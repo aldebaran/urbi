@@ -39,9 +39,7 @@ UCommandQueue::UCommandQueue  (int minBufferSize,
 			       int adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
     cursor_ (0),
-    discard_ (false),
-    closechar_ (' '),
-    closechar2_ (' '),
+    close_ (0),
     closers_ ()
 {
 }
@@ -55,45 +53,36 @@ UCommandQueue::~UCommandQueue()
 std::string
 UCommandQueue::popCommand ()
 {
-  if (dataSize_ == 0)
-    return std::string ();
-
-  // Scanning
-  int position = start_ + cursor_;
-  if (position >= bufferSize_)
-    position = position - bufferSize_;
-
-  int nextposition = position + 1;
-  if (nextposition >= bufferSize_)
-    nextposition = nextposition - bufferSize_;
-
-  int previousposition = position - 1;
-  if (previousposition < 0)
-    previousposition = previousposition + bufferSize_;
-  char p0 = (char) buffer_[previousposition]; // extract the previous char.
-  if (cursor_ == 0)
-    // no previous char at start
-    p0 = ' ';
-
-  bool found = false;
-  while (cursor_ < dataSize_ && !found)
+ // Scanning
+  for (/* nothing */; cursor_ < dataSize_; ++cursor_)
   {
-    char p_1 = p0;
-    p0 = (char) buffer_[position];
-    char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : '-';
+    int position = (start_ + cursor_) % bufferSize_;
+    char p0 = (char) buffer_[position];
 
-    if (discard_)
+    int nextposition = (position + 1) % bufferSize_;
+    char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : 0;
+
+    // Beware of \ which disables the next char whatever the context.
+    if (p0 == '\\')
     {
-      // One char close sequence
-      if (p0 == closechar_ && closechar2_ == ' ')
-	discard_ = closechar_ == '"' && p_1 == '\\';
+      ++cursor_;
+      continue;
+    }
 
-      // Two chars close sequence
-      if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')
-	discard_ = false;
+    // In string or in comment.
+    if (close_)
+    {
+      // Look for the closing sequence.
+      if (p0 == close_[0])
+      {
+	if (// One-char close sequence: strings, // and # comments.
+	  close_[1] == 0
+	  // Two-char close sequences: /* ... */
+	  || p1 == close_[1])
+	  close_ = 0;
+      }
     }
     else
-    {
       switch (p0)
       {
 	case '{':
@@ -119,72 +108,43 @@ UCommandQueue::popCommand ()
 	  break;
 
 	case '#':
-	  discard_    = true;
-	  closechar_  = '\n';
-	  closechar2_ = ' ';
+	  close_ = "\n";
 	  break;
 
 	case '"':
-	  discard_    = true;
-	  closechar_  = '"';
-	  closechar2_ = ' ';
+	  close_ = "\"";
 	  break;
 
-	default:
-	  if ((p0 == '/' && p1 == '*')
-	      || (p_1 == '/' && p0 == '*'))
+	case '/':
+	  if (p1 == '*')
 	  {
-	    discard_    = true;
-	    closechar_  = '*';
-	    closechar2_ = '/';
+	    close_ = "*/";
+	    ++cursor_;
 	  }
-	  if ((p0 == '/' && p1 == '/')
-	      || (p_1 == '/' && p0 == '/'))
+	  else if (p1 == '/')
 	  {
-	    discard_    = true;
-	    closechar_  = '\n';
-	    closechar2_ = ' ';
+	    close_ = "\n";
+	    ++cursor_;
+	  }
+	  break;
+
+	case ',':
+	case ';':
+	  // , or ; separator, except between paren or brackets
+	  if (closers_.empty())
+	  {
+	    // Include the terminator.
+	    ++cursor_;
+	    std::string res;
+	    res = std::string (reinterpret_cast<const char*> (pop(cursor_)),
+			cursor_);
+	    cursor_ = 0;  
+	    ECHO("Sending {{{" << res << "}}}");
+	    return res;
 	  }
       }
-    }
-
-    // , or ; separator, except between paren or brackets
-    if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
-	&& !discard_
-	&& closers_.empty())
-      found = true;
-
-    // Emergency escape character: ¤
-    if ((char)buffer_[position] == '$'
-	&& (char)buffer_[nextposition] == '$'
-	&& !discard_)
-    {
-      closers_.clear();
-      cursor_ = 0;
-      discard_  = false;
-      return 0;
-    }
-
-    ++cursor_;
-    ++position;
-    if (position == bufferSize_)
-      position = 0;
-    ++nextposition;
-    if (nextposition == bufferSize_)
-      nextposition = 0;
   }
 
-  std::string res;
-  if (found)
-  {
-    res = std::string (reinterpret_cast<const char*> (pop(cursor_)),
-                       cursor_);
-    cursor_ = 0;
-  }
-  else
-  {
-    res = std::string ();
-  }
-  ECHO("Sending {{{" << res << "}}}");
-  return res;
+  // A complete command was not found.
+  return std::string();
 }

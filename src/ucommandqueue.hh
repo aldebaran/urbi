@@ -71,17 +71,16 @@ public:
 
 private:
 
-  /// internal position of the preparsing cursor. It's an offset of
-  /// start_
+  /// start_.  Should always be before a complete "character".  I.e.,
+  /// should never point to the * of an "/*" that does open a comment,
+  /// should stop between a `\' and its "argument" and so forth.
   int cursor_;
-  /// True when a commentary is active;
-  bool discard_;
-  /// Used to store the 1st closing character for the commentary
-  /// detection.
-  char closechar_;
-  /// Used to store thezq 2nd closing character for the commentary
-  /// detection.
-  char closechar2_;
+
+  /// The closing character(s) for the commentary/string detection.
+  /// 0 if not in such a token.
+  /// Long lexemes: /* ... */, " ... ", # ... \n, \\ ... \n.
+  const char* close_;
+
   /// A stack of expected closing braces: ), ], } etc.
   std::vector<char> closers_;
 };

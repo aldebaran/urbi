@@ -1,5 +1,43 @@
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
+	merge -r 2256:2268 https://svn.gostai.com/svn/kernel1/trunk.
+	2008-01-07  Akim Demaille  <demaille@gostai.com>
+        Fix preparser.
+        * src/ucommandqueue.hh (closechar_, closechar2_): Replace with
+        (close_): this string, instead of two chars...
+        (discard_): Remove, useless now we have a string that can be 0.
+        * src/ucommandqueue.cc (UCommandQueue::popCommand): Adjust.
+        Simplify.
+        Instead of doing a switch and them some ifs, how about just
+        extending the switch?
+        And fix to support properly \.
+        Remove "$$" support.
+
+        2008-01-07  Akim Demaille  <demaille@gostai.com>
+        Start cleaning the handling of escapes in the preparser.
+        1.x/string-escapes fails, and with this patch, so does
+        1.x/armor-unarmor and a.x/channels-tags.
+        But the code is borken anyway: it thinks it
+        can handle \ from right to left.  So first, make the code cleaner
+        (this patch), then fix it (next patch).
+        * src/ucommandqueue.cc: Factor.
+        Group together what goes together.
+        Reduce scopes.
+        Prefer for to while.
+        Enjoy calling "return" from the loop.
+        * src/ucommandqueue.hh: more doc.
+        * src/uqueue.hh: Doc changes..
+
+        2008-01-07  Akim Demaille  <demaille@gostai.com>
+        Use 0.x tests.
+        * tests-local.mk: here.
+
+        2008-01-07  Akim Demaille  <demaille@gostai.com>
+        INSTRUMENT=true for check-buildfarm.
+        * Makefile.am: here.
+
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
 	Skip RT commits for merging.
 	* .automerge: Here. 2246-2254 patches are meaningless
 	for k2.
