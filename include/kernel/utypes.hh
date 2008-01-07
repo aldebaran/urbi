@@ -23,8 +23,8 @@
 
  **************************************************************************** */
 
-#ifndef UTYPES_HH
-# define UTYPES_HH
+#ifndef KERNEL_UTYPES_HH
+# define KERNEL_UTYPES_HH
 
 # include <list>
 # include "libport/cstring"
@@ -140,4 +140,4 @@ typedef unsigned char ubyte;
 
 # define ABSF(x)     (((x)>0)? (x) : (-(x)))
 
-#endif
+#endif // !KERNEL_UTYPES_HH

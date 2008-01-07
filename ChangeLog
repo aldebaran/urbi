@@ -1,3 +1,16 @@
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
+	reheader.
+	* include/kernel/blockmemorymanager.hh,
+	* include/kernel/fwd.hh,
+	* include/kernel/memorymanager.hh,
+	* include/kernel/ucomplaints.hh,
+	* include/kernel/uconnection.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/ustring.hh,
+	* include/kernel/utypes.hh:
+	Fix cpp guards.
+
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
 	Use static where appropriate.

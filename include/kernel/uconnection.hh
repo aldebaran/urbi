@@ -524,4 +524,4 @@ private:
 };
 
 # include "kernel/uconnection.hxx"
-#endif
+#endif // !KERNEL_UCONNECTION_HH

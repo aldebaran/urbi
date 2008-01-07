@@ -375,4 +375,4 @@ void debug (unsigned t, const char* fmt, ...)
 
 # include <kernel/userver.hxx>
 
-#endif // ! KERNEL_USERVER_HH
+#endif // !KERNEL_USERVER_HH

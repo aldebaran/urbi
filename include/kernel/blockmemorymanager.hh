@@ -4,8 +4,8 @@
  * instances allocated/freed using the block allocator
  */
 
-#ifndef BLOCKMEMORYMANAGER_HH
-# define BLOCKMEMORYMANAGER_HH
+#ifndef KERNEL_BLOCKMEMORYMANAGER_HH
+# define KERNEL_BLOCKMEMORYMANAGER_HH
 
 # include "libport/config.h"
 # if ! defined LIBPORT_URBI_ENV_AIBO
@@ -60,4 +60,4 @@ void block_operator_delete(BlockPool* mempool, void* ptr);
 
 void* block_operator_new(BlockPool* &mempool, size_t sz);
 
-#endif // !BLOCKMEMORYMANAGER_HH
+#endif // !KERNEL_BLOCKMEMORYMANAGER_HH
