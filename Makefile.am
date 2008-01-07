@@ -59,11 +59,16 @@ include/kernel/version.hh
 ## --------------- ##
 SVN_EXTERNALS += libport tests src/uobject src/network sdk
 
+
+## ------- ##
+## Check.  ##
+## ------- ##
+
 # check-html, check-clean, check-uob etc.
 check-%:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
 
 # The target run by the buildfarm.
-CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1
+CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
