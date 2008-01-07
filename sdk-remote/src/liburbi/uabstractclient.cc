@@ -142,7 +142,7 @@ namespace urbi
 	 it!=callbackList.end(); inc?it:it++, inc=false)
     {
       if (STREQ(msg.tag.c_str(), it->tag)
-	  || STREQ(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR
+	  || (STREQ(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR)
 	  || STREQ(it->tag, URBI_WILDCARD_TAG))
       {
 	UCallbackAction ua = it->callback(msg);
@@ -640,8 +640,8 @@ namespace urbi
   UAbstractClient::getAssociatedTag(UCallbackID id, char * tag)
   {
     listLock.lock();
-    std::list<UCallbackInfo>:: iterator it = find(callbackList.begin(),
-						  callbackList.end(), id);
+    std::list<UCallbackInfo>:: iterator it =
+      std::find(callbackList.begin(), callbackList.end(), id);
     if (it == callbackList.end())
     {
       listLock.unlock();
@@ -659,9 +659,8 @@ namespace urbi
   UAbstractClient::deleteCallback(UCallbackID callbackID)
   {
     listLock.lock();
-    std::list<UCallbackInfo>:: iterator it = find(callbackList.begin(),
-						  callbackList.end(),
-						  callbackID);
+    std::list<UCallbackInfo>:: iterator it =
+      std::find(callbackList.begin(), callbackList.end(), callbackID);
     if (it == callbackList.end())
     {
       listLock.unlock();
@@ -1169,10 +1168,12 @@ namespace urbi
        ? std::cerr
        : ((UAbstractClient*)getDefaultClient())->getStream());
     if (strlen(a)>2)
+    {
       if (a[0]=='(' && a[strlen(a)-1]==')')
 	s.rdbuf()->sputn(a+1, strlen(a)-2);
       else
 	s << a; //this is baaad, user forgot the parenthesis but was lucky
+    }
     return s;
   }
 
