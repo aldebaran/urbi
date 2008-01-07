@@ -131,15 +131,15 @@ UCommandQueue::popCommand ()
 	  break;
 
 	default:
-	  if (p0 == '/' && p1 == '*'
-	      || p_1 == '/' && p0 == '*')
+	  if ((p0 == '/' && p1 == '*')
+	      || (p_1 == '/' && p0 == '*'))
 	  {
 	    discard_    = true;
 	    closechar_  = '*';
 	    closechar2_ = '/';
 	  }
-	  if (p0 == '/' && p1 == '/'
-	      || p_1 == '/' && p0 == '/')
+	  if ((p0 == '/' && p1 == '/')
+	      || (p_1 == '/' && p0 == '/'))
 	  {
 	    discard_    = true;
 	    closechar_  = '\n';

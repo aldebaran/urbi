@@ -1,5 +1,11 @@
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
+	Fix GCC 4.3.0 warnings.
+	* src/ucommandqueue.cc: Fix GCC 4.3.0 warnings.
+	* src/userver.cc: Fix GCC 4.3.0 warnings.
+
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
 	Fix incorrect function name in prototype.
 	* include/kernel/userver.hh: Function was incorrectly prototyped
 	as debug() instead of vdebug().
