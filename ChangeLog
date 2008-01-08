@@ -1,5 +1,10 @@
 2008-01-08  Akim Demaille  <demaille@gostai.com>
 
+	Useless if.
+	* src/uconnection.cc (~UConnection): Remove it.
+
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
 	Add missing file.
 	* src/ast/cloner.hxx: New.
 

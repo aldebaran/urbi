@@ -99,11 +99,7 @@ UConnection::UConnection (UServer* userver,
 UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
-  if (connectionTag)
-  {
-    delete connectionTag;
-  }
-
+  delete connectionTag;
   delete parser_;
   delete sendQueue_;
   delete recvQueue_;
