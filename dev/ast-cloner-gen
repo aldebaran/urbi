@@ -20,20 +20,22 @@ dec_subclasses = \
   filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
 	   concrete_nodes)
 
+clonerlib = ast_params['clonerlib'];
+CLONERLIB = clonerlib.upper();
 
 ## Abstract syntax tree C++ clone visitor - header ----------------------------
 
 cloner_hh = file("cloner.hh.tmp", "w")
 sys.stdout = cloner_hh
 
-print tools.banner("astclone/cloner.hh",
-                   """Declaration of astclone::Cloner.""") + """
-#ifndef ASTCLONE_CLONER_HH
-# define ASTCLONE_CLONER_HH
+print tools.banner(clonerlib + "/cloner.hh",
+		   "Declaration of " + clonerlib + "::Cloner.") + """
+#ifndef """ + CLONERLIB + """_CLONER_HH
+# define """ + CLONERLIB + """_CLONER_HH
 
 # include "ast/default-visitor.hh"
 
-namespace astclone
+namespace """ + clonerlib + """
 {
 
   /// \\brief Duplicate an Ast.
@@ -59,7 +61,7 @@ namespace astclone
 
     /** \\brief Clone a collection object.
 
-    	Using overloading for this method is tempting, but it would
+	Using overloading for this method is tempting, but it would
 	lead to the same prototype than the first \\a recurse method.
 
 	A partial specialization for \\a std::list<T> would work, but is
@@ -96,17 +98,14 @@ print """
 
 } // namespace ast
 
-# include "astclone/cloner.hxx"
+# include \"""" + clonerlib + """/cloner.hxx"
 
-#endif // !ASTCLONE_CLONER_HH"""
+#endif // !""" + CLONERLIB + """_CLONER_HH"""
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
 cloner_hh.close ()
-
-file_fullpath = os.path.join (srcdir, "cloner.hh");
-# Check differences and update if any
-tools.lazy_overwrite (file_fullpath, "cloner.hh.tmp")
+tools.lazy_install(srcdir, "cloner.hh");
 
 
 ## Abstract syntax tree C++ clone visitor - implementation --------------------
@@ -129,15 +128,15 @@ print """\
 // Generated, do not edit by hand.
 //->>
 /**
- ** \\file astclone/cloner.cc
- ** \\brief Implementation of astclone::Cloner.
+ ** \\file """ + clonerlib + """/cloner.cc
+ ** \\brief Implementation of """ + clonerlib + """::Cloner.
  */
 
 #include "ast/all.hh"
-#include "astclone/cloner.hh"
-#include "misc/symbol.hh"
+#include \"""" + clonerlib + """/cloner.hh"
+#include \"""" + ast_params['auxlib'] + """/symbol.hh"
 
-namespace astclone
+namespace """ + clonerlib + """
 {
   using namespace ast;
 
@@ -222,12 +221,9 @@ for dec_type in dec_subclasses:
   //<< Other declarations.""",
 print """  //>>
 
-} // namespace ast"""
+} // namespace """ + clonerlib
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
 cloner_cc.close ()
-
-# Check differences and update if any
-file_fullpath = os.path.join (srcdir, "cloner.cc");
-tools.lazy_overwrite (file_fullpath, "cloner.cc.tmp")
+tools.lazy_install(srcdir, "cloner.cc");

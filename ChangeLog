@@ -1,3 +1,11 @@
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
+	Upgrade cloner generation.
+	* dev/ast-cloner-gen: Support the ast param "clonerlib".
+	Upgrade to newere tools.py.
+	* dev/ast-gen.mk: Upgrade to support ast_basedir (from tc).
+	Support cloner generation.
+
 2008-01-08  Matthieu Nottale  <nottale@gostai.com>
 
 	Support for UObject instanciation.

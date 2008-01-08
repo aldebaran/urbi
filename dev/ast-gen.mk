@@ -1,3 +1,14 @@
+# Before loading this file, define ast_basedir.
+#
+# The base directory to prepend to all the file names generated in the
+# generated Makefile snippet.  If this ast-nodes.mk is to be included
+# by ast/Makefile.am, then define to empty.  If it is included by its
+# parent Makefile.am, define to "ast/".
+#
+# Likewise, define ast_nodes to the list of all C++ files containing
+# the definitions of the AST nodes to be generated.
+
+
 ## -------------------------- ##
 ## Using the AST generators.  ##
 ## -------------------------- ##
@@ -5,56 +16,57 @@
 # We use GNU Make extensions.
 AUTOMAKE_OPTIONS += -Wno-portability
 $(ast_srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
-	@rm -rf $@
-	@rm -rf $@.tmp
+	@rm -f $@ $@.tmp
 	@touch $@.tmp
 	$(gen_dir)/ast-$*-gen $(ast_srcdir) < $(ast_srcdir)/ast.yml
 	@mv -f $@.tmp $@
 
 # ast-nodes.mk
-EXTRA_DIST += ast/nodes-mk.stamp
+EXTRA_DIST += $(ast_basedir)nodes-mk.stamp
 $(ast_srcdir)/ast-nodes.mk: $(ast_srcdir)/nodes-mk.stamp
 
 # all.hh.
-EXTRA_DIST += ast/all.stamp
-ast/all.hh: $(ast_srcdir)/all.stamp
+EXTRA_DIST += $(ast_basedir)all.stamp
+$(ast_basedir)all.hh: $(ast_srcdir)/all.stamp
+
+# cloner.hh etc.
+EXTRA_DIST += $(ast_basedir)cloner.stamp
+$(ast_basedir)cloner.hh $(ast_basedir)cloner.hxx $(ast_basedir)cloner.cc: $(ast_srcdir)/cloner.stamp
 
 # fwd.hh.
-EXTRA_DIST += ast/fwd.stamp
-ast/fwd.hh: $(ast_srcdir)/fwd.stamp
+EXTRA_DIST += $(ast_basedir)fwd.stamp
+$(ast_basedir)fwd.hh: $(ast_srcdir)/fwd.stamp
 
 # ignores.
-EXTRA_DIST += ast/ignores ast/ignores.stamp
+EXTRA_DIST += $(ast_basedir)ignores $(ast_basedir)ignores.stamp
 $(ast_srcdir)/ignores.stamp: $(gen_dir)/ast-ignores-gen $(ast_gen_deps)
-	@rm -rf $@
-	@rm -rf $@.tmp
+	@rm -f $@ $@.tmp
 	@touch $@.tmp
 	$(gen_dir)/ast-ignores-gen $(ast_srcdir) < $(ast_srcdir)/ast.yml
 	if test -d $(ast_srcdir)/.svn; then \
           svn propset svn:ignore $(ast_srcdir) -F $(ast_srcdir)/ignores; \
         fi
 	@mv -f $@.tmp $@
-ast/ignores: $(ast_srcdir)/ignores.stamp
+$(ast_basedir)ignores: $(ast_srcdir)/ignores.stamp
 
 # AST itself.
-EXTRA_DIST += ast/nodes.stamp
+EXTRA_DIST += $(ast_basedir)nodes.stamp
 $(ast_nodes): $(ast_srcdir)/nodes.stamp
 
 # ast.dot
-$(ast_srcdir)/ast.dot: $(gen_dir)/ast-graph-gen $(ast_gen_deps)
-	$(gen_dir)/ast-graph-gen < $(ast_srcdir)/ast.yml >$@.tmp
-	mv -f $@.tmp $@
+EXTRA_DIST += $(ast_basedir)graph.stamp
+$(ast_basedir)ast.dot: $(ast_srcdir)/graph.stamp
 
 # DefaultVisitor
-EXTRA_DIST += ast/default-visitor.stamp
-ast/default-visitor.hh ast/default-visitor.hxx: $(ast_srcdir)/default-visitor.stamp
+EXTRA_DIST += $(ast_basedir)default-visitor.stamp
+$(ast_basedir)default-visitor.hh $(ast_basedir)default-visitor.hxx: $(ast_srcdir)/default-visitor.stamp
 
 # Visitor.
-EXTRA_DIST += ast/visitor.stamp
-ast/visitor.hh: $(ast_srcdir)/visitor.stamp
+EXTRA_DIST += $(ast_basedir)visitor.stamp
+$(ast_basedir)visitor.hh: $(ast_srcdir)/visitor.stamp
 
 # PrettyPrinter.
-EXTRA_DIST += ast/pretty-printer.stamp
-ast/pretty-printer.hh ast/pretty-printer.hxx ast/pretty-printer.cc: $(ast_srcdir)/pretty-printer.stamp
+EXTRA_DIST += $(ast_basedir)pretty-printer.stamp
+$(ast_basedir)pretty-printer.hh $(ast_basedir)pretty-printer.hxx $(ast_basedir)pretty-printer.cc: $(ast_srcdir)/pretty-printer.stamp
 
 MAINTAINERCLEANFILES += $(BUILT_SOURCES_ast)
