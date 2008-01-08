@@ -1,3 +1,14 @@
+2008-01-08  Matthieu Nottale  <nottale@gostai.com>
+
+	Limit dump depth to 3, make it accessible from URBI.
+	* src/object/atom.hxx: pretty-print delegate as "<delegate>".
+	* src/object/object-class.cc: Add dump Primitive, display dumped
+	  result in multiple system (***) messages.
+	* src/object/object.cc: Use xalloc/iword to implement a limit in
+	  depth of calls to Object::dump. Rename "parents" into "protos".
+	* src/uconnection.cc: Fix a bug in mkPrefix when the tag "" is
+	 passed.
+
 2008-01-08  Samuel Tardieu  <tardieu@gostai.com>
 
 	Add missing files for distribution.

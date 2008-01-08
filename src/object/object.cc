@@ -118,14 +118,21 @@ namespace object
     return o << '_' << this;
   }
 
+
   std::ostream&
   Object::dump (std::ostream& o) const
   {
     id_dump (o);
+    static const long idx = o.xalloc();
+    static const long depth_max = 3;
+    long& address = o.iword(idx);
+    if (address > depth_max)
+      return o << " <...>";
+    address++;
     o << " {" << libport::incendl;
     if (parents_.begin () != parents_.end ())
       {
-	o << "parents = ";
+	o << "protos = ";
 	for (parents_type::const_iterator i = parents_.begin ();
 	     i != parents_.end (); ++i)
 	  {
@@ -139,14 +146,15 @@ namespace object
     BOOST_FOREACH (slot_type s, slots_)
       o << s << libport::iendl;
     o << libport::decindent << '}';
+    o.iword(idx)--;  //can not reuse address variable above according to spec
     return o;
   }
 
   std::ostream&
   Object::print(std::ostream& out) const
   {
-    // FIXME: For now, don't print anything.
-    return out;
+    // FIXME: Decide what should be printed, but at least print something
+    return out << "<object>";
   }
 
 } // namespace object

@@ -163,7 +163,7 @@ namespace object
   std::ostream&
   Atom<delegate_traits>::print(std::ostream& out) const
   {
-    return out << "delegate";
+    return out << "<delegate>";
   }
   
   template <>

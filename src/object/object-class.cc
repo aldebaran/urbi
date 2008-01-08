@@ -5,7 +5,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
-
+#include "libport/tokenizer.hh"
 #include <boost/lexical_cast.hpp>
 
 #include "kernel/userver.hh"
@@ -53,6 +53,30 @@ namespace object
     return args[0];
   }
 
+  /// Send dumped self on the connection.
+  /// args[1], if present, can be the tag to use.
+  static rObject
+  object_class_dump (rLobby c, objects_type args)
+  {
+    // Second argument is the tag name.
+    const char* tag = 0;
+    if (args.size() == 2)
+    {
+      FETCH_ARG(1, String);
+      tag = arg1->value_get().name_get().c_str();
+    }
+    std::ostringstream os;
+    args[0]->dump(os);
+    //for now our best choice is to dump line by line in "system" messages.
+    boost::tokenizer< boost::char_separator<char> > tok =
+    libport::make_tokenizer(os.str(), "\n");
+    std::string system_header("*** ");
+    BOOST_FOREACH(std::string  line, tok)
+      c->value_get().connection  << UConnection::send (
+	(system_header+line+"\n").c_str(), tag?tag:"");
+    return args[0];
+  }
+  
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
   static rObject
@@ -211,6 +235,7 @@ namespace object
     DECLARE1(updateSlot);
 
     DECLARE1(echo);
+    DECLARE1(dump);
     DECLARE1(print);
     DECLARE1(reboot);
     DECLARE1(shutdown);

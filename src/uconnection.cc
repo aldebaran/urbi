@@ -354,7 +354,7 @@ UConnection::mkPrefix (const ubyte* tag) const
   char fill = o.fill('0');
   o << '[' << std::setw(8) << (int) server->lastTime();
   o.fill(fill);
-  if (tag)
+  if (tag && strlen(reinterpret_cast<const char*>(tag)))
     o << ':' << tag;
   o << "] ";
 
