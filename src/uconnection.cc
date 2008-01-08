@@ -149,25 +149,26 @@ UConnection::initialize()
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
     *this << send(::HEADER_BEFORE_CUSTOM[i], "start");
 
-  int i = 0;
-  char customHeader[1024];
-
-  do {
-    server->getCustomHeader(i, customHeader, 1024);
-    if (customHeader[0]!=0)
-      *this << send(customHeader, "start");
-    ++i;
-  } while (customHeader[0]!=0);
+  {
+    // FIXME: This is sick.
+    char buf[1024];
+    for (int i = 0; buf[0];
+	 ++i, server->getCustomHeader(i, buf, sizeof buf))
+      *this << send(buf, "start");
+  }
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
     *this << send(::HEADER_AFTER_CUSTOM[i], "start");
-  sprintf(customHeader, "*** ID: %s\n", connectionTag->c_str());
-  *this << send(customHeader, "ident");
 
-  sprintf(customHeader, "%s created", connectionTag->c_str());
-  server->echo(::DISPLAY_FORMAT, (long)this,
-	       "UConnection::initialize",
-	       customHeader);
+  {
+    char buf[1024];
+    snprintf(buf, sizeof buf, "*** ID: %s\n", connectionTag->c_str());
+    *this << send(buf, "ident");
+
+    snprintf(buf, sizeof buf, "%s created", connectionTag->c_str());
+    server->echo(::DISPLAY_FORMAT, (long)this,
+		 "UConnection::initialize", buf);
+  }
 
   server->loadFile("CLIENT.INI", recvQueue_);
   newDataAdded = true;

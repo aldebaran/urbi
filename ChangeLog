@@ -1,3 +1,9 @@
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
+	Prefer for to while.
+	* src/uconnection.cc (UConnection::initialize): Here.
+	And prefer snprintf to sprintf (but both are sick).
+
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
 	Missing "done".
