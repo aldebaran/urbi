@@ -417,6 +417,12 @@ namespace runner
       YIELD ();
     }
 
+    // FIXME: I am very afraid that because of the YIELD above, some
+    // command are added right before this clear().  Hence the assert.
+    assert (i == e.children_get().end());
+    if (e.toplevel_get ())
+      e.clear();
+
     CORO_END;
   }
 

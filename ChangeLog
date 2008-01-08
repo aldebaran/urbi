@@ -1,5 +1,12 @@
 2008-01-08  Akim Demaille  <demaille@gostai.com>
 
+	Free the AST bits that were run.
+	* src/runner/runner.cc (Nary): When the top level Nary was processed,
+	flush it.
+	* src/uconnection.cc: Remove obsolete comments.
+
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
 	Fix graph generation.
 	* dev/ast-graph-gen: Pass srcdir.
 
