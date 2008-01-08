@@ -1,3 +1,8 @@
+2008-01-08  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Update check-buildfarm.
+	* Makefile.am: Here.
+
 2008-01-07  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add xfail tests.
