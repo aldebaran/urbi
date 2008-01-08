@@ -57,7 +57,7 @@ uqueue.hh uqueue.cc						\
 userver.cc							\
 ustring.cc							\
 usystem.cc                                                      \
-uvalue_cast.cc
+uvalue-cast.cc
 
 
 ## ------------ ##

@@ -58,6 +58,7 @@
 #include "object/atom.hh"
 #include "object/primitives.hh"
 #include "runner/scheduler.hh"
+#include "uobject.hh"
 
 // Global server reference
 UServer *urbiserver = 0;
@@ -159,12 +160,15 @@ UServer::initialize()
   
   //pluged uobjects
   //create uobject
-  object::rObject uobject = new object::Object();
+  object::rObject uobject = object::clone(object::object_class);
   ghost_->lobby_->slot_set("uobject", uobject);
   BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
   {
-    uobject->slot_set(i->name, new object::Object());
-    i->init(i->name);
+    //make our prototype
+    object::rObject proto =  uobject_make_proto(i->name);
+    uobject->slot_set(i->name+"_class", proto);
+    //make our first instance
+    uobject->slot_set(i->name, uobject_new(proto, true));
   }
   load_init_file("URBI.INI");
 }

@@ -386,7 +386,7 @@ public:
   UConnection& disactivate ();
   bool isActive ();
 
-  object::rLobby get_lobby() { return lobby_;}
+  object::rLobby lobby_get() { return lobby_;}
 protected:
   UConnection& execute ();
 

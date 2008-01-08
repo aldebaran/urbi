@@ -6,7 +6,6 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
-# include <boost/scoped_ptr.hpp>
 # include "ast/fwd.hh"
 
 # include "kernel/fwd.hh"

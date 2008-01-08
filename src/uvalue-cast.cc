@@ -1,10 +1,12 @@
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
 #include "urbi/uvalue.hh"
-#include "uvalue_cast.hh"
 
-urbi::UValue
-uvalue_cast(object::rObject o)
+
+
+
+
+urbi::UValue uvalue_cast(object::rObject o)
 {
   urbi::UValue v;
   switch(o->kind_get())
@@ -32,8 +34,7 @@ uvalue_cast(object::rObject o)
       std::list<object::rObject>& t = o.cast<object::List>()->value_get();
       BOOST_FOREACH(object::rObject co, t)
       {
-	urbi::UValue cv = uvalue_cast(co);
-	v.list->array.push_back(new urbi::UValue(cv));
+	v.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
       }
     }
     break;  
@@ -41,8 +42,7 @@ uvalue_cast(object::rObject o)
   return v;
 }
 
-object::rObject
-object_cast(const urbi::UValue& v)
+object::rObject object_cast(const urbi::UValue& v)
 {
   object::rObject r;
   switch(v.type)

@@ -1,3 +1,33 @@
+2008-01-08  Matthieu Nottale  <nottale@gostai.com>
+
+	Support for UObject instanciation.
+	The UObject binding mechanism is per instance. So here is what we
+	do:
+	- for toto in all UObjects (toto being the string given to UStart()),
+	  - create uobject.toto_class with a slot __urbi__cname=toto, a
+	    slot __urbi__base=self, and a slot clone, primitive, that:
+	      - clones Object
+	      - reparents the newly created object to __urbi__base
+	      - creates a new instance of the C++ UObject, passing the newly
+		created Object address as its name
+	      - adds the name to a hash, giving access to the object.
+	  - create uobject.toto by cloning uobject.toto_class, forcing the
+	    c++ uobject name to be toto.
+	- UBindFunction (through UGenericCallback ctor) now uses the hash
+	  table to access the underlying rObject.
+	* include/kernel/uconnection.hh: Correct accessor name.
+	* src/Makefile.am: Adapt for renamed files.
+	* src/object/atom.hh: Remove useless include.
+	* src/object/delegate-class.cc: Fix harmless typo.
+	* src/uobject.cc: Implement what is described above.
+	* src/uobject.hh: New.
+	* src/userver.cc: Call uobject_make_proto/uobject_new  for each
+	  UObject.
+	* src/uvalue-cast.cc,
+	* src/uvalue-cast.hh: Rename as.
+	* src/uvalue_cast.cc,
+	* src/uvalue_cast.hh: Those, and code cleanup.
+
 2008-01-08  Samuel Tardieu  <tardieu@gostai.com>
 
 	Add missing #include.

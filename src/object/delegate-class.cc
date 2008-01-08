@@ -19,4 +19,4 @@ namespace object
   {
   }
 
-}; // namespace object
+} // namespace object
