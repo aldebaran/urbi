@@ -1,3 +1,9 @@
+2008-01-08  Samuel Tardieu  <tardieu@gostai.com>
+
+	Add missing #include.
+	* src/uvalue_cast.cc: Add include for uvalue_cast.hh.
+	Minor reformatting.
+
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
 	UObject initial support (UBindFunction working).

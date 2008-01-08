@@ -1,12 +1,10 @@
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
 #include "urbi/uvalue.hh"
+#include "uvalue_cast.hh"
 
-
-
-
-
-urbi::UValue uvalue_cast(object::rObject o)
+urbi::UValue
+uvalue_cast(object::rObject o)
 {
   urbi::UValue v;
   switch(o->kind_get())
@@ -43,7 +41,8 @@ urbi::UValue uvalue_cast(object::rObject o)
   return v;
 }
 
-object::rObject object_cast(const urbi::UValue& v)
+object::rObject
+object_cast(const urbi::UValue& v)
 {
   object::rObject r;
   switch(v.type)
