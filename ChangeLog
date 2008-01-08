@@ -1,3 +1,8 @@
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
+	Fix graph generation.
+	* dev/ast-graph-gen: Pass srcdir.
+
 2008-01-08  Samuel Tardieu  <tardieu@gostai.com>
 
 	Implement sqr in Urbi rather than in C++.

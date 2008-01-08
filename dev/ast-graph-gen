@@ -1,15 +1,17 @@
 #! /usr/bin/env python
 
-import sys
-import ast
+import sys, ast, tools
 
-if len (sys.argv) != 1:
-  tools.error("Usage: ..")
+if len(sys.argv) != 2:
+  tools.error("Usage: .. SRCDIR")
+srcdir = sys.argv[1]
 
 ## Abstract syntax tree graph -------------------------------------------------
 
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
+
+sys.stdout = ast_dot = file("ast.dot.tmp", "w")
 
 # Prologue.
 print """/*<<-*/
@@ -52,3 +54,7 @@ for c in classes:
 
 # Epilogue.
 print "}"
+
+ast_dot.close()
+sys.stdout = sys.__stdout__
+tools.lazy_install (srcdir, "ast.dot")
