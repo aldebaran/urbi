@@ -16,6 +16,9 @@ ast_basedir: "ast/"
 # library.
 auxlib: "libport"
 
+# The name of the directory/namespace that contains the cloner.
+clonerlib: "ast"
+
 # The generator will accept these types as is, without looking for a
 # particular header.  Also, they are handled by copy.
 atomic_types:
@@ -51,21 +54,22 @@ includes_map:
 
   "exec_exps_type" : '"ast/fwd.hh"'
 
-# FIXME: Can we compute this list from atomic_types?
+# FIXME: Can't we compute this list from atomic_types?  Or simply, one
+# cannot visit something which is not a defined ast node?
+# Used by the cloner.
 non_visitable_types:
   - "bool"
-  - "int"
-  - "unsigned"
+  - "ufloat"
   - "std::string"
-  - "misc::symbol"
-  - "const misc::symbol"
-  - "Location"
+  - "libport::Symbol"
+  - "loc"
+  - "flavor_type"
 
+# In the cloner, these require "recurse_collection".
 collections:
-#  - "exps_type"
-#  - "fields_type"
-#  - "fieldinits_type"
-#  - "DecsList::decs_type"
+  - "symbols_type"
+  - "exps_type"
+  - "exec_exps_type"
 
 # The function to clear a list of pointers.
 deep_clear: "libport::deep_clear"

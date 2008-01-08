@@ -1,3 +1,4 @@
+ast_basedir = ast/
 ast_srcdir = $(srcdir)/ast
 # Don't use ast_srcdir in the include, otherwise Automake can't resolve it.
 include $(srcdir)/ast/ast-nodes.mk
@@ -12,6 +13,8 @@ BUILT_SOURCES_ast =							   \
 	ast/all.hh							   \
 	ast/ignores							   \
 	ast/visitor.hh							   \
+	ast/clone.hh ast/clone.hxx					   \
+	ast/cloner.hh ast/cloner.hxx ast/cloner.cc			   \
 	ast/default-visitor.hh ast/default-visitor.hxx			   \
 	ast/pretty-printer.hh ast/pretty-printer.hxx ast/pretty-printer.cc \
 	$(ast_nodes)

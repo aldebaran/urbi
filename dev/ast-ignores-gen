@@ -33,6 +33,9 @@ pretty-printer.stamp
 pretty-printer.hh
 pretty-printer.hxx
 pretty-printer.cc
+cloner.stamp
+cloner.hh
+cloner.cc
 visitor.stamp
 visitor.hh
 visitor.hxx

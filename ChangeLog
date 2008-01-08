@@ -1,5 +1,14 @@
 2008-01-08  Akim Demaille  <demaille@gostai.com>
 
+	Generate an AST cloner.
+	* dev/ast-ignores-gen: Ignore the generated cloner files.
+	* src/ast/ast.mk (ast_basedir): Define.
+	* src/ast/ast.yml (clonerlib, collections, non_visitable_types):
+	Complete/define.
+	* src/ast/clone.hh, src/ast/clone.hxx, src/ast/cloner.hxx: New
+
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
 	Upgrade cloner generation.
 	* dev/ast-cloner-gen: Support the ast param "clonerlib".
 	Upgrade to newere tools.py.
