@@ -11,6 +11,8 @@
 #include <libport/symbol.hh>
 
 #include "kernel/uconnection.hh"
+
+#include "ast/clone.hh"
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
 #include "object/idelegate.hh"
@@ -322,7 +324,7 @@ namespace runner
     YIELD ();
 
     PING ();
-    current_ = new object::Code (e);
+    current_ = new object::Code (*ast::clone(e));
 
     CORO_END;
   }

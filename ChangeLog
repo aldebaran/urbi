@@ -1,3 +1,16 @@
+2008-01-08  Akim Demaille  <demaille@gostai.com>
+
+	Start implementing incremental command arrival.
+	NOTE: This is a partial fix: since we accumulate the pieces of the
+	input but we don't free them, in interactive mode, commands are
+	evaluated several times.
+	I need to find a means for the runner to flush the commands that
+	were completed.
+	* src/runner/runner.cc (ast::Function): Store a clone of the function,
+	so that we can free the AST without any problem.
+	* src/uconnection.cc (received_): Accumulate AST nodes as they arrive.
+	Delete the AST when in syntax error.
+
 2008-01-08  Matthieu Nottale  <nottale@gostai.com>
 
 	urbi::UVar synchronous read/write.

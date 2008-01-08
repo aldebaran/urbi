@@ -546,72 +546,61 @@ UConnection::received_ (const ubyte *buffer, int length)
   receiving = true;
   server->updateTime();
 
-  // Code extracted from the UCommandQueue
-  std::string command;
   // active_command_: The command to be executed (root of the AST).
-  passert (*active_command_, active_command_->empty());
+  // passert (*active_command_, active_command_->empty());
 
   // Loop to get all the commands that are ready to be executed.
-  do {
-    command = recvQueue_->popCommand();
+  for (std::string command = recvQueue_->popCommand();
+       !command.empty();
+       command = recvQueue_->popCommand())
+  {
+    server->setSystemCommand (false);
+    int result = p.process (command);
+    assert (result != -1);
+    server->setSystemCommand (true);
 
-    if (command.empty ())
-      recvQueue_->clear();
+    // Warnings handling
+    if (p.hasWarning())
+    {
+      *this << send(p.warning_get().c_str(), "warn ");
+      server->error(::DISPLAY_FORMAT, (long)this,
+		    "UConnection::received",
+		    p.warning_get().c_str());
+    }
+
+    // Errors handling
+    if (p.hasError())
+    {
+      delete p.command_tree_get();
+      p.command_tree_set (0);
+
+      *this << send(p.error_get().c_str(), "error");
+      server->error(::DISPLAY_FORMAT, (long) this,
+		    "UConnection::received",
+		    p.error_get().c_str());
+    }
+    else if (!p.command_tree_get ())
+    {
+      *this << send ("the parser returned NULL\n", "error");
+      server->error(::DISPLAY_FORMAT, (long) this,
+		    "UConnection::received",
+		    "the parser returned NULL\n");
+    }
     else
     {
-      server->setSystemCommand (false);
-      int result = p.process (command);
-      assert (result != -1);
-      server->setSystemCommand (true);
-
-      // Warnings handling
-      if (p.hasWarning())
-      {
-	*this << send(p.warning_get().c_str(), "warn ");
-	server->error(::DISPLAY_FORMAT, (long)this,
-		      "UConnection::received",
-		      p.warning_get().c_str());
-      }
-
-      // Errors handling
-      if (p.hasError())
-      {
-	// FIXME: 2007-07-20: Currently we can't free the commandTree,
-	// we might kill function bodies.
-	// XXX 2007-07-28: I think that if we get here, it's because there
-	// was a parse error so I guess we can safely free the commandTree
-	// here, can't we?
-	//delete p.commandTree;
-	p.command_tree_set (0);
-
-	*this << send(p.error_get().c_str(), "error");
-	server->error(::DISPLAY_FORMAT, (long) this,
-		      "UConnection::received",
-		      p.error_get().c_str());
-      }
-      else if (!p.command_tree_get ())
-      {
-	*this << send ("the parser returned NULL\n", "error");
-	server->error(::DISPLAY_FORMAT, (long) this,
-		      "UConnection::received",
-		      "the parser returned NULL\n");
-      }
-      else
-      {
-	// Alright so at this point, we have parsed a new command
-	// (either a ";" or a ",", in any case it's a Nary) now it's
-	// time to append this new command in the AST.
-	ast::Nary& parsed_command =
-	  dynamic_cast<ast::Nary&> (*p.command_tree_get ());
-	ECHO ("parsed: {{{" << parsed_command << "}}}");
-	// Append to the current list.
-	active_command_->splice_back(parsed_command);
-	p.command_tree_set (0);
-	ECHO ("appended: " << *active_command_ << "}}}");
-      }
+      // We parsed a new command (either a ";" or a ",", in any case
+      // it's a Nary).  Append it in the AST.
+      ast::Nary& parsed_command =
+	dynamic_cast<ast::Nary&> (*p.command_tree_get ());
+      ECHO ("parsed: {{{" << parsed_command << "}}}");
+      // Append to the current list.
+      active_command_->splice_back(parsed_command);
+      p.command_tree_set (0);
+      ECHO ("appended: " << *active_command_ << "}}}");
     }
-  } while (!command.empty ()
-	   && !receiveBinary_);
+  }
+
+  // FIXME: recvQueue_->clear();
 
   // Execute the new command.
   if (!obstructed)
