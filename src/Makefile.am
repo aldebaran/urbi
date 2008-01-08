@@ -53,11 +53,13 @@ ucomplaints.cc							\
 uconnection.cc							\
 ughostconnection.hh ughostconnection.cc				\
 uobject.cc                                                      \
+uobject.hh                                                      \
 uqueue.hh uqueue.cc						\
 userver.cc							\
 ustring.cc							\
 usystem.cc                                                      \
-uvalue-cast.cc
+uvalue-cast.cc							\
+uvalue-cast.hh
 
 
 ## ------------ ##

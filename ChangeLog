@@ -1,3 +1,9 @@
+2008-01-08  Samuel Tardieu  <tardieu@gostai.com>
+
+	Add missing files for distribution.
+	* src/Makefile.am: Add missing files.
+	* src/object/object.mk: Add missing files.
+
 2008-01-08  Akim Demaille  <demaille@gostai.com>
 
 	Free the AST bits that were run.

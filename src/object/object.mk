@@ -10,6 +10,7 @@ object/lobby-class.hh				\
 object/float-class.cc				\
 object/float-class.hh				\
 object/fwd.hh					\
+object/idelegate.hh				\
 object/integer-class.cc				\
 object/integer-class.hh				\
 object/list-class.cc				\
