@@ -148,7 +148,69 @@ void UObject::UJoinGroup(const std::string& )
 {
 }
 
+
+/// Get an rObject from its uvar name
+static rObject uvar_get(const std::string& name)
+{
+  int p = name.find_last_of(".");
+  std::string oname = name.substr(0, p);
+  std::string slot = name.substr(p + 1, name.npos);
+  rObject o = get_base(oname);
+  return o->slot_get(slot);
+}
+
+/// Write an rObject to a slot from its uvar name
+static void uvar_set(const std::string& name, rObject val)
+{
+  int p = name.find_last_of(".");
+  std::string oname = name.substr(0, p);
+  std::string slot = name.substr(p + 1, name.npos);
+  rObject o = get_base(oname);
+  try 
+  {
+    o->slot_set(slot,val);
+  }
+  catch(object::RedefinitionError)
+  {
+    o->slot_update(slot, val);
+  }
+}
+
+#define UVAR_OPERATORS(T, DT)     \
+void UVar::operator = (DT t)      \
+{                                 \
+  uvar_set(name, ::object_cast(urbi::UValue(t))); \
+}                                 \
+UVar::operator T()                \
+{                                 \
+  return ::uvalue_cast(uvar_get(name)); \
+}
+
+UVAR_OPERATORS(ufloat, ufloat);
+UVAR_OPERATORS(std::string, const std::string&);
+UVAR_OPERATORS(UBinary, const UBinary&);
+UVAR_OPERATORS(UList, const UList&);
+
+//no corresponding operator= for this one...
+UVar::operator int()                
+{                                 
+  return ::uvalue_cast(uvar_get(name)); 
+}
+
+void UVar::__init()
+{
+  //nothing to do
+}
+
 UVar::~UVar() 
 {
+}
+
+void echo(const char * format, ...)
+{
+  va_list arg;
+  va_start(arg, format);
+  vfprintf(stderr, format, arg);
+  va_end(arg);
 }
 }
