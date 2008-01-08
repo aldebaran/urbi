@@ -32,6 +32,8 @@ do Float
 {
   init = function (x) { self.set(x) };
 
+  sqr = function () { self * self };
+
   += = function (x) { self.set (self + x) };
   -= = function (x) { self.set (self - x) };
   *= = function (x) { self.set (self * x) };

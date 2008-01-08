@@ -126,12 +126,6 @@ namespace object
     return res;
   }
 
-  static float
-  float_sqr (libport::ufloat x)
-  {
-    return x * x;
-  }
-
   // This is quite hideous, to be cleaned once we have integers.
 # define INTEGER_BIN_OP(Name, Op)					\
   static float								\
@@ -268,7 +262,6 @@ namespace object
   PRIMITIVE_0_FLOAT(round, round)
   PRIMITIVE_0_FLOAT(random, float_random)
   PRIMITIVE_0_FLOAT(trunc, trunc)
-  PRIMITIVE_0_FLOAT(sqr, float_sqr)
   PRIMITIVE_0_FLOAT_CHECK_POSITIVE(sqrt, sqrt)
 
 #undef PRIMITIVE_2_FLOAT
@@ -331,7 +324,6 @@ namespace object
     DECLARE(round);
     DECLARE(random);
     DECLARE(trunc);
-    DECLARE(sqr);
     DECLARE(sqrt);
 #undef DECLARE
 
