@@ -16,7 +16,6 @@ static const char* messages[][250] =
       "!!! Send buffer full\n",
       "!!! Receive buffer corrupted\n",
       "!!! Memory warning\n",
-      "!!! CPU Overload\n",
     },
     // UWarningCode
     {

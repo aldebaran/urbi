@@ -1,3 +1,13 @@
+2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
+
+	Remove obsolete CPU overload detection.
+	* include/kernel/ucomplaints.hh: Remove overload-related error.
+	* src/ucomplaints.cc: Ditto.
+	* include/kernel/userver.hh: Remove overload-related machinery.
+	* src/userver.cc: Ditto.
+	* src/uconnection.cc: Do not update time once more, it is already
+	done in the server just before and after executing some code.
+
 2008-01-09  Loic Fosse  <fosse@gostai.com>
 
 	Implement break keyword.

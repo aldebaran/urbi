@@ -85,10 +85,6 @@ UServer::UServer(ufloat period,
     mainName_ (mainName),
     somethingToDelete (false),
     uservarState (false),
-    cpuoverload (false),
-    signalcpuoverload (false),
-    cpucount (0),
-    cputhreshold (1.2),
     stopall (false),
     systemcommands (true),
     period_(period),
@@ -116,11 +112,8 @@ UServer::load_init_file(const char* fn)
 void
 UServer::initialize()
 {
+  // Set the initial time to a valid value.
   updateTime();
-  currentTime = latestTime = lastTime();
-  previousTime = currentTime - 0.000001; // avoid division by zero at start
-  previous2Time = previousTime - 0.000001; // avoid division by zero at start
-  previous3Time = previous2Time - 0.000001; // avoid division by zero at start
 
   // Display the banner.
   {
@@ -198,25 +191,19 @@ UServer::work ()
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);
 # endif
-  // CPU Overload test
-  updateTime ();
-  previous3Time = previous2Time;
-  previous2Time = previousTime;
-  previousTime  = currentTime;
-  currentTime   = lastTime ();
 
   beforeWork ();
 
   work_handle_connections_ ();
 
+  // To make sure that we get different times before and after every work
+  // phase if we use a monotonic clock, update the time before and after
+  // working.
+  updateTime ();
   scheduler_->work ();
+  updateTime ();
 
   afterWork ();
-
-  updateTime ();
-  latestTime = lastTime ();
-
-  work_test_cpuoverload_ ();
 }
 
 void
@@ -229,18 +216,11 @@ UServer::work_handle_connections_ ()
       if (!c->isBlocked())
 	(*c) << UConnection::continueSend;
 
-      if (signalcpuoverload)
-      {
-	(*c) << UConnection::errorSignal(UERROR_CPU_OVERLOAD);
-	signalcpuoverload = false;
-      }
-
       (*c) << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
       (*c) << UConnection::errorCheck(UERROR_MEMORY_WARNING);
       (*c) << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
       (*c) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
       (*c) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (*c) << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
 
       // The following code only made sense in k1, and should be
       // removed in k2, provided we are really sure it is useless.
@@ -302,34 +282,6 @@ UServer::work_handle_stopall_ ()
 
   somethingToDelete = false;
   stopall = false;
-}
-
-void
-UServer::work_test_cpuoverload_ ()
-{
-  cpuload = (latestTime - currentTime) / period_get();
-
-  if (!cpuoverload)
-  {
-    if (cpuload > cputhreshold)
-    {
-      ++cpucount;
-      if (cpucount > 10)
-      {
-	cpucount = 0;
-	cpuoverload = true;
-	signalcpuoverload = true;
-      }
-    }
-    else if (cpucount > 0)
-      --cpucount;
-  }
-
-  if (cpuoverload && cpuload < 1)
-  {
-    cpuoverload = false;
-    cpucount = 0;
-  }
 }
 
 //! UServer destructor.

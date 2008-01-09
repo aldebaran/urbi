@@ -544,7 +544,6 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   // Starts processing
   receiving = true;
-  server->updateTime();
 
   // active_command_: The command to be executed (root of the AST).
   // passert (*active_command_, active_command_->empty());

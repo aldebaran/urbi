@@ -293,29 +293,10 @@ public:
   /// True after the initialization phase: all vars are uservar then.
   bool uservarState;
 
-  /// Cpu load expressed as a number between 0 and 1.
-  ufloat cpuload;
-  /// True when there is a cpu overload.
-  bool cpuoverload;
-  /// A signal must be sent to every connection.
-  bool signalcpuoverload;
-  /// Nb of recent cpu overloads.
-  int cpucount;
-  /// Threshold for cpu overload alert.
-  ufloat cputhreshold;
-
 public:
-  /// Time at the start of the current cycle
-  ufloat currentTime;
-  /// Time at the start of previous cycles
-  ufloat previousTime;
-  ufloat previous2Time;
-  ufloat previous3Time;
-  /// Time after the work for current cycle (used to detect cpu overload)
-  ufloat latestTime;
-
   /// Stops all commands in all connections.
   bool stopall;
+
 private:
 
   /// False inside parsing, true otherwise for commands created by the
