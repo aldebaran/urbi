@@ -164,21 +164,21 @@ public:
     bool _flush;
   };
 
-  static inline _Send sendf (const std::string& tag,
-			     const char* format, va_list args)
+  static inline _Send vsendf (const std::string& tag,
+			      const char* format, va_list args)
   {
     char buf[1024];
     vsnprintf(buf, sizeof buf - 1, format, args);
     return send (buf, tag.c_str());
   }
 
-  /// Invoke the previous sendf.
+  /// Invoke the previous vsendf.
   static inline _Send sendf (const std::string& tag,
 			     const char* format, ...)
   {
     va_list args;
     va_start(args, format);
-    const _Send tmp = sendf (tag, format, args);
+    const _Send tmp = vsendf (tag, format, args);
     va_end(args);
     return tmp;
   }

@@ -1,5 +1,10 @@
 2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
 
+	Prefix function with va_list args with v.
+	* include/kernel/uconnection.hh: Use vsendf instead of sendf.
+
+2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
+
 	Remove obsolete CPU overload detection.
 	* include/kernel/ucomplaints.hh: Remove overload-related error.
 	* src/ucomplaints.cc: Ditto.
