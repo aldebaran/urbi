@@ -1,3 +1,8 @@
+2008-01-09  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Prevent infinite loop when readin value in notifyaccess.
+	* src/uvariable.cc: Here.
+
 2008-01-08  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Update check-buildfarm.

@@ -471,6 +471,8 @@ UVariable::selfSet(ufloat *valcheck)
 UValue*
 UVariable::get()
 {
+  inSetTarget = true;
+
   // recursive call for objects
   if (value->dataType == DATA_OBJ)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
@@ -496,6 +498,7 @@ UVariable::get()
     i->__evalcall(l);
   }
 
+  inSetTarget = false;
   return value;
 }
 
