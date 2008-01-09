@@ -302,6 +302,7 @@
 	TOK_ALIAS        "alias"
 	TOK_ASSIGN       "="
 	TOK_BIN          "bin"
+	TOK_BREAK        "break"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
 	TOK_DELGROUP     "delgroup"
@@ -946,6 +947,10 @@ stmt:
 | "return" expr.opt
     {
       $$ = new ast::Return(@$, $2, false);
+    }
+| "break"
+    {
+      $$ = new ast::Throw(@$, ast::break_exception, 0);
     }
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
     {

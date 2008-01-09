@@ -54,6 +54,8 @@ includes_map:
 
   "exec_exps_type" : '"ast/fwd.hh"'
 
+  "flow_exception_kind" : '"ast/flow-exception.hh"'
+
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
 # Used by the cloner.
@@ -64,6 +66,7 @@ non_visitable_types:
   - "libport::Symbol"
   - "loc"
   - "flavor_type"
+  - "flow_exception_kind"
 
 # In the cloner, these require "recurse_collection".
 collections:
@@ -636,6 +639,21 @@ Return:
        }'
     - '" "'
     - ~exp
+
+Throw:
+  desc: /// Throw an exception when visited, used to implement break, return, etc.
+  super: Exp
+  attributes:
+    - kind:
+        type: 'flow_exception_kind'
+        desc: The kind of the exception to throw.
+    - value:
+        type: 'Exp*'
+        desc: The value to throw when visited. May be empty.
+        mandatory: False
+  printer:
+    - $kind 
+    - ~value
 
 # Wait:
 #   super: Exp

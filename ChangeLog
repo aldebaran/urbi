@@ -1,3 +1,15 @@
+2008-01-09  Loic Fosse  <fosse@gostai.com>
+
+	Implement break keyword.
+	* src/ast/flow-exception.cc, src/ast/flow-exception.hh: New.
+	* src/ast/ast.mk: Add flow-exception.{cc,hh}.
+	* src/ast/ast.yml: Add a Throw node, which throw exceptions like
+	the BreakException, used to implement the break keyword.
+	* src/parser/ugrammar.y: Add rule to manage break keyword.
+	* src/parser/utoken.l: Add TOK_BREAK.
+	* src/runner/runner.cc, src/runner/runner.hh: Add behavior on a
+	Throw node, and catch the BreakException in the appropriate places.
+
 2008-01-08  Matthieu Nottale  <nottale@gostai.com>
 
 	Limit dump depth to 3, make it accessible from URBI.

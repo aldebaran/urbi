@@ -51,7 +51,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((13,
+    VISITOR_VISIT_NODES((14,
 			 (
 			  And,
 			  Call,
@@ -65,6 +65,7 @@ namespace runner
 			  Scope,
 			  String,
 			  Tag,
+			  Throw,
 			  While
 			  )))
     /// \}

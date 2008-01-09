@@ -292,7 +292,14 @@ namespace runner
       ECHO("bound args: " << *bound_args);
       // Change the current context and call.
       std::swap(bound_args, locals_);
-      CORO_CALL (current_ = eval (*fn->body_get()));
+
+      CORO_CALL_CATCH (current_ = eval (*fn->body_get());,
+	catch (ast::BreakException& be)
+	{
+	  object::PrimitiveError error("break", "called outside a loop");
+	  error.location_set(be.location_get());
+	  raise_error_(error);
+	});
       std::swap(bound_args, locals_);
     }
 
@@ -503,7 +510,10 @@ namespace runner
   void
   Runner::operator() (ast::While& e)
   {
-    CORO_WITHOUT_CTX ();
+    CORO_CTX_VARS
+      ((1, (
+	  (bool, broken)
+	  )));
 
     // Evaluate the test.
     while (true)
@@ -519,11 +529,33 @@ namespace runner
 	YIELD();
 
       JECHO ("while body", e.body_get ());
-      CORO_CALL (operator() (e.body_get()));
+
+      broken = false;
+      CORO_CALL_CATCH (operator() (e.body_get());,
+	catch (ast::BreakException&)
+	{
+	  // FIXME: Fix for flavor "," and "&".
+	  if (e.flavor_get() == ast::flavor_semicolon ||
+	      e.flavor_get() == ast::flavor_pipe)
+	  broken = true;
+	});
+      if (broken)
+	break;
     }
     // As far as I know, `while' doesn't return a value in URBI.
     current_.reset ();
 
+    CORO_END;
+  }
+
+  void
+  Runner::operator() (ast::Throw& e)
+  {
+    CORO_WITHOUT_CTX ();
+    switch (e.kind_get())
+    {
+      case ast::break_exception: throw ast::BreakException(e.location_get());
+    }
     CORO_END;
   }
 

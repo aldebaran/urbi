@@ -316,6 +316,7 @@ FLAVOR   [;|,&]?
 "addgroup"      return token::TOK_ADDGROUP;
 "alias"         return token::TOK_ALIAS;
 "bin"           return token::TOK_BIN;
+"break"         return token::TOK_BREAK;
 "class"         return token::TOK_CLASS;
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
