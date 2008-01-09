@@ -1,3 +1,8 @@
+2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
+
+	Do not test uninitialized values.
+	* src/uconnection.cc: Initialize buf[0] before testing it.
+
 2008-01-09  Loic Fosse  <fosse@gostai.com>
 
 	explicit constructors of FlowException and other minor fixes.

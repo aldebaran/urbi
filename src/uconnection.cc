@@ -138,7 +138,7 @@ UConnection::initialize()
 
   {
     // FIXME: This is sick.
-    char buf[1024];
+    char buf[1024] = {1};
     for (int i = 0; buf[0];
 	 ++i, server->getCustomHeader(i, buf, sizeof buf))
       *this << send(buf, "start");
