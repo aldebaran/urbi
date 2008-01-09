@@ -1,5 +1,10 @@
 2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
 
+	New file with semantic issues.
+	* semantics-issues.org: New.
+
+2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
+
 	Do not test uninitialized values.
 	* src/uconnection.cc: Initialize buf[0] before testing it.
 

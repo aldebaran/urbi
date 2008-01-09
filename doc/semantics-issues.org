@@ -1,0 +1,244 @@
+#+TITLE: Semantics issues in defining the Urbi 2.0 programming language
+#+AUTHOR: Gostai SAS
+#+LANGUAGE: en
+
+* Introduction
+
+This document contains the current open issues about the Urbi 2.0 language
+semantics and characteristics. It is a work document and is in no way the
+real specification.
+
+* Types
+
+The types listes here are those found in kernel/src/object.
+
+** Code
+
+Looks mostly empty at this time. Purpose?
+
+** Delegate
+
+Empty at this time. Purpose?
+
+** Float
+
+Floating point numbers, only numeric type at this time.
+
+** Integer
+
+Seems to be empty but declared.
+
+** List
+
+Mutable list.
+
+** Lobby
+
+A private user space available for each connection. This lets a user modify
+its view of the world without changing it globally for other users, although
+this is possible to go out of the lobby and make global modifications.
+
+** Object
+
+The root of all evil.
+
+** Primitive
+
+** String
+
+* Variables
+
+New named binding can be declared by "var x = expression". The new
+binding takes place in the current scope. By default, for an
+interactive connection, this is the connection lobby.
+
+It looks like by using "do scope { ... }", it is possible to push
+"scope" on the scope stack. However, why are variables in there
+declared as "x = y" instead of "var x = y" ? What should be the
+default "x = y" then if we do not accept it anymore in an anonymous
+scope?
+
+Are we allowed to push several scopes on the scope stack? If this is the
+case, what should the following do?
+
+do Object1 {
+   x = 1;
+   do Object2 {
+      y = x;
+      x = 2;         <=== which x is modified?
+   };
+}
+
+Does it mean that the "x" in "y = x" is not the same as the one on the
+following line despites the absence of a "var" keyword?
+
+* Assignment
+
+How should the assignment behave? You can associate properties to an
+object (such as ->rangemin and ->rangemax). Should the properties
+be reset by such an assignment?
+
+  a = 2;
+
+What about assignment from a named object, such as
+
+  a = b;
+
+Note that b may have different constraints itself, should they be
+copied as well if the object is replaced?
+
+What about the triggers ("at", ...) running on "a". Should they still
+run, even if it makes no sense? 
+
+Look at one of the examples in the v1 tutorial:
+
+  at (ball.visible ~ 100ms) speaker = found onleave speaker = lost;
+
+* Control flow
+
+** Instructions
+
+Each instruction has a beginning and an end time.
+
+Each instruction has a result.
+
+** Separators
+
+Instructions separated by ";" are executed one after another. Any
+instruction started before the ";" must have finished before the
+execution of ";" terminates.
+
+Instructions separated by "&" are started in parallel and considered
+to have been started by their most inner enclosing block. "&" is more
+binding than ";", so the following expression
+
+  a & b; c & d;
+
+must execute a and b in parallel, wait for both executions to
+terminate, start c and d in parallel and wait for both executions to
+terminate.
+
+What is the result of a parallel execution? Blend mode will work only
+for variables modifications, but what about
+
+random = function() { random1 & random2; }
+
+Note: add something about "|" and ","
+
+** if/then/else
+
+What is the status of separators in the test instruction? We are used
+to writing the following:
+
+  if (test) a else b;
+
+Should the following phrases be equivalent, forbidden, or semantically
+different?
+
+  if (test) a; else b;
+  if (test) {a;} else b;
+  if (test) {a}; else b;
+
+** Block
+
+The end time of a block corresponds to the end time of the latest
+instruction started from within this block. In short, it contains an
+implicit ";" at the end which causes a join to occur if needed.
+
+In a regular case, a block is an anonymous scope in which newly
+declared variables will be created; they will disappear at the end of
+the block, at the same time as the block itself.
+
+* Events
+
+** at
+
+Event handling can be declared with
+
+  at (condition)
+    positive-action
+  [onleave
+    negative-action]
+
+Are positive and negative actions allowed to be complex statements?
+Should they be blocks? Can there be concurrent execution of both of
+them, or of several occurrences of each, if positive-action or
+negative-action takes a long time to execute and the event is toggled
+during this time?
+
+The execution time of the "at" construct itself is immediate, right?
+
+How do you cancel such an event? Can it be started with a tag?
+
+If the condition is true when this construct is handled, should
+positive-action be executed right away even if there is no edge in
+this case?
+
+** whenever
+
+Repetitive event handling can be declared with
+
+  whenever (condition)
+    positive-action
+  [else
+    negative-action]
+
+This is the same thing as "at" except that no trigger is needed, the
+positive-action or negative-action block is executed repeatidly
+depending on the condition value.
+
+Same questions as with the at construct, what if the previous execution
+didn't terminate? What should be the rate of execution? (for example,
+printing something in positive-action and negative-action can generate
+lots of output at an unknown rate, depending on factors such as the machine
+speed)
+
+* Timing
+
+** wait
+
+  wait(ms)
+
+waits for "ms" milliseconds before resuming execution.
+
+** waituntil
+
+  waituntil(condition)
+
+will block until condition becomes true.
+
+** timeout
+
+  timeout(ms) instruction
+
+will stop "instruction" after "ms" milliseconds if it has not
+finished.
+
+** stopif
+
+  stopif(condition) instruction
+
+will stop "instruction" if "condition" becomes true.
+
+** freezeif
+
+  freezeif(condition) instruction
+
+will freeze "instruction" as long as "condition" is true.
+
+If "instruction" terminates, the "freezeif" block should be removed.
+
+** Soft tests
+
+All those instructions can use soft tests, that are conditions that
+have to stay valid for at least a given time, using
+
+  condition ~ ms
+
+Must the condition be false for "ms" milliseconds for the "freezeif"
+instruction to resume too or is it immediate?
+
+* Events
+
+* Tags
+
