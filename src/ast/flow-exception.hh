@@ -3,8 +3,8 @@
  ** \brief Contains flow exceptions.
  */
 
-#ifndef AST_FLOW_EXCEPTION
-# define AST_FLOW_EXCEPTION
+#ifndef AST_FLOW_EXCEPTION_HH
+# define AST_FLOW_EXCEPTION_HH
 
 # include <exception>
 # include <ostream>
@@ -14,12 +14,12 @@
 
 namespace ast
 {
-  /// The FlowException class. Base class for exceptions used to control the
-  /// flow of execution, like BreakException.
+  /// The \c FlowException class. Base class for exceptions used to control the
+  /// flow of execution, like \c BreakException.
   class FlowException : std::exception
   {
   public:
-    FlowException(const loc& location);
+    explicit FlowException(const loc& location);
 
     const loc& location_get () const;
 
@@ -27,14 +27,14 @@ namespace ast
     loc location_;
   };
 
-  /// BreakException, thrown to manage break keyword.
+  /// \c BreakException, thrown to manage break keyword.
   class BreakException : public FlowException
   {
   public:
-    BreakException(const loc& location);
+    explicit BreakException(const loc& location);
   };
 
-  /// kind of a flow exception
+  /// Kind of a flow exception.
   enum flow_exception_kind
   {
     break_exception,
@@ -45,4 +45,4 @@ namespace ast
 
 } // namespace ast
 
-#endif // !AST_FLOW_EXCEPTION
+#endif // !AST_FLOW_EXCEPTION_HH

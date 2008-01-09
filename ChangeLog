@@ -1,3 +1,9 @@
+2008-01-09  Loic Fosse  <fosse@gostai.com>
+
+	explicit constructors of FlowException and other minor fixes.
+	* src/ast/flow-exception.hh: Make constructors explicit and fix some
+	comments.
+
 2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
 
 	Prefix function with va_list args with v.
