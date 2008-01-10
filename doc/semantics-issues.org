@@ -229,6 +229,11 @@ In which context does "condition" evaluate? In which context does
 "positive-action" evaluate? Do we need closures here? Do we attach
 handlers to a particular object?
 
+It may be acceptable to warn against modifying the structure of items
+references in the condition. This opens up optimization opportunities
+until we have made our mind on an efficient model to refresh the
+condition.
+
 ** whenever
 
 Repetitive event handling can be declared with
