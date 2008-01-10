@@ -3,7 +3,7 @@
 ## -------- ##
 
 # Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
-Object.slotCopy = function (frm, to) {
+var Object.slotCopy = function (frm, to) {
   # This is annoying: one has to specify "self" here, otherwise the
   # setSlot goes to the locals_ :(
   self . setSlot(to, getSlot(frm))
@@ -19,8 +19,8 @@ Object.slotCopy ("removeParent", "disinherit");
 // Does not have anything special.  Yet.
 class Lobby.Channel
 {
-  init = function (x) { self.name = x };
-  <<   = function (x) { x.print (name); {} };
+  var init = function (x) { self.name = x };
+  var <<   = function (x) { x.print (name); {} };
 };
 
 
@@ -30,14 +30,14 @@ class Lobby.Channel
 
 do Float
 {
-  init = function (x) { self.set(x) };
+  var init = function (x) { self.set(x) };
 
-  sqr = function () { self * self };
+  var sqr = function () { self * self };
 
-  += = function (x) { self.set (self + x) };
-  -= = function (x) { self.set (self - x) };
-  *= = function (x) { self.set (self * x) };
-  /= = function (x) { self.set (self / x) };
+  var += = function (x) { self.set (self + x) };
+  var -= = function (x) { self.set (self - x) };
+  var *= = function (x) { self.set (self * x) };
+  var /= = function (x) { self.set (self / x) };
 
   // One would like to write
   //
@@ -52,8 +52,8 @@ do Float
   // creates an Object which derives from Float, but which is not a
   // Atom<Float>.  Not nice, eh?
 
-  ++ = function () { var res = 0; res.set(self); self += 1; res };
-  -- = function () { var res = 0; res.set(self); self -= 1; res };
+  var ++ = function () { var res = 0; res.set(self); self += 1; res };
+  var -- = function () { var res = 0; res.set(self); self -= 1; res };
 };
 
 ## ----- ##
@@ -62,21 +62,21 @@ do Float
 
 class Lobby.Math
 {
-  abs    = function (x) { x.abs };
-  acos   = function (x) { x.acos };
-  asin   = function (x) { x.asin };
-  atan   = function (x) { x.atan };
-  cos    = function (x) { x.cos };
-  exp    = function (x) { x.exp };
-  log    = function (x) { x.log };
-  random = function (x) { x.random };
-  round  = function (x) { x.round };
-  sgn    = function (x) { x.sgn };
-  sin    = function (x) { x.sin };
-  sqr    = function (x) { x.sqr };
-  sqrt   = function (x) { x.sqrt };
-  tan    = function (x) { x.tan };
-  trunc  = function (x) { x.trunc };
+  var abs    = function (x) { x.abs };
+  var acos   = function (x) { x.acos };
+  var asin   = function (x) { x.asin };
+  var atan   = function (x) { x.atan };
+  var cos    = function (x) { x.cos };
+  var exp    = function (x) { x.exp };
+  var log    = function (x) { x.log };
+  var random = function (x) { x.random };
+  var round  = function (x) { x.round };
+  var sgn    = function (x) { x.sgn };
+  var sin    = function (x) { x.sin };
+  var sqr    = function (x) { x.sqr };
+  var sqrt   = function (x) { x.sqrt };
+  var tan    = function (x) { x.tan };
+  var trunc  = function (x) { x.trunc };
 };
 Object inherits Math;
 
@@ -89,9 +89,9 @@ Object inherits Math;
 # operators, and derive from it.
 do String
 {
-  <= = function (rhs) { self < rhs || self == rhs };
-  >  = function (rhs) { rhs < self };
-  >= = function (rhs) { rhs < self || self == rhs };
+  var <= = function (rhs) { self < rhs || self == rhs };
+  var >  = function (rhs) { rhs < self };
+  var >= = function (rhs) { rhs < self || self == rhs };
 };
 
 ## ------------- ##
