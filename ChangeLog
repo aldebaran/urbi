@@ -1,3 +1,12 @@
+2008-01-10  Loic Fosse  <fosse@gostai.com>
+
+	Implement return keyword.
+	* src/ast/flow-exception.hh, src/ast/flow-exception.cc: Add ReturnException
+	class.
+	* src/parser/ugrammar.y: Build a Throw node when return is meet.
+	* src/runner/runner.cc: Add management of ReturnException.
+	* src/ast/ast.yml: Fix pretty-printing of Throw node.
+
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
 	Remove deprecated functions.

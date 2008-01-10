@@ -299,6 +299,10 @@ namespace runner
 	  object::PrimitiveError error("break", "called outside a loop");
 	  error.location_set(be.location_get());
 	  raise_error_(error);
+	}
+	catch (ast::ReturnException& re)
+	{
+	  current_ = re.result_get();
 	});
       std::swap(bound_args, locals_);
     }
@@ -552,10 +556,15 @@ namespace runner
   Runner::operator() (ast::Throw& e)
   {
     CORO_WITHOUT_CTX ();
-    switch (e.kind_get())
+
+    if (e.kind_get() == ast::break_exception)
+      throw ast::BreakException(e.location_get());
+    else if (e.kind_get() == ast::return_exception)
     {
-      case ast::break_exception: throw ast::BreakException(e.location_get());
+      CORO_CALL (operator() (e.value_get()));
+      throw ast::ReturnException(e.location_get(), current_);
     }
+
     CORO_END;
   }
 

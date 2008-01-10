@@ -946,7 +946,7 @@ stmt:
     }
 | "return" expr.opt
     {
-      $$ = new ast::Return(@$, $2, false);
+      $$ = new ast::Throw(@$, ast::return_exception, $2);
     }
 | "break"
     {

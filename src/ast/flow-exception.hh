@@ -19,7 +19,7 @@ namespace ast
   class FlowException : std::exception
   {
   public:
-    explicit FlowException(const loc& location);
+    explicit FlowException(const loc&);
 
     const loc& location_get () const;
 
@@ -31,13 +31,28 @@ namespace ast
   class BreakException : public FlowException
   {
   public:
-    explicit BreakException(const loc& location);
+    explicit BreakException(const loc&);
+  };
+
+  /// \c ReturnException, thrown to manage return keyword.
+  class ReturnException : public FlowException
+  {
+  public:
+    ReturnException(const loc&, object::rObject);
+
+    ~ReturnException() throw ();
+    
+    object::rObject	result_get();
+
+  protected:
+    object::rObject	result_;
   };
 
   /// Kind of a flow exception.
   enum flow_exception_kind
   {
     break_exception,
+    return_exception,
   };
 
   /// Report \a e on \a o.
