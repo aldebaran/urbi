@@ -58,17 +58,17 @@ namespace object
     /// \}
 
 
-    /// \name The parents.
+    /// \name The protos.
     /// \{
-    /// The parents.
-    typedef std::list<rObject> parents_type;
+    /// The protos.
+    typedef std::list<rObject> protos_type;
 
-    /// Add parent.
-    Object& parent_add (const rObject& p);
-    /// Remove parent.
-    Object& parent_remove (const rObject& p);
-    /// Read only access to parents.
-    const parents_type& parents_get () const;
+    /// Add proto.
+    Object& proto_add (const rObject& p);
+    /// Remove proto.
+    Object& proto_remove (const rObject& p);
+    /// Read only access to protos.
+    const protos_type& protos_get () const;
     /// \}
 
     /// \name The slots.
@@ -93,7 +93,7 @@ namespace object
     /// \brief Update value in slot.
     ///
     /// If the target is a "real" object, then updating means the same
-    /// as slot_set: one never updates a parent.  If the target is a
+    /// as slot_set: one never updates a proto.  If the target is a
     /// "locals" object, then updating really means updating the
     /// existing slot, not creating a new slot in the inner scope.
     Object& slot_update (const key_type& k, rObject o);
@@ -104,7 +104,7 @@ namespace object
 
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
-    /// parents).
+    /// protos).
     const rObject& own_slot_get (const key_type& k) const;
     rObject& own_slot_get (const key_type& k);
 
@@ -149,16 +149,16 @@ namespace object
     /// \return 0  if k does not exist.
     const Object* which (const key_type& k, objects_type& os) const;
 
-    /// The parents.
-    parents_type parents_;
+    /// The protos.
+    protos_type protos_;
     /// The slots.
     slots_type slots_;
     /// Whether is a locals object.
     bool locals_;
   };
 
-  /// Clone, i.e., create a fresh object with this class as sole parent.
-  // It is tempting to make it const, but then the list of parents
+  /// Clone, i.e., create a fresh object with this class as sole proto.
+  // It is tempting to make it const, but then the list of protos
   // must be const too.
   // Not a member function because we want the shared_ptr, which
   // is not available via this.

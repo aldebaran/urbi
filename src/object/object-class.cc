@@ -121,34 +121,34 @@ namespace object
 
 
   /*----------.
-  | Parents.  |
+  | Protos.  |
   `----------*/
 
-  /// Adding or removing parents. \a Verb is "add" or "remove".
+  /// Adding or removing protos. \a Verb is "add" or "remove".
 #define CHANGE_PARENTS(Verb)					\
   static rObject						\
-  object_class_ ## Verb ## Parent (rLobby, objects_type args)	\
+  object_class_ ## Verb ## Proto (rLobby, objects_type args)	\
   {								\
     CHECK_ARG_COUNT(2);						\
-    args[0]->parent_ ## Verb (args[1]);				\
+    args[0]->proto_ ## Verb (args[1]);				\
     return args[0];						\
   }
 
-  /// Add a parent.
+  /// Add a proto.
   CHANGE_PARENTS(add);
-  /// Remove a parent.
+  /// Remove a proto.
   CHANGE_PARENTS(remove);
 #undef CHANGE_PARENTS
 
-  /// Get parents' list.
+  /// Get protos' list.
   static rObject
-  object_class_parents (rLobby, objects_type args)
+  object_class_protos (rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
 
     object::list_traits::type l;
-    BOOST_FOREACH (const rObject o, obj->parents_get())
+    BOOST_FOREACH (const rObject o, obj->protos_get())
       l.push_back(o);
 
     return new object::List(l);
@@ -225,9 +225,9 @@ namespace object
     DECLARE1(clone);
     DECLARE1(init);
 
-    DECLARE1(parents);
-    DECLARE1(addParent);
-    DECLARE1(removeParent);
+    DECLARE1(protos);
+    DECLARE1(addProto);
+    DECLARE1(removeProto);
 
     DECLARE1(slotNames);
     DECLARE1(getSlot);

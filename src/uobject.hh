@@ -8,8 +8,8 @@ object::rObject uobject_make_proto(std::string& name);
 
 /*! Instanciate a new prototype inheriting from a UObject.
  A new instance of UObject is created
- \param parent parent object, created by uobject_make_proto() or uobject_new()
+ \param proto proto object, created by uobject_make_proto() or uobject_new()
  \param forceName force the reported C++ name to be the class name
 */
-object::rObject uobject_new(object::rObject parent, bool forceName=false);
+object::rObject uobject_new(object::rObject proto, bool forceName=false);
 #endif

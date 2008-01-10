@@ -77,7 +77,7 @@ namespace object
   | Free standing functions.  |
   `--------------------------*/
 
-  /// Clone, i.e., create a fresh object with this class as sole parent.
+  /// Clone, i.e., create a fresh object with this class as sole proto.
   // Overloads the definition for rObject.
   // Not a member function because we want the shared_ptr, which
   // is not available via this.

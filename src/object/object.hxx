@@ -22,7 +22,7 @@ namespace object
 
   inline
   Object::Object ()
-    : parents_ (), slots_ (), locals_ (false)
+    : protos_ (), slots_ (), locals_ (false)
   {
     root_classes_initialize();
   }
@@ -63,33 +63,33 @@ namespace object
 
 
   /*----------.
-  | Parents.  |
+  | Protos.  |
   `----------*/
 
   inline
   Object&
-  Object::parent_add (const rObject& p)
+  Object::proto_add (const rObject& p)
   {
     assert(p);
-    if (!libport::has(parents_, p))
-      parents_.push_back (p);
+    if (!libport::has(protos_, p))
+      protos_.push_back (p);
     return *this;
   }
 
   inline
   Object&
-  Object::parent_remove (const rObject& p)
+  Object::proto_remove (const rObject& p)
   {
     assert(p);
-    parents_.remove (p);
+    protos_.remove (p);
     return *this;
   }
 
   inline
-  const Object::parents_type&
-  Object::parents_get () const
+  const Object::protos_type&
+  Object::protos_get () const
   {
-    return parents_;
+    return protos_;
   }
 
 
@@ -170,7 +170,7 @@ namespace object
   clone (rObject ref)
   {
     rObject res = new Object;
-    res->parent_add (ref);
+    res->proto_add (ref);
     return res;
   }
 

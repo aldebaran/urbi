@@ -49,8 +49,8 @@ namespace object
       return 0;
     os.insert (this);
 
-    /// Look in parent slots (depth first search).
-    BOOST_FOREACH (rObject p, parents_)
+    /// Look in proto slots (depth first search).
+    BOOST_FOREACH (rObject p, protos_)
       if (const Object* res = p->which (k, os))
 	return res;
     return 0;
@@ -130,13 +130,13 @@ namespace object
       return o << " <...>";
     address++;
     o << " {" << libport::incendl;
-    if (parents_.begin () != parents_.end ())
+    if (protos_.begin () != protos_.end ())
       {
 	o << "protos = ";
-	for (parents_type::const_iterator i = parents_.begin ();
-	     i != parents_.end (); ++i)
+	for (protos_type::const_iterator i = protos_.begin ();
+	     i != protos_.end (); ++i)
 	  {
-	    if (i != parents_.begin())
+	    if (i != protos_.begin())
 	      o << ", ";
 	    (*i)->id_dump (o);
 	  }

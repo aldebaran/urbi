@@ -50,8 +50,8 @@ UWrapCallback::operator() (object::rLobby, object::objects_type ol)
 static rObject
 uobject_clone(object::rLobby, object::objects_type l)
 {
-  rObject parent = l.front();
-  return uobject_new(parent);
+  rObject proto = l.front();
+  return uobject_new(proto);
 }
 
 rObject uobject_make_proto(std::string& name)
@@ -64,16 +64,16 @@ rObject uobject_make_proto(std::string& name)
   return oc;
 }
 
-rObject uobject_new(rObject parent, bool forceName)
+rObject uobject_new(rObject proto, bool forceName)
 {
   rObject r = object::clone(object::object_class);
   
-  //parent to parent base
-  r->parent_remove(object::object_class);
-  r->parent_add(parent->slot_get("__uobject_base")); 
+  //proto to proto base
+  r->proto_remove(object::object_class);
+  r->proto_add(proto->slot_get("__uobject_base")); 
   
-  //get parent name
-  rObject rcName = parent->slot_get("__uobject_cname");
+  //get proto name
+  rObject rcName = proto->slot_get("__uobject_cname");
   const std::string& cname = rcName.cast<object::String>()->value_get();
   
   //get the name we will pass to uobject

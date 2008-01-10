@@ -293,9 +293,9 @@ namespace runner
       // The target is "self".
       ei = args.begin();
       bound_args->slot_set (libport::Symbol("self"), *ei);
-      // self is also the parent of the function outer scope, so that
+      // self is also the proto of the function outer scope, so that
       // we look for non-local identifiers in the target itself.
-      bound_args->parent_add (*ei);
+      bound_args->proto_add (*ei);
 
       // Now bind the non-target arguments.
       ++ei;
@@ -492,12 +492,12 @@ namespace runner
     if (e.target_get())
     {
       CORO_CALL (locals = eval(*e.target_get()));
-      // FIXME: Set the parents to locals_? Set self?
+      // FIXME: Set the protos to locals_? Set self?
     }
     else
     {
       locals = new object::Object;
-      locals->locals_set(true).parent_add (locals_);
+      locals->locals_set(true).proto_add (locals_);
     }
 
     std::swap(locals, locals_);

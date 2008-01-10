@@ -25,7 +25,7 @@ namespace runner
     locals_->locals_set (true);
     // If the lookup in the local variable failed, try in the the
     // Connection object, sort of a Lobby for Io.
-    locals_->parent_add(lobby_);
+    locals_->proto_add(lobby_);
     // Provide direct access to the Lobby.
     locals_->slot_set(libport::Symbol("lobby"), lobby_);
   }

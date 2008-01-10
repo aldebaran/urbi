@@ -690,9 +690,9 @@ stmt:
 
 expr:
   expr "inherits" expr
-    { $$ = call (@$, $1, new libport::Symbol("addParent"), $3); }
+    { $$ = call (@$, $1, new libport::Symbol("addProto"), $3); }
 | expr "disinherits" expr
-    { $$ = call (@$, $1, new libport::Symbol("removeParent"), $3); }
+    { $$ = call (@$, $1, new libport::Symbol("removeProto"), $3); }
 | "class" lvalue "{" stmts "}"
     {
       // Compiled as

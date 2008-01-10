@@ -8,8 +8,8 @@ var Object.slotCopy = function (frm, to) {
   # setSlot goes to the locals_ :(
   self . setSlot(to, getSlot(frm))
 };
-Object.slotCopy ("addParent", "inherit");
-Object.slotCopy ("removeParent", "disinherit");
+Object.slotCopy ("addProto", "inherit");
+Object.slotCopy ("removeProto", "disinherit");
 
 
 ## --------- ##
@@ -44,7 +44,7 @@ do Float
   // ++ = function () { var res = self.clone; self += 1; res };
   //
   // but it does not return a Float, it returns an Object which
-  // has Float as *grand*-parent.  As a result, it does not have
+  // has Float as *grand*-proto.  As a result, it does not have
   // a value (it is not an Atom<Float>).  This might be to change,
   // but it is to me (akim) unclear how.
   //

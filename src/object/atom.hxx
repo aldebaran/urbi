@@ -37,7 +37,7 @@ namespace object
     switch (kind_get())
       {
 # define CASE(What, Name)					\
-	case kind_ ## What: parent_add (What ## _class); break;
+	case kind_ ## What: proto_add (What ## _class); break;
 	APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
       case kind_object:
@@ -276,7 +276,7 @@ namespace object
   clone (typename Atom<Traits>::shared_type ref)
   {
     typename Atom<Traits>::shared_type res = new Atom<Traits>;
-    res->parent_add (ref);
+    res->proto_add (ref);
     return res;
   }
 
