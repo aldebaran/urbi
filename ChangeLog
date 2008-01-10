@@ -1,3 +1,9 @@
+2008-01-10  Akim Demaille  <demaille@gostai.com>
+
+	Back port a fix.
+	* src/uconnection.cc (initialize): Fix an iteration.
+	From the k2 fix by Samuel Tardieu.
+
 2008-01-08  Akim Demaille  <demaille@gostai.com>
 
 	Prefer for to while.

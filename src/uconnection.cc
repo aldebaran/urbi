@@ -149,12 +149,13 @@ UConnection::initialize()
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
     *this << send(::HEADER_BEFORE_CUSTOM[i], "start");
 
+  for (int i = 0; ; ++i)
   {
-    // FIXME: This is sick.
     char buf[1024];
-    for (int i = 0; buf[0];
-	 ++i, server->getCustomHeader(i, buf, sizeof buf))
-      *this << send(buf, "start");
+    server->getCustomHeader(i, buf, sizeof buf);
+    if (!buf[0])
+      break;
+    *this << send(buf, "start");
   }
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
