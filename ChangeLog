@@ -1,3 +1,8 @@
+2008-01-10  Loic Fosse  <fosse@gostai.com>
+
+	Fix exception thrown by a return with no value.
+	* src/runner/runner.cc: Here.
+
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
 	Add missing "var".

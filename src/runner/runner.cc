@@ -561,7 +561,10 @@ namespace runner
       throw ast::BreakException(e.location_get());
     else if (e.kind_get() == ast::return_exception)
     {
-      CORO_CALL (operator() (e.value_get()));
+      if (e.value_get())
+	CORO_CALL (operator() (*e.value_get()));
+      else
+	current_.reset();
       throw ast::ReturnException(e.location_get(), current_);
     }
 
