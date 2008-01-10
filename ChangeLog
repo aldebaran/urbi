@@ -1,5 +1,10 @@
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
+	Update notes.
+	* doc/semantics-issues.org: Integrate Akim's remarks.
+
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
 	Send a correct first line.
 	* src/uconnection.cc: The first line was incorrectly sent, rewrite
 	the loop.

@@ -14,19 +14,24 @@ The types listes here are those found in kernel/src/object.
 
 ** Code
 
-Looks mostly empty at this time. Purpose?
+Its purpose is to keep the bits of the AST used as Urbi values.
 
 ** Delegate
 
-Empty at this time. Purpose?
+Its purpose is to serve as support for UObject values.
 
 ** Float
 
-Floating point numbers, only numeric type at this time.
+Floating point numbers, the only numeric type at this time.
+
+Dubious conversion is used with certain operators (logical shift)
+which can only work with integers. For example, 1.5 << 1.5 works,
+albeit its result is *very* dubious.
 
 ** Integer
 
-Seems to be empty but declared.
+Dormant at this time as there is nothing in the parser to produce
+Integer nodes.
 
 ** List
 
@@ -44,13 +49,30 @@ The root of all evil.
 
 ** Primitive
 
+A primitive is a C++ function body.
+
 ** String
+
+Regular strings.
 
 * Variables
 
 New named binding can be declared by "var x = expression". The new
 binding takes place in the current scope. By default, for an
 interactive connection, this is the connection lobby.
+
+An update, such as "x = expression", updates the object locally
+(creating it if needed) unless the current scope is a locals
+container. This allows this kind of constructs:
+
+{
+  var a = 1;
+  {
+    var b = 2;       <= create b in the current scope
+    a = b;           <= update the parent's a
+  };
+  a;                 <= contains 2 here
+}
 
 It looks like by using "do scope { ... }", it is possible to push
 "scope" on the scope stack. However, why are variables in there
@@ -74,9 +96,9 @@ following line despites the absence of a "var" keyword?
 
 * Assignment
 
-How should the assignment behave? You can associate properties to an
-object (such as ->rangemin and ->rangemax). Should the properties
-be reset by such an assignment?
+How should the assignment behave? In kernel 1, you could associate
+properties to an object (such as ->rangemin and ->rangemax). Should
+the properties be reset by such an assignment?
 
   a = 2;
 
@@ -93,6 +115,19 @@ run, even if it makes no sense?
 Look at one of the examples in the v1 tutorial:
 
   at (ball.visible ~ 100ms) speaker = found onleave speaker = lost;
+
+Akim answer, to be completed:
+
+ In k2 we will address these horrors at the level
+ of the objects.  There is just *one* smart entity in k2:
+ the objects.  Slots are dumb.  The objects they contain
+ have the intelligent part.
+
+ If we can find something intelligent to reify the slots,
+ it might change.  The Claire/Laure programming languages
+ might be very good sources of inspiration in this regard.
+ But I will never accept to hard code in every single
+ slot the concept of rangemin/rangemax.
 
 * Control flow
 
@@ -138,6 +173,29 @@ different?
   if (test) a; else b;
   if (test) {a;} else b;
   if (test) {a}; else b;
+
+They should probably be semantically equivalent.
+
+The
+
+  if (test) a, else b;
+
+is interesting too.
+
+As a matter of fact what is often overlooked in the definition of
+these connectives, is their "scope".  something put in bg via "," is
+"waited for" at the next }.  So in the previous example, even if we
+code support for
+                                                                                
+        if (t) a, else b;
+                                                                                
+the scoping rules will make it exactly equivalent to
+                                                                                
+        if (t) a; else b;
+                                                                                
+Besides, it must be clearly understood that the last ";" "belongs" to
+the "if", not to "b".  This is in sharp constrast with C.  We will
+certainly never be able to mock ";" a la C.
 
 ** Block
 
@@ -192,6 +250,9 @@ didn't terminate? What should be the rate of execution? (for example,
 printing something in positive-action and negative-action can generate
 lots of output at an unknown rate, depending on factors such as the machine
 speed)
+
+If the positive-action contains an inner "if" at the top-level, the
+"else" should be associated with it if it makes sense (no other "else").
 
 * Timing
 
