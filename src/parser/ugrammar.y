@@ -171,7 +171,7 @@
     static
     ast::Call*
     assign (const yy::parser::location_type& l,
-	    ast::Call* lvalue, ast::Exp* value, bool declare = false)
+	    ast::Call* lvalue, ast::Exp* value, bool declare)
     {
       return call (l,
 		   lvalue->args_get().front(),
@@ -805,7 +805,7 @@ k1_id:
 `-------------------*/
 
 stmt:
-	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3);        }
+	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3, false); }
 | "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
 ;
 

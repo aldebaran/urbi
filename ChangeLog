@@ -1,5 +1,11 @@
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
+	Style: do not use default value used only once.
+	* src/parser/ugrammar.y: Using a default value for assign bears
+	no benefit.
+
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
 	Update notes.
 	* doc/semantics-issues.org: Integrate Akim's remarks.
 
