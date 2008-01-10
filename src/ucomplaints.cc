@@ -49,17 +49,3 @@ message (UMsgType t, int code)
 
   return messages[t][code];
 }
-
-// Deprecated
-const char*
-message (UErrorCode n)
-{
-  return message (UERRORCODE, n);
-}
-
-// Deprecated
-const char*
-message (UWarningCode n)
-{
-  return message (UWARNINGCODE, n);
-}

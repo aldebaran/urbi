@@ -36,8 +36,4 @@ enum UWarningCode
 
 const char* message (UMsgType t, int code);
 
-// Deprecated
-const char* message (UErrorCode n);
-const char* message (UWarningCode n);
-
 #endif // !KERNEL_UCOMPLAINTS_HH
