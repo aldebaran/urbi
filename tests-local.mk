@@ -73,7 +73,7 @@ XFAIL_TESTS +=					\
 1.x/nameresolution-objects.chk			\
 1.x/nameresolution.chk				\
 1.x/new-init.chk				\
-1.x/notag.log					\
+1.x/notag.chk					\
 1.x/object-events.chk				\
 1.x/onleave.chk					\
 1.x/onleave2.chk				\
