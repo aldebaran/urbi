@@ -610,14 +610,14 @@ flag:
   {
     UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
-    
+
     $$ = new UNamedParameters(new UString("flag"), flagval);
     if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
       $$->notifyEnd = true;
     if (flagval->val == 11)
       $$->notifyFreeze = true;
     memcheck(up, $$, flagval);
-    
+
   }
 
 | "+connection" "(" expr ")"
@@ -627,8 +627,8 @@ flag:
   }
 | "+rt"
   {
-    UExpression *flagval = new UExpression(@$, UExpression::VARIABLE, 
-			      new UVariableName(new UString("system"), 
+    UExpression *flagval = new UExpression(@$, UExpression::VARIABLE,
+			      new UVariableName(new UString("system"),
 			   new UString("ghostRTID"), false, 0));
     $$ = new UNamedParameters(new UString("flagid"), flagval);
     memcheck(up, $$, flagval);
@@ -906,7 +906,7 @@ instruction:
      $$ = new UCommand_OPERATOR_VAL(@$, $1, $2);
      memcheck(up, $$, $1, $2);
   }
-  
+
   | OPERATOR_VAR name {
 
       memcheck(up, $1);
@@ -1189,7 +1189,7 @@ instruction:
       $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
-    
+
 /*
  *  This loop keyword can't be converted to a for, since it would
  *  cause and ambiguity in the language. Consider this line:
