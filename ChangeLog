@@ -1,3 +1,8 @@
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
+	Some more semantics issues and brainstorms.
+	* doc/semantics-issues.org: More stuff.
+
 2008-01-10  Loic Fosse  <fosse@gostai.com>
 
 	Catch FlowException reaching toplevel.

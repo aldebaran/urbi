@@ -74,25 +74,8 @@ container. This allows this kind of constructs:
   a;                 <= contains 2 here
 }
 
-It looks like by using "do scope { ... }", it is possible to push
-"scope" on the scope stack. However, why are variables in there
-declared as "x = y" instead of "var x = y" ? What should be the
-default "x = y" then if we do not accept it anymore in an anonymous
-scope?
-
-Are we allowed to push several scopes on the scope stack? If this is the
-case, what should the following do?
-
-do Object1 {
-   x = 1;
-   do Object2 {
-      y = x;
-      x = 2;         <=== which x is modified?
-   };
-}
-
-Does it mean that the "x" in "y = x" is not the same as the one on the
-following line despites the absence of a "var" keyword?
+It is not allowed to declare with "var" a slot which already exists in
+the current scope.
 
 * Assignment
 
@@ -197,6 +180,16 @@ Besides, it must be clearly understood that the last ";" "belongs" to
 the "if", not to "b".  This is in sharp constrast with C.  We will
 certainly never be able to mock ";" a la C.
 
+** break
+
+"break" exits the innermost "for" or "while" loop. An exception is
+thrown if we are not in a loop.
+
+** return
+
+"return" returns from the innermost executing function. An exception is
+thrown if we are not in a function.
+
 ** Block
 
 The end time of a block corresponds to the end time of the latest
@@ -231,6 +224,10 @@ How do you cancel such an event? Can it be started with a tag?
 If the condition is true when this construct is handled, should
 positive-action be executed right away even if there is no edge in
 this case?
+
+In which context does "condition" evaluate? In which context does
+"positive-action" evaluate? Do we need closures here? Do we attach
+handlers to a particular object?
 
 ** whenever
 
@@ -298,8 +295,6 @@ have to stay valid for at least a given time, using
 
 Must the condition be false for "ms" milliseconds for the "freezeif"
 instruction to resume too or is it immediate?
-
-* Events
 
 * Tags
 
