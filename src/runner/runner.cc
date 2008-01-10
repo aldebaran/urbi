@@ -51,6 +51,20 @@ namespace runner
     CORO_YIELD ();                                              \
   } while (0)
 
+#define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)		\
+  catch (Type flow_exception)					\
+  {								\
+    if (e.toplevel_get ())					\
+    {								\
+      object::PrimitiveError error(Keyword, Error);		\
+      error.location_set(flow_exception.location_get());	\
+      raise_error_(error);					\
+      continue;							\
+    }								\
+    else							\
+      throw;							\
+  }
+
   void
   Runner::raise_error_ (const object::UrbiException& ue)
   {
@@ -296,7 +310,7 @@ namespace runner
       CORO_CALL_CATCH (current_ = eval (*fn->body_get());,
 	catch (ast::BreakException& be)
 	{
-	  object::PrimitiveError error("break", "called outside a loop");
+	  object::PrimitiveError error("break", "outside a loop");
 	  error.location_set(be.location_get());
 	  raise_error_(error);
 	}
@@ -412,7 +426,11 @@ namespace runner
 	{
 	  raise_error_ (ue);
 	  continue;
-	});
+	}
+	CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
+	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
+			     "outside a function"));
+
 
       if (e.toplevel_get () && current_.get ())
       {

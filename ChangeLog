@@ -1,3 +1,8 @@
+2008-01-10  Loic Fosse  <fosse@gostai.com>
+
+	Catch FlowException reaching toplevel.
+	* src/runner/runner.cc: Handle uncaught flow exceptions in Nary node.
+
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
 	Fix memory corruption in dump.
