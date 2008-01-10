@@ -1,5 +1,11 @@
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
+	Enforce use of "var" to create new slots.
+	* src/object/object.hxx: New named slots should never be created
+	by slot_update.
+
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
 	Add missing "var" in urbi.u.
 	* share/urbi/urbi.u: Add missing "var" where appropriate.
 

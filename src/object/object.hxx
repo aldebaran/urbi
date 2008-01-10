@@ -101,8 +101,11 @@ namespace object
   Object&
   Object::slot_update (const Object::key_type& k, rObject o)
   {
+    // As a side effect, check that the slot already exists, even if we want
+    // to create a new one locally.
+    rObject& existing = slot_get (k);
     if (locals_)
-      slot_get(k) = o;
+      existing = o;
     else
       slots_[k] = o;
     return *this;
