@@ -1,3 +1,9 @@
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
+	Send a correct first line.
+	* src/uconnection.cc: The first line was incorrectly sent, rewrite
+	the loop.
+
 2008-01-09  Samuel Tardieu  <tardieu@gostai.com>
 
 	New file with semantic issues.
