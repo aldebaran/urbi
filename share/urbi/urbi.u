@@ -19,7 +19,7 @@ Object.slotCopy ("removeParent", "disinherit");
 // Does not have anything special.  Yet.
 class Lobby.Channel
 {
-  var init = function (x) { self.name = x };
+  var init = function (x) { var self.name = x };
   var <<   = function (x) { x.print (name); {} };
 };
 

@@ -1,3 +1,8 @@
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
+	Add missing "var".
+	* share/urbi/urbi.u: Add missing "var".
+
 2008-01-10  Loic Fosse  <fosse@gostai.com>
 
 	Implement return keyword.
