@@ -1,3 +1,9 @@
+2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
+
+	Fix memory corruption in dump.
+	* src/object/object-class.cc: Make a long-lived copy of os.str()
+	before using it in the tokenizer.
+
 2008-01-10  Loic Fosse  <fosse@gostai.com>
 
 	Fix exception thrown by a return with no value.

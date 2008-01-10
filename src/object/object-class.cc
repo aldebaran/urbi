@@ -68,10 +68,11 @@ namespace object
     std::ostringstream os;
     args[0]->dump(os);
     //for now our best choice is to dump line by line in "system" messages.
+    const std::string stream = os.str();
     boost::tokenizer< boost::char_separator<char> > tok =
-    libport::make_tokenizer(os.str(), "\n");
+      libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
-    BOOST_FOREACH(std::string  line, tok)
+    BOOST_FOREACH(std::string line, tok)
       c->value_get().connection  << UConnection::send (
 	(system_header+line+"\n").c_str(), tag?tag:"");
     return args[0];
