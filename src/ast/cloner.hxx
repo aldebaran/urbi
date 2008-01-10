@@ -80,12 +80,12 @@ namespace ast
   {
     exec_exps_type* res = new exec_exps_type;
 
-    BOOST_FOREACH (const exec_exp_type& e, c)
+    BOOST_FOREACH (const Stmt* e, c)
     {
-      e.first->accept (*this);
-      Exp* elt = dynamic_cast<Exp*> (result_);
-      assert (elt);
-      res->push_back (exec_exp_type(elt, e.second));
+      e->accept (*this);
+      Stmt* s = dynamic_cast<Stmt*> (result_);
+      assert (s);
+      res->push_back (s);
     }
 
     return res;

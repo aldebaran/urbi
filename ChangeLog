@@ -1,3 +1,11 @@
+2008-01-10  Loic Fosse  <fosse@gostai.com>
+
+	Tranform Nary into a list of Stmt.
+	* src/ast/ast.yml: Add a Stmt node, and change Nary to use it.
+	* src/ast/cloner.hxx: Change cloner to handle std::list<Stmt*>.
+	* src/parser/ugrammar.y: Use new Nary methods.
+	* src/runner/runner.cc, src/runner/runner.hh: Add management of Stmt.
+
 2008-01-10  Samuel Tardieu  <tardieu@gostai.com>
 
 	Some more semantics issues and brainstorms.

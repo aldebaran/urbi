@@ -273,9 +273,26 @@ Flavorable:
   attributes:
     - flavor: { type: flavor_type, desc: Execution model }
 
+Stmt:
+  super:
+    - Exp
+    - Flavorable
+  desc: /// An expression with its flavor
+  attributes:
+    - expression:
+        type: 'Exp*'
+        desc: Unqualified expression
+        access: rw
+  printer:
+    - ~expression
+    - '{
+         if (n.flavor_get() != flavor_none)
+           ostr_ << n.flavor_get();
+       }'
+
 Nary:
   super: Exp
-  desc: /// A list of expressions to run possibly in background.
+  desc: /// A list of \c Stmts.
   attributes:
     - children:
         type: 'exec_exps_type'
@@ -292,14 +309,8 @@ Nary:
         # include "ast/flavor.hh"
         namespace ast
         {
-          // An expression and its flavor.
-          typedef std::pair<Exp*, flavor_type> exec_exp_type;
-          
-          /// Report \a e on \a o.
-          std::ostream& operator<<(std::ostream& o, const exec_exp_type& e);
-          
-          // A list of such expressions.
-          typedef std::list<exec_exp_type> exec_exps_type;
+          // A list of Stmts.
+          typedef std::list<Stmt*> exec_exps_type;
 
           /// Report \a e on \a o.
           std::ostream& operator<<(std::ostream& o, const exec_exps_type& e);
@@ -319,16 +330,13 @@ Nary:
           /// Push a new expression.
           void push_back(ast::Exp* e);
 
-          /// Push a new expression.
-          /// Add the expression @a e at the end of this, set the
-          /// *previous* execution type to be @a k.
-          /// \precondition this is not empty.
-          void push_back(flavor_type k, ast::Exp* e);
-
           /// Return the last child.
-          exec_exp_type& back ();
+          Stmt& back ();
 
           /// Sets the flavor of the last child.
+          void back_flavor_set (flavor_type k, const loc& l);
+
+          /// Sets the flavor of the last child without modifying location.
           void back_flavor_set (flavor_type k);
 
           /// Drop the last children.
@@ -344,21 +352,6 @@ Nary:
       #include "libport/separator.hh"
 
       #include "ast/pretty-printer.hh"
-
-      namespace libport
-      {
-      
-        // Specialization to free the children.
-        template<>
-        struct Delete<ast::exec_exp_type>
-        {
-          void operator () (ast::exec_exp_type& t)
-          {
-            delete t.first;
-          }
-        };
-
-      } // libport
 
     impl inside: |2
         Nary::Nary ()
@@ -382,28 +375,43 @@ Nary:
         void
         Nary::push_back(ast::Exp* e)
         {
-          children_.push_back (ast::exec_exp_type (e, flavor_none));
+          children_.push_back(new Stmt(e->location_get(), flavor_none, e));
+
+          // FIXME: Is there any better way to check if location_ is not set ?
+          if (location_.begin.filename)
+            location_ = location_ + e->location_get();
+          else
+            location_ = e->location_get();
+        }
+
+        Stmt&
+        Nary::back ()
+        {
+          return *children_.back();
         }
 
         void
-        Nary::push_back(flavor_type k, ast::Exp* e)
+        Nary::back_flavor_set (flavor_type k, const loc& l)
         {
-          assert(!children_.empty());
-          children_.back().second = k;
-          push_back (e);
-        }
+           if (!children_.empty ())
+           {
+             children_.back ()->flavor_get () = k;
+             children_.back ()->location_set(children_.back ()->location_get ()
+                                             + l);
+           }
 
-        exec_exp_type&
-        Nary::back ()
-        {
-          return children_.back();
+          // FIXME: Is there any better way to check if location_ is not set ?
+          if (location_.begin.filename)
+            location_ = location_ + l;
+          else
+            location_ = l;
         }
 
         void
         Nary::back_flavor_set (flavor_type k)
         {
            if (!children_.empty ())
-             children_.back ().second = k;
+             children_.back ()->flavor_get () = k;
         }
       
         void
@@ -418,15 +426,6 @@ Nary:
           children_.splice (children_.end (), rhs.children_get ());
         }
       
-        std::ostream&
-        operator<<(std::ostream& o, const exec_exp_type& e)
-        {
-          o << *e.first;
-          if (e.second != flavor_none)
-            o << e.second;
-          return o;
-        }
-        
         std::ostream&
         operator<<(std::ostream& o, const exec_exps_type& es)
         {

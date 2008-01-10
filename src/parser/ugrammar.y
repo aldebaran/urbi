@@ -212,7 +212,8 @@
 	{
 	  ast::Nary* res = new ast::Nary ();
 	  res->push_back (lhs);
-	  res->push_back (op, rhs);
+	  res->back_flavor_set (op);
+	  res->push_back (rhs);
 	  return res;
 	}
 	default:
@@ -584,23 +585,19 @@ stmts:
   }
 | stmts ";" cstmt
   {
+    $$->back_flavor_set ($2, @2);
     if (!dynamic_cast<ast::Noop*> ($3))
-      $$->push_back($2, $3);
+      $$->push_back($3);
     else
-    {
       delete $3;
-      $$->back_flavor_set ($2);
-    }
   }
 | stmts "," cstmt
   {
+    $$->back_flavor_set ($2, @2);
     if (!dynamic_cast<ast::Noop*> ($3))
-      $$->push_back($2, $3);
+      $$->push_back($3);
     else
-    {
       delete $3;
-      $$->back_flavor_set ($2);
-    }
   }
 ;
 
@@ -1158,8 +1155,10 @@ expr:
     // The sequence.
     ast::Nary* seq = new ast::Nary ();
     seq->push_back (decl);
-    seq->push_back (ast::flavor_semicolon, init);
-    seq->push_back (ast::flavor_semicolon, res);
+    seq->back_flavor_set(ast::flavor_semicolon);
+    seq->push_back (init);
+    seq->back_flavor_set(ast::flavor_semicolon);
+    seq->push_back (res);
 
     $$ = scope (@$, seq);
   }

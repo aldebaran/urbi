@@ -421,7 +421,7 @@ namespace runner
     {
       current_.reset ();
       JECHO ("child", *i);
-      CORO_CALL_CATCH (operator() (*i->first);,
+      CORO_CALL_CATCH (operator() (*i);,
 	catch (object::UrbiException& ue)
 	{
 	  raise_error_ (ue);
@@ -586,6 +586,15 @@ namespace runner
       throw ast::ReturnException(e.location_get(), current_);
     }
 
+    CORO_END;
+  }
+
+  void
+  Runner::operator() (ast::Stmt& e)
+  {
+    CORO_WITHOUT_CTX ();
+    JECHO ("expression", e.expression_get ());
+    CORO_CALL (operator() (e.expression_get()));
     CORO_END;
   }
 
