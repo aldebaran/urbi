@@ -69,7 +69,7 @@ const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
 const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 
-const char* UNKNOWN_TAG = "notag";
+const char* UNKNOWN_TAG = "";
 const char* MAINDEVICE  = "system";
 
 // Memory counter system

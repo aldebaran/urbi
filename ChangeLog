@@ -1,3 +1,13 @@
+2008-01-11  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Implicite "notag" is now "".
+	Update tests.
+	* include/kernel/uconnection.hh,
+	* src/tag-info.cc,
+	* src/ucommand.cc,
+	* src/uconnection.cc,
+	* src/userver.cc: Here.
+
 2008-01-09  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Prevent infinite loop when readin value in notifyaccess.
