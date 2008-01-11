@@ -379,3 +379,18 @@ instruction to resume too or is it immediate?
 
 * Tags
 
+* Various
+
+** nil
+
+A nil object could represent a "void" value. Such a declaration could
+be conceptually similar to
+
+  var nil = Object.clone();
+  nil.clone = function() { self }
+  nil.setLocalSlot = function (key, value) { }
+
+to lock up the nil object.
+
+One thing to discuss is whether nil should evaluate to true or false (I think
+it should be true, and only a real "false" singleton should evaluate to false).

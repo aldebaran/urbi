@@ -1,5 +1,10 @@
 2008-01-11  Samuel Tardieu  <tardieu@gostai.com>
 
+	Notes on "nil" object.
+	* doc/semantics-issues.org: Notes on "nil" object.
+
+2008-01-11  Samuel Tardieu  <tardieu@gostai.com>
+
 	Declare true and false in Urbi.
 	* share/urbi/urbi.u: Declare "true" and "false".
 	* src/parser/ugrammar.y: Do not handle "true" and "false" specially.
