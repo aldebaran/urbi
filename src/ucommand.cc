@@ -6385,25 +6385,10 @@ UCommand_FOREACH::execute_(UConnection *connection)
   if (position == 0)
     return UCOMPLETED;
 
-  UExpression* currentvalue =
-    new UExpression(loc(), UExpression::VALUE, ufloat(0));
-  if (!currentvalue)
-    return UCOMPLETED;
-  currentvalue->dataType = position->dataType;
-  if (position->dataType == DATA_NUM)
-    currentvalue->val = position->val;
-  if (position->dataType == DATA_STRING)
-    currentvalue->str = new UString(*position->str);
-  if (position->dataType == DATA_BINARY)
-  {
-    // add support here
-  }
-  if (position->dataType != DATA_NUM && position->dataType != DATA_STRING)
-  {
-    send_error(connection, this, "This type is not supported yet");
-    delete currentvalue;
-    return UCOMPLETED;
-  }
+ UExpression* currentvalue =
+   new UExpression(loc(), UExpression::VALUE, position->copy());
+ if (!currentvalue)
+   return UCOMPLETED;
 
   morph =
     new UCommand_TREE

@@ -1,5 +1,11 @@
 2008-01-11  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Merge foreach patch (trunk r2237:2238).
+	* src/ucommand.cc: Here.
+	* tests-local.mk: Remove 1.x/for-in from XFAILS.
+
+2008-01-11  Guillaume Deslandes  <deslandes@gostai.com>
+
 	Implicite "notag" is now "".
 	Update tests.
 	* include/kernel/uconnection.hh,

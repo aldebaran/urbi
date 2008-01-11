@@ -4,6 +4,5 @@
 TESTS_DIRS = 1.x 1.5 # uob
 URBI_SERVER = $(abs_top_builddir)/src/urbi-console
 XFAIL_TESTS += 				\
-	1.x/for-in.chk			\
 	1.x/and-pipe-priority.chk	\
 	1.x/for-in-complex.chk
