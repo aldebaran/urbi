@@ -35,7 +35,14 @@ Integer nodes.
 
 ** List
 
-Mutable list.
+Mutable list. See note on dictionaries below.
+
+At the implementation level, it would be great to have those lists shared
+with C++. This way, the list of prototypes of an object could be manipulated
+on the Urbi side and immediately seen in the C++ implementation of getSlot
+for example. Also, it would allow the removal of hardcoded addProto and
+removeProto, since it would be easy to work on the list returned by protos
+(right now, a copy is returned).
 
 ** Lobby
 
@@ -54,6 +61,75 @@ A primitive is a C++ function body.
 ** String
 
 Regular strings.
+
+** Other possible types
+
+*** Boolean
+
+There is no Boolean type. One could be declared as
+
+## --------- ##
+## Boolean.  ##
+## --------- ##
+
+var Boolean = Object.clone();
+var true = Boolean.clone();
+do true {
+  var not = function() { false };
+  var and = function(x) { x };
+  var or = function(x) { true };
+  var xor = function(x) { x.not };
+  var toInteger = 1;
+};
+var false = Boolean.clone();
+do false {
+  var not = function() { true };
+  var and = function(x) { false };
+  var or = function(x) { x };
+  var xor = function(x) { x };
+  var toInteger = 0;
+};
+var Float.toBoolean = function(x) { x == 0 };
+
+At this time, it is not possible to implement them as "true" and "false"
+are hardcoded in the parser.
+
+*** Dictionaries
+
+In Lua, the basic compound type is the dictionary. Even a list is
+a dictionary where keys are integers ranging from 0 to length-1.
+
+We could add such a dictionary type in Urbi and have the List type
+derive from it and override appropriate methods (for example, deleting
+an element will slice the list). A List could be seen as a Dictionary
+and it would be possible to ask for its keys or values for example.
+
+Having dictionaries, we could use one of them for the local slots (localSlots).
+We would then be able to write things such as
+
+  var Object.slotNames = function () { localSlots.keys; };
+  var Object.setLocalSlot = function (key, value) { localSlots.set(key, value)};
+
+and so on.
+
+If course, for efficiency reason, the underlying list would really be a list,
+it would only implement the Dictionary protocol with specialized methods.
+
+Dictionary is probably not the only type that could be added to Urbi to
+get a clean and usable system. One could add other protocols:
+
+  - Sequence (anything you can get an iterator on, such a list)
+
+  - Range (a special kind of sequence allowing you to do big 1..n loops
+    for example)
+
+The complexity of adding those kind of types should be properly thought of.
+IMO, not only are they not complex to add, but also they would lead to
+cleaner and more straightforward Urbi code. Defining small protocols helps
+having easily manipulable functions, and it is easy to then add generic
+functions using the well-defined protocols.
+
+This model has been adopted by Factor and for having used it, I like it.
 
 * Variables
 
