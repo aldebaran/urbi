@@ -28,7 +28,6 @@
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
 
-# include "flavorable.hh"
 # include "ugrammar.hh"
 # include "parser/flex-lexer.hh"
 

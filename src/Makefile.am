@@ -44,7 +44,6 @@ uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
 dist_libkernel_la_SOURCES +=					\
-flavorable.hh							\
 memorymanager/memorymanager.cc					\
 uast.hh								\
 ubanner.hh ubanner.cc						\

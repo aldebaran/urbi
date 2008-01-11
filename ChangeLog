@@ -1,3 +1,9 @@
+2008-01-11  Akim Demaille  <demaille@gostai.com>
+
+	Remove flavorable.hh.
+	* src/flavorable.hh: Remove, unused.
+	* src/Makefile.am, src/parser/uparser.hh: Adjust.
+
 2008-01-10  Akim Demaille  <demaille@gostai.com>
 
 	s/arent/roto.
