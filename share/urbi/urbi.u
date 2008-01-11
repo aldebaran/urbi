@@ -11,6 +11,9 @@ var Object.slotCopy = function (frm, to) {
 Object.slotCopy ("addProto", "inherit");
 Object.slotCopy ("removeProto", "disinherit");
 
+var Object.true = 1.0;
+var Object.false = 0.0;
+
 
 ## --------- ##
 ## Channel.  ##

@@ -314,7 +314,6 @@
 	TOK_EMIT         "emit"
 	TOK_EVENT        "event"
 	TOK_EVERY        "every"
-	TOK_FALSE        "false"
 	TOK_FREEZEIF     "freezeif"
 	TOK_FROM         "from"
 	TOK_FUNCTION     "function"
@@ -338,7 +337,6 @@
 	TOK_STOPIF       "stopif"
 	TOK_TILDE        "~"
 	TOK_TIMEOUT      "timeout"
-	TOK_TRUE         "true"
 	TOK_UNALIAS      "unalias"
 	TOK_VAR          "var"
 	TOK_VARERROR     "'e"
@@ -1243,10 +1241,7 @@ id:
 ;
 
 expr:
-  "false" { $$ = new ast::Float(@$, 0); }
-| "true"  { $$ = new ast::Float(@$, 1); }
-
-| expr "!="  expr { $$ = call(@$, $1, $2, $3); }
+  expr "!="  expr { $$ = call(@$, $1, $2, $3); }
 | expr "%="  expr { $$ = call(@$, $1, $2, $3); }
 | expr "<"   expr { $$ = call(@$, $1, $2, $3); }
 | expr "<="  expr { $$ = call(@$, $1, $2, $3); }

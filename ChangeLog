@@ -1,5 +1,12 @@
 2008-01-11  Samuel Tardieu  <tardieu@gostai.com>
 
+	Declare true and false in Urbi.
+	* share/urbi/urbi.u: Declare "true" and "false".
+	* src/parser/ugrammar.y: Do not handle "true" and "false" specially.
+	* src/parser/utoken.l: Ditto.
+
+2008-01-11  Samuel Tardieu  <tardieu@gostai.com>
+
 	More semantic issues and questions.
 	* doc/semantics-issues.org: Update document.
 

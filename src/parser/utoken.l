@@ -326,7 +326,6 @@ FLAVOR   [;|,&]?
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;
 "every"         return token::TOK_EVERY;
-"false"         return token::TOK_FALSE;
 "foreach"       DEPRECATED("for");
 "freezeif"      return token::TOK_FREEZEIF;
 "from"          return token::TOK_FROM;
@@ -345,7 +344,6 @@ FLAVOR   [;|,&]?
 "static"        return token::TOK_STATIC;
 "stopif"        return token::TOK_STOPIF;
 "timeout"       return token::TOK_TIMEOUT;
-"true"          return token::TOK_TRUE;
 "unalias"       return token::TOK_UNALIAS;
 "var"           return token::TOK_VAR;
 "'in"           return token::TOK_VARIN;
