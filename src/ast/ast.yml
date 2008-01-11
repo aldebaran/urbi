@@ -364,6 +364,7 @@ Nary:
         Nary::clear ()
         {
           children_.clear ();
+          location_ = ast::loc();
         }
 
         bool
@@ -418,12 +419,14 @@ Nary:
         Nary::pop_back ()
         {
           children_.pop_back();
+          location_.end = children_.back()->location_get().end;
         }
       
         void
         Nary::splice_back (Nary& rhs)
         {
           children_.splice (children_.end (), rhs.children_get ());
+          location_ = location_ + rhs.location_get();
         }
       
         std::ostream&
