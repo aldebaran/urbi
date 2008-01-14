@@ -1,3 +1,8 @@
+2008-01-14  Samuel Tardieu  <tardieu@gostai.com>
+
+	Use a name unavailable to the user for temporary purpose.
+	* src/parser/ugrammar.y: The user cannot enter 'res' so use it.
+
 2008-01-11  Samuel Tardieu  <tardieu@gostai.com>
 
 	Notes on "nil" object.

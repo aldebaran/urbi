@@ -1132,16 +1132,12 @@ expr:
     // but in that case the return value is that of the end of
     // "init".  And we don't want to require the users to end "init"
     // with "self".
-    //
-    // FIXME: Using "res" is not sane if the user use "res" too
-    // for her id, or in the arguments...  Don't know what to do
-    // yet.
 
     // I wish I could use tweasts here...  Lord, help me.
 
     // var res = id . clone ();
     ast::Exp* parent = call (@2, 0, $2);
-    ast::Call* res = call (@$, 0, "res");
+    ast::Call* res = call (@$, 0, "'res'");
     ast::Exp* decl = assign (@1 + @2,
 			     res,
 			     call(@1 + @2, parent, "clone"),
