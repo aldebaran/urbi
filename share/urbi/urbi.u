@@ -81,7 +81,7 @@ class Lobby.Math
   var tan    = function (x) { x.tan };
   var trunc  = function (x) { x.trunc };
 };
-Object inherits Math;
+Object.addProto (Math);
 
 ## -------- ##
 ## String.  ##

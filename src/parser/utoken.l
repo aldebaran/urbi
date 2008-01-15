@@ -320,7 +320,6 @@ FLAVOR   [;|,&]?
 "class"         return token::TOK_CLASS;
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
-"disinherits"   return token::TOK_DISINHERITS;
 "do"		return token::TOK_DO;
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
@@ -333,7 +332,6 @@ FLAVOR   [;|,&]?
 "group"         return token::TOK_GROUP;
 "if"            return token::TOK_IF;
 "in"            return token::TOK_IN;
-"inherits"      return token::TOK_INHERITS;
 
 "loopn"         DEPRECATED("for");
 "new"           return token::TOK_NEW;

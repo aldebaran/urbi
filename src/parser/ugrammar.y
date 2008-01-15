@@ -509,7 +509,6 @@
 %left  "else" "onleave"
 
 %left  "=" "+=" "-=" "*=" "/="
-%left  "inherits" "disinherits"
 %left  "||"
 %left  "&&"
 %left  "^"
@@ -682,16 +681,10 @@ stmt:
 // Classes.
 %token
 	TOK_CLASS       "class"
-	TOK_DISINHERITS	"disinherits"
-	TOK_INHERITS	"inherits"
 ;
 
 expr:
-  expr "inherits" expr
-    { $$ = call (@$, $1, new libport::Symbol("addProto"), $3); }
-| expr "disinherits" expr
-    { $$ = call (@$, $1, new libport::Symbol("removeProto"), $3); }
-| "class" lvalue "{" stmts "}"
+  "class" lvalue "{" stmts "}"
     {
       // Compiled as
       // var id = Object.clone; do id { stmts };
