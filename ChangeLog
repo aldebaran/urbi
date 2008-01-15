@@ -1,5 +1,10 @@
 2008-01-15  Samuel Tardieu  <tardieu@gostai.com>
 
+	Remove Inherits/Disinherits in yaml.
+	* src/ast/ast.yml: Remove Inherits/Disinherits.
+
+2008-01-15  Samuel Tardieu  <tardieu@gostai.com>
+
 	Remove obsolete inherits/disinherits.
 	* share/urbi/urbi.u: Use addProto instead of inherits.
 	* src/parser/ugrammar.y: Remove inherits / disinherits.

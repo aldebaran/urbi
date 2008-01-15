@@ -590,18 +590,6 @@ While:
 #     - obj: { type: 'Exp*', desc: Reference to the object to alias }
 #     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
  
-# Inherits:
-#   super: Exp
-#   attributes:
-#     - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
-#     - inherited: { type: 'Exp*', desc: Reference to the inherited object }
-
-# Disinherits:
-#   super: Exp
-#   attributes:
-#     - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
-#     - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
-
 # Delete:
 #   super: Exp
 #   attributes:
