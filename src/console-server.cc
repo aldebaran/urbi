@@ -7,116 +7,75 @@
 #include <fstream>
 
 #include <boost/foreach.hpp>
-#include <boost/format.hpp>
 
 #include "libport/cli.hh"
-#include "libport/compiler.hh"
 #include "libport/program-name.hh"
-#include "libport/sysexits.hh"
+#include "libport/tokenizer.hh"
 #include "libport/utime.hh"
-#include "libport/windows.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
-#include "console-server.hh"
 #include "ubanner.hh"
 
-namespace urbi
+class ConsoleServer
+  : public UServer
 {
-  ConsoleServer::ConsoleServer (const options::ConsoleServerOptions& opt)
-    : UServer(opt.getPeriod (), 1.0, 64000000, "console"),
-      options_ (opt),
-      fast_ (opt.isFastModeEnabled ()),
-      ctime_ (0)
+public:
+  ConsoleServer(int period, bool fast)
+    : UServer(period, 1.0, 64000000, "console"), fast(fast), ctime(0)
   {
-    BOOST_FOREACH (const std::string& s, opt.getPaths ())
-      path.push_back (s);
-
-    initNetwork ();
-    initialize ();
-    initGhostConnection ();
+    if (const char* cp = getenv ("URBI_PATH"))
+    {
+      std::string up(cp);
+      BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
+	path.push_back (s);
+    }
   }
 
-  ConsoleServer::~ConsoleServer ()
-  {
-  }
+  virtual ~ConsoleServer()
+  {}
 
-  void
-  ConsoleServer::initNetwork ()
-  {
-    if (!Network::createTCPServer(options_.getPort (),
-				  options_.getBindedAddress ().c_str ()))
-      options_.error ((boost::format ("cannot bind to port %1% on %2%")
-		       % options_.getPort ()
-		       % options_.getBindedAddress ()).str (), EX_UNAVAILABLE);
-
-    Network::startNetworkProcessingThread ();
-  }
-
-  void
-  ConsoleServer::initGhostConnection ()
-  {
-    UConnection& c = getGhostConnection ();
-    DEBUG(("Got ghost connection\n"));
-
-    const std::string& in = options_.getInputFile ();
-    if (in != "" &&
-	loadFile(in.c_str (), &c.recvQueue ()) != USUCCESS)
-      options_.error ((boost::format ("failed to process %1%") % in).str ());
-    c.newDataAdded = true;
-  }
-
-
-  void
-  ConsoleServer::shutdown ()
+  virtual void shutdown()
   {
     UServer::shutdown ();
     exit (EX_OK);
   }
-
-  void
-  ConsoleServer::beforeWork ()
+  virtual void beforeWork()
   {
-    ctime_ += static_cast<long long> (period_get ()) * 1000LL;
+    ctime += static_cast<long long>(period_get()) * 1000LL;
   }
+  virtual void reset()
+  {}
 
-  void
-  ConsoleServer::reset ()
-  {
-  }
+  virtual void reboot()
+  {}
 
-  void
-  ConsoleServer::reboot ()
+  virtual ufloat getTime()
   {
-  }
-
-  ufloat
-  ConsoleServer::getTime ()
-  {
-    if (fast_)
-      return ctime_ / 1000LL;
+    if (fast)
+      return ctime / 1000LL;
     else
-      return static_cast<ufloat> (libport::utime () / 1000LL);
+      return static_cast<ufloat>(libport::utime() / 1000LL);
   }
 
-  ufloat
-  ConsoleServer::getPower ()
+  virtual ufloat getPower()
   {
-    return ufloat (1);
+    return ufloat(1);
   }
 
-  void
-  ConsoleServer::getCustomHeader (int line, char* header, int maxlength)
+  //! Called to display the header at each coonection start
+  virtual void getCustomHeader(int line, char* header, int maxlength)
   {
     // FIXME: This interface is really really ridiculous and fragile.
     strncpy(header, uconsole_banner[line], maxlength);
   }
 
+  virtual
   UErrorValue
-  ConsoleServer::saveFile (const char* filename, const char* content)
+  saveFile (const char* filename, const char* content)
   {
     //! \todo check this code
     std::ofstream os (filename);
@@ -125,26 +84,131 @@ namespace urbi
     return os.good () ? USUCCESS : UFAIL;
   }
 
-  void
-  ConsoleServer::effectiveDisplay (const char* t)
+  virtual
+  void effectiveDisplay(const char* t)
   {
     std::cout << t;
+  }
+
+  bool fast;
+  long long ctime;
+};
+
+namespace
+{
+  static
+  void
+  usage ()
+  {
+    std::cout <<
+      "usage: " << libport::program_name << " [OPTIONS] [FILE]\n"
+      "\n"
+      "  FILE    to load\n"
+      "\n"
+      "Options:\n"
+      "  -h, --help            display this message and exit successfully\n"
+      "  -v, --version         display version information\n"
+      "  -P, --period PERIOD   base URBI interval in milliseconds\n"
+      "  -p, --port PORT       tcp port URBI will listen to.\n"
+      "  -f, --fast            ignore system time, go as fast as possible\n"
+      "  -w, --port-file FILE  write port number to specified file.\n"
+      ;
+    exit (EX_OK);
+  }
+
+  static
+  void
+  version ()
+  {
+    userver_package_info_dump(std::cout) << std::endl;
+    exit (EX_OK);
   }
 }
 
 int
 main (int argc, const char* argv[])
 {
-  // Parse options.
-  options::ConsoleServerOptions options (argc, argv);
-  options.processArguments ();
+  libport::program_name = argv[0];
 
-  urbi::ConsoleServer s (options);
+  // Input file.
+  const char* in = "/dev/stdin";
+  /// The period.
+  int arg_period = 32;
+  /// The port to use.  0 means automatic selection.
+  int arg_port = 0;
+  /// Where to write the port we use.
+  const char* arg_port_filename = 0;
+  /// fast mode
+  bool fast = false;
+  // Parse the command line.
+  {
+    int argp = 1;
+    for (int i = 1; i < argc; ++i)
+    {
+      std::string arg = argv[i];
+
+      if (arg == "--fast" || arg == "-f")
+	fast = true;
+      else if (arg == "--help" || arg == "-h")
+	usage();
+      else if (arg == "--period" || arg == "-P")
+	arg_period = libport::convert_argument<int> (arg, argv[++i]);
+      else if (arg == "--port" || arg == "-p")
+	arg_port = libport::convert_argument<int> (arg, argv[++i]);
+      else if (arg == "--port-file" || arg == "-w")
+	arg_port_filename = argv[++i];
+      else if (arg == "--version" || arg == "-v")
+	version();
+      else if (arg[0] == '-')
+	libport::invalid_option (arg);
+      else
+	// An argument.
+	switch (argp++)
+	{
+	  case 1:
+	    in = argv[i];
+	    break;
+	  default:
+	    std::cerr << libport::program_name
+		      << ": unexpected argument: " << arg << std::endl
+		      << libport::exit (EX_USAGE);
+	    break;
+	}
+    }
+  }
+
+  ConsoleServer s (arg_period, fast);
+
+  int port = Network::createTCPServer(arg_port, "localhost");
+  if (!port)
+    std::cerr << libport::program_name
+	      << ": cannot bind to port " << arg_port
+	      << " on localhost" << std::endl
+	      << libport::exit (EX_UNAVAILABLE);
+
+  if (arg_port_filename)
+    std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
+  Network::startNetworkProcessingThread();
+
+
+  s.initialize ();
+  UConnection& c = s.getGhostConnection ();
+  std::cerr << libport::program_name
+	    << ": got ghost connection" << std::endl;
+
+  if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
+    std::cerr << libport::program_name
+	      << ": failed to process " << in << std::endl
+	      << libport::exit(EX_NOINPUT);
+
+  c.newDataAdded = true;
 
   std::cerr << libport::program_name << ": going to work..." << std::endl;
-  if (options.isFastModeEnabled ())
+  if (fast)
     while(true)
+    {
       s.work();
+    }
   else
     while (true)
     {

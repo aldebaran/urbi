@@ -1,3 +1,14 @@
+2008-01-15  Thomas Moulard  <thomas@moulard.net>
+
+	Revert patches 2371 to 2374.
+	* configure.ac,
+	* src/Makefile.am,
+	* src/console-server.cc,
+	* src/kernel.mk: Revert.
+	* src/console-server-options.cc: Remove.
+	* src/console-server-options.hh: Remove.
+	* src/console-server.hh: Remove.
+
 2008-01-15  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 1835:2373 https://svn.gostai.com/svn/kernel1/branches/1.5
