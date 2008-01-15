@@ -1,3 +1,8 @@
+2008-01-15  Matthieu Nottale  <nottale@gostai.com>
+
+	Factor object_class_print and echo, remove dubious char* usage.
+	* src/object/object-class.cc: Here.
+
 2008-01-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Remove a deprecated file.

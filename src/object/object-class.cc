@@ -35,35 +35,17 @@ namespace object
     return args[0];
   }
 
-
-  /// Send pretty-printed self on the connection.
-  /// args[1], if present, can be the tag to use.
-  static rObject
-  object_class_print (rLobby c, objects_type args)
-  {
-    // Second argument is the tag name.
-    const char* tag = 0;
-    if (args.size() == 2)
-    {
-      FETCH_ARG(1, String);
-      tag = arg1->value_get().name_get().c_str();
-    }
-
-    c->value_get().connection.send (args[0], tag);
-    return args[0];
-  }
-
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
   object_class_dump (rLobby c, objects_type args)
   {
     // Second argument is the tag name.
-    const char* tag = 0;
+    std::string tag = 0;
     if (args.size() == 2)
     {
       FETCH_ARG(1, String);
-      tag = arg1->value_get().name_get().c_str();
+      tag = arg1->value_get().name_get();
     }
     std::ostringstream os;
     args[0]->dump(os);
@@ -74,27 +56,42 @@ namespace object
     std::string system_header("*** ");
     BOOST_FOREACH(std::string line, tok)
       c->value_get().connection  << UConnection::send (
-	(system_header+line+"\n").c_str(), tag?tag:"");
+	(system_header+line+"\n").c_str(), tag.c_str());
     return args[0];
   }
   
+  static rObject
+  object_echo(rLobby c, objects_type args, const char * prefix)
+  {
+    // Second argument is the tag name.
+    std::string tag;
+    if (args.size() == 3)
+    {
+      FETCH_ARG(2, String);
+      tag = arg2->value_get().name_get();
+    }
+    c->value_get().connection.send (args[1], tag.c_str(), prefix);
+    return args[0];
+  }
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
   static rObject
   object_class_echo (rLobby c, objects_type args)
   {
-    // Second argument is the tag name.
-    const char* tag = 0;
-    if (args.size() == 3)
-    {
-      FETCH_ARG(2, String);
-      tag = arg2->value_get().name_get().c_str();
-    }
-
-    c->value_get().connection.send (args[1], tag, "*** ");
-    return args[0];
+    return object_echo(c, args, "*** ");
   }
 
+  /// Send pretty-printed self on the connection.
+  /// args[1], if present, can be the tag to use.
+  static rObject
+  object_class_print (rLobby c, objects_type args)
+  {
+    objects_type nargs;
+    nargs.push_back(args[0]);
+    nargs.insert(nargs.end(),  args.begin(), args.end());
+    return object_echo(c, nargs, "");
+  }
+  
 #define SERVER_FUNCTION(Function)				\
   static rObject						\
   object_class_ ## Function (rLobby, objects_type args)		\
