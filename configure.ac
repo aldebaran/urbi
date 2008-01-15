@@ -43,6 +43,9 @@ TC_CXX_WARNINGS([[-Wcast-align],
 AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL
 
+# Boost.Program_options is needed for urbi-console only.
+BOOST_PROGRAM_OPTIONS([s])
+
 
 ## -------- ##
 ## Target.  ##

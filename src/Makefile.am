@@ -118,14 +118,18 @@ urbiinclude_HEADERS = $(uobject_headers)
 if !OPENR
 bin_PROGRAMS = urbi-console
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libkernel.la
+urbi_console_LDADD = libkernel.la		\
+$(BOOST_PROGRAM_OPTIONS_LIBS)
 
 dist_libkernel_la_SOURCES +=			\
+console-server.hh				\
 console-server.cc				\
+console-server-options.cc			\
 network/bsdnet/connection.hh			\
 network/bsdnet/connection.cc			\
 network/bsdnet/network.hh			\
-network/bsdnet/network.cc
+network/bsdnet/network.cc			\
+options/options.cc
 
 # FIXME: We might need this guy somewhere: $(PTHREAD_LIBS).  In
 # libkernel, or urbi_console_LDADD?
