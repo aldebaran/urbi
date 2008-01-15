@@ -1,5 +1,11 @@
 2008-01-15  Thomas Moulard  <thomas@moulard.net>
 
+	Boost libs should be in kernel.mk.
+	* src/Makefile.am: Move into...
+	* src/kernel.mk: ...this.
+
+2008-01-15  Thomas Moulard  <thomas@moulard.net>
+
 	Use options parsing modules.
         urbi-console default values are now customizable through environment
         variables URBI_<FLAG> (for instance URBI_PORT).
