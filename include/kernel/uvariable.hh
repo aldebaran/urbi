@@ -231,7 +231,6 @@ operator<< (std::ostream& o, const UVariable& v)
   return v.print(o);
 }
 
-
 inline const std::string& UVariable::getDevicename() const {return devicename;}
 inline const std::string& UVariable::getVarname() const {return varname;}
 inline const std::string& UVariable::getMethod() const {return method;}

@@ -193,7 +193,7 @@ public:
   /*! A tag is automatically added to output the message string and the
     resulting string is sent via send(const ubyte*,int).
     \param s the string to send
-    \param tag the tag of the message. Default is "notag"
+    \param tag the tag of the message. Default is ""
   */
   static inline _Send send (const char* s, const char* tag)
   {
@@ -379,7 +379,7 @@ public:
 
 protected:
   /// Execute until stopTime is reached, return false on timeout, true on finish
-  bool                execute            (UCommand_TREE*&, 
+  bool                execute            (UCommand_TREE*&,
 					  libport::utime_t stopTime);
   UConnection&        append             (UCommand_TREE *command);
 
@@ -505,13 +505,13 @@ private:
   /// set at "true" on start).
   bool           active_;
 
-  
-  
+
+
   /********************
   *    SCHEDULING     *
   ********************/
   public:
-  
+
   /// Set connection priority
   void    setPriority(int p) {priority_ = p;}
   /// Get priority
@@ -520,9 +520,9 @@ private:
   bool    wasInterrupted() {return executionInterrupted_;}
   /// Return true if deleteMarked must be called
   bool    hasSomethingToDelete() {return somethingToDelete_;}
-  
+
   private:
- 
+
   int           priority_;
   /// Time at which it was run last
   libport::utime_t     lastRun_;
@@ -533,7 +533,7 @@ private:
 
   /// Set to true if work must call deleteMarked()
   bool           somethingToDelete_;
-  
+
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;
 # endif

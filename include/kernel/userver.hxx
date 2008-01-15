@@ -31,4 +31,3 @@ std::string unic (const char* prefix)
   o << prefix << unic();
   return o.str();
 }
-

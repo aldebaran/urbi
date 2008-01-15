@@ -376,8 +376,7 @@ UConnection::mkPrefix (const ubyte* tag) const
   std::stringstream o;
   o << "["
     << std::setw(8) << std::setfill('0') << (int)server->lastTime();
-  // Don't display ":notag".
-  if (!tag || !STREQ((const char*) tag, "notag"))
+  if (tag && tag[0] != '\0')
     o << ":" << tag;
   o << "] ";
   return o.str ();

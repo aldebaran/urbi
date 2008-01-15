@@ -71,7 +71,7 @@ TagInfo::initializeTagInfos()
   systemTagInfo = t.insert(::urbiserver->tagtab);
   // insert a dummy tag in subtag list, so that the taginfo is never deleted
   systemTagInfo->subTags.push_back(dummy);
-  t.name = "notag";
+  t.name = "";
   notagTagInfo =  t.insert(::urbiserver->tagtab);
   notagTagInfo->subTags.push_back(dummy);
 }

@@ -2466,7 +2466,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	if (ret->dataType != DATA_VOID)
 	{
 	  if (!is_channel_get())
-	    *connection << UConnection::prefix("notag");
+	    *connection << UConnection::prefix("");
 	  else
 	    *connection << UConnection::prefix(getTag().c_str());
 	  ret->echo(connection);
@@ -2537,8 +2537,10 @@ UCommand_EXPR::execute_(UConnection *connection)
       if (validcmd)
       {
 	std::ostringstream o;
-	o << "{ waituntil(isdef(" << uid << ")) | "
-	  << getTag() << " << " << uid
+	o << "{ waituntil(isdef(" << uid << ")) | ";
+	if (getTag() != "")
+	  o << getTag() << " << ";
+	o << uid
 	  << " | delete " << uid << " }";
 	strMorph (o.str());
 	return UMORPH;
@@ -2572,7 +2574,7 @@ UCommand_EXPR::execute_(UConnection *connection)
     if (ret->dataType != DATA_VOID)
     {
       if (!is_channel_get())
-	*connection << UConnection::prefix("notag");
+	*connection << UConnection::prefix("");
       else
 	*connection << UConnection::prefix(getTag().c_str());
       ret->echo(connection);
@@ -2713,7 +2715,7 @@ UCommand_ECHO::execute_(UConnection *connection)
   if (!connectionTag)
   {
     if (!is_channel_get())
-      *connection << UConnection::sendc("*** ", "notag");
+      *connection << UConnection::sendc("*** ", "");
     else
       *connection << UConnection::sendc("*** ", getTag().c_str());
     ret->echo(connection, true);
@@ -2734,7 +2736,7 @@ UCommand_ECHO::execute_(UConnection *connection)
       {
 	ok = true;
 	if (!is_channel_get())
-	  *i << UConnection::sendc("*** ", "notag");
+	  *i << UConnection::sendc("*** ", "");
 	else
 	  *i << UConnection::sendc("*** ", getTag().c_str());
 	ret->echo(i, true);
@@ -3494,7 +3496,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
       return UCOMPLETED;
 
     if (*id == UNKNOWN_TAG)
-      send_error(connection, this, "cannot block 'notag'");
+      send_error(connection, this, "cannot block '' (empty tag)");
     else
       connection->server->block(id->c_str());
 
@@ -3511,7 +3513,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
       return UCOMPLETED;
 
     if (*id == UNKNOWN_TAG)
-      send_error(connection, this, "cannot freeze 'notag'");
+      send_error(connection, this, "cannot freeze '' (empty tag)");
     else
       connection->server->freeze(id->c_str());
 
@@ -3662,7 +3664,7 @@ UCommand_OPERATOR_VAL::execute_(UConnection *connection)
     if ( !value || value->dataType != DATA_NUM)
     {
       delete value;
-      send_error(connection, this, 
+      send_error(connection, this,
 		 "invalid non-numeric argument to setpriority");
       return UCOMPLETED;
     }
@@ -3670,13 +3672,13 @@ UCommand_OPERATOR_VAL::execute_(UConnection *connection)
     delete value;
     if (prio<-100 || prio > 100)
     {
-      send_error(connection, this, 
+      send_error(connection, this,
 		 "priority outside valid range [-100,100]");
     }
-    
+
     if (prio>0 && ::urbiserver->isSealed())
     {
-      send_error(connection, this, 
+      send_error(connection, this,
 		 "cannot set positive priority in sealed kernel");
        return UCOMPLETED;
     }
@@ -3686,7 +3688,7 @@ UCommand_OPERATOR_VAL::execute_(UConnection *connection)
   }
   return UCOMPLETED;
 }
-  
+
 //! UCommand subclass hard copy function
 UCommand*
 UCommand_OPERATOR_VAL::copy() const
@@ -4313,7 +4315,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       if (i.second.name != "__system__"
 	  && i.second.name != "__node__"
 	  && i.second.name != "__UGrouped_set_of_commands__"
-	  && i.second.name != "notag")
+	  && i.second.name != "")
       {
 	std::ostringstream o;
 	o << "*** " << i.second.name << "\n";
@@ -6486,6 +6488,7 @@ UCommand_FOREACH::execute_(UConnection *connection)
     new UExpression(loc(), UExpression::VALUE, position->copy());
   if (!currentvalue)
     return UCOMPLETED;
+
   morph =
     new UCommand_TREE
     (loc_, flavor(),

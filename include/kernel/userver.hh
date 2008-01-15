@@ -79,13 +79,13 @@ public:
 
    \param margin is a time margin in milliseconds: the work function will
    execute in at most 1/frequency - margin milliseconds.
-   
+
    \param freeMemory indicates the biggest malloc possible on the system
    when the server has just started. It is used to determine a high
    limit of memory allocation, thus avoiding later to run out of memory
    during a new or malloc.
    */
-  UServer(ufloat period, ufloat margin, int freeMemory, 
+  UServer(ufloat period, ufloat margin, int freeMemory,
 	  const char* mainName);
 
   virtual ~UServer();
@@ -393,7 +393,7 @@ public:
   /// Urbi TCP Port..
   enum { TCP_PORT = 54000 };
 
-  
+
   bool                     isSealed() {return sealed_;}
   void                     seal()     {sealed_ = true;}
 protected:
@@ -459,3 +459,4 @@ void debug (unsigned t, const char* fmt, ...)
 # include <kernel/userver.hxx>
 
 #endif // !KERNEL_USERVER_HH
+

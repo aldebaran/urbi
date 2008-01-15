@@ -48,10 +48,10 @@ namespace urbi
   ConsoleServer::initNetwork ()
   {
     if (!Network::createTCPServer(options_.getPort (),
-                                  options_.getBindedAddress ().c_str ()))
+				  options_.getBindedAddress ().c_str ()))
       options_.error ((boost::format ("cannot bind to port %1% on %2%")
-                       % options_.getPort ()
-                       % options_.getBindedAddress ()).str (), EX_UNAVAILABLE);
+		       % options_.getPort ()
+		       % options_.getBindedAddress ()).str (), EX_UNAVAILABLE);
 
     Network::startNetworkProcessingThread ();
   }
@@ -64,7 +64,7 @@ namespace urbi
 
     const std::string& in = options_.getInputFile ();
     if (in != "" &&
-        loadFile(in.c_str (), &c.recvQueue ()) != USUCCESS)
+	loadFile(in.c_str (), &c.recvQueue ()) != USUCCESS)
       options_.error ((boost::format ("failed to process %1%") % in).str ());
     c.newDataAdded = true;
   }
