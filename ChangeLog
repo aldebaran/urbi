@@ -10,6 +10,18 @@
 	* src/console-server.cc: Use ConsoleServerOptions class to parse options.
 	* src/console-server.hh: Add header for ConsoleServer class. New.
 
+2008-01-15  Thomas Moulard  <thomas@moulard.net>
+
+	Use options parsing modules.
+        urbi-console default values are now customizable through environment
+        variables URBI_<FLAG> (for instance URBI_PORT).
+	* configure.ac: Detect Boost.Program_options.
+	* src/Makefile.am: Link urbi-console against Boost.Program_options.
+	* src/console-server-options.cc: Handle urbi-console specific options. New.
+	* src/console-server-options.hh: Idem. New.
+	* src/console-server.cc: Use ConsoleServerOptions class to parse options.
+	* src/console-server.hh: Add header for ConsoleServer class. New.
+
 2008-01-15  Akim Demaille  <demaille@gostai.com>
 
 	NEWS: inherits is deprecated.
