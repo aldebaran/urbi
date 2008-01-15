@@ -285,6 +285,7 @@
   TOK_DERIV        "'"
   TOK_DERIV2       "''"
   TOK_DIR          "->"
+  TOK_DOT_DISINHERIT  ".disinherit"
   TOK_DISINHERITS  "disinherits"
   TOK_DIV          "/"
   TOK_DOLLAR       "$"
@@ -303,6 +304,7 @@
   TOK_GROUP        "group"
   TOK_IF           "if"
   TOK_IN           "in"
+  TOK_DOT_INHERIT  ".inherit"
   TOK_INHERITS     "inherits"
   TOK_LBRACKET     "{"
   TOK_LOOP         "loop"
@@ -384,6 +386,8 @@
    "identifier" TAG STRING BINDER OPERATOR OPERATOR_ID OPERATOR_VAR tag;
 
 %token <structure>           STRUCT
+%printer { debug_stream() << *$$.device << '.' << *$$.id; }
+   <structure>
 
 %type <expr>                expr
 %type <val>                 timeexpr
@@ -856,13 +860,25 @@ instruction:
     }
 
   | name "inherits" name {
-
+    warn_deprecated (up, @$, "Sub inherits Super", "Sub.inherit(Super)");
     $$ = new UCommand_INHERIT(@$, $1, $3);
       memcheck(up, $$, $1, $3);
     }
 
-  | name "disinherits" name {
+  | name ".inherit" "(" name ")"
+    {
+      $$ = new UCommand_INHERIT(@$, $1, $4);
+      memcheck(up, $$, $1, $4);
+    }
 
+  | name ".disinherit" "(" name ")"
+    {
+      $$ = new UCommand_INHERIT(@$, $1, $4, true);
+      memcheck(up, $$, $1, $4);
+    }
+
+  | name "disinherits" name {
+    warn_deprecated (up, @$, "Sub disinherits Super", "Sub.disinherit(Super)");
     $$ = new UCommand_INHERIT(@$, $1, $3, true);
       memcheck(up, $$, $1, $3);
     }

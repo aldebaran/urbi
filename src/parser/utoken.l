@@ -171,6 +171,9 @@ NUMBER   {FRACTION}{EXPONENT}?
 #endif
 
   static std::stack<yy::location> synclines;
+
+  // Pacify warning.
+  (void) yy_flex_realloc;
 %}
 
   /*-----------------------------------.
@@ -315,6 +318,8 @@ NUMBER   {FRACTION}{EXPONENT}?
 "copy"{BLANKS}?"("  return token::TOK_COPY_LPAREN;
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
+   /* No comment, please. */
+"."{BLANKS}?"disinherit" return token::TOK_DOT_DISINHERIT;
 "disinherits"   return token::TOK_DISINHERITS;
 "echo"          return token::TOK_ECHO;
 "echo"{BLANKS}?"("  return token::TOK_ECHO_LPAREN;
@@ -331,6 +336,8 @@ NUMBER   {FRACTION}{EXPONENT}?
 "group"         return token::TOK_GROUP;
 "if"            return token::TOK_IF;
 "in"            return token::TOK_IN;
+   /* Really, please, no comment. */
+"."{BLANKS}?"inherit" return token::TOK_DOT_INHERIT;
 "inherits"      return token::TOK_INHERITS;
 
 "loop"          return token::TOK_LOOP;
@@ -406,15 +413,31 @@ NUMBER   {FRACTION}{EXPONENT}?
 {ID}          RETURN_STR_TOKEN (IDENTIFIER);
 
 
-{ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
-		tmp_position[0] = 0;
+{ID}"."{ID}   { char* cp = strchr(yytext,'.');
+		*cp = 0;
+		// Hack: We must not capture the special cases of
+		// inherit and disinherit.
+		if (STREQ(cp + 1, "inherit")
+		    || STREQ(cp + 1, "disinherit"))
+		  {
+		    // Do not alter yytext for sake of the next yylex call.
+		    SET_VALP_STR(yytext);
+		    // We really need to have yytext restored before
+		    // calling yyless.
+		    size_t len = strlen (yytext);
+		    // Restore yytext.
+		    *cp = '.';
+		    // Leave the ".inherit" part in the stream.
+		    yyless(len);
+		    return token::IDENTIFIER;
+		  }
 		valp->structure.device = new UString(yytext);
 		if (valp->structure.device->c_str() == 0)
 		{
 		  delete valp->structure.device;
 		  valp->structure.device = 0;
 		}
-		valp->structure.id = new UString(tmp_position+1);
+		valp->structure.id = new UString(cp+1);
 		if (valp->structure.id->c_str() == 0)
 		{
 		  delete valp->structure.id;

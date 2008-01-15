@@ -1,3 +1,11 @@
+2008-01-15  Akim Demaille  <demaille@gostai.com>
+
+	Deprecate (dis)?inherits.
+	* src/parser/utoken.l, src/parser/ugrammar.y: Here.
+	Using an infamous hack to work around s/r conflicts that the
+	straightforward fix creates.
+	Requires tricky games with yyless.
+
 2008-01-10  Akim Demaille  <demaille@gostai.com>
 
 	Back port a fix.
