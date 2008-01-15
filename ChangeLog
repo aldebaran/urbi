@@ -1,3 +1,9 @@
+2008-01-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Remove a deprecated file.
+	* src/uast.hh: Remove.
+	* src/Makefile.am: Adjust.
+
 2008-01-15  Samuel Tardieu  <tardieu@gostai.com>
 
 	Add documentation following today's discussions.

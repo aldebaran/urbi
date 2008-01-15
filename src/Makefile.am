@@ -45,7 +45,6 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES +=					\
 memorymanager/memorymanager.cc					\
-uast.hh								\
 ubanner.hh ubanner.cc						\
 ucommandqueue.hh ucommandqueue.cc				\
 ucomplaints.cc							\
