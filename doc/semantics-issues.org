@@ -151,7 +151,7 @@ container. This allows this kind of constructs:
 }
 
 It is not allowed to declare with "var" a slot which already exists in
-the current scope.
+the current scope. Objects are lexically scoped.
 
 * Assignment
 
@@ -278,6 +278,17 @@ the block, at the same time as the block itself.
 
 * Events
 
+** Generalities
+
+Event handlers ("at", etc.) are attached to an object. By default,
+they are attached to the scope in which they have been declared, which
+means that they will be interrupted when leaving the scope. It is
+possible (how?) to attach them to a longer-lived object.
+
+Variables in event handlers need to be captured, be they in the expression
+or in the action block. The references are lexically scoped and have no
+relation with the object to which the handler is attached.
+
 ** at
 
 Event handling can be declared with
@@ -310,6 +321,13 @@ references in the condition. This opens up optimization opportunities
 until we have made our mind on an efficient model to refresh the
 condition.
 
+** every
+
+  every (ms)
+    action
+
+executes "action" every "ms" milliseconds.
+
 ** whenever
 
 Repetitive event handling can be declared with
@@ -338,20 +356,20 @@ If the positive-action contains an inner "if" at the top-level, the
 
   wait(ms)
 
-waits for "ms" milliseconds before resuming execution.
+waits for "ms" milliseconds before resuming execution. Potentially blocking.
 
 ** waituntil
 
   waituntil(condition)
 
-will block until condition becomes true.
+will block until condition becomes true. Potentially blocking.
 
 ** timeout
 
   timeout(ms) instruction
 
 will stop "instruction" after "ms" milliseconds if it has not
-finished.
+finished. Potentially blocking.
 
 ** stopif
 
@@ -380,6 +398,27 @@ instruction to resume too or is it immediate?
 * Tags
 
 * Various
+
+** Sheduler
+
+There are two kind of conditions that can wake up Urbi's scheduler:
+
+  - a timeout has expired
+  - an IO is possible (data is available or data can be written)
+
+A sensor implemented through an Uobject for example will ask to be woken
+up after a certain period; it often makes no sense to read inputs as fast
+as possible as sampling may take some time. Also, an effector doesn't
+not need to be modified as fast as possible and will ask to be rescheduled
+when appropriate.
+
+That means that no data can be modified when the scheduler is dead. By
+extension, this is never useful to try to evaluate "at" or similar guards
+at any moment except when the scheduler wakes up or goes to sleep.
+
+Using such a scheme would allow to put the scheduler (and large parts of
+the system) at rest most of the time and should save battery life and
+ease components cooling.
 
 ** nil
 

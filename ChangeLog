@@ -1,3 +1,8 @@
+2008-01-15  Samuel Tardieu  <tardieu@gostai.com>
+
+	Add documentation following today's discussions.
+	* doc/semantics-issues.org: Update documentation.
+
 2008-01-15  Matthieu Nottale  <nottale@gostai.com>
 
 	Factor code.
