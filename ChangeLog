@@ -1,5 +1,10 @@
 2008-01-15  Matthieu Nottale  <nottale@gostai.com>
 
+	Code cleanup.
+	* src/object/object.cc: Better comments and variable name.
+
+2008-01-15  Matthieu Nottale  <nottale@gostai.com>
+
 	Factor object_class_print and echo, remove dubious char* usage.
 	* src/object/object-class.cc: Here.
 

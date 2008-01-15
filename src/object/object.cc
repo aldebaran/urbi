@@ -123,12 +123,14 @@ namespace object
   Object::dump (std::ostream& o) const
   {
     id_dump (o);
+    /// Use xalloc/iword to store our current depth within the stream object.
     static const long idx = o.xalloc();
     static const long depth_max = 3;
-    long& address = o.iword(idx);
-    if (address > depth_max)
+    long& current_depth = o.iword(idx);
+    /// Stop recursion at depth_max.
+    if (current_depth > depth_max)
       return o << " <...>";
-    address++;
+    ++current_depth;
     o << " {" << libport::incendl;
     if (protos_.begin () != protos_.end ())
       {
@@ -146,7 +148,8 @@ namespace object
     BOOST_FOREACH (slot_type s, slots_)
       o << s << libport::iendl;
     o << libport::decindent << '}';
-    o.iword(idx)--;  //can not reuse address variable above according to spec
+    //We can not reuse current_depth variable above according to spec.
+    o.iword(idx)--;  
     return o;
   }
 
