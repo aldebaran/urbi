@@ -148,31 +148,35 @@ void UObject::UJoinGroup(const std::string& )
 {
 }
 
-
-/// Get an rObject from its uvar name
-static rObject uvar_get(const std::string& name)
+typedef std::pair<std::string, std::string> StringPair;
+/// Split a string of the form "a.b" in two
+static  StringPair split_name(const std::string& name)
 {
   int p = name.find_last_of(".");
   std::string oname = name.substr(0, p);
   std::string slot = name.substr(p + 1, name.npos);
-  rObject o = get_base(oname);
-  return o->slot_get(slot);
+  return StringPair(oname, slot);
+}
+/// Get an rObject from its uvar name
+static rObject uvar_get(const std::string& name)
+{
+  StringPair p = split_name(name);
+  rObject o = get_base(p.first);
+  return o->slot_get(p.second);
 }
 
 /// Write an rObject to a slot from its uvar name
 static void uvar_set(const std::string& name, rObject val)
 {
-  int p = name.find_last_of(".");
-  std::string oname = name.substr(0, p);
-  std::string slot = name.substr(p + 1, name.npos);
-  rObject o = get_base(oname);
+  StringPair p = split_name(name);
+  rObject o = get_base(p.first);
   try 
   {
-    o->slot_set(slot,val);
+    o->slot_set(p.second,val);
   }
   catch(object::RedefinitionError)
   {
-    o->slot_update(slot, val);
+    o->slot_update(p.second, val);
   }
 }
 
