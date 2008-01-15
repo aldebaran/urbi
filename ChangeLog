@@ -1,5 +1,10 @@
 2008-01-15  Akim Demaille  <demaille@gostai.com>
 
+	NEWS: inherits is deprecated.
+	* NEWS: here.
+
+2008-01-15  Akim Demaille  <demaille@gostai.com>
+
 	Deprecate (dis)?inherits.
 	* src/parser/utoken.l, src/parser/ugrammar.y: Here.
 	Using an infamous hack to work around s/r conflicts that the

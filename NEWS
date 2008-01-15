@@ -1,5 +1,18 @@
 * New in 1.6
 
+** inherits and disinherits are deprecated
+   Inheritance now uses the regular function calling scheme.
+   Please rather than
+
+   	  sub inherits super
+
+   write
+
+          sub.inherit(super).
+
+   Note "inherit" vs. "inherits".  Likewise for "disinherit" and
+   "disinherit".
+
 ** Connections can be prioritized. Use "setpriority N" to set a connection
    priority. Valid range is [-100, 100]. Default value is 0. 
    A second connection is created on startup with priority 80,
