@@ -560,12 +560,10 @@ UConnection::received_ (const ubyte *buffer, int length)
     server->setSystemCommand (true);
 
     // Warnings handling
-    if (p.hasWarning())
+    while (p.hasWarning())
     {
-      *this << send(p.warning_get().c_str(), "warn ");
-      server->error(::DISPLAY_FORMAT, (long)this,
-		    "UConnection::received",
-		    p.warning_get().c_str());
+      active_command_->message_push(p.warning_get(), "warn ");
+      p.warning_pop();
     }
 
     // Errors handling
@@ -574,10 +572,11 @@ UConnection::received_ (const ubyte *buffer, int length)
       delete p.command_tree_get();
       p.command_tree_set (0);
 
-      *this << send(p.error_get().c_str(), "error");
-      server->error(::DISPLAY_FORMAT, (long) this,
-		    "UConnection::received",
-		    p.error_get().c_str());
+      while (p.hasError())
+      {
+	active_command_->message_push(p.error_get(), "error");
+	p.error_pop();
+      }
     }
     else if (!p.command_tree_get ())
     {

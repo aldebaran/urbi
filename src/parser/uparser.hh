@@ -22,6 +22,7 @@
 #ifndef UPARSER_HH
 # define UPARSER_HH
 
+# include <list>
 # include <set>
 # include <string>
 
@@ -88,21 +89,19 @@ public:
   /// @name Errors and warnings handling
   /// @{
 
-  /// Whether an error occured during parsing.
+  /// Whether one or several errors occured during parsing.
   bool hasError() const;
-  /// Give latest error message.
-  /**
-   *  Precondition: hasError()
-   */
+  /// Give the oldest error message.
   std::string error_get() const;
+  /// Pop the oldest error message.
+  void error_pop ();
 
-  /// Whether a warning occured during parsing.
+  /// Whether one or several warnings occured during parsing.
   bool hasWarning() const;
-  /// Give latest warning message.
-  /**
-   *  Precondition: hasWarning()
-   */
+  /// Give the oldest warning message.
   std::string warning_get() const;
+  /// Pop the oldest warning message.
+  void warning_pop ();
 
   /// @}
 
@@ -111,15 +110,11 @@ private:
   friend int parser_type::parse ();
   friend token_type yylex (semantic_type*, location_type*, UParser&);
 
-  /// Whether an error occured
-  bool hasError_;
-  /// The latest parse error message.
-  std::string error_;
+  /// List of parse error messages.
+  std::list<std::string> errors_;
 
-  /// Whether a warning occured
-  bool hasWarning_;
-  /// The latest warning
-  std::string warning_;
+  /// List of warnings.
+  std::list<std::string> warnings_;
 
   /// Run the parse.  Expects the scanner to be initialized.
   int parse_ ();

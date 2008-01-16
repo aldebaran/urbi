@@ -1,3 +1,16 @@
+2008-01-16  Loic Fosse  <fosse@gostai.com>
+
+	Reorder syntax errors.
+	* src/ast/ast.yml: Add a Message node to carry errors and warnings.
+	Nary can now contain Stmt and Message.
+	* src/ast/cloner.hxx: Remove useless specialization.
+	* src/parser/uparser.cc, src/parser/uparser.hh: Store all warnings
+	and errors, not only the lastest.
+	* src/runner/runner.cc, src/runner/runner.hh: Add management of
+	Message node.
+	* src/uconnection.cc: When errors or warnings are encountered, push
+	them into the Nary instead of printing them directly.
+
 2008-01-16  Matthieu Nottale  <nottale@gostai.com>
 
 	Code cleanup.

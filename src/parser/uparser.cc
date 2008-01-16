@@ -22,10 +22,8 @@ UParser::UParser(UConnection& cn)
   : command_tree_ (0),
     binaryCommand (false),
     connection (cn),
-    hasError_(false),
-    error_ (),
-    hasWarning_(false),
-    warning_ (),
+    errors_ (),
+    warnings_ (),
     scanner_ (),
     loc_()
 {
@@ -38,8 +36,6 @@ UParser::parse_ ()
 {
   command_tree_ = 0;
   binaryCommand = false;
-  hasError_ = false;
-  hasWarning_ = false;
 
   parser_type p(*this);
 #ifdef ENABLE_DEBUG_TRACES
@@ -117,7 +113,7 @@ namespace
 			  const std::string& msg)
   {
     std::ostringstream o;
-    o << "!!! " << l << ": " << msg << '\n' << std::ends;
+    o << "!!! " << l << ": " << msg << std::ends;
     return o.str();
   }
 }
@@ -125,21 +121,19 @@ namespace
 void
 UParser::error (const yy::parser::location_type& l, const std::string& msg)
 {
-  hasError_ = true;
-  error_ = errorFormat(l, msg);
+  errors_.push_back(errorFormat(l, msg));
 }
 
 void
 UParser::warn (const yy::parser::location_type& l, const std::string& msg)
 {
-  hasWarning_ = true;
-  warning_ = errorFormat(l, msg);
+  warnings_.push_back(errorFormat(l, msg));
 }
 
 bool
 UParser::hasError () const
 {
-  return hasError_;
+  return !errors_.empty();
 }
 
 std::string
@@ -147,14 +141,13 @@ UParser::error_get () const
 {
   // precondition
   assert(hasError());
-
-  return error_;
+  return errors_.front();
 }
 
 bool
 UParser::hasWarning () const
 {
-  return hasWarning_;
+  return !warnings_.empty();
 }
 
 std::string
@@ -162,5 +155,17 @@ UParser::warning_get () const
 {
   // precondition
   assert(hasWarning());
-  return warning_;
+  return warnings_.front();
+}
+
+void
+UParser::warning_pop ()
+{
+  warnings_.pop_front();
+}
+
+void
+UParser::error_pop ()
+{
+  errors_.pop_front();
 }

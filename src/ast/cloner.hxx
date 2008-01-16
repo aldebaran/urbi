@@ -73,24 +73,6 @@ namespace ast
     return new symbols_type (c);
   }
 
-  template <>
-  inline
-  exec_exps_type*
-  Cloner::recurse_collection<exec_exps_type> (const exec_exps_type& c)
-  {
-    exec_exps_type* res = new exec_exps_type;
-
-    BOOST_FOREACH (const Stmt* e, c)
-    {
-      e->accept (*this);
-      Stmt* s = dynamic_cast<Stmt*> (result_);
-      assert (s);
-      res->push_back (s);
-    }
-
-    return res;
-  }
-
 } // namespace ast
 
 #endif // !AST_CLONER_HXX

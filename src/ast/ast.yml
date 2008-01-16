@@ -273,6 +273,22 @@ Flavorable:
   attributes:
     - flavor: { type: flavor_type, desc: Execution model }
 
+Message:
+  super:
+    - Exp
+  desc: /// Display a message when visited.
+  attributes:
+    - text:
+        type: 'std::string'
+        desc: The message to display when visited
+    - tag:
+        type: 'std::string'
+        desc: The tag for the message.
+  printer:
+    - $tag
+    - '" "'
+    - $text
+
 Stmt:
   super:
     - Exp
@@ -292,7 +308,7 @@ Stmt:
 
 Nary:
   super: Exp
-  desc: /// A list of \c Stmts.
+  desc: /// A list of \c Exp, mainly Stmt and Message.
   attributes:
     - children:
         type: 'exec_exps_type'
@@ -310,7 +326,7 @@ Nary:
         namespace ast
         {
           // A list of Stmts.
-          typedef std::list<Stmt*> exec_exps_type;
+          typedef std::list<Exp*> exec_exps_type;
 
           /// Report \a e on \a o.
           std::ostream& operator<<(std::ostream& o, const exec_exps_type& e);
@@ -327,11 +343,14 @@ Nary:
           /// Are there any children?
           bool empty() const;
 
-          /// Push a new expression.
+          /// Push a new expression, creating a Statement node.
           void push_back(ast::Exp* e);
 
+          /// Push a message.
+          void message_push(const std::string& text, const std::string& tag);
+
           /// Return the last child.
-          Stmt& back ();
+          Exp& back ();
 
           /// Sets the flavor of the last child.
           void back_flavor_set (flavor_type k, const loc& l);
@@ -385,7 +404,13 @@ Nary:
             location_ = e->location_get();
         }
 
-        Stmt&
+        void
+        Nary::message_push(const std::string& text, const std::string& tag)
+        {
+          children_.push_back(new Message(ast::loc(), text, tag));
+        }
+
+        Exp&
         Nary::back ()
         {
           return *children_.back();
@@ -396,9 +421,12 @@ Nary:
         {
            if (!children_.empty ())
            {
-             children_.back ()->flavor_get () = k;
-             children_.back ()->location_set(children_.back ()->location_get ()
-                                             + l);
+             Stmt* back = dynamic_cast<Stmt*>(children_.back());
+             if (back)
+             {
+               back->flavor_get () = k;
+               back->location_set(children_.back ()->location_get () + l);
+             }
            }
 
           // FIXME: Is there any better way to check if location_ is not set ?
@@ -412,7 +440,11 @@ Nary:
         Nary::back_flavor_set (flavor_type k)
         {
            if (!children_.empty ())
-             children_.back ()->flavor_get () = k;
+           {
+             Stmt* back = dynamic_cast<Stmt*>(children_.back());
+             if (back)
+               back->flavor_get () = k;
+           }
         }
       
         void

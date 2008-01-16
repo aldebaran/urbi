@@ -51,7 +51,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((15,
+    VISITOR_VISIT_NODES((16,
 			 (
 			  And,
 			  Call,
@@ -59,6 +59,7 @@ namespace runner
 			  Function,
 			  If,
 			  List,
+			  Message,
 			  Nary,
 			  Noop,
 			  Pipe,
@@ -80,6 +81,7 @@ namespace runner
 
   private:
     void raise_error_ (const object::UrbiException& ue);
+    void send_message_ (const std::string& text, const std::string& tag);
 
   private:
     /// The URBI Lobby used to evaluate.

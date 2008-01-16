@@ -68,14 +68,18 @@ namespace runner
   void
   Runner::raise_error_ (const object::UrbiException& ue)
   {
-    UConnection& c = lobby_.cast<object::Lobby>()->value_get().connection;
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
-    c << UConnection::send (o.str ().c_str (), "error")
-      << UConnection::endl;
+    send_message_ (o.str (), "error");
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();
+  }
+
+  void Runner::send_message_ (const std::string& text, const std::string& tag)
+  {
+    UConnection& c = lobby_.cast<object::Lobby>()->value_get().connection;
+    c << UConnection::send (text.c_str(), tag.c_str()) << UConnection::endl;
   }
 
   void
@@ -595,6 +599,14 @@ namespace runner
     CORO_WITHOUT_CTX ();
     JECHO ("expression", e.expression_get ());
     CORO_CALL (operator() (e.expression_get()));
+    CORO_END;
+  }
+
+  void
+  Runner::operator() (ast::Message& e)
+  {
+    CORO_WITHOUT_CTX ();
+    send_message_(e.text_get(), e.tag_get());
     CORO_END;
   }
 
