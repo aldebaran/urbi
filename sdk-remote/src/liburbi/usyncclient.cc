@@ -87,7 +87,7 @@ namespace urbi
   void USyncClient::notifyCallbacks(const UMessage &msg)
   {
     queueLock_.lock();
-    if (syncTag == msg.tag)
+    if (!syncTag.empty() && syncTag == msg.tag)
     {
       this->msg = new UMessage(msg);
       syncLock_++;
