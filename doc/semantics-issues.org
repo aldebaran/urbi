@@ -433,3 +433,69 @@ to lock up the nil object.
 
 One thing to discuss is whether nil should evaluate to true or false (I think
 it should be true, and only a real "false" singleton should evaluate to false).
+
+* Closures
+
+We need some things:
+
+  x.apply (ctx, arglist) => execute x code in scope ctx with args arglist
+  a.b (arg1, arg2, ...)  => execute a.b.apply (A, [arg1, arg2, ...])
+  a.b  (without parens)  => execute a.b.apply (A, [])
+
+The third line for example can be implemented by reimplementing "getSlot"
+(in C++) as something like
+
+  var Object.getSlot = function (s) {
+    var raw = findSlot (s);               <== find slot but do not execute
+    var scope = Scope.clone;
+    scope.self = self;
+    scope.addProto (self);
+    raw.apply (scope, [])
+  };
+
+By default, only Function objects implement a meaningful apply (in C++)
+which do the binding between local names and the given argument lists.
+
+Other objects are self evaluating, and contain the equivalent of:
+
+  var Object.apply = function(ctx, arglist) { check_size_0 (arglist); self };
+                                              ^
+                                              |
+                                              +-- if we want it, and we do
+
+This way, you can override the "()" operator by overriding "apply".
+
+To create a closure-like object with the lambda f, we can generate the
+following code:
+
+  var f = function() { ... };
+  var clos = Closure.clone ();
+  { clos.ctx = protos.front };             <== get current scope
+  clos.code = getSlot("f");                <== prevent evaluation
+  clos;
+
+With minimal changes, "apply" on the Closure object is implemented as
+
+  Closure.apply = function (arglist) {
+    getSlot("code").apply (ctx.clone, arglist);
+  };
+
+The code stored in clos.code will get executed in a new scope whose sole proto
+is the saved context (the closure). It is important to create a new scope to
+store new temporaries and not pollute the captured scope, which may be shared.
+
+Let's note the expansion of such a closure as <<< ... >>> (the content of
+the lambda that will be executed with a dynamic context being the current
+lexical one).
+
+With those closures,
+
+  at (condition) { action }
+
+could be desugared into
+
+  makeAt (<<< condition >>>, <<< action >>>)
+
+To attach this "at" construct to another object o, one could do
+
+  o.makeAt (<<< condition >>>, <<< action >>>)
