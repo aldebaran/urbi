@@ -1,3 +1,8 @@
+2008-01-16  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix dump.
+	* src/object/object-class.cc: Do not initialize a std::string with 0.
+
 2008-01-16  Samuel Tardieu  <tardieu@gostai.com>
 
 	Notes on closures and at expansion.

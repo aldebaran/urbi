@@ -41,7 +41,7 @@ namespace object
   object_class_dump (rLobby c, objects_type args)
   {
     // Second argument is the tag name.
-    std::string tag = 0;
+    std::string tag;
     if (args.size() == 2)
     {
       FETCH_ARG(1, String);
