@@ -1,5 +1,10 @@
 2008-01-16  Matthieu Nottale  <nottale@gostai.com>
 
+	Workaround for kernel "every(1)emit;" bug.
+	* src/liburbi/uobject.cc: Here.
+
+2008-01-16  Matthieu Nottale  <nottale@gostai.com>
+
 	Fig critical bug in USyncClient.
 	* src/liburbi/usyncclient.cc: Don't go into synchronous callback
 	  handling if tag is empty.

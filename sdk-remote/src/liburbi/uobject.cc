@@ -183,7 +183,7 @@ namespace urbi
     os.str ("");
     os.clear ();
     os << tagName << ": every(" << period << ") "
-      "{ emit " << cbName << ";};";
+      "{ emit " << cbName << ";},";
     URBI(()) << os.str ();
 
     return;
