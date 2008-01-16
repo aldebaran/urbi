@@ -84,7 +84,6 @@ XFAIL_TESTS +=					\
 1.x/size.chk					\
 1.x/speed-zero.chk				\
 1.x/stopif.chk					\
-1.x/string-escapes.chk				\
 1.x/switch.chk					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\

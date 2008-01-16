@@ -1,3 +1,8 @@
+2008-01-16  Loic Fosse  <fosse@gostai.com>
+
+	Test 1.x/string-escapes.chk does not fail anymore.
+	* tests-local.mk: Remove 1.x/string-escapes.chk from XFAIL.
+
 2008-01-16  Matthieu Nottale  <nottale@gostai.com>
 
 	uobject_initialize.
