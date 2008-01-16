@@ -1,3 +1,11 @@
+2008-01-16  Matthieu Nottale  <nottale@gostai.com>
+
+	Code cleanup.
+	* src/uobject.cc,
+	* src/uobject.hh,
+	* src/uvalue-cast.cc,
+	* src/uvalue-cast.hh: Restyle.
+
 2008-01-15  Matthieu Nottale  <nottale@gostai.com>
 
 	Code cleanup.

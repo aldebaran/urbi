@@ -8,7 +8,7 @@
 
 urbi::UValue uvalue_cast(object::rObject o)
 {
-  urbi::UValue v;
+  urbi::UValue res;
   switch(o->kind_get())
   {
   case object::Object::kind_delegate:
@@ -22,7 +22,7 @@ urbi::UValue uvalue_cast(object::rObject o)
     
 #define HANDLE_TYPE(k, t) \
   case object::Object::k:  \
-    v = o.cast<object::t>()->value_get(); \
+    res = o.cast<object::t>()->value_get(); \
     break;
   HANDLE_TYPE(kind_float, Float);
   HANDLE_TYPE(kind_integer, Integer);
@@ -30,40 +30,36 @@ urbi::UValue uvalue_cast(object::rObject o)
 #undef HANDLE_TYPE    
   case object::Object::kind_list:
     {
-      v.type = urbi::DATA_LIST;
+      res.type = urbi::DATA_LIST;
       std::list<object::rObject>& t = o.cast<object::List>()->value_get();
       BOOST_FOREACH(object::rObject co, t)
-      {
-	v.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
-      }
+        res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
     }
     break;  
   }
-  return v;
+  return res;
 }
 
 object::rObject object_cast(const urbi::UValue& v)
 {
-  object::rObject r;
+  object::rObject res;
   switch(v.type)
   {
   case urbi::DATA_DOUBLE:
-      r = new object::Float(v.val);
+      return new object::Float(v.val);
       break;
     case urbi::DATA_STRING:
-      r = new object::String(*v.stringValue);
+      return new object::String(*v.stringValue);
       break;
     case urbi::DATA_LIST:
-      r = new object::List(object::list_traits::type());
+      res = new object::List(object::list_traits::type());
       BOOST_FOREACH(urbi::UValue *cv, v.list->array)
-      {
-	r.cast<object::List>()->value_get().push_back(object_cast(*cv));
-      }
+        res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
     default:
       throw object::WrongArgumentType(object::Object::kind_float, 
 			      object::Object::kind_float, "cast");
       break;
   }
-  return r;
+  return res;
 }

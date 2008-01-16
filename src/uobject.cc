@@ -54,41 +54,45 @@ uobject_clone(object::rLobby, object::objects_type l)
   return uobject_new(proto);
 }
 
-rObject uobject_make_proto(std::string& name)
+rObject uobject_make_proto(const std::string& name)
 {
   rObject oc = object::clone(object::object_class);
   oc->slot_set("__uobject_cname", new object::String(name));
-  oc->slot_set("__uobject_base", 
-	       oc);
+  oc->slot_set("__uobject_base", oc);
   oc->slot_set("clone", new object::Primitive(&uobject_clone));
   return oc;
 }
 
+/*! Instanciate a new prototype inheriting from a UObject.
+ A new instance of UObject is created
+ \param proto proto object, created by uobject_make_proto() or uobject_new()
+ \param forceName force the reported C++ name to be the class name
+*/
 rObject uobject_new(rObject proto, bool forceName)
 {
   rObject r = object::clone(object::object_class);
   
-  //proto to proto base
+  // Reparent r to proto base.
   r->proto_remove(object::object_class);
   r->proto_add(proto->slot_get("__uobject_base")); 
   
-  //get proto name
+  // Get UObject name.
   rObject rcName = proto->slot_get("__uobject_cname");
   const std::string& cname = rcName.cast<object::String>()->value_get();
   
-  //get the name we will pass to uobject
+  // Get the name we will pass to uobject.
   std::string name;
   if (forceName)
     name = cname;
   else
   {
-    //boost::lexical_cast does not work on the way back, so dont use it here
+    // boost::lexical_cast does not work on the way back, so dont use it here
     std::stringstream ss;
     ss << r.get();
     name = ss.str();
   }
   uobject_map[name] = r;
-  //instanciate UObject
+  // Instanciate UObject.
   BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
   {
     if (i->name == cname)
@@ -149,6 +153,7 @@ void UObject::UJoinGroup(const std::string& )
 }
 
 typedef std::pair<std::string, std::string> StringPair;
+
 /// Split a string of the form "a.b" in two
 static  StringPair split_name(const std::string& name)
 {
