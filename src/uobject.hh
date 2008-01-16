@@ -8,4 +8,7 @@ object::rObject uobject_make_proto(const std::string& name);
 
 //! Instanciate a new prototype inheriting from a UObject.
 object::rObject uobject_new(object::rObject proto, bool forceName=false);
+
+//! Initialize plugin UObjects.
+void uobject_initialize(object::rObject where);
 #endif

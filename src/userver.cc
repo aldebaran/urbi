@@ -151,18 +151,11 @@ UServer::initialize()
 
   load_init_file("urbi.u");
   
-  //pluged uobjects
-  //create uobject
+  // Handle pluged UOBjects.
+  // Create "uobject" in lobby where UObjects will be put.
   object::rObject uobject = object::clone(object::object_class);
   ghost_->lobby_->slot_set("uobject", uobject);
-  BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
-  {
-    //make our prototype
-    object::rObject proto =  uobject_make_proto(i->name);
-    uobject->slot_set(i->name+"_class", proto);
-    //make our first instance
-    uobject->slot_set(i->name, uobject_new(proto, true));
-  }
+  uobject_initialize(uobject);
   load_init_file("URBI.INI");
 }
 

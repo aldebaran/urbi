@@ -1,3 +1,10 @@
+2008-01-16  Matthieu Nottale  <nottale@gostai.com>
+
+	uobject_initialize.
+	* src/uobject.cc: Implement it.
+	* src/uobject.hh: Declare it.
+	* src/userver.cc: Use it.
+
 2008-01-16  Loic Fosse  <fosse@gostai.com>
 
 	Reorder syntax errors.

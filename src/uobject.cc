@@ -11,7 +11,24 @@
 #include "uobject.hh"
 
 using object::rObject;
+
+/*! Initialize plugin UObjects.
+ \param where object in which the instances will be stored.
+*/
+void uobject_initialize(object::rObject where)
+{
+   BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+  {
+    //make our prototype
+    object::rObject proto =  uobject_make_proto(i->name);
+    where->slot_set(i->name+"_class", proto);
+    //make our first instance
+    where->slot_set(i->name, uobject_new(proto, true));
+  }
+}
+
 static libport::hash_map<std::string, rObject> uobject_map;
+
 
 class UWrapCallback: public object::IDelegate
 {
