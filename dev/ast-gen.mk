@@ -45,6 +45,8 @@ $(ast_srcdir)/ignores.stamp: $(gen_dir)/ast-ignores-gen $(ast_gen_deps)
 	$(gen_dir)/ast-ignores-gen $(ast_srcdir) < $(ast_srcdir)/ast.yml
 	if test -d $(ast_srcdir)/.svn; then \
           svn propset svn:ignore $(ast_srcdir) -F $(ast_srcdir)/ignores; \
+	elif test -f $(ast_srcdir)/.gitignore; then \
+	  cp $(ast_srcdir)/ignores $(ast_srcdir)/.gitignore; \
         fi
 	@mv -f $@.tmp $@
 $(ast_basedir)ignores: $(ast_srcdir)/ignores.stamp
