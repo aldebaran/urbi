@@ -5,7 +5,7 @@
 ## Sources and headers.  ##
 ## --------------------- ##
 
-uobject_srcdir = $(srcdir)/uobject
+#uobject_srcdir = $(srcdir)/uobject
 ucallbacks_hh = $(uobject_srcdir)/urbi/ucallbacks.hh
 
 nodist_uobject_headers =			\
