@@ -232,12 +232,6 @@ FLAVOR   [;|,&]?
   | The rules.  |
   `------------*/
 
-"inf"         RETURN_FVAL(FLOAT, UINFINITY);
-"pi"          RETURN_FVAL(FLOAT, 3.14159265358979323846264338327950288);
-"off"         RETURN_FVAL(FLOAT, 0);
-"switch"      RETURN_FVAL(FLOAT, -1);
-"on"          RETURN_FVAL(FLOAT, 1);
-
   /*  FIXME: This is really sick. */
 "+report"     RETURN_IVAL(FLAG, 1);
 "+error"      RETURN_IVAL(FLAG, 2);

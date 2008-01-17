@@ -11,8 +11,22 @@ var Object.slotCopy = function (frm, to) {
 Object.slotCopy ("addProto", "inherit");
 Object.slotCopy ("removeProto", "disinherit");
 
-var Object.true = 1.0;
-var Object.false = 0.0;
+
+## --------- ##
+## Constants ##
+## --------- ##
+
+class Lobby.Constants
+{
+  var true   = 1.0;
+  var false  = 0.0;
+
+  # FIXME: use real float infinity, or a special token, but not that
+  var inf    = 999999999999999.0;
+
+  var pi     = 3.14159265358979323846264338327950288;
+};
+Lobby.addProto (Constants);
 
 
 ## --------- ##
