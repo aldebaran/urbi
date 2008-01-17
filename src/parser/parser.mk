@@ -7,10 +7,10 @@ parser/uparser.hh parser/uparser.cc
 ## -------------- ##
 
 # A Bison wrapper for C++.
-BISONXX = $(top_builddir)/build-aux/bison++
-BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
+BISONXX = $(top_builddir)/libport/build-aux/bison++
+BISONXX_IN = $(top_srcdir)/libport/build-aux/bison++.in
 $(BISONXX): $(BISONXX_IN)
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/bison++
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) libport/build-aux/bison++
 
 parser_dir = $(top_srcdir)/src/parser
 

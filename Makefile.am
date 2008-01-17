@@ -8,16 +8,17 @@
 #
 ################################################################################
 
-include $(top_srcdir)/build-aux/build-aux.mk
+include $(top_srcdir)/libport/build-aux/build-aux.mk
 
-ACLOCAL_AMFLAGS = -I build-aux -I sdk
+ACLOCAL_AMFLAGS = -I libport/build-aux -I libport/sdk
 
-SUBDIRS = libport src sdk tests . doc
+SUBDIRS = libport/include libport/lib src libport/sdk tests . doc
 
 # build-aux.
-EXTRA_DIST +=					\
-build-aux/bison++.in				\
-build-aux/move-if-change
+EXTRA_DIST +=						\
+libport/build-aux/bison++.in				\
+libport/build-aux/move-if-change			\
+libport/build-aux/output-to-dot
 
 # windows.
 EXTRA_DIST +=					\
@@ -25,10 +26,6 @@ windows/urbikernel/Debug			\
 windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj
-
-dist-hook:
-	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
-
 
 ## -------------------------- ##
 ## Installed kernel headers.  ##
