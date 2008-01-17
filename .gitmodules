@@ -1,3 +1,6 @@
 [submodule "libport"]
 	path = libport
 	url = git@core.gostai.com:libport.git
+[submodule "tests"]
+	path = tests
+	url = git@core.gostai.com:urbivalid.git
