@@ -8,7 +8,7 @@ URBI_KERNEL_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2007])
 
 # Libtoolize needs to see this invocation...
-AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_AUX_DIR([libport/build-aux])
 URBI_BUILD_AUX
 
 # Automake.
@@ -27,7 +27,7 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
+AC_CONFIG_FILES([libport/build-aux/bison++], [chmod +x libport/build-aux/bison++])
 TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
@@ -50,6 +50,7 @@ AC_PROG_LIBTOOL
 ## -------- ##
 URBI_OPENR
 URBI_LIBPORT
+AC_CONFIG_FILES([libport/include/Makefile])
 dnl URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 BOOST_TOKENIZER
 

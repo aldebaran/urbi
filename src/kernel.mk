@@ -1,6 +1,6 @@
-include $(top_srcdir)/build-aux/init.mk
+include $(top_srcdir)/libport/build-aux/init.mk
 # Get $(libport_la).
-include $(top_srcdir)/libport/libport-sources.mk
+include $(top_srcdir)/libport/lib/libport-sources.mk
 
 # Find the kernel public headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include
@@ -9,10 +9,11 @@ AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_builddir)/src
 
 # Find the uobject headers
-AM_CPPFLAGS += -I$(top_srcdir)/src/uobject
+AM_CPPFLAGS += -I$(top_srcdir)/urbi-sdk/src/liburbi/uobject
 
 # Find libport headers.
-AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
+AM_CPPFLAGS += $(LIBPORT_CPPFLAGS) \
+	       -I$(top_srcdir)/libport -I$(top_builddir)/libport
 
 # Find uobject headers.
 AM_CPPFLAGS += -I$(srcdir)/uobject

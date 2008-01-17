@@ -65,7 +65,7 @@ uvalue-cast.hh
 ## ------------ ##
 
 REVISION_FILE = version.hh
-include $(top_srcdir)/build-aux/revision.mk
+include $(top_srcdir)/libport/build-aux/revision.mk
 
 
 
@@ -73,8 +73,9 @@ include $(top_srcdir)/build-aux/revision.mk
 ## uobject/.  ##
 ## ---------- ##
 
-include $(top_srcdir)/build-aux/svn-externals.mk
-include uobject/uobject.mk
+include $(top_srcdir)/libport/build-aux/svn-externals.mk
+uobject_srcdir = $(top_srcdir)/urbi-sdk/src/liburbi/uobject
+include ../urbi-sdk/src/liburbi/uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
@@ -100,14 +101,14 @@ noinst_PROGRAMS = urbi-console
 urbi_console_SOURCES = urbi-console.cc
 urbi_console_LDADD = libkernel.la
 
-dist_libkernel_la_SOURCES +=			\
-console-server.cc				\
-network/bsdnet/connection.hh			\
-network/bsdnet/connection.cc			\
-network/bsdnet/network.hh			\
-network/bsdnet/network.cc
+dist_libkernel_la_SOURCES +=				\
+console-server.cc					\
+$(top_srcdir)/libport/network/bsdnet/connection.hh	\
+$(top_srcdir)/libport/network/bsdnet/connection.cc	\
+$(top_srcdir)/libport/network/bsdnet/network.hh		\
+$(top_srcdir)/libport/network/bsdnet/network.cc
 
-libkernel_la_LIBADD = $(top_builddir)/libport/libport.la
+libkernel_la_LIBADD = $(top_builddir)/libport/lib/libport.la
 
 # FIXME: We might need these guys somewhere: $(PTHREAD_LIBS).  In
 # libkernel, or urbi_console_LDADD?
