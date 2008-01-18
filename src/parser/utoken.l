@@ -31,6 +31,7 @@
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
@@ -47,6 +48,22 @@ lexical_cast (UParser& up, const yy::location& loc, In t)
     return boost::lexical_cast<Out>(t);
   }
   catch (boost::bad_lexical_cast)
+  {
+    up.error(loc,
+	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+    return 0;
+  }
+}
+
+template <typename Out, typename In>
+Out
+numeric_cast (UParser& up, const yy::location& loc, In t)
+{
+  try
+  {
+    return boost::numeric_cast<Out>(t);
+  }
+  catch (boost::bad_numeric_cast)
   {
     up.error(loc,
 	     (boost::format ("invalid numerical litteral: %1%") % t).str());
@@ -145,11 +162,11 @@ EOL      \n|\r|\n\r|\r\n
 ID       [a-zA-Z_][_A-Za-z0-9]*
 
 NATURAL  [0-9]+
-FRACTION (\.{NATURAL})|({NATURAL}(\.[0-9]*)?)
-EXPONENT [eE][-+]?[0-9]+
-FLOAT    {FRACTION}{EXPONENT}?
+EXPONENT [eE][-+]?{NATURAL}
+FLOAT    {NATURAL}\.{NATURAL}{EXPONENT}?
+ENATURAL {NATURAL}{EXPONENT}
 
-NUMBER   {NATURAL}|{FLOAT}
+NUMBER   {NATURAL}|{ENATURAL}|{FLOAT}
 
 FLAVOR   [;|,&]?
 
@@ -250,6 +267,13 @@ FLAVOR   [;|,&]?
 
 {NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (up, *locp, yytext));
 {FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(up, *locp, yytext));
+{ENATURAL}    {
+                float res = lexical_cast<float>(up, *locp, yytext);
+		if (res < 1)
+		  RETURN_FVAL(FLOAT, res);
+		else
+		  RETURN_IVAL(INTEGER, numeric_cast<int>(up, *locp, res));
+              }
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 

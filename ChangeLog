@@ -1,3 +1,9 @@
+2008-01-18  Loic Fosse  <fosse@gostai.com>
+
+	Change parsing of numbers.
+	* src/parser/utoken.l: Floats can no longer be written without the
+	integer or the decimal part.
+
 2008-01-18  Akim Demaille  <demaille@gostai.com>
 
 	Adjust to urbi-sdk-remote.
