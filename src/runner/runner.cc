@@ -158,112 +158,36 @@ namespace runner
     CORO_END;
   }
 
-
-  void
-  Runner::operator() (ast::Call& e)
+  object::rObject
+  Runner::apply (rObject scope, const rObject& func,
+		 const object::objects_type& args)
   {
     CORO_CTX_VARS
-      ((11, (
-	  // Whether or not we must issue a real URBI function call
-	  (bool, call_code),
-	  // Whether or not something went wrong
-	  (bool, has_error),
-	  (rObject, val),
-	  // Iteration over un-evaluated effective arguments.
-	  (ast::exps_type::const_iterator, i),
-	  (ast::exps_type::const_iterator, i_end),
-	  // Gather the arguments, including the target.
-	  (object::objects_type, args),
-	  (rObject, tgt),
-	  // Formal argument iterator.
-	  (ast::symbols_type::const_iterator, fi),
-	  // Effective (evaluated) argument iterator.
-	  (object::objects_type::const_iterator, ei),
-	  // Object to bind the arguments.
-	  (rObject, bound_args),
-	  // The called function.
-	  (ast::Function*, fn)
-	  )));
+      ((5, (
+	    // Whether or not we must issue a real URBI function call
+	    (bool, call_code),
+	    // Object to bind the arguments.
+	    (rObject, bound_args),
+	    // The called function.
+	    (ast::Function*, fn),
+	    // Effective (evaluated) argument iterator.
+	    (object::objects_type::const_iterator, ei),
+	    // Formal argument iterator.
+	    (ast::symbols_type::const_iterator, fi)
+	    )));
 
-    /*-------------------------.
-    | Evaluate the arguments.  |
-    `-------------------------*/
-    PING ();
-
-    // Iterate over arguments, with a special case for the target.
-    i = e.args_get ().begin ();
-    i_end = e.args_get ().end ();
-
-    CORO_CALL (tgt = target(*i));
-    // No target?  Abort the call.  This can happen (for instance) when you
-    // do a.b () and a does not exist (lookup error).
-    if (!tgt)
-      CORO_RETURN;
-
-    args.push_back (tgt);
-    PING ();
-    for (++i; i != i_end; ++i)
-    {
-      CORO_CALL (eval (**i));
-      passert ("argument without a value: " << **i, current_);
-      PING ();
-      if (current_ == object::void_class)
-      {
-	object::WrongArgumentType wat(__PRETTY_FUNCTION__);
-	wat.location_set((*i)->location_get());
-	throw wat;
-      }
-      args.push_back (current_);
-    }
-
-    /*---------------------.
-    | Decode the message.  |
-    `---------------------*/
-    // We may have to run a primitive, or some code.
-    // We cannot use CORO_* in a switch.
     call_code = false;
-    has_error = false;
-    try {
-      // Ask the target for the handler of the message.
-      val = tgt->slot_get (e.name_get ());
-    }
-    catch (object::UrbiException& ue)
-    {
-      ue.location_set (e.location_get ());
-      raise_error_ (ue);
-      current_.reset ();
-      has_error = true;
-    }
-    if (has_error)
-      CORO_RETURN;
-    // FIXME: Do we need to issue an error message here?
-    if (!val)
-      CORO_RETURN;
 
-    switch (val->kind_get ())
+    switch (func->kind_get ())
     {
       case object::Object::kind_primitive:
 	PING ();
-	try {
-	  current_ = val.cast<object::Primitive>()->value_get()(lobby_, args);
-	}
-	catch (object::UrbiException& ue)
-	{
-	  ue.location_set (e.location_get ());
-	  throw;
-	}
+	current_ = func.cast<object::Primitive>()->value_get()(lobby_, args);
 	break;
       case object::Object::kind_delegate:
 	PING();
-	try {
-	  current_ = val.cast<object::Delegate>()->value_get()
-	    ->operator()(lobby_, args);
-	}
-	catch (object::UrbiException& ue)
-	{
-	  ue.location_set (e.location_get ());
-	  throw;
-	}
+	current_ = func.cast<object::Delegate>()->value_get()
+	  ->operator()(lobby_, args);
 	break;
       case object::Object::kind_code:
 	PING ();
@@ -271,7 +195,7 @@ namespace runner
 	break;
       default:
 	PING ();
-	current_ = val;
+	current_ = func;
 	break;
     }
 
@@ -282,22 +206,18 @@ namespace runner
     {
       PING ();
       // Create a new object to store the arguments.
-      bound_args = new object::Object;
+      if (scope)
+	bound_args = scope;
+      else
+	bound_args = new object::Object;
       bound_args->locals_set(true);
 
       // Fetch the called function.
-      fn = &val.cast<object::Code> ()->value_get ();
+      fn = &func.cast<object::Code> ()->value_get ();
 
       // Check the arity.
-      try {
-	object::check_arg_count (fn->formals_get().size(), args.size() - 1,
-				 __PRETTY_FUNCTION__);
-      }
-      catch (object::UrbiException& ue)
-      {
-	ue.location_set (e.location_get ());
-	throw;
-      }
+      object::check_arg_count (fn->formals_get().size(), args.size() - 1,
+			       __PRETTY_FUNCTION__);
 
       // Bind formal and effective arguments.
       // The target is "self".
@@ -330,6 +250,80 @@ namespace runner
 	});
       std::swap(bound_args, locals_);
     }
+
+    CORO_END_VALUE (current_);
+  }
+
+  void
+  Runner::operator() (ast::Call& e)
+  {
+    CORO_CTX_VARS
+      ((6, (
+	  // Whether or not something went wrong
+	  (bool, has_error),
+	  (rObject, val),
+	  // Iteration over un-evaluated effective arguments.
+	  (ast::exps_type::const_iterator, i),
+	  (ast::exps_type::const_iterator, i_end),
+	  // Gather the arguments, including the target.
+	  (object::objects_type, args),
+	  (rObject, tgt)
+	  )));
+
+    /*-------------------------.
+    | Evaluate the arguments.  |
+    `-------------------------*/
+    PING ();
+
+    // Iterate over arguments, with a special case for the target.
+    i = e.args_get ().begin ();
+    i_end = e.args_get ().end ();
+
+    CORO_CALL (tgt = target(*i));
+    // No target?  Abort the call.  This can happen (for instance) when you
+    // do a.b () and a does not exist (lookup error).
+    if (!tgt)
+      CORO_RETURN;
+
+    args.push_back (tgt);
+    PING ();
+    for (++i; i != i_end; ++i)
+    {
+      CORO_CALL (eval (**i));
+      passert ("argument without a value: " << **i, current_);
+      PING ();
+      args.push_back (current_);
+    }
+
+    /*---------------------.
+    | Decode the message.  |
+    `---------------------*/
+    // We may have to run a primitive, or some code.
+    // We cannot use CORO_* in a switch.
+    has_error = false;
+    try {
+      // Ask the target for the handler of the message.
+      val = tgt->slot_get (e.name_get ());
+    }
+    catch (object::UrbiException& ue)
+    {
+      ue.location_set (e.location_get ());
+      raise_error_ (ue);
+      current_.reset ();
+      has_error = true;
+    }
+    if (has_error)
+      CORO_RETURN;
+    // FIXME: Do we need to issue an error message here?
+    if (!val)
+      CORO_RETURN;
+
+    CORO_CALL_CATCH (apply (0, val, args);,
+      catch (object::UrbiException& ue)
+      {
+	ue.location_set (e.location_get ());
+	throw;
+      });
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).

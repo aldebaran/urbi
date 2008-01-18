@@ -45,6 +45,13 @@ namespace runner
     const rLobby& lobby_get () const;
     /// \}
 
+    /// Execute the code of function \a func with arguments \a args in the
+    /// local runner after installing \a scope as the current context. If
+    /// \a scope is 0, a new scope will be created as needed to bind
+    /// the function formals in the case of a function written in Urbi.
+    rObject apply (rObject scope, const rObject& func,
+		   const object::objects_type& args);
+
   protected:
     /// \name Evaluation.
     /// \{
