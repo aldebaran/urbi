@@ -5,7 +5,7 @@ namespace object {
 class IDelegate
 {
   public:
-  virtual object::rObject operator() (object::rLobby, object::objects_type) = 0;
+  virtual rObject operator() (rLobby, objects_type) = 0;
   virtual ~IDelegate() {}
 };
 }
