@@ -1,5 +1,10 @@
 2008-01-19  Matthieu Nottale  <nottale@gostai.com>
 
+	Return void_class for dump, echo, print.
+	* src/object/object-class.cc: Here.
+
+2008-01-19  Matthieu Nottale  <nottale@gostai.com>
+
 	Handle stdin EOF in interactive mode.
 	* libport: submodule up.
 	* src/console-server.cc: Catch read_stdin exception, stop trying to

@@ -57,7 +57,7 @@ namespace object
     BOOST_FOREACH(std::string line, tok)
       c->value_get().connection  << UConnection::send (
 	(system_header+line+"\n").c_str(), tag.c_str());
-    return args[0];
+    return void_class;
   }
   
   static rObject
@@ -71,7 +71,7 @@ namespace object
       tag = arg2->value_get().name_get();
     }
     c->value_get().connection.send (args[1], tag.c_str(), prefix);
-    return args[0];
+    return void_class;
   }
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
@@ -94,11 +94,11 @@ namespace object
   
 #define SERVER_FUNCTION(Function)				\
   static rObject						\
-  object_class_ ## Function (rLobby, objects_type args)		\
+  object_class_ ## Function (rLobby, objects_type)		\
   {								\
     ::urbiserver->Function();					\
     /* Return the current object to return something. */	\
-    return args[0];						\
+    return void_class;						\
   }
 
   SERVER_FUNCTION(reboot)
