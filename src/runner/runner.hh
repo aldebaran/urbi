@@ -42,7 +42,7 @@ namespace runner
     /// \{
   public:
     /// Return the lobby in which this runner has been started.
-    const rLobby& lobby_get ();
+    const rLobby& lobby_get () const;
     /// \}
 
   protected:

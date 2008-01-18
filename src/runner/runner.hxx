@@ -32,7 +32,7 @@ namespace runner
 
   inline
   const object::rLobby&
-  Runner::lobby_get ()
+  Runner::lobby_get () const
   {
     return lobby_;
   }
