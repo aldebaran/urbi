@@ -1,5 +1,5 @@
-# This file assumes that we are in $(srcdir)/uobject, i.e., we are
-# included by the directory that has uobject/ (svn:externals or not).
+# This file requires its includer to define $(uobject_srcdir) which
+# points to the contents of this directory.  E.g., $(srcdir)/uobject.
 
 ## --------------------- ##
 ## Sources and headers.  ##

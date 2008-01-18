@@ -12,7 +12,8 @@ SUBDIRS += . tests
 ## uobject.  ##
 ## --------- ##
 
-include $(top_srcdir)/build-aux/svn-externals.mk
+include $(top_srcdir)/libport/build-aux/svn-externals.mk
+uobject_srcdir = $(srcdir)/uobject
 include uobject/uobject.mk
 urbiinclude_HEADERS = $(uobject_headers)
 

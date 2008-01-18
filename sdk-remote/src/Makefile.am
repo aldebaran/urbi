@@ -1,4 +1,4 @@
-include $(top_srcdir)/build-aux/init.mk
+include $(top_srcdir)/libport/build-aux/init.mk
 
 SUBDIRS = liburbi 
 
@@ -11,4 +11,4 @@ endif
 ## ------------ ##
 
 REVISION_FILE = version.hh
-include $(top_srcdir)/build-aux/revision.mk
+include $(top_srcdir)/libport/build-aux/revision.mk

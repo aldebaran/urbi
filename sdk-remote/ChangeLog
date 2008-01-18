@@ -1,3 +1,12 @@
+2008-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Fix build process.
+	* jpeg-6b, libport: New.
+	* Makefile.am, bootstrap, configure.ac, doc/Makefile.am,
+	* flags.mk, src/Makefile.am, src/liburbi/Makefile.am,
+	* src/liburbi/tests/Makefile.am, src/liburbi/uobject/uobject.mk:
+	Adjust to libport/
+
 2008-01-16  Matthieu Nottale  <nottale@gostai.com>
 
 	Workaround for kernel "every(1)emit;" bug.
