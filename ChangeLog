@@ -1,0 +1,8 @@
+2008-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Fix libport uses.
+	* .gitignore: More of them.
+	* Makefile.am, bootstrap, configure.ac, src/Makefile.am,
+	* src/kernel.mk, src/parser/parser.mk: Adjust to symlinks used
+	instead of going into libport.
+
