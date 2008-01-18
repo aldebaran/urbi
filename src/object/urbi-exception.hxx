@@ -61,7 +61,7 @@ namespace object
     : UrbiException (std::string ("unexpected void"), fun)
   {
   }
-  
+
   inline
   WrongArgumentCount::WrongArgumentCount (unsigned formal,
 					  unsigned effective,

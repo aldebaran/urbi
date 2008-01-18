@@ -80,7 +80,7 @@ namespace object
   class PrimitiveError;
   class WrongArgumentType;
   class WrongArgumentCount;
-  
+
   extern rObject void_class;
 } // namespace object
 

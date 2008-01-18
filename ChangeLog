@@ -1,5 +1,11 @@
 2008-01-18  Matthieu Nottale  <nottale@gostai.com>
 
+	Temporary hack so that void_class.print displays nothing.
+	* src/object/object.cc: Here, until the C++ code can call the Urbi
+	  print.
+
+2008-01-18  Matthieu Nottale  <nottale@gostai.com>
+
 	Implement a void type.
 	void is a singleton. It cannot be used as argument in a function
 	call (all operators are function call). It should not print itself.

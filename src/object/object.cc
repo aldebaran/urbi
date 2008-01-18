@@ -156,6 +156,9 @@ namespace object
   std::ostream&
   Object::print(std::ostream& out) const
   {
+    // Temporary hack, detect void and print nothing
+    if (this == void_class.get())
+      return out;
     // FIXME: Decide what should be printed, but at least print something
     return out << "<object>";
   }
