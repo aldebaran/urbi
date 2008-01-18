@@ -1,3 +1,8 @@
+2008-01-18  Matthieu Nottale  <nottale@gostai.com>
+
+	Initialize the lobby slot in lobby.
+	* src/uconnection.cc: Here.
+
 2008-01-18  Akim Demaille  <demaille@gostai.com>
 
 	Fix libport uses.
