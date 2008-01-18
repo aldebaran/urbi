@@ -1,5 +1,15 @@
 2008-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Update libport uses.
+	We now use lib/libport, include/libport, build-aux, instead
+	of looking for then inside libport.  They are symlinked at
+	bootstrap time.
+	* bootstrap: List the modules we subscribe to.
+	* Makefile.am, configure.ac, src/Makefile.am,
+	* src/kernel.mk, src/parser/parser.mk: Adjust.
+
+2008-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Adjust to urbi-sdk-remote.
 	* src/Makefile.am, src/kernel.mk (uobject_srcdir): Adjust.
 	* urbi-sdk: Rename as...

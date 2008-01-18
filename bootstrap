@@ -1,2 +1,6 @@
 #! /bin/sh
-exec libport/build-aux/bootstrap "$@"
+exec libport/build-aux/bootstrap \
+    build-aux include/libport \
+    lib/libport network/bsdnet:lib/network/bsdnet lib/network \
+    sdk \
+    "$@"

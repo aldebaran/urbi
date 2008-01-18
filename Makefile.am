@@ -7,25 +7,35 @@
 # implied warranties of fitness for a particular purpose.
 #
 ################################################################################
+include $(top_srcdir)/build-aux/build-aux.mk
 
-include $(top_srcdir)/libport/build-aux/build-aux.mk
+ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-ACLOCAL_AMFLAGS = -I libport/build-aux -I libport/sdk
-
-SUBDIRS = libport/include libport/lib src libport/sdk tests . doc
+SUBDIRS =  src sdk tests . doc
 
 # build-aux.
-EXTRA_DIST +=						\
-libport/build-aux/bison++.in				\
-libport/build-aux/move-if-change			\
-libport/build-aux/output-to-dot
+EXTRA_DIST +=					\
+build-aux/bison++.in				\
+build-aux/move-if-change			\
+build-aux/output-to-dot
 
 # windows.
 EXTRA_DIST +=					\
-windows/urbikernel/Debug			\
+windows						\
+windows/urbikernel				\
 windows/urbikernel/urbikernel.sln		\
-windows/urbikernel/urbikernel.suo          	\
-windows/urbikernel/urbikernel.vcproj
+windows/urbikernel/urbikernel.suo		\
+windows/urbikernel/urbikernel.vcproj		\
+windows/urbikernel-7.1				\
+windows/urbikernel-7.1/urbikernel.ncb		\
+windows/urbikernel-7.1/urbikernel.sln		\
+windows/urbikernel-7.1/urbikernel.suo		\
+windows/urbikernel-7.1/urbikernel.vcproj	\
+windows/urbikernel-8.0				\
+windows/urbikernel-8.0/urbikernel.sln		\
+windows/urbikernel-8.0/urbikernel.suo		\
+windows/urbikernel-8.0/urbikernel.vcproj
+
 
 ## -------------------------- ##
 ## Installed kernel headers.  ##
@@ -50,6 +60,9 @@ include/kernel/uvariable.hh
 
 nodist_kernelincludekernel_HEADERS =		\
 include/kernel/version.hh
+
+include_libport = include/libport
+include include/libport/libport.mk
 
 ## --------------- ##
 ## Svn externals.  ##
