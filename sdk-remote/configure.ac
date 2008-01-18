@@ -2,7 +2,8 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.61])
-AC_INIT([URBI SDK], [1.6pre], [liburbi-cpp-bugs@gostai.com], [urbi-sdk])
+AC_INIT([URBI SDK Remote], [1.6pre],
+        [liburbi-cpp-bugs@gostai.com], [urbi-sdk-remote])
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2007])
 
 # Auxiliary files.
@@ -30,7 +31,8 @@ URBI_PTHREAD
 URBI_LIBPORT
 # liburbi-c++ is also in charge of Libport's test suite.
 AC_CONFIG_FILES([libport/tests/Makefile])
-AC_CONFIG_FILES([libport/build-aux/test.sh], [chmod a=rx libport/build-aux/test.sh])
+AC_CONFIG_FILES([libport/build-aux/test.sh],
+                [chmod a=rx libport/build-aux/test.sh])
 
 AC_PROG_CC
 URBI_PROG_CXX

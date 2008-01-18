@@ -1,5 +1,10 @@
 2008-01-18  Akim Demaille  <demaille@gostai.com>
 
+	This is urbi-sdk-remote.
+	* configure.ac: Fix project name.
+
+2008-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Fix build process.
 	* jpeg-6b, libport: New.
 	* Makefile.am, bootstrap, configure.ac, doc/Makefile.am,
