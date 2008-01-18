@@ -761,6 +761,7 @@ UConnection::execute ()
   ECHO("Command is: {{{" << *active_command_ << "}}}");
 
   Runner* runner = new Runner(lobby_,
+			      lobby_,
 			      ::urbiserver->getScheduler (),
 			      active_command_);
 
