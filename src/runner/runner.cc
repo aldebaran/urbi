@@ -207,6 +207,12 @@ namespace runner
       CORO_CALL (eval (**i));
       passert ("argument without a value: " << **i, current_);
       PING ();
+      if (current_ == object::void_class)
+      {
+	object::WrongArgumentType wat(__PRETTY_FUNCTION__);
+	wat.location_set((*i)->location_get());
+	throw wat;
+      }
       args.push_back (current_);
     }
 
@@ -420,7 +426,7 @@ namespace runner
       ((1, (
 	  (ast::exec_exps_type::iterator, i)
 	  )));
-
+    current_ = object::void_class;
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
       current_.reset ();

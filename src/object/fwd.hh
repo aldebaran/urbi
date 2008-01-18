@@ -80,6 +80,8 @@ namespace object
   class PrimitiveError;
   class WrongArgumentType;
   class WrongArgumentCount;
+  
+  extern rObject void_class;
 } // namespace object
 
 #endif // !OBJECT_FWD_HH

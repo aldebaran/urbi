@@ -108,11 +108,11 @@ namespace object
 
 
   static rObject
-  object_class_wait (rLobby, objects_type args)
+  object_class_wait (rLobby, objects_type)
   {
     // FIXME: Currently does nothing.  A stub so that we
     // accept "wait 2s" as is used in the test suite.
-    return args[0];
+    return void_class;
   }
 
 
