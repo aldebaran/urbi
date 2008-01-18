@@ -63,7 +63,7 @@ namespace object
  */
 #define PRIMITIVE_1_(Class, Name, Call, Ret, Type1, Get)        \
   static rObject						\
-  Class ## _class_ ## Name (rLobby, objects_type args)		\
+  Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Type1);                                        \
@@ -84,7 +84,7 @@ namespace object
  */
 #define PRIMITIVE_2_(Class, Name, Call, Ret, Type1, Type2, Get) \
   static rObject						\
-  Class ## _class_ ## Name (rLobby, objects_type args)		\
+  Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
@@ -105,7 +105,7 @@ namespace object
  */
 #define PRIMITIVE_2_OBJECT(Class, Name, Call, Type1)            \
   static rObject						\
-  Class ## _class_ ## Name (rLobby, objects_type args)		\
+  Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
@@ -118,7 +118,7 @@ namespace object
  */
 #define PRIMITIVE_OP_(Class, Name, Op, Ret, Type1, Type2, Get)  \
   static rObject						\
-  Class ## _class_ ## Name (rLobby, objects_type args)		\
+  Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \

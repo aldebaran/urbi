@@ -11,6 +11,11 @@
 # include "libport/fwd.hh"
 # include "libport/shared-ptr.hh"
 
+namespace runner
+{
+  class Runner;
+}
+
 namespace object
 {
   // state.hh
@@ -62,7 +67,7 @@ namespace object
   // primitive_type.
   // It is because we need this typedef that we have the
   // previous hideous macro.
-  typedef rObject (*primitive_type) (rLobby, objects_type);
+  typedef rObject (*primitive_type) (runner::Runner&, objects_type);
 
   DEFINE(primitive, Primitive)
 # undef DEFINE

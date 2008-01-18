@@ -142,16 +142,16 @@ namespace object
 
 
 
-/*------------------------------------------------------------.
-| Float Primitives.                                           |
-|                                                             |
-| I.e., the signature is rLobby x objects_type -> rObject.  |
-`------------------------------------------------------------*/
+/*-------------------------------------------------------------------.
+| Float Primitives.                                                  |
+|                                                                    |
+| I.e., the signature is runner::Runner& x objects_type -> rObject.  |
+`--------------------------------------------------------------------*/
 
 
   /// Clone.
   static rObject
-  float_class_clone(rLobby, objects_type args)
+  float_class_clone(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
     FETCH_ARG(0, Float);
@@ -161,7 +161,7 @@ namespace object
 
   /// Change the value.
   static rObject
-  float_class_set(rLobby, objects_type args)
+  float_class_set(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
     FETCH_ARG(0, Float);
@@ -173,7 +173,7 @@ namespace object
 
   /// Unary or binary minus.
   static rObject
-  float_class_sub(rLobby, objects_type args)
+  float_class_sub(runner::Runner&, objects_type args)
   {
     // FIXME: The error message requires 2 although 1 is ok.
     if (args.size () != 1 && args.size() != 2)
@@ -194,7 +194,7 @@ namespace object
   /// \param Pre C++ code executed before call (typically to check args)
 #define PRIMITIVE_0_FLOAT_(Name, Call, Pre)             \
   static rObject					\
-  float_class_ ## Name (rLobby, objects_type args)	\
+  float_class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                     \
     CHECK_ARG_COUNT(1);                                 \
     FETCH_ARG(0, Float);                                \

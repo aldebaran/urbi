@@ -37,14 +37,14 @@ class UWrapCallback: public object::IDelegate
   :ugc_(ugc) 
   {}
   virtual ~UWrapCallback() {}
-  virtual rObject operator() (object::rLobby, object::objects_type);
+  virtual rObject operator() (runner::Runner&, object::objects_type);
   private:
   urbi::UGenericCallback * ugc_;
 };
 
 
 rObject 
-UWrapCallback::operator() (object::rLobby, object::objects_type ol)
+UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
 {
   urbi::UList l;
   bool first = true;
@@ -65,7 +65,7 @@ UWrapCallback::operator() (object::rLobby, object::objects_type ol)
 
 
 static rObject
-uobject_clone(object::rLobby, object::objects_type l)
+uobject_clone(runner::Runner&, object::objects_type l)
 {
   rObject proto = l.front();
   return uobject_new(proto);

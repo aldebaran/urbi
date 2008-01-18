@@ -11,6 +11,8 @@
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
+#include "runner/runner.hh"
+
 #include "object/atom.hh"
 #include "object/object-class.hh"
 #include "object/object.hh"
@@ -24,13 +26,13 @@ namespace object
   `--------------------*/
 
   static rObject
-  object_class_clone (rLobby, objects_type args)
+  object_class_clone (runner::Runner&, objects_type args)
   {
     return clone(args[0]);
   }
 
   static rObject
-  object_class_init (rLobby, objects_type args)
+  object_class_init (runner::Runner&, objects_type args)
   {
     return args[0];
   }
@@ -38,7 +40,7 @@ namespace object
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_dump (rLobby c, objects_type args)
+  object_class_dump (runner::Runner& c, objects_type args)
   {
     // Second argument is the tag name.
     std::string tag;
@@ -55,13 +57,13 @@ namespace object
       libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
     BOOST_FOREACH(std::string line, tok)
-      c->value_get().connection  << UConnection::send (
+      c.lobby_get()->value_get().connection  << UConnection::send (
 	(system_header+line+"\n").c_str(), tag.c_str());
     return void_class;
   }
   
   static rObject
-  object_echo(rLobby c, objects_type args, const char * prefix)
+  object_echo(runner::Runner& c, objects_type args, const char * prefix)
   {
     // Second argument is the tag name.
     std::string tag;
@@ -70,13 +72,13 @@ namespace object
       FETCH_ARG(2, String);
       tag = arg2->value_get().name_get();
     }
-    c->value_get().connection.send (args[1], tag.c_str(), prefix);
+    c.lobby_get()->value_get().connection.send (args[1], tag.c_str(), prefix);
     return void_class;
   }
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
   static rObject
-  object_class_echo (rLobby c, objects_type args)
+  object_class_echo (runner::Runner& c, objects_type args)
   {
     return object_echo(c, args, "*** ");
   }
@@ -84,7 +86,7 @@ namespace object
   /// Send pretty-printed self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_print (rLobby c, objects_type args)
+  object_class_print (runner::Runner& c, objects_type args)
   {
     objects_type nargs;
     nargs.push_back(args[0]);
@@ -94,7 +96,7 @@ namespace object
   
 #define SERVER_FUNCTION(Function)				\
   static rObject						\
-  object_class_ ## Function (rLobby, objects_type)		\
+  object_class_ ## Function (runner::Runner&, objects_type)	\
   {								\
     ::urbiserver->Function();					\
     /* Return the current object to return something. */	\
@@ -108,7 +110,7 @@ namespace object
 
 
   static rObject
-  object_class_wait (rLobby, objects_type)
+  object_class_wait (runner::Runner&, objects_type)
   {
     // FIXME: Currently does nothing.  A stub so that we
     // accept "wait 2s" as is used in the test suite.
@@ -116,11 +118,11 @@ namespace object
   }
 
   static rObject
-  object_class_load (rLobby l, objects_type args)
+  object_class_load (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, String);
     if (::urbiserver->loadFile(arg1->value_get(),
-      &l->value_get().connection.recvQueue()) != USUCCESS)
+      &r.lobby_get()->value_get().connection.recvQueue()) != USUCCESS)
     throw PrimitiveError("load",
       std::string("Error loading file:") + arg1->value_get().name_get());
     return void_class;
@@ -132,13 +134,13 @@ namespace object
   `----------*/
 
   /// Adding or removing protos. \a Verb is "add" or "remove".
-#define CHANGE_PARENTS(Verb)					\
-  static rObject						\
-  object_class_ ## Verb ## Proto (rLobby, objects_type args)	\
-  {								\
-    CHECK_ARG_COUNT(2);						\
-    args[0]->proto_ ## Verb (args[1]);				\
-    return args[0];						\
+#define CHANGE_PARENTS(Verb)						\
+  static rObject							\
+  object_class_ ## Verb ## Proto (runner::Runner&, objects_type args)	\
+  {									\
+    CHECK_ARG_COUNT(2);							\
+    args[0]->proto_ ## Verb (args[1]);					\
+    return args[0];							\
   }
 
   /// Add a proto.
@@ -149,7 +151,7 @@ namespace object
 
   /// Get protos' list.
   static rObject
-  object_class_protos (rLobby, objects_type args)
+  object_class_protos (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
@@ -169,7 +171,7 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (rLobby, objects_type args)
+  object_class_slotNames (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
@@ -183,7 +185,7 @@ namespace object
 
   /// Get a slot content.
   static rObject
-  object_class_getSlot (rLobby, objects_type args)
+  object_class_getSlot (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
@@ -193,7 +195,7 @@ namespace object
 
   /// Remove a slot.
   static rObject
-  object_class_removeSlot (rLobby, objects_type args)
+  object_class_removeSlot (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
@@ -203,14 +205,14 @@ namespace object
   }
 
   /// Define setSlot or updateSlot.  \a Verb is "set" or "update".
-#define SLOT_CHANGE(Verb)					\
-  static rObject						\
-  object_class_ ## Verb ## Slot (rLobby, objects_type args)	\
-  {								\
-    CHECK_ARG_COUNT(3);						\
-    FETCH_ARG(1, String);					\
-    args[0]->slot_ ## Verb (arg1->value_get(), args[2]);	\
-    return args[2];						\
+#define SLOT_CHANGE(Verb)						\
+  static rObject							\
+  object_class_ ## Verb ## Slot (runner::Runner&, objects_type args)	\
+  {									\
+    CHECK_ARG_COUNT(3);							\
+    FETCH_ARG(1, String);						\
+    args[0]->slot_ ## Verb (arg1->value_get(), args[2]);		\
+    return args[2];							\
   }
 
   /// Set a slot.

@@ -182,12 +182,12 @@ namespace runner
     {
       case object::Object::kind_primitive:
 	PING ();
-	current_ = func.cast<object::Primitive>()->value_get()(lobby_, args);
+	current_ = func.cast<object::Primitive>()->value_get()(*this, args);
 	break;
       case object::Object::kind_delegate:
 	PING();
 	current_ = func.cast<object::Delegate>()->value_get()
-	  ->operator()(lobby_, args);
+	  ->operator()(*this, args);
 	break;
       case object::Object::kind_code:
 	PING ();
