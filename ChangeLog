@@ -1,3 +1,10 @@
+2008-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Adjust to urbi-sdk-remote.
+        * src/Makefile.am, src/kernel.mk (uobject_srcdir): Adjust.
+        * urbi-sdk: Rename as...
+        * urbi-sdk-remote: this.
+
 2008-01-17  Samuel Tardieu  <tardieu@gostai.com>
 
 	Constants cleanup.
@@ -432,73 +439,73 @@
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
 	merge -r 2284:2287 https://svn.gostai.com/svn/kernel1/trunk.
-        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
-        Typo.
-        * include/kernel/version.hh.in: Fix typo.
+	2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+	Typo.
+	* include/kernel/version.hh.in: Fix typo.
 
-        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
-        Add warning about modifying ucomplaints.hh.
-        * include/kernel/ucomplaints.hh: Add a note about keeping this file
-        in sync with ucomplaints.cc.
+	2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+	Add warning about modifying ucomplaints.hh.
+	* include/kernel/ucomplaints.hh: Add a note about keeping this file
+	in sync with ucomplaints.cc.
 
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
 	merge -r 2268:2284 https://svn.gostai.com/svn/kernel1/trunk.
-        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
-        Explicitely require bison >= 2.3a+.
-        * configure.ac: Require usage of bison 2.3a+ or later, as is done
-        in k2 (needed for %code support).
+	2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+	Explicitely require bison >= 2.3a+.
+	* configure.ac: Require usage of bison 2.3a+ or later, as is done
+	in k2 (needed for %code support).
 
-        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
-        Update trunk for GCC 4.3.0.
-        * include/kernel/userver.hh: Prototype was wrong, declare vdebug()
-        here instead of debug().
-        * src/parser/ugrammar.y: Add static where needed.
-        * src/ucommand.cc: Add {} to prevent warnings.
-        * src/uconnection.cc: Add () to prevent warnings.
-        * src/uexpression.cc: Add () to prevent warnings.
-        * src/uobj.cc: Add {} to prevent warnings.
-        * src/uobject.cc: Add static where needed.
-        * src/userver.cc: Add {} to prevent warnings.
-        * src/uvariable.cc: Add {} to prevent warnings.
+	2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+	Update trunk for GCC 4.3.0.
+	* include/kernel/userver.hh: Prototype was wrong, declare vdebug()
+	here instead of debug().
+	* src/parser/ugrammar.y: Add static where needed.
+	* src/ucommand.cc: Add {} to prevent warnings.
+	* src/uconnection.cc: Add () to prevent warnings.
+	* src/uexpression.cc: Add () to prevent warnings.
+	* src/uobj.cc: Add {} to prevent warnings.
+	* src/uobject.cc: Add static where needed.
+	* src/userver.cc: Add {} to prevent warnings.
+	* src/uvariable.cc: Add {} to prevent warnings.
 
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
 	merge -r 2256:2268 https://svn.gostai.com/svn/kernel1/trunk.
 	2008-01-07  Akim Demaille  <demaille@gostai.com>
-        Fix preparser.
-        * src/ucommandqueue.hh (closechar_, closechar2_): Replace with
-        (close_): this string, instead of two chars...
-        (discard_): Remove, useless now we have a string that can be 0.
-        * src/ucommandqueue.cc (UCommandQueue::popCommand): Adjust.
-        Simplify.
-        Instead of doing a switch and them some ifs, how about just
-        extending the switch?
-        And fix to support properly \.
-        Remove "$$" support.
+	Fix preparser.
+	* src/ucommandqueue.hh (closechar_, closechar2_): Replace with
+	(close_): this string, instead of two chars...
+	(discard_): Remove, useless now we have a string that can be 0.
+	* src/ucommandqueue.cc (UCommandQueue::popCommand): Adjust.
+	Simplify.
+	Instead of doing a switch and them some ifs, how about just
+	extending the switch?
+	And fix to support properly \.
+	Remove "$$" support.
 
-        2008-01-07  Akim Demaille  <demaille@gostai.com>
-        Start cleaning the handling of escapes in the preparser.
-        1.x/string-escapes fails, and with this patch, so does
-        1.x/armor-unarmor and a.x/channels-tags.
-        But the code is borken anyway: it thinks it
-        can handle \ from right to left.  So first, make the code cleaner
-        (this patch), then fix it (next patch).
-        * src/ucommandqueue.cc: Factor.
-        Group together what goes together.
-        Reduce scopes.
-        Prefer for to while.
-        Enjoy calling "return" from the loop.
-        * src/ucommandqueue.hh: more doc.
-        * src/uqueue.hh: Doc changes..
+	2008-01-07  Akim Demaille  <demaille@gostai.com>
+	Start cleaning the handling of escapes in the preparser.
+	1.x/string-escapes fails, and with this patch, so does
+	1.x/armor-unarmor and a.x/channels-tags.
+	But the code is borken anyway: it thinks it
+	can handle \ from right to left.  So first, make the code cleaner
+	(this patch), then fix it (next patch).
+	* src/ucommandqueue.cc: Factor.
+	Group together what goes together.
+	Reduce scopes.
+	Prefer for to while.
+	Enjoy calling "return" from the loop.
+	* src/ucommandqueue.hh: more doc.
+	* src/uqueue.hh: Doc changes..
 
-        2008-01-07  Akim Demaille  <demaille@gostai.com>
-        Use 0.x tests.
-        * tests-local.mk: here.
+	2008-01-07  Akim Demaille  <demaille@gostai.com>
+	Use 0.x tests.
+	* tests-local.mk: here.
 
-        2008-01-07  Akim Demaille  <demaille@gostai.com>
-        INSTRUMENT=true for check-buildfarm.
-        * Makefile.am: here.
+	2008-01-07  Akim Demaille  <demaille@gostai.com>
+	INSTRUMENT=true for check-buildfarm.
+	* Makefile.am: here.
 
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 

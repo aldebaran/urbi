@@ -74,8 +74,8 @@ include $(top_srcdir)/libport/build-aux/revision.mk
 ## ---------- ##
 
 include $(top_srcdir)/libport/build-aux/svn-externals.mk
-uobject_srcdir = $(top_srcdir)/urbi-sdk/src/liburbi/uobject
-include ../urbi-sdk/src/liburbi/uobject/uobject.mk
+
+include $(top_srcdir)/urbi-sdk-remote/src/liburbi/uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 

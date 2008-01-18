@@ -9,7 +9,8 @@ AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_builddir)/src
 
 # Find the uobject headers
-AM_CPPFLAGS += -I$(top_srcdir)/urbi-sdk/src/liburbi/uobject
+uobject_srcdir = $(top_srcdir)/urbi-sdk-remote/src/liburbi/uobject
+AM_CPPFLAGS += -I$(uobject_srcdir)
 
 # Find libport headers.
 AM_CPPFLAGS += $(LIBPORT_CPPFLAGS) \
