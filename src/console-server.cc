@@ -13,6 +13,7 @@
 #include "libport/program-name.hh"
 #include "libport/tokenizer.hh"
 #include "libport/utime.hh"
+#include "libport/read-stdin.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
@@ -112,6 +113,7 @@ namespace
       "  -P, --period PERIOD   base URBI interval in milliseconds\n"
       "  -p, --port PORT       tcp port URBI will listen to.\n"
       "  -f, --fast            ignore system time, go as fast as possible\n"
+      "  -i, --interactive     read and parse stdin in a nonblocking way\n"
       "  -w, --port-file FILE  write port number to specified file.\n"
       ;
     exit (EX_OK);
@@ -141,6 +143,8 @@ main (int argc, const char* argv[])
   const char* arg_port_filename = 0;
   /// fast mode
   bool fast = false;
+  /// interactive mode
+  bool interactive = false;
   // Parse the command line.
   {
     int argp = 1;
@@ -152,6 +156,8 @@ main (int argc, const char* argv[])
 	fast = true;
       else if (arg == "--help" || arg == "-h")
 	usage();
+      else if (arg == "--interactive" || arg == "-i")
+	interactive = true;
       else if (arg == "--period" || arg == "-P")
 	arg_period = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--port" || arg == "-p")
@@ -197,10 +203,11 @@ main (int argc, const char* argv[])
   std::cerr << libport::program_name
 	    << ": got ghost connection" << std::endl;
 
-  if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
-    std::cerr << libport::program_name
-	      << ": failed to process " << in << std::endl
-	      << libport::exit(EX_NOINPUT);
+  if (!interactive)
+    if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
+      std::cerr << libport::program_name
+	        << ": failed to process " << in << std::endl
+	        << libport::exit(EX_NOINPUT);
 
   c.newDataAdded = true;
 
@@ -215,8 +222,15 @@ main (int argc, const char* argv[])
     {
       long long startTime = libport::utime();
       ufloat period = s.period_get() * 1000;
+      //FIXME: this is bad and taking a lot of cpu
       while (libport::utime() < startTime + period)
 	usleep (1);
+      if (interactive)
+      {
+	std::string input = libport::read_stdin();
+	if (!input.empty())
+	  s.getGhostConnection () << UConnection::received(reinterpret_cast<const ubyte*>(input.c_str()), input.length());
+      }
       s.work ();
     }
 }
