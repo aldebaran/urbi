@@ -31,6 +31,13 @@ namespace runner
   }
 
   inline
+  const object::rLobby&
+  Runner::lobby_get ()
+  {
+    return lobby_;
+  }
+
+  inline
   Runner::rObject
   Runner::eval (ast::Ast& e)
   {
