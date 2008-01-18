@@ -14,6 +14,7 @@
 #include "libport/tokenizer.hh"
 #include "libport/utime.hh"
 #include "libport/read-stdin.hh"
+#include "libport/exception.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
@@ -227,7 +228,16 @@ main (int argc, const char* argv[])
 	usleep (1);
       if (interactive)
       {
-	std::string input = libport::read_stdin();
+	std::string input;
+	try
+	{
+	  input = libport::read_stdin();
+	}
+	catch(libport::exception::Exception e)
+	{
+	  std::cerr << e.what() << std::endl;
+	  interactive = false;
+	}
 	if (!input.empty())
 	  s.getGhostConnection () << UConnection::received(reinterpret_cast<const ubyte*>(input.c_str()), input.length());
       }
