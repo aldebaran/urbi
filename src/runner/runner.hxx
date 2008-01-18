@@ -14,20 +14,15 @@ namespace runner
 {
 
   inline
-  Runner::Runner (rLobby lobby, Scheduler& sched, ast::Ast* ast)
+  Runner::Runner (rLobby lobby, rObject locals, Scheduler& sched, ast::Ast* ast)
     : Coroutine (sched),
       lobby_ (lobby),
       ast_ (ast),
       started_ (false),
       current_ (0),
-      locals_ (new object::Object)
+      locals_ (locals)
   {
     locals_->locals_set (true);
-    // If the lookup in the local variable failed, try in the the
-    // Connection object, sort of a Lobby for Io.
-    locals_->proto_add(lobby_);
-    // Provide direct access to the Lobby.
-    locals_->slot_set(libport::Symbol("lobby"), lobby_);
   }
 
   inline

@@ -40,7 +40,21 @@ class Lobby.Channel
   var <<   = function (x) { x.print (name); {} };
 };
 
-
+## --------- ##
+## Void      ##
+## --------- ##
+do void
+{
+  // void prints nothing.
+  var print = function()
+  {
+  };
+  // void is a singleton.
+  var clone = function()
+  {
+    self;
+  };
+};
 ## ------- ##
 ## Float.  ##
 ## ------- ##

@@ -55,6 +55,13 @@ namespace object
 #define DECLARE(What, Name)				\
       object_class->slot_set(#Name, What ## _class);
     APPLY_ON_ALL_PRIMITIVES(DECLARE);
+
+    // Create and register void
+    void_class = clone(object_class);
+    object_class->slot_set("void", void_class);
+    void_class->slot_set("type", new String("void"));
 #undef DECLARE
   }
+
+  rObject void_class;
 } // namespace object

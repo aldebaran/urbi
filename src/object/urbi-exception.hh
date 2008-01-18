@@ -100,6 +100,8 @@ namespace object
     WrongArgumentType (Object::kind_type formal,
 		       Object::kind_type effective,
 		       const std::string& fun);
+    /// Invalid use of void.
+    WrongArgumentType(const std::string& fun);
 
   };
 

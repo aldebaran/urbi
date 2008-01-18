@@ -57,6 +57,12 @@ namespace object
   }
 
   inline
+  WrongArgumentType::WrongArgumentType (const std::string& fun)
+    : UrbiException (std::string ("unexpected void"), fun)
+  {
+  }
+
+  inline
   WrongArgumentCount::WrongArgumentCount (unsigned formal,
 					  unsigned effective,
 					  const std::string& fun)

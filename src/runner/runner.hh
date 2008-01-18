@@ -30,9 +30,9 @@ namespace runner
     /// \name Ctor & dtor.
     /// \{
     /// Construct a \c Runner in the \a lobby.  The runner needs to
-    /// know who is its \a scheduler and will execute \a ast.  Memory
-    /// ownership of \a ast is transferred to the Runner.
-    Runner (rLobby lobby, Scheduler& scheduler, ast::Ast* ast);
+    /// know its \a locals, who is its \a scheduler and will execute 
+    /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
+    Runner (rLobby lobby, rObject locals, Scheduler& scheduler, ast::Ast* ast);
     /// Destroy a Runner.
 
     virtual ~Runner ();
