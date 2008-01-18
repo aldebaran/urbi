@@ -1,5 +1,10 @@
 2008-01-18  Matthieu Nottale  <nottale@gostai.com>
 
+	Remove ChangeLog.
+	* ChangeLog: Remove.
+
+2008-01-18  Matthieu Nottale  <nottale@gostai.com>
+
 	Temporary hack so that void_class.print displays nothing.
 	* src/object/object.cc: Here, until the C++ code can call the Urbi
 	  print.
