@@ -4,6 +4,6 @@
 [submodule "tests"]
 	path = tests
 	url = git@core.gostai.com:urbivalid.git
-[submodule "urbi-sdk"]
-	path = urbi-sdk
-	url = git@core.gostai.com:liburbi-cpp.git
+[submodule "urbi-sdk-remote"]
+	path = urbi-sdk-remote
+	url = git@core.gostai.com:urbi-sdk-remote.git

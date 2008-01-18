@@ -1,3 +1,10 @@
+2008-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Adjust to urbi-sdk-remote.
+	* src/Makefile.am, src/kernel.mk (uobject_srcdir): Adjust.
+	* urbi-sdk: Rename as...
+	* urbi-sdk-remote: this.
+
 2008-01-16  Matthieu Nottale  <nottale@gostai.com>
 
 	Mark new test every-emit as XFAIL.
