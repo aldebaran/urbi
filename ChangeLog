@@ -1,5 +1,10 @@
 2008-01-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Update a copyright year.
+	* AUTHORS: Here.
+
+2008-01-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Remove a deprecated file.
 	* buildnumber.php: Remove.
 
