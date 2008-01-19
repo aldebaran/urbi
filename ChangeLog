@@ -1,5 +1,10 @@
 2008-01-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Comment change.
+	* tests-local.mk: Here.
+
+2008-01-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Document --with-boost in INSTALL.
 	* INSTALL: Here.
 
