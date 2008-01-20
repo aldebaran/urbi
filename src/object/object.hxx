@@ -73,7 +73,7 @@ namespace object
   {
     assert(p);
     if (!libport::has(protos_, p))
-      protos_.push_back (p);
+      protos_.push_front (p);
     return *this;
   }
 
