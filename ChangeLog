@@ -1,3 +1,8 @@
+2008-01-20  Matthieu Nottale  <nottale@gostai.com>
+
+	Implement and bind load.
+	* src/object/object-class.cc: Here.
+
 2008-01-19  Matthieu Nottale  <nottale@gostai.com>
 
 	Return void_class for dump, echo, print.

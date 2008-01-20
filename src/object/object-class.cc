@@ -115,6 +115,16 @@ namespace object
     return void_class;
   }
 
+  static rObject
+  object_class_load (rLobby l, objects_type args)
+  {
+    FETCH_ARG(1, String);
+    if (::urbiserver->loadFile(arg1->value_get(),
+      &l->value_get().connection.recvQueue()) != USUCCESS)
+    throw PrimitiveError("load",
+      std::string("Error loading file:") + arg1->value_get().name_get());
+    return void_class;
+  }
 
 
   /*----------.
@@ -238,6 +248,7 @@ namespace object
     DECLARE1(reboot);
     DECLARE1(shutdown);
     DECLARE1(wait);
+    DECLARE1(load);
 #undef DECLARE1
   }
 
