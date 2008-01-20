@@ -20,6 +20,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <cstdlib>
 
 #include "libport/assert.hh"
 #include "libport/cstring"
