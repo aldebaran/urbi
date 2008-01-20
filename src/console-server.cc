@@ -213,19 +213,16 @@ main (int argc, const char* argv[])
   c.newDataAdded = true;
 
   std::cerr << libport::program_name << ": going to work..." << std::endl;
-  if (fast)
-    while(true)
-    {
-      s.work();
-    }
-  else
     while (true)
     {
-      long long startTime = libport::utime();
-      ufloat period = s.period_get() * 1000;
-      //FIXME: this is bad and taking a lot of cpu
-      while (libport::utime() < startTime + period)
-	usleep (1);
+      if (!fast)
+      {
+	long long startTime = libport::utime();
+	ufloat period = s.period_get() * 1000;
+	//FIXME: this is bad and taking a lot of cpu
+	while (libport::utime() < startTime + period)
+	  usleep (1);
+      }
       if (interactive)
       {
 	std::string input;

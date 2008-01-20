@@ -1,5 +1,10 @@
 2008-01-20  Matthieu Nottale  <nottale@gostai.com>
 
+	Permit both fast and interactive mode.
+	* src/console-server.cc: Here.
+
+2008-01-20  Matthieu Nottale  <nottale@gostai.com>
+
 	Implement and bind load.
 	* src/object/object-class.cc: Here.
 
