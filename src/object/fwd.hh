@@ -11,11 +11,6 @@
 # include "libport/fwd.hh"
 # include "libport/shared-ptr.hh"
 
-namespace ast
-{
-  class Exp;
-}
-
 namespace object
 {
   // state.hh

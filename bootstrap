@@ -159,19 +159,21 @@ require $libtoolize 1.5.22
 # Tell what's going on.
 set -x
 
-# Finally, install the GNU Build System.
-autoreconf -f -v -i
+# Finally, install the GNU Build System and our submodules.
+exec libport/build-aux/bootstrap \
+    build-aux include/libport \
+    lib/libport network/bsdnet:lib/network/bsdnet lib/network \
+    sdk \
+    "$@"
 
 # FIXME: autoheader does not obey --force.
 find . -name 'config.h.in' | xargs touch
 
-#<<-
 # Now that configure was recreated, the documentation timestamps
 # are outdated (they depend on it).  Refresh them brutally.
 if test -f dev/stamp-vti; then
   touch dev/stamp-vti
 fi
-#->>
 
 # If the pseudo-standard name "_build" is used, then how about trying
 # to continue the re-build?
