@@ -16,81 +16,61 @@ namespace runner
   inline
   Job::Job (Scheduler& scheduler)
     : scheduler_ (&scheduler),
-      started_ (false)
+      terminated_ (false),
+      self_ (Coro_new ())
   {
-    assert (scheduler_);
+  }
+
+  inline
+  Job::Job (const Job& model)
+    : scheduler_ (model.scheduler_),
+      terminated_ (false),
+      self_ (Coro_new ())
+  {
   }
 
   inline
   Job::~Job ()
   {
-    assert (scheduler_);
-    scheduler_ = 0;
-    started_ = false;
+    assert (terminated_);
+    Coro_free (self_);
   }
 
-  inline
-  void
-  Job::scheduler_set (Scheduler& scheduler)
-  {
-    scheduler_ = &scheduler;
-    assert (scheduler_);
-  }
-
-  inline
-  const Scheduler&
+  inline Scheduler&
   Job::scheduler_get () const
   {
-    assert (scheduler_);
     return *scheduler_;
   }
 
-  inline
-  Scheduler&
-  Job::scheduler_get ()
-  {
-    assert (scheduler_);
-    return *scheduler_;
-  }
-
-  inline
-  void
-  Job::run ()
-  {
-    assert (scheduler_);
-    if (!started_)
-    {
-      started_ = true;
-      start ();
-    }
-    work ();
-  }
-
-  inline
-  void
+  inline void
   Job::terminate ()
   {
-    assert (scheduler_);
-    assert (started_);
-    stop ();
-    started_ = false;
   }
 
-  inline
-  void Job::yield ()
+  inline void
+  Job::terminate_now ()
   {
-    assert (scheduler_);
-    scheduler_->add_job (this);
+    terminate ();
+    terminated_ = true;
   }
 
-  inline
-  void Job::start ()
+  inline bool
+  Job::terminated () const
   {
+    return terminated_;
   }
 
-  inline
-  void Job::stop ()
+  inline void
+  Job::yield ()
   {
+    scheduler_->resume_scheduler (this);
+  }
+
+  inline Coro*
+  Job::coro_get () const
+  {
+    assert (self_);
+    return self_;
   }
 
 } // namespace runner

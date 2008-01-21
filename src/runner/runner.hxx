@@ -15,14 +15,24 @@ namespace runner
 
   inline
   Runner::Runner (rLobby lobby, rObject locals, Scheduler& sched, ast::Ast* ast)
-    : Coroutine (sched),
+    : Job (sched),
       lobby_ (lobby),
       ast_ (ast),
-      started_ (false),
       current_ (0),
       locals_ (locals)
   {
     locals_->locals_set (true);
+  }
+
+  inline
+  Runner::Runner(const Runner& model)
+    : ast::DefaultVisitor (),
+      Job (model),
+      lobby_ (model.lobby_),
+      ast_ (model.ast_),
+      current_ (model.current_),
+      locals_ (model.locals_)
+  {
   }
 
   inline

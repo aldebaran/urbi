@@ -6,17 +6,19 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
+#include <boost/tuple/tuple.hpp>
+
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
-# include "runner/coroutine.hh"
 # include "runner/scheduler.hh"
+# include "runner/job.hh"
 
 namespace runner
 {
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-		 public Coroutine
+		 public Job
   {
   public:
     /// \name Useful shorthands.
@@ -33,6 +35,9 @@ namespace runner
     /// know its \a locals, who is its \a scheduler and will execute 
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
     Runner (rLobby lobby, rObject locals, Scheduler& scheduler, ast::Ast* ast);
+
+    /// Create a copy of a runner
+    Runner (const Runner&);
 
     /// Destroy a Runner.
     virtual ~Runner ();
@@ -88,14 +93,13 @@ namespace runner
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
-    /// Re-implementation of \c Job::stop.
-    virtual void stop ();
-    /// Re-implementation of \c Coroutine::finished.
-    virtual void finished (Coroutine& coro);
 
   private:
     void raise_error_ (const object::UrbiException& ue);
     void send_message_ (const std::string& text, const std::string& tag);
+    rObject apply_urbi (rObject scope, const rObject& func,
+			const object::objects_type& args);
+
 
   private:
     /// The URBI Lobby used to evaluate.
@@ -104,9 +108,6 @@ namespace runner
 
     /// The root of the AST being executed.
     ast::Ast* ast_;
-
-    /// Whether or not we started to execute anything.
-    bool started_;
 
     /// The current value during the evaluation of the AST.
     rObject current_;

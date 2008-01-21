@@ -1,8 +1,5 @@
 dist_libkernel_la_SOURCES +=			\
-runner/coroutine.hh				\
-runner/coroutine.hxx				\
-runner/coroutine.cc				\
-runner/coroutine-yield.hh			\
+runner/job.cc					\
 runner/job.hh					\
 runner/job.hxx					\
 runner/fwd.hh					\

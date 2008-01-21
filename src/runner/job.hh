@@ -7,6 +7,7 @@
 # define RUNNER_JOB_HH
 
 # include "runner/fwd.hh"
+# include "runner/libcoroutine/Coro.h"
 
 namespace runner
 {
@@ -14,35 +15,49 @@ namespace runner
   class Job
   {
   public:
+    Job (const Job&);
     explicit Job (Scheduler& scheduler);
     virtual ~Job ();
 
-    void scheduler_set (Scheduler& scheduler);
-    const Scheduler& scheduler_get () const;
-    Scheduler& scheduler_get ();
+    Scheduler& scheduler_get () const;
 
-    /// Start to do some work (or continue unfinished work).
+    /// Get the underlying coroutine corresponding to this job.
+    Coro* coro_get () const;
+
+    /// Has this job terminated?
+    bool terminated () const;
+
+    /// Run the job -- called from the scheduler.
     void run ();
-    /// Stop this job.  If \c run is called again, the job will restart.
-    void terminate ();
 
-  protected:
+    /// Kill the job -- called from the scheduler.
+    void terminate_now ();
+
     /// Register this Job on its Scheduler so that it is rescheduled next
-    /// cycle (that is, its \c run method will be invoked).
+    /// cycle. This should be called from the currently scheduled job
+    /// only but must be kept visible to be callable from the primitives.
     void yield ();
 
-    /// Can optionally be overridden to do something when (re)starting a new
-    /// job.
-    virtual void start ();
-    /// Must be implemented to do something useful.
+  protected:
+
+    /// Must be implemented to do something useful. If an exception is
+    /// raised, it will be lost.
     virtual void work () = 0;
-    /// Can optionally be overridden to do something when stopping a job.
-    virtual void stop ();
+
+    /// Will be called if the job is killed prematurely or arrives at
+    /// its end. It is neither necessary nor advised to call yield
+    /// from this function. Any exception raised here will be lost.
+    void terminate ();
 
   private:
     /// Scheduler in charge of this job.  Do not delete.
     Scheduler* scheduler_;
-    bool started_;
+
+    /// Has the coroutine terminated? Set by run ().
+    bool terminated_;
+
+    /// Coro structure corresponding to this job
+    Coro* self_;
   };
 
 } // namespace runner
