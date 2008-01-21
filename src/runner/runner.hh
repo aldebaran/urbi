@@ -113,6 +113,8 @@ namespace runner
 
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
+
+    std::list<ast::loc> callStack;
   };
 
 } // namespace runner

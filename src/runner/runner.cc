@@ -71,6 +71,9 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
     send_message_ (o.str (), "error");
+    BOOST_FOREACH(ast::loc& l, callStack)
+      send_message_ (std::string("!!!    called from: ") +
+			       boost::lexical_cast<std::string>(l), "error");
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();
@@ -317,13 +320,14 @@ namespace runner
     // FIXME: Do we need to issue an error message here?
     if (!val)
       CORO_RETURN;
-
+    callStack.push_front(e.location_get());
     CORO_CALL_CATCH (apply (0, val, args);,
       catch (object::UrbiException& ue)
       {
 	ue.location_set (e.location_get ());
 	throw;
       });
+    callStack.pop_front();
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
