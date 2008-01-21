@@ -202,6 +202,16 @@ namespace runner
 	break;
     }
 
+    {// Not corointeruptible block
+      // Check if any argument is void
+      bool first = true;
+      BOOST_FOREACH(rObject arg, args)
+      {
+	if (!first && arg == object::void_class)
+	  throw object::WrongArgumentType (__PRETTY_FUNCTION__);
+	first = false;
+      }
+    }
     /*---------------------------.
     | Calling an Urbi function.  |
     `---------------------------*/
@@ -294,6 +304,12 @@ namespace runner
     {
       CORO_CALL (eval (**i));
       passert ("argument without a value: " << **i, current_);
+      if (current_ == object::void_class)
+      {
+	object::WrongArgumentType wt(__PRETTY_FUNCTION__);
+	wt.location_set((*i)->location_get());
+	throw wt;
+      }
       PING ();
       args.push_back (current_);
     }
@@ -324,7 +340,8 @@ namespace runner
     CORO_CALL_CATCH (apply (0, val, args);,
       catch (object::UrbiException& ue)
       {
-	ue.location_set (e.location_get ());
+	if (!ue.location_is_set())
+	  ue.location_set (e.location_get ());
 	throw;
       });
     callStack.pop_front();

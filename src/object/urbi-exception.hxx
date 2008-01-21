@@ -14,6 +14,7 @@ namespace object
   const ast::loc&
   UrbiException::location_get () const
   {
+    //FIXME: enable this? assert(location_set_);
     return loc_;
   }
 
@@ -22,6 +23,14 @@ namespace object
   UrbiException::location_set (const ast::loc& l)
   {
     loc_ = l;
+    location_set_ = true;
+  }
+
+  inline
+  bool
+  UrbiException::location_is_set ()
+  {
+    return location_set_;
   }
 
   inline

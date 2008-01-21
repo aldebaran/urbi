@@ -38,6 +38,8 @@ namespace object
     /// Set location.
     void location_set (const ast::loc&);
 
+    /// Returns if the location has been set
+    bool location_is_set();
   protected:
     /**
      * \brief Construct an exception which contains a raw message.
@@ -66,6 +68,9 @@ namespace object
 
     /// The (C++) function that raised.
     std::string fun_;
+
+    /// location is set?
+    bool location_set_;
   };
 
 

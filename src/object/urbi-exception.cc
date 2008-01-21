@@ -9,7 +9,8 @@ namespace object
 {
   UrbiException::UrbiException (const std::string& msg)
     : msg_ (msg),
-      loc_ ()
+      loc_ (),
+      location_set_(false)
   {
     initialize_msg ();
   }
@@ -17,7 +18,8 @@ namespace object
   UrbiException::UrbiException (const std::string& msg,
 				const ast::loc& loc)
     : msg_ (msg),
-      loc_ (loc)
+      loc_ (loc),
+      location_set_(false)
   {
     initialize_msg ();
   }
@@ -26,7 +28,8 @@ namespace object
 				const std::string& fun)
     : msg_ (msg),
       loc_ (),
-      fun_ (fun)
+      fun_ (fun),
+      location_set_(false)
   {
     initialize_msg ();
   }
