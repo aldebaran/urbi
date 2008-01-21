@@ -36,14 +36,6 @@ namespace runner
     static int cycle = 0;
 #endif
     static int nothing_todo = 0;
-#if 0
-    if (5 <= nothing_todo)
-    {
-      std::cerr << "It looks like I have nothing to do.  You are so boring."
-		<< std::endl
-		<< libport::exit (0);
-    }
-#endif
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
