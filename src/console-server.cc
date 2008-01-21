@@ -31,7 +31,7 @@ public:
     {
       std::string up(cp);
       BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
-	path.push_back (s);
+	search_path.append_dir(s);
     }
   }
 

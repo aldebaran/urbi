@@ -40,6 +40,7 @@
 
 #include "libport/containers.hh"
 #include "libport/compiler.hh"
+#include "libport/path.hh"
 #include "libport/separator.hh"
 #include "libport/utime.hh"
 
@@ -86,7 +87,8 @@ UServer::UServer(ufloat period,
 		 ufloat margin,
 		 int freeMemory,
 		 const char* mainName)
-  : reseting (false),
+  : search_path(),
+    reseting (false),
     stage (0),
     debugOutput (false),
     mainName_ (mainName),
@@ -974,25 +976,9 @@ namespace
 }
 
 std::string
-UServer::find_file (const char* base)
+UServer::find_file (const libport::path& path)
 {
-  ECHO (base << " in " << libport::separate(path, ':'));
-  BOOST_FOREACH (path_type::value_type p, path)
-  {
-    std::string f = p + "/" + base;
-    ECHO("find_file(" << base << ") testing " << f);
-    if (file_readable(f))
-    {
-      ECHO("found: " << f);
-      return f;
-    }
-  }
-  if (!file_readable(base))
-  {
-    ECHO("not found: " << base);
-    error ("cannot find file: %s", base);
-  }
-  return base;
+  return search_path.find_file(path) / path.basename();
 }
 
 #define URBI_BUFSIZ 1024
