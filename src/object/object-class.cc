@@ -110,10 +110,13 @@ namespace object
 
 
   static rObject
-  object_class_wait (runner::Runner&, objects_type)
+  object_class_wait (runner::Runner& r, objects_type args)
   {
-    // FIXME: Currently does nothing.  A stub so that we
-    // accept "wait 2s" as is used in the test suite.
+    FETCH_ARG(1, Float);
+    const time_t deadline = ::urbiserver->getTime() + arg1->value_get();
+    do {
+      r.yield ();
+    } while (::urbiserver->getTime() <= deadline);
     return void_class;
   }
 
