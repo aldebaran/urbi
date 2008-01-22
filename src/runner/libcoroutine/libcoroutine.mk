@@ -5,4 +5,5 @@ runner/libcoroutine/Coro.c			\
 runner/libcoroutine/Coro.h			\
 runner/libcoroutine/PortableUContext386.h	\
 runner/libcoroutine/PortableUContext.c		\
-runner/libcoroutine/PortableUContext.h
+runner/libcoroutine/PortableUContext.h		\
+runner/libcoroutine/PortableUContext_asm.S
