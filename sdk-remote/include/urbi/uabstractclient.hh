@@ -67,9 +67,9 @@ namespace urbi
 
   enum UMessageType
     {
-      MESSAGE_SYSTEM,
-      MESSAGE_ERROR,
-      MESSAGE_DATA
+      MESSAGE_SYSTEM, ///< Messages prefixed by ***.
+      MESSAGE_ERROR,  ///< Messages prefixed by !!!.
+      MESSAGE_DATA    ///< All other messages.
     };
 
   /// Class containing all informations related to an URBI message.
@@ -85,7 +85,9 @@ namespace urbi
 
     UMessageType	 type;
 
+    /// Set only if the message type is MESSAGE_DATA.
     urbi::UValue	 *value;
+    /// Set only if the message type is MESSAGE_SYSTEM or MESSAGE_ERROR.
     std::string	 message;
     /// Raw message without the binary data.
     std::string	 rawMessage;
