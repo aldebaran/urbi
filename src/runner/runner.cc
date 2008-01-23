@@ -118,9 +118,7 @@ namespace runner
     eval (e.rhs_get ());
 
     // Wait for lhs to terminate
-    while (!lhs->terminated()) {
-      yield ();
-    }
+    yield_until_terminated (*lhs);
     delete lhs;
 
     PING ();

@@ -124,6 +124,21 @@ namespace scheduler
   }
 
   void
+  Scheduler::resume_scheduler_suspend (Job *job)
+  {
+    suspended_jobs_.push_back (job);
+    switch_back (job);
+  }
+
+  void
+  Scheduler::resume_job (Job *job)
+  {
+    assert (libport::has (suspended_jobs_, job));
+    jobs_.push_back (job);
+    suspended_jobs_.remove (job);
+  }
+
+  void
   Scheduler::killall_jobs ()
   {
     ECHO ("killing all jobs!");
@@ -134,6 +149,9 @@ namespace scheduler
 
     while (!jobs_to_start_.empty ())
       jobs_to_start_.pop_front ();
+
+    while (!suspended_jobs_.empty ())
+      kill_job (suspended_jobs_.front ());
 
     while (!jobs_.empty ())
       kill_job (jobs_.front ());
@@ -157,6 +175,7 @@ namespace scheduler
     // Remove the job from the queues where it could be stored
     jobs_to_start_.remove (job);
     jobs_.remove (job);
+    suspended_jobs_.remove (job);
 
     // We have no remove() on a priority queue, regenerate a queue without
     // this job.

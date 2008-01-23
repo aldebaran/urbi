@@ -6,7 +6,6 @@
 #ifndef SCHEDULER_SCHEDULER_HH
 # define SCHEDULER_SCHEDULER_HH
 
-# include <list>
 # include <queue>
 # include <boost/tuple/tuple.hpp>
 # include <boost/utility.hpp>
@@ -50,15 +49,21 @@ namespace scheduler
     /// Ditto, but put the job at the front of the run queue.
     void resume_scheduler_front (Job* job);
 
-    /// Dutto, but put the job in the deferred run queue until the deadline
+    /// Ditto, but put the job in the deferred run queue until the deadline
     /// is reached.
     void resume_scheduler_until (Job* job, libport::ufloat deadline);
+
+    /// Suspend the current job.
+    void resume_scheduler_suspend (Job *job);
+
+    /// Resume a job that has been previously suspended and add it at
+    /// the back of the run queue.
+    void resume_job (Job *job);
 
   private:
     void switch_back (Job *job);
 
   private:
-    typedef std::list<Job*> jobs;
     typedef std::priority_queue
     <deferred_job, std::vector<deferred_job>, std::greater<deferred_job> >
       deferred_jobs;
@@ -71,6 +76,9 @@ namespace scheduler
 
     /// Deferred jobs
     deferred_jobs deferred_jobs_;
+
+    /// Suspended jobs
+    jobs suspended_jobs_;
 
     /// Coroutine support
     Coro* self_;

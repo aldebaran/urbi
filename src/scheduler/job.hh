@@ -46,6 +46,11 @@ namespace scheduler
     /// Ditto, but ask not to be woken up before the deadline.
     void yield_until (libport::ufloat deadline);
 
+    /// Wait for another job to terminate before resuming execution of
+    /// the current one. If the other job has already terminated, the
+    /// caller will continue its execution.
+    void yield_until_terminated (Job&);
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -63,6 +68,9 @@ namespace scheduler
 
     /// Has the coroutine terminated? Set by run ().
     bool terminated_;
+
+    /// Other jobs to wake up when we terminate.
+    jobs to_wake_up_;
 
     /// Coro structure corresponding to this job
     Coro* self_;

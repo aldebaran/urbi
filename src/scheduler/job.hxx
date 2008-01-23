@@ -46,13 +46,6 @@ namespace scheduler
   {
   }
 
-  inline void
-  Job::terminate_now ()
-  {
-    terminate ();
-    terminated_ = true;
-  }
-
   inline bool
   Job::terminated () const
   {
