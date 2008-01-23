@@ -65,6 +65,12 @@ namespace scheduler
     scheduler_->resume_scheduler (this);
   }
 
+  inline void
+  Job::yield_front ()
+  {
+    scheduler_->resume_scheduler_front (this);
+  }
+
   inline Coro*
   Job::coro_get () const
   {

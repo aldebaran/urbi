@@ -8,7 +8,7 @@ namespace scheduler
   Job::run ()
   {
     ECHO ("In Job::run for " << this);
-    yield ();
+    yield_front ();
     try {
       work ();
       terminate ();

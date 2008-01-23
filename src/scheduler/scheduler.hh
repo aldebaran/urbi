@@ -40,6 +40,12 @@ namespace scheduler
     /// interrupted with itself as argument.
     void resume_scheduler (Job* job);
 
+    /// Ditto, but put the job at the front of the run queue.
+    void resume_scheduler_front (Job* job);
+
+  private:
+    void switch_back (Job *job);
+
   private:
     typedef std::list<Job*> jobs;
     jobs jobs_;

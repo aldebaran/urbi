@@ -27,15 +27,6 @@ namespace scheduler
     ECHO ("Destroying scheduler");
   }
 
-  inline void
-  Scheduler::resume_scheduler (Job* job)
-  {
-    // Switch back to the scheduler
-    Coro_switchTo_ (job->coro_get (), self_);
-    // We regained control, we are again in the context of the job.
-    ECHO ("job " << job << " resumed");
-  }
-
 } // namespace scheduler
 
 #endif // !SCHEDULER_SCHEDULER_HXX

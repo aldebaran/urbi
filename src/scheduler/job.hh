@@ -38,6 +38,9 @@ namespace scheduler
     /// only but must be kept visible to be callable from the primitives.
     void yield ();
 
+    /// Ditto, but put the job at the front of the execution queue.
+    void yield_front ();
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is

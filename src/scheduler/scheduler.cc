@@ -51,12 +51,9 @@ namespace scheduler
     {
       assert (job);
       ECHO ("will start job " << job);
-      // Job will start for a very short time and do a yield; it will then
-      // be restarted below in the course of the regular cycle. New jobs
-      // are added at the front of the run queue.
+      // Job will start for a very short time and do a yield_front() to
+      // be restarted below in the course of the regular cycle.
       Coro_startCoro_ (self_, job->coro_get(), job, run_job);
-      if (!job->terminated())
-	jobs_.push_front (job);
     }
 
     // Run all the jobs in the run queue once.
@@ -71,11 +68,35 @@ namespace scheduler
       ECHO ("will resume job " << job);
       Coro_switchTo_ (self_, job->coro_get ());
       ECHO ("back from job " << job);
-      // If the job has not terminated, put it at the back of the run queue
-      // so that the run queue order is preserved between work cycles.
-      if (!job->terminated ())
-	jobs_.push_back (job);
     }
+  }
+
+  void
+  Scheduler::switch_back (Job *job)
+  {
+    // Switch back to the scheduler
+    Coro_switchTo_ (job->coro_get (), self_);
+    // We regained control, we are again in the context of the job.
+    ECHO ("job " << job << " resumed");
+  }
+
+  void
+  Scheduler::resume_scheduler (Job* job)
+  {
+    // If the job has not terminated, put it at the back of the run queue
+    // so that the run queue order is preserved between work cycles.
+    if (!job->terminated ())
+      jobs_.push_back (job);
+    switch_back (job);
+  }
+
+  void
+  Scheduler::resume_scheduler_front (Job *job)
+  {
+    // If the job has not terminated, put it at the front of the run queue.
+    if (!job->terminated ())
+      jobs_.push_front (job);
+    switch_back (job);
   }
 
   void
