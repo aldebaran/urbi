@@ -121,21 +121,12 @@ do {									\
 // that the regular scanning rule of New is run.
 #define DEPRECATED(New)						\
   do {								\
-<<<<<<< HEAD:src/parser/utoken.l
     std::string rewritten = New;				\
-=======
->>>>>>> 6e4fb6cb182d533454cd6b0ab0e5f3b7f92816e7:src/parser/utoken.l
     up.warn(*locp,						\
 	    std::string("`") + yytext + "' is deprecated. "	\
-<<<<<<< HEAD:src/parser/utoken.l
 	    "Use `" + rewritten + "' instead.");		\
     for (int i = rewritten.length() - 1; 0 <= i; --i)		\
       unput(rewritten[i]);					\
-=======
-	    "Use `" New "' instead.");				\
-    for (int i = strlen(New) - 1; 0 <= i; --i)			\
-      unput(New[i]);						\
->>>>>>> 6e4fb6cb182d533454cd6b0ab0e5f3b7f92816e7:src/parser/utoken.l
   } while(0);
 
 %}
@@ -150,18 +141,11 @@ EOL      \n|\r|\n\r|\r\n
 ID       [a-zA-Z_][_A-Za-z0-9]*
 
 NATURAL  [0-9]+
-<<<<<<< HEAD:src/parser/utoken.l
 FRACTION {NATURAL}(\.{NATURAL})?
-=======
-FRACTION (\.{NATURAL})|({NATURAL}(\.[0-9]*)?)
->>>>>>> 6e4fb6cb182d533454cd6b0ab0e5f3b7f92816e7:src/parser/utoken.l
 EXPONENT [eE][-+]?[0-9]+
 NUMBER   {FRACTION}{EXPONENT}?
-<<<<<<< HEAD:src/parser/utoken.l
 RFRAC    \.{NATURAL}
 LFRAC    {NATURAL}\.
-=======
->>>>>>> 6e4fb6cb182d533454cd6b0ab0e5f3b7f92816e7:src/parser/utoken.l
 
 %%
 %{
@@ -274,11 +258,8 @@ LFRAC    {NATURAL}\.
 {NUMBER}"ms"  RETURN_TIMEVALUE(2, 1);
 
 {NUMBER}      RETURN_VAL_TOKEN(NUM, lexical_cast<float>(up, *locp, yytext));
-<<<<<<< HEAD:src/parser/utoken.l
 {RFRAC}       DEPRECATED(std::string("0") + yytext);
 {LFRAC}       DEPRECATED(yytext + std::string("0"));
-=======
->>>>>>> 6e4fb6cb182d533454cd6b0ab0e5f3b7f92816e7:src/parser/utoken.l
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 
