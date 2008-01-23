@@ -57,7 +57,7 @@
 
 #include "object/atom.hh"
 #include "object/primitives.hh"
-#include "runner/scheduler.hh"
+#include "scheduler/scheduler.hh"
 #include "uobject.hh"
 
 // Global server reference
@@ -80,7 +80,7 @@ int usedMemory;
 
 UServer::UServer(ufloat period,
 		 const char* mainName)
-  : scheduler_ (new runner::Scheduler),
+  : scheduler_ (new scheduler::Scheduler),
     debugOutput (false),
     mainName_ (mainName),
     somethingToDelete (false),

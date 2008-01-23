@@ -1,15 +1,15 @@
 /**
- ** \file runner/job.hh
- ** \brief Definition of runner::Job.
+ ** \file scheduler/job.hh
+ ** \brief Definition of scheduler::Job.
  */
 
-#ifndef RUNNER_JOB_HH
-# define RUNNER_JOB_HH
+#ifndef SCHEDULER_JOB_HH
+# define SCHEDULER_JOB_HH
 
-# include "runner/fwd.hh"
-# include "runner/libcoroutine/Coro.h"
+# include "scheduler/fwd.hh"
+# include "scheduler/libcoroutine/Coro.h"
 
-namespace runner
+namespace scheduler
 {
 
   class Job
@@ -60,8 +60,8 @@ namespace runner
     Coro* self_;
   };
 
-} // namespace runner
+} // namespace scheduler
 
-# include "runner/job.hxx"
+# include "scheduler/job.hxx"
 
-#endif // !RUNNER_JOB_HH
+#endif // !SCHEDULER_JOB_HH

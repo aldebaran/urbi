@@ -1,18 +1,18 @@
 /**
- ** \file runner/scheduler.hh
- ** \brief Definition of runner::Scheduler.
+ ** \file scheduler/scheduler.hh
+ ** \brief Definition of scheduler::Scheduler.
  */
 
-#ifndef RUNNER_SCHEDULER_HH
-# define RUNNER_SCHEDULER_HH
+#ifndef SCHEDULER_SCHEDULER_HH
+# define SCHEDULER_SCHEDULER_HH
 
 # include <list>
 # include <boost/utility.hpp>
 
-# include "runner/fwd.hh"
-# include "runner/libcoroutine/Coro.h"
+# include "scheduler/fwd.hh"
+# include "scheduler/libcoroutine/Coro.h"
 
-namespace runner
+namespace scheduler
 {
 
   class Scheduler : boost::noncopyable
@@ -47,8 +47,8 @@ namespace runner
     Coro* self_;
   };
 
-} // namespace runner
+} // namespace scheduler
 
 # include "scheduler.hxx"
 
-#endif // !RUNNER_SCHEDULER_HH
+#endif // !SCHEDULER_SCHEDULER_HH

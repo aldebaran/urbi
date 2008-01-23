@@ -1,6 +1,6 @@
 /**
- ** \file runner/scheduler.cc
- ** \brief Implementation of runner::Scheduler.
+ ** \file scheduler/scheduler.cc
+ ** \brief Implementation of scheduler::Scheduler.
  */
 
 //#define ENABLE_DEBUG_TRACES
@@ -12,11 +12,10 @@
 #include "libport/compiler.hh"
 #include "libport/containers.hh"
 
-#include "runner/fwd.hh"
-#include "runner/scheduler.hh"
-#include "runner/job.hh"
+#include "scheduler/scheduler.hh"
+#include "scheduler/job.hh"
 
-namespace runner
+namespace scheduler
 {
 
   // This function is required to start a new job using the libcoroutine.
@@ -106,4 +105,4 @@ namespace runner
     delete job;
   }
 
-} // namespace runner
+} // namespace scheduler

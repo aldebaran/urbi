@@ -22,7 +22,7 @@ namespace runner
 {
 
 /// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
-#define JOB(Runner) static_cast<Job*> (Runner)
+#define JOB(Runner) static_cast<scheduler::Job*> (Runner)
 
 /// Address of \c this seen as a \c Job (Runner has multiple inheritance).
 #define ME JOB (this)

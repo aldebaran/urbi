@@ -10,15 +10,15 @@
 
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
-# include "runner/scheduler.hh"
-# include "runner/job.hh"
+# include "scheduler/scheduler.hh"
+# include "scheduler/job.hh"
 
 namespace runner
 {
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-		 public Job
+		 public scheduler::Job
   {
   public:
     /// \name Useful shorthands.
@@ -34,7 +34,8 @@ namespace runner
     /// Construct a \c Runner in the \a lobby.  The runner needs to
     /// know its \a locals, who is its \a scheduler and will execute 
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
-    Runner (rLobby lobby, rObject locals, Scheduler& scheduler, ast::Ast* ast);
+    Runner (rLobby lobby, rObject locals,
+	    scheduler::Scheduler& scheduler, ast::Ast* ast);
 
     /// Create a copy of a runner
     Runner (const Runner&);

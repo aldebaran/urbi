@@ -69,13 +69,13 @@ UServer::hasSomethingToDelete ()
   somethingToDelete = true;
 }
 
-inline const runner::Scheduler&
+inline const scheduler::Scheduler&
 UServer::getScheduler () const
 {
   return *scheduler_;
 }
 
-inline runner::Scheduler&
+inline scheduler::Scheduler&
 UServer::getScheduler ()
 {
   return *scheduler_;

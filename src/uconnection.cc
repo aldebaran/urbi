@@ -43,7 +43,6 @@
 #include "object/object.hh"
 #include "object/atom.hh"
 #include "runner/fwd.hh"
-#include "runner/scheduler.hh"
 #include "runner/runner.hh"
 
 #include "parser/uparser.hh"

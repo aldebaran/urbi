@@ -14,8 +14,9 @@ namespace runner
 {
 
   inline
-  Runner::Runner (rLobby lobby, rObject locals, Scheduler& sched, ast::Ast* ast)
-    : Job (sched),
+  Runner::Runner (rLobby lobby, rObject locals,
+		  scheduler::Scheduler& sched, ast::Ast* ast)
+    : scheduler::Job (sched),
       lobby_ (lobby),
       ast_ (ast),
       current_ (0),
@@ -27,7 +28,7 @@ namespace runner
   inline
   Runner::Runner(const Runner& model)
     : ast::DefaultVisitor (),
-      Job (model),
+      scheduler::Job (model),
       lobby_ (model.lobby_),
       ast_ (model.ast_),
       current_ (model.current_),

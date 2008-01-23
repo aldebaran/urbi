@@ -1,16 +1,15 @@
 /**
- ** \file runner/job.hxx
- ** \brief Inline implementation of runner::Job.
+ ** \file scheduler/job.hxx
+ ** \brief Inline implementation of scheduler::Job.
  */
 
-#ifndef RUNNER_JOB_HXX
-# define RUNNER_JOB_HXX
+#ifndef SCHEDULER_JOB_HXX
+# define SCHEDULER_JOB_HXX
 
 # include <cassert>
-# include "runner/job.hh"
-# include "runner/scheduler.hh"
+# include "scheduler/scheduler.hh"
 
-namespace runner
+namespace scheduler
 {
 
   inline
@@ -73,6 +72,6 @@ namespace runner
     return self_;
   }
 
-} // namespace runner
+} // namespace scheduler
 
-#endif // !RUNNER_JOB_HXX
+#endif // !SCHEDULER_JOB_HXX

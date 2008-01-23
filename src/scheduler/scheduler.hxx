@@ -1,15 +1,15 @@
 /**
- ** \file runner/scheduler.hxx
- ** \brief Inline implementation of runner::Scheduler.
+ ** \file scheduler/scheduler.hxx
+ ** \brief Inline implementation of scheduler::Scheduler.
  */
 
-#ifndef RUNNER_SCHEDULER_HXX
-# define RUNNER_SCHEDULER_HXX
+#ifndef SCHEDULER_SCHEDULER_HXX
+# define SCHEDULER_SCHEDULER_HXX
 
-# include "runner/scheduler.hh"
-# include "runner/job.hh"
+# include "scheduler/scheduler.hh"
+# include "scheduler/job.hh"
 
-namespace runner
+namespace scheduler
 {
 
   inline
@@ -36,6 +36,6 @@ namespace runner
     ECHO ("job " << job << " resumed");
   }
 
-} // namespace runner
+} // namespace scheduler
 
-#endif // !RUNNER_SCHEDULER_HXX
+#endif // !SCHEDULER_SCHEDULER_HXX

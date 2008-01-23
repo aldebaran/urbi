@@ -2,7 +2,7 @@
 #include "libport/compiler.hh"     // For ECHO
 #include "job.hh"
 
-namespace runner
+namespace scheduler
 {
   void
   Job::run ()
