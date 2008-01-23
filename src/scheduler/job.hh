@@ -6,6 +6,8 @@
 #ifndef SCHEDULER_JOB_HH
 # define SCHEDULER_JOB_HH
 
+# include <libport/ufloat.hh>
+
 # include "scheduler/fwd.hh"
 # include "scheduler/libcoroutine/Coro.h"
 
@@ -40,6 +42,9 @@ namespace scheduler
 
     /// Ditto, but put the job at the front of the execution queue.
     void yield_front ();
+
+    /// Ditto, but ask not to be woken up before the deadline.
+    void yield_until (libport::ufloat deadline);
 
   protected:
 

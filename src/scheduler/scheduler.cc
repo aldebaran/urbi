@@ -9,8 +9,10 @@
 
 #include <boost/foreach.hpp>
 
-#include "libport/compiler.hh"
-#include "libport/containers.hh"
+#include <libport/compiler.hh>
+#include <libport/containers.hh>
+
+#include "kernel/userver.hh"
 
 #include "scheduler/scheduler.hh"
 #include "scheduler/job.hh"
@@ -45,6 +47,7 @@ namespace scheduler
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
+    // Start new jobs
     jobs to_start;
     std::swap (to_start, jobs_to_start_);
     BOOST_FOREACH(Job* job, to_start)
@@ -54,6 +57,16 @@ namespace scheduler
       // Job will start for a very short time and do a yield_front() to
       // be restarted below in the course of the regular cycle.
       Coro_startCoro_ (self_, job->coro_get(), job, run_job);
+    }
+
+    // Start deferred jobs
+    libport::ufloat current_time = ::urbiserver->getTime ();
+    while (!deferred_jobs_.empty ()) {
+      deferred_job j = deferred_jobs_.top ();
+      if (j.get<0>() > current_time)
+	break;
+      jobs_.push_back (j.get<1>());
+      deferred_jobs_.pop ();
     }
 
     // Run all the jobs in the run queue once.
@@ -93,9 +106,20 @@ namespace scheduler
   void
   Scheduler::resume_scheduler_front (Job *job)
   {
-    // If the job has not terminated, put it at the front of the run queue.
-    if (!job->terminated ())
-      jobs_.push_front (job);
+    // Put the job in front of the queue. If the job asks to be requeued,
+    // it is not terminated.
+    assert (!job->terminated ());
+    jobs_.push_front (job);
+    switch_back (job);
+  }
+
+  void
+  Scheduler::resume_scheduler_until (Job *job, ufloat deadline)
+  {
+    // Put the job in the deferred queue. If the job asks to be requeued,
+    // it is not terminated.
+    assert (!job->terminated ());
+    deferred_jobs_.push (boost::make_tuple (deadline, job));
     switch_back (job);
   }
 
@@ -103,27 +127,58 @@ namespace scheduler
   Scheduler::killall_jobs ()
   {
     ECHO ("killing all jobs!");
-#ifdef ENABLE_DEBUG_TRACES
-    jobs::size_type n = jobs_.size ();
-    unsigned i = 0;
-#endif
-    BOOST_FOREACH (Job* job, jobs_)
-    {
-      assert (job);
-      ECHO ("stopping job " << ++i << '/' << n << ": " << job);
-      kill_job (job);
-    }
+
+    // This implementation is quite inefficient because it will call
+    // kill_job() for each job. But who cares? We are killing everyone
+    // anyway.
+
+    while (!jobs_to_start_.empty ())
+      jobs_to_start_.pop_front ();
+
+    while (!jobs_.empty ())
+      kill_job (jobs_.front ());
+
+    while (!deferred_jobs_.empty ())
+      kill_job (deferred_jobs_.top ().get<1>());
   }
 
   void
   Scheduler::kill_job (Job* job)
   {
     assert (job);
-    assert (libport::has (jobs_, job));
-    job->terminate_now ();
+
+    ECHO ("killing job " << job);
+
+    // First of all, tell the job it has been terminated unless it has
+    // been registered with us but not yet started.
+    if (!libport::has (jobs_to_start_, job))
+      job->terminate_now ();
+
+    // Remove the job from the queues where it could be stored
+    jobs_to_start_.remove (job);
     jobs_.remove (job);
+
+    // We have no remove() on a priority queue, regenerate a queue without
+    // this job.
+    {
+      deferred_jobs old_deferred;
+      std::swap (old_deferred, deferred_jobs_);
+      while (!old_deferred.empty ())
+      {
+	deferred_job j = old_deferred.top ();
+	old_deferred.pop ();
+	if (j.get<1>() != job)
+	  deferred_jobs_.push (j);
+      }
+    }
+
     ECHO ("deleting job " << job);
     delete job;
+  }
+
+  bool operator> (const deferred_job& left, const deferred_job& right)
+  {
+    return left.get<0>() > right.get<0>();
   }
 
 } // namespace scheduler

@@ -113,10 +113,7 @@ namespace object
   object_class_wait (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, Float);
-    const time_t deadline = ::urbiserver->getTime() + arg1->value_get();
-    do {
-      r.yield ();
-    } while (::urbiserver->getTime() <= deadline);
+    r.yield_until (::urbiserver->getTime() + arg1->value_get());
     return void_class;
   }
 

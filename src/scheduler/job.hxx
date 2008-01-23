@@ -71,6 +71,12 @@ namespace scheduler
     scheduler_->resume_scheduler_front (this);
   }
 
+  inline void
+  Job::yield_until (libport::ufloat deadline)
+  {
+    scheduler_->resume_scheduler_until (this, deadline);
+  }
+
   inline Coro*
   Job::coro_get () const
   {

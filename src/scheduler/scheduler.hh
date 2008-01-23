@@ -7,13 +7,20 @@
 # define SCHEDULER_SCHEDULER_HH
 
 # include <list>
+# include <queue>
+# include <boost/tuple/tuple.hpp>
 # include <boost/utility.hpp>
+
+# include <libport/ufloat.hh>
 
 # include "scheduler/fwd.hh"
 # include "scheduler/libcoroutine/Coro.h"
 
 namespace scheduler
 {
+
+  typedef boost::tuple<libport::ufloat, Job*> deferred_job;
+  bool operator> (const deferred_job&, const deferred_job&);
 
   class Scheduler : boost::noncopyable
   {
@@ -43,13 +50,29 @@ namespace scheduler
     /// Ditto, but put the job at the front of the run queue.
     void resume_scheduler_front (Job* job);
 
+    /// Dutto, but put the job in the deferred run queue until the deadline
+    /// is reached.
+    void resume_scheduler_until (Job* job, libport::ufloat deadline);
+
   private:
     void switch_back (Job *job);
 
   private:
     typedef std::list<Job*> jobs;
+    typedef std::priority_queue
+    <deferred_job, std::vector<deferred_job>, std::greater<deferred_job> >
+      deferred_jobs;
+
+    /// Regular jobs to schedule inconditionally during the next run
     jobs jobs_;
+
+    /// Jobs registered for initialization but not yet started
     jobs jobs_to_start_;
+
+    /// Deferred jobs
+    deferred_jobs deferred_jobs_;
+
+    /// Coroutine support
     Coro* self_;
   };
 
