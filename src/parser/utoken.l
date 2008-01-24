@@ -154,7 +154,7 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 %}
 %option noyywrap debug
 
-%x SC_C_COMMENT SC_STRING
+%x SC_C_COMMENT SC_STRING_OR_SYMBOL
 %s SC_UCONSOLE
 
 BLANKS   [ \t]+
@@ -199,8 +199,9 @@ FLAVOR   [;|,&]?
 
   static std::stack<yy::location> synclines;
 
-  // Pacify warning.
-  (void) yy_flex_realloc;
+  // The first delimiter of a string or a symbol : ' or ".
+  // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
+  static char delimiter;
 %}
 
   /*-----------------------------------.
@@ -279,7 +280,11 @@ FLAVOR   [;|,&]?
 		  RETURN_IVAL(INTEGER, numeric_cast<int>(up, *locp, res));
 	      }
 
-\"            valp->str = new std::string; BEGIN SC_STRING;
+[\"\']        {
+                valp->str = new std::string;
+		delimiter = *yytext;
+		BEGIN SC_STRING_OR_SYMBOL;
+	      }
 
 
 "block"      |
@@ -437,14 +442,22 @@ FLAVOR   [;|,&]?
 {ID}     RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
 
 
-    /*----------.
-    | Strings.  |
-    `----------*/
+    /*--------------------.
+    | Strings and symbols |
+    `--------------------*/
 
-<SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
-     \" {
-       BEGIN sc_default;
-       return token::STRING;
+<SC_STRING_OR_SYMBOL>{ /* Handling of the strings and symbols. */
+     [\"\'] {
+       if (*yytext == delimiter)
+       {
+	 BEGIN sc_default;
+	 if (*yytext == '\'')
+	   RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(*valp->str));
+	 else
+	   return token::STRING;
+       }
+       else
+         *valp->str += *yytext;
      }
 
      \\[0-7]{3}		{
@@ -466,18 +479,19 @@ FLAVOR   [;|,&]?
      \\r	*valp->str += '\r';
      \\t	*valp->str += '\t';
      \\v	*valp->str += '\v';
-     \\[\\""]   *valp->str += yytext[1];
+     \\[\\\"\'] *valp->str += yytext[1];
      \\.	up.error (*locp, "invalid escape");
 
 
-     [^\"\n\r\\]+      valp->str->append (yytext, yyleng);
+     [^\"\'\n\r\\]+      valp->str->append (yytext, yyleng);
 
      {EOL}+    locp->lines (yyleng); valp->str->append (yyleng, '\n');
 
      <<EOF>> {
-       up.error (*locp, "unexpected end of file in a string");
-       BEGIN sc_default;
-       return token::STRING;
+       std::ostringstream o;
+       o << "unexpected end of file in " << delimiter << "..." << delimiter;
+       up.error (*locp, o.str());
+       unput(delimiter);
      }
 }
 
