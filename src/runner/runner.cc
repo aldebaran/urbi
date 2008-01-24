@@ -260,6 +260,11 @@ namespace runner
 	catch (ast::ReturnException& re)
 	{
 	  current_ = re.result_get();
+	}
+	catch (object::UrbiException& ue)
+	{
+	  std::swap(bound_args, locals_);
+	  throw ue;
 	});
       std::swap(bound_args, locals_);
     }
