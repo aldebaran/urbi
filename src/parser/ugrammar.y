@@ -736,7 +736,7 @@ stmt:
       // Compiled as "name = function args stmt", i.e.,
       // updateSlot (name, function args stmt).
       $$ = assign (@$, $2,
-		   new ast::Function (@$, take($3), scope(@4+@6, $5)),
+		   new ast::Function (@$, take($3), $5),
 		   true);
   }
 ;
@@ -1068,7 +1068,7 @@ expr:
   // Because of conflicts, we need the braces
   "function" formal_args "{" stmts "}"
     {
-      $$ = new ast::Function (@$, take($2), scope(@3+@5, $4));
+      $$ = new ast::Function (@$, take($2), $4);
     }
 ;
 
