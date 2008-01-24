@@ -145,8 +145,10 @@ namespace runner
     if (scope)
       bound_args = scope;
     else
+    {
       bound_args = new object::Object;
-    bound_args->locals_set(true);
+      bound_args->locals_set(true);
+    }
 
     // Fetch the called function.
     fn = &func.cast<object::Code> ()->value_get ();
@@ -155,13 +157,17 @@ namespace runner
     object::check_arg_count (fn->formals_get().size(), args.size() - 1,
 			     __PRETTY_FUNCTION__);
 
-    // Bind formal and effective arguments.
-    // The target is "self".
+    // Bind formal and effective arguments if the caller has not provided
+    // a scope. If a scope has been given, it is up to the caller to set
+    // it up.
     ei = args.begin();
-    bound_args->slot_set (libport::Symbol("self"), *ei);
-    // self is also the proto of the function outer scope, so that
-    // we look for non-local identifiers in the target itself.
-    bound_args->proto_add (*ei);
+    if (!scope)
+    {
+      bound_args->slot_set (libport::Symbol("self"), *ei);
+      // self is also the proto of the function outer scope, so that
+      // we look for non-local identifiers in the target itself.
+      bound_args->proto_add (*ei);
+    }
 
     // Now bind the non-target arguments.
     ++ei;
@@ -177,11 +183,11 @@ namespace runner
       current_ = eval (*fn->body_get());
     }
     catch (ast::BreakException& be)
-      {
-        object::PrimitiveError error("break", "outside a loop");
-        error.location_set(be.location_get());
-        raise_error_(error);
-      }
+    {
+      object::PrimitiveError error("break", "outside a loop");
+      error.location_set(be.location_get());
+      raise_error_(error);
+    }
     catch (ast::ReturnException& re)
     {
       current_ = re.result_get();

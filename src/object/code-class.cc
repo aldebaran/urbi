@@ -8,6 +8,8 @@
 #include "object/atom.hh"
 #include "object/object.hh"
 
+#include "runner/runner.hh"
+
 namespace object
 {
   rObject code_class;
@@ -16,6 +18,21 @@ namespace object
   | Code primitives.  |
   `------------------*/
 
+  static rObject
+  code_class_apply (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (3);
+    FETCH_ARG (1, List);
+
+    objects_type apply_args;
+    apply_args.push_back (args[0]);
+    BOOST_FOREACH (rObject arg, arg1->value_get ())
+      apply_args.push_back (arg);
+
+    return r.apply (args[2], args[0], apply_args);
+  }
+
+
 
   void
   code_class_initialize ()
@@ -23,6 +40,7 @@ namespace object
 #define DECLARE(Name)							\
     code_class->slot_set (#Name,					\
 			  new Primitive(code_class_ ## Name));
+    DECLARE (apply);
 #undef DECLARE
   }
 
