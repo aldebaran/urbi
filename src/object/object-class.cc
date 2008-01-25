@@ -133,7 +133,7 @@ namespace object
   {
     CHECK_ARG_COUNT (3);
     FETCH_ARG (1, List);
-    if (arg1->value_get ().size ())
+    if (!arg1->value_get ().empty ())
       throw PrimitiveError ("apply", "first argument must be an empty list");
     return args[0];
   }
