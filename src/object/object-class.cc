@@ -128,6 +128,15 @@ namespace object
     return void_class;
   }
 
+  static rObject
+  object_class_apply (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (3);
+    FETCH_ARG (1, List);
+    if (arg1->value_get ().size ())
+      throw PrimitiveError ("apply", "first argument must be an empty list");
+    return args[0];
+  }
 
   /*----------.
   | Protos.  |
@@ -251,6 +260,7 @@ namespace object
     DECLARE1(shutdown);
     DECLARE1(wait);
     DECLARE1(load);
+    DECLARE1(apply);
 #undef DECLARE1
   }
 
