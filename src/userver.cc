@@ -40,6 +40,7 @@
 #include <boost/foreach.hpp>
 
 #include "libport/containers.hh"
+#include "libport/path.hh"
 #include "libport/separator.hh"
 
 #include "urbi/uobject.hh"
@@ -80,7 +81,8 @@ int usedMemory;
 
 UServer::UServer(ufloat period,
 		 const char* mainName)
-  : scheduler_ (new runner::Scheduler),
+  : search_path(),
+    scheduler_ (new runner::Scheduler),
     debugOutput (false),
     mainName_ (mainName),
     somethingToDelete (false),
@@ -150,7 +152,7 @@ UServer::initialize()
   }
 
   load_init_file("urbi.u");
-  
+
   // Handle pluged UOBjects.
   // Create "uobject" in lobby where UObjects will be put.
   object::rObject uobject = object::clone(object::object_class);
@@ -483,25 +485,9 @@ namespace
 }
 
 std::string
-UServer::find_file (const std::string& base)
+UServer::find_file (const libport::path& path)
 {
-  ECHO (base << " in " << libport::separate(path, ':'));
-  BOOST_FOREACH (path_type::value_type p, path)
-  {
-    std::string f = p + "/" + base;
-    ECHO("find_file(" << base << ") testing " << f);
-    if (file_readable(f))
-    {
-      ECHO("found: " << f);
-      return f;
-    }
-  }
-  if (!file_readable(base))
-  {
-    ECHO("not found: " << base);
-    error ("cannot find file: %s", base.c_str());
-  }
-  return base;
+  return search_path.find_file(path) / path.basename();
 }
 
 UErrorValue

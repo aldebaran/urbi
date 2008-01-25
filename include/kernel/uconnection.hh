@@ -1,4 +1,4 @@
-/*! \file uconnection.hh
+/*! \file kernel/uconnection.hh
  *******************************************************************************
 
  File: uconnection.hh\n
@@ -187,7 +187,7 @@ public:
   /*! A tag is automatically added to output the message string and the
     resulting string is sent via send(const ubyte*,int).
     \param s the string to send
-    \param tag the tag of the message. Default is "notag"
+    \param tag the tag of the message. Default is ""
   */
   static inline _Send send (const char *s, const char* tag = 0)
   {

@@ -268,12 +268,12 @@ FLAVOR   [;|,&]?
 {NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (up, *locp, yytext));
 {FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(up, *locp, yytext));
 {ENATURAL}    {
-                float res = lexical_cast<float>(up, *locp, yytext);
+		float res = lexical_cast<float>(up, *locp, yytext);
 		if (res < 1)
 		  RETURN_FVAL(FLOAT, res);
 		else
 		  RETURN_IVAL(INTEGER, numeric_cast<int>(up, *locp, res));
-              }
+	      }
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 
