@@ -71,13 +71,17 @@ do nil
 var Object.isNil = false;
 
 
-##############
+## -------- ##
 ## Closure. ##
-##############
+## -------- ##
 
 do Closure
 {
-  var apply = function (args, _ctx) { getSlot("func").apply (args, context.clone) };
+  var apply = function (args, _ctx) {
+    # We create a subcontext using clone in which the function arguments
+    # will be bound.
+    getSlot ("func").apply (args, context.clone)
+  };
 };
 
 

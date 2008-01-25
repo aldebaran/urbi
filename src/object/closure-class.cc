@@ -19,16 +19,15 @@ namespace object
   `------------------*/
 
   static rObject
-  closure_class_create (runner::Runner& r, objects_type args)
+  closure_class_init (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, Code);
 
-    rObject new_closure = clone (closure_class);
-    new_closure->slot_set ("func", args[1]);
-    new_closure->slot_set ("context", r.locals_get ());
+    args[0]->slot_set ("func", args[1]);
+    args[0]->slot_set ("context", r.locals_get ());
 
-    return new_closure;
+    return args[0];
   }
 
 
@@ -39,7 +38,7 @@ namespace object
 #define DECLARE(Name)							\
     closure_class->slot_set (#Name,					\
 			  new Primitive(closure_class_ ## Name));
-    DECLARE (create);
+    DECLARE (init);
 #undef DECLARE
   }
 
