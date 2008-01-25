@@ -82,6 +82,7 @@ namespace object
   class WrongArgumentCount;
 
   extern rObject void_class;
+  extern rObject nil_class;
 } // namespace object
 
 #endif // !OBJECT_FWD_HH

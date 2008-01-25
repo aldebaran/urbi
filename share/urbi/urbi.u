@@ -55,6 +55,22 @@ do void
     self;
   };
 };
+
+
+## ---- ##
+## nil. ##
+## ---- ##
+
+do nil
+{
+  // nil is a singleton.
+  var clone = function () { self };
+  var isNil = Lobby.true;
+  var ==    = function (x) { x.isNil };
+};
+var Object.isNil = false;
+
+
 ## ------- ##
 ## Float.  ##
 ## ------- ##
