@@ -723,7 +723,6 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
     }
   }
 
-
   if (fun)
   {
     if ((expression->parameters
@@ -753,51 +752,44 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 						  resultContainer),
 				  0));
 
-    if (morph)
-    {
-      UString* fundevice = expression->variablename->getDevice();
+    UString* fundevice = expression->variablename->getDevice();
+    UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
+    assert (uc_tree);
+    // handle the :: case
+    if (expression->variablename->doublecolon
+	&& !connection->stack.empty ()
+	&& libport::mhas(::urbiserver->objtab,
+			 connection->stack.front()->self().c_str()))
+      *fundevice = connection->stack.front()->self();
 
-      UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
-      assert (uc_tree);
-      // handle the :: case
-      if (expression->variablename->doublecolon
-	  && !connection->stack.empty ()
-	  && libport::mhas(::urbiserver->objtab,
-			   connection->stack.front()->self().c_str()))
-	*fundevice = connection->stack.front()->self();
+    uc_tree->callid = new UCallid(unic("__UFnct"),
+				  fundevice->c_str(), uc_tree);
 
-      uc_tree->callid = new UCallid(unic("__UFnct"),
-				    fundevice->c_str(), uc_tree);
+    resultContainer->nameUpdate(uc_tree->callid->str(), "__result__");
+    // creates return variable
+    uc_tree->callid->setReturnVar
+      (new UVariable (uc_tree->callid->str().c_str(), "__result__",
+		      new UValue ()));
 
-      resultContainer->nameUpdate(uc_tree->callid->str(), "__result__");
-      // creates return variable
-      uc_tree->callid->setReturnVar (
-				     new UVariable (uc_tree->callid->str().c_str(), "__result__",
-						    new UValue ()));
+    if (!uc_tree->callid)
+      return UCOMPLETED;
+    uc_tree->connection = connection;
 
-      if (!uc_tree->callid)
-	return UCOMPLETED;
-      uc_tree->connection = connection;
-
-      UNamedParameters *pvalue = expression->parameters;
-      UNamedParameters *pname	 = fun->parameters;
-      for (;
-	   pvalue != 0;
-	   pvalue = pvalue->next, pname = pname->next)
-      {
-	UValue* valparam = pvalue->expression->eval(this, connection);
-	if (!valparam)
-	{
-	  send_error(connection, this, "EXPR evaluation failed");
-	  return UCOMPLETED;
-	}
-
+    for (UNamedParameters
+	   *pvalue = expression->parameters,
+	   *pname = fun->parameters;
+	 pvalue != 0;
+	 pvalue = pvalue->next, pname = pname->next)
+      if (UValue* valparam = pvalue->expression->eval(this, connection))
 	uc_tree->callid->store
 	  (new UVariable(uc_tree->callid->str().c_str(),
 			 pname->name->c_str(),
 			 valparam));
+      else
+      {
+	send_error(connection, this, "EXPR evaluation failed");
+	return UCOMPLETED;
       }
-    }
 
     return UMORPH;
   }
@@ -849,9 +841,9 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 
 	BOOST_FOREACH (UMonitor* j, b->monitors)
 	{
-	  *j->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-	  *j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
-					   o.str().size());
+	  *j->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG)
+		<< UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+				      o.str().size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
@@ -864,7 +856,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	  *j->c << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
-      #define STRINGIFY(a) #a
+#define STRINGIFY(a) #a
       persistant = false;
       {
 	const char * vname = variablename->getFullname()->c_str();
@@ -900,6 +892,35 @@ namespace
   }
 }
 
+namespace
+{
+  static
+  void
+  undeclared_variable(UConnection& connection,
+		      UVariableName& variablename,
+		      const UAst::location& l)
+  {
+    UServer::defcheck_type check = connection.server->defcheck;
+    if (check == UServer::defcheck_teacher
+	|| check == UServer::defcheck_sarkozy)
+      {
+	bool warn = check == UServer::defcheck_teacher;
+	std::string err =
+	  std::string("!!! ")
+	  + boost::lexical_cast<std::string> (l)
+	  + ": "
+	  + (warn
+	     ? "deprecated declaration without `var'"
+	     : "undeclared identifier")
+	  + ": "
+	  + variablename.getFullname()->str()
+	  + '\n';
+	connection << UConnection::send(err.c_str(),
+					warn ? "warning" : "error");
+      }
+  }
+}
+
 //! UCommand subclass execution function
 UCommand::Status
 UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
@@ -930,6 +951,40 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
   if (scanGroups(&UCommand::refVarName, true))
     return UMORPH;
 
+  ////////////////////////////////////////
+  // Initialization phase (first pass)
+  ////////////////////////////////////////
+
+  if (status == UONQUEUE)
+  {
+    // object aliasing here
+    // check if variable is inherited
+    //XXX fixme duplicated from uexpression:cc:1684 (virtual variables) 
+    bool inherited = false;
+    const char* devname = variablename->getDevice()->c_str();
+    {
+      HMobjtab::iterator itobj = ::urbiserver->objtab.find(devname);
+      if (itobj != ::urbiserver->objtab.end())
+      {
+	bool ambiguous;
+	UVariable * v = itobj->second->
+	  searchVariable(variablename->getMethod()->c_str(), ambiguous);
+	if (ambiguous)
+	{
+	  send_error(connection, this,
+		     "Ambiguous multiple inheritance on variable %s",
+		     variablename->getFullname()->c_str());
+	}
+	if (v)
+	  inherited = true;
+      }
+    }
+
+    // Strict variable definition checking
+    if (!variable && !inherited && !defkey)
+      undeclared_variable(*connection, *variablename, loc());
+  }
+
   // Function call
   // morph into the function code
   if (expression->type == UExpression::FUNCTION)
@@ -945,7 +1000,6 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
   if (status == UONQUEUE)
   {
-    // object aliasing here
     if (variablename->nostruct
 	&& expression->type == UExpression::VARIABLE
 	&& expression->variablename
@@ -977,49 +1031,6 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 		 "Warning: %s type mismatch: no object assignment",
 		 variablename->getFullname()->c_str());
       return UCOMPLETED;
-    }
-
-    // check if variable is inherited
-    //XXX fixme duplicated from uexpression:cc:1684 (virtual variables) 
-    bool inherited = false;
-    const char* devname = variablename->getDevice()->c_str();
-    HMobjtab::iterator itobj;
-    if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	::urbiserver->objtab.end())
-    {
-      bool ambiguous;
-      UVariable * v = itobj->second->
-      searchVariable(variablename->getMethod()->c_str(), ambiguous);
-      if (ambiguous)
-      {
-	send_error(connection, this,
-	    "Ambiguous multiple inheritance on variable %s",
-	    variablename->getFullname()->c_str());
-      }
-      if (v)
-	inherited = true;
-    }
-
-    // Strict variable definition checking
-    if (!variable
-       && !inherited
-	&& !defkey
-	&& (connection->server->defcheck == UServer::defcheck_teacher
-	    || connection->server->defcheck == UServer::defcheck_sarkozy))
-    {
-      bool warn = connection->server->defcheck == UServer::defcheck_teacher;
-      std::string err =
-	std::string("!!! ")
-	+ boost::lexical_cast<std::string> (loc())
-	+ ": "
-	+ (warn
-	   ? "deprecated declaration without `var'"
-	   : "undeclared identifier")
-	+ ": "
-	+ variablename->getFullname()->str()
-	+ '\n';
-      *connection << UConnection::send(err.c_str(),
-				       warn ? "warning" : "error");
     }
 
     // Check the +error flag
@@ -1206,13 +1217,13 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  // Initialize modifiers
 	  for (UNamedParameters* modif = parameters; modif; modif = modif->next)
 	  {
-# define TEST_MODIF_SIN(Name)						\
-	    if (!modif_sin)						\
-	    {								\
-	      send_error(connection, this,				\
-			 "Use cos or sin before " #Name);		\
-	      delete rhs;						\
-	      return UCOMPLETED;					\
+# define TEST_MODIF_SIN(Name)					\
+	    if (!modif_sin)					\
+	    {							\
+	      send_error(connection, this,			\
+			 "Use cos or sin before " #Name);	\
+	      delete rhs;					\
+	      return UCOMPLETED;				\
 	    }
 
 	    if (!modif->expression || !modif->name)
@@ -1323,8 +1334,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  // Check modifiers
 	  bool modif_error = true;
 	  if (sin_modif_count > 1)
-	      send_error(connection, this,
-			 "Multiple sin or cos modifier applied");
+	    send_error(connection, this,
+		       "Multiple sin or cos modifier applied");
 	  else if (modif_count > 1)
 	    send_error(connection, this,
 		       "Only one modifier allowed on assignment");
@@ -1340,8 +1351,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	  if (modif_error)
 	  {
-	      delete rhs;
-	      return UCOMPLETED;
+	    delete rhs;
+	    return UCOMPLETED;
 	  }
 	}
 
