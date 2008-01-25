@@ -142,7 +142,7 @@ namespace runner
     // Create a new object to store the arguments unless a scope has been
     // given for this purpose.
     rObject bound_args;
-    if (scope)
+    if (scope != object::nil_class)
       bound_args = scope;
     else
     {
@@ -161,7 +161,7 @@ namespace runner
     // a scope. If a scope has been given, it is up to the caller to set
     // it up.
     ei = args.begin();
-    if (!scope)
+    if (scope == object::nil_class)
     {
       bound_args->slot_set (libport::Symbol("self"), *ei);
       // self is also the proto of the function outer scope, so that
@@ -309,7 +309,7 @@ namespace runner
       return;
     callStack.push_front(e.location_get());
     try {
-      apply (0, val, args);
+      apply (object::nil_class, val, args);
     }
     catch (object::UrbiException& ue)
     {
