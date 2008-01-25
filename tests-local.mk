@@ -21,8 +21,6 @@ XFAIL_TESTS +=					\
 # Tests that are only for 1.x, and we don't want them in k2.
 # We should probably use different directories instead.
 XFAIL_TESTS +=					\
-1.x/alias.chk					\
-1.x/deprecated-echo-syntax-warning.chk		\
 1.x/string-comparison.chk
 
 
