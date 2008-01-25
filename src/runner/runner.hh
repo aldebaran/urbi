@@ -49,6 +49,9 @@ namespace runner
   public:
     /// Return the lobby in which this runner has been started.
     const rLobby& lobby_get () const;
+
+    /// Return the current locals for this runner.
+    const rObject& locals_get () const;
     /// \}
 
     /// Execute the code of function \a func with arguments \a args in

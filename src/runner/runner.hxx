@@ -49,6 +49,13 @@ namespace runner
   }
 
   inline
+  const object::rObject&
+  Runner::locals_get () const
+  {
+    return locals_;
+  }
+
+  inline
   Runner::rObject
   Runner::eval (ast::Ast& e)
   {

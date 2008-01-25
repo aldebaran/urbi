@@ -30,6 +30,7 @@ namespace object
   /// lower case C++ name, and the second argument, \p Name, the
   /// capitalized URBI name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)	\
+  Macro(closure,   Closure)						\
   Macro(code,      Code)						\
   Macro(delegate,  Delegate)                                            \
   Macro(lobby,     Lobby)						\

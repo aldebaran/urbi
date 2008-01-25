@@ -71,6 +71,16 @@ do nil
 var Object.isNil = false;
 
 
+##############
+## Closure. ##
+##############
+
+do Closure
+{
+  var apply = function (args, _ctx) { getSlot("func").apply (args, context.clone) };
+};
+
+
 ## ------- ##
 ## Float.  ##
 ## ------- ##
