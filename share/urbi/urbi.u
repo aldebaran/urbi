@@ -16,7 +16,7 @@ Object.slotCopy ("removeProto", "disinherit");
 ## Constants ##
 ## --------- ##
 
-class Lobby.Constants
+class Object.Constants
 {
   var true   = 1.0;
   var false  = 0.0;
@@ -26,7 +26,7 @@ class Lobby.Constants
 
   var pi     = 3.14159265358979323846264338327950288;
 };
-Lobby.addProto (Constants);
+Object.addProto (Constants);
 
 
 ## --------- ##
@@ -34,11 +34,13 @@ Lobby.addProto (Constants);
 ## --------- ##
 
 // Does not have anything special.  Yet.
-class Lobby.Channel
+class Object.Channel
 {
   var init = function (x) { var self.name = x };
   var <<   = function (x) { x.print (name); {} };
 };
+
+
 
 ## --------- ##
 ## Void      ##
@@ -55,6 +57,8 @@ do void
     self;
   };
 };
+
+
 ## ------- ##
 ## Float.  ##
 ## ------- ##
@@ -91,7 +95,7 @@ do Float
 ## Math. ##
 ## ----- ##
 
-class Lobby.Math
+class Object.Math
 {
   var abs    = function (x) { x.abs };
   var acos   = function (x) { x.acos };
