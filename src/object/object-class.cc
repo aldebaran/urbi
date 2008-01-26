@@ -61,7 +61,7 @@ namespace object
 	(system_header+line+"\n").c_str(), tag.c_str());
     return void_class;
   }
-  
+
   static rObject
   object_echo(runner::Runner& c, objects_type args, const char * prefix)
   {
@@ -93,7 +93,7 @@ namespace object
     nargs.insert(nargs.end(),  args.begin(), args.end());
     return object_echo(c, nargs, "");
   }
-  
+
 #define SERVER_FUNCTION(Function)				\
   static rObject						\
   object_class_ ## Function (runner::Runner&, objects_type)	\

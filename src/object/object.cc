@@ -149,7 +149,7 @@ namespace object
       o << s << libport::iendl;
     o << libport::decindent << '}';
     //We can not reuse current_depth variable above according to spec.
-    o.iword(idx)--;  
+    o.iword(idx)--;
     return o;
   }
 
