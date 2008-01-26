@@ -264,24 +264,15 @@
       return noop && noop->implicit_get();
     }
 
-    /// Issue a warning.
-    static void
-    warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
-    {
-      std::ostringstream o;
-      o << "!!! " << l << ": " << m << "\n" << std::ends;
-      up.connection << UConnection::send(o.str().c_str(), "warning");
-    }
-
     /// Complain if \a command is not implicit.
     static void
     warn_implicit(UParser& up,
 		  const yy::parser::location_type& l, const ast::Exp* e)
     {
       if (implicit(e))
-	warn (up, l,
-	      "implicit empty instruction.  "
-	      "Use 'noop' to make it explicit.");
+	up.warn(l,
+		"implicit empty instruction.  "
+		"Use 'noop' to make it explicit.");
     }
 
   } // anon namespace

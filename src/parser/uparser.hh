@@ -110,11 +110,19 @@ private:
   friend int parser_type::parse ();
   friend token_type yylex (semantic_type*, location_type*, UParser&);
 
+  /// Errors and warnings.
+  typedef std::list<std::string> messages_type;
+
   /// List of parse error messages.
-  std::list<std::string> errors_;
+  messages_type errors_;
 
   /// List of warnings.
-  std::list<std::string> warnings_;
+  messages_type warnings_;
+
+  /// Push a warning or an error.
+  void message_push(messages_type& msgs,
+		    const yy::parser::location_type& l,
+		    const std::string& msg);
 
   /// Run the parse.  Expects the scanner to be initialized.
   int parse_ ();

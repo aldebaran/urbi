@@ -106,28 +106,26 @@ UParser::process_file (const std::string& fn)
   return res;
 }
 
-namespace
+void
+UParser::message_push(messages_type& msgs,
+		      const yy::parser::location_type& l,
+		      const std::string& msg)
 {
-  /// Helper to format error and warning messages.
-  std::string errorFormat(const yy::parser::location_type& l,
-			  const std::string& msg)
-  {
-    std::ostringstream o;
-    o << "!!! " << l << ": " << msg << std::ends;
-    return o.str();
-  }
+  std::ostringstream o;
+  o << "!!! " << l << ": " << msg;
+  msgs.push_back(o.str());
 }
 
 void
 UParser::error (const yy::parser::location_type& l, const std::string& msg)
 {
-  errors_.push_back(errorFormat(l, msg));
+  message_push(errors_, l, msg);
 }
 
 void
 UParser::warn (const yy::parser::location_type& l, const std::string& msg)
 {
-  warnings_.push_back(errorFormat(l, msg));
+  message_push(warnings_, l, msg);
 }
 
 bool

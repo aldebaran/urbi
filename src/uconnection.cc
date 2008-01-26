@@ -564,7 +564,7 @@ UConnection::received_ (const ubyte *buffer, int length)
     // Warnings handling
     while (p.hasWarning())
     {
-      active_command_->message_push(p.warning_get(), "warn ");
+      active_command_->message_push(p.warning_get(), "warning");
       p.warning_pop();
     }
 
