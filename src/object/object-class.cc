@@ -40,7 +40,7 @@ namespace object
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_dump (runner::Runner& c, objects_type args)
+  object_class_dump (runner::Runner& r, objects_type args)
   {
     // Second argument is the tag name.
     std::string tag;
@@ -57,13 +57,13 @@ namespace object
       libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
     BOOST_FOREACH(std::string line, tok)
-      c.lobby_get()->value_get().connection  << UConnection::send (
+      r.lobby_get()->value_get().connection  << UConnection::send (
 	(system_header+line+"\n").c_str(), tag.c_str());
     return void_class;
   }
 
   static rObject
-  object_echo(runner::Runner& c, objects_type args, const char * prefix)
+  object_echo(runner::Runner& r, objects_type args, const char * prefix)
   {
     // Second argument is the tag name.
     std::string tag;
@@ -72,26 +72,26 @@ namespace object
       FETCH_ARG(2, String);
       tag = arg2->value_get().name_get();
     }
-    c.lobby_get()->value_get().connection.send (args[1], tag.c_str(), prefix);
+    r.lobby_get()->value_get().connection.send (args[1], tag.c_str(), prefix);
     return void_class;
   }
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
   static rObject
-  object_class_echo (runner::Runner& c, objects_type args)
+  object_class_echo (runner::Runner& r, objects_type args)
   {
-    return object_echo(c, args, "*** ");
+    return object_echo(r, args, "*** ");
   }
 
   /// Send pretty-printed self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_print (runner::Runner& c, objects_type args)
+  object_class_print (runner::Runner& r, objects_type args)
   {
     objects_type nargs;
     nargs.push_back(args[0]);
     nargs.insert(nargs.end(),  args.begin(), args.end());
-    return object_echo(c, nargs, "");
+    return object_echo(r, nargs, "");
   }
 
 #define SERVER_FUNCTION(Function)				\
