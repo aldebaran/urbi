@@ -1,15 +1,10 @@
-#*#
-*.bak
-*.orig
-*.pyc
-*~
-+*
+INSTALL
 Makefile.in
-_build
 aclocal.m4
 autom4te.cache
 build-aux
 configure
+dev/*.pyc
 include/libport
 lib/libport
 lib/network

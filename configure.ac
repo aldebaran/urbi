@@ -50,7 +50,6 @@ AC_PROG_LIBTOOL
 ## -------- ##
 URBI_OPENR
 URBI_LIBPORT
-AC_CONFIG_FILES([lib/libport/Makefile])
 dnl URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 BOOST_TOKENIZER
 
@@ -66,9 +65,5 @@ URBI_SDK
 ## -------- ##
 
 URBI_TESTS
-
-AC_CONFIG_FILES([Makefile
-		   src/Makefile
-])
-
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

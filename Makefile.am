@@ -1,3 +1,4 @@
+################################################################################
 #
 # URBI - (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie.
 #
@@ -10,7 +11,7 @@ include $(top_srcdir)/build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS =  lib/libport src sdk tests . doc
+SUBDIRS = src sdk tests . doc
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -45,6 +46,9 @@ dist_pkgdata_DATA = share/urbi/urbi.u
 nodist_kernelincludekernel_HEADERS =		\
 include/kernel/version.hh
 
+include_libport = include/libport
+include include/libport/libport.mk
+
 
 ## --------------- ##
 ## Svn externals.  ##
@@ -61,6 +65,6 @@ check-%:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
 
 # The target run by the buildfarm.
-CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1
+CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)

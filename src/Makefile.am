@@ -79,6 +79,14 @@ include $(top_srcdir)/urbi-sdk-remote/src/liburbi/uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
+## ---------- ##
+## libport.la ##
+## ---------- ##
+
+noinst_LTLIBRARIES = libport.la
+dist_libport_la_SOURCES = $(libport_sources)
+
+
 ## ----------------- ##
 ## Sub directories.  ##
 ## ----------------- ##
@@ -107,10 +115,10 @@ $(top_srcdir)/lib/network/bsdnet/connection.cc	\
 $(top_srcdir)/lib/network/bsdnet/network.hh	\
 $(top_srcdir)/lib/network/bsdnet/network.cc
 
-libkernel_la_LIBADD = $(top_builddir)/lib/libport/libport.la
+libkernel_la_LIBADD = libport.la
 
 # FIXME: We might need these guys somewhere: $(PTHREAD_LIBS).  In
 # libkernel, or urbi_console_LDADD?
-# urbi_console_LDADD = libkernel.la $(top_builddir)/lib/libport/libport.la $(PTHREAD_LIBS)
+# urbi_console_LDADD = libkernel.la libport.la $(PTHREAD_LIBS)
 
 endif

@@ -82,11 +82,8 @@ public:
    which are the calls to the "work" function. These calls must be done at
    a fixed, precise, real-time period to let the server computer motor
    trajectories between two "work" calls.
-
-   \param mainName FIXME: A comment is missing here
-
    */
-  UServer (ufloat period, const char* mainName);
+  UServer(ufloat period, const char* mainName);
 
   virtual ~UServer ();
 

@@ -143,11 +143,12 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 // that the regular scanning rule of New is run.
 #define DEPRECATED(New)						\
   do {								\
+    std::string rewritten = New;				\
     up.warn(*locp,						\
 	    std::string("`") + yytext + "' is deprecated. "	\
-	    "Use `" New "' instead.");				\
-    for (int i = strlen(New) - 1; 0 <= i; --i)			\
-      unput(New[i]);						\
+	    "Use `" + rewritten + "' instead.");		\
+    for (int i = rewritten.length() - 1; 0 <= i; --i)		\
+      unput(rewritten[i]);					\
   } while(0);
 
 %}
@@ -197,6 +198,9 @@ FLAVOR   [;|,&]?
 #endif
 
   static std::stack<yy::location> synclines;
+
+  // Pacify warning.
+  (void) yy_flex_realloc;
 %}
 
   /*-----------------------------------.
