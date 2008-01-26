@@ -1240,7 +1240,7 @@ expr:
 | expr ">="  expr { $$ = call(@$, $1, $2, $3); }
 | expr "~="  expr { $$ = call(@$, $1, $2, $3); }
 
-| "!" expr { $$ = 0; }
+| "!" expr        { $$ = call(@$, $2, $1); }
 
 // FIXME: This is not good: we are not short-circuiting.  Ideally we
 // would like to use an If here, but it's not an expression (yet?).

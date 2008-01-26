@@ -92,6 +92,9 @@ do Float
 
   var ++ = function () { var res = 0; res.set(self); self += 1; res };
   var -- = function () { var res = 0; res.set(self); self -= 1; res };
+
+  // We are still waiting for Loic to introduc 'symbol' support.
+  setSlot("!", function () { self == 0; });
 };
 
 
