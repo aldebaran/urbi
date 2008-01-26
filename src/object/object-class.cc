@@ -110,10 +110,10 @@ namespace object
 
 
   static rObject
-  object_class_wait (runner::Runner&, objects_type)
+  object_class_sleep (runner::Runner&, objects_type)
   {
     // FIXME: Currently does nothing.  A stub so that we
-    // accept "wait 2s" as is used in the test suite.
+    // accept "sleep(2s)" as is used in the test suite.
     return void_class;
   }
 
@@ -129,9 +129,9 @@ namespace object
   }
 
 
-  /*----------.
+  /*---------.
   | Protos.  |
-  `----------*/
+  `---------*/
 
   /// Adding or removing protos. \a Verb is "add" or "remove".
 #define CHANGE_PARENTS(Verb)						\
@@ -244,13 +244,13 @@ namespace object
     DECLARE1(setSlot);
     DECLARE1(updateSlot);
 
-    DECLARE1(echo);
     DECLARE1(dump);
+    DECLARE1(echo);
+    DECLARE1(load);
     DECLARE1(print);
     DECLARE1(reboot);
     DECLARE1(shutdown);
-    DECLARE1(wait);
-    DECLARE1(load);
+    DECLARE1(sleep);
 #undef DECLARE1
   }
 
