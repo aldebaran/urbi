@@ -86,7 +86,7 @@ namespace runner
   void
   Runner::send_message_ (const std::string& tag, const std::string& msg)
   {
-    UConnection& c = lobby_.cast<object::Lobby>()->value_get().connection;
+    UConnection& c = lobby_->value_get().connection;
     c << UConnection::send (msg.c_str(), tag.c_str()) << UConnection::endl;
   }
 
