@@ -1,3 +1,6 @@
+# FIXME: this code should be split in several files, once we have
+# a "load" that works.
+
 ## -------- ##
 ## Object.  ##
 ## -------- ##
@@ -90,6 +93,25 @@ do Float
   var ++ = function () { var res = 0; res.set(self); self += 1; res };
   var -- = function () { var res = 0; res.set(self); self -= 1; res };
 };
+
+
+
+## ----- ##
+## List. ##
+## ----- ##
+
+do List
+{
+  var has = function (e)
+  {
+    # FIXME: for-in is not implemented yet.
+    for (var t = self; t.size; t = t.tail)
+      if (t.front == e)
+	return true;
+    return false;
+  };
+};
+
 
 ## ----- ##
 ## Math. ##
