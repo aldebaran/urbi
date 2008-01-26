@@ -8,7 +8,6 @@
 
 #include <sstream>
 #include <libport/foreach.hh>
-#include <libport/lexical-cast.hh>
 #include <libport/symbol.hh>
 
 #include "kernel/uconnection.hh"
@@ -70,22 +69,25 @@ namespace runner
   Runner::raise_error_ (const object::UrbiException& ue)
   {
     std::ostringstream o;
-    o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
-    send_message_ (o.str (), "error");
+    o << "!!! " << ue.location_get () << ": " << ue.what ();
+    send_message_ ("error", o.str ());
     foreach(ast::Call* c, call_stack_)
-      send_message_ (std::string("!!!    called from: ")
-		     + string_cast(c->location_get ()) + ": "
-		     + string_cast(c->name_get ()),
-		     "error");
+    {
+      o.str("");
+      o << "!!!    called from: " << c->location_get () << ": "
+	<< c->name_get ();
+      send_message_ ("error", o.str ());
+    }
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();
   }
 
-  void Runner::send_message_ (const std::string& text, const std::string& tag)
+  void
+  Runner::send_message_ (const std::string& tag, const std::string& msg)
   {
     UConnection& c = lobby_.cast<object::Lobby>()->value_get().connection;
-    c << UConnection::send (text.c_str(), tag.c_str()) << UConnection::endl;
+    c << UConnection::send (msg.c_str(), tag.c_str()) << UConnection::endl;
   }
 
   void
@@ -635,7 +637,7 @@ namespace runner
   Runner::operator() (ast::Message& e)
   {
     CORO_WITHOUT_CTX ();
-    send_message_(e.text_get(), e.tag_get());
+    send_message_(e.tag_get(), e.text_get());
     CORO_END;
   }
 

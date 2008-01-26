@@ -95,7 +95,7 @@ namespace runner
 
   private:
     void raise_error_ (const object::UrbiException& ue);
-    void send_message_ (const std::string& text, const std::string& tag);
+    void send_message_ (const std::string& tag, const std::string& msg);
 
   private:
     /// The URBI Lobby used to evaluate.
