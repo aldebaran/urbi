@@ -94,6 +94,13 @@ namespace object
     return object_echo(r, nargs, "");
   }
 
+  static rObject
+  object_class_sameAs(runner::Runner&, objects_type args)
+  {
+    return args[0]->slot_get((args[0] == args[1]) ? "true": "false");
+  }
+
+
 #define SERVER_FUNCTION(Function)				\
   static rObject						\
   object_class_ ## Function (runner::Runner&, objects_type)	\
@@ -254,11 +261,13 @@ namespace object
     DECLARE1(updateSlot);
 
     DECLARE1(apply);
+
     DECLARE1(dump);
     DECLARE1(echo);
     DECLARE1(load);
     DECLARE1(print);
     DECLARE1(reboot);
+    DECLARE1(sameAs);
     DECLARE1(shutdown);
     DECLARE1(sleep);
 #undef DECLARE1
