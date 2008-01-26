@@ -110,7 +110,7 @@ namespace object
 
 
   static rObject
-  object_class_wait (runner::Runner& r, objects_type args)
+  object_class_sleep (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, Float);
     r.yield_until (::urbiserver->getTime() + arg1->value_get());
@@ -138,9 +138,9 @@ namespace object
     return args[0];
   }
 
-  /*----------.
+  /*---------.
   | Protos.  |
-  `----------*/
+  `---------*/
 
   /// Adding or removing protos. \a Verb is "add" or "remove".
 #define CHANGE_PARENTS(Verb)						\
@@ -253,14 +253,14 @@ namespace object
     DECLARE1(setSlot);
     DECLARE1(updateSlot);
 
-    DECLARE1(echo);
+    DECLARE1(apply);
     DECLARE1(dump);
+    DECLARE1(echo);
+    DECLARE1(load);
     DECLARE1(print);
     DECLARE1(reboot);
+    DECLARE1(sleep);
     DECLARE1(shutdown);
-    DECLARE1(wait);
-    DECLARE1(load);
-    DECLARE1(apply);
 #undef DECLARE1
   }
 
