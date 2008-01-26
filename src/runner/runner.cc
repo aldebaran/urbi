@@ -7,7 +7,8 @@
 #include "libport/compiler.hh"
 
 #include <sstream>
-#include <boost/foreach.hpp>
+#include <libport/foreach.hh>
+#include <libport/lexical-cast.hh>
 #include <libport/symbol.hh>
 
 #include "kernel/uconnection.hh"
@@ -71,9 +72,11 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
     send_message_ (o.str (), "error");
-    BOOST_FOREACH(ast::loc& l, callStack)
-      send_message_ (std::string("!!!    called from: ") +
-			       boost::lexical_cast<std::string>(l), "error");
+    foreach(ast::Call* c, call_stack_)
+      send_message_ (std::string("!!!    called from: ")
+		     + string_cast(c->location_get ()) + ": "
+		     + string_cast(c->name_get ()),
+		     "error");
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();
@@ -205,7 +208,7 @@ namespace runner
     {// Not corointeruptible block
       // Check if any argument is void
       bool first = true;
-      BOOST_FOREACH(rObject arg, args)
+      foreach(rObject arg, args)
       {
 	if (!first && arg == object::void_class)
 	  throw object::WrongArgumentType (__PRETTY_FUNCTION__);
@@ -341,7 +344,7 @@ namespace runner
     // FIXME: Do we need to issue an error message here?
     if (!val)
       CORO_RETURN;
-    callStack.push_front(e.location_get());
+    call_stack_.push_front(&e);
     CORO_CALL_CATCH (apply (0, val, args);,
       catch (object::UrbiException& ue)
       {
@@ -349,7 +352,7 @@ namespace runner
 	  ue.location_set (e.location_get ());
 	throw;
       });
-    callStack.pop_front();
+    call_stack_.pop_front();
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).

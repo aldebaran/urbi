@@ -30,7 +30,7 @@ namespace runner
     /// \name Ctor & dtor.
     /// \{
     /// Construct a \c Runner in the \a lobby.  The runner needs to
-    /// know its \a locals, who is its \a scheduler and will execute 
+    /// know its \a locals, who is its \a scheduler and will execute
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
     Runner (rLobby lobby, rObject locals, Scheduler& scheduler, ast::Ast* ast);
 
@@ -114,7 +114,9 @@ namespace runner
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
 
-    std::list<ast::loc> callStack;
+    /// The call stack.
+    typedef std::list<ast::Call*> call_stack_type;
+    call_stack_type call_stack_;
   };
 
 } // namespace runner
