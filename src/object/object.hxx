@@ -17,6 +17,7 @@
 # include "object/object.hh"
 # include "object/primitives.hh"
 
+
 namespace object
 {
 
@@ -101,13 +102,13 @@ namespace object
   Object&
   Object::slot_update (const Object::key_type& k, rObject o)
   {
-    // As a side effect, check that the slot already exists, even if we want
-    // to create a new one locally.
-    rObject& existing = slot_get (k);
-    if (locals_)
-      existing = o;
+    Object& l = safe_slot_locate(k);
+
+    if (locals_)     // If current scope is local, no copy on write.
+      l.own_slot_get(k) = o;
     else
-      slots_[k] = o;
+      slots_[k] = o; // Class scope write: always copy.
+
     return *this;
   }
 

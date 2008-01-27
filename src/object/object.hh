@@ -82,10 +82,11 @@ namespace object
     /// A set of objects.
     typedef std::set<const Object*> objects_type;
 
-    /// Find the Object which defines k.
-    /// \return 0 if none found.
-    const Object* which (const key_type& k) const;
-
+    /// Locate the object containing a slot in hierarchy.
+    /// \return A pointer to the object having the slot k, or 0.
+    Object* slot_locate(const key_type& k) const;
+    /// Call slot_locate, throw a LookupError if not found.
+    Object& safe_slot_locate(const key_type& k) const;
     /// Lookup field in object hierarchy.
     const rObject& slot_get (const key_type& k) const;
     rObject& slot_get (const key_type& k);
@@ -96,6 +97,8 @@ namespace object
     /// as slot_set: one never updates a proto.  If the target is a
     /// "locals" object, then updating really means updating the
     /// existing slot, not creating a new slot in the inner scope.
+    /// Except if the existing source slot is a "real" object, in which case
+    /// updating means creating the slot in "self".
     Object& slot_update (const key_type& k, rObject o);
 
     /// Set slot value in local slot.
@@ -142,12 +145,14 @@ namespace object
     virtual bool operator< (const Object& rhs) const;
 
   private:
+    typedef std::pair<bool, rObject> locate_type;
     /// Lookup field in object hierarchy.
     /// \param k   the key looked up for
     /// \param os  the objects already looked up for, to break infinite
     ///            recursions
-    /// \return 0  if k does not exist.
-    const Object* which (const key_type& k, objects_type& os) const;
+    /// \return (false,0) if k does not exist, (true,0) if k is in this,
+    ///          (true, ptr) if k is in ptr.
+    locate_type slot_locate (const key_type& k, objects_type& os) const;
 
     /// The protos.
     protos_type protos_;
@@ -155,6 +160,8 @@ namespace object
     slots_type slots_;
     /// Whether is a locals object.
     bool locals_;
+
+    friend rObject slot_locate(rObject ref, const Object::key_type& k);
   };
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -163,6 +170,10 @@ namespace object
   // Not a member function because we want the shared_ptr, which
   // is not available via this.
   rObject clone (rObject ref);
+
+  /// Lookup field in object hierarchy.
+  /// \return the Object containing slot \b k, or 0 if not found.
+  rObject slot_locate (rObject ref, const Object::key_type& k);
 
   /// Report Object \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);

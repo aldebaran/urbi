@@ -36,40 +36,62 @@ namespace object
   | Slots.  |
   `--------*/
 
-  const Object*
-  Object::which (const key_type& k, Object::objects_type& os) const
+  Object::locate_type
+  Object::slot_locate (const key_type& k, Object::objects_type& os) const
   {
     /// Look in local slots.
     slots_type::const_iterator it = slots_.find (k);
     if (libport::mhas(slots_, k))
-      return this;
+      return locate_type(true, rObject());
 
     /// Break recursive loops.
     if (libport::mhas(os, this))
-      return 0;
+      return locate_type(false, rObject());
     os.insert (this);
 
     /// Look in proto slots (depth first search).
-    BOOST_FOREACH (rObject p, protos_)
-      if (const Object* res = p->which (k, os))
-	return res;
-    return 0;
+    locate_type res;
+    BOOST_FOREACH(rObject p, protos_)
+      if ((res = p->slot_locate(k, os)).first)
+	return res.second?res:locate_type(true, p);
+    return locate_type(false, rObject());
   }
 
-  const Object*
-  Object::which (const key_type& k) const
+  rObject slot_locate(rObject ref, const Object::key_type& k)
+  {
+    Object::objects_type os;
+    Object::locate_type l = ref->slot_locate(k, os);
+    if (l.first)
+      return l.second? l.second:ref;
+    else
+      return rObject();
+  }
+
+  Object*
+  Object::slot_locate(const key_type& k) const
   {
     objects_type os;
-    return which(k, os);
+    Object::locate_type l = slot_locate(k, os);
+    if (l.first)
+      return const_cast<Object*>(l.second?l.second.get():this);
+    else
+      return 0;
+  }
+
+  Object&
+  Object::safe_slot_locate(const key_type& k) const
+  {
+    Object* r = slot_locate(k);
+    if (!r)
+      throw LookupError(k);
+    return *r;
   }
 
   const rObject&
   Object::slot_get (const key_type& k) const
   {
-    if (const Object* o = which(k))
-      return o->own_slot_get (k);
-    else
-      throw LookupError(k);
+    Object& cont = safe_slot_locate(k);
+    return cont.own_slot_get(k);
   }
 
   rObject&
