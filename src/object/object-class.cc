@@ -220,6 +220,20 @@ namespace object
     return obj;
   }
 
+   /// Locate a slot.
+  static rObject
+  object_class_locateSlot (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(2);
+    FETCH_ARG(1, String);
+
+    rObject o = slot_locate(args[0], arg1->value_get());
+    if (o)
+      return o;
+    else
+    return nil_class;
+  }
+
   /// Define setSlot or updateSlot.  \a Verb is "set" or "update".
 #define SLOT_CHANGE(Verb)						\
   static rObject							\
@@ -259,6 +273,7 @@ namespace object
     DECLARE1(removeSlot);
     DECLARE1(setSlot);
     DECLARE1(updateSlot);
+    DECLARE1(locateSlot);
 
     DECLARE1(apply);
 
