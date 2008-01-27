@@ -104,10 +104,20 @@ namespace object
   {
     Object& l = safe_slot_locate(k);
 
-    if (locals_)     // If current scope is local, no copy on write.
+    if (locals_ && l.locals_)  // Local scope writes local var: no copyonwrite.
       l.own_slot_get(k) = o;
-    else
-      slots_[k] = o; // Class scope write: always copy.
+    else if (locals_ && !l.locals_)
+    {
+      // Local->class: copyonwrite to "self".
+      rObject self = slot_get("self");
+      assert(self);
+      if (self.get() == this)
+        slots_[k] = o;
+      else
+        self->slot_update(k, o);
+    }
+    else // Class->class: copy on write.
+      slots_[k] = o;
 
     return *this;
   }
