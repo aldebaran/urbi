@@ -15,6 +15,27 @@ Object.slotCopy ("addProto", "inherit");
 Object.slotCopy ("removeProto", "disinherit");
 
 Object.slotCopy ("sameAs", "==");
+## --------------- ##
+## VisibilityScope ##
+## --------------- ##
+
+# Must be before the first 'do' or 'class'
+# Do and class blocks are inheriting from VisibilityScope.
+# VisibilityScope has special setSlot and updateSlot preventing to write to
+# the locals. Only the target can be modified implicitly
+# The slot __target is expected to be set to the target of the block.
+var Object.VisibilityScope = Object.clone;
+
+var VisibilityScope.updateSlot = function(x, y)
+{
+  __target.updateSlot(x, getSlot("y"));
+};
+
+var VisibilityScope.setSlot = function(x, y)
+{
+  __target.setSlot(x, getSlot("y"));
+};
+
 
 ## --------- ##
 ## Constants ##

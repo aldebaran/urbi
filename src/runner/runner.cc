@@ -468,15 +468,21 @@ namespace runner
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
     rObject locals;
+    rObject target;
+    locals = new object::Object;
+    locals->locals_set(true);
+    // FIXME: is this the correct order? depends on getSlot algorithm.
+    locals->proto_add (locals_);
     if (e.target_get())
     {
-      locals = eval(*e.target_get());
-      // FIXME: Set the protos to locals_? Set self?
-    }
-    else
-    {
-      locals = new object::Object;
-      locals->locals_set(true).proto_add (locals_);
+      target = eval(*e.target_get());
+      // Be safe, do not inherit from VisibilityScope but copy the slots.
+      rObject vscope = object::object_class->slot_get("VisibilityScope");
+      locals->slot_set("setSlot", vscope->slot_get("setSlot"));
+      locals->slot_set("updateSlot", vscope->slot_get("updateSlot"));
+      locals->slot_set("self", target);
+      locals->slot_set("__target", target);
+      locals->proto_add(target);	     
     }
 
     std::swap(locals, locals_);
