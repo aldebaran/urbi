@@ -151,9 +151,14 @@ namespace scheduler
   void
   Scheduler::resume_job (Job *job)
   {
-    assert (libport::has (suspended_jobs_, job));
-    jobs_.push_back (job);
-    suspended_jobs_.remove (job);
+    // Suspended job may have been killed externally, in which case it
+    // will not appear in the list of suspended jobs.
+
+    if (libport::has (suspended_jobs_, job))
+    {
+      jobs_.push_back (job);
+      suspended_jobs_.remove (job);
+    }
   }
 
   void
