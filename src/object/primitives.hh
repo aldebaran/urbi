@@ -10,6 +10,7 @@
 
 # include "object/fwd.hh"
 
+# include "object/alien-class.hh"
 # include "object/closure-class.hh"
 # include "object/code-class.hh"
 # include "object/delegate-class.hh"

@@ -105,6 +105,14 @@ namespace object
   template <>
   inline
   bool
+  Atom<object::alien_traits>::operator< (const Atom& rhs) const
+  {
+    return this < &rhs;
+  }
+
+  template <>
+  inline
+  bool
   Atom<object::code_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
@@ -148,6 +156,14 @@ namespace object
   {
     pabort("Printing an Atom<T>");
     return o;
+  }
+
+  template <>
+  inline
+  std::ostream&
+  Atom<alien_traits>::print(std::ostream& out) const
+  {
+    return out << "<alien>";
   }
 
   template <>
@@ -247,6 +263,14 @@ namespace object
   Atom<Traits>::special_slots_dump (std::ostream& o) const
   {
     return o << "value" << " = " << libport::deref << value_ << libport::iendl;
+  }
+
+  template <>
+  inline
+  std::ostream&
+  Atom<alien_traits>::special_slots_dump (std::ostream& o) const
+  {
+    return o << "value = <hidden>" << libport::iendl;
   }
 
   template <>

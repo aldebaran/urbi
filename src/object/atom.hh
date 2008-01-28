@@ -85,15 +85,17 @@ namespace object
   typename Atom<Traits>::shared_type
   clone (typename Atom<Traits>::shared_type ref);
 
-  /*----------.
-  | Delegate. |
-  `----------*/
 
-  struct delegate_traits
+  /*--------.
+  | Alien.  |
+  `--------*/
+
+  struct alien_traits
   {
-    typedef IDelegate* type;
-    enum { kind = Object::kind_delegate };
+    typedef boost::any type;
+    enum { kind = Object::kind_alien };
   };
+
 
   /*-------.
   | Code.  |
@@ -106,14 +108,14 @@ namespace object
   };
 
 
-  /*-------.
-  | Lobby.  |
-  `-------*/
+  /*----------.
+  | Delegate. |
+  `----------*/
 
-  struct lobby_traits
+  struct delegate_traits
   {
-    typedef State type;
-    enum { kind = Object::kind_lobby };
+    typedef IDelegate* type;
+    enum { kind = Object::kind_delegate };
   };
 
 
@@ -147,6 +149,17 @@ namespace object
   {
     typedef std::list<rObject> type;
     enum { kind = Object::kind_list };
+  };
+
+
+  /*-------.
+  | Lobby.  |
+  `-------*/
+
+  struct lobby_traits
+  {
+    typedef State type;
+    enum { kind = Object::kind_lobby };
   };
 
 

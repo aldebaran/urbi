@@ -7,6 +7,7 @@
 # define OBJECT_FWD_HH
 
 # include <vector>
+# include <boost/any.hpp>
 
 # include "libport/fwd.hh"
 # include "libport/shared-ptr.hh"
@@ -30,6 +31,7 @@ namespace object
   /// lower case C++ name, and the second argument, \p Name, the
   /// capitalized URBI name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)	\
+  Macro(alien,     Alien)						\
   Macro(closure,   Closure)						\
   Macro(code,      Code)						\
   Macro(delegate,  Delegate)                                            \

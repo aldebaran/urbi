@@ -1,4 +1,8 @@
 dist_libkernel_la_SOURCES +=			\
+object/alien.hh					\
+object/alien.hxx				\
+object/alien-class.cc				\
+object/alien-class.hh				\
 object/atom.hh					\
 object/atom.hxx					\
 object/closure-class.cc				\
