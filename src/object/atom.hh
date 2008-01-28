@@ -151,8 +151,8 @@ namespace object
 
 
  /*------------.
-  | Primitive.  |
-  `------------*/
+ | Primitive.  |
+ `------------*/
 
   struct primitive_traits
   {
@@ -160,7 +160,7 @@ namespace object
     enum { kind = Object::kind_primitive };
   };
 
-  
+
   /*---------.
   | String.  |
   `---------*/
