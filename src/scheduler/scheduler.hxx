@@ -14,7 +14,7 @@ namespace scheduler
 
   inline
   Scheduler::Scheduler ()
-    : jobs_ (),
+    : current_job_ (0),
       self_ (Coro_new ())
   {
     ECHO ("Initializing main coroutine");
@@ -25,6 +25,13 @@ namespace scheduler
   Scheduler::~Scheduler ()
   {
     ECHO ("Destroying scheduler");
+  }
+
+  inline
+  Job& Scheduler::current_job ()
+  {
+    assert (current_job_);
+    return *current_job_;
   }
 
 } // namespace scheduler

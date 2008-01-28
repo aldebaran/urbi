@@ -56,6 +56,8 @@ namespace scheduler
       ECHO ("will start job " << job);
       // Job will start for a very short time and do a yield_front() to
       // be restarted below in the course of the regular cycle.
+      assert (!current_job_);
+      current_job_ = job;
       Coro_startCoro_ (self_, job->coro_get(), job, run_job);
     }
 
@@ -99,9 +101,13 @@ namespace scheduler
   void
   Scheduler::switch_back (Job *job)
   {
-    // Switch back to the scheduler
+    // Switch back to the scheduler.
+    assert (current_job_);
+    current_job_ = 0;
     Coro_switchTo_ (job->coro_get (), self_);
     // We regained control, we are again in the context of the job.
+    assert (!current_job_);
+    current_job_ = job;
     ECHO ("job " << job << " resumed");
   }
 

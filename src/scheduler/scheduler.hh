@@ -59,14 +59,17 @@ namespace scheduler
     void resume_scheduler_until (Job* job, libport::utime_t deadline);
 
     /// Suspend the current job.
-    void resume_scheduler_suspend (Job *job);
+    void resume_scheduler_suspend (Job* job);
 
     /// Resume a job that has been previously suspended and add it at
     /// the back of the run queue.
-    void resume_job (Job *job);
+    void resume_job (Job* job);
+
+    /// Return the currently executing job
+    Job& current_job ();
 
   private:
-    void switch_back (Job *job);
+    void switch_back (Job* job);
 
   private:
     typedef std::priority_queue
@@ -84,6 +87,9 @@ namespace scheduler
 
     /// Suspended jobs
     jobs suspended_jobs_;
+
+    /// Current job
+    Job* current_job_;
 
     /// Coroutine support
     Coro* self_;
