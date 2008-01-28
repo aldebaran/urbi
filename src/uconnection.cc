@@ -753,18 +753,11 @@ UConnection::isActive()
 UConnection&
 UConnection::execute ()
 {
-  using runner::Runner;
   PING ();
-
   if (active_command_->empty())
     return *this;
 
   ECHO("Command is: {{{" << *active_command_ << "}}}");
-
-  Runner* runner = new Runner(lobby_,
-			      lobby_,
-			      ::urbiserver->getScheduler (),
-			      active_command_);
 
   // Our active_command_ is a ast::Nary, we must now "tell" it that
   // it's a top-level Nary so that it can send its results back to the
@@ -772,6 +765,11 @@ UConnection::execute ()
   // it has evaluated it.
   active_command_->toplevel_set (true);
 
+  runner::Runner* runner = 
+    new runner::Runner(lobby_,
+		       lobby_,
+		       ::urbiserver->getScheduler (),
+		       active_command_);
   runner->start_job ();
 
   PING ();
