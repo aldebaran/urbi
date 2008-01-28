@@ -6,17 +6,19 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
+#include <boost/tuple/tuple.hpp>
+
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
-# include "runner/coroutine.hh"
-# include "runner/scheduler.hh"
+# include "scheduler/scheduler.hh"
+# include "scheduler/job.hh"
 
 namespace runner
 {
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-		 public Coroutine
+		 public scheduler::Job
   {
   public:
     /// \name Useful shorthands.
@@ -32,7 +34,11 @@ namespace runner
     /// Construct a \c Runner in the \a lobby.  The runner needs to
     /// know its \a locals, who is its \a scheduler and will execute
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
-    Runner (rLobby lobby, rObject locals, Scheduler& scheduler, ast::Ast* ast);
+    Runner (rLobby lobby, rObject locals,
+	    scheduler::Scheduler& scheduler, ast::Ast* ast);
+
+    /// Create a copy of a runner
+    Runner (const Runner&);
 
     /// Destroy a Runner.
     virtual ~Runner ();
@@ -43,12 +49,17 @@ namespace runner
   public:
     /// Return the lobby in which this runner has been started.
     const rLobby& lobby_get () const;
+
+    /// Return the current locals for this runner.
+    const rObject& locals_get () const;
     /// \}
 
-    /// Execute the code of function \a func with arguments \a args in the
-    /// local runner after installing \a scope as the current context. If
-    /// \a scope is 0, a new scope will be created as needed to bind
-    /// the function formals in the case of a function written in Urbi.
+    /// Execute the code of function \a func with arguments \a args in
+    /// the local runner after installing \a scope as the current
+    /// context. If \a scope is object::nil_class, a new scope will be
+    /// created as needed to bind "self" in the case of a function
+    /// written in Urbi. In the case of such a function, argument will
+    /// be bound in the user-provided or newly created scope.
     rObject apply (rObject scope, const rObject& func,
 		   const object::objects_type& args);
 
@@ -88,14 +99,13 @@ namespace runner
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
-    /// Re-implementation of \c Job::stop.
-    virtual void stop ();
-    /// Re-implementation of \c Coroutine::finished.
-    virtual void finished (Coroutine& coro);
 
   private:
     void raise_error_ (const object::UrbiException& ue);
     void send_message_ (const std::string& tag, const std::string& msg);
+    rObject apply_urbi (rObject scope, const rObject& func,
+			const object::objects_type& args);
+
 
   private:
     /// The URBI Lobby used to evaluate.
@@ -104,9 +114,6 @@ namespace runner
 
     /// The root of the AST being executed.
     ast::Ast* ast_;
-
-    /// Whether or not we started to execute anything.
-    bool started_;
 
     /// The current value during the evaluation of the AST.
     rObject current_;

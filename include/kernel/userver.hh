@@ -39,11 +39,7 @@
 # include "kernel/ustring.hh"
 # include "kernel/utypes.hh"
 
-//# include "runner/scheduler.hh"
-namespace runner
-{
-  class Scheduler;
-}
+# include "scheduler/scheduler.hh"
 
 extern const char* EXTERNAL_MESSAGE_TAG;
 extern const char* UNKNOWN_TAG;
@@ -240,15 +236,15 @@ public:
 
   void hasSomethingToDelete ();
 
-  const runner::Scheduler& getScheduler () const;
-  runner::Scheduler& getScheduler ();
+  const scheduler::Scheduler& getScheduler () const;
+  scheduler::Scheduler& getScheduler ();
 
 protected:
   virtual void effectiveDisplay (const char*) = 0;
 
 private:
   // Pointer to stop the header dependency.
-  runner::Scheduler* scheduler_;
+  scheduler::Scheduler* scheduler_;
 
 public: // FIXME remove from the public section.
   /// List of active connections: includes one UGhostConnection.

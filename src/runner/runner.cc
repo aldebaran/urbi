@@ -22,7 +22,7 @@ namespace runner
 {
 
 /// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
-#define JOB(Runner) static_cast<Job*> (Runner)
+#define JOB(Runner) static_cast<scheduler::Job*> (Runner)
 
 /// Address of \c this seen as a \c Job (Runner has multiple inheritance).
 #define ME JOB (this)
@@ -30,7 +30,7 @@ namespace runner
 #define AST(Ast) "{{{" << Ast << "}}}"
 
 /// Job echo.
-#define JECHO(Title, Ast)					\
+#define JECHO(Title, Ast)                                       \
   ECHO ("job " << ME << ", " Title ": " << AST(Ast))
 
 
@@ -43,26 +43,26 @@ namespace runner
  * so it should most probably start with a YIELD.
  *
  * The Ast is expected to be named "e".  */
-#define YIELD()							\
-  do                                                            \
-  {                                                             \
-    ECHO ("job " << ME << " yielding on AST: "                  \
-	  << &e << ' ' << AST(e));				\
-    CORO_YIELD ();                                              \
+#define YIELD()                                 \
+  do                                            \
+  {                                             \
+    ECHO ("job " << ME << " yielding on AST: "  \
+          << &e << ' ' << AST(e));              \
+    yield ();                                   \
   } while (0)
 
-#define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)		\
-  catch (Type flow_exception)					\
-  {								\
-    if (e.toplevel_get ())					\
-    {								\
-      object::PrimitiveError error(Keyword, Error);		\
-      error.location_set(flow_exception.location_get());	\
-      raise_error_(error);					\
-      continue;							\
-    }								\
-    else							\
-      throw;							\
+#define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
+  catch (Type flow_exception)                                   \
+  {                                                             \
+    if (e.toplevel_get ())                                      \
+    {                                                           \
+      object::PrimitiveError error(Keyword, Error);             \
+      error.location_set(flow_exception.location_get());        \
+      raise_error_(error);                                      \
+      continue;                                                 \
+    }                                                           \
+    else                                                        \
+      throw;                                                    \
   }
 
   void
@@ -95,45 +95,10 @@ namespace runner
   {
     assert (ast_);
 
-    if (!started_)
-    {
-      ECHO ("job " << ME << " starting evaluation of AST: " << ast_
-	    << ' ' << AST(*ast_));
-      started_ = true;
-    }
-    else
-      ECHO ("job " << ME << " restarting evaluation of AST: " << ast_
-	    << ' ' << AST(*ast_)
-	    << ' ' << context_count () << " contexts in the coroutine stack");
+    ECHO ("job " << ME << " starting evaluation of AST: " << ast_
+          << ' ' << AST(*ast_));
     operator() (*ast_);
   }
-
-  void
-  Runner::stop ()
-  {
-    Coroutine::reset ();
-  }
-
-  void
-  Runner::finished (Coroutine& coro)
-  {
-    Runner& r = dynamic_cast<Runner&> (coro);
-    ECHO (ME << " join with " << JOB (&r));
-    /*
-     * Alright so for now, we only join other coroutines for the &-operator.
-     * So what this line does is that it fetches the result of that
-     * coroutine (which is about to delete itself).  Admittedly, this line
-     * do better be in the operator (And) but it's been moved here
-     * temporarily due to a small bug in the coroutine implementation: Once
-     * we'll be back to the operator (And) the coroutine which has finished
-     * may have deleted itself and we could be accessing its current_
-     * attribute whereas the object is no longer valid.  So this line will
-     * move to operator (And) once the coroutine properly handle its
-     * lifetime.
-     */
-    current_ = r.current_;
-  }
-
 
 
   /*---------------------.
@@ -143,155 +108,156 @@ namespace runner
   void
   Runner::operator() (ast::And& e)
   {
-    CORO_WITHOUT_CTX ();
+    // lhs will be evaluated in another Runner, while rhs will be evaluated
+    // in this one.
 
-    {
-      JECHO ("lhs", e.lhs_get ());
-      Runner* lhs = new Runner (*this);
-      lhs->ast_ = &e.lhs_get ();
-      CORO_CALL_IN_BACKGROUND (lhs, lhs->eval (e.lhs_get ()));
+    JECHO ("lhs", e.lhs_get ());
+    Runner* lhs = new Runner (*this);
+    lhs->ast_ = &e.lhs_get ();
+    scheduler_get().add_job (lhs);
 
-      PING ();
-      JECHO ("rhs", e.rhs_get ());
-      Runner* rhs = new Runner (*this);
-      rhs->ast_ = &e.rhs_get ();
-      CORO_CALL_IN_BACKGROUND (rhs, rhs->eval (e.rhs_get ()));
-
-      wait_for (*lhs);
-      wait_for (*rhs);
-    }
-    CORO_JOIN ();
     PING ();
 
-    CORO_END;
+    JECHO ("rhs", e.rhs_get ());
+
+    eval (e.rhs_get ());
+
+    // Wait for lhs to terminate
+    yield_until_terminated (*lhs);
+    delete lhs;
+
+    PING ();
+
+    current_ = object::void_class;
+  }
+
+  // Apply a function written in Urbi
+  object::rObject
+  Runner::apply_urbi (rObject scope, const rObject& func,
+		      const object::objects_type& args)
+  {
+    // The called function.
+    ast::Function* fn;
+    // Effective (evaluated) argument iterator.
+    object::objects_type::const_iterator ei;
+    // Formal argument iterator.
+    ast::symbols_type::const_iterator fi;
+
+    PING ();
+    // Create a new object to store the arguments unless a scope has been
+    // given for this purpose.
+    rObject bound_args;
+    if (scope != object::nil_class)
+      bound_args = scope;
+    else
+    {
+      bound_args = new object::Object;
+      bound_args->locals_set(true);
+    }
+
+    // Fetch the called function.
+    fn = &func.cast<object::Code> ()->value_get ();
+
+    // Check the arity.
+    object::check_arg_count (fn->formals_get().size(), args.size() - 1,
+			     __PRETTY_FUNCTION__);
+
+    // Bind formal and effective arguments if the caller has not provided
+    // a scope. If a scope has been given, it is up to the caller to set
+    // it up.
+    ei = args.begin();
+    if (scope == object::nil_class)
+    {
+      bound_args->slot_set (libport::Symbol("self"), *ei);
+      // self is also the proto of the function outer scope, so that
+      // we look for non-local identifiers in the target itself.
+      bound_args->proto_add (*ei);
+    }
+
+    // Now bind the non-target arguments.
+    ++ei;
+    for (fi = fn->formals_get().begin();
+	 fi != fn->formals_get().end() && ei != args.end();
+	 ++fi, ++ei)
+      bound_args->slot_set (**fi, *ei);
+    ECHO("bound args: " << *bound_args);
+    // Change the current context and call.
+    std::swap(bound_args, locals_);
+
+    try {
+      current_ = eval (*fn->body_get());
+    }
+    catch (ast::BreakException& be)
+    {
+      object::PrimitiveError error("break", "outside a loop");
+      error.location_set(be.location_get());
+      raise_error_(error);
+    }
+    catch (ast::ReturnException& re)
+    {
+      current_ = re.result_get();
+    }
+    catch (object::UrbiException& ue)
+    {
+      std::swap(bound_args, locals_);
+      throw ue;
+    };
+    std::swap(bound_args, locals_);
+
+    return current_;
   }
 
   object::rObject
   Runner::apply (rObject scope, const rObject& func,
-		 const object::objects_type& args)
+                 const object::objects_type& args)
   {
-    CORO_CTX_VARS
-      ((5, (
-	    // Whether or not we must issue a real URBI function call
-	    (bool, call_code),
-	    // Object to bind the arguments.
-	    (rObject, bound_args),
-	    // The called function.
-	    (ast::Function*, fn),
-	    // Effective (evaluated) argument iterator.
-	    (object::objects_type::const_iterator, ei),
-	    // Formal argument iterator.
-	    (ast::symbols_type::const_iterator, fi)
-	    )));
-
-    call_code = false;
-
-    switch (func->kind_get ())
     {
-      case object::Object::kind_primitive:
-	PING ();
-	current_ = func.cast<object::Primitive>()->value_get()(*this, args);
-	break;
-      case object::Object::kind_delegate:
-	PING();
-	current_ = func.cast<object::Delegate>()->value_get()
-	  ->operator()(*this, args);
-	break;
-      case object::Object::kind_code:
-	PING ();
-	call_code = true;
-	break;
-      default:
-	PING ();
-	current_ = func;
-	break;
-    }
-
-    {// Not corointeruptible block
       // Check if any argument is void
       bool first = true;
-      foreach(rObject arg, args)
+      BOOST_FOREACH(rObject arg, args)
       {
 	if (!first && arg == object::void_class)
 	  throw object::WrongArgumentType (__PRETTY_FUNCTION__);
 	first = false;
       }
     }
-    /*---------------------------.
-    | Calling an Urbi function.  |
-    `---------------------------*/
-    if (call_code)
+
+    switch (func->kind_get ())
     {
-      PING ();
-      // Create a new object to store the arguments.
-      if (scope)
-	bound_args = scope;
-      else
-	bound_args = new object::Object;
-      bound_args->locals_set(true);
-
-      // Fetch the called function.
-      fn = &func.cast<object::Code> ()->value_get ();
-
-      // Check the arity.
-      object::check_arg_count (fn->formals_get().size(), args.size() - 1,
-			       __PRETTY_FUNCTION__);
-
-      // Bind formal and effective arguments.
-      // The target is "self".
-      ei = args.begin();
-      bound_args->slot_set (libport::Symbol("self"), *ei);
-      // self is also the proto of the function outer scope, so that
-      // we look for non-local identifiers in the target itself.
-      bound_args->proto_add (*ei);
-
-      // Now bind the non-target arguments.
-      ++ei;
-      for (fi = fn->formals_get().begin();
-	   fi != fn->formals_get().end() && ei != args.end();
-	   ++fi, ++ei)
-	bound_args->slot_set (**fi, *ei);
-      ECHO("bound args: " << *bound_args);
-      // Change the current context and call.
-      std::swap(bound_args, locals_);
-
-      CORO_CALL_CATCH (current_ = eval (*fn->body_get());,
-	catch (ast::BreakException& be)
-	{
-	  object::PrimitiveError error("break", "outside a loop");
-	  error.location_set(be.location_get());
-	  raise_error_(error);
-	}
-	catch (ast::ReturnException& re)
-	{
-	  current_ = re.result_get();
-	}
-	catch (object::UrbiException& ue)
-	{
-	  std::swap(bound_args, locals_);
-	  throw ue;
-	});
-      std::swap(bound_args, locals_);
+      case object::Object::kind_primitive:
+        PING ();
+        current_ = func.cast<object::Primitive>()->value_get()(*this, args);
+	break;
+      case object::Object::kind_delegate:
+        PING();
+        current_ = func.cast<object::Delegate>()->value_get()
+          ->operator()(*this, args);
+	break;
+      case object::Object::kind_code:
+        PING ();
+	current_ = apply_urbi (scope, func, args);
+	break;
+      default:
+        PING ();
+        current_ = func;
+	break;
     }
 
-    CORO_END_VALUE (current_);
+    return current_;
   }
 
   void
   Runner::operator() (ast::Call& e)
   {
-    CORO_CTX_VARS
-      ((6, (
-	  // Whether or not something went wrong
-	  (bool, has_error),
-	  (rObject, val),
-	  // Iteration over un-evaluated effective arguments.
-	  (ast::exps_type::const_iterator, i),
-	  (ast::exps_type::const_iterator, i_end),
-	  // Gather the arguments, including the target.
-	  (object::objects_type, args),
-	  (rObject, tgt)
-	  )));
+    // Whether or not something went wrong
+    bool has_error;
+    rObject val;
+    // Iteration over un-evaluated effective arguments.
+    ast::exps_type::const_iterator i;
+    ast::exps_type::const_iterator i_end;
+    // Gather the arguments, including the target.
+    object::objects_type args;
+    rObject tgt;
 
     /*-------------------------.
     | Evaluate the arguments.  |
@@ -302,17 +268,17 @@ namespace runner
     i = e.args_get ().begin ();
     i_end = e.args_get ().end ();
 
-    CORO_CALL (tgt = target(*i));
+    tgt = target(*i);
     // No target?  Abort the call.  This can happen (for instance) when you
     // do a.b () and a does not exist (lookup error).
     if (!tgt)
-      CORO_RETURN;
+      return;
 
     args.push_back (tgt);
     PING ();
     for (++i; i != i_end; ++i)
     {
-      CORO_CALL (eval (**i));
+      eval (**i);
       passert ("argument without a value: " << **i, current_);
       if (current_ == object::void_class)
       {
@@ -342,77 +308,67 @@ namespace runner
       has_error = true;
     }
     if (has_error)
-      CORO_RETURN;
+      return;
     // FIXME: Do we need to issue an error message here?
     if (!val)
-      CORO_RETURN;
+      return;
     call_stack_.push_front(&e);
-    CORO_CALL_CATCH (apply (0, val, args);,
-      catch (object::UrbiException& ue)
-      {
-	if (!ue.location_is_set())
-	  ue.location_set (e.location_get ());
-	throw;
-      });
+    try {
+      apply (object::nil_class, val, args);
+    }
+    catch (object::UrbiException& ue)
+    {
+      ue.location_set (e.location_get ());
+      throw;
+    };
     call_stack_.pop_front();
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
     // passert ("no value: " << e, current_);
     ECHO (AST(e) << " result: " << *current_);
-    CORO_END;
   }
 
 
   void
   Runner::operator() (ast::Float& e)
   {
-    CORO_WITHOUT_CTX ();
     YIELD ();
 
     current_ = new object::Float (e.value_get());
     ECHO ("result: " << *current_);
-
-    CORO_END;
   }
 
 
   void
   Runner::operator() (ast::Function& e)
   {
-    CORO_WITHOUT_CTX ();
     YIELD ();
 
     PING ();
     current_ = new object::Code (*ast::clone(e));
-
-    CORO_END;
   }
 
 
   void
   Runner::operator() (ast::If& e)
   {
-    CORO_WITHOUT_CTX ();
-
     // Evaluate the test.
     JECHO ("test", e.test_get ());
-    CORO_CALL (operator() (e.test_get()));
+    operator() (e.test_get());
 
     YIELD();
 
     if (IS_TRUE(current_))
     {
       JECHO ("then", e.thenclause_get ());
-      CORO_CALL (operator() (e.thenclause_get()));
+      operator() (e.thenclause_get());
     }
     else
     {
       JECHO ("else", e.elseclause_get ());
-      CORO_CALL (operator() (e.elseclause_get()));
+      operator() (e.elseclause_get());
     }
-
-    CORO_END;
   }
 
 
@@ -421,25 +377,23 @@ namespace runner
   {
     typedef std::list<object::rObject> objects;
     typedef std::list<ast::Exp*> exps;
-		      // list values
-    CORO_WITH_2SLOTS_CTX (objects, values,
-			  exps::const_iterator, i);
+    // list values
+    objects values;
+    exps::const_iterator i;
     YIELD ();
 
     PING ();
     // Evaluate every expression in the list
     // FIXME: parallelized?
     for (i = e.value_get ().begin ();
-	 i != e.value_get ().end ();
-	 ++i)
+         i != e.value_get ().end ();
+         ++i)
     {
-      CORO_CALL (operator() (**i));
+      operator() (**i);
       values.push_back(current_);
     }
     current_ = new object::List (values);
     ECHO ("result: " << *current_);
-
-    CORO_END;
   }
 
 
@@ -447,37 +401,36 @@ namespace runner
   Runner::operator() (ast::Nary& e)
   {
     // FIXME: other flavor support.
-    CORO_CTX_VARS
-      ((1, (
-	  (ast::exec_exps_type::iterator, i)
-	  )));
+    ast::exec_exps_type::iterator i;
     current_ = object::void_class;
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
       current_.reset ();
       JECHO ("child", *i);
-      CORO_CALL_CATCH (operator() (*i);,
-	catch (object::UrbiException& ue)
-	{
-	  raise_error_ (ue);
-	  continue;
-	}
-	CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
-	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
-			     "outside a function"));
+      try {
+        operator() (*i);
+      }
+      catch (object::UrbiException& ue)
+      {
+        raise_error_ (ue);
+        continue;
+      }
+      CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
+        CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
+                             "outside a function");
 
 
       if (e.toplevel_get () && current_.get ())
       {
-	ECHO ("toplevel: returning a result to the connection.");
-	lobby_->value_get ().connection.new_result (current_);
-	current_.reset ();
+        ECHO ("toplevel: returning a result to the connection.");
+        lobby_->value_get ().connection.new_result (current_);
+        current_.reset ();
       }
 
       /* Allow some time to pass before we execute what follows.  If
-	 we don't do this, the ;-operator would act almost like the
-	 |-operator because it would always start to execute its RHS
-	 immediately.  */
+         we don't do this, the ;-operator would act almost like the
+         |-operator because it would always start to execute its RHS
+         immediately.  */
       YIELD ();
     }
 
@@ -486,34 +439,26 @@ namespace runner
     assert (i == e.children_get().end());
     if (e.toplevel_get ())
       e.clear();
-
-    CORO_END;
   }
 
 
   void
   Runner::operator() (ast::Noop&)
   {
-    CORO_WITHOUT_CTX ();
     current_.reset ();
-    CORO_END;
   }
 
 
   void
   Runner::operator() (ast::Pipe& e)
   {
-    CORO_WITHOUT_CTX ();
-
     // lhs
     JECHO ("lhs", e.lhs_get ());
-    CORO_CALL (operator() (e.lhs_get()));
+    operator() (e.lhs_get());
 
     // rhs:  start the execution immediately.
     JECHO ("rhs", e.rhs_get ());
-    CORO_CALL (operator() (e.rhs_get()));
-
-    CORO_END;
+    operator() (e.rhs_get());
   }
 
 
@@ -523,10 +468,10 @@ namespace runner
     // To each scope corresponds a "locals" object which stores the
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
-    CORO_WITH_1SLOT_CTX (rObject, locals);
+    rObject locals;
     if (e.target_get())
     {
-      CORO_CALL (locals = eval(*e.target_get()));
+      locals = eval(*e.target_get());
       // FIXME: Set the protos to locals_? Set self?
     }
     else
@@ -536,41 +481,31 @@ namespace runner
     }
 
     std::swap(locals, locals_);
-    CORO_CALL (super_type::operator()(e.body_get()));
+    super_type::operator()(e.body_get());
     std::swap(locals, locals_);
-
-    CORO_END;
   }
 
 
   void
   Runner::operator() (ast::String& e)
   {
-    CORO_WITHOUT_CTX ();
     YIELD ();
 
     PING ();
     current_ = new object::String(e.value_get());
     ECHO ("result: " << *current_);
-
-    CORO_END;
   }
 
   void
   Runner::operator() (ast::Tag&)
   {
-    CORO_WITHOUT_CTX ();
     // FIXME: Some code is missing here.
-    CORO_END;
   }
 
   void
   Runner::operator() (ast::While& e)
   {
-    CORO_CTX_VARS
-      ((1, (
-	  (bool, broken)
-	  )));
+    bool broken;
 
     // Evaluate the test.
     while (true)
@@ -578,67 +513,59 @@ namespace runner
       // FIXME: YIELD if second iteration for "while;".
 
       JECHO ("while test", e.test_get ());
-      CORO_CALL (operator() (e.test_get()));
+      operator() (e.test_get());
       if (!IS_TRUE(current_))
-	break;
+        break;
 
       if (e.flavor_get() == ast::flavor_semicolon)
-	YIELD();
+        YIELD();
 
       JECHO ("while body", e.body_get ());
 
       broken = false;
-      CORO_CALL_CATCH (operator() (e.body_get());,
-	catch (ast::BreakException&)
-	{
-	  // FIXME: Fix for flavor "," and "&".
-	  if (e.flavor_get() == ast::flavor_semicolon ||
-	      e.flavor_get() == ast::flavor_pipe)
-	  broken = true;
-	});
+      try {
+        operator() (e.body_get());
+      }
+      catch (ast::BreakException&)
+      {
+        // FIXME: Fix for flavor "," and "&".
+        if (e.flavor_get() == ast::flavor_semicolon ||
+            e.flavor_get() == ast::flavor_pipe)
+          broken = true;
+      };
       if (broken)
-	break;
+        break;
     }
     // As far as I know, `while' doesn't return a value in URBI.
     current_.reset ();
-
-    CORO_END;
   }
 
   void
   Runner::operator() (ast::Throw& e)
   {
-    CORO_WITHOUT_CTX ();
-
     if (e.kind_get() == ast::break_exception)
       throw ast::BreakException(e.location_get());
     else if (e.kind_get() == ast::return_exception)
     {
       if (e.value_get())
-	CORO_CALL (operator() (*e.value_get()));
+        operator() (*e.value_get());
       else
-	current_.reset();
+        current_.reset();
       throw ast::ReturnException(e.location_get(), current_);
     }
-
-    CORO_END;
   }
 
   void
   Runner::operator() (ast::Stmt& e)
   {
-    CORO_WITHOUT_CTX ();
     JECHO ("expression", e.expression_get ());
-    CORO_CALL (operator() (e.expression_get()));
-    CORO_END;
+    operator() (e.expression_get());
   }
 
   void
   Runner::operator() (ast::Message& e)
   {
-    CORO_WITHOUT_CTX ();
     send_message_(e.tag_get(), e.text_get());
-    CORO_END;
   }
 
 } // namespace runner

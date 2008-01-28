@@ -40,6 +40,8 @@ TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wbad-function-cast],
 		 [-Wmissing-declarations]])
 
+AM_PROG_AS
+
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL

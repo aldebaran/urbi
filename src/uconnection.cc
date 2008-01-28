@@ -43,7 +43,6 @@
 #include "object/object.hh"
 #include "object/atom.hh"
 #include "runner/fwd.hh"
-#include "runner/scheduler.hh"
 #include "runner/runner.hh"
 
 #include "parser/uparser.hh"
@@ -773,7 +772,7 @@ UConnection::execute ()
   // it has evaluated it.
   active_command_->toplevel_set (true);
 
-  ::urbiserver->getScheduler ().schedule_immediately (runner);
+  ::urbiserver->getScheduler ().add_job (runner);
 
   PING ();
   return *this;

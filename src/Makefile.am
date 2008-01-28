@@ -95,6 +95,8 @@ include ast/ast.mk
 include parser/parser.mk
 include object/object.mk
 include runner/runner.mk
+include scheduler/scheduler.mk
+include scheduler/libcoroutine/libcoroutine.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 

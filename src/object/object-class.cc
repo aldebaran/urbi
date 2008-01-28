@@ -110,10 +110,10 @@ namespace object
 
 
   static rObject
-  object_class_sleep (runner::Runner&, objects_type)
+  object_class_sleep (runner::Runner& r, objects_type args)
   {
-    // FIXME: Currently does nothing.  A stub so that we
-    // accept "sleep(2s)" as is used in the test suite.
+    FETCH_ARG(1, Float);
+    r.yield_until (::urbiserver->getTime() + arg1->value_get());
     return void_class;
   }
 
@@ -128,6 +128,15 @@ namespace object
     return void_class;
   }
 
+  static rObject
+  object_class_apply (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (3);
+    FETCH_ARG (1, List);
+    if (!arg1->value_get ().empty ())
+      throw PrimitiveError ("apply", "first argument must be an empty list");
+    return args[0];
+  }
 
   /*---------.
   | Protos.  |
@@ -244,6 +253,7 @@ namespace object
     DECLARE1(setSlot);
     DECLARE1(updateSlot);
 
+    DECLARE1(apply);
     DECLARE1(dump);
     DECLARE1(echo);
     DECLARE1(load);

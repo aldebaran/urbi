@@ -11,11 +11,12 @@ urbi::UValue uvalue_cast(object::rObject o)
   urbi::UValue res;
   switch(o->kind_get())
   {
-  case object::Object::kind_delegate:
-  case object::Object::kind_primitive:
-  case object::Object::kind_lobby:
+  case object::Object::kind_closure:
   case object::Object::kind_code:
+  case object::Object::kind_delegate:
+  case object::Object::kind_lobby:
   case object::Object::kind_object:
+  case object::Object::kind_primitive:
     throw object::WrongArgumentType
        (object::Object::kind_float, o->kind_get(), "cast");
     break;

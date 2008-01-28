@@ -1,6 +1,8 @@
 dist_libkernel_la_SOURCES +=			\
 object/atom.hh					\
 object/atom.hxx					\
+object/closure-class.cc				\
+object/closure-class.hh				\
 object/code-class.cc				\
 object/code-class.hh				\
 object/delegate-class.cc                        \
