@@ -207,37 +207,39 @@ main (int argc, const char* argv[])
   if (!interactive)
     if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
       std::cerr << libport::program_name
-	        << ": failed to process " << in << std::endl
-	        << libport::exit(EX_NOINPUT);
+		<< ": failed to process " << in << std::endl
+		<< libport::exit(EX_NOINPUT);
 
   c.newDataAdded = true;
 
   std::cerr << libport::program_name << ": going to work..." << std::endl;
-    while (true)
+  while (true)
+  {
+    if (!fast)
     {
-      if (!fast)
-      {
-	long long startTime = libport::utime();
-	ufloat period = s.period_get() * 1000;
-	//FIXME: this is bad and taking a lot of cpu
-	while (libport::utime() < startTime + period)
-	  usleep (1);
-      }
-      if (interactive)
-      {
-	std::string input;
-	try
-	{
-	  input = libport::read_stdin();
-	}
-	catch(libport::exception::Exception e)
-	{
-	  std::cerr << e.what() << std::endl;
-	  interactive = false;
-	}
-	if (!input.empty())
-	  s.getGhostConnection () << UConnection::received(reinterpret_cast<const ubyte*>(input.c_str()), input.length());
-      }
-      s.work ();
+      long long startTime = libport::utime();
+      ufloat period = s.period_get() * 1000;
+      //FIXME: this is bad and taking a lot of cpu
+      while (libport::utime() < startTime + period)
+	usleep (1);
     }
+    if (interactive)
+    {
+      std::string input;
+      try
+      {
+	input = libport::read_stdin();
+      }
+      catch(libport::exception::Exception e)
+      {
+	std::cerr << e.what() << std::endl;
+	interactive = false;
+      }
+      if (!input.empty())
+	s.getGhostConnection ()
+	  << UConnection::received
+	  (reinterpret_cast<const ubyte*>(input.c_str()), input.length());
+    }
+    s.work ();
+  }
 }
