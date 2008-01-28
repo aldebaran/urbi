@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <string>
 
+#include "server-timer.hh"
 #include "uparser.hh"
 
 /*----------.
@@ -34,6 +35,7 @@ UParser::UParser(UConnection& cn)
 int
 UParser::parse_ ()
 {
+  TIMER_PUSH("parse");
   command_tree_ = 0;
   binaryCommand = false;
 
@@ -46,6 +48,7 @@ UParser::parse_ ()
   ECHO("====================== Parse begin");
   int res = p.parse();
   ECHO("====================== Parse end: " << res);
+  TIMER_POP("parse");
   return res;
 }
 

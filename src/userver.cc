@@ -51,15 +51,17 @@
 
 #include "ast/ast.hh"
 #include "ast/nary.hh"
-#include "ubanner.hh"
-#include "ucommandqueue.hh"
-#include "uqueue.hh"
-#include "ughostconnection.hh"
 
 #include "object/atom.hh"
 #include "object/primitives.hh"
 #include "scheduler/scheduler.hh"
+
+#include "server-timer.hh"
+#include "ubanner.hh"
+#include "ucommandqueue.hh"
+#include "ughostconnection.hh"
 #include "uobject.hh"
+#include "uqueue.hh"
 
 // Global server reference
 UServer *urbiserver = 0;
@@ -93,6 +95,12 @@ UServer::UServer(ufloat period,
     isolate_ (false),
     uid(0)
 {
+#if ! defined NDEBUG
+  //  std::atexit(dump_timer);
+  server_timer.start ();
+  server_timer.dump_on_destruction (std::cerr);
+  TIMER_PUSH("server");
+#endif
   ::urbiserver = this;
 }
 
