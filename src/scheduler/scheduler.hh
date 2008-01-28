@@ -48,6 +48,10 @@ namespace scheduler
     /// executing job as it will do very bad things.
     void kill_job (Job* job);
 
+    /// Unschedule a job but do not delete it. Also here, the currently
+    /// executing job cannot unschedule itself.
+    void unschedule_job (Job* job);
+
     /// Resume scheduler execution. Must be called from the job being
     /// interrupted with itself as argument.
     void resume_scheduler (Job* job);

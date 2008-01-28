@@ -184,11 +184,12 @@ namespace scheduler
   }
 
   void
-  Scheduler::kill_job (Job* job)
+  Scheduler::unschedule_job (Job *job)
   {
     assert (job);
+    assert (job != current_job_);
 
-    ECHO ("killing job " << job);
+    ECHO ("unscheduling job " << job);
 
     // First of all, tell the job it has been terminated unless it has
     // been registered with us but not yet started.
@@ -213,6 +214,12 @@ namespace scheduler
 	  deferred_jobs_.push (j);
       }
     }
+  }
+
+  void
+  Scheduler::kill_job (Job* job)
+  {
+    assert (job != current_job_);
 
     ECHO ("deleting job " << job);
     delete job;

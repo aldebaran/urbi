@@ -31,7 +31,7 @@ namespace scheduler
   inline
   Job::~Job ()
   {
-    assert (terminated_);
+    scheduler_->unschedule_job (this);
     Coro_free (self_);
   }
 
