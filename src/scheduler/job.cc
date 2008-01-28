@@ -32,7 +32,7 @@ namespace scheduler
   {
     terminate ();
     terminated_ = true;
-    BOOST_FOREACH (Job *job, to_wake_up_)
+    BOOST_FOREACH (Job* job, to_wake_up_)
       scheduler_->resume_job (job);
   }
 

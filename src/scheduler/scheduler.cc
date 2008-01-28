@@ -21,12 +21,12 @@ namespace scheduler
 {
 
   // This function is required to start a new job using the libcoroutine.
-  // It's only purpose is to create the context and start the execution
+  // Its only purpose is to create the context and start the execution
   // of the new job.
   static void
   run_job (void* job)
   {
-    ((Job *)job)->run();
+    static_cast<Job*>(job)->run();
   }
 
   void
@@ -60,13 +60,14 @@ namespace scheduler
     }
 
     // Start deferred jobs
-    libport::ufloat current_time = ::urbiserver->getTime ();
-    while (!deferred_jobs_.empty ()) {
+    for (libport::ufloat current_time = ::urbiserver->getTime ();
+	 !deferred_jobs_.empty();
+	 deferred_jobs_.pop ())
+    {
       deferred_job j = deferred_jobs_.top ();
-      if (j.get<0>() > current_time)
+      if (current_time < j.get<0>())
 	break;
-      jobs_.push_back (j.get<1>());
-      deferred_jobs_.pop ();
+      jobs_.push_back (j.get<1> ());
     }
 
     // Run all the jobs in the run queue once.
