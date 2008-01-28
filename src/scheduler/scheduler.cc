@@ -38,7 +38,7 @@ namespace scheduler
     jobs_to_start_.push_back (job);
   }
 
-  void
+  libport::utime_t
   Scheduler::work ()
   {
 #ifdef ENABLE_DEBUG_TRACES
@@ -82,6 +82,17 @@ namespace scheduler
       Coro_switchTo_ (self_, job->coro_get ());
       ECHO ("back from job " << job);
     }
+
+    // Do we have some work to do now?
+    if (!jobs_.empty ())
+      return 0;
+
+    // Do we have deferred jobs?
+    if (!deferred_jobs_.empty ())
+      return deferred_jobs_.top ().get<0> ();
+
+    // Ok, let's say, we'll be called again in one hour.
+    return ::urbiserver->getTime() + 3600 * 1000;
   }
 
   void
