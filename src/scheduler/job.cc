@@ -45,4 +45,10 @@ namespace scheduler
       scheduler_->resume_scheduler_suspend (this);
     }
   }
+
+  void
+  Job::yield_until_things_changed ()
+  {
+    scheduler_->resume_scheduler_things_changed (this);
+  }
 }

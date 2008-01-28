@@ -18,6 +18,7 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::Object::kind_lobby:
   case object::Object::kind_object:
   case object::Object::kind_primitive:
+  case object::Object::kind_task:
     throw object::WrongArgumentType
        (object::Object::kind_float, o->kind_get(), "cast");
     break;

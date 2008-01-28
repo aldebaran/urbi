@@ -49,6 +49,13 @@ namespace runner
   }
 
   inline
+  object::rLobby
+  Runner::lobby_get ()
+  {
+    return lobby_;
+  }
+
+  inline
   const object::rObject&
   Runner::locals_get () const
   {

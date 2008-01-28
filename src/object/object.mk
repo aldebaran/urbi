@@ -36,6 +36,8 @@ object/string-class.cc				\
 object/string-class.hh				\
 object/symbols.cc				\
 object/symbols.hh				\
+object/task-class.cc				\
+object/task-class.hh				\
 object/urbi-exception.cc			\
 object/urbi-exception.hh			\
 object/urbi-exception.hxx

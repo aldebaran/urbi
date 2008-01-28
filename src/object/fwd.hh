@@ -38,7 +38,8 @@ namespace object
   Macro(float,     Float)						\
   Macro(integer,   Integer)						\
   Macro(list,      List)						\
-  Macro(string,    String)
+  Macro(string,    String)						\
+  Macro(task,      Task)
 
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)			\
   Macro(primitive, Primitive)						\

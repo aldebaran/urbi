@@ -54,6 +54,9 @@ namespace scheduler
     /// caller will continue its execution.
     void yield_until_terminated (Job&);
 
+    /// Wait for any other task to be scheduled.
+    void yield_until_things_changed ();
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is

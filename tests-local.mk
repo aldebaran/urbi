@@ -15,8 +15,6 @@ ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
-2.x/apply.chk					\
-2.x/closure.chk					\
 2.x/literal-string.chk				\
 2.x/nullary.chk
 

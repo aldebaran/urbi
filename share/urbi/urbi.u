@@ -40,6 +40,54 @@ var Object.makeClosure = function
   makeExplicitClosure (call.evalArgAt (1), call.context);
 };
 
+var Object.makeClosedCode = function
+{
+  var f = function () { call.evalArgAt (1) };
+  makeClosure (getSlot ("f"))
+};
+
+## -------------------- ##
+## Task related stuff.  ##
+## -------------------- ##
+
+# Detach takes an expression and evaluates it in background within
+# the caller's context. The task will be stopped when there is no
+# more references onto the returned object.
+var Object.detach = function
+{
+  var f = makeClosedCode (call.evalArgAt (1));
+  new Task (getSlot ("f"))
+};
+
+# every_ takes two arguments, a delay and an expression.
+var Object.every_ = function
+{
+  detach ({
+    var delay = call.evalArgAt (1);
+    var runners = [];
+    loop {
+      runners += [detach (call.evalArgAt (2))];
+      sleep (delay);
+    }
+  })
+};
+
+# at_ takes two expressions, a test and a code to execute when the test
+# becomes true
+var Object.at_ = function
+{
+  var t = detach ({
+    loop {
+      if (call.evalArgAt (1)) {
+        call.evalArgAt (2);
+        break
+      };
+      t.waitForChanges
+    }
+  });
+  t
+};
+
 ## ----------------- ##
 ## VisibilityScope.  ##
 ## ----------------- ##

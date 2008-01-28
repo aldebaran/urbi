@@ -49,6 +49,7 @@ namespace runner
   public:
     /// Return the lobby in which this runner has been started.
     const rLobby& lobby_get () const;
+    rLobby lobby_get ();
 
     /// Return the current locals for this runner.
     const rObject& locals_get () const;
@@ -67,8 +68,8 @@ namespace runner
     /// Eval a tree in a given local scope
     rObject eval_in_scope (rObject scope, ast::Exp& e);
 
-    /// Return the result of last evaluation.
-    const rObject& current_get() const;
+    /// Return the result of an evaluation. The runner must be terminated.
+    const rObject& current_get () const;
   protected:
     /// \name Evaluation.
     /// \{

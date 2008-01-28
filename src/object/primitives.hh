@@ -22,6 +22,7 @@
 # include "object/object-class.hh"
 # include "object/primitive-class.hh"
 # include "object/string-class.hh"
+# include "object/task-class.hh"
 # include "object/urbi-exception.hh"
 
 namespace object
