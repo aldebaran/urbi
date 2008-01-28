@@ -75,8 +75,8 @@ namespace object
     r.lobby_get()->value_get().connection.send (args[1], tag.c_str(), prefix);
     return void_class;
   }
+
   /// Send pretty-printed args[1] to the connection.
-  // FIXME: Lots of duplication with the previous primitive :(
   static rObject
   object_class_echo (runner::Runner& r, objects_type args)
   {
@@ -106,7 +106,6 @@ namespace object
   object_class_ ## Function (runner::Runner&, objects_type)	\
   {								\
     ::urbiserver->Function();					\
-    /* Return the current object to return something. */	\
     return void_class;						\
   }
 
