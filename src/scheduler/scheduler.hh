@@ -9,8 +9,7 @@
 # include <queue>
 # include <boost/tuple/tuple.hpp>
 # include <boost/utility.hpp>
-
-# include <libport/ufloat.hh>
+# include <libport/utime.hh>
 
 # include "scheduler/fwd.hh"
 # include "scheduler/libcoroutine/Coro.h"
@@ -18,7 +17,7 @@
 namespace scheduler
 {
 
-  typedef boost::tuple<libport::ufloat, Job*> deferred_job;
+  typedef boost::tuple<libport::utime_t, Job*> deferred_job;
   bool operator> (const deferred_job&, const deferred_job&);
 
   class Scheduler : boost::noncopyable
@@ -51,7 +50,7 @@ namespace scheduler
 
     /// Ditto, but put the job in the deferred run queue until the deadline
     /// is reached.
-    void resume_scheduler_until (Job* job, libport::ufloat deadline);
+    void resume_scheduler_until (Job* job, libport::utime_t deadline);
 
     /// Suspend the current job.
     void resume_scheduler_suspend (Job *job);

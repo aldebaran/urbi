@@ -437,7 +437,7 @@ UServer::shutdown()
 //! Overload this function to return the running time of the server.
 /*! The running time of the server must be in milliseconds.
  */
-ufloat
+libport::utime_t
 UServer::getTime()
 {
   return 0;

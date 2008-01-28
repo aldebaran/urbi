@@ -114,7 +114,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::resume_scheduler_until (Job *job, ufloat deadline)
+  Scheduler::resume_scheduler_until (Job *job, libport::utime_t deadline)
   {
     // Put the job in the deferred queue. If the job asks to be requeued,
     // it is not terminated.

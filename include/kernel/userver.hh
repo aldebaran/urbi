@@ -25,15 +25,16 @@
 # include <cstdarg>
 # include <sstream>
 
-# include "libport/config.h"
+# include <libport/config.h>
 # if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
 
-# include "libport/fwd.hh"
-# include "libport/compiler.hh"
-# include "libport/file-library.hh"
-# include "libport/ufloat.h"
+# include <libport/fwd.hh>
+# include <libport/compiler.hh>
+# include <libport/file-library.hh>
+# include <libport/ufloat.h>
+# include <libport/utime.hh>
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
@@ -140,7 +141,7 @@ public:
   void deIsolate ();
   bool isIsolated ();
 
-  virtual ufloat getTime () = 0;
+  virtual libport::utime_t getTime () = 0;
   virtual ufloat getPower () = 0;
 
   //! Overload this function to return a specific header for your URBI server

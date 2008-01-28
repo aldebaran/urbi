@@ -56,12 +56,12 @@ public:
   virtual void reboot()
   {}
 
-  virtual ufloat getTime()
+  virtual libport::utime_t getTime()
   {
     if (fast)
       return ctime / 1000LL;
     else
-      return static_cast<ufloat>(libport::utime() / 1000LL);
+      return libport::utime() / 1000LL;
   }
 
   virtual ufloat getPower()
