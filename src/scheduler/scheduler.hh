@@ -27,23 +27,23 @@ namespace scheduler
     ~Scheduler ();
 
   public:
-    // Do one cycle of work, and return the next time we expect to be called.
-    // If we have work to do, 0 will be returned in order to be called again
-    // as soon as possible. If we only have time-suspended or dependent
-    // jobs, we will return the time of the next scheduled one. In short,
-    // calling work() again before the returned time is useless as there will
-    // be nothing to do except if some new work has been entered in.
+    /// Do one cycle of work, and return the next time we expect to be called.
+    /// If we have work to do, 0 will be returned in order to be called again
+    /// as soon as possible. If we only have time-suspended or dependent
+    /// jobs, we will return the time of the next scheduled one. In short,
+    /// calling work() again before the returned time is useless as there will
+    /// be nothing to do except if some new work has been entered in.
     libport::utime_t work ();
 
-    // Add a job to the list of jobs to be run later. Jobs will be started
-    // at the next cycle by the scheduler.
+    /// Add \a job to the list of jobs to be run later. Jobs will be started
+    /// at the next cycle by the scheduler.
     void add_job (Job* job);
 
     /// Remove all jobs but the caller one. It will have to terminate
     /// after that.
     void killall_jobs ();
 
-    /// Kill a job, and delete it. It is not allowed to kill the currently
+    /// Kill \a job, and delete it. It is not allowed to kill the currently
     /// executing job as it will do very bad things.
     void kill_job (Job* job);
 
