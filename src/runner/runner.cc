@@ -112,9 +112,9 @@ namespace runner
     // in this one.
 
     JECHO ("lhs", e.lhs_get ());
-    Runner* lhs = new Runner (*this);
-    lhs->ast_ = &e.lhs_get ();
-    scheduler_get().add_job (lhs);
+    Runner lhs (*this);
+    lhs.ast_ = &e.lhs_get ();
+    lhs.start_job ();
 
     PING ();
 
@@ -123,8 +123,7 @@ namespace runner
     eval (e.rhs_get ());
 
     // Wait for lhs to terminate
-    yield_until_terminated (*lhs);
-    delete lhs;
+    yield_until_terminated (lhs);
 
     PING ();
 

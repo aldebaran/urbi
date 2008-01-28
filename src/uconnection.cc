@@ -772,7 +772,7 @@ UConnection::execute ()
   // it has evaluated it.
   active_command_->toplevel_set (true);
 
-  ::urbiserver->getScheduler ().add_job (runner);
+  runner->start_job ();
 
   PING ();
   return *this;

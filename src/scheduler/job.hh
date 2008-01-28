@@ -29,6 +29,9 @@ namespace scheduler
     /// Has this job terminated?
     bool terminated () const;
 
+    /// Start job by adding it into the scheduler.
+    void start_job ();
+
     /// Run the job -- called from the scheduler.
     void run ();
 

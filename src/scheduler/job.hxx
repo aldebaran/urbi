@@ -77,6 +77,12 @@ namespace scheduler
     return self_;
   }
 
+  inline void
+  Job::start_job ()
+  {
+    scheduler_->add_job (this);
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_JOB_HXX

@@ -36,7 +36,8 @@ namespace scheduler
     libport::utime_t work ();
 
     /// Add \a job to the list of jobs to be run later. Jobs will be started
-    /// at the next cycle by the scheduler.
+    /// at the next cycle by the scheduler. It is advised to call \a start_job
+    /// on \a *job rather than invoking this method.
     void add_job (Job* job);
 
     /// Remove all jobs but the caller one. It will have to terminate
