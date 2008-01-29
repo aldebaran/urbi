@@ -79,10 +79,9 @@ namespace scheduler
     // on the pending jobs queue.
     if (!if_change_jobs_.empty() && (job_started || !jobs_.empty()))
     {
-      jobs to_resume;
-      std::swap (to_resume, if_change_jobs_);
-      foreach (Job* job, to_resume)
+      foreach (Job* job, if_change_jobs_)
 	jobs_.push_back (job);
+      if_change_jobs_.clear ();
     }
 
     // Run all the jobs in the run queue once.
