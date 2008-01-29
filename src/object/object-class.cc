@@ -28,12 +28,14 @@ namespace object
   static rObject
   object_class_clone (runner::Runner&, objects_type args)
   {
+    CHECK_ARG_COUNT (1);
     return clone(args[0]);
   }
 
   static rObject
   object_class_init (runner::Runner&, objects_type args)
   {
+    CHECK_ARG_COUNT (1);
     return args[0];
   }
 
@@ -80,6 +82,7 @@ namespace object
   static rObject
   object_class_echo (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT_RANGE (2, 3);
     return object_echo(r, args, "*** ");
   }
 
@@ -88,6 +91,7 @@ namespace object
   static rObject
   object_class_print (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT_RANGE (1, 2);
     objects_type nargs;
     nargs.push_back(args[0]);
     nargs.insert(nargs.end(),  args.begin(), args.end());
@@ -97,16 +101,18 @@ namespace object
   static rObject
   object_class_sameAs(runner::Runner&, objects_type args)
   {
+    CHECK_ARG_COUNT (2);
     return args[0]->slot_get((args[0] == args[1]) ? "true": "false");
   }
 
 
-#define SERVER_FUNCTION(Function)				\
-  static rObject						\
-  object_class_ ## Function (runner::Runner&, objects_type)	\
-  {								\
-    ::urbiserver->Function();					\
-    return void_class;						\
+#define SERVER_FUNCTION(Function)					\
+  static rObject							\
+  object_class_ ## Function (runner::Runner&, objects_type args)	\
+  {									\
+    CHECK_ARG_COUNT (1);						\
+    ::urbiserver->Function();						\
+    return void_class;							\
   }
 
   SERVER_FUNCTION(reboot)
@@ -118,6 +124,7 @@ namespace object
   static rObject
   object_class_sleep (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT (2);
     FETCH_ARG(1, Float);
     r.yield_until (::urbiserver->getTime() + arg1->value_get());
     return void_class;
@@ -126,6 +133,7 @@ namespace object
   static rObject
   object_class_load (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT (2);
     FETCH_ARG(1, String);
     if (::urbiserver->loadFile(arg1->value_get(),
       &r.lobby_get()->value_get().connection.recvQueue()) != USUCCESS)
