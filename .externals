@@ -1,0 +1,8 @@
+external: libport
+link: build-aux          -> libport/build-aux
+link: include/libport    -> libport/include/libport
+link: lib/libport        -> libport/lib/libport
+link: sdk		 -> libport/sdk
+link: lib/network/bsdnet -> libport/network/bsdnet
+
+external: tests -> urbivalid

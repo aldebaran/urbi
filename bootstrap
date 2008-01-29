@@ -1,101 +1,9 @@
 #! /bin/sh
 
-
 fatal ()
 {
   echo >&2 "$0: $@"
   exit 1
-}
-
-awk_strverscmp='
-  # Use only awk features that work with 7th edition Unix awk (1978).
-  # My, what an old awk you have, Mr. Solaris!
-  END {
-    while (length(v1) || length(v2)) {
-      # Set d1 to be the next thing to compare from v1, and likewise for d2.
-      # Normally this is a single character, but if v1 and v2 contain digits,
-      # compare them as integers and fractions as strverscmp does.
-      if (v1 ~ /^[0-9]/ && v2 ~ /^[0-9]/) {
-	# Split v1 and v2 into their leading digit string components d1 and d2,
-	# and advance v1 and v2 past the leading digit strings.
-	for (len1 = 1; substr(v1, len1 + 1) ~ /^[0-9]/; len1++) continue
-	for (len2 = 1; substr(v2, len2 + 1) ~ /^[0-9]/; len2++) continue
-	d1 = substr(v1, 1, len1); v1 = substr(v1, len1 + 1)
-	d2 = substr(v2, 1, len2); v2 = substr(v2, len2 + 1)
-	if (d1 ~ /^0/) {
-	  if (d2 ~ /^0/) {
-	    # Compare two fractions.
-	    while (d1 ~ /^0/ && d2 ~ /^0/) {
-	      d1 = substr(d1, 2); len1--
-	      d2 = substr(d2, 2); len2--
-	    }
-	    if (len1 != len2 && ! (len1 && len2 && substr(d1, 1, 1) == substr(d2, 1, 1))) {
-	      # The two components differ in length, and the common prefix
-	      # contains only leading zeros.  Consider the longer to be less.
-	      d1 = -len1
-	      d2 = -len2
-	    } else {
-	      # Otherwise, compare as strings.
-	      d1 = "x" d1
-	      d2 = "x" d2
-	    }
-	  } else {
-	    # A fraction is less than an integer.
-	    exit 1
-	  }
-	} else {
-	  if (d2 ~ /^0/) {
-	    # An integer is greater than a fraction.
-	    exit 2
-	  } else {
-	    # Compare two integers.
-	    d1 += 0
-	    d2 += 0
-	  }
-	}
-      } else {
-	# The normal case, without worrying about digits.
-	if (v1 == "") d1 = v1; else { d1 = substr(v1, 1, 1); v1 = substr(v1,2) }
-	if (v2 == "") d2 = v2; else { d2 = substr(v2, 1, 1); v2 = substr(v2,2) }
-      }
-      if (d1 < d2) exit 1
-      if (d1 > d2) exit 2
-    }
-  }
-'
-
-version_compare ()
-{
-  (
-    # Locally ignore failures, otherwise we'll exit whenever $1 and $2
-    # are not equal!
-    set +e
-
-    awk "$awk_strverscmp" v1="$1" v2="$2" /dev/null
-    case $? in
-      1)  echo '<';;
-      0)  echo '=';;
-      2)  echo '>';;
-    esac
-  )
-}
-
-# require TOOL REQUIREMENT
-# ------------------------
-# Test that TOOL exists, and its version is at least REQUIREMENT.
-# Check whether the environment contains a variable named like TOOL,
-# but upper-cased, and use it instead of TOOL if so.
-require ()
-{
-  envvar_name=$(echo $1 | tr '[:lower:]' '[:upper:]')
-  tool=$(printenv $envvar_name || echo $1)
-  local version=$($tool --version | \
-    sed -n 's/.*[^0-9.]\([0-9][0-9.]*\).*/\1/p;q')
-  test x"$version" != x ||
-    fatal "$tool is required"
-  case $(version_compare "$2" "$version") in
-    '>') fatal "$1 $2 or better is required: this is $tool $version";;
-  esac
 }
 
 # Failures do matter.
@@ -142,44 +50,5 @@ EOF
     }
 fi
 
-# Requirements over bootstrap tools.
-require autoconf 2.61
-require automake 1.10
-libtoolize=libtoolize
-for l in "$LIBTOOLIZE" glibtoolize libtoolize;
-do
-  if ($l --version) >/dev/null 2>&1; then
-    libtoolize=$l
-    break
-  fi
-done
-export LIBTOOLIZE=$libtoolize
-require $libtoolize 1.5.22
-
-# Tell what's going on.
-set -x
-
 # Finally, install the GNU Build System and our submodules.
-exec libport/build-aux/bootstrap \
-    build-aux include/libport \
-    lib/libport network/bsdnet:lib/network/bsdnet lib/network \
-    sdk \
-    "$@"
-
-# FIXME: autoheader does not obey --force.
-find . -name 'config.h.in' | xargs touch
-
-# Now that configure was recreated, the documentation timestamps
-# are outdated (they depend on it).  Refresh them brutally.
-if test -f dev/stamp-vti; then
-  touch dev/stamp-vti
-fi
-
-# If the pseudo-standard name "_build" is used, then how about trying
-# to continue the re-build?
-if test -f _build/config.status; then
-  cd _build
-  ./config.status --recheck
-  ./config.status
-  make
-fi
+exec libport/build-aux/bootstrap "$@"
