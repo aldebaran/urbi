@@ -112,17 +112,28 @@ namespace object
 
   /** Exception used for calls with wrong argument count.
    * \param effective  Number of arguments given.
-   * \param formal     Number of arguments expected.  */
+   * \param formal     Number of arguments expected.
+   * A version of the constructor also exists for functions taking a
+   * variable number of arguments, between \param minformal and
+   * \param maxformal.
+   */
   struct WrongArgumentCount: public UrbiException
   {
     WrongArgumentCount (unsigned formal, unsigned effective,
 			const std::string& fun);
+    WrongArgumentCount (unsigned minformal, unsigned maxformal,
+			unsigned effective, const std::string& fun);
   };
 
   /// Throw an exception if formal != effective.
-  /// \note: \c self is not included in the count.
+  /// \note: \c self is included in the count.
   void check_arg_count (unsigned formal, unsigned effective,
 		       const std::string& fun);
+
+  /// Same as above, with a minimum and maximum number of
+  /// formal parameters.
+  void check_arg_count (unsigned minformal, unsigned maxformal,
+			unsigned effective, const std::string& fun);
 
 } // namespace object
 

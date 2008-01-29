@@ -83,11 +83,34 @@ namespace object
   }
 
   inline
+  WrongArgumentCount::WrongArgumentCount (unsigned minformal,
+					  unsigned maxformal,
+					  unsigned effective,
+					  const std::string& fun)
+    : UrbiException ((boost::format ("expected between %1% and %2% arguments, "
+				     "given %3%")
+		      % minformal
+		      % maxformal
+		      % effective).str (),
+		     fun)
+  {
+  }
+
+  inline
   void
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {
     if (formal != effective)
       throw WrongArgumentCount(formal, effective, fun);
+  }
+
+  inline
+  void
+  check_arg_count (unsigned minformal, unsigned maxformal,
+		   unsigned effective, const std::string& fun)
+  {
+    if (effective < minformal || maxformal < effective)
+      throw WrongArgumentCount(minformal, maxformal, effective, fun);
   }
 
 }; // end of namespace object
