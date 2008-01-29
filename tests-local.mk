@@ -44,7 +44,6 @@ XFAIL_TESTS +=					\
 1.x/freeze-time.chk				\
 1.x/function-declaration.chk			\
 1.x/function-delete.chk				\
-1.x/function-return.chk				\
 1.x/groups.chk					\
 1.x/hash-and-list.chk				\
 1.x/hierarchical-tags.chk			\
@@ -78,7 +77,6 @@ XFAIL_TESTS +=					\
 1.x/ping.chk					\
 1.x/simple-alias.chk				\
 1.x/sinus.chk					\
-1.x/size.chk					\
 1.x/speed-zero.chk				\
 1.x/stopif.chk					\
 1.x/switch.chk					\

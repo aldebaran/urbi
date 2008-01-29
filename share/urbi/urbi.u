@@ -23,9 +23,9 @@ Object.slotCopy ("sameAs", "==");
 var lobby.self = lobby;
 
 
-## --------------- ##
-## VisibilityScope ##
-## --------------- ##
+## ----------------- ##
+## VisibilityScope.  ##
+## ----------------- ##
 
 # Must be before the first 'do' or 'class'
 # Do and class blocks are inheriting from VisibilityScope.
@@ -73,6 +73,19 @@ class Object.Channel
   var '<<' = function (x) { x.print (name); {} };
 };
 
+// Default channels.
+do Object
+{
+  // Long names are k1 compatible.
+  var output  = new Channel("output");
+  var error   = new Channel("error");
+  var warning = new Channel("warning");
+  // Short names are user compatible.
+  var cout  = output;
+  var cerr  = error;
+
+  var warn = function (msg) { echo (msg, "warning") };
+};
 
 
 ## --------- ##
@@ -170,6 +183,16 @@ do List
 	return true;
     return false;
   };
+};
+
+# k1 compatibility.
+do Object
+{
+  var size = function(l)
+  { 
+    warn("`size(list)' is deprecated, use `list.size'");
+    l.size
+   };
 };
 
 
