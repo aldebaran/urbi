@@ -1121,7 +1121,7 @@ expr:
 
     // var res = id . clone ();
     ast::Exp* parent = call (@2, 0, $2);
-    ast::Call* res = call (@$, 0, "'res'");
+    ast::Call* res = call (@$, 0, libport::Symbol::fresh("res"));
     ast::Exp* decl = assign (@1 + @2,
 			     res,
 			     call(@1 + @2, parent, "clone"),
