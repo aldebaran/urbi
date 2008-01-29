@@ -1121,6 +1121,8 @@ expr:
 
     // var res = id . clone ();
     ast::Exp* parent = call (@2, 0, $2);
+    // Cannot use a fixed string here, otherwise two successive "new"
+    // will conflict.  Delete the slot afterwards?
     ast::Call* res = call (@$, 0, libport::Symbol::fresh("res"));
     ast::Exp* decl = assign (@1 + @2,
 			     res,
