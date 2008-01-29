@@ -159,7 +159,7 @@ namespace runner
 
     // Check the arity.
     object::check_arg_count (fn->formals_get().size(), args.size() - 1,
-			     __PRETTY_FUNCTION__);
+			     "");
 
     // Bind formal and effective arguments if the caller has not provided
     // a scope. If a scope has been given, it is up to the caller to set
@@ -216,7 +216,7 @@ namespace runner
       BOOST_FOREACH(rObject arg, args)
       {
 	if (!first && arg == object::void_class)
-	  throw object::WrongArgumentType (__PRETTY_FUNCTION__);
+	  throw object::WrongArgumentType ("");
 	first = false;
       }
     }
@@ -281,7 +281,7 @@ namespace runner
       passert ("argument without a value: " << **i, current_);
       if (current_ == object::void_class)
       {
-	object::WrongArgumentType wt(__PRETTY_FUNCTION__);
+	object::WrongArgumentType wt("");
 	wt.location_set((*i)->location_get());
 	throw wt;
       }

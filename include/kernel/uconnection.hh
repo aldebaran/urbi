@@ -421,9 +421,10 @@ public:
   UErrorValue uerror_;
 
 public:
-  /// Reference to the underlying server.
+  /// Reference to the underlying server. FIXME: make me private.
   UServer* server;
-
+  /// Accessor for server.
+  UServer& server_get() const;
 private:
   /// The commands to be executed.
   ast::Nary* active_command_;

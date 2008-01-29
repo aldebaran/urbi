@@ -8,6 +8,7 @@
 #include "libport/tokenizer.hh"
 #include <boost/lexical_cast.hpp>
 
+#include "parser/uparser.hh"
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
@@ -131,15 +132,43 @@ namespace object
   }
 
   static rObject
+  execute_parsed (runner::Runner& r, UParser& p, UrbiException e)
+  {
+    ast::Nary errs;
+    p.process_errors(&errs);
+    errs.accept(r);
+
+    if (!p.command_tree_get())
+      throw e;
+    else
+      p.command_tree_get()->accept(r);
+    //FIXME: deleting the tree now causes segv.
+    //delete p.command_tree_get();
+    //p.command_tree_set (0);
+    return r.current_get();
+  }
+
+  static rObject
+  object_class_eval (runner::Runner& r, objects_type args)
+  {
+    FETCH_ARG(1, String);
+    UConnection& c = r.lobby_get()->value_get().connection;
+    UParser p(c);
+    p.process(arg1->value_get());
+    return execute_parsed(r, p, PrimitiveError("",
+	std::string("Error executing command.")));
+  }
+
+  static rObject
   object_class_load (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG(1, String);
-    if (::urbiserver->loadFile(arg1->value_get(),
-      &r.lobby_get()->value_get().connection.recvQueue()) != USUCCESS)
-    throw PrimitiveError("load",
-      std::string("Error loading file:") + arg1->value_get().name_get());
-    return void_class;
+    UConnection& c = r.lobby_get()->value_get().connection;
+    UParser p(c);
+    p.process_file(c.server_get().find_file(libport::path(arg1->value_get())));
+    return  execute_parsed(r, p, PrimitiveError("", //same message than k1
+	std::string("Error loading file: ") + arg1->value_get().name_get()));
   }
 
   static rObject
@@ -284,6 +313,7 @@ namespace object
 
     DECLARE1(apply);
 
+    DECLARE1(eval);
     DECLARE1(dump);
     DECLARE1(echo);
     DECLARE1(load);

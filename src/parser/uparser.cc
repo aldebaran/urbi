@@ -13,7 +13,9 @@
 #include <string>
 
 #include "server-timer.hh"
+#include <boost/foreach.hpp>
 #include "uparser.hh"
+#include "ast/nary.hh"
 
 /*----------.
 | UParser.  |
@@ -102,6 +104,8 @@ UParser::process_file (const std::string& fn)
   // restore the cursor after having handled a load command).
   std::swap(loc, loc_);
   std::ifstream f (fn.c_str());
+  if (!f.good())
+    return 1; // Return an error instead of creating a valid empty ast.
   scanner_.switch_streams(&f, 0);
   ECHO("Parsing file: " << fn);
   int res = parse_();
@@ -117,6 +121,25 @@ UParser::message_push(messages_type& msgs,
   std::ostringstream o;
   o << "!!! " << l << ": " << msg;
   msgs.push_back(o.str());
+}
+
+void
+UParser::process_errors(ast::Nary* target)
+{
+  BOOST_FOREACH(std::string e, warnings_)
+    target->message_push(e, "warning");
+  warnings_.clear();
+
+  // Errors handling
+  if (!errors_.empty())
+  {
+    delete command_tree_get();
+    command_tree_set (0);
+
+    BOOST_FOREACH(std::string e, errors_)
+      target->message_push(e, "error");
+    errors_.clear();
+  }
 }
 
 void

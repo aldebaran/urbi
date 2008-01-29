@@ -41,8 +41,7 @@ namespace object
   void
   UrbiException::initialize_msg () throw ()
   {
-    if (getenv("DEBUG") && !fun_.empty ())
-      msg_ = fun_ + ": " + msg_;
+    msg_ = fun_ + (fun_.empty() ? "" : ": ") + msg_;
   }
 
   const char*

@@ -89,6 +89,10 @@ public:
   /// @name Errors and warnings handling
   /// @{
 
+  /// Push all warning and error messages in \b target.
+  /// If errors were pushed, the command tree is deleted and set to 0.
+  void process_errors(ast::Nary* target);
+
   /// Whether one or several errors occured during parsing.
   bool hasError() const;
   /// Give the oldest error message.

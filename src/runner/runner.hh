@@ -63,6 +63,8 @@ namespace runner
     rObject apply (rObject scope, const rObject& func,
 		   const object::objects_type& args);
 
+    /// Return the result of last evaluation.
+    const rObject& current_get() const;
   protected:
     /// \name Evaluation.
     /// \{

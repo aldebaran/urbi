@@ -58,4 +58,10 @@ UConnection::error () const
   return error_;
 }
 
+inline
+UServer&
+UConnection::server_get() const
+{
+  return *server;
+}
 #endif // !KERNEL_UCONNECTION_HXX

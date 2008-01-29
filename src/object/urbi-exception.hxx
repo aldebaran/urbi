@@ -50,7 +50,7 @@ namespace object
   inline
   PrimitiveError::PrimitiveError (const std::string& primitive,
 				  const std::string& msg)
-    : UrbiException (primitive + ": " + msg)
+    : UrbiException (msg, primitive)
   {
   }
 

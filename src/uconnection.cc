@@ -560,33 +560,15 @@ UConnection::received_ (const ubyte *buffer, int length)
     assert (result != -1);
     server->setSystemCommand (true);
 
-    // Warnings handling
-    while (p.hasWarning())
-    {
-      active_command_->message_push(p.warning_get(), "warning");
-      p.warning_pop();
-    }
-
-    // Errors handling
-    if (p.hasError())
-    {
-      delete p.command_tree_get();
-      p.command_tree_set (0);
-
-      while (p.hasError())
-      {
-	active_command_->message_push(p.error_get(), "error");
-	p.error_pop();
-      }
-    }
-    else if (!p.command_tree_get ())
+    if (!p.command_tree_get ())
     {
       *this << send ("the parser returned NULL\n", "error");
       server->error(::DISPLAY_FORMAT, (long) this,
 		    "UConnection::received",
 		    "the parser returned NULL\n");
     }
-    else
+    p.process_errors(active_command_);
+    if (p.command_tree_get ())
     {
       // We parsed a new command (either a ";" or a ",", in any case
       // it's a Nary).  Append it in the AST.

@@ -39,7 +39,7 @@ namespace object
     if (!(Obj)->type_is<Type>())					\
       throw object::WrongArgumentType(object::Object::kind_type(Type::kind), \
 				      Obj->kind_get(),			\
-				      __PRETTY_FUNCTION__);		\
+				      "");		\
   } while (0)
 
 /**
