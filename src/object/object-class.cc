@@ -173,8 +173,11 @@ namespace object
     UConnection& c = r.lobby_get()->value_get().connection;
     UParser p(c);
     p.process_file(c.server_get().find_file(libport::path(arg1->value_get())));
-    return  execute_parsed(r, p, PrimitiveError("", //same message than k1
-	std::string("Error loading file: ") + arg1->value_get().name_get()));
+    return
+      execute_parsed(r, p,
+		     PrimitiveError("", //same message than k1
+				    std::string("Error loading file: ")
+				    + arg1->value_get().name_get()));
   }
 
   static rObject
@@ -297,39 +300,37 @@ namespace object
   object_class_initialize ()
   {
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE2(Call, Name)						\
+#define DECLARE(Name)							\
     object_class->slot_set (#Name,					\
-			    new Primitive(object_class_ ## Call))
-#define DECLARE1(Name)				\
-    DECLARE2(Name, Name)
+			    new Primitive(object_class_ ## Name))
 
-    DECLARE1(clone);
-    DECLARE1(init);
+    DECLARE(clone);
+    DECLARE(init);
 
-    DECLARE1(protos);
-    DECLARE1(addProto);
-    DECLARE1(removeProto);
+    DECLARE(protos);
+    DECLARE(addProto);
+    DECLARE(removeProto);
 
-    DECLARE1(slotNames);
-    DECLARE1(getSlot);
-    DECLARE1(removeSlot);
-    DECLARE1(setSlot);
-    DECLARE1(updateSlot);
-    DECLARE1(locateSlot);
+    DECLARE(slotNames);
+    DECLARE(getSlot);
+    DECLARE(removeSlot);
+    DECLARE(setSlot);
+    DECLARE(updateSlot);
+    DECLARE(locateSlot);
 
-    DECLARE1(apply);
+    DECLARE(apply);
 
-    DECLARE1(eval);
-    DECLARE1(dump);
-    DECLARE1(echo);
-    DECLARE1(load);
-    DECLARE1(print);
-    DECLARE1(reboot);
-    DECLARE1(sameAs);
-    DECLARE1(shutdown);
-    DECLARE1(sleep);
-    DECLARE1(time);
-#undef DECLARE1
+    DECLARE(dump);
+    DECLARE(echo);
+    DECLARE(eval);
+    DECLARE(load);
+    DECLARE(print);
+    DECLARE(reboot);
+    DECLARE(sameAs);
+    DECLARE(shutdown);
+    DECLARE(sleep);
+    DECLARE(time);
+#undef DECLARE
   }
 
 }; // namespace object
