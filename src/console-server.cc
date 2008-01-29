@@ -6,6 +6,7 @@
 #include "libport/windows.hh"
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include <boost/foreach.hpp>
 
@@ -48,7 +49,7 @@ public:
   }
   virtual void beforeWork()
   {
-    ctime += static_cast<long long>(period_get()) * 1000LL;
+    ctime += static_cast<libport::utime_t>(period_get()) * 1000LL;
   }
   virtual void reset()
   {}
@@ -59,9 +60,9 @@ public:
   virtual libport::utime_t getTime()
   {
     if (fast)
-      return ctime / 1000LL;
+      return ctime;
     else
-      return libport::utime() / 1000LL;
+      return libport::utime();
   }
 
   virtual ufloat getPower()
@@ -94,7 +95,7 @@ public:
   }
 
   bool fast;
-  long long ctime;
+  libport::utime_t ctime;
 };
 
 namespace
@@ -196,7 +197,6 @@ main (int argc, const char* argv[])
 
   if (arg_port_filename)
     std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
-  Network::startNetworkProcessingThread();
 
 
   s.initialize ();
@@ -213,16 +213,9 @@ main (int argc, const char* argv[])
   c.newDataAdded = true;
 
   std::cerr << libport::program_name << ": going to work..." << std::endl;
+  libport::utime_t next_time = 0;
   while (true)
   {
-    if (!fast)
-    {
-      long long startTime = libport::utime();
-      ufloat period = s.period_get() * 1000;
-      //FIXME: this is bad and taking a lot of cpu
-      while (libport::utime() < startTime + period)
-	usleep (1);
-    }
     if (interactive)
     {
       std::string input;
@@ -240,6 +233,17 @@ main (int argc, const char* argv[])
 	  << UConnection::received
 	  (reinterpret_cast<const ubyte*>(input.c_str()), input.length());
     }
-    s.work ();
+    libport::utime_t select_time = 0;
+    if (!fast)
+    {
+      libport::utime_t ctime = libport::utime();
+      if (ctime < next_time)
+	select_time = next_time - ctime;
+      if (interactive)
+	select_time = std::min(100000LL, select_time);
+    }
+    Network::selectAndProcess(select_time);
+
+    next_time = s.work ();
   }
 }

@@ -100,7 +100,7 @@ public:
 
    "period_" is a parameter of the server, given in the constructor.
    */
-  void work ();
+ libport::utime_t work ();
 
   /// Set the system.args list in URBI.
   void main (int argc, const char* argv[]);

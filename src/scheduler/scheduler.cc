@@ -95,7 +95,7 @@ namespace scheduler
       return deferred_jobs_.top ().get<0> ();
 
     // Ok, let's say, we'll be called again in one hour.
-    return ::urbiserver->getTime() + 3600 * 1000;
+    return ::urbiserver->getTime() + 3600000000LL;
   }
 
   void

@@ -127,8 +127,14 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG(1, Float);
-    r.yield_until (::urbiserver->getTime() + arg1->value_get());
+    r.yield_until (::urbiserver->getTime() + arg1->value_get() * 1000.0);
     return void_class;
+  }
+
+  static rObject
+  object_class_time (runner::Runner&, objects_type)
+  {
+    return new Float(::urbiserver->getTime() / 1000.0);
   }
 
   static rObject
@@ -169,12 +175,6 @@ namespace object
     p.process_file(c.server_get().find_file(libport::path(arg1->value_get())));
     return  execute_parsed(r, p, PrimitiveError("", //same message than k1
 	std::string("Error loading file: ") + arg1->value_get().name_get()));
-  }
-
-  static rObject
-  object_class_time (runner::Runner&, objects_type)
-  {
-    return new Float(::urbiserver->getTime());
   }
 
   static rObject

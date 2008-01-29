@@ -188,7 +188,7 @@ UServer::afterWork ()
 {
 }
 
-void
+libport::utime_t
 UServer::work ()
 {
 # if ! defined LIBPORT_URBI_ENV_AIBO
@@ -203,10 +203,11 @@ UServer::work ()
   // phase if we use a monotonic clock, update the time before and after
   // working.
   updateTime ();
-  scheduler_->work ();
+  libport::utime_t next_time = scheduler_->work ();
   updateTime ();
 
   afterWork ();
+  return next_time;
 }
 
 void
