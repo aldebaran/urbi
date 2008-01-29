@@ -7,10 +7,9 @@
 
 #include <cassert>
 
-#include <boost/foreach.hpp>
-
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
+#include <libport/foreach.hh>
 
 #include "kernel/userver.hh"
 
@@ -47,10 +46,13 @@ namespace scheduler
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
+    // Set to true when at least one job has been started
+    bool job_started = !jobs_to_start_.empty ();
+
     // Start new jobs
     jobs to_start;
     std::swap (to_start, jobs_to_start_);
-    BOOST_FOREACH(Job* job, to_start)
+    foreach (Job* job, to_start)
     {
       assert (job);
       ECHO ("will start job " << job);
@@ -72,12 +74,23 @@ namespace scheduler
       jobs_.push_back (j.get<1> ());
     }
 
+    // If something is going to happen, or if we have just started a
+    // new job, add the list of jobs waiting for something to happen
+    // on the pending jobs queue.
+    if (!if_change_jobs_.empty() && (job_started || !jobs_.empty()))
+    {
+      jobs to_resume;
+      std::swap (to_resume, if_change_jobs_);
+      foreach (Job* job, to_resume)
+	jobs_.push_back (job);
+    }
+
     // Run all the jobs in the run queue once.
     jobs pending;
     std::swap (pending, jobs_);
 
     ECHO (pending.size() << " jobs in the queue for this cycle");
-    BOOST_FOREACH(Job* job, pending)
+    foreach (Job* job, pending)
     {
       assert (job);
       assert (!job->terminated ());
@@ -99,7 +112,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::switch_back (Job *job)
+  Scheduler::switch_back (Job* job)
   {
     // Switch back to the scheduler.
     assert (current_job_);
@@ -122,7 +135,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::resume_scheduler_front (Job *job)
+  Scheduler::resume_scheduler_front (Job* job)
   {
     // Put the job in front of the queue. If the job asks to be requeued,
     // it is not terminated.
@@ -132,7 +145,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::resume_scheduler_until (Job *job, libport::utime_t deadline)
+  Scheduler::resume_scheduler_until (Job* job, libport::utime_t deadline)
   {
     // Put the job in the deferred queue. If the job asks to be requeued,
     // it is not terminated.
@@ -142,14 +155,21 @@ namespace scheduler
   }
 
   void
-  Scheduler::resume_scheduler_suspend (Job *job)
+  Scheduler::resume_scheduler_suspend (Job* job)
   {
     suspended_jobs_.push_back (job);
     switch_back (job);
   }
 
   void
-  Scheduler::resume_job (Job *job)
+  Scheduler::resume_scheduler_things_changed (Job* job)
+  {
+    if_change_jobs_.push_back (job);
+    switch_back (job);
+  }
+
+  void
+  Scheduler::resume_job (Job* job)
   {
     // Suspended job may have been killed externally, in which case it
     // will not appear in the list of suspended jobs.
@@ -176,6 +196,9 @@ namespace scheduler
     while (!suspended_jobs_.empty ())
       kill_job (suspended_jobs_.front ());
 
+    while (!if_change_jobs_.empty ())
+      kill_job (if_change_jobs_.front ());
+
     while (!jobs_.empty ())
       kill_job (jobs_.front ());
 
@@ -184,7 +207,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::unschedule_job (Job *job)
+  Scheduler::unschedule_job (Job* job)
   {
     assert (job);
     assert (job != current_job_);
@@ -200,6 +223,7 @@ namespace scheduler
     jobs_to_start_.remove (job);
     jobs_.remove (job);
     suspended_jobs_.remove (job);
+    if_change_jobs_.remove (job);
 
     // We have no remove() on a priority queue, regenerate a queue without
     // this job.

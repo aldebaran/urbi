@@ -63,6 +63,12 @@ namespace scheduler
     /// is reached.
     void resume_scheduler_until (Job* job, libport::utime_t deadline);
 
+    /// Ditto, but put the job in a queue that will be used only after at
+    /// last one job has been scheduled during the next cycle. This may be
+    /// used for jobs watching some value, which will not change spontaneously
+    /// unless someone changes it.
+    void resume_scheduler_things_changed (Job *job);
+
     /// Suspend the current job.
     void resume_scheduler_suspend (Job* job);
 
@@ -92,6 +98,9 @@ namespace scheduler
 
     /// Suspended jobs
     jobs suspended_jobs_;
+
+    /// Jobs waiting for something interesting to happen
+    jobs if_change_jobs_;
 
     /// Current job
     Job* current_job_;
