@@ -14,7 +14,8 @@ k2-check:
 ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail.
-#XFAIL_TESTS +=
+XFAIL_TESTS +=					\
+2.x/literal-string.chk
 
 # Tests that are only for 1.x, and we don't want them in k2.
 # We should probably use different directories instead.

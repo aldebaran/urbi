@@ -804,7 +804,9 @@ Call:
              ostr_ << " . ";
            }
        }'
-    - $name
+    - '{
+         n.name_get().print_escaped(ostr_);
+       }'
     - '{
           if (n.args_get ().size() >= 2)
             ostr_ << "("
