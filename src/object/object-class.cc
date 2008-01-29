@@ -172,6 +172,12 @@ namespace object
   }
 
   static rObject
+  object_class_time (runner::Runner&, objects_type)
+  {
+    return new Float(::urbiserver->getTime());
+  }
+
+  static rObject
   object_class_apply (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (3);
@@ -322,6 +328,7 @@ namespace object
     DECLARE1(sameAs);
     DECLARE1(shutdown);
     DECLARE1(sleep);
+    DECLARE1(time);
 #undef DECLARE1
   }
 
