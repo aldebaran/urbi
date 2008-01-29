@@ -281,7 +281,7 @@ FLAVOR   [;|,&]?
 	      }
 
 [\"\']        {
-                valp->str = new std::string;
+		valp->str = new std::string;
 		delimiter = *yytext;
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
@@ -457,7 +457,7 @@ FLAVOR   [;|,&]?
 	   return token::STRING;
        }
        else
-         *valp->str += *yytext;
+	 *valp->str += *yytext;
      }
 
      \\[0-7]{3}		{
