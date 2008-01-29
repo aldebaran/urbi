@@ -70,7 +70,7 @@ Object.addProto (Constants);
 class Object.Channel
 {
   var init = function (x) { var self.name = x };
-  var <<   = function (x) { x.print (name); {} };
+  var '<<' = function (x) { x.print (name); {} };
 };
 
 
@@ -101,7 +101,7 @@ do nil
   // nil is a singleton.
   var clone = function () { self };
   var isNil = Lobby.true;
-  var ==    = function (x) { x.isNil };
+  var '=='  = function (x) { x.isNil };
 };
 var Object.isNil = false;
 
@@ -130,14 +130,14 @@ do Float
 
   var sqr = function () { self * self };
 
-  var += = function (x) { self.set (self + x) };
-  var -= = function (x) { self.set (self - x) };
-  var *= = function (x) { self.set (self * x) };
-  var /= = function (x) { self.set (self / x) };
+  var '+=' = function (x) { self.set (self + x) };
+  var '-=' = function (x) { self.set (self - x) };
+  var '*=' = function (x) { self.set (self * x) };
+  var '/=' = function (x) { self.set (self / x) };
 
   // One would like to write
   //
-  // ++ = function () { var res = self.clone; self += 1; res };
+  // '++' = function () { var res = self.clone; self += 1; res };
   //
   // but it does not return a Float, it returns an Object which
   // has Float as *grand*-proto.  As a result, it does not have
@@ -148,11 +148,10 @@ do Float
   // creates an Object which derives from Float, but which is not a
   // Atom<Float>.  Not nice, eh?
 
-  var ++ = function () { var res = 0; res.set(self); self += 1; res };
-  var -- = function () { var res = 0; res.set(self); self -= 1; res };
+  var '++' = function () { var res = 0; res.set(self); self += 1; res };
+  var '--' = function () { var res = 0; res.set(self); self -= 1; res };
 
-  // We are still waiting for Loic to introduc 'symbol' support.
-  setSlot("!", function () { self == 0; });
+  var '!' = function () { self == 0; };
 };
 
 
@@ -207,9 +206,9 @@ Object.addProto (Math);
 # operators, and derive from it.
 do String
 {
-  var <= = function (rhs) { self < rhs || self == rhs };
-  var >  = function (rhs) { rhs < self };
-  var >= = function (rhs) { rhs < self || self == rhs };
+  var '<=' = function (rhs) { self < rhs || self == rhs };
+  var '>'  = function (rhs) { rhs < self };
+  var '>=' = function (rhs) { rhs < self || self == rhs };
 };
 
 ## ------------- ##
