@@ -36,13 +36,11 @@ XFAIL_TESTS +=					\
 1.x/delete.chk					\
 1.x/doublecolon.chk				\
 1.x/echo.chk					\
-1.x/eval.chk					\
 1.x/events.chk					\
 1.x/events-emit-then-return-in-function.chk	\
 1.x/every.chk					\
 1.x/for-in.chk					\
 1.x/freeze-time.chk				\
-1.x/function-declaration.chk			\
 1.x/function-delete.chk				\
 1.x/groups.chk					\
 1.x/hash-and-list.chk				\
