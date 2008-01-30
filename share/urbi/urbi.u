@@ -16,12 +16,6 @@ Object.slotCopy ("removeProto", "disinherit");
 
 Object.slotCopy ("sameAs", "==");
 
-# self must always exists wherever you are.
-# self is set by function call, by do and by class
-# so the only case where you land in a local scope without self is in an
-# anonymous scope in top-level code.
-var lobby.self = lobby;
-
 
 ## ----------------- ##
 ## VisibilityScope.  ##

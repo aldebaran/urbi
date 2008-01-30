@@ -6,6 +6,7 @@
 #include "object/lobby-class.hh"
 #include "object/object.hh"
 
+#include "runner/runner.hh"
 
 namespace object
 {
@@ -15,9 +16,22 @@ namespace object
   | Lobby primitives.  |
   `------------------*/
 
+  // Get the current lobby
+  static rObject
+  lobby_class_self (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return r.lobby_get ();
+  }
+
   void
   lobby_class_initialize ()
   {
+#define DECLARE(Name)							\
+    lobby_class->slot_set (#Name,					\
+			   new Primitive(lobby_class_ ## Name))
+    DECLARE (self);
+#undef DECLARE
   }
 
 }; // namespace object
