@@ -32,6 +32,7 @@ namespace object
   /// capitalized URBI name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)	\
   Macro(alien,     Alien)						\
+  Macro(call,      Call)						\
   Macro(closure,   Closure)						\
   Macro(code,      Code)						\
   Macro(delegate,  Delegate)                                            \

@@ -5,6 +5,8 @@ object/alien-class.cc				\
 object/alien-class.hh				\
 object/atom.hh					\
 object/atom.hxx					\
+object/call-class.cc				\
+object/call-class.hh				\
 object/closure-class.cc				\
 object/closure-class.hh				\
 object/code-class.cc				\
