@@ -114,7 +114,7 @@ namespace scheduler
   Scheduler::switch_back (Job* job)
   {
     // Switch back to the scheduler.
-    assert (current_job_);
+    assert (current_job_ == job);
     current_job_ = 0;
     Coro_switchTo_ (job->coro_get (), self_);
     // We regained control, we are again in the context of the job.
