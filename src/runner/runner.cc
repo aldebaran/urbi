@@ -180,8 +180,10 @@ namespace runner
 	 ++fi, ++ei)
       bound_args->slot_set (**fi, *ei);
     ECHO("bound args: " << *bound_args);
-    // Change the current context and call.
+    // Change the current context and call. But before, yield() so that
+    // an infinite recursion gets a better chance to be detected.
     std::swap(bound_args, locals_);
+    YIELD ();
 
     try {
       current_ = eval (*fn->body_get());
