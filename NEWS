@@ -6,8 +6,12 @@
 // FIXME: LIST THE SYNTAX CHANGES COMPARED TO KERNEL1
 
 ** True OO support
-// FIXME: More things must be missing here...
+The language is entirely based on objects. Multi-inheritance is fully
+supported.
 
+** Tickless kernel
+The kernel doesn't consume more CPU than needed and avoids to do any busy
+loop. This should greatly dicrease the robots battery consumtion.
 
 * New in 1.6
 
