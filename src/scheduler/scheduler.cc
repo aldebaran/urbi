@@ -13,6 +13,8 @@
 
 #include "kernel/userver.hh"
 
+#include "object/urbi-exception.hh"
+
 #include "scheduler/scheduler.hh"
 #include "scheduler/job.hh"
 
@@ -121,6 +123,9 @@ namespace scheduler
     assert (!current_job_);
     current_job_ = job;
     ECHO ("job " << job << " resumed");
+    // Check that we are not near exhausting the stack space.
+    if (Coro_stackSpaceAlmostGone (job->coro_get ()))
+      throw object::StackExhaustedError ("stack space exhausted");
   }
 
   void

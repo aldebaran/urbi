@@ -87,6 +87,12 @@ namespace object
     explicit RedefinitionError (libport::Symbol slot);
   };
 
+  /// Exception raised when the stack space in a task is almost exhausted
+  struct StackExhaustedError: public UrbiException
+  {
+    explicit StackExhaustedError (const std::string& msg);
+  };
+
   /** Exception for errors related to primitives usage.
    * \param primitive   primitive that has thrown the error.
    * \param msg         error message which will be sent.  */

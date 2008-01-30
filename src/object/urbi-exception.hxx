@@ -55,6 +55,12 @@ namespace object
   }
 
   inline
+  StackExhaustedError::StackExhaustedError (const std::string& msg)
+    : UrbiException (msg)
+  {
+  }
+
+  inline
   WrongArgumentType::WrongArgumentType (Object::kind_type formal,
 					Object::kind_type effective,
 					const std::string& fun)
