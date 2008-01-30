@@ -143,16 +143,12 @@ namespace runner
     ast::symbols_type::const_iterator fi;
 
     PING ();
-    // Create a new object to store the arguments unless a scope has been
-    // given for this purpose.
-    rObject bound_args;
+    // Create a new object to store the arguments. If a scope has been
+    // provided, it is the first parent.
+    rObject bound_args = new object::Object;
+    bound_args->locals_set(true);
     if (scope != object::nil_class)
-      bound_args = scope;
-    else
-    {
-      bound_args = new object::Object;
-      bound_args->locals_set(true);
-    }
+      bound_args->proto_add (scope);
 
     // Fetch the called function.
     fn = &func.cast<object::Code> ()->value_get ();
