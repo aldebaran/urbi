@@ -250,31 +250,26 @@ namespace runner
   void
   Runner::operator() (ast::Call& e)
   {
-    // Whether or not something went wrong
-    bool has_error;
-    rObject val;
-    // Iteration over un-evaluated effective arguments.
-    ast::exps_type::const_iterator i;
-    ast::exps_type::const_iterator i_end;
-    // Gather the arguments, including the target.
-    object::objects_type args;
-    rObject tgt;
-
     /*-------------------------.
     | Evaluate the arguments.  |
     `-------------------------*/
     PING ();
 
     // Iterate over arguments, with a special case for the target.
+    ast::exps_type::const_iterator i, i_end;
     i = e.args_get ().begin ();
     i_end = e.args_get ().end ();
 
+    rObject tgt;
     tgt = target(*i);
+
     // No target?  Abort the call.  This can happen (for instance) when you
     // do a.b () and a does not exist (lookup error).
     if (!tgt)
       return;
 
+    // Gather the arguments, including the target.
+    object::objects_type args;
     args.push_back (tgt);
     PING ();
     for (++i; i != i_end; ++i)
@@ -294,9 +289,10 @@ namespace runner
     /*---------------------.
     | Decode the message.  |
     `---------------------*/
+
+    rObject val;
+
     // We may have to run a primitive, or some code.
-    // We cannot use CORO_* in a switch.
-    has_error = false;
     try {
       // Ask the target for the handler of the message.
       val = tgt->slot_get (e.name_get ());
@@ -306,10 +302,8 @@ namespace runner
       ue.location_set (e.location_get ());
       raise_error_ (ue);
       current_.reset ();
-      has_error = true;
-    }
-    if (has_error)
       return;
+    }
     // FIXME: Do we need to issue an error message here?
     if (!val)
       return;
