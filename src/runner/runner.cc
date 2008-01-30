@@ -13,6 +13,7 @@
 #include "kernel/uconnection.hh"
 
 #include "ast/clone.hh"
+#include "object/alien.hh"
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
 #include "object/idelegate.hh"
@@ -133,10 +134,11 @@ namespace runner
   // Apply a function written in Urbi
   object::rObject
   Runner::apply_urbi (rObject scope, const rObject& func,
-		      const object::objects_type& args)
+		      const object::objects_type& args,
+		      const rObject call_message)
   {
     // The called function.
-    ast::Function* fn;
+    ast::Function* fn = &func.cast<object::Code> ()->value_get ();
     // Effective (evaluated) argument iterator.
     object::objects_type::const_iterator ei;
     // Formal argument iterator.
@@ -150,13 +152,6 @@ namespace runner
     if (scope != object::nil_class)
       bound_args->proto_add (scope);
 
-    // Fetch the called function.
-    fn = &func.cast<object::Code> ()->value_get ();
-
-    // Check the arity.
-    object::check_arg_count (fn->formals_get().size() + 1, args.size(),
-			     "");
-
     // Bind formal and effective arguments if the caller has not provided
     // a scope. If a scope has been given, it is up to the caller to set
     // it up.
@@ -169,13 +164,29 @@ namespace runner
       bound_args->proto_add (*ei);
     }
 
-    // Now bind the non-target arguments.
-    ++ei;
-    for (fi = fn->formals_get().begin();
-	 fi != fn->formals_get().end() && ei != args.end();
-	 ++fi, ++ei)
-      bound_args->slot_set (**fi, *ei);
+    // If this is a strict function, check the arity and bind the formal
+    // arguments. Otherwise, bind the call message.
+
+    if (fn->strict_get())
+    {
+      assert (!call_message);
+      object::check_arg_count (fn->formals_get().size() + 1, args.size(),
+			       "");
+
+      ++ei;
+      for (fi = fn->formals_get().begin();
+	   fi != fn->formals_get().end() && ei != args.end();
+	   ++fi, ++ei)
+	bound_args->slot_set (**fi, *ei);
+    }
+    else
+    {
+      assert (call_message);
+      bound_args->slot_set (libport::Symbol ("call"), call_message);
+    }
+
     ECHO("bound args: " << *bound_args);
+
     // Change the current context and call. But before, yield() so that
     // an infinite recursion gets a better chance to be detected.
     std::swap(bound_args, locals_);
@@ -205,8 +216,25 @@ namespace runner
   }
 
   object::rObject
+  Runner::eval_in_scope (rObject scope, ast::Exp& e)
+  {
+    std::swap (locals_, scope);
+    try {
+      eval (e);
+    }
+    catch (...)
+    {
+      std::swap (locals_, scope);
+      throw;
+    }
+    std::swap (locals_, scope);
+    return current_;
+  }
+
+  object::rObject
   Runner::apply (rObject scope, const rObject& func,
-                 const object::objects_type& args)
+                 const object::objects_type& args,
+		 const rObject call_message)
   {
     {
       // Check if any argument is void
@@ -232,7 +260,7 @@ namespace runner
 	break;
       case object::Object::kind_code:
         PING ();
-	current_ = apply_urbi (scope, func, args);
+	current_ = apply_urbi (scope, func, args, call_message);
 	break;
       default:
         PING ();
@@ -244,17 +272,57 @@ namespace runner
   }
 
   void
+  Runner::push_evaluated_arguments (object::objects_type& args,
+				    const ast::exps_type& ue_args)
+  {
+    ast::exps_type::const_iterator arg = ue_args.begin ();
+    // Skip target
+    ++arg;
+    ast::exps_type::const_iterator args_end = ue_args.end ();
+
+    for (; arg != args_end; ++arg)
+    {
+      eval (**arg);
+      passert ("argument without a value: " << **arg, current_);
+      if (current_ == object::void_class)
+      {
+	object::WrongArgumentType wt("");
+	wt.location_set((*arg)->location_get());
+	throw wt;
+      }
+      PING ();
+      args.push_back (current_);
+    }
+  }
+
+  object::rObject
+  Runner::build_call_message (const rObject& tgt, const ast::exps_type& args)
+  {
+    rObject res = object::clone (object::call_class);
+
+    // Set the sender to be the current self. self must always exist.
+    res->slot_set (libport::Symbol ("sender"),
+		   locals_->slot_get (libport::Symbol ("self")));
+
+    // Set the target to be the object on which the function is applied.
+    res->slot_set (libport::Symbol ("target"), tgt);
+
+    // Set the args to be the unevaluated expressions, including the target.
+    // We use an Alien here.
+    res->slot_set (libport::Symbol ("args"), box(const ast::exps_type&, args));
+
+    // Store the current context in which the arguments must be evaluated.
+    res->slot_set (libport::Symbol ("context"), locals_);
+
+    return res;
+  }
+
+  void
   Runner::operator() (ast::Call& e)
   {
     PING ();
 
-    // Iterate over arguments, with a special case for the target.
-    ast::exps_type::const_iterator i, i_end;
-    i = e.args_get ().begin ();
-    i_end = e.args_get ().end ();
-
-    rObject tgt;
-    tgt = target(*i);
+    const rObject tgt = target(e.args_get ().front ());
 
     // No target?  Abort the call.  This can happen (for instance) when you
     // do a.b () and a does not exist (lookup error).
@@ -288,26 +356,25 @@ namespace runner
     `-------------------------*/
 
     // Gather the arguments, including the target.
+    rObject call_message;
     object::objects_type args;
     args.push_back (tgt);
-    PING ();
-    for (++i; i != i_end; ++i)
+
+    if (val->kind_get () == object::Object::kind_code)
     {
-      eval (**i);
-      passert ("argument without a value: " << **i, current_);
-      if (current_ == object::void_class)
-      {
-	object::WrongArgumentType wt("");
-	wt.location_set((*i)->location_get());
-	throw wt;
-      }
-      PING ();
-      args.push_back (current_);
+      // Build either the evaluated argument list or the call message
+      ast::Function* fn = &val.cast<object::Code> ()->value_get ();
+      if (fn->strict_get())
+	push_evaluated_arguments (args, e.args_get ());
+      else
+	call_message = build_call_message (tgt, e.args_get ());
     }
+    else
+      push_evaluated_arguments (args, e.args_get ());
 
     call_stack_.push_front(&e);
     try {
-      apply (object::nil_class, val, args);
+      apply (object::nil_class, val, args, call_message);
     }
     catch (object::UrbiException& ue)
     {
@@ -321,7 +388,6 @@ namespace runner
     // passert ("no value: " << e, current_);
     ECHO (AST(e) << " result: " << *current_);
   }
-
 
   void
   Runner::operator() (ast::Float& e)

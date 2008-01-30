@@ -9,7 +9,8 @@
 # include <exception>
 # include <string>
 
-# include "libport/symbol.hh"
+# include <libport/ufloat.hh>
+# include <libport/symbol.hh>
 
 # include "ast/loc.hh"
 
@@ -129,6 +130,15 @@ namespace object
 			const std::string& fun);
     WrongArgumentCount (unsigned minformal, unsigned maxformal,
 			unsigned effective, const std::string& fun);
+  };
+
+  /** Exception used when a non-integer is provided to a primitive expecting
+   * an integer.
+   * \param effective  Effective floating point value that failed conversion.
+   */
+  struct BadInteger: public UrbiException
+  {
+    BadInteger (libport::ufloat effective, const std::string& fun);
   };
 
   /// Throw an exception if formal != effective.

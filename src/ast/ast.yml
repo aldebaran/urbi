@@ -658,12 +658,17 @@ Call:
 Function:
   super: Exp
   attributes:
+    - strict: { type: 'bool', desc: True if the arguments must be evaluated }
     - formals: { type: 'symbols_type', desc: Formal arguments }
     - body: { type: 'Exp*', access: rwW, mandatory: False, desc: Body }
   printer:
-    - '"function ("'
-    - libport::separate (n.formals_get(), ", ")
-    - '") "'
+    - '"function "'
+    - '{
+          if (n.strict_get ())
+            ostr_ << "("
+                  << libport::separate (n.formals_get(), ", ")
+                  << ") ";
+        }'
     - '"{"'
     - 'libport::incendl'
     - ~body

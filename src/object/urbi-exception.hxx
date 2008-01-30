@@ -111,6 +111,14 @@ namespace object
   }
 
   inline
+  BadInteger::BadInteger (libport::ufloat effective, const std::string& fun)
+    : UrbiException ((boost::format ("expected integer, got %1%")
+		      % effective).str (),
+		     fun)
+  {
+  }
+
+  inline
   void
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {

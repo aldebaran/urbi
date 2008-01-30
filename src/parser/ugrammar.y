@@ -727,7 +727,7 @@ stmt:
       // Compiled as "var name = function args stmt", i.e.,
       // setSlot (name, function args stmt).
       $$ = assign (@$, $2,
-		   new ast::Function (@$, take($3), $5),
+		   new ast::Function (@$, true, take($3), $5),
 		   true);
     }
 ;
@@ -1059,7 +1059,19 @@ expr:
   // Because of conflicts, we need the braces
   "function" formal_args "{" stmts "}"
     {
-      $$ = new ast::Function (@$, take($2), $4);
+      $$ = new ast::Function (@$, true, take($2), $4);
+    }
+;
+
+// Anonymous function with call message
+expr:
+  "function" "{" stmts "}"
+    {
+      // FIXME: It may be better to change the "formals" argument to a
+      // const symbols_type* instead of a reference here and make it
+      // non-mandatory.
+      const ast::symbols_type* empty = new ast::symbols_type;
+      $$ = new ast::Function (@$, false, *empty, $3);
     }
 ;
 

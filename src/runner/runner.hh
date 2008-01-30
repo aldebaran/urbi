@@ -61,7 +61,11 @@ namespace runner
     /// written in Urbi. In the case of such a function, argument will
     /// be bound in the user-provided or newly created scope.
     rObject apply (rObject scope, const rObject& func,
-		   const object::objects_type& args);
+		   const object::objects_type& args,
+		   const rObject call_message = 0);
+
+    /// Eval a tree in a given local scope
+    rObject eval_in_scope (rObject scope, ast::Exp& e);
 
     /// Return the result of last evaluation.
     const rObject& current_get() const;
@@ -74,6 +78,14 @@ namespace runner
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for Io.
     rObject target (ast::Exp* n);
+
+    /// Build an evaluated arguments list containing \a tgt and
+    /// arguments coming from \a args evaluated in the current context.
+    void push_evaluated_arguments (object::objects_type& args,
+				   const ast::exps_type& ue_args);
+
+    /// Build a call message
+    rObject build_call_message (const rObject& tgt, const ast::exps_type& args);
 
     /// Import from super.
     using super_type::operator();
@@ -106,7 +118,8 @@ namespace runner
     void raise_error_ (const object::UrbiException& ue);
     void send_message_ (const std::string& tag, const std::string& msg);
     rObject apply_urbi (rObject scope, const rObject& func,
-			const object::objects_type& args);
+			const object::objects_type& args,
+			const rObject call_message);
 
 
   private:
