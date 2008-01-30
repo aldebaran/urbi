@@ -747,6 +747,7 @@ UConnection::execute ()
   // it has evaluated it.
   active_command_->toplevel_set (true);
 
+  // FIXME: There is an obvious memory leak here
   runner::Runner* runner = 
     new runner::Runner(lobby_,
 		       lobby_,
