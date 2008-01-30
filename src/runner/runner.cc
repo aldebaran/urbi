@@ -215,7 +215,7 @@ namespace runner
     {
       // Check if any argument is void
       bool first = true;
-      BOOST_FOREACH(rObject arg, args)
+      foreach (rObject arg, args)
       {
 	if (!first && arg == object::void_class)
 	  throw object::WrongArgumentType ("");
