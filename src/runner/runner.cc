@@ -246,9 +246,6 @@ namespace runner
   void
   Runner::operator() (ast::Call& e)
   {
-    /*-------------------------.
-    | Evaluate the arguments.  |
-    `-------------------------*/
     PING ();
 
     // Iterate over arguments, with a special case for the target.
@@ -263,24 +260,6 @@ namespace runner
     // do a.b () and a does not exist (lookup error).
     if (!tgt)
       return;
-
-    // Gather the arguments, including the target.
-    object::objects_type args;
-    args.push_back (tgt);
-    PING ();
-    for (++i; i != i_end; ++i)
-    {
-      eval (**i);
-      passert ("argument without a value: " << **i, current_);
-      if (current_ == object::void_class)
-      {
-	object::WrongArgumentType wt("");
-	wt.location_set((*i)->location_get());
-	throw wt;
-      }
-      PING ();
-      args.push_back (current_);
-    }
 
     /*---------------------.
     | Decode the message.  |
@@ -303,6 +282,29 @@ namespace runner
     // FIXME: Do we need to issue an error message here?
     if (!val)
       return;
+
+    /*-------------------------.
+    | Evaluate the arguments.  |
+    `-------------------------*/
+
+    // Gather the arguments, including the target.
+    object::objects_type args;
+    args.push_back (tgt);
+    PING ();
+    for (++i; i != i_end; ++i)
+    {
+      eval (**i);
+      passert ("argument without a value: " << **i, current_);
+      if (current_ == object::void_class)
+      {
+	object::WrongArgumentType wt("");
+	wt.location_set((*i)->location_get());
+	throw wt;
+      }
+      PING ();
+      args.push_back (current_);
+    }
+
     call_stack_.push_front(&e);
     try {
       apply (object::nil_class, val, args);
