@@ -502,47 +502,6 @@ Pipe:
 
 
 
-# Identifier constructs
-
-# Dot:
-#   super: Exp
-#   attributes:
-#     - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
-#     - symbol:  { type: 'libport::Symbol*', desc: Name of the variable separated from exp with a dot }
-
-# Id:
-#   super: Exp
-#   attributes:
-#     - symbol:  { type: 'libport::Symbol*', desc: Name of the symbol to be name-resolved }
-
-# Var:
-#   super: Dot
-
-# Arrow:
-#   super: Exp
-#   attributes:
-#     - var: { type: 'Var*', desc: variable whose property is accessed }
-#     - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
-
-# TagOp:
-#   super: Exp
-#   inline:
-#     header inside: |2
-#
-#         public:
-#           /// Operator qualifier.
-#           enum type
-#             {
-#               stop,
-#               freeze,
-#               unfreeze,
-#               block,
-#               unblock,
-#             };
-#   attributes:
-#     - tag: { type: Exp*, desc: Tag of the tag-operation command }
-#     - oper: { type: TagOp::type, access: r, desc: Operator }
-
 If:
   super: Exp
   attributes:
@@ -598,56 +557,6 @@ While:
     - ~body
     - libport::decindent
 
-# At:
-#   super: Exp
-#   attributes:
-#     - test: { type: 'Exp*', desc: Condition }
-#     - atclause:
-#         type: Exp*
-#         desc: Instructions executed at the moment when condition becomes true
-#     - onleaveclause:
-#         type: Exp*
-#         desc: Instructions executed onleave
-
-# Alias:
-#   super: Exp
-#   desc: |2
-#
-#       /** \class ast::Alias
-#        ** \brief Set an alias flag in the object given, to point to one of
-#        ** its attribute (typically, 'val'). For backward compat only.
-#        */
-#
-#   attributes:
-#     - obj: { type: 'Exp*', desc: Reference to the object to alias }
-#     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
- 
-# Delete:
-#   super: Exp
-#   attributes:
-#     - obj:
-#         type: 'Exp*'
-#         desc: Reference to the object to delete
-
-# External:
-#   super: Exp
-#   inline:
-#     header inside: |2
-
-#         public:
-#           /// External binding type.
-#           enum Type
-#             {
-#               var,
-#               function,
-#               event,
-#             };
-#   attributes:
-#     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
-#     - attribute: { type: 'libport::Symbol*', desc: Bound attribute }
-#     - type: { type: External::Type, access: r, desc: External binding type }
-#     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
-
 Throw:
   desc: /// Throw an exception when visited, used to implement break, return, etc.
   super: Exp
@@ -664,27 +573,6 @@ Throw:
     - '" "'
     - ~value
 
-# Wait:
-#   super: Exp
-#   attributes:
-#     - duration: { type: 'Exp*', desc: Time to wait }
-
-# WaitUntil:
-#   super: Exp
-#   attributes:
-#     - condition: { type: 'Exp*', desc: Condition to wait }
-
-# Whenever:
-#   super: Exp
-#   attributes:
-#     - test: { type: 'Exp*', desc: Condition }
-#     - wheneverclause:
-#         type: Exp*
-#         desc: Instructions executed whenever condition is true
-#     - elseclause:
-#         type: Exp*
-#         desc: Instructions executed whenever condition is false
- 
 Noop:
   super: Exp
   desc: /// Also known as nop, noop etc.
@@ -693,26 +581,9 @@ Noop:
   printer:
     - '"noop"'
 
-# Emit:
-#   super: Exp
-#   attributes:
-#     - name:
-#         type: 'Exp*'
-#         desc: Reference to the called event
-#     - args:
-#         type: 'exps_type*'
-#         desc: List of arguments passed to the event
- 
 
 # Expressions
 
-# Exec:
-#   super: Exp
-#   attributes:
-#     - toexec:
-#         type: 'Exp*'
-#         access: r
-#         desc: String to execute
  
 Float:
   super: Exp
@@ -751,41 +622,6 @@ List:
        }'
     - '"]"'
 
-## FIXME: Disabled because I don't know how to free the exp_pairs_type
-## pointer.  The machinery is not ready.
-##Map:
-##  super: Exp
-##  attributes:
-##    - value:
-##        type: 'exp_pairs_type*'
-##        access: r
-##        desc: Stored pair values
-
-# Ref:
-#   super: Exp
-#   attributes:
-#     - value:
-#         type: 'Exp*'
-#         access: r
-#         desc: Stored reference
-
-# OpVar:
-#   super: Exp
-#   inline:
-#     header inside: |2
-
-#         public:
-#           /// Operator qualifier.
-#           enum type
-#             {
-#               copy,  ///< Copy
-#               addr,  ///< @
-#               group, ///< group
-#             };
-#   attributes:
-#     - operand: { type: 'Var*', desc: Operand }
-#     - oper: { type: OpVar::type, access: r, desc: Operator }
- 
 Call:
   desc: /// Function calls, and attribute look-ups.
   super: Exp
@@ -818,67 +654,7 @@ Call:
                   << ")";
        }'
 
-# Array:
-#   super: Exp
-#   attributes:
-#     - name:
-#         type: 'Exp*'
-#         desc: Reference to the array
-#     - arg:
-#         type: 'Exp*'
-#         desc: Index of the array
- 
-New:
-  super: Exp
-  attributes:
-    - obj:
-        type: 'Exp*'
-        desc: Reference to the object to clone
-    - args:
-        type: 'exps_type*'
-        desc: List of arguments passed to the constructor
 
-
-# Types (embryonic for now)
-
-# Ty:
-#   super: Ast
-
-# NameTy:
-#   super: Ty
-#   attributes:
-#     - name:
-#         type: 'libport::Symbol'
-#         owned: False
-#         desc: The name of the type
-#         access: rW
- 
-
-# Declarations
-
-# Dec:
-#   super: Exp
-#   attributes:
-#     - exp:
-#         type: 'Var*'
-#         mandatory: False
-#         desc: Object the variable is attached to (or null if root)
-#     - symbol:
-#         type: 'libport::Symbol*'
-#         desc: Name of the variable, separated from exp with a dot
-
-# VarDec:
-#   super: Dec
-#   attributes:
-#     - type_name:
-#         type: NameTy*
-#         mandatory: False
-#         desc: Optional type of the declared variable
-#     - init:
-#         type: Exp*
-#         mandatory: False
-#         desc: The initial value (expression) assigned to the variable
- 
 Function:
   super: Exp
   attributes:
@@ -893,23 +669,6 @@ Function:
     - ~body
     - 'libport::decendl'
     - '"}"'
-
-# EventDec:
-#   super: Dec
-#   attributes:
-#     - formals: { type: 'vardecs_type*', desc: Formal arguments }
- 
-## FIXME: This does not work currently, because the machinery is not ready
-## to free lists of pairs.
-##
-## ClassDec:
-##   super: Dec
-##   attributes:
-##     - inherits: { type: 'exps_type*', mandatory: False, desc: Inherited classes }
-##     - decs: { type: 'decs_type*', mandatory: False, desc: List of declarations }
-
-# TagDec:
-#   super: Dec
  
 # Local Variables:
 # mode: yaml
