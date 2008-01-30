@@ -154,7 +154,7 @@ namespace runner
     fn = &func.cast<object::Code> ()->value_get ();
 
     // Check the arity.
-    object::check_arg_count (fn->formals_get().size(), args.size() - 1,
+    object::check_arg_count (fn->formals_get().size() + 1, args.size(),
 			     "");
 
     // Bind formal and effective arguments if the caller has not provided
