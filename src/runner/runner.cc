@@ -133,7 +133,7 @@ namespace runner
 
   // Apply a function written in Urbi.
   object::rObject
-  Runner::apply_urbi (rObject scope, const rObject& func,
+  Runner::apply_urbi (const rObject& func,
 		      const object::objects_type& args,
 		      const rObject call_message)
   {
@@ -143,6 +143,8 @@ namespace runner
     object::objects_type::const_iterator ei;
     // Formal argument iterator.
     ast::symbols_type::const_iterator fi;
+    // Scope in which to evaluate the function, which may be nil
+    rObject scope = func->slot_get ("context");
 
     PING ();
     // Create a new object to store the arguments. If a scope has been
@@ -233,7 +235,7 @@ namespace runner
   }
 
   object::rObject
-  Runner::apply (rObject scope, const rObject& func,
+  Runner::apply (const rObject& func,
 		 const object::objects_type& args,
 		 const rObject call_message)
   {
@@ -261,7 +263,7 @@ namespace runner
 	break;
       case object::Object::kind_code:
 	PING ();
-	current_ = apply_urbi (scope, func, args, call_message);
+	current_ = apply_urbi (func, args, call_message);
 	break;
       default:
 	PING ();
@@ -375,7 +377,7 @@ namespace runner
 
     call_stack_.push_front(&e);
     try {
-      apply (object::nil_class, val, args, call_message);
+      apply (val, args, call_message);
     }
     catch (object::UrbiException& ue)
     {

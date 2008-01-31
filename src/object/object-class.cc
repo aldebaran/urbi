@@ -183,7 +183,7 @@ namespace object
   static rObject
   object_class_apply (runner::Runner&, objects_type args)
   {
-    CHECK_ARG_COUNT (3);
+    CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
     if (!arg1->value_get ().empty ())
       throw PrimitiveError ("apply", "first argument must be an empty list");

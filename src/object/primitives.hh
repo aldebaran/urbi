@@ -12,7 +12,6 @@
 
 # include "object/alien-class.hh"
 # include "object/call-class.hh"
-# include "object/closure-class.hh"
 # include "object/code-class.hh"
 # include "object/delegate-class.hh"
 # include "object/lobby-class.hh"

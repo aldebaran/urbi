@@ -5,6 +5,11 @@
 ## Object.  ##
 ## -------- ##
 
+# This has to be present before the first function call, otherwise
+# we will have a fatal error when trying to determine the context
+# in which the function will be evaluated.
+var Code.context = nil;
+
 {
   # Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
   var Object.slotCopy = function (frm, to) {
@@ -17,6 +22,22 @@
   
   Object.slotCopy ("sameAs", "==");
   void
+};
+
+## --------- ##
+## Closure.  ##
+## --------- ##
+
+var Object.makeExplicitClosure = function (f, context)
+{
+  var nf = getSlot ("f").clone;
+  getSlot ("nf").context = context;
+  getSlot ("nf");
+};
+
+var Object.makeClosure = function
+{
+  makeExplicitClosure (call.evalArgAt (1), call.context);
 };
 
 ## ----------------- ##
@@ -120,21 +141,6 @@ do nil
   var '=='  = function (x) { x.isNil };
 
   var Object.isNil = false;
-  void;
-};
-
-
-## -------- ##
-## Closure. ##
-## -------- ##
-
-do Closure
-{
-  var apply = function (args, _ctx) {
-    # We create a subcontext using clone in which the function arguments
-    # will be bound.
-    getSlot ("func").apply (args, context.clone)
-  };
   void;
 };
 

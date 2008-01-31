@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object code.
  */
 
+#include <libport/foreach.hh>
+
 #include "object/code-class.hh"
 
 #include "object/atom.hh"
@@ -21,15 +23,15 @@ namespace object
   static rObject
   code_class_apply (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (3);
+    CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
 
     objects_type apply_args;
     apply_args.push_back (args[0]);
-    BOOST_FOREACH (rObject arg, arg1->value_get ())
+    foreach (rObject arg, arg1->value_get ())
       apply_args.push_back (arg);
 
-    return r.apply (args[2], args[0], apply_args);
+    return r.apply (args[0], apply_args);
   }
 
 

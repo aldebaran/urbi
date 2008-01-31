@@ -60,7 +60,7 @@ namespace runner
     /// created as needed to bind "self" in the case of a function
     /// written in Urbi. In the case of such a function, argument will
     /// be bound in the user-provided or newly created scope.
-    rObject apply (rObject scope, const rObject& func,
+    rObject apply (const rObject& func,
 		   const object::objects_type& args,
 		   const rObject call_message = 0);
 
@@ -117,7 +117,7 @@ namespace runner
   private:
     void raise_error_ (const object::UrbiException& ue);
     void send_message_ (const std::string& tag, const std::string& msg);
-    rObject apply_urbi (rObject scope, const rObject& func,
+    rObject apply_urbi (const rObject& func,
 			const object::objects_type& args,
 			const rObject call_message);
 

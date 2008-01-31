@@ -13,7 +13,6 @@ urbi::UValue uvalue_cast(object::rObject o)
   {
   case object::Object::kind_alien:
   case object::Object::kind_call:
-  case object::Object::kind_closure:
   case object::Object::kind_code:
   case object::Object::kind_delegate:
   case object::Object::kind_lobby:
