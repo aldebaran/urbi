@@ -30,10 +30,9 @@ namespace object
 			  b->value_get ().name_get());		\
     }
 
-    PRIMITIVE_OP_STRING(add,   +, String);
-    PRIMITIVE_OP_STRING(equ,  ==, Float);
-    PRIMITIVE_OP_STRING(lth,   <, Float);
-    PRIMITIVE_OP_STRING(nequ, !=, Float);
+    PRIMITIVE_OP_STRING(add,  +, String);
+    PRIMITIVE_OP_STRING(equ, ==, Float);
+    PRIMITIVE_OP_STRING(lth,  <, Float);
 
 #undef PRIMITIVE_OP_STRING
 
@@ -54,7 +53,6 @@ namespace object
 
   PRIMITIVE_2_STRING(add, String);
   PRIMITIVE_2_STRING(equ, String);
-  PRIMITIVE_2_STRING(nequ, String);
 
   PRIMITIVE_2_STRING(lth, String);
 
@@ -71,7 +69,6 @@ namespace object
 
     DECLARE(+,  add);
     DECLARE(==, equ);
-    DECLARE(!=, nequ);
     DECLARE(<,  lth);
 
     DECLARE(size, size);

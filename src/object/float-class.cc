@@ -242,12 +242,8 @@ namespace object
   PRIMITIVE_2_FLOAT(req, float_req) //REQ ~=
   PRIMITIVE_2_FLOAT(deq, float_deq) //DEQ =~=
   PRIMITIVE_2_FLOAT(peq, float_peq) //PEQ %=
-  PRIMITIVE_OP_FLOAT(neq, !=)
 
   PRIMITIVE_OP_FLOAT(lth, <)
-  PRIMITIVE_OP_FLOAT(leq, <=)
-  PRIMITIVE_OP_FLOAT(gth, >)
-  PRIMITIVE_OP_FLOAT(geq, >=)
 
   PRIMITIVE_0_FLOAT(sin, sin)
   PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, asin, -1, 1)
@@ -297,12 +293,8 @@ namespace object
     DECLARE(req, ~=);
     DECLARE(deq, =~=);
     DECLARE(peq, %=);
-    DECLARE(neq, !=);
 
     DECLARE(lth, <);
-    DECLARE(leq, <=);
-    DECLARE(gth, >);
-    DECLARE(geq, >=);
 #undef  DECLARE
 
 #define DECLARE(Name)                      \

@@ -151,12 +151,29 @@ class Object.Comparable
 };
 
 
+## ----------- ##
+## Orderable.  ##
+## ----------- ##
+
+class Object.Orderable
+{
+  var '<'  = function (rhs) { rhs > self };
+  var '<=' = function (rhs) { self < rhs || self == rhs };
+  var '>'  = function (rhs) { rhs < self };
+  var '>=' = function (rhs) { self > rhs || self == rhs };
+  void;
+};
+
+
 ## ------- ##
 ## Float.  ##
 ## ------- ##
 
 do Float
 {
+  self.addProto(Comparable);
+  self.addProto(Orderable);
+
   var init = function (x) { self.set(x) };
 
   var sqr = function () { self * self };
@@ -242,20 +259,6 @@ class Object.Math
 };
 Object.addProto (Math);
 
-
-
-## ----------- ##
-## Orderable.  ##
-## ----------- ##
-
-class Object.Orderable
-{
-  var '<'  = function (rhs) { rhs > self };
-  var '<=' = function (rhs) { self < rhs || self == rhs };
-  var '>'  = function (rhs) { rhs < self };
-  var '>=' = function (rhs) { self > rhs || self == rhs };
-  void;
-};
 
 
 ## -------- ##
