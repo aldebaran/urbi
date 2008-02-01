@@ -6,7 +6,9 @@
 #ifndef OBJECT_ALIEN_HH
 # define OBJECT_ALIEN_HH
 
-# include "object/alien-class.hh"
+# include <libport/select-ref.hh>
+
+# include "object/fwd.hh"
 
 namespace object
 {
@@ -15,15 +17,15 @@ namespace object
   template<typename T>
   rObject box_with_type(const T&, const std::string&);
 
-  #define box(type, v)			\
-    object::box_with_type<type>(v, #type)
+  #define box(Type, V)			\
+    object::box_with_type<libport::unref_traits<Type>::type>(V, #Type)
 
   /// Extract an alien content
   template<typename T>
   T unbox_with_type(const rObject&);
 
-  #define unbox(type, o)			\
-    object::unbox_with_type<type>(o)
+  #define unbox(Type, O)			\
+    object::unbox_with_type<Type>(O)
 
 } // namespace object
 

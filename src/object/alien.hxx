@@ -6,6 +6,9 @@
 #ifndef OBJECT_ALIEN_HXX
 # define OBJECT_ALIEN_HXX
 
+# include <boost/any.hpp>
+# include <boost/tuple/tuple.hpp>
+
 # include "object/atom.hh"
 # include "object/primitives.hh"
 
@@ -29,7 +32,9 @@ namespace object
   {
     TYPE_CHECK(o, Alien);
     rAlien a = o.unsafe_cast<Alien>();
-    return boost::any_cast<T>(a->value_get().get<0>());
+    // GCC 4.0.1 on OSX cannot grok the following version:
+    //    a->value_get().get<0>();
+    return boost::any_cast<T>(boost::get<0>(a->value_get()));
   }
 
 } // namespace object

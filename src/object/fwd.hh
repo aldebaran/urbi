@@ -7,7 +7,6 @@
 # define OBJECT_FWD_HH
 
 # include <vector>
-# include <boost/any.hpp>
 
 # include "libport/fwd.hh"
 # include "libport/shared-ptr.hh"

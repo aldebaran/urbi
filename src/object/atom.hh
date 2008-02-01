@@ -6,6 +6,7 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
+# include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
 
 # include "ast/fwd.hh"
