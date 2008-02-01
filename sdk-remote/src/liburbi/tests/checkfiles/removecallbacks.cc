@@ -1,5 +1,5 @@
 #include "tests.hh"
-BEGIN_TEST(removecallbacks)
+BEGIN_TEST(removecallbacks, client, )
 client.setCallback(&dump, "p");
 urbi::UCallbackID i1 = client.setCallback(&dump, "tagb");
 urbi::UCallbackID i2 = client.setCallback(&dump, "tagb");

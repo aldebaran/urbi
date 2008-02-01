@@ -1,6 +1,6 @@
 #include "tests.hh"
 
-BEGIN_TEST(values)
+BEGIN_TEST(values, client, )
 client.setCallback(&dump, "tag");
 
 client.send("tag << 1;");

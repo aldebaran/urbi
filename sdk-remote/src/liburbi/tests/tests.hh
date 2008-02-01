@@ -28,8 +28,8 @@ urbi::UCallbackAction dump(const urbi::UMessage & msg);
 urbi::UCallbackAction removeOnZero(const urbi::UMessage & msg);
 
 
-#define BEGIN_TEST(name) \
-  void name(urbi::UClient & client, urbi::USyncClient & syncClient) {
+#define BEGIN_TEST(name, clientName, syncClientName)		\
+  void name(urbi::UClient & clientName, urbi::USyncClient & syncClientName) {
 
 #define END_TEST \
   client.send("shutdown;"); \

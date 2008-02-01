@@ -58,7 +58,7 @@ removeOnZero(const urbi::UMessage& msg)
 }
 
 urbi::UCallbackAction
-doExit(const urbi::UMessage& msg)
+doExit(const urbi::UMessage& /* msg */)
 {
   exit(0);
 }
