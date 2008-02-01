@@ -5,17 +5,19 @@
 ## Object.  ##
 ## -------- ##
 
-# Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
-var Object.slotCopy = function (frm, to) {
-  # This is annoying: one has to specify "self" here, otherwise the
-  # setSlot goes to the locals_ :(
-  self . setSlot(to, getSlot(frm))
+{
+  # Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
+  var Object.slotCopy = function (frm, to) {
+    # This is annoying: one has to specify "self" here, otherwise the
+    # setSlot goes to the locals_ :(
+    self . setSlot(to, getSlot(frm))
+  };
+  Object.slotCopy ("addProto", "inherit");
+  Object.slotCopy ("removeProto", "disinherit");
+  
+  Object.slotCopy ("sameAs", "==");
+  void
 };
-Object.slotCopy ("addProto", "inherit");
-Object.slotCopy ("removeProto", "disinherit");
-
-Object.slotCopy ("sameAs", "==");
-
 
 ## ----------------- ##
 ## VisibilityScope.  ##
@@ -26,18 +28,21 @@ Object.slotCopy ("sameAs", "==");
 # VisibilityScope has special setSlot and updateSlot preventing to write to
 # the locals. Only the target can be modified implicitly
 # The slot __target is expected to be set to the target of the block.
-var Object.VisibilityScope = Object.clone;
-
-var VisibilityScope.updateSlot = function(x, y)
 {
-  __target.updateSlot(x, getSlot("y"));
-};
+  var Object.VisibilityScope = Object.clone;
 
-var VisibilityScope.setSlot = function(x, y)
-{
-  __target.setSlot(x, getSlot("y"));
-};
+  var VisibilityScope.updateSlot = function(x, y)
+  {
+    __target.updateSlot(x, getSlot("y"));
+  };
+  
+  var VisibilityScope.setSlot = function(x, y)
+  {
+    __target.setSlot(x, getSlot("y"));
+  };
 
+  void
+};
 
 ## --------- ##
 ## Constants ##
@@ -52,6 +57,7 @@ class Object.Constants
   var inf    = 999999999999999.0;
 
   var pi     = 3.14159265358979323846264338327950288;
+  void;
 };
 Object.addProto (Constants);
 
@@ -65,6 +71,7 @@ class Object.Channel
 {
   var init = function (x) { var self.name = x };
   var '<<' = function (x) { x.print (name); {} };
+  void;
 };
 
 // Default channels.
@@ -79,6 +86,7 @@ do Object
   var cerr  = error;
 
   var warn = function (msg) { echo (msg, "warning") };
+  void;
 };
 
 
@@ -96,6 +104,7 @@ do void
   {
     self;
   };
+  void;
 };
 
 
@@ -109,8 +118,10 @@ do nil
   var clone = function () { self };
   var isNil = Lobby.true;
   var '=='  = function (x) { x.isNil };
+
+  var Object.isNil = false;
+  void;
 };
-var Object.isNil = false;
 
 
 ## -------- ##
@@ -124,6 +135,19 @@ do Closure
     # will be bound.
     getSlot ("func").apply (args, context.clone)
   };
+  void;
+};
+
+
+## ------------ ##
+## Comparable.  ##
+## ------------ ##
+
+class Object.Comparable
+{
+  var '!=' = function (rhs) { ! (self == rhs) };
+  var '==' = function (rhs) { ! (self != rhs) };
+  void;
 };
 
 
@@ -159,6 +183,7 @@ do Float
   var '--' = function () { var res = 0; res.set(self); self -= 1; res };
 
   var '!' = function () { self == 0; };
+  void;
 };
 
 
@@ -177,6 +202,7 @@ do List
 	return true;
     return false;
   };
+  void;
 };
 
 # k1 compatibility.
@@ -187,6 +213,7 @@ do Object
     warn("`size(list)' is deprecated, use `list.size'");
     l.size
    };
+  void;
 };
 
 
@@ -211,22 +238,36 @@ class Object.Math
   var sqrt   = function (x) { x.sqrt };
   var tan    = function (x) { x.tan };
   var trunc  = function (x) { x.trunc };
+  void;
 };
 Object.addProto (Math);
+
+
+
+## ----------- ##
+## Orderable.  ##
+## ----------- ##
+
+class Object.Orderable
+{
+  var '<'  = function (rhs) { rhs > self };
+  var '<=' = function (rhs) { self < rhs || self == rhs };
+  var '>'  = function (rhs) { rhs < self };
+  var '>=' = function (rhs) { self > rhs || self == rhs };
+  void;
+};
+
 
 ## -------- ##
 ## String.  ##
 ## -------- ##
 
-# We do have ==, <, and != as builtins.
-# FIXME: Introduce "Sortable", or whatever, which defines these
-# operators, and derive from it.
-do String
-{
-  var '<=' = function (rhs) { self < rhs || self == rhs };
-  var '>'  = function (rhs) { rhs < self };
-  var '>=' = function (rhs) { rhs < self || self == rhs };
-};
+# The connectives == and < are builtins.
+# FIXME: I'd like to put the addProto in a do, but then it goes
+# to the locals :(
+String.addProto(Comparable);
+String.addProto(Orderable);
+
 
 ## ------------- ##
 ## Ready to go.  ##
