@@ -182,7 +182,7 @@ namespace object
     if (this == void_class.get())
       return out;
     // FIXME: Decide what should be printed, but at least print something
-    return out << "<object>";
+    return out << "<object_" << std::hex << (long) (this) << ">";
   }
 
 } // namespace object

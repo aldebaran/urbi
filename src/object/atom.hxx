@@ -125,7 +125,7 @@ namespace object
   {
     return this < &rhs;
   }
-  
+
   template <>
   inline
   bool
@@ -181,7 +181,7 @@ namespace object
   {
     return out << "<delegate>";
   }
-  
+
   template <>
   inline
   std::ostream&
