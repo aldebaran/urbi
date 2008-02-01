@@ -724,12 +724,12 @@ stmt:
 stmt:
   "function" k1_id formal_args "{" stmts "}"
     {
-      // Compiled as "name = function args stmt", i.e.,
-      // updateSlot (name, function args stmt).
+      // Compiled as "var name = function args stmt", i.e.,
+      // setSlot (name, function args stmt).
       $$ = assign (@$, $2,
 		   new ast::Function (@$, take($3), $5),
 		   true);
-  }
+    }
 ;
 
 /*-----------------------------.
