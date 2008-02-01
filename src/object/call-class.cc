@@ -73,8 +73,12 @@ namespace object
     const ast::exps_type& func_args = args_get (args[0]);
 
     std::list<rObject> res;
-    foreach (ast::Exp* exp, func_args)
-      res.push_back (r.eval_in_scope (scope, *exp));
+    ast::exps_type::const_iterator i = func_args.begin();
+    ++i;
+    ast::exps_type::const_iterator i_end = func_args.end();
+
+    for (; i != i_end; ++i)
+      res.push_back (r.eval_in_scope (scope, **i));
 
     return new List (res);
   }
