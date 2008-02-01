@@ -16,7 +16,7 @@ namespace object
   rObject box_with_type(const T&, const std::string&);
 
   #define box(type, v)			\
-    object::box_with_type(v, #type)
+    object::box_with_type<type>(v, #type)
 
   /// Extract an alien content
   template<typename T>
