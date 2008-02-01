@@ -48,7 +48,7 @@ namespace runner
   do                                            \
   {                                             \
     ECHO ("job " << ME << " yielding on AST: "  \
-          << &e << ' ' << AST(e));              \
+	  << &e << ' ' << AST(e));              \
     yield ();                                   \
   } while (0)
 
@@ -97,7 +97,7 @@ namespace runner
     assert (ast_);
 
     ECHO ("job " << ME << " starting evaluation of AST: " << ast_
-          << ' ' << AST(*ast_));
+	  << ' ' << AST(*ast_));
     operator() (*ast_);
   }
 
@@ -131,7 +131,7 @@ namespace runner
     current_ = object::void_class;
   }
 
-  // Apply a function written in Urbi
+  // Apply a function written in Urbi.
   object::rObject
   Runner::apply_urbi (rObject scope, const rObject& func,
 		      const object::objects_type& args,
@@ -192,7 +192,8 @@ namespace runner
     std::swap(bound_args, locals_);
     YIELD ();
 
-    try {
+    try
+    {
       current_ = eval (*fn->body_get());
     }
     catch (ast::BreakException& be)
@@ -233,7 +234,7 @@ namespace runner
 
   object::rObject
   Runner::apply (rObject scope, const rObject& func,
-                 const object::objects_type& args,
+		 const object::objects_type& args,
 		 const rObject call_message)
   {
     {
@@ -250,21 +251,21 @@ namespace runner
     switch (func->kind_get ())
     {
       case object::Object::kind_primitive:
-        PING ();
-        current_ = func.cast<object::Primitive>()->value_get()(*this, args);
+	PING ();
+	current_ = func.cast<object::Primitive>()->value_get()(*this, args);
 	break;
       case object::Object::kind_delegate:
-        PING();
-        current_ = func.cast<object::Delegate>()->value_get()
-          ->operator()(*this, args);
+	PING();
+	current_ = func.cast<object::Delegate>()->value_get()
+	  ->operator()(*this, args);
 	break;
       case object::Object::kind_code:
-        PING ();
+	PING ();
 	current_ = apply_urbi (scope, func, args, call_message);
 	break;
       default:
-        PING ();
-        current_ = func;
+	PING ();
+	current_ = func;
 	break;
     }
 
@@ -445,8 +446,8 @@ namespace runner
     // Evaluate every expression in the list
     // FIXME: parallelized?
     for (i = e.value_get ().begin ();
-         i != e.value_get ().end ();
-         ++i)
+	 i != e.value_get ().end ();
+	 ++i)
     {
       operator() (**i);
       values.push_back(current_);
@@ -467,29 +468,29 @@ namespace runner
       current_.reset ();
       JECHO ("child", *i);
       try {
-        operator() (*i);
+	operator() (*i);
       }
       catch (object::UrbiException& ue)
       {
-        raise_error_ (ue);
-        continue;
+	raise_error_ (ue);
+	continue;
       }
       CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
-        CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
-                             "outside a function");
+	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
+			     "outside a function");
 
 
       if (e.toplevel_get () && current_.get ())
       {
-        ECHO ("toplevel: returning a result to the connection.");
-        lobby_->value_get ().connection.new_result (current_);
-        current_.reset ();
+	ECHO ("toplevel: returning a result to the connection.");
+	lobby_->value_get ().connection.new_result (current_);
+	current_.reset ();
       }
 
       /* Allow some time to pass before we execute what follows.  If
-         we don't do this, the ;-operator would act almost like the
-         |-operator because it would always start to execute its RHS
-         immediately.  */
+	 we don't do this, the ;-operator would act almost like the
+	 |-operator because it would always start to execute its RHS
+	 immediately.  */
       YIELD ();
     }
 
@@ -542,7 +543,7 @@ namespace runner
       locals->slot_set("updateSlot", vscope->slot_get("updateSlot"));
       locals->slot_set("self", target);
       locals->slot_set("__target", target);
-      locals->proto_add(target);	     
+      locals->proto_add(target);
     }
 
     std::swap(locals, locals_);
@@ -580,26 +581,26 @@ namespace runner
       JECHO ("while test", e.test_get ());
       operator() (e.test_get());
       if (!IS_TRUE(current_))
-        break;
+	break;
 
       if (e.flavor_get() == ast::flavor_semicolon)
-        YIELD();
+	YIELD();
 
       JECHO ("while body", e.body_get ());
 
       broken = false;
       try {
-        operator() (e.body_get());
+	operator() (e.body_get());
       }
       catch (ast::BreakException&)
       {
-        // FIXME: Fix for flavor "," and "&".
-        if (e.flavor_get() == ast::flavor_semicolon ||
-            e.flavor_get() == ast::flavor_pipe)
-          broken = true;
+	// FIXME: Fix for flavor "," and "&".
+	if (e.flavor_get() == ast::flavor_semicolon ||
+	    e.flavor_get() == ast::flavor_pipe)
+	  broken = true;
       };
       if (broken)
-        break;
+	break;
     }
     // As far as I know, `while' doesn't return a value in URBI.
     current_.reset ();
@@ -613,9 +614,9 @@ namespace runner
     else if (e.kind_get() == ast::return_exception)
     {
       if (e.value_get())
-        operator() (*e.value_get());
+	operator() (*e.value_get());
       else
-        current_.reset();
+	current_.reset();
       throw ast::ReturnException(e.location_get(), current_);
     }
   }
