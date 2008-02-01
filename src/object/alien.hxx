@@ -18,18 +18,18 @@ namespace object
 
   template<typename T>
   inline rObject
-  box (const T& value)
+  box_with_type(const T& v, const std::string& type)
   {
-    return new Alien (value);
+    return new Alien(boost::make_tuple(v, type));
   }
 
   template<typename T>
   inline T
-  unbox (const rObject& o)
+  unbox_with_type(const rObject& o)
   {
-    TYPE_CHECK (o, Alien);
-    rAlien a = o.unsafe_cast<Alien> ();
-    return boost::any_cast<T> (a->value_get ());
+    TYPE_CHECK(o, Alien);
+    rAlien a = o.unsafe_cast<Alien>();
+    return boost::any_cast<T>(a->value_get().get<0>());
   }
 
 } // namespace object

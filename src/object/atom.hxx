@@ -270,7 +270,7 @@ namespace object
   std::ostream&
   Atom<alien_traits>::special_slots_dump (std::ostream& o) const
   {
-    return o << "value = <hidden>" << libport::iendl;
+    return o << "type = " << value_.get<1>() << libport::iendl;
   }
 
   template <>

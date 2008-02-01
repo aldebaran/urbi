@@ -6,6 +6,8 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
+# include <boost/tuple/tuple.hpp>
+
 # include "ast/fwd.hh"
 
 # include "kernel/fwd.hh"
@@ -92,7 +94,7 @@ namespace object
 
   struct alien_traits
   {
-    typedef boost::any type;
+    typedef boost::tuple<boost::any, std::string> type;
     enum { kind = Object::kind_alien };
   };
 

@@ -13,11 +13,17 @@ namespace object
 
   /// Build an alien
   template<typename T>
-  rObject box (const T&);
+  rObject box_with_type(const T&, const std::string&);
+
+  #define box(type, v)			\
+    object::box_with_type(v, #type)
 
   /// Extract an alien content
   template<typename T>
-  T unbox (const rObject&);
+  T unbox_with_type(const rObject&);
+
+  #define unbox(type, o)			\
+    object::unbox_with_type<type>(o)
 
 } // namespace object
 
