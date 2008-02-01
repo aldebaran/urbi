@@ -52,11 +52,11 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& e)
     {
-      throw BadInteger (arg1->value_get (), __PRETTY_FUNCTION__);
+      throw BadInteger (arg1->value_get (), "evalArgAt");
     }
 
     if (n < 0 || n >= static_cast<int>(func_args.size ()))
-      throw PrimitiveError (__PRETTY_FUNCTION__,
+      throw PrimitiveError ("evalArgAt",
 			    (boost::format ("bad argument %1%") % n) .str ());
 
     ast::exps_type::const_iterator i = func_args.begin();
