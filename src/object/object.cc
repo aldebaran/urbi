@@ -57,7 +57,7 @@ namespace object
     return locate_type(false, rObject());
   }
 
-  rObject slot_locate(rObject ref, const Object::key_type& k)
+  rObject slot_locate(const rObject& ref, const Object::key_type& k)
   {
     Object::objects_type os;
     Object::locate_type l = ref->slot_locate(k, os);

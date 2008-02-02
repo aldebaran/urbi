@@ -161,7 +161,7 @@ namespace object
     /// Whether is a locals object.
     bool locals_;
 
-    friend rObject slot_locate(rObject ref, const Object::key_type& k);
+    friend rObject slot_locate(const rObject& ref, const Object::key_type& k);
   };
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -173,7 +173,7 @@ namespace object
 
   /// Lookup field in object hierarchy.
   /// \return the Object containing slot \b k, or 0 if not found.
-  rObject slot_locate (rObject ref, const Object::key_type& k);
+  rObject slot_locate (const rObject& ref, const Object::key_type& k);
 
   /// Report Object \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);
