@@ -27,14 +27,14 @@ namespace object
   static const ast::exps_type&
   args_get (const rObject& self)
   {
-    const rObject& alien_args = self->slot_get (libport::Symbol ("args"));
+    const rObject& alien_args = self->slot_get (symbol_args);
     return unbox (const ast::exps_type&, alien_args);
   }
 
   static rObject
   context_get (const rObject& self)
   {
-    return self->slot_get (libport::Symbol ("context"));
+    return self->slot_get (symbol_context);
   }
 
   static rObject
@@ -52,7 +52,7 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& e)
     {
-      throw BadInteger (arg1->value_get (), "evalArgAt");
+      throw BadInteger (arg1->value_get (), symbol_evalArgAt);
     }
 
     if (n < 0 || n >= static_cast<int>(func_args.size ()))
@@ -94,8 +94,8 @@ namespace object
   call_class_initialize ()
   {
 #define DECLARE(Name)							\
-    call_class->slot_set (#Name,					\
-			  new Primitive(call_class_ ## Name));
+    DECLARE_PRIMITIVE(call, Name, Name)
+
     DECLARE (evalArgAt);
     DECLARE (evalArgs);
     DECLARE (argsCount);

@@ -67,9 +67,9 @@ namespace object
 #define DECLARE(Name, Implem)                   \
     DECLARE_PRIMITIVE(string, Name, Implem)
 
-    DECLARE(+,  add);
-    DECLARE(==, equ);
-    DECLARE(<,  lth);
+    DECLARE(PLUS,  add);
+    DECLARE(EQ_EQ, equ);
+    DECLARE(LT,  lth);
 
     DECLARE(size, size);
     DECLARE(length, size);

@@ -136,20 +136,20 @@ namespace object
   list_class_initialize ()
   {
 #define DECLARE(Name, Implem)                   \
-    DECLARE_PRIMITIVE(list, Name, Implem)
+    DECLARE_PRIMITIVE(list, Implem, Name)
 
-    DECLARE(+, concat);
-    DECLARE(+=, ip_concat);
+    DECLARE(concat, PLUS);
+    DECLARE(ip_concat, PLUS_EQ);
     DECLARE(front, front);
-    DECLARE(head, front);
+    DECLARE(front, head);
     DECLARE(tail, tail);
     DECLARE(back, back);
     //DECLARE(insert, insert);
     Primitive* p = new Primitive (list_class_insert);
-    list_class->slot_set ("insert", p);
+    list_class->slot_set (symbol_insert, p);
     DECLARE (sort, sort);
     DECLARE (size, size);
 #undef DECLARE
   }
 
-}; // namespace object
+} // namespace object

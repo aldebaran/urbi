@@ -275,26 +275,26 @@ namespace object
 #define DECLARE(Call, Name)                      \
     DECLARE_PRIMITIVE(float, Name, Call)
 
-    DECLARE(add, +);
-    DECLARE(div, /);
-    DECLARE(mul, *);
-    DECLARE(sub, -);
-    DECLARE(pow, **);
-    DECLARE(mod, %);
+    DECLARE(add, PLUS);
+    DECLARE(div, SLASH);
+    DECLARE(mul, STAR);
+    DECLARE(sub, MINUS);
+    DECLARE(pow, STAR_STAR);
+    DECLARE(mod, PERCENT);
 
-    DECLARE(lshift, <<);
-    DECLARE(rshift, >>);
-    DECLARE(xor,    ^);
+    DECLARE(lshift, LT_LT);
+    DECLARE(rshift, GT_GT);
+    DECLARE(xor,    CARET);
 
-    DECLARE(land, &&);
-    DECLARE(lor, ||);
+    DECLARE(land, AMPERSAND_AMPERSAND);
+    DECLARE(lor, PIPE_PIPE);
 
-    DECLARE(equ, ==);
-    DECLARE(req, ~=);
-    DECLARE(deq, =~=);
-    DECLARE(peq, %=);
+    DECLARE(equ, EQ_EQ);
+    DECLARE(req, TILDA_EQ);
+    DECLARE(deq, EQ_TILDA_EQ);
+    DECLARE(peq, PERCENT_EQ);
 
-    DECLARE(lth, <);
+    DECLARE(lth, LT);
 #undef  DECLARE
 
 #define DECLARE(Name)                      \

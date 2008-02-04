@@ -9,6 +9,7 @@
 # include "libport/compiler.hh"
 
 # include "object/fwd.hh"
+# include "object/symbols.hh"
 
 # include "object/alien-class.hh"
 # include "object/call-class.hh"
@@ -40,7 +41,7 @@ namespace object
     if (!(Obj)->type_is<Type>())					\
       throw object::WrongArgumentType(object::Object::kind_type(Type::kind), \
 				      Obj->kind_get(),			\
-				      "");		\
+				      "");				\
   } while (0)
 
 /**
@@ -142,10 +143,10 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
   PRIMITIVE_OP_(Class, Name, Op, new Ret, Type1, Type2, ->value_get())
 
 /**
- * Declare a primitive Name in class Class with imlementation Call.
+ * Declare a primitive Name in class Class with C++ implementation Call.
  */
-#define DECLARE_PRIMITIVE(Class, Name, Call)            \
-  Class ## _class->slot_set (# Name,                    \
-    new Primitive(Class ## _class_## Call))
+#define DECLARE_PRIMITIVE(Class, Name, Call)				\
+  Class ## _class->slot_set (object::symbol_##Name,			\
+			     new Primitive(Class ## _class_ ## Call))
 
 #endif // !OBJECT_PRIMITIVES_HH
