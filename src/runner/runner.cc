@@ -58,17 +58,31 @@ namespace runner
     if (e.toplevel_get ())                                      \
     {                                                           \
       object::PrimitiveError error(Keyword, Error);             \
-      error.location_set(flow_exception.location_get());        \
-      raise_error_(error);                                      \
+      show_error_(error, flow_exception.location_get());        \
       continue;                                                 \
     }                                                           \
     else                                                        \
       throw;                                                    \
   }
 
+/** Catch UrbiException, execute Code, then display the error if not allready
+ * done, and rethrow it. Also execute Code if no exception caught. */
+#define PROPAGATE_URBI_EXCEPTION(Loc, Code)          \
+  catch(object::UrbiException& ue)                   \
+  {                                                  \
+    Code                                             \
+    current_.reset();                                \
+    show_error_(ue, Loc);                            \
+    throw;                                           \
+  }                                                  \
+  Code
+
   void
-  Runner::raise_error_ (const object::UrbiException& ue)
+  Runner::show_error_ (object::UrbiException& ue, const ast::loc& l)
   {
+    if (ue.location_is_set())
+      return;
+    ue.location_set(l);
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
@@ -201,19 +215,13 @@ namespace runner
     catch (ast::BreakException& be)
     {
       object::PrimitiveError error("break", "outside a loop");
-      error.location_set(be.location_get());
-      raise_error_(error);
+      show_error_(error, be.location_get());
     }
     catch (ast::ReturnException& re)
     {
       current_ = re.result_get();
     }
-    catch (object::UrbiException& ue)
-    {
-      std::swap(bound_args, locals_);
-      throw ue;
-    };
-    std::swap(bound_args, locals_);
+    PROPAGATE_URBI_EXCEPTION(fn->location_get(), std::swap(bound_args, locals_);)
 
     return current_;
   }
@@ -225,12 +233,7 @@ namespace runner
     try {
       eval (e);
     }
-    catch (...)
-    {
-      std::swap (locals_, scope);
-      throw;
-    }
-    std::swap (locals_, scope);
+    PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap (locals_, scope);)
     return current_;
   }
 
@@ -290,7 +293,7 @@ namespace runner
       if (current_ == object::void_class)
       {
 	object::WrongArgumentType wt("");
-	wt.location_set((*arg)->location_get());
+	show_error_(wt, (*arg)->location_get());
 	throw wt;
       }
       PING ();
@@ -343,16 +346,9 @@ namespace runner
       // Ask the target for the handler of the message.
       val = tgt->slot_get (e.name_get ());
     }
-    catch (object::UrbiException& ue)
-    {
-      ue.location_set (e.location_get ());
-      raise_error_ (ue);
-      current_.reset ();
-      return;
-    }
-    // FIXME: Do we need to issue an error message here?
-    if (!val)
-      return;
+    PROPAGATE_URBI_EXCEPTION(e.location_get(), {})
+
+    assert(val);
 
     /*-------------------------.
     | Evaluate the arguments.  |
@@ -379,12 +375,7 @@ namespace runner
     try {
       apply (val, args, call_message);
     }
-    catch (object::UrbiException& ue)
-    {
-      ue.location_set (e.location_get ());
-      throw;
-    };
-    call_stack_.pop_front();
+    PROPAGATE_URBI_EXCEPTION(e.location_get(), call_stack_.pop_front();)
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
@@ -474,8 +465,9 @@ namespace runner
       }
       catch (object::UrbiException& ue)
       {
-	raise_error_ (ue);
-	continue;
+	show_error_(ue, (*i)->location_get());
+	if (!e.toplevel_get())
+	  throw;
       }
       CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
 	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
@@ -549,8 +541,11 @@ namespace runner
     }
 
     std::swap(locals, locals_);
-    super_type::operator()(e.body_get());
-    std::swap(locals, locals_);
+    try
+    {
+      super_type::operator()(e.body_get());
+    }
+    PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
   }
 
 
