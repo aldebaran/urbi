@@ -51,6 +51,7 @@
   Macro(STAR_EQ, *=);				\
   Macro(STAR_STAR, **);				\
   Macro(String, String);			\
+  Macro(Task, Task);				\
   Macro(TILDA_EQ, ~=);				\
   Macro(VisibilityScope, VisibilityScope);	\
   Macro(__target, __target);			\
@@ -93,7 +94,9 @@
   Macro(reboot, reboot);			\
   Macro(removeProto, removeProto);		\
   Macro(removeSlot, removeSlot);		\
+  Macro(result, result);			\
   Macro(round, round);				\
+  Macro(runner, runner);			\
   Macro(sameAs, sameAs);			\
   Macro(self, self);				\
   Macro(sender, sender);			\
@@ -116,7 +119,10 @@
   Macro(type, type);				\
   Macro(uobject, uobject);			\
   Macro(updateSlot, updateSlot);		\
-  Macro(void, void);
+  Macro(void, void);				\
+  Macro(waitFor, waitFor);			\
+  Macro(waitForChanges, waitForChanges);
+
 
 namespace object
 {

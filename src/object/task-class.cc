@@ -32,10 +32,10 @@ namespace object
     rList locals = new List (std::list<rObject> ());
     ast::Exp *body = arg1->value_get ().body_get ();
     rRunner new_runner = new runner::Runner (r.lobby_get(),
-					     args[1]->slot_get ("context"),
+					     args[1]->slot_get (symbol_context),
 					     r.scheduler_get (),
 					     body);
-    args[0]->slot_set ("runner", box (rRunner, new_runner));
+    args[0]->slot_set (symbol_runner, box (rRunner, new_runner));
     new_runner->start_job ();
 
     return args[0];
@@ -83,9 +83,8 @@ namespace object
   void
   task_class_initialize ()
   {
-#define DECLARE(Name)							\
-    task_class->slot_set (#Name,					\
-			  new Primitive(task_class_ ## Name));
+#define DECLARE(Name)				\
+    DECLARE_PRIMITIVE(task, Name, Name);
     DECLARE (init);
     DECLARE (result);
     DECLARE (waitFor);
