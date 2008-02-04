@@ -1,18 +1,5 @@
 == New in 2.0 ==
 
-=== Deprecated features are removed. ===
-
-The following constructs, deprecated in the 1.x series, are no
-longer supported.
-
- * {{{<object> inherits <object>}}}.
- * {{{<object> disinherits <object>}}}.
- * {{{<integer> ^ <integer> denotes binary xor}}}.
- * {{{foreach}}} and {{{loopn}}}.
- * calls to {{{copy}}}, {{{echo}}}, and {{{sleep}}} without parentheses.
- * {{{wait(<duration>)}}}, use {{{sleep}}}.
- * new variables must be declared with {{{var}}}.
-
 === Full Object Orientation Support ===
  * Everything is an object.[[br]]
    In the 1.x series there were several kind of entities: numbers,
@@ -126,8 +113,36 @@ longer supported.
 
    {{{robot.leg("rear-left").joint("knee").value}}}
 
- * An object can have any number of prototypes.
-   Multiple-inheritance is fully supported.  This allows to factor
+ * Name spaces.[[br]]
+
+   There is no global name space in the Urbi language: there are no
+   global variables or functions in the traditional sense.  Rather,
+   the Urbi world is a network of objects that use each other (either
+   via inheritance, or via aggregation).  To reach a particular
+   object, for instance {{{Object}}} from which all the objects
+   derive, one uses a series of local names starting from the current
+   object.
+
+   For instance {{{true}}} is defined as a member of
+   {{{Object.Constants}}}, which is a prototype of {{{Object}}} (i.e.,
+   {{{Object}}} "derives" from {{{Object.Constants}}}.  Since every
+   object derives from {{{Object}}}, the {{{true}}} is available from
+   anywhere.
+
+ * Lobbies.[[br]]
+
+   Sessions with the Urbi server, via files or via network
+   connections, are handled via "lobbies".  Lobbies implement the
+   local scope: variables introduced during the interaction are
+   only visible from this lobby.  Nevertheless, because lobbies are
+   connected to the rest of the Urbi network of objects, the user can
+   introduce new features in the common space, for instance by
+   extending {{{Object}}}.  The user may also provide access to
+   his/her own lobby by giving it a name in an object that is
+   reachable from the other lobbies.
+
+ * An object can have any number of prototypes.[[br]]
+   Multiple inheritance is fully supported.  This allows to factor
    common code.  For instance the object {{{Orderable}}} provides
    implementations of ordered comparators in terms of each other
    (e.g., {{{function '>=' (rhs) { rhs < self }}}}), and
@@ -141,118 +156,144 @@ longer supported.
 The kernel doesn't consume more CPU than needed and avoids to do any busy
 loop. This should greatly dicrease the robots battery consumtion.
 
+=== Deprecated features are removed. ===
+
+The following constructs, deprecated in the 1.x series, are no
+longer supported.
+
+ * {{{<object> inherits <object>}}}.
+ * {{{<object> disinherits <object>}}}.
+ * {{{<integer> ^ <integer> denotes binary xor}}}.
+ * {{{foreach}}} and {{{loopn}}}.
+ * calls to {{{copy}}}, {{{echo}}}, and {{{sleep}}} without parentheses.
+ * {{{wait(<duration>)}}}, use {{{sleep}}}.
+ * new variables must be declared with {{{var}}}.
+
 == New in 1.6 ==
 
 === inherits and disinherits are deprecated ===
 Inheritance now uses the regular function calling scheme.
-Please rather than
+Rather than {{{sub inherits super}}}, write {{{sub.inherit(super)}}}.
 
-	  sub inherits super
+Note {{{inherit}}} vs. {{{inherits}}}.  Likewise for {{{disinherit}}}
+and {{{disinherits}}}.
 
-write
+=== Connections can be prioritized. ===
 
-       sub.inherit(super).
+Use {{{setpriority N}}} to set a connection priority. Valid range is
+[-100, 100]. Default value is 0.  A second connection is created on
+startup with priority 80, loading the file {{{URBIRT.INI}}}.
 
-Note "inherit" vs. "inherits".  Likewise for "disinherit" and
-"disinherit".
-
-=== Connections can be prioritized. Use "setpriority N" to set a connection ===
-priority. Valid range is [-100, 100]. Default value is 0.
-A second connection is created on startup with priority 80,
-loading the file "URBIRT.INI"
-
-=== Kernel can be 'sealed' to prevent interference with high-priority code. ===
-Call "seal" to activate. Once activated:
-  - no +connection can be used to connections with higher priority.
-  - no "setpriority" can be called with a positive value.
+=== Kernel can be 'sealed' ===
+To prevent interference with high-priority code, use {{{seal}}}.
+Once activated:
+  * no {{{+connection}}} can be used to connections with higher priority.
+  * no {{{setpriority}}} can be called with a positive value.
  
 
 == New in 1.5 ==
 
-=== "foreach" and "loopn" are deprecated, use "for" instead. ===
+=== "foreach" and "loopn" are deprecated ===
+Use "for" instead.
 
-=== Use "**", not "^", to denote exponentiation.  In the future ===
-  "^" between numbers will denote exclusive-or.
+=== Use "**", not "^", to denote exponentiation ===
+In the future "^" between numbers will denote exclusive-or.
 
-=== "copy", "echo", and "wait" use a more traditional function syntax. ===
-  Use "echo (1)" instead of "echo 1", and "wait (1s)" instead of "wait 1s".
-  Similarly with "copy".
+=== Consistent function call syntax ===
+
+{{{copy}}}, {{{echo}}}, and {{{wait}}} use a more traditional function
+syntax === Use {{{echo (1)}}} instead of {{{echo 1}}}, and {{{wait
+(1s)}}} instead of {{{wait 1s}}}.  Similarly with {{{copy}}}.
 
 === Job control and channels are different. ===
-  The structure "tag : code" used to address two different issues:
-  enabling job control, and reporting values.  They now have two
-  different syntaxes.  Write "chan << code" to send the evaluation
-  of "code" to the channel "chan", and write "tag : code" to allow
-  job control over "code".
+The structure {{{tag : code}}} used to address two different issues:
+enabling job control, and reporting values.  They now have two
+different syntaxes.  Write {{{chan << code}}} to send the evaluation
+of {{{code}}} to the channel {{{chan}}}, and write {{{tag : code}}} to allow
+job control over {{{code}}}.
 
 === Numbers ===
-  Numbers are no longer output in fixed format, hence 1+2*3 yields
-  7, no longer 7.000000.  Besides, so called "scientific notation"
-  is supported: "1e-5" stands for "0.00001" etc.
+Numbers are no longer output in fixed format, hence 1+2*3 yields
+7, no longer 7.000000.  Besides, so called "scientific notation"
+is supported: {{{1e-5}}} stands for {{{0.00001}}} etc.
 
 == New in 1.0 ==
 
-=== New keyword `taglist' displays the tags of currently running commands. ===
+=== New keyword `taglist' ===
+To display the tags of currently running commands.
 
-=== UObject::send(string) is now available to send URBI code from any UObject ===
-  (plugged or remote). The code is executed immediately in plugin mode, which
-  makes it convenient to add specialized initialization in UObject
-  constructors to setup some useful wrappers.
+=== UObject::send(string) ===
+It is now available to send URBI code from any UObject
+(plugged or remote). The code is executed immediately in plugin mode, which
+makes it convenient to add specialized initialization in UObject
+constructors to setup some useful wrappers.
 
 == New in 1.0 RC2: ==
 
-=== USensor becomes UOwned (with backward compatibility) ===
+=== USensor becomes UOwned ===
+(with backward compatibility).
 
-=== It is new OK to redefine a function that already exist, you will get a ===
-  warning in scrict mode only.
+=== Function redefinition ===
+It is now OK to redefine a function that already exist, you will get a
+warning in scrict mode only.
 
-=== inherit changes to 'inherits' (same for disinherit) ===
+=== inherit changes to 'inherits' ===
+Same for disinherit.
 
-=== Important bug fix on UNotifyChange: was not working with motor variables ===
-  like headPan.val from within a UObject. NotifyAccess and NotifyChange
-  simultaneous usage has also been improved in plugin mode.
+=== UNotifyChange bug fix. ===
+
+Important bug fix on UNotifyChange: was not working with motor variables
+like headPan.val from within a UObject. NotifyAccess and NotifyChange
+simultaneous usage has also been improved in plugin mode.
 
 
 New in 1.0 RC1:
 
-=== New support for multi events. Example: ===
-
+=== New support for multi events ===
+Example:
+{{{
   at (e(x)) echo x;
   emit e(4) & emit e(11);
   [00018969:notag] *** 11.000000
   [00018969:notag] *** 4.000000
+}}}
+=== 'events' keyword ===
+To list existing declared events.
 
-=== 'events' keyword can be used to list existing declared events. ===
-
-=== Reminder: do not use 'return' inside functions defining background commands ===
+=== Do not use 'return' inside functions defining background commands ===
   like 'at', return will terminate function and everything it contains.
   Simply end the function without calling return, and use a comma when you
   call it:
-
+{{{
   function f()
   {
- at (test) ping;
+    at (test) ping;
   };
   f(),
+}}}
 
-=== The inherit/disinherit keywords are now available to manage inheritance and ===
-  multiple inheritance at runtime. Syntax:  
-
+=== Multiple inheritance ===
+The inherit/disinherit keywords are now available to manage inheritance and
+multiple inheritance at runtime. Syntax:  
+{{{
   class1 inherit class2;
   class1 disinherit class2;
+}}}
 
-=== The 'events' command lists all defined events ===
+=== {{{::}}} ===
 
-=== The :: construct allows you to call a parent method inside a redefined ===
+The :: construct allows you to call a parent method inside a redefined 
+{{{
   subclass method:
 
   function parent.f(x) { ... };
   sub = new parent;
   function sub.f(x)
   {
- parent::f(x);
- ...
+    parent::f(x);
+    ...
   };
+}}}
 
   This is a powerful feature needed in more advanced object-oriented
   programming.
@@ -261,167 +302,176 @@ New in 1.0 RC1:
 == Version 1.0 beta2                        released on xx.xx.2006 ==
 
 === Bug fixes ===
-=== New features ===
-=== Changes ===
+ * derivative extension fixed for autoupdate variables
 
-=== add delete operator  ===
-=== renamed global. into system. ===
-=== group objects, hardware, software added ===
-=== derivative extension fixed for autoupdate variables ===
+=== New features ===
+ * add delete operator 
+ * group objects, hardware, software added
+
+=== Changes ===
+ * renamed global. into system.
+
 
 == Version 1.0.0                        released on xx.xx.2006 ==
 
 === Bug fixes ===
+ * lists of lists works now
+
 === New features ===
+ * lists can contain any type of data, including binary
+
 === Changes ===
 
-=== bugfix: lists of lists works now ===
-=== feature: lists can contain any type of data, including binary ===
-=== external mode works: register with 	"external var <name>" or  ===
-					"external function(<nbparam>) <name>" or 
-					"external event(<nbparam>) <name>"
-=== syntax: syntax change def=>var, function or event, defcheckon=>strict, group=>alias ===
-=== class implementation (see detail in doc) ===
-=== feature: emit() now works (<=> emit(inf)) ===
+ * register with {{{external var <name>}}} or 
+   {{{external function(<nbparam>) <name>}}} or 
+   {{{external event(<nbparam>) <name>}}}.
+ * syntax change def=>var, function or event, defcheckon=>strict, group=>alias
+ * class implementation (see detail in doc)
+ * emit() now works (<=> emit(inf))
 
-TODO:
+=== To do ===
 
- ** add event def (out of class definition)
- ** class
-- add function def
-- add event def
-- operator new
-- call to init
-- inheritance integrated class a:b {...};
-- function polymorphism
-- var polymorphism
-- name resolution inside function => class members identification
- ** aliases update
- ** list type?
- ** a=b <=> alias a b? yes, with alias unicity
+ * add event def (out of class definition)
+ * class
+   * add function def
+   * add event def
+   * operator new
+   * call to init
+   * inheritance integrated class a:b {...};
+   * function polymorphism
+   * var polymorphism
+   * name resolution inside function => class members identification
+ * aliases update
+ * list type?
+ * a=b <=> alias a b? yes, with alias unicity
 
 == Version 0.9.8                        released on xx.01.2006 ==
 
 === Bug fixes ===
-=== New features ===
-=== Changes ===
+ * sgn now works as expected
+ * addition of lists now works correctly
+ * || or && separated events now work fine
+ * closed connection do no hold zombie events anymore
+ * context is now properly liberated when a parse error occur inside a function definition
 
-=== bugfix: sgn now works as expected ===
-=== feature: 'list groupname.var' evaluates as the list [groupmember1.var, groupmember2.val]... ===
-=== bugfix: addition of lists now works correctly ===
-=== bugfix: || or && separated events now work fine ===
-=== bugfix: closed connection do no hold zombie events anymore ===
-=== bugfix: context is now properly liberated when a parse error occur inside a function definition ===
+=== New features ===
+ * 'list groupname.var' evaluates as the list [groupmember1.var, groupmember2.val]...
 
 == Version 0.9.7                        released on 29.10.2005 ==
 
 Major changes in the kernel interface to allow softdevices to be plugged in the kernel
 
 === Bug fixes ===
+ * memoryleak on {{{+timeout}}} flag is fixed
+ * multiple flags are now handled properly
+ * softtest in functions are now handled properly
+ * {{{'n}}} now works with virtual devices
+ * operator priority in tests is now fixed
+ * at memory leak from 0.9.7  now fixed
+ * {{{$(...)}}} inside function now works properly
+
 === New features ===
+ * the command {{{connections;}}} returns a list of opened connections
+ * new flag: {{{+connection("U1234566") : command}}} starts the command in the given connection. Can also be used with {{{all}}} as a parameter (starts in every connection) or {{{other}}} (starts in every connection except the current one). You can create a chat room with this:  myname+connection("other"):echo "hello!";
+ * .val is now optional with devices and virtual devices. headPan.val is equivalent to headPan. Makes the code simpler.
+ * event integrated, emit is available (see doc for full description)
+ * added 'loadwav' function
+ * time values can now be expressed as a combination of d,h,m,s,ms
+ * new {{{every (time) ...}}} command
+ * the {{{reset}}} command now virtually reboot your robot, so that you can reload scripts and test modifications easily
+ * the {{{undefall}}} command clear all user defined variables and functions
+ * list type is now available: {{{[1,2,"bla",14]}}}. You can iterate a list L with the {{{foreach}}} command: {{{foreach i in L {...}}}};
+ * {{{+bg}}} flag added 
+ * echo can now have a connection modifier to specify a connection where the message is displayed: echo "..." connection:ID. ID can be {{{all}}} or {{{other}}} or a specific connection ID.
+ * partial test evaluation occurs now when (false && b) or (true || b) is calculated (b is not evaluated)
+ * prefixing variables with {{{local}}} make then explicitely local to the connection, which is useful inside functions to access local variables.
+ * sgn(x) function
+
 === Changes ===
 
-=== bugfix: memoryleak on +timeout flag is fixed ===
-=== feature: the command "connections;" returns a list of opened connections ===
-=== feature: new flag: "+connection("U1234566") : command" starts the command in the given connection. Can also be used with "all" as a parameter (starts in every connection) or "other" (starts in every connection except the current one). You can create a chat room with this:  myname+connection("other"):echo "hello!"; ===
-=== feature: .val is now optional with devices and virtual devices. headPan.val is equivalent to headPan. Makes the code simpler. ===
-=== change: ball.x and ball.y are now centered between -1/2 and 1/2, avoiding the unecessary translation ===
-=== feature: event integrated, emit is available (see doc for full description) ===
-=== feature: added 'loadwav' function ===
-=== bugfix: multiple flags are now handled properly ===
-=== feature: +bg flag added  ===
-=== bugfix: softtest in functions are now handled properly ===
-=== feature: time values can now be expressed as a combination of d,h,m,s,ms ===
-=== feature: new "every (time) ..." command ===
-=== feature: the "reset" command now virtually reboot your robot, so that you can reload scripts and test modifications easily ===
-=== feature: the "undefall" command clear all user defined variables and functions ===
-=== feature: list type is now available: [1,2,"bla",14]. You can iterate a list L with the foreach command: foreach i in L {...}; ===
-=== bugfix: 'n now works with virtual devices ===
-=== change: motoron and motoroff are now changed to "motor on" and "motor off", to prepare the way for future deivce control mechanisms. You also have the "motor switch" command to change from on to off and vice-versa. ===
-=== bugfix: operator priority in tests is now fixed ===
-=== feature: echo can now have a connection modifier to specify a connection where the message is displayed: echo "..." connection:ID. ID can be "all" or "other" or a specific connection ID. ===
-=== feature: partial test evaluation occurs now when (false && b) or (true || b) is calculated (b is not evaluated) ===
-=== bugfix: at memory leak from 0.9.7  now fixed ===
-=== bugfix: $(...) inside function now works properly ===
-=== feature: prefixing variables with "local" make then explicitely local to the connection, which is useful inside functions to access local variables. ===
-=== modif: static variables are now prefixed by @. The keyword 'only' as a prefix is used where @ was before, to signal a non recursive descent in a virtual device expression. ===
-=== added: sgn(x) function ===
-=== change: the timeout modifier no longer exist because of conflicts with the new 'timeout' command. ===
+ * ball.x and ball.y are now centered between -1/2 and 1/2, avoiding the unecessary translation
+ * motoron and motoroff are now changed to {{{motor on}}} and {{{motor off}}}, to prepare the way for future deivce control mechanisms. You also have the {{{motor switch}}} command to change from on to off and vice-versa.
+ * static variables are now prefixed by @. The keyword 'only' as a prefix is used where @ was before, to signal a non recursive descent in a virtual device expression.
+ * the timeout modifier no longer exist because of conflicts with the new 'timeout' command.
 
 
 == Version 0.9.6c                       released on 09.09.2005 ==
 === Bug fixes ===
-=== New features ===
-=== Changes ===
-
-=== bugfix: URBI.INI was not properly read at each robot start, on a random basis. It's fixed. ===
+ * {{{URBI.INI}}} was not properly read at each robot start, on a random basis. It's fixed.
 
 
 
 == Version 0.9.6b                       released on 07.09.2005 ==
 === Bug fixes ===
+ * the {{{>=}}} operator now works fine
+ * operator precedence in tests has been fixed
+ * function local variables are now correctly freed at the end of the function call
+ * bug with undef instabilities now fixed
+ * memory leak on tests is fixed
+ * the stop command now works better, in particular inside nested loops. stop/freeze/block are now taking one cycle to execute (they are no more ZTEC: Zero Time Execution Commands).
+ * fixed precedence between {{{;}}} and {{{,}}}
+ * fixed {{{exec}}} command bug occuring in conjunction with {{{stop}}}
+
+
 === New features ===
+ * a new {{{=~=}}} comparison operator is available: it takes into accound the delta property of variables to perform a ~= comparison. Very useful to put tests on motor values. It is also better than the {{{global.epsilontilde + ~=}}} approach because it is device specific. Delta composition for complex expressions will be added soon. 
+ * the ghost connection now outputs its messages to the debug port (59000)
+ * stopall command clears all commands in every connection. It is very powerful and should be used carefuly.
+
 === Changes ===
 
-=== modif: tests are now expressions, like in C. You can write stuffs like "while (1) ..." ===
-=== modif: the wait command is not polymorphic anymore. Use "wait(t)" to wait a certain time and "waituntil(test)" for a condition ===
-=== the "main" device is now called "global" again. The main device affects: global.name, global.device[i] and global.nbdevices, global.epsilontilde, global.epsilonpercent, global.ghostID. This name is subject to another change in the future, as it should better reflect the notion of "superdevice". ===
-=== robot.epsilontilde and robotl.epsilonpercent are now again global.epsilontilde and global.epsilonpercent for consistancy. ===
-=== function "booleval" no longer exists ===
-=== bugfix: the >= operator now works fine ===
-=== bugfix: operator precedence in tests has been fixed ===
-=== bugfix: function local variables are now correctly freed at the end of the function call ===
-=== bugfix: bug with undef instabilities now fixed ===
-=== bugfix: memory leak on tests is fixed ===
-=== bugfix: the stop command now works better, in particular inside nested loops. stop/freeze/block are now taking one cycle to execute (they are no more ZTEC: Zero Time Execution Commands). ===
-=== modif: global.device[i] and global.joint[i] are now aliases pointing to the corresponding device.val variable, instead of strings with the device name. The old string value can now be accessed with global.devicename[i] and global.jointname[i]. This serves the most common usage of such shortcuts and save the trouble of understanding the $(...) operator for most users.  ===
-=== modif: the std.u file has been modified: robot.leg aliases are now global.leg ===
-=== modif: robot.ledMode is now global.ledMode ===
-=== feature: a new =~= comparison operator is available: it takes into accound the delta property of variables to perform a ~= comparison. Very useful to put tests on motor values. It is also better than the "global.epsilontilde + ~=" approach because it is device specific. Delta composition for complex expressions will be added soon.  ===
-=== feature: the ghost connection now outputs its messages to the debug port (59000) ===
-=== modif: better cpuload() measure ===
-=== bugfix: fixed precedence between ; and , ===
-=== feature: stopall command clears all commands in every connection. It is very powerful and should be used carefuly. ===
-=== bugfix: fixed "exec" command bug occuring in conjunction with "stop" ===
-
+ * tests are now expressions, like in C. You can write stuffs like {{{while (1) ...}}}
+ * the wait command is not polymorphic anymore. Use {{{wait(t)}}} to wait a certain time and {{{waituntil(test)}}} for a condition
+ * the {{{main}}} device is now called {{{global}}} again. The main device affects: global.name, global.device[i] and global.nbdevices, global.epsilontilde, global.epsilonpercent, global.ghostID. This name is subject to another change in the future, as it should better reflect the notion of {{{superdevice}}}.
+ * robot.epsilontilde and robotl.epsilonpercent are now again global.epsilontilde and global.epsilonpercent for consistancy.
+ * function {{{booleval}}} no longer exists
+ * global.device[i] and global.joint[i] are now aliases pointing to the corresponding device.val variable, instead of strings with the device name. The old string value can now be accessed with global.devicename[i] and global.jointname[i]. This serves the most common usage of such shortcuts and save the trouble of understanding the $(...) operator for most users.
+ * the std.u file has been modified: robot.leg aliases are now global.leg
+ * robot.ledMode is now global.ledMode
+ * better cpuload() measure
 
 
 == Version 0.9.6                         released on 03.09.2005 ==
-=== Bug fixes ===
-=== New features ===
-=== Changes ===
 
-
-Some syntax changes:
-  - valn is replaced by val'n. Any variable can now be accessed in a normalized form by using the 'n suffix. Other suffixes will be available in the future, extending the possibilities (average on a time frame, max/min, etc).
-  - blend modes, ranges and speedmin/max are now set/read with variable "properties", which are accessed via the -> indirection:
+=== Syntax changes ===
+  * valn is replaced by val'n. Any variable can now be accessed in a normalized form by using the 'n suffix. Other suffixes will be available in the future, extending the possibilities (average on a time frame, max/min, etc).
+  * blend modes, ranges and speedmin/max are now set/read with
+  variable "properties", which are accessed via the -> indirection:
+{{{
    variable->blend = mix; // instead of blend[mix] variable
    variable->rangemin = 45;
    variable->rangemax;
    variable->speedmin = 15;
    variable->speedmax = 10;
    variable->unit = "cm";
-  - the "delta" property is accessible for variables: variable->delta = ... This property set the level of tolerance when adaptive trajectory are executed. Basically, it means that the assignment "variable = x" will be done with a precision of +/- variable->delta. For normal variables, the delta is zero. For variables related to motor devices, it reflects the precision of the underlying hardware.
-  - global.motortolerance and global.errorsensibility no longer exist and they are replaced by the corresponding joint.val delta property. Note that this property, like any property, can be assigned using a group assignment. For example: robot.val->delta = ...
-  - the "delete" operator is replaced by "undef" which is now common for variables and functions. If both a variable and a function share the same name "x", "undef x" will delete the function first.
-  - the isdef function now works with variables **and** functions.
-  - camera.ballx, camera.bally and camera.ballsize are replaced by ball.x, ball.y and ball.size. This is in prevision of future soft devices semantics.
-  - global.name, global.device[i], global.nbdevices are replaced by robot.name, robot.device[i] and robot.nbdevices for semantic consistancy.
-  - the +condout flag is changed into +stopif, for consistancy with the new +blockif flag
+}}}
+  * the {{{delta}}} property is accessible for variables: variable->delta = ... This property set the level of tolerance when adaptive trajectory are executed. Basically, it means that the assignment {{{variable = x}}} will be done with a precision of +/- variable->delta. For normal variables, the delta is zero. For variables related to motor devices, it reflects the precision of the underlying hardware.
+  * global.motortolerance and global.errorsensibility no longer exist and they are replaced by the corresponding joint.val delta property. Note that this property, like any property, can be assigned using a group assignment. For example: robot.val->delta = ...
+  * the {{{delete}}} operator is replaced by {{{undef}}} which is now common for variables and functions. If both a variable and a function share the same name {{{x}}}, {{{undef x}}} will delete the function first.
+  * the isdef function now works with variables **and** functions.
+  * camera.ballx, camera.bally and camera.ballsize are replaced by ball.x, ball.y and ball.size. This is in prevision of future soft devices semantics.
+  * {{{global.name}}}, {{{global.device[i]}}}, {{{global.nbdevices}}} are replaced by {{{robot.name}}}, {{{robot.device[i]}}} and {{{robot.nbdevices}}} for semantic consistancy.
+  * the {{{+condout}}} flag is changed into {{{+stopif}}}, for consistancy with the new {{{+blockif}}} flag
 
-=== bugfix: +report now works fine with function calls ===
-=== modif: "def f(x) instruction;" is now valid if instruction is alone (no brackets needed). Otherwise, brackets must be used to enclose several commands, like: "def f(x) {x;x+1};"  ===
-=== modif array indexes are now "auto-static". There is no need to use the tab[:i] construct in a loop. tab[i] has the same effect. This is to simplify the syntax, considering that array indexes would probably never need to be non-static. ===
-=== feature: def is now working with variables. "def my.var" defines my.var, without a type. "def {x;y;z}" defines x,y and z in one shot. "def mydevice {a;b}" defines mydevice.a and mydevice.b in one shot. The interest of this feature is to use the "defchekon" command to make the interpreter strict about undefined assignments (reject it). "defcheckoff" returns to the default permissive policy. ===
-=== feature: the 'e extension is available: it gives the difference between estimated value and measured value for a device, which is a crude measure of the force/torque for a motor device. ===
-=== modif: "delayed" motor messages no longer exist. They can be emulated trivially with: whenever (device.val'e > device.val->delta) echo "****** delayed"; ===
-=== modif: speedmax enforcement is now very strict and works. You can restrict any motor device "d" with: d.val->speedmax = ... (units/s) ===
-=== bugfix: load and exec now work as expected, they actually insert the code where the command is called (and not at the end of the execution buffer) ===
-=== feature: for any variable the ' and '' extensions are now available to return the derivative and the second derivative. The value used is the theoretical motion profile as expressed by the currently running assignments. For the real derivative and second derivative, measured from the sensor output, the 'd and 'dd extensions are available. ===
-=== bugfix: tags for grouped commands that include background commands now work (like tag:{at ...}) ===
-=== feature: the +blockif(test) flag is now available and the command is blocked when the test is true, unblocked when it is false. ===
-=== bugfix: "loop {noop}" and "loop noop" now run the same, without having a double execution time difference ===
-=== bugfix: the FOR command morphing policy has been changed to a more semantically valid version ===
+=== Bug fixes ===
+ * +report now works fine with function calls 
+ * load and exec now work as expected, they actually insert the code where the command is called (and not at the end of the execution buffer) 
+ * tags for grouped commands that include background commands now work (like tag:{at ...}) 
+ * {{{loop {noop}}}} and {{{loop noop}}} now run the same, without having a double execution time difference 
+ * the FOR command morphing policy has been changed to a more semantically valid version 
+
+=== New features ===
+ * the +blockif(test) flag is now available and the command is blocked when the test is true, unblocked when it is false. 
+ * def is now working with variables. {{{def my.var}}} defines my.var, without a type. {{{def {x;y;z}}}} defines x,y and z in one shot. {{{def mydevice {a;b}}}} defines mydevice.a and mydevice.b in one shot. The interest of this feature is to use the {{{defchekon}}} command to make the interpreter strict about undefined assignments (reject it). {{{defcheckoff}}} returns to the default permissive policy. 
+ * the 'e extension is available: it gives the difference between estimated value and measured value for a device, which is a crude measure of the force/torque for a motor device. 
+ * for any variable the ' and '' extensions are now available to return the derivative and the second derivative. The value used is the theoretical motion profile as expressed by the currently running assignments. For the real derivative and second derivative, measured from the sensor output, the 'd and 'dd extensions are available. 
+
+
+=== Changes ===
+ * {{{def f(x) instruction;}}} is now valid if instruction is alone (no brackets needed). Otherwise, brackets must be used to enclose several commands, like: {{{def f(x) {x;x+1};}}}  
+ * array indexes are now "auto-static". There is no need to use the tab[:i] construct in a loop. tab[i] has the same effect. This is to simplify the syntax, considering that array indexes would probably never need to be non-static. ===
+ * {{{delayed}}} motor messages no longer exist. They can be emulated trivially with: whenever (device.val'e > device.val->delta) echo {{{****** delayed}}}; 
+ * speedmax enforcement is now very strict and works. You can restrict any motor device {{{d}}} with: d.val->speedmax = ... (units/s) 
 
 == Version 0.9.5                         released on 24.07.2005 ==
 
@@ -429,38 +479,43 @@ Major kernel code revision for variable storage and access. Caching
 mechanism implemented. Various perfomance optimization.
 
 === Bug fixes ===
+ * fixed some bug for the propagation of {{{stop}}} commands in the command tree (now: only !UONQUEUE commands affected). 
+ * prefixes are now ignored for system functions like {{{sin}}}, {{{string}}}, {{{cos}}},... This make toto.sin(2); a valid evaluation (it's very permissive) but solve a known bug with cross client function definitions. 
+ * no more spasm-like shake after a motoron when the joints have moved. 
+
 === New features ===
+
+ * function 'abs' added 
+ * global.ghostID variable added: it returns the ID of the ghost connection 
+ * function cpuload() added and a warning is issued when cpuload > 120% for more than 10 iterations of the work loop 
+
 === Changes ===
 
-=== modif: Aliases are now traced once when a command is executed, so dynamic modification of aliases chains will not affect already running code. This is done for optimization purposes.  ===
-=== feature: function 'abs' added ===
-=== feature: global.ghostID variable added: it returns the ID of the ghost connection ===
-=== feature: function cpuload() added and a warning is issued when cpuload > 120% for more than 10 iterations of the work loop ===
-=== modif: variable access caching system is functional ===
-=== bugfix: fixed some bug for the propagation of "stop" commands in the command tree (now: only !UONQUEUE commands affected). ===
-=== modif: the way the group hiearchy is passed has changed: group a {b,c};a.x=0 time:10; will not generate errors on a.x anymore. Only leaves are taken into account for error report (this is a subtle problem, but you will be happy it is solved). ===
-=== bugfix: prefixes are now ignored for system functions like "sin", "string", "cos",... This make toto.sin(2); a valid evaluation (it's very permissive) but solve a known bug with cross client function definitions. ===
-=== bugfix: no more spasm-like shake after a motoron when the joints have moved. ===
+ * Aliases are now traced once when a command is executed, so dynamic modification of aliases chains will not affect already running code. This is done for optimization purposes.  
+ * variable access caching system is functional 
+ * the way the group hiearchy is passed has changed: group a {b,c};a.x=0 time:10; will not generate errors on a.x anymore. Only leaves are taken into account for error report (this is a subtle problem, but you will be happy it is solved). 
 
 
 
 == Version 0.9.4                         released on 05.05.2005 ==
 === Bug fixes ===
+ * grouped commands without tag are not labelled {{{notag}}} anymore, but __UGrouped_set_of_commands__ 
+
 === New features ===
+ * atan function added 
+
 === Changes ===
 
-=== modif: the target value of a sin-modified assignment is constantly reevaluated during execution, not only at start. ===
-=== bugfix: grouped commands without tag are not labelled "notag" anymore, but __UGrouped_set_of_commands__ ===
-=== modif: Error messages are now prefixed by !!! and simple system messages by ****** ===
-=== feature: atan function added ===
-=== modif: sin assignments don't require the variable to be already defined anymore. It's just a "normal" assignment. ===
+ * the target value of a sin-modified assignment is constantly reevaluated during execution, not only at start. 
+ * Error messages are now prefixed by !!! and simple system messages by ****** 
+ * sin assignments don't require the variable to be already defined anymore. It's just a {{{normal}}} assignment. 
 
 
 == Version 0.9.3                         released on 23.02.2005 ==
 
 === Bug fixes ===
 
- * "valn" evaluation doesn't change the "val" value anymore 
+ * {{{valn}}} evaluation doesn't change the {{{val}}} value anymore 
  * type mismatch with binary variables is correctly handled 
  * tags on grouped commands (between { }) are now working 
  * +report flag now works fine with grouped commands (between { }) 
@@ -468,9 +523,9 @@ mechanism implemented. Various perfomance optimization.
 === New features ===
 
  * functions are now implemented (in a limited extend, see doc) 
- * the keyword "def" alone lists the existing function definitions 
- * "undef <functionname>" can be used to undefine a function 
- * "isdef(variable)" returns 1 or 0, if the variable is defined or not 
+ * the keyword {{{def}}} alone lists the existing function definitions 
+ * {{{undef <functionname>}}} can be used to undefine a function 
+ * {{{isdef(variable)}}} returns 1 or 0, if the variable is defined or not 
  * arrays can now be indexed with strings and not only numbers 
  * +timeout and +condout flags added 
  * added the 'getphase' modificator 
@@ -485,16 +540,16 @@ mechanism implemented. Various perfomance optimization.
  * fixed problem with assignment result just after a blend[mix] 
 
 === New features ===
- * added a new "add" blending mode 
+ * added a new {{{add}}} blending mode 
 
 == Version 0.9.1                         released on 22.01.2005 ==
 
 === Bug fixes ===
- * The behavior of "for &" is now as expected in the specification. 
+ * The behavior of {{{for &}}} is now as expected in the specification. 
 
 === New features ===
 
- * added static variables usage with the ":" prefix, to freeze
+ * added static variables usage with the {{{:}}} prefix, to freeze
    variable evaluation 
 
  * added 'alias' command 
