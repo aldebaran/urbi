@@ -111,20 +111,15 @@ do Object
 };
 
 
-## --------- ##
-## Void      ##
-## --------- ##
+## ------ ##
+## void.  ##
+## ------ ##
 do void
 {
   // void prints nothing.
-  var print = function()
-  {
-  };
+  var print = function() {};
   // void is a singleton.
-  var clone = function()
-  {
-    self;
-  };
+  var clone = function() { self; };
   void;
 };
 
@@ -137,7 +132,7 @@ do nil
 {
   // nil is a singleton.
   var clone = function () { self };
-  var isNil = Lobby.true;
+  var isNil = true;
   var '=='  = function (x) { x.isNil };
 
   var Object.isNil = false;
