@@ -28,7 +28,7 @@ namespace object
 
   inline
   bool
-  UrbiException::location_is_set ()
+  UrbiException::location_is_set () const
   {
     return location_set_;
   }

@@ -40,7 +40,7 @@ namespace object
     void location_set (const ast::loc&);
 
     /// Returns if the location has been set
-    bool location_is_set();
+    bool location_is_set() const;
   protected:
     /**
      * \brief Construct an exception which contains a raw message.
