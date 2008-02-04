@@ -748,7 +748,7 @@ UConnection::execute ()
   active_command_->toplevel_set (true);
 
   // FIXME: There is an obvious memory leak here
-  runner::Runner* runner = 
+  runner::Runner* runner =
     new runner::Runner(lobby_,
 		       lobby_,
 		       ::urbiserver->getScheduler (),
