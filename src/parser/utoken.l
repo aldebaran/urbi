@@ -154,7 +154,7 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 %}
 %option noyywrap debug
 
-%x SC_C_COMMENT SC_STRING_OR_SYMBOL
+%x SC_C_COMMENT SC_STRING_OR_SYMBOL SC_IDENTIFIER_SUFFIX
 %s SC_UCONSOLE
 
 BLANKS   [ \t]+
@@ -412,14 +412,6 @@ FLAVOR   [;|,&]?
 "$"             return token::TOK_DOLLAR;
 "%="            return token::TOK_PEQ;
 
-  /*
-   "'"             return token::TOK_DERIV;
-   "''"            return token::TOK_DERIV2;
-   "'d"            return token::TOK_TRUEDERIV;
-   "'dd"           return token::TOK_TRUEDERIV2;
-   "'e"            return token::TOK_VARERROR;
-   "'n"            return token::TOK_NORM;
-   */
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
 "->"            return token::TOK_DIR;
@@ -439,7 +431,10 @@ FLAVOR   [;|,&]?
 ","             RETURN_FLAVOR(COMMA, comma);
 
 
-{ID}     RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
+{ID}            {
+                  BEGIN SC_IDENTIFIER_SUFFIX;
+		  RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
+		}
 
 
     /*--------------------.
@@ -450,11 +445,16 @@ FLAVOR   [;|,&]?
      [\"\'] {
        if (*yytext == delimiter)
        {
-	 BEGIN sc_default;
 	 if (*yytext == '\'')
+	 {
+	   BEGIN SC_IDENTIFIER_SUFFIX;
 	   RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(*valp->str));
+	 }
 	 else
+	 {
+	   BEGIN sc_default;
 	   return token::STRING;
+	 }
        }
        else
 	 *valp->str += *yytext;
@@ -496,6 +496,21 @@ FLAVOR   [;|,&]?
 }
 
 
+    /*---------------------.
+    | Identifier suffixes. |
+    `---------------------*/
+
+<SC_IDENTIFIER_SUFFIX>{ /* Handling of 'd, 'n, etc. */
+   "'"		BEGIN sc_default; DEPRECATED(".'\\''");
+   "''"		BEGIN sc_default; DEPRECATED(".'\\'\\''");
+   "'d"		BEGIN sc_default; DEPRECATED(".'\\'d'");
+   "'dd"	BEGIN sc_default; DEPRECATED(".'\\'dd'");
+   "'e"		BEGIN sc_default; DEPRECATED(".'\\'e'");
+   "'n"		BEGIN sc_default; DEPRECATED(".'\\'n'");
+   {BLANKS}     locp->step();
+   {EOL}        LINES(locp); locp->step();
+   .		BEGIN sc_default; locp->end.column--; unput(*yytext);
+}
 
     /*----------------------------.
     | White spaces and comments.  |

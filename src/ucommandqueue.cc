@@ -115,9 +115,11 @@ UCommandQueue::popCommand ()
 	  close_ = "\"";
 	  break;
 
-	case '\'':
-	  close_ = "'";
-	  break;
+	// FIXME: It is totally broken with 'd, 'n, etc.
+	// There is no easy way to handle this without rewritting a lexer.
+	// case '\'':
+	  // close_ = "'";
+	  // break;
 
 	case '/':
 	  if (p1 == '*')
