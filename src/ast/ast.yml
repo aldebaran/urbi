@@ -62,9 +62,9 @@ non_visitable_types:
 
 # In the cloner, these require "recurse_collection".
 collections:
-  - "symbols_type"
-  - "exps_type"
   - "exec_exps_type"
+  - "exps_type"
+  - "symbols_type"
 
 # The function to clear a list of pointers.
 deep_clear: "libport::deep_clear"
@@ -114,9 +114,9 @@ fwd_hh_epilogue: |2
 
 printer_cc_prologue: |2
 
+  #include "libport/escape.hh"
   #include "libport/indent.hh"
   #include "libport/pair.hh"
-  #include "libport/escape.hh"
   #include "libport/separator.hh"
 
   #include <boost/foreach.hpp>
