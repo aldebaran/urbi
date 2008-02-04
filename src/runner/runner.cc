@@ -624,4 +624,83 @@ namespace runner
     send_message_(e.tag_get(), e.text_get());
   }
 
+  void
+  Runner::operator() (ast::Foreach& e)
+  {
+    // Evaluate the list attribute, and check its type.
+    JECHO ("foreach list", e.list_get());
+    operator() (e.list_get());
+    try
+    {
+      TYPE_CHECK(current_, object::List);
+    }
+    PROPAGATE_URBI_EXCEPTION(e.location_get(), {});
+
+    JECHO("foreach body", e.body_get());
+
+    // We need to copy the pointer on the list, otherwise the list will be
+    // destroyed when children are visited and current_ is modified.
+    rObject l = current_;
+
+    // for& ... in loop.
+    if (e.flavor_get() == ast::flavor_and)
+    {
+      // The list of runners launched for each value in the list.
+      std::list<Runner> runners;
+
+      foreach (rObject o, VALUE(l, object::List))
+      {
+	// Define a new local scope for each instance of the runner, and
+	// set the index.
+	rObject locals = new object::Object;
+	locals->locals_set(true);
+	locals->proto_add(locals_);
+	locals->slot_set(e.index_get(), o);
+
+	// Create the new runner and launch it.
+	runners.push_back(Runner(*this));
+	runners.back().locals_ = locals;
+	runners.back().ast_ = &e.body_get();
+	runners.back().start_job();
+      }
+
+      // Wait for all runners to terminate.
+      foreach(Runner& r, runners)
+	yield_until_terminated(r);
+    }
+    else // for| and for;
+    {
+      // Define a new local scope, common for all iterations.
+      rObject locals = new object::Object;
+      locals->locals_set(true);
+      locals->proto_add(locals_);
+      locals->slot_set(e.index_get(), 0);
+      std::swap(locals, locals_);
+
+      try
+      {
+	// Iterate on each value.
+	foreach (rObject o, VALUE(l, object::List))
+	{
+	  locals_->slot_get(e.index_get()) = o;
+	  if (e.flavor_get() == ast::flavor_semicolon)
+	    YIELD();
+	  try
+	  {
+	    operator() (e.body_get());
+	  }
+	  catch (ast::BreakException&)
+	  {
+	    break;
+	  }
+	}
+      }
+      // Restore previous locals_, even if an exception was thrown.
+      PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+    }
+
+    // For the moment return void.
+    current_ = object::void_class;
+  }
+
 } // namespace runner

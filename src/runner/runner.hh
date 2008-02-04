@@ -91,10 +91,11 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((15,
+    VISITOR_VISIT_NODES((16,
 			 (
 			  And,
 			  Call,
+			  Foreach,
 			  Function,
 			  If,
 			  List,

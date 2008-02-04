@@ -43,6 +43,9 @@ exp.cc
 flavorable.hh
 flavorable.hxx
 flavorable.cc
+foreach.hh
+foreach.hxx
+foreach.cc
 function.hh
 function.hxx
 function.cc

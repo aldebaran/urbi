@@ -549,6 +549,31 @@ While:
     - ~body
     - libport::decindent
 
+Foreach:
+  super:
+    - Exp
+    - Flavorable
+  attributes:
+    - index:
+        type: 'libport::Symbol'
+        desc: The variable storing de values on which iterate.
+    - list:
+        type: Exp*
+        desc: The list containing the values on which iterate.
+    - body:
+        type: Exp*
+        desc: Executed for each value in the list
+  printer:
+    - '"for "'
+    - '{ n.index_get().print_escaped(ostr_); }'
+    - '" in "'
+    - ~list
+    - '" {"'
+    - libport::incendl
+    - ~body
+    - libport::decendl
+    - '"}"'
+
 Throw:
   desc: /// Throw an exception when visited, used to implement break, return, etc.
   super: Exp

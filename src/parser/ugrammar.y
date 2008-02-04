@@ -859,7 +859,7 @@ stmt:
     }
 | "for" "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
     {
-      $$ = 0;
+      $$ = new ast::Foreach(@$, $1, take($2), $4, $6);
     }
 | "freezeif" "(" softtest ")" stmt
     {
