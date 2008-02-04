@@ -38,8 +38,9 @@ namespace object
     // Now that these classes exists, in particular string_class
     // from which any String is a clone, we can initialize the
     // "type" field for all of them, including Object.
-#define DECLARE(What, Name)					\
-      What ## _class->slot_set("type", new String (#Name));
+#define DECLARE(What, Name)						\
+    What ## _class->slot_set(symbol_type,				\
+			     new String (libport::Symbol(#Name)));
     APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
@@ -53,19 +54,19 @@ namespace object
     // Register all these classes in Object, so that when we look up
     // for "Object" for instance, we find it.
 #define DECLARE(What, Name)				\
-      object_class->slot_set(#Name, What ## _class);
+    object_class->slot_set(symbol_ ## Name, What ## _class);
     APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
     // Create and register void
     void_class = clone(object_class);
-    object_class->slot_set("void", void_class);
-    void_class->slot_set("type", new String("void"));
+    object_class->slot_set(symbol_void, void_class);
+    void_class->slot_set(symbol_type, new String(symbol_void));
 
     // Create and register nil
     nil_class = clone (object_class);
-    object_class->slot_set("nil", nil_class);
-    nil_class->slot_set ("type", new String ("nil"));
+    object_class->slot_set(symbol_nil, nil_class);
+    nil_class->slot_set (symbol_type, new String (symbol_nil));
   }
 
   rObject void_class;

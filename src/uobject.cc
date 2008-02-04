@@ -1,4 +1,6 @@
-#include "libport/hash.hh"
+#include <libport/foreach.hh>
+#include <libport/hash.hh>
+
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
 #include "object/primitives.hh"
@@ -17,13 +19,13 @@ using object::rObject;
 */
 void uobject_initialize(object::rObject where)
 {
-   BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+  foreach (urbi::baseURBIStarter* i, *urbi::objectlist)
   {
-    //make our prototype
-    object::rObject proto =  uobject_make_proto(i->name);
-    where->slot_set(i->name+"_class", proto);
-    //make our first instance
-    where->slot_set(i->name, uobject_new(proto, true));
+    // Make our prototype.
+    object::rObject proto = uobject_make_proto(i->name);
+    where->slot_set(libport::Symbol(i->name + "_class"), proto);
+    // Make our first instance.
+    where->slot_set(libport::Symbol(i->name), uobject_new(proto, true));
   }
 }
 
@@ -34,7 +36,7 @@ class UWrapCallback: public object::IDelegate
 {
   public:
   UWrapCallback(urbi::UGenericCallback* ugc)
-  :ugc_(ugc) 
+  :ugc_(ugc)
   {}
   virtual ~UWrapCallback() {}
   virtual rObject operator() (runner::Runner&, object::objects_type);
@@ -43,7 +45,7 @@ class UWrapCallback: public object::IDelegate
 };
 
 
-rObject 
+rObject
 UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
 {
   urbi::UList l;
@@ -51,7 +53,7 @@ UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
   BOOST_FOREACH(rObject co, ol)
   {
     if (first)
-    {  
+    {
       first = false;
       continue;
     }
@@ -74,9 +76,10 @@ uobject_clone(runner::Runner&, object::objects_type l)
 rObject uobject_make_proto(const std::string& name)
 {
   rObject oc = object::clone(object::object_class);
-  oc->slot_set("__uobject_cname", new object::String(name));
-  oc->slot_set("__uobject_base", oc);
-  oc->slot_set("clone", new object::Primitive(&uobject_clone));
+  oc->slot_set(object::symbol___uobject_cname,
+	       new object::String(libport::Symbol(name)));
+  oc->slot_set(object::symbol___uobject_base, oc);
+  oc->slot_set(object::symbol_clone, new object::Primitive(&uobject_clone));
   return oc;
 }
 
@@ -88,15 +91,15 @@ rObject uobject_make_proto(const std::string& name)
 rObject uobject_new(rObject proto, bool forceName)
 {
   rObject r = object::clone(object::object_class);
-  
+
   // Reparent r to proto base.
   r->proto_remove(object::object_class);
-  r->proto_add(proto->slot_get("__uobject_base")); 
-  
+  r->proto_add(proto->slot_get(object::symbol___uobject_base));
+
   // Get UObject name.
-  rObject rcName = proto->slot_get("__uobject_cname");
+  rObject rcName = proto->slot_get(object::symbol___uobject_cname);
   const std::string& cname = rcName.cast<object::String>()->value_get();
-  
+
   // Get the name we will pass to uobject.
   std::string name;
   if (forceName)
@@ -127,116 +130,119 @@ get_base(const std::string& objname)
   return uobject_map[objname];
 }
 
-namespace urbi 
+namespace urbi
 {
 
-UGenericCallback::UGenericCallback(const std::string& objname,
-		     const std::string& type,
-		     const std::string& name,
-		     int, urbi::UTable&, bool)
-{
-  if (type == "function")
+  UGenericCallback::UGenericCallback(const std::string& objname,
+				     const std::string& type,
+				     const std::string& name,
+				     int, urbi::UTable&, bool)
   {
-    std::string method = name.substr(name.find_last_of(".") + 1,
-				     std::string::npos);
-    rObject me = get_base(objname);
-    std::cerr << "binding " << objname << "." << method << std::endl;
-    me->slot_set(method, new object::Delegate(new UWrapCallback(this)));
+    if (type == "function")
+    {
+      std::string method = name.substr(name.find_last_of(".") + 1,
+				       std::string::npos);
+      rObject me = get_base(objname);
+      std::cerr << "binding " << objname << "." << method << std::endl;
+      me->slot_set(libport::Symbol(method),
+		   new object::Delegate(new UWrapCallback(this)));
+    }
   }
-}
-UGenericCallback::UGenericCallback(const std::string& ,
-		     const std::string& ,
-		     const std::string& , urbi::UTable&)
-{
-}
 
-UGenericCallback::~UGenericCallback() {}
-
-void UGenericCallback::registerCallback(UTable& ) 
-{
-}
-
-UObject::~UObject() 
-{
-}
-
-UObject::UObject(const std::string& name) 
-:__name(name)
-{
-
-}
-void UObject::UJoinGroup(const std::string& ) 
-{
-}
-
-typedef std::pair<std::string, std::string> StringPair;
-
-/// Split a string of the form "a.b" in two
-static  StringPair split_name(const std::string& name)
-{
-  int p = name.find_last_of(".");
-  std::string oname = name.substr(0, p);
-  std::string slot = name.substr(p + 1, name.npos);
-  return StringPair(oname, slot);
-}
-/// Get an rObject from its uvar name
-static rObject uvar_get(const std::string& name)
-{
-  StringPair p = split_name(name);
-  rObject o = get_base(p.first);
-  return o->slot_get(p.second);
-}
-
-/// Write an rObject to a slot from its uvar name
-static void uvar_set(const std::string& name, rObject val)
-{
-  StringPair p = split_name(name);
-  rObject o = get_base(p.first);
-  try 
+  UGenericCallback::UGenericCallback(const std::string&,
+				     const std::string&,
+				     const std::string&, urbi::UTable&)
   {
-    o->slot_set(p.second,val);
   }
-  catch(object::RedefinitionError)
+
+  UGenericCallback::~UGenericCallback() {}
+
+  void UGenericCallback::registerCallback(UTable& )
   {
-    o->slot_update(p.second, val);
   }
-}
 
-#define UVAR_OPERATORS(T, DT)     \
-void UVar::operator = (DT t)      \
-{                                 \
-  uvar_set(name, ::object_cast(urbi::UValue(t))); \
-}                                 \
-UVar::operator T()                \
-{                                 \
-  return ::uvalue_cast(uvar_get(name)); \
-}
+  UObject::~UObject()
+  {
+  }
 
-UVAR_OPERATORS(ufloat, ufloat);
-UVAR_OPERATORS(std::string, const std::string&);
-UVAR_OPERATORS(UBinary, const UBinary&);
-UVAR_OPERATORS(UList, const UList&);
+  UObject::UObject(const std::string& name)
+    :__name(name)
+  {
 
-//no corresponding operator= for this one...
-UVar::operator int()                
-{                                 
-  return ::uvalue_cast(uvar_get(name)); 
-}
+  }
+  void UObject::UJoinGroup(const std::string&)
+  {
+  }
 
-void UVar::__init()
-{
-  //nothing to do
-}
+  typedef std::pair<std::string, std::string> StringPair;
 
-UVar::~UVar() 
-{
-}
+  /// Split a string of the form "a.b" in two
+  static  StringPair split_name(const std::string& name)
+  {
+    int p = name.find_last_of(".");
+    std::string oname = name.substr(0, p);
+    std::string slot = name.substr(p + 1, name.npos);
+    return StringPair(oname, slot);
+  }
 
-void echo(const char * format, ...)
-{
-  va_list arg;
-  va_start(arg, format);
-  vfprintf(stderr, format, arg);
-  va_end(arg);
-}
+  /// Get an rObject from its uvar name
+  static rObject uvar_get(const std::string& name)
+  {
+    StringPair p = split_name(name);
+    rObject o = get_base(p.first);
+    return o->slot_get(libport::Symbol(p.second));
+  }
+
+  /// Write an rObject to a slot from its uvar name
+  static void uvar_set(const std::string& name, rObject val)
+  {
+    StringPair p = split_name(name);
+    rObject o = get_base(p.first);
+    try
+    {
+      o->slot_set(libport::Symbol(p.second), val);
+    }
+    catch(object::RedefinitionError)
+    {
+      o->slot_update(libport::Symbol(p.second), val);
+    }
+  }
+
+#define UVAR_OPERATORS(T, DT)				\
+  void UVar::operator = (DT t)				\
+  {							\
+    uvar_set(name, ::object_cast(urbi::UValue(t)));	\
+  }							\
+  UVar::operator T()					\
+  {							\
+    return ::uvalue_cast(uvar_get(name));		\
+  }
+
+  UVAR_OPERATORS(ufloat, ufloat);
+  UVAR_OPERATORS(std::string, const std::string&);
+  UVAR_OPERATORS(UBinary, const UBinary&);
+  UVAR_OPERATORS(UList, const UList&);
+
+  //no corresponding operator= for this one...
+  UVar::operator int()
+  {
+    return ::uvalue_cast(uvar_get(name));
+  }
+
+  void UVar::__init()
+  {
+    //nothing to do
+  }
+
+  UVar::~UVar()
+  {
+  }
+
+  void echo(const char * format, ...)
+  {
+    va_list arg;
+    va_start(arg, format);
+    vfprintf(stderr, format, arg);
+    va_end(arg);
+  }
 }

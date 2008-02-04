@@ -86,7 +86,7 @@ UConnection::UConnection (UServer* userver,
     lobby_ (new object::Lobby (object::State(*this)))
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
-  lobby_->slot_set("lobby", lobby_);
+  lobby_->slot_set(object::symbol_lobby, lobby_);
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
 

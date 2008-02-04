@@ -27,9 +27,8 @@ namespace object
   void
   lobby_class_initialize ()
   {
-#define DECLARE(Name)							\
-    lobby_class->slot_set (#Name,					\
-			   new Primitive(lobby_class_ ## Name))
+#define DECLARE(Name)				\
+    DECLARE_PRIMITIVE(lobby, Name, Name)
     DECLARE (self);
 #undef DECLARE
   }

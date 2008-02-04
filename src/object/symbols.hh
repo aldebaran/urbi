@@ -20,27 +20,42 @@
 # define SYMBOLS_APPLY(Macro)			\
   Macro(AMPERSAND, &);				\
   Macro(AMPERSAND_AMPERSAND, &&);		\
+  Macro(Alien, Alien);				\
   Macro(CARET, ^);				\
+  Macro(Call, Call);				\
+  Macro(Code, Code);				\
+  Macro(Delegate, Delegate);			\
   Macro(EQ, =);					\
   Macro(EQ_EQ, ==);				\
   Macro(EQ_TILDA_EQ, =~=);			\
+  Macro(Float, Float);				\
   Macro(GT_GT, >>);				\
+  Macro(Integer, Integer);			\
   Macro(LT, <);					\
   Macro(LT_LT, <<);				\
+  Macro(List, List);				\
+  Macro(Lobby, Lobby);				\
   Macro(MINUS, -);				\
   Macro(MINUS_EQ, -=);				\
+  Macro(Object, Object);			\
   Macro(PERCENT, %);				\
   Macro(PERCENT_EQ, %=);			\
   Macro(PIPE, |);				\
   Macro(PIPE_PIPE, ||);				\
   Macro(PLUS, +);				\
   Macro(PLUS_EQ, +=);				\
+  Macro(Primitive, Primitive);			\
   Macro(SLASH, /);				\
   Macro(SLASH_EQ, /=);				\
   Macro(STAR, *);				\
   Macro(STAR_EQ, *=);				\
   Macro(STAR_STAR, **);				\
+  Macro(String, String);			\
   Macro(TILDA_EQ, ~=);				\
+  Macro(VisibilityScope, VisibilityScope);	\
+  Macro(__target, __target);			\
+  Macro(__uobject_base, __uobject_base);	\
+  Macro(__uobject_cname, __uobject_cname);	\
   Macro(abs, abs);				\
   Macro(acos, acos);				\
   Macro(addProto, addProto);			\
@@ -50,6 +65,7 @@
   Macro(asin, asin);				\
   Macro(atan, atan);				\
   Macro(back, back);				\
+  Macro(call, call);				\
   Macro(clone, clone);				\
   Macro(context, context);			\
   Macro(cos, cos);				\
@@ -67,8 +83,10 @@
   Macro(insert, insert);			\
   Macro(length, length);			\
   Macro(load, load);				\
+  Macro(lobby, lobby);				\
   Macro(locateSlot, locateSlot);		\
   Macro(log, log);				\
+  Macro(nil, nil);				\
   Macro(print, print);				\
   Macro(protos, protos);			\
   Macro(random, random);			\
@@ -78,6 +96,7 @@
   Macro(round, round);				\
   Macro(sameAs, sameAs);			\
   Macro(self, self);				\
+  Macro(sender, sender);			\
   Macro(set, set);				\
   Macro(setSlot, setSlot);			\
   Macro(sgn, sgn);				\
@@ -90,10 +109,14 @@
   Macro(sqrt, sqrt);				\
   Macro(tail, tail);				\
   Macro(tan, tan);				\
+  Macro(target, target);			\
   Macro(time, time);				\
   Macro(true, true);				\
   Macro(trunc, trunc);				\
-  Macro(updateSlot, updateSlot);
+  Macro(type, type);				\
+  Macro(uobject, uobject);			\
+  Macro(updateSlot, updateSlot);		\
+  Macro(void, void);
 
 namespace object
 {

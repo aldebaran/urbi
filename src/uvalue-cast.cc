@@ -22,7 +22,7 @@ urbi::UValue uvalue_cast(object::rObject o)
     throw object::WrongArgumentType
        (object::Object::kind_float, o->kind_get(), "cast");
     break;
-    
+
 #define HANDLE_TYPE(k, t) \
   case object::Object::k:  \
     res = o.cast<object::t>()->value_get(); \
@@ -30,15 +30,15 @@ urbi::UValue uvalue_cast(object::rObject o)
   HANDLE_TYPE(kind_float, Float);
   HANDLE_TYPE(kind_integer, Integer);
   HANDLE_TYPE(kind_string, String);
-#undef HANDLE_TYPE    
+#undef HANDLE_TYPE
   case object::Object::kind_list:
     {
       res.type = urbi::DATA_LIST;
       std::list<object::rObject>& t = o.cast<object::List>()->value_get();
       BOOST_FOREACH(object::rObject co, t)
-        res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
+	res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
     }
-    break;  
+    break;
   }
   return res;
 }
@@ -52,15 +52,15 @@ object::rObject object_cast(const urbi::UValue& v)
       return new object::Float(v.val);
       break;
     case urbi::DATA_STRING:
-      return new object::String(*v.stringValue);
+      return new object::String(libport::Symbol(*v.stringValue));
       break;
     case urbi::DATA_LIST:
       res = new object::List(object::list_traits::type());
       BOOST_FOREACH(urbi::UValue *cv, v.list->array)
-        res.cast<object::List>()->value_get().push_back(object_cast(*cv));
+	res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
     default:
-      throw object::WrongArgumentType(object::Object::kind_float, 
+      throw object::WrongArgumentType(object::Object::kind_float,
 			      object::Object::kind_float, "cast");
       break;
   }

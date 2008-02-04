@@ -18,14 +18,11 @@ namespace object
   | Alien primitives.  |
   `-------------------*/
 
-
-
   void
   alien_class_initialize ()
   {
 #define DECLARE(Name)							\
-    alien_class->slot_set (#Name,					\
-			  new Primitive(alien_class_ ## Name));
+    DECLARE_PRIMITIVE(alien, Name, Name);
 #undef DECLARE
   }
 

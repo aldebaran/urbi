@@ -679,7 +679,9 @@ expr:
     {
       // Compiled as
       // var id = Object.clone; do id { stmts };
-      ast::Exp* object_clone = call(@$, call (@$, 0, "Object"), "clone");
+      ast::Exp* object_clone = call(@$,
+				    call (@$, 0, object::symbol_Object),
+				    object::symbol_clone);
       $$ = new_flavor(@$, ast::flavor_semicolon,
 		      assign (@1+@2, $2, object_clone, true),
 		      new ast::Scope(@$, $2, $4));
@@ -905,14 +907,14 @@ stmt:
        */
 
       // var ___idx = <expr>
-      ast::Call *idx = call(@$, 0, "___idx");
+      ast::Call *idx = call(@$, 0, libport::Symbol::fresh());
       ast::Call	*init = assign(@$, idx, $3, true);
 
       // ___idx > 0
       ast::Call *test = call(@$, idx, new libport::Symbol(">"),
 			     new ast::Object(@$, new object::Float(0)));
       // ___idx--
-      ast::Call *dec = call(@$, idx, "--");
+      ast::Call *dec = call(@$, idx, libport::Symbol("--"));
 
       // Put all together into a while.
       $$ = for_loop(@$, $1, init, test, dec, $5);
@@ -1109,7 +1111,9 @@ number:
 expr:
   number        { $$ = new ast::Object(@$, new object::Float($1)); }
 | time_expr     { $$ = new ast::Object(@$, new object::Float($1)); }
-| "string"      { $$ = new ast::Object(@$, new object::String(take($1))); }
+| "string"
+  { $$ = new ast::Object(@$,
+			 new object::String(libport::Symbol(take($1)))); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
@@ -1136,14 +1140,14 @@ expr:
     ast::Exp* parent = call (@2, 0, $2);
     // Cannot use a fixed string here, otherwise two successive "new"
     // will conflict.  Delete the slot afterwards?
-    ast::Call* res = call (@$, 0, libport::Symbol::fresh("res"));
+    ast::Call* res = call (@$, 0, libport::Symbol::fresh());
     ast::Exp* decl = assign (@1 + @2,
 			     res,
-			     call(@1 + @2, parent, "clone"),
+			     call(@1 + @2, parent, object::symbol_clone),
 			     true);
 
     // res . init (args);
-    ast::Exp* init = call (@$, res, "init", $3);
+    ast::Exp* init = call (@$, res, object::symbol_init, $3);
 
     // The sequence.
     ast::Nary* seq = new ast::Nary ();

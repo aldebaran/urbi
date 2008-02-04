@@ -20,21 +20,28 @@ namespace object
   {
 
     // Don't forget our Strings are wrapped in Symbols.
-#define PRIMITIVE_OP_STRING(Name, Op, TypeRet)                  \
+#define PRIMITIVE_OP_STRING(Name, Op)				\
     static							\
-    r ## TypeRet						\
+    rFloat							\
     Name (rString& a, rString& b)                               \
     {                                                           \
-      return new TypeRet (a->value_get ().name_get()		\
-			  Op					\
-			  b->value_get ().name_get());		\
+      return new Float (a->value_get ().name_get()		\
+			Op					\
+			b->value_get ().name_get());		\
     }
 
-    PRIMITIVE_OP_STRING(add,  +, String);
-    PRIMITIVE_OP_STRING(equ, ==, Float);
-    PRIMITIVE_OP_STRING(lth,  <, Float);
+    PRIMITIVE_OP_STRING(equ, ==);
+    PRIMITIVE_OP_STRING(lth,  <);
 
 #undef PRIMITIVE_OP_STRING
+
+    static
+    rString
+    add (rString& a, rString& b)
+    {
+      return new String(libport::Symbol (a->value_get ().name_get()
+					 + b->value_get ().name_get()));
+    }
 
     /// Return string's length.
     static rFloat

@@ -39,9 +39,8 @@ namespace object
   void
   code_class_initialize ()
   {
-#define DECLARE(Name)							\
-    code_class->slot_set (#Name,					\
-			  new Primitive(code_class_ ## Name));
+#define DECLARE(Name)				\
+    DECLARE_PRIMITIVE(code, Name, Name)
     DECLARE (apply);
 #undef DECLARE
   }
