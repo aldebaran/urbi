@@ -43,36 +43,57 @@
   Macro(TILDA_EQ, ~=);				\
   Macro(abs, abs);				\
   Macro(acos, acos);				\
+  Macro(addProto, addProto);			\
+  Macro(apply, apply);				\
   Macro(args, args);				\
   Macro(argsCount, argsCount);			\
   Macro(asin, asin);				\
   Macro(atan, atan);				\
+  Macro(back, back);				\
   Macro(clone, clone);				\
   Macro(context, context);			\
   Macro(cos, cos);				\
+  Macro(dump, dump);				\
+  Macro(echo, echo);				\
+  Macro(eval, eval);				\
   Macro(evalArgAt, evalArgAt);			\
   Macro(evalArgs, evalArgs);			\
   Macro(exp, exp);				\
   Macro(false, false);				\
   Macro(front, front);				\
+  Macro(getSlot, getSlot);			\
+  Macro(head, head);				\
+  Macro(init, init);				\
   Macro(insert, insert);			\
   Macro(length, length);			\
+  Macro(load, load);				\
+  Macro(locateSlot, locateSlot);		\
   Macro(log, log);				\
+  Macro(print, print);				\
+  Macro(protos, protos);			\
   Macro(random, random);			\
+  Macro(reboot, reboot);			\
+  Macro(removeProto, removeProto);		\
+  Macro(removeSlot, removeSlot);		\
   Macro(round, round);				\
+  Macro(sameAs, sameAs);			\
   Macro(self, self);				\
   Macro(set, set);				\
+  Macro(setSlot, setSlot);			\
   Macro(sgn, sgn);				\
+  Macro(shutdown, shutdown);			\
   Macro(sin, sin);				\
   Macro(size, size);				\
-  Macro(sqrt, sqrt);				\
-  Macro(tan, tan);				\
-  Macro(tail, tail);				\
-  Macro(back, back);				\
+  Macro(sleep, sleep);				\
+  Macro(slotNames, slotNames);			\
   Macro(sort, sort);				\
-  Macro(head, head);				\
+  Macro(sqrt, sqrt);				\
+  Macro(tail, tail);				\
+  Macro(tan, tan);				\
+  Macro(time, time);				\
   Macro(true, true);				\
-  Macro(trunc, trunc);
+  Macro(trunc, trunc);				\
+  Macro(updateSlot, updateSlot);
 
 namespace object
 {

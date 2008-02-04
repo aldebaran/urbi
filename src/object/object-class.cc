@@ -301,9 +301,7 @@ namespace object
   {
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)							\
-    object_class->slot_set (#Name,					\
-			    new Primitive(object_class_ ## Name))
-
+    DECLARE_PRIMITIVE(object, Name, Name)
     DECLARE(clone);
     DECLARE(init);
 
