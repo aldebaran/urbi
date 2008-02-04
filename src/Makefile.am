@@ -13,7 +13,7 @@
 ## ---------------- ##
 
 include kernel.mk
-AUTOMAKE_OPTIONS += -Wno-portability
+AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 
 kernelinclude_HEADERS =
 dist_libkernel_la_SOURCES =
@@ -76,16 +76,14 @@ include $(top_srcdir)/build-aux/revision.mk
 
 include $(top_srcdir)/build-aux/svn-externals.mk
 
-include $(top_srcdir)/urbi-sdk-remote/src/liburbi/uobject/uobject.mk
-nodist_libkernel_la_SOURCES += $(uobject_sources)
+# include $(top_srcdir)/urbi-sdk-remote/src/liburbi/uobject/uobject.mk
+nodist_libkernel_la_SOURCES +=					\
+../urbi-sdk-remote/src/liburbi/uobject/uobject-hub-common.cc	\
+../urbi-sdk-remote/src/liburbi/uobject/uobject-common.cc	\
+../urbi-sdk-remote/src/liburbi/uobject/uvalue-common.cc		\
+../urbi-sdk-remote/src/liburbi/uobject/uvar-common.cc
 
 
-## ---------- ##
-## libport.la ##
-## ---------- ##
-
-noinst_LTLIBRARIES = libport.la
-dist_libport_la_SOURCES = $(libport_sources)
 
 
 ## ----------------- ##
@@ -113,12 +111,12 @@ urbi_console_LDADD = libkernel.la
 
 dist_libkernel_la_SOURCES +=			\
 console-server.cc				\
-$(top_srcdir)/lib/network/bsdnet/connection.hh	\
-$(top_srcdir)/lib/network/bsdnet/connection.cc	\
-$(top_srcdir)/lib/network/bsdnet/network.hh	\
-$(top_srcdir)/lib/network/bsdnet/network.cc
+../lib/network/bsdnet/connection.hh		\
+../lib/network/bsdnet/connection.cc		\
+../lib/network/bsdnet/network.hh		\
+../lib/network/bsdnet/network.cc
 
-libkernel_la_LIBADD = libport.la
+libkernel_la_LIBADD = $(top_builddir)/lib/libport/libport.la
 
 # FIXME: We might need these guys somewhere: $(PTHREAD_LIBS).  In
 # libkernel, or urbi_console_LDADD?

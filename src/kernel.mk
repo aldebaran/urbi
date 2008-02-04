@@ -1,14 +1,14 @@
 include $(top_srcdir)/libport/build-aux/init.mk
 # Get $(libport_la).
-lib_libport = ../lib/libport
-include $(top_srcdir)/lib/libport/libport-sources.mk
+# lib_libport = ../lib/libport
+# include $(top_srcdir)/lib/libport/libport-sources.mk
 
 # Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += -I$(srcdir) -I.
 
 # Find the uobject headers
-uobject_srcdir = $(top_srcdir)/urbi-sdk-remote/src/liburbi/uobject
-AM_CPPFLAGS += -I$(uobject_srcdir)
+uobject_reldir = ../urbi-sdk-remote/src/liburbi/uobject
+AM_CPPFLAGS += -I$(srcdir)/$(uobject_reldir)
 
 # Find the kernel, libport, etc. headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include -I$(top_builddir)/include
