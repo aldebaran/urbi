@@ -15,12 +15,12 @@
 
   var VisibilityScope.updateSlot = function(x, y)
   {
-    __target.updateSlot(x, getSlot("y"));
+   getSlot("__target").updateSlot(x, getSlot("y"));
   };
 
   var VisibilityScope.setSlot = function(x, y)
   {
-    __target.setSlot(x, getSlot("y"));
+   getSlot("__target").setSlot(x, getSlot("y"));
   };
 
   void
