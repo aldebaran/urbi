@@ -87,6 +87,7 @@
   Macro(lobby, lobby);				\
   Macro(locateSlot, locateSlot);		\
   Macro(log, log);				\
+  Macro(makeScope, makeScope);			\
   Macro(nil, nil);				\
   Macro(print, print);				\
   Macro(protos, protos);			\

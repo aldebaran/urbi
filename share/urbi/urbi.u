@@ -113,6 +113,14 @@ var Object.at_ = function
   void
 };
 
+## ------- ##
+## Scope.  ##
+## ------- ##
+
+class Object.Scope {
+  var init = function () { self.makeScope (true) }
+};
+
 ## --------- ##
 ## Constants ##
 ## --------- ##

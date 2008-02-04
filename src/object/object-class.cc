@@ -4,8 +4,9 @@
  */
 
 //#define ENABLE_DEBUG_TRACES
-#include "libport/compiler.hh"
-#include "libport/tokenizer.hh"
+#include <libport/compiler.hh>
+#include <libport/tokenizer.hh>
+#include <libport/ufloat.hh>
 #include <boost/lexical_cast.hpp>
 
 #include "parser/uparser.hh"
@@ -296,6 +297,22 @@ namespace object
   SLOT_CHANGE(update)
 #undef SLOT_CHANGE
 
+  static rObject
+  object_class_makeScope (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (2);
+    FETCH_ARG (1, Float);
+    try {
+      int is_local = libport::ufloat_to_boolean (arg1->value_get ());
+      args[0]->locals_set (is_local);
+    }
+    catch (boost::numeric::bad_numeric_cast& ue)
+    {
+      throw new BadInteger (arg1->value_get (), "makeScope");
+    }
+    return args[0];
+  }
+
   void
   object_class_initialize ()
   {
@@ -315,6 +332,7 @@ namespace object
     DECLARE(setSlot);
     DECLARE(updateSlot);
     DECLARE(locateSlot);
+    DECLARE(makeScope);
 
     DECLARE(apply);
 
