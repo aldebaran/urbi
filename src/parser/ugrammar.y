@@ -178,8 +178,8 @@
 		   // this new is stupid.  We need to clean
 		   // this set of call functions.
 		   new libport::Symbol(declare ? "setSlot" : "updateSlot"),
-		   new ast::String(lvalue->location_get(),
-				   lvalue->name_get().name_get()),
+		   new ast::Object(lvalue->location_get(),
+				   new object::String(lvalue->name_get())),
 		   value);
     }
 
@@ -1009,9 +1009,8 @@ lvalue:
     // There is an implicit target: the current object, 0.
     if ($$->args_get().size() != 1)
     {
-      std::string lvalue ($1 ? boost::lexical_cast<std::string>(*$1)
-			  : "<NULL>");
-      error(@$, (std::string ("invalid lvalue: ") + lvalue));
+      error(@$, (std::string ("invalid lvalue: ")
+		 + boost::lexical_cast<std::string>(*$1)));
       YYERROR;
     }
   }
@@ -1110,7 +1109,7 @@ number:
 expr:
   number        { $$ = new ast::Object(@$, new object::Float($1)); }
 | time_expr     { $$ = new ast::Object(@$, new object::Float($1)); }
-| "string"      { $$ = new ast::String(@$, take($1)); }
+| "string"      { $$ = new ast::Object(@$, new object::String(take($1))); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }

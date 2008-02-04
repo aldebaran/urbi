@@ -548,16 +548,6 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::String& e)
-  {
-    YIELD ();
-
-    PING ();
-    current_ = new object::String(e.value_get());
-    ECHO ("result: " << *current_);
-  }
-
-  void
   Runner::operator() (ast::Tag&)
   {
     // FIXME: Some code is missing here.

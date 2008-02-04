@@ -585,19 +585,6 @@ Object:
   printer:
     - '{ n.value_get()->print(ostr_); }'
 
-String:
-  super: Exp
-  attributes:
-    - value:
-        type: 'std::string'
-        access: r
-        desc: String value
-  printer:
-    - "'\"'"
-# FIXME: It really stinks not to be able to use $value here.
-    - libport::escape(n.value_get())
-    - "'\"'"
-
 List:
   super: Exp
   attributes:

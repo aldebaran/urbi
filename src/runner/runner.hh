@@ -90,7 +90,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((16,
+    VISITOR_VISIT_NODES((15,
 			 (
 			  And,
 			  Call,
@@ -104,7 +104,6 @@ namespace runner
 			  Pipe,
 			  Scope,
 			  Stmt,
-			  String,
 			  Tag,
 			  Throw,
 			  While
