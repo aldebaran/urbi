@@ -291,6 +291,19 @@ namespace object
   return o << "delegate" << libport::iendl;
   }
 
+  /*-------.
+  | clone. |
+  `-------*/
+
+  template<typename Traits>
+  inline rObject
+  Atom<Traits>::do_clone (rObject self) const
+  {
+    Atom<Traits>* res = new Atom<Traits> (value_get ());
+    res->proto_add (self);
+    return res;
+  }
+
   /*--------------------------.
   | Free standing functions.  |
   `--------------------------*/

@@ -141,6 +141,10 @@ namespace object
     virtual std::ostream& special_slots_dump (std::ostream& o) const;
     /// \}
 
+    /// Clone helper. We use it for dispatching purpose. self is the same
+    /// as this, but uses a shared_ptr.
+    virtual rObject do_clone (rObject self) const;
+
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;
 
@@ -169,7 +173,7 @@ namespace object
   // must be const too.
   // Not a member function because we want the shared_ptr, which
   // is not available via this.
-  rObject clone (rObject ref);
+  rObject clone (rObject proto);
 
   /// Lookup field in object hierarchy.
   /// \return the Object containing slot \b k, or 0 if not found.

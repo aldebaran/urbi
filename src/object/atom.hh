@@ -59,6 +59,9 @@ namespace object
 
     void value_set (value_ref_type v);
 
+    /// Clone helper.
+    virtual rObject do_clone (rObject self) const;
+
     /// Comparison methods
     /// \{
     bool operator< (const Atom& rhs) const;

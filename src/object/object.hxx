@@ -171,6 +171,13 @@ namespace object
     return *this;
   }
 
+  inline rObject
+  Object::do_clone (rObject self) const
+  {
+    rObject res = new Object;
+    res->proto_add (self);
+    return res;
+  }
 
   /*--------------------------.
   | Free standing functions.  |
@@ -178,11 +185,9 @@ namespace object
 
   inline
   rObject
-  clone (rObject ref)
+  clone (rObject proto)
   {
-    rObject res = new Object;
-    res->proto_add (ref);
-    return res;
+    return proto->do_clone (proto);
   }
 
   inline
