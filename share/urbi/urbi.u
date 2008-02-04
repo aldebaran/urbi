@@ -276,6 +276,10 @@ do List
 	return true;
     return false;
   };
+
+  # The Lisp-like name.
+  slotCopy ("front", "head");
+
   void;
 };
 

@@ -3,7 +3,7 @@
  ** \brief Creation of the URBI object list.
  */
 
-#include <boost/foreach.hpp>
+#include <libport/foreach.hh>
 
 #include "object/list-class.hh"
 #include "object/atom.hh"
@@ -20,35 +20,39 @@ namespace object
 
   namespace
   {
-    /// Concatenate a list in place
+    /// Concatenate two lists in place.
     /**
      * @return \a lhs
      */
     static rList
-    ip_concat(rList lhs, rList rhs)
+    PLUS_EQ(rList lhs, rList rhs)
     {
-      // FIXME: I can't explain why, but the line below result in an
-      // infinite loop. Use foreach instead for now.
-      //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
+      // FIXME: If we use the following code, then a += a does not
+      // end.
+      //
+      //      lhs->value_get().insert(lhs->value_get().end(),
+      //			      rhs->value_get().begin(),
+      //			      rhs->value_get().end());
 
-      BOOST_FOREACH (const rObject& o, rhs->value_get())
+      foreach (const rObject& o, rhs->value_get())
 	lhs->value_get().push_back(o);
 
       return lhs;
     }
-    /// Concatenate two list
+
+    /// Concatenate two lists.
     /**
      * @return A fresh list, concatenation of \a lhs and \a rhs
      */
     static rList
-    concat(rList lhs, rList rhs)
+    PLUS(rList lhs, rList rhs)
     {
       // Copy lhs
       list_traits::type l(lhs->value_get());
       rList res = new List(l);
 
       // Append rhs
-      ip_concat(res, rhs);
+      PLUS_EQ(res, rhs);
       return res;
     }
 
@@ -118,11 +122,11 @@ namespace object
 #define PRIMITIVE_1_LIST(Name)                  \
   PRIMITIVE_1(list, Name, Name, List)
 
-#define PRIMITIVE_2_LIST(Name, Type2)           \
-  PRIMITIVE_2(list, Name, Name, List, Type2)
+#define PRIMITIVE_2_LIST(Name)			\
+  PRIMITIVE_2(list, Name, Name, List, List)
 
-  PRIMITIVE_2_LIST(concat, List);
-  PRIMITIVE_2_LIST(ip_concat, List);
+  PRIMITIVE_2_LIST(PLUS);
+  PRIMITIVE_2_LIST(PLUS_EQ);
   PRIMITIVE_1_LIST(front);
   PRIMITIVE_1_LIST(back);
   PRIMITIVE_1_LIST(tail);
@@ -135,20 +139,17 @@ namespace object
   void
   list_class_initialize ()
   {
-#define DECLARE(Name, Implem)                   \
-    DECLARE_PRIMITIVE(list, Implem, Name)
+#define DECLARE(Name)                   \
+    DECLARE_PRIMITIVE(list, Name, Name)
 
-    DECLARE(concat, PLUS);
-    DECLARE(ip_concat, PLUS_EQ);
-    DECLARE(front, front);
-    DECLARE(front, head);
-    DECLARE(tail, tail);
-    DECLARE(back, back);
-    //DECLARE(insert, insert);
-    Primitive* p = new Primitive (list_class_insert);
-    list_class->slot_set (symbol_insert, p);
-    DECLARE (sort, sort);
-    DECLARE (size, size);
+    DECLARE(PLUS);
+    DECLARE(PLUS_EQ);
+    DECLARE(back);
+    DECLARE(front);
+    DECLARE(insert);
+    DECLARE(size);
+    DECLARE(sort);
+    DECLARE(tail);
 #undef DECLARE
   }
 
