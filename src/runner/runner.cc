@@ -383,15 +383,6 @@ namespace runner
     ECHO (AST(e) << " result: " << *current_);
   }
 
-  void
-  Runner::operator() (ast::Float& e)
-  {
-    YIELD ();
-
-    current_ = new object::Float (e.value_get());
-    ECHO ("result: " << *current_);
-  }
-
 
   void
   Runner::operator() (ast::Function& e)
@@ -502,6 +493,13 @@ namespace runner
     current_.reset ();
   }
 
+  void
+  Runner::operator() (ast::Object& e)
+  {
+    YIELD ();
+    current_ = e.value_get();
+    ECHO ("result: " << *current_);
+  }
 
   void
   Runner::operator() (ast::Pipe& e)

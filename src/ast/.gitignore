@@ -43,9 +43,6 @@ exp.cc
 flavorable.hh
 flavorable.hxx
 flavorable.cc
-float.hh
-float.hxx
-float.cc
 function.hh
 function.hxx
 function.cc
@@ -64,6 +61,9 @@ nary.cc
 noop.hh
 noop.hxx
 noop.cc
+object.hh
+object.hxx
+object.cc
 pipe.hh
 pipe.hxx
 pipe.cc

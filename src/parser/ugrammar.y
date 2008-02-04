@@ -883,7 +883,9 @@ stmt:
  */
 | "loop" stmt %prec CMDBLOCK
     {
-      $$ = new ast::While(@$, $1, new ast::Float(@$, 1), $2);
+      $$ = new ast::While(@$, $1,
+			  new ast::Object(@$, new object::Float(1)),
+			  $2);
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -908,7 +910,7 @@ stmt:
 
       // ___idx > 0
       ast::Call *test = call(@$, idx, new libport::Symbol(">"),
-			     new ast::Float(@$, 0));
+			     new ast::Object(@$, new object::Float(0)));
       // ___idx--
       ast::Call *dec = call(@$, idx, "--");
 
@@ -1106,8 +1108,8 @@ number:
 `-------*/
 
 expr:
-  number        { $$ = new ast::Float(@$, $1);        }
-| time_expr     { $$ = new ast::Float(@$, $1);        }
+  number        { $$ = new ast::Object(@$, new object::Float($1)); }
+| time_expr     { $$ = new ast::Object(@$, new object::Float($1)); }
 | "string"      { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }

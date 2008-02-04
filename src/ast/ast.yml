@@ -35,38 +35,30 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "std::string": "<string>"
-
-  "ufloat": '"libport/ufloat.h"'
-
-  "libport::Symbol": '"libport/symbol.hh"'
-  "symbols_type": '"ast/fwd.hh"'
-
-  "exps_type": '"ast/exp.hh"'
-
-  "decs_type": '"ast/dec.hh"'
-  "vardecs_type": '"ast/var-dec.hh"'
-
+  "exec_exps_type": '"ast/fwd.hh"'
   "exp_pair_type": '"ast/exp.hh"'
   "exp_pairs_type": '"ast/exp.hh"'
-
+  "exps_type": '"ast/exp.hh"'
   "flavor_type": '"ast/flavor.hh"'
-
-  "exec_exps_type" : '"ast/fwd.hh"'
-
-  "flow_exception_kind" : '"ast/flow-exception.hh"'
+  "flow_exception_kind": '"ast/flow-exception.hh"'
+  "libport::Symbol": '<libport/symbol.hh>'
+  "object::rObject": '"object/object.hh"'
+  "std::string": "<string>"
+  "symbols_type": '"ast/fwd.hh"'
+  "ufloat": '<libport/ufloat.h>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
 # Used by the cloner.
 non_visitable_types:
   - "bool"
-  - "ufloat"
-  - "std::string"
-  - "libport::Symbol"
-  - "loc"
   - "flavor_type"
   - "flow_exception_kind"
+  - "libport::Symbol"
+  - "loc"
+  - "object::rObject"
+  - "std::string"
+  - "ufloat"
 
 # In the cloner, these require "recurse_collection".
 collections:
@@ -582,18 +574,16 @@ Noop:
     - '"noop"'
 
 
-# Expressions
-
- 
-Float:
+# Native Urbi objects.
+Object:
   super: Exp
   attributes:
     - value:
-        type: ufloat
+        type: object::rObject
         access: r
-        desc: Float value
+        desc: Native Urbi object
   printer:
-    - $value
+    - '{ n.value_get()->print(ostr_); }'
 
 String:
   super: Exp
