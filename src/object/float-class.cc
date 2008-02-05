@@ -134,7 +134,7 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& ue)
     {
-      throw new BadInteger (val, func);
+      throw BadInteger (val, func);
     }
   }
 

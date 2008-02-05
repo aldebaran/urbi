@@ -308,7 +308,7 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& ue)
     {
-      throw new BadInteger (arg1->value_get (), "makeScope");
+      throw BadInteger (arg1->value_get (), "makeScope");
     }
     return args[0];
   }
