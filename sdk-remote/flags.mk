@@ -1,4 +1,4 @@
-include $(top_srcdir)/libport/build-aux/init.mk
+include $(top_srcdir)/build-aux/init.mk
 
 # Find libport's sources and config.h.
 AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
@@ -11,8 +11,8 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/uobject
 # Find version.hh.
 AM_CPPFLAGS += -I$(top_builddir)/src
 # Find sdk/config.h
-AM_CPPFLAGS += -I$(top_builddir)/libport
+AM_CPPFLAGS += -I$(top_builddir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 LIBADD       = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
-LIBADD      += $(top_builddir)/libport/lib/libport.la
+LIBADD      += $(top_builddir)/lib/libport/libport.la

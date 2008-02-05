@@ -12,7 +12,7 @@ SUBDIRS += . tests
 ## uobject.  ##
 ## --------- ##
 
-include $(top_srcdir)/libport/build-aux/svn-externals.mk
+include $(top_srcdir)/build-aux/svn-externals.mk
 uobject_srcdir = $(srcdir)/uobject
 include uobject/uobject.mk
 urbiinclude_HEADERS = $(uobject_headers)
@@ -61,4 +61,3 @@ install-exec-hook:
 	$(mkdir_p) $(DESTDIR)$(libdir)
 	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)$(envdir)/liburbi.la
 	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)$(envdir)/liburbi.a
-

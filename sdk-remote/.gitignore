@@ -2,5 +2,9 @@ INSTALL
 Makefile.in
 aclocal.m4
 autom4te.cache
+build-aux
 configure
+include/libport
+lib/libport
+sdk
 src/liburbi/uobject/urbi/ucallbacks.hh

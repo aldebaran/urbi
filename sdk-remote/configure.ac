@@ -3,11 +3,11 @@ m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.61])
 AC_INIT([URBI SDK Remote], [1.6pre],
-        [urbi-sdk-remote-bugs@gostai.com], [urbi-sdk-remote])
-URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2007])
+	[sdk-remote-bugs@gostai.com], [sdk-remote])
+URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2008])
 
 # Auxiliary files.
-AC_CONFIG_AUX_DIR([libport/build-aux])
+AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
@@ -29,10 +29,9 @@ URBI_DOC
 # URBI_LIBPORT AC_REQUIREs URBI_PTHREAD, so run the latter first.
 URBI_PTHREAD
 URBI_LIBPORT
-# liburbi-c++ is also in charge of Libport's test suite.
-AC_CONFIG_FILES([libport/tests/Makefile])
-AC_CONFIG_FILES([libport/build-aux/test.sh],
-                [chmod a=rx libport/build-aux/test.sh])
+AC_CONFIG_FILES([lib/libport/Makefile])
+AC_CONFIG_FILES([build-aux/test.sh],
+		[chmod a=rx build-aux/test.sh])
 
 AC_PROG_CC
 URBI_PROG_CXX

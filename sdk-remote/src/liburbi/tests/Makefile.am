@@ -1,6 +1,6 @@
 include $(top_srcdir)/flags.mk
-include $(top_srcdir)/libport/build-aux/check.mk
-include $(top_srcdir)/libport/build-aux/m4sh.mk
+include $(top_srcdir)/build-aux/check.mk
+include $(top_srcdir)/build-aux/m4sh.mk
 
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
