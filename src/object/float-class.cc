@@ -126,12 +126,26 @@ namespace object
     return res;
   }
 
+  static int
+  ufloat_to_int (libport::ufloat val, const std::string& func)
+  {
+    try {
+      return libport::ufloat_to_int (val);
+    }
+    catch (boost::numeric::bad_numeric_cast& ue)
+    {
+      throw new BadInteger (val, func);
+    }
+  }
+
   // This is quite hideous, to be cleaned once we have integers.
-# define INTEGER_BIN_OP(Name, Op)					\
-  static float								\
-  float_ ## Name (libport::ufloat lhs, libport::ufloat rhs)		\
-  {									\
-    return libport::to_long_long (lhs) Op libport::to_long_long (rhs);	\
+# define INTEGER_BIN_OP(Name, Op)				\
+  static float							\
+  float_ ## Name (libport::ufloat lhs, libport::ufloat rhs)	\
+  {								\
+    int ilhs = ufloat_to_int (lhs, #Op);			\
+    int irhs = ufloat_to_int (rhs, #Op);			\
+    return ilhs Op irhs;					\
   }
 
   INTEGER_BIN_OP(lshift, <<)
