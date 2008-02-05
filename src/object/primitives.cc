@@ -40,7 +40,7 @@ namespace object
     // "type" field for all of them, including Object.
 #define DECLARE(What, Name)						\
     What ## _class->slot_set(SYMBOL(type),				\
-			     new String (libport::Symbol(#Name)));
+			     new String (SYMBOL(Name)));
     APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
