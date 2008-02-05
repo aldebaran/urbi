@@ -20,6 +20,10 @@ namespace scheduler
       // Exception is lost, as written in the header file. However, be
       // nice and signal it.
       std::cerr << "Exception caught in job " << this << ",loosing it\n";
+
+      // Ensure the job is marked as terminated to avoid triggering the
+      // assertion below.
+      terminated_ = true;
     }
     yield ();
 
