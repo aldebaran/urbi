@@ -6,3 +6,4 @@ link: sdk		 -> libport/sdk
 link: lib/network/bsdnet -> libport/network/bsdnet
 
 external: tests -> urbivalid
+external: sdk-remote

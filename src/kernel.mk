@@ -7,7 +7,7 @@ include $(top_srcdir)/libport/build-aux/init.mk
 AM_CPPFLAGS += -I$(srcdir) -I.
 
 # Find the uobject headers
-uobject_reldir = ../urbi-sdk-remote/src/liburbi/uobject
+uobject_reldir = ../sdk-remote/src/liburbi/uobject
 AM_CPPFLAGS += -I$(srcdir)/$(uobject_reldir)
 
 # Find the kernel, libport, etc. headers.
