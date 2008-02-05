@@ -173,7 +173,7 @@ namespace object
 
   /// Unary or binary minus.
   static rObject
-  float_class_sub(runner::Runner&, objects_type args)
+  float_class_MINUS(runner::Runner&, objects_type args)
   {
     // FIXME: The error message requires 2 although 1 is ok.
     if (args.size () != 1 && args.size() != 2)
@@ -233,15 +233,15 @@ namespace object
 
   PRIMITIVE_2_FLOAT(LT_LT, float_lshift) // <<
   PRIMITIVE_2_FLOAT(GT_GT, float_rshift) // >>
-  PRIMITIVE_2_FLOAT(CARET,    float_xor)    // ^
+  PRIMITIVE_2_FLOAT(CARET,    float_xor) // ^
 
-  PRIMITIVE_OP_FLOAT(AMPSERSAND_AMPSERSAND, &&)
+  PRIMITIVE_OP_FLOAT(AMPERSAND_AMPERSAND, &&)
   PRIMITIVE_OP_FLOAT(PIPE_PIPE, ||)
 
   PRIMITIVE_OP_FLOAT(EQ_EQ, ==)
-  PRIMITIVE_2_FLOAT(TILDA_EQ, float_req) //REQ ~=
+  PRIMITIVE_2_FLOAT(TILDA_EQ, float_req)    //REQ ~=
   PRIMITIVE_2_FLOAT(EQ_TILDA_EQ, float_deq) //DEQ =~=
-  PRIMITIVE_2_FLOAT(PERCENT_EQ, float_peq) //PEQ %=
+  PRIMITIVE_2_FLOAT(PERCENT_EQ, float_peq)  //PEQ %=
 
   PRIMITIVE_OP_FLOAT(LT, <)
 
