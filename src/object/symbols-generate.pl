@@ -32,6 +32,10 @@ sub symbol ($)
 # Get the list of all the SYMBOL() uses.
 my $symbols = `git grep -E '(DECLARE|SYMBOL) *\\('`;
 
+# If git failed, do not proceed.
+die "git grep failed"
+    unless $symbols;
+
 my %symbol =
     map { $_ => symbol($_) }
 	($symbols =~ /\b(?:DECLARE|SYMBOL) *\(([^,\)]+)/gm);
@@ -58,7 +62,7 @@ print <<'EOF';
 
 # define SYMBOL(Sym) object::symbol_ ## Sym
 
-# define SYMBOLS_APPLY(Macro)			   \
+# define SYMBOLS_APPLY(Macro)			  \
 EOF
 
 for (sort keys %symbol)

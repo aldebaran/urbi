@@ -19,7 +19,7 @@
 
 # define SYMBOL(Sym) object::symbol_ ## Sym
 
-# define SYMBOLS_APPLY(Macro)			   \
+# define SYMBOLS_APPLY(Macro)			  \
   Macro(AMPERSAND_AMPERSAND, "&&");               \
   Macro(Alien, "Alien");                          \
   Macro(CARET, "^");                              \
