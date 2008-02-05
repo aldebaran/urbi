@@ -156,6 +156,33 @@
 The kernel doesn't consume more CPU than needed and avoids to do any busy
 loop. This should greatly dicrease the robots battery consumtion.
 
+=== Closures ===
+It is now possible to create local functions that are able to access local
+variables of their enclosing scope. For instance, the following code will
+create a function {{{makeCounter}}} which returns a new function acting
+as an independent counter, incrementing its result each time it is called.
+
+{{{
+var Object.makeCounter = function () {
+  var count = 0;
+  makeClosure (function () { count++ })
+};
+
+var counter1 = Object.makeCounter;
+counter1;
+[14760721] 0
+counter1;
+17192816] 1
+
+var counter2 = Object.makeCounter;
+counter2;
+[37131341] 2
+
+counter1;
+[45807168] 3
+
+}}}
+
 === Deprecated features are removed. ===
 
 The following constructs, deprecated in the 1.x series, are no
