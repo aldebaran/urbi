@@ -76,10 +76,10 @@ uobject_clone(runner::Runner&, object::objects_type l)
 rObject uobject_make_proto(const std::string& name)
 {
   rObject oc = object::clone(object::object_class);
-  oc->slot_set(object::symbol___uobject_cname,
+  oc->slot_set(SYMBOL(__uobject_cname),
 	       new object::String(libport::Symbol(name)));
-  oc->slot_set(object::symbol___uobject_base, oc);
-  oc->slot_set(object::symbol_clone, new object::Primitive(&uobject_clone));
+  oc->slot_set(SYMBOL(__uobject_base), oc);
+  oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
   return oc;
 }
 
@@ -94,10 +94,10 @@ rObject uobject_new(rObject proto, bool forceName)
 
   // Reparent r to proto base.
   r->proto_remove(object::object_class);
-  r->proto_add(proto->slot_get(object::symbol___uobject_base));
+  r->proto_add(proto->slot_get(SYMBOL(__uobject_base)));
 
   // Get UObject name.
-  rObject rcName = proto->slot_get(object::symbol___uobject_cname);
+  rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
   const std::string& cname = rcName.cast<object::String>()->value_get();
 
   // Get the name we will pass to uobject.

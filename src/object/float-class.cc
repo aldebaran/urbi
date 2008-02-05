@@ -272,29 +272,29 @@ namespace object
   float_class_initialize ()
   {
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Call, Name)                      \
+#define DECLARE(Name, Call)                      \
     DECLARE_PRIMITIVE(float, Name, Call)
 
-    DECLARE(add, PLUS);
-    DECLARE(div, SLASH);
-    DECLARE(mul, STAR);
-    DECLARE(sub, MINUS);
-    DECLARE(pow, STAR_STAR);
-    DECLARE(mod, PERCENT);
+    DECLARE(PLUS, add);
+    DECLARE(SLASH, div);
+    DECLARE(STAR, mul);
+    DECLARE(MINUS, sub);
+    DECLARE(STAR_STAR, pow);
+    DECLARE(PERCENT, mod);
 
-    DECLARE(lshift, LT_LT);
-    DECLARE(rshift, GT_GT);
-    DECLARE(xor,    CARET);
+    DECLARE(LT_LT, lshift);
+    DECLARE(GT_GT, rshift);
+    DECLARE(CARET,    xor);
 
-    DECLARE(land, AMPERSAND_AMPERSAND);
-    DECLARE(lor, PIPE_PIPE);
+    DECLARE(AMPERSAND_AMPERSAND, land);
+    DECLARE(PIPE_PIPE, lor);
 
-    DECLARE(equ, EQ_EQ);
-    DECLARE(req, TILDA_EQ);
-    DECLARE(deq, EQ_TILDA_EQ);
-    DECLARE(peq, PERCENT_EQ);
+    DECLARE(EQ_EQ, equ);
+    DECLARE(TILDA_EQ, req);
+    DECLARE(EQ_TILDA_EQ, deq);
+    DECLARE(PERCENT_EQ, peq);
 
-    DECLARE(lth, LT);
+    DECLARE(LT, lth);
 #undef  DECLARE
 
 #define DECLARE(Name)                      \

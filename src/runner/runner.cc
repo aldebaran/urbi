@@ -160,7 +160,7 @@ namespace runner
     // Formal argument iterator.
     ast::symbols_type::const_iterator fi;
     // Scope in which to evaluate the function, which may be nil
-    rObject scope = func->slot_get (object::symbol_context);
+    rObject scope = func->slot_get (SYMBOL(context));
 
     PING ();
     // Create a new object to store the arguments. If a scope has been
@@ -176,7 +176,7 @@ namespace runner
     ei = args.begin();
     if (scope == object::nil_class)
     {
-      bound_args->slot_set (object::symbol_self, *ei);
+      bound_args->slot_set (SYMBOL(self), *ei);
       // self is also the proto of the function outer scope, so that
       // we look for non-local identifiers in the target itself.
       bound_args->proto_add (*ei);
@@ -200,7 +200,7 @@ namespace runner
     else
     {
       assert (call_message);
-      bound_args->slot_set (object::symbol_call, call_message);
+      bound_args->slot_set (SYMBOL(call), call_message);
     }
 
     ECHO("bound args: " << *bound_args);
@@ -309,18 +309,18 @@ namespace runner
     rObject res = object::clone (object::call_class);
 
     // Set the sender to be the current self. self must always exist.
-    res->slot_set (object::symbol_sender,
-		   locals_->slot_get (object::symbol_self));
+    res->slot_set (SYMBOL(sender),
+		   locals_->slot_get (SYMBOL(self)));
 
     // Set the target to be the object on which the function is applied.
-    res->slot_set (object::symbol_target, tgt);
+    res->slot_set (SYMBOL(target), tgt);
 
     // Set the args to be the unevaluated expressions, including the target.
     // We use an Alien here.
-    res->slot_set (object::symbol_args, box(const ast::exps_type&, args));
+    res->slot_set (SYMBOL(args), box(const ast::exps_type&, args));
 
     // Store the current context in which the arguments must be evaluated.
-    res->slot_set (object::symbol_context, locals_);
+    res->slot_set (SYMBOL(context), locals_);
 
     return res;
   }
@@ -533,13 +533,13 @@ namespace runner
       target = eval(*e.target_get());
       // Be safe, do not inherit from VisibilityScope but copy the slots.
       rObject vscope =
-	object::object_class->slot_get(object::symbol_VisibilityScope);
-      locals->slot_set(object::symbol_setSlot,
-		       vscope->slot_get(object::symbol_setSlot));
-      locals->slot_set(object::symbol_updateSlot,
-		       vscope->slot_get(object::symbol_updateSlot));
-      locals->slot_set(object::symbol_self, target);
-      locals->slot_set(object::symbol___target, target);
+	object::object_class->slot_get(SYMBOL(VisibilityScope));
+      locals->slot_set(SYMBOL(setSlot),
+		       vscope->slot_get(SYMBOL(setSlot)));
+      locals->slot_set(SYMBOL(updateSlot),
+		       vscope->slot_get(SYMBOL(updateSlot)));
+      locals->slot_set(SYMBOL(self), target);
+      locals->slot_set(SYMBOL(__target), target);
       locals->proto_add(target);
     }
 

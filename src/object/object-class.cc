@@ -104,7 +104,7 @@ namespace object
   object_class_sameAs(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    return args[0]->slot_get((args[0] == args[1]) ? symbol_true: symbol_false);
+    return args[0]->slot_get((args[0] == args[1]) ? SYMBOL(true): SYMBOL(false));
   }
 
 

@@ -109,7 +109,7 @@ namespace object
     else if (locals_ && !l.locals_)
     {
       // Local->class: copyonwrite to "self".
-      rObject self = slot_get(symbol_self);
+      rObject self = slot_get(SYMBOL(self));
       assert(self);
       if (self.get() == this)
 	slots_[k] = o;

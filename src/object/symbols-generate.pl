@@ -1,3 +1,41 @@
+#! /usr/bin/perl -w
+
+use strict;
+
+my %char =
+(
+    'AND' => '&',
+    'CARET' => '^',
+    'EQ' => '=',
+    'GT' => '>',
+    'LT' => '<',
+    'MINUS' => '-',
+    'PERCENT' => '%',
+    'PIPE' => '|',
+    'PLUS' => '+',
+    'SLASH' => '/',
+    'STAR' => '*',
+    'TILDA' => '~',
+);
+
+# Convert a symbol name into its representation.
+sub symbol ($)
+{
+    my ($res) = @_;
+    while (my ($code, $char) = each %char)
+    {
+	$res =~ s/_?$code/$char/g;
+    }
+    $res;
+}
+
+# Get the list of all the SYMBOL() uses.
+my $symbols = `git grep -E '(DECLARE|SYMBOL) *\\('`;
+my %symbol = 
+    map { $_ => symbol($_) }
+        ($symbols =~ /\b(?:DECLARE|SYMBOL) *\(([^,\)]*)/gm);
+
+print <<'EOF';
 /**
  ** \file object/symbols.hh
  ** \brief Frequently used symbol names.
@@ -20,6 +58,14 @@
 # define SYMBOL(Sym) object::symbol_ ## Sym
 
 # define SYMBOLS_APPLY(Macro)			   \
+EOF
+
+for (sort keys %symbol)
+{
+    printf "  %-48s\\\n", "Macro($_, \"$symbol{$_}\");";
+}
+
+print <<'EOF';
   /* Backslash terminator. */
 
 namespace object
@@ -35,3 +81,4 @@ namespace object
 } // namespace object
 
 #endif // !OBJECT_SYMBOLS_HH
+EOF

@@ -133,7 +133,7 @@ namespace object
     try
     {
       // Should be an rString.
-      o << slot_get(symbol_type).cast<String>()->value_get ();
+      o << slot_get(SYMBOL(type)).cast<String>()->value_get ();
     }
     catch (UrbiException&)
     {}

@@ -27,14 +27,14 @@ namespace object
   static const ast::exps_type&
   args_get (const rObject& self)
   {
-    const rObject& alien_args = self->slot_get (symbol_args);
+    const rObject& alien_args = self->slot_get (SYMBOL(args));
     return unbox (const ast::exps_type&, alien_args);
   }
 
   static rObject
   context_get (const rObject& self)
   {
-    return self->slot_get (symbol_context);
+    return self->slot_get (SYMBOL(context));
   }
 
   static rObject
@@ -52,7 +52,7 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& e)
     {
-      throw BadInteger (arg1->value_get (), symbol_evalArgAt);
+      throw BadInteger (arg1->value_get (), SYMBOL(evalArgAt));
     }
 
     if (n < 0 || n >= static_cast<int>(func_args.size ()))

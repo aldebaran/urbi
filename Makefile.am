@@ -50,6 +50,14 @@ include_libport = include/libport
 include include/libport/libport.mk
 
 
+## ------------------------------------- ##
+## Generate the list of symbols we use.  ##
+## ------------------------------------- ##
+
+.PHONY: symbols
+symbols:
+	$(MAKE) $(AM_MAKEFLAGS) -C src $@
+
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##

@@ -1,3 +1,17 @@
+## ------------------------------------- ##
+## Generate the list of symbols we use.  ##
+## ------------------------------------- ##
+
+.PHONY: symbols
+symbols:
+	rm -f $(srcdir)/object/symbols.hh
+	$(MAKE) $(AM_MAKEFLAGS) $(srcdir)/object/symbols.hh
+$(srcdir)/object/symbols.hh:
+	perl -w $(srcdir)/object/symbols-generate.pl >$@.tmp
+	$(top_srcdir)/build-aux/move-if-change $@.tmp $@
+
+
+
 dist_libkernel_la_SOURCES +=			\
 object/alien.hh					\
 object/alien.hxx				\

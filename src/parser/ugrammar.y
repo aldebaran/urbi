@@ -680,8 +680,8 @@ expr:
       // Compiled as
       // var id = Object.clone; do id { stmts };
       ast::Exp* object_clone = call(@$,
-				    call (@$, 0, object::symbol_Object),
-				    object::symbol_clone);
+				    call (@$, 0, SYMBOL(Object)),
+				    SYMBOL(clone));
       $$ = new_flavor(@$, ast::flavor_semicolon,
 		      assign (@1+@2, $2, object_clone, true),
 		      new ast::Scope(@$, $2, $4));
@@ -1143,11 +1143,11 @@ expr:
     ast::Call* res = call (@$, 0, libport::Symbol::fresh());
     ast::Exp* decl = assign (@1 + @2,
 			     res,
-			     call(@1 + @2, parent, object::symbol_clone),
+			     call(@1 + @2, parent, SYMBOL(clone)),
 			     true);
 
     // res . init (args);
-    ast::Exp* init = call (@$, res, object::symbol_init, $3);
+    ast::Exp* init = call (@$, res, SYMBOL(init), $3);
 
     // The sequence.
     ast::Nary* seq = new ast::Nary ();

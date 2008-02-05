@@ -49,6 +49,24 @@ namespace object
   Macro(object,    Object)				\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)
 
+  /*
+    Help the generation of precompiled symbols.
+
+    SYMBOL(Alien)
+    SYMBOL(Call)
+    SYMBOL(Code)
+    SYMBOL(Delegate)
+    SYMBOL(Float)
+    SYMBOL(Integer)
+    SYMBOL(List)
+    SYMBOL(Lobby)
+    SYMBOL(Object)
+    SYMBOL(Primitive)
+    SYMBOL(String)
+    SYMBOL(Task)
+
+  */
+
   // All the atoms.
   template <typename Traits>
   class Atom;

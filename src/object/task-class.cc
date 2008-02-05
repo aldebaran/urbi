@@ -32,10 +32,10 @@ namespace object
     rList locals = new List (std::list<rObject> ());
     ast::Exp *body = arg1->value_get ().body_get ();
     rRunner new_runner = new runner::Runner (r.lobby_get(),
-					     args[1]->slot_get (symbol_context),
+					     args[1]->slot_get (SYMBOL(context)),
 					     r.scheduler_get (),
 					     body);
-    args[0]->slot_set (symbol_runner, box (rRunner, new_runner));
+    args[0]->slot_set (SYMBOL(runner), box (rRunner, new_runner));
     new_runner->start_job ();
 
     return args[0];

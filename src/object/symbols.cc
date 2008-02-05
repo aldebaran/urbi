@@ -9,7 +9,7 @@ namespace object
 {
 
 # define SYMBOL_DEFINE(Name, Value)		\
-  libport::Symbol symbol_ ## Name (#Value);
+  libport::Symbol symbol_ ## Name (Value);
 
   SYMBOLS_APPLY(SYMBOL_DEFINE);
 

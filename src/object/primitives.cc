@@ -39,7 +39,7 @@ namespace object
     // from which any String is a clone, we can initialize the
     // "type" field for all of them, including Object.
 #define DECLARE(What, Name)						\
-    What ## _class->slot_set(symbol_type,				\
+    What ## _class->slot_set(SYMBOL(type),				\
 			     new String (libport::Symbol(#Name)));
     APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
@@ -60,13 +60,13 @@ namespace object
 
     // Create and register void
     void_class = clone(object_class);
-    object_class->slot_set(symbol_void, void_class);
-    void_class->slot_set(symbol_type, new String(symbol_void));
+    object_class->slot_set(SYMBOL(void), void_class);
+    void_class->slot_set(SYMBOL(type), new String(SYMBOL(void)));
 
     // Create and register nil
     nil_class = clone (object_class);
-    object_class->slot_set(symbol_nil, nil_class);
-    nil_class->slot_set (symbol_type, new String (symbol_nil));
+    object_class->slot_set(SYMBOL(nil), nil_class);
+    nil_class->slot_set (SYMBOL(type), new String (SYMBOL(nil)));
   }
 
   rObject void_class;
