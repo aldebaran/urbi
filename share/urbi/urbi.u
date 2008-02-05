@@ -270,10 +270,11 @@ do List
 {
   var has = function (e)
   {
-    # FIXME: for-in is not implemented yet.
-    for (var t = self; t.size; t = t.tail)
-      if (t.front == e)
+    for i in self
+    {
+      if (i == e)
 	return true;
+    };
     return false;
   };
 
