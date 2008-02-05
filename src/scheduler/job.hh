@@ -6,10 +6,12 @@
 #ifndef SCHEDULER_JOB_HH
 # define SCHEDULER_JOB_HH
 
-# include <libport/ufloat.hh>
+# include <libport/utime.hh>
 
 # include "scheduler/fwd.hh"
-# include "scheduler/libcoroutine/Coro.h"
+
+// From libcoroutine/Coro.h.
+class Coro;
 
 namespace scheduler
 {
@@ -47,7 +49,7 @@ namespace scheduler
     void yield_front ();
 
     /// Ditto, but ask not to be woken up before the deadline.
-    void yield_until (libport::ufloat deadline);
+    void yield_until (libport::utime_t deadline);
 
     /// Wait for another job to terminate before resuming execution of
     /// the current one. If the other job has already terminated, the

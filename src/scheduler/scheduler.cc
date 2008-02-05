@@ -66,7 +66,7 @@ namespace scheduler
     }
 
     // Start deferred jobs
-    for (libport::ufloat current_time = ::urbiserver->getTime ();
+    for (libport::utime_t current_time = ::urbiserver->getTime ();
 	 !deferred_jobs_.empty();
 	 deferred_jobs_.pop ())
     {

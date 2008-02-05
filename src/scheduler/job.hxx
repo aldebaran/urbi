@@ -8,6 +8,7 @@
 
 # include <cassert>
 # include "scheduler/scheduler.hh"
+# include "scheduler/libcoroutine/Coro.h"
 
 namespace scheduler
 {
@@ -65,7 +66,7 @@ namespace scheduler
   }
 
   inline void
-  Job::yield_until (libport::ufloat deadline)
+  Job::yield_until (libport::utime_t deadline)
   {
     scheduler_->resume_scheduler_until (this, deadline);
   }
