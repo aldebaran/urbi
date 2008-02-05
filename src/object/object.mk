@@ -7,9 +7,8 @@ symbols:
 	rm -f $(srcdir)/object/symbols.hh
 	$(MAKE) $(AM_MAKEFLAGS) $(srcdir)/object/symbols.hh
 $(srcdir)/object/symbols.hh:
-	perl -w $(srcdir)/object/symbols-generate.pl >$@.tmp
+	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$@.tmp
 	$(top_srcdir)/build-aux/move-if-change $@.tmp $@
-
 
 
 dist_libkernel_la_SOURCES +=			\

@@ -225,25 +225,25 @@ namespace object
   PRIMITIVE_OP_V(float, Name, Op, Float, Float, Float)
 
   // Binary arithmetics operators.
-  PRIMITIVE_OP_FLOAT(add, +)
-  PRIMITIVE_2_FLOAT(div, float_div)
-  PRIMITIVE_OP_FLOAT(mul, *)
-  PRIMITIVE_2_FLOAT(mod, float_mod)
-  PRIMITIVE_2_FLOAT(pow, powf)
+  PRIMITIVE_OP_FLOAT(PLUS, +)
+  PRIMITIVE_2_FLOAT(SLASH, float_div)
+  PRIMITIVE_OP_FLOAT(STAR, *)
+  PRIMITIVE_2_FLOAT(PERCENT, float_mod)
+  PRIMITIVE_2_FLOAT(STAR_STAR, powf)
 
-  PRIMITIVE_2_FLOAT(lshift, float_lshift) // <<
-  PRIMITIVE_2_FLOAT(rshift, float_rshift) // >>
-  PRIMITIVE_2_FLOAT(xor,    float_xor)    // ^
+  PRIMITIVE_2_FLOAT(LT_LT, float_lshift) // <<
+  PRIMITIVE_2_FLOAT(GT_GT, float_rshift) // >>
+  PRIMITIVE_2_FLOAT(CARET,    float_xor)    // ^
 
-  PRIMITIVE_OP_FLOAT(land, &&)
-  PRIMITIVE_OP_FLOAT(lor, ||)
+  PRIMITIVE_OP_FLOAT(AMPSERSAND_AMPSERSAND, &&)
+  PRIMITIVE_OP_FLOAT(PIPE_PIPE, ||)
 
-  PRIMITIVE_OP_FLOAT(equ, ==)
-  PRIMITIVE_2_FLOAT(req, float_req) //REQ ~=
-  PRIMITIVE_2_FLOAT(deq, float_deq) //DEQ =~=
-  PRIMITIVE_2_FLOAT(peq, float_peq) //PEQ %=
+  PRIMITIVE_OP_FLOAT(EQ_EQ, ==)
+  PRIMITIVE_2_FLOAT(TILDA_EQ, float_req) //REQ ~=
+  PRIMITIVE_2_FLOAT(EQ_TILDA_EQ, float_deq) //DEQ =~=
+  PRIMITIVE_2_FLOAT(PERCENT_EQ, float_peq) //PEQ %=
 
-  PRIMITIVE_OP_FLOAT(lth, <)
+  PRIMITIVE_OP_FLOAT(LT, <)
 
   PRIMITIVE_0_FLOAT(sin, sin)
   PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, asin, -1, 1)
@@ -272,33 +272,29 @@ namespace object
   float_class_initialize ()
   {
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Name, Call)                      \
-    DECLARE_PRIMITIVE(float, Name, Call)
-
-    DECLARE(PLUS, add);
-    DECLARE(SLASH, div);
-    DECLARE(STAR, mul);
-    DECLARE(MINUS, sub);
-    DECLARE(STAR_STAR, pow);
-    DECLARE(PERCENT, mod);
-
-    DECLARE(LT_LT, lshift);
-    DECLARE(GT_GT, rshift);
-    DECLARE(CARET,    xor);
-
-    DECLARE(AMPERSAND_AMPERSAND, land);
-    DECLARE(PIPE_PIPE, lor);
-
-    DECLARE(EQ_EQ, equ);
-    DECLARE(TILDA_EQ, req);
-    DECLARE(EQ_TILDA_EQ, deq);
-    DECLARE(PERCENT_EQ, peq);
-
-    DECLARE(LT, lth);
-#undef  DECLARE
-
 #define DECLARE(Name)                      \
     DECLARE_PRIMITIVE(float, Name, Name)
+
+    DECLARE(PLUS);
+    DECLARE(SLASH);
+    DECLARE(STAR);
+    DECLARE(MINUS);
+    DECLARE(STAR_STAR);
+    DECLARE(PERCENT);
+
+    DECLARE(LT_LT);
+    DECLARE(GT_GT);
+    DECLARE(CARET);
+
+    DECLARE(AMPERSAND_AMPERSAND);
+    DECLARE(PIPE_PIPE);
+
+    DECLARE(EQ_EQ);
+    DECLARE(TILDA_EQ);
+    DECLARE(EQ_TILDA_EQ);
+    DECLARE(PERCENT_EQ);
+
+    DECLARE(LT);
 
     DECLARE(clone);
     DECLARE(set);

@@ -4,7 +4,7 @@ use strict;
 
 my %char =
 (
-    'AND' => '&',
+    'AMPERSAND' => '&',
     'CARET' => '^',
     'EQ' => '=',
     'GT' => '>',
@@ -31,9 +31,10 @@ sub symbol ($)
 
 # Get the list of all the SYMBOL() uses.
 my $symbols = `git grep -E '(DECLARE|SYMBOL) *\\('`;
-my %symbol = 
+
+my %symbol =
     map { $_ => symbol($_) }
-        ($symbols =~ /\b(?:DECLARE|SYMBOL) *\(([^,\)]*)/gm);
+	($symbols =~ /\b(?:DECLARE|SYMBOL) *\(([^,\)]+)/gm);
 
 print <<'EOF';
 /**
