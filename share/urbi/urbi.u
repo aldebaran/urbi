@@ -291,7 +291,16 @@ do Object
   { 
     warn("`size(list)' is deprecated, use `list.size'");
     l.size
-   };
+  };
+
+  var seq = function(n)
+  {
+    var result = [];
+    for (var i = 1; i <= n; i++)
+      result.insert(i);
+    result
+  };
+
   void;
 };
 
