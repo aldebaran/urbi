@@ -54,6 +54,13 @@ namespace runner
     yield ();                                   \
   } while (0)
 
+#define MAYBE_YIELD(Flavor)			\
+  do						\
+  {						\
+    if (Flavor == ast::flavor_semicolon)	\
+      YIELD();					\
+  } while (0)
+
 #define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
   catch (Type flow_exception)                                   \
   {                                                             \
@@ -561,8 +568,6 @@ namespace runner
   void
   Runner::operator() (ast::While& e)
   {
-    bool broken;
-
     // Evaluate the test.
     while (true)
     {
@@ -573,12 +578,10 @@ namespace runner
       if (!IS_TRUE(current_))
 	break;
 
-      if (e.flavor_get() == ast::flavor_semicolon)
-	YIELD();
+      MAYBE_YIELD(e.flavor_get());
 
       JECHO ("while body", e.body_get ());
 
-      broken = false;
       try {
 	operator() (e.body_get());
       }
@@ -587,10 +590,8 @@ namespace runner
 	// FIXME: Fix for flavor "," and "&".
 	if (e.flavor_get() == ast::flavor_semicolon ||
 	    e.flavor_get() == ast::flavor_pipe)
-	  broken = true;
+	  break;
       };
-      if (broken)
-	break;
     }
     // As far as I know, `while' doesn't return a value in URBI.
     current_.reset ();
@@ -683,8 +684,7 @@ namespace runner
 	foreach (rObject o, VALUE(l, object::List))
 	{
 	  locals_->slot_get(e.index_get()) = o;
-	  if (e.flavor_get() == ast::flavor_semicolon)
-	    YIELD();
+	  MAYBE_YIELD(e.flavor_get());
 	  try
 	  {
 	    operator() (e.body_get());
