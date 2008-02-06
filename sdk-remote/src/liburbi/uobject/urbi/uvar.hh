@@ -124,6 +124,7 @@ namespace urbi
     /// not be valid after the calling function returns. Changes to
     /// the other fields of the structure have no effect..
     operator USound();
+
     operator ufloat ();
     operator std::string ();
     operator UList();
