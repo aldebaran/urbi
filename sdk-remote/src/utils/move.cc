@@ -315,7 +315,7 @@ namespace urbi
     if (tag)
       strcpy(usertag, tag);
     else
-      strcpy(usertag, "notag");
+      strcpy(usertag, "");
     if (bestnummoves == -1 || bestnummoves == 0)
     {
       distance = 0;
@@ -447,7 +447,7 @@ namespace urbi
   if (tag)
     strcpy(usertag, tag);
   else
-    strcpy(usertag, "notag");
+    strcpy(usertag, "");
   if (bestnummoves == -1 || bestnummoves == 0)
   {
     distance = 0;
