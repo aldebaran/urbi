@@ -399,6 +399,7 @@ FLAVOR   [;|,&]?
 "<<"            RETURN_OP(LT_LT);
 "=="            RETURN_OP(EQU);
 "=~="           RETURN_OP(DEQ);
+"~="            RETURN_OP(REQ);
 ">"             RETURN_OP(GTH);
 ">="            RETURN_OP(GEQ);
 ">>"            RETURN_OP(GT_GT);
@@ -423,7 +424,6 @@ FLAVOR   [;|,&]?
 "{"             return token::TOK_LBRACE;
 "}"             return token::TOK_RBRACE;
 "~"             return token::TOK_TILDE;
-"~="            return token::TOK_REQ;
 
 "&"             RETURN_FLAVOR(AND, and);
 "|"             RETURN_FLAVOR(PIPE, pipe);
