@@ -486,7 +486,11 @@ namespace urbi
       else if (arg == "--help" || arg == "-h")
 	usage (argv[0]);
       else if (arg == "--host" || arg == "-H")
-	addr = libport::convert_argument<char*>(arg, argv[++i]);
+      {
+	// libport::convert_argument exits for us on error.
+	libport::convert_argument<std::string>(arg, argv[++i]);
+	addr = argv[i];
+      }
       else if (arg == "--port" || arg == "-p")
 	port = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--version" || arg == "-v")
