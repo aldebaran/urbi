@@ -398,8 +398,10 @@ FLAVOR   [;|,&]?
 "<="            RETURN_OP(LEQ);
 "<<"            RETURN_OP(LT_LT);
 "=="            RETURN_OP(EQU);
+"!="            RETURN_OP(NEQ);
 "=~="           RETURN_OP(DEQ);
 "~="            RETURN_OP(REQ);
+"%="            RETURN_OP(PEQ);
 ">"             RETURN_OP(GTH);
 ">="            RETURN_OP(GEQ);
 ">>"            RETURN_OP(GT_GT);
@@ -409,9 +411,7 @@ FLAVOR   [;|,&]?
 "||"            RETURN_OP(LOR);
 
 "="             return token::TOK_ASSIGN;
-"!="            RETURN_OP(NEQ);
 "$"             return token::TOK_DOLLAR;
-"%="            return token::TOK_PEQ;
 
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
