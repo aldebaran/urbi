@@ -13,11 +13,14 @@ k2-check:
 # while running make check.
 ENABLE_HARD_ERRORS = false
 
-# k2 tests that fail.
-XFAIL_TESTS +=					\
+# k2 tests that fail currently but need to be fixed soon.
+TFAIL_TESTS =					\
 2.x/closure.chk					\
-2.x/literal-string.chk				\
 2.x/nullary.chk
+
+# k2 tests that fail.
+TFAIL_TESTS +=					\
+2.x/literal-string.chk
 
 # Tests that are only for 1.x, and we don't want them in k2.
 # We should probably use different directories instead.
