@@ -34,10 +34,4 @@ class UString;
 class UTest;
 class UWaitCounter;
 
-// FIXME: Should not be here, but we don't want to export ast/ either.
-namespace ast
-{
-  class Ast;
-}
-
 #endif // !KERNEL_FWD_HH
