@@ -195,6 +195,52 @@
 	return new ast::Scope(l, 0, e);
     }
 
+    // Compiled as
+    //  {
+    //     var res = id . clone ();
+    //     res . init (args);
+    //     res;
+    //  }
+    //
+    // Used to be compiled as
+    //
+    //     id . clone () . init (args);
+    //
+    // but in that case the return value is that of the end of
+    // "init".  And we don't want to require the users to end "init"
+    // with "self".
+    static
+    ast::Scope*
+    desugar_new (const yy::parser::location_type& l,
+		 libport::Symbol* id, ast::exps_type* args)
+    {
+      // I wish I could use tweasts here...  Lord, help me.
+
+      // var res = id . clone ();
+      ast::Exp* parent = call (l, 0, id);
+      // Cannot use a fixed string here, otherwise two successive "new"
+      // will conflict.  Delete the slot afterwards?
+      ast::Call* res = call (l, 0, libport::Symbol::fresh());
+      ast::Exp* decl = assign (l,
+			       res,
+			       call(l, parent, SYMBOL(clone)),
+			       true);
+
+      // res . init (args);
+      ast::Exp* init = call (l, res, SYMBOL(init), args);
+
+      // The sequence.
+      ast::Nary* seq = new ast::Nary ();
+      seq->push_back (decl);
+      seq->back_flavor_set(ast::flavor_semicolon);
+      seq->push_back (init);
+      seq->back_flavor_set(ast::flavor_semicolon);
+      seq->push_back (res);
+
+      return scope (l, seq);
+    }
+
+
     /// When op can be either of the four cases.
     static
     ast::Exp*
@@ -994,8 +1040,15 @@ call:
   }
 ;
 
+// Instantiation looks a lot like a function call.
+%type <expr> new;
+new:
+  "new" "identifier" args { $$ = desugar_new (@$, $2, $3); }
+;
+
 expr:
-  call  { $$ = $1; }
+  new   { $$ = $1; }
+| call  { $$ = $1; }
 ;
 
 
@@ -1117,48 +1170,6 @@ expr:
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
-| "new" "identifier" args
-  {
-    // Compiled as
-    //  {
-    //     var res = id . clone ();
-    //     res . init (args);
-    //     res;
-    //  }
-    //
-    // Used to be compiled as
-    //
-    //     id . clone () . init (args);
-    //
-    // but in that case the return value is that of the end of
-    // "init".  And we don't want to require the users to end "init"
-    // with "self".
-
-    // I wish I could use tweasts here...  Lord, help me.
-
-    // var res = id . clone ();
-    ast::Exp* parent = call (@2, 0, $2);
-    // Cannot use a fixed string here, otherwise two successive "new"
-    // will conflict.  Delete the slot afterwards?
-    ast::Call* res = call (@$, 0, libport::Symbol::fresh());
-    ast::Exp* decl = assign (@1 + @2,
-			     res,
-			     call(@1 + @2, parent, SYMBOL(clone)),
-			     true);
-
-    // res . init (args);
-    ast::Exp* init = call (@$, res, SYMBOL(init), $3);
-
-    // The sequence.
-    ast::Nary* seq = new ast::Nary ();
-    seq->push_back (decl);
-    seq->back_flavor_set(ast::flavor_semicolon);
-    seq->push_back (init);
-    seq->back_flavor_set(ast::flavor_semicolon);
-    seq->push_back (res);
-
-    $$ = scope (@$, seq);
-  }
 ;
 
 
