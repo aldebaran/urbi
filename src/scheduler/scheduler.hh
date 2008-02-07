@@ -102,6 +102,12 @@ namespace scheduler
     /// Jobs waiting for something interesting to happen
     jobs if_change_jobs_;
 
+    /// The following fields represent running structures used in
+    /// work(). Jobs be removed from here just before they are started
+    /// or scheduled.
+    jobs to_start_;
+    jobs pending_;
+
     /// Current job
     Job* current_job_;
 

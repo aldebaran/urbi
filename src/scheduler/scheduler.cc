@@ -52,9 +52,9 @@ namespace scheduler
     bool job_started = !jobs_to_start_.empty ();
 
     // Start new jobs
-    jobs to_start;
-    std::swap (to_start, jobs_to_start_);
-    foreach (Job* job, to_start)
+    to_start_.clear ();
+    std::swap (to_start_, jobs_to_start_);
+    foreach (Job* job, to_start_)
     {
       assert (job);
       ECHO ("will start job " << job);
@@ -87,11 +87,11 @@ namespace scheduler
     }
 
     // Run all the jobs in the run queue once.
-    jobs pending;
-    std::swap (pending, jobs_);
+    pending_.clear ();
+    std::swap (pending_, jobs_);
 
-    ECHO (pending.size() << " jobs in the queue for this cycle");
-    foreach (Job* job, pending)
+    ECHO (pending_.size() << " jobs in the queue for this cycle");
+    foreach (Job* job, pending_)
     {
       assert (job);
       assert (!job->terminated ());
@@ -223,11 +223,15 @@ namespace scheduler
     if (!libport::has (jobs_to_start_, job))
       job->terminate_now ();
 
-    // Remove the job from the queues where it could be stored
+    // Remove the job from the queues where it could be stored.
     jobs_to_start_.remove (job);
     jobs_.remove (job);
     suspended_jobs_.remove (job);
     if_change_jobs_.remove (job);
+
+    // Remove it from live queues as well if the job is destroyed.
+    to_start_.remove (job);
+    pending_.remove (job);
 
     // We have no remove() on a priority queue, regenerate a queue without
     // this job.
