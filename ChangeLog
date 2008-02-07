@@ -1,5 +1,0 @@
-2008-01-29  Matthieu Nottale  <nottale@gostai.com>
-
-	Declare and bind time.
-	* src/object/object-class.cc (object_class_time): Do it.
-
