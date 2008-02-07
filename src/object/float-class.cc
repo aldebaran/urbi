@@ -52,70 +52,6 @@ namespace object
 #undef FCT_M_PROTECTED
 #undef FCT_OP_PROTECTED
 
-  static libport::ufloat
-  float_req (libport::ufloat l, libport::ufloat r)
-  {
-    // FIXME: get epsilontilde from environment
-
-    // ENSURE_COMPARISON ("Approximate", l, r);
-    // UVariable *epsilontilde =
-    //   ::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
-    // if (epsilontilde)
-    //   $EXEC$
-    // else
-    //   return 0;
-
-#define epsilontilde 0.0001
-    return fabs(l - r) <= epsilontilde;
-#undef epsilontilde
-  }
-
-  static float
-  float_deq (libport::ufloat l, libport::ufloat r)
-  {
-    // FIXME: get deltas for l and r
-
-    // ENSURE_COMPARISON ("Approximate", l, r);
-    libport::ufloat dl = 0.f;
-    libport::ufloat dr = 0.f;
-    // dl = 0, get l->delta
-    // dr = 0, get r->delta
-
-    return fabs(l - r) <= dl + dr;
-  }
-
-  static float
-  float_peq (libport::ufloat l, libport::ufloat r)
-  {
-    // FIXME: get epsilonpercent from environment
-    // FIXME: return error on div by 0
-
-    // ENSURE_COMPARISON ("Approximate", l, r);
-    // UVariable *epsilonpercent =
-    //   ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
-    // if (epsilonpercent)
-    //   $EXEC$
-    // else
-    //   return 0;
-
-    if (r == 0)
-      // FIXME: error
-      return 0;
-
-# define epsilonpercent 0.0001
-    return fabs(1.f - l / r) < epsilonpercent;
-# undef epsilonpercent
-  }
-
-  static float
-  float_sgn (libport::ufloat x)
-  {
-    return
-      0 < x ?  1 :
-      x < 0 ? -1 :
-      0;
-  }
-
   static float
   float_random (libport::ufloat x)
   {
@@ -253,9 +189,6 @@ namespace object
   PRIMITIVE_OP_FLOAT(PIPE_PIPE, ||)
 
   PRIMITIVE_OP_FLOAT(EQ_EQ, ==)
-  PRIMITIVE_2_FLOAT(TILDA_EQ, float_req)    //REQ ~=
-  PRIMITIVE_2_FLOAT(EQ_TILDA_EQ, float_deq) //DEQ =~=
-  PRIMITIVE_2_FLOAT(PERCENT_EQ, float_peq)  //PEQ %=
 
   PRIMITIVE_OP_FLOAT(LT, <)
 
@@ -265,7 +198,6 @@ namespace object
   PRIMITIVE_0_FLOAT_CHECK_RANGE(acos, acos, -1, 1)
   PRIMITIVE_0_FLOAT(tan, tan)
   PRIMITIVE_0_FLOAT(atan, atan)
-  PRIMITIVE_0_FLOAT(sgn, float_sgn)
   PRIMITIVE_0_FLOAT(abs, fabs)
   PRIMITIVE_0_FLOAT(exp, exp)
   PRIMITIVE_0_FLOAT_CHECK_POSITIVE(log, log)
@@ -304,9 +236,6 @@ namespace object
     DECLARE(PIPE_PIPE);
 
     DECLARE(EQ_EQ);
-    DECLARE(TILDA_EQ);
-    DECLARE(EQ_TILDA_EQ);
-    DECLARE(PERCENT_EQ);
 
     DECLARE(LT);
 
@@ -319,7 +248,6 @@ namespace object
     DECLARE(acos);
     DECLARE(tan);
     DECLARE(atan);
-    DECLARE(sgn);
     DECLARE(abs);
     DECLARE(exp);
     DECLARE(log);

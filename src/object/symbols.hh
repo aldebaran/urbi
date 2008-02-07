@@ -27,7 +27,6 @@
   Macro(Code, "Code");                            \
   Macro(Delegate, "Delegate");                    \
   Macro(EQ_EQ, "==");                             \
-  Macro(EQ_TILDA_EQ, "=~=");                      \
   Macro(Float, "Float");                          \
   Macro(GT_GT, ">>");                             \
   Macro(Integer, "Integer");                      \
@@ -39,7 +38,6 @@
   Macro(Name, "Name");                            \
   Macro(Object, "Object");                        \
   Macro(PERCENT, "%");                            \
-  Macro(PERCENT_EQ, "%=");                        \
   Macro(PIPE_PIPE, "||");                         \
   Macro(PLUS, "+");                               \
   Macro(PLUS_EQ, "+=");                           \
@@ -49,7 +47,6 @@
   Macro(STAR_STAR, "**");                         \
   Macro(String, "String");                        \
   Macro(Sym, "Sym");                              \
-  Macro(TILDA_EQ, "~=");                          \
   Macro(Task, "Task");                            \
   Macro(VisibilityScope, "VisibilityScope");      \
   Macro(What, "What");                            \
@@ -101,7 +98,6 @@
   Macro(sender, "sender");                        \
   Macro(set, "set");                              \
   Macro(setSlot, "setSlot");                      \
-  Macro(sgn, "sgn");                              \
   Macro(shutdown, "shutdown");                    \
   Macro(sin, "sin");                              \
   Macro(size, "size");                            \
