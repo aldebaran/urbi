@@ -39,8 +39,9 @@ namespace object
     /// Ref-couting.
     typedef libport::shared_ptr< Atom<Traits> > shared_type;
 
-    /// Construct an Atom with value \p v.
-    Atom (const value_type v);
+    /// Construct an Atom with value \p v. If \p add_proto is \a true,
+    /// the appropriate prototype will be added.
+    Atom (const value_type v, bool add_proto = true);
 
     /// Destroy an Atom.
     virtual ~Atom ();

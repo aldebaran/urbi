@@ -31,18 +31,19 @@ namespace object
 
   template <typename Traits>
   inline
-  Atom<Traits>::Atom (const typename Traits::type v)
+  Atom<Traits>::Atom (const typename Traits::type v, bool add_proto)
     : value_(v)
   {
-    switch (kind_get())
-      {
+    if (add_proto)
+      switch (kind_get())
+	{
 # define CASE(What, Name)					\
-	case kind_ ## What: proto_add (What ## _class); break;
-	APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
+	  case kind_ ## What: proto_add (What ## _class); break;
+	  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
-      case kind_object:
-	pabort (kind_get());
-      }
+	case kind_object:
+	    pabort (kind_get());
+	}
   }
 
   template <typename Traits>
@@ -299,7 +300,7 @@ namespace object
   inline rObject
   Atom<Traits>::do_clone (rObject self) const
   {
-    Atom<Traits>* res = new Atom<Traits> (value_get ());
+    Atom<Traits>* res = new Atom<Traits> (value_get (), false);
     res->proto_add (self);
     return res;
   }
