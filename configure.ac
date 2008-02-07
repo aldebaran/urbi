@@ -5,7 +5,7 @@ m4_pattern_forbid([^URBI_])
 AC_PREREQ([2.60])
 AC_INIT([Urbi Kernel], [2.0], [kernel-bugs@lists.gostai.com], [kernel])
 URBI_KERNEL_VERSION
-URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2007])
+URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2008])
 
 # Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
