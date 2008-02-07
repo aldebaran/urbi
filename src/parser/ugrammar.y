@@ -217,13 +217,12 @@
       // I wish I could use tweasts here...  Lord, help me.
 
       // var res = id . clone ();
-      ast::Exp* parent = call (l, 0, id);
+      ast::Exp* proto = call (l, 0, id);
       // Cannot use a fixed string here, otherwise two successive "new"
       // will conflict.  Delete the slot afterwards?
       ast::Call* res = call (l, 0, libport::Symbol::fresh());
-      ast::Exp* decl = assign (l,
-			       res,
-			       call(l, parent, SYMBOL(clone)),
+      ast::Exp* decl = assign (l, res,
+			       call(l, proto, SYMBOL(clone)),
 			       true);
 
       // res . init (args);
