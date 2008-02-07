@@ -506,7 +506,7 @@ namespace runner
   Runner::operator() (ast::Object& e)
   {
     YIELD ();
-    current_ = e.value_get();
+    current_ = object::clone(e.value_get());
     ECHO ("result: " << *current_);
   }
 
