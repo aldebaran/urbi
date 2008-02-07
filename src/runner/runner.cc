@@ -506,6 +506,21 @@ namespace runner
   Runner::operator() (ast::Object& e)
   {
     YIELD ();
+    // Make a copy of the value, otherwise each time we pass here, we
+    // use the same object.  For instance
+    //
+    // for (var i = 0; i < 2; i++)
+    //    { var a = 0; a++; cout << a }
+    //
+    // would display "1" and "2", since the ast::Object(0) would be used,
+    // and modified via the first "a++".
+    //
+    // Note that using "clone" is probably not what we want if we introduce
+    // a syntax a la Self to create arbitrary objects: we want a real clone
+    // of the object (in the C++ sense of clone) rather than a descendant
+    // (in the prototypal sense of clone).  It turns out ast::Object is used
+    // only for simple object::Atom, i.e., the case where "clone" and "dup"
+    // behave equally.
     current_ = object::clone(e.value_get());
     ECHO ("result: " << *current_);
   }
