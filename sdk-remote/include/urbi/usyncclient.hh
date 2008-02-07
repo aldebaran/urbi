@@ -26,6 +26,7 @@
 # include "libport/fwd.hh"
 # include "libport/lockable.hh"
 # include "libport/semaphore.hh"
+# include "libport/utime.hh"
 
 # include "urbi/uclient.hh"
 
@@ -92,8 +93,14 @@ namespace urbi
     /// Overriding UAbstractclient implementation
     virtual void notifyCallbacks(const UMessage &msg);
 
-    /// Check message queue for pending messages, notify callbacks synchronously
-    void processEvents();
+    /**
+     * Check message queue for pending messages, notify callbacks synchronously.
+     * @param timeout If different -1 process events for at most @a timeout
+     *                microseconds. This is useful if you don't want
+     *                processEvents() to take to much time if there are many
+     *                many pending messages.
+     */
+    void processEvents(const libport::utime_t timeout = -1);
 
     /// Stop callback thread, in case you want to use your own.
     void stopCallbackThread();

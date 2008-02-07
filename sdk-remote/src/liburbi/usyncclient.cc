@@ -65,9 +65,10 @@ namespace urbi
   {
     stopCallbackThread_ = true;
   }
-  void USyncClient::processEvents()
+  void USyncClient::processEvents(const libport::utime_t timeout)
   {
-    while (true)
+    libport::utime_t startTime = libport::utime();
+    while (timeout < 0 || libport::utime() - startTime <= timeout)
     {
       queueLock_.lock();
       if (queue.empty())
