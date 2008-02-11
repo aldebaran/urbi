@@ -37,13 +37,11 @@ XFAIL_TESTS +=					\
 1.x/blocking-comma.chk				\
 1.x/channels-tags.chk				\
 1.x/connection-delete.chk			\
-1.x/delete.chk					\
 1.x/doublecolon.chk				\
 1.x/echo.chk					\
 1.x/events.chk					\
 1.x/events-emit-then-return-in-function.chk	\
 1.x/every.chk					\
-1.x/for-in.chk					\
 1.x/freeze-time.chk				\
 1.x/function-delete.chk				\
 1.x/groups.chk					\
