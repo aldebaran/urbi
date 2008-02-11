@@ -302,7 +302,7 @@ do Object
   {
     var result = [];
     for (var i = 1; i <= n; i++)
-      result.insert(i);
+      result.insert(i.clone);
     result
   };
 
