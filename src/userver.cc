@@ -19,29 +19,26 @@
 
  **************************************************************************** */
 //#define ENABLE_DEBUG_TRACES
-#include "libport/compiler.hh"
-
-#include "libport/config.h"
 #include <cassert>
 #include <cstdlib>
-#include "libport/cstdio"
 #include <cstdarg>
 
 #include <fstream>
 #include <sstream>
 #include <string>
 
-#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #if ! defined LIBPORT_URBI_ENV_AIBO
 # include <boost/thread.hpp>
 #endif
 
-#include <boost/foreach.hpp>
-
-#include "libport/containers.hh"
-#include "libport/path.hh"
-#include "libport/separator.hh"
+#include <libport/compiler.hh>
+#include <libport/config.h>
+#include <libport/containers.hh>
+#include <libport/cstdio>
+#include <libport/foreach.hh>
+#include <libport/path.hh>
+#include <libport/separator.hh>
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -214,7 +211,7 @@ void
 UServer::work_handle_connections_ ()
 {
   // Scan currently opened connections for ongoing work
-  BOOST_FOREACH (UConnection* c, connectionList)
+  foreach (UConnection* c, connectionList)
     if (c->isActive())
     {
       if (!c->isBlocked())
@@ -259,9 +256,11 @@ void
 UServer::work_handle_stopall_ ()
 {
   if (stopall)
-    BOOST_FOREACH (UConnection* c, connectionList)
+  {
+    foreach (UConnection* c, connectionList)
       if (c->isActive() && c->has_pending_command ())
 	c->drop_pending_commands ();
+  }
 
   // Delete all connections with closing=true
   for (std::list<UConnection *>::iterator i = connectionList.begin();
