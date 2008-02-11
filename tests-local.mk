@@ -14,7 +14,7 @@ k2-check:
 ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail currently but need to be fixed soon.
-TFAIL_TESTS =					\
+TFAIL_TESTS +=					\
 2.x/nullary.chk
 
 # k2 tests that fail.
@@ -53,7 +53,6 @@ XFAIL_TESTS +=					\
 1.x/load.chk					\
 1.x/loadwav.chk					\
 1.x/long-identifiers.chk			\
-1.x/loopn.chk					\
 1.x/modifier-accel-adaptive.chk			\
 1.x/modifier-accel.chk				\
 1.x/modifier-smooth-adaptive.chk		\
@@ -68,20 +67,17 @@ XFAIL_TESTS +=					\
 1.x/nameresolution-dollars.chk			\
 1.x/nameresolution-objects.chk			\
 1.x/nameresolution.chk				\
-1.x/new-init.chk				\
 1.x/notag.chk					\
 1.x/object-events.chk				\
 1.x/onleave.chk					\
 1.x/onleave2.chk				\
 1.x/ping.chk					\
-1.x/simple-alias.chk				\
 1.x/sinus.chk					\
 1.x/speed-zero.chk				\
 1.x/stopif.chk					\
 1.x/switch.chk					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
-1.x/undefall.chk				\
 1.x/var-lookup.chk				\
 1.x/variable-normalize.chk			\
 1.x/variable-qualifiers.chk			\
