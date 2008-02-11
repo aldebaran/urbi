@@ -162,6 +162,56 @@
     }
 
 
+    /// Factor slot_set, slot_update, and slot_remove.
+    /// \param l        source location.
+    /// \param lvalue   object and slot to change.
+    /// \param change   the Urbi method to invoke.
+    /// \param value    optional assigned value.
+    /// \return The AST node calling the slot assignment.
+    static
+    inline
+    ast::Call*
+    slot_change (const yy::parser::location_type& l,
+		 ast::Call* lvalue, libport::Symbol& change,
+		 ast::Exp* value)
+    {
+      ast::Call* res =
+	call (l,
+	      lvalue->args_get().front(),
+	      // this new is stupid.  We need to clean
+	      // this set of call functions.
+	      new libport::Symbol(change),
+	      new ast::Object(lvalue->location_get(),
+			      new object::String(lvalue->name_get())));
+      if (value)
+	res->args_get().push_back(value);
+      return res;
+    }
+
+    static
+    ast::Call*
+    slot_set  (const yy::parser::location_type& l,
+	       ast::Call* lvalue, ast::Exp* value)
+    {
+      return slot_change(l, lvalue, SYMBOL(setSlot), value);
+    }
+
+    static
+    ast::Call*
+    slot_update  (const yy::parser::location_type& l,
+		  ast::Call* lvalue, ast::Exp* value)
+    {
+      return slot_change(l, lvalue, SYMBOL(updateSlot), value);
+    }
+
+    static
+    ast::Call*
+    slot_remove  (const yy::parser::location_type& l,
+		  ast::Call* lvalue)
+    {
+      return slot_change(l, lvalue, SYMBOL(removeSlot), 0);
+    }
+
     /// "<lvalue> = <value>".
     /// \param l        source location.
     /// \param lvalue   object and slot to assign to.
@@ -221,9 +271,7 @@
       // Cannot use a fixed string here, otherwise two successive "new"
       // will conflict.  Delete the slot afterwards?
       ast::Call* res = call (l, 0, libport::Symbol::fresh());
-      ast::Exp* decl = assign (l, res,
-			       call(l, proto, SYMBOL(clone)),
-			       true);
+      ast::Exp* decl = slot_set (l, res, call(l, proto, SYMBOL(clone)));
 
       // res . init (args);
       ast::Exp* init = call (l, res, SYMBOL(init), args);
@@ -342,6 +390,7 @@
 	TOK_BREAK        "break"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
+	TOK_DELETE       "delete"
 	TOK_DELGROUP     "delgroup"
 	TOK_DIR          "->"
 	TOK_DOLLAR       "$"
@@ -468,7 +517,6 @@
 	BINDER             "binder"
 	OPERATOR           "operator command"
 	OPERATOR_ID        "operator"
-	OPERATOR_VAR       "var-operator"
 ;
 
 // id is meant to enclose all the symbols we use as operators.  For
@@ -726,7 +774,7 @@ expr:
 				    call (@$, 0, SYMBOL(Object)),
 				    SYMBOL(clone));
       $$ = new_flavor(@$, ast::flavor_semicolon,
-		      assign (@1+@2, $2, object_clone, true),
+		      slot_set (@1+@2, $2, object_clone),
 		      new ast::Scope(@$, $2, $4));
     }
 // | "class" lvalue
@@ -829,12 +877,13 @@ k1_id:
 `-------------------*/
 
 stmt:
-	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3, false); }
-| "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
+	lvalue "=" expr namedarguments { $$ = slot_update (@$, $1, $3); }
+| "var" lvalue "=" expr namedarguments { $$ = slot_set    (@$, $2, $4); }
+| "delete" lvalue                      { $$ = slot_remove (@$, $2);     }
 ;
 
 %token <symbol>
-	TOK_SLASH_ASSIGN    "/="
+	TOK_SLASH_ASSIGN  "/="
 	TOK_MINUS_ASSIGN  "-="
 	TOK_MINUS_MINUS   "--"
 	TOK_PLUS_ASSIGN   "+="
@@ -951,7 +1000,7 @@ stmt:
 
       // var ___idx = <expr>
       ast::Call *idx = call(@$, 0, libport::Symbol::fresh());
-      ast::Call	*init = assign(@$, idx, $3, true);
+      ast::Call	*init = slot_set(@$, idx, $3);
 
       // ___idx > 0
       ast::Call *test = call(@$, idx, new libport::Symbol(">"),
@@ -1017,7 +1066,7 @@ expr:
 
 %type <call> lvalue call;
 lvalue:
-           id   { $$ = call (@$,  0, take($1)); }
+	   id   { $$ = call (@$,  0, take($1)); }
 | expr "." id   { $$ = call (@$, $1, take($3)); }
 ;
 
@@ -1027,9 +1076,10 @@ id:
 
 call:
   lvalue args
-    { 
+    {
       $$ = $1;
       $$->args_get().splice($$->args_get().end(), *$2);
+      $$->location_set(@$);
     }
 ;
 

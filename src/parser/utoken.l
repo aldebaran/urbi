@@ -286,18 +286,19 @@ FLAVOR   [;|,&]?
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
 
+ /*
+  "block"      |
+  "disconnect" |
+  "freeze"     |
+  "killall"    |
+  "stop"       |
+  "unblock"    |
+  "unfreeze"   RETURN_SYMBOL (OPERATOR_ID);
 
-"block"      |
-"disconnect" |
-"freeze"     |
-"killall"    |
-"stop"       |
-"unblock"    |
-"unfreeze"   RETURN_SYMBOL (OPERATOR_ID);
 
-"delete"  |
-"info"    |
-"undef"   RETURN_SYMBOL (OPERATOR_VAR);
+  "info"    |
+  "undef"   RETURN_SYMBOL (OPERATOR_VAR);
+ */
 
  /*
    FIXME: Surprisingly enough, these are strings, not symbols,
@@ -346,6 +347,7 @@ FLAVOR   [;|,&]?
 "break"         return token::TOK_BREAK;
 "class"         return token::TOK_CLASS;
 "def"           return token::TOK_DEF;
+"delete"        return token::TOK_DELETE;
 "delgroup"      return token::TOK_DELGROUP;
 "do"		return token::TOK_DO;
 "else"          return token::TOK_ELSE;
@@ -359,7 +361,6 @@ FLAVOR   [;|,&]?
 "group"         return token::TOK_GROUP;
 "if"            return token::TOK_IF;
 "in"            return token::TOK_IN;
-
 "loopn"         DEPRECATED("for");
 "new"           return token::TOK_NEW;
 "noop"          return token::TOK_NOOP;
@@ -432,7 +433,7 @@ FLAVOR   [;|,&]?
 
 
 {ID}            {
-                  BEGIN SC_IDENTIFIER_SUFFIX;
+		  BEGIN SC_IDENTIFIER_SUFFIX;
 		  RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
 		}
 
