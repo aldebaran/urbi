@@ -239,10 +239,7 @@ UServer::work_handle_connections_ ()
 # if ! defined LIBPORT_URBI_ENV_AIBO
 	  boost::try_mutex::scoped_lock((*c)->treeMutex);
 # endif
-	  c->inwork = true;   // to distinguish this call of
-	  //execute from the one in receive
 	  c->execute((*c)->activeCommand);
-	  c->inwork = false;
 	}
       }
 #endif
@@ -261,15 +258,10 @@ UServer::work_handle_connections_ ()
 void
 UServer::work_handle_stopall_ ()
 {
-  BOOST_FOREACH (UConnection* c, connectionList)
-    if (c->isActive() && c->has_pending_command ())
-    {
-      if (c->killall || stopall)
-      {
-	c->killall = false;
+  if (stopall)
+    BOOST_FOREACH (UConnection* c, connectionList)
+      if (c->isActive() && c->has_pending_command ())
 	c->drop_pending_commands ();
-      }
-    }
 
   // Delete all connections with closing=true
   for (std::list<UConnection *>::iterator i = connectionList.begin();

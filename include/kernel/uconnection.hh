@@ -438,18 +438,12 @@ public:
   UString* functionClass;
   /// Ip of the calling client.
   IPAdd clientIP;
-  /// Killall signal (empty Activecommand).
-  bool killall;
   /// Connection closing.
   bool closing;
   /// Connection receiving (and processing) commands.
   bool receiving;
-  /// Connection in the work command.
-  bool inwork;
   /// Used by addToQueue to notify new data.
   bool newDataAdded;
-  /// True after a "return" command is met.
-  bool returnMode;
   /// False when the whole command tree has been processed.
   bool obstructed;
 
