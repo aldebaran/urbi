@@ -354,6 +354,38 @@ String.addProto(Comparable);
 String.addProto(Orderable);
 
 
+## ------------------------ ##
+## Functional programming.  ##
+## ------------------------ ##
+
+var Object.map = function (f, list)
+{
+  if (!list.size)
+    []
+  else
+    [f (list.head)] + map (getSlot ("f"), list.tail)
+};
+
+var Object.any = function (f, list)
+{
+  if (!list.size)
+    false
+  else if (f (list.head))
+    true
+  else
+    any (getSlot ("f"), list.tail)
+};
+
+var Object.all = function (f, list)
+{
+  if (!list.size)
+    true
+  else if (!f (list.head))
+    false
+  else
+    all (getSlot ("f"), list.tail)
+};
+
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##
