@@ -4,10 +4,11 @@
 
 .PHONY: symbols
 symbols:
-	rm -f $(srcdir)/object/symbols.hh
+	mv -f $(srcdir)/object/symbols.hh $(srcdir)/object/symbols.hh.old
 	$(MAKE) $(AM_MAKEFLAGS) $(srcdir)/object/symbols.hh
 $(srcdir)/object/symbols.hh:
 	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$@.tmp
+	-diff -u $@.tmp $@.old
 	$(top_srcdir)/build-aux/move-if-change $@.tmp $@
 
 
