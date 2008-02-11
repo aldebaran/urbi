@@ -19,7 +19,7 @@ LDADD = $(AM_LDADD)
 
 # By default, instrument the code.
 INSTRUMENT = true
-URBI_SERVER = urbi-server
+URBI_SERVER = urbi-console
 
 TESTS_ENVIRONMENT =				\
  srcdir='$(srcdir)'				\

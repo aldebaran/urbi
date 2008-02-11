@@ -79,6 +79,8 @@ me=$medir/$(basename "$chk" ".cc")
 # ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
 meraw=$(basename $me)    # MERAW!
 
+srcdir=$(absolute $srcdir)
+export srcdir
 # Move to a private dir.
 rm -rf $me.dir
 mkdir -p $me.dir
