@@ -497,8 +497,6 @@
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
 
-%type <call>  lvalue
-
 %type <expr>  expr
 %type <expr>  expr.opt
 %type <expr>  flag
@@ -1017,13 +1015,10 @@ expr:
 | Function calls, messages.  |
 `---------------------------*/
 
-%type <call> call message;
-message:
-  id args
-    {
-      // The target of the message is currently unknown.
-      $$ = call (@$, 0, take($1), $2);
-    }
+%type <call> lvalue call;
+lvalue:
+           id   { $$ = call (@$,  0, take($1)); }
+| expr "." id   { $$ = call (@$, $1, take($3)); }
 ;
 
 id:
@@ -1031,12 +1026,11 @@ id:
 ;
 
 call:
-  message           { $$ = $1; }
-| expr "." message
-  {
-    // Now we know the target.
-    $$ = $3; $$->args_get().front() = $1;
-  }
+  lvalue args
+    { 
+      $$ = $1;
+      $$->args_get().splice($$->args_get().end(), *$2);
+    }
 ;
 
 // Instantiation looks a lot like a function call.
@@ -1051,24 +1045,6 @@ expr:
 ;
 
 
-
-/*------------.
-| Variables.  |
-`------------*/
-
-// An lvalue is a Call without arguments.
-lvalue:
-  call
-  {
-    // There is an implicit target: the current object, 0.
-    if ($$->args_get().size() != 1)
-    {
-      error(@$, (std::string ("invalid lvalue: ")
-		 + boost::lexical_cast<std::string>(*$1)));
-      YYERROR;
-    }
-  }
-;
 
 //expr:
 //  k1_id          { $$ = $1; }
