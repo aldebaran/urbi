@@ -73,7 +73,6 @@ XFAIL_TESTS +=					\
 1.x/object-events.chk				\
 1.x/onleave.chk					\
 1.x/onleave2.chk				\
-1.x/parse-errors.chk				\
 1.x/ping.chk					\
 1.x/simple-alias.chk				\
 1.x/sinus.chk					\
