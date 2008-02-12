@@ -67,7 +67,7 @@ namespace object
   }
 
   static rObject
-  object_echo(runner::Runner& r, objects_type args, const char * prefix)
+  object_echo(runner::Runner& r, objects_type args, bool is_echo)
   {
     // Second argument is the tag name.
     std::string tag;
@@ -76,7 +76,18 @@ namespace object
       FETCH_ARG(2, String);
       tag = arg2->value_get().name_get();
     }
-    r.lobby_get()->value_get().connection.send (args[1], tag.c_str(), prefix);
+    //special case for Strings
+    if (is_echo && args[1]->kind_is(Object::kind_string))
+    {
+      r.lobby_get()->value_get().connection
+      << UConnection::send((std::string("*** ")
+			   + std::string(VALUE(args[1], String))
+			   + "\n").c_str(),
+			   tag.c_str());
+    }
+    else
+      r.lobby_get()->value_get().connection.send (args[1], tag.c_str(),
+	is_echo?"*** ":"");
     return void_class;
   }
 
@@ -84,8 +95,7 @@ namespace object
   static rObject
   object_class_echo (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT_RANGE (2, 3);
-    return object_echo(r, args, "*** ");
+    return object_echo(r, args, true);
   }
 
   /// Send pretty-printed self on the connection.
@@ -97,7 +107,7 @@ namespace object
     objects_type nargs;
     nargs.push_back(args[0]);
     nargs.insert(nargs.end(),  args.begin(), args.end());
-    return object_echo(r, nargs, "");
+    return object_echo(r, nargs, false);
   }
 
   static rObject

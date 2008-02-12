@@ -31,7 +31,6 @@ XFAIL_TESTS +=					\
 1.x/blocking-comma.chk				\
 1.x/channels-tags.chk				\
 1.x/connection-delete.chk			\
-1.x/echo.chk					\
 1.x/events.chk					\
 1.x/events-emit-then-return-in-function.chk	\
 1.x/every.chk					\
