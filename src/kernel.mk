@@ -7,7 +7,7 @@ include $(top_srcdir)/build-aux/init.mk
 AM_CPPFLAGS += -I$(srcdir) -I.
 
 # Find the uobject headers
-AM_CPPFLAGS += -I$(srcdir)/uobject
+AM_CPPFLAGS += -I$(srcdir)/uobject -Iuobject
 
 # Find the kernel, libport, etc. headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include -I$(top_builddir)/include
