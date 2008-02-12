@@ -250,7 +250,7 @@ namespace object
   std::ostream&
   Atom<string_traits>::print(std::ostream& out) const
   {
-    out << "\"" << libport::escape(value_get()) << "\"";
+    out << '"' << libport::escape(value_get()) << '"';
     return out;
   }
 
