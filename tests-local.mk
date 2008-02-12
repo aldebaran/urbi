@@ -21,12 +21,6 @@ TFAIL_TESTS +=					\
 XFAIL_TESTS +=					\
 2.x/literal-string.chk
 
-# Tests that are only for 1.x, and we don't want them in k2.
-# We should probably use different directories instead.
-XFAIL_TESTS +=					\
-1.x/string-comparison.chk
-
-
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
