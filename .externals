@@ -1,8 +1,8 @@
-external: libport
-link: build-aux          -> libport/build-aux
-link: sdk                -> libport/sdk
-link: include/libport    -> libport/include/libport
-link: lib/libport        -> libport/lib/libport
+external: externals/libport -> libport
+link: build-aux          -> externals/libport/build-aux
+link: sdk                -> externals/libport/sdk
+link: include/libport    -> externals/libport/include/libport
+link: lib/libport        -> externals/libport/lib/libport
 
-external: jpeg-6b -> libjpeg-6b
+external: jpeg-6b -> externals/libjpeg-6b
 subpackage: jpeg-6b

@@ -4,3 +4,9 @@
 [submodule "jpeg-6b"]
 	path = jpeg-6b
 	url = git@core.gostai.com:libjpeg-6b
+[submodule "externals/libport"]
+	path = externals/libport
+	url = git@core.gostai.com:libport.git
+[submodule "externals/libjpeg-6b"]
+	path = externals/libjpeg-6b
+	url = git@core.gostai.com:libjpeg-6b.git
