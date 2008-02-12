@@ -105,7 +105,7 @@ urbiinclude_HEADERS = $(uobject_headers)
 if !OPENR
 noinst_PROGRAMS = urbi-console
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libkernel.la
+urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS)
 
 dist_libkernel_la_SOURCES +=			\
 console-server.cc				\
