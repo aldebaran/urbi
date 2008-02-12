@@ -396,8 +396,6 @@ namespace runner
   void
   Runner::operator() (ast::Function& e)
   {
-    YIELD ();
-
     PING ();
     current_ = new object::Code (*ast::clone(e));
   }
@@ -409,8 +407,6 @@ namespace runner
     // Evaluate the test.
     JECHO ("test", e.test_get ());
     operator() (e.test_get());
-
-    YIELD();
 
     if (IS_TRUE(current_))
     {
@@ -433,7 +429,6 @@ namespace runner
     // list values
     objects values;
     exps::const_iterator i;
-    YIELD ();
 
     PING ();
     // Evaluate every expression in the list
@@ -505,7 +500,6 @@ namespace runner
   void
   Runner::operator() (ast::Object& e)
   {
-    YIELD ();
     // Make a copy of the value, otherwise each time we pass here, we
     // use the same object.  For instance
     //
