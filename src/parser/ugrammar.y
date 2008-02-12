@@ -873,6 +873,18 @@ stmt:
     }
 ;
 
+// Functions with call messages.
+stmt:
+  "function" k1_id "{" stmts "}"
+    {
+      // Compiled as above.
+      const ast::symbols_type* empty = new ast::symbols_type;
+      $$ = ast_assign(@$, $2,
+		      new ast::Function (@$, false, *empty, $4),
+		      true);
+    }
+;
+
 /*-----------------------------.
 | k1_id: A simple identifier.  |
 `-----------------------------*/

@@ -61,12 +61,12 @@ do Object {
     getSlot ("nf");
   };
 
-  var makeClosure = function
+  function makeClosure
   {
     makeExplicitClosure (call.evalArgAt (1), call.context);
   };
 
-  var makeClosedCode = function
+  function makeClosedCode
   {
     var f = function () { call.evalArgAt (1) };
     makeClosure (getSlot ("f"))
@@ -80,7 +80,7 @@ do Object {
     getSlot ("self")
   };
 
-  var captureVars = function
+  function captureVars
   {
     for (var i = 1; i < call.argsCount; i++)
       getSlot("self").capture (call.argString (i), call.evalArgAt (i));
