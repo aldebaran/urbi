@@ -156,7 +156,7 @@ UServer::initialize()
     DEBUG (("done\n"));
   }
 
-  load_init_file("urbi.u");
+  load_init_file("urbi/urbi.u");
 
   // Handle pluged UOBjects.
   // Create "uobject" in lobby where UObjects will be put.
