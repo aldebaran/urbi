@@ -53,40 +53,39 @@ var Code.context = nil;
 ## Closure.  ##
 ## --------- ##
 
-var Object.makeExplicitClosure = function (f, context)
-{
-  var nf = getSlot ("f").clone;
-  getSlot ("nf").context = context;
-  getSlot ("nf");
-};
-
-var Object.makeClosure = function
-{
-  makeExplicitClosure (call.evalArgAt (1), call.context);
-};
-
-var Object.makeClosedCode = function
-{
-  var f = function () { call.evalArgAt (1) };
-  makeClosure (getSlot ("f"))
-};
-
-var Code.capture = function (varname, value)
-{
-  if (getSlot ("self").context.isNil)
-    getSlot ("self").context = new Object;
-  getSlot ("self").context.setSlot (varname, value);
-  getSlot ("self")
-};
-
-var Code.captureVars = function
-{
-  var i = 1;
-  for (; i < call.argsCount; i++)
+do Object {
+  function makeExplicitClosure (f, context)
   {
-    getSlot("self").capture (call.argString (i), call.evalArgAt (i))
+    var nf = getSlot ("f").clone;
+    getSlot ("nf").context = context;
+    getSlot ("nf");
   };
-  getSlot ("self")
+
+  var makeClosure = function
+  {
+    makeExplicitClosure (call.evalArgAt (1), call.context);
+  };
+
+  var makeClosedCode = function
+  {
+    var f = function () { call.evalArgAt (1) };
+    makeClosure (getSlot ("f"))
+  };
+
+  function capture (varname, value)
+  {
+    if (getSlot ("self").context.isNil)
+      getSlot ("self").context = new Object;
+    getSlot ("self").context.setSlot (varname, value);
+    getSlot ("self")
+  };
+
+  var captureVars = function
+  {
+    for (var i = 1; i < call.argsCount; i++)
+      getSlot("self").capture (call.argString (i), call.evalArgAt (i));
+    getSlot ("self")
+  }
 };
 
 ## -------------------- ##
