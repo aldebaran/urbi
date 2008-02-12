@@ -46,6 +46,24 @@ var Object.makeClosedCode = function
   makeClosure (getSlot ("f"))
 };
 
+var Code.capture = function (varname, value)
+{
+  if (getSlot ("self").context.isNil)
+    getSlot ("self").context = new Object;
+  getSlot ("self").context.setSlot (varname, value);
+  getSlot ("self")
+};
+
+var Code.captureVars = function
+{
+  var i = 1;
+  for (; i < call.argsCount; i++)
+  {
+    getSlot("self").capture (call.argString (i), call.evalArgAt (i))
+  };
+  getSlot ("self")
+};
+
 ## -------------------- ##
 ## Task related stuff.  ##
 ## -------------------- ##
@@ -391,6 +409,17 @@ var Object.all = function (f, list)
     false
   else
     all (getSlot ("f"), list.tail)
+};
+
+var Object.tasks = [];
+
+var Object.eachBg = function (f, list)
+{
+  if (list.size)
+  {
+    Object.tasks += [detach (f (list.head))];
+    eachBg (getSlot ("f"), list.tail)
+  }
 };
 
 ## ------------- ##
