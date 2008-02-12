@@ -15,7 +15,8 @@
 my $file = $ARGV[0];
 my $DEBUG = 0;
 
-open(DAT, $file) or die;
+open(DAT, $file)
+    or die "cannot open $file: $!";
 
 while(<DAT>) {
     if (/%%%%/) {
