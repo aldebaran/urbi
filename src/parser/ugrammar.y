@@ -241,12 +241,19 @@
     /// Return \a e in a ast::Scope unless it is already one.
     static
     ast::Scope*
-    scope (const loc& l, ast::Exp* e)
+    ast_scope(const loc& l, ast::Exp* target, ast::Exp* e)
     {
       if (ast::Scope* res = dynamic_cast<ast::Scope*>(e))
 	return res;
       else
-	return new ast::Scope(l, 0, e);
+	return new ast::Scope(l, target, e);
+    }
+
+    static
+    ast::Scope*
+    ast_scope(const loc& l, ast::Exp* e)
+    {
+      return ast_scope(l, 0, e);
     }
 
     // Compiled as
@@ -287,7 +294,7 @@
       seq->back_flavor_set(ast::flavor_semicolon);
       seq->push_back (res);
 
-      return scope (l, seq);
+      return ast_scope(l, seq);
     }
 
 
@@ -368,10 +375,11 @@
       ast::Exp* loop_body = ast_nary (l, op, body, inc);
 
       // WHILE OP (TEST) { BODY OP INC }.
-      ast::While *while_loop = new ast::While(l, op, test, scope(l, loop_body));
+      ast::While *while_loop =
+	new ast::While(l, op, test, ast_scope(l, loop_body));
 
       // { INIT OP WHILE OP (TEST) { BODY OP INC } }.
-      return scope (l, ast_nary (l, op, init, while_loop));
+      return ast_scope(l, ast_nary (l, op, init, while_loop));
     }
 
 
@@ -799,7 +807,7 @@ expr:
 	ast_call(@$, ast_call(@$, 0, SYMBOL(Object)), SYMBOL(clone));
       $$ = ast_nary(@$, ast::flavor_semicolon,
 		    slot_set (@1+@2, $2, object_clone),
-		    new ast::Scope(@$, $2, $4));
+		    ast_scope(@$, $2, $4));
     }
 // | "class" lvalue
 //    { $$ = ast_assign(@$, $2, 0, true); }
@@ -1074,12 +1082,8 @@ stmt:
 %token TOK_DO "do";
 
 expr:
-  "{" stmts "}"
-    { $$ = scope(@$, $2); }
-| "do" expr "{" stmts "}"
-    {
-      $$ = new ast::Scope(@$, $2, $4);
-    }
+            "{" stmts "}"   { $$ = ast_scope(@$,  0, $2); }
+| "do" expr "{" stmts "}"   { $$ = ast_scope(@$, $2, $4); }
 ;
 
 /*---------------------------.
