@@ -108,30 +108,6 @@
     }
 
 
-    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-    static
-    ast::Exp*
-    new_bin(const loc& l, ast::flavor_type op,
-	    ast::Exp* lhs, ast::Exp* rhs)
-    {
-      ast::Exp* res = 0;
-      assert (lhs);
-      assert (rhs);
-      switch (op)
-      {
-	case ast::flavor_and:
-	  res = new ast::And (l, lhs, rhs);
-	  break;
-	case ast::flavor_pipe:
-	  res = new ast::Pipe (l, lhs, rhs);
-	  break;
-	default:
-	  pabort(op);
-      }
-      return res;
-    }
-
-
     /*---------------------.
     | Calls, lvalues etc.  |
     `---------------------*/
@@ -139,7 +115,7 @@
     /// "<target> . <method> (args)".
     static
     ast::Call*
-    call (const loc& l,
+    ast_call (const loc& l,
 	  ast::Exp* target, libport::Symbol method, ast::exps_type* args)
     {
       args->push_front (target);
@@ -150,28 +126,28 @@
     /// "<target> . <method> ()".
     static
     ast::Call*
-    call (const loc& l, ast::Exp* target, libport::Symbol method)
+    ast_call(const loc& l, ast::Exp* target, libport::Symbol method)
     {
-      return call (l, target, method, new ast::exps_type);
+      return ast_call(l, target, method, new ast::exps_type);
     }
 
     /// "<target> . <method> ()".
     static
     ast::Call*
-    call (const loc& l, ast::Exp* target, libport::Symbol* method)
+    ast_call(const loc& l, ast::Exp* target, libport::Symbol* method)
     {
       assert (method);
-      return call (l, target, take(method));
+      return ast_call(l, target, take(method));
     }
 
     /// "<target> . <method> (<arg1>)".
     static
     ast::Call*
-    call (const loc& l,
+    ast_call(const loc& l,
 	  ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
       assert (method);
-      ast::Call* res = call (l, target, method);
+      ast::Call* res = ast_call(l, target, method);
       res->args_get().push_back(arg1);
       return res;
     }
@@ -179,12 +155,12 @@
     /// "<target> . <method> (<arg1>, <arg2>)".
     static
     ast::Call*
-    call (const loc& l,
+    ast_call(const loc& l,
 	  ast::Exp* target, libport::Symbol* method,
 	  ast::Exp* arg1, ast::Exp* arg2)
     {
       assert (method);
-      ast::Call* res = call (l, target, method);
+      ast::Call* res = ast_call(l, target, method);
       res->args_get().push_back(arg1);
       res->args_get().push_back(arg2);
       return res;
@@ -209,7 +185,7 @@
 		 ast::Exp* value)
     {
       ast::Call* res =
-	call (l,
+	ast_call(l,
 	      lvalue->args_get().front(),
 	      // this new is stupid.  We need to clean
 	      // this set of call functions.
@@ -250,9 +226,9 @@
     /// \return The AST node calling the slot assignment.
     static
     ast::Call*
-    assign (const loc& l, ast::Call* lvalue, ast::Exp* value, bool declare)
+    ast_assign(const loc& l, ast::Call* lvalue, ast::Exp* value, bool declare)
     {
-      return call (l,
+      return ast_call(l,
 		   lvalue->args_get().front(),
 		   // this new is stupid.  We need to clean
 		   // this set of call functions.
@@ -289,19 +265,19 @@
     // with "self".
     static
     ast::Scope*
-    desugar_new (const loc& l, libport::Symbol* id, ast::exps_type* args)
+    ast_new (const loc& l, libport::Symbol* id, ast::exps_type* args)
     {
       // I wish I could use tweasts here...  Lord, help me.
 
       // var res = id . clone ();
-      ast::Exp* proto = call (l, 0, id);
+      ast::Exp* proto = ast_call(l, 0, id);
       // Cannot use a fixed string here, otherwise two successive "new"
       // will conflict.  Delete the slot afterwards?
-      ast::Call* res = call (l, 0, libport::Symbol::fresh());
-      ast::Exp* decl = slot_set (l, res, call(l, proto, SYMBOL(clone)));
+      ast::Call* res = ast_call(l, 0, libport::Symbol::fresh());
+      ast::Exp* decl = slot_set (l, res, ast_call(l, proto, SYMBOL(clone)));
 
       // res . init (args);
-      ast::Exp* init = call (l, res, SYMBOL(init), args);
+      ast::Exp* init = ast_call(l, res, SYMBOL(init), args);
 
       // The sequence.
       ast::Nary* seq = new ast::Nary ();
@@ -315,17 +291,40 @@
     }
 
 
-    /// When op can be either of the four cases.
+    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+    /// \param op must be & or |.
     static
     ast::Exp*
-    new_flavor(const loc& l, ast::flavor_type op,
-	       ast::Exp* lhs, ast::Exp* rhs)
+    ast_bin(const loc& l, ast::flavor_type op, ast::Exp* lhs, ast::Exp* rhs)
+    {
+      ast::Exp* res = 0;
+      assert (lhs);
+      assert (rhs);
+      switch (op)
+      {
+	case ast::flavor_and:
+	  res = new ast::And (l, lhs, rhs);
+	  break;
+	case ast::flavor_pipe:
+	  res = new ast::Pipe (l, lhs, rhs);
+	  break;
+	default:
+	  pabort(op);
+      }
+      return res;
+    }
+
+    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+    /// \param op can be any of the four cases.
+    static
+    ast::Exp*
+    ast_nary(const loc& l, ast::flavor_type op, ast::Exp* lhs, ast::Exp* rhs)
     {
       switch (op)
       {
 	case ast::flavor_and:
 	case ast::flavor_pipe:
-	  return new_bin(l, op, lhs, rhs);
+	  return ast_bin(l, op, lhs, rhs);
 
 	case ast::flavor_comma:
 	case ast::flavor_semicolon:
@@ -355,7 +354,7 @@
     // OP is either ";" or "|".
     static
     ast::Exp*
-    for_loop (const loc& l, ast::flavor_type op,
+    ast_for (const loc& l, ast::flavor_type op,
 	      ast::Exp* init, ast::Exp* test, ast::Exp* inc,
 	      ast::Exp* body)
     {
@@ -366,13 +365,13 @@
       assert (body);
 
       // BODY OP INC.
-      ast::Exp* loop_body = new_flavor (l, op, body, inc);
+      ast::Exp* loop_body = ast_nary (l, op, body, inc);
 
       // WHILE OP (TEST) { BODY OP INC }.
       ast::While *while_loop = new ast::While(l, op, test, scope(l, loop_body));
 
       // { INIT OP WHILE OP (TEST) { BODY OP INC } }.
-      return scope (l, new_flavor (l, op, init, while_loop));
+      return scope (l, ast_nary (l, op, init, while_loop));
     }
 
 
@@ -718,8 +717,8 @@ cstmt:
     else
       $$ = $1;
   }
-| cstmt "|" cstmt { $$ = new_bin(@$, $2, $1, $3); }
-| cstmt "&" cstmt { $$ = new_bin(@$, $2, $1, $3); }
+| cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
+| cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;
 
 
@@ -796,15 +795,14 @@ expr:
     {
       // Compiled as
       // var id = Object.clone; do id { stmts };
-      ast::Exp* object_clone = call(@$,
-				    call (@$, 0, SYMBOL(Object)),
-				    SYMBOL(clone));
-      $$ = new_flavor(@$, ast::flavor_semicolon,
-		      slot_set (@1+@2, $2, object_clone),
-		      new ast::Scope(@$, $2, $4));
+      ast::Exp* object_clone =
+	ast_call(@$, ast_call(@$, 0, SYMBOL(Object)), SYMBOL(clone));
+      $$ = ast_nary(@$, ast::flavor_semicolon,
+		    slot_set (@1+@2, $2, object_clone),
+		    new ast::Scope(@$, $2, $4));
     }
 // | "class" lvalue
-//    { $$ = assign (@$, $2, 0, true); }
+//    { $$ = ast_assign(@$, $2, 0, true); }
 ;
 
 stmt:
@@ -845,9 +843,9 @@ stmt:
     {
       // Compiled as "var name = function args stmt", i.e.,
       // setSlot (name, function args stmt).
-      $$ = assign (@$, $2,
-		   new ast::Function (@$, true, take($3), $5),
-		   true);
+      $$ = ast_assign(@$, $2,
+		      new ast::Function (@$, true, take($3), $5),
+		      true);
     }
 ;
 
@@ -882,8 +880,8 @@ stmt:
 // for anonymous functions.  But that's not a good option IMHO (AD).
 %type <call> k1_id;
 k1_id:
-  "identifier"                   { $$ = call (@$, 0, $1); }
-| "identifier" "." "identifier"  { $$ = call (@$, call (@1, 0, $1), $3); }
+  "identifier"                   { $$ = ast_call(@$, 0, $1); }
+| "identifier" "." "identifier"  { $$ = ast_call(@$, ast_call(@1, 0, $1), $3); }
 ;
 
 // These should probably be integrated into k1_id too, but without
@@ -927,15 +925,15 @@ id:
 ;
 
 expr:
-  expr "+=" expr { $$ = call (@$, $1, $2, $3); }
-| expr "-=" expr { $$ = call (@$, $1, $2, $3); }
-| expr "*=" expr { $$ = call (@$, $1, $2, $3); }
-| expr "/=" expr { $$ = call (@$, $1, $2, $3); }
+  expr "+=" expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "-=" expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "*=" expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "/=" expr { $$ = ast_call(@$, $1, $2, $3); }
 ;
 
 expr:
-  expr "--"      { $$ = call (@$, $1, $2); }
-| expr "++"      { $$ = call (@$, $1, $2); }
+  expr "--"      { $$ = ast_call(@$, $1, $2); }
+| expr "++"      { $$ = ast_call(@$, $1, $2); }
 ;
 
 
@@ -973,7 +971,7 @@ stmt:
     {
       FLAVOR_CHECK(@$, "for", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
-      $$ = for_loop (@$, $1, $3, $5, $7, $9);
+      $$ = ast_for (@$, $1, $3, $5, $7, $9);
     }
 | "for" "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
     {
@@ -1019,20 +1017,21 @@ stmt:
        *   }
        * }
        *
-       * using the for_loop function.
+       * using the ast_for function.
        */
 
       // var ___idx = <expr>
-      ast::Call *idx = call(@$, 0, libport::Symbol::fresh());
+      ast::Call *idx = ast_call(@$, 0, libport::Symbol::fresh());
       ast::Call	*init = slot_set(@$, idx, $3);
 
       // ___idx > 0
-      ast::Call *test = call(@$, idx, new libport::Symbol(">"), ast_object(@$, 0));
+      ast::Call *test =
+	ast_call(@$, idx, new libport::Symbol(">"), ast_object(@$, 0));
       // ___idx--
-      ast::Call *dec = call(@$, idx, libport::Symbol("--"));
+      ast::Call *dec = ast_call(@$, idx, libport::Symbol("--"));
 
       // Put all together into a while.
-      $$ = for_loop(@$, $1, init, test, dec, $5);
+      $$ = ast_for(@$, $1, init, test, dec, $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
@@ -1089,8 +1088,8 @@ expr:
 
 %type <call> lvalue call;
 lvalue:
-	   id   { $$ = call (@$,  0, take($1)); }
-| expr "." id   { $$ = call (@$, $1, take($3)); }
+	   id   { $$ = ast_call(@$,  0, take($1)); }
+| expr "." id   { $$ = ast_call(@$, $1, take($3)); }
 ;
 
 id:
@@ -1109,7 +1108,7 @@ call:
 // Instantiation looks a lot like a function call.
 %type <expr> new;
 new:
-  "new" "identifier" args { $$ = desugar_new (@$, $2, $3); }
+  "new" "identifier" args { $$ = ast_new (@$, $2, $3); }
 ;
 
 expr:
@@ -1251,16 +1250,16 @@ id:
 ;
 
 expr:
-  expr "+" expr	          { $$ = call(@$, $1, $2, $3); }
-| expr "-" expr	          { $$ = call(@$, $1, $2, $3); }
-| expr "*" expr	          { $$ = call(@$, $1, $2, $3); }
-| expr "**" expr          { $$ = call(@$, $1, $2, $3); }
-| expr "/" expr	          { $$ = call(@$, $1, $2, $3); }
-| expr "%" expr	          { $$ = call(@$, $1, $2, $3); }
-| expr "^" expr	          { $$ = call(@$, $1, $2, $3); }
-| expr "<<" expr          { $$ = call(@$, $1, $2, $3); }
-| expr ">>" expr          { $$ = call(@$, $1, $2, $3); }
-| "-" expr    %prec UNARY { $$ = call(@$, $2, $1); }
+  expr "+" expr	          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "-" expr	          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "*" expr	          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "**" expr          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "/" expr	          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "%" expr	          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "^" expr	          { $$ = ast_call(@$, $1, $2, $3); }
+| expr "<<" expr          { $$ = ast_call(@$, $1, $2, $3); }
+| expr ">>" expr          { $$ = ast_call(@$, $1, $2, $3); }
+| "-" expr    %prec UNARY { $$ = ast_call(@$, $2, $1); }
 | "(" expr ")"            { $$ = $2; }
 ;
 
@@ -1297,22 +1296,22 @@ id:
 ;
 
 expr:
-  expr "!="  expr { $$ = call(@$, $1, $2, $3); }
-| expr "%="  expr { $$ = call(@$, $1, $2, $3); }
-| expr "<"   expr { $$ = call(@$, $1, $2, $3); }
-| expr "<="  expr { $$ = call(@$, $1, $2, $3); }
-| expr "=="  expr { $$ = call(@$, $1, $2, $3); }
-| expr "=~=" expr { $$ = call(@$, $1, $2, $3); }
-| expr ">"   expr { $$ = call(@$, $1, $2, $3); }
-| expr ">="  expr { $$ = call(@$, $1, $2, $3); }
-| expr "~="  expr { $$ = call(@$, $1, $2, $3); }
+  expr "!="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "%="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "<"   expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "<="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "=="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "=~=" expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr ">"   expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr ">="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "~="  expr { $$ = ast_call(@$, $1, $2, $3); }
 
-| "!" expr        { $$ = call(@$, $2, $1); }
+| "!" expr        { $$ = ast_call(@$, $2, $1); }
 
 // FIXME: This is not good: we are not short-circuiting.  Ideally we
 // would like to use an If here, but it's not an expression (yet?).
-| expr "&&" expr  { $$ = call(@$, $1, $2, $3); }
-| expr "||" expr  { $$ = call(@$, $1, $2, $3); }
+| expr "&&" expr  { $$ = ast_call(@$, $1, $2, $3); }
+| expr "||" expr  { $$ = ast_call(@$, $1, $2, $3); }
 ;
 
 expr.opt:
