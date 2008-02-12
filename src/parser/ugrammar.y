@@ -939,6 +939,7 @@ k1_id:
 stmt:
 	lvalue "=" expr namedarguments { $$ = ast_slot_update (@$, $1, $3); }
 | "var" lvalue "=" expr namedarguments { $$ = ast_slot_set    (@$, $2, $4); }
+| "var" lvalue { $$ = ast_slot_set(@$, $2, ast_call(@$, 0, SYMBOL(nil)));}
 | "delete" lvalue                      { $$ = ast_slot_remove (@$, $2);     }
 ;
 
