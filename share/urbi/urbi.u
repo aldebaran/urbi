@@ -383,32 +383,25 @@ String.addProto(Orderable);
 ## Functional programming.  ##
 ## ------------------------ ##
 
-var Object.map = function (f, list)
-{
-  if (!list.size)
-    []
-  else
-    [f (list.head)] + map (getSlot ("f"), list.tail)
-};
+do List {
+  function map (f)
+  {
+    var res = [];
+    for i in self { res += [f (i)] };
+    res
+  };
 
-var Object.any = function (f, list)
-{
-  if (!list.size)
+  function any (f)
+  {
+    for i in self { if (f (i)) return true };
     false
-  else if (f (list.head))
-    true
-  else
-    any (getSlot ("f"), list.tail)
-};
+  };
 
-var Object.all = function (f, list)
-{
-  if (!list.size)
+  function all (f)
+  {
+    for i in self { if (!f (i)) return false };
     true
-  else if (!f (list.head))
-    false
-  else
-    all (getSlot ("f"), list.tail)
+  }
 };
 
 var Object.tasks = [];
