@@ -283,7 +283,7 @@ do Float
   var seq = function()
   {
     var result = [];
-    for (var i = 1; i <= self; i++)
+    for (var i = 0; i < self; i++)
       result.insert(i.clone);
     result
   };
