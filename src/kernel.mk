@@ -1,4 +1,4 @@
-include $(top_srcdir)/libport/build-aux/init.mk
+include $(top_srcdir)/build-aux/init.mk
 # Get $(libport_la).
 # lib_libport = ../lib/libport
 # include $(top_srcdir)/lib/libport/libport-sources.mk
@@ -7,8 +7,7 @@ include $(top_srcdir)/libport/build-aux/init.mk
 AM_CPPFLAGS += -I$(srcdir) -I.
 
 # Find the uobject headers
-uobject_reldir = ../sdk-remote/src/liburbi/uobject
-AM_CPPFLAGS += -I$(srcdir)/$(uobject_reldir)
+AM_CPPFLAGS += -I$(srcdir)/uobject
 
 # Find the kernel, libport, etc. headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include -I$(top_builddir)/include

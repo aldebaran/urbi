@@ -78,13 +78,9 @@ include $(top_srcdir)/build-aux/revision.mk
 
 include $(top_srcdir)/build-aux/svn-externals.mk
 
-# include $(top_srcdir)/sdk-remote/src/liburbi/uobject/uobject.mk
+include uobject/uobject.mk
 dist_libkernel_la_SOURCES +=				\
-../sdk-remote/src/liburbi/uobject/uobject-hub-common.cc	\
-../sdk-remote/src/liburbi/uobject/uobject-common.cc	\
-../sdk-remote/src/liburbi/uobject/uvalue-common.cc	\
-../sdk-remote/src/liburbi/uobject/uvar-common.cc
-
+$(dist_uobject_sources)
 
 
 
