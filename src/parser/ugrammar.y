@@ -69,6 +69,7 @@
 
   namespace
   {
+    typedef yy::parser::location_type loc;
 
     /// Return the value pointed to be \a s, and delete it.
     template <typename T>
@@ -82,10 +83,35 @@
       return res;
     }
 
+    /// Create an AST node storing a float.
+    static
+    ast::Object*
+    ast_object (const loc& l, ufloat val)
+    {
+      return new ast::Object(l, new object::Float(val));
+    }
+
+    /// Create an AST node storing a symbol.
+    static
+    ast::Object*
+    ast_object (const loc& l, const libport::Symbol& val)
+    {
+      return new ast::Object(l, new object::String(val));
+    }
+
+    /// Create an AST node storing a string.
+    static
+    ast::Object*
+    ast_object (const loc& l, const std::string& val)
+    {
+      return ast_object (l, libport::Symbol(val));
+    }
+
+
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     static
     ast::Exp*
-    new_bin(const yy::parser::location_type& l, ast::flavor_type op,
+    new_bin(const loc& l, ast::flavor_type op,
 	    ast::Exp* lhs, ast::Exp* rhs)
     {
       ast::Exp* res = 0;
@@ -105,10 +131,15 @@
       return res;
     }
 
+
+    /*---------------------.
+    | Calls, lvalues etc.  |
+    `---------------------*/
+
     /// "<target> . <method> (args)".
     static
     ast::Call*
-    call (const yy::parser::location_type& l,
+    call (const loc& l,
 	  ast::Exp* target, libport::Symbol method, ast::exps_type* args)
     {
       args->push_front (target);
@@ -119,8 +150,7 @@
     /// "<target> . <method> ()".
     static
     ast::Call*
-    call (const yy::parser::location_type& l,
-	  ast::Exp* target, libport::Symbol method)
+    call (const loc& l, ast::Exp* target, libport::Symbol method)
     {
       return call (l, target, method, new ast::exps_type);
     }
@@ -128,8 +158,7 @@
     /// "<target> . <method> ()".
     static
     ast::Call*
-    call (const yy::parser::location_type& l,
-	  ast::Exp* target, libport::Symbol* method)
+    call (const loc& l, ast::Exp* target, libport::Symbol* method)
     {
       assert (method);
       return call (l, target, take(method));
@@ -138,7 +167,7 @@
     /// "<target> . <method> (<arg1>)".
     static
     ast::Call*
-    call (const yy::parser::location_type& l,
+    call (const loc& l,
 	  ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
       assert (method);
@@ -150,7 +179,7 @@
     /// "<target> . <method> (<arg1>, <arg2>)".
     static
     ast::Call*
-    call (const yy::parser::location_type& l,
+    call (const loc& l,
 	  ast::Exp* target, libport::Symbol* method,
 	  ast::Exp* arg1, ast::Exp* arg2)
     {
@@ -162,6 +191,10 @@
     }
 
 
+    /*-----------------.
+    | Changing slots.  |
+    `-----------------*/
+
     /// Factor slot_set, slot_update, and slot_remove.
     /// \param l        source location.
     /// \param lvalue   object and slot to change.
@@ -171,7 +204,7 @@
     static
     inline
     ast::Call*
-    slot_change (const yy::parser::location_type& l,
+    slot_change (const loc& l,
 		 ast::Call* lvalue, libport::Symbol& change,
 		 ast::Exp* value)
     {
@@ -181,8 +214,7 @@
 	      // this new is stupid.  We need to clean
 	      // this set of call functions.
 	      new libport::Symbol(change),
-	      new ast::Object(lvalue->location_get(),
-			      new object::String(lvalue->name_get())));
+	      ast_object(lvalue->location_get(), lvalue->name_get()));
       if (value)
 	res->args_get().push_back(value);
       return res;
@@ -190,27 +222,25 @@
 
     static
     ast::Call*
-    slot_set  (const yy::parser::location_type& l,
-	       ast::Call* lvalue, ast::Exp* value)
+    slot_set  (const loc& l, ast::Call* lvalue, ast::Exp* value)
     {
       return slot_change(l, lvalue, SYMBOL(setSlot), value);
     }
 
     static
     ast::Call*
-    slot_update  (const yy::parser::location_type& l,
-		  ast::Call* lvalue, ast::Exp* value)
+    slot_update  (const loc& l, ast::Call* lvalue, ast::Exp* value)
     {
       return slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
 
     static
     ast::Call*
-    slot_remove  (const yy::parser::location_type& l,
-		  ast::Call* lvalue)
+    slot_remove  (const loc& l, ast::Call* lvalue)
     {
       return slot_change(l, lvalue, SYMBOL(removeSlot), 0);
     }
+
 
     /// "<lvalue> = <value>".
     /// \param l        source location.
@@ -220,16 +250,14 @@
     /// \return The AST node calling the slot assignment.
     static
     ast::Call*
-    assign (const yy::parser::location_type& l,
-	    ast::Call* lvalue, ast::Exp* value, bool declare)
+    assign (const loc& l, ast::Call* lvalue, ast::Exp* value, bool declare)
     {
       return call (l,
 		   lvalue->args_get().front(),
 		   // this new is stupid.  We need to clean
 		   // this set of call functions.
 		   new libport::Symbol(declare ? "setSlot" : "updateSlot"),
-		   new ast::Object(lvalue->location_get(),
-				   new object::String(lvalue->name_get())),
+		   ast_object(lvalue->location_get(), lvalue->name_get()),
 		   value);
     }
 
@@ -237,7 +265,7 @@
     /// Return \a e in a ast::Scope unless it is already one.
     static
     ast::Scope*
-    scope (const yy::parser::location_type& l, ast::Exp* e)
+    scope (const loc& l, ast::Exp* e)
     {
       if (ast::Scope* res = dynamic_cast<ast::Scope*>(e))
 	return res;
@@ -261,8 +289,7 @@
     // with "self".
     static
     ast::Scope*
-    desugar_new (const yy::parser::location_type& l,
-		 libport::Symbol* id, ast::exps_type* args)
+    desugar_new (const loc& l, libport::Symbol* id, ast::exps_type* args)
     {
       // I wish I could use tweasts here...  Lord, help me.
 
@@ -291,7 +318,7 @@
     /// When op can be either of the four cases.
     static
     ast::Exp*
-    new_flavor(const yy::parser::location_type& l, ast::flavor_type op,
+    new_flavor(const loc& l, ast::flavor_type op,
 	       ast::Exp* lhs, ast::Exp* rhs)
     {
       switch (op)
@@ -328,8 +355,7 @@
     // OP is either ";" or "|".
     static
     ast::Exp*
-    for_loop (const yy::parser::location_type& l,
-	      ast::flavor_type op,
+    for_loop (const loc& l, ast::flavor_type op,
 	      ast::Exp* init, ast::Exp* test, ast::Exp* inc,
 	      ast::Exp* body)
     {
@@ -349,6 +375,7 @@
       return scope (l, new_flavor (l, op, init, while_loop));
     }
 
+
     /// Whether the \a e was the empty command.
     static bool
     implicit (const ast::Exp* e)
@@ -359,8 +386,7 @@
 
     /// Complain if \a command is not implicit.
     static void
-    warn_implicit(UParser& up,
-		  const yy::parser::location_type& l, const ast::Exp* e)
+    warn_implicit(UParser& up, const loc& l, const ast::Exp* e)
     {
       if (implicit(e))
 	up.warn(l,
@@ -977,9 +1003,7 @@ stmt:
  */
 | "loop" stmt %prec CMDBLOCK
     {
-      $$ = new ast::While(@$, $1,
-			  new ast::Object(@$, new object::Float(1)),
-			  $2);
+      $$ = new ast::While(@$, $1, ast_object(@$, 1), $2);
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -1003,8 +1027,7 @@ stmt:
       ast::Call	*init = slot_set(@$, idx, $3);
 
       // ___idx > 0
-      ast::Call *test = call(@$, idx, new libport::Symbol(">"),
-			     new ast::Object(@$, new object::Float(0)));
+      ast::Call *test = call(@$, idx, new libport::Symbol(">"), ast_object(@$, 0));
       // ___idx--
       ast::Call *dec = call(@$, idx, libport::Symbol("--"));
 
@@ -1187,11 +1210,9 @@ number:
 `-------*/
 
 expr:
-  number        { $$ = new ast::Object(@$, new object::Float($1)); }
-| time_expr     { $$ = new ast::Object(@$, new object::Float($1)); }
-| "string"
-  { $$ = new ast::Object(@$,
-			 new object::String(libport::Symbol(take($1)))); }
+  number        { $$ = ast_object(@$, $1); }
+| time_expr     { $$ = ast_object(@$, $1); }
+| "string"      { $$ = ast_object(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
