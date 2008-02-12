@@ -37,6 +37,29 @@ namespace object
     return self->slot_get (SYMBOL(context));
   }
 
+  static ast::Exp&
+  arg_at (const rObject& f, ufloat arg_n, const libport::Symbol& func)
+  {
+    const ast::exps_type& func_args = args_get (f);
+
+    int n;
+    try {
+      n = libport::ufloat_to_int (arg_n);
+    }
+    catch (boost::numeric::bad_numeric_cast& e)
+    {
+      throw BadInteger (arg_n, func);
+    }
+
+    if (n < 0 || n >= static_cast<int>(func_args.size ()))
+      throw PrimitiveError (func,
+			    (boost::format ("bad argument %1%") % n) .str ());
+
+    ast::exps_type::const_iterator i = func_args.begin();
+    advance (i, n);
+    return **i;
+  }
+
   static rObject
   call_class_evalArgAt (runner::Runner& r, objects_type args)
   {
@@ -44,24 +67,11 @@ namespace object
     FETCH_ARG (1, Float);
 
     const rObject& scope = context_get (args[0]);
-    const ast::exps_type& func_args = args_get (args[0]);
 
-    int n;
-    try {
-      n = libport::ufloat_to_int (arg1->value_get ());
-    }
-    catch (boost::numeric::bad_numeric_cast& e)
-    {
-      throw BadInteger (arg1->value_get (), SYMBOL(evalArgAt));
-    }
-
-    if (n < 0 || n >= static_cast<int>(func_args.size ()))
-      throw PrimitiveError ("evalArgAt",
-			    (boost::format ("bad argument %1%") % n) .str ());
-
-    ast::exps_type::const_iterator i = func_args.begin();
-    advance (i, n);
-    return r.eval_in_scope (scope, **i);
+    return r.eval_in_scope (scope,
+			    arg_at (args[0],
+				    arg1->value_get (),
+				    SYMBOL (evalArgAt)));
   }
 
   static rObject
