@@ -798,19 +798,35 @@ stmt:
 	TOK_CLASS       "class"
 ;
 
-expr:
+%code
+{
+  namespace
+  {
+    /// var s = Object.clone.
+    static
+    ast::Call*
+    ast_class (const loc&l, ast::Call* s)
+    {
+      return slot_set (l, s, 
+		       ast_call(l, ast_call(l, 0, SYMBOL(Object)),
+				SYMBOL(clone)));
+    }
+  }
+};
+
+stmt:
   "class" lvalue "{" stmts "}"
     {
       // Compiled as
       // var id = Object.clone; do id { stmts };
-      ast::Exp* object_clone =
-	ast_call(@$, ast_call(@$, 0, SYMBOL(Object)), SYMBOL(clone));
       $$ = ast_nary(@$, ast::flavor_semicolon,
-		    slot_set (@1+@2, $2, object_clone),
+		    ast_class (@1+@2, $2),
 		    ast_scope(@$, $2, $4));
     }
-// | "class" lvalue
-//    { $$ = ast_assign(@$, $2, 0, true); }
+| "class" lvalue
+    {
+      $$ = ast_class (@$, $2);
+    }
 ;
 
 stmt:
@@ -1082,7 +1098,7 @@ stmt:
 %token TOK_DO "do";
 
 expr:
-            "{" stmts "}"   { $$ = ast_scope(@$,  0, $2); }
+	    "{" stmts "}"   { $$ = ast_scope(@$,  0, $2); }
 | "do" expr "{" stmts "}"   { $$ = ast_scope(@$, $2, $4); }
 ;
 
