@@ -191,6 +191,20 @@ namespace object
     return args[0];
   }
 
+  static rObject
+  object_class_fresh (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return new String(libport::Symbol::fresh());
+  }
+
+  static rObject
+  object_class_lobby (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return r.lobby_get();
+  }
+
   /*---------.
   | Protos.  |
   `---------*/
@@ -339,7 +353,9 @@ namespace object
     DECLARE(dump);
     DECLARE(echo);
     DECLARE(eval);
+    DECLARE(fresh);
     DECLARE(load);
+    DECLARE(lobby);
     DECLARE(print);
     DECLARE(reboot);
     DECLARE(sameAs);

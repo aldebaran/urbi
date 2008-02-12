@@ -74,6 +74,7 @@
   Macro(evalArgs, "evalArgs");                    \
   Macro(exp, "exp");                              \
   Macro(false, "false");                          \
+  Macro(fresh, "fresh");                          \
   Macro(front, "front");                          \
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
@@ -96,6 +97,7 @@
   Macro(runner, "runner");                        \
   Macro(sameAs, "sameAs");                        \
   Macro(self, "self");                            \
+  Macro(send, "send");                            \
   Macro(sender, "sender");                        \
   Macro(set, "set");                              \
   Macro(setSlot, "setSlot");                      \
