@@ -180,9 +180,9 @@
     static
     inline
     ast::Call*
-    slot_change (const loc& l,
-		 ast::Call* lvalue, libport::Symbol& change,
-		 ast::Exp* value)
+    ast_slot_change (const loc& l,
+		     ast::Call* lvalue, libport::Symbol& change,
+		     ast::Exp* value)
     {
       ast::Call* res =
 	ast_call(l,
@@ -198,23 +198,23 @@
 
     static
     ast::Call*
-    slot_set  (const loc& l, ast::Call* lvalue, ast::Exp* value)
+    ast_slot_set  (const loc& l, ast::Call* lvalue, ast::Exp* value)
     {
-      return slot_change(l, lvalue, SYMBOL(setSlot), value);
+      return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
     }
 
     static
     ast::Call*
-    slot_update  (const loc& l, ast::Call* lvalue, ast::Exp* value)
+    ast_slot_update  (const loc& l, ast::Call* lvalue, ast::Exp* value)
     {
-      return slot_change(l, lvalue, SYMBOL(updateSlot), value);
+      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
 
     static
     ast::Call*
-    slot_remove  (const loc& l, ast::Call* lvalue)
+    ast_slot_remove  (const loc& l, ast::Call* lvalue)
     {
-      return slot_change(l, lvalue, SYMBOL(removeSlot), 0);
+      return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
     }
 
 
@@ -281,7 +281,7 @@
       // Cannot use a fixed string here, otherwise two successive "new"
       // will conflict.  Delete the slot afterwards?
       ast::Call* res = ast_call(l, 0, libport::Symbol::fresh());
-      ast::Exp* decl = slot_set (l, res, ast_call(l, proto, SYMBOL(clone)));
+      ast::Exp* decl = ast_slot_set (l, res, ast_call(l, proto, SYMBOL(clone)));
 
       // res . init (args);
       ast::Exp* init = ast_call(l, res, SYMBOL(init), args);
@@ -807,9 +807,9 @@ stmt:
     ast::Call*
     ast_class (const loc&l, ast::Call* s)
     {
-      return slot_set (l, s, 
-		       ast_call(l, ast_call(l, 0, SYMBOL(Object)),
-				SYMBOL(clone)));
+      return ast_slot_set (l, s,
+			   ast_call(l, ast_call(l, 0, SYMBOL(Object)),
+				    SYMBOL(clone)));
     }
   }
 };
@@ -925,9 +925,9 @@ k1_id:
 `-------------------*/
 
 stmt:
-	lvalue "=" expr namedarguments { $$ = slot_update (@$, $1, $3); }
-| "var" lvalue "=" expr namedarguments { $$ = slot_set    (@$, $2, $4); }
-| "delete" lvalue                      { $$ = slot_remove (@$, $2);     }
+	lvalue "=" expr namedarguments { $$ = ast_slot_update (@$, $1, $3); }
+| "var" lvalue "=" expr namedarguments { $$ = ast_slot_set    (@$, $2, $4); }
+| "delete" lvalue                      { $$ = ast_slot_remove (@$, $2);     }
 ;
 
 %token <symbol>
@@ -1046,7 +1046,7 @@ stmt:
 
       // var ___idx = <expr>
       ast::Call *idx = ast_call(@$, 0, libport::Symbol::fresh());
-      ast::Call	*init = slot_set(@$, idx, $3);
+      ast::Call	*init = ast_slot_set(@$, idx, $3);
 
       // ___idx > 0
       ast::Call *test =
