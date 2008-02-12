@@ -42,7 +42,6 @@ XFAIL_TESTS +=					\
 1.x/illegal-operation-on-void.chk		\
 1.x/init-in-pipe-with-time.chk			\
 1.x/lazy-test-eval.chk				\
-1.x/load.chk					\
 1.x/loadwav.chk					\
 1.x/modifier-accel-adaptive.chk			\
 1.x/modifier-accel.chk				\
