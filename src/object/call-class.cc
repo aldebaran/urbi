@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object call.
  */
 
+#include <sstream>
+
 #include <boost/numeric/conversion/converter.hpp>
 
 #include <libport/foreach.hh>
@@ -75,6 +77,20 @@ namespace object
   }
 
   static rObject
+  call_class_argString (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (2);
+    FETCH_ARG (1, Float);
+
+    const ast::Exp& exp = arg_at (args[0],
+				  arg1->value_get (),
+				  SYMBOL (argString));
+    std::ostringstream str;
+    str << exp;
+    return new String (libport::Symbol (str.str ()));
+  }
+
+  static rObject
   call_class_evalArgs (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
@@ -106,6 +122,7 @@ namespace object
 #define DECLARE(Name)							\
     DECLARE_PRIMITIVE(call, Name, Name)
 
+    DECLARE (argString);
     DECLARE (evalArgAt);
     DECLARE (evalArgs);
     DECLARE (argsCount);

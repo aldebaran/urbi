@@ -57,6 +57,7 @@
   Macro(acos, "acos");                            \
   Macro(addProto, "addProto");                    \
   Macro(apply, "apply");                          \
+  Macro(argString, "argString");                  \
   Macro(args, "args");                            \
   Macro(argsCount, "argsCount");                  \
   Macro(asin, "asin");                            \
