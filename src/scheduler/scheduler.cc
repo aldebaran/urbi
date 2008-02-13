@@ -130,6 +130,8 @@ namespace scheduler
     // Check that we are not near exhausting the stack space.
     if (Coro_stackSpaceAlmostGone (job->coro_get ()))
       throw object::StackExhaustedError ("stack space exhausted");
+    // Execute a deferred exception if any
+    job->check_for_pending_exception ();
   }
 
   void

@@ -66,6 +66,13 @@ namespace scheduler
     void side_effect_free_set (bool);
     bool side_effect_free_get () const;
 
+    /// Raise an exception next time this job will be resumed.
+    void async_throw (std::exception*);
+
+    /// Maybe raise a deferred exception. Must be called from the scheduler
+    /// while resuming the job execution.
+    void check_for_pending_exception ();
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -91,6 +98,7 @@ namespace scheduler
     Coro* self_;
 
     bool side_effect_free_;
+    std::exception* pending_exception_;
   };
 
 } // namespace scheduler

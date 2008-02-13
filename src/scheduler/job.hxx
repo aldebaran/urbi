@@ -18,7 +18,8 @@ namespace scheduler
     : scheduler_ (&scheduler),
       terminated_ (false),
       self_ (Coro_new ()),
-      side_effect_free_ (false)
+      side_effect_free_ (false),
+      pending_exception_ (0)
   {
   }
 
@@ -27,7 +28,8 @@ namespace scheduler
     : scheduler_ (model.scheduler_),
       terminated_ (false),
       self_ (Coro_new ()),
-      side_effect_free_ (false)
+      side_effect_free_ (false),
+      pending_exception_ (0)
   {
   }
 
@@ -35,6 +37,8 @@ namespace scheduler
   Job::~Job ()
   {
     scheduler_->unschedule_job (this);
+    if (pending_exception_)
+      delete pending_exception_;
     Coro_free (self_);
   }
 
@@ -98,6 +102,20 @@ namespace scheduler
     return side_effect_free_;
   }
 
+  inline void
+  Job::async_throw (std::exception* ue)
+  {
+    if (pending_exception_)
+      delete pending_exception_;
+    pending_exception_ = ue;
+  }
+
+  inline void
+  Job::check_for_pending_exception ()
+  {
+    if (pending_exception_)
+      throw *pending_exception_;
+  }
 } // namespace scheduler
 
 #endif // !SCHEDULER_JOB_HXX
