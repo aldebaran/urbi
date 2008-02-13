@@ -119,8 +119,10 @@ var Object.every_ = function
 var Object.at_ = function
 {
   var t = detach ({
+    t.setSideEffectFree (true);
     loop {
       if (call.evalArgAt (1)) {
+        t.setSideEffectFree (false);
         call.evalArgAt (2);
         break
       };
