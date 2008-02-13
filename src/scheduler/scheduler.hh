@@ -113,6 +113,10 @@ namespace scheduler
 
     /// Coroutine support
     Coro* self_;
+
+    /// Has there been a possible side-effect since last time we reset
+    /// this field?
+    bool possible_side_effect_;
   };
 
 } // namespace scheduler

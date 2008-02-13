@@ -15,7 +15,8 @@ namespace scheduler
   inline
   Scheduler::Scheduler ()
     : current_job_ (0),
-      self_ (Coro_new ())
+      self_ (Coro_new ()),
+      possible_side_effect_ (true)
   {
     ECHO ("Initializing main coroutine");
     Coro_initializeMainCoro (self_);

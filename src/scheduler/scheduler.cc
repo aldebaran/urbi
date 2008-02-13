@@ -48,9 +48,6 @@ namespace scheduler
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
-    // Set to true when at least one job has been started
-    bool job_started = !jobs_to_start_.empty ();
-
     // Start new jobs
     to_start_.clear ();
     std::swap (to_start_, jobs_to_start_);
@@ -63,6 +60,8 @@ namespace scheduler
       assert (!current_job_);
       current_job_ = job;
       Coro_startCoro_ (self_, job->coro_get(), job, run_job);
+      // We have to assume that a new job may have had side-effects.
+      possible_side_effect_ = true;
     }
 
     // Start deferred jobs
@@ -79,14 +78,17 @@ namespace scheduler
     // If something is going to happen, or if we have just started a
     // new job, add the list of jobs waiting for something to happen
     // on the pending jobs queue.
-    if (!if_change_jobs_.empty() && (job_started || !jobs_.empty()))
+    if (!if_change_jobs_.empty() && (possible_side_effect_ || !jobs_.empty()))
     {
       foreach (Job* job, if_change_jobs_)
 	jobs_.push_back (job);
       if_change_jobs_.clear ();
     }
 
-    // Run all the jobs in the run queue once.
+    // Run all the jobs in the run queue once. If any job declares upon entry or
+    // return that it is not side-effect free, we remember that for the next
+    // cycle.
+    possible_side_effect_ = false;
     pending_.clear ();
     std::swap (pending_, jobs_);
 
@@ -96,7 +98,9 @@ namespace scheduler
       assert (job);
       assert (!job->terminated ());
       ECHO ("will resume job " << job);
+      possible_side_effect_ |= !job->side_effect_free_get ();
       Coro_switchTo_ (self_, job->coro_get ());
+      possible_side_effect_ |= !job->side_effect_free_get ();
       ECHO ("back from job " << job);
     }
 
