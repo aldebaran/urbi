@@ -59,6 +59,13 @@ namespace scheduler
     /// Wait for any other task to be scheduled.
     void yield_until_things_changed ();
 
+    /// Indicate whether the current state of a job may influence other
+    /// parts of the system. This is used by the scheduler to choose
+    /// whether other jobs needs scheduling or not. The default value
+    /// for \a side_effect_free is false.
+    void side_effect_free_set (bool);
+    bool side_effect_free_get () const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -82,6 +89,8 @@ namespace scheduler
 
     /// Coro structure corresponding to this job
     Coro* self_;
+
+    bool side_effect_free_;
   };
 
 } // namespace scheduler

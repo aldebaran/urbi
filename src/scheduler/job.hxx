@@ -17,7 +17,8 @@ namespace scheduler
   Job::Job (Scheduler& scheduler)
     : scheduler_ (&scheduler),
       terminated_ (false),
-      self_ (Coro_new ())
+      self_ (Coro_new ()),
+      side_effect_free_ (false)
   {
   }
 
@@ -25,7 +26,8 @@ namespace scheduler
   Job::Job (const Job& model)
     : scheduler_ (model.scheduler_),
       terminated_ (false),
-      self_ (Coro_new ())
+      self_ (Coro_new ()),
+      side_effect_free_ (false)
   {
   }
 
@@ -82,6 +84,18 @@ namespace scheduler
   Job::start_job ()
   {
     scheduler_->add_job (this);
+  }
+
+  inline void
+  Job::side_effect_free_set (bool s)
+  {
+    side_effect_free_ = s;
+  }
+
+  inline bool
+  Job::side_effect_free_get () const
+  {
+    return side_effect_free_;
   }
 
 } // namespace scheduler
