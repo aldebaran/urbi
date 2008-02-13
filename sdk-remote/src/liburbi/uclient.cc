@@ -32,6 +32,8 @@
 # include <sys/time.h>
 # include <time.h>
 # include <signal.h>
+#else
+# include "libport/windows.hh"
 #endif
 
 #include "urbi/uclient.hh"
