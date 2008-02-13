@@ -60,6 +60,7 @@
   Macro(argString, "argString");                  \
   Macro(args, "args");                            \
   Macro(argsCount, "argsCount");                  \
+  Macro(asString, "asString");                    \
   Macro(asin, "asin");                            \
   Macro(atan, "atan");                            \
   Macro(back, "back");                            \

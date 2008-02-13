@@ -110,11 +110,24 @@ namespace object
     return object_echo(r, nargs, false);
   }
 
+  /// Send pretty-printed self on the connection.
+  /// args[1], if present, can be the tag to use.
+  static rObject
+  object_class_asString (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    std::ostringstream os;
+    args[0]->print(os);
+    return new String(libport::Symbol(os.str()));
+  }
+
   static rObject
   object_class_sameAs(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    return args[0]->slot_get((args[0] == args[1]) ? SYMBOL(true): SYMBOL(false));
+    return args[0]->slot_get((args[0] == args[1])
+			     ? SYMBOL(true)
+			     : SYMBOL(false));
   }
 
 
@@ -362,6 +375,7 @@ namespace object
 
     DECLARE(apply);
 
+    DECLARE(asString);
     DECLARE(dump);
     DECLARE(echo);
     DECLARE(eval);
