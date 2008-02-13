@@ -100,6 +100,7 @@
   Macro(send, "send");                            \
   Macro(sender, "sender");                        \
   Macro(set, "set");                              \
+  Macro(setSideEffectFree, "setSideEffectFree");  \
   Macro(setSlot, "setSlot");                      \
   Macro(shutdown, "shutdown");                    \
   Macro(sin, "sin");                              \

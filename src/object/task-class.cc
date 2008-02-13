@@ -5,6 +5,8 @@
 
 #include <boost/any.hpp>
 
+#include <libport/ufloat.hh>
+
 #include "object/task-class.hh"
 
 #include "object/alien.hh"
@@ -80,6 +82,23 @@ namespace object
     return yield_until_terminated (r, args)->current_get ();
   }
 
+  static rObject
+  task_class_setSideEffectFree (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (2);
+    FETCH_ARG (1, Float);
+
+    try {
+      r.side_effect_free_set (libport::ufloat_to_boolean (arg1->value_get ()));
+    }
+    catch (boost::numeric::bad_numeric_cast& ue)
+    {
+      throw BadInteger (arg1->value_get (), "setSideEffectFree");
+    }
+
+    return void_class;
+  }
+
   void
   task_class_initialize ()
   {
@@ -87,6 +106,7 @@ namespace object
     DECLARE_PRIMITIVE(task, Name, Name);
     DECLARE (init);
     DECLARE (result);
+    DECLARE (setSideEffectFree);
     DECLARE (waitFor);
     DECLARE (waitForChanges);
 #undef DECLARE
