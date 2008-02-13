@@ -1,0 +1,24 @@
+# k1 compatibility.
+class Kernel1Functions
+{
+  function size(l)
+  { 
+    warn("`size(list)' is deprecated, use `list.size'");
+    l.size
+  };
+
+  function seq(n)
+  {
+    warn("`seq(number)' is deprecated, use `number.seq'");
+    n.seq()
+  };
+
+  function ping ()
+  {
+    echo ("pong time=" + time.asString);
+  };
+
+  void;
+};
+
+Object.addProto(Kernel1Functions);

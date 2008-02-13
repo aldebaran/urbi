@@ -317,24 +317,7 @@ do List
   void;
 };
 
-# k1 compatibility.
-do Object
-{
-  var size = function(l)
-  { 
-    warn("`size(list)' is deprecated, use `list.size'");
-    l.size
-  };
-
-  var seq = function(n)
-  {
-    warn("`seq(number)' is deprecated, use `number.seq'");
-    n.seq()
-  };
-
-  void;
-};
-
+load("urbi/k1.u");
 
 ## ----- ##
 ## Math. ##

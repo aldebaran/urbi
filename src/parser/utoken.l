@@ -326,9 +326,6 @@ FLAVOR   [;|,&]?
 "devices"         |
 "events"          |
 "functions"       |
-"motoroff"        |
-"motoron"         |
-"ping"            |
 "quit"            |
 "reset"           |
 "runningcommands" |
