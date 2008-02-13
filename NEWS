@@ -188,11 +188,18 @@ counter1;
 The following constructs, deprecated in the 1.x series, are no
 longer supported.
 
- * {{{<object> inherits <object>}}}.
- * {{{<object> disinherits <object>}}}.
+ * Function call syntax[[br]]
+   Function calls are normalized to {{{object.method(args)}}}.
+   * {{{<object> inherits <object>}}}.
+   * {{{<object> disinherits <object>}}}.
+   * {{{<object> on}}}.
+   * {{{<object> off}}}.
+   * {{{<object> switch}}}.
+   * {{{copy <arg>}}}
+   * {{{echo <arg>}}}
+   * {{{sleep <arg>}}}
  * {{{<integer> ^ <integer> denotes binary xor}}}.
  * {{{foreach}}} and {{{loopn}}}.
- * calls to {{{copy}}}, {{{echo}}}, and {{{sleep}}} without parentheses.
  * {{{wait(<duration>)}}}, use {{{sleep}}}.
  * new variables must be declared with {{{var}}}.
 
