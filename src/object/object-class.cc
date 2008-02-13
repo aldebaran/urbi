@@ -327,8 +327,7 @@ namespace object
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, Float);
     try {
-      int is_local = libport::ufloat_to_boolean (arg1->value_get ());
-      args[0]->locals_set (is_local);
+      args[0]->locals_set (libport::ufloat_to_boolean (arg1->value_get ()));
     }
     catch (boost::numeric::bad_numeric_cast& ue)
     {
