@@ -61,7 +61,7 @@ namespace scheduler
 
     /// Indicate whether the current state of a job may influence other
     /// parts of the system. This is used by the scheduler to choose
-    /// whether other jobs needs scheduling or not. The default value
+    /// whether other jobs need scheduling or not. The default value
     /// for \a side_effect_free is false.
     void side_effect_free_set (bool);
     bool side_effect_free_get () const;
