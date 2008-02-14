@@ -101,7 +101,7 @@ boost
 				{
 				BOOST_ASSERT( 0!=dynamic_cast<ErrorInfo const *>(eib.get()) );
 				ErrorInfo const * w = static_cast<ErrorInfo const *>(eib.get());
-				return shared_ptr<typename ErrorInfo::value_type const>(eib,&w->value());
+				return shared_ptr<typename ErrorInfo::value_type const>(new typename ErrorInfo::value_type (w->value()));
 				}
 		return shared_ptr<typename ErrorInfo::value_type const>();
 		}
