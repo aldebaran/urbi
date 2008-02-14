@@ -444,8 +444,6 @@ public:
   bool receiving;
   /// Used by addToQueue to notify new data.
   bool newDataAdded;
-  /// False when the whole command tree has been processed.
-  bool obstructed;
 
 
   /// \name Parsing.

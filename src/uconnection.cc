@@ -67,7 +67,6 @@ UConnection::UConnection (UServer* userver,
     closing (false),
     receiving (false),
     newDataAdded (false),
-    obstructed (false),
     parser_ (new UParser (*this)),
     sendQueue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
 			    UConnection::ADAPTIVE)),
@@ -546,6 +545,11 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   // active_command_: The command to be executed (root of the AST).
   // passert (*active_command_, active_command_->empty());
+
+  // If active_command_ is not empty, a runner is still alive, so set
+  // obstructed to true. This is a temporary fix to avoid having several
+  // runners on the same Nary, until runners become managed outside UConnection.
+  bool obstructed = !active_command_->empty();
 
   // Loop to get all the commands that are ready to be executed.
   for (std::string command = recvQueue_->popCommand();
