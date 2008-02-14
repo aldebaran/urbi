@@ -5,6 +5,7 @@
 
 #include <sstream>
 
+#include <boost/format.hpp>
 #include <boost/numeric/conversion/converter.hpp>
 
 #include <libport/foreach.hh>
