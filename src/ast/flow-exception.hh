@@ -7,6 +7,7 @@
 # define AST_FLOW_EXCEPTION_HH
 
 # include <boost/exception.hpp>
+# include <boost/exception/enable_exception_cloning.hpp>
 # include <ostream>
 
 # include "ast/loc.hh"

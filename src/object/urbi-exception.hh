@@ -9,6 +9,7 @@
 # include <string>
 
 # include <boost/exception.hpp>
+# include <boost/exception/enable_exception_cloning.hpp>
 
 # include <libport/ufloat.hh>
 # include <libport/symbol.hh>
