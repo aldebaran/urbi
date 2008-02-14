@@ -6,8 +6,9 @@
 #ifndef OBJECT_URBI_EXCEPTION_HH
 # define OBJECT_URBI_EXCEPTION_HH
 
-# include <exception>
 # include <string>
+
+# include <boost/exception.hpp>
 
 # include <libport/ufloat.hh>
 # include <libport/symbol.hh>
@@ -21,7 +22,7 @@ namespace object
 {
   /// This class defines an exception used when an error
   /// occurs in an URBI primitive.
-  class UrbiException : public std::exception
+  class UrbiException : public boost::exception
   {
   public:
     /// Destructor.
@@ -34,7 +35,7 @@ namespace object
     virtual const char* what () const throw ();
 
     /// Get location.
-    const ast::loc& location_get () const;
+    ast::loc location_get () const;
 
     /// Set location.
     void location_set (const ast::loc&);
@@ -51,7 +52,7 @@ namespace object
      * \brief Construct an exception which contains a raw message.
      * \param msg raw Error message.
      * \param loc Error's location.  */
-    UrbiException (const std::string& msg, const ast::loc& loc);
+    UrbiException (const std::string& msg, const ast::loc&);
 
     /**
      * \brief Construct an exception which contains a raw message.
@@ -59,19 +60,6 @@ namespace object
      * \param fun C++ function that raised.  */
     UrbiException (const std::string& msg,
 		   const std::string& fun);
-
-  private:
-    /// Error message.
-    std::string msg_;
-
-    /// Location
-    ast::loc loc_;
-
-    /// The (C++) function that raised.
-    std::string fun_;
-
-    /// location is set?
-    bool location_set_;
   };
 
 

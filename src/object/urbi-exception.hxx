@@ -5,32 +5,36 @@
 
 #ifndef OBJECT_URBI_EXCEPTION_HXX
 # define OBJECT_URBI_EXCEPTION_HXX
+# include <boost/exception/info.hpp>
 # include <boost/format.hpp>
+
+typedef boost::error_info<struct tag_msg, std::string> msg_info;
+typedef boost::error_info<struct tag_location, ast::loc> location_info;
+typedef boost::error_info<struct tag_function, std::string> function_info;
 
 namespace object
 {
 
   inline
-  const ast::loc&
+  ast::loc
   UrbiException::location_get () const
   {
     //FIXME: enable this? assert(location_set_);
-    return loc_;
+    return *boost::get_error_info<location_info> (*this);
   }
 
   inline
   void
   UrbiException::location_set (const ast::loc& l)
   {
-    loc_ = l;
-    location_set_ = true;
+    *this << location_info (l);
   }
 
   inline
   bool
   UrbiException::location_is_set () const
   {
-    return location_set_;
+    return boost::get_error_info<location_info> (*this);
   }
 
   inline
