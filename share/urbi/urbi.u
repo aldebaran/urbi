@@ -47,6 +47,16 @@ do Object
   copySlot ("removeProto", "disinherit");
   
   copySlot ("sameAs", "==");
+
+  function 'new'
+  {
+    # The fresh child.
+    var res = call.target.clone;
+    # Call the "init" from the parent, retargetted to the child.
+    call.target.getSlot("init").apply([res] + call.evalArgs);
+    res;
+  };
+
   void
 };
 

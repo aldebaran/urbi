@@ -440,7 +440,6 @@
 	TOK_LBRACE       "{"
 	TOK_LBRACKET     "["
 	TOK_LPAREN       "("
-	TOK_NEW          "new"
 	TOK_NOOP         "noop"
 	TOK_OBJECT       "object"
 	TOK_ONLEAVE      "onleave"
@@ -1096,10 +1095,25 @@ call:
 ;
 
 // Instantiation looks a lot like a function call.
+%token <symbol> TOK_NEW "new";
 %type <expr> new;
 new:
   "new" "identifier" args { $$ = ast_new (@$, $2, $3); }
 ;
+
+// Allow Object.new etc.
+id: "new";
+
+// There is a shift/reduce conflict that results from the two uses of "new":
+//
+//   new -> "new" . "identifier" args
+//   id  -> "new" .
+//    "identifier"  shift, and go to state 108
+//    "identifier"  [reduce using rule 89 (id)]
+//
+// Obviously the shift should win.
+%left "new";
+%left "identifier";
 
 expr:
   new   { $$ = $1; }

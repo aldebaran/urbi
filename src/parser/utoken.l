@@ -460,7 +460,7 @@ FLAVOR   [;|,&]?
 "if"            RETURN(IF);
 "in"            RETURN(IN);
 "loopn"         DEPRECATED("for");
-"new"           RETURN(NEW);
+"new"           RETURN_OP(NEW);
 "noop"          RETURN(NOOP);
 "object"        RETURN(OBJECT);
 "onleave"       RETURN(ONLEAVE);
