@@ -116,6 +116,8 @@ class Attribute:
     if self.owned:
       if self.pointer_p ():
 	if re_list.match (self.root_type ()):
+	  if not self.mandatory:
+            res += "    if (" + self.name_() + ")\n  "
 	  res += "    " + self.ast_params['deep_clear'] + \
 		 " (*" + self.name_() + ");\n"
 	res += "    delete " + self.name_() + ";\n"

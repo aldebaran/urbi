@@ -176,8 +176,13 @@ for node in concrete_nodes:
       # Collection attributes.
       elif a.root_type () in ast_params['collections']:
 	if a.pointer_p ():
-	  print "    " + a.root_type () + "* " + a.name + \
+	  if a.mandatory:
+	    print "    " + a.root_type () + "* " + a.name + \
 		" = recurse_collection (" + accessor + ");"
+	  else:
+	    print "    " + a.root_type () + "* " + a.name + " ="
+	    print "      " + accessor + \
+		" ? recurse_collection (*" + accessor + ") : 0;"
 	else:
 	  print "    " + a.root_type () + " " + a.name + \
 		" = *recurse_collection (" + accessor + ");"

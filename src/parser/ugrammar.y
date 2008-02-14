@@ -557,12 +557,10 @@
 // asssociativity, yet we can write "foo . + (2)" and call foo's +.
 %type <symbol> id;
 
-%type <symbols> identifiers identifiers.1 formal_args;
 // FIXME: this destructor entails double frees and invalid pointer
 // frees.
 // %destructor { delete $$; } <symbol>;
 %printer { debug_stream() << libport::deref << $$; } <symbol>;
-%printer { debug_stream() << libport::separate (*$$, ", "); } <symbols>;
 
 
 /*--------------.
@@ -858,29 +856,17 @@ stmt:
   "emit" k1_id args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
 | "waituntil" softtest               { $$ = 0; }
-| "event" k1_id formal_args          { $$ = 0; }
+| "event" k1_id formals          { $$ = 0; }
 ;
 
 // Functions.
 stmt:
-  "function" k1_id formal_args "{" stmts "}"
+  "function" k1_id formals "{" stmts "}"
     {
       // Compiled as "var name = function args stmt", i.e.,
       // setSlot (name, function args stmt).
       $$ = ast_assign(@$, $2,
-		      new ast::Function (@$, true, take($3), $5),
-		      true);
-    }
-;
-
-// Functions with call messages.
-stmt:
-  "function" k1_id "{" stmts "}"
-    {
-      // Compiled as above.
-      const ast::symbols_type* empty = new ast::symbols_type;
-      $$ = ast_assign(@$, $2,
-		      new ast::Function (@$, false, *empty, $4),
+		      new ast::Function (@$, $3, $5),
 		      true);
     }
 ;
@@ -1192,22 +1178,9 @@ expr:
 
 // Anonymous function.
 expr:
-  // Because of conflicts, we need the braces
-  "function" formal_args "{" stmts "}"
+  "function" formals "{" stmts "}"
     {
-      $$ = new ast::Function (@$, true, take($2), $4);
-    }
-;
-
-// Anonymous function with call message
-expr:
-  "function" "{" stmts "}"
-    {
-      // FIXME: It may be better to change the "formals" argument to a
-      // const symbols_type* instead of a reference here and make it
-      // non-mandatory.
-      const ast::symbols_type* empty = new ast::symbols_type;
-      $$ = new ast::Function (@$, false, *empty, $3);
+      $$ = new ast::Function (@$, $2, $4);
     }
 ;
 
@@ -1406,6 +1379,9 @@ var.opt:
 | "var"
 ;
 
+%type <symbols> identifiers identifiers.1 formals;
+%printer { debug_stream() << libport::separate (*$$, ", "); } <symbols>;
+
 // One or several comma-separated identifiers.
 identifiers.1:
   var.opt "identifier"
@@ -1426,14 +1402,11 @@ identifiers:
 | identifiers.1   { $$ = $1; }
 ;
 
-/* It used to be possible to not have the parens for empty identifiers.
-   For the time being, this is disabled because it goes against
-   factoring.  Might be reintroduced later. */
-formal_args:
-  "(" identifiers ")" { $$ = $2; }
+// Function formal arguments.
+formals:
+  /* empty */         { $$ = 0; }
+| "(" identifiers ")" { $$ = $2; }
 ;
-
-/* End of grammar */
 
 %%
 

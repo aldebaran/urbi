@@ -660,17 +660,31 @@ Call:
 Function:
   super: Exp
   attributes:
-    - strict: { type: 'bool', desc: True if the arguments must be evaluated }
-    - formals: { type: 'symbols_type', desc: Formal arguments }
-    - body: { type: 'Exp*', access: rwW, mandatory: False, desc: Body }
+    - formals:
+        type: 'symbols_type*'
+        mandatory: False
+        desc: Formal arguments
+    - body:
+        type: 'Exp*'
+        access: rwW
+        mandatory: False
+        desc: Body
+  inline:
+    header inside: |2
+        public:
+          /// Whether the arguments must be evaluated.
+          bool strict () const
+          {
+            return formals_;
+          }
   printer:
     - '"function "'
     - '{
-          if (n.strict_get ())
-            ostr_ << "("
-                  << libport::separate (n.formals_get(), ", ")
-                  << ") ";
-        }'
+         if (n.formals_get ())
+           ostr_ << "("
+                 << libport::separate (*n.formals_get(), ", ")
+                 << ") ";
+       }'
     - '"{"'
     - 'libport::incendl'
     - ~body
