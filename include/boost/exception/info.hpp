@@ -36,6 +36,7 @@ boost
 
 			virtual std::type_info const & tag_typeid() const = 0;
 			virtual std::string value_as_string() const = 0;
+			virtual ~error_info_base() {};
 			};
 		}
 
@@ -120,7 +121,7 @@ boost
 				{
 				}
 
-			~error_info_container_impl() throw()
+			virtual ~error_info_container_impl() throw()
 				{
 				}
 
@@ -190,8 +191,8 @@ boost
 
 			typedef std::map< typeinfo, shared_ptr<error_info_base const> > error_info_map;
 			error_info_map info_;
-			std::string mutable what_;
-			int mutable count_;
+			mutable std::string what_;
+			mutable int count_;
 
 			void
 			add_ref() const

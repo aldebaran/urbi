@@ -31,6 +31,8 @@ boost
 
 			virtual void add_ref() const=0;
 			virtual void release() const=0;
+			public:
+			virtual ~counted_base() throw() {};
 			};
 		}
 	}
