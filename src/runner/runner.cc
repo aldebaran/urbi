@@ -159,7 +159,7 @@ namespace runner
 		      const rObject call_message)
   {
     // The called function.
-    ast::Function* fn = &func.cast<object::Code> ()->value_get ();
+    ast::Function& fn = func.cast<object::Code> ()->value_get ();
     // Effective (evaluated) argument iterator.
     object::objects_type::const_iterator ei;
     // Formal argument iterator.
@@ -190,15 +190,15 @@ namespace runner
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
 
-    if (fn->strict_get())
+    if (fn.strict_get())
     {
       assert (!call_message);
-      object::check_arg_count (fn->formals_get().size() + 1, args.size(),
+      object::check_arg_count (fn.formals_get().size() + 1, args.size(),
 			       "");
 
       ++ei;
-      for (fi = fn->formals_get().begin();
-	   fi != fn->formals_get().end() && ei != args.end();
+      for (fi = fn.formals_get().begin();
+	   fi != fn.formals_get().end() && ei != args.end();
 	   ++fi, ++ei)
 	bound_args->slot_set (**fi, *ei);
     }
@@ -217,7 +217,7 @@ namespace runner
 
     try
     {
-      current_ = eval (*fn->body_get());
+      current_ = eval (*fn.body_get());
     }
     catch (ast::BreakException& be)
     {
@@ -228,7 +228,7 @@ namespace runner
     {
       current_ = re.result_get();
     }
-    PROPAGATE_URBI_EXCEPTION(fn->location_get(), std::swap(bound_args, locals_);)
+    PROPAGATE_URBI_EXCEPTION(fn.location_get(), std::swap(bound_args, locals_);)
 
     return current_;
   }
@@ -373,8 +373,8 @@ namespace runner
     if (val->kind_get () == object::Object::kind_code)
     {
       // Build either the evaluated argument list or the call message
-      ast::Function* fn = &val.cast<object::Code> ()->value_get ();
-      if (fn->strict_get())
+      ast::Function& fn = val.cast<object::Code> ()->value_get ();
+      if (fn.strict_get())
 	push_evaluated_arguments (args, e.args_get ());
       else
 	call_message = build_call_message (tgt, e.name_get(), e.args_get ());
