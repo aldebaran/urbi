@@ -19,7 +19,8 @@
 
  **************************************************************************** */
 
-#include "libport/cstring"
+#include <libport/cstring>
+#include <libport/windows.hh>
 
 #include "kernel/utypes.hh"
 #include "kernel/userver.hh"
