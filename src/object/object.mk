@@ -8,7 +8,7 @@ symbols:
 	$(MAKE) $(AM_MAKEFLAGS) $(srcdir)/object/symbols.hh
 $(srcdir)/object/symbols.hh:
 	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$@.tmp
-	-diff -u $@.tmp $@.old
+	-diff -u $@.old $@.tmp
 	$(top_srcdir)/build-aux/move-if-change $@.tmp $@
 
 
