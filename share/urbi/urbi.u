@@ -13,12 +13,12 @@
 {
   var Object.VisibilityScope = Object.clone;
 
-  var VisibilityScope.updateSlot = function(x, y)
+  function VisibilityScope.updateSlot(x, y)
   {
    getSlot("__target").updateSlot(x, getSlot("y"));
   };
 
-  var VisibilityScope.setSlot = function(x, y)
+  function VisibilityScope.setSlot(x, y)
   {
    getSlot("__target").setSlot(x, getSlot("y"));
   };
@@ -35,17 +35,18 @@
 # in which the function will be evaluated.
 var Code.context = nil;
 
+do Object
 {
   # Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
-  var Object.slotCopy = function (frm, to) {
+  function slotCopy (frm, to) {
     # This is annoying: one has to specify "self" here, otherwise the
     # setSlot goes to the locals_ :(
     self . setSlot(to, getSlot(frm))
   };
-  Object.slotCopy ("addProto", "inherit");
-  Object.slotCopy ("removeProto", "disinherit");
+  slotCopy ("addProto", "inherit");
+  slotCopy ("removeProto", "disinherit");
   
-  Object.slotCopy ("sameAs", "==");
+  slotCopy ("sameAs", "==");
   void
 };
 
@@ -95,41 +96,46 @@ do Object {
 # Detach takes an expression and evaluates it in background within
 # the caller's context. The task will be stopped when there is no
 # more references onto the returned object.
-var Object.detach = function
+do Object
 {
-  var f = makeClosedCode (call.evalArgAt (1));
-  new Task (getSlot ("f"))
-};
+  function detach
+  {
+    var f = makeClosedCode (call.evalArgAt (1));
+    new Task (getSlot ("f"))
+  };
+  
+  # every_ takes two arguments, a delay and an expression.
+  function every_
+  {
+    detach ({
+      var delay = call.evalArgAt (1);
+      var runners = [];
+      loop {
+        runners += [detach (call.evalArgAt (2))];
+        sleep (delay);
+      }
+    })
+  };
+  
+  # at_ takes two expressions, a test and a code to execute when the test
+  # becomes true
+  function at_
+  {
+    var t = detach ({
+      t.setSideEffectFree (true);
+      loop {
+        if (call.evalArgAt (1)) {
+          t.setSideEffectFree (false);
+          call.evalArgAt (2);
+          break
+        };
+        t.waitForChanges
+      }
+    });
+    t
+  };
 
-# every_ takes two arguments, a delay and an expression.
-var Object.every_ = function
-{
-  detach ({
-    var delay = call.evalArgAt (1);
-    var runners = [];
-    loop {
-      runners += [detach (call.evalArgAt (2))];
-      sleep (delay);
-    }
-  })
-};
-
-# at_ takes two expressions, a test and a code to execute when the test
-# becomes true
-var Object.at_ = function
-{
-  var t = detach ({
-    t.setSideEffectFree (true);
-    loop {
-      if (call.evalArgAt (1)) {
-        t.setSideEffectFree (false);
-        call.evalArgAt (2);
-        break
-      };
-      t.waitForChanges
-    }
-  });
-  t
+  void
 };
 
 ## ------- ##
@@ -137,7 +143,7 @@ var Object.at_ = function
 ## ------- ##
 
 class Object.Scope {
-  var init = function () { self.makeScope (true) }
+  function init() { self.makeScope (true) }
 };
 
 ## --------- ##
@@ -165,8 +171,8 @@ Object.addProto (Constants);
 // Does not have anything special.  Yet.
 class Object.Channel
 {
-  var init = function (x) { var self.name = x };
-  var '<<' = function (x) { x.print (name); {} };
+  function init(x) { var self.name = x };
+  function '<<'(x) { x.print (name); {} };
   void;
 };
 
@@ -181,7 +187,7 @@ do Object
   var cout  = output;
   var cerr  = error;
 
-  var warn = function (msg) { echo (msg, "warning") };
+  function warn(msg) { echo (msg, "warning") };
   void;
 };
 
@@ -192,9 +198,9 @@ do Object
 do void
 {
   // void prints nothing.
-  var print = function() {};
+  function print() {};
   // void is a singleton.
-  var clone = function() { self; };
+  function clone() { self; };
   void;
 };
 
@@ -206,9 +212,9 @@ do void
 do nil
 {
   // nil is a singleton.
-  var clone = function () { self };
+  function clone () { self };
   var isNil = true;
-  var '=='  = function (x) { x.isNil };
+  function '==' (x) { x.isNil };
 
   var Object.isNil = false;
   void;
@@ -221,8 +227,8 @@ do nil
 
 class Object.Comparable
 {
-  var '!=' = function (rhs) { ! (self == rhs) };
-  var '==' = function (rhs) { ! (self != rhs) };
+  function '!=' (rhs) { ! (self == rhs) };
+  function '==' (rhs) { ! (self != rhs) };
   void;
 };
 
@@ -233,10 +239,10 @@ class Object.Comparable
 
 class Object.Orderable
 {
-  var '<'  = function (rhs) { rhs > self };
-  var '<=' = function (rhs) { self < rhs || self == rhs };
-  var '>'  = function (rhs) { rhs < self };
-  var '>=' = function (rhs) { self > rhs || self == rhs };
+  function '<'  (rhs) { rhs > self };
+  function '<=' (rhs) { self < rhs || self == rhs };
+  function '>'  (rhs) { rhs < self };
+  function '>=' (rhs) { self > rhs || self == rhs };
   void;
 };
 
@@ -250,18 +256,18 @@ do Float
   self.addProto(Comparable);
   self.addProto(Orderable);
 
-  var init = function (x) { self.set(x) };
+  function init(x) { self.set(x) };
 
-  var sqr = function () { self * self };
+  function sqr() { self * self };
 
-  var '+=' = function (x) { self.set (self + x) };
-  var '-=' = function (x) { self.set (self - x) };
-  var '*=' = function (x) { self.set (self * x) };
-  var '/=' = function (x) { self.set (self / x) };
+  function '+='(x) { self.set (self + x) };
+  function '-='(x) { self.set (self - x) };
+  function '*='(x) { self.set (self * x) };
+  function '/='(x) { self.set (self / x) };
 
   // One would like to write
   //
-  // '++' = function () { var res = self.clone; self += 1; res };
+  // function '++' () { var res = self.clone; self += 1; res };
   //
   // but it does not return a Float, it returns an Object which
   // has Float as *grand*-proto.  As a result, it does not have
@@ -272,17 +278,17 @@ do Float
   // creates an Object which derives from Float, but which is not a
   // Atom<Float>.  Not nice, eh?
 
-  var '++' = function () { var res = 0; res.set(self); self += 1; res };
-  var '--' = function () { var res = 0; res.set(self); self -= 1; res };
-  var '~=' = function (x) { (self - x).abs <= epsilontilde };
-  var '%=' = function (x) { (1.0 - self / x).abs <= epsilonpercent };
+  function '++'() { var res = 0; res.set(self); self += 1; res };
+  function '--'() { var res = 0; res.set(self); self -= 1; res };
+  function '~='(x) { (self - x).abs <= epsilontilde };
+  function '%='(x) { (1.0 - self / x).abs <= epsilonpercent };
   # FIXME: =~= cannot be correctly implemented without properties.
-  var '=~=' = function (x) { (self - x) <= self.delta + x.delta };
-  var sgn = function () { if (self < 0) -1 else if (self > 0) 1 else 0 };
+  function '=~='(x) { (self - x) <= self.delta + x.delta };
+  function sgn() { if (self < 0) -1 else if (self > 0) 1 else 0 };
 
-  var '!' = function () { self == 0; };
+  function '!'() { self == 0; };
 
-  var seq = function()
+  function seq()
   {
     var result = [];
     for (var i = 0; i < self; i++)
@@ -301,7 +307,7 @@ do Float
 
 do List
 {
-  var has = function (e)
+  function has(e)
   {
     for i in self
     {
@@ -326,21 +332,21 @@ load("urbi/k1.u");
 class Object.Math
 {
   # Standard functions.
-  var abs    = function (x) { x.abs };
-  var acos   = function (x) { x.acos };
-  var asin   = function (x) { x.asin };
-  var atan   = function (x) { x.atan };
-  var cos    = function (x) { x.cos };
-  var exp    = function (x) { x.exp };
-  var log    = function (x) { x.log };
-  var random = function (x) { x.random };
-  var round  = function (x) { x.round };
-  var sgn    = function (x) { x.sgn };
-  var sin    = function (x) { x.sin };
-  var sqr    = function (x) { x.sqr };
-  var sqrt   = function (x) { x.sqrt };
-  var tan    = function (x) { x.tan };
-  var trunc  = function (x) { x.trunc };
+  function abs   (x) { x.abs };
+  function acos  (x) { x.acos };
+  function asin  (x) { x.asin };
+  function atan  (x) { x.atan };
+  function cos   (x) { x.cos };
+  function exp   (x) { x.exp };
+  function log   (x) { x.log };
+  function random(x) { x.random };
+  function round (x) { x.round };
+  function sgn   (x) { x.sgn };
+  function sin   (x) { x.sin };
+  function sqr   (x) { x.sqr };
+  function sqrt  (x) { x.sqrt };
+  function tan   (x) { x.tan };
+  function trunc (x) { x.trunc };
 
   # Global variables
   var epsilontilde = 0.0001;
@@ -390,7 +396,7 @@ do List {
 
 var Object.tasks = [];
 
-var Object.eachBg = function (f, list)
+function Object.eachBg(f, list)
 {
   if (list.size)
   {
