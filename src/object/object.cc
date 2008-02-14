@@ -83,7 +83,7 @@ namespace object
   {
     Object* r = slot_locate(k);
     if (!r)
-      throw LookupError(k);
+      boost::throw_exception (LookupError(k));
     return *r;
   }
 

@@ -51,12 +51,13 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& e)
     {
-      throw BadInteger (arg_n, func);
+      boost::throw_exception (BadInteger (arg_n, func));
     }
 
     if (n < 0 || n >= static_cast<int>(func_args.size ()))
-      throw PrimitiveError (func,
-			    (boost::format ("bad argument %1%") % n) .str ());
+      boost::throw_exception
+	(PrimitiveError (func,
+			 (boost::format ("bad argument %1%") % n) .str ()));
 
     ast::exps_type::const_iterator i = func_args.begin();
     advance (i, n);

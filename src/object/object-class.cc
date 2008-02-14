@@ -172,7 +172,7 @@ namespace object
     errs.accept(r);
 
     if (!p.command_tree_get())
-      throw e;
+      boost::throw_exception (e);
     else
       p.command_tree_get()->accept(r);
     //FIXME: deleting the tree now causes segv.
@@ -213,7 +213,8 @@ namespace object
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
     if (!arg1->value_get ().empty ())
-      throw PrimitiveError ("apply", "first argument must be an empty list");
+      boost::throw_exception
+	(PrimitiveError ("apply", "first argument must be an empty list"));
     return args[0];
   }
 
@@ -347,7 +348,7 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& ue)
     {
-      throw BadInteger (arg1->value_get (), "makeScope");
+      boost::throw_exception (BadInteger (arg1->value_get (), "makeScope"));
     }
     return args[0];
   }
