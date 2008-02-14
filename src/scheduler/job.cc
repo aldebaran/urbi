@@ -1,7 +1,8 @@
 #include <iostream>
-#include <boost/foreach.hpp>
 
-#include "libport/compiler.hh"     // For ECHO
+#include <libport/compiler.hh>     // For ECHO
+#include <libport/foreach.hh>
+
 #include "job.hh"
 
 namespace scheduler
@@ -13,18 +14,26 @@ namespace scheduler
     yield_front ();
     try {
       work ();
-      terminate_now ();
+      terminate ();
+    }
+    catch (boost::exception &e)
+    {
+      // Signal the exception to each linked job in turn.
+      boost::exception_ptr ep = boost::clone_exception (e);
+      jobs to_signal = links_;
+      foreach (Job* job, to_signal)
+      {
+	  job->async_throw (ep);
+	  unlink (job);
+      }
     }
     catch (...)
     {
-      // Exception is lost, as written in the header file. However, be
-      // nice and signal it.
-      std::cerr << "Exception caught in job " << this << ",loosing it\n";
-
-      // Ensure the job is marked as terminated to avoid triggering the
-      // assertion below.
-      terminated_ = true;
+      // Exception is lost and cannot be propagated properly
+      std::cerr << "Exception caught in job " << this << ", loosing it\n";
     }
+
+    terminate_cleanup ();
     yield ();
 
     // We should never go there as the scheduler will have terminated us.
@@ -35,9 +44,20 @@ namespace scheduler
   Job::terminate_now ()
   {
     terminate ();
+    terminate_cleanup ();
+  }
+
+  void
+  Job::terminate_cleanup ()
+  {
     terminated_ = true;
-    BOOST_FOREACH (Job* job, to_wake_up_)
+    // Remove pending links.
+    foreach (Job* job, links_)
+      job->links_.remove (this);
+    // Wake-up waiting jobs.
+    foreach (Job* job, to_wake_up_)
       scheduler_->resume_job (job);
+    to_wake_up_.clear ();
   }
 
   void
@@ -55,4 +75,5 @@ namespace scheduler
   {
     scheduler_->resume_scheduler_things_changed (this);
   }
+
 }

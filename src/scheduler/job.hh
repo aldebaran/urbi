@@ -6,6 +6,8 @@
 #ifndef SCHEDULER_JOB_HH
 # define SCHEDULER_JOB_HH
 
+# include <boost/exception.hpp>
+# include <boost/exception/enable_exception_cloning.hpp>
 # include <libport/utime.hh>
 
 # include "scheduler/fwd.hh"
@@ -67,16 +69,23 @@ namespace scheduler
     bool side_effect_free_get () const;
 
     /// Raise an exception next time this job will be resumed.
-    void async_throw (std::exception*);
+    void async_throw (boost::exception_ptr);
 
     /// Maybe raise a deferred exception. Must be called from the scheduler
     /// while resuming the job execution.
     void check_for_pending_exception ();
 
+    /// Establish a bi-directional link between two jobs.
+    void link (Job*);
+
+    /// Destroy a bi-directional link if it exists.
+    void unlink (Job*);
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
-    /// raised, it will be lost.
+    /// raised, it will be lost, but before that, it will be propagated
+    // into linked jobs.
     virtual void work () = 0;
 
     /// Will be called if the job is killed prematurely or arrives at
@@ -85,6 +94,9 @@ namespace scheduler
     void terminate ();
 
   private:
+    /// Ensure proper cleanup;
+    void terminate_cleanup ();
+
     /// Scheduler in charge of this job.  Do not delete.
     Scheduler* scheduler_;
 
@@ -94,11 +106,16 @@ namespace scheduler
     /// Other jobs to wake up when we terminate.
     jobs to_wake_up_;
 
-    /// Coro structure corresponding to this job
+    /// Coro structure corresponding to this job.
     Coro* self_;
 
+    /// List of jobs having a link to this one. If the current job
+    /// terminates with an exception, any linked job will throw the
+    /// exception as well when they resume.
+    jobs links_;
+
     bool side_effect_free_;
-    std::exception* pending_exception_;
+    boost::exception_ptr pending_exception_;
   };
 
 } // namespace scheduler
