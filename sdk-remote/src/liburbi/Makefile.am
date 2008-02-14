@@ -6,7 +6,7 @@ SUBDIRS =
 if BINDINGS
  SUBDIRS += swig
 endif
-SUBDIRS += . tests
+SUBDIRS += . #tests
 
 ## --------- ##
 ## uobject.  ##

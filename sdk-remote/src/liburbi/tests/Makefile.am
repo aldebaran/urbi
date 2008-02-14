@@ -61,7 +61,7 @@ nodist_check_SCRIPTS = liburbi-check
 m4sh_scripts = liburbi-check
 
 # The test suite.
-no_TESTS = checkfiles/values.cc \
+TESTS = checkfiles/values.cc \
 	checkfiles/removecallbacks.cc
 TEST_LOGS = $(TESTS:.cc=.log)
 
