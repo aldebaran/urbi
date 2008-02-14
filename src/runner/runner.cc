@@ -118,9 +118,7 @@ namespace runner
   Runner::work ()
   {
     assert (ast_);
-
-    ECHO ("job " << ME << " starting evaluation of AST: " << ast_
-	  << ' ' << AST(*ast_));
+    JECHO ("starting evaluation of AST: " << ast_, *ast_);
     operator() (*ast_);
   }
 
@@ -677,7 +675,7 @@ namespace runner
       else // for| and for;
       {
 	std::swap(locals, locals_);
-	
+
 	MAYBE_YIELD(e.flavor_get());
 	try
 	{
