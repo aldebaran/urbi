@@ -86,7 +86,8 @@ namespace runner
 				   const ast::exps_type& ue_args);
 
     /// Build a call message
-    rObject build_call_message (const rObject& tgt, const ast::exps_type& args);
+    rObject build_call_message (const rObject& tgt, const libport::Symbol& msg,
+				const ast::exps_type& args) const;
 
     /// Import from super.
     using super_type::operator();

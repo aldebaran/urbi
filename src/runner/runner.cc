@@ -309,7 +309,8 @@ namespace runner
   }
 
   object::rObject
-  Runner::build_call_message (const rObject& tgt, const ast::exps_type& args)
+  Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
+			      const ast::exps_type& args) const
   {
     rObject res = object::clone (object::call_class);
 
@@ -319,6 +320,9 @@ namespace runner
 
     // Set the target to be the object on which the function is applied.
     res->slot_set (SYMBOL(target), tgt);
+
+    // Set the name of the message call.
+    res->slot_set (SYMBOL(message), new object::String(msg));
 
     // Set the args to be the unevaluated expressions, including the target.
     // We use an Alien here.
@@ -373,7 +377,7 @@ namespace runner
       if (fn->strict_get())
 	push_evaluated_arguments (args, e.args_get ());
       else
-	call_message = build_call_message (tgt, e.args_get ());
+	call_message = build_call_message (tgt, e.name_get(), e.args_get ());
     }
     else
       push_evaluated_arguments (args, e.args_get ());
