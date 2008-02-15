@@ -121,11 +121,3 @@ libkernel_la_LIBADD = $(top_builddir)/lib/libport/libport.la
 # urbi_console_LDADD = libkernel.la libport.la $(PTHREAD_LIBS)
 
 endif
-
-## ------- ##
-## tests.  ##
-## ------- ##
-
-if !OPENR
-include tests/tests.mk
-endif
