@@ -277,6 +277,7 @@ namespace runner
 	break;
       default:
 	PING ();
+	object::check_arg_count (1, args.size(), "");
 	current_ = func;
 	break;
     }
