@@ -79,7 +79,6 @@ namespace object
     DECLARE(LT,  lth);
 
     DECLARE(size, size);
-    DECLARE(length, size);
 #undef DECLARE
   }
 }; // namespace object

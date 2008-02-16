@@ -1,0 +1,15 @@
+## -------- ##
+## String.  ##
+## -------- ##
+
+
+# The connectives == and < are builtins.
+# FIXME: I'd like to put the addProto in a do, but then it goes
+# to the locals :(
+String.addProto(Comparable);
+String.addProto(Orderable);
+
+do String
+{
+  slotCopy("size", "length");
+};
