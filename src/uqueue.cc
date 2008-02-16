@@ -64,9 +64,9 @@ UQueue::UQueue (int minBufferSize,
     maxBufferSize_ (maxBufferSize == -1 ? minBufferSize_ : maxBufferSize),
     adaptive_(adaptive),
     bufferSize_(minBufferSize_),
-    buffer_(new ubyte[bufferSize_]),
+    buffer_(bufferSize_),
     outputBufferSize_(UQueue::INITIAL_BUFFER_SIZE),
-    outputBuffer_(new ubyte[outputBufferSize_]),
+    outputBuffer_(outputBufferSize_),
     start_(0),
     end_(0),
     dataSize_(0),
@@ -81,8 +81,6 @@ UQueue::UQueue (int minBufferSize,
 //! UQueue destructor.
 UQueue::~UQueue()
 {
-  delete buffer_;
-  delete outputBuffer_;
 }
 
 //! Clear the queue
@@ -142,19 +140,15 @@ UQueue::push (const ubyte *buffer, int length)
 	newSize = maxBufferSize_;
 
       // Realloc the internal buffer
-      ubyte* newBuffer =
-	static_cast<ubyte*> (realloc (static_cast<void*> (buffer_), newSize));
-      assert (newBuffer != 0);
-
-      buffer_ = newBuffer;
+      buffer_.resize(newSize);
       if (end_ < start_ || bfs == 0 )
       {
 	// Translate the rightside of the old internal buffer.
-	memmove(buffer_ + start_ + newSize - bufferSize_,
-		buffer_ + start_, bufferSize_ - start_);
+	memmove(&buffer_[0] + start_ + newSize - bufferSize_,
+		&buffer_[0] + start_,
+		bufferSize_ - start_);
 	start_ += newSize - bufferSize_;
       }
-
       bufferSize_ = newSize;
     }
   }
@@ -163,7 +157,7 @@ UQueue::push (const ubyte *buffer, int length)
   {
     // Do we have to split 'buffer'?
     // No need to split.
-    memcpy(buffer_ + end_, buffer, length);
+    memcpy(&buffer_[0] + end_, buffer, length);
     end_ += length;
     if (end_ == bufferSize_)
       end_ = 0; // loop the circular geometry.
@@ -171,8 +165,10 @@ UQueue::push (const ubyte *buffer, int length)
   else
   {
     // Split 'buffer' to fit in the internal circular buffer.
-    memcpy(buffer_ + end_, buffer, bufferSize_ - end_);
-    memcpy(buffer_, buffer + (bufferSize_ - end_), length-(bufferSize_ - end_));
+    memcpy(&buffer_[0] + end_, buffer, bufferSize_ - end_);
+    memcpy(&buffer_[0],
+	   buffer + (bufferSize_ - end_),
+	   length-(bufferSize_ - end_));
     end_ = length - (bufferSize_ - end_);
   }
 
@@ -197,9 +193,11 @@ UQueue::pop (int length)
   int toPop = length;
   if (toPop > dataSize_)
     return 0; // Not enough data to pop 'length'
+
   if (toPop == 0)
-    return buffer_ + start_;  // Pops nothing but gets a pointer to the
-			      // beginning of the buffer.
+    // Pops nothing but gets a pointer to the beginning of the buffer.
+    return &buffer_[0] + start_;
+
   // Adaptive shrinking behavior
   if (adaptive_)
   {
@@ -218,14 +216,8 @@ UQueue::pop (int length)
       {
 	// We shrink the output buffer to the new size: topOutputSize_ + 10%
 	topOutputSize_ = (int)(topOutputSize_ * 1.1);
-
-	ubyte* newOutputBuffer =
-	  static_cast<ubyte*> (realloc (outputBuffer_, topOutputSize_));
-	if (newOutputBuffer != 0)
-	{
-	  outputBuffer_ = newOutputBuffer;
-	  outputBufferSize_ = topOutputSize_;
-	}
+	outputBuffer_.resize(topOutputSize_);
+	outputBufferSize_ = topOutputSize_;
       }
 
       if (topDataSize_ < (int) (bufferSize_ * 0.8))
@@ -238,27 +230,23 @@ UQueue::pop (int length)
 	if (end_ < start_)
 	{
 	  // The data is splitted
-	  memmove(buffer_ + start_ - (bufferSize_ - topDataSize_),
-		  buffer_ + start_, bufferSize_ - start_);
+	  memmove(&buffer_[0] + start_ - (bufferSize_ - topDataSize_),
+		  &buffer_[0] + start_, bufferSize_ - start_);
 	  start_ = start_ - (bufferSize_ - topDataSize_);
 	}
 	else
 	{
 	  // The data is contiguous
-	  memmove(buffer_, buffer_ + start_, dataSize_);
+	  memmove(&buffer_[0], &buffer_[0] + start_, dataSize_);
 	  start_ = 0;
 	  end_   = dataSize_;
 	  // the case end_ == bufferSize_ is handled below.
 	}
 
-	ubyte* newBuffer = static_cast<ubyte*> (realloc (buffer_, topDataSize_));
-	if (newBuffer != 0)
-	{
-	  buffer_ = newBuffer;
-	  bufferSize_ = topDataSize_;
-	  if (end_ == bufferSize_ )
-	    end_ =0; // loop the circular geometry.
-	}
+	bufferSize_ = topDataSize_;
+	buffer_.resize(bufferSize_);
+	if (end_ == bufferSize_ )
+	  end_ =0; // loop the circular geometry.
 	// else... well it should never come to this else anyway.
       }
 
@@ -276,7 +264,7 @@ UQueue::pop (int length)
     if (start_ == bufferSize_)
       start_ = 0; // loop the circular geometry.
     dataSize_ -= toPop;
-    return buffer_ + tmp_index;
+    return &buffer_[0] + tmp_index;
   }
   else
   {
@@ -290,27 +278,22 @@ UQueue::pop (int length)
       int theNewSize = (int)(toPop * 1.10);
       if (theNewSize % 2 != 0)
 	++theNewSize;
-      ubyte* newOutputBuffer =
-	static_cast<ubyte*> (realloc (static_cast<void*> (outputBuffer_),
-				      theNewSize));
-      if (newOutputBuffer == 0)
-	return 0; // not enough memory.
-      outputBuffer_ = newOutputBuffer;
       outputBufferSize_ = theNewSize;
+      outputBuffer_.resize(outputBufferSize_);
     }
 
-    memcpy(outputBuffer_,
-	   buffer_ + start_,
+    memcpy(&outputBuffer_[0],
+	   &buffer_[0] + start_,
 	   bufferSize_ - start_);
 
-    memcpy(outputBuffer_ + (bufferSize_ - start_ ),
-	   buffer_,
+    memcpy(&outputBuffer_[0] + (bufferSize_ - start_ ),
+	   &buffer_[0],
 	   toPop - (bufferSize_ - start_));
 
     start_ = toPop - (bufferSize_ - start_);
     dataSize_ -= toPop;
 
-    return outputBuffer_;
+    return &outputBuffer_[0];
   }
 }
 
@@ -338,9 +321,9 @@ UQueue::pop (int length)
 ubyte*
 UQueue::fastPop (int &length)
 {
-  return pop((length > bufferSize_ - start_) ?
-	      (length = bufferSize_ - start_) :
-	      length );
+  return pop((length > bufferSize_ - start_)
+	     ? (length = bufferSize_ - start_)
+	     : length);
 }
 
 
@@ -357,20 +340,18 @@ UQueue::fastPop (int &length)
 ubyte*
 UQueue::virtualPop (int length)
 {
-  int toPop;    // nb of bytes to send
-
   // Actual size of the data to pop.
-  toPop = length;
+  int toPop = length;
   if (toPop > dataSize_)
     return 0; // Not enough data to pop 'length'
   if (toPop == 0)
-    return buffer_ + start_;  // Pops nothing but gets a pointer to the
-			      // beginning of the buffer.
+    // Pops nothing but gets a pointer to the beginning of the buffer.
+    return &buffer_[0] + start_;
 
   // Is the packet continuous across the internal buffer?
   if (bufferSize_ - start_ >= toPop)
     // yes, the packet is continuous in the internal buffer
-    return buffer_ + start_;
+    return &buffer_[0] + start_;
   else
   {
     // no, the packet spans then end and the beginning of the buffer
@@ -383,27 +364,21 @@ UQueue::virtualPop (int length)
       int theNewSize = (int)(toPop * 1.10);
       if (theNewSize % 2 != 0)
 	++theNewSize;
-      ubyte* newOutputBuffer =
-	static_cast<ubyte*> (realloc (static_cast<void*> (outputBuffer_),
-				      theNewSize));
-      if (newOutputBuffer == 0)
-	// not enough memory.
-	return 0;
-      outputBuffer_ = newOutputBuffer;
       outputBufferSize_ = theNewSize;
+      outputBuffer_.resize(outputBufferSize_);
     }
 
-    memcpy(outputBuffer_,
-	   buffer_ + start_,
+    memcpy(&outputBuffer_[0],
+	   &buffer_[0] + start_,
 	   bufferSize_ - start_);
 
-    memcpy(outputBuffer_ + (bufferSize_ - start_),
-	   buffer_,
+    memcpy(&outputBuffer_[0] + (bufferSize_ - start_),
+	   &buffer_[0],
 	   toPop - (bufferSize_ - start_));
 
     //start_ = toPop - (bufferSize_ - start_);
     //dataSize_ -= toPop;
 
-    return outputBuffer_;
+    return &outputBuffer_[0];
   }
 }

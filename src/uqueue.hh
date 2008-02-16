@@ -22,6 +22,8 @@
 #ifndef UQUEUE_HH
 # define UQUEUE_HH
 
+# include <vector>
+
 # include "kernel/utypes.hh"
 
 /// Dynamic expendable and shrinkable circular FIFO buffer
@@ -55,7 +57,7 @@ public:
   //! Pushes a string into the queue. The zero ending character is ignored.
   /*! The string is converted into a ubyte* buffer and the function calls the
     push(ubyte*,int) function.
-    
+
     \param s the string to send
     \return
 	    - USUCCESS: successful
@@ -101,12 +103,12 @@ protected:
   /// current internal buffer size.
   int bufferSize_;
   /// queue internal buffer (circular).
-  ubyte* buffer_;
+  std::vector<ubyte> buffer_;
 
   /// size of the output buffer used by pop.
   int outputBufferSize_;
   /// buffer used by pop to return it's value.
-  ubyte* outputBuffer_;
+  std::vector<ubyte> outputBuffer_;
 
   /// internal buffer start offset.
   int start_;
