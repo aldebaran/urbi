@@ -431,11 +431,7 @@ private:
 
 public:
   /// Virtual device for the connection..
-  UString* connectionTag;
-  /// Virtual device for function def.
-  UString* functionTag;
-  /// Class name in a class method definition.
-  UString* functionClass;
+  std::string connectionTag;
   /// Ip of the calling client.
   IPAdd clientIP;
   /// Connection closing.

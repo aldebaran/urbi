@@ -61,8 +61,6 @@ UConnection::UConnection (UServer* userver,
   : uerror_ (USUCCESS),
     server (userver),
     active_command_ (new ast::Nary()),
-    connectionTag (0),
-    functionTag (0),
     clientIP (0),
     closing (false),
     receiving (false),
@@ -89,14 +87,13 @@ UConnection::UConnection (UServer* userver,
   // initialize the connection tag used to reference local variables
   std::ostringstream o;
   o << 'U' << (long) this;
-  connectionTag = new UString(o.str());
+  connectionTag = o.str();
 }
 
 //! UConnection destructor.
 UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
-  delete connectionTag;
   delete parser_;
   delete sendQueue_;
   delete recvQueue_;
@@ -147,10 +144,10 @@ UConnection::initialize()
 
   {
     char buf[1024];
-    snprintf(buf, sizeof buf, "*** ID: %s\n", connectionTag->c_str());
+    snprintf(buf, sizeof buf, "*** ID: %s\n", connectionTag.c_str());
     *this << send(buf, "ident");
 
-    snprintf(buf, sizeof buf, "%s created", connectionTag->c_str());
+    snprintf(buf, sizeof buf, "%s created", connectionTag.c_str());
     server->echo(::DISPLAY_FORMAT, (long)this,
 		 "UConnection::initialize", buf);
   }
