@@ -133,7 +133,7 @@ UQueue::push (const ubyte *buffer, size_t length)
     else
     {
       // Calculate the required size + 10%, if it fits.
-      newSize = (size_t)(1.10 * newSize);
+      newSize *= 1.1;
       if (newSize % 2 != 0)
 	++newSize; // hack for short alignment...
       if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
@@ -210,13 +210,13 @@ UQueue::pop (size_t length)
       // time out
       nbPopCall_ = 0; // reset
 
-      if (topOutputSize_ < (size_t)(outputBuffer_.size() * 0.8))
+      if (topOutputSize_ < outputBuffer_.size() * 0.8)
 	outputBuffer_.resize(topOutputSize_ * 1.1);
 
-      if (topDataSize_ < (size_t) (buffer_.size() * 0.8))
+      if (topDataSize_ < buffer_.size() * 0.8)
       {
 	// We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
-	topDataSize_ = (size_t) (topDataSize_ * 1.1);
+	topDataSize_ *= 1.1;
 	if (topDataSize_ > maxBufferSize_ && maxBufferSize_ !=0)
 	  topDataSize_ = maxBufferSize_;
 
