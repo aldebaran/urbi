@@ -9,19 +9,19 @@ UQueue::push (const char *s)
   return push(reinterpret_cast<const ubyte*>(s), strlen(s));
 }
 
-inline int
+inline size_t
 UQueue::bufferFreeSpace()
 {
-  return bufferSize_ - dataSize_ ;
+  return buffer_.size() - dataSize_ ;
 }
 
-inline int
+inline size_t
 UQueue::bufferMaxFreeSpace()
 {
   return maxBufferSize_ - dataSize_ ;
 }
 
-inline int
+inline size_t
 UQueue::dataSize()
 {
   return dataSize_ ;
@@ -34,7 +34,7 @@ UQueue::locked()
 }
 
 inline void
-UQueue::setAdaptive (int adaptive)
+UQueue::setAdaptive (size_t adaptive)
 {
   adaptive_ = adaptive;
 }

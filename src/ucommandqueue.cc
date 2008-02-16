@@ -34,9 +34,9 @@
 /*! UCommandQueue constructor simply calls the UQueue constructor with the same
     behavior.
 */
-UCommandQueue::UCommandQueue  (int minBufferSize,
-			       int maxBufferSize,
-			       int adaptive)
+UCommandQueue::UCommandQueue  (size_t minBufferSize,
+			       size_t maxBufferSize,
+			       size_t adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
     cursor_ (0),
     close_ (0),
@@ -56,10 +56,10 @@ UCommandQueue::popCommand ()
  // Scanning
   for (/* nothing */; cursor_ < dataSize_; ++cursor_)
   {
-    int position = (start_ + cursor_) % bufferSize_;
+    size_t position = (start_ + cursor_) % buffer_.size();
     char p0 = (char) buffer_[position];
 
-    int nextposition = (position + 1) % bufferSize_;
+    size_t nextposition = (position + 1) % buffer_.size();
     char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : 0;
 
     // Beware of \ which disables the next char whatever the context.
@@ -144,7 +144,7 @@ UCommandQueue::popCommand ()
 	    std::string res;
 	    res = std::string (reinterpret_cast<const char*> (pop(cursor_)),
 			cursor_);
-	    cursor_ = 0;  
+	    cursor_ = 0;
 	    ECHO("Sending {{{" << res << "}}}");
 	    return res;
 	  }

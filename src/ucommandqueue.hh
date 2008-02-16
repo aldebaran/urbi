@@ -39,9 +39,9 @@
 class UCommandQueue : public UQueue
 {
 public:
-  explicit UCommandQueue  (int minBufferSize = 0,
-                           int maxBufferSize = -1,
-                           int adaptive = 0);
+  explicit UCommandQueue  (size_t minBufferSize = 0,
+			   size_t maxBufferSize = -1,
+			   size_t adaptive = 0);
 
   virtual ~UCommandQueue ();
 
@@ -65,7 +65,7 @@ public:
    The final ',' or ';' is the last character of the popped data.
 
    \return the command popped or an empty string if there was an error or
-           nothing to pop.
+	   nothing to pop.
    */
   std::string popCommand ();
 
@@ -74,7 +74,7 @@ private:
   /// start_.  Should always be before a complete "character".  I.e.,
   /// should never point to the * of an "/*" that does open a comment,
   /// should stop between a `\' and its "argument" and so forth.
-  int cursor_;
+  size_t cursor_;
 
   /// The closing character(s) for the commentary/string detection.
   /// 0 if not in such a token.

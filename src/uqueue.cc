@@ -57,16 +57,16 @@
 	   size difference, to avoid time consuming reallocs for nothing.
 	   We recommand a default value of 100 for the adaptive value.
 */
-UQueue::UQueue (int minBufferSize,
-		int maxBufferSize,
-		int adaptive)
-  : minBufferSize_ (minBufferSize ? minBufferSize : INITIAL_BUFFER_SIZE),
-    maxBufferSize_ (maxBufferSize == -1 ? minBufferSize_ : maxBufferSize),
+UQueue::UQueue (size_t minBufferSize,
+		size_t maxBufferSize,
+		size_t adaptive)
+  : minBufferSize_ (minBufferSize
+		    ? minBufferSize : static_cast<size_t>(INITIAL_BUFFER_SIZE)),
+    maxBufferSize_ (maxBufferSize == static_cast<size_t>(-1)
+		    ? minBufferSize_ : maxBufferSize),
     adaptive_(adaptive),
-    bufferSize_(minBufferSize_),
-    buffer_(bufferSize_),
-    outputBufferSize_(UQueue::INITIAL_BUFFER_SIZE),
-    outputBuffer_(outputBufferSize_),
+    buffer_(minBufferSize_),
+    outputBuffer_(UQueue::INITIAL_BUFFER_SIZE),
     start_(0),
     end_(0),
     dataSize_(0),
@@ -119,57 +119,57 @@ UQueue::revert()
 	    - UFAIL   : could not push the buffer. The queue is not changed.
 */
 UErrorValue
-UQueue::push (const ubyte *buffer, int length)
+UQueue::push (const ubyte *buffer, size_t length)
 {
-  int bfs = bufferFreeSpace();
+  size_t bfs = bufferFreeSpace();
 
   if (bfs < length) // Is the internal buffer big enough?
   {
     // No. Check if the internal buffer can be extended.
-    int newSize = bufferSize_ + (length - bfs);
+    size_t newSize = buffer_.size() + (length - bfs);
 
     if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
       return UFAIL;
     else
     {
       // Calculate the required size + 10%, if it fits.
-      newSize = (int)(1.10 * newSize);
+      newSize = (size_t)(1.10 * newSize);
       if (newSize % 2 != 0)
 	++newSize; // hack for short alignment...
       if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
 	newSize = maxBufferSize_;
 
       // Realloc the internal buffer
+      size_t old_size = buffer_.size();
       buffer_.resize(newSize);
       if (end_ < start_ || bfs == 0 )
       {
 	// Translate the rightside of the old internal buffer.
-	memmove(&buffer_[0] + start_ + newSize - bufferSize_,
+	memmove(&buffer_[0] + start_ + newSize - old_size,
 		&buffer_[0] + start_,
-		bufferSize_ - start_);
-	start_ += newSize - bufferSize_;
+		old_size - start_);
+	start_ += newSize - old_size;
       }
-      bufferSize_ = newSize;
     }
   }
 
-  if (bufferSize_ - end_ >= length)
+  if (buffer_.size() - end_ >= length)
   {
     // Do we have to split 'buffer'?
     // No need to split.
     memcpy(&buffer_[0] + end_, buffer, length);
     end_ += length;
-    if (end_ == bufferSize_)
+    if (end_ == buffer_.size())
       end_ = 0; // loop the circular geometry.
   }
   else
   {
     // Split 'buffer' to fit in the internal circular buffer.
-    memcpy(&buffer_[0] + end_, buffer, bufferSize_ - end_);
+    memcpy(&buffer_[0] + end_, buffer, buffer_.size() - end_);
     memcpy(&buffer_[0],
-	   buffer + (bufferSize_ - end_),
-	   length-(bufferSize_ - end_));
-    end_ = length - (bufferSize_ - end_);
+	   buffer + (buffer_.size() - end_),
+	   length - (buffer_.size() - end_));
+    end_ = length - (buffer_.size() - end_);
   }
 
   dataSize_ += length;
@@ -187,10 +187,10 @@ UQueue::push (const ubyte *buffer, int length)
     \return a pointer to the the data popped or 0 in case of error.
 */
 ubyte*
-UQueue::pop (int length)
+UQueue::pop (size_t length)
 {
   // Actual size of the data to pop.
-  int toPop = length;
+  size_t toPop = length;
   if (toPop > dataSize_)
     return 0; // Not enough data to pop 'length'
 
@@ -212,27 +212,26 @@ UQueue::pop (int length)
       // time out
       nbPopCall_ = 0; // reset
 
-      if (topOutputSize_ < (int)(outputBufferSize_ * 0.8))
+      if (topOutputSize_ < (size_t)(outputBuffer_.size() * 0.8))
       {
 	// We shrink the output buffer to the new size: topOutputSize_ + 10%
-	topOutputSize_ = (int)(topOutputSize_ * 1.1);
+	topOutputSize_ = (size_t)(topOutputSize_ * 1.1);
 	outputBuffer_.resize(topOutputSize_);
-	outputBufferSize_ = topOutputSize_;
       }
 
-      if (topDataSize_ < (int) (bufferSize_ * 0.8))
+      if (topDataSize_ < (size_t) (buffer_.size() * 0.8))
       {
 	// We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
-	topDataSize_ = (int) (topDataSize_ * 1.1);
+	topDataSize_ = (size_t) (topDataSize_ * 1.1);
 	if (topDataSize_ > maxBufferSize_ && maxBufferSize_ !=0)
 	  topDataSize_ = maxBufferSize_;
 
 	if (end_ < start_)
 	{
 	  // The data is splitted
-	  memmove(&buffer_[0] + start_ - (bufferSize_ - topDataSize_),
-		  &buffer_[0] + start_, bufferSize_ - start_);
-	  start_ = start_ - (bufferSize_ - topDataSize_);
+	  memmove(&buffer_[0] + start_ - (buffer_.size() - topDataSize_),
+		  &buffer_[0] + start_, buffer_.size() - start_);
+	  start_ = start_ - (buffer_.size() - topDataSize_);
 	}
 	else
 	{
@@ -240,12 +239,11 @@ UQueue::pop (int length)
 	  memmove(&buffer_[0], &buffer_[0] + start_, dataSize_);
 	  start_ = 0;
 	  end_   = dataSize_;
-	  // the case end_ == bufferSize_ is handled below.
+	  // the case end_ == buffer_.size() is handled below.
 	}
 
-	bufferSize_ = topDataSize_;
-	buffer_.resize(bufferSize_);
-	if (end_ == bufferSize_ )
+	buffer_.resize(topDataSize_);
+	if (end_ == buffer_.size() )
 	  end_ =0; // loop the circular geometry.
 	// else... well it should never come to this else anyway.
       }
@@ -255,13 +253,13 @@ UQueue::pop (int length)
     }
   }
 
-  if (bufferSize_ - start_ >= toPop)
+  if (buffer_.size() - start_ >= toPop)
   {
     // Is the packet continuous across the the internal buffer?  yes,
     // the packet is continuous in the internal buffer
-    int tmp_index = start_;
+    size_t tmp_index = start_;
     start_ += toPop;
-    if (start_ == bufferSize_)
+    if (start_ == buffer_.size())
       start_ = 0; // loop the circular geometry.
     dataSize_ -= toPop;
     return &buffer_[0] + tmp_index;
@@ -272,25 +270,24 @@ UQueue::pop (int length)
     // and it must be reconstructed.
 
     // Is the temporary internal outputBuffer large enough?
-    if (outputBufferSize_ < toPop)
+    if (outputBuffer_.size() < toPop)
     {
       // Realloc the internal outputBuffer
-      int theNewSize = (int)(toPop * 1.10);
+      size_t theNewSize = (size_t)(toPop * 1.10);
       if (theNewSize % 2 != 0)
 	++theNewSize;
-      outputBufferSize_ = theNewSize;
-      outputBuffer_.resize(outputBufferSize_);
+      outputBuffer_.resize(theNewSize);
     }
 
     memcpy(&outputBuffer_[0],
 	   &buffer_[0] + start_,
-	   bufferSize_ - start_);
+	   buffer_.size() - start_);
 
-    memcpy(&outputBuffer_[0] + (bufferSize_ - start_ ),
+    memcpy(&outputBuffer_[0] + (buffer_.size() - start_ ),
 	   &buffer_[0],
-	   toPop - (bufferSize_ - start_));
+	   toPop - (buffer_.size() - start_));
 
-    start_ = toPop - (bufferSize_ - start_);
+    start_ = toPop - (buffer_.size() - start_);
     dataSize_ -= toPop;
 
     return &outputBuffer_[0];
@@ -319,10 +316,10 @@ UQueue::pop (int length)
     \return a pointer to the the data popped or 0 in case of error.
 */
 ubyte*
-UQueue::fastPop (int &length)
+UQueue::fastPop (size_t &length)
 {
-  return pop((length > bufferSize_ - start_)
-	     ? (length = bufferSize_ - start_)
+  return pop((length > buffer_.size() - start_)
+	     ? (length = buffer_.size() - start_)
 	     : length);
 }
 
@@ -338,10 +335,10 @@ UQueue::fastPop (int &length)
     \return a pointer to the the data popped or 0 in case of error.
 */
 ubyte*
-UQueue::virtualPop (int length)
+UQueue::virtualPop (size_t length)
 {
   // Actual size of the data to pop.
-  int toPop = length;
+  size_t toPop = length;
   if (toPop > dataSize_)
     return 0; // Not enough data to pop 'length'
   if (toPop == 0)
@@ -349,7 +346,7 @@ UQueue::virtualPop (int length)
     return &buffer_[0] + start_;
 
   // Is the packet continuous across the internal buffer?
-  if (bufferSize_ - start_ >= toPop)
+  if (buffer_.size() - start_ >= toPop)
     // yes, the packet is continuous in the internal buffer
     return &buffer_[0] + start_;
   else
@@ -358,25 +355,24 @@ UQueue::virtualPop (int length)
     // and it must be reconstructed.
 
     // Is the temporary internal outputBuffer large enough?
-    if (outputBufferSize_ < toPop)
+    if (outputBuffer_.size() < toPop)
     {
       // Realloc the internal outputBuffer
-      int theNewSize = (int)(toPop * 1.10);
+      size_t theNewSize = (size_t)(toPop * 1.10);
       if (theNewSize % 2 != 0)
 	++theNewSize;
-      outputBufferSize_ = theNewSize;
-      outputBuffer_.resize(outputBufferSize_);
+      outputBuffer_.resize(theNewSize);
     }
 
     memcpy(&outputBuffer_[0],
 	   &buffer_[0] + start_,
-	   bufferSize_ - start_);
+	   buffer_.size() - start_);
 
-    memcpy(&outputBuffer_[0] + (bufferSize_ - start_),
+    memcpy(&outputBuffer_[0] + (buffer_.size() - start_),
 	   &buffer_[0],
-	   toPop - (bufferSize_ - start_));
+	   toPop - (buffer_.size() - start_));
 
-    //start_ = toPop - (bufferSize_ - start_);
+    //start_ = toPop - (buffer_.size() - start_);
     //dataSize_ -= toPop;
 
     return &outputBuffer_[0];

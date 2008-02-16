@@ -48,44 +48,44 @@ class UQueue
 {
 public:
 
-  explicit UQueue  (int minBufferSize = 0,
-		    int maxBufferSize = -1,
-		    int adaptive = 0);
+  explicit UQueue  (size_t minBufferSize = 0,
+		    size_t maxBufferSize = -1,
+		    size_t adaptive = 0);
 
   virtual ~UQueue ();
 
   //! Pushes a string into the queue. The zero ending character is ignored.
   /*! The string is converted into a ubyte* buffer and the function calls the
-    push(ubyte*,int) function.
+    push(ubyte*,size_t) function.
 
     \param s the string to send
     \return
 	    - USUCCESS: successful
 	    - UFAIL   : could not push the string.
-    \sa push(const ubyte*,int)
+    \sa push(const ubyte*,size_t)
   */
   UErrorValue         push              (const char *s);
-  UErrorValue         push              (const ubyte *buffer, int length);
+  UErrorValue         push              (const ubyte *buffer, size_t length);
 
-  ubyte*              pop               (int length);
-  ubyte*              virtualPop        (int length);
-  ubyte*              fastPop           (int &length);
+  ubyte*              pop               (size_t length);
+  ubyte*              virtualPop        (size_t length);
+  ubyte*              fastPop           (size_t &length);
 
   void                clear             ();
 
   //! Available free space in the buffer.
-  int                 bufferFreeSpace   ();
+  size_t                 bufferFreeSpace   ();
   //! Max available free space in the buffer.
-  int                 bufferMaxFreeSpace();
+  size_t                 bufferMaxFreeSpace();
   //! Size of the data in the buffer
-  int                 dataSize          ();
+  size_t                 dataSize          ();
 
   void                mark              ();
   void                revert            ();
   //! Locked status of the queue
   bool                locked            ();
   //! Adaptive accessor
-  void                setAdaptive       (int adaptive);
+  void                setAdaptive       (size_t adaptive);
 
 protected:
 
@@ -93,40 +93,37 @@ protected:
   enum { INITIAL_BUFFER_SIZE = 4096 };
 
   /// Stores the initial size of the internal buffer.
-  int minBufferSize_;
+  size_t minBufferSize_;
 
   /// Maximum size the dynamical internal buffer is allowed to grow.
-  int maxBufferSize_;
+  size_t maxBufferSize_;
 
   /// Size of the time window used by the adaptive algorithm.
-  int adaptive_;
-  /// current internal buffer size.
-  int bufferSize_;
+  size_t adaptive_;
+
   /// queue internal buffer (circular).
   std::vector<ubyte> buffer_;
 
-  /// size of the output buffer used by pop.
-  int outputBufferSize_;
   /// buffer used by pop to return it's value.
   std::vector<ubyte> outputBuffer_;
 
   /// internal buffer start offset.
-  int start_;
+  size_t start_;
   /// internal buffer end offset.
-  int end_;
+  size_t end_;
   /// size of the data inside the buffer.
-  int dataSize_;
+  size_t dataSize_;
 
   /// nb calls to the pop() function.
-  int nbPopCall_;
+  size_t nbPopCall_;
   /// maximal data size in the adaptive time windows. Used to shrink
   /// the buffer.
-  int topDataSize_;
+  size_t topDataSize_;
   /// maximal data size outputed in the time windows. Used to shrink
   /// outputBuffer.
-  int topOutputSize_;
+  size_t topOutputSize_;
   /// mark offset.
-  int mark_;
+  size_t mark_;
   /// lock the connection after a failure (only 'mark' can unlock it)
   bool locked_;
 };
