@@ -202,10 +202,8 @@ UQueue::pop (size_t length)
   if (adaptive_)
   {
     ++nbPopCall_;
-    if (dataSize_ > topDataSize_)
-      topDataSize_ = dataSize_;
-    if (toPop > topOutputSize_)
-      topOutputSize_ = toPop;
+    topDataSize_ = std::max (topDataSize_, dataSize_);
+    topOutputSize_ = std::max (topOutputSize_, toPop);
 
     if (nbPopCall_ > adaptive_ )
     {
@@ -213,11 +211,7 @@ UQueue::pop (size_t length)
       nbPopCall_ = 0; // reset
 
       if (topOutputSize_ < (size_t)(outputBuffer_.size() * 0.8))
-      {
-	// We shrink the output buffer to the new size: topOutputSize_ + 10%
-	topOutputSize_ = (size_t)(topOutputSize_ * 1.1);
-	outputBuffer_.resize(topOutputSize_);
-      }
+	outputBuffer_.resize(topOutputSize_ * 1.1);
 
       if (topDataSize_ < (size_t) (buffer_.size() * 0.8))
       {
@@ -271,13 +265,7 @@ UQueue::pop (size_t length)
 
     // Is the temporary internal outputBuffer large enough?
     if (outputBuffer_.size() < toPop)
-    {
-      // Realloc the internal outputBuffer
-      size_t theNewSize = (size_t)(toPop * 1.10);
-      if (theNewSize % 2 != 0)
-	++theNewSize;
-      outputBuffer_.resize(theNewSize);
-    }
+      outputBuffer_.resize(toPop * 1.1);
 
     memcpy(&outputBuffer_[0],
 	   &buffer_[0] + start_,
@@ -356,13 +344,7 @@ UQueue::virtualPop (size_t length)
 
     // Is the temporary internal outputBuffer large enough?
     if (outputBuffer_.size() < toPop)
-    {
-      // Realloc the internal outputBuffer
-      size_t theNewSize = (size_t)(toPop * 1.10);
-      if (theNewSize % 2 != 0)
-	++theNewSize;
-      outputBuffer_.resize(theNewSize);
-    }
+      outputBuffer_.resize(toPop * 1.1);
 
     memcpy(&outputBuffer_[0],
 	   &buffer_[0] + start_,
