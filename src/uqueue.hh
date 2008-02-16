@@ -47,11 +47,21 @@ class UQueue
 public:
 
   explicit UQueue  (int minBufferSize = 0,
-                    int maxBufferSize = -1,
-                    int adaptive = 0);
+		    int maxBufferSize = -1,
+		    int adaptive = 0);
 
   virtual ~UQueue ();
 
+  //! Pushes a string into the queue. The zero ending character is ignored.
+  /*! The string is converted into a ubyte* buffer and the function calls the
+    push(ubyte*,int) function.
+    
+    \param s the string to send
+    \return
+	    - USUCCESS: successful
+	    - UFAIL   : could not push the string.
+    \sa push(const ubyte*,int)
+  */
   UErrorValue         push              (const char *s);
   UErrorValue         push              (const ubyte *buffer, int length);
 
@@ -61,97 +71,67 @@ public:
 
   void                clear             ();
 
+  //! Available free space in the buffer.
   int                 bufferFreeSpace   ();
+  //! Max available free space in the buffer.
   int                 bufferMaxFreeSpace();
+  //! Size of the data in the buffer
   int                 dataSize          ();
 
   void                mark              ();
   void                revert            ();
+  //! Locked status of the queue
   bool                locked            ();
+  //! Adaptive accessor
   void                setAdaptive       (int adaptive);
 
-  UErrorValue         UError;///< err code for the constructor
+  /// Err code for the constructor.
+  UErrorValue         UError;
 
 protected:
 
-/// Initial size of the output buffer used by pop.
+  /// Initial size of the output buffer used by pop.
   enum { INITIAL_BUFFER_SIZE = 4096 };
 
-  ubyte          *buffer_;       ///< queue internal buffer (circular).
-  ubyte          *outputBuffer_; ///< buffer used by pop to return it's value.
+  /// Stores the initial size of the internal buffer.
+  int minBufferSize_;
 
-  int            bufferSize_;    ///< current internal buffer size.
-  int            outputBufferSize_; ///< size of the output buffer used by pop.
-  int            start_;         ///< internal buffer start offset.
-  int            end_;           ///< internal buffer end offset.
-  int            dataSize_;      ///< size of the data inside the buffer.
+  /// Maximum size the dynamical internal buffer is allowed to grow.
+  int maxBufferSize_;
 
-  int            minBufferSize_; ///< Stores the initial size of the internal
-				 ///< buffer.
-  int            maxBufferSize_; ///< This is the maximum size the dynamical
-				 ///< internal buffer is allowed to grow.
-  int            adaptive_;      ///< This is the size of the time window used
-				 ///< by the adaptive algorithm.
-  int            nbPopCall_;     ///< nb calls to the pop() function.
-  int            topDataSize_;   ///< maximal data size in the adaptive time
-				 ///< windows. Used to shrink the buffer.
-  int            topOutputSize_; ///< maximal data size outputed in the time
-				 ///< windows. Used to shrink outputBuffer.
-  int            mark_;          ///< mark offset.
-  bool           locked_;        ///< lock the connection after a failure
-				 ///< (only 'mark' can unlock it)
+  /// Size of the time window used by the adaptive algorithm.
+  int adaptive_;
+  /// current internal buffer size.
+  int bufferSize_;
+  /// queue internal buffer (circular).
+  ubyte* buffer_;
+
+  /// size of the output buffer used by pop.
+  int outputBufferSize_;
+  /// buffer used by pop to return it's value.
+  ubyte* outputBuffer_;
+
+  /// internal buffer start offset.
+  int start_;
+  /// internal buffer end offset.
+  int end_;
+  /// size of the data inside the buffer.
+  int dataSize_;
+
+  /// nb calls to the pop() function.
+  int nbPopCall_;
+  /// maximal data size in the adaptive time windows. Used to shrink
+  /// the buffer.
+  int topDataSize_;
+  /// maximal data size outputed in the time windows. Used to shrink
+  /// outputBuffer.
+  int topOutputSize_;
+  /// mark offset.
+  int mark_;
+  /// lock the connection after a failure (only 'mark' can unlock it)
+  bool locked_;
 };
 
-
-//! Pushes a string into the queue. The zero ending character is ignored.
-/*! The string is converted into a ubyte* buffer and the function calls the
-    push(ubyte*,int) function.
-
-    \param s the string to send
-    \return
-	    - USUCCESS: successful
-	    - UFAIL   : could not push the string.
-    \sa push(const ubyte*,int)
-*/
-inline UErrorValue
-UQueue::push (const char *s)
-{
-  return push(reinterpret_cast<const ubyte*>(s), strlen(s));
-}
-
-//! returns the available free space in the buffer.
-inline int
-UQueue::bufferFreeSpace()
-{
-  return bufferSize_ - dataSize_ ;
-}
-
-//! returns the max available free space in the buffer.
-inline int
-UQueue::bufferMaxFreeSpace()
-{
-  return maxBufferSize_ - dataSize_ ;
-}
-
-//! returns the size of the data in the buffer
-inline int
-UQueue::dataSize()
-{
-  return dataSize_ ;
-}
-
-//! returns the locked status of the queue
-inline bool
-UQueue::locked()
-{
-  return locked_;
-}
-
-//! Adaptive accessor
-inline void
-UQueue::setAdaptive (int adaptive)
-{
-  adaptive_ = adaptive;
-}
+# include "uqueue.hxx"
 
 #endif

@@ -66,71 +66,30 @@
 UQueue::UQueue (int minBufferSize,
 		int maxBufferSize,
 		int adaptive)
+  : UError(USUCCESS),
+    minBufferSize_ (minBufferSize ? minBufferSize : INITIAL_BUFFER_SIZE),
+    maxBufferSize_ (maxBufferSize == -1 ? minBufferSize_ : maxBufferSize),
+    adaptive_(adaptive),
+    bufferSize_(minBufferSize_),
+    buffer_(new ubyte[bufferSize_]),
+    outputBufferSize_(UQueue::INITIAL_BUFFER_SIZE),
+    outputBuffer_(new ubyte[outputBufferSize_]),
+    start_(0),
+    end_(0),
+    dataSize_(0),
+    nbPopCall_(0),
+    topDataSize_(0),
+    topOutputSize_(0),
+    mark_(0),
+    locked_(false)
 {
-
-  if (minBufferSize != 0)
-    minBufferSize_ = minBufferSize;
-  else
-    minBufferSize_ = UQueue::INITIAL_BUFFER_SIZE;
-
-  if (maxBufferSize == -1)
-    maxBufferSize_ = minBufferSize_;
-  else
-    maxBufferSize_ = maxBufferSize;
-
-  adaptive_        = adaptive;
-
-  outputBuffer_    = 0;
-
-  // Internal buffer initialization.
-  buffer_ = static_cast<ubyte*> (malloc (minBufferSize_));
-  if (buffer_== 0)
-  {
-    UError = UFAIL;
-    return;
-  }
-
-  bufferSize_      = minBufferSize_;
-  start_           = 0;
-  end_             = 0;
-  dataSize_        = 0;
-
-  // adaptive initialization
-  nbPopCall_       = 0;
-  topDataSize_     = 0;
-
-  // Output buffer initialization (the size can grow later)
-  outputBuffer_ = static_cast<ubyte*> (malloc (UQueue::INITIAL_BUFFER_SIZE));
-  if (outputBuffer_== 0)
-  {
-    free (buffer_);
-    buffer_ = 0;
-    UError = UFAIL;
-    return;
-  }
-  outputBufferSize_ = UQueue::INITIAL_BUFFER_SIZE;
-  topOutputSize_ = 0;
-
-  // mark the beginning of the buffer
-  mark_ = 0;
-  locked_ = false;
-
-  UError = USUCCESS;
 }
 
 //! UQueue destructor.
 UQueue::~UQueue()
 {
-
-  if (buffer_)
-  {
-    free (buffer_);
-  }
-
-  if (outputBuffer_)
-  {
-    free (outputBuffer_);
-  }
+  delete buffer_;
+  delete outputBuffer_;
 }
 
 //! Clear the queue
@@ -171,20 +130,15 @@ UQueue::revert()
 UErrorValue
 UQueue::push (const ubyte *buffer, int length)
 {
-  int bfs;
-  int newSize;
-
-  bfs = bufferFreeSpace();
+  int bfs = bufferFreeSpace();
 
   if (bfs < length) // Is the internal buffer big enough?
   {
     // No. Check if the internal buffer can be extended.
-    newSize = bufferSize_ + (length - bfs);
+    int newSize = bufferSize_ + (length - bfs);
 
     if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
-    {
       return UFAIL;
-    }
     else
     {
       // Calculate the required size + 10%, if it fits.
@@ -246,10 +200,8 @@ UQueue::push (const ubyte *buffer, int length)
 ubyte*
 UQueue::pop (int length)
 {
-  int toPop;    // nb of bytes to send
-
   // Actual size of the data to pop.
-  toPop = length;
+  int toPop = length;
   if (toPop > dataSize_)
     return 0; // Not enough data to pop 'length'
   if (toPop == 0)

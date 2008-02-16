@@ -55,7 +55,7 @@ uconnection.cc							\
 ughostconnection.hh ughostconnection.cc				\
 uobject.cc                                                      \
 uobject.hh                                                      \
-uqueue.hh uqueue.cc						\
+uqueue.hh uqueue.hxx uqueue.cc					\
 userver.cc							\
 ustring.cc							\
 usystem.cc                                                      \
