@@ -85,9 +85,6 @@ public:
   //! Adaptive accessor
   void                setAdaptive       (int adaptive);
 
-  /// Err code for the constructor.
-  UErrorValue         UError;
-
 protected:
 
   /// Initial size of the output buffer used by pop.

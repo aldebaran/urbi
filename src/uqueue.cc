@@ -56,18 +56,11 @@
 	   Note that the buffer will shrink only if there is a minimum of 20%
 	   size difference, to avoid time consuming reallocs for nothing.
 	   We recommand a default value of 100 for the adaptive value.
-
-    When exiting, the internal UError static variable can have the following
-    values:
-
-    - USUCCESS: success
-    - UFAIL   : memory allocation failed.
 */
 UQueue::UQueue (int minBufferSize,
 		int maxBufferSize,
 		int adaptive)
-  : UError(USUCCESS),
-    minBufferSize_ (minBufferSize ? minBufferSize : INITIAL_BUFFER_SIZE),
+  : minBufferSize_ (minBufferSize ? minBufferSize : INITIAL_BUFFER_SIZE),
     maxBufferSize_ (maxBufferSize == -1 ? minBufferSize_ : maxBufferSize),
     adaptive_(adaptive),
     bufferSize_(minBufferSize_),
