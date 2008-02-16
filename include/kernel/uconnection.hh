@@ -167,7 +167,10 @@ public:
   static inline _Send vsendf (const std::string& tag,
 			      const char* format, va_list args)
   {
-    char buf[1024];
+    // FIXME: This buffer is a real nuisance, we should move
+    // everything to C++, and use a string, a stream, and/or
+    // Boost.format.
+    char buf[4096];
     vsnprintf(buf, sizeof buf - 1, format, args);
     return send (buf, tag.c_str());
   }

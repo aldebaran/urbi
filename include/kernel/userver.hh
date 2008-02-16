@@ -296,7 +296,10 @@ private:
     /// Urbi TCP Port..
     TCP_PORT = 54000,
     /// Used by echo() & error().
-    MAXSIZE_INTERNALMESSAGE = 1024,
+    // FIXME: Because of this stupid hard limit, we can't produce
+    // large outputs!  We should move to using C++.  Or some scheme
+    // that is robust to the size of the message.
+    MAXSIZE_INTERNALMESSAGE = 8192,
   };
 
   /// Frequency of the calls to work().
