@@ -108,6 +108,15 @@ UQueue::revert()
   locked_ = true;
 }
 
+void
+UQueue::enlarge (size_t& s) const
+{
+  s *= 1.1;
+  if (maxBufferSize_)
+    s = std::min(s, maxBufferSize_);
+}
+
+
 //! Pushes a buffer into the queue..
 /*! This function tries to store the buffer in the queue, and tries to extend
     to buffer size when the buffer does not fit and if it is possible.
@@ -118,6 +127,7 @@ UQueue::revert()
 	    - USUCCESS: successful
 	    - UFAIL   : could not push the buffer. The queue is not changed.
 */
+
 UErrorValue
 UQueue::push (const ubyte *buffer, size_t length)
 {
@@ -133,11 +143,7 @@ UQueue::push (const ubyte *buffer, size_t length)
     else
     {
       // Calculate the required size + 10%, if it fits.
-      newSize *= 1.1;
-      if (newSize % 2 != 0)
-	++newSize; // hack for short alignment...
-      if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
-	newSize = maxBufferSize_;
+      enlarge(newSize);
 
       // Realloc the internal buffer
       size_t old_size = buffer_.size();
@@ -176,6 +182,51 @@ UQueue::push (const ubyte *buffer, size_t length)
   return USUCCESS;
 }
 
+void
+UQueue::adapt(size_t toPop)
+{
+  ++nbPopCall_;
+  topDataSize_ = std::max (topDataSize_, dataSize_);
+  topOutputSize_ = std::max (topOutputSize_, toPop);
+
+  if (adaptive_ < nbPopCall_)
+  {
+    // time out
+    if (topOutputSize_ < outputBuffer_.size() * 0.8)
+      outputBuffer_.resize(topOutputSize_ * 1.1);
+
+    if (topDataSize_ < buffer_.size() * 0.8)
+    {
+      // We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
+      enlarge(topDataSize_);
+      if (end_ < start_)
+      {
+	// The data is splitted
+	memmove(&buffer_[0] + start_ - (buffer_.size() - topDataSize_),
+		&buffer_[0] + start_, buffer_.size() - start_);
+	start_ = start_ - (buffer_.size() - topDataSize_);
+      }
+      else
+      {
+	// The data is contiguous
+	memmove(&buffer_[0], &buffer_[0] + start_, dataSize_);
+	start_ = 0;
+	end_   = dataSize_;
+	// the case end_ == buffer_.size() is handled below.
+      }
+
+      buffer_.resize(topDataSize_);
+      if (end_ == buffer_.size() )
+	end_ =0; // loop the circular geometry.
+      // else... well it should never come to this else anyway.
+    }
+
+    // reset.
+    nbPopCall_ = 0;
+    topDataSize_   = 0;
+    topOutputSize_ = 0;
+  }
+}
 
 //! Pops 'length' bytes out of the Queue
 /*! Pops 'length' bytes.
@@ -200,63 +251,18 @@ UQueue::pop (size_t length)
 
   // Adaptive shrinking behavior
   if (adaptive_)
-  {
-    ++nbPopCall_;
-    topDataSize_ = std::max (topDataSize_, dataSize_);
-    topOutputSize_ = std::max (topOutputSize_, toPop);
-
-    if (nbPopCall_ > adaptive_ )
-    {
-      // time out
-      nbPopCall_ = 0; // reset
-
-      if (topOutputSize_ < outputBuffer_.size() * 0.8)
-	outputBuffer_.resize(topOutputSize_ * 1.1);
-
-      if (topDataSize_ < buffer_.size() * 0.8)
-      {
-	// We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
-	topDataSize_ *= 1.1;
-	if (topDataSize_ > maxBufferSize_ && maxBufferSize_ !=0)
-	  topDataSize_ = maxBufferSize_;
-
-	if (end_ < start_)
-	{
-	  // The data is splitted
-	  memmove(&buffer_[0] + start_ - (buffer_.size() - topDataSize_),
-		  &buffer_[0] + start_, buffer_.size() - start_);
-	  start_ = start_ - (buffer_.size() - topDataSize_);
-	}
-	else
-	{
-	  // The data is contiguous
-	  memmove(&buffer_[0], &buffer_[0] + start_, dataSize_);
-	  start_ = 0;
-	  end_   = dataSize_;
-	  // the case end_ == buffer_.size() is handled below.
-	}
-
-	buffer_.resize(topDataSize_);
-	if (end_ == buffer_.size() )
-	  end_ =0; // loop the circular geometry.
-	// else... well it should never come to this else anyway.
-      }
-
-      topDataSize_   = 0;
-      topOutputSize_ = 0;
-    }
-  }
+    adapt(toPop);
 
   if (buffer_.size() - start_ >= toPop)
   {
     // Is the packet continuous across the the internal buffer?  yes,
     // the packet is continuous in the internal buffer
-    size_t tmp_index = start_;
+    size_t start = start_;
     start_ += toPop;
     if (start_ == buffer_.size())
       start_ = 0; // loop the circular geometry.
     dataSize_ -= toPop;
-    return &buffer_[0] + tmp_index;
+    return &buffer_[0] + start;
   }
   else
   {

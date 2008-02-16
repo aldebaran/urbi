@@ -87,6 +87,15 @@ public:
   //! Adaptive accessor
   void                setAdaptive       (size_t adaptive);
 
+private:
+  /// Implement buffer adaptive scheme.
+  /// \param toPop  size of the current buffer pop.
+  // Called by pop() only.
+  void adapt(size_t toPop);
+
+  /// Grow \a s, using the threshold maxBufferSize_.
+  void enlarge (size_t& s) const;
+
 protected:
 
   /// Initial size of the output buffer used by pop.
