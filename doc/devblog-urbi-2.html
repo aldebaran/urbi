@@ -1,0 +1,193 @@
+With Urbi 1 Gostai introduced a revolutionary means to program robots:
+a domain specific scripting language that brings together the
+efficient of C++, and the flexibility of a dynamic language.  Urbi 1
+was designed pragmatically, based on user requests and feedback.
+That's how Urbi 1 was made useful, and how it met its users'
+expectations.  Yet, because of this iterative design process, it
+suffers a number of limitations.  <br />
+
+To address these issues, Gostai launched the Urbi 2 project months
+ago. We are happy to announce that Urbi 2 is up and running.  It will
+be made available for technical preview in the near future.  In the
+meanwhile, let us show you some of the changes we made in Urbi.  For a
+start, we will focus on the changes of the Object-Orientation support
+in Urbi, later articles will cover other facets of the Urbi 2 system.
+<br />
+
+What follows is implemented, runs, and can be done at home in total safety.
+
+<h2>Full Object Orientation Support</h2>
+
+<ul>
+<li>Everything is an object.<br />
+  In the 1.x series there were several kind of entities: numbers,
+  lists, strings, images, etc. and objects.  In the 2.x series,
+  everything is an object, including the atomic values.  For instance
+  <tt>"foo"</tt> evaluates into an object that derives from the
+  <tt>String</tt>.
+</li>
+
+<li>Objects are dictionaries of slots.<br />
+  Objects are implemented as associative arrays: a mapping from
+  symbols to objects.
+</li>
+
+<li>The distinction between value and function is blurred.<br />
+From a software engineering point of view, the client (i.e., the
+"caller") should not know how the provider (i.e., the "callee") is
+implemented.  In particular, it is an implementation detail whether
+<tt>object.feature</tt> is an attribute, or a function taking no
+argument.  Therefore, parentheses are not needed to invoke
+functions that do not have argument (other that <tt>self</tt>).
+<code>
+   # 0-ary functions and attributes should behave equally.
+   var feature = 42;
+   [11648000] 42
+   feature;
+   [11680000] 42
+   feature();
+   [11712000] 42
+   feature(42);
+   [11776000:error] !!! input.u:8.1-11: expected 0 arguments, given 1
+   
+   feature = function () { 42 };
+   [11872000] function () {
+     42
+   }
+   feature;
+   [12000000] 42
+   feature();
+   [12128000] 42
+   feature(42);
+   [12192000:error] !!! input.u:10.1-11: expected 0 arguments, given 1
+   
+   feature = function (x) { x };
+   [12256000] function (x) {
+     x
+   }
+   feature;
+   [12288000:error] !!! input.u:26.1-7: expected 1 arguments, given 0
+   feature();
+   [12288000:error] !!! input.u:28.1-9: expected 1 arguments, given 0
+   feature(42);
+   [12384000] 42
+</code>
+</li>
+
+<li>Functions are first-class citizens.<br />
+In other words, functions are objects and can be manipulated like
+any other type of object.  For instance you may copy a function
+from an object to another.  Be careful though that by default code
+is evaluated, see the following example.
+<code>
+   var counter_ = 0;
+   [09856000] 0
+   var counter = function () { counter_ += 1; };
+   [09952000] function () {
+     counter_ . '+='(1);
+   }
+   counter;
+   [10080000] 1
+   counter;
+   [10208000] 2
+   var counter2 = counter;
+   [10368000] 3
+   counter2;
+   [10400000] 3
+   counter2;
+   [10432000] 3
+   var counter3 = getSlot("counter");
+   [10528000] function () {
+     counter_ . '+='(1);
+   }
+   counter3;
+   [10656000] 4
+   counter3;
+   [10784000] 5
+   counter;
+   [10912000] 6
+</code>
+</li>
+
+<li>Arbitrary identifiers.<br />
+Identifiers can be composed of any sequence of characters enclosed
+between <tt>'</tt>, but some sequences behave magically.
+
+<ul>
+  <li>Regular identifiers.<br />
+    Traditional identifiers (<tt>MyObject</tt>, <tt>my_function_2</tt>,
+    <tt>SomeVariableName</tt> etc.) need no quotes.
+  </li>
+  
+  <li>Traditional connectives.<br />
+    Connectives such as <tt>+</tt>, <tt>*</tt>, <tt>&lt;=</tt> and so forth, when
+    used unquoted behave as usual (e.g., <tt>1 &lt; 2</tt>), but between
+    quotes, they behave like regular function names (e.g.,
+    <tt>1.'&lt;'(2)</tt>).
+  </li>
+</ul>
+</li>
+
+<li>Fewer primitives, more expressive power.<br />  The basic
+  connectives, such as <tt>+</tt>, <tt>*</tt>, <tt>&lt;=</tt> and so
+  forth, are regular functions that the user can freely define.  For
+  instance <tt>Person.'&lt;' = function (rhs) { name &lt;
+  rhs.name </tt>} define the <tt>&lt;</tt> between <tt>Person</tt>.
+</li>
+
+<li>Objects can be arbitrarily nested.<br />  The previous limitations
+  of the language are alleviated, and the
+  <tt>.</tt> connective can now be freely used.  For instance:
+<code>
+robot.leg("rear-left").joint("knee").value
+</code>
+</li>
+
+
+<li>Name spaces.<br />
+<p>
+  There is no global name space in the Urbi language: there are no
+  global variables or functions in the traditional sense.  Rather,
+  the Urbi world is a network of objects that use each other (either
+  via inheritance, or via aggregation).  To reach a particular
+  object, for instance <tt>Object</tt> from which all the objects
+  derive, one uses a series of local names starting from the current
+  object.
+</p>
+  <p>
+    For instance <tt>true</tt> is defined as a member of
+    <tt>Object.Constants</tt>, which is a prototype of <tt>Object</tt> (i.e.,
+    <tt>Object</tt> "derives" from <tt>Object.Constants</tt>.  Since every
+    object derives from <tt>Object</tt>, the <tt>true</tt> is available from
+    anywhere.
+  </p>
+</li>
+
+
+
+<li>Lobbies.<br />
+<p>
+  Sessions with the Urbi server, via files or via network
+  connections, are handled via "lobbies".  Lobbies implement the
+  local scope: variables introduced during the interaction are
+  only visible from this lobby.  Nevertheless, because lobbies are
+  connected to the rest of the Urbi network of objects, the user can
+  introduce new features in the common space, for instance by
+  extending <tt>Object</tt>.  The user may also provide access to
+  his/her own lobby by giving it a name in an object that is
+  reachable from the other lobbies.
+</p>
+</li>
+
+
+<li>An object can have any number of prototypes.<br />
+  Multiple inheritance is fully supported.  This allows to factor
+  common code.  For instance the object <tt>Orderable</tt> provides
+  implementations of ordered comparators in terms of each other
+  (e.g., <tt>function '&gt;=' (rhs) { rhs &lt; self </tt>}), and
+  <tt>Comparable</tt> relates <tt>==</tt> and <tt>!=</tt>.  If your
+  <tt>object</tt> provides <tt>==</tt> and <tt>&lt;</tt>, then running
+  <tt>object.addProto(Comparable);object.addProto(Orderable);</tt>
+  provides the others.
+</li>
+</ul>
