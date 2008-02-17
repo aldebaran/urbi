@@ -111,7 +111,7 @@ UQueue::revert()
 void
 UQueue::enlarge (size_t& s) const
 {
-  s *= 1.1;
+  s *= 2;
   if (maxBufferSize_)
     s = std::min(s, maxBufferSize_);
 }
@@ -193,7 +193,7 @@ UQueue::adapt(size_t toPop)
   {
     // time out
     if (topOutputSize_ < outputBuffer_.size() * 0.8)
-      outputBuffer_.resize(topOutputSize_ * 1.1);
+      outputBuffer_.resize(topOutputSize_ * 2);
 
     if (topDataSize_ < buffer_.size() * 0.8)
     {
@@ -271,7 +271,7 @@ UQueue::pop (size_t length)
 
     // Is the temporary internal outputBuffer large enough?
     if (outputBuffer_.size() < toPop)
-      outputBuffer_.resize(toPop * 1.1);
+      outputBuffer_.resize(toPop * 2);
 
     memcpy(&outputBuffer_[0],
 	   &buffer_[0] + start_,
@@ -350,7 +350,7 @@ UQueue::virtualPop (size_t length)
 
     // Is the temporary internal outputBuffer large enough?
     if (outputBuffer_.size() < toPop)
-      outputBuffer_.resize(toPop * 1.1);
+      outputBuffer_.resize(toPop * 2);
 
     memcpy(&outputBuffer_[0],
 	   &buffer_[0] + start_,
