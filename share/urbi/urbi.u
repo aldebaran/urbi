@@ -89,6 +89,24 @@ do Object {
   }
 };
 
+## ------------ ##
+## Scope exit.  ##
+## ------------ ##
+
+do Object
+{
+  function getLazy (name, default)
+  {
+    if (!self.slotNames.has (name))
+      self.setSlot (name, default);
+    self.getSlot (name);
+  };
+  function atExit (func)
+  {
+    self.getLazy ("atexit", []) += [getSlot ("func")]
+  }
+};
+
 ## -------------------- ##
 ## Task related stuff.  ##
 ## -------------------- ##
