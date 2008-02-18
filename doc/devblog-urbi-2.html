@@ -39,7 +39,7 @@ implemented.  In particular, it is an implementation detail whether
 <tt>object.feature</tt> is an attribute, or a function taking no
 argument.  Therefore, parentheses are not needed to invoke
 functions that do not have argument (other that <tt>self</tt>).
-<code>
+[source language='c++']
    # 0-ary functions and attributes should behave equally.
    var feature = 42;
    [11648000] 42
@@ -49,7 +49,7 @@ functions that do not have argument (other that <tt>self</tt>).
    [11712000] 42
    feature(42);
    [11776000:error] !!! input.u:8.1-11: expected 0 arguments, given 1
-   
+
    feature = function () { 42 };
    [11872000] function () {
      42
@@ -60,7 +60,7 @@ functions that do not have argument (other that <tt>self</tt>).
    [12128000] 42
    feature(42);
    [12192000:error] !!! input.u:10.1-11: expected 0 arguments, given 1
-   
+
    feature = function (x) { x };
    [12256000] function (x) {
      x
@@ -71,7 +71,7 @@ functions that do not have argument (other that <tt>self</tt>).
    [12288000:error] !!! input.u:28.1-9: expected 1 arguments, given 0
    feature(42);
    [12384000] 42
-</code>
+[/source]
 </li>
 
 <li>Functions are first-class citizens.<br />
@@ -79,7 +79,7 @@ In other words, functions are objects and can be manipulated like
 any other type of object.  For instance you may copy a function
 from an object to another.  Be careful though that by default code
 is evaluated, see the following example.
-<code>
+[source language='c++']
    var counter_ = 0;
    [09856000] 0
    var counter = function () { counter_ += 1; };
@@ -106,7 +106,7 @@ is evaluated, see the following example.
    [10784000] 5
    counter;
    [10912000] 6
-</code>
+[/source]
 </li>
 
 <li>Arbitrary identifiers.<br />
@@ -118,7 +118,7 @@ between <tt>'</tt>, but some sequences behave magically.
     Traditional identifiers (<tt>MyObject</tt>, <tt>my_function_2</tt>,
     <tt>SomeVariableName</tt> etc.) need no quotes.
   </li>
-  
+
   <li>Traditional connectives.<br />
     Connectives such as <tt>+</tt>, <tt>*</tt>, <tt>&lt;=</tt> and so forth, when
     used unquoted behave as usual (e.g., <tt>1 &lt; 2</tt>), but between
@@ -138,9 +138,9 @@ between <tt>'</tt>, but some sequences behave magically.
 <li>Objects can be arbitrarily nested.<br />  The previous limitations
   of the language are alleviated, and the
   <tt>.</tt> connective can now be freely used.  For instance:
-<code>
+[source language='c++']
 robot.leg("rear-left").joint("knee").value
-</code>
+[/source]
 </li>
 
 
