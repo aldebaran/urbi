@@ -20,7 +20,6 @@
 # define SYMBOL(Sym) object::symbol_ ## Sym
 
 # define SYMBOLS_APPLY(Macro)			  \
-  Macro(AMPERSAND_AMPERSAND, "&&");               \
   Macro(Alien, "Alien");                          \
   Macro(CARET, "^");                              \
   Macro(Call, "Call");                            \
@@ -38,7 +37,6 @@
   Macro(Name, "Name");                            \
   Macro(Object, "Object");                        \
   Macro(PERCENT, "%");                            \
-  Macro(PIPE_PIPE, "||");                         \
   Macro(PLUS, "+");                               \
   Macro(PLUS_EQ, "+=");                           \
   Macro(Primitive, "Primitive");                  \
@@ -80,7 +78,6 @@
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
   Macro(insert, "insert");                        \
-  Macro(length, "length");                        \
   Macro(load, "load");                            \
   Macro(lobby, "lobby");                          \
   Macro(locateSlot, "locateSlot");                \
