@@ -141,14 +141,17 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.
-#define DEPRECATED(New)						\
-  do {								\
-    std::string rewritten = New;				\
-    up.warn(*locp,						\
-	    std::string("`") + yytext + "' is deprecated. "	\
-	    "Use `" + rewritten + "' instead.");		\
-    for (int i = rewritten.length() - 1; 0 <= i; --i)		\
-      unput(rewritten[i]);					\
+#define DEPRECATED(New)							\
+  do {									\
+    std::string rewritten = New;					\
+    if (rewritten == "")						\
+      up.warn(*locp, std::string("`") + yytext + "' is deprecated.");	\
+    else								\
+      up.warn(*locp,							\
+	      std::string("`") + yytext + "' is deprecated. "		\
+	      "Use `" + rewritten + "' instead.");			\
+    for (int i = rewritten.length() - 1; 0 <= i; --i)			\
+      unput(rewritten[i]);						\
   } while(0);
 
 %}
@@ -316,26 +319,8 @@ FLAVOR   [;|,&]?
    "queue"   RETURN_STR (STRING);
  */
 
-"external"  |
-"internal"  RETURN_SYMBOL (BINDER);
-
-"commands"        |
-"connections"     |
-"debugoff"        |
-"debugon"         |
-"devices"         |
-"events"          |
-"functions"       |
-"quit"            |
-"reset"           |
-"runningcommands" |
-"stopall"         |
-"strict"          |
-"taglist"         |
-"undefall"        |
-"unstrict"        |
-"uservars"        |
-"vars"            RETURN_SYMBOL (OPERATOR);
+"internal"  DEPRECATED("");
+"external"  RETURN_SYMBOL (BINDER);
 
 "BIN"           return token::TOK_BIN;
 "addgroup"      return token::TOK_ADDGROUP;
@@ -364,7 +349,7 @@ FLAVOR   [;|,&]?
 "object"        return token::TOK_OBJECT;
 "onleave"       return token::TOK_ONLEAVE;
 "return"        return token::TOK_RETURN;
-"static"        return token::TOK_STATIC;
+"static"        DEPRECATED("");
 "stopif"        return token::TOK_STOPIF;
 "timeout"       return token::TOK_TIMEOUT;
 "unalias"       return token::TOK_UNALIAS;

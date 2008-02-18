@@ -22,3 +22,42 @@ class Kernel1Functions
 };
 
 Object.addProto(Kernel1Functions);
+
+# Deprecated command from k1.
+# FIXME: Some commands should be rewritten once it becomes possible.
+class DeprecatedCommands
+{
+  var deprecated_ = function () { echo("`" + name + "' is deprecated." ) };
+
+  function deprecate(f)
+  {
+    setSlot(f, getSlot("deprecated_").clone());
+    getSlot(f).capture("name", f);
+  };
+
+  for i in
+  [
+    "commands",
+    "connections",
+    "debugoff",
+    "debugon",
+    "devices",
+    "events",
+    "functions",
+    "quit",
+    "reset",
+    "runningcommands",
+    "stopall",
+    "strict",
+    "taglist",
+    "undefall",
+    "unstrict",
+    "uservars",
+    "vars"
+  ]
+  {
+    deprecate(i)
+  };
+};
+
+Object.addProto(DeprecatedCommands);
