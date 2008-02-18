@@ -79,14 +79,14 @@ public:
   virtual void yyrestart( std::istream* s ) = 0;
 
   virtual yy::parser::token_type
-  yylex(yy::parser::semantic_type* val,
-	yy::location* loc, UParser* p) = 0;
+  yylex(yy::parser::semantic_type* val = 0,
+	yy::location* loc = 0, UParser* p = 0) = 0;
 
   // Call yylex with new input/output sources.
-  yy::parser::token_type yylex( yy::parser::semantic_type* val,
-				yy::location* loc, UParser* p,
-				std::istream* new_in,
-				std::ostream* new_out = 0 )
+  yy::parser::token_type yylex(yy::parser::semantic_type* val,
+			       yy::location* loc, UParser* p,
+			       std::istream* new_in,
+			       std::ostream* new_out = 0)
   {
     switch_streams( new_in, new_out );
     return yylex(val, loc, p);
@@ -142,8 +142,8 @@ public:
   void yyrestart( std::istream* s );
 
   virtual yy::parser::token_type
-  yylex(yy::parser::semantic_type* val,
-	yy::location* loc, UParser* p);
+  yylex(yy::parser::semantic_type* val = 0,
+	yy::location* loc = 0, UParser* p = 0);
   virtual void switch_streams( std::istream* new_in, std::ostream* new_out );
 
 protected:
