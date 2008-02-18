@@ -400,6 +400,20 @@ function Object.eachBg(f, list)
   }
 };
 
+## -------------------------- ##
+## Logic with short-circuit.  ##
+## -------------------------- ##
+
+do Object {
+  function '&&' {
+    if (self) call.evalArgAt (1) else self;
+  };
+
+  function '||' {
+    if (self) self else call.evalArgAt (1);
+  }
+};
+
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##

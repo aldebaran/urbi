@@ -1314,8 +1314,6 @@ expr:
 
 | "!" expr        { $$ = ast_call(@$, $2, $1); }
 
-// FIXME: This is not good: we are not short-circuiting.  Ideally we
-// would like to use an If here, but it's not an expression (yet?).
 | expr "&&" expr  { $$ = ast_call(@$, $1, $2, $3); }
 | expr "||" expr  { $$ = ast_call(@$, $1, $2, $3); }
 ;
