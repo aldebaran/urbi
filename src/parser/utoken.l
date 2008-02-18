@@ -509,9 +509,9 @@ FLAVOR   [;|,&]?
     BEGIN sc_default;
   }
 
-  [^*/\n\r]+	;
+  [^*/\n\r]+	|
+  [*/]		continue;
   {EOL}	        LINES(locp);
-  .             /* Stray `*' and `/'. */;
 
   <<EOF>> {
     up->error(*locp, std::string ("unexpected end of file in a comment"));
