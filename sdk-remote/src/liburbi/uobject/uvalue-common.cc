@@ -476,7 +476,7 @@ namespace urbi
 	break;
 
       case BINARY_NONE:
-	pabort(type);
+	break;
     }
     return o.str();
   }
