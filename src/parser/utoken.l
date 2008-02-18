@@ -33,7 +33,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-  //#define ENABLE_DEBUG_TRACES
+  // #define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
 #include "parser/uparser.hh"
@@ -107,7 +107,10 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 // "while(1)".
 #define PRESKIP()				\
   if (!up)					\
-    continue;
+  {						\
+    ECHO("Skipping: {{{" << yytext << "}}}");	\
+    continue;					\
+}
 
 // Move the front cursor to the end cursor.
 #define STEP()					\
@@ -165,15 +168,17 @@ do {						\
 `----------------------------------*/
 
 #define RETURN(Symbol)				\
-  PRESKIP();					\
-  return token::TOK_ ## Symbol;
+  {						\
+    PRESKIP();					\
+    return token::TOK_ ## Symbol;		\
+  }
 
 #define RETURN_VALUE(Token, Field, Value)	\
- do {						\
-   PRESKIP();					\
-   SET_VAL(Field, Value);			\
-   RETURN(Token);				\
- } while (0)
+  {						\
+    PRESKIP();					\
+    SET_VAL(Field, Value);			\
+    RETURN(Token);				\
+  }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
 #define RETURN_FLAVOR(Symbol, Flavor)					\
@@ -201,22 +206,25 @@ do {						\
 
 // UnitSize is the number of letters used for the unit.
 #define RETURN_TIME_VALUE(UnitSize, Scale)				\
-  do {									\
+  {									\
     PRESKIP();								\
     yytext[yyleng - UnitSize] = 0;					\
     RETURN_VALUE(TIME_VALUE, fval,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
-  } while (0)
+  }
 
 #define RETURN_FLAVORED_KEYWORD(Token)					\
-  PRESKIP();								\
-  switch (yytext[strlen(yytext) - 1])					\
   {									\
-    case '|': RETURN_FLAVOR(Token, pipe);				\
-    case ',': RETURN_FLAVOR(Token, comma);				\
-    case '&': RETURN_FLAVOR(Token, and);				\
-    default:  RETURN_FLAVOR(Token, semicolon);				\
+    PRESKIP();								\
+    switch (yytext[strlen(yytext) - 1])					\
+    {									\
+      case '|': RETURN_FLAVOR(Token, pipe);				\
+      case ',': RETURN_FLAVOR(Token, comma);				\
+      case '&': RETURN_FLAVOR(Token, and);				\
+      default:  RETURN_FLAVOR(Token, semicolon);			\
+    }									\
   }
+
 
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
@@ -224,11 +232,11 @@ do {						\
 #define DEPRECATED(New)							\
   {									\
     PRESKIP();								\
-    std::string msg = std::string("`") + yytext + "' is deprecated.";	\
+    std::string warn = std::string("`") + yytext + "' is deprecated.";	\
     std::string rewritten = New;					\
     if (!rewritten.empty())						\
-      msg += " Use `" + rewritten + "' instead.";			\
-    up->warn(*locp, msg);						\
+      warn += " Use `" + rewritten + "' instead.";			\
+    up->warn(*locp, warn);						\
     for (int i = rewritten.length() - 1; 0 <= i; --i)			\
       unput(rewritten[i]);						\
   }
@@ -245,7 +253,7 @@ EOL      \n|\r|\n\r|\r\n
   // Identifier.
 ID       [a-zA-Z_][_A-Za-z0-9]*
   // Identifier suffix for magic derivation (K1 syntax).
-SUFFIX   "'"("'"|d|dd|e|n|in|out)
+SUFFIX   "'"(""|"'"|d|dd|e|n|in|out)
 
 
 NATURAL  [0-9]+
@@ -360,11 +368,13 @@ FLAVOR   [;|,&]?
 {NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, *locp, yytext));
 {FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, *locp, yytext));
 {ENATURAL}    {
+		PRESKIP();
 		float res = lexical_cast<float>(*up, *locp, yytext);
+		// Do not put semicolons here: RETURN_?VAL expands into {}.
 		if (res < 1)
-		  RETURN_FVAL(FLOAT, res);
+		  RETURN_FVAL(FLOAT, res)
 		else
-		  RETURN_IVAL(INTEGER, numeric_cast<int>(*up, *locp, res));
+		  RETURN_IVAL(INTEGER, numeric_cast<int>(*up, *locp, res))
 	      }
 
 [\"\']        {
@@ -498,12 +508,13 @@ FLAVOR   [;|,&]?
 
 {ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
   PRESKIP();
+  // Push back "n.'\''" in the stream.
   char* quote = strchr(yytext, '\'');
-  // Push the message name "back" into the stream.
-  std::string msg (yytext, quote - yytext);
-  msg += ".'\'";
-  msg += quote[1] == '\'' ? "\\'" : quote + 1;
-  DEPRECATED(msg);
+  std::string s (yytext, quote - yytext);
+  s += ".'\\'";
+  s += quote[1] == '\'' ? "\\'" : quote + 1;
+  s += '\'';
+  DEPRECATED(s);
 }
 
 {ID}            RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
@@ -519,7 +530,7 @@ FLAVOR   [;|,&]?
        {
 	 BEGIN sc_default;
 	 if (*yytext == '\'')
-	   RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(*valp->str));
+	   RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(*valp->str))
 	 else
 	   RETURN(STRING);
        }
