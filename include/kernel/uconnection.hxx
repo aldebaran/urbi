@@ -22,7 +22,7 @@ UConnection::sendAdaptive ()
 
 //! Accessor for recvQueue_
 inline
-UCommandQueue&
+UQueue&
 UConnection::recvQueue ()
 {
   return *recvQueue_;

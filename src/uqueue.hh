@@ -125,7 +125,7 @@ public:
       validity before actually popping the data.  It is also typically
       used when trying to send bytes in a connection and it is not
       known in advance how many bytes will be effectively sent.
-  
+
       \param length the length requested.
       \return a pointer to the the data popped or 0 in case of error.
   */
@@ -136,7 +136,7 @@ public:
      The ubyte* pointer returned is not permanent. You have to make a
      copy of the data pointed if you want to keep it. Any call to a
      member function of UQueue might alter it later.
- 
+
      This method is called "fast" because is will not use the
      temporary outputBuffer if the requested data is half at the end
      and half at the beginning of the buffer. It will return only the
@@ -149,11 +149,35 @@ public:
      call to 'pop', result in a huge memory replication. In other
      cases, prefer 'pop', which is most of the time as efficient as
      fastPop and much more convenient to use.
- 
+
      \param length the length requested. Contains the actual length popped.
      \return a pointer to the the data popped or 0 in case of error.
  */
   ubyte* fastPop (size_t &length);
+
+  //! Pops the next command in the queue.
+  /*! Scan the buffer to a terminating ',' or ';' symbol by removing
+   any text between:
+
+   - { and }
+   - [ and ]
+   - / * and * /
+   - // and \\n
+   - # and \\n
+   - ( and )
+
+   This function is interruptible which means that is does not rescan the
+   entire buffer from the start each time it is called, but it stores it's
+   internal state before quitting and starts again where it left. This
+   is important when the buffer comes from a TCP/IP entry connection where
+   instructions typically arrive in several shots.
+
+   The final ',' or ';' is the last character of the popped data.
+
+   \return the command popped or an empty string if there was an error or
+	   nothing to pop.
+   */
+  std::string pop_command ();
 
   //! Clear the queue
   void clear ();

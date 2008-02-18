@@ -87,16 +87,27 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
     {								\
       /* We are in the prescanner, we are only interested in	\
        some tokens. */						\
+      reinterpret_cast<size_t&>(*valp) += yyleng;		\
       char res = yytext[0];					\
       if (YY_START == sc_default				\
 	  && yyleng == 1					\
-	  && (res == '{'					\
-	      || res == '}'					\
-	      || res == ','					\
-	      || res == ';'))					\
+	  && (res == '{' || res == '}'				\
+	      || res == '(' || res == ')'			\
+	      || res == '[' || res == ']'			\
+	      || res == ',' || res == ';'))			\
 	return yy::parser::token_type(res);			\
       else							\
+      {								\
+	/*	std::cerr << "Discard: \"" << yytext		\
+		  << "\" ("					\
+		  << yyleng << " -> "				\
+		  << reinterpret_cast<size_t&>(*valp)		\
+		  << ")"					\
+		  << ", state = " << YY_START			\
+		  << " vs. " << sc_default			\
+	 << std::endl;*/					\
 	continue;						\
+      }								\
     }								\
   }
 
@@ -199,36 +210,32 @@ FLAVOR   [;|,&]?
 
 %%
 %{
-#ifndef NDEBUG
-  static bool first_run = true;
-  if (first_run)
-    yy_flex_debug = !!getenv("FLEX_DEBUG");
-#endif
 
-  if (locp)
-    locp->step();
-
-#ifndef NDEBUG
   // The default start condition: the one replacing INITIAL.
   static int sc_default = -1;
-  if (sc_default == -1)
-  {
-    if (getenv ("UCONSOLE_MODE"))
-    {
-      std::cerr << "Message from the scanner: UCONSOLE_MODE enabled.\n";
-      sc_default = SC_UCONSOLE;
-    }
-    else
-      sc_default = INITIAL;
-    BEGIN sc_default;
-  }
-#endif
 
   static std::stack<yy::location> synclines;
 
   // The first delimiter of a string or a symbol : ' or ".
   // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
   static char delimiter;
+
+# define YY_USER_INIT							\
+  yy_flex_debug = !!getenv("FLEX_DEBUG");				\
+									\
+  if (getenv ("UCONSOLE_MODE"))						\
+  {									\
+    std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."	\
+	      << std::endl;						\
+    sc_default = SC_UCONSOLE;						\
+  }									\
+  else									\
+    sc_default = INITIAL;						\
+  BEGIN sc_default;
+
+  if (locp)
+    locp->step();
+
 %}
 
   /*-----------------------------------.

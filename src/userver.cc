@@ -55,7 +55,6 @@
 
 #include "server-timer.hh"
 #include "ubanner.hh"
-#include "ucommandqueue.hh"
 #include "ughostconnection.hh"
 #include "uobject.hh"
 #include "uqueue.hh"
@@ -105,7 +104,7 @@ UErrorValue
 UServer::load_init_file(const char* fn)
 {
   DEBUG (("Loading %s...", fn));
-  UErrorValue res = loadFile(fn, &ghost_->recvQueue());
+  UErrorValue res = loadFile(fn, ghost_->recvQueue());
   if (res == USUCCESS)
   {
     DEBUG (("done\n"));
@@ -491,7 +490,7 @@ UServer::find_file (const libport::path& path)
 }
 
 UErrorValue
-UServer::loadFile (const std::string& base, UCommandQueue* q, QueueType type)
+UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
 {
   std::istream *is;
   bool isStdin = (base == std::string("/dev/stdin"));
@@ -505,16 +504,16 @@ UServer::loadFile (const std::string& base, UCommandQueue* q, QueueType type)
       return UFAIL;
   }
   if (type == QUEUE_URBI)
-    q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
+    q.push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
   while (is->good ())
   {
     char buf[BUFSIZ];
     is->read (buf, sizeof buf);
-    if (q->push((const ubyte*) buf, is->gcount()) == UFAIL)
+    if (q.push((const ubyte*) buf, is->gcount()) == UFAIL)
       return UFAIL;
   }
   if (type == QUEUE_URBI)
-    q->push ("#pop\n");
+    q.push ("#pop\n");
   if (!isStdin)
   {
     reinterpret_cast<std::ifstream*>(is)->close();

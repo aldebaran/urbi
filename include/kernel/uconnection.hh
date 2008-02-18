@@ -123,11 +123,11 @@ public:
 
     \sa UQueue */
   UConnection (UServer* userver,
-	       int minSendBufferSize,
-	       int maxSendBufferSize,
-	       int packetSize,
-	       int minRecvBufferSize,
-	       int maxRecvBufferSize);
+	       size_t minSendBufferSize,
+	       size_t maxSendBufferSize,
+	       size_t packetSize,
+	       size_t minRecvBufferSize,
+	       size_t maxRecvBufferSize);
 
   virtual ~UConnection ();
 
@@ -398,7 +398,7 @@ public:
   int availableSendQueue ();
   int sendQueueRemain ();
 
-  UCommandQueue& recvQueue ();
+  UQueue& recvQueue ();
   UQueue& send_queue ();
 
 public:
@@ -485,7 +485,7 @@ private:
   UQueue* sendQueue_;
 
   /// A pointer to stop dependencies.
-  UCommandQueue* recvQueue_;
+  UQueue* recvQueue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
   int packetSize_;

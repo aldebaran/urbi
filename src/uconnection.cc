@@ -47,17 +47,16 @@
 
 #include "parser/uparser.hh"
 #include "ubanner.hh"
-#include "ucommandqueue.hh"
 #include "uqueue.hh"
 
 #include "object/atom.hh" // object::Lobby
 
 UConnection::UConnection (UServer* userver,
-			  int minSendBufferSize,
-			  int maxSendBufferSize,
-			  int packetSize,
-			  int minRecvBufferSize,
-			  int maxRecvBufferSize)
+			  size_t minSendBufferSize,
+			  size_t maxSendBufferSize,
+			  size_t packetSize,
+			  size_t minRecvBufferSize,
+			  size_t maxRecvBufferSize)
   : uerror_ (USUCCESS),
     server (userver),
     active_command_ (new ast::Nary()),
@@ -68,8 +67,8 @@ UConnection::UConnection (UServer* userver,
     parser_ (new UParser (*this)),
     sendQueue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
 			    UConnection::ADAPTIVE)),
-    recvQueue_ (new UCommandQueue (minRecvBufferSize, maxRecvBufferSize,
-				   UConnection::ADAPTIVE)),
+    recvQueue_ (new UQueue (minRecvBufferSize, maxRecvBufferSize,
+			    UConnection::ADAPTIVE)),
     packetSize_ (packetSize),
     blocked_ (false),
     receiveBinary_ (false),
@@ -152,7 +151,7 @@ UConnection::initialize()
 		 "UConnection::initialize", buf);
   }
 
-  server->loadFile("CLIENT.INI", recvQueue_);
+  server->loadFile("CLIENT.INI", *recvQueue_);
   newDataAdded = true;
   return *this;
 }
@@ -549,9 +548,9 @@ UConnection::received_ (const ubyte *buffer, int length)
   bool obstructed = !active_command_->empty();
 
   // Loop to get all the commands that are ready to be executed.
-  for (std::string command = recvQueue_->popCommand();
+  for (std::string command = recvQueue_->pop_command();
        !command.empty();
-       command = recvQueue_->popCommand())
+       command = recvQueue_->pop_command())
   {
     server->setSystemCommand (false);
     int result = p.process (command);

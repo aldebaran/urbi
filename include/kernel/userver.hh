@@ -186,7 +186,7 @@ public:
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue loadFile (const std::string& file_name,
-				UCommandQueue* loadQueue,
+				UQueue& loadQueue,
 				QueueType t=QUEUE_URBI);
 
   /// Load \a fn in the ghostqueue.

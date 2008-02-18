@@ -205,7 +205,7 @@ main (int argc, const char* argv[])
 	    << ": got ghost connection" << std::endl;
 
   if (!interactive)
-    if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
+    if (s.loadFile(in, c.recvQueue ()) != USUCCESS)
       std::cerr << libport::program_name
 		<< ": failed to process " << in << std::endl
 		<< libport::exit(EX_NOINPUT);

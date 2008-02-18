@@ -49,7 +49,6 @@ dist_libkernel_la_SOURCES +=					\
 memorymanager/memorymanager.cc					\
 server-timer.hh server-timer.cc					\
 ubanner.hh ubanner.cc						\
-ucommandqueue.hh ucommandqueue.cc				\
 ucomplaints.cc							\
 uconnection.cc							\
 ughostconnection.hh ughostconnection.cc				\
