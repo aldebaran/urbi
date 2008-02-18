@@ -143,13 +143,11 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 // that the regular scanning rule of New is run.
 #define DEPRECATED(New)							\
   do {									\
+    std::string msg = std::string("`") + yytext + "' is deprecated.";	\
     std::string rewritten = New;					\
-    if (rewritten == "")						\
-      up.warn(*locp, std::string("`") + yytext + "' is deprecated.");	\
-    else								\
-      up.warn(*locp,							\
-	      std::string("`") + yytext + "' is deprecated. "		\
-	      "Use `" + rewritten + "' instead.");			\
+    if (!rewritten.empty())						\
+      msg += " Use `" + rewritten + "' instead.";			\
+    up->warn(*locp, msg);						\
     for (int i = rewritten.length() - 1; 0 <= i; --i)			\
       unput(rewritten[i]);						\
   } while(0);
@@ -236,7 +234,7 @@ FLAVOR   [;|,&]?
     synclines.push(*locp);
 
   locp->initialize (!file || STREQ(file, "-") ? 0 : new libport::Symbol (file));
-  locp->lines (lexical_cast<int>(up, *locp, line) - 1);
+  locp->lines (lexical_cast<int>(*up, *locp, line) - 1);
   locp->step ();
 }
 
@@ -273,14 +271,14 @@ FLAVOR   [;|,&]?
 {NUMBER}"s"   RETURN_TIME_VALUE(1, 1000);
 {NUMBER}"ms"  RETURN_TIME_VALUE(2, 1);
 
-{NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (up, *locp, yytext));
-{FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(up, *locp, yytext));
+{NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, *locp, yytext));
+{FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, *locp, yytext));
 {ENATURAL}    {
-		float res = lexical_cast<float>(up, *locp, yytext);
+		float res = lexical_cast<float>(*up, *locp, yytext);
 		if (res < 1)
 		  RETURN_FVAL(FLOAT, res);
 		else
-		  RETURN_IVAL(INTEGER, numeric_cast<int>(up, *locp, res));
+		  RETURN_IVAL(INTEGER, numeric_cast<int>(*up, *locp, res));
 	      }
 
 [\"\']        {
@@ -444,7 +442,7 @@ FLAVOR   [;|,&]?
      \\[0-7]{3}		{
        long c = strtol (yytext + 1, 0, 8);
        if (c > 255)
-	 up.error(*locp, "invalid escape");
+	 up->error(*locp, "invalid escape");
        else
 	 *valp->str += c;
      }
@@ -461,7 +459,7 @@ FLAVOR   [;|,&]?
      \\t	*valp->str += '\t';
      \\v	*valp->str += '\v';
      \\[\\\"\'] *valp->str += yytext[1];
-     \\.	up.error (*locp, "invalid escape");
+     \\.	up->error (*locp, "invalid escape");
 
 
      [^\"\'\n\r\\]+      valp->str->append (yytext, yyleng);
@@ -471,7 +469,7 @@ FLAVOR   [;|,&]?
      <<EOF>> {
        std::ostringstream o;
        o << "unexpected end of file in " << delimiter << "..." << delimiter;
-       up.error (*locp, o.str());
+       up->error (*locp, o.str());
        unput(delimiter);
      }
 }
@@ -516,7 +514,7 @@ FLAVOR   [;|,&]?
   .             /* Stray `*' and `/'. */;
 
   <<EOF>> {
-    up.error(*locp, std::string ("unexpected end of file in a comment"));
+    up->error(*locp, std::string ("unexpected end of file in a comment"));
     locp->step ();
     BEGIN sc_default;
   }
@@ -524,7 +522,7 @@ FLAVOR   [;|,&]?
 
 <*>{
    .      {
-	     up.error(*locp, std::string ("invalid character: ") + yytext);
+	     up->error(*locp, std::string ("invalid character: ") + yytext);
 	     locp->step ();
 	  }
 }

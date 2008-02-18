@@ -28,7 +28,7 @@
 %defines
 %skeleton "lalr1.cc"
 %parse-param {UParser& up}
-%lex-param   {UParser& up}
+%lex-param   {UParser* up}
 %debug
 
 %code requires
@@ -408,7 +408,7 @@
   yy::parser::token_type
   yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
   {
-    return up.scanner_.yylex(val, loc, up);
+    return up.scanner_.yylex(val, loc, &up);
   }
 
 } // %code requires.

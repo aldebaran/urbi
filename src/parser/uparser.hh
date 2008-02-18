@@ -38,7 +38,7 @@
   UParser::token_type						 \
   yyFlexLexer::yylex(UParser::semantic_type* valp,		 \
 		     UParser::location_type* locp,		 \
-		     UParser& up)
+		     UParser* up)
 
 //! UParser uses 'flex' and 'bison' as scanner/parser
 /*! The choice of flex/bison is detailed in the comment on the UServer class.

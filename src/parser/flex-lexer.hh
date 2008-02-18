@@ -9,7 +9,7 @@
 // FlexLexer.h -- define interfaces for lexical analyzer classes generated
 //		  by flex
 
-// Copyright (c) 1993, 2006 The Regents of the University of California.
+// Copyright (c) 1993, 2006, 2008 The Regents of the University of California.
 // All rights reserved.
 //
 // This code is derived from software contributed to Berkeley by
@@ -80,11 +80,11 @@ public:
 
   virtual yy::parser::token_type
   yylex(yy::parser::semantic_type* val,
-	yy::location* loc, UParser& p) = 0;
+	yy::location* loc, UParser* p) = 0;
 
   // Call yylex with new input/output sources.
   yy::parser::token_type yylex( yy::parser::semantic_type* val,
-				yy::location* loc, UParser& p,
+				yy::location* loc, UParser* p,
 				std::istream* new_in,
 				std::ostream* new_out = 0 )
   {
@@ -143,7 +143,7 @@ public:
 
   virtual yy::parser::token_type
   yylex(yy::parser::semantic_type* val,
-	yy::location* loc, UParser& p);
+	yy::location* loc, UParser* p);
   virtual void switch_streams( std::istream* new_in, std::ostream* new_out );
 
 protected:
