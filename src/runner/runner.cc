@@ -688,6 +688,7 @@ namespace runner
 	}
 	catch (ast::BreakException&)
 	{
+	  std::swap(locals, locals_);
 	  break;
 	}
 	// Restore previous locals_, even if an exception was thrown.
