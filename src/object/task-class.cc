@@ -103,7 +103,7 @@ namespace object
   task_class_initialize ()
   {
 #define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(task, Name, Name);
+    DECLARE_PRIMITIVE(task, Name);
     DECLARE (init);
     DECLARE (result);
     DECLARE (setSideEffectFree);

@@ -146,8 +146,8 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
 /**
  * Declare a primitive Name in class Class with C++ implementation Call.
  */
-#define DECLARE_PRIMITIVE(Class, Name, Call)				\
+#define DECLARE_PRIMITIVE(Class, Name)  				\
   Class ## _class->slot_set (object::symbol_##Name,			\
-			     new Primitive(Class ## _class_ ## Call))
+			     new Primitive(Class ## _class_ ## Name))
 
 #endif // !OBJECT_PRIMITIVES_HH

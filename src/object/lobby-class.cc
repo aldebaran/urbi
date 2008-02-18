@@ -46,7 +46,7 @@ namespace object
   lobby_class_initialize ()
   {
 #define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(lobby, Name, Name)
+    DECLARE_PRIMITIVE(lobby, Name)
     DECLARE (self);
     DECLARE (send);
 #undef DECLARE

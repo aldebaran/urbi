@@ -216,7 +216,7 @@ namespace object
   {
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)                      \
-    DECLARE_PRIMITIVE(float, Name, Name)
+    DECLARE_PRIMITIVE(float, Name)
 
     DECLARE(PLUS);
     DECLARE(SLASH);

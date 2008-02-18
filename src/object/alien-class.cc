@@ -22,7 +22,7 @@ namespace object
   alien_class_initialize ()
   {
 #define DECLARE(Name)							\
-    DECLARE_PRIMITIVE(alien, Name, Name);
+    DECLARE_PRIMITIVE(alien, Name);
 #undef DECLARE
   }
 

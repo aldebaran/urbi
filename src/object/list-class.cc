@@ -140,7 +140,7 @@ namespace object
   list_class_initialize ()
   {
 #define DECLARE(Name)                   \
-    DECLARE_PRIMITIVE(list, Name, Name)
+    DECLARE_PRIMITIVE(list, Name)
 
     DECLARE(PLUS);
     DECLARE(PLUS_EQ);

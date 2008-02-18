@@ -30,14 +30,14 @@ namespace object
 			b->value_get ().name_get());		\
     }
 
-    PRIMITIVE_OP_STRING(equ, ==);
-    PRIMITIVE_OP_STRING(lth,  <);
+    PRIMITIVE_OP_STRING(EQ_EQ, ==);
+    PRIMITIVE_OP_STRING(LT,  <);
 
 #undef PRIMITIVE_OP_STRING
 
     static
     rString
-    add (rString& a, rString& b)
+    PLUS (rString& a, rString& b)
     {
       return new String(libport::Symbol (a->value_get ().name_get()
 					 + b->value_get ().name_get()));
@@ -58,10 +58,10 @@ namespace object
 #define PRIMITIVE_2_STRING(Name, Type2)           \
   PRIMITIVE_2(string, Name, Name, String, Type2)
 
-  PRIMITIVE_2_STRING(add, String);
-  PRIMITIVE_2_STRING(equ, String);
+  PRIMITIVE_2_STRING(PLUS, String);
+  PRIMITIVE_2_STRING(EQ_EQ, String);
 
-  PRIMITIVE_2_STRING(lth, String);
+  PRIMITIVE_2_STRING(LT, String);
 
   PRIMITIVE_1_STRING(size);
 
@@ -71,14 +71,14 @@ namespace object
   void
   string_class_initialize ()
   {
-#define DECLARE(Name, Implem)                   \
-    DECLARE_PRIMITIVE(string, Name, Implem)
+#define DECLARE(Name)                   \
+    DECLARE_PRIMITIVE(string, Name)
 
-    DECLARE(PLUS,  add);
-    DECLARE(EQ_EQ, equ);
-    DECLARE(LT,  lth);
+    DECLARE(PLUS);
+    DECLARE(EQ_EQ);
+    DECLARE(LT);
 
-    DECLARE(size, size);
+    DECLARE(size);
 #undef DECLARE
   }
 }; // namespace object

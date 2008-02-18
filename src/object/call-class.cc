@@ -121,7 +121,7 @@ namespace object
   call_class_initialize ()
   {
 #define DECLARE(Name)							\
-    DECLARE_PRIMITIVE(call, Name, Name)
+    DECLARE_PRIMITIVE(call, Name)
 
     DECLARE (argString);
     DECLARE (evalArgAt);

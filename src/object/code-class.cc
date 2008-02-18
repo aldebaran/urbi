@@ -40,7 +40,7 @@ namespace object
   code_class_initialize ()
   {
 #define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(code, Name, Name)
+    DECLARE_PRIMITIVE(code, Name)
     DECLARE (apply);
 #undef DECLARE
   }
