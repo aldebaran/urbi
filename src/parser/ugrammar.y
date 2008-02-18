@@ -504,14 +504,14 @@
 
 %union { int ival; }
 %token <ival>
-	INTEGER    "integer"
-	FLAG       "flag"
+	TOK_INTEGER    "integer"
+	TOK_FLAG       "flag"
 %printer { debug_stream() << $$; } <ival>;
 
 %union { float fval; }
 %token <fval>
-	FLOAT      "float"
-	TIME_VALUE "time"
+	TOK_FLOAT      "float"
+	TOK_TIME_VALUE "time"
 %type <fval> number;
 %type <fval> time_expr;
 %printer { debug_stream() << $$; } <fval>;
@@ -527,7 +527,7 @@
 
 // FIXME: Arguably, could be a Symbol too.
 %token
-   <str>  STRING             "string"
+   <str>  TOK_STRING             "string"
 %destructor { delete $$; } <str>;
 %printer { debug_stream() << libport::deref << $$; } <str>;
 
@@ -542,10 +542,10 @@
 }
 
 %token <symbol>
-	IDENTIFIER         "identifier"
-	BINDER             "binder"
-	OPERATOR           "operator command"
-	OPERATOR_ID        "operator"
+	TOK_IDENTIFIER         "identifier"
+	TOK_BINDER             "binder"
+	TOK_OPERATOR           "operator command"
+	TOK_OPERATOR_ID        "operator"
 ;
 
 // id is meant to enclose all the symbols we use as operators.  For
@@ -744,7 +744,7 @@ stmt:
 `--------*/
 
 flag:
-  FLAG                        { $$ = 0; }
+  TOK_FLAG         { $$ = 0; }
 ;
 
 // One or more "flag"s.
@@ -823,9 +823,9 @@ stmt:
 ;
 
 stmt:
-  OPERATOR        { $$ = 0; }
-| OPERATOR_ID tag { $$ = 0; }
-| "def" { $$ = 0; }
+  TOK_OPERATOR        { $$ = 0; }
+| TOK_OPERATOR_ID tag { $$ = 0; }
+| "def"               { $$ = 0; }
 ;
 
 // Variables.
@@ -840,10 +840,10 @@ stmt:
 
 // Bindings.
 stmt:
-  BINDER "object" k1_id { $$ = 0; }
-| BINDER "var" k1_id "from" k1_id { $$ = 0; }
-| BINDER "function" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
-| BINDER "event" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
+  TOK_BINDER "object" k1_id                                  { $$ = 0; }
+| TOK_BINDER "var" k1_id "from" k1_id                        { $$ = 0; }
+| TOK_BINDER "function" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
+| TOK_BINDER "event" "(" "integer" ")" k1_id "from" k1_id    { $$ = 0; }
 ;
 
 // Events.
@@ -851,7 +851,7 @@ stmt:
   "emit" k1_id args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
 | "waituntil" softtest               { $$ = 0; }
-| "event" k1_id formals          { $$ = 0; }
+| "event" k1_id formals              { $$ = 0; }
 ;
 
 // Functions.
@@ -1194,8 +1194,8 @@ namedarguments:
 `------------*/
 
 time_expr:
-  TIME_VALUE
-| time_expr TIME_VALUE { $$ += $2; }
+  TOK_TIME_VALUE
+| time_expr TOK_TIME_VALUE { $$ += $2; }
 ;
 
 

@@ -126,17 +126,18 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
+#define RETURN(Symbol)			\
+  return token::TOK_ ## Symbol
+
 #define RETURN_VALUE(Token, Field, Value)	\
  do {						\
    valp->Field = Value;				\
-   return token::Token;				\
+   RETURN(Token);				\
  } while (0)
-
-
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
 #define RETURN_FLAVOR(Symbol, Flavor)					\
-  RETURN_VALUE(TOK_ ## Symbol, flavor, ast::flavor_ ## Flavor)
+  RETURN_VALUE(Symbol, flavor, ast::flavor_ ## Flavor)
 
 /// Return an fval of type Token with Value.
 #define RETURN_FVAL(Token, Value)		\
@@ -156,7 +157,7 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 
 // Return an operator whose string representation is kept as a Symbol.
 #define RETURN_OP(Token)			\
-  RETURN_SYMBOL(TOK_ ## Token)
+  RETURN_SYMBOL(Token)
 
 // UnitSize is the number of letters used for the unit.
 #define RETURN_TIME_VALUE(UnitSize, Scale)				\
@@ -172,7 +173,7 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
     case '|': RETURN_FLAVOR(Token, pipe);				\
     case ',': RETURN_FLAVOR(Token, comma);				\
     case '&': RETURN_FLAVOR(Token, and);				\
-    default: RETURN_FLAVOR(Token, semicolon);				\
+    default:  RETURN_FLAVOR(Token, semicolon);				\
   }
 
 // We matched an obsolete token, New is now preferered.  Unput it so
@@ -353,40 +354,40 @@ FLAVOR   [;|,&]?
 "internal"  DEPRECATED("");
 "external"  RETURN_SYMBOL (BINDER);
 
-"BIN"           return token::TOK_BIN;
-"addgroup"      return token::TOK_ADDGROUP;
-"alias"         return token::TOK_ALIAS;
-"bin"           return token::TOK_BIN;
-"break"         return token::TOK_BREAK;
-"class"         return token::TOK_CLASS;
-"def"           return token::TOK_DEF;
-"delete"        return token::TOK_DELETE;
-"delgroup"      return token::TOK_DELGROUP;
-"do"		return token::TOK_DO;
-"else"          return token::TOK_ELSE;
-"emit"          return token::TOK_EMIT;
-"event"         return token::TOK_EVENT;
-"every"         return token::TOK_EVERY;
+"BIN"           RETURN(BIN);
+"addgroup"      RETURN(ADDGROUP);
+"alias"         RETURN(ALIAS);
+"bin"           RETURN(BIN);
+"break"         RETURN(BREAK);
+"class"         RETURN(CLASS);
+"def"           RETURN(DEF);
+"delete"        RETURN(DELETE);
+"delgroup"      RETURN(DELGROUP);
+"do"		RETURN(DO);
+"else"          RETURN(ELSE);
+"emit"          RETURN(EMIT);
+"event"         RETURN(EVENT);
+"every"         RETURN(EVERY);
 "foreach"       DEPRECATED("for");
-"freezeif"      return token::TOK_FREEZEIF;
-"from"          return token::TOK_FROM;
-"function"      return token::TOK_FUNCTION;
-"group"         return token::TOK_GROUP;
-"if"            return token::TOK_IF;
-"in"            return token::TOK_IN;
+"freezeif"      RETURN(FREEZEIF);
+"from"          RETURN(FROM);
+"function"      RETURN(FUNCTION);
+"group"         RETURN(GROUP);
+"if"            RETURN(IF);
+"in"            RETURN(IN);
 "loopn"         DEPRECATED("for");
-"new"           return token::TOK_NEW;
-"noop"          return token::TOK_NOOP;
-"object"        return token::TOK_OBJECT;
-"onleave"       return token::TOK_ONLEAVE;
-"return"        return token::TOK_RETURN;
+"new"           RETURN(NEW);
+"noop"          RETURN(NOOP);
+"object"        RETURN(OBJECT);
+"onleave"       RETURN(ONLEAVE);
+"return"        RETURN(RETURN);
 "static"        DEPRECATED("");
-"stopif"        return token::TOK_STOPIF;
-"timeout"       return token::TOK_TIMEOUT;
-"unalias"       return token::TOK_UNALIAS;
-"var"           return token::TOK_VAR;
-"waituntil"     return token::TOK_WAITUNTIL;
-"whenever"      return token::TOK_WHENEVER;
+"stopif"        RETURN(STOPIF);
+"timeout"       RETURN(TIMEOUT);
+"unalias"       RETURN(UNALIAS);
+"var"           RETURN(VAR);
+"waituntil"     RETURN(WAITUNTIL);
+"whenever"      RETURN(WHENEVER);
 
 "for"{FLAVOR}   RETURN_FLAVORED_KEYWORD(FOR);
 "loop"{FLAVOR}  RETURN_FLAVORED_KEYWORD(LOOP);
@@ -422,20 +423,20 @@ FLAVOR   [;|,&]?
 "&&"            RETURN_OP(LAND);
 "||"            RETURN_OP(LOR);
 
-"="             return token::TOK_ASSIGN;
-"$"             return token::TOK_DOLLAR;
+"="             RETURN(ASSIGN);
+"$"             RETURN(DOLLAR);
 
-"("             return token::TOK_LPAREN;
-")"             return token::TOK_RPAREN;
-"->"            return token::TOK_DIR;
-"."             return token::TOK_POINT;
-":"             return token::TOK_COLON;
-"::"            return token::TOK_DOUBLECOLON;
-"["             return token::TOK_LBRACKET;
-"]"             return token::TOK_RBRACKET;
-"{"             return token::TOK_LBRACE;
-"}"             return token::TOK_RBRACE;
-"~"             return token::TOK_TILDE;
+"("             RETURN(LPAREN);
+")"             RETURN(RPAREN);
+"->"            RETURN(DIR);
+"."             RETURN(POINT);
+":"             RETURN(COLON);
+"::"            RETURN(DOUBLECOLON);
+"["             RETURN(LBRACKET);
+"]"             RETURN(RBRACKET);
+"{"             RETURN(LBRACE);
+"}"             RETURN(RBRACE);
+"~"             RETURN(TILDE);
 
 "&"             RETURN_FLAVOR(AND, and);
 "|"             RETURN_FLAVOR(PIPE, pipe);
@@ -465,7 +466,7 @@ FLAVOR   [;|,&]?
 	 else
 	 {
 	   BEGIN sc_default;
-	   return token::STRING;
+	   RETURN(STRING);
 	 }
        }
        else
