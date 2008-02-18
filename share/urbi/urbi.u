@@ -122,6 +122,12 @@ do Object
     new Task (getSlot ("f"))
   };
   
+  function detach_linked
+  {
+    var f = makeClosedCode (call.evalArgAt (1));
+    new Task (getSlot ("f"), true)
+  };
+
   # every_ takes two arguments, a delay and an expression.
   function every_
   {

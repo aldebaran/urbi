@@ -28,7 +28,7 @@ namespace object
   static rObject
   task_class_init (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (2);
+    CHECK_ARG_COUNT_RANGE (2, 3);
     FETCH_ARG (1, Code);
 
     rList locals = new List (std::list<rObject> ());
@@ -38,6 +38,14 @@ namespace object
 					     r.scheduler_get (),
 					     body);
     args[0]->slot_set (SYMBOL(runner), box (rRunner, new_runner));
+
+    if (args.size () == 3)
+    {
+      FETCH_ARG (2, Float);
+      if (libport::ufloat_to_boolean (arg2->value_get ()))
+	r.link (new_runner.get ());
+    }
+
     new_runner->start_job ();
 
     return args[0];
