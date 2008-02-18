@@ -69,59 +69,59 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
 
 /**
  * Define a primitive for class Class named name, which takes one
- * argument of type Type1, returns type Ret and whose result is Call
+ * argument of type Type1, returns type Ret and whose result is \a Name
  * applied to all arguments.
  */
-#define PRIMITIVE_1_(Class, Name, Call, Ret, Type1, Get)        \
+#define PRIMITIVE_1_(Class, Name, Ret, Type1, Get)        \
   static rObject						\
   Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Type1);                                        \
-    return Ret(Call(arg0 Get));                                 \
+    return Ret(Class ## _ ## Name(arg0 Get));                   \
   }
 
-#define PRIMITIVE_1(Class, Name, Call, Type1)                   \
-  PRIMITIVE_1_(Class, Name, Call, , Type1, )
+#define PRIMITIVE_1(Class, Name, Type1)                   \
+  PRIMITIVE_1_(Class, Name, , Type1, )
 
-#define PRIMITIVE_1_V(Class, Name, Call, Ret, Type1)            \
-  PRIMITIVE_1_(Class, Name, Call, new Ret, Type1, ->value_get())
+#define PRIMITIVE_1_V(Class, Name, Ret, Type1)            \
+  PRIMITIVE_1_(Class, Name, new Ret, Type1, ->value_get())
 
 
 /**
- * Define a primitive for class \a Class named name, which takes two
- * arguments of type \a Type1 and \a Type2, returns type \a Ret and whose
- * result is \a Call applied to all arguments.
+ * Define a primitive for class \a Class named \a Name, which takes
+ * two arguments of type \a Type1 and \a Type2, returns type \a Ret
+ * and whose result is \a Name applied to all arguments.
  */
-#define PRIMITIVE_2_(Class, Name, Call, Ret, Type1, Type2, Get) \
+#define PRIMITIVE_2_(Class, Name, Ret, Type1, Type2, Get) \
   static rObject						\
   Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
-    return Ret(Call(arg0 Get, arg1 Get));                       \
+    return Ret(Class ## _ ## Name(arg0 Get, arg1 Get));         \
   }
 
-#define PRIMITIVE_2(Class, Name, Call, Type1, Type2)            \
-  PRIMITIVE_2_(Class, Name, Call, , Type1, Type2, )
+#define PRIMITIVE_2(Class, Name, Type1, Type2)                  \
+  PRIMITIVE_2_(Class, Name, , Type1, Type2, )
 
-#define PRIMITIVE_2_V(Class, Name, Call, Ret, Type1, Type2)     \
-  PRIMITIVE_2_(Class, Name, Call, new Ret, Type1, Type2, ->value_get())
+#define PRIMITIVE_2_V(Class, Name, Ret, Type1, Type2)           \
+  PRIMITIVE_2_(Class, Name, new Ret, Type1, Type2, ->value_get())
 
 /**
- * Define a primitive for class Class named Name, which takes two
- * arguments of type Type1 and rObject, returns type Ret and whose
- * result is Call applied to all arguments.
+ * Define a primitive for class \a Class named \a Name, which takes
+ * two arguments of type Type1 and rObject, returns type \a Ret and
+ * whose result is \a Name applied to all arguments.
  */
-#define PRIMITIVE_2_OBJECT(Class, Name, Call, Type1)            \
+#define PRIMITIVE_2_OBJECT(Class, Name, Type1)                  \
   static rObject						\
   Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     rObject arg1 = args[1];                                     \
-    return (Call(arg0, arg1));                                  \
+    return (Class ## _ ## Name(arg0, arg1));                    \
   }
 
 /**
@@ -144,7 +144,8 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
   PRIMITIVE_OP_(Class, Name, Op, new Ret, Type1, Type2, ->value_get())
 
 /**
- * Declare a primitive Name in class Class with C++ implementation Call.
+ * Declare a primitive \a Name in class \a Class with C++
+ * implementation \a Name.
  */
 #define DECLARE_PRIMITIVE(Class, Name)  				\
   Class ## _class->slot_set (object::symbol_##Name,			\

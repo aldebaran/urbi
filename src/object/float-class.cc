@@ -28,26 +28,26 @@ namespace object
 #define FCT_OP_PROTECTED(Name, Operator, ErrorMessage)                  \
   static                                                                \
   libport::ufloat                                                       \
-  float_##Name (libport::ufloat l, libport::ufloat r)                   \
+  float_ ## Name (libport::ufloat l, libport::ufloat r)                 \
   {                                                                     \
     if (!r)								\
       throw PrimitiveError("Operator " #Operator,                       \
-			   ErrorMessage);                               \
+                           ErrorMessage);                               \
     return l Operator r;                                                \
   }
 
 #define FCT_M_PROTECTED(Name, Method, ErrorMessage)                     \
   static                                                                \
   libport::ufloat                                                       \
-  float_##Name (libport::ufloat l, libport::ufloat r)                   \
+  float_ ## Name (libport::ufloat l, libport::ufloat r)                 \
   {                                                                     \
     if (!r)								\
       throw PrimitiveError(#Method, ErrorMessage);                      \
     return Method(l, r);                                                \
   }
 
-  FCT_OP_PROTECTED(div, /, "division by 0")
-  FCT_M_PROTECTED(mod, fmod, "modulo by 0")
+  FCT_OP_PROTECTED(SLASH, /, "division by 0")
+  FCT_M_PROTECTED(PERCENT, fmod, "modulo by 0")
 
 #undef FCT_M_PROTECTED
 #undef FCT_OP_PROTECTED
@@ -84,12 +84,46 @@ namespace object
     return ilhs Op irhs;					\
   }
 
-  INTEGER_BIN_OP(lshift, <<)
-  INTEGER_BIN_OP(rshift, >>)
-  INTEGER_BIN_OP(xor,    ^)
+  INTEGER_BIN_OP(LT_LT, <<)
+  INTEGER_BIN_OP(GT_GT, >>)
+  INTEGER_BIN_OP(CARET, ^)
 
 # undef INTEGER_BIN_OP
 
+#define UNARY_WRAPPER(Name, Call)                               \
+  static float                                                  \
+  float_ ## Name (libport::ufloat arg)                          \
+  {                                                             \
+    return Call(arg);                                           \
+  }
+
+#define BIN_WRAPPER(Name, Call)                                 \
+  static float                                                  \
+  float_ ## Name (libport::ufloat lhs, libport::ufloat rhs)     \
+  {                                                             \
+    return Call(lhs, rhs);                                      \
+  }
+
+BIN_WRAPPER(STAR_STAR, powf)
+UNARY_WRAPPER(sin, sin)
+UNARY_WRAPPER(asin, asin)
+UNARY_WRAPPER(cos, cos)
+UNARY_WRAPPER(acos, acos)
+UNARY_WRAPPER(tan, tan)
+UNARY_WRAPPER(atan, atan)
+static float
+float_abs (libport::ufloat arg)
+{
+  return abs((int)arg);
+}
+UNARY_WRAPPER(exp, exp)
+UNARY_WRAPPER(log, log)
+UNARY_WRAPPER(round, round)
+UNARY_WRAPPER(trunc, trunc)
+UNARY_WRAPPER(sqrt, sqrt)
+
+#undef BIN_WRAPPER
+#undef UNARY_WRAPPER
 
 
 /*-------------------------------------------------------------------.
@@ -138,70 +172,74 @@ namespace object
     }
   }
 
+  // FIXME: Code duplication here, factor this macro with PRIMITIVE_1_
+  // in primitives.hh.
+
   /// Internal macro used to define a primitive for float numbers.
   /// \param Name primitive's name
   /// \param Call C++ code executed when primitive is called.
   /// \param Pre C++ code executed before call (typically to check args)
-#define PRIMITIVE_0_FLOAT_(Name, Call, Pre)             \
-  static rObject					\
+#define PRIMITIVE_0_FLOAT_(Name, Pre)                           \
+  static rObject                                                \
   float_class_ ## Name (runner::Runner&, objects_type args)	\
-  {                                                     \
-    CHECK_ARG_COUNT(1);                                 \
-    FETCH_ARG(0, Float);                                \
-    Pre;                                                \
-    return new Float(Call(arg0->value_get()));          \
+  {                                                             \
+    CHECK_ARG_COUNT(1);                                         \
+    FETCH_ARG(0, Float);                                        \
+    Pre;                                                        \
+    return new Float(float_ ## Name(arg0->value_get()));        \
   }
 
   /// Define a primitive for float numbers.
   /// \param Call Name primitive's name
-#define PRIMITIVE_0_FLOAT(Name, Call)                   \
-  PRIMITIVE_0_FLOAT_(Name, Call, )
+#define PRIMITIVE_0_FLOAT(Name)                            \
+  PRIMITIVE_0_FLOAT_(Name, )
 
-#define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name, Call)            \
-  PRIMITIVE_0_FLOAT_(Name, Call,                                \
+#define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name)                  \
+  PRIMITIVE_0_FLOAT_(Name,                                      \
      if (VALUE(args[0], Float) < 0)                             \
        throw PrimitiveError(#Name,                              \
 			    "argument has to be positive"))
 
-#define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name, Call, Min, Max)		\
-  PRIMITIVE_0_FLOAT_(Name, Call,					\
+#define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name,Min, Max)                    \
+  PRIMITIVE_0_FLOAT_(Name,      					\
      if (VALUE(args[0], Float) < Min || Max < VALUE(args[0], Float))	\
       throw PrimitiveError(#Name, "invalid range"))
 
-#define PRIMITIVE_2_FLOAT(Name, Call)                   \
-  PRIMITIVE_2_V(float, Name, Call, Float, Float, Float)
+#define PRIMITIVE_2_FLOAT(Name)                            \
+  PRIMITIVE_2_V(float, Name, Float, Float, Float)
 
 #define PRIMITIVE_OP_FLOAT(Name, Op)                    \
   PRIMITIVE_OP_V(float, Name, Op, Float, Float, Float)
 
   // Binary arithmetics operators.
   PRIMITIVE_OP_FLOAT(PLUS, +)
-  PRIMITIVE_2_FLOAT(SLASH, float_div)
+  PRIMITIVE_2_FLOAT(SLASH)
   PRIMITIVE_OP_FLOAT(STAR, *)
-  PRIMITIVE_2_FLOAT(PERCENT, float_mod)
-  PRIMITIVE_2_FLOAT(STAR_STAR, powf)
+  PRIMITIVE_2_FLOAT(PERCENT)
 
-  PRIMITIVE_2_FLOAT(LT_LT, float_lshift) // <<
-  PRIMITIVE_2_FLOAT(GT_GT, float_rshift) // >>
-  PRIMITIVE_2_FLOAT(CARET,    float_xor) // ^
+  PRIMITIVE_2_FLOAT(STAR_STAR)
+
+  PRIMITIVE_2_FLOAT(LT_LT) // <<
+  PRIMITIVE_2_FLOAT(GT_GT) // >>
+  PRIMITIVE_2_FLOAT(CARET) // ^
 
   PRIMITIVE_OP_FLOAT(EQ_EQ, ==)
 
   PRIMITIVE_OP_FLOAT(LT, <)
 
-  PRIMITIVE_0_FLOAT(sin, sin)
-  PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, asin, -1, 1)
-  PRIMITIVE_0_FLOAT(cos, cos)
-  PRIMITIVE_0_FLOAT_CHECK_RANGE(acos, acos, -1, 1)
-  PRIMITIVE_0_FLOAT(tan, tan)
-  PRIMITIVE_0_FLOAT(atan, atan)
-  PRIMITIVE_0_FLOAT(abs, fabs)
-  PRIMITIVE_0_FLOAT(exp, exp)
-  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(log, log)
-  PRIMITIVE_0_FLOAT(round, round)
-  PRIMITIVE_0_FLOAT(random, float_random)
-  PRIMITIVE_0_FLOAT(trunc, trunc)
-  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(sqrt, sqrt)
+  PRIMITIVE_0_FLOAT(sin)
+  PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, -1, 1)
+  PRIMITIVE_0_FLOAT(cos)
+  PRIMITIVE_0_FLOAT_CHECK_RANGE(acos, -1, 1)
+  PRIMITIVE_0_FLOAT(tan)
+  PRIMITIVE_0_FLOAT(atan)
+  PRIMITIVE_0_FLOAT(abs)
+  PRIMITIVE_0_FLOAT(exp)
+  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(log)
+  PRIMITIVE_0_FLOAT(round)
+  PRIMITIVE_0_FLOAT(random)
+  PRIMITIVE_0_FLOAT(trunc)
+  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(sqrt)
 
 #undef PRIMITIVE_2_FLOAT
 #undef PRIMITIVE_0_FLOAT_CHECK_RANGE
