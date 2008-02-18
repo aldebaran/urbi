@@ -33,6 +33,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
+//#define ENABLE_DEBUG_TRACES
+#include <libport/compiler.hh>
+
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
@@ -98,14 +101,13 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 	return yy::parser::token_type(res);			\
       else							\
       {								\
-	/*	std::cerr << "Discard: \"" << yytext		\
-		  << "\" ("					\
-		  << yyleng << " -> "				\
-		  << reinterpret_cast<size_t&>(*valp)		\
-		  << ")"					\
-		  << ", state = " << YY_START			\
-		  << " vs. " << sc_default			\
-	 << std::endl;*/					\
+	ECHO("Discard: \"" << yytext				\
+	     << "\" ("						\
+	     << yyleng << " -> "				\
+	     << reinterpret_cast<size_t&>(*valp)		\
+	     << ")"						\
+	     << ", state = " << YY_START			\
+	     << " vs. " << sc_default);				\
 	continue;						\
       }								\
     }								\

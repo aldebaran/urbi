@@ -19,18 +19,20 @@
 
  **************************************************************************** */
 
+
 #include <cstdlib>
 #include <libport/cstring>
 #include <sstream>
 #include <strstream>
 
+//#define ENABLE_DEBUG_TRACES
+#include <libport/compiler.hh>
+
 #include "parser/uparser.hh"
 
 #include "uqueue.hh"
 
-UQueue::UQueue (size_t minBufferSize,
-		size_t maxBufferSize,
-		size_t adaptive)
+UQueue::UQueue (size_t minBufferSize, size_t maxBufferSize, size_t adaptive)
   : minBufferSize_ (minBufferSize
 		    ? minBufferSize : static_cast<size_t>(INITIAL_BUFFER_SIZE)),
     maxBufferSize_ (maxBufferSize == static_cast<size_t>(-1)
@@ -312,8 +314,8 @@ UQueue::pop_command ()
   while (int c =
 	 scanner.yylex(reinterpret_cast<yy::parser::semantic_type*>(&length)))
   {
-    //    std::cerr << length << ": " << c << " (" << char(c) << "), closers: "
-    //	      << closers.size() << std::endl;
+    ECHO(length << ": " << c << " (" << char(c) << "), closers: "
+	 << closers.size());
     switch (c)
     {
       case '{':
@@ -353,6 +355,6 @@ UQueue::pop_command ()
   }
   // We can't break a loop in a switch with break...
   done:
-  //  std::cerr << "res: {{{" << res << "}}}" << std::endl;
+  ECHO("res: {{{" << res << "}}}");
   return res;
 }
