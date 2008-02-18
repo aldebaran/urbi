@@ -33,7 +33,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-//#define ENABLE_DEBUG_TRACES
+  //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
 #include "parser/uparser.hh"
@@ -99,19 +99,15 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 	      || res == '[' || res == ']'			\
 	      || res == ',' || res == ';'))			\
 	return yy::parser::token_type(res);			\
-      else							\
-      {								\
-	ECHO("Discard: \"" << yytext				\
-	     << "\" ("						\
-	     << yyleng << " -> "				\
-	     << reinterpret_cast<size_t&>(*valp)		\
-	     << ")"						\
-	     << ", state = " << YY_START			\
-	     << " vs. " << sc_default);				\
-	continue;						\
-      }								\
     }								\
   }
+
+// Skip this action if in pre-parser.  Do not put this in a do-while,
+// as it would capture the "continue" which is meant to yylex's
+// "while(1)".
+#define PRESKIP()				\
+  if (!up)					\
+    continue;
 
 // Move the front cursor to the end cursor.
 #define STEP()					\
@@ -168,11 +164,13 @@ do {						\
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
-#define RETURN(Symbol)			\
-  return token::TOK_ ## Symbol
+#define RETURN(Symbol)				\
+  PRESKIP();					\
+  return token::TOK_ ## Symbol;
 
 #define RETURN_VALUE(Token, Field, Value)	\
  do {						\
+   PRESKIP();					\
    SET_VAL(Field, Value);			\
    RETURN(Token);				\
  } while (0)
@@ -204,12 +202,14 @@ do {						\
 // UnitSize is the number of letters used for the unit.
 #define RETURN_TIME_VALUE(UnitSize, Scale)				\
   do {									\
+    PRESKIP();								\
     yytext[yyleng - UnitSize] = 0;					\
     RETURN_VALUE(TIME_VALUE, fval,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   } while (0)
 
 #define RETURN_FLAVORED_KEYWORD(Token)					\
+  PRESKIP();								\
   switch (yytext[strlen(yytext) - 1])					\
   {									\
     case '|': RETURN_FLAVOR(Token, pipe);				\
@@ -219,9 +219,11 @@ do {						\
   }
 
 // We matched an obsolete token, New is now preferered.  Unput it so
-// that the regular scanning rule of New is run.
+// that the regular scanning rule of New is run.  The braces are
+// needed to scope msg and rewritten.
 #define DEPRECATED(New)							\
-  do {									\
+  {									\
+    PRESKIP();								\
     std::string msg = std::string("`") + yytext + "' is deprecated.";	\
     std::string rewritten = New;					\
     if (!rewritten.empty())						\
@@ -229,18 +231,22 @@ do {						\
     up->warn(*locp, msg);						\
     for (int i = rewritten.length() - 1; 0 <= i; --i)			\
       unput(rewritten[i]);						\
-  } while(0);
+  }
 
 %}
 %option noyywrap debug
 
-%x SC_C_COMMENT SC_STRING_OR_SYMBOL SC_IDENTIFIER_SUFFIX
+%x SC_C_COMMENT SC_STRING_OR_SYMBOL
 %s SC_UCONSOLE
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
 
+  // Identifier.
 ID       [a-zA-Z_][_A-Za-z0-9]*
+  // Identifier suffix for magic derivation (K1 syntax).
+SUFFIX   "'"("'"|d|dd|e|n|in|out)
+
 
 NATURAL  [0-9]+
 EXPONENT [eE][-+]?{NATURAL}
@@ -284,6 +290,7 @@ FLAVOR   [;|,&]?
   | Internal rules for generated code. |
   `-----------------------------------*/
 ^"#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
+  PRESKIP();
 # define SKIP_SPACES()				\
   for (++yytext; isspace (*yytext); ++yytext)	\
     continue;
@@ -293,6 +300,7 @@ FLAVOR   [;|,&]?
   yytext += 4; // line|push.
 
   SKIP_SPACES();
+# undef SKIP_SPACES
   char* line = yytext;
   yytext += strspn(yytext, "0123456789");
   *yytext = 0;
@@ -313,8 +321,11 @@ FLAVOR   [;|,&]?
   STEP();
 }
 
-^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     *locp = synclines.top(); synclines.pop();
-
+^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
+  PRESKIP();
+  *locp = synclines.top();
+  synclines.pop();
+}
 
   /*--------------------------------------------------------------.
   | Console mode: skip the [01234567] lines for expected output.  |
@@ -485,10 +496,17 @@ FLAVOR   [;|,&]?
 ","             RETURN_FLAVOR(COMMA, comma);
 
 
-{ID}            {
-		  BEGIN SC_IDENTIFIER_SUFFIX;
-		  RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
-		}
+{ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
+  PRESKIP();
+  char* quote = strchr(yytext, '\'');
+  // Push the message name "back" into the stream.
+  std::string msg (yytext, quote - yytext);
+  msg += ".'\'";
+  msg += quote[1] == '\'' ? "\\'" : quote + 1;
+  DEPRECATED(msg);
+}
+
+{ID}            RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
 
 
     /*--------------------.
@@ -499,16 +517,11 @@ FLAVOR   [;|,&]?
      [\"\'] {
        if (*yytext == delimiter)
        {
+	 BEGIN sc_default;
 	 if (*yytext == '\'')
-	 {
-	   BEGIN SC_IDENTIFIER_SUFFIX;
 	   RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(*valp->str));
-	 }
 	 else
-	 {
-	   BEGIN sc_default;
 	   RETURN(STRING);
-	 }
        }
        else
 	 GROW_VAL(*yytext);
@@ -546,24 +559,6 @@ FLAVOR   [;|,&]?
      }
 }
 
-
-    /*---------------------.
-    | Identifier suffixes. |
-    `---------------------*/
-
-<SC_IDENTIFIER_SUFFIX>{ /* Handling of 'd, 'n, etc. */
-   "'"		BEGIN sc_default; DEPRECATED(".'\\''");
-   "''"		BEGIN sc_default; DEPRECATED(".'\\'\\''");
-   "'d"		BEGIN sc_default; DEPRECATED(".'\\'d'");
-   "'dd"	BEGIN sc_default; DEPRECATED(".'\\'dd'");
-   "'e"		BEGIN sc_default; DEPRECATED(".'\\'e'");
-   "'n"		BEGIN sc_default; DEPRECATED(".'\\'n'");
-   "'in"	BEGIN sc_default; DEPRECATED(".'\\'in'");
-   "'out"	BEGIN sc_default; DEPRECATED(".'\\'out'");
-   {BLANKS}     STEP();
-   {EOL}        LINES(1); STEP();
-   .		BEGIN sc_default; locp->end.column--; unput(*yytext);
-}
 
     /*----------------------------.
     | White spaces and comments.  |
