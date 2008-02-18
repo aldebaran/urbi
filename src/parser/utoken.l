@@ -354,8 +354,6 @@ FLAVOR   [;|,&]?
 "timeout"       return token::TOK_TIMEOUT;
 "unalias"       return token::TOK_UNALIAS;
 "var"           return token::TOK_VAR;
-"'in"           return token::TOK_VARIN;
-"'out"          return token::TOK_VAROUT;
 "waituntil"     return token::TOK_WAITUNTIL;
 "whenever"      return token::TOK_WHENEVER;
 
@@ -490,6 +488,8 @@ FLAVOR   [;|,&]?
    "'dd"	BEGIN sc_default; DEPRECATED(".'\\'dd'");
    "'e"		BEGIN sc_default; DEPRECATED(".'\\'e'");
    "'n"		BEGIN sc_default; DEPRECATED(".'\\'n'");
+   "'in"	BEGIN sc_default; DEPRECATED(".'\\'in'");
+   "'out"	BEGIN sc_default; DEPRECATED(".'\\'out'");
    {BLANKS}     locp->step();
    {EOL}        LINES(locp); locp->step();
    .		BEGIN sc_default; locp->end.column--; unput(*yytext);

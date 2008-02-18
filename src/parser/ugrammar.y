@@ -443,7 +443,6 @@
 	TOK_LPAREN       "("
 	TOK_NEW          "new"
 	TOK_NOOP         "noop"
-	TOK_NORM         "'n"
 	TOK_OBJECT       "object"
 	TOK_ONLEAVE      "onleave"
 	TOK_POINT        "."
@@ -457,9 +456,6 @@
 	TOK_TIMEOUT      "timeout"
 	TOK_UNALIAS      "unalias"
 	TOK_VAR          "var"
-	TOK_VARERROR     "'e"
-	TOK_VARIN        "'in"
-	TOK_VAROUT       "'out"
 	TOK_WAITUNTIL    "waituntil"
 	TOK_WHENEVER     "whenever"
 
@@ -634,8 +630,6 @@
 %right "!" "++" "--" UNARY     /* Negation--unary minus */
 %left  "("
 %left  "."
-
-%right "'n"
 
 /* URBI Grammar */
 %%
