@@ -20,18 +20,23 @@ def error (msg):
 ## Remove the write permission on the result to avoid accidental edition
 ## of generated files.
 def lazy_overwrite (old, new):
+  verbose = os.getenv(key='BUILDFARM') is None
   if not os.path.isfile (old):
-    print "> Create: " + old
+    if verbose:
+      print "> Create: " + old
     shutil.move (new, old)
-    os.system("diff -uw /dev/null " + old)
+    if verbose:
+      os.system("diff -uw /dev/null " + old)
   elif not filecmp.cmp (old, new):
-    print "> Overwrite: " + old
+    if verbose:
+      print "> Overwrite: " + old
     # Change the file modes to write the file
     file_modes = os.stat (old) [stat.ST_MODE]
     os.chmod (old, file_modes | 0666);
     shutil.move (old, old + "~")
     shutil.move (new, old)
-    os.system("diff -uw " + old + "~ " + old)
+    if verbose:
+      os.system("diff -uw " + old + "~ " + old)
   else:
     os.remove (new)
   # Prevent generated file modifications
