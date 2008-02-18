@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UPARSER_HH
-# define UPARSER_HH
+#ifndef PARSER_UPARSER_HH
+# define PARSER_UPARSER_HH
 
 # include <list>
 # include <set>
@@ -138,4 +138,4 @@ private:
   location_type loc_;
 };
 
-#endif
+#endif // !PARSER_UPARSER_HH
