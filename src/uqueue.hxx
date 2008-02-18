@@ -3,37 +3,43 @@
 
 # include "uqueue.hxx"
 
-inline UErrorValue
+inline
+UErrorValue
 UQueue::push (const char *s)
 {
   return push(reinterpret_cast<const ubyte*>(s), strlen(s));
 }
 
-inline size_t
+inline
+size_t
 UQueue::bufferFreeSpace()
 {
   return buffer_.size() - dataSize_ ;
 }
 
-inline size_t
+inline
+size_t
 UQueue::bufferMaxFreeSpace()
 {
   return maxBufferSize_ - dataSize_ ;
 }
 
-inline size_t
+inline
+size_t
 UQueue::dataSize()
 {
   return dataSize_ ;
 }
 
-inline bool
+inline
+bool
 UQueue::locked()
 {
   return locked_;
 }
 
-inline void
+inline
+void
 UQueue::setAdaptive (size_t adaptive)
 {
   adaptive_ = adaptive;
