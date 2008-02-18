@@ -451,32 +451,45 @@ namespace runner
   void
   Runner::operator() (ast::Nary& e)
   {
-    // FIXME: other flavor support.
+    // List of runners for Stmt flavored by a comma.
+    std::list<Runner*> runners;
+
     ast::exec_exps_type::iterator i;
     current_ = object::void_class;
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
       current_.reset ();
       JECHO ("child", *i);
-      try {
-	operator() (*i);
-      }
-      catch (object::UrbiException& ue)
-      {
-	show_error_(ue, (*i)->location_get());
-	if (!e.toplevel_get())
-	  throw;
-      }
-      CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
-	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
-			     "outside a function");
 
-
-      if (e.toplevel_get () && current_.get ())
+      if (dynamic_cast<ast::Stmt*>(*i) &&
+	  dynamic_cast<ast::Stmt*>(*i)->flavor_get() == ast::flavor_comma)
       {
-	ECHO ("toplevel: returning a result to the connection.");
-	lobby_->value_get ().connection.new_result (current_);
-	current_.reset ();
+	Runner* subrunner = new Runner(*this);
+	subrunner->ast_ = *i;
+	subrunner->start_job ();
+	runners.push_back(subrunner);
+      }
+      else
+      {
+	try {
+	  operator() (*i);
+	}
+	catch (object::UrbiException& ue)
+	{
+	  show_error_(ue, (*i)->location_get());
+	  if (!e.toplevel_get())
+	    throw;
+	}
+	CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
+	  CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
+			       "outside a function");
+
+	if (e.toplevel_get () && current_.get ())
+	{
+	  ECHO ("toplevel: returning a result to the connection.");
+	  lobby_->value_get ().connection.new_result (current_);
+	  current_.reset ();
+	}
       }
 
       /* Allow some time to pass before we execute what follows.  If
@@ -485,6 +498,16 @@ namespace runner
 	 immediately.  */
       YIELD ();
     }
+
+    // If the Nary is not the toplevel one, all subrunners must be finished when
+    // the runner exits the Nary node.
+    // FIXME: There is a memory leak if the Nary is a toplevel one.
+    if (!e.toplevel_get ())
+      foreach(Runner* r, runners)
+      {
+	yield_until_terminated(*r);
+	delete r;
+      }
 
     // FIXME: I am very afraid that because of the YIELD above, some
     // command are added right before this clear().  Hence the assert.
