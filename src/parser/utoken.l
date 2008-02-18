@@ -113,16 +113,56 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
     }								\
   }
 
+// Move the front cursor to the end cursor.
+#define STEP()					\
+  do {						\
+    if (up)					\
+      locp->step();				\
+  } while (0)
+
 // To avoid differences between versions of Bison, set by hand the
 // initial columns when advancing lines.
-#define LINES(Loc)				\
- do {						\
-   (Loc)->lines();				\
-   (Loc)->end.column = 1;			\
- } while (0)
+#define LINES(Num)				\
+  do {						\
+    if (up)					\
+    {						\
+      locp->lines(Num);				\
+      locp->end.column = 1;			\
+    }						\
+  } while (0)
+
+// Report an error.
+#define ERROR(Msg)				\
+do {						\
+  if (up)					\
+    up->error(*locp, Msg);			\
+} while(0)
 
 // Otherwise Flex returns an int instead of an enum.
-#define yyterminate() return token::TOK_EOF
+#define yyterminate()				\
+  return token::TOK_EOF
+
+// valp->Field = Value.
+#define SET_VAL(Field, Value)			\
+  do {						\
+    if (up)					\
+      valp->Field = Value;			\
+  } while(0)
+
+// Extend the string value of valp.
+#define GROW_VAL(Value)				\
+  do {						\
+    if (up)					\
+      *valp->str += Value;			\
+  } while(0)
+
+// Extend the string value of valp.
+#define APPEND_VAL(Arg1, Arg2)			\
+  do {						\
+    if (up)					\
+      valp->str->append (Arg1, Arg2);		\
+  } while(0)
+
 
 /*----------------------------------.
 | Sugar to return semantic values.  |
@@ -133,7 +173,7 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 
 #define RETURN_VALUE(Token, Field, Value)	\
  do {						\
-   valp->Field = Value;				\
+   SET_VAL(Field, Value);			\
    RETURN(Token);				\
  } while (0)
 
@@ -236,8 +276,7 @@ FLAVOR   [;|,&]?
     sc_default = INITIAL;						\
   BEGIN sc_default;
 
-  if (locp)
-    locp->step();
+  STEP();
 
 %}
 
@@ -271,7 +310,7 @@ FLAVOR   [;|,&]?
 
   locp->initialize (!file || STREQ(file, "-") ? 0 : new libport::Symbol (file));
   locp->lines (lexical_cast<int>(*up, *locp, line) - 1);
-  locp->step ();
+  STEP();
 }
 
 ^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     *locp = synclines.top(); synclines.pop();
@@ -318,7 +357,7 @@ FLAVOR   [;|,&]?
 	      }
 
 [\"\']        {
-		valp->str = new std::string;
+		SET_VAL(str, new std::string);
 		delimiter = *yytext;
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
@@ -472,40 +511,37 @@ FLAVOR   [;|,&]?
 	 }
        }
        else
-	 *valp->str += *yytext;
+	 GROW_VAL(*yytext);
      }
 
      \\[0-7]{3}		{
        long c = strtol (yytext + 1, 0, 8);
        if (c > 255)
-	 up->error(*locp, "invalid escape");
+	 ERROR(std::string("invalid escape: `") + yytext + '\'');
        else
-	 *valp->str += c;
+	 GROW_VAL(c);
      }
 
-     \\x[0-9a-fA-F]{2}	{
-       *valp->str += strtol (yytext + 2, 0, 16);
-     }
+     \\x[0-9a-fA-F]{2}	 GROW_VAL(strtol (yytext + 2, 0, 16));
 
-     \\a	*valp->str += '\a';
-     \\b	*valp->str += '\b';
-     \\f	*valp->str += '\f';
-     \\n	*valp->str += '\n';
-     \\r	*valp->str += '\r';
-     \\t	*valp->str += '\t';
-     \\v	*valp->str += '\v';
-     \\[\\\"\'] *valp->str += yytext[1];
-     \\.	up->error (*locp, "invalid escape");
+     \\a	GROW_VAL('\a');
+     \\b	GROW_VAL('\b');
+     \\f	GROW_VAL('\f');
+     \\n	GROW_VAL('\n');
+     \\r	GROW_VAL('\r');
+     \\t	GROW_VAL('\t');
+     \\v	GROW_VAL('\v');
+     \\[\\\"\'] GROW_VAL(yytext[1]);
+     \\.	ERROR(std::string("invalid escape: `") + yytext + '\'');
 
 
-     [^\"\'\n\r\\]+      valp->str->append (yytext, yyleng);
+     [^\"\'\n\r\\]+      APPEND_VAL(yytext, yyleng);
 
-     {EOL}+    locp->lines (yyleng); valp->str->append (yyleng, '\n');
+     {EOL}+    LINES(yyleng); APPEND_VAL(yyleng, '\n');
 
      <<EOF>> {
-       std::ostringstream o;
-       o << "unexpected end of file in " << delimiter << "..." << delimiter;
-       up->error (*locp, o.str());
+       ERROR(std::string("unexpected end of file in ")
+	     + delimiter + "..." + delimiter);
        unput(delimiter);
      }
 }
@@ -524,8 +560,8 @@ FLAVOR   [;|,&]?
    "'n"		BEGIN sc_default; DEPRECATED(".'\\'n'");
    "'in"	BEGIN sc_default; DEPRECATED(".'\\'in'");
    "'out"	BEGIN sc_default; DEPRECATED(".'\\'out'");
-   {BLANKS}     locp->step();
-   {EOL}        LINES(locp); locp->step();
+   {BLANKS}     STEP();
+   {EOL}        LINES(1); STEP();
    .		BEGIN sc_default; locp->end.column--; unput(*yytext);
 }
 
@@ -533,33 +569,33 @@ FLAVOR   [;|,&]?
     | White spaces and comments.  |
     `----------------------------*/
 
-("//"|"#").*   locp->step (); // One-line comments.
+("//"|"#").*   STEP(); // One-line comments.
 "/*"           BEGIN SC_C_COMMENT;
 
-{BLANKS}       locp->step();
-{EOL}          LINES(locp); locp->step();
+{BLANKS}       STEP();
+{EOL}          LINES(1); STEP();
 
 <SC_C_COMMENT>{ /* Comments. */
   "*/" { /* End of the comment. */
-    locp->step ();
+    STEP();
     BEGIN sc_default;
   }
 
   [^*/\n\r]+	|
   [*/]		continue;
-  {EOL}	        LINES(locp);
+  {EOL}	        LINES(1);
 
   <<EOF>> {
-    up->error(*locp, std::string ("unexpected end of file in a comment"));
-    locp->step ();
+    ERROR("unexpected end of file in a comment");
+    STEP();
     BEGIN sc_default;
   }
 }
 
 <*>{
    .      {
-	     up->error(*locp, std::string ("invalid character: ") + yytext);
-	     locp->step ();
+	     ERROR(std::string ("invalid character: ") + yytext);
+	     STEP();
 	  }
 }
 
