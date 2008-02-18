@@ -71,9 +71,34 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
   }
 }
 
-
-// At each match, adjust the end cursor.
-#define YY_USER_ACTION locp->columns(yyleng);
+// We do not use the "do {} while(0)" tricks because (i), the use by
+// Flex is not dangerous, (ii), it is a full if-else structure so
+// there is no problem and in addition it is wrapped in braced, and
+// (iii) we want to be able to use "continue" to refer to yylex's
+// while(1), no this do-while.
+#define YY_USER_ACTION						\
+  {								\
+    if (up)							\
+    {								\
+      /* At each match, adjust the end cursor. */		\
+      locp->columns(yyleng);					\
+    }								\
+    else							\
+    {								\
+      /* We are in the prescanner, we are only interested in	\
+       some tokens. */						\
+      char res = yytext[0];					\
+      if (YY_START == sc_default				\
+	  && yyleng == 1					\
+	  && (res == '{'					\
+	      || res == '}'					\
+	      || res == ','					\
+	      || res == ';'))					\
+	return yy::parser::token_type(res);			\
+      else							\
+	continue;						\
+    }								\
+  }
 
 // To avoid differences between versions of Bison, set by hand the
 // initial columns when advancing lines.
@@ -180,7 +205,8 @@ FLAVOR   [;|,&]?
     yy_flex_debug = !!getenv("FLEX_DEBUG");
 #endif
 
-  locp->step();
+  if (locp)
+    locp->step();
 
 #ifndef NDEBUG
   // The default start condition: the one replacing INITIAL.
