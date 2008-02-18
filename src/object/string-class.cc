@@ -23,7 +23,7 @@ namespace object
 #define PRIMITIVE_OP_STRING(Name, Op)				\
     static							\
     rFloat							\
-    string_ ## Name (rString& a, rString& b)                    \
+    Name (rString& a, rString& b)                               \
     {                                                           \
       return new Float (a->value_get ().name_get()		\
 			Op					\
@@ -37,7 +37,7 @@ namespace object
 
     static
     rString
-    string_PLUS (rString& a, rString& b)
+    PLUS (rString& a, rString& b)
     {
       return new String(libport::Symbol (a->value_get ().name_get()
 					 + b->value_get ().name_get()));
@@ -45,7 +45,7 @@ namespace object
 
     /// Return string's length.
     static rFloat
-    string_size (rString& s)
+    size (rString& s)
     {
       return new Float (s->value_get ().name_get ().size ());
     }

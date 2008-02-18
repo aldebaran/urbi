@@ -28,7 +28,7 @@ namespace object
 #define FCT_OP_PROTECTED(Name, Operator, ErrorMessage)                  \
   static                                                                \
   libport::ufloat                                                       \
-  float_ ## Name (libport::ufloat l, libport::ufloat r)                 \
+  Name (libport::ufloat l, libport::ufloat r)                           \
   {                                                                     \
     if (!r)								\
       throw PrimitiveError("Operator " #Operator,                       \
@@ -39,7 +39,7 @@ namespace object
 #define FCT_M_PROTECTED(Name, Method, ErrorMessage)                     \
   static                                                                \
   libport::ufloat                                                       \
-  float_ ## Name (libport::ufloat l, libport::ufloat r)                 \
+  Name (libport::ufloat l, libport::ufloat r)                           \
   {                                                                     \
     if (!r)								\
       throw PrimitiveError(#Method, ErrorMessage);                      \
@@ -53,7 +53,7 @@ namespace object
 #undef FCT_OP_PROTECTED
 
   static float
-  float_random (libport::ufloat x)
+  random (libport::ufloat x)
   {
     float res = 0.f;
     const long long range = libport::to_long_long (x);
@@ -77,7 +77,7 @@ namespace object
   // This is quite hideous, to be cleaned once we have integers.
 # define INTEGER_BIN_OP(Name, Op)				\
   static float							\
-  float_ ## Name (libport::ufloat lhs, libport::ufloat rhs)	\
+  Name (libport::ufloat lhs, libport::ufloat rhs)               \
   {								\
     int ilhs = ufloat_to_int (lhs, #Op);			\
     int irhs = ufloat_to_int (rhs, #Op);			\
@@ -90,40 +90,22 @@ namespace object
 
 # undef INTEGER_BIN_OP
 
-#define UNARY_WRAPPER(Name, Call)                               \
-  static float                                                  \
-  float_ ## Name (libport::ufloat arg)                          \
-  {                                                             \
-    return Call(arg);                                           \
-  }
-
 #define BIN_WRAPPER(Name, Call)                                 \
   static float                                                  \
-  float_ ## Name (libport::ufloat lhs, libport::ufloat rhs)     \
+  Name (libport::ufloat lhs, libport::ufloat rhs)               \
   {                                                             \
     return Call(lhs, rhs);                                      \
   }
 
 BIN_WRAPPER(STAR_STAR, powf)
-UNARY_WRAPPER(sin, sin)
-UNARY_WRAPPER(asin, asin)
-UNARY_WRAPPER(cos, cos)
-UNARY_WRAPPER(acos, acos)
-UNARY_WRAPPER(tan, tan)
-UNARY_WRAPPER(atan, atan)
-static float
-float_abs (libport::ufloat arg)
-{
-  return abs((int)arg);
-}
-UNARY_WRAPPER(exp, exp)
-UNARY_WRAPPER(log, log)
-UNARY_WRAPPER(round, round)
-UNARY_WRAPPER(trunc, trunc)
-UNARY_WRAPPER(sqrt, sqrt)
 
 #undef BIN_WRAPPER
-#undef UNARY_WRAPPER
+
+static float
+abs(libport::ufloat v)
+{
+  return std::abs(v);
+}
 
 
 /*-------------------------------------------------------------------.
@@ -186,7 +168,7 @@ UNARY_WRAPPER(sqrt, sqrt)
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Float);                                        \
     Pre;                                                        \
-    return new Float(float_ ## Name(arg0->value_get()));        \
+    return new Float(Name(arg0->value_get()));                  \
   }
 
   /// Define a primitive for float numbers.

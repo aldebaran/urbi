@@ -72,13 +72,13 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
  * argument of type Type1, returns type Ret and whose result is \a Name
  * applied to all arguments.
  */
-#define PRIMITIVE_1_(Class, Name, Ret, Type1, Get)        \
+#define PRIMITIVE_1_(Class, Name, Ret, Type1, Get)              \
   static rObject						\
   Class ## _class_ ## Name (runner::Runner&, objects_type args)	\
   {                                                             \
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Type1);                                        \
-    return Ret(Class ## _ ## Name(arg0 Get));                   \
+    return Ret(Name(arg0 Get));                                 \
   }
 
 #define PRIMITIVE_1(Class, Name, Type1)                   \
@@ -100,7 +100,7 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
-    return Ret(Class ## _ ## Name(arg0 Get, arg1 Get));         \
+    return Ret(Name(arg0 Get, arg1 Get));         \
   }
 
 #define PRIMITIVE_2(Class, Name, Type1, Type2)                  \
@@ -121,7 +121,7 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     rObject arg1 = args[1];                                     \
-    return (Class ## _ ## Name(arg0, arg1));                    \
+    return (Name(arg0, arg1));                                  \
   }
 
 /**

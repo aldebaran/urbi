@@ -25,7 +25,7 @@ namespace object
      * @return \a lhs
      */
     static rList
-    list_PLUS_EQ(rList lhs, rList rhs)
+    PLUS_EQ(rList lhs, rList rhs)
     {
       // FIXME: If we use the following code, then a += a does not
       // end.
@@ -45,34 +45,34 @@ namespace object
      * @return A fresh list, concatenation of \a lhs and \a rhs
      */
     static rList
-    list_PLUS(rList lhs, rList rhs)
+    PLUS(rList lhs, rList rhs)
     {
       // Copy lhs
       list_traits::type l(lhs->value_get());
       rList res = new List(l);
 
       // Append rhs
-      list_PLUS_EQ(res, rhs);
+      PLUS_EQ(res, rhs);
       return res;
     }
 
     /// Give the first element of \a l.
     static rObject
-    list_front(rList l)
+    front(rList l)
     {
       return l->value_get().front();
     }
 
     /// Give the last element of \a l.
     static rObject
-    list_back(rList l)
+    back(rList l)
     {
       return l->value_get().back();
     }
 
     /// Give \a l without the first element.
     static rList
-    list_tail(rList l)
+    tail(rList l)
     {
       List::value_type res(l->value_get());
       res.pop_front();
@@ -81,7 +81,7 @@ namespace object
 
     /// Insert \a elt at the end of \a l
     static rList
-    list_insert(rList l, rObject elt)
+    insert(rList l, rObject elt)
     {
       l->value_get().push_back(elt);
       return l;
@@ -99,7 +99,7 @@ namespace object
     /// the order is not defined.
     /// \return New sorted list
     static rList
-    list_sort (rList l)
+    sort (rList l)
     {
       List::value_type res (l->value_get());
       res.sort (compareListItems);
@@ -108,7 +108,7 @@ namespace object
 
     /// Its size.
     static rFloat
-    list_size (rList l)
+    size (rList l)
     {
       return new Float (l->value_get().size());
     }
