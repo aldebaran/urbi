@@ -61,6 +61,7 @@
   Macro(asString, "asString");                    \
   Macro(asin, "asin");                            \
   Macro(atan, "atan");                            \
+  Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \
   Macro(call, "call");                            \
   Macro(clone, "clone");                          \

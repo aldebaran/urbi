@@ -217,7 +217,15 @@ namespace runner
 
     try
     {
-      current_ = eval (*fn.body_get());
+      try {
+	current_ = eval (*fn.body_get());
+	run_at_exit (locals_);
+      }
+      catch (...)
+      {
+	run_at_exit (locals_);
+	throw;
+      }
     }
     catch (ast::BreakException& be)
     {
@@ -238,9 +246,10 @@ namespace runner
   {
     std::swap (locals_, scope);
     try {
-      eval (e);
+	eval (e);
     }
-    PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap (locals_, scope);)
+    PROPAGATE_URBI_EXCEPTION(e.location_get(),
+			     {run_at_exit (scope); std::swap(locals_, scope);});
     return current_;
   }
 
@@ -518,6 +527,37 @@ namespace runner
       e.clear();
   }
 
+  void
+  Runner::run_at_exit (object::rObject& scope)
+  {
+    object::rObject atexit = scope->own_slot_get (SYMBOL (atexit));
+
+    // If there is no atexit slot, return immediately.
+    if (!atexit)
+      return;
+
+    try {
+      TYPE_CHECK (atexit, object::List);
+    }
+    catch (...)
+    {
+      // Bad type, return immediately.
+      return;
+    }
+    object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
+    object::objects_type args;
+    args.push_back (scope->slot_get (SYMBOL (self)));
+    foreach (const rObject& func, atexit_funcs->value_get ())
+    {
+      try {
+	apply (func, args);
+      }
+      catch (...)
+      {
+	// Ignore errors in atexit blocks but execute further calls
+      }
+    }
+  }
 
   void
   Runner::operator() (ast::Noop&)
@@ -590,7 +630,15 @@ namespace runner
     std::swap(locals, locals_);
     try
     {
-      super_type::operator()(e.body_get());
+      try {
+	super_type::operator()(e.body_get());
+	run_at_exit (locals_);
+      }
+      catch (...)
+      {
+	run_at_exit (locals_);
+	throw;
+      }
     }
     PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
   }
