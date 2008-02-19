@@ -317,11 +317,13 @@ namespace urbi
 	   i != objectlist->end();
 	   ++i)
 	if ((*i)->name == (std::string)array[2])
+	{
 	  if (found != objectlist->end())
 	    msg.client.printf("Double object definition %s\n",
 			      (*i)->name.c_str());
 	  else
 	    found = i;
+	}
 
       if (found == objectlist->end())
 	msg.client.printf("Unknown object definition %s\n",
@@ -339,11 +341,13 @@ namespace urbi
 	   i != objectlist->end();
 	   ++i)
 	if ((*i)->name == (std::string)array[1])
+	{
 	  if (found != objectlist->end())
 	    msg.client.printf("Double object definition %s\n",
 			      (*i)->name.c_str());
 	  else
 	    found = i;
+	}
 
       if (found == objectlist->end())
 	msg.client.printf("Unknown object definition %s\n",
