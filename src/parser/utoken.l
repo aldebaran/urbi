@@ -120,14 +120,14 @@ static Out numeric_cast (UParser& up, const yy::location& loc, In t);
   else									\
     sc_default = INITIAL;						\
   BEGIN sc_default;							\
-  									\
+									\
   if (!up)								\
   {									\
     pre_length = 0;							\
     pre_closers.clear();						\
   }
 
-  
+
 #define YY_USER_ACTION				\
   COLUMNS(yyleng);
 
@@ -309,7 +309,7 @@ FLAVOR   [;|,&]?
 
   // The first delimiter of a string or a symbol : ' or ".
   // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
-  char delimiter;
+  char delimiter = 0;
 
   // A stack of expected closing braces: ), ], } etc.
   std::vector<char> pre_closers;
