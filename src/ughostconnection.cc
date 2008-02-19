@@ -28,7 +28,7 @@
 #include "ughostconnection.hh"
 
 
-// Parameters used by the constructor.
+// Parameters used by the constructor, and other constants.
 
 enum
 {
@@ -37,6 +37,8 @@ enum
   PACKETSIZE        = 32768,
   MINRECVBUFFERSIZE = 4096,
   MAXRECVBUFFERSIZE = 1048576,
+
+  EFFECTIVESENDSIZE = 1024,
 };
 
 //! UGhostConnection constructor.
@@ -71,13 +73,17 @@ UGhostConnection::closeConnection()
 int
 UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 {
-  char buf[1024];
-  int len = std::min (length, static_cast<int>(sizeof buf) - 1);
+  char buf[EFFECTIVESENDSIZE];
 
-  memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer),
-	  len);
-  buf[len] = 0;
-  ::urbiserver->debug("%s", buf);
+  for (int i = 0; i < length; i += EFFECTIVESENDSIZE - 1)
+  {
+    int len = std::min (length - i, EFFECTIVESENDSIZE - 1);
+
+    memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer + i),
+	    len);
+    buf[len] = 0;
+    ::urbiserver->debug("%s", buf);
+  }
 
   return length;
 }
