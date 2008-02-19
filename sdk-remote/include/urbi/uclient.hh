@@ -44,21 +44,34 @@ namespace urbi
 
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;
-    virtual void setPingInterval(unsigned int msTime);
     
     //! For internal use.
     void listenThread();
-    UCallbackAction pong(const UMessage& msg);
+
+    /// Active KeepAlive functionality
+    virtual void activeKeepAliveCheck(const unsigned pingInterval,
+                                      const unsigned pongTimeout);
+
   protected:
     virtual int  effectiveSend(const void * buffer, int size);
     virtual bool canSend(int size);
 
     int             sd;                  ///< Socket file descriptor.
+
   private:
+    //! Callback for "PONG' reception
+    UCallbackAction pongCallback(const UMessage& msg);
+
+    /// Pipe for termination notification
     int             control_fd[2];       ///< Pipe for termination notification.
-    void           *thread;
-    unsigned int   pingInterval;
-    long long      lastPong;      ///< utime() of last pong received
+    void*           thread;
+
+    /// Delay (in s) without activity to check if the connection is yet available
+    unsigned int    pingInterval;
+    /// Delay (in s) of timeout to wait 'PONG'
+    unsigned int    pongTimeout;
+    /// True if waiting 'PONG'
+    bool            waitingPong;
   };
 
 } // namespace urbi

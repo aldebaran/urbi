@@ -275,11 +275,14 @@ namespace urbi
     /// reference time.
     virtual unsigned int getCurrentTime() const = 0;
 
-    /** Set interval between ping messages in milliseconds, 0 to disable.
-     Sends an URBI message at specified interval, if no anwser is received after
-     three times this interval, close the connection.
-    */
-    virtual void setPingInterval(unsigned int msTime) = 0;
+    /// Active KeepAlive functionality
+    /// Sends an URBI message at specified interval, if no anwser is received
+    /// close the connection and notify 'URBI_ERROR_CONNECTION_TIMEOUT'
+    ///
+    /// pingInterval: Set interval between ping messages in milliseconds, 0 to disable.
+    /// pongTimeout:  Set timeout in milliseconds to wait answer.
+    virtual void activeKeepAliveCheck(const unsigned pingInterval,
+                                      const unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
     const char * getServerName() {return host;}

@@ -50,7 +50,8 @@ namespace urbi
    */
   UClient::UClient(const char *_host, int _port, int _buflen)
     : UAbstractClient(_host, _port, _buflen),
-      thread(0), pingInterval(0), lastPong(0)
+      thread(0),
+      pingInterval(0)
   {
     setlocale(LC_NUMERIC, "C");
     control_fd[0] = control_fd[1] = -1;
@@ -194,110 +195,121 @@ namespace urbi
     return 0;
   }
 
+
   UCallbackAction
-  UClient::pong(const UMessage &)
+  UClient::pongCallback(const UMessage &)
   {
-    lastPong++;
+    waitingPong = false;
     return URBI_CONTINUE;
   }
+
 
   void
   UClient::listenThread()
   {
-    const char* pingTag = "_liburbi_ping";
-    fd_set rfds, efds;
-    int res;
-    int maxfd = 1 + std::max(sd, control_fd[0]);
-    long long lastPing = libport::utime();
-    lastPong = libport::utime();
-    setCallback(callback(*this, &UClient::pong), pingTag);
+    const char* pongTag = "__URBI_INTERNAL_PONG";
+    //TODO: Add a list of general URBIO TAG for user
+    const char* connectionTimeoutTag = "__URBI_TAG_CONNECTION_TIMEOUT";
+    int maxfd;
+
+    maxfd = 1 + std::max(sd, control_fd[0]);
+    waitingPong = false;
+
+    setCallback(callback(*this, &UClient::pongCallback), pongTag);
+
     while (true)
     {
-      do {
-	if (sd==-1)
-	  return;
-	FD_ZERO(&rfds);
-	FD_ZERO(&efds);
-	LIBPORT_FD_SET(sd, &rfds);
-	LIBPORT_FD_SET(sd, &efds);
+      if (sd == -1)
+        return;
+
+      fd_set rfds;
+      fd_set efds;
+
+      FD_ZERO(&rfds);
+      FD_ZERO(&efds);
+      LIBPORT_FD_SET(sd, &rfds);
+      LIBPORT_FD_SET(sd, &efds);
 #ifndef WIN32
-	LIBPORT_FD_SET(control_fd[0], &rfds);
+      LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
-	unsigned int msTime = pingInterval? pingInterval:1000;
-	struct timeval tme;
-	tme.tv_sec = msTime / 1000;
-	tme.tv_usec = (msTime%1000)*1000;
-	res = select(maxfd+1, &rfds, NULL, &efds, &tme);
-	if (res < 0 && errno != EINTR)
-	{
-	  rc = -1;
-#ifdef WIN32
-	  res = WSAGetLastError();
-#endif
-	  clientError("select error", res);
-	  std::cerr << "select error " << res << std::endl;
-	  //TODO when error will be implemented, send an error msg
-	  //TODO maybe try to reconnect?
-	  return;
-	}
-	if (pingInterval)
-	{
-	  long long currentTime = libport::utime();
-	  if (currentTime - lastPing > pingInterval * 1000)
-	  {
-	    if (0 < lastPong)
-	    {
-	      send("%s << 1,", pingTag);
-	      lastPong = 0;
-	    }
-	    else
-	    {
-	      lastPong --;
-	      if (lastPong <= -3)
-	      {
-		clientError("ping timeout", 0);
-		return;
-	      }
-	    }
-	    lastPing = currentTime;
-	  }
-	}
-	if (res == -1)
-	{
-	  res = 0;
-	  continue;
-	}
-#ifndef WIN32
-	if (res != 0 && FD_ISSET(control_fd[0], &rfds))
-	  return;
-#endif
-      } while (!res);
-      int count = ::recv(sd,
-			 &recvBuffer[recvBufferPosition],
-			 buflen - recvBufferPosition - 1, 0);
-      //TODO when error will be implemented, send an error msg
-      //TODO maybe try to reconnect?
-      if (count < 0)
+
+      int selectReturn;
+      if (pingInterval != 0)
       {
-	perror ("recv error");
-	clientError("recv error, errno =", count);
-	rc = -1;
-	return;
+        const unsigned delay = waitingPong ? pongTimeout : pingInterval;
+        struct timeval timeout = { delay / 1000, (delay % 1000) * 1000};
+        selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, &timeout);
       }
-      else if (!count)
+      else
       {
-	std::cerr << "recv error: connection closed" << std::endl;
-	clientError("recv error: connection closed");
-	rc = -1;
-	return;
+        selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, NULL);
       }
 
-      recvBufferPosition += count;
-      recvBuffer[recvBufferPosition] = 0;
-      processRecvBuffer();
+      // Treat error
+      if (selectReturn < 0 && errno != EINTR)
+      {
+        rc = -1;
+
+        int errorCode = selectReturn;
+#ifdef WIN32
+        errorCode = WSAGetLastError();
+#endif
+        clientError("select error", errorCode);
+        std::cerr << "select error " << errorCode << std::endl;
+        //TODO when error will be implemented, send an error msg
+        //TODO maybe try to reconnect?
+        return;
+      }
+      if (selectReturn == -1)
+        continue;
+
+      // timeout
+      if (selectReturn == 0)
+      {
+        if (waitingPong) // Timeout while waiting PONG
+        {
+          // FIXME: Choose between two differents way to alert user program
+          clientError("ping timeout", 0);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
+                                   "!!! Lost connection with server",
+                                   std::list<BinaryData>() ));
+          return;
+        }
+        else // Timeout : Ping_interval
+        {
+          send("%s << 1,", pongTag);
+          waitingPong = true;
+        }
+      }
+
+      if (selectReturn > 0)
+      {
+        int count = ::recv(sd, &recvBuffer[recvBufferPosition],
+                           buflen - recvBufferPosition - 1, 0);
+
+        if (count < 0)
+        {
+          //TODO when error will be implemented, send an error msg
+          //TODO maybe try to reconnect?
+          perror ("recv error");
+          clientError("recv error, errno =", count);
+          rc = -1;
+          return;
+        }
+        else if (count == 0)
+        {
+          std::cerr << "recv error: connection closed" << std::endl;
+          clientError("recv error: connection closed");
+          rc = -1;
+          return;
+        }
+
+        recvBufferPosition += count;
+        recvBuffer[recvBufferPosition] = 0;
+        processRecvBuffer();
+      }
     }
   }
-
 
   void
   UClient::printf(const char * format, ...)
@@ -338,9 +350,11 @@ namespace urbi
   }
 
 
-  void UClient::setPingInterval(unsigned int msTime)
+  void UClient::activeKeepAliveCheck(const unsigned    pingInterval,
+                                     const unsigned    pongTimeout)
   {
-    pingInterval = msTime;
+    this->pingInterval = pingInterval;
+    this->pongTimeout  = pongTimeout;
   }
 
 } // namespace urbi
