@@ -35,6 +35,7 @@
 #include <libport/compiler.hh>
 
 #include "parser/uparser.hh"
+#include "parser/utoken.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
