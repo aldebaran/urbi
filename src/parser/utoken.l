@@ -34,55 +34,35 @@
   // #define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
+#include "object/object.hh"
+#include "object/atom.hh"
+
 #include "parser/uparser.hh"
 #include "parser/utoken.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
+/// Split yytext which matches
+/// "BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}";"
+/// setting \a keywords to the first char of keyword, and return the
+/// size.
+static size_t bin_split (char* yytext, size_t yyleng, char*& keywords);
+
+/// Create a K1Bin object.
+static ast::Object* new_k1_bin(const yy::location& loc,
+			       const char* keywords, const std::string& data);
+
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
-Out
-lexical_cast (UParser& up, const yy::location& loc, In t)
-{
-  try
-  {
-    return boost::lexical_cast<Out>(t);
-  }
-  catch (boost::bad_lexical_cast)
-  {
-    up.error(loc,
-	     (boost::format ("invalid numerical litteral: %1%") % t).str());
-    return 0;
-  }
-}
+static Out lexical_cast (UParser& up, const yy::location& loc, In t);
 
 template <typename Out, typename In>
-Out
-numeric_cast (UParser& up, const yy::location& loc, In t)
-{
-  try
-  {
-    return boost::numeric_cast<Out>(t);
-  }
-  catch (boost::bad_numeric_cast)
-  {
-    up.error(loc,
-	     (boost::format ("invalid numerical litteral: %1%") % t).str());
-    return 0;
-  }
-}
+static Out numeric_cast (UParser& up, const yy::location& loc, In t);
 
-// We do not use the "do {} while(0)" tricks because (i), the use by
-// Flex is not dangerous, (ii), it is a full if-else structure so
-// there is no problem and in addition it is wrapped in braced, and
-// (iii) we want to be able to use "continue" to refer to yylex's
-// while(1), no this do-while.
-#define YY_USER_ACTION						\
-  if (up)							\
-    /* At each match, adjust the end cursor. */			\
-    locp->columns(yyleng);					\
-  else								\
-    reinterpret_cast<size_t&>(*valp) += yyleng;
+
+/*--------------------.
+| Prescanner macros.  |
+`--------------------*/
 
 // Skip this action if in pre-parser.  Do not put this in a do-while,
 // as it would capture the "continue" which is meant to yylex's
@@ -93,6 +73,44 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
     ECHO("Skipping: {{{" << yytext << "}}}");	\
     continue;					\
   }
+
+# define PRE_PUSH(Char)				\
+  if (!up)					\
+  {						\
+    pre_closers.push_back(Char);		\
+    continue;					\
+  }
+
+# define PRE_POP()							\
+  if (!up)								\
+  {									\
+    if (!pre_closers.empty() && pre_closers.back() == yytext[0])	\
+    {									\
+      pre_closers.pop_back();						\
+      continue;								\
+    }									\
+    else								\
+      /* This is a syntax error.  Empty the set of closers so		\
+       that we finish as if the sentence was correct.  It will		\
+       be given to the parser which will report the error		\
+       itself. */							\
+    {									\
+      ECHO("Pre: Unexpected character: " << yytext);			\
+      return token::yytokentype(yytext[0]);				\
+    }									\
+  }
+
+# define PRE_RETURN();				\
+  if (!up)					\
+  {						\
+    if (pre_closers.empty())			\
+      return token::yytokentype(yytext[0]);	\
+    else					\
+      continue;					\
+  }
+
+#define YY_USER_ACTION				\
+  COLUMNS(yyleng);
 
 // Move the front cursor to the end cursor.
 #define STEP()					\
@@ -112,6 +130,15 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
     }						\
   } while (0)
 
+#define COLUMNS(Num)					\
+  do {							\
+    if (up)						\
+      /* At each match, adjust the end cursor. */	\
+      locp->columns(Num);				\
+    else						\
+      pre_length += Num;				\
+ } while (0)
+     
 // Report an error.
 #define ERROR(Msg)				\
 do {						\
@@ -262,40 +289,8 @@ FLAVOR   [;|,&]?
   // A stack of expected closing braces: ), ], } etc.
   static std::vector<char> pre_closers;
 
-# define PRE_PUSH(Char)				\
-  if (!up)					\
-  {						\
-    pre_closers.push_back(Char);		\
-    continue;					\
-  }
-
-# define PRE_POP()							\
-  if (!up)								\
-  {									\
-    if (!pre_closers.empty() && pre_closers.back() == yytext[0])	\
-    {									\
-      pre_closers.pop_back();						\
-      continue;								\
-    }									\
-    else								\
-      /* This is a syntax error.  Empty the set of closers so		\
-       that we finish as if the sentence was correct.  It will		\
-       be given to the parser which will report the error		\
-       itself. */							\
-    {									\
-      ECHO("Pre: Unexpected character: " << yytext);			\
-      return token::yytokentype(yytext[0]);				\
-    }									\
-  }
-
-# define PRE_RETURN();				\
-  if (!up)					\
-  {						\
-    if (pre_closers.empty())			\
-      return token::yytokentype(yytext[0]);	\
-    else					\
-      continue;					\
-  }
+  // Where we store the prescanned chunk length.
+  size_t& pre_length (reinterpret_cast<size_t&>(*valp));
 
 # define YY_USER_INIT							\
   yy_flex_debug = !!getenv("FLEX_DEBUG");				\
@@ -440,10 +435,8 @@ FLAVOR   [;|,&]?
 "internal"  DEPRECATED("");
 "external"  RETURN_SYMBOL (BINDER);
 
-"BIN"           RETURN(BIN);
 "addgroup"      RETURN(ADDGROUP);
 "alias"         RETURN(ALIAS);
-"bin"           RETURN(BIN);
 "break"         RETURN(BREAK);
 "class"         RETURN(CLASS);
 "def"           RETURN(DEF);
@@ -531,6 +524,40 @@ FLAVOR   [;|,&]?
 ";"             PRE_RETURN(); RETURN_FLAVOR(SEMICOLON, semicolon);
 ","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);
 
+
+  /*----------------------.
+  | The infamous k1-BIN.  |
+  `----------------------*/
+
+  /* It is used only as a sort of here-doc,
+     and it is just as unusable, yet necessary.
+  
+     The only supported syntax was "var foo = BIN (keywords)+ SIZE; DATA"
+     with DATA being SIZE long.  Note where the ";" is...
+   */
+"BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}?";"      {
+  char *keywords;
+  size_t size = bin_split (yytext, yyleng, keywords);
+  // Eat the data.
+  std::string data;
+  for (size_t i = 0; i < size; ++i)
+    switch (char c = yyinput())
+    {
+      case EOF:
+	ERROR(std::string("unexpected end of file in BIN"));
+	goto out_of_loop;
+      default:
+	// Keep track of the locations.
+	COLUMNS(1);
+	data += c;
+	break;
+    }
+  out_of_loop:
+  // Use yytext before modifying it (unput).
+  SET_VAL(expr, new_k1_bin (*locp, keywords, data));
+  unput(';');
+  RETURN(K1BIN);
+}
 
 {ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
   PRE_SKIP();
@@ -632,6 +659,85 @@ FLAVOR   [;|,&]?
 }
 
 %%
+
+// Safe conversion to a numeric value.
+template <typename Out, typename In>
+Out
+lexical_cast (UParser& up, const yy::location& loc, In t)
+{
+  try
+  {
+    return boost::lexical_cast<Out>(t);
+  }
+  catch (boost::bad_lexical_cast)
+  {
+    up.error(loc,
+	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+    return 0;
+  }
+}
+
+template <typename Out, typename In>
+Out
+numeric_cast (UParser& up, const yy::location& loc, In t)
+{
+  try
+  {
+    return boost::numeric_cast<Out>(t);
+  }
+  catch (boost::bad_numeric_cast)
+  {
+    up.error(loc,
+	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+    return 0;
+  }
+}
+
+
+/// Split yytext which matches
+/// "BIN"({BLANKS}{ID})*{NATURAL}{BLANKS}";" setting \a keywords to
+/// the first char of keyword, and return the size.
+static
+size_t
+bin_split (char* yytext, size_t yyleng, char*& keywords)
+{
+  // Smash the semicolon.
+  yytext[yyleng - 1] = 0;
+  std::cerr << "Full: " << yytext << std::endl;
+  // Skip BIN.
+  yytext += 3;
+# define SKIP_SPACES()				\
+  for (++yytext; isspace (*yytext); ++yytext)	\
+    continue;
+  SKIP_SPACES();
+
+  char *size = yytext;
+  while (isdigit(yytext[0]))
+    ++yytext;
+  *yytext = 0;
+  size_t res = boost::lexical_cast<size_t>(size);
+  std::cerr << "Size: " << res << std::endl;
+
+  SKIP_SPACES();
+  keywords = yytext;
+  std::cerr << "keywords: " << keywords << std::endl;
+  return res;
+}
+
+static
+ast::Object*
+new_k1_bin(const yy::location& loc,
+	   const char* keywords, const std::string& data)
+{
+  object::Object* o = new object::Object;
+  o->slot_set(SYMBOL(keywords), 
+	      new object::String(libport::Symbol(keywords)));
+  o->slot_set(SYMBOL(data), 
+	      new object::String(libport::Symbol(data)));
+  o->dump(std::cerr);
+  return new ast::Object (loc, o);
+}
+
 
 size_t
 prescan (char *buf)

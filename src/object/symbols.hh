@@ -67,6 +67,7 @@
   Macro(clone, "clone");                          \
   Macro(context, "context");                      \
   Macro(cos, "cos");                              \
+  Macro(data, "data");                            \
   Macro(dump, "dump");                            \
   Macro(echo, "echo");                            \
   Macro(eval, "eval");                            \
@@ -79,6 +80,7 @@
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
   Macro(insert, "insert");                        \
+  Macro(keywords, "keywords");                    \
   Macro(load, "load");                            \
   Macro(lobby, "lobby");                          \
   Macro(locateSlot, "locateSlot");                \

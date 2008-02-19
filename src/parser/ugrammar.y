@@ -419,7 +419,6 @@
 	TOK_ADDGROUP     "addgroup"
 	TOK_ALIAS        "alias"
 	TOK_ASSIGN       "="
-	TOK_BIN          "bin"
 	TOK_BREAK        "break"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
@@ -520,10 +519,7 @@
  /*----------.
  | Strings.  |
  `----------*/
-%union
-{
-  std::string* str;
-}
+%union { std::string* str; }
 
 // FIXME: Arguably, could be a Symbol too.
 %token
@@ -578,7 +574,6 @@
 %type <expr>  flags.0
 %type <expr>  flags.1
 %type <expr>  namedarguments
-%type <expr>  raw_arguments
 %type <expr>  softtest
 %type <expr>  stmt
 
@@ -647,26 +642,7 @@ root:
     // FIXME: We should probably free it.
     up.command_tree_set (0);
   }
-| lvalue "=" binary ";"  { /* FIXME: */ up.command_tree_set (0); }
-| stmts
-  {
-    up.command_tree_set ($1);
-  }
-;
-
-binary:
-  "bin" "integer" raw_arguments { /* FIXME: Fill. */ }
-;
-
-raw_argument:
-  number                    { /* FIXME: Fill. */ }
-| "identifier"              { /* FIXME: Fill. */ }
-;
-
-// raw_argument*
-raw_arguments:
-  /* empty */                { $$ = 0; }
-| raw_arguments raw_argument { $$ = 0; }
+| stmts      { up.command_tree_set ($1); }
 ;
 
 
@@ -1399,6 +1375,31 @@ identifiers:
 formals:
   /* empty */         { $$ = 0; }
 | "(" identifiers ")" { $$ = $2; }
+;
+
+
+/*-----------.
+| K1's BIN.  |
+`-----------*/
+
+// This syntax is pure bullshit (and admittedly the bull was badly
+// sick), but we don't need to do better that k1 itself, which accepts
+// this only here.
+
+cstmt:
+  k1bin
+  {
+    ast::Nary* res = new ast::Nary();
+    res->push_back ($1);
+    up.command_tree_set (res);
+  }
+;
+
+%token <expr> TOK_K1BIN "BIN data";
+%type  <expr> k1bin;
+k1bin:
+	lvalue "=" "BIN data" { $$ = ast_slot_update (@$, $1, $3); }
+| "var" lvalue "=" "BIN data" { $$ = ast_slot_set    (@$, $2, $4); }
 ;
 
 %%
