@@ -9,3 +9,4 @@ include/libport
 lib/libport
 lib/network
 sdk
+src/object/symbols.hh.old
