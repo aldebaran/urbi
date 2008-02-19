@@ -240,6 +240,21 @@ namespace object
     return void_class;
   }
 
+#define SERVER_SET_VAR(Function, Variable, Value)					\
+  static rObject							\
+  object_class_ ## Function (runner::Runner&, objects_type args)	\
+  {									\
+    CHECK_ARG_COUNT (1);						\
+    ::urbiserver->Variable = Value;					\
+    return void_class;							\
+  }
+
+  SERVER_SET_VAR(debugoff, debugOutput, false)
+  SERVER_SET_VAR(debugon, debugOutput, true)
+  SERVER_SET_VAR(stopall, stopall, true)
+
+#undef SERVER_SET_VAR
+
   /*---------.
   | Protos.  |
   `---------*/
@@ -385,6 +400,8 @@ namespace object
     DECLARE(apply);
 
     DECLARE(asString);
+    DECLARE(debugoff);
+    DECLARE(debugon);
     DECLARE(dump);
     DECLARE(echo);
     DECLARE(eval);
@@ -397,6 +414,7 @@ namespace object
     DECLARE(sameAs);
     DECLARE(shutdown);
     DECLARE(sleep);
+    DECLARE(stopall);
     DECLARE(time);
 #undef DECLARE
   }

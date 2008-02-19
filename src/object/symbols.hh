@@ -68,6 +68,8 @@
   Macro(context, "context");                      \
   Macro(cos, "cos");                              \
   Macro(data, "data");                            \
+  Macro(debugoff, "debugoff");                    \
+  Macro(debugon, "debugon");                      \
   Macro(dump, "dump");                            \
   Macro(echo, "echo");                            \
   Macro(eval, "eval");                            \
@@ -112,6 +114,7 @@
   Macro(slotNames, "slotNames");                  \
   Macro(sort, "sort");                            \
   Macro(sqrt, "sqrt");                            \
+  Macro(stopall, "stopall");                      \
   Macro(tail, "tail");                            \
   Macro(tan, "tan");                              \
   Macro(target, "target");                        \
