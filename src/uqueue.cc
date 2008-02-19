@@ -22,13 +22,11 @@
 
 #include <cstdlib>
 #include <libport/cstring>
-#include <sstream>
-#include <strstream>
 
-//#define ENABLE_DEBUG_TRACES
+// #define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include "parser/uparser.hh"
+#include "parser/utoken.hh"
 
 #include "uqueue.hh"
 
@@ -295,66 +293,7 @@ UQueue::virtualPop (size_t length)
 std::string
 UQueue::pop_command ()
 {
-  yyFlexLexer scanner;
-  // It has been said Flex scanners cannot work with istrstream.
-  // Get the whole contents of the UQueue.  This is suboptimal, but
-  // functional.  FIXME: spare memory.
-  std::istrstream mem_buff (reinterpret_cast<char*>(virtualPop(dataSize())));
-  std::istream mem_input (mem_buff.rdbuf());
-  scanner.switch_streams(&mem_input, 0);
-
-  // A stack of expected closing braces: ), ], } etc.
-  std::vector<char> closers;
-
-  // The result.
-  std::string res;
-
-  // The number of byte that were read.
-  size_t length = 0;
-  while (int c =
-	 scanner.yylex(reinterpret_cast<yy::parser::semantic_type*>(&length)))
-  {
-    ECHO(length << ": " << c << " (" << char(c) << "), closers: "
-	 << closers.size());
-    switch (c)
-    {
-      case '{':
-	closers.push_back('}');
-	break;
-      case '[':
-	closers.push_back(']');
-	break;
-      case '(':
-	closers.push_back(')');
-	break;
-      case ')':
-      case ']':
-      case '}':
-	if (!closers.empty() && closers.back() == c)
-	  closers.pop_back();
-	else
-	  // This is a syntax error.  Empty the set of closers so
-	  // that we finish as if the sentence was correct.  It will
-	  // be given to the parser which will report the error
-	  // itself.
-	  closers.clear();
-	break;
-
-      case ',':
-      case ';':
-	if (closers.empty())
-	{
-	  res = std::string(reinterpret_cast<char*>(pop(length)), length);
-	  goto done;
-	}
-	break;
-
-      default:
-	pabort (c);
-    }
-  }
-  // We can't break a loop in a switch with break...
-  done:
-  ECHO("res: {{{" << res << "}}}");
-  return res;
+  char *buf = reinterpret_cast<char*>(virtualPop(dataSize()));
+  size_t len = prescan(buf);
+  return std::string(reinterpret_cast<char*>(pop(len)), len);
 }

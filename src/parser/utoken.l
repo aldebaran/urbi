@@ -23,11 +23,9 @@
 
 #include <cstdlib>
 #include <cstring>
-#ifndef NDEBUG
-# include <cstdlib> // for getenv
-#endif
-
+#include <sstream>
 #include <stack>
+#include <strstream>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -39,7 +37,6 @@
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
-
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
@@ -80,37 +77,21 @@ numeric_cast (UParser& up, const yy::location& loc, In t)
 // (iii) we want to be able to use "continue" to refer to yylex's
 // while(1), no this do-while.
 #define YY_USER_ACTION						\
-  {								\
-    if (up)							\
-    {								\
-      /* At each match, adjust the end cursor. */		\
-      locp->columns(yyleng);					\
-    }								\
-    else							\
-    {								\
-      /* We are in the prescanner, we are only interested in	\
-       some tokens. */						\
-      reinterpret_cast<size_t&>(*valp) += yyleng;		\
-      char res = yytext[0];					\
-      if (YY_START == sc_default				\
-	  && yyleng == 1					\
-	  && (res == '{' || res == '}'				\
-	      || res == '(' || res == ')'			\
-	      || res == '[' || res == ']'			\
-	      || res == ',' || res == ';'))			\
-	return yy::parser::token_type(res);			\
-    }								\
-  }
+  if (up)							\
+    /* At each match, adjust the end cursor. */			\
+    locp->columns(yyleng);					\
+  else								\
+    reinterpret_cast<size_t&>(*valp) += yyleng;
 
 // Skip this action if in pre-parser.  Do not put this in a do-while,
 // as it would capture the "continue" which is meant to yylex's
 // "while(1)".
-#define PRESKIP()				\
+#define PRE_SKIP()				\
   if (!up)					\
   {						\
     ECHO("Skipping: {{{" << yytext << "}}}");	\
     continue;					\
-}
+  }
 
 // Move the front cursor to the end cursor.
 #define STEP()					\
@@ -169,13 +150,13 @@ do {						\
 
 #define RETURN(Symbol)				\
   {						\
-    PRESKIP();					\
+    PRE_SKIP();					\
     return token::TOK_ ## Symbol;		\
   }
 
 #define RETURN_VALUE(Token, Field, Value)	\
   {						\
-    PRESKIP();					\
+    PRE_SKIP();					\
     SET_VAL(Field, Value);			\
     RETURN(Token);				\
   }
@@ -207,7 +188,7 @@ do {						\
 // UnitSize is the number of letters used for the unit.
 #define RETURN_TIME_VALUE(UnitSize, Scale)				\
   {									\
-    PRESKIP();								\
+    PRE_SKIP();								\
     yytext[yyleng - UnitSize] = 0;					\
     RETURN_VALUE(TIME_VALUE, fval,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
@@ -215,7 +196,7 @@ do {						\
 
 #define RETURN_FLAVORED_KEYWORD(Token)					\
   {									\
-    PRESKIP();								\
+    PRE_SKIP();								\
     switch (yytext[strlen(yytext) - 1])					\
     {									\
       case '|': RETURN_FLAVOR(Token, pipe);				\
@@ -231,7 +212,7 @@ do {						\
 // needed to scope msg and rewritten.
 #define DEPRECATED(New)							\
   {									\
-    PRESKIP();								\
+    PRE_SKIP();								\
     std::string warn = std::string("`") + yytext + "' is deprecated.";	\
     std::string rewritten = New;					\
     if (!rewritten.empty())						\
@@ -277,6 +258,44 @@ FLAVOR   [;|,&]?
   // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
   static char delimiter;
 
+  // A stack of expected closing braces: ), ], } etc.
+  static std::vector<char> pre_closers;
+
+# define PRE_PUSH(Char)				\
+  if (!up)					\
+  {						\
+    pre_closers.push_back(Char);		\
+    continue;					\
+  }
+
+# define PRE_POP()							\
+  if (!up)								\
+  {									\
+    if (!pre_closers.empty() && pre_closers.back() == yytext[0])	\
+    {									\
+      pre_closers.pop_back();						\
+      continue;								\
+    }									\
+    else								\
+      /* This is a syntax error.  Empty the set of closers so		\
+       that we finish as if the sentence was correct.  It will		\
+       be given to the parser which will report the error		\
+       itself. */							\
+    {									\
+      ECHO("Pre: Unexpected character: " << yytext);			\
+      return token::yytokentype(yytext[0]);				\
+    }									\
+  }
+
+# define PRE_RETURN();				\
+  if (!up)					\
+  {						\
+    if (pre_closers.empty())			\
+      return token::yytokentype(yytext[0]);	\
+    else					\
+      continue;					\
+  }
+
 # define YY_USER_INIT							\
   yy_flex_debug = !!getenv("FLEX_DEBUG");				\
 									\
@@ -288,7 +307,11 @@ FLAVOR   [;|,&]?
   }									\
   else									\
     sc_default = INITIAL;						\
-  BEGIN sc_default;
+  BEGIN sc_default;							\
+									\
+  if (!up)								\
+    pre_closers.clear();						\
+
 
   STEP();
 
@@ -298,7 +321,7 @@ FLAVOR   [;|,&]?
   | Internal rules for generated code. |
   `-----------------------------------*/
 ^"#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
-  PRESKIP();
+  PRE_SKIP();
 # define SKIP_SPACES()				\
   for (++yytext; isspace (*yytext); ++yytext)	\
     continue;
@@ -330,7 +353,7 @@ FLAVOR   [;|,&]?
 }
 
 ^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
-  PRESKIP();
+  PRE_SKIP();
   *locp = synclines.top();
   synclines.pop();
 }
@@ -368,7 +391,7 @@ FLAVOR   [;|,&]?
 {NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, *locp, yytext));
 {FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, *locp, yytext));
 {ENATURAL}    {
-		PRESKIP();
+		PRE_SKIP();
 		float res = lexical_cast<float>(*up, *locp, yytext);
 		// Do not put semicolons here: RETURN_?VAL expands into {}.
 		if (res < 1)
@@ -488,26 +511,28 @@ FLAVOR   [;|,&]?
 "="             RETURN(ASSIGN);
 "$"             RETURN(DOLLAR);
 
-"("             RETURN(LPAREN);
-")"             RETURN(RPAREN);
 "->"            RETURN(DIR);
 "."             RETURN(POINT);
 ":"             RETURN(COLON);
 "::"            RETURN(DOUBLECOLON);
-"["             RETURN(LBRACKET);
-"]"             RETURN(RBRACKET);
-"{"             RETURN(LBRACE);
-"}"             RETURN(RBRACE);
 "~"             RETURN(TILDE);
+
+"("             PRE_PUSH(')'); RETURN(LPAREN);
+")"             PRE_POP();     RETURN(RPAREN);
+"["             PRE_PUSH(']'); RETURN(LBRACKET);
+"]"             PRE_POP();     RETURN(RBRACKET);
+"{"             PRE_PUSH('}'); RETURN(LBRACE);
+"}"             PRE_POP();     RETURN(RBRACE);
+
 
 "&"             RETURN_FLAVOR(AND, and);
 "|"             RETURN_FLAVOR(PIPE, pipe);
-";"             RETURN_FLAVOR(SEMICOLON, semicolon);
-","             RETURN_FLAVOR(COMMA, comma);
+";"             PRE_RETURN(); RETURN_FLAVOR(SEMICOLON, semicolon);
+","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);
 
 
 {ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
-  PRESKIP();
+  PRE_SKIP();
   // Push back "n.'\''" in the stream.
   char* quote = strchr(yytext, '\'');
   std::string s (yytext, quote - yytext);
@@ -606,6 +631,30 @@ FLAVOR   [;|,&]?
 }
 
 %%
+
+size_t
+prescan (char *buf)
+{
+  yyFlexLexer scanner;
+  // It has been said Flex scanners cannot work with istrstream.
+  // Get the whole contents of the UQueue.  This is suboptimal, but
+  // functional.  FIXME: spare memory.
+  std::istrstream mem_buff (buf);
+  std::istream mem_input (mem_buff.rdbuf());
+  scanner.switch_streams(&mem_input, 0);
+
+  // The number of read bytes.
+  size_t length = 0;
+  int c =
+    scanner.yylex(reinterpret_cast<yy::parser::semantic_type*>(&length));
+  ECHO("res: " << c << " (" << char(c) << "), length: " << length);
+  if (!c)
+    // When met EOF before reaching a terminator.
+    return 0;
+  else
+    return length;
+}
+
 
 // Local Variables:
 // mode: C++

@@ -32,7 +32,6 @@
 # include "ugrammar.hh"
 # include "parser/flex-lexer.hh"
 
-
 # undef  YY_DECL
 # define YY_DECL                                                 \
   UParser::token_type						 \

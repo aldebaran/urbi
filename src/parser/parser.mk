@@ -1,6 +1,7 @@
-dist_libkernel_la_SOURCES +=					\
-parser/uparser.hh parser/uparser.cc
-
+dist_libkernel_la_SOURCES +=			\
+parser/utoken.hh 				\
+parser/uparser.hh				\
+parser/uparser.cc
 
 ## -------------- ##
 ## Bison parser.  ##
