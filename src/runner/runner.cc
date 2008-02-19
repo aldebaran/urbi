@@ -503,11 +503,13 @@ namespace runner
     // the runner exits the Nary node.
     // FIXME: There is a memory leak if the Nary is a toplevel one.
     if (!e.toplevel_get ())
+    {
       foreach(Runner* r, runners)
       {
 	yield_until_terminated(*r);
 	delete r;
       }
+    }
 
     // FIXME: I am very afraid that because of the YIELD above, some
     // command are added right before this clear().  Hence the assert.
