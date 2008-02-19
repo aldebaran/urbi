@@ -547,6 +547,7 @@ namespace runner
     object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
     object::objects_type args;
     args.push_back (scope->slot_get (SYMBOL (self)));
+    rObject saved_current = current_;
     foreach (const rObject& func, atexit_funcs->value_get ())
     {
       try {
@@ -557,6 +558,7 @@ namespace runner
 	// Ignore errors in atexit blocks but execute further calls
       }
     }
+    current_ = saved_current;
   }
 
   void
