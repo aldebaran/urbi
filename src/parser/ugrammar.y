@@ -116,7 +116,7 @@
     static
     ast::Call*
     ast_call (const loc& l,
-	  ast::Exp* target, libport::Symbol method, ast::exps_type* args)
+	      ast::Exp* target, libport::Symbol method, ast::exps_type* args)
     {
       args->push_front (target);
       ast::Call* res = new ast::Call(l, method, args);
@@ -144,7 +144,7 @@
     static
     ast::Call*
     ast_call(const loc& l,
-	  ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
+	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
       assert (method);
       ast::Call* res = ast_call(l, target, method);
@@ -156,8 +156,8 @@
     static
     ast::Call*
     ast_call(const loc& l,
-	  ast::Exp* target, libport::Symbol* method,
-	  ast::Exp* arg1, ast::Exp* arg2)
+	     ast::Exp* target, libport::Symbol* method,
+	     ast::Exp* arg1, ast::Exp* arg2)
     {
       assert (method);
       ast::Call* res = ast_call(l, target, method);
@@ -198,14 +198,14 @@
 
     static
     ast::Call*
-    ast_slot_set  (const loc& l, ast::Call* lvalue, ast::Exp* value)
+    ast_slot_set (const loc& l, ast::Call* lvalue, ast::Exp* value)
     {
       return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
     }
 
     static
     ast::Call*
-    ast_slot_update  (const loc& l, ast::Call* lvalue, ast::Exp* value)
+    ast_slot_update (const loc& l, ast::Call* lvalue, ast::Exp* value)
     {
       return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
