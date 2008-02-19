@@ -71,19 +71,19 @@ namespace runner
       continue;                                                 \
     }                                                           \
     else                                                        \
-      throw;                                                    \
+      boost::rethrow_exception (boost::clone_exception (e));    \
   }
 
 /** Catch UrbiException, execute Code, then display the error if not allready
  * done, and rethrow it. Also execute Code if no exception caught. */
-#define PROPAGATE_URBI_EXCEPTION(Loc, Code)          \
-  catch(object::UrbiException& ue)                   \
-  {                                                  \
-    Code                                             \
-    current_.reset();                                \
-    show_error_(ue, Loc);                            \
-    throw;                                           \
-  }                                                  \
+#define PROPAGATE_URBI_EXCEPTION(Loc, Code)          		\
+  catch(object::UrbiException& ue)                   		\
+  {                                                  		\
+    Code                                             		\
+    current_.reset();                                		\
+    show_error_(ue, Loc);                            		\
+    boost::rethrow_exception (boost::clone_exception (ue));     \
+  }                                                  		\
   Code
 
   void
@@ -264,7 +264,7 @@ namespace runner
       foreach (rObject arg, args)
       {
 	if (!first && arg == object::void_class)
-	  throw object::WrongArgumentType ("");
+	  boost::throw_exception (object::WrongArgumentType (""));
 	first = false;
       }
     }
@@ -311,7 +311,7 @@ namespace runner
       {
 	object::WrongArgumentType wt("");
 	show_error_(wt, (*arg)->location_get());
-	throw wt;
+	boost::throw_exception (wt);
       }
       PING ();
       args.push_back (current_);
@@ -487,7 +487,7 @@ namespace runner
 	{
 	  show_error_(ue, (*i)->location_get());
 	  if (!e.toplevel_get())
-	    throw;
+	    boost::rethrow_exception (boost::clone_exception (ue));
 	}
 	CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
 	  CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
@@ -688,14 +688,15 @@ namespace runner
   Runner::operator() (ast::Throw& e)
   {
     if (e.kind_get() == ast::break_exception)
-      throw ast::BreakException(e.location_get());
+      boost::throw_exception (ast::BreakException(e.location_get()));
     else if (e.kind_get() == ast::return_exception)
     {
       if (e.value_get())
 	operator() (*e.value_get());
       else
 	current_.reset();
-      throw ast::ReturnException(e.location_get(), current_);
+      boost::throw_exception
+	(ast::ReturnException(e.location_get(), current_));
     }
   }
 

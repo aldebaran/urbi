@@ -19,8 +19,8 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::Object::kind_object:
   case object::Object::kind_primitive:
   case object::Object::kind_task:
-    throw object::WrongArgumentType
-       (object::Object::kind_float, o->kind_get(), "cast");
+    boost::throw_exception (object::WrongArgumentType
+       (object::Object::kind_float, o->kind_get(), "cast"));
     break;
 
 #define HANDLE_TYPE(k, t) \
@@ -60,8 +60,9 @@ object::rObject object_cast(const urbi::UValue& v)
 	res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
     default:
-      throw object::WrongArgumentType(object::Object::kind_float,
-			      object::Object::kind_float, "cast");
+      boost::throw_exception
+       (object::WrongArgumentType(object::Object::kind_float,
+				  object::Object::kind_float, "cast"));
       break;
   }
   return res;

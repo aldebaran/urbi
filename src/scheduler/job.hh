@@ -8,6 +8,7 @@
 
 # include <libport/utime.hh>
 
+# include "object/urbi-exception.hh"
 # include "scheduler/fwd.hh"
 
 // From libcoroutine/Coro.h.
@@ -67,7 +68,7 @@ namespace scheduler
     bool side_effect_free_get () const;
 
     /// Raise an exception next time this job will be resumed.
-    void async_throw (std::exception*);
+    void async_throw (boost::exception_ptr);
 
     /// Maybe raise a deferred exception. Must be called from the scheduler
     /// while resuming the job execution.
@@ -98,7 +99,7 @@ namespace scheduler
     Coro* self_;
 
     bool side_effect_free_;
-    std::exception* pending_exception_;
+    boost::exception_ptr pending_exception_;
   };
 
 } // namespace scheduler

@@ -105,7 +105,7 @@ namespace object
   Object::slot_set (const Object::key_type& k, rObject o)
   {
     if (libport::mhas(slots_, k))
-      throw RedefinitionError(k);
+      boost::throw_exception (RedefinitionError(k));
     slots_[k] = o;
     return *this;
   }
