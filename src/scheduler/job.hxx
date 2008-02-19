@@ -37,6 +37,7 @@ namespace scheduler
   Job::~Job ()
   {
     scheduler_->unschedule_job (this);
+    pending_exception_ = 0;
     Coro_free (self_);
   }
 
@@ -110,11 +111,7 @@ namespace scheduler
   Job::check_for_pending_exception ()
   {
     if (pending_exception_)
-    {
-      boost::exception_ptr e;
-      std::swap (e, pending_exception_);
-      boost::rethrow_exception (e);
-    }
+      boost::rethrow_exception (pending_exception_);
   }
 
   inline void

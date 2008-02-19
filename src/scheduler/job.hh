@@ -10,6 +10,7 @@
 # include <boost/exception/enable_exception_cloning.hpp>
 # include <libport/utime.hh>
 
+# include "object/urbi-exception.hh"
 # include "scheduler/fwd.hh"
 
 // From libcoroutine/Coro.h.
