@@ -48,9 +48,11 @@
 //	...
 
 
-#ifndef FLEX_LEXER_HH
-# define FLEX_LEXER_HH
+#ifndef PARSER_FLEX_LEXER_HH
+# define PARSER_FLEX_LEXER_HH
+
 # include <iostream>
+# include <stack>
 
 # include "ugrammar.hh"
 
@@ -211,10 +213,21 @@ protected:
   int yy_more_len;
   int yy_more_offset;
   int yy_prev_more_offset;
+
+public:
+  /*-----------------------------------.
+  | Urbi's scanner specific features.  |
+  `-----------------------------------*/
+
+  // When used in the prescanner mode, the accepted length before the
+  // first terminator.
+  size_t pre_length;
+
+  // The default start condition: the one replacing INITIAL.
+  int sc_default;
+
+  // A stack of synclines to support #push/#pop.
+  std::stack<yy::location> synclines;
 };
 
-#endif
-
-// Local Variables:
-// mode: C++
-// End:
+#endif // ! PARSER_FLEX_LEXER_HH

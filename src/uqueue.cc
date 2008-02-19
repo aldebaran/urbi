@@ -295,5 +295,9 @@ UQueue::pop_command ()
 {
   char *buf = reinterpret_cast<char*>(virtualPop(dataSize()));
   size_t len = prescan(buf);
-  return std::string(reinterpret_cast<char*>(pop(len)), len);
+  buf = reinterpret_cast<char*>(pop(len));
+  assert(buf);
+  std::string res (buf, len);
+  std::cerr << "pop: " << res << std::endl;
+  return res;
 }

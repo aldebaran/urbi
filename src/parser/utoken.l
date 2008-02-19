@@ -24,7 +24,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
-#include <stack>
 #include <strstream>
 
 #include <boost/format.hpp>
@@ -109,6 +108,26 @@ static Out numeric_cast (UParser& up, const yy::location& loc, In t);
       continue;					\
   }
 
+# define YY_USER_INIT							\
+  yy_flex_debug = !!getenv("FLEX_DEBUG");				\
+									\
+  if (getenv ("UCONSOLE_MODE"))						\
+  {									\
+    std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."	\
+	      << std::endl;						\
+    sc_default = SC_UCONSOLE;						\
+  }									\
+  else									\
+    sc_default = INITIAL;						\
+  BEGIN sc_default;							\
+  									\
+  if (!up)								\
+  {									\
+    pre_length = 0;							\
+    pre_closers.clear();						\
+  }
+
+  
 #define YY_USER_ACTION				\
   COLUMNS(yyleng);
 
@@ -138,17 +157,28 @@ static Out numeric_cast (UParser& up, const yy::location& loc, In t);
     else						\
       pre_length += Num;				\
  } while (0)
-     
+
 // Report an error.
 #define ERROR(Msg)				\
 do {						\
   if (up)					\
-    up->error(*locp, Msg);			\
+    up->error(*locp, std::string () + Msg);	\
 } while(0)
+
+// Report an EOF error.  In that case, the prescanner must return
+// non-null, since null means there is not enough data.
+#define EOF_ERROR(Where)				\
+  do {							\
+    if (!up)						\
+      return token::yytokentype('.');			\
+    ERROR("unexpected end of file in " + Where);	\
+  } while(0)
+
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()				\
   return token::TOK_EOF
+
 
 // valp->Field = Value.
 #define SET_VAL(Field, Value)			\
@@ -277,37 +307,12 @@ FLAVOR   [;|,&]?
 %%
 %{
 
-  // The default start condition: the one replacing INITIAL.
-  static int sc_default = -1;
-
-  static std::stack<yy::location> synclines;
-
   // The first delimiter of a string or a symbol : ' or ".
   // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
-  static char delimiter;
+  char delimiter;
 
   // A stack of expected closing braces: ), ], } etc.
-  static std::vector<char> pre_closers;
-
-  // Where we store the prescanned chunk length.
-  size_t& pre_length (reinterpret_cast<size_t&>(*valp));
-
-# define YY_USER_INIT							\
-  yy_flex_debug = !!getenv("FLEX_DEBUG");				\
-									\
-  if (getenv ("UCONSOLE_MODE"))						\
-  {									\
-    std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."	\
-	      << std::endl;						\
-    sc_default = SC_UCONSOLE;						\
-  }									\
-  else									\
-    sc_default = INITIAL;						\
-  BEGIN sc_default;							\
-									\
-  if (!up)								\
-    pre_closers.clear();						\
-
+  std::vector<char> pre_closers;
 
   STEP();
 
@@ -531,7 +536,7 @@ FLAVOR   [;|,&]?
 
   /* It is used only as a sort of here-doc,
      and it is just as unusable, yet necessary.
-  
+
      The only supported syntax was "var foo = BIN (keywords)+ SIZE; DATA"
      with DATA being SIZE long.  Note where the ";" is...
    */
@@ -544,7 +549,7 @@ FLAVOR   [;|,&]?
     switch (char c = yyinput())
     {
       case EOF:
-	ERROR(std::string("unexpected end of file in BIN"));
+	EOF_ERROR("BIN");
 	goto out_of_loop;
       default:
 	// Keep track of the locations.
@@ -594,7 +599,7 @@ FLAVOR   [;|,&]?
      \\[0-7]{3}		{
        long c = strtol (yytext + 1, 0, 8);
        if (c > 255)
-	 ERROR(std::string("invalid escape: `") + yytext + '\'');
+	 ERROR("invalid escape: `" + yytext + '\'');
        else
 	 GROW_VAL(c);
      }
@@ -609,16 +614,14 @@ FLAVOR   [;|,&]?
      \\t	GROW_VAL('\t');
      \\v	GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
-     \\.	ERROR(std::string("invalid escape: `") + yytext + '\'');
-
+     \\.	ERROR("invalid escape: `" + yytext + '\'');
 
      [^\"\'\n\r\\]+      APPEND_VAL(yytext, yyleng);
 
      {EOL}+    LINES(yyleng); APPEND_VAL(yyleng, '\n');
 
      <<EOF>> {
-       ERROR(std::string("unexpected end of file in ")
-	     + delimiter + "..." + delimiter);
+       EOF_ERROR(delimiter + "..." + delimiter);
        unput(delimiter);
      }
 }
@@ -645,7 +648,7 @@ FLAVOR   [;|,&]?
   {EOL}	        LINES(1);
 
   <<EOF>> {
-    ERROR("unexpected end of file in a comment");
+    EOF_ERROR("a comment");
     STEP();
     BEGIN sc_default;
   }
@@ -653,7 +656,7 @@ FLAVOR   [;|,&]?
 
 <*>{
    .      {
-	     ERROR(std::string ("invalid character: ") + yytext);
+	     ERROR("invalid character: " + yytext);
 	     STEP();
 	  }
 }
@@ -703,7 +706,6 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
 {
   // Smash the semicolon.
   yytext[yyleng - 1] = 0;
-  std::cerr << "Full: " << yytext << std::endl;
   // Skip BIN.
   yytext += 3;
 # define SKIP_SPACES()				\
@@ -716,11 +718,9 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
     ++yytext;
   *yytext = 0;
   size_t res = boost::lexical_cast<size_t>(size);
-  std::cerr << "Size: " << res << std::endl;
 
   SKIP_SPACES();
   keywords = yytext;
-  std::cerr << "keywords: " << keywords << std::endl;
   return res;
 }
 
@@ -730,9 +730,9 @@ new_k1_bin(const yy::location& loc,
 	   const char* keywords, const std::string& data)
 {
   object::Object* o = new object::Object;
-  o->slot_set(SYMBOL(keywords), 
+  o->slot_set(SYMBOL(keywords),
 	      new object::String(libport::Symbol(keywords)));
-  o->slot_set(SYMBOL(data), 
+  o->slot_set(SYMBOL(data),
 	      new object::String(libport::Symbol(data)));
   o->dump(std::cerr);
   return new ast::Object (loc, o);
@@ -745,15 +745,14 @@ prescan (char *buf)
   yyFlexLexer scanner;
   // It has been said Flex scanners cannot work with istrstream.
   // Get the whole contents of the UQueue.  This is suboptimal, but
-  // functional.  FIXME: spare memory.
+  // functional.
   std::istrstream mem_buff (buf);
   std::istream mem_input (mem_buff.rdbuf());
   scanner.switch_streams(&mem_input, 0);
 
   // The number of read bytes.
-  size_t length = 0;
-  int c =
-    scanner.yylex(reinterpret_cast<yy::parser::semantic_type*>(&length));
+  int c = scanner.yylex();
+  size_t length = scanner.pre_length;
   ECHO("res: " << c << " (" << char(c) << "), length: " << length);
   if (!c)
     // When met EOF before reaching a terminator.
