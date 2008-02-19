@@ -90,6 +90,7 @@
   Macro(nil, "nil");                              \
   Macro(print, "print");                          \
   Macro(protos, "protos");                        \
+  Macro(quit, "quit");                            \
   Macro(random, "random");                        \
   Macro(reboot, "reboot");                        \
   Macro(removeProto, "removeProto");              \

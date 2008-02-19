@@ -65,7 +65,6 @@ class DeprecatedCommands
     "devices",
     "events",
     "functions",
-    "quit",
     "reset",
     "runningcommands",
     "stopall",

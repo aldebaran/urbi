@@ -232,6 +232,14 @@ namespace object
     return r.lobby_get();
   }
 
+  static rObject
+  object_class_quit (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    r.lobby_get()->value_get().connection << UConnection::close;
+    return void_class;
+  }
+
   /*---------.
   | Protos.  |
   `---------*/
@@ -384,6 +392,7 @@ namespace object
     DECLARE(load);
     DECLARE(lobby);
     DECLARE(print);
+    DECLARE(quit);
     DECLARE(reboot);
     DECLARE(sameAs);
     DECLARE(shutdown);
