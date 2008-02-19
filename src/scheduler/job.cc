@@ -43,8 +43,11 @@ namespace scheduler
   void
   Job::terminate_now ()
   {
-    terminate ();
-    terminate_cleanup ();
+    if (!terminated_)
+    {
+      terminate ();
+      terminate_cleanup ();
+    }
   }
 
   void
