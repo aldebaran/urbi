@@ -37,7 +37,7 @@ namespace scheduler
   Job::~Job ()
   {
     scheduler_->unschedule_job (this);
-    pending_exception_ = 0;
+    delete pending_exception_;
     Coro_free (self_);
   }
 
@@ -102,8 +102,9 @@ namespace scheduler
   }
 
   inline void
-  Job::async_throw (boost::exception_ptr ue)
+  Job::async_throw (std::exception* ue)
   {
+    delete pending_exception_;
     pending_exception_ = ue;
   }
 
@@ -111,7 +112,7 @@ namespace scheduler
   Job::check_for_pending_exception ()
   {
     if (pending_exception_)
-      boost::rethrow_exception (pending_exception_);
+      throw *pending_exception_;
   }
 } // namespace scheduler
 

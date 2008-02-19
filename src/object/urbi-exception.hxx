@@ -127,8 +127,7 @@ namespace object
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {
     if (formal != effective)
-      boost::throw_exception
-	(WrongArgumentCount(formal, effective, fun));
+      throw WrongArgumentCount(formal, effective, fun);
   }
 
   inline
@@ -137,8 +136,7 @@ namespace object
 		   unsigned effective, const std::string& fun)
   {
     if (effective < minformal || maxformal < effective)
-      boost::throw_exception
-	(WrongArgumentCount(minformal, maxformal, effective, fun));
+      throw WrongArgumentCount(minformal, maxformal, effective, fun);
   }
 
 }; // end of namespace object

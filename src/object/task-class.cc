@@ -93,8 +93,7 @@ namespace object
     }
     catch (boost::numeric::bad_numeric_cast& ue)
     {
-      boost::throw_exception (BadInteger (arg1->value_get (),
-			      "setSideEffectFree"));
+      throw BadInteger (arg1->value_get (), "setSideEffectFree");
     }
 
     return void_class;
