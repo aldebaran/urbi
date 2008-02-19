@@ -49,7 +49,7 @@ namespace object
     try {
       n = libport::ufloat_to_int (arg_n);
     }
-    catch (boost::numeric::bad_numeric_cast& e)
+    catch (libport::bad_numeric_cast& e)
     {
       boost::throw_exception (BadInteger (arg_n, func));
     }

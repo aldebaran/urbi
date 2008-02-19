@@ -369,7 +369,7 @@ namespace object
     try {
       args[0]->locals_set (libport::ufloat_to_boolean (arg1->value_get ()));
     }
-    catch (boost::numeric::bad_numeric_cast& ue)
+    catch (libport::bad_numeric_cast& ue)
     {
       boost::throw_exception (BadInteger (arg1->value_get (), "makeScope"));
     }

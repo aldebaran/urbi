@@ -68,7 +68,7 @@ namespace object
     try {
       return libport::ufloat_to_int (val);
     }
-    catch (boost::numeric::bad_numeric_cast& ue)
+    catch (libport::bad_numeric_cast& ue)
     {
       boost::throw_exception (BadInteger (val, func));
       return 0;  // Keep the compiler happy
