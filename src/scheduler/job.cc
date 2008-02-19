@@ -7,13 +7,21 @@
 
 namespace scheduler
 {
+  struct TerminateException : public boost::exception {};
+
   void
   Job::run ()
   {
     ECHO ("In Job::run for " << this);
     yield_front ();
     try {
-      work ();
+      try {
+	work ();
+      }
+      catch (TerminateException&)
+      {
+	// Normal termination requested
+      }
       terminate ();
     }
     catch (boost::exception &e)
@@ -44,10 +52,7 @@ namespace scheduler
   Job::terminate_now ()
   {
     if (!terminated_)
-    {
-      terminate ();
-      terminate_cleanup ();
-    }
+      async_throw (boost::clone_exception (TerminateException ()));
   }
 
   void
