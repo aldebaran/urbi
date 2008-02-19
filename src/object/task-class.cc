@@ -91,6 +91,17 @@ namespace object
   }
 
   static rObject
+  task_class_terminate (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+
+    rRunner r = unbox (rRunner, args[0]->slot_get (SYMBOL (runner)));
+    r->terminate_now ();
+
+    return void_class;
+  }
+
+  static rObject
   task_class_setSideEffectFree (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
@@ -115,6 +126,7 @@ namespace object
     DECLARE (init);
     DECLARE (result);
     DECLARE (setSideEffectFree);
+    DECLARE (terminate);
     DECLARE (waitFor);
     DECLARE (waitForChanges);
 #undef DECLARE

@@ -112,6 +112,7 @@
   Macro(tail, "tail");                            \
   Macro(tan, "tan");                              \
   Macro(target, "target");                        \
+  Macro(terminate, "terminate");                  \
   Macro(time, "time");                            \
   Macro(true, "true");                            \
   Macro(trunc, "trunc");                          \
