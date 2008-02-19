@@ -350,6 +350,9 @@ Nary:
           /// Sets the flavor of the last child without modifying location.
           void back_flavor_set (flavor_type k);
 
+          /// Get the flavor of the last child.
+          flavor_type back_flavor_get() const;
+
           /// Drop the last children.
           void pop_back ();
 
@@ -437,6 +440,18 @@ Nary:
              if (back)
                back->flavor_get () = k;
            }
+        }
+
+        flavor_type
+        Nary::back_flavor_get() const
+        {
+          if (!children_.empty ())
+          {
+            Stmt* back = dynamic_cast<Stmt*>(children_.back());
+            if (back)
+              return back->flavor_get ();
+          }
+          return ast::flavor_none;
         }
       
         void

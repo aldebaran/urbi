@@ -680,7 +680,6 @@ raw_arguments:
 stmts:
   cstmt
   {
-    // FIXME: Adjust the locations.
     $$ = new ast::Nary();
     if (!dynamic_cast<ast::Noop*> ($1))
       $$->push_back ($1);
@@ -689,7 +688,8 @@ stmts:
   }
 | stmts ";" cstmt
   {
-    $$->back_flavor_set ($2, @2);
+    if ($$->back_flavor_get() == ast::flavor_none)
+      $$->back_flavor_set ($2, @2);
     if (!dynamic_cast<ast::Noop*> ($3))
       $$->push_back($3);
     else
@@ -697,7 +697,8 @@ stmts:
   }
 | stmts "," cstmt
   {
-    $$->back_flavor_set ($2, @2);
+    if ($$->back_flavor_get() == ast::flavor_none)
+      $$->back_flavor_set ($2, @2);
     if (!dynamic_cast<ast::Noop*> ($3))
       $$->push_back($3);
     else
