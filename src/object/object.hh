@@ -104,6 +104,10 @@ namespace object
     const rObject& own_slot_get (const key_type& k) const;
     rObject& own_slot_get (const key_type& k);
 
+    /// Get the object pointed to by the *local* slot
+    /// or \a def if it does not exist locally.
+    rObject own_slot_get (const key_type& k, rObject def);
+
     /// Remove slot.
     Object& slot_remove (const key_type& k);
     /// Read only access to slots.

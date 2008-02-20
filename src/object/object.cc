@@ -135,6 +135,14 @@ namespace object
     }
     else // Class->class: copy on write.
       context->slots_[k] = o;
+  };
+
+  rObject
+  Object::own_slot_get (const key_type& k, rObject def)
+  {
+    if (libport::mhas (slots_, k))
+      return own_slot_get (k);
+    return def;
   }
 
   /*-----------.

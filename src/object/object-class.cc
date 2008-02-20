@@ -343,6 +343,27 @@ namespace object
     return obj->slot_get(arg1->value_get());
   }
 
+  static rObject
+  object_class_getLazyLocalSlot (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (4);
+
+    FETCH_ARG (1, String);
+    Object::key_type slot_name = arg1->value_get ();
+
+    // If the slot already exists, return its content.
+    rObject slot = args[0]->own_slot_get (slot_name, 0);
+    if (slot)
+      return slot;
+
+    // The slot doesn't exist. Should we create it?
+    if (IS_TRUE (args[3]))
+      args[0]->slot_set (slot_name, args[2]);
+
+    // Return the default value for this slot.
+    return args[2];
+  }
+
   /// Remove a slot.
   static rObject
   object_class_removeSlot (runner::Runner&, objects_type args)
@@ -412,6 +433,7 @@ namespace object
     DECLARE(removeProto);
 
     DECLARE(slotNames);
+    DECLARE(getLazyLocalSlot);
     DECLARE(getSlot);
     DECLARE(removeSlot);
     DECLARE(setSlot);

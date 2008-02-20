@@ -97,6 +97,7 @@
   Macro(false, "false");                          \
   Macro(fresh, "fresh");                          \
   Macro(front, "front");                          \
+  Macro(getLazyLocalSlot, "getLazyLocalSlot");    \
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
   Macro(isScope, "isScope");                      \
