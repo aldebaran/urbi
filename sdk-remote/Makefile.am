@@ -23,7 +23,8 @@ include/urbi/uabstractclient.hh			\
 include/urbi/uclient.hh				\
 include/urbi/uconversion.hh			\
 include/urbi/uexternal.hh			\
-include/urbi/usyncclient.hh
+include/urbi/usyncclient.hh     \
+include/urbi/utag.hh
 
 # liburbi is installed in $prefix, and its headers depend on libport.
 # So we must provide libport in $prefix, although they are also

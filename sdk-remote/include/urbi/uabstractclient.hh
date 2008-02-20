@@ -40,6 +40,7 @@
 # include "urbi/fwd.hh"
 # include "urbi/uobject.hh"
 # include "urbi/uconversion.hh"
+# include "urbi/utag.hh"
 
 namespace urbi
 {
@@ -281,8 +282,8 @@ namespace urbi
     ///
     /// pingInterval: Set interval between ping messages in milliseconds, 0 to disable.
     /// pongTimeout:  Set timeout in milliseconds to wait answer.
-    virtual void activeKeepAliveCheck(const unsigned pingInterval,
-                                      const unsigned pongTimeout) = 0;
+    virtual void setKeepAliveCheck(const unsigned pingInterval,
+                                   const unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
     const char * getServerName() {return host;}
@@ -623,6 +624,9 @@ namespace urbi
   void exit(int code);
   /// Create a new UClient object
   UClient& connect(const char * host);
+  /// Destroy an UClient object
+  /// Be careful: don't use client after called this function
+  void disconnect(UClient &client);
   /// Return the first UClient created by the program. Used by the URBI macro
   UClient* getDefaultClient();
   /// Redefine the default client

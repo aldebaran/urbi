@@ -49,8 +49,8 @@ namespace urbi
     void listenThread();
 
     /// Active KeepAlive functionality
-    virtual void activeKeepAliveCheck(const unsigned pingInterval,
-                                      const unsigned pongTimeout);
+    virtual void setKeepAliveCheck(const unsigned pingInterval,
+                                   const unsigned pongTimeout);
 
   protected:
     virtual int  effectiveSend(const void * buffer, int size);

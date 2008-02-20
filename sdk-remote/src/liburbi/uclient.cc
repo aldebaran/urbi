@@ -37,6 +37,7 @@
 #endif
 
 #include "urbi/uclient.hh"
+#include "urbi/utag.hh"
 #include "libport/network.h"
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
@@ -208,8 +209,7 @@ namespace urbi
   UClient::listenThread()
   {
     const char* pongTag = "__URBI_INTERNAL_PONG";
-    //TODO: Add a list of general URBIO TAG for user
-    const char* connectionTimeoutTag = "__URBI_TAG_CONNECTION_TIMEOUT";
+
     int maxfd;
 
     maxfd = 1 + std::max(sd, control_fd[0]);
@@ -248,19 +248,18 @@ namespace urbi
       // Treat error
       if (selectReturn < 0 && errno != EINTR)
       {
-        rc = -1;
-
         int errorCode = selectReturn;
 #ifdef WIN32
         errorCode = WSAGetLastError();
 #endif
-        clientError("select error", errorCode);
-        std::cerr << "select error " << errorCode << std::endl;
-        //TODO when error will be implemented, send an error msg
-        //TODO maybe try to reconnect?
+
+        rc = -1;
+        clientError("Connection error : ", errorCode);
+        notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+                                 "!!! Connection error", std::list<BinaryData>() ));
         return;
       }
-      if (selectReturn == -1)
+      if (selectReturn < 0)  // ::select catch a signal (errno == EINTR)
         continue;
 
       // timeout
@@ -268,9 +267,10 @@ namespace urbi
       {
         if (waitingPong) // Timeout while waiting PONG
         {
+          rc = -1;
           // FIXME: Choose between two differents way to alert user program
-          clientError("ping timeout", 0);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
+          clientError("Lost connection with server", 0);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
                                    "!!! Lost connection with server",
                                    std::list<BinaryData>() ));
           return;
@@ -287,20 +287,29 @@ namespace urbi
         int count = ::recv(sd, &recvBuffer[recvBufferPosition],
                            buflen - recvBufferPosition - 1, 0);
 
-        if (count < 0)
+        if (count <= 0)
         {
-          //TODO when error will be implemented, send an error msg
-          //TODO maybe try to reconnect?
-          perror ("recv error");
-          clientError("recv error, errno =", count);
+          std::string errorMsg;
+          int         errorCode = 0;
+
+          if (count < 0)
+          {
+#ifdef WIN32
+            errorCode = WSAGetLastError();
+#else
+            errorCode = errno;
+#endif
+            errorMsg = "!!! Connection error : " + errorCode;
+          }
+          else // count == 0  => Connection close
+          {
+            errorMsg = "!!! Connection closed";
+          }
+
           rc = -1;
-          return;
-        }
-        else if (count == 0)
-        {
-          std::cerr << "recv error: connection closed" << std::endl;
-          clientError("recv error: connection closed");
-          rc = -1;
+          clientError(errorMsg.c_str(), errorCode);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+                                   errorMsg.c_str(), std::list<BinaryData>() ));
           return;
         }
 
@@ -349,9 +358,13 @@ namespace urbi
     return *new UClient(host);
   }
 
+  void disconnect(UClient &client)
+  {
+    delete &client;
+  }
 
-  void UClient::activeKeepAliveCheck(const unsigned    pingInterval,
-                                     const unsigned    pongTimeout)
+  void UClient::setKeepAliveCheck(const unsigned    pingInterval,
+                                  const unsigned    pongTimeout)
   {
     this->pingInterval = pingInterval;
     this->pongTimeout  = pongTimeout;
