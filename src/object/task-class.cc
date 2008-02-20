@@ -5,8 +5,6 @@
 
 #include <boost/any.hpp>
 
-#include <libport/ufloat.hh>
-
 #include "object/task-class.hh"
 
 #include "object/alien.hh"
@@ -41,8 +39,7 @@ namespace object
 
     if (args.size () == 3)
     {
-      FETCH_ARG (2, Float);
-      if (libport::ufloat_to_boolean (arg2->value_get ()))
+      if (IS_TRUE (args[2]))
 	r.link (new_runner.get ());
     }
 
@@ -105,17 +102,7 @@ namespace object
   task_class_setSideEffectFree (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, Float);
-
-    try {
-      r.side_effect_free_set (libport::ufloat_to_boolean (arg1->value_get ()));
-    }
-    catch (libport::bad_numeric_cast& ue)
-    {
-      boost::throw_exception (BadInteger (arg1->value_get (),
-			      "setSideEffectFree"));
-    }
-
+    r.side_effect_free_set (IS_TRUE (args[1]));
     return void_class;
   }
 

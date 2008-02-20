@@ -6,7 +6,6 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 #include <libport/tokenizer.hh>
-#include <libport/ufloat.hh>
 #include <boost/lexical_cast.hpp>
 
 #include "parser/uparser.hh"
@@ -365,14 +364,7 @@ namespace object
   object_class_makeScope (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, Float);
-    try {
-      args[0]->locals_set (libport::ufloat_to_boolean (arg1->value_get ()));
-    }
-    catch (libport::bad_numeric_cast& ue)
-    {
-      boost::throw_exception (BadInteger (arg1->value_get (), "makeScope"));
-    }
+    args[0]->locals_set (IS_TRUE (args[1]));
     return args[0];
   }
 
