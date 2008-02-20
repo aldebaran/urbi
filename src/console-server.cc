@@ -34,7 +34,15 @@ public:
     if (const char* cp = getenv ("URBI_PATH"))
     {
       std::string up(cp);
+      std::list<std::string> paths;
       BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
+      {
+	if (s[0] == '\\' && paths.back().length() == 1)
+	  paths.back() += ':' + s;
+	else
+	  paths.push_back(s);
+      }
+      BOOST_FOREACH (const std::string& s, paths)
 	search_path.append_dir(s);
     }
   }
