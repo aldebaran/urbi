@@ -298,6 +298,5 @@ UQueue::pop_command ()
   buf = reinterpret_cast<char*>(pop(len));
   assert(buf);
   std::string res (buf, len);
-  std::cerr << "pop: " << res << std::endl;
   return res;
 }
