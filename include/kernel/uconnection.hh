@@ -133,7 +133,7 @@ public:
 
   UConnection& initialize ();
 
-protected:
+public:
   //! UConnection close. Must be redefined by the robot-specific sub class.
   /*! The implementation of this function must set 'closing' to true, to
     tell the UConnection to stop sending data.

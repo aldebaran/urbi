@@ -235,7 +235,7 @@ namespace object
   object_class_quit (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    r.lobby_get()->value_get().connection << UConnection::close;
+    r.lobby_get()->value_get().connection.closeConnection();
     return void_class;
   }
 
