@@ -498,8 +498,14 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
     is = & std::cin;
   else
   {
-    std::string f = find_file (base);
-    is = new std::ifstream(f.c_str(), std::ios::binary);
+    try
+    {
+      is = new std::ifstream(find_file (base).c_str (), std::ios::binary);
+    }
+    catch (libport::file_library::Not_found&)
+    {
+      return UFAIL;
+    }
     if (!*is)
       return UFAIL;
   }

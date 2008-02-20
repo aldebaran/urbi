@@ -198,12 +198,26 @@ namespace object
     FETCH_ARG(1, String);
     UConnection& c = r.lobby_get()->value_get().connection;
     UParser p(c);
-    p.process_file(c.server_get().find_file(libport::path(arg1->value_get())));
-    return
-      execute_parsed(r, p,
-		     PrimitiveError("", //same message than k1
-				    std::string("Error loading file: ")
-				    + arg1->value_get().name_get()));
+    try
+    {
+      libport::path path = c.server_get().find_file(libport::path(arg1->value_get()));
+      p.process_file(path);
+      return
+        execute_parsed(r, p,
+                       PrimitiveError("", //same message than k1
+                                      "Error loading file: "
+                                      + arg1->value_get().name_get()));
+    }
+    catch (libport::file_library::Not_found&)
+    {
+      boost::throw_exception(
+        PrimitiveError("",
+                       "Unable to find file: "
+                       + arg1->value_get().name_get()));
+      // Never reached
+      assertion(false);
+      return 0;
+    }
   }
 
   static rObject
