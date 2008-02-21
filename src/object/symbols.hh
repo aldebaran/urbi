@@ -80,6 +80,7 @@
   Macro(fresh, "fresh");                          \
   Macro(front, "front");                          \
   Macro(getSlot, "getSlot");                      \
+  Macro(id, "id");                                \
   Macro(init, "init");                            \
   Macro(insert, "insert");                        \
   Macro(isScope, "isScope");                      \

@@ -120,6 +120,17 @@ namespace object
     return new String(libport::Symbol(os.str()));
   }
 
+  /// Return the address of an object as a number, mostly
+  /// for debugging purpose.
+
+  static rObject
+  object_class_id (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    std::string str = (boost::format ("0x%x") % reinterpret_cast<long long> (args[0].get ())).str ();
+    return new String (libport::Symbol (str));
+  }
+
   static rObject
   object_class_sameAs(runner::Runner&, objects_type args)
   {
@@ -420,6 +431,7 @@ namespace object
     DECLARE(echo);
     DECLARE(eval);
     DECLARE(fresh);
+    DECLARE(id);
     DECLARE(load);
     DECLARE(lobby);
     DECLARE(print);
