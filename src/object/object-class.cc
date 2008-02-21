@@ -124,7 +124,7 @@ namespace object
   /// for debugging purpose.
 
   static rObject
-  object_class_id (runner::Runner&, objects_type args)
+  object_class_uid (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
     std::string str = (boost::format ("0x%x") % reinterpret_cast<long long> (args[0].get ())).str ();
@@ -429,7 +429,6 @@ namespace object
     DECLARE(echo);
     DECLARE(eval);
     DECLARE(fresh);
-    DECLARE(id);
     DECLARE(load);
     DECLARE(lobby);
     DECLARE(print);
@@ -440,6 +439,7 @@ namespace object
     DECLARE(sleep);
     DECLARE(stopall);
     DECLARE(time);
+    DECLARE(uid);
 #undef DECLARE
   }
 

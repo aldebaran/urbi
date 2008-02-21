@@ -98,7 +98,6 @@
   Macro(fresh, "fresh");                          \
   Macro(front, "front");                          \
   Macro(getSlot, "getSlot");                      \
-  Macro(id, "id");                                \
   Macro(init, "init");                            \
   Macro(isScope, "isScope");                      \
   Macro(keywords, "keywords");                    \
@@ -143,6 +142,7 @@
   Macro(true, "true");                            \
   Macro(trunc, "trunc");                          \
   Macro(type, "type");                            \
+  Macro(uid, "uid");                              \
   Macro(uobject, "uobject");                      \
   Macro(updateSlot, "updateSlot");                \
   Macro(void, "void");                            \
