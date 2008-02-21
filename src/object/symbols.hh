@@ -109,6 +109,7 @@
   Macro(log, "log");                              \
   Macro(makeScope, "makeScope");                  \
   Macro(message, "message");                      \
+  Macro(new, "new");                              \
   Macro(nil, "nil");                              \
   Macro(print, "print");                          \
   Macro(protos, "protos");                        \

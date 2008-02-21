@@ -256,48 +256,6 @@
       return ast_scope(l, 0, e);
     }
 
-    // Compiled as
-    //  {
-    //     var res = id . clone ();
-    //     res . init (args);
-    //     res;
-    //  }
-    //
-    // Used to be compiled as
-    //
-    //     id . clone () . init (args);
-    //
-    // but in that case the return value is that of the end of
-    // "init".  And we don't want to require the users to end "init"
-    // with "self".
-    static
-    ast::Scope*
-    ast_new (const loc& l, libport::Symbol* id, ast::exps_type* args)
-    {
-      // I wish I could use tweasts here...  Lord, help me.
-
-      // var res = id . clone ();
-      ast::Exp* proto = ast_call(l, 0, id);
-      // Cannot use a fixed string here, otherwise two successive "new"
-      // will conflict.  Delete the slot afterwards?
-      ast::Call* res = ast_call(l, 0, libport::Symbol::fresh());
-      ast::Exp* decl = ast_slot_set (l, res, ast_call(l, proto, SYMBOL(clone)));
-
-      // res . init (args);
-      ast::Exp* init = ast_call(l, res, SYMBOL(init), args);
-
-      // The sequence.
-      ast::Nary* seq = new ast::Nary ();
-      seq->push_back (decl);
-      seq->back_flavor_set(ast::flavor_semicolon);
-      seq->push_back (init);
-      seq->back_flavor_set(ast::flavor_semicolon);
-      seq->push_back (res);
-
-      return ast_scope(l, seq);
-    }
-
-
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     /// \param op must be & or |.
     static
@@ -1098,7 +1056,11 @@ call:
 %token <symbol> TOK_NEW "new";
 %type <expr> new;
 new:
-  "new" "identifier" args { $$ = ast_new (@$, $2, $3); }
+  "new" "identifier" args
+  {
+    // Compiled as "id . new (args)".
+    $$ = ast_call(@$, ast_call(@$, 0, $2), SYMBOL(new), $3);
+  }
 ;
 
 // Allow Object.new etc.
