@@ -214,17 +214,17 @@ namespace object
       libport::path path = c.server_get().find_file(libport::path(arg1->value_get()));
       p.process_file(path);
       return
-        execute_parsed(r, p,
-                       PrimitiveError("", //same message than k1
-                                      "Error loading file: "
-                                      + arg1->value_get().name_get()));
+	execute_parsed(r, p,
+		       PrimitiveError("", //same message than k1
+				      "Error loading file: "
+				      + arg1->value_get().name_get()));
     }
     catch (libport::file_library::Not_found&)
     {
       boost::throw_exception(
-        PrimitiveError("",
-                       "Unable to find file: "
-                       + arg1->value_get().name_get()));
+	PrimitiveError("",
+		       "Unable to find file: "
+		       + arg1->value_get().name_get()));
       // Never reached
       assertion(false);
       return 0;
@@ -362,10 +362,7 @@ namespace object
     FETCH_ARG(1, String);
 
     rObject o = slot_locate(args[0], arg1->value_get());
-    if (o)
-      return o;
-    else
-    return nil_class;
+    return o ? o : nil_class;
   }
 
   static rObject
@@ -398,14 +395,14 @@ namespace object
   object_class_isScope (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return new Float (args[0]->locals_get () ? 1 : 0);
+    return new Float (!!args[0]->locals_get ());
   }
 
   void
   object_class_initialize ()
   {
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Name)							\
+#define DECLARE(Name)				\
     DECLARE_PRIMITIVE(object, Name)
     DECLARE(clone);
     DECLARE(init);
