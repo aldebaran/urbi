@@ -61,6 +61,12 @@ UParser::process (const std::string& command)
   return parse_ ();
 }
 
+int
+UParser::process (const parser::Tweast& t)
+{
+  return process (t.input_get());
+}
+
 ast::Ast*
 UParser::ast_get ()
 {

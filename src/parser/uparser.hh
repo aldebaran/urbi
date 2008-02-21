@@ -29,6 +29,8 @@
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
 
+# include "parser/tweast.hh"
+
 # include "ugrammar.hh"
 # include "parser/flex-lexer.hh"
 
@@ -58,9 +60,17 @@ public:
   /// \return yyparse's result (0 on success).
   int process (const std::string& code);
 
+  /// Parse the command from a TWEAST.
+  /// \return yyparse's result (0 on success).
+  int process (const parser::Tweast& t);
+
   /// Parse a file.
   /// \return yyparse's result (0 on success).
   int process_file (const std::string& fn);
+
+  /// The parsed object is either a file, represented by the filename
+  /// or a Tweast.
+  int process (parser::Tweast& t);
 
   /// \{
   /// The last AST read by process().
