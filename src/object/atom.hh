@@ -97,6 +97,8 @@ namespace object
   | Alien.  |
   `--------*/
 
+  // Aliens allow to store any kind of value.  For debugging purpose,
+  // we also store its C++ type, hence the tuple.
   struct alien_traits
   {
     typedef boost::tuple<boost::any, std::string> type;
@@ -108,6 +110,8 @@ namespace object
   | Code.  |
   `-------*/
 
+  // Functions that are written in Urbi, detached from the AST
+  // returned by the parser.
   struct code_traits
   {
     typedef ast::Function& type;
@@ -130,6 +134,7 @@ namespace object
   | Float.  |
   `--------*/
 
+  // The sole numerical value really supported for the time being.
   struct float_traits
   {
     typedef libport::ufloat type;
@@ -141,6 +146,8 @@ namespace object
   | Integer.  |
   `----------*/
 
+  // The future.  But requires intelligence to mix with other
+  // numerical values, so not used currently.
   struct integer_traits
   {
     typedef int type;
@@ -152,6 +159,7 @@ namespace object
   | List.  |
   `-------*/
 
+  // Lists, not arrays.
   struct list_traits
   {
     typedef std::list<rObject> type;
@@ -163,6 +171,8 @@ namespace object
   | Lobby.  |
   `-------*/
 
+  // The object inside which user interaction (via the connections) is
+  // evaluated.
   struct lobby_traits
   {
     typedef State type;
@@ -174,6 +184,7 @@ namespace object
  | Primitive.  |
  `------------*/
 
+  // Code written in C++.
   struct primitive_traits
   {
     typedef primitive_type type;
@@ -185,6 +196,9 @@ namespace object
   | String.  |
   `---------*/
 
+  // Internalized strings.  We should probably make them real
+  // std::string in the future, because currently any constructed
+  // string is kept endlessly.
   struct string_traits
   {
     typedef libport::Symbol type;
