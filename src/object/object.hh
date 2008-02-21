@@ -93,14 +93,6 @@ namespace object
 
     /// \brief Update value in slot.
     ///
-    /// If the target is a "real" object, then updating means the same
-    /// as slot_set: one never updates a proto.  If the target is a
-    /// "locals" object, then updating really means updating the
-    /// existing slot, not creating a new slot in the inner scope.
-    /// Except if the existing source slot is a "real" object, in which case
-    /// updating means creating the slot in "self".
-    Object& slot_update (const key_type& k, rObject o);
-
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
     Object& slot_set (const key_type& k, rObject o);
@@ -166,6 +158,7 @@ namespace object
     bool locals_;
 
     friend rObject slot_locate(const rObject& ref, const Object::key_type& k);
+    friend void slot_update(rObject& ref, const Object::key_type& k, rObject o);
   };
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -178,6 +171,14 @@ namespace object
   /// Lookup field in object hierarchy.
   /// \return the Object containing slot \b k, or 0 if not found.
   rObject slot_locate (const rObject& ref, const Object::key_type& k);
+
+  /// If the target is a "real" object, then updating means the same
+  /// as slot_set: one never updates a proto.  If the target is a
+  /// "locals" object, then updating really means updating the
+  /// existing slot, not creating a new slot in the inner scope.
+  /// Except if the existing source slot is a "real" object, in which case
+  /// updating means creating the slot in the result of "self" evaluation.
+  void slot_update(rObject& ref, const Object::key_type& k, rObject o);
 
   /// Report Object \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);

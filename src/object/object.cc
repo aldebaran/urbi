@@ -110,25 +110,22 @@ namespace object
     return *this;
   }
 
-
-  Object&
-  Object::slot_update (const Object::key_type& k, rObject o)
+  void
+  slot_update (rObject& context, const Object::key_type& k, rObject o)
   {
-    Object& l = safe_slot_locate(k);
+    Object& l = context->safe_slot_locate(k);
 
-    if (locals_ && l.locals_)  // Local scope writes local var: no copyonwrite.
+    if (context->locals_ && l.locals_)  // Local scope writes local var: no copyonwrite.
       l.own_slot_get(k) = o;
-    else if (locals_ && !l.locals_)
+    else if (context->locals_ && !l.locals_)
     {
-      // Local->class: copyonwrite to "self".
-      rObject self = slot_get(SYMBOL(self));
+      // Local->class: copyonwrite to "self" after evaluating it.
+      rObject self = context->slot_get(SYMBOL(self));
       assert(self);
       self.get ()->slots_[k] = o;
     }
     else // Class->class: copy on write.
-      slots_[k] = o;
-
-    return *this;
+      context->slots_[k] = o;
   }
 
   /*-----------.

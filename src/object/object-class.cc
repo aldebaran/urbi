@@ -368,22 +368,23 @@ namespace object
     return nil_class;
   }
 
-  /// Define setSlot or updateSlot.  \a Verb is "set" or "update".
-#define SLOT_CHANGE(Verb)						\
-  static rObject							\
-  object_class_ ## Verb ## Slot (runner::Runner&, objects_type args)	\
-  {									\
-    CHECK_ARG_COUNT(3);							\
-    FETCH_ARG(1, String);						\
-    args[0]->slot_ ## Verb (arg1->value_get(), args[2]);		\
-    return args[2];							\
+  static rObject
+  object_class_setSlot (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (3);
+    FETCH_ARG (1, String);
+    args[0]->slot_set (arg1->value_get (), args[2]);
+    return args[2];
   }
 
-  /// Set a slot.
-  SLOT_CHANGE(set)
-  /// Update a slot.
-  SLOT_CHANGE(update)
-#undef SLOT_CHANGE
+  static rObject
+  object_class_updateSlot (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (3);
+    FETCH_ARG (1, String);
+    slot_update (args[0], arg1->value_get (), args[2]);
+    return args[2];
+  }
 
   static rObject
   object_class_makeScope (runner::Runner&, objects_type args)
