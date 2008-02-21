@@ -29,7 +29,7 @@ namespace scheduler
   }
 
   inline
-  Job& Scheduler::current_job ()
+  Job& Scheduler::current_job () const
   {
     assert (current_job_);
     return *current_job_;

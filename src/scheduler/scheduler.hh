@@ -77,7 +77,7 @@ namespace scheduler
     void resume_job (Job* job);
 
     /// Return the currently executing job
-    Job& current_job ();
+    Job& current_job () const;
 
   private:
     void switch_back (Job* job);
