@@ -123,10 +123,7 @@ namespace object
       // Local->class: copyonwrite to "self".
       rObject self = slot_get(SYMBOL(self));
       assert(self);
-      if (self.get() == this)
-	slots_[k] = o;
-      else
-	self->slot_update(k, o);
+      self.get ()->slots_[k] = o;
     }
     else // Class->class: copy on write.
       slots_[k] = o;
