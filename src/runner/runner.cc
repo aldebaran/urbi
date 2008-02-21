@@ -169,28 +169,28 @@ namespace runner
     object::objects_type::const_iterator ei;
     // Formal argument iterator.
     ast::symbols_type::const_iterator fi;
-    // Scope in which to evaluate the function, which may be nil
-    rObject scope = func->slot_get (SYMBOL(context));
+    // Context in which to evaluate the function, which may be nil.
+    rObject context = func->slot_get (SYMBOL(context));
 
     PING ();
-    // Create a new object to store the arguments. If a scope has been
-    // provided, it is the first parent.
+    // Create a new object to store the arguments.
     rObject bound_args = new object::Object;
     bound_args->locals_set(true);
-    if (scope != object::nil_class)
-      bound_args->proto_add (scope);
 
-    // Bind formal and effective arguments if the caller has not provided
-    // a scope. If a scope has been given, it is up to the caller to set
-    // it up.
     ei = args.begin();
-    if (scope == object::nil_class)
-    {
-      bound_args->slot_set (SYMBOL(self), *ei);
-      // self is also the proto of the function outer scope, so that
-      // we look for non-local identifiers in the target itself.
-      bound_args->proto_add (*ei);
-    }
+
+    rObject self = func->own_slot_get (SYMBOL (self), *ei);
+
+    bound_args->slot_set (SYMBOL (self), self);
+
+    // self is also the proto of the function outer scope, so that
+    // we look for non-local identifiers in the target itself.
+    bound_args->proto_add (self);
+
+    // Add the context if it had been provided. It will take precedence
+    // over self.
+    if (context != object::nil_class)
+      bound_args->proto_add (context);
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.

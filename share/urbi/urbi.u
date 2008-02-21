@@ -66,6 +66,7 @@ do Object {
   {
     var nf = getSlot ("f").clone;
     getSlot ("nf").context = context;
+    getSlot ("nf").self = context.getSlot ("self");
     getSlot ("nf");
   };
 
