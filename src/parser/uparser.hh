@@ -52,7 +52,7 @@ public:
   typedef parser_type::semantic_type semantic_type;
   typedef parser_type::location_type location_type;
 
-  UParser (UConnection& cn);
+  UParser ();
 
   /// Parse the command from a buffer.
   /// \return yyparse's result (0 on success).
@@ -81,9 +81,6 @@ public:
 
   /// Warn at \a l about \a msg.
   void warn (const location_type& l, const std::string& msg);
-
-  /// The connection we belong to.
-  UConnection& connection;
 
   /// @name Errors and warnings handling
   /// @{

@@ -21,10 +21,9 @@
 | UParser.  |
 `----------*/
 
-UParser::UParser(UConnection& cn)
+UParser::UParser()
   : command_tree_ (0),
     binaryCommand (false),
-    connection (cn),
     errors_ (),
     warnings_ (),
     scanner_ (),

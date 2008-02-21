@@ -195,8 +195,7 @@ namespace object
   object_class_eval (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, String);
-    UConnection& c = r.lobby_get()->value_get().connection;
-    UParser p(c);
+    UParser p;
     p.process(arg1->value_get());
     return execute_parsed(r, p, PrimitiveError("",
 	std::string("Error executing command.")));
@@ -208,10 +207,11 @@ namespace object
     CHECK_ARG_COUNT (2);
     FETCH_ARG(1, String);
     UConnection& c = r.lobby_get()->value_get().connection;
-    UParser p(c);
+    UParser p;
     try
     {
-      libport::path path = c.server_get().find_file(libport::path(arg1->value_get()));
+      libport::path path =
+	c.server_get().find_file(libport::path(arg1->value_get()));
       p.process_file(path);
       return
 	execute_parsed(r, p,
