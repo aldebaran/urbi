@@ -100,7 +100,6 @@
   Macro(getSlot, "getSlot");                      \
   Macro(id, "id");                                \
   Macro(init, "init");                            \
-  Macro(insert, "insert");                        \
   Macro(isScope, "isScope");                      \
   Macro(keywords, "keywords");                    \
   Macro(load, "load");                            \
@@ -112,6 +111,7 @@
   Macro(nil, "nil");                              \
   Macro(print, "print");                          \
   Macro(protos, "protos");                        \
+  Macro(push_back, "push_back");                  \
   Macro(quit, "quit");                            \
   Macro(random, "random");                        \
   Macro(reboot, "reboot");                        \

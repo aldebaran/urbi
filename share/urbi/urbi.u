@@ -1,6 +1,3 @@
-# FIXME: this code should be split in several files, once we have
-# a "load" that works.
-
 ## ----------------- ##
 ## VisibilityScope.  ##
 ## ----------------- ##
@@ -326,7 +323,7 @@ do Float
   {
     var result = [];
     for (var i = 0; i < self; i++)
-      result.insert(i.clone);
+      result.push_back(i.clone);
     result
   };
 
@@ -334,53 +331,10 @@ do Float
 };
 
 
-
-## ----- ##
-## List. ##
-## ----- ##
-
-do List
-{
-  function has(e)
-  {
-    for i in self
-    {
-      if (i == e)
-	return true;
-    };
-    return false;
-  };
-
-  # The Lisp-like name.
-  copySlot ("front", "head");
-
-  void;
-};
-
-## ------------------------ ##
-## Functional programming.  ##
-## ------------------------ ##
-
-do List {
-  function map (f)
-  {
-    var res = [];
-    for i in self { res += [f (i)] };
-    res
-  };
-
-  function any (f)
-  {
-    for i in self { if (f (i)) return true };
-    false
-  };
-
-  function all (f)
-  {
-    for i in self { if (!f (i)) return false };
-    true
-  }
-};
+## ------ ##
+## List.  ##
+## ------ ##
+load("urbi/list.u");
 
 do Object {
   function bounce_named (fn)

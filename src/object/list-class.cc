@@ -81,7 +81,7 @@ namespace object
 
     /// Insert \a elt at the end of \a l
     static rList
-    insert(rList l, rObject elt)
+    push_back(rList l, rObject elt)
     {
       l->value_get().push_back(elt);
       return l;
@@ -125,16 +125,14 @@ namespace object
 #define PRIMITIVE_2_LIST(Name)			\
   PRIMITIVE_2(list, Name, List, List)
 
+  PRIMITIVE_1_LIST (sort);
+  PRIMITIVE_1_LIST(back);
+  PRIMITIVE_1_LIST(front);
+  PRIMITIVE_1_LIST(size);
+  PRIMITIVE_1_LIST(tail);
   PRIMITIVE_2_LIST(PLUS);
   PRIMITIVE_2_LIST(PLUS_EQ);
-  PRIMITIVE_1_LIST(front);
-  PRIMITIVE_1_LIST(back);
-  PRIMITIVE_1_LIST(tail);
-  PRIMITIVE_1_LIST(size);
-
-  PRIMITIVE_2_OBJECT(list, insert, List);
-
-  PRIMITIVE_1_LIST (sort);
+  PRIMITIVE_2_OBJECT(list, push_back, List);
 
   void
   list_class_initialize ()
@@ -146,7 +144,7 @@ namespace object
     DECLARE(PLUS_EQ);
     DECLARE(back);
     DECLARE(front);
-    DECLARE(insert);
+    DECLARE(push_back);
     DECLARE(size);
     DECLARE(sort);
     DECLARE(tail);

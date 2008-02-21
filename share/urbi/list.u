@@ -1,0 +1,50 @@
+## ----- ##
+## List. ##
+## ----- ##
+
+do List
+{
+  function has(e)
+  {
+    for i in self
+    {
+      if (i == e)
+	return true;
+    };
+    return false;
+  };
+
+  # The Lisp-like name.
+  copySlot ("front", "head");
+
+  function insert(e)
+  {
+    echo ("List.insert is deprecated, please use List.push_back");
+    push_back(e);
+  };
+
+  ## ------------------------ ##
+  ## Functional programming.  ##
+  ## ------------------------ ##
+
+  function map (f)
+  {
+    var res = [];
+    for i in self { res += [f (i)] };
+    res
+  };
+
+  function any (f)
+  {
+    for i in self { if (f (i)) return true };
+    false
+  };
+
+  function all (f)
+  {
+    for i in self { if (!f (i)) return false };
+    true
+  };
+
+  void;
+};
