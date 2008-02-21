@@ -54,7 +54,6 @@ XFAIL_TESTS +=					\
 1.x/nameresolution-array.chk			\
 1.x/nameresolution-dollars.chk			\
 1.x/nameresolution-objects.chk			\
-1.x/nameresolution.chk				\
 1.x/notag.chk					\
 1.x/object-events.chk				\
 1.x/onleave.chk					\
