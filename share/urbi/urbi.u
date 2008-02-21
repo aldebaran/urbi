@@ -373,11 +373,16 @@ do List {
 };
 
 do Object {
-  function bounce
+  function bounce_named (fn)
   {
     function (x) {
       x.getSlot (fn) .apply ([x])
-    }.capture ("fn", call.argString (1))
+    }.captureVars (fn)
+  };
+
+  function bounce
+  {
+    bounce_named (call.argString (1))
   }
 };
 
@@ -400,22 +405,11 @@ load("urbi/k1.u");
 
 class Object.Math
 {
-  # Standard functions.
-  function abs   (x) { x.abs };
-  function acos  (x) { x.acos };
-  function asin  (x) { x.asin };
-  function atan  (x) { x.atan };
-  function cos   (x) { x.cos };
-  function exp   (x) { x.exp };
-  function log   (x) { x.log };
-  function random(x) { x.random };
-  function round (x) { x.round };
-  function sgn   (x) { x.sgn };
-  function sin   (x) { x.sin };
-  function sqr   (x) { x.sqr };
-  function sqrt  (x) { x.sqrt };
-  function tan   (x) { x.tan };
-  function trunc (x) { x.trunc };
+  for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
+             "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
+  {
+    setSlot (fn, bounce_named (fn))
+  };
 
   # Global variables
   var epsilontilde = 0.0001;
