@@ -20,32 +20,50 @@
 # define SYMBOL(Sym) object::symbol_ ## Sym
 
 # define SYMBOLS_APPLY(Macro)			  \
+  Macro(AMPERSAND_AMPERSAND, "&&");               \
   Macro(Alien, "Alien");                          \
+  Macro(BANG, "!");                               \
+  Macro(BANG_EQ, "!=");                           \
   Macro(CARET, "^");                              \
   Macro(Call, "Call");                            \
   Macro(Code, "Code");                            \
   Macro(Delegate, "Delegate");                    \
+  Macro(EQ, "=");                                 \
   Macro(EQ_EQ, "==");                             \
+  Macro(EQ_TILDA_EQ, "=~=");                      \
   Macro(Float, "Float");                          \
+  Macro(GT, ">");                                 \
+  Macro(GT_EQ, ">=");                             \
   Macro(GT_GT, ">>");                             \
   Macro(Integer, "Integer");                      \
   Macro(LT, "<");                                 \
+  Macro(LT_EQ, "<=");                             \
   Macro(LT_LT, "<<");                             \
   Macro(List, "List");                            \
   Macro(Lobby, "Lobby");                          \
   Macro(MINUS, "-");                              \
+  Macro(MINUS_EQ, "-=");                          \
+  Macro(MINUS_MINUS, "--");                       \
+  Macro(NEW, "NEW");                              \
   Macro(Name, "Name");                            \
   Macro(Object, "Object");                        \
   Macro(PERCENT, "%");                            \
+  Macro(PERCENT_EQ, "%=");                        \
+  Macro(PIPE_PIPE, "||");                         \
   Macro(PLUS, "+");                               \
   Macro(PLUS_EQ, "+=");                           \
+  Macro(PLUS_PLUS, "++");                         \
   Macro(Primitive, "Primitive");                  \
   Macro(SLASH, "/");                              \
+  Macro(SLASH_EQ, "/=");                          \
   Macro(STAR, "*");                               \
+  Macro(STAR_EQ, "*=");                           \
   Macro(STAR_STAR, "**");                         \
   Macro(String, "String");                        \
   Macro(Sym, "Sym");                              \
+  Macro(TILDA_EQ, "~=");                          \
   Macro(Task, "Task");                            \
+  Macro(Token, "Token");                          \
   Macro(VisibilityScope, "VisibilityScope");      \
   Macro(What, "What");                            \
   Macro(__target, "__target");                    \

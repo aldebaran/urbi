@@ -418,15 +418,15 @@
 %token
 	TOK_ADDGROUP     "addgroup"
 	TOK_ALIAS        "alias"
-	TOK_ASSIGN       "="
+	TOK_EQ           "="
 	TOK_BREAK        "break"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
 	TOK_DELETE       "delete"
 	TOK_DELGROUP     "delgroup"
-	TOK_DIR          "->"
+	TOK_MINUS_GT     "->"
 	TOK_DOLLAR       "$"
-	TOK_DOUBLECOLON  "::"
+	TOK_COLON_COLON  "::"
 	TOK_ELSE         "else"
 	TOK_EMIT         "emit"
 	TOK_EVENT        "event"
@@ -451,7 +451,7 @@
 	TOK_RPAREN       ")"
 	TOK_STATIC       "static"
 	TOK_STOPIF       "stopif"
-	TOK_TILDE        "~"
+	TOK_TILDA        "~"
 	TOK_TIMEOUT      "timeout"
 	TOK_UNALIAS      "unalias"
 	TOK_VAR          "var"
@@ -487,7 +487,7 @@
 %token <flavor>
 	TOK_COMMA        ","
 	TOK_SEMICOLON    ";"
-	TOK_AND          "&"
+	TOK_AMPERSAND    "&"
 	TOK_PIPE         "|"
 	TOK_FOR          "for"
 	TOK_LOOP         "loop"
@@ -901,12 +901,12 @@ stmt:
 ;
 
 %token <symbol>
-	TOK_SLASH_ASSIGN  "/="
-	TOK_MINUS_ASSIGN  "-="
-	TOK_MINUS_MINUS   "--"
-	TOK_PLUS_ASSIGN   "+="
-	TOK_PLUS_PLUS     "++"
-	TOK_STAR_ASSIGN   "*="
+	TOK_SLASH_EQ    "/="
+	TOK_MINUS_EQ    "-="
+	TOK_MINUS_MINUS "--"
+	TOK_PLUS_EQ     "+="
+	TOK_PLUS_PLUS   "++"
+	TOK_STAR_EQ     "*="
 ;
 
 id:
@@ -1244,18 +1244,18 @@ expr:
 | Tests.  |
 `--------*/
 %token <symbol>
-	TOK_DEQ   "=~="
-	TOK_EQU   "=="
-	TOK_GEQ   ">="
-	TOK_GTH   ">"
-	TOK_LEQ   "<="
-	TOK_LTH   "<"
-	TOK_NEQ   "!="
-	TOK_PEQ   "%="
-	TOK_REQ   "~="
+	TOK_EQ_TILDA_EQ   "=~="
+	TOK_EQ_EQ         "=="
+	TOK_GT_EQ         ">="
+	TOK_GT            ">"
+	TOK_LT_EQ         "<="
+	TOK_LT            "<"
+	TOK_BANG_EQ       "!="
+	TOK_PERCENT_EQ    "%="
+	TOK_TILDA_EQ      "~="
 
-	TOK_LAND  "&&"
-	TOK_LOR   "||"
+	TOK_AMPERSAND_AMPERSAND  "&&"
+	TOK_PIPE_PIPE            "||"
 ;
 
 id:

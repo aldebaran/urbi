@@ -481,40 +481,40 @@ FLAVOR   [;|,&]?
 "!"             RETURN_OP(BANG);
 "%"             RETURN_OP(PERCENT);
 "*"             RETURN_OP(STAR);
-"*="            RETURN_OP(STAR_ASSIGN);
+"*="            RETURN_OP(STAR_EQ);
 "+"             RETURN_OP(PLUS);
-"+="            RETURN_OP(PLUS_ASSIGN);
+"+="            RETURN_OP(PLUS_EQ);
 "++"            RETURN_OP(PLUS_PLUS);
 "-"             RETURN_OP(MINUS);
-"-="            RETURN_OP(MINUS_ASSIGN);
+"-="            RETURN_OP(MINUS_EQ);
 "--"            RETURN_OP(MINUS_MINUS);
 "/"             RETURN_OP(SLASH);
-"/="            RETURN_OP(SLASH_ASSIGN);
+"/="            RETURN_OP(SLASH_EQ);
 
-"<"             RETURN_OP(LTH);
-"<="            RETURN_OP(LEQ);
+"<"             RETURN_OP(LT);
+"<="            RETURN_OP(LT_EQ);
 "<<"            RETURN_OP(LT_LT);
-"=="            RETURN_OP(EQU);
-"!="            RETURN_OP(NEQ);
-"=~="           RETURN_OP(DEQ);
-"~="            RETURN_OP(REQ);
-"%="            RETURN_OP(PEQ);
-">"             RETURN_OP(GTH);
-">="            RETURN_OP(GEQ);
+"=="            RETURN_OP(EQ_EQ);
+"!="            RETURN_OP(BANG_EQ);
+"=~="           RETURN_OP(EQ_TILDA_EQ);
+"~="            RETURN_OP(TILDA_EQ);
+"%="            RETURN_OP(PERCENT_EQ);
+">"             RETURN_OP(GT);
+">="            RETURN_OP(GT_EQ);
 ">>"            RETURN_OP(GT_GT);
 "^"             RETURN_OP(CARET);
 "**"            RETURN_OP(STAR_STAR);
-"&&"            RETURN_OP(LAND);
-"||"            RETURN_OP(LOR);
+"&&"            RETURN_OP(AMPERSAND_AMPERSAND);
+"||"            RETURN_OP(PIPE_PIPE);
 
-"="             RETURN(ASSIGN);
+"="             RETURN(EQ);
 "$"             RETURN(DOLLAR);
 
-"->"            RETURN(DIR);
+"->"            RETURN(MINUS_GT);
 "."             RETURN(POINT);
 ":"             RETURN(COLON);
-"::"            RETURN(DOUBLECOLON);
-"~"             RETURN(TILDE);
+"::"            RETURN(COLON_COLON);
+"~"             RETURN(TILDA);
 
 "("             PRE_PUSH(')'); RETURN(LPAREN);
 ")"             PRE_POP();     RETURN(RPAREN);
@@ -524,7 +524,7 @@ FLAVOR   [;|,&]?
 "}"             PRE_POP();     RETURN(RBRACE);
 
 
-"&"             RETURN_FLAVOR(AND, and);
+"&"             RETURN_FLAVOR(AMPERSAND, and);
 "|"             RETURN_FLAVOR(PIPE, pipe);
 ";"             PRE_RETURN(); RETURN_FLAVOR(SEMICOLON, semicolon);
 ","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);

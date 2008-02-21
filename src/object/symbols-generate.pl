@@ -5,6 +5,7 @@ use strict;
 my %char =
 (
     'AMPERSAND' => '&',
+    'BANG' => '!',
     'CARET' => '^',
     'EQ' => '=',
     'GT' => '>',
@@ -30,7 +31,15 @@ sub symbol ($)
 }
 
 # Get the list of all the SYMBOL() uses.
-my $symbols = `git grep -E '(DECLARE|SYMBOL) *\\('`;
+#
+# SYMBOL(EQ) is used when we want to denote it explicitly.
+#
+# DECLARE(EQ, ...) is used in the *-class.cc to bind C++ functions
+# into the Urbi world.
+#
+# RETURN_OP(EQ) is used in the scanner to return tokens which
+# semantical value is the string itself.
+my $symbols = `git grep -E '(DECLARE|SYMBOL|RETURN_OP) *\\('`;
 
 # If git failed, do not proceed.
 die "git grep failed"
@@ -38,7 +47,7 @@ die "git grep failed"
 
 my %symbol =
     map { $_ => symbol($_) }
-	($symbols =~ /\b(?:DECLARE|SYMBOL) *\(([^,\)]+)/gm);
+	($symbols =~ /\b(?:DECLARE|SYMBOL|RETURN_OP) *\(([^,\)]+)/gm);
 
 print <<'EOF';
 /**
