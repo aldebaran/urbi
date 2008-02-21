@@ -52,6 +52,7 @@ XFAIL_TESTS +=					\
 1.x/modifier-syntax.chk				\
 1.x/multiinheritance.chk			\
 1.x/nameresolution-array.chk			\
+1.x/nameresolution-dollar-computed.chk		\
 1.x/nameresolution-dollars.chk			\
 1.x/nameresolution-objects.chk			\
 1.x/notag.chk					\
@@ -61,7 +62,6 @@ XFAIL_TESTS +=					\
 1.x/sinus.chk					\
 1.x/speed-zero.chk				\
 1.x/stopif.chk					\
-1.x/switch.chk					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
 1.x/variable-normalize.chk			\
