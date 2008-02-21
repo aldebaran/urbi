@@ -59,12 +59,12 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "libport/separator.hh"
+#include <libport/separator.hh>
 
 #include "ast/all.hh"
-#include "runner/runner.hh"
 
-#include "kernel/uconnection.hh"
+#include "object/atom.hh"
+
 #include "parser/uparser.hh"
 
   namespace
