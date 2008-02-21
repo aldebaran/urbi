@@ -1053,7 +1053,15 @@ namespace urbi
     if (message && erc)
       msg += " : ";
     if (erc)
-      msg+=strerror(erc);
+    {
+#ifndef WIN32
+      msg += strerror(erc);
+#else
+      char tmp[10];
+      snprintf(tmp, 10, "%d", erc);
+      msg += tmp;
+#endif
+    }
     m.message = m.rawMessage = msg; //rawMessage is incorrect but we dont care
     m.timestamp = 0;
     m.tag = CLIENTERROR_TAG;

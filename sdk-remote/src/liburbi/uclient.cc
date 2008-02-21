@@ -141,8 +141,13 @@ namespace urbi
 
   UClient::~UClient()
   {
+#ifndef WIN32
     if (close(sd) == -1)
       perror ("cannot close sd");
+#else
+    if (closesocket(sd) != 0)
+      perror ("cannot close sd"); // FIXME: Use a windows style error
+#endif
     sd = -1;
     if (control_fd[1] != -1
 	&& ::write(control_fd[1], "a", 1) == -1)
