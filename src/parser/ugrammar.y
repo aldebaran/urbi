@@ -1325,7 +1325,13 @@ var.opt:
 ;
 
 %type <symbols> identifiers identifiers.1 formals;
-%printer { debug_stream() << libport::separate (*$$, ", "); } <symbols>;
+%printer
+{
+  if ($$)
+    debug_stream() << libport::separate (*$$, ", ");
+  else
+    debug_stream() << "NULL";
+} <symbols>;
 
 // One or several comma-separated identifiers.
 identifiers.1:
