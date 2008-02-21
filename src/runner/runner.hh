@@ -56,11 +56,7 @@ namespace runner
     /// \}
 
     /// Execute the code of function \a func with arguments \a args in
-    /// the local runner after installing \a scope as the current
-    /// context. If \a scope is object::nil_class, a new scope will be
-    /// created as needed to bind "self" in the case of a function
-    /// written in Urbi. In the case of such a function, argument will
-    /// be bound in the user-provided or newly created scope.
+    /// the local runner.
     rObject apply (const rObject& func,
 		   const object::objects_type& args,
 		   const rObject call_message = 0);
