@@ -11,5 +11,5 @@ String.addProto(Orderable);
 
 do String
 {
-  slotCopy("size", "length");
+  copySlot("size", "length");
 };

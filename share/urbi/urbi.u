@@ -37,16 +37,16 @@ var Code.context = nil;
 
 do Object
 {
-  # Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
-  function slotCopy (frm, to) {
+  # Cannot use "from" which is a k1 reserved word :) :) :)
+  function copySlot (frm, to) {
     # This is annoying: one has to specify "self" here, otherwise the
     # setSlot goes to the locals_ :(
     self . setSlot(to, getSlot(frm))
   };
-  slotCopy ("addProto", "inherit");
-  slotCopy ("removeProto", "disinherit");
+  copySlot ("addProto", "inherit");
+  copySlot ("removeProto", "disinherit");
   
-  slotCopy ("sameAs", "==");
+  copySlot ("sameAs", "==");
   void
 };
 
@@ -342,7 +342,7 @@ do List
   };
 
   # The Lisp-like name.
-  slotCopy ("front", "head");
+  copySlot ("front", "head");
 
   void;
 };
