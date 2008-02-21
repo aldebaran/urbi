@@ -22,8 +22,7 @@
 `----------*/
 
 UParser::UParser()
-  : command_tree_ (0),
-    binaryCommand (false),
+  : ast_ (0),
     errors_ (),
     warnings_ (),
     scanner_ (),
@@ -37,8 +36,7 @@ int
 UParser::parse_ ()
 {
   TIMER_PUSH("parse");
-  command_tree_ = 0;
-  binaryCommand = false;
+  ast_ = 0;
 
   parser_type p(*this);
 #ifdef ENABLE_DEBUG_TRACES
@@ -67,25 +65,25 @@ UParser::process (const std::string& command)
 }
 
 ast::Ast*
-UParser::command_tree_get ()
+UParser::ast_get ()
 {
   if (hasError ())
     return 0;
-  return command_tree_;
+  return ast_;
 }
 
 const ast::Ast*
-UParser::command_tree_get () const
+UParser::ast_get () const
 {
   if (hasError ())
     return 0;
-  return command_tree_;
+  return ast_;
 }
 
 void
-UParser::command_tree_set (ast::Ast* ast)
+UParser::ast_set (ast::Ast* ast)
 {
-  command_tree_ = ast;
+  ast_ = ast;
 }
 
 int
@@ -132,8 +130,8 @@ UParser::process_errors(ast::Nary* target)
   // Errors handling
   if (!errors_.empty())
   {
-    delete command_tree_get();
-    command_tree_set (0);
+    delete ast_;
+    ast_ = 0;
 
     BOOST_FOREACH(std::string e, errors_)
       target->message_push(e, "error");

@@ -524,7 +524,7 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   UParser& p = parser();
   PING();
-  if (p.command_tree_get ())
+  if (p.ast_get ())
   {
     // This chunk of code seems suspect in k2, meanwhile:
     pabort ("SHOULD NEVER BE HERE");
@@ -557,7 +557,7 @@ UConnection::received_ (const ubyte *buffer, int length)
     assert (result != -1);
     server->setSystemCommand (true);
 
-    if (!p.command_tree_get ())
+    if (!p.ast_get ())
     {
       *this << send ("the parser returned NULL\n", "error");
       server->error(::DISPLAY_FORMAT, (long) this,
@@ -565,16 +565,16 @@ UConnection::received_ (const ubyte *buffer, int length)
 		    "the parser returned NULL\n");
     }
     p.process_errors(active_command_);
-    if (p.command_tree_get ())
+    if (p.ast_get ())
     {
       // We parsed a new command (either a ";" or a ",", in any case
       // it's a Nary).  Append it in the AST.
       ast::Nary& parsed_command =
-	dynamic_cast<ast::Nary&> (*p.command_tree_get ());
+	dynamic_cast<ast::Nary&> (*p.ast_get ());
       ECHO ("parsed: {{{" << parsed_command << "}}}");
       // Append to the current list.
       active_command_->splice_back(parsed_command);
-      p.command_tree_set (0);
+      p.ast_set (0);
       ECHO ("appended: " << *active_command_ << "}}}");
     }
   }
@@ -586,7 +586,7 @@ UConnection::received_ (const ubyte *buffer, int length)
     execute ();
 
   receiving = false;
-  p.command_tree_set (0);
+  p.ast_set (0);
 #if ! defined LIBPORT_URBI_ENV_AIBO
   treeLock.unlock();
 #endif

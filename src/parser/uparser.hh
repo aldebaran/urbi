@@ -64,16 +64,14 @@ public:
 
   /// \{
   /// The last AST read by process().
-  ast::Ast* command_tree_get ();
-  const ast::Ast* command_tree_get () const;
-  void command_tree_set (ast::Ast* ast);
+  ast::Ast* ast_get ();
+  const ast::Ast* ast_get () const;
+  void ast_set (ast::Ast* ast);
 private:
-  ast::Ast* command_tree_;
+  ast::Ast* ast_;
   /// \}
 
 public:
-  bool binaryCommand;
-
   token_type scan(semantic_type* val, location_type* loc);
 
   /// Declare an error at \a l about \a msg.

@@ -181,10 +181,10 @@ namespace object
     p.process_errors(&errs);
     errs.accept(r);
 
-    if (!p.command_tree_get())
+    if (!p.ast_get())
       boost::throw_exception (e);
     else
-      p.command_tree_get()->accept(r);
+      p.ast_get()->accept(r);
     //FIXME: deleting the tree now causes segv.
     //delete p.command_tree_get();
     //p.command_tree_set (0);

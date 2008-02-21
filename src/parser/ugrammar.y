@@ -594,12 +594,8 @@ start:
 root:
     /* Minimal error recovery, so that all the tokens are read,
        especially the end-of-lines, to keep error messages in sync. */
-  error
-  {
-    // FIXME: We should probably free it.
-    up.command_tree_set (0);
-  }
-| stmts      { up.command_tree_set ($1); }
+  error  { up.ast_set (0); /* FIXME: We should probably free it. */ }
+| stmts  { up.ast_set ($1); }
 ;
 
 
@@ -1373,7 +1369,7 @@ cstmt:
   {
     ast::Nary* res = new ast::Nary();
     res->push_back ($1);
-    up.command_tree_set (res);
+    up.ast_set (res);
   }
 ;
 
