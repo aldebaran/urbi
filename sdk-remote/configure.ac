@@ -2,7 +2,7 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.61])
-AC_INIT([URBI SDK Remote], [1.6pre],
+AC_INIT([URBI SDK Remote], [1.5],
 	[sdk-remote-bugs@gostai.com], [sdk-remote])
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2008])
 
