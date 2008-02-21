@@ -78,9 +78,8 @@
   Macro(argsCount, "argsCount");                  \
   Macro(asString, "asString");                    \
   Macro(asin, "asin");                            \
-  Macro(atEntry, "atEntry");                      \
-  Macro(atExit, "atExit");                        \
   Macro(atan, "atan");                            \
+  Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \
   Macro(call, "call");                            \
   Macro(clear, "clear");                          \
