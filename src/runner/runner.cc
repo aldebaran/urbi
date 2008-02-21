@@ -74,16 +74,21 @@ namespace runner
       throw;							\
   }
 
-/** Catch UrbiException, execute Code, then display the error if not allready
+/** Catch exceptions, execute Code, then display the error if not already
  * done, and rethrow it. Also execute Code if no exception caught. */
-#define PROPAGATE_URBI_EXCEPTION(Loc, Code)          		\
-  catch(object::UrbiException& ue)                   		\
-  {                                                  		\
-    Code                                             		\
-    current_.reset();                                		\
-    show_error_(ue, Loc);                            		\
-    throw;							\
-  }                                                  		\
+#define PROPAGATE_EXCEPTION(Loc, Code)	\
+  catch(object::UrbiException& ue)		\
+  {						\
+    Code					\
+    current_.reset();				\
+    show_error_(ue, Loc);			\
+    throw;					\
+  }						\
+  catch(...)					\
+  {						\
+    Code					\
+    throw;					\
+  }						\
   Code
 
   void
@@ -236,7 +241,7 @@ namespace runner
     {
       current_ = re.result_get();
     }
-    PROPAGATE_URBI_EXCEPTION(fn.location_get(), std::swap(bound_args, locals_);)
+    PROPAGATE_EXCEPTION(fn.location_get(), std::swap(bound_args, locals_);)
 
     return current_;
   }
@@ -248,8 +253,8 @@ namespace runner
     try {
 	eval (e);
     }
-    PROPAGATE_URBI_EXCEPTION(e.location_get(),
-			     {run_at_exit (scope); std::swap(locals_, scope);});
+    PROPAGATE_EXCEPTION(e.location_get(),
+			{run_at_exit (scope); std::swap(locals_, scope);});
     return current_;
   }
 
@@ -376,7 +381,7 @@ namespace runner
       // Ask the target for the handler of the message.
       val = tgt->slot_get (e.name_get ());
     }
-    PROPAGATE_URBI_EXCEPTION(e.location_get(), {})
+    PROPAGATE_EXCEPTION(e.location_get(), {};)
 
     assert(val);
 
@@ -405,7 +410,7 @@ namespace runner
     try {
       apply (val, args, call_message);
     }
-    PROPAGATE_URBI_EXCEPTION(e.location_get(), call_stack_.pop_front();)
+    PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_front();)
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
@@ -651,7 +656,7 @@ namespace runner
 	throw;
       }
     }
-    PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+    PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
   }
 
 
@@ -732,7 +737,7 @@ namespace runner
     {
       TYPE_CHECK(current_, object::List);
     }
-    PROPAGATE_URBI_EXCEPTION(e.location_get(), {});
+    PROPAGATE_EXCEPTION(e.location_get(), {};)
 
     JECHO("foreach body", e.body_get());
 
@@ -777,7 +782,7 @@ namespace runner
 	  break;
 	}
 	// Restore previous locals_, even if an exception was thrown.
-	PROPAGATE_URBI_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+	PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
       }
     }
 
