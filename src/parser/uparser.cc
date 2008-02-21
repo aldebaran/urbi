@@ -14,10 +14,14 @@
 
 #include <libport/foreach.hh>
 
+#include "ast/pretty-printer.hh"
+
 #include "server-timer.hh"
 
 #include "ast/nary.hh"
+
 #include "parser/tweast.hh"
+#include "parser/utoken.hh"
 #include "parser/uparser.hh"
 
 /*----------.
@@ -28,20 +32,21 @@ UParser::UParser()
   : ast_ (0),
     errors_ (),
     warnings_ (),
-    scanner_ (),
-    loc_()
+    loc_(),
+    synclines_()
 {
   // The first column for locations is 1.
   loc_.begin.column = loc_.end.column = 1;
 }
 
 int
-UParser::parse_ ()
+UParser::parse_ (std::istream& source)
 {
   TIMER_PUSH("parse");
-  ast_ = 0;
-
-  parser_type p(*this);
+  passert(ast_, !ast_);
+  yyFlexLexer scanner;
+  scanner.switch_streams(&source, 0);
+  parser_type p(*this, scanner);
   p.set_debug_level (!!getenv ("YYDEBUG"));
   ECHO("====================== Parse begin");
   int res = p.parse();
@@ -56,17 +61,20 @@ UParser::process (const std::string& command)
   // It has been said Flex scanners cannot work with istrstream.
   std::istrstream mem_buff (command.c_str ());
   std::istream mem_input (mem_buff.rdbuf());
-  scanner_.switch_streams(&mem_input, 0);
   ECHO("Parsing string: ==================\n"
        << loc_ << ":\n" << command
        << "\n==================================");
-  return parse_ ();
+  return parse_ (mem_buff);
 }
 
 int
-UParser::process (const parser::Tweast& t)
+UParser::process (parser::Tweast& t)
 {
-  return process (t.input_get());
+  tweast_ = &t;
+  std::cerr << "Tweast in: " << t << std::endl;
+  int res = process (t.input_get());
+  std::cerr << "Tweast out: " << *ast_ << std::endl;
+  return res;
 }
 
 ast::Ast*
@@ -104,9 +112,8 @@ UParser::process_file (const std::string& fn)
   std::ifstream f (fn.c_str());
   if (!f.good())
     return 1; // Return an error instead of creating a valid empty ast.
-  scanner_.switch_streams(&f, 0);
   ECHO("Parsing file: " << fn);
-  int res = parse_();
+  int res = parse_(f);
   std::swap(loc, loc_);
   return res;
 }

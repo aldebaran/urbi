@@ -225,9 +225,6 @@ public:
 
   // The default start condition: the one replacing INITIAL.
   int sc_default;
-
-  // A stack of synclines to support #push/#pop.
-  std::stack<yy::location> synclines;
 };
 
 #endif // !PARSER_FLEX_LEXER_HH

@@ -28,7 +28,9 @@
 %defines
 %skeleton "lalr1.cc"
 %parse-param {UParser& up}
-%lex-param   {UParser* up}
+%parse-param {FlexLexer& scanner}
+%lex-param   {UParser& up}
+%lex-param   {FlexLexer& scanner}
 %debug
 
 %code requires
@@ -37,6 +39,7 @@
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "ast/fwd.hh"
+#include "parser/fwd.hh"
 }
 
 // Locations.
@@ -65,11 +68,22 @@
 
 #include "object/atom.hh"
 
+#include "parser/tweast.hh"
 #include "parser/uparser.hh"
+#include "parser/utoken.hh"
 
   namespace
   {
     typedef yy::parser::location_type loc;
+
+    /// Get the metavar from the specified map.
+    template <typename T>
+    static
+    T*
+    metavar (UParser& up, unsigned key)
+    {
+      return up.tweast_->template take<T> (key);
+    }
 
     /// Return the value pointed to be \a s, and delete it.
     template <typename T>
@@ -364,9 +378,10 @@
   /// Direct the call from 'bison' to the scanner in the right UParser.
   inline
   yy::parser::token_type
-  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
+  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up,
+	FlexLexer& scanner)
   {
-    return up.scanner_.yylex(val, loc, &up);
+    return scanner.yylex(val, loc, &up);
   }
 
 } // %code requires.
@@ -952,33 +967,17 @@ stmt:
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
-      /*
-       * Compiled as
-       *
-       * {
-       *   var ___idx = <expr>;
-       *   while (___idx > 0)
-       *   {
-       *     <stmt>
-       *     ___idx--;
-       *   }
-       * }
-       *
-       * using the ast_for function.
-       */
-
-      // var ___idx = <expr>
-      ast::Call *idx = ast_call(@$, 0, libport::Symbol::fresh());
-      ast::Call	*init = ast_slot_set(@$, idx, $3);
-
-      // ___idx > 0
-      ast::Call *test =
-	ast_call(@$, idx, new libport::Symbol(">"), ast_object(@$, 0));
-      // ___idx--
-      ast::Call *dec = ast_call(@$, idx, libport::Symbol("--"));
-
-      // Put all together into a while.
-      $$ = ast_for(@$, $1, init, test, dec, $5);
+      libport::Symbol idx = libport::Symbol::fresh();
+      int err = up.process (::parser::Tweast()
+			    << "for (var " << idx << " = " << $3 << ";"
+			    << "    0 < " << idx << ";"
+			    << "    " << idx << "--)"
+			    << "  " << $5);
+      assert (!err);
+      ast::Exp* res = dynamic_cast<ast::Exp*>(up.ast_get());
+      assert(res);
+      up.ast_set(0);
+      $$ = res;
     }
 | "stopif" "(" softtest ")" stmt
     {
@@ -1266,6 +1265,11 @@ expr.opt:
 | expr          { $$ = $1; }
 ;
 
+// Metavariables.
+%token TOK__EXP "_exp";
+expr:
+  "_exp" "(" "integer" ")"    { $$ = metavar<ast::Exp> (up, $3); }
+;
 
 /*--------------.
 | Expressions.  |

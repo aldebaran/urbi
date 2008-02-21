@@ -21,7 +21,8 @@ namespace parser
   template <typename Data>
   MetavarMap<Data>::~MetavarMap ()
   {
-    assertion (map_.empty ());
+    // All the values must have been used.
+    passert (map_, map_.empty ());
   }
 
   template <typename Data>

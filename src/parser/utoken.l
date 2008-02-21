@@ -346,7 +346,7 @@ FLAVOR   [;|,&]?
   }
 
   if (push)
-    synclines.push(*locp);
+    up->synclines_.push(*locp);
 
   locp->initialize (!file || STREQ(file, "-") ? 0 : new libport::Symbol (file));
   locp->lines (lexical_cast<int>(*up, *locp, line) - 1);
@@ -355,8 +355,8 @@ FLAVOR   [;|,&]?
 
 ^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
   PRE_SKIP();
-  *locp = synclines.top();
-  synclines.pop();
+  *locp = up->synclines_.top();
+  up->synclines_.pop();
 }
 
   /*--------------------------------------------------------------.
@@ -439,6 +439,8 @@ FLAVOR   [;|,&]?
 
 "internal"  DEPRECATED("");
 "external"  RETURN_SYMBOL (BINDER);
+
+"_exp"          RETURN(_EXP);
 
 "addgroup"      RETURN(ADDGROUP);
 "alias"         RETURN(ALIAS);

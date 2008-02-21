@@ -7,10 +7,14 @@
 #ifndef PARSER_FWD_HH
 # define PARSER_FWD_HH
 
+// parser/flex-lexer.hh.
+class FlexLexer;
+
 namespace parser
 {
-  // tweast.hh.
+  // parser/tweast.hh.
   class Tweast;
+
 } // namespace parser
 
 #endif // !PARSER_FWD_HH

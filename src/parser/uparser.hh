@@ -49,15 +49,14 @@ public:
 
   /// Parse the command from a TWEAST.
   /// \return yyparse's result (0 on success).
-  int process (const parser::Tweast& t);
+  int process (parser::Tweast& t);
+
+  parser::Tweast* tweast_;
 
   /// Parse a file.
   /// \return yyparse's result (0 on success).
   int process_file (const std::string& fn);
 
-  /// The parsed object is either a file, represented by the filename
-  /// or a Tweast.
-  int process (parser::Tweast& t);
 
   /// \{
   /// The latest AST read by process().
@@ -80,9 +79,9 @@ public:
   void process_errors(ast::Nary* target);
 
 private:
-  // Give access to loc_ and scanner_.
+  // Give access to loc_.
   friend int parser_type::parse ();
-  friend token_type yylex (semantic_type*, location_type*, UParser&);
+  friend YY_DECL;
 
   /// Errors and warnings.
   typedef std::list<std::string> messages_type;
@@ -98,14 +97,14 @@ private:
 		    const yy::parser::location_type& l,
 		    const std::string& msg);
 
-  /// Run the parse.  Expects the scanner to be initialized.
-  int parse_ ();
-
-  /// The Flex scanner.
-  yyFlexLexer scanner_;
+  /// Run the parse.
+  int parse_ (std::istream& source);
 
   /// The current location.
   location_type loc_;
+
+  /// A stack of locations to support #push/#pop.
+  std::stack<yy::location> synclines_;
 };
 
 #endif // !PARSER_UPARSER_HH

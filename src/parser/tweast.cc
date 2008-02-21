@@ -1,11 +1,13 @@
 /**
  ** \file parser/tweast.cc
- ** \brief Implementation of parse::Tweast.
+ ** \brief Implementation of parser::Tweast.
  */
 
 #include <sstream>
 
 #include <libport/foreach.hh>
+
+#include "ast/pretty-printer.hh"
 
 #include "parser/tweast.hh"
 
