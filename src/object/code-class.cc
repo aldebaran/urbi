@@ -3,8 +3,6 @@
  ** \brief Creation of the URBI object code.
  */
 
-#include <libport/foreach.hh>
-
 #include "object/code-class.hh"
 
 #include "object/atom.hh"
@@ -25,13 +23,7 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
-
-    objects_type apply_args;
-    apply_args.push_back (args[0]);
-    foreach (rObject arg, arg1->value_get ())
-      apply_args.push_back (arg);
-
-    return r.apply (args[0], apply_args);
+    return r.apply (args[0], arg1);
   }
 
 

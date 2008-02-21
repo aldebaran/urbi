@@ -65,6 +65,9 @@ namespace runner
 		   const object::objects_type& args,
 		   const rObject call_message = 0);
 
+    /// Use an argument list coming from Urbi.
+    rObject apply (const rObject& func, const object::rList& args);
+
     /// Eval a tree in a given local scope
     rObject eval_in_scope (rObject scope, ast::Exp& e);
 

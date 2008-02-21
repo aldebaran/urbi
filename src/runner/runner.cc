@@ -294,6 +294,15 @@ namespace runner
     return current_;
   }
 
+  object::rObject
+  Runner::apply (const rObject& func, const object::rList& args)
+  {
+    object::objects_type apply_args;
+    foreach (rObject arg, args->value_get ())
+      apply_args.push_back (arg);
+    return apply (func, apply_args);
+  }
+
   void
   Runner::push_evaluated_arguments (object::objects_type& args,
 				    const ast::exps_type& ue_args)
