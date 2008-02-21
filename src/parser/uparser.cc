@@ -124,7 +124,7 @@ UParser::message_push(messages_type& msgs,
 void
 UParser::process_errors(ast::Nary* target)
 {
-  foreach(std::string e, warnings_)
+  foreach(const std::string& e, warnings_)
     target->message_push(e, "warning");
   warnings_.clear();
 
@@ -134,7 +134,7 @@ UParser::process_errors(ast::Nary* target)
     delete ast_;
     ast_ = 0;
 
-    foreach(std::string e, errors_)
+    foreach(const std::string& e, errors_)
       target->message_push(e, "error");
     errors_.clear();
   }
