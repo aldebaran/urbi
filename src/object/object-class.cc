@@ -382,6 +382,13 @@ namespace object
     return args[0];
   }
 
+  static rObject
+  object_class_isScope (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return new Float (args[0]->locals_get () ? 1 : 0);
+  }
+
   void
   object_class_initialize ()
   {
@@ -402,6 +409,7 @@ namespace object
     DECLARE(updateSlot);
     DECLARE(locateSlot);
     DECLARE(makeScope);
+    DECLARE(isScope);
 
     DECLARE(apply);
 

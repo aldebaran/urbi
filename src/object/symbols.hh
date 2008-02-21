@@ -82,6 +82,7 @@
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
   Macro(insert, "insert");                        \
+  Macro(isScope, "isScope");                      \
   Macro(keywords, "keywords");                    \
   Macro(load, "load");                            \
   Macro(lobby, "lobby");                          \
