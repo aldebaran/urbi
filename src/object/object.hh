@@ -13,6 +13,7 @@
 # include "libport/hash.hh"
 # include "libport/symbol.hh"
 # include "object/fwd.hh"
+# include "runner/fwd.hh"
 
 namespace object
 {
@@ -158,7 +159,10 @@ namespace object
     bool locals_;
 
     friend rObject slot_locate(const rObject& ref, const Object::key_type& k);
-    friend void slot_update(rObject& ref, const Object::key_type& k, rObject o);
+    friend void slot_update(runner::Runner& r,
+			    rObject& ref,
+			    const Object::key_type& k,
+			    rObject o);
   };
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -178,7 +182,10 @@ namespace object
   /// existing slot, not creating a new slot in the inner scope.
   /// Except if the existing source slot is a "real" object, in which case
   /// updating means creating the slot in the result of "self" evaluation.
-  void slot_update(rObject& ref, const Object::key_type& k, rObject o);
+  void slot_update (runner::Runner& r,
+		    rObject& ref,
+		    const Object::key_type& k,
+		    rObject o);
 
   /// Report Object \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);

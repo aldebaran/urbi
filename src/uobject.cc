@@ -204,7 +204,10 @@ namespace urbi
     }
     catch(object::RedefinitionError)
     {
-      slot_update(o, libport::Symbol(p.second), val);
+      slot_update(::urbiserver->getCurrentRunner (),
+		  o,
+		  libport::Symbol(p.second),
+		  val);
     }
   }
 

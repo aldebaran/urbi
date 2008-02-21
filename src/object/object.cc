@@ -14,6 +14,8 @@
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
 
+#include "runner/runner.hh"
+
 namespace object
 {
   /*-------.
@@ -111,7 +113,10 @@ namespace object
   }
 
   void
-  slot_update (rObject& context, const Object::key_type& k, rObject o)
+  slot_update (runner::Runner& r,
+	       rObject& context,
+	       const Object::key_type& k,
+	       rObject o)
   {
     Object& l = context->safe_slot_locate(k);
 
@@ -120,7 +125,11 @@ namespace object
     else if (context->locals_ && !l.locals_)
     {
       // Local->class: copyonwrite to "self" after evaluating it.
-      rObject self = context->slot_get(SYMBOL(self));
+      rObject self_obj = context->slot_get(SYMBOL(self));
+      assert (self_obj);
+      objects_type self_args;
+      self_args.push_back (context);
+      rObject self = r.apply (self_obj, self_args);
       assert(self);
       self.get ()->slots_[k] = o;
     }

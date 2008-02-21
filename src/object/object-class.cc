@@ -375,11 +375,11 @@ namespace object
   }
 
   static rObject
-  object_class_updateSlot (runner::Runner&, objects_type args)
+  object_class_updateSlot (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (3);
     FETCH_ARG (1, String);
-    slot_update (args[0], arg1->value_get (), args[2]);
+    slot_update (r, args[0], arg1->value_get (), args[2]);
     return args[2];
   }
 
