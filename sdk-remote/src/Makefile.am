@@ -3,7 +3,7 @@ include $(top_srcdir)/build-aux/init.mk
 SUBDIRS = liburbi
 
 if EXAMPLES
-SUBDIRS += #utils #examples
+SUBDIRS += utils examples
 endif
 
 ## ------------ ##
