@@ -18,6 +18,11 @@ class Kernel1Functions
     echo ("pong time=" + time.asString);
   };
 
+  function strlen(s)
+  {
+    s.length
+  };
+
   function on()
   {
     self.load = 1;
