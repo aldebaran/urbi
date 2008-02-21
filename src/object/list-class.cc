@@ -87,6 +87,14 @@ namespace object
       return l;
     }
 
+    /// Clear \l
+    static rList
+    clear(rList l)
+    {
+      l->value_get().clear();
+      return l;
+    }
+
     /// Binary predicate used to sort lists.
     static bool
     compareListItems (const rObject a, const rObject b)
@@ -127,6 +135,7 @@ namespace object
 
   PRIMITIVE_1_LIST (sort);
   PRIMITIVE_1_LIST(back);
+  PRIMITIVE_1_LIST(clear);
   PRIMITIVE_1_LIST(front);
   PRIMITIVE_1_LIST(size);
   PRIMITIVE_1_LIST(tail);
@@ -143,6 +152,7 @@ namespace object
     DECLARE(PLUS);
     DECLARE(PLUS_EQ);
     DECLARE(back);
+    DECLARE(clear);
     DECLARE(front);
     DECLARE(push_back);
     DECLARE(size);
