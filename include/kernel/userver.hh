@@ -42,7 +42,7 @@
 
 # include "runner/fwd.hh"
 
-# include "scheduler/scheduler.hh"
+# include "scheduler/fwd.hh"
 
 extern const char* EXTERNAL_MESSAGE_TAG;
 extern const char* UNKNOWN_TAG;
