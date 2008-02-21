@@ -12,8 +12,9 @@
 #include <algorithm>
 #include <string>
 
+#include <libport/foreach.hh>
+
 #include "server-timer.hh"
-#include <boost/foreach.hpp>
 #include "uparser.hh"
 #include "ast/nary.hh"
 
@@ -123,7 +124,7 @@ UParser::message_push(messages_type& msgs,
 void
 UParser::process_errors(ast::Nary* target)
 {
-  BOOST_FOREACH(std::string e, warnings_)
+  foreach(std::string e, warnings_)
     target->message_push(e, "warning");
   warnings_.clear();
 
@@ -133,7 +134,7 @@ UParser::process_errors(ast::Nary* target)
     delete ast_;
     ast_ = 0;
 
-    BOOST_FOREACH(std::string e, errors_)
+    foreach(std::string e, errors_)
       target->message_push(e, "error");
     errors_.clear();
   }
