@@ -347,6 +347,51 @@ do List
   void;
 };
 
+## ------------------------ ##
+## Functional programming.  ##
+## ------------------------ ##
+
+do List {
+  function map (f)
+  {
+    var res = [];
+    for i in self { res += [f (i)] };
+    res
+  };
+
+  function any (f)
+  {
+    for i in self { if (f (i)) return true };
+    false
+  };
+
+  function all (f)
+  {
+    for i in self { if (!f (i)) return false };
+    true
+  }
+};
+
+do Object {
+  function bounce
+  {
+    function (x) {
+      x.getSlot (fn) .apply ([x])
+    }.capture ("fn", call.argString (1))
+  }
+};
+
+var Object.tasks = [];
+
+function Object.eachBg(f, list)
+{
+  if (list.size)
+  {
+    Object.tasks += [detach (f (list.head))];
+    eachBg (getSlot ("f"), list.tail)
+  }
+};
+
 load("urbi/k1.u");
 
 ## ----- ##
@@ -387,42 +432,6 @@ Object.addProto (Math);
 load("urbi/string.u");
 
 
-
-## ------------------------ ##
-## Functional programming.  ##
-## ------------------------ ##
-
-do List {
-  function map (f)
-  {
-    var res = [];
-    for i in self { res += [f (i)] };
-    res
-  };
-
-  function any (f)
-  {
-    for i in self { if (f (i)) return true };
-    false
-  };
-
-  function all (f)
-  {
-    for i in self { if (!f (i)) return false };
-    true
-  }
-};
-
-var Object.tasks = [];
-
-function Object.eachBg(f, list)
-{
-  if (list.size)
-  {
-    Object.tasks += [detach (f (list.head))];
-    eachBg (getSlot ("f"), list.tail)
-  }
-};
 
 ## -------------------------- ##
 ## Logic with short-circuit.  ##
