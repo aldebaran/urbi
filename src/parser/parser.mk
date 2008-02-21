@@ -1,5 +1,10 @@
 dist_libkernel_la_SOURCES +=			\
-parser/utoken.hh 				\
+parser/metavar-map.hh				\
+parser/metavar-map.hxx				\
+parser/tweast.hh				\
+parser/tweast.hxx				\
+parser/tweast.cc				\
+parser/utoken.hh				\
 parser/uparser.hh				\
 parser/uparser.cc
 

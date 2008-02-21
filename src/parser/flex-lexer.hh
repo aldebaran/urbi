@@ -230,4 +230,4 @@ public:
   std::stack<yy::location> synclines;
 };
 
-#endif // ! PARSER_FLEX_LEXER_HH
+#endif // !PARSER_FLEX_LEXER_HH

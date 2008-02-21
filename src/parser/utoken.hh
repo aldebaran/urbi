@@ -31,4 +31,4 @@
 /// parser error on it.
 size_t prescan (char *buf);
 
-#endif // ! PARSER_UTOKEN_HH
+#endif // !PARSER_UTOKEN_HH
