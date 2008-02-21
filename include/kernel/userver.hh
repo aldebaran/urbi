@@ -40,6 +40,8 @@
 # include "kernel/ustring.hh"
 # include "kernel/utypes.hh"
 
+# include "runner/fwd.hh"
+
 # include "scheduler/scheduler.hh"
 
 extern const char* EXTERNAL_MESSAGE_TAG;
@@ -239,6 +241,8 @@ public:
 
   const scheduler::Scheduler& getScheduler () const;
   scheduler::Scheduler& getScheduler ();
+
+  runner::Runner& getCurrentRunner () const;
 
 protected:
   virtual void effectiveDisplay (const char*) = 0;

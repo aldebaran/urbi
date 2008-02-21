@@ -51,6 +51,7 @@
 
 #include "object/atom.hh"
 #include "object/primitives.hh"
+#include "runner/runner.hh"
 #include "scheduler/scheduler.hh"
 
 #include "server-timer.hh"
@@ -563,6 +564,13 @@ UConnection&
 UServer::getGhostConnection ()
 {
   return *ghost_;
+}
+
+
+runner::Runner&
+UServer::getCurrentRunner () const
+{
+  return dynamic_cast<runner::Runner&> (scheduler_->current_job());
 }
 
 
