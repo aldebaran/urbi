@@ -299,7 +299,7 @@ namespace urbi
 #else
             errorCode = errno;
 #endif
-            errorMsg = "!!! Connection error : " + errorCode;
+            errorMsg = "!!! Connection error";
           }
           else // count == 0  => Connection close
           {
