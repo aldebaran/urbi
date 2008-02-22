@@ -5,10 +5,10 @@
 
 #include <algorithm>
 
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "libport/containers.hh"
+#include <libport/containers.hh>
+#include <libport/foreach.hh>
 
 #include "object/object.hh"
 #include "object/atom.hh"
@@ -42,7 +42,6 @@ namespace object
   Object::slot_locate (const key_type& k, Object::objects_type& os) const
   {
     /// Look in local slots.
-    slots_type::const_iterator it = slots_.find (k);
     if (libport::mhas(slots_, k))
       return locate_type(true, rObject());
 
@@ -53,7 +52,7 @@ namespace object
 
     /// Look in proto slots (depth first search).
     locate_type res;
-    BOOST_FOREACH(rObject p, protos_)
+    foreach(rObject p, protos_)
       if ((res = p->slot_locate(k, os)).first)
 	return res.second?res:locate_type(true, p);
     return locate_type(false, rObject());
@@ -201,7 +200,7 @@ namespace object
 	o << libport::iendl;
       }
     special_slots_dump (o);
-    BOOST_FOREACH (slot_type s, slots_)
+    foreach (slot_type s, slots_)
       o << s << libport::iendl;
     o << libport::decindent << '}';
     //We can not reuse current_depth variable above according to spec.
