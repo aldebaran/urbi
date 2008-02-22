@@ -280,9 +280,27 @@ namespace urbi
   };
 
   template <>
+  struct uvalue_caster<UValue&>
+  {
+    UValue& operator()(UValue& v)
+    {
+      return v;
+    }
+  };
+
+  template <>
   struct uvalue_caster<UValue>
   {
     UValue operator()(UValue& v)
+    {
+      return v;
+    }
+  };
+
+  template <>
+  struct uvalue_caster<const UValue>
+  {
+    const UValue operator()(UValue& v)
     {
       return v;
     }
