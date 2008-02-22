@@ -179,8 +179,9 @@ namespace runner
 
     ei = args.begin();
 
+    // If self has been set explicitely, use it. Otherwise, use the
+    // one provided by the caller.
     rObject self = func->own_slot_get (SYMBOL (self), *ei);
-
     bound_args->slot_set (SYMBOL (self), self);
 
     // self is also the proto of the function outer scope, so that
