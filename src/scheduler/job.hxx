@@ -111,7 +111,11 @@ namespace scheduler
   Job::check_for_pending_exception ()
   {
     if (pending_exception_)
-      boost::rethrow_exception (pending_exception_);
+    {
+      boost::exception_ptr to_throw;
+      std::swap (to_throw, pending_exception_);
+      boost::rethrow_exception (to_throw);
+    }
   }
 
   inline void
