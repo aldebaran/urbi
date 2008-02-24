@@ -15,8 +15,10 @@
 #include <libport/foreach.hh>
 
 #include "server-timer.hh"
-#include "uparser.hh"
+
 #include "ast/nary.hh"
+#include "parser/tweast.hh"
+#include "parser/uparser.hh"
 
 /*----------.
 | UParser.  |

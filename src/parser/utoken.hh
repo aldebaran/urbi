@@ -1,6 +1,16 @@
 #ifndef PARSER_UTOKEN_HH
 # define PARSER_UTOKEN_HH
 
+# include "ugrammar.hh"
+# include "parser/flex-lexer.hh"
+
+# undef  YY_DECL
+# define YY_DECL                                                 \
+  UParser::token_type						 \
+  yyFlexLexer::yylex(UParser::semantic_type* valp,		 \
+		     UParser::location_type* locp,		 \
+		     UParser* up)
+
 /* The scanner is used for two different purposes: "regular": as a
    regular scanner that feeds its parser, and "prescanner" as a
    pre-scanner that tries to find a complete sentence to feed the
