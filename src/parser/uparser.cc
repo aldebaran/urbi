@@ -40,11 +40,7 @@ UParser::parse_ ()
   ast_ = 0;
 
   parser_type p(*this);
-#ifdef ENABLE_DEBUG_TRACES
-  p.set_debug_level(true);
-#else
   p.set_debug_level (!!getenv ("YYDEBUG"));
-#endif
   ECHO("====================== Parse begin");
   int res = p.parse();
   ECHO("====================== Parse end: " << res);
