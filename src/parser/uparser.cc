@@ -72,17 +72,13 @@ UParser::process (const parser::Tweast& t)
 ast::Ast*
 UParser::ast_get ()
 {
-  if (hasError ())
-    return 0;
-  return ast_;
+  return errors_.empty () ? ast_ : 0;
 }
 
 const ast::Ast*
 UParser::ast_get () const
 {
-  if (hasError ())
-    return 0;
-  return ast_;
+  return errors_.empty () ? ast_ : 0;
 }
 
 void
@@ -154,44 +150,4 @@ void
 UParser::warn (const yy::parser::location_type& l, const std::string& msg)
 {
   message_push(warnings_, l, msg);
-}
-
-bool
-UParser::hasError () const
-{
-  return !errors_.empty();
-}
-
-std::string
-UParser::error_get () const
-{
-  // precondition
-  assert(hasError());
-  return errors_.front();
-}
-
-bool
-UParser::hasWarning () const
-{
-  return !warnings_.empty();
-}
-
-std::string
-UParser::warning_get () const
-{
-  // precondition
-  assert(hasWarning());
-  return warnings_.front();
-}
-
-void
-UParser::warning_pop ()
-{
-  warnings_.pop_front();
-}
-
-void
-UParser::error_pop ()
-{
-  errors_.pop_front();
 }

@@ -60,7 +60,7 @@ public:
   int process (parser::Tweast& t);
 
   /// \{
-  /// The last AST read by process().
+  /// The latest AST read by process().
   ast::Ast* ast_get ();
   const ast::Ast* ast_get () const;
   void ast_set (ast::Ast* ast);
@@ -69,36 +69,15 @@ private:
   /// \}
 
 public:
-  token_type scan(semantic_type* val, location_type* loc);
-
   /// Declare an error at \a l about \a msg.
   void error (const location_type& l, const std::string& msg);
 
   /// Warn at \a l about \a msg.
   void warn (const location_type& l, const std::string& msg);
 
-  /// @name Errors and warnings handling
-  /// @{
-
   /// Push all warning and error messages in \b target.
   /// If errors were pushed, the command tree is deleted and set to 0.
   void process_errors(ast::Nary* target);
-
-  /// Whether one or several errors occured during parsing.
-  bool hasError() const;
-  /// Give the oldest error message.
-  std::string error_get() const;
-  /// Pop the oldest error message.
-  void error_pop ();
-
-  /// Whether one or several warnings occured during parsing.
-  bool hasWarning() const;
-  /// Give the oldest warning message.
-  std::string warning_get() const;
-  /// Pop the oldest warning message.
-  void warning_pop ();
-
-  /// @}
 
 private:
   // Give access to loc_ and scanner_.
