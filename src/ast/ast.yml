@@ -77,7 +77,7 @@ visitor_hh_prologue: |2
   # include <boost/preprocessor/array.hpp>
   # include <boost/preprocessor/repeat.hpp>
  
-  # include "libport/select-const.hh"
+  # include <libport/select-const.hh>
  
   # include "ast/fwd.hh"
 
@@ -88,7 +88,7 @@ default_visitor_hh_prologue: |2
   # include <ostream>
   # include "ast/visitor.hh"
   # include "ast/fwd.hh"
-  # include "libport/select-const.hh"
+  # include <libport/select-const.hh>
 
 # The beginning of fwd.hh, for includes.
 fwd_hh_prologue: |2
@@ -96,7 +96,8 @@ fwd_hh_prologue: |2
   # include <list>
   # include <vector>
   
-  # include "libport/fwd.hh"
+  # include <libport/fwd.hh>
+  # include <libport/separator.hh>
 
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
@@ -114,10 +115,9 @@ fwd_hh_epilogue: |2
 
 printer_cc_prologue: |2
 
-  #include "libport/escape.hh"
-  #include "libport/indent.hh"
-  #include "libport/pair.hh"
-  #include "libport/separator.hh"
+  #include <libport/escape.hh>
+  #include <libport/indent.hh>
+  #include <libport/pair.hh>
 
   #include <boost/foreach.hpp>
   #define foreach BOOST_FOREACH
@@ -362,8 +362,8 @@ Nary:
     impl prologue: |2
       #include <boost/foreach.hpp>
         
-      #include "libport/indent.hh"
-      #include "libport/separator.hh"
+      #include <libport/indent.hh>
+      #include <libport/separator.hh>
 
       #include "ast/pretty-printer.hh"
 
