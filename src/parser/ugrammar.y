@@ -1389,18 +1389,8 @@ formals:
 // sick), but we don't need to do better that k1 itself, which accepts
 // this only here.
 
-cstmt:
-  k1bin
-  {
-    ast::Nary* res = new ast::Nary();
-    res->push_back ($1);
-    up.ast_set (res);
-  }
-;
-
 %token <expr> TOK_K1BIN "BIN data";
-%type  <expr> k1bin;
-k1bin:
+cstmt:
 	lvalue "=" "BIN data" { $$ = ast_slot_update (@$, $1, $3); }
 | "var" lvalue "=" "BIN data" { $$ = ast_slot_set    (@$, $2, $4); }
 ;
