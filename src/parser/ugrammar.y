@@ -395,6 +395,14 @@
     return scanner.yylex(val, loc, &up);
   }
 
+# define DESUGAR(Var, Code)				\
+  do {							\
+    int err = up.process(::parser::Tweast() << Code);	\
+    assert (!err);					\
+    Var = up.ast_xtake().release();			\
+  } while(0)
+
+
 } // %code requires.
 
 /* Tokens and nonterminal symbols, with their type */
@@ -775,13 +783,9 @@ stmt:
       // Currently does not work, because although we store an LValue
       // (an ast::Call), we get here as an Exp, which is not good enough
       // to be used with "var".
-      ast::Exp* lvalue = $2;
-      int err = up.process
-	(::parser::Tweast()
-	 << "var " << ast::clone(*lvalue) << "= Object.clone;"
-	 << "do " << lvalue << "{" << ast_exp($4) << "};");
-      assert (!err);
-      $$ = up.ast_xtake().release();
+      DESUGAR($$, 
+	      "var " << ast::clone(*lvalue) << "= Object.clone;"
+	      << "do " << lvalue << "{" << ast_exp($4) << "};");
 #endif
     }
 | "class" lvalue
@@ -991,14 +995,12 @@ stmt:
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
-      libport::Symbol idx = libport::Symbol::fresh();
-      int err = up.process (::parser::Tweast()
-			    << "for (var " << idx << " = " << $3 << ";"
-			    << "    0 < " << idx << ";"
-			    << "    " << idx << "--)"
-			    << "  " << $5);
-      assert (!err);
-      $$ = up.ast_xtake().release();
+      libport::Symbol id = libport::Symbol::fresh();
+      DESUGAR($$,
+	      "for (var " << id << " = " << $3 << ";"
+	      << "    0 < " << id << ";"
+	      << "    " << id << "--)"
+	      << "  " << $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
