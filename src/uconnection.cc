@@ -554,28 +554,27 @@ UConnection::received_ (const ubyte *buffer, int length)
   {
     server->setSystemCommand (false);
     int result = p.process (command);
-    assert (result != -1);
+    passert (result, result != -1);
+    p.process_errors(active_command_);
     server->setSystemCommand (true);
 
-    if (!p.ast_get ())
-    {
-      *this << send ("the parser returned NULL\n", "error");
-      server->error(::DISPLAY_FORMAT, (long) this,
-		    "UConnection::received",
-		    "the parser returned NULL\n");
-    }
-    p.process_errors(active_command_);
-    if (p.ast_get ())
+    if (ast::Ast* ast = p.ast_get ())
     {
       // We parsed a new command (either a ";" or a ",", in any case
       // it's a Nary).  Append it in the AST.
-      ast::Nary& parsed_command =
-	dynamic_cast<ast::Nary&> (*p.ast_get ());
+      ast::Nary& parsed_command = dynamic_cast<ast::Nary&> (*ast);
       ECHO ("parsed: {{{" << parsed_command << "}}}");
       // Append to the current list.
       active_command_->splice_back(parsed_command);
       p.ast_set (0);
       ECHO ("appended: " << *active_command_ << "}}}");
+    }
+    else
+    {
+      *this << send ("the parser returned NULL\n", "error");
+      server->error(::DISPLAY_FORMAT, (long) this,
+		    "UConnection::received",
+		    "the parser returned NULL\n");
     }
   }
 
