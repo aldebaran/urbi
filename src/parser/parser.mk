@@ -7,6 +7,7 @@ parser/tweast.hxx				\
 parser/tweast.cc				\
 parser/utoken.hh				\
 parser/uparser.hh				\
+parser/uparser.hxx				\
 parser/uparser.cc
 
 ## -------------- ##

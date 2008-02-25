@@ -558,15 +558,11 @@ UConnection::received_ (const ubyte *buffer, int length)
     p.process_errors(active_command_);
     server->setSystemCommand (true);
 
-    if (ast::Ast* ast = p.ast_get ())
+    if (ast::Nary* ast = p.ast_take().release())
     {
-      // We parsed a new command (either a ";" or a ",", in any case
-      // it's a Nary).  Append it in the AST.
-      ast::Nary& parsed_command = dynamic_cast<ast::Nary&> (*ast);
-      ECHO ("parsed: {{{" << parsed_command << "}}}");
+      ECHO ("parsed: {{{" << *ast << "}}}");
       // Append to the current list.
-      active_command_->splice_back(parsed_command);
-      p.ast_set (0);
+      active_command_->splice_back(*ast);
       ECHO ("appended: " << *active_command_ << "}}}");
     }
     else

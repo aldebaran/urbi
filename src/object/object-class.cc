@@ -5,6 +5,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
+#include <libport/throw-exception.hh>
 #include <libport/tokenizer.hh>
 #include <boost/lexical_cast.hpp>
 
@@ -181,14 +182,16 @@ namespace object
     p.process_errors(&errs);
     errs.accept(r);
 
-    if (!p.ast_get())
-      boost::throw_exception (e);
+    if (ast::Nary* ast = p.ast_get())
+    {
+      ast->accept(r);
+      //FIXME: deleting the tree now causes segv.
+      //delete p.command_tree_get();
+      //p.command_tree_set (0);
+      return r.current_get();
+    }
     else
-      p.ast_get()->accept(r);
-    //FIXME: deleting the tree now causes segv.
-    //delete p.command_tree_get();
-    //p.command_tree_set (0);
-    return r.current_get();
+      libport::throw_exception (e);
   }
 
   static rObject

@@ -23,6 +23,7 @@
 # define PARSER_UPARSER_HH
 
 # include <list>
+# include <memory>
 # include <string>
 
 # include "parser/fwd.hh"
@@ -59,12 +60,16 @@ public:
 
 
   /// \{
+  /// The type of AST node returned by the parser.
+  typedef ast::Nary ast_type;
   /// The latest AST read by process().
-  ast::Ast* ast_get ();
-  const ast::Ast* ast_get () const;
-  void ast_set (ast::Ast* ast);
+  inline ast_type* ast_get ();
+  /// Return the AST, assert it is non-null, and reset \a ast_.
+  inline std::auto_ptr<ast_type> ast_take ();
+  /// Set \a ast_.
+  inline void ast_set (ast_type* ast);
 private:
-  ast::Ast* ast_;
+  ast_type* ast_;
   /// \}
 
 public:
@@ -76,7 +81,7 @@ public:
 
   /// Push all warning and error messages in \b target.
   /// If errors were pushed, the command tree is deleted and set to 0.
-  void process_errors(ast::Nary* target);
+  void process_errors(ast_type* target);
 
 private:
   // Give access to loc_.
@@ -106,5 +111,7 @@ private:
   /// A stack of locations to support #push/#pop.
   std::stack<yy::location> synclines_;
 };
+
+# include "parser/uparser.hxx"
 
 #endif // !PARSER_UPARSER_HH

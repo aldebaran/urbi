@@ -77,24 +77,6 @@ UParser::process (parser::Tweast& t)
   return res;
 }
 
-ast::Ast*
-UParser::ast_get ()
-{
-  return errors_.empty () ? ast_ : 0;
-}
-
-const ast::Ast*
-UParser::ast_get () const
-{
-  return errors_.empty () ? ast_ : 0;
-}
-
-void
-UParser::ast_set (ast::Ast* ast)
-{
-  ast_ = ast;
-}
-
 int
 UParser::process_file (const std::string& fn)
 {

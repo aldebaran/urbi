@@ -974,7 +974,7 @@ stmt:
 			    << "    " << idx << "--)"
 			    << "  " << $5);
       assert (!err);
-      ast::Exp* res = dynamic_cast<ast::Exp*>(up.ast_get());
+      ast::Exp* res = up.ast_get();
       assert(res);
       up.ast_set(0);
       $$ = res;
