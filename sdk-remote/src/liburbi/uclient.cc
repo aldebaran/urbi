@@ -42,6 +42,8 @@
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
 #include "libport/utime.hh"
+#include "libport/stdio.hh"
+#include "libport/string.hh"
 
 namespace urbi
 {
@@ -61,7 +63,7 @@ namespace urbi
     if (::pipe(control_fd) == -1)
     {
       rc = -1;
-      perror("UClient::UClient failed to create pipe");
+      libport::perror("UClient::UClient failed to create pipe");
       return;
     }
     //block sigpipe
@@ -88,9 +90,9 @@ namespace urbi
       sa.sin_addr.s_addr = inet_addr(host);
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
-	std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
-	rc = -1;
-	return;
+        std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
+        rc = -1;
+        return;
       }
     }
     else
@@ -99,7 +101,7 @@ namespace urbi
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0)
     {
-      perror("UClient::UClient socket");
+      libport::perror("UClient::UClient socket");
       rc = -1;
       return;
     }
@@ -117,7 +119,7 @@ namespace urbi
     // Check there was no error.
     if (rc)
     {
-      perror("UClient::UClient connect");
+      libport::perror("UClient::UClient connect");
       return;
     }
 
@@ -127,7 +129,7 @@ namespace urbi
       pos = ::recv(sd, recvBuffer, buflen, 0);
     if (pos<0)
     {
-      perror("UClient::UClient recv");
+      libport::perror("UClient::UClient recv");
       rc = pos;
       return;
     }
@@ -141,17 +143,13 @@ namespace urbi
 
   UClient::~UClient()
   {
-#ifndef WIN32
-    if (close(sd) == -1)
-      perror ("cannot close sd");
-#else
-    if (closesocket(sd) != 0)
-      perror ("cannot close sd"); // FIXME: Use a windows style error
-#endif
+    if (libport::closeSocket(sd) == -1)
+      libport::perror ("cannot close sd");
+
     sd = -1;
     if (control_fd[1] != -1
-	&& ::write(control_fd[1], "a", 1) == -1)
-      perror ("cannot write to control_fd[1]");
+        && ::write(control_fd[1], "a", 1) == -1)
+      libport::perror ("cannot write to control_fd[1]");
 
     // If the connection has failed while building the client, the
     // thread is not created.
@@ -160,11 +158,11 @@ namespace urbi
       libport::joinThread(thread);
 
     if (control_fd[1] != -1
-	&& close(control_fd[1]) == -1)
-      perror ("cannot close controlfd[1]");
+        && close(control_fd[1]) == -1)
+      libport::perror ("cannot close controlfd[1]");
     if (control_fd[0] != -1
-	&& close(control_fd[0]) == -1)
-      perror ("cannot close controlfd[0]");
+        && close(control_fd[0]) == -1)
+      libport::perror ("cannot close controlfd[0]");
   }
 
 
@@ -192,9 +190,9 @@ namespace urbi
       int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
       if (retval< 0)
       {
-	rc = retval;
-	clientError("send error", rc);
-	return rc;
+        rc = retval;
+        clientError("send error", rc);
+        return rc;
       }
       pos += retval;
     }

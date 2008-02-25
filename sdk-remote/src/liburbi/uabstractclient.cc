@@ -34,6 +34,8 @@
 
 #include "urbi/uabstractclient.hh"
 
+#include "libport/string.hh"
+
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"
 
@@ -1053,15 +1055,7 @@ namespace urbi
     if (message && erc)
       msg += " : ";
     if (erc)
-    {
-#ifndef WIN32
-      msg += strerror(erc);
-#else
-      char tmp[10];
-      snprintf(tmp, 10, "%d", erc);
-      msg += tmp;
-#endif
-    }
+      msg += libport::strerror(erc);
     m.message = m.rawMessage = msg; //rawMessage is incorrect but we dont care
     m.timestamp = 0;
     m.tag = CLIENTERROR_TAG;

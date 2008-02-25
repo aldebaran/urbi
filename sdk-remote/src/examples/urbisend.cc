@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     }
 
   urbi::UClient client (argv[1]);
-  client.setPingInterval(1000);
+  client.setKeepAliveCheck(3000, 1000);
   if (client.error())
     exit(1);
   client.setWildcardCallback(callback(&dump));
