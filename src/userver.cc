@@ -105,11 +105,11 @@ UErrorValue
 UServer::load_init_file(const char* fn)
 {
   DEBUG (("Loading %s...", fn));
-  UErrorValue res = loadFile(fn, ghost_->recvQueue());
+  UErrorValue res = loadFile(fn, ghost_->recv_queue_get());
   if (res == USUCCESS)
   {
     DEBUG (("done\n"));
-    ghost_->newDataAdded = true;
+    ghost_->new_data_added_get() = true;
   }
   else
     DEBUG (("not found\n"));
@@ -212,16 +212,16 @@ UServer::work_handle_connections_ ()
 {
   // Scan currently opened connections for ongoing work
   foreach (UConnection* c, connectionList)
-    if (c->isActive())
+    if (c->active_get())
     {
-      if (!c->isBlocked())
-	(*c) << UConnection::continueSend;
+      if (!c->blocked_get())
+	c->continue_send();
 
-      (*c) << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
-      (*c) << UConnection::errorCheck(UERROR_MEMORY_WARNING);
-      (*c) << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
-      (*c) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (*c) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      c->error_check_and_send(UERROR_MEMORY_OVERFLOW);
+      c->error_check_and_send(UERROR_MEMORY_WARNING);
+      c->error_check_and_send(UERROR_SEND_BUFFER_FULL);
+      c->error_check_and_send(UERROR_RECEIVE_BUFFER_FULL);
+      c->error_check_and_send(UERROR_RECEIVE_BUFFER_CORRUPTED);
 
       // The following code only made sense in k1, and should be
       // removed in k2, provided we are really sure it is useless.
@@ -241,13 +241,13 @@ UServer::work_handle_connections_ ()
       }
 #endif
 
-      if (c->newDataAdded)
+      if (c->new_data_added_get())
       {
 	// used by loadFile and eval to
 	// delay the parsing after the completion
 	// of execute().
-	c->newDataAdded = false;
-	(*c) << UConnection::received("");
+	c->new_data_added_get() = false;
+	c->received("");
       }
     }
 }
@@ -258,7 +258,7 @@ UServer::work_handle_stopall_ ()
   if (stopall)
   {
     foreach (UConnection* c, connectionList)
-      if (c->isActive() && c->has_pending_command ())
+      if (c->active_get() && c->has_pending_command ())
 	c->drop_pending_commands ();
   }
 
@@ -266,7 +266,7 @@ UServer::work_handle_stopall_ ()
   for (std::list<UConnection *>::iterator i = connectionList.begin();
        i != connectionList.end(); )
   {
-    if ((*i)->closing)
+    if ((*i)->closing_get())
     {
       delete *i;
       i = connectionList.erase(i);

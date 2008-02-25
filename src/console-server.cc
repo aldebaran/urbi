@@ -213,12 +213,12 @@ main (int argc, const char* argv[])
 	    << ": got ghost connection" << std::endl;
 
   if (!interactive)
-    if (s.loadFile(in, c.recvQueue ()) != USUCCESS)
+    if (s.loadFile(in, c.recv_queue_get ()) != USUCCESS)
       std::cerr << libport::program_name
 		<< ": failed to process " << in << std::endl
 		<< libport::exit(EX_NOINPUT);
 
-  c.newDataAdded = true;
+  c.new_data_added_get() = true;
 
   std::cerr << libport::program_name << ": going to work..." << std::endl;
   libport::utime_t next_time = 0;
@@ -237,8 +237,7 @@ main (int argc, const char* argv[])
 	interactive = false;
       }
       if (!input.empty())
-	s.getGhostConnection ()
-	  << UConnection::received
+	s.getGhostConnection ().received
 	  (reinterpret_cast<const ubyte*>(input.c_str()), input.length());
     }
     libport::utime_t select_time = 0;

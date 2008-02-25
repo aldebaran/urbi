@@ -58,180 +58,100 @@ UConnection::UConnection (UServer* userver,
 			  size_t minRecvBufferSize,
 			  size_t maxRecvBufferSize)
   : uerror_ (USUCCESS),
-    server (userver),
-    active_command_ (new ast::Nary()),
-    clientIP (0),
-    closing (false),
-    receiving (false),
-    newDataAdded (false),
-    parser_ (new UParser ()),
-    sendQueue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
+    client_ip_ (0),
+    closing_ (false),
+    receiving_ (false),
+    new_data_added_ (false),
+    send_queue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
 			    UConnection::ADAPTIVE)),
-    recvQueue_ (new UQueue (minRecvBufferSize, maxRecvBufferSize,
+    recv_queue_ (new UQueue (minRecvBufferSize, maxRecvBufferSize,
 			    UConnection::ADAPTIVE)),
-    packetSize_ (packetSize),
+    packet_size_ (packetSize),
     blocked_ (false),
-    receiveBinary_ (false),
-    sendAdaptive_ (UConnection::ADAPTIVE),
-    recvAdaptive_ (UConnection::ADAPTIVE),
+    send_adaptive_ (UConnection::ADAPTIVE),
+    recv_adaptive_ (UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
-    lobby_ (new object::Lobby (object::State(*this)))
+    lobby_ (new object::Lobby (object::State(*this))),
+    parser_ (new UParser ()),
+    active_command_ (new ast::Nary()),
+    server_ (userver)
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
   lobby_->slot_set(SYMBOL(lobby), lobby_);
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
-    errorSignals_[i] = false;
+    error_signals_[i] = false;
 
   // initialize the connection tag used to reference local variables
   std::ostringstream o;
   o << 'U' << (long) this;
-  connectionTag = o.str();
+  connection_tag_ = o.str();
 }
 
-//! UConnection destructor.
 UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
   delete parser_;
-  delete sendQueue_;
-  delete recvQueue_;
+  delete send_queue_;
+  delete recv_queue_;
   DEBUG(("done\n"));
 }
 
 UConnection&
-UConnection::setIP (IPAdd ip)
-{
-  clientIP = ip;
-  return *this;
-}
-
-bool
-UConnection::has_pending_command () const
-{
-  return !active_command_->empty();
-}
-
-void
-UConnection::drop_pending_commands ()
-{
-  active_command_->clear();
-}
-
-//! Initializes the connection, by sending the standard header for URBI
-/*! This function must be called once the connection is operational and
-  able to send data. It is a requirement for URBI compliance to send
-  the header at start, so this function must be called.
-*/
-UConnection&
 UConnection::initialize()
 {
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
-    *this << send(::HEADER_BEFORE_CUSTOM[i], "start");
+    send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   for (int i = 0; ; ++i)
   {
     char buf[1024];
-    server->getCustomHeader(i, buf, sizeof buf);
+    server_->getCustomHeader(i, buf, sizeof buf);
     if (!buf[0])
       break;
-    *this << send(buf, "start");
+    send(buf, "start");
   }
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
-    *this << send(::HEADER_AFTER_CUSTOM[i], "start");
+    send(::HEADER_AFTER_CUSTOM[i], "start");
 
   {
     char buf[1024];
-    snprintf(buf, sizeof buf, "*** ID: %s\n", connectionTag.c_str());
-    *this << send(buf, "ident");
+    snprintf(buf, sizeof buf, "*** ID: %s\n", connection_tag_.c_str());
+    send(buf, "ident");
 
-    snprintf(buf, sizeof buf, "%s created", connectionTag.c_str());
-    server->echo(::DISPLAY_FORMAT, (long)this,
+    snprintf(buf, sizeof buf, "%s created", connection_tag_.c_str());
+    server_->echo(::DISPLAY_FORMAT, (long)this,
 		 "UConnection::initialize", buf);
   }
 
-  server->loadFile("CLIENT.INI", *recvQueue_);
-  newDataAdded = true;
+  server_->loadFile("CLIENT.INI", *recv_queue_);
+  new_data_added_ = true;
   return *this;
 }
 
-# if 1 // use connection as stream
-
 UConnection&
-UConnection::block (UConnection& c)
+UConnection::send (const char* buf, const char* tag, bool flush)
 {
-  return c.block ();
-}
-
-//! Send a "\n" through the connection
-UConnection&
-UConnection::endl (UConnection& c)
-{
-  return c.endline ();
-}
-
-/// Flushes the connection buffer into the network
-UConnection&
-UConnection::flush (UConnection& c)
-{
-  return c.flush ();
-}
-
-UConnection&
-UConnection::continueSend (UConnection& c)
-{
-  return c.continueSend();
-}
-
-UConnection&
-UConnection::activate (UConnection& c)
-{
-  return c << setActivate (true);
-}
-
-UConnection&
-UConnection::disactivate (UConnection& c)
-{
-  return c << setActivate (false);
-}
-
-UConnection&
-UConnection::close (UConnection& c)
-{
-  return c.closeConnection ();
-}
-
-UConnection&
-UConnection::operator<< (_Prefix pref)
-{
-  return *this << sendc (0, 0, (const ubyte*)pref._tag);
-}
-
-UConnection&
-UConnection::operator<< (_Send msg)
-{
-  if (msg._tag != 0)
+  if (tag != 0)
   {
-    std::string pref = mkPrefix (msg._tag);
-    msg._tag = (const ubyte*)pref.c_str ();
-    msg._taglen = pref.length ();
-    sendQueue_->mark (); // put a marker to indicate the beginning of a message
+    std::string pref = make_prefix (tag);
+    send_queue_->mark (); // put a marker to indicate the beginning of a message
 
     // UErrorValue ret =
-    sendc_ (msg._tag, msg._taglen);
+    send_queue (reinterpret_cast<const ubyte*>(pref.c_str()), pref.length());
 
     // .error ();
 
     //FIXME: check error
   }
-  if (msg._buf != 0)
+  if (buf != 0)
   {
-    UErrorValue ret = sendc_ (msg._buf, msg._buflen).error ();
-    delete [] msg._buf;
+    UErrorValue ret = send_queue (reinterpret_cast<const ubyte*>(buf),
+				  strlen(buf)).error_get ();
 
-    if (msg._flush && ret != UFAIL)
-      flush ();
+    if (flush && ret != UFAIL)
+      this->flush ();
 
     CONN_ERR_RET(ret);
   }
@@ -239,255 +159,76 @@ UConnection::operator<< (_Send msg)
 }
 
 UConnection&
-UConnection::operator<< (_ErrorSignal err)
+UConnection::send_queue (const ubyte *buffer, int length)
 {
-  return errorSignal_set (err._n);
-}
-
-UConnection&
-UConnection::operator<< (_ErrorCheck err)
-{
-  return errorCheckAndSend (err._n);
-}
-
-UConnection&
-UConnection::operator<< (_Activate act)
-{
-  active_ = act._st;
-  return *this;
-}
-
-UConnection&
-UConnection::operator<< (_SendAdaptative adap)
-{
-  return setSendAdaptive (adap._val);
-}
-
-UConnection&
-UConnection::operator<< (_RecvAdaptative adap)
-{
-  return setReceiveAdaptive (adap._val);
-}
-
-UConnection&
-UConnection::operator<< (_MsgCode mc)
-{
-  const char* msg = message (mc._t, mc._n);
-
-  UErrorValue result = UFAIL;
-
-  switch (mc._t)
-  {
-    case UERRORCODE:
-      *this << send(msg, "error");
-      break;
-    case UWARNINGCODE:
-      *this << send(msg, "warning");
-      break;
-    default:
-      break;
-  };
-
-  result = error ();
-
-  if (result == USUCCESS)
-  {
-    char buf[80];
-    strncpy (buf, msg, sizeof buf);
-    if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end.
-      buf[strlen(msg)-1] = 0;
-
-    switch (mc._t)
-    {
-      case UERRORCODE:
-	server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
-	break;
-      case UWARNINGCODE:
-	server->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
-			"UConnection::warning", buf);
-	break;
-      case UMSGMAX:
-	break;
-    };
-  }
-  error_ = result;
-  return *this;
-}
-
-UConnection&
-UConnection::operator<< (UWarningCode id)
-{
-  return *this << msg (UWARNINGCODE, id);
-}
-
-UConnection&
-UConnection::operator<< (UErrorCode id)
-{
-  return *this << msg (UERRORCODE, id);
-}
-
-UConnection&
-UConnection::operator<< (_Received cmd)
-{
-  return received_ (cmd._val, cmd._len);
-}
-
-UConnection&
-UConnection::operator<< (UConnection& m (UConnection&))
-{
-  return (*m)(*this);
-}
-
-# endif // 1
-
-std::string
-UConnection::mkPrefix (const ubyte* tag) const
-{
-  std::ostringstream o;
-  char fill = o.fill('0');
-  o << '[' << std::setw(8) << (int) server->lastTime();
-  o.fill(fill);
-  if (tag && strlen(reinterpret_cast<const char*>(tag)))
-    o << ':' << tag;
-  o << "] ";
-
-  return o.str ();
-}
-
-//! Send a buffer through the connection without flushing it.
-/*! The function piles the buffer in the sending queue and calls continueSend()
-  if the connection is not blocked (blocked means that the connection is not
-  ready to send data). The server will try to send the data in the
-  sending queue each time the "work" function is called and if the connection
-  is not blocked. It is the job of the programmer to let the kernel know when
-  the connection is blocked or not, using the "block()" function to block it
-  or by calling continueSend() directly to unblock it.
-
-  \param buffer the buffer to send
-  \param length the length of the buffer
-  \return
-  - USUCCESS: successful. The message is in the queue.
-  - UFAIL   : could not send the buffer, not enough memory in the
-  send queue.
-  \sa send(const char*)
-*/
-UConnection&
-UConnection::sendc_ (const ubyte *buffer, int length)
-{
-  if (closing)
+  if (closing_)
     CONN_ERR_RET(USUCCESS);
-  if (sendQueue_->locked ())
+  if (send_queue_->locked ())
     CONN_ERR_RET(UFAIL);
 
   // Add to Queue
-  UErrorValue result = sendQueue_->push(buffer, length);
+  UErrorValue result = send_queue_->push(buffer, length);
   if (result != USUCCESS)
   {
     if (result == UFAIL)
     {
-      errorSignal_set(UERROR_SEND_BUFFER_FULL);
-      server->isolate();
+      error_signal_set(UERROR_SEND_BUFFER_FULL);
+      server_->isolate();
     }
 
-    sendQueue_->revert ();
+    send_queue_->revert ();
     CONN_ERR_RET(UFAIL);
   }
 
   CONN_ERR_RET(USUCCESS);
 }
 
-/// Flushes the connection buffer into the network
 UConnection&
-UConnection::flush ()
+UConnection::continue_send ()
 {
-  if (!blocked_)
-    continueSend();
-  return *this;
-}
-
-//! Returns the state of the connection: blocked or unblocked.
-bool
-UConnection::isBlocked ()
-{
-  return blocked_ ;
-}
-
-//! Blocks the connection so that send() functions will not call continueSend.
-/*! The normal behavior of the send() functions is to pile the data in the
- internal buffer and call continueSend(), except if the connection is
- blocked. */
-UConnection&
-UConnection::block ()
-{
-  blocked_ = true;
-  return *this;
-}
-
-
-//! Send at most packetSize bytes in the connection, calling effectiveSend()
-/*! Must be called when the system tells that the connection is ready to
- accept new data for sending, in order to carry on the processing of the
- sending queue stored in the internal buffer.
- Each call to continueSend sends packetSize bytes (at most) through the real
- connection until the internal buffer is empty.
- \return
- - USUCCESS: successful
- - UFAIL   : effectiveSend() failed or not enough memory
- */
-UConnection&
-UConnection::continueSend ()
-{
-  if (closing)
+  if (closing_)
      CONN_ERR_RET(UFAIL);
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
 # endif
-  blocked_ = false;	    // continueSend unblocks the connection.
+  blocked_ = false;	    // continue_send unblocks the connection.
 
-  int toSend = sendQueue_->dataSize(); // nb of bytes to send
-  if (toSend > packetSize_)
-    toSend = packetSize_;
+  int toSend = send_queue_->dataSize(); // nb of bytes to send
+  if (toSend > packet_size_)
+    toSend = packet_size_;
   if (toSend == 0)
     CONN_ERR_RET(USUCCESS);
 
-  ubyte* popData = sendQueue_->virtualPop(toSend);
+  ubyte* popData = send_queue_->virtualPop(toSend);
 
   if (popData != 0)
   {
-    int wasSent = effectiveSend ((const ubyte*)popData, toSend);
+    int wasSent = effective_send ((const ubyte*)popData, toSend);
 
     if (wasSent < 0)
       CONN_ERR_RET(UFAIL);
-    else if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
+    else if (wasSent == 0 || send_queue_->pop(wasSent) != 0)
       CONN_ERR_RET(USUCCESS);
   }
 
-  server->isolate();
+  server_->isolate();
 
   CONN_ERR_RET(UFAIL);
 }
 
-//! Handles an incoming string.
-/*! Must be called each time a string is received by the connection.
-  \param s the incoming string
-  \return UFAIL buffer overflow
-  \return UMEMORYFAIL critical memory overflow
-  \return USUCCESS otherwise
-*/
 UConnection&
-UConnection::received_ (const char *s)
+UConnection::received (const char *s)
 {
-  return received_ ((const ubyte*) s, strlen (s));
+  return received ((const ubyte*) s, strlen (s));
 }
 
 UConnection&
-UConnection::received_ (const ubyte *buffer, int length)
+UConnection::received (const ubyte *buffer, int length)
 {
   PING();
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::recursive_mutex::scoped_lock serverLock(server->mutex);
+  boost::recursive_mutex::scoped_lock serverLock(server_->mutex);
 #endif
   UErrorValue result = UFAIL;
   {
@@ -495,11 +236,11 @@ UConnection::received_ (const ubyte *buffer, int length)
 #if ! defined LIBPORT_URBI_ENV_AIBO
     boost::mutex::scoped_lock lock(mutex_);
 #endif
-    result = recvQueue_->push(buffer, length);
+    result = recv_queue_->push(buffer, length);
   }
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::try_mutex::scoped_try_lock treeLock(treeMutex, false);
+  boost::try_mutex::scoped_try_lock treeLock(tree_mutex_, false);
 #endif
 
   PING();
@@ -508,8 +249,8 @@ UConnection::received_ (const ubyte *buffer, int length)
     // Handles memory errors.
     if (result == UFAIL)
     {
-      errorSignal_set(UERROR_RECEIVE_BUFFER_FULL);
-      errorSignal_set(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      error_signal_set(UERROR_RECEIVE_BUFFER_FULL);
+      error_signal_set(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
     CONN_ERR_RET(result);
   }
@@ -518,11 +259,11 @@ UConnection::received_ (const ubyte *buffer, int length)
   if (!treeLock.try_lock())
 #endif
   {
-    newDataAdded = true; //server will call us again right after work
+    new_data_added_ = true; //server will call us again right after work
     CONN_ERR_RET(USUCCESS);
   }
 
-  UParser& p = parser();
+  UParser& p = parser_get();
   PING();
   if (p.ast_get ())
   {
@@ -537,7 +278,7 @@ UConnection::received_ (const ubyte *buffer, int length)
   }
 
   // Starts processing
-  receiving = true;
+  receiving_ = true;
 
   // active_command_: The command to be executed (root of the AST).
   // passert (*active_command_, active_command_->empty());
@@ -548,15 +289,15 @@ UConnection::received_ (const ubyte *buffer, int length)
   bool obstructed = !active_command_->empty();
 
   // Loop to get all the commands that are ready to be executed.
-  for (std::string command = recvQueue_->pop_command();
+  for (std::string command = recv_queue_->pop_command();
        !command.empty();
-       command = recvQueue_->pop_command())
+       command = recv_queue_->pop_command())
   {
-    server->setSystemCommand (false);
+    server_->setSystemCommand (false);
     int result = p.process (command);
     passert (result, result != -1);
     p.process_errors(active_command_);
-    server->setSystemCommand (true);
+    server_->setSystemCommand (true);
 
     if (ast::Nary* ast = p.ast_take().release())
     {
@@ -567,20 +308,20 @@ UConnection::received_ (const ubyte *buffer, int length)
     }
     else
     {
-      *this << send ("the parser returned NULL\n", "error");
-      server->error(::DISPLAY_FORMAT, (long) this,
+      send ("the parser returned NULL\n", "error");
+      server_->error(::DISPLAY_FORMAT, (long) this,
 		    "UConnection::received",
 		    "the parser returned NULL\n");
     }
   }
 
-  // FIXME: recvQueue_->clear();
+  // FIXME: recv_queue_->clear();
 
   // Execute the new command.
   if (!obstructed)
     execute ();
 
-  receiving = false;
+  receiving_ = false;
   p.ast_set (0);
 #if ! defined LIBPORT_URBI_ENV_AIBO
   treeLock.unlock();
@@ -589,34 +330,11 @@ UConnection::received_ (const ubyte *buffer, int length)
   CONN_ERR_RET(USUCCESS);
 }
 
-
-//! Sends a buffer through the real connection (redefined in the sub class)
-/*! Must be defined to implement the effective code that sends a buffer through
- the connection.
-
- ATTENTION: The buffer received is a short lived buffer. There is no
- warranty whatsoever that it will survive once the function returns. You must
- make a copy of it if your sending method requires to work asynchronously on
- the buffer, after the function has returned.
-
- \return the number of bytes effectively sent. -1 means that there was an error.
- */
-int
-UConnection::effectiveSend (const ubyte*, int length)
-{
-  return length;
-}
-
-//! Send an error message based on the error number.
-/*! This command sends an error message through the connection, and to the
- server output system, according to the error number n.
-
- \param n the error number. */
 UConnection&
-UConnection::send_error (UErrorCode n)
+UConnection::send (UErrorCode n)
 {
   const char* msg = message (UERRORCODE, n);
-  UErrorValue result = (*this << send(msg, "error")).error ();
+  UErrorValue result = send(msg, "error").error_get ();
   if (result == USUCCESS)
   {
     char buf[80];
@@ -624,27 +342,16 @@ UConnection::send_error (UErrorCode n)
     if (strlen (msg) - 1 < sizeof buf)
       //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
-    server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
+    server_->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
   CONN_ERR_RET(result);
 }
 
-//! Send a warning message based on the warning number.
-
-/*! This command sends an warning message through the connection, and to
- the server output system, according to the warning number n.
-
- \param n the warning number. Use the UWarningCode enum. Can be:
- - 0 : Memory overflow warning
-
- \param complement is a complement string added at the end
- of the warning message.
- */
 UConnection&
-UConnection::send_warning (UWarningCode n)
+UConnection::send (UWarningCode n)
 {
   const char* msg = message (UWARNINGCODE, n);
-  UErrorValue result = (*this << send(msg, "warning")).error ();
+  UErrorValue result = send(msg, "warning").error_get ();
   if (result == USUCCESS)
   {
     char buf[80];
@@ -652,76 +359,37 @@ UConnection::send_warning (UWarningCode n)
     if (strlen (msg) - 1 < sizeof buf)
       //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
-    server->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
+    server_->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
 		    "UConnection::warning", buf);
   }
   CONN_ERR_RET(result);
 }
 
-//! Set a flag to insure the error will be send.
-
-/*! This command sends an error message through the connection, and
- to the server output system, according to the error number n. The
- difference with the "error" function is that is does not actually
- send the message but set a flag so that the message will be
- sent. The flag is active as long as the message is not actually
- sent. So, using errorSignal is more robust since it guarantees
- that the message will be sent, at all costs.
-
- \param n the error number. Use the UErrorCode enum.  */
 UConnection&
-UConnection::errorSignal_set (UErrorCode n)
+UConnection::send (object::rObject result, const char* tag, const char* p)
 {
-  errorSignals_[(int)n] = true;
+  // "Display" the result.
+  std::ostringstream os;
+  if (p)
+    os << p;
+  result->print (os);
+
+  if (!os.str ().empty ())
+  {
+    std::string prefix = make_prefix (tag);
+    send (prefix.c_str (), 0, false);
+    send (os.str ().c_str (), 0, false);
+    endline ();
+  }
   return *this;
 }
 
-//! Check if the errorSignal is active and tries to effectively send the message
-/*! If the message can be sent, the errorSignal is canceled, otherwise not.
- */
-UConnection&
-UConnection::errorCheckAndSend (UErrorCode n)
+void
+UConnection::new_result (object::rObject result)
 {
-  if (errorSignals_[(int)n]
-      && (send_error(n).error () == USUCCESS))
-    errorSignals_[(int)n] = false;
-  return *this;
-}
-
-//! Activate the connection
-/*! The use of activation is related to OPENR. When a new connection is created
- in OPENR, it is not active immediately. One must wait until a listen call
- returns. For this reason, the connection is set to disactivate until this
- listen call returns. Then, it is activated and the connection can be
- "visible" from the kernel's point of view.
-
- In normal situations, just ignore this. For example, if your connection is
- usable (send/receive) once it has been created, you can ignore this.
- */
-UConnection&
-UConnection::activate()
-{
-  active_ = true;
-  return *this;
-}
-
-//! Disactivate the connection
-/*! see UConnection::activate() for more details about activation.
- */
-UConnection&
-UConnection::disactivate()
-{
-  active_ = false;
-  return *this;
-}
-
-//! Disactivate the connection
-/*! see UConnection::activate() for more details about activation.
- */
-bool
-UConnection::isActive()
-{
-  return active_;
+  // The prefix should be (getTag().c_str()) instead of 0.
+  // FIXME: the prefix should not be built manually.
+  send (result, 0, 0);
 }
 
 UConnection&
@@ -751,61 +419,61 @@ UConnection::execute ()
   return *this;
 }
 
-void
-UConnection::send (object::rObject result, const char* tag, const char* p)
+std::string
+UConnection::make_prefix (const char* tag) const
 {
-  // "Display" the result.
-  std::ostringstream os;
-  if (p)
-    os << p;
-  result->print (os);
+  std::ostringstream o;
+  char fill = o.fill('0');
+  o << '[' << std::setw(8) << (int) server_->lastTime();
+  o.fill(fill);
+  if (tag && strlen(tag))
+    o << ':' << tag;
+  o << "] ";
 
-  if (!os.str ().empty ())
-  {
-    *this
-      << sendc (mkPrefix (reinterpret_cast<const ubyte*>(tag)).c_str (), 0)
-      << sendc (os.str ().c_str (), 0)
-      << endl;
-  }
+  return o.str ();
 }
 
-void
-UConnection::new_result (object::rObject result)
-{
-  // The prefix should be (getTag().c_str()) instead of 0.
-  // FIXME: the prefix should not be built manually.
-  send (result, 0, 0);
-}
-
-//! Returns how much space is available in the send queue
 int
-UConnection::availableSendQueue ()
+UConnection::effective_send (const ubyte*, int length)
 {
-  return sendQueue_->bufferMaxFreeSpace();
+  return length;
 }
 
+void
+UConnection::send_adaptive_set (int send_adaptive)
+{
+  send_adaptive_ = send_adaptive;
+  send_queue_->setAdaptive (send_adaptive_);
+}
 
-//! Returns how many bytes are still in the send queue
+void
+UConnection::receive_adaptive_set (int receive_adaptive)
+{
+  recv_adaptive_ = receive_adaptive;
+  recv_queue_->setAdaptive (recv_adaptive_);
+}
+
 int
-UConnection::sendQueueRemain ()
+UConnection::send_queue_remain ()
 {
-  return sendQueue_->dataSize();
+  return send_queue_->dataSize();
 }
 
-//! Sets sendAdaptive_
-UConnection&
-UConnection::setSendAdaptive (int sendAdaptive)
+int
+UConnection::available_send_queue ()
 {
-  sendAdaptive_ = sendAdaptive;
-  sendQueue_->setAdaptive (sendAdaptive_);
-  return *this;
+  return send_queue_->bufferMaxFreeSpace();
 }
 
-//! Sets receiveAdaptive_
-UConnection&
-UConnection::setReceiveAdaptive (int receiveAdaptive)
+bool
+UConnection::has_pending_command () const
 {
-  recvAdaptive_ = receiveAdaptive;
-  recvQueue_->setAdaptive (recvAdaptive_);
-  return *this;
+  return !active_command_->empty();
 }
+
+void
+UConnection::drop_pending_commands ()
+{
+  active_command_->clear();
+}
+

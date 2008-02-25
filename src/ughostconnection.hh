@@ -34,10 +34,10 @@ class UGhostConnection : public UConnection
 public:
   UGhostConnection (UServer *mainserver);
   virtual ~UGhostConnection ();
-  virtual UConnection& closeConnection ();
+  virtual UConnection& close ();
 
 protected:
-  virtual int effectiveSend (const ubyte *buffer, int length);
+  virtual int effective_send (const ubyte *buffer, int length);
 public:
   virtual UConnection& endline ();
 };

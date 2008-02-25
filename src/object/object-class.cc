@@ -61,7 +61,7 @@ namespace object
       libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
     BOOST_FOREACH(std::string line, tok)
-      r.lobby_get()->value_get().connection  << UConnection::send (
+      r.lobby_get()->value_get().connection.send (
 	(system_header+line+"\n").c_str(), tag.c_str());
     return void_class;
   }
@@ -79,8 +79,7 @@ namespace object
     //special case for Strings
     if (is_echo && args[1]->kind_is(Object::kind_string))
     {
-      r.lobby_get()->value_get().connection
-      << UConnection::send((std::string("*** ")
+      r.lobby_get()->value_get().connection.send((std::string("*** ")
 			   + std::string(VALUE(args[1], String))
 			   + "\n").c_str(),
 			   tag.c_str());
@@ -278,7 +277,7 @@ namespace object
   object_class_quit (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    r.lobby_get()->value_get().connection.closeConnection();
+    r.lobby_get()->value_get().connection.close();
     return void_class;
   }
 

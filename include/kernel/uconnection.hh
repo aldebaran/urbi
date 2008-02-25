@@ -51,19 +51,19 @@
 
     The sending mechanism is asynchronous. Each time the send() function is
     called, it will pile the data in the internal buffer and try to send what is
-    available in the internal buffer by calling continueSend(), except if the
+    available in the internal buffer by calling continue_send(), except if the
     connection is blocked (see block()).
 
-    The programmer has to call continueSend() each time the system is ready to
+    The programmer has to call continue_send() each time the system is ready to
     send something, to make sure the internal buffer is progressively emptied.
 
     If the connection is not ready for sending, the programmer must call the
-    block() function in order to prevent future send() to call continueSend().
+    block() function in order to prevent future send() to call continue_send().
     Using this feature, it is always possible to use send(), but the data will
     simply be piled on the internal buffer and sent later, when the connection
     is unblocked.
 
-    A call to continueSend() automatically unblocks the connection.
+    A call to continue_send() automatically unblocks the connection.
 
     The received() function must be called each time data has been received on
     the connection.
@@ -77,7 +77,6 @@ class UConnection
   friend class UServer;
 
 public:
-
   /// UConnection constructor.
   /*! This constructor must be called by any sub class.
 
@@ -131,232 +130,61 @@ public:
 
   virtual ~UConnection ();
 
+  //! Initializes the connection, by sending the standard header for URBI
+  /*! This function must be called once the connection is operational and
+    able to send data. It is a requirement for URBI compliance to send
+    the header at start, so this function must be called.
+  */
   UConnection& initialize ();
 
-public:
-  //! UConnection close. Must be redefined by the robot-specific sub class.
-  /*! The implementation of this function must set 'closing' to true, to
-    tell the UConnection to stop sending data.
+  /*-----------------------.
+  | Send/receive functions |
+  \-----------------------*/
+
+  /// The "base" high-level send function. Calls the send_queue() function.
+  UConnection&
+  send (const char* buf, const char* tag = 0, bool flush = false);
+
+  /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
+  UConnection&
+  send (object::rObject result, const char* tag = 0, const char* p = 0);
+
+  //! Send an error message based on the error number.
+  /*! This command sends an error message through the connection, and to the
+    server output system, according to the error number n.
+    \param n the error number.
+   */
+  UConnection& send (UErrorCode n);
+
+  //! Send a warning message based on the warning number.
+  /*! This command sends an warning message through the connection, and to
+    the server output system, according to the warning number n.
+
+    \param n the warning number. Use the UWarningCode enum. Can be:
+    - 0 : Memory overflow warning
+
+    \param complement is a complement string added at the end
+    of the warning message.
   */
-  virtual UConnection& closeConnection    () = 0;
+  UConnection& send (UWarningCode n);
 
-#if 1
-public:
-  static UConnection& block (UConnection& c);
-  static UConnection& endl (UConnection& c);
-  static UConnection& flush (UConnection& c);
-  static UConnection& continueSend (UConnection& c);
-  static UConnection& activate (UConnection& c);
-  static UConnection& disactivate (UConnection& c);
-  static UConnection& close (UConnection& c);
+  //! Send at most packetSize bytes in the connection, calling effectiveSend()
+  /*! Must be called when the system tells that the connection is ready to
+    accept new data for sending, in order to carry on the processing of the
+    sending queue stored in the internal buffer.
+    Each call to continue_send sends packetSize bytes (at most) through the real
+    connection until the internal buffer is empty.
+    \return
+    - USUCCESS: successful
+    - UFAIL   : effectiveSend() failed or not enough memory
+   */
+  UConnection& continue_send ();
 
-  UConnection& operator<< (UConnection& m (UConnection&));
+  /// Notify the connection that a new result is available.  This will
+  /// typically print the result on the console or send it through the
+  /// network.
+  void new_result (object::rObject result);
 
-  /*--------------.
-  | Send, sendc.  |
-  `--------------*/
-
-  /// Unified struct for sending messages
-  struct _Send
-  {
-    const ubyte* _tag; int _taglen;
-    ubyte* _buf; int _buflen;
-    bool _flush;
-  };
-
-  static inline _Send vsendf (const std::string& tag,
-			      const char* format, va_list args)
-  {
-    // FIXME: This buffer is a real nuisance, we should move
-    // everything to C++, and use a string, a stream, and/or
-    // Boost.format.
-    char buf[4096];
-    vsnprintf(buf, sizeof buf - 1, format, args);
-    return send (buf, tag.c_str());
-  }
-
-  /// Invoke the previous vsendf.
-  static inline _Send sendf (const std::string& tag,
-			     const char* format, ...)
-  {
-    va_list args;
-    va_start(args, format);
-    const _Send tmp = vsendf (tag, format, args);
-    va_end(args);
-    return tmp;
-  }
-
-  //! Send a string through the connection.
-  /*! A tag is automatically added to output the message string and the
-    resulting string is sent via send(const ubyte*,int).
-    \param s the string to send
-    \param tag the tag of the message. Default is ""
-  */
-  static inline _Send send (const char *s, const char* tag = 0)
-  {
-    return send ((const ubyte*) s, s != 0 ? strlen (s) : 0,
-		 (const ubyte*) tag);
-  }
-
-  static inline _Send sendc (const char* s, const char* tag)
-  {
-    return sendc ((const ubyte*) s, s != 0 ? strlen (s) : 0,
-		  (const ubyte*) tag);
-  }
-
-  static inline _Send sendc (const ubyte* buf, int len,
-			     const ubyte* tag = 0)
-  {
-    return send (buf, len, tag, false);
-  }
-
-  static inline
-  _Send
-  send (const ubyte* buf, int buflen,
-	const ubyte* tag = 0, bool flush = true)
-  {
-    _Send msg;
-    msg._tag = tag;
-    msg._taglen = 0;
-    if (buf)
-    {
-      msg._buf = new ubyte [buflen];
-      memcpy(msg._buf, buf, buflen);
-    }
-    else
-      msg._buf = 0;
-    msg._buflen = buflen;
-    msg._flush = flush;
-    return msg;
-  }
-
-  static inline
-  _Send
-  send (const std::string& s)
-  {
-    return send (reinterpret_cast<const ubyte*>(s.c_str()), s.length(),
-		 0, false);
-  }
-
-  UConnection& operator<< (_Send msg);
-
-  /*---------.
-  | Prefix.  |
-  `---------*/
-
-  struct _Prefix { const char* _tag; };
-  static inline _Prefix prefix (const char * tag)
-  {
-    _Prefix pref;
-    pref._tag = tag;
-    return pref;
-  }
-  UConnection& operator<< (_Prefix pref);
-
-  struct _ErrorSignal { UErrorCode _n; };
-  static inline _ErrorSignal errorSignal (UErrorCode n)
-  {
-    _ErrorSignal err;
-    err._n = n;
-    return err;
-  }
-  UConnection& operator<< (_ErrorSignal pref);
-
-  struct _ErrorCheck { UErrorCode _n; };
-  static inline _ErrorCheck errorCheck (UErrorCode n)
-  {
-    _ErrorCheck err;
-    err._n = n;
-    return err;
-  }
-  UConnection& operator<< (_ErrorCheck pref);
-
-  struct _Activate { bool _st; };
-  static inline _Activate setActivate (bool st)
-  {
-    _Activate act;
-    act._st = st;
-    return act;
-  }
-  UConnection& operator<< (_Activate act);
-
-  struct _SendAdaptative { int _val; };
-  static inline _SendAdaptative sendAdaptative (int val)
-  {
-    _SendAdaptative adap;
-    adap._val = val;
-    return adap;
-  }
-  UConnection& operator<< (_SendAdaptative adap);
-
-  struct _RecvAdaptative { int _val; };
-  static inline _RecvAdaptative receiveAdaptative (int val)
-  {
-    _RecvAdaptative adap;
-    adap._val = val;
-    return adap;
-  }
-  UConnection& operator<< (_RecvAdaptative adap);
-
-  struct _MsgCode { UMsgType _t; int _n; };
-  static inline _MsgCode msg (UMsgType t, int n)
-  {
-    _MsgCode msg;
-    msg._t = t;
-    msg._n = n;
-    return msg;
-  }
-  UConnection& operator<< (_MsgCode msg);
-  UConnection& operator<< (UErrorCode id);
-  UConnection& operator<< (UWarningCode id);
-
-  struct _Received { const ubyte* _val; int _len; };
-  static inline _Received received (const ubyte* val, int len)
-  {
-    _Received cmd;
-    cmd._val = val;
-    cmd._len = len;
-    return cmd;
-  }
-  static inline _Received received (const char* val)
-  {
-    return received((const ubyte*) val,
-		     ((val != 0) ? strlen (val) : 0));
-  }
-  UConnection& operator<< (_Received cmd);
-
-#endif // 1
-
-  std::string mkPrefix (const ubyte* tag) const;
-
-
-  //! Send a buffer through the connection without flushing it.
-  /*! The function piles the buffer in the sending queue and calls
-   continueSend() if the connection is not blocked (blocked means that
-   the connection is not ready to send data). The server will try to send
-   the data in the sending queue each time the "work" function is called
-   and if the connection is not blocked.
-
-   It is the job of the programmer to let the kernel know when
-   the connection is blocked or not, using the "block()" function to block it
-   or by calling continueSend() directly to unblock it.
-   \param buffer the buffer to send
-   \param length the length of the buffer
-   \sa send(const char*)
-  */
-  virtual UConnection&	sendc_             (const ubyte *buffer, int length);
-  /// Send \a str through the connection, don't flush.
-  UConnection& sendc_ (const std::string& s);
-
-  virtual UConnection&	endline            () = 0;
-
-public:
-  bool isBlocked ();
-  UConnection& block ();
-  UConnection& continueSend ();
-  UConnection& flush ();
-
-protected:
   /// Handle an incoming string.
   /*! Must be called each time a string is received by the connection.
    \param s the incoming string
@@ -364,7 +192,7 @@ protected:
    \return UMEMORYFAIL critical memory overflow
    \return USUCCESS otherwise
    */
-  UConnection& received_ (const char *s);
+  UConnection& received (const char *s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -374,104 +202,131 @@ protected:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UConnection& received_ (const ubyte *buffer, int length);
+  UConnection& received (const ubyte *buffer, int length);
 
-public:
-  int sendAdaptive ();
-  int receiveAdaptive ();
-  UConnection& setSendAdaptive (int sendAdaptive);
-  UConnection& setReceiveAdaptive (int receiveAdaptive);
+  /// A generic << operator, to easily send every kind of data through the
+  ///connection.
+  template <typename T>
+  UConnection& operator<<(const T&);
 
-  UConnection& errorSignal_set (UErrorCode n);
-  UConnection& errorCheckAndSend (UErrorCode n);
+  //! UConnection close. Must be redefined by the robot-specific sub class.
+  /*! The implementation of this function must set 'closing_' to true, to
+    tell the UConnection to stop sending data.
+  */
+  virtual UConnection& close () = 0;
 
-  UConnection& activate ();
-  UConnection& disactivate ();
-  bool isActive ();
+  /// Abstract end of line.
+  virtual UConnection&	endline() = 0;
 
-  object::rLobby lobby_get() { return lobby_;}
-protected:
-  UConnection& execute ();
+  void flush ();
 
-public:
+  /*----------.
+  | Accessors |
+  \----------*/
 
-  int availableSendQueue ();
-  int sendQueueRemain ();
+  UErrorValue error_get () const;
+  UParser& parser_get ();
+  UServer& server_get() const;
+  object::rLobby lobby_get();
 
-  UQueue& recvQueue ();
-  UQueue& send_queue ();
-
-public:
   //! UConnection IP associated
   /*! The robot specific part should call the function when the
     connection is active and transmit the IP address of the client,
     as a long int.  */
-  UConnection& setIP (IPAdd ip);
+  IPAdd& client_ip_get ();
+
+  int available_send_queue ();
+  int send_queue_remain ();
+
+  UQueue& recv_queue_get ();
+  UQueue& send_queue_get ();
+
+  int send_adaptive_get () const;
+  int receive_adaptive_get () const;
+  void send_adaptive_set (int);
+  void receive_adaptive_set (int);
+
+  bool& active_get ();
+  bool& blocked_get ();
+  bool& closing_get ();
+
+  bool& new_data_added_get();
+
+  /*------------------.
+  | Utility functions |
+  \------------------*/
 
   bool has_pending_command () const;
   void drop_pending_commands ();
 
-  /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
-  void send (object::rObject result, const char* tag = 0, const char* p = 0);
+  /// Build a prefix [01234567:tag].
+  std::string make_prefix (const char* tag) const;
 
-  /// Notify the connection that a new result is available.  This will
-  /// typically print the result on the console or send it through the
-  /// network.
-  void new_result (object::rObject result);
+  void error_signal_set (UErrorCode n);
+  void error_check_and_send (UErrorCode n);
+
+protected:
+  enum { ADAPTIVE = 100 };
+
+  //! Send a buffer through the connection without flushing it.
+  /*! The function piles the buffer in the sending queue and calls
+   continue_send() if the connection is not blocked (blocked means that
+   the connection is not ready to send data). The server will try to send
+   the data in the sending queue each time the "work" function is called
+   and if the connection is not blocked.
+
+   It is the job of the programmer to let the kernel know when
+   the connection is blocked or not, using the "block()" function to block it
+   or by calling continue_send() directly to unblock it.
+
+  \param buffer the buffer to send
+  \param length the length of the buffer
+  \return
+  - USUCCESS: successful. The message is in the queue.
+  - UFAIL   : could not send the buffer, not enough memory in the
+  send queue.
+  \sa send(const char*)
+  */
+  virtual UConnection&	send_queue(const ubyte *buffer, int length);
+
+  //! Sends a buffer through the real connection (redefined in the sub class)
+  /*! Must be defined to implement the effective code that sends a buffer through
+    the connection.
+
+    ATTENTION: The buffer received is a short lived buffer. There is no
+    warranty whatsoever that it will survive once the function returns. You must
+    make a copy of it if your sending method requires to work asynchronously on
+    the buffer, after the function has returned.
+
+    \return the number of bytes effectively sent. -1 means that there was an error.
+   */
+  virtual int effective_send (const ubyte*, int length) = 0;
+
+  UConnection& execute ();
 
 public:
   /// Error return code for the constructor.
   UErrorValue uerror_;
 
-public:
-  /// Reference to the underlying server. FIXME: make me private.
-  UServer* server;
-  /// Accessor for server.
-  UServer& server_get() const;
-private:
-  /// The commands to be executed.
-  ast::Nary* active_command_;
-
-public:
   /// Virtual device for the connection..
-  std::string connectionTag;
+  std::string connection_tag_;
+
   /// Ip of the calling client.
-  IPAdd clientIP;
+  IPAdd client_ip_;
+
   /// Connection closing.
-  bool closing;
+  bool closing_;
+
   /// Connection receiving (and processing) commands.
-  bool receiving;
+  bool receiving_;
+
   /// Used by addToQueue to notify new data.
-  bool newDataAdded;
-
-
-  /// \name Parsing.
-  /// \{
-public:
-  /// Return the UParser we use.
-  UParser& parser (); // OK : accessor
+  bool new_data_added_;
 
 # if ! defined LIBPORT_URBI_ENV_AIBO
   /// Lock access to command tree.
-  boost::try_mutex treeMutex;
+  boost::try_mutex tree_mutex_;
 # endif
-
-private:
-  /// Our parser.  A pointer to stop dependencies.
-  UParser* parser_;
-  /// \}
-
-protected:
-
-  /// Default adaptive behavior for Send/Recv..
-  enum { ADAPTIVE = 100 };
-
-  virtual int effectiveSend (const ubyte*, int length) = 0;
-  UConnection& send_error (UErrorCode n);
-  UConnection& send_warning (UWarningCode n);
-
-public:
-  UErrorValue  error () const;
 
 protected:
   /// Store error on commands
@@ -482,28 +337,26 @@ private:
   enum { MAX_ERRORSIGNALS = 20 };
 
   /// A pointer to stop dependencies.
-  UQueue* sendQueue_;
+  UQueue* send_queue_;
 
   /// A pointer to stop dependencies.
-  UQueue* recvQueue_;
+  UQueue* recv_queue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
-  int packetSize_;
+  int packet_size_;
 
   /// Stores the state of the connection.
   bool blocked_;
 
-  /// Whether the connection is receiving binary data.
-  bool receiveBinary_;
-
-  /// Nb of bytes already received in bin mode.
-  int transferedBinary_;
   /// Adaptive behavior for the send UQueue.
-  int sendAdaptive_;
+  int send_adaptive_;
+
   /// Adaptive behavior for the receiving UQueue.
-  int recvAdaptive_;
+  int recv_adaptive_;
+
   /// Stores error flags.
-  bool errorSignals_[MAX_ERRORSIGNALS];
+  bool error_signals_[MAX_ERRORSIGNALS];
+
   /// True when the connection is reading to send/receive data (usualy
   /// set at "true" on start).
   bool active_;
@@ -511,9 +364,19 @@ private:
   /// The Lobby into which the code is evaluated.
   object::rLobby lobby_;
 
+  /// Our parser.  A pointer to stop dependencies.
+  UParser* parser_;
+
+  /// The commands to be executed.
+  ast::Nary* active_command_;
+
+  /// Reference to the underlying server.
+  UServer* server_;
+
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;
 # endif
+
 };
 
 # include "kernel/uconnection.hxx"
