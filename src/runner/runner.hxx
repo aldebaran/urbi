@@ -17,6 +17,7 @@ namespace runner
   Runner::Runner (rLobby lobby, rObject locals,
 		  scheduler::Scheduler& sched, ast::Ast* ast)
     : scheduler::Job (sched),
+      Tag (),
       lobby_ (lobby),
       ast_ (ast),
       current_ (0),
@@ -29,6 +30,7 @@ namespace runner
   Runner::Runner(const Runner& model)
     : ast::DefaultVisitor (),
       scheduler::Job (model),
+      Tag (),
       lobby_ (model.lobby_),
       ast_ (model.ast_),
       current_ (model.current_),

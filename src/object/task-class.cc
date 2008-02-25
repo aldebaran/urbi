@@ -35,6 +35,7 @@ namespace object
 					     args[1]->slot_get (SYMBOL(context)),
 					     r.scheduler_get (),
 					     body);
+    new_runner->copy_parents (r);
     args[0]->slot_set (SYMBOL (runner), box (rRunner, new_runner));
 
     if (args.size () == 3)

@@ -10,6 +10,7 @@
 
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
+# include "runner/tag.hh"
 # include "scheduler/scheduler.hh"
 # include "scheduler/job.hh"
 
@@ -18,7 +19,8 @@ namespace runner
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-		 public scheduler::Job
+		 public scheduler::Job,
+		 public Tag
   {
   public:
     /// \name Useful shorthands.
@@ -34,10 +36,11 @@ namespace runner
     /// Construct a \c Runner in the \a lobby.  The runner needs to
     /// know its \a locals, who is its \a scheduler and will execute
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
+    /// The new runner has no parent.
     Runner (rLobby lobby, rObject locals,
 	    scheduler::Scheduler& scheduler, ast::Ast* ast);
 
-    /// Create a copy of a runner
+    /// Create a copy of a runner.
     Runner (const Runner&);
 
     /// Destroy a Runner.
@@ -115,8 +118,14 @@ namespace runner
     /// Code to run the cleanup code
     void run_at_exit (object::rObject& scope);
 
+    /// Code to execute when terminating a runner.
+    virtual void terminate ();
+
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
+
+    /// Scheduling operations
+    virtual void act (operation_type);
 
   private:
     void show_error_ (object::UrbiException& ue, const ast::loc& l);

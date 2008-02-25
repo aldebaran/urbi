@@ -137,6 +137,20 @@ namespace runner
     operator() (*ast_);
   }
 
+  void
+  Runner::terminate ()
+  {
+    // We have to terminate our dependents as well
+    propagate (stop);
+  }
+
+  void
+  Runner::act (operation_type operation)
+  {
+    // If asked to terminate, do it through terminate_now ()
+    if (operation == stop)
+      terminate_now ();
+  }
 
   /*---------------------.
   | Regular operator().  |
@@ -146,10 +160,12 @@ namespace runner
   Runner::operator() (ast::And& e)
   {
     // lhs will be evaluated in another Runner, while rhs will be evaluated
-    // in this one.
+    // in this one. We will be the new runner parent, as we have the same
+    // tags.
 
     JECHO ("lhs", e.lhs_get ());
     Runner lhs (*this);
+    lhs.copy_parents (*this);
     lhs.ast_ = &e.lhs_get ();
     lhs.start_job ();
 
@@ -499,7 +515,9 @@ namespace runner
       if (dynamic_cast<ast::Stmt*>(i) &&
 	  dynamic_cast<ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
       {
+	// The new runners are attached to the same tags as we are
 	Runner* subrunner = new Runner(*this);
+	subrunner->copy_parents (*this);
 	subrunner->ast_ = i;
 	subrunner->start_job ();
 	runners.push_back(subrunner);
