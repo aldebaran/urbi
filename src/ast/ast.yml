@@ -115,12 +115,10 @@ fwd_hh_epilogue: |2
 
 printer_cc_prologue: |2
 
+  #include <libport/foreach.hh>
   #include <libport/escape.hh>
   #include <libport/indent.hh>
   #include <libport/pair.hh>
-
-  #include <boost/foreach.hpp>
-  #define foreach BOOST_FOREACH
 
 ---
 
@@ -360,8 +358,6 @@ Nary:
           void splice_back (Nary& rhs);
 
     impl prologue: |2
-      #include <boost/foreach.hpp>
-        
       #include <libport/indent.hh>
       #include <libport/separator.hh>
 
