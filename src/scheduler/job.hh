@@ -92,7 +92,7 @@ namespace scheduler
     /// Will be called if the job is killed prematurely or arrives at
     /// its end. It is neither necessary nor advised to call yield
     /// from this function. Any exception raised here will be lost.
-    void terminate ();
+    virtual void terminate ();
 
   private:
     /// Ensure proper cleanup;
