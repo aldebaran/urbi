@@ -12,12 +12,12 @@
 
   function VisibilityScope.updateSlot(x, y)
   {
-   getSlot("__target").updateSlot(x, getSlot("y"));
+    getSlot("__target").updateSlot(x, getSlot("y"));
   };
 
   function VisibilityScope.setSlot(x, y)
   {
-   getSlot("__target").setSlot(x, getSlot("y"));
+    getSlot("__target").setSlot(x, getSlot("y"));
   };
 
   void
@@ -34,15 +34,20 @@ var Code.context = nil;
 
 do Object
 {
+  function load (path)
+  {
+    loadFile(searchFile(path))
+  };
+
   # Cannot use "from" which is a k1 reserved word :) :) :)
   function copySlot (frm, to) {
     # This is annoying: one has to specify "self" here, otherwise the
     # setSlot goes to the locals_ :(
-    self . setSlot(to, getSlot(frm))
+    self.setSlot(to, getSlot(frm))
   };
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");
-  
+
   copySlot ("sameAs", "==");
 
   function 'new'
@@ -61,7 +66,8 @@ do Object
 ## Closure.  ##
 ## --------- ##
 
-do Object {
+do Object
+{
   function makeExplicitClosure (f, context)
   {
     var nf = getSlot ("f").clone;
@@ -129,7 +135,7 @@ do Object
     var f = makeClosedCode (call.evalArgAt (1));
     new Task (getSlot ("f"))
   };
-  
+
   function detach_linked
   {
     var f = makeClosedCode (call.evalArgAt (1));
@@ -148,7 +154,7 @@ do Object
       }
     })
   };
-  
+
   # at_ takes two expressions, a test and a code to execute when the test
   # becomes true
   function at_
@@ -174,7 +180,8 @@ do Object
 ## Scope.  ##
 ## ------- ##
 
-class Object.Scope {
+class Object.Scope
+{
   function init() { self.makeScope (true) }
 };
 
@@ -204,7 +211,7 @@ Object.addProto (Constants);
 class Object.Channel
 {
   function init(x) { var self.name = x };
-  function '<<'(x) { x.print (name); {} };
+  function '<<' (x) { x.print (name); {} };
   void;
 };
 
@@ -216,8 +223,8 @@ do Object
   var error   = new Channel("error");
   var warning = new Channel("warning");
   // Short names are user compatible.
-  var cout  = output;
-  var cerr  = error;
+  var cout    = output;
+  var cerr    = error;
 
   function warn(msg) { echo (msg, "warning") };
   void;

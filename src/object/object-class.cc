@@ -205,33 +205,48 @@ namespace object
   }
 
   static rObject
-  object_class_load (runner::Runner& r, objects_type args)
+  object_class_searchFile (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG(1, String);
-    UConnection& c = r.lobby_get()->value_get().connection;
-    UParser p;
+
+    UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
     {
-      libport::path path =
-	c.server_get().find_file(libport::path(arg1->value_get()));
-      p.process_file(path);
-      return
-	execute_parsed(r, p,
-		       PrimitiveError("", //same message than k1
-				      "Error loading file: "
-				      + arg1->value_get().name_get()));
+      return new String(libport::Symbol(
+                          s.find_file(arg1->value_get ().name_get ())));
     }
     catch (libport::file_library::Not_found&)
     {
       boost::throw_exception(
-	PrimitiveError("",
-		       "Unable to find file: "
-		       + arg1->value_get().name_get()));
+        PrimitiveError("searchFile",
+                       "Unable to find file: "
+                       + arg1->value_get().name_get()));
       // Never reached
       assertion(false);
       return 0;
     }
+  }
+
+  static rObject
+  object_class_loadFile (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (2);
+    FETCH_ARG(1, String);
+
+    std::string filename = arg1->value_get().name_get();
+
+    if (!libport::path (filename).exists ())
+      boost::throw_exception(PrimitiveError("loadFile",
+                                            "No such file: " + filename));
+
+    UParser p;
+
+    p.process_file(arg1->value_get());
+    return
+      execute_parsed(r, p,
+                     PrimitiveError("", //same message than k1
+                                    "Error loading file: " + filename));
   }
 
   static rObject
@@ -428,6 +443,7 @@ namespace object
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(object, Name)
+
     DECLARE(clone);
     DECLARE(init);
 
@@ -454,12 +470,13 @@ namespace object
     DECLARE(echo);
     DECLARE(eval);
     DECLARE(fresh);
-    DECLARE(load);
+    DECLARE(loadFile);
     DECLARE(lobby);
     DECLARE(print);
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(sameAs);
+    DECLARE(searchFile);
     DECLARE(shutdown);
     DECLARE(sleep);
     DECLARE(stopall);

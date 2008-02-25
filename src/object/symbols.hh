@@ -103,6 +103,7 @@
   Macro(init, "init");                            \
   Macro(isScope, "isScope");                      \
   Macro(keywords, "keywords");                    \
+  Macro(loadFile, "loadFile");                    \
   Macro(load, "load");                            \
   Macro(lobby, "lobby");                          \
   Macro(locateSlot, "locateSlot");                \
@@ -123,6 +124,7 @@
   Macro(round, "round");                          \
   Macro(runner, "runner");                        \
   Macro(sameAs, "sameAs");                        \
+  Macro(searchFile, "searchFile");                \
   Macro(self, "self");                            \
   Macro(send, "send");                            \
   Macro(sender, "sender");                        \
