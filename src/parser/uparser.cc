@@ -70,11 +70,10 @@ UParser::process (const std::string& command)
 int
 UParser::process (parser::Tweast& t)
 {
+  // We need to keep it to be able to get the variables.
+  // FIXME: Non-reentrant.
   tweast_ = &t;
-  std::cerr << "Tweast in: " << t << std::endl;
-  int res = process (t.input_get());
-  std::cerr << "Tweast out: " << *ast_ << std::endl;
-  return res;
+  return process (t.input_get());
 }
 
 int

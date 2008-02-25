@@ -15,6 +15,16 @@ std::auto_ptr<UParser::ast_type>
 UParser::ast_take ()
 {
   ast_type* res = ast_get();
+  ast_set(0);
+  return std::auto_ptr<UParser::ast_type>(res);
+}
+
+inline
+std::auto_ptr<UParser::ast_type>
+UParser::ast_xtake ()
+{
+  // Because of auto_ptr, using iassert is inconvenient here.
+  ast_type* res = ast_get();
   assert(res);
   ast_set(0);
   return std::auto_ptr<UParser::ast_type>(res);

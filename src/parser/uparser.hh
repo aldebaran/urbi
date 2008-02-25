@@ -64,8 +64,10 @@ public:
   typedef ast::Nary ast_type;
   /// The latest AST read by process().
   inline ast_type* ast_get ();
-  /// Return the AST, assert it is non-null, and reset \a ast_.
+  /// Return the AST and reset \a ast_.
   inline std::auto_ptr<ast_type> ast_take ();
+  /// Same as \a ast_take, but assert the result.
+  inline std::auto_ptr<ast_type> ast_xtake ();
   /// Set \a ast_.
   inline void ast_set (ast_type* ast);
 private:

@@ -65,6 +65,7 @@
 #include <libport/separator.hh>
 
 #include "ast/all.hh"
+#include "ast/clone.hh"
 
 #include "object/atom.hh"
 
@@ -96,6 +97,16 @@
       delete s;
       return res;
     }
+
+    /// For some reason there are ambiguities bw MetaVar::append_ and
+    /// Tweast::append_ when we don't use exactly ast::Exp*.
+    inline
+    ast::Exp*
+    ast_exp (ast::Exp* e)
+    {
+      return e;
+    }
+
 
     /// Create an AST node storing a float.
     static
@@ -754,11 +765,24 @@ stmt:
 stmt:
   "class" lvalue "{" stmts "}"
     {
+#if 1
       // Compiled as
       // var id = Object.clone; do id { stmts };
       $$ = ast_nary(@$, ast::flavor_semicolon,
-		    ast_class (@1+@2, $2),
-		    ast_scope(@$, $2, $4));
+		   ast_class (@1+@2, $2),
+		   ast_scope(@$, $2, $4));
+#else
+      // Currently does not work, because although we store an LValue
+      // (an ast::Call), we get here as an Exp, which is not good enough
+      // to be used with "var".
+      ast::Exp* lvalue = $2;
+      int err = up.process
+	(::parser::Tweast()
+	 << "var " << ast::clone(*lvalue) << "= Object.clone;"
+	 << "do " << lvalue << "{" << ast_exp($4) << "};");
+      assert (!err);
+      $$ = up.ast_xtake().release();
+#endif
     }
 | "class" lvalue
     {
@@ -974,10 +998,7 @@ stmt:
 			    << "    " << idx << "--)"
 			    << "  " << $5);
       assert (!err);
-      ast::Exp* res = up.ast_get();
-      assert(res);
-      up.ast_set(0);
-      $$ = res;
+      $$ = up.ast_xtake().release();
     }
 | "stopif" "(" softtest ")" stmt
     {
