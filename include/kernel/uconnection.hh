@@ -209,6 +209,9 @@ public:
   template <typename T>
   UConnection& operator<<(const T&);
 
+  /// A << operator which call endline() when receiving std::endl.
+  UConnection& operator<<(std::ostream& (*pf)(std::ostream&));
+
   //! UConnection close. Must be redefined by the robot-specific sub class.
   /*! The implementation of this function must set 'closing_' to true, to
     tell the UConnection to stop sending data.

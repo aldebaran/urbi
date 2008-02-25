@@ -140,4 +140,13 @@ UConnection::operator<<(const T& t)
   return *this;
 }
 
+inline
+UConnection&
+UConnection::operator<<(std::ostream& (*pf)(std::ostream&))
+{
+  if (pf == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
+    endline();
+  return *this;
+}
+
 #endif // !KERNEL_UCONNECTION_HXX
