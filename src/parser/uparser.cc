@@ -6,11 +6,12 @@
 #include <cstdlib>
 #include <cassert>
 
-#include <sstream>
-#include <strstream>
-#include <fstream>
 #include <algorithm>
+#include <fstream>
+#include <iterator>
+#include <sstream>
 #include <string>
+#include <strstream>
 
 #include <libport/foreach.hh>
 
@@ -73,7 +74,13 @@ UParser::process (parser::Tweast& t)
   // We need to keep it to be able to get the variables.
   // FIXME: Non-reentrant.
   tweast_ = &t;
-  return process (t.input_get());
+  int res = process (t.input_get());
+  // We need the parse errors now.
+  std::copy(warnings_.begin(), warnings_.end(),
+	    std::ostream_iterator<std::string>(std::cerr, "\n"));
+  std::copy(errors_.begin(), errors_.end(),
+	    std::ostream_iterator<std::string>(std::cerr, "\n"));
+  return res;
 }
 
 int
