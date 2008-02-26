@@ -54,7 +54,7 @@ namespace scheduler
     foreach (Job* job, to_start_)
     {
       assert (job);
-      ECHO ("will start job " << job);
+      ECHO ("will start job " << *job);
       // Job will start for a very short time and do a yield_front() to
       // be restarted below in the course of the regular cycle.
       assert (!current_job_);
@@ -97,11 +97,11 @@ namespace scheduler
     {
       assert (job);
       assert (!job->terminated ());
-      ECHO ("will resume job " << job);
+      ECHO ("will resume job " << *job);
       possible_side_effect_ |= !job->side_effect_free_get ();
       Coro_switchTo_ (self_, job->coro_get ());
       possible_side_effect_ |= !job->side_effect_free_get ();
-      ECHO ("back from job " << job);
+      ECHO ("back from job " << *job);
     }
 
     // Do we have some work to do now?
@@ -126,7 +126,7 @@ namespace scheduler
     // We regained control, we are again in the context of the job.
     assert (!current_job_);
     current_job_ = job;
-    ECHO ("job " << job << " resumed");
+    ECHO ("job " << *job << " resumed");
     // Check that we are not near exhausting the stack space.
     if (Coro_stackSpaceAlmostGone (job->coro_get ()))
       boost::throw_exception
@@ -223,7 +223,7 @@ namespace scheduler
     assert (job);
     assert (job != current_job_);
 
-    ECHO ("unscheduling job " << job);
+    ECHO ("unscheduling job " << *job);
 
     // First of all, tell the job it has been terminated unless it has
     // been registered with us but not yet started.
@@ -260,7 +260,7 @@ namespace scheduler
   {
     assert (job != current_job_);
 
-    ECHO ("deleting job " << job);
+    ECHO ("deleting job " << *job);
     delete job;
   }
 
