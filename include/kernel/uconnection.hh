@@ -143,7 +143,7 @@ public:
 
   /// The "base" high-level send function. Calls the send_queue() function.
   UConnection&
-  send (const char* buf, const char* tag = 0, bool flush = false);
+  send (const char* buf, const char* tag = 0, bool flush = true);
 
   /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
   UConnection&

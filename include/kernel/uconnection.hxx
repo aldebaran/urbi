@@ -136,7 +136,7 @@ UConnection::operator<<(const T& t)
 {
   std::ostringstream os;
   os << t;
-  send(os.str().c_str());
+  send_queue(os.str().c_str(), os.str().length());
   return *this;
 }
 
