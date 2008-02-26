@@ -408,14 +408,12 @@
 /* Tokens and nonterminal symbols, with their type */
 
 %token
-	TOK_ADDGROUP     "addgroup"
 	TOK_ALIAS        "alias"
 	TOK_EQ           "="
 	TOK_BREAK        "break"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
 	TOK_DELETE       "delete"
-	TOK_DELGROUP     "delgroup"
 	TOK_MINUS_GT     "->"
 	TOK_DOLLAR       "$"
 	TOK_COLON_COLON  "::"
@@ -426,7 +424,6 @@
 	TOK_FREEZEIF     "freezeif"
 	TOK_FROM         "from"
 	TOK_FUNCTION     "function"
-	TOK_GROUP        "group"
 	TOK_IF           "if"
 	TOK_IN           "in"
 	TOK_LBRACE       "{"
@@ -734,11 +731,31 @@ stmt:
 ;
 
 // Groups.
+%token	TOK_ADDGROUP     "addgroup"
+	TOK_DELGROUP     "delgroup"
+	TOK_GROUP        "group";
 stmt:
-  "group"    "identifier" "{" identifiers "}" { $$ = 0; }
-| "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
-| "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
+  "group" "identifier" "{" identifiers "}"
+  {
+    DESUGAR($$,
+	    "var " << *$2 << " = Object.Group.new;"
+	    << *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "]);");
+  }
+| "addgroup" "identifier" "{" identifiers "}"
+  {
+    DESUGAR($$,
+	    *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "]);");
+  }
+| "delgroup" "identifier" "{" identifiers "}"
+  {
+    DESUGAR($$,
+	    *$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "]);");
+  }
 | "group" { $$ = 0; }
+;
+
+expr:
+  "group" "identifier"    { DESUGAR($$, *$2 << ".members;"); }
 ;
 
 // Aliases.
@@ -783,7 +800,7 @@ stmt:
       // Currently does not work, because although we store an LValue
       // (an ast::Call), we get here as an Exp, which is not good enough
       // to be used with "var".
-      DESUGAR($$, 
+      DESUGAR($$,
 	      "var " << ast::clone(*lvalue) << "= Object.clone;"
 	      << "do " << lvalue << "{" << ast_exp($4) << "};");
 #endif
@@ -1185,7 +1202,6 @@ expr:
 | "string"      { $$ = ast_object(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }
-| "group" "identifier"    { $$ = 0; }
 ;
 
 

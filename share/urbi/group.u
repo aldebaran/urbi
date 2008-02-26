@@ -1,0 +1,33 @@
+class Object.Group
+{
+  function init ()
+  {
+    var self.members = [];
+  };
+
+  function add(g)
+  {
+    members.push_back(g);
+  };
+
+  // Implements addgroup.  Cannot use "group" as an identifier,
+  // reserved by k1.
+  function addGroups(g)
+  {
+    members += g;
+  };
+
+  function remove(g)
+  {
+    self.members = members.remove(g);
+  };
+
+  // Implements delgroup.  Cannot use "group" as an identifier,
+  // reserved by k1.
+  function removeGroups(g)
+  {
+    self.members = self.members - g;
+  };
+
+  void;
+};
