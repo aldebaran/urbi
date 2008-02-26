@@ -276,6 +276,8 @@ class Object.Comparable
   void;
 };
 
+// Provide !=.
+Object.addProto(Object.Comparable);
 
 ## ----------- ##
 ## Orderable.  ##
