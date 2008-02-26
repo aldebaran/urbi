@@ -4,6 +4,7 @@
 
 do List
 {
+  // Whether e is in the list.
   function has(e)
   {
     for i in self
@@ -12,6 +13,24 @@ do List
 	return true;
     };
     return false;
+  };
+
+  // Same contents except occurrences of e.
+  function remove(e)
+  {
+    return res - [e];
+  };
+
+  // Subtract a list from self.
+  function '-' (rhs)
+  {
+    var res = [];
+    for i in self
+    {
+      if (!rhs.has(i))
+	res.push_back(i);
+    };
+    return res;
   };
 
   # The Lisp-like name.
