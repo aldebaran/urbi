@@ -338,7 +338,7 @@ namespace urbi
 
   // callback creation for non void return type
 
-# define MKUCreateCallBack%N%(Const)					\
+# define MKUCreateCallBack%N%(Const, Useless)					\
   template <class OBJ, class R%%, class P% %%>				\
   UGenericCallback*							\
   createUCallback(const std::string& objname, const std::string& type,	\
@@ -351,8 +351,8 @@ namespace urbi
 					     owned);			\
   }
 
-  MKUCreateCallBack%N% (/**/);
-  MKUCreateCallBack%N% (const);
+  MKUCreateCallBack%N% (/**/, /**/);
+  MKUCreateCallBack%N% (const, /**/);
 
 # undef MKUCreateCallBack%N%
 

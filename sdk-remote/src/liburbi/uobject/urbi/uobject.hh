@@ -220,7 +220,7 @@ namespace urbi
 # undef MakeMEtaNotify
 
     /// Set a timer that will call tune 'fun' function every 't' milliseconds.
-# define MKUSetTimer(Const)						\
+# define MKUSetTimer(Const, Useless)						\
     template <class T>							\
     void USetTimer(ufloat t, int (T::*fun) () Const)			\
     {									\
@@ -228,8 +228,8 @@ namespace urbi
 				dynamic_cast<T*>(this), fun, timermap);	\
     }
 
-    MKUSetTimer (/**/);
-    MKUSetTimer (const);
+    MKUSetTimer (/**/, /**/);
+    MKUSetTimer (const, /**/);
 
 # undef MKUSetTimer
 

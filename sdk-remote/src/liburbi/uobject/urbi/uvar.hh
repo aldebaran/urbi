@@ -107,7 +107,7 @@ namespace urbi
     void operator = (const UValue &v);
 
     operator int ();
-    operator bool ()  {return (int)(*this);}
+    operator bool ()  {return static_cast<int>(*this) != 0;}
 
     /// Deep copy.
     operator UBinary ();

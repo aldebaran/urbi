@@ -58,7 +58,7 @@ namespace urbi
     }
     int size() const
     {
-      return array.size();
+      return static_cast<int>(array.size());
     }
     void setOffset(int n)
     {
@@ -99,7 +99,7 @@ namespace urbi
 
     int size() const
     {
-      return array.size();
+      return static_cast<int>(array.size());
     }
 
     std::string refName;
@@ -165,11 +165,11 @@ namespace urbi
 
     operator ufloat() const;
     operator std::string() const;
-    operator int() const {return (int)(ufloat)(*this);}
-    operator unsigned int() const {return (unsigned int)(ufloat)(*this);}
-    operator long() const {return (int)(ufloat)(*this);}
-    operator unsigned long() const {return (unsigned int)(ufloat)(*this);}
-    operator bool() const {return (bool)(int)(ufloat)(*this);}
+    operator int() const {return static_cast<int>(static_cast<ufloat>((*this)));}
+    operator unsigned int() const {return static_cast<unsigned int>(static_cast<ufloat>((*this)));}
+    operator long() const {return static_cast<long>(static_cast<ufloat>((*this)));}
+    operator unsigned long() const {return static_cast<unsigned long>(static_cast<ufloat>((*this)));}
+    operator bool() const {return static_cast<int>(static_cast<ufloat>((*this))) != 0;}
 
     /// Deep copy.
     operator UBinary() const;
