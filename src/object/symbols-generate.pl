@@ -47,7 +47,7 @@ die "git grep failed"
 
 my %symbol =
     map { $_ => symbol($_) }
-	($symbols =~ /\b(?:DECLARE|SYMBOL|RETURN_OP) *\(([^,\)]+)/gm);
+	($symbols =~ /\b(?:DECLARE|SYMBOL|RETURN_OP) *\(([^,\)]*)/gm);
 
 print <<'EOF';
 /**
