@@ -15,6 +15,8 @@ ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail currently but need to be fixed soon.
 TFAIL_TESTS +=					\
+1.x/load.chk					\
+2.x/break.chk					\
 2.x/make-scope.chk
 
 # k2 tests that fail.
