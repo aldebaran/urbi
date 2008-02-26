@@ -19,14 +19,14 @@ class Object.Group
 
   function remove(g)
   {
-    self.members = members.remove(g);
+    members = members.remove(g);
   };
 
   // Implements delgroup.  Cannot use "group" as an identifier,
   // reserved by k1.
   function removeGroups(g)
   {
-    self.members = self.members - g;
+    members = self.members - g;
   };
 
   void;
