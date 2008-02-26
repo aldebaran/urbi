@@ -187,7 +187,8 @@ namespace object
   // Code written in C++.
   struct primitive_traits
   {
-    typedef primitive_type type;
+    // The type of the primitives.
+    typedef rObject (*type) (runner::Runner&, objects_type);
     enum { kind = Object::kind_primitive };
   };
 

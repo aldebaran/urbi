@@ -29,21 +29,19 @@ namespace object
   /// \a Macro should be a binary macro whose first arg, \p What, is the
   /// lower case C++ name, and the second argument, \p Name, the
   /// capitalized URBI name.
-# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)	\
-  Macro(alien,     Alien)						\
-  Macro(call,      Call)						\
-  Macro(code,      Code)						\
-  Macro(delegate,  Delegate)                                            \
-  Macro(lobby,     Lobby)						\
-  Macro(float,     Float)						\
-  Macro(integer,   Integer)						\
-  Macro(list,      List)						\
-  Macro(string,    String)						\
+# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
+  Macro(alien,     Alien)				\
+  Macro(call,      Call)				\
+  Macro(code,      Code)				\
+  Macro(delegate,  Delegate)				\
+  Macro(float,     Float)				\
+  Macro(integer,   Integer)				\
+  Macro(list,      List)				\
+  Macro(lobby,     Lobby)				\
+  Macro(primitive, Primitive)				\
+  Macro(string,    String)				\
   Macro(task,      Task)
 
-# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)			\
-  Macro(primitive, Primitive)						\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   Macro(object,    Object)				\
@@ -79,18 +77,11 @@ namespace object
 
   /* You have to understand that the primitives are defined here.  For
    * example, a Code is manipulated through a rCode (r = ref counted) and in
-   * fact Code is just a typedef for Atom<code_traits>.  If get compilation
+   * fact Code is just a typedef for Atom<code_traits>.  If you get compilation
    * errors about non existent members, it's most likely because you did
    * obj.get_value () instead of obj->get_value ().  This is a side effect
    * of the operator-> used for the ref-counting.  Keep that in mind. */
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(DEFINE)
-
-  // primitive_type.
-  // It is because we need this typedef that we have the
-  // previous hideous macro.
-  typedef rObject (*primitive_type) (runner::Runner&, objects_type);
-
-  DEFINE(primitive, Primitive)
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
 # undef DEFINE
 
   // urbi-exception.hh
