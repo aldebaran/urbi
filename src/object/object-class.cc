@@ -127,7 +127,8 @@ namespace object
   object_class_uid (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    std::string str = (boost::format ("0x%x") % reinterpret_cast<long long> (args[0].get ())).str ();
+    std::string str = (boost::format ("0x%x")
+		       % reinterpret_cast<long long> (args[0].get ())).str ();
     return new String (libport::Symbol (str));
   }
 
@@ -281,7 +282,7 @@ namespace object
     return void_class;
   }
 
-#define SERVER_SET_VAR(Function, Variable, Value)					\
+#define SERVER_SET_VAR(Function, Variable, Value)			\
   static rObject							\
   object_class_ ## Function (runner::Runner&, objects_type args)	\
   {									\
