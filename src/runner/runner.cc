@@ -481,27 +481,27 @@ namespace runner
 
     ast::exec_exps_type::iterator i;
     current_ = object::void_class;
-    for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
+    foreach (ast::Exp* i, e.children_get ())
     {
       current_.reset ();
-      JECHO ("child", *i);
+      JECHO ("child", i);
 
-      if (dynamic_cast<ast::Stmt*>(*i) &&
-	  dynamic_cast<ast::Stmt*>(*i)->flavor_get() == ast::flavor_comma)
+      if (dynamic_cast<ast::Stmt*>(i) &&
+	  dynamic_cast<ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
       {
 	Runner* subrunner = new Runner(*this);
-	subrunner->ast_ = *i;
+	subrunner->ast_ = i;
 	subrunner->start_job ();
 	runners.push_back(subrunner);
       }
       else
       {
 	try {
-	  operator() (*i);
+	  operator() (i);
 	}
 	catch (object::UrbiException& ue)
 	{
-	  show_error_(ue, (*i)->location_get());
+	  show_error_(ue, (i)->location_get());
 	  if (!e.toplevel_get())
 	    throw;
 	}
@@ -536,9 +536,6 @@ namespace runner
       }
     }
 
-    // FIXME: I am very afraid that because of the YIELD above, some
-    // command are added right before this clear().  Hence the assert.
-    assert (i == e.children_get().end());
     if (e.toplevel_get ())
       e.clear();
   }
