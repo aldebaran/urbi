@@ -37,7 +37,6 @@ XFAIL_TESTS +=					\
 1.x/groups.chk					\
 1.x/hash-and-list.chk				\
 1.x/hierarchical-tags.chk			\
-1.x/illegal-operation-on-void.chk		\
 1.x/init-in-pipe-with-time.chk			\
 1.x/lazy-test-eval.chk				\
 1.x/loadwav.chk					\

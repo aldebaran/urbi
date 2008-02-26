@@ -1,16 +1,11 @@
 # k1 compatibility.
 class Protos.Kernel1Functions
 {
-  function size(l)
-  { 
-    warn("`size(list)' is deprecated, use `list.size'");
-    l.size
-  };
 
-  function seq(n)
+  // isdef("name"): Check whether "name" is defined (here or above).
+  function isdef
   {
-    warn("`seq(number)' is deprecated, use `number.seq'");
-    n.seq()
+    !call.target.locateSlot(call.argString(1)).isNil;
   };
 
   function ping ()
@@ -18,10 +13,27 @@ class Protos.Kernel1Functions
     echo ("pong time=" + time.asString);
   };
 
+  function seq(n)
+  {
+    warn("`seq(number)' is deprecated, use `number.seq'");
+    n.seq
+  };
+
+  function size(l)
+  { 
+    warn("`size(list)' is deprecated, use `list.size'");
+    l.size
+  };
+
   function strlen(s)
   {
     s.length
   };
+
+
+  ## --------------------------------- ##
+  ## Dirty tricks to change foo.load.  ##
+  ## --------------------------------- ##
 
   function on()
   {
