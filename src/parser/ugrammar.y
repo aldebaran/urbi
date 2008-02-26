@@ -651,7 +651,7 @@ root:
 | stmts.  |
 `--------*/
 
-%type <nary>  stmts;
+%type <nary> stmts block;
 
 // Statements: with ";" and ",".
 stmts:
@@ -804,22 +804,27 @@ stmt:
   }
 };
 
+
+block:
+  "{" stmts "}" { $$ = $2; }
+;
+
 stmt:
-  "class" lvalue "{" stmts "}"
+  "class" lvalue block
     {
 #if 1
       // Compiled as
       // var id = Object.clone; do id { stmts };
       $$ = ast_nary(@$, ast::flavor_semicolon,
 		   ast_class (@1+@2, $2),
-		   ast_scope(@$, $2, $4));
+		   ast_scope(@$, $2, $3));
 #else
       // Currently does not work, because although we store an LValue
       // (an ast::Call), we get here as an Exp, which is not good enough
       // to be used with "var".
       DESUGAR($$,
 	      "var " << ast::clone(*lvalue) << "= Object.clone;"
-	      << "do " << lvalue << "{" << ast_exp($4) << "};");
+	      << "do " << lvalue << "{" << ast_exp($3) << "};");
 #endif
     }
 | "class" lvalue
@@ -862,12 +867,12 @@ stmt:
 
 // Functions.
 stmt:
-  "function" k1_id formals "{" stmts "}"
+  "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt", i.e.,
       // setSlot (name, function args stmt).
       $$ = ast_assign(@$, $2,
-		      new ast::Function (@$, $3, $5),
+		      new ast::Function (@$, $3, $4),
 		      true);
     }
 ;
@@ -1002,9 +1007,9 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = ast_for (@$, $1, $3, $5, $7, $9);
     }
-| "for" "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
+| "for" "identifier" "in" expr block    %prec CMDBLOCK
     {
-      $$ = new ast::Foreach(@$, $1, take($2), $4, $6);
+      $$ = new ast::Foreach(@$, $1, take($2), $4, $5);
     }
 | "freezeif" "(" softtest ")" stmt
     {
@@ -1084,8 +1089,8 @@ stmt:
 %token TOK_DO "do";
 
 expr:
-	    "{" stmts "}"   { $$ = ast_scope(@$,  0, $2); }
-| "do" expr "{" stmts "}"   { $$ = ast_scope(@$, $2, $4); }
+	    block   { $$ = ast_scope(@$,  0, $1); }
+| "do" expr block   { $$ = ast_scope(@$, $2, $3); }
 ;
 
 /*---------------------------.
@@ -1184,9 +1189,9 @@ expr:
 
 // Anonymous function.
 expr:
-  "function" formals "{" stmts "}"
+  "function" formals block
     {
-      $$ = new ast::Function (@$, $2, $4);
+      $$ = new ast::Function (@$, $2, $3);
     }
 ;
 
