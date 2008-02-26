@@ -1,5 +1,5 @@
 # k1 compatibility.
-class Kernel1Functions
+class Protos.Kernel1Functions
 {
   function size(l)
   { 
@@ -47,11 +47,11 @@ class Kernel1Functions
   void;
 };
 
-Object.addProto(Kernel1Functions);
+Protos.addProto(Protos.Kernel1Functions);
 
 # Deprecated command from k1.
 # FIXME: Some commands should be rewritten once it becomes possible.
-class DeprecatedCommands
+class Protos.DeprecatedCommands
 {
   var deprecated_ = function () { echo("`" + name + "' is deprecated." ) };
 
@@ -84,4 +84,4 @@ class DeprecatedCommands
   void;
 };
 
-Object.addProto(DeprecatedCommands);
+Protos.addProto(Protos.DeprecatedCommands);

@@ -23,24 +23,41 @@
   void
 };
 
-## -------- ##
-## Object.  ##
-## -------- ##
-
 # This has to be present before the first function call, otherwise
 # we will have a fatal error when trying to determine the context
 # in which the function will be evaluated.
 var Code.context = nil;
 
-do Object
+## -------- ##
+## Protos.  ##
+## -------- ##
+
+# There are many object, functions, etc. that we want to provide.
+# Instead of having Object derive from them all, we let Protos derive
+# from them, and have Object derive from it.
+class Object.Protos
 {
-  function load (path)
+  // Look for file and load file.
+  function load (file)
   {
-    loadFile(searchFile(path))
+    loadFile(searchFile(file));
   };
 
-  # Cannot use "from" which is a k1 reserved word :) :) :)
-  function copySlot (frm, to) {
+  void;
+};
+
+Object.addProto(Object.Protos);
+
+
+## -------- ##
+## Object.  ##
+## -------- ##
+
+do Object
+{
+  # Cannot use "from" which is a k1 reserved word.
+  function copySlot (frm, to)
+  {
     # This is annoying: one has to specify "self" here, otherwise the
     # setSlot goes to the locals_ :(
     self.setSlot(to, getSlot(frm))
@@ -50,6 +67,7 @@ do Object
 
   copySlot ("sameAs", "==");
 
+  // Invoke "clone", then "init".
   function 'new'
   {
     # The fresh child.
@@ -59,14 +77,14 @@ do Object
     res;
   };
 
-  void
+  void;
 };
 
 ## --------- ##
 ## Closure.  ##
 ## --------- ##
 
-do Object
+class Protos.Closure
 {
   function makeExplicitClosure (f, context)
   {
@@ -104,6 +122,8 @@ do Object
 
   void;
 };
+
+Protos.addProto(Protos.Closure);
 
 ## ------------ ##
 ## Scope exit.  ##
@@ -184,7 +204,7 @@ do Object
 ## Scope.  ##
 ## ------- ##
 
-class Object.Scope
+class Protos.Scope
 {
   function init() { self.makeScope (true) };
   void;
@@ -194,7 +214,7 @@ class Object.Scope
 ## Constants ##
 ## --------- ##
 
-class Object.Constants
+class Protos.Constants
 {
   var true   = 1.0;
   var false  = 0.0;
@@ -205,7 +225,7 @@ class Object.Constants
   var pi     = 3.14159265358979323846264338327950288;
   void;
 };
-Object.addProto (Constants);
+Protos.addProto (Protos.Constants);
 
 
 ## --------- ##
@@ -213,7 +233,7 @@ Object.addProto (Constants);
 ## --------- ##
 
 // Does not have anything special.  Yet.
-class Object.Channel
+class Protos.Channel
 {
   function init(x) { var self.name = x };
   function '<<' (x) { x.print (name); {} };
@@ -269,7 +289,7 @@ do nil
 ## Comparable.  ##
 ## ------------ ##
 
-class Object.Comparable
+class Protos.Comparable
 {
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
@@ -277,13 +297,13 @@ class Object.Comparable
 };
 
 // Provide !=.
-Object.addProto(Object.Comparable);
+Protos.addProto(Protos.Comparable);
 
 ## ----------- ##
 ## Orderable.  ##
 ## ----------- ##
 
-class Object.Orderable
+class Protos.Orderable
 {
   function '<'  (rhs) { rhs > self };
   function '<=' (rhs) { self < rhs || self == rhs };
@@ -299,8 +319,9 @@ class Object.Orderable
 
 do Float
 {
-  self.addProto(Comparable);
-  self.addProto(Orderable);
+  // To bad, "self" is needed.
+  self.addProto(Protos.Comparable);
+  self.addProto(Protos.Orderable);
 
   function init(x) { self.set(x) };
 
@@ -334,6 +355,7 @@ do Float
 
   function '!'() { self == 0; };
 
+  // Create a list 0..(self - 1).
   function seq()
   {
     var result = [];
@@ -390,7 +412,7 @@ load("urbi/k1.u");
 ## Math. ##
 ## ----- ##
 
-class Object.Math
+class Protos.Math
 {
   for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
              "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
@@ -404,7 +426,7 @@ class Object.Math
 
   void;
 };
-Object.addProto (Math);
+Protos.addProto (Protos.Math);
 
 
 ## -------- ##

@@ -3,13 +3,15 @@
 ## -------- ##
 
 
-# The connectives == and < are builtins.
-# FIXME: I'd like to put the addProto in a do, but then it goes
-# to the locals :(
-String.addProto(Comparable);
-String.addProto(Orderable);
-
 do String
 {
+  # The connectives == and < are builtins.
+  # FIXME: I'd like to put the addProto in a do, but then it goes
+  # to the locals :(
+  self.addProto(Protos.Comparable);
+  self.addProto(Protos.Orderable);
+
+  // It is more natural to refer to the length of a string.  Besides,
+  // other encodings will make a difference between size and length.
   copySlot("size", "length");
 };

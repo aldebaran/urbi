@@ -1,4 +1,4 @@
-class Object.Group
+class Protos.Group
 {
   function init ()
   {
@@ -31,3 +31,4 @@ class Object.Group
 
   void;
 };
+Protos.addProto(Protos.Group);
