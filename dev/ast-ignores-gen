@@ -11,42 +11,45 @@ srcdir = sys.argv[1]
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
 
-ignores = file ("ignores.tmp", "w")
-print >>ignores, """\
-all.stamp
-all.hh
-ast-fwd-gen.stamp
-ast-nodes-gen.stamp
-ast-nodes.mk
-ast-print-visitor-gen.stamp
-ast-visitor-gen.stamp
-default-visitor.hh
-default-visitor.hxx
-default-visitor.stamp
-fwd.hh
-fwd.stamp
-ignores
-ignores.stamp
-nodes-mk.stamp
-nodes.stamp
-pretty-printer.stamp
-pretty-printer.hh
-pretty-printer.hxx
-pretty-printer.cc
-cloner.stamp
-cloner.hh
-cloner.cc
-visitor.stamp
-visitor.hh
-visitor.hxx
-"""
+ignores = \
+[
+  "all.hh",
+  "all.stamp",
+  "ast-fwd-gen.stamp",
+  "ast-nodes-gen.stamp",
+  "ast-nodes.mk",
+  "ast-print-visitor-gen.stamp",
+  "ast-visitor-gen.stamp",
+  "ast.dot",
+  "cloner.cc",
+  "cloner.hh",
+  "cloner.stamp",
+  "default-visitor.hh",
+  "default-visitor.hxx",
+  "default-visitor.stamp",
+  "fwd.hh",
+  "fwd.stamp",
+  "graph.stamp",
+  "ignores",
+  "ignores.stamp",
+  "nodes-mk.stamp",
+  "nodes.stamp",
+  "pretty-printer.cc",
+  "pretty-printer.hh",
+  "pretty-printer.hxx",
+  "pretty-printer.stamp",
+  "visitor.hh",
+  "visitor.hxx",
+  "visitor.stamp",
+];
 
 arr = nodes.values ()
-arr.sort (lambda x, y: cmp (x.name, y.name))
 for node in arr:
-  print >>ignores, node.hh()
-  print >>ignores, node.hxx()
-  print >>ignores, node.cc()
+  ignores += [node.hh(), node.hxx(), node.cc()]
+ignores.sort();
 
-ignores.close ()
+f = file ("ignores.tmp", "w")
+for n in ignores:
+  print >>f, n
+f.close ()
 tools.lazy_install (srcdir, "ignores");
