@@ -87,9 +87,7 @@ namespace object
     const ast::Exp& exp = arg_at (args[0],
 				  arg1->value_get (),
 				  SYMBOL (argString));
-    std::ostringstream str;
-    str << exp;
-    return new String (libport::Symbol (str.str ()));
+    return new String (libport::Symbol (boost::lexical_cast<std::string>(exp)));
   }
 
   static rObject
@@ -101,12 +99,10 @@ namespace object
     const ast::exps_type& func_args = args_get (args[0]);
 
     std::list<rObject> res;
-    ast::exps_type::const_iterator i = func_args.begin();
-    ++i;
-    ast::exps_type::const_iterator i_end = func_args.end();
-
-    for (; i != i_end; ++i)
-      res.push_back (r.eval_in_scope (scope, **i));
+    bool not_first = false;
+    foreach(ast::Exp* e, func_args)
+      if (not_first++)
+	res.push_back (r.eval_in_scope (scope, *e));
 
     return new List (res);
   }
