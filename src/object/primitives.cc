@@ -3,10 +3,11 @@
  ** \brief Creation of the root Objects.
  */
 
+#include "object/atom.hh"
 #include "object/object.hh"
 #include "object/primitives.hh"
 #include "object/system-class.hh"
-#include "object/atom.hh"
+#include "object/urbi-exception.hh"
 
 namespace object
 {

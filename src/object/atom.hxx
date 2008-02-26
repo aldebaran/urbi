@@ -16,6 +16,18 @@
 
 # include "object/atom.hh"
 # include "object/primitives.hh"
+# include "object/alien-class.hh"
+# include "object/call-class.hh"
+# include "object/code-class.hh"
+# include "object/delegate-class.hh"
+# include "object/lobby-class.hh"
+# include "object/float-class.hh"
+# include "object/integer-class.hh"
+# include "object/list-class.hh"
+# include "object/object-class.hh"
+# include "object/primitive-class.hh"
+# include "object/string-class.hh"
+# include "object/task-class.hh"
 
 /// How to print a UConnection.
 /// Used by the atom object::Lobby.
