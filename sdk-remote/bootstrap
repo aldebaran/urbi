@@ -1,2 +1,2 @@
 #! /bin/sh
-exec libport/build-aux/bootstrap "$@"
+exec externals/libport/build-aux/bootstrap "$@"
