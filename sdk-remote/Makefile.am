@@ -52,3 +52,12 @@ CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
 	cd src/liburbi/tests && \
 	  $(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) check-html
+
+## ----- ##
+## Doc.  ##
+## ----- ##
+
+.PHONY: doc html
+
+doc html:
+	cd doc && $(MAKE) $(AM_MAKEFLAGS) $@
