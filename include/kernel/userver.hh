@@ -222,7 +222,7 @@ public:
   void display (const char**);
 
   //! Accessor for lastTime_.
-  ufloat lastTime ();
+  libport::utime_t lastTime ();
   //! Update lastTime_ to current time.
   void updateTime ();
   void addConnection (UConnection& connection);
@@ -311,7 +311,7 @@ private:
   /// Is the server isolated.
   bool isolate_;
   /// Store the time on the last call to updateTime();.
-  ufloat lastTime_;
+  libport::utime_t lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
 

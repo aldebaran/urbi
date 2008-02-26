@@ -38,7 +38,7 @@ UServer::period_get ()
   return period_;
 }
 
-inline ufloat
+inline libport::utime_t
 UServer::lastTime()
 {
   return lastTime_;
