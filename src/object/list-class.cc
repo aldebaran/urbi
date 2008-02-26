@@ -133,11 +133,11 @@ namespace object
 #define PRIMITIVE_2_LIST(Name)			\
   PRIMITIVE_2(list, Name, List, List)
 
-  PRIMITIVE_1_LIST (sort);
   PRIMITIVE_1_LIST(back);
   PRIMITIVE_1_LIST(clear);
   PRIMITIVE_1_LIST(front);
   PRIMITIVE_1_LIST(size);
+  PRIMITIVE_1_LIST(sort);
   PRIMITIVE_1_LIST(tail);
   PRIMITIVE_2_LIST(PLUS);
   PRIMITIVE_2_LIST(PLUS_EQ);
