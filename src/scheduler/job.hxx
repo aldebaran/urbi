@@ -140,6 +140,12 @@ namespace scheduler
     return name_;
   }
 
+  inline std::ostream&
+  operator<< (std::ostream& o, const Job& j)
+  {
+    return o << "Job(" << j.name_get () << ")";
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_JOB_HXX

@@ -6,6 +6,8 @@
 #ifndef SCHEDULER_JOB_HH
 # define SCHEDULER_JOB_HH
 
+# include <iosfwd>
+
 # include <boost/exception.hpp>
 # include <boost/exception/enable_exception_cloning.hpp>
 
@@ -126,6 +128,8 @@ namespace scheduler
     bool side_effect_free_;
     boost::exception_ptr pending_exception_;
   };
+
+  std::ostream& operator<< (std::ostream&, const Job&);
 
 } // namespace scheduler
 
