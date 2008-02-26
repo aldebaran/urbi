@@ -412,6 +412,10 @@ do Object
   void;
 };
 
+class Object.Binary {};
+var Object.Binary.asString = function() {
+  "BIN " + data.size.asString + " "  + keywords + "\n" + data
+};
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##

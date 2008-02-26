@@ -25,6 +25,7 @@
   Macro(Alien, "Alien");                          \
   Macro(BANG, "!");                               \
   Macro(BANG_EQ, "!=");                           \
+  Macro(Binary, "Binary");                        \
   Macro(CARET, "^");                              \
   Macro(Call, "Call");                            \
   Macro(Code, "Code");                            \
