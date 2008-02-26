@@ -213,14 +213,14 @@ namespace object
     try
     {
       return new String(libport::Symbol(
-                          s.find_file(arg1->value_get ().name_get ())));
+			  s.find_file(arg1->value_get ().name_get ())));
     }
     catch (libport::file_library::Not_found&)
     {
       boost::throw_exception(
-        PrimitiveError("searchFile",
-                       "Unable to find file: "
-                       + arg1->value_get().name_get()));
+	PrimitiveError("searchFile",
+		       "Unable to find file: "
+		       + arg1->value_get().name_get()));
       // Never reached
       assertion(false);
       return 0;
@@ -237,15 +237,15 @@ namespace object
 
     if (!libport::path (filename).exists ())
       boost::throw_exception(PrimitiveError("loadFile",
-                                            "No such file: " + filename));
+					    "No such file: " + filename));
 
     UParser p;
 
     p.process_file(arg1->value_get());
     return
       execute_parsed(r, p,
-                     PrimitiveError("", //same message than k1
-                                    "Error loading file: " + filename));
+		     PrimitiveError("", //same message than k1
+				    "Error loading file: " + filename));
   }
 
   static rObject
@@ -443,44 +443,40 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(object, Name)
 
-    DECLARE(clone);
-    DECLARE(init);
-
-    DECLARE(protos);
     DECLARE(addProto);
-    DECLARE(removeProto);
-
-    DECLARE(slotNames);
-    DECLARE(getLazyLocalSlot);
-    DECLARE(getSlot);
-    DECLARE(removeSlot);
-    DECLARE(setSlot);
-    DECLARE(updateSlot);
-    DECLARE(locateSlot);
-    DECLARE(makeScope);
-    DECLARE(isScope);
-
     DECLARE(apply);
-
     DECLARE(asString);
+    DECLARE(clone);
     DECLARE(debugoff);
     DECLARE(debugon);
     DECLARE(dump);
     DECLARE(echo);
     DECLARE(eval);
     DECLARE(fresh);
+    DECLARE(getLazyLocalSlot);
+    DECLARE(getSlot);
+    DECLARE(init);
+    DECLARE(isScope);
     DECLARE(loadFile);
     DECLARE(lobby);
+    DECLARE(locateSlot);
+    DECLARE(makeScope);
     DECLARE(print);
+    DECLARE(protos);
     DECLARE(quit);
     DECLARE(reboot);
+    DECLARE(removeProto);
+    DECLARE(removeSlot);
     DECLARE(sameAs);
     DECLARE(searchFile);
+    DECLARE(setSlot);
     DECLARE(shutdown);
     DECLARE(sleep);
+    DECLARE(slotNames);
     DECLARE(stopall);
     DECLARE(time);
     DECLARE(uid);
+    DECLARE(updateSlot);
 #undef DECLARE
   }
 
