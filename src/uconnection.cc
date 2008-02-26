@@ -308,7 +308,9 @@ UConnection::received (const ubyte *buffer, int length)
     }
     else
     {
-      send ("the parser returned NULL\n", "error");
+      std::cerr << make_prefix("error")
+	        << "the parser returned NULL" << std::endl;
+      // FIXME: Is this line usefull ?
       server_->error(::DISPLAY_FORMAT, (long) this,
 		    "UConnection::received",
 		    "the parser returned NULL\n");
