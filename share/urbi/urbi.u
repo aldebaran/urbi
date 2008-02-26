@@ -100,7 +100,9 @@ do Object
     for (var i = 1; i < call.argsCount; i++)
       getSlot("self").capture (call.argString (i), call.evalArgAt (i));
     getSlot ("self")
-  }
+  };
+
+  void;
 };
 
 ## ------------ ##
@@ -118,7 +120,9 @@ do Object
   function atExit (func)
   {
     self.getLazy ("atexit", []) += [getSlot ("func")]
-  }
+  };
+
+  void;
 };
 
 ## -------------------- ##
@@ -182,7 +186,8 @@ do Object
 
 class Object.Scope
 {
-  function init() { self.makeScope (true) }
+  function init() { self.makeScope (true) };
+  void;
 };
 
 ## --------- ##
@@ -344,7 +349,8 @@ do Float
 ## ------ ##
 load("urbi/list.u");
 
-do Object {
+do Object
+{
   function bounce_named (fn)
   {
     function (x) {
@@ -355,18 +361,25 @@ do Object {
   function bounce
   {
     bounce_named (call.argString (1))
-  }
+  };
+
+  void;
 };
 
-var Object.tasks = [];
-
-function Object.eachBg(f, list)
+do Object
 {
-  if (list.size)
+  var tasks = [];
+
+  function eachBg(f, list)
   {
-    Object.tasks += [detach (f (list.head))];
-    eachBg (getSlot ("f"), list.tail)
-  }
+    if (list.size)
+    {
+      Object.tasks += [detach (f (list.head))];
+      eachBg (getSlot ("f"), list.tail)
+    };
+  };
+
+  void;
 };
 
 load("urbi/k1.u");
@@ -403,14 +416,17 @@ load("urbi/string.u");
 ## Logic with short-circuit.  ##
 ## -------------------------- ##
 
-do Object {
+do Object
+{
   function '&&' {
     if (self) call.evalArgAt (1) else self;
   };
 
   function '||' {
     if (self) self else call.evalArgAt (1);
-  }
+  };
+
+  void;
 };
 
 ## ------------- ##

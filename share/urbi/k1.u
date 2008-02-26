@@ -80,6 +80,8 @@ class DeprecatedCommands
   {
     deprecate(i)
   };
+
+  void;
 };
 
 Object.addProto(DeprecatedCommands);
