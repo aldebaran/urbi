@@ -63,9 +63,9 @@ namespace object
 
 
 
-  /*----------.
+  /*---------.
   | Protos.  |
-  `----------*/
+  `---------*/
 
   inline
   Object&

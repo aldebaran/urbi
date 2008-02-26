@@ -26,9 +26,11 @@ namespace object
   typedef libport::shared_ptr<Object> rObject;
   typedef std::vector<rObject> objects_type;
 
-  /// \a Macro should be a binary macro whose first arg, \p What, is the
-  /// lower case C++ name, and the second argument, \p Name, the
-  /// capitalized URBI name.
+  /// \a Macro should be a binary macro whose first arg, \p What, is
+  /// the lower case C++ name, and the second argument, \p Name, the
+  /// capitalized URBI name.  This is used in many different contexts,
+  /// such as defining enums, so we do not use terminators here (;
+  /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,     Alien)				\
   Macro(call,      Call)				\
@@ -44,8 +46,8 @@ namespace object
 
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
-  Macro(object,    Object)				\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
+  Macro(object,    Object)
 
   /*
     Help the generation of precompiled symbols.
