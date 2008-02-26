@@ -5,6 +5,7 @@
 
 #include "object/object.hh"
 #include "object/primitives.hh"
+#include "object/system-class.hh"
 #include "object/atom.hh"
 
 namespace object
@@ -20,6 +21,7 @@ namespace object
 
    SYMBOL(nil)
    SYMBOL(Protos)
+   SYMBOL(System)
    SYMBOL(void)
 
    */
@@ -96,6 +98,7 @@ namespace object
     APPLY_ON_ALL_PRIMITIVES(CLASS_INIT);
 
     CLASS_SETUP(nil, nil);
+    CLASS_SETUP(system, System);
     CLASS_SETUP(void, void);
   }
 

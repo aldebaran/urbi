@@ -149,7 +149,7 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
  * Declare a primitive \a Name in class \a Class with C++
  * implementation \a Name.
  */
-#define DECLARE_PRIMITIVE(Class, Name)  				\
+#define DECLARE_PRIMITIVE(Class, Name)					\
   Class ## _class->slot_set (object::symbol_##Name,			\
 			     new Primitive(Class ## _class_ ## Name))
 

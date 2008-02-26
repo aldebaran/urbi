@@ -62,6 +62,7 @@
   Macro(STAR_STAR, "**");                         \
   Macro(String, "String");                        \
   Macro(Sym, "Sym");                              \
+  Macro(System, "System");                        \
   Macro(TILDA_EQ, "~=");                          \
   Macro(Task, "Task");                            \
   Macro(Token, "Token");                          \

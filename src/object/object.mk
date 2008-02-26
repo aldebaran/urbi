@@ -50,6 +50,8 @@ object/string-class.cc				\
 object/string-class.hh				\
 object/symbols.cc				\
 object/symbols.hh				\
+object/system-class.cc				\
+object/system-class.hh				\
 object/task-class.cc				\
 object/task-class.hh				\
 object/urbi-exception.cc			\

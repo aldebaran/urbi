@@ -7,10 +7,7 @@
 #include <libport/compiler.hh>
 #include <libport/throw-exception.hh>
 #include <libport/tokenizer.hh>
-#include <boost/lexical_cast.hpp>
 
-#include "parser/uparser.hh"
-#include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
 #include "runner/runner.hh"
@@ -122,7 +119,6 @@ namespace object
 
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
-
   static rObject
   object_class_uid (runner::Runner&, objects_type args)
   {
@@ -141,114 +137,6 @@ namespace object
 			     : SYMBOL(false));
   }
 
-
-#define SERVER_FUNCTION(Function)					\
-  static rObject							\
-  object_class_ ## Function (runner::Runner&, objects_type args)	\
-  {									\
-    CHECK_ARG_COUNT (1);						\
-    ::urbiserver->Function();						\
-    return void_class;							\
-  }
-
-  SERVER_FUNCTION(reboot)
-  SERVER_FUNCTION(shutdown)
-
-#undef SERVER_FUNCTION
-
-
-  static rObject
-  object_class_sleep (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, Float);
-    libport::utime_t deadline =
-      ::urbiserver->getTime() +
-      static_cast<libport::utime_t>(arg1->value_get() * 1000.0);
-    r.yield_until (deadline);
-    return void_class;
-  }
-
-  static rObject
-  object_class_time (runner::Runner&, objects_type)
-  {
-    return new Float(::urbiserver->getTime() / 1000.0);
-  }
-
-  static rObject
-  execute_parsed (runner::Runner& r, UParser& p, UrbiException e)
-  {
-    ast::Nary errs;
-    p.process_errors(&errs);
-    errs.accept(r);
-
-    if (ast::Nary* ast = p.ast_get())
-    {
-      ast->accept(r);
-      //FIXME: deleting the tree now causes segv.
-      //delete p.command_tree_get();
-      //p.command_tree_set (0);
-      return r.current_get();
-    }
-    else
-      libport::throw_exception (e);
-  }
-
-  static rObject
-  object_class_eval (runner::Runner& r, objects_type args)
-  {
-    FETCH_ARG(1, String);
-    UParser p;
-    p.process(arg1->value_get());
-    return execute_parsed(r, p, PrimitiveError("",
-	std::string("Error executing command.")));
-  }
-
-  static rObject
-  object_class_searchFile (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, String);
-
-    UServer& s = r.lobby_get()->value_get().connection.server_get();
-    try
-    {
-      return new String(libport::Symbol(
-			  s.find_file(arg1->value_get ().name_get ())));
-    }
-    catch (libport::file_library::Not_found&)
-    {
-      boost::throw_exception(
-	PrimitiveError("searchFile",
-		       "Unable to find file: "
-		       + arg1->value_get().name_get()));
-      // Never reached
-      assertion(false);
-      return 0;
-    }
-  }
-
-  static rObject
-  object_class_loadFile (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, String);
-
-    std::string filename = arg1->value_get().name_get();
-
-    if (!libport::path (filename).exists ())
-      boost::throw_exception(PrimitiveError("loadFile",
-					    "No such file: " + filename));
-
-    UParser p;
-
-    p.process_file(arg1->value_get());
-    return
-      execute_parsed(r, p,
-		     PrimitiveError("", //same message than k1
-				    "Error loading file: " + filename));
-  }
-
   static rObject
   object_class_apply (runner::Runner&, objects_type args)
   {
@@ -259,43 +147,6 @@ namespace object
 	(PrimitiveError ("apply", "first argument must be an empty list"));
     return args[0];
   }
-
-  static rObject
-  object_class_fresh (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    return new String(libport::Symbol::fresh());
-  }
-
-  static rObject
-  object_class_lobby (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    return r.lobby_get();
-  }
-
-  static rObject
-  object_class_quit (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    r.lobby_get()->value_get().connection.close();
-    return void_class;
-  }
-
-#define SERVER_SET_VAR(Function, Variable, Value)			\
-  static rObject							\
-  object_class_ ## Function (runner::Runner&, objects_type args)	\
-  {									\
-    CHECK_ARG_COUNT (1);						\
-    ::urbiserver->Variable = Value;					\
-    return void_class;							\
-  }
-
-  SERVER_SET_VAR(debugoff, debugOutput, false)
-  SERVER_SET_VAR(debugon, debugOutput, true)
-  SERVER_SET_VAR(stopall, stopall, true)
-
-#undef SERVER_SET_VAR
 
   /*---------.
   | Protos.  |
@@ -448,34 +299,21 @@ namespace object
     DECLARE(apply);
     DECLARE(asString);
     DECLARE(clone);
-    DECLARE(debugoff);
-    DECLARE(debugon);
     DECLARE(dump);
-    DECLARE(echo);
-    DECLARE(eval);
-    DECLARE(fresh);
+    DECLARE(echo); // This guy should be in System.
     DECLARE(getLazyLocalSlot);
     DECLARE(getSlot);
     DECLARE(init);
     DECLARE(isScope);
-    DECLARE(loadFile);
-    DECLARE(lobby);
     DECLARE(locateSlot);
     DECLARE(makeScope);
     DECLARE(print);
     DECLARE(protos);
-    DECLARE(quit);
-    DECLARE(reboot);
     DECLARE(removeProto);
     DECLARE(removeSlot);
     DECLARE(sameAs);
-    DECLARE(searchFile);
     DECLARE(setSlot);
-    DECLARE(shutdown);
-    DECLARE(sleep);
     DECLARE(slotNames);
-    DECLARE(stopall);
-    DECLARE(time);
     DECLARE(uid);
     DECLARE(updateSlot);
 #undef DECLARE

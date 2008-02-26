@@ -20,7 +20,7 @@
     getSlot("__target").setSlot(x, getSlot("y"));
   };
 
-  void
+  void;
 };
 
 # This has to be present before the first function call, otherwise
@@ -37,6 +37,9 @@ var Code.context = nil;
 # from them, and have Object derive from it.
 do Protos
 {
+  // Import the primitives.
+  self.addProto(System);
+
   // Look for file and load file.
   function load (file)
   {
@@ -195,7 +198,7 @@ do Object
     t
   };
 
-  void
+  void;
 };
 
 ## ------- ##
