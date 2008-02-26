@@ -229,34 +229,7 @@ class Protos.Constants
 Protos.addProto (Protos.Constants);
 
 
-## --------- ##
-## Channel.  ##
-## --------- ##
-
-// Does not have anything special.  Yet.
-class Protos.Channel
-{
-  function init(x) { var self.name = x };
-  function '<<' (x) { x.print (name); {} };
-  void;
-};
-
-// Default channels.
-do Protos
-{
-  // Long names are k1 compatible.
-  var output  = new Channel("output");
-  var error   = new Channel("error");
-  var warning = new Channel("warning");
-  // Short names are user compatible.
-  var cout    = output;
-  var cerr    = error;
-
-  function warn(msg) { echo (msg, "warning") };
-  void;
-};
-
-
+load("urbi/channel.u");
 load("urbi/singleton.u");
 
 
