@@ -35,7 +35,7 @@ namespace object
 					     args[1]->slot_get (SYMBOL(context)),
 					     r.scheduler_get (),
 					     body);
-    args[0]->slot_set (SYMBOL(runner), box (rRunner, new_runner));
+    args[0]->slot_set (SYMBOL (runner), box (rRunner, new_runner));
 
     if (args.size () == 3)
     {
@@ -51,12 +51,9 @@ namespace object
   // Helper function: check that there are no argument, unbox the
   // runner and return it once it has terminated.
   static inline rRunner
-  yield_until_terminated (runner::Runner& r, objects_type args)
+  yield_until_terminated (runner::Runner& r, rObject o)
   {
-    CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, Alien);
-
-    rRunner other = unbox (rRunner, arg1);
+    rRunner other = unbox (rRunner, o->slot_get (SYMBOL (runner)));
     r.yield_until_terminated (*other);
     return other;
   }
@@ -64,9 +61,9 @@ namespace object
   static rObject
   task_class_waitFor (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (2);
+    CHECK_ARG_COUNT (1);
 
-    yield_until_terminated (r, args);
+    yield_until_terminated (r, args[0]);
     return void_class;
   }
 
@@ -82,9 +79,9 @@ namespace object
   static rObject
   task_class_result (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (2);
+    CHECK_ARG_COUNT (1);
 
-    return yield_until_terminated (r, args)->current_get ();
+    return yield_until_terminated (r, args[0])->current_get ();
   }
 
   static rObject
