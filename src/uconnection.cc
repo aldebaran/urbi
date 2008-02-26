@@ -476,4 +476,3 @@ UConnection::drop_pending_commands ()
 {
   active_command_->clear();
 }
-
