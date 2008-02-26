@@ -1,0 +1,11 @@
+## ----------- ##
+## Singleton.  ##
+## ----------- ##
+
+class Protos.Singleton
+{
+  function clone() { self };
+  function 'new' { self };
+  function init {};
+  void;
+};

@@ -257,16 +257,18 @@ do Protos
 };
 
 
+load("urbi/singleton.u");
+
+
 ## ------ ##
 ## void.  ##
 ## ------ ##
+
 do void
 {
+  self.addProto(Singleton);
   // void prints nothing.
   function print() {};
-  // void is a singleton.
-  function clone() { self; };
-  void;
 };
 
 
@@ -276,11 +278,9 @@ do void
 
 do nil
 {
-  // nil is a singleton.
-  function clone () { self };
+  self.addProto(Singleton);
   var isNil = true;
   function '==' (x) { x.isNil };
-
   var Object.isNil = false;
   void;
 };
