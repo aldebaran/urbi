@@ -20,6 +20,7 @@
 # define SYMBOL(Sym) object::symbol_ ## Sym
 
 # define SYMBOLS_APPLY(Macro)			  \
+  Macro(, "");                                    \
   Macro(AMPERSAND_AMPERSAND, "&&");               \
   Macro(Alien, "Alien");                          \
   Macro(BANG, "!");                               \
@@ -103,6 +104,7 @@
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
   Macro(isScope, "isScope");                      \
+  Macro(job, "job");                              \
   Macro(keywords, "keywords");                    \
   Macro(loadFile, "loadFile");                    \
   Macro(lobby, "lobby");                          \

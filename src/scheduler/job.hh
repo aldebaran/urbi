@@ -8,6 +8,8 @@
 
 # include <boost/exception.hpp>
 # include <boost/exception/enable_exception_cloning.hpp>
+
+# include <libport/symbol.hh>
 # include <libport/utime.hh>
 
 # include "object/urbi-exception.hh"
@@ -22,8 +24,8 @@ namespace scheduler
   class Job
   {
   public:
-    Job (const Job&);
-    explicit Job (Scheduler& scheduler);
+    Job (const Job&, const libport::Symbol& name = SYMBOL ());
+    explicit Job (Scheduler& scheduler, const libport::Symbol& name = SYMBOL ());
     virtual ~Job ();
 
     Scheduler& scheduler_get () const;
@@ -82,6 +84,9 @@ namespace scheduler
     /// Destroy a bi-directional link if it exists.
     void unlink (Job*);
 
+    /// Get this job name
+    const libport::Symbol& name_get () const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -100,6 +105,9 @@ namespace scheduler
 
     /// Scheduler in charge of this job.  Do not delete.
     Scheduler* scheduler_;
+
+    /// This job name
+    libport::Symbol name_;
 
     /// Has the coroutine terminated? Set by run ().
     bool terminated_;

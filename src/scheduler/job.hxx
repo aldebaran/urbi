@@ -14,8 +14,9 @@ namespace scheduler
 {
 
   inline
-  Job::Job (Scheduler& scheduler)
+  Job::Job (Scheduler& scheduler, const libport::Symbol& name)
     : scheduler_ (&scheduler),
+      name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       terminated_ (false),
       self_ (Coro_new ()),
       side_effect_free_ (false),
@@ -24,8 +25,9 @@ namespace scheduler
   }
 
   inline
-  Job::Job (const Job& model)
+  Job::Job (const Job& model, const libport::Symbol& name)
     : scheduler_ (model.scheduler_),
+      name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       terminated_ (false),
       self_ (Coro_new ()),
       side_effect_free_ (false),
@@ -130,6 +132,12 @@ namespace scheduler
   {
     links_.remove (other);
     other->links_.remove (this);
+  }
+
+  inline const libport::Symbol&
+  Job::name_get () const
+  {
+    return name_;
   }
 
 } // namespace scheduler
