@@ -54,6 +54,7 @@
   Macro(PLUS_EQ, "+=");                           \
   Macro(PLUS_PLUS, "++");                         \
   Macro(Primitive, "Primitive");                  \
+  Macro(Protos, "Protos");                        \
   Macro(SLASH, "/");                              \
   Macro(SLASH_EQ, "/=");                          \
   Macro(STAR, "*");                               \
@@ -65,7 +66,6 @@
   Macro(Task, "Task");                            \
   Macro(Token, "Token");                          \
   Macro(VisibilityScope, "VisibilityScope");      \
-  Macro(What, "What");                            \
   Macro(__target, "__target");                    \
   Macro(__uobject_base, "__uobject_base");        \
   Macro(__uobject_cname, "__uobject_cname");      \
@@ -104,7 +104,6 @@
   Macro(isScope, "isScope");                      \
   Macro(keywords, "keywords");                    \
   Macro(loadFile, "loadFile");                    \
-  Macro(load, "load");                            \
   Macro(lobby, "lobby");                          \
   Macro(locateSlot, "locateSlot");                \
   Macro(log, "log");                              \

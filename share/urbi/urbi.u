@@ -8,7 +8,7 @@
 # the locals. Only the target can be modified implicitly
 # The slot __target is expected to be set to the target of the block.
 {
-  var Object.VisibilityScope = Object.clone;
+  var Protos.VisibilityScope = Object.clone;
 
   function VisibilityScope.updateSlot(x, y)
   {
@@ -35,7 +35,7 @@ var Code.context = nil;
 # There are many object, functions, etc. that we want to provide.
 # Instead of having Object derive from them all, we let Protos derive
 # from them, and have Object derive from it.
-class Object.Protos
+do Protos
 {
   // Look for file and load file.
   function load (file)
@@ -45,8 +45,6 @@ class Object.Protos
 
   void;
 };
-
-Object.addProto(Object.Protos);
 
 
 ## -------- ##

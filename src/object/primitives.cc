@@ -16,7 +16,17 @@ namespace object
   rObject What ## _class;					\
   namespace { static void What ## _class_initialize () { } }
 
+  /* Help the generation of symbols.
+
+   SYMBOL(nil)
+   SYMBOL(Protos)
+   SYMBOL(void)
+
+   */
+
   CLASS_INITIALIZE(nil);
+  // Where we store all the primitives (objects and functions).
+  CLASS_INITIALIZE(protos);
   CLASS_INITIALIZE(void);
 #undef CLASS_INITIALIZE
 
@@ -42,16 +52,16 @@ namespace object
     // steps.
     //
     // 1. Construct the (empty) objects for the base classes.  They
-    // all derive from Object.
+    // all derive from Object... except Object.
     //
-    // 2. Now that these classes exists, in particular string_class
-    // from which any String is a clone, we can initialize the "type"
-    // field for all of them, including Object.
+    // 2. Initialize the "type" field for all of them, including
+    // Object (requires that these classes exists, in particular
+    // string_class from which any String is a clone).
     //
-    // 3. Now finalize the construction for each base class: bind some
+    // 3. Finalize the construction for each base class: bind some
     // initial methods.
     //
-    // 4. Register all these classes in Object, so that when we look
+    // 4. Register all these classes in Protos, so that when we look
     // up for "Object" for instance, we find it.
     //
     // CLASS_CREATE does 1, CLASS_INIT does 2 to 4, and CLASS_SETUP
@@ -64,7 +74,7 @@ namespace object
     What ## _class->slot_set(SYMBOL(type),			\
 			     new String (SYMBOL(Name)));	\
     What ## _class_initialize ();				\
-    object_class->slot_set(symbol_ ## Name, What ## _class);
+    protos_class->slot_set(symbol_ ## Name, What ## _class);
 
 #define CLASS_SETUP(What, Name)			\
     CLASS_CREATE(What, Name)			\
@@ -78,6 +88,11 @@ namespace object
     // in the primitive classes), first create them all, then bind
     // them all.
     APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CLASS_CREATE);
+
+    CLASS_SETUP(protos, Protos);
+    // Object must derive from Protos.
+    object_class->proto_add(protos_class);
+
     APPLY_ON_ALL_PRIMITIVES(CLASS_INIT);
 
     CLASS_SETUP(nil, nil);
