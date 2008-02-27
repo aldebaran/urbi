@@ -30,6 +30,8 @@ include dev/dev.mk
 kernelincludekerneldir = $(kernelincludedir)/kernel
 kernelincludekernel_HEADERS =			\
 include/kernel/blockmemorymanager.hh		\
+include/kernel/exception.hh			\
+include/kernel/exception.hxx			\
 include/kernel/fwd.hh				\
 include/kernel/memorymanager.hh			\
 include/kernel/ucomplaints.hh			\
