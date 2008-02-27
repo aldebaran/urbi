@@ -81,13 +81,6 @@ include uobject/uobject.mk
 dist_libkernel_la_SOURCES +=				\
 $(dist_uobject_sources)
 
-## ------------------ ##
-## boost::exception.  ##
-## ------------------ ##
-
-include $(top_srcdir)/include/boost/exception/local.mk
-
-
 ## ----------------- ##
 ## Sub directories.  ##
 ## ----------------- ##
