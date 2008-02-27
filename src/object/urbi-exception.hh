@@ -8,13 +8,12 @@
 
 # include <string>
 
-# include <boost/exception.hpp>
-# include <boost/exception/enable_exception_cloning.hpp>
-
 # include <libport/ufloat.hh>
 # include <libport/symbol.hh>
 
 # include "ast/loc.hh"
+
+# include "kernel/exception.hh"
 
 # include "object/fwd.hh"
 # include "object/object.hh"
@@ -23,7 +22,7 @@ namespace object
 {
   /// This class defines an exception used when an error
   /// occurs in an URBI primitive.
-  class UrbiException : public boost::exception
+  class UrbiException : public kernel::exception
   {
   public:
     /// Destructor.
@@ -33,16 +32,12 @@ namespace object
     void initialize_msg () throw ();
 
     /// Return the exception's error message.
-    virtual const char* what () const throw ();
+    virtual std::string what () const throw ();
 
-    /// Get location.
-    ast::loc location_get () const;
+    ADD_FIELD (ast::loc, location)
+    ADD_FIELD (std::string, msg)
+    ADD_FIELD (std::string, function);
 
-    /// Set location.
-    void location_set (const ast::loc&);
-
-    /// Returns if the location has been set
-    bool location_is_set() const;
   protected:
     /**
      * \brief Construct an exception which contains a raw message.
@@ -61,6 +56,8 @@ namespace object
      * \param fun C++ function that raised.  */
     UrbiException (const std::string& msg,
 		   const std::string& fun);
+
+    COMPLETE_EXCEPTION (UrbiException)
   };
 
 
@@ -69,18 +66,21 @@ namespace object
   struct LookupError: public UrbiException
   {
     explicit LookupError (libport::Symbol slot);
+    COMPLETE_EXCEPTION (LookupError)
   };
 
   /// Explicit for slots redefined.
   struct RedefinitionError: public UrbiException
   {
     explicit RedefinitionError (libport::Symbol slot);
+    COMPLETE_EXCEPTION (RedefinitionError)
   };
 
   /// Exception raised when the stack space in a task is almost exhausted
   struct StackExhaustedError: public UrbiException
   {
     explicit StackExhaustedError (const std::string& msg);
+    COMPLETE_EXCEPTION (StackExhaustedError)
   };
 
   /** Exception for errors related to primitives usage.
@@ -90,6 +90,7 @@ namespace object
   {
     PrimitiveError (const std::string& primitive,
 		    const std::string& msg);
+    COMPLETE_EXCEPTION (PrimitiveError)
   };
 
   /** Exception for type mismatch in a primitive usage.
@@ -104,6 +105,7 @@ namespace object
     /// Invalid use of void.
     WrongArgumentType(const std::string& fun);
 
+    COMPLETE_EXCEPTION (WrongArgumentType)
   };
 
   /** Exception used for calls with wrong argument count.
@@ -119,6 +121,7 @@ namespace object
 			const std::string& fun);
     WrongArgumentCount (unsigned minformal, unsigned maxformal,
 			unsigned effective, const std::string& fun);
+    COMPLETE_EXCEPTION (WrongArgumentCount)
   };
 
   /** Exception used when a non-integer is provided to a primitive expecting
@@ -128,6 +131,7 @@ namespace object
   struct BadInteger: public UrbiException
   {
     BadInteger (libport::ufloat effective, const std::string& fun);
+    COMPLETE_EXCEPTION (BadInteger)
   };
 
   /// Throw an exception if formal != effective.

@@ -104,9 +104,9 @@ namespace scheduler
   }
 
   inline void
-  Job::async_throw (boost::exception_ptr e)
+  Job::async_throw (const kernel::exception& e)
   {
-    pending_exception_ = e;
+    pending_exception_ = e.clone ();
   }
 
   inline void
@@ -114,9 +114,9 @@ namespace scheduler
   {
     if (pending_exception_)
     {
-      boost::exception_ptr to_throw;
-      std::swap (to_throw, pending_exception_);
-      boost::rethrow_exception (to_throw);
+      current_exception_ = pending_exception_;
+      pending_exception_ = 0;
+      kernel::rethrow (current_exception_);
     }
   }
 

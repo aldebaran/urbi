@@ -84,7 +84,7 @@ namespace object
   {
     Object* r = slot_locate(k);
     if (!r)
-      boost::throw_exception (LookupError(k));
+      throw LookupError(k);
     return *r;
   }
 
@@ -106,7 +106,7 @@ namespace object
   Object::slot_set (const Object::key_type& k, rObject o)
   {
     if (libport::mhas(slots_, k))
-      boost::throw_exception (RedefinitionError(k));
+      throw RedefinitionError(k);
     slots_[k] = o;
     return *this;
   }

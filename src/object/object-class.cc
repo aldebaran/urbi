@@ -143,8 +143,8 @@ namespace object
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
     if (!arg1->value_get ().empty ())
-      boost::throw_exception
-	(PrimitiveError ("apply", "first argument must be an empty list"));
+      throw
+	PrimitiveError ("apply", "first argument must be an empty list");
     return args[0];
   }
 

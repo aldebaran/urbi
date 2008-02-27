@@ -5,7 +5,6 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
-#include <libport/throw-exception.hh>
 
 #include "parser/uparser.hh"
 #include "kernel/userver.hh"
@@ -73,7 +72,7 @@ namespace object
       return r.current_get();
     }
     else
-      libport::throw_exception (e);
+      throw e;
   }
 
   static rObject
@@ -100,10 +99,10 @@ namespace object
     }
     catch (libport::file_library::Not_found&)
     {
-      boost::throw_exception(
+      throw
 	PrimitiveError("searchFile",
 		       "Unable to find file: "
-		       + arg1->value_get().name_get()));
+		       + arg1->value_get().name_get());
       // Never reached
       assertion(false);
       return 0;
@@ -119,8 +118,8 @@ namespace object
     std::string filename = arg1->value_get().name_get();
 
     if (!libport::path (filename).exists ())
-      boost::throw_exception(PrimitiveError("loadFile",
-					    "No such file: " + filename));
+      throw PrimitiveError("loadFile",
+			   "No such file: " + filename);
 
     UParser p;
 

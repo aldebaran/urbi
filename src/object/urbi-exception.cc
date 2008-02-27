@@ -8,38 +8,38 @@
 namespace object
 {
   UrbiException::UrbiException (const std::string& msg)
-    : boost::exception ()
+    : kernel::exception ()
   {
-    *this << msg_info (msg);
+    msg_ = msg;
   }
 
   UrbiException::UrbiException (const std::string& msg,
 				const ast::loc& loc)
-    : boost::exception ()
+    : kernel::exception ()
   {
-    *this << msg_info (msg);
-    *this << location_info (loc);
+    msg_ = msg;
+    location_ = loc;
   }
 
   UrbiException::UrbiException (const std::string& msg,
 				const std::string& fun)
-    : boost::exception ()
+    : kernel::exception ()
   {
     if (fun.empty ())
-      *this << msg_info (msg);
+      msg_ = msg;
     else
-      *this << msg_info (fun + ": " + msg);
-    *this << function_info (fun);
+      msg_ = fun + ": " + msg;
+    function_ = fun;
   }
 
   UrbiException::~UrbiException () throw ()
   {
   }
 
-  const char*
+  std::string
   UrbiException::what () const throw ()
   {
-    return boost::get_error_info<msg_info> (*this)->c_str();
+    return msg_get ();
   }
 
 }; // namespace object

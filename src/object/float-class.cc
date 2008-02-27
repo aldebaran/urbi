@@ -31,8 +31,7 @@ namespace object
   Name (libport::ufloat l, libport::ufloat r)                           \
   {                                                                     \
     if (!r)								\
-      boost::throw_exception (PrimitiveError("Operator " #Operator,	\
-					     ErrorMessage));		\
+      throw PrimitiveError("Operator " #Operator, ErrorMessage);	\
     return l Operator r;                                                \
   }
 
@@ -42,7 +41,7 @@ namespace object
   Name (libport::ufloat l, libport::ufloat r)                           \
   {                                                                     \
     if (!r)								\
-      boost::throw_exception (PrimitiveError(#Method, ErrorMessage));	\
+      throw PrimitiveError(#Method, ErrorMessage);			\
     return Method(l, r);                                                \
   }
 
@@ -70,7 +69,7 @@ namespace object
     }
     catch (libport::bad_numeric_cast& ue)
     {
-      boost::throw_exception (BadInteger (val, func));
+      throw BadInteger (val, func);
       return 0;  // Keep the compiler happy
     }
   }
@@ -144,8 +143,7 @@ abs(libport::ufloat v)
   {
     // FIXME: The error message requires 2 although 1 is ok.
     if (args.size () != 1 && args.size() != 2)
-      boost::throw_exception (WrongArgumentCount(2, args.size (),
-						 __PRETTY_FUNCTION__));
+      throw WrongArgumentCount(2, args.size (), __PRETTY_FUNCTION__);
     FETCH_ARG(0, Float);
     if (args.size() == 1)
       return new Float(- arg0->value_get());
@@ -181,14 +179,14 @@ abs(libport::ufloat v)
 #define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name)			\
   PRIMITIVE_0_FLOAT_(Name,					\
      if (VALUE(args[0], Float) < 0)				\
-       boost::throw_exception					\
-	 (PrimitiveError(#Name,					\
-			 "argument has to be positive")))
+       throw							\
+	 PrimitiveError(#Name,					\
+			"argument has to be positive"))
 
 #define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name,Min, Max)                    \
   PRIMITIVE_0_FLOAT_(Name,      					\
      if (VALUE(args[0], Float) < Min || Max < VALUE(args[0], Float))	\
-       boost::throw_exception (PrimitiveError(#Name, "invalid range")))
+       throw PrimitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name)                            \
   PRIMITIVE_2_V(float, Name, Float, Float, Float)

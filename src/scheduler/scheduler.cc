@@ -129,8 +129,7 @@ namespace scheduler
     ECHO ("job " << *job << " resumed");
     // Check that we are not near exhausting the stack space.
     if (Coro_stackSpaceAlmostGone (job->coro_get ()))
-      boost::throw_exception
-	(object::StackExhaustedError ("stack space exhausted"));
+      throw object::StackExhaustedError ("stack space exhausted");
     // Execute a deferred exception if any
     job->check_for_pending_exception ();
   }

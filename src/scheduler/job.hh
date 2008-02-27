@@ -8,12 +8,10 @@
 
 # include <iosfwd>
 
-# include <boost/exception.hpp>
-# include <boost/exception/enable_exception_cloning.hpp>
-
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
 
+# include "kernel/exception.hh"
 # include "object/urbi-exception.hh"
 # include "scheduler/fwd.hh"
 
@@ -74,7 +72,7 @@ namespace scheduler
     bool side_effect_free_get () const;
 
     /// Raise an exception next time this job will be resumed.
-    void async_throw (boost::exception_ptr);
+    void async_throw (const kernel::exception&);
 
     /// Maybe raise a deferred exception. Must be called from the scheduler
     /// while resuming the job execution.
@@ -126,7 +124,8 @@ namespace scheduler
     jobs links_;
 
     bool side_effect_free_;
-    boost::exception_ptr pending_exception_;
+    kernel::exception_ptr pending_exception_;
+    kernel::exception_ptr current_exception_;
   };
 
   std::ostream& operator<< (std::ostream&, const Job&);

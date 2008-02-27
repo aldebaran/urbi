@@ -27,11 +27,11 @@ namespace object
 #define TYPE_CHECK(Obj, Type)				\
   do {							\
     if (!(Obj)->type_is<Type>())			\
-      boost::throw_exception				\
-	(object::WrongArgumentType			\
-	 (object::Object::kind_type(Type::kind),	\
-	  (Obj)->kind_get(),				\
-	  ""));						\
+      throw						\
+	object::WrongArgumentType			\
+	(object::Object::kind_type(Type::kind),		\
+	 (Obj)->kind_get(),				\
+	 "");						\
   } while (0)
 
 /**

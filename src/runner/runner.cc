@@ -11,6 +11,7 @@
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
 
+#include "kernel/exception.hh"
 #include "kernel/uconnection.hh"
 
 #include "ast/clone.hh"
@@ -76,19 +77,26 @@ namespace runner
 
 /** Catch exceptions, execute Code, then display the error if not already
  * done, and rethrow it. Also execute Code if no exception caught. */
-#define PROPAGATE_EXCEPTION(Loc, Code)	\
-  catch(object::UrbiException& ue)		\
-  {						\
-    Code					\
-    current_.reset();				\
-    show_error_(ue, Loc);			\
-    throw;					\
-  }						\
-  catch(...)					\
-  {						\
-    Code					\
-    throw;					\
-  }						\
+#define PROPAGATE_EXCEPTION(Loc, Code)			\
+  catch(object::UrbiException& ue)			\
+  {							\
+    Code						\
+    current_.reset();					\
+    show_error_(ue, Loc);				\
+    throw;						\
+  }							\
+  catch(kernel::exception &e)				\
+  {							\
+    std::cerr << "Unexpected exception propagated: "	\
+              << e.what() << std::endl;			\
+    Code						\
+    throw; 						\
+  }							\
+  catch(...)						\
+  {							\
+    Code						\
+    throw;						\
+  }							\
   Code
 
   void
@@ -271,7 +279,7 @@ namespace runner
       foreach (rObject arg, args)
       {
 	if (!first && arg == object::void_class)
-	  boost::throw_exception (object::WrongArgumentType (""));
+	  throw object::WrongArgumentType ("");
 	first = false;
       }
     }
@@ -327,7 +335,7 @@ namespace runner
       {
 	object::WrongArgumentType wt("");
 	show_error_(wt, (*arg)->location_get());
-	boost::throw_exception (wt);
+	throw wt;
       }
       PING ();
       args.push_back (current_);
@@ -701,15 +709,14 @@ namespace runner
   Runner::operator() (ast::Throw& e)
   {
     if (e.kind_get() == ast::break_exception)
-      boost::throw_exception (ast::BreakException(e.location_get()));
+      throw ast::BreakException(e.location_get());
     else if (e.kind_get() == ast::return_exception)
     {
       if (e.value_get())
 	operator() (*e.value_get());
       else
 	current_.reset();
-      boost::throw_exception
-	(ast::ReturnException(e.location_get(), current_));
+      throw ast::ReturnException(e.location_get(), current_);
     }
   }
 

@@ -7,7 +7,16 @@
 
 namespace scheduler
 {
-  struct TerminateException : public boost::exception {};
+  struct TerminateException : public kernel::exception
+  {
+    virtual std::string
+    what() const throw ()
+    {
+      return "TerminateException";
+    }
+
+    COMPLETE_EXCEPTION (TerminateException)
+  };
 
   void
   Job::run ()
@@ -24,14 +33,13 @@ namespace scheduler
       }
       terminate ();
     }
-    catch (boost::exception &e)
+    catch (kernel::exception &e)
     {
       // Signal the exception to each linked job in turn.
-      boost::exception_ptr ep = boost::clone_exception (e);
       jobs to_signal = links_;
       foreach (Job* job, to_signal)
       {
-	  job->async_throw (ep);
+	  job->async_throw (e);
 	  unlink (job);
       }
     }
@@ -52,7 +60,7 @@ namespace scheduler
   Job::terminate_now ()
   {
     if (!terminated_)
-      async_throw (boost::clone_exception (TerminateException ()));
+      async_throw (TerminateException ());
   }
 
   void

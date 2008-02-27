@@ -7,19 +7,10 @@
 
 namespace ast
 {
-  typedef boost::error_info<struct tag_location, loc> location_info;
-  typedef boost::error_info<struct tag_rObject, object::rObject> rObject_info;
-
   FlowException::FlowException(const loc& location)
-    : boost::exception ()
+    : kernel::exception ()
   {
-    *this << location_info (location);
-  }
-
-  loc
-  FlowException::location_get () const
-  {
-    return *boost::get_error_info<location_info> (*this);
+    location_ = location;
   }
 
   BreakException::BreakException(const loc& location)
@@ -31,14 +22,9 @@ namespace ast
 				    object::rObject result)
     : FlowException(location)
   {
-    *this << rObject_info (result);
+    result_ = result;
   }
 
-  object::rObject ReturnException::result_get() const
-  {
-    return *boost::get_error_info<rObject_info> (*this);
-  }
-  
   std::ostream& operator<<(std::ostream& o, flow_exception_kind k)
   {
     switch (k)

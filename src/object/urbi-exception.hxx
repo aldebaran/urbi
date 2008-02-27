@@ -5,37 +5,11 @@
 
 #ifndef OBJECT_URBI_EXCEPTION_HXX
 # define OBJECT_URBI_EXCEPTION_HXX
-# include <boost/exception/info.hpp>
-# include <boost/format.hpp>
 
-typedef boost::error_info<struct tag_msg, std::string> msg_info;
-typedef boost::error_info<struct tag_location, ast::loc> location_info;
-typedef boost::error_info<struct tag_function, std::string> function_info;
+# include <boost/format.hpp>
 
 namespace object
 {
-
-  inline
-  ast::loc
-  UrbiException::location_get () const
-  {
-    //FIXME: enable this? assert(location_set_);
-    return *boost::get_error_info<location_info> (*this);
-  }
-
-  inline
-  void
-  UrbiException::location_set (const ast::loc& l)
-  {
-    *this << location_info (l);
-  }
-
-  inline
-  bool
-  UrbiException::location_is_set () const
-  {
-    return boost::get_error_info<location_info> (*this);
-  }
 
   inline
   LookupError::LookupError (libport::Symbol slot)
@@ -127,8 +101,7 @@ namespace object
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {
     if (formal != effective)
-      boost::throw_exception
-	(WrongArgumentCount(formal, effective, fun));
+      throw WrongArgumentCount(formal, effective, fun);
   }
 
   inline
@@ -137,8 +110,7 @@ namespace object
 		   unsigned effective, const std::string& fun)
   {
     if (effective < minformal || maxformal < effective)
-      boost::throw_exception
-	(WrongArgumentCount(minformal, maxformal, effective, fun));
+      throw WrongArgumentCount(minformal, maxformal, effective, fun);
   }
 
 }; // end of namespace object

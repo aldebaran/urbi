@@ -6,22 +6,23 @@
 #ifndef AST_FLOW_EXCEPTION_HH
 # define AST_FLOW_EXCEPTION_HH
 
-# include <boost/exception.hpp>
-# include <boost/exception/enable_exception_cloning.hpp>
 # include <ostream>
 
 # include "ast/loc.hh"
+# include "kernel/exception.hh"
 # include "object/fwd.hh"
 
 namespace ast
 {
   /// The \c FlowException class. Base class for exceptions used to control the
   /// flow of execution, like \c BreakException.
-  class FlowException : public boost::exception
+  class FlowException : public kernel::exception
   {
   public:
     explicit FlowException(const loc&);
-    loc location_get () const;
+
+    ADD_FIELD (ast::loc, location)
+    COMPLETE_EXCEPTION (FlowException)
   };
 
   /// \c BreakException, thrown to manage break keyword.
@@ -29,6 +30,7 @@ namespace ast
   {
   public:
     explicit BreakException(const loc&);
+    COMPLETE_EXCEPTION (BreakException)
   };
 
   /// \c ReturnException, thrown to manage return keyword.
@@ -36,7 +38,8 @@ namespace ast
   {
   public:
     explicit ReturnException(const loc&, object::rObject);
-    object::rObject result_get() const;
+    ADD_FIELD (object::rObject, result)
+    COMPLETE_EXCEPTION (ReturnException)
   };
 
   /// Kind of a flow exception.
