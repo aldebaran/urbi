@@ -117,8 +117,12 @@ namespace urbi
 
   typedef int UReturn;
 
-  // For remote mode.
-  void main(int argc, char *argv[]);
+  /** Initialisation method.
+   * Both plugin and remote libraries include a main function whose only
+   * effect is to call urbi::main. If you need to write your own main, call
+   * urbi::main(argc, argv) after your work is done. This function never returns.
+   */
+  int main(int argc, const char *argv[]);
 
   /// an empty dummy UObject used by UVar to set a NotifyChange
   /// This avoid coupling a UVar to a particular object
