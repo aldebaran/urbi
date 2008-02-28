@@ -229,6 +229,10 @@ namespace scheduler
   Scheduler::unschedule_job (Job* job)
   {
     assert (job);
+    if (job == current_job_)
+    {
+      std::cerr << *job << " asked to unschedule itself\n";
+    }
     assert (job != current_job_);
 
     ECHO ("unscheduling job " << *job);
