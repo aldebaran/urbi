@@ -132,15 +132,9 @@ Protos.addProto(Protos.Closure);
 
 do Object
 {
-  function getLazy (name, default)
-  {
-    if (!self.slotNames.has (name))
-      self.setSlot (name, default);
-    self.getSlot (name);
-  };
   function atExit (func)
   {
-    self.getLazy ("atexit", []) += [getSlot ("func")]
+    self.getLazyLocalSlot ("atexit", [], true) += [getSlot ("func")]
   };
 
   void;
@@ -172,9 +166,8 @@ do Object
   {
     detach ({
       var delay = call.evalArgAt (1);
-      var runners = [];
       loop {
-        runners += [detach (call.evalArgAt (2))];
+        detach (call.evalArgAt (2));
         sleep (delay);
       }
     })
