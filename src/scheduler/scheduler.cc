@@ -97,11 +97,11 @@ namespace scheduler
     {
       assert (job);
       assert (!job->terminated ());
-      ECHO ("will resume job " << *job);
+      ECHO ("will resume job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
       possible_side_effect_ |= !job->side_effect_free_get ();
       Coro_switchTo_ (self_, job->coro_get ());
       possible_side_effect_ |= !job->side_effect_free_get ();
-      ECHO ("back from job " << *job);
+      ECHO ("back from job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
     }
 
     // Do we have some work to do now?
