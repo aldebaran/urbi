@@ -35,6 +35,13 @@ namespace scheduler
     return *current_job_;
   }
 
+  inline
+  void Scheduler::take_job_reference (rJob& job)
+  {
+    assert (!to_kill_);
+    std::swap (job, to_kill_);
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_SCHEDULER_HXX

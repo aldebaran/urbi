@@ -21,6 +21,79 @@ class Coro;
 namespace scheduler
 {
 
+  // A Job represents a thread of control, implemented using coroutines.
+  // The scheduler decides which job to launch and resumes its execution.
+  // The lifetime of a job is the following
+  //         Job ()                  : job creation
+  //         start_job ()            : add job to the scheduler; the scheduler
+  //                                   will call run (), and the job will
+  //                                   yield () itself into the scheduler run
+  //                                   queue
+  //         work ()                 : this method, which must be overridden,
+  //                                   does the real work
+  //         terminate ()            : called when the job terminates, either
+  //                                   because it has indicated it wanted to,
+  //                                   because its work () method has
+  //                                   returned or because an exception
+  //                                   has been thrown from work ()
+  //
+  // When the job destructor is called, it will call the unschedule ()
+  // routine of its runner which will take care of removing it from all
+  // the working queues. The job will then free the space allocated for
+  // its coroutine structure.
+  //
+  // However, due to the way coroutines work, a job may not delete itself
+  // as once the coroutine structure has been freed, it is illegal to
+  // continue its execution, even only to switch to another coroutine.
+  // And if a job switches back to the scheduler before terminating its
+  // destructor, the coroutine structure will not be freed. Because of
+  // that, it is necessary for a job to be deleted by another one or
+  // by the scheduler.
+  //
+  // An additional constraint comes from the fact that even when a job
+  // has terminated its work, its structure may not always be deleted.
+  // For example, other jobs may have kept a reference to this job and
+  // expect to retrieve some information (such as a result) after the
+  // job termination.
+  //
+  // We have several ways of dealing with those constraints and not leaking
+  // memory upon a job termination:
+  //
+  //   1. Make sure the job spits out all the useful information concerning
+  //      its state by the way of inter-job communication before asking to
+  //      be deleted.
+  //   2. Make sure the job keeps alive as long as there is at least one
+  //      reference onto it, and that it gets deleted from another coroutine.
+  //
+  // We chose to implement the second solution. To achieve this, the
+  // following method has been used:
+  //
+  //   1. All the jobs are dynamically allocated. It is forbidden to
+  //      allocate a job from another job stack.
+  //   2. All the references to a job use a rJob value, which is a
+  //      reference counted pointer. It is stored as a field in the
+  //      Job structure, hence ensuring that the job destructor will
+  //      not fire as long as we do not override this field.
+  //   3. At creation time, a job creates the rJob which will be used
+  //      to represent itself. This rJob may be retrieved using
+  //      myself_get () should anyone need to keep a reference to this
+  //      job.
+  //   4. In its terminate () routine, the rJob will get rid of its
+  //      self reference. To avoid decreasing the reference count to 0,
+  //      it will do so by handing the reference to the scheduler using
+  //      take_job_reference (). This will swap the current rJob pointer
+  //      with the scheduler to_kill_ pointer, which will always be 0
+  //      at this stage. As a consequence, we ensure that the reference
+  //      count will at least be 1.
+  //   5. After returning from the job, the scheduler will set its
+  //      to_kill_ pointer to 0. As a consequence, if a job has called
+  //      take_job_reference (), the reference count will be decremented
+  //      by 1. If nobody else has a reference on the job, its destructor
+  //      will be called and its memory and the one of its associated
+  //      coroutine structure will be freed. If there are other references,
+  //      the job structure will not be destroyed until everyone has
+  //      dropped all those references.
+
   class Job
   {
   public:

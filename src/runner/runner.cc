@@ -142,6 +142,10 @@ namespace runner
   {
     // We have to terminate our dependents as well
     propagate (stop);
+
+    // We have terminated, remove the auto-reference by handling it to the
+    // scheduler.
+    scheduler_get ().take_job_reference (myself_);
   }
 
   void
@@ -164,10 +168,11 @@ namespace runner
     // tags.
 
     JECHO ("lhs", e.lhs_get ());
-    Runner lhs (*this);
-    lhs.copy_parents (*this);
-    lhs.ast_ = &e.lhs_get ();
-    lhs.start_job ();
+    Runner* lhs = new Runner (*this);
+    scheduler::rJob lhs_ = lhs->myself_get ();
+    lhs->copy_parents (*this);
+    lhs->ast_ = &e.lhs_get ();
+    lhs->start_job ();
 
     PING ();
 
@@ -176,7 +181,7 @@ namespace runner
     eval (e.rhs_get ());
 
     // Wait for lhs to terminate
-    yield_until_terminated (lhs);
+    yield_until_terminated (*lhs);
 
     PING ();
 
@@ -503,7 +508,7 @@ namespace runner
   Runner::operator() (ast::Nary& e)
   {
     // List of runners for Stmt flavored by a comma.
-    std::list<Runner*> runners;
+    std::list<scheduler::rJob> runners;
 
     ast::exec_exps_type::iterator i;
     current_ = object::void_class;
@@ -519,8 +524,8 @@ namespace runner
 	Runner* subrunner = new Runner(*this);
 	subrunner->copy_parents (*this);
 	subrunner->ast_ = i;
+	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
-	runners.push_back(subrunner);
       }
       else
       {
@@ -557,10 +562,9 @@ namespace runner
     // FIXME: There is a memory leak if the Nary is a toplevel one.
     if (!e.toplevel_get ())
     {
-      foreach(Runner* r, runners)
+      foreach(scheduler::rJob r, runners)
       {
 	yield_until_terminated(*r);
-	delete r;
       }
     }
 

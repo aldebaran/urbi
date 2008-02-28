@@ -17,8 +17,6 @@ namespace object
 {
   rObject task_class;
 
-  typedef libport::shared_ptr<runner::Runner> rRunner;
-
   /*-------------------.
   | Task primitives.  |
   `-------------------*/
@@ -31,17 +29,19 @@ namespace object
 
     rList locals = new List (std::list<rObject> ());
     ast::Exp *body = arg1->value_get ().body_get ();
-    rRunner new_runner = new runner::Runner (r.lobby_get(),
-					     args[1]->slot_get (SYMBOL(context)),
-					     r.scheduler_get (),
-					     body);
+    runner::Runner* new_runner =
+      new runner::Runner (r.lobby_get(),
+			  args[1]->slot_get (SYMBOL(context)),
+			  r.scheduler_get (),
+			  body);
     new_runner->copy_parents (r);
-    args[0]->slot_set (SYMBOL (runner), box (rRunner, new_runner));
+    args[0]->slot_set (SYMBOL (runner),
+                       box (scheduler::rJob, new_runner->myself_get ()));
 
     if (args.size () == 3)
     {
       if (IS_TRUE (args[2]))
-	r.link (new_runner.get ());
+	r.link (new_runner);
     }
 
     new_runner->start_job ();
@@ -51,12 +51,13 @@ namespace object
 
   // Helper function: check that there are no argument, unbox the
   // runner and return it once it has terminated.
-  static inline rRunner
+  static inline runner::Runner*
   yield_until_terminated (runner::Runner& r, rObject o)
   {
-    rRunner other = unbox (rRunner, o->slot_get (SYMBOL (runner)));
+    scheduler::rJob other = unbox (scheduler::rJob,
+                                   o->slot_get (SYMBOL (runner)));
     r.yield_until_terminated (*other);
-    return other;
+    return dynamic_cast<runner::Runner*>(other.get ());
   }
 
   static rObject
@@ -90,7 +91,8 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
 
-    rRunner r = unbox (rRunner, args[0]->slot_get (SYMBOL (runner)));
+    scheduler::rJob r = unbox (scheduler::rJob,
+                               args[0]->slot_get (SYMBOL (runner)));
     r->terminate_now ();
 
     return void_class;

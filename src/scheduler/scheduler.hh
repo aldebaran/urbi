@@ -67,7 +67,7 @@ namespace scheduler
     /// last one job has been scheduled during the next cycle. This may be
     /// used for jobs watching some value, which will not change spontaneously
     /// unless someone changes it.
-    void resume_scheduler_things_changed (Job *job);
+    void resume_scheduler_things_changed (Job* job);
 
     /// Suspend the current job.
     void resume_scheduler_suspend (Job* job);
@@ -75,6 +75,9 @@ namespace scheduler
     /// Resume a job that has been previously suspended and add it at
     /// the back of the run queue.
     void resume_job (Job* job);
+
+    /// Take the (maybe last) reference on a job and swap it with 0.
+    void take_job_reference (rJob&);
 
     /// Return the currently executing job
     Job& current_job () const;
@@ -110,6 +113,9 @@ namespace scheduler
 
     /// Current job
     Job* current_job_;
+
+    /// Job to maybe kill
+    rJob to_kill_;
 
     /// Coroutine support
     Coro* self_;

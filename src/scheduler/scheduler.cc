@@ -6,6 +6,7 @@
 //#define ENABLE_DEBUG_TRACES
 
 #include <cassert>
+#include <cstdlib>
 
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
@@ -48,11 +49,15 @@ namespace scheduler
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
-    // Start new jobs
+    // Start new jobs. You may note that to_kill_ is reset at the beginning
+    // of each loop and one final time at the end. This is to ensure that
+    // we are not trying to clear the job on which we are iterating (it
+    // may only be set to a reference onto the latest scheduled job).
     to_start_.clear ();
     std::swap (to_start_, jobs_to_start_);
     foreach (Job* job, to_start_)
     {
+      to_kill_ = 0;
       assert (job);
       ECHO ("will start job " << *job);
       // Job will start for a very short time and do a yield_front() to
@@ -95,14 +100,21 @@ namespace scheduler
     ECHO (pending_.size() << " jobs in the queue for this cycle");
     foreach (Job* job, pending_)
     {
+      // Kill a job if needed. See explanation in job.hh.
+      to_kill_ = 0;
+
       assert (job);
       assert (!job->terminated ());
       ECHO ("will resume job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
       possible_side_effect_ |= !job->side_effect_free_get ();
+      assert (!current_job_);
       Coro_switchTo_ (self_, job->coro_get ());
+      assert (!current_job_);
       possible_side_effect_ |= !job->side_effect_free_get ();
       ECHO ("back from job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
     }
+    // Kill a job if needed. See explanation in job.hh.
+    to_kill_ = 0;
 
     // Do we have some work to do now?
     if (!jobs_.empty () || !jobs_to_start_.empty())
@@ -228,18 +240,9 @@ namespace scheduler
   Scheduler::unschedule_job (Job* job)
   {
     assert (job);
-    if (job == current_job_)
-    {
-      std::cerr << *job << " asked to unschedule itself\n";
-    }
     assert (job != current_job_);
 
     ECHO ("unscheduling job " << *job);
-
-    // First of all, tell the job it has been terminated unless it has
-    // been registered with us but not yet started.
-    if (!libport::has (jobs_to_start_, job))
-      job->terminate_now ();
 
     // Remove the job from the queues where it could be stored.
     jobs_to_start_.remove (job);

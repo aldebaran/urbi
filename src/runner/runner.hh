@@ -6,7 +6,7 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
-#include <boost/tuple/tuple.hpp>
+# include <boost/tuple/tuple.hpp>
 
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
@@ -72,6 +72,9 @@ namespace runner
 
     /// Return the result of an evaluation. The runner must be terminated.
     const rObject& current_get () const;
+
+    /// Return a shared pointer on myself. The runner must not be terminated.
+    scheduler::rJob myself_get () const;
   protected:
     /// \name Evaluation.
     /// \{
@@ -148,6 +151,9 @@ namespace runner
 
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
+
+    /// Myself as long as I have not terminated, 0 otherwise
+    scheduler::rJob myself_;
 
     /// The call stack.
     typedef std::list<ast::Call*> call_stack_type;

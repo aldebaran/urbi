@@ -8,12 +8,15 @@
 
 # include <list>
 
+# include <libport/shared-ptr.hh>
+
 namespace scheduler
 {
 
   class Scheduler;
   class Job;
   typedef std::list<Job*> jobs;
+  typedef libport::shared_ptr<Job> rJob;
 
 } // namespace scheduler
 
