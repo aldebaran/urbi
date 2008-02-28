@@ -462,8 +462,8 @@ namespace urbi
     exit (0);
   }
 
-  void
-  main(int argc, char* argv[])
+  int
+  main(int argc, const char* argv[])
   {
     libport::program_name = argv[0];
 
@@ -542,6 +542,9 @@ namespace urbi
 	 i != objectlist->end();
 	 ++i)
       (*i)->init((*i)->name);
+    while (true)
+      usleep(30000000);
+    return 0;
   }
 
 } // namespace urbi
