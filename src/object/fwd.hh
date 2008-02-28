@@ -8,8 +8,8 @@
 
 # include <vector>
 
-# include "libport/fwd.hh"
-# include "libport/shared-ptr.hh"
+# include <libport/fwd.hh>
+# include <libport/shared-ptr.hh>
 
 namespace runner
 {
@@ -95,8 +95,9 @@ namespace object
   class WrongArgumentType;
   class WrongArgumentCount;
 
-  extern rObject void_class;
   extern rObject nil_class;
+  extern rObject task_class;
+  extern rObject void_class;
 } // namespace object
 
 #endif // !OBJECT_FWD_HH
