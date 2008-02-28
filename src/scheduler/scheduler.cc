@@ -106,13 +106,21 @@ namespace scheduler
 
     // Do we have some work to do now?
     if (!jobs_.empty () || !jobs_to_start_.empty())
+    {
+      ECHO ("scheduler: asking to be recalled ASAP, " << jobs_.size() << " jobs ready and " << jobs_to_start_.size()
+	    << " to start");
       return 0;
+    }
 
     // Do we have deferred jobs?
     if (!deferred_jobs_.empty ())
+    {
+      ECHO ("scheduler: asking to be recalled later");
       return deferred_jobs_.top ().get<0> ();
+    }
 
     // Ok, let's say, we'll be called again in one hour.
+    ECHO ("scheduler: asking to be recalled in a long time");
     return ::urbiserver->getTime() + 3600000000LL;
   }
 
@@ -141,6 +149,7 @@ namespace scheduler
     // so that the run queue order is preserved between work cycles.
     if (!job->terminated ())
       jobs_.push_back (job);
+    ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated");
     switch_back (job);
   }
 
