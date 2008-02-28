@@ -180,22 +180,31 @@ do Object
     })
   };
 
-  # at_ takes two expressions, a test and a code to execute when the test
-  # becomes true
+  # at_ takes three expressions, a test and a code to execute each time the test
+  # becomes true and a code to execute each time the test becomes false
   function at_
   {
-    var t = detach ({
-      t.setSideEffectFree (true);
+    detach ({
+      var t = currentRunner;
       loop {
-        if (call.evalArgAt (1)) {
-          t.setSideEffectFree (false);
-          call.evalArgAt (2);
-          break
+        t.setSideEffectFree (true);
+        loop {
+          if (call.evalArgAt (1))
+            break;
+          t.waitForChanges
         };
-        t.waitForChanges
+        t.setSideEffectFree (false);
+        detach (call.evalArgAt (2));
+        t.setSideEffectFree (true);
+        loop {
+          if (!call.evalArgAt (1))
+            break;
+          t.waitForChanges
+        };
+        t.setSideEffectFree (false);
+        detach (call.evalArgAt (3))
       }
-    });
-    t
+    })
   };
 
   void;
