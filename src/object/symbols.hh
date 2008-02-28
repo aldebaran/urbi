@@ -88,6 +88,7 @@
   Macro(clone, "clone");                          \
   Macro(context, "context");                      \
   Macro(cos, "cos");                              \
+  Macro(currentRunner, "currentRunner");          \
   Macro(data, "data");                            \
   Macro(debugoff, "debugoff");                    \
   Macro(debugon, "debugon");                      \

@@ -12,6 +12,7 @@
 
 #include "runner/runner.hh"
 
+#include "object/alien.hh"
 #include "object/system-class.hh"
 
 namespace object
@@ -131,6 +132,16 @@ namespace object
   }
 
   static rObject
+  system_class_currentRunner (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    rObject res = new object::Object;
+    res->proto_add (task_class);
+    res->slot_set (SYMBOL (runner), box (scheduler::rJob, r.myself_get ()));
+    return res;
+  }
+
+  static rObject
   system_class_fresh (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
@@ -175,6 +186,7 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(system, Name)
 
+    DECLARE(currentRunner);
     DECLARE(debugoff);
     DECLARE(debugon);
     DECLARE(eval);
