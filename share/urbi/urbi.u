@@ -200,6 +200,30 @@ do Object
     })
   };
 
+  # whenever_ takes three expressions, a test and a code to execute each time the
+  # test is true and a code to execute each time the test then becomes false
+  function whenever_
+  {
+    detach ({
+      var t = currentRunner;
+      loop {
+        t.setSideEffectFree (true);
+        loop {
+          if (call.evalArgAt (1))
+            break;
+          t.waitForChanges
+        };
+        t.setSideEffectFree (false);
+        loop {
+          call.evalArgAt (2);
+          if (!call.evalArgAt (1))
+            break
+        };
+        call.evalArgAt (3)
+      }
+    })
+  };
+
   void;
 };
 
