@@ -105,7 +105,7 @@ namespace scheduler
     }
 
     // Do we have some work to do now?
-    if (!jobs_.empty ())
+    if (!jobs_.empty () || !jobs_to_start_.empty())
       return 0;
 
     // Do we have deferred jobs?
