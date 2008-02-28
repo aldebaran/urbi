@@ -59,7 +59,7 @@ namespace object
   }
 
   static rObject
-  task_class_waitFor (runner::Runner& r, objects_type args)
+  task_class_waitForTermination (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
 
@@ -112,8 +112,8 @@ namespace object
     DECLARE (result);
     DECLARE (setSideEffectFree);
     DECLARE (terminate);
-    DECLARE (waitFor);
     DECLARE (waitForChanges);
+    DECLARE (waitForTermination);
 #undef DECLARE
   }
 

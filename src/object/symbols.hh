@@ -153,8 +153,8 @@
   Macro(uobject, "uobject");                      \
   Macro(updateSlot, "updateSlot");                \
   Macro(void, "void");                            \
-  Macro(waitFor, "waitFor");                      \
   Macro(waitForChanges, "waitForChanges");        \
+  Macro(waitForTermination, "waitForTermination");\
   /* Backslash terminator. */
 
 namespace object
