@@ -287,6 +287,13 @@ namespace urbi
     owned = true;
   }
 
+  //! Get Uvalue type
+  UDataType
+  UVar::type () const
+  {
+    return value.type;
+  }
+
   void
   UVar::requestValue()
   {

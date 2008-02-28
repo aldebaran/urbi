@@ -90,6 +90,9 @@ namespace urbi
 
     void init(const std::string&, const std::string&);
     void setOwned();
+
+    UDataType type () const;
+
     void syncValue ();
 
     void reset (ufloat);
