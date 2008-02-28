@@ -94,6 +94,7 @@ namespace runner
   }							\
   catch(...)						\
   {							\
+    std::cerr << "Unknown exception propagated\n";	\
     Code						\
     throw;						\
   }							\
