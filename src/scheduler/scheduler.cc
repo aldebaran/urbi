@@ -156,6 +156,15 @@ namespace scheduler
   void
   Scheduler::resume_scheduler (Job* job)
   {
+    // If the job has not terminated and is side-effect free, then we
+    // assume it will not take a long time as we are probably evaluating
+    // a condition. In order to reduce the number of cycles spent to evaluate
+    // the condition, continue until it asks to be suspended in another
+    // way or until it is no longer side-effect free.
+
+    if (!job->terminated () && job->side_effect_free_get ())
+      return;
+
     // If the job has not terminated, put it at the back of the run queue
     // so that the run queue order is preserved between work cycles.
     if (!job->terminated ())
