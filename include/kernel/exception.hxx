@@ -4,6 +4,11 @@
 namespace kernel
 {
 
+  inline
+  exception::~exception ()
+  {
+  };
+
   inline std::string
   exception::what () const throw()
   {

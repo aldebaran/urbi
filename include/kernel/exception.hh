@@ -12,6 +12,7 @@ namespace kernel
   class exception
   {
   public:
+    virtual ~exception ();
     virtual std::string what () const throw ();
     virtual exception* clone () const = 0;
     virtual void rethrow () const = 0;
