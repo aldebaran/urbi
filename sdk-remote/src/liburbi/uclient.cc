@@ -42,8 +42,8 @@
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
 #include "libport/utime.hh"
-#include "libport/stdio.hh"
-#include "libport/string.hh"
+#include "libport/cstdio"
+#include "libport/cstring"
 
 namespace urbi
 {

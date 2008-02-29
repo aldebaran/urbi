@@ -34,7 +34,7 @@
 
 #include "urbi/uabstractclient.hh"
 
-#include "libport/string.hh"
+#include "libport/cstring"
 
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"

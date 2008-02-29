@@ -338,6 +338,8 @@ namespace urbi
 
   // callback creation for non void return type
 
+  // Second argument is useless, it exist only for visual c++ compiler
+  // which warn at compilation for a call of MKUCreateCallBack()
 # define MKUCreateCallBack%N%(Const, Useless)					\
   template <class OBJ, class R%%, class P% %%>				\
   UGenericCallback*							\
