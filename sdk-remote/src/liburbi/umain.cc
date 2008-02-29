@@ -23,7 +23,7 @@
 #endif
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
   urbi::main(argc, argv);
   while (1)
