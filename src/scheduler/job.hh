@@ -84,8 +84,12 @@ namespace scheduler
     /// Destroy a bi-directional link if it exists.
     void unlink (Job*);
 
-    /// Get this job name
+    /// Get this job name.
     const libport::Symbol& name_get () const;
+
+    /// Throw an exception if the stack space for this job is near
+    // exhaustion.
+    void check_stack_space () const;
 
   protected:
 

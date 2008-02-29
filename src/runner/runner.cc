@@ -226,10 +226,11 @@ namespace runner
 
     ECHO("bound args: " << *bound_args);
 
-    // Change the current context and call. But before, yield() so that
-    // an infinite recursion gets a better chance to be detected.
+    // Change the current context and call. But before, check that we
+    // are not exhausting the stack space, for example in an infinite
+    // recursion.
     std::swap(bound_args, locals_);
-    YIELD ();
+    check_stack_space ();
 
     try
     {

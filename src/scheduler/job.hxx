@@ -140,6 +140,13 @@ namespace scheduler
     return name_;
   }
 
+  inline void
+  Job::check_stack_space () const
+  {
+    if (Coro_stackSpaceAlmostGone (self_))
+      throw object::StackExhaustedError ("stack space exhausted");
+  }
+
   inline std::ostream&
   operator<< (std::ostream& o, const Job& j)
   {
