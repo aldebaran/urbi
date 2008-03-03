@@ -120,6 +120,8 @@ printer_cc_prologue: |2
   #include <libport/indent.hh>
   #include <libport/pair.hh>
 
+
+  #include <kernel/userver.hh>
 ---
 
 # ----------- #
@@ -619,7 +621,8 @@ Object:
         access: r
         desc: Native Urbi object
   printer:
-    - '{ n.value_get()->print(ostr_); }'
+    - '{ object::print(::urbiserver->getCurrentRunner(), n.value_get(),
+             ostr_);}'
 
 List:
   super: Exp

@@ -123,6 +123,27 @@ namespace object
 
   }
 
+  static rObject
+  list_class_asString (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    if (args[0] == list_class)
+      return new String(libport::Symbol("<List>"));
+    std::stringstream ss;
+    ss << '[';
+    bool first = true;
+    BOOST_FOREACH (const rObject& o, VALUE(args[0], List))
+    {
+      if (first)
+	first = false;
+      else
+	ss << ", ";
+      print(r, o, ss);
+    }
+    ss << ']';
+    return new String(libport::Symbol(ss.str()));
+  }
+
   /*-------------------------.
   | Primitives declaration.  |
   `-------------------------*/
@@ -151,6 +172,7 @@ namespace object
 
     DECLARE(PLUS);
     DECLARE(PLUS_EQ);
+    DECLARE(asString);
     DECLARE(back);
     DECLARE(clear);
     DECLARE(front);

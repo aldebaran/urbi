@@ -50,6 +50,17 @@ namespace object
       return new Float (s->value_get ().name_get ().size ());
     }
 
+    static rObject
+    string_class_asString(runner::Runner&, objects_type args)
+    {
+    CHECK_ARG_COUNT (1);
+    if (args[0] == string_class)
+      return new String(SYMBOL(LT_String_GT));
+    /// FIXME: Fix escape to be able to return a string then fix this.
+    return new String(libport::Symbol('"'
+	 + boost::lexical_cast<std::string>(libport::escape(VALUE(args[0],
+				String).name_get())) + '"'));
+    }
   };
 
 #define PRIMITIVE_1_STRING(Name)                  \
@@ -78,6 +89,7 @@ namespace object
     DECLARE(EQ_EQ);
     DECLARE(LT);
 
+    DECLARE(asString);
     DECLARE(size);
 #undef DECLARE
   }

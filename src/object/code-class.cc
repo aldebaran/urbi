@@ -26,7 +26,14 @@ namespace object
     return r.apply (args[0], arg1);
   }
 
-
+  static rObject
+  code_class_asString(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    std::stringstream ss;
+    ss << VALUE(args[0], Code);
+    return new String(libport::Symbol(ss.str()));
+  }
 
   void
   code_class_initialize ()
@@ -34,6 +41,7 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(code, Name)
     DECLARE (apply);
+    DECLARE (asString);
 #undef DECLARE
   }
 

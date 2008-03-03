@@ -149,7 +149,7 @@ namespace object
   `-----------*/
 
   std::ostream&
-  Object::special_slots_dump (std::ostream& o) const
+  Object::special_slots_dump (runner::Runner&, rObject, std::ostream& o) const
   {
     return o;
   }
@@ -175,9 +175,9 @@ namespace object
 
 
   std::ostream&
-  Object::dump (std::ostream& o) const
+  dump (runner::Runner& runner, rObject r, std::ostream& o)
   {
-    id_dump (o);
+    r->id_dump (o);
     /// Use xalloc/iword to store our current depth within the stream object.
     static const long idx = o.xalloc();
     static const long depth_max = 3;
@@ -187,21 +187,24 @@ namespace object
       return o << " <...>";
     ++current_depth;
     o << " {" << libport::incendl;
-    if (protos_.begin () != protos_.end ())
+    if (r->protos_.begin () != r->protos_.end ())
       {
 	o << "protos = ";
-	for (protos_type::const_iterator i = protos_.begin ();
-	     i != protos_.end (); ++i)
+	for (Object::protos_type::const_iterator i = r->protos_.begin ();
+	     i != r->protos_.end (); ++i)
 	  {
-	    if (i != protos_.begin())
+	    if (i != r->protos_.begin())
 	      o << ", ";
 	    (*i)->id_dump (o);
 	  }
 	o << libport::iendl;
       }
-    special_slots_dump (o);
-    foreach (slot_type s, slots_)
-      o << s << libport::iendl;
+    r->special_slots_dump (runner, r, o);
+    foreach(Object::slot_type s, r->slots_)
+    {
+      o << s.first << " = ";
+      dump(runner, s.second, o) << libport::iendl;
+    }
     o << libport::decindent << '}';
     //We can not reuse current_depth variable above according to spec.
     o.iword(idx)--;
@@ -209,13 +212,13 @@ namespace object
   }
 
   std::ostream&
-  Object::print(std::ostream& out) const
+  print(runner::Runner& runner, rObject r, std::ostream& out)
   {
-    // Temporary hack, detect void and print nothing
-    if (this == void_class.get())
-      return out;
-    // FIXME: Decide what should be printed, but at least print something
-    return out << "<object_" << std::hex << (long) (this) << ">";
+    rObject asString = r->slot_get(SYMBOL(asString));
+    objects_type args;
+    args.push_back(r);
+    rObject s = runner.apply(asString, args);
+    return out << VALUE(s, String).name_get();
   }
 
 } // namespace object

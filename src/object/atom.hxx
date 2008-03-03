@@ -158,113 +158,6 @@ namespace object
       return this->Object::operator< (rhs);
   }
 
-  /*--------.
-  | print.  |
-  `--------*/
-
-  template <typename Traits>
-  inline
-  std::ostream&
-  Atom<Traits>::print(std::ostream& o) const
-  {
-    pabort("Printing an Atom<T>");
-    return o;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<alien_traits>::print(std::ostream& out) const
-  {
-    return out << "<alien>";
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<code_traits>::print(std::ostream& out) const
-  {
-    return out << value_get();
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<delegate_traits>::print(std::ostream& out) const
-  {
-    return out << "<delegate>";
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<lobby_traits>::print(std::ostream& out) const
-  {
-    // FIXME: discuss what we should print here.
-    out << "<lobby>";
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<float_traits>::print(std::ostream& out) const
-  {
-    // FIXME: Get rid of this cast by setting the precision for
-    // streams to the same as used by lexical_cast (which is one more
-    // than the default value, and this results in different output bw
-    // 1.x and 2.x, a useless nuisance in the test suite.
-    out << boost::lexical_cast<std::string>((float) value_get());
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<integer_traits>::print(std::ostream& out) const
-  {
-    out << value_get();
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<list_traits>::print(std::ostream& out) const
-  {
-    std::list<rObject> values = value_get();
-    out << '[';
-    bool first = true;
-    BOOST_FOREACH (const rObject& o, values)
-    {
-      if (first)
-	first = false;
-      else
-	out << ", ";
-      o->print(out);
-    }
-    out << ']';
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<primitive_traits>::print(std::ostream& out) const
-  {
-    // FIXME: discuss what we should print here.
-    out << "<primitive>";
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<string_traits>::print(std::ostream& out) const
-  {
-    out << '"' << libport::escape(value_get()) << '"';
-    return out;
-  }
 
   /*---------------------.
   | special_slots_dump.  |
@@ -273,7 +166,8 @@ namespace object
   template <typename Traits>
   inline
   std::ostream&
-  Atom<Traits>::special_slots_dump (std::ostream& o) const
+  Atom<Traits>::special_slots_dump (runner::Runner&, rObject,
+				    std::ostream& o) const
   {
     return o << "value" << " = " << libport::deref << value_ << libport::iendl;
   }
@@ -281,7 +175,8 @@ namespace object
   template <>
   inline
   std::ostream&
-  Atom<alien_traits>::special_slots_dump (std::ostream& o) const
+  Atom<alien_traits>::special_slots_dump (runner::Runner&, rObject,
+					  std::ostream& o) const
   {
     return o << "type = " << value_.get<1>() << libport::iendl;
   }
@@ -289,17 +184,19 @@ namespace object
   template <>
   inline
   std::ostream&
-  Atom<list_traits>::special_slots_dump (std::ostream& o) const
+  Atom<list_traits>::special_slots_dump (runner::Runner& runner, rObject r,
+					 std::ostream& o) const
   {
     o << "value" << " = " << libport::deref;
-    print(o);
+    print(runner, r, o);
     return o << libport::iendl;
   }
 
   template <>
   inline
   std::ostream&
-  Atom<delegate_traits>::special_slots_dump (std::ostream& o) const
+  Atom<delegate_traits>::special_slots_dump (runner::Runner&, rObject,
+					     std::ostream& o) const
   {
   return o << "delegate" << libport::iendl;
   }

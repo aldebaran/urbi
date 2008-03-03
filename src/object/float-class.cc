@@ -115,6 +115,21 @@ abs(libport::ufloat v)
 `--------------------------------------------------------------------*/
 
 
+  /// asString.
+  static rObject
+  float_class_asString(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    if (args[0] == float_class)
+      return new String(SYMBOL(LT_Float_GT));
+    // FIXME: Get rid of this cast by setting the precision for
+    // streams to the same as used by lexical_cast (which is one more
+    // than the default value, and this results in different output bw
+    // 1.x and 2.x, a useless nuisance in the test suite.
+    return new String(libport::Symbol(boost::lexical_cast<std::string>
+		      ((float) VALUE(args[0], Float))));
+  }
+
   /// Clone.
   static rObject
   float_class_clone(runner::Runner&, objects_type args)
@@ -257,6 +272,7 @@ abs(libport::ufloat v)
     DECLARE(clone);
     DECLARE(set);
 
+    DECLARE(asString);
     DECLARE(sin);
     DECLARE(asin);
     DECLARE(cos);

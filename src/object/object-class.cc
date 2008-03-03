@@ -51,7 +51,7 @@ namespace object
       tag = arg1->value_get().name_get();
     }
     std::ostringstream os;
-    args[0]->dump(os);
+    dump(r, args[0], os);
     //for now our best choice is to dump line by line in "system" messages.
     const std::string stream = os.str();
     boost::tokenizer< boost::char_separator<char> > tok =
@@ -73,17 +73,23 @@ namespace object
       FETCH_ARG(2, String);
       tag = arg2->value_get().name_get();
     }
+    // Call asString.
+    rObject asString = args[1]->slot_get(SYMBOL(asString));
+    objects_type as_args;
+    as_args.push_back(args[1]);
+    rObject data = r.apply(asString, as_args);
+    std::string s = VALUE(data, String).name_get();
+
+    //Hack: special case for Strings to have k1 behavior
     //special case for Strings
-    if (is_echo && args[1]->kind_is(Object::kind_string))
-    {
-      r.lobby_get()->value_get().connection.send((std::string("*** ")
-			   + std::string(VALUE(args[1], String))
-			   + "\n").c_str(),
+    if (is_echo && args[1]->kind_is(Object::kind_string)
+      && s[0] == '"' && s.length() && s[s.length()-1] == '"')
+      s = s.substr(1, s.length()-2);
+
+    r.lobby_get()->value_get().connection.send(
+    	(std::string(is_echo?"*** ":"") + s  + "\n").c_str(),
 			   tag.c_str());
-    }
-    else
-      r.lobby_get()->value_get().connection.send (args[1], tag.c_str(),
-	is_echo?"*** ":"");
+
     return void_class;
   }
 
@@ -113,7 +119,8 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
     std::ostringstream os;
-    args[0]->print(os);
+    // FIXME: Decide what should be printed, but at least print something
+    os << "<object_" << std::hex << (long)args[0].get() << ">";
     return new String(libport::Symbol(os.str()));
   }
 

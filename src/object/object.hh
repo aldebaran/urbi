@@ -128,14 +128,9 @@ namespace object
     /// Report a short string describing the identity.
     std::ostream& id_dump (std::ostream& o) const;
 
-    /// Report the content on \p o.  For debugging purpose.
-    virtual std::ostream& dump (std::ostream& o) const;
-
-    /// Print out the value. Suitable for user interaction.
-    virtual std::ostream& print (std::ostream& o) const;
-
     /// Dump the special slots if there are.
-    virtual std::ostream& special_slots_dump (std::ostream& o) const;
+    virtual std::ostream& special_slots_dump (runner::Runner&, rObject r,
+					      std::ostream& o) const;
     /// \}
 
     /// Clone helper. We use it for dispatching purpose. self is the same
@@ -167,6 +162,7 @@ namespace object
 			    rObject& ref,
 			    const Object::key_type& k,
 			    rObject o);
+    friend std::ostream& dump(runner::Runner&, rObject o, std::ostream& o);
   };
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -191,11 +187,14 @@ namespace object
 		    const Object::key_type& k,
 		    rObject o);
 
-  /// Report Object \p v on \p o.  For debugging purpose.
-  std::ostream& operator<< (std::ostream& o, const Object& v);
+  // Print out the value. Suitable for user interaction.
+  std::ostream& print(runner::Runner&, rObject o, std::ostream& o);
 
-  /// Report slot \p s on \p o.  For debugging purpose.
-  std::ostream& operator<< (std::ostream& o, const Object::slot_type& s);
+  /// Report the content on \p o.  For debugging purpose.
+  std::ostream& dump(runner::Runner&, rObject o, std::ostream& o);
+
+
+
 
 } // namespace object
 

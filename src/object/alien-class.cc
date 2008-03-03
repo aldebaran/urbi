@@ -18,11 +18,20 @@ namespace object
   | Alien primitives.  |
   `-------------------*/
 
+  static rObject
+  alien_class_asString(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    static rObject alienString = new String(SYMBOL(LT_alien_GT));
+    return alienString;
+  }
+
   void
   alien_class_initialize ()
   {
 #define DECLARE(Name)							\
     DECLARE_PRIMITIVE(alien, Name);
+    DECLARE(asString);
 #undef DECLARE
   }
 

@@ -166,19 +166,7 @@ namespace object
     return proto->do_clone (proto);
   }
 
-  inline
-  std::ostream&
-  operator<< (std::ostream& o, const Object& v)
-  {
-    return v.dump (o);
-  }
 
-  inline
-  std::ostream&
-  operator<< (std::ostream& o, const Object::slot_type& s)
-  {
-    return o << s.first << " = " << *s.second;
-  }
 
 } // namespace object
 
