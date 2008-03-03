@@ -735,7 +735,6 @@ new_k1_bin(const yy::location& loc,
 	      new object::String(libport::Symbol(keywords)));
   o->slot_set(SYMBOL(data),
 	      new object::String(libport::Symbol(data)));
-  o->dump(std::cerr);
   return new ast::Object (loc, o);
 }
 
