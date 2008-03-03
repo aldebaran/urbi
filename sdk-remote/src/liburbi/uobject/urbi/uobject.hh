@@ -177,6 +177,43 @@ namespace urbi
     // Change    | urbi::UVar&        | int (T::*fun) (urbi::UVar&) | non-const
     // OnRequest |
 
+# ifdef DOXYGEN
+    // Doxygen does not handle macros very well so feed it simplified code.
+    /*!
+    \brief Call a function each time a variable is modified.
+    \param v the variable to monitor.
+    \param fun the function to call each time the variable \b v is modified.
+    The function is called rigth after the variable v is modified.
+    */
+    void UNotifyChange(UVar& v, int (UObject::*fun)(UVar&));
+
+    /*!
+    \brief Call a function each time a new variable value is available.
+    \param v the variable to monitor.
+    \param fun the function to call each time the variable \b v is modified.
+    This function is similar to UNotifyChange(), but it does not monitor the
+    changes on \b v. You must explicitly call UVar::requestValue() when you
+    want the callback function to be called.
+    The function is called rigth after the variable v is updated.
+    */
+    void UNotifyOnRequest(UVar& v, int (UObject::*fun)(UVar&));
+    /*!
+    \brief Call a function each time a variable is accessed.
+    \param v the variable to monitor.
+    \param fun the function to call each time the variable \b v is accessed.
+    The function is called rigth \b before the variable v is accessed, giving
+    \b fun the oportunity to modify it.
+    */
+    void UNotifyAccess(UVar& v, int (UObject::*fun)(UVar&));
+
+    /*!
+    \brief Setup a callback function that will be called every \t milliseconds.
+    */
+    template <class T>
+    void USetTimer(ufloat t, int (T::*fun) ());
+# else
+
+    /// \internal
 # define MakeNotify(Type, Notified, Arg, Const,				\
 		    TypeString, Name, Map, Owned,			\
 		    WithArg, StoreArg)					\
@@ -192,6 +229,7 @@ namespace urbi
 	cb->storage = StoreArg;						\
     }
 
+    /// \internal
 # define MakeMetaNotifyArg(Type, Notified, TypeString, Map, Owned,	\
 			   Name, StoreArg)				\
     MakeNotify (Type, Notified, /**/, /**/,   TypeString, Name,		\
@@ -203,27 +241,27 @@ namespace urbi
     MakeNotify (Type, Notified, UVar&, const, TypeString, Name,		\
 		Map, Owned, true, StoreArg);
 
+    /// \internal
 # define MakeMetaNotify(Type, TypeString, Map)				\
     MakeMetaNotifyArg (Type, UVar& v, TypeString,			\
 		       Map, v.owned, v.get_name (), &v);		\
     MakeMetaNotifyArg (Type, const std::string& name, TypeString,	\
 		       Map, false, name, new UVar(name));
 
-    /// Calls the specified Method each time the variable is access.
+    /// \internal
     MakeMetaNotify (Access, "varaccess", accessmap);
 
-    /// Calls the specified Method each time the variable is modified.
+    /// \internal
     MakeMetaNotify (Change, "var", monitormap);
 
-    /// Calls the specified Method when the variable value is updated on
-    /// request by requestValue().
+    /// \internal
     MakeMetaNotify (OnRequest, "var_onrequest", monitormap);
 
 # undef MakeNotify
 # undef MakeMetaNotifyArg
 # undef MakeMEtaNotify
 
-    /// Set a timer that will call tune 'fun' function every 't' milliseconds.
+    /// \internal
 # define MKUSetTimer(Const, Useless)						\
     template <class T>							\
     void USetTimer(ufloat t, int (T::*fun) () Const)			\
@@ -236,6 +274,8 @@ namespace urbi
     MKUSetTimer (const, /**/);
 
 # undef MKUSetTimer
+
+# endif //DOXYGEN
 
     /// Request permanent synchronization for v.
     void USync(UVar &v);
@@ -301,7 +341,7 @@ namespace urbi
 
     void addMember(UObject* obj);
 
-    /// Set a timer that will call update every 'period' milliseconds.
+    /// Set a timer that will call update() every 'period' milliseconds.
     void USetUpdate(ufloat period);
     virtual int update() {return 0;}
 
