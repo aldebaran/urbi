@@ -182,6 +182,9 @@ public:
   //! Clear the queue
   void clear ();
 
+  /// Whether it's empty.
+  bool empty () const;
+
   //! Available free space in the buffer.
   size_t bufferFreeSpace ();
   //! Max available free space in the buffer.

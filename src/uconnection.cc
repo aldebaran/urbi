@@ -309,7 +309,7 @@ UConnection::received (const ubyte *buffer, int length)
     else
     {
       std::cerr << make_prefix("error")
-	        << "the parser returned NULL" << std::endl;
+		<< "the parser returned NULL" << std::endl;
       // FIXME: Is this line usefull ?
       server_->error(::DISPLAY_FORMAT, (long) this,
 		    "UConnection::received",
@@ -441,32 +441,6 @@ UConnection::effective_send (const ubyte*, int length)
   return length;
 }
 
-void
-UConnection::send_adaptive_set (int send_adaptive)
-{
-  send_adaptive_ = send_adaptive;
-  send_queue_->setAdaptive (send_adaptive_);
-}
-
-void
-UConnection::receive_adaptive_set (int receive_adaptive)
-{
-  recv_adaptive_ = receive_adaptive;
-  recv_queue_->setAdaptive (recv_adaptive_);
-}
-
-int
-UConnection::send_queue_remain ()
-{
-  return send_queue_->dataSize();
-}
-
-int
-UConnection::available_send_queue ()
-{
-  return send_queue_->bufferMaxFreeSpace();
-}
-
 bool
 UConnection::has_pending_command () const
 {
@@ -478,3 +452,10 @@ UConnection::drop_pending_commands ()
 {
   active_command_->clear();
 }
+
+bool
+UConnection::send_queue_empty () const
+{
+  return send_queue_->empty();
+}
+

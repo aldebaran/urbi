@@ -4,6 +4,13 @@
 # include "uqueue.hxx"
 
 inline
+bool
+UQueue::empty () const
+{
+  return !dataSize_;
+}
+
+inline
 UErrorValue
 UQueue::push (const char *s)
 {

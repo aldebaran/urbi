@@ -238,16 +238,10 @@ public:
     as a long int.  */
   IPAdd& client_ip_get ();
 
-  int available_send_queue ();
-  int send_queue_remain ();
+  bool send_queue_empty () const;
 
   UQueue& recv_queue_get ();
   UQueue& send_queue_get ();
-
-  int send_adaptive_get () const;
-  int receive_adaptive_get () const;
-  void send_adaptive_set (int);
-  void receive_adaptive_set (int);
 
   bool& active_get ();
   bool& blocked_get ();

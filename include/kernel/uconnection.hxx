@@ -11,20 +11,6 @@
   `----------*/
 
 inline
-int
-UConnection::send_adaptive_get () const
-{
-  return send_adaptive_;
-}
-
-inline
-int
-UConnection::receive_adaptive_get () const
-{
-  return recv_adaptive_;
-}
-
-inline
 UQueue&
 UConnection::recv_queue_get ()
 {
