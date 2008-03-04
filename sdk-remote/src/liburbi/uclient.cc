@@ -266,7 +266,7 @@ namespace urbi
         {
           rc = -1;
           // FIXME: Choose between two differents way to alert user program
-          clientError("Lost connection with server", ETIMEDOUT);
+          clientError("Lost connection with server");
           notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
                                    "!!! Lost connection with server",
                                    std::list<BinaryData>() ));
