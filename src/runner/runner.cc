@@ -85,7 +85,13 @@ namespace runner
     show_error_(ue, Loc);				\
     throw;						\
   }							\
-  catch(kernel::exception &e)				\
+  catch(ast::FlowException& e)				\
+  {							\
+    Code						\
+    current_.reset();					\
+    throw;						\
+  }							\
+  catch(kernel::exception& e)				\
   {							\
     std::cerr << "Unexpected exception propagated: "	\
               << e.what() << std::endl;			\
@@ -539,8 +545,7 @@ namespace runner
 	    throw;
 	}
 	CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
-	  CATCH_FLOW_EXCEPTION(ast::ReturnException, "return",
-			       "outside a function");
+	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return", "outside a function")
 
 	if (e.toplevel_get () && current_.get ())
 	{
