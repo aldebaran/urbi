@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object string.
  */
 
+#include "libport/tokenizer.hh"
+
 #include "object/string-class.hh"
 #include "object/object.hh"
 #include "object/primitives.hh"
@@ -61,6 +63,19 @@ namespace object
 	 + boost::lexical_cast<std::string>(libport::escape(VALUE(args[0],
 				String).name_get())) + '"'));
     }
+
+    static rObject
+    string_class_split(runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT (2);
+      boost::tokenizer< boost::char_separator<char> > tok
+      = libport::make_tokenizer(VALUE(args[0], String).name_get(), 
+				VALUE(args[1], String).name_get().c_str());
+      list_traits::type ret;
+      foreach(std::string i, tok)
+        ret.push_back(new String(libport::Symbol(i)));
+      return new List(ret);
+    }
   };
 
 #define PRIMITIVE_1_STRING(Name)                  \
@@ -91,6 +106,7 @@ namespace object
 
     DECLARE(asString);
     DECLARE(size);
+    DECLARE(split);
 #undef DECLARE
   }
 }; // namespace object

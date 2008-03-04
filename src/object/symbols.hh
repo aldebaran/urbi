@@ -147,6 +147,7 @@
   Macro(sleep, "sleep");                          \
   Macro(slotNames, "slotNames");                  \
   Macro(sort, "sort");                            \
+  Macro(split, "split");                          \
   Macro(sqrt, "sqrt");                            \
   Macro(stopall, "stopall");                      \
   Macro(tail, "tail");                            \
