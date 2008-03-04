@@ -185,12 +185,6 @@ public:
   /// Whether it's empty.
   bool empty () const;
 
-  //! Available free space in the buffer.
-  size_t bufferFreeSpace ();
-  //! Max available free space in the buffer.
-  size_t bufferMaxFreeSpace();
-  //! Size of the data in the buffer
-  size_t dataSize ();
 
   //! Set a mark to be able to revert to this position
   void mark ();
@@ -199,10 +193,15 @@ public:
   void revert ();
   //! Locked status of the queue
   bool locked ();
-  //! Adaptive accessor
-  void setAdaptive (size_t adaptive);
+  //! Size of the data in the buffer
+  size_t dataSize ();
 
 private:
+  //! Available free space in the buffer.
+  size_t bufferFreeSpace ();
+  //! Max available free space in the buffer.
+  size_t bufferMaxFreeSpace();
+
   /// Implement buffer adaptive scheme.
   /// \param toPop  size of the current buffer pop.
   // Called by pop() only.
@@ -210,8 +209,6 @@ private:
 
   /// Grow \a s, using the threshold maxBufferSize_.
   void enlarge (size_t& s) const;
-
-protected:
 
   /// Initial size of the output buffer used by pop.
   enum { INITIAL_BUFFER_SIZE = 4096 };

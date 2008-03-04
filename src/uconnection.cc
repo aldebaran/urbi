@@ -187,7 +187,7 @@ UConnection&
 UConnection::continue_send ()
 {
   if (closing_)
-     CONN_ERR_RET(UFAIL);
+    CONN_ERR_RET(UFAIL);
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
 # endif
@@ -458,4 +458,3 @@ UConnection::send_queue_empty () const
 {
   return send_queue_->empty();
 }
-

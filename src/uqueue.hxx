@@ -45,11 +45,4 @@ UQueue::locked()
   return locked_;
 }
 
-inline
-void
-UQueue::setAdaptive (size_t adaptive)
-{
-  adaptive_ = adaptive;
-}
-
 #endif
