@@ -162,7 +162,7 @@ UConnection::continue_send ()
 # endif
   blocked_ = false;	    // continue_send unblocks the connection.
 
-  int toSend = send_queue_->size(); // nb of bytes to send
+  size_t toSend = send_queue_->size(); // nb of bytes to send
   if (toSend > packet_size_)
     toSend = packet_size_;
   if (toSend == 0)

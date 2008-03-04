@@ -305,12 +305,12 @@ private:
   UQueue* recv_queue_;
 
   /// Each call to effective_send() will send packetSize byte (or less)..
-  int packet_size_;
+  size_t packet_size_;
 
-  /// Stores the state of the connection.
+  /// The state of the connection.
   bool blocked_;
 
-  /// Stores error flags.
+  /// Error flags.
   bool error_signals_[MAX_ERRORSIGNALS];
 
   /// True when the connection is reading to send/receive data (usualy
