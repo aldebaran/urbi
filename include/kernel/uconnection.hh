@@ -68,7 +68,7 @@
     The received() function must be called each time data has been received on
     the connection.
 
-    The effectiveSend() function should be overloaded to define the way the
+    The effective_send() function should be overloaded to define the way the
     system is actually sending data through the real connection.
  */
 
@@ -83,7 +83,7 @@ public:
     \param userver is the server to which the connection belongs
 
     \param packetSize is the maximal size of a packet sent in one shot
-    via a call to effectiveSend(). This should be the biggest as
+    via a call to effective_send(). This should be the biggest as
     possible to help emptying the sending queue as fast as
     possible. Check the capacity of your connection to know this
     limit.
@@ -133,7 +133,7 @@ public:
   */
   UConnection& send (UWarningCode n);
 
-  //! Send at most packetSize bytes in the connection, calling effectiveSend()
+  //! Send at most packetSize bytes in the connection, calling effective_send()
   /*! Must be called when the system tells that the connection is ready to
     accept new data for sending, in order to carry on the processing of the
     sending queue stored in the internal buffer.
@@ -141,7 +141,7 @@ public:
     connection until the internal buffer is empty.
     \return
     - USUCCESS: successful
-    - UFAIL   : effectiveSend() failed or not enough memory
+    - UFAIL   : effective_send() failed or not enough memory
    */
   UConnection& continue_send ();
 
@@ -304,7 +304,7 @@ private:
   /// A pointer to stop dependencies.
   UQueue* recv_queue_;
 
-  /// Each call to effectiveSend() will send packetSize byte (or less)..
+  /// Each call to effective_send() will send packetSize byte (or less)..
   int packet_size_;
 
   /// Stores the state of the connection.
