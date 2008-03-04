@@ -390,12 +390,6 @@ UConnection::make_prefix (const char* tag) const
   return o.str ();
 }
 
-int
-UConnection::effective_send (const char*, int length)
-{
-  return length;
-}
-
 bool
 UConnection::has_pending_command () const
 {
