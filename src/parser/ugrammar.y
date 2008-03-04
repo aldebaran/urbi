@@ -969,11 +969,15 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
-      $$ = 0;
+      $$ = ast_call(@$, 0, SYMBOL(at_), $3, $5, new ast::Noop(@$, true));
     }
 | "at" "(" softtest ")" stmt "onleave" stmt
     {
-      $$ = 0;
+      FLAVOR_CHECK(@$, "at", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
+      warn_implicit(up, @5, $5);
+      warn_implicit(up, @7, $7);
+      $$ = ast_call(@$, 0, SYMBOL(at_), $3, $5, $7);
     }
 | "every" "(" expr ")" stmt
     {

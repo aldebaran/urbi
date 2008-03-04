@@ -80,6 +80,7 @@
   Macro(argsCount, "argsCount");                  \
   Macro(asString, "asString");                    \
   Macro(asin, "asin");                            \
+  Macro(at_, "at_");                              \
   Macro(atan, "atan");                            \
   Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \
