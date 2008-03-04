@@ -22,6 +22,7 @@
 #ifndef UQUEUE_HH
 # define UQUEUE_HH
 
+# include <deque>
 # include <vector>
 
 # include "kernel/utypes.hh"
@@ -62,7 +63,7 @@ public:
 	    - UFAIL   : could not push the string.
     \sa push(const ubyte*,size_t)
   */
-  UErrorValue push (const char *s);
+  void push (const char *s);
 
   //! Pushes a buffer into the queue.
   /*! This function tries to store the buffer in the queue, and tries to extend
@@ -70,11 +71,8 @@ public:
 
       \param buffer the buffer to push
       \param length the length of the buffer
-      \return
-	    - USUCCESS: successful
-	    - UFAIL   : could not push the buffer. The queue is not changed.
   */
-  UErrorValue push (const ubyte *buffer, size_t length);
+  void push (const ubyte *buffer, size_t length);
 
   //! Pops 'length' bytes out of the Queue
   /*! Pops 'length' bytes.
@@ -97,31 +95,7 @@ public:
       \param length the length requested.
       \return a pointer to the the data popped or 0 in case of error.
   */
-  ubyte* virtualPop (size_t length);
-
- //! Pops at most 'length' bytes out of the Queue
- /*! Pops at most 'length' bytes. The actual size is returned in 'length'.
-     The ubyte* pointer returned is not permanent. You have to make a
-     copy of the data pointed if you want to keep it. Any call to a
-     member function of UQueue might alter it later.
-
-     This method is called "fast" because is will not use the
-     temporary outputBuffer if the requested data is half at the end
-     and half at the beginning of the buffer. It will return only the
-     part at the end of the buffer and return the actual size of data
-     popped. You have to check if this value is equal to the requested
-     length. If it is not, a second call to fastPop will give you the
-     rest of the buffer, with a different pointer.  This function is
-     useful if you plan to pop huge amount of data which will probably
-     span over the end of the buffer and which would, with a simple
-     call to 'pop', result in a huge memory replication. In other
-     cases, prefer 'pop', which is most of the time as efficient as
-     fastPop and much more convenient to use.
-
-     \param length the length requested. Contains the actual length popped.
-     \return a pointer to the the data popped or 0 in case of error.
- */
-  ubyte* fastPop (size_t &length);
+  ubyte* front (size_t length);
 
   //! Pops the next command in the queue.
   /*! Scan the buffer to a terminating ',' or ';' symbol by removing
@@ -154,38 +128,14 @@ public:
   bool empty () const;
 
   //! Size of the data in the buffer
-  size_t dataSize ();
+  size_t size () const;
 
 private:
-  //! Available free space in the buffer.
-  size_t bufferFreeSpace ();
-  //! Max available free space in the buffer.
-  size_t bufferMaxFreeSpace();
-
-  /// Grow \a s, using the threshold maxBufferSize_.
-  void enlarge (size_t& s) const;
-
-  /// Initial size of the output buffer used by pop.
-  enum { INITIAL_BUFFER_SIZE = 4096 };
-
-  /// Stores the initial size of the internal buffer.
-  size_t minBufferSize_;
-
-  /// Maximum size the dynamical internal buffer is allowed to grow.
-  size_t maxBufferSize_;
-
   /// queue internal buffer (circular).
-  std::vector<ubyte> buffer_;
+  std::deque<ubyte> buffer_;
 
   /// buffer used by pop to return it's value.
   std::vector<ubyte> outputBuffer_;
-
-  /// internal buffer start offset.
-  size_t start_;
-  /// internal buffer end offset.
-  size_t end_;
-  /// size of the data inside the buffer.
-  size_t dataSize_;
 };
 
 # include "uqueue.hxx"

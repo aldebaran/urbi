@@ -163,13 +163,13 @@ UConnection::continue_send ()
 # endif
   blocked_ = false;	    // continue_send unblocks the connection.
 
-  int toSend = send_queue_->dataSize(); // nb of bytes to send
+  int toSend = send_queue_->size(); // nb of bytes to send
   if (toSend > packet_size_)
     toSend = packet_size_;
   if (toSend == 0)
     CONN_ERR_RET(USUCCESS);
 
-  ubyte* popData = send_queue_->virtualPop(toSend);
+  ubyte* popData = send_queue_->front(toSend);
 
   if (popData != 0)
   {
@@ -198,30 +198,18 @@ UConnection::received (const ubyte *buffer, int length)
 #if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock serverLock(server_->mutex);
 #endif
-  UErrorValue result = UFAIL;
+
   {
     // Lock the connection.
 #if ! defined LIBPORT_URBI_ENV_AIBO
     boost::mutex::scoped_lock lock(mutex_);
 #endif
-    result = recv_queue_->push(buffer, length);
+    recv_queue_->push(buffer, length);
   }
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
   boost::try_mutex::scoped_try_lock treeLock(tree_mutex_, false);
 #endif
-
-  PING();
-  if (result != USUCCESS)
-  {
-    // Handles memory errors.
-    if (result == UFAIL)
-    {
-      error_signal_set(UERROR_RECEIVE_BUFFER_FULL);
-      error_signal_set(UERROR_RECEIVE_BUFFER_CORRUPTED);
-    }
-    CONN_ERR_RET(result);
-  }
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
   if (!treeLock.try_lock())
