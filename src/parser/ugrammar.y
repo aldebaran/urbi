@@ -192,6 +192,21 @@
     }
 
 
+    /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
+    static
+    ast::Call*
+    ast_call(const loc& l,
+	     ast::Exp* target, libport::Symbol method,
+	     ast::Exp* arg1, ast::Exp* arg2, ast::Exp* arg3)
+    {
+      ast::Call* res = ast_call(l, target, method);
+      res->args_get().push_back(arg1);
+      res->args_get().push_back(arg2);
+      res->args_get().push_back(arg3);
+      return res;
+    }
+
+
     /*-----------------.
     | Changing slots.  |
     `-----------------*/
