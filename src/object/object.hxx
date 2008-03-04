@@ -13,6 +13,7 @@
 
 # include "libport/containers.hh"
 # include "libport/indent.hh"
+# include "libport/foreach.hh"
 
 # include "object/object.hh"
 # include "object/primitives.hh"
@@ -165,8 +166,25 @@ namespace object
   {
     return proto->do_clone (proto);
   }
-
-
+  template<class P, class F> bool 
+  for_all_protos(P& r, F& f, objects_type& objects)
+  {
+    if (libport::has(objects, r))
+      return false;
+    if (f(r))
+      return true;
+    objects.push_back(r);
+    foreach(P& p, r->protos_get())
+      if (for_all_protos(p, f, objects))
+	return true;
+    return false;
+  }
+  template<class P,class F> bool
+  for_all_protos(P& r, F& f)
+  {
+    objects_type objects;
+    return for_all_protos(r, f, objects);
+  }
 
 } // namespace object
 

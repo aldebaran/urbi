@@ -294,6 +294,13 @@ namespace object
     return new Float (!!args[0]->locals_get ());
   }
 
+  static rObject
+  object_class_isA(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (2);
+    return new Float (is_a(args[0], args[1])? 1.0:0.0);
+  }
+
   void
   object_class_initialize ()
   {
@@ -310,6 +317,7 @@ namespace object
     DECLARE(getLazyLocalSlot);
     DECLARE(getSlot);
     DECLARE(init);
+    DECLARE(isA);
     DECLARE(isScope);
     DECLARE(locateSlot);
     DECLARE(makeScope);

@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/lambda/lambda.hpp>
 
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
@@ -221,4 +222,9 @@ namespace object
     return out << VALUE(s, String).name_get();
   }
 
+  bool
+  is_a(const rObject& c, const rObject& p)
+  {
+    return for_all_protos(c, boost::lambda::_1 == p);
+  }
 } // namespace object

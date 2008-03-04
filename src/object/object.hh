@@ -194,8 +194,11 @@ namespace object
   std::ostream& dump(runner::Runner&, rObject o, std::ostream& o);
 
 
+  /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
+  template<class F> bool for_all_protos(rObject& r, F& f);
 
-
+  /// Checks in \b c's proto hierarchy if \b p is present.
+  bool is_a(const rObject& c, const rObject& p);
 } // namespace object
 
 /// Return the value of the shared_ptr \a Obj as an Atom<Type>.
