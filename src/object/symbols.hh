@@ -98,6 +98,7 @@
   Macro(eval, "eval");                            \
   Macro(evalArgAt, "evalArgAt");                  \
   Macro(evalArgs, "evalArgs");                    \
+  Macro(every_, "every_");                        \
   Macro(exp, "exp");                              \
   Macro(false, "false");                          \
   Macro(fresh, "fresh");                          \
