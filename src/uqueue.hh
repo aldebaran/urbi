@@ -49,39 +49,7 @@ class UQueue
 public:
 
   //! UQueue constructor.
-  /*! UQueue implements a dynamic circular FIFO buffer.
-      You can specify the following parameters:
-
-      \param minBufferSize is the initial size of the buffer. If the buffer is
-	   shrinked (adaptive buffer), its size will be at least minBufferSize.
-	   The default value if not specified is 4096 octets.
-      \param maxBufferSize is the maximal size of the buffer. The buffer size is
-	   increased when one tries to push data that is too big for the current
-	   buffer size. However, this dynamic behavior is limited to
-	   maxBufferSize in any case. If the buffer can still not hold the
-	   pushed data, the push() function returns UFAIL.
-	   If set to zero, the limit is infinite.
-	   The default value is equal to minBufferSize.
-      \param adaptive the default behavior of the UQueue is to increase the size
-	   of the internal buffer if one tries to hold more data that what the
-	   current size allows (up to maxBufferSize, as we said). However, if
-	   the buffer is adaptive, it will also be able to shrink the buffer.
-	   This is very useful to allow the UQueue to grow momentarily to hold
-	   a large amount of data and then recover memory after the boost, if
-	   this data size is not the usual functioning load.
-	   If adaptive is non null, the behavior is the following: the UQueue
-	   counts the number of calls to the pop() function. Each time this
-	   number goes above 'adaptive', the UQueue will resize to the maximum
-	   data size it has held in the past 'adaptive' calls to pop(), and
-	   minBufferSize at least. So, 'adaptive' is a time windows that is
-	   periodicaly checked to shink the buffer if necessary.
-	   Note that the buffer will shrink only if there is a minimum of 20%
-	   size difference, to avoid time consuming reallocs for nothing.
-	   We recommand a default value of 100 for the adaptive value.
-  */
-  explicit UQueue (size_t minBufferSize = 0,
-		   size_t maxBufferSize = -1,
-		   size_t adaptive = 0);
+  UQueue ();
   virtual ~UQueue ();
 
   //! Pushes a string into the queue. The zero ending character is ignored.
@@ -202,11 +170,6 @@ private:
   //! Max available free space in the buffer.
   size_t bufferMaxFreeSpace();
 
-  /// Implement buffer adaptive scheme.
-  /// \param toPop  size of the current buffer pop.
-  // Called by pop() only.
-  void adapt(size_t toPop);
-
   /// Grow \a s, using the threshold maxBufferSize_.
   void enlarge (size_t& s) const;
 
@@ -218,9 +181,6 @@ private:
 
   /// Maximum size the dynamical internal buffer is allowed to grow.
   size_t maxBufferSize_;
-
-  /// Size of the time window used by the adaptive algorithm.
-  size_t adaptive_;
 
   /// queue internal buffer (circular).
   std::vector<ubyte> buffer_;
@@ -235,14 +195,6 @@ private:
   /// size of the data inside the buffer.
   size_t dataSize_;
 
-  /// nb calls to the pop() function.
-  size_t nbPopCall_;
-  /// maximal data size in the adaptive time windows. Used to shrink
-  /// the buffer.
-  size_t topDataSize_;
-  /// maximal data size outputed in the time windows. Used to shrink
-  /// outputBuffer.
-  size_t topOutputSize_;
   /// mark offset.
   size_t mark_;
   /// lock the connection after a failure (only 'mark' can unlock it)

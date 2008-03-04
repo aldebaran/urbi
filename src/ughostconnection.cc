@@ -42,13 +42,8 @@ enum
 };
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection  (UServer* mainserver)
-  : UConnection   (mainserver,
-		   MINSENDBUFFERSIZE,
-		   MAXSENDBUFFERSIZE,
-		   PACKETSIZE,
-		   MINRECVBUFFERSIZE,
-		   MAXRECVBUFFERSIZE)
+UGhostConnection::UGhostConnection (UServer* s)
+  : UConnection (s, PACKETSIZE)
 {
   ::urbiserver->connectionList.push_front (this);
 }

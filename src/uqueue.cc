@@ -30,20 +30,20 @@
 
 #include "uqueue.hh"
 
-UQueue::UQueue (size_t minBufferSize, size_t maxBufferSize, size_t adaptive)
-  : minBufferSize_ (minBufferSize
-		    ? minBufferSize : static_cast<size_t>(INITIAL_BUFFER_SIZE)),
-    maxBufferSize_ (maxBufferSize == static_cast<size_t>(-1)
-		    ? minBufferSize_ : maxBufferSize),
-    adaptive_(adaptive),
+enum
+{
+  MIN_BUFFER_SIZE = 4096,
+  MAX_BUFFER_SIZE = 1048576,
+};
+
+UQueue::UQueue ()
+  : minBufferSize_ (MIN_BUFFER_SIZE),
+    maxBufferSize_ (MAX_BUFFER_SIZE),
     buffer_(minBufferSize_),
     outputBuffer_(UQueue::INITIAL_BUFFER_SIZE),
     start_(0),
     end_(0),
     dataSize_(0),
-    nbPopCall_(0),
-    topDataSize_(0),
-    topOutputSize_(0),
     mark_(0),
     locked_(false)
 {
@@ -141,56 +141,6 @@ UQueue::push (const ubyte *buffer, size_t length)
   return USUCCESS;
 }
 
-void
-UQueue::adapt(size_t toPop)
-{
-  ++nbPopCall_;
-  topDataSize_ = std::max (topDataSize_, dataSize_);
-  topOutputSize_ = std::max (topOutputSize_, toPop);
-
-  if (adaptive_ < nbPopCall_)
-  {
-    // time out
-    if (topOutputSize_ < outputBuffer_.size() * 0.8)
-      outputBuffer_.resize(topOutputSize_ * 2);
-
-    if (topDataSize_ < buffer_.size() * 0.8)
-    {
-      // We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
-      enlarge(topDataSize_);
-      if (end_ < start_)
-      {
-	// The data is splitted
-	//  [4567|       }      |123]
-	//      end     new   start
-	// ->
-	//  [4567|   |123]
-	memmove(&buffer_[0] + start_ - (buffer_.size() - topDataSize_),
-		&buffer_[0] + start_, buffer_.size() - start_);
-	start_ = start_ - (buffer_.size() - topDataSize_);
-      }
-      else
-      {
-	// The data is contiguous.
-	memmove(&buffer_[0], &buffer_[0] + start_, dataSize_);
-	start_ = 0;
-	end_   = dataSize_;
-	// the case end_ == buffer_.size() is handled below.
-      }
-
-      buffer_.resize(topDataSize_);
-      if (end_ == buffer_.size() )
-	end_ =0; // loop the circular geometry.
-      // else... well it should never come to this else anyway.
-    }
-
-    // reset.
-    nbPopCall_ = 0;
-    topDataSize_   = 0;
-    topOutputSize_ = 0;
-  }
-}
-
 ubyte*
 UQueue::pop (size_t length)
 {
@@ -202,10 +152,6 @@ UQueue::pop (size_t length)
   if (toPop == 0)
     // Pops nothing but gets a pointer to the beginning of the buffer.
     return &buffer_[0] + start_;
-
-  // Adaptive shrinking behavior
-  if (adaptive_)
-    adapt(toPop);
 
   if (buffer_.size() - start_ >= toPop)
   {

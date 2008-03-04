@@ -51,25 +51,16 @@
 
 #include "object/atom.hh" // object::Lobby
 
-UConnection::UConnection (UServer* userver,
-			  size_t minSendBufferSize,
-			  size_t maxSendBufferSize,
-			  size_t packetSize,
-			  size_t minRecvBufferSize,
-			  size_t maxRecvBufferSize)
+UConnection::UConnection (UServer* userver,size_t packetSize)
   : uerror_ (USUCCESS),
     client_ip_ (0),
     closing_ (false),
     receiving_ (false),
     new_data_added_ (false),
-    send_queue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
-			    UConnection::ADAPTIVE)),
-    recv_queue_ (new UQueue (minRecvBufferSize, maxRecvBufferSize,
-			    UConnection::ADAPTIVE)),
+    send_queue_ (new UQueue ()),
+    recv_queue_ (new UQueue ()),
     packet_size_ (packetSize),
     blocked_ (false),
-    send_adaptive_ (UConnection::ADAPTIVE),
-    recv_adaptive_ (UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
     lobby_ (new object::Lobby (object::State(*this))),
