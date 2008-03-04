@@ -21,29 +21,28 @@
 **********************************************************************/
 
 #include <cstdlib>
-#include "libport/cstdio"
 #include <cerrno>
 
 #include <locale.h>
 
-#include "libport/unistd.h"
+#include "libport/windows.hh"
 
 #ifndef WIN32
 # include <sys/time.h>
 # include <time.h>
 # include <signal.h>
-#else
-# include "libport/windows.hh"
 #endif
 
-#include "urbi/uclient.hh"
-#include "urbi/utag.hh"
+#include "libport/unistd.h"
 #include "libport/network.h"
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
 #include "libport/utime.hh"
 #include "libport/cstdio"
 #include "libport/cstring"
+
+#include "urbi/uclient.hh"
+#include "urbi/utag.hh"
 
 namespace urbi
 {
@@ -251,13 +250,8 @@ namespace urbi
       // Treat error
       if (selectReturn < 0 && errno != EINTR)
       {
-        int errorCode = selectReturn;
-#ifdef WIN32
-        errorCode = WSAGetLastError();
-#endif
-
         rc = -1;
-        clientError("Connection error : ", errorCode);
+        clientError("Connection error : ", errno);
         notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
                                  "!!! Connection error", std::list<BinaryData>() ));
         return;
@@ -272,7 +266,7 @@ namespace urbi
         {
           rc = -1;
           // FIXME: Choose between two differents way to alert user program
-          clientError("Lost connection with server", 0);
+          clientError("Lost connection with server", ETIMEDOUT);
           notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
                                    "!!! Lost connection with server",
                                    std::list<BinaryData>() ));
