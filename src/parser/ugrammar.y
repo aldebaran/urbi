@@ -1057,11 +1057,13 @@ stmt:
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
     {
       warn_implicit(up, @5, $5);
-      $$ = 0;
+      $$ = ast_call(@$, 0, SYMBOL(whenever_), $3, $5, new ast::Noop(@$, true));
     }
 | "whenever" "(" softtest ")" stmt "else" stmt
     {
-      $$ = 0;
+      warn_implicit(up, @5, $5);
+      warn_implicit(up, @7, $7);
+      $$ = ast_call(@$, 0, SYMBOL(whenever_), $3, $5, $7);
     }
 | "while" "(" expr ")" stmt %prec CMDBLOCK
     {

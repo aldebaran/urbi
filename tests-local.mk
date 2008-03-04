@@ -61,5 +61,4 @@ XFAIL_TESTS +=					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
 1.x/variable-normalize.chk			\
-1.x/variable-qualifiers.chk			\
-1.x/whenever-bad.chk
+1.x/variable-qualifiers.chk

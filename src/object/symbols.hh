@@ -157,6 +157,7 @@
   Macro(void, "void");                            \
   Macro(waitForChanges, "waitForChanges");        \
   Macro(waitForTermination, "waitForTermination");\
+  Macro(whenever_, "whenever_");                  \
   /* Backslash terminator. */
 
 namespace object
