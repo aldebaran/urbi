@@ -139,10 +139,6 @@ public:
   void debug (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
 
-  void isolate ();
-  void deIsolate ();
-  bool isIsolated ();
-
   virtual libport::utime_t getTime () = 0;
   virtual ufloat getPower () = 0;
 
@@ -308,8 +304,7 @@ private:
 
   /// Frequency of the calls to work().
   ufloat period_;
-  /// Is the server isolated.
-  bool isolate_;
+
   /// Store the time on the last call to updateTime();.
   libport::utime_t lastTime_;
   /// The ghost connection used for URBI.INI.

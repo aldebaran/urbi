@@ -89,7 +89,6 @@ UServer::UServer(ufloat period,
     stopall (false),
     systemcommands (true),
     period_(period),
-    isolate_ (false),
     uid(0)
 {
 #if ! defined NDEBUG
@@ -372,33 +371,6 @@ UServer::debug(const char* s, ...)
   va_start(args, s);
   vdebug (s, args);
   va_end(args);
-}
-
-//! Isolate the server from incoming commands.
-void
-UServer::isolate()
-{
-  isolate_ = true;
-}
-
-//! Remove the server isolatation from incoming commands.
-void
-UServer::deIsolate()
-{
-  isolate_ = false;
-}
-
-//! Returns the status of isolation of the server
-/*! Usual situation is that the server is not isolated. Isolation comes when
- a critical error happens, like a memory overflow, and the server should
- stop receiving incoming commands. It is the job of the programmer in his/her
- own UServer sub class (robot specific) to test this function before
- requesting more data through the client connection.
- */
-bool
-UServer::isIsolated()
-{
-  return isolate_;
 }
 
 //! Overload this function to specify how your robot is displaying messages.

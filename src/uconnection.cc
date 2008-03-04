@@ -164,7 +164,6 @@ UConnection::send_queue (const ubyte *buffer, int length)
     if (result == UFAIL)
     {
       error_signal_set(UERROR_SEND_BUFFER_FULL);
-      server_->isolate();
     }
 
     send_queue_->revert ();
@@ -201,8 +200,6 @@ UConnection::continue_send ()
     else if (wasSent == 0 || send_queue_->pop(wasSent) != 0)
       CONN_ERR_RET(USUCCESS);
   }
-
-  server_->isolate();
 
   CONN_ERR_RET(UFAIL);
 }
