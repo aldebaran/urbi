@@ -24,7 +24,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
-#include <strstream>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -745,12 +744,8 @@ size_t
 prescan (char *buf)
 {
   yyFlexLexer scanner;
-  // It has been said Flex scanners cannot work with istrstream.
-  // Get the whole contents of the UQueue.  This is suboptimal, but
-  // functional.
-  std::istrstream mem_buff (buf);
-  std::istream mem_input (mem_buff.rdbuf());
-  scanner.switch_streams(&mem_input, 0);
+  std::istringstream is (buf);
+  scanner.switch_streams(&is, 0);
 
   // The number of read bytes.
   int c = scanner.yylex();

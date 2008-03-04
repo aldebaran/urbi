@@ -11,7 +11,6 @@
 #include <iterator>
 #include <sstream>
 #include <string>
-#include <strstream>
 
 #include <libport/foreach.hh>
 
@@ -59,13 +58,11 @@ UParser::parse_ (std::istream& source)
 int
 UParser::process (const std::string& command)
 {
-  // It has been said Flex scanners cannot work with istrstream.
-  std::istrstream mem_buff (command.c_str ());
-  std::istream mem_input (mem_buff.rdbuf());
+  std::istringstream is (command);
   ECHO("Parsing string: ==================\n"
        << loc_ << ":\n" << command
        << "\n==================================");
-  return parse_ (mem_buff);
+  return parse_ (is);
 }
 
 int
