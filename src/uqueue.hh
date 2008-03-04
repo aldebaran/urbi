@@ -153,14 +153,6 @@ public:
   /// Whether it's empty.
   bool empty () const;
 
-
-  //! Set a mark to be able to revert to this position
-  void mark ();
-
-  //! Revert the buffer to the marked position.
-  void revert ();
-  //! Locked status of the queue
-  bool locked ();
   //! Size of the data in the buffer
   size_t dataSize ();
 
@@ -194,11 +186,6 @@ private:
   size_t end_;
   /// size of the data inside the buffer.
   size_t dataSize_;
-
-  /// mark offset.
-  size_t mark_;
-  /// lock the connection after a failure (only 'mark' can unlock it)
-  bool locked_;
 };
 
 # include "uqueue.hxx"

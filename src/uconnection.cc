@@ -124,19 +124,12 @@ UConnection::initialize()
 UConnection&
 UConnection::send (const char* buf, const char* tag, bool flush)
 {
-  if (tag != 0)
+  if (tag)
   {
     std::string pref = make_prefix (tag);
-    send_queue_->mark (); // put a marker to indicate the beginning of a message
-
-    // UErrorValue ret =
     send_queue (reinterpret_cast<const ubyte*>(pref.c_str()), pref.length());
-
-    // .error ();
-
-    //FIXME: check error
   }
-  if (buf != 0)
+  if (buf)
   {
     UErrorValue ret = send_queue (reinterpret_cast<const ubyte*>(buf),
 				  strlen(buf)).error_get ();
@@ -154,22 +147,9 @@ UConnection::send_queue (const ubyte *buffer, int length)
 {
   if (closing_)
     CONN_ERR_RET(USUCCESS);
-  if (send_queue_->locked ())
-    CONN_ERR_RET(UFAIL);
 
   // Add to Queue
-  UErrorValue result = send_queue_->push(buffer, length);
-  if (result != USUCCESS)
-  {
-    if (result == UFAIL)
-    {
-      error_signal_set(UERROR_SEND_BUFFER_FULL);
-    }
-
-    send_queue_->revert ();
-    CONN_ERR_RET(UFAIL);
-  }
-
+  send_queue_->push(buffer, length);
   CONN_ERR_RET(USUCCESS);
 }
 

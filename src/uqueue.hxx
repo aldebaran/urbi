@@ -38,11 +38,4 @@ UQueue::dataSize()
   return dataSize_ ;
 }
 
-inline
-bool
-UQueue::locked()
-{
-  return locked_;
-}
-
 #endif

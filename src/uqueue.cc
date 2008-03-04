@@ -43,9 +43,7 @@ UQueue::UQueue ()
     outputBuffer_(UQueue::INITIAL_BUFFER_SIZE),
     start_(0),
     end_(0),
-    dataSize_(0),
-    mark_(0),
-    locked_(false)
+    dataSize_(0)
 {
 }
 
@@ -59,20 +57,6 @@ UQueue::clear()
   start_    = 0;
   end_      = 0;
   dataSize_ = 0;
-}
-
-void
-UQueue::mark()
-{
-  mark_ = end_;
-  locked_ = false;
-}
-
-void
-UQueue::revert()
-{
-  end_ = mark_;
-  locked_ = true;
 }
 
 void
