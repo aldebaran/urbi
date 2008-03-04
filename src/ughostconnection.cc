@@ -66,7 +66,7 @@ UGhostConnection::close()
 
 //! Does nothing. No output for the ghosts...
 int
-UGhostConnection::effective_send(const ubyte *buffer, int length)
+UGhostConnection::effective_send(const char* buffer, int length)
 {
   char buf[EFFECTIVESENDSIZE];
 

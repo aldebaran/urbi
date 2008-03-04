@@ -54,14 +54,14 @@ public:
   virtual ~UQueue ();
 
   //! Pushes a string into the queue. The zero ending character is ignored.
-  /*! The string is converted into a ubyte* buffer and the function calls the
-    push(ubyte*,size_t) function.
+  /*! The string is converted into a char* buffer and the function calls the
+    push(char*,size_t) function.
 
     \param s the string to send
     \return
 	    - USUCCESS: successful
 	    - UFAIL   : could not push the string.
-    \sa push(const ubyte*,size_t)
+    \sa push(const char*,size_t)
   */
   void push (const char *s);
 
@@ -72,18 +72,18 @@ public:
       \param buffer the buffer to push
       \param length the length of the buffer
   */
-  void push (const ubyte *buffer, size_t length);
+  void push (const char *buffer, size_t length);
 
   //! Pops 'length' bytes out of the Queue
   /*! Pops 'length' bytes.
-      The ubyte* pointer returned is not permanent. You have to make a copy
+      The char* pointer returned is not permanent. You have to make a copy
       of the data pointed if you want to keep it. Any call to a member function
       of UQueue might alter it later.
 
       \param length the length requested.
       \return a pointer to the the data popped or 0 in case of error.
   */
-  ubyte* pop (size_t length);
+  char* pop (size_t length);
 
   //! Simulates the pop of 'length' bytes out of the Queue
   /*! Behave like pop but simulate the effect. This is useful if one
@@ -95,7 +95,7 @@ public:
       \param length the length requested.
       \return a pointer to the the data popped or 0 in case of error.
   */
-  ubyte* front (size_t length);
+  char* front (size_t length);
 
   //! Pops the next command in the queue.
   /*! Scan the buffer to a terminating ',' or ';' symbol by removing
@@ -132,10 +132,10 @@ public:
 
 private:
   /// queue internal buffer (circular).
-  std::deque<ubyte> buffer_;
+  std::deque<char> buffer_;
 
   /// buffer used by pop to return it's value.
-  std::vector<ubyte> outputBuffer_;
+  std::vector<char> outputBuffer_;
 };
 
 # include "uqueue.hxx"

@@ -167,7 +167,7 @@ public:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UConnection& received (const ubyte *buffer, int length);
+  UConnection& received (const char *buffer, int length);
 
   /// A generic << operator, to easily send every kind of data through the
   ///connection.
@@ -249,7 +249,7 @@ protected:
   send queue.
   \sa send(const char*)
   */
-  virtual UConnection&	send_queue(const ubyte *buffer, int length);
+  virtual UConnection&	send_queue(const char *buffer, int length);
 
   //! Sends a buffer through the real connection (redefined in the sub class)
   /*! Must be defined to implement the effective code that sends a buffer through
@@ -262,7 +262,7 @@ protected:
 
     \return the number of bytes effectively sent. -1 means that there was an error.
    */
-  virtual int effective_send (const ubyte*, int length) = 0;
+  virtual int effective_send (const char*, int length) = 0;
 
   UConnection& execute ();
 

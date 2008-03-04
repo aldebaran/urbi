@@ -48,18 +48,18 @@ UQueue::clear()
 }
 
 void
-UQueue::push (const ubyte *buf, size_t len)
+UQueue::push (const char *buf, size_t len)
 {
   buffer_.insert(buffer_.end(), buf, buf + len);
 }
 
-ubyte*
+char*
 UQueue::front (size_t len)
 {
   // FIXME: Our interface is bad, this is needed.
   if (!len)
   {
-    static ubyte res = 0;
+    static char res = 0;
     return &res;
   }
   // Not enough data to pop 'len'.
@@ -71,16 +71,15 @@ UQueue::front (size_t len)
 		       buffer_.begin(), buffer_.begin() + len);
   outputBuffer_.push_back(0);
   ECHO("Output: "
-       << std::string(reinterpret_cast<char*>(&outputBuffer_[0]),
-		      len));
+       << std::string(&outputBuffer_[0], len));
   ECHO("Output size: " << outputBuffer_.size());
   return &outputBuffer_[0];
 }
 
-ubyte*
+char*
 UQueue::pop (size_t len)
 {
-  ubyte* res = front(len);
+  char* res = front(len);
   buffer_.erase(buffer_.begin(), buffer_.begin() + len);
   return res;
 }
@@ -89,11 +88,11 @@ std::string
 UQueue::pop_command ()
 {
   ECHO("Size: " << buffer_.size());
-  char *buf = reinterpret_cast<char*>(front(buffer_.size()));
+  char *buf = front(buffer_.size());
   ECHO("buf: {{{" << std::string(buf) << "}}}");
   size_t len = prescan(buf);
   ECHO("Len: " << len);
-  buf = reinterpret_cast<char*>(pop(len));
+  buf = pop(len);
   assert(buf);
   std::string res (buf, len);
   ECHO("Res: " << res);

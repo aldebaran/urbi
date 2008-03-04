@@ -21,7 +21,7 @@ inline
 void
 UQueue::push (const char *s)
 {
-  push(reinterpret_cast<const ubyte*>(s), strlen(s));
+  push(s, strlen(s));
 }
 
 #endif

@@ -127,12 +127,11 @@ UConnection::send (const char* buf, const char* tag, bool flush)
   if (tag)
   {
     std::string pref = make_prefix (tag);
-    send_queue (reinterpret_cast<const ubyte*>(pref.c_str()), pref.length());
+    send_queue (pref.c_str(), pref.length());
   }
   if (buf)
   {
-    UErrorValue ret = send_queue (reinterpret_cast<const ubyte*>(buf),
-				  strlen(buf)).error_get ();
+    UErrorValue ret = send_queue (buf, strlen(buf)).error_get ();
 
     if (flush && ret != UFAIL)
       this->flush ();
@@ -143,7 +142,7 @@ UConnection::send (const char* buf, const char* tag, bool flush)
 }
 
 UConnection&
-UConnection::send_queue (const ubyte *buffer, int length)
+UConnection::send_queue (const char *buffer, int length)
 {
   if (closing_)
     CONN_ERR_RET(USUCCESS);
@@ -169,11 +168,11 @@ UConnection::continue_send ()
   if (toSend == 0)
     CONN_ERR_RET(USUCCESS);
 
-  ubyte* popData = send_queue_->front(toSend);
+  char* popData = send_queue_->front(toSend);
 
   if (popData != 0)
   {
-    int wasSent = effective_send ((const ubyte*)popData, toSend);
+    int wasSent = effective_send ((const char*)popData, toSend);
 
     if (wasSent < 0)
       CONN_ERR_RET(UFAIL);
@@ -187,11 +186,11 @@ UConnection::continue_send ()
 UConnection&
 UConnection::received (const char *s)
 {
-  return received ((const ubyte*) s, strlen (s));
+  return received ((const char*) s, strlen (s));
 }
 
 UConnection&
-UConnection::received (const ubyte *buffer, int length)
+UConnection::received (const char *buffer, int length)
 {
   PING();
 
@@ -392,7 +391,7 @@ UConnection::make_prefix (const char* tag) const
 }
 
 int
-UConnection::effective_send (const ubyte*, int length)
+UConnection::effective_send (const char*, int length)
 {
   return length;
 }

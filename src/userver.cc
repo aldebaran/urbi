@@ -488,7 +488,7 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
   {
     char buf[BUFSIZ];
     is->read (buf, sizeof buf);
-    q.push((const ubyte*) buf, is->gcount());
+    q.push(buf, is->gcount());
   }
   if (type == QUEUE_URBI)
     q.push ("#pop\n");

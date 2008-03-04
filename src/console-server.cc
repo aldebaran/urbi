@@ -237,8 +237,7 @@ main (int argc, const char* argv[])
 	interactive = false;
       }
       if (!input.empty())
-	s.getGhostConnection ().received
-	  (reinterpret_cast<const ubyte*>(input.c_str()), input.length());
+	s.getGhostConnection ().received (input.c_str(), input.length());
     }
     libport::utime_t select_time = 0;
     if (!fast)
