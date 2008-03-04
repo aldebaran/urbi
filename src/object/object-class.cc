@@ -142,10 +142,10 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
-    if (!arg1->value_get ().empty ())
+    if (!arg1->value_get ().size () == 1)
       throw
-	PrimitiveError ("apply", "first argument must be an empty list");
-    return args[0];
+	PrimitiveError ("apply", "first argument must be [self]");
+    return arg1->value_get ().front ();
   }
 
   /*---------.
