@@ -229,7 +229,7 @@
       ast::Call* res =
 	ast_call(l,
 	      lvalue->args_get().front(),
-	      // this new is stupid.  We need to clean
+	      // FIXME: this new is stupid.  We need to clean
 	      // this set of call functions.
 	      new libport::Symbol(change),
 	      ast_object(lvalue->location_get(), lvalue->name_get()));
