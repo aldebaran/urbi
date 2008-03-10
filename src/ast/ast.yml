@@ -599,9 +599,11 @@ Throw:
         desc: The value to throw when visited. May be empty.
         mandatory: False
   printer:
-    - $kind 
-    - '" "'
-    - ~value
+    - $kind
+    - "{
+         if (n.value_get())
+           ostr_ << ' ' << *n.value_get();
+       }"
 
 Noop:
   super: Exp
