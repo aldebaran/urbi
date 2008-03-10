@@ -93,6 +93,12 @@ namespace runner
     current_.reset();					\
     throw;						\
   }							\
+  catch(scheduler::SchedulerException& e)		\
+  {							\
+    Code						\
+    current_.reset();					\
+    throw;						\
+  }							\
   catch(kernel::exception& e)				\
   {							\
     std::cerr << "Unexpected exception propagated: "	\

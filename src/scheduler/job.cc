@@ -7,7 +7,7 @@
 
 namespace scheduler
 {
-  struct TerminateException : public kernel::exception
+  struct TerminateException : public SchedulerException
   {
     virtual std::string
     what() const throw ()
