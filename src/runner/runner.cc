@@ -617,7 +617,7 @@ namespace runner
   void
   Runner::operator() (const ast::Noop&)
   {
-    current_.reset ();
+    current_ = object::void_class;
   }
 
   void
@@ -732,8 +732,7 @@ namespace runner
 	  break;
       };
     }
-    // As far as I know, `while' doesn't return a value in URBI.
-    current_.reset ();
+    current_ = object::void_class;
   }
 
   void
