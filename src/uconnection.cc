@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-//#define ENABLE_DEBUG_TRACES
+#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "libport/config.h"
@@ -142,7 +142,7 @@ UConnection::send (const char* buf, const char* tag, bool flush)
 }
 
 UConnection&
-UConnection::send_queue (const char *buffer, int length)
+UConnection::send_queue (const char* buffer, int length)
 {
   if (closing_)
     CONN_ERR_RET(USUCCESS);
@@ -162,17 +162,17 @@ UConnection::continue_send ()
 # endif
   blocked_ = false;	    // continue_send unblocks the connection.
 
-  size_t toSend = send_queue_->size(); // nb of bytes to send
-  if (toSend > packet_size_)
-    toSend = packet_size_;
-  if (toSend == 0)
+  // nb of bytes to send.
+  size_t toSend = std::min(packet_size_, send_queue_->size());
+  ECHO(toSend);
+
+  if (!toSend)
     CONN_ERR_RET(USUCCESS);
 
-  char* popData = send_queue_->front(toSend);
-
-  if (popData != 0)
+  if (char* popData = send_queue_->front(toSend))
   {
-    int wasSent = effective_send ((const char*)popData, toSend);
+    ECHO(popData);
+    int wasSent = effective_send (popData, toSend);
 
     if (wasSent < 0)
       CONN_ERR_RET(UFAIL);
