@@ -69,6 +69,8 @@ namespace runner
     ///
     /// \param call_message  the callMessage.  Valid only for \a func
     ///             being Code.
+    ///
+    /// One cannot have both a call message and args.
     rObject apply (const rObject& func,
 		   const object::objects_type& args,
 		   const rObject call_message = 0);

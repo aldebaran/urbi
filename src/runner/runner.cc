@@ -198,11 +198,7 @@ namespace runner
 		      const rObject call_message)
   {
     // The called function.
-    ast::Function& fn = func.cast<object::Code> ()->value_get ();
-    // Effective (evaluated) argument iterator.
-    object::objects_type::const_iterator ei;
-    // Formal argument iterator.
-    ast::symbols_type::const_iterator fi;
+    ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
     // Context in which to evaluate the function, which may be nil.
     rObject context = func->slot_get (SYMBOL(context));
 
@@ -211,36 +207,31 @@ namespace runner
     rObject bound_args = new object::Object;
     bound_args->locals_set(true);
 
-    ei = args.begin();
-
     // If self has been set explicitely, use it. Otherwise, use the
     // one provided by the caller.
-    rObject self = func->own_slot_get (SYMBOL (self), *ei);
+    rObject self = func->own_slot_get (SYMBOL (self), args.front());
     bound_args->slot_set (SYMBOL (self), self);
 
     // self is also the proto of the function outer scope, so that
     // we look for non-local identifiers in the target itself.
     bound_args->proto_add (self);
 
-    // Add the context if it had been provided. It will take precedence
-    // over self.
+    // Add the context if provided. It will take precedence over self.
     if (context != object::nil_class)
       bound_args->proto_add (context);
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
-
     if (fn.strict())
     {
       assert (!call_message);
       ast::symbols_type& formals = *fn.formals_get();
       object::check_arg_count (formals.size() + 1, args.size(), "");
-
-      ++ei;
-      for (fi = formals.begin();
-	   fi != formals.end() && ei != args.end();
-	   ++fi, ++ei)
-	bound_args->slot_set (**fi, *ei);
+      // Effective (evaluated) argument iterator.
+      // Skip "self" which has already been handled.
+      object::objects_type::const_iterator ei = ++args.begin();
+      foreach (libport::Symbol* s, formals)
+	bound_args->slot_set (*s, *ei++);
     }
     else
     {
@@ -258,7 +249,8 @@ namespace runner
 
     try
     {
-      try {
+      try
+      {
 	current_ = eval (*fn.body_get());
 	run_at_exit (locals_);
       }
@@ -286,8 +278,9 @@ namespace runner
   Runner::eval_in_scope (rObject scope, const ast::Exp& e)
   {
     std::swap (locals_, scope);
-    try {
-	eval (e);
+    try
+    {
+      eval (e);
     }
     PROPAGATE_EXCEPTION(e.location_get(),
 			{run_at_exit (scope); std::swap(locals_, scope);});
@@ -301,6 +294,10 @@ namespace runner
   {
     // The call-message only makes sense for code.
     assert (!call_message || func->kind_get() == object::Object::kind_code);
+    // Even with call message, there is at least one argument: self.
+    assert (!args.empty());
+    // If we use a call message, "self" is the only argument.
+    assert (!call_message || args.size() == 1);
 
     {
       // Check if any argument is void
@@ -317,11 +314,13 @@ namespace runner
     {
       case object::Object::kind_primitive:
 	PING ();
-	current_ = func.cast<object::Primitive>()->value_get()(*this, args);
+	current_ =
+	  func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
 	break;
       case object::Object::kind_delegate:
 	PING();
-	current_ = func.cast<object::Delegate>()->value_get()
+	current_ =
+	  func.unsafe_cast<object::Delegate>()->value_get()
 	  ->operator()(*this, args);
 	break;
       case object::Object::kind_code:
@@ -416,7 +415,8 @@ namespace runner
     rObject val;
 
     // We may have to run a primitive, or some code.
-    try {
+    try
+    {
       // Ask the target for the handler of the message.
       val = tgt->slot_get (e.name_get ());
     }
@@ -429,24 +429,21 @@ namespace runner
     `-------------------------*/
 
     // Gather the arguments, including the target.
-    rObject call_message;
     object::objects_type args;
     args.push_back (tgt);
 
-    if (val->kind_get () == object::Object::kind_code)
-    {
-      // Build either the evaluated argument list or the call message
-      ast::Function& fn = val.cast<object::Code> ()->value_get ();
-      if (fn.strict())
-	push_evaluated_arguments (args, e.args_get ());
-      else
-	call_message = build_call_message (tgt, e.name_get(), e.args_get ());
-    }
+    // Build the call message for non-strict functions, otherwise the
+    // evaluated argument list.
+    rObject call_message;
+    if (val->kind_get () == object::Object::kind_code
+	&& !val.unsafe_cast<object::Code> ()->value_get ().strict())
+      call_message = build_call_message (tgt, e.name_get(), e.args_get ());
     else
       push_evaluated_arguments (args, e.args_get ());
 
     call_stack_.push_front(&e);
-    try {
+    try
+    {
       apply (val, args, call_message);
     }
     PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_front();)
@@ -535,7 +532,8 @@ namespace runner
       }
       else
       {
-	try {
+	try
+	{
 	  operator() (i);
 	}
 	catch (object::UrbiException& ue)
@@ -583,35 +581,34 @@ namespace runner
   void
   Runner::run_at_exit (object::rObject& scope)
   {
-    object::rObject atexit = scope->own_slot_get (SYMBOL (atexit));
-
-    // If there is no atexit slot, return immediately.
-    if (!atexit)
-      return;
-
-    try {
-      TYPE_CHECK (atexit, object::List);
-    }
-    catch (...)
+    if (object::rObject atexit = scope->own_slot_get (SYMBOL (atexit)))
     {
-      // Bad type, return immediately.
-      return;
-    }
-    object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
-    object::objects_type args;
-    args.push_back (scope->slot_get (SYMBOL (self)));
-    rObject saved_current = current_;
-    foreach (const rObject& func, atexit_funcs->value_get ())
-    {
-      try {
-	apply (func, args);
+      try
+      {
+	TYPE_CHECK (atexit, object::List);
       }
       catch (...)
       {
-	// Ignore errors in atexit blocks but execute further calls
+	// Bad type, return immediately.
+	return;
       }
+      object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
+      object::objects_type args;
+      args.push_back (scope->slot_get (SYMBOL (self)));
+      rObject saved_current = current_;
+      foreach (const rObject& func, atexit_funcs->value_get ())
+      {
+	try
+	{
+	  apply (func, args);
+	}
+	catch (...)
+	{
+	  // Ignore errors in atexit blocks but execute further calls
+	}
+      }
+      current_ = saved_current;
     }
-    current_ = saved_current;
   }
 
   void
@@ -685,7 +682,8 @@ namespace runner
     std::swap(locals, locals_);
     try
     {
-      try {
+      try
+      {
 	super_type::operator()(e.body_get());
 	run_at_exit (locals_);
       }
@@ -721,7 +719,8 @@ namespace runner
 
       JECHO ("while body", e.body_get ());
 
-      try {
+      try
+      {
 	operator() (e.body_get());
       }
       catch (ast::BreakException&)
