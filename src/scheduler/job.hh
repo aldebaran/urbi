@@ -190,7 +190,7 @@ namespace scheduler
     bool terminated_;
 
     /// Other jobs to wake up when we terminate.
-    jobs to_wake_up_;
+    jobs_type to_wake_up_;
 
     /// Coro structure corresponding to this job.
     Coro* self_;
@@ -198,7 +198,7 @@ namespace scheduler
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the
     /// exception as well when they resume.
-    jobs links_;
+    jobs_type links_;
 
     bool side_effect_free_;
     kernel::exception_ptr pending_exception_;

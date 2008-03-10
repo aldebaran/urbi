@@ -15,7 +15,7 @@ namespace scheduler
 
   class Scheduler;
   class Job;
-  typedef std::list<Job*> jobs;
+  typedef std::list<Job*> jobs_type;
   typedef libport::shared_ptr<Job> rJob;
 
 } // namespace scheduler

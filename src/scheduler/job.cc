@@ -36,7 +36,7 @@ namespace scheduler
     catch (kernel::exception &e)
     {
       // Signal the exception to each linked job in turn.
-      jobs to_signal = links_;
+      jobs_type to_signal = links_;
       foreach (Job* job, to_signal)
       {
 	  job->async_throw (e);

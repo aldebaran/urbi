@@ -91,25 +91,25 @@ namespace scheduler
       deferred_jobs;
 
     /// Regular jobs to schedule inconditionally during the next run
-    jobs jobs_;
+    jobs_type jobs_;
 
     /// Jobs registered for initialization but not yet started
-    jobs jobs_to_start_;
+    jobs_type jobs_to_start_;
 
     /// Deferred jobs
     deferred_jobs deferred_jobs_;
 
     /// Suspended jobs
-    jobs suspended_jobs_;
+    jobs_type suspended_jobs_;
 
     /// Jobs waiting for something interesting to happen
-    jobs if_change_jobs_;
+    jobs_type if_change_jobs_;
 
     /// The following fields represent running structures used in
     /// work(). Jobs be removed from here just before they are started
     /// or scheduled.
-    jobs to_start_;
-    jobs pending_;
+    jobs_type to_start_;
+    jobs_type pending_;
 
     /// Current job
     Job* current_job_;
