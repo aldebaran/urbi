@@ -84,7 +84,7 @@ namespace object
     //special case for Strings
     if (is_echo && args[1]->kind_is(Object::kind_string)
       && s[0] == '"' && s.length() && s[s.length()-1] == '"')
-      s = s.substr(1, s.length()-2);
+      s = libport::unescape(s.substr(1, s.length()-2));
 
     r.lobby_get()->value_get().connection.send(
     	(std::string(is_echo?"*** ":"") + s  + "\n").c_str(),
