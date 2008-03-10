@@ -62,6 +62,8 @@ namespace runner
       YIELD();					\
   } while (0)
 
+// Forward flow exceptions up to the top-level, and handle them
+// there.  Makes only sense in a Nary.
 #define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
   catch (Type flow_exception)                                   \
   {                                                             \
@@ -413,6 +415,7 @@ namespace runner
     | Decode the message.  |
     `---------------------*/
 
+    // The invoked slot (probably a function).
     rObject val;
 
     // We may have to run a primitive, or some code.
@@ -421,8 +424,8 @@ namespace runner
       val = tgt->slot_get (e.name_get ());
     }
     PROPAGATE_EXCEPTION(e.location_get(), {};)
-
     assert(val);
+
 
     /*-------------------------.
     | Evaluate the arguments.  |
@@ -712,7 +715,6 @@ namespace runner
     while (true)
     {
       // FIXME: YIELD if second iteration for "while;".
-
       JECHO ("while test", e.test_get ());
       operator() (e.test_get());
       if (!IS_TRUE(current_))

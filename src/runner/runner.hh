@@ -60,6 +60,15 @@ namespace runner
 
     /// Execute the code of function \a func with arguments \a args in
     /// the local runner.
+    ///
+    /// \param func  the "function" to call: Primitive, Delegate, Code
+    ///              or even rObject, in which case it is returned.
+    ///
+    /// \param args  the arguments.  Used as given, they are not evaluated
+    ///              here.
+    ///
+    /// \param call_message  the callMessage.  Valid only for \a func
+    ///             being Code.
     rObject apply (const rObject& func,
 		   const object::objects_type& args,
 		   const rObject call_message = 0);
