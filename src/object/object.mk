@@ -4,7 +4,7 @@
 
 .PHONY: symbols
 symbols:
-	mv -f $(srcdir)/object/symbols.hh $(srcdir)/object/symbols.hh.old
+	-mv -f $(srcdir)/object/symbols.hh $(srcdir)/object/symbols.hh.old
 	$(MAKE) $(AM_MAKEFLAGS) $(srcdir)/object/symbols.hh
 $(srcdir)/object/symbols.hh:
 	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$@.tmp

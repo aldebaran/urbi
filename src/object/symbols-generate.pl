@@ -25,7 +25,7 @@ sub symbol ($)
     my ($res) = @_;
     while (my ($code, $char) = each %char)
     {
-	$res =~ s/_?$code/$char/g;
+	$res =~ s/_?${code}_?/$char/g;
     }
     $res;
 }

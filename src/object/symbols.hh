@@ -40,11 +40,11 @@
   Macro(Integer, "Integer");                      \
   Macro(LT, "<");                                 \
   Macro(LT_EQ, "<=");                             \
-  Macro(LT_Float_GT, "<_Float>");                 \
+  Macro(LT_Float_GT, "<Float>");                  \
   Macro(LT_LT, "<<");                             \
-  Macro(LT_String_GT, "<_String>");               \
-  Macro(LT_alien_GT, "<_alien>");                 \
-  Macro(LT_delegate_GT, "<_delegate>");           \
+  Macro(LT_String_GT, "<String>");                \
+  Macro(LT_alien_GT, "<alien>");                  \
+  Macro(LT_delegate_GT, "<delegate>");            \
   Macro(List, "List");                            \
   Macro(Lobby, "Lobby");                          \
   Macro(MINUS, "-");                              \
