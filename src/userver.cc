@@ -163,6 +163,11 @@ UServer::initialize()
   ghost_->lobby_->slot_set(SYMBOL(uobject), uobject);
   uobject_initialize(uobject);
   load_init_file("URBI.INI");
+
+  // Force processing of urbi.u.
+  libport::utime_t now = libport::utime();
+  while (work() <= now)
+    ;
 }
 
 
