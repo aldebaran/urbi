@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-#define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "libport/config.h"
