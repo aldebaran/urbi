@@ -84,6 +84,7 @@ namespace scheduler
 
   private:
     void switch_back (Job* job);
+    void execute_round (const jobs_type&);
 
   private:
     typedef std::priority_queue

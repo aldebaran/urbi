@@ -96,25 +96,7 @@ namespace scheduler
     possible_side_effect_ = false;
     pending_.clear ();
     std::swap (pending_, jobs_);
-
-    ECHO (pending_.size() << " jobs in the queue for this cycle");
-    foreach (Job* job, pending_)
-    {
-      // Kill a job if needed. See explanation in job.hh.
-      to_kill_ = 0;
-
-      assert (job);
-      assert (!job->terminated ());
-      ECHO ("will resume job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
-      possible_side_effect_ |= !job->side_effect_free_get ();
-      assert (!current_job_);
-      Coro_switchTo_ (self_, job->coro_get ());
-      assert (!current_job_);
-      possible_side_effect_ |= !job->side_effect_free_get ();
-      ECHO ("back from job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
-    }
-    // Kill a job if needed. See explanation in job.hh.
-    to_kill_ = 0;
+    execute_round (pending_);
 
     // Do we have some work to do now?
     if (!jobs_.empty () || !jobs_to_start_.empty())
@@ -134,6 +116,29 @@ namespace scheduler
     // Ok, let's say, we'll be called again in one hour.
     ECHO ("scheduler: asking to be recalled in a long time");
     return ::urbiserver->getTime() + 3600000000LL;
+  }
+
+  void
+  Scheduler::execute_round (const jobs_type& jobs)
+  {
+    ECHO (pending_.size() << " jobs in the queue for this round");
+    foreach (Job* job, jobs)
+    {
+      // Kill a job if needed. See explanation in job.hh.
+      to_kill_ = 0;
+
+      assert (job);
+      assert (!job->terminated ());
+      ECHO ("will resume job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+      possible_side_effect_ |= !job->side_effect_free_get ();
+      assert (!current_job_);
+      Coro_switchTo_ (self_, job->coro_get ());
+      assert (!current_job_);
+      possible_side_effect_ |= !job->side_effect_free_get ();
+      ECHO ("back from job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+    }
+    // Kill a job if needed. See explanation in job.hh.
+    to_kill_ = 0;
   }
 
   void
