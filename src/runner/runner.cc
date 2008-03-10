@@ -738,15 +738,17 @@ namespace runner
   void
   Runner::operator() (const ast::Throw& e)
   {
-    if (e.kind_get() == ast::break_exception)
-      throw ast::BreakException(e.location_get());
-    else if (e.kind_get() == ast::return_exception)
+    switch (e.kind_get())
     {
-      if (e.value_get())
-	operator() (*e.value_get());
-      else
-	current_.reset();
-      throw ast::ReturnException(e.location_get(), current_);
+      case ast::break_exception:
+	throw ast::BreakException(e.location_get());
+
+      case ast::return_exception:
+	if (e.value_get())
+	  operator() (*e.value_get());
+	else
+	  current_.reset();
+	throw ast::ReturnException(e.location_get(), current_);
     }
   }
 
