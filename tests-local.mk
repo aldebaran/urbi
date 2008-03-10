@@ -33,6 +33,7 @@ XFAIL_TESTS +=					\
 1.x/events.chk					\
 1.x/events-emit-then-return-in-function.chk	\
 1.x/every.chk					\
+1.x/every-0.chk					\
 1.x/freeze-time.chk				\
 1.x/groups.chk					\
 1.x/hash-and-list.chk				\
