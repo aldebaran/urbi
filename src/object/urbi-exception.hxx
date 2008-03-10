@@ -97,6 +97,12 @@ namespace object
   }
 
   inline
+  ImplicitTagComponentError::ImplicitTagComponentError (const ast::loc& l)
+    : UrbiException ("illegal component for implicit tag", l)
+  {
+  }
+
+  inline
   void
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {

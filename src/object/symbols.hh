@@ -70,6 +70,7 @@
   Macro(Sym, "Sym");                              \
   Macro(System, "System");                        \
   Macro(TILDA_EQ, "~=");                          \
+  Macro(Tag, "Tag");                              \
   Macro(Task, "Task");                            \
   Macro(Token, "Token");                          \
   Macro(VisibilityScope, "VisibilityScope");      \
@@ -89,6 +90,7 @@
   Macro(atan, "atan");                            \
   Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \
+  Macro(block, "block");                          \
   Macro(call, "call");                            \
   Macro(clear, "clear");                          \
   Macro(clone, "clone");                          \
@@ -106,6 +108,7 @@
   Macro(every_, "every_");                        \
   Macro(exp, "exp");                              \
   Macro(false, "false");                          \
+  Macro(freeze, "freeze");                        \
   Macro(fresh, "fresh");                          \
   Macro(front, "front");                          \
   Macro(getLazyLocalSlot, "getLazyLocalSlot");    \
@@ -150,7 +153,9 @@
   Macro(sort, "sort");                            \
   Macro(split, "split");                          \
   Macro(sqrt, "sqrt");                            \
+  Macro(stop, "stop");                            \
   Macro(stopall, "stopall");                      \
+  Macro(tag, "tag");                              \
   Macro(tail, "tail");                            \
   Macro(tan, "tan");                              \
   Macro(target, "target");                        \
@@ -160,6 +165,8 @@
   Macro(trunc, "trunc");                          \
   Macro(type, "type");                            \
   Macro(uid, "uid");                              \
+  Macro(unblock, "unblock");                      \
+  Macro(unfreeze, "unfreeze");                    \
   Macro(uobject, "uobject");                      \
   Macro(updateSlot, "updateSlot");                \
   Macro(void, "void");                            \

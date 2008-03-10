@@ -393,7 +393,11 @@ load("urbi/string.u");
 ## -------- ##
 load("urbi/group.u");
 
+## ------ ##
+## Tags.  ##
+## ------ ##
 
+Object.addProto (Tag);
 
 ## -------------------------- ##
 ## Logic with short-circuit.  ##

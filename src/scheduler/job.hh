@@ -11,9 +11,9 @@
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
 
-# include "kernel/exception.hh"
 # include "object/urbi-exception.hh"
 # include "scheduler/fwd.hh"
+# include "scheduler/tag.hh"
 
 // From libcoroutine/Coro.h.
 class Coro;
@@ -148,7 +148,8 @@ namespace scheduler
     void async_throw (const kernel::exception&);
 
     /// Maybe raise a deferred exception. Must be called from the scheduler
-    /// while resuming the job execution.
+    /// while resuming the job execution. For example, BlockedException
+    /// may be raised from here if the job has been blocked by a tag.
     void check_for_pending_exception ();
 
     /// Establish a bi-directional link between two jobs.
@@ -163,6 +164,13 @@ namespace scheduler
     /// Throw an exception if the stack space for this job is near
     // exhaustion.
     void check_stack_space () const;
+
+    /// Tag related operations
+    bool frozen () const;
+    bool blocked () const;
+    void push_tag (rTag);
+    void pop_tag ();
+    void copy_tags (const Job&);
 
   protected:
 
@@ -195,6 +203,9 @@ namespace scheduler
     /// Coro structure corresponding to this job.
     Coro* self_;
 
+    /// Tags acting on this job
+    std::vector<rTag> tags_;
+
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the
     /// exception as well when they resume.
@@ -206,6 +217,11 @@ namespace scheduler
   };
 
   std::ostream& operator<< (std::ostream&, const Job&);
+
+  struct BlockedException : public SchedulerException
+  {
+    COMPLETE_EXCEPTION (BlockedException);
+  };
 
 } // namespace scheduler
 

@@ -134,6 +134,14 @@ namespace object
     COMPLETE_EXCEPTION (BadInteger)
   };
 
+  /** Exception used when building an implicit tag name (k1 style).
+   */
+  struct ImplicitTagComponentError: public UrbiException
+  {
+    ImplicitTagComponentError (const ast::loc&);
+    COMPLETE_EXCEPTION (ImplicitTagComponentError);
+  };
+
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
   void check_arg_count (unsigned formal, unsigned effective,

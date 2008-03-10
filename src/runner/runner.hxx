@@ -18,7 +18,6 @@ namespace runner
 		  scheduler::Scheduler& sched, const ast::Ast* ast)
     : Runner::super_type (),
       scheduler::Job (sched),
-      Tag (),
       lobby_ (lobby),
       ast_ (ast),
       current_ (0),
@@ -32,7 +31,6 @@ namespace runner
   Runner::Runner(const Runner& model)
     : Runner::super_type (),
       scheduler::Job (model),
-      Tag (),
       lobby_ (model.lobby_),
       ast_ (model.ast_),
       current_ (model.current_),

@@ -82,9 +82,15 @@ namespace scheduler
     /// Return the currently executing job
     Job& current_job () const;
 
+    /// Signal that a stop (or block) has been issued on a tag, and that
+    /// queued jobs should be checked soon to see whether they need to
+    /// get some treatment.
+    void signal_stop (Tag*);
+
   private:
     void switch_back (Job* job);
     void execute_round (const jobs_type&);
+    void check_for_stopped_tags ();
 
   private:
     typedef std::priority_queue
@@ -124,6 +130,10 @@ namespace scheduler
     /// Has there been a possible side-effect since last time we reset
     /// this field?
     bool possible_side_effect_;
+
+    /// List of tags that have been stopped or blocked
+    typedef std::pair<Tag*, bool> tag_state_type;
+    std::vector<tag_state_type> stopped_tags_;
   };
 
 } // namespace scheduler

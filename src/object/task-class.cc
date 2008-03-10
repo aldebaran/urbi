@@ -34,7 +34,7 @@ namespace object
 			  args[1]->slot_get (SYMBOL(context)),
 			  r.scheduler_get (),
 			  body);
-    new_runner->copy_parents (r);
+    new_runner->copy_tags (r);
     args[0]->slot_set (SYMBOL (runner),
                        box (scheduler::rJob, new_runner->myself_get ()));
 

@@ -10,7 +10,6 @@
 
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
-# include "runner/tag.hh"
 # include "scheduler/scheduler.hh"
 # include "scheduler/job.hh"
 
@@ -19,8 +18,7 @@ namespace runner
 
   /// Ast executor.
   class Runner : public ast::DefaultConstVisitor,
-		 public scheduler::Job,
-		 public Tag
+		 public scheduler::Job
   {
   public:
     /// \name Useful shorthands.
@@ -81,6 +79,10 @@ namespace runner
     /// Eval a tree in a given local scope
     rObject eval_in_scope (rObject scope, const ast::Exp& e);
 
+    /// Evaluate a tag and create it as well as the intermediate levels
+    /// if needed.
+    rObject eval_tag (const ast::Exp&);
+
     /// Return the result of an evaluation. The runner must be terminated.
     const rObject& current_get () const;
 
@@ -137,9 +139,6 @@ namespace runner
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
-
-    /// Scheduling operations
-    virtual void act (operation_type);
 
   private:
     void show_error_ (object::UrbiException& ue, const ast::loc& l);

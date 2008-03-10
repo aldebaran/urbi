@@ -27,6 +27,7 @@
 # include "object/object-class.hh"
 # include "object/primitive-class.hh"
 # include "object/string-class.hh"
+# include "object/tag-class.hh"
 # include "object/task-class.hh"
 
 /// How to print a UConnection.

@@ -6,6 +6,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include <deque>
 #include <sstream>
 
 #include <libport/foreach.hh>
@@ -114,6 +115,21 @@ namespace runner
   }							\
   Code
 
+  static std::deque<const libport::Symbol*>
+  decompose_tag_chain (const ast::Exp* e)
+  {
+    std::deque<const libport::Symbol*> res;
+    while (e)
+    {
+      const ast::Call* c = dynamic_cast<const ast::Call*> (e);
+      if (!c || c->args_get ().size () != 1)
+	throw object::ImplicitTagComponentError (e->location_get ());
+      res.push_front (&c->name_get ());
+      e = c->args_get ().front ();
+    }
+    return res;
+  }
+
   void
   Runner::show_error_ (object::UrbiException& ue, const ast::loc& l)
   {
@@ -154,20 +170,9 @@ namespace runner
   void
   Runner::terminate ()
   {
-    // We have to terminate our dependents as well
-    propagate (stop);
-
     // We have terminated, remove the auto-reference by handling it to the
     // scheduler.
     scheduler_get ().take_job_reference (myself_);
-  }
-
-  void
-  Runner::act (operation_type operation)
-  {
-    // If asked to terminate, do it through terminate_now ()
-    if (operation == stop)
-      terminate_now ();
   }
 
   /*---------------------.
@@ -184,7 +189,7 @@ namespace runner
     JECHO ("lhs", e.lhs_get ());
     Runner* lhs = new Runner (*this);
     scheduler::rJob lhs_ = lhs->myself_get ();
-    lhs->copy_parents (*this);
+    lhs->copy_tags (*this);
     lhs->ast_ = &e.lhs_get ();
     lhs->start_job ();
 
@@ -531,7 +536,7 @@ namespace runner
       {
 	// The new runners are attached to the same tags as we are
 	Runner* subrunner = new Runner(*this);
-	subrunner->copy_parents (*this);
+	subrunner->copy_tags (*this);
 	subrunner->ast_ = i;
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
@@ -704,9 +709,79 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Tag&)
+  Runner::operator() (const ast::Tag& t)
   {
-    // FIXME: Some code is missing here.
+    push_tag (extract_tag (eval_tag (t.tag_get ())));
+    try {
+      // If the latest tag causes us to be frozen or blocked, let the
+      // scheduler handler this properly to avoid duplicating the
+      // logic.
+      if (frozen () || blocked ())
+	yield ();
+      eval (t.exp_get ());
+    }
+    catch (scheduler::BlockedException& e)
+    {
+      // If we have been blocked, restore the tags list. We may have
+      // been blocked because of another tag in our stack, but we are
+      // not allowed to pop them ourselves. So check if we are still
+      // blocked and go up one level in this case.
+      current_.reset ();
+      pop_tag ();
+      if (blocked ())
+	throw;
+      yield ();
+      return;
+    }
+    PROPAGATE_EXCEPTION(t.location_get(), pop_tag (););
+  }
+
+  object::rObject
+  Runner::eval_tag (const ast::Exp& e)
+  {
+    try {
+      // Try to evaluate e as a normal expression.
+      return eval (e);
+    }
+    catch (object::LookupError &ue)
+    {
+      // We got a lookup error. It means that we have to automatically
+      // create the tag. In this case, we only accept k1 style tags,
+      // i.e. chains of identifiers, excluding function calls.
+      // The reason to do that is:
+      //   - we do not want to mix k1 non-declared syntax with k2
+      //     clean syntax for tags
+      //   - we have no way to know whether the lookup error arrived
+      //     in a function call or during the direct resolution of
+      //     the name
+
+      // Tag represents the top level tag
+      rObject toplevel =
+	object::object_class->slot_get (SYMBOL (Tag));
+      rObject base = toplevel;
+      foreach (const libport::Symbol* element, decompose_tag_chain (&e))
+      {
+	// Check whether the concerned level in the chain already
+	// exists.
+	rObject owner = base->slot_locate (*element);
+	if (owner)
+	  base = owner->own_slot_get (*element);
+	else
+	{
+	  // We have to create a new tag, which will be attached
+	  // to the upper level (hierarchical tags, implicitely
+	  // rooted by Tag).
+	  rObject new_tag = object::clone (toplevel);
+	  object::objects_type args;
+	  args.push_back (new_tag);
+	  args.push_back (base);
+	  apply (toplevel->own_slot_get (SYMBOL (init)), args);
+	  base->slot_set (*element, new_tag);
+	  base = new_tag;
+	}
+      }
+      return base;
+    }
   }
 
   void

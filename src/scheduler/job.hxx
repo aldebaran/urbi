@@ -30,6 +30,7 @@ namespace scheduler
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       terminated_ (false),
       self_ (Coro_new ()),
+      tags_ (model.tags_),
       side_effect_free_ (false),
       pending_exception_ (0)
   {
@@ -118,6 +119,8 @@ namespace scheduler
       pending_exception_ = 0;
       kernel::rethrow (current_exception_);
     }
+    if (blocked ())
+      throw BlockedException ();
   }
 
   inline void

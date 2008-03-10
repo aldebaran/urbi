@@ -92,4 +92,40 @@ namespace scheduler
     scheduler_->resume_scheduler_things_changed (this);
   }
 
+  bool
+  Job::frozen () const
+  {
+    foreach (rTag tag, tags_)
+      if (tag->frozen ())
+	return true;
+    return false;
+  }
+
+  bool
+  Job::blocked () const
+  {
+    foreach (rTag tag, tags_)
+      if (tag->blocked ())
+	return true;
+    return false;
+  }
+
+  void
+  Job::push_tag (rTag tag)
+  {
+    tags_.push_back (tag);
+  }
+
+  void
+  Job::pop_tag ()
+  {
+    tags_.pop_back ();
+  }
+
+  void
+  Job::copy_tags (const Job& other)
+  {
+    tags_ = other.tags_;
+  }
+
 }

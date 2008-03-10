@@ -98,6 +98,8 @@ namespace scheduler
     std::swap (pending_, jobs_);
     execute_round (pending_);
 
+    check_for_stopped_tags ();
+
     // Do we have some work to do now?
     if (!jobs_.empty () || !jobs_to_start_.empty())
     {
@@ -142,6 +144,51 @@ namespace scheduler
   }
 
   void
+  Scheduler::check_for_stopped_tags ()
+  {
+    // If we have had no stopped tag, return immediately.
+    if (stopped_tags_.empty ())
+      return;
+
+    // Extract blocked jobs from every queue, and run them once so that they can react to the
+    // stop. To do that, we build a list of jobs to start, unschedule them then execute them.
+    jobs_type to_start;
+
+    foreach (Job *job, jobs_)
+      if (job->blocked ())
+	to_start.push_back (job);
+
+    foreach (Job *job, suspended_jobs_)
+      if (job->blocked ())
+	to_start.push_back (job);
+
+    foreach (Job *job, if_change_jobs_)
+      if (job->blocked ())
+	to_start.push_back (job);
+
+    deferred_jobs deferred_jobs_copy = deferred_jobs_;
+    while (!deferred_jobs_copy.empty ())
+    {
+      deferred_job j = deferred_jobs_copy.top ();
+      deferred_jobs_copy.pop ();
+
+      Job *job = j.get<1>();
+      if (job->blocked ())
+	to_start.push_back (job);
+    }
+
+    foreach (Job* job, to_start)
+      unschedule_job (job);
+
+    execute_round (to_start);
+
+    // Reset tags to their real blocked value and reset the list
+    foreach (tag_state_type t, stopped_tags_)
+      t.first->set_blocked (t.second);
+    stopped_tags_.clear ();
+  }
+
+  void
   Scheduler::switch_back (Job* job)
   {
     // Switch back to the scheduler.
@@ -156,6 +203,22 @@ namespace scheduler
     job->check_stack_space ();
     // Execute a deferred exception if any
     job->check_for_pending_exception ();
+    // If we are in frozen state, let's requeue ourselves waiting
+    // for something to change. And let's mark us side-effect
+    // free during this time so that we won't cause other jobs
+    // to be scheduled. Of course, we have to check for pending
+    // exceptions each time we are woken up.
+    if (job->frozen ())
+    {
+      bool side_effect_free_save = job->side_effect_free_get ();
+      do {
+	job->side_effect_free_set (true);
+	job->yield_until_things_changed ();
+	job->side_effect_free_set (side_effect_free_save);
+	// Execute a deferred exception if any
+	job->check_for_pending_exception ();
+      } while (job->frozen ());
+    }
   }
 
   void
@@ -290,6 +353,13 @@ namespace scheduler
 
     ECHO ("deleting job " << *job);
     delete job;
+  }
+
+  void Scheduler::signal_stop (Tag* t)
+  {
+    bool previous_state = t->own_blocked ();
+    t->set_blocked (true);
+    stopped_tags_.push_back (std::make_pair(t, previous_state));
   }
 
   bool operator> (const deferred_job& left, const deferred_job& right)

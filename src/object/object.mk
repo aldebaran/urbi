@@ -52,6 +52,8 @@ object/symbols.cc				\
 object/symbols.hh				\
 object/system-class.cc				\
 object/system-class.hh				\
+object/tag-class.cc				\
+object/tag-class.hh				\
 object/task-class.cc				\
 object/task-class.hh				\
 object/urbi-exception.cc			\
