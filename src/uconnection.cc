@@ -142,13 +142,10 @@ UConnection::send (const char* buf, const char* tag, bool flush)
 }
 
 UConnection&
-UConnection::send_queue (const char* buffer, int length)
+UConnection::send_queue (const char* buf, size_t len)
 {
-  if (closing_)
-    CONN_ERR_RET(USUCCESS);
-
-  // Add to Queue
-  send_queue_->push(buffer, length);
+  if (!closing_)
+    send_queue_->push(buf, len);
   CONN_ERR_RET(USUCCESS);
 }
 
@@ -176,7 +173,7 @@ UConnection::continue_send ()
 
     if (wasSent < 0)
       CONN_ERR_RET(UFAIL);
-    else if (wasSent == 0 || send_queue_->pop(wasSent) != 0)
+    else if (wasSent == 0 || send_queue_->pop(wasSent))
       CONN_ERR_RET(USUCCESS);
   }
 
@@ -184,13 +181,13 @@ UConnection::continue_send ()
 }
 
 UConnection&
-UConnection::received (const char *s)
+UConnection::received (const char* s)
 {
-  return received ((const char*) s, strlen (s));
+  return received (s, strlen (s));
 }
 
 UConnection&
-UConnection::received (const char *buffer, int length)
+UConnection::received (const char* buffer, size_t length)
 {
   PING();
 
@@ -271,8 +268,6 @@ UConnection::received (const char *buffer, int length)
 		    "the parser returned NULL\n");
     }
   }
-
-  // FIXME: recv_queue_->clear();
 
   // Execute the new command.
   if (!obstructed)

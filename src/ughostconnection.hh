@@ -37,7 +37,7 @@ public:
   virtual UConnection& close ();
 
 protected:
-  virtual int effective_send (const char* buffer, int length);
+  virtual int effective_send (const char* buffer, size_t length);
 public:
   virtual UConnection& endline ();
 };

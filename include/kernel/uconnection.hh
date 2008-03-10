@@ -157,7 +157,7 @@ public:
    \return UMEMORYFAIL critical memory overflow
    \return USUCCESS otherwise
    */
-  UConnection& received (const char *s);
+  UConnection& received (const char* s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -167,7 +167,7 @@ public:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UConnection& received (const char *buffer, int length);
+  UConnection& received (const char* buffer, size_t length);
 
   /// A generic << operator, to easily send every kind of data through the
   ///connection.
@@ -249,20 +249,22 @@ protected:
   send queue.
   \sa send(const char*)
   */
-  virtual UConnection&	send_queue(const char *buffer, int length);
+  virtual UConnection&	send_queue(const char* buffer, size_t length);
 
   //! Sends a buffer through the real connection (redefined in the sub class)
-  /*! Must be defined to implement the effective code that sends a buffer through
-    the connection.
+  /*! Must be defined to implement the effective code that sends a
+    buffer through the connection.
 
-    ATTENTION: The buffer received is a short lived buffer. There is no
-    warranty whatsoever that it will survive once the function returns. You must
-    make a copy of it if your sending method requires to work asynchronously on
-    the buffer, after the function has returned.
+    ATTENTION: The buffer received is a short lived buffer. There is
+    no warranty whatsoever that it will survive once the function
+    returns. You must make a copy of it if your sending method
+    requires to work asynchronously on the buffer, after the function
+    has returned.
 
-    \return the number of bytes effectively sent. -1 means that there was an error.
+    \return  the number of bytes effectively sent.
+	     -1 upon error.
    */
-  virtual int effective_send (const char*, int length) = 0;
+  virtual int effective_send (const char*, size_t length) = 0;
 
   UConnection& execute ();
 

@@ -66,14 +66,13 @@ UGhostConnection::close()
 
 //! Does nothing. No output for the ghosts...
 int
-UGhostConnection::effective_send(const char* buffer, int length)
+UGhostConnection::effective_send(const char* buffer, size_t length)
 {
   char buf[EFFECTIVESENDSIZE];
 
-  for (int i = 0; i < length; i += EFFECTIVESENDSIZE - 1)
+  for (size_t i = 0; i < length; i += EFFECTIVESENDSIZE - 1)
   {
-    int len = std::min (length - i, EFFECTIVESENDSIZE - 1);
-
+    size_t len = std::min (length - i, size_t(EFFECTIVESENDSIZE - 1));
     memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer + i),
 	    len);
     buf[len] = 0;
