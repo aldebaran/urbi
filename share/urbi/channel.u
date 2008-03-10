@@ -17,6 +17,8 @@ do Protos
   var output  = new Channel("output");
   var error   = new Channel("error");
   var warning = new Channel("warning");
+  var clog    = new Channel("clog");
+
   // Short names are user compatible.
   var cout    = output;
   var cerr    = error;
