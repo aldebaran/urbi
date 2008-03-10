@@ -182,16 +182,11 @@ namespace runner
     lhs->ast_ = &e.lhs_get ();
     lhs->start_job ();
 
-    PING ();
-
     JECHO ("rhs", e.rhs_get ());
-
     eval (e.rhs_get ());
 
     // Wait for lhs to terminate
     yield_until_terminated (*lhs);
-
-    PING ();
 
     current_ = object::void_class;
   }
