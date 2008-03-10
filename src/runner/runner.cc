@@ -94,9 +94,9 @@ namespace runner
   catch(kernel::exception& e)				\
   {							\
     std::cerr << "Unexpected exception propagated: "	\
-              << e.what() << std::endl;			\
+	      << e.what() << std::endl;			\
     Code						\
-    throw; 						\
+    throw;						\
   }							\
   catch(...)						\
   {							\
@@ -115,7 +115,7 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
-    foreach(ast::Call* c, call_stack_)
+    foreach(const ast::Call* c, call_stack_)
     {
       o.str("");
       o << "!!!    called from: " << c->location_get () << ": "
@@ -167,7 +167,7 @@ namespace runner
   `---------------------*/
 
   void
-  Runner::operator() (ast::And& e)
+  Runner::operator() (const ast::And& e)
   {
     // lhs will be evaluated in another Runner, while rhs will be evaluated
     // in this one. We will be the new runner parent, as we have the same
@@ -286,7 +286,7 @@ namespace runner
   }
 
   object::rObject
-  Runner::eval_in_scope (rObject scope, ast::Exp& e)
+  Runner::eval_in_scope (rObject scope, const ast::Exp& e)
   {
     std::swap (locals_, scope);
     try {
@@ -398,7 +398,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::Call& e)
+  Runner::operator() (const ast::Call& e)
   {
     PING ();
 
@@ -459,7 +459,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::Function& e)
+  Runner::operator() (const ast::Function& e)
   {
     PING ();
     current_ = new object::Code (*ast::clone(e));
@@ -467,7 +467,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::If& e)
+  Runner::operator() (const ast::If& e)
   {
     // Evaluate the test.
     JECHO ("test", e.test_get ());
@@ -487,7 +487,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::List& e)
+  Runner::operator() (const ast::List& e)
   {
     typedef std::list<object::rObject> objects;
     typedef std::list<ast::Exp*> exps;
@@ -511,7 +511,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::Nary& e)
+  Runner::operator() (const ast::Nary& e)
   {
     // List of runners for Stmt flavored by a comma.
     std::list<scheduler::rJob> runners;
@@ -544,8 +544,10 @@ namespace runner
 	  if (!e.toplevel_get())
 	    throw;
 	}
-	CATCH_FLOW_EXCEPTION(ast::BreakException, "break", "outside a loop")
-	CATCH_FLOW_EXCEPTION(ast::ReturnException, "return", "outside a function")
+	CATCH_FLOW_EXCEPTION(ast::BreakException,
+			     "break", "outside a loop")
+	CATCH_FLOW_EXCEPTION(ast::ReturnException,
+			     "return", "outside a function")
 
 	if (e.toplevel_get () && current_.get ())
 	{
@@ -568,13 +570,14 @@ namespace runner
     if (!e.toplevel_get ())
     {
       foreach(scheduler::rJob r, runners)
-      {
 	yield_until_terminated(*r);
-      }
     }
 
+    // FIXME: We violate the constness, but anyway this should not
+    // be done here.  Not to mention the leaks, as we don't delete the
+    // AST here.
     if (e.toplevel_get ())
-      e.clear();
+      const_cast<ast::Nary&>(e).clear();
   }
 
   void
@@ -612,13 +615,13 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::Noop&)
+  Runner::operator() (const ast::Noop&)
   {
     current_.reset ();
   }
 
   void
-  Runner::operator() (ast::Object& e)
+  Runner::operator() (const ast::Object& e)
   {
     // Make a copy of the value, otherwise each time we pass here, we
     // use the same object.  For instance
@@ -640,7 +643,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::Pipe& e)
+  Runner::operator() (const ast::Pipe& e)
   {
     // lhs
     JECHO ("lhs", e.lhs_get ());
@@ -653,7 +656,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::Scope& e)
+  Runner::operator() (const ast::Scope& e)
   {
     // To each scope corresponds a "locals" object which stores the
     // local variables.  It points to the previous current scope to
@@ -697,13 +700,13 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::Tag&)
+  Runner::operator() (const ast::Tag&)
   {
     // FIXME: Some code is missing here.
   }
 
   void
-  Runner::operator() (ast::While& e)
+  Runner::operator() (const ast::While& e)
   {
     // Evaluate the test.
     while (true)
@@ -735,7 +738,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::Throw& e)
+  Runner::operator() (const ast::Throw& e)
   {
     if (e.kind_get() == ast::break_exception)
       throw ast::BreakException(e.location_get());
@@ -750,20 +753,20 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::Stmt& e)
+  Runner::operator() (const ast::Stmt& e)
   {
     JECHO ("expression", e.expression_get ());
     operator() (e.expression_get());
   }
 
   void
-  Runner::operator() (ast::Message& e)
+  Runner::operator() (const ast::Message& e)
   {
     send_message_(e.tag_get(), e.text_get());
   }
 
   void
-  Runner::operator() (ast::Foreach& e)
+  Runner::operator() (const ast::Foreach& e)
   {
     // Evaluate the list attribute, and check its type.
     JECHO ("foreach list", e.list_get());

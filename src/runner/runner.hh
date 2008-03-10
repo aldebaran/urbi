@@ -18,7 +18,7 @@ namespace runner
 {
 
   /// Ast executor.
-  class Runner : public ast::DefaultVisitor,
+  class Runner : public ast::DefaultConstVisitor,
 		 public scheduler::Job,
 		 public Tag
   {
@@ -26,7 +26,7 @@ namespace runner
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
-    typedef ast::DefaultVisitor super_type;
+    typedef ast::DefaultConstVisitor super_type;
     typedef object::rObject rObject;
     typedef object::rLobby rLobby;
     /// \}
@@ -38,7 +38,7 @@ namespace runner
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
     /// The new runner has no parent.
     Runner (rLobby lobby, rObject locals,
-	    scheduler::Scheduler& scheduler, ast::Ast* ast);
+	    scheduler::Scheduler& scheduler, const ast::Ast* ast);
 
     /// Create a copy of a runner.
     Runner (const Runner&);
@@ -68,7 +68,7 @@ namespace runner
     rObject apply (const rObject& func, const object::rList& args);
 
     /// Eval a tree in a given local scope
-    rObject eval_in_scope (rObject scope, ast::Exp& e);
+    rObject eval_in_scope (rObject scope, const ast::Exp& e);
 
     /// Return the result of an evaluation. The runner must be terminated.
     const rObject& current_get () const;
@@ -79,11 +79,11 @@ namespace runner
     /// \name Evaluation.
     /// \{
     /// Evaluate a tree and return the \a current_ that results.
-    rObject eval (ast::Ast& e);
+    rObject eval (const ast::Ast& e);
 
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for Io.
-    rObject target (ast::Exp* n);
+    rObject target (const ast::Exp* n);
 
     /// Build an evaluated arguments list containing \a tgt and
     /// arguments coming from \a args evaluated in the current context.
@@ -97,25 +97,25 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((16,
-			 (
-			  And,
-			  Call,
-			  Foreach,
-			  Function,
-			  If,
-			  List,
-			  Message,
-			  Nary,
-			  Noop,
-			  Object,
-			  Pipe,
-			  Scope,
-			  Stmt,
-			  Tag,
-			  Throw,
-			  While
-			  )))
+    CONST_VISITOR_VISIT_NODES((16,
+			       (
+				 And,
+				 Call,
+				 Foreach,
+				 Function,
+				 If,
+				 List,
+				 Message,
+				 Nary,
+				 Noop,
+				 Object,
+				 Pipe,
+				 Scope,
+				 Stmt,
+				 Tag,
+				 Throw,
+				 While
+				 )))
     /// \}
 
     /// Code to run the cleanup code
@@ -144,7 +144,7 @@ namespace runner
     rLobby lobby_;
 
     /// The root of the AST being executed.
-    ast::Ast* ast_;
+    const ast::Ast* ast_;
 
     /// The current value during the evaluation of the AST.
     rObject current_;
@@ -156,7 +156,7 @@ namespace runner
     scheduler::rJob myself_;
 
     /// The call stack.
-    typedef std::list<ast::Call*> call_stack_type;
+    typedef std::list<const ast::Call*> call_stack_type;
     call_stack_type call_stack_;
   };
 

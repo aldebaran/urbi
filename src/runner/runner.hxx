@@ -15,8 +15,9 @@ namespace runner
 
   inline
   Runner::Runner (rLobby lobby, rObject locals,
-		  scheduler::Scheduler& sched, ast::Ast* ast)
-    : scheduler::Job (sched),
+		  scheduler::Scheduler& sched, const ast::Ast* ast)
+    : Runner::super_type (),
+      scheduler::Job (sched),
       Tag (),
       lobby_ (lobby),
       ast_ (ast),
@@ -29,7 +30,7 @@ namespace runner
 
   inline
   Runner::Runner(const Runner& model)
-    : ast::DefaultVisitor (),
+    : Runner::super_type (),
       scheduler::Job (model),
       Tag (),
       lobby_ (model.lobby_),
@@ -82,7 +83,7 @@ namespace runner
 
   inline
   Runner::rObject
-  Runner::eval (ast::Ast& e)
+  Runner::eval (const ast::Ast& e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
     e.accept (*this);
@@ -92,7 +93,7 @@ namespace runner
 
   inline
   Runner::rObject
-  Runner::target (ast::Exp* n)
+  Runner::target (const ast::Exp* n)
   {
     // If there is no target, look in the local variables.
     if (n)
