@@ -299,6 +299,9 @@ namespace runner
 		 const object::objects_type& args,
 		 const rObject call_message)
   {
+    // The call-message only makes sense for code.
+    assert (!call_message || func->kind_get() == object::Object::kind_code);
+
     {
       // Check if any argument is void
       bool first = true;
