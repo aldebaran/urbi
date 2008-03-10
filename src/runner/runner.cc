@@ -540,7 +540,7 @@ namespace runner
 	}
 	catch (object::UrbiException& ue)
 	{
-	  show_error_(ue, (i)->location_get());
+	  show_error_(ue, i->location_get());
 	  if (!e.toplevel_get())
 	    throw;
 	}
