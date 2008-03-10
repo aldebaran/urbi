@@ -348,19 +348,18 @@ namespace runner
   Runner::push_evaluated_arguments (object::objects_type& args,
 				    const ast::exps_type& ue_args)
   {
-    ast::exps_type::const_iterator arg = ue_args.begin ();
-    // Skip target
-    ++arg;
-    ast::exps_type::const_iterator args_end = ue_args.end ();
-
-    for (; arg != args_end; ++arg)
+    bool tail = false;
+    foreach (const ast::Exp* arg, ue_args)
     {
-      eval (**arg);
-      passert ("argument without a value: " << **arg, current_);
+      // Skip target, the first argument.
+      if (!tail++)
+	continue;
+      eval (*arg);
+      passert ("argument without a value: " << *arg, current_);
       if (current_ == object::void_class)
       {
 	object::WrongArgumentType wt("");
-	show_error_(wt, (*arg)->location_get());
+	show_error_(wt, arg->location_get());
 	throw wt;
       }
       PING ();
