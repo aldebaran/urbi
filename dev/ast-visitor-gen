@@ -101,6 +101,10 @@ print """\
     void accept (E* e);
   };
 
+  /*----------.
+  | Visitor.  |
+  `----------*/
+
 # define VISITOR_VISIT_NODE_(Z, N, Array)                      \\
     virtual void operator() (ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
 
@@ -109,10 +113,23 @@ print """\
 		 VISITOR_VISIT_NODE_,                  \\
 		 Nodes)
 
-  /// Shorthand for a const visitor.
-  typedef GenVisitor<libport::constify_traits> ConstVisitor;
   /// Shorthand for a non const visitor.
   typedef GenVisitor<libport::id_traits> Visitor;
+
+  /*---------------.
+  | ConstVisitor.  |
+  `---------------*/
+
+  /// Shorthand for a const visitor.
+  typedef GenVisitor<libport::constify_traits> ConstVisitor;
+
+# define CONST_VISITOR_VISIT_NODE_(Z, N, Array)        \\
+    virtual void operator() (const ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
+
+# define CONST_VISITOR_VISIT_NODES(Nodes)              \\
+  BOOST_PP_REPEAT(BOOST_PP_ARRAY_SIZE(Nodes),          \\
+		 CONST_VISITOR_VISIT_NODE_,            \\
+		 Nodes)
 
 } // namespace ast
 
