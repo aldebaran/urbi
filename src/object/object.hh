@@ -162,7 +162,7 @@ namespace object
 			    rObject& ref,
 			    const Object::key_type& k,
 			    rObject o);
-    friend std::ostream& dump(runner::Runner&, rObject o, std::ostream& o);
+    friend std::ostream& dump(runner::Runner&, rObject, std::ostream&);
   };
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -188,10 +188,10 @@ namespace object
 		    rObject o);
 
   // Print out the value. Suitable for user interaction.
-  std::ostream& print(runner::Runner&, rObject o, std::ostream& o);
+  std::ostream& print(runner::Runner&, rObject, std::ostream&);
 
   /// Report the content on \p o.  For debugging purpose.
-  std::ostream& dump(runner::Runner&, rObject o, std::ostream& o);
+  std::ostream& dump(runner::Runner&, rObject, std::ostream&);
 
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
