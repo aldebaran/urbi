@@ -86,9 +86,9 @@ namespace object
       && s[0] == '"' && s.length() && s[s.length()-1] == '"')
       s = libport::unescape(s.substr(1, s.length()-2));
 
-    r.lobby_get()->value_get().connection.send(
-    	(std::string(is_echo?"*** ":"") + s  + "\n").c_str(),
-			   tag.c_str());
+    r.lobby_get()->value_get().connection.send
+      ((std::string(is_echo?"*** ":"") + s + "\n").c_str(),
+       tag.c_str());
 
     return void_class;
   }
@@ -149,9 +149,8 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
-    if (!arg1->value_get ().size () == 1)
-      throw
-	PrimitiveError ("apply", "first argument must be [self]");
+    if (arg1->value_get ().size () != 1)
+      throw PrimitiveError ("apply", "first argument must be [self]");
     return arg1->value_get ().front ();
   }
 
