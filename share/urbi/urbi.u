@@ -458,9 +458,7 @@ do Object
 
 class Protos.Binary
 {
-  var data = "";
-  var keywords = "";
-  var asString = function()
+  function asString()
   {
     var res = "BIN " + data.size.asString;
     if (!keywords.empty)
