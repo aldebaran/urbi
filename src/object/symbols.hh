@@ -111,6 +111,7 @@
   Macro(getLazyLocalSlot, "getLazyLocalSlot");    \
   Macro(getSlot, "getSlot");                      \
   Macro(init, "init");                            \
+  Macro(isA, "isA");                              \
   Macro(isScope, "isScope");                      \
   Macro(job, "job");                              \
   Macro(keywords, "keywords");                    \
