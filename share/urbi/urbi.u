@@ -416,7 +416,10 @@ class Protos.Binary
 {
   var asString = function()
   {
-    "BIN " + data.size.asString + " "  + keywords + "\n" + data
+    var res = "BIN " + data.size.asString;
+    if (keywords.empty)
+      res += " " + keywords;
+    res += "\n" + data;
   };
   void
 };
