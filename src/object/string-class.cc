@@ -97,7 +97,6 @@ namespace object
       arg0->value_set (arg1->value_get());
       return arg0;
     }
-  }
 
     static rObject
     string_class_split(runner::Runner&, objects_type args)
@@ -111,7 +110,7 @@ namespace object
 	ret.push_back(new String(libport::Symbol(i)));
       return new List(ret);
     }
-  };
+  }
 
 #define PRIMITIVE_1_STRING(Name)                  \
   PRIMITIVE_1(string, Name, String)
