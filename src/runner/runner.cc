@@ -200,7 +200,7 @@ namespace runner
     // The called function.
     ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
     // There is a call message iff the function is not strict.
-    assert(call_message != 0 xor fn.strict());
+    assert((call_message != 0) xor fn.strict());
 
     // Context in which to evaluate the function, which may be nil.
     rObject context = func->slot_get (SYMBOL(context));
