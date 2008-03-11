@@ -420,6 +420,7 @@ class Protos.Binary
     if (!keywords.empty)
       res += " " + keywords;
     res += "\n" + data;
+    res;
   };
   void
 };
