@@ -11,6 +11,12 @@ do String
   self.addProto(Protos.Comparable);
   self.addProto(Protos.Orderable);
 
+  // Append in place.
+  function '+='(x) { self.set (self + x) };
+
+  // Whether the string is empty.
+  function empty () { self == ""; };
+
   // It is more natural to refer to the length of a string.  Besides,
   // other encodings will make a difference between size and length.
   copySlot("size", "length");

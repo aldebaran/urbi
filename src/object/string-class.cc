@@ -54,6 +54,12 @@ namespace object
       return new Float (s->value_get ().name_get ().size ());
     }
 
+/*-------------------------------------------------------------------.
+| String Primitives.                                                 |
+|                                                                    |
+| I.e., the signature is runner::Runner& x objects_type -> rObject.  |
+`-------------------------------------------------------------------*/
+
     static rObject
     string_class_asString(runner::Runner&, objects_type args)
     {
@@ -71,12 +77,34 @@ namespace object
       return new String(res);
     }
 
+    /// Clone.
+    static rObject
+    string_class_clone(runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT(1);
+      FETCH_ARG(0, String);
+      return clone(arg0);
+    }
+
+
+    /// Change the value.
+    static rObject
+    string_class_set(runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT(2);
+      FETCH_ARG(0, String);
+      FETCH_ARG(1, String);
+      arg0->value_set (arg1->value_get());
+      return arg0;
+    }
+  }
+
     static rObject
     string_class_split(runner::Runner&, objects_type args)
     {
       CHECK_ARG_COUNT (2);
-      boost::tokenizer< boost::char_separator<char> > tok
-      = libport::make_tokenizer(VALUE(args[0], String).name_get(),
+      boost::tokenizer< boost::char_separator<char> > tok =
+	libport::make_tokenizer(VALUE(args[0], String).name_get(),
 				VALUE(args[1], String).name_get().c_str());
       list_traits::type ret;
       foreach(std::string i, tok)
@@ -107,11 +135,12 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(string, Name)
 
-    DECLARE(PLUS);
     DECLARE(EQ_EQ);
     DECLARE(LT);
-
+    DECLARE(PLUS);
     DECLARE(asString);
+    DECLARE(clone);
+    DECLARE(set);
     DECLARE(size);
     DECLARE(split);
 #undef DECLARE
