@@ -568,6 +568,8 @@ FLAVOR   [;|,&]?
   // Use yytext before modifying it (unput).
   SET_VAL(expr, new_k1_bin (*locp, keywords, data));
   unput(';');
+  if (!up)
+    --pre_length;
   RETURN(K1BIN);
 }
 
