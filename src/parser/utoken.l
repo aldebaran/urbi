@@ -62,6 +62,14 @@ static Out numeric_cast (UParser& up, const yy::location& loc, In t);
 | Prescanner macros.  |
 `--------------------*/
 
+// Prescanner return values.
+/// End of file.
+static token::yytokentype pre_eof        = token::yytokentype(-1);
+/// No terminator found.
+static token::yytokentype pre_wants_more = token::yytokentype(0);
+/// A complete sentence was found.
+static token::yytokentype pre_complete   = token::yytokentype(1);
+
 // Skip this action if in pre-parser.  Do not put this in a do-while,
 // as it would capture the "continue" which is meant to yylex's
 // "while(1)".
@@ -88,13 +96,11 @@ static Out numeric_cast (UParser& up, const yy::location& loc, In t);
       continue;								\
     }									\
     else								\
-      /* This is a syntax error.  Empty the set of closers so		\
-       that we finish as if the sentence was correct.  It will		\
-       be given to the parser which will report the error		\
-       itself. */							\
     {									\
+      /* Syntax error (unbalanced closers).  Return as if the sentence	\
+	 was correct.  The parser will report the error itself. */	\
       ECHO("Pre: Unexpected character: " << yytext);			\
-      return token::yytokentype(yytext[0]);				\
+      return pre_complete;						\
     }									\
   }
 
@@ -102,7 +108,7 @@ static Out numeric_cast (UParser& up, const yy::location& loc, In t);
   if (!up)					\
   {						\
     if (pre_closers.empty())			\
-      return token::yytokentype(yytext[0]);	\
+      return pre_complete;			\
     else					\
       continue;					\
   }
@@ -169,14 +175,14 @@ do {						\
 #define EOF_ERROR(Where)				\
   do {							\
     if (!up)						\
-      return token::yytokentype('.');			\
+      return pre_eof;					\
     ERROR("unexpected end of file in " + Where);	\
   } while(0)
 
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()				\
-  return token::TOK_EOF
+  return up ? token::TOK_EOF : pre_wants_more;
 
 
 // valp->Field = Value.
@@ -542,12 +548,12 @@ FLAVOR   [;|,&]?
      with DATA being SIZE long.  Note where the ";" is...
    */
 "BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}?";"      {
-  char *keywords;
+  char* keywords;
   size_t size = bin_split (yytext, yyleng, keywords);
   // Eat the data.
   std::string data;
   for (size_t i = 0; i < size; ++i)
-    switch (char c = yyinput())
+    switch (int c = yyinput())
     {
       case EOF:
 	EOF_ERROR("BIN");
@@ -714,7 +720,7 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
     continue;
   SKIP_SPACES();
 
-  char *size = yytext;
+  char* size = yytext;
   while (isdigit(yytext[0]))
     ++yytext;
   *yytext = 0;
@@ -741,21 +747,23 @@ new_k1_bin(const yy::location& loc,
 
 
 size_t
-prescan (char *buf)
+prescan (char* buf)
 {
   yyFlexLexer scanner;
   std::istringstream is (buf);
   scanner.switch_streams(&is, 0);
 
-  // The number of read bytes.
+  // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
   int c = scanner.yylex();
+  passert(c, c == pre_eof || c == pre_wants_more || c == pre_complete);
+  // The number of read bytes.
   size_t length = scanner.pre_length;
-  ECHO("res: " << c << " (" << char(c) << "), length: " << length);
-  if (!c)
-    // When met EOF before reaching a terminator.
-    return 0;
-  else
+  ECHO("res: " << c << ", length: " << length);
+  if (c == pre_complete)
     return length;
+  else
+    // We met EOF before reaching a terminator.
+    return 0;
 }
 
 
