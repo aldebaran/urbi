@@ -199,10 +199,12 @@ namespace runner
   {
     // The called function.
     ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
+    // There is a call message iff the function is not strict.
+    assert(call_message != 0 xor fn.strict());
+
     // Context in which to evaluate the function, which may be nil.
     rObject context = func->slot_get (SYMBOL(context));
 
-    PING ();
     // Create a new object to store the arguments.
     rObject bound_args = new object::Object;
     bound_args->locals_set(true);
@@ -224,7 +226,6 @@ namespace runner
     // arguments. Otherwise, bind the call message.
     if (fn.strict())
     {
-      assert (!call_message);
       ast::symbols_type& formals = *fn.formals_get();
       object::check_arg_count (formals.size() + 1, args.size(), "");
       // Effective (evaluated) argument iterator.
@@ -235,7 +236,6 @@ namespace runner
     }
     else
     {
-      assert (call_message);
       bound_args->slot_set (SYMBOL(call), call_message);
     }
 
