@@ -7,8 +7,9 @@
 
 #include "sdk/config.h"
 #ifndef HAVE_ROUND
-#  include "libport/ufloat.h"
+#  include <libport/ufloat.h>
 #endif
+#include <libport/lexical-cast.hh>
 
 #include "object/float-class.hh"
 #include "object/object.hh"
@@ -126,8 +127,8 @@ abs(libport::ufloat v)
     // streams to the same as used by lexical_cast (which is one more
     // than the default value, and this results in different output bw
     // 1.x and 2.x, a useless nuisance in the test suite.
-    return new String(libport::Symbol(boost::lexical_cast<std::string>
-		      ((float) VALUE(args[0], Float))));
+    return new String(libport::Symbol(string_cast
+				      (float (VALUE(args[0], Float)))));
   }
 
   /// Clone.
@@ -199,7 +200,7 @@ abs(libport::ufloat v)
 			"argument has to be positive"))
 
 #define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name,Min, Max)                    \
-  PRIMITIVE_0_FLOAT_(Name,      					\
+  PRIMITIVE_0_FLOAT_(Name,						\
      if (VALUE(args[0], Float) < Min || Max < VALUE(args[0], Float))	\
        throw PrimitiveError(#Name, "invalid range"))
 
@@ -254,38 +255,33 @@ abs(libport::ufloat v)
 #define DECLARE(Name)                      \
     DECLARE_PRIMITIVE(float, Name)
 
+    DECLARE(CARET);
+    DECLARE(EQ_EQ);
+    DECLARE(GT_GT);
+    DECLARE(LT);
+    DECLARE(LT_LT);
+    DECLARE(MINUS);
+    DECLARE(PERCENT);
     DECLARE(PLUS);
     DECLARE(SLASH);
     DECLARE(STAR);
-    DECLARE(MINUS);
     DECLARE(STAR_STAR);
-    DECLARE(PERCENT);
-
-    DECLARE(LT_LT);
-    DECLARE(GT_GT);
-    DECLARE(CARET);
-
-    DECLARE(EQ_EQ);
-
-    DECLARE(LT);
-
-    DECLARE(clone);
-    DECLARE(set);
-
-    DECLARE(asString);
-    DECLARE(sin);
-    DECLARE(asin);
-    DECLARE(cos);
-    DECLARE(acos);
-    DECLARE(tan);
-    DECLARE(atan);
     DECLARE(abs);
+    DECLARE(acos);
+    DECLARE(asString);
+    DECLARE(asin);
+    DECLARE(atan);
+    DECLARE(clone);
+    DECLARE(cos);
     DECLARE(exp);
     DECLARE(log);
-    DECLARE(round);
     DECLARE(random);
-    DECLARE(trunc);
+    DECLARE(round);
+    DECLARE(set);
+    DECLARE(sin);
     DECLARE(sqrt);
+    DECLARE(tan);
+    DECLARE(trunc);
 #undef DECLARE
 
   }
