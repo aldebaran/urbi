@@ -63,9 +63,13 @@ namespace urbi
   {
     if (!vardata)
     {
-      echo("Unable to locate variable %s in hashtable. "
-	   "Memory problem, report bug.\n",
-	   name.c_str());
+      // FIXME: this special case should be put in doc.
+      echo ("Unable to locate variable %s in hashtable. "
+	    "UVars being UObject attributes must be binded to be used "
+	    "in UObject C++ code. Use UBindVar. "
+	    "In any other case, this can be a memory problem. "
+	    "Please report bug.\n",
+	     name.c_str());
       return false;
     }
     else
