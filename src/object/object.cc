@@ -215,11 +215,26 @@ namespace object
   std::ostream&
   print(runner::Runner& runner, rObject r, std::ostream& out)
   {
-    rObject asString = r->slot_get(SYMBOL(asString));
-    objects_type args;
-    args.push_back(r);
-    rObject s = runner.apply(asString, args);
-    return out << VALUE(s, String).name_get();
+    try
+    {
+      rObject asString = r->slot_get(SYMBOL(asString));
+
+      objects_type args;
+      args.push_back(r);
+      rObject s = runner.apply(asString, args);
+      out << VALUE(s, String).name_get();
+
+      return out;
+    }
+    // Check if asString was found, especially for bootstrap: asString
+    // is implemented in urbi/urbi.u, but print is called to show
+    // result in the toplevel before its definition.
+    catch (LookupError&)
+    {
+      // If no asString method is supplied, print the unique id
+      std::cerr << std::hex << r.get() << std::endl;
+      return out;
+    }
   }
 
   bool
