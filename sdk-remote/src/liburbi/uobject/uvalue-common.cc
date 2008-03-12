@@ -316,7 +316,10 @@ namespace urbi
 	return "unknown format";
     }
     // To pacify "warning: control reaches end of non-void function".
-    pabort(soundFormat);
+    // FIXME: This should not abort. UImage should be initialized with IMAGE_UKNOWN.
+    //        This is not done because data is stored in an union in UBinary and
+    //        union members cannot have constructors.
+    return "unknown format";
   }
 
   /*---------.
@@ -339,7 +342,11 @@ namespace urbi
 	return "unknown format";
     }
     // To pacify "warning: control reaches end of non-void function".
-    pabort(imageFormat);
+    // pabort(imageFormat);
+    // FIXME: This should not abort. UImage should be initialized with IMAGE_UKNOWN.
+    //        This is not done because data is stored in an union in UBinary and
+    //        union members cannot have constructors.
+    return "unknown format";
   }
 
   /*----------.
