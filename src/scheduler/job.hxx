@@ -15,7 +15,8 @@ namespace scheduler
 
   inline
   Job::Job (Scheduler& scheduler, const libport::Symbol& name)
-    : scheduler_ (&scheduler),
+    : state_ (to_start),
+      scheduler_ (&scheduler),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       terminated_ (false),
       self_ (Coro_new ()),
@@ -26,7 +27,8 @@ namespace scheduler
 
   inline
   Job::Job (const Job& model, const libport::Symbol& name)
-    : scheduler_ (model.scheduler_),
+    : state_ (to_start),
+      scheduler_ (model.scheduler_),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       terminated_ (false),
       self_ (Coro_new ()),
@@ -64,19 +66,23 @@ namespace scheduler
   inline void
   Job::yield ()
   {
+    state_ = running;
     scheduler_->resume_scheduler (this);
   }
 
   inline void
   Job::yield_front ()
   {
-    scheduler_->resume_scheduler_front (this);
+    state_ = running;
+    scheduler_->resume_scheduler (this);
   }
 
   inline void
   Job::yield_until (libport::utime_t deadline)
   {
-    scheduler_->resume_scheduler_until (this, deadline);
+    state_ = sleeping;
+    deadline_ = deadline;
+    scheduler_->resume_scheduler (this);
   }
 
   inline Coro*
@@ -89,6 +95,7 @@ namespace scheduler
   inline void
   Job::start_job ()
   {
+    assert (state_ == to_start);
     scheduler_->add_job (this);
   }
 
@@ -148,6 +155,24 @@ namespace scheduler
   {
     if (Coro_stackSpaceAlmostGone (self_))
       throw object::StackExhaustedError ("stack space exhausted");
+  }
+
+  inline job_state
+  Job::state_get () const
+  {
+    return state_;
+  }
+
+  inline void
+  Job::state_set (job_state state)
+  {
+    state_ = state;
+  }
+
+  inline libport::utime_t
+  Job::deadline_get () const
+  {
+    return deadline_;
   }
 
   inline std::ostream&

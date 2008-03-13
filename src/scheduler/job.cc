@@ -21,8 +21,10 @@ namespace scheduler
   void
   Job::run ()
   {
+    assert (state_ == to_start);
     ECHO ("In Job::run for " << this);
-    yield_front ();
+    state_ = running;
+    yield ();
     try {
       try {
 	work ();
@@ -50,6 +52,7 @@ namespace scheduler
     }
 
     terminate_cleanup ();
+    state_ = zombie;
     yield ();
 
     // We should never go there as the scheduler will have terminated us.
@@ -82,14 +85,16 @@ namespace scheduler
     if (!other.terminated ())
     {
       other.to_wake_up_.push_back (this);
-      scheduler_->resume_scheduler_suspend (this);
+      state_ = joining;
+      scheduler_->resume_scheduler (this);
     }
   }
 
   void
   Job::yield_until_things_changed ()
   {
-    scheduler_->resume_scheduler_things_changed (this);
+    state_ = waiting;
+    scheduler_->resume_scheduler (this);
   }
 
   bool

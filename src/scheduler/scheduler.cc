@@ -228,6 +228,31 @@ namespace scheduler
   void
   Scheduler::resume_scheduler (Job* job)
   {
+    // If the job state is not running, use the appropriate method to requeue
+    // the job.
+    {
+      job_state state = job->state_get ();
+      switch (state)
+      {
+      case to_start:
+	assert (false);
+	break;
+      case running:
+	break;
+      case sleeping:
+	resume_scheduler_until (job, job->deadline_get ());
+	break;
+      case waiting:
+	resume_scheduler_things_changed (job);
+	break;
+      case joining:
+	resume_scheduler_suspend (job);
+	break;
+      case zombie:
+	break;
+      }
+    }
+
     // If the job has not terminated and is side-effect free, then we
     // assume it will not take a long time as we are probably evaluating
     // a condition. In order to reduce the number of cycles spent to evaluate
@@ -242,16 +267,6 @@ namespace scheduler
     if (!job->terminated ())
       jobs_.push_back (job);
     ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated");
-    switch_back (job);
-  }
-
-  void
-  Scheduler::resume_scheduler_front (Job* job)
-  {
-    // Put the job in front of the queue. If the job asks to be requeued,
-    // it is not terminated.
-    assert (!job->terminated ());
-    jobs_.push_front (job);
     switch_back (job);
   }
 

@@ -94,6 +94,16 @@ namespace scheduler
   //      the job structure will not be destroyed until everyone has
   //      dropped all those references.
 
+  enum job_state
+  {
+    to_start,            // Job needs to be started
+    running,             // Job is waiting for the CPU
+    sleeping,            // Job is sleeping until a specified deadline
+    waiting,             // Job is waiting for changes to happen
+    joining,             // Job is waiting for another job to terminate
+    zombie               // Job wants to be dead but isn't really yet
+  };
+
   class Job
   {
   public:
@@ -172,6 +182,11 @@ namespace scheduler
     void pop_tag ();
     void copy_tags (const Job&);
 
+    /// State related operations
+    job_state state_get () const;
+    void state_set (job_state);
+    libport::utime_t deadline_get () const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -185,6 +200,11 @@ namespace scheduler
     virtual void terminate ();
 
   private:
+    /// Current job state, to be manipulated only from the job and the
+    /// scheduler. The deadline is only meaningful when the job is sleeping.
+    job_state state_;
+    libport::utime_t deadline_;
+
     /// Ensure proper cleanup;
     void terminate_cleanup ();
 

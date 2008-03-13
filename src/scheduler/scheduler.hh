@@ -56,22 +56,6 @@ namespace scheduler
     /// interrupted with itself as argument.
     void resume_scheduler (Job* job);
 
-    /// Ditto, but put the job at the front of the run queue.
-    void resume_scheduler_front (Job* job);
-
-    /// Ditto, but put the job in the deferred run queue until the deadline
-    /// is reached.
-    void resume_scheduler_until (Job* job, libport::utime_t deadline);
-
-    /// Ditto, but put the job in a queue that will be used only after at
-    /// last one job has been scheduled during the next cycle. This may be
-    /// used for jobs watching some value, which will not change spontaneously
-    /// unless someone changes it.
-    void resume_scheduler_things_changed (Job* job);
-
-    /// Suspend the current job.
-    void resume_scheduler_suspend (Job* job);
-
     /// Resume a job that has been previously suspended and add it at
     /// the back of the run queue.
     void resume_job (Job* job);
@@ -88,6 +72,19 @@ namespace scheduler
     void signal_stop (Tag*);
 
   private:
+    /// Put the job in the deferred run queue until the deadline is
+    /// reached.
+    void resume_scheduler_until (Job* job, libport::utime_t deadline);
+
+    /// Ditto, but put the job in a queue that will be used only after at
+    /// last one job has been scheduled during the next cycle. This may be
+    /// used for jobs watching some value, which will not change spontaneously
+    /// unless someone changes it.
+    void resume_scheduler_things_changed (Job* job);
+
+    /// Suspend the current job.
+    void resume_scheduler_suspend (Job* job);
+
     void switch_back (Job* job);
     void execute_round (const jobs_type&);
     void check_for_stopped_tags ();
