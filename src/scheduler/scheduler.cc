@@ -103,7 +103,8 @@ namespace scheduler
     // Do we have some work to do now?
     if (!jobs_.empty () || !jobs_to_start_.empty())
     {
-      ECHO ("scheduler: asking to be recalled ASAP, " << jobs_.size() << " jobs ready and " << jobs_to_start_.size()
+      ECHO ("scheduler: asking to be recalled ASAP, " << jobs_.size()
+	    << " jobs ready and " << jobs_to_start_.size()
 	    << " to start");
       return 0;
     }
@@ -131,13 +132,15 @@ namespace scheduler
 
       assert (job);
       assert (!job->terminated ());
-      ECHO ("will resume job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+      ECHO ("will resume job " << *job
+	    << (job->side_effect_free_get() ? " (side-effect free)" : ""));
       possible_side_effect_ |= !job->side_effect_free_get ();
       assert (!current_job_);
       Coro_switchTo_ (self_, job->coro_get ());
       assert (!current_job_);
       possible_side_effect_ |= !job->side_effect_free_get ();
-      ECHO ("back from job " << *job << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+      ECHO ("back from job " << *job
+	    << (job->side_effect_free_get() ? " (side-effect free)" : ""));
     }
     // Kill a job if needed. See explanation in job.hh.
     to_kill_ = 0;
@@ -150,8 +153,9 @@ namespace scheduler
     if (stopped_tags_.empty ())
       return;
 
-    // Extract blocked jobs from every queue, and run them once so that they can react to the
-    // stop. To do that, we build a list of jobs to start, unschedule them then execute them.
+    // Extract blocked jobs from every queue, and run them once so
+    // that they can react to the stop. To do that, we build a list of
+    // jobs to start, unschedule them then execute them.
     jobs_type to_start;
 
     foreach (Job *job, jobs_)
@@ -182,7 +186,7 @@ namespace scheduler
 
     execute_round (to_start);
 
-    // Reset tags to their real blocked value and reset the list
+    // Reset tags to their real blocked value and reset the list.
     foreach (tag_state_type t, stopped_tags_)
       t.first->set_blocked (t.second);
     stopped_tags_.clear ();
