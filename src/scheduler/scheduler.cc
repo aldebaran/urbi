@@ -36,8 +36,8 @@ namespace scheduler
   {
     assert (job);
     assert (!libport::has (jobs_, job));
-    assert (!libport::has (jobs_to_start_, job));
-    jobs_to_start_.push_back (job);
+    jobs_.push_back (job);
+    jobs_to_start_ = true;
   }
 
   libport::utime_t
@@ -49,81 +49,41 @@ namespace scheduler
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
-    // Start new jobs. You may note that to_kill_ is reset at the beginning
-    // of each loop and one final time at the end. This is to ensure that
-    // we are not trying to clear the job on which we are iterating (it
-    // may only be set to a reference onto the latest scheduled job).
-    to_start_.clear ();
-    std::swap (to_start_, jobs_to_start_);
-    foreach (Job* job, to_start_)
-    {
-      to_kill_ = 0;
-      assert (job);
-      ECHO ("will start job " << *job);
-      // Job will start for a very short time and do a yield_front() to
-      // be restarted below in the course of the regular cycle.
-      assert (!current_job_);
-      current_job_ = job;
-      Coro_startCoro_ (self_, job->coro_get(), job, run_job);
-      // We have to assume that a new job may have had side-effects.
-      possible_side_effect_ = true;
-    }
-
-    // Start deferred jobs
-    for (libport::utime_t current_time = ::urbiserver->getTime ();
-	 !deferred_jobs_.empty();
-	 deferred_jobs_.pop ())
-    {
-      deferred_job j = deferred_jobs_.top ();
-      if (current_time < j.get<0>())
-	break;
-      jobs_.push_back (j.get<1> ());
-    }
-
-    // If something is going to happen, or if we have just started a
-    // new job, add the list of jobs waiting for something to happen
-    // on the pending jobs queue.
-    if (!if_change_jobs_.empty() && (possible_side_effect_ || !jobs_.empty()))
-    {
-      foreach (Job* job, if_change_jobs_)
-	jobs_.push_back (job);
-      if_change_jobs_.clear ();
-    }
-
     // Run all the jobs in the run queue once. If any job declares upon entry or
     // return that it is not side-effect free, we remember that for the next
     // cycle.
-    possible_side_effect_ = false;
     pending_.clear ();
     std::swap (pending_, jobs_);
-    execute_round (pending_);
 
-    check_for_stopped_tags ();
+    libport::utime_t deadline = execute_round (pending_);
 
-    // Do we have some work to do now?
-    if (!jobs_.empty () || !jobs_to_start_.empty())
-    {
-      ECHO ("scheduler: asking to be recalled ASAP, " << jobs_.size()
-	    << " jobs ready and " << jobs_to_start_.size()
-	    << " to start");
-      return 0;
-    }
+    // If some jobs need to be stopped, do it as soon as possible.
+    if (check_for_stopped_tags ())
+      deadline = 0;
 
-    // Do we have deferred jobs?
-    if (!deferred_jobs_.empty ())
-    {
-      ECHO ("scheduler: asking to be recalled later");
-      return deferred_jobs_.top ().get<0> ();
-    }
+#ifdef ENABLE_DEBUG_TRACES
+    if (deadline)
+      ECHO ("Scheduler asking to be woken up in "
+	    << (deadline - ::urbiserver->getTime ()) / 1000000L << " seconds");
+    else
+      ECHO ("Scheduler asking to be woken up ASAP");
+#endif
 
-    // Ok, let's say, we'll be called again in one hour.
-    ECHO ("scheduler: asking to be recalled in a long time");
-    return ::urbiserver->getTime() + 3600000000LL;
+    return deadline;
   }
 
-  void
+  libport::utime_t
   Scheduler::execute_round (const jobs_type& jobs)
   {
+    // By default, wake us up after one hour and consider that we have no
+    // new job to start. Also, run waiting jobs only if the previous round
+    // may have add a side effect and reset this indication for the current
+    // job.
+    libport::utime_t deadline = ::urbiserver->getTime () +  3600000000LL;
+    jobs_to_start_ = false;
+    bool start_waiting = possible_side_effect_;
+    possible_side_effect_ = false;
+
     ECHO (pending_.size() << " jobs in the queue for this round");
     foreach (Job* job, jobs)
     {
@@ -132,64 +92,116 @@ namespace scheduler
 
       assert (job);
       assert (!job->terminated ());
-      ECHO ("will resume job " << *job
-	    << (job->side_effect_free_get() ? " (side-effect free)" : ""));
-      possible_side_effect_ |= !job->side_effect_free_get ();
-      assert (!current_job_);
-      Coro_switchTo_ (self_, job->coro_get ());
-      assert (!current_job_);
-      possible_side_effect_ |= !job->side_effect_free_get ();
-      ECHO ("back from job " << *job
-	    << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+
+      // Should the job be started?
+      bool start = false;
+
+      ECHO ("Considering " << *job << " in state " << state_name (job->state_get ()));
+
+      switch (job->state_get ())
+      {
+      case to_start:
+	// New job. Start its coroutine but do not start the job as it would be queued
+	// twice otherwise. It will start doing real work at the next cycle, so set
+	// deadline to 0. Note that we use "continue" here to avoid having the job
+	// requeued because it hasn't been started by setting "start".
+	ECHO ("Starting job " << *job);
+	current_job_ = job;
+	Coro_startCoro_ (self_, job->coro_get(), job, run_job);
+	current_job_ = 0;
+	ECHO ("Job " << *job << " has been started");
+	assert (job->state_get () != to_start);
+	deadline = 0;
+	continue;
+      case zombie:
+	assert (false);
+	break;
+      case running:
+	start = true;
+	break;
+      case sleeping:
+	{
+	  libport::utime_t job_deadline = job->deadline_get ();
+	  if (job_deadline <= ::urbiserver->getTime ())
+	    start = true;
+	  else
+	    deadline = std::min (deadline, job_deadline);
+	}
+	break;
+      case waiting:
+	// Since jobs keep their orders in the queue, start waiting jobs if
+	// previous jobs in the run have had a possible side effect or if
+	// the previous run may have had some. Without it, we may miss some
+	// changes if the watching job is after the modifying job in the queue
+	// and the watched condition gets true for only one cycle.
+	start = start_waiting | possible_side_effect_;
+	break;
+      case joining:
+	break;
+      }
+
+      if (start)
+      {
+	ECHO ("will resume job " << *job
+	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+	possible_side_effect_ |= !job->side_effect_free_get ();
+	assert (!current_job_);
+	Coro_switchTo_ (self_, job->coro_get ());
+	assert (!current_job_);
+	possible_side_effect_ |= !job->side_effect_free_get ();
+	ECHO ("back from job " << *job
+	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
+	switch (job->state_get ())
+	{
+	case running:
+	  deadline = 0;
+	  break;
+	case sleeping:
+	  deadline = std::min (deadline, job->deadline_get ());
+	  break;
+	default:
+	  break;
+	}
+      }
+      else
+	jobs_.push_back (job);   // Job not started, keep it in queue
     }
+
     // Kill a job if needed. See explanation in job.hh.
     to_kill_ = 0;
+
+    /// If during this cycle a new job has been created by an existing job,
+    /// start it.
+    if (jobs_to_start_)
+      deadline = 0;
+
+    return deadline;
   }
 
-  void
+  bool
   Scheduler::check_for_stopped_tags ()
   {
+    bool blocked_job = false;
+
     // If we have had no stopped tag, return immediately.
     if (stopped_tags_.empty ())
-      return;
+      return false;
 
-    // Extract blocked jobs from every queue, and run them once so
-    // that they can react to the stop. To do that, we build a list of
-    // jobs to start, unschedule them then execute them.
-    jobs_type to_start;
-
-    foreach (Job *job, jobs_)
+    // If some jobs have been blocked, mark them as running so that they will
+    // handle the condition when they are resumed.
+    foreach (Job* job, jobs_)
       if (job->blocked ())
-	to_start.push_back (job);
-
-    foreach (Job *job, suspended_jobs_)
-      if (job->blocked ())
-	to_start.push_back (job);
-
-    foreach (Job *job, if_change_jobs_)
-      if (job->blocked ())
-	to_start.push_back (job);
-
-    deferred_jobs deferred_jobs_copy = deferred_jobs_;
-    while (!deferred_jobs_copy.empty ())
-    {
-      deferred_job j = deferred_jobs_copy.top ();
-      deferred_jobs_copy.pop ();
-
-      Job *job = j.get<1>();
-      if (job->blocked ())
-	to_start.push_back (job);
-    }
-
-    foreach (Job* job, to_start)
-      unschedule_job (job);
-
-    execute_round (to_start);
+      {
+	job->state_set (running);
+	blocked_job = true;
+      }
 
     // Reset tags to their real blocked value and reset the list.
     foreach (tag_state_type t, stopped_tags_)
       t.first->set_blocked (t.second);
     stopped_tags_.clear ();
+
+    return blocked_job;
   }
 
   void
@@ -228,83 +240,21 @@ namespace scheduler
   void
   Scheduler::resume_scheduler (Job* job)
   {
-    // If the job state is not running, use the appropriate method to requeue
-    // the job.
-    {
-      job_state state = job->state_get ();
-      switch (state)
-      {
-      case to_start:
-	assert (false);
-	break;
-      case running:
-	break;
-      case sleeping:
-	resume_scheduler_until (job, job->deadline_get ());
-	break;
-      case waiting:
-	resume_scheduler_things_changed (job);
-	break;
-      case joining:
-	resume_scheduler_suspend (job);
-	break;
-      case zombie:
-	break;
-      }
-    }
-
     // If the job has not terminated and is side-effect free, then we
     // assume it will not take a long time as we are probably evaluating
     // a condition. In order to reduce the number of cycles spent to evaluate
     // the condition, continue until it asks to be suspended in another
     // way or until it is no longer side-effect free.
 
-    if (!job->terminated () && job->side_effect_free_get ())
+    if (job->state_get () == running && job->side_effect_free_get ())
       return;
 
-    // If the job has not terminated, put it at the back of the run queue
-    // so that the run queue order is preserved between work cycles.
     if (!job->terminated ())
       jobs_.push_back (job);
-    ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated");
+
+    ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated\n\t"
+	  << "state: " << state_name (job->state_get ()));
     switch_back (job);
-  }
-
-  void
-  Scheduler::resume_scheduler_until (Job* job, libport::utime_t deadline)
-  {
-    // Put the job in the deferred queue. If the job asks to be requeued,
-    // it is not terminated.
-    assert (!job->terminated ());
-    deferred_jobs_.push (boost::make_tuple (deadline, job));
-    switch_back (job);
-  }
-
-  void
-  Scheduler::resume_scheduler_suspend (Job* job)
-  {
-    suspended_jobs_.push_back (job);
-    switch_back (job);
-  }
-
-  void
-  Scheduler::resume_scheduler_things_changed (Job* job)
-  {
-    if_change_jobs_.push_back (job);
-    switch_back (job);
-  }
-
-  void
-  Scheduler::resume_job (Job* job)
-  {
-    // Suspended job may have been killed externally, in which case it
-    // will not appear in the list of suspended jobs.
-
-    if (libport::has (suspended_jobs_, job))
-    {
-      jobs_.push_back (job);
-      suspended_jobs_.remove (job);
-    }
   }
 
   void
@@ -312,24 +262,8 @@ namespace scheduler
   {
     ECHO ("killing all jobs!");
 
-    // This implementation is quite inefficient because it will call
-    // kill_job() for each job. But who cares? We are killing everyone
-    // anyway.
-
-    while (!jobs_to_start_.empty ())
-      jobs_to_start_.pop_front ();
-
-    while (!suspended_jobs_.empty ())
-      kill_job (suspended_jobs_.front ());
-
-    while (!if_change_jobs_.empty ())
-      kill_job (if_change_jobs_.front ());
-
     while (!jobs_.empty ())
       kill_job (jobs_.front ());
-
-    while (!deferred_jobs_.empty ())
-      kill_job (deferred_jobs_.top ().get<1>());
   }
 
   void
@@ -340,29 +274,11 @@ namespace scheduler
 
     ECHO ("unscheduling job " << *job);
 
-    // Remove the job from the queues where it could be stored.
-    jobs_to_start_.remove (job);
+    // Remove the job from the queue.
     jobs_.remove (job);
-    suspended_jobs_.remove (job);
-    if_change_jobs_.remove (job);
 
     // Remove it from live queues as well if the job is destroyed.
-    to_start_.remove (job);
     pending_.remove (job);
-
-    // We have no remove() on a priority queue, regenerate a queue without
-    // this job.
-    {
-      deferred_jobs old_deferred;
-      std::swap (old_deferred, deferred_jobs_);
-      while (!old_deferred.empty ())
-      {
-	deferred_job j = old_deferred.top ();
-	old_deferred.pop ();
-	if (j.get<1>() != job)
-	  deferred_jobs_.push (j);
-      }
-    }
   }
 
   void
@@ -379,11 +295,6 @@ namespace scheduler
     bool previous_state = t->own_blocked ();
     t->set_blocked (true);
     stopped_tags_.push_back (std::make_pair(t, previous_state));
-  }
-
-  bool operator> (const deferred_job& left, const deferred_job& right)
-  {
-    return left.get<0>() > right.get<0>();
   }
 
 } // namespace scheduler

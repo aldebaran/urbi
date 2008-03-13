@@ -23,7 +23,6 @@ namespace scheduler
   {
     assert (state_ == to_start);
     ECHO ("In Job::run for " << this);
-    state_ = running;
     yield ();
     try {
       try {
@@ -75,7 +74,7 @@ namespace scheduler
       job->links_.remove (this);
     // Wake-up waiting jobs.
     foreach (Job* job, to_wake_up_)
-      scheduler_->resume_job (job);
+      job->state_set (running);
     to_wake_up_.clear ();
   }
 

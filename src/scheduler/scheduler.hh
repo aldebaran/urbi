@@ -6,8 +6,6 @@
 #ifndef SCHEDULER_SCHEDULER_HH
 # define SCHEDULER_SCHEDULER_HH
 
-# include <queue>
-# include <boost/tuple/tuple.hpp>
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
 
@@ -16,9 +14,6 @@
 
 namespace scheduler
 {
-
-  typedef boost::tuple<libport::utime_t, Job*> deferred_job;
-  bool operator> (const deferred_job&, const deferred_job&);
 
   class Scheduler : boost::noncopyable
   {
@@ -56,10 +51,6 @@ namespace scheduler
     /// interrupted with itself as argument.
     void resume_scheduler (Job* job);
 
-    /// Resume a job that has been previously suspended and add it at
-    /// the back of the run queue.
-    void resume_job (Job* job);
-
     /// Take the (maybe last) reference on a job and swap it with 0.
     void take_job_reference (rJob&);
 
@@ -72,47 +63,17 @@ namespace scheduler
     void signal_stop (Tag*);
 
   private:
-    /// Put the job in the deferred run queue until the deadline is
-    /// reached.
-    void resume_scheduler_until (Job* job, libport::utime_t deadline);
-
-    /// Ditto, but put the job in a queue that will be used only after at
-    /// last one job has been scheduled during the next cycle. This may be
-    /// used for jobs watching some value, which will not change spontaneously
-    /// unless someone changes it.
-    void resume_scheduler_things_changed (Job* job);
-
-    /// Suspend the current job.
-    void resume_scheduler_suspend (Job* job);
-
     void switch_back (Job* job);
-    void execute_round (const jobs_type&);
-    void check_for_stopped_tags ();
+    libport::utime_t execute_round (const jobs_type&);
+    bool check_for_stopped_tags ();
 
   private:
-    typedef std::priority_queue
-    <deferred_job, std::vector<deferred_job>, std::greater<deferred_job> >
-      deferred_jobs;
-
-    /// Regular jobs to schedule inconditionally during the next run
+    /// List of jobs_ we are aware of
     jobs_type jobs_;
-
-    /// Jobs registered for initialization but not yet started
-    jobs_type jobs_to_start_;
-
-    /// Deferred jobs
-    deferred_jobs deferred_jobs_;
-
-    /// Suspended jobs
-    jobs_type suspended_jobs_;
-
-    /// Jobs waiting for something interesting to happen
-    jobs_type if_change_jobs_;
 
     /// The following fields represent running structures used in
     /// work(). Jobs be removed from here just before they are started
     /// or scheduled.
-    jobs_type to_start_;
     jobs_type pending_;
 
     /// Current job
@@ -127,6 +88,10 @@ namespace scheduler
     /// Has there been a possible side-effect since last time we reset
     /// this field?
     bool possible_side_effect_;
+
+    /// Has a new job been added to the list of jobs to start in the current
+    /// cycle?
+    bool jobs_to_start_;
 
     /// List of tags that have been stopped or blocked
     typedef std::pair<Tag*, bool> tag_state_type;
