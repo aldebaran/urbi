@@ -267,7 +267,7 @@ do void
 {
   self.addProto(Singleton);
   // void prints nothing.
-  function print() {};
+  var asString = "";
 };
 
 
