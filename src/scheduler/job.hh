@@ -243,6 +243,9 @@ namespace scheduler
     COMPLETE_EXCEPTION (BlockedException);
   };
 
+  // State names to string, for debugging purpose
+  const char* state_name (job_state);
+
 } // namespace scheduler
 
 # include "scheduler/job.hxx"

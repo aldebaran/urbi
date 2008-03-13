@@ -181,6 +181,23 @@ namespace scheduler
     return o << "Job(" << j.name_get () << ")";
   }
 
+  inline const char*
+  state_name (job_state state)
+  {
+#define CASE(State) case State: return #State;
+    switch (state)
+    {
+      CASE(to_start)
+      CASE (running)
+      CASE(sleeping)
+      CASE(waiting)
+      CASE(joining)
+      CASE(zombie)
+    }
+#undef CASE
+    return "<unknown state>";
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_JOB_HXX
