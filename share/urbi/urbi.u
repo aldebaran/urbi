@@ -67,6 +67,7 @@ do Object
   copySlot ("removeProto", "disinherit");
 
   copySlot ("sameAs", "==");
+  copySlot ("memSameAs", "===");
 
   // Invoke "clone", then "init".
   function 'new'

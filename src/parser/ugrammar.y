@@ -621,7 +621,7 @@
 %left  "||"
 %left  "&&"
 %left  "^"
-%nonassoc "==" "~=" "%=" "=~=" "!="
+%nonassoc "==" "===" "~=" "%=" "=~=" "!="
 %nonassoc "<" "<=" ">" ">="
 %left  "<<" ">>"
 %left  "+" "-"
@@ -1309,6 +1309,7 @@ expr:
 %token <symbol>
 	TOK_EQ_TILDA_EQ   "=~="
 	TOK_EQ_EQ         "=="
+	TOK_EQ_EQ_EQ      "==="
 	TOK_GT_EQ         ">="
 	TOK_GT            ">"
 	TOK_LT_EQ         "<="
@@ -1324,6 +1325,7 @@ expr:
 id:
   "=~="
 | "=="
+| "==="
 | ">="
 | ">"
 | "<="
@@ -1341,6 +1343,7 @@ expr:
 | expr "<"   expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr "<="  expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr "=="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "===" expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr "=~=" expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr ">"   expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr ">="  expr { $$ = ast_call(@$, $1, $2, $3); }

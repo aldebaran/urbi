@@ -135,13 +135,28 @@ namespace object
     return new String (libport::Symbol (str));
   }
 
+  /// Structural equality
   static rObject
-  object_class_sameAs(runner::Runner&, objects_type args)
+  object_class_sameAs(runner::Runner& r, objects_type args)
+  {
+    // Unless overridden, structural equality is physical equality.
+    CHECK_ARG_COUNT (2);
+    rObject memEq = args[0]->slot_get(SYMBOL(memSameAs));
+    objects_type mem_args;
+    mem_args.push_back(args[0]);
+    mem_args.push_back(args[1]);
+    return r.apply(memEq, mem_args);
+  }
+
+  /// Physical equality
+  static rObject
+  object_class_memSameAs(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    return args[0]->slot_get((args[0] == args[1])
+    rObject res = args[0]->slot_get((args[0] == args[1])
 			     ? SYMBOL(true)
 			     : SYMBOL(false));
+    return res;
   }
 
   static rObject
@@ -321,6 +336,7 @@ namespace object
     DECLARE(isScope);
     DECLARE(locateSlot);
     DECLARE(makeScope);
+    DECLARE(memSameAs);
     DECLARE(print);
     DECLARE(protos);
     DECLARE(removeProto);

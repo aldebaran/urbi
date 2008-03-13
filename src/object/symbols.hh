@@ -123,6 +123,7 @@
   Macro(locateSlot, "locateSlot");                \
   Macro(log, "log");                              \
   Macro(makeScope, "makeScope");                  \
+  Macro(memSameAs, "memSameAs");                  \
   Macro(message, "message");                      \
   Macro(new, "new");                              \
   Macro(nil, "nil");                              \
