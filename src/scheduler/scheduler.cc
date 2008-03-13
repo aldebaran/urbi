@@ -49,17 +49,10 @@ namespace scheduler
     ECHO ("======================================================== cycle "
 	  << ++cycle);
 
-    // Run all the jobs in the run queue once. If any job declares upon entry or
-    // return that it is not side-effect free, we remember that for the next
-    // cycle.
-    pending_.clear ();
-    std::swap (pending_, jobs_);
-
-    libport::utime_t deadline = execute_round (pending_);
+    libport::utime_t deadline = execute_round (false);
 
     // If some jobs need to be stopped, do it as soon as possible.
-    if (check_for_stopped_tags ())
-      deadline = 0;
+    deadline = std::min (deadline, check_for_stopped_tags (deadline));
 
 #ifdef ENABLE_DEBUG_TRACES
     if (deadline)
@@ -73,8 +66,14 @@ namespace scheduler
   }
 
   libport::utime_t
-  Scheduler::execute_round (const jobs_type& jobs)
+  Scheduler::execute_round (bool blocked_only)
   {
+    // Run all the jobs in the run queue once. If any job declares upon entry or
+    // return that it is not side-effect free, we remember that for the next
+    // cycle.
+    pending_.clear ();
+    std::swap (pending_, jobs_);
+
     // By default, wake us up after one hour and consider that we have no
     // new job to start. Also, run waiting jobs only if the previous round
     // may have add a side effect and reset this indication for the current
@@ -85,7 +84,7 @@ namespace scheduler
     possible_side_effect_ = false;
 
     ECHO (pending_.size() << " jobs in the queue for this round");
-    foreach (Job* job, jobs)
+    foreach (Job* job, pending_)
     {
       // Kill a job if needed. See explanation in job.hh.
       to_kill_ = 0;
@@ -117,7 +116,7 @@ namespace scheduler
 	assert (false);
 	break;
       case running:
-	start = true;
+	start = !blocked_only || job->blocked ();
 	break;
       case sleeping:
 	{
@@ -178,14 +177,14 @@ namespace scheduler
     return deadline;
   }
 
-  bool
-  Scheduler::check_for_stopped_tags ()
+  libport::utime_t
+  Scheduler::check_for_stopped_tags (libport::utime_t old_deadline)
   {
     bool blocked_job = false;
 
     // If we have had no stopped tag, return immediately.
     if (stopped_tags_.empty ())
-      return false;
+      return old_deadline;
 
     // If some jobs have been blocked, mark them as running so that they will
     // handle the condition when they are resumed.
@@ -196,12 +195,15 @@ namespace scheduler
 	blocked_job = true;
       }
 
+    // Wake up blocked jobs.
+    libport::utime_t deadline = execute_round (true);
+
     // Reset tags to their real blocked value and reset the list.
     foreach (tag_state_type t, stopped_tags_)
       t.first->set_blocked (t.second);
     stopped_tags_.clear ();
 
-    return blocked_job;
+    return deadline;
   }
 
   void

@@ -64,8 +64,8 @@ namespace scheduler
 
   private:
     void switch_back (Job* job);
-    libport::utime_t execute_round (const jobs_type&);
-    bool check_for_stopped_tags ();
+    libport::utime_t execute_round (bool blocked_only);
+    libport::utime_t check_for_stopped_tags (libport::utime_t old_deadline);
 
   private:
     /// List of jobs_ we are aware of
