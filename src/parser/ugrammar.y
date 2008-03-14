@@ -1017,7 +1017,17 @@ stmt:
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      $$ = 0;
+      libport::Symbol ex = libport::Symbol::fresh(SYMBOL(tag));
+      libport::Symbol in = libport::Symbol::fresh(SYMBOL(tag));
+      DESUGAR($$,
+	      "var " << ex << " = " << "new Tag;"
+	      << "var " << in << " = " << "new Tag;"
+	      << ex << " : { "
+	      // FIXME: Use the next line instead of the following one; it looks
+	      // like Tweast, at least as used here, may not be reentrant.
+	      // << "at(" << $3 << ") " << in << ".freeze onleave " << in << ".unfreeze;"
+	      << "at_ (" << $3 << ", " << in << ".freeze, " << in << ".unfreeze);"
+	      << in << " : { " << $5 << "; " << ex << ".stop } }");
     }
 /*
  *  This loop keyword can't be converted to a for, since it would
