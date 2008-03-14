@@ -51,7 +51,8 @@ namespace object
   tag_class_ ## Action (runner::Runner& r, objects_type args)	\
   {								\
     CHECK_ARG_COUNT (1);					\
-    extract_tag (args[0])->Action (r);				\
+    scheduler::rTag self = extract_tag (args[0]);		\
+    self->Action (r, self);					\
     return void_class;						\
   }
   TAG_ACTION(block)

@@ -58,7 +58,7 @@ namespace scheduler
     /// Signal that a stop (or block) has been issued on a tag, and that
     /// queued jobs should be checked soon to see whether they need to
     /// get some treatment.
-    void signal_stop (Tag*);
+    void signal_stop (rTag);
 
   private:
     void switch_back (Job* job);
@@ -92,7 +92,7 @@ namespace scheduler
     bool jobs_to_start_;
 
     /// List of tags that have been stopped or blocked
-    typedef std::pair<Tag*, bool> tag_state_type;
+    typedef std::pair<rTag, bool> tag_state_type;
     std::vector<tag_state_type> stopped_tags_;
   };
 

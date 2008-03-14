@@ -289,13 +289,11 @@ namespace scheduler
   void
   Scheduler::kill_job (Job* job)
   {
-    assert (job != current_job_);
-
-    ECHO ("deleting job " << *job);
-    delete job;
+    KillException ke;
+    job->async_throw (ke);
   }
 
-  void Scheduler::signal_stop (Tag* t)
+  void Scheduler::signal_stop (rTag t)
   {
     bool previous_state = t->own_blocked ();
     t->set_blocked (true);

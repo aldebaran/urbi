@@ -37,34 +37,34 @@ namespace scheduler
   }
 
   void
-  Tag::freeze (Job&)
+  Tag::freeze (const Job&, rTag)
   {
     frozen_ = true;
   }
 
   void
-  Tag::unfreeze (Job&)
+  Tag::unfreeze (const Job&, rTag)
   {
     frozen_ = false;
   }
 
   void
-  Tag::block (Job& job)
+  Tag::block (const Job& job, rTag self)
   {
     blocked_ = true;
-    stop (job);
+    stop (job, self);
   }
 
   void
-  Tag::unblock (Job&)
+  Tag::unblock (const Job&, rTag)
   {
     blocked_ = false;
   }
 
   void
-  Tag::stop (Job& job)
+  Tag::stop (const Job& job, rTag self)
   {
-    job.scheduler_get ().signal_stop (this);
+    job.scheduler_get ().signal_stop (self);
   }
 
   bool
