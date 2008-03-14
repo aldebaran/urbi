@@ -1061,7 +1061,12 @@ stmt:
     }
 | "timeout" "(" expr ")" stmt
     {
-      $$ = 0;
+      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
+      DESUGAR($$,
+	      "var " << tag << " = " << "new Tag;"
+	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
+	      << "sleep(" << $3 << ");"
+	      << tag << ".stop }");
     }
 | "return" expr.opt
     {
