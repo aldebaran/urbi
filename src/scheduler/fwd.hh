@@ -31,6 +31,12 @@ namespace scheduler
     COMPLETE_EXCEPTION (SchedulerException);
   };
 
+  // Exception raised to forcibly terminate a job
+  struct KillException : public SchedulerException
+  {
+    COMPLETE_EXCEPTION (KillException);
+  };
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_FWD_HH

@@ -35,12 +35,10 @@ namespace scheduler
     /// on \a *job rather than invoking this method.
     void add_job (Job* job);
 
-    /// Remove all jobs but the caller one. It will have to terminate
-    /// after that.
+    /// Remove all jobs.
     void killall_jobs ();
 
-    /// Kill \a job, and delete it. It is not allowed to kill the currently
-    /// executing job as it will do very bad things.
+    /// Kill \a job.
     void kill_job (Job* job);
 
     /// Unschedule a job but do not delete it. Also here, the currently

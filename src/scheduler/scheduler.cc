@@ -264,8 +264,11 @@ namespace scheduler
   {
     ECHO ("killing all jobs!");
 
-    while (!jobs_.empty ())
-      kill_job (jobs_.front ());
+    foreach (Job* job, jobs_)
+      kill_job (job);
+
+    foreach (Job* job, pending_)
+      kill_job (job);
   }
 
   void
