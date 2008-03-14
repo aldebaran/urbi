@@ -253,11 +253,10 @@ do Object
   function persist {
     var o = new Object;
     var o.val = false;
+    var o.tag = new Tag;
     var delay = call.evalArgAt (2);
-    at (call.evalArgAt (1))
-      stopif (!call.evalArgAt (1)) { sleep (delay); o.val = true }
-    onleave
-      o.val = false;
+    at (call.evalArgAt (1)) o.tag: { sleep (delay); o.val = true }
+      onleave { o.val = false; o.tag.stop };
     o;
   };
 
