@@ -222,10 +222,17 @@ Exp:
 ## Tags.  ##
 ## ------ ##
 
+Tag:
+  super: Exp
+  attributes:
+    - exp: { type: 'Exp*', desc: The tagging expression }
+  printer:
+    - ~exp
+
 TaggedStmt:
   super: Exp
   attributes:
-    - tag: { type: 'Exp*', desc: The tagging expression }
+    - tag: { type: 'Tag*', desc: The tagging expression }
     - exp: { type: 'Exp*', desc: The tagged expression }
   printer:
     - ~tag

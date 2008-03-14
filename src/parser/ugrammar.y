@@ -568,6 +568,7 @@
   ast::Exp*    expr;
   ast::Call*   call;
   ast::Nary*   nary;
+  ast::Tag*    tag;
 }
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
@@ -703,8 +704,13 @@ cstmt:
 | tagged and flagged stmt.  |
 `--------------------------*/
 
-%type <expr> tag;
-tag: expr;
+%type <tag> tag;
+tag:
+  expr
+  {
+    $$ = new ast::Tag (@$, $1);
+  }
+;
 
 stmt:
   tag flags.0 ":" stmt

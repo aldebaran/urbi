@@ -709,11 +709,16 @@ namespace runner
     PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
   }
 
+  void
+  Runner::operator() (const ast::Tag& t)
+  {
+    eval_tag (t.exp_get ());
+  }
 
   void
   Runner::operator() (const ast::TaggedStmt& t)
   {
-    push_tag (extract_tag (eval_tag (t.tag_get ())));
+    push_tag (extract_tag (eval (t.tag_get ())));
     try {
       // If the latest tag causes us to be frozen or blocked, let the
       // scheduler handler this properly to avoid duplicating the
