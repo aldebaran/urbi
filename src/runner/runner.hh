@@ -127,7 +127,7 @@ namespace runner
 				 Pipe,
 				 Scope,
 				 Stmt,
-				 Tag,
+				 TaggedStmt,
 				 Throw,
 				 While
 				 )))

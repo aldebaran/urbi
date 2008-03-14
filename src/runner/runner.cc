@@ -711,7 +711,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Tag& t)
+  Runner::operator() (const ast::TaggedStmt& t)
   {
     push_tag (extract_tag (eval_tag (t.tag_get ())));
     try {

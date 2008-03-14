@@ -709,7 +709,7 @@ tag: expr;
 stmt:
   tag flags.0 ":" stmt
   {
-    $$ = new ast::Tag (@$, $1, $4);
+    $$ = new ast::TaggedStmt (@$, $1, $4);
   }
 | flags.1 ":" stmt { $$ = $3; }
 

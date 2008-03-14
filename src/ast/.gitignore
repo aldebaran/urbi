@@ -74,9 +74,9 @@ scope.hxx
 stmt.cc
 stmt.hh
 stmt.hxx
-tag.cc
-tag.hh
-tag.hxx
+tagged-stmt.cc
+tagged-stmt.hh
+tagged-stmt.hxx
 throw.cc
 throw.hh
 throw.hxx

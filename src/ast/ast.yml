@@ -222,7 +222,7 @@ Exp:
 ## Tags.  ##
 ## ------ ##
 
-Tag:
+TaggedStmt:
   super: Exp
   attributes:
     - tag: { type: 'Exp*', desc: The tagging expression }
