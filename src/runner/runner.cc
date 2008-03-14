@@ -139,11 +139,13 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
-    foreach(const ast::Call* c, call_stack_)
+    for (std::vector<const ast::Call*>::const_reverse_iterator c = call_stack_.rbegin();
+	 c != call_stack_.rend();
+	 ++c)
     {
       o.str("");
-      o << "!!!    called from: " << c->location_get () << ": "
-	<< c->name_get ();
+      o << "!!!    called from: " << (*c)->location_get () << ": "
+	<< (*c)->name_get ();
       send_message_ ("error", o.str ());
     }
     // Reset the current value: there was an error so whatever value it has,
@@ -452,12 +454,12 @@ namespace runner
     else
       push_evaluated_arguments (args, e.args_get ());
 
-    call_stack_.push_front(&e);
+    call_stack_.push_back(&e);
     try
     {
       apply (val, args, call_message);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_front();)
+    PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_back();)
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).

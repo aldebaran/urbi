@@ -6,6 +6,8 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
+# include <vector>
+
 # include <boost/tuple/tuple.hpp>
 
 # include "ast/default-visitor.hh"
@@ -166,7 +168,7 @@ namespace runner
     scheduler::rJob myself_;
 
     /// The call stack.
-    typedef std::list<const ast::Call*> call_stack_type;
+    typedef std::vector<const ast::Call*> call_stack_type;
     call_stack_type call_stack_;
   };
 
