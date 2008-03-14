@@ -248,11 +248,13 @@ namespace scheduler
     // the condition, continue until it asks to be suspended in another
     // way or until it is no longer side-effect free.
 
-    if (job->state_get () == running && job->side_effect_free_get ())
-      return;
-
     if (!job->terminated ())
-      jobs_.push_back (job);
+      {
+	if (job->state_get () == running && job->side_effect_free_get ())
+	  return;
+	else
+	  jobs_.push_back (job);
+      }
 
     ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated\n\t"
 	  << "state: " << state_name (job->state_get ()));
