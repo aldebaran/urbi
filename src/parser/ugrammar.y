@@ -1055,9 +1055,9 @@ stmt:
       libport::Symbol tag = libport::Symbol::fresh();
       DESUGAR($$,
 	      "var " << tag << " = " << "new Tag;"
-	      << tag << " : " << $5 << ","
+	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
 	      << "waituntil(" << $3 << ");"
-	      << tag << ".stop");
+	      << tag << ".stop }");
     }
 | "timeout" "(" expr ")" stmt
     {
