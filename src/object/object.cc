@@ -186,23 +186,25 @@ namespace object
     return this < &rhs;
   }
 
+  // FIXME: A smart pointer to this (\a self) is required for now to
+  // avoid deleting this at the end of the method.
   std::ostream&
-  Object::id_dump (std::ostream& o) const
+  Object::id_dump (rObject self,
+                   std::ostream& o,
+                   runner::Runner& r)
   {
-    try
-    {
-      // Should be an rString.
-      o << slot_get(SYMBOL(type)).cast<String>()->value_get ();
-    }
-    catch (UrbiException&)
-    {}
-    return o << '_' << this;
+    rObject id = self->slot_get(SYMBOL(id));
+    objects_type id_args;
+    id_args.push_back(self);
+    rObject data = r.apply(id, id_args);
+    std::string s = VALUE(data, String).name_get();
+    return o << s;
   }
 
   std::ostream&
   dump (runner::Runner& runner, rObject r, std::ostream& o)
   {
-    r->id_dump (o);
+    r->id_dump (r, o, runner);
     /// Use xalloc/iword to store our current depth within the stream object.
     static const long idx = o.xalloc();
     static const long depth_max = 3;
@@ -220,7 +222,7 @@ namespace object
 	  {
 	    if (i != r->protos_.begin())
 	      o << ", ";
-	    (*i)->id_dump (o);
+	    (*i)->id_dump (*i, o, runner);
 	  }
 	o << libport::iendl;
       }

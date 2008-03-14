@@ -113,6 +113,7 @@
   Macro(front, "front");                          \
   Macro(getLazyLocalSlot, "getLazyLocalSlot");    \
   Macro(getSlot, "getSlot");                      \
+  Macro(id, "id");                                \
   Macro(init, "init");                            \
   Macro(isA, "isA");                              \
   Macro(isScope, "isScope");                      \
@@ -128,6 +129,7 @@
   Macro(new, "new");                              \
   Macro(nil, "nil");                              \
   Macro(print, "print");                          \
+  Macro(protoName, "protoName");                  \
   Macro(protos, "protos");                        \
   Macro(push_back, "push_back");                  \
   Macro(quit, "quit");                            \

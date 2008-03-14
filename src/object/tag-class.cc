@@ -62,20 +62,11 @@ namespace object
   TAG_ACTION(unfreeze)
 #undef TAG_ACTION
 
-  static rObject
-  tag_class_asString (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    // FIXME: Decide if and how tags are named.
-    return new String (libport::Symbol ("<tag>"));
-  }
-
   void
   tag_class_initialize ()
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(tag, Name)
-    DECLARE (asString);
     DECLARE (block);
     DECLARE (freeze);
     DECLARE (init);

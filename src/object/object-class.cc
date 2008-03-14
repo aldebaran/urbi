@@ -109,18 +109,6 @@ namespace object
     return object_echo(r, nargs, false);
   }
 
-  /// Send pretty-printed self on the connection.
-  /// args[1], if present, can be the tag to use.
-  static rObject
-  object_class_asString (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    std::ostringstream os;
-    // FIXME: Decide what should be printed, but at least print something
-    os << "<object_" << std::hex << (long)args[0].get() << ">";
-    return new String(libport::Symbol(os.str()));
-  }
-
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
@@ -320,7 +308,6 @@ namespace object
 
     DECLARE(addProto);
     DECLARE(apply);
-    DECLARE(asString);
     DECLARE(clone);
     DECLARE(dump);
     DECLARE(echo); // This guy should be in System.

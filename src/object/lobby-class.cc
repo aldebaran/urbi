@@ -18,14 +18,6 @@ namespace object
   | Lobby primitives.  |
   `------------------*/
 
-  static rObject
-  lobby_class_asString(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    static rObject lobbyString = new String(libport::Symbol("<lobby>"));
-    return lobbyString;
-  }
-
   // Get the current lobby
   static rObject
   lobby_class_self (runner::Runner& r, objects_type args)
@@ -55,7 +47,6 @@ namespace object
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(lobby, Name)
-    DECLARE (asString);
     DECLARE (self);
     DECLARE (send);
 #undef DECLARE

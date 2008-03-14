@@ -166,7 +166,7 @@ namespace object
   {
     return proto->do_clone (proto);
   }
-  template<class P, class F> bool 
+  template<class P, class F> bool
   for_all_protos(P& r, F& f, objects_type& objects)
   {
     if (libport::has(objects, r))

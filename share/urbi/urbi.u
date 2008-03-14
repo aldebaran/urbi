@@ -305,6 +305,7 @@ do void
   self.addProto(Singleton);
   // void prints nothing.
   var asString = "";
+  void
 };
 
 
@@ -356,6 +357,42 @@ class Protos.Orderable
 ## ------- ##
 
 load("urbi/float.u");
+
+## --------- ##
+## Printing. ##
+## --------- ##
+
+do Object
+{
+  function isProto ()
+  {
+    getSlot("self").locateSlot("protoName") === getSlot("self")
+  };
+
+  function type ()
+  {
+    if (getSlot("self").isProto)
+      "<" + getSlot("self").protoName + ">"
+    else
+      getSlot("self").protoName
+  };
+
+  // Gives type, + uid if relevant
+  function id ()
+  {
+    var res = getSlot("self").type.clone;
+    if (!getSlot("self").isProto)
+      res += "_" + getSlot("self").uid;
+    res
+  };
+
+  // Destined to be overridden by subclasses.
+  function asString ()
+  {
+    getSlot("self").id;
+  };
+  void
+};
 
 
 ## ------ ##

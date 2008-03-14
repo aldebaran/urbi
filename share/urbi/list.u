@@ -65,5 +65,21 @@ do List
     true
   };
 
+  function asString ()
+  {
+    if (self === List)
+      return "<List>";
+    var res = "[";
+    if (self.size)
+    {
+      res += self.front.asString;
+      for elt in self.tail
+      {
+        res += ", " + elt.asString;
+      }
+    };
+    res += "]";
+  };
+
   void;
 };

@@ -42,7 +42,7 @@ namespace object
 
   /// Initialize the root classes.
   /// There are some dependency issues.  For instance, String
-  /// is a clone of Object, but Object[type] is a String.
+  /// is a clone of Object, but Object[protoName] is a String.
   /// So we need to control the initialization sequence.
   void
   root_classes_initialize ()
@@ -57,7 +57,7 @@ namespace object
     // 1. Construct the (empty) objects for the base classes.  They
     // all derive from Object... except Object.
     //
-    // 2. Initialize the "type" field for all of them, including
+    // 2. Initialize the "protoName" field for all of them, including
     // Object (requires that these classes exists, in particular
     // string_class from which any String is a clone).
     //
@@ -74,7 +74,7 @@ namespace object
     What ## _class = clone(object_class);
 
 #define CLASS_INIT(What, Name)					\
-    What ## _class->slot_set(SYMBOL(type),			\
+    What ## _class->slot_set(SYMBOL(protoName),			\
 			     new String (SYMBOL(Name)));	\
     What ## _class_initialize ();				\
     protos_class->slot_set(symbol_ ## Name, What ## _class);

@@ -25,21 +25,12 @@ namespace object
     return r.apply (args[0], arg1);
   }
 
-  static rObject
-  primitive_class_asString(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    static rObject primitiveString = new String(libport::Symbol("<primitive>"));
-    return primitiveString;
-  }
-
   void
   primitive_class_initialize ()
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(primitive, Name)
     DECLARE (apply);
-    DECLARE (asString);
 #undef DECLARE
   }
 
