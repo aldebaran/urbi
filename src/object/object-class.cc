@@ -73,12 +73,9 @@ namespace object
       FETCH_ARG(2, String);
       tag = arg2->value_get().name_get();
     }
-    // Call asString.
-    rObject asString = args[1]->slot_get(SYMBOL(asString));
-    objects_type as_args;
-    as_args.push_back(args[1]);
-    rObject data = r.apply(asString, as_args);
-    std::string s = VALUE(data, String).name_get();
+
+    rObject res = urbi_call(r, args[1], SYMBOL(asString));
+    std::string s = VALUE(res, String).name_get();
 
     //Hack: special case for Strings to have k1 behavior
     //special case for Strings
@@ -141,11 +138,9 @@ namespace object
   {
     // Unless overridden, structural equality is physical equality.
     CHECK_ARG_COUNT (2);
-    rObject memEq = args[0]->slot_get(SYMBOL(memSameAs));
     objects_type mem_args;
-    mem_args.push_back(args[0]);
     mem_args.push_back(args[1]);
-    return r.apply(memEq, mem_args);
+    return urbi_call(r, args[0], SYMBOL(memSameAs), mem_args);
   }
 
   /// Physical equality

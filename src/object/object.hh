@@ -80,8 +80,7 @@ namespace object
     typedef libport::hash_map<key_type, rObject> slots_type;
     /// One slot.
     typedef std::pair<const key_type, rObject> slot_type;
-    /// A set of objects.
-    typedef std::set<const Object*> objects_type;
+    typedef std::set<const Object*> objects_set_type;
 
     /// Locate the object containing a slot in hierarchy.
     /// \return A pointer to the object having the slot k, or 0.
@@ -148,7 +147,7 @@ namespace object
     ///            recursions
     /// \return (false,0) if k does not exist, (true,0) if k is in this,
     ///          (true, ptr) if k is in ptr.
-    locate_type slot_locate (const key_type& k, objects_type& os) const;
+    locate_type slot_locate (const key_type& k, objects_set_type& os) const;
 
     /// The protos.
     protos_type protos_;
@@ -164,6 +163,15 @@ namespace object
 			    rObject o);
     friend std::ostream& dump(runner::Runner&, rObject, std::ostream&);
   };
+
+  /// Helpers to call Urbi functions from C++
+  rObject urbi_call(runner::Runner& r,
+                    rObject& self,
+                    libport::Symbol msg);
+  rObject urbi_call(runner::Runner& r,
+                    rObject& self,
+                    libport::Symbol msg,
+                    objects_type& args);
 
   /// Clone, i.e., create a fresh object with this class as sole proto.
   // It is tempting to make it const, but then the list of protos

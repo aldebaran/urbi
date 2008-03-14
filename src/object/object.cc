@@ -19,6 +19,31 @@
 
 namespace object
 {
+
+  /*---------.
+  | Callers. |
+  `---------*/
+
+  rObject urbi_call(runner::Runner& r,
+                    rObject& self,
+                    libport::Symbol msg,
+                    objects_type& args)
+  {
+    rObject message = self->slot_get(msg);
+    args.insert(args.begin(), self);
+    rObject res = r.apply(message, args);
+    args.erase(args.begin());
+    return res;
+  }
+
+  rObject urbi_call(runner::Runner& r,
+                    rObject& self,
+                    libport::Symbol msg)
+  {
+    objects_type args; // Call with no args.
+    return urbi_call(r, self, msg, args);
+  }
+
   /*-------.
   | kind.  |
   `-------*/
@@ -40,7 +65,7 @@ namespace object
   `--------*/
 
   Object::locate_type
-  Object::slot_locate (const key_type& k, Object::objects_type& os) const
+  Object::slot_locate (const key_type& k, Object::objects_set_type& os) const
   {
     /// Look in local slots.
     if (libport::mhas(slots_, k))
@@ -61,7 +86,7 @@ namespace object
 
   rObject slot_locate(const rObject& ref, const Object::key_type& k)
   {
-    Object::objects_type os;
+    Object::objects_set_type os;
     Object::locate_type l = ref->slot_locate(k, os);
     if (l.first)
       return l.second? l.second:ref;
@@ -72,7 +97,7 @@ namespace object
   Object*
   Object::slot_locate(const key_type& k) const
   {
-    objects_type os;
+    objects_set_type os;
     Object::locate_type l = slot_locate(k, os);
     if (l.first)
       return const_cast<Object*>(l.second?l.second.get():this);
@@ -174,7 +199,6 @@ namespace object
     return o << '_' << this;
   }
 
-
   std::ostream&
   dump (runner::Runner& runner, rObject r, std::ostream& o)
   {
@@ -217,11 +241,7 @@ namespace object
   {
     try
     {
-      rObject asString = r->slot_get(SYMBOL(asString));
-
-      objects_type args;
-      args.push_back(r);
-      rObject s = runner.apply(asString, args);
+      rObject s = urbi_call(runner, r, SYMBOL(asString));
       out << VALUE(s, String).name_get();
 
       return out;
