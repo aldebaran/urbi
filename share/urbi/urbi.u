@@ -465,6 +465,30 @@ class Protos.Binary
   };
   void
 };
+
+## ---------------------- ##
+## Profiling operations.  ##
+## ---------------------- ##
+
+class Profiling
+{
+  function timen {
+    var niters = call.evalArgAt (2);
+    var start_time = time;
+    for (var i = 0; i < niters; i++)
+      call.evalArgAt (1);
+    var expired = time - start_time;
+    echo ("Profiling information");
+    echo ("  Expression:       " + call.argString (1));
+    echo ("  Iterations:       " + niters);
+    echo ("  Total time:       " + expired + " ms");
+    echo ("  Single iteration: " + expired / niters + " ms");
+  };
+
+  void
+};
+Protos.addProto (Profiling);
+
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##
