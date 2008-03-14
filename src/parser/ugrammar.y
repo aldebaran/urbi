@@ -1052,7 +1052,12 @@ stmt:
     }
 | "stopif" "(" softtest ")" stmt
     {
-      $$ = 0;
+      libport::Symbol tag = libport::Symbol::fresh();
+      DESUGAR($$,
+	      "var " << tag << " = " << "new Tag;"
+	      << tag << " : " << $5 << ","
+	      << "waituntil(" << $3 << ");"
+	      << tag << ".stop");
     }
 | "timeout" "(" expr ")" stmt
     {

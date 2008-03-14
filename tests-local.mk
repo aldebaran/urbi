@@ -59,7 +59,6 @@ XFAIL_TESTS +=					\
 1.x/object-events.chk				\
 1.x/sinus.chk					\
 1.x/speed-zero.chk				\
-1.x/stopif.chk					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
 1.x/variable-normalize.chk			\
