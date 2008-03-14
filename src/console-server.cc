@@ -57,7 +57,6 @@ public:
   }
   virtual void beforeWork()
   {
-    ctime += static_cast<libport::utime_t>(period_get()) * 1000LL;
   }
   virtual void reset()
   {}
@@ -251,5 +250,6 @@ main (int argc, const char* argv[])
     Network::selectAndProcess(select_time);
 
     next_time = s.work ();
+    s.ctime = std::max (next_time, s.ctime + 1000L);
   }
 }
