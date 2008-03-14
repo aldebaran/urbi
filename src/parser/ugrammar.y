@@ -1052,7 +1052,7 @@ stmt:
     }
 | "stopif" "(" softtest ")" stmt
     {
-      libport::Symbol tag = libport::Symbol::fresh();
+      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
       DESUGAR($$,
 	      "var " << tag << " = " << "new Tag;"
 	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
