@@ -376,7 +376,7 @@ UConnection::make_prefix (const char* tag) const
 {
   std::ostringstream o;
   char fill = o.fill('0');
-  o << '[' << std::setw(8) << server_->lastTime();
+  o << '[' << std::setw(8) << server_->lastTime() / 1000L;
   o.fill(fill);
   if (tag && strlen(tag))
     o << ':' << tag;
