@@ -11,6 +11,7 @@
 #include "object/object.hh"
 #include "object/primitives.hh"
 #include "object/atom.hh"
+#include "runner/runner.hh"
 
 namespace object
 {
@@ -39,14 +40,6 @@ namespace object
 
 #undef PRIMITIVE_OP_STRING
 
-    static
-    rString
-    PLUS (rString& a, rString& b)
-    {
-      return new String(libport::Symbol (a->value_get ().name_get()
-					 + b->value_get ().name_get()));
-    }
-
     /// Return string's length.
     static rFloat
     size (rString& s)
@@ -59,6 +52,30 @@ namespace object
 |                                                                    |
 | I.e., the signature is runner::Runner& x objects_type -> rObject.  |
 `-------------------------------------------------------------------*/
+
+    static rObject
+    string_class_PLUS (runner::Runner& r, objects_type args)
+    {
+      CHECK_ARG_COUNT (2);
+      FETCH_ARG (0, String);
+      std::string str0 = arg0->value_get ().name_get ();
+      std::string str1;
+      if (args[1]->type_is<String> ())
+      {
+	FETCH_ARG (1, String);
+	str1 = arg1->value_get ().name_get ();
+      }
+      else
+      {
+	objects_type asargs;
+	asargs.push_back (args[1]);
+	rObject as = r.apply (args[1]->slot_get (SYMBOL (asString)), asargs);
+	TYPE_CHECK (as, String);
+	rString arg1 = as.unsafe_cast<String> ();
+	str1 = arg1->value_get ().name_get ();
+      }
+      return new String (libport::Symbol (str0 + str1));
+    }
 
     static rObject
     string_class_asString(runner::Runner&, objects_type args)
@@ -118,7 +135,6 @@ namespace object
 #define PRIMITIVE_2_STRING(Name, Type2)		\
   PRIMITIVE_2(string, Name, String, Type2)
 
-  PRIMITIVE_2_STRING(PLUS, String);
   PRIMITIVE_2_STRING(EQ_EQ, String);
 
   PRIMITIVE_2_STRING(LT, String);
