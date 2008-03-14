@@ -236,6 +236,31 @@ do Object
     t.setSideEffectFree (false);
   };
 
+  # persist takes an expression and a delay, and return an object whose val slot
+  # evaluates to true if the expression has been continously true for this delay and
+  # false otherwise.
+  #
+  # This function will be used to implement
+  #   at (condition ~ delay) action [onleave leaveaction]
+  # as
+  #   var u = persist (condition, delay);
+  #   at (u.val) action [onleave leaveaction]
+  #
+  # but this will require the assistance from the parser (FIXME: do it)
+  #
+  # FIXME: We need a way to scope the "at" and destroy it when "o" is no longer
+  # visible.
+  function persist {
+    var o = new Object;
+    var o.val = false;
+    var delay = call.evalArgAt (2);
+    at (call.evalArgAt (1))
+      stopif (!call.evalArgAt (1)) { sleep (delay); o.val = true }
+    onleave
+      o.val = false;
+    o;
+  };
+
   void;
 };
 
