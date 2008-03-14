@@ -477,7 +477,6 @@ FLAVOR   [;|,&]?
 "timeout"       RETURN(TIMEOUT);
 "unalias"       RETURN(UNALIAS);
 "var"           RETURN(VAR);
-"waituntil"     RETURN(WAITUNTIL);
 "whenever"      RETURN(WHENEVER);
 
 "for"{FLAVOR}   RETURN_FLAVORED_KEYWORD(FOR);

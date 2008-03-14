@@ -460,7 +460,6 @@
 	TOK_TIMEOUT      "timeout"
 	TOK_UNALIAS      "unalias"
 	TOK_VAR          "var"
-	TOK_WAITUNTIL    "waituntil"
 	TOK_WHENEVER     "whenever"
 
 %token TOK_EOF 0 "end of command"
@@ -861,7 +860,6 @@ stmt:
 stmt:
   "emit" k1_id args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
-| "waituntil" softtest               { $$ = 0; }
 | "event" k1_id formals              { $$ = 0; }
 ;
 
