@@ -189,7 +189,7 @@ namespace object
   // FIXME: A smart pointer to this (\a self) is required for now to
   // avoid deleting this at the end of the method.
   std::ostream&
-  Object::id_dump (rObject self,
+  Object::id_dump (const rObject& self,
                    std::ostream& o,
                    runner::Runner& r)
   {

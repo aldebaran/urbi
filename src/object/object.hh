@@ -125,7 +125,7 @@ namespace object
     /// \name Printing.
     /// \{
     /// Report a short string describing the identity.
-    std::ostream& id_dump (rObject r,
+    std::ostream& id_dump (const rObject& self,
                            std::ostream& o,
                            runner::Runner& r);
 
