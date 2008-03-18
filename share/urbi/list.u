@@ -80,6 +80,4 @@ do List
     };
     res += "]";
   };
-
-  void;
 };

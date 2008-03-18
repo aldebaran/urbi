@@ -55,8 +55,6 @@ class Protos.Kernel1Functions
       self.load = 1;
     self
   };
-
-  void;
 };
 
 Protos.addProto(Protos.Kernel1Functions);
@@ -92,8 +90,6 @@ class Protos.DeprecatedCommands
   {
     deprecate(i)
   };
-
-  void;
 };
 
 Protos.addProto(Protos.DeprecatedCommands);

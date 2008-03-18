@@ -7,7 +7,6 @@ class Protos.Channel
 {
   function init(x) { var self.name = x };
   function '<<' (x) { x.print (name); {} };
-  void;
 };
 
 // Default channels.
@@ -24,5 +23,4 @@ do Protos
   var cerr    = error;
 
   function warn(msg) { echo (msg, "warning") };
-  void;
 };

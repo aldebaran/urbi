@@ -48,8 +48,6 @@ do Float
       result.push_back(i.clone);
     result
   };
-
-  void;
 };
 
 

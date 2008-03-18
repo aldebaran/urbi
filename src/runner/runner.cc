@@ -707,6 +707,8 @@ namespace runner
       }
     }
     PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+    if (target)
+      current_ = target;
   }
 
   void

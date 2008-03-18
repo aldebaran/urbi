@@ -19,8 +19,6 @@
   {
     getSlot("__target").setSlot(x, getSlot("y"));
   };
-
-  void;
 };
 
 # This has to be present before the first function call, otherwise
@@ -45,8 +43,6 @@ do Protos
   {
     loadFile(searchFile(file));
   };
-
-  void;
 };
 
 
@@ -78,8 +74,6 @@ do Object
     call.target.getSlot("init").apply([res] + call.evalArgs);
     res;
   };
-
-  void;
 };
 
 ## --------- ##
@@ -121,8 +115,6 @@ class Protos.Closure
       getSlot("self").capture (call.argString (i), call.evalArgAt (i));
     getSlot ("self")
   };
-
-  void;
 };
 
 Protos.addProto(Protos.Closure);
@@ -137,8 +129,6 @@ do Object
   {
     self.getLazyLocalSlot ("atexit", [], true) += [getSlot ("func")]
   };
-
-  void;
 };
 
 ## -------------------- ##
@@ -260,8 +250,6 @@ do Object
       onleave { o.val = false; o.tag.stop };
     o;
   };
-
-  void;
 };
 
 ## ------- ##
@@ -271,7 +259,6 @@ do Object
 class Protos.Scope
 {
   function init() { self.makeScope (true) };
-  void;
 };
 
 ## --------- ##
@@ -287,7 +274,6 @@ class Protos.Constants
   var inf    = 999999999999999.0;
 
   var pi     = 3.14159265358979323846264338327950288;
-  void;
 };
 Protos.addProto (Protos.Constants);
 
@@ -305,7 +291,6 @@ do void
   self.addProto(Singleton);
   // void prints nothing.
   var asString = "";
-  void
 };
 
 
@@ -320,7 +305,6 @@ do nil
   function '==' (x) { x.isNil };
   var Object.isNil = false;
   var asString = "";
-  void;
 };
 
 
@@ -332,7 +316,6 @@ class Protos.Comparable
 {
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
-  void;
 };
 
 // Provide !=.
@@ -348,7 +331,6 @@ class Protos.Orderable
   function '<=' (rhs) { self < rhs || self == rhs };
   function '>'  (rhs) { rhs < self };
   function '>=' (rhs) { self > rhs || self == rhs };
-  void;
 };
 
 
@@ -357,6 +339,14 @@ class Protos.Orderable
 ## ------- ##
 
 load("urbi/float.u");
+
+
+## -------- ##
+## String.  ##
+## -------- ##
+load("urbi/string.u");
+
+
 
 ## --------- ##
 ## Printing. ##
@@ -391,7 +381,6 @@ do Object
   {
     getSlot("self").id;
   };
-  void
 };
 
 
@@ -413,8 +402,6 @@ do Object
   {
     bounce_named (call.argString (1))
   };
-
-  void;
 };
 
 do Object
@@ -429,8 +416,6 @@ do Object
       eachBg (getSlot ("f"), list.tail)
     };
   };
-
-  void;
 };
 
 load("urbi/k1.u");
@@ -450,17 +435,8 @@ class Protos.Math
   # Global variables
   var epsilontilde = 0.0001;
   var epsilonpercent = 0.0001;
-
-  void;
 };
 Protos.addProto (Protos.Math);
-
-
-## -------- ##
-## String.  ##
-## -------- ##
-load("urbi/string.u");
-
 
 
 ## -------- ##
@@ -487,12 +463,12 @@ do Object
   function '||' {
     if (self) self else call.evalArgAt (1);
   };
-
-  void;
 };
 
 class Protos.Binary
 {
+  var data = "";
+  var keywords = "";
   var asString = function()
   {
     var res = "BIN " + data.size.asString;
@@ -501,7 +477,6 @@ class Protos.Binary
     res += "\n" + data;
     res;
   };
-  void
 };
 
 ## ---------------------- ##
@@ -522,8 +497,6 @@ class Profiling
     echo ("  Total time:       " + expired + " ms");
     echo ("  Single iteration: " + expired / niters + " ms");
   };
-
-  void
 };
 Protos.addProto (Profiling);
 
