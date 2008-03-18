@@ -24,7 +24,6 @@ XFAIL_TESTS +=					\
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
-1.x/at-is-def.chk				\
 1.x/begin-end-report.chk			\
 1.x/bin-copy.chk				\
 1.x/bin.chk					\
