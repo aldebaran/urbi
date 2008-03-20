@@ -127,6 +127,14 @@ namespace object
 	ret.push_back(new String(libport::Symbol(i)));
       return new List(ret);
     }
+
+    static rObject
+    string_class_fresh (runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT (1);
+      FETCH_ARG (0, String);
+      return new String (libport::Symbol::fresh (arg0->value_get ()));
+    }
   }
 
 #define PRIMITIVE_1_STRING(Name)                  \
@@ -155,6 +163,7 @@ namespace object
     DECLARE(PLUS);
     DECLARE(asString);
     DECLARE(clone);
+    DECLARE(fresh);
     DECLARE(set);
     DECLARE(size);
     DECLARE(split);
