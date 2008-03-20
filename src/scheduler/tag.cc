@@ -6,18 +6,23 @@
 
 namespace scheduler
 {
-  Tag::Tag ()
+  Tag::Tag (libport::Symbol name)
     : parent_ (0),
       blocked_ (false),
-      frozen_ (false)
+      frozen_ (false),
+      name_ (name)
   {
   }
 
-  Tag::Tag (rTag parent)
+  Tag::Tag (rTag parent, libport::Symbol name)
     : parent_ (parent),
       blocked_ (false),
       frozen_ (false)
   {
+    if (parent)
+      name_ = libport::Symbol::Symbol (parent->name_get ().name_get () + "." + name.name_get ());
+    else
+      name_ = name;
   }
 
   Tag::~Tag ()
@@ -77,6 +82,12 @@ namespace scheduler
   Tag::set_blocked (bool b)
   {
     blocked_ = b;
+  }
+
+  const libport::Symbol&
+  Tag::name_get () const
+  {
+    return name_;
   }
 
 } // namespace scheduler

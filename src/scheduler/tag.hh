@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_TAG_HH
 # define SCHEDULER_TAG_HH
 
+# include <libport/symbol.hh>
+
 # include "scheduler/fwd.hh"
 
 namespace scheduler
@@ -9,8 +11,8 @@ namespace scheduler
   class Tag
   {
   public:
-    Tag ();
-    Tag (rTag parent);
+    Tag (libport::Symbol name);
+    Tag (rTag parent, libport::Symbol name);
     virtual ~Tag ();
 
     bool frozen () const;
@@ -27,10 +29,13 @@ namespace scheduler
     bool own_blocked () const;
     void set_blocked (bool);
 
+    const libport::Symbol& name_get () const;
+
   private:
-    rTag parent_;
-    bool blocked_;
-    bool frozen_;
+    rTag            parent_;
+    bool            blocked_;
+    bool            frozen_;
+    libport::Symbol name_;
   };
 
 } // namespace scheduler

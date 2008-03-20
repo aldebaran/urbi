@@ -32,6 +32,7 @@
   Macro(Delegate, "Delegate");                    \
   Macro(EQ, "=");                                 \
   Macro(EQ_EQ, "==");                             \
+  Macro(EQ_EQ_EQ, "===");                         \
   Macro(EQ_TILDA_EQ, "=~=");                      \
   Macro(Float, "Float");                          \
   Macro(GT, ">");                                 \
@@ -43,8 +44,6 @@
   Macro(LT_Float_GT, "<Float>");                  \
   Macro(LT_LT, "<<");                             \
   Macro(LT_String_GT, "<String>");                \
-  Macro(LT_alien_GT, "<alien>");                  \
-  Macro(LT_delegate_GT, "<delegate>");            \
   Macro(List, "List");                            \
   Macro(Lobby, "Lobby");                          \
   Macro(MINUS, "-");                              \
@@ -86,7 +85,6 @@
   Macro(argsCount, "argsCount");                  \
   Macro(asString, "asString");                    \
   Macro(asin, "asin");                            \
-  Macro(at_, "at_");                              \
   Macro(atan, "atan");                            \
   Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \
@@ -105,10 +103,10 @@
   Macro(eval, "eval");                            \
   Macro(evalArgAt, "evalArgAt");                  \
   Macro(evalArgs, "evalArgs");                    \
-  Macro(every_, "every_");                        \
   Macro(exp, "exp");                              \
   Macro(false, "false");                          \
   Macro(freeze, "freeze");                        \
+  Macro(freezeif, "freezeif");                    \
   Macro(fresh, "fresh");                          \
   Macro(front, "front");                          \
   Macro(getLazyLocalSlot, "getLazyLocalSlot");    \
@@ -126,6 +124,7 @@
   Macro(makeScope, "makeScope");                  \
   Macro(memSameAs, "memSameAs");                  \
   Macro(message, "message");                      \
+  Macro(name, "name");                            \
   Macro(new, "new");                              \
   Macro(nil, "nil");                              \
   Macro(print, "print");                          \
@@ -158,15 +157,16 @@
   Macro(sqrt, "sqrt");                            \
   Macro(stop, "stop");                            \
   Macro(stopall, "stopall");                      \
+  Macro(stopif, "stopif");                        \
   Macro(tag, "tag");                              \
   Macro(tail, "tail");                            \
   Macro(tan, "tan");                              \
   Macro(target, "target");                        \
   Macro(terminate, "terminate");                  \
   Macro(time, "time");                            \
+  Macro(timeout, "timeout");                      \
   Macro(true, "true");                            \
   Macro(trunc, "trunc");                          \
-  Macro(type, "type");                            \
   Macro(uid, "uid");                              \
   Macro(unblock, "unblock");                      \
   Macro(unfreeze, "unfreeze");                    \

@@ -244,7 +244,7 @@ do Object
   function persist {
     var o = new Object;
     var o.val = false;
-    var o.tag = new Tag;
+    var o.tag = new Tag ("persist".fresh);
     var delay = call.evalArgAt (2);
     at (call.evalArgAt (1)) o.tag: { sleep (delay); o.val = true }
       onleave { o.val = false; o.tag.stop };

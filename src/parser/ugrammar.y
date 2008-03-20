@@ -1017,11 +1017,11 @@ stmt:
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      libport::Symbol ex = libport::Symbol::fresh(SYMBOL(tag));
-      libport::Symbol in = libport::Symbol::fresh(SYMBOL(tag));
+      libport::Symbol ex = libport::Symbol::fresh(SYMBOL(freezeif));
+      libport::Symbol in = libport::Symbol::fresh(SYMBOL(freezeif));
       DESUGAR($$,
-	      "var " << ex << " = " << "new Tag;"
-	      << "var " << in << " = " << "new Tag;"
+	      "var " << ex << " = " << "new Tag (\"" << ex << "\");"
+	      << "var " << in << " = " << "new Tag (\"" << in << "\");"
 	      << ex << " : { "
 	      // FIXME: Use the next line instead of the following one; it looks
 	      // like Tweast, at least as used here, may not be reentrant.
@@ -1062,18 +1062,18 @@ stmt:
     }
 | "stopif" "(" softtest ")" stmt
     {
-      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
+      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(stopif));
       DESUGAR($$,
-	      "var " << tag << " = " << "new Tag;"
+	      "var " << tag << " = " << "new Tag (\"" << tag << "\");"
 	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
 	      << "waituntil(" << $3 << ");"
 	      << tag << ".stop }");
     }
 | "timeout" "(" expr ")" stmt
     {
-      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
+      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(timeout));
       DESUGAR($$,
-	      "var " << tag << " = " << "new Tag;"
+	      "var " << tag << " = " << "new Tag (\"" << tag << "\");"
 	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
 	      << "sleep(" << $3 << ");"
 	      << tag << ".stop }");
