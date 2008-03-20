@@ -139,7 +139,13 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
-    for (std::vector<const ast::Call*>::const_reverse_iterator c = call_stack_.rbegin();
+    // We cannot use a const_reverse_iterator here because of a defect
+    // in the C++ standard which doesn't offer a "!=" operator for
+    // reverse_iterator (as returned by rend()) and const_reverse_iterator.
+    // This is fixed in the draft for the next C++ standard and in
+    // g++ >= 4.1.1, but we are using older g++ on some platforms.
+    for (std::vector<const ast::Call*>::reverse_iterator c =
+	   call_stack_.rbegin();
 	 c != call_stack_.rend();
 	 ++c)
     {
