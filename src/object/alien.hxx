@@ -23,7 +23,7 @@ namespace object
   inline rObject
   box_with_type(const T& v, const std::string& type)
   {
-    return new Alien(boost::make_tuple(v, type));
+    return Alien::fresh(boost::make_tuple(v, type));
   }
 
   template<typename T>

@@ -117,7 +117,7 @@ namespace object
     CHECK_ARG_COUNT (1);
     std::string str = (boost::format ("0x%x")
 		       % reinterpret_cast<long long> (args[0].get ())).str ();
-    return new String (libport::Symbol (str));
+    return String::fresh(libport::Symbol (str));
   }
 
   /// Structural equality
@@ -183,7 +183,7 @@ namespace object
     BOOST_FOREACH (const rObject o, obj->protos_get())
       l.push_back(o);
 
-    return new object::List(l);
+    return object::List::fresh(l);
   }
 
 
@@ -201,9 +201,9 @@ namespace object
 
     object::list_traits::type l;
     BOOST_FOREACH (const Object::slot_type& p, obj->slots_get())
-      l.push_back (new object::String (p.first));
+      l.push_back (object::String::fresh(p.first));
 
-    return new object::List (l);
+    return object::List::fresh(l);
   }
 
   /// Get a slot content.
@@ -289,14 +289,14 @@ namespace object
   object_class_isScope (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return new Float (!!args[0]->locals_get ());
+    return Float::fresh(!!args[0]->locals_get ());
   }
 
   static rObject
   object_class_isA(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    return new Float (is_a(args[0], args[1])? 1.0:0.0);
+    return Float::fresh(is_a(args[0], args[1])? 1.0:0.0);
   }
 
   void

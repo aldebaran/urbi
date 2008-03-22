@@ -41,7 +41,11 @@ namespace object
 
     /// Construct an Atom with value \p v. If \p add_proto is \a true,
     /// the appropriate prototype will be added.
-    Atom (const value_type v, bool add_proto = true);
+    static shared_type fresh(const value_type v, bool add_proto = true);
+
+    /// Get a smart pointer to this
+    shared_type self() const;
+
 
     /// Destroy an Atom.
     virtual ~Atom ();
@@ -72,6 +76,10 @@ namespace object
     /// For debugging.
     std::ostream& special_slots_dump (runner::Runner&, rObject r,
 				      std::ostream& o) const;
+
+  protected:
+    /// Protected constructor to force proper self_ initialization.
+    Atom (const value_type v, bool add_proto = true);
 
 
   private:

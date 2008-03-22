@@ -54,7 +54,7 @@ namespace object
   static rObject
   system_class_time (runner::Runner&, objects_type)
   {
-    return new Float(::urbiserver->getTime() / 1000.0);
+    return Float::fresh(::urbiserver->getTime() / 1000.0);
   }
 
   static rObject
@@ -107,8 +107,8 @@ namespace object
     UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
     {
-      return new String(libport::Symbol(
-			  s.find_file(arg1->value_get ().name_get ())));
+      return String::fresh(libport::Symbol(
+                             s.find_file(arg1->value_get ().name_get ())));
     }
     catch (libport::file_library::Not_found&)
     {
@@ -147,7 +147,7 @@ namespace object
   system_class_currentRunner (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    rObject res = new object::Object;
+    rObject res = object::Object::fresh();
     res->proto_add (task_class);
     res->slot_set (SYMBOL (runner), box (scheduler::rJob, r.myself_get ()));
     return res;
@@ -157,7 +157,7 @@ namespace object
   system_class_fresh (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return new String(libport::Symbol::fresh());
+    return String::fresh(libport::Symbol::fresh());
   }
 
   static rObject

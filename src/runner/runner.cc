@@ -225,7 +225,7 @@ namespace runner
     rObject context = func->slot_get (SYMBOL(context));
 
     // Create a new object to store the arguments.
-    rObject bound_args = new object::Object;
+    rObject bound_args = object::Object::fresh();
     bound_args->locals_set(true);
 
     // If self has been set explicitely, use it. Otherwise, use the
@@ -406,7 +406,7 @@ namespace runner
     res->slot_set (SYMBOL(target), tgt);
 
     // Set the name of the message call.
-    res->slot_set (SYMBOL(message), new object::String(msg));
+    res->slot_set (SYMBOL(message), object::String::fresh(msg));
 
     // Set the args to be the unevaluated expressions, including the target.
     // We use an Alien here.
@@ -482,7 +482,7 @@ namespace runner
   Runner::operator() (const ast::Function& e)
   {
     PING ();
-    current_ = new object::Code (*ast::clone(e));
+    current_ = object::Code::fresh(*ast::clone(e));
   }
 
 
@@ -524,7 +524,7 @@ namespace runner
       operator() (**i);
       values.push_back(current_);
     }
-    current_ = new object::List (values);
+    current_ = object::List::fresh(values);
     ECHO ("result: " << *current_);
   }
 
@@ -687,7 +687,7 @@ namespace runner
     // implement lexical scoping.
     rObject locals;
     rObject target;
-    locals = new object::Object;
+    locals = object::Object::fresh();
     locals->locals_set(true);
     // FIXME: is this the correct order? depends on getSlot algorithm.
     locals->proto_add (locals_);
@@ -898,7 +898,7 @@ namespace runner
     foreach (rObject o, VALUE(l, object::List))
     {
       // Define a new local scope for each loop, and set the index.
-      rObject locals = new object::Object;
+      rObject locals = object::Object::fresh();
       locals->locals_set(true);
       locals->proto_add(locals_);
       locals->slot_set(e.index_get(), o);

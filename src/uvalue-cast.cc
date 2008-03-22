@@ -49,15 +49,15 @@ object::rObject object_cast(const urbi::UValue& v)
   object::rObject res;
   switch(v.type)
   {
-  case urbi::DATA_DOUBLE:
-      return new object::Float(v.val);
+    case urbi::DATA_DOUBLE:
+      return object::Float::fresh(v.val);
       break;
     case urbi::DATA_STRING:
-      return new object::String(libport::Symbol(*v.stringValue));
+      return object::String::fresh(libport::Symbol(*v.stringValue));
       break;
     case urbi::DATA_LIST:
-      res = new object::List(object::list_traits::type());
-      BOOST_FOREACH(urbi::UValue *cv, v.list->array)
+      res = object::List::fresh(object::list_traits::type());
+      foreach (urbi::UValue *cv, v.list->array)
 	res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
     default:

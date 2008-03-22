@@ -21,9 +21,9 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
     if (args[0] == integer_class)
-      return new String(SYMBOL(LT_Integer_GT));
-    return new String(libport::Symbol(boost::lexical_cast<std::string>
-                     (VALUE(args[0], Integer))));
+      return String::fresh(SYMBOL(LT_Integer_GT));
+    return String::fresh(libport::Symbol(boost::lexical_cast<std::string>
+		      (VALUE(args[0], Integer))));
   }
 
   void

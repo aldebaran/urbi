@@ -34,7 +34,7 @@ namespace object
       return new String(SYMBOL(LT_Code_GT));
     std::stringstream ss;
     ss << VALUE(args[0], Code);
-    return new String(libport::Symbol(ss.str()));
+    return String::fresh(libport::Symbol(ss.str()));
   }
 
   void

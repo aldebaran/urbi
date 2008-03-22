@@ -63,7 +63,7 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
     blocked_ (false),
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
-    lobby_ (new object::Lobby (object::State(*this))),
+    lobby_ (object::Lobby::fresh(object::State(*this))),
     parser_ (new UParser ()),
     active_command_ (new ast::Nary()),
     server_ (userver)

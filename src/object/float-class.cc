@@ -122,12 +122,12 @@ abs(libport::ufloat v)
   {
     CHECK_ARG_COUNT(1);
     if (args[0] == float_class)
-      return new String(SYMBOL(LT_Float_GT));
+      return String::fresh(SYMBOL(LT_Float_GT));
     // FIXME: Get rid of this cast by setting the precision for
     // streams to the same as used by lexical_cast (which is one more
     // than the default value, and this results in different output bw
     // 1.x and 2.x, a useless nuisance in the test suite.
-    return new String(libport::Symbol(string_cast
+    return String::fresh(libport::Symbol(string_cast
 				      (float (VALUE(args[0], Float)))));
   }
 
@@ -162,11 +162,11 @@ abs(libport::ufloat v)
       throw WrongArgumentCount(2, args.size (), __PRETTY_FUNCTION__);
     FETCH_ARG(0, Float);
     if (args.size() == 1)
-      return new Float(- arg0->value_get());
+      return Float::fresh(- arg0->value_get());
     else
     {
       FETCH_ARG(1, Float);
-      return new Float(arg0->value_get() - arg1->value_get());
+      return Float::fresh(arg0->value_get() - arg1->value_get());
     }
   }
 
@@ -184,7 +184,7 @@ abs(libport::ufloat v)
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Float);                                        \
     Pre;                                                        \
-    return new Float(Name(arg0->value_get()));                  \
+    return Float::fresh(Name(arg0->value_get()));               \
   }
 
   /// Define a primitive for float numbers.

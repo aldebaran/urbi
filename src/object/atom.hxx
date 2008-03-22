@@ -26,6 +26,7 @@
 # include "object/list-class.hh"
 # include "object/object-class.hh"
 # include "object/primitive-class.hh"
+# include "object/scope-class.hh"
 # include "object/string-class.hh"
 # include "object/tag-class.hh"
 # include "object/task-class.hh"
@@ -41,7 +42,26 @@ operator<< (std::ostream& o, const UConnection& c)
 
 namespace object
 {
+  template <typename Traits>
+  inline
+  typename Atom<Traits>::shared_type
+  Atom<Traits>::fresh (const typename Traits::type v, bool add_proto)
+  {
+    shared_type res = new Atom<Traits>(v, add_proto);
+    res->self_ = res;
+    return res;
+  }
 
+  template <typename Traits>
+  inline
+  typename Atom<Traits>::shared_type
+  Atom<Traits>::self() const
+  {
+    rObject res = super_type::self();
+    return res.unsafe_cast<Atom<Traits> >();
+  }
+
+  // Protected. Use the static fresh method instead.
   template <typename Traits>
   inline
   Atom<Traits>::Atom (const typename Traits::type v, bool add_proto)
@@ -210,7 +230,7 @@ namespace object
   inline rObject
   Atom<Traits>::do_clone (rObject self) const
   {
-    Atom<Traits>* res = new Atom<Traits> (value_get (), false);
+    rObject res = Atom<Traits>::fresh(value_get (), false);
     res->proto_add (self);
     return res;
   }
@@ -223,7 +243,7 @@ namespace object
   typename Atom<Traits>::shared_type
   clone (typename Atom<Traits>::shared_type ref)
   {
-    typename Atom<Traits>::shared_type res = new Atom<Traits>;
+    typename Atom<Traits>::shared_type res = Atom<Traits>::fresh();
     res->proto_add (ref);
     return res;
   }

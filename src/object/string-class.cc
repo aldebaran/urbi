@@ -30,9 +30,9 @@ namespace object
     rFloat						\
     Name (rString& a, rString& b)			\
     {							\
-      return new Float (a->value_get ().name_get()	\
-			Op				\
-			b->value_get ().name_get());	\
+      return Float::fresh(a->value_get ().name_get()    \
+                          Op				\
+                          b->value_get ().name_get());	\
     }
 
     PRIMITIVE_OP_STRING(EQ_EQ, ==);
@@ -44,7 +44,7 @@ namespace object
     static rFloat
     size (rString& s)
     {
-      return new Float (s->value_get ().name_get ().size ());
+      return Float::fresh(s->value_get ().name_get ().size ());
     }
 
 /*-------------------------------------------------------------------.
@@ -74,7 +74,7 @@ namespace object
 	rString arg1 = as.unsafe_cast<String> ();
 	str1 = arg1->value_get ().name_get ();
       }
-      return new String (libport::Symbol (str0 + str1));
+      return String::fresh(libport::Symbol (str0 + str1));
     }
 
     static rObject
@@ -91,7 +91,7 @@ namespace object
 			      + string_cast(libport::escape(VALUE(args[0], String).name_get()))
 			      + '"');
       }
-      return new String(res);
+      return String::fresh(res);
     }
 
     /// Clone.
@@ -124,8 +124,8 @@ namespace object
 				VALUE(args[1], String).name_get().c_str());
       list_traits::type ret;
       foreach(std::string i, tok)
-	ret.push_back(new String(libport::Symbol(i)));
-      return new List(ret);
+	ret.push_back(String::fresh(libport::Symbol(i)));
+      return List::fresh(ret);
     }
 
     static rObject
@@ -133,7 +133,7 @@ namespace object
     {
       CHECK_ARG_COUNT (1);
       FETCH_ARG (0, String);
-      return new String (libport::Symbol::fresh (arg0->value_get ()));
+      return String::fresh(libport::Symbol::fresh (arg0->value_get ()));
     }
   }
 

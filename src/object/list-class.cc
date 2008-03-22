@@ -49,7 +49,7 @@ namespace object
     {
       // Copy lhs
       list_traits::type l(lhs->value_get());
-      rList res = new List(l);
+      rList res = List::fresh(l);
 
       // Append rhs
       PLUS_EQ(res, rhs);
@@ -85,7 +85,7 @@ namespace object
       CHECK_NON_EMPTY;
       List::value_type res = ul;
       res.pop_front();
-      return new List(res);
+      return List::fresh(res);
     }
 
     /// Insert \a elt at the end of \a l
@@ -131,14 +131,14 @@ namespace object
     {
       List::value_type res (l->value_get());
       res.sort (compareListItems);
-      return new List (res);
+      return List::fresh(res);
     }
 
     /// Its size.
     static rFloat
     size (rList l)
     {
-      return new Float (l->value_get().size());
+      return Float::fresh(l->value_get().size());
     }
 
   }

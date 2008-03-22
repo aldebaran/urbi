@@ -77,9 +77,9 @@ rObject uobject_make_proto(const std::string& name)
 {
   rObject oc = object::clone(object::object_class);
   oc->slot_set(SYMBOL(__uobject_cname),
-	       new object::String(libport::Symbol(name)));
+	       object::String::fresh(libport::Symbol(name)));
   oc->slot_set(SYMBOL(__uobject_base), oc);
-  oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
+  oc->slot_set(SYMBOL(clone), object::Primitive::fresh(&uobject_clone));
   return oc;
 }
 
@@ -145,7 +145,7 @@ namespace urbi
       rObject me = get_base(objname);
       std::cerr << "binding " << objname << "." << method << std::endl;
       me->slot_set(libport::Symbol(method),
-		   new object::Delegate(new UWrapCallback(this)));
+		   object::Delegate::fresh(new UWrapCallback(this)));
     }
   }
 

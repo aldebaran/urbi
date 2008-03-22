@@ -738,12 +738,12 @@ ast::Object*
 new_k1_bin(const yy::location& loc,
 	   const char* keywords, const std::string& data)
 {
-  object::Object* o = new object::Object;
+  object::rObject o = object::Object::fresh();
   o->proto_add(object::protos_class->slot_get(SYMBOL(Binary)));
   o->slot_set(SYMBOL(keywords),
-	      new object::String(libport::Symbol(keywords)));
+	      object::String::fresh(libport::Symbol(keywords)));
   o->slot_set(SYMBOL(data),
-	      new object::String(libport::Symbol(data)));
+	      object::String::fresh(libport::Symbol(data)));
   return new ast::Object (loc, o);
 }
 

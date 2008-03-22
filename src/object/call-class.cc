@@ -86,7 +86,7 @@ namespace object
     const ast::Exp& exp = arg_at (args[0],
 				  arg1->value_get (),
 				  SYMBOL (argString));
-    return new String (libport::Symbol (boost::lexical_cast<std::string>(exp)));
+    return String::fresh(libport::Symbol (boost::lexical_cast<std::string>(exp)));
   }
 
   static rObject
@@ -103,14 +103,14 @@ namespace object
       if (not_first++)
 	res.push_back (r.eval_in_scope (scope, *e));
 
-    return new List (res);
+    return List::fresh(res);
   }
 
   static rObject
   call_class_argsCount (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return new Float (args_get (args[0]) .size ());
+    return Float::fresh(args_get (args[0]) .size ());
   }
 
   void

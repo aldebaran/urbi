@@ -11,7 +11,9 @@
 # include <list>
 
 # include "libport/hash.hh"
+# include "libport/shared-ptr.hh"
 # include "libport/symbol.hh"
+# include "libport/weak-ptr.hh"
 # include "object/fwd.hh"
 # include "runner/fwd.hh"
 
@@ -24,8 +26,11 @@ namespace object
     /// \name Ctor & dtor.
     /// \{
   public:
-    /// Construct a Object.
-    Object ();
+    /// Create a new object.
+    static rObject fresh();
+
+    /// Get a smart pointer to this
+    rObject self() const;
 
     /// Destroy a Object.
     virtual ~Object ();
@@ -141,6 +146,12 @@ namespace object
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;
 
+  protected:
+    /// Protected constructor to force proper self_ initialization.
+    Object ();
+    /// Weak pointer to be able to retrieve smart pointer to this
+    libport::weak_ptr<Object> self_;
+
   private:
     typedef std::pair<bool, rObject> locate_type;
     /// Lookup field in object hierarchy.
@@ -209,6 +220,7 @@ namespace object
 
   /// Checks in \b c's proto hierarchy if \b p is present.
   bool is_a(const rObject& c, const rObject& p);
+
 } // namespace object
 
 /// Return the value of the shared_ptr \a Obj as an Atom<Type>.

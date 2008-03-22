@@ -30,6 +30,22 @@ namespace object
   }
 
   inline
+  rObject Object::fresh ()
+  {
+    rObject res = new Object();
+    res->self_ = res;
+    return res;
+  }
+
+  inline
+  rObject Object::self() const
+  {
+    rObject res;
+    res = self_.lock();
+    return res;
+  }
+
+  inline
   Object::~Object ()
   {}
 
@@ -151,7 +167,7 @@ namespace object
   inline rObject
   Object::do_clone (rObject self) const
   {
-    rObject res = new Object;
+    rObject res = Object::fresh();
     res->proto_add (self);
     return res;
   }

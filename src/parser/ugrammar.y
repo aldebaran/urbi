@@ -113,7 +113,7 @@
     ast::Object*
     ast_object (const loc& l, ufloat val)
     {
-      return new ast::Object(l, new object::Float(val));
+      return new ast::Object(l, object::Float::fresh(val));
     }
 
     /// Create an AST node storing a symbol.
@@ -121,7 +121,7 @@
     ast::Object*
     ast_object (const loc& l, const libport::Symbol& val)
     {
-      return new ast::Object(l, new object::String(val));
+      return new ast::Object(l, object::String::fresh(val));
     }
 
     /// Create an AST node storing a string.

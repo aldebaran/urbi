@@ -75,7 +75,7 @@ namespace object
 
 #define CLASS_INIT(What, Name)					\
     What ## _class->slot_set(SYMBOL(protoName),			\
-			     new String (SYMBOL(Name)));	\
+			     String::fresh(SYMBOL(Name)));          \
     What ## _class_initialize ();				\
     protos_class->slot_set(symbol_ ## Name, What ## _class);
 
@@ -84,7 +84,7 @@ namespace object
     CLASS_INIT(What, Name)
 
     // Object is a special case: it is not built as a clone of itself.
-    object_class = new Object;
+    object_class = Object::fresh();
     // The other primitives.  Because primitive initialization depend
     // a lot on one another (e.g., String is used everywhere for slot
     // names, and Primitive is used for... all the primitive methods

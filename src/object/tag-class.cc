@@ -61,7 +61,7 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
 
-    return new String (extract_tag (args[0])->name_get ());
+    return String::fresh(extract_tag (args[0])->name_get ());
   }
 
 #define TAG_ACTION(Action, Yield)				\

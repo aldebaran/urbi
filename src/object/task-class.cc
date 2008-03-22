@@ -27,7 +27,7 @@ namespace object
     CHECK_ARG_COUNT_RANGE (2, 3);
     FETCH_ARG (1, Code);
 
-    rList locals = new List (std::list<rObject> ());
+    rList locals = List::fresh(std::list<rObject> ());
     ast::Exp *body = arg1->value_get ().body_get ();
     runner::Runner* new_runner =
       new runner::Runner (r.lobby_get(),
