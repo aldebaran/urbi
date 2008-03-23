@@ -283,6 +283,8 @@ namespace runner
     {
       object::PrimitiveError error("break", "outside a loop");
       show_error_(error, be.location_get());
+      std::swap(bound_args, locals_);
+      throw error;
     }
     catch (ast::ReturnException& re)
     {
