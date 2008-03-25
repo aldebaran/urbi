@@ -173,21 +173,9 @@ do Object
     detach ({
       var t = currentRunner;
       loop {
-        t.setSideEffectFree (true);
-        loop {
-          if (call.evalArgAt (1))
-            break;
-          t.waitForChanges
-        };
-        t.setSideEffectFree (false);
+        waituntil (call.evalArgAt (1));
         detach (call.evalArgAt (2));
-        t.setSideEffectFree (true);
-        loop {
-          if (!call.evalArgAt (1))
-            break;
-          t.waitForChanges
-        };
-        t.setSideEffectFree (false);
+        waituntil (!call.evalArgAt (1));
         detach (call.evalArgAt (3))
       }
     })
@@ -200,13 +188,7 @@ do Object
     detach ({
       var t = currentRunner;
       loop {
-        t.setSideEffectFree (true);
-        loop {
-          if (call.evalArgAt (1))
-            break;
-          t.waitForChanges
-        };
-        t.setSideEffectFree (false);
+        waituntil (call.evalArgAt (1));
         loop {
           call.evalArgAt (2);
           if (!call.evalArgAt (1))
