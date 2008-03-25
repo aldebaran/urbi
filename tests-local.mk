@@ -49,7 +49,6 @@ XFAIL_TESTS +=					\
 1.x/modifier-time-adaptive.chk			\
 1.x/modifier-time.chk				\
 1.x/modifier-syntax.chk				\
-1.x/multiinheritance.chk			\
 1.x/nameresolution-array.chk			\
 1.x/nameresolution-dollar-computed.chk		\
 1.x/nameresolution-dollars.chk			\
