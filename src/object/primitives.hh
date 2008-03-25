@@ -57,9 +57,9 @@ namespace object
 check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
 
 /**
- * Define a primitive for class Class named name, which takes one
- * argument of type Type1, returns type Ret and whose result is \a Name
- * applied to all arguments.
+ * Define a primitive for class \a Class named \a Name, which takes
+ * one argument of type \a Type1, returns type \a Ret and whose result
+ * is \a Name applied to all arguments.
  */
 #define PRIMITIVE_1_(Class, Name, Ret, Type1, Get)              \
   static rObject						\

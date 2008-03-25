@@ -20,7 +20,7 @@ class Protos.Kernel1Functions
   };
 
   function size(l)
-  { 
+  {
     warn("`size(list)' is deprecated, use `list.size'");
     l.size
   };
@@ -65,10 +65,10 @@ class Protos.DeprecatedCommands
 {
   var deprecated_ = function () { echo("`" + name + "' is deprecated." ) };
 
-  function deprecate(f)
+  function deprecate(slotName)
   {
-    setSlot(f, getSlot("deprecated_").clone());
-    getSlot(f).capture("name", f);
+    self.setSlot(slotName, getSlot("deprecated_").clone());
+    self.getSlot(slotName).capture("name", slotName);
   };
 
   for i in

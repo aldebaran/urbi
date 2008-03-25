@@ -89,17 +89,6 @@ namespace runner
     return current_;
   }
 
-  inline
-  Runner::rObject
-  Runner::target (const ast::Exp* n)
-  {
-    // If there is no target, look in the local variables.
-    if (n)
-      return eval (*n);
-    else
-      return locals_;
-  }
-
 } // namespace runner
 
 #endif // !RUNNER_RUNNER_HXX

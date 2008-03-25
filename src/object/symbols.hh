@@ -45,6 +45,7 @@
   Macro(LT_Float_GT, "<Float>");                  \
   Macro(LT_Integer_GT, "<Integer>");              \
   Macro(LT_LT, "<<");                             \
+  Macro(LT_Scope_GT, "<Scope>");                  \
   Macro(LT_String_GT, "<String>");                \
   Macro(List, "List");                            \
   Macro(Lobby, "Lobby");                          \
@@ -67,6 +68,7 @@
   Macro(STAR, "*");                               \
   Macro(STAR_EQ, "*=");                           \
   Macro(STAR_STAR, "**");                         \
+  Macro(Scope, "Scope");                          \
   Macro(String, "String");                        \
   Macro(Sym, "Sym");                              \
   Macro(System, "System");                        \
@@ -122,6 +124,7 @@
   Macro(keywords, "keywords");                    \
   Macro(loadFile, "loadFile");                    \
   Macro(lobby, "lobby");                          \
+  Macro(locals, "locals");                        \
   Macro(locateSlot, "locateSlot");                \
   Macro(log, "log");                              \
   Macro(makeScope, "makeScope");                  \

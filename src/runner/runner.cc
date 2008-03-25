@@ -9,6 +9,8 @@
 #include <deque>
 #include <sstream>
 
+#include <boost/bind.hpp>
+
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
 
@@ -18,9 +20,10 @@
 #include "ast/clone.hh"
 #include "object/alien.hh"
 #include "object/atom.hh"
-#include "object/urbi-exception.hh"
 #include "object/idelegate.hh"
+#include "object/object.hh"
 #include "object/symbols.hh"
+#include "object/urbi-exception.hh"
 #include "runner/runner.hh"
 
 namespace runner
@@ -219,27 +222,18 @@ namespace runner
     // The called function.
     ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
     // There is a call message iff the function is not strict.
-    assert((call_message != 0) xor fn.strict());
+    assertion((call_message != 0) ^ fn.strict());
 
     // Context in which to evaluate the function, which may be nil.
     rObject context = func->slot_get (SYMBOL(context));
 
-    // Create a new object to store the arguments.
-    rObject bound_args = object::Object::fresh();
-    bound_args->locals_set(true);
+    // Create the function's local scope
+    rObject scope = object::Object::make_scope(*this);
 
-    // If self has been set explicitely, use it. Otherwise, use the
-    // one provided by the caller.
-    rObject self = func->own_slot_get (SYMBOL (self), args.front());
-    bound_args->slot_set (SYMBOL (self), self);
-
-    // self is also the proto of the function outer scope, so that
-    // we look for non-local identifiers in the target itself.
-    bound_args->proto_add (self);
-
-    // Add the context if provided. It will take precedence over self.
     if (context != object::nil_class)
-      bound_args->proto_add (context);
+      scope->proto_add(context);
+    else
+      scope->slot_set(SYMBOL (self), args.front());
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
@@ -251,19 +245,19 @@ namespace runner
       // Skip "self" which has already been handled.
       object::objects_type::const_iterator ei = ++args.begin();
       foreach (libport::Symbol* s, formals)
-	bound_args->slot_set (*s, *ei++);
+	scope->slot_set (*s, *ei++);
     }
     else
     {
-      bound_args->slot_set (SYMBOL(call), call_message);
+      scope->slot_set (SYMBOL(call), call_message);
     }
 
-    ECHO("bound args: " << *bound_args);
+    ECHO("bound args: " << *scope);
 
     // Change the current context and call. But before, check that we
     // are not exhausting the stack space, for example in an infinite
     // recursion.
-    std::swap(bound_args, locals_);
+    std::swap(scope, locals_);
     check_stack_space ();
 
     try
@@ -283,7 +277,7 @@ namespace runner
     {
       object::PrimitiveError error("break", "outside a loop");
       show_error_(error, be.location_get());
-      std::swap(bound_args, locals_);
+      std::swap(scope, locals_);
       throw error;
     }
     catch (ast::ReturnException& re)
@@ -292,7 +286,7 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
-    PROPAGATE_EXCEPTION(fn.location_get(), std::swap(bound_args, locals_);)
+    PROPAGATE_EXCEPTION(fn.location_get(), std::swap(scope, locals_);)
 
     return current_;
   }
@@ -418,17 +412,54 @@ namespace runner
     return res;
   }
 
+  namespace
+  {
+    static boost::optional<Runner::rObject>
+    targetLookup(Runner::rObject obj,
+                 const object::Object::key_type& slotName)
+    {
+      if (obj->own_slot_get(slotName, 0))
+        return boost::optional<Runner::rObject>(Runner::rObject());
+      if (Runner::rObject self = obj->own_slot_get(SYMBOL(self), Runner::rObject()))
+        if (self->slot_locate(slotName))
+          return self;
+      return boost::optional<Runner::rObject>();
+    }
+  }
+
+  inline
+  Runner::rObject
+  Runner::target (const ast::Exp* n, const libport::Symbol& name)
+  {
+    // If there is no target, lookup in the local variables.
+    if (n)
+      return eval (*n);
+    else
+    {
+      boost::function1<boost::optional<rObject>, rObject> lookup =
+        boost::bind(targetLookup, _1, name);
+      boost::optional<Runner::rObject> res = locals_->lookup(lookup);
+      if (!res)
+        throw object::LookupError(name);
+      if (!res.get())
+        return locals_;
+      return res.get();
+    }
+  }
+
   void
   Runner::operator() (const ast::Call& e)
   {
     PING ();
 
-    const rObject tgt = target(e.args_get ().front ());
+    rObject tgt;
+    try
+    {
+      tgt = target(e.args_get().front(), e.name_get());
+    }
+    PROPAGATE_EXCEPTION(e.location_get(), {};)
+    assertion(tgt);
 
-    // No target?  Abort the call.  This can happen (for instance) when you
-    // do a.b () and a does not exist (lookup error).
-    if (!tgt)
-      return;
 
     /*---------------------.
     | Decode the message.  |
@@ -444,7 +475,7 @@ namespace runner
       val = tgt->slot_get (e.name_get ());
     }
     PROPAGATE_EXCEPTION(e.location_get(), {};)
-    assert(val);
+    assertion(val);
 
 
     /*-------------------------.
@@ -687,23 +718,17 @@ namespace runner
     // implement lexical scoping.
     rObject locals;
     rObject target;
-    locals = object::Object::fresh();
-    locals->locals_set(true);
-    // FIXME: is this the correct order? depends on getSlot algorithm.
-    locals->proto_add (locals_);
+
+    locals = object::Object::make_scope(*this, locals_);
+
     if (e.target_get())
     {
       target = eval(*e.target_get());
-      // Be safe, do not inherit from VisibilityScope but copy the slots.
-      rObject vscope =
-	object::object_class->slot_get(SYMBOL(VisibilityScope));
-      locals->slot_set(SYMBOL(setSlot),
-		       vscope->slot_get(SYMBOL(setSlot)));
-      locals->slot_set(SYMBOL(updateSlot),
-		       vscope->slot_get(SYMBOL(updateSlot)));
       locals->slot_set(SYMBOL(self), target);
-      locals->slot_set(SYMBOL(__target), target);
-      locals->proto_add(target);
+      // FIXME
+      locals->slot_remove(SYMBOL(updateSlot));
+      locals->slot_remove(SYMBOL(setSlot));
+      locals->slot_remove(SYMBOL(removeSlot));
     }
 
     std::swap(locals, locals_);
@@ -944,3 +969,4 @@ namespace runner
   }
 
 } // namespace runner
+

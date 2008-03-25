@@ -255,7 +255,7 @@ namespace object
     CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
 
-    rObject o = slot_locate(args[0], arg1->value_get());
+    rObject o = args[0]->slot_locate(arg1->value_get());
     return o ? o : nil_class;
   }
 

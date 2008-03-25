@@ -5,6 +5,7 @@
 
 #include <algorithm>
 
+#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
 
@@ -60,65 +61,97 @@ namespace object
     pabort("unreachable");
   }
 
+  /*---------.
+  | Scopes.  |
+  `---------*/
+
+  // FIXME: implement in urbi too
+  rObject Object::make_scope(const runner::Runner& runner, const rObject& parent)
+  {
+    rObject res = object::Object::fresh();
+    res->locals_set(true);
+    if (parent)
+      res->proto_add(parent);
+    else
+      res->proto_add(runner.lobby_get());
+    // Mind the order!
+    res->proto_add(object::scope_class);
+    res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
+    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
+    res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
+    res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
+    return res;
+  }
+
   /*--------.
   | Slots.  |
   `--------*/
 
-  Object::locate_type
-  Object::slot_locate (const key_type& k, Object::objects_set_type& os) const
+  template <typename R>
+  boost::optional<R>
+  Object::lookup(boost::function1<boost::optional<R>,
+                                  rObject> action,
+                 objects_set_type& marks) const
   {
-    /// Look in local slots.
-    if (libport::mhas(slots_, k))
-      return locate_type(true, rObject());
-
-    /// Break recursive loops.
-    if (libport::mhas(os, this))
-      return locate_type(false, rObject());
-    os.insert (this);
-
-    /// Look in proto slots (depth first search).
-    locate_type res;
-    foreach(rObject p, protos_)
-      if ((res = p->slot_locate(k, os)).first)
-	return res.second?res:locate_type(true, p);
-    return locate_type(false, rObject());
+    if (!libport::has(marks, this))
+    {
+      marks.insert(this);
+      assertion(self());
+      if (boost::optional<R> res = action(self()))
+        return res;
+      foreach (const rObject& proto, protos_get())
+        if (boost::optional<R> res = proto->lookup(action, marks))
+          return res;
+    }
+    return boost::optional<R>();
   }
 
-  rObject slot_locate(const rObject& ref, const Object::key_type& k)
+  template <typename R>
+  boost::optional<R>
+  Object::lookup(boost::function1<boost::optional<R>,
+                                  rObject> action) const
   {
-    Object::objects_set_type os;
-    Object::locate_type l = ref->slot_locate(k, os);
-    if (l.first)
-      return l.second? l.second:ref;
-    else
-      return rObject();
+    objects_set_type marks;
+    return lookup(action, marks);
   }
 
-  Object*
-  Object::slot_locate(const key_type& k) const
+  namespace
   {
-    objects_set_type os;
-    Object::locate_type l = slot_locate(k, os);
-    if (l.first)
-      return const_cast<Object*>(l.second?l.second.get():this);
+    static boost::optional<rObject>
+    slot_lookup(rObject obj, const Object::key_type& k)
+    {
+      assertion(obj);
+      if (obj->own_slot_get(k, 0))
+        return obj;
+      return boost::optional<rObject>();
+    }
+  }
+
+  rObject Object::slot_locate(const Object::key_type& k) const
+  {
+    boost::function1<boost::optional<rObject>, rObject> action =
+      boost::bind(slot_lookup, _1, k);
+    boost::optional<rObject> res = lookup(action);
+    if (res)
+      return res.get();
     else
       return 0;
   }
 
-  Object&
+  rObject
   Object::safe_slot_locate(const key_type& k) const
   {
-    Object* r = slot_locate(k);
+    rObject r = slot_locate(k);
     if (!r)
       throw LookupError(k);
-    return *r;
+    return r;
   }
 
   const rObject&
   Object::slot_get (const key_type& k) const
   {
-    Object& cont = safe_slot_locate(k);
-    return cont.own_slot_get(k);
+    rObject cont = safe_slot_locate(k);
+    return cont->own_slot_get(k);
   }
 
   rObject&
@@ -143,22 +176,28 @@ namespace object
 	       const Object::key_type& k,
 	       rObject o)
   {
-    Object& l = context->safe_slot_locate(k);
+    // The owner of the updated slot
+    rObject owner = context->safe_slot_locate(k);
 
-    if (context->locals_ && l.locals_)  // Local scope writes local var: no copyonwrite.
-      l.own_slot_get(k) = o;
-    else if (context->locals_ && !l.locals_)
+    // We have to determine where the new value must be stored,
+    // depending on whether the slot owner and the context are scopes.
+
+    // If both are scopes, update the original scope.
+    if (context->locals_ && owner->locals_get())
+      owner->own_slot_get(k) = o;
+    else if (context->locals_ && !owner->locals_get())
     {
       // Local->class: copyonwrite to "self" after evaluating it.
       rObject self_obj = context->slot_get(SYMBOL(self));
-      assert (self_obj);
+      assertion(self_obj);
       objects_type self_args;
       self_args.push_back (context);
       rObject self = r.apply (self_obj, self_args);
-      assert(self);
-      self.get ()->slots_[k] = o;
+      assertion(self);
+      self->slot_set(k, o);
     }
-    else // Class->class: copy on write.
+    // If the context isn't a scope, copy on write.
+    else
       context->slots_[k] = o;
   };
 

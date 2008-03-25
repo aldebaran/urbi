@@ -46,6 +46,8 @@ object/primitives.cc				\
 object/primitives.hh				\
 object/state.cc					\
 object/state.hh					\
+object/scope-class.cc				\
+object/scope-class.hh				\
 object/string-class.cc				\
 object/string-class.hh				\
 object/symbols.cc				\

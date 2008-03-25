@@ -10,6 +10,9 @@
 # include <set>
 # include <list>
 
+# include <boost/function.hpp>
+# include <boost/optional.hpp>
+
 # include "libport/hash.hh"
 # include "libport/shared-ptr.hh"
 # include "libport/symbol.hh"
@@ -87,11 +90,24 @@ namespace object
     typedef std::pair<const key_type, rObject> slot_type;
     typedef std::set<const Object*> objects_set_type;
 
-    /// Locate the object containing a slot in hierarchy.
-    /// \return A pointer to the object having the slot k, or 0.
-    Object* slot_locate(const key_type& k) const;
-    /// Call slot_locate, throw a LookupError if not found.
-    Object& safe_slot_locate(const key_type& k) const;
+    template <typename R>
+    boost::optional<R>
+    lookup(boost::function1<boost::optional<R>,
+                            rObject> action) const;
+
+    template <typename R>
+    boost::optional<R>
+    lookup(boost::function1<boost::optional<R>,
+                            rObject> action,
+           objects_set_type& marks) const;
+
+    /// Lookup field in object hierarchy.
+    /// \return the Object containing slot \b k, or 0 if not found.
+    rObject slot_locate (const Object::key_type& k) const;
+
+    rObject safe_slot_locate (const Object::key_type& k) const;
+
+
     /// Lookup field in object hierarchy.
     const rObject& slot_get (const key_type& k) const;
     rObject& slot_get (const key_type& k);
@@ -146,6 +162,15 @@ namespace object
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;
 
+    /// Create a fresh scope
+    /**
+     ** \param runner The current runner
+     ** \param parent The parent scope (optional, in which case lobby
+     **               becomes the parent)
+     ** \return The new scope
+     */
+    static rObject make_scope(const runner::Runner& runner, const rObject& parent = 0);
+
   protected:
     /// Protected constructor to force proper self_ initialization.
     Object ();
@@ -162,6 +187,7 @@ namespace object
     ///          (true, ptr) if k is in ptr.
     locate_type slot_locate (const key_type& k, objects_set_type& os) const;
 
+  private:
     /// The protos.
     protos_type protos_;
     /// The slots.
@@ -169,7 +195,6 @@ namespace object
     /// Whether is a locals object.
     bool locals_;
 
-    friend rObject slot_locate(const rObject& ref, const Object::key_type& k);
     friend void slot_update(runner::Runner& r,
 			    rObject& ref,
 			    const Object::key_type& k,
@@ -192,10 +217,6 @@ namespace object
   // Not a member function because we want the shared_ptr, which
   // is not available via this.
   rObject clone (rObject proto);
-
-  /// Lookup field in object hierarchy.
-  /// \return the Object containing slot \b k, or 0 if not found.
-  rObject slot_locate (const rObject& ref, const Object::key_type& k);
 
   /// If the target is a "real" object, then updating means the same
   /// as slot_set: one never updates a proto.  If the target is a

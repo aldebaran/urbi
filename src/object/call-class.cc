@@ -46,7 +46,8 @@ namespace object
     const ast::exps_type& func_args = args_get (f);
 
     int n;
-    try {
+    try
+    {
       n = libport::ufloat_to_int (arg_n);
     }
     catch (libport::bad_numeric_cast& e)
@@ -60,6 +61,7 @@ namespace object
 
     ast::exps_type::const_iterator i = func_args.begin();
     advance (i, n);
+    assertion(*i);
     return **i;
   }
 

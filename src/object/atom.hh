@@ -201,6 +201,17 @@ namespace object
   };
 
 
+  /*--------.
+  | Scope.  |
+  `--------*/
+
+  struct scope_traits
+  {
+    // FIXME: Scope are not really atoms ...
+    typedef int type;
+    enum { kind = Object::kind_scope };
+  };
+
   /*---------.
   | String.  |
   `---------*/

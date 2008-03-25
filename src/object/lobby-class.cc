@@ -18,14 +18,6 @@ namespace object
   | Lobby primitives.  |
   `------------------*/
 
-  // Get the current lobby
-  static rObject
-  lobby_class_self (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    return r.lobby_get ();
-  }
-
   static rObject
   lobby_class_send(runner::Runner&, objects_type args)
   {
@@ -47,7 +39,6 @@ namespace object
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(lobby, Name)
-    DECLARE (self);
     DECLARE (send);
 #undef DECLARE
   }

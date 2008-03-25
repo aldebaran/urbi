@@ -1,30 +1,33 @@
-## ----------------- ##
-## VisibilityScope.  ##
-## ----------------- ##
-
-# Must be before the first 'do' or 'class'
-# Do and class blocks are inheriting from VisibilityScope.
-# VisibilityScope has special setSlot and updateSlot preventing to write to
-# the locals. Only the target can be modified implicitly
-# The slot __target is expected to be set to the target of the block.
-{
-  var Protos.VisibilityScope = Object.clone;
-
-  function VisibilityScope.updateSlot(x, y)
-  {
-    getSlot("__target").updateSlot(x, getSlot("y"));
-  };
-
-  function VisibilityScope.setSlot(x, y)
-  {
-    getSlot("__target").setSlot(x, getSlot("y"));
-  };
-};
-
 # This has to be present before the first function call, otherwise
 # we will have a fatal error when trying to determine the context
 # in which the function will be evaluated.
 var Code.context = nil;
+
+# Must appear before any scope creation
+var Scope.setSlot = Object.getSlot("setSlot");
+var Scope.updateSlot = function (slotName, value)
+{
+  if (self.locateSlot(slotName) === self)
+    Object.getSlot("updateSlot").apply([self, slotName, value])
+  else if (self.getSlot("self").locateSlot(slotName) != nil)
+    Object.getSlot("updateSlot").apply([self.getSlot("self"), slotName, value])
+  else
+    Object.getSlot("updateSlot").apply([self, slotName, value])
+};
+# FIXME: do something clever in removeSlot
+var Scope.removeSlot = Object.getSlot("removeSlot");
+var Scope.locals = function () { self };
+var lobby.locals = function () { lobby };
+var lobby .self = lobby; # FIXME: leak!
+
+## ------- ##
+## Scope.  ##
+## ------- ##
+
+do Scope
+{
+  function init() { self.makeScope (true) };
+};
 
 ## -------- ##
 ## Protos.  ##
@@ -91,10 +94,10 @@ class Protos.Closure
 {
   function makeExplicitClosure (f, context)
   {
-    var nf = getSlot ("f").clone;
-    getSlot ("nf").context = context;
-    var getSlot ("nf").self = context.self;
-    getSlot ("nf");
+    var nf = locals.getSlot("f").clone;
+    locals.getSlot("nf").context = context;
+#    var locals.getSlot("nf").self = context.self;
+    locals.getSlot ("nf");
   };
 
   function makeClosure
@@ -105,22 +108,22 @@ class Protos.Closure
   function makeClosedCode
   {
     var f = function () { call.evalArgAt (1) };
-    makeClosure (getSlot ("f"))
+    makeClosure (locals.getSlot ("f"))
   };
 
   function capture (varname, value)
   {
-    if (getSlot ("self").context.isNil)
-      getSlot ("self").context = new Object;
-    getSlot ("self").context.setSlot (varname, value);
-    getSlot ("self")
+    if (locals.getSlot("self").context.isNil)
+      locals.getSlot ("self").context = new Object;
+    locals.getSlot ("self").context.setSlot (varname, value);
+    locals.getSlot ("self")
   };
 
   function captureVars
   {
     for (var i = 1; i < call.argsCount; i++)
-      getSlot("self").capture (call.argString (i), call.evalArgAt (i));
-    getSlot ("self")
+      locals.getSlot("self").capture (call.argString (i), call.evalArgAt (i));
+    locals.getSlot ("self")
   };
 };
 
@@ -134,7 +137,7 @@ do Object
 {
   function atExit (func)
   {
-    self.getLazyLocalSlot ("atexit", [], true) += [getSlot ("func")]
+    self.getLazyLocalSlot ("atexit", [], true) += [locals.getSlot ("func")]
   };
 };
 
@@ -243,15 +246,6 @@ do Object
   };
 };
 
-## ------- ##
-## Scope.  ##
-## ------- ##
-
-class Protos.Scope
-{
-  function init() { self.makeScope (true) };
-};
-
 ## --------- ##
 ## Constants ##
 ## --------- ##
@@ -347,30 +341,30 @@ do Object
 {
   function isProto ()
   {
-    getSlot("self").locateSlot("protoName") === getSlot("self")
+    locateSlot("protoName") === locals.getSlot("self")
   };
 
   function type ()
   {
-    if (getSlot("self").isProto)
-      "<" + getSlot("self").protoName + ">"
+    if (isProto)
+      "<" + protoName + ">"
     else
-      getSlot("self").protoName
+      protoName
   };
 
   // Gives type, + uid if relevant
   function id ()
   {
-    var res = getSlot("self").type.clone;
-    if (!getSlot("self").isProto)
-      res += "_" + getSlot("self").uid;
+    var res = type.clone;
+    if (!isProto)
+      res += "_" + uid;
     res
   };
 
   // Destined to be overridden by subclasses.
   function asString ()
   {
-    getSlot("self").id;
+    id
   };
 };
 

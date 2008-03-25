@@ -98,7 +98,12 @@ namespace runner
 
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for Io.
-    rObject target (const ast::Exp* n);
+    rObject target (const ast::Exp* n, const libport::Symbol& name);
+    typedef std::pair<bool, const Runner::rObject> locate_type;
+    locate_type
+    find_target(const Runner::rObject& where,
+                const libport::Symbol& what,
+                object::Object::objects_set_type& marks);
 
     /// Build an evaluated arguments list containing \a tgt and
     /// arguments coming from \a args evaluated in the current context.

@@ -41,6 +41,7 @@ namespace object
   Macro(list,      List)				\
   Macro(lobby,     Lobby)				\
   Macro(primitive, Primitive)				\
+  Macro(scope,     Scope)				\
   Macro(string,    String)				\
   Macro(tag,       Tag)					\
   Macro(task,      Task)
