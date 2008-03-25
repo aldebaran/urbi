@@ -463,6 +463,41 @@ namespace urbi
   }
 
   int
+  initialize(const char* addr, int port, int buflen, bool exitOnDisconnect)
+  {
+     std::cerr << libport::program_name
+	      << ": " << urbi::package_info() << std::endl
+	      << libport::program_name
+	      << ": Remote Component Running on "
+	      << addr << " " << port << std::endl;
+
+    new USyncClient(addr, port, buflen);
+
+#ifdef LIBURBIDEBUG
+    getDefaultClient()->setWildcardCallback(callback (&debug));
+#else
+    getDefaultClient()->setErrorCallback(callback (&debug));
+#endif
+
+    getDefaultClient()->setCallback(&dispatcher,
+				    externalModuleTag.c_str());
+    if (exitOnDisconnect)
+    {
+      if (getDefaultClient()->error())
+	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
+		  << libport::exit(1);
+      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
+    }
+
+    dummyUObject = new UObject (0);
+    for (UStartlist::iterator i = objectlist->begin();
+	 i != objectlist->end();
+	 ++i)
+      (*i)->init((*i)->name);
+    return 0;
+  }
+
+  int
   main(int argc, const char* argv[])
   {
     libport::program_name = argv[0];
@@ -513,35 +548,7 @@ namespace urbi
 	}
     }
 
-    std::cerr << libport::program_name
-	      << ": " << urbi::package_info() << std::endl
-	      << libport::program_name
-	      << ": Remote Component Running on "
-	      << addr << " " << port << std::endl;
-
-    new USyncClient(addr, port, buflen);
-
-#ifdef LIBURBIDEBUG
-    getDefaultClient()->setWildcardCallback(callback (&debug));
-#else
-    getDefaultClient()->setErrorCallback(callback (&debug));
-#endif
-
-    getDefaultClient()->setCallback(&dispatcher,
-				    externalModuleTag.c_str());
-    if (exitOnDisconnect)
-    {
-      if (getDefaultClient()->error())
-	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
-		  << libport::exit(1);
-      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
-    }
-
-    dummyUObject = new UObject (0);
-    for (UStartlist::iterator i = objectlist->begin();
-	 i != objectlist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+   initialize(addr, port, buflen, exitOnDisconnect);
     while (true)
       usleep(30000000);
     return 0;

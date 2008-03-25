@@ -124,6 +124,19 @@ namespace urbi
    */
   int main(int argc, const char *argv[]);
 
+#ifdef URBI_ENV_REMOTE
+  /** Initialisation method, for remote mode only, that returns.
+   * \param host the host to connect to.
+   * \param port the port number to connect to (you can use the constant
+   *             UAbstractClient::URBI_PORT).
+   * \param buflen receive and send buffer size (you can use the constant
+   *               UAbstractClient::URBI_BUFLEN).
+   * \param exitOnDisconnect call exit() if we get disconnected from server.
+   * \return 0 if no error occured.
+   */
+   int initialize(const char* host, int port, int buflen,
+		  bool exitOnDisconnect);
+#endif
   /// an empty dummy UObject used by UVar to set a NotifyChange
   /// This avoid coupling a UVar to a particular object
   extern UObject* dummyUObject;
