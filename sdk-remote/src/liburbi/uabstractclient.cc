@@ -856,6 +856,13 @@ namespace urbi
 
 	if (parsePosition == 0) // parse header
 	{
+	  // Ignore empty lines.
+	  if (endline == recvBuffer)
+	  {
+	    memmove(recvBuffer, recvBuffer+1, recvBufferPosition - 1);
+	    recvBufferPosition--;
+	    continue;
+	  }
 	  int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]",
 			     &currentTimestamp, currentTag);
 	  if (found != 2)
