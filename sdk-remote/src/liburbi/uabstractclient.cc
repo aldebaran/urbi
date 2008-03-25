@@ -850,7 +850,7 @@ namespace urbi
 	// Not in binary mode.
 	char* endline =
 	  static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
-				     recvBufferPosition));
+				     recvBufferPosition - parsePosition));
 	if (!endline)
 	  return; //no new end of command/start of binary: wait
 
