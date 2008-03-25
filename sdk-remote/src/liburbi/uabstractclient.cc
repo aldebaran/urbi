@@ -872,8 +872,8 @@ namespace urbi
 	      currentTag[0] = 0;
 	    else // failure
 	    {
-	      std::cerr << "UAbstractClient::read, fatal error parsing header: "
-			<< recvBuffer << std::endl;
+	      std::cerr << "UAbstractClient::read, error parsing header: '"
+			<< recvBuffer << '\'' << std::endl;
 	      currentTimestamp = 0;
 	      strcpy(currentTag, "UNKNWN");
 	      //listLock.lock();
