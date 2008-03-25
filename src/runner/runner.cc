@@ -289,6 +289,8 @@ namespace runner
     catch (ast::ReturnException& re)
     {
       current_ = re.result_get();
+      if (!current_)
+	current_ = object::void_class;
     }
     PROPAGATE_EXCEPTION(fn.location_get(), std::swap(bound_args, locals_);)
 
