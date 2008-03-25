@@ -52,7 +52,6 @@ XFAIL_TESTS +=					\
 1.x/nameresolution-dollar-computed.chk		\
 1.x/nameresolution-dollars.chk			\
 1.x/nameresolution-objects.chk			\
-1.x/notag.chk					\
 1.x/object-events.chk				\
 1.x/sinus.chk					\
 1.x/speed-zero.chk				\
