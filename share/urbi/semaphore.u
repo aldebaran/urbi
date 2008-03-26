@@ -1,0 +1,28 @@
+class Protos.Semaphore {
+
+   function init (n) {
+     var self.queue = [];
+     var self.count = n
+   };
+
+   function p () {
+     self.count-- |
+     if (self.count >= 0)
+       return |
+     var tag = new Tag ("semaphore") |
+     self.queue.push_back (tag) |
+     tag: tag.freeze
+   };
+
+   function v () {
+     self.count++ |
+     if (self.count > 0)
+       return |
+     var tag = self.queue.front |
+     self.queue.pop_front |
+     tag.unfreeze
+   }
+
+};
+
+Protos.addProto (Protos.Semaphore);

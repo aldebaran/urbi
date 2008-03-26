@@ -484,6 +484,12 @@ class Profiling
 };
 Protos.addProto (Profiling);
 
+## ----------- ##
+## Semaphores. ##
+## ----------- ##
+
+load("urbi/semaphore.u");
+
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##
