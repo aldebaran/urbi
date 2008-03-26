@@ -136,20 +136,21 @@ do Object
 ## -------------------- ##
 
 # Detach takes an expression and evaluates it in background within
-# the caller's context. The task will be stopped when there is no
-# more references onto the returned object.
+# the caller's context.
 do Object
 {
   function detach
   {
     var f = makeClosedCode (call.evalArgAt (1));
-    new Task (getSlot ("f"))
+    new Task (getSlot ("f"));
+    void
   };
 
   function detach_linked
   {
     var f = makeClosedCode (call.evalArgAt (1));
-    new Task (getSlot ("f"), true)
+    new Task (getSlot ("f"), true);
+    void
   };
 
   # every_ takes two arguments, a delay and an expression.
