@@ -87,6 +87,14 @@ namespace object
       return l;
     }
 
+    /// Remove first element from \a l
+    static rList
+    pop_front(rList l)
+    {
+      l->value_get().pop_front();
+      return l;
+    }
+
     /// Clear \l
     static rList
     clear(rList l)
@@ -137,6 +145,7 @@ namespace object
   PRIMITIVE_1_LIST(back);
   PRIMITIVE_1_LIST(clear);
   PRIMITIVE_1_LIST(front);
+  PRIMITIVE_1_LIST(pop_front);
   PRIMITIVE_1_LIST(size);
   PRIMITIVE_1_LIST(sort);
   PRIMITIVE_1_LIST(tail);
@@ -155,6 +164,7 @@ namespace object
     DECLARE(back);
     DECLARE(clear);
     DECLARE(front);
+    DECLARE(pop_front);
     DECLARE(push_back);
     DECLARE(size);
     DECLARE(sort);
