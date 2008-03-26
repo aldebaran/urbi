@@ -537,8 +537,19 @@ namespace runner
 
     ast::exec_exps_type::iterator i;
     current_ = object::void_class;
+    bool first_iteration = true;
     foreach (ast::Exp* i, e.children_get ())
     {
+      // Allow some time to pass before we execute what follows.  If
+      // we don't do this, the ;-operator would act almost like the
+      // |-operator because it would always start to execute its RHS
+      // immediately. However, we don't want to do it before the first
+      // statement or if we only have one statement in the scope.
+      if (first_iteration)
+	first_iteration = false;
+      else
+	YIELD ();
+
       current_.reset ();
       JECHO ("child", i);
 
@@ -576,12 +587,6 @@ namespace runner
 	  current_.reset ();
 	}
       }
-
-      /* Allow some time to pass before we execute what follows.  If
-	 we don't do this, the ;-operator would act almost like the
-	 |-operator because it would always start to execute its RHS
-	 immediately.  */
-      YIELD ();
     }
 
     // If the Nary is not the toplevel one, all subrunners must be finished when
@@ -887,6 +892,8 @@ namespace runner
     // is "&".
     std::list<Runner> runners;
 
+    bool first_iteration = true;
+
     // Iterate on each value.
     foreach (rObject o, VALUE(l, object::List))
     {
@@ -909,7 +916,11 @@ namespace runner
       {
 	std::swap(locals, locals_);
 
-	MAYBE_YIELD(e.flavor_get());
+	if (first_iteration)
+	  first_iteration = false;
+	else
+	  MAYBE_YIELD(e.flavor_get());
+
 	try
 	{
 	  operator() (e.body_get());
