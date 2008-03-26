@@ -748,7 +748,7 @@ namespace runner
       pop_tag ();
       if (blocked ())
 	throw;
-      yield ();
+      // Execution will go on as planned
       return;
     }
     PROPAGATE_EXCEPTION(t.location_get(), pop_tag (););
