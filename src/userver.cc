@@ -157,10 +157,9 @@ UServer::initialize()
 
   // Handle pluged UOBjects.
   // Create "uobject" in lobby where UObjects will be put.
-  object::rObject uobject = object::object_class->clone();
-  ghost_->lobby_->slot_set(SYMBOL(uobject), uobject);
-  uobject_initialize(uobject);
-  load_init_file("URBI.INI");
+
+  object::object_class->slot_set(
+	SYMBOL(uobject_init), object::Primitive::fresh(&uobject_initialize));
 
   // Force processing of urbi.u.
   //libport::utime_t now = libport::utime();

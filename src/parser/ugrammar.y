@@ -782,10 +782,40 @@ stmt:
 
 // Bindings.
 stmt:
-  TOK_BINDER "object" k1_id                                  { $$ = 0; }
-| TOK_BINDER "var" k1_id "from" k1_id                        { $$ = 0; }
-| TOK_BINDER "function" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
-| TOK_BINDER "event" "(" "integer" ")" k1_id "from" k1_id    { $$ = 0; }
+  "binder" "object" "identifier"
+  {
+  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
+  $$ = ast_call(@$, ext, new libport::Symbol("object"),
+	    new ast::String(@$, take($3)));
+  }
+| "binder" "var" "identifier" "." "identifier" "from" "identifier"
+  {
+  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
+  ast::Call* res = ast_call(@$, ext, new libport::Symbol("var"));
+  res->args_get().push_back(new ast::String(@$, take($3)));
+  res->args_get().push_back(new ast::String(@$, take($5)));
+  res->args_get().push_back(new ast::String(@$, take($7)));
+  $$ = res;
+  }
+| "binder" "function" "(" "integer" ")" "identifier" "." "identifier" "from" "identifier"
+  {
+  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
+  ast::Call* res = ast_call(@$, ext, new libport::Symbol("function"),
+			new ast::Float(@$, $4));
+  res->args_get().push_back(new ast::String(@$, take($6)));
+  res->args_get().push_back(new ast::String(@$, take($8)));
+  res->args_get().push_back(new ast::String(@$, take($10)));
+  $$ = res;
+  }
+| "binder" "event" "(" "integer" ")" "identifier" "." "identifier" "from" "identifier"
+  {
+  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
+  ast::Call* res = ast_call(@$, ext, new libport::Symbol("event"));
+  res->args_get().push_back(new ast::String(@$, take($6)));
+  res->args_get().push_back(new ast::String(@$, take($8)));
+  res->args_get().push_back(new ast::String(@$, take($10)));
+  $$ = res;
+  }
 ;
 
 // Events.

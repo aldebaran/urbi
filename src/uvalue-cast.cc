@@ -84,7 +84,7 @@ object::rObject object_cast(const urbi::UValue& v)
     case urbi::DATA_BINARY:
       {
 	res = object::Object::fresh();
-	res->proto_add(object::object_class->slot_get(SYMBOL(Binary)));
+	res->proto_add(object::global_class->slot_get(SYMBOL(Binary)));
 	std::string msg = v.binary->getMessage();
 	// Trim it.
 	if (!msg.empty() && msg[0] == ' ' )

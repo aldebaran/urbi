@@ -2,7 +2,7 @@
 # are specific to a given project or even Svn branch.
 UCONSOLE_CHECK_FLAGS = -k2
 
-TESTS_DIRS = 0.x 1.x 2.x # uob
+TESTS_DIRS = 0.x 1.x 2.x uob
 
 URBI_SERVER = $(abs_top_builddir)/src/urbi-console
 # Run k2 tests only.
@@ -60,3 +60,9 @@ XFAIL_TESTS +=					\
 1.x/tag.chk					\
 1.x/variable-normalize.chk			\
 1.x/variable-qualifiers.chk
+
+# Uobject tests that we fail because features are not implemented
+XFAIL_TESTS +=                                  \
+uob/group.chk                                   \
+uob/all-write-plug-prop.chk                     \
+  uob/all-write-remote-prop.chk

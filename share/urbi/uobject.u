@@ -1,0 +1,321 @@
+/* Urbi side of 2.0 UObject plugin/remote implementation.
+*/
+/// FIXME: implement in C++ to get the period passed on command line.
+var Object.getPeriod = 20;
+
+/// Returns true if argument is defined. Argument can be of the form a.b.c.
+function Global.isdef
+{
+  var s = call.argString(1).split(". ");
+  var base = call.context;
+  for c in s {
+    var v = getSlot("base").locateSlot(c);
+    if (v.sameAs(nil))
+      return false;
+    base = getSlot("v").getSlot(c).apply([getSlot("v").getSlot(c)]);
+  };
+  return true
+};
+
+class Object.UObject
+{
+  var minimumInterval = Object.getPeriod;
+  var updateTask = 0;
+  var timerTask = 0;
+  var updateInterval = 0;
+  function update()
+  {
+    "update not defined".print
+  };
+  function init()
+  {
+    updateTask = new Tag;
+  };
+  /// Set a timer to call update at specified interval.
+  function setUpdate(interval)
+  {
+    if (0 < interval && interval < minimumInterval)
+      interval = minimumInterval;
+    // Stop current update task.
+    updateTask.stop;
+    updateInterval = interval;
+    if (0 < interval)
+      updateTask: detach({loop{ update; sleep(updateInterval)}})
+  };
+  /// Set a timer to call \b func every \b interval milliseconds.
+  function setTimer(interval, func)
+  {
+    if (interval < minimumInterval)
+      interval = minimumInterval;
+    if (!self.locateSlot("timerTask").sameAs(self))
+      timerTask = [];
+    //the sleep is required
+    var tag = new Tag;
+    tag: detach({sleep(100);loop{ func; sleep(interval)}});
+    timerTask += [tag]
+  };
+  /// Call hub update function \b for hub \b hubname
+  function setHubUpdate(hubname, interval, func)
+  {
+    if (0 < interval && interval < minimumInterval)
+      interval = minimumInterval;
+    // Ensure only one instance is running using a tag in slot hub<hubname>.
+    var slotName = "hub"+hubname;
+    if (self.locateSlot(slotName).sameAs(nil))
+      self.setSlot(slotName, new Tag);
+    self.getSlot(slotName).stop;
+    if (0 < interval)
+      self.getSlot(slotName):
+        detach({sleep(100);loop{ func; sleep(interval)}});
+  };
+};
+
+/// Urbi-side UVar. Function which calls notifyAccess when the value is read.
+var Object.uvar = new Global; //required by context resolution mechanism
+
+
+do getSlot("uvar")
+{
+  function accessor()
+  {
+    // Call registered callbacks. Ensure no looping happens.
+    if (!inAccess)
+    {
+      inAccess = true |
+      callNotify(access) |
+      inAccess = false
+    } |
+    // Return the target or the sensor value.
+    if (owned)
+      valsensor
+    else
+      val
+  };
+  /// Global number of notifyaccess
+  var nAccess = 0;
+  var nAccessTag = new Tag;
+  /// Hook write attempts to the UVar.
+  function updateHook(parent, slot, newval)
+  {
+    // Urbi or C++ not-owned set: write to val.
+    val = newval |
+    if (owned)
+      callNotify(changeOwned)
+    else
+    {
+      if (!inChange)
+      {
+	inChange = true    |
+	callNotify(change) |
+	inChange = false
+      }
+    } |
+    void
+  };
+
+  var __clone = getSlot("clone");
+  function clone()
+  {
+    var ret = function() {
+      getSlot("code").accessor
+    } |
+    getSlot("ret").addProto(self) |
+    do getSlot("ret") {
+      var change = [] |
+      var changeOwned = [] |
+      var access = [] |
+      var inAccess = false |
+      var inChange = false |
+      var owned = false |
+      var val |
+      var valsensor = 0 |
+      var looping = false |
+      var loopTag = new Tag |
+      var isUVar = 1
+    } |
+    getSlot("ret")
+  };
+  /** If both notifyChange and notifyAccess are present, call the notifyAccess
+   *  periodically.
+   */
+  function loopCheck()
+  {
+    if (looping == 0 && change.size && access.size)
+    {
+      looping = 1 |
+      loopTag: detach({loop { callNotify(access); sleep(getPeriod)}})
+    }
+  };
+  /// Write from a C++ owned UVar.
+  function writeOwned(newval)
+  {
+    // C++ owned set
+    valsensor = newval |
+    callNotify(change) |
+    newval
+  };
+  function notifyChange(f)
+  {
+    change += [getSlot("f")] |
+    if (change.size == 1)
+      loopCheck |
+    void
+  };
+  function notifyChangeOwned(f)
+  {
+    changeOwned += [getSlot("f")] |
+    void
+  };
+  function notifyAccess(f)
+  {
+    nAccess++ |
+    access += [getSlot("f")] |
+    if (access.size == 1)
+      loopCheck |
+    void
+  };
+  function callNotify(l)
+  {
+    while (l.size)
+    {
+      var f = l.front |
+      f |
+      l = l.tail
+    } |
+    void
+  };
+  void
+};
+
+// Can't be in a class or do block.
+// Force reevaluation of all at exprs when at least on notifyaccess is present.
+at (getSlot("uvar").nAccess > 0)
+  getSlot("uvar").nAccessTag: every(getPeriod) {}
+onleave
+  getSlot("uvar").nAccessTag.stop;
+
+var Global.uobjects = Object.clone;
+Global.uobjects.uobject_init();
+
+
+// UObject remote API.
+
+/* EXTERNALS */
+class Global.'external' {
+  var MODULE_TAG = "__ExternalMessage__";
+  var UEM_EVALFUNCTION = 0;
+  var UEM_ASSIGNVALUE  = 1;
+  var UEM_EMITEVENT    = 2;
+  var UEM_ENDEVENT     = 3;
+  var UEM_NEW          = 4;
+  var UEM_DELETE       = 5;
+
+  //var uobjects = Lobby.uobjects;
+  // external object toto: Set clone to send a UEM_NEW message.
+  var 'object' = function(o)
+  {
+    if (uobjects.locateSlot(o).sameAs(uobjects))
+      return;
+    /* The remote sent the code 'class <o> {};' just before calling this
+     * function, but we want o in uobjects, not lobby.
+     */
+    lobby.removeSlot(o);
+    if (!Global.protos.has(uobjects))
+      Global.addProto(uobjects);
+    ("external object "+o).print;
+    function cloner()
+    {
+      var u = fresh;
+      var msg = [  'external'.UEM_NEW, "Global.uobjects."+u, objectName];
+      connection.send(msg, 'external'.MODULE_TAG);
+      // Wait until the remote fills the variable named u.
+      waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
+      var ret = Global.uobjects.getSlot(u);
+      Global.uobjects.removeSlot(u);
+      getSlot("ret");
+    };
+    getSlot("cloner").inject("connection", lobby).inject("objectName",o);
+    uobjects.setSlot(o, Object.clone);
+    uobjects.getSlot(o).setSlot("clone", getSlot("cloner"));
+    //Ensure load is bound. K1 uobj tries to do it before binding the object.
+    'var'(o, "load", "dummy0");
+    void
+  };
+  /// Notify the remote when <pbjname>.<varname> is modified.
+  var 'var' = function(objname, varname, fr)
+  {
+    ("external var call "+varname).print;
+    var fullname = objname + "." + varname;
+
+    if (uobjects.locateSlot(objname).sameAs(nil))
+    {
+      if (varname == "load")
+	return;
+      ("Error: external var called for "+objname+"."+varname).print
+    };
+    // Ignore duplicate binds of same var.
+    var lid = lobby.uid;
+    if (!self.slotNames.has(lid))
+      self.setSlot(lid, []);
+    if (self.getSlot(lid).has(fullname))
+      return;
+    self.getSlot(lid).push_back(fullname);
+    var obj = uobjects.getSlot(objname);
+    // Setup a hook, notify the remote when a change occurrs.
+    if (!obj.locateSlot(varname).sameAs(obj))
+      obj.setSlot(varname, getSlot("uvar").clone)
+    else if
+      (obj.getSlot(varname).locateSlot("isUVar").sameAs(nil))
+    {
+      // The slot allready exists, but is not an uvar.
+      var v = obj.getSlot(varname);
+      obj.removeSlot(varname);
+      obj.setSlot(varname, getSlot("uvar").clone);
+      obj.updateSlot(varname, getSlot("v"));
+    };
+    /* Create a 'notifyChange' function that generates the UObject message
+     * and sends it through the remote connection.
+     */
+    function f()
+    {
+      var msg = [  'external'.UEM_ASSIGNVALUE, fullname,
+      uob.getSlot(varname).val];
+      connection.send(msg, 'external'.MODULE_TAG);
+    };
+    getSlot("f").inject("connection", lobby)
+    	.inject("fullname", objname+"."+varname)
+	.inject("uob", uobjects.getSlot(objname))
+	.inject("varname", varname);
+    uobjects.getSlot(objname).getSlot(varname).notifyChange(getSlot("f"));
+    void
+  };
+
+  /* Bind a function call to the remote side.
+   * Write to the slot a function that will generate an uobject call message,
+   * send it to the remote side, and wait for the result.
+   */
+  var 'function' = function(nargs, objname, fname, fr)
+  {
+    ("external function call "+fname).print;
+    function f
+    {
+      var args = call.evalArgs;
+      var u = fresh;
+      var msg = [ 'external'.UEM_EVALFUNCTION, functionName + "__"
+      + args.size.asString, "Global.uobjects."+u] + args;
+      connection.send(msg, 'external'.MODULE_TAG);
+      waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
+      var ret = Global.uobjects.getSlot(u);
+      Global.uobjects.removeSlot(u);
+      getSlot("ret")
+    };
+    getSlot("f").inject("functionName", objname+"."+fname)
+    	.inject("connection", lobby);
+    Global.uobjects.getSlot(objname).setSlot(fname, getSlot("f"));
+    void
+  };
+  var 'event' = function(nargs, objname, ename, fr)
+  {
+    // FIXME: implement when k2 will support events.
+  };
+};

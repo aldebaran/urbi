@@ -10,5 +10,5 @@ object::rObject uobject_make_proto(const std::string& name);
 object::rObject uobject_new(object::rObject proto, bool forceName=false);
 
 //! Initialize plugin UObjects.
-void uobject_initialize(object::rObject where);
+object::rObject uobject_initialize(runner::Runner&, object::objects_type args);
 #endif
