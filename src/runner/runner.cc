@@ -517,7 +517,6 @@ namespace runner
 
     PING ();
     // Evaluate every expression in the list
-    // FIXME: parallelized?
     for (i = e.value_get ().begin ();
 	 i != e.value_get ().end ();
 	 ++i)
