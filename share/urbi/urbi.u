@@ -43,6 +43,13 @@ do Protos
   {
     loadFile(searchFile(file));
   };
+
+  // Assertion control
+  var System.ndebug = 0;
+  function System.assert {
+    if (!System.ndebug)
+      System.assert_ (call.evalArgAt (1), call.argString (1));
+  };
 };
 
 

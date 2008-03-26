@@ -85,6 +85,7 @@
   Macro(argsCount, "argsCount");                  \
   Macro(asString, "asString");                    \
   Macro(asin, "asin");                            \
+  Macro(assert_, "assert_");                      \
   Macro(atan, "atan");                            \
   Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \

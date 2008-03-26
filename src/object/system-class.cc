@@ -77,6 +77,18 @@ namespace object
   }
 
   static rObject
+  system_class_assert_(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(3);
+    FETCH_ARG(2, String);
+    if (!IS_TRUE(args[1]))
+      throw PrimitiveError
+	("assert_",
+	 "assertion `" + arg2->value_get().name_get() + "' failed");
+    return void_class;
+  }
+
+  static rObject
   system_class_eval (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, String);
@@ -186,6 +198,7 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(system, Name)
 
+    DECLARE(assert_);
     DECLARE(currentRunner);
     DECLARE(debugoff);
     DECLARE(debugon);
