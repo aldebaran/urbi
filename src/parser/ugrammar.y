@@ -980,7 +980,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
-      DESUGAR ($$, "at_(" << $3 << ", " << $5 << ", nil)");
+      DESUGAR ($$, "at_(" << $3 << ", " << $5 << ")");
     }
 | "at" "(" softtest ")" stmt "onleave" stmt
     {
