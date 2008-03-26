@@ -176,7 +176,8 @@ do Object
         waituntil (call.evalArgAt (1));
         detach (call.evalArgAt (2));
         waituntil (!call.evalArgAt (1));
-        detach (call.evalArgAt (3))
+        if (call.argString (3) != "nil")
+          detach (call.evalArgAt (3))
       }
     })
   };
