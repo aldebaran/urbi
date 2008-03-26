@@ -221,7 +221,7 @@ namespace scheduler
     jobs_type to_wake_up_;
 
     /// Coro structure corresponding to this job.
-    Coro* self_;
+    Coro* coro_;
 
     /// Tags acting on this job
     std::vector<rTag> tags_;

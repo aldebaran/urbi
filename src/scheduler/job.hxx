@@ -19,7 +19,7 @@ namespace scheduler
       scheduler_ (&scheduler),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       terminated_ (false),
-      self_ (Coro_new ()),
+      coro_ (Coro_new ()),
       side_effect_free_ (false),
       pending_exception_ (0)
   {
@@ -31,7 +31,7 @@ namespace scheduler
       scheduler_ (model.scheduler_),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       terminated_ (false),
-      self_ (Coro_new ()),
+      coro_ (Coro_new ()),
       tags_ (model.tags_),
       side_effect_free_ (false),
       pending_exception_ (0)
@@ -43,7 +43,7 @@ namespace scheduler
   {
     scheduler_->unschedule_job (this);
     pending_exception_ = 0;
-    Coro_free (self_);
+    Coro_free (coro_);
   }
 
   inline Scheduler&
@@ -88,8 +88,8 @@ namespace scheduler
   inline Coro*
   Job::coro_get () const
   {
-    assert (self_);
-    return self_;
+    assert (coro_);
+    return coro_;
   }
 
   inline void
@@ -153,7 +153,7 @@ namespace scheduler
   inline void
   Job::check_stack_space () const
   {
-    if (Coro_stackSpaceAlmostGone (self_))
+    if (Coro_stackSpaceAlmostGone (coro_))
       throw object::StackExhaustedError ("stack space exhausted");
   }
 

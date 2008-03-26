@@ -81,7 +81,7 @@ namespace scheduler
     rJob to_kill_;
 
     /// Coroutine support
-    Coro* self_;
+    Coro* coro_;
 
     /// Has there been a possible side-effect since last time we reset
     /// this field?

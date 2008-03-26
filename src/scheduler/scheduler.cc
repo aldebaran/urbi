@@ -106,7 +106,7 @@ namespace scheduler
 	// requeued because it hasn't been started by setting "start".
 	ECHO ("Starting job " << *job);
 	current_job_ = job;
-	Coro_startCoro_ (self_, job->coro_get(), job, run_job);
+	Coro_startCoro_ (coro_, job->coro_get(), job, run_job);
 	current_job_ = 0;
 	ECHO ("Job " << *job << " has been started");
 	assert (job->state_get () != to_start);
@@ -145,7 +145,7 @@ namespace scheduler
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
 	possible_side_effect_ |= !job->side_effect_free_get ();
 	assert (!current_job_);
-	Coro_switchTo_ (self_, job->coro_get ());
+	Coro_switchTo_ (coro_, job->coro_get ());
 	assert (!current_job_);
 	possible_side_effect_ |= !job->side_effect_free_get ();
 	ECHO ("back from job " << *job
@@ -212,7 +212,7 @@ namespace scheduler
     // Switch back to the scheduler.
     assert (current_job_ == job);
     current_job_ = 0;
-    Coro_switchTo_ (job->coro_get (), self_);
+    Coro_switchTo_ (job->coro_get (), coro_);
     // We regained control, we are again in the context of the job.
     assert (!current_job_);
     current_job_ = job;
