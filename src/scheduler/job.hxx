@@ -71,13 +71,6 @@ namespace scheduler
   }
 
   inline void
-  Job::yield_front ()
-  {
-    state_ = running;
-    scheduler_->resume_scheduler (this);
-  }
-
-  inline void
   Job::yield_until (libport::utime_t deadline)
   {
     state_ = sleeping;

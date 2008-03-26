@@ -133,9 +133,6 @@ namespace scheduler
     /// only but must be kept visible to be callable from the primitives.
     void yield ();
 
-    /// Ditto, but put the job at the front of the execution queue.
-    void yield_front ();
-
     /// Ditto, but ask not to be woken up before the deadline.
     void yield_until (libport::utime_t deadline);
 
