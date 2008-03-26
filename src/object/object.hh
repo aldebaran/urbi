@@ -202,6 +202,11 @@ namespace object
     friend std::ostream& dump(runner::Runner&, rObject, std::ostream&);
   };
 
+
+  /// Target lookup
+  rObject target(rObject where, const libport::Symbol& name);
+
+
   /// Helpers to call Urbi functions from C++
   rObject urbi_call(runner::Runner& r,
                     rObject& self,

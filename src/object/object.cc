@@ -65,6 +65,30 @@ namespace object
   | Scopes.  |
   `---------*/
 
+  static boost::optional<rObject>
+  targetLookup(rObject obj,
+               const object::Object::key_type& slotName)
+  {
+    if (obj->own_slot_get(slotName, 0))
+      return boost::optional<rObject>(rObject());
+    if (rObject self = obj->own_slot_get(SYMBOL(self), rObject()))
+      if (self->slot_locate(slotName))
+        return self;
+    return boost::optional<rObject>();
+  }
+
+  rObject target(rObject where, const libport::Symbol& name)
+  {
+    boost::function1<boost::optional<rObject>, rObject> lookup =
+      boost::bind(targetLookup, _1, name);
+    boost::optional<rObject> res = where->lookup(lookup);
+    if (!res)
+      throw object::LookupError(name);
+    if (!res.get())
+      return where;
+    return res.get();
+  }
+
   // FIXME: implement in urbi too
   rObject Object::make_scope(const runner::Runner& runner, const rObject& parent)
   {
@@ -76,10 +100,12 @@ namespace object
       res->proto_add(runner.lobby_get());
     // Mind the order!
     res->proto_add(object::scope_class);
-    res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
-    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
-    res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
+    res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
     res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
+    res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
+    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
+    res->slot_set(SYMBOL(target), scope_class->slot_get(SYMBOL(target)));
+    res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
     return res;
   }
 

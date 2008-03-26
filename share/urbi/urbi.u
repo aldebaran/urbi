@@ -4,21 +4,29 @@
 var Code.context = nil;
 
 # Must appear before any scope creation
-var Scope.setSlot = Object.getSlot("setSlot");
-var Scope.updateSlot = function (slotName, value)
-{
-  if (self.locateSlot(slotName) === self)
-    Object.getSlot("updateSlot").apply([self, slotName, value])
-  else if (self.getSlot("self").locateSlot(slotName) != nil)
-    Object.getSlot("updateSlot").apply([self.getSlot("self"), slotName, value])
-  else
-    Object.getSlot("updateSlot").apply([self, slotName, value])
-};
-# FIXME: do something clever in removeSlot
-var Scope.removeSlot = Object.getSlot("removeSlot");
+
+# ...
+
 var Scope.locals = function () { self };
 var lobby.locals = function () { lobby };
-var lobby .self = lobby; # FIXME: leak!
+var lobby.self = lobby; # FIXME: leak!
+
+# Override slot mechanisms
+var Scope.setSlot = Object.getSlot("setSlot");
+var Scope.getSlot = function (slotName)
+{
+  Object.getSlot("getSlot").apply([self.target(slotName), slotName])
+};
+
+var Scope.updateSlot = function (slotName, value)
+{
+  Object.getSlot("updateSlot").apply([self.target(slotName), slotName, value])
+};
+
+var Scope.removeSlot = function (slotName)
+{
+  Object.getSlot("removeSlot").apply([self.target(slotName), slotName])
+};
 
 ## ------- ##
 ## Scope.  ##
@@ -67,7 +75,7 @@ do Object
   {
     # This is annoying: one has to specify "self" here, otherwise the
     # setSlot goes to the locals_ :(
-    self.setSlot(to, getSlot(frm))
+    self.setSlot(to, self.getSlot(frm))
   };
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");

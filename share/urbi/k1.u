@@ -67,7 +67,7 @@ class Protos.DeprecatedCommands
 
   function deprecate(slotName)
   {
-    self.setSlot(slotName, getSlot("deprecated_").clone());
+    self.setSlot(slotName, self.getSlot("deprecated_").clone());
     self.getSlot(slotName).capture("name", slotName);
   };
 

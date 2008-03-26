@@ -9,8 +9,6 @@
 #include <deque>
 #include <sstream>
 
-#include <boost/bind.hpp>
-
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
 
@@ -252,7 +250,7 @@ namespace runner
       scope->slot_set (SYMBOL(call), call_message);
     }
 
-    ECHO("bound args: " << *scope);
+    ECHO("scope: " << *scope);
 
     // Change the current context and call. But before, check that we
     // are not exhausting the stack space, for example in an infinite
@@ -412,38 +410,16 @@ namespace runner
     return res;
   }
 
-  namespace
-  {
-    static boost::optional<Runner::rObject>
-    targetLookup(Runner::rObject obj,
-                 const object::Object::key_type& slotName)
-    {
-      if (obj->own_slot_get(slotName, 0))
-        return boost::optional<Runner::rObject>(Runner::rObject());
-      if (Runner::rObject self = obj->own_slot_get(SYMBOL(self), Runner::rObject()))
-        if (self->slot_locate(slotName))
-          return self;
-      return boost::optional<Runner::rObject>();
-    }
-  }
-
-  inline
   Runner::rObject
   Runner::target (const ast::Exp* n, const libport::Symbol& name)
   {
-    // If there is no target, lookup in the local variables.
     if (n)
       return eval (*n);
     else
     {
-      boost::function1<boost::optional<rObject>, rObject> lookup =
-        boost::bind(targetLookup, _1, name);
-      boost::optional<Runner::rObject> res = locals_->lookup(lookup);
-      if (!res)
-        throw object::LookupError(name);
-      if (!res.get())
-        return locals_;
-      return res.get();
+      object::objects_type args;
+      args.push_back(object::String::fresh(name));
+      return urbi_call(*this, locals_, SYMBOL(target), args);
     }
   }
 
