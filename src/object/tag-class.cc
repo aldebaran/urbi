@@ -64,20 +64,21 @@ namespace object
     return new String (extract_tag (args[0])->name_get ());
   }
 
-#define TAG_ACTION(Action)					\
+#define TAG_ACTION(Action, Yield)				\
   static rObject						\
   tag_class_ ## Action (runner::Runner& r, objects_type args)	\
   {								\
     CHECK_ARG_COUNT (1);					\
     scheduler::rTag self = extract_tag (args[0]);		\
     self->Action (r, self);					\
+    if (Yield) r.yield ();					\
     return void_class;						\
   }
-  TAG_ACTION(block)
-  TAG_ACTION(freeze)
-  TAG_ACTION(stop)
-  TAG_ACTION(unblock)
-  TAG_ACTION(unfreeze)
+  TAG_ACTION(block, true)
+  TAG_ACTION(freeze, true)
+  TAG_ACTION(stop, true)
+  TAG_ACTION(unblock, false)
+  TAG_ACTION(unfreeze, false)
 #undef TAG_ACTION
 
   void
