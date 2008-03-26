@@ -805,16 +805,18 @@ namespace runner
   void
   Runner::operator() (const ast::While& e)
   {
+    bool first_iteration = true;
     // Evaluate the test.
     while (true)
     {
-      // FIXME: YIELD if second iteration for "while;".
+      if (first_iteration)
+	first_iteration = false;
+      else
+	MAYBE_YIELD (e.flavor_get());
       JECHO ("while test", e.test_get ());
       operator() (e.test_get());
       if (!IS_TRUE(current_))
 	break;
-
-      MAYBE_YIELD(e.flavor_get());
 
       JECHO ("while body", e.body_get ());
 
