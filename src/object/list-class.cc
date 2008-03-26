@@ -56,25 +56,34 @@ namespace object
       return res;
     }
 
+#define CHECK_NON_EMPTY							\
+    List::value_type& ul = l->value_get();				\
+    if (ul.empty ())							\
+      throw PrimitiveError						\
+	(__FUNCTION__, "operation cannot be applied onto empty list")
+
     /// Give the first element of \a l.
     static rObject
     front(rList l)
     {
-      return l->value_get().front();
+      CHECK_NON_EMPTY;
+      return ul.front();
     }
 
     /// Give the last element of \a l.
     static rObject
     back(rList l)
     {
-      return l->value_get().back();
+      CHECK_NON_EMPTY;
+      return ul.back();
     }
 
     /// Give \a l without the first element.
     static rList
     tail(rList l)
     {
-      List::value_type res(l->value_get());
+      CHECK_NON_EMPTY;
+      List::value_type res = ul;
       res.pop_front();
       return new List(res);
     }
@@ -91,9 +100,12 @@ namespace object
     static rList
     pop_front(rList l)
     {
-      l->value_get().pop_front();
+      CHECK_NON_EMPTY;
+      ul.pop_front();
       return l;
     }
+
+#undef CHECK_NON_EMPTY
 
     /// Clear \l
     static rList
