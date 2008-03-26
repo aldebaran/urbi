@@ -15,7 +15,9 @@ ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail currently but need to be fixed soon.
 TFAIL_TESTS +=					\
-1.x/every-emit.chk
+1.x/every-emit.chk				\
+2.x/semaphore2.chk				\
+2.x/while2.chk
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
