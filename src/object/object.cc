@@ -280,10 +280,11 @@ namespace object
 
     // We have to determine where the new value must be stored,
     // depending on whether the slot owner and the context are scopes.
+    Object* effective_target;
 
     // If both are scopes, update the original scope.
     if (context->locals_ && owner->locals_get())
-      owner->own_slot_get(k) = o;
+      effective_target = owner.get();
     else if (context->locals_ && !owner->locals_get())
     {
       // Local->class: copyonwrite to "self" after evaluating it.
@@ -293,11 +294,35 @@ namespace object
       self_args.push_back (context);
       rObject self = r.apply (self_obj, self_args);
       assertion(self);
-      self->slot_set(k, o);
+      effective_target = self.get();
     }
-    // If the context isn't a scope, copy on write.
-    else
-      context->slots_[k] = o;
+    else // Class->class: copy on write.
+      effective_target = context.get();
+    // Check hook, only if we are not create-on-writing.
+    /* If the current value in the slot to be written in has a slot named
+     * 'updateHook', call it, passing the object owning the slot, the slot name
+     * and the target. If the return value is not void, write this value in the
+     * slot.
+     */
+    if (effective_target == owner.get())
+    {
+      rObject& val = owner->own_slot_get(k);
+      if (Object* hookOwner = val->slot_locate(SYMBOL(updateHook)).get())
+      {
+	rObject hook = hookOwner->own_slot_get(SYMBOL(updateHook));
+	objects_type args;
+	args.push_back(val);
+	args.push_back(context);
+	args.push_back(String::fresh(k));
+	args.push_back(o);
+	rObject ret = r.apply(hook, args);
+	// If return-value of hook is not void, write it to slot.
+	if (ret != object::void_class)
+	  effective_target->own_slot_get(k) = ret;
+	return;
+      }
+    }
+    effective_target->own_slot_get(k) = o;
   };
 
   rObject
