@@ -71,7 +71,8 @@ namespace object
     CHECK_ARG_COUNT (1);					\
     scheduler::rTag self = extract_tag (args[0]);		\
     self->Action (r, self);					\
-    if (Yield) r.yield ();					\
+    if (Yield && (r.frozen () || r.blocked ()))			\
+      r.yield ();						\
     return void_class;						\
   }
   TAG_ACTION(block, true)
