@@ -35,8 +35,6 @@ UParser::UParser()
     loc_(),
     synclines_()
 {
-  // The first column for locations is 1.
-  loc_.begin.column = loc_.end.column = 1;
 }
 
 int
@@ -86,9 +84,6 @@ UParser::process_file (const std::string& fn)
   // A location pointing to it.
   location_type loc;
   loc.initialize (new libport::Symbol(fn));
-  // The convention for the first column changed: make sure the first
-  // column is column 1.
-  loc.begin.column = loc.end.column = 1;
 
   // Exchange with the current location so that we can restore it
   // afterwards (when reading the input flow, we want to be able to
