@@ -14,6 +14,7 @@
 
 #include "object/object.hh"
 #include "object/atom.hh"
+#include "object/globals-class.hh"
 #include "object/urbi-exception.hh"
 
 #include "runner/runner.hh"
@@ -90,14 +91,14 @@ namespace object
   }
 
   // FIXME: implement in urbi too
-  rObject Object::make_scope(const runner::Runner& runner, const rObject& parent)
+  rObject Object::make_scope(const runner::Runner&, const rObject& parent)
   {
     rObject res = object::Object::fresh();
     res->locals_set(true);
     if (parent)
       res->proto_add(parent);
     else
-      res->proto_add(runner.lobby_get());
+      res->proto_add(globals_class);
     // Mind the order!
     res->proto_add(object::scope_class);
     res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));

@@ -4,9 +4,8 @@
 
 do Float
 {
-  // To bad, "self" is needed.
-  self.addProto(Protos.Comparable);
-  self.addProto(Protos.Orderable);
+  addProto(Comparable);
+  addProto(Orderable);
 
   function init(x) { self.set(x) };
 

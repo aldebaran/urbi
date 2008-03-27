@@ -1,4 +1,4 @@
-class Protos.Semaphore {
+class Globals.Semaphore {
 
    function init (n) {
      var self.queue = [];
@@ -24,5 +24,3 @@ class Protos.Semaphore {
    }
 
 };
-
-Protos.addProto (Protos.Semaphore);

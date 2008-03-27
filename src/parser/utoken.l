@@ -739,7 +739,7 @@ new_k1_bin(const yy::location& loc,
 	   const char* keywords, const std::string& data)
 {
   object::rObject o = object::Object::fresh();
-  o->proto_add(object::protos_class->slot_get(SYMBOL(Binary)));
+  o->proto_add(object::globals_class->slot_get(SYMBOL(Binary)));
   o->slot_set(SYMBOL(keywords),
 	      object::String::fresh(libport::Symbol(keywords)));
   o->slot_set(SYMBOL(data),

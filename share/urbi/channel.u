@@ -3,14 +3,14 @@
 ## --------- ##
 
 // Does not have anything special.  Yet.
-class Protos.Channel
+class Globals.Channel
 {
   function init(x) { var self.name = x };
   function '<<' (x) { x.print (name); {} };
 };
 
 // Default channels.
-do Protos
+do Globals
 {
   // Long names are k1 compatible.
   var output  = new Channel("output");

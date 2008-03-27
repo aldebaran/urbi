@@ -821,8 +821,8 @@ stmt:
       // Compiled as
       // var id = Object.clone; do id { stmts };
       $$ = ast_nary(@$, ast::flavor_semicolon,
-		   ast_class (@1+@2, $2),
-		   ast_scope(@$, $2, $3));
+                    ast_class (@1+@2, $2),
+                    ast_scope(@$, $2, $3));
 #else
       // Currently does not work, because although we store an LValue
       // (an ast::Call), we get here as an Exp, which is not good enough

@@ -18,18 +18,8 @@ namespace object
   rObject What ## _class;					\
   namespace { static void What ## _class_initialize () { } }
 
-  /* Help the generation of symbols.
-
-   SYMBOL(nil)
-   SYMBOL(Protos)
-   SYMBOL(System)
-   SYMBOL(void)
-
-   */
-
   CLASS_INITIALIZE(nil);
   // Where we store all the primitives (objects and functions).
-  CLASS_INITIALIZE(protos);
   CLASS_INITIALIZE(void);
 #undef CLASS_INITIALIZE
 
@@ -77,7 +67,7 @@ namespace object
     What ## _class->slot_set(SYMBOL(protoName),			\
 			     String::fresh(SYMBOL(Name)));          \
     What ## _class_initialize ();				\
-    protos_class->slot_set(symbol_ ## Name, What ## _class);
+    globals_class->slot_set(symbol_ ## Name, What ## _class);
 
 #define CLASS_SETUP(What, Name)			\
     CLASS_CREATE(What, Name)			\
@@ -92,15 +82,14 @@ namespace object
     // them all.
     APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CLASS_CREATE);
 
-    CLASS_SETUP(protos, Protos);
-    // Object must derive from Protos.
-    object_class->proto_add(protos_class);
-
     APPLY_ON_ALL_PRIMITIVES(CLASS_INIT);
 
     CLASS_SETUP(nil, nil);
     CLASS_SETUP(system, System);
     CLASS_SETUP(void, void);
+
+    // Enable to access global variables from the toplevel
+    lobby_class->proto_add(globals_class);
   }
 
 } // namespace object

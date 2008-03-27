@@ -136,9 +136,9 @@ namespace object
   object_class_memSameAs(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    rObject res = args[0]->slot_get((args[0] == args[1])
-			     ? SYMBOL(true)
-			     : SYMBOL(false));
+    rObject res = globals_class->slot_get((args[0] == args[1])
+                                          ? SYMBOL(true)
+                                          : SYMBOL(false));
     return res;
   }
 

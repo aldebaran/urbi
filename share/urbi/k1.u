@@ -1,5 +1,5 @@
 # k1 compatibility.
-class Protos.Kernel1Functions
+class Globals.Kernel1Functions
 {
 
   // isdef("name"): Check whether "name" is defined (here or above).
@@ -29,8 +29,11 @@ class Protos.Kernel1Functions
   {
     s.length
   };
+};
+Globals.addProto(Globals.Kernel1Functions);
 
-
+class Globals.Kernel1Methods
+{
   ## --------------------------------- ##
   ## Dirty tricks to change foo.load.  ##
   ## --------------------------------- ##
@@ -56,12 +59,13 @@ class Protos.Kernel1Functions
     self
   };
 };
+Object.addProto(Globals.Kernel1Methods);
 
-Protos.addProto(Protos.Kernel1Functions);
+
 
 # Deprecated command from k1.
 # FIXME: Some commands should be rewritten once it becomes possible.
-class Protos.DeprecatedCommands
+class Globals.DeprecatedCommands
 {
   var deprecated_ = function () { echo("`" + name + "' is deprecated." ) };
 
@@ -92,4 +96,4 @@ class Protos.DeprecatedCommands
   };
 };
 
-Protos.addProto(Protos.DeprecatedCommands);
+Globals.addProto(Globals.DeprecatedCommands);

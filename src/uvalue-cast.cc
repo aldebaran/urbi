@@ -15,6 +15,7 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::Object::kind_call:
   case object::Object::kind_code:
   case object::Object::kind_delegate:
+  case object::Object::kind_globals:
   case object::Object::kind_lobby:
   case object::Object::kind_object:
   case object::Object::kind_primitive:

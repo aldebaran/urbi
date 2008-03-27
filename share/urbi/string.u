@@ -8,8 +8,8 @@ do String
   # The connectives == and < are builtins.
   # FIXME: I'd like to put the addProto in a do, but then it goes
   # to the locals :(
-  self.addProto(Protos.Comparable);
-  self.addProto(Protos.Orderable);
+  self.addProto(Comparable);
+  self.addProto(Orderable);
 
   // Append in place.
   function '+='(x) { self.set (self + x) };

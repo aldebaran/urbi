@@ -2,7 +2,7 @@
 ## Singleton.  ##
 ## ----------- ##
 
-class Protos.Singleton
+class Globals.Singleton
 {
   function clone() { self };
   function 'new' { self };

@@ -5,11 +5,13 @@ var Code.context = nil;
 
 # Must appear before any scope creation
 
-# ...
-
 var Scope.locals = function () { self };
 var lobby.locals = function () { lobby };
-var lobby.self = lobby; # FIXME: leak!
+# FIXME
+# 1/ This is a leak.
+# 2/ We should be able to get rid of this self, because every function outer scope
+#    defines self. Yet, for now the expansion of 'at' uses self.
+var lobby.self = lobby;
 
 # Override slot mechanisms
 var Scope.setSlot = Object.getSlot("setSlot");
@@ -37,14 +39,11 @@ do Scope
   function init() { self.makeScope (true) };
 };
 
-## -------- ##
-## Protos.  ##
-## -------- ##
+## --------- ##
+## Globals.  ##
+## --------- ##
 
-# There are many object, functions, etc. that we want to provide.
-# Instead of having Object derive from them all, we let Protos derive
-# from them, and have Object derive from it.
-do Protos
+do Globals
 {
   // Import the primitives.
   self.addProto(System);
@@ -98,7 +97,7 @@ do Object
 ## Closure.  ##
 ## --------- ##
 
-class Protos.Closure
+class Globals.Closure
 {
   function makeExplicitClosure (f, context)
   {
@@ -134,8 +133,8 @@ class Protos.Closure
     locals.getSlot ("self")
   };
 };
-
-Protos.addProto(Protos.Closure);
+Code.addProto(Globals.Closure);
+Globals.addProto(Globals.Closure);
 
 ## ------------ ##
 ## Scope exit.  ##
@@ -258,7 +257,7 @@ do Object
 ## Constants ##
 ## --------- ##
 
-class Protos.Constants
+class Globals.Constants
 {
   var true   = 1.0;
   var false  = 0.0;
@@ -268,7 +267,7 @@ class Protos.Constants
 
   var pi     = 3.14159265358979323846264338327950288;
 };
-Protos.addProto (Protos.Constants);
+Globals.addProto (Globals.Constants);
 
 
 load("urbi/channel.u");
@@ -305,20 +304,20 @@ do nil
 ## Comparable.  ##
 ## ------------ ##
 
-class Protos.Comparable
+class Globals.Comparable
 {
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
 };
 
-// Provide !=.
-Protos.addProto(Protos.Comparable);
+# Provide !=.
+Object.addProto(Comparable);
 
 ## ----------- ##
 ## Orderable.  ##
 ## ----------- ##
 
-class Protos.Orderable
+class Globals.Orderable
 {
   function '<'  (rhs) { rhs > self };
   function '<=' (rhs) { self < rhs || self == rhs };
@@ -417,7 +416,7 @@ load("urbi/k1.u");
 ## Math. ##
 ## ----- ##
 
-class Protos.Math
+class Globals.Math
 {
   for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
              "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
@@ -429,7 +428,7 @@ class Protos.Math
   var epsilontilde = 0.0001;
   var epsilonpercent = 0.0001;
 };
-Protos.addProto (Protos.Math);
+Globals.addProto (Globals.Math);
 
 
 ## -------- ##
@@ -458,11 +457,11 @@ do Object
   };
 };
 
-class Protos.Binary
+class Globals.Binary
 {
   function asString()
   {
-    if (self === Protos.Binary)
+    if (self === Binary)
       "<Binary>"
     else
     {
@@ -479,7 +478,7 @@ class Protos.Binary
 ## Profiling operations.  ##
 ## ---------------------- ##
 
-class Profiling
+class Globals.Profiling
 {
   function timen {
     var niters = call.evalArgAt (2);
@@ -494,7 +493,7 @@ class Profiling
     echo ("  Single iteration: " + expired / niters + " ms");
   };
 };
-Protos.addProto (Profiling);
+Globals.addProto (Globals.Profiling);
 
 ## ----------- ##
 ## Semaphores. ##

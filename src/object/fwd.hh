@@ -37,6 +37,7 @@ namespace object
   Macro(code,      Code)				\
   Macro(delegate,  Delegate)				\
   Macro(float,     Float)				\
+  Macro(globals,   Globals)				\
   Macro(integer,   Integer)				\
   Macro(list,      List)				\
   Macro(lobby,     Lobby)				\
@@ -97,7 +98,6 @@ namespace object
   class WrongArgumentType;
   class WrongArgumentCount;
 
-  extern rObject protos_class;
   extern rObject nil_class;
   extern rObject task_class;
   extern rObject void_class;

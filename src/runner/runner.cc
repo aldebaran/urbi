@@ -701,10 +701,12 @@ namespace runner
     {
       target = eval(*e.target_get());
       locals->slot_set(SYMBOL(self), target);
-      // FIXME
-      locals->slot_remove(SYMBOL(updateSlot));
+
+      // FIXME: there's probably a cleaner way to do this (playing
+      // with 'target', for instance).
+      // We remove 'setSlot' so as created slots go in the object, not
+      // the local scope
       locals->slot_remove(SYMBOL(setSlot));
-      locals->slot_remove(SYMBOL(removeSlot));
     }
 
     std::swap(locals, locals_);
