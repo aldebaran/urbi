@@ -5,11 +5,11 @@
 # include "parser/flex-lexer.hh"
 
 # undef  YY_DECL
-# define YY_DECL                                                 \
-  UParser::token_type						 \
-  yyFlexLexer::yylex(UParser::semantic_type* valp,		 \
-		     UParser::location_type* locp,		 \
-		     UParser* up)
+# define YY_DECL							\
+  parser::UParser::token_type						\
+  yyFlexLexer::yylex(parser::UParser::semantic_type* valp,		\
+		     parser::UParser::location_type* locp,		\
+		     parser::UParser* up)
 
 /* The scanner is used for two different purposes: "regular": as a
    regular scanner that feeds its parser, and "prescanner" as a
@@ -31,14 +31,16 @@
    to skip the rest of the action in that case: they are all prefixed
    with PRE_*. */
 
-
-/// Scan \a buf, and return the number of bytes to read to get the
-/// next top-level "," or ";" (included).  Return 0 if there is none
-/// (maybe the buffer is not complete enough).
-///
-/// On a "parse-error" (braces do not match), return the length up to
-/// (including) the invalid brace, so that the parser will raise a
-/// parser error on it.
-size_t prescan (char *buf);
+namespace parser
+{
+  /// Scan \a buf, and return the number of bytes to read to get the
+  /// next top-level "," or ";" (included).  Return 0 if there is none
+  /// (maybe the buffer is not complete enough).
+  ///
+  /// On a "parse-error" (braces do not match), return the length up to
+  /// (including) the invalid brace, so that the parser will raise a
+  /// parser error on it.
+  size_t prescan (char *buf);
+}
 
 #endif // !PARSER_UTOKEN_HH

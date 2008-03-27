@@ -52,10 +52,10 @@ static ast::Object* new_k1_bin(const yy::location& loc,
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
-static Out lexical_cast (UParser& up, const yy::location& loc, In t);
+static Out lexical_cast (parser::UParser& up, const yy::location& loc, In t);
 
 template <typename Out, typename In>
-static Out numeric_cast (UParser& up, const yy::location& loc, In t);
+static Out numeric_cast (parser::UParser& up, const yy::location& loc, In t);
 
 
 /*--------------------.
@@ -675,7 +675,7 @@ FLAVOR   [;|,&]?
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
 Out
-lexical_cast (UParser& up, const yy::location& loc, In t)
+lexical_cast (parser::UParser& up, const yy::location& loc, In t)
 {
   try
   {
@@ -691,7 +691,7 @@ lexical_cast (UParser& up, const yy::location& loc, In t)
 
 template <typename Out, typename In>
 Out
-numeric_cast (UParser& up, const yy::location& loc, In t)
+numeric_cast (parser::UParser& up, const yy::location& loc, In t)
 {
   try
   {
@@ -747,27 +747,28 @@ new_k1_bin(const yy::location& loc,
   return new ast::Object (loc, o);
 }
 
-
-size_t
-prescan (char* buf)
+namespace parser
 {
-  yyFlexLexer scanner;
-  std::istringstream is (buf);
-  scanner.switch_streams(&is, 0);
+  size_t
+  prescan (char* buf)
+  {
+    yyFlexLexer scanner;
+    std::istringstream is (buf);
+    scanner.switch_streams(&is, 0);
 
-  // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
-  int c = scanner.yylex();
-  passert(c, c == pre_eof || c == pre_wants_more || c == pre_complete);
-  // The number of read bytes.
-  size_t length = scanner.pre_length;
-  ECHO("res: " << c << ", length: " << length);
-  if (c == pre_complete)
-    return length;
-  else
-    // We met EOF before reaching a terminator.
-    return 0;
+    // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
+    int c = scanner.yylex();
+    passert(c, c == pre_eof || c == pre_wants_more || c == pre_complete);
+    // The number of read bytes.
+    size_t length = scanner.pre_length;
+    ECHO("res: " << c << ", length: " << length);
+    if (c == pre_complete)
+      return length;
+    else
+      // We met EOF before reaching a terminator.
+      return 0;
+  }
 }
-
 
 // Local Variables:
 // mode: C++
