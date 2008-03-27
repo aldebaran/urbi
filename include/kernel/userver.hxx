@@ -47,20 +47,8 @@ UServer::lastTime()
 inline void
 UServer::addConnection (UConnection* connection)
 {
-  assert (connection != 0);
+  assert (connection);
   addConnection (*connection);
-}
-
-inline bool
-UServer::isRunningSystemCommands () const
-{
-  return systemcommands;
-}
-
-inline void
-UServer::setSystemCommand (bool val)
-{
-  systemcommands = val;
 }
 
 inline void

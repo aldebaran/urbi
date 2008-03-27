@@ -235,11 +235,9 @@ UConnection::received (const char* buffer, size_t length)
        !command.empty();
        command = recv_queue_->pop_command())
   {
-    server_->setSystemCommand (false);
     int result = p.process (command);
     passert (result, result != -1);
     p.process_errors(active_command_);
-    server_->setSystemCommand (true);
 
     if (ast::Nary* ast = p.ast_take().release())
     {

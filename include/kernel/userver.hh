@@ -230,9 +230,6 @@ public:
   // A usual connection to stop dependencies.
   UConnection& getGhostConnection ();
 
-  bool isRunningSystemCommands () const;
-  void setSystemCommand (bool val);
-
   void hasSomethingToDelete ();
 
   const scheduler::Scheduler& getScheduler () const;
@@ -286,10 +283,6 @@ public:
   bool stopall;
 
 private:
-
-  /// False inside parsing, true otherwise for commands created by the
-  /// kernel.
-  bool systemcommands;
 
   enum
   {

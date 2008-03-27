@@ -87,7 +87,6 @@ UServer::UServer(ufloat period,
     somethingToDelete (false),
     uservarState (false),
     stopall (false),
-    systemcommands (true),
     period_(period),
     uid(0)
 {
