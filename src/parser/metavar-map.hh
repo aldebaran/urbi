@@ -1,6 +1,6 @@
 /**
  ** \file parser/metavar-map.hh
- ** \brief Declaration of parser::MetavarMap.
+ ** \brief Declaration of parse::MetavarMap.
  */
 
 #ifndef PARSER_METAVAR_MAP_HH

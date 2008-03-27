@@ -58,7 +58,7 @@ namespace object
   }
 
   static rObject
-  execute_parsed (runner::Runner& r, parser::UParser& p, UrbiException e)
+  execute_parsed (runner::Runner& r, UParser& p, UrbiException e)
   {
     ast::Nary errs;
     p.process_errors(&errs);
@@ -92,7 +92,7 @@ namespace object
   system_class_eval (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, String);
-    parser::UParser p;
+    UParser p;
     p.process(arg1->value_get());
     return execute_parsed(r, p, PrimitiveError("",
 	std::string("Error executing command.")));
@@ -134,7 +134,7 @@ namespace object
       throw PrimitiveError("loadFile",
 			   "No such file: " + filename);
 
-    parser::UParser p;
+    UParser p;
 
     p.process_file(arg1->value_get());
     return

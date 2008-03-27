@@ -90,7 +90,7 @@ UQueue::pop_command ()
   ECHO("Size: " << buffer_.size());
   char *buf = front(buffer_.size());
   ECHO("buf: {{{" << std::string(buf) << "}}}");
-  size_t len = parser::prescan(buf);
+  size_t len = prescan(buf);
   ECHO("Len: " << len);
   buf = pop(len);
   assert(buf);

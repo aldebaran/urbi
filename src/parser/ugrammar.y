@@ -27,11 +27,9 @@
 %error-verbose
 %defines
 %skeleton "lalr1.cc"
-// The leading :: are needed to avoid symbol clashes in the
-// parser class when it sees a parser namespace occurrence.
-%parse-param {::parser::UParser& up}
+%parse-param {UParser& up}
 %parse-param {FlexLexer& scanner}
-%lex-param   {::parser::UParser& up}
+%lex-param   {UParser& up}
 %lex-param   {FlexLexer& scanner}
 %debug
 
@@ -83,7 +81,7 @@
     template <typename T>
     static
     T*
-    metavar (parser::UParser& up, unsigned key)
+    metavar (UParser& up, unsigned key)
     {
       return up.tweast_->template take<T> (key);
     }
@@ -395,7 +393,7 @@
 
     /// Complain if \a command is not implicit.
     static void
-    warn_implicit(parser::UParser& up, const loc& l, const ast::Exp* e)
+    warn_implicit(UParser& up, const loc& l, const ast::Exp* e)
     {
       if (implicit(e))
 	up.warn(l,
@@ -405,10 +403,10 @@
 
   } // anon namespace
 
-  /// Direct the call from 'bison' to the scanner in the right parser::UParser.
+  /// Direct the call from 'bison' to the scanner in the right UParser.
   inline
   yy::parser::token_type
-  yylex(yy::parser::semantic_type* val, yy::location* loc, parser::UParser& up,
+  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up,
 	FlexLexer& scanner)
   {
     return scanner.yylex(val, loc, &up);

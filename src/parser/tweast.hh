@@ -1,6 +1,6 @@
 /**
  ** \file parser/tweast.hh
- ** \brief Declaration of parser::Tweast.
+ ** \brief Declaration of parse::Tweast.
  */
 
 #ifndef PARSER_TWEAST_HH
