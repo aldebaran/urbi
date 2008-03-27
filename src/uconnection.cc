@@ -216,18 +216,8 @@ UConnection::received (const char* buffer, size_t length)
   }
 
   UParser& p = parser_get();
-  PING();
-  if (p.ast_get ())
-  {
-    // This chunk of code seems suspect in k2, meanwhile:
-    pabort ("SHOULD NEVER BE HERE");
-    PING();
-    //reentrency trouble
-#if ! defined LIBPORT_URBI_ENV_AIBO
-    treeLock.unlock();
-#endif
-    CONN_ERR_RET(USUCCESS);
-  }
+  // There should be no tree sitting in the parser.
+  passert (*p.ast_get(), !p.ast_get());
 
   // Starts processing
   receiving_ = true;
@@ -240,7 +230,7 @@ UConnection::received (const char* buffer, size_t length)
   // runners on the same Nary, until runners become managed outside UConnection.
   bool obstructed = !active_command_->empty();
 
-  // Loop to get all the commands that are ready to be executed.
+  // Get all the commands that are ready to be executed.
   for (std::string command = recv_queue_->pop_command();
        !command.empty();
        command = recv_queue_->pop_command())
