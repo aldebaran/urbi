@@ -64,7 +64,6 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
     lobby_ (new object::Lobby (object::State(*this))),
-    parser_ (new UParser ()),
     active_command_ (new ast::Nary()),
     server_ (userver)
 {
@@ -82,7 +81,6 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
 UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
-  delete parser_;
   delete send_queue_;
   delete recv_queue_;
   DEBUG(("done\n"));
@@ -215,10 +213,6 @@ UConnection::received (const char* buffer, size_t length)
     CONN_ERR_RET(USUCCESS);
   }
 
-  UParser& p = parser_get();
-  // There should be no tree sitting in the parser.
-  passert (*p.ast_get(), !p.ast_get());
-
   // Starts processing
   receiving_ = true;
 
@@ -235,11 +229,10 @@ UConnection::received (const char* buffer, size_t length)
        !command.empty();
        command = recv_queue_->pop_command())
   {
-    int result = p.process (command);
-    passert (result, result != -1);
-    p.process_errors(active_command_);
+    parser::UParser parser = parser::parse(command);
+    parser.process_errors(active_command_);
 
-    if (ast::Nary* ast = p.ast_take().release())
+    if (ast::Nary* ast = parser.ast_take().release())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
       // Append to the current list.
@@ -262,7 +255,6 @@ UConnection::received (const char* buffer, size_t length)
     execute ();
 
   receiving_ = false;
-  p.ast_set (0);
 #if ! defined LIBPORT_URBI_ENV_AIBO
   treeLock.unlock();
 #endif

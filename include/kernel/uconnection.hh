@@ -193,7 +193,6 @@ public:
   \----------*/
 
   UErrorValue error_get () const;
-  UParser& parser_get ();
   UServer& server_get() const;
   object::rLobby lobby_get();
 
@@ -321,9 +320,6 @@ private:
 
   /// The Lobby into which the code is evaluated.
   object::rLobby lobby_;
-
-  /// Our parser.  A pointer to stop dependencies.
-  UParser* parser_;
 
   /// The commands to be executed.
   ast::Nary* active_command_;

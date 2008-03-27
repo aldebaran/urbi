@@ -138,3 +138,22 @@ UParser::warn (const yy::parser::location_type& l, const std::string& msg)
 {
   message_push(warnings_, l, msg);
 }
+
+
+/*--------------------------.
+| Free-standing functions.  |
+`--------------------------*/
+
+namespace parser
+{
+
+  UParser
+  parse(const std::string& cmd)
+  {
+    UParser res;
+    int result = res.process (cmd);
+    passert (result, result != -1);
+    return res;
+  }
+
+}
