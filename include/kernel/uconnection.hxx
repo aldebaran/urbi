@@ -25,6 +25,13 @@ UConnection::send_queue_get ()
 }
 
 inline
+UParser&
+UConnection::parser_get ()
+{
+  return *parser_;
+}
+
+inline
 UErrorValue
 UConnection::error_get () const
 {

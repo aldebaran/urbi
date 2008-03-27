@@ -26,6 +26,7 @@ class UImage;
 class UList;
 class UMonitor;
 class UMultiEventInstance;
+class UParser;
 class UQueue;
 class UServer;
 class USound;

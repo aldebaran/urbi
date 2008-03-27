@@ -52,7 +52,6 @@ public:
   /// \return yyparse's result (0 on success).
   int process (parser::Tweast& t);
 
-  /// The TWEAST currently analyzed (if there is one).
   parser::Tweast* tweast_;
 
   /// Parse a file.
@@ -71,9 +70,7 @@ public:
   inline std::auto_ptr<ast_type> ast_xtake ();
   /// Set \a ast_.
   inline void ast_set (ast_type* ast);
-
 private:
-  /// The resulting AST.
   ast_type* ast_;
   /// \}
 
@@ -116,23 +113,6 @@ private:
   /// A stack of locations to support #push/#pop.
   std::stack<yy::location> synclines_;
 };
-
-
-/*--------------------------.
-| Free-standing functions.  |
-`--------------------------*/
-
-namespace parser
-{
-
-  /// Temporary, until we move everything in this namespace.
-  typedef ::UParser UParser;
-
-  /// Parse \a cmd, and return a UParser that holds the result and the
-  /// errors.  Admittedly, we could avoid using UParser at all and
-  /// return a tuple, maybe in another step.
-  UParser parse(const std::string& cmd);
-}
 
 # include "parser/uparser.hxx"
 
