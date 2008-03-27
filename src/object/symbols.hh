@@ -41,7 +41,9 @@
   Macro(Integer, "Integer");                      \
   Macro(LT, "<");                                 \
   Macro(LT_EQ, "<=");                             \
+  Macro(LT_Code_GT, "<Code>");                    \
   Macro(LT_Float_GT, "<Float>");                  \
+  Macro(LT_Integer_GT, "<Integer>");              \
   Macro(LT_LT, "<<");                             \
   Macro(LT_String_GT, "<String>");                \
   Macro(List, "List");                            \
