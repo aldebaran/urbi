@@ -30,7 +30,7 @@ var Scope.locateSlot = function (slotName)
 
 var Scope.updateSlot = function (slotName, value)
 {
-  Object.getSlot("updateSlot").apply([self.target(slotName), slotName, value])
+  Object.getSlot("updateSlot").apply([self.target(slotName), slotName, getSlot("value")])
 };
 
 var Scope.removeSlot = function (slotName)
