@@ -96,19 +96,45 @@ namespace object
 
   // FIXME: implement in urbi too
   rObject
-  Object::make_scope(const runner::Runner&, const rObject& parent)
+  Object::make_scope(const rObject& parent)
+  {
+    rObject res = make_do_scope(parent);
+    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
+    return res;
+  }
+
+  // FIXME: implement in urbi too
+  rObject
+  Object::make_do_scope(const rObject& parent)
   {
     rObject res = object::Object::fresh();
     res->locals_set(true);
     res->proto_add(parent ? parent : global_class);
-    // Mind the order!
-    res->proto_add(object::scope_class);
-    res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
-    res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
-    res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
-    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
-    res->slot_set(SYMBOL(target), scope_class->slot_get(SYMBOL(target)));
-    res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
+
+    try
+    {
+      res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
+      res->slot_set(SYMBOL(locateSlot), scope_class->slot_get(SYMBOL(locateSlot)));
+      res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
+      res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
+
+      // We really need to copy 'locals' in every scope, or else
+      // Scope's methods will get completely fubared: 'locals' will be
+      // found in 'self' and will thus not be the local scope!
+      res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
+    }
+    catch (object::LookupError&)
+    {
+      // Nothing. This never happens in normal use, since all these
+      // scope methods are defined at the very top of
+      // urbi/urbi.u. Yet, a first scope is created to load urbi.u,
+      // and these method are thus not yet defined. We define the
+      // target slot by hand so as anything written in urbi.u goes in
+      // Lobby. So keep in mind that urbi.u is evaluated a little bit
+      // differently than a regular lobby: every {set,get,update}Slot
+      // goes in Lobby, not the local scope - which is quite
+      // reasonable, since this scope will never be usable again.
+    }
     return res;
   }
 

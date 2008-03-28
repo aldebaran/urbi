@@ -350,7 +350,7 @@ UConnection::execute ()
   // FIXME: There is an obvious memory leak here
   runner::Runner* runner =
     new runner::Runner(lobby_,
-		       lobby_,
+		       0,
 		       ::urbiserver->getScheduler (),
 		       active_command_);
   runner->start_job ();

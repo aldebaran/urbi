@@ -4,14 +4,7 @@
 var Code.context = nil;
 
 # Must appear before any scope creation
-
 var Scope.locals = function () { self };
-var lobby.locals = function () { lobby };
-# FIXME
-# 1/ This is a leak.
-# 2/ We should be able to get rid of this self, because every function outer scope
-#    defines self. Yet, for now the expansion of 'at' uses self.
-var lobby.self = lobby;
 
 # Override slot mechanisms
 var Scope.setSlot = Object.getSlot("setSlot");
@@ -22,9 +15,9 @@ var Scope.getSlot = function (slotName)
 
 var Scope.locateSlot = function (slotName)
 {
-  var tgt = self.tryTarget(slotName);
+  var tgt = self.tryTarget(slotName) |
   if (tgt.sameAs(nil))
-    return nil;
+    return nil |
   Object.getSlot("locateSlot").apply([tgt, slotName])
 };
 
@@ -37,6 +30,7 @@ var Scope.removeSlot = function (slotName)
 {
   Object.getSlot("removeSlot").apply([self.target(slotName), slotName])
 };
+
 
 ## --------- ##
 ## Constants ##
@@ -56,6 +50,7 @@ class Global.Constants
 };
 Global.addProto (Global.Constants);
 
+
 ## ------- ##
 ## Scope.  ##
 ## ------- ##
@@ -63,30 +58,10 @@ Global.addProto (Global.Constants);
 do Scope
 {
   function init() { self.makeScope (true) };
-};
 
-## --------- ##
-## Global.  ##
-## --------- ##
-
-do Global
-{
-  // Import the primitives.
-  self.addProto(System);
-
-  // Look for file and load file.
-  function load (file)
+  function atExit (func)
   {
-    loadFile(searchFile(file));
-  };
-
-  function noop () {};
-
-  // Assertion control
-  var System.ndebug = 0;
-  function System.assert {
-    if (!System.ndebug)
-      System.assert_ (call.evalArgAt (1), call.argString (1));
+    self.getLazyLocalSlot ("atexit", [], true) += [getSlot ("func")]
   };
 };
 
@@ -127,6 +102,39 @@ do Object
 };
 
 ## --------- ##
+## Global.  ##
+## --------- ##
+
+do Global
+{
+  // Import the primitives.
+  self.addProto(System);
+
+  // Look for file and load file.
+  function load (file)
+  {
+    loadFile(searchFile(file));
+  };
+
+  // Assertion control
+  var System.ndebug = 0;
+  function System.assert {
+    if (!System.ndebug)
+      System.assert_ (call.evalArgAt (1), call.argString (1));
+  };
+
+  function asString()
+  {
+    if (self === Global)
+      "<Global>"
+    else
+      Scope.getSlot("asString").apply([self]);
+  };
+
+  function noop () {}
+};
+
+## --------- ##
 ## Closure.  ##
 ## --------- ##
 
@@ -138,7 +146,6 @@ class Global.Closure
   {
     var nf = locals.getSlot("f").clone;
     locals.getSlot("nf").context = context;
-#    var locals.getSlot("nf").self = context.self;
     locals.getSlot ("nf");
   };
 
@@ -170,18 +177,6 @@ class Global.Closure
 };
 Code.addProto(Global.Closure);
 Global.addProto(Global.Closure);
-
-## ------------ ##
-## Scope exit.  ##
-## ------------ ##
-
-do Object
-{
-  function atExit (func)
-  {
-    self.getLazyLocalSlot ("atexit", [], true) += [locals.getSlot ("func")]
-  };
-};
 
 ## -------------------- ##
 ## Task related stuff.  ##

@@ -35,22 +35,12 @@ namespace object
     return void_class;
   }
 
-  static rObject
-  lobby_class_target(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, String);
-
-    return target(args[0], arg1->value_get());
-  }
-
   void
   lobby_class_initialize ()
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(lobby, Name)
     DECLARE (send);
-    DECLARE (target);
 #undef DECLARE
   }
 

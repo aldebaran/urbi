@@ -24,7 +24,11 @@ namespace runner
       locals_ (locals),
       myself_ (this)
   {
-    locals_->locals_set (true);
+    if (!locals_)
+    {
+      locals_ = object::Object::make_do_scope();
+      locals_->slot_set(SYMBOL(self), lobby);
+    }
   }
 
   inline

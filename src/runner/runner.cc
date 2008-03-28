@@ -226,12 +226,9 @@ namespace runner
     rObject context = func->slot_get (SYMBOL(context));
 
     // Create the function's local scope
-    rObject scope = object::Object::make_scope(*this);
+    rObject scope = object::Object::make_scope();
 
-    if (context != object::nil_class)
-      scope->proto_add(context);
-    else
-      scope->slot_set(SYMBOL (self), args.front());
+    scope->slot_set(SYMBOL (self), args.front());
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
@@ -248,6 +245,14 @@ namespace runner
     else
     {
       scope->slot_set (SYMBOL(call), call_message);
+    }
+
+    // Copy the context, so as it takes precedence over members
+    if (context != object::nil_class)
+    {
+      foreach (object::Object::slot_type slot, context->slots_get())
+        if (!scope->own_slot_get(slot.first, 0))
+          scope->slot_set(slot.first, slot.second);
     }
 
     ECHO("scope: " << *scope);
@@ -419,7 +424,14 @@ namespace runner
     {
       object::objects_type args;
       args.push_back(object::String::fresh(name));
-      return urbi_call(*this, locals_, SYMBOL(target), args);
+      try
+      {
+        return urbi_call(*this, locals_, SYMBOL(target), args);
+      }
+      catch (object::LookupError&) // No 'target' function
+      {
+        return locals_;
+      }
     }
   }
 
@@ -692,20 +704,17 @@ namespace runner
     // To each scope corresponds a "locals" object which stores the
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
-    rObject locals = object::Object::make_scope(*this, locals_);
+    rObject locals = object::Object::make_scope(locals_);
     rObject target;
 
     if (e.target_get())
     {
       target = eval(*e.target_get());
+      locals = object::Object::make_do_scope(locals_);
       locals->slot_set(SYMBOL(self), target);
-
-      // FIXME: there's probably a cleaner way to do this (playing
-      // with 'target', for instance).
-      // We remove 'setSlot' so as created slots go in the object, not
-      // the local scope
-      locals->slot_remove(SYMBOL(setSlot));
     }
+    else
+      locals = object::Object::make_scope(locals_);
 
     std::swap(locals, locals_);
     try

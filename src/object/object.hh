@@ -182,12 +182,19 @@ namespace object
 
     /// Create a fresh scope
     /**
-     ** \param runner The current runner
      ** \param parent The parent scope (optional, in which case lobby
      **               becomes the parent)
      ** \return The new scope
      */
-    static rObject make_scope(const runner::Runner& runner, const rObject& parent = 0);
+    static rObject make_scope(const rObject& parent = 0);
+
+    /// Make a 'do ... {}' scope
+    /**
+     ** Similar to \see make_scope, but make the scope forward more
+     ** messages to 'self'.
+     ** \return The new scope
+     **/
+    static rObject make_do_scope(const rObject& parent = 0);
 
   protected:
     /// Protected constructor to force proper self_ initialization.

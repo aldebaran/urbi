@@ -98,8 +98,6 @@ namespace object
     CLASS_SETUP(system, System);
     CLASS_SETUP(void, void);
 
-    // Enable to access global variables from the toplevel
-    lobby_class->proto_add(global_class);
   }
 
 } // namespace object
