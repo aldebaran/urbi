@@ -503,6 +503,7 @@ FLAVOR   [;|,&]?
 "=="            RETURN_OP(EQ_EQ);
 "==="           RETURN_OP(EQ_EQ_EQ);
 "!="            RETURN_OP(BANG_EQ);
+"!=="           RETURN_OP(BANG_EQ_EQ);
 "=~="           RETURN_OP(EQ_TILDA_EQ);
 "~="            RETURN_OP(TILDA_EQ);
 "%="            RETURN_OP(PERCENT_EQ);

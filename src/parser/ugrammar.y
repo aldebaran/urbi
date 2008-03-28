@@ -621,7 +621,7 @@
 %left  "||"
 %left  "&&"
 %left  "^"
-%nonassoc "==" "===" "~=" "%=" "=~=" "!="
+%nonassoc "==" "===" "~=" "%=" "=~=" "!=" "!=="
 %nonassoc "<" "<=" ">" ">="
 %left  "<<" ">>"
 %left  "+" "-"
@@ -1315,6 +1315,7 @@ expr:
 	TOK_LT_EQ         "<="
 	TOK_LT            "<"
 	TOK_BANG_EQ       "!="
+	TOK_BANG_EQ_EQ    "!=="
 	TOK_PERCENT_EQ    "%="
 	TOK_TILDA_EQ      "~="
 
@@ -1331,6 +1332,7 @@ id:
 | "<="
 | "<"
 | "!="
+| "!=="
 | "%="
 | "~="
 | "&&"
@@ -1339,6 +1341,7 @@ id:
 
 expr:
   expr "!="  expr { $$ = ast_call(@$, $1, $2, $3); }
+| expr "!==" expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr "%="  expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr "<"   expr { $$ = ast_call(@$, $1, $2, $3); }
 | expr "<="  expr { $$ = ast_call(@$, $1, $2, $3); }
