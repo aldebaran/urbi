@@ -25,12 +25,26 @@ namespace object
     return target(args[0], arg1->value_get());
   }
 
+  static rObject
+  scope_class_tryTarget(runner::Runner& runner, objects_type args)
+  {
+    try
+    {
+      return scope_class_target(runner, args);
+    }
+    catch (LookupError&)
+    {
+      return nil_class;
+    }
+  }
+
   void
   scope_class_initialize ()
   {
 #define DECLARE(Name)                   \
     DECLARE_PRIMITIVE(scope, Name)
     DECLARE(target);
+    DECLARE(tryTarget);
 #undef DECLARE
   }
 

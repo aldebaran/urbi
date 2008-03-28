@@ -20,6 +20,14 @@ var Scope.getSlot = function (slotName)
   Object.getSlot("getSlot").apply([self.target(slotName), slotName])
 };
 
+var Scope.locateSlot = function (slotName)
+{
+  var tgt = self.tryTarget(slotName);
+  if (tgt.sameAs(nil))
+    return nil;
+  Object.getSlot("locateSlot").apply([tgt, slotName])
+};
+
 var Scope.updateSlot = function (slotName, value)
 {
   Object.getSlot("updateSlot").apply([self.target(slotName), slotName, value])
@@ -29,6 +37,22 @@ var Scope.removeSlot = function (slotName)
 {
   Object.getSlot("removeSlot").apply([self.target(slotName), slotName])
 };
+
+## --------- ##
+## Constants ##
+## --------- ##
+
+class Global.Constants
+{
+  var true   = 1.0;
+  var false  = 0.0;
+
+  # FIXME: use real float infinity, or a special token, but not that
+  var inf    = 999999999999999.0;
+
+  var pi     = 3.14159265358979323846264338327950288;
+};
+Global.addProto (Global.Constants);
 
 ## ------- ##
 ## Scope.  ##
@@ -252,23 +276,6 @@ do Object
     o;
   };
 };
-
-## --------- ##
-## Constants ##
-## --------- ##
-
-class Global.Constants
-{
-  var true   = 1.0;
-  var false  = 0.0;
-
-  # FIXME: use real float infinity, or a special token, but not that
-  var inf    = 999999999999999.0;
-
-  var pi     = 3.14159265358979323846264338327950288;
-};
-Global.addProto (Global.Constants);
-
 
 load("urbi/channel.u");
 load("urbi/singleton.u");

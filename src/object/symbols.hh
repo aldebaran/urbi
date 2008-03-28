@@ -176,6 +176,7 @@
   Macro(timeout, "timeout");                      \
   Macro(true, "true");                            \
   Macro(trunc, "trunc");                          \
+  Macro(tryTarget, "tryTarget");                  \
   Macro(uid, "uid");                              \
   Macro(unblock, "unblock");                      \
   Macro(unfreeze, "unfreeze");                    \
