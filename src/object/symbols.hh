@@ -35,7 +35,7 @@
   Macro(EQ_EQ_EQ, "===");                         \
   Macro(EQ_TILDA_EQ, "=~=");                      \
   Macro(Float, "Float");                          \
-  Macro(Globals, "Globals");                      \
+  Macro(Global, "Global");                        \
   Macro(GT, ">");                                 \
   Macro(GT_EQ, ">=");                             \
   Macro(GT_GT, ">>");                             \
@@ -45,7 +45,7 @@
   Macro(LT_Code_GT, "<Code>");                    \
   Macro(LT_Float_GT, "<Float>");                  \
   Macro(LT_Integer_GT, "<Integer>");              \
-  Macro(LT_Globals_GT, "<Globals>");              \
+  Macro(LT_Global_GT, "<Global>");                \
   Macro(LT_LT, "<<");                             \
   Macro(LT_Scope_GT, "<Scope>");                  \
   Macro(LT_String_GT, "<String>");                \

@@ -1,4 +1,4 @@
-class Globals.Semaphore {
+class Global.Semaphore {
 
    function init (n) {
      var self.queue = [];

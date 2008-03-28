@@ -138,15 +138,15 @@ namespace object
   };
 
 
-  /*---------.
-  | Globals. |
-  `---------*/
+  /*--------.
+  | Global. |
+  `--------*/
 
-  struct globals_traits
+  struct global_traits
   {
-    // FIXME: Globals is not really an atom
+    // FIXME: Global is not really an atom
     typedef int type;
-    enum { kind = Object::kind_globals };
+    enum { kind = Object::kind_global };
   };
 
 

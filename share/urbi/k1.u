@@ -1,5 +1,5 @@
 # k1 compatibility.
-class Globals.Kernel1Functions
+class Global.Kernel1Functions
 {
 
   // isdef("name"): Check whether "name" is defined (here or above).
@@ -30,9 +30,9 @@ class Globals.Kernel1Functions
     s.length
   };
 };
-Globals.addProto(Globals.Kernel1Functions);
+Global.addProto(Global.Kernel1Functions);
 
-class Globals.Kernel1Methods
+class Global.Kernel1Methods
 {
   ## --------------------------------- ##
   ## Dirty tricks to change foo.load.  ##
@@ -59,13 +59,13 @@ class Globals.Kernel1Methods
     self
   };
 };
-Object.addProto(Globals.Kernel1Methods);
+Object.addProto(Global.Kernel1Methods);
 
 
 
 # Deprecated command from k1.
 # FIXME: Some commands should be rewritten once it becomes possible.
-class Globals.DeprecatedCommands
+class Global.DeprecatedCommands
 {
   var deprecated_ = function () { echo("`" + name + "' is deprecated." ) };
 
@@ -96,4 +96,4 @@ class Globals.DeprecatedCommands
   };
 };
 
-Globals.addProto(Globals.DeprecatedCommands);
+Global.addProto(Global.DeprecatedCommands);

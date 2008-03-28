@@ -40,10 +40,10 @@ do Scope
 };
 
 ## --------- ##
-## Globals.  ##
+## Global.  ##
 ## --------- ##
 
-do Globals
+do Global
 {
   // Import the primitives.
   self.addProto(System);
@@ -97,7 +97,7 @@ do Object
 ## Closure.  ##
 ## --------- ##
 
-class Globals.Closure
+class Global.Closure
 {
   function makeExplicitClosure (f, context)
   {
@@ -133,8 +133,8 @@ class Globals.Closure
     locals.getSlot ("self")
   };
 };
-Code.addProto(Globals.Closure);
-Globals.addProto(Globals.Closure);
+Code.addProto(Global.Closure);
+Global.addProto(Global.Closure);
 
 ## ------------ ##
 ## Scope exit.  ##
@@ -257,7 +257,7 @@ do Object
 ## Constants ##
 ## --------- ##
 
-class Globals.Constants
+class Global.Constants
 {
   var true   = 1.0;
   var false  = 0.0;
@@ -267,7 +267,7 @@ class Globals.Constants
 
   var pi     = 3.14159265358979323846264338327950288;
 };
-Globals.addProto (Globals.Constants);
+Global.addProto (Global.Constants);
 
 
 load("urbi/channel.u");
@@ -304,7 +304,7 @@ do nil
 ## Comparable.  ##
 ## ------------ ##
 
-class Globals.Comparable
+class Global.Comparable
 {
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
@@ -317,7 +317,7 @@ Object.addProto(Comparable);
 ## Orderable.  ##
 ## ----------- ##
 
-class Globals.Orderable
+class Global.Orderable
 {
   function '<'  (rhs) { rhs > self };
   function '<=' (rhs) { self < rhs || self == rhs };
@@ -416,7 +416,7 @@ load("urbi/k1.u");
 ## Math. ##
 ## ----- ##
 
-class Globals.Math
+class Global.Math
 {
   for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
              "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
@@ -428,7 +428,7 @@ class Globals.Math
   var epsilontilde = 0.0001;
   var epsilonpercent = 0.0001;
 };
-Globals.addProto (Globals.Math);
+Global.addProto (Global.Math);
 
 
 ## -------- ##
@@ -457,7 +457,7 @@ do Object
   };
 };
 
-class Globals.Binary
+class Global.Binary
 {
   function asString()
   {
@@ -478,7 +478,7 @@ class Globals.Binary
 ## Profiling operations.  ##
 ## ---------------------- ##
 
-class Globals.Profiling
+class Global.Profiling
 {
   function timen {
     var niters = call.evalArgAt (2);
@@ -493,7 +493,7 @@ class Globals.Profiling
     echo ("  Single iteration: " + expired / niters + " ms");
   };
 };
-Globals.addProto (Globals.Profiling);
+Global.addProto (Global.Profiling);
 
 ## ----------- ##
 ## Semaphores. ##

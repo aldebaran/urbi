@@ -20,7 +20,7 @@
 # include "object/call-class.hh"
 # include "object/code-class.hh"
 # include "object/delegate-class.hh"
-# include "object/globals-class.hh"
+# include "object/global-class.hh"
 # include "object/lobby-class.hh"
 # include "object/float-class.hh"
 # include "object/integer-class.hh"

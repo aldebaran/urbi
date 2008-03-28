@@ -29,8 +29,8 @@ object/lobby-class.cc				\
 object/lobby-class.hh				\
 object/float-class.cc				\
 object/float-class.hh				\
-object/globals-class.cc				\
-object/globals-class.hh				\
+object/global-class.cc				\
+object/global-class.hh				\
 object/fwd.hh					\
 object/idelegate.hh				\
 object/integer-class.cc				\

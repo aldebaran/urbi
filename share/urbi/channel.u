@@ -3,14 +3,14 @@
 ## --------- ##
 
 // Does not have anything special.  Yet.
-class Globals.Channel
+class Global.Channel
 {
   function init(x) { var self.name = x };
   function '<<' (x) { x.print (name); {} };
 };
 
 // Default channels.
-do Globals
+do Global
 {
   // Long names are k1 compatible.
   var output  = new Channel("output");

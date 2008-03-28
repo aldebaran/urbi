@@ -37,7 +37,7 @@ namespace object
   Macro(code,      Code)				\
   Macro(delegate,  Delegate)				\
   Macro(float,     Float)				\
-  Macro(globals,   Globals)				\
+  Macro(global,    Global)				\
   Macro(integer,   Integer)				\
   Macro(list,      List)				\
   Macro(lobby,     Lobby)				\

@@ -54,8 +54,8 @@ namespace object
     // 3. Finalize the construction for each base class: bind some
     // initial methods.
     //
-    // 4. Register all these classes in Protos, so that when we look
-    // up for "Object" for instance, we find it.
+    // 4. Register all these classes in Global, to make them
+    // accessible from anywhere.
     //
     // CLASS_CREATE does 1, CLASS_INIT does 2 to 4, and CLASS_SETUP
     // runs 1 to 4.
@@ -65,9 +65,9 @@ namespace object
 
 #define CLASS_INIT(What, Name)					\
     What ## _class->slot_set(SYMBOL(protoName),			\
-			     String::fresh(SYMBOL(Name)));          \
+			     String::fresh(SYMBOL(Name)));      \
     What ## _class_initialize ();				\
-    globals_class->slot_set(symbol_ ## Name, What ## _class);
+    global_class->slot_set(symbol_ ## Name, What ## _class);
 
 #define CLASS_SETUP(What, Name)			\
     CLASS_CREATE(What, Name)			\
@@ -89,7 +89,7 @@ namespace object
     CLASS_SETUP(void, void);
 
     // Enable to access global variables from the toplevel
-    lobby_class->proto_add(globals_class);
+    lobby_class->proto_add(global_class);
   }
 
 } // namespace object

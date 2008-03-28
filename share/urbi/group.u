@@ -1,4 +1,4 @@
-class Globals.Group
+class Global.Group
 {
   function init ()
   {

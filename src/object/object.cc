@@ -14,7 +14,7 @@
 
 #include "object/object.hh"
 #include "object/atom.hh"
-#include "object/globals-class.hh"
+#include "object/global-class.hh"
 #include "object/urbi-exception.hh"
 
 #include "runner/runner.hh"
@@ -98,7 +98,7 @@ namespace object
     if (parent)
       res->proto_add(parent);
     else
-      res->proto_add(globals_class);
+      res->proto_add(global_class);
     // Mind the order!
     res->proto_add(object::scope_class);
     res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
