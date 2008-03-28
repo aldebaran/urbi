@@ -31,7 +31,10 @@ namespace object
                     libport::Symbol msg,
                     objects_type& args)
   {
+    assertion(self);
     rObject message = self->slot_get(msg);
+    if (!message)
+      throw LookupError(msg);
     args.insert(args.begin(), self);
     rObject res = r.apply(message, args);
     args.erase(args.begin());
