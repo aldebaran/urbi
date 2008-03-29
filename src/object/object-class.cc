@@ -28,7 +28,7 @@ namespace object
   object_class_clone (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return clone(args[0]);
+    return args[0]->clone();
   }
 
   static rObject

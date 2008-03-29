@@ -75,7 +75,7 @@ uobject_clone(runner::Runner&, object::objects_type l)
 
 rObject uobject_make_proto(const std::string& name)
 {
-  rObject oc = object::clone(object::object_class);
+  rObject oc = object::object_class->clone();
   oc->slot_set(SYMBOL(__uobject_cname),
 	       object::String::fresh(libport::Symbol(name)));
   oc->slot_set(SYMBOL(__uobject_base), oc);
@@ -90,7 +90,7 @@ rObject uobject_make_proto(const std::string& name)
 */
 rObject uobject_new(rObject proto, bool forceName)
 {
-  rObject r = object::clone(object::object_class);
+  rObject r = object::object_class->clone();
 
   // Reparent r to proto base.
   r->proto_remove(object::object_class);

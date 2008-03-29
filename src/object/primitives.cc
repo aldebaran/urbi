@@ -61,7 +61,7 @@ namespace object
     // runs 1 to 4.
 
 #define CLASS_CREATE(What, Name)		\
-    What ## _class = clone(object_class);
+    What ## _class = object_class->clone();
 
 #define CLASS_INIT(What, Name)					\
     What ## _class->slot_set(SYMBOL(protoName),			\

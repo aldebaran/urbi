@@ -155,9 +155,12 @@ namespace object
 					      std::ostream& o) const;
     /// \}
 
-    /// Clone helper. We use it for dispatching purpose. self is the same
-    /// as this, but uses a shared_ptr.
-    virtual rObject do_clone (rObject self) const;
+    /// Clone, i.e., create a fresh object with this class as sole proto.
+    // It is tempting to make it const, but then the list of protos
+    // must be const too.
+    // Not a member function because we want the shared_ptr, which
+    // is not available via this.
+    virtual rObject clone () const;
 
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;
@@ -215,13 +218,6 @@ namespace object
                     rObject& self,
                     libport::Symbol msg,
                     objects_type& args);
-
-  /// Clone, i.e., create a fresh object with this class as sole proto.
-  // It is tempting to make it const, but then the list of protos
-  // must be const too.
-  // Not a member function because we want the shared_ptr, which
-  // is not available via this.
-  rObject clone (rObject proto);
 
   /// If the target is a "real" object, then updating means the same
   /// as slot_set: one never updates a proto.  If the target is a

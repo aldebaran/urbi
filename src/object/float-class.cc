@@ -137,7 +137,7 @@ abs(libport::ufloat v)
   {
     CHECK_ARG_COUNT(1);
     FETCH_ARG(0, Float);
-    return clone(arg0);
+    return arg0->clone();
   }
 
 

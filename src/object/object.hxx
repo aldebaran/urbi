@@ -165,10 +165,10 @@ namespace object
   }
 
   inline rObject
-  Object::do_clone (rObject self) const
+  Object::clone () const
   {
     rObject res = Object::fresh();
-    res->proto_add (self);
+    res->proto_add (self());
     return res;
   }
 
@@ -176,12 +176,6 @@ namespace object
   | Free standing functions.  |
   `--------------------------*/
 
-  inline
-  rObject
-  clone (rObject proto)
-  {
-    return proto->do_clone (proto);
-  }
   template<class P, class F> bool
   for_all_protos(P& r, F& f, objects_type& objects)
   {

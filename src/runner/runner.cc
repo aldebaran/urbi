@@ -388,7 +388,7 @@ namespace runner
   Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
 			      const ast::exps_type& args) const
   {
-    rObject res = object::clone (object::call_class);
+    rObject res = object::call_class->clone();
 
     // Set the sender to be the current self. self must always exist.
     res->slot_set (SYMBOL(sender),
@@ -669,7 +669,7 @@ namespace runner
     // (in the prototypal sense of clone).  It turns out ast::Object is used
     // only for simple object::Atom, i.e., the case where "clone" and "dup"
     // behave equally.
-    current_ = object::clone(e.value_get());
+    current_ = e.value_get()->clone();
     ECHO ("result: " << *current_);
   }
 
@@ -797,7 +797,7 @@ namespace runner
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitely
 	  // rooted by Tag).
-	  rObject new_tag = object::clone (toplevel);
+	  rObject new_tag = toplevel->clone();
 	  object::objects_type args;
 	  args.push_back (new_tag);
 	  args.push_back (base);

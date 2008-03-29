@@ -64,8 +64,7 @@ namespace object
 
     void value_set (value_ref_type v);
 
-    /// Clone helper.
-    virtual rObject do_clone (rObject self) const;
+    virtual rObject clone () const;
 
     /// Comparison methods
     /// \{
@@ -86,19 +85,6 @@ namespace object
     /// The value.
     value_type value_;
   };
-
-
-  /*--------------------------.
-  | Free standing functions.  |
-  `--------------------------*/
-
-  /// Clone, i.e., create a fresh object with this class as sole proto.
-  // Overloads the definition for rObject.
-  // Not a member function because we want the shared_ptr, which
-  // is not available via this.
-  template <typename Traits>
-  typename Atom<Traits>::shared_type
-  clone (typename Atom<Traits>::shared_type ref);
 
 
   /*--------.

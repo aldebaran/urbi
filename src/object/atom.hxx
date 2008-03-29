@@ -229,23 +229,10 @@ namespace object
 
   template<typename Traits>
   inline rObject
-  Atom<Traits>::do_clone (rObject self) const
+  Atom<Traits>::clone () const
   {
     rObject res = Atom<Traits>::fresh(value_get (), false);
-    res->proto_add (self);
-    return res;
-  }
-
-  /*--------------------------.
-  | Free standing functions.  |
-  `--------------------------*/
-
-  template <typename Traits>
-  typename Atom<Traits>::shared_type
-  clone (typename Atom<Traits>::shared_type ref)
-  {
-    typename Atom<Traits>::shared_type res = Atom<Traits>::fresh();
-    res->proto_add (ref);
+    res->proto_add (self());
     return res;
   }
 
