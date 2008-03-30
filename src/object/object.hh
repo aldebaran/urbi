@@ -186,15 +186,23 @@ namespace object
      **               becomes the parent)
      ** \return The new scope
      */
-    static rObject make_scope(const rObject& parent = 0);
+    static rObject make_scope(const rObject& parent);
 
     /// Make a 'do ... {}' scope
     /**
-     ** Similar to \see make_scope, but make the scope forward more
+     ** Similar to \see make_method_scope, but make the scope forward more
      ** messages to 'self'.
      ** \return The new scope
      **/
-    static rObject make_do_scope(const rObject& parent = 0);
+    static rObject make_do_scope(const rObject& parent, const rObject& self);
+
+    /// Make a method outer scope
+    /**
+     ** Similar to \see make_scope, but make the scope forward
+     ** messages to self when relevant
+     ** \return The new scope
+     **/
+    static rObject make_method_scope(const rObject& self);
 
   protected:
     /// Protected constructor to force proper self_ initialization.

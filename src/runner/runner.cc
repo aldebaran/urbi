@@ -225,10 +225,11 @@ namespace runner
     // Context in which to evaluate the function, which may be nil.
     rObject context = func->slot_get (SYMBOL(context));
 
+    // Create the function's outer scope, with the first argument as
+    // 'self'
+    rObject outerScope = object::Object::make_method_scope(args.front());
     // Create the function's local scope
-    rObject scope = object::Object::make_scope();
-
-    scope->slot_set(SYMBOL (self), args.front());
+    rObject scope = object::Object::make_scope(outerScope);
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
@@ -719,8 +720,7 @@ namespace runner
     if (e.target_get())
     {
       target = eval(*e.target_get());
-      locals = object::Object::make_do_scope(locals_);
-      locals->slot_set(SYMBOL(self), target);
+      locals = object::Object::make_do_scope(locals_, target);
     }
     else
       locals = object::Object::make_scope(locals_);

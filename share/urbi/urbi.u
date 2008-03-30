@@ -8,6 +8,17 @@ var Scope.locals = function () { self };
 
 # Override slot mechanisms
 var Scope.setSlot = Object.getSlot("setSlot");
+
+function Scope.doSetSlot(slotName, value)
+{
+  var tgt;
+  if (self.locateSlot("setSlot").memSameAs(self))
+    tgt = self.getSlot("self")
+  else
+    tgt = self;
+  Object.getSlot("setSlot").apply([tgt, slotName, getSlot("value")])
+};
+
 var Scope.getSlot = function (slotName)
 {
   Object.getSlot("getSlot").apply([self.target(slotName), slotName])
@@ -36,20 +47,22 @@ var Scope.removeSlot = function (slotName)
 ## Constants ##
 ## --------- ##
 
-class Global.Constants
+# Define true and false outside a do, since they are needed to run do
+# scopes' doSetSlot.
+class Global.Constants {};
+var Global.Constants.true   = 1.0;
+var Global.Constants.false  = 0.0;
+Global.addProto (Global.Constants);
+
+do Global.Constants
 {
   var asString = "<Constants>";
-
-  var true   = 1.0;
-  var false  = 0.0;
 
   # FIXME: use real float infinity, or a special token, but not that
   var inf    = 999999999999999.0;
 
   var pi     = 3.14159265358979323846264338327950288;
 };
-Global.addProto (Global.Constants);
-
 
 ## ------- ##
 ## Scope.  ##
@@ -291,12 +304,9 @@ load("urbi/singleton.u");
 ## void.  ##
 ## ------ ##
 
-do void
-{
-  self.addProto(Singleton);
-  // void prints nothing.
-  var asString = "";
-};
+void.addProto(Singleton);
+// void prints nothing.
+var void.asString = "";
 
 
 ## ---- ##
@@ -324,7 +334,6 @@ class Global.Comparable
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
 };
-
 # Provide !=.
 Object.addProto(Comparable);
 
@@ -440,7 +449,7 @@ class Global.Math
   for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
              "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
   {
-    setSlot (fn, bounce_named (fn))
+    Global.Math.setSlot (fn, bounce_named (fn))
   };
 
   # Global variables

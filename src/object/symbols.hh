@@ -102,6 +102,7 @@
   Macro(data, "data");                            \
   Macro(debugoff, "debugoff");                    \
   Macro(debugon, "debugon");                      \
+  Macro(doSetSlot, "doSetSlot");                  \
   Macro(dump, "dump");                            \
   Macro(echo, "echo");                            \
   Macro(eval, "eval");                            \

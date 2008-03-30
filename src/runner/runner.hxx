@@ -7,6 +7,7 @@
 # define RUNNER_RUNNER_HXX
 
 # include "object/atom.hh"
+# include "object/global-class.hh"
 
 # include "runner/runner.hh"
 
@@ -25,10 +26,7 @@ namespace runner
       myself_ (this)
   {
     if (!locals_)
-    {
-      locals_ = object::Object::make_do_scope();
-      locals_->slot_set(SYMBOL(self), lobby);
-    }
+      locals_ = object::Object::make_do_scope(object::global_class, lobby);
   }
 
   inline
