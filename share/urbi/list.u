@@ -7,30 +7,30 @@ do List
   // Whether e is in the list.
   function has(e)
   {
-    for i in self
+    for| i in self
     {
       if (i == e)
-	return true;
-    };
-    return false;
+	return true
+    } |
+    return false
   };
 
   // Same contents except occurrences of e.
   function remove(e)
   {
-    return res - [e];
+    return res - [e]
   };
 
   // Subtract a list from self.
   function '-' (rhs)
   {
-    var res = [];
-    for i in self
+    var res = [] |
+    for| i in self
     {
       if (!rhs.has(i))
-	res.push_back(i);
-    };
-    return res;
+	res.push_back(i)
+    } |
+    return res
   };
 
   # The Lisp-like name.
@@ -38,8 +38,8 @@ do List
 
   function insert(e)
   {
-    echo ("List.insert is deprecated, please use List.push_back");
-    push_back(e);
+    echo ("List.insert is deprecated, please use List.push_back") |
+    push_back(e)
   };
 
   ## ------------------------ ##
@@ -48,36 +48,36 @@ do List
 
   function map (f)
   {
-    var res = [];
-    for i in self { res += [f (i)] };
+    var res = [] |
+    for| i in self { res += [f (i)] } |
     res
   };
 
   function any (f)
   {
-    for i in self { if (f (i)) return true };
+    for i in self { if (f (i)) return true } |
     false
   };
 
   function all (f)
   {
-    for i in self { if (!f (i)) return false };
+    for i in self { if (!f (i)) return false } |
     true
   };
 
   function asString ()
   {
     if (self === List)
-      return "<List>";
-    var res = "[";
+      return "<List>" |
+    var res = "[" |
     if (self.size)
     {
-      res += self.front.asString;
-      for elt in self.tail
+      res += self.front.asString |
+      for| elt in self.tail
       {
-        res += ", " + elt.asString;
+        res += ", " + elt.asString |
       }
-    };
-    res += "]";
+    } |
+    res += "]"
   };
 };

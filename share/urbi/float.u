@@ -18,7 +18,7 @@ do Float
 
   // One would like to write
   //
-  // function '++' () { var res = self.clone; self += 1; res };
+  // function '++' () { var res = self.clone | self += 1 | res };
   //
   // but it does not return a Float, it returns an Object which
   // has Float as *grand*-proto.  As a result, it does not have

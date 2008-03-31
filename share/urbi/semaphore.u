@@ -1,7 +1,7 @@
 class Global.Semaphore {
 
    function init (n) {
-     var self.queue = [];
+     var self.queue = [] |
      var self.count = n
    };
 

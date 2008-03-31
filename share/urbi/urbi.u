@@ -115,10 +115,10 @@ do Object
   function 'new'
   {
     # The fresh child.
-    var res = call.target.clone;
+    var res = call.target.clone |
     # Call the "init" from the parent, retargetted to the child.
-    call.target.getSlot("init").apply([res] + call.evalArgs);
-    res;
+    call.target.getSlot("init").apply([res] + call.evalArgs) |
+    res
   };
 };
 
@@ -374,9 +374,9 @@ do Object
   // Gives type, + uid if relevant
   function id ()
   {
-    var res = type.clone;
+    var res = type.clone |
     if (!isProto)
-      res += "_" + uid;
+      res += "_" + uid |
     res
   };
 
@@ -477,12 +477,12 @@ class Global.Binary
       "<Binary>"
     else
     {
-      var res = "BIN " + data.size.asString;
+      var res = "BIN " + data.size.asString |
       if (!keywords.empty)
-	res += " " + keywords;
-      res += "\n" + data;
-      res;
-    };
+	res += " " + keywords |
+      res += "\n" + data |
+      res
+    }
   };
 };
 
@@ -496,10 +496,10 @@ class Global.Profiling
     var niters = call.evalArgAt (2);
     var start_time = time;
     var start_cycle = cycle |
-    { for| (var i = 0; i < niters; i++)
+    { for (var i = 0; i < niters; i++)
         call.evalArgAt (1)
     } |
-    var ncycles = cycle - start_cycle;
+    var ncycles = cycle - start_cycle - 1;
     var expired = time - start_time;
     echo ("Profiling information");
     echo ("  Expression:       " + call.argString (1));
