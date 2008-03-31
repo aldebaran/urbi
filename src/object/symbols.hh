@@ -25,6 +25,7 @@
   Macro(Alien, "Alien");                          \
   Macro(BANG, "!");                               \
   Macro(BANG_EQ, "!=");                           \
+  Macro(BANG_EQ_EQ, "!==");                       \
   Macro(Binary, "Binary");                        \
   Macro(CARET, "^");                              \
   Macro(Call, "Call");                            \
@@ -35,19 +36,17 @@
   Macro(EQ_EQ_EQ, "===");                         \
   Macro(EQ_TILDA_EQ, "=~=");                      \
   Macro(Float, "Float");                          \
-  Macro(Global, "Global");                        \
   Macro(GT, ">");                                 \
   Macro(GT_EQ, ">=");                             \
   Macro(GT_GT, ">>");                             \
+  Macro(Global, "Global");                        \
   Macro(Integer, "Integer");                      \
   Macro(LT, "<");                                 \
-  Macro(LT_EQ, "<=");                             \
   Macro(LT_Code_GT, "<Code>");                    \
+  Macro(LT_EQ, "<=");                             \
   Macro(LT_Float_GT, "<Float>");                  \
   Macro(LT_Integer_GT, "<Integer>");              \
-  Macro(LT_Global_GT, "<Global>");                \
   Macro(LT_LT, "<<");                             \
-  Macro(LT_Scope_GT, "<Scope>");                  \
   Macro(LT_String_GT, "<String>");                \
   Macro(List, "List");                            \
   Macro(Lobby, "Lobby");                          \
@@ -64,7 +63,6 @@
   Macro(PLUS_EQ, "+=");                           \
   Macro(PLUS_PLUS, "++");                         \
   Macro(Primitive, "Primitive");                  \
-  Macro(Protos, "Protos");                        \
   Macro(SLASH, "/");                              \
   Macro(SLASH_EQ, "/=");                          \
   Macro(STAR, "*");                               \
@@ -78,8 +76,6 @@
   Macro(Tag, "Tag");                              \
   Macro(Task, "Task");                            \
   Macro(Token, "Token");                          \
-  Macro(VisibilityScope, "VisibilityScope");      \
-  Macro(__target, "__target");                    \
   Macro(__uobject_base, "__uobject_base");        \
   Macro(__uobject_cname, "__uobject_cname");      \
   Macro(abs, "abs");                              \
