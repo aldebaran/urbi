@@ -658,7 +658,7 @@ stmts:
   cstmt
   {
     $$ = new ast::Nary();
-    if (!dynamic_cast<ast::Noop*> ($1))
+    if (!implicit ($1))
       $$->push_back ($1);
     else
       delete $1;
@@ -667,7 +667,7 @@ stmts:
   {
     if ($$->back_flavor_get() == ast::flavor_none)
       $$->back_flavor_set ($2, @2);
-    if (!dynamic_cast<ast::Noop*> ($3))
+    if (!implicit ($3))
       $$->push_back($3);
     else
       delete $3;
@@ -676,7 +676,7 @@ stmts:
   {
     if ($$->back_flavor_get() == ast::flavor_none)
       $$->back_flavor_set ($2, @2);
-    if (!dynamic_cast<ast::Noop*> ($3))
+    if (!implicit ($3))
       $$->push_back($3);
     else
       delete $3;
