@@ -187,15 +187,15 @@ do Object
 {
   function detach
   {
-    var f = makeClosedCode (call.evalArgAt (1));
-    new Task (getSlot ("f"));
+    var f = makeClosedCode (call.evalArgAt (1)) |
+    new Task (getSlot ("f")) |
     void
   };
 
   function detach_linked
   {
-    var f = makeClosedCode (call.evalArgAt (1));
-    new Task (getSlot ("f"), true);
+    var f = makeClosedCode (call.evalArgAt (1)) |
+    new Task (getSlot ("f"), true) |
     void
   };
 
@@ -203,12 +203,12 @@ do Object
   function every_
   {
     detach ({
-      var delay = call.evalArgAt (1);
-      var deadline = time;
+      var delay = call.evalArgAt (1) |
+      var deadline = time |
       loop {
-        detach (call.evalArgAt (2));
-	deadline += delay;
-        sleep (deadline - time);
+        detach (call.evalArgAt (2)) |
+	deadline += delay |
+        sleep (deadline - time)
       }
     })
   };
@@ -218,11 +218,11 @@ do Object
   function at_
   {
     detach ({
-      var t = currentRunner;
+      var t = currentRunner |
       loop {
-        waituntil (call.evalArgAt (1));
-        detach (call.evalArgAt (2));
-        waituntil (!call.evalArgAt (1));
+        waituntil (call.evalArgAt (1)) |
+        detach (call.evalArgAt (2)) |
+        waituntil (!call.evalArgAt (1)) |
         if (call.argsCount > 3)
           detach (call.evalArgAt (3))
       }
@@ -234,11 +234,11 @@ do Object
   function whenever_
   {
     detach ({
-      var t = currentRunner;
+      var t = currentRunner |
       loop {
-        waituntil (call.evalArgAt (1));
+        waituntil (call.evalArgAt (1)) |
         loop {
-          call.evalArgAt (2);
+          call.evalArgAt (2) |
           if (!call.evalArgAt (1))
             break
         };
@@ -249,12 +249,12 @@ do Object
 
   # waituntil takes an expression and waits until it becomes true
   function waituntil {
-    var t = currentRunner;
-    t.setSideEffectFree (true);
+    var t = currentRunner |
+    t.setSideEffectFree (true) |
     while (!call.evalArgAt (1)) {
       t.waitForChanges
-    };
-    t.setSideEffectFree (false);
+    } |
+    t.setSideEffectFree (false)
   };
 
   # persist takes an expression and a delay, and return an object whose val slot
@@ -272,13 +272,13 @@ do Object
   # FIXME: We need a way to scope the "at" and destroy it when "o" is no longer
   # visible.
   function persist {
-    var o = new Object;
-    var o.val = false;
-    var o.tag = new Tag ("persist".fresh);
-    var delay = call.evalArgAt (2);
-    at (call.evalArgAt (1)) o.tag: { sleep (delay); o.val = true }
-      onleave { o.val = false; o.tag.stop };
-    o;
+    var o = new Object |
+    var o.val = false |
+    var o.tag = new Tag ("persist".fresh) |
+    var delay = call.evalArgAt (2) |
+    at (call.evalArgAt (1)) o.tag: { sleep (delay) | o.val = true }
+      onleave { o.val = false | o.tag.stop } |
+    o
   };
 };
 
@@ -495,14 +495,19 @@ class Global.Profiling
   function timen {
     var niters = call.evalArgAt (2);
     var start_time = time;
-    for (var i = 0; i < niters; i++)
-      call.evalArgAt (1);
+    var start_cycle = cycle |
+    { for| (var i = 0; i < niters; i++)
+        call.evalArgAt (1)
+    } |
+    var ncycles = cycle - start_cycle;
     var expired = time - start_time;
     echo ("Profiling information");
     echo ("  Expression:       " + call.argString (1));
     echo ("  Iterations:       " + niters);
+    echo ("  Cycles:           " + ncycles);
     echo ("  Total time:       " + expired + " ms");
     echo ("  Single iteration: " + expired / niters + " ms");
+    echo ("                    " + ncycles / niters + " cycles");
   };
 };
 Global.addProto (Global.Profiling);

@@ -356,7 +356,7 @@
     //
     // ->
     //
-    // "{ INIT OP WHILE OP (TEST) { BODY OP INC } }"
+    // "{ INIT OP WHILE OP (TEST) { BODY | INC } }"
     //
     // OP is either ";" or "|".
     static
@@ -371,14 +371,14 @@
       assert (inc);
       assert (body);
 
-      // BODY OP INC.
-      ast::Exp* loop_body = ast_nary (l, op, body, inc);
+      // BODY | INC.
+      ast::Exp* loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
 
-      // WHILE OP (TEST) { BODY OP INC }.
+      // WHILE OP (TEST) { BODY | INC }.
       ast::While *while_loop =
 	new ast::While(l, op, test, ast_scope(l, loop_body));
 
-      // { INIT OP WHILE OP (TEST) { BODY OP INC } }.
+      // { INIT OP WHILE OP (TEST) { BODY | INC } }.
       return ast_scope(l, ast_nary (l, op, init, while_loop));
     }
 
@@ -761,23 +761,23 @@ stmt:
   {
     DESUGAR($$,
 	    "var " << *$2 << " = Object.Group.new;"
-	    << *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "]);");
+	    << *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
     DESUGAR($$,
-	    *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "]);");
+	    *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
     DESUGAR($$,
-	    *$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "]);");
+	    *$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "])");
   }
 | "group" { $$ = 0; }
 ;
 
 expr:
-  "group" "identifier"    { DESUGAR($$, *$2 << ".members;"); }
+  "group" "identifier"    { DESUGAR($$, *$2 << ".members"); }
 ;
 
 // Aliases.
@@ -828,8 +828,8 @@ stmt:
       // (an ast::Call), we get here as an Exp, which is not good enough
       // to be used with "var".
       DESUGAR($$,
-	      "var " << ast::clone(*lvalue) << "= Object.clone;"
-	      << "do " << lvalue << "{" << ast_exp($3) << "};");
+	      "var " << ast::clone(*lvalue) << "= Object.clone|"
+	      << "do " << lvalue << "{" << ast_exp($3) << "}");
 #endif
     }
 | "class" lvalue
@@ -1020,14 +1020,14 @@ stmt:
       libport::Symbol ex = libport::Symbol::fresh(SYMBOL(freezeif));
       libport::Symbol in = libport::Symbol::fresh(SYMBOL(freezeif));
       DESUGAR($$,
-	      "var " << ex << " = " << "new Tag (\"" << ex << "\");"
-	      << "var " << in << " = " << "new Tag (\"" << in << "\");"
+	      "var " << ex << " = " << "new Tag (\"" << ex << "\")|"
+	      << "var " << in << " = " << "new Tag (\"" << in << "\")|"
 	      << ex << " : { "
 	      // FIXME: Use the next line instead of the following one; it looks
 	      // like Tweast, at least as used here, may not be reentrant.
 	      // << "at(" << $3 << ") " << in << ".freeze onleave " << in << ".unfreeze;"
-	      << "at_ (" << $3 << ", " << in << ".freeze, " << in << ".unfreeze);"
-	      << in << " : { " << $5 << "; " << ex << ".stop } }");
+	      << "at_ (" << $3 << ", " << in << ".freeze, " << in << ".unfreeze)|"
+	      << in << " : { " << $5 << "| " << ex << ".stop } }");
     }
 /*
  *  This loop keyword can't be converted to a for, since it would
@@ -1064,18 +1064,18 @@ stmt:
     {
       libport::Symbol tag = libport::Symbol::fresh(SYMBOL(stopif));
       DESUGAR($$,
-	      "var " << tag << " = " << "new Tag (\"" << tag << "\");"
-	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
-	      << "waituntil(" << $3 << ");"
+	      "var " << tag << " = " << "new Tag (\"" << tag << "\")|"
+	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << ","
+	      << "waituntil(" << $3 << ")|"
 	      << tag << ".stop }");
     }
 | "timeout" "(" expr ")" stmt
     {
       libport::Symbol tag = libport::Symbol::fresh(SYMBOL(timeout));
       DESUGAR($$,
-	      "var " << tag << " = " << "new Tag (\"" << tag << "\");"
-	      << tag << " : { { " << $5 << ";" << tag << ".stop }" << ","
-	      << "sleep(" << $3 << ");"
+	      "var " << tag << " = " << "new Tag (\"" << tag << "\")|"
+	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << ","
+	      << "sleep(" << $3 << ")|"
 	      << tag << ".stop }");
     }
 | "return" expr.opt

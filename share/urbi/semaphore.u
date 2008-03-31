@@ -11,6 +11,7 @@ class Global.Semaphore {
        return |
      var tag = new Tag ("semaphore") |
      self.queue.push_back (tag) |
+     assert (self.queue.size == -self.count) |
      tag: tag.freeze
    };
 
@@ -18,6 +19,7 @@ class Global.Semaphore {
      self.count++ |
      if (self.count > 0)
        return |
+     assert (self.queue.size == 1-self.count) |
      var tag = self.queue.front |
      self.queue.pop_front |
      tag.unfreeze
