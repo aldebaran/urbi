@@ -102,6 +102,7 @@
   Macro(context, "context");                      \
   Macro(cos, "cos");                              \
   Macro(currentRunner, "currentRunner");          \
+  Macro(cycle, "cycle");                          \
   Macro(data, "data");                            \
   Macro(debugoff, "debugoff");                    \
   Macro(debugon, "debugon");                      \

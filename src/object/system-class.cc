@@ -108,7 +108,7 @@ namespace object
     try
     {
       return String::fresh(libport::Symbol(
-                             s.find_file(arg1->value_get ().name_get ())));
+			     s.find_file(arg1->value_get ().name_get ())));
     }
     catch (libport::file_library::Not_found&)
     {
@@ -151,6 +151,13 @@ namespace object
     res->proto_add (task_class);
     res->slot_set (SYMBOL (runner), box (scheduler::rJob, r.myself_get ()));
     return res;
+  }
+
+  static rObject
+  system_class_cycle (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return Float::fresh (r.scheduler_get ().cycle_get ());
   }
 
   static rObject
@@ -200,6 +207,7 @@ namespace object
 
     DECLARE(assert_);
     DECLARE(currentRunner);
+    DECLARE(cycle);
     DECLARE(debugoff);
     DECLARE(debugon);
     DECLARE(eval);

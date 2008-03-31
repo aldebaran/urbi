@@ -43,11 +43,9 @@ namespace scheduler
   libport::utime_t
   Scheduler::work ()
   {
-#ifdef ENABLE_DEBUG_TRACES
-    static int cycle = 0;
-#endif
+    ++cycle_;
     ECHO ("======================================================== cycle "
-	  << ++cycle);
+	  << cycle_);
 
     libport::utime_t deadline = execute_round (false);
 

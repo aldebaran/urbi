@@ -60,6 +60,9 @@ namespace scheduler
     /// get some treatment.
     void signal_stop (rTag);
 
+    /// Return the current cycle
+    unsigned int cycle_get () const;
+
   private:
     void switch_back (Job* job);
     libport::utime_t execute_round (bool blocked_only);
@@ -90,6 +93,9 @@ namespace scheduler
     /// Has a new job been added to the list of jobs to start in the current
     /// cycle?
     bool jobs_to_start_;
+
+    /// Cycles counter
+    unsigned int cycle_;
 
     /// List of tags that have been stopped or blocked
     typedef std::pair<rTag, bool> tag_state_type;

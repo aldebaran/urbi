@@ -16,7 +16,8 @@ namespace scheduler
   Scheduler::Scheduler ()
     : current_job_ (0),
       coro_ (Coro_new ()),
-      possible_side_effect_ (true)
+      possible_side_effect_ (true),
+      cycle_ (0)
   {
     ECHO ("Initializing main coroutine");
     Coro_initializeMainCoro (coro_);
@@ -40,6 +41,12 @@ namespace scheduler
   {
     assert (!to_kill_);
     std::swap (job, to_kill_);
+  }
+
+  inline
+  unsigned int Scheduler::cycle_get () const
+  {
+    return cycle_;
   }
 
 } // namespace scheduler
