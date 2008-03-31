@@ -323,7 +323,7 @@ namespace object
     catch (LookupError&)
     {
       // If no asString method is supplied, print the unique id
-      std::cerr << std::hex << r.get() << std::endl;
+      out << std::hex << r.get() << std::endl;
       return out;
     }
   }
