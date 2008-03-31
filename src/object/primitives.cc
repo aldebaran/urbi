@@ -18,6 +18,16 @@ namespace object
   rObject What ## _class;					\
   namespace { static void What ## _class_initialize () { } }
 
+  /* Help the generation of symbols.
+
+  SYMBOL(nil);
+  SYMBOL(Global);
+  SYMBOL(Scope);
+  SYMBOL(System);
+  SYMBOL(void);
+
+  */
+
   CLASS_INITIALIZE(nil);
   // Where we store all the primitives (objects and functions).
   CLASS_INITIALIZE(void);
