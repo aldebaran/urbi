@@ -44,6 +44,8 @@ var Scope.removeSlot = function (slotName)
 
 class Global.Constants
 {
+  var asString = "<Constants>";
+
   var true   = 1.0;
   var false  = 0.0;
 
@@ -130,6 +132,8 @@ do Object
 
 class Global.Closure
 {
+  var asString = "<Closure>";
+
   function makeExplicitClosure (f, context)
   {
     var nf = locals.getSlot("f").clone;
@@ -320,6 +324,8 @@ do nil
 
 class Global.Comparable
 {
+  var asString = "<Comparable>";
+
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
 };
@@ -333,6 +339,8 @@ Object.addProto(Comparable);
 
 class Global.Orderable
 {
+  var asString = "<Orderable>";
+
   function '<'  (rhs) { rhs > self };
   function '<=' (rhs) { self < rhs || self == rhs };
   function '>'  (rhs) { rhs < self };
@@ -432,6 +440,8 @@ load("urbi/k1.u");
 
 class Global.Math
 {
+  var asString = "<Math>";
+
   for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
              "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
   {
@@ -494,6 +504,8 @@ class Global.Binary
 
 class Global.Profiling
 {
+  var asString = "<Profiling>";
+
   function timen {
     var niters = call.evalArgAt (2);
     var start_time = time;
