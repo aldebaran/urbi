@@ -220,7 +220,7 @@ namespace runner
     // The called function.
     ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
     // There is a call message iff the function is not strict.
-    assertion((call_message != 0) ^ fn.strict());
+    assertion((call_message != 0) xor fn.strict());
 
     // Context in which to evaluate the function, which may be nil.
     rObject context = func->slot_get (SYMBOL(context));
@@ -692,10 +692,8 @@ namespace runner
     // To each scope corresponds a "locals" object which stores the
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
-    rObject locals;
+    rObject locals = object::Object::make_scope(*this, locals_);
     rObject target;
-
-    locals = object::Object::make_scope(*this, locals_);
 
     if (e.target_get())
     {

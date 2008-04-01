@@ -81,7 +81,8 @@ namespace object
     return boost::optional<rObject>();
   }
 
-  rObject target(rObject where, const libport::Symbol& name)
+  rObject
+  target(rObject where, const libport::Symbol& name)
   {
     boost::function1<boost::optional<rObject>, rObject> lookup =
       boost::bind(targetLookup, _1, name);
@@ -94,14 +95,12 @@ namespace object
   }
 
   // FIXME: implement in urbi too
-  rObject Object::make_scope(const runner::Runner&, const rObject& parent)
+  rObject
+  Object::make_scope(const runner::Runner&, const rObject& parent)
   {
     rObject res = object::Object::fresh();
     res->locals_set(true);
-    if (parent)
-      res->proto_add(parent);
-    else
-      res->proto_add(global_class);
+    res->proto_add(parent ? parent : global_class);
     // Mind the order!
     res->proto_add(object::scope_class);
     res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
@@ -123,7 +122,7 @@ namespace object
                                   rObject> action,
                  objects_set_type& marks) const
   {
-    if (!libport::has(marks, this))
+    if (!libport::mhas(marks, this))
     {
       marks.insert(this);
       assertion(self());
@@ -162,10 +161,7 @@ namespace object
     boost::function1<boost::optional<rObject>, rObject> action =
       boost::bind(slot_lookup, _1, k);
     boost::optional<rObject> res = lookup(action);
-    if (res)
-      return res.get();
-    else
-      return 0;
+    return res ? res.get() : 0;
   }
 
   rObject

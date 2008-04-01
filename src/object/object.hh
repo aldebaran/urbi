@@ -90,11 +90,24 @@ namespace object
     typedef std::pair<const key_type, rObject> slot_type;
     typedef std::set<const Object*> objects_set_type;
 
+    /// Abstract lookup traversal
+    ///
+    /// Traverse the inheritance hierarchy, calling \a action on each
+    /// encountered object. If the lookup is successful, \a action
+    /// should return the result. Otherwise, it should return an empty
+    /// boost::optional, so as the lookup continues. This enables to
+    /// perform different kind of searches (slot_locate, target
+    /// lookup) without duplicating the traversal algorithm.
+    ///
+    /// \param action The search to apply on each encountered object.
+    /// \return The result returned by \a action, or an empty
+    /// boost::optional if the lookup failed.
     template <typename R>
     boost::optional<R>
     lookup(boost::function1<boost::optional<R>,
                             rObject> action) const;
 
+    /// Lookup helper, with a mark table
     template <typename R>
     boost::optional<R>
     lookup(boost::function1<boost::optional<R>,
@@ -105,6 +118,8 @@ namespace object
     /// \return the Object containing slot \b k, or 0 if not found.
     rObject slot_locate (const Object::key_type& k) const;
 
+    /// Same as slot_locate, but raise LookupError if not found.
+    /// \throw LookupError if the lookup fails.
     rObject safe_slot_locate (const Object::key_type& k) const;
 
 
