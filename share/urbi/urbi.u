@@ -78,6 +78,8 @@ do Global
     loadFile(searchFile(file));
   };
 
+  function noop () {};
+
   // Assertion control
   var System.ndebug = 0;
   function System.assert {

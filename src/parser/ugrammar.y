@@ -388,7 +388,7 @@
     implicit (const ast::Exp* e)
     {
       const ast::Noop* noop = dynamic_cast<const ast::Noop*>(e);
-      return noop && noop->implicit_get();
+      return noop;
     }
 
     /// Complain if \a command is not implicit.
@@ -398,7 +398,7 @@
       if (implicit(e))
 	up.warn(l,
 		"implicit empty instruction.  "
-		"Use 'noop' to make it explicit.");
+		"Use '{}' to make it explicit.");
     }
 
   } // anon namespace
@@ -446,7 +446,6 @@
 	TOK_LBRACE       "{"
 	TOK_LBRACKET     "["
 	TOK_LPAREN       "("
-	TOK_NOOP         "noop"
 	TOK_OBJECT       "object"
 	TOK_ONLEAVE      "onleave"
 	TOK_POINT        "."
@@ -691,7 +690,7 @@ cstmt:
     // XXX FIXME: Used as a temporary workaround until all actions are
     // filled in this parser
     if (!$1)
-      $$ = new ast::Noop (@$, true);
+      $$ = new ast::Noop (@$);
     else
       $$ = $1;
   }
@@ -747,8 +746,7 @@ flags.0:
 `-------*/
 
 stmt:
-  /* empty */ { $$ = new ast::Noop (@$, true); }
-| "noop"      { $$ = new ast::Noop (@$, false); }
+  /* empty */ { $$ = new ast::Noop (@$); }
 | expr        { $$ = $1; }
 ;
 
@@ -998,7 +996,7 @@ stmt:
 | "if" "(" expr ")" stmt %prec CMDBLOCK
     {
       warn_implicit(up, @5, $5);
-      $$ = new ast::If(@$, $3, $5, new ast::Noop(@$, true));
+      $$ = new ast::If(@$, $3, $5, new ast::Noop(@$));
     }
 | "if" "(" expr ")" stmt "else" stmt
     {
@@ -1089,7 +1087,7 @@ stmt:
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
     {
       warn_implicit(up, @5, $5);
-      $$ = ast_call(@$, 0, SYMBOL(whenever_), $3, $5, new ast::Noop(@$, true));
+      $$ = ast_call(@$, 0, SYMBOL(whenever_), $3, $5, new ast::Noop(@$));
     }
 | "whenever" "(" softtest ")" stmt "else" stmt
     {

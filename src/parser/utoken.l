@@ -468,7 +468,6 @@ FLAVOR   [;|,&]?
 "in"            RETURN(IN);
 "loopn"         DEPRECATED("for");
 "new"           RETURN_OP(NEW);
-"noop"          RETURN(NOOP);
 "object"        RETURN(OBJECT);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
