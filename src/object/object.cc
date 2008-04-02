@@ -69,22 +69,53 @@ namespace object
   | Scopes.  |
   `---------*/
 
-  static boost::optional<rObject>
-  targetLookup(rObject obj,
-               const object::Object::key_type& slotName)
+  // Typedef for lookups that return rObject
+  typedef std::pair<boost::optional<rObject>, bool> lookup_result;
+  typedef boost::function1<lookup_result, rObject> lookup_action;
+
+  namespace
   {
-    if (obj->own_slot_get(slotName, 0))
-      return boost::optional<rObject>(rObject());
-    if (rObject self = obj->own_slot_get(SYMBOL(self), rObject()))
-      if (self->slot_locate(slotName))
-        return self;
-    return boost::optional<rObject>();
+    using std::make_pair;
+    using boost::bind;
+    using boost::optional;
+
+    static lookup_result
+    contextLookup(rObject obj,
+                 const object::Object::key_type& slotName)
+    {
+      if (obj->own_slot_get(SYMBOL(self), 0))
+        return std::make_pair(optional<rObject>(), false);
+      if (obj->own_slot_get(slotName, 0))
+        return std::make_pair(obj, false);
+      return std::make_pair(optional<rObject>(), true);
+    }
+
+    static lookup_result
+    targetLookup(rObject obj,
+                 const object::Object::key_type& slotName)
+    {
+      if (obj->own_slot_get(slotName, 0))
+        // Return a nonempty optional containing an empty rObject, to
+        // indicate to target that the lookup is successful, and the
+        // target is the initial object.
+        return make_pair(optional<rObject>(rObject()), false);
+      if (rObject self = obj->own_slot_get(SYMBOL(self), rObject()))
+        if (self->slot_locate(slotName))
+          return make_pair(self, false);
+      if (rObject ctx = obj->own_slot_get(SYMBOL(context), rObject()))
+      {
+        lookup_action action = bind(contextLookup, _1, slotName);
+        if (ctx->lookup(action))
+          return make_pair(ctx, false);
+      }
+      return make_pair(optional<rObject>(), true);
+    }
   }
 
   rObject
   target(rObject where, const libport::Symbol& name)
   {
-    boost::function1<boost::optional<rObject>, rObject> lookup =
+    boost::function1<std::pair<boost::optional<rObject>, bool>, rObject> lookup =
       boost::bind(targetLookup, _1, name);
     boost::optional<rObject> res = where->lookup(lookup);
     if (!res)
@@ -174,7 +205,7 @@ namespace object
 
   template <typename R>
   boost::optional<R>
-  Object::lookup(boost::function1<boost::optional<R>,
+  Object::lookup(boost::function1<std::pair<boost::optional<R>, bool>,
                                   rObject> action,
                  objects_set_type& marks) const
   {
@@ -182,18 +213,21 @@ namespace object
     {
       marks.insert(this);
       assertion(self());
-      if (boost::optional<R> res = action(self()))
-        return res;
-      foreach (const rObject& proto, protos_get())
-        if (boost::optional<R> res = proto->lookup(action, marks))
-          return res;
+      std::pair<boost::optional<R>, bool> res = action(self());
+      if (res.first)
+        return res.first;
+      else
+        if (res.second)
+          foreach (const rObject& proto, protos_get())
+            if (boost::optional<R> res = proto->lookup(action, marks))
+              return res;
     }
     return boost::optional<R>();
   }
 
   template <typename R>
   boost::optional<R>
-  Object::lookup(boost::function1<boost::optional<R>,
+  Object::lookup(boost::function1<std::pair<boost::optional<R>, bool>,
                                   rObject> action) const
   {
     objects_set_type marks;
@@ -202,20 +236,19 @@ namespace object
 
   namespace
   {
-    static boost::optional<rObject>
+    static lookup_result
     slot_lookup(rObject obj, const Object::key_type& k)
     {
       assertion(obj);
       if (obj->own_slot_get(k, 0))
-        return obj;
-      return boost::optional<rObject>();
+        return std::make_pair(obj, false);
+      return std::make_pair(boost::optional<rObject>(), true);
     }
   }
 
   rObject Object::slot_locate(const Object::key_type& k) const
   {
-    boost::function1<boost::optional<rObject>, rObject> action =
-      boost::bind(slot_lookup, _1, k);
+    lookup_action action = boost::bind(slot_lookup, _1, k);
     boost::optional<rObject> res = lookup(action);
     return res ? res.get() : 0;
   }
@@ -289,6 +322,13 @@ namespace object
     if (libport::mhas (slots_, k))
       return own_slot_get (k);
     return def;
+  }
+
+  void Object::all_slots_copy(const rObject& other)
+  {
+    foreach (object::Object::slot_type slot, other->slots_get())
+      if (!own_slot_get(slot.first, 0))
+        slot_set(slot.first, slot.second);
   }
 
   /*-----------.

@@ -228,6 +228,7 @@ namespace runner
     // Create the function's outer scope, with the first argument as
     // 'self'
     rObject outerScope = object::Object::make_method_scope(args.front());
+    outerScope->slot_set(SYMBOL(context), context);
     // Create the function's local scope
     rObject scope = object::Object::make_scope(outerScope);
 
@@ -246,14 +247,6 @@ namespace runner
     else
     {
       scope->slot_set (SYMBOL(call), call_message);
-    }
-
-    // Copy the context, so as it takes precedence over members
-    if (context != object::nil_class)
-    {
-      foreach (object::Object::slot_type slot, context->slots_get())
-	if (!scope->own_slot_get(slot.first, 0))
-	  scope->slot_set(slot.first, slot.second);
     }
 
     ECHO("scope: " << *scope);
@@ -406,7 +399,7 @@ namespace runner
     res->slot_set (SYMBOL(args), box(const ast::exps_type&, args));
 
     // Store the current context in which the arguments must be evaluated.
-    res->slot_set (SYMBOL(context), locals_);
+    res->slot_set (SYMBOL(context), object::Object::make_scope(locals_));
 
     return res;
   }
@@ -495,6 +488,10 @@ namespace runner
   Runner::operator() (const ast::Function& e)
   {
     current_ = object::Code::fresh(*ast::clone(e));
+    // Store the function declaration context. Use make_scope to add
+    // an empty object above it, so as variables injected in the
+    // context do not appear in the declaration scope.
+    current_->slot_set(SYMBOL(context), object::Object::make_scope(locals_));
   }
 
 

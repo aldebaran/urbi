@@ -11,11 +11,11 @@ var Scope.setSlot = Object.getSlot("setSlot");
 
 function Scope.doSetSlot(slotName, value)
 {
-  var tgt;
+  var tgt |
   if (self.locateSlot("setSlot").memSameAs(self))
     tgt = self.getSlot("self")
   else
-    tgt = self;
+    tgt = self |
   Object.getSlot("setSlot").apply([tgt, slotName, getSlot("value")])
 };
 
@@ -175,10 +175,8 @@ class Global.Closure
 
   function capture (varname, value)
   {
-    if (locals.getSlot("self").context.isNil)
-      locals.getSlot ("self").context = new Object;
-    locals.getSlot ("self").context.setSlot (varname, value);
-    locals.getSlot ("self")
+    getSlot ("self").context.setSlot (varname, value);
+    getSlot ("self")
   };
 
   function captureVars
@@ -413,7 +411,7 @@ do Object
   {
     function (x) {
       x.getSlot (fn) .apply ([x])
-    }.captureVars (fn)
+    }
   };
 
   function bounce

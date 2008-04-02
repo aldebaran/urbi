@@ -104,13 +104,13 @@ namespace object
     /// boost::optional if the lookup failed.
     template <typename R>
     boost::optional<R>
-    lookup(boost::function1<boost::optional<R>,
+    lookup(boost::function1<std::pair<boost::optional<R>, bool>,
                             rObject> action) const;
 
     /// Lookup helper, with a mark table
     template <typename R>
     boost::optional<R>
-    lookup(boost::function1<boost::optional<R>,
+    lookup(boost::function1<std::pair<boost::optional<R>, bool>,
                             rObject> action,
            objects_set_type& marks) const;
 
@@ -147,6 +147,10 @@ namespace object
     Object& slot_remove (const key_type& k);
     /// Read only access to slots.
     const slots_type& slots_get () const;
+
+    /// Copy another object local slots, if not already present.
+    void all_slots_copy(const rObject& other);
+
     /// \}
 
     /// \name Properties.
