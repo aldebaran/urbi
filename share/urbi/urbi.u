@@ -16,9 +16,9 @@ var Scope.getSlot = function (slotName)
 var Scope.locateSlot = function (slotName)
 {
   var tgt = self.tryTarget(slotName) |
-  if (tgt.sameAs(nil))
+  if (getSlot ("tgt").sameAs(nil))
     return nil |
-  Object.getSlot("locateSlot").apply([tgt, slotName])
+  Object.getSlot("locateSlot").apply([getSlot("tgt"), slotName])
 };
 
 var Scope.updateSlot = function (slotName, value)
@@ -125,7 +125,7 @@ do Global
 
   function asString()
   {
-    if (self === Global)
+    if (getSlot ("self") === Global)
       "<Global>"
     else
       Scope.getSlot("asString").apply([self]);
