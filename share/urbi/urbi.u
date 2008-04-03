@@ -94,10 +94,10 @@ do Object
   function 'new'
   {
     # The fresh child.
-    var res = call.target.clone |
+    var res = call.getSlot("target").clone |
     # Call the "init" from the parent, retargetted to the child.
-    call.target.getSlot("init").apply([res] + call.evalArgs) |
-    res
+    call.getSlot("target").getSlot("init").apply([getSlot("res")] + call.evalArgs) |
+    getSlot("res")
   };
 };
 
