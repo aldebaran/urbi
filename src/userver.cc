@@ -163,9 +163,10 @@ UServer::initialize()
   load_init_file("URBI.INI");
 
   // Force processing of urbi.u.
-  libport::utime_t now = libport::utime();
-  while (work() <= now)
-    ;
+  //libport::utime_t now = libport::utime();
+  while (!object::object_class->slot_locate(SYMBOL(loaded)))
+    work();
+  object::object_class->slot_remove(SYMBOL(loaded));
 }
 
 

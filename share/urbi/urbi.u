@@ -573,4 +573,5 @@ load("urbi/semaphore.u");
 # This string is special and expected by uconsole-check as the
 # signal that we have loaded urbi.u.  Messages before, and including
 # this one, are ignored.
+var Object.loaded = 1;
 "Urbi is up and running.";
