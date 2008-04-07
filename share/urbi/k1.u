@@ -75,10 +75,8 @@ class Global.DeprecatedCommands
   function deprecate(slotName)
   {
     self.setSlot(slotName, self.getSlot("deprecated_").clone());
-    // Copy the context to avoid clashes on 'name'
-    self.getSlot(slotName).context =
-      self.getSlot("deprecated_").context.clone();
-    self.getSlot(slotName).capture("name", slotName);
+    self.getSlot(slotName).context = self.getSlot("deprecated_").context.clone();
+    self.getSlot(slotName).inject("name", slotName);
   };
 
   for i in

@@ -93,8 +93,10 @@
   Macro(back, "back");                            \
   Macro(block, "block");                          \
   Macro(call, "call");                            \
+  Macro(capturedVars, "capturedVars");            \
   Macro(clear, "clear");                          \
   Macro(clone, "clone");                          \
+  Macro(code, "code");                            \
   Macro(context, "context");                      \
   Macro(cos, "cos");                              \
   Macro(currentRunner, "currentRunner");          \

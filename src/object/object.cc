@@ -80,17 +80,6 @@ namespace object
     using boost::optional;
 
     static lookup_result
-    contextLookup(rObject obj,
-                 const object::Object::key_type& slotName)
-    {
-      if (obj->own_slot_get(SYMBOL(self), 0))
-        return std::make_pair(optional<rObject>(), false);
-      if (obj->own_slot_get(slotName, 0))
-        return std::make_pair(obj, false);
-      return std::make_pair(optional<rObject>(), true);
-    }
-
-    static lookup_result
     targetLookup(rObject obj,
                  const object::Object::key_type& slotName)
     {
@@ -99,14 +88,26 @@ namespace object
         // indicate to target that the lookup is successful, and the
         // target is the initial object.
         return make_pair(optional<rObject>(rObject()), false);
-      if (rObject self = obj->own_slot_get(SYMBOL(self), rObject()))
+      // If this is a method outer scope, perform special lookup
+      if (rObject self = obj->own_slot_get(SYMBOL(self), 0))
+      {
+        // FIXME: The 'code' slot is *always* set by the scoping
+        // system, yet the user can still delete it. What kind of
+        // error should we raise when this problem occurs? For now,
+        // just ignore it:
+        if (rObject code = obj->own_slot_get(SYMBOL(code), 0))
+          // Likewise.
+          if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
+          {
+            if (captured == nil_class)
+              return make_pair(code->own_slot_get(SYMBOL(context)), false);
+            else
+              foreach (const rObject& var, VALUE(captured, object::List))
+                if (VALUE(var, object::String) == slotName)
+                  return make_pair(target(code->own_slot_get(SYMBOL(context)), slotName), false);
+          }
         if (self->slot_locate(slotName))
           return make_pair(self, false);
-      if (rObject ctx = obj->own_slot_get(SYMBOL(context), rObject()))
-      {
-        lookup_action action = bind(contextLookup, _1, slotName);
-        if (ctx->lookup(action))
-          return make_pair(ctx, false);
       }
       return make_pair(optional<rObject>(), true);
     }

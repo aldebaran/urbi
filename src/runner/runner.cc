@@ -222,13 +222,10 @@ namespace runner
     // There is a call message iff the function is not strict.
     assertion((call_message != 0) xor fn.strict());
 
-    // Context in which to evaluate the function, which may be nil.
-    rObject context = func->slot_get (SYMBOL(context));
-
     // Create the function's outer scope, with the first argument as
     // 'self'
     rObject outerScope = object::Object::make_method_scope(args.front());
-    outerScope->slot_set(SYMBOL(context), context);
+    outerScope->slot_set(SYMBOL(code), func);
     // Create the function's local scope
     rObject scope = object::Object::make_scope(outerScope);
 
@@ -492,6 +489,10 @@ namespace runner
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.
     current_->slot_set(SYMBOL(context), object::Object::make_scope(locals_));
+    // Set capturedVars at []. By default, no variables are searched
+    // in the context.
+    current_->slot_set(SYMBOL(capturedVars),
+                       object::List::fresh(std::list<object::rObject>()));
   }
 
 

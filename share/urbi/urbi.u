@@ -155,39 +155,26 @@ class Global.Closure
 {
   var asString = "<Closure>";
 
-  function makeExplicitClosure (f, context)
-  {
-    var nf = locals.getSlot("f").clone;
-    locals.getSlot("nf").context = context;
-    locals.getSlot ("nf");
-  };
-
   function makeClosure
   {
-    makeExplicitClosure (call.evalArgAt (1), call.context);
+    getSlot("self").capturedVars = nil;
+    getSlot("self")
   };
 
-  function makeClosedCode
+  function capture (varname)
   {
-    var f = function () { call.evalArgAt (1) };
-    makeClosure (locals.getSlot ("f"))
-  };
-
-  function capture (varname, value)
-  {
-    getSlot ("self").context.setSlot (varname, value);
+    getSlot ("self").capturedVars.push_back(varname);
     getSlot ("self")
   };
 
-  function captureVars
+  function inject (name, value)
   {
-    for (var i = 1; i < call.argsCount; i++)
-      locals.getSlot("self").capture (call.argString (i), call.evalArgAt (i));
-    locals.getSlot ("self")
+    getSlot("self").context.setSlot(name, getSlot("value"));
+    capture (name);
+    getSlot ("self")
   };
 };
 Code.addProto(Global.Closure);
-Global.addProto(Global.Closure);
 
 ## -------------------- ##
 ## Task related stuff.  ##
@@ -199,15 +186,13 @@ do Object
 {
   function detach
   {
-    var f = makeClosedCode (call.evalArgAt (1)) |
-    new Task (getSlot ("f")) |
+    new Task (function { call.evalArgAt (1) }) |
     void
   };
 
   function detach_linked
   {
-    var f = makeClosedCode (call.evalArgAt (1)) |
-    new Task (getSlot ("f"), true) |
+    new Task (function { call.evalArgAt (1) }, true) |
     void
   };
 
@@ -411,7 +396,7 @@ do Object
   {
     function (x) {
       x.getSlot (fn) .apply ([x])
-    }
+    }.capture("fn")
   };
 
   function bounce
