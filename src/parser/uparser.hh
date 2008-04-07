@@ -32,11 +32,6 @@
 namespace parser
 {
 
-  //! UParser uses 'flex' and 'bison' as scanner/parser
-  /*! The choice of flex/bison is detailed in the comment on the UServer class.
-      The main concern is about reentrancy, which is not necessary in most
-      cases but would become a problem with a multithreaded server.
-  */
   class UParser
   {
   public:
