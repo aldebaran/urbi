@@ -49,24 +49,24 @@ namespace parser
 
     /// Parse the command from a buffer.
     /// \return yyparse's result (0 on success).
-    int process (const std::string& code);
+    int parse (const std::string& code);
 
     /// Parse the command from a TWEAST.
     /// \return yyparse's result (0 on success).
-    int process (parser::Tweast& t);
+    int parse (parser::Tweast& t);
 
     /// The TWEAST currently analyzed (if there is one).
     parser::Tweast* tweast_;
 
     /// Parse a file.
     /// \return yyparse's result (0 on success).
-    int process_file (const std::string& fn);
+    int parse_file (const std::string& fn);
 
 
     /// \{
     /// The type of AST node returned by the parser.
     typedef ast::Nary ast_type;
-    /// The latest AST read by process().
+    /// The latest AST read by parse().
     inline ast_type* ast_get ();
     /// Return the AST and reset \a ast_.
     inline std::auto_ptr<ast_type> ast_take ();
@@ -88,7 +88,7 @@ namespace parser
     void warn (const location_type& l, const std::string& msg);
 
     /// Push all warning and error messages in \b target.
-    /// If errors were pushed, the command tree is deleted and set to 0.
+    /// If errors were pushed, the ast is deleted and set to 0.
     void process_errors(ast_type* target);
 
   private:
@@ -107,8 +107,8 @@ namespace parser
 
     /// Push a warning or an error.
     void message_push(messages_type& msgs,
-		    const yy::parser::location_type& l,
-		    const std::string& msg);
+		      const yy::parser::location_type& l,
+		      const std::string& msg);
 
     /// Run the parse.
     int parse_ (std::istream& source);
@@ -129,6 +129,10 @@ namespace parser
   /// errors.  Admittedly, we could avoid using UParser at all and
   /// return a tuple, maybe in another step.
   UParser parse(const std::string& cmd);
+
+  /// Parse a file.
+  /// \see parse().
+  UParser parse_file(const std::string& file);
 }
 
 # include "parser/uparser.hxx"

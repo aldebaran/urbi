@@ -416,7 +416,7 @@
 
 # define DESUGAR(Var, Code)				\
   do {							\
-    int err = up.process(::parser::Tweast() << Code);	\
+    int err = up.parse(::parser::Tweast() << Code);	\
     assert (!err);					\
     Var = up.ast_xtake().release();			\
   } while(0)

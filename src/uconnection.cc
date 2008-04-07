@@ -235,7 +235,7 @@ UConnection::received (const char* buffer, size_t length)
        !command.empty();
        command = recv_queue_->pop_command())
   {
-    int result = p.process (command);
+    int result = p.parse (command);
     passert (result, result != -1);
     p.process_errors(active_command_);
 

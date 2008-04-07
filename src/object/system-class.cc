@@ -93,7 +93,7 @@ namespace object
   {
     FETCH_ARG(1, String);
     parser::UParser p;
-    p.process(arg1->value_get());
+    p.parse(arg1->value_get());
     return execute_parsed(r, p, PrimitiveError("",
 	std::string("Error executing command.")));
   }
@@ -136,7 +136,7 @@ namespace object
 
     parser::UParser p;
 
-    p.process_file(arg1->value_get());
+    p.parse_file(arg1->value_get());
     return
       execute_parsed(r, p,
 		     PrimitiveError("", //same message than k1

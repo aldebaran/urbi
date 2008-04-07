@@ -57,7 +57,7 @@ namespace parser
   }
 
   int
-  UParser::process (const std::string& command)
+  UParser::parse (const std::string& command)
   {
     std::istringstream is (command);
     ECHO("Parsing string: ==================\n"
@@ -67,12 +67,12 @@ namespace parser
   }
 
   int
-  UParser::process (Tweast& t)
+  UParser::parse (Tweast& t)
   {
     // We need to keep it to be able to get the variables.
     // FIXME: Non-reentrant.
     tweast_ = &t;
-    int res = process (t.input_get());
+    int res = parse (t.input_get());
     // We need the parse errors now.
     std::copy(warnings_.begin(), warnings_.end(),
 	    std::ostream_iterator<std::string>(std::cerr, "\n"));
@@ -82,7 +82,7 @@ namespace parser
   }
 
   int
-  UParser::process_file (const std::string& fn)
+  UParser::parse_file (const std::string& fn)
   {
     // A location pointing to it.
     location_type loc;
@@ -151,7 +151,16 @@ namespace parser
   parse(const std::string& cmd)
   {
     UParser res;
-    int result = res.process (cmd);
+    int result = res.parse (cmd);
+    passert (result, result != -1);
+    return res;
+  }
+
+  UParser
+  parse_file(const std::string& file)
+  {
+    UParser res;
+    int result = res.parse_file (file);
     passert (result, result != -1);
     return res;
   }
