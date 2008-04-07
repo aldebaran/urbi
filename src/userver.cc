@@ -84,7 +84,6 @@ UServer::UServer(ufloat period,
     scheduler_ (new scheduler::Scheduler),
     debugOutput (false),
     mainName_ (mainName),
-    somethingToDelete (false),
     uservarState (false),
     stopall (false),
     period_(period),
@@ -278,7 +277,6 @@ UServer::work_handle_stopall_ ()
       i++;
   }
 
-  somethingToDelete = false;
   stopall = false;
 }
 

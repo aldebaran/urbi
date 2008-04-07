@@ -51,12 +51,6 @@ UServer::addConnection (UConnection* connection)
   addConnection (*connection);
 }
 
-inline void
-UServer::hasSomethingToDelete ()
-{
-  somethingToDelete = true;
-}
-
 inline const scheduler::Scheduler&
 UServer::getScheduler () const
 {

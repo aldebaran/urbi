@@ -230,8 +230,6 @@ public:
   // A usual connection to stop dependencies.
   UConnection& getGhostConnection ();
 
-  void hasSomethingToDelete ();
-
   const scheduler::Scheduler& getScheduler () const;
   scheduler::Scheduler& getScheduler ();
 
@@ -273,8 +271,6 @@ private:
   std::string mainName_;
 
 public:
-  /// True after a stop command.
-  bool somethingToDelete;
   /// True after the initialization phase: all vars are uservar then.
   bool uservarState;
 
@@ -298,7 +294,7 @@ private:
   /// Frequency of the calls to work().
   ufloat period_;
 
-  /// Store the time on the last call to updateTime();.
+  /// Store the time on the last call to updateTime().
   libport::utime_t lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
