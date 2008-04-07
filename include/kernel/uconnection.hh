@@ -30,13 +30,22 @@
 #  include <boost/thread.hpp>
 # endif
 # include <boost/shared_ptr.hpp>
-
+# include "libport/shared-ptr.hh"
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
 # include "kernel/ucomplaints.hh"
 
-# include "ast/fwd.hh"
-# include "object/fwd.hh"
+namespace ast {
+  class Nary;
+};
+
+namespace object {
+  class Object;
+  struct lobby_traits;
+  template<class T> class Atom;
+  typedef libport::shared_ptr<Object> rObject;
+  typedef libport::shared_ptr<Atom<lobby_traits> > rLobby;
+};
 
 # define ERR_SET(Val) (error_ = Val)
 # define CONN_ERR_RET(Val) do			\

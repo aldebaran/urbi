@@ -40,9 +40,13 @@
 # include "kernel/ustring.hh"
 # include "kernel/utypes.hh"
 
-# include "runner/fwd.hh"
+namespace runner {
+  class Runner;
+};
 
-# include "scheduler/fwd.hh"
+namespace scheduler {
+  class Scheduler;
+};
 
 extern const char* EXTERNAL_MESSAGE_TAG;
 extern const char* UNKNOWN_TAG;
@@ -278,7 +282,7 @@ public:
   /// Stops all commands in all connections.
   bool stopall;
 
-private:
+
 
   enum
   {
@@ -291,6 +295,7 @@ private:
     MAXSIZE_INTERNALMESSAGE = 8192,
   };
 
+private:
   /// Frequency of the calls to work().
   ufloat period_;
 
