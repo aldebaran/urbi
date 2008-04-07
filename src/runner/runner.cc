@@ -482,6 +482,80 @@ namespace runner
 
 
   void
+  Runner::operator() (const ast::Foreach& e)
+  {
+    // Evaluate the list attribute, and check its type.
+    JECHO ("foreach list", e.list_get());
+    operator() (e.list_get());
+    try
+    {
+      TYPE_CHECK(current_, object::List);
+    }
+    PROPAGATE_EXCEPTION(e.location_get(), {};)
+
+    JECHO("foreach body", e.body_get());
+
+    // We need to copy the pointer on the list, otherwise the list will be
+    // destroyed when children are visited and current_ is modified.
+    rObject l = current_;
+
+    // The list of runners launched for each value in the list if the flavor
+    // is "&".
+    std::list<Runner> runners;
+
+    bool first_iteration = true;
+
+    // Iterate on each value.
+    foreach (rObject o, VALUE(l, object::List))
+    {
+      // Define a new local scope for each loop, and set the index.
+      rObject locals = object::Object::fresh();
+      locals->locals_set(true);
+      locals->proto_add(locals_);
+      locals->slot_set(e.index_get(), o);
+
+      // for& ... in loop.
+      if (e.flavor_get() == ast::flavor_and)
+      {
+	// Create the new runner and launch it.
+	runners.push_back(Runner(*this));
+	runners.back().locals_ = locals;
+	runners.back().ast_ = &e.body_get();
+	runners.back().start_job();
+      }
+      else // for| and for;
+      {
+	std::swap(locals, locals_);
+
+	if (first_iteration)
+	  first_iteration = false;
+	else
+	  MAYBE_YIELD(e.flavor_get());
+
+	try
+	{
+	  operator() (e.body_get());
+	}
+	catch (ast::BreakException&)
+	{
+	  std::swap(locals, locals_);
+	  break;
+	}
+	// Restore previous locals_, even if an exception was thrown.
+	PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+      }
+    }
+
+    // Wait for all runners to terminate.
+    foreach(Runner& r, runners)
+      yield_until_terminated(r);
+
+    // For the moment return void.
+    current_ = object::void_class;
+  }
+
+
+  void
   Runner::operator() (const ast::Function& e)
   {
     current_ = object::Code::fresh(*ast::clone(e));
@@ -535,6 +609,13 @@ namespace runner
     }
     current_ = object::List::fresh(values);
     ECHO ("result: " << *current_);
+  }
+
+
+  void
+  Runner::operator() (const ast::Message& e)
+  {
+    send_message_(e.tag_get(), e.text_get());
   }
 
 
@@ -743,6 +824,13 @@ namespace runner
   }
 
   void
+  Runner::operator() (const ast::Stmt& e)
+  {
+    JECHO ("expression", e.expression_get ());
+    operator() (e.expression_get());
+  }
+
+  void
   Runner::operator() (const ast::String& e)
   {
     current_ = object::String::fresh(libport::Symbol(e.value_get()));
@@ -831,6 +919,24 @@ namespace runner
   }
 
   void
+  Runner::operator() (const ast::Throw& e)
+  {
+    switch (e.kind_get())
+    {
+      case ast::break_exception:
+	throw ast::BreakException(e.location_get());
+
+      case ast::return_exception:
+	if (e.value_get())
+	  operator() (*e.value_get());
+	else
+	  current_.reset();
+	throw ast::ReturnException(e.location_get(), current_);
+    }
+  }
+
+
+  void
   Runner::operator() (const ast::While& e)
   {
     bool first_iteration = true;
@@ -863,107 +969,5 @@ namespace runner
     current_ = object::void_class;
   }
 
-  void
-  Runner::operator() (const ast::Throw& e)
-  {
-    switch (e.kind_get())
-    {
-      case ast::break_exception:
-	throw ast::BreakException(e.location_get());
-
-      case ast::return_exception:
-	if (e.value_get())
-	  operator() (*e.value_get());
-	else
-	  current_.reset();
-	throw ast::ReturnException(e.location_get(), current_);
-    }
-  }
-
-  void
-  Runner::operator() (const ast::Stmt& e)
-  {
-    JECHO ("expression", e.expression_get ());
-    operator() (e.expression_get());
-  }
-
-  void
-  Runner::operator() (const ast::Message& e)
-  {
-    send_message_(e.tag_get(), e.text_get());
-  }
-
-  void
-  Runner::operator() (const ast::Foreach& e)
-  {
-    // Evaluate the list attribute, and check its type.
-    JECHO ("foreach list", e.list_get());
-    operator() (e.list_get());
-    try
-    {
-      TYPE_CHECK(current_, object::List);
-    }
-    PROPAGATE_EXCEPTION(e.location_get(), {};)
-
-    JECHO("foreach body", e.body_get());
-
-    // We need to copy the pointer on the list, otherwise the list will be
-    // destroyed when children are visited and current_ is modified.
-    rObject l = current_;
-
-    // The list of runners launched for each value in the list if the flavor
-    // is "&".
-    std::list<Runner> runners;
-
-    bool first_iteration = true;
-
-    // Iterate on each value.
-    foreach (rObject o, VALUE(l, object::List))
-    {
-      // Define a new local scope for each loop, and set the index.
-      rObject locals = object::Object::fresh();
-      locals->locals_set(true);
-      locals->proto_add(locals_);
-      locals->slot_set(e.index_get(), o);
-
-      // for& ... in loop.
-      if (e.flavor_get() == ast::flavor_and)
-      {
-	// Create the new runner and launch it.
-	runners.push_back(Runner(*this));
-	runners.back().locals_ = locals;
-	runners.back().ast_ = &e.body_get();
-	runners.back().start_job();
-      }
-      else // for| and for;
-      {
-	std::swap(locals, locals_);
-
-	if (first_iteration)
-	  first_iteration = false;
-	else
-	  MAYBE_YIELD(e.flavor_get());
-
-	try
-	{
-	  operator() (e.body_get());
-	}
-	catch (ast::BreakException&)
-	{
-	  std::swap(locals, locals_);
-	  break;
-	}
-	// Restore previous locals_, even if an exception was thrown.
-	PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
-      }
-    }
-
-    // Wait for all runners to terminate.
-    foreach(Runner& r, runners)
-      yield_until_terminated(r);
-
-    // For the moment return void.
-    current_ = object::void_class;
-  }
 
 } // namespace runner
