@@ -36,12 +36,6 @@ namespace parser
     /// Metavariables manipulator.
     template <typename T> T* take (unsigned s) throw (std::range_error);
 
-    /*<object-desugar<-*/
-    /// Move the contents of all aggregated Tweast metavariables into
-    /// the current Tweast.
-    void flatten ();
-    /*->>*/
-
     /// Get the current input string.
     std::string input_get () const;
 
