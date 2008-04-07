@@ -87,8 +87,9 @@ namespace object
       /// FIXME: Fix escape to be able to return a string then fix this.
       else
       {
+	FETCH_ARG(0, String);
 	res = libport::Symbol('"'
-			      + string_cast(libport::escape(VALUE(args[0], String).name_get()))
+			      + string_cast(libport::escape(arg0->value_get().name_get()))
 			      + '"');
       }
       return String::fresh(res);

@@ -33,7 +33,8 @@ namespace object
     if (args[0] == code_class)
       return String::fresh(SYMBOL(LT_Code_GT));
     std::stringstream ss;
-    ss << VALUE(args[0], Code);
+    FETCH_ARG(0, Code);
+    ss << arg0->value_get();
     return String::fresh(libport::Symbol(ss.str()));
   }
 

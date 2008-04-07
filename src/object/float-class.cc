@@ -127,8 +127,9 @@ abs(libport::ufloat v)
     // streams to the same as used by lexical_cast (which is one more
     // than the default value, and this results in different output bw
     // 1.x and 2.x, a useless nuisance in the test suite.
+    FETCH_ARG(0, Float);
     return String::fresh(libport::Symbol(string_cast
-				      (float (VALUE(args[0], Float)))));
+					 (float (arg0->value_get()))));
   }
 
   /// Clone.
