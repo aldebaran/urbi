@@ -610,6 +610,13 @@ namespace runner
       }
     }
 
+    // FIXME: We use toplevel_get here for two different things:
+    //   1. Are we at the top-level of the current runner? (primary expression)
+    //   2. Are we directly below the current connection *and* the top-level
+    //      of the current runner?
+    // Point "1" should influence ast freeing, while point "2" should influence
+    // result printing.
+
     // If the Nary is not the toplevel one, all subrunners must be finished when
     // the runner exits the Nary node.
     // FIXME: There is a memory leak if the Nary is a toplevel one.
