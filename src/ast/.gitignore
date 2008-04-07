@@ -74,6 +74,9 @@ scope.hxx
 stmt.cc
 stmt.hh
 stmt.hxx
+string.cc
+string.hh
+string.hxx
 tag.cc
 tag.hh
 tag.hxx

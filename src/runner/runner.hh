@@ -113,7 +113,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    CONST_VISITOR_VISIT_NODES((17,
+    CONST_VISITOR_VISIT_NODES((18,
 			       (
 				 And,
 				 Call,
@@ -128,6 +128,7 @@ namespace runner
 				 Pipe,
 				 Scope,
 				 Stmt,
+				 String,
 				 Tag,
 				 TaggedStmt,
 				 Throw,

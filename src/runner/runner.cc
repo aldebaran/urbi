@@ -743,6 +743,12 @@ namespace runner
   }
 
   void
+  Runner::operator() (const ast::String& e)
+  {
+    current_ = object::String::fresh(libport::Symbol(e.value_get()));
+  }
+
+  void
   Runner::operator() (const ast::Tag& t)
   {
     eval_tag (t.exp_get ());

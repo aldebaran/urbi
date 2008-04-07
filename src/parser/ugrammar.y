@@ -126,14 +126,6 @@
       return new ast::Object(l, object::String::fresh(val));
     }
 
-    /// Create an AST node storing a string.
-    static
-    ast::Object*
-    ast_object (const loc& l, const std::string& val)
-    {
-      return ast_object (l, libport::Symbol(val));
-    }
-
 
     /*---------------------.
     | Calls, lvalues etc.  |
@@ -521,7 +513,6 @@
  `----------*/
 %union { std::string* str; }
 
-// FIXME: Arguably, could be a Symbol too.
 %token
    <str>  TOK_STRING             "string"
 %destructor { delete $$; } <str>;
@@ -1245,7 +1236,7 @@ number:
 expr:
   number        { $$ = ast_object(@$, $1); }
 | time_expr     { $$ = ast_object(@$, $1); }
-| "string"      { $$ = ast_object(@$, take($1)); }
+| "string"      { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }
 ;
