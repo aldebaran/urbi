@@ -64,7 +64,7 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
     lobby_ (object::Lobby::fresh(object::State(*this))),
-    parser_ (new UParser ()),
+    parser_ (new parser::UParser ()),
     active_command_ (new ast::Nary()),
     server_ (userver)
 {
@@ -215,7 +215,7 @@ UConnection::received (const char* buffer, size_t length)
     CONN_ERR_RET(USUCCESS);
   }
 
-  UParser& p = parser_get();
+  parser::UParser& p = parser_get();
   // There should be no tree sitting in the parser.
   passert (*p.ast_get(), !p.ast_get());
 

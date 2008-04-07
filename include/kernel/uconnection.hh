@@ -188,12 +188,12 @@ public:
 
   void flush ();
 
-  /*----------.
-  | Accessors |
-  \----------*/
+  /*------------.
+  | Accessors.  |
+  `------------*/
 
   UErrorValue error_get () const;
-  UParser& parser_get ();
+  parser::UParser& parser_get ();
   UServer& server_get() const;
   object::rLobby lobby_get();
 
@@ -297,7 +297,7 @@ protected:
   UErrorValue error_;
 
 private:
-  /// Max number of error signals used..
+  /// Max number of error signals used.
   enum { MAX_ERRORSIGNALS = 20 };
 
   /// A pointer to stop dependencies.
@@ -323,7 +323,7 @@ private:
   object::rLobby lobby_;
 
   /// Our parser.  A pointer to stop dependencies.
-  UParser* parser_;
+  parser::UParser* parser_;
 
   /// The commands to be executed.
   ast::Nary* active_command_;

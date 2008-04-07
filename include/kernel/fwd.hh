@@ -14,11 +14,16 @@ namespace urbi
   class USystem;
   class UValue;
   class baseURBIStarter;
-};
+}
 
 class UCommandQueue;
 class UConnection;
 class UContext;
+
+namespace parser
+{
+  class UParser;
+}
 
 class UGenericCallback;
 class UGhostConnection;
@@ -26,7 +31,6 @@ class UImage;
 class UList;
 class UMonitor;
 class UMultiEventInstance;
-class UParser;
 class UQueue;
 class UServer;
 class USound;

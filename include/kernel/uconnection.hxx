@@ -25,7 +25,7 @@ UConnection::send_queue_get ()
 }
 
 inline
-UParser&
+parser::UParser&
 UConnection::parser_get ()
 {
   return *parser_;

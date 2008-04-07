@@ -27,9 +27,11 @@
 %error-verbose
 %defines
 %skeleton "lalr1.cc"
-%parse-param {UParser& up}
+// The leading :: are needed to avoid symbol clashes in the
+// parser class when it sees a parser namespace occurrence.
+%parse-param {::parser::UParser& up}
 %parse-param {FlexLexer& scanner}
-%lex-param   {UParser& up}
+%lex-param   {::parser::UParser& up}
 %lex-param   {FlexLexer& scanner}
 %debug
 
@@ -81,7 +83,7 @@
     template <typename T>
     static
     T*
-    metavar (UParser& up, unsigned key)
+    metavar (parser::UParser& up, unsigned key)
     {
       return up.tweast_->template take<T> (key);
     }
@@ -393,7 +395,7 @@
 
     /// Complain if \a command is not implicit.
     static void
-    warn_implicit(UParser& up, const loc& l, const ast::Exp* e)
+    warn_implicit(parser::UParser& up, const loc& l, const ast::Exp* e)
     {
       if (implicit(e))
 	up.warn(l,
@@ -403,10 +405,10 @@
 
   } // anon namespace
 
-  /// Direct the call from 'bison' to the scanner in the right UParser.
+  /// Direct the call from 'bison' to the scanner in the right parser::UParser.
   inline
   yy::parser::token_type
-  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up,
+  yylex(yy::parser::semantic_type* val, yy::location* loc, parser::UParser& up,
 	FlexLexer& scanner)
   {
     return scanner.yylex(val, loc, &up);
@@ -819,8 +821,8 @@ stmt:
       // Compiled as
       // var id = Object.clone; do id { stmts };
       $$ = ast_nary(@$, ast::flavor_semicolon,
-                    ast_class (@1+@2, $2),
-                    ast_scope(@$, $2, $3));
+		    ast_class (@1+@2, $2),
+		    ast_scope(@$, $2, $3));
 #else
       // Currently does not work, because although we store an LValue
       // (an ast::Call), we get here as an Exp, which is not good enough
