@@ -415,12 +415,7 @@
   }
 
 # define DESUGAR(Var, Code)				\
-  do {							\
-    int err = up.parse(::parser::Tweast() << Code);	\
-    assert (!err);					\
-    Var = up.ast_xtake().release();			\
-  } while(0)
-
+  Var = ::parser::parse(::parser::Tweast() << Code)
 
 } // %code requires.
 
@@ -1019,15 +1014,13 @@ stmt:
     {
       libport::Symbol ex = libport::Symbol::fresh(SYMBOL(freezeif));
       libport::Symbol in = libport::Symbol::fresh(SYMBOL(freezeif));
-      DESUGAR($$,
-	      "var " << ex << " = " << "new Tag (\"" << ex << "\")|"
-	      << "var " << in << " = " << "new Tag (\"" << in << "\")|"
-	      << ex << " : { "
-	      // FIXME: Use the next line instead of the following one; it looks
-	      // like Tweast, at least as used here, may not be reentrant.
-	      // << "at(" << $3 << ") " << in << ".freeze onleave " << in << ".unfreeze;"
-	      << "at_ (" << $3 << ", " << in << ".freeze, " << in << ".unfreeze)|"
-	      << in << " : { " << $5 << "| " << ex << ".stop } }");
+      DESUGAR
+      ($$,
+       "var " << ex << " = " << "new Tag (\"" << ex << "\")|"
+       << "var " << in << " = " << "new Tag (\"" << in << "\")|"
+       << ex << " : { "
+       << "at(" << $3 << ") " << in << ".freeze onleave " << in << ".unfreeze|"
+       << in << " : { " << $5 << "| " << ex << ".stop } }");
     }
 /*
  *  This loop keyword can't be converted to a for, since it would

@@ -52,7 +52,9 @@ namespace parser
     int parse (const std::string& code);
 
     /// Parse the command from a TWEAST.
+    /// \param t  the Tweast to process.  Emptied as it is used.
     /// \return yyparse's result (0 on success).
+    /// \note   Recursive calls are forbidden.
     int parse (parser::Tweast& t);
 
     /// The TWEAST currently analyzed (if there is one).
@@ -129,6 +131,9 @@ namespace parser
   /// errors.  Admittedly, we could avoid using UParser at all and
   /// return a tuple, maybe in another step.
   UParser parse(const std::string& cmd);
+
+  /// Parse a Tweast and return the (desugared) AST.
+  UParser::ast_type* parse(Tweast& t);
 
   /// Parse a file.
   /// \see parse().

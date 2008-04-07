@@ -32,7 +32,8 @@ namespace parser
   `----------*/
 
   UParser::UParser()
-    : ast_ (0),
+    : tweast_ (0),
+      ast_ (0),
       errors_ (),
       warnings_ (),
       loc_(),
@@ -69,15 +70,21 @@ namespace parser
   int
   UParser::parse (Tweast& t)
   {
-    // We need to keep it to be able to get the variables.
-    // FIXME: Non-reentrant.
+    // Recursive calls are forbidden.  If we want to relax this
+    // constraint, note that we also need to save and restore other
+    // member changed during the parsing, such as warnings_ and
+    // errors_.  But it is simpler to recurse with the standalone
+    // parse functions.
+    passert(tweast_, !tweast_);
     tweast_ = &t;
     int res = parse (t.input_get());
+    tweast_ = 0;
+
     // We need the parse errors now.
     std::copy(warnings_.begin(), warnings_.end(),
-	    std::ostream_iterator<std::string>(std::cerr, "\n"));
+	      std::ostream_iterator<std::string>(std::cerr, "\n"));
     std::copy(errors_.begin(), errors_.end(),
-	    std::ostream_iterator<std::string>(std::cerr, "\n"));
+	      std::ostream_iterator<std::string>(std::cerr, "\n"));
     return res;
   }
 
@@ -151,17 +158,26 @@ namespace parser
   parse(const std::string& cmd)
   {
     UParser res;
-    int result = res.parse (cmd);
-    passert (result, result != -1);
+    int err = res.parse (cmd);
+    passert (err, !err);
     return res;
+  }
+
+  UParser::ast_type*
+  parse(Tweast& t)
+  {
+    UParser p;
+    int err = p.parse (t);
+    passert (err, !err);
+    return p.ast_xtake().release();
   }
 
   UParser
   parse_file(const std::string& file)
   {
     UParser res;
-    int result = res.parse_file (file);
-    passert (result, result != -1);
+    int err = res.parse_file (file);
+    passert (err, !err);
     return res;
   }
 
