@@ -251,8 +251,8 @@ namespace runner
     if (context != object::nil_class)
     {
       foreach (object::Object::slot_type slot, context->slots_get())
-        if (!scope->own_slot_get(slot.first, 0))
-          scope->slot_set(slot.first, slot.second);
+	if (!scope->own_slot_get(slot.first, 0))
+	  scope->slot_set(slot.first, slot.second);
     }
 
     ECHO("scope: " << *scope);
@@ -333,22 +333,18 @@ namespace runner
     switch (func->kind_get ())
     {
       case object::Object::kind_primitive:
-	PING ();
 	current_ =
 	  func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
 	break;
       case object::Object::kind_delegate:
-	PING();
 	current_ =
 	  func.unsafe_cast<object::Delegate>()->value_get()
 	  ->operator()(*this, args);
 	break;
       case object::Object::kind_code:
-	PING ();
 	current_ = apply_urbi (func, args, call_message);
 	break;
       default:
-	PING ();
 	object::check_arg_count (1, args.size(), "");
 	current_ = func;
 	break;
@@ -384,7 +380,6 @@ namespace runner
 	show_error_(wt, arg->location_get());
 	throw wt;
       }
-      PING ();
       args.push_back (current_);
     }
   }
@@ -426,11 +421,11 @@ namespace runner
       args.push_back(object::String::fresh(name));
       try
       {
-        return urbi_call(*this, locals_, SYMBOL(target), args);
+	return urbi_call(*this, locals_, SYMBOL(target), args);
       }
       catch (object::LookupError&) // No 'target' function
       {
-        return locals_;
+	return locals_;
       }
     }
   }
@@ -438,8 +433,6 @@ namespace runner
   void
   Runner::operator() (const ast::Call& e)
   {
-    PING ();
-
     rObject tgt;
     try
     {
@@ -500,7 +493,6 @@ namespace runner
   void
   Runner::operator() (const ast::Function& e)
   {
-    PING ();
     current_ = object::Code::fresh(*ast::clone(e));
   }
 
@@ -534,7 +526,6 @@ namespace runner
     objects values;
     exps::const_iterator i;
 
-    PING ();
     // Evaluate every expression in the list
     for (i = e.value_get ().begin ();
 	 i != e.value_get ().end ();
@@ -954,4 +945,3 @@ namespace runner
   }
 
 } // namespace runner
-
