@@ -92,8 +92,7 @@ namespace object
   system_class_eval (runner::Runner& r, objects_type args)
   {
     FETCH_ARG(1, String);
-    parser::UParser p;
-    p.parse(arg1->value_get());
+    parser::UParser p = parser::parse(arg1->value_get());
     return execute_parsed(r, p, PrimitiveError("",
 	std::string("Error executing command.")));
   }
@@ -134,9 +133,7 @@ namespace object
       throw PrimitiveError("loadFile",
 			   "No such file: " + filename);
 
-    parser::UParser p;
-
-    p.parse_file(arg1->value_get());
+    parser::UParser p = parser::parse_file(filename);
     return
       execute_parsed(r, p,
 		     PrimitiveError("", //same message than k1
