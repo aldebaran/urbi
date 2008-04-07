@@ -27,9 +27,9 @@ namespace object
   `---------*/
 
   rObject urbi_call(runner::Runner& r,
-                    rObject& self,
-                    libport::Symbol msg,
-                    objects_type& args)
+		    rObject& self,
+		    libport::Symbol msg,
+		    objects_type& args)
   {
     assertion(self);
     rObject message = self->slot_get(msg);
@@ -42,8 +42,8 @@ namespace object
   }
 
   rObject urbi_call(runner::Runner& r,
-                    rObject& self,
-                    libport::Symbol msg)
+		    rObject& self,
+		    libport::Symbol msg)
   {
     objects_type args; // Call with no args.
     return urbi_call(r, self, msg, args);
@@ -81,33 +81,33 @@ namespace object
 
     static lookup_result
     targetLookup(rObject obj,
-                 const object::Object::key_type& slotName)
+		 const object::Object::key_type& slotName)
     {
       if (obj->own_slot_get(slotName, 0))
-        // Return a nonempty optional containing an empty rObject, to
-        // indicate to target that the lookup is successful, and the
-        // target is the initial object.
-        return make_pair(optional<rObject>(rObject()), false);
+	// Return a nonempty optional containing an empty rObject, to
+	// indicate to target that the lookup is successful, and the
+	// target is the initial object.
+	return make_pair(optional<rObject>(rObject()), false);
       // If this is a method outer scope, perform special lookup
       if (rObject self = obj->own_slot_get(SYMBOL(self), 0))
       {
-        // FIXME: The 'code' slot is *always* set by the scoping
-        // system, yet the user can still delete it. What kind of
-        // error should we raise when this problem occurs? For now,
-        // just ignore it:
-        if (rObject code = obj->own_slot_get(SYMBOL(code), 0))
-          // Likewise.
-          if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
-          {
-            if (captured == nil_class)
-              return make_pair(code->own_slot_get(SYMBOL(context)), false);
-            else
-              foreach (const rObject& var, VALUE(captured, object::List))
-                if (VALUE(var, object::String) == slotName)
-                  return make_pair(target(code->own_slot_get(SYMBOL(context)), slotName), false);
-          }
-        if (self->slot_locate(slotName))
-          return make_pair(self, false);
+	// FIXME: The 'code' slot is *always* set by the scoping
+	// system, yet the user can still delete it. What kind of
+	// error should we raise when this problem occurs? For now,
+	// just ignore it:
+	if (rObject code = obj->own_slot_get(SYMBOL(code), 0))
+	  // Likewise.
+	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
+	  {
+	    if (captured == nil_class)
+	      return make_pair(code->own_slot_get(SYMBOL(context)), false);
+	    else
+	      foreach (const rObject& var, VALUE(captured, object::List))
+		if (VALUE(var, object::String) == slotName)
+		  return make_pair(target(code->own_slot_get(SYMBOL(context)), slotName), false);
+	  }
+	if (self->slot_locate(slotName))
+	  return make_pair(self, false);
       }
       return make_pair(optional<rObject>(), true);
     }
@@ -144,27 +144,27 @@ namespace object
       rObject res = Object::make_scope(parent);
       try
       {
-        res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
-        res->slot_set(SYMBOL(locateSlot), scope_class->slot_get(SYMBOL(locateSlot)));
-        res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
-        res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
-        res->slot_set(SYMBOL(self), self);
-        // We really need to copy 'locals' in every scope, or else
-        // Scope's methods will get completely fubared: 'locals' will be
-        // found in 'self' and will thus not be the local scope!
-        res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
+	res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
+	res->slot_set(SYMBOL(locateSlot), scope_class->slot_get(SYMBOL(locateSlot)));
+	res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
+	res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
+	res->slot_set(SYMBOL(self), self);
+	// We really need to copy 'locals' in every scope, or else
+	// Scope's methods will get completely fubared: 'locals' will be
+	// found in 'self' and will thus not be the local scope!
+	res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
       }
       catch (object::LookupError&)
       {
-        // Nothing. This never happens in normal use, since all these
-        // scope methods are defined at the very top of
-        // urbi/urbi.u. Yet, a first scope is created to load urbi.u,
-        // and these method are thus not yet defined. We define the
-        // target slot by hand so as anything written in urbi.u goes in
-        // Lobby. So keep in mind that urbi.u is evaluated a little bit
-        // differently than a regular lobby: every {set,get,update}Slot
-        // goes in Lobby, not the local scope - which is quite
-        // reasonable, since this scope will never be usable again.
+	// Nothing. This never happens in normal use, since all these
+	// scope methods are defined at the very top of
+	// urbi/urbi.u. Yet, a first scope is created to load urbi.u,
+	// and these method are thus not yet defined. We define the
+	// target slot by hand so as anything written in urbi.u goes in
+	// Lobby. So keep in mind that urbi.u is evaluated a little bit
+	// differently than a regular lobby: every {set,get,update}Slot
+	// goes in Lobby, not the local scope - which is quite
+	// reasonable, since this scope will never be usable again.
       }
       return res;
     }
@@ -207,8 +207,8 @@ namespace object
   template <typename R>
   boost::optional<R>
   Object::lookup(boost::function1<std::pair<boost::optional<R>, bool>,
-                                  rObject> action,
-                 objects_set_type& marks) const
+				  rObject> action,
+		 objects_set_type& marks) const
   {
     if (!libport::mhas(marks, this))
     {
@@ -216,12 +216,12 @@ namespace object
       assertion(self());
       std::pair<boost::optional<R>, bool> res = action(self());
       if (res.first)
-        return res.first;
+	return res.first;
       else
-        if (res.second)
-          foreach (const rObject& proto, protos_get())
-            if (boost::optional<R> res = proto->lookup(action, marks))
-              return res;
+	if (res.second)
+	  foreach (const rObject& proto, protos_get())
+	    if (boost::optional<R> res = proto->lookup(action, marks))
+	      return res;
     }
     return boost::optional<R>();
   }
@@ -229,7 +229,7 @@ namespace object
   template <typename R>
   boost::optional<R>
   Object::lookup(boost::function1<std::pair<boost::optional<R>, bool>,
-                                  rObject> action) const
+				  rObject> action) const
   {
     objects_set_type marks;
     return lookup(action, marks);
@@ -242,7 +242,7 @@ namespace object
     {
       assertion(obj);
       if (obj->own_slot_get(k, 0))
-        return std::make_pair(obj, false);
+	return std::make_pair(obj, false);
       return std::make_pair(boost::optional<rObject>(), true);
     }
   }
@@ -320,16 +320,14 @@ namespace object
   rObject
   Object::own_slot_get (const key_type& k, rObject def)
   {
-    if (libport::mhas (slots_, k))
-      return own_slot_get (k);
-    return def;
+    return libport::mhas (slots_, k) ? own_slot_get (k) : def;
   }
 
   void Object::all_slots_copy(const rObject& other)
   {
     foreach (object::Object::slot_type slot, other->slots_get())
       if (!own_slot_get(slot.first, 0))
-        slot_set(slot.first, slot.second);
+	slot_set(slot.first, slot.second);
   }
 
   /*-----------.
@@ -352,8 +350,8 @@ namespace object
   // avoid deleting this at the end of the method.
   std::ostream&
   Object::id_dump (const rObject& self,
-                   std::ostream& o,
-                   runner::Runner& r)
+		   std::ostream& o,
+		   runner::Runner& r)
   {
     rObject id = self->slot_get(SYMBOL(id));
     objects_type id_args;
