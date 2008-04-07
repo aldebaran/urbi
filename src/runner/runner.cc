@@ -592,9 +592,20 @@ namespace runner
 
 	if (e.toplevel_get () && current_.get ())
 	{
-	  ECHO ("toplevel: returning a result to the connection.");
-	  lobby_->value_get ().connection.new_result (current_);
-	  current_.reset ();
+	  try
+	  {
+	    ECHO ("toplevel: returning a result to the connection.");
+	    lobby_->value_get ().connection.new_result (current_);
+	    current_.reset ();
+	  }
+	  catch (std::exception &ke)
+	  {
+	    std::cerr << "Exception when printing result: " << ke.what() << std::endl;
+	  }
+	  catch (...)
+	  {
+	    std::cerr << "Unknown exception when printing result\n";
+	  }
 	}
       }
     }
