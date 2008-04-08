@@ -112,10 +112,10 @@
 
     /// Create an AST node storing a symbol.
     static
-    ast::Object*
+    ast::rObject*
     ast_object (const loc& l, const libport::Symbol& val)
     {
-      return new ast::Object(l, object::String::fresh(val));
+      return new ast::rObject(l, object::String::fresh(val));
     }
 
 

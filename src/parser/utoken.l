@@ -47,8 +47,8 @@ typedef yy::parser::token token;
 static size_t bin_split (char* yytext, size_t yyleng, char*& keywords);
 
 /// Create a K1Bin object.
-static ast::Object* new_k1_bin(const yy::location& loc,
-			       const char* keywords, const std::string& data);
+static ast::rObject* new_k1_bin(const yy::location& loc,
+				const char* keywords, const std::string& data);
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
@@ -734,7 +734,7 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
 }
 
 static
-ast::Object*
+ast::rObject*
 new_k1_bin(const yy::location& loc,
 	   const char* keywords, const std::string& data)
 {
@@ -744,7 +744,7 @@ new_k1_bin(const yy::location& loc,
 	      object::String::fresh(libport::Symbol(keywords)));
   o->slot_set(SYMBOL(data),
 	      object::String::fresh(libport::Symbol(data)));
-  return new ast::Object (loc, o);
+  return new ast::rObject (loc, o);
 }
 
 namespace parser

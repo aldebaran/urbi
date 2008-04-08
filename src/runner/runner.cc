@@ -760,7 +760,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Object& e)
+  Runner::operator() (const ast::rObject& e)
   {
     // Make a copy of the value, otherwise each time we pass here, we
     // use the same object.  For instance
@@ -768,13 +768,13 @@ namespace runner
     // for (var i = 0; i < 2; i++)
     //    { var a = 0; a++; cout << a }
     //
-    // would display "1" and "2", since the ast::Object(0) would be used,
+    // would display "1" and "2", since the ast::rObject(0) would be used,
     // and modified via the first "a++".
     //
     // Note that using "clone" is probably not what we want if we introduce
     // a syntax a la Self to create arbitrary objects: we want a real clone
     // of the object (in the C++ sense of clone) rather than a descendant
-    // (in the prototypal sense of clone).  It turns out ast::Object is used
+    // (in the prototypal sense of clone).  It turns out ast::rObject is used
     // only for simple object::Atom, i.e., the case where "clone" and "dup"
     // behave equally.
     current_ = e.value_get()->clone();

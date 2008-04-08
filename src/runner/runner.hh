@@ -125,7 +125,7 @@ namespace runner
 				 Message,
 				 Nary,
 				 Noop,
-				 Object,
+				 rObject,
 				 Pipe,
 				 Scope,
 				 Stmt,

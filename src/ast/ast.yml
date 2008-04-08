@@ -616,7 +616,7 @@ Noop:
 
 
 # Native Urbi objects.
-Object:
+rObject:
   super: Exp
   attributes:
     - value:

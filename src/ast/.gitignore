@@ -61,9 +61,6 @@ nodes.stamp
 noop.cc
 noop.hh
 noop.hxx
-object.cc
-object.hh
-object.hxx
 pipe.cc
 pipe.hh
 pipe.hxx
@@ -71,6 +68,9 @@ pretty-printer.cc
 pretty-printer.hh
 pretty-printer.hxx
 pretty-printer.stamp
+r-object.cc
+r-object.hh
+r-object.hxx
 scope.cc
 scope.hh
 scope.hxx
