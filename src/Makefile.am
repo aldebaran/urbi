@@ -15,11 +15,6 @@
 include kernel.mk
 AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 
-kernelinclude_HEADERS =
-dist_libkernel_la_SOURCES =
-nodist_libkernel_la_SOURCES =
-
-
 
 ## ----------- ##
 ## libkernel.  ##
@@ -45,24 +40,6 @@ install-data-hook:
 uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
-dist_libkernel_la_SOURCES +=					\
-memorymanager/memorymanager.cc					\
-server-timer.hh server-timer.cc					\
-ubanner.hh ubanner.cc						\
-ucomplaints.cc							\
-uconnection.cc							\
-ughostconnection.hh ughostconnection.cc				\
-utypes.cc							\
-uobject.cc                                                      \
-uobject.hh                                                      \
-uqueue.hh uqueue.hxx uqueue.cc					\
-userver.cc							\
-ustring.cc							\
-usystem.cc                                                      \
-uvalue-cast.cc							\
-uvalue-cast.hh
-
-
 ## ------------ ##
 ## version.hh.  ##
 ## ------------ ##
@@ -70,6 +47,10 @@ uvalue-cast.hh
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
 
+
+kernelinclude_HEADERS =
+dist_libkernel_la_SOURCES =
+nodist_libkernel_la_SOURCES =
 
 
 ## ---------- ##
@@ -95,6 +76,22 @@ include scheduler/libcoroutine/libcoroutine.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
+dist_libkernel_la_SOURCES +=					\
+memorymanager/memorymanager.cc					\
+server-timer.hh server-timer.cc					\
+ubanner.hh ubanner.cc						\
+ucomplaints.cc							\
+uconnection.cc							\
+ughostconnection.hh ughostconnection.cc				\
+utypes.cc							\
+uobject.cc                                                      \
+uobject.hh                                                      \
+uqueue.hh uqueue.hxx uqueue.cc					\
+userver.cc							\
+ustring.cc							\
+usystem.cc                                                      \
+uvalue-cast.cc							\
+uvalue-cast.hh
 
 ## -------------- ##
 ## urbi-console.  ##
