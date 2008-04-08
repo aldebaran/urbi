@@ -1,4 +1,4 @@
-/// \file ucomplaints.hh
+/// \file kernel/ucomplaints.hh
 
 #ifndef KERNEL_UCOMPLAINTS_HH
 # define KERNEL_UCOMPLAINTS_HH
