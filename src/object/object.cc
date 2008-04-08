@@ -219,9 +219,11 @@ namespace object
 	return res.first;
       else
 	if (res.second)
+        {
 	  foreach (const rObject& proto, protos_get())
 	    if (boost::optional<R> res = proto->lookup(action, marks))
 	      return res;
+        }
     }
     return boost::optional<R>();
   }
