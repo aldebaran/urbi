@@ -26,17 +26,8 @@
 #ifndef KERNEL_UTYPES_HH
 # define KERNEL_UTYPES_HH
 
-# include <list>
-# include "libport/cstring"
-
-# include "libport/hash.hh"
-# include "libport/ufloat.h"
-
-# include "fwd.hh"
-
+# include <iosfwd>
 # include "kernel/fwd.hh"
-# include "kernel/ustring.hh"
-
 
 /*------------.
 | Debugging.  |
@@ -54,8 +45,6 @@
 			#Test, __FILE__, __LINE__);	\
   else
 
-
-
 typedef unsigned long IPAdd;
 
 /// Return code values
@@ -65,19 +54,7 @@ enum UErrorValue
   UFAIL,
 };
 
-inline
-std::ostream&
-operator<< (std::ostream& o, UErrorValue v)
-{
-  switch (v)
-  {
-#define CASE(V) case V: o << #V; break;
-    CASE(USUCCESS);
-    CASE(UFAIL);
-#undef CASE
-  }
-  return o;
-}
+std::ostream& operator<< (std::ostream& o, UErrorValue v);
 
 /// Type of Bind modes
 enum UBindMode

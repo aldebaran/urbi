@@ -52,6 +52,7 @@ ubanner.hh ubanner.cc						\
 ucomplaints.cc							\
 uconnection.cc							\
 ughostconnection.hh ughostconnection.cc				\
+utypes.cc							\
 uobject.cc                                                      \
 uobject.hh                                                      \
 uqueue.hh uqueue.hxx uqueue.cc					\
