@@ -35,8 +35,6 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "exp_pair_type":       '"ast/exp.hh"'
-  "exp_pairs_type":      '"ast/exp.hh"'
   "exps_type":           '"ast/fwd.hh"'
   "flavor_type":         '"ast/flavor.hh"'
   "flow_exception_kind": '"ast/flow-exception.hh"'
@@ -103,8 +101,6 @@ fwd_hh_epilogue: |2
 
     // List types.
     typedef std::list<Exp*> exps_type;
-    typedef std::pair<Exp*, Exp*> exp_pair_type;
-    typedef std::list<exp_pair_type> exp_pairs_type;
     // FIXME: Should not be pointers, but the machinery is not ready
     // for that.
     typedef std::list<libport::Symbol*> symbols_type;
