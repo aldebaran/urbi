@@ -104,14 +104,12 @@ namespace object
     /// boost::optional if the lookup failed.
     template <typename R>
     boost::optional<R>
-    lookup(boost::function1
-           <std::pair<boost::optional<R>, bool>, rObject> action) const;
+    lookup(boost::function1<boost::optional<R>, rObject> action) const;
 
     /// Lookup helper, with a mark table
     template <typename R>
     boost::optional<R>
-    lookup(boost::function1<std::pair<boost::optional<R>, bool>,
-                            rObject> action,
+    lookup(boost::function1<boost::optional<R>, rObject> action,
            objects_set_type& marks) const;
 
     /// Lookup field in object hierarchy.

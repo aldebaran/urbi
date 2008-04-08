@@ -70,7 +70,7 @@ namespace object
   `---------*/
 
   // Typedef for lookups that return rObject
-  typedef std::pair<boost::optional<rObject>, bool> lookup_result;
+  typedef boost::optional<rObject> lookup_result;
   typedef boost::function1<lookup_result, rObject> lookup_action;
 
   namespace
@@ -87,7 +87,7 @@ namespace object
 	// Return a nonempty optional containing an empty rObject, to
 	// indicate to target that the lookup is successful, and the
 	// target is the initial object.
-	return make_pair(optional<rObject>(rObject()), false);
+	return optional<rObject>(rObject());
       // If this is a method outer scope, perform special lookup
       if (rObject self = obj->own_slot_get(SYMBOL(self), 0))
       {
@@ -100,23 +100,23 @@ namespace object
 	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
 	  {
 	    if (captured == nil_class)
-	      return make_pair(code->own_slot_get(SYMBOL(context)), false);
+	      return code->own_slot_get(SYMBOL(context));
 	    else
 	      foreach (const rObject& var, captured->value<object::List>())
 		if (var->value<object::String>() == slotName)
-		  return make_pair(target(code->own_slot_get(SYMBOL(context)), slotName), false);
+		  return target(code->own_slot_get(SYMBOL(context)), slotName);
 	  }
 	if (self->slot_locate(slotName))
-	  return make_pair(self, false);
+	  return self;
       }
-      return make_pair(optional<rObject>(), true);
+      return optional<rObject>();
     }
   }
 
   rObject
   target(rObject where, const libport::Symbol& name)
   {
-    boost::function1<std::pair<boost::optional<rObject>, bool>, rObject> lookup =
+    boost::function1<boost::optional<rObject>, rObject> lookup =
       boost::bind(targetLookup, _1, name);
     boost::optional<rObject> res = where->lookup(lookup);
     if (!res)
@@ -206,32 +206,27 @@ namespace object
 
   template <typename R>
   boost::optional<R>
-  Object::lookup(boost::function1<std::pair<boost::optional<R>, bool>,
-				  rObject> action,
+  Object::lookup(boost::function1<boost::optional<R>, rObject> action,
 		 objects_set_type& marks) const
   {
     if (!libport::mhas(marks, this))
     {
       marks.insert(this);
       assertion(self());
-      std::pair<boost::optional<R>, bool> res = action(self());
-      if (res.first)
-	return res.first;
+      boost::optional<R> res = action(self());
+      if (res)
+	return res;
       else
-	if (res.second)
-        {
-	  foreach (const rObject& proto, protos_get())
-	    if (boost::optional<R> res = proto->lookup(action, marks))
-	      return res;
-        }
+	foreach (const rObject& proto, protos_get())
+	  if (boost::optional<R> res = proto->lookup(action, marks))
+	    return res;
     }
     return boost::optional<R>();
   }
 
   template <typename R>
   boost::optional<R>
-  Object::lookup(boost::function1<std::pair<boost::optional<R>, bool>,
-				  rObject> action) const
+  Object::lookup(boost::function1<boost::optional<R>, rObject> action) const
   {
     objects_set_type marks;
     return lookup(action, marks);
@@ -244,8 +239,8 @@ namespace object
     {
       assertion(obj);
       if (obj->own_slot_get(k, 0))
-	return std::make_pair(obj, false);
-      return std::make_pair(boost::optional<rObject>(), true);
+	return obj;
+      return boost::optional<rObject>();
     }
   }
 
