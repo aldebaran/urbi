@@ -121,8 +121,8 @@ namespace object
     {
       CHECK_ARG_COUNT (2);
       boost::tokenizer< boost::char_separator<char> > tok =
-	libport::make_tokenizer(VALUE(args[0], String).name_get(),
-				VALUE(args[1], String).name_get().c_str());
+	libport::make_tokenizer(args[0]->value<String>().name_get(),
+                                args[1]->value<String>().name_get().c_str());
       list_traits::type ret;
       foreach(std::string i, tok)
 	ret.push_back(String::fresh(libport::Symbol(i)));

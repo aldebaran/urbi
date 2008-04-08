@@ -75,7 +75,7 @@ namespace object
     }
 
     rObject res = urbi_call(r, args[1], SYMBOL(asString));
-    std::string s = VALUE(res, String).name_get();
+    std::string s = res->value<String>().name_get();
 
     //Hack: special case for Strings to have k1 behavior
     //special case for Strings

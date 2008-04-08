@@ -14,6 +14,7 @@
 # include "libport/containers.hh"
 # include "libport/indent.hh"
 # include "libport/foreach.hh"
+# include "libport/shared-ptr.hh"
 
 # include "object/object.hh"
 # include "object/primitives.hh"
@@ -171,6 +172,19 @@ namespace object
     res->proto_add (self());
     return res;
   }
+
+
+  /*--------.
+  | Atoms.  |
+  `--------*/
+
+  template <class T>
+  inline typename T::value_type
+  Object::value()
+  {
+    return self().unsafe_cast<T>()->value_get();
+  }
+
 
   /*--------------------------.
   | Free standing functions.  |

@@ -195,14 +195,14 @@ abs(libport::ufloat v)
 
 #define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name)			\
   PRIMITIVE_0_FLOAT_(Name,					\
-     if (VALUE(args[0], Float) < 0)				\
+     if (args[0]->value<Float>() < 0)                           \
        throw							\
 	 PrimitiveError(#Name,					\
 			"argument has to be positive"))
 
 #define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name,Min, Max)                    \
   PRIMITIVE_0_FLOAT_(Name,						\
-     if (VALUE(args[0], Float) < Min || Max < VALUE(args[0], Float))	\
+     if (args[0]->value<Float>() < Min || Max < args[0]->value<Float>())\
        throw PrimitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name)                            \

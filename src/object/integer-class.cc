@@ -23,7 +23,7 @@ namespace object
     if (args[0] == integer_class)
       return String::fresh(SYMBOL(LT_Integer_GT));
     return String::fresh(libport::Symbol(boost::lexical_cast<std::string>
-		      (VALUE(args[0], Integer))));
+                                         (args[0]->value<Integer>())));
   }
 
   void

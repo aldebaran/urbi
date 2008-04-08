@@ -104,8 +104,8 @@ namespace object
     /// boost::optional if the lookup failed.
     template <typename R>
     boost::optional<R>
-    lookup(boost::function1<std::pair<boost::optional<R>, bool>,
-                            rObject> action) const;
+    lookup(boost::function1
+           <std::pair<boost::optional<R>, bool>, rObject> action) const;
 
     /// Lookup helper, with a mark table
     template <typename R>
@@ -208,6 +208,11 @@ namespace object
      **/
     static rObject make_method_scope(const rObject& self);
 
+    /// Return the value of \a atom as an Atom<T>.
+    template <class T>
+    typename T::value_type
+    value();
+
   protected:
     /// Protected constructor to force proper self_ initialization.
     Object ();
@@ -278,16 +283,6 @@ namespace object
   bool is_a(const rObject& c, const rObject& p);
 
 } // namespace object
-
-/// Return the value of the shared_ptr \a Obj as an Atom<Type>.
-// FIXME: Bad name (space).
-// A macro, not a function, because I want to work on the ref-pointer.
-// But I might be wrong: the problem is that when I have to different
-// pointer types to the same object, they should share the ref counter.
-// But is it really the case with our ref ptr?  Be careful, be very
-// careful :(  To be checked thoroughly.
-#define VALUE(Obj, Type)			\
-  ((Obj).unsafe_cast<Type>()->value_get())
 
 /// Whether the truth value of \a Obj is true.
 // We don't have Booleans currently: 0 is false, everything else

@@ -102,8 +102,8 @@ namespace object
 	    if (captured == nil_class)
 	      return make_pair(code->own_slot_get(SYMBOL(context)), false);
 	    else
-	      foreach (const rObject& var, VALUE(captured, object::List))
-		if (VALUE(var, object::String) == slotName)
+	      foreach (const rObject& var, captured->value<object::List>())
+		if (var->value<object::String>() == slotName)
 		  return make_pair(target(code->own_slot_get(SYMBOL(context)), slotName), false);
 	  }
 	if (self->slot_locate(slotName))
@@ -359,7 +359,7 @@ namespace object
     objects_type id_args;
     id_args.push_back(self);
     rObject data = r.apply(id, id_args);
-    std::string s = VALUE(data, String).name_get();
+    std::string s = data->value<String>().name_get();
     return o << s;
   }
 
@@ -406,7 +406,7 @@ namespace object
     try
     {
       rObject s = urbi_call(runner, r, SYMBOL(asString));
-      out << VALUE(s, String).name_get();
+      out << s->value<String>().name_get();
 
       return out;
     }
