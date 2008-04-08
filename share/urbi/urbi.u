@@ -78,7 +78,7 @@ do Object
     # The fresh child.
     var res = call.getSlot("target").clone |
     # Call the "init" from the parent, retargetted to the child.
-    call.getSlot("target").getSlot("init").apply([getSlot("res")] + call.evalArgs) |
+    getSlot("res").getSlot("init").apply([getSlot("res")] + call.evalArgs) |
     getSlot("res")
   };
 };
