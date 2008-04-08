@@ -113,10 +113,11 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    CONST_VISITOR_VISIT_NODES((18,
+    CONST_VISITOR_VISIT_NODES((19,
 			       (
 				 And,
 				 Call,
+				 Float,
 				 Foreach,
 				 Function,
 				 If,

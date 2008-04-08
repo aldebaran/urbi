@@ -30,6 +30,9 @@ exp.hxx
 flavorable.cc
 flavorable.hh
 flavorable.hxx
+float.cc
+float.hh
+float.hxx
 foreach.cc
 foreach.hh
 foreach.hxx

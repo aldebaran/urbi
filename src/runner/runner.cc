@@ -482,6 +482,13 @@ namespace runner
 
 
   void
+  Runner::operator() (const ast::Float& e)
+  {
+    current_ = object::Float::fresh(e.value_get());
+  }
+
+
+  void
   Runner::operator() (const ast::Foreach& e)
   {
     // Evaluate the list attribute, and check its type.
@@ -566,7 +573,7 @@ namespace runner
     // Set capturedVars at []. By default, no variables are searched
     // in the context.
     current_->slot_set(SYMBOL(capturedVars),
-                       object::List::fresh(std::list<object::rObject>()));
+		       object::List::fresh(std::list<object::rObject>()));
   }
 
 

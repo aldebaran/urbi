@@ -110,14 +110,6 @@
     }
 
 
-    /// Create an AST node storing a float.
-    static
-    ast::Object*
-    ast_object (const loc& l, ufloat val)
-    {
-      return new ast::Object(l, object::Float::fresh(val));
-    }
-
     /// Create an AST node storing a symbol.
     static
     ast::Object*
@@ -1033,7 +1025,7 @@ stmt:
  */
 | "loop" stmt %prec CMDBLOCK
     {
-      $$ = new ast::While(@$, $1, ast_object(@$, 1), $2);
+      $$ = new ast::While(@$, $1, new ast::Float(@$, 1), $2);
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -1234,8 +1226,8 @@ number:
 `-------*/
 
 expr:
-  number        { $$ = ast_object(@$, $1); }
-| time_expr     { $$ = ast_object(@$, $1); }
+  number        { $$ = new ast::Float(@$, $1); }
+| time_expr     { $$ = new ast::Float(@$, $1); }
 | "string"      { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 //| "%" name            { $$ = 0; }

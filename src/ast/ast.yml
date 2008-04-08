@@ -631,6 +631,16 @@ Object:
     - '{ object::print(::urbiserver->getCurrentRunner(), n.value_get(),
              ostr_);}'
 
+Float:
+  super: Exp
+  attributes:
+    - value:
+        type: ufloat
+        access: r
+        desc: Float value
+  printer:
+    - $value
+
 String:
   super: Exp
   attributes:
