@@ -35,10 +35,9 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "exec_exps_type":      '"ast/fwd.hh"'
   "exp_pair_type":       '"ast/exp.hh"'
   "exp_pairs_type":      '"ast/exp.hh"'
-  "exps_type":           '"ast/exp.hh"'
+  "exps_type":           '"ast/fwd.hh"'
   "flavor_type":         '"ast/flavor.hh"'
   "flow_exception_kind": '"ast/flow-exception.hh"'
   "libport::Symbol":     '<libport/symbol.hh>'
@@ -64,7 +63,6 @@ non_visitable_types:
 
 # In the cloner, these require "recurse_collection".
 collections:
-  - "exec_exps_type"
   - "exps_type"
   - "symbols_type"
 
@@ -307,7 +305,7 @@ Nary:
   desc: /// A list of \c Exp, mainly Stmt and Message.
   attributes:
     - children:
-        type: 'exec_exps_type'
+        type: 'exps_type'
         desc: Subtrees possibly qualified to be background.
         access: rw
     - toplevel:
@@ -321,11 +319,8 @@ Nary:
         # include "ast/flavor.hh"
         namespace ast
         {
-          // A list of Stmts.
-          typedef std::list<Exp*> exec_exps_type;
-
           /// Report \a e on \a o.
-          std::ostream& operator<<(std::ostream& o, const exec_exps_type& e);
+          std::ostream& operator<<(std::ostream& o, const exps_type& e);
         }
 
     header inside: |2
@@ -471,10 +466,10 @@ Nary:
         }
 
         std::ostream&
-        operator<<(std::ostream& o, const exec_exps_type& es)
+        operator<<(std::ostream& o, const exps_type& es)
         {
           // Specifying template parameters is needed for gcc-3
-          return o << libport::separate<const exec_exps_type,
+          return o << libport::separate<const exps_type,
                                         std::ostream&(*)(std::ostream&)>
                                        (es, libport::iendl);
         }

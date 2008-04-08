@@ -632,8 +632,9 @@ namespace runner
     // List of runners for Stmt flavored by a comma.
     std::list<scheduler::rJob> runners;
 
-    ast::exec_exps_type::iterator i;
+    // In case we're empty.
     current_ = object::void_class;
+
     bool first_iteration = true;
     foreach (ast::Exp* i, e.children_get ())
     {
