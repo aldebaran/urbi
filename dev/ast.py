@@ -6,9 +6,6 @@ import string, re, sys, syck, tools
 
 from tools import warning, error
 
-# Match the typedef denoting a list to deep_clear.
-re_list = re.compile ("[a-zA-Z_][a-zA-Z_0-9:]*(s|list)_type$")
-
 def decl (type, name):
   "Return the concatenation of type and name, with spaces if needed."
   res = type;
@@ -106,7 +103,7 @@ class Attribute:
 
   def deep_clear_p (self):
     "Whether this type requires a deep clear."
-    return re_list.match (self.root_type ()) != None
+    return self.ast_params['deep_clear_p'].match (self.root_type ()) != None
 
   def delete (self):
     "The C++ delete invocations for self, if needed."
@@ -320,6 +317,8 @@ class Loader:
     docs = syck.load_documents (file.read ())
     i = iter (docs)
     ast_params = i.next ()
+    # Compile the regexps once for all.
+    ast_params['deep_clear_p'] = re.compile (ast_params['deep_clear_p'])
     ast_nodes = i.next ()
     nodes = self.create_nodes (ast_nodes, ast_params)
     self.final_compute (nodes)
