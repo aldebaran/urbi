@@ -566,6 +566,15 @@ Global.addProto (Global.Profiling);
 
 load("urbi/semaphore.u");
 
+// This variable is used by initialization code to detect the end of urbi.u.
+var Object.loaded = 1;
+
+// Force a yeld
+sleep(10);
+
+// Load URBI.INI outside initialization phase.
+"Loading URBI.INI";
+load("URBI.INI");
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##
@@ -573,5 +582,4 @@ load("urbi/semaphore.u");
 # This string is special and expected by uconsole-check as the
 # signal that we have loaded urbi.u.  Messages before, and including
 # this one, are ignored.
-var Object.loaded = 1;
 "Urbi is up and running.";
