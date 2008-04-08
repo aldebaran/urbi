@@ -31,7 +31,8 @@ namespace object
   }
 
   inline
-  rObject Object::fresh ()
+  rObject
+  Object::fresh ()
   {
     rObject res = new Object();
     res->self_ = res;
@@ -39,7 +40,8 @@ namespace object
   }
 
   inline
-  rObject Object::self() const
+  rObject 
+  Object::self() const
   {
     rObject res;
     res = self_.lock();
@@ -178,11 +180,14 @@ namespace object
   | Atoms.  |
   `--------*/
 
-  template <class T>
-  inline typename T::value_type
+  template <typename T>
+  inline
+  typename T::value_type
   Object::value()
   {
-    return self().unsafe_cast<T>()->value_get();
+    // This local variable seems to be needed by GCC 4.0.1 on OSX.
+    rObject s = self();
+    return s.unsafe_cast<T>()->value_get();
   }
 
 
