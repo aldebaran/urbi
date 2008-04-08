@@ -506,7 +506,7 @@ namespace runner
     bool first_iteration = true;
 
     // Iterate on each value.
-    foreach (rObject o, l->value<object::List())
+    foreach (rObject o, l->value<object::List>())
     {
       // Define a new local scope for each loop, and set the index.
       rObject locals = object::Object::fresh();
