@@ -35,6 +35,8 @@ namespace urbi
       syncTag (""),
       stopCallbackThread_(false)
   {
+    if (error())
+      return;
     libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;

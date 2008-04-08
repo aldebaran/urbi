@@ -465,13 +465,23 @@ namespace urbi
   int
   initialize(const char* addr, int port, int buflen, bool exitOnDisconnect)
   {
-     std::cerr << libport::program_name
+    std::cerr << libport::program_name
 	      << ": " << urbi::package_info() << std::endl
 	      << libport::program_name
 	      << ": Remote Component Running on "
 	      << addr << " " << port << std::endl;
 
     new USyncClient(addr, port, buflen);
+
+    if (exitOnDisconnect)
+    {
+      if (!getDefaultClient() || getDefaultClient()->error())
+	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
+		  << libport::exit(1);
+      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
+    }
+   if (!getDefaultClient() || getDefaultClient()->error())
+      return 1;
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback(callback (&debug));
@@ -481,13 +491,6 @@ namespace urbi
 
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
-    if (exitOnDisconnect)
-    {
-      if (getDefaultClient()->error())
-	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
-		  << libport::exit(1);
-      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
-    }
 
     dummyUObject = new UObject (0);
     for (UStartlist::iterator i = objectlist->begin();
