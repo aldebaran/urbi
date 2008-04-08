@@ -70,9 +70,8 @@ def print_includes (node, header, inline, impl):
 
   need_misc_algorithm = False
   for attribute in node.attributes:
+    need_misc_algorithm |= attribute.deep_clear_p ()
     type = attribute.root_type ()
-    if ast.re_list.match (type):
-      need_misc_algorithm = True
     if type in ast_params['includes_map']:
       includes[ast_params['includes_map'][type]] = True
     elif not type == node.name and \

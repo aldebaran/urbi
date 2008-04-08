@@ -62,16 +62,6 @@ class Attribute:
     "Is this a pointer type?"
     return self.type[-1] == '*'
 
-  def r_type (self):
-    "Return type for a const *_get method."
-    res = self.root_type ()
-    if not self.atomic_p ():
-      if self.mandatory:
-	res = "const " + res + "&"
-      else:
-	res = "const " + res + "*"
-    return res
-
   def w_type (self):
     "Return type for a non const *_get method."
     res = self.root_type ()
@@ -80,6 +70,10 @@ class Attribute:
     else:
       res += "&"
     return res
+
+  def r_type (self):
+    "Return type for a const *_get method."
+    return "const " + self.w_type ()
 
   def W_type (self):
     "Type of the input argument for the *_set method."
@@ -110,19 +104,23 @@ class Attribute:
       res = res[:-1]
     return res
 
+  def deep_clear_p (self):
+    "Whether this type requires a deep clear."
+    return re_list.match (self.root_type ()) != None
+
   def delete (self):
     "The C++ delete invocations for self, if needed."
     res = ""
     if self.owned:
       if self.pointer_p ():
-	if re_list.match (self.root_type ()):
+	if self.deep_clear_p ():
 	  if not self.mandatory:
 	    res += "    if (" + self.name_() + ")\n  "
 	  res += "    " + self.ast_params['deep_clear'] + \
 		 " (*" + self.name_() + ");\n"
 	res += "    delete " + self.name_() + ";\n"
       else:
-	if re_list.match (self.root_type ()):
+	if self.deep_clear_p ():
 	  res += "    " + self.ast_params['deep_clear'] + \
 		 " (" + self.name_() + ");\n"
       if self.hide and res:
