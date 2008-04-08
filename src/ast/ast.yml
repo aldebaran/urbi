@@ -106,9 +106,6 @@ fwd_hh_epilogue: |2
     typedef std::list<Exp*> exps_type;
     typedef std::pair<Exp*, Exp*> exp_pair_type;
     typedef std::list<exp_pair_type> exp_pairs_type;
-    //typedef std::list<VarDec*> vardecs_type;
-    //typedef std::list<Dec*> decs_type;
-
     // FIXME: Should not be pointers, but the machinery is not ready
     // for that.
     typedef std::list<libport::Symbol*> symbols_type;
@@ -119,7 +116,6 @@ printer_cc_prologue: |2
   #include <libport/escape.hh>
   #include <libport/indent.hh>
   #include <libport/pair.hh>
-
 
   #include <kernel/userver.hh>
 ---
