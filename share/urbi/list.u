@@ -18,7 +18,12 @@ do List
   // Same contents except occurrences of e.
   function remove(e)
   {
-    return res - [e]
+    var res = self - [e] |
+    clear |
+    for| i in (res) {
+      push_back (i)
+    } |
+    res
   };
 
   // Subtract a list from self.
