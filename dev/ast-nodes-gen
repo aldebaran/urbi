@@ -156,9 +156,9 @@ def print_class_open (node, header, inline, impl):
     tail = False
     for sup in node.super:
       if tail:
-        decl += ", "
+	decl += ", "
       else:
-        tail = True
+	tail = True
       decl += "public " + sup.name
   else:
     decl += "boost::noncopyable"
