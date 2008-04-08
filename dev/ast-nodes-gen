@@ -58,11 +58,16 @@ def print_guards_close (node, header, inline, impl):
 
 def print_includes (node, header, inline, impl):
   """Generate the required header inclusions."""
-  # Shortands.
 
   includes = {}
-  for sup in node.super:
-    includes["\"ast/" + sup.hh () + "\""] = True
+
+  # If the class has no parents, it derives from boost::noncopyable.
+  if node.super:
+    for sup in node.super:
+      includes["\"ast/" + sup.hh () + "\""] = True
+  else:
+    includes['<boost/utility.hpp>'] = True
+
   need_misc_algorithm = False
   for attribute in node.attributes:
     type = attribute.root_type ()
@@ -98,30 +103,66 @@ def print_includes (node, header, inline, impl):
   print >>impl, "#include \"ast/" + node.hh () + "\""
   print_inline_code (node, "impl", "prologue")
 
-def print_namespace_class_open (node, header, inline, impl):
-  # Shortands
-  class_id = node.name
+
+## ----------- ##
+## Namespace.  ##
+## ----------- ##
+
+def print_namespace_open (node, header, inline, impl):
+  """Open the AST namespace."""
   # Open namespace
   for f in [header, inline, impl]:
     print >>f, """
 namespace ast
 {
 """
-    if node.hide:
+
+def print_namespace_close (node, header, inline, impl):
+  """Close the AST namespace."""
+  for f in [header, inline, impl]:
+    print >>f, """
+} // namespace ast
+"""
+
+
+## -------------- ##
+## Hiding marks.  ##
+## -------------- ##
+
+def print_hiding_marks (node, mark, header, inline, impl):
+  """Print the hiding marks for node.  Used to open and close:
+  mark should be "<<" or ">>", etc."""
+  if node.hide:
+    for f in [header, inline, impl]:
       if not (f == inline and len(node.attributes) == 0):
-	print >>f, "//<<"
+	print >>f, "//" + mark
+
+## ------- ##
+## Class.  ##
+## ------- ##
+
+def print_class_open (node, header, inline, impl):
+  """Open the class header."""
+  print_hiding_marks (node, "<<", header, inline, impl)
 
   # Declare class
   sys.stdout = header
   decl = "class " + node.name
-  first = True
-  for sup in node.super:
-    if first:
-      decl += " : "
-    else:
-      decl += ", "
-    first = False
-    decl += "public " + sup.name
+
+  # Declare parents.  If there are non, declare that the class
+  # is non-copyable.
+  if node.super:
+    first = True
+    for sup in node.super:
+      if first:
+        decl += " : "
+        first = False
+      else:
+        decl += ", "
+      decl += "public " + sup.name
+  else:
+    decl += " : boost::noncopyable"
+
   if node.desc:
     print node.desc
   else:
@@ -129,20 +170,11 @@ namespace ast
   print "  " + decl
   print "  {"
 
-def print_namespace_class_close (node, header, inline, impl):
+def print_class_close (node, header, inline, impl):
   sys.stdout = header
   print "  };"
 
-  # Close namespace
-  for f in [header, inline, impl]:
-    sys.stdout = f
-    if node.hide:
-      if not (f == inline and len(node.attributes) == 0):
-	print "//>>"
-    print """
-} // namespace ast
-"""
-
+  print_hiding_marks (node, ">>", header, inline, impl)
 
 def print_ctor_dtor (node, header, inline, impl):
   """Issue the constructors and destructor."""
@@ -356,7 +388,8 @@ def class_generate(node):
   print_guards_open (node, header, inline, impl)
   print_includes (node, header, inline, impl)
 
-  print_namespace_class_open(node, header, inline, impl)
+  print_namespace_open(node, header, inline, impl)
+  print_class_open(node, header, inline, impl)
 
   # Print inside hand written code.
   for f in [(header, "header"),
@@ -375,7 +408,8 @@ def class_generate(node):
   print_attributes (node, header, inline, impl)
 
   # End of declaration.
-  print_namespace_class_close (node, header, inline, impl)
+  print_class_close (node, header, inline, impl)
+  print_namespace_close (node, header, inline, impl)
 
   # Print epilogue.
   print_guards_close (node, header, inline, impl)
