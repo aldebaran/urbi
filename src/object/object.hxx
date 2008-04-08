@@ -19,6 +19,20 @@
 # include "object/object.hh"
 # include "object/primitives.hh"
 
+# include "object/alien-class.hh"
+# include "object/code-class.hh"
+# include "object/delegate-class.hh"
+# include "object/float-class.hh"
+# include "object/global-class.hh"
+# include "object/integer-class.hh"
+# include "object/list-class.hh"
+# include "object/lobby-class.hh"
+# include "object/primitive-class.hh"
+# include "object/scope-class.hh"
+# include "object/string-class.hh"
+# include "object/tag-class.hh"
+# include "object/task-class.hh"
+
 
 namespace object
 {
@@ -95,6 +109,34 @@ namespace object
   Object::proto_add (const rObject& p)
   {
     assert(p);
+    /*
+      Inheriting from atoms is a problem: when trying to fetch the
+      value of an atom, only the local object is inspected, not its
+      prototypes. Thus, calling an atom method on an object inheriting
+      from this atom systematically fails with a type checking error.
+
+      For now, we forbid inheriting from atoms. This problem could be
+      solved by performing a real lookup to find the atom value, but
+      we can't tell whether we really want this right now.
+
+      Note that an Object can still inherit from an atom if it is
+      itself an atom of the same kind (this pattern is used when
+      literals are evaluated, for instance).
+    */
+    switch(p->kind_get())
+    {
+#define FORBID(L, U)                                                            \
+      case kind_ ## L:                                                          \
+        if (kind_get() != kind_ ## L)                                           \
+          pabort("You can't inherit from atoms for now. Atom type: " #U ".");   \
+        break;
+      APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(FORBID)
+#undef FORBID
+      case object::Object::kind_object:
+        // Nothing. Inheriting from objects is Ok.
+        break;
+    }
+
     if (!libport::has(*protos_, p))
       protos_->push_front (p);
     return *this;
