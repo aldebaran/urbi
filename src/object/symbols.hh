@@ -143,6 +143,7 @@
   Macro(quit, "quit");                            \
   Macro(random, "random");                        \
   Macro(reboot, "reboot");                        \
+  Macro(removeById, "removeById");                \
   Macro(removeProto, "removeProto");              \
   Macro(removeSlot, "removeSlot");                \
   Macro(result, "result");                        \

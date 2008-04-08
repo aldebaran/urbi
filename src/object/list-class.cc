@@ -105,6 +105,13 @@ namespace object
       return l;
     }
 
+    static rList
+    removeById(rList l, rObject elt)
+    {
+      l->value_get().remove(elt);
+      return l;
+    }
+
 #undef CHECK_NON_EMPTY
 
     /// Clear \l
@@ -164,6 +171,7 @@ namespace object
   PRIMITIVE_2_LIST(PLUS);
   PRIMITIVE_2_LIST(PLUS_EQ);
   PRIMITIVE_2_OBJECT(list, push_back, List);
+  PRIMITIVE_2_OBJECT(list, removeById, List);
 
   void
   list_class_initialize ()
@@ -178,6 +186,7 @@ namespace object
     DECLARE(front);
     DECLARE(pop_front);
     DECLARE(push_back);
+    DECLARE(removeById);
     DECLARE(size);
     DECLARE(sort);
     DECLARE(tail);
