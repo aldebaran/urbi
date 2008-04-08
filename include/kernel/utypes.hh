@@ -133,9 +133,4 @@ enum UReport
   UCONTINUE
 };
 
-
-typedef unsigned char ubyte;
-
-# define ABSF(x)     (((x)>0)? (x) : (-(x)))
-
 #endif // !KERNEL_UTYPES_HH
