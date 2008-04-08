@@ -277,6 +277,38 @@ do Object
       onleave { o.val = false | o.tag.stop } |
     o
   };
+
+  class Global.Event {
+    var asString = "<Event>";
+
+    function init  () {
+      var self.emitted = [] |
+      var self.generation = 0
+    };
+
+    function 'emit' {
+      var l = call.evalArgs |
+      generation = generation + 1 |
+      emitted.push_back (l);  # We want to yield here
+      emitted.removeById (l) |
+      void
+    };
+
+    function onEvent (func) {
+      var prev_launched = [] |
+      var prev_generation = 0 |
+      loop {
+        waituntil (generation != prev_generation) |
+        prev_generation = generation |
+        var launched = emitted + [] |
+        for| instance in (launched) {
+          if (!prev_launched.hasSame (instance))
+            detach (getSlot ("func").apply ([self] + instance))
+        } |
+        prev_launched = launched
+      }
+    };
+  };
 };
 
 load("urbi/channel.u");
