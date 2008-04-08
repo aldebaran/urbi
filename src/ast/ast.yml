@@ -35,17 +35,19 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "exec_exps_type": '"ast/fwd.hh"'
-  "exp_pair_type": '"ast/exp.hh"'
-  "exp_pairs_type": '"ast/exp.hh"'
-  "exps_type": '"ast/exp.hh"'
-  "flavor_type": '"ast/flavor.hh"'
+  "exec_exps_type":      '"ast/fwd.hh"'
+  "exp_pair_type":       '"ast/exp.hh"'
+  "exp_pairs_type":      '"ast/exp.hh"'
+  "exps_type":           '"ast/exp.hh"'
+  "flavor_type":         '"ast/flavor.hh"'
   "flow_exception_kind": '"ast/flow-exception.hh"'
-  "libport::Symbol": '<libport/symbol.hh>'
-  "object::rObject": '"object/object.hh"'
-  "std::string": "<string>"
-  "symbols_type": '"ast/fwd.hh"'
-  "ufloat": '<libport/ufloat.h>'
+  "libport::Symbol":     '<libport/symbol.hh>'
+  "object::rObject":     '"object/object.hh"'
+  "slot_type":           '"ast/fwd.hh"'
+  "slots_type":          '"ast/fwd.hh"'
+  "std::string":         '<string>'
+  "symbols_type":        '"ast/fwd.hh"'
+  "ufloat":              '<libport/ufloat.h>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
@@ -92,7 +94,6 @@ default_visitor_hh_prologue: |2
 
 # The beginning of fwd.hh, for includes.
 fwd_hh_prologue: |2
-
   # include <list>
   # include <vector>
 
