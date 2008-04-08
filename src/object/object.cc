@@ -142,30 +142,15 @@ namespace object
     make_outer_scope(const rObject& parent, const rObject& self)
     {
       rObject res = Object::make_scope(parent);
-      try
-      {
-	res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
-	res->slot_set(SYMBOL(locateSlot), scope_class->slot_get(SYMBOL(locateSlot)));
-	res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
-	res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
-	res->slot_set(SYMBOL(self), self);
-	// We really need to copy 'locals' in every scope, or else
-	// Scope's methods will get completely fubared: 'locals' will be
-	// found in 'self' and will thus not be the local scope!
-	res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
-      }
-      catch (object::LookupError&)
-      {
-	// Nothing. This never happens in normal use, since all these
-	// scope methods are defined at the very top of
-	// urbi/urbi.u. Yet, a first scope is created to load urbi.u,
-	// and these method are thus not yet defined. We define the
-	// target slot by hand so as anything written in urbi.u goes in
-	// Lobby. So keep in mind that urbi.u is evaluated a little bit
-	// differently than a regular lobby: every {set,get,update}Slot
-	// goes in Lobby, not the local scope - which is quite
-	// reasonable, since this scope will never be usable again.
-      }
+      res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
+      res->slot_set(SYMBOL(locateSlot), scope_class->slot_get(SYMBOL(locateSlot)));
+      res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
+      res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
+      res->slot_set(SYMBOL(self), self);
+      // We really need to copy 'locals' in every scope, or else
+      // Scope's methods will get completely fubared: 'locals' will be
+      // found in 'self' and will thus not be the local scope!
+      res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
       return res;
     }
   }
@@ -174,14 +159,7 @@ namespace object
   Object::make_method_scope(const rObject& self)
   {
     rObject res = make_outer_scope(global_class, self);
-    try
-    {
-      res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
-    }
-    catch (object::LookupError&)
-    {
-      // Nothing. See comment in make_outer_scope's catch
-    }
+    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
     return res;
   }
 
@@ -189,14 +167,7 @@ namespace object
   Object::make_do_scope(const rObject& parent, const rObject& self)
   {
     rObject res = make_outer_scope (parent ? parent : global_class, self);
-    try
-    {
-      res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(doSetSlot)));
-    }
-    catch (LookupError&)
-    {
-      // Nothing. See comment in make_outer_scope's catch
-    }
+    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(doSetSlot)));
     return res;
   }
 

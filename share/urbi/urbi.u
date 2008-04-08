@@ -4,44 +4,7 @@
 var Code.context = nil;
 
 # Must appear before any scope creation
-var Scope.locals = function () { self };
-
-# Override slot mechanisms
 var Scope.setSlot = Object.getSlot("setSlot");
-
-function Scope.doSetSlot(slotName, value)
-{
-  var tgt |
-  if (self.locateSlot("setSlot").memSameAs(self))
-    tgt = self.getSlot("self")
-  else
-    tgt = self |
-  Object.getSlot("setSlot").apply([tgt, slotName, getSlot("value")])
-};
-
-var Scope.getSlot = function (slotName)
-{
-  Object.getSlot("getSlot").apply([self.target(slotName), slotName])
-};
-
-var Scope.locateSlot = function (slotName)
-{
-  var tgt = self.tryTarget(slotName) |
-  if (getSlot ("tgt").sameAs(nil))
-    return nil |
-  Object.getSlot("locateSlot").apply([getSlot("tgt"), slotName])
-};
-
-var Scope.updateSlot = function (slotName, value)
-{
-  Object.getSlot("updateSlot").apply([self.target(slotName), slotName, getSlot("value")])
-};
-
-var Scope.removeSlot = function (slotName)
-{
-  Object.getSlot("removeSlot").apply([self.target(slotName), slotName])
-};
-
 
 ## --------- ##
 ## Constants ##
