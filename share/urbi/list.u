@@ -15,6 +15,16 @@ do List
     return false
   };
 
+  function hasSame(e)
+  {
+    for| i in self
+    {
+      if (i === e)
+        return true
+    } |
+    return false
+  };
+
   // Same contents except occurrences of e.
   function remove(e)
   {
@@ -36,6 +46,11 @@ do List
 	res.push_back(i)
     } |
     return res
+  };
+
+  function empty
+  {
+    return size == 0
   };
 
   # The Lisp-like name.
