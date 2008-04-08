@@ -151,17 +151,17 @@ def print_class_open (node, header, inline, impl):
 
   # Declare parents.  If there are non, declare that the class
   # is non-copyable.
+  decl += " : "
   if node.super:
-    first = True
+    tail = False
     for sup in node.super:
-      if first:
-        decl += " : "
-        first = False
-      else:
+      if tail:
         decl += ", "
+      else:
+        tail = True
       decl += "public " + sup.name
   else:
-    decl += " : boost::noncopyable"
+    decl += "boost::noncopyable"
 
   if node.desc:
     print node.desc
