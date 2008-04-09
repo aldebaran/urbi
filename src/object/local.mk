@@ -29,8 +29,6 @@ object/alien-class.cc				\
 object/alien-class.hh				\
 object/atom.hh					\
 object/atom.hxx					\
-object/call-class.cc				\
-object/call-class.hh				\
 object/code-class.cc				\
 object/code-class.hh				\
 object/delegate-class.cc                        \

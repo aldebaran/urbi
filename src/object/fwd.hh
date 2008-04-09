@@ -33,7 +33,6 @@ namespace object
   /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,     Alien)				\
-  Macro(call,      Call)				\
   Macro(code,      Code)				\
   Macro(delegate,  Delegate)				\
   Macro(float,     Float)				\

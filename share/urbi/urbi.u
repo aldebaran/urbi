@@ -124,6 +124,50 @@ do Global
   function noop () {}
 };
 
+## -------------- ##
+## Call message.  ##
+## -------------- ##
+
+class Global.CallMessage
+{
+  function argString(i)
+  {
+    args.idx(i).string
+  };
+
+  function evalArgAt(i)
+  {
+    args.idx(i).eval
+  };
+
+  function argAt(i)
+  {
+    args.idx(i).value
+  };
+
+  function evalArgs()
+  {
+    args.tail.map(function (arg) { arg.eval})
+  };
+
+  function argsCount
+  {
+    args.size
+  };
+};
+
+## ----- ##
+## Lazy. ##
+## ----- ##
+
+load("urbi/lazy.u");
+
+## ------ ##
+## List.  ##
+## ------ ##
+
+load("urbi/list.u");
+
 ## --------- ##
 ## Closure.  ##
 ## --------- ##
@@ -393,12 +437,6 @@ do Object
   };
 };
 
-
-## ------ ##
-## List.  ##
-## ------ ##
-load("urbi/list.u");
-
 do Object
 {
   function bounce_named (fn)
@@ -527,12 +565,6 @@ Global.addProto (Global.Profiling);
 ## ----------- ##
 
 load("urbi/semaphore.u");
-
-## ----- ##
-## Lazy. ##
-## ----- ##
-
-load("urbi/lazy.u");
 
 ## ------------- ##
 ## Ready to go.  ##

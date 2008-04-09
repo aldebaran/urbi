@@ -18,11 +18,14 @@
 #include "ast/clone.hh"
 #include "object/alien.hh"
 #include "object/atom.hh"
+#include "object/global-class.hh"
 #include "object/idelegate.hh"
 #include "object/object.hh"
 #include "object/symbols.hh"
 #include "object/urbi-exception.hh"
 #include "runner/runner.hh"
+#include "parser/tweast.hh"
+#include "parser/uparser.hh"
 
 namespace runner
 {
@@ -395,9 +398,9 @@ namespace runner
 
   object::rObject
   Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
-			      const ast::exps_type& args) const
+			      const ast::exps_type& args)
   {
-    rObject res = object::call_class->clone();
+    rObject res = object::global_class->slot_get(SYMBOL(CallMessage))->clone();
 
     // Set the sender to be the current self. self must always exist.
     res->slot_set (SYMBOL(sender),
@@ -411,7 +414,25 @@ namespace runner
 
     // Set the args to be the unevaluated expressions, including the target.
     // We use an Alien here.
-    res->slot_set (SYMBOL(args), box(const ast::exps_type&, args));
+    std::list<rObject> lazy_args;
+
+    foreach (ast::Exp* e, args)
+    {
+      // The target can be unspecified
+      if (!e)
+      {
+	lazy_args.push_back(object::nil_class);
+	continue;
+      }
+      ast::Ast* lazy = parser::parse(
+	// Can't use new, which himself uses call messages.
+	parser::Tweast() << "{ var res = Lazy.clone| res.code = function () {" << e << "}.makeClosure| res }");
+      assertion(lazy);
+      lazy_args.push_back(eval(*lazy));
+      // delete lazy;
+    }
+
+    res->slot_set (SYMBOL(args), object::List::fresh(lazy_args));
 
     // Store the current context in which the arguments must be evaluated.
     res->slot_set (SYMBOL(context), object::Object::make_scope(locals_));
