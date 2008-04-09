@@ -38,6 +38,18 @@ namespace object
     return String::fresh(libport::Symbol(ss.str()));
   }
 
+  static rObject
+  code_class_bodyString(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    if (args[0] == code_class)
+      return String::fresh(SYMBOL(LT_Code_GT));
+    std::stringstream ss;
+    FETCH_ARG(0, Code);
+    ss << *arg0->value_get().body_get();
+    return String::fresh(libport::Symbol(ss.str()));
+  }
+
   void
   code_class_initialize ()
   {
@@ -45,6 +57,7 @@ namespace object
     DECLARE_PRIMITIVE(code, Name)
     DECLARE (apply);
     DECLARE (asString);
+    DECLARE (bodyString);
 #undef DECLARE
   }
 

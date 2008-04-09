@@ -92,6 +92,7 @@
   Macro(atexit, "atexit");                        \
   Macro(back, "back");                            \
   Macro(block, "block");                          \
+  Macro(bodyString, "bodyString");                \
   Macro(call, "call");                            \
   Macro(capturedVars, "capturedVars");            \
   Macro(clear, "clear");                          \
