@@ -515,6 +515,12 @@ Global.addProto (Global.Profiling);
 
 load("urbi/semaphore.u");
 
+## ----- ##
+## Lazy. ##
+## ----- ##
+
+load("urbi/lazy.u");
+
 ## ------------- ##
 ## Ready to go.  ##
 ## ------------- ##

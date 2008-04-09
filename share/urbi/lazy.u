@@ -1,0 +1,29 @@
+class Global.Lazy
+{
+  var code;
+  var val;
+  var protoName = "Lazy";
+
+  function init(value)
+  {
+    self.code = getSlot("value");
+    self.getSlot("code").makeClosure;
+  };
+
+  function eval()
+  {
+    val = self.code;
+  };
+
+  function value()
+  {
+    if (getSlot("val").isNil)
+      eval;
+    getSlot("val");
+  };
+
+  function string ()
+  {
+    self.getSlot("code").bodyString;
+  };
+};
