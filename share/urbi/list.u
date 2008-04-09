@@ -62,7 +62,7 @@ do List
     push_back(e)
   };
 
-  # Access element x
+  # Access element at index \a idx
   # FIXME: Inneficient. Do we want to implement Urbi lists as C++ std::vectors?
   # FIXME: Do we want to make [] available for this contstruct?
   # FIXME: Sadly, 'at' is reserved, and adding it as an identifier generates conflicts
@@ -79,6 +79,7 @@ do List
   ## Functional programming.  ##
   ## ------------------------ ##
 
+  # Build a new list containing the result of \a f applied to all elements
   function map (f)
   {
     var res = [] |
@@ -86,18 +87,28 @@ do List
     res
   };
 
+  # Apply \a f on every element
+  function each (f)
+  {
+    for| i in self { f (i) } |
+    void
+  };
+
+  # Check whether at least one element verifies the \a f predicate
   function any (f)
   {
     for i in self { if (f (i)) return true } |
     false
   };
 
+  # Check whether all elements verifies the \a f predicate
   function all (f)
   {
     for i in self { if (!f (i)) return false } |
     true
   };
 
+  # Get the string representation
   function asString ()
   {
     if (self === List)
