@@ -184,6 +184,10 @@ namespace scheduler
     void state_set (job_state);
     libport::utime_t deadline_get () const;
 
+    /// Atomic execution related operations
+    bool non_interruptible_get () const;
+    void non_interruptible_set (bool);
+
     /// Return a shared pointer on myself. The job must not be
     /// terminated.
     scheduler::rJob myself_get () const;
@@ -231,6 +235,10 @@ namespace scheduler
     /// terminates with an exception, any linked job will throw the
     /// exception as well when they resume.
     jobs_type links_;
+
+    /// Is the current job non-interruptible? If yes, yielding will
+    /// do nothing and blocking operations may raise an exception.
+    bool non_interruptible_;
 
     bool side_effect_free_;
     kernel::exception_ptr pending_exception_;

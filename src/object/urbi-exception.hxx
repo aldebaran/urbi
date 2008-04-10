@@ -103,6 +103,12 @@ namespace object
   }
 
   inline
+  SchedulingError::SchedulingError (const std::string& msg)
+    : UrbiException (msg)
+  {
+  }
+
+  inline
   void
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {

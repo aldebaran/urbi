@@ -82,6 +82,9 @@ namespace scheduler
   void
   Job::yield_until_terminated (Job& other)
   {
+    if (non_interruptible_)
+      throw object::SchedulingError ("dependency on other task in non-interruptible code");
+
     if (!other.terminated ())
     {
       other.to_wake_up_.push_back (this);
@@ -93,6 +96,9 @@ namespace scheduler
   void
   Job::yield_until_things_changed ()
   {
+    if (non_interruptible_ && !frozen ())
+      throw object::SchedulingError ("attempt to wait for condition changes in non-interruptible code");
+
     state_ = waiting;
     scheduler_->resume_scheduler (this);
   }

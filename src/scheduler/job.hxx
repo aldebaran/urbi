@@ -20,6 +20,7 @@ namespace scheduler
       myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       coro_ (Coro_new ()),
+      non_interruptible_ (false),
       side_effect_free_ (false),
       pending_exception_ (0)
   {
@@ -33,6 +34,7 @@ namespace scheduler
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       coro_ (Coro_new ()),
       tags_ (model.tags_),
+      non_interruptible_ (false),
       side_effect_free_ (false),
       pending_exception_ (0)
   {
@@ -66,6 +68,12 @@ namespace scheduler
   inline void
   Job::yield ()
   {
+    // The only case where we yield while being non-interruptible
+    // is when we get frozen. This is used to suspend a task
+    // and resume it in non-interruptible contexts.
+    if (non_interruptible_ && !frozen ())
+      return;
+
     state_ = running;
     scheduler_->resume_scheduler (this);
   }
@@ -73,6 +81,9 @@ namespace scheduler
   inline void
   Job::yield_until (libport::utime_t deadline)
   {
+    if (non_interruptible_)
+      throw object::SchedulingError ("attempt to sleep in non-interruptible code");
+
     state_ = sleeping;
     deadline_ = deadline;
     scheduler_->resume_scheduler (this);
@@ -143,6 +154,18 @@ namespace scheduler
   Job::name_get () const
   {
     return name_;
+  }
+
+  inline bool
+  Job::non_interruptible_get () const
+  {
+    return non_interruptible_;
+  }
+
+  inline void
+  Job::non_interruptible_set (bool ni)
+  {
+    non_interruptible_ = ni;
   }
 
   inline void

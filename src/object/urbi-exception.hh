@@ -142,6 +142,15 @@ namespace object
     COMPLETE_EXCEPTION (ImplicitTagComponentError);
   };
 
+  /** Exception used when a non-interruptible block of code tries to
+   * get interrupted or blocked.
+   */
+  struct SchedulingError: public UrbiException
+  {
+    SchedulingError (const std::string& msg);
+    COMPLETE_EXCEPTION (SchedulingError);
+  };
+
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
   void check_arg_count (unsigned formal, unsigned effective,
