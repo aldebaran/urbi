@@ -854,7 +854,7 @@ stmt:
       // Compiled as "var name = function args stmt", i.e.,
       // setSlot (name, function args stmt).
       $$ = ast_assign(@$, $2,
-		      new ast::Function (@$, $3, $4),
+		      new ast::Function (@$, $3, ast_scope (@$, $4)),
 		      true);
     }
 ;
@@ -1191,7 +1191,7 @@ expr:
 expr:
   "function" formals block
     {
-      $$ = new ast::Function (@$, $2, $3);
+      $$ = new ast::Function (@$, $2, ast_scope (@$, $3));
     }
 ;
 

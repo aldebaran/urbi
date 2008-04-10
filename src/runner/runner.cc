@@ -215,11 +215,10 @@ namespace runner
     assertion((call_message != 0) xor fn.strict());
 
     // Create the function's outer scope, with the first argument as
-    // 'self'
-    rObject outerScope = object::Object::make_method_scope(args.front());
-    outerScope->slot_set(SYMBOL(code), func);
-    // Create the function's local scope
-    rObject scope = object::Object::make_scope(outerScope);
+    // 'self'. The inner scope will be created when executing ()
+    // on ast::Scope.
+    rObject scope = object::Object::make_method_scope(args.front());
+    scope->slot_set(SYMBOL(code), func);
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.

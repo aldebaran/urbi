@@ -700,7 +700,7 @@ Function:
         mandatory: False
         desc: Formal arguments
     - body:
-        type: 'Exp*'
+        type: 'Scope*'
         access: rwW
         mandatory: False
         desc: Body
@@ -720,11 +720,7 @@ Function:
                  << libport::separate (*n.formals_get(), ", ")
                  << ") ";
        }'
-    - '"{"'
-    - 'libport::incendl'
     - ~body
-    - 'libport::decendl'
-    - '"}"'
 
 # Local Variables:
 # mode: yaml
