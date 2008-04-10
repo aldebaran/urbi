@@ -64,7 +64,6 @@ namespace scheduler
     unsigned int cycle_get () const;
 
   private:
-    void switch_back (Job* job);
     libport::utime_t execute_round (bool blocked_only);
     libport::utime_t check_for_stopped_tags (libport::utime_t old_deadline);
 

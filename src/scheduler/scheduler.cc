@@ -205,39 +205,6 @@ namespace scheduler
   }
 
   void
-  Scheduler::switch_back (Job* job)
-  {
-    // Switch back to the scheduler.
-    assert (current_job_ == job);
-    current_job_ = 0;
-    Coro_switchTo_ (job->coro_get (), coro_);
-    // We regained control, we are again in the context of the job.
-    assert (!current_job_);
-    current_job_ = job;
-    ECHO ("job " << *job << " resumed");
-    // Check that we are not near exhausting the stack space.
-    job->check_stack_space ();
-    // Execute a deferred exception if any
-    job->check_for_pending_exception ();
-    // If we are in frozen state, let's requeue ourselves waiting
-    // for something to change. And let's mark us side-effect
-    // free during this time so that we won't cause other jobs
-    // to be scheduled. Of course, we have to check for pending
-    // exceptions each time we are woken up.
-    if (job->frozen ())
-    {
-      bool side_effect_free_save = job->side_effect_free_get ();
-      do {
-	job->side_effect_free_set (true);
-	job->yield_until_things_changed ();
-	job->side_effect_free_set (side_effect_free_save);
-	// Execute a deferred exception if any
-	job->check_for_pending_exception ();
-      } while (job->frozen ());
-    }
-  }
-
-  void
   Scheduler::resume_scheduler (Job* job)
   {
     // If the job has not terminated and is side-effect free, then we
@@ -246,14 +213,54 @@ namespace scheduler
     // the condition, continue until it asks to be suspended in another
     // way or until it is no longer side-effect free.
 
-    if (job->state_get () == running && job->side_effect_free_get ())
-      return;
-    else
-      jobs_.push_back (job);
+    bool side_effect_free_save = job->side_effect_free_get ();
 
-    ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated\n\t"
-	  << "state: " << state_name (job->state_get ()));
-    switch_back (job);
+    if (job->state_get () == running && side_effect_free_save)
+      return;
+
+    // We may have to suspend the job several time in case it makes no sense
+    // to start it back. Let's do it in a loop and we'll break when we want
+    // to resume the job.
+
+    for (;;)
+    {
+      // Add the job at the end of the scheduler queue unless the job has
+      // already terminated.
+      if (!job->terminated ())
+	jobs_.push_back (job);
+
+      // Switch back to the scheduler.
+      assert (current_job_ == job);
+      current_job_ = 0;
+      ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated\n\t"
+	    << "state: " << state_name (job->state_get ()));
+      Coro_switchTo_ (job->coro_get (), coro_);
+
+      // We regained control, we are again in the context of the job.
+      assert (!current_job_);
+      current_job_ = job;
+      ECHO ("job " << *job << " resumed");
+
+      // Execute a deferred exception if any; this may break out of this loop
+      job->check_for_pending_exception ();
+
+      // If we are not frozen, it is time to resume regular execution
+      if (!job->frozen ())
+	break;
+
+      // Ok, we are frozen. Let's requeue ourselves after setting
+      // the side_effect_free flag, and we will be in waiting mode.
+      job->side_effect_free_set (true);
+      job->state_set (waiting);
+    }
+
+    // Check that we are not near exhausting the stack space.
+    job->check_stack_space ();
+
+    // Restore the side_effect_free flag
+    job->side_effect_free_set (side_effect_free_save);
+
+    // Resume job execution
   }
 
   void
