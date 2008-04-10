@@ -424,12 +424,20 @@ namespace runner
 	lazy_args.push_back(object::nil_class);
 	continue;
       }
-      ast::Ast* lazy = parser::parse(
-	// Can't use new, which himself uses call messages.
-	parser::Tweast() << "{ var res = Lazy.clone| res.code = function () {" << e << "}.makeClosure| res }");
-      assertion(lazy);
-      lazy_args.push_back(eval(*lazy));
-      // delete lazy;
+
+      rObject arg = object::global_class->slot_get(SYMBOL(Lazy))->clone();
+
+      // Strangly, this temporary variable is required. Calling the
+      // ast::Function ctor inline in the make_code(...) call invokes
+      // the ast copy ctor. Please post an explanation if you
+      // understand the problem.
+      ast::Function ast(e->location_get(), new ast::symbols_type(),
+			new ast::Scope(e->location_get(), 0, ast::clone(*e)));
+      rObject function = make_code(ast);
+
+      urbi_call(*this, function, SYMBOL(makeClosure));
+      arg->slot_update(*this, SYMBOL(code), function);
+      lazy_args.push_back(arg);
     }
 
     res->slot_set (SYMBOL(args), object::List::fresh(lazy_args));
@@ -600,19 +608,26 @@ namespace runner
     current_ = object::void_class;
   }
 
+  object::rObject
+  Runner::make_code(const ast::Function& e) const
+  {
+    rObject res = object::Code::fresh(*ast::clone(e));
+    // Store the function declaration context. Use make_scope to add
+    // an empty object above it, so as variables injected in the
+    // context do not appear in the declaration scope.
+    res->slot_set(SYMBOL(context), object::Object::make_scope(locals_));
+    // Set capturedVars at []. By default, no variables are searched
+    // in the context.
+    res->slot_set(SYMBOL(capturedVars),
+		       object::List::fresh(std::list<object::rObject>()));
+    return res;
+  }
+
 
   void
   Runner::operator() (const ast::Function& e)
   {
-    current_ = object::Code::fresh(*ast::clone(e));
-    // Store the function declaration context. Use make_scope to add
-    // an empty object above it, so as variables injected in the
-    // context do not appear in the declaration scope.
-    current_->slot_set(SYMBOL(context), object::Object::make_scope(locals_));
-    // Set capturedVars at []. By default, no variables are searched
-    // in the context.
-    current_->slot_set(SYMBOL(capturedVars),
-		       object::List::fresh(std::list<object::rObject>()));
+    current_ = make_code(e);
   }
 
 

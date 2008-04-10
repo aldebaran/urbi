@@ -110,6 +110,10 @@ namespace runner
     rObject build_call_message (const rObject& tgt, const libport::Symbol& msg,
 				const ast::exps_type& args);
 
+    /// Make an urbi function from an ast chunk
+    rObject
+    make_code(const ast::Function& f) const;
+
     /// Import from super.
     using super_type::operator();
 
