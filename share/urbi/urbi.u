@@ -127,7 +127,7 @@ class Global.Closure
 {
   var asString = "<Closure>";
 
-  function makeClosure
+  function makeClosure ()
   {
     getSlot("self").capturedVars = nil;
     getSlot("self")
