@@ -804,6 +804,7 @@ namespace runner
     else
       locals = object::Object::make_scope(locals_);
 
+    bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
     try
     {
@@ -818,7 +819,7 @@ namespace runner
 	throw;
       }
     }
-    PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+    PROPAGATE_EXCEPTION(e.location_get(), { std::swap(locals, locals_); non_interruptible_set (was_non_interruptible); })
     if (target)
       current_ = target;
   }
