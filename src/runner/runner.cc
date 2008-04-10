@@ -793,7 +793,7 @@ namespace runner
     // To each scope corresponds a "locals" object which stores the
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
-    rObject locals = object::Object::make_scope(locals_);
+    rObject locals;
     rObject target;
 
     if (e.target_get())
