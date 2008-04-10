@@ -100,7 +100,7 @@ namespace object
 	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
 	  {
 	    if (captured == nil_class)
-	      return code->own_slot_get(SYMBOL(context));
+	      return target(code->own_slot_get(SYMBOL(context)), slotName);
 	    else
 	      foreach (const rObject& var, captured->value<object::List>())
 		if (var->value<object::String>() == slotName)
