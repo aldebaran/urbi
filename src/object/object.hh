@@ -129,6 +129,18 @@ namespace object
     const rObject& slot_get (const key_type& k) const;
     rObject& slot_get (const key_type& k);
 
+
+    /// If the target is a "real" object, then updating means the same
+    /// as slot_set: one never updates a proto.  If the target is a
+    /// "locals" object, then updating really means updating the
+    /// existing slot, not creating a new slot in the inner scope.
+    /// Except if the existing source slot is a "real" object, in which case
+    /// updating means creating the slot in the result of "self" evaluation.
+    void slot_update (runner::Runner& r,
+		      const Object::key_type& k,
+		      rObject o);
+
+
     /// \brief Update value in slot.
     ///
     /// Set slot value in local slot.
@@ -252,10 +264,6 @@ namespace object
     /// Whether is a locals object.
     bool locals_;
 
-    friend void slot_update(runner::Runner& r,
-			    rObject& ref,
-			    const Object::key_type& k,
-			    rObject o);
   };
 
 
@@ -271,17 +279,6 @@ namespace object
 		    rObject& self,
 		    libport::Symbol msg,
 		    objects_type& args);
-
-  /// If the target is a "real" object, then updating means the same
-  /// as slot_set: one never updates a proto.  If the target is a
-  /// "locals" object, then updating really means updating the
-  /// existing slot, not creating a new slot in the inner scope.
-  /// Except if the existing source slot is a "real" object, in which case
-  /// updating means creating the slot in the result of "self" evaluation.
-  void slot_update (runner::Runner& r,
-		    rObject& ref,
-		    const Object::key_type& k,
-		    rObject o);
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
   template<class F> bool for_all_protos(rObject& r, F& f);

@@ -270,11 +270,12 @@ namespace object
   }
 
   void
-  slot_update (runner::Runner& r,
-	       rObject& context,
-	       const Object::key_type& k,
-	       rObject o)
+  Object::slot_update (runner::Runner& r,
+		       const Object::key_type& k,
+		       rObject o)
   {
+    // The target of updateSlot
+    rObject context = self();
     // The owner of the updated slot
     rObject owner = context->safe_slot_locate(k);
 

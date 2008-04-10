@@ -401,9 +401,9 @@ namespace urbi
   {
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
-    slot_update(getCurrentRunner(), me, SYMBOL(update),
-		object::Delegate::fresh(
-		    uwrapfunction(boost::bind(&urbi::UObject::update, this))));
+    me->slot_update(getCurrentRunner(), SYMBOL(update),
+		    object::Delegate::fresh(
+		      uwrapfunction(boost::bind(&urbi::UObject::update, this))));
     object::objects_type args;
     args.push_back(me);
     args.push_back(object::Float::fresh(t));
@@ -499,8 +499,8 @@ namespace urbi
     o->slot_set(varName, uvar);
     // If the variable existed but was not an uvar, copy its old value.
     if (initVal)
-      slot_update(getCurrentRunner(),
-	o->slot_get(varName), SYMBOL(val), initVal);
+      o->slot_get(varName)->slot_update(getCurrentRunner(),
+					SYMBOL(val), initVal);
   }
 
   void
@@ -510,9 +510,8 @@ namespace urbi
     // Write 1 to the Urbi-side uvar owned slot.
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
-    slot_update(getCurrentRunner(), o->slot_get(Symbol(p.second))
-		,
-		SYMBOL(owned), object::Float::fresh(1));
+    o->slot_get(Symbol(p.second))->slot_update(
+      getCurrentRunner(), SYMBOL(owned), object::Float::fresh(1));
     ECHO("call to setowned on "<<name);
   }
 

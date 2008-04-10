@@ -267,7 +267,7 @@ namespace object
   {
     CHECK_ARG_COUNT (3);
     FETCH_ARG (1, String);
-    slot_update (r, args[0], arg1->value_get (), args[2]);
+    args[0]->slot_update(r, arg1->value_get (), args[2]);
     return args[2];
   }
 
