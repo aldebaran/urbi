@@ -2,6 +2,8 @@
 # we will have a fatal error when trying to determine the context
 # in which the function will be evaluated.
 var Code.context = nil;
+var Code.acceptVoid = 0;
+var Primitive.acceptVoid = 0;
 
 # Must appear before any scope creation
 var Scope.setSlot = Object.getSlot("setSlot");

@@ -101,8 +101,10 @@ namespace runner
 
     /// Build an evaluated arguments list containing \a tgt and
     /// arguments coming from \a args evaluated in the current context.
+    /// If check_void is true, raise an error if any argument is void.
     void push_evaluated_arguments (object::objects_type& args,
-				   const ast::exps_type& ue_args);
+				   const ast::exps_type& ue_args,
+				   bool check_void);
 
     /// Build a call message
     rObject build_call_message (const rObject& tgt, const libport::Symbol& msg,

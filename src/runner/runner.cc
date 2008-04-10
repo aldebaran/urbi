@@ -292,6 +292,24 @@ namespace runner
     return current_;
   }
 
+  namespace
+  {
+    // Helper to determine whether a function accepts void parameters
+    static inline bool
+    acceptVoid(object::rObject f)
+    {
+      try
+      {
+	return IS_TRUE(f->slot_get(SYMBOL(acceptVoid)));
+      }
+      catch (object::LookupError&)
+      {
+	// acceptVoid is undefined. Refuse void parameter by default.
+	return false;
+      }
+    }
+  }
+
   object::rObject
   Runner::apply (const rObject& func,
 		 const object::objects_type& args,
@@ -304,15 +322,24 @@ namespace runner
     // If we use a call message, "self" is the only argument.
     assert (!call_message || args.size() == 1);
 
+    // Check if any argument is void
+    try
     {
-      // Check if any argument is void
-      bool first = true;
-      foreach (rObject arg, args)
+      if (!acceptVoid(func))
       {
-	if (!first && arg == object::void_class)
-	  throw object::WrongArgumentType ("");
-	first = false;
+	bool first = true;
+	foreach (rObject arg, args)
+	{
+	  if (!first && arg == object::void_class)
+	    throw object::WrongArgumentType ("");
+	  first = false;
+	}
       }
+    }
+    catch (object::LookupError)
+    {
+      // Nothing. This happen only once, when invoking the first
+      // setSlot that defines Code.acceptVoid to false.
     }
 
     switch (func->kind_get ())
@@ -349,7 +376,8 @@ namespace runner
 
   void
   Runner::push_evaluated_arguments (object::objects_type& args,
-				    const ast::exps_type& ue_args)
+				    const ast::exps_type& ue_args,
+				    bool check_void)
   {
     bool tail = false;
     foreach (const ast::Exp* arg, ue_args)
@@ -358,13 +386,17 @@ namespace runner
       if (!tail++)
 	continue;
       eval (*arg);
-      passert ("argument without a value: " << *arg, current_);
-      if (current_ == object::void_class)
+      // Check if any argument is void. This will be checked again in
+      // Runner::apply, yet raising exception here gives better
+      // location (the argument and not the whole function invocation).
+      if (check_void && current_ == object::void_class)
       {
-	object::WrongArgumentType wt("");
-	show_error_(wt, arg->location_get());
-	throw wt;
+	object::WrongArgumentType e("");
+	e.location_set(arg->location_get());
+	throw e;
       }
+
+      passert ("argument without a value: " << *arg, current_);
       args.push_back (current_);
     }
   }
@@ -459,7 +491,7 @@ namespace runner
 	&& !val.unsafe_cast<object::Code> ()->value_get ().strict())
       call_message = build_call_message (tgt, e.name_get(), e.args_get ());
     else
-      push_evaluated_arguments (args, e.args_get ());
+      push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
 
     call_stack_.push_back(&e);
     try
