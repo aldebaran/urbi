@@ -52,7 +52,7 @@ namespace scheduler
 
     terminate_cleanup ();
     state_ = zombie;
-    yield ();
+    scheduler_->resume_scheduler (this);
 
     // We should never go there as the scheduler will have terminated us.
     assert (false);
