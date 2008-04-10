@@ -172,6 +172,14 @@ namespace object
   }
 
   static rObject
+  system_class_nonInterruptible (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    r.non_interruptible_set (true);
+    return void_class;
+  }
+
+  static rObject
   system_class_quit (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
@@ -211,6 +219,7 @@ namespace object
     DECLARE(fresh);
     DECLARE(loadFile);
     DECLARE(lobby);
+    DECLARE(nonInterruptible);
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(searchFile);

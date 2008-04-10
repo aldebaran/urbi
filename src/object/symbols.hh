@@ -135,6 +135,7 @@
   Macro(name, "name");                            \
   Macro(new, "new");                              \
   Macro(nil, "nil");                              \
+  Macro(nonInterruptible, "nonInterruptible");    \
   Macro(pop_front, "pop_front");                  \
   Macro(print, "print");                          \
   Macro(protoName, "protoName");                  \
