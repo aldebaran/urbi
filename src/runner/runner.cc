@@ -176,14 +176,6 @@ namespace runner
     operator() (*ast_);
   }
 
-  void
-  Runner::terminate ()
-  {
-    // We have terminated, remove the auto-reference by handling it to the
-    // scheduler.
-    scheduler_get ().take_job_reference (myself_);
-  }
-
   /*---------------------.
   | Regular operator().  |
   `---------------------*/

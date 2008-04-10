@@ -87,9 +87,6 @@ namespace runner
 
     /// Return the result of an evaluation. The runner must be terminated.
     const rObject& current_get () const;
-
-    /// Return a shared pointer on myself. The runner must not be terminated.
-    scheduler::rJob myself_get () const;
   protected:
     /// \name Evaluation.
     /// \{
@@ -140,9 +137,6 @@ namespace runner
     /// Code to run the cleanup code
     void run_at_exit (object::rObject& scope);
 
-    /// Code to execute when terminating a runner.
-    virtual void terminate ();
-
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
 
@@ -167,9 +161,6 @@ namespace runner
 
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
-
-    /// Myself as long as I have not terminated, 0 otherwise
-    scheduler::rJob myself_;
 
     /// The call stack.
     typedef std::vector<const ast::Call*> call_stack_type;

@@ -22,8 +22,7 @@ namespace runner
       lobby_ (lobby),
       ast_ (ast),
       current_ (0),
-      locals_ (locals),
-      myself_ (this)
+      locals_ (locals)
   {
     if (!locals_)
       locals_ = object::Object::make_do_scope(object::global_class, lobby);
@@ -36,8 +35,7 @@ namespace runner
       lobby_ (model.lobby_),
       ast_ (model.ast_),
       current_ (model.current_),
-      locals_ (model.locals_),
-      myself_ (this)
+      locals_ (model.locals_)
   {
   }
 
@@ -72,13 +70,6 @@ namespace runner
   Runner::current_get () const
   {
     return current_;
-  }
-
-  inline
-  scheduler::rJob
-  Runner::myself_get () const
-  {
-    return myself_;
   }
 
   inline

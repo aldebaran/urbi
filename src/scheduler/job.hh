@@ -184,6 +184,10 @@ namespace scheduler
     void state_set (job_state);
     libport::utime_t deadline_get () const;
 
+    /// Return a shared pointer on myself. The job must not be
+    /// terminated.
+    scheduler::rJob myself_get () const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -207,6 +211,9 @@ namespace scheduler
 
     /// Scheduler in charge of this job.  Do not delete.
     Scheduler* scheduler_;
+
+    /// Myself as long as I have not terminated, 0 otherwise
+    scheduler::rJob myself_;
 
     /// This job name
     libport::Symbol name_;

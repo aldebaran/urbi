@@ -51,8 +51,6 @@ namespace scheduler
     }
 
     terminate_cleanup ();
-    state_ = zombie;
-    scheduler_->resume_scheduler (this);
 
     // We should never go there as the scheduler will have terminated us.
     assert (false);
@@ -75,6 +73,10 @@ namespace scheduler
     foreach (Job* job, to_wake_up_)
       job->state_set (running);
     to_wake_up_.clear ();
+    // Return to the scheduler and release sole reference
+    scheduler_->take_job_reference (myself_);
+    state_ = zombie;
+    scheduler_->resume_scheduler (this);
   }
 
   void

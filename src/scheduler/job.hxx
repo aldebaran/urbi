@@ -17,6 +17,7 @@ namespace scheduler
   Job::Job (Scheduler& scheduler, const libport::Symbol& name)
     : state_ (to_start),
       scheduler_ (&scheduler),
+      myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       coro_ (Coro_new ()),
       side_effect_free_ (false),
@@ -28,6 +29,7 @@ namespace scheduler
   Job::Job (const Job& model, const libport::Symbol& name)
     : state_ (to_start),
       scheduler_ (model.scheduler_),
+      myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       coro_ (Coro_new ()),
       tags_ (model.tags_),
@@ -164,6 +166,12 @@ namespace scheduler
   Job::deadline_get () const
   {
     return deadline_;
+  }
+
+  inline rJob
+  Job::myself_get () const
+  {
+    return myself_;
   }
 
   inline std::ostream&
