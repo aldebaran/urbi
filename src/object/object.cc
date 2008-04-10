@@ -83,7 +83,7 @@ namespace object
     targetLookup(rObject obj,
 		 const object::Object::key_type& slotName)
     {
-      if (obj->own_slot_get(slotName, 0))
+      if (obj->own_slot_get(slotName, 0) && slotName != SYMBOL(self))
 	// Return a nonempty optional containing an empty rObject, to
 	// indicate to target that the lookup is successful, and the
 	// target is the initial object.
@@ -106,6 +106,8 @@ namespace object
 		if (var->value<object::String>() == slotName)
 		  return target(code->own_slot_get(SYMBOL(context)), slotName);
 	  }
+	if (slotName == SYMBOL(self))
+	  return optional<rObject>(rObject());
 	if (self->slot_locate(slotName))
 	  return self;
       }
