@@ -18,7 +18,6 @@ namespace scheduler
     : state_ (to_start),
       scheduler_ (&scheduler),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
-      terminated_ (false),
       coro_ (Coro_new ()),
       side_effect_free_ (false),
       pending_exception_ (0)
@@ -30,7 +29,6 @@ namespace scheduler
     : state_ (to_start),
       scheduler_ (model.scheduler_),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
-      terminated_ (false),
       coro_ (Coro_new ()),
       tags_ (model.tags_),
       side_effect_free_ (false),
@@ -60,7 +58,7 @@ namespace scheduler
   inline bool
   Job::terminated () const
   {
-    return terminated_;
+    return state_ == zombie;
   }
 
   inline void

@@ -211,9 +211,6 @@ namespace scheduler
     /// This job name
     libport::Symbol name_;
 
-    /// Has the coroutine terminated? Set by run ().
-    bool terminated_;
-
     /// Other jobs to wake up when we terminate.
     jobs_type to_wake_up_;
 

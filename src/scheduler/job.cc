@@ -61,14 +61,13 @@ namespace scheduler
   void
   Job::terminate_now ()
   {
-    if (!terminated_)
+    if (!terminated ())
       async_throw (TerminateException ());
   }
 
   void
   Job::terminate_cleanup ()
   {
-    terminated_ = true;
     // Remove pending links.
     foreach (Job* job, links_)
       job->links_.remove (this);
