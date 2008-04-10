@@ -6,6 +6,7 @@ class Global.Semaphore {
    };
 
    function p () {
+     nonInterruptible |
      self.count-- |
      if (self.count >= 0)
        return |
@@ -16,6 +17,7 @@ class Global.Semaphore {
    };
 
    function v () {
+     nonInterruptible |
      self.count++ |
      if (self.count > 0)
        return |
