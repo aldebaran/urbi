@@ -134,20 +134,20 @@ class Global.Closure
 
   function makeClosure ()
   {
-    getSlot("self").capturedVars = nil;
+    getSlot("self").capturedVars = nil|
     getSlot("self")
   };
 
   function capture (varname)
   {
-    getSlot ("self").capturedVars.push_back(varname);
+    getSlot ("self").capturedVars.push_back(varname)|
     getSlot ("self")
   };
 
   function inject (name, value)
   {
-    getSlot("self").context.setSlot(name, getSlot("value"));
-    capture (name);
+    getSlot("self").context.setSlot(name, getSlot("value"))|
+    capture (name)|
     getSlot ("self")
   };
 };

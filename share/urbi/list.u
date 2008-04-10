@@ -68,10 +68,10 @@ do List
   # FIXME: Sadly, 'at' is reserved, and adding it as an identifier generates conflicts
   function idx(idx)
   {
-    var res = self;
-    for (var i = 0; i < idx; i++)
-      res = res.tail;
-    return res.head;
+    var res = self|
+    for| (var i = 0; i < idx; i++)
+      res = res.tail|
+    return res.head|
   };
 
 

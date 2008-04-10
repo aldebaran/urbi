@@ -6,8 +6,8 @@ class Global.Lazy
 
   function init(value)
   {
-    self.code = getSlot("value");
-    self.getSlot("code").makeClosure;
+    self.code = getSlot("value")|
+    self.getSlot("code").makeClosure|
   };
 
   function eval()
@@ -18,12 +18,12 @@ class Global.Lazy
   function value()
   {
     if (getSlot("val").isNil)
-      eval;
-    getSlot("val");
+      eval|
+    getSlot("val")
   };
 
   function string ()
   {
-    self.getSlot("code").bodyString;
+    self.getSlot("code").bodyString
   };
 };
