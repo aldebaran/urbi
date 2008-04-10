@@ -117,6 +117,8 @@ namespace scheduler
     {
       current_exception_ = pending_exception_;
       pending_exception_ = 0;
+      // If an exception is propagated, it may have side effects
+      side_effect_free_ = false;
       kernel::rethrow (current_exception_);
     }
     if (blocked ())
