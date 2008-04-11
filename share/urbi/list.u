@@ -119,7 +119,7 @@ do List
       res += self.front.asString |
       for| elt in self.tail
       {
-        res += ", " + elt.asString |
+        res += ", " + getSlot("elt").asString |
       }
     } |
     res += "]"
