@@ -21,7 +21,8 @@ namespace parser
   ///
   /// Aggregate string to parse and tables of metavariables.
   class Tweast
-    : public MetavarMap<ast::Exp>
+    : public MetavarMap<ast::Call>,
+      public MetavarMap<ast::Exp>
   {
   public:
     Tweast ();
@@ -45,15 +46,18 @@ namespace parser
   protected:
     /// Insert base class \a append members in the current scope.
     /// \{
+    using MetavarMap<ast::Call>::append_;
     using MetavarMap<ast::Exp>::append_;
     /// \}
+
+    // We need this function to disambiguate.  When we append a Call
+    // (static type, not dynamic type), the C++ standard says
+    // append_(ast::Exp) and append<T>(T) are both eligible.  Hence it
+    // fails to compile.
+    //    ast::Call& append_ (unsigned&, ast::Call& data) const;
+
     /// Fake append (default case, i.e. when \a data is not a metavariable).
     template <typename T> T& append_ (unsigned&, T& data) const;
-
-    /*<object-desugar<-*/
-    template <typename T>
-    void move_metavars_ (Tweast& tweast, std::string& input);
-    /*->>*/
 
   protected:
     /// The next identifier suffix to create.

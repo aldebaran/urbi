@@ -55,7 +55,7 @@ namespace object
       throw BadInteger (arg_n, func);
     }
 
-    if (n < 0 || n >= static_cast<int>(func_args.size ()))
+    if (!(0 <= n && n < int(func_args.size ())))
       throw PrimitiveError (func,
 		  (boost::format ("bad argument %1%") % n) .str ());
 

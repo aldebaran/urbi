@@ -37,7 +37,8 @@ do Scope
 
   function atExit (func)
   {
-    self.getLazyLocalSlot ("atexit", [], true) += [getSlot ("func")]
+    self.getLazyLocalSlot ("atexit", [], true);
+    self.atexit += [getSlot ("func")]
   };
 };
 

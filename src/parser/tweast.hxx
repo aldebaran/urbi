@@ -32,20 +32,21 @@ namespace parser
   T*
   Tweast::take (unsigned s) throw (std::range_error)
   {
-    T* t = 0;
+    return MetavarMap<T>::take_ (s);
+    // T* t = 0;
     //    try
     //      {
-	t = MetavarMap<T>::take_ (s);
-	//      }
-//    catch (std::range_error& e)
-//      {
-//	// Print the contents of the Tweast before dying.
-//	misc::error error;
-//	error << e.what () << std::endl;
-//	error << *this;
-//	error.ice_here ();
-//      }
-    return t;
+    //	t = MetavarMap<T>::take_ (s);
+    //      }
+    //    catch (std::range_error& e)
+    //      {
+    //	// Print the contents of the Tweast before dying.
+    //	misc::error error;
+    //	error << e.what () << std::endl;
+    //	error << *this;
+    //	error.ice_here ();
+    //      }
+    // return t;
   }
 
 }

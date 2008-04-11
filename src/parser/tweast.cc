@@ -16,13 +16,15 @@ namespace parser
   unsigned Tweast::count_ = 0;
 
   Tweast::Tweast()
-    : MetavarMap<ast::Exp>::MetavarMap ("exp"),
+    : MetavarMap<ast::Call>::MetavarMap ("call"),
+      MetavarMap<ast::Exp>::MetavarMap ("exp"),
       input_ ()
   {
   }
 
   Tweast::Tweast (const std::string& str)
-    : MetavarMap<ast::Exp>::MetavarMap ("exp"),
+    : MetavarMap<ast::Call>::MetavarMap ("call"),
+      MetavarMap<ast::Exp>::MetavarMap ("exp"),
       input_ (str)
   {
   }
@@ -41,6 +43,8 @@ namespace parser
   Tweast::dump (std::ostream& ostr) const
   {
     return ostr
+      << "Call map:"
+      << libport::incendl << MetavarMap<ast::Call>::map_ << libport::decendl
       << "Exp map:"
       << libport::incendl << MetavarMap<ast::Exp>::map_ << libport::decendl
       << "Input string:"

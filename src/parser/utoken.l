@@ -445,6 +445,7 @@ FLAVOR   [;|,&]?
 "internal"  DEPRECATED("");
 "external"  RETURN_SYMBOL (BINDER);
 
+"_call"         RETURN(_CALL);
 "_exp"          RETURN(_EXP);
 
 "addgroup"      RETURN(ADDGROUP);
@@ -486,15 +487,15 @@ FLAVOR   [;|,&]?
 "!"             RETURN_OP(BANG);
 "%"             RETURN_OP(PERCENT);
 "*"             RETURN_OP(STAR);
-"*="            RETURN_OP(STAR_EQ);
+"*="            RETURN(STAR_EQ);
 "+"             RETURN_OP(PLUS);
-"+="            RETURN_OP(PLUS_EQ);
-"++"            RETURN_OP(PLUS_PLUS);
+"+="            RETURN(PLUS_EQ);
+"++"            RETURN(PLUS_PLUS);
 "-"             RETURN_OP(MINUS);
-"-="            RETURN_OP(MINUS_EQ);
-"--"            RETURN_OP(MINUS_MINUS);
+"-="            RETURN(MINUS_EQ);
+"--"            RETURN(MINUS_MINUS);
 "/"             RETURN_OP(SLASH);
-"/="            RETURN_OP(SLASH_EQ);
+"/="            RETURN(SLASH_EQ);
 
 "<"             RETURN_OP(LT);
 "<="            RETURN_OP(LT_EQ);

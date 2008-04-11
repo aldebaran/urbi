@@ -398,9 +398,14 @@
     return scanner.yylex(val, loc, &up);
   }
 
-# define DESUGAR(Var, Code)				\
+  /// Store in Var the AST of the parsing of Code.
+# define DESUGAR_(Var, Code)				\
   Var = ::parser::parse(::parser::Tweast() << Code)
 
+  /// Store in $$ the AST of the parsing of Code.
+  // Fragile in case Bison changes its expansion of $$.
+# define DESUGAR(Code)				\
+  DESUGAR_(yyval.expr, Code)
 } // %code requires.
 
 /* Tokens and nonterminal symbols, with their type */
@@ -737,25 +742,22 @@ stmt:
 stmt:
   "group" "identifier" "{" identifiers "}"
   {
-    DESUGAR($$,
-	    "var " << *$2 << " = Object.Group.new;"
+    DESUGAR("var " << *$2 << " = Object.Group.new;"
 	    << *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR($$,
-	    *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
+    DESUGAR(*$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR($$,
-	    *$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "])");
+    DESUGAR(*$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "])");
   }
 | "group" { $$ = 0; }
 ;
 
 expr:
-  "group" "identifier"    { DESUGAR($$, *$2 << ".members"); }
+  "group" "identifier"    { DESUGAR(*$2 << ".members"); }
 ;
 
 // Aliases.
@@ -805,8 +807,7 @@ stmt:
       // Currently does not work, because although we store an LValue
       // (an ast::Call), we get here as an Exp, which is not good enough
       // to be used with "var".
-      DESUGAR($$,
-	      "var " << ast::clone(*lvalue) << "= Object.clone|"
+      DESUGAR("var " << ast::clone(*lvalue) << "= Object.clone|"
 	      << "do " << lvalue << "{" << ast_exp($3) << "}");
 #endif
     }
@@ -917,8 +918,7 @@ stmt:
 | "delete" lvalue                      { $$ = ast_slot_remove (@$, $2);     }
 ;
 
-%token <symbol>
-	TOK_SLASH_EQ    "/="
+%token	TOK_SLASH_EQ    "/="
 	TOK_MINUS_EQ    "-="
 	TOK_MINUS_MINUS "--"
 	TOK_PLUS_EQ     "+="
@@ -926,25 +926,16 @@ stmt:
 	TOK_STAR_EQ     "*="
 ;
 
-id:
-  "/="
-| "-="
-| "--"
-| "+="
-| "++"
-| "*="
+expr:
+  lvalue "+=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '+' << $3); }
+| lvalue "-=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '-' << $3); }
+| lvalue "*=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '*' << $3); }
+| lvalue "/=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '/' << $3); }
 ;
 
 expr:
-  expr "+=" expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "-=" expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "*=" expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "/=" expr { $$ = ast_call(@$, $1, $2, $3); }
-;
-
-expr:
-  expr "--"      { $$ = ast_call(@$, $1, $2); }
-| expr "++"      { $$ = ast_call(@$, $1, $2); }
+  lvalue "--"      { DESUGAR('(' << $1 << "-= 1) + 1"); }
+| lvalue "++"      { DESUGAR('(' << $1 << "+= 1) - 1"); }
 ;
 
 
@@ -958,7 +949,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
-      DESUGAR ($$, "at_(" << $3 << ", " << $5 << ")");
+      DESUGAR ("at_(" << $3 << ", " << $5 << ")");
     }
 | "at" "(" softtest ")" stmt "onleave" stmt
     {
@@ -966,12 +957,12 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       warn_implicit(up, @7, $7);
-      DESUGAR ($$, "at_(" << $3 << ", " << $5 << ", " << $7 << ")");
+      DESUGAR ("at_(" << $3 << ", " << $5 << ", " << $7 << ")");
     }
 | "every" "(" expr ")" stmt
     {
       warn_implicit(up, @5, $5);
-      DESUGAR ($$, "every_(" << $3 << ", " << $5 << ")");
+      DESUGAR ("every_(" << $3 << ", " << $5 << ")");
     }
 | "if" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -998,8 +989,7 @@ stmt:
       libport::Symbol ex = libport::Symbol::fresh(SYMBOL(freezeif));
       libport::Symbol in = libport::Symbol::fresh(SYMBOL(freezeif));
       DESUGAR
-      ($$,
-       "var " << ex << " = " << "new Tag (\"" << ex << "\")|"
+      ("var " << ex << " = " << "new Tag (\"" << ex << "\")|"
        << "var " << in << " = " << "new Tag (\"" << in << "\")|"
        << ex << " : { "
        << "at(" << $3 << ") " << in << ".freeze onleave " << in << ".unfreeze|"
@@ -1030,8 +1020,7 @@ stmt:
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
       libport::Symbol id = libport::Symbol::fresh();
-      DESUGAR($$,
-	      "for (var " << id << " = " << $3 << ";"
+      DESUGAR("for (var " << id << " = " << $3 << ";"
 	      << "    0 < " << id << ";"
 	      << "    " << id << "--)"
 	      << "  " << $5);
@@ -1039,8 +1028,7 @@ stmt:
 | "stopif" "(" softtest ")" stmt
     {
       libport::Symbol tag = libport::Symbol::fresh(SYMBOL(stopif));
-      DESUGAR($$,
-	      "var " << tag << " = " << "new Tag (\"" << tag << "\")|"
+      DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
 	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << ","
 	      << "waituntil(" << $3 << ")|"
 	      << tag << ".stop }");
@@ -1048,8 +1036,7 @@ stmt:
 | "timeout" "(" expr ")" stmt
     {
       libport::Symbol tag = libport::Symbol::fresh(SYMBOL(timeout));
-      DESUGAR($$,
-	      "var " << tag << " = " << "new Tag (\"" << tag << "\")|"
+      DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
 	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << ","
 	      << "sleep(" << $3 << ")|"
 	      << tag << ".stop }");
@@ -1340,6 +1327,11 @@ expr.opt:
 ;
 
 // Metavariables.
+%token TOK__CALL "_call";
+lvalue:
+  "_call" "(" "integer" ")"    { $$ = metavar<ast::Call> (up, $3); }
+;
+
 %token TOK__EXP "_exp";
 expr:
   "_exp" "(" "integer" ")"    { $$ = metavar<ast::Exp> (up, $3); }

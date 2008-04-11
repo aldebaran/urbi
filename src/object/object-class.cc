@@ -137,8 +137,8 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     rObject res = global_class->slot_get((args[0] == args[1])
-                                          ? SYMBOL(true)
-                                          : SYMBOL(false));
+					  ? SYMBOL(true)
+					  : SYMBOL(false));
     return res;
   }
 
@@ -216,6 +216,7 @@ namespace object
     return obj->slot_get(arg1->value_get());
   }
 
+  // self.getLazyLocalSlot(SLOT-NAME, DEFAULT-VALUE, CREATE?).
   static rObject
   object_class_getLazyLocalSlot (runner::Runner&, objects_type args)
   {
@@ -225,8 +226,7 @@ namespace object
     Object::key_type slot_name = arg1->value_get ();
 
     // If the slot already exists, return its content.
-    rObject slot = args[0]->own_slot_get (slot_name, 0);
-    if (slot)
+    if (rObject slot = args[0]->own_slot_get (slot_name, 0))
       return slot;
 
     // The slot doesn't exist. Should we create it?
