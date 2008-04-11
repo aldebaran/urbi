@@ -219,20 +219,30 @@ namespace object
 
   namespace
   {
-    static lookup_result
-    slot_lookup(rObject obj, const Object::key_type& k)
+    class SlotLookup
     {
-      assertion(obj);
-      if (obj->own_slot_get(k, 0))
-	return obj;
-      return boost::optional<rObject>();
-    }
+    public:
+      lookup_result
+      slot_lookup(rObject obj, const Object::key_type& k)
+      {
+	assertion(obj);
+	if (obj->own_slot_get(k, 0))
+	  return obj;
+	if (!fallback && obj->own_slot_get(SYMBOL(fallback), 0))
+	  fallback = obj;
+	return boost::optional<rObject>();
+      }
+      rObject fallback;
+    };
   }
 
   rObject Object::slot_locate(const Object::key_type& k) const
   {
-    lookup_action action = boost::bind(slot_lookup, _1, k);
+    SlotLookup looker;
+    lookup_action action = boost::bind(&SlotLookup::slot_lookup, &looker, _1, k);
     boost::optional<rObject> res = lookup(action);
+    if (!res && looker.fallback)
+      res = looker.fallback;
     return res ? res.get() : 0;
   }
 
@@ -249,7 +259,10 @@ namespace object
   Object::slot_get (const key_type& k) const
   {
     rObject cont = safe_slot_locate(k);
-    return cont->own_slot_get(k);
+    if (cont->own_slot_get(k, 0))
+      return cont->own_slot_get(k);
+    else
+      return cont->own_slot_get(SYMBOL(fallback));
   }
 
   rObject&
