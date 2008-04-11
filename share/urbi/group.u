@@ -10,6 +10,8 @@ class Global.Group
     members.push_back(g);
   };
 
+  copySlot("add", "<<");
+
   // Implements addgroup.  Cannot use "group" as an identifier,
   // reserved by k1.
   function addGroups(g)
@@ -27,5 +29,17 @@ class Global.Group
   function removeGroups(g)
   {
     members = self.members - g;
+  };
+
+  // FIXME: This implementation always evaluates the
+  // arguments. There's no other way to do it for now.
+  function fallback
+  {
+    function action (m)
+    {
+      m.getSlot(call.message).apply([m] + call.evalArgs)
+    }|
+    getSlot("action").makeClosure|
+    members.map(getSlot("action"))
   };
 };
