@@ -67,9 +67,7 @@ namespace object
       }
       else
       {
-	objects_type asargs;
-	asargs.push_back (args[1]);
-	rObject as = r.apply (args[1]->slot_get (SYMBOL (asString)), asargs);
+	rObject as = urbi_call(r, args[1], SYMBOL(asString));
 	TYPE_CHECK (as, String);
 	rString arg1 = as.unsafe_cast<String> ();
 	str1 = arg1->value_get ().name_get ();

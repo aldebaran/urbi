@@ -48,7 +48,7 @@ namespace object
 									\
     rObject fwd = object_class->slot_get(SYMBOL(Name));			\
     args[0] = target(args[0], arg1->value_get());			\
-    return runner.apply(fwd, args);					\
+    return runner.apply(fwd, SYMBOL(Name), args);			\
   }
 
   FORWARD(getSlot, 2);
@@ -69,7 +69,7 @@ namespace object
     else
     {
       rObject fwd = object_class->slot_get(SYMBOL(locateSlot));
-      return runner.apply(fwd, args);
+      return runner.apply(fwd, SYMBOL(locateSlot), args);
     }
   }
 
@@ -85,10 +85,10 @@ namespace object
     if (args[0] == outer)
     {
       args[0] = outer->own_slot_get(SYMBOL(self));
-      return runner.apply(fwd, args);
+      return runner.apply(fwd, SYMBOL(doSetSlot), args);
     }
     else
-      return runner.apply(fwd, args);
+      return runner.apply(fwd, SYMBOL(doSetSlot), args);
   }
 
   static rObject

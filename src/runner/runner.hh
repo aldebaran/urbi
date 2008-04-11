@@ -72,11 +72,13 @@ namespace runner
     ///
     /// One cannot have both a call message and args.
     rObject apply (const rObject& func,
+		   const libport::Symbol msg,
 		   const object::objects_type& args,
 		   const rObject call_message = 0);
 
     /// Use an argument list coming from Urbi.
-    rObject apply (const rObject& func, const object::rList& args);
+    rObject apply (const rObject& func, const libport::Symbol msg,
+		   const object::rList& args);
 
     /// Eval a tree in a given local scope
     rObject eval_in_scope (rObject scope, const ast::Exp& e);
@@ -87,6 +89,10 @@ namespace runner
 
     /// Return the result of an evaluation. The runner must be terminated.
     const rObject& current_get () const;
+
+    /// Make an urbi function from an ast chunk
+    rObject
+    make_code(const ast::Function& f) const;
 
   protected:
     /// \name Evaluation.
@@ -108,11 +114,11 @@ namespace runner
 
     /// Build a call message
     rObject build_call_message (const rObject& tgt, const libport::Symbol& msg,
-				const ast::exps_type& args);
+				const object::objects_type& args);
 
-    /// Make an urbi function from an ast chunk
-    rObject
-    make_code(const ast::Function& f) const;
+    /// Build a call message
+    rObject build_call_message (const rObject& tgt, const libport::Symbol& msg,
+				const ast::exps_type& args);
 
     /// Import from super.
     using super_type::operator();
@@ -152,8 +158,9 @@ namespace runner
     void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
     void send_message_ (const std::string& tag, const std::string& msg);
     rObject apply_urbi (const rObject& func,
+			const libport::Symbol& msg,
 			const object::objects_type& args,
-			const rObject call_message);
+			rObject call_message);
 
 
   private:

@@ -20,6 +20,7 @@
 #include "object/atom.hh"
 #include "object/global-class.hh"
 #include "object/idelegate.hh"
+#include "object/lazy.hh"
 #include "object/object.hh"
 #include "object/symbols.hh"
 #include "object/urbi-exception.hh"
@@ -201,13 +202,23 @@ namespace runner
   // Apply a function written in Urbi.
   object::rObject
   Runner::apply_urbi (const rObject& func,
+		      const libport::Symbol& msg,
 		      const object::objects_type& args,
-		      const rObject call_message)
+		      rObject call_message)
   {
     // The called function.
     ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
-    // There is a call message iff the function is not strict.
-    assertion((call_message != 0) xor fn.strict());
+
+    // If the function is lazy and there's no call message, forge
+    // one. This happen when a lazy function is invoked with eval, for
+    // instance.
+    if (!fn.strict() && call_message == 0)
+    {
+      object::objects_type lazy_args;
+      foreach (const rObject& o, args)
+	lazy_args.push_back(mkLazy(*this, o));
+      call_message = build_call_message(args[0], msg, lazy_args);
+    }
 
     // Create the function's outer scope, with the first argument as
     // 'self'. The inner scope will be created when executing ()
@@ -307,6 +318,7 @@ namespace runner
 
   object::rObject
   Runner::apply (const rObject& func,
+		 const libport::Symbol msg,
 		 const object::objects_type& args,
 		 const rObject call_message)
   {
@@ -349,7 +361,7 @@ namespace runner
 	  ->operator()(*this, args);
 	break;
       case object::Object::kind_code:
-	current_ = apply_urbi (func, args, call_message);
+	current_ = apply_urbi (func, msg, args, call_message);
 	break;
       default:
 	object::check_arg_count (1, args.size(), "");
@@ -361,12 +373,13 @@ namespace runner
   }
 
   object::rObject
-  Runner::apply (const rObject& func, const object::rList& args)
+  Runner::apply (const rObject& func, const libport::Symbol msg,
+		 const object::rList& args)
   {
     object::objects_type apply_args;
     foreach (rObject arg, args->value_get ())
       apply_args.push_back (arg);
-    return apply (func, apply_args);
+    return apply (func, msg, apply_args);
   }
 
   void
@@ -398,7 +411,7 @@ namespace runner
 
   object::rObject
   Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
-			      const ast::exps_type& args)
+			      const object::objects_type& args)
   {
     rObject res = object::global_class->slot_get(SYMBOL(CallMessage))->clone();
 
@@ -412,9 +425,25 @@ namespace runner
     // Set the name of the message call.
     res->slot_set (SYMBOL(message), object::String::fresh(msg));
 
-    // Set the args to be the unevaluated expressions, including the target.
-    // We use an Alien here.
-    std::list<rObject> lazy_args;
+    std::list<rObject> largs;
+    foreach (const rObject& o, args)
+    {
+      largs.push_back(o);
+    }
+    res->slot_set (SYMBOL(args), object::List::fresh(largs));
+
+    // Store the current context in which the arguments must be evaluated.
+    res->slot_set (SYMBOL(context), object::Object::make_scope(locals_));
+
+    return res;
+  }
+
+  object::rObject
+  Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
+			      const ast::exps_type& args)
+  {
+    // Build the list of lazy arguments
+    object::objects_type lazy_args;
 
     foreach (ast::Exp* e, args)
     {
@@ -424,28 +453,10 @@ namespace runner
 	lazy_args.push_back(object::nil_class);
 	continue;
       }
-
-      rObject arg = object::global_class->slot_get(SYMBOL(Lazy))->clone();
-
-      // Strangly, this temporary variable is required. Calling the
-      // ast::Function ctor inline in the make_code(...) call invokes
-      // the ast copy ctor. Please post an explanation if you
-      // understand the problem.
-      ast::Function ast(e->location_get(), new ast::symbols_type(),
-			new ast::Scope(e->location_get(), 0, ast::clone(*e)));
-      rObject function = make_code(ast);
-
-      urbi_call(*this, function, SYMBOL(makeClosure));
-      arg->slot_update(*this, SYMBOL(code), function);
-      lazy_args.push_back(arg);
+      lazy_args.push_back(object::mkLazy(*this, e));
     }
 
-    res->slot_set (SYMBOL(args), object::List::fresh(lazy_args));
-
-    // Store the current context in which the arguments must be evaluated.
-    res->slot_set (SYMBOL(context), object::Object::make_scope(locals_));
-
-    return res;
+    return build_call_message(tgt, msg, lazy_args);
   }
 
   Runner::rObject
@@ -517,7 +528,7 @@ namespace runner
     call_stack_.push_back(&e);
     try
     {
-      apply (val, args, call_message);
+      apply (val, e.name_get(), args, call_message);
     }
     PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_back());
 
@@ -829,7 +840,8 @@ namespace runner
       {
 	try
 	{
-	  apply (func, args);
+	  // FIXME: We have no way to find the actual message name here.
+	  apply (func, SYMBOL(atExit), args);
 	}
 	catch (...)
 	{
@@ -1011,7 +1023,7 @@ namespace runner
 	  args.push_back (new_tag);
 	  args.push_back (object::String::fresh (*element));
 	  args.push_back (base);
-	  apply (toplevel->own_slot_get (SYMBOL (init)), args);
+	  apply (toplevel->own_slot_get (SYMBOL (init)), SYMBOL(init), args);
 	  base->slot_set (*element, new_tag);
 	  base = new_tag;
 	}

@@ -27,22 +27,21 @@ namespace object
   `---------*/
 
   rObject urbi_call(runner::Runner& r,
-		    rObject& self,
+		    rObject self,
 		    libport::Symbol msg,
-		    objects_type& args)
+		    objects_type args)
   {
     assertion(self);
     rObject message = self->slot_get(msg);
     if (!message)
       throw LookupError(msg);
     args.insert(args.begin(), self);
-    rObject res = r.apply(message, args);
-    args.erase(args.begin());
+    rObject res = r.apply(message, msg, args);
     return res;
   }
 
   rObject urbi_call(runner::Runner& r,
-		    rObject& self,
+		    rObject self,
 		    libport::Symbol msg)
   {
     objects_type args; // Call with no args.
@@ -289,11 +288,7 @@ namespace object
     else if (context->locals_ && !owner->locals_get())
     {
       // Local->class: copyonwrite to "self" after evaluating it.
-      rObject self_obj = context->slot_get(SYMBOL(self));
-      assertion(self_obj);
-      objects_type self_args;
-      self_args.push_back (context);
-      rObject self = r.apply (self_obj, self_args);
+      rObject self = urbi_call(r, context, SYMBOL(self));
       assertion(self);
       effective_target = self.get();
     }
@@ -316,7 +311,7 @@ namespace object
 	args.push_back(context);
 	args.push_back(String::fresh(k));
 	args.push_back(o);
-	rObject ret = r.apply(hook, args);
+	rObject ret = r.apply(hook, SYMBOL(updateHook), args);
 	// If return-value of hook is not void, write it to slot.
 	if (ret != object::void_class)
 	  effective_target->own_slot_get(k) = ret;
@@ -359,10 +354,7 @@ namespace object
   std::ostream&
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
-    rObject id = slot_get(SYMBOL(id));
-    objects_type id_args;
-    id_args.push_back(self());
-    rObject data = r.apply(id, id_args);
+    rObject data = urbi_call(r, self(), SYMBOL(id));
     std::string s = data->value<String>().name_get();
     return o << s;
   }

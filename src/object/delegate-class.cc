@@ -22,7 +22,7 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
-    return r.apply (args[0], arg1);
+    return r.apply (args[0], SYMBOL(apply), arg1);
   }
 
   void

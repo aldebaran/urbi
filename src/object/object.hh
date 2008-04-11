@@ -273,12 +273,12 @@ namespace object
 
   /// Helpers to call Urbi functions from C++
   rObject urbi_call(runner::Runner& r,
-		    rObject& self,
-		    libport::Symbol msg);
+                    rObject self,
+                    libport::Symbol msg);
   rObject urbi_call(runner::Runner& r,
-		    rObject& self,
+		    rObject self,
 		    libport::Symbol msg,
-		    objects_type& args);
+		    objects_type args);
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
   template<class F> bool for_all_protos(rObject& r, F& f);
