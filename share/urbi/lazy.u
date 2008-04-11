@@ -7,7 +7,8 @@ class Global.Lazy
   function init(value)
   {
     self.code = getSlot("value")|
-    self.getSlot("code").makeClosure|
+    if (self.getSlot("code").isA(Executable))
+      self.getSlot("code").makeClosure|
   };
 
   function eval()
