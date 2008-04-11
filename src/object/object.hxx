@@ -197,6 +197,7 @@ namespace object
   {
     // This local variable seems to be needed by GCC 4.0.1 on OSX.
     rObject s = self();
+    TYPE_CHECK(s, T);
     return s.unsafe_cast<T>()->value_get();
   }
 
