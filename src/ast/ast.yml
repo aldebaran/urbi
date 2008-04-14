@@ -334,7 +334,7 @@ Nary:
           bool empty() const;
 
           /// Push a new expression, creating a Statement node.
-          void push_back(ast::Exp* e);
+          void push_back(Exp* e);
 
           /// Push a message.
           void message_push(const std::string& text, const std::string& tag);
@@ -365,7 +365,7 @@ Nary:
 
     impl inside: |2
         Nary::Nary ()
-          : Exp (ast::loc()),
+          : Exp (loc()),
             children_ (),
             toplevel_ (false)
         { }
@@ -374,7 +374,7 @@ Nary:
         Nary::clear ()
         {
           children_.clear ();
-          location_ = ast::loc();
+          location_ = loc();
         }
 
         bool
@@ -384,7 +384,7 @@ Nary:
         }
 
         void
-        Nary::push_back(ast::Exp* e)
+        Nary::push_back(Exp* e)
         {
           children_.push_back(new Stmt(e->location_get(), flavor_none, e));
 
@@ -398,7 +398,7 @@ Nary:
         void
         Nary::message_push(const std::string& text, const std::string& tag)
         {
-          children_.push_back(new Message(ast::loc(), text, tag));
+          children_.push_back(new Message(loc(), text, tag));
         }
 
         Exp&
@@ -447,7 +447,7 @@ Nary:
             if (back)
               return back->flavor_get ();
           }
-          return ast::flavor_none;
+          return flavor_none;
         }
 
         void
