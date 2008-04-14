@@ -752,6 +752,16 @@ namespace runner
   }
 
   void
+  Runner::operator() (const ast::Object& e)
+  {
+    rObject res = object::Object::fresh();
+    foreach (const ast::Slot& s, e.slots_get())
+      res->slot_set(s.name_get(), eval(s.value_get()));
+    current_ = res;
+  }
+
+
+  void
   Runner::operator() (const ast::rObject& e)
   {
     // Make a copy of the value, otherwise each time we pass here, we
@@ -772,6 +782,7 @@ namespace runner
     current_ = e.value_get()->clone();
     ECHO ("result: " << *current_);
   }
+
 
   void
   Runner::operator() (const ast::Pipe& e)

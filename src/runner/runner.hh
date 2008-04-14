@@ -87,6 +87,7 @@ namespace runner
 
     /// Return the result of an evaluation. The runner must be terminated.
     const rObject& current_get () const;
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -110,7 +111,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    CONST_VISITOR_VISIT_NODES((19,
+    CONST_VISITOR_VISIT_NODES((20,
 			       (
 				 And,
 				 Call,
@@ -122,6 +123,7 @@ namespace runner
 				 Message,
 				 Nary,
 				 Noop,
+				 Object,
 				 rObject,
 				 Pipe,
 				 Scope,

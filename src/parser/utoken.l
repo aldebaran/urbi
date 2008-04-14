@@ -524,6 +524,8 @@ FLAVOR   [;|,&]?
 "::"            RETURN(COLON_COLON);
 "~"             RETURN(TILDA);
 
+"(|"            PRE_PUSH('|'); RETURN(LPAREN_PIPE);
+"|)"            PRE_POP();     RETURN(PIPE_RPAREN);
 "("             PRE_PUSH(')'); RETURN(LPAREN);
 ")"             PRE_POP();     RETURN(RPAREN);
 "["             PRE_PUSH(']'); RETURN(LBRACKET);

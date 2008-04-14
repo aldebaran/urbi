@@ -61,6 +61,9 @@ nodes.stamp
 noop.cc
 noop.hh
 noop.hxx
+object.cc
+object.hh
+object.hxx
 pipe.cc
 pipe.hh
 pipe.hxx
@@ -74,6 +77,9 @@ r-object.hxx
 scope.cc
 scope.hh
 scope.hxx
+slot.cc
+slot.hh
+slot.hxx
 stmt.cc
 stmt.hh
 stmt.hxx

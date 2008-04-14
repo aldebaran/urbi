@@ -40,7 +40,6 @@ includes_map:
   "flow_exception_kind": '"ast/flow-exception.hh"'
   "libport::Symbol":     '<libport/symbol.hh>'
   "object::rObject":     '"object/object.hh"'
-  "slot_type":           '"ast/fwd.hh"'
   "slots_type":          '"ast/fwd.hh"'
   "std::string":         '<string>'
   "symbols_type":        '"ast/fwd.hh"'
@@ -62,6 +61,7 @@ non_visitable_types:
 # In the cloner, these require "recurse_collection".
 collections:
   - "exps_type"
+  - "slots_type"
   - "symbols_type"
 
 # The function to clear a list of pointers.
@@ -94,7 +94,8 @@ default_visitor_hh_prologue: |2
 # The beginning of fwd.hh, for includes.
 fwd_hh_prologue: |2
   # include <list>
-  # include <vector>
+
+  # include <boost/ptr_container/ptr_vector.hpp>
 
   # include <libport/fwd.hh>
   # include <libport/separator.hh>
@@ -102,10 +103,13 @@ fwd_hh_prologue: |2
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
 
-    // List types.
+    /// List of expressions, for List, Nary, Call etc.
     typedef std::list<Exp*> exps_type;
-    // FIXME: Should not be pointers, but the machinery is not ready
-    // for that.
+
+    /// List of slots, for Object.
+    typedef boost::ptr_vector<Slot> slots_type;
+
+    /// Function formal arguments.
     typedef std::list<libport::Symbol*> symbols_type;
 
 printer_cc_prologue: |2
@@ -133,6 +137,14 @@ printer_cc_prologue: |2
 #
 #    + super
 #      a possibly empty space separated list of superclass names.
+#
+#    + inline
+#      code to include verbatim at some selected places:
+#      [header, inline, impl] x [prologue, inside, epilogue].
+#       *.hh     *.hxx  *.cc
+#       prologue: in the #include section.
+#       inside:   in the class definition/namespace
+#       epilogue: after the class definition, in the namespace.   
 #
 #  * attributes:
 #    + name
@@ -610,7 +622,40 @@ Noop:
     - '"{}"'
 
 
-# Native Urbi objects.
+## --------------------- ##
+## Native Urbi objects.  ##
+## --------------------- ##
+
+Object:
+  super: Exp
+  inline:
+    header prologue: '# include "ast/slot.hh"'
+    header inside: |2
+        public:
+          /// An empty Object.
+          Object(const loc& location);
+    impl inside: |2
+        Object::Object (const loc& location)
+          : Exp (location),
+            slots_ (new slots_type)
+        { }
+  attributes:
+    - slots:
+        type: slots_type*
+        desc: List of slots
+  printer:
+    - '"(|"'
+    - '{
+        bool tail = false;
+        foreach (const Slot& s, n.slots_get())
+        {
+          if (tail++)
+            ostr_ << "," << libport::iendl;
+          ostr_ << s;
+        }
+       }'
+    - '"|)"'
+
 rObject:
   super: Exp
   attributes:
@@ -631,6 +676,18 @@ Float:
         desc: Float value
   printer:
     - $value
+
+Slot:
+  super: Ast
+  attributes:
+    - name:
+        type: 'libport::Symbol'
+    - value:
+        type: 'Exp*'
+  printer:
+    - $name
+    - '": "'
+    - ~value
 
 String:
   super: Exp

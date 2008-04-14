@@ -1209,6 +1209,31 @@ expr:
 //| "%" name            { $$ = 0; }
 ;
 
+%token TOK_LPAREN_PIPE "(|"
+       TOK_PIPE_RPAREN "|)";
+expr:
+  "(|" slots "|)" { $$ = $2; }
+;
+
+%union { ast::Object* object; };
+%type <object> slots slots.1;
+%printer { debug_stream() << libport::deref << $$; } <slot> <object>;
+
+slots:
+  /* nothing */  { $$ = new ast::Object(@$); }
+| slots.1
+;
+
+slots.1:
+  slot           { $$ = new ast::Object(@$); $$->slots_get().push_back($1); }
+| slots "," slot { $$->slots_get().push_back($3); }
+;
+
+%union { ast::Slot* slot; };
+%type <slot> slot;
+slot:
+  "identifier" ":" expr   { $$ = new ast::Slot(@$, take($1), $3); }
+;
 
 
   /*---------.
