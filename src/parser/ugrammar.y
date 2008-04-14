@@ -110,14 +110,6 @@
     }
 
 
-    /// Create an AST node storing a symbol.
-    static
-    ast::rObject*
-    ast_object (const loc& l, const libport::Symbol& val)
-    {
-      return new ast::rObject(l, object::String::fresh(val));
-    }
-
 
     /*---------------------.
     | Calls, lvalues etc.  |
@@ -163,20 +155,6 @@
       return res;
     }
 
-    /// "<target> . <method> (<arg1>, <arg2>)".
-    static
-    ast::Call*
-    ast_call(const loc& l,
-	     ast::Exp* target, libport::Symbol* method,
-	     ast::Exp* arg1, ast::Exp* arg2)
-    {
-      assert (method);
-      ast::Call* res = ast_call(l, target, method);
-      res->args_get().push_back(arg1);
-      res->args_get().push_back(arg2);
-      return res;
-    }
-
 
     /// "<target> . <method> (<arg1>, <arg2>)".
     /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
@@ -214,11 +192,11 @@
     {
       ast::Call* res =
 	ast_call(l,
-	      lvalue->args_get().front(),
-	      // FIXME: this new is stupid.  We need to clean
-	      // this set of call functions.
-	      new libport::Symbol(change),
-	      ast_object(lvalue->location_get(), lvalue->name_get()));
+		 lvalue->args_get().front(),
+		 // FIXME: this new is stupid.  We need to clean
+		 // this set of call functions.
+		 new libport::Symbol(change),
+		 new ast::String(lvalue->location_get(), lvalue->name_get()));
       if (value)
 	res->args_get().push_back(value);
       return res;
@@ -243,26 +221,6 @@
     ast_slot_remove  (const loc& l, ast::Call* lvalue)
     {
       return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
-    }
-
-
-    /// "<lvalue> = <value>".
-    /// \param l        source location.
-    /// \param lvalue   object and slot to assign to.
-    /// \param value    assigned value.
-    /// \param declare  whether we also declare the lvalue.
-    /// \return The AST node calling the slot assignment.
-    static
-    ast::Call*
-    ast_assign(const loc& l, ast::Call* lvalue, ast::Exp* value, bool declare)
-    {
-      return ast_call(l,
-		   lvalue->args_get().front(),
-		   // this new is stupid.  We need to clean
-		   // this set of call functions.
-		   new libport::Symbol(declare ? "setSlot" : "updateSlot"),
-		   ast_object(lvalue->location_get(), lvalue->name_get()),
-		   value);
     }
 
 
@@ -348,8 +306,8 @@
     static
     ast::Exp*
     ast_for (const loc& l, ast::flavor_type op,
-	      ast::Exp* init, ast::Exp* test, ast::Exp* inc,
-	      ast::Exp* body)
+	     ast::Exp* init, ast::Exp* test, ast::Exp* inc,
+	     ast::Exp* body)
     {
       passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
       assert (init);
@@ -391,9 +349,9 @@
 
   /// Direct the call from 'bison' to the scanner in the right parser::UParser.
   inline
-  yy::parser::token_type
-  yylex(yy::parser::semantic_type* val, yy::location* loc, parser::UParser& up,
-	FlexLexer& scanner)
+    yy::parser::token_type
+    yylex(yy::parser::semantic_type* val, yy::location* loc, parser::UParser& up,
+	  FlexLexer& scanner)
   {
     return scanner.yylex(val, loc, &up);
   }
@@ -843,9 +801,8 @@ stmt:
     {
       // Compiled as "var name = function args stmt", i.e.,
       // setSlot (name, function args stmt).
-      $$ = ast_assign(@$, $2,
-		      new ast::Function (@$, $3, ast_scope (@$, $4)),
-		      true);
+      $$ = ast_slot_set(@$, $2,
+			new ast::Function (@$, $3, ast_scope (@$, $4)));
     }
 ;
 
