@@ -447,7 +447,7 @@ load("urbi/group.u");
 ## Tags.  ##
 ## ------ ##
 
-Object.addProto (Tag);
+Global.addProto (Tag);
 
 ## -------------------------- ##
 ## Logic with short-circuit.  ##
