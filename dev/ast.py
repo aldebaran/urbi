@@ -44,7 +44,7 @@ class Attribute:
     if self.desc != "":
       return string.lower (self.desc)
     else:
-      return attribute.name
+      return self.name
 
   def name_ (self):
     """The name of the attribute, i.e., with an underscore appended."""
@@ -147,7 +147,7 @@ class Node:
       if isinstance (key, tuple):
 	(realkey, value) = key
 	error ('duplicate key: ' + name + "::" + realkey)
-      if not key in [
+      if key not in [
 	'attributes',
 	'concrete',
 	'default',

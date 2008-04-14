@@ -77,7 +77,8 @@ namespace """ + clonerlib + """
 for node in concrete_nodes:
   print "    virtual void operator() (const ast::" + node.name + "&);"
 
-print """
+if dec_subclasses:
+  print """
     template <typename DecsType>
     /** \\brief Visit a chunk (i.e., a list of Function, Var, and Type decs).
      **
@@ -87,8 +88,8 @@ print """
 
     // As we can't mix template and virtual methods, we have to
     // duplicate these methods.  That's too bad.  :("""
-for dec_type in dec_subclasses:
-  print "    virtual void operator() (const ast::" + dec_type.name + "s" + "&);"
+  for dec_type in dec_subclasses:
+    print "    virtual void operator() (const ast::" + dec_type.name + "s" + "&);"
 
 print """
   protected:
