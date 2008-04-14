@@ -39,7 +39,6 @@ includes_map:
   "flavor_type":         '"ast/flavor.hh"'
   "flow_exception_kind": '"ast/flow-exception.hh"'
   "libport::Symbol":     '<libport/symbol.hh>'
-  "object::rObject":     '"object/object.hh"'
   "slots_type":          '"ast/fwd.hh"'
   "std::string":         '<string>'
   "symbols_type":        '"ast/fwd.hh"'
@@ -54,7 +53,6 @@ non_visitable_types:
   - "flow_exception_kind"
   - "libport::Symbol"
   - "loc"
-  - "object::rObject"
   - "std::string"
   - "ufloat"
 
@@ -655,17 +653,6 @@ Object:
         }
        }'
     - '"|)"'
-
-rObject:
-  super: Exp
-  attributes:
-    - value:
-        type: object::rObject
-        access: r
-        desc: Native Urbi object
-  printer:
-    - '{ object::print(::urbiserver->getCurrentRunner(), n.value_get(),
-             ostr_);}'
 
 Float:
   super: Exp
