@@ -12,7 +12,7 @@ class Global.Lazy
 
   function eval()
   {
-    val = self.code;
+    updateVoidSlot("val", self.code)
   };
 
   function value()

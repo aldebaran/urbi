@@ -64,6 +64,9 @@ do Object
   copySlot ("sameAs", "==");
   copySlot ("memSameAs", "===");
 
+  copySlot("setSlot", "setVoidSlot").acceptVoid = true;
+  copySlot("updateSlot", "updateVoidSlot").acceptVoid = true;
+
   function '!==' (rhs)
   {
     !(self === rhs)
