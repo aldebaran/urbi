@@ -37,6 +37,7 @@ namespace object
       throw LookupError(msg);
     args.insert(args.begin(), self);
     rObject res = r.apply(message, msg, args);
+    assertion(res);
     return res;
   }
 
@@ -82,12 +83,16 @@ namespace object
     targetLookup(rObject obj,
 		 const object::Object::key_type& slotName)
     {
+      // First, check if the object has the slot locally. We do not
+      // handle 'self' here, since we first want to see whether it has
+      // been captured in the context.
       if (obj->own_slot_get(slotName, 0) && slotName != SYMBOL(self))
 	// Return a nonempty optional containing an empty rObject, to
 	// indicate to target that the lookup is successful, and the
 	// target is the initial object.
 	return optional<rObject>(rObject());
-      // If this is a method outer scope, perform special lookup
+      // If this is a method outer scope, perform special lookup in
+      // self and context.
       if (rObject self = obj->own_slot_get(SYMBOL(self), 0))
       {
 	// FIXME: The 'code' slot is *always* set by the scoping
@@ -105,9 +110,14 @@ namespace object
 		if (var->value<object::String>() == slotName)
 		  return target(code->own_slot_get(SYMBOL(context)), slotName);
 	  }
+	// If we were looking for 'self' and it wasn't captured in the
+	// context, we found it here.
 	if (slotName == SYMBOL(self))
 	  return optional<rObject>(rObject());
-	if (self->slot_locate(slotName))
+	// Check whether self has the slot. We do not use the
+	// 'fallback' method here: only calls with explicit target are
+	// subject to fallback.
+	if (self->slot_locate(slotName, false))
 	  return self;
       }
       return optional<rObject>();
@@ -236,12 +246,12 @@ namespace object
     };
   }
 
-  rObject Object::slot_locate(const Object::key_type& k) const
+  rObject Object::slot_locate(const Object::key_type& k, bool fallback) const
   {
     SlotLookup looker;
     lookup_action action = boost::bind(&SlotLookup::slot_lookup, &looker, _1, k);
     boost::optional<rObject> res = lookup(action);
-    if (!res && looker.fallback)
+    if (!res && fallback && looker.fallback)
       res = looker.fallback;
     return res ? res.get() : 0;
   }
@@ -259,10 +269,10 @@ namespace object
   Object::slot_get (const key_type& k) const
   {
     rObject cont = safe_slot_locate(k);
-    if (cont->own_slot_get(k, 0))
-      return cont->own_slot_get(k);
-    else
-      return cont->own_slot_get(SYMBOL(fallback));
+    rObject& res = cont->own_slot_get(k, 0) ? cont->own_slot_get(k) :
+      cont->own_slot_get(SYMBOL(fallback));
+    assertion(res);
+    return res;
   }
 
   rObject&
@@ -423,9 +433,9 @@ namespace object
   {
     try
     {
-      rObject rthis = self();
-      rObject s = urbi_call(runner, rthis, SYMBOL(asString));
-      return o << s->value<String>().name_get();
+      rObject s = urbi_call(runner, self(), SYMBOL(asString));
+      o << s->value<String>().name_get();
+      return o;
     }
     // Check if asString was found, especially for bootstrap: asString
     // is implemented in urbi/urbi.u, but print is called to show

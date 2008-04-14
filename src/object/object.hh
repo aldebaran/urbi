@@ -118,7 +118,7 @@ namespace object
 
     /// Lookup field in object hierarchy.
     /// \return the Object containing slot \b k, or 0 if not found.
-    rObject slot_locate (const Object::key_type& k) const;
+    rObject slot_locate (const Object::key_type& k, bool fallback = true) const;
 
     /// Same as slot_locate, but raise LookupError if not found.
     /// \throw LookupError if the lookup fails.
