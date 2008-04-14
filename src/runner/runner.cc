@@ -903,11 +903,12 @@ namespace runner
 	else
 	{
 	  // We have to create a new tag, which will be attached
-	  // to the upper level (hierarchical tags, implicitely
+	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
 	  rObject new_tag = toplevel->clone();
 	  object::objects_type args;
 	  args.push_back (new_tag);
+	  args.push_back (object::String::fresh (*element));
 	  args.push_back (base);
 	  apply (toplevel->own_slot_get (SYMBOL (init)), args);
 	  base->slot_set (*element, new_tag);
