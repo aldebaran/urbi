@@ -73,8 +73,8 @@ namespace runner
     /// One cannot have both a call message and args.
     rObject apply (const rObject& func,
 		   const libport::Symbol msg,
-		   const object::objects_type& args,
-		   const rObject call_message = 0);
+		   object::objects_type args,
+		   rObject call_message = 0);
 
     /// Use an argument list coming from Urbi.
     rObject apply (const rObject& func, const libport::Symbol msg,

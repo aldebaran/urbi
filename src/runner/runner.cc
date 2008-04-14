@@ -319,11 +319,20 @@ namespace runner
   object::rObject
   Runner::apply (const rObject& func,
 		 const libport::Symbol msg,
-		 const object::objects_type& args,
-		 const rObject call_message)
+		 object::objects_type args,
+		 rObject call_message)
   {
-    // The call-message only makes sense for code.
-    assert (!call_message || func->kind_get() == object::Object::kind_code);
+    // If we try to call a C++ primitive with a call message, make it
+    // look like a strict function call
+    if (call_message && func->kind_get() != object::Object::kind_code)
+    {
+      rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
+      foreach (const rObject& arg,
+	       urbi_args->value<object::List>())
+	args.push_back(arg);
+      call_message = 0;
+    }
+
     // Even with call message, there is at least one argument: self.
     assert (!args.empty());
     // If we use a call message, "self" is the only argument.

@@ -152,6 +152,18 @@ namespace object
     return arg1->value_get ().front ();
   }
 
+  static rObject
+  object_class_callMessage (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (2);
+    libport::Symbol msg = args[1]->slot_get(SYMBOL(message))->value<String>();
+    rObject code = args[0]->slot_get(msg);
+    // FIXME: Sanity checks on the call message are probably required
+    object::objects_type self;
+    self.push_back(args[0]);
+    return r.apply(code, msg, self, args[1]);
+  }
+
   /*---------.
   | Protos.  |
   `---------*/
@@ -302,6 +314,7 @@ namespace object
 
     DECLARE(addProto);
     DECLARE(apply);
+    DECLARE(callMessage);
     DECLARE(clone);
     DECLARE(dump);
     DECLARE(echo); // This guy should be in System.
