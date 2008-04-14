@@ -33,9 +33,11 @@ print tools.banner(clonerlib + "/cloner.hh",
 #ifndef """ + CLONERLIB + """_CLONER_HH
 # define """ + CLONERLIB + """_CLONER_HH
 
+# include <boost/type_traits/remove_const.hpp>
+
 # include "ast/default-visitor.hh"
 
-namespace """ + clonerlib + """
+namespace %(clonerlib)s
 {
 
   /// \\brief Duplicate an Ast.
@@ -44,20 +46,29 @@ namespace """ + clonerlib + """
   public:
     typedef ast::DefaultConstVisitor super_type;
 
-    // Import overloaded virtual functions.
-    using super_type::operator();
-
     /// Destroy a Cloner.
     virtual ~Cloner ();
 
     // Return the cloned Ast.
     ast::Ast* result_get ();
 
+    // Visit methods.
+  public:
+    // Import overloaded virtual functions.
+    using super_type::operator();
+""" % ast_params
+
+for node in concrete_nodes:
+  print "    virtual void operator() (const ast::" + node.name + "&);"
+
+print """\
+
+  protected:
     template <typename T>
     T* recurse (const T& t);
 
     template <typename T>
-    T* recurse (const T* const t);
+    typename boost::remove_const<T>::type* recurse (T* t);
 
     /** \\brief Clone a collection object.
 
@@ -69,13 +80,7 @@ namespace """ + clonerlib + """
 	using different names.
      */
     template <typename CollectionType>
-    CollectionType* recurse_collection (const CollectionType& c);
-
-
-    // Visit methods.
-  public:"""
-for node in concrete_nodes:
-  print "    virtual void operator() (const ast::" + node.name + "&);"
+    CollectionType* recurse_collection (const CollectionType& c);"""
 
 if dec_subclasses:
   print """
@@ -92,14 +97,11 @@ if dec_subclasses:
     print "    virtual void operator() (const ast::" + dec_type.name + "s" + "&);"
 
 print """
-  protected:
     /// The cloned Ast.
     ast::Ast* result_;
   };
 
 } // namespace ast
-
-# include \"""" + clonerlib + """/cloner.hxx"
 
 #endif // !""" + CLONERLIB + """_CLONER_HH"""
 
@@ -129,15 +131,18 @@ print """\
 // Generated, do not edit by hand.
 //->>
 /**
- ** \\file """ + clonerlib + """/cloner.cc
- ** \\brief Implementation of """ + clonerlib + """::Cloner.
+ ** \\file %(clonerlib)s/cloner.cc
+ ** \\brief Implementation of %(clonerlib)s::Cloner.
  */
 
 #include "ast/all.hh"
-#include \"""" + clonerlib + """/cloner.hh"
-#include \"""" + ast_params['auxlib'] + """/symbol.hh"
+#include "%(clonerlib)s/cloner.hh"
+// This file contains only protected functions, not loading it
+// from cloner.hh saves cycles.
+#include "%(clonerlib)s/cloner.hxx"
+#include "%(auxlib)s/symbol.hh"
 
-namespace """ + clonerlib + """
+namespace %(clonerlib)s
 {
   using namespace ast;
 
@@ -150,7 +155,7 @@ namespace """ + clonerlib + """
   {
     return result_;
   }
-"""
+""" % ast_params
 
 for node in concrete_nodes:
   print "  void"

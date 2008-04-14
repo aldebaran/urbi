@@ -6,7 +6,7 @@
 #ifndef AST_CLONER_HXX
 # define AST_CLONER_HXX
 
-# include <boost/foreach.hpp>
+# include <libport/foreach.hh>
 
 # include "ast/cloner.hh"
 
@@ -24,17 +24,10 @@ namespace ast
   }
 
   template <typename T>
-  T*
-  Cloner::recurse (const T* const t)
+  typename boost::remove_const<T>::type*
+  Cloner::recurse (T* t)
   {
-    T* res = 0;
-    if (t)
-      {
-	t->accept (*this);
-	res = dynamic_cast<T*> (result_);
-	assert (res);
-      }
-    return res;
+    return t ? recurse(*t) : 0;
   }
 
   // args_type can include 0 in its list of args to denote the default
@@ -46,21 +39,8 @@ namespace ast
   Cloner::recurse_collection (const CollectionType& c)
   {
     CollectionType* res = new CollectionType;
-
-    typedef typename CollectionType::value_type elt_type;
-    BOOST_FOREACH (const elt_type& e, c)
-    {
-      if (e)
-      {
-	e->accept (*this);
-	elt_type elt = dynamic_cast<elt_type> (result_);
-	assert (elt);
-	res->push_back (elt);
-      }
-      else
-	res->push_back (0);
-    }
-
+    foreach (typename CollectionType::const_reference e, c)
+      res->push_back(recurse(e));
     return res;
   }
 
