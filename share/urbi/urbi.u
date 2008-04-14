@@ -78,9 +78,9 @@ do Object
   };
 };
 
-## --------- ##
+## -------- ##
 ## Global.  ##
-## --------- ##
+## -------- ##
 
 do Global
 {
@@ -91,6 +91,15 @@ do Global
   function load (file)
   {
     loadFile(searchFile(file));
+  };
+
+  # Add proto to obj's list of protos.  Return obj.
+  # Does not require that object derives from Object to have addProto.
+  function _addProto(obj, proto)
+  {
+    # Call the "init" from the parent, retargetted to the child.
+    Object.getSlot("addProto").apply([obj, proto]) |
+    obj
   };
 
   // Assertion control
