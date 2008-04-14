@@ -8,6 +8,7 @@ class Global.Group
   function add(g)
   {
     members.push_back(g);
+    self
   };
 
   copySlot("add", "<<");
@@ -31,15 +32,28 @@ class Global.Group
     members = self.members - g;
   };
 
+  var protoName = "Group";
+  function asString ()
+  {
+    if (self === Group)
+      "<Group>"
+    else
+      "Group " + members.asString
+  };
+
   // FIXME: This implementation always evaluates the
   // arguments. There's no other way to do it for now.
   function fallback
   {
+    var res = Group.new|
     function action (m)
     {
-      m.getSlot(call.message).apply([m] + call.evalArgs)
+      res << m.callMessage(call)
     }|
     getSlot("action").makeClosure|
-    members.map(getSlot("action"))
+    members.each(getSlot("action"))|
+    res
   };
+
+  copySlot("fallback", "updateSlot");
 };
