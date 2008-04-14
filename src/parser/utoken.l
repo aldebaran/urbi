@@ -21,6 +21,12 @@
 
  **************************************************************************** */
 
+  // Unforunately the file libport/compiler.hh is included before, and
+  // it is useless to define ENABLE_DEBUG_TRACES here as the guards
+  // avoid the redefinition.  Use LIBPORT_ECHO instead of ECHO.
+  // #define ENABLE_DEBUG_TRACES
+#include <libport/compiler.hh>
+
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
@@ -28,9 +34,6 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-
-  // #define ENABLE_DEBUG_TRACES
-#include <libport/compiler.hh>
 
 #include "object/object.hh"
 #include "object/atom.hh"
@@ -45,10 +48,6 @@ typedef yy::parser::token token;
 /// setting \a keywords to the first char of keyword, and return the
 /// size.
 static size_t bin_split (char* yytext, size_t yyleng, char*& keywords);
-
-/// Create a K1Bin object.
-static ast::rObject* new_k1_bin(const yy::location& loc,
-				const char* keywords, const std::string& data);
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
@@ -270,6 +269,22 @@ do {						\
   }
 
 
+/// Unput a large string.
+// 
+// Do not forget to remove from the pre-length the length of Str when
+// in prescanner mode, otherwise the prescanner will count too many
+// characters: those of the original string, and those of the unput
+// string.
+#define UNPUT(Str)					\
+  do {							\
+    std::string _rewritten = Str;			\
+    for (int i = _rewritten.length() - 1; 0 <= i; --i)	\
+      unput(_rewritten[i]);				\
+    if (!up)						\
+      pre_length -= _rewritten.length();		\
+  } while (0)
+
+
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
 // needed to scope msg and rewritten.
@@ -281,8 +296,7 @@ do {						\
     if (!rewritten.empty())						\
       warn += " Use `" + rewritten + "' instead.";			\
     up->warn(*locp, warn);						\
-    for (int i = rewritten.length() - 1; 0 <= i; --i)			\
-      unput(rewritten[i]);						\
+    UNPUT(rewritten);							\
   }
 
 %}
@@ -568,12 +582,10 @@ FLAVOR   [;|,&]?
 	break;
     }
   out_of_loop:
-  // Use yytext before modifying it (unput).
-  SET_VAL(expr, new_k1_bin (*locp, keywords, data));
-  unput(';');
-  if (!up)
-    --pre_length;
-  RETURN(K1BIN);
+  std::ostringstream rewritten;
+  rewritten << "_addProto((| keywords: \"" << keywords << "\", "
+	    << "data: \"" << libport::escape(data) << "\"|), Binary);";
+  UNPUT(rewritten.str());
 }
 
 {ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
@@ -736,19 +748,6 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
   return res;
 }
 
-static
-ast::rObject*
-new_k1_bin(const yy::location& loc,
-	   const char* keywords, const std::string& data)
-{
-  object::rObject o = object::Object::fresh();
-  o->proto_add(object::global_class->slot_get(SYMBOL(Binary)));
-  o->slot_set(SYMBOL(keywords),
-	      object::String::fresh(libport::Symbol(keywords)));
-  o->slot_set(SYMBOL(data),
-	      object::String::fresh(libport::Symbol(data)));
-  return new ast::rObject (loc, o);
-}
 
 namespace parser
 {

@@ -1440,20 +1440,6 @@ formals:
 ;
 
 
-/*-----------.
-| K1's BIN.  |
-`-----------*/
-
-// This syntax is pure bullshit (and admittedly the bull was badly
-// sick), but we don't need to do better that k1 itself, which accepts
-// this only here.
-
-%token <expr> TOK_K1BIN "BIN data";
-cstmt:
-	lvalue "=" "BIN data" { $$ = ast_slot_update (@$, $1, $3); }
-| "var" lvalue "=" "BIN data" { $$ = ast_slot_set    (@$, $2, $4); }
-;
-
 %%
 
 // The error function that 'bison' calls.
