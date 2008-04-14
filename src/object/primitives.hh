@@ -60,6 +60,9 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
  * Define a primitive for class \a Class named \a Name, which takes
  * one argument of type \a Type1, returns type \a Ret and whose result
  * is \a Name applied to all arguments.
+ *
+ * We use ::object:: to avoid Koenig look-up capture by Boost, since
+ * our object are boost::shared_ptr.
  */
 #define PRIMITIVE_1_(Class, Name, Ret, Type1, Get)              \
   static rObject						\
@@ -67,7 +70,7 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
   {                                                             \
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Type1);                                        \
-    return Ret(Name(arg0 Get));                                 \
+    return Ret(::object::Name(arg0 Get));			\
   }
 
 #define PRIMITIVE_1(Class, Name, Type1)                   \
@@ -89,7 +92,7 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
-    return Ret(Name(arg0 Get, arg1 Get));         \
+    return Ret(::object::Name(arg0 Get, arg1 Get));         \
   }
 
 #define PRIMITIVE_2(Class, Name, Type1, Type2)                  \
