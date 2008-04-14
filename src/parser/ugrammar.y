@@ -401,6 +401,7 @@
 	TOK_LBRACKET     "["
 	TOK_LPAREN       "("
 	TOK_OBJECT       "object"
+	TOK_ONEVENT      "onevent"
 	TOK_ONLEAVE      "onleave"
 	TOK_POINT        "."
 	TOK_RBRACE       "}"
@@ -733,7 +734,7 @@ stmt:
   "class" lvalue block
     {
       DESUGAR("var " << ast::clone(*$2) << "= Object.clone|"
-	      << "do " << $2 << "{" << static_cast<ast::Exp*>($3) << "}");
+	      << "do " << $2 << "{" << ast_exp($3) << "}");
     }
 | "class" lvalue
     {
@@ -1030,6 +1031,11 @@ stmt:
       FLAVOR_CHECK(@$, "while", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = new ast::While(@$, $1, $3, $5);
+    }
+| "onevent" "identifier" formals block
+    {
+      DESUGAR(take($2) << ".onEvent(function " << $3
+              << " { " << ast_exp($4) << " })");
     }
 ;
 

@@ -471,6 +471,7 @@ FLAVOR   [;|,&]?
 "loopn"         DEPRECATED("for");
 "new"           RETURN_OP(NEW);
 "object"        RETURN(OBJECT);
+"onevent"       RETURN(ONEVENT);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
 "static"        DEPRECATED("");
