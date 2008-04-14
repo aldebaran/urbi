@@ -891,7 +891,7 @@ namespace runner
 
       // Tag represents the top level tag
       rObject toplevel =
-	object::object_class->slot_get (SYMBOL (Tag));
+	object::global_class->slot_get (SYMBOL (Tag));
       rObject base = toplevel;
       foreach (const libport::Symbol* element, decompose_tag_chain (&e))
       {
