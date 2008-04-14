@@ -349,9 +349,6 @@ Nary:
           /// Push a message.
           void message_push(const std::string& text, const std::string& tag);
 
-          /// Return the last child.
-          Exp& back ();
-
           /// Sets the flavor of the last child.
           void back_flavor_set (flavor_type k, const loc& l);
 
@@ -366,6 +363,18 @@ Nary:
 
           /// Splice the content of \a rhs at the back this list.
           void splice_back (Nary& rhs);
+
+       private:
+          /// Return the last child if there is one of the right type.
+          template <typename T>
+          T* back ();
+
+          /// Return the last child if there is one of the right type.
+          template <typename T>
+          const T* back () const;
+
+          /// Adjust the whole location.
+          void location_adjust ();
 
     impl prologue: |2
       #include <libport/indent.hh>
@@ -394,15 +403,22 @@ Nary:
         }
 
         void
+        Nary::location_adjust ()
+        {
+          if (empty())
+            location_.initialize(0);
+          else
+          {
+            location_.begin = children_.front()->location_get().begin;
+            location_.end   = children_.back() ->location_get().end;
+          }
+        }
+
+        void
         Nary::push_back(Exp* e)
         {
           children_.push_back(new Stmt(e->location_get(), flavor_none, e));
-
-          // FIXME: Is there any better way to check if location_ is not set ?
-          if (location_.begin.filename)
-            location_ = location_ + e->location_get();
-          else
-            location_ = e->location_get();
+          location_adjust();
         }
 
         void
@@ -411,52 +427,43 @@ Nary:
           children_.push_back(new Message(loc(), text, tag));
         }
 
-        Exp&
+        template <typename T>
+        T*
         Nary::back ()
         {
-          return *children_.back();
+          return empty() ? 0 : dynamic_cast<T*>(children_.back());
+        }
+
+        template <typename T>
+        const T*
+        Nary::back () const
+        {
+          return empty() ? 0 : dynamic_cast<T*>(children_.back());
         }
 
         void
         Nary::back_flavor_set (flavor_type k, const loc& l)
         {
-           if (!children_.empty ())
-           {
-             Stmt* back = dynamic_cast<Stmt*>(children_.back());
-             if (back)
-             {
-               back->flavor_get () = k;
-               back->location_set(children_.back ()->location_get () + l);
-             }
-           }
-
-          // FIXME: Is there any better way to check if location_ is not set ?
-          if (location_.begin.filename)
-            location_ = location_ + l;
-          else
-            location_ = l;
+          if (Stmt* b = back<Stmt>())
+          {
+            b->flavor_get () = k;
+            b->location_set(b->location_get () + l);
+          }
+          location_adjust();
         }
 
         void
         Nary::back_flavor_set (flavor_type k)
         {
-           if (!children_.empty ())
-           {
-             Stmt* back = dynamic_cast<Stmt*>(children_.back());
-             if (back)
-               back->flavor_get () = k;
-           }
+          if (Stmt* b = back<Stmt>())
+             b->flavor_get () = k;
         }
 
         flavor_type
         Nary::back_flavor_get() const
         {
-          if (!children_.empty ())
-          {
-            Stmt* back = dynamic_cast<Stmt*>(children_.back());
-            if (back)
-              return back->flavor_get ();
-          }
+          if (const Stmt* b = back<Stmt>())
+            return b->flavor_get ();
           return flavor_none;
         }
 
@@ -464,14 +471,14 @@ Nary:
         Nary::pop_back ()
         {
           children_.pop_back();
-          location_.end = children_.back()->location_get().end;
+          location_adjust();
         }
 
         void
         Nary::splice_back (Nary& rhs)
         {
           children_.splice (children_.end (), rhs.children_get ());
-          location_ = location_ + rhs.location_get();
+          location_adjust();
         }
 
         std::ostream&
