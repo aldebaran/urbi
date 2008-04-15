@@ -2,15 +2,25 @@
 ## Generate the list of symbols we use.  ##
 ## ------------------------------------- ##
 
-.PHONY: symbols
-symbols:
-	-mv -f $(srcdir)/object/symbols.hh $(srcdir)/object/symbols.hh.old
-	$(MAKE) $(AM_MAKEFLAGS) $(srcdir)/object/symbols.hh
-$(srcdir)/object/symbols.hh:
-	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$@.tmp
-	-diff -u $@.old $@.tmp
-	$(top_srcdir)/build-aux/move-if-change $@.tmp $@
+symbols_hh = $(srcdir)/object/symbols.hh
+# We don't include $(nodist_libkernel_la_SOURCES) here, since it
+# includes symbols.hh itself.  Currently there seems to be no need to
+# support generated files.
+symbols.stamp: $(dist_libkernel_la_SOURCES)
+	@rm -f $@.tmp
+	@touch $@.tmp
+	:> $(symbols_hh).old
+	-cp -f $(symbols_hh) $(symbols_hh).old
+	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$(symbols_hh).tmp
+	-diff -u $(symbols_hh).old $(symbols_hh).tmp
+	$(top_srcdir)/build-aux/move-if-change $(symbols_hh).tmp $(symbols_hh)
+	@mv -f $@.tmp $@
 
+$(symbols_hh): symbols.stamp
+	@if test -f $@; then :; else			\
+	  rm -f symbols.stamp; 				\
+	  $(MAKE) $(AM_MAKEFLAGS) symbols.stamp;	\
+	fi
 
 dist_libkernel_la_SOURCES +=			\
 object/alien.hh					\
@@ -53,7 +63,6 @@ object/scope-class.hh				\
 object/string-class.cc				\
 object/string-class.hh				\
 object/symbols.cc				\
-object/symbols.hh				\
 object/system-class.cc				\
 object/system-class.hh				\
 object/tag-class.cc				\
@@ -63,3 +72,6 @@ object/task-class.hh				\
 object/urbi-exception.cc			\
 object/urbi-exception.hh			\
 object/urbi-exception.hxx
+
+nodist_libkernel_la_SOURCES += 			\
+object/symbols.hh
