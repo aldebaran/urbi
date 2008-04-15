@@ -759,7 +759,21 @@ namespace runner
   {
     rObject res = object::Object::fresh();
     foreach (const ast::Slot& s, e.slots_get())
-      res->slot_set(s.name_get(), eval(s.value_get()));
+    {
+      rObject val = eval(s.value_get());
+      if (s.name_get() == SYMBOL(protos))
+      {
+	// protos should always point to a list.
+	try
+	{
+	  TYPE_CHECK(val, object::List);
+	}
+	PROPAGATE_EXCEPTION(e.location_get(), {});
+	res->protos_set(val.unsafe_cast<object::List>()->value_get());
+      }
+      else
+	res->slot_set(s.name_get(), val);
+    }
     current_ = res;
   }
 
