@@ -96,6 +96,14 @@ namespace object
       return l;
     }
 
+    /// Insert \a elt at the front of \a l
+    static rList
+    push_front(rList l, rObject elt)
+    {
+      l->value_get().push_front(elt);
+      return l;
+    }
+
     /// Remove first element from \a l
     static rList
     pop_front(rList l)
@@ -171,6 +179,7 @@ namespace object
   PRIMITIVE_2_LIST(PLUS);
   PRIMITIVE_2_LIST(PLUS_EQ);
   PRIMITIVE_2_OBJECT(list, push_back, List);
+  PRIMITIVE_2_OBJECT(list, push_front, List);
   PRIMITIVE_2_OBJECT(list, removeById, List);
 
   void
@@ -186,6 +195,7 @@ namespace object
     DECLARE(front);
     DECLARE(pop_front);
     DECLARE(push_back);
+    DECLARE(push_front);
     DECLARE(removeById);
     DECLARE(size);
     DECLARE(sort);

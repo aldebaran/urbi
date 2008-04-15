@@ -142,6 +142,7 @@
   Macro(protoName, "protoName");                  \
   Macro(protos, "protos");                        \
   Macro(push_back, "push_back");                  \
+  Macro(push_front, "push_front");                \
   Macro(quit, "quit");                            \
   Macro(random, "random");                        \
   Macro(reboot, "reboot");                        \
