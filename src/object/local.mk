@@ -6,7 +6,8 @@ symbols_hh = object/symbols.hh
 # We don't include $(nodist_libkernel_la_SOURCES) here, since it
 # includes symbols.hh itself.  Currently there seems to be no need to
 # support generated files.
-symbols.stamp: $(dist_libkernel_la_SOURCES)
+symbols_hh_deps += $(dist_libkernel_la_SOURCES)
+symbols.stamp: $(symbols_hh_deps)
 	@rm -f $@.tmp
 	@touch $@.tmp
 	:> $(symbols_hh).old
