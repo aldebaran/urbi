@@ -64,21 +64,6 @@ namespace runner
       YIELD();					\
   } while (0)
 
-// Forward flow exceptions up to the top-level, and handle them
-// there.  Makes only sense in a Nary.
-#define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
-  catch (Type flow_exception)                                   \
-  {                                                             \
-    if (e.toplevel_get ())                                      \
-    {                                                           \
-      object::PrimitiveError error(Keyword, Error);             \
-      show_error_(error, flow_exception.location_get());        \
-      continue;                                                 \
-    }                                                           \
-    else                                                        \
-      throw;							\
-  }
-
 /** Catch exceptions, execute Code, then display the error if not already
  * done, and rethrow it. Also execute Code if no exception caught. */
 #define PROPAGATE_EXCEPTION(Loc, Code)			\
@@ -86,7 +71,7 @@ namespace runner
   {							\
     Code;						\
     current_.reset();					\
-    show_error_(ue, Loc);				\
+    propagate_error_(ue, Loc);				\
     throw;						\
   }							\
   catch(ast::FlowException& e)				\
@@ -132,11 +117,8 @@ namespace runner
   }
 
   void
-  Runner::show_error_ (object::UrbiException& ue, const ast::loc& l)
+  Runner::show_error_ (object::UrbiException& ue)
   {
-    if (ue.location_is_set())
-      return;
-    ue.location_set(l);
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
@@ -145,9 +127,10 @@ namespace runner
     // reverse_iterator (as returned by rend()) and const_reverse_iterator.
     // This is fixed in the draft for the next C++ standard and in
     // g++ >= 4.1.1, but we are using older g++ on some platforms.
-    for (std::vector<const ast::Call*>::reverse_iterator c =
-	   call_stack_.rbegin();
-	 c != call_stack_.rend();
+    call_stack_type& backtrace = const_cast<call_stack_type&>(ue.backtrace_get());
+    for (call_stack_type::reverse_iterator c =
+	   backtrace.rbegin();
+	 c != backtrace.rend();
 	 ++c)
     {
       o.str("");
@@ -155,6 +138,15 @@ namespace runner
 	<< (*c)->name_get ();
       send_message_ ("error", o.str ());
     }
+  }
+
+  void
+  Runner::propagate_error_ (object::UrbiException& ue, const ast::loc& l)
+  {
+    if (!ue.location_is_set())
+      ue.location_set(l);
+    if (!ue.backtrace_is_set())
+      ue.backtrace_set(call_stack_);
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();
@@ -261,7 +253,7 @@ namespace runner
     catch (ast::BreakException& be)
     {
       object::PrimitiveError error("break", "outside a loop");
-      show_error_(error, be.location_get());
+      propagate_error_(error, be.location_get());
       std::swap(scope, locals_);
       throw error;
     }
@@ -652,6 +644,22 @@ namespace runner
   }
 
 
+// Forward flow exceptions up to the top-level, and handle them
+// there.  Makes only sense in a Nary.
+#define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
+  catch (Type flow_exception)                                   \
+  {                                                             \
+    if (e.toplevel_get ())                                      \
+    {                                                           \
+      object::PrimitiveError error(Keyword, Error);             \
+      propagate_error_(error, flow_exception.location_get());   \
+      throw error;						\
+      continue;                                                 \
+    }                                                           \
+    else                                                        \
+      throw;							\
+  }
+
   void
   Runner::operator() (const ast::Nary& e)
   {
@@ -689,38 +697,54 @@ namespace runner
       }
       else
       {
+	// If at toplevel, stop and print errors
 	try
 	{
-	  operator() (i);
+	  // Rewrite flow error if we are at toplevel
+	  try
+	  {
+	    // Propagate potential errors
+	    try
+	    {
+	      operator() (i);
+	    }
+	    PROPAGATE_EXCEPTION(e.location_get(), )
+          }
+	  CATCH_FLOW_EXCEPTION(ast::BreakException,
+			       "break", "outside a loop")
+	  CATCH_FLOW_EXCEPTION(ast::ReturnException,
+			       "return", "outside a function")
+
+	  if (e.toplevel_get () && current_.get ())
+	  {
+	    try
+	    {
+	      ECHO ("toplevel: returning a result to the connection.");
+	      lobby_->value_get ().connection.new_result (current_);
+	      current_.reset ();
+	    }
+	    catch (std::exception &ke)
+	    {
+	      std::cerr << "Exception when printing result: " << ke.what() << std::endl;
+	    }
+	    catch (...)
+	    {
+	      std::cerr << "Unknown exception when printing result\n";
+	    }
+	  }
 	}
 	catch (object::UrbiException& ue)
 	{
-	  show_error_(ue, i->location_get());
-	  if (!e.toplevel_get())
+	  if (e.toplevel_get())
+	    show_error_(ue);
+	  else
 	    throw;
 	}
-	CATCH_FLOW_EXCEPTION(ast::BreakException,
+        CATCH_FLOW_EXCEPTION(ast::BreakException,
 			     "break", "outside a loop")
-	CATCH_FLOW_EXCEPTION(ast::ReturnException,
-			     "return", "outside a function")
+        CATCH_FLOW_EXCEPTION(ast::ReturnException,
+                             "return", "outside a function")
 
-	if (e.toplevel_get () && current_.get ())
-	{
-	  try
-	  {
-	    ECHO ("toplevel: returning a result to the connection.");
-	    lobby_->value_get ().connection.new_result (current_);
-	    current_.reset ();
-	  }
-	  catch (std::exception &ke)
-	  {
-	    std::cerr << "Exception when printing result: " << ke.what() << std::endl;
-	  }
-	  catch (...)
-	  {
-	    std::cerr << "Unknown exception when printing result\n";
-	  }
-	}
       }
     }
 
@@ -792,19 +816,19 @@ namespace runner
     rObject res = object::Object::fresh();
     foreach (const ast::Slot& s, e.slots_get())
     {
-      rObject val = eval(s.value_get());
-      if (s.name_get() == SYMBOL(protos))
+      try
       {
-	// protos should always point to a list.
-	try
+	rObject val = eval(s.value_get());
+	if (s.name_get() == SYMBOL(protos))
 	{
+	  // protos should always point to a list.
 	  TYPE_CHECK(val, object::List);
+	  res->protos_set(val.unsafe_cast<object::List>()->value_get());
 	}
-	PROPAGATE_EXCEPTION(e.location_get(), {});
-	res->protos_set(val.unsafe_cast<object::List>()->value_get());
+	else
+	  res->slot_set(s.name_get(), val);
       }
-      else
-	res->slot_set(s.name_get(), val);
+      PROPAGATE_EXCEPTION(s.location_get(), {});
     }
     current_ = res;
   }

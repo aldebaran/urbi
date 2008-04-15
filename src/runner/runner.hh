@@ -144,7 +144,8 @@ namespace runner
     virtual void work ();
 
   private:
-    void show_error_ (object::UrbiException& ue, const ast::loc& l);
+    void show_error_ (object::UrbiException& ue);
+    void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
     void send_message_ (const std::string& tag, const std::string& msg);
     rObject apply_urbi (const rObject& func,
 			const object::objects_type& args,

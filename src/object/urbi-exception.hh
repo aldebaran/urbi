@@ -16,6 +16,7 @@
 # include "kernel/exception.hh"
 
 # include "object/fwd.hh"
+# include "ast/fwd.hh"
 # include "object/object.hh"
 
 namespace object
@@ -35,6 +36,7 @@ namespace object
     virtual std::string what () const throw ();
 
     ADD_FIELD (ast::loc, location)
+    ADD_FIELD (std::vector<const ast::Call*>, backtrace)
     ADD_FIELD (std::string, msg)
     ADD_FIELD (std::string, function);
 
