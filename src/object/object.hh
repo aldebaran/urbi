@@ -46,11 +46,11 @@ namespace object
     /// \{
     /// The kinds of primitive objects.
     enum kind_type
-      {
+    {
 #define CASE(What, Name) kind_ ## What,
-	APPLY_ON_ALL_PRIMITIVES(CASE)
+      APPLY_ON_ALL_PRIMITIVES(CASE)
 #undef CASE
-      };
+    };
 
     /// Return the kind of this Object.
     virtual kind_type kind_get () const;
@@ -112,7 +112,7 @@ namespace object
     template <typename R>
     boost::optional<R>
     lookup(boost::function1<boost::optional<R>, rObject> action,
-           objects_set_type& marks) const;
+	   objects_set_type& marks) const;
 
     /// Lookup field in object hierarchy.
     /// \return the Object containing slot \b k, or 0 if not found.
@@ -164,14 +164,23 @@ namespace object
 
     /// \name Printing.
     /// \{
+    /// Dump the list of protos.
+    /// FIXME: Should become useless when protos become Urbi lists.
+    std::ostream& protos_dump (std::ostream& o,
+			       runner::Runner& r) const;
     /// Report a short string describing the identity.
-    std::ostream& id_dump (const rObject& self,
-                           std::ostream& o,
-                           runner::Runner& r);
+    std::ostream& id_dump (std::ostream& o,
+			   runner::Runner& r) const;
 
     /// Dump the special slots if there are.
-    virtual std::ostream& special_slots_dump (runner::Runner&, rObject r,
-					      std::ostream& o) const;
+    virtual std::ostream& special_slots_dump (std::ostream& o,
+					      runner::Runner&) const;
+
+    // Print out the value. Suitable for user interaction.
+    std::ostream& print(std::ostream&, runner::Runner&) const;
+
+    /// Report the content on \p o.  For debugging purpose.
+    std::ostream& dump(std::ostream&, runner::Runner&) const;
     /// \}
 
     /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -216,7 +225,7 @@ namespace object
   protected:
     /// Protected constructor to force proper self_ initialization.
     Object ();
-    /// Weak pointer to be able to retrieve smart pointer to this
+    /// Weak pointer to be able to retrieve smart pointer to this.
     libport::weak_ptr<Object> self_;
 
   private:
@@ -245,7 +254,6 @@ namespace object
 			    rObject& ref,
 			    const Object::key_type& k,
 			    rObject o);
-    friend std::ostream& dump(runner::Runner&, rObject, std::ostream&);
   };
 
 
@@ -255,12 +263,12 @@ namespace object
 
   /// Helpers to call Urbi functions from C++
   rObject urbi_call(runner::Runner& r,
-                    rObject& self,
-                    libport::Symbol msg);
+		    rObject& self,
+		    libport::Symbol msg);
   rObject urbi_call(runner::Runner& r,
-                    rObject& self,
-                    libport::Symbol msg,
-                    objects_type& args);
+		    rObject& self,
+		    libport::Symbol msg,
+		    objects_type& args);
 
   /// If the target is a "real" object, then updating means the same
   /// as slot_set: one never updates a proto.  If the target is a
@@ -272,13 +280,6 @@ namespace object
 		    rObject& ref,
 		    const Object::key_type& k,
 		    rObject o);
-
-  // Print out the value. Suitable for user interaction.
-  std::ostream& print(runner::Runner&, rObject, std::ostream&);
-
-  /// Report the content on \p o.  For debugging purpose.
-  std::ostream& dump(runner::Runner&, rObject, std::ostream&);
-
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
   template<class F> bool for_all_protos(rObject& r, F& f);

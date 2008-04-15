@@ -312,7 +312,7 @@ UConnection::send (object::rObject result, const char* tag, const char* p)
   std::ostringstream os;
   if (p)
     os << p;
-  object::print (server_->getCurrentRunner(), result, os);
+  result->print (os, server_->getCurrentRunner());
 
   if (!os.str ().empty ())
   {

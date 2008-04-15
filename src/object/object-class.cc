@@ -51,7 +51,7 @@ namespace object
       tag = arg1->value_get().name_get();
     }
     std::ostringstream os;
-    dump(r, args[0], os);
+    args[0]->dump(os, r);
     //for now our best choice is to dump line by line in "system" messages.
     const std::string stream = os.str();
     boost::tokenizer< boost::char_separator<char> > tok =

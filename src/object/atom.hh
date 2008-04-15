@@ -73,8 +73,7 @@ namespace object
     /// \}
 
     /// For debugging.
-    std::ostream& special_slots_dump (runner::Runner&, rObject r,
-				      std::ostream& o) const;
+    std::ostream& special_slots_dump (std::ostream& o, runner::Runner&) const;
 
   protected:
     /// Protected constructor to force proper self_ initialization.

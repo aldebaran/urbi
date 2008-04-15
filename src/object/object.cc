@@ -57,11 +57,11 @@ namespace object
   Object::string_of (Object::kind_type k)
   {
     switch (k)
-      {
+    {
 #define CASE(What, Name) case kind_ ## What: return #Name; break;
-	APPLY_ON_ALL_PRIMITIVES(CASE);
+      APPLY_ON_ALL_PRIMITIVES(CASE);
 #undef CASE
-      }
+    }
     pabort("unreachable");
   }
 
@@ -304,7 +304,8 @@ namespace object
     return libport::mhas (slots_, k) ? own_slot_get (k) : def;
   }
 
-  void Object::all_slots_copy(const rObject& other)
+  void
+  Object::all_slots_copy(const rObject& other)
   {
     foreach (object::Object::slot_type slot, other->slots_get())
       if (!own_slot_get(slot.first, 0))
@@ -316,7 +317,7 @@ namespace object
   `-----------*/
 
   std::ostream&
-  Object::special_slots_dump (runner::Runner&, rObject, std::ostream& o) const
+  Object::special_slots_dump (std::ostream& o, runner::Runner&) const
   {
     return o;
   }
@@ -327,51 +328,56 @@ namespace object
     return this < &rhs;
   }
 
-  // FIXME: A smart pointer to this (\a self) is required for now to
-  // avoid deleting this at the end of the method.
   std::ostream&
-  Object::id_dump (const rObject& self,
-		   std::ostream& o,
-		   runner::Runner& r)
+  Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
-    rObject id = self->slot_get(SYMBOL(id));
+    rObject id = slot_get(SYMBOL(id));
     objects_type id_args;
-    id_args.push_back(self);
+    id_args.push_back(self());
     rObject data = r.apply(id, id_args);
     std::string s = data->value<String>().name_get();
     return o << s;
   }
 
+
   std::ostream&
-  dump (runner::Runner& runner, rObject r, std::ostream& o)
+  Object::protos_dump(std::ostream& o, runner::Runner& runner) const
   {
-    r->id_dump (r, o, runner);
+    if (!protos_->empty())
+    {
+      o << "protos = ";
+      bool tail = false;
+      foreach (rObject p, *protos_)
+      {
+	if (tail++)
+	  o << ", ";
+	p->id_dump (o, runner);
+      }
+      o << libport::iendl;
+    }
+    return o;
+  }
+
+  std::ostream&
+  Object::dump (std::ostream& o, runner::Runner& runner) const
+  {
+    id_dump(o, runner);
     /// Use xalloc/iword to store our current depth within the stream object.
     static const long idx = o.xalloc();
-    static const long depth_max = 3;
     long& current_depth = o.iword(idx);
-    /// Stop recursion at depth_max.
+
+    // Stop recursion at depth_max.
+    enum { depth_max = 3 };
     if (current_depth > depth_max)
       return o << " <...>";
     ++current_depth;
     o << " {" << libport::incendl;
-    if (r->protos_->begin () != r->protos_->end ())
-      {
-	o << "protos = ";
-	for (Object::protos_type::const_iterator i = r->protos_->begin ();
-	     i != r->protos_->end (); ++i)
-	  {
-	    if (i != r->protos_->begin())
-	      o << ", ";
-	    (*i)->id_dump (*i, o, runner);
-	  }
-	o << libport::iendl;
-      }
-    r->special_slots_dump (runner, r, o);
-    foreach(Object::slot_type s, r->slots_)
+    protos_dump(o, runner);
+    special_slots_dump (o, runner);
+    foreach(Object::slot_type s, slots_)
     {
       o << s.first << " = ";
-      dump(runner, s.second, o) << libport::iendl;
+      s.second->dump(o, runner) << libport::iendl;
     }
     o << libport::decindent << '}';
     //We can not reuse current_depth variable above according to spec.
@@ -380,14 +386,13 @@ namespace object
   }
 
   std::ostream&
-  print(runner::Runner& runner, rObject r, std::ostream& out)
+  Object::print(std::ostream& o, runner::Runner& runner) const
   {
     try
     {
-      rObject s = urbi_call(runner, r, SYMBOL(asString));
-      out << s->value<String>().name_get();
-
-      return out;
+      rObject rthis = self();
+      rObject s = urbi_call(runner, rthis, SYMBOL(asString));
+      return o << s->value<String>().name_get();
     }
     // Check if asString was found, especially for bootstrap: asString
     // is implemented in urbi/urbi.u, but print is called to show
@@ -395,8 +400,7 @@ namespace object
     catch (LookupError&)
     {
       // If no asString method is supplied, print the unique id
-      out << std::hex << r.get();
-      return out;
+      return o << std::hex << this;
     }
   }
 

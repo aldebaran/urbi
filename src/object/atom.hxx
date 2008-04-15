@@ -188,8 +188,7 @@ namespace object
   template <typename Traits>
   inline
   std::ostream&
-  Atom<Traits>::special_slots_dump (runner::Runner&, rObject,
-				    std::ostream& o) const
+  Atom<Traits>::special_slots_dump (std::ostream& o, runner::Runner&) const
   {
     return o << "value" << " = " << libport::deref << value_ << libport::iendl;
   }
@@ -197,8 +196,8 @@ namespace object
   template <>
   inline
   std::ostream&
-  Atom<alien_traits>::special_slots_dump (runner::Runner&, rObject,
-					  std::ostream& o) const
+  Atom<alien_traits>::special_slots_dump (std::ostream& o,
+					  runner::Runner&) const
   {
     return o << "type = " << value_.get<1>() << libport::iendl;
   }
@@ -206,21 +205,21 @@ namespace object
   template <>
   inline
   std::ostream&
-  Atom<list_traits>::special_slots_dump (runner::Runner& runner, rObject r,
-					 std::ostream& o) const
+  Atom<list_traits>::special_slots_dump (std::ostream& o,
+					 runner::Runner& runner) const
   {
     o << "value" << " = " << libport::deref;
-    print(runner, r, o);
+    print(o, runner);
     return o << libport::iendl;
   }
 
   template <>
   inline
   std::ostream&
-  Atom<delegate_traits>::special_slots_dump (runner::Runner&, rObject,
-					     std::ostream& o) const
+  Atom<delegate_traits>::special_slots_dump (std::ostream& o,
+					     runner::Runner&) const
   {
-  return o << "delegate" << libport::iendl;
+    return o << "delegate" << libport::iendl;
   }
 
   /*-------.
