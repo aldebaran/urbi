@@ -77,6 +77,8 @@ namespace parser
     // parse functions.
     passert(tweast_, !tweast_);
     tweast_ = &t;
+    if (getenv("DESUGAR"))
+      LIBPORT_ECHO("Desugar " << t);
     int res = parse (t.input_get());
     tweast_ = 0;
 

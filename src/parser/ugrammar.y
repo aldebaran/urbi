@@ -115,6 +115,14 @@
     | Calls, lvalues etc.  |
     `---------------------*/
 
+  /// Store in Var the AST of the parsing of Code.
+# define DESUGAR_(Var, Code)				\
+  Var = ::parser::parse(::parser::Tweast() << Code)
+
+  /// Store in $$ the AST of the parsing of Code.
+  // Fragile in case Bison changes its expansion of $$.
+# define DESUGAR(Code)				\
+  DESUGAR_(yyval.expr, Code)
     /// "<target> . <method> (args)".
     static
     ast::Call*
@@ -182,42 +190,69 @@
     /// \param lvalue   object and slot to change.
     /// \param change   the Urbi method to invoke.
     /// \param value    optional assigned value.
+    /// \param modifier optional time modifier object.
     /// \return The AST node calling the slot assignment.
     static
     inline
-    ast::Call*
+    ast::Exp*
     ast_slot_change (const loc& l,
 		     ast::Call* lvalue, libport::Symbol& change,
-		     ast::Exp* value)
+		     ast::Exp* value, ast::Exp* modifier = 0)
     {
-      ast::Call* res =
-	ast_call(l,
-		 lvalue->args_get().front(),
-		 // FIXME: this new is stupid.  We need to clean
-		 // this set of call functions.
-		 new libport::Symbol(change),
-		 new ast::String(lvalue->location_get(), lvalue->name_get()));
-      if (value)
-	res->args_get().push_back(value);
+      ast::Exp* res = 0;
+      if (modifier)
+      {
+	libport::Symbol gen = libport::Symbol::fresh(SYMBOL(generator));
+	libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
+	DESUGAR_
+	  (res,
+	   "{"
+	   << "var " << gen << " = "
+	   <<   "TrajectoryGenerator.new(" << value << ", " << modifier << ") |"
+	   << "var " << tag << " = "
+	   <<   lvalue << ".getLazyLocalSlot (\"tag_\", Tag.new, true) |"
+	   << tag << ": every (" << gen << ".getPeriod)"
+	   <<     "{"
+	   <<        "if (" << gen << ".isOver)"
+	   <<           tag << ".stop |"
+	   <<        lvalue << " = " << gen << ".get"
+	   <<      "}"
+	   << "}");
+      }
+      else
+      {
+	ast::Call* call =
+	  ast_call(l,
+		   lvalue->args_get().front(),
+		   // FIXME: this new is stupid.  We need to clean
+		   // this set of call functions.
+		   new libport::Symbol(change),
+		   new ast::String(lvalue->location_get(), lvalue->name_get()));
+	if (value)
+	  call->args_get().push_back(value);
+	res = call;
+      }
       return res;
     }
 
     static
-    ast::Call*
-    ast_slot_set (const loc& l, ast::Call* lvalue, ast::Exp* value)
+    ast::Exp*
+    ast_slot_set (const loc& l, ast::Call* lvalue,
+		  ast::Exp* value, ast::Object* modifier = 0)
     {
-      return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
+      return ast_slot_change(l, lvalue, SYMBOL(setSlot), value, modifier);
     }
 
     static
-    ast::Call*
-    ast_slot_update (const loc& l, ast::Call* lvalue, ast::Exp* value)
+    ast::Exp*
+    ast_slot_update (const loc& l, ast::Call* lvalue,
+		     ast::Exp* value, ast::Object* modifier = 0)
     {
-      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
+      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value, modifier);
     }
 
     static
-    ast::Call*
+    ast::Exp*
     ast_slot_remove  (const loc& l, ast::Call* lvalue)
     {
       return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
@@ -356,14 +391,6 @@
     return scanner.yylex(val, loc, &up);
   }
 
-  /// Store in Var the AST of the parsing of Code.
-# define DESUGAR_(Var, Code)				\
-  Var = ::parser::parse(::parser::Tweast() << Code)
-
-  /// Store in $$ the AST of the parsing of Code.
-  // Fragile in case Bison changes its expansion of $$.
-# define DESUGAR(Code)				\
-  DESUGAR_(yyval.expr, Code)
 } // %code requires.
 
 /* Tokens and nonterminal symbols, with their type */
@@ -520,7 +547,6 @@
 %type <expr>  flag
 %type <expr>  flags.0
 %type <expr>  flags.1
-%type <expr>  namedarguments
 %type <expr>  softtest
 %type <expr>  stmt
 
@@ -737,7 +763,7 @@ stmt:
   {
     /// var s = Object.clone.
     static
-    ast::Call*
+    ast::Exp*
     ast_class (const loc&l, ast::Call* s)
     {
       return ast_slot_set (l, s,
@@ -890,10 +916,22 @@ k1_id:
 `-------------------*/
 
 stmt:
-	lvalue "=" expr namedarguments { $$ = ast_slot_update (@$, $1, $3); }
-| "var" lvalue "=" expr namedarguments { $$ = ast_slot_set    (@$, $2, $4); }
-| "var" lvalue { $$ = ast_slot_set(@$, $2, ast_call(@$, 0, SYMBOL(nil)));}
-| "delete" lvalue                      { $$ = ast_slot_remove (@$, $2);     }
+ lvalue "=" expr namedarguments
+    {
+      $$ = ast_slot_update(@$, $1, $3, $4);
+    }
+| "var" lvalue "=" expr namedarguments
+    {
+      $$ = ast_slot_set(@$, $2, $4, $5);
+    }
+| "var" lvalue
+    {
+      $$ = ast_slot_set(@$, $2, ast_call(@$, 0, SYMBOL(nil)));
+    }
+| "delete" lvalue
+    {
+      $$ = ast_slot_remove(@$, $2);
+    }
 ;
 
 %token	TOK_SLASH_EQ    "/="
@@ -1160,16 +1198,6 @@ expr:
     }
 ;
 
-/*-----------------.
-| namedarguments.  |
-`-----------------*/
-
-namedarguments:
-  /* empty */ { $$ = 0; }
-| "identifier" ":" expr namedarguments { $$ = 0; }
-;
-
-
 /*------------.
 | time_expr.  |
 `------------*/
@@ -1198,6 +1226,11 @@ expr:
 //| "%" name            { $$ = 0; }
 ;
 
+
+/*----------------------------.
+| slots and literal objects.  |
+`----------------------------*/
+
 %token TOK_LPAREN_PIPE "(|"
        TOK_PIPE_RPAREN "|)";
 expr:
@@ -1205,7 +1238,7 @@ expr:
 ;
 
 %union { ast::Object* object; };
-%type <object> slots slots.1;
+%type <object> slots slots.1 namedarguments namedarguments.1;
 %printer { debug_stream() << libport::deref << $$; } <slot> <object>;
 
 slots:
@@ -1216,6 +1249,27 @@ slots:
 slots.1:
   slot           { $$ = new ast::Object(@$); $$->slots_get().push_back($1); }
 | slots "," slot { $$->slots_get().push_back($3); }
+;
+
+/*-----------------.
+| namedarguments.  |
+`-----------------*/
+
+namedarguments:
+  /* empty */      { $$ = 0;  }
+| namedarguments.1 { $$ = $1; }
+;
+
+namedarguments.1:
+  slot
+    {
+      $$ = new ast::Object(@$);
+      $$->slots_get().push_back($1);
+    }
+| namedarguments.1 slot
+    {
+      $$->slots_get().push_back($2);
+    }
 ;
 
 %union { ast::Slot* slot; };
