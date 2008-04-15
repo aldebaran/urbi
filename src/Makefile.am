@@ -51,7 +51,7 @@ include $(top_srcdir)/build-aux/revision.mk
 kernelinclude_HEADERS =
 dist_libkernel_la_SOURCES =
 nodist_libkernel_la_SOURCES =
-
+BUILT_SOURCES += $(nodist_libkernel_la_SOURCES)
 
 ## ---------- ##
 ## uobject/.  ##

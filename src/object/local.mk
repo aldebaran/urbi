@@ -2,7 +2,7 @@
 ## Generate the list of symbols we use.  ##
 ## ------------------------------------- ##
 
-symbols_hh = $(srcdir)/object/symbols.hh
+symbols_hh = object/symbols.hh
 # We don't include $(nodist_libkernel_la_SOURCES) here, since it
 # includes symbols.hh itself.  Currently there seems to be no need to
 # support generated files.
