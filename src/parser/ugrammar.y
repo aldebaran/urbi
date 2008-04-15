@@ -202,20 +202,22 @@
       ast::Exp* res = 0;
       if (modifier)
       {
-	libport::Symbol gen = libport::Symbol::fresh(SYMBOL(generator));
+	libport::Symbol gen = libport::Symbol::fresh(SYMBOL(gen));
 	libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
 	DESUGAR_
 	  (res,
 	   "{"
 	   << "var " << gen << " = "
-	   <<   "TrajectoryGenerator.new(" << value << ", " << modifier << ") |"
+	   <<   "TrajectoryGenerator.new(" << lvalue << ", "
+	   <<                            value << ", "
+	   <<                            "_addProto(modifier, Object)) |"
 	   << "var " << tag << " = "
 	   <<   lvalue << ".getLazyLocalSlot (\"tag_\", Tag.new, true) |"
 	   << tag << ": every (" << gen << ".getPeriod)"
 	   <<     "{"
 	   <<        "if (" << gen << ".isOver)"
 	   <<           tag << ".stop |"
-	   <<        lvalue << " = " << gen << ".get"
+	   <<        lvalue << " = " << gen << ".get (" << lvalue << ")"
 	   <<      "}"
 	   << "}");
       }
