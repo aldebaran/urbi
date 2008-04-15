@@ -97,7 +97,6 @@ do Global
   # Does not require that object derives from Object to have addProto.
   function _addProto(obj, proto)
   {
-    # Call the "init" from the parent, retargetted to the child.
     Object.getSlot("addProto").apply([obj, proto]) |
     obj
   };
