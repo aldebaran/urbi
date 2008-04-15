@@ -84,20 +84,20 @@ namespace runner
 #define PROPAGATE_EXCEPTION(Loc, Code)			\
   catch(object::UrbiException& ue)			\
   {							\
-    Code						\
+    Code;						\
     current_.reset();					\
     show_error_(ue, Loc);				\
     throw;						\
   }							\
   catch(ast::FlowException& e)				\
   {							\
-    Code						\
+    Code;						\
     current_.reset();					\
     throw;						\
   }							\
   catch(scheduler::SchedulerException& e)		\
   {							\
-    Code						\
+    Code;						\
     current_.reset();					\
     throw;						\
   }							\
@@ -105,13 +105,13 @@ namespace runner
   {							\
     std::cerr << "Unexpected exception propagated: "	\
 	      << e.what() << std::endl;			\
-    Code						\
+    Code;						\
     throw;						\
   }							\
   catch(...)						\
   {							\
     std::cerr << "Unknown exception propagated\n";	\
-    Code						\
+    Code;						\
     throw;						\
   }							\
   Code
@@ -271,7 +271,7 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
-    PROPAGATE_EXCEPTION(fn.location_get(), std::swap(scope, locals_);)
+    PROPAGATE_EXCEPTION(fn.location_get(), std::swap(scope, locals_));
 
     return current_;
   }
@@ -285,7 +285,10 @@ namespace runner
       eval (e);
     }
     PROPAGATE_EXCEPTION(e.location_get(),
-			{run_at_exit (scope); std::swap(locals_, scope);});
+			{
+			  run_at_exit (scope);
+			  std::swap(locals_, scope);
+			});
     return current_;
   }
 
@@ -420,7 +423,7 @@ namespace runner
     {
       tgt = target(e.args_get().front(), e.name_get());
     }
-    PROPAGATE_EXCEPTION(e.location_get(), {};)
+    PROPAGATE_EXCEPTION(e.location_get(), {});
     assertion(tgt);
 
 
@@ -437,7 +440,7 @@ namespace runner
       // Ask the target for the handler of the message.
       val = tgt->slot_get (e.name_get ());
     }
-    PROPAGATE_EXCEPTION(e.location_get(), {};)
+    PROPAGATE_EXCEPTION(e.location_get(), {});
     assertion(val);
 
 
@@ -463,7 +466,7 @@ namespace runner
     {
       apply (val, args, call_message);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_back();)
+    PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_back());
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
@@ -489,7 +492,7 @@ namespace runner
     {
       TYPE_CHECK(current_, object::List);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), {};)
+    PROPAGATE_EXCEPTION(e.location_get(), {});
 
     JECHO("foreach body", e.body_get());
 
@@ -540,7 +543,7 @@ namespace runner
 	  break;
 	}
 	// Restore previous locals_, even if an exception was thrown.
-	PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_);)
+	PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_));
       }
     }
 
@@ -806,7 +809,11 @@ namespace runner
 	throw;
       }
     }
-    PROPAGATE_EXCEPTION(e.location_get(), { std::swap(locals, locals_); non_interruptible_set (was_non_interruptible); })
+    PROPAGATE_EXCEPTION(e.location_get(),
+			{
+			  std::swap(locals, locals_);
+			  non_interruptible_set (was_non_interruptible);
+			});
     if (target)
       current_ = target;
   }
@@ -855,7 +862,7 @@ namespace runner
       // Execution will go on as planned
       return;
     }
-    PROPAGATE_EXCEPTION(t.location_get(), pop_tag (););
+    PROPAGATE_EXCEPTION(t.location_get(), pop_tag ());
   }
 
   object::rObject
