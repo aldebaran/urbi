@@ -26,7 +26,6 @@
   Macro(BANG, "!");                               \
   Macro(BANG_EQ, "!=");                           \
   Macro(BANG_EQ_EQ, "!==");                       \
-  Macro(Binary, "Binary");                        \
   Macro(CARET, "^");                              \
   Macro(Call, "Call");                            \
   Macro(Code, "Code");                            \
@@ -51,8 +50,6 @@
   Macro(List, "List");                            \
   Macro(Lobby, "Lobby");                          \
   Macro(MINUS, "-");                              \
-  Macro(MINUS_EQ, "-=");                          \
-  Macro(MINUS_MINUS, "--");                       \
   Macro(NEW, "NEW");                              \
   Macro(Name, "Name");                            \
   Macro(Object, "Object");                        \
@@ -61,12 +58,9 @@
   Macro(PIPE_PIPE, "||");                         \
   Macro(PLUS, "+");                               \
   Macro(PLUS_EQ, "+=");                           \
-  Macro(PLUS_PLUS, "++");                         \
   Macro(Primitive, "Primitive");                  \
   Macro(SLASH, "/");                              \
-  Macro(SLASH_EQ, "/=");                          \
   Macro(STAR, "*");                               \
-  Macro(STAR_EQ, "*=");                           \
   Macro(STAR_STAR, "**");                         \
   Macro(Scope, "Scope");                          \
   Macro(String, "String");                        \
@@ -102,7 +96,6 @@
   Macro(cos, "cos");                              \
   Macro(currentRunner, "currentRunner");          \
   Macro(cycle, "cycle");                          \
-  Macro(data, "data");                            \
   Macro(debugoff, "debugoff");                    \
   Macro(debugon, "debugon");                      \
   Macro(doSetSlot, "doSetSlot");                  \
@@ -124,7 +117,6 @@
   Macro(isA, "isA");                              \
   Macro(isScope, "isScope");                      \
   Macro(job, "job");                              \
-  Macro(keywords, "keywords");                    \
   Macro(loadFile, "loadFile");                    \
   Macro(lobby, "lobby");                          \
   Macro(locals, "locals");                        \
