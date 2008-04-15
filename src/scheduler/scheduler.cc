@@ -168,8 +168,9 @@ namespace scheduler
     to_kill_ = 0;
 
     /// If during this cycle a new job has been created by an existing job,
-    /// start it.
-    if (jobs_to_start_)
+    /// start it. Also start if a possible side effect happened, it may have
+    /// occurred later then the waiting jobs in the cycle.
+    if (jobs_to_start_ || possible_side_effect_)
       deadline = 0;
 
     return deadline;
