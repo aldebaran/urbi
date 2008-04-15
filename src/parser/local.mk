@@ -40,7 +40,7 @@ nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 EXTRA_DIST += $(parser_dir)/ugrammar.y
-ugrammar_deps = $(BISONXX_IN) $(parser_dir)/parser.mk
+ugrammar_deps = $(BISONXX_IN) $(parser_dir)/local.mk
 ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
@@ -79,7 +79,7 @@ dist_libkernel_la_SOURCES += $(parser_dir)/flex-lexer.hh
 nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parser_dir)/utoken.l
-utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/parser.mk
+utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/local.mk
 	@rm -f $@.tmp
 	@touch $@.tmp
 # -s to disable the default rule (ECHO).

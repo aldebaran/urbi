@@ -67,12 +67,12 @@ $(dist_uobject_sources)
 ## Sub directories.  ##
 ## ----------------- ##
 
-include ast/ast.mk
-include parser/parser.mk
-include object/object.mk
-include runner/runner.mk
-include scheduler/scheduler.mk
-include scheduler/libcoroutine/libcoroutine.mk
+include ast/local.mk
+include parser/local.mk
+include object/local.mk
+include runner/local.mk
+include scheduler/local.mk
+include scheduler/libcoroutine/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
@@ -110,9 +110,5 @@ console-server.cc				\
 ../lib/network/bsdnet/network.cc
 
 libkernel_la_LIBADD = $(top_builddir)/lib/libport/libport.la
-
-# FIXME: We might need these guys somewhere: $(PTHREAD_LIBS).  In
-# libkernel, or urbi_console_LDADD?
-# urbi_console_LDADD = libkernel.la libport.la $(PTHREAD_LIBS)
 
 endif
