@@ -46,7 +46,7 @@ namespace object
       return String::fresh(SYMBOL(LT_Code_GT));
     std::stringstream ss;
     FETCH_ARG(0, Code);
-    ss << *arg0->value_get().body_get();
+    ss << arg0->value_get().body_get()->body_get();
     return String::fresh(libport::Symbol(ss.str()));
   }
 
