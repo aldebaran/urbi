@@ -175,6 +175,19 @@ namespace object
   | Slots.  |
   `--------*/
 
+  rObject
+  Object::urbi_protos_get ()
+  {
+    if (!protos_cache_)
+    {
+      rList protos = List::fresh (*protos_);
+      protos_cache_ = protos;
+      delete protos_;
+      protos_ = &protos->value_get ();
+    }
+    return protos_cache_;
+  }
+
   template <typename R>
   boost::optional<R>
   Object::lookup(boost::function1<boost::optional<R>, rObject> action,
@@ -342,13 +355,13 @@ namespace object
       return o << " <...>";
     ++current_depth;
     o << " {" << libport::incendl;
-    if (r->protos_.begin () != r->protos_.end ())
+    if (r->protos_->begin () != r->protos_->end ())
       {
 	o << "protos = ";
-	for (Object::protos_type::const_iterator i = r->protos_.begin ();
-	     i != r->protos_.end (); ++i)
+	for (Object::protos_type::const_iterator i = r->protos_->begin ();
+	     i != r->protos_->end (); ++i)
 	  {
-	    if (i != r->protos_.begin())
+	    if (i != r->protos_->begin())
 	      o << ", ";
 	    (*i)->id_dump (*i, o, runner);
 	  }

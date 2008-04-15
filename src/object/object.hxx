@@ -25,7 +25,7 @@ namespace object
 
   inline
   Object::Object ()
-    : protos_ (), slots_ (), locals_ (false)
+    : protos_ (new protos_type), slots_ (), locals_ (false)
   {
     root_classes_initialize();
   }
@@ -40,7 +40,7 @@ namespace object
   }
 
   inline
-  rObject 
+  rObject
   Object::self() const
   {
     rObject res;
@@ -50,7 +50,10 @@ namespace object
 
   inline
   Object::~Object ()
-  {}
+  {
+    if (!protos_cache_)
+      delete protos_;
+  }
 
 
   /*-------.
@@ -92,8 +95,8 @@ namespace object
   Object::proto_add (const rObject& p)
   {
     assert(p);
-    if (!libport::has(protos_, p))
-      protos_.push_front (p);
+    if (!libport::has(*protos_, p))
+      protos_->push_front (p);
     return *this;
   }
 
@@ -102,7 +105,7 @@ namespace object
   Object::proto_remove (const rObject& p)
   {
     assert(p);
-    protos_.remove (p);
+    protos_->remove (p);
     return *this;
   }
 
@@ -110,7 +113,7 @@ namespace object
   const Object::protos_type&
   Object::protos_get () const
   {
-    return protos_;
+    return *protos_;
   }
 
 

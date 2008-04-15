@@ -78,6 +78,8 @@ namespace object
     Object& proto_remove (const rObject& p);
     /// Read only access to protos.
     const protos_type& protos_get () const;
+    // Urbi access to protos.
+    rObject urbi_protos_get ();
     /// \}
 
     /// \name The slots.
@@ -229,7 +231,11 @@ namespace object
 
   private:
     /// The protos.
-    protos_type protos_;
+    protos_type* protos_;
+
+    /// The protos cache at the Urbi level.
+    rObject protos_cache_;
+
     /// The slots.
     slots_type slots_;
     /// Whether is a locals object.

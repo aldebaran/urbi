@@ -177,13 +177,7 @@ namespace object
   object_class_protos (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
-    rObject obj = args[0];
-
-    object::list_traits::type l;
-    BOOST_FOREACH (const rObject o, obj->protos_get())
-      l.push_back(o);
-
-    return object::List::fresh(l);
+    return args[0]->urbi_protos_get ();
   }
 
 
