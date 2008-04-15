@@ -270,7 +270,7 @@ do {						\
 
 
 /// Unput a large string.
-// 
+//
 // Do not forget to remove from the pre-length the length of Str when
 // in prescanner mode, otherwise the prescanner will count too many
 // characters: those of the original string, and those of the unput
@@ -583,8 +583,11 @@ FLAVOR   [;|,&]?
     }
   out_of_loop:
   std::ostringstream rewritten;
-  rewritten << "_addProto((| keywords: \"" << keywords << "\", "
-	    << "data: \"" << libport::escape(data) << "\"|), Binary);";
+  rewritten << "(|"
+	    << "  protos: [Binary], "
+	    << "  keywords: \"" << keywords << "\", "
+	    << "  data: \"" << libport::escape(data) << "\""
+	    << "|);";
   UNPUT(rewritten.str());
 }
 
