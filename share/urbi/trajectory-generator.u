@@ -1,0 +1,89 @@
+class Global.TrajectoryGenerator
+{
+  function init(startValue, targetValue, args)
+  {
+    self.targetValue = targetValue|
+    self.startTime = time|
+    self.startValue = startValue |
+    var content = args.slotNames|
+    if (content.has("time"))
+    {
+      var self.get = getSlot("timeGet") |
+      var self.duration = args.getSlot("time") |
+      var self.adaptive = args.getLazyLocalSlot("adaptive", 0, false)
+    }
+    else if (content.has("accel"))
+    {
+      var self.get = getSlot("accelGet") |
+      var self.accel = args.getSlot("accel") |
+      var self.duration = sqrt ( 2 * (targetValue - startValue) / accel)
+    }
+    else if (content.has("speed"))
+    {
+      var self.adaptive = args.getLazyLocalSlot("adaptive", 0, false) |
+      var self.speed = args.speed;
+      var self.duration = abs(startValue - targetValue) / speed |
+      if (!adaptive)
+      {
+      var self.get = getSlot("timeGet")
+      }
+      else
+      {
+	var self.get = getSlot("adaptiveSpeedGet")
+      }
+    }
+    else if (content.has("sin") || content.has("cos"))
+    {
+      var self.get = getSlot("sinGet");
+      var self.phase =  args.getLazyLocalSlot("phase", 0, false) |
+      var self.ampli =  args.getLazyLocalSlot("ampli", 0, false) |
+      if (content.has("cos"))
+      {
+	var self.period =  args.cos |
+	self.phase += pi/2
+      }
+      else
+	var self.period = args.sin
+    }
+  };
+  var startValue = 0;
+  var startTime;
+  var targetValue;
+  var isOver = false;
+
+  function timeGet(currentVal)
+  {
+    var stat =  (time - startTime) / duration |
+    if (stat > 1) 
+    {
+      isOver = true|
+      return targetValue
+    } |
+    startValue + (targetValue - startValue) * stat
+  };
+  function sinGet(currentVal)
+  {
+    targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
+  };
+  function accelGet(currentVal)
+  {
+    if (time - startTime > duration)
+    {
+      isOver = true |
+      return targetValue
+    } |
+    var d = (time - startTime) |
+    d * d * 0.5 * accel
+  };
+  function adaptiveSpeedGet(currentVal)
+  {
+     var nextVal = currentVal + speed * sgn(targetValue - currentVal);
+     if ((currentVal < targetValue && targetValue < nextVal)
+       || (nextVal < targetValue && targetValue < currentVal))
+     {
+       isOver = true |
+       nextVal = targetValue
+     } |
+     nextVal
+  };
+};
