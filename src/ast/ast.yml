@@ -510,14 +510,16 @@ And:
   super: Binary
   printer:
     - ~lhs
-    - '" & "'
+    - '" &"'
+    - libport::iendl
     - ~rhs
 
 Pipe:
   super: Binary
   printer:
     - ~lhs
-    - '" | "'
+    - '" |"'
+    - libport::iendl
     - ~rhs
 
 
