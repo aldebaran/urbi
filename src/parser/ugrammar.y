@@ -827,6 +827,8 @@ stmt:
 
 // Functions.
 stmt:
+  // If you want to use something more general than "k1_id", read the
+  // comment of k1_id.
   "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt", i.e.,
