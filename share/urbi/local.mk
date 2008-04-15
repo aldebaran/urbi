@@ -4,7 +4,7 @@ share/urbi/float.u				\
 share/urbi/group.u				\
 share/urbi/k1.u					\
 share/urbi/list.u				\
-share/urbi/semaphore.h				\
+share/urbi/semaphore.u				\
 share/urbi/singleton.u				\
 share/urbi/string.u				\
 share/urbi/urbi.u
