@@ -64,13 +64,13 @@ namespace object
     p.process_errors(&errs);
     errs.accept(r);
 
-    if (ast::Nary* ast = p.ast_get())
+    if (const ast::Nary* ast = p.ast_get())
     {
-      ast->accept(r);
+      rObject res = r.eval (*ast);
       //FIXME: deleting the tree now causes segv.
       //delete p.command_tree_get();
       //p.command_tree_set (0);
-      return r.current_get();
+      return res;
     }
     else
       throw e;

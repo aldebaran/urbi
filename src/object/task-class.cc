@@ -79,14 +79,6 @@ namespace object
   }
 
   static rObject
-  task_class_result (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-
-    return yield_until_terminated (r, args[0])->current_get ();
-  }
-
-  static rObject
   task_class_terminate (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
@@ -112,7 +104,6 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(task, Name);
     DECLARE (init);
-    DECLARE (result);
     DECLARE (setSideEffectFree);
     DECLARE (terminate);
     DECLARE (waitForChanges);

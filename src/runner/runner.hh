@@ -80,15 +80,15 @@ namespace runner
     rObject apply (const rObject& func, const libport::Symbol msg,
 		   const object::rList& args);
 
-    /// Eval a tree in a given local scope
+    /// Evaluate a tree and return the result.
+    rObject eval (const ast::Ast& e);
+
+    /// Evaluate a tree in a given local scope
     rObject eval_in_scope (rObject scope, const ast::Exp& e);
 
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
     rObject eval_tag (const ast::Exp&);
-
-    /// Return the result of an evaluation. The runner must be terminated.
-    const rObject& current_get () const;
 
     /// Make an urbi function from an ast chunk
     rObject
@@ -97,8 +97,6 @@ namespace runner
   protected:
     /// \name Evaluation.
     /// \{
-    /// Evaluate a tree and return the \a current_ that results.
-    rObject eval (const ast::Ast& e);
 
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for Io.

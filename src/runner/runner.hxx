@@ -66,13 +66,6 @@ namespace runner
   }
 
   inline
-  const object::rObject&
-  Runner::current_get () const
-  {
-    return current_;
-  }
-
-  inline
   Runner::rObject
   Runner::eval (const ast::Ast& e)
   {
