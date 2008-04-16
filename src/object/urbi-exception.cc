@@ -42,4 +42,4 @@ namespace object
     return msg_get ();
   }
 
-}; // namespace object
+} // namespace object
