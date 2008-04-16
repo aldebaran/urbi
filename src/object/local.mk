@@ -45,6 +45,7 @@ object/idelegate.hh				\
 object/integer-class.cc				\
 object/integer-class.hh				\
 object/lazy.hh					\
+object/lazy.cc					\
 object/list-class.cc				\
 object/list-class.hh				\
 object/object-class.cc				\

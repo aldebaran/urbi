@@ -295,6 +295,7 @@ namespace object
   Object::slot_copy (const Object::key_type& name, rObject from)
   {
     this->slot_set(name, from->slot_get(name));
+    return *this;
   }
 
   void
