@@ -132,17 +132,17 @@ class Global.CallMessage
 {
   function argString(i)
   {
-    args.idx(i).string
+    args.nth(i).string
   };
 
   function evalArgAt(i)
   {
-    args.idx(i).eval
+    args.nth(i).eval
   };
 
   function argAt(i)
   {
-    args.idx(i).value
+    args.nth(i).value
   };
 
   function evalArgs()
