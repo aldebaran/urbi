@@ -153,15 +153,15 @@ namespace object
     make_outer_scope(const rObject& parent, const rObject& self)
     {
       rObject res = Object::make_scope(parent);
-      res->slot_set(SYMBOL(getSlot), scope_class->slot_get(SYMBOL(getSlot)));
-      res->slot_set(SYMBOL(locateSlot), scope_class->slot_get(SYMBOL(locateSlot)));
-      res->slot_set(SYMBOL(removeSlot), scope_class->slot_get(SYMBOL(removeSlot)));
-      res->slot_set(SYMBOL(updateSlot), scope_class->slot_get(SYMBOL(updateSlot)));
+      res->slot_copy(SYMBOL(getSlot), scope_class);
+      res->slot_copy(SYMBOL(locateSlot), scope_class);
+      res->slot_copy(SYMBOL(removeSlot), scope_class);
+      res->slot_copy(SYMBOL(updateSlot), scope_class);
       res->slot_set(SYMBOL(self), self);
       // We really need to copy 'locals' in every scope, or else
       // Scope's methods will get completely fubared: 'locals' will be
       // found in 'self' and will thus not be the local scope!
-      res->slot_set(SYMBOL(locals), scope_class->slot_get(SYMBOL(locals)));
+      res->slot_copy(SYMBOL(locals), scope_class);
       return res;
     }
   }
@@ -170,7 +170,7 @@ namespace object
   Object::make_method_scope(const rObject& self)
   {
     rObject res = make_outer_scope(global_class, self);
-    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(setSlot)));
+    res->slot_copy(SYMBOL(setSlot), scope_class);
     return res;
   }
 
@@ -289,6 +289,12 @@ namespace object
       throw RedefinitionError(k);
     slots_[k] = o;
     return *this;
+  }
+
+  Object&
+  Object::slot_copy (const Object::key_type& name, rObject from)
+  {
+    this->slot_set(name, from->slot_get(name));
   }
 
   void

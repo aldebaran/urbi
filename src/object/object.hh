@@ -147,6 +147,16 @@ namespace object
     /// \precondition the slot does not exist in this.
     Object& slot_set (const key_type& k, rObject o);
 
+    /// \brief Copy another object's slot.
+    ///
+    /// \precondition the slot does not exist in this.
+    /// \precondition the slot exists in \a from.
+    /// \postcondition the slot exists in \a this.
+    /// \param name The name of the slot to copy
+    /// \param from The object to copy the slot from
+    /// \return this
+    Object& slot_copy (const key_type& name, rObject from);
+
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
     /// protos).
