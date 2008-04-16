@@ -36,9 +36,9 @@ class Global.Group
   function asString ()
   {
     if (self === Group)
-      "<Group>"
+      "<" + protoName + ">"
     else
-      "Group " + members.asString
+      protoName + " " + members.asString
   };
 
   // FIXME: This implementation always evaluates the
