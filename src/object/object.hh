@@ -126,9 +126,15 @@ namespace object
 
 
     /// Lookup field in object hierarchy.
-    const rObject& slot_get (const key_type& k) const;
-    rObject& slot_get (const key_type& k);
-
+    /// \param name The name of the slot to search
+    /// \param def  The optional default value
+    /// \throw LookupError if \a def isn't given and the slot isn't found.
+    rObject slot_get (
+      const key_type& k,
+      boost::optional<rObject> def = boost::optional<rObject>()) const;
+    rObject& slot_get (
+      const key_type& k,
+      boost::optional<rObject&> def = boost::optional<rObject&>());
 
     /// If the target is a "real" object, then updating means the same
     /// as slot_set: one never updates a proto.  If the target is a

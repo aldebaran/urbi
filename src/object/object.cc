@@ -265,20 +265,33 @@ namespace object
     return r;
   }
 
-  const rObject&
-  Object::slot_get (const key_type& k) const
+  rObject
+  Object::slot_get (const key_type& k, boost::optional<rObject> odef) const
   {
-    rObject cont = safe_slot_locate(k);
-    rObject& res = cont->own_slot_get(k, 0) ? cont->own_slot_get(k) :
-      cont->own_slot_get(SYMBOL(fallback));
-    assertion(res);
-    return res;
+    // Take a local copy, to be able to pass it by ref to
+    // slot_get.
+    rObject def = odef.get();
+    // Otherwise, this would call this method, and not the non-const
+    // one, resulting in an infinite recursion.
+    return const_cast<Object*>(this)->slot_get(k, def);
   }
 
   rObject&
-  Object::slot_get (const key_type& k)
+  Object::slot_get (const key_type& k, boost::optional<rObject&> def)
   {
-    return const_cast<rObject&>(const_cast<const Object*>(this)->slot_get(k));
+    rObject cont;
+    if (def)
+      cont = slot_locate(k);
+    else
+      cont = safe_slot_locate(k);
+    rObject* res;
+    if (cont)
+      res = cont->own_slot_get(k, 0) ?
+	&cont->own_slot_get(k) :
+	&cont->own_slot_get(SYMBOL(fallback));
+    else
+      res = &def.get();
+    return *res;
   }
 
 
@@ -333,9 +346,9 @@ namespace object
     if (effective_target == owner.get())
     {
       rObject& val = owner->own_slot_get(k);
-      if (Object* hookOwner = val->slot_locate(SYMBOL(updateHook)).get())
+//      rObject def;
+      if (rObject hook = val->slot_get(SYMBOL(updateHook), rObject()))
       {
-	rObject hook = hookOwner->own_slot_get(SYMBOL(updateHook));
 	objects_type args;
 	args.push_back(val);
 	args.push_back(context);

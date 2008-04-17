@@ -17,7 +17,7 @@ namespace object
   rObject
   mkLazy(runner::Runner& r, ast::Exp* e)
   {
-    // Strangly, this temporary variable is required. Calling the
+    // Strangely, this temporary variable is required. Calling the
     // ast::Function ctor inline in the make_code(...) call invokes
     // the ast copy ctor. Please post an explanation if you
     // understand the problem.
