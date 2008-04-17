@@ -216,8 +216,6 @@ namespace object
     /// Clone, i.e., create a fresh object with this class as sole proto.
     // It is tempting to make it const, but then the list of protos
     // must be const too.
-    // Not a member function because we want the shared_ptr, which
-    // is not available via this.
     virtual rObject clone () const;
 
     /// Comparison methods.
