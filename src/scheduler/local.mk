@@ -7,4 +7,5 @@ scheduler/scheduler.hh				\
 scheduler/scheduler.hxx				\
 scheduler/scheduler.cc				\
 scheduler/tag.cc				\
-scheduler/tag.hh
+scheduler/tag.hh				\
+scheduler/tag.hxx
