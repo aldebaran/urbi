@@ -70,7 +70,7 @@ namespace object
   {								\
     CHECK_ARG_COUNT (1);					\
     scheduler::rTag self = extract_tag (args[0]);		\
-    self->Action (r);						\
+    self->Action (r.scheduler_get ());				\
     if (Yield && (r.frozen () || r.blocked ()))			\
       r.yield ();						\
     return void_class;						\

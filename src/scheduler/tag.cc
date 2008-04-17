@@ -19,9 +19,9 @@ namespace scheduler
   }
 
   void
-  Tag::stop (const Job& job)
+  Tag::stop (Scheduler& sched)
   {
-    job.scheduler_get ().signal_stop (self ());
+    sched.signal_stop (self ());
   }
 
 } // namespace scheduler

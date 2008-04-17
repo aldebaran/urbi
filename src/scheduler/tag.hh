@@ -46,11 +46,11 @@ namespace scheduler
     bool blocked () const;
 
     // Act on a tag and make the scheduler take it into account
-    void freeze (const Job&);
-    void unfreeze (const Job&);
-    void block (const Job&);
-    void unblock (const Job&);
-    void stop (const Job&);
+    void freeze (Scheduler&);
+    void unfreeze (Scheduler&);
+    void block (Scheduler&);
+    void unblock (Scheduler&);
+    void stop (Scheduler&);
 
     // Return true if the tag has been directly blocked through a call
     // to "block". Return false if it is only indirectly blocked

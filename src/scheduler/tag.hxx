@@ -44,26 +44,26 @@ namespace scheduler
   }
 
   inline void
-  Tag::freeze (const Job&)
+  Tag::freeze (Scheduler&)
   {
     frozen_ = true;
   }
 
   inline void
-  Tag::unfreeze (const Job&)
+  Tag::unfreeze (Scheduler&)
   {
     frozen_ = false;
   }
 
   inline void
-  Tag::block (const Job& job)
+  Tag::block (Scheduler& sched)
   {
     blocked_ = true;
-    stop (job);
+    stop (sched);
   }
 
   inline void
-  Tag::unblock (const Job&)
+  Tag::unblock (Scheduler&)
   {
     blocked_ = false;
   }
