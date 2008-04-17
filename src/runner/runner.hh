@@ -64,6 +64,10 @@ namespace runner
     /// \param func  the "function" to call: Primitive, Delegate, Code
     ///              or even rObject, in which case it is returned.
     ///
+    /// \param msg   the name of the called method, as it should be stored
+    ///              in a call message in case further processing is
+    ///              required.
+    ///
     /// \param args  the arguments.  Used as given, they are not evaluated
     ///              here.
     ///
