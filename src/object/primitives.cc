@@ -24,6 +24,7 @@ namespace object
   SYMBOL(Global);
   SYMBOL(Scope);
   SYMBOL(System);
+  SYMBOL(Tag);
   SYMBOL(void);
 
   */

@@ -46,7 +46,7 @@ namespace object
     // underlying scheduler tag will get its underlying object
     // as parent.
     scheduler::rTag mytag;
-    if (args.size () == 3 && args[1] != tag_class)
+    if (args.size () == 3 && args[2] != tag_class)
       mytag = scheduler::Tag::fresh (extract_tag (args[2]),
 				     tag_short_name);
     else

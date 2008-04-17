@@ -117,6 +117,7 @@ namespace runner
       res.push_front (&c->name_get ());
       e = c->args_get ().front ();
     }
+    assert (!res.empty ());
     return res;
   }
 
@@ -1012,8 +1013,7 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      rObject toplevel =
-	object::global_class->slot_get (SYMBOL (Tag));
+      rObject toplevel = object::tag_class;
       rObject base = toplevel;
       foreach (const libport::Symbol* element, decompose_tag_chain (&e))
       {
@@ -1037,6 +1037,7 @@ namespace runner
 	  base = new_tag;
 	}
       }
+
       return base;
     }
   }
