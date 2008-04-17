@@ -50,6 +50,7 @@
 #include "uqueue.hh"
 
 #include "object/atom.hh" // object::Lobby
+#include "object/alien.hh" // object::box
 
 UConnection::UConnection (UServer* userver,size_t packetSize)
   : uerror_ (USUCCESS),
@@ -77,10 +78,17 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
   std::ostringstream o;
   o << 'U' << (long) this;
   connection_tag_ = o.str();
+  object::rObject tag = object::Object::fresh();
+  tag->proto_add(object::tag_class);
+  tag->slot_set(SYMBOL(tag), box(scheduler::rTag,
+		scheduler::Tag::fresh(libport::Symbol(connection_tag_))));
+  lobby_->slot_set(SYMBOL(connectionTag), tag);
 }
 
 UConnection::~UConnection ()
 {
+  extract_tag(lobby_->slot_get(SYMBOL(connectionTag)))
+    ->stop(server_->getScheduler());
   DEBUG(("Destroying UConnection..."));
   delete parser_;
   delete send_queue_;

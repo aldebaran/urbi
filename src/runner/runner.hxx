@@ -8,6 +8,7 @@
 
 # include "object/atom.hh"
 # include "object/global-class.hh"
+# include "object/alien.hh"
 
 # include "runner/runner.hh"
 
@@ -26,6 +27,10 @@ namespace runner
   {
     if (!locals_)
       locals_ = object::Object::make_do_scope(object::global_class, lobby);
+    // If the lobby has a slot connectionTag, push it
+    rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
+    if (connection_tag)
+      push_tag(extract_tag(connection_tag->slot_get(SYMBOL(connectionTag))));
   }
 
   inline
