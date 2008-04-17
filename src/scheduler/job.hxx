@@ -133,7 +133,10 @@ namespace scheduler
       kernel::rethrow (current_exception_);
     }
     if (blocked ())
+    {
+      side_effect_free_ = false;
       throw BlockedException ();
+    }
   }
 
   inline void
