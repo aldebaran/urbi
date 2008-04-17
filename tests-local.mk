@@ -14,8 +14,7 @@ k2-check:
 ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail currently but need to be fixed soon.
-TFAIL_TESTS +=					\
-1.x/every-emit.chk
+TFAIL_TESTS +=
 
 
 # k2 tests that fail.
