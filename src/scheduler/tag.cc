@@ -29,6 +29,22 @@ namespace scheduler
   {
   }
 
+  rTag
+  Tag::fresh (libport::Symbol name)
+  {
+    rTag res = new Tag (name);
+    res->self_ = res;
+    return res;
+  }
+
+  rTag
+  Tag::fresh (rTag parent, libport::Symbol name)
+  {
+    rTag res = new Tag (parent, name);
+    res->self_ = res;
+    return res;
+  }
+
   bool
   Tag::frozen () const
   {
@@ -42,34 +58,34 @@ namespace scheduler
   }
 
   void
-  Tag::freeze (const Job&, rTag)
+  Tag::freeze (const Job&)
   {
     frozen_ = true;
   }
 
   void
-  Tag::unfreeze (const Job&, rTag)
+  Tag::unfreeze (const Job&)
   {
     frozen_ = false;
   }
 
   void
-  Tag::block (const Job& job, rTag self)
+  Tag::block (const Job& job)
   {
     blocked_ = true;
-    stop (job, self);
+    stop (job);
   }
 
   void
-  Tag::unblock (const Job&, rTag)
+  Tag::unblock (const Job&)
   {
     blocked_ = false;
   }
 
   void
-  Tag::stop (const Job& job, rTag self)
+  Tag::stop (const Job& job)
   {
-    job.scheduler_get ().signal_stop (self);
+    job.scheduler_get ().signal_stop (self ());
   }
 
   bool
@@ -82,6 +98,14 @@ namespace scheduler
   Tag::set_blocked (bool b)
   {
     blocked_ = b;
+  }
+
+  rTag
+  Tag::self () const
+  {
+    rTag res;
+    res = self_.lock ();
+    return res;
   }
 
   const libport::Symbol&
