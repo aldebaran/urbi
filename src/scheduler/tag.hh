@@ -21,8 +21,6 @@ namespace scheduler
     bool frozen () const;
     bool blocked () const;
 
-    // Actions must take a self parameter allowing the scheduler to retain
-    // a counted reference on the tag if needed.
     void freeze (const Job&);
     void unfreeze (const Job&);
     void block (const Job&);
