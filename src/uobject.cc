@@ -494,10 +494,9 @@ namespace urbi
     ECHO("creating uvar "<<name);
     object::objects_type args;
     rObject protouvar = object::object_class->slot_get(SYMBOL(uvar));
-    args.push_back(protouvar);
-    rObject uvar = getCurrentRunner().apply(protouvar->slot_get(SYMBOL(clone)),
-					    SYMBOL(clone), args);
-    o->slot_set(varName, uvar);
+    args.push_back(o);
+    args.push_back(object::String::fresh(varName));
+    rObject uvar = urbi_call(getCurrentRunner(), protouvar, SYMBOL(new), args);
     // If the variable existed but was not an uvar, copy its old value.
     if (initVal)
       o->slot_get(varName)->slot_update(getCurrentRunner(),

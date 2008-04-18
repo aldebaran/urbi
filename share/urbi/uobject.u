@@ -23,6 +23,7 @@ class Object.UObject
   var updateTask = 0;
   var timerTask = 0;
   var updateInterval = 0;
+
   function update()
   {
     "update not defined".print
@@ -91,11 +92,23 @@ do getSlot("uvar")
     else
       val
   };
+
+  function init(parent, name)
+  {
+    parent.setSlot(name, getSlot("self"))|
+    parent.setProperty(name, "updateHook", getSlot("updateHook"))
+  };
+
   /// Global number of notifyaccess
   var nAccess = 0;
   var nAccessTag = new Tag;
   /// Hook write attempts to the UVar.
-  function updateHook(parent, slot, newval)
+  function updateHook(slot, newval)
+  {
+    self.getSlot(slot).update_(slot, newval);
+  };
+
+  function update_(slot, newval)
   {
     // Urbi or C++ not-owned set: write to val.
     val = newval |
