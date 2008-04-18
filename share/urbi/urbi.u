@@ -85,7 +85,8 @@ do Object
   # Set the \a name property on slot \a slot to \a value
   function setProperty(slot, name, value)
   {
-    getLazyLocalSlot("properties", (||), true)|
+    if (locateSlot("properties") != self)
+      var self.properties = (||)|
     if (_locateSlot(properties, slot).isNil)
       _setSlot(properties, slot, (||))|
     var slotProps = _getSlot(properties, slot)|
@@ -225,7 +226,13 @@ do Global
   # Generate such wrappers for standard functions. This enable to
   # apply them on proto-less objects, such as (||). Name them by
   # prefixing '_'.
-  ["getSlot", "locateSlot", "setSlot", "updateSlot", "addProto"].each(function (name)
+  ["addProto",
+    "getSlot",
+    "locateSlot",
+    "setSlot",
+    "slotNames",
+    "updateSlot"
+    ].each(function (name)
     {
       Global.setSlot("_" + name, methodToFunction(Object.getSlot(name)))
     });

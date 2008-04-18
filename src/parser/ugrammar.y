@@ -219,7 +219,7 @@
 	   <<     "{"
 	   <<        "if (" << gen << ".isOver)"
 	   <<           tag << ".stop |"
-	   <<            ast::clone(*lvalue) << " = " << gen << ".get (" 
+	   <<            ast::clone(*lvalue) << " = " << gen << ".get ("
 	   <<              ast::clone(*lvalue) << ")"
 	   <<      "}"
 	   << "}");
@@ -817,7 +817,7 @@ stmt:
   {
   ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
   $$ = ast_call(@$, ext, new libport::Symbol("object"),
-	    new ast::String(@$, take($3)));
+		new ast::String(@$, take($3)));
   }
 | "binder" "var" "identifier" "." "identifier" "from" "identifier"
   {
@@ -924,6 +924,33 @@ stmt:
  lvalue "=" expr namedarguments
     {
       $$ = ast_slot_update(@$, $1, $3, $4);
+    }
+// FIXME: Factor these four rules
+| id "->" id "=" expr
+    {
+      $$ = ast_call(@$, 0, SYMBOL(setProperty),
+		    new ast::String(@1, take($1)),
+		    new ast::String(@3, take($3)),
+		    $5);
+    }
+| expr "." id "->" id "=" expr
+    {
+      $$ = ast_call(@$, $1, SYMBOL(setProperty),
+		    new ast::String(@3, take($3)),
+		    new ast::String(@5, take($5)),
+		    $7);
+    }
+| id "->" id
+    {
+      $$ = ast_call(@$, 0, SYMBOL(getProperty),
+		    new ast::String(@1, take($1)),
+		    new ast::String(@3, take($3)));
+    }
+| expr "." id "->" id
+    {
+      $$ = ast_call(@$, $1, SYMBOL(getProperty),
+		    new ast::String(@3, take($3)),
+		    new ast::String(@5, take($5)));
     }
 | "var" lvalue "=" expr namedarguments
     {
@@ -1107,8 +1134,8 @@ expr:
 
 %type <call> lvalue call;
 lvalue:
-	   id   { $$ = ast_call(@$,  0, take($1)); }
-| expr "." id   { $$ = ast_call(@$, $1, take($3)); }
+	   id		{ $$ = ast_call(@$,  0, take($1)); }
+| expr "." id		{ $$ = ast_call(@$, $1, take($3)); }
 ;
 
 id:
