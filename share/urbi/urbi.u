@@ -90,6 +90,8 @@ do Object
     if (_locateSlot(properties, slot).isNil)
       _setSlot(properties, slot, (||))|
     var slotProps = _getSlot(properties, slot)|
+    if (!getSlot(slot).locateSlot("propertyHook").isNil)
+      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
     _setSlot(slotProps, name, getSlot("value"))
   };
 
