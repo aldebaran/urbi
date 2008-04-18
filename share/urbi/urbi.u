@@ -98,14 +98,6 @@ do Global
     loadFile(searchFile(file));
   };
 
-  # Add proto to obj's list of protos.  Return obj.
-  # Does not require that object derives from Object to have addProto.
-  function _addProto(obj, proto)
-  {
-    Object.getSlot("addProto").apply([obj, proto]) |
-    obj
-  };
-
   // Assertion control
   var System.ndebug = 0;
   function System.assert {
@@ -196,6 +188,33 @@ class Global.Closure
   };
 };
 Code.addProto(Global.Closure);
+
+## ------------------------ ##
+## Method function wrappers ##
+## ------------------------ ##
+
+do Global
+{
+  # Make a function f from a method m, so as f(a, b, c) is equivalent
+  # to a.m(b, c)
+  # FIXME: I'm not satisfied with the name, but can't find anything
+  # better
+  function methodToFunction(f)
+  {
+    function
+    {
+      getSlot("f").apply(call.evalArgs);
+    }.capture("f")
+  };
+
+  # Generate such wrappers for standard functions. This enable to
+  # apply them on proto-less objects, such as (||). Name them by
+  # prefixing '_'.
+  ["getSlot", "setSlot", "updateSlot", "addProto"].each(function (name)
+    {
+      Global.setSlot("_" + name, methodToFunction(Object.getSlot(name)))
+    });
+};
 
 ## -------------------- ##
 ## Task related stuff.  ##
