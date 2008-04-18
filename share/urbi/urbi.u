@@ -79,6 +79,23 @@ do Object
     getSlot("res").getSlot("init").apply([getSlot("res")] + call.evalArgs) |
     getSlot("res")
   };
+
+  var properties = (||);
+
+  # Set the \a name property on slot \a slot to \a value
+  function setProperty(slot, name, value)
+  {
+    getLazyLocalSlot("properties", (||), true)|
+    if (_locateSlot(properties, slot).isNil)
+      _setSlot(properties, slot, (||))|
+    var slotProps = _getSlot(properties, slot)|
+    _setSlot(slotProps, name, getSlot("value"))
+  };
+
+  function getProperty(slot, name)
+  {
+    _getSlot(_getSlot(properties, slot), name)
+  };
 };
 
 ## -------- ##
@@ -208,7 +225,7 @@ do Global
   # Generate such wrappers for standard functions. This enable to
   # apply them on proto-less objects, such as (||). Name them by
   # prefixing '_'.
-  ["getSlot", "setSlot", "updateSlot", "addProto"].each(function (name)
+  ["getSlot", "locateSlot", "setSlot", "updateSlot", "addProto"].each(function (name)
     {
       Global.setSlot("_" + name, methodToFunction(Object.getSlot(name)))
     });
