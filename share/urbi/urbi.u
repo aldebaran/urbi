@@ -99,6 +99,15 @@ do Object
   {
     _getSlot(_getSlot(properties, slot), name)
   };
+
+  function hasProperty(slot, name)
+  {
+    # No '&&' yet.
+    if (_locateSlot(properties, slot))
+      if (_locateSlot(_getSlot(properties, slot), name))
+        return true|
+    return false
+  };
 };
 
 ## -------- ##

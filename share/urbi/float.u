@@ -47,6 +47,26 @@ do Float
       result.push_back(i.clone) |
     result
   };
+
+  function propertyHook(parent, name, prop, value)
+  {
+    var modifiers = ["speed"]|
+    if (!modifiers.has(prop))
+      return|
+    parent.setProperty(name, "updateHook",
+    function (name, value) {
+      var mod = (||)|
+      if (parent.hasProperty(name, "speed"))
+        _setSlot(mod, "speed", parent.getProperty(name, "speed"))|
+      var g = TrajectoryGenerator.new(getSlot(name), value, mod)|
+      var t = Tag.new|
+      t: every(100) { # FIXME: Don't use an arbitrary period.
+	if (g.isOver)
+          t.stop|
+	changeSlot(name, g.get(getSlot(name)))
+      }|
+    }.capture("parent"));
+  }
 };
 
 
