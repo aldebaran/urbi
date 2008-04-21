@@ -8,7 +8,7 @@
 
 # include <cassert>
 # include "scheduler/scheduler.hh"
-# include "scheduler/libcoroutine/Coro.h"
+# include "scheduler/coroutine.hh"
 
 namespace scheduler
 {
@@ -19,7 +19,7 @@ namespace scheduler
       scheduler_ (&scheduler),
       myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
-      coro_ (Coro_new ()),
+      coro_ (coroutine_new ()),
       non_interruptible_ (false),
       side_effect_free_ (false),
       pending_exception_ (0)
@@ -32,7 +32,7 @@ namespace scheduler
       scheduler_ (model.scheduler_),
       myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
-      coro_ (Coro_new ()),
+      coro_ (coroutine_new ()),
       tags_ (model.tags_),
       non_interruptible_ (false),
       side_effect_free_ (false),
@@ -45,7 +45,7 @@ namespace scheduler
   {
     scheduler_->unschedule_job (this);
     pending_exception_ = 0;
-    Coro_free (coro_);
+    coroutine_free (coro_);
   }
 
   inline Scheduler&
@@ -150,7 +150,7 @@ namespace scheduler
   inline void
   Job::check_stack_space () const
   {
-    if (Coro_stackSpaceAlmostGone (coro_))
+    if (coroutine_stack_space_almost_gone (coro_))
       throw object::StackExhaustedError ("stack space exhausted");
   }
 

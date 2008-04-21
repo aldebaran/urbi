@@ -12,11 +12,9 @@
 # include <libport/utime.hh>
 
 # include "object/urbi-exception.hh"
+# include "scheduler/coroutine.hh"
 # include "scheduler/fwd.hh"
 # include "scheduler/tag.hh"
-
-// From libcoroutine/Coro.h.
-class Coro;
 
 namespace scheduler
 {

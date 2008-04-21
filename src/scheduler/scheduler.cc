@@ -104,7 +104,7 @@ namespace scheduler
 	// requeued because it hasn't been started by setting "start".
 	ECHO ("Starting job " << *job);
 	current_job_ = job;
-	Coro_startCoro_ (coro_, job->coro_get(), job, run_job);
+	coroutine_start (coro_, job->coro_get(), job, run_job);
 	current_job_ = 0;
 	ECHO ("Job " << *job << " has been started");
 	assert (job->state_get () != to_start);
@@ -145,7 +145,7 @@ namespace scheduler
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
 	possible_side_effect_ |= !job->side_effect_free_get ();
 	assert (!current_job_);
-	Coro_switchTo_ (coro_, job->coro_get ());
+	coroutine_switch_to (coro_, job->coro_get ());
 	assert (!current_job_);
 	possible_side_effect_ |= !job->side_effect_free_get ();
 	ECHO ("back from job " << *job
@@ -226,7 +226,7 @@ namespace scheduler
       current_job_ = 0;
       ECHO (*job << " has " << (job->terminated () ? "" : "not ") << "terminated\n\t"
 	    << "state: " << state_name (job->state_get ()));
-      Coro_switchTo_ (job->coro_get (), coro_);
+      coroutine_switch_to (job->coro_get (), coro_);
 
       // We regained control, we are again in the context of the job.
       assert (!current_job_);

@@ -15,12 +15,12 @@ namespace scheduler
   inline
   Scheduler::Scheduler ()
     : current_job_ (0),
-      coro_ (Coro_new ()),
+      coro_ (coroutine_new ()),
       possible_side_effect_ (true),
       cycle_ (0)
   {
     ECHO ("Initializing main coroutine");
-    Coro_initializeMainCoro (coro_);
+    coroutine_initialize_main (coro_);
   }
 
   inline

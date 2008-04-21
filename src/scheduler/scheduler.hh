@@ -9,8 +9,8 @@
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
 
+# include "scheduler/coroutine.hh"
 # include "scheduler/fwd.hh"
-# include "scheduler/libcoroutine/Coro.h"
 
 namespace scheduler
 {
