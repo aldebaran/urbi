@@ -629,15 +629,7 @@ stmts:
 %type <expr> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
-  stmt
-  {
-    // XXX FIXME: Used as a temporary workaround until all actions are
-    // filled in this parser
-    if (!$1)
-      $$ = new ast::Noop (@$);
-    else
-      $$ = $1;
-  }
+  stmt            { assert($1); $$ = $1; }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 | cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;
@@ -656,12 +648,8 @@ tag:
 ;
 
 stmt:
-  tag flags.0 ":" stmt
-  {
-    $$ = new ast::TaggedStmt (@$, $1, $4);
-  }
-| flags.1 ":" stmt { $$ = $3; }
-
+  tag flags.0 ":" stmt  {  $$ = new ast::TaggedStmt (@$, $1, $4); }
+|     flags.1 ":" stmt  { $$ = 0; }
 ;
 
 /*--------.
