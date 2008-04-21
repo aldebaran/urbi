@@ -6,8 +6,9 @@
 #ifndef AST_LOC_HH
 # define AST_LOC_HH
 
-# include "libport/symbol.hh"
-# include "location.hh"
+# include <libport/symbol.hh>
+
+# include "parser/location.hh"
 
 namespace ast
 {

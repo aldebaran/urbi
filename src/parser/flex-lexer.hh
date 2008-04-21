@@ -54,7 +54,7 @@
 # include <iostream>
 # include <stack>
 
-# include "ugrammar.hh"
+# include "parser/ugrammar.hh"
 
 struct yy_buffer_state;
 typedef int yy_state_type;

@@ -23,16 +23,16 @@ $(BISONXX): $(BISONXX_IN)
 parser_dir = $(top_srcdir)/src/parser
 
 # We do not use Automake features here.
-FROM_UGRAMMAR_Y =			\
-stack.hh				\
-position.hh				\
-location.hh				\
-ugrammar.hh				\
-ugrammar.cc
+FROM_UGRAMMAR_Y =				\
+parser/stack.hh					\
+parser/position.hh				\
+parser/location.hh				\
+parser/ugrammar.hh				\
+parser/ugrammar.cc
 
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UGRAMMAR_Y)
-CLEANFILES += ugrammar.{html,output,stamp,xml}
+CLEANFILES += parser/ugrammar.{html,output,stamp,xml}
 nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 
 
@@ -42,17 +42,17 @@ nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 EXTRA_DIST += $(parser_dir)/ugrammar.y
 symbols_hh_deps += $(parser_dir)/ugrammar.y
 ugrammar_deps = $(BISONXX_IN) $(parser_dir)/local.mk
-ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
+parser/ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(BISONXX) $(parser_dir)/ugrammar.y ugrammar.cc -d -ra
+	$(BISONXX) $(parser_dir)/ugrammar.y parser/ugrammar.cc -d -ra
 	@mv -f $@.tmp $@
 
-$(FROM_UGRAMMAR_Y): ugrammar.stamp
+$(FROM_UGRAMMAR_Y): parser/ugrammar.stamp
 	@if test -f $@; then :; else \
-	  rm -f ugrammar.stamp; \
-	  $(MAKE) $(AM_MAKEFLAGS) ugrammar.stamp; \
+	  rm -f parser/ugrammar.stamp; \
+	  $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp; \
 	fi
 
 # We tried several times to run make from ast/ to build position.hh
@@ -72,7 +72,7 @@ generate-parser: $(FROM_UGRAMMAR_Y)
 flex_nonstd = 'cin|cout|cerr|[io]stream'
 
 FROM_UTOKEN_L =			\
-utoken.cc
+parser/utoken.cc
 
 BUILT_SOURCES += $(FROM_UTOKEN_L)
 CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
@@ -80,34 +80,34 @@ dist_libkernel_la_SOURCES += $(parser_dir)/flex-lexer.hh
 nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parser_dir)/utoken.l
-utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/local.mk
+parser/utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/local.mk
 	@rm -f $@.tmp
 	@touch $@.tmp
 # -s to disable the default rule (ECHO).
-	$(FLEX) -s -+ -outoken.cc $(parser_dir)/utoken.l
+	$(FLEX) -s -+ -oparser/utoken.cc $(parser_dir)/utoken.l
 	perl -pi						\
 	     -e 's,<FlexLexer.h>,"parser/flex-lexer.hh",;'	\
 	     -e 's/class istream;/#include <iostream>/;'	\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
 	     -e 's,# *include *<unistd.h>,#include "sdk/config.h"\n#ifndef WIN32\n$$&\n#endif,'	\
-	     utoken.cc
+	     parser/utoken.cc
 ## For some reason, on Windows perl does not remove the back up file.
-	rm -f utoken.cc.bak
+	rm -f parser/utoken.cc.bak
 	@mv -f $@.tmp $@
 
-$(FROM_UTOKEN_L): utoken.stamp
+$(FROM_UTOKEN_L): parser/utoken.stamp
 	@if test -f $@; then :; else \
-	  rm -f utoken.stamp; \
-	  $(MAKE) $(AM_MAKEFLAGS) utoken.stamp; \
+	  rm -f parser/utoken.stamp; \
+	  $(MAKE) $(AM_MAKEFLAGS) parser/utoken.stamp; \
 	fi
 
 
 # Kludge to install userver.hh.
-kernelinclude_HEADERS += 		\
-stack.hh				\
-position.hh				\
-location.hh				\
-ugrammar.hh
+kernelinclude_HEADERS +=			\
+parser/stack.hh					\
+parser/position.hh				\
+parser/location.hh				\
+parser/ugrammar.hh
 
 nobase_kernelinclude_HEADERS = 		\
 parser/flex-lexer.hh

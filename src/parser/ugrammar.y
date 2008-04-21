@@ -1,26 +1,9 @@
-/* \file ugrammar.y
- *******************************************************************************
-
- File: ugrammar.y\n
- Definition of the parser used by the UParser object.
- This parser is defined with bison, using the option %pure_parser to make it
- reentrant. For more details about reentrancy issues, check the definition of
- the UServer class.
-
- This file is part of
- %URBI, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.net
-
- **************************************************************************** */
+/// \file parser/ugrammar.y
+/// \brief Definition of the parser used by the UParser object.
+///
+/// This parser is defined with bison, using the option %pure_parser
+/// to make it reentrant. For more details about reentrancy issues,
+/// check the definition of the UServer class.
 
 %expect 0
 %require "2.3"
