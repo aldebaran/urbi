@@ -708,14 +708,14 @@ expr:
 
 // Aliases.
 stmt:
-  "alias" { $$ = 0; }
-//| "alias" k1_id k1_id { $$ = 0; }
-//| "alias" k1_id { $$ = 0; }
-//| "unalias" k1_id { $$ = 0; }
+  "alias"             { $$ = 0; }
+| "alias" k1_id k1_id { $$ = 0; }
+| "alias" k1_id       { $$ = 0; }
+| "unalias" k1_id     { $$ = 0; }
 ;
 
 block:
-  "{" stmts "}" { $$ = $2; }
+  "{" stmts "}"       { $$ = $2; }
 ;
 
 // Classes.
