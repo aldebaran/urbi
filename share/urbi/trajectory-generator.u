@@ -35,8 +35,8 @@ class Global.TrajectoryGenerator
     else if (content.has("sin") || content.has("cos"))
     {
       var self.get = getSlot("sinGet");
-      var self.phase =  args.getLazyLocalSlot("phase", 0, false) |
-      var self.ampli =  args.getLazyLocalSlot("ampli", 0, false) |
+      var self.phase = _getLazyLocalSlot(args, "phase", 0, false) |
+      var self.ampli = _getLazyLocalSlot(args, "ampli", 0, false) |
       if (content.has("cos"))
       {
 	var self.period =  args.cos |
