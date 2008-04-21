@@ -802,37 +802,29 @@ stmt:
 stmt:
   "binder" "object" "identifier"
   {
-  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
-  $$ = ast_call(@$, ext, new libport::Symbol("object"),
-		new ast::String(@$, take($3)));
+    DESUGAR("'external'.'object'(\"" << take($3) << "\")");
   }
 | "binder" "var" "identifier" "." "identifier" "from" "identifier"
   {
-  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
-  ast::Call* res = ast_call(@$, ext, new libport::Symbol("var"));
-  res->args_get().push_back(new ast::String(@$, take($3)));
-  res->args_get().push_back(new ast::String(@$, take($5)));
-  res->args_get().push_back(new ast::String(@$, take($7)));
-  $$ = res;
+    DESUGAR("'external'.'var'(\"" << take($3) << "\", "
+	    <<               "\"" << take($5) << "\", "
+	    <<               "\"" << take($7) << "\")");
   }
-| "binder" "function" "(" "integer" ")" "identifier" "." "identifier" "from" "identifier"
+| "binder" "function" "(" "integer" ")" "identifier" "." "identifier"
+           "from" "identifier"
   {
-  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
-  ast::Call* res = ast_call(@$, ext, new libport::Symbol("function"),
-			new ast::Float(@$, $4));
-  res->args_get().push_back(new ast::String(@$, take($6)));
-  res->args_get().push_back(new ast::String(@$, take($8)));
-  res->args_get().push_back(new ast::String(@$, take($10)));
-  $$ = res;
+    DESUGAR("'external'.'function'(" << $4 << ", "
+	    <<                    "\"" << take($6) << "\", "
+	    <<                    "\"" << take($8) << "\", "
+	    <<                    "\"" << take($10) << "\")");
   }
-| "binder" "event" "(" "integer" ")" "identifier" "." "identifier" "from" "identifier"
+| "binder" "event" "(" "integer" ")" "identifier" "." "identifier"
+           "from" "identifier"
   {
-  ast::Call * ext = ast_call(@$, 0, libport::Symbol("external"));
-  ast::Call* res = ast_call(@$, ext, new libport::Symbol("event"));
-  res->args_get().push_back(new ast::String(@$, take($6)));
-  res->args_get().push_back(new ast::String(@$, take($8)));
-  res->args_get().push_back(new ast::String(@$, take($10)));
-  $$ = res;
+    DESUGAR("'external'.'event'(" << $4 << ", "
+	    <<                "\"" << take($6) << "\", "
+	    <<                "\"" << take($8) << "\", "
+	    <<                "\"" << take($10) << "\")");
   }
 ;
 
