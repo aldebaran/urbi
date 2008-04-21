@@ -23,14 +23,24 @@ namespace scheduler
   {
     assert (state_ == to_start);
     ECHO ("In Job::run for " << this);
-    yield ();
     try {
+      // The first yield, performed just after the job structure has
+      // been setup here by calling run(), has to be done from within
+      // the exception handler as this job may be killed by a "stop"
+      // or "block" of a tag that has been inherited at job creation
+      // time.
       try {
+	yield ();
 	work ();
       }
       catch (TerminateException&)
       {
 	// Normal termination requested
+      }
+      catch (BlockedException&)
+      {
+	// Termination through "stop" or "block" on a top-level tag,
+	// that is a tag inherited at the job creation time.
       }
       terminate ();
     }
@@ -40,8 +50,8 @@ namespace scheduler
       jobs_type to_signal = links_;
       foreach (Job* job, to_signal)
       {
-	  job->async_throw (e);
 	  unlink (job);
+	  job->async_throw (e);
       }
     }
     catch (...)
@@ -152,6 +162,17 @@ namespace scheduler
   void
   Job::check_for_pending_exception ()
   {
+    // If we have been blocked, try to get up the chain. No need to
+    // handle another exception here.
+    if (blocked ())
+    {
+      pending_exception_ = 0;
+      side_effect_free_ = false;
+      throw BlockedException ();
+    }
+
+    // If an exception has been stored for further rethrow, now is
+    // a good time to do so.
     if (pending_exception_)
     {
       current_exception_ = pending_exception_;
@@ -159,11 +180,6 @@ namespace scheduler
       // If an exception is propagated, it may have side effects
       side_effect_free_ = false;
       kernel::rethrow (current_exception_);
-    }
-    if (blocked ())
-    {
-      side_effect_free_ = false;
-      throw BlockedException ();
     }
   }
 

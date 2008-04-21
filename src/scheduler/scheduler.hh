@@ -65,6 +65,10 @@ namespace scheduler
 
   private:
     libport::utime_t execute_round (bool blocked_only);
+
+    /// Check if we have stopped tags to handle. In this case, we will
+    /// wake up any blocked jobs so that they can handle the stop
+    /// situation. This is used one after each scheduler round.
     libport::utime_t check_for_stopped_tags (libport::utime_t old_deadline);
 
   private:

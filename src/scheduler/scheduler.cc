@@ -114,7 +114,7 @@ namespace scheduler
 	assert (false);
 	break;
       case running:
-	start = !blocked_only || job->blocked ();
+	start = !blocked_only;
 	break;
       case sleeping:
 	{
@@ -137,7 +137,9 @@ namespace scheduler
 	break;
       }
 
-      if (start)
+      // A blocked job will be started unconditionally as it has to
+      // handle this condition.
+      if (start || job->blocked ())
       {
 	ECHO ("will resume job " << *job
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
@@ -179,22 +181,11 @@ namespace scheduler
   libport::utime_t
   Scheduler::check_for_stopped_tags (libport::utime_t old_deadline)
   {
-    bool blocked_job = false;
-
     // If we have had no stopped tag, return immediately.
     if (stopped_tags_.empty ())
       return old_deadline;
 
-    // If some jobs have been blocked, mark them as running so that they will
-    // handle the condition when they are resumed.
-    foreach (Job* job, jobs_)
-      if (job->blocked ())
-      {
-	job->state_set (running);
-	blocked_job = true;
-      }
-
-    // Wake up blocked jobs.
+    // Wake up blocked jobs if there are any.
     libport::utime_t deadline = execute_round (true);
 
     // Reset tags to their real blocked value and reset the list.
