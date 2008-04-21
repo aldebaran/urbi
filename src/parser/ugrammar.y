@@ -715,32 +715,12 @@ stmt:
 //| "unalias" k1_id { $$ = 0; }
 ;
 
-// Classes.
-%token
-	TOK_CLASS       "class"
-;
-
-%code
-{
-  namespace
-  {
-    /// var s = Object.clone.
-    static
-    ast::Exp*
-    ast_class (const loc&l, ast::Call* s)
-    {
-      return ast_slot_set (l, s,
-			   ast_call(l, ast_call(l, 0, SYMBOL(Object)),
-				    SYMBOL(clone)));
-    }
-  }
-};
-
-
 block:
   "{" stmts "}" { $$ = $2; }
 ;
 
+// Classes.
+%token TOK_CLASS "class";
 stmt:
   "class" lvalue block
     {
@@ -749,7 +729,7 @@ stmt:
     }
 | "class" lvalue
     {
-      $$ = ast_class (@$, $2);
+      DESUGAR("var " << $2 << "= Object.clone");
     }
 ;
 
