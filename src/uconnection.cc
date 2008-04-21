@@ -130,7 +130,7 @@ UConnection::initialize()
 }
 
 UConnection&
-UConnection::send (const char* buf, const char* tag, bool flush)
+UConnection::send (const char* buf, int len, const char* tag, bool flush)
 {
   if (tag)
   {
@@ -139,7 +139,7 @@ UConnection::send (const char* buf, const char* tag, bool flush)
   }
   if (buf)
   {
-    UErrorValue ret = send_queue (buf, strlen(buf)).error_get ();
+    UErrorValue ret = send_queue (buf, len).error_get ();
 
     if (flush && ret != UFAIL)
       this->flush ();
@@ -325,8 +325,8 @@ UConnection::send (object::rObject result, const char* tag, const char* p)
   if (!os.str ().empty ())
   {
     std::string prefix = make_prefix (tag);
-    send (prefix.c_str (), 0, false);
-    send (os.str ().c_str (), 0, false);
+    send (prefix.c_str (), (const char*)0, false);
+    send_queue (os.str ().c_str(), os.str().length());
     endline ();
   }
   return *this;

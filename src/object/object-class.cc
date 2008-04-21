@@ -83,9 +83,9 @@ namespace object
       && s[0] == '"' && s.length() && s[s.length()-1] == '"')
       s = libport::unescape(s.substr(1, s.length()-2));
 
-    r.lobby_get()->value_get().connection.send
-      ((std::string(is_echo?"*** ":"") + s + "\n").c_str(),
-       tag.c_str());
+    std::string data = std::string(is_echo?"*** ":"") + s + "\n";
+    r.lobby_get()->value_get().connection.send(data.c_str(), data.size(),
+					       tag.c_str());
 
     return void_class;
   }
