@@ -44,9 +44,12 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG(1, Float);
-    libport::utime_t deadline =
-      ::urbiserver->getTime() +
-      static_cast<libport::utime_t>(arg1->value_get() * 1000.0);
+    libport::utime_t deadline;
+    if (arg1->value_get() == std::numeric_limits<ufloat>::infinity())
+      deadline = std::numeric_limits<libport::utime_t>::max();
+    else
+      deadline = ::urbiserver->getTime() +
+	static_cast<libport::utime_t>(arg1->value_get() * 1000.0);
     r.yield_until (deadline);
     return void_class;
   }
