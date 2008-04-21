@@ -60,7 +60,7 @@ class Global.TrajectoryGenerator
           tag.stop|
 	owner.changeSlot(name, get(owner.getSlot(name)))
       }|
-      sleep(36000000) # FIXME: We need to 'sleep forever' here.
+      sleep(inf)
     }|
   };
 
