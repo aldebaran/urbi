@@ -516,18 +516,27 @@ namespace urbi
   }
 
   void
-  UVar::setProp(urbi::UProperty p, ufloat v)
+  UVar::setProp(urbi::UProperty prop, ufloat v)
   {
-    uvar_set(name.substr(0,name.find_first_of('.'))+".__"+UPropertyNames[p],
-	     object::Float::fresh(v));
+    StringPair p = split_name(name);
+    rObject o = get_base(p.first);
+    object::objects_type args;
+    args.push_back(object::String::fresh(Symbol(p.second)));
+    args.push_back(object::String::fresh(Symbol(UPropertyNames[prop])));
+    args.push_back(object::Float::fresh(v));
+    urbi_call(getCurrentRunner(), o, SYMBOL(setProperty), args);
   }
 
   UValue
-  UVar::getProp(urbi::UProperty p)
+  UVar::getProp(urbi::UProperty prop)
   {
-    return UValue (
-		   uvar_get(name.substr(0,name.find_first_of('.'))+".__"+UPropertyNames[p])
-		   .cast<object::Float>()->value_get());
+    StringPair p = split_name(name);
+    rObject o = get_base(p.first);
+    object::objects_type args;
+    args.push_back(object::String::fresh(Symbol(p.second)));
+    args.push_back(object::String::fresh(Symbol(UPropertyNames[prop])));
+    return ::uvalue_cast(
+      urbi_call(getCurrentRunner(), o, SYMBOL(getProperty), args));
   }
 
   UVar::~UVar()
