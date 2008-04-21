@@ -108,7 +108,6 @@ abs(libport::ufloat v)
   return std::abs(v);
 }
 
-
 /*-------------------------------------------------------------------.
 | Float Primitives.                                                  |
 |                                                                    |
@@ -141,6 +140,21 @@ abs(libport::ufloat v)
     return arg0->clone();
   }
 
+  /// Infinity
+  static rObject
+  float_class_inf(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    return Float::fresh(std::numeric_limits<ufloat>::infinity());
+  }
+
+  /// NaN
+  static rObject
+  float_class_nan(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    return Float::fresh(std::numeric_limits<ufloat>::quiet_NaN());
+  }
 
   /// Change the value.
   static rObject
@@ -275,7 +289,9 @@ abs(libport::ufloat v)
     DECLARE(clone);
     DECLARE(cos);
     DECLARE(exp);
+    DECLARE(inf);
     DECLARE(log);
+    DECLARE(nan);
     DECLARE(random);
     DECLARE(round);
     DECLARE(set);

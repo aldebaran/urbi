@@ -22,11 +22,9 @@ Global.addProto (Global.Constants);
 do Global.Constants
 {
   var asString = "<Constants>";
-
-  # FIXME: use real float infinity, or a special token, but not that
-  var inf    = 999999999999999.0;
-
   var pi     = 3.14159265358979323846264338327950288;
+  var inf    = Float.inf;
+  var nan    = Float.nan;
 };
 
 ## ------- ##
