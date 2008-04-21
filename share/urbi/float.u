@@ -60,10 +60,13 @@ do Float
         _setSlot(mod, "speed", parent.getProperty(name, "speed"))|
       var g = TrajectoryGenerator.new(getSlot(name), value, mod)|
       var t = Tag.new|
-      t: every(100) { # FIXME: Don't use an arbitrary period.
-	if (g.isOver)
-          t.stop|
-	changeSlot(name, g.get(getSlot(name)))
+      t: {
+	every(100) { # FIXME: Don't use an arbitrary period.
+          if (g.isOver)
+            t.stop|
+	  changeSlot(name, g.get(getSlot(name)))
+        }|
+        sleep(36000000) # FIXME: We need to 'sleep forever' here.
       }|
     }.capture("parent"));
   }
