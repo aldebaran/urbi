@@ -5,7 +5,7 @@ class Global.TrajectoryGenerator
     self.targetValue = targetValue|
     self.startTime = time|
     self.startValue = startValue |
-    var content = args.slotNames|
+    var content = Global._slotNames(args)|
     if (content.has("time"))
     {
       var self.get = getSlot("timeGet") |
@@ -20,9 +20,9 @@ class Global.TrajectoryGenerator
     }
     else if (content.has("speed"))
     {
-      var self.adaptive = args.getLazyLocalSlot("adaptive", 0, false) |
+      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
       var self.speed = args.speed;
-      var self.duration = abs(startValue - targetValue) / speed |
+      var self.duration = abs(startValue - targetValue) * 1000 / speed |
       if (!adaptive)
       {
       var self.get = getSlot("timeGet")
@@ -54,7 +54,7 @@ class Global.TrajectoryGenerator
   function timeGet(currentVal)
   {
     var stat =  (time - startTime) / duration |
-    if (stat > 1) 
+    if (stat > 1)
     {
       isOver = true|
       return targetValue

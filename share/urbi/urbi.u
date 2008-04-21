@@ -85,9 +85,9 @@ do Object
   # Set the \a name property on slot \a slot to \a value
   function setProperty(slot, name, value)
   {
-    if (locateSlot("properties") != self)
+    if (locateSlot("properties") !== self)
       var self.properties = (||)|
-    if (_locateSlot(properties, slot).isNil)
+    if (_isNil(_locateSlot(properties, slot)))
       _setSlot(properties, slot, (||))|
     var slotProps = _getSlot(properties, slot)|
     if (!getSlot(slot).locateSlot("propertyHook").isNil)
@@ -207,6 +207,28 @@ class Global.Closure
 };
 Code.addProto(Global.Closure);
 
+load("urbi/singleton.u");
+
+## ---- ##
+## nil. ##
+## ---- ##
+
+do nil
+{
+  self.addProto(Singleton);
+  function '==' (x) { x.isNil };
+  var asString = "";
+};
+
+do Object
+{
+  function Object.isNil ()
+  {
+    # Preserve this order, so as _isNil((||)) works.
+    nil === self
+  }
+};
+
 ## ------------------------ ##
 ## Method function wrappers ##
 ## ------------------------ ##
@@ -230,6 +252,8 @@ do Global
   # prefixing '_'.
   ["addProto",
     "getSlot",
+    "getLazyLocalSlot",
+    "isNil",
     "locateSlot",
     "setSlot",
     "slotNames",
@@ -376,7 +400,6 @@ do Object
 };
 
 load("urbi/channel.u");
-load("urbi/singleton.u");
 
 
 ## ------ ##
@@ -386,20 +409,6 @@ load("urbi/singleton.u");
 void.addProto(Singleton);
 // void prints nothing.
 var void.asString = "";
-
-
-## ---- ##
-## nil. ##
-## ---- ##
-
-do nil
-{
-  self.addProto(Singleton);
-  var isNil = true;
-  function '==' (x) { x.isNil };
-  var Object.isNil = false;
-  var asString = "";
-};
 
 
 ## ------------ ##
@@ -437,6 +446,7 @@ class Global.Orderable
 
 load("urbi/float.u");
 
+load("urbi/trajectory-generator.u");
 
 ## -------- ##
 ## String.  ##
