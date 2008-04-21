@@ -9,10 +9,12 @@
 # include <map>
 # include <iostream>
 # include <sstream>
-# include "ast/fwd.hh"
 
-# include "libport/symbol.hh"
-# include "libport/map.hh"
+# include <libport/map.hh>
+# include <libport/symbol.hh>
+# include <libport/unique-pointer.hh>
+
+# include "ast/fwd.hh"
 # include "parser/metavar-map.hh"
 
 namespace parser
@@ -32,6 +34,25 @@ namespace parser
     /// \brief Stream manipulator.
     ///
     /// Append Tiger expressions to the string to parse.
+    ///
+    /// \precondition: If \a t is an AST pointer type, it must not
+    /// have been already registered.
+    ///
+    /// Registering the same address twice means that the
+    /// same address will be used twice, and therefore deleted twice.
+    ///
+    /// Why don't we allow the use of a same node several times?
+    /// Because most of the time it is wrong: it means you use a single
+    /// ast several times, which means that something that was written
+    /// once initially will be written twice in the result.  In that
+    /// case you are likely to introduce several computations of the
+    /// expressions (with possibly several times its side-effects)
+    /// which is wrong (thing of Cpp macros).  You typically need to
+    /// introduce a temporary in that case.
+    ///
+    /// But of course sometimes you really want to use that tree
+    /// several times.  In which case explicitly clone it on the call
+    /// side.
     template <typename T> Tweast& operator<< (const T& t);
 
     /// Metavariables manipulator.
@@ -44,20 +65,20 @@ namespace parser
     std::ostream& dump (std::ostream& ostr) const;
 
   protected:
-    /// Insert base class \a append members in the current scope.
+    /// Store some typed data.
     /// \{
+    /// Define virtual std::string append_ (unsigned& key, ast::Call* data);
     using MetavarMap<ast::Call>::append_;
     using MetavarMap<ast::Exp>::append_;
+    template <typename T> T& append_ (unsigned&, T& data) const;
     /// \}
 
-    // We need this function to disambiguate.  When we append a Call
-    // (static type, not dynamic type), the C++ standard says
-    // append_(ast::Exp) and append<T>(T) are both eligible.  Hence it
-    // fails to compile.
-    //    ast::Call& append_ (unsigned&, ast::Call& data) const;
-
-    /// Fake append (default case, i.e. when \a data is not a metavariable).
-    template <typename T> T& append_ (unsigned&, T& data) const;
+    /// Whether the pointer must be registered only once.
+    /// \{
+    using MetavarMap<ast::Call>::must_be_unique_;
+    using MetavarMap<ast::Exp>::must_be_unique_;
+    template <typename T> bool must_be_unique_ (const T&) const;
+    /// \}
 
   protected:
     /// The next identifier suffix to create.
@@ -65,6 +86,10 @@ namespace parser
 
     /// The string to parse.
     std::stringstream input_;
+# ifndef NDEBUG
+    /// The set of pointers that must be unique.
+    libport::UniquePointer unique_;
+# endif
   };
 
   /// Display the content of the tweast.

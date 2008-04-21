@@ -16,16 +16,18 @@ namespace parser
   unsigned Tweast::count_ = 0;
 
   Tweast::Tweast()
-    : MetavarMap<ast::Call>::MetavarMap ("call"),
-      MetavarMap<ast::Exp>::MetavarMap ("exp"),
-      input_ ()
+    : MetavarMap<ast::Call>::MetavarMap("call"),
+      MetavarMap<ast::Exp>::MetavarMap("exp"),
+      input_(),
+      unique_()
   {
   }
 
   Tweast::Tweast (const std::string& str)
-    : MetavarMap<ast::Call>::MetavarMap ("call"),
-      MetavarMap<ast::Exp>::MetavarMap ("exp"),
-      input_ (str)
+    : MetavarMap<ast::Call>::MetavarMap("call"),
+      MetavarMap<ast::Exp>::MetavarMap("exp"),
+      input_(str),
+      unique_()
   {
   }
 

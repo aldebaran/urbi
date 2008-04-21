@@ -6,6 +6,7 @@
 #ifndef PARSER_TWEAST_HXX
 # define PARSER_TWEAST_HXX
 
+# include <libport/containers.hh>
 # include <libport/foreach.hh>
 
 # include "parser/tweast.hh"
@@ -21,9 +22,17 @@ namespace parser
   }
 
   template <typename T>
+  bool
+  Tweast::must_be_unique_ (const T&) const
+  {
+    return false;
+  }
+
+  template <typename T>
   Tweast&
   Tweast::operator<< (const T& t)
   {
+    passert (t, !must_be_unique_(t) || unique_(t));
     input_ << append_ (count_, t);
     return *this;
   }
@@ -33,20 +42,6 @@ namespace parser
   Tweast::take (unsigned s) throw (std::range_error)
   {
     return MetavarMap<T>::take_ (s);
-    // T* t = 0;
-    //    try
-    //      {
-    //	t = MetavarMap<T>::take_ (s);
-    //      }
-    //    catch (std::range_error& e)
-    //      {
-    //	// Print the contents of the Tweast before dying.
-    //	misc::error error;
-    //	error << e.what () << std::endl;
-    //	error << *this;
-    //	error.ice_here ();
-    //      }
-    // return t;
   }
 
 }

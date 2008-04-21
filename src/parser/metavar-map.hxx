@@ -36,6 +36,13 @@ namespace parser
   }
 
   template <typename Data>
+  bool
+  MetavarMap<Data>::must_be_unique_ (Data*) const
+  {
+    return true;
+  }
+
+  template <typename Data>
   Data*
   MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
   {
