@@ -58,7 +58,7 @@ class Global.TrajectoryGenerator
       {
 	if (isOver)
           tag.stop|
-	owner.changeSlot(name, get(owner.getSlot(name)))
+	owner.updateSlot(name, get(owner.getSlot(name)))
       }|
       sleep(inf)
     }|
