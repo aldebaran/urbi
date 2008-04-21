@@ -46,6 +46,24 @@ class Global.TrajectoryGenerator
 	var self.period = args.sin
     }
   };
+
+  # Update slot \a name in \a owner accordingly to the trajectory.
+  # Blocking until the trajectory is over.
+  function run(owner, name)
+  {
+    var tag = Tag.new|
+    tag:
+    {
+      every(100) # FIXME: Don't use an arbitrary period.
+      {
+	if (isOver)
+          tag.stop|
+	owner.changeSlot(name, get(owner.getSlot(name)))
+      }|
+      sleep(36000000) # FIXME: We need to 'sleep forever' here.
+    }|
+  };
+
   var startValue = 0;
   var startTime;
   var targetValue;
