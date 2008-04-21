@@ -116,30 +116,6 @@ namespace scheduler
   }
 
   inline void
-  Job::async_throw (const kernel::exception& e)
-  {
-    pending_exception_ = e.clone ();
-  }
-
-  inline void
-  Job::check_for_pending_exception ()
-  {
-    if (pending_exception_)
-    {
-      current_exception_ = pending_exception_;
-      pending_exception_ = 0;
-      // If an exception is propagated, it may have side effects
-      side_effect_free_ = false;
-      kernel::rethrow (current_exception_);
-    }
-    if (blocked ())
-    {
-      side_effect_free_ = false;
-      throw BlockedException ();
-    }
-  }
-
-  inline void
   Job::link (Job* other)
   {
     links_.push_back (other);

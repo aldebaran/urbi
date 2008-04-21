@@ -139,4 +139,32 @@ namespace scheduler
     tags_ = other.tags_;
   }
 
+  void
+  Job::async_throw (const kernel::exception& e)
+  {
+    pending_exception_ = e.clone ();
+    // Now that we acquired an exception to raise, we are active again,
+    // even if we were previously sleeping or waiting for something.
+    if (state_ != to_start && state_ != zombie)
+      state_ = running;
+  }
+
+  void
+  Job::check_for_pending_exception ()
+  {
+    if (pending_exception_)
+    {
+      current_exception_ = pending_exception_;
+      pending_exception_ = 0;
+      // If an exception is propagated, it may have side effects
+      side_effect_free_ = false;
+      kernel::rethrow (current_exception_);
+    }
+    if (blocked ())
+    {
+      side_effect_free_ = false;
+      throw BlockedException ();
+    }
+  }
+
 }
