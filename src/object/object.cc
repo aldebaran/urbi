@@ -314,7 +314,8 @@ namespace object
   void
   Object::slot_update (runner::Runner& r,
 		       const Object::key_type& k,
-		       rObject o)
+		       rObject o,
+		       bool hook)
   {
     // The target of updateSlot
     rObject context = self();
@@ -342,7 +343,7 @@ namespace object
      * 'updateHook', call it, passing the object owning the slot, the slot name
      * and the target.
      */
-    if (effective_target == owner)
+    if (hook && effective_target == owner)
     // FIXME: We probably want helper to access properties
     if (rObject properties = effective_target->slot_get(SYMBOL(properties), rObject()))
     if (rObject slotProperties = properties->slot_get(k, rObject()))

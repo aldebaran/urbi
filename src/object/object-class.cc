@@ -284,6 +284,15 @@ namespace object
   }
 
   static rObject
+  object_class_changeSlot (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (3);
+    FETCH_ARG (1, String);
+    args[0]->slot_update(r, arg1->value_get (), args[2], false);
+    return args[2];
+  }
+
+  static rObject
   object_class_makeScope (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
@@ -315,6 +324,7 @@ namespace object
     DECLARE(addProto);
     DECLARE(apply);
     DECLARE(callMessage);
+    DECLARE(changeSlot);
     DECLARE(clone);
     DECLARE(dump);
     DECLARE(echo); // This guy should be in System.

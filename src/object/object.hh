@@ -142,9 +142,13 @@ namespace object
     /// existing slot, not creating a new slot in the inner scope.
     /// Except if the existing source slot is a "real" object, in which case
     /// updating means creating the slot in the result of "self" evaluation.
+    /// \param k	The slot to update
+    /// \param o	The new value
+    /// \param hook	Whether to trigger the potential updateHook
     void slot_update (runner::Runner& r,
 		      const Object::key_type& k,
-		      rObject o);
+		      rObject o,
+		      bool hook = true);
 
 
     /// \brief Update value in slot.
