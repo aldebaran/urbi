@@ -326,7 +326,9 @@ namespace runner
   {
     // If we try to call a C++ primitive with a call message, make it
     // look like a strict function call
-    if (call_message && func->kind_get() != object::Object::kind_code)
+    if (call_message &&
+	(func->kind_get() != object::Object::kind_code
+	 || func->value<object::Code>().strict()))
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
