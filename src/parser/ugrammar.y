@@ -488,7 +488,6 @@
 
 %token <symbol>
 	TOK_IDENTIFIER         "identifier"
-	TOK_OPERATOR           "operator command"
 	TOK_OPERATOR_ID        "operator"
 ;
 
@@ -734,8 +733,7 @@ stmt:
 ;
 
 stmt:
-  TOK_OPERATOR        { $$ = 0; }
-| TOK_OPERATOR_ID tag { $$ = 0; }
+  TOK_OPERATOR_ID tag { $$ = 0; }
 | "def"               { $$ = 0; }
 ;
 
