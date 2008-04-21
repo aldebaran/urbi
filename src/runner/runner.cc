@@ -186,6 +186,7 @@ namespace runner
 
     JECHO ("lhs", e.lhs_get ());
     Runner* lhs = new Runner (*this);
+    link (lhs);
     scheduler::rJob lhs_ = lhs->myself_get ();
     lhs->copy_tags (*this);
     lhs->ast_ = &e.lhs_get ();
