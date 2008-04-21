@@ -33,6 +33,7 @@ include/kernel/blockmemorymanager.hh		\
 include/kernel/exception.hh			\
 include/kernel/exception.hxx			\
 include/kernel/fwd.hh				\
+include/kernel/kernconf.hh			\
 include/kernel/memorymanager.hh			\
 include/kernel/ucomplaints.hh			\
 include/kernel/uconnection.hh			\
