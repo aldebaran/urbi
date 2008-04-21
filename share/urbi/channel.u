@@ -17,6 +17,8 @@ do Global
   var error   = new Channel("error");
   var warning = new Channel("warning");
   var clog    = new Channel("clog");
+  // This one is used by urbiimage.
+  var uimg    = new Channel("uimg");
 
   // Short names are user compatible.
   var cout    = output;
