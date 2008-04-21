@@ -504,7 +504,6 @@
 
 %token <symbol>
 	TOK_IDENTIFIER         "identifier"
-	TOK_BINDER             "binder"
 	TOK_OPERATOR           "operator command"
 	TOK_OPERATOR_ID        "operator"
 ;
@@ -799,27 +798,29 @@ stmt:
 // ;
 
 // Bindings.
+%token TOK_EXTERNAL "external";
 stmt:
-  "binder" "object" "identifier"
+  "external" "object" "identifier"
   {
     DESUGAR("'external'.'object'(\"" << take($3) << "\")");
   }
-| "binder" "var" "identifier" "." "identifier" "from" "identifier"
+| "external" "var" "identifier" "." "identifier"
+	     "from" "identifier"
   {
     DESUGAR("'external'.'var'(\"" << take($3) << "\", "
 	    <<               "\"" << take($5) << "\", "
 	    <<               "\"" << take($7) << "\")");
   }
-| "binder" "function" "(" "integer" ")" "identifier" "." "identifier"
-           "from" "identifier"
+| "external" "function" "(" "integer" ")" "identifier" "." "identifier"
+	     "from" "identifier"
   {
     DESUGAR("'external'.'function'(" << $4 << ", "
 	    <<                    "\"" << take($6) << "\", "
 	    <<                    "\"" << take($8) << "\", "
 	    <<                    "\"" << take($10) << "\")");
   }
-| "binder" "event" "(" "integer" ")" "identifier" "." "identifier"
-           "from" "identifier"
+| "external" "event" "(" "integer" ")" "identifier" "." "identifier"
+	     "from" "identifier"
   {
     DESUGAR("'external'.'event'(" << $4 << ", "
 	    <<                "\"" << take($6) << "\", "

@@ -457,7 +457,7 @@ FLAVOR   [;|,&]?
  */
 
 "internal"  DEPRECATED("");
-"external"  RETURN_SYMBOL (BINDER);
+"external"  RETURN(EXTERNAL);
 
 "_call"         RETURN(_CALL);
 "_exp"          RETURN(_EXP);
