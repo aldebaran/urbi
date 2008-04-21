@@ -9,8 +9,8 @@ class Global.TrajectoryGenerator
     if (content.has("time"))
     {
       var self.get = getSlot("timeGet") |
-      var self.duration = args.getSlot("time") |
-      var self.adaptive = args.getLazyLocalSlot("adaptive", 0, false)
+      var self.duration = _getSlot(args, "time") |
+      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false)
     }
     else if (content.has("accel"))
     {

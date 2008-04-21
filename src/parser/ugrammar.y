@@ -206,23 +206,10 @@
 	libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
 	DESUGAR_
 	  (res,
-	   "{"
-	   << "var " << gen << " = "
-	   <<   "TrajectoryGenerator.new(" << lvalue << ", "
-	   <<                            value << ", "
-	   <<                            "_addProto(" << modifier << ", "
-	   <<                                       "Object)) |"
-	   << "var " << tag << " = "
-	   <<   ast::clone(*lvalue) << ".getLazyLocalSlot (\"tag_\", Tag.new, "
-	   <<					                     "true) |"
-	   << tag << ": every (" << gen << ".getPeriod)"
-	   <<     "{"
-	   <<        "if (" << gen << ".isOver)"
-	   <<           tag << ".stop |"
-	   <<            ast::clone(*lvalue) << " = " << gen << ".get ("
-	   <<              ast::clone(*lvalue) << ")"
-	   <<      "}"
-	   << "}");
+	   "TrajectoryGenerator.new"
+	   "(" << lvalue << ", " << value << ", " << modifier << ")"
+	   ".run(locateSlot(\"" << lvalue->name_get() << "\"),"
+				<< "\"" << lvalue->name_get() << "\")");
       }
       else
       {
