@@ -1,8 +1,8 @@
 class Global.Group
 {
-  function init ()
+  function init
   {
-    var self.members = [];
+    var self.members = call.evalArgs;
   };
 
   function add(g)
