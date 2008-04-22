@@ -39,7 +39,7 @@ namespace runner
       scheduler::Job (model),
       lobby_ (model.lobby_),
       ast_ (model.ast_),
-      current_ (model.current_),
+      current_ (0),
       locals_ (model.locals_)
   {
   }
