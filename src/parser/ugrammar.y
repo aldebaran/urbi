@@ -199,6 +199,7 @@
       {
 	ast::Call* call =
 	  ast_call(l,
+                   // The target.
 		   lvalue->args_get().front(),
 		   // FIXME: this new is stupid.  We need to clean
 		   // this set of call functions.
@@ -855,32 +856,18 @@ stmt:
     {
       $$ = ast_slot_update(@$, $1, $3, $4);
     }
-// FIXME: Factor these four rules
-| id "->" id "=" expr
+| lvalue "->" id "=" expr
     {
-      $$ = ast_call(@$, 0, SYMBOL(setProperty),
-		    new ast::String(@1, take($1)),
+      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(setProperty),
+		    new ast::String(@1, $1->name_get()),
 		    new ast::String(@3, take($3)),
 		    $5);
     }
-| expr "." id "->" id "=" expr
+| lvalue "->" id
     {
-      $$ = ast_call(@$, $1, SYMBOL(setProperty),
-		    new ast::String(@3, take($3)),
-		    new ast::String(@5, take($5)),
-		    $7);
-    }
-| id "->" id
-    {
-      $$ = ast_call(@$, 0, SYMBOL(getProperty),
-		    new ast::String(@1, take($1)),
+      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(getProperty),
+		    new ast::String(@1, $1->name_get()),
 		    new ast::String(@3, take($3)));
-    }
-| expr "." id "->" id
-    {
-      $$ = ast_call(@$, $1, SYMBOL(getProperty),
-		    new ast::String(@3, take($3)),
-		    new ast::String(@5, take($5)));
     }
 | "var" lvalue "=" expr namedarguments
     {
