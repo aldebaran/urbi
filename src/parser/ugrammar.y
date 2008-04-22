@@ -1099,37 +1099,6 @@ expr:
 ;
 
 
-
-//expr:
-//  k1_id          { $$ = $1; }
-//| "static" k1_id	{ /* FIXME: Fill. */ }
-//| k1_id derive   { /* FIXME: Fill. */ }
-//| k1_id "'n"	{ /* FIXME: Fill. */ }
-//| k1_id "'e"	{ /* FIXME: Fill. */ }
-//| k1_id "'in"	{ /* FIXME: Fill. */ }
-//| k1_id "'out"   { /* FIXME: Fill. */ }
-//| k1_id "'n"	{ $$ = 0; }
-//;
-//
-//%code requires
-//{
-//#include "uvariablename.hh" // UDeriveType
-//};
-//%union { UVariableName::UDeriveType derive; };
-//%token
-//  TOK_DERIV        "'"
-//  TOK_DERIV2       "''"
-//  TOK_TRUEDERIV    "'d"
-//  TOK_TRUEDERIV2   "'dd";
-//%type <derive> derive;
-//derive:
-//  "'"	{ $$ = UVariableName::UDERIV;	   }
-//| "''"	{ $$ = UVariableName::UDERIV2;	   }
-//| "'d"	{ $$ = UVariableName::UTRUEDERIV;  }
-//| "'dd"	{ $$ = UVariableName::UTRUEDERIV2; }
-//;
-
-
 //expr:
 //  k1_id "->" "identifier" { $$ = 0; }
 //;
