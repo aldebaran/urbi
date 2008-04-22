@@ -47,6 +47,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <libport/assert.hh>
 #include <libport/separator.hh>
 
 #include "ast/all.hh"
@@ -60,6 +61,7 @@
 
   namespace
   {
+    /// Shorthand.
     typedef yy::parser::location_type loc;
 
     /// Get the metavar from the specified map.
@@ -338,6 +340,14 @@
       return ast_scope(l, ast_nary (l, op, init, while_loop));
     }
 
+
+    /*---------------.
+    | Warnings etc.  |
+    `---------------*/
+
+# define NOT_IMPLEMENTED(Loc)                                           \
+    pabort(Loc << ": rule not implemented in the parser.\n"             \
+           "Rerun with YYDEBUG=1 in the environment to know more.")
 
     /// Whether the \a e was the empty command.
     static bool
@@ -643,8 +653,8 @@ tag:
 ;
 
 stmt:
-  tag flags.0 ":" stmt  {  $$ = new ast::TaggedStmt (@$, $1, $4); }
-|     flags.1 ":" stmt  { $$ = 0; }
+  tag flags.0 ":" stmt  { $$ = new ast::TaggedStmt (@$, $1, $4); }
+|     flags.1 ":" stmt  { NOT_IMPLEMENTED(@$); }
 ;
 
 /*--------.
@@ -652,19 +662,22 @@ stmt:
 `--------*/
 
 flag:
-  TOK_FLAG         { $$ = 0; }
+  TOK_FLAG         { NOT_IMPLEMENTED(@$); }
 ;
 
 // One or more "flag"s.
 flags.1:
-  flag             { $$ = 0; }
-| flags.1 flag     { $$ = 0; }
+  flag             { NOT_IMPLEMENTED(@$); }
+| flags.1 flag     { NOT_IMPLEMENTED(@$); }
 ;
 
 // Zero or more "flag"s.
 flags.0:
-  /* empty. */   { $$ = 0; }
-| flags.1        { $$ = 0; }
+  /* When use tags, we use the following rule, but ignore the result.
+     So don't abort here.  FIXME: Once flags handled, do something else
+     than $$ = 0.  */
+  /* empty. */   { $$ = 0;  }
+| flags.1        { NOT_IMPLEMENTED(@$); }
 ;
 
 
@@ -695,7 +708,7 @@ stmt:
   {
     DESUGAR(*$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "])");
   }
-| "group" { $$ = 0; }
+| "group" { NOT_IMPLEMENTED(@$); }
 ;
 
 expr:
@@ -704,10 +717,10 @@ expr:
 
 // Aliases.
 stmt:
-  "alias"             { $$ = 0; }
-| "alias" k1_id k1_id { $$ = 0; }
-| "alias" k1_id       { $$ = 0; }
-| "unalias" k1_id     { $$ = 0; }
+  "alias"             { NOT_IMPLEMENTED(@$); }
+| "alias" k1_id k1_id { NOT_IMPLEMENTED(@$); }
+| "alias" k1_id       { NOT_IMPLEMENTED(@$); }
+| "unalias" k1_id     { NOT_IMPLEMENTED(@$); }
 ;
 
 block:
@@ -730,9 +743,9 @@ stmt:
 
 // Variables.
 // stmt:
-// | "var" k1_id { $$ = 0; }
+// | "var" k1_id { NOT_IMPLEMENTED(@$); }
 // The following one is incorrect: wrong separator, should be ;.
-// | "var" "{" identifiers "}" { $$ = 0; }
+// | "var" "{" identifiers "}" { NOT_IMPLEMENTED(@$); }
 // ;
 
 // Bindings.
@@ -769,9 +782,9 @@ stmt:
 
 // Events.
 stmt:
-  "emit" k1_id args                  { $$ = 0; }
-| "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
-| "event" k1_id formals              { $$ = 0; }
+  "emit" k1_id args                  { NOT_IMPLEMENTED(@$); }
+| "emit" "(" expr.opt ")" k1_id args { NOT_IMPLEMENTED(@$); }
+| "event" k1_id formals              { NOT_IMPLEMENTED(@$); }
 ;
 
 // Functions.
@@ -1331,8 +1344,8 @@ args:
 
 softtest:
   expr
-| expr "~" expr  { $$ = 0; }
-| "(" expr "~" expr ")" { $$ = 0; }
+| expr "~" expr         { NOT_IMPLEMENTED(@$); }
+| "(" expr "~" expr ")" { NOT_IMPLEMENTED(@$); }
 ;
 
 
