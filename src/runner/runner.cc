@@ -362,23 +362,15 @@ namespace runner
     assert (!call_message || args.size() == 1);
 
     // Check if any argument is void
-    try
+    if (!acceptVoid(func))
     {
-      if (!acceptVoid(func))
+      bool first = true;
+      foreach (rObject arg, args)
       {
-	bool first = true;
-	foreach (rObject arg, args)
-	{
-	  if (!first && arg == object::void_class)
-	    throw object::WrongArgumentType ("");
-	  first = false;
-	}
+	if (!first && arg == object::void_class)
+	  throw object::WrongArgumentType ("");
+	first = false;
       }
-    }
-    catch (object::LookupError)
-    {
-      // Nothing. This happen only once, when invoking the first
-      // setSlot that defines Code.acceptVoid to false.
     }
 
     switch (func->kind_get ())
