@@ -14,6 +14,9 @@ def decl (type, name):
   res += name
   return res
 
+# The list of all the AST nodes.
+ast_nodes = None;
+
 ## AST Descriptions ----------------------------------------------------------
 class Attribute:
   """An attribute of a AST class node."""
@@ -128,6 +131,10 @@ class Attribute:
       if self.hide and res:
 	res = "    //<<-\n" + res + "    //->>\n"
     return res;
+
+  def visitable_p(self):
+    "Attributes whose base type is an AST node are visitable."
+    return self.root_type() in ast_nodes
 
 class Node:
   def __init__(self, name, dict, ast_params):
@@ -324,6 +331,7 @@ class Loader:
     ast_params = i.next ()
     # Compile the regexps once for all.
     ast_params['deep_clear_p'] = re.compile (ast_params['deep_clear_p'])
+    global ast_nodes
     ast_nodes = i.next ()
     nodes = self.create_nodes (ast_nodes, ast_params)
     self.final_compute (nodes)

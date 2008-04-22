@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+# TODO:
+# - traversal of pointer types.
+# - abstract classes should have a traversal too, let only to provide
+#   it to its subclasses (via super_type::operator()).
+# - subclasses should invoke the traversal of their superclass.
+
 import re
 import sys, os, os.path, filecmp, shutil, stat
 import ast, tools
@@ -137,17 +143,21 @@ for node in arr:
   if node.concrete or 'default' in node.__dict__:
     if 'default' in node.__dict__:
       action = node.default
+    else:
+      action = ""
+      for attr in node.attributes:
+	if attr.visitable_p():
+	  action += "    operator()(n." + attr.name + "_get());\n"
+    if action != '':
+      action = "\n" + action + "  "
       var = ' n'
     else:
-      action = '// No action defined.'
       var = ''
     print """\
   template <template <typename> class Const>
   void
   GenDefaultVisitor<Const>::operator() (typename GenDefaultVisitor<Const>::%s_type&%s)
-  {
-    %s
-  }
+  {%s}
 """ % (lower(node.name), var, action)
 
 print """} // namespace ast
