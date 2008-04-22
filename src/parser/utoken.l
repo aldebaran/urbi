@@ -427,15 +427,6 @@ FLAVOR   [;|,&]?
 	      }
 
  /*
-  "block"      |
-  "disconnect" |
-  "freeze"     |
-  "killall"    |
-  "stop"       |
-  "unblock"    |
-  "unfreeze"   RETURN_SYMBOL (OPERATOR_ID);
-
-
   "info"    |
   "undef"   RETURN_SYMBOL (OPERATOR_VAR);
  */

@@ -488,7 +488,6 @@
 
 %token <symbol>
 	TOK_IDENTIFIER         "identifier"
-	TOK_OPERATOR_ID        "operator"
 ;
 
 // id is meant to enclose all the symbols we use as operators.  For
@@ -733,8 +732,7 @@ stmt:
 ;
 
 stmt:
-  TOK_OPERATOR_ID tag { $$ = 0; }
-| "def"               { $$ = 0; }
+  "def"               { $$ = 0; }
 ;
 
 // Variables.
