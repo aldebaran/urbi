@@ -199,7 +199,7 @@
       {
 	ast::Call* call =
 	  ast_call(l,
-                   // The target.
+		   // The target.
 		   lvalue->args_get().front(),
 		   // FIXME: this new is stupid.  We need to clean
 		   // this set of call functions.
@@ -379,7 +379,6 @@
 	TOK_COLON        ":"
 	TOK_DEF          "def"
 	TOK_DELETE       "delete"
-	TOK_MINUS_GT     "->"
 	TOK_DOLLAR       "$"
 	TOK_COLON_COLON  "::"
 	TOK_ELSE         "else"
@@ -856,19 +855,6 @@ stmt:
     {
       $$ = ast_slot_update(@$, $1, $3, $4);
     }
-| lvalue "->" id "=" expr
-    {
-      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(setProperty),
-		    new ast::String(@1, $1->name_get()),
-		    new ast::String(@3, take($3)),
-		    $5);
-    }
-| lvalue "->" id
-    {
-      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(getProperty),
-		    new ast::String(@1, $1->name_get()),
-		    new ast::String(@3, take($3)));
-    }
 | "var" lvalue "=" expr namedarguments
     {
       $$ = ast_slot_set(@$, $2, $4, $5);
@@ -891,6 +877,7 @@ stmt:
 	TOK_STAR_EQ     "*="
 ;
 
+
 expr:
   lvalue "+=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '+' << $3); }
 | lvalue "-=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '-' << $3); }
@@ -903,6 +890,29 @@ expr:
 | lvalue "++"      { DESUGAR('(' << $1 << "+= 1) - 1"); }
 ;
 
+
+/*-------------.
+| Properties.  |
+`-------------*/
+%token TOK_MINUS_GT     "->";
+stmt:
+  lvalue "->" id "=" expr
+    {
+      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(setProperty),
+		    new ast::String(@1, $1->name_get()),
+		    new ast::String(@3, take($3)),
+		    $5);
+    }
+;
+
+expr:
+  lvalue "->" id
+    {
+      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(getProperty),
+		    new ast::String(@1, $1->name_get()),
+		    new ast::String(@3, take($3)));
+    }
+;
 
 /*---------------------.
 | Stmt: Control flow.  |
