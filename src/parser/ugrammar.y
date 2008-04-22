@@ -698,7 +698,7 @@ stmt:
 stmt:
   "group" "identifier" "{" identifiers "}"
   {
-    DESUGAR("var " << *$2 << " = Object.Group.new;"
+    DESUGAR("var " << *$2 << " = Object.Group.new|"
 	    << *$2 << ".addGroups([" << $4 << "])");
   }
 | "addgroup" "identifier" "{" identifiers "}"
