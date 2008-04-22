@@ -31,6 +31,9 @@
 
 namespace runner
 {
+  using boost::bind;
+  using libport::Finally;
+
 /// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
 #define JOB(Runner) static_cast<scheduler::Job*> (Runner)
 
@@ -105,8 +108,16 @@ namespace runner
   }							\
   Code
 
-  static void (*swap) (Runner::rObject&, Runner::rObject&) =
-		 &std::swap<Runner::rObject>;
+  // Helper to generate a function that swaps two rObjects.
+  inline
+  boost::function0<void>
+  swap(Runner::rObject& lhs, Runner::rObject& rhs)
+  {
+    // Strangely, this indirection is needed
+    void (*f) (Runner::rObject&, Runner::rObject&) =
+      std::swap<Runner::rObject>;
+    return boost::bind(f, ref(lhs), ref(rhs));
+  }
 
   static std::deque<const libport::Symbol*>
   decompose_tag_chain (const ast::Exp* e)
@@ -258,8 +269,7 @@ namespace runner
     // are not exhausting the stack space, for example in an infinite
     // recursion.
     std::swap(scope, locals_);
-    libport::Finally finally;
-    finally << boost::bind(swap, ref(scope), ref(locals_));
+    Finally finally(swap(scope, locals_));
 
     check_stack_space ();
 
@@ -299,8 +309,7 @@ namespace runner
     try
     {
       std::swap (locals_, scope);
-      libport::Finally finally;
-      finally << boost::bind(swap, ref(scope), ref(locals_));
+      Finally finally(swap(scope, locals_));
       eval (e);
     }
     PROPAGATE_EXCEPTION(e.location_get(),
@@ -551,8 +560,7 @@ namespace runner
     try
     {
       call_stack_.push_back(&e);
-      libport::Finally finally;
-      finally << boost::bind(&call_stack_type::pop_back, &call_stack_);
+      Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
       apply (val, e.name_get(), args, call_message);
     }
     PROPAGATE_EXCEPTION(e.location_get(), );
@@ -621,8 +629,7 @@ namespace runner
       else // for| and for;
       {
 	std::swap(locals, locals_);
-	libport::Finally finally;
-	finally << boost::bind(swap, ref(locals), ref(locals_));
+	Finally finally(swap(locals, locals_));
 
 	if (first_iteration)
 	  first_iteration = false;
@@ -943,8 +950,7 @@ namespace runner
 
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
-    libport::Finally finally;
-    finally << boost::bind(swap, ref(locals), ref(locals_));
+    Finally finally(swap(locals, locals_));
     try
     {
       try
@@ -991,8 +997,7 @@ namespace runner
     try
     {
       push_tag (extract_tag (eval (t.tag_get ())));
-      libport::Finally finally;
-      finally << boost::bind(&Runner::pop_tag, this);
+      Finally finally(bind(&Runner::pop_tag, this));
       // If the latest tag causes us to be frozen or blocked, let the
       // scheduler handler this properly to avoid duplicating the
       // logic.
