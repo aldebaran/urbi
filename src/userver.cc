@@ -36,6 +36,7 @@
 #include <libport/config.h>
 #include <libport/containers.hh>
 #include <libport/cstdio>
+#include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
 #include <libport/separator.hh>
@@ -469,6 +470,7 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
 {
   std::istream *is;
   bool isStdin = (base == std::string("/dev/stdin"));
+  libport::Finally finally;
   if (isStdin)
     is = & std::cin;
   else
@@ -476,6 +478,7 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
     try
     {
       is = new std::ifstream(find_file (base).c_str (), std::ios::binary);
+      finally << boost::bind(operator delete, is);
     }
     catch (libport::file_library::Not_found&)
     {
@@ -485,19 +488,15 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
       return UFAIL;
   }
   if (type == QUEUE_URBI)
+  {
     q.push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
+    finally << boost::bind(&UQueue::push, &q, "#pop\n");
+  }
   while (is->good ())
   {
     char buf[BUFSIZ];
     is->read (buf, sizeof buf);
     q.push(buf, is->gcount());
-  }
-  if (type == QUEUE_URBI)
-    q.push ("#pop\n");
-  if (!isStdin)
-  {
-    reinterpret_cast<std::ifstream*>(is)->close();
-    delete is;
   }
   return USUCCESS;
 }

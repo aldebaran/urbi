@@ -9,6 +9,7 @@
 #include <deque>
 #include <sstream>
 
+#include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
 
@@ -30,7 +31,6 @@
 
 namespace runner
 {
-
 /// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
 #define JOB(Runner) static_cast<scheduler::Job*> (Runner)
 
@@ -104,6 +104,9 @@ namespace runner
     throw;						\
   }							\
   Code
+
+  static void (*swap) (Runner::rObject&, Runner::rObject&) =
+		 &std::swap<Runner::rObject>;
 
   static std::deque<const libport::Symbol*>
   decompose_tag_chain (const ast::Exp* e)
@@ -255,6 +258,9 @@ namespace runner
     // are not exhausting the stack space, for example in an infinite
     // recursion.
     std::swap(scope, locals_);
+    libport::Finally finally;
+    finally << boost::bind(swap, ref(scope), ref(locals_));
+
     check_stack_space ();
 
     try
@@ -274,7 +280,6 @@ namespace runner
     {
       object::PrimitiveError error("break", "outside a loop");
       propagate_error_(error, be.location_get());
-      std::swap(scope, locals_);
       throw error;
     }
     catch (ast::ReturnException& re)
@@ -283,7 +288,7 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
-    PROPAGATE_EXCEPTION(fn.location_get(), std::swap(scope, locals_));
+    PROPAGATE_EXCEPTION(fn.location_get(), );
 
     return current_;
   }
@@ -291,15 +296,16 @@ namespace runner
   object::rObject
   Runner::eval_in_scope (rObject scope, const ast::Exp& e)
   {
-    std::swap (locals_, scope);
     try
     {
+      std::swap (locals_, scope);
+      libport::Finally finally;
+      finally << boost::bind(swap, ref(scope), ref(locals_));
       eval (e);
     }
     PROPAGATE_EXCEPTION(e.location_get(),
 			{
 			  run_at_exit (scope);
-			  std::swap(locals_, scope);
 			});
     return current_;
   }
@@ -542,12 +548,14 @@ namespace runner
     else
       push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
 
-    call_stack_.push_back(&e);
     try
     {
+      call_stack_.push_back(&e);
+      libport::Finally finally;
+      finally << boost::bind(&call_stack_type::pop_back, &call_stack_);
       apply (val, e.name_get(), args, call_message);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), call_stack_.pop_back());
+    PROPAGATE_EXCEPTION(e.location_get(), );
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
@@ -613,6 +621,8 @@ namespace runner
       else // for| and for;
       {
 	std::swap(locals, locals_);
+	libport::Finally finally;
+	finally << boost::bind(swap, ref(locals), ref(locals_));
 
 	if (first_iteration)
 	  first_iteration = false;
@@ -625,11 +635,10 @@ namespace runner
 	}
 	catch (ast::BreakException&)
 	{
-	  std::swap(locals, locals_);
 	  break;
 	}
 	// Restore previous locals_, even if an exception was thrown.
-	PROPAGATE_EXCEPTION(e.location_get(), std::swap(locals, locals_));
+	PROPAGATE_EXCEPTION(e.location_get(), {});
       }
     }
 
@@ -934,6 +943,8 @@ namespace runner
 
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
+    libport::Finally finally;
+    finally << boost::bind(swap, ref(locals), ref(locals_));
     try
     {
       try
@@ -949,7 +960,6 @@ namespace runner
     }
     PROPAGATE_EXCEPTION(e.location_get(),
 			{
-			  std::swap(locals, locals_);
 			  non_interruptible_set (was_non_interruptible);
 			});
     if (target)
@@ -978,8 +988,11 @@ namespace runner
   void
   Runner::operator() (const ast::TaggedStmt& t)
   {
-    push_tag (extract_tag (eval (t.tag_get ())));
-    try {
+    try
+    {
+      push_tag (extract_tag (eval (t.tag_get ())));
+      libport::Finally finally;
+      finally << boost::bind(&Runner::pop_tag, this);
       // If the latest tag causes us to be frozen or blocked, let the
       // scheduler handler this properly to avoid duplicating the
       // logic.
@@ -994,13 +1007,12 @@ namespace runner
       // not allowed to pop them ourselves. So check if we are still
       // blocked and go up one level in this case.
       current_.reset ();
-      pop_tag ();
       if (blocked ())
 	throw;
       // Execution will go on as planned
       return;
     }
-    PROPAGATE_EXCEPTION(t.location_get(), pop_tag ());
+    PROPAGATE_EXCEPTION(t.location_get(), );
   }
 
   object::rObject
