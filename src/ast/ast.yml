@@ -502,9 +502,6 @@ Binary:
         type: 'Exp*'
         desc: Right-hand side expression
         access: rwW
-  default: |2
-    operator()(n.lhs_get());
-    operator()(n.rhs_get());
 
 And:
   super: Binary
@@ -523,7 +520,6 @@ Pipe:
     - ~rhs
 
 
-
 If:
   super: Exp
   attributes:
@@ -536,10 +532,6 @@ If:
     - elseclause:
         type: Exp*
         desc: Executed if test is false
-  default: |2
-    operator()(n.test_get());
-    operator()(n.thenclause_get());
-    operator()(n.elseclause_get());
   printer:
     - '"if ("'
     - ~test
@@ -563,9 +555,6 @@ While:
     - body:
         type: Exp*
         desc: Executed if test is true
-  default: |2
-    operator()(n.test_get());
-    operator()(n.body_get());
   printer:
     - '"while"'
     - '{
