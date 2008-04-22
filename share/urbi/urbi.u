@@ -90,9 +90,12 @@ do Object
     if (_isNil(_locateSlot(properties, slot)))
       _setSlot(properties, slot, (||))|
     var slotProps = _getSlot(properties, slot)|
+    if (_isNil(_locateSlot(slotProps, name)))
+      _setSlot(slotProps, name, getSlot("value"))
+    else
+      _updateSlot(slotProps, name, getSlot("value"))|
     if (!getSlot(slot).locateSlot("propertyHook").isNil)
-      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
-    _setSlot(slotProps, name, getSlot("value"))
+      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))
   };
 
   function getProperty(slot, name)
@@ -103,10 +106,11 @@ do Object
   function hasProperty(slot, name)
   {
     # No '&&' yet.
-    if (_locateSlot(properties, slot))
-      if (_locateSlot(_getSlot(properties, slot), name))
-        return true|
-    return false
+    if (_isNil(_locateSlot(properties, slot)))
+      return false
+    else if (_isNil(_locateSlot(_getSlot(properties, slot), name)))
+        return false
+      else return true
   };
 };
 
