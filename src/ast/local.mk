@@ -17,6 +17,7 @@ BUILT_SOURCES_ast =							   \
 	ast/cloner.hh ast/cloner.hxx ast/cloner.cc			   \
 	ast/default-visitor.hh ast/default-visitor.hxx			   \
 	ast/pretty-printer.hh ast/pretty-printer.hxx ast/pretty-printer.cc \
+	ast/symbols-type.hh ast/symbols-type.cc 			   \
 	$(ast_nodes)
 
 gen_dir = $(top_srcdir)/dev
