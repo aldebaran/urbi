@@ -427,11 +427,6 @@ FLAVOR   [;|,&]?
 	      }
 
  /*
-  "info"    |
-  "undef"   RETURN_SYMBOL (OPERATOR_VAR);
- */
-
- /*
    FIXME: Surprisingly enough, these are strings, not symbols,
    i.e., they pretend to have quotes around them.  This is because
    they are used as properties, which are "generalized" as strings.
