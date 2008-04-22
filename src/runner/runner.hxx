@@ -34,11 +34,11 @@ namespace runner
   }
 
   inline
-  Runner::Runner(const Runner& model)
+  Runner::Runner(const Runner& model, const ast::Ast* ast)
     : Runner::super_type (),
       scheduler::Job (model),
       lobby_ (model.lobby_),
-      ast_ (model.ast_),
+      ast_ (ast),
       current_ (0),
       locals_ (model.locals_)
   {

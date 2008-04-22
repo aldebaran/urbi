@@ -40,8 +40,8 @@ namespace runner
     Runner (rLobby lobby, rObject locals,
 	    scheduler::Scheduler& scheduler, const ast::Ast* ast);
 
-    /// Create a copy of a runner.
-    Runner (const Runner&);
+    /// Create a copy of a runner starting with another ast.
+    Runner (const Runner&, const ast::Ast* ast);
 
     /// Destroy a Runner.
     virtual ~Runner ();

@@ -185,11 +185,15 @@ namespace runner
     // tags.
 
     JECHO ("lhs", e.lhs_get ());
-    Runner* lhs = new Runner (*this);
+    Runner* lhs = new Runner (*this, &e.lhs_get ());
+
+    // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
+
+    // Keep a reference on the runner so that it doesn't get destroyed
+    // if it finishes first.
     scheduler::rJob lhs_ = lhs->myself_get ();
-    lhs->copy_tags (*this);
-    lhs->ast_ = &e.lhs_get ();
+
     lhs->start_job ();
 
     JECHO ("rhs", e.rhs_get ());
@@ -749,9 +753,7 @@ namespace runner
 	  dynamic_cast<ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are
-	Runner* subrunner = new Runner(*this);
-	subrunner->copy_tags (*this);
-	subrunner->ast_ = i;
+	Runner* subrunner = new Runner(*this, i);
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
