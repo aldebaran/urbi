@@ -377,7 +377,6 @@
 	TOK_EQ           "="
 	TOK_BREAK        "break"
 	TOK_COLON        ":"
-	TOK_DEF          "def"
 	TOK_DELETE       "delete"
 	TOK_DOLLAR       "$"
 	TOK_COLON_COLON  "::"
@@ -731,16 +730,10 @@ stmt:
     }
 ;
 
-stmt:
-  "def"               { $$ = 0; }
-;
-
 // Variables.
 // stmt:
 // | OPERATOR_VAR k1_id { $$ = 0; }
 // | "var" k1_id { $$ = 0; }
-// Duplicates the previous one, and cannot be factored.
-// | "def" k1_id { $$ = 0; }
 // The following one is incorrect: wrong separator, should be ;.
 // | "var" "{" identifiers "}" { $$ = 0; }
 // ;

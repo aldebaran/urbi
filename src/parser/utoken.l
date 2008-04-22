@@ -457,7 +457,6 @@ FLAVOR   [;|,&]?
 "alias"         RETURN(ALIAS);
 "break"         RETURN(BREAK);
 "class"         RETURN(CLASS);
-"def"           RETURN(DEF);
 "delete"        RETURN(DELETE);
 "delgroup"      RETURN(DELGROUP);
 "do"		RETURN(DO);
