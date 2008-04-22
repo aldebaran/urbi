@@ -92,7 +92,6 @@ uobject.cc                                                      \
 uobject.hh                                                      \
 uqueue.hh uqueue.hxx uqueue.cc					\
 userver.cc							\
-ustring.cc							\
 usystem.cc                                                      \
 uvalue-cast.cc							\
 uvalue-cast.hh

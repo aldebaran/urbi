@@ -40,7 +40,6 @@ include/kernel/uconnection.hh			\
 include/kernel/uconnection.hxx			\
 include/kernel/userver.hh			\
 include/kernel/userver.hxx			\
-include/kernel/ustring.hh			\
 include/kernel/utypes.hh
 
 include share/urbi/local.mk

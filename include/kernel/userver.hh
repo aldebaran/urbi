@@ -37,16 +37,17 @@
 # include <libport/utime.hh>
 
 # include "kernel/fwd.hh"
-# include "kernel/ustring.hh"
 # include "kernel/utypes.hh"
 
-namespace runner {
+namespace runner
+{
   class Runner;
-};
+}
 
-namespace scheduler {
+namespace scheduler
+{
   class Scheduler;
-};
+}
 
 extern const char* EXTERNAL_MESSAGE_TAG;
 extern const char* UNKNOWN_TAG;
