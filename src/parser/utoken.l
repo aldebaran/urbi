@@ -515,12 +515,10 @@ FLAVOR   [;|,&]?
 "||"            RETURN_OP(PIPE_PIPE);
 
 "="             RETURN(EQ);
-"$"             RETURN(DOLLAR);
 
 "->"            RETURN(MINUS_GT);
 "."             RETURN(POINT);
 ":"             RETURN(COLON);
-"::"            RETURN(COLON_COLON);
 "~"             RETURN(TILDA);
 
 "(|"            PRE_PUSH('|'); RETURN(LPAREN_PIPE);

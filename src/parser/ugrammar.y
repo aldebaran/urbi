@@ -378,8 +378,6 @@
 	TOK_BREAK        "break"
 	TOK_COLON        ":"
 	TOK_DELETE       "delete"
-	TOK_DOLLAR       "$"
-	TOK_COLON_COLON  "::"
 	TOK_ELSE         "else"
 	TOK_EMIT         "emit"
 	TOK_EVENT        "event"
@@ -824,17 +822,6 @@ k1_id:
 | "identifier" "." "identifier"  { $$ = ast_call(@$, ast_call(@1, 0, $1), $3); }
 ;
 
-// These should probably be integrated into k1_id too, but without
-// the recursion.
-
-//name:
-//  "identifier"             { $$ = call(@$, 0, $1); }
-//| "$" "(" expr ")"         { $$ = 0; }
-//| name "." "identifier"    { $$ = call(@$, $1, $3); }
-//| name "[" expr "]"        { $$ = 0; }
-//| name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
-//;
-
 
 /*-------------------.
 | Stmt: Assignment.  |
@@ -1136,7 +1123,6 @@ expr:
 | time_expr     { $$ = new ast::Float(@$, $1); }
 | "string"      { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
-//| "%" name            { $$ = 0; }
 ;
 
 
