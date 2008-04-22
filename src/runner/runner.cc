@@ -583,7 +583,7 @@ namespace runner
 
     // The list of runners launched for each value in the list if the flavor
     // is "&".
-    std::list<Runner> runners;
+    std::list<scheduler::rJob> runners;
 
     bool first_iteration = true;
 
@@ -600,10 +600,10 @@ namespace runner
       if (e.flavor_get() == ast::flavor_and)
       {
 	// Create the new runner and launch it.
-	runners.push_back(Runner(*this));
-	runners.back().locals_ = locals;
-	runners.back().ast_ = &e.body_get();
-	runners.back().start_job();
+	Runner* new_runner = new Runner(*this, &e.body_get());
+	runners.push_back(new_runner->myself_get());
+	new_runner->locals_ = locals;
+	new_runner->start_job();
       }
       else // for| and for;
       {
@@ -629,8 +629,8 @@ namespace runner
     }
 
     // Wait for all runners to terminate.
-    foreach(Runner& r, runners)
-      yield_until_terminated(r);
+    foreach(scheduler::rJob r, runners)
+      yield_until_terminated(*r);
 
     // For the moment return void.
     current_ = object::void_class;
