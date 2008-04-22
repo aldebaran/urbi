@@ -3,21 +3,20 @@
  ** \brief Implementation of parser::Tweast.
  */
 
-#include <sstream>
-
-#include <libport/foreach.hh>
-
 #include "ast/pretty-printer.hh"
 
 #include "parser/tweast.hh"
 
+
 namespace parser
 {
+
   unsigned Tweast::count_ = 0;
 
   Tweast::Tweast()
     : MetavarMap<ast::Call>::MetavarMap("call"),
       MetavarMap<ast::Exp>::MetavarMap("exp"),
+      MetavarMap<ast::symbols_type>::MetavarMap("formals"),
       input_(),
       unique_()
   {
@@ -26,6 +25,7 @@ namespace parser
   Tweast::Tweast (const std::string& str)
     : MetavarMap<ast::Call>::MetavarMap("call"),
       MetavarMap<ast::Exp>::MetavarMap("exp"),
+      MetavarMap<ast::symbols_type>::MetavarMap("formals"),
       input_(str),
       unique_()
   {
@@ -45,12 +45,15 @@ namespace parser
   Tweast::dump (std::ostream& ostr) const
   {
     return ostr
+      << "Input string:"
+      << libport::incendl << input_.str () << libport::decendl
       << "Call map:"
       << libport::incendl << MetavarMap<ast::Call>::map_ << libport::decendl
       << "Exp map:"
       << libport::incendl << MetavarMap<ast::Exp>::map_ << libport::decendl
-      << "Input string:"
-      << libport::incendl << input_.str () << libport::decendl;
+      << "symbols_type map:"
+      << libport::incendl << MetavarMap<ast::symbols_type>::map_ << libport::decendl
+      ;
   }
 
   std::ostream&

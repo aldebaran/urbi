@@ -1295,7 +1295,11 @@ expr.opt:
 | expr          { $$ = $1; }
 ;
 
-// Metavariables.
+
+/*----------------.
+| Metavariables.  |
+`----------------*/
+
 %token TOK__CALL "_call";
 lvalue:
   "_call" "(" "integer" ")"    { $$ = metavar<ast::Call> (up, $3); }
@@ -1303,8 +1307,14 @@ lvalue:
 
 %token TOK__EXP "_exp";
 expr:
-  "_exp" "(" "integer" ")"    { $$ = metavar<ast::Exp> (up, $3); }
+  "_exp" "(" "integer" ")"     { $$ = metavar<ast::Exp> (up, $3); }
 ;
+
+%token TOK__FORMALS "_formals";
+formals:
+  "_formals" "(" "integer" ")" { $$ = metavar<ast::symbols_type> (up, $3); }
+;
+
 
 /*--------------.
 | Expressions.  |

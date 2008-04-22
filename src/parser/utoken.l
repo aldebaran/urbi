@@ -445,8 +445,10 @@ FLAVOR   [;|,&]?
 "internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
 
+ /* Meta variables. */
 "_call"         RETURN(_CALL);
 "_exp"          RETURN(_EXP);
+"_formals"      RETURN(_FORMALS);
 
 "addgroup"      RETURN(ADDGROUP);
 "alias"         RETURN(ALIAS);
