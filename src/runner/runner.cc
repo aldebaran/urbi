@@ -579,16 +579,18 @@ namespace runner
 
     // We need to copy the pointer on the list, otherwise the list will be
     // destroyed when children are visited and current_ is modified.
-    rObject l = current_;
+    object::List::value_type content = current_->value<object::List>();
 
     // The list of runners launched for each value in the list if the flavor
     // is "&".
-    std::list<scheduler::rJob> runners;
+    std::vector<scheduler::rJob> runners;
+    if (e.flavor_get() == ast::flavor_and)
+      runners.reserve(content.size());
 
     bool first_iteration = true;
 
     // Iterate on each value.
-    foreach (rObject o, l->value<object::List>())
+    foreach (rObject o, content)
     {
       // Define a new local scope for each loop, and set the index.
       rObject locals = object::Object::fresh();
@@ -599,8 +601,11 @@ namespace runner
       // for& ... in loop.
       if (e.flavor_get() == ast::flavor_and)
       {
-	// Create the new runner and launch it.
+	// Create the new runner and launch it. We create a link so
+	// that an error in evaluation will stop other evaluations
+	// as well and propagate the exception.
 	Runner* new_runner = new Runner(*this, &e.body_get());
+	link(new_runner);
 	runners.push_back(new_runner->myself_get());
 	new_runner->locals_ = locals;
 	new_runner->start_job();
