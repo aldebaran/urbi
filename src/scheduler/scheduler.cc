@@ -261,10 +261,10 @@ namespace scheduler
     ECHO ("killing all jobs!");
 
     foreach (Job* job, jobs_)
-      kill_job (job);
+      job->terminate_now ();
 
     foreach (Job* job, pending_)
-      kill_job (job);
+      job->terminate_now ();
   }
 
   void
@@ -280,13 +280,6 @@ namespace scheduler
 
     // Remove it from live queues as well if the job is destroyed.
     pending_.remove (job);
-  }
-
-  void
-  Scheduler::kill_job (Job* job)
-  {
-    KillException ke;
-    job->async_throw (ke);
   }
 
   void Scheduler::signal_stop (rTag t)

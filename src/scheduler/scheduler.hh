@@ -38,9 +38,6 @@ namespace scheduler
     /// Remove all jobs.
     void killall_jobs ();
 
-    /// Kill \a job.
-    void kill_job (Job* job);
-
     /// Unschedule a job but do not delete it. Also here, the currently
     /// executing job cannot unschedule itself.
     void unschedule_job (Job* job);
