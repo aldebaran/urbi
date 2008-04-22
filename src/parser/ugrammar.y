@@ -347,7 +347,7 @@
 
 # define NOT_IMPLEMENTED(Loc)                                           \
     pabort(Loc << ": rule not implemented in the parser.\n"             \
-           "Rerun with YYDEBUG=1 in the environment to know more.")
+	   "Rerun with YYDEBUG=1 in the environment to know more.")
 
     /// Whether the \a e was the empty command.
     static bool
