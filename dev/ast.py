@@ -16,6 +16,7 @@ def decl (type, name):
 
 ## AST Descriptions ----------------------------------------------------------
 class Attribute:
+  """An attribute of a AST class node."""
   def __init__(self, name, dict, ast_params):
     self.name = name
     self.type = ""
@@ -45,6 +46,10 @@ class Attribute:
       return string.lower (self.desc)
     else:
       return self.name
+
+  def accessor_comment (self, verb):
+    """Verb is expected to be "Return" or "Set" for instance."""
+    return "/// " + verb + " " + self.description () + "."
 
   def name_ (self):
     """The name of the attribute, i.e., with an underscore appended."""

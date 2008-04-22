@@ -228,6 +228,37 @@ def print_ctor_dtor (node, header, inline, impl):
   print "  }"
   print ""
 
+def print_attribute_get (attr, const, header, inline, impl):
+  """Print the declaration and implementation for attribute attr.
+  Depending whether const, issue a read or read-write accessor."""
+  if const and re_access_r.match (attr.access) \
+	or not const and re_access_w.match (attr.access):
+
+    get_deref = ""
+    if attr.pointer_p () and attr.mandatory:
+      get_deref = "*"
+
+    sys.stdout = header
+    print "    " + attr.accessor_comment ("Return");
+    if const:
+      type = attr.r_type()
+    else:
+      type = attr.w_type()
+    const_cv = ""
+    if const:
+      const_cv = " const"
+    print "    " + ast.decl (type, attr.name) + "_get ()" + const_cv + ";"
+    sys.stdout = inline
+    if attr.hide:
+      print "  //<<-"
+    print "  inline " + type
+    print "  " + node.name + "::" + attr.name + "_get ()" + const_cv
+    print "  {"
+    print "    return " + get_deref + attr.name + "_;"
+    print "  }"
+    if attr.hide:
+      print "  //->>"
+
 def print_attributes (node, header, inline, impl):
   # Declare attribute accessors
   if len(node.attributes) > 0:
@@ -238,56 +269,20 @@ def print_attributes (node, header, inline, impl):
   public:"""
 
     for a in node.attributes:
-      get_comment = "    /// Return " + a.description () + "."
-      set_comment = "    /// Set " + a.description () + "."
-
-      get_deref = ""
-      set_deref = ""
-      if a.pointer_p () and a.mandatory:
-	get_deref = "*"
-	set_deref = "&"
-
       # Hide following code to students
       if a.hide:
 	sys.stdout = header
 	print "    //<<-"
 
       # Read-only accessor (const get)
-      if re_access_r.match (a.access):
-	sys.stdout = header
-	print get_comment
-	print "    " + ast.decl (a.r_type (), a.name) + "_get () const;"
-	sys.stdout = inline
-	if a.hide:
-	  print "  //<<-"
-	print "  inline " + a.r_type ()
-	print "  " + node.name + "::" + a.name + "_get () const"
-	print "  {"
-	print "    return " + get_deref + a.name + "_;"
-	print "  }"
-	if a.hide:
-	  print "  //->>"
-
-      # Read/Write accessor (non const get)
-      if re_access_w.match (a.access):
-	sys.stdout = header
-	print get_comment
-	print "    " + ast.decl (a.w_type (), a.name) + "_get ();"
-	sys.stdout = inline
-	if a.hide:
-	  print "  //<<-"
-	print "  inline " + a.w_type ()
-	print "  " + node.name + "::" + a.name + "_get ()"
-	print "  {"
-	print "    return " + get_deref + a.name + "_;"
-	print "  }"
-	if a.hide:
-	  print "  //->>"
+      print_attribute_get (a, True,  header, inline, impl);
+      # Read-write accessor (get)
+      print_attribute_get (a, False, header, inline, impl);
 
       # Write accessor (set)
       if re_access_W.match (a.access):
 	sys.stdout = header
-	print set_comment
+	print "    " + a.accessor_comment ("Set");
 	print "    void " + a.name + "_set (" + a.W_type () + ");"
 	sys.stdout = inline
 	if a.hide:
