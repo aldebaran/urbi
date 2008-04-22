@@ -15,7 +15,7 @@ class Global.Group
 
   // Implements addgroup.  Cannot use "group" as an identifier,
   // reserved by k1.
-  function addGroups(g)
+  function addMembers(g)
   {
     members += g;
   };
@@ -27,7 +27,7 @@ class Global.Group
 
   // Implements delgroup.  Cannot use "group" as an identifier,
   // reserved by k1.
-  function removeGroups(g)
+  function removeMembers(g)
   {
     members = self.members - g;
   };

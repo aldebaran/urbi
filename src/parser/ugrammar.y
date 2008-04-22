@@ -699,15 +699,15 @@ stmt:
   "group" "identifier" "{" identifiers "}"
   {
     DESUGAR("var " << *$2 << " = Object.Group.new|"
-	    << *$2 << ".addGroups([" << $4 << "])");
+	    << *$2 << ".addMembers([" << $4 << "])");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".addGroups([" << $4 << "])");
+    DESUGAR(*$2 << ".addMembers([" << $4 << "])");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".removeGroups([" << $4 << "])");
+    DESUGAR(*$2 << ".removeMembers([" << $4 << "])");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
 ;
