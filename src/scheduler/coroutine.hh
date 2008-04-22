@@ -3,30 +3,42 @@
 
 # include "scheduler/libcoroutine/Coro.h"
 
-// This package provides an interface to the libcoroutine. Using this
-// interface allows for various checks and instrumentations to be
-// easily added without modifying the imported libcoroutine.
+/// This package provides an interface to the \c libcoroutine. Using this
+/// interface allows for various checks and instrumentations to be
+/// easily added without modifying the imported \c libcoroutine.
 
-// Create a new coroutine with a specified stack size, or the default one
-// if stack_size is 0.
+/// Create a new coroutine with a specified stack size.
+/// \param stack_size Stack size in bytes or default stack size if 0.
 Coro* coroutine_new(size_t stack_size = 0);
 
-// Free the space used by a coroutine. Cannot be called from the coroutine
-// itself.
+/// Free the space used by a coroutine. Cannot be called from the coroutine
+/// itself.
+/// \param Coro The coroutine to destroy.
 void coroutine_free(Coro*);
 
-// Start a coroutine
+/// Start a coroutine.
+/// \param self The coroutine of the calling task.
+/// \param other The coroutine to start.
+/// \param context An opaque data to pass to \a callback.
+/// \param callback The function used to launch the coroutine. This function
+///        must never return.
 void coroutine_start(Coro* self, Coro* other, void* context,
 		     CoroStartCallback* callback);
 
-// Switch to a coroutine
+/// Switch to a coroutine
+/// \param self The coroutine of the calling task.
+/// \param next The coroutine to schedule.
 void coroutine_switch_to(Coro* self, Coro* next);
 
-// Check whether the stack space is sufficient or near exhaustion.
-bool coroutine_stack_space_almost_gone(Coro*);
+/// Check whether the stack space is sufficient or near exhaustion.
+/// \param coro The coroutine to check, can either be the current one
+///        or any other coroutine.
+bool coroutine_stack_space_almost_gone(Coro* coro);
 
-// Initialize main coroutine
-void coroutine_initialize_main(Coro*);
+/// Initialize the main coroutine.
+/// \param coro The coroutine structure that will be used for the main
+///        task. This coroutine must never be destroyed.
+void coroutine_initialize_main(Coro* coro);
 
 # include "scheduler/coroutine.hxx"
 

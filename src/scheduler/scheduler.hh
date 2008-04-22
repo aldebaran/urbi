@@ -23,67 +23,107 @@ namespace scheduler
 
   public:
     /// Do one cycle of work, and return the next time we expect to be called.
-    /// If we have work to do, 0 will be returned in order to be called again
-    /// as soon as possible. If we only have time-suspended or dependent
-    /// jobs, we will return the time of the next scheduled one. In short,
-    /// calling work() again before the returned time is useless as there will
+    ///
+    /// \return If we have work to do, 0 will be returned in order to
+    /// be called again as soon as possible. If we only have
+    /// time-suspended or dependent jobs, we will return the time of
+    /// the next scheduled one.
+    ///
+    /// Calling work() again before the returned time is useless as there will
     /// be nothing to do except if some new work has been entered in.
     libport::utime_t work ();
 
-    /// Add \a job to the list of jobs to be run later. Jobs will be started
-    /// at the next cycle by the scheduler. It is advised to call \a start_job
-    /// on \a *job rather than invoking this method.
+    /// Add a job to the list of jobs to be run later.
+    ///
+    /// \param job Job to be started. Please do not use this function
+    ///        directly except from the \c Job::start_job() method.
+    ///
+    /// Jobs added during a cycle will be started at the next cycle by the
+    /// scheduler.
     void add_job (Job* job);
 
-    /// Remove all jobs.
+    /// Terminate all jobs. This must be called only when the executable
+    /// is going to terminate.
     void killall_jobs ();
 
-    /// Unschedule a job but do not delete it. Also here, the currently
-    /// executing job cannot unschedule itself.
+    /// Unschedule a job on its way to deletion.
+    ///
+    /// \param job The job to unschedule. It must not be the currently
+    ///        executing job. This function must be called only from
+    ///        \a job destructor.
     void unschedule_job (Job* job);
 
-    /// Resume scheduler execution. Must be called from the job being
-    /// interrupted with itself as argument.
+    /// Resume scheduler execution.
+    ///
+    /// \param job Job currently being executed. This job will relinquish
+    ///        the CPU to the scheduler. Note that the scheduler is free
+    ///        to reschedule \a job immediately if it wishes to do so.
     void resume_scheduler (Job* job);
 
-    /// Take the (maybe last) reference on a job and swap it with 0.
-    void take_job_reference (rJob&);
+    /// Swap a job reference with 0.
+    ///
+    /// \param job A job reference which will be swapped with 0.
+    ///
+    /// This is used to give the scheduler a chance to delete the last
+    /// reference on a job while the scheduler is the active
+    /// task. This is necessary because a currently scheduled job
+    /// cannot kill itself.
+    void take_job_reference (rJob& job);
 
-    /// Return the currently executing job
+    /// Get the currently executing job.
+    ///
+    /// \return A reference onto the currently executing job.
     Job& current_job () const;
 
-    /// Signal that a stop (or block) has been issued on a tag, and that
-    /// queued jobs should be checked soon to see whether they need to
-    /// get some treatment.
-    void signal_stop (rTag);
+    /// Signal that a \c stop or a \c block has been issued on a tag.
+    ///
+    /// \param t The tag that has been recently stopped or blocked.
+    ///
+    /// After this function has been called, the scheduler will determine,
+    /// at the end of the current cycle, which jobs need to react to this
+    /// action.
+    void signal_stop (rTag t);
 
-    /// Return the current cycle
+    /// Get the current cycle number.
+    ///
+    /// \return The current cycle index, increasing by 1 at each cycle.
     unsigned int cycle_get () const;
 
   private:
+    /// Execute one round in the scheduler.
+    ///
+    /// \param blocked_only If true, this round only effect must be to wake up
+    ///        blocked jobs so that they can react to a \c stop or a
+    ///        \c block action on a tag.
+    ///
+    /// \return See work().
     libport::utime_t execute_round (bool blocked_only);
 
-    /// Check if we have stopped tags to handle. In this case, we will
-    /// wake up any blocked jobs so that they can handle the stop
-    /// situation. This is used one after each scheduler round.
+    /// Check if we have stopped tags to handle.
+    ///
+    /// \param old_deadline The deadline to return if no tags have been
+    ///        signalled through signal_stop() during the previous round.
+    ///
+    /// \return See work().
     libport::utime_t check_for_stopped_tags (libport::utime_t old_deadline);
 
   private:
-    /// List of jobs_ we are aware of
+    /// List of jobs we are in charge of. During a cycle execution,
+    /// this is where jobs will accumulate themselves after they have
+    /// been executed.
     jobs_type jobs_;
 
-    /// The following fields represent running structures used in
-    /// work(). Jobs be removed from here just before they are started
-    /// or scheduled.
+    /// List of jobs currently being scheduled during the current round.
     jobs_type pending_;
 
-    /// Current job
+    /// Current job.
     Job* current_job_;
 
-    /// Job to maybe kill
+    /// Job to kill, if any, when the scheduler regains control. \sa
+    /// take_job_reference().
     rJob to_kill_;
 
-    /// Coroutine support
+    /// Coroutine corresponding to the scheduler.
     Coro* coro_;
 
     /// Has there been a possible side-effect since last time we reset
@@ -94,10 +134,11 @@ namespace scheduler
     /// cycle?
     bool jobs_to_start_;
 
-    /// Cycles counter
+    /// Cycles counter.
     unsigned int cycle_;
 
-    /// List of tags that have been stopped or blocked
+    /// List of tags that have been stopped or blocked. \sa
+    /// signal_stop(), check_for_stopped_tags().
     typedef std::pair<rTag, bool> tag_state_type;
     std::vector<tag_state_type> stopped_tags_;
   };
