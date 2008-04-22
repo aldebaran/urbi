@@ -699,15 +699,15 @@ stmt:
   "group" "identifier" "{" identifiers "}"
   {
     DESUGAR("var " << *$2 << " = Object.Group.new;"
-	    << *$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
+	    << *$2 << ".addGroups([" << $4 << "])");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".addGroups([" << libport::separate (*$4, ", ") << "])");
+    DESUGAR(*$2 << ".addGroups([" << $4 << "])");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".removeGroups([" << libport::separate (*$4, ", ") << "])");
+    DESUGAR(*$2 << ".removeGroups([" << $4 << "])");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
 ;
@@ -1379,7 +1379,7 @@ var.opt:
 %printer
 {
   if ($$)
-    debug_stream() << libport::separate (*$$, ", ");
+    debug_stream() << *$$;
   else
     debug_stream() << "NULL";
 } <symbols>;
