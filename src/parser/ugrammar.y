@@ -193,7 +193,7 @@
 	  (res,
 	   "TrajectoryGenerator.new"
 	   "(" << lvalue << ", " << value << ", " << modifier << ")"
-	   ".run(" << lvalue->args_get().front() << ".locateSlot("
+	   ".run(" << lvalue->args_get().front() << ".target("
 	   "\"" << lvalue->name_get() << "\"),"
 	   "\"" << lvalue->name_get() << "\")");
       }
