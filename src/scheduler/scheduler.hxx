@@ -13,8 +13,9 @@ namespace scheduler
 {
 
   inline
-  Scheduler::Scheduler ()
-    : current_job_ (0),
+  Scheduler::Scheduler (boost::function0<libport::utime_t> get_time)
+    : get_time_ (get_time),
+      current_job_ (0),
       coro_ (coroutine_new ()),
       possible_side_effect_ (true),
       cycle_ (0)

@@ -82,7 +82,8 @@ int usedMemory;
 UServer::UServer(ufloat period,
 		 const char* mainName)
   : search_path(),
-    scheduler_ (new scheduler::Scheduler),
+    scheduler_ (new scheduler::Scheduler (boost::bind(&UServer::getTime,
+						      boost::ref(*this)))),
     debugOutput (false),
     mainName_ (mainName),
     uservarState (false),

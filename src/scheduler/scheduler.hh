@@ -6,6 +6,7 @@
 #ifndef SCHEDULER_SCHEDULER_HH
 # define SCHEDULER_SCHEDULER_HH
 
+# include <boost/function.hpp>
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
 
@@ -18,7 +19,13 @@ namespace scheduler
   class Scheduler : boost::noncopyable
   {
   public:
-    Scheduler ();
+    /// Constructor.
+    ///
+    /// \param get_time A function which, when called, returns the
+    ///        current system time.
+    Scheduler (boost::function0<libport::utime_t> get_time);
+
+    /// Destructor.
     ~Scheduler ();
 
   public:
@@ -107,7 +114,9 @@ namespace scheduler
     /// \return See work().
     libport::utime_t check_for_stopped_tags (libport::utime_t old_deadline);
 
-  private:
+    /// Function to retrieve the current system time.
+    boost::function0<libport::utime_t> get_time_;
+
     /// List of jobs we are in charge of. During a cycle execution,
     /// this is where jobs will accumulate themselves after they have
     /// been executed.

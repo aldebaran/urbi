@@ -12,8 +12,6 @@
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 
-#include "kernel/userver.hh"
-
 #include "object/urbi-exception.hh"
 
 #include "scheduler/scheduler.hh"
@@ -55,7 +53,7 @@ namespace scheduler
 #ifdef ENABLE_DEBUG_TRACES
     if (deadline)
       ECHO ("Scheduler asking to be woken up in "
-	    << (deadline - ::urbiserver->getTime ()) / 1000000L << " seconds");
+	    << (deadline - get_time_ ()) / 1000000L << " seconds");
     else
       ECHO ("Scheduler asking to be woken up ASAP");
 #endif
@@ -76,7 +74,7 @@ namespace scheduler
     // new job to start. Also, run waiting jobs only if the previous round
     // may have add a side effect and reset this indication for the current
     // job.
-    libport::utime_t deadline = ::urbiserver->getTime () +  3600000000LL;
+    libport::utime_t deadline = get_time_ () +  3600000000LL;
     jobs_to_start_ = false;
     bool start_waiting = possible_side_effect_;
     possible_side_effect_ = false;
@@ -119,7 +117,7 @@ namespace scheduler
       case sleeping:
 	{
 	  libport::utime_t job_deadline = job->deadline_get ();
-	  if (job_deadline <= ::urbiserver->getTime ())
+	  if (job_deadline <= get_time_ ())
 	    start = true;
 	  else
 	    deadline = std::min (deadline, job_deadline);
