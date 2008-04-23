@@ -1007,10 +1007,11 @@ namespace runner
       // been blocked because of another tag in our stack, but we are
       // not allowed to pop them ourselves. So check if we are still
       // blocked and go up one level in this case.
-      current_.reset ();
       if (blocked ())
 	throw;
-      // Execution will go on as planned
+      // Execution will go on as planned, but the interrupted expression
+      // will evaluate to void.
+      current_ = object::void_class;
       return;
     }
     PROPAGATE_EXCEPTION(t.location_get(), );
