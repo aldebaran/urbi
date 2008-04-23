@@ -567,6 +567,7 @@
 %left  "else" "onleave"
 
 %left  "=" "+=" "-=" "*=" "/="
+%nonassoc "~"
 %left  "||"
 %left  "&&"
 %left  "^"
@@ -926,20 +927,39 @@ expr:
 `---------------------*/
 
 stmt:
-  "at" "(" softtest ")" stmt %prec CMDBLOCK
+  "at" "(" expr ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       DESUGAR ("at_(" << $3 << ", " << $5 << ")");
     }
-| "at" "(" softtest ")" stmt "onleave" stmt
+| "at" "(" expr ")" stmt "onleave" stmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       warn_implicit(up, @7, $7);
       DESUGAR ("at_(" << $3 << ", " << $5 << ", " << $7 << ")");
+    }
+| "at" "(" expr "~" expr ")" stmt %prec CMDBLOCK
+    {
+      FLAVOR_CHECK(@$, "at", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
+      warn_implicit(up, @5, $5);
+      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
+      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
+	      "at_( " << s << ".val, " << $7 << ")");
+    }
+| "at" "(" expr "~" expr ")" stmt "onleave" stmt
+    {
+      FLAVOR_CHECK(@$, "at", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
+      warn_implicit(up, @7, $7);
+      warn_implicit(up, @9, $9);
+      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
+      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
+	      "at_( " << s << ".val, " << $7 << ", " << $9 << ")");
     }
 | "every" "(" expr ")" stmt
     {
@@ -1031,16 +1051,31 @@ stmt:
     {
       $$ = new ast::Throw(@$, ast::break_exception, 0);
     }
-| "whenever" "(" softtest ")" stmt %prec CMDBLOCK
+| "whenever" "(" expr ")" stmt %prec CMDBLOCK
     {
       warn_implicit(up, @5, $5);
-      $$ = ast_call(@$, 0, SYMBOL(whenever_), $3, $5, new ast::Noop(@$));
+      DESUGAR("whenever_(" << $3 << ", " << $5 << ")");
     }
-| "whenever" "(" softtest ")" stmt "else" stmt
+| "whenever" "(" expr "~" expr ")" stmt %prec CMDBLOCK
+    {
+      warn_implicit(up, @7, $7);
+      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
+      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
+	      "whenever_(" << s << ".val, " << $7 << ")");
+    }
+| "whenever" "(" expr ")" stmt "else" stmt
     {
       warn_implicit(up, @5, $5);
       warn_implicit(up, @7, $7);
-      $$ = ast_call(@$, 0, SYMBOL(whenever_), $3, $5, $7);
+      DESUGAR("whenever_(" << $3 << ", " << $5 << ", " << $7 << ")");
+    }
+| "whenever" "(" expr "~" expr ")" stmt "else" stmt
+    {
+      warn_implicit(up, @7, $7);
+      warn_implicit(up, @9, $9);
+      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
+      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
+	      "whenever_(" << s << ".val, " << $7 << ", " << $9 << ")");
     }
 | "while" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -1378,12 +1413,7 @@ args:
 /*-----------.
 | softtest.  |
 `-----------*/
-
-softtest:
-  expr
-| expr "~" expr         { NOT_IMPLEMENTED(@$); }
-| "(" expr "~" expr ")" { NOT_IMPLEMENTED(@$); }
-;
+softtest: expr
 
 
 /*--------------.
