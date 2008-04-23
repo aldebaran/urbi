@@ -262,7 +262,7 @@ namespace object
     rObject r = slot_locate(k);
     if (!r)
       throw LookupError(k);
-    return r;
+    return iassertion(r);
   }
 
   rObject
@@ -291,6 +291,7 @@ namespace object
 	&cont->own_slot_get(SYMBOL(fallback));
     else
       res = &def.get();
+    postcondition(*res || def);
     return *res;
   }
 

@@ -325,9 +325,10 @@ namespace runner
     static inline bool
     acceptVoid(object::rObject f)
     {
+      assertion(f);
       try
       {
-	return IS_TRUE(f->slot_get(SYMBOL(acceptVoid)));
+	return IS_TRUE(iassertion(f->slot_get(SYMBOL(acceptVoid))));
       }
       catch (object::LookupError&)
       {
@@ -343,6 +344,8 @@ namespace runner
 		 object::objects_type args,
 		 rObject call_message)
   {
+    precondition(func);
+
     // If we try to call a C++ primitive with a call message, make it
     // look like a strict function call
     if (call_message &&
@@ -795,6 +798,7 @@ namespace runner
 	    try
 	    {
 	      ECHO ("toplevel: returning a result to the connection.");
+	      assertion(current_);
 	      lobby_->value_get ().connection.new_result (current_);
 	      current_.reset ();
 	    }
