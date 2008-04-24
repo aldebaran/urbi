@@ -241,8 +241,6 @@ public:
   void error_check_and_send (UErrorCode n);
 
 protected:
-  enum { ADAPTIVE = 100 };
-
   //! Send a buffer through the connection without flushing it.
   /*! The function piles the buffer in the sending queue and calls
    continue_send() if the connection is not blocked (blocked means that
