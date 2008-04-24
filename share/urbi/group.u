@@ -2,34 +2,24 @@ class Global.Group
 {
   function init
   {
-    var self.members = call.evalArgs;
+    var self.members = call.evalArgs |
+    self
   };
 
-  function add(g)
+  # n-ary strict: add the arguments as group members.
+  function add
   {
-    members.push_back(g);
+    members += call.evalArgs |
     self
   };
 
   copySlot("add", "<<");
 
-  // Implements addgroup.  Cannot use "group" as an identifier,
-  // reserved by k1.
-  function addMembers(g)
+  # n-ary strict: remove the arguments as group members.
+  # Removing a non-member is ok.
+  function remove
   {
-    members += g;
-  };
-
-  function remove(g)
-  {
-    members = members.remove(g);
-  };
-
-  // Implements delgroup.  Cannot use "group" as an identifier,
-  // reserved by k1.
-  function removeMembers(g)
-  {
-    members = self.members - g;
+    members -= call.evalArgs
   };
 
   var protoName = "Group";
