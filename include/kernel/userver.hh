@@ -265,10 +265,6 @@ private:
   std::string mainName_;
 
 public:
-  /// True after the initialization phase: all vars are uservar then.
-  bool uservarState;
-
-public:
   /// Stops all commands in all connections.
   bool stopall;
 

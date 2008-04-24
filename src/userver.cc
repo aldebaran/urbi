@@ -85,7 +85,6 @@ UServer::UServer(const char* mainName)
 						      boost::ref(*this)))),
     debugOutput (false),
     mainName_ (mainName),
-    uservarState (false),
     stopall (false)
 {
 #if ! defined NDEBUG
@@ -142,12 +141,9 @@ UServer::initialize()
   //The order is important: ghost connection, plugins, urbi.ini
 
   // Ghost connection
-  {
-    DEBUG (("Setting up ghost connection..."));
-    ghost_ = new UGhostConnection(*this);
-    uservarState = true;
-    DEBUG (("done\n"));
-  }
+  DEBUG (("Setting up ghost connection..."));
+  ghost_ = new UGhostConnection(*this);
+  DEBUG (("done\n"));
 
   load_init_file("urbi/urbi.u");
 
