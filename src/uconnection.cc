@@ -52,11 +52,12 @@
 #include "object/atom.hh" // object::Lobby
 #include "object/alien.hh" // object::box
 
-UConnection::UConnection (UServer* userver,size_t packetSize)
+UConnection::UConnection (UServer& server, size_t packetSize)
   : uerror_ (USUCCESS),
     closing_ (false),
     receiving_ (false),
     new_data_added_ (false),
+    server_ (server),
     send_queue_ (new UQueue ()),
     recv_queue_ (new UQueue ()),
     packet_size_ (packetSize),
@@ -65,8 +66,7 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
     active_ (true),
     lobby_ (object::Lobby::fresh(object::State(*this))),
     parser_ (new parser::UParser ()),
-    active_command_ (new ast::Nary()),
-    server_ (userver)
+    active_command_ (new ast::Nary())
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
   lobby_->slot_set(SYMBOL(lobby), lobby_);
@@ -87,7 +87,7 @@ UConnection::UConnection (UServer* userver,size_t packetSize)
 UConnection::~UConnection ()
 {
   extract_tag(lobby_->slot_get(SYMBOL(connectionTag)))
-    ->stop(server_->getScheduler());
+    ->stop(server_.getScheduler());
   DEBUG(("Destroying UConnection..."));
   delete parser_;
   delete send_queue_;
@@ -104,7 +104,7 @@ UConnection::initialize()
   for (int i = 0; ; ++i)
   {
     char buf[1024];
-    server_->getCustomHeader(i, buf, sizeof buf);
+    server_.getCustomHeader(i, buf, sizeof buf);
     if (!buf[0])
       break;
     send(buf, "start");
@@ -119,11 +119,11 @@ UConnection::initialize()
     send(buf, "ident");
 
     snprintf(buf, sizeof buf, "%s created", connection_tag_.c_str());
-    server_->echo(::DISPLAY_FORMAT, (long)this,
+    server_.echo(::DISPLAY_FORMAT, (long)this,
 		 "UConnection::initialize", buf);
   }
 
-  server_->loadFile("CLIENT.INI", *recv_queue_);
+  server_.loadFile("CLIENT.INI", *recv_queue_);
   new_data_added_ = true;
   return *this;
 }
@@ -199,7 +199,7 @@ UConnection::received (const char* buffer, size_t length)
   PING();
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::recursive_mutex::scoped_lock serverLock(server_->mutex);
+  boost::recursive_mutex::scoped_lock serverLock(server_.mutex);
 #endif
 
   {
@@ -258,7 +258,7 @@ UConnection::received (const char* buffer, size_t length)
       std::cerr << make_prefix("error")
 		<< "the parser returned NULL" << std::endl;
       // FIXME: Is this line usefull ?
-      server_->error(::DISPLAY_FORMAT, (long) this,
+      server_.error(::DISPLAY_FORMAT, (long) this,
 		    "UConnection::received",
 		    "the parser returned NULL\n");
     }
@@ -289,7 +289,7 @@ UConnection::send (UErrorCode n)
     if (strlen (msg) - 1 < sizeof buf)
       //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
-    server_->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
+    server_.error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
   CONN_ERR_RET(result);
 }
@@ -306,7 +306,7 @@ UConnection::send (UWarningCode n)
     if (strlen (msg) - 1 < sizeof buf)
       //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
-    server_->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
+    server_.echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
 		    "UConnection::warning", buf);
   }
   CONN_ERR_RET(result);
@@ -319,7 +319,7 @@ UConnection::send (object::rObject result, const char* tag, const char* p)
   std::ostringstream os;
   if (p)
     os << p;
-  result->print (os, server_->getCurrentRunner());
+  result->print (os, server_.getCurrentRunner());
 
   if (!os.str ().empty ())
   {
@@ -371,7 +371,7 @@ UConnection::make_prefix (const char* tag) const
 {
   std::ostringstream o;
   char fill = o.fill('0');
-  o << '[' << std::setw(8) << server_->lastTime() / 1000L;
+  o << '[' << std::setw(8) << server_.lastTime() / 1000L;
   o.fill(fill);
   if (tag && strlen(tag))
     o << ':' << tag;

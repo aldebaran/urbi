@@ -144,7 +144,7 @@ UServer::initialize()
   // Ghost connection
   {
     DEBUG (("Setting up ghost connection..."));
-    ghost_ = new UGhostConnection(this);
+    ghost_ = new UGhostConnection(*this);
     std::ostringstream o;
     o << 'U' << (long)ghost_;
 
@@ -212,7 +212,7 @@ void
 UServer::work_handle_connections_ ()
 {
   // Scan currently opened connections for ongoing work
-  foreach (UConnection* c, connectionList)
+  foreach (UConnection* c, connections_)
     if (c->active_get())
     {
       if (!c->blocked_get())
@@ -240,19 +240,19 @@ UServer::work_handle_stopall_ ()
 {
   if (stopall)
   {
-    foreach (UConnection* c, connectionList)
+    foreach (UConnection* c, connections_)
       if (c->active_get() && c->has_pending_command ())
 	c->drop_pending_commands ();
   }
 
   // Delete all connections with closing=true
-  for (std::list<UConnection *>::iterator i = connectionList.begin();
-       i != connectionList.end(); )
+  for (std::list<UConnection *>::iterator i = connections_.begin();
+       i != connections_.end(); )
   {
     if ((*i)->closing_get())
     {
       delete *i;
-      i = connectionList.erase(i);
+      i = connections_.erase(i);
     }
     else
       i++;
@@ -487,14 +487,15 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
  value and UError return code
  */
 void
-UServer::addConnection(UConnection& connection)
+UServer::connection_add(UConnection* c)
 {
-  if (connection.uerror_ != USUCCESS)
+  assert(c);
+  if (c->uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  __PRETTY_FUNCTION__,
 	  "UConnection constructor failed");
   else
-    connectionList.push_front (&connection);
+    connections_.push_front (c);
 }
 
 //! Remove a connection from the connection list
@@ -502,13 +503,13 @@ UServer::addConnection(UConnection& connection)
  value and UError return code
  */
 void
-UServer::removeConnection(UConnection& connection)
+UServer::connection_remove(UConnection* c)
 {
-  connectionList.remove (&connection);
-  echo(::DISPLAY_FORMAT1, (long)this,
+  connections_.remove(c);
+  echo(::DISPLAY_FORMAT1, long(this),
        __PRETTY_FUNCTION__,
-       "Connection closed", (long) &connection);
-  delete &connection;
+       "Connection closed", long(c));
+  delete c;
 }
 
 
@@ -526,7 +527,9 @@ UServer::getCurrentRunner () const
 }
 
 
-/* Free standing functions. */
+/*--------------------------.
+| Free standing functions.  |
+`--------------------------*/
 
 namespace
 {

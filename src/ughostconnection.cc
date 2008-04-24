@@ -42,16 +42,16 @@ enum
 };
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection (UServer* s)
-  : UConnection (s, PACKETSIZE)
+UGhostConnection::UGhostConnection (UServer& s)
+  : UConnection(s, PACKETSIZE)
 {
-  ::urbiserver->connectionList.push_front (this);
+  server_.connection_add(this);
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
-  ::urbiserver->connectionList.remove (this);
+  server_.connection_remove(this);
 }
 
 //! Close the connection
@@ -65,7 +65,7 @@ UGhostConnection::close()
 }
 
 //! Does nothing. No output for the ghosts...
-int
+size_t
 UGhostConnection::effective_send(const char* buffer, size_t length)
 {
   char buf[EFFECTIVESENDSIZE];

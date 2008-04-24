@@ -101,7 +101,7 @@ public:
     success - UFAIL : memory allocation failed.
 
     \sa UQueue */
-  UConnection (UServer* userver, size_t packetSize);
+  UConnection(UServer& userver, size_t packetSize);
   virtual ~UConnection ();
 
   //! Initializes the connection, by sending the standard header for URBI
@@ -269,7 +269,7 @@ protected:
     \return  the number of bytes effectively sent.
 	     -1 upon error.
    */
-  virtual int effective_send (const char*, size_t length) = 0;
+  virtual size_t effective_send (const char*, size_t length) = 0;
 
   UConnection& execute ();
 
@@ -295,7 +295,10 @@ public:
 # endif
 
 protected:
-  /// Store error on commands
+  /// Reference to the underlying server.
+  UServer& server_;
+
+  /// Store error on commands.
   UErrorValue error_;
 
 private:
@@ -329,9 +332,6 @@ private:
 
   /// The commands to be executed.
   ast::Nary* active_command_;
-
-  /// Reference to the underlying server.
-  UServer* server_;
 
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;

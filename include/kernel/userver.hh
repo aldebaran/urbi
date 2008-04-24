@@ -208,14 +208,26 @@ public:
   libport::utime_t lastTime ();
   //! Update lastTime_ to current time.
   void updateTime ();
-  void addConnection (UConnection& connection);
-  /// Overload to support the legacy interface of k1.
-  void addConnection (UConnection* connection);
-  void removeConnection (UConnection& connection);
+
+
+  /*--------------.
+  | Connections.  |
+  `--------------*/
+
+  /// Takes ownership on c.
+  /// \precondition c != 0
+  void connection_add(UConnection* c);
+  /// Will destroy \a c.
+  void connection_remove(UConnection* c);
 
   // A usual connection to stop dependencies.
-  UConnection& getGhostConnection ();
+  UConnection& getGhostConnection();
 
+
+  /*--------------------.
+  | Scheduler, runner.  |
+  `--------------------*/
+public:
   const scheduler::Scheduler& getScheduler () const;
   scheduler::Scheduler& getScheduler ();
 
@@ -228,10 +240,6 @@ private:
   // Pointer to stop the header dependency.
   scheduler::Scheduler* scheduler_;
 
-public: // FIXME remove from the public section.
-  /// List of active connections: includes one UGhostConnection.
-  // FIXME: This is meant to become a runner::Job and move out of this class.
-  std::list<UConnection*> connectionList;
 
 private:
   /// \{ Various parts of @c UServer::work.
@@ -280,6 +288,11 @@ public:
 private:
   /// Store the time on the last call to updateTime().
   libport::utime_t lastTime_;
+
+  /// List of active connections: includes one UGhostConnection.
+  // FIXME: This is meant to become a runner::Job and move out of this class.
+  std::list<UConnection*> connections_;
+
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
 };

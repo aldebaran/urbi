@@ -42,7 +42,7 @@ inline
 UServer&
 UConnection::server_get() const
 {
-  return *server_;
+  return server_;
 }
 
 inline

@@ -29,13 +29,6 @@ UServer::lastTime()
   return lastTime_;
 }
 
-inline void
-UServer::addConnection (UConnection* connection)
-{
-  assert (connection);
-  addConnection (*connection);
-}
-
 inline const scheduler::Scheduler&
 UServer::getScheduler () const
 {
