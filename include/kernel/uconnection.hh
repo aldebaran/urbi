@@ -210,12 +210,6 @@ public:
   UServer& server_get() const;
   object::rLobby lobby_get();
 
-  //! UConnection IP associated
-  /*! The robot specific part should call the function when the
-    connection is active and transmit the IP address of the client,
-    as a long int.  */
-  IPAdd& client_ip_get ();
-
   bool send_queue_empty () const;
 
   UQueue& recv_queue_get ();
@@ -285,9 +279,6 @@ public:
 
   /// Virtual device for the connection..
   std::string connection_tag_;
-
-  /// Ip of the calling client.
-  IPAdd client_ip_;
 
   /// Connection closing.
   bool closing_;

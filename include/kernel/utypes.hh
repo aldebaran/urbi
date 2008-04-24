@@ -28,9 +28,6 @@
 
 # include <iosfwd>
 
-/// IP address.
-typedef unsigned long IPAdd;
-
 /// Return code values
 enum UErrorValue
 {

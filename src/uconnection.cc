@@ -54,7 +54,6 @@
 
 UConnection::UConnection (UServer* userver,size_t packetSize)
   : uerror_ (USUCCESS),
-    client_ip_ (0),
     closing_ (false),
     receiving_ (false),
     new_data_added_ (false),

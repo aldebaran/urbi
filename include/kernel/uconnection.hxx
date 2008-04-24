@@ -53,13 +53,6 @@ UConnection::active_get()
 }
 
 inline
-IPAdd&
-UConnection::client_ip_get ()
-{
-  return client_ip_;
-}
-
-inline
 bool&
 UConnection::blocked_get ()
 {
