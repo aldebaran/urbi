@@ -162,11 +162,9 @@ UServer::initialize()
 
 
 void
-UServer::main (int argc, const char* argv[])
+UServer::main (int, const char*[])
 {
   // FIXME: Save argv into Urbi world.
-  (void) argc;
-  (void) argv;
 }
 
 void
