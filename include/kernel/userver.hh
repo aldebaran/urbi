@@ -286,7 +286,7 @@ public:
 
   enum
   {
-    /// Urbi TCP Port..
+    /// Urbi TCP Port.
     TCP_PORT = 54000,
     /// Used by echo() & error().
     // FIXME: Because of this stupid hard limit, we can't produce
@@ -304,12 +304,6 @@ private:
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
 };
-
-/// Unique identifier to create new references.
-inline int unique ();
-
-/// Return an identifier starting with \a prefix, ending with a unique int.
-inline std::string unique (const std::string& prefix);
 
 /*-------------------------.
 | Freestanding functions.  |

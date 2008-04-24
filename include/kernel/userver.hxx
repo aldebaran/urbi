@@ -54,19 +54,4 @@ UServer::getScheduler ()
   return *scheduler_;
 }
 
-inline
-int unique ()
-{
-  static int cnt = 10000;
-  return ++cnt;
-}
-
-inline
-std::string unique (const std::string& prefix)
-{
-  std::ostringstream o;
-  o << prefix << unique();
-  return o.str();
-}
-
 #endif // !KERNEL_USERVER_HXX
