@@ -81,7 +81,6 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 dist_libkernel_la_SOURCES +=					\
 kernconf.cc							\
-memorymanager/memorymanager.cc					\
 server-timer.hh server-timer.cc					\
 ubanner.hh ubanner.cc						\
 ucomplaints.cc							\
