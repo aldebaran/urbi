@@ -757,9 +757,7 @@ Function:
     - '"function "'
     - '{
          if (n.formals_get ())
-           ostr_ << "("
-                 << libport::separate (*n.formals_get(), ", ")
-                 << ") ";
+           ostr_ << "(" << *n.formals_get() << ") ";
        }'
     - ~body
 
