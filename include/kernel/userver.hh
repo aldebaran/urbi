@@ -305,10 +305,6 @@ void vdebug (const char* fmt, va_list args)
 void debug (const char* fmt, ...)
   __attribute__ ((__format__ (__printf__, 1, 2)));
 
-/// Send debugging messages indented with \a t spaces, via ::urbiserver.
-void debug (unsigned t, const char* fmt, ...)
-  __attribute__ ((__format__ (__printf__, 2, 3)));
-
 // Send debugging messages.
 # if URBI_DEBUG
 // Must be invoked with two pairs of parens.

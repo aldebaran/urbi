@@ -522,25 +522,6 @@ UServer::getCurrentRunner () const
 | Free standing functions.  |
 `--------------------------*/
 
-namespace
-{
-
-  // Use with care, returns a static buffer.
-  const char* tab (unsigned n)
-  {
-    static char buf[1024];
-    if (n >= sizeof buf)
-      n = sizeof buf - 1;
-
-    for (unsigned i = 0; i < n; ++i)
-      buf[i] = ' ';
-    buf[n] = 0;
-    return buf;
-  }
-
-}
-
-
 void
 vdebug (const char* fmt, va_list args)
 {
@@ -550,17 +531,6 @@ vdebug (const char* fmt, va_list args)
 void
 debug (const char* fmt, ...)
 {
-  va_list args;
-  va_start (args, fmt);
-  vdebug (fmt, args);
-  va_end (args);
-}
-
-
-void
-debug (unsigned t, const char* fmt, ...)
-{
-  debug ("%s", tab(t));
   va_list args;
   va_start (args, fmt);
   vdebug (fmt, args);
