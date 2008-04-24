@@ -24,7 +24,6 @@
 #include <cstdarg>
 
 #include <fstream>
-#include <sstream>
 #include <string>
 
 #include <boost/format.hpp>
@@ -34,12 +33,12 @@
 
 #include <libport/compiler.hh>
 #include <libport/config.h>
-#include <libport/containers.hh>
 #include <libport/cstdio>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
-#include <libport/separator.hh>
+#include <libport/program-name.hh>
+#include <libport/sysexits.hh>
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -88,7 +87,6 @@ UServer::UServer(const char* mainName)
     stopall (false)
 {
 #if ! defined NDEBUG
-  //  std::atexit(dump_timer);
   server_timer.start ();
   server_timer.dump_on_destruction (std::cerr);
   TIMER_PUSH("server");
@@ -145,7 +143,12 @@ UServer::initialize()
   ghost_ = new UGhostConnection(*this);
   DEBUG (("done\n"));
 
-  load_init_file("urbi/urbi.u");
+  if (load_init_file("urbi/urbi.u") != USUCCESS
+      && !getenv("IGNORE_URBI_U"))
+    std::cerr
+      << libport::program_name << ": cannot load urbi/urbi.u." << std::endl
+      << libport::program_name << ": set IGNORE_URBI_U to ignore." << std::endl
+      << libport::exit(EX_OSFILE);
 
   // Handle pluged UOBjects.
   // Create "uobject" in lobby where UObjects will be put.
