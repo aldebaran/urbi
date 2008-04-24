@@ -27,7 +27,6 @@
 # define KERNEL_UTYPES_HH
 
 # include <iosfwd>
-# include "kernel/fwd.hh"
 
 /// IP address.
 typedef unsigned long IPAdd;
@@ -40,59 +39,5 @@ enum UErrorValue
 };
 
 std::ostream& operator<< (std::ostream& o, UErrorValue v);
-
-/// Type of Bind modes
-enum UBindMode
-{
-  UEXTERNAL,
-  UINTERNAL,
-};
-
-/// Type of binding
-enum UBindType
-{
-  UBIND_FUNCTION,
-  UBIND_VAR,
-  UBIND_EVENT,
-  UBIND_OBJECT
-};
-
-/// Results of a test
-enum UTestResult
-{
-  UFALSE,
-  UTRUE,
-  UTESTFAIL
-};
-
-/// The different Data types
-enum UDataType
-{
-  DATA_UNKNOWN,
-  DATA_NUM,
-  DATA_STRING,
-  DATA_FILE,
-  DATA_BINARY,
-  DATA_VOID,
-  DATA_LIST,
-  DATA_OBJ,
-  DATA_FUNCTION,
-  DATA_VARIABLE
-};
-
-/// Runlevel type for a binary tree exploration
-enum URunlevel
-{
-  UWAITING,
-  UEXPLORED,
-  UTERMINATED
-};
-
-/// Return code values for the setDeviceVar method
-enum UReport
-{
-  UDONE,
-  UCONTINUE
-};
 
 #endif // !KERNEL_UTYPES_HH
