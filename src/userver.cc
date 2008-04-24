@@ -79,16 +79,14 @@ int availableMemory;
 int usedMemory;
 
 
-UServer::UServer(ufloat period,
-		 const char* mainName)
+UServer::UServer(const char* mainName)
   : search_path(),
     scheduler_ (new scheduler::Scheduler (boost::bind(&UServer::getTime,
 						      boost::ref(*this)))),
     debugOutput (false),
     mainName_ (mainName),
     uservarState (false),
-    stopall (false),
-    period_(period)
+    stopall (false)
 {
 #if ! defined NDEBUG
   //  std::atexit(dump_timer);

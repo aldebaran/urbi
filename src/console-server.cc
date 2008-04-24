@@ -28,8 +28,8 @@ class ConsoleServer
   : public UServer
 {
 public:
-  ConsoleServer(int period, bool fast)
-    : UServer(period, "console"), fast(fast), ctime(0)
+  ConsoleServer(bool fast)
+    : UServer("console"), fast(fast), ctime(0)
   {
     if (const char* cp = getenv ("URBI_PATH"))
     {
@@ -119,7 +119,7 @@ namespace
       "Options:\n"
       "  -h, --help            display this message and exit successfully\n"
       "  -v, --version         display version information\n"
-      "  -P, --period PERIOD   base URBI interval in milliseconds\n"
+      "  -P, --period PERIOD   ignored for backward compatibility\n"
       "  -p, --port PORT       tcp port URBI will listen to.\n"
       "  -f, --fast            ignore system time, go as fast as possible\n"
       "  -i, --interactive     read and parse stdin in a nonblocking way\n"
@@ -144,8 +144,6 @@ main (int argc, const char* argv[])
 
   // Input file.
   const char* in = "/dev/stdin";
-  /// The period.
-  int arg_period = 32;
   /// The port to use.  0 means automatic selection.
   int arg_port = 0;
   /// Where to write the port we use.
@@ -168,7 +166,7 @@ main (int argc, const char* argv[])
       else if (arg == "--interactive" || arg == "-i")
 	interactive = true;
       else if (arg == "--period" || arg == "-P")
-	arg_period = libport::convert_argument<int> (arg, argv[++i]);
+	(void) libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--port" || arg == "-p")
 	arg_port = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--port-file" || arg == "-w")
@@ -193,7 +191,7 @@ main (int argc, const char* argv[])
     }
   }
 
-  ConsoleServer s (arg_period, fast);
+  ConsoleServer s (fast);
 
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)

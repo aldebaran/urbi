@@ -23,12 +23,6 @@
 
 # include "userver.hh"
 
-inline ufloat
-UServer::period_get ()
-{
-  return period_;
-}
-
 inline libport::utime_t
 UServer::lastTime()
 {

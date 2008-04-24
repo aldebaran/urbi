@@ -73,22 +73,7 @@ extern class UServer* urbiserver;
 class UServer
 {
 public:
-  //! UServer constructor.
-  /*! UServer constructor
-
-   Unlike UConstructor, it is not required that you handle the memory
-   management task when you create the robot-specific sub class. The
-   difference in memory between your class and the UServer class is
-   considered as neglectible and included in the security margin. If you
-   don't understand this point, ignore it.
-
-   \param period gives the value in msec of the server update,
-   which are the calls to the "work" function. These calls must be done at
-   a fixed, precise, real-time period to let the server computer motor
-   trajectories between two "work" calls.
-   */
-  UServer(ufloat period, const char* mainName);
-
+  UServer(const char* mainName);
   virtual ~UServer ();
 
 public:
@@ -100,14 +85,9 @@ public:
    */
   void initialize ();
 
-  //! Main processing loop of the server
-  /*! This function must be called every "period_" msec to ensure the proper
-   functionning of the server. It will call the command execution, the
-   connection message sending when they are delayed, etc...
-
-   "period_" is a parameter of the server, given in the constructor.
-   */
- libport::utime_t work ();
+  /// Process the jobs.
+  /// \return the time when should be called again.
+  libport::utime_t work ();
 
   /// Set the system.args list in URBI.
   void main (int argc, const char* argv[]);
@@ -201,16 +181,18 @@ public:
   virtual UErrorValue saveFile (const std::string& filename,
 				const std::string& content) = 0;
 
-  //! Accessor for period_.
-  ufloat period_get();
   void mark (UString* stopTag);
+
   virtual void reboot () = 0;
+
   virtual void shutdown () = 0;
+
   //! Function called before work
   /*! Redefine this virtual function if you need to do pre-processing before
     the work function starts.
   */
   virtual void beforeWork ();
+
   //! Function called after work
   /*! Redefine this virtual function if you need to do post-processing
     before the work function ends.
@@ -296,9 +278,6 @@ public:
   };
 
 private:
-  /// Frequency of the calls to work().
-  ufloat period_;
-
   /// Store the time on the last call to updateTime().
   libport::utime_t lastTime_;
   /// The ghost connection used for URBI.INI.
