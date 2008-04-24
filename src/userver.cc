@@ -227,24 +227,6 @@ UServer::work_handle_connections_ ()
       c->error_check_and_send(UERROR_RECEIVE_BUFFER_FULL);
       c->error_check_and_send(UERROR_RECEIVE_BUFFER_CORRUPTED);
 
-      // The following code only made sense in k1, and should be
-      // removed in k2, provided we are really sure it is useless.
-      // The following if is also suspicous...
-#if 0
-      // Run the connection's command queue:
-      if (c->has_pending_command ())
-      {
-	c->obstructed = true; // will be changed to 'false'
-	{
-	  //if the whole tree is visited
-# if ! defined LIBPORT_URBI_ENV_AIBO
-	  boost::try_mutex::scoped_lock((*c)->treeMutex);
-# endif
-	  c->execute((*c)->activeCommand);
-	}
-      }
-#endif
-
       if (c->new_data_added_get())
       {
 	// used by loadFile and eval to
