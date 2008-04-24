@@ -145,9 +145,6 @@ UServer::initialize()
   {
     DEBUG (("Setting up ghost connection..."));
     ghost_ = new UGhostConnection(*this);
-    std::ostringstream o;
-    o << 'U' << (long)ghost_;
-
     uservarState = true;
     DEBUG (("done\n"));
   }
