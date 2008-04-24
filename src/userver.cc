@@ -291,13 +291,7 @@ UServer::echoKey(const char* key, const char* s, ...)
   va_end(args);
 }
 
-//! Displays a formatted error message.
-/*! This function uses the virtual URobot::display() function to make the
- message printing robot-specific.
 
- It formats the output in a standard URBI way by adding an ERROR key
- between brackets at the end.
- */
 void
 UServer::error(const char* s, ...)
 {
@@ -307,16 +301,7 @@ UServer::error(const char* s, ...)
   va_end(args);
 }
 
-//! Displays a formatted message.
-/*! This function uses the virtual URobot::display() function to make the
- message printing robot-specific.
 
- It formats the output in a standard URBI way by adding an empty key
- between brackets at the end. If you want to specify a key, use the
- echoKey() function.
- \param s is the formatted string containing the message.
- \sa echoKey()
- */
 void
 UServer::echo(const char* s, ...)
 {
@@ -326,13 +311,7 @@ UServer::echo(const char* s, ...)
   va_end(args);
 }
 
-//! Displays a raw message for debug
-/*! This function uses the virtual URobot::display() function to make the
- message printing robot-specific.
 
- \param s is the formatted string containing the message
- \param args Arguments for the format string.
- */
 void
 UServer::vdebug (const char* s, va_list args)
 {
@@ -340,6 +319,7 @@ UServer::vdebug (const char* s, va_list args)
   vsnprintf(buf, sizeof buf, s, args);
   effectiveDisplay(buf);
 }
+
 
 void
 UServer::debug(const char* s, ...)
@@ -350,11 +330,6 @@ UServer::debug(const char* s, ...)
   va_end(args);
 }
 
-//! Overload this function to specify how your robot is displaying messages.
-void
-UServer::effectiveDisplay(const char*)
-{
-}
 
 void
 UServer::display(const char* s)
@@ -363,6 +338,7 @@ UServer::display(const char* s)
     effectiveDisplay(s);
 }
 
+
 void
 UServer::display(const char** b)
 {
@@ -370,45 +346,16 @@ UServer::display(const char** b)
     display (b[i]);
 }
 
-//! Overload this function to specify how your system will reboot
-void
-UServer::reboot()
-{
-}
 
-//! Overload this function to specify how your system will shutdown
 void
 UServer::shutdown()
 {
+  // FIXME: If shutdown is overriden in subclasses, this code is
+  // not run.  Move it to the dtor?
   scheduler_->killall_jobs ();
 }
 
-//! Overload this function to return the running time of the server.
-/*! The running time of the server must be in milliseconds.
- */
-libport::utime_t
-UServer::getTime()
-{
-  return 0;
-}
 
-//! Overload this function to return the remaining power of the robot
-/*! The remaining power is expressed as percentage. 0 for empty batteries
- and 1 for full power.
- */
-ufloat
-UServer::getPower()
-{
-  return 1;
-}
-
-//! Update the server's time using the robot-specific implementation
-/*! It is necessary to have an update of the server time to
- increase the performance of successive calls to getTime.
- It allows also to see a whole processing session (like the
- processing of the command tree) as occuring AT the same time,
- from the server's point of view.
- */
 void
 UServer::updateTime()
 {
@@ -476,10 +423,6 @@ UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
 }
 
 
-//! Add a new connection to the connection list
-/*! This function perform also some error testing on the connection
- value and UError return code
- */
 void
 UServer::connection_add(UConnection* c)
 {
@@ -492,10 +435,7 @@ UServer::connection_add(UConnection* c)
     connections_.push_front (c);
 }
 
-//! Remove a connection from the connection list
-/*! This function perform also some error testing on the connection
- value and UError return code
- */
+
 void
 UServer::connection_remove(UConnection* c)
 {

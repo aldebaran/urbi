@@ -96,8 +96,26 @@ public:
   /// Package information about this server.
   static const libport::PackageInfo& package_info ();
 
+  //! Displays a formatted error message.
+  /*! This function uses the virtual URobot::display() function to make the
+   message printing robot-specific.
+  
+   It formats the output in a standard URBI way by adding an ERROR key
+   between brackets at the end.
+   */
   void error (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
+
+  //! Displays a formatted message.
+  /*! This function uses the virtual URobot::display() function to make the
+   message printing robot-specific.
+  
+   It formats the output in a standard URBI way by adding an empty key
+   between brackets at the end. If you want to specify a key, use the
+   echoKey() function.
+   \param s is the formatted string containing the message.
+   \sa echoKey()
+   */
   void echo (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
 
@@ -119,12 +137,26 @@ public:
     __attribute__ ((__format__ (__printf__, 3, 4)));
 
   /// Send debugging data.
+  /*! This function uses the virtual URobot::display() function to make the
+   message printing robot-specific.
+
+   \param s is the formatted string containing the message
+   \param args Arguments for the format string.
+   */
   void vdebug (const char* s, va_list args)
     __attribute__ ((__format__ (__printf__, 2, 0)));
   void debug (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
 
+  //! Overload this function to return the running time of the server.
+  /*! The running time of the server must be in milliseconds.
+   */
   virtual libport::utime_t getTime () = 0;
+
+  //! Overload this function to return the remaining power of the robot
+  /*! The remaining power is expressed as percentage. 0 for empty batteries
+   and 1 for full power.
+   */
   virtual ufloat getPower () = 0;
 
   //! Overload this function to return a specific header for your URBI server
@@ -183,9 +215,11 @@ public:
 
   void mark (UString* stopTag);
 
+  //! Overload this function to specify how your system will reboot
   virtual void reboot () = 0;
 
-  virtual void shutdown () = 0;
+  //! Overload this function to specify how your system will shutdown
+  virtual void shutdown ();
 
   //! Function called before work
   /*! Redefine this virtual function if you need to do pre-processing before
@@ -206,7 +240,15 @@ public:
 
   //! Accessor for lastTime_.
   libport::utime_t lastTime ();
+
   //! Update lastTime_ to current time.
+  //! Update the server's time using the robot-specific implementation
+  /*! It is necessary to have an update of the server time to
+   increase the performance of successive calls to getTime.
+   It allows also to see a whole processing session (like the
+   processing of the command tree) as occuring AT the same time,
+   from the server's point of view.
+   */
   void updateTime ();
 
 
@@ -214,10 +256,16 @@ public:
   | Connections.  |
   `--------------*/
 
-  /// Takes ownership on c.
+  /// Add a new connection to the connection list.
+  /// Take ownership on c. Also perform some error testing on the connection
+  /// value and UError return code
   /// \precondition c != 0
   void connection_add(UConnection* c);
-  /// Will destroy \a c.
+
+  /// Remove from the connection list.
+  /// This function perform also some error testing on the connection
+  /// value and UError return code
+  /// Destroy \a c.
   void connection_remove(UConnection* c);
 
   // A usual connection to stop dependencies.
@@ -234,6 +282,7 @@ public:
   runner::Runner& getCurrentRunner () const;
 
 protected:
+  //! Overload this function to specify how your robot is displaying messages.
   virtual void effectiveDisplay (const char*) = 0;
 
 private:
