@@ -66,10 +66,7 @@ public:
 
   virtual libport::utime_t getTime()
   {
-    if (fast)
-      return ctime;
-    else
-      return libport::utime();
+    return fast ? ctime : libport::utime();
   }
 
   virtual ufloat getPower()
