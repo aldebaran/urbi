@@ -49,14 +49,10 @@ namespace scheduler
   class Scheduler;
 }
 
-extern const char* EXTERNAL_MESSAGE_TAG;
-extern const char* UNKNOWN_TAG;
-
 extern const char* DISPLAY_FORMAT;
 extern const char* DISPLAY_FORMAT1;
 extern const char* DISPLAY_FORMAT2;
 
-extern const char* MAINDEVICE;
 
 /// Global variable for the server
 extern class UServer* urbiserver;
