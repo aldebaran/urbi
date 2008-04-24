@@ -23,15 +23,6 @@
 
 # include "userver.hh"
 
-inline int
-UServer::getUID ()
-{
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::recursive_mutex::scoped_lock lock(mutex);
-# endif
-  return ++uid;
-}
-
 inline ufloat
 UServer::period_get ()
 {

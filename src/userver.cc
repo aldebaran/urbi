@@ -88,8 +88,7 @@ UServer::UServer(ufloat period,
     mainName_ (mainName),
     uservarState (false),
     stopall (false),
-    period_(period),
-    uid(0)
+    period_(period)
 {
 #if ! defined NDEBUG
   //  std::atexit(dump_timer);

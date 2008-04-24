@@ -230,7 +230,6 @@ public:
   /// Overload to support the legacy interface of k1.
   void addConnection (UConnection* connection);
   void removeConnection (UConnection& connection);
-  int getUID ();
 
   // A usual connection to stop dependencies.
   UConnection& getGhostConnection ();
@@ -304,9 +303,6 @@ private:
   libport::utime_t lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
-
-  /// unique id source
-  int               uid;
 };
 
 /// Unique identifier to create new references.
