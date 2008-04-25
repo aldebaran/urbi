@@ -210,11 +210,6 @@ Ast:
         type: loc
         access: rW
         desc: Scanner position information
-    - up:
-        type: 'Ast*'
-        init: '0'
-        access: rW
-        desc: Parent node
   default: super_type::operator() (n);
 
 Exp:
@@ -276,8 +271,7 @@ Flavorable:
     - flavor: { type: flavor_type, desc: Execution model }
 
 Message:
-  super:
-    - Exp
+  super: Exp
   desc: /// Display a message when visited.
   attributes:
     - text:
