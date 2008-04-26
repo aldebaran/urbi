@@ -168,35 +168,37 @@ for node in concrete_nodes:
 
   # Clone recursively the children of E.
   for a in (node_all_attributes (node)):
-    if not a.init:
-      accessor = "e." + a.name + "_get ()"
-      # Non visitable attributes.
-      if a.type in ast_params['non_visitable_types']:
-	type = a.W_type ()
-	get_deref = ""
-	if a.pointer_p () and a.mandatory:
-	  get_deref = "&"
-	print "    " + type + " " + a.name + " = " + \
-	      get_deref + accessor + ";"
+    # Attributes with a default value are cloned with the default value.
+    if a.init:
+      continue
+    accessor = "e." + a.name + "_get ()"
+    # Non visitable attributes.
+    if a.type in ast_params['non_visitable_types']:
+      type = a.W_type ()
+      get_deref = ""
+      if a.pointer_p () and a.mandatory:
+        get_deref = "&"
+      print "    " + type + " " + a.name + " = " + \
+            get_deref + accessor + ";"
 
-      # Collection attributes.
-      elif a.root_type () in ast_params['collections']:
-	if a.pointer_p ():
-	  if a.mandatory:
-	    print "    " + a.root_type () + "* " + a.name + \
-		" = recurse_collection (" + accessor + ");"
-	  else:
-	    print "    " + a.root_type () + "* " + a.name + " ="
-	    print "      " + accessor + \
-		" ? recurse_collection (*" + accessor + ") : 0;"
-	else:
-	  print "    " + a.root_type () + " " + a.name + \
-		" = *recurse_collection (" + accessor + ");"
-
-      # Visitable attributes.
+    # Collection attributes.
+    elif a.root_type () in ast_params['collections']:
+      if a.pointer_p ():
+        if a.mandatory:
+          print "    " + a.root_type () + "* " + a.name + \
+              " = recurse_collection (" + accessor + ");"
+        else:
+          print "    " + a.root_type () + "* " + a.name + " ="
+          print "      " + accessor + \
+              " ? recurse_collection (*" + accessor + ") : 0;"
       else:
-	print "    " + a.W_type () + " " + a.name + \
-	      " = recurse (" + accessor + ");"
+        print "    " + a.root_type () + " " + a.name + \
+              " = *recurse_collection (" + accessor + ");"
+
+    # Visitable attributes.
+    else:
+      print "    " + a.W_type () + " " + a.name + \
+            " = recurse (" + accessor + ");"
 
   # Result.
   if node.name == "FunctionDec":
