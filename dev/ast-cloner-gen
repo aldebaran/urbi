@@ -30,12 +30,9 @@ sys.stdout = cloner_hh
 
 print tools.banner(clonerlib + "/cloner.hh",
 		   "Declaration of " + clonerlib + "::Cloner.") + """
-#ifndef """ + guard + """
-# define """ + guard + """
-
 # include <boost/type_traits/remove_const.hpp>
 
-# include "ast/default-visitor.hh"
+# include "%(ast_basedir)sdefault-visitor.hh"
 
 namespace %(clonerlib)s
 {
@@ -165,7 +162,7 @@ print """\
  ** \\brief Implementation of %(clonerlib)s::Cloner.
  */
 
-#include "ast/all.hh"
+#include "%(ast_basedir)sall.hh"
 #include "%(clonerlib)s/cloner.hh"
 // This file contains only protected functions, not loading it
 // from cloner.hh saves cycles.

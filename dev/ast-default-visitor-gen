@@ -27,10 +27,6 @@ visitor_hh = file("default-visitor.hh.tmp", "w")
 
 print >>visitor_hh, tools.banner("ast/default-visitor.hh",
 		   "Definition of ast::DefaultVisitor.") + """
-
-#ifndef AST_DEFAULT_VISITOR_HH
-# define AST_DEFAULT_VISITOR_HH
-
 """ + ast_params['default_visitor_hh_prologue'] + """
 
 namespace ast
@@ -109,9 +105,6 @@ sys.stdout = visitor_hxx
 
 print >>visitor_hxx, tools.banner("ast/default-visitor.hxx",
 				  "Implementation of ast::DefaultVisitor.") + """
-#ifndef AST_DEFAULT_VISITOR_HXX
-# define AST_DEFAULT_VISITOR_HXX
-
 # include "default-visitor.hh"
 # include "all.hh"
 

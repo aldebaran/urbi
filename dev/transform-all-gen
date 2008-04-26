@@ -31,9 +31,6 @@ sys.stdout = all_hh
 
 print tools.banner("transform/all.hh",
                    """Declaration of the visitor combinator transform::All.""") + """
-#ifndef TRANSFORM_ALL_HH
-# define TRANSFORM_ALL_HH
-
 # include "transform/visitor.hh"
 
 namespace transform
@@ -65,7 +62,7 @@ namespace transform
 
     /** \\brief Clone a collection object.
 
-    	Using overloading for this method is tempting, but it would
+	Using overloading for this method is tempting, but it would
 	lead to the same prototype than the first \\a visit method.
 
 	A partial specialization for \\a std::list<T> would work, but is

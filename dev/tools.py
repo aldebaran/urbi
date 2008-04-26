@@ -93,8 +93,9 @@ def wrap_proto (fundec, width):
   return output
 
 def banner(name, description):
-  '''Given a name and description, return the file's banner.'''
-  return """\
+  '''Given a name and description, return the file's banner, including
+  its CPP guard when needed.'''
+  res = """\
 //<<-
 // Generated, do not edit by hand.
 //->>
@@ -103,3 +104,9 @@ def banner(name, description):
  ** \\brief """ + description + """
  */
 """
+  # Header and inline implementation files want guards.
+  if re.match(".*\\.(hh|hxx)", name):
+    res += "\n"
+    res += "#ifndef " + define_id(name) + "\n"
+    res += "# define " + define_id(name) + "\n"
+  return res

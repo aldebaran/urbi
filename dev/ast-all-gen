@@ -14,9 +14,6 @@ nodes, ast_params = loader.load (sys.stdin)
 all_hh = file ("all.hh.tmp", "w")
 print >>all_hh, tools.banner("ast/all.hh",
 			     """Include all the exported headers.""") + """
-#ifndef AST_ALL_HH
-# define AST_ALL_HH
-
 # include "ast/fwd.hh"
 """
 

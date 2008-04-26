@@ -21,9 +21,6 @@ sys.stdout = visitor_hh
 
 print tools.banner("ast/pretty-printer.hh",
 		   "Definition of ast::PrettyPrinter.") + """
-#ifndef AST_PRETTY_PRINTER_HH
-# define AST_PRETTY_PRINTER_HH
-
 # include <iosfwd>
 
 # include "ast/default-visitor.hh"
@@ -80,10 +77,6 @@ sys.stdout = visitor_hxx
 
 print tools.banner("ast/pretty-printer.hxx",
 		   "Inline implementation of ast::PrettyPrinter.") + """
-
-#ifndef AST_PRETTY_PRINTER_HXX
-# define AST_PRETTY_PRINTER_HXX
-
 # include "pretty-printer.hh"
 
 namespace ast

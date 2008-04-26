@@ -18,10 +18,6 @@ sys.stdout = visitor_hh
 
 print tools.banner("ast/visitor.hh",
 		   "Definition of ast::Visitor.") + """
-
-#ifndef AST_VISITOR_HH
-# define AST_VISITOR_HH
-
 """ + ast_params['visitor_hh_prologue'] + """
 
 namespace ast

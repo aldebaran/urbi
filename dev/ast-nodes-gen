@@ -23,17 +23,6 @@ def print_inline_code (node, file, where):
 def print_banner(file, name, description):
   print >>file, tools.banner("ast/" + name,  description)
 
-def print_guard_open (file, node, ext):
-  print >>file, "#ifndef " + node.guard(ext)
-  print >>file, "# define " + node.guard(ext)
-  print >>file, ""
-
-def print_guards_open (node, header, inline, impl):
-  """Output the multiple inclusion guard."""
-  # Shortands
-  print_guard_open (header, node, "hh")
-  print_guard_open (inline, node, "hxx")
-
 def print_guard_close (file, node, ext):
   print >>file, "#endif // !" + node.guard(ext)
 
@@ -371,7 +360,6 @@ def class_generate(node):
   print_banner (impl, node.cc (),
 		"Implementation of ast::" + node.name + ".")
 
-  print_guards_open (node, header, inline, impl)
   print_includes (node, header, inline, impl)
 
   print_namespace_open(node, header, inline, impl)

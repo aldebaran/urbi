@@ -18,11 +18,6 @@ sys.stdout = proxy_visitors_hh
 print tools.banner("transform/proxy-visitors.hh",
                    """Declaration of proxy visitors used by voyagers.""") + """
 // FIXME: Document.
-"""
-
-print """#ifndef TRANSFORM_PROXY_VISITORS_HH
-# define TRANSFORM_PROXY_VISITORS_HH
-
 # include "ast/visitor.hh"
 
 namespace transform
@@ -248,4 +243,3 @@ proxy_visitors_hxx.close ()
 # Check differences and update if any
 fullname = os.path.join (srcdir, "proxy-visitors.hxx")
 tools.lazy_overwrite (fullname, "proxy-visitors.hxx.tmp")
-
