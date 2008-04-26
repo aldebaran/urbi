@@ -112,16 +112,46 @@ tools.lazy_install(srcdir, "cloner.hh");
 
 
 ## Abstract syntax tree C++ clone visitor - implementation --------------------
+def attribute_clone(a):
+  accessor = "e." + a.name + "_get ()"
+  # Non visitable attributes.
+  if a.type in ast_params['non_visitable_types']:
+    type = a.W_type ()
+    get_deref = ""
+    if a.pointer_p () and a.mandatory:
+      get_deref = "&"
+    print "    " + type + " " + a.name + " = " + \
+          get_deref + accessor + ";"
 
-# Helper.  Should be part of dev/ast.py?
-def node_all_attributes (node):
-  attrs = []
-  for sup in node.super:
-    sup_attrs = node_all_attributes (sup)
-    if len (sup_attrs) > 0:
-      attrs.extend (sup_attrs)
-  attrs.extend (node.attributes)
-  return attrs
+  # Collection attributes.
+  elif a.root_type () in ast_params['collections']:
+    if a.pointer_p ():
+      if a.mandatory:
+        print "    " + a.root_type () + "* " + a.name + \
+            " = recurse_collection (" + accessor + ");"
+      else:
+        print "    " + a.root_type () + "* " + a.name + " ="
+        print "      " + accessor + \
+            " ? recurse_collection (*" + accessor + ") : 0;"
+    else:
+      print "    " + a.root_type () + " " + a.name + \
+            " = *recurse_collection (" + accessor + ");"
+
+  # Visitable attributes.
+  else:
+    print "    " + a.W_type () + " " + a.name + \
+          " = recurse (" + accessor + ");"
+
+def children_clone (node):
+  """Print on stdout the definition of local variables that copy/clone
+  the attributes of node."""
+  # Clone recursively the children of E.
+  for a in (node.all_attributes()):
+    # Attributes with a default value are cloned with the default value.
+    if a.init:
+      continue
+    attribute_clone(a)
+
 
 cloner_cc = file("cloner.cc.tmp", "w")
 sys.stdout = cloner_cc
@@ -164,43 +194,9 @@ for node in concrete_nodes:
   if node.hide:
     print "    //<<"
 
-  args = node.ctor_args (False, False)
-
-  # Clone recursively the children of E.
-  for a in (node_all_attributes (node)):
-    # Attributes with a default value are cloned with the default value.
-    if a.init:
-      continue
-    accessor = "e." + a.name + "_get ()"
-    # Non visitable attributes.
-    if a.type in ast_params['non_visitable_types']:
-      type = a.W_type ()
-      get_deref = ""
-      if a.pointer_p () and a.mandatory:
-        get_deref = "&"
-      print "    " + type + " " + a.name + " = " + \
-            get_deref + accessor + ";"
-
-    # Collection attributes.
-    elif a.root_type () in ast_params['collections']:
-      if a.pointer_p ():
-        if a.mandatory:
-          print "    " + a.root_type () + "* " + a.name + \
-              " = recurse_collection (" + accessor + ");"
-        else:
-          print "    " + a.root_type () + "* " + a.name + " ="
-          print "      " + accessor + \
-              " ? recurse_collection (*" + accessor + ") : 0;"
-      else:
-        print "    " + a.root_type () + " " + a.name + \
-              " = *recurse_collection (" + accessor + ");"
-
-    # Visitable attributes.
-    else:
-      print "    " + a.W_type () + " " + a.name + \
-            " = recurse (" + accessor + ");"
-
+  children_clone(node)
   # Result.
+  args = node.ctor_args (False, False)
   if node.name == "FunctionDec":
     # Special case for FunctionDec: copy the sl_needed_ and sl_escapes_ fields.
     print "    FunctionDec* fundec ="

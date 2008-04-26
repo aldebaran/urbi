@@ -183,10 +183,9 @@ class Node:
     for att_name, att_dict in dict.iteritems ():
       return Attribute (att_name, att_dict, self.ast_params)
 
-  # Search the 'name' attribute of this node.
-  # Perform lookup in parents nodes if not found in current
-  # Raise string exception if not found
   def attribute (self, name):
+    """Search the 'name' attribute of this node in all its attributes,
+    including inherited.  Raise string exception if not found."""
     for attr in self.attributes:
       if attr.name == name:
        return attr
@@ -195,6 +194,17 @@ class Node:
       if attr != None:
        return attr
     return None
+
+  def all_attributes (self):
+    """The list of all the attributes, including inherited attributes."""
+    attrs = []
+    for sup in self.super:
+      sup_attrs = sup.all_attributes ()
+      if len (sup_attrs) > 0:
+        attrs.extend (sup_attrs)
+    attrs.extend (self.attributes)
+    return attrs
+
 
   def guard (self, ext):
     """The CPP guard."""
