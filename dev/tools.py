@@ -49,15 +49,15 @@ def lazy_install (srcdir, name):
 
 ## String helpers -------------------------------------------------------------
 
-## Return a conventional macro identifier from a class name.
-## (FooBar -> FOO_BAR).
 def define_id (s):
-  return re.sub ("([^_])([A-Z])", "\\1_\\2", s).upper ()
+  """Return a conventional macro identifier from a pseudo-file name.
+  (ast/FooBar.hh -> AST_FOO_BAR_HH)."""
+  return re.sub ("[^A-Z]", "_", file_id(s).upper())
 
-## Return a conventional file name from a class name.
-## (FooBar -> foo-bar).
 def file_id (s):
-  return re.sub ("^-", "", re.sub ("([A-Z])", "-\\1", s)).lower ()
+  """Return a conventional file name from a pseudo-file name.
+  (ast/FooBar.hh -> ast/foo-bar.hh)."""
+  return re.sub ("([a-z])([A-Z])", "\\1-\\2", s).lower ()
 
 # FIXME: Improve this generator
 # (see http://en.wikipedia.org/wiki/A_and_an for instance).

@@ -23,24 +23,19 @@ def print_inline_code (node, file, where):
 def print_banner(file, name, description):
   print >>file, tools.banner("ast/" + name,  description)
 
-def guard_name (node, ext):
-  return tools.define_id ("ast_" + node.name + "_" + ext)
-
 def print_guard_open (file, node, ext):
-  guard = guard_name (node, ext)
-  print >>file, "#ifndef " + guard
-  print >>file, "# define " + guard
+  print >>file, "#ifndef " + node.guard(ext)
+  print >>file, "# define " + node.guard(ext)
   print >>file, ""
 
 def print_guards_open (node, header, inline, impl):
   """Output the multiple inclusion guard."""
   # Shortands
-  define_id = tools.define_id (node.name)
   print_guard_open (header, node, "hh")
   print_guard_open (inline, node, "hxx")
 
 def print_guard_close (file, node, ext):
-  print >>file, "#endif // !" + guard_name (node, ext)
+  print >>file, "#endif // !" + node.guard(ext)
 
 def print_guards_close (node, header, inline, impl):
   sys.stdout = header
@@ -362,9 +357,6 @@ def print_visitor(node, header, inline, impl):
 
 ## Generate the class corresponding to node
 def class_generate(node):
-  # Shortands.
-  define_id = tools.define_id (node.name)
-
   # Open destination header, inline and implementation files
   header = file(node.fname ("hh.tmp"),  "w")
   inline = file(node.fname ("hxx.tmp"), "w")

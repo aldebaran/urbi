@@ -21,7 +21,7 @@ dec_subclasses = \
 	   concrete_nodes)
 
 clonerlib = ast_params['clonerlib'];
-CLONERLIB = clonerlib.upper();
+guard = tools.define_id(clonerlib + "/cloner.hh")
 
 ## Abstract syntax tree C++ clone visitor - header ----------------------------
 
@@ -30,8 +30,8 @@ sys.stdout = cloner_hh
 
 print tools.banner(clonerlib + "/cloner.hh",
 		   "Declaration of " + clonerlib + "::Cloner.") + """
-#ifndef """ + CLONERLIB + """_CLONER_HH
-# define """ + CLONERLIB + """_CLONER_HH
+#ifndef """ + guard + """
+# define """ + guard + """
 
 # include <boost/type_traits/remove_const.hpp>
 
@@ -103,7 +103,7 @@ print """
 
 } // namespace ast
 
-#endif // !""" + CLONERLIB + """_CLONER_HH"""
+#endif // !""" + guard
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__

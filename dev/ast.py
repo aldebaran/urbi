@@ -196,9 +196,9 @@ class Node:
        return attr
     return None
 
-  def guard (self):
+  def guard (self, ext):
     """The CPP guard."""
-    return self.name.upper ()
+    return tools.define_id("ast/" + self.fname(ext))
 
   def fname (self, ext):
     """The file base name, or file name with extension."""
