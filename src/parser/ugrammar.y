@@ -698,16 +698,15 @@ stmt:
 stmt:
   "group" "identifier" "{" identifiers "}"
   {
-    DESUGAR("var " << *$2 << " = Object.Group.new|"
-	    << *$2 << ".addMembers([" << $4 << "])");
+    DESUGAR("var " << *$2 << " = Global.Group.new(" << $4 << ")");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".addMembers([" << $4 << "])");
+    DESUGAR(*$2 << ".add(" << $4 << ")");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".removeMembers([" << $4 << "])");
+    DESUGAR(*$2 << ".remove(" << $4 << ")");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
 ;
