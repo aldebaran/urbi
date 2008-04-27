@@ -8,6 +8,7 @@
 
 # include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
+# include <boost/type_traits/add_reference.hpp>
 
 namespace ast
 {
@@ -17,7 +18,6 @@ namespace ast
 # include "kernel/fwd.hh"
 
 # include "libport/ufloat.h"
-# include "libport/select-ref.hh"
 # include "libport/symbol.hh"
 # include "object/object.hh"
 # include "object/state.hh"
@@ -37,7 +37,7 @@ namespace object
     typedef typename Traits::type value_type;
 
     /// What we store, as a ref (for arguments and return values).
-    typedef typename libport::ref_traits<value_type>::type value_ref_type;
+    typedef typename boost::add_reference<value_type>::type value_ref_type;
 
     /// Ref-couting.
     typedef libport::shared_ptr< Atom<Traits> > shared_type;

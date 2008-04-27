@@ -6,7 +6,7 @@
 #ifndef OBJECT_ALIEN_HH
 # define OBJECT_ALIEN_HH
 
-# include <libport/select-ref.hh>
+# include <boost/type_traits/remove_reference.hpp>
 
 # include "object/fwd.hh"
 
@@ -18,7 +18,7 @@ namespace object
   rObject box_with_type(const T&, const std::string&);
 
   #define box(Type, V)			\
-    object::box_with_type<libport::unref_traits<Type>::type>(V, #Type)
+    object::box_with_type<boost::remove_reference<Type>::type>(V, #Type)
 
   /// Extract an alien content
   template<typename T>
