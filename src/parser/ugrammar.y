@@ -187,8 +187,6 @@
       ast::Exp* res = 0;
       if (modifier)
       {
-	libport::Symbol gen = libport::Symbol::fresh(SYMBOL(gen));
-	libport::Symbol tag = libport::Symbol::fresh(SYMBOL(tag));
 	DESUGAR_
 	  (res,
 	   "TrajectoryGenerator.new"
