@@ -347,3 +347,16 @@ class Loader:
     self.final_compute (nodes)
     self.resolve_super (nodes)
     return nodes, ast_params
+
+def concrete(nodes):
+  """Return only the concrete classes, sorted."""
+  concrete = filter ((lambda node: node.concrete), nodes.values ())
+  concrete.sort (lambda x, y: cmp(x.name, y.name))
+  return concrete
+
+def subclasses(nodes, c):
+  """Return the set of concrete classes inheriting from 'c'."""
+  con = concrete(nodes)
+  return filter (lambda node: node.name != c and node.is_a (c), con)
+
+

@@ -10,15 +10,10 @@ srcdir = sys.argv[1]
 
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
-arr = nodes.values ()
-concrete_nodes = filter ((lambda node: node.concrete), arr)
-concrete_nodes.sort (lambda x, y: cmp(x.name, y.name))
+# Concrete classes.
+concrete = ast.concrete(nodes)
 
-# FIXME: The definition of dec_subclasses is redundant with
-# ast-visitor-gen's.
-dec_subclasses = \
-  filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
-	   concrete_nodes)
+dec_subclasses = ast.subclasses(nodes, 'Dec')
 
 clonerlib = ast_params['clonerlib'];
 guard = tools.define_id(clonerlib + "/cloner.hh")
@@ -55,7 +50,7 @@ namespace %(clonerlib)s
     using super_type::operator();
 """ % ast_params
 
-for node in concrete_nodes:
+for node in concrete:
   print "    virtual void operator() (const ast::" + node.name + "&);"
 
 print """\
@@ -184,7 +179,7 @@ namespace %(clonerlib)s
   }
 """ % ast_params
 
-for node in concrete_nodes:
+for node in concrete:
   print "  void"
   print "  Cloner::operator() (const ast::" + node.name + "& e)"
   print "  {"

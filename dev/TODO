@@ -1,0 +1,7 @@
+* Remove useless ast::
+In the visitors, the node are qualified by ast::, although they
+live in the same namespace.  This is needed for tc, but not for
+Urbi.  We need more parameters about the namespaces.
+
+* Graph generation
+There are some hard coded values (e.g. Escapable).
