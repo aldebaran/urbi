@@ -9,7 +9,10 @@
 # include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
 
-# include "ast/fwd.hh"
+namespace ast
+{
+  class Function;
+}
 
 # include "kernel/fwd.hh"
 
