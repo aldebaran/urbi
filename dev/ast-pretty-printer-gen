@@ -77,7 +77,7 @@ sys.stdout = visitor_hxx
 
 print tools.banner("ast/pretty-printer.hxx",
 		   "Inline implementation of ast::PrettyPrinter.") + """
-# include "pretty-printer.hh"
+# include "ast/pretty-printer.hh"
 
 namespace ast
 {
