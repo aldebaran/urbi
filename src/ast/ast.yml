@@ -24,8 +24,8 @@ clonerlib: "ast"
 atomic_types:
   - "bool"
   - "int"
-  - "unsigned"
   - "ufloat"
+  - "unsigned"
 
 # Likewise, but these types are handled by references, because of
 # their size.
@@ -55,6 +55,7 @@ non_visitable_types:
   - "loc"
   - "std::string"
   - "ufloat"
+  - "unsigned"
 
 # In the cloner, these require "recurse_collection".
 collections:
@@ -85,9 +86,10 @@ default_visitor_hh_prologue: |2
 
   # include <functional>
   # include <ostream>
-  # include "ast/visitor.hh"
-  # include "ast/fwd.hh"
+
   # include <libport/select-const.hh>
+
+  # include "ast/visitor.hh"
 
 # The beginning of fwd.hh, for includes.
 fwd_hh_prologue: |2
