@@ -108,6 +108,8 @@
   // Fragile in case Bison changes its expansion of $$.
 # define DESUGAR(Code)				\
   DESUGAR_(yyval.expr, Code)
+
+
     /// "<target> . <method> (args)".
     static
     ast::Call*
@@ -778,12 +780,29 @@ stmt:
   }
 ;
 
-// Events.
+
+/*---------.
+| Events.  |
+`---------*/
 stmt:
-  "emit" k1_id args                  { NOT_IMPLEMENTED(@$); }
-| "emit" "(" expr.opt ")" k1_id args { NOT_IMPLEMENTED(@$); }
-| "event" k1_id formals              { NOT_IMPLEMENTED(@$); }
+ "event" k1_id formals
+  {
+    if ($3)
+      up.warn(@3, "ignored arguments in event declaration");
+    delete $3;
+    DESUGAR("var " << $2
+            << "= Global.Event.new(\"" << $2->name_get() << "\")");
+  }
+| "emit" k1_id args
+  {
+    DESUGAR($2 << ".'emit'(" << $3 << ")");
+  }
+| "emit" "(" expr.opt ")" k1_id args
+  {
+    NOT_IMPLEMENTED(@$);
+  }
 ;
+
 
 // Functions.
 stmt:
@@ -1311,6 +1330,11 @@ lvalue:
 %token TOK__EXP "_exp";
 expr:
   "_exp" "(" "integer" ")"     { $$ = metavar<ast::Exp> (up, $3); }
+;
+
+%token TOK__EXPS "_exps";
+exprs:
+  "_exps" "(" "integer" ")"    { $$ = metavar<ast::exps_type> (up, $3); }
 ;
 
 %token TOK__FORMALS "_formals";

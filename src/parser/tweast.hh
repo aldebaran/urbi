@@ -19,12 +19,14 @@
 
 namespace parser
 {
+
   /// \brief TWEAST stands for ``Text With Embedded Abstract Syntax Trees''.
   ///
   /// Aggregate string to parse and tables of metavariables.
   class Tweast
     : public MetavarMap<ast::Call>,
       public MetavarMap<ast::Exp>,
+      public MetavarMap<ast::exps_type>,
       public MetavarMap<ast::symbols_type>
   {
   public:
@@ -71,6 +73,7 @@ namespace parser
     /// Define virtual std::string append_ (unsigned& key, ast::Call* data);
     using MetavarMap<ast::Call>::append_;
     using MetavarMap<ast::Exp>::append_;
+    using MetavarMap<ast::exps_type>::append_;
     using MetavarMap<ast::symbols_type>::append_;
     template <typename T> T& append_ (unsigned&, T& data) const;
     /// \}
@@ -79,6 +82,7 @@ namespace parser
     /// \{
     using MetavarMap<ast::Call>::must_be_unique_;
     using MetavarMap<ast::Exp>::must_be_unique_;
+    using MetavarMap<ast::exps_type>::must_be_unique_;
     using MetavarMap<ast::symbols_type>::must_be_unique_;
     template <typename T> bool must_be_unique_ (const T&) const;
     /// \}

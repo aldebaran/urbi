@@ -14,20 +14,22 @@ namespace parser
   unsigned Tweast::count_ = 0;
 
   Tweast::Tweast()
-    : MetavarMap<ast::Call>::MetavarMap("call"),
-      MetavarMap<ast::Exp>::MetavarMap("exp"),
-      MetavarMap<ast::symbols_type>::MetavarMap("formals"),
-      input_(),
-      unique_()
+    : MetavarMap<ast::Call>::MetavarMap("call")
+    , MetavarMap<ast::Exp>::MetavarMap("exp")
+    , MetavarMap<ast::exps_type>::MetavarMap("exps")
+    , MetavarMap<ast::symbols_type>::MetavarMap("formals")
+    , input_()
+    , unique_()
   {
   }
 
   Tweast::Tweast (const std::string& str)
-    : MetavarMap<ast::Call>::MetavarMap("call"),
-      MetavarMap<ast::Exp>::MetavarMap("exp"),
-      MetavarMap<ast::symbols_type>::MetavarMap("formals"),
-      input_(str),
-      unique_()
+    : MetavarMap<ast::Call>::MetavarMap("call")
+    , MetavarMap<ast::Exp>::MetavarMap("exp")
+    , MetavarMap<ast::exps_type>::MetavarMap("exps")
+    , MetavarMap<ast::symbols_type>::MetavarMap("formals")
+    , input_(str)
+    , unique_()
   {
   }
 
@@ -42,24 +44,22 @@ namespace parser
   }
 
   std::ostream&
-  Tweast::dump (std::ostream& ostr) const
+  Tweast::dump (std::ostream& o) const
   {
-    return ostr
+    return o
       << "Input string:"
       << libport::incendl << input_.str () << libport::decendl
-      << "Call map:"
-      << libport::incendl << MetavarMap<ast::Call>::map_ << libport::decendl
-      << "Exp map:"
-      << libport::incendl << MetavarMap<ast::Exp>::map_ << libport::decendl
-      << "symbols_type map:"
-      << libport::incendl << MetavarMap<ast::symbols_type>::map_ << libport::decendl
+      << static_cast<const MetavarMap<ast::Call>&>(*this)
+      << static_cast<const MetavarMap<ast::Exp>&>(*this)
+      << static_cast<const MetavarMap<ast::exps_type>&>(*this)
+      << static_cast<const MetavarMap<ast::symbols_type>&>(*this)
       ;
   }
 
   std::ostream&
-  operator<< (std::ostream& ostr, const Tweast& in)
+  operator<< (std::ostream& o, const Tweast& in)
   {
-    return in.dump (ostr);
+    return in.dump (o);
   }
 
 }

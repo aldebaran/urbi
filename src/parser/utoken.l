@@ -448,6 +448,7 @@ FLAVOR   [;|,&]?
  /* Meta variables. */
 "_call"         RETURN(_CALL);
 "_exp"          RETURN(_EXP);
+"_exps"         RETURN(_EXPS);
 "_formals"      RETURN(_FORMALS);
 
 "addgroup"      RETURN(ADDGROUP);
