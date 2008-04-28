@@ -66,3 +66,10 @@ XFAIL_TESTS +=                                  \
 uob/group.chk                                   \
 uob/all-write-plug-prop.chk                     \
   uob/all-write-remote-prop.chk
+
+# k2 tests that we fail because features are not implementes
+XFAIL_TESTS +=                                  \
+2.x/modifier-accel-freeze.chk                   \
+2.x/modifier-speed-adaptive-freeze.chk          \
+2.x/modifier-time-adaptive-freeze.chk           \
+2.x/modifier-time-freeze.log
