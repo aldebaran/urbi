@@ -26,7 +26,6 @@ XFAIL_TESTS +=					\
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
 1.x/begin-end-report.chk			\
-1.x/bin-copy.chk				\
 1.x/channels-tags.chk				\
 1.x/connection-delete.chk			\
 1.x/events.chk					\
