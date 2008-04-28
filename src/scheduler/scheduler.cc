@@ -91,6 +91,10 @@ namespace scheduler
       // Should the job be started?
       bool start = false;
 
+      // Save the current time since we will use it several times during this job
+      // analysis.
+      libport::utime_t current_time = get_time_ ();
+
       ECHO ("Considering " << *job << " in state " << state_name (job->state_get ()));
 
       switch (job->state_get ())
@@ -117,7 +121,15 @@ namespace scheduler
       case sleeping:
 	{
 	  libport::utime_t job_deadline = job->deadline_get ();
-	  if (job_deadline <= get_time_ ())
+
+	  // If the job has been frozen, extend its deadline by the
+	  // corresponding amount of time. The deadline will be adjusted
+	  // later when the job is unfrozen using notice_not_frozen(),
+	  // but in the meantime we do not want to cause an early wakeup.
+	  if (libport::utime_t frozen_since = job->frozen_since_get ())
+	    job_deadline += (current_time - frozen_since);
+
+	  if (job_deadline <= current_time)
 	    start = true;
 	  else
 	    deadline = std::min (deadline, job_deadline);
@@ -134,6 +146,13 @@ namespace scheduler
       case joining:
 	break;
       }
+
+      // Tell the job whether it is frozen or not so that it can remember
+      // since when it has been in this state.
+      if (job->frozen ())
+	job->notice_frozen (current_time);
+      else
+	job->notice_not_frozen (current_time);
 
       // A blocked job will be started unconditionally as it has to
       // handle this condition.

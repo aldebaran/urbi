@@ -299,6 +299,29 @@ namespace scheduler
     /// \return A shared pointer on the job.
     scheduler::rJob myself_get () const;
 
+    /// Remember the time we have been frozen since if not remembered
+    /// yet.
+    ///
+    /// \param current_time The current time.
+    void notice_frozen (libport::utime_t current_time);
+
+    /// Note that we are not frozen anymore.
+    ///
+    /// \param current_time The current time.
+    void notice_not_frozen (libport::utime_t current_time);
+
+    /// Return the origin since we have been frozen.
+    ///
+    /// \return 0 if we have not been frozen, the date since we have
+    ///         been frozen otherwise.
+    libport::utime_t frozen_since_get () const;
+
+    /// Return the current time shift.
+    ///
+    /// \return The value to subtract from the system time to get the
+    ///         unfrozen time of this runner.
+    libport::utime_t time_shift_get () const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -319,6 +342,14 @@ namespace scheduler
     /// Current job deadline. The deadline is only meaningful when the
     /// job state is \c sleeping.
     libport::utime_t deadline_;
+
+    /// The last time we have been frozen (in system time), or 0 if we
+    /// are not currently frozen.
+    libport::utime_t frozen_since_;
+
+    /// The value we have to deduce from system time because we have
+    /// been frozen.
+    libport::utime_t time_shift_;
 
     /// Ensure proper cleanup;
     void terminate_cleanup ();

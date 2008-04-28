@@ -16,6 +16,8 @@ namespace scheduler
   inline
   Job::Job (Scheduler& scheduler, const libport::Symbol& name)
     : state_ (to_start),
+      frozen_since_ (0),
+      time_shift_ (0),
       scheduler_ (&scheduler),
       myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
@@ -29,6 +31,8 @@ namespace scheduler
   inline
   Job::Job (const Job& model, const libport::Symbol& name)
     : state_ (to_start),
+      frozen_since_ (0),
+      time_shift_ (0),
       scheduler_ (model.scheduler_),
       myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
@@ -176,6 +180,37 @@ namespace scheduler
   Job::myself_get () const
   {
     return myself_;
+  }
+
+  inline void
+  Job::notice_frozen (libport::utime_t current_time)
+  {
+    if (!frozen_since_)
+      frozen_since_ = current_time;
+  }
+
+  inline void
+  Job::notice_not_frozen (libport::utime_t current_time)
+  {
+    if (frozen_since_ && state_ == sleeping)
+    {
+      libport::utime_t time_spent_frozen = current_time - frozen_since_;
+      time_shift_ += time_spent_frozen;
+      deadline_ += time_spent_frozen;
+    }
+    frozen_since_ = 0;
+  }
+
+  inline libport::utime_t
+  Job::frozen_since_get () const
+  {
+    return frozen_since_;
+  }
+
+  inline libport::utime_t
+  Job::time_shift_get () const
+  {
+    return time_shift_;
   }
 
   inline std::ostream&

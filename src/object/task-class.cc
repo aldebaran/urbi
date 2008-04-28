@@ -98,6 +98,13 @@ namespace object
     return void_class;
   }
 
+  static rObject
+  task_class_timeShift (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return Float::fresh (r.time_shift_get () / 1000LL);
+  }
+
   void
   task_class_initialize ()
   {
@@ -106,6 +113,7 @@ namespace object
     DECLARE (init);
     DECLARE (setSideEffectFree);
     DECLARE (terminate);
+    DECLARE (timeShift);
     DECLARE (waitForChanges);
     DECLARE (waitForTermination);
 #undef DECLARE
