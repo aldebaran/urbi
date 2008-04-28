@@ -1,6 +1,6 @@
 #include "urbi/uclient.hh"
 #include <sys/types.h>
-#include "libport/sys/stat.h"
+#include <libport/sys/stat.h>
 
 urbi::USound snd;
 

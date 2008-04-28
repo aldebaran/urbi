@@ -17,8 +17,8 @@
 
 # include <vector>
 
-# include "libport/select-ref.hh"
-# include "libport/ufloat.h"
+# include <libport/select-ref.hh>
+# include <libport/ufloat.h>
 
 # include "urbi/fwd.hh"
 # include "urbi/ubinary.hh"

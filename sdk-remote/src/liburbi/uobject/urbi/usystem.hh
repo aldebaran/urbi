@@ -25,9 +25,9 @@
 # include <list>
 # include <algorithm>
 
-# include "libport/singleton-ptr.hh"
-# include "libport/ufloat.h"
-# include "libport/hash.hh"
+# include <libport/singleton-ptr.hh>
+# include <libport/ufloat.h>
+# include <libport/hash.hh>
 
 namespace urbi
 {

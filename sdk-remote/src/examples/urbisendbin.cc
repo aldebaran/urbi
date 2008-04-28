@@ -3,8 +3,8 @@
 */
 #include "urbi/uclient.hh"
 #include <sys/types.h>
-#include "libport/sys/stat.h"
-#include "libport/windows.hh"
+#include <libport/sys/stat.h>
+#include <libport/windows.hh>
 
 int main(int argc, char * argv[])
 {

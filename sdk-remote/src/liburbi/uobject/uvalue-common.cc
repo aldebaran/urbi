@@ -22,8 +22,8 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "libport/assert.hh"
-#include "libport/cstring"
+#include <libport/assert.hh>
+#include <libport/cstring>
 
 #include "urbi/uvalue.hh"
 

@@ -5,8 +5,8 @@
 #endif
 #include <fcntl.h>
 
-#include "libport/thread.hh"
-#include "libport/assert.hh"
+#include <libport/thread.hh>
+#include <libport/assert.hh>
 
 #include "urbi/usyncclient.hh"
 #include "urbi/uconversion.hh"

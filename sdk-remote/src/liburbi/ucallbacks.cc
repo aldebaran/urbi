@@ -22,7 +22,7 @@
 #include <sstream>
 #include <list>
 
-#include "libport/program-name.hh"
+#include <libport/program-name.hh>
 
 #include "urbi/ucallbacks.hh"
 #include "urbi/usyncclient.hh"

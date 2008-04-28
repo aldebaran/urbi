@@ -24,7 +24,7 @@
  * This simple demonstration program display or save images from an Urbi server.
  */
 
-#include "libport/cstdio"
+#include <libport/cstdio>
 #include <csignal>
 
 #include "urbi/usyncclient.hh"

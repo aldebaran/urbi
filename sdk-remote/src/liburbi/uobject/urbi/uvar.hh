@@ -18,8 +18,8 @@
 # include <iosfwd>
 # include <string>
 
-# include "libport/fwd.hh"
-# include "libport/ufloat.hh"
+# include <libport/fwd.hh>
+# include <libport/ufloat.hh>
 
 # include "urbi/uvalue.hh"
 # include "urbi/uproperty.hh"

@@ -23,9 +23,9 @@
 
 # include <string>
 
-# include "libport/fwd.hh"
-# include "libport/ufloat.h"
-# include "libport/package-info.hh"
+# include <libport/fwd.hh>
+# include <libport/ufloat.h>
+# include <libport/package-info.hh>
 # include "urbi/fwd.hh"
 # include "urbi/ucallbacks.hh"
 # include "urbi/uvar.hh"

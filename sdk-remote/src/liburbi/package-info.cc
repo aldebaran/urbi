@@ -1,6 +1,6 @@
 #include "sdk/config.h"
 #include "version.hh"
-#include "libport/package-info.hh"
+#include <libport/package-info.hh>
 
 namespace urbi
 {

@@ -13,8 +13,8 @@
 #ifndef URBI_UBLEND_TYPE_HH
 # define URBI_UBLEND_TYPE_HH
 
-# include "libport/cstring"
-# include "libport/assert.hh"
+# include <libport/cstring>
+# include <libport/assert.hh>
 
 namespace urbi
 {

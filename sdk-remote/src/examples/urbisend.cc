@@ -23,8 +23,8 @@
 
 /* This is a trivial demonstration program that send commands contained in a file to an urbi server */
 
-#include "libport/cstdio"
-#include "libport/sysexits.hh"
+#include <libport/cstdio>
+#include <libport/sysexits.hh>
 #include "urbi/uclient.hh"
 
 urbi::UCallbackAction

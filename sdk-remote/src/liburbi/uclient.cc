@@ -21,12 +21,12 @@
 **********************************************************************/
 
 #include <cstdlib>
-#include "libport/cstdio"
+#include <libport/cstdio>
 #include <cerrno>
 
 #include <locale.h>
 
-#include "libport/unistd.h"
+#include <libport/unistd.h>
 
 #ifndef WIN32
 # include <sys/time.h>
@@ -35,10 +35,10 @@
 #endif
 
 #include "urbi/uclient.hh"
-#include "libport/network.h"
-#include "libport/lockable.hh"
-#include "libport/thread.hh"
-#include "libport/utime.hh"
+#include <libport/network.h>
+#include <libport/lockable.hh>
+#include <libport/thread.hh>
+#include <libport/utime.hh>
 
 namespace urbi
 {
