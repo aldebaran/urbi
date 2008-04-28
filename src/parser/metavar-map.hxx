@@ -26,6 +26,15 @@ namespace parser
   }
 
   template <typename Data>
+  std::ostream&
+  MetavarMap<Data>::dump (std::ostream& o) const
+  {
+    return o
+      << name_ << " map:"
+      << libport::incendl << map_ << libport::decendl;
+  }
+
+  template <typename Data>
   std::string
   MetavarMap<Data>::append_ (unsigned& count, Data* data)
   {
@@ -47,6 +56,18 @@ namespace parser
   MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
   {
     return map_.take (key);
+  }
+
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  template <typename Data>
+  std::ostream&
+  operator<< (std::ostream& o, const MetavarMap<Data>& t)
+  {
+    return t.dump (o);
   }
 
 }

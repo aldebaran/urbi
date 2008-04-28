@@ -21,6 +21,10 @@ namespace parser
     MetavarMap (const std::string& name);
     virtual ~MetavarMap ();
 
+    /// User friendly dump of the table.
+    /// Expects the elements of the map to support <<.
+    std::ostream& dump (std::ostream& o) const;
+
   protected:
     /// Append a metavariable to the map.
     virtual std::string append_ (unsigned& key, Data* data);
@@ -38,6 +42,15 @@ namespace parser
     map_type map_;
   };
 
+
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  template <typename Data>
+  std::ostream&
+  operator<< (std::ostream& o, const MetavarMap<Data>& t);
 }
 
 # include "parser/metavar-map.hxx"
