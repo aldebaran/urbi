@@ -1,5 +1,7 @@
 class Global.TrajectoryGenerator
 {
+  /// Stop adaptive trajectory if error is below this value.
+  var delta = 2;
   function init(startValue, targetValue, args)
   {
     if (startValue.type == "Float")
@@ -21,21 +23,30 @@ class Global.TrajectoryGenerator
     var content = Global._slotNames(args)|
     if (content.has("time"))
     {
-      var self.get = getSlot("timeGet") |
+      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
+      if (self.adaptive)
+	var self.get = getSlot("timeAdaptiveGet")
+      else
+	var self.get = getSlot("timeGet") |
       var self.duration = _getSlot(args, "time") |
-      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false)
+    }
+    else if (content.has("smooth"))
+    {
+      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
+      var self.get = getSlot("smoothGet") |
+      var self.duration = _getSlot(args, "smooth") |
     }
     else if (content.has("accel"))
     {
       var self.get = getSlot("accelGet") |
-      var self.accel = args.getSlot("accel") |
+      var self.accel = _getSlot(args, "accel") / 1000000 |
       var self.duration = sqrt ( 2 * (targetValue - self.startValue) / accel)
     }
     else if (content.has("speed"))
     {
       var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
-      var self.speed = args.speed;
-      var self.duration = abs(self.startValue - targetValue) * 1000 / speed |
+      var self.speed = args.speed / 1000|
+      var self.duration = abs(self.startValue - targetValue)  / speed |
       if (!adaptive)
       {
       var self.get = getSlot("timeGet")
@@ -67,7 +78,7 @@ class Global.TrajectoryGenerator
     var tag = Tag.new|
     tag:
     {
-      every(100) # FIXME: Don't use an arbitrary period.
+      every(getPeriod)
       {
 	if (isOver)
           tag.stop|
@@ -93,6 +104,29 @@ class Global.TrajectoryGenerator
     } |
     startValue + (targetValue - startValue) * stat
   };
+  function smoothGet(currentVal)
+  {
+    var stat =  (time - startTime) / duration |
+    if (stat > 1)
+    {
+      isOver = true|
+      return targetValue
+    } |
+    startValue +
+      (targetValue - startValue) * ( sin ( - pi / 2.0 + pi * stat) +1) / 2.0
+  };
+  function timeAdaptiveGet(currentVal)
+  {
+    if (abs(currentVal - targetValue) < delta)
+    {
+      isOver = true |
+      return targetValue
+    } |
+    var stat = getPeriod / ( startTime + duration - time) |
+    if (stat > 1 || stat < 0)
+      return targetValue |
+    currentVal + stat *  (targetValue - currentVal)
+  };
   function sinGet(currentVal)
   {
     targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
@@ -109,13 +143,18 @@ class Global.TrajectoryGenerator
   };
   function adaptiveSpeedGet(currentVal)
   {
-     var nextVal = currentVal + speed * sgn(targetValue - currentVal);
-     if ((currentVal < targetValue && targetValue < nextVal)
-       || (nextVal < targetValue && targetValue < currentVal))
-     {
-       isOver = true |
-       nextVal = targetValue
-     } |
-     nextVal
+    if (abs(currentVal - targetValue) < delta)
+    {
+      isOver = true |
+      return targetValue
+    } |
+    var nextVal = currentVal
+      + speed * sgn(targetValue - currentVal) * getPeriod |
+    if ((currentVal < targetValue && targetValue < nextVal)
+      || (nextVal < targetValue && targetValue < currentVal))
+    {
+      nextVal = targetValue
+    } |
+    nextVal
   };
 };
