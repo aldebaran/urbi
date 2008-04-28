@@ -1,6 +1,7 @@
 dist_pkgdata_DATA =				\
 share/urbi/binary.u				\
 share/urbi/channel.u				\
+share/urbi/event.u				\
 share/urbi/float.u				\
 share/urbi/group.u				\
 share/urbi/k1.u					\
