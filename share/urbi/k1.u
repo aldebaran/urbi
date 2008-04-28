@@ -3,6 +3,12 @@ class Global.Kernel1Functions
 {
   var asString = "<Kernel1Functions>";
 
+  function copy(o)
+  {
+    warn("`copy(o)' is deprecated, use `o.copy'") |
+    o.copy
+  };
+
   // isdef("name"): Check whether "name" is defined (here or above).
   function isdef
   {
@@ -16,13 +22,13 @@ class Global.Kernel1Functions
 
   function seq(n)
   {
-    warn("`seq(number)' is deprecated, use `number.seq'");
+    warn("`seq(number)' is deprecated, use `number.seq'") |
     n.seq
   };
 
   function size(l)
   {
-    warn("`size(list)' is deprecated, use `list.size'");
+    warn("`size(list)' is deprecated, use `list.size'") |
     l.size
   };
 
@@ -31,6 +37,8 @@ class Global.Kernel1Functions
     s.length
   };
 };
+
+# K1 compatibility: import the k1 functions.
 Global.addProto(Global.Kernel1Functions);
 
 class Global.Kernel1Methods
@@ -64,7 +72,7 @@ Object.addProto(Global.Kernel1Methods);
 
 
 
-# Deprecated command from k1.
+# Deprecated commands from k1.
 # FIXME: Some commands should be rewritten once it becomes possible.
 class Global.DeprecatedCommands
 {

@@ -1,0 +1,37 @@
+class Global.Binary
+{
+  function init(k, v)
+  {
+    var self.keywords = k |
+    var self.data = v
+  };
+
+  var protoName = "Binary";
+  function asString()
+  {
+    if (self === Binary)
+      "<" + protoName + ">"
+    else
+    {
+      var res = "BIN " + data.size.asString |
+      if (!keywords.empty)
+	res += " " + keywords |
+      res += "\n" + data |
+      res
+    }
+  };
+
+  # The semantics is mandated by K1 compatibility.
+  function '+'(lhs)
+  {
+    var res = Global.Binary.new(keywords, data + lhs.data)|
+    if (keywords.empty)
+      res.keywords = lhs.keywords |
+    return res
+  };
+
+  function copy()
+  {
+    Global.Binary.new(keywords, data)
+  };
+};
