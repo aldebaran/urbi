@@ -77,10 +77,12 @@ namespace object
     rObject res = urbi_call(r, args[1], SYMBOL(asString));
     std::string s = res->value<String>().name_get();
 
-    //Hack: special case for Strings to have k1 behavior
-    //special case for Strings
-    if (is_echo && args[1]->kind_is(Object::kind_string)
-      && s[0] == '"' && s.length() && s[s.length()-1] == '"')
+    // Hack: special case for Strings to have k1 behavior special case
+    // for Strings.
+    if (is_echo
+        && args[1]->kind_is(Object::kind_string)
+        && s[0] == '"'
+        && s.length() && s[s.length()-1] == '"')
       s = libport::unescape(s.substr(1, s.length()-2));
 
     std::string data = std::string(is_echo?"*** ":"") + s + "\n";
@@ -114,10 +116,11 @@ namespace object
   static rObject
   object_class_uid (runner::Runner&, objects_type args)
   {
-    CHECK_ARG_COUNT (1);
-    std::string str = (boost::format ("0x%x")
-		       % reinterpret_cast<long long> (args[0].get ())).str ();
-    return String::fresh(libport::Symbol (str));
+    static boost::format uid("0x%x");
+    CHECK_ARG_COUNT(1);
+    return
+      String::fresh(libport::Symbol
+                    (str(uid % reinterpret_cast<long long>(args[0].get()))));
   }
 
   /// Structural equality
