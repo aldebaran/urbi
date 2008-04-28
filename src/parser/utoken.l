@@ -569,11 +569,8 @@ FLAVOR   [;|,&]?
     }
   out_of_loop:
   std::ostringstream rewritten;
-  rewritten << "(|"
-	    << "  protos: [Binary], "
-	    << "  keywords: \"" << keywords << "\", "
-	    << "  data: \"" << libport::escape(data) << "\""
-	    << "|);";
+  rewritten << "Global.Binary.new (\"" << keywords << "\", "
+	    <<                   " \"" << libport::escape(data) << "\");";
   UNPUT(rewritten.str());
 }
 
