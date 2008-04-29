@@ -225,6 +225,14 @@ namespace urbi
     // UEM_ASSIGNVALUE
     if ((USystemExternalMessage)(int)array[0] == UEM_ASSIGNVALUE)
     {
+      if (array.size() != 3)
+      {
+	msg.client.printf("Component Error: Invalid number "
+			"of arguments in the server message: %d"
+			" (expected 3)\n",
+			array.size());
+	return URBI_CONTINUE;
+      }
       UVarTable::iterator varmapfind = varmap->find(array[1]);
       if (varmapfind != varmap->end())
 	for (std::list<UVar*>::iterator it = varmapfind->second.begin();
