@@ -251,7 +251,7 @@ namespace runner
     if (fn.strict())
     {
       ast::symbols_type& formals = *fn.formals_get();
-      object::check_arg_count (formals.size() + 1, args.size(), "");
+      object::check_arg_count (formals.size() + 1, args.size(), msg.name_get());
       // Effective (evaluated) argument iterator.
       // Skip "self" which has already been handled.
       object::objects_type::const_iterator ei = ++args.begin();
@@ -371,7 +371,7 @@ namespace runner
       foreach (rObject arg, args)
       {
 	if (!first && arg == object::void_class)
-	  throw object::WrongArgumentType ("");
+	  throw object::WrongArgumentType (msg);
 	first = false;
       }
     }
@@ -391,7 +391,7 @@ namespace runner
 	current_ = apply_urbi (func, msg, args, call_message);
 	break;
       default:
-	object::check_arg_count (1, args.size(), "");
+	object::check_arg_count (1, args.size(), msg.name_get());
 	current_ = func;
 	break;
     }
