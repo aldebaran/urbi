@@ -150,13 +150,13 @@ namespace runner
     /// \}
 
     /// Code to run the cleanup code
-    void run_at_exit (object::rObject& scope);
+    void run_at_exit (const object::rObject& scope);
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
 
   private:
-    void show_error_ (object::UrbiException& ue);
+    void show_error_ (const object::UrbiException& ue);
     void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
     void send_message_ (const std::string& tag, const std::string& msg);
     rObject apply_urbi (const rObject& func,

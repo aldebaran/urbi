@@ -13,7 +13,7 @@ namespace object
 
   /// Build a lazy value that evaluates to the given expression
   rObject
-  mkLazy(runner::Runner& r, ast::Exp* e);
+  mkLazy(runner::Runner& r, const ast::Exp& e);
 }
 
 #endif

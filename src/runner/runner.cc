@@ -136,7 +136,7 @@ namespace runner
   }
 
   void
-  Runner::show_error_ (object::UrbiException& ue)
+  Runner::show_error_ (const object::UrbiException& ue)
   {
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
@@ -250,7 +250,7 @@ namespace runner
     // arguments. Otherwise, bind the call message.
     if (fn.strict())
     {
-      ast::symbols_type& formals = *fn.formals_get();
+      const ast::symbols_type& formals = *fn.formals_get();
       object::check_arg_count (formals.size() + 1, args.size(), msg.name_get());
       // Effective (evaluated) argument iterator.
       // Skip "self" which has already been handled.
@@ -404,7 +404,7 @@ namespace runner
 		 const object::rList& args)
   {
     object::objects_type apply_args;
-    foreach (rObject arg, args->value_get ())
+    foreach (const rObject arg, args->value_get ())
       apply_args.push_back (arg);
     return apply (func, msg, apply_args);
   }
@@ -472,7 +472,7 @@ namespace runner
     // Build the list of lazy arguments
     object::objects_type lazy_args;
 
-    foreach (ast::Exp* e, args)
+    foreach (const ast::Exp* e, args)
     {
       // The target can be unspecified
       if (!e)
@@ -480,7 +480,7 @@ namespace runner
 	lazy_args.push_back(object::nil_class);
 	continue;
       }
-      lazy_args.push_back(object::mkLazy(*this, e));
+      lazy_args.push_back(object::mkLazy(*this, *e));
     }
 
     return build_call_message(tgt, msg, lazy_args);
@@ -601,7 +601,7 @@ namespace runner
     bool first_iteration = true;
 
     // Iterate on each value.
-    foreach (rObject o, content)
+    foreach (const rObject o, content)
     {
       // Define a new local scope for each loop, and set the index.
       rObject locals = object::Object::fresh();
@@ -748,7 +748,7 @@ namespace runner
     current_ = object::void_class;
 
     bool first_iteration = true;
-    foreach (ast::Exp* i, e.children_get ())
+    foreach (const ast::Exp* i, e.children_get ())
     {
       // Allow some time to pass before we execute what follows.  If
       // we don't do this, the ;-operator would act almost like the
@@ -763,8 +763,8 @@ namespace runner
       current_.reset ();
       JECHO ("child", i);
 
-      if (dynamic_cast<ast::Stmt*>(i) &&
-	  dynamic_cast<ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
+      if (dynamic_cast<const ast::Stmt*>(i) &&
+	  dynamic_cast<const ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are
 	Runner* subrunner = new Runner(*this, i);
@@ -849,7 +849,7 @@ namespace runner
   }
 
   void
-  Runner::run_at_exit (object::rObject& scope)
+  Runner::run_at_exit (const object::rObject& scope)
   {
     if (object::rObject atexit = scope->own_slot_get (SYMBOL (atexit)))
     {
@@ -862,10 +862,10 @@ namespace runner
 	// Bad type, return immediately.
 	return;
       }
-      object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
+      const object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
       object::objects_type args;
       args.push_back (scope->slot_get (SYMBOL (self)));
-      rObject saved_current = current_;
+      const rObject saved_current = current_;
       foreach (const rObject& func, atexit_funcs->value_get ())
       {
 	try
@@ -896,7 +896,7 @@ namespace runner
     {
       try
       {
-	rObject val = eval(s.value_get());
+	const rObject val = eval(s.value_get());
 	if (s.name_get() == SYMBOL(protos))
 	{
 	  // protos should always point to a list. Also, we make a copy

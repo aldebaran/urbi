@@ -153,12 +153,12 @@ namespace object
     sort (rList l)
     {
       std::list<rObject> s;
-      foreach(rObject o, l->value_get())
+      foreach(const rObject& o, l->value_get())
 	s.push_back(o);
       s.sort(compareListItems);
 
       List::value_type res;
-      foreach(rObject o, s)
+      foreach(const rObject& o, s)
 	res.push_back(o);
       return List::fresh(res);
     }
