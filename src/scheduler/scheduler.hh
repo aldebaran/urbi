@@ -80,6 +80,10 @@ namespace scheduler
     /// Get the currently executing job.
     ///
     /// \return A reference onto the currently executing job.
+    ///
+    /// It is an error to call this method if no job is currently
+    /// executing or to keep the reference after yielding since the
+    /// Job may no longer be valid then.
     Job& current_job () const;
 
     /// Signal that a \c stop or a \c block has been issued on a tag.
