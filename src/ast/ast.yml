@@ -217,6 +217,16 @@ Ast:
 Exp:
   super: Ast
 
+MetaExp:
+  desc: /// A node which is a placeholder for an Exp.
+  super: Exp
+  attributes:
+    - id:
+        type: unsigned
+        desc: The index of the meta-variable.
+  printer:
+    - '"%exp:"'
+    - $id
 
 ## ------ ##
 ## Tags.  ##
@@ -727,7 +737,6 @@ Call:
                   << libport::decindent
                   << ")";
        }'
-
 
 Function:
   super: Exp

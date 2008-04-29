@@ -52,6 +52,7 @@
 
 #include "ast/all.hh"
 #include "ast/clone.hh"
+#include "ast/parametric-ast.hh"
 
 #include "object/atom.hh"
 
@@ -189,13 +190,16 @@
       ast::Exp* res = 0;
       if (modifier)
       {
-	DESUGAR_
-	  (res,
-	   "TrajectoryGenerator.new"
-	   "(" << lvalue << ", " << value << ", " << modifier << ")"
-	   ".run(" << lvalue->args_get().front() << ".target("
-	   "\"" << lvalue->name_get() << "\"),"
-	   "\"" << lvalue->name_get() << "\")");
+        static ast::ParametricAst
+          traj("TrajectoryGenerator"
+               ".new(%exp:1, %exp:2, %exp:3)"
+               ".run(%exp:4.target(%exp:5),"
+               "     %exp:6)");
+        ast::String* name = new ast::String(l, lvalue->name_get());
+        res = exp(traj
+                  %lvalue %value %modifier
+                  %clone(lvalue->args_get().front()) %clone(name)
+                  %name);
       }
       else
       {
@@ -932,7 +936,8 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
-      DESUGAR ("at_(" << $3 << ", " << $5 << ")");
+      static ast::ParametricAst at("at_(%exp:1, %exp:2)");
+      $$ = exp (at % $3 % $5);
     }
 | "at" "(" expr ")" stmt "onleave" stmt
     {
@@ -940,7 +945,8 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       warn_implicit(up, @7, $7);
-      DESUGAR ("at_(" << $3 << ", " << $5 << ", " << $7 << ")");
+      static ast::ParametricAst at("at_(%exp:1, %exp:2, %exp:3)");
+      $$ = exp (at % $3 % $5 % $7);
     }
 | "at" "(" expr "~" expr ")" stmt %prec CMDBLOCK
     {
@@ -964,7 +970,8 @@ stmt:
 | "every" "(" expr ")" stmt
     {
       warn_implicit(up, @5, $5);
-      DESUGAR ("every_(" << $3 << ", " << $5 << ")");
+      static ast::ParametricAst every("every_(%exp:1, %exp:2)");
+      $$ = exp (every % $3 % $5);
     }
 | "if" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -1375,6 +1382,11 @@ exprs:
 %token TOK__FORMALS "_formals";
 formals:
   "_formals" "(" "integer" ")" { $$ = metavar<ast::symbols_type> (up, $3); }
+;
+
+%token TOK_PERCENT_EXP_COLON "%exp:";
+expr:
+  "%exp:" "integer"    { $$ = new ast::MetaExp(@$, $2); }
 ;
 
 

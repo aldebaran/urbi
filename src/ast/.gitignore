@@ -53,6 +53,9 @@ list.hxx
 message.cc
 message.hh
 message.hxx
+meta-exp.cc
+meta-exp.hh
+meta-exp.hxx
 nary.cc
 nary.hh
 nary.hxx

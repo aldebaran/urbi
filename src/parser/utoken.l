@@ -451,6 +451,8 @@ FLAVOR   [;|,&]?
 "_exps"         RETURN(_EXPS);
 "_formals"      RETURN(_FORMALS);
 
+"%exp:"		RETURN(PERCENT_EXP_COLON);
+
 "addgroup"      RETURN(ADDGROUP);
 "alias"         RETURN(ALIAS);
 "break"         RETURN(BREAK);
