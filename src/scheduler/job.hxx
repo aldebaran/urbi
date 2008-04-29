@@ -192,11 +192,12 @@ namespace scheduler
   inline void
   Job::notice_not_frozen (libport::utime_t current_time)
   {
-    if (frozen_since_ && state_ == sleeping)
+    if (frozen_since_)
     {
       libport::utime_t time_spent_frozen = current_time - frozen_since_;
       time_shift_ += time_spent_frozen;
-      deadline_ += time_spent_frozen;
+      if (state_ == sleeping)
+	deadline_ += time_spent_frozen;
     }
     frozen_since_ = 0;
   }
