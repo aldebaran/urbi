@@ -322,6 +322,12 @@ namespace scheduler
     ///         unfrozen time of this runner.
     libport::utime_t time_shift_get () const;
 
+    /// Set the current time shift.
+    ///
+    /// \param ts The new time shift. This should probably only be used
+    ///           at runner creation time.
+    void time_shift_set (libport::utime_t ts);
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is

@@ -32,7 +32,7 @@ namespace scheduler
   Job::Job (const Job& model, const libport::Symbol& name)
     : state_ (to_start),
       frozen_since_ (0),
-      time_shift_ (0),
+      time_shift_ (model.time_shift_),
       scheduler_ (model.scheduler_),
       myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
@@ -211,6 +211,12 @@ namespace scheduler
   Job::time_shift_get () const
   {
     return time_shift_;
+  }
+
+  inline void
+  Job::time_shift_set (libport::utime_t ts)
+  {
+    time_shift_ = ts;
   }
 
   inline std::ostream&
