@@ -96,6 +96,8 @@ namespace object
   static rObject
   object_class_echo (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT_RANGE(2, 3);
+
     return object_echo(r, args, true);
   }
 
