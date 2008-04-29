@@ -88,6 +88,10 @@ namespace parser
     /// If errors were pushed, the ast is deleted and set to 0.
     void process_errors(ast_type* target);
 
+    /// Dump all the errors on std::cerr.
+    /// For developpers.
+    void dump_errors() const;
+
   private:
     // Give access to loc_.
     friend int parser_type::parse ();

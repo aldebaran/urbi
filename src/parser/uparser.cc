@@ -83,11 +83,17 @@ namespace parser
     tweast_ = 0;
 
     // We need the parse errors now.
+    dump_errors();
+    return res;
+  }
+
+  void
+  UParser::dump_errors() const
+  {
     std::copy(warnings_.begin(), warnings_.end(),
 	      std::ostream_iterator<std::string>(std::cerr, "\n"));
     std::copy(errors_.begin(), errors_.end(),
 	      std::ostream_iterator<std::string>(std::cerr, "\n"));
-    return res;
   }
 
   int
