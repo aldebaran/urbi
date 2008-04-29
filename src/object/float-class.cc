@@ -172,17 +172,16 @@ abs(libport::ufloat v)
   static rObject
   float_class_MINUS(runner::Runner&, objects_type args)
   {
-    // FIXME: The error message requires 2 although 1 is ok.
-    if (args.size () != 1 && args.size() != 2)
-      throw WrongArgumentCount(2, args.size (), __PRETTY_FUNCTION__);
+    CHECK_ARG_COUNT_RANGE(1, 2);
+
+    // Unary minus.
     FETCH_ARG(0, Float);
     if (args.size() == 1)
       return Float::fresh(- arg0->value_get());
-    else
-    {
-      FETCH_ARG(1, Float);
-      return Float::fresh(arg0->value_get() - arg1->value_get());
-    }
+
+    // Binary minus.
+    FETCH_ARG(1, Float);
+    return Float::fresh(arg0->value_get() - arg1->value_get());
   }
 
   // FIXME: Code duplication here, factor this macro with PRIMITIVE_1_
