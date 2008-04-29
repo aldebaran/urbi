@@ -55,8 +55,9 @@ namespace object
   }
 
   static rObject
-  system_class_time (runner::Runner& r, objects_type)
+  system_class_time (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT (1);
     return Float::fresh(r.scheduler_get().get_time() / 1000.0);
   }
 
