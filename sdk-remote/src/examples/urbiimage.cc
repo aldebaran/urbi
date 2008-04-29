@@ -158,7 +158,7 @@ main (int argc, char *argv[])
   client.send("%s.resolution  = 0;", device);
   client.send("%s.jpegfactor = %d;", device, jpegfactor);
 
-  client << "%s.reconstruct = " << (reconstruct ? 1 : 0)
+  client << device << ".reconstruct = " << (reconstruct ? 1 : 0)
 	 << urbi::semicolon;
 
   if (!fileName)
