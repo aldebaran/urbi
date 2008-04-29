@@ -22,7 +22,7 @@ namespace parser
   MetavarMap<Data>::~MetavarMap ()
   {
     // All the values must have been used.
-    passert (map_, map_.empty ());
+    passert (map_, empty_ ());
   }
 
   template <typename Data>
@@ -45,6 +45,13 @@ namespace parser
   }
 
   template <typename Data>
+  Data*
+  MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
+  {
+    return map_.take (key);
+  }
+
+  template <typename Data>
   bool
   MetavarMap<Data>::must_be_unique_ (Data*) const
   {
@@ -52,10 +59,10 @@ namespace parser
   }
 
   template <typename Data>
-  Data*
-  MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
+  bool
+  MetavarMap<Data>::empty_ () const
   {
-    return map_.take (key);
+    return map_.empty();
   }
 
 
