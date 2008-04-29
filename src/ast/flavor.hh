@@ -1,6 +1,6 @@
 /**
  ** \file ast/flavor.hh
- ** \brief Declaration of ast::flavor.
+ ** \brief Declaration of ast::flavor_type.
  */
 
 #ifndef AST_FLAVOR_HH
