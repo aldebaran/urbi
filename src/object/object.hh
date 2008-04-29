@@ -6,9 +6,9 @@
 #ifndef OBJECT_OBJECT_HH
 # define OBJECT_OBJECT_HH
 
+# include <deque>
 # include <iosfwd>
 # include <set>
-# include <list>
 
 # include <boost/function.hpp>
 # include <boost/optional.hpp>
@@ -70,7 +70,7 @@ namespace object
     /// \name The protos.
     /// \{
     /// The protos.
-    typedef std::list<rObject> protos_type;
+    typedef std::deque<rObject> protos_type;
 
     /// Add proto.
     Object& proto_add (const rObject& p);

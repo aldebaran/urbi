@@ -452,7 +452,7 @@ namespace runner
     // Set the name of the message call.
     res->slot_set (SYMBOL(message), object::String::fresh(msg));
 
-    std::list<rObject> largs;
+    object::List::value_type largs;
     foreach (const rObject& o, args)
     {
       largs.push_back(o);
@@ -663,7 +663,7 @@ namespace runner
     // Set capturedVars at []. By default, no variables are searched
     // in the context.
     res->slot_set(SYMBOL(capturedVars),
-		       object::List::fresh(std::list<object::rObject>()));
+		  object::List::fresh(object::List::value_type()));
     return res;
   }
 
@@ -698,10 +698,9 @@ namespace runner
   void
   Runner::operator() (const ast::List& e)
   {
-    typedef std::list<object::rObject> objects;
     typedef std::list<ast::Exp*> exps;
     // list values
-    objects values;
+    object::List::value_type values;
     exps::const_iterator i;
 
     // Evaluate every expression in the list

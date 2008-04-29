@@ -62,19 +62,6 @@ do List
     push_back(e)
   };
 
-  # Access element at index \a nth
-  # FIXME: Inneficient. Do we want to implement Urbi lists as C++ std::vectors?
-  # FIXME: Do we want to make [] available for this contstruct?
-  # FIXME: Sadly, 'at' is reserved, and adding it as an identifier generates conflicts
-  function nth(n)
-  {
-    var res = self|
-    for| (var i = 0; i < n; i++)
-      res = res.tail|
-    return res.head|
-  };
-
-
   ## ------------------------ ##
   ## Functional programming.  ##
   ## ------------------------ ##

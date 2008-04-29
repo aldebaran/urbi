@@ -4,7 +4,9 @@
  */
 
 #include <libport/foreach.hh>
+#include <libport/ufloat.hh>
 
+#include "object/float-class.hh"
 #include "object/list-class.hh"
 #include "object/atom.hh"
 #include "object/object.hh"
@@ -116,7 +118,13 @@ namespace object
     static rList
     removeById(rList l, rObject elt)
     {
-      l->value_get().remove(elt);
+      List::value_type& under = l->value_get();
+      List::value_type::iterator i = under.begin();
+      while (i != under.end())
+	if (*i == elt)
+	  i = under.erase(i);
+	else
+	  ++i;
       return l;
     }
 
@@ -144,8 +152,14 @@ namespace object
     static rList
     sort (rList l)
     {
-      List::value_type res (l->value_get());
-      res.sort (compareListItems);
+      std::list<rObject> s;
+      foreach(rObject o, l->value_get())
+	s.push_back(o);
+      s.sort(compareListItems);
+
+      List::value_type res;
+      foreach(rObject o, s)
+	res.push_back(o);
       return List::fresh(res);
     }
 
@@ -158,6 +172,17 @@ namespace object
 
   }
 
+  static rObject
+  list_class_nth(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(2);
+    FETCH_ARG(0, List);
+    FETCH_ARG(1, Float);
+    int index = ufloat_to_int(arg1->value_get(), "nth");
+    if (index < 0 || index > static_cast<int>(arg0->value_get().size()))
+      throw PrimitiveError("nth", "invalid index");
+    return arg0->value_get().at(index);
+  }
 
   /*-------------------------.
   | Primitives declaration.  |
@@ -193,6 +218,7 @@ namespace object
     DECLARE(back);
     DECLARE(clear);
     DECLARE(front);
+    DECLARE(nth);
     DECLARE(pop_front);
     DECLARE(push_back);
     DECLARE(push_front);

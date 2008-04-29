@@ -6,6 +6,8 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
+# include <deque>
+
 # include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
 # include <boost/type_traits/add_reference.hpp>
@@ -170,7 +172,7 @@ namespace object
   // Lists, not arrays.
   struct list_traits
   {
-    typedef std::list<rObject> type;
+    typedef std::deque<rObject> type;
     enum { kind = Object::kind_list };
   };
 

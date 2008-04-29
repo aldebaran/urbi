@@ -147,7 +147,12 @@ namespace object
   Object::proto_remove (const rObject& p)
   {
     assert(p);
-    protos_->remove (p);
+    protos_type::iterator i = protos_->begin();
+    while (i != protos_->end())
+      if (*i == p)
+	i = protos_->erase(i);
+      else
+	++i;
     return *this;
   }
 

@@ -62,7 +62,7 @@ namespace object
     return res;
   }
 
-  static int
+  int
   ufloat_to_int (libport::ufloat val, const std::string& func)
   {
     try {

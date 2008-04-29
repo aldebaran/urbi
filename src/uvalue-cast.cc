@@ -3,9 +3,6 @@
 #include "urbi/uvalue.hh"
 #include "uvalue-cast.hh"
 
-
-
-
 urbi::UValue uvalue_cast(object::rObject o)
 {
   urbi::UValue res;
@@ -56,7 +53,7 @@ urbi::UValue uvalue_cast(object::rObject o)
     {
       res.type = urbi::DATA_LIST;
       res.list = new urbi::UList;
-      std::list<object::rObject>& t = o.cast<object::List>()->value_get();
+      object::List::value_type& t = o.cast<object::List>()->value_get();
       BOOST_FOREACH(object::rObject co, t)
 	res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
     }
