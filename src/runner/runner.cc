@@ -733,7 +733,6 @@ namespace runner
       object::PrimitiveError error(Keyword, Error);             \
       propagate_error_(error, flow_exception.location_get());   \
       throw error;						\
-      continue;                                                 \
     }                                                           \
     else                                                        \
       throw;							\
