@@ -103,7 +103,7 @@ namespace object
   task_class_timeShift (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return Float::fresh (r.time_shift_get () / 1000LL);
+    return Float::fresh (r.time_shift_get () / 1000.0);
   }
 
   void

@@ -127,7 +127,7 @@ namespace scheduler
 	  // later when the job is unfrozen using notice_not_frozen(),
 	  // but in the meantime we do not want to cause an early wakeup.
 	  if (libport::utime_t frozen_since = job->frozen_since_get ())
-	    job_deadline += (current_time - frozen_since);
+	    job_deadline += current_time - frozen_since;
 
 	  if (job_deadline <= current_time)
 	    start = true;
