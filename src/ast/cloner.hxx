@@ -50,7 +50,10 @@ namespace ast
   symbols_type*
   Cloner::recurse_collection<symbols_type> (const symbols_type& c)
   {
-    return new symbols_type (c);
+    symbols_type* ret = new symbols_type();
+    foreach(libport::Symbol* s, c)
+      ret->push_back(new libport::Symbol(*s));
+    return ret;
   }
 
 } // namespace ast
