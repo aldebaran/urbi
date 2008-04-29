@@ -18,8 +18,7 @@ namespace ast
 
   /// Clone \a *ast.
   /// Since ASTs are often handled as pointers, this is very
-  /// handy.
-  /// \precondition  ast != 0
+  /// handy.  \a ast == 0 is valid and returns 0 too.
   template <typename AstNode>
   typename boost::remove_const<AstNode>::type* clone(AstNode* ast);
 

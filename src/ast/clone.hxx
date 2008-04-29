@@ -35,8 +35,7 @@ namespace ast
   typename boost::remove_const<AstNode>::type*
   clone (AstNode* ast)
   {
-    assert(ast);
-    return clone(*ast);
+    return ast ? clone(*ast) : 0;
   }
 }
 
