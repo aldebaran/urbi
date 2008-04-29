@@ -62,6 +62,14 @@ namespace object
   }
 
   static rObject
+  system_class_shiftedTime (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return Float::fresh ((r.scheduler_get().get_time() -
+			  r.time_shift_get()) / 1000.0);
+  }
+
+  static rObject
   execute_parsed (runner::Runner& r, parser::UParser& p, UrbiException e)
   {
     ast::Nary errs;
@@ -227,6 +235,7 @@ namespace object
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(searchFile);
+    DECLARE(shiftedTime);
     DECLARE(shutdown);
     DECLARE(sleep);
     DECLARE(stopall);

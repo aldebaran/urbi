@@ -302,11 +302,11 @@ do Object
   {
     detach ({
       var delay = call.evalArgAt (1) |
-      var deadline = time |
+      var deadline = shiftedTime |
       loop {
         detach (call.evalArgAt (2)) |
 	deadline += delay |
-        sleep (deadline - time)
+        sleep (deadline - shiftedTime)
       }
     })
   };
