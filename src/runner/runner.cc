@@ -149,8 +149,7 @@ namespace runner
     // This is fixed in the draft for the next C++ standard and in
     // g++ >= 4.1.1, but we are using older g++ on some platforms.
     call_stack_type& backtrace = const_cast<call_stack_type&>(ue.backtrace_get());
-    for (call_stack_type::reverse_iterator c =
-	   backtrace.rbegin();
+    for (call_stack_type::reverse_iterator c = backtrace.rbegin();
 	 c != backtrace.rend();
 	 ++c)
     {
@@ -700,17 +699,12 @@ namespace runner
   void
   Runner::operator() (const ast::List& e)
   {
-    typedef std::list<ast::Exp*> exps;
-    // list values
     object::List::value_type values;
-    exps::const_iterator i;
 
     // Evaluate every expression in the list
-    for (i = e.value_get ().begin ();
-	 i != e.value_get ().end ();
-	 ++i)
+    foreach (const ast::Exp* i, e.value_get())
     {
-      operator() (**i);
+      operator() (*i);
       values.push_back(current_);
     }
     current_ = object::List::fresh(values);
