@@ -39,15 +39,8 @@
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
 
-namespace runner
-{
-  class Runner;
-}
-
-namespace scheduler
-{
-  class Scheduler;
-}
+# include "runner/fwd.hh"
+# include "scheduler/fwd.hh"
 
 extern const char* DISPLAY_FORMAT;
 extern const char* DISPLAY_FORMAT1;
