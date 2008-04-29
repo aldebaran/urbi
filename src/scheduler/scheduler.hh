@@ -96,6 +96,11 @@ namespace scheduler
     /// \return The current cycle index, increasing by 1 at each cycle.
     unsigned int cycle_get () const;
 
+    /// Get the time as seen by the scheduler.
+    ///
+    /// \return The current system time.
+    libport::utime_t get_time () const;
+
   private:
     /// Execute one round in the scheduler.
     ///

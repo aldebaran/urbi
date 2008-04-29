@@ -50,6 +50,12 @@ namespace scheduler
     return cycle_;
   }
 
+  inline
+  libport::utime_t Scheduler::get_time () const
+  {
+    return get_time_ ();
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_SCHEDULER_HXX

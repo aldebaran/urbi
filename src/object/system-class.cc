@@ -48,16 +48,16 @@ namespace object
     if (arg1->value_get() == std::numeric_limits<ufloat>::infinity())
       deadline = std::numeric_limits<libport::utime_t>::max();
     else
-      deadline = ::urbiserver->getTime() +
+      deadline = r.scheduler_get().get_time() +
 	static_cast<libport::utime_t>(arg1->value_get() * 1000.0);
     r.yield_until (deadline);
     return void_class;
   }
 
   static rObject
-  system_class_time (runner::Runner&, objects_type)
+  system_class_time (runner::Runner& r, objects_type)
   {
-    return Float::fresh(::urbiserver->getTime() / 1000.0);
+    return Float::fresh(r.scheduler_get().get_time() / 1000.0);
   }
 
   static rObject
