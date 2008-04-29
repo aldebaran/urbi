@@ -119,6 +119,8 @@ namespace runner
     return boost::bind(f, ref(lhs), ref(rhs));
   }
 
+  // This function takes an expression and attempts to decompose it into
+  // a list of identifiers.
   static std::deque<const libport::Symbol*>
   decompose_tag_chain (const ast::Exp* e)
   {
