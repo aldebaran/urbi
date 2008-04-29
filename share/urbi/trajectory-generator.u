@@ -94,6 +94,12 @@ class Global.TrajectoryGenerator
   var targetValue;
   var isOver = false;
 
+  // Override system time to take shift induced by freeze into account.
+  function time()
+  {
+    System.time - currentRunner.timeShift
+  };
+
   function timeGet(currentVal)
   {
     var stat =  (time - startTime) / duration |
