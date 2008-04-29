@@ -70,7 +70,7 @@ do List
   function map (f)
   {
     var res = [] |
-    for| i in self { res += [f (i)] } |
+    for| i in self { res.push_back (f (i)) } |
     res
   };
 
