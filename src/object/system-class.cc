@@ -103,6 +103,7 @@ namespace object
   static rObject
   system_class_eval (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
     parser::UParser p = parser::parse(arg1->value_get());
     return execute_parsed(r, p, PrimitiveError("",
