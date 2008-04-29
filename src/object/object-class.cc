@@ -43,6 +43,7 @@ namespace object
   static rObject
   object_class_dump (runner::Runner& r, objects_type args)
   {
+    CHECK_ARG_COUNT_RANGE(1, 2);
     // Second argument is the tag name.
     std::string tag;
     if (args.size() == 2)
