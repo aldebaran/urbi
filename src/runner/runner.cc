@@ -901,9 +901,10 @@ namespace runner
 	rObject val = eval(s.value_get());
 	if (s.name_get() == SYMBOL(protos))
 	{
-	  // protos should always point to a list.
+	  // protos should always point to a list. Also, we make a copy
+	  // as we do not want to share the same protos list.
 	  TYPE_CHECK(val, object::List);
-	  res->protos_set(val.unsafe_cast<object::List>()->value_get());
+	  res->protos_set (val->clone());
 	}
 	else
 	  res->slot_set(s.name_get(), val);

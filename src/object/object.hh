@@ -79,7 +79,7 @@ namespace object
     /// Read only access to protos.
     const protos_type& protos_get () const;
     /// Change the whole set of protos.
-    void protos_set (const protos_type& p) const;
+    void protos_set (rObject);
     // Urbi access to protos.
     rObject urbi_protos_get ();
     /// \}

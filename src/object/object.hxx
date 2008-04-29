@@ -158,13 +158,6 @@ namespace object
     return *protos_;
   }
 
-  inline
-  void
-  Object::protos_set (const Object::protos_type& p) const
-  {
-    *protos_ = p;
-  }
-
 
   /*--------.
   | Slots.  |

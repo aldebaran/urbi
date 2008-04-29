@@ -199,6 +199,15 @@ namespace object
     return protos_cache_;
   }
 
+  void
+  Object::protos_set (rObject l)
+  {
+    if (!protos_cache_)
+      delete protos_;
+    protos_cache_ = l;
+    protos_ = &l.unsafe_cast<object::List>()->value_get ();
+  }
+
   template <typename R>
   boost::optional<R>
   Object::lookup(boost::function1<boost::optional<R>, rObject> action,
