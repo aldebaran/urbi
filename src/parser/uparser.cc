@@ -167,6 +167,7 @@ namespace parser
   {
     UParser res;
     int err = res.parse (cmd);
+    res.dump_errors();
     passert (err, !err);
     return res;
   }
@@ -176,6 +177,7 @@ namespace parser
   {
     UParser p;
     int err = p.parse (t);
+    p.dump_errors();
     passert (err, !err);
     return p.ast_xtake().release();
   }
@@ -185,6 +187,7 @@ namespace parser
   {
     UParser res;
     int err = res.parse_file (file);
+    res.dump_errors();
     passert (err, !err);
     return res;
   }
