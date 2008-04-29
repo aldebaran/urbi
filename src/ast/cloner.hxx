@@ -9,17 +9,24 @@
 # include <libport/foreach.hh>
 
 # include "ast/cloner.hh"
+# include "ast/pretty-printer.hh"
 
 namespace ast
 {
 
   template <typename T>
   T*
-  Cloner::recurse (const T& t)
+  Cloner::recurse(const T& t)
   {
-    t.accept (*this);
-    T* res = dynamic_cast<T*> (result_);
-    assert (res);
+    t.accept(*this);
+    T* res = dynamic_cast<T*>(result_);
+    // We do have situations where t is not null, but result_ is, for
+    // instance when we process a ParametricAst which substitutes a
+    // MetaVar for a target, and the effective target is 0.
+    // 
+    // FIXME: We should stop accepting 0 in our tree, this is really
+    // painful and dangerous.
+    passert(t, !result_ || res);
     return res;
   }
 
