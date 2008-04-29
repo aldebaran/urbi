@@ -733,7 +733,7 @@ block:
 stmt:
   "class" lvalue block
     {
-      DESUGAR("var " << ast::clone(*$2) << "= Object.clone|"
+      DESUGAR("var " << clone($2) << "= Object.clone|"
 	      << "do " << $2 << "{" << ast_exp($3) << "}");
     }
 | "class" lvalue
@@ -887,10 +887,10 @@ stmt:
 
 
 expr:
-  lvalue "+=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '+' << $3); }
-| lvalue "-=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '-' << $3); }
-| lvalue "*=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '*' << $3); }
-| lvalue "/=" expr { DESUGAR(ast::clone(*$1) << '=' << $1 << '/' << $3); }
+  lvalue "+=" expr { DESUGAR(clone($1) << '=' << $1 << '+' << $3); }
+| lvalue "-=" expr { DESUGAR(clone($1) << '=' << $1 << '-' << $3); }
+| lvalue "*=" expr { DESUGAR(clone($1) << '=' << $1 << '*' << $3); }
+| lvalue "/=" expr { DESUGAR(clone($1) << '=' << $1 << '/' << $3); }
 ;
 
 expr:
