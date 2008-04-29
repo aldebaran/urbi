@@ -95,20 +95,26 @@ do List
     true
   };
 
-  # Get the string representation
+  # Get the string representation. We want "void" and "nil" to
+  # be printed as part of a list, so we add a "asStringForList"
+  # method to everyone.
+  function Object.asStringForList () { asString };
+  var nil.asStringForList = "nil";
+  var void.asStringForList = "void";
+
   function asString ()
   {
     if (self === List)
       return "<List>" |
-    var res = "[" |
+    var res = "" |
     if (self.size)
     {
-      res += self.front.asString |
+      res = self.front.asStringForList |
       for| elt in self.tail
       {
-        res += ", " + getSlot("elt").asString |
+        res += ", " + getSlot("elt").asStringForList |
       }
     } |
-    res += "]"
+    "[" + res + "]"
   };
 };
