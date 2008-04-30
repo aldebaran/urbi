@@ -254,11 +254,21 @@ do Global
   # to a.m(b, c)
   # FIXME: I'm not satisfied with the name, but can't find anything
   # better
-  function methodToFunction(f)
+  function methodToFunction(name)
   {
     function
     {
-      getSlot("f").apply(call.evalArgs);
+      var args = call.evalArgs|
+      _getSlot(args.head, name).apply(args)
+    }.capture("name")
+  };
+
+  # Make a function applicable on a plain object from the \a f method
+  function makePlainObjectFunction(f)
+  {
+    function
+    {
+      getSlot("f").apply(call.evalArgs)
     }.capture("f")
   };
 
@@ -266,8 +276,8 @@ do Global
   # apply them on proto-less objects, such as (||). Name them by
   # prefixing '_'.
   ["addProto",
-    "getSlot",
     "getLazyLocalSlot",
+    "getSlot",
     "isNil",
     "locateSlot",
     "setSlot",
@@ -275,7 +285,8 @@ do Global
     "updateSlot"
     ].each(function (name)
     {
-      Global.setSlot("_" + name, methodToFunction(Object.getSlot(name)))
+      Global.setSlot("_" + name,
+        makePlainObjectFunction(Object.getSlot(name)))
     });
 };
 
