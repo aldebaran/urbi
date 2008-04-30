@@ -3,14 +3,18 @@
  ** \brief Creation of the URBI object list.
  */
 
+#include <boost/bind.hpp>
+
 #include <libport/foreach.hh>
 #include <libport/ufloat.hh>
 
+#include "kernel/userver.hh"
 #include "object/float-class.hh"
 #include "object/list-class.hh"
 #include "object/atom.hh"
 #include "object/object.hh"
 #include "primitives.hh"
+#include "runner/runner.hh"
 
 namespace object
 {
@@ -141,22 +145,27 @@ namespace object
 
     /// Binary predicate used to sort lists.
     static bool
-    compareListItems (const rObject a, const rObject b)
+    compareListItems (runner::Runner&, rObject a, rObject b)
     {
-      return *a < *b;
+      objects_type args;
+      args.push_back(b);
+      return IS_TRUE(urbi_call(::urbiserver->getCurrentRunner(),
+                               a, SYMBOL(LT), args));
     }
 
     /// \brief Sort a list.
     /// If the list contains different kinds of elements,
     /// the order is not defined.
     /// \return New sorted list
-    static rList
-    sort (rList l)
+    static rObject
+    list_class_sort (runner::Runner& r, objects_type args)
     {
+      CHECK_ARG_COUNT(1);
+      FETCH_ARG(0, List);
       std::list<rObject> s;
-      foreach(const rObject& o, l->value_get())
+      foreach(const rObject& o, arg0->value_get())
 	s.push_back(o);
-      s.sort(compareListItems);
+      s.sort(boost::bind(compareListItems, boost::ref(r), _1, _2));
 
       List::value_type res;
       foreach(const rObject& o, s)
@@ -200,7 +209,6 @@ namespace object
   PRIMITIVE_1_LIST(front);
   PRIMITIVE_1_LIST(pop_front);
   PRIMITIVE_1_LIST(size);
-  PRIMITIVE_1_LIST(sort);
   PRIMITIVE_1_LIST(tail);
   PRIMITIVE_2_LIST(PLUS);
   PRIMITIVE_2_LIST(PLUS_EQ);
