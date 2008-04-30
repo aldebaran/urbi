@@ -28,6 +28,23 @@ class Global.TupleClass
     else
       "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
   };
+
+  function '<' (other)
+  {
+    var l = self.members|
+    var r = other.members|
+    while (!l.empty && !r.empty)
+    {
+      if (l.head < r.head)
+        return true|
+      if (l.head > r.head)
+        return false|
+      l = l.tail|
+      r = r.tail|
+    }|
+    # FIXME: raise error, tuple sizes mismatch
+    return false|
+  };
 };
 
 var Global.Pair = TupleClass.new("Pair", 2);
