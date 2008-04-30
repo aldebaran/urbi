@@ -11,3 +11,4 @@ lib/network
 sdk
 src/object/symbols.hh.old
 .deps
+Makefile
