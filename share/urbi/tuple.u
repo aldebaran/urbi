@@ -1,0 +1,34 @@
+# This is a meta class, used to generate specific tuple classes (Pair, ...)
+class Global.TupleClass
+{
+  var protoName = "TupleClass";
+
+  function init(name, size)
+  {
+    var names = ["first", "second", "third", "fourth", "fifth", "sixth"];
+    var self.size = size|
+    var self.protoName = name|
+    var self.init = function
+    {
+      var self.members = call.evalArgs;
+      # FIXME: check the number of argument against self.size.
+    }|
+
+    # Define named accessors
+    size.times(function (i) {
+      if (names.size > i)
+        self.setSlot(names.nth(i), function () { members.nth(i) }.capture("i"))
+    }.makeClosure)
+  };
+
+  function asString ()
+  {
+    if (self === TupleClass)
+      "<TupleClass>"
+    else
+      "(" + members.join(", ") + ")"
+  };
+};
+
+var Global.Pair = TupleClass.new("Pair", 2);
+var Global.Triplet = TupleClass.new("Triplet", 3);

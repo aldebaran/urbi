@@ -595,6 +595,12 @@ load("urbi/semaphore.u");
 class Global.Executable;
 [Code, Primitive, Delegate].each(function (c) { c.addProto(Executable) });
 
+## ------ ##
+## Tuple. ##
+## ------ ##
+
+load("urbi/tuple.u");
+
 ## -------- ##
 ## UObject. ##
 ## -------- ##
