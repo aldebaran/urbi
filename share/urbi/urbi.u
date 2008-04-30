@@ -614,6 +614,12 @@ class Global.Executable;
 
 load("urbi/tuple.u");
 
+## ----------- ##
+## Dictionary. ##
+## ----------- ##
+
+load("urbi/dictionary.u");
+
 ## -------- ##
 ## UObject. ##
 ## -------- ##

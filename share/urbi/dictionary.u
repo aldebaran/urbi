@@ -1,0 +1,45 @@
+class Global.Dictionary
+{
+  var protoName = "Dictionary";
+  var content = (||);
+
+  function set (key, value)
+  {
+    _setSlot (content, key, value)|
+    self
+  };
+
+  function get (key)
+  {
+    _getSlot(content, key)
+  };
+
+  function has (key)
+  {
+    !_isNil(_locateSlot (content, key))
+  };
+
+  function keys ()
+  {
+    _slotNames (content)
+  };
+
+  function asList ()
+  {
+    var res = []|
+    keys.each (function(k) {
+      res.push_back(Pair.new (k, get (k)))
+    }.makeClosure)|
+    res
+  };
+
+  function asString ()
+  {
+    if (self === Dictionary)
+      "<Dictionary>"
+    else
+      "Dictionary {" +
+        asList.map (function (p) { p.first.asPrintable + " => " + p.second.asPrintable})
+        .join (", ") + "}"
+  };
+};
