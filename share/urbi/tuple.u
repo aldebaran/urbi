@@ -26,7 +26,7 @@ class Global.TupleClass
     if (self === TupleClass)
       "<TupleClass>"
     else
-      "(" + members.join(", ") + ")"
+      "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
   };
 };
 
