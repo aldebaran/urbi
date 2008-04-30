@@ -47,10 +47,12 @@ do Float
       result.push_back(i.clone) |
     result
   };
+
   function '\'n'()
   {
     (self - self.rangemin) / (self.rangemax - self.rangemin)
   };
+
   function getNormHook() {
     function(n, value) {
       var rmin = self.rangemin|
@@ -63,6 +65,7 @@ do Float
       parent.changeSlot(name, value)|
     }
   };
+
   function propertyHook(parent, name, prop, value)
   {
     var modifiers = ["speed", "rangemin", "rangemax"]|
@@ -117,7 +120,14 @@ do Float
 	  parent.changeSlot(name, value)
 	}.capture("parent").capture("name"))
     }
-  }
+  };
+
+  # Repeat \a action \a self times.
+  function times (action)
+  {
+    for| (var i = 0; i < self; i++)
+      action(i)
+  };
 };
 
 
