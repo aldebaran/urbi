@@ -118,13 +118,14 @@ namespace object
     static rList
     removeById(rList l, rObject elt)
     {
-      List::value_type& under = l->value_get();
+      List::value_type under = l->value_get();
       List::value_type::iterator i = under.begin();
       while (i != under.end())
 	if (*i == elt)
 	  i = under.erase(i);
 	else
 	  ++i;
+      l->value_set(under);
       return l;
     }
 
