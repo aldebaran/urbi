@@ -62,6 +62,15 @@ do List
     push_back(e)
   };
 
+  # Concatenate the string representation of the members, separated by \a sep
+  function join(sep)
+  {
+    if (empty)
+      ""
+    else
+      tail.foldl(function(a, b) { a + sep + b.asString}.capture("sep"), head.asString);
+  };
+
   ## ------------------------ ##
   ## Functional programming.  ##
   ## ------------------------ ##
@@ -72,6 +81,19 @@ do List
     var res = [] |
     for| i in self { res.push_back (f (i)) } |
     res
+  };
+
+  function foldl(action, value)
+  {
+    var res = value|
+    for (var l = self; !l.empty; l = l.tail)
+      res = action(res, l.head)|
+    res
+  };
+
+  function foldl_head(action)
+  {
+    tail.foldl(getSlot("action"), head)
   };
 
   # Apply \a f on every element
