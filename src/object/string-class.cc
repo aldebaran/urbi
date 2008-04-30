@@ -79,18 +79,25 @@ namespace object
     string_class_asString(runner::Runner&, objects_type args)
     {
       CHECK_ARG_COUNT (1);
-      libport::Symbol res;
       if (args[0] == string_class)
-	res = SYMBOL(LT_String_GT);
-      /// FIXME: Fix escape to be able to return a string then fix this.
+	return String::fresh(SYMBOL(LT_String_GT));
       else
       {
 	FETCH_ARG(0, String);
-	res = libport::Symbol('"'
-			      + string_cast(libport::escape(arg0->value_get().name_get()))
-			      + '"');
+        return arg0;
       }
-      return String::fresh(res);
+    }
+
+    static rObject
+    string_class_asPrintable(runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT(1);
+      FETCH_ARG(0, String);
+      return String::fresh(
+        libport::Symbol('"'
+                        + string_cast(libport::escape(arg0->value_get().name_get()))
+                        + '"'));
+
     }
 
     /// Clone.
@@ -160,6 +167,7 @@ namespace object
     DECLARE(EQ_EQ);
     DECLARE(LT);
     DECLARE(PLUS);
+    DECLARE(asPrintable);
     DECLARE(asString);
     DECLARE(clone);
     DECLARE(fresh);

@@ -230,7 +230,9 @@ do nil
 {
   self.addProto(Singleton);
   function '==' (x) { x.isNil };
-  var asString = "";
+  var asString = "nil";
+  // nil prints nothing in the toplevel
+  var asToplevelPrintable = "";
 };
 
 do Object
@@ -389,8 +391,9 @@ load("urbi/channel.u");
 ## ------ ##
 
 void.addProto(Singleton);
-// void prints nothing.
-var void.asString = "";
+var void.asString = "void";
+// void prints nothing in the toplevel
+var void.asToplevelPrintable = "";
 
 
 ## ------------ ##
@@ -469,6 +472,16 @@ do Object
   function asString ()
   {
     id
+  };
+
+  function asPrintable ()
+  {
+    asString
+  };
+
+  function asToplevelPrintable ()
+  {
+    asPrintable
   };
 };
 

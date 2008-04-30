@@ -319,7 +319,16 @@ UConnection::send (object::rObject result, const char* tag, const char* p)
   std::ostringstream os;
   if (p)
     os << p;
-  result->print (os, server_.getCurrentRunner());
+  runner::Runner& r = server_.getCurrentRunner();
+  try
+  {
+    result = urbi_call(r, result, SYMBOL(asToplevelPrintable));
+  }
+  catch (object::LookupError&)
+  {
+    // nothing
+  }
+  result->print (os, r);
 
   if (!os.str ().empty ())
   {
