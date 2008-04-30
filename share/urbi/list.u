@@ -68,7 +68,7 @@ do List
     if (empty)
       ""
     else
-      tail.foldl(function(a, b) { a + sep + b.asString}.capture("sep"), head.asString);
+      foldl_head(function (a, b) { a.asString + sep + b.asString }.makeClosure)
   };
 
   ## ------------------------ ##
