@@ -5,3 +5,6 @@ Urbi.  We need more parameters about the namespaces.
 
 * Graph generation
 There are some hard coded values (e.g. Escapable).
+
+* Docs
+Don't duplicate the final periods.
