@@ -1196,10 +1196,11 @@ number:
 `-------*/
 
 expr:
-  number        { $$ = new ast::Float(@$, $1); }
-| time_expr     { $$ = new ast::Float(@$, $1); }
-| "string"      { $$ = new ast::String(@$, take($1)); }
-| "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
+  number          { $$ = new ast::Float(@$, $1); }
+| time_expr       { $$ = new ast::Float(@$, $1); }
+| "string"        { $$ = new ast::String(@$, take($1)); }
+| "[" exprs "]"   { $$ = new ast::List(@$, $2);	      }
+| "(" exprs.2 ")" { $$ = DESUGAR("Tuple.new(" << $2 << ")" ); }
 ;
 
 
@@ -1404,6 +1405,7 @@ expr:
 } <exprs>;
 %type <exprs> exprs;
 %type <exprs> exprs.1;
+%type <exprs> exprs.2;
 %type <exprs> args;
 
 exprs:
@@ -1414,6 +1416,10 @@ exprs:
 exprs.1:
   expr             { $$ = new ast::exps_type; $$->push_back ($1); }
 | exprs.1 "," expr { $$->push_back($3); }
+;
+
+exprs.2:
+  exprs.1 "," expr { $$ = $1; $$->push_back($3); }
 ;
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
