@@ -20,7 +20,8 @@ namespace runner
 
   /// Ast executor.
   class Runner : public ast::DefaultConstVisitor,
-		 public scheduler::Job
+		 public scheduler::Job,
+                 public boost::noncopyable
   {
   public:
     /// \name Useful shorthands.
