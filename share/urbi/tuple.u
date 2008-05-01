@@ -21,21 +21,14 @@ class Global.Tuple
       "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
   };
 
+  function sameAs(other)
+  {
+    return members == other.members
+  };
+
   function '<' (other)
   {
-    var l = self.members|
-    var r = other.members|
-    while (!l.empty && !r.empty)
-    {
-      if (l.head < r.head)
-        return true|
-      if (l.head > r.head)
-        return false|
-      l = l.tail|
-      r = r.tail|
-    }|
-    # FIXME: raise error, tuple sizes mismatch
-    return false|
+    members < other.members
   };
 
   function nth(n)

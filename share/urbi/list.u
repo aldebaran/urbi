@@ -41,6 +41,22 @@ do List
     return true|
   };
 
+  function '<' (other)
+  {
+    var l = self|
+    var r = other|
+    while (!l.empty && !r.empty)
+    {
+      if (l.head < r.head)
+        return true|
+      if (l.head > r.head)
+        return false|
+      l = l.tail|
+      r = r.tail|
+    }|
+    return l.empty|
+  };
+
   // Same contents except occurrences of e.
   function remove(e)
   {
