@@ -59,11 +59,23 @@ do Object
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");
 
-  copySlot ("sameAs", "==");
-  copySlot ("memSameAs", "===");
+  function '==' (other)
+  {
+    sameAs(other)
+  };
+
+  function '===' (other)
+  {
+    memSameAs(other)
+  };
 
   copySlot("setSlot", "setVoidSlot").acceptVoid = true;
   copySlot("updateSlot", "updateVoidSlot").acceptVoid = true;
+
+  function hasSlot(name)
+  {
+    !locateSlot(name).isNil
+  };
 
   function '!==' (rhs)
   {

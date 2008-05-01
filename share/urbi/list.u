@@ -25,6 +25,22 @@ do List
     return false
   };
 
+  function sameAs(other)
+  {
+    if (size != other.size)
+      return false|
+    var l = self|
+    var r = other|
+    while (!l.empty && !r.empty)
+    {
+      if (l.head != r.head)
+        return false|
+      l = l.tail|
+      r = r.tail|
+    }|
+    return true|
+  };
+
   // Same contents except occurrences of e.
   function remove(e)
   {
