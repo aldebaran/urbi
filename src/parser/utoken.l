@@ -239,9 +239,13 @@ do {						\
 #define RETURN_STR(Token)				\
   RETURN_VALUE(Token, str, new std::string(yytext))
 
+// Store Val in valp->symbol, and return Token.
+#define RETURN_SOME_SYMBOL(Token, Val)				\
+  RETURN_VALUE(Token, symbol, new libport::Symbol(Val))
+
 // Store yytext in valp->symbol, and return Token.
 #define RETURN_SYMBOL(Token)					\
-  RETURN_VALUE(Token, symbol, new libport::Symbol(yytext))
+  RETURN_SOME_SYMBOL(Token, yytext)
 
 // Return an operator whose string representation is kept as a Symbol.
 #define RETURN_OP(Token)			\
@@ -588,7 +592,7 @@ FLAVOR   [;|,&]?
   DEPRECATED(s);
 }
 
-{ID}            RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
+{ID}            RETURN_SYMBOL(IDENTIFIER);
 
 
     /*--------------------.
@@ -601,7 +605,7 @@ FLAVOR   [;|,&]?
        {
 	 BEGIN sc_default;
 	 if (*yytext == '\'')
-	   RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(*valp->str))
+	   RETURN_SOME_SYMBOL(IDENTIFIER, *valp->str)
 	 else
 	   RETURN(STRING);
        }
