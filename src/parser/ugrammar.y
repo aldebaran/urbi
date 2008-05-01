@@ -18,9 +18,9 @@
 %lex-param   {FlexLexer& scanner}
 %debug
 
-%code requires
+%code requires // Output in ugrammar.hh.
 {
-// Output in ugrammar.hh.
+#include <libport/pod-cast.hh>
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "ast/fwd.hh"
@@ -130,22 +130,12 @@
       return ast_call(l, target, method, new ast::exps_type);
     }
 
-    /// "<target> . <method> ()".
-    static
-    ast::Call*
-    ast_call(const loc& l, ast::Exp* target, libport::Symbol* method)
-    {
-      assert (method);
-      return ast_call(l, target, take(method));
-    }
-
     /// "<target> . <method> (<arg1>)".
     static
     ast::Call*
     ast_call(const loc& l,
-	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
+	     ast::Exp* target, libport::Symbol method, ast::Exp* arg1)
     {
-      assert (method);
       ast::Call* res = ast_call(l, target, method);
       res->args_get().push_back(arg1);
       return res;
@@ -184,7 +174,7 @@
     inline
     ast::Exp*
     ast_slot_change (const loc& l,
-		     ast::Call* lvalue, libport::Symbol& change,
+		     ast::Call* lvalue, libport::Symbol change,
 		     ast::Exp* value, ast::Exp* modifier = 0)
     {
       ast::Exp* res = 0;
@@ -207,9 +197,7 @@
 	  ast_call(l,
 		   // The target.
 		   lvalue->args_get().front(),
-		   // FIXME: this new is stupid.  We need to clean
-		   // this set of call functions.
-		   new libport::Symbol(change),
+		   change,
 		   new ast::String(lvalue->location_get(), lvalue->name_get()));
 	if (value)
 	  call->args_get().push_back(value);
@@ -495,7 +483,8 @@
 
 %union
 {
-  libport::Symbol* symbol;
+  typedef libport::pod_caster<libport::Symbol> symbol_type;
+  symbol_type symbol;
 }
 
 %token <symbol> TOK_IDENTIFIER "identifier";
@@ -505,10 +494,7 @@
 // asssociativity, yet we can write "foo . + (2)" and call foo's +.
 %type <symbol> id;
 
-// FIXME: this destructor entails double frees and invalid pointer
-// frees.
-// %destructor { delete $$; } <symbol>;
-%printer { debug_stream() << libport::deref << $$; } <symbol>;
+%printer { debug_stream() << $$.value(); } <symbol>;
 
 
 /*--------------.
@@ -701,21 +687,21 @@ stmt:
 stmt:
   "group" "identifier" "{" identifiers "}"
   {
-    DESUGAR("var " << take($2) << " = Global.Group.new(" << $4 << ")");
+    DESUGAR("var " << $2 << " = Global.Group.new(" << $4 << ")");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(take($2) << ".add(" << $4 << ")");
+    DESUGAR($2 << ".add(" << $4 << ")");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(take($2) << ".remove(" << $4 << ")");
+    DESUGAR($2 << ".remove(" << $4 << ")");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
 ;
 
 expr:
-  "group" "identifier"    { DESUGAR(take($2) << ".members"); }
+  "group" "identifier"    { DESUGAR($2 << ".members"); }
 ;
 
 // Aliases.
@@ -756,30 +742,30 @@ stmt:
 stmt:
   "external" "object" "identifier"
   {
-    DESUGAR("'external'.'object'(\"" << take($3) << "\")");
+    DESUGAR("'external'.'object'(\"" << $3 << "\")");
   }
 | "external" "var" "identifier" "." "identifier"
 	     "from" "identifier"
   {
-    DESUGAR("'external'.'var'(\"" << take($3) << "\", "
-	    <<               "\"" << take($5) << "\", "
-	    <<               "\"" << take($7) << "\")");
+    DESUGAR("'external'.'var'(\"" << $3 << "\", "
+	    <<               "\"" << $5 << "\", "
+	    <<               "\"" << $7 << "\")");
   }
 | "external" "function" "(" "integer" ")" "identifier" "." "identifier"
 	     "from" "identifier"
   {
     DESUGAR("'external'.'function'(" << $4 << ", "
-	    <<                    "\"" << take($6) << "\", "
-	    <<                    "\"" << take($8) << "\", "
-	    <<                    "\"" << take($10) << "\")");
+	    <<                    "\"" << $6 << "\", "
+	    <<                    "\"" << $8 << "\", "
+	    <<                    "\"" << $10 << "\")");
   }
 | "external" "event" "(" "integer" ")" "identifier" "." "identifier"
 	     "from" "identifier"
   {
     DESUGAR("'external'.'event'(" << $4 << ", "
-	    <<                "\"" << take($6) << "\", "
-	    <<                "\"" << take($8) << "\", "
-	    <<                "\"" << take($10) << "\")");
+	    <<                "\"" << $6 << "\", "
+	    <<                "\"" << $8 << "\", "
+	    <<                "\"" << $10 << "\")");
   }
 ;
 
@@ -910,7 +896,7 @@ stmt:
     {
       $$ = ast_call(@$, $1->args_get().front(), SYMBOL(setProperty),
 		    new ast::String(@1, $1->name_get()),
-		    new ast::String(@3, take($3)),
+		    new ast::String(@3, $3.value()),
 		    $5);
     }
 ;
@@ -920,7 +906,7 @@ expr:
     {
       $$ = ast_call(@$, $1->args_get().front(), SYMBOL(getProperty),
 		    new ast::String(@1, $1->name_get()),
-		    new ast::String(@3, take($3)));
+		    new ast::String(@3, $3.value()));
     }
 ;
 
@@ -989,7 +975,7 @@ stmt:
     }
 | "for" "identifier" "in" expr block    %prec CMDBLOCK
     {
-      $$ = new ast::Foreach(@$, $1, take($2), $4, $5);
+      $$ = new ast::Foreach(@$, $1, $2, $4, $5);
     }
 | "freezeif" "(" softtest ")" stmt
     {
@@ -1090,7 +1076,7 @@ stmt:
     }
 | "onevent" "identifier" formals block
     {
-      DESUGAR(take($2) << ".onEvent(function " << $3
+      DESUGAR($2 << ".onEvent(function " << $3
               << " { " << ast_exp($4) << " })");
     }
 ;
@@ -1113,8 +1099,8 @@ expr:
 
 %type <call> lvalue call;
 lvalue:
-	   id		{ $$ = ast_call(@$,  0, take($1)); }
-| expr "." id		{ $$ = ast_call(@$, $1, take($3)); }
+	   id		{ $$ = ast_call(@$,  0, $1); }
+| expr "." id		{ $$ = ast_call(@$, $1, $3); }
 ;
 
 id:
@@ -1250,7 +1236,7 @@ namedarguments.1:
 %union { ast::Slot* slot; };
 %type <slot> slot;
 slot:
-  "identifier" ":" expr   { $$ = new ast::Slot(@$, take($1), $3); }
+  "identifier" ":" expr   { $$ = new ast::Slot(@$, $1, $3); }
 ;
 
 
@@ -1457,12 +1443,12 @@ identifiers.1:
   var.opt "identifier"
   {
     $$ = new ast::symbols_type;
-    $$->push_back(take($2));
+    $$->push_back($2);
   }
 | identifiers.1 "," var.opt "identifier"
   {
     $$ = $1;
-    $$->push_back(take($4));
+    $$->push_back($4);
   }
 ;
 
