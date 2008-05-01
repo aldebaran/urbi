@@ -292,6 +292,7 @@ do Global
     "getSlot",
     "isNil",
     "locateSlot",
+    "removeSlot",
     "setSlot",
     "slotNames",
     "updateSlot"

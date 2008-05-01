@@ -5,8 +5,11 @@ class Global.Dictionary
 
   function set (key, value)
   {
-    _setSlot (content, key, value)|
-    self
+    if (has((key)))
+      _updateSlot (content, key, value)
+    else
+      _setSlot (content, key, value)|
+    return self|
   };
 
   function get (key)
@@ -17,6 +20,14 @@ class Global.Dictionary
   function has (key)
   {
     !_isNil(_locateSlot (content, key))
+  };
+
+  function flush ()
+  {
+    keys.each(function (key) {
+      _removeSlot(content, key)
+    }.makeClosure)|
+    self|
   };
 
   function keys ()
@@ -38,8 +49,12 @@ class Global.Dictionary
     if (self === Dictionary)
       "<Dictionary>"
     else
-      "Dictionary {" +
-        asList.map (function (p) { p.first.asPrintable + " => " + p.second.asPrintable})
-        .join (", ") + "}"
+    {
+      var res = asList.sort|
+      res = res.map(function (p) {
+        p.first.asPrintable + " => " + p.second.asPrintable
+      })|
+      "Dictionary {" + res.join(", ") + "}"
+    }
   };
 };
