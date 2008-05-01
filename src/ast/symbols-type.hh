@@ -2,18 +2,18 @@
 # define AST_SYMBOLS_TYPE_HH
 
 # include <iostream>
-# include <list>
+# include <vector>
 
-# include <libport/fwd.hh> 
+# include <libport/fwd.hh>
 
 namespace ast
 {
   /// Function formal arguments.
-  typedef std::list<libport::Symbol*> symbols_type;
+  typedef std::vector<libport::Symbol> symbols_type;
 }
 
-// We need argument dependant name lookup for symbols_type,
-// which is actually a class of std: it is std::list<...>.
+// We need argument dependent name lookup for symbols_type,
+// which is actually a class of std: it is std::vector<...>.
 namespace std
 {
   /// Separated by commas.

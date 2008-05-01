@@ -478,9 +478,9 @@
 %printer { debug_stream() << $$; } <fval>;
 
 
- /*----------.
- | Strings.  |
- `----------*/
+ /*---------.
+ | String.  |
+ `---------*/
 %union { std::string* str; }
 
 %token
@@ -489,18 +489,16 @@
 %printer { debug_stream() << libport::deref << $$; } <str>;
 
 
- /*----------.
- | Symbols.  |
- `----------*/
+ /*---------.
+ | Symbol.  |
+ `---------*/
+
 %union
 {
   libport::Symbol* symbol;
-  ast::symbols_type* symbols;
 }
 
-%token <symbol>
-	TOK_IDENTIFIER         "identifier"
-;
+%token <symbol> TOK_IDENTIFIER "identifier";
 
 // id is meant to enclose all the symbols we use as operators.  For
 // instance "+" is special so that we do have the regular priority and
@@ -703,21 +701,21 @@ stmt:
 stmt:
   "group" "identifier" "{" identifiers "}"
   {
-    DESUGAR("var " << *$2 << " = Global.Group.new(" << $4 << ")");
+    DESUGAR("var " << take($2) << " = Global.Group.new(" << $4 << ")");
   }
 | "addgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".add(" << $4 << ")");
+    DESUGAR(take($2) << ".add(" << $4 << ")");
   }
 | "delgroup" "identifier" "{" identifiers "}"
   {
-    DESUGAR(*$2 << ".remove(" << $4 << ")");
+    DESUGAR(take($2) << ".remove(" << $4 << ")");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
 ;
 
 expr:
-  "group" "identifier"    { DESUGAR(*$2 << ".members"); }
+  "group" "identifier"    { DESUGAR(take($2) << ".members"); }
 ;
 
 // Aliases.
@@ -1434,9 +1432,9 @@ args:
 softtest: expr
 
 
-/*--------------.
-| identifiers.  |
-`--------------*/
+/*----------------------.
+| List of identifiers.  |
+`----------------------*/
 
 // "var"?
 var.opt:
@@ -1444,7 +1442,7 @@ var.opt:
 | "var"
 ;
 
-%type <symbols> identifiers identifiers.1 formals;
+%union { ast::symbols_type* symbols; };
 %printer
 {
   if ($$)
@@ -1452,18 +1450,19 @@ var.opt:
   else
     debug_stream() << "NULL";
 } <symbols>;
+%type <symbols> identifiers identifiers.1 formals;
 
 // One or several comma-separated identifiers.
 identifiers.1:
   var.opt "identifier"
   {
     $$ = new ast::symbols_type;
-    $$->push_back($2);
+    $$->push_back(take($2));
   }
 | identifiers.1 "," var.opt "identifier"
   {
     $$ = $1;
-    $$->push_back($4);
+    $$->push_back(take($4));
   }
 ;
 

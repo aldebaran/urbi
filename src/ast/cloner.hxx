@@ -23,7 +23,7 @@ namespace ast
     // We do have situations where t is not null, but result_ is, for
     // instance when we process a ParametricAst which substitutes a
     // MetaVar for a target, and the effective target is 0.
-    // 
+    //
     // FIXME: We should stop accepting 0 in our tree, this is really
     // painful and dangerous.
     passert(t, !result_ || res);
@@ -57,10 +57,7 @@ namespace ast
   symbols_type*
   Cloner::recurse_collection<symbols_type> (const symbols_type& c)
   {
-    symbols_type* ret = new symbols_type();
-    foreach(libport::Symbol* s, c)
-      ret->push_back(new libport::Symbol(*s));
-    return ret;
+    return new symbols_type(c);
   }
 
 } // namespace ast

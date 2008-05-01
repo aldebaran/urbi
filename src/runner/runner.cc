@@ -256,8 +256,8 @@ namespace runner
       // Effective (evaluated) argument iterator.
       // Skip "self" which has already been handled.
       object::objects_type::const_iterator ei = ++args.begin();
-      foreach (libport::Symbol* s, formals)
-	scope->slot_set (*s, *ei++);
+      foreach (const libport::Symbol s, formals)
+	scope->slot_set (s, *ei++);
     }
     else
     {

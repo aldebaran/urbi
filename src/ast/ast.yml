@@ -67,7 +67,7 @@ collections:
 deep_clear: "libport::deep_clear"
 
 # A regexp mathing the types that need to be deep-cleared.
-deep_clear_p: '^(exps|symbols)_type$'
+deep_clear_p: '^exps_type$'
 
 # The beginning of visitor.hh, for includes.
 visitor_hh_prologue: |2
@@ -744,7 +744,7 @@ Function:
     - formals:
         type: 'symbols_type*'
         mandatory: False
-        desc: Formal arguments
+        desc: Formal arguments.  If null, a lazy function.
     - body:
         type: 'Scope*'
         access: rwW
