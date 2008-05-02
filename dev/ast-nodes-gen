@@ -20,8 +20,8 @@ def print_inline_code (node, file, where):
     str = node.inline[file + ' ' + where]
     print str
 
-def print_banner(file, name, description):
-  print >>file, tools.banner("ast/" + name,  description)
+def print_banner(file, name, doc):
+  print >>file, tools.banner("ast/" + name,  doc)
 
 def print_guard_close (file, node, ext):
   print >>file, "#endif // !" + node.guard(ext)
@@ -146,10 +146,7 @@ def print_class_open (node, header, inline, impl):
   else:
     decl += "boost::noncopyable"
 
-  if node.desc:
-    print node.desc
-  else:
-    print "  /// " + node.name + "."
+  print node.description()
   print "  " + decl
   print "  {"
 
@@ -293,7 +290,7 @@ def print_attributes (node, header, inline, impl):
       sys.stdout = header
       if a.hide:
 	print "    //<<-"
-      print "    /// "+ a.desc + "."
+      print "    " + a.accessor_comment('')
       print "    " + a.attr_decl () + ";"
       if a.hide:
 	print "    //->>"

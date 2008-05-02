@@ -46,13 +46,20 @@ class Attribute:
 
   def description (self):
     if self.desc != "":
-      return string.lower (self.desc)
+      return self.desc
     else:
       return self.name
 
   def accessor_comment (self, verb):
-    """Verb is expected to be "Return" or "Set" for instance."""
-    return "/// " + verb + " " + self.description () + "."
+    """Verb is expected to be "Return" or "Set" for instance, or empty."""
+    res = "/// "
+    if verb != '':
+      res += verb + " " + string.lower(self.description())
+    else:
+      res += self.description()
+    if self.description()[-1] != '.':
+      res += "."
+    return res
 
   def name_ (self):
     """The name of the attribute, i.e., with an underscore appended."""
@@ -205,6 +212,14 @@ class Node:
     attrs.extend (self.attributes)
     return attrs
 
+  def description (self):
+    if self.desc:
+      res = self.desc
+    else:
+      res = "  /// " + self.name
+    if res[-1] != '.':
+      res += '.'
+    return res
 
   def guard (self, ext):
     """The CPP guard."""
@@ -358,5 +373,3 @@ def subclasses(nodes, c):
   """Return the set of concrete classes inheriting from 'c'."""
   con = concrete(nodes)
   return filter (lambda node: node.name != c and node.is_a (c), con)
-
-
