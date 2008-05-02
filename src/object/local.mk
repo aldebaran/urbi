@@ -3,24 +3,30 @@
 ## ------------------------------------- ##
 
 symbols_hh = object/symbols.hh
+symbols_stamp = $(symbols_hh:.hh=.stamp)
 # We don't include $(nodist_libkernel_la_SOURCES) here, since it
 # includes symbols.hh itself.  Currently there seems to be no need to
 # support generated files.
 symbols_hh_deps += $(dist_libkernel_la_SOURCES)
-symbols.stamp: $(symbols_hh_deps)
+$(symbols_stamp): $(symbols_hh_deps)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	:> $(symbols_hh).old
-	-cp -f $(symbols_hh) $(symbols_hh).old
+	@echo "rebuilding $(symbols_hh) because of:"
+	@for i in $?;				\
+	do					\
+	  echo "       $$i";			\
+	done
+	:> $(symbols_hh)~
+	-cp -f $(symbols_hh) $(symbols_hh)~
 	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$(symbols_hh).tmp
-	-diff -u $(symbols_hh).old $(symbols_hh).tmp
+	-diff -u $(symbols_hh)~ $(symbols_hh).tmp
 	$(top_srcdir)/build-aux/move-if-change $(symbols_hh).tmp $(symbols_hh)
 	@mv -f $@.tmp $@
 
-$(symbols_hh): symbols.stamp
-	@if test -f $@; then :; else			\
-	  rm -f symbols.stamp; 				\
-	  $(MAKE) $(AM_MAKEFLAGS) symbols.stamp;	\
+$(symbols_hh): $(symbols_stamp)
+	@if test ! -f $@; then				\
+	  rm -f $(symbols_stamp);			\
+	  $(MAKE) $(AM_MAKEFLAGS) $(symbols_stamp);	\
 	fi
 
 dist_libkernel_la_SOURCES +=			\
