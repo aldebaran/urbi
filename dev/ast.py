@@ -24,7 +24,7 @@ class Attribute:
     self.name = name
     self.type = ""
     self.mandatory = True
-    self.init = ""
+    self.init = None
     self.owned = True
     self.access = "rw"
     self.desc = ""
@@ -41,7 +41,6 @@ class Attribute:
 	]:
 	warning ('unknown Attribute attribute: ' + key + ' from ' + name)
       self.__dict__[key] = dict[key]
-    self.init = str (self.init)
     self.ast_params = ast_params
 
   def description (self):
@@ -99,7 +98,7 @@ class Attribute:
     return decl (self.type, self.name_())
 
   def ctor_init (self):
-    if self.init != "":
+    if self.init != None:
       value = self.init
     else:
       value = self.name
@@ -245,7 +244,7 @@ class Node:
     """Do we need a hidden ctor in addition of the public one?
     That's the case there are hidden arguments with no default value."""
     for a in self.attributes:
-      if a.hide and not a.init:
+      if a.hide and a.init == None:
 	return True
     # If a parent class has an hidden attribute, we also need
     # two constructors.
@@ -267,7 +266,7 @@ class Node:
     for a in self.attributes:
       if hide and a.hide:
 	continue
-      if not a.init:
+      if a.init == None:
 	if decl_p:
 	  args.append (decl (a.W_type (), a.name))
 	else:

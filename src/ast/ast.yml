@@ -161,9 +161,9 @@ printer_cc_prologue: |2
 #      + False
 #        *_get methods return a const pointer.
 #
-#    + init=VALUE
+#    + init
 #      If set, the value used to initialize the member.
-#      This attribute will not have a argument in the constructors.
+#      This attribute will not have an argument in the constructors.
 #
 #    + owned
 #      - True: Pointer members are "delete"'d.
