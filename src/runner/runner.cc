@@ -16,7 +16,8 @@
 #include "kernel/exception.hh"
 #include "kernel/uconnection.hh"
 
-#include "ast/clone.hh"
+#include "ast/new-clone.hh"
+
 #include "object/alien.hh"
 #include "object/atom.hh"
 #include "object/global-class.hh"
@@ -656,7 +657,7 @@ namespace runner
   object::rObject
   Runner::make_code(const ast::Function& e) const
   {
-    rObject res = object::Code::fresh(*ast::clone(e));
+    rObject res = object::Code::fresh(*new_clone(e));
     // Store the function declaration context. Use make_scope to add
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.

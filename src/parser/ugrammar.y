@@ -51,7 +51,7 @@
 #include <libport/separator.hh>
 
 #include "ast/all.hh"
-#include "ast/clone.hh"
+#include "ast/new-clone.hh"
 #include "ast/parametric-ast.hh"
 
 #include "object/atom.hh"
@@ -188,7 +188,7 @@
         ast::String* name = new ast::String(l, lvalue->name_get());
         res = exp(traj
                   %lvalue %value %modifier
-                  %clone(lvalue->args_get().front()) %clone(name)
+                  %new_clone(lvalue->args_get().front()) %new_clone(name)
                   %name);
       }
       else
@@ -721,7 +721,7 @@ block:
 stmt:
   "class" lvalue block
     {
-      DESUGAR("var " << clone($2) << "= Object.clone|"
+      DESUGAR("var " << new_clone($2) << "= Object.clone|"
 	      << "do " << $2 << "{" << ast_exp($3) << "}");
     }
 | "class" lvalue
@@ -875,10 +875,10 @@ stmt:
 
 
 expr:
-  lvalue "+=" expr { DESUGAR(clone($1) << '=' << $1 << '+' << $3); }
-| lvalue "-=" expr { DESUGAR(clone($1) << '=' << $1 << '-' << $3); }
-| lvalue "*=" expr { DESUGAR(clone($1) << '=' << $1 << '*' << $3); }
-| lvalue "/=" expr { DESUGAR(clone($1) << '=' << $1 << '/' << $3); }
+  lvalue "+=" expr { DESUGAR(new_clone($1) << '=' << $1 << '+' << $3); }
+| lvalue "-=" expr { DESUGAR(new_clone($1) << '=' << $1 << '-' << $3); }
+| lvalue "*=" expr { DESUGAR(new_clone($1) << '=' << $1 << '*' << $3); }
+| lvalue "/=" expr { DESUGAR(new_clone($1) << '=' << $1 << '/' << $3); }
 ;
 
 expr:
