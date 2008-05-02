@@ -324,7 +324,7 @@ Nary:
         access: rw
     - toplevel:
         type: 'bool'
-        desc: Whether or not this node is a top-level node.
+        desc: Whether is a top-level node.
         access: rW
   printer:
     - $children
