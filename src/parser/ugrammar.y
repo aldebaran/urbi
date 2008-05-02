@@ -461,18 +461,15 @@
 %token <fval>
 	TOK_FLOAT      "float"
 	TOK_TIME_VALUE "time"
-%type <fval> number;
-%type <fval> time_expr;
+%type <fval> number time_expr;
 %printer { debug_stream() << $$; } <fval>;
 
 
  /*---------.
  | String.  |
  `---------*/
-%union { std::string* str; }
-
-%token
-   <str>  TOK_STRING             "string"
+%union { std::string* str; };
+%token  <str>  TOK_STRING  "string";
 %destructor { delete $$; } <str>;
 %printer { debug_stream() << libport::deref << $$; } <str>;
 
@@ -507,17 +504,11 @@
   ast::Call*   call;
   ast::Nary*   nary;
   ast::Tag*    tag;
-}
+};
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
 
-%type <expr>  expr
-%type <expr>  expr.opt
-%type <expr>  flag
-%type <expr>  flags.0
-%type <expr>  flags.1
-%type <expr>  softtest
-%type <expr>  stmt
+%type <expr> expr expr.opt flag flags.0 flags.1 softtest stmt;
 
 
 /*----------------------.
@@ -1387,10 +1378,7 @@ expr:
   else
     debug_stream() << "NULL";
 } <exprs>;
-%type <exprs> exprs;
-%type <exprs> exprs.1;
-%type <exprs> exprs.2;
-%type <exprs> args;
+%type <exprs> exprs exprs.1 exprs.2 args;
 
 exprs:
   /* empty */ { $$ = new ast::exps_type; }
