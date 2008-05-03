@@ -381,9 +381,9 @@ do Object
     t.setSideEffectFree (false)
   };
 
-  # persist takes an expression and a delay, and return an object whose val slot
-  # evaluates to true if the expression has been continously true for this delay and
-  # false otherwise.
+  # persist takes an expression and a delay, and return an object
+  # whose val slot evaluates to true if the expression has been
+  # continously true for this delay and false otherwise.
   #
   # This function will be used to implement
   #   at (condition ~ delay) action [onleave leaveaction]
@@ -393,16 +393,17 @@ do Object
   #
   # but this will require the assistance from the parser (FIXME: do it)
   #
-  # FIXME: We need a way to scope the "at" and destroy it when "o" is no longer
-  # visible.
-  function persist {
-    var o = new Object |
-    var o.val = false |
-    var o.tag = new Tag ("persist".fresh) |
+  # FIXME: We need a way to scope the "at" and destroy it when "o" is
+  # no longer visible.
+  function persist
+  {
+    var res = (|protos: [Object], 
+                val: false, 
+                tag: new Tag ("persist".fresh)|) |
     var delay = call.evalArgAt (2) |
-    at (call.evalArgAt (1)) o.tag: { sleep (delay) | o.val = true }
-      onleave { o.val = false | o.tag.stop } |
-    o
+    at (call.evalArgAt (1)) res.tag: { sleep (delay) | res.val = true }
+      onleave { res.val = false | res.tag.stop } |
+    res
   };
 };
 
