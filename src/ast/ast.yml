@@ -735,13 +735,13 @@ Call:
        }'
     - '{
           if (n.args_get ().size() >= 2)
-            ostr_ << "("
-                  << libport::incindent
-                  << libport::separate (exps_type (++n.args_get ().begin(),
-                                                   n.args_get ().end()),
-                                        ", ")
-                  << libport::decindent
-                  << ")";
+            ostr_
+             << "("
+             << libport::incindent
+             << libport::separate(boost::make_iterator_range(n.args_get(), 1, 0),
+                                   ", ")
+             << libport::decindent
+             << ")";
        }'
 
 Function:
