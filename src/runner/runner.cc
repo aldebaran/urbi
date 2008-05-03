@@ -126,7 +126,7 @@ namespace runner
   decompose_tag_chain (const ast::Exp* e)
   {
     std::deque<const libport::Symbol*> res;
-    while (e)
+    while (!dynamic_cast<const ast::Implicit*>(e))
     {
       const ast::Call* c = dynamic_cast<const ast::Call*> (e);
       if (!c || c->args_get ().size () != 1)
@@ -477,7 +477,7 @@ namespace runner
     foreach (const ast::Exp* e, args)
     {
       // The target can be unspecified
-      if (!e)
+      if (dynamic_cast<const ast::Implicit*>(e))
       {
 	lazy_args.push_back(object::nil_class);
 	continue;
@@ -491,9 +491,7 @@ namespace runner
   Runner::rObject
   Runner::target (const ast::Exp* n, const libport::Symbol& name)
   {
-    if (n)
-      return eval (*n);
-    else
+    if (dynamic_cast<const ast::Implicit*>(n))
     {
       object::objects_type args;
       args.push_back(object::String::fresh(name));
@@ -506,6 +504,8 @@ namespace runner
 	return locals_;
       }
     }
+    else
+      return eval (*n);
   }
 
   void

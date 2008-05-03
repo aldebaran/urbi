@@ -828,8 +828,14 @@ stmt:
 // for anonymous functions.  But that's not a good option IMHO (AD).
 %type <call> k1_id;
 k1_id:
-  "identifier"                   { $$ = ast_call(@$, 0, $1); }
-| "identifier" "." "identifier"  { $$ = ast_call(@$, ast_call(@1, 0, $1), $3); }
+  "identifier"
+    {
+      $$ = ast_call(@$, new ast::Implicit(@$), $1);
+    }
+| "identifier" "." "identifier"
+    {
+      $$ = ast_call(@$,
+                    ast_call(@1, new ast::Implicit(@$), $1), $3); }
 ;
 
 
@@ -848,7 +854,8 @@ stmt:
     }
 | "var" lvalue
     {
-      $$ = ast_slot_set(@$, $2, ast_call(@$, 0, SYMBOL(nil)));
+      $$ = ast_slot_set(@$, $2,
+                        ast_call(@$, new ast::Implicit(@$), SYMBOL(nil)));
     }
 | "delete" lvalue
     {
@@ -1090,7 +1097,7 @@ expr:
 
 %type <call> lvalue call;
 lvalue:
-	   id		{ $$ = ast_call(@$,  0, $1); }
+	   id		{ $$ = ast_call(@$, new ast::Implicit(@$), $1); }
 | expr "." id		{ $$ = ast_call(@$, $1, $3); }
 ;
 
@@ -1114,7 +1121,7 @@ new:
   "new" "identifier" args
   {
     // Compiled as "id . new (args)".
-    $$ = ast_call(@$, ast_call(@$, 0, $2), SYMBOL(new), $3);
+    $$ = ast_call(@$, ast_call(@$, new ast::Implicit(@$), $2), SYMBOL(new), $3);
   }
 ;
 

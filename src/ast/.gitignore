@@ -47,6 +47,9 @@ if.hh
 if.hxx
 ignores
 ignores.stamp
+implicit.cc
+implicit.hh
+implicit.hxx
 list.cc
 list.hh
 list.hxx
