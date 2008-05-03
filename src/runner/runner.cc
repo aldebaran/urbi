@@ -122,16 +122,18 @@ namespace runner
 
   // This function takes an expression and attempts to decompose it into
   // a list of identifiers.
-  static std::deque<const libport::Symbol*>
+  typedef std::deque<libport::Symbol> symbol_queue_type;
+  static
+  symbol_queue_type
   decompose_tag_chain (const ast::Exp* e)
   {
-    std::deque<const libport::Symbol*> res;
+    symbol_queue_type res;
     while (!dynamic_cast<const ast::Implicit*>(e))
     {
       const ast::Call* c = dynamic_cast<const ast::Call*> (e);
       if (!c || c->args_get ().size () != 1)
 	throw object::ImplicitTagComponentError (e->location_get ());
-      res.push_front (&c->name_get ());
+      res.push_front (c->name_get ());
       e = c->args_get ().front ();
     }
     assert (!res.empty ());
@@ -1035,13 +1037,12 @@ namespace runner
       // Tag represents the top level tag
       rObject toplevel = object::tag_class;
       rObject base = toplevel;
-      foreach (const libport::Symbol* element, decompose_tag_chain (&e))
+      foreach (const libport::Symbol element, decompose_tag_chain (&e))
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-	rObject owner = base->slot_locate (*element);
-	if (owner)
-	  base = owner->own_slot_get (*element);
+	if (rObject owner = base->slot_locate (element))
+	  base = owner->own_slot_get (element);
 	else
 	{
 	  // We have to create a new tag, which will be attached
@@ -1050,10 +1051,10 @@ namespace runner
 	  rObject new_tag = toplevel->clone();
 	  object::objects_type args;
 	  args.push_back (new_tag);
-	  args.push_back (object::String::fresh (*element));
+	  args.push_back (object::String::fresh (element));
 	  args.push_back (base);
 	  apply (toplevel->own_slot_get (SYMBOL (init)), SYMBOL(init), args);
-	  base->slot_set (*element, new_tag);
+	  base->slot_set (element, new_tag);
 	  base = new_tag;
 	}
       }
