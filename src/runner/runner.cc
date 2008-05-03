@@ -9,6 +9,8 @@
 #include <deque>
 #include <sstream>
 
+#include <boost/range/iterator_range.hpp>
+
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
@@ -146,19 +148,13 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
-    // We cannot use a const_reverse_iterator here because of a defect
-    // in the C++ standard which doesn't offer a "!=" operator for
-    // reverse_iterator (as returned by rend()) and const_reverse_iterator.
-    // This is fixed in the draft for the next C++ standard and in
-    // g++ >= 4.1.1, but we are using older g++ on some platforms.
-    call_stack_type& backtrace = const_cast<call_stack_type&>(ue.backtrace_get());
-    for (call_stack_type::reverse_iterator c = backtrace.rbegin();
-	 c != backtrace.rend();
-	 ++c)
+    foreach (const ast::Call* c,
+             boost::make_iterator_range(boost::rbegin(ue.backtrace_get()),
+                                        boost::rend(ue.backtrace_get())))
     {
       o.str("");
-      o << "!!!    called from: " << (*c)->location_get () << ": "
-	<< (*c)->name_get ();
+      o << "!!!    called from: " << c->location_get () << ": "
+	<< c->name_get ();
       send_message_ ("error", o.str ());
     }
   }
