@@ -652,15 +652,7 @@ Object:
         desc: List of slots
   printer:
     - '"(|"'
-    - '{
-        bool tail = false;
-        foreach (const Slot& s, n.slots_get())
-        {
-          if (tail++)
-            ostr_ << "," << libport::iendl;
-          ostr_ << s;
-        }
-       }'
+    - 'libport::separate(n.slots_get(), libport::iendl)'
     - '"|)"'
 
 Float:
@@ -707,9 +699,7 @@ List:
         desc: Stored list value
   printer:
     - '"["'
-    - '{
-        ostr_ << libport::separate (n.value_get(), ", ");
-       }'
+    - 'libport::separate (n.value_get(), ", ")'
     - '"]"'
 
 Call:
