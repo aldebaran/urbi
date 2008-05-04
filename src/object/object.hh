@@ -13,10 +13,11 @@
 # include <boost/function.hpp>
 # include <boost/optional.hpp>
 
-# include "libport/hash.hh"
-# include "libport/shared-ptr.hh"
-# include "libport/symbol.hh"
-# include "libport/weak-ptr.hh"
+# include <libport/hash.hh>
+# include <libport/shared-ptr.hh>
+# include <libport/symbol.hh>
+# include <libport/weak-ptr.hh>
+
 # include "object/fwd.hh"
 # include "runner/fwd.hh"
 
@@ -281,27 +282,21 @@ namespace object
     slots_type slots_;
     /// Whether is a locals object.
     bool locals_;
-
   };
-
 
   /// Target lookup
   rObject target(rObject where, const libport::Symbol& name);
 
-
-  /// Helpers to call Urbi functions from C++
+  /// Helpers to call Urbi functions from C++.
   rObject urbi_call(runner::Runner& r,
-                    rObject self,
-                    libport::Symbol msg);
+                    rObject self, libport::Symbol msg);
   rObject urbi_call(runner::Runner& r,
-		    rObject self,
-		    libport::Symbol msg,
-		    objects_type args);
+		    rObject self, libport::Symbol msg, objects_type args);
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
   template<class F> bool for_all_protos(rObject& r, F& f);
 
-  /// Checks in \b c's proto hierarchy if \b p is present.
+  /// Whether \b p is present in \b c's proto hierarchy.
   bool is_a(const rObject& c, const rObject& p);
 
 } // namespace object
