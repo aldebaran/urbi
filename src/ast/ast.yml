@@ -389,10 +389,10 @@ Nary:
 
     impl inside: |2
         Nary::Nary ()
-          : Exp (loc()),
-            children_ (),
-            toplevel_ (false)
-        { }
+          : Exp(loc()),
+            children_(),
+            toplevel_(false)
+        {}
 
         void
         Nary::clear ()
