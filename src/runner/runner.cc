@@ -4,7 +4,7 @@
  */
 
 //#define ENABLE_DEBUG_TRACES
-#include "libport/compiler.hh"
+#include <libport/compiler.hh>
 
 #include <deque>
 #include <sstream>
@@ -43,12 +43,23 @@ namespace runner
 /// Address of \c this seen as a \c Job (Runner has multiple inheritance).
 #define ME JOB (this)
 
-#define AST(Ast) "{{{" << Ast << "}}}"
+#define AST(Ast)                                \
+  (Ast).location_get ()                         \
+  << libport::incendl                           \
+  << "{{{"                                      \
+  << libport::incendl                           \
+  << Ast                                        \
+  << libport::decendl                           \
+  << "}}}"                                      \
+  << libport::decindent
 
 /// Job echo.
-#define JECHO(Title, Ast)                                       \
-  ECHO ("job " << ME << ", " Title ": " << AST(Ast))
+#define JECHO(Title, Content)                           \
+  ECHO ("job " << ME << ", " Title ": " << Content)
 
+/// Job & astecho.
+#define JAECHO(Title, Ast)                      \
+  JECHO (Title, AST(Ast))
 
 /** Call this macro at the very beginning of the evaluation of an AST
  * node.  Nodes that should yield are that doing something useful.  For
@@ -183,7 +194,7 @@ namespace runner
   Runner::work ()
   {
     assert (ast_);
-    JECHO ("starting evaluation of AST: " << ast_, *ast_);
+    JAECHO ("starting evaluation of AST: ", *ast_);
     operator() (*ast_);
   }
 
@@ -198,7 +209,7 @@ namespace runner
     // in this one. We will be the new runner parent, as we have the same
     // tags.
 
-    JECHO ("lhs", e.lhs_get ());
+    JAECHO ("lhs", e.lhs_get ());
     Runner* lhs = new Runner (*this, &e.lhs_get ());
 
     // Propagate errors between left-hand side and right-hand side runners.
@@ -210,7 +221,7 @@ namespace runner
 
     lhs->start_job ();
 
-    JECHO ("rhs", e.rhs_get ());
+    JAECHO ("rhs", e.rhs_get ());
     eval (e.rhs_get ());
 
     // Wait for lhs to terminate
@@ -263,7 +274,7 @@ namespace runner
       scope->slot_set (SYMBOL(call), call_message);
     }
 
-    ECHO("scope: " << *scope);
+    //ECHO("scope: " << *scope);
 
     // Change the current context and call. But before, check that we
     // are not exhausting the stack space, for example in an infinite
@@ -563,7 +574,7 @@ namespace runner
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
     // passert ("no value: " << e, current_);
-    ECHO (AST(e) << " result: " << *current_);
+    // ECHO (AST(e) << " result: " << *current_);
   }
 
 
@@ -578,7 +589,7 @@ namespace runner
   Runner::operator() (const ast::Foreach& e)
   {
     // Evaluate the list attribute, and check its type.
-    JECHO ("foreach list", e.list_get());
+    JAECHO ("foreach list", e.list_get());
     operator() (e.list_get());
     try
     {
@@ -586,7 +597,7 @@ namespace runner
     }
     PROPAGATE_EXCEPTION(e.location_get(), {});
 
-    JECHO("foreach body", e.body_get());
+    JAECHO("foreach body", e.body_get());
 
     // We need to copy the pointer on the list, otherwise the list will be
     // destroyed when children are visited and current_ is modified.
@@ -679,17 +690,17 @@ namespace runner
   Runner::operator() (const ast::If& e)
   {
     // Evaluate the test.
-    JECHO ("test", e.test_get ());
+    JAECHO ("test", e.test_get ());
     operator() (e.test_get());
 
     if (IS_TRUE(current_))
     {
-      JECHO ("then", e.thenclause_get ());
+      JAECHO ("then", e.thenclause_get ());
       operator() (e.thenclause_get());
     }
     else
     {
-      JECHO ("else", e.elseclause_get ());
+      JAECHO ("else", e.elseclause_get ());
       operator() (e.elseclause_get());
     }
   }
@@ -707,7 +718,7 @@ namespace runner
       values.push_back(current_);
     }
     current_ = object::List::fresh(values);
-    ECHO ("result: " << *current_);
+    //ECHO ("result: " << *current_);
   }
 
 
@@ -756,7 +767,7 @@ namespace runner
 	YIELD ();
 
       current_.reset ();
-      JECHO ("child", i);
+      JAECHO ("child", *i);
 
       if (dynamic_cast<const ast::Stmt*>(i) &&
 	  dynamic_cast<const ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
@@ -912,11 +923,11 @@ namespace runner
   Runner::operator() (const ast::Pipe& e)
   {
     // lhs
-    JECHO ("lhs", e.lhs_get ());
+    JAECHO ("lhs", e.lhs_get ());
     operator() (e.lhs_get());
 
     // rhs:  start the execution immediately.
-    JECHO ("rhs", e.rhs_get ());
+    JAECHO ("rhs", e.rhs_get ());
     operator() (e.rhs_get());
   }
 
@@ -965,7 +976,7 @@ namespace runner
   void
   Runner::operator() (const ast::Stmt& e)
   {
-    JECHO ("expression", e.expression_get ());
+    JAECHO ("expression", e.expression_get ());
     operator() (e.expression_get());
   }
 
@@ -1088,12 +1099,12 @@ namespace runner
 	first_iteration = false;
       else
 	MAYBE_YIELD (e.flavor_get());
-      JECHO ("while test", e.test_get ());
+      JAECHO ("while test", e.test_get ());
       operator() (e.test_get());
       if (!IS_TRUE(current_))
 	break;
 
-      JECHO ("while body", e.body_get ());
+      JAECHO ("while body", e.body_get ());
 
       try
       {
