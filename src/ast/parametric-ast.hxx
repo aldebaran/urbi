@@ -27,14 +27,10 @@ namespace ast
   T*
   ParametricAst::result()
   {
-    // Let cpp authors rot in hell.
-#define COMMA ,
-    BOOST_STATIC_ASSERT(boost::is_base_of<Ast COMMA T>::value);
+    BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     operator()(ast_);
     clear();
-    T* res = dynamic_cast<T*>(result_);
-    assert (res);
-    return res;
+    return assert_exp(dynamic_cast<T*>(result_));
   }
 
   template <typename T>

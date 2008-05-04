@@ -32,6 +32,7 @@ namespace ast
 
   ParametricAst::~ParametricAst()
   {
+    passert(*this, empty());
     delete ast_;
   }
 
@@ -41,13 +42,18 @@ namespace ast
     result_ = parser::MetavarMap<Exp>::take_(e.id_get () - 1);
   }
 
+  bool
+  ParametricAst::empty() const
+  {
+    return exp_map_type::empty_();
+  }
+
   void
   ParametricAst::clear()
   {
-    passert(exp_map_type::map_, exp_map_type::empty_());
+    passert(*this, empty());
     count_ = 0;
   }
-
 
   std::ostream&
   ParametricAst::dump(std::ostream& o) const

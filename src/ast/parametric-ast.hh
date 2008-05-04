@@ -21,9 +21,13 @@ namespace ast
     , public parser::MetavarMap<ast::Exp>
   {
   public:
+    typedef Cloner super_type;
     typedef parser::MetavarMap<ast::Exp> exp_map_type;
 
+    /// Build a ParametricAst whose textual part is \a s.
     ParametricAst(const std::string& s);
+    /// Destroy the ParametricAst.
+    /// \precondition empty()
     virtual ~ParametricAst();
 
     /// Pass the n-th argument.
@@ -35,8 +39,11 @@ namespace ast
     template <typename T>
     T* result();
 
-    /// Reset for a new instantiation (the ast is kept).
     /// Check that the tables are empty.
+    bool empty() const;
+
+    /// Reset for a new instantiation (the ast is kept).
+    /// \precondition empty()
     void clear();
 
     /// Dump the master AST and the state of the tables.
@@ -46,7 +53,6 @@ namespace ast
     /// Import from super.
     using super_type::operator();
     virtual void operator() (const MetaExp& e);
-    /// \}
 
     /// Metavariables manipulator.
     template <typename T> T* take (unsigned s) throw (std::range_error);
