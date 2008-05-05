@@ -286,10 +286,9 @@
 	case ast::flavor_comma:
 	case ast::flavor_semicolon:
 	{
-	  ast::Nary* res = new ast::Nary ();
-	  res->push_back (lhs);
-	  res->back_flavor_set (op);
-	  res->push_back (rhs);
+	  ast::Nary* res = new ast::Nary(l);
+	  res->push_back(lhs, op);
+	  res->push_back(rhs);
 	  return res;
 	}
 	default:
@@ -586,7 +585,7 @@ root:
 stmts:
   cstmt
   {
-    $$ = new ast::Nary();
+    $$ = new ast::Nary(@$);
     if (!implicit ($1))
       $$->push_back ($1);
     else

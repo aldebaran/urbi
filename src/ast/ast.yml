@@ -169,7 +169,7 @@ printer_cc_prologue: |2
 #      - True: Pointer members are "delete"'d.
 #      - False: They are not.
 #
-#    + access composed by [ 'r', 'w', 'W' ]
+#    + access composed by [ 'r', 'w', 'W' ]        (defaults to rw)
 #      - r: provide a *_get const accessor.
 #      - w: provide a *_get accessor that returns a reference
 #        for possible modifications.
@@ -319,13 +319,15 @@ Nary:
   desc: /// A list of \c Exp, mainly Stmt and Message.
   attributes:
     - children:
-        type: 'exps_type'
+        type: 'exps_type*'
         desc: Subtrees possibly qualified to be background.
-        access: rw
+        access: rwW
+        init: "new exps_type()"
     - toplevel:
         type: 'bool'
         desc: Whether is a top-level node.
         access: rW
+        init: "false"
   printer:
     - $children
   inline:
@@ -349,7 +351,7 @@ Nary:
           bool empty() const;
 
           /// Push a new expression, creating a Statement node.
-          void push_back(Exp* e);
+          void push_back(Exp* e, flavor_type f = flavor_none);
 
           /// Push a message.
           void message_push(const std::string& text, const std::string& tag);
@@ -390,21 +392,21 @@ Nary:
     impl inside: |2
         Nary::Nary ()
           : Exp(loc()),
-            children_(),
+            children_(new exps_type()),
             toplevel_(false)
         {}
 
         void
         Nary::clear ()
         {
-          children_.clear ();
+          children_->clear ();
           location_ = loc();
         }
 
         bool
         Nary::empty () const
         {
-          return children_.empty();
+          return children_->empty();
         }
 
         void
@@ -414,36 +416,36 @@ Nary:
             location_.initialize(0);
           else
           {
-            location_.begin = children_.front()->location_get().begin;
-            location_.end   = children_.back() ->location_get().end;
+            location_.begin = children_->front()->location_get().begin;
+            location_.end   = children_->back() ->location_get().end;
           }
         }
 
         void
-        Nary::push_back(Exp* e)
+        Nary::push_back(Exp* e, flavor_type f)
         {
-          children_.push_back(new Stmt(e->location_get(), flavor_none, e));
+          children_->push_back(new Stmt(e->location_get(), f, e));
           location_adjust();
         }
 
         void
         Nary::message_push(const std::string& text, const std::string& tag)
         {
-          children_.push_back(new Message(loc(), text, tag));
+          children_->push_back(new Message(loc(), text, tag));
         }
 
         template <typename T>
         T*
         Nary::back ()
         {
-          return empty() ? 0 : dynamic_cast<T*>(children_.back());
+          return empty() ? 0 : dynamic_cast<T*>(children_->back());
         }
 
         template <typename T>
         const T*
         Nary::back () const
         {
-          return empty() ? 0 : dynamic_cast<T*>(children_.back());
+          return empty() ? 0 : dynamic_cast<const T*>(children_->back());
         }
 
         void
@@ -475,14 +477,14 @@ Nary:
         void
         Nary::pop_back ()
         {
-          children_.pop_back();
+          children_->pop_back();
           location_adjust();
         }
 
         void
-        Nary::splice_back (Nary& rhs)
+        Nary::splice_back(Nary& rhs)
         {
-          children_.splice (children_.end (), rhs.children_get ());
+          children_->splice(children_->end (), rhs.children_get());
           location_adjust();
         }
 
