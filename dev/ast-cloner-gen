@@ -104,7 +104,8 @@ tools.lazy_install(srcdir, "cloner.hh");
 
 
 ## Abstract syntax tree C++ clone visitor - implementation --------------------
-def attribute_clone(a):
+def attribute_dup(a):
+  "Return a clone (an expression) of a's value."
   accessor = "e." + a.name + "_get ()"
   # Non visitable attributes.
   if a.type in ast_params['non_visitable_types']:
@@ -112,27 +113,26 @@ def attribute_clone(a):
     get_deref = ""
     if a.pointer_p () and a.mandatory:
       get_deref = "&"
-    print "    " + type + " " + a.name + " = " + \
-          get_deref + accessor + ";"
+    return get_deref + accessor
 
   # Collection attributes.
   elif a.root_type () in ast_params['collections']:
     if a.pointer_p ():
       if a.mandatory:
-        print "    " + a.root_type () + "* " + a.name + \
-            " = recurse_collection (" + accessor + ");"
+        return "recurse_collection (" + accessor + ")"
       else:
-        print "    " + a.root_type () + "* " + a.name + " ="
-        print "      " + accessor + \
-            " ? recurse_collection (*" + accessor + ") : 0;"
+        return accessor + " ? recurse_collection (*" + accessor + ") : 0"
     else:
-      print "    " + a.root_type () + " " + a.name + \
-            " = *recurse_collection (" + accessor + ");"
+      return "*recurse_collection (" + accessor + ")"
 
   # Visitable attributes.
   else:
-    print "    " + a.W_type () + " " + a.name + \
-          " = recurse (" + accessor + ");"
+    return "recurse (" + accessor + ")"
+
+
+def attribute_clone(a):
+  "Build a copy of attribute a in a local variable."
+  print "    " + a.W_type () + " " + a.name + " = " + attribute_dup(a) + ";"
 
 def children_clone (node):
   """Print on stdout the definition of local variables that copy/clone
@@ -196,8 +196,7 @@ for node in concrete:
     if a.hide:
       print "   //<<-"
     if a.hide or a.init != None:
-      print "    res->%s_set(%s_get());" % \
-          (a.name, a.name)
+      print "    res->%s_set(%s);" % (a.name, str(attribute_dup(a)))
     if a.hide:
       print "   //->>"
   print "    result_ = res;"
