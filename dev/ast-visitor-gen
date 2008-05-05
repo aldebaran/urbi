@@ -41,15 +41,15 @@ namespace ast
      * bug in MSVC 2005 SP1, see:
      * http://forums.microsoft.com/msdn/showpost.aspx?postid=987536
      * http://support.microsoft.com/kb/930198 */
-    typedef typename Const<ast::Ast>::type ast_type;
+    typedef typename Const<Ast>::type ast_type;
     /// The entry point: visit \\a e.
-    virtual void operator() (typename Const<ast::Ast>::type& e);
+    virtual void operator() (typename Const<Ast>::type& e);
 """
 for node in concrete:
   print """\
     /// MSVC 2005 SP1 workaround.
-    typedef typename Const<ast::%s>::type %s_type;
-    virtual void operator() (typename Const<ast::%s>::type&) = 0;
+    typedef typename Const<%s>::type %s_type;
+    virtual void operator() (typename Const<%s>::type&) = 0;
 """ % (node.name, lower(node.name), node.name)
 print
 for dec_type in ast.subclasses(nodes, 'Dec'):
@@ -84,7 +84,7 @@ print """\
 	providing it with \\a E
 
 	\\code
-	accept<ast::NameTy> (e.result_get ());
+	accept<NameTy> (e.result_get ());
 	\\endcode
 
 	but this is painful.  */
