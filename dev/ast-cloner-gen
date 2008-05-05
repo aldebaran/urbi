@@ -189,40 +189,41 @@ for node in concrete:
   children_clone(node)
   # Result.
   args = node.ctor_args (False, False)
-  if node.name == "FunctionDec":
-    # Special case for FunctionDec: copy the sl_needed_ and sl_escapes_ fields.
-    print "    FunctionDec* fundec ="
-    print "      new " + node.name + " (" + args + ");"
-    print "    //<<-"
-    for a in ["sl_needed", "sl_escapes"]:
-      print "    fundec->" + a + "_set (e." + a + "_get ());"
-    print "    //->>"
-    print "    result_ = fundec;"
-  else:
-    # Normal case.
-    print "    result_ = new " + node.name + " (" + args + ");"
+  print "    %s* res = new %s (%s);" % (node.name, node.name, str(args))
+  # Copy the fields that are not passed as ctor arguments: the hidden
+  # one, and those with an "init" field.
+  for a in node.attributes:
+    if a.hide:
+      print "   //<<-"
+    if a.hide or a.init != None:
+      print "    res->%s_set(%s_get());" % \
+          (a.name, a.name)
+    if a.hide:
+      print "   //->>"
+  print "    result_ = res;"
   if node.hide:
     print "    //>>"
   print """  }
 """
 
-first_decs_type_p = True
-for dec_type in dec_subclasses:
-  print """
-  void
-  Cloner::operator() (const ast::""" + dec_type.name + "s" + """& e)
-  {
-    decs_visit<ast::""" + dec_type.name + "s" + """> (e);
-  }"""
-  # Show the visit method for the first instance of decs types, but
-  # hide the others.
-  if first_decs_type_p:
-    first_decs_type_p = False
+if dec_subclasses:
+  first_decs_type_p = True
+  for dec_type in dec_subclasses:
     print """
-  //<< Other declarations.""",
-print """  //>>
+    void
+    Cloner::operator() (const ast::""" + dec_type.name + "s" + """& e)
+    {
+      decs_visit<ast::""" + dec_type.name + "s" + """> (e);
+    }"""
+    # Show the visit method for the first instance of decs types, but
+    # hide the others.
+    if first_decs_type_p:
+      first_decs_type_p = False
+      print """
+    //<< Other declarations.""",
+  print "  //>>\n"
 
-} // namespace """ + clonerlib
+print "} // namespace " + clonerlib
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
