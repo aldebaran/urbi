@@ -211,11 +211,13 @@ UConnection::received (const char* buffer, size_t length)
   }
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::try_mutex::scoped_try_lock treeLock(tree_mutex_, false);
-#endif
-
-#if ! defined LIBPORT_URBI_ENV_AIBO
-  if (!treeLock.try_lock())
+  // If the following code does not compile with Boost 1.34, then use
+  // CPP to discrimate bw Boost < 1.35 and Boost >= 1.35 to pass
+  // (resp.) "false" or "boost::defer_lock" as second arg.
+  //
+  // http://www.boost.org/doc/libs/1_35_0/doc/html/thread/changes.html
+  boost::try_mutex::scoped_try_lock tree_lock(tree_mutex_, boost::defer_lock);
+  if (!tree_lock.try_lock())
 #endif
   {
     new_data_added_ = true; //server will call us again right after work
@@ -271,7 +273,7 @@ UConnection::received (const char* buffer, size_t length)
   receiving_ = false;
   p.ast_set (0);
 #if ! defined LIBPORT_URBI_ENV_AIBO
-  treeLock.unlock();
+  tree_lock.unlock();
 #endif
 
   CONN_ERR_RET(USUCCESS);
