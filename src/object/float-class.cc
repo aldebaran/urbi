@@ -233,8 +233,6 @@ abs(libport::ufloat v)
   PRIMITIVE_2_FLOAT(GT_GT) // >>
   PRIMITIVE_2_FLOAT(CARET) // ^
 
-  PRIMITIVE_OP_FLOAT(EQ_EQ, ==)
-
   PRIMITIVE_OP_FLOAT(LT, <)
 
   PRIMITIVE_0_FLOAT(sin)
@@ -267,7 +265,6 @@ abs(libport::ufloat v)
     DECLARE_PRIMITIVE(float, Name)
 
     DECLARE(CARET);
-    DECLARE(EQ_EQ);
     DECLARE(GT_GT);
     DECLARE(LT);
     DECLARE(LT_LT);

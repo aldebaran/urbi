@@ -35,7 +35,6 @@ namespace object
                           b->value_get ().name_get());	\
     }
 
-    PRIMITIVE_OP_STRING(EQ_EQ, ==);
     PRIMITIVE_OP_STRING(LT,  <);
 
 #undef PRIMITIVE_OP_STRING
@@ -149,8 +148,6 @@ namespace object
 #define PRIMITIVE_2_STRING(Name, Type2)		\
   PRIMITIVE_2(string, Name, String, Type2)
 
-  PRIMITIVE_2_STRING(EQ_EQ, String);
-
   PRIMITIVE_2_STRING(LT, String);
 
   PRIMITIVE_1_STRING(size);
@@ -166,7 +163,6 @@ namespace object
     string_class->slot_remove(SYMBOL(asString));
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(string, Name)
-    DECLARE(EQ_EQ);
     DECLARE(LT);
     DECLARE(PLUS);
     DECLARE(asPrintable);

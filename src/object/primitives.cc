@@ -64,6 +64,27 @@ namespace object
     return args.front();
   }
 
+  template <typename T>
+  static rObject
+  compare(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(2);
+    TYPE_CHECK(args[0], T);
+    libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
+    try
+    {
+      TYPE_CHECK(args[1], T);
+    }
+    catch (WrongArgumentType&)
+    {
+      // Comparing two atoms with different types isn't an error, it
+      // just return false
+      return Float::fresh(0);
+    }
+    libport::shared_ptr<T> arg1 = args[1].unsafe_cast<T>();
+    return Float::fresh(arg0->value_get() == arg1->value_get());
+  }
+
   /// Initialize the root classes.
   /// There are some dependency issues.  For instance, String
   /// is a clone of Object, but Object[protoName] is a String.
@@ -129,6 +150,15 @@ namespace object
     CLASS_SETUP(void, void);
 
 #undef SYMBOL_
+
+// This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are false atoms
+#define COMPARABLE(What, Name)		\
+    What ## _class->slot_set(SYMBOL(sameAs), Primitive::fresh(compare<Name>));
+
+    COMPARABLE(float,     Float);
+    COMPARABLE(integer,   Integer);
+    COMPARABLE(string,    String);
+
   }
 
 } // namespace object
