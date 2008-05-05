@@ -5,11 +5,12 @@
 
 #include <cmath>
 
+#include <boost/format.hpp>
+
 #include "sdk/config.h"
 #ifndef HAVE_ROUND
 #  include <libport/ufloat.h>
 #endif
-#include <libport/lexical-cast.hh>
 
 #include "object/float-class.hh"
 #include "object/object.hh"
@@ -122,13 +123,9 @@ abs(libport::ufloat v)
     CHECK_ARG_COUNT(1);
     if (args[0] == float_class)
       return String::fresh(SYMBOL(LT_Float_GT));
-    // FIXME: Get rid of this cast by setting the precision for
-    // streams to the same as used by lexical_cast (which is one more
-    // than the default value, and this results in different output bw
-    // 1.x and 2.x, a useless nuisance in the test suite.
     FETCH_ARG(0, Float);
-    return String::fresh(libport::Symbol(string_cast
-					 (float (arg0->value_get()))));
+    static boost::format f("%g");
+    return String::fresh(libport::Symbol(str(f % float(arg0->value_get()))));
   }
 
   /// Clone.
