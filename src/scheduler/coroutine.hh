@@ -1,8 +1,20 @@
 #ifndef SCHEDULER_COROUTINE_HH
 #define SCHEDULER_COROUTINE_HH
 
-# include "scheduler/libcoroutine/Coro.h"
-
+// Define SCHEDULER_CORO_OSTHREAD to use the os-thread implementation of coros.
+# ifdef SCHEDULER_CORO_OSTHREAD
+#  include <libport/semaphore.hh>
+class Coro
+{
+  public:
+  Coro():die_(false) {}
+  libport::Semaphore sem;
+  bool die_;
+};
+typedef void (CoroStartCallback)(void *);
+# else
+#  include "scheduler/libcoroutine/Coro.h"
+# endif
 /// This package provides an interface to the \c libcoroutine. Using this
 /// interface allows for various checks and instrumentations to be
 /// easily added without modifying the imported \c libcoroutine.
@@ -40,6 +52,9 @@ bool coroutine_stack_space_almost_gone(Coro* coro);
 ///        task. This coroutine must never be destroyed.
 void coroutine_initialize_main(Coro* coro);
 
-# include "scheduler/coroutine.hxx"
-
+# ifdef SCHEDULER_CORO_OSTHREAD
+#  include "scheduler/pthread-coro.hxx"
+# else
+#  include "scheduler/coroutine.hxx"
+# endif
 #endif // SCHEDULER_COROUTINE_HH
