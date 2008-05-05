@@ -712,12 +712,29 @@ block:
 stmt:
   "class" lvalue block
     {
-      DESUGAR("var " << new_clone($2) << "= Object.clone|"
-	      << "do " << $2 << "{"
-              << "var protoName = "
-              << ast_exp(new ast::String(@2, $2->name_get().name_get())) << "|"
-              << "function " << ("as" + $2->name_get().name_get()) << "() {self}|"
-              << ast_exp($3) << "}");
+      ::parser::Tweast tweast;
+      libport::Symbol owner = libport::Symbol::fresh(libport::Symbol("__class_"));
+      ast::Call* target = $2;
+      if (!dynamic_cast<ast::Implicit*>($2->args_get().front()))
+      {
+        // If the lvalue call is qualified, we need to store the
+        // target in a variable to avoid evaluating it several times.
+        tweast << "var " << owner << " = " << new_clone($2->args_get().front()) << "|";
+        ast::exps_type* args2 = new ast::exps_type();
+        args2->push_back(new ast::Implicit(@2));
+        ast::exps_type* args = new ast::exps_type();
+        args->push_back(new ast::Call(@2, owner, args2));
+        target = new ast::Call(@2, $2->name_get(), args);
+      }
+      tweast << "var " << new_clone(target) << "= Object.clone|"
+             << "do " << new_clone(target) << " {"
+             << "var protoName = "
+             << ast_exp(new ast::String(@2, $2->name_get().name_get())) << "|"
+             << "function " << ("as" + $2->name_get().name_get()) << "() {self}|"
+             << ast_exp($3) << "}";
+
+      $$ = ::parser::parse(tweast);
+      delete $2;
     }
 | "class" lvalue
     {

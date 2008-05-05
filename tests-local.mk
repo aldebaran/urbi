@@ -20,7 +20,6 @@ TFAIL_TESTS +=					\
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
-2.x/class.chk					\
 2.x/literal-string.chk
 
 # k1 tests that currently don't pass, but we should.
