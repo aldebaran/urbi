@@ -211,12 +211,12 @@ UConnection::received (const char* buffer, size_t length)
   }
 
 #if ! defined LIBPORT_URBI_ENV_AIBO
-  // If the following code does not compile with Boost 1.34, then use
-  // CPP to discrimate bw Boost < 1.35 and Boost >= 1.35 to pass
-  // (resp.) "false" or "boost::defer_lock" as second arg.
-  //
   // http://www.boost.org/doc/libs/1_35_0/doc/html/thread/changes.html
+#if BOOST_VERSION >= 103500
   boost::try_mutex::scoped_try_lock tree_lock(tree_mutex_, boost::defer_lock);
+#else
+  boost::try_mutex::scoped_try_lock tree_lock(tree_mutex_, false);
+#endif // BOOST_VERSION >= 103500
   if (!tree_lock.try_lock())
 #endif
   {
