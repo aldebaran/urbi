@@ -107,7 +107,8 @@ do Object
     else
       _updateSlot(slotProps, name, getSlot("value"))|
     if (!getSlot(slot).locateSlot("propertyHook").isNil)
-      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))
+      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
+    getSlot("value")
   };
 
   function getProperty(slot, name)
