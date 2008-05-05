@@ -22,7 +22,6 @@ class Global.Group
     members -= call.evalArgs
   };
 
-  var protoName = "Group";
   function asString ()
   {
     if (self === Group)

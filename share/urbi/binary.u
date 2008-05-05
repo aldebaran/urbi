@@ -6,7 +6,6 @@ class Global.Binary
     var self.data = v
   };
 
-  var protoName = "Binary";
   function asString()
   {
     if (self === Binary)

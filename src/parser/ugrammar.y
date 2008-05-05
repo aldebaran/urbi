@@ -713,7 +713,10 @@ stmt:
   "class" lvalue block
     {
       DESUGAR("var " << new_clone($2) << "= Object.clone|"
-	      << "do " << $2 << "{" << ast_exp($3) << "}");
+	      << "do " << $2 << "{"
+              << "var protoName = "
+              << ast_exp(new ast::String(@2, $2->name_get().name_get())) << "|"
+              << ast_exp($3) << "}");
     }
 | "class" lvalue
     {

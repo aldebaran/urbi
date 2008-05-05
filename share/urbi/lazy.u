@@ -2,7 +2,6 @@ class Global.Lazy
 {
   var code;
   var val;
-  var protoName = "Lazy";
 
   function init(value)
   {

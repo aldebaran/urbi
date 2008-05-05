@@ -1,7 +1,5 @@
 class Global.Tuple
 {
-  var protoName = "Tuple";
-
   function init
   {
     var names = ["first", "second", "third", "fourth", "fifth", "sixth"];

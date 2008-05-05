@@ -1,6 +1,5 @@
 class Global.Dictionary
 {
-  var protoName = "Dictionary";
   var content = (||);
 
   function set (key, value)
