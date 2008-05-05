@@ -397,8 +397,8 @@ do Object
   # no longer visible.
   function persist
   {
-    var res = (|protos: [Object], 
-                val: false, 
+    var res = (|protos: [Object],
+                val: false,
                 tag: new Tag ("persist".fresh)|) |
     var delay = call.evalArgAt (2) |
     at (call.evalArgAt (1)) res.tag: { sleep (delay) | res.val = true }
@@ -540,6 +540,18 @@ do Object
 };
 
 load("urbi/k1.u");
+
+## ------------ ##
+## Conversions. ##
+## ------------ ##
+
+do Object
+{
+  function as(type)
+  {
+    getSlot("self").getSlot("as" + getSlot("type").protoName).apply([self])
+  }
+};
 
 ## ----- ##
 ## Math. ##

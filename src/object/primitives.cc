@@ -20,6 +20,22 @@ namespace object
 
   /* Help the generation of symbols.
 
+  SYMBOL(asAlien);
+  SYMBOL(asCode);
+  SYMBOL(asDelegate);
+  SYMBOL(asFloat);
+  SYMBOL(asGlobal);
+  SYMBOL(asInteger);
+  SYMBOL(asList);
+  SYMBOL(asLobby);
+  SYMBOL(asPrimitive);
+  SYMBOL(asScope);
+  SYMBOL(asTag);
+  SYMBOL(asTask);
+  SYMBOL(asObject);
+  SYMBOL(asnil);
+  SYMBOL(asSystem);
+  SYMBOL(asvoid);
   SYMBOL(nil);
   SYMBOL(Global);
   SYMBOL(Scope);
@@ -40,6 +56,13 @@ namespace object
 
   /// Whether the root classes where initialized.
   bool root_classes_initialized = false;
+
+  static rObject
+  id(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT (1);
+    return args.front();
+  }
 
   /// Initialize the root classes.
   /// There are some dependency issues.  For instance, String
@@ -74,11 +97,17 @@ namespace object
 #define CLASS_CREATE(What, Name)		\
     What ## _class = object_class->clone();
 
+// Alias unmatched by symbols-generate.pl
+#define SYMBOL_ SYMBOL
+
 #define CLASS_INIT(What, Name)					\
     What ## _class->slot_set(SYMBOL(protoName),			\
 			     String::fresh(SYMBOL(Name)));      \
+    What ## _class->slot_set(SYMBOL_(as ## Name),		\
+			     Primitive::fresh(id));             \
     What ## _class_initialize ();				\
     global_class->slot_set(symbol_ ## Name, What ## _class);
+
 
 #define CLASS_SETUP(What, Name)			\
     CLASS_CREATE(What, Name)			\
@@ -99,6 +128,7 @@ namespace object
     CLASS_SETUP(system, System);
     CLASS_SETUP(void, void);
 
+#undef SYMBOL_
   }
 
 } // namespace object

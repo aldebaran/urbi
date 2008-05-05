@@ -161,9 +161,11 @@ namespace object
   void
   string_class_initialize ()
   {
+    // String.asString was already defined to function () {self} in
+    // CLASS_INIT in primitives.cc
+    string_class->slot_remove(SYMBOL(asString));
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(string, Name)
-
     DECLARE(EQ_EQ);
     DECLARE(LT);
     DECLARE(PLUS);
@@ -175,5 +177,6 @@ namespace object
     DECLARE(size);
     DECLARE(split);
 #undef DECLARE
+
   }
 }; // namespace object
