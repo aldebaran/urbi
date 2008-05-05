@@ -19,7 +19,8 @@ class Global.Group
   # Removing a non-member is ok.
   function remove
   {
-    members -= call.evalArgs
+    members -= call.evalArgs |
+    self
   };
 
   function asString ()
