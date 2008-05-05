@@ -309,7 +309,7 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
-    PROPAGATE_EXCEPTION(fn.location_get(), );
+    PROPAGATE_EXCEPTION(fn.location_get(), {});
 
     return current_;
   }
@@ -569,7 +569,7 @@ namespace runner
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
       apply (val, e.name_get(), args, call_message);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), );
+    PROPAGATE_EXCEPTION(e.location_get(), {});
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
@@ -827,7 +827,6 @@ namespace runner
 			     "break", "outside a loop")
         CATCH_FLOW_EXCEPTION(ast::ReturnException,
                              "return", "outside a function")
-
       }
     }
 
@@ -1019,7 +1018,7 @@ namespace runner
       current_ = object::void_class;
       return;
     }
-    PROPAGATE_EXCEPTION(t.location_get(), );
+    PROPAGATE_EXCEPTION(t.location_get(), {});
   }
 
   object::rObject
