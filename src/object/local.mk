@@ -44,9 +44,11 @@ object/lobby-class.cc				\
 object/lobby-class.hh				\
 object/float-class.cc				\
 object/float-class.hh				\
+object/fwd.hh					\
 object/global-class.cc				\
 object/global-class.hh				\
-object/fwd.hh					\
+object/hash-slots.hh				\
+object/hash-slots.hxx				\
 object/idelegate.hh				\
 object/integer-class.cc				\
 object/integer-class.hh				\
@@ -63,10 +65,12 @@ object/primitive-class.cc			\
 object/primitive-class.hh			\
 object/primitives.cc				\
 object/primitives.hh				\
-object/state.cc					\
-object/state.hh					\
 object/scope-class.cc				\
 object/scope-class.hh				\
+object/sorted-vector-slots.hh			\
+object/sorted-vector-slots.hxx			\
+object/state.cc					\
+object/state.hh					\
 object/string-class.cc				\
 object/string-class.hh				\
 object/symbols.cc				\

@@ -339,7 +339,7 @@ namespace runner
       assertion(f);
       try
       {
-	return IS_TRUE(iassertion(f->slot_get(SYMBOL(acceptVoid))));
+	return IS_TRUE(f->slot_get(SYMBOL(acceptVoid)));
       }
       catch (object::LookupError&)
       {

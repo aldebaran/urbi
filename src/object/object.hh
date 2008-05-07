@@ -13,12 +13,13 @@
 # include <boost/function.hpp>
 # include <boost/optional.hpp>
 
-# include <libport/hash.hh>
 # include <libport/shared-ptr.hh>
-# include <libport/symbol.hh>
 # include <libport/weak-ptr.hh>
 
 # include "object/fwd.hh"
+# include "object/hash-slots.hh"
+# include "object/sorted-vector-slots.hh"
+
 # include "runner/fwd.hh"
 
 namespace object
@@ -87,12 +88,9 @@ namespace object
 
     /// \name The slots.
     /// \{
-    /// The keys to the slots.
-    typedef libport::Symbol key_type;
-    /// The slots.
-    typedef libport::hash_map<key_type, rObject> slots_type;
+    /// The slots implementation
+    typedef HashSlots slots_implem;
     /// One slot.
-    typedef std::pair<const key_type, rObject> slot_type;
     typedef std::set<const Object*> objects_set_type;
 
     /// Abstract lookup traversal
@@ -118,12 +116,14 @@ namespace object
 	   objects_set_type& marks) const;
 
     /// Lookup field in object hierarchy.
-    /// \return the Object containing slot \b k, or 0 if not found.
-    rObject slot_locate (const Object::key_type& k, bool fallback = true) const;
+    /// \param value Whether to retur the owner of the slot or its value
+    /// \return the Object containing slot \a k if \a value is false,
+    ///         the slot value if \a value is true, 0 if not found.
+    rObject slot_locate (const Slots::key_type& k, bool fallback = true, bool value = false) const;
 
     /// Same as slot_locate, but raise LookupError if not found.
     /// \throw LookupError if the lookup fails.
-    rObject safe_slot_locate (const Object::key_type& k) const;
+    rObject safe_slot_locate (const Slots::key_type& k, bool value = false) const;
 
 
     /// Lookup field in object hierarchy.
@@ -131,11 +131,8 @@ namespace object
     /// \param def  The optional default value
     /// \throw LookupError if \a def isn't given and the slot isn't found.
     rObject slot_get (
-      const key_type& k,
+      const Slots::key_type& k,
       boost::optional<rObject> def = boost::optional<rObject>()) const;
-    rObject& slot_get (
-      const key_type& k,
-      boost::optional<rObject&> def = boost::optional<rObject&>());
 
     /// If the target is a "real" object, then updating means the same
     /// as slot_set: one never updates a proto.  If the target is a
@@ -147,16 +144,20 @@ namespace object
     /// \param o	The new value
     /// \param hook	Whether to trigger the potential updateHook
     void slot_update (runner::Runner& r,
-		      const Object::key_type& k,
+		      const Slots::key_type& k,
 		      rObject o,
 		      bool hook = true);
+
+    void own_slot_update (const Slots::key_type& k,
+                          rObject o);
+
 
 
     /// \brief Update value in slot.
     ///
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
-    Object& slot_set (const key_type& k, rObject o);
+    Object& slot_set (const Slots::key_type& k, rObject o);
 
     /// \brief Copy another object's slot.
     ///
@@ -166,22 +167,21 @@ namespace object
     /// \param name The name of the slot to copy
     /// \param from The object to copy the slot from
     /// \return this
-    Object& slot_copy (const key_type& name, rObject from);
+    Object& slot_copy (const Slots::key_type& name, rObject from);
 
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
     /// protos).
-    const rObject& own_slot_get (const key_type& k) const;
-    rObject& own_slot_get (const key_type& k);
+    rObject own_slot_get (const Slots::key_type& k) const;
 
     /// Get the object pointed to by the *local* slot
     /// or \a def if it does not exist locally.
-    rObject own_slot_get (const key_type& k, rObject def);
+    rObject own_slot_get (const Slots::key_type& k, rObject def);
 
     /// Remove slot.
-    Object& slot_remove (const key_type& k);
+    Object& slot_remove (const Slots::key_type& k);
     /// Read only access to slots.
-    const slots_type& slots_get () const;
+    const slots_implem::content_type& slots_get () const;
 
     /// Copy another object local slots, if not already present.
     void all_slots_copy(const rObject& other);
@@ -269,7 +269,7 @@ namespace object
     ///            recursions
     /// \return (false,0) if k does not exist, (true,0) if k is in this,
     ///          (true, ptr) if k is in ptr.
-    locate_type slot_locate (const key_type& k, objects_set_type& os) const;
+    locate_type slot_locate (const Slots::key_type& k, objects_set_type& os) const;
 
   private:
     /// The protos.
@@ -279,7 +279,7 @@ namespace object
     rObject protos_cache_;
 
     /// The slots.
-    slots_type slots_;
+    slots_implem slots_;
     /// Whether is a locals object.
     bool locals_;
   };

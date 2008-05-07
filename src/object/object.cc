@@ -15,6 +15,7 @@
 #include "object/object.hh"
 #include "object/atom.hh"
 #include "object/global-class.hh"
+#include "object/hash-slots.hh"
 #include "object/urbi-exception.hh"
 
 #include "runner/runner.hh"
@@ -81,12 +82,12 @@ namespace object
 
     static lookup_result
     targetLookup(rObject obj,
-		 const object::Object::key_type& slotName)
+		 const object::Slots::key_type& slotName)
     {
       // First, check if the object has the slot locally. We do not
       // handle 'self' here, since we first want to see whether it has
       // been captured in the context.
-      if (obj->own_slot_get(slotName, 0) && slotName != SYMBOL(self))
+      if (slotName != SYMBOL(self) && obj->own_slot_get(slotName, 0))
 	// Return a nonempty optional containing an empty rObject, to
 	// indicate to target that the lookup is successful, and the
 	// target is the initial object.
@@ -242,23 +243,25 @@ namespace object
     {
     public:
       lookup_result
-      slot_lookup(rObject obj, const Object::key_type& k)
+      slot_lookup(rObject obj, const Slots::key_type& k, bool value)
       {
 	assertion(obj);
-	if (obj->own_slot_get(k, 0))
-	  return obj;
-	if (!fallback && obj->own_slot_get(SYMBOL(fallback), 0))
-	  fallback = obj;
+	if (rObject x = obj->own_slot_get(k, 0))
+	  return value ? x : obj;
+	if (!fallback)
+          if (rObject f = obj->own_slot_get(SYMBOL(fallback), 0))
+            fallback = value ? f : obj;
 	return boost::optional<rObject>();
       }
       rObject fallback;
     };
   }
 
-  rObject Object::slot_locate(const Object::key_type& k, bool fallback) const
+  rObject Object::slot_locate(const Slots::key_type& k,
+                              bool fallback, bool value) const
   {
     SlotLookup looker;
-    lookup_action action = boost::bind(&SlotLookup::slot_lookup, &looker, _1, k);
+    lookup_action action = boost::bind(&SlotLookup::slot_lookup, &looker, _1, k, value);
     boost::optional<rObject> res = lookup(action);
     if (!res && fallback && looker.fallback)
       res = looker.fallback;
@@ -266,56 +269,39 @@ namespace object
   }
 
   rObject
-  Object::safe_slot_locate(const key_type& k) const
+  Object::safe_slot_locate(const Slots::key_type& k, bool value) const
   {
-    rObject r = slot_locate(k);
+    rObject r = slot_locate(k, true, value);
     if (!r)
       throw LookupError(k);
     return iassertion(r);
   }
 
   rObject
-  Object::slot_get (const key_type& k, boost::optional<rObject> odef) const
+  Object::slot_get (const Slots::key_type& k, boost::optional<rObject> def) const
   {
-    // Take a local copy, to be able to pass it by ref to
-    // slot_get.
-    rObject def = odef.get();
-    // Otherwise, this would call this method, and not the non-const
-    // one, resulting in an infinite recursion.
-    return const_cast<Object*>(this)->slot_get(k, def);
-  }
-
-  rObject&
-  Object::slot_get (const key_type& k, boost::optional<rObject&> def)
-  {
-    rObject cont;
+    rObject value;
     if (def)
-      cont = slot_locate(k);
+      value = slot_locate(k, true, true);
     else
-      cont = safe_slot_locate(k);
-    rObject* res;
-    if (cont)
-      res = cont->own_slot_get(k, 0) ?
-	&cont->own_slot_get(k) :
-	&cont->own_slot_get(SYMBOL(fallback));
+      value = safe_slot_locate(k, true);
+    if (value)
+      return value;
     else
-      res = &def.get();
-    postcondition(*res || def);
-    return *res;
+      return def.get();
   }
 
 
   Object&
-  Object::slot_set (const Object::key_type& k, rObject o)
+  Object::slot_set (const Slots::key_type& k, rObject o)
   {
-    if (libport::mhas(slots_, k))
+    if (!slots_.set(k, o))
       throw RedefinitionError(k);
-    slots_[k] = o;
     return *this;
   }
 
   Object&
-  Object::slot_copy (const Object::key_type& name, rObject from)
+  Object::slot_copy (const Slots::key_type& name, rObject from)
   {
     this->slot_set(name, from->slot_get(name));
     return *this;
@@ -323,7 +309,7 @@ namespace object
 
   void
   Object::slot_update (runner::Runner& r,
-		       const Object::key_type& k,
+		       const Slots::key_type& k,
 		       rObject o,
 		       bool hook)
   {
@@ -370,21 +356,28 @@ namespace object
 	return;
     }
     // If return-value of hook is not void, write it to slot.
-    effective_target->own_slot_get(k) = o;
+    effective_target->own_slot_update(k, o);
   };
 
-  rObject
-  Object::own_slot_get (const key_type& k, rObject def)
+  void
+  Object::own_slot_update (const Slots::key_type& k, rObject v)
   {
-    return libport::mhas (slots_, k) ? own_slot_get (k) : def;
+    slots_.update(k, v);
+  }
+
+  rObject
+  Object::own_slot_get (const Slots::key_type& k, rObject def)
+  {
+    rObject res = slots_.get(k);
+    return res ? res : def;
   }
 
   void
   Object::all_slots_copy(const rObject& other)
   {
-    foreach (object::Object::slot_type slot, other->slots_get())
+    foreach (Slots::slot_type slot, other->slots_get())
       if (!own_slot_get(slot.first, 0))
-	slot_set(slot.first, slot.second);
+        slot_set(slot.first, slot.second);
   }
 
   /*-----------.
@@ -446,11 +439,12 @@ namespace object
     o << " {" << libport::incendl;
     protos_dump(o, runner);
     special_slots_dump (o, runner);
-    foreach(Object::slot_type s, slots_)
+    foreach(Slots::slot_type s, slots_.container())
     {
       o << s.first << " = ";
       s.second->dump(o, runner) << libport::iendl;
     }
+
     o << libport::decindent << '}';
     //We can not reuse current_depth variable above according to spec.
     o.iword(idx)--;

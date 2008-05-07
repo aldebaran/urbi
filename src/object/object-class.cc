@@ -212,7 +212,7 @@ namespace object
     rObject obj = args[0];
 
     object::list_traits::type l;
-    BOOST_FOREACH (const Object::slot_type& p, obj->slots_get())
+    foreach (const Slots::slot_type& p, obj->slots_get())
       l.push_back (object::String::fresh(p.first));
 
     return object::List::fresh(l);
@@ -235,7 +235,7 @@ namespace object
     CHECK_ARG_COUNT (4);
 
     FETCH_ARG (1, String);
-    Object::key_type slot_name = arg1->value_get ();
+    Slots::key_type slot_name = arg1->value_get ();
 
     // If the slot already exists, return its content.
     if (rObject slot = args[0]->own_slot_get (slot_name, 0))

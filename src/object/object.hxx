@@ -24,15 +24,16 @@
 # include "object/delegate-class.hh"
 # include "object/float-class.hh"
 # include "object/global-class.hh"
+# include "object/hash-slots.hh"
 # include "object/integer-class.hh"
 # include "object/list-class.hh"
 # include "object/lobby-class.hh"
 # include "object/primitive-class.hh"
 # include "object/scope-class.hh"
+# include "object/sorted-vector-slots.hh"
 # include "object/string-class.hh"
 # include "object/tag-class.hh"
 # include "object/task-class.hh"
-
 
 namespace object
 {
@@ -169,32 +170,25 @@ namespace object
   `--------*/
 
   inline
-  rObject&
-  Object::own_slot_get (const Object::key_type& k)
+  rObject
+  Object::own_slot_get (const Slots::key_type& k) const
   {
-    return slots_[k];
-  }
-
-  inline
-  const rObject&
-  Object::own_slot_get (const Object::key_type& k) const
-  {
-    return const_cast<Object*>(this)->slots_[k];
+    return slots_.get(k);
   }
 
   inline
   Object&
-  Object::slot_remove (const Object::key_type& k)
+  Object::slot_remove (const Slots::key_type& k)
   {
     slots_.erase (k);
     return *this;
   }
 
   inline
-  const Object::slots_type&
+  const Object::slots_implem::content_type&
   Object::slots_get () const
   {
-    return slots_;
+    return slots_.container();
   }
 
 
