@@ -314,22 +314,6 @@ namespace runner
     return current_;
   }
 
-  object::rObject
-  Runner::eval_in_scope (rObject scope, const ast::Exp& e)
-  {
-    try
-    {
-      std::swap (locals_, scope);
-      Finally finally(swap(scope, locals_));
-      eval (e);
-    }
-    PROPAGATE_EXCEPTION(e.location_get(),
-			{
-			  run_at_exit (scope);
-			});
-    return current_;
-  }
-
   namespace
   {
     // Helper to determine whether a function accepts void parameters

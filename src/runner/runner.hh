@@ -88,9 +88,6 @@ namespace runner
     /// Evaluate a tree and return the result.
     rObject eval (const ast::Ast& e);
 
-    /// Evaluate a tree in a given local scope
-    rObject eval_in_scope (rObject scope, const ast::Exp& e);
-
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
     rObject eval_tag (const ast::Exp&);
