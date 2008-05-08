@@ -72,7 +72,7 @@ namespace runner
 
   inline
   Runner::rObject
-  Runner::eval (const ast::Ast& e)
+  Runner::eval (const ast::Exp& e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
     e.accept (*this);

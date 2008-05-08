@@ -85,8 +85,8 @@ namespace runner
     rObject apply (const rObject& func, const libport::Symbol msg,
 		   const object::rList& args);
 
-    /// Evaluate a tree and return the result.
-    rObject eval (const ast::Ast& e);
+    /// Evaluate an expression in the current scope and return its result.
+    rObject eval (const ast::Exp&);
 
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
