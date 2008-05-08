@@ -485,20 +485,9 @@ namespace runner
   Runner::target (const ast::Exp* n, const libport::Symbol& name)
   {
     if (dynamic_cast<const ast::Implicit*>(n))
-    {
-      object::objects_type args;
-      args.push_back(object::String::fresh(name));
-      try
-      {
-	return urbi_call(*this, locals_, SYMBOL(target), args);
-      }
-      catch (object::LookupError&) // No 'target' function
-      {
-	return locals_;
-      }
-    }
-    else
       return eval (*n);
+    else
+      return object::target(locals_, name);
   }
 
   void

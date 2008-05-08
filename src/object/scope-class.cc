@@ -16,7 +16,6 @@ namespace object
 {
   rObject scope_class;
 
-
   static rObject
   scope_class_target(runner::Runner&, objects_type args)
   {
@@ -24,19 +23,6 @@ namespace object
     FETCH_ARG(1, String);
 
     return target(args[0], arg1->value_get());
-  }
-
-  static rObject
-  scope_class_tryTarget(runner::Runner& runner, objects_type args)
-  {
-    try
-    {
-      return scope_class_target(runner, args);
-    }
-    catch (LookupError&)
-    {
-      return nil_class;
-    }
   }
 
 #define FORWARD(Name, Argc)						\
@@ -63,14 +49,16 @@ namespace object
     CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
 
-    args[0] = scope_class_tryTarget(runner, args);
-    if (args[0] == nil_class)
-      return nil_class;
-    else
+    try
     {
-      rObject fwd = object_class->slot_get(SYMBOL(locateSlot));
-      return runner.apply(fwd, SYMBOL(locateSlot), args);
+      args[0] = target(args[0], arg1->value_get());
     }
+    catch (LookupError&)
+    {
+      return nil_class;
+    }
+    rObject fwd = object_class->slot_get(SYMBOL(locateSlot));
+    return runner.apply(fwd, SYMBOL(locateSlot), args);
   }
 
   static rObject
@@ -110,7 +98,6 @@ namespace object
     DECLARE(locateSlot);
     DECLARE(removeSlot);
     DECLARE(target);
-    DECLARE(tryTarget);
     DECLARE(updateSlot);
 #undef DECLARE
   }
