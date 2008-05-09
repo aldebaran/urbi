@@ -263,6 +263,16 @@ namespace scheduler
     /// \param other The other job to copy tags from.
     void copy_tags (const Job& other);
 
+    /// Get the current tags.
+    ///
+    /// \return The tags attached to the current job.
+    tags_type tags_get () const;
+
+    /// Set the current tags.
+    ///
+    /// \param tags Set the tags attached to the current job.
+    void tags_set (tags_type tags);
+
     /// Get the current job state.
     ///
     /// \return The current job state.

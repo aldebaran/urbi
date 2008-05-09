@@ -133,24 +133,6 @@ namespace scheduler
   }
 
   void
-  Job::push_tag (rTag tag)
-  {
-    tags_.push_back (tag);
-  }
-
-  void
-  Job::pop_tag ()
-  {
-    tags_.pop_back ();
-  }
-
-  void
-  Job::copy_tags (const Job& other)
-  {
-    tags_ = other.tags_;
-  }
-
-  void
   Job::async_throw (const kernel::exception& e)
   {
     pending_exception_ = e.clone ();

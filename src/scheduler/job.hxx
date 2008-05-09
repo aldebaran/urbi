@@ -220,6 +220,36 @@ namespace scheduler
     time_shift_ = ts;
   }
 
+  inline void
+  Job::push_tag (rTag tag)
+  {
+    tags_.push_back (tag);
+  }
+
+  inline void
+  Job::pop_tag ()
+  {
+    tags_.pop_back ();
+  }
+
+  inline void
+  Job::copy_tags (const Job& other)
+  {
+    tags_set (other.tags_get());
+  }
+
+  inline tags_type
+  Job::tags_get () const
+  {
+    return tags_;
+  }
+
+  inline void
+  Job::tags_set (tags_type tags)
+  {
+    tags_ = tags;
+  }
+
   inline std::ostream&
   operator<< (std::ostream& o, const Job& j)
   {
