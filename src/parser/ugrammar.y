@@ -938,7 +938,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
-      static ast::ParametricAst at("at_(%exp:1, %exp:2)");
+      static ast::ParametricAst at("at_(%exp:1, detach(%exp:2))");
       $$ = exp (at % $3 % $5);
     }
 | "at" "(" expr ")" stmt "onleave" stmt
@@ -947,7 +947,7 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       warn_implicit(up, @7, $7);
-      static ast::ParametricAst at("at_(%exp:1, %exp:2, %exp:3)");
+      static ast::ParametricAst at("at_(%exp:1, detach(%exp:2), detach(%exp:3))");
       $$ = exp (at % $3 % $5 % $7);
     }
 | "at" "(" expr "~" expr ")" stmt %prec CMDBLOCK

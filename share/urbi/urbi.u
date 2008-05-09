@@ -342,16 +342,10 @@ do Object
   # becomes true and a code to execute each time the test becomes false
   function at_
   {
-    detach ({
-      var t = currentRunner |
-      loop {
-        waituntil (call.evalArgAt (1)) |
-        detach (call.evalArgAt (2)) |
-        waituntil (!call.evalArgAt (1)) |
-        if (call.argsCount > 3)
-          detach (call.evalArgAt (3))
-      }
-    })
+    if (call.args.size > 3)
+      registerAtJob(call.args.nth(1), call.args.nth(2), call.args.nth(3))
+    else
+      registerAtJob(call.args.nth(1), call.args.nth(2), nil)
   };
 
   # whenever_ takes three expressions, a test and a code to execute each time the

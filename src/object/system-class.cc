@@ -10,6 +10,7 @@
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
+#include "runner/at_handler.hh"
 #include "runner/runner.hh"
 
 #include "object/alien.hh"
@@ -108,6 +109,14 @@ namespace object
     parser::UParser p = parser::parse(arg1->value_get());
     return execute_parsed(r, p, PrimitiveError("",
 	std::string("Error executing command.")));
+  }
+
+  static rObject
+  system_class_registerAtJob (runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT(4);
+    runner::register_at_job(r, args[1], args[2], args[3]);
+    return object::void_class;
   }
 
   static rObject
@@ -235,6 +244,7 @@ namespace object
     DECLARE(nonInterruptible);
     DECLARE(quit);
     DECLARE(reboot);
+    DECLARE(registerAtJob);
     DECLARE(searchFile);
     DECLARE(shiftedTime);
     DECLARE(shutdown);
