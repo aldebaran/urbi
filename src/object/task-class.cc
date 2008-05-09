@@ -41,7 +41,7 @@ namespace object
 
     if (args.size () == 3)
     {
-      if (IS_TRUE (args[2]))
+      if (is_true (args[2]))
 	r.link (new_runner);
     }
 
@@ -95,7 +95,7 @@ namespace object
   task_class_setSideEffectFree (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    r.side_effect_free_set (IS_TRUE (args[1]));
+    r.side_effect_free_set (is_true (args[1]));
     return void_class;
   }
 

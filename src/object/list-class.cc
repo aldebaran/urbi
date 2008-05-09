@@ -149,7 +149,7 @@ namespace object
     {
       objects_type args;
       args.push_back(b);
-      return IS_TRUE(urbi_call(::urbiserver->getCurrentRunner(),
+      return is_true(urbi_call(::urbiserver->getCurrentRunner(),
                                a, SYMBOL(LT), args));
     }
 

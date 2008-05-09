@@ -323,7 +323,7 @@ namespace runner
       assertion(f);
       try
       {
-	return IS_TRUE(f->slot_get(SYMBOL(acceptVoid)));
+	return object::is_true(f->slot_get(SYMBOL(acceptVoid)));
       }
       catch (object::LookupError&)
       {
@@ -677,7 +677,7 @@ namespace runner
     JAECHO ("test", e.test_get ());
     operator() (e.test_get());
 
-    if (IS_TRUE(current_))
+    if (object::is_true(current_))
     {
       JAECHO ("then", e.thenclause_get ());
       operator() (e.thenclause_get());
@@ -1084,7 +1084,7 @@ namespace runner
 	MAYBE_YIELD (e.flavor_get());
       JAECHO ("while test", e.test_get ());
       operator() (e.test_get());
-      if (!IS_TRUE(current_))
+      if (!object::is_true(current_))
 	break;
 
       JAECHO ("while body", e.body_get ());

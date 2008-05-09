@@ -475,4 +475,16 @@ namespace object
   {
     return for_all_protos(c, boost::lambda::_1 == p);
   }
+
+  bool
+  is_true(const rObject& o)
+  {
+    // FIXME: should nil be true? It should probably be false.
+    if (o == nil_class)
+      return true;
+    if (o->type_is<object::Float>())
+      return o.unsafe_cast<object::Float>()->value_get();
+    return false;
+  }
+
 } // namespace object

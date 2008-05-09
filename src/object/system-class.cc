@@ -93,7 +93,7 @@ namespace object
   {
     CHECK_ARG_COUNT(3);
     FETCH_ARG(2, String);
-    if (!IS_TRUE(args[1]))
+    if (!is_true(args[1]))
       throw PrimitiveError
 	("assert_",
 	 "assertion `" + arg2->value_get().name_get() + "' failed");

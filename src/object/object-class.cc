@@ -242,7 +242,7 @@ namespace object
       return slot;
 
     // The slot doesn't exist. Should we create it?
-    if (IS_TRUE (args[3]))
+    if (is_true (args[3]))
       args[0]->slot_set (slot_name, args[2]);
 
     // Return the default value for this slot.
@@ -302,7 +302,7 @@ namespace object
   object_class_makeScope (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    args[0]->locals_set (IS_TRUE (args[1]));
+    args[0]->locals_set (is_true (args[1]));
     return args[0];
   }
 
