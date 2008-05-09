@@ -85,9 +85,10 @@ namespace urbi
   {
     objecthub = 0;
     autogroup = false;
-
-    URBI(()) << "class " << __name << "{};";
-    URBI(()) << "external object " << __name << ";";
+    std::stringstream ss;
+    ss << "class " << __name << "{};";
+    ss << "external object " << __name << ";";
+    URBI(()) << ss.str();
     period = -1;
 
     // default
@@ -261,14 +262,15 @@ namespace urbi
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
+	std::stringstream os;
 	if (retval.type == DATA_VOID)
-	  URBI(()) << "var " << (std::string) array[2];
+	  os << "var " << (std::string) array[2];
 	else
 	{
-	  URBI(()) << "var " << (std::string) array[2] << "=";
-	  getDefaultClient()->send(retval);//I'd rather not use << for bins
+	  os << "var " << (std::string) array[2] << "=" << retval;
 	}
-	URBI(()) << ";";
+	os << ";";
+	URBI(()) << os.str();
       }
       else
 	msg.client.printf("Component Error: %s function unknown.\n",
