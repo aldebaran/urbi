@@ -100,9 +100,8 @@ namespace runner
     /// \name Evaluation.
     /// \{
 
-    // FIXME: For the time being, if there is no target, it is the
-    // Connection object which is used, sort of a Lobby for Io.
-    rObject target (const ast::Exp* n, const libport::Symbol& name);
+    std::pair<rObject, rObject>
+    target (const ast::Exp* n, const libport::Symbol& name);
     typedef std::pair<bool, const Runner::rObject> locate_type;
 
     /// Build an evaluated arguments list containing \a tgt and

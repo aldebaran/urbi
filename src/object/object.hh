@@ -285,7 +285,8 @@ namespace object
   };
 
   /// Target lookup
-  rObject target(rObject where, const libport::Symbol& name);
+  /// \return The target of the message and the message itself
+  std::pair<rObject, rObject> target(rObject where, const libport::Symbol& name);
 
   /// Helpers to call Urbi functions from C++.
   rObject urbi_call(runner::Runner& r,

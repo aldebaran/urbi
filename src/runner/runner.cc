@@ -481,43 +481,35 @@ namespace runner
     return build_call_message(tgt, msg, lazy_args);
   }
 
-  Runner::rObject
+  std::pair<Runner::rObject, Runner::rObject>
   Runner::target (const ast::Exp* n, const libport::Symbol& name)
   {
     if (dynamic_cast<const ast::Implicit*>(n))
-      return eval (*n);
-    else
       return object::target(locals_, name);
+    else
+    {
+      rObject tgt = eval (*n);
+      return std::make_pair(tgt, tgt->slot_get(name));
+    }
   }
 
   void
   Runner::operator() (const ast::Call& e)
   {
+    // The invoked slot (probably a function).
+    rObject val;
+    // The target of the message
     rObject tgt;
     try
     {
-      tgt = target(e.args_get().front(), e.name_get());
+      std::pair<rObject, rObject> lookup =
+        target(e.args_get().front(), e.name_get());
+      tgt = lookup.first;
+      val = lookup.second;
     }
     PROPAGATE_EXCEPTION(e.location_get(), {});
     assertion(tgt);
-
-
-    /*---------------------.
-    | Decode the message.  |
-    `---------------------*/
-
-    // The invoked slot (probably a function).
-    rObject val;
-
-    // We may have to run a primitive, or some code.
-    try
-    {
-      // Ask the target for the handler of the message.
-      val = tgt->slot_get (e.name_get ());
-    }
-    PROPAGATE_EXCEPTION(e.location_get(), {});
     assertion(val);
-
 
     /*-------------------------.
     | Evaluate the arguments.  |

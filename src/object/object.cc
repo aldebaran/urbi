@@ -82,16 +82,21 @@ namespace object
 
     static lookup_result
     targetLookup(rObject obj,
-		 const object::Slots::key_type& slotName)
+		 const object::Slots::key_type& slotName,
+                 rObject& value)
     {
       // First, check if the object has the slot locally. We do not
       // handle 'self' here, since we first want to see whether it has
       // been captured in the context.
-      if (slotName != SYMBOL(self) && obj->own_slot_get(slotName, 0))
-	// Return a nonempty optional containing an empty rObject, to
-	// indicate to target that the lookup is successful, and the
-	// target is the initial object.
-	return optional<rObject>(rObject());
+      if (slotName != SYMBOL(self))
+        if (rObject v = obj->own_slot_get(slotName, 0))
+        {
+          value = v;
+          // Return a nonempty optional containing an empty rObject, to
+          // indicate to target that the lookup is successful, and the
+          // target is the initial object.
+          return optional<rObject>(rObject());
+        }
       // If this is a method outer scope, perform special lookup in
       // self and context.
       if (rObject self = obj->own_slot_get(SYMBOL(self), 0))
@@ -104,38 +109,56 @@ namespace object
 	  // Likewise.
 	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
 	  {
+            bool capture = false;
 	    if (captured == nil_class)
-	      return target(code->own_slot_get(SYMBOL(context)), slotName);
+              capture = true;
 	    else
 	      foreach (const rObject& var, captured->value<object::List>())
 		if (var->value<object::String>() == slotName)
-		  return target(code->own_slot_get(SYMBOL(context)), slotName);
+                {
+                  capture = true;
+                  break;
+                }
+            if (capture)
+            {
+              std::pair<rObject, rObject> res =
+                target(code->own_slot_get(SYMBOL(context)), slotName);
+              value = res.second;
+              return res.first;
+            }
 	  }
 	// If we were looking for 'self' and it wasn't captured in the
 	// context, we found it here.
 	if (slotName == SYMBOL(self))
+        {
+          value = self;
 	  return optional<rObject>(rObject());
+        }
 	// Check whether self has the slot. We do not use the
 	// 'fallback' method here: only calls with explicit target are
 	// subject to fallback.
-	if (self->slot_locate(slotName, false))
+	if (rObject v = self->slot_locate(slotName, false, true))
+        {
+          value = v;
 	  return self;
+        }
       }
       return optional<rObject>();
     }
   }
 
-  rObject
+  std::pair <rObject, rObject>
   target(rObject where, const libport::Symbol& name)
   {
+    rObject value;
     boost::function1<boost::optional<rObject>, rObject> lookup =
-      boost::bind(targetLookup, _1, name);
+      boost::bind(targetLookup, _1, name, boost::ref(value));
     boost::optional<rObject> res = where->lookup(lookup);
     if (!res)
       throw object::LookupError(name);
     if (!res.get())
-      return where;
-    return res.get();
+      return std::make_pair(where, value);
+    return std::make_pair(res.get(), value);
   }
 
   rObject

@@ -22,7 +22,7 @@ namespace object
     CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
 
-    return target(args[0], arg1->value_get());
+    return target(args[0], arg1->value_get()).first;
   }
 
 #define FORWARD(Name, Argc)						\
@@ -33,7 +33,7 @@ namespace object
     FETCH_ARG(1, String);						\
 									\
     rObject fwd = object_class->slot_get(SYMBOL(Name));			\
-    args[0] = target(args[0], arg1->value_get());			\
+    args[0] = target(args[0], arg1->value_get()).first;			\
     return runner.apply(fwd, SYMBOL(Name), args);			\
   }
 
@@ -51,7 +51,7 @@ namespace object
 
     try
     {
-      args[0] = target(args[0], arg1->value_get());
+      args[0] = target(args[0], arg1->value_get()).first;
     }
     catch (LookupError&)
     {
