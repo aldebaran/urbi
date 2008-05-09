@@ -243,12 +243,12 @@ namespace scheduler
     /// Is the job frozen?
     ///
     /// \return This depends from the job tags state.
-    bool frozen () const;
+    virtual bool frozen () const;
 
     /// Is the job blocked?
     ///
     /// \return This depends from the job tags state.
-    bool blocked () const;
+    virtual bool blocked () const;
 
     /// Push a tag onto the current job tag stack.
     ///
