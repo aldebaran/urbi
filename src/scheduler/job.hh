@@ -376,7 +376,7 @@ namespace scheduler
     Coro* coro_;
 
     /// Tags this job depends on.
-    std::vector<rTag> tags_;
+    scheduler::tags_type tags_;
 
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the

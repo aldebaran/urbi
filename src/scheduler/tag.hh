@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_TAG_HH
 # define SCHEDULER_TAG_HH
 
+# include <vector>
+
 # include <libport/symbol.hh>
 # include <libport/weak-ptr.hh>
 
@@ -77,6 +79,8 @@ namespace scheduler
     bool            frozen_;
     libport::Symbol name_;
   };
+
+  typedef std::vector<rTag> tags_type;
 
 } // namespace scheduler
 
