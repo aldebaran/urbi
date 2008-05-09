@@ -484,7 +484,7 @@ namespace object
       return true;
     if (o->type_is<object::Float>())
       return o.unsafe_cast<object::Float>()->value_get();
-    return false;
+    return true;
   }
 
 } // namespace object
