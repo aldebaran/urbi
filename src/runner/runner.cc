@@ -61,15 +61,7 @@ namespace runner
 #define JAECHO(Title, Ast)                      \
   JECHO (Title, AST(Ast))
 
-/** Call this macro at the very beginning of the evaluation of an AST
- * node.  Nodes that should yield are that doing something useful.  For
- * instance in "1;2" we have 3 nodes: two values in a Semicolon.  The
- * Semicolon does not do anything useful, it simply recurses in its
- * left hand side.  However, the "1" does something useful: it calculates
- * a value (even though calculating the constant "1" is somewhat trivial),
- * so it should most probably start with a YIELD.
- *
- * The Ast is expected to be named "e".  */
+/* Yield and trace. */
 #define YIELD()                                 \
   do                                            \
   {                                             \
