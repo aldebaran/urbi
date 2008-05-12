@@ -9,15 +9,23 @@ class Global.Kernel1Functions
     o.copy
   };
 
-  // isdef("name"): Check whether "name" is defined (here or above).
-  function isdef
-  {
-    !call.target.locateSlot(call.argString(1)).isNil;
-  };
-
   function ping ()
   {
     echo ("pong time=" + time.asString);
+  };
+
+  /// Returns true if argument is defined. Argument can be of the form a.b.c.
+  function isdef
+  {
+    var s = call.argString(1).split(". ");
+    var base = call.context;
+    for c in s {
+      var v = getSlot("base").locateSlot(c);
+      if (v.sameAs(nil))
+        return false;
+      base = getSlot("v").getSlot(c).apply([getSlot("v").getSlot(c)]);
+    };
+    return true
   };
 
   function seq(n)
