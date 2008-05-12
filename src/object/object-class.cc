@@ -5,7 +5,6 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
-#include <libport/throw-exception.hh>
 #include <libport/tokenizer.hh>
 
 #include "kernel/uconnection.hh"
