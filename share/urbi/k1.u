@@ -17,14 +17,14 @@ class Global.Kernel1Functions
   /// Returns true if argument is defined. Argument can be of the form a.b.c.
   function isdef
   {
-    var s = call.argString(1).split(". ");
-    var base = call.context;
+    var s = call.argString(1).split(". ") |
+    var base = call.context |
     for c in s {
-      var v = getSlot("base").locateSlot(c);
+      var v = getSlot("base").locateSlot(c) |
       if (v.sameAs(nil))
-        return false;
-      base = getSlot("v").getSlot(c).apply([getSlot("v").getSlot(c)]);
-    };
+        return false |
+      base = getSlot("v").getSlot(c).apply([getSlot("v").getSlot(c)])
+    } |
     return true
   };
 
