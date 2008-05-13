@@ -142,12 +142,10 @@ UServer::initialize()
 
   // Handle pluged UOBjects.
   // Create "uobject" in lobby where UObjects will be put.
-
-  object::object_class->slot_set(
-	SYMBOL(uobject_init), object::Primitive::fresh(&uobject_initialize));
+  object::object_class->slot_set(SYMBOL(uobject_init),
+                                 object::Primitive::fresh(&uobject_initialize));
 
   // Force processing of urbi.u.
-  //libport::utime_t now = libport::utime();
   while (!object::object_class->slot_locate(SYMBOL(loaded)))
     work();
   object::object_class->slot_remove(SYMBOL(loaded));
@@ -171,7 +169,7 @@ UServer::afterWork ()
 }
 
 libport::utime_t
-UServer::work ()
+UServer::work()
 {
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);

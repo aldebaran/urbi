@@ -225,13 +225,13 @@ main (int argc, const char* argv[])
       {
 	input = libport::read_stdin();
       }
-      catch(libport::exception::Exception e)
+      catch (libport::exception::Exception e)
       {
 	std::cerr << e.what() << std::endl;
 	interactive = false;
       }
       if (!input.empty())
-	s.getGhostConnection ().received (input.c_str(), input.length());
+	s.getGhostConnection().received(input.c_str(), input.length());
     }
     libport::utime_t select_time = 0;
     if (!fast)

@@ -19,11 +19,13 @@ namespace object
   void
   global_class_initialize ()
   {
-    // Global is a scope. We thus remove useless inheritance from object.
+    // Global is a scope. We thus remove useless inheritance from
+    // object.
     global_class->proto_remove(object_class);
     global_class->proto_add(scope_class);
 
-    // Do not report children to be instance of 'Global', but instances of scope.
+    // Do not report children to be instance of 'Global', but
+    // instances of scope.
     global_class->slot_remove(SYMBOL(protoName));
 
 #define DECLARE(Name)				\
