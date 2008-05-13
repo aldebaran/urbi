@@ -60,6 +60,7 @@ namespace runner
   void
   AtHandler::work()
   {
+    bool check_for_blocked = true;
     side_effect_free_set(true);
 
     while (true)
@@ -78,7 +79,10 @@ namespace runner
 	bool frozen = false;
 	foreach (const scheduler::rTag& tag, job->tags_)
 	{
-	  blocked |= tag->blocked();
+	  // Checking for a blocked state may be costly, so skip it when we
+	  // know for sure that none of our at jobs can be blocked.
+	  if (check_for_blocked)
+	    blocked |= tag->blocked();
 	  frozen  |= tag->frozen();
 	}
 
@@ -156,14 +160,15 @@ namespace runner
 	// catching the exception. If, by mistake, a condition evaluation
 	// yields and is blocked, we do not want it to get the bogus
         // exception.
+	check_for_blocked = false;
 	yielding = true;
 	yield_until_things_changed();
 	yielding = false;
       }
       catch (const scheduler::BlockedException& e)
       {
-	// Ignore this exception, we will check every condition against this
-	// anyway.
+	// We have at least one "at" job which needs to be blocked.
+	check_for_blocked = true;
       }
       catch (const kernel::exception& e)
       {
