@@ -146,9 +146,6 @@ namespace runner
 				 )))
     /// \}
 
-    /// Code to run the cleanup code
-    void run_at_exit (const object::rObject& scope);
-
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
 

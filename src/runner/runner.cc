@@ -278,16 +278,7 @@ namespace runner
 
     try
     {
-      try
-      {
-	current_ = eval (*fn.body_get());
-	run_at_exit (locals_);
-      }
-      catch (...)
-      {
-	run_at_exit (locals_);
-	throw;
-      }
+      current_ = eval (*fn.body_get());
     }
     catch (ast::BreakException& be)
     {
@@ -815,40 +806,6 @@ namespace runner
   }
 
   void
-  Runner::run_at_exit (const object::rObject& scope)
-  {
-    if (object::rObject atexit = scope->own_slot_get (SYMBOL (atexit)))
-    {
-      try
-      {
-	TYPE_CHECK (atexit, object::List);
-      }
-      catch (...)
-      {
-	// Bad type, return immediately.
-	return;
-      }
-      const object::rList atexit_funcs = atexit.unsafe_cast<object::List> ();
-      object::objects_type args;
-      args.push_back (scope->slot_get (SYMBOL (self)));
-      const rObject saved_current = current_;
-      foreach (const rObject& func, atexit_funcs->value_get ())
-      {
-	try
-	{
-	  // FIXME: We have no way to find the actual message name here.
-	  apply (func, SYMBOL(atExit), args);
-	}
-	catch (...)
-	{
-	  // Ignore errors in atexit blocks but execute further calls
-	}
-      }
-      current_ = saved_current;
-    }
-  }
-
-  void
   Runner::operator() (const ast::Noop&)
   {
     current_ = object::void_class;
@@ -914,16 +871,7 @@ namespace runner
     Finally finally(swap(locals, locals_));
     try
     {
-      try
-      {
-	super_type::operator()(e.body_get());
-	run_at_exit (locals_);
-      }
-      catch (...)
-      {
-	run_at_exit (locals_);
-	throw;
-      }
+      super_type::operator()(e.body_get());
     }
     PROPAGATE_EXCEPTION(e.location_get(),
 			{

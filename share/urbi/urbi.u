@@ -34,12 +34,6 @@ do Global.Constants
 do Scope
 {
   function init() { self.makeScope (true) };
-
-  function atExit (func)
-  {
-    self.getLazyLocalSlot ("atexit", [], true);
-    self.atexit += [getSlot ("func")]
-  };
 };
 
 
