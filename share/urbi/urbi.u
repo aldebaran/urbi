@@ -52,10 +52,14 @@ do Object
   # Cannot use "from" which is a k1 reserved word.
   function copySlot (frm, to)
   {
-    # This is annoying: one has to specify "self" here, otherwise the
-    # setSlot goes to the locals_ :(
     self.setSlot(to, self.getSlot(frm))
   };
+
+  function cloneSlot (frm, to)
+  {
+    self.setSlot(to, self.getSlot(frm).clone)
+  };
+
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");
 
@@ -69,8 +73,8 @@ do Object
     memSameAs(getSlot("other"))
   };
 
-  copySlot("setSlot", "setVoidSlot").acceptVoid = true;
-  copySlot("updateSlot", "updateVoidSlot").acceptVoid = true;
+  cloneSlot("setSlot", "setVoidSlot").acceptVoid = true;
+  cloneSlot("updateSlot", "updateVoidSlot").acceptVoid = true;
 
   function hasSlot(name)
   {
