@@ -89,7 +89,7 @@ namespace object
       // handle 'self' here, since we first want to see whether it has
       // been captured in the context.
       if (slotName != SYMBOL(self))
-        if (rObject v = obj->own_slot_get(slotName, 0))
+        if (rObject v = obj->own_slot_get(slotName))
         {
           value = v;
           // Return a nonempty optional containing an empty rObject, to
@@ -99,15 +99,15 @@ namespace object
         }
       // If this is a method outer scope, perform special lookup in
       // self and context.
-      if (rObject self = obj->own_slot_get(SYMBOL(self), 0))
+      if (rObject self = obj->own_slot_get(SYMBOL(self)))
       {
 	// FIXME: The 'code' slot is *always* set by the scoping
 	// system, yet the user can still delete it. What kind of
 	// error should we raise when this problem occurs? For now,
 	// just ignore it:
-	if (rObject code = obj->own_slot_get(SYMBOL(code), 0))
+	if (rObject code = obj->own_slot_get(SYMBOL(code)))
 	  // Likewise.
-	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars), 0))
+	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars)))
 	  {
             bool capture = false;
 	    if (captured == nil_class)
@@ -269,10 +269,10 @@ namespace object
       slot_lookup(rObject obj, const Slots::key_type& k, bool value)
       {
 	assertion(obj);
-	if (rObject x = obj->own_slot_get(k, 0))
+	if (rObject x = obj->own_slot_get(k))
 	  return value ? x : obj;
 	if (!fallback)
-          if (rObject f = obj->own_slot_get(SYMBOL(fallback), 0))
+          if (rObject f = obj->own_slot_get(SYMBOL(fallback)))
             fallback = value ? f : obj;
 	return boost::optional<rObject>();
       }
@@ -388,18 +388,11 @@ namespace object
     slots_.update(k, v);
   }
 
-  rObject
-  Object::own_slot_get (const Slots::key_type& k, rObject def)
-  {
-    rObject res = slots_.get(k);
-    return res ? res : def;
-  }
-
   void
   Object::all_slots_copy(const rObject& other)
   {
     foreach (Slots::slot_type slot, other->slots_get())
-      if (!own_slot_get(slot.first, 0))
+      if (!own_slot_get(slot.first))
         slot_set(slot.first, slot.second);
   }
 

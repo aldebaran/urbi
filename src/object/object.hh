@@ -174,10 +174,6 @@ namespace object
     /// protos).
     rObject own_slot_get (const Slots::key_type& k) const;
 
-    /// Get the object pointed to by the *local* slot
-    /// or \a def if it does not exist locally.
-    rObject own_slot_get (const Slots::key_type& k, rObject def);
-
     /// Remove slot.
     Object& slot_remove (const Slots::key_type& k);
     /// Read only access to slots.

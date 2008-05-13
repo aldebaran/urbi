@@ -237,7 +237,7 @@ namespace object
     Slots::key_type slot_name = arg1->value_get ();
 
     // If the slot already exists, return its content.
-    if (rObject slot = args[0]->own_slot_get (slot_name, 0))
+    if (rObject slot = args[0]->own_slot_get (slot_name))
       return slot;
 
     // The slot doesn't exist. Should we create it?
