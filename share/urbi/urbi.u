@@ -61,12 +61,12 @@ do Object
 
   function '==' (other)
   {
-    sameAs(other)
+    sameAs(getSlot("other"))
   };
 
   function '===' (other)
   {
-    memSameAs(other)
+    memSameAs(getSlot("other"))
   };
 
   copySlot("setSlot", "setVoidSlot").acceptVoid = true;
