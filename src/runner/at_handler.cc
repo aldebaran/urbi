@@ -36,8 +36,11 @@ namespace runner
     virtual bool blocked() const;
     void add_job(AtJob*);
   private:
+    void complete_tags(const AtJob&);
+    void rebuild_tags();
     std::list<AtJob*> jobs_;
     bool yielding;
+    scheduler::tags_type tags_;
   };
 
   // There is only one at job handler. It will be created if it doesn't exist
@@ -178,13 +181,41 @@ namespace runner
   bool
   AtHandler::blocked() const
   {
-    return yielding;
+    if (!yielding)
+      return false;
+    foreach (const scheduler::rTag& t, tags_)
+      if (t->blocked())
+	return true;
+    return false;
   }
 
   void
   AtHandler::add_job(AtJob* job)
   {
     jobs_.push_back(job);
+    complete_tags(*job);
+  }
+
+  void
+  AtHandler::rebuild_tags()
+  {
+    tags_.clear();
+    foreach (const AtJob* job, jobs_)
+      complete_tags(*job);
+  }
+
+  void
+  AtHandler::complete_tags(const AtJob& job)
+  {
+    foreach (scheduler::rTag t, job.tags_)
+    {
+      foreach (const scheduler::rTag& u, tags_)
+	if (t == u)
+	  goto already_found;
+      tags_.push_back(t);
+    already_found:
+      ;
+    }
   }
 
   void
