@@ -60,6 +60,22 @@ namespace ast
     return new symbols_type(c);
   }
 
+  template <>
+  inline
+  exps_type*
+  Cloner::recurse_collection<exps_type> (const exps_type& c)
+  {
+    exps_type* res = new exps_type;
+    // We cannot use the container's clone feature, since it uses the
+    // stock AST cloner and none of its specializations, such as the
+    // very needed override from ParametricAst.  As a result, we clone
+    // the meta-ast instead of subsituting the meta-vars with their
+    // actual values.
+    foreach (const Exp& e, c)
+      res->push_back(recurse(e));
+    return res;
+  }
+
 } // namespace ast
 
 #endif // !AST_CLONER_HXX
