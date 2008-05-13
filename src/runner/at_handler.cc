@@ -103,6 +103,13 @@ namespace runner
 	  new_state =
 	    object::is_true(urbi_call(*this, job->condition_, SYMBOL(eval)));
 	}
+	catch (const kernel::exception& ke)
+	{
+	  std::cerr << "at condition triggered an exception: " << ke.what()
+		    << std::endl;
+	  delete job;
+	  continue;
+	}
 	catch (...)
 	{
 	  std::cerr << "at condition triggered an exception\n";
@@ -158,7 +165,7 @@ namespace runner
 	// Ignore this exception, we will check every condition against this
 	// anyway.
       }
-      catch (const std::exception& e)
+      catch (const kernel::exception& e)
       {
 	std::cerr << "at job handler exited with exception " << e.what()
 		  << std::endl;
