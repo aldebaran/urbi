@@ -32,22 +32,35 @@ namespace object
 		    libport::Symbol msg,
 		    objects_type args)
   {
-    assertion(self);
-    rObject message = self->slot_get(msg);
-    if (!message)
-      throw LookupError(msg);
-    args.insert(args.begin(), self);
-    rObject res = r.apply(message, msg, args);
-    assertion(res);
-    return res;
+    return urbi_call_function(r, self, self, msg, args);
   }
 
   rObject urbi_call(runner::Runner& r,
 		    rObject self,
 		    libport::Symbol msg)
   {
+    return urbi_call_function(r, self, self, msg);
+  }
+
+  rObject urbi_call_function(runner::Runner& r, rObject self,
+                             rObject owner, libport::Symbol msg)
+  {
     objects_type args; // Call with no args.
-    return urbi_call(r, self, msg, args);
+    return urbi_call_function(r, self, owner, msg, args);
+  }
+
+  rObject urbi_call_function(runner::Runner& r, rObject self,
+                             rObject owner, libport::Symbol msg,
+                             objects_type args)
+  {
+    assertion(self);
+    rObject message = owner->slot_get(msg);
+    if (!message)
+      throw LookupError(msg);
+    args.insert(args.begin(), self);
+    rObject res = r.apply(message, msg, args);
+    assertion(res);
+    return res;
   }
 
   /*-------.
@@ -415,7 +428,17 @@ namespace object
   std::ostream&
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
-    rObject data = urbi_call(r, self(), SYMBOL(id));
+    rObject data;
+    try
+    {
+      data = urbi_call(r, self(), SYMBOL(id));
+    }
+    catch (object::LookupError&)
+    {
+      // If this is a plain object, it has no 'id' method. Call
+      // Object's 'id' on it.
+      data = urbi_call_function(r, self(), object_class, SYMBOL(id));
+    }
     std::string s = data->value<String>().name_get();
     return o << s;
   }

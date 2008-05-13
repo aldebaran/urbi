@@ -285,10 +285,20 @@ namespace object
   std::pair<rObject, rObject> target(rObject where, const libport::Symbol& name);
 
   /// Helpers to call Urbi functions from C++.
+
+  // self.'msg'
   rObject urbi_call(runner::Runner& r,
                     rObject self, libport::Symbol msg);
+  // self.'msg'(args)
   rObject urbi_call(runner::Runner& r,
 		    rObject self, libport::Symbol msg, objects_type args);
+  // owner.getSlot(msg).apply([self])
+  rObject urbi_call_function(runner::Runner& r, rObject self,
+                             rObject function_owner, libport::Symbol msg);
+  // owner.getSlot(msg).apply([self, args])
+  rObject urbi_call_function(runner::Runner& r, rObject self,
+                             rObject function_owner, libport::Symbol msg,
+                             objects_type args);
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
   template<class F> bool for_all_protos(rObject& r, F& f);
