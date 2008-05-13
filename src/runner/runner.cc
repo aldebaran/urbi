@@ -135,15 +135,16 @@ namespace runner
     symbol_queue_type res;
     while (!dynamic_cast<const ast::Implicit*>(e))
     {
-      const ast::Call* c = dynamic_cast<const ast::Call*> (e);
+      const ast::Call* c = dynamic_cast<const ast::Call*>(e);
       if (!c || c->args_get ().size () != 1)
-	throw object::ImplicitTagComponentError (e->location_get ());
+	throw object::ImplicitTagComponentError(e->location_get());
       res.push_front (c->name_get ());
-      e = c->args_get ().front ();
+      e = &c->args_get().front();
     }
     assert (!res.empty ());
     return res;
   }
+
 
   void
   Runner::show_error_ (const object::UrbiException& ue)
@@ -393,23 +394,23 @@ namespace runner
 				    bool check_void)
   {
     bool tail = false;
-    foreach (const ast::Exp* arg, ue_args)
+    foreach (const ast::Exp& arg, ue_args)
     {
       // Skip target, the first argument.
       if (!tail++)
 	continue;
-      eval (*arg);
+      eval (arg);
       // Check if any argument is void. This will be checked again in
       // Runner::apply, yet raising exception here gives better
       // location (the argument and not the whole function invocation).
       if (check_void && current_ == object::void_class)
       {
 	object::WrongArgumentType e("");
-	e.location_set(arg->location_get());
+	e.location_set(arg.location_get());
 	throw e;
       }
 
-      passert ("argument without a value: " << *arg, current_);
+      passert ("argument without a value: " << arg, current_);
       args.push_back (current_);
     }
   }
@@ -449,17 +450,15 @@ namespace runner
   {
     // Build the list of lazy arguments
     object::objects_type lazy_args;
-
-    foreach (const ast::Exp* e, args)
+    boost::sub_range<const ast::exps_type> range(args);
+    // The target can be unspecified.
+    if (dynamic_cast<const ast::Implicit*>(&args.front()))
     {
-      // The target can be unspecified
-      if (dynamic_cast<const ast::Implicit*>(e))
-      {
-	lazy_args.push_back(object::nil_class);
-	continue;
-      }
-      lazy_args.push_back(object::mkLazy(*this, *e));
+      lazy_args.push_back(object::nil_class);
+      range = make_iterator_range(range, 1, 0);
     }
+    foreach (const ast::Exp& e, range)
+      lazy_args.push_back(object::mkLazy(*this, e));
 
     return build_call_message(tgt, msg, lazy_args);
   }
@@ -481,12 +480,12 @@ namespace runner
   {
     // The invoked slot (probably a function).
     rObject val;
-    // The target of the message
+    // The target of the message.
     rObject tgt;
     try
     {
       std::pair<rObject, rObject> lookup =
-        target(e.args_get().front(), e.name_get());
+        target(&e.args_get().front(), e.name_get());
       tgt = lookup.first;
       val = lookup.second;
     }
@@ -657,15 +656,11 @@ namespace runner
   void
   Runner::operator() (const ast::List& e)
   {
-    object::List::value_type values;
-
+    object::List::value_type res;
     // Evaluate every expression in the list
-    foreach (const ast::Exp* i, e.value_get())
-    {
-      operator() (*i);
-      values.push_back(current_);
-    }
-    current_ = object::List::fresh(values);
+    foreach (const ast::Exp& c, e.value_get())
+      res.push_back(eval(c));
+    current_ = object::List::fresh(res);
     //ECHO ("result: " << *current_);
   }
 
@@ -701,27 +696,25 @@ namespace runner
     // In case we're empty.
     current_ = object::void_class;
 
-    bool first_iteration = true;
-    foreach (const ast::Exp* i, e.children_get ())
+    bool tail = false;
+    foreach (const ast::Exp& c, e.children_get())
     {
       // Allow some time to pass before we execute what follows.  If
       // we don't do this, the ;-operator would act almost like the
       // |-operator because it would always start to execute its RHS
       // immediately. However, we don't want to do it before the first
       // statement or if we only have one statement in the scope.
-      if (first_iteration)
-	first_iteration = false;
-      else
+      if (tail++)
 	YIELD ();
 
       current_.reset ();
-      JAECHO ("child", *i);
+      JAECHO ("child", c);
 
-      if (dynamic_cast<const ast::Stmt*>(i) &&
-	  dynamic_cast<const ast::Stmt*>(i)->flavor_get() == ast::flavor_comma)
+      if (dynamic_cast<const ast::Stmt*>(&c) &&
+	  dynamic_cast<const ast::Stmt*>(&c)->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are
-	Runner* subrunner = new Runner(*this, i);
+	Runner* subrunner = new Runner(*this, &c);
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
@@ -736,9 +729,9 @@ namespace runner
 	    // Propagate potential errors
 	    try
 	    {
-	      operator() (i);
+	      operator() (c);
 	    }
-	    PROPAGATE_EXCEPTION(e.location_get(), )
+	    PROPAGATE_EXCEPTION(e.location_get(), {})
           }
 	  CATCH_FLOW_EXCEPTION(ast::BreakException,
 			       "break", "outside a loop")
@@ -749,14 +742,15 @@ namespace runner
 	  {
 	    try
 	    {
-	      ECHO ("toplevel: returning a result to the connection.");
 	      assertion(current_);
+	      ECHO("toplevel: returning a result to the connection.");
 	      lobby_->value_get ().connection.new_result (current_);
-	      current_.reset ();
+              current_.reset ();
 	    }
 	    catch (std::exception &ke)
 	    {
-	      std::cerr << "Exception when printing result: " << ke.what() << std::endl;
+	      std::cerr << "Exception when printing result: "
+                        << ke.what() << std::endl;
 	    }
 	    catch (object::UrbiException& e)
 	    {
@@ -764,7 +758,8 @@ namespace runner
 	    }
 	    catch (...)
 	    {
-	      std::cerr << "Unknown exception when printing result\n";
+	      std::cerr << "Unknown exception when printing result"
+                        << std::endl;
 	    }
 	  }
 	}

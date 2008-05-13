@@ -78,10 +78,11 @@ namespace parser
     passert(tweast_, !tweast_);
     tweast_ = &t;
     if (getenv("DESUGAR"))
-      LIBPORT_ECHO("Desugar " << t);
+      LIBPORT_ECHO("Desugar in:" << t);
     int res = parse (t.input_get());
     tweast_ = 0;
-
+    if (getenv("DESUGAR"))
+      LIBPORT_ECHO("Desugar out:" << *ast_);
     // We need the parse errors now.
     dump_errors();
     return res;

@@ -117,7 +117,7 @@
     ast_call (const loc& l,
 	      ast::Exp* target, libport::Symbol method, ast::exps_type* args)
     {
-      args->push_front (target);
+      args->push_front(target);
       ast::Call* res = new ast::Call(l, method, args);
       return res;
     }
@@ -193,11 +193,10 @@
       }
       else
       {
+        // FIXME: We leak lvalue itself.
 	ast::Call* call =
 	  ast_call(l,
-		   // The target.
-		   lvalue->args_get().front(),
-		   change,
+		   &lvalue->args_get().front(), change,
 		   new ast::String(lvalue->location_get(), lvalue->name_get()));
 	if (value)
 	  call->args_get().push_back(value);
@@ -712,13 +711,14 @@ stmt:
   "class" lvalue block
     {
       ::parser::Tweast tweast;
-      libport::Symbol owner = libport::Symbol::fresh(libport::Symbol("__class_"));
+      libport::Symbol owner = libport::Symbol::fresh(SYMBOL(__class__));
       ast::Call* target = $2;
-      if (!dynamic_cast<ast::Implicit*>($2->args_get().front()))
+      if (!dynamic_cast<ast::Implicit*>(&$2->args_get().front()))
       {
         // If the lvalue call is qualified, we need to store the
         // target in a variable to avoid evaluating it several times.
-        tweast << "var " << owner << " = " << new_clone($2->args_get().front()) << "|";
+        tweast << "var " << owner
+               << " = " << new_clone($2->args_get().front()) << "|";
         ast::exps_type* args2 = new ast::exps_type();
         args2->push_back(new ast::Implicit(@2));
         ast::exps_type* args = new ast::exps_type();
@@ -912,7 +912,8 @@ expr:
 stmt:
   lvalue "->" id "=" expr
     {
-      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(setProperty),
+      // FIXME: We leak lvalue itself.
+      $$ = ast_call(@$, &$1->args_get().front(), SYMBOL(setProperty),
 		    new ast::String(@1, $1->name_get()),
 		    new ast::String(@3, $3.value()),
 		    $5);
@@ -922,7 +923,8 @@ stmt:
 expr:
   lvalue "->" id
     {
-      $$ = ast_call(@$, $1->args_get().front(), SYMBOL(getProperty),
+      // FIXME: lvalue leaks.
+      $$ = ast_call(@$, &$1->args_get().front(), SYMBOL(getProperty),
 		    new ast::String(@1, $1->name_get()),
 		    new ast::String(@3, $3.value()));
     }
@@ -1129,7 +1131,7 @@ call:
   lvalue args
     {
       $$ = $1;
-      $$->args_get().splice($$->args_get().end(), *$2);
+      $$->args_get().transfer($$->args_get().end(), *$2);
       $$->location_set(@$);
     }
 ;
