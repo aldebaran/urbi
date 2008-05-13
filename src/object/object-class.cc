@@ -152,7 +152,7 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     FETCH_ARG (1, List);
-    if (arg1->value_get ().size () != 1)
+    if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
       throw PrimitiveError ("apply", "first argument must be [self]");
     return arg1->value_get ().front ();
   }
