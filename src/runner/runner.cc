@@ -767,6 +767,10 @@ namespace runner
 	    {
 	      std::cerr << "Exception when printing result: " << ke.what() << std::endl;
 	    }
+	    catch (object::UrbiException& e)
+	    {
+	      show_error_(e);
+	    }
 	    catch (...)
 	    {
 	      std::cerr << "Unknown exception when printing result\n";
