@@ -66,6 +66,7 @@ namespace runner
     while (true)
     {
       non_interruptible_set(true);
+      yielding = false;
 
       // We have been woken up, either because we may have something to do
       // or because some tag conditions have changed.
@@ -152,6 +153,8 @@ namespace runner
       }
 
       non_interruptible_set(false);
+      check_for_blocked = false;
+      yielding = true;
 
       // Go to sleep
       try
@@ -160,10 +163,7 @@ namespace runner
 	// catching the exception. If, by mistake, a condition evaluation
 	// yields and is blocked, we do not want it to get the bogus
         // exception.
-	check_for_blocked = false;
-	yielding = true;
 	yield_until_things_changed();
-	yielding = false;
       }
       catch (const scheduler::BlockedException& e)
       {
