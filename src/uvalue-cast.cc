@@ -54,7 +54,7 @@ urbi::UValue uvalue_cast(object::rObject o)
       res.type = urbi::DATA_LIST;
       res.list = new urbi::UList;
       object::List::value_type& t = o.cast<object::List>()->value_get();
-      BOOST_FOREACH(object::rObject co, t)
+      foreach (const object::rObject& co, t)
 	res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
     }
     break;

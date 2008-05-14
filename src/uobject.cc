@@ -176,7 +176,7 @@ UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
 {
   urbi::UList l;
   bool first = true;
-  BOOST_FOREACH(rObject co, ol)
+  foreach (const rObject& co, ol)
   {
     if (first)
     {
@@ -246,7 +246,7 @@ uobject_new(rObject proto, bool forceName)
   }
   uobject_map[name] = r;
   // Instanciate UObject.
-  BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+  foreach (urbi::baseURBIStarter* i, *urbi::objectlist)
   {
     if (i->name == cname)
     {

@@ -117,7 +117,7 @@ namespace scheduler
   bool
   Job::frozen () const
   {
-    foreach (rTag tag, tags_)
+    foreach (const rTag& tag, tags_)
       if (tag->frozen ())
 	return true;
     return false;
@@ -126,7 +126,7 @@ namespace scheduler
   bool
   Job::blocked () const
   {
-    foreach (rTag tag, tags_)
+    foreach (const rTag& tag, tags_)
       if (tag->blocked ())
 	return true;
     return false;

@@ -8,14 +8,13 @@
 #include <fstream>
 #include <algorithm>
 
-#include <boost/foreach.hpp>
-
 #include <libport/cli.hh>
+#include <libport/exception.hh>
+#include <libport/foreach.hh>
 #include <libport/program-name.hh>
+#include <libport/read-stdin.hh>
 #include <libport/tokenizer.hh>
 #include <libport/utime.hh>
-#include <libport/read-stdin.hh>
-#include <libport/exception.hh>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
@@ -35,14 +34,14 @@ public:
     {
       std::string up(cp);
       std::list<std::string> paths;
-      BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
+      foreach (const std::string& s, libport::make_tokenizer(up, ":"))
       {
 	if (s[0] == '\\' && paths.back().length() == 1)
 	  paths.back() += ':' + s;
 	else
 	  paths.push_back(s);
       }
-      BOOST_FOREACH (const std::string& s, paths)
+      foreach (const std::string& s, paths)
 	search_path.append_dir(s);
     }
   }

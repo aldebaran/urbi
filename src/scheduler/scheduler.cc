@@ -206,7 +206,7 @@ namespace scheduler
     libport::utime_t deadline = execute_round (true);
 
     // Reset tags to their real blocked value and reset the list.
-    foreach (tag_state_type t, stopped_tags_)
+    foreach (const tag_state_type& t, stopped_tags_)
       t.first->set_blocked (t.second);
     stopped_tags_.clear ();
 

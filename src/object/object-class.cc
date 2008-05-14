@@ -5,6 +5,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
+#include <libport/foreach.hh>
 #include <libport/tokenizer.hh>
 
 #include "kernel/uconnection.hh"
@@ -57,7 +58,7 @@ namespace object
     boost::tokenizer< boost::char_separator<char> > tok =
       libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
-    BOOST_FOREACH(std::string line, tok)
+    foreach(const std::string& line, tok)
       r.lobby_get()->value_get().connection.send (
 	(system_header+line+"\n").c_str(), tag.c_str());
     return void_class;

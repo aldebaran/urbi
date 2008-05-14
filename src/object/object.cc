@@ -404,7 +404,7 @@ namespace object
   void
   Object::all_slots_copy(const rObject& other)
   {
-    foreach (Slots::slot_type slot, other->slots_get())
+    foreach (const Slots::slot_type& slot, other->slots_get())
       if (!own_slot_get(slot.first))
         slot_set(slot.first, slot.second);
   }
@@ -451,7 +451,7 @@ namespace object
     {
       o << "protos = ";
       bool tail = false;
-      foreach (rObject p, *protos_)
+      foreach (const rObject& p, *protos_)
       {
 	if (tail++)
 	  o << ", ";
@@ -478,7 +478,7 @@ namespace object
     o << " {" << libport::incendl;
     protos_dump(o, runner);
     special_slots_dump (o, runner);
-    foreach(Slots::slot_type s, slots_.container())
+    foreach(const Slots::slot_type& s, slots_.container())
     {
       o << s.first << " = ";
       s.second->dump(o, runner) << libport::iendl;

@@ -347,7 +347,7 @@ namespace runner
     if (!acceptVoid(func))
     {
       bool first = true;
-      foreach (rObject arg, args)
+      foreach (const rObject& arg, args)
       {
 	if (!first && arg == object::void_class)
 	  throw object::WrongArgumentType (msg);
@@ -559,7 +559,7 @@ namespace runner
     bool first_iteration = true;
 
     // Iterate on each value.
-    foreach (const rObject o, content)
+    foreach (const rObject& o, content)
     {
       // Define a new local scope for each loop, and set the index.
       rObject locals = object::Object::fresh();
@@ -603,7 +603,7 @@ namespace runner
     }
 
     // Wait for all runners to terminate.
-    foreach(scheduler::rJob r, runners)
+    foreach(const scheduler::rJob& r, runners)
       yield_until_terminated(*r);
 
     // For the moment return void.
@@ -789,7 +789,7 @@ namespace runner
     // FIXME: There is a memory leak if the Nary is a toplevel one.
     if (!e.toplevel_get ())
     {
-      foreach(scheduler::rJob r, runners)
+      foreach(const scheduler::rJob& r, runners)
 	yield_until_terminated(*r);
     }
 
