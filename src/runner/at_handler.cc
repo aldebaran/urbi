@@ -8,17 +8,20 @@
 namespace runner
 {
 
-  struct AtJob
+  class AtJob
   {
+  public:
     AtJob(rObject condition, rObject clause, rObject on_leave,
-	  scheduler::tags_type tags) :
-      condition_(condition),
-      clause_(clause),
-      on_leave_(on_leave),
-      triggered_(false),
-      tags_(tags)
-      {
-      }
+	  scheduler::tags_type tags);
+    bool blocked() const;
+    bool frozen() const;
+    const rObject& condition_get() const;
+    const rObject& clause_get() const;
+    const rObject& on_leave_get() const;
+    bool triggered_get() const;
+    void triggered_set(bool);
+    const scheduler::tags_type& tags_get() const;
+  private:
     rObject condition_;
     rObject clause_;
     rObject on_leave_;
@@ -38,7 +41,8 @@ namespace runner
   private:
     void complete_tags(const AtJob&);
     void rebuild_tags();
-    std::list<AtJob*> jobs_;
+    typedef std::vector<AtJob*> at_jobs_type;
+    at_jobs_type jobs_;
     bool yielding;
     scheduler::tags_type tags_;
   };
@@ -47,9 +51,9 @@ namespace runner
   // and destroyed when it has no more jobs to handle.
   static AtHandler* at_job_handler;
 
-  AtHandler::AtHandler(const Runner& model) :
-    Runner(model, 0),
-    yielding(false)
+  AtHandler::AtHandler(const Runner& model)
+    : Runner(model, 0),
+      yielding(false)
   {
   }
 
@@ -73,32 +77,33 @@ namespace runner
       // We have been woken up, either because we may have something to do
       // or because some tag conditions have changed.
 
-      std::list<AtJob*> pending;
-      swap(jobs_, pending);
+      at_jobs_type pending;
+      pending.reserve(jobs_.size());
+
+      // If we have to check for blocked jobs, do it at the beginning
+      // to make sure we do not miss a "stop" because some condition
+      // evaluation mistakenly reenters the scheduler. So instead of
+      // just swapping pending_ and jobs, we will build pending using
+      // the unblocked jobs.
+
+      if (check_for_blocked)
+      {
+	foreach(AtJob* job, jobs_)
+	  if (job->blocked())
+	  {
+	    tags_need_rebuilding = true;
+	    delete job;
+	  }
+	  else
+	    pending.push_back(job);
+      }
+      else // Use all jobs, none has been blocked
+	swap(jobs_, pending);
 
       foreach (AtJob* job, pending)
       {
-	bool blocked = false;
-	bool frozen = false;
-	foreach (const scheduler::rTag& tag, job->tags_)
-	{
-	  // Checking for a blocked state may be costly, so skip it when we
-	  // know for sure that none of our at jobs can be blocked.
-	  if (check_for_blocked)
-	    blocked |= tag->blocked();
-	  frozen  |= tag->frozen();
-	}
-
-	// If job has been blocked or stopped, we will not keep it any longer.
-	if (blocked)
-	{
-	  tags_need_rebuilding = true;
-	  delete job;
-	  continue;
-	}
-
 	// If job has been frozen, we will not consider it for the moment.
-	if (frozen)
+	if (job->frozen())
 	{
 	  jobs_.push_back(job);
 	  continue;
@@ -109,7 +114,7 @@ namespace runner
 	try
 	{
 	  new_state =
-	    object::is_true(urbi_call(*this, job->condition_, SYMBOL(eval)));
+	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)));
 	}
 	catch (const kernel::exception& ke)
 	{
@@ -125,7 +130,7 @@ namespace runner
 	  delete job;
 	  continue;
 	}
-	if (new_state == job->triggered_)
+	if (new_state == job->triggered_get())
 	{
 	  jobs_.push_back(job);
 	  continue;
@@ -134,18 +139,20 @@ namespace runner
 	// There has been a change in the condition, act accordingly depending
 	// on whether we have seen a rising or a falling edge and save the
 	// condition evaluation result.
-	rObject to_launch = new_state ? job->clause_ : job->on_leave_;
+	const rObject& to_launch =
+	  new_state ? job->clause_get() : job->on_leave_get();
 	if (to_launch != object::nil_class)
 	{
 	  // Temporarily install the needed tags as the current tags.
-	  tags_set(job->tags_);
+	  tags_set(job->tags_get());
+
 	  // We do not need to check for an exception here as "detach",
 	  // which is the function being called, will not throw and any
 	  // exception thrown in the detached runner will not be caught
 	  // here anyway.
 	  urbi_call(*this, to_launch, SYMBOL(eval));
 	}
-	job->triggered_ = new_state;
+	job->triggered_set(new_state);
 	jobs_.push_back(job);
       }
 
@@ -227,7 +234,7 @@ namespace runner
   void
   AtHandler::complete_tags(const AtJob& job)
   {
-    foreach (scheduler::rTag t, job.tags_)
+    foreach (scheduler::rTag t, job.tags_get())
     {
       foreach (const scheduler::rTag& u, tags_)
 	if (t == u)
@@ -236,6 +243,70 @@ namespace runner
     already_found:
       ;
     }
+  }
+
+  AtJob::AtJob(rObject condition, rObject clause, rObject on_leave,
+	       scheduler::tags_type tags)
+    : condition_(condition),
+      clause_(clause),
+      on_leave_(on_leave),
+      triggered_(false),
+      tags_(tags)
+  {
+  }
+
+  bool
+  AtJob::blocked() const
+  {
+    foreach(const scheduler::rTag& tag, tags_)
+      if (tag->blocked())
+	return true;
+    return false;
+  }
+
+  bool
+  AtJob::frozen() const
+  {
+    foreach(const scheduler::rTag& tag, tags_)
+      if (tag->frozen())
+	return true;
+    return false;
+  }
+
+  const rObject&
+  AtJob::condition_get() const
+  {
+    return condition_;
+  }
+
+  const rObject&
+  AtJob::clause_get() const
+  {
+    return clause_;
+  }
+
+  const rObject&
+  AtJob::on_leave_get() const
+  {
+    return on_leave_;
+  }
+
+  bool
+  AtJob::triggered_get() const
+  {
+    return triggered_;
+  }
+
+  void
+  AtJob::triggered_set(bool t)
+  {
+    triggered_ = t;
+  }
+
+  const scheduler::tags_type&
+  AtJob::tags_get() const
+  {
+    return tags_;
   }
 
   void
