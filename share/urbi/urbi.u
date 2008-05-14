@@ -374,17 +374,15 @@ do Object
     t.setSideEffectFree (false)
   };
 
-  # persist takes an expression and a delay, and return an object
+  # persist takes an expression and a delay, and returns an object
   # whose val slot evaluates to true if the expression has been
   # continously true for this delay and false otherwise.
   #
-  # This function will be used to implement
+  # This function is used to implement
   #   at (condition ~ delay) action [onleave leaveaction]
   # as
   #   var u = persist (condition, delay);
   #   at (u.val) action [onleave leaveaction]
-  #
-  # but this will require the assistance from the parser (FIXME: do it)
   #
   # FIXME: We need a way to scope the "at" and destroy it when "o" is
   # no longer visible.
