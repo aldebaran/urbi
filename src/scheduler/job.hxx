@@ -125,13 +125,6 @@ namespace scheduler
     other->links_.push_back (this);
   }
 
-  inline void
-  Job::unlink (Job* other)
-  {
-    links_.remove (other);
-    other->links_.remove (this);
-  }
-
   inline const libport::Symbol&
   Job::name_get () const
   {

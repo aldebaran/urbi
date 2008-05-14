@@ -47,11 +47,10 @@ namespace scheduler
     catch (const kernel::exception& e)
     {
       // Signal the exception to each linked job in turn.
-      jobs_type to_signal = links_;
-      foreach (Job* job, to_signal)
+      foreach (Job* job, links_)
       {
-	  unlink (job);
-	  job->async_throw (e);
+	job->links_.remove (this);
+	job->async_throw (e);
       }
     }
     catch (...)

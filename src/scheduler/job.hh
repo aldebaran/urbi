@@ -212,19 +212,10 @@ namespace scheduler
     /// may be raised from here if the job has been blocked by a tag.
     void check_for_pending_exception ();
 
-    /// Establish a bi-directional link between two jobs.
+    /// Establish a permanent bi-directional link between two jobs.
     ///
     /// \param other The job to link to.
-    ///
-    /// \sa unlink()
     void link (Job* other);
-
-    /// Destroy a bi-directional link if it exists.
-    ///
-    /// \param other The job to unlink from.
-    ///
-    /// \sa link()
-    void unlink (Job* other);
 
     /// Get the job name
     ///
