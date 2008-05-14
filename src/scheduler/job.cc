@@ -44,7 +44,7 @@ namespace scheduler
       }
       terminate ();
     }
-    catch (kernel::exception &e)
+    catch (const kernel::exception& e)
     {
       // Signal the exception to each linked job in turn.
       jobs_type to_signal = links_;
@@ -83,7 +83,7 @@ namespace scheduler
     foreach (Job* job, to_wake_up_)
       job->state_set (running);
     to_wake_up_.clear ();
-    // Return to the scheduler and release sole reference
+    // Return to the scheduler and release the possibly sole reference.
     scheduler_->take_job_reference (myself_);
     state_ = zombie;
     scheduler_->resume_scheduler (this);
@@ -108,7 +108,8 @@ namespace scheduler
   Job::yield_until_things_changed ()
   {
     if (non_interruptible_ && !frozen ())
-      throw object::SchedulingError ("attempt to wait for condition changes in non-interruptible code");
+      throw object::SchedulingError
+	("attempt to wait for condition changes in non-interruptible code");
 
     state_ = waiting;
     scheduler_->resume_scheduler (this);
@@ -160,7 +161,7 @@ namespace scheduler
     {
       current_exception_ = pending_exception_;
       pending_exception_ = 0;
-      // If an exception is propagated, it may have side effects
+      // If an exception is propagated, it may have side effects.
       side_effect_free_ = false;
       kernel::rethrow (current_exception_);
     }

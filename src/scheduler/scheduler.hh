@@ -53,13 +53,6 @@ namespace scheduler
     /// is going to terminate.
     void killall_jobs ();
 
-    /// Unschedule a job on its way to deletion.
-    ///
-    /// \param job The job to unschedule. It must not be the currently
-    ///        executing job. This function must be called only from
-    ///        \a job destructor.
-    void unschedule_job (Job* job);
-
     /// Resume scheduler execution.
     ///
     /// \param job Job currently being executed. This job will relinquish

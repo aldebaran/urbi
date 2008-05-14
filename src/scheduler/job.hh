@@ -49,12 +49,7 @@ namespace scheduler
   ///                                returned or because an exception
   ///                                has been thrown from work()
   ///
-  /// When the job destructor is called, it will call the
-  /// Scheduler::unschedule() routine on its scheduler which will take
-  /// care of removing it from all the working queues. The job will
-  /// then free the space allocated for its coroutine structure.
-  ///
-  /// However, due to the way coroutines work, a job may not delete itself
+  /// Due to the way coroutines work, a job may not delete itself
   /// as once the coroutine structure has been freed, it is illegal to
   /// continue its execution, even only to switch to another coroutine.
   /// And if a job switches back to the scheduler before terminating its

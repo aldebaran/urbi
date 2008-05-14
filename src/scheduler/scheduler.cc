@@ -284,21 +284,6 @@ namespace scheduler
       job->terminate_now ();
   }
 
-  void
-  Scheduler::unschedule_job (Job* job)
-  {
-    assert (job);
-    assert (job != current_job_);
-
-    ECHO ("unscheduling job " << *job);
-
-    // Remove the job from the queue.
-    jobs_.remove (job);
-
-    // Remove it from live queues as well if the job is destroyed.
-    pending_.remove (job);
-  }
-
   void Scheduler::signal_stop (rTag t)
   {
     bool previous_state = t->own_blocked ();

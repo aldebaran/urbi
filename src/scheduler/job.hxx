@@ -47,7 +47,6 @@ namespace scheduler
   inline
   Job::~Job ()
   {
-    scheduler_->unschedule_job (this);
     pending_exception_ = 0;
     coroutine_free (coro_);
   }
