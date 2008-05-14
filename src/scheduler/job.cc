@@ -79,8 +79,9 @@ namespace scheduler
     foreach (Job* job, links_)
       job->links_.remove (this);
     // Wake-up waiting jobs.
-    foreach (Job* job, to_wake_up_)
-      job->state_set (running);
+    foreach (rJob job, to_wake_up_)
+      if (!job->terminated())
+	job->state_set (running);
     to_wake_up_.clear ();
     // Return to the scheduler and release the possibly sole reference.
     scheduler_->take_job_reference (myself_);
@@ -97,7 +98,7 @@ namespace scheduler
 
     if (!other.terminated ())
     {
-      other.to_wake_up_.push_back (this);
+      other.to_wake_up_.push_back (myself_get());
       state_ = joining;
       scheduler_->resume_scheduler (this);
     }

@@ -7,6 +7,7 @@
 # define SCHEDULER_JOB_HH
 
 # include <iosfwd>
+# include <vector>
 
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
@@ -366,7 +367,7 @@ namespace scheduler
     libport::Symbol name_;
 
     /// Other jobs to wake up when we terminate.
-    jobs_type to_wake_up_;
+    std::vector<rJob> to_wake_up_;
 
     /// Coro structure corresponding to this job.
     Coro* coro_;
