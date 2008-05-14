@@ -4,7 +4,7 @@
 #include <list>
 
 #include <boost/bind.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/ptr_container/ptr_list.hpp>
 
 #include "scheduler/tag.hh"
 
@@ -44,7 +44,7 @@ namespace runner
   private:
     void complete_tags(const AtJob&);
     void rebuild_tags();
-    typedef boost::ptr_vector<AtJob> at_jobs_type;
+    typedef boost::ptr_list<AtJob> at_jobs_type;
     at_jobs_type jobs_;
     bool yielding;
     scheduler::tags_type tags_;
