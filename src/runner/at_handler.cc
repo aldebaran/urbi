@@ -3,6 +3,9 @@
 #include <iostream>
 #include <list>
 
+#include <boost/bind.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+
 #include "scheduler/tag.hh"
 
 namespace runner
@@ -41,7 +44,7 @@ namespace runner
   private:
     void complete_tags(const AtJob&);
     void rebuild_tags();
-    typedef std::vector<AtJob*> at_jobs_type;
+    typedef boost::ptr_vector<AtJob> at_jobs_type;
     at_jobs_type jobs_;
     bool yielding;
     scheduler::tags_type tags_;
@@ -59,53 +62,38 @@ namespace runner
 
   AtHandler::~AtHandler()
   {
+    jobs_.release();
   }
 
   void
   AtHandler::work()
   {
     bool check_for_blocked = true;
-    bool tags_need_rebuilding;
+    bool tags_need_rebuilding = false;
     side_effect_free_set(true);
 
     while (true)
     {
       non_interruptible_set(true);
       yielding = false;
-      tags_need_rebuilding = false;
-
-      // We have been woken up, either because we may have something to do
-      // or because some tag conditions have changed.
-
-      at_jobs_type pending;
-      pending.reserve(jobs_.size());
 
       // If we have to check for blocked jobs, do it at the beginning
       // to make sure we do not miss a "stop" because some condition
-      // evaluation mistakenly reenters the scheduler. So instead of
-      // just swapping pending_ and jobs, we will build pending using
-      // the unblocked jobs.
+      // evaluation mistakenly reenters the scheduler. We know that we
+      // have to check for blocked jobs because we have had an indication
+      // that tags needed to be rebuilt.
 
-      if (check_for_blocked)
-      {
-	foreach(AtJob* job, jobs_)
-	  if (job->blocked())
-	  {
-	    tags_need_rebuilding = true;
-	    delete job;
-	  }
-	  else
-	    pending.push_back(job);
-      }
-      else // Use all jobs, none has been blocked
-	swap(jobs_, pending);
+      if (tags_need_rebuilding)
+	jobs_.erase_if(boost::bind(&AtJob::blocked, _1));
 
-      foreach (AtJob* job, pending)
+      for (at_jobs_type::iterator job = jobs_.begin();
+	   job != jobs_.end();
+	   /* Do not increment as we will also use erase() to advance */)
       {
 	// If job has been frozen, we will not consider it for the moment.
 	if (job->frozen())
 	{
-	  jobs_.push_back(job);
+	  ++job;
 	  continue;
 	}
 
@@ -121,18 +109,18 @@ namespace runner
 	  std::cerr << "at condition triggered an exception: " << ke.what()
 		    << std::endl;
 	  tags_need_rebuilding = true;
-	  delete job;
+	  job = jobs_.erase(job);
 	  continue;
 	}
 	catch (...)
 	{
 	  std::cerr << "at condition triggered an exception\n";
-	  delete job;
+	  job = jobs_.erase(job);
 	  continue;
 	}
 	if (new_state == job->triggered_get())
 	{
-	  jobs_.push_back(job);
+	  ++job;
 	  continue;
 	}
 
@@ -153,7 +141,7 @@ namespace runner
 	  urbi_call(*this, to_launch, SYMBOL(eval));
 	}
 	job->triggered_set(new_state);
-	jobs_.push_back(job);
+	++job;
       }
 
       // If we have no more jobs, we can destroy ourselves.
@@ -170,6 +158,7 @@ namespace runner
       // Rebuild tags if our list of jobs has changed.
       if (tags_need_rebuilding)
 	rebuild_tags();
+      tags_need_rebuilding = false;
 
       // Go to sleep
       try
@@ -183,7 +172,7 @@ namespace runner
       catch (const scheduler::BlockedException& e)
       {
 	// We have at least one "at" job which needs to be blocked.
-	check_for_blocked = true;
+	tags_need_rebuilding = true;
       }
       catch (const kernel::exception& e)
       {
@@ -227,8 +216,8 @@ namespace runner
   AtHandler::rebuild_tags()
   {
     tags_.clear();
-    foreach (const AtJob* job, jobs_)
-      complete_tags(*job);
+    foreach (const AtJob& job, jobs_)
+      complete_tags(job);
   }
 
   void
