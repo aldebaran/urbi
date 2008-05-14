@@ -61,12 +61,14 @@ namespace runner
   AtHandler::work()
   {
     bool check_for_blocked = true;
+    bool tags_need_rebuilding;
     side_effect_free_set(true);
 
     while (true)
     {
       non_interruptible_set(true);
       yielding = false;
+      tags_need_rebuilding = false;
 
       // We have been woken up, either because we may have something to do
       // or because some tag conditions have changed.
@@ -90,6 +92,7 @@ namespace runner
 	// If job has been blocked or stopped, we will not keep it any longer.
 	if (blocked)
 	{
+	  tags_need_rebuilding = true;
 	  delete job;
 	  continue;
 	}
@@ -112,6 +115,7 @@ namespace runner
 	{
 	  std::cerr << "at condition triggered an exception: " << ke.what()
 		    << std::endl;
+	  tags_need_rebuilding = true;
 	  delete job;
 	  continue;
 	}
@@ -155,6 +159,10 @@ namespace runner
       non_interruptible_set(false);
       check_for_blocked = false;
       yielding = true;
+
+      // Rebuild tags if our list of jobs has changed.
+      if (tags_need_rebuilding)
+	rebuild_tags();
 
       // Go to sleep
       try
