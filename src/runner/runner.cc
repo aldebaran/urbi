@@ -714,7 +714,9 @@ namespace runner
 	  dynamic_cast<const ast::Stmt*>(&c)->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are
-	Runner* subrunner = new Runner(*this, &c);
+        // FIXME: We must clone here since the nary will be
+        // cleared. Yet taking the node from the nary would be better.
+	Runner* subrunner = new Runner(*this, new_clone(c));
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
