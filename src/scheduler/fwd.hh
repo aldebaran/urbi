@@ -6,8 +6,6 @@
 #ifndef SCHEDULER_FWD_HH
 # define SCHEDULER_FWD_HH
 
-# include <list>
-
 # include <libport/shared-ptr.hh>
 
 # include "kernel/exception.hh"
@@ -17,7 +15,6 @@ namespace scheduler
 
   class Scheduler;
   class Job;
-  typedef std::list<Job*> jobs_type;
   typedef libport::shared_ptr<Job> rJob;
   class Tag;
   typedef libport::shared_ptr<Tag> rTag;

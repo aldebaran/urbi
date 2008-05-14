@@ -6,6 +6,8 @@
 #ifndef SCHEDULER_SCHEDULER_HH
 # define SCHEDULER_SCHEDULER_HH
 
+# include <vector>
+
 # include <boost/function.hpp>
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
@@ -122,10 +124,10 @@ namespace scheduler
     /// List of jobs we are in charge of. During a cycle execution,
     /// this is where jobs will accumulate themselves after they have
     /// been executed.
-    jobs_type jobs_;
+    std::vector<Job*> jobs_;
 
     /// List of jobs currently being scheduled during the current round.
-    jobs_type pending_;
+    std::vector<Job*> pending_;
 
     /// Current job.
     Job* current_job_;

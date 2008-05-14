@@ -7,6 +7,7 @@
 # define SCHEDULER_JOB_HH
 
 # include <iosfwd>
+# include <list>
 # include <vector>
 
 # include <libport/symbol.hh>
@@ -377,8 +378,9 @@ namespace scheduler
 
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the
-    /// exception as well when they resume.
-    jobs_type links_;
+    /// exception as well when they resume. This must be a list, as
+    /// we may remove elements while we are iterating over it.
+    std::list<Job*> links_;
 
     /// Is the current job non-interruptible? If yes, yielding will
     /// do nothing and blocking operations may raise an exception.
