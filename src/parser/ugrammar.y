@@ -347,16 +347,6 @@
       return noop;
     }
 
-    /// Complain if \a command is not implicit.
-    static void
-    warn_implicit(parser::UParser& up, const loc& l, const ast::Exp* e)
-    {
-      if (implicit(e))
-	up.warn(l,
-		"implicit empty instruction.  "
-		"Use '{}' to make it explicit.");
-    }
-
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right parser::UParser.
@@ -934,57 +924,59 @@ expr:
 | Stmt: Control flow.  |
 `---------------------*/
 
+// non-empty-statement: A statement that triggers a warning if empty.
+%type <expr> nstmt;
+nstmt:
+  stmt
+    {
+      if (implicit($1))
+	up.warn(@1,
+		"implicit empty instruction.  Use '{}' to make it explicit.");
+    }
+;
+
 stmt:
-  "at" "(" expr ")" stmt %prec CMDBLOCK
+  "at" "(" expr ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      warn_implicit(up, @5, $5);
       static ast::ParametricAst at("at_(%exp:1, detach(%exp:2))");
       $$ = exp (at % $3 % $5);
     }
-| "at" "(" expr ")" stmt "onleave" stmt
+| "at" "(" expr ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      warn_implicit(up, @5, $5);
-      warn_implicit(up, @7, $7);
       static ast::ParametricAst at("at_(%exp:1, detach(%exp:2), detach(%exp:3))");
       $$ = exp (at % $3 % $5 % $7);
     }
-| "at" "(" expr "~" expr ")" stmt %prec CMDBLOCK
+| "at" "(" expr "~" expr ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      warn_implicit(up, @5, $5);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
       DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
 	      "at_( " << s << ".val, " << $7 << ")");
     }
-| "at" "(" expr "~" expr ")" stmt "onleave" stmt
+| "at" "(" expr "~" expr ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      warn_implicit(up, @7, $7);
-      warn_implicit(up, @9, $9);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
       DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
 	      "at_( " << s << ".val, " << $7 << ", " << $9 << ")");
     }
-| "every" "(" expr ")" stmt
+| "every" "(" expr ")" nstmt
     {
-      warn_implicit(up, @5, $5);
       static ast::ParametricAst every("every_(%exp:1, %exp:2)");
       $$ = exp (every % $3 % $5);
     }
-| "if" "(" expr ")" stmt %prec CMDBLOCK
+| "if" "(" expr ")" nstmt %prec CMDBLOCK
     {
-      warn_implicit(up, @5, $5);
       $$ = new ast::If(@$, $3, $5, new ast::Noop(@$));
     }
-| "if" "(" expr ")" stmt "else" stmt
+| "if" "(" expr ")" nstmt "else" nstmt
     {
-      warn_implicit(up, @5, $5);
       $$ = new ast::If(@$, $3, $5, $7);
     }
 | "for" "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
@@ -1062,28 +1054,22 @@ stmt:
     {
       $$ = new ast::Throw(@$, ast::break_exception, 0);
     }
-| "whenever" "(" expr ")" stmt %prec CMDBLOCK
+| "whenever" "(" expr ")" nstmt %prec CMDBLOCK
     {
-      warn_implicit(up, @5, $5);
       DESUGAR("whenever_(" << $3 << ", " << $5 << ")");
     }
-| "whenever" "(" expr "~" expr ")" stmt %prec CMDBLOCK
+| "whenever" "(" expr "~" expr ")" nstmt %prec CMDBLOCK
     {
-      warn_implicit(up, @7, $7);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
 	      "whenever_(" << s << ".val, " << $7 << ")");
     }
-| "whenever" "(" expr ")" stmt "else" stmt
+| "whenever" "(" expr ")" nstmt "else" nstmt
     {
-      warn_implicit(up, @5, $5);
-      warn_implicit(up, @7, $7);
       DESUGAR("whenever_(" << $3 << ", " << $5 << ", " << $7 << ")");
     }
-| "whenever" "(" expr "~" expr ")" stmt "else" stmt
+| "whenever" "(" expr "~" expr ")" nstmt "else" nstmt
     {
-      warn_implicit(up, @7, $7);
-      warn_implicit(up, @9, $9);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
 	      "whenever_(" << s << ".val, " << $7 << ", " << $9 << ")");
