@@ -716,7 +716,7 @@ namespace runner
 	// The new runners are attached to the same tags as we are
         // FIXME: We must clone here since the nary will be
         // cleared. Yet taking the node from the nary would be better.
-	Runner* subrunner = new Runner(*this, new_clone(c));
+	Runner* subrunner = new Runner(*this, e.toplevel_get () ? new_clone(c) : &c);
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
