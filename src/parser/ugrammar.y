@@ -448,8 +448,8 @@
 %union { float fval; }
 %token <fval>
 	TOK_FLOAT      "float"
-	TOK_TIME_VALUE "time"
-%type <fval> number time_expr;
+	TOK_DURATION   "duration"
+%type <fval> number;
 %printer { debug_stream() << $$; } <fval>;
 
 
@@ -1166,13 +1166,14 @@ expr:
     }
 ;
 
-/*------------.
-| time_expr.  |
-`------------*/
+/*-----------.
+| duration.  |
+`-----------*/
 
-time_expr:
-  TOK_TIME_VALUE
-| time_expr TOK_TIME_VALUE { $$ += $2; }
+%type <fval> duration;
+duration:
+  "duration"
+| duration "duration" { $$ += $2; }
 ;
 
 
@@ -1188,7 +1189,7 @@ number:
 
 expr:
   number        { $$ = new ast::Float(@$, $1); }
-| time_expr     { $$ = new ast::Float(@$, $1); }
+| duration      { $$ = new ast::Float(@$, $1); }
 | "string"      { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
 ;

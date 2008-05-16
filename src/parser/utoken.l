@@ -265,11 +265,11 @@ do {						\
   RETURN_SYMBOL(Token)
 
 // UnitSize is the number of letters used for the unit.
-#define RETURN_TIME_VALUE(UnitSize, Scale)				\
+#define RETURN_DURATION(UnitSize, Scale)				\
   {									\
     PRE_SKIP();								\
     yytext[yyleng - UnitSize] = 0;					\
-    RETURN_VALUE(TIME_VALUE, fval,					\
+    RETURN_VALUE(DURATION, fval,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   }
 
@@ -419,11 +419,11 @@ FLAVOR   [;|,&]?
 "+freeze"     RETURN_IVAL(FLAG, 11);
 "+stop"       RETURN_IVAL(FLAG, 12);
 
-{NUMBER}"d"   RETURN_TIME_VALUE(1, 1000*60*60*24);
-{NUMBER}"h"   RETURN_TIME_VALUE(1, 1000*60*60);
-{NUMBER}"m"   RETURN_TIME_VALUE(1, 1000*60);
-{NUMBER}"s"   RETURN_TIME_VALUE(1, 1000);
-{NUMBER}"ms"  RETURN_TIME_VALUE(2, 1);
+{NUMBER}"d"   RETURN_DURATION(1, 1000*60*60*24);
+{NUMBER}"h"   RETURN_DURATION(1, 1000*60*60);
+{NUMBER}"m"   RETURN_DURATION(1, 1000*60);
+{NUMBER}"s"   RETURN_DURATION(1, 1000);
+{NUMBER}"ms"  RETURN_DURATION(2, 1);
 
 {NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, *locp, yytext));
 {FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, *locp, yytext));
