@@ -720,35 +720,43 @@ stmt:
 // | "var" "{" identifiers "}" { NOT_IMPLEMENTED(@$); }
 // ;
 
+%type <expr> identifier_as_string;
+identifier_as_string:
+  "identifier"
+    {
+      $$ = new ast::String(@1, $1.value());
+    }
+;
+
 // Bindings.
 %token TOK_EXTERNAL "external";
 stmt:
-  "external" "object" "identifier"
+  "external" "object" identifier_as_string
   {
-    DESUGAR("'external'.'object'(\"" << $3 << "\")");
+    static ast::ParametricAst a("'external'.'object'(%exp:1)");
+    $$ = exp(a % $3);
   }
-| "external" "var" "identifier" "." "identifier"
-	     "from" "identifier"
+| "external" "var" identifier_as_string "." identifier_as_string
+	     "from" identifier_as_string
   {
-    DESUGAR("'external'.'var'(\"" << $3 << "\", "
-	    <<               "\"" << $5 << "\", "
-	    <<               "\"" << $7 << "\")");
+    static ast::ParametricAst a("'external'.'var'(%exp:1, %exp:2, %exp:3)");
+    $$ = exp(a % $3 % $5 % $7);
   }
-| "external" "function" "(" "integer" ")" "identifier" "." "identifier"
-	     "from" "identifier"
+| "external" "function" "(" expr_integer ")"
+             identifier_as_string "." identifier_as_string
+	     "from" identifier_as_string
   {
-    DESUGAR("'external'.'function'(" << $4 << ", "
-	    <<                    "\"" << $6 << "\", "
-	    <<                    "\"" << $8 << "\", "
-	    <<                    "\"" << $10 << "\")");
+    static ast::ParametricAst
+      a("'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+    $$ = exp(a % $4 % $6 % $8 % $10);
   }
-| "external" "event" "(" "integer" ")" "identifier" "." "identifier"
-	     "from" "identifier"
+| "external" "event" "(" expr_integer ")"
+             identifier_as_string "." identifier_as_string
+	     "from" identifier_as_string
   {
-    DESUGAR("'external'.'event'(" << $4 << ", "
-	    <<                "\"" << $6 << "\", "
-	    <<                "\"" << $8 << "\", "
-	    <<                "\"" << $10 << "\")");
+    static ast::ParametricAst
+      a("'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
+    $$ = exp(a % $4 % $6 % $8 % $10);
   }
 ;
 
