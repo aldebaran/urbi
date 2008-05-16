@@ -8,8 +8,10 @@ parser/tweast.hh				\
 parser/tweast.hxx				\
 parser/tweast.cc				\
 parser/utoken.hh				\
+parser/parser-impl.hh				\
+parser/parser-impl.hxx				\
+parser/parser-impl.cc				\
 parser/uparser.hh				\
-parser/uparser.hxx				\
 parser/uparser.cc
 
 ## -------------- ##

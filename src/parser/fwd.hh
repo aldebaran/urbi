@@ -15,6 +15,9 @@ namespace parser
   // tweast.hh.
   class Tweast;
 
+  // parser-impl.hh.
+  class ParserImpl;
+
   // uparser.hh.
   class UParser;
 }

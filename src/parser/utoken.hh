@@ -6,9 +6,9 @@
 
 # undef  YY_DECL
 # define YY_DECL							\
-  parser::UParser::token_type						\
-  yyFlexLexer::yylex(parser::UParser::semantic_type* valp,		\
-		     parser::UParser::location_type* locp,		\
-		     parser::UParser* up)
+  parser::ParserImpl::token_type                                        \
+  yyFlexLexer::yylex(parser::ParserImpl::semantic_type* valp,		\
+		     parser::ParserImpl::location_type* locp,		\
+		     parser::ParserImpl* up)
 
 #endif // !PARSER_UTOKEN_HH

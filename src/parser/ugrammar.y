@@ -1,5 +1,5 @@
 /// \file parser/ugrammar.y
-/// \brief Definition of the parser used by the UParser object.
+/// \brief Definition of the parser used by the ParserImpl object.
 ///
 /// This parser is defined with bison, using the option %pure_parser
 /// to make it reentrant. For more details about reentrancy issues,
@@ -12,9 +12,9 @@
 %skeleton "lalr1.cc"
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
-%parse-param {::parser::UParser& up}
+%parse-param {::parser::ParserImpl& up}
 %parse-param {FlexLexer& scanner}
-%lex-param   {::parser::UParser& up}
+%lex-param   {::parser::ParserImpl& up}
 %lex-param   {FlexLexer& scanner}
 %debug
 
@@ -57,7 +57,7 @@
 #include "object/atom.hh"
 
 #include "parser/tweast.hh"
-#include "parser/uparser.hh"
+#include "parser/parser-impl.hh"
 #include "parser/utoken.hh"
 
   namespace
@@ -69,7 +69,7 @@
     template <typename T>
     static
     T*
-    metavar (parser::UParser& up, unsigned key)
+    metavar (parser::ParserImpl& up, unsigned key)
     {
       return up.tweast_->template take<T> (key);
     }
@@ -349,10 +349,11 @@
 
   } // anon namespace
 
-  /// Direct the call from 'bison' to the scanner in the right parser::UParser.
+  /// Direct the call from 'bison' to the scanner in the right parser::ParserImpl.
   inline
     yy::parser::token_type
-    yylex(yy::parser::semantic_type* val, yy::location* loc, parser::UParser& up,
+    yylex(yy::parser::semantic_type* val, yy::location* loc,
+          parser::ParserImpl& up,
 	  FlexLexer& scanner)
   {
     return scanner.yylex(val, loc, &up);

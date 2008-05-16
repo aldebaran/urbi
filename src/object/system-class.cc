@@ -6,6 +6,8 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
+#include <memory>
+
 #include "parser/uparser.hh"
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
@@ -76,15 +78,9 @@ namespace object
     ast::Nary errs;
     p.process_errors(&errs);
     errs.accept(r);
-
-    if (const ast::Nary* ast = p.ast_get())
-    {
-      rObject res = r.eval (*ast);
-      //FIXME: deleting the tree now causes segv.
-      //delete p.command_tree_get();
-      //p.command_tree_set (0);
-      return res;
-    }
+    if (const ast::Nary* ast = p.ast_take().release())
+      // FIXME: Release AST.
+      return r.eval(*ast);
     else
       throw e;
   }
@@ -106,7 +102,7 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
-    parser::UParser p = parser::parse(arg1->value_get());
+    parser::UParser p(parser::parse(arg1->value_get()));
     return execute_parsed(r, p, PrimitiveError("",
 	std::string("Error executing command.")));
   }

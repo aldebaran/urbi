@@ -227,7 +227,7 @@ UConnection::received (const char* buffer, size_t length)
 
   parser::UParser& p = parser_get();
   // There should be no tree sitting in the parser.
-  passert (*p.ast_get(), !p.ast_get());
+  //  passert (*p.ast_get(), !p.ast_get());
 
   // Starts processing
   receiving_ = true;
@@ -266,7 +266,7 @@ UConnection::received (const char* buffer, size_t length)
     execute ();
 
   receiving_ = false;
-  p.ast_set (0);
+  // p.ast_set (0);
 #if ! defined LIBPORT_URBI_ENV_AIBO
   tree_lock.unlock();
 #endif

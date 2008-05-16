@@ -38,7 +38,7 @@
 #include <libport/escape.hh>
 
 #include "parser/prescan.hh"
-#include "parser/uparser.hh"
+#include "parser/parser-impl.hh"
 #include "parser/utoken.hh"
 
 // Shorter access to the tokens.
@@ -52,10 +52,10 @@ static size_t bin_split (char* yytext, size_t yyleng, char*& keywords);
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
-static Out lexical_cast (parser::UParser& up, const yy::location& loc, In t);
+static Out lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t);
 
 template <typename Out, typename In>
-static Out numeric_cast (parser::UParser& up, const yy::location& loc, In t);
+static Out numeric_cast (parser::ParserImpl& up, const yy::location& loc, In t);
 
 
 /*--------------------.
@@ -67,10 +67,10 @@ static Out numeric_cast (parser::UParser& up, const yy::location& loc, In t);
 static token::yytokentype pre_eof =
   token::yytokentype(parser::pre_eof);
 /// No terminator found.
-static token::yytokentype pre_wants_more = 
+static token::yytokentype pre_wants_more =
   token::yytokentype(parser::pre_wants_more);
 /// A complete sentence was found.
-static token::yytokentype pre_complete = 
+static token::yytokentype pre_complete =
   token::yytokentype(parser::pre_complete);
 
 
@@ -701,7 +701,7 @@ FLAVOR   [;|,&]?
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
 Out
-lexical_cast (parser::UParser& up, const yy::location& loc, In t)
+lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t)
 {
   try
   {
@@ -717,7 +717,7 @@ lexical_cast (parser::UParser& up, const yy::location& loc, In t)
 
 template <typename Out, typename In>
 Out
-numeric_cast (parser::UParser& up, const yy::location& loc, In t)
+numeric_cast (parser::ParserImpl& up, const yy::location& loc, In t)
 {
   try
   {
