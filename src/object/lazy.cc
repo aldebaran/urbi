@@ -23,7 +23,7 @@ namespace object
     // the ast copy ctor. Please post an explanation if you
     // understand the problem.
     ast::Function ast(e.location_get(), new ast::symbols_type(),
-		      new ast::Scope(e.location_get(), 0, new_clone(e)));
+		      new ast::Scope(e.location_get(), new_clone(e)));
     rObject function = r.make_code(ast);
     urbi_call(r, function, SYMBOL(makeClosure));
     return mkLazy(r, function);

@@ -1,3 +1,6 @@
+abstract-scope.cc
+abstract-scope.hh
+abstract-scope.hxx
 all.hh
 all.stamp
 and.cc
@@ -24,6 +27,9 @@ cloner.stamp
 default-visitor.hh
 default-visitor.hxx
 default-visitor.stamp
+do.cc
+do.hh
+do.hxx
 exp.cc
 exp.hh
 exp.hxx

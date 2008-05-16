@@ -122,10 +122,11 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    CONST_VISITOR_VISIT_NODES((19,
+    CONST_VISITOR_VISIT_NODES((20,
 			       (
 				 And,
 				 Call,
+                                 Do,
 				 Float,
 				 Foreach,
 				 Function,
@@ -144,7 +145,14 @@ namespace runner
 				 Throw,
 				 While
 				 )))
+
+    /// Factor handling of Scope and Do
+    void
+    operator() (const ast::AbstractScope& e, rObject locals);
+
     /// \}
+
+
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();

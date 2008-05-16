@@ -231,17 +231,20 @@
 
     /// Return \a e in a ast::Scope unless it is already one.
     static
-    ast::Scope*
+    ast::AbstractScope*
     ast_scope(const loc& l, ast::Exp* target, ast::Exp* e)
     {
-      if (ast::Scope* res = dynamic_cast<ast::Scope*>(e))
+      if (ast::AbstractScope* res = dynamic_cast<ast::AbstractScope*>(e))
 	return res;
       else
-	return new ast::Scope(l, target, e);
+        if (target)
+          return new ast::Do(l, e, target);
+        else
+          return new ast::Scope(l, e);
     }
 
     static
-    ast::Scope*
+    ast::AbstractScope*
     ast_scope(const loc& l, ast::Exp* e)
     {
       return ast_scope(l, 0, e);

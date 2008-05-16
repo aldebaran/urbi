@@ -847,22 +847,8 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Scope& e)
+  Runner::operator() (const ast::AbstractScope& e, rObject locals)
   {
-    // To each scope corresponds a "locals" object which stores the
-    // local variables.  It points to the previous current scope to
-    // implement lexical scoping.
-    rObject locals;
-    rObject target;
-
-    if (e.target_get())
-    {
-      target = eval(*e.target_get());
-      locals = object::Object::make_do_scope(locals_, target);
-    }
-    else
-      locals = object::Object::make_scope(locals_);
-
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
     Finally finally(swap(locals, locals_));
@@ -874,8 +860,24 @@ namespace runner
 			{
 			  non_interruptible_set (was_non_interruptible);
 			});
-    if (target)
-      current_ = target;
+  }
+
+  void
+  Runner::operator() (const ast::Scope& e)
+  {
+    operator() (static_cast<const ast::AbstractScope&>(e),
+                object::Object::make_scope(locals_));
+  }
+
+  void
+  Runner::operator() (const ast::Do& e)
+  {
+    rObject tgt = eval(e.target_get());
+    operator() (static_cast<const ast::AbstractScope&>(e),
+                object::Object::make_do_scope(locals_, tgt));
+    // This is arguable. Do, just like Scope, should maybe return
+    // their last inner value.
+    current_ = tgt;
   }
 
   void

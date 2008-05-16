@@ -150,7 +150,7 @@ printer_cc_prologue: |2
 #       *.hh     *.hxx  *.cc
 #       prologue: in the #include section.
 #       inside:   in the class definition/namespace
-#       epilogue: after the class definition, in the namespace.   
+#       epilogue: after the class definition, in the namespace.
 #
 #  * attributes:
 #    + name
@@ -261,25 +261,33 @@ TaggedStmt:
 ## Scope.  ##
 ## ------- ##
 
-Scope:
+AbstractScope:
   super: Exp
   attributes:
-    - target: { type: 'Exp*', mandatory: false, desc: The default target }
     - body:   { type: 'Exp*', desc: The scoped expression }
   default: |2
-    if (n.target_get())
-      operator()(*n.target_get());
     operator()(n.body_get());
   printer:
-    - '{
-         if (n.target_get())
-           ostr_ << "do " << *n.target_get() << " ";
-       }'
     - '"{"'
     - 'libport::incendl'
     - ~body
     - 'libport::decendl'
     - '"}"'
+
+Scope:
+  super: AbstractScope
+  printer:
+    - '{ operator()(static_cast<const AbstractScope&>(n)); }'
+
+Do:
+  super: AbstractScope
+  attributes:
+    - target: { type: 'Exp*', desc: The default target }
+  default: |2
+    operator()(n.target_get());
+  printer:
+    - '{ ostr_ << "do " << n.target_get() << " "; }'
+    - '{ operator()(static_cast<const AbstractScope&>(n)); }'
 
 ## -------------------- ##
 ## Composing commands.  ##
@@ -748,7 +756,7 @@ Function:
         mandatory: False
         desc: Formal arguments.  If null, a lazy function.
     - body:
-        type: 'Scope*'
+        type: 'AbstractScope*'
         access: rwW
         mandatory: False
         desc: Body
