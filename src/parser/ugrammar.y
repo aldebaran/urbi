@@ -435,24 +435,6 @@
 %printer { debug_stream() << $$; } <flavor>;
 
 
-/*----------.
-| Numbers.  |
-`----------*/
-
-%union { int ival; }
-%token <ival>
-	TOK_INTEGER    "integer"
-	TOK_FLAG       "flag"
-%printer { debug_stream() << $$; } <ival>;
-
-%union { float fval; }
-%token <fval>
-	TOK_FLOAT      "float"
-	TOK_DURATION   "duration"
-%type <fval> number;
-%printer { debug_stream() << $$; } <fval>;
-
-
  /*---------.
  | String.  |
  `---------*/
@@ -1166,6 +1148,33 @@ expr:
     }
 ;
 
+
+/*----------.
+| Numbers.  |
+`----------*/
+
+%union { int ival; };
+%printer { debug_stream() << $$; } <ival>;
+%token <ival>
+	TOK_INTEGER    "integer"
+        TOK_FLAG       "flag";
+%type <expr> expr_integer;
+expr_integer:
+  "integer"  { $$ = new ast::Float(@$, $1); }
+;
+
+
+%union { float fval; };
+%printer { debug_stream() << $$; } <fval>;
+%token <fval>
+	TOK_FLOAT      "float"
+        TOK_DURATION   "duration";
+%type <expr> expr_float;
+expr_float:
+  "float"  { $$ = new ast::Float(@$, $1); }
+;
+
+
 /*-----------.
 | duration.  |
 `-----------*/
@@ -1177,21 +1186,16 @@ duration:
 ;
 
 
-number:
-  "integer"  { $$ = $1; }
-| "float"
-;
-
-
 /*-------.
 | expr.  |
 `-------*/
 
 expr:
-  number        { $$ = new ast::Float(@$, $1); }
-| duration      { $$ = new ast::Float(@$, $1); }
-| "string"      { $$ = new ast::String(@$, take($1)); }
-| "[" exprs "]" { $$ = new ast::List(@$, $2);	      }
+  expr_integer
+| expr_float
+| duration       { $$ = new ast::Float(@$, $1);        }
+| "string"       { $$ = new ast::String(@$, take($1)); }
+| "[" exprs "]"  { $$ = new ast::List(@$, $2);	       }
 ;
 
 
