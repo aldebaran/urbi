@@ -1132,6 +1132,7 @@ call:
     {
       $$ = $1;
       $$->args_get().transfer($$->args_get().end(), *$2);
+      delete $2;
       $$->location_set(@$);
     }
 ;
