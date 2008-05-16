@@ -2,6 +2,8 @@ dist_libkernel_la_SOURCES +=			\
 parser/fwd.hh					\
 parser/metavar-map.hh				\
 parser/metavar-map.hxx				\
+parser/prescan.hh				\
+parser/prescan.cc				\
 parser/tweast.hh				\
 parser/tweast.hxx				\
 parser/tweast.cc				\

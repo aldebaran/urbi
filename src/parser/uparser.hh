@@ -66,9 +66,9 @@ namespace parser
     /// The latest AST read by parse().
     inline ast_type* ast_get ();
     /// Return the AST and reset \a ast_.
-    inline std::auto_ptr<ast_type> ast_take ();
+    std::auto_ptr<ast_type> ast_take();
     /// Same as \a ast_take, but assert the result.
-    inline std::auto_ptr<ast_type> ast_xtake ();
+    std::auto_ptr<ast_type> ast_xtake();
     /// Set \a ast_.
     inline void ast_set (ast_type* ast);
 
@@ -108,7 +108,7 @@ namespace parser
 
     /// Push a warning or an error.
     void message_push(messages_type& msgs,
-		      const yy::parser::location_type& l,
+		      const location_type& l,
 		      const std::string& msg);
 
     /// Run the parse.

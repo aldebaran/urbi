@@ -28,18 +28,19 @@
 #include <libport/compiler.hh>
 
 #include <cstdlib>
-#include <cstring>
+#include <libport/cstring>
 #include <sstream>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-#include "object/object.hh"
-#include "object/atom.hh"
+#include <libport/escape.hh>
 
+#include "parser/prescan.hh"
 #include "parser/uparser.hh"
 #include "parser/utoken.hh"
+
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
@@ -61,13 +62,17 @@ static Out numeric_cast (parser::UParser& up, const yy::location& loc, In t);
 | Prescanner macros.  |
 `--------------------*/
 
-// Prescanner return values.
+// Import Prescanner return values.
 /// End of file.
-static token::yytokentype pre_eof        = token::yytokentype(-1);
+static token::yytokentype pre_eof =
+  token::yytokentype(parser::pre_eof);
 /// No terminator found.
-static token::yytokentype pre_wants_more = token::yytokentype(0);
+static token::yytokentype pre_wants_more = 
+  token::yytokentype(parser::pre_wants_more);
 /// A complete sentence was found.
-static token::yytokentype pre_complete   = token::yytokentype(1);
+static token::yytokentype pre_complete = 
+  token::yytokentype(parser::pre_complete);
+
 
 // Skip this action if in pre-parser.  Do not put this in a do-while,
 // as it would capture the "continue" which is meant to yylex's
@@ -384,7 +389,7 @@ FLAVOR   [;|,&]?
   if (push)
     up->synclines_.push(*locp);
 
-  locp->initialize (!file || STREQ(file, "-") ? 0 : new libport::Symbol (file));
+  locp->initialize(!file || STREQ(file, "-") ? 0 : new libport::Symbol(file));
   locp->lines (lexical_cast<int>(*up, *locp, line) - 1);
   STEP();
 }
@@ -752,30 +757,6 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
   SKIP_SPACES();
   keywords = yytext;
   return res;
-}
-
-
-namespace parser
-{
-  size_t
-  prescan (char* buf)
-  {
-    yyFlexLexer scanner;
-    std::istringstream is (buf);
-    scanner.switch_streams(&is, 0);
-
-    // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
-    int c = scanner.yylex();
-    passert(c, c == pre_eof || c == pre_wants_more || c == pre_complete);
-    // The number of read bytes.
-    size_t length = scanner.pre_length;
-    ECHO("res: " << c << ", length: " << length);
-    if (c == pre_complete)
-      return length;
-    else
-      // We met EOF before reaching a terminator.
-      return 0;
-  }
 }
 
 // Local Variables:

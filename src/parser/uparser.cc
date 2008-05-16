@@ -119,8 +119,8 @@ namespace parser
 
   void
   UParser::message_push(messages_type& msgs,
-		      const yy::parser::location_type& l,
-		      const std::string& msg)
+                        const location_type& l,
+                        const std::string& msg)
   {
     std::ostringstream o;
     o << "!!! " << l << ": " << msg;
@@ -147,17 +147,35 @@ namespace parser
   }
 
   void
-  UParser::error (const yy::parser::location_type& l, const std::string& msg)
+  UParser::error (const location_type& l, const std::string& msg)
   {
     message_push(errors_, l, msg);
   }
 
   void
-  UParser::warn (const yy::parser::location_type& l, const std::string& msg)
+  UParser::warn (const location_type& l, const std::string& msg)
   {
     message_push(warnings_, l, msg);
   }
 
+
+  std::auto_ptr<UParser::ast_type>
+  UParser::ast_take ()
+  {
+    ast_type* res = ast_get();
+    ast_set(0);
+    return std::auto_ptr<UParser::ast_type>(res);
+  }
+
+  std::auto_ptr<UParser::ast_type>
+  UParser::ast_xtake ()
+  {
+    // Because of auto_ptr, using iassert is inconvenient here.
+    ast_type* res = ast_get();
+    assert(res);
+    ast_set(0);
+    return std::auto_ptr<UParser::ast_type>(res);
+  }
 
   /*--------------------------.
   | Free-standing functions.  |
