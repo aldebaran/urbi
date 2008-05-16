@@ -22,23 +22,25 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 
 #include "urbi/uobject.hh"
 
+// These calls are made out of any namespace due to vcxx error C2888
+// cf: http://msdn.microsoft.com/en-us/library/27zksbks(VS.80).aspx
+STATIC_INSTANCE_NS(UStartlist, objectlist, urbi);
+STATIC_INSTANCE_NS(UStartlistHub, objecthublist, urbi);
+
+// Lists and hashtables used.
+STATIC_INSTANCE_NS(UTable, accessmap, urbi);
+STATIC_INSTANCE_NS(UTable, eventendmap, urbi);
+STATIC_INSTANCE_NS(UTable, eventmap, urbi);
+STATIC_INSTANCE_NS(UTable, functionmap, urbi);
+STATIC_INSTANCE_NS(UTable, monitormap, urbi);
+STATIC_INSTANCE_NS(UVarTable, varmap, urbi);
+
+// Timer and update maps.
+STATIC_INSTANCE_NS(UTimerTable, timermap, urbi);
+STATIC_INSTANCE_NS(UTimerTable, updatemap, urbi);
+
 namespace urbi
 {
-  STATIC_INSTANCE(UStartlist, objectlist);
-  STATIC_INSTANCE(UStartlistHub, objecthublist);
-
-  // Lists and hashtables used.
-  STATIC_INSTANCE(UTable, accessmap);
-  STATIC_INSTANCE(UTable, eventendmap);
-  STATIC_INSTANCE(UTable, eventmap);
-  STATIC_INSTANCE(UTable, functionmap);
-  STATIC_INSTANCE(UTable, monitormap);
-  STATIC_INSTANCE(UVarTable, varmap);
-
-  // Timer and update maps.
-  STATIC_INSTANCE(UTimerTable, timermap);
-  STATIC_INSTANCE(UTimerTable, updatemap);
-
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
   void
