@@ -713,13 +713,6 @@ stmt:
     }
 ;
 
-// Variables.
-// stmt:
-// | "var" k1_id { NOT_IMPLEMENTED(@$); }
-// The following one is incorrect: wrong separator, should be ;.
-// | "var" "{" identifiers "}" { NOT_IMPLEMENTED(@$); }
-// ;
-
 %type <expr> identifier_as_string;
 identifier_as_string:
   "identifier"
