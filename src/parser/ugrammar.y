@@ -700,7 +700,7 @@ stmt:
       tweast << "var " << new_clone(target) << "= Object.clone|"
              << "do " << new_clone(target) << " {"
              << "var protoName = "
-             << ast_exp(new ast::String(@2, $2->name_get().name_get())) << "|"
+             << ast_exp(new ast::String(@2, $2->name_get())) << "|"
              << "function " << ("as" + $2->name_get().name_get()) << "() {self}|"
              << ast_exp($3) << "}";
 
