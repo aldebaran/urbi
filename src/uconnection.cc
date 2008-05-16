@@ -257,14 +257,8 @@ UConnection::received (const char* buffer, size_t length)
       ECHO ("appended: " << *active_command_ << "}}}");
     }
     else
-    {
-      std::cerr << make_prefix("error")
-		<< "the parser returned NULL" << std::endl;
-      // FIXME: Is this line usefull ?
-      server_.error(::DISPLAY_FORMAT, (long) this,
-		    "UConnection::received",
-		    "the parser returned NULL\n");
-    }
+      LIBPORT_ECHO("the parser returned NULL:" << std::endl
+                   << "{{{" << command << "}}}");
   }
 
   // Execute the new command.
