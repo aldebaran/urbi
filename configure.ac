@@ -54,8 +54,7 @@ case $enable_precompiled_symbols in
   yes) AC_DEFINE([SYMBOLS_PRECOMPILED], 1,
                  [Define if Urbi symbols should be precompiled]);;
 esac
-AM_CONDITIONAL([SYMBOLS_PRECOMPILED], [test $enable_precompiled_symbols = yes])
-AC_SUBST([SYMBOLS_PRECOMPILED])
+
 
 ## -------- ##
 ## Target.  ##
