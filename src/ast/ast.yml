@@ -278,6 +278,8 @@ Scope:
   super: AbstractScope
   printer:
     - '{ operator()(static_cast<const AbstractScope&>(n)); }'
+  default: |2
+    operator()(static_cast<typename Const<AbstractScope>::type&>(n));
 
 Do:
   super: AbstractScope
@@ -285,6 +287,7 @@ Do:
     - target: { type: 'Exp*', desc: The default target }
   default: |2
     operator()(n.target_get());
+    operator()(static_cast<typename Const<AbstractScope>::type&>(n));
   printer:
     - '{ ostr_ << "do " << n.target_get() << " "; }'
     - '{ operator()(static_cast<const AbstractScope&>(n)); }'
@@ -343,6 +346,11 @@ Nary:
         desc: Whether is a top-level node.
         access: rW
         init: "false"
+
+  default: |2
+    foreach (typename Const<ast::Ast>::type& c, n.children_get())
+      c.accept(*this);
+
   printer:
     - $children
   inline:
@@ -524,6 +532,9 @@ Binary:
         type: 'Exp*'
         desc: Right-hand side expression
         access: rwW
+  default: |2
+    n.lhs_get().accept(*this);
+    n.rhs_get().accept(*this);
 
 And:
   super: Binary
@@ -532,6 +543,8 @@ And:
     - '" &"'
     - libport::iendl
     - ~rhs
+  default:
+    operator()(static_cast<typename Const<Binary>::type&>(n));
 
 Pipe:
   super: Binary
@@ -540,6 +553,8 @@ Pipe:
     - '" |"'
     - libport::iendl
     - ~rhs
+  default:
+    operator()(static_cast<typename Const<Binary>::type&>(n));
 
 
 If:
@@ -632,6 +647,9 @@ Throw:
          if (n.value_get())
            ostr_ << ' ' << *n.value_get();
        }"
+  default: |2
+    if (n.value_get())
+      operator()(n.value_get());
 
 Noop:
   super: Exp
@@ -729,6 +747,9 @@ Call:
     - args:
         type: 'exps_type*'
         desc: Arguments passed to the function
+  default:
+      foreach (typename Const<ast::Exp>::type& e, n.args_get())
+        e.accept(*this);
   printer:
     - '{
          if (!dynamic_cast<const Implicit*>(&n.args_get().front()))
