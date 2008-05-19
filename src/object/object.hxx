@@ -80,12 +80,12 @@ namespace object
   Object::kind_type
   Object::kind_get () const
   {
-    return kind_object;
+    return object_kind_object;
   }
 
   inline
   bool
-  Object::kind_is(Object::kind_type k) const
+  Object::kind_is(kind_type k) const
   {
     return kind_get () == k;
   }
@@ -97,7 +97,7 @@ namespace object
   {
     // FIXME: static_assert Obj derives from Object.
     // FIXME: Is this really faster than using dynamic_cast? Or RTTI?
-    return kind_is(object::Object::kind_type(Type::kind));
+    return kind_is(kind_type(Type::kind));
   }
 
 
@@ -128,13 +128,13 @@ namespace object
     switch(p->kind_get())
     {
 #define FORBID(L, U)                                                            \
-      case kind_ ## L:                                                          \
-        if (kind_get() != kind_ ## L)                                           \
+      case object_kind_ ## L:                                                   \
+        if (kind_get() != object_kind_ ## L)                                    \
           pabort("You can't inherit from atoms for now. Atom type: " #U ".");   \
         break;
       APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(FORBID)
 #undef FORBID
-      case object::Object::kind_object:
+      case object_kind_object:
         // Nothing. Inheriting from objects is Ok.
         break;
     }

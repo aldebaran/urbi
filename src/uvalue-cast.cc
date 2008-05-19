@@ -8,23 +8,23 @@ urbi::UValue uvalue_cast(object::rObject o)
   urbi::UValue res;
   switch(o->kind_get())
   {
-  case object::Object::kind_alien:
-  case object::Object::kind_code:
-  case object::Object::kind_delegate:
-  case object::Object::kind_dictionary:
-  case object::Object::kind_global:
-  case object::Object::kind_lobby:
-  case object::Object::kind_primitive:
-  case object::Object::kind_scope:
-  case object::Object::kind_tag:
-  case object::Object::kind_task:
+  case object::object_kind_alien:
+  case object::object_kind_code:
+  case object::object_kind_delegate:
+  case object::object_kind_dictionary:
+  case object::object_kind_global:
+  case object::object_kind_lobby:
+  case object::object_kind_primitive:
+  case object::object_kind_scope:
+  case object::object_kind_tag:
+  case object::object_kind_task:
     throw object::WrongArgumentType
-      (object::Object::kind_float, o->kind_get(), "cast");
+      (object::object_kind_float, o->kind_get(), "cast");
     break;
-  case object::Object::kind_object:
+  case object::object_kind_object:
     if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
       boost::throw_exception (object::WrongArgumentType
-       (object::Object::kind_object, o->kind_get(), "bin-cast"));
+       (object::object_kind_object, o->kind_get(), "bin-cast"));
       {
 	const std::string& data =
 	  o->slot_get(SYMBOL(data))->value<object::String>().name_get();
@@ -43,14 +43,14 @@ urbi::UValue uvalue_cast(object::rObject o)
       }
     break;
 #define HANDLE_TYPE(k, t) \
-  case object::Object::k:  \
+  case object::object_kind_##k:  \
     res = o.cast<object::t>()->value_get(); \
     break;
-  HANDLE_TYPE(kind_float, Float);
-  HANDLE_TYPE(kind_integer, Integer);
-  HANDLE_TYPE(kind_string, String);
+  HANDLE_TYPE(float, Float);
+  HANDLE_TYPE(integer, Integer);
+  HANDLE_TYPE(string, String);
 #undef HANDLE_TYPE
-  case object::Object::kind_list:
+  case object::object_kind_list:
     {
       res.type = urbi::DATA_LIST;
       res.list = new urbi::UList;
@@ -71,21 +71,24 @@ object::rObject object_cast(const urbi::UValue& v)
     case urbi::DATA_DOUBLE:
       return object::Float::fresh(v.val);
       break;
+
     case urbi::DATA_STRING:
       return object::String::fresh(libport::Symbol(*v.stringValue));
       break;
+
     case urbi::DATA_LIST:
       res = object::List::fresh(object::list_traits::type());
       foreach (urbi::UValue *cv, v.list->array)
 	res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
+
     case urbi::DATA_BINARY:
       {
 	res = object::Object::fresh();
 	res->proto_add(object::global_class->slot_get(SYMBOL(Binary)));
 	std::string msg = v.binary->getMessage();
 	// Trim it.
-	if (!msg.empty() && msg[0] == ' ' )
+	if (!msg.empty() && msg[0] == ' ')
 	  msg = msg.substr(1, msg.npos);
 	res->slot_set(SYMBOL(keywords), object::String::fresh
 		    (libport::Symbol(msg)));
@@ -94,10 +97,11 @@ object::rObject object_cast(const urbi::UValue& v)
 	      v.binary->common.size))));
       }
       break;
+
     default:
       throw
-	object::WrongArgumentType(object::Object::kind_float,
-				  object::Object::kind_float, "backcast");
+	object::WrongArgumentType(object::object_kind_float,
+				  object::object_kind_float, "backcast");
       break;
   }
   return res;

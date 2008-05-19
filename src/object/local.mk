@@ -68,6 +68,8 @@ object/object-class.hh				\
 object/object.cc				\
 object/object.hh				\
 object/object.hxx				\
+object/object-kind.cc				\
+object/object-kind.hh				\
 object/primitive-class.cc			\
 object/primitive-class.hh			\
 object/primitives.cc				\

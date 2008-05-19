@@ -72,10 +72,10 @@ namespace object
       switch (kind_get())
 	{
 # define CASE(What, Name)					\
-	  case kind_ ## What: proto_add (What ## _class); break;
+	  case object_kind_ ## What: proto_add (What ## _class); break;
 	  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
-	case kind_object:
+          case object_kind_object:
 	    pabort (kind_get());
 	}
   }
@@ -93,7 +93,6 @@ namespace object
     // As is usual for integer values, Traits::kind is an enum whose
     // value is a kind_type.  So we have to cast it back to its type
     // here.
-
     return static_cast<Object::kind_type>(Traits::kind);
   }
 

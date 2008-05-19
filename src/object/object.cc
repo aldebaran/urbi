@@ -63,22 +63,6 @@ namespace object
     return res;
   }
 
-  /*-------.
-  | kind.  |
-  `-------*/
-
-  const char*
-  Object::string_of (Object::kind_type k)
-  {
-    switch (k)
-    {
-#define CASE(What, Name) case kind_ ## What: return #Name; break;
-      APPLY_ON_ALL_PRIMITIVES(CASE);
-#undef CASE
-    }
-    pabort("unreachable");
-  }
-
   /*---------.
   | Scopes.  |
   `---------*/

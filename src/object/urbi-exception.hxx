@@ -39,12 +39,12 @@ namespace object
   }
 
   inline
-  WrongArgumentType::WrongArgumentType (Object::kind_type formal,
-					Object::kind_type effective,
+  WrongArgumentType::WrongArgumentType (object_kind_type formal,
+					object_kind_type effective,
 					const std::string& fun)
     : UrbiException (std::string ("unexpected argument type `")
-		     + Object::string_of (effective) + "', expected `"
-		     + Object::string_of (formal) + '\'',
+		     + string_of(effective) + "', expected `"
+		     + string_of(formal) + '\'',
 		     fun)
   {
   }

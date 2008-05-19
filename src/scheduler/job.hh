@@ -13,7 +13,9 @@
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
 
+# include "object/symbols.hh"
 # include "object/urbi-exception.hh"
+
 # include "scheduler/coroutine.hh"
 # include "scheduler/fwd.hh"
 # include "scheduler/tag.hh"

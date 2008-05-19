@@ -328,7 +328,7 @@ namespace runner
     // If we try to call a C++ primitive with a call message, make it
     // look like a strict function call
     if (call_message &&
-	(func->kind_get() != object::Object::kind_code
+	(func->kind_get() != object::object_kind_code
 	 || func->value<object::Code>().strict()))
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
@@ -357,16 +357,16 @@ namespace runner
 
     switch (func->kind_get ())
     {
-      case object::Object::kind_primitive:
+      case object::object_kind_primitive:
 	current_ =
 	  func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
 	break;
-      case object::Object::kind_delegate:
+      case object::object_kind_delegate:
 	current_ =
 	  func.unsafe_cast<object::Delegate>()->value_get()
 	  ->operator()(*this, args);
 	break;
-      case object::Object::kind_code:
+      case object::object_kind_code:
 	current_ = apply_urbi (func, msg, args, call_message);
 	break;
       default:
@@ -504,7 +504,7 @@ namespace runner
     // Build the call message for non-strict functions, otherwise the
     // evaluated argument list.
     rObject call_message;
-    if (val->kind_get () == object::Object::kind_code
+    if (val->kind_get () == object::object_kind_code
 	&& !val.unsafe_cast<object::Code> ()->value_get ().strict())
       call_message = build_call_message (tgt, e.name_get(), e.args_get ());
     else

@@ -81,7 +81,7 @@ namespace object
     // Hack: special case for Strings to have k1 behavior special case
     // for Strings.
     if (is_echo
-        && args[1]->kind_is(Object::kind_string)
+        && args[1]->kind_is(object_kind_string)
         && s[0] == '"'
         && s.length() && s[s.length()-1] == '"')
       s = libport::unescape(s.substr(1, s.length()-2));

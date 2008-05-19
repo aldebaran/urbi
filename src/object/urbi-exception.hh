@@ -11,13 +11,13 @@
 # include <libport/ufloat.hh>
 # include <libport/symbol.hh>
 
+# include "ast/fwd.hh"
 # include "ast/loc.hh"
 
 # include "kernel/exception.hh"
 
 # include "object/fwd.hh"
-# include "ast/fwd.hh"
-# include "object/object.hh"
+# include "object/object-kind.hh"
 
 namespace object
 {
@@ -101,8 +101,8 @@ namespace object
    * \param fun         Primitive's name.  */
   struct WrongArgumentType: public UrbiException
   {
-    WrongArgumentType (Object::kind_type formal,
-		       Object::kind_type effective,
+    WrongArgumentType (object_kind_type formal,
+		       object_kind_type effective,
 		       const std::string& fun);
     /// Invalid use of void.
     WrongArgumentType(const std::string& fun);

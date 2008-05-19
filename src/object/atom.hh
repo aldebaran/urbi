@@ -101,7 +101,7 @@ namespace object
   struct alien_traits
   {
     typedef boost::tuple<boost::any, std::string> type;
-    enum { kind = Object::kind_alien };
+    enum { kind = object_kind_alien };
   };
 
 
@@ -114,7 +114,7 @@ namespace object
   struct code_traits
   {
     typedef ast::Function& type;
-    enum { kind = Object::kind_code };
+    enum { kind = object_kind_code };
   };
 
 
@@ -125,7 +125,7 @@ namespace object
   struct delegate_traits
   {
     typedef IDelegate* type;
-    enum { kind = Object::kind_delegate };
+    enum { kind = object_kind_delegate };
   };
 
 
@@ -136,7 +136,7 @@ namespace object
   struct dictionary_traits
   {
     typedef libport::hash_map<libport::Symbol, rObject> type;
-    enum { kind = Object::kind_dictionary };
+    enum { kind = object_kind_dictionary };
   };
 
 
@@ -148,7 +148,7 @@ namespace object
   {
     // FIXME: Global is not really an atom
     typedef int type;
-    enum { kind = Object::kind_global };
+    enum { kind = object_kind_global };
   };
 
 
@@ -160,7 +160,7 @@ namespace object
   struct float_traits
   {
     typedef libport::ufloat type;
-    enum { kind = Object::kind_float };
+    enum { kind = object_kind_float };
   };
 
 
@@ -173,7 +173,7 @@ namespace object
   struct integer_traits
   {
     typedef int type;
-    enum { kind = Object::kind_integer };
+    enum { kind = object_kind_integer };
   };
 
 
@@ -185,7 +185,7 @@ namespace object
   struct list_traits
   {
     typedef std::deque<rObject> type;
-    enum { kind = Object::kind_list };
+    enum { kind = object_kind_list };
   };
 
 
@@ -198,7 +198,7 @@ namespace object
   struct lobby_traits
   {
     typedef State type;
-    enum { kind = Object::kind_lobby };
+    enum { kind = object_kind_lobby };
   };
 
 
@@ -211,7 +211,7 @@ namespace object
   {
     // The type of the primitives.
     typedef rObject (*type) (runner::Runner&, objects_type);
-    enum { kind = Object::kind_primitive };
+    enum { kind = object_kind_primitive };
   };
 
 
@@ -223,7 +223,7 @@ namespace object
   {
     // FIXME: Scopes are not really atoms ...
     typedef int type;
-    enum { kind = Object::kind_scope };
+    enum { kind = object_kind_scope };
   };
 
   /*---------.
@@ -236,7 +236,7 @@ namespace object
   struct string_traits
   {
     typedef libport::Symbol type;
-    enum { kind = Object::kind_string };
+    enum { kind = object_kind_string };
   };
 
 } // namespace object
