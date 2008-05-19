@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <libport/cstring>
 
+#include <cassert>
 #include <string>
 
 #include "parser/prescan.hh"
