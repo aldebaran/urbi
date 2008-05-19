@@ -69,16 +69,11 @@ namespace ast
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
-  # Do not output functions for abstract nodes, we might create
-  # black holes: if the visitor runs into them, it won't get out.
-  # Unless the user asks for troubles.
-  if node.concrete or 'default' in node.__dict__:
-    print >>visitor_hh, \
-	"""
+  print >>visitor_hh, """
     /// MSVC 2005 SP1 workaround.
     typedef typename Const<%s>::type %s_type;
-    virtual void operator() (%s_type&);
-""" % (node.name, lower(node.name), lower(node.name))
+    virtual void operator() (%s_type&);""" \
+      % (node.name, lower(node.name), lower(node.name))
 
 print >>visitor_hh, """    /// \\}
   };
@@ -133,23 +128,39 @@ namespace ast
 """
 
 for node in arr:
-  if node.concrete or 'default' in node.__dict__:
-    if 'default' in node.__dict__:
-      action = node.default
-    else:
-      action = ""
-      for attr in node.attributes:
-	if attr.visitable_p():
-	  action += "    operator()(n." + attr.name + "_get());\n"
-    if action != '':
-      action = "\n" + action + "  "
-      var = ' n'
-    else:
-      var = ''
-    print """\
+  if 'default' in node.__dict__:
+    action = node.default
+  else:
+    action = ""
+    # First iterate over the parent's types.
+    # This is better than applying the default behavior to
+    # all the children as it allows to implement the behavior for
+    # the parent class, and let the DefaultVisitor bounce to it for
+    # subclasses.
+    for super in node.super:
+      if action != '':
+        action += "\n"
+      action +=  \
+          "operator()(static_cast<typename Const<%s>::type&>(n));" \
+          % super.name
+    for attr in node.attributes:
+      if attr.visitable_p():
+        if action != '':
+          action += "\n"
+        if attr.mandatory:
+          action += "operator()(n." + attr.name + "_get());"
+        else:
+          action += "if (n." + attr.name + "_get())\n"
+          action += "  operator()(*n." + attr.name + "_get());"
+  if action != '':
+    action = "\n" + tools.indent(4, action) + "\n  "
+    var = ' n'
+  else:
+    var = ''
+  print """\
   template <template <typename> class Const>
   void
-  GenDefaultVisitor<Const>::operator() (typename GenDefaultVisitor<Const>::%s_type&%s)
+  GenDefaultVisitor<Const>::operator() (%s_type&%s)
   {%s}
 """ % (lower(node.name), var, action)
 

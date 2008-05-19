@@ -5,21 +5,25 @@
 import string, re, sys
 import os, stat, filecmp, shutil
 
-## Display a warning.
 def warning (msg):
+  "Display a warning."
   print >>sys.stderr, "Warning: " + msg
 
 
-## Display an error message and exit.
 def error (msg):
+  "Display an error message and exit."
   print >>sys.stderr, "Error: " + msg
   sys.exit (1)
 
+bols = re.compile("^(?=.)", re.M);
+def indent(tab, text):
+  "Add tab spaces in front of text."
+  return bols.sub (" " * tab, text);
 
-## Overwrite old with new if different, or nonexistant.
-## Remove the write permission on the result to avoid accidental edition
-## of generated files.
 def lazy_overwrite (old, new):
+  """Overwrite old with new if different, or nonexistant.
+  Remove the write permission on the result to avoid accidental edition
+  of generated files."""
   verbose = os.getenv(key='BUILDFARM') is None
   if not os.path.isfile (old):
     if verbose:
