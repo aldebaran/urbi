@@ -122,7 +122,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    CONST_VISITOR_VISIT_NODES((20,
+    CONST_VISITOR_VISIT_NODES((19,
 			       (
 				 And,
 				 Call,
@@ -135,7 +135,6 @@ namespace runner
 				 Message,
 				 Nary,
 				 Noop,
-				 Object,
 				 Pipe,
 				 Scope,
 				 Stmt,

@@ -19,8 +19,9 @@ namespace ast
 
 # include "kernel/fwd.hh"
 
-# include "libport/ufloat.h"
-# include "libport/symbol.hh"
+# include <libport/hash.hh>
+# include <libport/ufloat.h>
+# include <libport/symbol.hh>
 # include "object/object.hh"
 # include "object/state.hh"
 
@@ -125,6 +126,17 @@ namespace object
   {
     typedef IDelegate* type;
     enum { kind = Object::kind_delegate };
+  };
+
+
+  /*------------.
+  | Dictionary. |
+  `------------*/
+
+  struct dictionary_traits
+  {
+    typedef libport::hash_map<libport::Symbol, rObject> type;
+    enum { kind = Object::kind_dictionary };
   };
 
 

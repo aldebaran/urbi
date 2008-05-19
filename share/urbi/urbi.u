@@ -89,40 +89,6 @@ do Object
     getSlot("res").getSlot("init").apply([getSlot("res")] + call.evalArgs) |
     getSlot("res")
   };
-
-  var properties = (||);
-
-  # Set the \a name property on slot \a slot to \a value
-  function setProperty(slot, name, value)
-  {
-    if (locateSlot("properties") !== self)
-      var self.properties = (||)|
-    if (_isNil(_locateSlot(properties, slot)))
-      _setSlot(properties, slot, (||))|
-    var slotProps = _getSlot(properties, slot)|
-    if (_isNil(_locateSlot(slotProps, name)))
-      _setSlot(slotProps, name, getSlot("value"))
-    else
-      _updateSlot(slotProps, name, getSlot("value"))|
-    if (!getSlot(slot).locateSlot("propertyHook").isNil)
-      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
-    getSlot("value")
-  };
-
-  function getProperty(slot, name)
-  {
-    _getSlot(_getSlot(properties, slot), name)
-  };
-
-  function hasProperty(slot, name)
-  {
-    # No '&&' yet.
-    if (_isNil(_locateSlot(properties, slot)))
-      return false
-    else if (_isNil(_locateSlot(_getSlot(properties, slot), name)))
-        return false
-      else return true
-  };
 };
 
 ## -------- ##
@@ -250,7 +216,6 @@ do Object
 {
   function Object.isNil ()
   {
-    # Preserve this order, so as _isNil((||)) works.
     nil === self
   }
 };
@@ -270,36 +235,9 @@ do Global
     function
     {
       var args = call.evalArgs|
-      _getSlot(args.head, name).apply(args)
+      args.head.getSlot(name).apply(args)
     }.capture("name")
   };
-
-  # Make a function applicable on a plain object from the \a f method
-  function makePlainObjectFunction(f)
-  {
-    function
-    {
-      getSlot("f").apply(call.evalArgs)
-    }.capture("f")
-  };
-
-  # Generate such wrappers for standard functions. This enable to
-  # apply them on proto-less objects, such as (||). Name them by
-  # prefixing '_'.
-  ["addProto",
-    "getLazyLocalSlot",
-    "getSlot",
-    "isNil",
-    "locateSlot",
-    "removeSlot",
-    "setSlot",
-    "slotNames",
-    "updateSlot"
-    ].each(function (name)
-    {
-      Global.setSlot("_" + name,
-        makePlainObjectFunction(Object.getSlot(name)))
-    });
 };
 
 ## -------------------- ##
@@ -386,16 +324,16 @@ do Object
   #
   # FIXME: We need a way to scope the "at" and destroy it when "o" is
   # no longer visible.
-  function persist
-  {
-    var res = (|protos: [Object],
-                val: false,
-                tag: new Tag ("persist".fresh)|) |
-    var delay = call.evalArgAt (2) |
-    at (call.evalArgAt (1)) res.tag: { sleep (delay) | res.val = true }
-      onleave { res.val = false | res.tag.stop } |
-    res
-  };
+#   function persist
+#   {
+#     var res = (|protos: [Object],
+#                 val: false,
+#                 tag: new Tag ("persist".fresh)|) |
+#     var delay = call.evalArgAt (2) |
+#     at (call.evalArgAt (1)) res.tag: { sleep (delay) | res.val = true }
+#       onleave { res.val = false | res.tag.stop } |
+#     res
+#   };
 };
 
 load("urbi/event.u");
@@ -649,6 +587,48 @@ load("urbi/tuple.u");
 
 load("urbi/dictionary.u");
 
+## ----------- ##
+## Properties. ##
+## ----------- ##
+
+do Object
+{
+  var properties = Dictionary.new;
+
+  # Set the \a name property on slot \a slot to \a value
+  function setProperty(slot, name, value)
+  {
+    if (locateSlot("properties") !== self)
+      var self.properties = Dictionary.new|
+    var slotProps|
+    if (!properties.has(slot))
+    {
+      slotProps = Dictionary.new|
+      properties.set(slot, slotProps)|
+    }
+    else
+      slotProps = properties.get(slot)|
+    slotProps.set(name, getSlot("value"))|
+    if (!getSlot(slot).locateSlot("propertyHook").isNil)
+      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
+    getSlot("value")
+  };
+
+  function getProperty(slot, name)
+  {
+    properties.get(slot).get(name)
+  };
+
+  function hasProperty(slot, name)
+  {
+    # No '&&' yet.
+    if (properties.has(slot))
+      properties.get(slot).has(name)
+    else
+      return false
+  };
+};
+
 ## -------- ##
 ## UObject. ##
 ## -------- ##
@@ -673,3 +653,4 @@ load("URBI.INI");
 # signal that we have loaded urbi.u.  Messages before, and including
 # this one, are ignored.
 "Urbi is up and running.";
+

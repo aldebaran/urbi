@@ -40,6 +40,8 @@ object/code-class.cc				\
 object/code-class.hh				\
 object/delegate-class.cc                        \
 object/delegate-class.hh                        \
+object/dictionary-class.cc                        \
+object/dictionary-class.hh                        \
 object/lobby-class.cc				\
 object/lobby-class.hh				\
 object/float-class.cc				\

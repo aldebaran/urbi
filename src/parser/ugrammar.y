@@ -176,50 +176,34 @@
     ast::Exp*
     ast_slot_change (const loc& l,
 		     ast::Call* lvalue, libport::Symbol change,
-		     ast::Exp* value, ast::Exp* modifier = 0)
+		     ast::Exp* value)
     {
       ast::Exp* res = 0;
-      if (modifier)
-      {
-        static ast::ParametricAst
-          traj("TrajectoryGenerator"
-               ".new(%exp:1, %exp:2, %exp:3)"
-               ".run(%exp:4.target(%exp:5),"
-               "     %exp:6)");
-        ast::String* name = new ast::String(l, lvalue->name_get());
-        res = exp(traj
-                  %lvalue %value %modifier
-                  %new_clone(lvalue->args_get().front()) %new_clone(name)
-                  %name);
-      }
-      else
-      {
-        // FIXME: We leak lvalue itself.
-	ast::Call* call =
-	  ast_call(l,
-		   &lvalue->args_get().front(), change,
-		   new ast::String(lvalue->location_get(), lvalue->name_get()));
-	if (value)
-	  call->args_get().push_back(value);
-	res = call;
-      }
+      // FIXME: We leak lvalue itself.
+      ast::Call* call =
+        ast_call(l,
+                 &lvalue->args_get().front(), change,
+                 new ast::String(lvalue->location_get(), lvalue->name_get()));
+      if (value)
+        call->args_get().push_back(value);
+      res = call;
       return res;
     }
 
     static
     ast::Exp*
     ast_slot_set (const loc& l, ast::Call* lvalue,
-		  ast::Exp* value, ast::Object* modifier = 0)
+		  ast::Exp* value)
     {
-      return ast_slot_change(l, lvalue, SYMBOL(setSlot), value, modifier);
+      return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
     }
 
     static
     ast::Exp*
     ast_slot_update (const loc& l, ast::Call* lvalue,
-		     ast::Exp* value, ast::Object* modifier = 0)
+                     ast::Exp* value  )
     {
-      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value, modifier);
+      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
 
     static
@@ -842,13 +826,13 @@ k1_id:
 `-------------------*/
 
 stmt:
- lvalue "=" expr namedarguments
+  lvalue "=" expr
     {
-      $$ = ast_slot_update(@$, $1, $3, $4);
+      $$ = ast_slot_update(@$, $1, $3);
     }
-| "var" lvalue "=" expr namedarguments
+| "var" lvalue "=" expr
     {
-      $$ = ast_slot_set(@$, $2, $4, $5);
+      $$ = ast_slot_set(@$, $2, $4);
     }
 | "var" lvalue
     {
@@ -1202,58 +1186,6 @@ expr:
 | duration       { $$ = new ast::Float(@$, $1);        }
 | "string"       { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]"  { $$ = new ast::List(@$, $2);	       }
-;
-
-
-/*----------------------------.
-| slots and literal objects.  |
-`----------------------------*/
-
-%token TOK_LPAREN_PIPE "(|"
-       TOK_PIPE_RPAREN "|)";
-expr:
-  "(|" slots "|)" { $$ = $2; }
-;
-
-%union { ast::Object* object; };
-%type <object> slots slots.1 namedarguments namedarguments.1;
-%printer { debug_stream() << libport::deref << $$; } <slot> <object>;
-
-slots:
-  /* nothing */  { $$ = new ast::Object(@$); }
-| slots.1
-;
-
-slots.1:
-  slot           { $$ = new ast::Object(@$); $$->slots_get().push_back($1); }
-| slots "," slot { $$->slots_get().push_back($3); }
-;
-
-/*-----------------.
-| namedarguments.  |
-`-----------------*/
-
-namedarguments:
-  /* empty */      { $$ = 0;  }
-| namedarguments.1 { $$ = $1; }
-;
-
-namedarguments.1:
-  slot
-    {
-      $$ = new ast::Object(@$);
-      $$->slots_get().push_back($1);
-    }
-| namedarguments.1 slot
-    {
-      $$->slots_get().push_back($2);
-    }
-;
-
-%union { ast::Slot* slot; };
-%type <slot> slot;
-slot:
-  "identifier" ":" expr   { $$ = new ast::Slot(@$, $1, $3); }
 ;
 
 

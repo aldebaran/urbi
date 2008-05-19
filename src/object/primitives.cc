@@ -23,6 +23,7 @@ namespace object
   SYMBOL(asAlien);
   SYMBOL(asCode);
   SYMBOL(asDelegate);
+  SYMBOL(asDictionary);
   SYMBOL(asFloat);
   SYMBOL(asGlobal);
   SYMBOL(asInteger);
@@ -37,6 +38,7 @@ namespace object
   SYMBOL(asSystem);
   SYMBOL(asvoid);
   SYMBOL(nil);
+  SYMBOL(Dictionary);
   SYMBOL(Global);
   SYMBOL(Scope);
   SYMBOL(System);

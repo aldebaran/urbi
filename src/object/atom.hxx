@@ -19,6 +19,7 @@
 # include "object/alien-class.hh"
 # include "object/code-class.hh"
 # include "object/delegate-class.hh"
+# include "object/dictionary-class.hh"
 # include "object/global-class.hh"
 # include "object/lobby-class.hh"
 # include "object/float-class.hh"
@@ -92,6 +93,7 @@ namespace object
     // As is usual for integer values, Traits::kind is an enum whose
     // value is a kind_type.  So we have to cast it back to its type
     // here.
+
     return static_cast<Object::kind_type>(Traits::kind);
   }
 
@@ -156,6 +158,14 @@ namespace object
   inline
   bool
   Atom<object::delegate_traits>::operator< (const Atom& rhs) const
+  {
+    return this < &rhs;
+  }
+
+  template <>
+  inline
+  bool
+  Atom<object::dictionary_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
   }

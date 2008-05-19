@@ -32,19 +32,20 @@ namespace object
   /// such as defining enums, so we do not use terminators here (;
   /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
-  Macro(alien,     Alien)				\
-  Macro(code,      Code)				\
-  Macro(delegate,  Delegate)				\
-  Macro(float,     Float)				\
-  Macro(global,    Global)				\
-  Macro(integer,   Integer)				\
-  Macro(list,      List)				\
-  Macro(lobby,     Lobby)				\
-  Macro(primitive, Primitive)				\
-  Macro(scope,     Scope)				\
-  Macro(string,    String)				\
-  Macro(tag,       Tag)					\
-  Macro(task,      Task)
+  Macro(alien,      Alien)				\
+  Macro(code,       Code)				\
+  Macro(delegate,   Delegate)				\
+  Macro(dictionary, Dictionary)                         \
+  Macro(float,      Float)				\
+  Macro(global,     Global)				\
+  Macro(integer,    Integer)				\
+  Macro(list,       List)				\
+  Macro(lobby,      Lobby)				\
+  Macro(primitive,  Primitive)				\
+  Macro(scope,      Scope)				\
+  Macro(string,     String)				\
+  Macro(tag,        Tag)				\
+  Macro(task,       Task)
 
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\

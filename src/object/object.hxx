@@ -22,6 +22,7 @@
 # include "object/alien-class.hh"
 # include "object/code-class.hh"
 # include "object/delegate-class.hh"
+# include "object/dictionary-class.hh"
 # include "object/float-class.hh"
 # include "object/global-class.hh"
 # include "object/hash-slots.hh"

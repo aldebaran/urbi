@@ -1,39 +1,5 @@
-class Global.Dictionary
+do Global.Dictionary
 {
-  var content = (||);
-
-  function set (key, value)
-  {
-    if (has((key)))
-      _updateSlot (content, key, value)
-    else
-      _setSlot (content, key, value)|
-    return self|
-  };
-
-  function get (key)
-  {
-    _getSlot(content, key)
-  };
-
-  function has (key)
-  {
-    !_isNil(_locateSlot (content, key))
-  };
-
-  function flush ()
-  {
-    keys.each(function (key) {
-      _removeSlot(content, key)
-    }.makeClosure)|
-    self|
-  };
-
-  function keys ()
-  {
-    _slotNames (content)
-  };
-
   function asList ()
   {
     var res = []|

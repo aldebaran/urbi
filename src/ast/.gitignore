@@ -73,9 +73,6 @@ nodes.stamp
 noop.cc
 noop.hh
 noop.hxx
-object.cc
-object.hh
-object.hxx
 pipe.cc
 pipe.hh
 pipe.hxx

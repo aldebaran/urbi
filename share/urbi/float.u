@@ -66,61 +66,61 @@ do Float
     }
   };
 
-  function propertyHook(parent, name, prop, value)
-  {
-    var modifiers = ["speed", "rangemin", "rangemax"]|
-    if (!modifiers.has(prop))
-      return|
-    if (prop == "speed")
-    {
-      parent.setProperty(name, "updateHook",
-	function (name, value) {
-	  var mod = (||)|
-	  if (parent.hasProperty(name, "speed"))
-	    _setSlot(mod, "speed", parent.getProperty(name, "speed"))|
-	  var g = TrajectoryGenerator.new(getSlot(name), value, mod)|
-	  g.run(parent, name);
-	}.capture("parent").capture("name"));
-    }
-    else
-    {
-      if (!parent.hasProperty(name, "rangemin"))
-	parent.setProperty(name, "rangemin", 0) |
-      if (!parent.hasProperty(name, "rangemax"))
-	parent.setProperty(name, "rangemax", 0) |
-      parent.setProperty(name, "updateHook",
-	function (name, value) {
-	  var rmin = parent.getProperty(name, "rangemin")|
-	  var rmax = parent.getProperty(name, "rangemax")|
-	  if (value < rmin)
-	    value = rmin
-	  else if (value > rmax)
-	    value = rmax |
-	  var v = value+0|
-	  var v.rangemin = rmin|
-	  var v.rangemax = rmax|
-	  parent.changeSlot(name, v)|
-	  parent.getSlot(name).setSlot("'n",
-		parent.getSlot(name).getSlot("'n"))|
-	  parent.getSlot(name).setProperty("'n", "updateHook",
-	    Float.getNormHook.inject("parent",parent).inject("name",name)) |
-	  void
-	}.capture("parent").capture("name"))|
-      var v = parent.getSlot(name) + 0|
-      var v.rangemin = parent.getProperty(name, "rangemin")|
-      var v.rangemax = parent.getProperty(name, "rangemax")|
-      parent.changeSlot(name, v)|
-      parent.getSlot(name).setProperty("'n", "updateHook",
-	function(name, value) {
-	  var rmin = parent.getSlot(name).rangemin|
-	  var rmax = parent.getSlot(name).rangemin|
-	  value = value*(rmax-rmin) + rmin|
-	  var value.rangemin = rmin|
-	  var value.rangemax = rmax|
-	  parent.changeSlot(name, value)
-	}.capture("parent").capture("name"))
-    }
-  };
+#   function propertyHook(parent, name, prop, value)
+#   {
+#     var modifiers = ["speed", "rangemin", "rangemax"]|
+#     if (!modifiers.has(prop))
+#       return|
+#     if (prop == "speed")
+#     {
+#       parent.setProperty(name, "updateHook",
+# 	function (name, value) {
+# 	  var mod = (||)|
+# 	  if (parent.hasProperty(name, "speed"))
+# 	    _setSlot(mod, "speed", parent.getProperty(name, "speed"))|
+# 	  var g = TrajectoryGenerator.new(getSlot(name), value, mod)|
+# 	  g.run(parent, name);
+# 	}.capture("parent").capture("name"));
+#     }
+#     else
+#     {
+#       if (!parent.hasProperty(name, "rangemin"))
+# 	parent.setProperty(name, "rangemin", 0) |
+#       if (!parent.hasProperty(name, "rangemax"))
+# 	parent.setProperty(name, "rangemax", 0) |
+#       parent.setProperty(name, "updateHook",
+# 	function (name, value) {
+# 	  var rmin = parent.getProperty(name, "rangemin")|
+# 	  var rmax = parent.getProperty(name, "rangemax")|
+# 	  if (value < rmin)
+# 	    value = rmin
+# 	  else if (value > rmax)
+# 	    value = rmax |
+# 	  var v = value+0|
+# 	  var v.rangemin = rmin|
+# 	  var v.rangemax = rmax|
+# 	  parent.changeSlot(name, v)|
+# 	  parent.getSlot(name).setSlot("'n",
+# 		parent.getSlot(name).getSlot("'n"))|
+# 	  parent.getSlot(name).setProperty("'n", "updateHook",
+# 	    Float.getNormHook.inject("parent",parent).inject("name",name)) |
+# 	  void
+# 	}.capture("parent").capture("name"))|
+#       var v = parent.getSlot(name) + 0|
+#       var v.rangemin = parent.getProperty(name, "rangemin")|
+#       var v.rangemax = parent.getProperty(name, "rangemax")|
+#       parent.changeSlot(name, v)|
+#       parent.getSlot(name).setProperty("'n", "updateHook",
+# 	function(name, value) {
+# 	  var rmin = parent.getSlot(name).rangemin|
+# 	  var rmax = parent.getSlot(name).rangemin|
+# 	  value = value*(rmax-rmin) + rmin|
+# 	  var value.rangemin = rmin|
+# 	  var value.rangemax = rmax|
+# 	  parent.changeSlot(name, value)
+# 	}.capture("parent").capture("name"))
+#     }
+#   };
 
   # Repeat \a action \a self times.
   function times (action)

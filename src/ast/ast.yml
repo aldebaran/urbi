@@ -652,28 +652,6 @@ Implicit:
   printer:
     - '"<IMPLICIT>"'
 
-Object:
-  super: Exp
-  inline:
-    header prologue: '# include "ast/slot.hh"'
-    header inside: |2
-        public:
-          /// An empty Object.
-          Object(const loc& location);
-    impl inside: |2
-        Object::Object (const loc& location)
-          : Exp (location),
-            slots_ (new slots_type)
-        { }
-  attributes:
-    - slots:
-        type: slots_type*
-        desc: List of slots
-  printer:
-    - '"(|"'
-    - 'libport::separate(n.slots_get(), libport::iendl)'
-    - '"|)"'
-
 Float:
   super: Exp
   attributes:
