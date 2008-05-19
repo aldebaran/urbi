@@ -2,32 +2,37 @@
 ## Generate the list of symbols we use.  ##
 ## ------------------------------------- ##
 
-symbols_hh = object/symbols.hh
-symbols_stamp = $(symbols_hh:.hh=.stamp)
+precompiled_symbols_hh = object/precompiled-symbols.hh
+precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
 # We don't include $(nodist_libkernel_la_SOURCES) here, since it
 # includes symbols.hh itself.  Currently there seems to be no need to
 # support generated files.
-symbols_hh_deps += $(dist_libkernel_la_SOURCES)
-$(symbols_stamp): $(symbols_hh_deps)
+precompiled_symbols_hh_deps +=			\
+	 $(dist_libkernel_la_SOURCES)		\
+	object/symbols-generate.pl
+$(precompiled_symbols_stamp): $(precompiled_symbols_hh_deps)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	@echo "rebuilding $(symbols_hh) because of:"
+	@echo "rebuilding $(precompiled_symbols_hh) because of:"
 	@for i in $?;				\
 	do					\
 	  echo "       $$i";			\
 	done
-	:> $(symbols_hh)~
-	-cp -f $(symbols_hh) $(symbols_hh)~
-	(cd $(top_srcdir) && perl -w src/object/symbols-generate.pl) >$(symbols_hh).tmp
-	-diff -u $(symbols_hh)~ $(symbols_hh).tmp
-	$(top_srcdir)/build-aux/move-if-change $(symbols_hh).tmp $(symbols_hh)
+	:> $(precompiled_symbols_hh)~
+	-cp -f $(precompiled_symbols_hh) $(precompiled_symbols_hh)~
+	(cd $(top_srcdir) && \
+	  perl -w src/object/symbols-generate.pl) >$(precompiled_symbols_hh).tmp
+	-diff -u $(precompiled_symbols_hh)~ $(precompiled_symbols_hh).tmp
+	$(top_srcdir)/build-aux/move-if-change \
+	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
 	@mv -f $@.tmp $@
 
-$(symbols_hh): $(symbols_stamp)
-	@if test ! -f $@; then				\
-	  rm -f $(symbols_stamp);			\
-	  $(MAKE) $(AM_MAKEFLAGS) $(symbols_stamp);	\
+$(precompiled_symbols_hh): $(precompiled_symbols_stamp)
+	@if test ! -f $@; then					\
+	  rm -f $(precompiled_symbols_stamp);			\
+	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
+
 
 dist_libkernel_la_SOURCES +=			\
 object/alien.hh					\
@@ -75,6 +80,7 @@ object/state.cc					\
 object/state.hh					\
 object/string-class.cc				\
 object/string-class.hh				\
+object/symbols.hh				\
 object/symbols.cc				\
 object/system-class.cc				\
 object/system-class.hh				\
@@ -87,4 +93,4 @@ object/urbi-exception.hh			\
 object/urbi-exception.hxx
 
 nodist_libkernel_la_SOURCES += 			\
-object/symbols.hh
+object/precompiled-symbols.hh

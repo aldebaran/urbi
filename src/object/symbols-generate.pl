@@ -51,25 +51,12 @@ my %symbol =
 
 print <<'EOF';
 /**
- ** \file object/symbols.hh
- ** \brief Frequently used symbol names.
+ ** \file object/precompiled-symbols.hh
+ ** \brief Predefined symbols.
  */
 
-#ifndef OBJECT_SYMBOLS_HH
-# define OBJECT_SYMBOLS_HH
-
-# include <libport/symbol.hh>
-
-/* Symbols are internalized, that is to say, we keep a single
-   representative, and use only it to denote all the equal symbols
-   (the "FlyWeight" design pattern).  It is there quite useful to
-   predeclare the symbols we use, so that at runtime we don't have to
-   recompute the single representative.
-
-   Therefore, declare here all the symbols we use somewhere in the C++
-   code.  */
-
-# define SYMBOL(Sym) object::symbol_ ## Sym
+#ifndef OBJECT_PRECOMPILED_SYMBOLS_HH
+# define OBJECT_PRECOMPILED_SYMBOLS_HH
 
 # define SYMBOLS_APPLY(Macro)			  \
 EOF
@@ -82,17 +69,5 @@ for (sort keys %symbol)
 print <<'EOF';
   /* Backslash terminator. */
 
-namespace object
-{
-
-# define SYMBOL_DECLARE(Name, Value)		\
-  extern libport::Symbol symbol_ ## Name
-
-  SYMBOLS_APPLY(SYMBOL_DECLARE);
-
-# undef SYMBOL_DECLARE
-
-} // namespace object
-
-#endif // !OBJECT_SYMBOLS_HH
+#endif // !OBJECT_PRECOMPILED_SYMBOLS_HH
 EOF

@@ -54,7 +54,7 @@ nodist_libkernel_la_SOURCES =
 BUILT_SOURCES += $(nodist_libkernel_la_SOURCES)
 # Needed in object/local.mk, used potentially everywhere else (maybe
 # before, so initialize it here).
-symbols_hh_deps =
+precompiled_symbols_hh_deps =
 
 ## ---------- ##
 ## uobject/.  ##

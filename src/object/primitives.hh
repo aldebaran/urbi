@@ -140,7 +140,7 @@ check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
  * implementation \a Name.
  */
 #define DECLARE_PRIMITIVE(Class, Name)					\
-  Class ## _class->slot_set (object::symbol_##Name,			\
+  Class ## _class->slot_set (SYMBOL(Name),                              \
 			     Primitive::fresh(Class ## _class_ ## Name))
 
 #endif // !OBJECT_PRIMITIVES_HH

@@ -129,7 +129,7 @@ namespace object
     What ## _class->slot_set(SYMBOL_(as ## Name),		\
 			     Primitive::fresh(id));             \
     What ## _class_initialize ();				\
-    global_class->slot_set(symbol_ ## Name, What ## _class);
+    global_class->slot_set(SYMBOL(Name), What ## _class);
 
 
 #define CLASS_SETUP(What, Name)			\
