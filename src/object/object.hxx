@@ -17,6 +17,7 @@
 # include "libport/shared-ptr.hh"
 
 # include "object/object.hh"
+# include "object/root-classes.hh"
 # include "object/primitives.hh"
 
 # include "object/alien-class.hh"

@@ -72,8 +72,9 @@ object/object-kind.cc				\
 object/object-kind.hh				\
 object/primitive-class.cc			\
 object/primitive-class.hh			\
-object/primitives.cc				\
 object/primitives.hh				\
+object/root-classes.cc				\
+object/root-classes.hh				\
 object/scope-class.cc				\
 object/scope-class.hh				\
 object/sorted-vector-slots.hh			\

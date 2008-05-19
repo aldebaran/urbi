@@ -1,13 +1,12 @@
 /**
- ** \file object/primitives.cc
+ ** \file object/root-classes.cc
  ** \brief Creation of the root Objects.
  */
 
 #include "object/atom.hh"
 #include "object/object.hh"
-#include "object/primitives.hh"
+#include "object/root-classes.hh"
 #include "object/system-class.hh"
-#include "object/urbi-exception.hh"
 
 namespace object
 {
@@ -153,7 +152,8 @@ namespace object
 
 #undef SYMBOL_
 
-// This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are false atoms
+// This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
+// false atoms
 #define COMPARABLE(What, Name)		\
     What ## _class->slot_set(SYMBOL(sameAs), Primitive::fresh(compare<Name>));
 

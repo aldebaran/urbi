@@ -6,16 +6,9 @@
 #ifndef OBJECT_PRIMITIVES_HH
 # define OBJECT_PRIMITIVES_HH
 
-# include "libport/compiler.hh"
-
-# include "object/fwd.hh"
+# include "object/object.hh"
 # include "object/urbi-exception.hh"
 # include "object/symbols.hh"
-
-namespace object
-{
-  void root_classes_initialize ();
-}; // namespace object
 
   /*-------------------.
   | Primitives macros  |
@@ -54,7 +47,7 @@ namespace object
  * fall into the expected \param MIN - \param MAX range, including self.
  */
 #define CHECK_ARG_COUNT_RANGE(MIN, MAX)				\
-check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
+  check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
 
 /**
  * Define a primitive for class \a Class named \a Name, which takes
