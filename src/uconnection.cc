@@ -36,17 +36,20 @@
 #include "libport/assert.hh"
 #include "libport/ref-pt.hh"
 
+#include "ast/nary.hh"
+
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
-#include "ast/ast.hh"
-#include "ast/nary.hh"
 #include "object/object.hh"
 #include "object/atom.hh"
+
+#include "parser/uparser.hh"
+#include "parser/parse-result.hh"
+
 #include "runner/fwd.hh"
 #include "runner/runner.hh"
 
-#include "parser/uparser.hh"
 #include "ubanner.hh"
 #include "uqueue.hh"
 
@@ -245,11 +248,11 @@ UConnection::received (const char* buffer, size_t length)
        !command.empty();
        command = recv_queue_->pop_command())
   {
-    int result = p.parse (command);
-    passert (result, result != -1);
-    p.process_errors(active_command_);
+    parser::parse_result_type result(p.parse(command));
+    passert(result.get(), result->status != -1);
+    result->process_errors(*active_command_);
 
-    if (ast::Nary* ast = p.ast_take().release())
+    if (ast::Nary* ast = result->ast_take().release())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
       // Append to the current list.

@@ -5,27 +5,16 @@
 
 #include "ast/parametric-ast.hh"
 #include "ast/pretty-printer.hh"
-#include "parser/uparser.hh"
+
+#include "parser/parse.hh"
+#include "parser/parse-result.hh"
 
 namespace ast
 {
 
-  namespace
-  {
-    parser::UParser::ast_type*
-    parse(const std::string& s)
-    {
-      parser::UParser p;
-      int err = p.parse (s);
-      p.dump_errors();
-      passert (err, !err);
-      return p.ast_xtake().release();
-    }
-  }
-
   ParametricAst::ParametricAst(const std::string& s)
     : exp_map_type("exp")
-    , ast_(parse(s))
+    , ast_(parser::parse(s)->ast_xtake().release())
     , count_(0)
   {
   }

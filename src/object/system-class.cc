@@ -8,15 +8,17 @@
 
 #include <memory>
 
-#include "parser/uparser.hh"
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
-#include "runner/at_handler.hh"
-#include "runner/runner.hh"
-
 #include "object/alien.hh"
 #include "object/system-class.hh"
+
+#include "parser/parse.hh"
+#include "parser/parse-result.hh"
+
+#include "runner/at_handler.hh"
+#include "runner/runner.hh"
 
 namespace object
 {
@@ -73,12 +75,13 @@ namespace object
   }
 
   static rObject
-  execute_parsed (runner::Runner& r, parser::UParser& p, UrbiException e)
+  execute_parsed (runner::Runner& r,
+                  parser::parse_result_type p, UrbiException e)
   {
     ast::Nary errs;
-    p.process_errors(&errs);
+    p->process_errors(errs);
     errs.accept(r);
-    if (const ast::Nary* ast = p.ast_take().release())
+    if (const ast::Nary* ast = p->ast_take().release())
       // FIXME: Release AST.
       return r.eval(*ast);
     else
@@ -102,9 +105,12 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
-    parser::UParser p(parser::parse(arg1->value_get()));
-    return execute_parsed(r, p, PrimitiveError("",
-	std::string("Error executing command.")));
+    parser::parse_result_type p();
+    return
+      execute_parsed(r,
+                     parser::parse(arg1->value_get()),
+                     PrimitiveError("",
+                                    std::string("Error executing command.")));
   }
 
   static rObject
@@ -151,9 +157,9 @@ namespace object
       throw PrimitiveError("loadFile",
 			   "No such file: " + filename);
 
-    parser::UParser p = parser::parse_file(filename);
     return
-      execute_parsed(r, p,
+      execute_parsed(r,
+                     parser::parse_file(filename),
 		     PrimitiveError("", //same message than k1
 				    "Error loading file: " + filename));
   }

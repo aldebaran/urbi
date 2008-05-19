@@ -57,6 +57,7 @@
 #include "object/atom.hh"
 
 #include "parser/tweast.hh"
+#include "parser/parse.hh"
 #include "parser/parser-impl.hh"
 #include "parser/utoken.hh"
 
@@ -103,12 +104,12 @@
 
   /// Store in Var the AST of the parsing of Code.
 # define DESUGAR_(Var, Code)				\
-  Var = ::parser::parse(::parser::Tweast() << Code)
+    Var = ::parser::parse(::parser::Tweast() << Code)->ast_take().release()
 
   /// Store in $$ the AST of the parsing of Code.
   // Fragile in case Bison changes its expansion of $$.
 # define DESUGAR(Code)				\
-  DESUGAR_(yyval.expr, Code)
+    DESUGAR_(yyval.expr, Code)
 
 
     /// "<target> . <method> (args)".
@@ -545,8 +546,8 @@ start:
 root:
     /* Minimal error recovery, so that all the tokens are read,
        especially the end-of-lines, to keep error messages in sync. */
-  error  { up.ast_set (0); /* FIXME: We should probably free it. */ }
-| stmts  { up.ast_set ($1); }
+  error  { up.result_->ast_reset(); /* FIXME: We should probably free it. */ }
+| stmts  { up.result_->ast_reset($1); }
 ;
 
 
@@ -708,7 +709,7 @@ stmt:
              << "function " << ("as" + $2->name_get().name_get()) << "() {self}|"
              << ast_exp($3) << "}";
 
-      $$ = ::parser::parse(tweast);
+      $$ = ::parser::parse(tweast)->ast_take().release();
       delete $2;
     }
 | "class" lvalue
