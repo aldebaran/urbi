@@ -349,7 +349,8 @@ var void.asString = "void";
 // void prints nothing in the toplevel
 var void.asToplevelPrintable = "";
 var void.isProto = 1;
-
+var Object.isVoid = false;
+var void.isVoid = true;
 
 ## ------------ ##
 ## Comparable.  ##

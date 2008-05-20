@@ -34,7 +34,7 @@ namespace object
       if (it != d.end())
         return it->second;
       else
-        return nil_class;
+        return void_class;
     }
 
     static rObject
