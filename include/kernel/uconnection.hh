@@ -35,17 +35,19 @@
 # include "kernel/utypes.hh"
 # include "kernel/ucomplaints.hh"
 
-namespace ast {
+namespace ast
+{
   class Nary;
-};
+}
 
-namespace object {
+namespace object
+{
   class Object;
   struct lobby_traits;
   template<class T> class Atom;
   typedef libport::shared_ptr<Object> rObject;
   typedef libport::shared_ptr<Atom<lobby_traits> > rLobby;
-};
+}
 
 # define ERR_SET(Val) (error_ = Val)
 # define CONN_ERR_RET(Val) do			\
