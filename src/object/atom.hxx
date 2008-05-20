@@ -71,12 +71,14 @@ namespace object
     if (add_proto)
       switch (kind_get())
 	{
-# define CASE(What, Name)					\
-	  case object_kind_ ## What: proto_add (What ## _class); break;
+# define CASE(What, Name)                       \
+	  case object_kind_ ## What:            \
+            proto_add (What ## _class);         \
+          break;
 	  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
           case object_kind_object:
-	    pabort (kind_get());
+	    pabort(kind_get());
 	}
   }
 

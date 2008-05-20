@@ -7,35 +7,18 @@
 # define OBJECT_OBJECT_HXX
 
 //#define ENABLE_DEBUG_TRACES
-//#include "libport/compiler.hh"
+//#include <libport/compiler.hh>
 
 # include <ostream>
 
-# include "libport/containers.hh"
-# include "libport/indent.hh"
-# include "libport/foreach.hh"
-# include "libport/shared-ptr.hh"
+# include <libport/containers.hh>
+# include <libport/indent.hh>
+# include <libport/foreach.hh>
+# include <libport/shared-ptr.hh>
 
 # include "object/object.hh"
 # include "object/root-classes.hh"
 # include "object/primitives.hh"
-
-# include "object/alien-class.hh"
-# include "object/code-class.hh"
-# include "object/delegate-class.hh"
-# include "object/dictionary-class.hh"
-# include "object/float-class.hh"
-# include "object/global-class.hh"
-# include "object/hash-slots.hh"
-# include "object/integer-class.hh"
-# include "object/list-class.hh"
-# include "object/lobby-class.hh"
-# include "object/primitive-class.hh"
-# include "object/scope-class.hh"
-# include "object/sorted-vector-slots.hh"
-# include "object/string-class.hh"
-# include "object/tag-class.hh"
-# include "object/task-class.hh"
 
 namespace object
 {
@@ -128,11 +111,12 @@ namespace object
     */
     switch(p->kind_get())
     {
-#define FORBID(L, U)                                                            \
-      case object_kind_ ## L:                                                   \
-        if (kind_get() != object_kind_ ## L)                                    \
-          pabort("You can't inherit from atoms for now. Atom type: " #U ".");   \
-        break;
+#define FORBID(L, U)                                                    \
+      case object_kind_ ## L:                                           \
+        if (kind_get() != object_kind_ ## L)                            \
+          pabort("You can't inherit from atoms for now. Atom type: "    \
+                 #U ".");                                               \
+      break;
       APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(FORBID)
 #undef FORBID
       case object_kind_object:

@@ -11,8 +11,8 @@
 namespace object
 {
 
-  // The initialization routines are useless, but allow a more
-  // systematic initialization of all the base classes.
+  // The following initialization routines are useless, but allow a
+  // more systematic initialization of all the base classes.
 #define CLASS_INITIALIZE(What)					\
   rObject What ## _class;					\
   namespace { static void What ## _class_initialize () { } }
@@ -160,7 +160,6 @@ namespace object
     COMPARABLE(float,     Float);
     COMPARABLE(integer,   Integer);
     COMPARABLE(string,    String);
-
   }
 
 } // namespace object
