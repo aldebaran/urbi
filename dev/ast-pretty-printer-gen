@@ -49,6 +49,7 @@ namespace ast
 
     using super_type::%(visit)s;
 """ % ast_params
+
 print tools.indent(4, ast.visit(arr, True))
 
 print """

@@ -50,9 +50,7 @@ namespace %(clonerlib)s
     using super_type::%(visit)s;
 """ % ast_params
 
-for node in concrete:
-  print "    virtual void %s (const ast::%s&);" \
-      % (ast_params['visit'], node.name)
+print tools.indent(4, ast.visit(concrete, True))
 
 print """\
 
