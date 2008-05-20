@@ -41,8 +41,13 @@ namespace runner
     Runner (rLobby lobby, rObject locals,
 	    scheduler::Scheduler& scheduler, const ast::Ast* ast);
 
+    Runner (rLobby lobby, rObject locals,
+	    scheduler::Scheduler& scheduler, rObject code);
+
     /// Create a copy of a runner starting with another ast.
     Runner (const Runner&, const ast::Ast* ast);
+
+    void init(rObject lobby);
 
     /// Destroy a Runner.
     virtual ~Runner ();
@@ -169,6 +174,9 @@ namespace runner
 
     /// The root of the AST being executed.
     const ast::Ast* ast_;
+
+    /// The urbi Code object to execute
+    rObject code_;
 
     /// The current value during the evaluation of the AST.
     rObject current_;

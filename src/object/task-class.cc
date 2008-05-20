@@ -27,13 +27,11 @@ namespace object
     CHECK_ARG_COUNT_RANGE (2, 3);
     FETCH_ARG (1, Code);
 
-    rList locals = List::fresh(List::value_type ());
-    ast::Exp *body = arg1->value_get ().body_get ();
     runner::Runner* new_runner =
       new runner::Runner (r.lobby_get(),
-			  args[1]->slot_get (SYMBOL(context)),
+			  r.locals_get(),
 			  r.scheduler_get (),
-			  body);
+			  arg1);
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
     args[0]->slot_set (SYMBOL (runner),

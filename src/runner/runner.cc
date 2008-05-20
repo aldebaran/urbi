@@ -186,9 +186,16 @@ namespace runner
   void
   Runner::work ()
   {
-    assert (ast_);
+    assert (ast_ || code_);
     JAECHO ("starting evaluation of AST: ", *ast_);
-    visit (*ast_);
+    if (ast_)
+      visit(*ast_);
+    else
+    {
+      object::objects_type args;
+      args.push_back(locals_);
+      apply(code_, SYMBOL(task), args);
+    }
   }
 
   /*---------------------.

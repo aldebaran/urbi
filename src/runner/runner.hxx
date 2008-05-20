@@ -22,8 +22,29 @@ namespace runner
       scheduler::Job (sched),
       lobby_ (lobby),
       ast_ (ast),
+      code_(0),
       current_ (0),
       locals_ (locals)
+  {
+    init(lobby);
+  }
+
+  inline
+  Runner::Runner (rLobby lobby, rObject locals,
+		  scheduler::Scheduler& sched, rObject code)
+    : Runner::super_type (),
+      scheduler::Job (sched),
+      lobby_ (lobby),
+      ast_ (0),
+      code_(code),
+      current_ (0),
+      locals_ (locals)
+  {
+    init(lobby);
+  }
+
+  inline
+  void Runner::init(rObject lobby)
   {
     if (!locals_)
       locals_ = object::Object::make_do_scope(object::global_class, lobby);

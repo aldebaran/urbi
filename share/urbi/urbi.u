@@ -250,13 +250,15 @@ do Object
 {
   function detach
   {
-    new Task (function { call.evalArgAt (1) }) |
+    var f = function { getSlot("code").context.call.evalArgAt (1) }|
+    Task.new(getSlot("f"))|
     void
   };
 
   function detach_linked
   {
-    new Task (function { call.evalArgAt (1) }, true) |
+    var f = function { getSlot("code").context.call.evalArgAt (1) }|
+    new Task (getSlot("f"), true) |
     void
   };
 
