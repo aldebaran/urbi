@@ -21,7 +21,6 @@ Global.addProto (Global.Constants);
 
 do Global.Constants
 {
-  var asString = "<Constants>";
   var pi     = 3.14159265358979323846264338327950288;
   var inf    = Float.inf;
   var nan    = Float.nan;
