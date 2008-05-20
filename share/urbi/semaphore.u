@@ -11,7 +11,7 @@ class Global.Semaphore {
      if (self.count >= 0)
        return |
      var tag = new Tag ("semaphore") |
-     self.queue.push_back (tag) |
+     queue.push_back (tag) |
      assert (self.queue.size == -self.count) |
      tag: tag.freeze
    };
