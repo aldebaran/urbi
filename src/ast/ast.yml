@@ -69,6 +69,9 @@ deep_clear: "libport::deep_clear"
 # A regexp mathing the types that need to be deep-cleared.
 deep_clear_p: '^$'
 
+# Name of the visit method.
+visit: 'operator()'
+
 # The beginning of visitor.hh, for includes.
 visitor_hh_prologue: |2
 

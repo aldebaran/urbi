@@ -47,11 +47,12 @@ namespace %(clonerlib)s
     // Visit methods.
   public:
     // Import overloaded virtual functions.
-    using super_type::operator();
+    using super_type::%(visit)s;
 """ % ast_params
 
 for node in concrete:
-  print "    virtual void operator() (const ast::" + node.name + "&);"
+  print "    virtual void %s (const ast::%s&);" \
+      % (ast_params['visit'], node.name)
 
 print """\
 
@@ -86,7 +87,8 @@ if dec_subclasses:
     // As we can't mix template and virtual methods, we have to
     // duplicate these methods.  That's too bad.  :("""
   for dec_type in dec_subclasses:
-    print "    virtual void operator() (const ast::" + dec_type.name + "s" + "&);"
+    print "    virtual void %s (const ast::%ss&);" \
+        % (ast_params['visit'], dec_type.name)
 
 print """
     /// The cloned Ast.
@@ -181,7 +183,7 @@ namespace %(clonerlib)s
 
 for node in concrete:
   print "  void"
-  print "  Cloner::operator() (const ast::" + node.name + "& e)"
+  print "  Cloner::%s (const ast::%s& e)" % (ast_params['visit'], node.name)
   print "  {"
   if node.hide:
     print "    //<<"
@@ -210,10 +212,10 @@ if dec_subclasses:
   for dec_type in dec_subclasses:
     print """
     void
-    Cloner::operator() (const ast::""" + dec_type.name + "s" + """& e)
+    Cloner::%s (const ast::%ss& e)
     {
-      decs_visit<ast::""" + dec_type.name + "s" + """> (e);
-    }"""
+      decs_visit<ast::%ss> (e);
+    }"""  % (ast_params['visit'], dec_type.name, dec_type.name)
     # Show the visit method for the first instance of decs types, but
     # hide the others.
     if first_decs_type_p:
@@ -226,5 +228,5 @@ print "} // namespace " + clonerlib
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
-cloner_cc.close ()
+cloner_cc.close()
 tools.lazy_install(srcdir, "cloner.cc");

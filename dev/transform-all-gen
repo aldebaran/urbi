@@ -43,7 +43,7 @@ namespace transform
     typedef transform::ConstVisitor super_type;
 
     // Import overloaded virtual functions.
-    using super_type::operator();
+    using super_type::%s;
 
     /// Destroy an All combinator.
     All (transform::ConstVisitor& v);
@@ -74,9 +74,11 @@ namespace transform
 
 
     // Visit methods.
-  public:"""
+  public:""" % ast_params
 for node in concrete_nodes:
-  print "    virtual void operator() (const ast::" + node.name + "&);"
+  print "    virtual void %s (const ast::%s&);" \
+      % (ast_params['visit'], node.name)
+
 
 print """
     template <typename DecsType>
@@ -89,7 +91,8 @@ print """
     // As we can't mix template and virtual methods, we have to
     // duplicate these methods.  That's too bad.  :("""
 for dec_type in dec_subclasses:
-  print "    virtual void operator() (const ast::" + dec_type.name + "s" + "&);"
+  print "    virtual void %s (const ast::%ss&);" \
+      % (ast_params['visit'], dec_type.name)
 
 print """
   protected:
@@ -156,7 +159,8 @@ namespace transform
 
 for node in concrete_nodes:
   print "  void"
-  print "  All::operator() (const ast::" + node.name + "& e)"
+  print "  All::%s (const ast::%s& e)" % (ast_params['visit'], node.name)
+
   print "  {"
   if node.hide:
     print "    //<<"
@@ -212,10 +216,11 @@ first_decs_type_p = True
 for dec_type in dec_subclasses:
   print """
   void
-  All::operator() (const ast::""" + dec_type.name + "s" + """& e)
+  All::%s (const ast::%ss& e)
   {
-    decs_visit<ast::""" + dec_type.name + "s" + """> (e);
-  }"""
+    decs_visit<ast::%ss> (e);
+  }""" % (ast_params['visit'], dec_type.name, dec_type.name)
+
   # Show the visit method for the first instance of decs types, but
   # hide the others.
   if first_decs_type_p:

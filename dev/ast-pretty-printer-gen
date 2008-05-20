@@ -44,13 +44,13 @@ namespace ast
     virtual ~PrettyPrinter ();
     /** \\} */
 
-    using super_type::operator();
-"""
+    using super_type::%(visit)s;
+""" % ast_params
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
   if 'printer' in node.__dict__:
-    print "    virtual void operator() (const %s&);" % (node.name)
+    print "    virtual void %s (const %s&);" % (ast_params['visit'], node.name)
 
 print """
   private:
@@ -158,12 +158,12 @@ for node in arr:
 	action += '    ostr_ << %s;\n' % (a)
     print """\
   void
-  PrettyPrinter::operator() (const %s& n)
+  PrettyPrinter::%s (const %s& n)
   {
     // Don't warn about unused arguments.
     (void) n;
 %s  }
-""" % (node.name, action)
+""" % (ast_params['visit'], node.name, action)
 
 print """} // namespace ast
 """

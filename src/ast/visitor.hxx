@@ -19,7 +19,7 @@ namespace ast
   void
   GenVisitor<Const>::operator() (typename GenVisitor<Const>::ast_type& e)
   {
-    e.accept (*this);
+    e.accept(*this);
   }
 
   template <template <typename> class Const>
@@ -28,7 +28,7 @@ namespace ast
   GenVisitor<Const>::operator() (E* e)
   {
     if (e)
-      e->accept (*this);
+      e->accept(*this);
   }
 
 } // namespace ast

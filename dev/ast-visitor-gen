@@ -49,20 +49,19 @@ for node in concrete:
   print """\
     /// MSVC 2005 SP1 workaround.
     typedef typename Const<%s>::type %s_type;
-    virtual void operator() (typename Const<%s>::type&) = 0;
-""" % (node.name, lower(node.name), node.name)
+    virtual void %s (typename Const<%s>::type&) = 0;
+""" % (node.name, lower(node.name), ast_params['visit'], node.name)
 print
 for dec_type in ast.subclasses(nodes, 'Dec'):
-  print "   " \
-	" virtual void" \
-	" operator() (typename Const<" + dec_type.name + "s" + ">::type&) = 0;"
+  print "    virtual void %s (typename Const<%ss>::type&) = 0;"\
+      % ast_params['visit'], dec_type.name
 print """\
   protected:
     /** A convenient shortcut for recurring code like this:
 
 	\\code
 	if (e)
-	  operator() (*e);
+	  %(visit)s (*e);
 	\\endcode
 
 	However, the drawback of this approach is that it doesn't take
@@ -73,23 +72,23 @@ print """\
 	We cannot use the libport/select_const.hh approach here, since
 	the compiler cannot resolve a function overloaded or
 	specialized on an associated type of a template.  E.g., writing
-	\\a operator() like this:
+	\\a %(visit)s like this:
 
 	\\code
 	template <typename E>
-	void operator() (typename Const<E>::type* e);
+	void %(visit)s (typename Const<E>::type* e);
 	\\endcode
 
 	won't work directly.  Of course, on can help the compiler,
 	providing it with \\a E
 
 	\\code
-	operator()<NameTy> (e.result_get ());
+	%(visit)s<NameTy> (e.result_get ());
 	\\endcode
 
 	but this is painful.  */
     template <typename E>
-    void operator() (E* e);
+    void %(visit)s (E* e);
   };
 
   /*----------.
@@ -97,7 +96,7 @@ print """\
   `----------*/
 
 # define VISITOR_VISIT_NODE_(Z, N, Array)                      \\
-    virtual void operator() (ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
+    virtual void %(visit)s (ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
 
 # define VISITOR_VISIT_NODES(Nodes)                    \\
   BOOST_PP_REPEAT(BOOST_PP_ARRAY_SIZE(Nodes),          \\
@@ -115,7 +114,7 @@ print """\
   typedef GenVisitor<libport::constify_traits> ConstVisitor;
 
 # define CONST_VISITOR_VISIT_NODE_(Z, N, Array)        \\
-    virtual void operator() (const ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
+    virtual void %(visit)s (const ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
 
 # define CONST_VISITOR_VISIT_NODES(Nodes)              \\
   BOOST_PP_REPEAT(BOOST_PP_ARRAY_SIZE(Nodes),          \\
@@ -126,7 +125,7 @@ print """\
 
 # include "ast/visitor.hxx"
 
-#endif // !AST_VISITOR_HH"""
+#endif // !AST_VISITOR_HH""" % ast_params
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
