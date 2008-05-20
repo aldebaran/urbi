@@ -512,12 +512,6 @@ Global.addProto (Global.Math);
 ## -------- ##
 load("urbi/group.u");
 
-## ------ ##
-## Tags.  ##
-## ------ ##
-
-Global.addProto (Tag);
-
 ## -------------------------- ##
 ## Logic with short-circuit.  ##
 ## -------------------------- ##

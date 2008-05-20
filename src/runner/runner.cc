@@ -125,24 +125,31 @@ namespace runner
     return boost::bind(f, ref(lhs), ref(rhs));
   }
 
-  // This function takes an expression and attempts to decompose it into
-  // a list of identifiers.
-  typedef std::deque<libport::Symbol> symbol_queue_type;
+  // This function takes an expression and attempts to decompose it
+  // into a list of identifiers, and a potential expression that
+  // represents the owner of the new tag.
+  typedef std::deque<const ast::Call*> tag_chain_type;
   static
-  symbol_queue_type
+  std::pair<const ast::Exp*, tag_chain_type>
   decompose_tag_chain (const ast::Exp* e)
   {
-    symbol_queue_type res;
+    tag_chain_type res;
     while (!dynamic_cast<const ast::Implicit*>(e))
     {
       const ast::Call* c = dynamic_cast<const ast::Call*>(e);
-      if (!c || c->args_get ().size () != 1)
+      if (!c)
 	throw object::ImplicitTagComponentError(e->location_get());
-      res.push_front (c->name_get ());
+      if (c->args_get().size() > 1)
+      {
+        std::cerr << "The base is a " << c->name_get() << std::endl;
+        return std::make_pair(c, res);
+      }
+      res.push_front (c);
       e = &c->args_get().front();
     }
     assert (!res.empty ());
-    return res;
+    std::cerr << "The base is empty" << std::endl;
+    return std::make_pair((const ast::Exp*)0, res);
   }
 
 
@@ -934,26 +941,39 @@ namespace runner
 
       // Tag represents the top level tag
       rObject toplevel = object::tag_class;
-      rObject base = toplevel;
-      foreach (const libport::Symbol element, decompose_tag_chain (&e))
+      std::pair<const ast::Exp*, tag_chain_type> res = decompose_tag_chain (&e);
+      // If the left part of the implicit tag is a call with argument, evaluate it
+      // to find the owner. Otherwise, store the new tag as a local variable.
+      rObject where = res.first ? eval(*res.first) : locals_;
+      // If it is a tag, consider it as the parent of the new tag as well.
+      rObject base = is_a(where, object::tag_class) ? where : toplevel;
+      tag_chain_type chain = res.second;
+      std::cerr << "Where: " << where << std::endl;
+      std::cerr << "Base: " << base << std::endl;
+      foreach (const ast::Call* element, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-	if (rObject owner = base->slot_locate (element))
-	  base = owner->own_slot_get (element);
+          std::cerr << "I'm on " << element->name_get() << std::endl;
+	if (rObject owner = base->slot_locate (element->name_get()))
+        {
+          std::cerr << "I already have " << element->name_get() << std::endl;
+	  base = owner->own_slot_get (element->name_get());
+        }
 	else
 	{
+          std::cerr << "I create " << element->name_get() << std::endl;
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
 	  rObject new_tag = toplevel->clone();
 	  object::objects_type args;
 	  args.push_back (new_tag);
-	  args.push_back (object::String::fresh (element));
+	  args.push_back (object::String::fresh (element->name_get()));
 	  args.push_back (base);
 	  apply (toplevel->own_slot_get (SYMBOL (init)), SYMBOL(init), args);
-	  base->slot_set (element, new_tag);
-	  base = new_tag;
+	  where->slot_set (element->name_get(), new_tag);
+	  base = where = new_tag;
 	}
       }
 
