@@ -2,9 +2,9 @@ class Global.Tuple
 {
   function init
   {
-    var names = ["first", "second", "third", "fourth", "fifth", "sixth"];
-    var self.members = call.evalArgs;
-    var self.size = members.size;
+    var names = ["first", "second", "third", "fourth", "fifth", "sixth"] |
+    var self.members = call.evalArgs |
+    var self.size = members.size |
     size.times(function (i) {
       if (names.size > i)
         self.setSlot(names.nth(i), function () { members.nth(i) }.capture("i"))
