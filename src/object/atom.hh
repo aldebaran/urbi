@@ -42,7 +42,7 @@ namespace object
     typedef typename boost::add_reference<value_type>::type value_ref_type;
 
     /// Ref-couting.
-    typedef libport::shared_ptr< Atom<Traits> > shared_type;
+    typedef libport::shared_ptr< Atom<Traits>, true > shared_type;
 
     /// Construct an Atom with value \p v. If \p add_proto is \a true,
     /// the appropriate prototype will be added.

@@ -122,7 +122,7 @@ namespace runner
     // Strangely, this indirection is needed
     void (*f) (Runner::rObject&, Runner::rObject&) =
       std::swap<Runner::rObject>;
-    return boost::bind(f, ref(lhs), ref(rhs));
+    return boost::bind(f, boost::ref(lhs), boost::ref(rhs));
   }
 
   // This function takes an expression and attempts to decompose it into
@@ -236,7 +236,7 @@ namespace runner
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
     // instance.
-    if (!fn.strict() && call_message == 0)
+    if (!fn.strict() && !call_message)
     {
       object::objects_type lazy_args;
       foreach (const rObject& o, args)

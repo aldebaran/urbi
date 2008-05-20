@@ -76,7 +76,7 @@ namespace runner
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
     e.accept (*this);
-    ECHO("Eval: " << &e << " = " << current_);
+    ECHO("Eval: " << &e << " = " << current_.get());
     return current_;
   }
 

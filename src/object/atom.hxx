@@ -48,7 +48,6 @@ namespace object
   Atom<Traits>::fresh (const typename Traits::type v, bool add_proto)
   {
     shared_type res = new Atom<Traits>(v, add_proto);
-    res->self_ = res;
     return res;
   }
 

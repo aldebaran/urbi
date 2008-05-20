@@ -32,7 +32,7 @@ namespace scheduler
   // when they resume execution, if they get the same tag again, they will
   // not act as if they were blocked again.
 
-  class Tag
+  class Tag: public libport::RefCounted
   {
   public:
     // Create a new tag, with or without a parent
@@ -73,7 +73,6 @@ namespace scheduler
   private:
     Tag (libport::Symbol name);
     Tag (rTag parent, libport::Symbol name);
-    libport::weak_ptr<Tag> self_;
     rTag            parent_;
     bool            blocked_;
     bool            frozen_;

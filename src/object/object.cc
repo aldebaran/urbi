@@ -301,7 +301,10 @@ namespace object
     boost::optional<rObject> res = lookup(action);
     if (!res && fallback && looker.fallback)
       res = looker.fallback;
-    return res ? res.get() : 0;
+    if (res)
+      return res.get();
+    else
+      return 0;
   }
 
   rObject
