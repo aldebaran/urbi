@@ -372,3 +372,26 @@ def subclasses(nodes, c):
   """Return the set of concrete classes inheriting from 'c'."""
   con = concrete(nodes)
   return filter (lambda node: node.name != c and node.is_a (c), con)
+
+def visit(nodes, const):
+  """Return a string to declare the visit methods for the 'nodes'.
+  If 'const', then these are const visits."""
+  if const:
+    res = "CONST_VISITOR_VISIT_NODES"
+  else:
+    res = "VISITOR_VISIT_NODES"
+  res += "(("
+  width = len(res);
+  res += str(len(nodes)) + ",\n"
+  res += tools.indent(width, "(\n")
+  # The list of nodes to override.
+  sep = ','
+  list = ''
+  for node in nodes:
+    if node == nodes[-1]:
+      sep = ''
+    list += node.name + sep + "\n"
+  list += ")))"
+  res += tools.indent(width + 2, list)
+  return res
+

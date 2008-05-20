@@ -11,6 +11,9 @@ srcdir = sys.argv[1]
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
 
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp(x.name, y.name))
+arr = filter ((lambda node: 'printer' in node.__dict__), arr)
 
 ## --------------- ##
 ## The *.hh file.  ##
@@ -46,11 +49,7 @@ namespace ast
 
     using super_type::%(visit)s;
 """ % ast_params
-arr = nodes.values ()
-arr.sort (lambda x, y: cmp(x.name, y.name))
-for node in arr:
-  if 'printer' in node.__dict__:
-    print "    virtual void %s (const %s&);" % (ast_params['visit'], node.name)
+print tools.indent(4, ast.visit(arr, True))
 
 print """
   private:
