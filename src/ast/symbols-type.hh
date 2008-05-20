@@ -1,7 +1,7 @@
 #ifndef AST_SYMBOLS_TYPE_HH
 # define AST_SYMBOLS_TYPE_HH
 
-# include <iostream>
+# include <iosfwd>
 # include <vector>
 
 # include <libport/fwd.hh>

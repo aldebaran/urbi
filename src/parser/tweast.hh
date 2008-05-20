@@ -14,6 +14,7 @@
 # include <libport/unique-pointer.hh>
 
 # include "ast/fwd.hh"
+# include "ast/symbols-type.hh"
 
 # include "parser/metavar-map.hh"
 

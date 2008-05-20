@@ -35,13 +35,13 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "exps_type":           '"ast/fwd.hh"'
+  "exps_type":           '"ast/exps-type.hh"'
   "flavor_type":         '"ast/flavor.hh"'
   "Throw::exception_kind": '"ast/throw.hh"'
   "libport::Symbol":     '<libport/symbol.hh>'
   "slots_type":          '"ast/fwd.hh"'
   "std::string":         '<string>'
-  "symbols_type":        '"ast/fwd.hh"'
+  "symbols_type":        '"ast/symbols-type.hh"'
   "ufloat":              '<libport/ufloat.h>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
@@ -96,27 +96,13 @@ default_visitor_hh_prologue: |2
 
 # The beginning of fwd.hh, for includes.
 fwd_hh_prologue: |2
-  # include <boost/ptr_container/ptr_list.hpp>
   # include <boost/ptr_container/ptr_vector.hpp>
 
   # include <libport/fwd.hh>
   # include <libport/separator.hh>
 
-  # include "ast/symbols-type.hh"
-
 # The end of the fwd.hh file, in the namespace.
-#
-# FIXME: we would very much like to make exps_type a deque (sometimes
-# we prepend, so vector is not OK), but the top-level REP loop uses a
-# Nary which is an exps_type wrapper, and we sometimes push stuff into
-# it at the same time that a runner works on the first part of the
-# Nary.  As a result, boom: things moved and pointers are junk.  On
-# the other hand, lists give the guarantee that stored element will
-# not move when appending, so it just works.
 fwd_hh_epilogue: |2
-
-    /// List of expressions, for List, Nary, Call etc.
-    typedef boost::ptr_list<Exp> exps_type;
 
     /// List of slots, for Object.
     typedef boost::ptr_vector<Slot> slots_type;
@@ -352,14 +338,8 @@ Nary:
   printer:
     - $children
   inline:
-    header prologue: |
-        # include "ast/flavor.hh"
-        namespace ast
-        {
-          /// Report \a e on \a o.
-          std::ostream& operator<<(std::ostream& o, const exps_type& e);
-        }
-
+    header prologue: |2
+      #include "ast/flavor.hh"
     header inside: |2
         public:
           /// A completely empty Nary node.
@@ -409,7 +389,6 @@ Nary:
       #include <libport/separator.hh>
 
       #include "ast/message.hh"
-      #include "ast/print.hh"
       #include "ast/stmt.hh"
 
     impl inside: |2
@@ -509,15 +488,6 @@ Nary:
         {
           children_->transfer(children_->end(), rhs.children_get());
           location_adjust();
-        }
-
-        std::ostream&
-        operator<<(std::ostream& o, const exps_type& es)
-        {
-          // Specifying template parameters is needed for gcc-3.
-          return o << libport::separate<const exps_type,
-                                        std::ostream&(*)(std::ostream&)>
-                                       (es, libport::iendl);
         }
 
 Binary:

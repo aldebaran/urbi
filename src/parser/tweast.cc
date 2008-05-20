@@ -3,9 +3,8 @@
  ** \brief Implementation of parser::Tweast.
  */
 
-#include "ast/all.hh"
+#include "ast/call.hh"
 #include "ast/exp.hh"
-#include "ast/fwd.hh"
 #include "ast/print.hh"
 
 #include "parser/tweast.hh"

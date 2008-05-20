@@ -24,6 +24,8 @@
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "ast/fwd.hh"
+#include "ast/exps-type.hh"
+#include "ast/symbols-type.hh"
 #include "parser/fwd.hh"
 }
 

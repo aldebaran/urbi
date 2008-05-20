@@ -26,6 +26,7 @@ include $(top_srcdir)/dev/ast-gen.mk
 
 dist_libkernel_la_SOURCES +=						\
 ast/all.hh								\
+ast/exps-type.hh ast/exps-type.cc					\
 ast/flavor.hh ast/flavor.cc						\
 ast/loc.hh								\
 ast/new-clone.hh ast/new-clone.hxx					\
