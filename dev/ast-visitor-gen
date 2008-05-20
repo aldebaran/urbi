@@ -62,7 +62,7 @@ print """\
 
 	\\code
 	if (e)
-	  e->accept (*this);
+	  operator() (*e);
 	\\endcode
 
 	However, the drawback of this approach is that it doesn't take
@@ -73,23 +73,23 @@ print """\
 	We cannot use the libport/select_const.hh approach here, since
 	the compiler cannot resolve a function overloaded or
 	specialized on an associated type of a template.  E.g., writing
-	\\a accept like this:
+	\\a operator() like this:
 
 	\\code
 	template <typename E>
-	void accept (typename Const<E>::type* e);
+	void operator() (typename Const<E>::type* e);
 	\\endcode
 
 	won't work directly.  Of course, on can help the compiler,
 	providing it with \\a E
 
 	\\code
-	accept<NameTy> (e.result_get ());
+	operator()<NameTy> (e.result_get ());
 	\\endcode
 
 	but this is painful.  */
     template <typename E>
-    void accept (E* e);
+    void operator() (E* e);
   };
 
   /*----------.

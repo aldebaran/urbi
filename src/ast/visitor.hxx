@@ -25,7 +25,7 @@ namespace ast
   template <template <typename> class Const>
   template <typename E>
   void
-  GenVisitor<Const>::accept (E* e)
+  GenVisitor<Const>::operator() (E* e)
   {
     if (e)
       e->accept (*this);
