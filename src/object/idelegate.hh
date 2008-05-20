@@ -3,13 +3,14 @@
 
 #include "runner/runner.hh"
 
-namespace object {
-class IDelegate
+namespace object
 {
+  class IDelegate
+  {
   public:
-  virtual rObject operator() (runner::Runner&, objects_type) = 0;
-  virtual ~IDelegate() {}
-};
+    virtual rObject operator() (runner::Runner&, objects_type) = 0;
+    virtual ~IDelegate() {}
+  };
 }
 
 #endif
