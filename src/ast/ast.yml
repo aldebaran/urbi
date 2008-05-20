@@ -37,7 +37,7 @@ atomic_types:
 includes_map:
   "exps_type":           '"ast/fwd.hh"'
   "flavor_type":         '"ast/flavor.hh"'
-  "flow_exception_kind": '"ast/flow-exception.hh"'
+  "Throw::exception_kind": '"ast/throw.hh"'
   "libport::Symbol":     '<libport/symbol.hh>'
   "slots_type":          '"ast/fwd.hh"'
   "std::string":         '<string>'
@@ -50,7 +50,7 @@ includes_map:
 non_visitable_types:
   - "bool"
   - "flavor_type"
-  - "flow_exception_kind"
+  - "Throw::exception_kind"
   - "libport::Symbol"
   - "loc"
   - "std::string"
@@ -623,16 +623,30 @@ Foreach:
 Throw:
   desc: /// Throw an exception when visited, used to implement break, return, etc.
   super: Exp
+  inline:
+    header inside: |2
+        public:
+          enum exception_kind
+          {
+            exception_return,
+            exception_break,
+          };
   attributes:
     - kind:
-        type: 'flow_exception_kind'
+        type: 'Throw::exception_kind'
         desc: The kind of the exception to throw.
     - value:
         type: 'Exp*'
         desc: The value to throw when visited. May be empty.
         mandatory: False
   printer:
-    - $kind
+    - '{
+         switch (n.kind_get())
+         {
+           case Throw::exception_return: ostr_ << "return"; break;
+           case Throw::exception_break:  ostr_ << "break";  break;
+         }
+       }'
     - "{
          if (n.value_get())
            ostr_ << ' ' << *n.value_get();

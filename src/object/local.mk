@@ -35,22 +35,22 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 
 
 dist_libkernel_la_SOURCES +=			\
-object/alien.hh					\
-object/alien.hxx				\
 object/alien-class.cc				\
 object/alien-class.hh				\
+object/alien.hh					\
+object/alien.hxx				\
 object/atom.hh					\
 object/atom.hxx					\
 object/code-class.cc				\
 object/code-class.hh				\
-object/delegate-class.cc                        \
-object/delegate-class.hh                        \
-object/dictionary-class.cc                        \
-object/dictionary-class.hh                        \
-object/lobby-class.cc				\
-object/lobby-class.hh				\
+object/delegate-class.cc			\
+object/delegate-class.hh			\
+object/dictionary-class.cc			\
+object/dictionary-class.hh			\
 object/float-class.cc				\
 object/float-class.hh				\
+object/flow-exception.cc			\
+object/flow-exception.hh			\
 object/fwd.hh					\
 object/global-class.cc				\
 object/global-class.hh				\
@@ -59,17 +59,19 @@ object/hash-slots.hxx				\
 object/idelegate.hh				\
 object/integer-class.cc				\
 object/integer-class.hh				\
-object/lazy.hh					\
 object/lazy.cc					\
+object/lazy.hh					\
 object/list-class.cc				\
 object/list-class.hh				\
+object/lobby-class.cc				\
+object/lobby-class.hh				\
 object/object-class.cc				\
 object/object-class.hh				\
+object/object-kind.cc				\
+object/object-kind.hh				\
 object/object.cc				\
 object/object.hh				\
 object/object.hxx				\
-object/object-kind.cc				\
-object/object-kind.hh				\
 object/primitive-class.cc			\
 object/primitive-class.hh			\
 object/primitives.hh				\
@@ -83,8 +85,8 @@ object/state.cc					\
 object/state.hh					\
 object/string-class.cc				\
 object/string-class.hh				\
-object/symbols.hh				\
 object/symbols.cc				\
+object/symbols.hh				\
 object/system-class.cc				\
 object/system-class.hh				\
 object/tag-class.cc				\

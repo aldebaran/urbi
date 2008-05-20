@@ -28,6 +28,8 @@
 #include "object/object.hh"
 #include "object/symbols.hh"
 #include "object/urbi-exception.hh"
+#include "object/flow-exception.hh"
+
 #include "runner/runner.hh"
 #include "parser/tweast.hh"
 #include "parser/uparser.hh"
@@ -87,7 +89,7 @@ namespace runner
     propagate_error_(ue, Loc);				\
     throw;						\
   }							\
-  catch(ast::FlowException& e)				\
+  catch(object::FlowException& e)                       \
   {							\
     Code;						\
     current_.reset();					\
@@ -295,13 +297,13 @@ namespace runner
     {
       current_ = eval (*fn.body_get());
     }
-    catch (ast::BreakException& be)
+    catch (object::BreakException& be)
     {
       object::PrimitiveError error("break", "outside a loop");
       propagate_error_(error, be.location_get());
       throw error;
     }
-    catch (ast::ReturnException& re)
+    catch (object::ReturnException& re)
     {
       current_ = re.result_get();
       if (!current_)
@@ -608,7 +610,7 @@ namespace runner
 	{
 	  visit (e.body_get());
 	}
-	catch (ast::BreakException&)
+	catch (object::BreakException&)
 	{
 	  break;
 	}
@@ -750,9 +752,9 @@ namespace runner
 	    }
 	    PROPAGATE_EXCEPTION(e.location_get(), {})
           }
-	  CATCH_FLOW_EXCEPTION(ast::BreakException,
+	  CATCH_FLOW_EXCEPTION(object::BreakException,
 			       "break", "outside a loop")
-	  CATCH_FLOW_EXCEPTION(ast::ReturnException,
+	  CATCH_FLOW_EXCEPTION(object::ReturnException,
 			       "return", "outside a function")
 
 	  if (e.toplevel_get () && current_.get ())
@@ -787,9 +789,9 @@ namespace runner
 	  else
 	    throw;
 	}
-        CATCH_FLOW_EXCEPTION(ast::BreakException,
+        CATCH_FLOW_EXCEPTION(object::BreakException,
 			     "break", "outside a loop")
-        CATCH_FLOW_EXCEPTION(ast::ReturnException,
+        CATCH_FLOW_EXCEPTION(object::ReturnException,
                              "return", "outside a function")
       }
     }
@@ -986,15 +988,15 @@ namespace runner
   {
     switch (e.kind_get())
     {
-      case ast::break_exception:
-	throw ast::BreakException(e.location_get());
+      case ast::Throw::exception_break:
+	throw object::BreakException(e.location_get());
 
-      case ast::return_exception:
+      case ast::Throw::exception_return:
 	if (e.value_get())
 	  visit (*e.value_get());
 	else
 	  current_.reset();
-	throw ast::ReturnException(e.location_get(), current_);
+	throw object::ReturnException(e.location_get(), current_);
     }
   }
 
@@ -1021,7 +1023,7 @@ namespace runner
       {
 	visit (e.body_get());
       }
-      catch (ast::BreakException&)
+      catch (object::BreakException&)
       {
 	// FIXME: Fix for flavor "," and "&".
 	if (e.flavor_get() == ast::flavor_semicolon ||

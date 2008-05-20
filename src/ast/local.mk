@@ -31,6 +31,5 @@ dist_libkernel_la_SOURCES +=			\
 ast/all.hh					\
 ast/loc.hh					\
 ast/flavor.hh ast/flavor.cc			\
-ast/flow-exception.hh ast/flow-exception.cc	\
 ast/visitor.hxx					\
 $(BUILT_SOURCES_ast)

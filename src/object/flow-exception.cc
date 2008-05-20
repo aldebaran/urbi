@@ -1,24 +1,24 @@
 /**
- ** \file ast/flow-exception.cc
- ** \brief Implementation of ast::FlowException.
+ ** \file object/flow-exception.cc
+ ** \brief Implementation of object::FlowException.
  */
 
-#include "ast/flow-exception.hh"
+#include "object/flow-exception.hh"
 
-namespace ast
+namespace object
 {
-  FlowException::FlowException(const loc& location)
+  FlowException::FlowException(const ast::loc& location)
     : kernel::exception ()
   {
     location_ = location;
   }
 
-  BreakException::BreakException(const loc& location)
+  BreakException::BreakException(const ast::loc& location)
     : FlowException(location)
   {
   }
 
-  ReturnException::ReturnException (const loc& location,
+  ReturnException::ReturnException (const ast::loc& location,
 				    object::rObject result)
     : FlowException(location)
   {
@@ -31,7 +31,7 @@ namespace ast
     {
       case break_exception: return o << "break";
       case return_exception: return o << "return";
-      default: return o;
     }
+    pabort(k);
   }
-} // namespace ast
+} // namespace object

@@ -1020,11 +1020,11 @@ stmt:
     }
 | "return" expr.opt
     {
-      $$ = new ast::Throw(@$, ast::return_exception, $2);
+      $$ = new ast::Throw(@$, ast::Throw::exception_return, $2);
     }
 | "break"
     {
-      $$ = new ast::Throw(@$, ast::break_exception, 0);
+      $$ = new ast::Throw(@$, ast::Throw::exception_break, 0);
     }
 | "whenever" "(" expr ")" nstmt %prec CMDBLOCK
     {
