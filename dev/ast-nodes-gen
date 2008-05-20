@@ -322,21 +322,17 @@ def print_visitor(node, header, inline, impl):
     sys.stdout = inline
     print ""
     sys.stdout = impl
-    # How to call the visit method.
-    visit = ''
-    if ast_params['visit'] != 'operator()':
-      visit = '.' + ast_params['visit']
     print """  void
   %s::accept (ConstVisitor& v) const
   {
-    v%s(*this);
+    v.visit(*this);
   }
 
   void
   %s::accept (Visitor& v)
   {
-    v%s(*this);
-  }""" % (node.name, visit, node.name, visit)
+    v.visit(*this);
+  }""" % (node.name, node.name)
   # In our design, the class is concrete iff it has a single parent.
   # This excludes roots, and "joins".
   elif len (node.super) != 1:

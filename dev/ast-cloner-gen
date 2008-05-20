@@ -47,7 +47,7 @@ namespace %(clonerlib)s
     // Visit methods.
   public:
     // Import overloaded virtual functions.
-    using super_type::%(visit)s;
+    using super_type::visit;
 """ % ast_params
 
 print tools.indent(4, ast.visit(concrete, True))
@@ -85,8 +85,8 @@ if dec_subclasses:
     // As we can't mix template and virtual methods, we have to
     // duplicate these methods.  That's too bad.  :("""
   for dec_type in dec_subclasses:
-    print "    virtual void %s (const ast::%ss&);" \
-        % (ast_params['visit'], dec_type.name)
+    print "    virtual void visit (const ast::%ss&);" \
+        % (dec_type.name)
 
 print """
     /// The cloned Ast.
@@ -181,7 +181,7 @@ namespace %(clonerlib)s
 
 for node in concrete:
   print "  void"
-  print "  Cloner::%s (const ast::%s& e)" % (ast_params['visit'], node.name)
+  print "  Cloner::visit (const ast::%s& e)" % node.name
   print "  {"
   if node.hide:
     print "    //<<"
@@ -210,10 +210,10 @@ if dec_subclasses:
   for dec_type in dec_subclasses:
     print """
     void
-    Cloner::%s (const ast::%ss& e)
+    Cloner::visit (const ast::%ss& e)
     {
       decs_visit<ast::%ss> (e);
-    }"""  % (ast_params['visit'], dec_type.name, dec_type.name)
+    }"""  % (dec_type.name, dec_type.name)
     # Show the visit method for the first instance of decs types, but
     # hide the others.
     if first_decs_type_p:

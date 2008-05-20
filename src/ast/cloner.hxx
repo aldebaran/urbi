@@ -69,7 +69,7 @@ namespace ast
     // We cannot use the container's clone feature, since it uses the
     // stock AST cloner and none of its specializations, such as the
     // very needed override from ParametricAst.  As a result, we clone
-    // the meta-ast instead of subsituting the meta-vars with their
+    // the meta-ast instead of substituting the meta-vars with their
     // actual values.
     foreach (const Exp& e, c)
       res->push_back(recurse(e));

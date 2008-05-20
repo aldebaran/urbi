@@ -198,7 +198,7 @@ namespace runner
     assert (ast_ || code_);
     JAECHO ("starting evaluation of AST: ", *ast_);
     if (ast_)
-      visit(*ast_);
+      operator()(*ast_);
     else
     {
       object::objects_type args;
@@ -207,9 +207,9 @@ namespace runner
     }
   }
 
-  /*---------------------.
+  /*----------------.
   | Regular visit.  |
-  `---------------------*/
+  `----------------*/
 
   void
   Runner::visit (const ast::And& e)
@@ -554,7 +554,7 @@ namespace runner
   {
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
-    visit (e.list_get());
+    operator() (e.list_get());
     try
     {
       TYPE_CHECK(current_, object::List);
@@ -608,7 +608,7 @@ namespace runner
 
 	try
 	{
-	  visit (e.body_get());
+	  operator() (e.body_get());
 	}
 	catch (object::BreakException&)
 	{
@@ -655,17 +655,17 @@ namespace runner
   {
     // Evaluate the test.
     JAECHO ("test", e.test_get ());
-    visit (e.test_get());
+    operator() (e.test_get());
 
     if (object::is_true(current_))
     {
       JAECHO ("then", e.thenclause_get ());
-      visit (e.thenclause_get());
+      operator() (e.thenclause_get());
     }
     else
     {
       JAECHO ("else", e.elseclause_get ());
-      visit (e.elseclause_get());
+      operator() (e.elseclause_get());
     }
   }
 
@@ -748,7 +748,7 @@ namespace runner
 	    // Propagate potential errors
 	    try
 	    {
-	      visit (c);
+	      operator() (c);
 	    }
 	    PROPAGATE_EXCEPTION(e.location_get(), {})
           }
@@ -831,11 +831,11 @@ namespace runner
   {
     // lhs
     JAECHO ("lhs", e.lhs_get ());
-    visit (e.lhs_get());
+    operator() (e.lhs_get());
 
     // rhs:  start the execution immediately.
     JAECHO ("rhs", e.rhs_get ());
-    visit (e.rhs_get());
+    operator() (e.rhs_get());
   }
 
 
@@ -847,7 +847,7 @@ namespace runner
     Finally finally(swap(locals, locals_));
     try
     {
-      super_type::visit(e.body_get());
+      super_type::operator()(e.body_get());
     }
     PROPAGATE_EXCEPTION(e.location_get(),
 			{
@@ -859,7 +859,7 @@ namespace runner
   Runner::visit (const ast::Scope& e)
   {
     visit (static_cast<const ast::AbstractScope&>(e),
-                object::Object::make_scope(locals_));
+           object::Object::make_scope(locals_));
   }
 
   void
@@ -867,7 +867,7 @@ namespace runner
   {
     rObject tgt = eval(e.target_get());
     visit (static_cast<const ast::AbstractScope&>(e),
-                object::Object::make_do_scope(locals_, tgt));
+           object::Object::make_do_scope(locals_, tgt));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     current_ = tgt;
@@ -877,7 +877,7 @@ namespace runner
   Runner::visit (const ast::Stmt& e)
   {
     JAECHO ("expression", e.expression_get ());
-    visit (e.expression_get());
+    operator() (e.expression_get());
   }
 
   void
@@ -993,7 +993,7 @@ namespace runner
 
       case ast::Throw::exception_return:
 	if (e.value_get())
-	  visit (*e.value_get());
+	  operator() (*e.value_get());
 	else
 	  current_.reset();
 	throw object::ReturnException(e.location_get(), current_);
@@ -1013,7 +1013,7 @@ namespace runner
       else
 	MAYBE_YIELD (e.flavor_get());
       JAECHO ("while test", e.test_get ());
-      visit (e.test_get());
+      operator() (e.test_get());
       if (!object::is_true(current_))
 	break;
 
@@ -1021,7 +1021,7 @@ namespace runner
 
       try
       {
-	visit (e.body_get());
+	operator() (e.body_get());
       }
       catch (object::BreakException&)
       {

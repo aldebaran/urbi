@@ -28,7 +28,7 @@ namespace ast
   ParametricAst::result()
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
-    visit(ast_);
+    operator()(ast_);
     clear();
     return assert_exp(dynamic_cast<T*>(result_));
   }

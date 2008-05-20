@@ -54,11 +54,9 @@ namespace ast
     /** \\} */
 
     // Import from super class.
-    using super_type::%(visit)s;
+    using super_type::visit;
 
-    // Useful shortcut for pointer types.
-    template<class E> void %(visit)s (E* e);
-
+  protected:
     /// \\name Visit nodes.
     /// \\{
 """ % ast_params
@@ -106,14 +104,6 @@ namespace ast
   {
   }
 
-  template <template <typename> class Const>
-  template <class E>
-  void
-  GenDefaultVisitor<Const>::%(visit)s (E* e)
-  {
-    e->accept (*this);
-  }
-
 """ % ast_params
 
 for node in arr:
@@ -122,25 +112,30 @@ for node in arr:
   else:
     action = ""
     # First iterate over the parent's types.
+    #
     # This is better than applying the default behavior to
     # all the children as it allows to implement the behavior for
     # the parent class, and let the DefaultVisitor bounce to it for
     # subclasses.
+    #
+    # Call visit, not operator(), since otherwise the latter will call
+    # itself (it relies on the dynamic type, which voids the point of
+    # a static_cast).
     for super in node.super:
       if action != '':
         action += "\n"
       action +=  \
-          "%s(static_cast<typename Const<%s>::type&>(n));" \
-          % (ast_params['visit'], super.name)
+          "visit(static_cast<typename Const<%s>::type&>(n));" \
+          % (super.name)
     for attr in node.attributes:
       if attr.visitable_p():
         if action != '':
           action += "\n"
         if attr.mandatory:
-          action += "%s(n.%s_get());" % (ast_params['visit'], attr.name)
+          action += "operator()(n.%s_get());" % (attr.name)
         else:
           action += "if (n.%s_get())\n" % attr.name
-          action += "  %s(*n.%s_get());" % (ast_params['visit'], attr.name)
+          action += "  operator()(*n.%s_get());" % (attr.name)
   if action != '':
     action = "\n" + tools.indent(4, action) + "\n  "
     var = ' n'
@@ -149,9 +144,9 @@ for node in arr:
   print """\
   template <template <typename> class Const>
   void
-  GenDefaultVisitor<Const>::%s (typename Const<%s>::type&%s)
+  GenDefaultVisitor<Const>::visit (typename Const<%s>::type&%s)
   {%s}
-""" % (ast_params['visit'], node.name, var, action)
+""" % (node.name, var, action)
 
 print """} // namespace ast
 #endif // !AST_DEFAULT_VISITOR_HH

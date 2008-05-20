@@ -47,7 +47,8 @@ namespace ast
     virtual ~PrettyPrinter ();
     /** \\} */
 
-    using super_type::%(visit)s;
+  protected:
+    using super_type::visit;
 """ % ast_params
 
 print tools.indent(4, ast.visit(arr, True))
@@ -126,12 +127,12 @@ for node in arr:
 	action += '    ostr_ << %s;\n' % (a)
     print """\
   void
-  PrettyPrinter::%s (const %s& n)
+  PrettyPrinter::visit (const %s& n)
   {
     // Don't warn about unused arguments.
     (void) n;
 %s  }
-""" % (ast_params['visit'], node.name, action)
+""" % (node.name, action)
 
 print """} // namespace ast
 """

@@ -96,7 +96,7 @@ namespace runner
   Runner::eval (const ast::Exp& e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
-    e.accept (*this);
+    operator()(e);
     ECHO("Eval: " << &e << " = " << current_);
     return current_;
   }

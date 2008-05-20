@@ -28,8 +28,13 @@ namespace ast
   `----------------------------------------------------*/
 
 /// Declare an abstract visit method for Elem for a GenVisitor.
-# define ABSTRACT_VISITOR_VISIT_NODE_(R, Data, Elem)            \\
-    virtual void %(visit)s (typename Const<ast::Elem>::type& e) = 0;
+/// Also, declare the node as a friend: it is allowed to call visit.
+/// It would be nice to declare only Elem::accept, but then we have
+/// a mutual recursion problem.  Maybe we can address this from the
+/// derived visitors, not from the abstract visitor.
+# define ABSTRACT_VISITOR_VISIT_NODE_(R, Data, Elem)                    \\
+  friend class ast::Elem;                                               \\
+  virtual void visit (typename Const<ast::Elem>::type& e) = 0;
 
 /// Declare abstract visits for an abstract GenVisitor.
 # define ABSTRACT_VISITOR_VISIT_NODES(Nodes)                    \\
@@ -37,7 +42,7 @@ namespace ast
 
 /// Declare a visit method for Elem for a GenVisitor.
 # define GEN_VISITOR_VISIT_NODE_(R, Data, Elem)            \\
-    virtual void %(visit)s (typename Const<ast::Elem>::type& e);
+    virtual void visit (typename Const<ast::Elem>::type& e);
 
 /// Declare visits for a GenVisitor.
 # define GEN_VISITOR_VISIT_NODES(Nodes)                    \\
@@ -45,7 +50,7 @@ namespace ast
 
 /// Declare a visit method for Elem.  Pass Const = const or not.
 # define VISITOR_VISIT_NODE_(R, Const, Elem)            \\
-    virtual void %(visit)s (Const ast::Elem& e);
+    virtual void visit (Const ast::Elem& e);
 
 /// Declare visit methods for Nodes.  Pass Const = const or not.
 # define VISITOR_VISIT_NODES_(Nodes, Const)             \\
@@ -67,48 +72,19 @@ namespace ast
 
     /// The entry point: visit \\a e.
     virtual void operator() (typename Const<Ast>::type& e);
-""" % ast_params
+
+    /// The entry point: visit \\a e if non null.
+    virtual void operator() (typename Const<Ast>::type* e);
+
+  protected:""" % ast_params
 
 print tools.indent(4, ast.visit(concrete, "ABSTRACT_VISITOR_VISIT_NODES"))
 
 print
 for dec_type in ast.subclasses(nodes, 'Dec'):
-  print "    virtual void %s (typename Const<%ss>::type&) = 0;"\
-      % ast_params['visit'], dec_type.name
+  print "    virtual void visit (typename Const<%ss>::type&) = 0;"\
+      % dec_type.name
 print """\
-  protected:
-    /** A convenient shortcut for recurring code like this:
-
-	\\code
-	if (e)
-	  %(visit)s (*e);
-	\\endcode
-
-	However, the drawback of this approach is that it doesn't take
-	care of the constness, and any \\a const violation will be
-	reported \\em within the body of this method, not at its
-	corresponding call site.
-
-	We cannot use the libport/select_const.hh approach here, since
-	the compiler cannot resolve a function overloaded or
-	specialized on an associated type of a template.  E.g., writing
-	\\a %(visit)s like this:
-
-	\\code
-	template <typename E>
-	void %(visit)s (typename Const<E>::type* e);
-	\\endcode
-
-	won't work directly.  Of course, on can help the compiler,
-	providing it with \\a E
-
-	\\code
-	%(visit)s<NameTy> (e.result_get ());
-	\\endcode
-
-	but this is painful.  */
-    template <typename E>
-    void %(visit)s (E* e);
   };
 
   /*----------.

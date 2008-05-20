@@ -149,9 +149,7 @@ namespace runner
 
     /// Factor handling of Scope and Do
     void visit (const ast::AbstractScope& e, rObject locals);
-
     /// \}
-
 
 
     /// Do the actual work.  Implementation of \c Job::run.

@@ -16,6 +16,7 @@ namespace ast
   }
 
   template < template <typename> class Const >
+  inline
   void
   GenVisitor<Const>::operator() (typename Const<Ast>::type& e)
   {
@@ -23,9 +24,9 @@ namespace ast
   }
 
   template <template <typename> class Const>
-  template <typename E>
+  inline
   void
-  GenVisitor<Const>::visit (E* e)
+  GenVisitor<Const>::operator() (typename Const<Ast>::type* e)
   {
     if (e)
       e->accept(*this);
@@ -33,4 +34,4 @@ namespace ast
 
 } // namespace ast
 
-#endif // !AST_VISITOR_HH
+#endif // !AST_VISITOR_HXX

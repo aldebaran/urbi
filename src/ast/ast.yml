@@ -69,9 +69,6 @@ deep_clear: "libport::deep_clear"
 # A regexp mathing the types that need to be deep-cleared.
 deep_clear_p: '^$'
 
-# Name of the visit method.
-visit: 'visit'
-
 # The beginning of visitor.hh, for includes.
 visitor_hh_prologue: |2
 
@@ -208,7 +205,6 @@ Ast:
         type: loc
         access: rW
         desc: Scanner position information
-  default: super_type::operator() (n);
 
 Exp:
   super: Ast
@@ -271,7 +267,7 @@ Do:
   attributes:
     - target: { type: 'Exp*', desc: The default target }
   default: |2
-    visit(n.target_get());
+    operator()(n.target_get());
     visit(static_cast<typename Const<AbstractScope>::type&>(n));
   printer:
     - '{ ostr_ << "do " << n.target_get() << " "; }'
@@ -333,7 +329,7 @@ Nary:
         init: "false"
   default: |2
     foreach (typename Const<ast::Ast>::type& c, n.children_get())
-      c.accept(*this);
+      operator()(c);
 
   printer:
     - $children
@@ -700,7 +696,7 @@ Call:
         desc: Arguments passed to the function
   default:
       foreach (typename Const<ast::Exp>::type& e, n.args_get())
-        e.accept(*this);
+        operator()(e);
   printer:
     - '{
          if (!dynamic_cast<const Implicit*>(&n.args_get().front()))
