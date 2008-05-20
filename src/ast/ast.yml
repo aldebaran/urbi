@@ -70,7 +70,7 @@ deep_clear: "libport::deep_clear"
 deep_clear_p: '^$'
 
 # Name of the visit method.
-visit: 'operator()'
+visit: 'visit'
 
 # The beginning of visitor.hh, for includes.
 visitor_hh_prologue: |2
@@ -278,18 +278,18 @@ AbstractScope:
 Scope:
   super: AbstractScope
   printer:
-    - '{ operator()(static_cast<const AbstractScope&>(n)); }'
+    - '{ visit(static_cast<const AbstractScope&>(n)); }'
 
 Do:
   super: AbstractScope
   attributes:
     - target: { type: 'Exp*', desc: The default target }
   default: |2
-    operator()(n.target_get());
-    operator()(static_cast<typename Const<AbstractScope>::type&>(n));
+    visit(n.target_get());
+    visit(static_cast<typename Const<AbstractScope>::type&>(n));
   printer:
     - '{ ostr_ << "do " << n.target_get() << " "; }'
-    - '{ operator()(static_cast<const AbstractScope&>(n)); }'
+    - '{ visit(static_cast<const AbstractScope&>(n)); }'
 
 ## -------------------- ##
 ## Composing commands.  ##

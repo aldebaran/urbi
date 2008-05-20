@@ -120,7 +120,7 @@ namespace runner
 				const ast::exps_type& args);
 
     /// Import from super.
-    using super_type::operator();
+    using super_type::visit;
 
     CONST_VISITOR_VISIT_NODES((And)
                               (Call)
@@ -143,8 +143,7 @@ namespace runner
                               (While))
 
     /// Factor handling of Scope and Do
-    void
-    operator() (const ast::AbstractScope& e, rObject locals);
+    void visit (const ast::AbstractScope& e, rObject locals);
 
     /// \}
 

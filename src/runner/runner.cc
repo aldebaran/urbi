@@ -188,15 +188,15 @@ namespace runner
   {
     assert (ast_);
     JAECHO ("starting evaluation of AST: ", *ast_);
-    operator() (*ast_);
+    visit (*ast_);
   }
 
   /*---------------------.
-  | Regular operator().  |
+  | Regular visit.  |
   `---------------------*/
 
   void
-  Runner::operator() (const ast::And& e)
+  Runner::visit (const ast::And& e)
   {
     // lhs will be evaluated in another Runner, while rhs will be evaluated
     // in this one. We will be the new runner parent, as we have the same
@@ -363,7 +363,8 @@ namespace runner
 	break;
       case object::object_kind_delegate:
 	current_ =
-	  func.unsafe_cast<object::Delegate>()->value_get()
+	  func.unsafe_cast<object::Delegate>()
+          ->value_get()
 	  ->operator()(*this, args);
 	break;
       case object::object_kind_code:
@@ -476,7 +477,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Call& e)
+  Runner::visit (const ast::Call& e)
   {
     // The invoked slot (probably a function).
     rObject val;
@@ -526,18 +527,18 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Float& e)
+  Runner::visit (const ast::Float& e)
   {
     current_ = object::Float::fresh(e.value_get());
   }
 
 
   void
-  Runner::operator() (const ast::Foreach& e)
+  Runner::visit (const ast::Foreach& e)
   {
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
-    operator() (e.list_get());
+    visit (e.list_get());
     try
     {
       TYPE_CHECK(current_, object::List);
@@ -591,7 +592,7 @@ namespace runner
 
 	try
 	{
-	  operator() (e.body_get());
+	  visit (e.body_get());
 	}
 	catch (ast::BreakException&)
 	{
@@ -627,34 +628,34 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Function& e)
+  Runner::visit (const ast::Function& e)
   {
     current_ = make_code(e);
   }
 
 
   void
-  Runner::operator() (const ast::If& e)
+  Runner::visit (const ast::If& e)
   {
     // Evaluate the test.
     JAECHO ("test", e.test_get ());
-    operator() (e.test_get());
+    visit (e.test_get());
 
     if (object::is_true(current_))
     {
       JAECHO ("then", e.thenclause_get ());
-      operator() (e.thenclause_get());
+      visit (e.thenclause_get());
     }
     else
     {
       JAECHO ("else", e.elseclause_get ());
-      operator() (e.elseclause_get());
+      visit (e.elseclause_get());
     }
   }
 
 
   void
-  Runner::operator() (const ast::List& e)
+  Runner::visit (const ast::List& e)
   {
     object::List::value_type res;
     // Evaluate every expression in the list
@@ -666,7 +667,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Message& e)
+  Runner::visit (const ast::Message& e)
   {
     send_message_(e.tag_get(), e.text_get());
   }
@@ -688,7 +689,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Nary& e)
+  Runner::visit (const ast::Nary& e)
   {
     // List of runners for Stmt flavored by a comma.
     std::list<scheduler::rJob> runners;
@@ -731,7 +732,7 @@ namespace runner
 	    // Propagate potential errors
 	    try
 	    {
-	      operator() (c);
+	      visit (c);
 	    }
 	    PROPAGATE_EXCEPTION(e.location_get(), {})
           }
@@ -803,34 +804,34 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Noop&)
+  Runner::visit (const ast::Noop&)
   {
     current_ = object::void_class;
   }
 
 
   void
-  Runner::operator() (const ast::Pipe& e)
+  Runner::visit (const ast::Pipe& e)
   {
     // lhs
     JAECHO ("lhs", e.lhs_get ());
-    operator() (e.lhs_get());
+    visit (e.lhs_get());
 
     // rhs:  start the execution immediately.
     JAECHO ("rhs", e.rhs_get ());
-    operator() (e.rhs_get());
+    visit (e.rhs_get());
   }
 
 
   void
-  Runner::operator() (const ast::AbstractScope& e, rObject locals)
+  Runner::visit (const ast::AbstractScope& e, rObject locals)
   {
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
     Finally finally(swap(locals, locals_));
     try
     {
-      super_type::operator()(e.body_get());
+      super_type::visit(e.body_get());
     }
     PROPAGATE_EXCEPTION(e.location_get(),
 			{
@@ -839,17 +840,17 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Scope& e)
+  Runner::visit (const ast::Scope& e)
   {
-    operator() (static_cast<const ast::AbstractScope&>(e),
+    visit (static_cast<const ast::AbstractScope&>(e),
                 object::Object::make_scope(locals_));
   }
 
   void
-  Runner::operator() (const ast::Do& e)
+  Runner::visit (const ast::Do& e)
   {
     rObject tgt = eval(e.target_get());
-    operator() (static_cast<const ast::AbstractScope&>(e),
+    visit (static_cast<const ast::AbstractScope&>(e),
                 object::Object::make_do_scope(locals_, tgt));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
@@ -857,26 +858,26 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Stmt& e)
+  Runner::visit (const ast::Stmt& e)
   {
     JAECHO ("expression", e.expression_get ());
-    operator() (e.expression_get());
+    visit (e.expression_get());
   }
 
   void
-  Runner::operator() (const ast::String& e)
+  Runner::visit (const ast::String& e)
   {
     current_ = object::String::fresh(libport::Symbol(e.value_get()));
   }
 
   void
-  Runner::operator() (const ast::Tag& t)
+  Runner::visit (const ast::Tag& t)
   {
     eval_tag (t.exp_get ());
   }
 
   void
-  Runner::operator() (const ast::TaggedStmt& t)
+  Runner::visit (const ast::TaggedStmt& t)
   {
     try
     {
@@ -954,7 +955,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::Throw& e)
+  Runner::visit (const ast::Throw& e)
   {
     switch (e.kind_get())
     {
@@ -963,7 +964,7 @@ namespace runner
 
       case ast::return_exception:
 	if (e.value_get())
-	  operator() (*e.value_get());
+	  visit (*e.value_get());
 	else
 	  current_.reset();
 	throw ast::ReturnException(e.location_get(), current_);
@@ -972,7 +973,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::While& e)
+  Runner::visit (const ast::While& e)
   {
     bool first_iteration = true;
     // Evaluate the test.
@@ -983,7 +984,7 @@ namespace runner
       else
 	MAYBE_YIELD (e.flavor_get());
       JAECHO ("while test", e.test_get ());
-      operator() (e.test_get());
+      visit (e.test_get());
       if (!object::is_true(current_))
 	break;
 
@@ -991,7 +992,7 @@ namespace runner
 
       try
       {
-	operator() (e.body_get());
+	visit (e.body_get());
       }
       catch (ast::BreakException&)
       {

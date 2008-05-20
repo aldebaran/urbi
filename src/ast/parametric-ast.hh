@@ -51,8 +51,8 @@ namespace ast
 
   protected:
     /// Import from super.
-    using super_type::operator();
-    virtual void operator() (const MetaExp& e);
+    using super_type::visit;
+    virtual void visit (const MetaExp& e);
 
     /// Metavariables manipulator.
     template <typename T> T* take (unsigned s) throw (std::range_error);
