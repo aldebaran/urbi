@@ -122,28 +122,25 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    CONST_VISITOR_VISIT_NODES((19,
-			       (
-				 And,
-				 Call,
-                                 Do,
-				 Float,
-				 Foreach,
-				 Function,
-				 If,
-				 List,
-				 Message,
-				 Nary,
-				 Noop,
-				 Pipe,
-				 Scope,
-				 Stmt,
-				 String,
-				 Tag,
-				 TaggedStmt,
-				 Throw,
-				 While
-				 )))
+    CONST_VISITOR_VISIT_NODES((And)
+                              (Call)
+                              (Do)
+                              (Float)
+                              (Foreach)
+                              (Function)
+                              (If)
+                              (List)
+                              (Message)
+                              (Nary)
+                              (Noop)
+                              (Pipe)
+                              (Scope)
+                              (Stmt)
+                              (String)
+                              (Tag)
+                              (TaggedStmt)
+                              (Throw)
+                              (While))
 
     /// Factor handling of Scope and Do
     void

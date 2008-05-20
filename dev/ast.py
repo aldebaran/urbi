@@ -375,23 +375,22 @@ def subclasses(nodes, c):
 
 def visit(nodes, const):
   """Return a string to declare the visit methods for the 'nodes'.
-  If 'const', then these are const visits."""
-  if const:
+  If 'const' is True, then these are const visits.
+  If 'const' is False, then these are non const visits.
+  Otherwise use 'const' as the macro to invoke the list upon."""
+  if const == True:
     res = "CONST_VISITOR_VISIT_NODES"
-  else:
+  elif const == False:
     res = "VISITOR_VISIT_NODES"
-  res += "(("
-  width = len(res);
-  res += str(len(nodes)) + ",\n"
-  res += tools.indent(width, "(\n")
+  else:
+    res = const
+  width = len(res)
+  res += "(\n"
   # The list of nodes to override.
-  sep = ','
   list = ''
   for node in nodes:
-    if node == nodes[-1]:
-      sep = ''
-    list += node.name + sep + "\n"
-  list += ")))"
-  res += tools.indent(width + 2, list)
+    list += " (" + node.name + ")\n"
+  list += ")\n"
+  res += tools.indent(width, list)
   return res
 

@@ -3,7 +3,6 @@
 import re
 import sys, os, os.path
 import ast, tools
-from string import lower
 
 if len(sys.argv) != 2:
   tools.error("Usage: .. SRCDIR")
@@ -24,6 +23,35 @@ print tools.banner("ast/visitor.hh",
 namespace ast
 {
 
+  /*----------------------------------------------------.
+  | Boost PP macros to ease the declaration of visits.  |
+  `----------------------------------------------------*/
+
+/// Declare an abstract visit method for Elem for a GenVisitor.
+# define ABSTRACT_VISITOR_VISIT_NODE_(R, Data, Elem)            \\
+    virtual void %(visit)s (typename Const<ast::Elem>::type& e) = 0;
+
+/// Declare abstract visits for an abstract GenVisitor.
+# define ABSTRACT_VISITOR_VISIT_NODES(Nodes)                    \\
+  BOOST_PP_SEQ_FOR_EACH(ABSTRACT_VISITOR_VISIT_NODE_, ~, Nodes)
+
+/// Declare a visit method for Elem for a GenVisitor.
+# define GEN_VISITOR_VISIT_NODE_(R, Data, Elem)            \\
+    virtual void %(visit)s (typename Const<ast::Elem>::type& e);
+
+/// Declare visits for a GenVisitor.
+# define GEN_VISITOR_VISIT_NODES(Nodes)                    \\
+  BOOST_PP_SEQ_FOR_EACH(GEN_VISITOR_VISIT_NODE_, ~, Nodes)
+
+/// Declare a visit method for Elem.  Pass Const = const or not.
+# define VISITOR_VISIT_NODE_(R, Const, Elem)            \\
+    virtual void %(visit)s (Const ast::Elem& e);
+
+/// Declare visit methods for Nodes.  Pass Const = const or not.
+# define VISITOR_VISIT_NODES_(Nodes, Const)             \\
+  BOOST_PP_SEQ_FOR_EACH(VISITOR_VISIT_NODE_, Const, Nodes)
+
+
   /** \\brief Root class of all Ast visitors.
    **
    ** GenVisitor<CONSTIFY> is the root class of all Ast visitors. */
@@ -37,20 +65,12 @@ namespace ast
     virtual ~GenVisitor ();
     /** \\} */
 
-    /** This \\c typedef and the following ones are only here to workaround a
-     * bug in MSVC 2005 SP1, see:
-     * http://forums.microsoft.com/msdn/showpost.aspx?postid=987536
-     * http://support.microsoft.com/kb/930198 */
-    typedef typename Const<Ast>::type ast_type;
     /// The entry point: visit \\a e.
     virtual void operator() (typename Const<Ast>::type& e);
-"""
-for node in concrete:
-  print """\
-    /// MSVC 2005 SP1 workaround.
-    typedef typename Const<%s>::type %s_type;
-    virtual void %s (typename Const<%s>::type&) = 0;
-""" % (node.name, lower(node.name), ast_params['visit'], node.name)
+""" % ast_params
+
+print tools.indent(4, ast.visit(concrete, "ABSTRACT_VISITOR_VISIT_NODES"))
+
 print
 for dec_type in ast.subclasses(nodes, 'Dec'):
   print "    virtual void %s (typename Const<%ss>::type&) = 0;"\
@@ -95,16 +115,13 @@ print """\
   | Visitor.  |
   `----------*/
 
-# define VISITOR_VISIT_NODE_(Z, N, Array)                      \\
-    virtual void %(visit)s (ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
-
-# define VISITOR_VISIT_NODES(Nodes)                    \\
-  BOOST_PP_REPEAT(BOOST_PP_ARRAY_SIZE(Nodes),          \\
-		 VISITOR_VISIT_NODE_,                  \\
-		 Nodes)
-
   /// Shorthand for a non const visitor.
   typedef GenVisitor<libport::id_traits> Visitor;
+
+  /// Declare visits for a non-const visitor.
+# define VISITOR_VISIT_NODES(Nodes)                     \\
+    VISITOR_VISIT_NODES_(Nodes, )
+
 
   /*---------------.
   | ConstVisitor.  |
@@ -113,13 +130,10 @@ print """\
   /// Shorthand for a const visitor.
   typedef GenVisitor<libport::constify_traits> ConstVisitor;
 
-# define CONST_VISITOR_VISIT_NODE_(Z, N, Array)        \\
-    virtual void %(visit)s (const ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
+  /// Declare visits for a const visitor.
+# define CONST_VISITOR_VISIT_NODES(Nodes)               \\
+    VISITOR_VISIT_NODES_(Nodes, const)
 
-# define CONST_VISITOR_VISIT_NODES(Nodes)              \\
-  BOOST_PP_REPEAT(BOOST_PP_ARRAY_SIZE(Nodes),          \\
-		 CONST_VISITOR_VISIT_NODE_,            \\
-		 Nodes)
 
 } // namespace ast
 
