@@ -1,6 +1,8 @@
 /// \file parser/parse-result.cc
 
+#include <algorithm>
 #include <iostream>
+#include <iterator>
 
 #include <libport/indent.hh>
 #include <libport/foreach.hh>
@@ -16,12 +18,14 @@ namespace parser
 
   namespace
   {
-    static 
+    static
     std::ostream&
-    operator<<(std::ostream& o, 
+    operator<<(std::ostream& o,
                const std::list<std::string>& ms)
     {
-      return o << libport::separate(ms, libport::iendl);
+      std::copy(ms.begin(), ms.end(),
+                std::ostream_iterator<std::string>(o, "\n"));
+      return o;
     }
   }
 
@@ -85,9 +89,7 @@ namespace parser
   void
   ParseResult::dump_errors() const
   {
-    std::cerr
-      << errors_ << std::endl
-      << warnings_ << std::endl;
+    std::cerr << errors_ << warnings_;
   }
 
   void
@@ -108,4 +110,3 @@ namespace parser
   }
 
 }
-
