@@ -154,10 +154,10 @@ do List
     if (self === List)
       return "<List>" |
     var res = "" |
-    if (self.size)
+    if (size)
     {
-      res = self.front.asPrintable |
-      for| elt in self.tail
+      res = front.asPrintable |
+      for| elt in tail
       {
         res += ", " + getSlot("elt").asPrintable |
       }
