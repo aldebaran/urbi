@@ -78,7 +78,6 @@ pipe.hh
 pipe.hxx
 pretty-printer.cc
 pretty-printer.hh
-pretty-printer.hxx
 pretty-printer.stamp
 scope.cc
 scope.hh

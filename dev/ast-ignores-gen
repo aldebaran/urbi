@@ -36,7 +36,6 @@ ignores = \
   "nodes.stamp",
   "pretty-printer.cc",
   "pretty-printer.hh",
-  "pretty-printer.hxx",
   "pretty-printer.stamp",
   "visitor.hh",
   "visitor.hxx",

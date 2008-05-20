@@ -4,7 +4,7 @@
  */
 
 #include "ast/parametric-ast.hh"
-#include "ast/pretty-printer.hh"
+#include "ast/print.hh"
 
 #include "parser/parse.hh"
 #include "parser/parse-result.hh"

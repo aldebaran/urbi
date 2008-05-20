@@ -408,7 +408,9 @@ Nary:
       #include <libport/indent.hh>
       #include <libport/separator.hh>
 
-      #include "ast/pretty-printer.hh"
+      #include "ast/message.hh"
+      #include "ast/print.hh"
+      #include "ast/stmt.hh"
 
     impl inside: |2
         Nary::Nary ()

@@ -9,7 +9,7 @@
 #include <libport/separator.hh>
 
 #include "ast/nary.hh"
-#include "ast/pretty-printer.hh"
+#include "ast/print.hh"
 
 #include "parser/parse-result.hh"
 

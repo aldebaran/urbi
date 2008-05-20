@@ -58,54 +58,11 @@ print """
     std::ostream& ostr_;
   };
 
-  std::ostream& operator<< (std::ostream& o, const Ast& a);
-
 } // namespace ast
-
-# include "ast/pretty-printer.hxx"
 
 #endif // !AST_PRETTY_PRINTER_HH
 """
 
-
-## ---------------- ##
-## The *.hxx file.  ##
-## ---------------- ##
-
-visitor_hxx = file("pretty-printer.hxx.tmp", "w")
-sys.stdout = visitor_hxx
-
-print tools.banner("ast/pretty-printer.hxx",
-		   "Inline implementation of ast::PrettyPrinter.") + """
-# include "ast/pretty-printer.hh"
-
-namespace ast
-{
-
-  inline
-  std::ostream&
-  operator<< (std::ostream& o, const Ast& a)
-  {
-    PrettyPrinter p (o);
-    p(a);
-    return o;
-  }
-
-  inline
-  PrettyPrinter::PrettyPrinter (std::ostream& ostr)
-    : ostr_ (ostr)
-  {
-  }
-
-  inline
-  PrettyPrinter::~PrettyPrinter ()
-  {
-  }
-
-} // namespace ast
-
-#endif // !AST_PRETTY_PRINTER_HXX
-"""
 
 ## --------------- ##
 ## The *.cc file.  ##
@@ -119,11 +76,22 @@ print tools.banner("ast/pretty-printer.cc",
 		   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
 
-#include "pretty-printer.hh"
-#include "all.hh"
+#include "ast/all.hh"
+#include "ast/pretty-printer.hh"
+#include "ast/print.hh"
 """ + ast_params["printer_cc_prologue"] + """
 namespace ast
 {
+
+  PrettyPrinter::PrettyPrinter (std::ostream& ostr)
+    : ostr_ (ostr)
+  {
+  }
+
+  PrettyPrinter::~PrettyPrinter ()
+  {
+  }
+
 """
 
 for node in arr:
@@ -172,9 +140,7 @@ print """} // namespace ast
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
 visitor_hh.close ()
-visitor_hxx.close ()
 visitor_cc.close ()
 
 tools.lazy_install (srcdir, "pretty-printer.hh")
-tools.lazy_install (srcdir, "pretty-printer.hxx")
 tools.lazy_install (srcdir, "pretty-printer.cc")

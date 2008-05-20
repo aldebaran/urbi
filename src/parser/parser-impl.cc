@@ -3,24 +3,22 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include <cstdlib>
 #include <cassert>
-
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <string>
 
 #include <libport/foreach.hh>
 
-#include "ast/pretty-printer.hh"
-
-#include "server-timer.hh"
-
 #include "ast/nary.hh"
+#include "ast/print.hh"
 
+#include "parser/parser-impl.hh"
 #include "parser/tweast.hh"
 #include "parser/utoken.hh"
-#include "parser/parser-impl.hh"
+
+#include "server-timer.hh"
 
 namespace parser
 {
@@ -94,7 +92,7 @@ namespace parser
       // A location pointing to it.
       location_type loc;
       loc.initialize(new libport::Symbol(fn));
-      
+
       // Exchange with the current location so that we can restore it
       // afterwards (when reading the input flow, we want to be able to
       // restore the cursor after having handled a load command).

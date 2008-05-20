@@ -12,7 +12,7 @@
 # include "libport/deref.hh"
 # include "libport/escape.hh"
 
-# include "ast/pretty-printer.hh"
+# include "ast/print.hh"
 
 # include "object/atom.hh"
 # include "object/primitives.hh"
