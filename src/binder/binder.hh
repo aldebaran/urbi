@@ -25,7 +25,7 @@ namespace binder
       /// Super class type.
       typedef ast::DefaultVisitor super_type;
       /// Import rObject
-      using object::rObject;
+      typedef object::rObject rObject;
       /// \}
 
       /// How to bind. Essentialy, in normal mode, unknown variables
