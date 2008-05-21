@@ -180,7 +180,7 @@ do Object
 {
   function Object.isNil ()
   {
-    nil === self
+    nil === getSlot("self")
   }
 };
 
