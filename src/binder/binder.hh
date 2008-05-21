@@ -79,7 +79,7 @@ namespace binder
       /// Retarget a call to getSlot("self")
       void targetSelf(ast::Call& call);
       /// Retarget a call to getSlot("code").context
-      void targetContext(ast::Call& call);
+      void targetContext(ast::Call& call, int depth = 1);
       /// Whether \return 0 If the variable is local, or the depth in
       /// number of imbriqued function otherwise.
       int isLocal(const libport::Symbol& name);

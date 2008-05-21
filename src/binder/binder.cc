@@ -100,7 +100,7 @@ namespace binder
     if (depth)
     {
       if (depth < depth_)
-        targetContext(call);
+        targetContext(call, depth_ - depth);
     }
     else
       switch (mode_)
@@ -130,7 +130,7 @@ namespace binder
     call.args_get().push_front(self);
   }
 
-  void Binder::targetContext(ast::Call& call)
+  void Binder::targetContext(ast::Call& call, int depth)
   {
     call.args_get().pop_front();
     ast::Call* code;
@@ -146,6 +146,8 @@ namespace binder
       args->push_back(code);
       context = new ast::Call(call.location_get(), SYMBOL(context), args);
     }
+    if (depth > 1)
+      targetContext(*code, depth - 1);
     call.args_get().push_front(context);
   }
 
