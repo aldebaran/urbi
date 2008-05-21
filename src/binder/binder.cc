@@ -47,16 +47,16 @@ namespace binder
   {
     super_type::visit (call);
     libport::Symbol name = call.name_get();
-    // These are always locals
-    if (name == SYMBOL(call) ||
-        name == SYMBOL(locals) ||
-        (name == SYMBOL(self) && mode_ == normal))
-      return;
-    if (name == SYMBOL(self) && mode_ == context)
-      targetContext(call);
     // If this is a qualified call, nothing particular to do
     if (dynamic_cast<ast::Implicit*>(&call.args_get().front()))
     {
+      if (name == SYMBOL(call) ||
+          name == SYMBOL(locals) ||
+          name == SYMBOL(self))
+      {
+        retarget(call, name);
+        return;
+      }
       if (name == SYMBOL(setSlot))
       {
         if (boost::optional<libport::Symbol> var = getFirstArg(call))
@@ -83,12 +83,17 @@ namespace binder
   void Binder::retarget(ast::Call& call, const libport::Symbol& var)
   {
     if (var == SYMBOL(call) ||
-        var == SYMBOL(locals)||
-        (var == SYMBOL(self) && mode_ == normal))
-       return;
-    if (var == SYMBOL(self) && mode_ == context)
+        var == SYMBOL(locals) ||
+        var == SYMBOL(self))
     {
-      targetContext(call);
+      switch (mode_)
+      {
+        case normal:
+          return;
+        case context:
+          targetContext(call);
+          return;
+      }
       return;
     }
     int depth = isLocal(var);

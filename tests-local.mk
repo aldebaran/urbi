@@ -25,10 +25,6 @@ TFAIL_TESTS +=					\
 2.x/tuples.chk					\
 2.x/void.chk
 
-# k2 tests that fail because of the binder
-TFAIL_TESTS +=					\
-2.x/timeshift2.chk
-
 # k2 tests that fail because plain objects have been removed.
 TFAIL_TESTS +=					\
 2.x/modifier-accel-freeze.chk			\
