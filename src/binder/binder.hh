@@ -24,9 +24,13 @@ namespace binder
       /// \{
       /// Super class type.
       typedef ast::DefaultVisitor super_type;
-      typedef object::rObject rObject;
+      /// Import rObject
+      using object::rObject;
       /// \}
 
+      /// How to bind. Essentialy, in normal mode, unknown variables
+      /// are searched in self, while they're search in the context in
+      /// context mode.
       enum Mode
       {
         normal,
@@ -36,14 +40,11 @@ namespace binder
       /// \name Ctor & dtor.
       /// \{
       /// Construct a \c Binder.
+      /// \param m How to bind
       Binder (Mode m = normal);
 
       /// Destroy a Binder.
       virtual ~Binder ();
-      /// \}
-
-      /// \ name Accessors.
-      /// \{
       /// \}
 
       /// Import visit from DefaultVisitor.
@@ -58,21 +59,32 @@ namespace binder
     private:
       typedef std::list<std::pair<ast::Ast*, int> > Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
+      /// Map of currently bound variables
       Environment env_;
-      // Actions to perform at exit of the most inner scope
+      /// Actions to perform at exit of the most inner scope
       std::list<libport::Finally> unbind_;
-      // Whether to apply setSlot on self
+      /// Whether to apply setSlot on self
       std::list<bool> setOnSelf_;
-      // Level of function imbrication
+      /// Level of function imbrication
       int depth_;
-
-      void bind(const libport::Symbol& var, ast::Ast* decl);
-      void retarget(ast::Call& call, const libport::Symbol& var);
-      void targetSelf(ast::Call& call);
-      void targetContext(ast::Call& call);
-      int isLocal(const libport::Symbol& name);
-      void handleScope(ast::AbstractScope& scope, bool setOnSelf);
+      /// The mode for this binder
       Mode mode_;
+
+      /// Register that \a var is bound in any subscope, \a being its
+      /// declaration
+      void bind(const libport::Symbol& var, ast::Ast* decl);
+      /// Retarget a call according to the mode and whether the \a
+      /// variable is set.
+      void retarget(ast::Call& call, const libport::Symbol& var);
+      /// Retarget a call to getSlot("self")
+      void targetSelf(ast::Call& call);
+      /// Retarget a call to getSlot("code").context
+      void targetContext(ast::Call& call);
+      /// Whether \return 0 If the variable is local, or the depth in
+      /// number of imbriqued function otherwise.
+      int isLocal(const libport::Symbol& name);
+      /// Factored method to handle scopes.
+      void handleScope(ast::AbstractScope& scope, bool setOnSelf);
   };
 
 } // namespace binder
