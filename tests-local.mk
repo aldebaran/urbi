@@ -49,8 +49,6 @@ XFAIL_TESTS +=					\
 
 # k2 tests that fail because these features are no longer supported
 XFAIL_TESTS +=					\
-2.x/capture.chk					\
-2.x/closure.chk					\
 2.x/inheritance.chk				\
 2.x/literal-object.chk				\
 2.x/lookup.chk

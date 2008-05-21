@@ -608,4 +608,3 @@ load("URBI.INI");
 # signal that we have loaded urbi.u.  Messages before, and including
 # this one, are ignored.
 "Urbi is up and running.";
-
