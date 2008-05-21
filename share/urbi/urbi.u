@@ -359,8 +359,6 @@ var void.isVoid = true;
 
 class Global.Comparable
 {
-  var asString = "<Comparable>";
-
   function '!=' (rhs) { ! (self == rhs) };
   function '==' (rhs) { ! (self != rhs) };
 };
@@ -373,8 +371,6 @@ Object.addProto(Comparable);
 
 class Global.Orderable
 {
-  var asString = "<Orderable>";
-
   function '<'  (rhs) { rhs > self };
   function '<=' (rhs) { self < rhs || self == rhs };
   function '>'  (rhs) { rhs < self };
@@ -491,8 +487,6 @@ do Object
 
 class Global.Math
 {
-  var asString = "<Math>";
-
   for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
              "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
   {
@@ -534,8 +528,6 @@ load("urbi/binary.u");
 
 class Global.Profiling
 {
-  var asString = "<Profiling>";
-
   function timen {
     var niters = call.evalArgAt (2);
     var start_time = time;
