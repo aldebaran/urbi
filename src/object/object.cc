@@ -67,96 +67,8 @@ namespace object
   | Scopes.  |
   `---------*/
 
-  // Typedef for lookups that return rObject
   typedef boost::optional<rObject> lookup_result;
   typedef boost::function1<lookup_result, rObject> lookup_action;
-
-  namespace
-  {
-    using std::make_pair;
-    using boost::bind;
-    using boost::optional;
-
-    static lookup_result
-    targetLookup(rObject obj,
-		 const object::Slots::key_type& slotName,
-                 rObject& value)
-    {
-      // First, check if the object has the slot locally. We do not
-      // handle 'self' here, since we first want to see whether it has
-      // been captured in the context.
-      if (slotName != SYMBOL(self))
-        if (rObject v = obj->own_slot_get(slotName))
-        {
-          value = v;
-          // Return a nonempty optional containing an empty rObject, to
-          // indicate to target that the lookup is successful, and the
-          // target is the initial object.
-          return optional<rObject>(rObject());
-        }
-      // If this is a method outer scope, perform special lookup in
-      // self and context.
-      if (rObject self = obj->own_slot_get(SYMBOL(self)))
-      {
-	// FIXME: The 'code' slot is *always* set by the scoping
-	// system, yet the user can still delete it. What kind of
-	// error should we raise when this problem occurs? For now,
-	// just ignore it:
-	if (rObject code = obj->own_slot_get(SYMBOL(code)))
-	  // Likewise.
-	  if (rObject captured = code->own_slot_get(SYMBOL(capturedVars)))
-	  {
-            bool capture = false;
-	    if (captured == nil_class)
-              capture = true;
-	    else
-	      foreach (const rObject& var, captured->value<object::List>())
-		if (var->value<object::String>() == slotName)
-                {
-                  capture = true;
-                  break;
-                }
-            if (capture)
-            {
-              std::pair<rObject, rObject> res =
-                target(code->own_slot_get(SYMBOL(context)), slotName);
-              value = res.second;
-              return res.first;
-            }
-	  }
-	// If we were looking for 'self' and it wasn't captured in the
-	// context, we found it here.
-	if (slotName == SYMBOL(self))
-        {
-          value = self;
-	  return optional<rObject>(rObject());
-        }
-	// Check whether self has the slot. We do not use the
-	// 'fallback' method here: only calls with explicit target are
-	// subject to fallback.
-	if (rObject v = self->slot_locate(slotName, false, true))
-        {
-          value = v;
-	  return self;
-        }
-      }
-      return optional<rObject>();
-    }
-  }
-
-  std::pair <rObject, rObject>
-  target(rObject where, const libport::Symbol& name)
-  {
-    rObject value;
-    boost::function1<boost::optional<rObject>, rObject> lookup =
-      boost::bind(targetLookup, _1, name, boost::ref(value));
-    boost::optional<rObject> res = where->lookup(lookup);
-    if (!res)
-      throw object::LookupError(name);
-    if (!res.get())
-      return std::make_pair(where, value);
-    return std::make_pair(res.get(), value);
-  }
 
   rObject
   Object::make_scope(const rObject& parent)
@@ -167,39 +79,13 @@ namespace object
     return res;
   }
 
-  namespace
-  {
-    // helper for make_method_scope and make_do_scope
-    static rObject
-    make_outer_scope(const rObject& parent, const rObject& self)
-    {
-      rObject res = Object::make_scope(parent);
-      res->slot_copy(SYMBOL(getSlot), scope_class);
-      res->slot_copy(SYMBOL(locateSlot), scope_class);
-      res->slot_copy(SYMBOL(removeSlot), scope_class);
-      res->slot_copy(SYMBOL(updateSlot), scope_class);
-      res->slot_set(SYMBOL(self), self);
-      // We really need to copy 'locals' in every scope, or else
-      // Scope's methods will get completely fubared: 'locals' will be
-      // found in 'self' and will thus not be the local scope!
-      res->slot_copy(SYMBOL(locals), scope_class);
-      return res;
-    }
-  }
-
   rObject
-  Object::make_method_scope(const rObject& self)
+  Object::make_method_scope(const rObject& self, const rObject& parent)
   {
-    rObject res = make_outer_scope(global_class, self);
+    rObject res = Object::make_scope(parent ? parent : scope_class);
+    res->slot_set(SYMBOL(self), self);
+    res->slot_copy(SYMBOL(locals), scope_class);
     res->slot_copy(SYMBOL(setSlot), scope_class);
-    return res;
-  }
-
-  rObject
-  Object::make_do_scope(const rObject& parent, const rObject& self)
-  {
-    rObject res = make_outer_scope (parent ? parent : global_class, self);
-    res->slot_set(SYMBOL(setSlot), scope_class->slot_get(SYMBOL(doSetSlot)));
     return res;
   }
 

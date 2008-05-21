@@ -9,6 +9,7 @@
 # include "object/atom.hh"
 # include "object/global-class.hh"
 # include "object/alien.hh"
+# include "binder/binder.hh"
 
 # include "runner/runner.hh"
 
@@ -47,7 +48,7 @@ namespace runner
   void Runner::init(rObject lobby)
   {
     if (!locals_)
-      locals_ = object::Object::make_do_scope(object::global_class, lobby);
+      locals_ = object::Object::make_method_scope(lobby);
     // If the lobby has a slot connectionTag, push it
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
@@ -93,7 +94,7 @@ namespace runner
 
   inline
   Runner::rObject
-  Runner::eval (const ast::Exp& e)
+  Runner::eval (const ast::Ast& e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
     operator()(e);

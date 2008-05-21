@@ -100,7 +100,7 @@ do List
     if (empty)
       ""
     else
-      foldl_head(function (a, b) { a.asString + sep + b.asString }.makeClosure)
+      foldl_head(function (a, b) { a.asString + sep + b.asString })
   };
 
   ## ------------------------ ##

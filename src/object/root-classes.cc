@@ -160,6 +160,9 @@ namespace object
     COMPARABLE(float,     Float);
     COMPARABLE(integer,   Integer);
     COMPARABLE(string,    String);
+
+    // Object.addProto(Global)
+    object_class->proto_add(global_class);
   }
 
 } // namespace object

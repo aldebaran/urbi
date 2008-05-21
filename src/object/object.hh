@@ -92,8 +92,8 @@ namespace object
     /// encountered object. If the lookup is successful, \a action
     /// should return the result. Otherwise, it should return an empty
     /// boost::optional, so as the lookup continues. This enables to
-    /// perform different kind of searches (slot_locate, target
-    /// lookup) without duplicating the traversal algorithm.
+    /// perform different kind of searches without duplicating the
+    /// traversal algorithm.
     ///
     /// \param action The search to apply on each encountered object.
     /// \return The result returned by \a action, or an empty
@@ -221,15 +221,7 @@ namespace object
      **               becomes the parent)
      ** \return The new scope
      */
-    static rObject make_scope(const rObject& parent);
-
-    /// Make a 'do ... {}' scope
-    /**
-     ** Similar to \see make_method_scope, but make the scope forward more
-     ** messages to 'self'.
-     ** \return The new scope
-     **/
-    static rObject make_do_scope(const rObject& parent, const rObject& self);
+    static rObject make_scope(const rObject& parent = 0);
 
     /// Make a method outer scope
     /**
@@ -237,7 +229,7 @@ namespace object
      ** messages to self when relevant
      ** \return The new scope
      **/
-    static rObject make_method_scope(const rObject& self);
+    static rObject make_method_scope(const rObject& self, const rObject& parent = 0);
 
     /// Return the value of \a atom as an Atom<T>.
     template <class T>
@@ -272,10 +264,6 @@ namespace object
     /// Whether is a locals object.
     bool locals_;
   };
-
-  /// Target lookup
-  /// \return The target of the message and the message itself
-  std::pair<rObject, rObject> target(rObject where, const libport::Symbol& name);
 
   /// Helpers to call Urbi functions from C++.
 

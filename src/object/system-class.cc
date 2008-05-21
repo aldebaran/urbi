@@ -81,9 +81,13 @@ namespace object
     ast::Nary errs;
     p->process_errors(errs);
     errs.accept(r);
-    if (const ast::Nary* ast = p->ast_take().release())
+    if (ast::Nary* ast = p->ast_take().release())
+    {
+      binder::Binder bind;
+      bind(ast);
       // FIXME: Release AST.
       return r.eval(*ast);
+    }
     else
       throw e;
   }

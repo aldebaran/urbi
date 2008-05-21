@@ -33,8 +33,9 @@
 #include <boost/foreach.hpp>
 #include <boost/version.hpp>
 
-#include "libport/assert.hh"
-#include "libport/ref-pt.hh"
+#include <libport/assert.hh>
+#include <libport/foreach.hh>
+#include <libport/ref-pt.hh>
 
 #include "ast/nary.hh"
 
@@ -255,6 +256,14 @@ UConnection::received (const char* buffer, size_t length)
     if (ast::Nary* ast = result->ast_take().release())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
+
+      // Bind local variables
+      {
+        binder::Binder bind;
+        bind(*ast);
+      }
+      ECHO ("bound: {{{" << *ast << "}}}");
+
       // Append to the current list.
       active_command_->splice_back(*ast);
       ECHO ("appended: " << *active_command_ << "}}}");

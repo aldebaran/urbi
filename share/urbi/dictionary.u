@@ -2,10 +2,11 @@ do Global.Dictionary
 {
   function asList ()
   {
+    var dictionary = self|
     var res = []|
     keys.each (function(k) {
-      res.push_back(Pair.new (k, get (k)))
-    }.makeClosure)|
+      res.push_back(Pair.new (k, dictionary.get (k)))
+    })|
     res
   };
 

@@ -38,11 +38,11 @@ class Global.Group
   function fallback
   {
     var res = Group.new |
+    var outer_call = call |
     function action (m)
     {
-      res << m.callMessage(call)
+      res << m.callMessage(outer_call)
     }|
-    getSlot("action").makeClosure|
     members.each(getSlot("action"))|
     res
   };

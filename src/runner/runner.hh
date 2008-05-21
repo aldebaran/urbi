@@ -91,7 +91,7 @@ namespace runner
 		   const object::rList& args);
 
     /// Evaluate an expression in the current scope and return its result.
-    rObject eval (const ast::Exp&);
+    rObject eval (const ast::Ast&);
 
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
@@ -106,7 +106,7 @@ namespace runner
     /// \{
 
     std::pair<rObject, rObject>
-    target (const ast::Exp* n, const libport::Symbol& name);
+    target (const ast::Exp* n);
     typedef std::pair<bool, const Runner::rObject> locate_type;
 
     /// Build an evaluated arguments list containing \a tgt and

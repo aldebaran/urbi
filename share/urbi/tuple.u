@@ -5,10 +5,11 @@ class Global.Tuple
     var names = ["first", "second", "third", "fourth", "fifth", "sixth"] |
     var self.members = call.evalArgs |
     var self.size = members.size |
+    var tuple = self |
     size.times(function (i) {
       if (names.size > i)
-        self.setSlot(names.nth(i), function () { members.nth(i) }.capture("i"))
-    }.makeClosure)
+        tuple.setSlot(names.nth(i), function () { members.nth(i) })
+    })
   };
 
   function asString ()

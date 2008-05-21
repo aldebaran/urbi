@@ -5,8 +5,6 @@ var Code.context = nil;
 var Code.acceptVoid = 0;
 var Primitive.acceptVoid = 0;
 
-# Must appear before any scope creation
-var Scope.setSlot = Object.getSlot("setSlot");
 
 ## --------- ##
 ## Constants ##
@@ -112,15 +110,7 @@ do Global
       System.assert_ (call.evalArgAt (1), call.argString (1));
   };
 
-  function asString()
-  {
-    if (getSlot ("self") === Global)
-      "<Global>"
-    else
-      Scope.getSlot("asString").apply([self]);
-  };
-
-  function noop () {}
+  function noop () {};
 };
 
 ## -------------- ##
@@ -167,34 +157,9 @@ load("urbi/lazy.u");
 
 load("urbi/list.u");
 
-## --------- ##
-## Closure.  ##
-## --------- ##
-
-class Global.Closure
-{
-  var asString = "<Closure>";
-
-  function makeClosure ()
-  {
-    getSlot("self").capturedVars = nil|
-    getSlot("self")
-  };
-
-  function capture (varname)
-  {
-    getSlot ("self").capturedVars.push_back(varname)|
-    getSlot ("self")
-  };
-
-  function inject (name, value)
-  {
-    getSlot("self").context.setSlot(name, getSlot("value"))|
-    capture (name)|
-    getSlot ("self")
-  };
-};
-Code.addProto(Global.Closure);
+## ----------- ##
+## Singleton.  ##
+## ----------- ##
 
 load("urbi/singleton.u");
 
@@ -235,7 +200,7 @@ do Global
     {
       var args = call.evalArgs|
       args.head.getSlot(name).apply(args)
-    }.capture("name")
+    }
   };
 };
 
@@ -249,15 +214,15 @@ do Object
 {
   function detach
   {
-    var f = function { getSlot("code").context.call.evalArgAt (1) }|
-    Task.new(getSlot("f"))|
+    var outer_call = call |
+    new Task (function () { outer_call.evalArgAt (1) }) |
     void
   };
 
   function detach_linked
   {
-    var f = function { getSlot("code").context.call.evalArgAt (1) }|
-    new Task (getSlot("f"), true) |
+    var outer_call = call |
+    new Task (function () { outer_call.evalArgAt (1) }, true) |
     void
   };
 
@@ -444,7 +409,7 @@ do Object
   {
     function (x) {
       x.getSlot (fn) .apply ([x])
-    }.capture("fn")
+    }
   };
 
   function bounce

@@ -480,34 +480,15 @@ namespace runner
     return build_call_message(tgt, msg, lazy_args);
   }
 
-  std::pair<Runner::rObject, Runner::rObject>
-  Runner::target (const ast::Exp* n, const libport::Symbol& name)
-  {
-    if (dynamic_cast<const ast::Implicit*>(n))
-      return object::target(locals_, name);
-    else
-    {
-      rObject tgt = eval (*n);
-      return std::make_pair(tgt, tgt->slot_get(name));
-    }
-  }
-
   void
   Runner::visit (const ast::Call& e)
   {
     // The invoked slot (probably a function).
-    rObject val;
-    // The target of the message.
-    rObject tgt;
-    try
-    {
-      std::pair<rObject, rObject> lookup =
-        target(&e.args_get().front(), e.name_get());
-      tgt = lookup.first;
-      val = lookup.second;
-    }
-    PROPAGATE_EXCEPTION(e.location_get(), {});
+    const ast::Exp& ast_tgt = e.args_get().front();
+    rObject tgt = dynamic_cast<const ast::Implicit*>(&ast_tgt) ?
+      locals_ : eval(ast_tgt);
     assertion(tgt);
+    rObject val = tgt->slot_get(e.name_get());
     assertion(val);
 
     /*-------------------------.
@@ -867,7 +848,7 @@ namespace runner
   {
     rObject tgt = eval(e.target_get());
     visit (static_cast<const ast::AbstractScope&>(e),
-           object::Object::make_do_scope(locals_, tgt));
+           object::Object::make_method_scope(tgt, locals_));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     current_ = tgt;
@@ -946,6 +927,7 @@ namespace runner
       std::pair<const ast::Exp*, tag_chain_type> res = decompose_tag_chain (&e);
       // If the left part of the implicit tag is a call with argument, evaluate it
       // to find the owner. Otherwise, store the new tag as a local variable.
+      // FIXME: This is naive. Perform a real setSlot.
       rObject where = res.first ? eval(*res.first) : locals_;
       // If it is a tag, consider it as the parent of the new tag as well.
       rObject base = is_a(where, object::tag_class) ? where : toplevel;

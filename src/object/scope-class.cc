@@ -17,69 +17,6 @@ namespace object
   rObject scope_class;
 
   static rObject
-  scope_class_target(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, String);
-
-    return target(args[0], arg1->value_get()).first;
-  }
-
-#define FORWARD(Name, Argc)						\
-  static rObject							\
-  scope_class_ ## Name (runner::Runner& runner, objects_type args)	\
-  {									\
-    CHECK_ARG_COUNT(Argc);						\
-    FETCH_ARG(1, String);						\
-									\
-    rObject fwd = object_class->slot_get(SYMBOL(Name));			\
-    args[0] = target(args[0], arg1->value_get()).first;			\
-    return runner.apply(fwd, SYMBOL(Name), args);			\
-  }
-
-  FORWARD(getSlot, 2);
-  FORWARD(removeSlot, 2);
-  FORWARD(updateSlot, 3);
-
-#undef FORWARD
-
-  static rObject
-  scope_class_locateSlot (runner::Runner& runner, objects_type args)
-  {
-    CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, String);
-
-    try
-    {
-      args[0] = target(args[0], arg1->value_get()).first;
-    }
-    catch (LookupError&)
-    {
-      return nil_class;
-    }
-    rObject fwd = object_class->slot_get(SYMBOL(locateSlot));
-    return runner.apply(fwd, SYMBOL(locateSlot), args);
-  }
-
-  static rObject
-  scope_class_doSetSlot(runner::Runner& runner, objects_type args)
-  {
-    CHECK_ARG_COUNT(3);
-    FETCH_ARG(1, String);
-
-
-    rObject fwd = object_class->slot_get(SYMBOL(setSlot));
-    rObject outer = args[0]->slot_locate(SYMBOL(self));
-    if (args[0] == outer)
-    {
-      args[0] = outer->own_slot_get(SYMBOL(self));
-      return runner.apply(fwd, SYMBOL(doSetSlot), args);
-    }
-    else
-      return runner.apply(fwd, SYMBOL(doSetSlot), args);
-  }
-
-  static rObject
   scope_class_locals(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
@@ -92,13 +29,7 @@ namespace object
   {
 #define DECLARE(Name)                   \
     DECLARE_PRIMITIVE(scope, Name)
-    DECLARE(doSetSlot);
-    DECLARE(getSlot);
     DECLARE(locals);
-    DECLARE(locateSlot);
-    DECLARE(removeSlot);
-    DECLARE(target);
-    DECLARE(updateSlot);
 #undef DECLARE
   }
 
