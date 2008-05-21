@@ -930,7 +930,7 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
       DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
-	      "at_( " << s << ".val, " << $7 << ")");
+	      "at_( " << s << ", " << $7 << ")");
     }
 | "at" "(" expr "~" expr ")" nstmt "onleave" nstmt
     {
@@ -938,7 +938,7 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
       DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
-	      "at_( " << s << ".val, " << $7 << ", " << $9 << ")");
+	      "at_( " << s << ", " << $7 << ", " << $9 << ")");
     }
 | "every" "(" expr ")" nstmt
     {

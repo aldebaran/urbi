@@ -290,16 +290,15 @@ do Object
   #
   # FIXME: We need a way to scope the "at" and destroy it when "o" is
   # no longer visible.
-#   function persist
-#   {
-#     var res = (|protos: [Object],
-#                 val: false,
-#                 tag: new Tag ("persist".fresh)|) |
-#     var delay = call.evalArgAt (2) |
-#     at (call.evalArgAt (1)) res.tag: { sleep (delay) | res.val = true }
-#       onleave { res.val = false | res.tag.stop } |
-#     res
-#   };
+  function persist
+  {
+    var res = false |
+    var tag = Tag.new("persist".fresh) |
+    var delay = call.evalArgAt (2) |
+    at (call.evalArgAt (1)) tag: { sleep (delay) | res = true }
+      onleave { res = false | tag.stop } |
+    return function () { res }
+  };
 };
 
 load("urbi/event.u");
