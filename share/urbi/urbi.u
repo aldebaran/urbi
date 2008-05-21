@@ -562,13 +562,15 @@ do Object
     else
       slotProps = properties.get(slot)|
     slotProps.set(name, getSlot("value"))|
-    if (!getSlot(slot).locateSlot("propertyHook").isNil)
-      getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
+    if (!self.getSlot(slot).locateSlot("propertyHook").isNil)
+      self.getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
     getSlot("value")
   };
 
   function getProperty(slot, name)
   {
+    if (!hasProperty(slot, name))
+      return void|
     properties.get(slot).get(name)
   };
 
