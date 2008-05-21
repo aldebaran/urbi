@@ -142,15 +142,11 @@ namespace runner
       if (!c)
 	throw object::ImplicitTagComponentError(e->location_get());
       if (c->args_get().size() > 1)
-      {
-        std::cerr << "The base is a " << c->name_get() << std::endl;
         return std::make_pair(c, res);
-      }
       res.push_front (c);
       e = &c->args_get().front();
     }
     assert (!res.empty ());
-    std::cerr << "The base is empty" << std::endl;
     return std::make_pair((const ast::Exp*)0, res);
   }
 
@@ -932,21 +928,14 @@ namespace runner
       // If it is a tag, consider it as the parent of the new tag as well.
       rObject base = is_a(where, object::tag_class) ? where : toplevel;
       tag_chain_type chain = res.second;
-      std::cerr << "Where: " << where << std::endl;
-      std::cerr << "Base: " << base << std::endl;
       foreach (const ast::Call* element, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-          std::cerr << "I'm on " << element->name_get() << std::endl;
 	if (rObject owner = base->slot_locate (element->name_get()))
-        {
-          std::cerr << "I already have " << element->name_get() << std::endl;
 	  base = owner->own_slot_get (element->name_get());
-        }
 	else
 	{
-          std::cerr << "I create " << element->name_get() << std::endl;
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
