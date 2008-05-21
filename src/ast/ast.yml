@@ -677,12 +677,15 @@ List:
   attributes:
     - value:
         type: 'exps_type*'
-        access: r
+        access: rw
         desc: Stored list value
   printer:
     - '"["'
     - 'libport::separate (n.value_get(), ", ")'
     - '"]"'
+  default: |2
+    foreach (typename Const<ast::Exp>::type& exp, n.value_get())
+      operator()(exp);
 
 Call:
   desc: /// Function calls, and attribute look-ups.
