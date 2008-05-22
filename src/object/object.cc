@@ -167,7 +167,8 @@ namespace object
                               bool fallback, bool value) const
   {
     SlotLookup looker;
-    lookup_action action = boost::bind(&SlotLookup::slot_lookup, &looker, _1, k, value);
+    lookup_action action =
+      boost::bind(&SlotLookup::slot_lookup, &looker, _1, k, value);
     boost::optional<rObject> res = lookup(action);
     if (!res && fallback && looker.fallback)
       res = looker.fallback;
@@ -184,7 +185,8 @@ namespace object
   }
 
   rObject
-  Object::slot_get (const Slots::key_type& k, boost::optional<rObject> def) const
+  Object::slot_get (const Slots::key_type& k,
+                    boost::optional<rObject> def) const
   {
     rObject value;
     if (def)
@@ -247,9 +249,12 @@ namespace object
      */
     if (hook && effective_target == owner)
     // FIXME: We probably want helper to access properties
-    if (rObject properties = effective_target->slot_get(SYMBOL(properties), rObject()))
-    if (rObject slotProperties = properties->slot_get(k, rObject()))
-    if (rObject hook = slotProperties->slot_get(SYMBOL(updateHook), rObject()))
+    if (rObject properties =
+        effective_target->slot_get(SYMBOL(properties), rObject()))
+    if (rObject slotProperties =
+        properties->slot_get(k, rObject()))
+    if (rObject hook =
+        slotProperties->slot_get(SYMBOL(updateHook), rObject()))
     {
       objects_type args;
       args.push_back(effective_target);
