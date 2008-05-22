@@ -611,10 +611,6 @@ namespace runner
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.
     res->slot_set(SYMBOL(context), object::Object::make_scope(locals_));
-    // Set capturedVars at []. By default, no variables are searched
-    // in the context.
-    res->slot_set(SYMBOL(capturedVars),
-		  object::List::fresh(object::List::value_type()));
     return res;
   }
 
