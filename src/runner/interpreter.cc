@@ -76,36 +76,43 @@ namespace runner
       YIELD();					\
   } while (0)
 
-/** Catch exceptions, execute Code, then display the error if not already
- * done, and rethrow it. Also execute Code if no exception caught. */
+/// Catch exceptions, execute Code, then display the error if not
+/// already done, and rethrow it. Also execute Code if no exception
+/// caught.
+///
+/// Since this is a macro, we are likely to capture identifiers.  In
+/// particular, don't use "e" to bind the name of the caught
+/// exceptions, since that's the name used by the formal argument of
+/// the visit methods.
 #define PROPAGATE_EXCEPTION(Loc, Code)			\
-  catch(object::UrbiException& ue)			\
+  catch (object::UrbiException& propagate_exception)    \
   {							\
     Code;						\
     current_.reset();					\
-    propagate_error_(ue, Loc);				\
+    propagate_error_(propagate_exception, Loc);         \
     throw;						\
   }							\
-  catch(object::FlowException& e)                       \
-  {							\
-    Code;						\
-    current_.reset();					\
-    throw;						\
-  }							\
-  catch(scheduler::SchedulerException& e)		\
+  catch (object::FlowException&)                        \
   {							\
     Code;						\
     current_.reset();					\
     throw;						\
   }							\
-  catch(kernel::exception& e)				\
+  catch (scheduler::SchedulerException&)                \
+  {							\
+    Code;						\
+    current_.reset();					\
+    throw;						\
+  }							\
+  catch (kernel::exception& propagate_exception)        \
   {							\
     std::cerr << "Unexpected exception propagated: "	\
-	      << e.what() << std::endl;			\
+	      << propagate_exception.what()             \
+              << std::endl;                             \
     Code;						\
     throw;						\
   }							\
-  catch(...)						\
+  catch (...)						\
   {							\
     std::cerr << "Unknown exception propagated\n";	\
     Code;						\
@@ -913,7 +920,7 @@ namespace runner
   {
     try {
       // Try to evaluate e as a normal expression.
-      return eval (e);
+      return eval(e);
     }
     catch (object::LookupError &ue)
     {
@@ -930,8 +937,10 @@ namespace runner
       // Tag represents the top level tag
       rObject toplevel = object::tag_class;
       std::pair<const ast::Exp*, tag_chain_type> res = decompose_tag_chain (&e);
-      // If the left part of the implicit tag is a call with argument, evaluate it
-      // to find the owner. Otherwise, store the new tag as a local variable.
+      // If the left part of the implicit tag is a call with argument,
+      // evaluate it to find the owner. Otherwise, store the new tag
+      // as a local variable.
+      //
       // FIXME: This is naive. Perform a real setSlot.
       rObject where = res.first ? eval(*res.first) : locals_;
       // If it is a tag, consider it as the parent of the new tag as well.
