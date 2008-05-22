@@ -51,7 +51,7 @@ namespace binder
     super_type::visit (call);
     libport::Symbol name = call.name_get();
     // If this is a qualified call, nothing particular to do
-    if (dynamic_cast<ast::Implicit*>(&call.args_get().front()))
+    if (call.target_implicit())
     {
       if (name == SYMBOL(call) ||
           name == SYMBOL(locals) ||

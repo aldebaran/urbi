@@ -676,7 +676,7 @@ stmt:
       ::parser::Tweast tweast;
       libport::Symbol owner = libport::Symbol::fresh(SYMBOL(__class__));
       ast::Call* target = $2;
-      if (!dynamic_cast<ast::Implicit*>(&$2->args_get().front()))
+      if (!$2->target_implicit())
       {
         // If the lvalue call is qualified, we need to store the
         // target in a variable to avoid evaluating it several times.

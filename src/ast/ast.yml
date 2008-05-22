@@ -208,6 +208,16 @@ Ast:
 
 Exp:
   super: Ast
+  inline:
+    header inside: |2
+        public:
+          /// Whether is an instance of ast::Implicit.
+          virtual bool implicit() const;
+    impl inside: |2
+          bool Exp::implicit() const
+          {
+            return false;
+          }
 
 MetaExp:
   desc: /// A node which is a placeholder for an Exp.
@@ -634,6 +644,16 @@ Noop:
 Implicit:
   super: Exp
   desc: /// Implicit target for messages.
+  inline:
+    header inside: |2
+        public:
+          /// Whether is an instance of ast::Implicit.
+          virtual bool implicit() const;
+    impl inside: |2
+          bool Implicit::implicit() const
+          {
+            return true;
+          }
   printer:
     - '"<IMPLICIT>"'
 
@@ -697,6 +717,16 @@ Call:
     - args:
         type: 'exps_type*'
         desc: Arguments passed to the function
+  inline:
+    header inside: |2
+        public:
+          /// Whether the target is implicit.
+          bool target_implicit() const;
+    inline inside: |2
+          inline bool Call::target_implicit() const
+          {
+            return args_->front().implicit();
+          }
   default:
       foreach (typename Const<ast::Exp>::type& e, n.args_get())
         operator()(e);

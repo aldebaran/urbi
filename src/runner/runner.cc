@@ -136,7 +136,7 @@ namespace runner
   decompose_tag_chain (const ast::Exp* e)
   {
     tag_chain_type res;
-    while (!dynamic_cast<const ast::Implicit*>(e))
+    while (!e->implicit())
     {
       const ast::Call* c = dynamic_cast<const ast::Call*>(e);
       if (!c)
@@ -465,7 +465,7 @@ namespace runner
     object::objects_type lazy_args;
     boost::sub_range<const ast::exps_type> range(args);
     // The target can be unspecified.
-    if (dynamic_cast<const ast::Implicit*>(&args.front()))
+    if (args.front().implicit())
     {
       lazy_args.push_back(object::nil_class);
       range = make_iterator_range(range, 1, 0);
@@ -481,8 +481,7 @@ namespace runner
   {
     // The invoked slot (probably a function).
     const ast::Exp& ast_tgt = e.args_get().front();
-    rObject tgt = dynamic_cast<const ast::Implicit*>(&ast_tgt) ?
-      locals_ : eval(ast_tgt);
+    rObject tgt = ast_tgt.implicit() ? locals_ : eval(ast_tgt);
     assertion(tgt);
     rObject val = tgt->slot_get(e.name_get());
     assertion(val);
