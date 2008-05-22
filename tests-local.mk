@@ -16,14 +16,6 @@ ENABLE_HARD_ERRORS = false
 # k2 tests that fail currently but need to be fixed soon.
 TFAIL_TESTS +=
 
-# k2 tests that fail because the binder breaks some locations.
-TFAIL_TESTS +=					\
-2.x/atoms.chk					\
-2.x/apply.chk					\
-2.x/inheritance.chk				\
-2.x/lookup.chk					\
-2.x/tuples.chk
-
 # k2 tests that fail because plain objects have been removed.
 TFAIL_TESTS +=					\
 2.x/modifier-accel-freeze.chk			\

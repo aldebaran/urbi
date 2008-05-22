@@ -493,32 +493,32 @@ namespace runner
   void
   Interpreter::visit (const ast::Call& e)
   {
-    // The invoked slot (probably a function).
-    const ast::Exp& ast_tgt = e.args_get().front();
-    rObject tgt = ast_tgt.implicit() ? locals_ : eval(ast_tgt);
-    assertion(tgt);
-    rObject val = tgt->slot_get(e.name_get());
-    assertion(val);
+    try
+    {
+      // The invoked slot (probably a function).
+      const ast::Exp& ast_tgt = e.args_get().front();
+      rObject tgt = ast_tgt.implicit() ? locals_ : eval(ast_tgt);
+      assertion(tgt);
+      rObject val = tgt->slot_get(e.name_get());
+      assertion(val);
 
     /*-------------------------.
     | Evaluate the arguments.  |
     `-------------------------*/
 
-    // Gather the arguments, including the target.
-    object::objects_type args;
-    args.push_back (tgt);
+      // Gather the arguments, including the target.
+      object::objects_type args;
+      args.push_back (tgt);
 
-    // Build the call message for non-strict functions, otherwise the
-    // evaluated argument list.
-    rObject call_message;
-    if (val->kind_get () == object::object_kind_code
-	&& !val.unsafe_cast<object::Code> ()->value_get ().strict())
-      call_message = build_call_message (tgt, e.name_get(), e.args_get ());
-    else
-      push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
+      // Build the call message for non-strict functions, otherwise the
+      // evaluated argument list.
+      rObject call_message;
+      if (val->kind_get () == object::object_kind_code
+          && !val.unsafe_cast<object::Code> ()->value_get ().strict())
+        call_message = build_call_message (tgt, e.name_get(), e.args_get ());
+      else
+        push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
 
-    try
-    {
       call_stack_.push_back(&e);
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
       apply (val, e.name_get(), args, call_message);
