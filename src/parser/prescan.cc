@@ -7,10 +7,10 @@ namespace parser
 {
 
   size_t
-  prescan (char* buf)
+  prescan(const char* buf)
   {
     yyFlexLexer scanner;
-    std::istringstream is (buf);
+    std::istringstream is(buf);
     scanner.switch_streams(&is, 0);
 
     // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
