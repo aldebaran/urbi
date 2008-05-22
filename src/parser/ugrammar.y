@@ -1014,17 +1014,13 @@ stmt:
     {
       libport::Symbol tag = libport::Symbol::fresh(SYMBOL(stopif));
       DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
-	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << ","
-	      << "waituntil(" << $3 << ")|"
-	      << tag << ".stop }");
+	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
+	      << "{ waituntil(" << $3 << ")|"
+	      << tag << ".stop } }");
     }
 | "timeout" "(" expr ")" stmt
     {
-      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(timeout));
-      DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
-	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << ","
-	      << "sleep(" << $3 << ")|"
-	      << tag << ".stop }");
+      DESUGAR("stopif ({sleep(" << $3 << ") | true}) " << $5);
     }
 | "return" expr.opt
     {
