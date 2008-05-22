@@ -14,17 +14,8 @@ namespace ast
 namespace binder
 {
 
-  /// How to bind. Essentialy, in normal mode, unknown variables
-  /// are searched in self, while they're search in the context in
-  /// context mode.
-  enum bind_type
-  {
-    bind_normal,
-    bind_context,
-  };
-
   /// Bind names in \a a.
-  void bind(ast::Ast& a, bind_type mode = bind_normal);
+  void bind(ast::Ast& a);
 
 } // namespace binder
 

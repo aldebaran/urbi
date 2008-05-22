@@ -13,11 +13,10 @@
 
 namespace binder
 {
-  Binder::Binder(bind_type m)
+  Binder::Binder()
     : env_()
     , unbind_()
     , depth_(1)
-    , mode_(m)
   {
     unbind_.push_back(libport::Finally());
     setOnSelf_.push_back(true);
@@ -88,32 +87,14 @@ namespace binder
     if (var == SYMBOL(call) ||
         var == SYMBOL(locals) ||
         var == SYMBOL(self))
-    {
-      switch (mode_)
-      {
-        case bind_normal:
-          return;
-        case bind_context:
-          targetContext(call);
-          return;
-      }
       return;
-    }
     if (int depth = isLocal(var))
     {
       if (depth < depth_)
         targetContext(call, depth_ - depth);
     }
     else
-      switch (mode_)
-      {
-        case bind_normal:
-          targetSelf(call);
-          break;
-        case bind_context:
-          targetContext(call);
-          break;
-      }
+      targetSelf(call);
   }
 
   void Binder::visit (ast::Foreach& f)

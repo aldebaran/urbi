@@ -4,10 +4,9 @@
 namespace binder
 {
   void
-  bind(ast::Ast& a, bind_type mode)
+  bind(ast::Ast& a)
   {
-    Binder bind(mode);
+    Binder bind;
     bind(a);
   }
-
 } // namespace binder

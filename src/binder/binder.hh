@@ -33,8 +33,7 @@ namespace binder
       /// \name Ctor & dtor.
       /// \{
       /// Construct a \c Binder.
-      /// \param m How to bind
-      Binder (bind_type m = bind_normal);
+      Binder ();
 
       /// Destroy a Binder.
       virtual ~Binder ();
@@ -60,14 +59,11 @@ namespace binder
       std::list<bool> setOnSelf_;
       /// Level of function imbrication
       int depth_;
-      /// The mode for this binder
-      bind_type mode_;
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
       void bind(const libport::Symbol& var, ast::Ast* decl);
-      /// Retarget a call according to the mode and whether the \a
-      /// variable is set.
+      /// Retarget a call according to whether the \a variable is set.
       void retarget(ast::Call& call, const libport::Symbol& var);
       /// Retarget a call to getSlot("self")
       void targetSelf(ast::Call& call);
