@@ -48,6 +48,9 @@ namespace runner
     /// Return the lobby in which this runner has been started.
     const rLobby& lobby_get() const;
     rLobby lobby_get();
+    /// The call stack
+    typedef std::vector<const ast::Call*> call_stack_type;
+    const call_stack_type& call_stack_get() const;
     /// \}
 
     /// Execute the code of function \a func with arguments \a args in
@@ -90,6 +93,9 @@ namespace runner
     /// The URBI Lobby used to evaluate.
     /// Wraps an UConnection (ATM).
     rLobby lobby_;
+
+    /// The call stack.
+    call_stack_type call_stack_;
   };
 
 } // namespace runner

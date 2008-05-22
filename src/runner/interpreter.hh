@@ -174,10 +174,6 @@ namespace runner
 
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
-
-    /// The call stack.
-    typedef std::vector<const ast::Call*> call_stack_type;
-    call_stack_type call_stack_;
   };
 
 } // namespace runner
