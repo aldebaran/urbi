@@ -235,9 +235,9 @@ namespace runner
   // Apply a function written in Urbi.
   object::rObject
   Interpreter::apply_urbi (const rObject& func,
-		      const libport::Symbol& msg,
-		      const object::objects_type& args,
-		      rObject call_message)
+                           const libport::Symbol& msg,
+                           const object::objects_type& args,
+                           rObject call_message)
   {
     // The called function.
     ast::Code& fn = func.unsafe_cast<object::Code> ()->value_get ();
@@ -435,7 +435,8 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::build_call_message (const rObject& tgt, const libport::Symbol& msg,
+  Interpreter::build_call_message (const rObject& tgt,
+                                   const libport::Symbol& msg,
 				   const object::objects_type& args)
   {
     rObject res = object::global_class->slot_get(SYMBOL(CallMessage))->clone();
