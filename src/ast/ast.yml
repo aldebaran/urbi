@@ -765,7 +765,9 @@ Function:
     header inside: |2
         public:
           /// Whether the arguments must be evaluated.
-          bool strict () const
+          bool strict () const;
+    inline inside: |2
+          inline bool Function::strict () const
           {
             return formals_;
           }
