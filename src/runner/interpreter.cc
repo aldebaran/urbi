@@ -7,7 +7,6 @@
 #include <libport/compiler.hh>
 
 #include <deque>
-#include <sstream>
 
 #include <boost/range/iterator_range.hpp>
 
@@ -20,7 +19,6 @@
 
 #include "ast/new-clone.hh"
 
-#include "object/alien.hh"
 #include "object/atom.hh"
 #include "object/global-class.hh"
 #include "object/idelegate.hh"
@@ -31,7 +29,6 @@
 #include "object/flow-exception.hh"
 
 #include "runner/interpreter.hh"
-#include "parser/tweast.hh"
 #include "parser/uparser.hh"
 
 namespace runner
@@ -720,7 +717,8 @@ namespace runner
 	// The new runners are attached to the same tags as we are
         // FIXME: We must clone here since the nary will be
         // cleared. Yet taking the node from the nary would be better.
-	Interpreter* subrunner = new Interpreter(*this, e.toplevel_get () ? new_clone(c) : &c);
+	Interpreter* subrunner =
+	  new Interpreter(*this, e.toplevel_get () ? new_clone(c) : &c);
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
