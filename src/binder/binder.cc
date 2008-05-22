@@ -28,10 +28,10 @@ namespace binder
   static inline
   boost::optional<libport::Symbol> getFirstArg(const ast::Call& call)
   {
-    const ast::Ast* arg1 = &*++call.args_get().begin();
-    if (!dynamic_cast<const ast::String*>(arg1))
+    const ast::Ast& arg1 = *++call.args_get().begin();
+    if (!dynamic_cast<const ast::String*>(&arg1))
       return boost::optional<libport::Symbol>();
-    return libport::Symbol(dynamic_cast<const ast::String*>(arg1)->value_get());
+    return libport::Symbol(dynamic_cast<const ast::String*>(&arg1)->value_get());
   }
 
   int Binder::isLocal(const libport::Symbol& name)
@@ -52,9 +52,9 @@ namespace binder
     // If this is a qualified call, nothing particular to do
     if (call.target_implicit())
     {
-      if (name == SYMBOL(call) ||
-          name == SYMBOL(locals) ||
-          name == SYMBOL(self))
+      if (name == SYMBOL(call)
+          || name == SYMBOL(locals)
+          || name == SYMBOL(self))
       {
         retarget(call, name);
         return;
@@ -69,10 +69,10 @@ namespace binder
         else
           targetSelf(call);
       }
-      else if (name == SYMBOL(getSlot) ||
-               name == SYMBOL(locateSlot) ||
-               name == SYMBOL(updateSlot) ||
-               name == SYMBOL(removeSlot))
+      else if (name == SYMBOL(getSlot)
+               || name == SYMBOL(locateSlot)
+               || name == SYMBOL(updateSlot)
+               || name == SYMBOL(removeSlot))
       {
         if (boost::optional<libport::Symbol> var = getFirstArg(call))
           retarget(call, var.get());
@@ -84,9 +84,9 @@ namespace binder
 
   void Binder::retarget(ast::Call& call, const libport::Symbol& var)
   {
-    if (var == SYMBOL(call) ||
-        var == SYMBOL(locals) ||
-        var == SYMBOL(self))
+    if (var == SYMBOL(call)
+        || var == SYMBOL(locals)
+        || var == SYMBOL(self))
       return;
     if (int depth = isLocal(var))
     {
