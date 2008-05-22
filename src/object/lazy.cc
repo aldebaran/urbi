@@ -1,7 +1,6 @@
 #include "ast/function.hh"
 #include "ast/new-clone.hh"
 #include "ast/scope.hh"
-#include "binder/bind.hh"
 #include "global-class.hh"
 #include "runner/interpreter.hh"
 #include "lazy.hh"
@@ -23,9 +22,8 @@ namespace object
     // ast::Function ctor inline in the make_code(...) call invokes
     // the ast copy ctor. Please post an explanation if you
     // understand the problem.
-    ast::Function ast(e.location_get(), new ast::symbols_type(),
+    ast::Closure ast(e.location_get(), new ast::symbols_type(),
 		      new ast::Scope(e.location_get(), new_clone(e)));
-    binder::bind(ast, binder::bind_context);
     rObject function = dynamic_cast<runner::Interpreter*>(&r)->make_code(ast);
     return mkLazy(r, function);
   }
