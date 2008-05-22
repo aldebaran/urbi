@@ -22,8 +22,7 @@ TFAIL_TESTS +=					\
 2.x/apply.chk					\
 2.x/inheritance.chk				\
 2.x/lookup.chk					\
-2.x/tuples.chk					\
-2.x/void.chk
+2.x/tuples.chk
 
 # k2 tests that fail because plain objects have been removed.
 TFAIL_TESTS +=					\
