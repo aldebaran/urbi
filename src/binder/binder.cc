@@ -155,16 +155,22 @@ namespace binder
     super_type::visit (scope);
   }
 
-  void Binder::visit (ast::Function& f)
+  void Binder::visit(ast::Function& f)
   {
-    unbind_.push_back(libport::Finally());
     depth_++;
     if (f.formals_get())
       foreach (const libport::Symbol& arg, *f.formals_get())
 	bind(arg, &f);
     super_type::visit (f);
-    unbind_.pop_back();
     depth_--;
+  }
+
+  void Binder::visit(ast::Closure& f)
+  {
+    if (f.formals_get())
+      foreach (const libport::Symbol& arg, *f.formals_get())
+	bind(arg, &f);
+    super_type::visit (f);
   }
 
   void Binder::bind(const libport::Symbol& var, ast::Ast* decl)
