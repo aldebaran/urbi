@@ -129,9 +129,12 @@ do List
   };
 
   # Apply \a f on every element
-  function each (f)
+  # This is lazy only because we need the call message to retrieve the
+  # sender (call.sender). Make it strict when we'll have call message
+  # even in strict functions.
+  function each
   {
-    for| i in self { f (i) } |
+    for| i in self { call.argAt(1).apply([call.sender, i]) } |
     void
   };
 
