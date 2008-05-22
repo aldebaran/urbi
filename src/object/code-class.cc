@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object code.
  */
 
+#include <libport/lexical-cast.hh>
+
 #include "ast/function.hh"
 
 #include "object/atom.hh"
@@ -35,10 +37,8 @@ namespace object
     CHECK_ARG_COUNT (1);
     if (args[0] == code_class)
       return String::fresh(SYMBOL(LT_Code_GT));
-    std::stringstream ss;
     FETCH_ARG(0, Code);
-    ss << arg0->value_get();
-    return String::fresh(libport::Symbol(ss.str()));
+    return String::fresh(libport::Symbol(string_cast(arg0->value_get())));
   }
 
   static rObject
@@ -47,10 +47,11 @@ namespace object
     CHECK_ARG_COUNT (1);
     if (args[0] == code_class)
       return String::fresh(SYMBOL(LT_Code_GT));
-    std::stringstream ss;
     FETCH_ARG(0, Code);
-    ss << arg0->value_get().body_get()->body_get();
-    return String::fresh(libport::Symbol(ss.str()));
+    return 
+      String::fresh(
+        libport::Symbol(
+          string_cast(arg0->value_get().body_get()->body_get())));
   }
 
   void
