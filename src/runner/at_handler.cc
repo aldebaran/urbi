@@ -70,7 +70,6 @@ namespace runner
   {
     bool check_for_blocked = true;
     bool tags_need_rebuilding = false;
-    side_effect_free_set(true);
 
     while (true)
     {
@@ -167,6 +166,7 @@ namespace runner
 	// catching the exception. If, by mistake, a condition evaluation
 	// yields and is blocked, we do not want it to get the bogus
         // exception.
+	side_effect_free_set(true);
 	yield_until_things_changed();
       }
       catch (const scheduler::BlockedException& e)
