@@ -18,7 +18,7 @@ namespace runner
 
   inline
   Runner::Runner(const Runner& model)
-    : scheduler::Job(model.scheduler_get()),
+    : scheduler::Job(model),
       lobby_(model.lobby_)
   {
   }
