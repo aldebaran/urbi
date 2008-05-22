@@ -357,6 +357,7 @@
 	TOK_ALIAS        "alias"
 	TOK_EQ           "="
 	TOK_BREAK        "break"
+	TOK_CLOSURE      "closure"
 	TOK_COLON        ":"
 	TOK_DELETE       "delete"
 	TOK_ELSE         "else"
@@ -774,10 +775,15 @@ stmt:
   // comment of k1_id.
   "function" k1_id formals block
     {
-      // Compiled as "var name = function args stmt", i.e.,
-      // setSlot (name, function args stmt).
+      // Compiled as "var name = function args stmt"
       $$ = ast_slot_set(@$, $2,
 			new ast::Function (@$, $3, ast_scope (@$, $4)));
+    }
+| "closure" k1_id formals block
+    {
+      // Compiled as "var name = closure args stmt"
+      $$ = ast_slot_set(@$, $2,
+			new ast::Closure (@$, $3, ast_scope (@$, $4)));
     }
 ;
 
@@ -1137,6 +1143,10 @@ expr:
   "function" formals block
     {
       $$ = new ast::Function (@$, $2, ast_scope (@$, $3));
+    }
+| "closure" formals block
+    {
+      $$ = new ast::Closure (@$, $2, ast_scope (@$, $3));
     }
 ;
 

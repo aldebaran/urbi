@@ -749,7 +749,7 @@ Call:
             << ")";
        }'
 
-Function:
+Code:
   super: Exp
   attributes:
     - formals:
@@ -767,17 +767,28 @@ Function:
           /// Whether the arguments must be evaluated.
           bool strict () const;
     inline inside: |2
-          inline bool Function::strict () const
+          inline bool Code::strict () const
           {
             return formals_;
           }
   printer:
-    - '"function "'
+    - '{
+         if (dynamic_cast<const ast::Closure*>(&n))
+           ostr_ << "closure ";
+         else
+           ostr_ << "function ";
+       }'
     - '{
          if (n.formals_get ())
            ostr_ << "(" << *n.formals_get() << ") ";
        }'
     - ~body
+
+Function:
+  super: Code
+
+Closure:
+  super: Code
 
 # Local Variables:
 # mode: yaml

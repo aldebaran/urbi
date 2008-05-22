@@ -93,7 +93,7 @@ namespace runner
 
     /// Make an urbi function from an ast chunk
     rObject
-    make_code(const ast::Function& f) const;
+    make_code(const ast::Code& f) const;
 
   protected:
     /// \name Evaluation.
@@ -124,6 +124,7 @@ namespace runner
 
     CONST_VISITOR_VISIT_NODES((And)
                               (Call)
+                              (Closure)
                               (Do)
                               (Float)
                               (Foreach)

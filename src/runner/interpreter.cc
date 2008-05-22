@@ -243,7 +243,9 @@ namespace runner
 		      rObject call_message)
   {
     // The called function.
-    ast::Function& fn = func.unsafe_cast<object::Code> ()->value_get ();
+    ast::Code& fn = func.unsafe_cast<object::Code> ()->value_get ();
+    // Whether it's an explicit closure
+    bool closure = dynamic_cast<ast::Closure*>(&fn);
 
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
@@ -259,8 +261,18 @@ namespace runner
     // Create the function's outer scope, with the first argument as
     // 'self'. The inner scope will be created when executing ()
     // on ast::Scope.
-    rObject scope = object::Object::make_method_scope(args.front());
-    scope->slot_set(SYMBOL(code), func);
+    rObject scope;
+    if (!closure)
+      // Create the function's outer scope, with the first argument as
+      // 'self'. The inner scope will be created when executing ()
+      // on ast::Scope.
+    {
+      scope = object::Object::make_method_scope(args.front());
+      scope->slot_set(SYMBOL(code), func);
+    }
+    else
+      // For closures, use the context as parent scope.
+      scope = func->slot_get(SYMBOL(context));
 
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
@@ -275,11 +287,8 @@ namespace runner
 	scope->slot_set (s, *ei++);
     }
     else
-    {
-      scope->slot_set (SYMBOL(call), call_message);
-    }
-
-    //ECHO("scope: " << *scope);
+      if (!closure)
+        scope->slot_set (SYMBOL(call), call_message);
 
     // Change the current context and call. But before, check that we
     // are not exhausting the stack space, for example in an infinite
@@ -604,19 +613,25 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::make_code(const ast::Function& e) const
+  Interpreter::make_code(const ast::Code& e) const
   {
     rObject res = object::Code::fresh(*new_clone(e));
     // Store the function declaration context. Use make_scope to add
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.
-    res->slot_set(SYMBOL(context), object::Object::make_scope(locals_));
+    res->slot_set(SYMBOL(context), locals_);
     return res;
   }
 
 
   void
   Interpreter::visit (const ast::Function& e)
+  {
+    current_ = make_code(e);
+  }
+
+  void
+  Interpreter::visit (const ast::Closure& e)
   {
     current_ = make_code(e);
   }
