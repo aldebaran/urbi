@@ -9,7 +9,6 @@
 # include "object/atom.hh"
 # include "object/global-class.hh"
 # include "object/alien.hh"
-# include "binder/binder.hh"
 
 # include "runner/runner.hh"
 

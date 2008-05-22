@@ -13,8 +13,11 @@
 
 namespace binder
 {
-  Binder::Binder(Mode m)
-    : env_(), unbind_(), depth_(1), mode_(m)
+  Binder::Binder(bind_type m)
+    : env_()
+    , unbind_()
+    , depth_(1)
+    , mode_(m)
   {
     unbind_.push_back(libport::Finally());
     setOnSelf_.push_back(true);
@@ -88,16 +91,15 @@ namespace binder
     {
       switch (mode_)
       {
-        case normal:
+        case bind_normal:
           return;
-        case context:
+        case bind_context:
           targetContext(call);
           return;
       }
       return;
     }
-    int depth = isLocal(var);
-    if (depth)
+    if (int depth = isLocal(var))
     {
       if (depth < depth_)
         targetContext(call, depth_ - depth);
@@ -105,10 +107,10 @@ namespace binder
     else
       switch (mode_)
       {
-        case normal:
+        case bind_normal:
           targetSelf(call);
           break;
-        case context:
+        case bind_context:
           targetContext(call);
           break;
       }

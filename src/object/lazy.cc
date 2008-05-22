@@ -1,7 +1,7 @@
 #include "ast/function.hh"
 #include "ast/new-clone.hh"
 #include "ast/scope.hh"
-#include "binder/binder.hh"
+#include "binder/bind.hh"
 #include "global-class.hh"
 #include "lazy.hh"
 
@@ -24,8 +24,7 @@ namespace object
     // understand the problem.
     ast::Function ast(e.location_get(), new ast::symbols_type(),
 		      new ast::Scope(e.location_get(), new_clone(e)));
-    binder::Binder bind(binder::Binder::context);
-    bind(static_cast<ast::Ast&>(ast));
+    binder::bind(ast, binder::bind_context);
     rObject function = r.make_code(ast);
     return mkLazy(r, function);
   }

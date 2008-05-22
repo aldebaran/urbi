@@ -13,6 +13,8 @@
 # include "ast/all.hh"
 # include "object/fwd.hh"
 
+# include "binder/bind.hh"
+
 namespace binder
 {
 
@@ -28,20 +30,11 @@ namespace binder
       typedef object::rObject rObject;
       /// \}
 
-      /// How to bind. Essentialy, in normal mode, unknown variables
-      /// are searched in self, while they're search in the context in
-      /// context mode.
-      enum Mode
-      {
-        normal,
-        context,
-      };
-
       /// \name Ctor & dtor.
       /// \{
       /// Construct a \c Binder.
       /// \param m How to bind
-      Binder (Mode m = normal);
+      Binder (bind_type m = bind_normal);
 
       /// Destroy a Binder.
       virtual ~Binder ();
@@ -68,7 +61,7 @@ namespace binder
       /// Level of function imbrication
       int depth_;
       /// The mode for this binder
-      Mode mode_;
+      bind_type mode_;
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration

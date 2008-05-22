@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include "binder/bind.hh"
+
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
@@ -83,8 +85,7 @@ namespace object
     errs.accept(r);
     if (ast::Nary* ast = p->ast_take().release())
     {
-      binder::Binder bind;
-      bind(ast);
+      binder::bind(*ast);
       // FIXME: Release AST.
       return r.eval(*ast);
     }

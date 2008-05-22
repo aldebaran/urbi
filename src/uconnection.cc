@@ -39,11 +39,15 @@
 
 #include "ast/nary.hh"
 
+#include "binder/bind.hh"
+
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
-#include "object/object.hh"
+#include "object/alien.hh" // object::box
 #include "object/atom.hh"
+#include "object/atom.hh" // object::Lobby
+#include "object/object.hh"
 
 #include "parser/uparser.hh"
 #include "parser/parse-result.hh"
@@ -53,9 +57,6 @@
 
 #include "ubanner.hh"
 #include "uqueue.hh"
-
-#include "object/atom.hh" // object::Lobby
-#include "object/alien.hh" // object::box
 
 UConnection::UConnection (UServer& server, size_t packetSize)
   : uerror_ (USUCCESS),
@@ -256,14 +257,8 @@ UConnection::received (const char* buffer, size_t length)
     if (ast::Nary* ast = result->ast_take().release())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
-
-      // Bind local variables
-      {
-        binder::Binder bind;
-        bind(*ast);
-      }
+      binder::bind(*ast);
       ECHO ("bound: {{{" << *ast << "}}}");
-
       // Append to the current list.
       active_command_->splice_back(*ast);
       ECHO ("appended: " << *active_command_ << "}}}");
