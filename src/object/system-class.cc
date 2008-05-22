@@ -21,6 +21,9 @@
 
 #include "runner/at_handler.hh"
 #include "runner/runner.hh"
+#include "runner/interpreter.hh"
+
+#include "ast/nary.hh"
 
 namespace object
 {
@@ -82,12 +85,12 @@ namespace object
   {
     ast::Nary errs;
     p->process_errors(errs);
-    errs.accept(r);
+    errs.accept(dynamic_cast<runner::Interpreter&>(r));
     if (ast::Nary* ast = p->ast_take().release())
     {
       binder::bind(*ast);
       // FIXME: Release AST.
-      return r.eval(*ast);
+      return dynamic_cast<runner::Interpreter&>(r).eval(*ast);
     }
     else
       throw e;
@@ -122,7 +125,8 @@ namespace object
   system_class_registerAtJob (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(4);
-    runner::register_at_job(r, args[1], args[2], args[3]);
+    runner::register_at_job(dynamic_cast<runner::Interpreter&>(r),
+			    args[1], args[2], args[3]);
     return object::void_class;
   }
 

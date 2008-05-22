@@ -32,10 +32,10 @@ namespace runner
     scheduler::tags_type tags_;
   };
 
-  class AtHandler : public Runner
+  class AtHandler : public Interpreter
   {
   public:
-    AtHandler(const Runner&);
+    AtHandler(const Interpreter&);
     virtual ~AtHandler();
     virtual void work();
     virtual bool frozen() const;
@@ -54,8 +54,8 @@ namespace runner
   // and destroyed when it has no more jobs to handle.
   static AtHandler* at_job_handler;
 
-  AtHandler::AtHandler(const Runner& model)
-    : Runner(model, 0),
+  AtHandler::AtHandler(const Interpreter& model)
+    : Interpreter(model, 0),
       yielding(false)
   {
   }
@@ -299,7 +299,7 @@ namespace runner
   }
 
   void
-  register_at_job(const runner::Runner& starter,
+  register_at_job(const runner::Interpreter& starter,
 		  rObject condition,
 		  rObject clause,
 		  rObject on_leave)

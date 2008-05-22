@@ -6,101 +6,40 @@
 #ifndef RUNNER_RUNNER_HXX
 # define RUNNER_RUNNER_HXX
 
-# include "object/atom.hh"
-# include "object/global-class.hh"
-# include "object/alien.hh"
-
-# include "runner/runner.hh"
-
 namespace runner
 {
 
   inline
-  Runner::Runner (rLobby lobby, rObject locals,
-		  scheduler::Scheduler& sched, const ast::Ast* ast)
-    : Runner::super_type (),
-      scheduler::Job (sched),
-      lobby_ (lobby),
-      ast_ (ast),
-      code_(0),
-      current_ (0),
-      locals_ (locals)
-  {
-    init(lobby);
-  }
-
-  inline
-  Runner::Runner (rLobby lobby, rObject locals,
-		  scheduler::Scheduler& sched, rObject code)
-    : Runner::super_type (),
-      scheduler::Job (sched),
-      lobby_ (lobby),
-      ast_ (0),
-      code_(code),
-      current_ (0),
-      locals_ (locals)
-  {
-    init(lobby);
-  }
-
-  inline
-  void Runner::init(rObject lobby)
-  {
-    if (!locals_)
-      locals_ = object::Object::make_method_scope(lobby);
-    // If the lobby has a slot connectionTag, push it
-    rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
-    if (connection_tag)
-      push_tag(extract_tag(connection_tag->slot_get(SYMBOL(connectionTag))));
-  }
-
-  inline
-  Runner::Runner(const Runner& model, const ast::Ast* ast)
-    : Runner::super_type (),
-      scheduler::Job (model),
-      lobby_ (model.lobby_),
-      ast_ (ast),
-      current_ (0),
-      locals_ (model.locals_)
+  Runner::Runner(rLobby lobby, scheduler::Scheduler& sched)
+    : scheduler::Job(sched),
+      lobby_(lobby)
   {
   }
 
   inline
-  Runner::~Runner ()
+  Runner::Runner(const Runner& model)
+    : scheduler::Job(model.scheduler_get()),
+      lobby_(model.lobby_)
   {
   }
 
   inline
-  const object::rLobby&
-  Runner::lobby_get () const
+  Runner::~Runner()
+  {
+  }
+
+  inline const object::rLobby&
+  Runner::lobby_get() const
   {
     return lobby_;
   }
 
-  inline
-  object::rLobby
-  Runner::lobby_get ()
+  inline object::rLobby
+  Runner::lobby_get()
   {
     return lobby_;
-  }
-
-  inline
-  const object::rObject&
-  Runner::locals_get () const
-  {
-    return locals_;
-  }
-
-  inline
-  Runner::rObject
-  Runner::eval (const ast::Ast& e)
-  {
-    ECHO("Eval: " << &e << " {{{" << e << "}}}");
-    operator()(e);
-    ECHO("Eval: " << &e << " = " << current_);
-    return current_;
   }
 
 } // namespace runner
 
-#endif // !RUNNER_RUNNER_HXX
+#endif // RUNNER_RUNNER_HXX

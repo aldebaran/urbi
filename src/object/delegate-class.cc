@@ -3,6 +3,7 @@
  ** \brief Creation of the URBI object delegate.
  */
 
+#include "object/atom.hh"
 #include "object/delegate-class.hh"
 #include "object/object.hh"
 #include "object/primitives.hh"

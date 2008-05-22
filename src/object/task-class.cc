@@ -11,6 +11,7 @@
 #include "object/atom.hh"
 #include "object/object.hh"
 
+#include "runner/interpreter.hh"
 #include "runner/runner.hh"
 
 namespace object
@@ -27,11 +28,9 @@ namespace object
     CHECK_ARG_COUNT_RANGE (2, 3);
     FETCH_ARG (1, Code);
 
-    runner::Runner* new_runner =
-      new runner::Runner (r.lobby_get(),
-			  r.locals_get(),
-			  r.scheduler_get (),
-			  arg1);
+    runner::Interpreter* new_runner =
+      new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
+			       arg1);
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
     args[0]->slot_set (SYMBOL (runner),

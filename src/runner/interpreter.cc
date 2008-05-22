@@ -1,6 +1,6 @@
 /**
- ** \file runner/runner.cc
- ** \brief Implementation of runner::Runner.
+ ** \file runner/interpreter.cc
+ ** \brief Implementation of runner::Interpreter.
  */
 
 //#define ENABLE_DEBUG_TRACES
@@ -30,7 +30,7 @@
 #include "object/urbi-exception.hh"
 #include "object/flow-exception.hh"
 
-#include "runner/runner.hh"
+#include "runner/interpreter.hh"
 #include "parser/tweast.hh"
 #include "parser/uparser.hh"
 
@@ -39,10 +39,10 @@ namespace runner
   using boost::bind;
   using libport::Finally;
 
-/// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
-#define JOB(Runner) static_cast<scheduler::Job*> (Runner)
+/// Address of \a Interpreter seen as a \c Job (Interpreter has multiple inheritance).
+#define JOB(Interpreter) static_cast<scheduler::Job*> (Interpreter)
 
-/// Address of \c this seen as a \c Job (Runner has multiple inheritance).
+/// Address of \c this seen as a \c Job (Interpreter has multiple inheritance).
 #define ME JOB (this)
 
 #define AST(Ast)                                \
@@ -119,11 +119,11 @@ namespace runner
   // Helper to generate a function that swaps two rObjects.
   inline
   boost::function0<void>
-  swap(Runner::rObject& lhs, Runner::rObject& rhs)
+  swap(Interpreter::rObject& lhs, Interpreter::rObject& rhs)
   {
     // Strangely, this indirection is needed
-    void (*f) (Runner::rObject&, Runner::rObject&) =
-      std::swap<Runner::rObject>;
+    void (*f) (Interpreter::rObject&, Interpreter::rObject&) =
+      std::swap<Interpreter::rObject>;
     return boost::bind(f, ref(lhs), ref(rhs));
   }
 
@@ -152,7 +152,7 @@ namespace runner
 
 
   void
-  Runner::show_error_ (const object::UrbiException& ue)
+  Interpreter::show_error_ (const object::UrbiException& ue)
   {
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
@@ -169,7 +169,7 @@ namespace runner
   }
 
   void
-  Runner::propagate_error_ (object::UrbiException& ue, const ast::loc& l)
+  Interpreter::propagate_error_ (object::UrbiException& ue, const ast::loc& l)
   {
     if (!ue.location_is_set())
       ue.location_set(l);
@@ -181,7 +181,7 @@ namespace runner
   }
 
   void
-  Runner::send_message_ (const std::string& tag, const std::string& msg)
+  Interpreter::send_message_ (const std::string& tag, const std::string& msg)
   {
     UConnection& c = lobby_->value_get().connection;
     c.send (msg.c_str(), tag.c_str());
@@ -189,7 +189,7 @@ namespace runner
   }
 
   void
-  Runner::work ()
+  Interpreter::work ()
   {
     assert (ast_ || code_);
     JAECHO ("starting evaluation of AST: ", *ast_);
@@ -208,14 +208,14 @@ namespace runner
   `----------------*/
 
   void
-  Runner::visit (const ast::And& e)
+  Interpreter::visit (const ast::And& e)
   {
-    // lhs will be evaluated in another Runner, while rhs will be evaluated
+    // lhs will be evaluated in another Interpreter, while rhs will be evaluated
     // in this one. We will be the new runner parent, as we have the same
     // tags.
 
     JAECHO ("lhs", e.lhs_get ());
-    Runner* lhs = new Runner (*this, &e.lhs_get ());
+    Interpreter* lhs = new Interpreter (*this, &e.lhs_get ());
 
     // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
@@ -237,7 +237,7 @@ namespace runner
 
   // Apply a function written in Urbi.
   object::rObject
-  Runner::apply_urbi (const rObject& func,
+  Interpreter::apply_urbi (const rObject& func,
 		      const libport::Symbol& msg,
 		      const object::objects_type& args,
 		      rObject call_message)
@@ -330,10 +330,10 @@ namespace runner
   }
 
   object::rObject
-  Runner::apply (const rObject& func,
-		 const libport::Symbol msg,
-		 object::objects_type args,
-		 rObject call_message)
+  Interpreter::apply (const rObject& func,
+		      const libport::Symbol msg,
+		      object::objects_type args,
+		      rObject call_message)
   {
     precondition(func);
 
@@ -392,8 +392,8 @@ namespace runner
   }
 
   object::rObject
-  Runner::apply (const rObject& func, const libport::Symbol msg,
-		 const object::rList& args)
+  Interpreter::apply (const rObject& func, const libport::Symbol msg,
+		      const object::rList& args)
   {
     object::objects_type apply_args;
     foreach (const rObject arg, args->value_get ())
@@ -402,9 +402,9 @@ namespace runner
   }
 
   void
-  Runner::push_evaluated_arguments (object::objects_type& args,
-				    const ast::exps_type& ue_args,
-				    bool check_void)
+  Interpreter::push_evaluated_arguments (object::objects_type& args,
+					 const ast::exps_type& ue_args,
+					 bool check_void)
   {
     bool tail = false;
     foreach (const ast::Exp& arg, ue_args)
@@ -414,7 +414,7 @@ namespace runner
 	continue;
       eval (arg);
       // Check if any argument is void. This will be checked again in
-      // Runner::apply, yet raising exception here gives better
+      // Interpreter::apply, yet raising exception here gives better
       // location (the argument and not the whole function invocation).
       if (check_void && current_ == object::void_class)
       {
@@ -429,8 +429,8 @@ namespace runner
   }
 
   object::rObject
-  Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
-			      const object::objects_type& args)
+  Interpreter::build_call_message (const rObject& tgt, const libport::Symbol& msg,
+				   const object::objects_type& args)
   {
     rObject res = object::global_class->slot_get(SYMBOL(CallMessage))->clone();
 
@@ -458,8 +458,8 @@ namespace runner
   }
 
   object::rObject
-  Runner::build_call_message (const rObject& tgt, const libport::Symbol& msg,
-			      const ast::exps_type& args)
+  Interpreter::build_call_message (const rObject& tgt, const libport::Symbol& msg,
+				   const ast::exps_type& args)
   {
     // Build the list of lazy arguments
     object::objects_type lazy_args;
@@ -477,7 +477,7 @@ namespace runner
   }
 
   void
-  Runner::visit (const ast::Call& e)
+  Interpreter::visit (const ast::Call& e)
   {
     // The invoked slot (probably a function).
     const ast::Exp& ast_tgt = e.args_get().front();
@@ -519,14 +519,14 @@ namespace runner
 
 
   void
-  Runner::visit (const ast::Float& e)
+  Interpreter::visit (const ast::Float& e)
   {
     current_ = object::Float::fresh(e.value_get());
   }
 
 
   void
-  Runner::visit (const ast::Foreach& e)
+  Interpreter::visit (const ast::Foreach& e)
   {
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
@@ -566,7 +566,7 @@ namespace runner
 	// Create the new runner and launch it. We create a link so
 	// that an error in evaluation will stop other evaluations
 	// as well and propagate the exception.
-	Runner* new_runner = new Runner(*this, &e.body_get());
+	Interpreter* new_runner = new Interpreter(*this, &e.body_get());
 	link(new_runner);
 	runners.push_back(new_runner->myself_get());
 	new_runner->locals_ = locals;
@@ -604,7 +604,7 @@ namespace runner
   }
 
   object::rObject
-  Runner::make_code(const ast::Function& e) const
+  Interpreter::make_code(const ast::Function& e) const
   {
     rObject res = object::Code::fresh(*new_clone(e));
     // Store the function declaration context. Use make_scope to add
@@ -620,14 +620,14 @@ namespace runner
 
 
   void
-  Runner::visit (const ast::Function& e)
+  Interpreter::visit (const ast::Function& e)
   {
     current_ = make_code(e);
   }
 
 
   void
-  Runner::visit (const ast::If& e)
+  Interpreter::visit (const ast::If& e)
   {
     // Evaluate the test.
     JAECHO ("test", e.test_get ());
@@ -647,7 +647,7 @@ namespace runner
 
 
   void
-  Runner::visit (const ast::List& e)
+  Interpreter::visit (const ast::List& e)
   {
     object::List::value_type res;
     // Evaluate every expression in the list
@@ -659,7 +659,7 @@ namespace runner
 
 
   void
-  Runner::visit (const ast::Message& e)
+  Interpreter::visit (const ast::Message& e)
   {
     send_message_(e.tag_get(), e.text_get());
   }
@@ -681,7 +681,7 @@ namespace runner
   }
 
   void
-  Runner::visit (const ast::Nary& e)
+  Interpreter::visit (const ast::Nary& e)
   {
     // List of runners for Stmt flavored by a comma.
     std::list<scheduler::rJob> runners;
@@ -709,7 +709,7 @@ namespace runner
 	// The new runners are attached to the same tags as we are
         // FIXME: We must clone here since the nary will be
         // cleared. Yet taking the node from the nary would be better.
-	Runner* subrunner = new Runner(*this, e.toplevel_get () ? new_clone(c) : &c);
+	Interpreter* subrunner = new Interpreter(*this, e.toplevel_get () ? new_clone(c) : &c);
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
@@ -796,14 +796,14 @@ namespace runner
   }
 
   void
-  Runner::visit (const ast::Noop&)
+  Interpreter::visit (const ast::Noop&)
   {
     current_ = object::void_class;
   }
 
 
   void
-  Runner::visit (const ast::Pipe& e)
+  Interpreter::visit (const ast::Pipe& e)
   {
     // lhs
     JAECHO ("lhs", e.lhs_get ());
@@ -816,7 +816,7 @@ namespace runner
 
 
   void
-  Runner::visit (const ast::AbstractScope& e, rObject locals)
+  Interpreter::visit (const ast::AbstractScope& e, rObject locals)
   {
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
@@ -832,14 +832,14 @@ namespace runner
   }
 
   void
-  Runner::visit (const ast::Scope& e)
+  Interpreter::visit (const ast::Scope& e)
   {
     visit (static_cast<const ast::AbstractScope&>(e),
            object::Object::make_scope(locals_));
   }
 
   void
-  Runner::visit (const ast::Do& e)
+  Interpreter::visit (const ast::Do& e)
   {
     rObject tgt = eval(e.target_get());
     visit (static_cast<const ast::AbstractScope&>(e),
@@ -850,31 +850,31 @@ namespace runner
   }
 
   void
-  Runner::visit (const ast::Stmt& e)
+  Interpreter::visit (const ast::Stmt& e)
   {
     JAECHO ("expression", e.expression_get ());
     operator() (e.expression_get());
   }
 
   void
-  Runner::visit (const ast::String& e)
+  Interpreter::visit (const ast::String& e)
   {
     current_ = object::String::fresh(libport::Symbol(e.value_get()));
   }
 
   void
-  Runner::visit (const ast::Tag& t)
+  Interpreter::visit (const ast::Tag& t)
   {
     eval_tag (t.exp_get ());
   }
 
   void
-  Runner::visit (const ast::TaggedStmt& t)
+  Interpreter::visit (const ast::TaggedStmt& t)
   {
     try
     {
       push_tag (extract_tag (eval (t.tag_get ())));
-      Finally finally(bind(&Runner::pop_tag, this));
+      Finally finally(bind(&Interpreter::pop_tag, this));
       // If the latest tag causes us to be frozen or blocked, let the
       // scheduler handler this properly to avoid duplicating the
       // logic.
@@ -899,7 +899,7 @@ namespace runner
   }
 
   object::rObject
-  Runner::eval_tag (const ast::Exp& e)
+  Interpreter::eval_tag (const ast::Exp& e)
   {
     try {
       // Try to evaluate e as a normal expression.
@@ -954,7 +954,7 @@ namespace runner
   }
 
   void
-  Runner::visit (const ast::Throw& e)
+  Interpreter::visit (const ast::Throw& e)
   {
     switch (e.kind_get())
     {
@@ -972,7 +972,7 @@ namespace runner
 
 
   void
-  Runner::visit (const ast::While& e)
+  Interpreter::visit (const ast::While& e)
   {
     bool first_iteration = true;
     // Evaluate the test.

@@ -3,6 +3,7 @@
 #include "ast/scope.hh"
 #include "binder/bind.hh"
 #include "global-class.hh"
+#include "runner/interpreter.hh"
 #include "lazy.hh"
 
 namespace object
@@ -25,7 +26,7 @@ namespace object
     ast::Function ast(e.location_get(), new ast::symbols_type(),
 		      new ast::Scope(e.location_get(), new_clone(e)));
     binder::bind(ast, binder::bind_context);
-    rObject function = r.make_code(ast);
+    rObject function = dynamic_cast<runner::Interpreter*>(&r)->make_code(ast);
     return mkLazy(r, function);
   }
 }

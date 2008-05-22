@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object code.
  */
 
+#include "ast/function.hh"
+
 #include "object/atom.hh"
 #include "object/code-class.hh"
 #include "object/object.hh"

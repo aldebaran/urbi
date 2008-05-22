@@ -52,8 +52,9 @@
 #include "parser/uparser.hh"
 #include "parser/parse-result.hh"
 
-#include "runner/fwd.hh"
-#include "runner/runner.hh"
+#include "binder/binder.hh"
+
+#include "runner/interpreter.hh"
 
 #include "ubanner.hh"
 #include "uqueue.hh"
@@ -368,12 +369,12 @@ UConnection::execute ()
   active_command_->toplevel_set (true);
 
   // FIXME: There is an obvious memory leak here
-  runner::Runner* runner =
-    new runner::Runner(lobby_,
-		       0,
-		       ::urbiserver->getScheduler (),
-		       active_command_);
-  runner->start_job ();
+  runner::Interpreter* interpreter =
+    new runner::Interpreter(lobby_,
+			    0,
+			    ::urbiserver->getScheduler (),
+			    active_command_);
+  interpreter->start_job ();
 
   PING ();
   return *this;
