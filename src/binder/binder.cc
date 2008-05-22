@@ -159,8 +159,10 @@ namespace binder
   {
     depth_++;
     if (f.formals_get())
+    {
       foreach (const libport::Symbol& arg, *f.formals_get())
 	bind(arg, &f);
+    }
     super_type::visit (f);
     depth_--;
   }
@@ -168,8 +170,10 @@ namespace binder
   void Binder::visit(ast::Closure& f)
   {
     if (f.formals_get())
+    {
       foreach (const libport::Symbol& arg, *f.formals_get())
 	bind(arg, &f);
+    }
     super_type::visit (f);
   }
 
