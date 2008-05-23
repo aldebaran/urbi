@@ -220,6 +220,19 @@ namespace object
     return void_class;
   }
 
+  // This should give a backtrace as an urbi object.
+  static rObject
+  system_class_backtrace(runner::Runner&r, objects_type args)
+  {
+    // FIXME: This method sucks a bit, because show_backtrace sucks a
+    // bit, because our channeling/message-sending system sucks a lot.
+    CHECK_ARG_COUNT (1);
+    runner::Runner::call_stack_type bt = r.call_stack_get();
+    bt.pop_back(); // Remove "backtrace" itself from the backtrace
+    r.show_backtrace(bt, "");
+    return void_class;
+  }
+
 #define SERVER_SET_VAR(Function, Variable, Value)			\
   static rObject							\
   system_class_ ## Function (runner::Runner&, objects_type args)	\
@@ -244,6 +257,7 @@ namespace object
     DECLARE_PRIMITIVE(system, Name)
 
     DECLARE(assert_);
+    DECLARE(backtrace);
     DECLARE(currentRunner);
     DECLARE(cycle);
     DECLARE(debugoff);
