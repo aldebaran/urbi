@@ -47,9 +47,11 @@
 #include <string>
 #include <iostream>
 
+#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <libport/assert.hh>
+#include <libport/finally.hh>
 #include <libport/separator.hh>
 
 #include "ast/all.hh"
@@ -674,6 +676,7 @@ block:
 stmt:
   "class" lvalue block
     {
+      libport::Finally finally(boost::bind(&operator delete, $2));
       ::parser::Tweast tweast;
       libport::Symbol owner = libport::Symbol::fresh(SYMBOL(__class__));
       ast::Call* target = $2;
@@ -688,6 +691,7 @@ stmt:
         ast::exps_type* args = new ast::exps_type();
         args->push_back(new ast::Call(@2, owner, args2));
         target = new ast::Call(@2, $2->name_get(), args);
+	finally << boost::bind(&operator delete, target);
       }
       tweast << "var " << new_clone(target) << "= Object.clone|"
              << "do " << new_clone(target) << " {"
@@ -697,7 +701,6 @@ stmt:
              << ast_exp($3) << "}";
 
       $$ = ::parser::parse(tweast)->ast_take().release();
-      delete $2;
     }
 | "class" lvalue
     {
