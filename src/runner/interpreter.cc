@@ -1072,12 +1072,24 @@ namespace runner
       o << "!!!    called from: " << c->location_get () << ": " << c->name_get ();
       send_message_(chan, o.str());
     }
-
   }
 
   void Interpreter::show_backtrace(const std::string& chan)
   {
     show_backtrace(call_stack_, chan);
+  }
+
+  Interpreter::Backtrace Interpreter::backtrace_get()
+  {
+    Backtrace res;
+    foreach (const ast::Call* c, call_stack_)
+
+    {
+      std::ostringstream o;
+      o << c->location_get();
+      res.push_back(std::make_pair(c->name_get().name_get(), o.str()));
+    }
+    return res;
   }
 
 } // namespace runner

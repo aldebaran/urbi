@@ -157,6 +157,7 @@ namespace runner
 
 
     virtual void show_backtrace(const std::string& chan);
+    virtual Backtrace backtrace_get();
 
   private:
     void init();

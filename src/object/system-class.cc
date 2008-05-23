@@ -227,11 +227,12 @@ namespace object
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
     CHECK_ARG_COUNT (1);
-     // FIXME: Enable to retreive the backtrace as a list of strings
-     // in the runner to be able to pop back the last element here.
-//     runner::Runner::call_stack_type bt = r.call_stack_get();
-//     bt.pop_back(); // Remove "backtrace" itself from the backtrace
-    r.show_backtrace("");
+    runner::Runner::Backtrace bt = r.backtrace_get();
+    bt.pop_back();
+    typedef std::pair<std::string, std::string> Elt;
+    foreach (const Elt& elt, boost::make_iterator_range(boost::rbegin(bt),
+                                                        boost::rend(bt)))
+      r.send_message_("backtrace", elt.first + " (" + elt.second + ")");
     return void_class;
   }
 
