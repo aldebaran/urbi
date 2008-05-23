@@ -35,8 +35,11 @@ namespace object
     /// Return the exception's error message.
     virtual std::string what () const throw ();
 
+    /// The call stack
+    typedef std::vector<std::string> call_stack_type;
+
     ADD_FIELD (ast::loc, location)
-    ADD_FIELD (std::vector<const ast::Call*>, backtrace)
+    ADD_FIELD (call_stack_type, backtrace)
     ADD_FIELD (std::string, msg)
     ADD_FIELD (std::string, function);
 

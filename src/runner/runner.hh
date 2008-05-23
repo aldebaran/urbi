@@ -49,7 +49,7 @@ namespace runner
     const rLobby& lobby_get() const;
     rLobby lobby_get();
     /// The call stack
-    typedef std::vector<const ast::Call*> call_stack_type;
+    typedef object::UrbiException::call_stack_type call_stack_type;
     const call_stack_type& call_stack_get() const;
     /// \}
 

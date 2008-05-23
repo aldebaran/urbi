@@ -3,7 +3,6 @@
  ** \brief Implementation of runner::Runner.
  */
 
-#include <ast/call.hh>
 #include <kernel/uconnection.hh>
 #include <runner/runner.hh>
 #include <sstream>
@@ -14,15 +13,10 @@ namespace runner
 
   void Runner::show_backtrace(const call_stack_type& bt, const std::string& chan)
   {
-    foreach (const ast::Call* c,
+    foreach (const std::string& c,
              boost::make_iterator_range(boost::rbegin(bt),
                                         boost::rend(bt)))
-    {
-      std::ostringstream o;
-      o << "!!!    called from: " << c->location_get () << ": "
-	<< c->name_get ();
-      send_message_ (chan, o.str ());
-    }
+      send_message_ (chan, "!!!    called from: " + c);
   }
 
   void

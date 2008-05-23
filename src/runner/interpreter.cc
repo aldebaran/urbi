@@ -566,7 +566,11 @@ namespace runner
       else
         push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
 
-      call_stack_.push_back(&e);
+      {
+        std::ostringstream o;
+        o << e.location_get () << ": " << e.name_get ();
+        call_stack_.push_back(o.str());
+      }
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
       apply (val, e.name_get(), args, call_message);
     }
