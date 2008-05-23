@@ -6,6 +6,7 @@
 #include <libport/lexical-cast.hh>
 
 #include "ast/function.hh"
+#include "ast/print.hh"
 
 #include "object/atom.hh"
 #include "object/code-class.hh"
@@ -48,7 +49,7 @@ namespace object
     if (args[0] == code_class)
       return String::fresh(SYMBOL(LT_Code_GT));
     FETCH_ARG(0, Code);
-    return 
+    return
       String::fresh(
         libport::Symbol(
           string_cast(arg0->value_get().body_get()->body_get())));

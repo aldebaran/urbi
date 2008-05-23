@@ -12,6 +12,8 @@
 # include <boost/tuple/tuple.hpp>
 # include <boost/type_traits/add_reference.hpp>
 
+# include <ast/code.hh>
+
 namespace ast
 {
   class Function;
@@ -240,7 +242,5 @@ namespace object
   };
 
 } // namespace object
-
-# include "object/atom.hxx"
 
 #endif // !OBJECT_ATOM_HH

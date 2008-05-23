@@ -44,10 +44,10 @@
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
-#include "object/alien.hh" // object::box
+#include "object/alien.hh"
 #include "object/atom.hh"
-#include "object/atom.hh" // object::Lobby
 #include "object/object.hh"
+#include "object/tag-class.hh"
 
 #include "parser/uparser.hh"
 #include "parser/parse-result.hh"

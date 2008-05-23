@@ -50,6 +50,7 @@
 #include "ast/nary.hh"
 
 #include "object/atom.hh"
+#include "object/object-class.hh"
 #include "object/primitives.hh"
 #include "runner/runner.hh"
 #include "scheduler/scheduler.hh"

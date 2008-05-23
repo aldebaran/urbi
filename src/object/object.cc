@@ -16,6 +16,8 @@
 #include "object/atom.hh"
 #include "object/global-class.hh"
 #include "object/hash-slots.hh"
+#include "object/object-class.hh"
+#include "object/scope-class.hh"
 #include "object/urbi-exception.hh"
 
 #include "runner/runner.hh"

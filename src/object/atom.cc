@@ -3,38 +3,35 @@
  ** \brief Inline implementation of atoms.
  */
 
-#ifndef OBJECT_ATOM_HXX
-# define OBJECT_ATOM_HXX
+#include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 
-# include <boost/foreach.hpp>
-# include <boost/lexical_cast.hpp>
+#include "libport/deref.hh"
+#include "libport/escape.hh"
 
-# include "libport/deref.hh"
-# include "libport/escape.hh"
+#include "ast/print.hh"
 
-# include "ast/print.hh"
-
-# include "object/atom.hh"
-# include "object/primitives.hh"
-# include "object/alien-class.hh"
-# include "object/code-class.hh"
-# include "object/delegate-class.hh"
-# include "object/dictionary-class.hh"
-# include "object/global-class.hh"
-# include "object/lobby-class.hh"
-# include "object/float-class.hh"
-# include "object/integer-class.hh"
-# include "object/list-class.hh"
-# include "object/object-class.hh"
-# include "object/primitive-class.hh"
-# include "object/scope-class.hh"
-# include "object/string-class.hh"
-# include "object/tag-class.hh"
-# include "object/task-class.hh"
+#include "object/atom.hh"
+#include "object/primitives.hh"
+#include "object/alien-class.hh"
+#include "object/code-class.hh"
+#include "object/delegate-class.hh"
+#include "object/dictionary-class.hh"
+#include "object/global-class.hh"
+#include "object/lobby-class.hh"
+#include "object/float-class.hh"
+#include "object/integer-class.hh"
+#include "object/list-class.hh"
+#include "object/object-class.hh"
+#include "object/primitive-class.hh"
+#include "object/scope-class.hh"
+#include "object/string-class.hh"
+#include "object/tag-class.hh"
+#include "object/task-class.hh"
+#include "object/urbi-exception.hh"
 
 /// How to print a UConnection.
 /// Used by the atom object::Lobby.
-inline
 std::ostream&
 operator<< (std::ostream& o, const UConnection& c)
 {
@@ -44,7 +41,6 @@ operator<< (std::ostream& o, const UConnection& c)
 namespace object
 {
   template <typename Traits>
-  inline
   typename Atom<Traits>::shared_type
   Atom<Traits>::fresh (const typename Traits::type v, bool add_proto)
   {
@@ -54,7 +50,6 @@ namespace object
   }
 
   template <typename Traits>
-  inline
   typename Atom<Traits>::shared_type
   Atom<Traits>::self() const
   {
@@ -64,7 +59,6 @@ namespace object
 
   // Protected. Use the static fresh method instead.
   template <typename Traits>
-  inline
   Atom<Traits>::Atom (const typename Traits::type v, bool add_proto)
     : value_(v)
   {
@@ -83,12 +77,10 @@ namespace object
   }
 
   template <typename Traits>
-  inline
   Atom<Traits>::~Atom ()
   {}
 
   template <typename Traits>
-  inline
   Object::kind_type
   Atom<Traits>::kind_get () const
   {
@@ -103,7 +95,6 @@ namespace object
   `------------------*/
 
   template <typename Traits>
-  inline
   const typename Atom<Traits>::value_type
   Atom<Traits>::value_get () const
   {
@@ -111,7 +102,6 @@ namespace object
   }
 
   template <typename Traits>
-  inline
   typename Atom<Traits>::value_ref_type
   Atom<Traits>::value_get ()
   {
@@ -119,20 +109,31 @@ namespace object
   }
 
   template <typename Traits>
-  inline
   void
   Atom<Traits>::value_set (typename Atom<Traits>::value_ref_type v)
   {
     value_ = v;
   }
 
+  template <>
+  void
+  Atom<code_traits>::value_set (Atom<code_traits>::value_ref_type)
+  {
+    throw InternalError("cannot call object::Code::value_set");
+  }
+
+  template <>
+  void
+  Atom<lobby_traits>::value_set (Atom<lobby_traits>::value_ref_type)
+  {
+    throw InternalError("cannot call object::Code::value_set");
+  }
 
   /*------------.
   | operator<.  |
   `------------*/
 
   template <typename Traits>
-  inline
   bool
   Atom<Traits>::operator< (const Atom& rhs) const
   {
@@ -140,7 +141,6 @@ namespace object
   }
 
   template <>
-  inline
   bool
   Atom<object::alien_traits>::operator< (const Atom& rhs) const
   {
@@ -148,7 +148,6 @@ namespace object
   }
 
   template <>
-  inline
   bool
   Atom<object::code_traits>::operator< (const Atom& rhs) const
   {
@@ -156,7 +155,6 @@ namespace object
   }
 
   template <>
-  inline
   bool
   Atom<object::delegate_traits>::operator< (const Atom& rhs) const
   {
@@ -164,7 +162,6 @@ namespace object
   }
 
   template <>
-  inline
   bool
   Atom<object::dictionary_traits>::operator< (const Atom& rhs) const
   {
@@ -172,7 +169,6 @@ namespace object
   }
 
   template <>
-  inline
   bool
   Atom<object::lobby_traits>::operator< (const Atom& rhs) const
   {
@@ -180,7 +176,6 @@ namespace object
   }
 
   template <typename Traits>
-  inline
   bool
   Atom<Traits>::operator< (const Object& rhs) const
   {
@@ -196,7 +191,6 @@ namespace object
   `---------------------*/
 
   template <typename Traits>
-  inline
   std::ostream&
   Atom<Traits>::special_slots_dump (std::ostream& o, runner::Runner&) const
   {
@@ -204,7 +198,6 @@ namespace object
   }
 
   template <>
-  inline
   std::ostream&
   Atom<alien_traits>::special_slots_dump (std::ostream& o,
 					  runner::Runner&) const
@@ -213,7 +206,6 @@ namespace object
   }
 
   template <>
-  inline
   std::ostream&
   Atom<list_traits>::special_slots_dump (std::ostream& o,
 					 runner::Runner& runner) const
@@ -224,7 +216,6 @@ namespace object
   }
 
   template <>
-  inline
   std::ostream&
   Atom<delegate_traits>::special_slots_dump (std::ostream& o,
 					     runner::Runner&) const
@@ -237,7 +228,7 @@ namespace object
   `-------*/
 
   template<typename Traits>
-  inline rObject
+  rObject
   Atom<Traits>::clone () const
   {
     rObject res = Atom<Traits>::fresh(value_get (), false);
@@ -245,6 +236,8 @@ namespace object
     return res;
   }
 
-} // namespace object
+  // Force instantiation
+#define INSTANTIATE(What, Name) template class Atom<What ## _traits>;
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(INSTANTIATE)
 
-#endif // !OBJECT_ATOM_HXX
+} // namespace object

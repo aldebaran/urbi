@@ -3,10 +3,24 @@
  ** \brief Creation of the root Objects.
  */
 
+#include "object/alien-class.hh"
 #include "object/atom.hh"
+#include "object/code-class.hh"
+#include "object/delegate-class.hh"
+#include "object/dictionary-class.hh"
+#include "object/float-class.hh"
+#include "object/global-class.hh"
+#include "object/integer-class.hh"
+#include "object/lobby-class.hh"
 #include "object/object.hh"
+#include "object/object-class.hh"
+#include "object/primitive-class.hh"
 #include "object/root-classes.hh"
+#include "object/scope-class.hh"
+#include "object/string-class.hh"
 #include "object/system-class.hh"
+#include "object/tag-class.hh"
+#include "object/task-class.hh"
 
 namespace object
 {

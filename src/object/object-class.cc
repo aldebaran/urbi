@@ -5,6 +5,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
+#include <libport/escape.hh>
 #include <libport/foreach.hh>
 #include <libport/tokenizer.hh>
 
@@ -13,6 +14,7 @@
 #include "runner/runner.hh"
 
 #include "object/atom.hh"
+#include "object/global-class.hh"
 #include "object/object-class.hh"
 #include "object/object.hh"
 

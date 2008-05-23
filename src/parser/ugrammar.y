@@ -57,6 +57,7 @@
 #include "ast/all.hh"
 #include "ast/new-clone.hh"
 #include "ast/parametric-ast.hh"
+#include "ast/print.hh"
 
 #include "object/atom.hh"
 

@@ -40,7 +40,7 @@ object/alien-class.hh				\
 object/alien.hh					\
 object/alien.hxx				\
 object/atom.hh					\
-object/atom.hxx					\
+object/atom.cc					\
 object/code-class.cc				\
 object/code-class.hh				\
 object/delegate-class.cc			\

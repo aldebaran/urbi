@@ -3,6 +3,7 @@
  ** \brief Creation of the URBI object string.
  */
 
+#include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
 
 #include "libport/tokenizer.hh"

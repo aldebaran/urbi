@@ -153,6 +153,15 @@ namespace object
     COMPLETE_EXCEPTION (SchedulingError);
   };
 
+  /** Exception used for a path which should be impossible to take,
+   * for example when a template method doesn't make sense.
+   */
+  struct InternalError: public UrbiException
+  {
+    InternalError (const std::string& msg);
+    COMPLETE_EXCEPTION (InternalError);
+  };
+
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
   void check_arg_count (unsigned formal, unsigned effective,

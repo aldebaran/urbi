@@ -14,6 +14,7 @@
 #include "object/primitives.hh"
 #include "object/idelegate.hh"
 #include "object/object.hh"
+#include "object/object-class.hh"
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 #include "urbi/uobject.hh"

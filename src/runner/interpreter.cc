@@ -18,6 +18,7 @@
 #include "kernel/uconnection.hh"
 
 #include "ast/new-clone.hh"
+#include "ast/print.hh"
 
 #include "object/atom.hh"
 #include "object/global-class.hh"
@@ -25,6 +26,7 @@
 #include "object/lazy.hh"
 #include "object/object.hh"
 #include "object/symbols.hh"
+#include "object/tag-class.hh"
 #include "object/urbi-exception.hh"
 #include "object/flow-exception.hh"
 
