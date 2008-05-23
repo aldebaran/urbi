@@ -182,7 +182,12 @@ namespace runner
     assert (ast_ || code_);
     JAECHO ("starting evaluation of AST: ", *ast_);
     if (ast_)
+    {
+      Finally finally;
+      if (free_ast_after_use_)
+	finally << bind(&operator delete, const_cast<ast::Ast*>(ast_));
       operator()(*ast_);
+    }
     else
     {
       object::objects_type args;
@@ -203,7 +208,7 @@ namespace runner
     // tags.
 
     JAECHO ("lhs", e.lhs_get ());
-    Interpreter* lhs = new Interpreter (*this, &e.lhs_get ());
+    Interpreter* lhs = new Interpreter (*this, ast::new_clone(e.lhs_get ()), true);
 
     // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
@@ -564,7 +569,7 @@ namespace runner
 	// Create the new runner and launch it. We create a link so
 	// that an error in evaluation will stop other evaluations
 	// as well and propagate the exception.
-	Interpreter* new_runner = new Interpreter(*this, &e.body_get());
+	Interpreter* new_runner = new Interpreter(*this, new_clone(e.body_get()), true);
 	link(new_runner);
 	runners.push_back(new_runner->myself_get());
 	new_runner->locals_ = locals;
@@ -706,11 +711,9 @@ namespace runner
       if (dynamic_cast<const ast::Stmt*>(&c) &&
 	  dynamic_cast<const ast::Stmt*>(&c)->flavor_get() == ast::flavor_comma)
       {
-	// The new runners are attached to the same tags as we are
-        // FIXME: We must clone here since the nary will be
-        // cleared. Yet taking the node from the nary would be better.
+	// The new runners are attached to the same tags as we are.
 	Interpreter* subrunner =
-	  new Interpreter(*this, e.toplevel_get () ? new_clone(c) : &c);
+	  new Interpreter(*this, new_clone(c), true);
 	runners.push_back(subrunner->myself_get ());
 	subrunner->start_job ();
       }
@@ -772,13 +775,6 @@ namespace runner
                              "return", "outside a function")
       }
     }
-
-    // FIXME: We use toplevel_get here for two different things:
-    //   1. Are we at the top-level of the current runner? (primary expression)
-    //   2. Are we directly below the current connection *and* the top-level
-    //      of the current runner?
-    // Point "1" should influence ast freeing, while point "2" should influence
-    // result printing.
 
     // If the Nary is not the toplevel one, all subrunners must be finished when
     // the runner exits the Nary node.

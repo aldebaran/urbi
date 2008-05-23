@@ -364,16 +364,16 @@ UConnection::execute ()
 
   // Our active_command_ is a ast::Nary, we must now "tell" it that
   // it's a top-level Nary so that it can send its results back to the
-  // UConnection.  It also entitles the Runner to free this Nary when
+  // UConnection.  It also entitles the Runner to clear this Nary when
   // it has evaluated it.
   active_command_->toplevel_set (true);
 
-  // FIXME: There is an obvious memory leak here
   runner::Interpreter* interpreter =
     new runner::Interpreter(lobby_,
 			    0,
 			    ::urbiserver->getScheduler (),
-			    active_command_);
+			    active_command_,
+			    false);
   interpreter->start_job ();
 
   PING ();

@@ -40,12 +40,16 @@ namespace runner
     /// \a ast.  Memory ownership of \a ast is transferred to the Interpreter.
     /// The new runner has no parent.
     Interpreter (rLobby lobby, rObject locals,
-		 scheduler::Scheduler& scheduler, const ast::Ast* ast);
+		 scheduler::Scheduler& scheduler,
+		 const ast::Ast* ast,
+		 bool free_ast_after_use);
 
     Interpreter (const Interpreter&, rObject code);
 
     /// Create a copy of a runner starting with another ast.
-    Interpreter (const Interpreter&, const ast::Ast* ast);
+    Interpreter (const Interpreter&,
+		 const ast::Ast* ast,
+		 bool free_ast_after_use);
 
     /// Destroy a Interpreter.
     virtual ~Interpreter ();
@@ -164,6 +168,9 @@ namespace runner
   private:
     /// The root of the AST being executed.
     const ast::Ast* ast_;
+
+    /// Should the AST be freed after use?
+    bool free_ast_after_use_;
 
     /// The urbi Code object to execute
     rObject code_;
