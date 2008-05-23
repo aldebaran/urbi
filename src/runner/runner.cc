@@ -10,15 +10,6 @@
 
 namespace runner
 {
-
-  void Runner::show_backtrace(const call_stack_type& bt, const std::string& chan)
-  {
-    foreach (const std::string& c,
-             boost::make_iterator_range(boost::rbegin(bt),
-                                        boost::rend(bt)))
-      send_message_ (chan, "!!!    called from: " + c);
-  }
-
   void
   Runner::send_message_ (const std::string& tag, const std::string& msg)
   {

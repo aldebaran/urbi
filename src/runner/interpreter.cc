@@ -566,11 +566,7 @@ namespace runner
       else
         push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
 
-      {
-        std::ostringstream o;
-        o << e.location_get () << ": " << e.name_get ();
-        call_stack_.push_back(o.str());
-      }
+      call_stack_.push_back(&e);
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
       apply (val, e.name_get(), args, call_message);
     }
@@ -1065,5 +1061,23 @@ namespace runner
     current_ = object::void_class;
   }
 
+
+  void Interpreter::show_backtrace(const call_stack_type& bt, const std::string& chan)
+  {
+    foreach (const ast::Call* c,
+             boost::make_iterator_range(boost::rbegin(bt),
+                                        boost::rend(bt)))
+    {
+      std::ostringstream o;
+      o << "!!!    called from: " << c->location_get () << ": " << c->name_get ();
+      send_message_(chan, o.str());
+    }
+
+  }
+
+  void Interpreter::show_backtrace(const std::string& chan)
+  {
+    show_backtrace(call_stack_, chan);
+  }
 
 } // namespace runner

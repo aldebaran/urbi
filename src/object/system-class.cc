@@ -227,9 +227,11 @@ namespace object
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
     CHECK_ARG_COUNT (1);
-    runner::Runner::call_stack_type bt = r.call_stack_get();
-    bt.pop_back(); // Remove "backtrace" itself from the backtrace
-    r.show_backtrace(bt, "");
+     // FIXME: Enable to retreive the backtrace as a list of strings
+     // in the runner to be able to pop back the last element here.
+//     runner::Runner::call_stack_type bt = r.call_stack_get();
+//     bt.pop_back(); // Remove "backtrace" itself from the backtrace
+    r.show_backtrace("");
     return void_class;
   }
 

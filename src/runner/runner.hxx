@@ -40,12 +40,6 @@ namespace runner
     return lobby_;
   }
 
-  inline const Runner::call_stack_type&
-  Runner::call_stack_get() const
-  {
-    return call_stack_;
-  }
-
 } // namespace runner
 
 #endif // RUNNER_RUNNER_HXX

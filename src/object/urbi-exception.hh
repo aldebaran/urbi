@@ -36,7 +36,7 @@ namespace object
     virtual std::string what () const throw ();
 
     /// The call stack
-    typedef std::vector<std::string> call_stack_type;
+    typedef std::vector<const ast::Call*> call_stack_type;
 
     ADD_FIELD (ast::loc, location)
     ADD_FIELD (call_stack_type, backtrace)

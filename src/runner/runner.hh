@@ -48,15 +48,11 @@ namespace runner
     /// Return the lobby in which this runner has been started.
     const rLobby& lobby_get() const;
     rLobby lobby_get();
-    /// The call stack
-    typedef object::UrbiException::call_stack_type call_stack_type;
-    const call_stack_type& call_stack_get() const;
     /// \}
 
-    /// Send the given backtrace through the connection.
-    /// \param bt   The backtrace to print out.
+    /// Send the current backtrace through the connection.
     /// \param chan The channel to print through.
-    void show_backtrace(const call_stack_type& bt, const std::string& chan);
+    virtual void show_backtrace(const std::string& chan) = 0;
 
     void send_message_ (const std::string& tag, const std::string& msg);
 
@@ -100,9 +96,6 @@ namespace runner
     /// The URBI Lobby used to evaluate.
     /// Wraps an UConnection (ATM).
     rLobby lobby_;
-
-    /// The call stack.
-    call_stack_type call_stack_;
   };
 
 } // namespace runner

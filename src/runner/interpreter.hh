@@ -155,6 +155,9 @@ namespace runner
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
 
+
+    virtual void show_backtrace(const std::string& chan);
+
   private:
     void init();
     void show_error_ (const object::UrbiException& ue);
@@ -180,6 +183,12 @@ namespace runner
 
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
+
+    /// The call stack.
+    typedef object::UrbiException::call_stack_type call_stack_type;
+    call_stack_type call_stack_;
+    void show_backtrace(const call_stack_type& bt,
+                        const std::string& chan);
   };
 
 } // namespace runner
