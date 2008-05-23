@@ -86,23 +86,21 @@ namespace runner
 /// particular, don't use "e" to bind the name of the caught
 /// exceptions, since that's the name used by the formal argument of
 /// the visit methods.
-#define PROPAGATE_EXCEPTION(Loc, Code)			\
+#define PROPAGATE_EXCEPTION(Node)			\
   catch (object::UrbiException& propagate_exception)    \
   {							\
-    Code;						\
     current_.reset();					\
-    propagate_error_(propagate_exception, Loc);         \
+    propagate_error_(propagate_exception,               \
+                     (Node).location_get());            \
     throw;						\
   }							\
   catch (object::FlowException&)                        \
   {							\
-    Code;						\
     current_.reset();					\
     throw;						\
   }							\
   catch (scheduler::SchedulerException&)                \
   {							\
-    Code;						\
     current_.reset();					\
     throw;						\
   }							\
@@ -111,16 +109,13 @@ namespace runner
     std::cerr << "Unexpected exception propagated: "	\
 	      << propagate_exception.what()             \
               << std::endl;                             \
-    Code;						\
     throw;						\
   }							\
   catch (...)						\
   {							\
     std::cerr << "Unknown exception propagated\n";	\
-    Code;						\
     throw;						\
-  }							\
-  Code
+  }
 
   // Helper to generate a function that swaps two rObjects.
   inline
@@ -365,7 +360,7 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
-    PROPAGATE_EXCEPTION(fn.location_get(), {});
+    PROPAGATE_EXCEPTION(fn);
 
     return current_;
   }
@@ -570,7 +565,7 @@ namespace runner
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
       apply (val, e.name_get(), args, call_message);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), {});
+    PROPAGATE_EXCEPTION(e);
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
@@ -596,7 +591,7 @@ namespace runner
     {
       TYPE_CHECK(current_, object::List);
     }
-    PROPAGATE_EXCEPTION(e.location_get(), {});
+    PROPAGATE_EXCEPTION(e);
 
     JAECHO("foreach body", e.body_get());
 
@@ -652,7 +647,7 @@ namespace runner
 	  break;
 	}
 	// Restore previous locals_, even if an exception was thrown.
-	PROPAGATE_EXCEPTION(e.location_get(), {});
+	PROPAGATE_EXCEPTION(e);
       }
     }
 
@@ -788,7 +783,7 @@ namespace runner
 	    {
 	      operator() (c);
 	    }
-	    PROPAGATE_EXCEPTION(e.location_get(), {})
+	    PROPAGATE_EXCEPTION(e);
           }
 	  CATCH_FLOW_EXCEPTION(object::BreakException,
 			       "break", "outside a loop")
@@ -869,21 +864,32 @@ namespace runner
     operator() (e.rhs_get());
   }
 
+  namespace
+  {
+    static
+    inline
+    boost::function0<void>
+    non_interruptible_set(Interpreter* o, bool& value)
+    {
+      // Strangely, this indirection is needed
+      return boost::bind(&scheduler::Job::non_interruptible_set,
+                         o, boost::ref(value));
+    }
+  }
 
   void
   Interpreter::visit (const ast::AbstractScope& e, rObject locals)
   {
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
-    Finally finally(swap(locals, locals_));
+    Finally finally;
+    finally << swap(locals, locals_)
+            << runner::non_interruptible_set(this, was_non_interruptible);
     try
     {
       super_type::operator()(e.body_get());
     }
-    PROPAGATE_EXCEPTION(e.location_get(),
-			{
-			  non_interruptible_set (was_non_interruptible);
-			});
+    PROPAGATE_EXCEPTION(e);
   }
 
   void
@@ -950,7 +956,7 @@ namespace runner
       current_ = object::void_class;
       return;
     }
-    PROPAGATE_EXCEPTION(t.location_get(), {});
+    PROPAGATE_EXCEPTION(t);
   }
 
   object::rObject
