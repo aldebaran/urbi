@@ -6,11 +6,6 @@
 #ifndef RUNNER_INTERPRETER_HXX
 # define RUNNER_INTERPRETER_HXX
 
-# include "object/atom.hh"
-# include "object/global-class.hh"
-# include "object/alien.hh"
-# include "binder/binder.hh"
-
 namespace runner
 {
 
