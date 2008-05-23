@@ -155,7 +155,6 @@ namespace runner
     void init();
     void show_error_ (const object::UrbiException& ue);
     void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
-    void send_message_ (const std::string& tag, const std::string& msg);
     rObject apply_urbi (const rObject& func,
 			const libport::Symbol& msg,
 			const object::objects_type& args,

@@ -161,15 +161,7 @@ namespace runner
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message_ ("error", o.str ());
-    foreach (const ast::Call* c,
-             boost::make_iterator_range(boost::rbegin(ue.backtrace_get()),
-                                        boost::rend(ue.backtrace_get())))
-    {
-      o.str("");
-      o << "!!!    called from: " << c->location_get () << ": "
-	<< c->name_get ();
-      send_message_ ("error", o.str ());
-    }
+    show_backtrace(ue.backtrace_get(), "error");
   }
 
   void
@@ -182,14 +174,6 @@ namespace runner
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();
-  }
-
-  void
-  Interpreter::send_message_ (const std::string& tag, const std::string& msg)
-  {
-    UConnection& c = lobby_->value_get().connection;
-    c.send (msg.c_str(), tag.c_str());
-    c.endline();
   }
 
   void

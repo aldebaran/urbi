@@ -53,6 +53,13 @@ namespace runner
     const call_stack_type& call_stack_get() const;
     /// \}
 
+    /// Send the given backtrace through the connection.
+    /// \param bt   The backtrace to print out.
+    /// \param chan The channel to print through.
+    void show_backtrace(const call_stack_type& bt, const std::string& chan);
+
+    void send_message_ (const std::string& tag, const std::string& msg);
+
     /// Execute the code of function \a func with arguments \a args in
     /// the local runner.
     ///
