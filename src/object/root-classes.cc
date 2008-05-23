@@ -142,9 +142,9 @@ namespace object
     // names, and Primitive is used for... all the primitive methods
     // in the primitive classes), first create them all, then bind
     // them all.
-    APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CLASS_CREATE);
+    APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(CLASS_CREATE);
 
-    APPLY_ON_ALL_PRIMITIVES(CLASS_INIT);
+    APPLY_ON_ALL_ROOT_CLASSES(CLASS_INIT);
 
     CLASS_SETUP(nil, nil);
     CLASS_SETUP(system, System);

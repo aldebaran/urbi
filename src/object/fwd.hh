@@ -43,14 +43,23 @@ namespace object
   Macro(lobby,      Lobby)				\
   Macro(primitive,  Primitive)				\
   Macro(scope,      Scope)				\
-  Macro(string,     String)				\
-  Macro(tag,        Tag)				\
-  Macro(task,       Task)
+  Macro(string,     String)
 
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
   Macro(object,    Object)
+
+
+# define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
+  Macro(tag, Tag)					\
+  Macro(task, Task)
+
+
+# define APPLY_ON_ALL_ROOT_CLASSES(Macro)	\
+  APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
+  Macro(object, Object)
 
   /*
     Help the generation of precompiled symbols.
