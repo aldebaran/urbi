@@ -57,11 +57,6 @@ namespace scheduler
     return *scheduler_;
   }
 
-  inline void
-  Job::terminate ()
-  {
-  }
-
   inline bool
   Job::terminated () const
   {

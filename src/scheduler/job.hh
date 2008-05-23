@@ -47,12 +47,6 @@ namespace scheduler
   /// \li   work()                 : this method, which must be overridden,
   ///                                does the real work
   ///
-  /// \li   terminate()            : called when the job terminates, either
-  ///                                because it has indicated it wanted to,
-  ///                                because its work() method has
-  ///                                returned or because an exception
-  ///                                has been thrown from work()
-  ///
   /// Due to the way coroutines work, a job may not delete itself
   /// as once the coroutine structure has been freed, it is illegal to
   /// continue its execution, even only to switch to another coroutine.
@@ -94,8 +88,8 @@ namespace scheduler
   ///         myself_get() should anyone need to keep a reference to this
   ///         job.
   ///
-  /// \li  4. In its terminate() routine, the \c rJob will get rid of its
-  ///         self reference. To avoid decreasing the reference count to
+  /// \li  4. In its terminate_cleanup() routine, the \c rJob will get rid of
+  ///         its self reference. To avoid decreasing the reference count to
   ///         0, it will do so by handing the reference to the scheduler
   ///         using Scheduler::take_job_reference(). This will swap the
   ///         current \c rJob pointer with the scheduler to_kill_
@@ -334,11 +328,6 @@ namespace scheduler
     /// raised, it will be lost, but before that, it will be propagated
     // into linked jobs.
     virtual void work () = 0;
-
-    /// Will be called if the job is killed prematurely or arrives at
-    /// its end. It is neither necessary nor advised to call yield
-    /// from this function. Any exception raised here will be lost.
-    virtual void terminate ();
 
   private:
     /// Current job state, to be manipulated only from the job and the

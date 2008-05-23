@@ -29,20 +29,17 @@ namespace scheduler
       // the exception handler as this job may be killed by a "stop"
       // or "block" of a tag that has been inherited at job creation
       // time.
-      try {
-	yield ();
-	work ();
-      }
-      catch (TerminateException&)
-      {
-	// Normal termination requested
-      }
-      catch (BlockedException&)
-      {
-	// Termination through "stop" or "block" on a top-level tag,
-	// that is a tag inherited at the job creation time.
-      }
-      terminate ();
+      yield ();
+      work ();
+    }
+    catch (TerminateException&)
+    {
+      // Normal termination requested
+    }
+    catch (BlockedException&)
+    {
+      // Termination through "stop" or "block" on a top-level tag,
+      // that is a tag inherited at the job creation time.
     }
     catch (const kernel::exception& e)
     {
