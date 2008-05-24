@@ -373,7 +373,8 @@ UConnection::execute ()
 			    0,
 			    ::urbiserver->getScheduler (),
 			    active_command_,
-			    false);
+			    false,
+			    libport::Symbol("<interpreter>"));
   interpreter->start_job ();
 
   PING ();

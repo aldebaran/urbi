@@ -55,7 +55,7 @@ namespace runner
   static AtHandler* at_job_handler;
 
   AtHandler::AtHandler(const Interpreter& model)
-    : Interpreter(model, 0),
+    : Interpreter(model, 0, libport::Symbol("<at jobs handler>")),
       yielding(false)
   {
   }

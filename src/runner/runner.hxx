@@ -10,15 +10,16 @@ namespace runner
 {
 
   inline
-  Runner::Runner(rLobby lobby, scheduler::Scheduler& sched)
-    : scheduler::Job(sched),
+  Runner::Runner(rLobby lobby, scheduler::Scheduler& sched,
+		 const libport::Symbol& name)
+    : scheduler::Job(sched, name),
       lobby_(lobby)
   {
   }
 
   inline
-  Runner::Runner(const Runner& model)
-    : scheduler::Job(model),
+  Runner::Runner(const Runner& model, const libport::Symbol& name)
+    : scheduler::Job(model, name),
       lobby_(model.lobby_)
   {
   }

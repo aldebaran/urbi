@@ -34,9 +34,11 @@ namespace runner
     /// know its \a locals, who is its \a scheduler and will execute
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
     /// The new runner has no parent.
-    Runner(rLobby lobby, scheduler::Scheduler& scheduler);
+    Runner(rLobby lobby,
+	   scheduler::Scheduler& scheduler,
+	   const libport::Symbol& name = SYMBOL());
 
-    explicit Runner(const Runner&);
+    explicit Runner(const Runner&, const libport::Symbol& name = SYMBOL());
 
     /// Destroy a Runner.
     virtual ~Runner();

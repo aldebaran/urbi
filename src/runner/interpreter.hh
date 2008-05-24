@@ -42,14 +42,18 @@ namespace runner
     Interpreter (rLobby lobby, rObject locals,
 		 scheduler::Scheduler& scheduler,
 		 const ast::Ast* ast,
-		 bool free_ast_after_use);
+		 bool free_ast_after_use,
+		 const libport::Symbol& name = SYMBOL());
 
-    Interpreter (const Interpreter&, rObject code);
+    Interpreter (const Interpreter&,
+		 rObject code,
+		 const libport::Symbol& name = SYMBOL());
 
     /// Create a copy of a runner starting with another ast.
     Interpreter (const Interpreter&,
 		 const ast::Ast* ast,
-		 bool free_ast_after_use);
+		 bool free_ast_after_use,
+		 const libport::Symbol& name = SYMBOL());
 
     /// Destroy a Interpreter.
     virtual ~Interpreter ();

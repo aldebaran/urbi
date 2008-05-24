@@ -156,9 +156,10 @@ namespace runner
 			    rObject locals,
 			    scheduler::Scheduler& sched,
 			    const ast::Ast* ast,
-			    bool free_ast_after_use)
+			    bool free_ast_after_use,
+			    const libport::Symbol& name)
     : Interpreter::super_type(),
-      Runner(lobby, sched),
+      Runner(lobby, sched, name),
       ast_(ast),
       free_ast_after_use_(free_ast_after_use),
       code_(0),
@@ -168,9 +169,10 @@ namespace runner
     init();
   }
 
-  Interpreter::Interpreter(const Interpreter& model, rObject code)
+  Interpreter::Interpreter(const Interpreter& model, rObject code,
+			   const libport::Symbol& name)
     : Interpreter::super_type(),
-      Runner(model),
+      Runner(model, name),
       ast_(0),
       free_ast_after_use_(false),
       code_(code),
@@ -182,9 +184,10 @@ namespace runner
 
   Interpreter::Interpreter(const Interpreter& model,
 			   const ast::Ast* ast,
-			   bool free_ast_after_use)
+			   bool free_ast_after_use,
+			   const libport::Symbol& name)
     : Interpreter::super_type (),
-      Runner(model),
+      Runner(model, name),
       ast_(ast),
       free_ast_after_use_(free_ast_after_use),
       code_(0),
