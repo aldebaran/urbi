@@ -6,6 +6,7 @@
 #ifndef SCHEDULER_SCHEDULER_HH
 # define SCHEDULER_SCHEDULER_HH
 
+# include <iosfwd>
 # include <vector>
 
 # include <boost/function.hpp>
@@ -99,6 +100,10 @@ namespace scheduler
     ///
     /// \return The current system time.
     libport::utime_t get_time () const;
+
+    /// Write the current job states as known by the scheduler.
+    ///
+    void ps(std::ostream&);
 
   private:
     /// Execute one round in the scheduler.

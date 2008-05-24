@@ -7,6 +7,7 @@
 #include <libport/compiler.hh>
 
 #include <memory>
+#include <sstream>
 
 #include "binder/bind.hh"
 
@@ -222,7 +223,7 @@ namespace object
 
   // This should give a backtrace as an urbi object.
   static rObject
-  system_class_backtrace(runner::Runner&r, objects_type args)
+  system_class_backtrace(runner::Runner& r, objects_type args)
   {
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
@@ -234,6 +235,15 @@ namespace object
                                                         boost::rend(bt)))
       r.send_message_("backtrace", elt.first + " (" + elt.second + ")");
     return void_class;
+  }
+
+  static rObject
+  system_class_ps(runner::Runner& r, objects_type args)
+  {
+    std::stringstream output;
+    r.scheduler_get().ps(output);
+    CHECK_ARG_COUNT(1);
+    return String::fresh(libport::Symbol('\n' + output.str()));
   }
 
 #define SERVER_SET_VAR(Function, Variable, Value)			\
@@ -270,6 +280,7 @@ namespace object
     DECLARE(loadFile);
     DECLARE(lobby);
     DECLARE(nonInterruptible);
+    DECLARE(ps);
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(registerAtJob);

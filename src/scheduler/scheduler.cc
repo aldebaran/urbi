@@ -284,11 +284,49 @@ namespace scheduler
       job->terminate_now ();
   }
 
-  void Scheduler::signal_stop (rTag t)
+  void
+  Scheduler::signal_stop (rTag t)
   {
     bool previous_state = t->own_blocked ();
     t->set_blocked (true);
     stopped_tags_.push_back (std::make_pair(t, previous_state));
+  }
+
+  namespace
+  {
+    const char*
+    state_get(job_state state)
+    {
+      switch(state)
+      {
+      case to_start:
+	return "starting";
+      case running:
+	return "running";
+      case sleeping:
+	return "sleeping";
+      case waiting:
+	return "idle";
+      case joining:
+	return "waiting";
+      case zombie:
+	return "terminating";
+      }
+    }
+  }
+
+  void
+  Scheduler::ps(std::ostream& o)
+  {
+    foreach(const Job* job, pending_)
+    {
+      o << job->name_get() << std::endl;
+      o << "   State: " << state_name(job->state_get()) << std::endl;
+      o << "   Tags: ";
+      foreach(const rTag& t, job->tags_get())
+	o << ' ' << t->name_get();
+      o << std::endl;
+    }
   }
 
 } // namespace scheduler
