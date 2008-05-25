@@ -111,6 +111,13 @@ namespace runner
               << std::endl;                             \
     throw;						\
   }							\
+  catch (std::exception& propagate_exception)		\
+  {							\
+    std::cerr << "Unexpected exception propagated: "	\
+	      << propagate_exception.what()             \
+              << std::endl;                             \
+    throw;						\
+  }							\
   catch (...)						\
   {							\
     std::cerr << "Unknown exception propagated\n";	\
