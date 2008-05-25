@@ -321,7 +321,16 @@ namespace scheduler
     foreach(const Job* job, pending_)
     {
       o << job->name_get() << std::endl;
-      o << "   State: " << state_name(job->state_get()) << std::endl;
+      o << "   State: " << state_name(job->state_get());
+      if (job->frozen())
+        o << " (frozen)";
+      if (job->blocked())
+        o << " (blocked)";
+      if (job->side_effect_free_get())
+        o << " (side effect free)";
+      if (job->non_interruptible_get())
+        o << " (non interruptible)";
+      o << std::endl;
       o << "   Tags: ";
       foreach(const rTag& t, job->tags_get())
 	o << ' ' << t->name_get();
