@@ -189,7 +189,7 @@ namespace object
     FETCH_ARG(0, List);
     FETCH_ARG(1, Float);
     int index = ufloat_to_int(arg1->value_get(), "nth");
-    if (index < 0 || index > static_cast<int>(arg0->value_get().size()))
+    if (index < 0 || index >= static_cast<int>(arg0->value_get().size()))
       throw PrimitiveError("nth", "invalid index");
     return arg0->value_get().at(index);
   }
