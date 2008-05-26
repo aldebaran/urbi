@@ -16,11 +16,10 @@ dump(const urbi::UMessage& msg)
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
-      type =  'D';
+      type = 'D';
       break;
-
     case urbi::MESSAGE_ERROR:
-      type =  'E';
+      type = 'E';
       break;
     case urbi::MESSAGE_SYSTEM:
       type = 'S';
@@ -49,6 +48,8 @@ dump(const urbi::UMessage& msg)
 urbi::UCallbackAction
 removeOnZero(const urbi::UMessage& msg)
 {
+  if (getenv("VERBOSE"))
+    LIBPORT_ECHO("removeOnZero");
   dump(msg);
   if (msg.type == urbi::MESSAGE_DATA
       && msg.value->type == urbi::DATA_DOUBLE
@@ -60,6 +61,8 @@ removeOnZero(const urbi::UMessage& msg)
 urbi::UCallbackAction
 doExit(const urbi::UMessage& /* msg */)
 {
+  if (getenv("VERBOSE"))
+    LIBPORT_ECHO("Exiting");
   exit(0);
 }
 
@@ -81,7 +84,7 @@ main(int argc, const char* argv[])
   for (int i = 3; i < argc; ++i)
   {
     if (getenv("VERBOSE"))
-      std::cerr << argv[0] << ": test " << argv[i] << std::endl;
+      LIBPORT_ECHO(argv[0] << ": test " << argv[i]);
     dispatch(argv[i], client, syncClient);
   }
   return 0;
