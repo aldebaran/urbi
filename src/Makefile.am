@@ -101,7 +101,7 @@ uvalue-cast.hh
 ## -------------- ##
 
 if !OPENR
-noinst_PROGRAMS = urbi-console
+bin_PROGRAMS = urbi-console
 urbi_console_SOURCES = urbi-console.cc
 urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS)
 
