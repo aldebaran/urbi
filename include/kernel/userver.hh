@@ -88,7 +88,7 @@ public:
   //! Displays a formatted error message.
   /*! This function uses the virtual URobot::display() function to make the
    message printing robot-specific.
-  
+
    It formats the output in a standard URBI way by adding an ERROR key
    between brackets at the end.
    */
@@ -98,7 +98,7 @@ public:
   //! Displays a formatted message.
   /*! This function uses the virtual URobot::display() function to make the
    message printing robot-specific.
-  
+
    It formats the output in a standard URBI way by adding an empty key
    between brackets at the end. If you want to specify a key, use the
    echoKey() function.
@@ -189,9 +189,9 @@ public:
 
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue loadFile (const std::string& file_name,
-				UQueue& loadQueue,
-				QueueType t=QUEUE_URBI);
+  virtual UErrorValue load_file(const std::string& file_name,
+                                UQueue& loadQueue,
+                                QueueType t = QUEUE_URBI);
 
   /// Load \a fn in the ghostqueue.
   UErrorValue load_init_file(const char* fn);
@@ -199,8 +199,8 @@ public:
   /// Save content to a file
   /// This function must be redefined by the robot-specific server.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue saveFile (const std::string& filename,
-				const std::string& content) = 0;
+  virtual UErrorValue save_file(const std::string& filename,
+                                const std::string& content) = 0;
 
   void mark (UString* stopTag);
 

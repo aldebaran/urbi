@@ -130,7 +130,7 @@ UConnection::initialize()
 		 "UConnection::initialize", buf);
   }
 
-  server_.loadFile("CLIENT.INI", *recv_queue_);
+  server_.load_file("CLIENT.INI", *recv_queue_);
   new_data_added_ = true;
   return *this;
 }

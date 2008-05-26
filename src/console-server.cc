@@ -82,7 +82,7 @@ public:
 
   virtual
   UErrorValue
-  saveFile (const std::string& filename, const std::string& content)
+  save_file(const std::string& filename, const std::string& content)
   {
     //! \todo check this code
     std::ofstream os (filename.c_str ());
@@ -206,7 +206,7 @@ main (int argc, const char* argv[])
 	    << ": got ghost connection" << std::endl;
 
   if (!interactive)
-    if (s.loadFile(in, c.recv_queue_get ()) != USUCCESS)
+    if (s.load_file(in, c.recv_queue_get ()) != USUCCESS)
       std::cerr << libport::program_name
 		<< ": failed to process " << in << std::endl
 		<< libport::exit(EX_NOINPUT);

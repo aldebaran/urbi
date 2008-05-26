@@ -89,7 +89,7 @@ UErrorValue
 UServer::load_init_file(const char* fn)
 {
   DEBUG (("Loading %s...", fn));
-  UErrorValue res = loadFile(fn, ghost_->recv_queue_get());
+  UErrorValue res = load_file(fn, ghost_->recv_queue_get());
   if (res == USUCCESS)
   {
     DEBUG (("done\n"));
@@ -209,7 +209,7 @@ UServer::work_handle_connections_ ()
 
       if (c->new_data_added_get())
       {
-	// used by loadFile and eval to
+	// used by load_file and eval to
 	// delay the parsing after the completion
 	// of execute().
 	c->new_data_added_get() = false;
@@ -376,7 +376,7 @@ UServer::find_file (const libport::path& path)
 }
 
 UErrorValue
-UServer::loadFile (const std::string& base, UQueue& q, QueueType type)
+UServer::load_file(const std::string& base, UQueue& q, QueueType type)
 {
   std::istream *is;
   bool isStdin = (base == std::string("/dev/stdin"));
