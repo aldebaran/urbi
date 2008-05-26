@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <libport/cstring>
 
 #include <libport/cli.hh>
 #include <libport/exception.hh>
@@ -18,8 +19,8 @@
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
-#include "kernel/userver.hh"
-#include "kernel/uconnection.hh"
+#include <kernel/userver.hh>
+#include <kernel/uconnection.hh>
 
 #include "ubanner.hh"
 
@@ -108,9 +109,9 @@ namespace
   usage ()
   {
     std::cout <<
-      "usage: " << libport::program_name << " [OPTIONS] [FILE]\n"
+      "usage: " << libport::program_name << " [OPTIONS] [FILE...]\n"
       "\n"
-      "  FILE    to load\n"
+      "  FILE    to load.  `-' stands for standard input\n"
       "\n"
       "Options:\n"
       "  -h, --help            display this message and exit successfully\n"
@@ -138,8 +139,9 @@ main (int argc, const char* argv[])
 {
   libport::program_name = argv[0];
 
-  // Input file.
-  const char* in = "/dev/stdin";
+  // Input files.
+  typedef std::vector<const char*> files_type;
+  files_type files;
   /// The port to use.  0 means automatic selection.
   int arg_port = 0;
   /// Where to write the port we use.
@@ -150,7 +152,6 @@ main (int argc, const char* argv[])
   bool interactive = false;
   // Parse the command line.
   {
-    int argp = 1;
     for (int i = 1; i < argc; ++i)
     {
       std::string arg = argv[i];
@@ -169,25 +170,15 @@ main (int argc, const char* argv[])
 	arg_port_filename = argv[++i];
       else if (arg == "--version" || arg == "-v")
 	version();
-      else if (arg[0] == '-')
+      else if (arg[0] == '-' && arg[1] != 0)
 	libport::invalid_option (arg);
       else
-	// An argument.
-	switch (argp++)
-	{
-	  case 1:
-	    in = argv[i];
-	    break;
-	  default:
-	    std::cerr << libport::program_name
-		      << ": unexpected argument: " << arg << std::endl
-		      << libport::exit (EX_USAGE);
-	    break;
-	}
+	// An argument: a file.
+        files.push_back(STREQ(argv[i], "-") ? "/dev/stdin" : argv[i]);
     }
   }
 
-  ConsoleServer s (fast);
+  ConsoleServer s(fast);
 
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
@@ -205,10 +196,10 @@ main (int argc, const char* argv[])
   std::cerr << libport::program_name
 	    << ": got ghost connection" << std::endl;
 
-  if (!interactive)
-    if (s.load_file(in, c.recv_queue_get ()) != USUCCESS)
+  foreach (const char* f, files)
+    if (s.load_file(f, c.recv_queue_get ()) != USUCCESS)
       std::cerr << libport::program_name
-		<< ": failed to process " << in << std::endl
+		<< ": failed to process " << f << std::endl
 		<< libport::exit(EX_NOINPUT);
 
   c.new_data_added_get() = true;
