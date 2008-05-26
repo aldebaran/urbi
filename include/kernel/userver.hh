@@ -202,8 +202,6 @@ public:
   virtual UErrorValue save_file(const std::string& filename,
                                 const std::string& content) = 0;
 
-  void mark (UString* stopTag);
-
   //! Overload this function to specify how your system will reboot
   virtual void reboot () = 0;
 

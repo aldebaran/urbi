@@ -18,7 +18,6 @@ namespace urbi
 
 class UCommandQueue;
 class UConnection;
-class UContext;
 
 namespace parser
 {
@@ -29,13 +28,9 @@ class UGenericCallback;
 class UGhostConnection;
 class UImage;
 class UList;
-class UMonitor;
-class UMultiEventInstance;
 class UQueue;
 class UServer;
 class USound;
-class UString;
 class UTest;
-class UWaitCounter;
 
 #endif // !KERNEL_FWD_HH
