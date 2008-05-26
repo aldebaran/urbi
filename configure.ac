@@ -55,6 +55,16 @@ case $enable_precompiled_symbols in
                  [Define if Urbi symbols should be precompiled]);;
 esac
 
+# Where we look for the installed files.
+pkgdatadir=${datadir}/$PACKAGE
+AC_SUBST([urbidir], [${pkgdatadir}/urbi])
+# Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
+# sole use of URBI_RESOLVE_DIR_PREPARE.
+URBI_RESOLVE_DIR_PREPARE
+AC_DEFINE_UNQUOTED([URBI_PATH],
+                   ["`URBI_RESOLVE_DIR([$pkgdatadir])`"],
+                   [Define to the path where library files are installed.])
+
 
 ## -------- ##
 ## Target.  ##

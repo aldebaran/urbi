@@ -70,7 +70,7 @@ const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 
 UServer::UServer(const char* mainName)
-  : search_path(),
+  : search_path(LIBPORT_URBI_PATH),
     scheduler_ (new scheduler::Scheduler (boost::bind(&UServer::getTime,
 						      boost::ref(*this)))),
     debugOutput (false),
@@ -138,6 +138,7 @@ UServer::initialize()
       && !getenv("IGNORE_URBI_U"))
     std::cerr
       << libport::program_name << ": cannot load urbi/urbi.u." << std::endl
+      << libport::program_name << ": path: " << search_path << std::endl
       << libport::program_name << ": set IGNORE_URBI_U to ignore." << std::endl
       << libport::exit(EX_OSFILE);
 
