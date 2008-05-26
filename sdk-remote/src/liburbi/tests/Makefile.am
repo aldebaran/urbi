@@ -5,7 +5,7 @@ include $(top_srcdir)/build-aux/m4sh.mk
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
-%.log: %.cc
+%.log: %.cc $(check_programs)
 	@$(am__check_pre) ./liburbi-check $(srcdir)/$* $(am__check_post)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
@@ -30,6 +30,7 @@ TESTS_ENVIRONMENT =				\
 
 # tests(*).
 check_PROGRAMS = tests
+check_SCRIPTS = liburbi-check
 
 tests_SOURCES = tests.hh tests.cc $(TESTS)
 tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
@@ -64,6 +65,10 @@ m4sh_scripts = liburbi-check
 TESTS = checkfiles/values.cc \
 	checkfiles/removecallbacks.cc
 TEST_LOGS = $(TESTS:.cc=.log)
+
+# Run some tests only.
+check-%:
+        $(MAKE) $(AM_MAKEFLAGS) check-html TESTS_DIRS=$* VERBOSE=1
 
 check-clean-local:
 	rm -rf $(TESTS:.cc=.dir)
