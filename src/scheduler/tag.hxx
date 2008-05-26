@@ -19,7 +19,6 @@ namespace scheduler
   Tag::fresh (libport::Symbol name)
   {
     rTag res = new Tag (name);
-    res->self_ = res;
     return res;
   }
 
@@ -27,7 +26,6 @@ namespace scheduler
   Tag::fresh (rTag parent, libport::Symbol name)
   {
     rTag res = new Tag (parent, name);
-    res->self_ = res;
     return res;
   }
 
@@ -83,9 +81,7 @@ namespace scheduler
   inline rTag
   Tag::self () const
   {
-    rTag res;
-    res = self_.lock ();
-    return res;
+    return rTag(const_cast<Tag*>(this));
   }
 
   inline const libport::Symbol&

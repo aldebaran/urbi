@@ -15,7 +15,8 @@ namespace scheduler
 
   inline
   Job::Job (Scheduler& scheduler, const libport::Symbol& name)
-    : state_ (to_start),
+    : RefCounted (),
+      state_ (to_start),
       frozen_since_ (0),
       time_shift_ (0),
       scheduler_ (&scheduler),
@@ -30,7 +31,8 @@ namespace scheduler
 
   inline
   Job::Job (const Job& model, const libport::Symbol& name)
-    : state_ (to_start),
+  :   RefCounted (),
+      state_ (to_start),
       frozen_since_ (0),
       time_shift_ (model.time_shift_),
       scheduler_ (model.scheduler_),

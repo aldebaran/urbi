@@ -15,6 +15,7 @@
 #include "object/idelegate.hh"
 #include "object/object.hh"
 #include "object/object-class.hh"
+#include "object/global-class.hh"
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 #include "urbi/uobject.hh"
@@ -259,10 +260,26 @@ uobject_new(rObject proto, bool forceName)
   return r;
 }
 
+/** Find an UObject from its name.
+
+The UObject class expects to know the variable name,i.e. a = new b;
+should pass a to b's corresponding UObject ctor. Since we don't have this
+information, we create a unique string, pass it to the ctor, and store it
+in a.
+But the user can create UVars based on the variable name it knows about,
+i.e. a.val. So get_base must look in its uid map, and if it finds nothing,
+look for an Urbi variable with given name. We expect all UObjects to be created
+in Global.
+*/
+
 static rObject
 get_base(const std::string& objname)
 {
-  return uobject_map[objname];
+  rObject res = uobject_map[objname];
+  // The user may be using the Urbi variable name.
+  if (!res)
+    res = object::global_class->slot_get(libport::Symbol(objname));
+  return res;
 }
 
 
@@ -345,9 +362,10 @@ namespace urbi
     CallbackStorage& s = *reinterpret_cast<CallbackStorage*>(storage);
     StringPair p = split_name(s.name);
     std::string method = p.second;
-    rObject me = get_base(p.first); //objname?
     ECHO("ugenericcallback " << s.type << " " << p.first << " "
       << method << "  " << s.owned);
+    rObject me = get_base(p.first); //objname?
+    assertion(me);
     if (s.type == "function")
     {
       ECHO( "binding " << p.first << "." << method );
@@ -357,6 +375,7 @@ namespace urbi
     if (s.type == "var" || s.type == "varaccess")
     {
       rObject var = me->slot_get(Symbol(method));
+      assertion(var);
       Symbol sym(SYMBOL(notifyAccess));
       if (s.type != "varaccess")
       {
@@ -366,6 +385,7 @@ namespace urbi
 	  sym = SYMBOL(notifyChange);
       }
       rObject f = var->slot_get(sym);
+      assertion(f);
       object::objects_type args;
       args.push_back(var);
       args.push_back(object::Delegate::fresh(new UWrapNotify(this, p.first,
@@ -479,6 +499,7 @@ namespace urbi
     owned = false;
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
+    assertion(o);
     Symbol varName(p.second);
     // Force kernel-side variable creation, init to void.
     rObject initVal;

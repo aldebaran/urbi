@@ -15,9 +15,9 @@ namespace scheduler
 
   class Scheduler;
   class Job;
-  typedef libport::shared_ptr<Job> rJob;
+  typedef libport::shared_ptr<Job, true> rJob;
   class Tag;
-  typedef libport::shared_ptr<Tag> rTag;
+  typedef libport::shared_ptr<Tag, true> rTag;
 
   // This exception is above other scheduler-related exceptions such
   // as BlockedException. This allows catching more specific exceptions

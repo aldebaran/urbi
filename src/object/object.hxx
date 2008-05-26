@@ -36,7 +36,6 @@ namespace object
   Object::fresh ()
   {
     rObject res = new Object();
-    res->self_ = res;
     return res;
   }
 
@@ -44,9 +43,7 @@ namespace object
   rObject
   Object::self() const
   {
-    rObject res;
-    res = self_.lock();
-    return res;
+    return const_cast<Object*>(this);
   }
 
   inline

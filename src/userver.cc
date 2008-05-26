@@ -173,6 +173,11 @@ UServer::afterWork ()
 libport::utime_t
 UServer::work()
 {
+  static bool report = getenv("REPORT");
+  static int niter = 0;
+  static libport::utime_t sumtime = 0, mintime = 10000000, maxtime = 0;
+  static libport::utime_t rsumtime = 0, rmintime = 10000000, rmaxtime = 0;
+  static unsigned int nzero = 0;
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);
 # endif
@@ -185,9 +190,42 @@ UServer::work()
   // phase if we use a monotonic clock, update the time before and after
   // working.
   updateTime ();
+  libport::utime_t ctime = libport::utime();
   libport::utime_t next_time = scheduler_->work ();
+  libport::utime_t rtime = next_time? std::max(0LL, next_time - ctime):0;
+  ctime = libport::utime() - ctime;
   updateTime ();
-
+  if (report)
+  {
+    if (!rtime)
+      nzero++;
+    else
+    {
+      rsumtime += rtime;
+      rmintime = std::min(rmintime, rtime);
+      rmaxtime = std::max(rmaxtime, rtime);
+    }
+    sumtime += ctime;
+    mintime = std::min(mintime, ctime);
+    maxtime = std::max(maxtime, ctime);
+    niter++;
+    if (niter == 1000)
+    {
+      std::cerr <<"## work time(us)  min: " << mintime <<"   max: " << maxtime
+        << "   avg: " << sumtime/niter << std::endl;
+      std::cerr <<"  sched interval(us)  zero-ratio: "
+        << (float)nzero / (float)niter << "   min: " << rmintime <<"   max: "
+        << rmaxtime << "   avg: " << rsumtime/(0.01 + niter-nzero) << std::endl;
+      niter = 0;
+      sumtime = 0;
+      maxtime = 0;
+      mintime = 1000000;
+      rsumtime = 0;
+      rmaxtime = 0;
+      rmintime = 1000000;
+      nzero = 0;
+    }
+  }
   afterWork ();
   return next_time;
 }

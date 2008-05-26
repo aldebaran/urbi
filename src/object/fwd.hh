@@ -23,7 +23,9 @@ namespace object
 
   // rObject & objects_type.
   class Object;
-  typedef libport::shared_ptr<Object> rObject;
+  // We don't know yet that Object inherits RefCounted, so we have to force
+  // the second template argument.
+  typedef libport::shared_ptr<Object, true> rObject;
   typedef std::vector<rObject> objects_type;
 
   /// \a Macro should be a binary macro whose first arg, \p What, is
@@ -87,7 +89,7 @@ namespace object
 # define DEFINE(What, Name)				\
   struct What ## _traits;				\
   typedef Atom< What ## _traits > Name;			\
-  typedef libport::shared_ptr < Name > r ## Name;
+  typedef libport::shared_ptr < Name, true > r ## Name;
 
   /* You have to understand that the primitives are defined here.  For
    * example, a Code is manipulated through a rCode (r = ref counted) and in

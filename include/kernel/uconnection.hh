@@ -45,8 +45,8 @@ namespace object
   class Object;
   struct lobby_traits;
   template<class T> class Atom;
-  typedef libport::shared_ptr<Object> rObject;
-  typedef libport::shared_ptr<Atom<lobby_traits> > rLobby;
+  typedef libport::shared_ptr<Object, true> rObject;
+  typedef libport::shared_ptr<Atom<lobby_traits>, true > rLobby;
 }
 
 # define ERR_SET(Val) (error_ = Val)
@@ -210,7 +210,7 @@ public:
   UErrorValue error_get () const;
   parser::UParser& parser_get ();
   UServer& server_get() const;
-  object::rLobby lobby_get();
+  object::rLobby& lobby_get();
 
   bool send_queue_empty () const;
 

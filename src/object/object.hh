@@ -27,7 +27,7 @@ namespace object
 {
 
   /// Run time values for Urbi.
-  class Object
+  class Object: public libport::RefCounted
   {
     /// \name Ctor & dtor.
     /// \{
@@ -240,7 +240,6 @@ namespace object
     /// Protected constructor to force proper self_ initialization.
     Object ();
     /// Weak pointer to be able to retrieve smart pointer to this.
-    libport::weak_ptr<Object> self_;
 
   private:
     typedef std::pair<bool, rObject> locate_type;

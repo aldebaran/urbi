@@ -107,7 +107,7 @@ namespace scheduler
   ///         will not be destroyed until everyone has dropped all those
   ///         references.
 
-  class Job
+  class Job: public libport::RefCounted
   {
   public:
     /// Create a job from another one.

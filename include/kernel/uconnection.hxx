@@ -60,7 +60,7 @@ UConnection::blocked_get ()
 }
 
 inline
-object::rLobby
+object::rLobby&
 UConnection::lobby_get()
 {
   return lobby_;
