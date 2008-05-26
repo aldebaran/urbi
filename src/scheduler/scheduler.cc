@@ -293,52 +293,17 @@ namespace scheduler
     stopped_tags_.push_back (std::make_pair(t, previous_state));
   }
 
-  namespace
+  const std::vector<rJob>
+  Scheduler::jobs_get() const
   {
-    const char*
-    state_get(job_state state)
-    {
-      switch(state)
-      {
-      case to_start:
-	return "starting";
-      case running:
-	return "running";
-      case sleeping:
-	return "sleeping";
-      case waiting:
-	return "idle";
-      case joining:
-	return "waiting";
-      case zombie:
-	return "terminating";
-      }
-      unreached();
-      return 0;
-    }
-  }
-
-  void
-  Scheduler::ps(std::ostream& o)
-  {
-    foreach(const Job* job, pending_)
-    {
-      o << job->name_get() << std::endl;
-      o << "   State: " << state_name(job->state_get());
-      if (job->frozen())
-        o << " (frozen)";
-      if (job->blocked())
-        o << " (blocked)";
-      if (job->side_effect_free_get())
-        o << " (side effect free)";
-      if (job->non_interruptible_get())
-        o << " (non interruptible)";
-      o << std::endl;
-      o << "   Tags: ";
-      foreach(const rTag& t, job->tags_get())
-	o << ' ' << t->name_get();
-      o << std::endl;
-    }
+    // If this method is called from within a job, return the currently
+    // executing jobs (pending_), otherwise return the jobs_ content which
+    // is complete.
+    std::vector<Job*> src = current_job_ ? pending_ : jobs_;
+    std::vector<rJob> res;
+    foreach(Job* job, src)
+      res.push_back(job->myself_get());
+    return res;
   }
 
 } // namespace scheduler

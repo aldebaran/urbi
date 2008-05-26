@@ -18,6 +18,9 @@ namespace object
 
   /// Extract the tag object
   scheduler::rTag extract_tag (const rObject&);
+
+  /// Create an Urbi tag from a scheduler tag.
+  rObject create_tag(scheduler::rTag);
 }; // namespace object
 
 #endif // !OBJECT_TAG_CLASS_HH

@@ -101,9 +101,10 @@ namespace scheduler
     /// \return The current system time.
     libport::utime_t get_time () const;
 
-    /// Write the current job states as known by the scheduler.
+    /// Get the current jobs list.
     ///
-    void ps(std::ostream&);
+    /// \return The currently known jobs.
+    const std::vector<rJob> jobs_get() const;
 
   private:
     /// Execute one round in the scheduler.

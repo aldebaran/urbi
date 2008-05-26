@@ -16,6 +16,7 @@
 
 #include "object/alien.hh"
 #include "object/system-class.hh"
+#include "object/task-class.hh"
 
 #include "parser/parse.hh"
 #include "parser/parse-result.hh"
@@ -238,12 +239,13 @@ namespace object
   }
 
   static rObject
-  system_class_ps(runner::Runner& r, objects_type args)
+  system_class_jobs(runner::Runner& r, objects_type args)
   {
-    std::stringstream output;
-    r.scheduler_get().ps(output);
     CHECK_ARG_COUNT(1);
-    return String::fresh(libport::Symbol('\n' + output.str()));
+    List::value_type res;
+    foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
+      res.push_back(create_task_from_job(job));
+    return List::fresh(res);
   }
 
 #define SERVER_SET_VAR(Function, Variable, Value)			\
@@ -277,10 +279,10 @@ namespace object
     DECLARE(debugon);
     DECLARE(eval);
     DECLARE(fresh);
+    DECLARE(jobs);
     DECLARE(loadFile);
     DECLARE(lobby);
     DECLARE(nonInterruptible);
-    DECLARE(ps);
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(registerAtJob);

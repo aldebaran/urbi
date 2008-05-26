@@ -1091,7 +1091,7 @@ namespace runner
     show_backtrace(call_stack_, chan);
   }
 
-  Interpreter::Backtrace Interpreter::backtrace_get()
+  Interpreter::Backtrace Interpreter::backtrace_get() const
   {
     Backtrace res;
     foreach (const ast::Call* c, call_stack_)

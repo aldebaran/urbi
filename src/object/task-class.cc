@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object task.
  */
 
+#include <sstream>
+
 #include <boost/any.hpp>
 
 #include "object/task-class.hh"
@@ -10,6 +12,7 @@
 #include "object/alien.hh"
 #include "object/atom.hh"
 #include "object/object.hh"
+#include "object/tag-class.hh"
 
 #include "runner/interpreter.hh"
 #include "runner/runner.hh"
@@ -17,6 +20,25 @@
 namespace object
 {
   rObject task_class;
+
+  /*-------------------.
+  | Helper functions.  |
+  `-------------------*/
+
+  rObject
+  create_task_from_job(const scheduler::rJob& job)
+  {
+    rObject res = task_class->clone();
+    res->slot_set(SYMBOL(job),
+		  box(scheduler::rJob, job));
+    return res;
+  }
+
+  static scheduler::rJob
+  extract_job(const rObject& o)
+  {
+    return unbox(scheduler::rJob, o->slot_get(SYMBOL(job)));
+  }
 
   /*-------------------.
   | Task primitives.  |
@@ -33,7 +55,7 @@ namespace object
 			       arg1);
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
-    args[0]->slot_set (SYMBOL (runner),
+    args[0]->slot_set (SYMBOL (job),
                        box (scheduler::rJob, new_runner->myself_get ()));
 
     if (args.size () == 3)
@@ -47,23 +69,89 @@ namespace object
     return args[0];
   }
 
-  // Helper function: check that there are no argument, unbox the
-  // runner and return it once it has terminated.
-  static inline runner::Runner*
-  yield_until_terminated (runner::Runner& r, rObject o)
+  static rObject
+  task_class_name(runner::Runner&, objects_type args)
   {
-    scheduler::rJob other = unbox (scheduler::rJob,
-                                   o->slot_get (SYMBOL (runner)));
-    r.yield_until_terminated (*other);
-    return dynamic_cast<runner::Runner*>(other.get ());
+    CHECK_ARG_COUNT(1);
+    return String::fresh(extract_job(args[0])->name_get());
+  }
+
+  static rObject
+  task_class_tags(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    List::value_type res;
+    foreach(scheduler::rTag tag, extract_job(args[0])->tags_get())
+      res.push_back(create_tag(tag));
+    return List::fresh(res);
+  }
+
+  static rObject
+  task_class_status(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    scheduler::rJob job = extract_job(args[0]);
+    std::stringstream status;
+    switch(job->state_get())
+    {
+    case scheduler::to_start:
+      status << "starting";
+      break;
+    case scheduler::running:
+      status << "running";
+      break;
+    case scheduler::sleeping:
+      status << "sleeping";
+      break;
+    case scheduler::waiting:
+      status << "idle";
+      break;
+    case scheduler::joining:
+      status << "waiting";
+      break;
+    case scheduler::zombie:
+      status << "terminated";
+      break;
+    }
+    if (job->frozen())
+      status << " (frozen)";
+    if (job->blocked())
+      status << " (blocked)";
+    if (job->side_effect_free_get())
+      status << " (side effect free)";
+    if (job->non_interruptible_get())
+      status << " (non interruptible)";
+    return String::fresh(libport::Symbol(status.str()));
+  }
+
+  static rObject
+  task_class_backtrace(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+
+    List::value_type res;
+
+    scheduler::rJob job = extract_job(args[0]);
+    const runner::Runner* runner = dynamic_cast<runner::Runner*>(job.get());
+
+    if (!runner)
+      return List::fresh(res);
+
+    foreach(runner::Runner::frame_type line, runner->backtrace_get())
+    {
+      List::value_type frame;
+      frame.push_back(String::fresh(libport::Symbol(line.first)));
+      frame.push_back(String::fresh(libport::Symbol(line.second)));
+      res.push_back(List::fresh(frame));
+    }
+    return List::fresh(res);
   }
 
   static rObject
   task_class_waitForTermination (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-
-    yield_until_terminated (r, args[0]);
+    r.yield_until_terminated(*extract_job(args[0]));
     return void_class;
   }
 
@@ -80,11 +168,7 @@ namespace object
   task_class_terminate (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-
-    scheduler::rJob r = unbox (scheduler::rJob,
-                               args[0]->slot_get (SYMBOL (runner)));
-    r->terminate_now ();
-
+    extract_job(args[0])->terminate_now();
     return void_class;
   }
 
@@ -108,12 +192,16 @@ namespace object
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(task, Name);
-    DECLARE (init);
-    DECLARE (setSideEffectFree);
-    DECLARE (terminate);
-    DECLARE (timeShift);
-    DECLARE (waitForChanges);
-    DECLARE (waitForTermination);
+    DECLARE(backtrace);
+    DECLARE(init);
+    DECLARE(name);
+    DECLARE(setSideEffectFree);
+    DECLARE(status);
+    DECLARE(tags);
+    DECLARE(terminate);
+    DECLARE(timeShift);
+    DECLARE(waitForChanges);
+    DECLARE(waitForTermination);
 #undef DECLARE
   }
 

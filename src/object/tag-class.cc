@@ -18,6 +18,18 @@ namespace object
 {
   rObject tag_class;
 
+  /*-------------------.
+  | Helper functions.  |
+  `-------------------*/
+
+  rObject
+  create_tag(scheduler::rTag tag)
+  {
+    rObject res = tag_class->clone();
+    res->slot_set(SYMBOL(tag), box(scheduler::rTag, tag));
+    return res;
+  }
+
   /*-----------------.
   | Tag primitives.  |
   `-----------------*/

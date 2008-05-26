@@ -1,0 +1,29 @@
+do Task {
+
+   function dump_state()
+   {
+     echo("Task: " + name)|
+     echo("  State: " + status) |
+     var ts = "" |
+     for| t in tags {
+       ts += " " + t.name;
+     } |
+     echo("  Tags: " + ts) |
+     var b = backtrace |
+     if (!b.empty) {
+       echo("  Backtrace:") |
+       for| l in backtrace {
+         echo("    " + l.front + " (at " + l.back + ")")
+       }
+     }
+   }
+
+};
+
+function System.ps()
+{
+   nonInterruptible |
+   for| t in jobs {
+     t.dump_state
+   }
+} | void;

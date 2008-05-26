@@ -57,8 +57,9 @@ namespace runner
     virtual void show_backtrace(const std::string& chan) = 0;
     /// Retreive the current backtrace as a list of (function name,
     /// location) pairs
-    typedef std::vector<std::pair<std::string, std::string> > Backtrace;
-    virtual Backtrace backtrace_get() = 0;
+    typedef std::pair<std::string, std::string> frame_type;
+    typedef std::vector<frame_type> Backtrace;
+    virtual Backtrace backtrace_get() const = 0;
 
     void send_message_ (const std::string& tag, const std::string& msg);
 
