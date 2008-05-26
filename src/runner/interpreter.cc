@@ -1073,8 +1073,8 @@ namespace runner
     current_ = object::void_class;
   }
 
-
-  void Interpreter::show_backtrace(const call_stack_type& bt, const std::string& chan)
+  void
+  Interpreter::show_backtrace(const call_stack_type& bt, const std::string& chan)
   {
     foreach (const ast::Call* c,
              boost::make_iterator_range(boost::rbegin(bt),
@@ -1086,16 +1086,17 @@ namespace runner
     }
   }
 
-  void Interpreter::show_backtrace(const std::string& chan)
+  void
+  Interpreter::show_backtrace(const std::string& chan)
   {
     show_backtrace(call_stack_, chan);
   }
 
-  Interpreter::Backtrace Interpreter::backtrace_get() const
+  Interpreter::backtrace_type
+  Interpreter::backtrace_get() const
   {
-    Backtrace res;
+    backtrace_type res;
     foreach (const ast::Call* c, call_stack_)
-
     {
       std::ostringstream o;
       o << c->location_get();

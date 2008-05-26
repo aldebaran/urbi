@@ -229,11 +229,11 @@ namespace object
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
     CHECK_ARG_COUNT (1);
-    runner::Runner::Backtrace bt = r.backtrace_get();
+    runner::Runner::backtrace_type bt = r.backtrace_get();
     bt.pop_back();
-    typedef std::pair<std::string, std::string> Elt;
-    foreach (const Elt& elt, boost::make_iterator_range(boost::rbegin(bt),
-                                                        boost::rend(bt)))
+    foreach (const runner::Runner::frame_type& elt,
+	     boost::make_iterator_range(boost::rbegin(bt),
+					boost::rend(bt)))
       r.send_message_("backtrace", elt.first + " (" + elt.second + ")");
     return void_class;
   }
