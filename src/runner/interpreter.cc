@@ -484,7 +484,7 @@ namespace runner
 	throw e;
       }
 
-      passert ("argument without a value: " << arg, current_);
+      passert (arg, current_);
       args.push_back (current_);
     }
   }
@@ -575,7 +575,7 @@ namespace runner
 
     // Because while returns 0, we can't have a call that returns 0
     // (a function that runs a while for instance).
-    // passert ("no value: " << e, current_);
+    // passert (e, current_);
     // ECHO (AST(e) << " result: " << *current_);
   }
 

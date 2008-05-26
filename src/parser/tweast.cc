@@ -20,7 +20,9 @@ namespace parser
     , MetavarMap<ast::exps_type>::MetavarMap("exps")
     , MetavarMap<ast::symbols_type>::MetavarMap("formals")
     , input_()
+#ifndef NDEBUG
     , unique_()
+#endif
   {
   }
 
@@ -30,7 +32,9 @@ namespace parser
     , MetavarMap<ast::exps_type>::MetavarMap("exps")
     , MetavarMap<ast::symbols_type>::MetavarMap("formals")
     , input_(str)
+#ifndef NDEBUG
     , unique_()
+#endif
   {
   }
 
