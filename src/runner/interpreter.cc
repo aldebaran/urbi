@@ -318,18 +318,14 @@ namespace runner
     // 'self'. The inner scope will be created when executing ()
     // on ast::Scope.
     rObject scope;
-    if (!closure)
-      // Create the function's outer scope, with the first argument as
-      // 'self'. The inner scope will be created when executing ()
-      // on ast::Scope.
+    if (closure)
+      // For closures, use the context as parent scope.
+      scope = func->slot_get(SYMBOL(context));
+    else
     {
       scope = object::Object::make_method_scope(args.front());
       scope->slot_set(SYMBOL(code), func);
     }
-    else
-      // For closures, use the context as parent scope.
-      scope = func->slot_get(SYMBOL(context));
-
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
     if (fn.strict())
