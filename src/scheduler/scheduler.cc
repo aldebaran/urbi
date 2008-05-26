@@ -10,6 +10,7 @@
 
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
+#include <libport/contract.hh>
 #include <libport/foreach.hh>
 
 #include "object/urbi-exception.hh"
@@ -312,6 +313,8 @@ namespace scheduler
       case zombie:
 	return "terminating";
       }
+      unreached();
+      return 0;
     }
   }
 
