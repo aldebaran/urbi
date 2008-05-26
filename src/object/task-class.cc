@@ -142,7 +142,7 @@ namespace object
       List::value_type frame;
       frame.push_back(String::fresh(libport::Symbol(line.first)));
       frame.push_back(String::fresh(libport::Symbol(line.second)));
-      res.push_back(List::fresh(frame));
+      res.push_front(List::fresh(frame));
     }
     return List::fresh(res);
   }
