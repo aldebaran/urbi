@@ -109,7 +109,7 @@ namespace
   usage ()
   {
     std::cout <<
-      "usage: " << libport::program_name << " [OPTIONS] [FILE...]\n"
+      "usage: " << libport::program_name << " [OPTION].. [FILE]...\n"
       "\n"
       "  FILE    to load.  `-' stands for standard input\n"
       "\n"
