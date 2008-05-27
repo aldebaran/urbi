@@ -12,6 +12,9 @@ libport::Semaphore dumpSem;
 urbi::UCallbackAction
 dump(const urbi::UMessage& msg)
 {
+  if (msg.tag == "start" || msg.tag == "ident")
+    return urbi::URBI_CONTINUE;
+  if (getenv("VERBOSE")) LIBPORT_ECHO("got a message: " << msg);
   unsigned char type;
   switch (msg.type)
   {
