@@ -437,11 +437,7 @@ namespace urbi
   usage (const char* name)
   {
     std::cout <<
-      "usage:\n" << name << " [OPTIONS...] [ADDR] [PORT]\n"
-      "\n"
-      "   ADDR   Urbi server IP (e.g., \"localhost\")\n"
-      "   PORT   Port to listen to (defaults to 54000)\n"
-      "   LEN    Size of the input buffer\n"
+      "usage:\n" << name << " [OPTION]...\n"
       "\n"
       "Options:\n"
       "  -b, --buffer SIZE  input buffer size"
@@ -502,6 +498,26 @@ namespace urbi
     return 0;
   }
 
+  namespace
+  {
+    static
+    void
+    argument_with_option(const char* longopt,
+                         char shortopt,
+                         const char* val)
+    {
+      std::cerr
+        << libport::program_name
+        << ": warning: arguments without options are deprecated"
+        << std::endl
+        << "use `-" << shortopt << ' ' << val << '\''
+        << " or `--" << longopt << ' ' << val << "' instead"
+        << std::endl
+        << "Try `" << libport::program_name << " --help' for more information."
+        << std::endl;
+    }
+  }
+
   int
   main(int argc, const char* argv[])
   {
@@ -543,9 +559,11 @@ namespace urbi
 	{
 	  case 1:
 	    addr = argv[i];
+            argument_with_option("host", 'H', addr);
 	    break;
 	  case 2:
 	    port = libport::convert_argument<int> ("port", argv[i]);
+            argument_with_option("port", 'p', addr);
 	    break;
 	  default:
 	    std::cerr << "unexpected argument: " << arg << std::endl
