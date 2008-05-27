@@ -118,6 +118,7 @@ namespace
       "  -v, --version         display version information\n"
       "  -P, --period PERIOD   ignored for backward compatibility\n"
       "  -p, --port PORT       tcp port URBI will listen to.\n"
+      "  -n, --no-network      disable networking.\n"
       "  -f, --fast            ignore system time, go as fast as possible\n"
       "  -i, --interactive     read and parse stdin in a nonblocking way\n"
       "  -w, --port-file FILE  write port number to specified file.\n"
@@ -150,6 +151,8 @@ main (int argc, const char* argv[])
   bool fast = false;
   /// interactive mode
   bool interactive = false;
+  /// enable network
+  bool network = true;
   // Parse the command line.
   {
     for (int i = 1; i < argc; ++i)
@@ -162,6 +165,8 @@ main (int argc, const char* argv[])
 	usage();
       else if (arg == "--interactive" || arg == "-i")
 	interactive = true;
+      else if (arg == "--no-network" || arg == "-n")
+	network = false;
       else if (arg == "--period" || arg == "-P")
 	(void) libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--port" || arg == "-p")
@@ -179,9 +184,8 @@ main (int argc, const char* argv[])
   }
 
   ConsoleServer s(fast);
-
-  int port = Network::createTCPServer(arg_port, "localhost");
-  if (!port)
+  int port = 0;
+  if (network && !(port=Network::createTCPServer(arg_port, "localhost")))
     std::cerr << libport::program_name
 	      << ": cannot bind to port " << arg_port
 	      << " on localhost" << std::endl
@@ -232,7 +236,8 @@ main (int argc, const char* argv[])
       if (interactive)
 	select_time = std::min(100000LL, select_time);
     }
-    Network::selectAndProcess(select_time);
+    if (network)
+      Network::selectAndProcess(select_time);
 
     next_time = s.work ();
     s.ctime = std::max (next_time, s.ctime + 1000L);
