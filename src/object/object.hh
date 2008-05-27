@@ -14,7 +14,6 @@
 # include <boost/optional.hpp>
 
 # include <libport/shared-ptr.hh>
-# include <libport/weak-ptr.hh>
 
 # include "object/fwd.hh"
 # include "object/object-kind.hh"
