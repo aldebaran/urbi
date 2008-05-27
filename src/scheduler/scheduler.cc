@@ -25,9 +25,9 @@ namespace scheduler
   // Its only purpose is to create the context and start the execution
   // of the new job.
   static void
-  run_job (void* job)
+  run_job(Job* job)
   {
-    static_cast<Job*>(job)->run();
+    job->run();
   }
 
   void
@@ -107,7 +107,7 @@ namespace scheduler
 	// requeued because it hasn't been started by setting "start".
 	ECHO ("Starting job " << *job);
 	current_job_ = job;
-	coroutine_start (coro_, job->coro_get(), job, run_job);
+	coroutine_start (coro_, job->coro_get(), run_job, job);
 	current_job_ = 0;
 	ECHO ("Job " << *job << " has been started");
 	assert (job->state_get () != to_start);

@@ -11,7 +11,6 @@ class Coro
   libport::Semaphore sem;
   bool die_;
 };
-typedef void (CoroStartCallback)(void *);
 # else
 #  include "scheduler/libcoroutine/Coro.h"
 # endif
@@ -31,11 +30,11 @@ void coroutine_free(Coro*);
 /// Start a coroutine.
 /// \param self The coroutine of the calling task.
 /// \param other The coroutine to start.
-/// \param context An opaque data to pass to \a callback.
 /// \param callback The function used to launch the coroutine. This function
 ///        must never return.
-void coroutine_start(Coro* self, Coro* other, void* context,
-		     CoroStartCallback* callback);
+/// \param context An opaque data to pass to \a callback.
+template<typename T>
+void coroutine_start(Coro* self, Coro* other, void (*callback)(T*), T* context);
 
 /// Switch to a coroutine
 /// \param self The coroutine of the calling task.

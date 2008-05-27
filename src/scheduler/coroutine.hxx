@@ -29,11 +29,12 @@ coroutine_initialize_main(Coro* coro)
   Coro_initializeMainCoro(coro);
 }
 
+template<typename T>
 inline void
-coroutine_start(Coro* self, Coro* other, void* context,
-		CoroStartCallback* callback)
+coroutine_start(Coro* self, Coro* other, void (*callback)(T*), T* context)
 {
-  Coro_startCoro_(self, other, context, callback);
+  Coro_startCoro_(self, other, context,
+		  reinterpret_cast<CoroStartCallback*>(callback));
 }
 
 inline void

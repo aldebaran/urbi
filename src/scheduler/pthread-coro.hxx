@@ -5,7 +5,7 @@
 
 #include "scheduler/coroutine.hh"
 /* Os-thread implementation of coroutines, using semaphores to ensure that only
- one coroutine is runnig at the same time.
+ one coroutine is running at the same time.
 */
 inline
 Coro* coroutine_new(size_t)
@@ -20,16 +20,16 @@ void coroutine_free(Coro* c)
   c->sem++;
 }
 
-inline
-void coroutine_start(Coro* self, Coro*, void* context,
-		     CoroStartCallback* callback)
+template<typename T>
+inline void
+coroutine_start(Coro* self, Coro*, void (*callback)(T*), T* context)
 {
 #if defined WIN32
   unsigned long id;
-  void* r = CreateThread(NULL, 0, void*(*)(void*))callback, context, 0, &id);
+  void* r = CreateThread(NULL, 0, void*(*)(void*))callback, (void*)context, 0, &id);
 #else
   pthread_t*pt = new pthread_t;
-  pthread_create(pt, 0, (void*(*)(void*))callback, context);
+  pthread_create(pt, 0, (void*(*)(void*))callback, (void*)context);
 #endif
   self->sem--;
 }
@@ -55,5 +55,4 @@ bool coroutine_stack_space_almost_gone(Coro*)
 inline
 void coroutine_initialize_main(Coro*)
 {
-
 }
