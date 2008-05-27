@@ -20,7 +20,6 @@ namespace scheduler
       frozen_since_ (0),
       time_shift_ (0),
       scheduler_ (&scheduler),
-      myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       coro_ (coroutine_new ()),
       non_interruptible_ (false),
@@ -36,7 +35,6 @@ namespace scheduler
       frozen_since_ (0),
       time_shift_ (model.time_shift_),
       scheduler_ (model.scheduler_),
-      myself_ (this),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (model.name_get ()) : name),
       coro_ (coroutine_new ()),
       tags_ (model.tags_),
@@ -116,7 +114,7 @@ namespace scheduler
   }
 
   inline void
-  Job::link (Job* other)
+  Job::link (rJob other)
   {
     links_.push_back (other);
     other->links_.push_back (this);
@@ -163,12 +161,6 @@ namespace scheduler
   Job::deadline_get () const
   {
     return deadline_;
-  }
-
-  inline rJob
-  Job::myself_get () const
-  {
-    return myself_;
   }
 
   inline void

@@ -50,7 +50,7 @@ namespace scheduler
     ///
     /// Jobs added during a cycle will be started at the next cycle by the
     /// scheduler.
-    void add_job (Job* job);
+    void add_job (rJob job);
 
     /// Terminate all jobs. This must be called only when the executable
     /// is going to terminate.
@@ -61,17 +61,7 @@ namespace scheduler
     /// \param job Job currently being executed. This job will relinquish
     ///        the CPU to the scheduler. Note that the scheduler is free
     ///        to reschedule \a job immediately if it wishes to do so.
-    void resume_scheduler (Job* job);
-
-    /// Swap a job reference with 0.
-    ///
-    /// \param job A job reference which will be swapped with 0.
-    ///
-    /// This is used to give the scheduler a chance to delete the last
-    /// reference on a job while the scheduler is the active
-    /// task. This is necessary because a currently scheduled job
-    /// cannot kill itself.
-    void take_job_reference (rJob& job);
+    void resume_scheduler (rJob job);
 
     /// Get the currently executing job.
     ///
@@ -103,8 +93,8 @@ namespace scheduler
 
     /// Get the current jobs list.
     ///
-    /// \return The currently known jobs.
-    const std::vector<rJob> jobs_get() const;
+    /// \return The currently non-terminated known jobs.
+    std::vector<rJob> jobs_get() const;
 
   private:
     /// Execute one round in the scheduler.
@@ -130,17 +120,13 @@ namespace scheduler
     /// List of jobs we are in charge of. During a cycle execution,
     /// this is where jobs will accumulate themselves after they have
     /// been executed.
-    std::vector<Job*> jobs_;
+    std::vector<rJob> jobs_;
 
     /// List of jobs currently being scheduled during the current round.
-    std::vector<Job*> pending_;
+    std::vector<rJob> pending_;
 
     /// Current job.
-    Job* current_job_;
-
-    /// Job to kill, if any, when the scheduler regains control. \sa
-    /// take_job_reference().
-    rJob to_kill_;
+    rJob current_job_;
 
     /// Coroutine corresponding to the scheduler.
     Coro* coro_;

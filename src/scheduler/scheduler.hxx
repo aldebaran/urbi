@@ -38,13 +38,6 @@ namespace scheduler
   }
 
   inline
-  void Scheduler::take_job_reference (rJob& job)
-  {
-    assert (!to_kill_);
-    std::swap (job, to_kill_);
-  }
-
-  inline
   unsigned int Scheduler::cycle_get () const
   {
     return cycle_;

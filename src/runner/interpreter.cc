@@ -271,14 +271,10 @@ namespace runner
     // tags.
 
     JAECHO ("lhs", e.lhs_get ());
-    Interpreter* lhs = new Interpreter (*this, ast::new_clone(e.lhs_get ()), true);
+    scheduler::rJob lhs = new Interpreter (*this, ast::new_clone(e.lhs_get ()), true);
 
     // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
-
-    // Keep a reference on the runner so that it doesn't get destroyed
-    // if it finishes first.
-    scheduler::rJob lhs_ = lhs->myself_get ();
 
     lhs->start_job ();
 
@@ -630,7 +626,7 @@ namespace runner
 	// as well and propagate the exception.
 	Interpreter* new_runner = new Interpreter(*this, new_clone(e.body_get()), true);
 	link(new_runner);
-	runners.push_back(new_runner->myself_get());
+	runners.push_back(new_runner);
 	new_runner->locals_ = locals;
 	new_runner->start_job();
       }
@@ -773,7 +769,7 @@ namespace runner
 	// The new runners are attached to the same tags as we are.
 	Interpreter* subrunner =
 	  new Interpreter(*this, new_clone(c), true);
-	runners.push_back(subrunner->myself_get ());
+	runners.push_back(subrunner);
 	subrunner->start_job ();
       }
       else

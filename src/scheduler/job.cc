@@ -44,7 +44,7 @@ namespace scheduler
     catch (const kernel::exception& e)
     {
       // Signal the exception to each linked job in turn.
-      foreach (Job* job, links_)
+      foreach (rJob job, links_)
       {
 	job->links_.remove (this);
 	job->async_throw (e);
@@ -73,15 +73,13 @@ namespace scheduler
   Job::terminate_cleanup ()
   {
     // Remove pending links.
-    foreach (Job* job, links_)
+    foreach (rJob job, links_)
       job->links_.remove (this);
     // Wake-up waiting jobs.
     foreach (rJob job, to_wake_up_)
       if (!job->terminated())
 	job->state_set (running);
     to_wake_up_.clear ();
-    // Return to the scheduler and release the possibly sole reference.
-    scheduler_->take_job_reference (myself_);
     state_ = zombie;
     scheduler_->resume_scheduler (this);
   }
@@ -95,7 +93,7 @@ namespace scheduler
 
     if (!other.terminated ())
     {
-      other.to_wake_up_.push_back (myself_get());
+      other.to_wake_up_.push_back (this);
       state_ = joining;
       scheduler_->resume_scheduler (this);
     }

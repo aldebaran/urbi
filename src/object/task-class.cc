@@ -56,7 +56,7 @@ namespace object
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
     args[0]->slot_set (SYMBOL (job),
-                       box (scheduler::rJob, new_runner->myself_get ()));
+                       box (scheduler::rJob, new_runner));
 
     if (args.size () == 3)
     {

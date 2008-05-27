@@ -31,7 +31,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::add_job (Job* job)
+  Scheduler::add_job (rJob job)
   {
     assert (job);
     assert (!libport::has (jobs_, job));
@@ -81,13 +81,12 @@ namespace scheduler
     possible_side_effect_ = false;
 
     ECHO (pending_.size() << " jobs in the queue for this round");
-    foreach (Job* job, pending_)
+    foreach (rJob job, pending_)
     {
-      // Kill a job if needed. See explanation in job.hh.
-      to_kill_ = 0;
-
-      assert (job);
-      assert (!job->terminated ());
+      // If the job has terminated during the previous round, remove the
+      // references we have on it by just skipping it.
+      if (job->terminated())
+	continue;
 
       // Should the job be started?
       bool start = false;
@@ -107,7 +106,7 @@ namespace scheduler
 	// requeued because it hasn't been started by setting "start".
 	ECHO ("Starting job " << *job);
 	current_job_ = job;
-	coroutine_start (coro_, job->coro_get(), run_job, job);
+	coroutine_start (coro_, job->coro_get(), run_job, job.get());
 	current_job_ = 0;
 	ECHO ("Job " << *job << " has been started");
 	assert (job->state_get () != to_start);
@@ -184,9 +183,6 @@ namespace scheduler
 	jobs_.push_back (job);   // Job not started, keep it in queue
     }
 
-    // Kill a job if needed. See explanation in job.hh.
-    to_kill_ = 0;
-
     /// If during this cycle a new job has been created by an existing job,
     /// start it. Also start if a possible side effect happened, it may have
     /// occurred later then the waiting jobs in the cycle.
@@ -215,7 +211,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::resume_scheduler (Job* job)
+  Scheduler::resume_scheduler (rJob job)
   {
     // If the job has not terminated and is side-effect free, then we
     // assume it will not take a long time as we are probably evaluating
@@ -278,10 +274,7 @@ namespace scheduler
   {
     ECHO ("killing all jobs!");
 
-    foreach (Job* job, jobs_)
-      job->terminate_now ();
-
-    foreach (Job* job, pending_)
+    foreach (rJob job, jobs_get())
       job->terminate_now ();
   }
 
@@ -293,17 +286,13 @@ namespace scheduler
     stopped_tags_.push_back (std::make_pair(t, previous_state));
   }
 
-  const std::vector<rJob>
+  std::vector<rJob>
   Scheduler::jobs_get() const
   {
     // If this method is called from within a job, return the currently
     // executing jobs (pending_), otherwise return the jobs_ content which
     // is complete.
-    const std::vector<Job*>& src = current_job_ ? pending_ : jobs_;
-    std::vector<rJob> res;
-    foreach(Job* job, src)
-      res.push_back(job->myself_get());
-    return res;
+    return current_job_ ? pending_ : jobs_;
   }
 
 } // namespace scheduler

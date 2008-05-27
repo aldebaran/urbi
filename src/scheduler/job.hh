@@ -68,44 +68,9 @@ namespace scheduler
   ///        its state by the way of inter-job communication before asking to
   ///        be deleted.
   ///
-  /// \li  2. Make sure the job keeps alive as long as there is at least one
+  /// \li  2. Make sure the job is kept alive as long as there is at least one
   ///         reference onto it, and that it gets deleted from another
-  ///         coroutine.
-  ///
-  /// We chose to implement the second solution. To achieve this, the
-  /// following method has been used:
-  ///
-  /// \li  1. All the jobs are dynamically allocated. It is forbidden to
-  ///         allocate a job from another job stack.
-  ///
-  /// \li  2. All the references to a job use a \c rJob value, which is a
-  ///         reference counted pointer. It is stored as a field in the
-  ///         Job structure, hence ensuring that the job destructor will
-  ///         not fire as long as we do not override this field.
-  ///
-  /// \li  3. At creation time, a job creates the \c rJob which will be used
-  ///         to represent itself. This \c rJob may be retrieved using
-  ///         myself_get() should anyone need to keep a reference to this
-  ///         job.
-  ///
-  /// \li  4. In its terminate_cleanup() routine, the \c rJob will get rid of
-  ///         its self reference. To avoid decreasing the reference count to
-  ///         0, it will do so by handing the reference to the scheduler
-  ///         using Scheduler::take_job_reference(). This will swap the
-  ///         current \c rJob pointer with the scheduler to_kill_
-  ///         pointer, which will always be 0 at this stage. As a
-  ///         consequence, we ensure that the reference count will at
-  ///         least be 1.
-  ///
-  /// \li  5. After returning from the job, the scheduler will set its
-  ///         to_kill_ pointer to 0. As a consequence, if a job has
-  ///         called Scheduler::take_job_reference(), the reference count
-  ///         will be decremented by 1. If nobody else has a reference on
-  ///         the job, its destructor will be called and its memory and
-  ///         the one of its associated coroutine structure will be
-  ///         freed. If there are other references, the job structure
-  ///         will not be destroyed until everyone has dropped all those
-  ///         references.
+  ///         coroutine, or from the main one.
 
   class Job: public libport::RefCounted
   {
@@ -213,7 +178,7 @@ namespace scheduler
     /// Establish a permanent bi-directional link between two jobs.
     ///
     /// \param other The job to link to.
-    void link (Job* other);
+    void link (rJob other);
 
     /// Get the job name
     ///
@@ -287,12 +252,6 @@ namespace scheduler
     ///        notice.
     void non_interruptible_set (bool ni);
 
-    /// Return a shared pointer on myself. The job must not be
-    /// terminated.
-    ///
-    /// \return A shared pointer on the job.
-    scheduler::rJob myself_get () const;
-
     /// Remember the time we have been frozen since if not remembered
     /// yet.
     ///
@@ -352,9 +311,6 @@ namespace scheduler
     /// Scheduler in charge of this job. Do not delete.
     Scheduler* scheduler_;
 
-    /// Myself as long as I have not terminated, 0 otherwise.
-    scheduler::rJob myself_;
-
     /// This job name.
     libport::Symbol name_;
 
@@ -371,7 +327,7 @@ namespace scheduler
     /// terminates with an exception, any linked job will throw the
     /// exception as well when they resume. This must be a list, as
     /// we may remove elements while we are iterating over it.
-    std::list<Job*> links_;
+    std::list<rJob> links_;
 
     /// Is the current job non-interruptible? If yes, yielding will
     /// do nothing and blocking operations may raise an exception.
