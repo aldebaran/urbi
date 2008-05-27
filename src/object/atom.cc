@@ -30,14 +30,6 @@
 #include "object/task-class.hh"
 #include "object/urbi-exception.hh"
 
-/// How to print a UConnection.
-/// Used by the atom object::Lobby.
-std::ostream&
-operator<< (std::ostream& o, const UConnection& c)
-{
-  return o << "UConnection_" << static_cast<const void*>(&c);
-}
-
 namespace object
 {
   template <typename Traits>
