@@ -534,7 +534,7 @@ namespace urbi
     {
       std::string arg = argv[i];
       if (arg == "--buffer" || arg == "-b")
-	buflen = libport::convert_argument<int> (arg, argv[++i]);
+	buflen = libport::convert_argument<unsigned> (arg, argv[++i]);
       else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
       else if (arg == "--stay-alive" || arg == "-s")
@@ -548,7 +548,7 @@ namespace urbi
 	addr = argv[i];
       }
       else if (arg == "--port" || arg == "-p")
-	port = libport::convert_argument<int> (arg, argv[++i]);
+	port = libport::convert_argument<unsigned> (arg, argv[++i]);
       else if (arg == "--version" || arg == "-v")
 	version ();
       else if (arg[0] == '-')
@@ -562,7 +562,7 @@ namespace urbi
             argument_with_option("host", 'H', addr);
 	    break;
 	  case 2:
-	    port = libport::convert_argument<int> ("port", argv[i]);
+	    port = libport::convert_argument<unsigned> ("port", argv[i]);
             argument_with_option("port", 'p', addr);
 	    break;
 	  default:
