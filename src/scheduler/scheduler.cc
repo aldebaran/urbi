@@ -299,7 +299,7 @@ namespace scheduler
     // If this method is called from within a job, return the currently
     // executing jobs (pending_), otherwise return the jobs_ content which
     // is complete.
-    std::vector<Job*> src = current_job_ ? pending_ : jobs_;
+    const std::vector<Job*>& src = current_job_ ? pending_ : jobs_;
     std::vector<rJob> res;
     foreach(Job* job, src)
       res.push_back(job->myself_get());
