@@ -4,7 +4,6 @@
 # include <vector>
 
 # include <libport/symbol.hh>
-# include <libport/weak-ptr.hh>
 
 # include "scheduler/fwd.hh"
 
