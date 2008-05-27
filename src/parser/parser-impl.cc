@@ -72,8 +72,6 @@ namespace parser
     std::istringstream is(t.input_get());
     parse_(is);
     tweast_ = 0;
-    // We need the parse errors now.
-    result_->dump_errors();
     return result_;
   }
 
