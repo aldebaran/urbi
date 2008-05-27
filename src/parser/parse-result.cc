@@ -4,14 +4,15 @@
 #include <iostream>
 #include <iterator>
 
+#include <libport/deref.hh>
 #include <libport/indent.hh>
 #include <libport/foreach.hh>
 #include <libport/separator.hh>
 
-#include "ast/nary.hh"
-#include "ast/print.hh"
+#include <ast/nary.hh>
+#include <ast/print.hh>
 
-#include "parser/parse-result.hh"
+#include <parser/parse-result.hh>
 
 namespace parser
 {
@@ -29,18 +30,51 @@ namespace parser
     }
   }
 
+  ParseResult::ParseResult()
+    : status(-1)
+    , ast_(0)
+    , errors_()
+    , warnings_()
+    , reported_(false)
+  {
+  }
+
+  ParseResult::ParseResult(ParseResult& rhs)
+    : status(rhs.status)
+    , ast_(rhs.ast_) // The ast is stolen here.
+    , errors_(rhs.errors_)
+    , warnings_(rhs.warnings_)
+    , reported_(rhs.reported_)
+  {
+    // It is now up to the most recent object to output the result.
+    reported_ = true;
+  }
+
   ParseResult::~ParseResult()
   {
+    if (!reported_
+        && (!errors_.empty() || !warnings_.empty()))
+      dump_errors();
+  }
+
+  bool
+  ParseResult::good() const
+  {
+    return (!status
+            && ast_.get()
+            && errors_.empty()
+            && warnings_.empty());
   }
 
   std::ostream&
   ParseResult::dump (std::ostream& o) const
   {
+    reported_ = true;
     return o
       << "Status:"
       << libport::incendl << status << libport ::decendl
       << "Ast:"
-      << libport::incendl << *ast_ << libport ::decendl
+      << libport::incendl << libport::deref << ast_ << libport ::decendl
       << "Errors: "
       << libport::incendl << errors_ << libport ::decendl
       << "Warnings: "
@@ -95,6 +129,7 @@ namespace parser
   void
   ParseResult::process_errors(ast::Nary& target)
   {
+    reported_ = true;
     foreach(const std::string& e, warnings_)
       target.message_push(e, "warning");
     warnings_.clear();

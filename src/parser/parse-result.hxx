@@ -10,6 +10,7 @@ namespace parser
   void
   ParseResult::error (const std::string& msg)
   {
+    reported_ = false;
     errors_.push_back(msg);
   }
 
@@ -17,6 +18,7 @@ namespace parser
   void
   ParseResult::warn (const std::string& msg)
   {
+    reported_ = false;
     warnings_.push_back(msg);
   }
 

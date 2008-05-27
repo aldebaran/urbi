@@ -33,10 +33,18 @@ namespace parser
   class ParseResult
   {
   public:
+    ParseResult();
+    ParseResult(ParseResult& rhs);
+
+    /// Errors must have been dumped or cleared.
+    /// This is to avoid that parse errors get lost.
     ~ParseResult();
 
     /// The status as reported by Bison's parser.
     int status;
+    /// Whether everything is fine.
+    /// The status is 0, the ast is defined, there are no warnings/errors.
+    bool good() const;
 
     /// \name The resulting AST.
     /// \{
@@ -82,6 +90,9 @@ namespace parser
 
     /// List of warnings.
     messages_type warnings_;
+
+    /// Whether the errors and warnings were output or given.
+    mutable bool reported_;
 
   public:
     /// Dump for debugging.
