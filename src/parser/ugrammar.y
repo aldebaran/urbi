@@ -641,15 +641,15 @@ stmt:
 	TOK_DELGROUP     "delgroup"
 	TOK_GROUP        "group";
 stmt:
-  "group" "identifier" "{" identifiers "}"
+  "group" "identifier" "{" exprs "}"
   {
     DESUGAR("var " << $2 << " = Global.Group.new(" << $4 << ")");
   }
-| "addgroup" "identifier" "{" identifiers "}"
+| "addgroup" "identifier" "{" exprs "}"
   {
     DESUGAR($2 << ".add(" << $4 << ")");
   }
-| "delgroup" "identifier" "{" identifiers "}"
+| "delgroup" "identifier" "{" exprs "}"
   {
     DESUGAR($2 << ".remove(" << $4 << ")");
   }
