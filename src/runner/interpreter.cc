@@ -91,7 +91,7 @@ namespace runner
   {							\
     current_.reset();					\
     propagate_error_(propagate_exception,               \
-                     (Node).location_get());            \
+                     (Node)->location_get());           \
     throw;						\
   }							\
   catch (object::FlowException&)                        \
@@ -138,31 +138,31 @@ namespace runner
   // This function takes an expression and attempts to decompose it
   // into a list of identifiers, and a potential expression that
   // represents the owner of the new tag.
-  typedef std::deque<const ast::Call*> tag_chain_type;
+  typedef std::deque<ast::rConstCall> tag_chain_type;
   static
-  std::pair<const ast::Exp*, tag_chain_type>
-  decompose_tag_chain (const ast::Exp* e)
+  std::pair<ast::rConstExp, tag_chain_type>
+  decompose_tag_chain (ast::rConstExp e)
   {
     tag_chain_type res;
     while (!e->implicit())
     {
-      const ast::Call* c = dynamic_cast<const ast::Call*>(e);
+      ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c)
 	throw object::ImplicitTagComponentError(e->location_get());
       if (c->args_get().size() > 1)
         return std::make_pair(c, res);
       res.push_front (c);
-      e = &c->args_get().front();
+      e = c->args_get().front();
     }
     assert (!res.empty ());
-    return std::make_pair((const ast::Exp*)0, res);
+    return std::make_pair(ast::rExp(), res);
   }
 
 
   Interpreter::Interpreter (rLobby lobby,
 			    rObject locals,
 			    scheduler::Scheduler& sched,
-			    const ast::Ast* ast,
+			    ast::rConstAst ast,
 			    bool free_ast_after_use,
 			    const libport::Symbol& name)
     : Interpreter::super_type(),
@@ -190,7 +190,7 @@ namespace runner
   }
 
   Interpreter::Interpreter(const Interpreter& model,
-			   const ast::Ast* ast,
+			   ast::rConstAst ast,
 			   bool free_ast_after_use,
 			   const libport::Symbol& name)
     : Interpreter::super_type (),
@@ -245,12 +245,7 @@ namespace runner
     assert (ast_ || code_);
     JAECHO ("starting evaluation of AST: ", *ast_);
     if (ast_)
-    {
-      Finally finally;
-      if (free_ast_after_use_)
-	finally << bind(&operator delete, const_cast<ast::Ast*>(ast_));
-      operator()(*ast_);
-    }
+      operator()(ast_);
     else
     {
       object::objects_type args;
@@ -264,14 +259,15 @@ namespace runner
   `----------------*/
 
   void
-  Interpreter::visit (const ast::And& e)
+  Interpreter::visit (ast::rConstAnd e)
   {
     // lhs will be evaluated in another Interpreter, while rhs will be evaluated
     // in this one. We will be the new runner parent, as we have the same
     // tags.
 
-    JAECHO ("lhs", e.lhs_get ());
-    scheduler::rJob lhs = new Interpreter (*this, ast::new_clone(e.lhs_get ()), true);
+    JAECHO ("lhs", e->lhs_get ());
+    scheduler::rJob lhs =
+      new Interpreter (*this, ast::new_clone(e->lhs_get ()), true);
 
     // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
@@ -279,7 +275,7 @@ namespace runner
     lhs->start_job ();
 
     JAECHO ("rhs", e.rhs_get ());
-    eval (e.rhs_get ());
+    eval (e->rhs_get ());
 
     // Wait for lhs to terminate
     yield_until_terminated (*lhs);
@@ -295,14 +291,14 @@ namespace runner
                            rObject call_message)
   {
     // The called function.
-    ast::Code& fn = func.unsafe_cast<object::Code> ()->value_get ();
+    ast::rCode fn = func.unsafe_cast<object::Code> ()->value_get ();
     // Whether it's an explicit closure
-    bool closure = dynamic_cast<ast::Closure*>(&fn);
+    bool closure = fn.unsafe_cast<ast::Closure>();
 
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
     // instance.
-    if (!fn.strict() && !call_message)
+    if (!fn->strict() && !call_message)
     {
       object::objects_type lazy_args;
       foreach (const rObject& o, args)
@@ -324,9 +320,9 @@ namespace runner
     }
     // If this is a strict function, check the arity and bind the formal
     // arguments. Otherwise, bind the call message.
-    if (fn.strict())
+    if (fn->strict())
     {
-      const ast::symbols_type& formals = *fn.formals_get();
+      const ast::symbols_type& formals = *fn->formals_get();
       object::check_arg_count (formals.size() + 1, args.size(), msg.name_get());
       // Effective (evaluated) argument iterator.
       // Skip "self" which has already been handled.
@@ -348,7 +344,7 @@ namespace runner
 
     try
     {
-      current_ = eval (*fn.body_get());
+      current_ = eval (fn->body_get());
     }
     catch (object::BreakException& be)
     {
@@ -398,7 +394,7 @@ namespace runner
     // look like a strict function call
     if (call_message &&
 	(func->kind_get() != object::object_kind_code
-	 || func->value<object::Code>().strict()))
+	 || func->value<object::Code>()->strict()))
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
@@ -464,7 +460,7 @@ namespace runner
 					 bool check_void)
   {
     bool tail = false;
-    foreach (const ast::Exp& arg, ue_args)
+    foreach (ast::rConstExp arg, ue_args)
     {
       // Skip target, the first argument.
       if (!tail++)
@@ -476,11 +472,11 @@ namespace runner
       if (check_void && current_ == object::void_class)
       {
 	object::WrongArgumentType e("");
-	e.location_set(arg.location_get());
+	e.location_set(arg->location_get());
 	throw e;
       }
 
-      passert (arg, current_);
+      passert (*arg, current_);
       args.push_back (current_);
     }
   }
@@ -523,27 +519,27 @@ namespace runner
     object::objects_type lazy_args;
     boost::sub_range<const ast::exps_type> range(args);
     // The target can be unspecified.
-    if (args.front().implicit())
+    if (args.front()->implicit())
     {
       lazy_args.push_back(object::nil_class);
       range = make_iterator_range(range, 1, 0);
     }
-    foreach (const ast::Exp& e, range)
+    foreach (ast::rConstExp e, range)
       lazy_args.push_back(object::mkLazy(*this, e));
 
     return build_call_message(tgt, msg, lazy_args);
   }
 
   void
-  Interpreter::visit (const ast::Call& e)
+  Interpreter::visit (ast::rConstCall e)
   {
     try
     {
       // The invoked slot (probably a function).
-      const ast::Exp& ast_tgt = e.args_get().front();
-      rObject tgt = ast_tgt.implicit() ? locals_ : eval(ast_tgt);
+      ast::rConstExp ast_tgt = e->args_get().front();
+      rObject tgt = ast_tgt->implicit() ? locals_ : eval(ast_tgt);
       assertion(tgt);
-      rObject val = tgt->slot_get(e.name_get());
+      rObject val = tgt->slot_get(e->name_get());
       assertion(val);
 
     /*-------------------------.
@@ -558,14 +554,14 @@ namespace runner
       // evaluated argument list.
       rObject call_message;
       if (val->kind_get () == object::object_kind_code
-          && !val.unsafe_cast<object::Code> ()->value_get ().strict())
-        call_message = build_call_message (tgt, e.name_get(), e.args_get ());
+          && !val.unsafe_cast<object::Code> ()->value_get ()->strict())
+        call_message = build_call_message (tgt, e->name_get(), e->args_get ());
       else
-        push_evaluated_arguments (args, e.args_get (), !acceptVoid(val));
+        push_evaluated_arguments (args, e->args_get (), !acceptVoid(val));
 
-      call_stack_.push_back(&e);
+      call_stack_.push_back(e);
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
-      apply (val, e.name_get(), args, call_message);
+      apply (val, e->name_get(), args, call_message);
     }
     PROPAGATE_EXCEPTION(e);
 
@@ -577,18 +573,18 @@ namespace runner
 
 
   void
-  Interpreter::visit (const ast::Float& e)
+  Interpreter::visit (ast::rConstFloat e)
   {
-    current_ = object::Float::fresh(e.value_get());
+    current_ = object::Float::fresh(e->value_get());
   }
 
 
   void
-  Interpreter::visit (const ast::Foreach& e)
+  Interpreter::visit (ast::rConstForeach e)
   {
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
-    operator() (e.list_get());
+    operator() (e->list_get());
     try
     {
       TYPE_CHECK(current_, object::List);
@@ -604,7 +600,7 @@ namespace runner
     // The list of runners launched for each value in the list if the flavor
     // is "&".
     std::vector<scheduler::rJob> runners;
-    if (e.flavor_get() == ast::flavor_and)
+    if (e->flavor_get() == ast::flavor_and)
       runners.reserve(content.size());
 
     bool first_iteration = true;
@@ -616,15 +612,16 @@ namespace runner
       rObject locals = object::Object::fresh();
       locals->locals_set(true);
       locals->proto_add(locals_);
-      locals->slot_set(e.index_get(), o);
+      locals->slot_set(e->index_get(), o);
 
       // for& ... in loop.
-      if (e.flavor_get() == ast::flavor_and)
+      if (e->flavor_get() == ast::flavor_and)
       {
 	// Create the new runner and launch it. We create a link so
 	// that an error in evaluation will stop other evaluations
 	// as well and propagate the exception.
-	Interpreter* new_runner = new Interpreter(*this, new_clone(e.body_get()), true);
+	Interpreter* new_runner =
+          new Interpreter(*this, ast::new_clone(e->body_get()), true);
 	link(new_runner);
 	runners.push_back(new_runner);
 	new_runner->locals_ = locals;
@@ -638,11 +635,11 @@ namespace runner
 	if (first_iteration)
 	  first_iteration = false;
 	else
-	  MAYBE_YIELD(e.flavor_get());
+	  MAYBE_YIELD(e->flavor_get());
 
 	try
 	{
-	  operator() (e.body_get());
+	  operator() (e->body_get());
 	}
 	catch (object::BreakException&)
 	{
@@ -662,9 +659,9 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::make_code(const ast::Code& e) const
+  Interpreter::make_code(ast::rConstCode e) const
   {
-    rObject res = object::Code::fresh(*new_clone(e));
+    rObject res = object::Code::fresh(new_clone(e));
     // Store the function declaration context. Use make_scope to add
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.
@@ -674,44 +671,44 @@ namespace runner
 
 
   void
-  Interpreter::visit (const ast::Function& e)
+  Interpreter::visit (ast::rConstFunction e)
   {
     current_ = make_code(e);
   }
 
   void
-  Interpreter::visit (const ast::Closure& e)
+  Interpreter::visit (ast::rConstClosure e)
   {
     current_ = make_code(e);
   }
 
 
   void
-  Interpreter::visit (const ast::If& e)
+  Interpreter::visit (ast::rConstIf e)
   {
     // Evaluate the test.
-    JAECHO ("test", e.test_get ());
-    operator() (e.test_get());
+    JAECHO ("test", e->test_get ());
+    operator() (e->test_get());
 
     if (object::is_true(current_))
     {
       JAECHO ("then", e.thenclause_get ());
-      operator() (e.thenclause_get());
+      operator() (e->thenclause_get());
     }
     else
     {
       JAECHO ("else", e.elseclause_get ());
-      operator() (e.elseclause_get());
+      operator() (e->elseclause_get());
     }
   }
 
 
   void
-  Interpreter::visit (const ast::List& e)
+  Interpreter::visit (ast::rConstList e)
   {
     object::List::value_type res;
     // Evaluate every expression in the list
-    foreach (const ast::Exp& c, e.value_get())
+    foreach (ast::rConstExp c, e->value_get())
       res.push_back(eval(c));
     current_ = object::List::fresh(res);
     //ECHO ("result: " << *current_);
@@ -719,9 +716,9 @@ namespace runner
 
 
   void
-  Interpreter::visit (const ast::Message& e)
+  Interpreter::visit (ast::rConstMessage e)
   {
-    send_message_(e.tag_get(), e.text_get());
+    send_message_(e->tag_get(), e->text_get());
   }
 
 
@@ -730,7 +727,7 @@ namespace runner
 #define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
   catch (Type flow_exception)                                   \
   {                                                             \
-    if (e.toplevel_get ())                                      \
+    if (e->toplevel_get ())                                     \
     {                                                           \
       object::PrimitiveError error(Keyword, Error);             \
       propagate_error_(error, flow_exception.location_get());   \
@@ -741,7 +738,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (const ast::Nary& e)
+  Interpreter::visit (ast::rConstNary e)
   {
     // List of runners for Stmt flavored by a comma.
     std::list<scheduler::rJob> runners;
@@ -750,7 +747,7 @@ namespace runner
     current_ = object::void_class;
 
     bool tail = false;
-    foreach (const ast::Exp& c, e.children_get())
+    foreach (ast::rConstExp c, e->children_get())
     {
       // Allow some time to pass before we execute what follows.  If
       // we don't do this, the ;-operator would act almost like the
@@ -763,8 +760,8 @@ namespace runner
       current_.reset ();
       JAECHO ("child", c);
 
-      if (dynamic_cast<const ast::Stmt*>(&c) &&
-	  dynamic_cast<const ast::Stmt*>(&c)->flavor_get() == ast::flavor_comma)
+      if (c.unsafe_cast<const ast::Stmt>() &&
+	  c.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are.
 	Interpreter* subrunner =
@@ -792,7 +789,7 @@ namespace runner
 	  CATCH_FLOW_EXCEPTION(object::ReturnException,
 			       "return", "outside a function")
 
-	  if (e.toplevel_get () && current_.get ())
+	  if (e->toplevel_get () && current_.get ())
 	  {
 	    try
 	    {
@@ -819,7 +816,7 @@ namespace runner
 	}
 	catch (object::UrbiException& ue)
 	{
-	  if (e.toplevel_get())
+	  if (e->toplevel_get())
 	    show_error_(ue);
 	  else
 	    throw;
@@ -834,7 +831,7 @@ namespace runner
     // If the Nary is not the toplevel one, all subrunners must be finished when
     // the runner exits the Nary node.
     // FIXME: There is a memory leak if the Nary is a toplevel one.
-    if (!e.toplevel_get ())
+    if (!e->toplevel_get ())
     {
       foreach(const scheduler::rJob& r, runners)
 	yield_until_terminated(*r);
@@ -843,27 +840,27 @@ namespace runner
     // FIXME: We violate the constness, but anyway this should not
     // be done here.  Not to mention the leaks, as we don't delete the
     // AST here.
-    if (e.toplevel_get ())
-      const_cast<ast::Nary&>(e).clear();
+    if (e->toplevel_get ())
+      const_cast<ast::Nary*>(e.get())->clear();
   }
 
   void
-  Interpreter::visit (const ast::Noop&)
+  Interpreter::visit (ast::rConstNoop)
   {
     current_ = object::void_class;
   }
 
 
   void
-  Interpreter::visit (const ast::Pipe& e)
+  Interpreter::visit (ast::rConstPipe e)
   {
     // lhs
-    JAECHO ("lhs", e.lhs_get ());
-    operator() (e.lhs_get());
+    JAECHO ("lhs", e->lhs_get ());
+    operator() (e->lhs_get());
 
     // rhs:  start the execution immediately.
-    JAECHO ("rhs", e.rhs_get ());
-    operator() (e.rhs_get());
+    JAECHO ("rhs", e->rhs_get ());
+    operator() (e->rhs_get());
   }
 
   namespace
@@ -880,7 +877,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (const ast::AbstractScope& e, rObject locals)
+  Interpreter::visit (ast::rConstAbstractScope e, rObject locals)
   {
     bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
@@ -889,23 +886,23 @@ namespace runner
             << runner::non_interruptible_set(this, was_non_interruptible);
     try
     {
-      super_type::operator()(e.body_get());
+      super_type::operator()(e->body_get());
     }
     PROPAGATE_EXCEPTION(e);
   }
 
   void
-  Interpreter::visit (const ast::Scope& e)
+  Interpreter::visit (ast::rConstScope e)
   {
-    visit (static_cast<const ast::AbstractScope&>(e),
+    visit (e.unsafe_cast<const ast::AbstractScope>(),
            object::Object::make_scope(locals_));
   }
 
   void
-  Interpreter::visit (const ast::Do& e)
+  Interpreter::visit (ast::rConstDo e)
   {
-    rObject tgt = eval(e.target_get());
-    visit (static_cast<const ast::AbstractScope&>(e),
+    rObject tgt = eval(e->target_get());
+    visit (e.unsafe_cast<const ast::AbstractScope>(),
            object::Object::make_method_scope(tgt, locals_));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
@@ -913,37 +910,37 @@ namespace runner
   }
 
   void
-  Interpreter::visit (const ast::Stmt& e)
+  Interpreter::visit (ast::rConstStmt e)
   {
     JAECHO ("expression", e.expression_get ());
-    operator() (e.expression_get());
+    operator() (e->expression_get());
   }
 
   void
-  Interpreter::visit (const ast::String& e)
+  Interpreter::visit (ast::rConstString e)
   {
-    current_ = object::String::fresh(libport::Symbol(e.value_get()));
+    current_ = object::String::fresh(libport::Symbol(e->value_get()));
   }
 
   void
-  Interpreter::visit (const ast::Tag& t)
+  Interpreter::visit (ast::rConstTag t)
   {
-    eval_tag (t.exp_get ());
+    eval_tag (t->exp_get ());
   }
 
   void
-  Interpreter::visit (const ast::TaggedStmt& t)
+  Interpreter::visit (ast::rConstTaggedStmt t)
   {
     try
     {
-      push_tag (extract_tag (eval (t.tag_get ())));
+      push_tag (extract_tag (eval (t->tag_get ())));
       Finally finally(bind(&Interpreter::pop_tag, this));
       // If the latest tag causes us to be frozen or blocked, let the
       // scheduler handler this properly to avoid duplicating the
       // logic.
       if (frozen () || blocked ())
 	yield ();
-      eval (t.exp_get ());
+      eval (t->exp_get ());
     }
     catch (scheduler::BlockedException& e)
     {
@@ -962,7 +959,7 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::eval_tag (const ast::Exp& e)
+  Interpreter::eval_tag (ast::rConstExp e)
   {
     try {
       // Try to evaluate e as a normal expression.
@@ -982,17 +979,17 @@ namespace runner
 
       // Tag represents the top level tag
       rObject toplevel = object::tag_class;
-      std::pair<const ast::Exp*, tag_chain_type> res = decompose_tag_chain (&e);
+      std::pair<ast::rConstExp, tag_chain_type> res = decompose_tag_chain(e);
       // If the left part of the implicit tag is a call with argument,
       // evaluate it to find the owner. Otherwise, store the new tag
       // as a local variable.
       //
       // FIXME: This is naive. Perform a real setSlot.
-      rObject where = res.first ? eval(*res.first) : locals_;
+      rObject where = res.first ? eval(res.first) : locals_;
       // If it is a tag, consider it as the parent of the new tag as well.
       rObject base = is_a(where, object::tag_class) ? where : toplevel;
       tag_chain_type chain = res.second;
-      foreach (const ast::Call* element, chain)
+      foreach (ast::rConstCall element, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.
@@ -1019,25 +1016,25 @@ namespace runner
   }
 
   void
-  Interpreter::visit (const ast::Throw& e)
+  Interpreter::visit (ast::rConstThrow e)
   {
-    switch (e.kind_get())
+    switch (e->kind_get())
     {
       case ast::Throw::exception_break:
-	throw object::BreakException(e.location_get());
+	throw object::BreakException(e->location_get());
 
       case ast::Throw::exception_return:
-	if (e.value_get())
-	  operator() (*e.value_get());
+	if (e->value_get())
+	  operator() (e->value_get());
 	else
 	  current_.reset();
-	throw object::ReturnException(e.location_get(), current_);
+	throw object::ReturnException(e->location_get(), current_);
     }
   }
 
 
   void
-  Interpreter::visit (const ast::While& e)
+  Interpreter::visit (ast::rConstWhile e)
   {
     bool first_iteration = true;
     // Evaluate the test.
@@ -1046,9 +1043,9 @@ namespace runner
       if (first_iteration)
 	first_iteration = false;
       else
-	MAYBE_YIELD (e.flavor_get());
+	MAYBE_YIELD (e->flavor_get());
       JAECHO ("while test", e.test_get ());
-      operator() (e.test_get());
+      operator() (e->test_get());
       if (!object::is_true(current_))
 	break;
 
@@ -1056,13 +1053,13 @@ namespace runner
 
       try
       {
-	operator() (e.body_get());
+	operator() (e->body_get());
       }
       catch (object::BreakException&)
       {
 	// FIXME: Fix for flavor "," and "&".
-	if (e.flavor_get() == ast::flavor_semicolon ||
-	    e.flavor_get() == ast::flavor_pipe)
+	if (e->flavor_get() == ast::flavor_semicolon ||
+	    e->flavor_get() == ast::flavor_pipe)
 	  break;
       };
     }
@@ -1072,7 +1069,7 @@ namespace runner
   void
   Interpreter::show_backtrace(const call_stack_type& bt, const std::string& chan)
   {
-    foreach (const ast::Call* c,
+    foreach (ast::rConstCall c,
              boost::make_iterator_range(boost::rbegin(bt),
                                         boost::rend(bt)))
     {
@@ -1092,7 +1089,7 @@ namespace runner
   Interpreter::backtrace_get() const
   {
     backtrace_type res;
-    foreach (const ast::Call* c, call_stack_)
+    foreach (ast::rConstCall c, call_stack_)
     {
       std::ostringstream o;
       o << c->location_get();

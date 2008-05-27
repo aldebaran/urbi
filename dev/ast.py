@@ -73,13 +73,18 @@ class Attribute:
     "Is this a pointer type?"
     return self.type[-1] == '*'
 
+  def refcounted_p (self):
+    "Is this a refcounted type?"
+    return re.match("^r[A-Z]", self.type)
+
   def w_type (self):
     "Return type for a non const *_get method."
     res = self.root_type ()
-    if not self.mandatory:
-      res += "*"
-    else:
-      res += "&"
+    if not self.refcounted_p():
+      if not self.mandatory:
+        res += "*"
+      else:
+        res += "&"
     return res
 
   def r_type (self):
@@ -140,12 +145,17 @@ class Attribute:
 
   def visitable_p(self):
     "Attributes whose base type is an AST node are visitable."
-    return self.root_type() in ast_nodes
+    type = self.root_type()
+    # Remove refcounting mark.
+    if type[0] == "r":
+      type = type[1:]
+    return type in ast_nodes
 
 class Node:
   def __init__(self, name, dict, ast_params):
     self.name = name
     self.super = ""
+    self.super_non_nodes = []
     self.derived = []
     self.desc = ""
     self.inline = {}
@@ -154,6 +164,7 @@ class Node:
     # Is the class concrete? (Default is false.)
     self.concrete = False
     self.ast_params = ast_params
+    self.includes = {}
 
     for key in dict:
       # PySyck changed its behavior WRT duplicate keys
@@ -343,8 +354,14 @@ class Loader:
       for sup in sups:
 	if sup == '':
 	  continue
-	n.super.append (ast[sup])
-	ast[sup].derived.append (n)
+        if sup in ast:
+          n.super.append (ast[sup])
+          ast[sup].derived.append (n)
+        elif sup in ast_params['includes_map']:
+          n.super_non_nodes.append (sup)
+          n.includes[ast_params['includes_map'][sup]] = True
+        else:
+          raise "Unknown super type: '%s'." % (sup)
 
   def load (self, file):
     "Load both the paramaters and the AST description."
@@ -352,6 +369,7 @@ class Loader:
     # information on `syck.load_documents'.
     docs = syck.load_documents (file.read ())
     i = iter (docs)
+    global ast_params
     ast_params = i.next ()
     # Compile the regexps once for all.
     ast_params['deep_clear_p'] = re.compile (ast_params['deep_clear_p'])

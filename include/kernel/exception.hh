@@ -18,7 +18,7 @@ namespace kernel
     virtual void rethrow () const = 0;
   };
 
-  typedef libport::shared_ptr<exception> exception_ptr;
+  typedef libport::shared_ptr<exception, false> exception_ptr;
 
   void rethrow (const exception_ptr&);
 

@@ -27,14 +27,14 @@ namespace parser
 
   protected:
     /// Append a metavariable to the map.
-    virtual std::string append_ (unsigned& key, Data* data);
+    virtual std::string append_ (unsigned& key, Data data);
 
     /// Extract a metavariable.
-    virtual Data* take_ (unsigned key) throw (std::range_error);
+    virtual Data take_ (unsigned key) throw (std::range_error);
 
     /// Whether this value must be unique.
     /// Used to catch multiple uses of a unique pointer.
-    virtual bool must_be_unique_ (Data*) const;
+    virtual bool must_be_unique_ (Data) const;
 
     /// Check the tables are empty.
     ///
@@ -47,7 +47,7 @@ namespace parser
     const std::string name_;
 
     /// Metavariables.
-    typedef libport::map<unsigned, Data*> map_type;
+    typedef libport::map<unsigned, Data> map_type;
     map_type map_;
   };
 

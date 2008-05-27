@@ -18,7 +18,7 @@ namespace runner
 
   inline
   Interpreter::rObject
-  Interpreter::eval (const ast::Ast& e)
+  Interpreter::eval (ast::rConstAst e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
     operator()(e);

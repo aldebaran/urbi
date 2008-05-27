@@ -24,17 +24,17 @@ namespace ast
   }
 
   template <typename T>
-  T*
+  libport::shared_ptr<T>
   ParametricAst::result()
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     operator()(ast_);
     clear();
-    return assert_exp(dynamic_cast<T*>(result_));
+    return assert_exp(result_.unsafe_cast<T>());
   }
 
   template <typename T>
-  T*
+  T
   ParametricAst::take (unsigned s) throw (std::range_error)
   {
     return parser::MetavarMap<T>::take_ (s);

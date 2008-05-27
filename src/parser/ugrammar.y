@@ -74,7 +74,7 @@
     /// Get the metavar from the specified map.
     template <typename T>
     static
-    T*
+    T
     metavar (parser::ParserImpl& up, unsigned key)
     {
       return up.tweast_->template take<T> (key);
@@ -93,10 +93,10 @@
     }
 
     /// For some reason there are ambiguities bw MetaVar::append_ and
-    /// Tweast::append_ when we don't use exactly ast::Exp*.
+    /// Tweast::append_ when we don't use exactly ast::rExp.
     inline
-    ast::Exp*
-    ast_exp (ast::Exp* e)
+    ast::rExp
+    ast_exp (ast::rExp e)
     {
       return e;
     }
@@ -109,7 +109,7 @@
 
   /// Store in Var the AST of the parsing of Code.
 # define DESUGAR_(Var, Code)				\
-    Var = ::parser::parse(::parser::Tweast() << Code)->ast_take().release()
+    Var = ::parser::parse(::parser::Tweast() << Code)->ast_take()
 
   /// Store in $$ the AST of the parsing of Code.
   // Fragile in case Bison changes its expansion of $$.
@@ -119,30 +119,30 @@
 
     /// "<target> . <method> (args)".
     static
-    ast::Call*
+    ast::rCall
     ast_call (const loc& l,
-	      ast::Exp* target, libport::Symbol method, ast::exps_type* args)
+	      ast::rExp target, libport::Symbol method, ast::exps_type* args)
     {
       args->push_front(target);
-      ast::Call* res = new ast::Call(l, method, args);
+      ast::rCall res = new ast::Call(l, method, args);
       return res;
     }
 
     /// "<target> . <method> ()".
     static
-    ast::Call*
-    ast_call(const loc& l, ast::Exp* target, libport::Symbol method)
+    ast::rCall
+    ast_call(const loc& l, ast::rExp target, libport::Symbol method)
     {
       return ast_call(l, target, method, new ast::exps_type);
     }
 
     /// "<target> . <method> (<arg1>)".
     static
-    ast::Call*
+    ast::rCall
     ast_call(const loc& l,
-	     ast::Exp* target, libport::Symbol method, ast::Exp* arg1)
+	     ast::rExp target, libport::Symbol method, ast::rExp arg1)
     {
-      ast::Call* res = ast_call(l, target, method);
+      ast::rCall res = ast_call(l, target, method);
       res->args_get().push_back(arg1);
       return res;
     }
@@ -151,12 +151,12 @@
     /// "<target> . <method> (<arg1>, <arg2>)".
     /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
     static
-    ast::Call*
+    ast::rCall
     ast_call(const loc& l,
-	     ast::Exp* target, libport::Symbol method,
-	     ast::Exp* arg1, ast::Exp* arg2, ast::Exp* arg3 = 0)
+	     ast::rExp target, libport::Symbol method,
+	     ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0)
     {
-      ast::Call* res = ast_call(l, target, method);
+      ast::rCall res = ast_call(l, target, method);
       res->args_get().push_back(arg1);
       res->args_get().push_back(arg2);
       if (arg3)
@@ -178,17 +178,17 @@
     /// \return The AST node calling the slot assignment.
     static
     inline
-    ast::Exp*
+    ast::rExp
     ast_slot_change (const loc& l,
-		     ast::Call* lvalue, libport::Symbol change,
-		     ast::Exp* value)
+		     ast::rCall lvalue, libport::Symbol change,
+		     ast::rExp value)
     {
-      ast::Exp* res = 0;
+      ast::rExp res = 0;
       // FIXME: We leak lvalue itself.
-      ast::Call* call =
+      ast::rCall call =
         ast_call(l,
-                 &lvalue->args_get().front(), change,
-                 new ast::String(lvalue->location_get(), lvalue->name_get()));
+                 lvalue->args_get().front(), change,
+                 ast::rString(new ast::String(lvalue->location_get(), lvalue->name_get())));
       if (value)
         call->args_get().push_back(value);
       res = call;
@@ -196,24 +196,24 @@
     }
 
     static
-    ast::Exp*
-    ast_slot_set (const loc& l, ast::Call* lvalue,
-		  ast::Exp* value)
+    ast::rExp
+    ast_slot_set (const loc& l, ast::rCall lvalue,
+		  ast::rExp value)
     {
       return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
     }
 
     static
-    ast::Exp*
-    ast_slot_update (const loc& l, ast::Call* lvalue,
-                     ast::Exp* value  )
+    ast::rExp
+    ast_slot_update (const loc& l, ast::rCall lvalue,
+                     ast::rExp value  )
     {
       return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
 
     static
-    ast::Exp*
-    ast_slot_remove  (const loc& l, ast::Call* lvalue)
+    ast::rExp
+    ast_slot_remove  (const loc& l, ast::rCall lvalue)
     {
       return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
     }
@@ -221,10 +221,10 @@
 
     /// Return \a e in a ast::Scope unless it is already one.
     static
-    ast::AbstractScope*
-    ast_scope(const loc& l, ast::Exp* target, ast::Exp* e)
+    ast::rAbstractScope
+    ast_scope(const loc& l, ast::rExp target, ast::rExp e)
     {
-      if (ast::AbstractScope* res = dynamic_cast<ast::AbstractScope*>(e))
+      if (ast::rAbstractScope res = e.unsafe_cast<ast::AbstractScope>())
 	return res;
       else
         if (target)
@@ -234,8 +234,8 @@
     }
 
     static
-    ast::AbstractScope*
-    ast_scope(const loc& l, ast::Exp* e)
+    ast::rAbstractScope
+    ast_scope(const loc& l, ast::rExp e)
     {
       return ast_scope(l, 0, e);
     }
@@ -243,10 +243,10 @@
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     /// \param op must be & or |.
     static
-    ast::Exp*
-    ast_bin(const loc& l, ast::flavor_type op, ast::Exp* lhs, ast::Exp* rhs)
+    ast::rExp
+    ast_bin(const loc& l, ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
     {
-      ast::Exp* res = 0;
+      ast::rExp res = 0;
       assert (lhs);
       assert (rhs);
       switch (op)
@@ -266,8 +266,8 @@
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     /// \param op can be any of the four cases.
     static
-    ast::Exp*
-    ast_nary(const loc& l, ast::flavor_type op, ast::Exp* lhs, ast::Exp* rhs)
+    ast::rExp
+    ast_nary(const loc& l, ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
     {
       switch (op)
       {
@@ -278,7 +278,7 @@
 	case ast::flavor_comma:
 	case ast::flavor_semicolon:
 	{
-	  ast::Nary* res = new ast::Nary(l);
+	  ast::rNary res = new ast::Nary(l);
 	  res->push_back(lhs, op);
 	  res->push_back(rhs);
 	  return res;
@@ -301,10 +301,10 @@
     //
     // OP is either ";" or "|".
     static
-    ast::Exp*
+    ast::rExp
     ast_for (const loc& l, ast::flavor_type op,
-	     ast::Exp* init, ast::Exp* test, ast::Exp* inc,
-	     ast::Exp* body)
+	     ast::rExp init, ast::rExp test, ast::rExp inc,
+	     ast::rExp body)
     {
       passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
       assert (init);
@@ -313,7 +313,7 @@
       assert (body);
 
       // BODY | INC.
-      ast::Exp* loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
+      ast::rExp loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
 
       // WHILE OP (TEST) { BODY | INC }.
       ast::While *while_loop =
@@ -334,9 +334,9 @@
 
     /// Whether the \a e was the empty command.
     static bool
-    implicit (const ast::Exp* e)
+    implicit (const ast::rExp e)
     {
-      const ast::Noop* noop = dynamic_cast<const ast::Noop*>(e);
+      ast::rConstNoop noop = e.unsafe_cast<const ast::Noop>();
       return noop;
     }
 
@@ -465,10 +465,15 @@
 
 %union
 {
-  ast::Exp*    expr;
-  ast::Call*   call;
-  ast::Nary*   nary;
-  ast::Tag*    tag;
+  typedef libport::pod_caster<ast::rExp> podExp;
+  typedef libport::pod_caster<ast::rCall> podCall;
+  typedef libport::pod_caster<ast::rNary> podNary;
+  typedef libport::pod_caster<ast::rTag>  podTag;
+
+  podExp    expr;
+  podCall   call;
+  podNary   nary;
+  podTag    tag;
 };
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
@@ -553,34 +558,28 @@ stmts:
   {
     $$ = new ast::Nary(@$);
     if (!implicit ($1))
-      $$->push_back ($1);
-    else
-      delete $1;
+      $$.value()->push_back ($1);
   }
 | stmts ";" cstmt
   {
-    if ($$->back_flavor_get() == ast::flavor_none)
-      $$->back_flavor_set ($2, @2);
+    if ($$.value()->back_flavor_get() == ast::flavor_none)
+      $$.value()->back_flavor_set ($2, @2);
     if (!implicit ($3))
-      $$->push_back($3);
-    else
-      delete $3;
+      $$.value()->push_back($3);
   }
 | stmts "," cstmt
   {
-    if ($$->back_flavor_get() == ast::flavor_none)
-      $$->back_flavor_set ($2, @2);
+    if ($$.value()->back_flavor_get() == ast::flavor_none)
+      $$.value()->back_flavor_set ($2, @2);
     if (!implicit ($3))
-      $$->push_back($3);
-    else
-      delete $3;
+      $$.value()->push_back($3);
   }
 ;
 
 %type <expr> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
-  stmt            { assert($1); $$ = $1; }
+stmt            { assert($1.value()); $$ = $1; }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 | cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;
@@ -654,8 +653,8 @@ stmt:
     DESUGAR($2 << ".remove(" << $4 << ")");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
-;
 
+;
 expr:
   "group" "identifier"    { DESUGAR($2 << ".members"); }
 ;
@@ -677,35 +676,33 @@ block:
 stmt:
   "class" lvalue block
     {
-      libport::Finally finally(boost::bind(&operator delete, $2));
       ::parser::Tweast tweast;
       libport::Symbol owner = libport::Symbol::fresh(SYMBOL(__class__));
-      ast::Call* target = $2;
-      if (!$2->target_implicit())
+      ast::rCall target = $2;
+      if (!$2.value()->target_implicit())
       {
         // If the lvalue call is qualified, we need to store the
         // target in a variable to avoid evaluating it several times.
         tweast << "var " << owner
-               << " = " << new_clone($2->args_get().front()) << "|";
+               << " = " << new_clone($2.value()->args_get().front()) << "|";
         ast::exps_type* args2 = new ast::exps_type();
         args2->push_back(new ast::Implicit(@2));
         ast::exps_type* args = new ast::exps_type();
         args->push_back(new ast::Call(@2, owner, args2));
-        target = new ast::Call(@2, $2->name_get(), args);
-	finally << boost::bind(&operator delete, target);
+        target = new ast::Call(@2, $2.value()->name_get(), args);
       }
       tweast << "var " << new_clone(target) << "= Object.clone|"
              << "do " << new_clone(target) << " {"
              << "var protoName = "
-             << ast_exp(new ast::String(@2, $2->name_get())) << "|"
-             << "function " << ("as" + $2->name_get().name_get()) << "() {self}|"
-             << ast_exp($3) << "}";
+             << ast_exp(new ast::String(@2, $2.value()->name_get())) << "|"
+             << "function " << ("as" + $2.value()->name_get().name_get()) << "() {self}|"
+             << ast_exp($3.value()) << "}";
 
-      $$ = ::parser::parse(tweast)->ast_take().release();
+      $$ = ::parser::parse(tweast)->ast_take();
     }
 | "class" lvalue
     {
-      DESUGAR("var " << $2 << "= Object.clone");
+      DESUGAR("var " << $2.value() << "= Object.clone");
     }
 ;
 
@@ -723,7 +720,7 @@ stmt:
   "external" "object" identifier_as_string
   {
     static ast::ParametricAst a("'external'.'object'(%exp:1)");
-    $$ = exp(a % $3);
+    $$ = exp(a % $3.value());
   }
 | "external" "var" identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
@@ -759,12 +756,12 @@ stmt:
     if ($3)
       up.warn(@3, "ignored arguments in event declaration");
     delete $3;
-    DESUGAR("var " << $2
-            << "= Global.Event.new(\"" << $2->name_get() << "\")");
+    DESUGAR("var " << $2.value()
+            << "= Global.Event.new(\"" << $2.value()->name_get() << "\")");
   }
 | "emit" k1_id args
   {
-    DESUGAR($2 << ".'emit'(" << $3 << ")");
+    DESUGAR($2.value() << ".'emit'(" << $3 << ")");
   }
 | "emit" "(" expr.opt ")" k1_id args
   {
@@ -780,14 +777,14 @@ stmt:
   "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt"
-      $$ = ast_slot_set(@$, $2,
-			new ast::Function (@$, $3, ast_scope (@$, $4)));
+      $$ = ast_slot_set(@$, $2.value(),
+			new ast::Function (@$, $3, ast_scope (@$, $4.value())));
     }
 | "closure" k1_id formals block
     {
       // Compiled as "var name = closure args stmt"
-      $$ = ast_slot_set(@$, $2,
-			new ast::Closure (@$, $3, ast_scope (@$, $4)));
+      $$ = ast_slot_set(@$, $2.value(),
+			new ast::Closure (@$, $3, ast_scope (@$, $4.value())));
     }
 ;
 
@@ -867,15 +864,19 @@ stmt:
 
 
 expr:
-  lvalue "+=" expr { DESUGAR(new_clone($1) << '=' << $1 << '+' << $3); }
-| lvalue "-=" expr { DESUGAR(new_clone($1) << '=' << $1 << '-' << $3); }
-| lvalue "*=" expr { DESUGAR(new_clone($1) << '=' << $1 << '*' << $3); }
-| lvalue "/=" expr { DESUGAR(new_clone($1) << '=' << $1 << '/' << $3); }
+  lvalue "+=" expr
+  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '+' << $3.value()); }
+| lvalue "-=" expr
+  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '-' << $3.value()); }
+| lvalue "*=" expr
+  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '*' << $3.value()); }
+| lvalue "/=" expr
+  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '/' << $3.value()); }
 ;
 
 expr:
-  lvalue "--"      { DESUGAR('(' << $1 << "-= 1) + 1"); }
-| lvalue "++"      { DESUGAR('(' << $1 << "+= 1) - 1"); }
+  lvalue "--"      { DESUGAR('(' << $1.value() << "-= 1) + 1"); }
+| lvalue "++"      { DESUGAR('(' << $1.value() << "+= 1) - 1"); }
 ;
 
 
@@ -887,8 +888,8 @@ stmt:
   lvalue "->" id "=" expr
     {
       // FIXME: We leak lvalue itself.
-      $$ = ast_call(@$, &$1->args_get().front(), SYMBOL(setProperty),
-		    new ast::String(@1, $1->name_get()),
+      $$ = ast_call(@$, $1.value()->args_get().front(), SYMBOL(setProperty),
+		    new ast::String(@1, $1.value()->name_get()),
 		    new ast::String(@3, $3.value()),
 		    $5);
     }
@@ -898,8 +899,8 @@ expr:
   lvalue "->" id
     {
       // FIXME: lvalue leaks.
-      $$ = ast_call(@$, &$1->args_get().front(), SYMBOL(getProperty),
-		    new ast::String(@1, $1->name_get()),
+      $$ = ast_call(@$, $1.value()->args_get().front(), SYMBOL(getProperty),
+		    new ast::String(@1, $1.value()->name_get()),
 		    new ast::String(@3, $3.value()));
     }
 ;
@@ -939,16 +940,17 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
-      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
-	      "at_( " << s << ", " << $7 << ")");
+      DESUGAR("var " << s << " = persist (" << $3.value() << ","
+              << $5.value() << ") | at_( " << s << ", " << $7.value() << ")");
     }
 | "at" "(" expr "~" expr ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
-      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
-	      "at_( " << s << ", " << $7 << ", " << $9 << ")");
+      DESUGAR("var " << s << " = persist (" << $3.value() << ","
+              << $5.value() << ") | at_( " << s << ", "
+              << $7.value() << ", " << $9.value() << ")");
     }
 | "every" "(" expr ")" nstmt
     {
@@ -971,7 +973,7 @@ stmt:
     }
 | "for" "identifier" "in" expr block    %prec CMDBLOCK
     {
-      $$ = new ast::Foreach(@$, $1, $2, $4, $5);
+      $$ = new ast::Foreach(@$, $1, $2, $4.value(), $5.value());
     }
 | "freezeif" "(" softtest ")" stmt
     {
@@ -981,8 +983,9 @@ stmt:
       ("var " << ex << " = " << "new Tag (\"" << ex << "\")|"
        << "var " << in << " = " << "new Tag (\"" << in << "\")|"
        << ex << " : { "
-       << "at(" << $3 << ") " << in << ".freeze onleave " << in << ".unfreeze|"
-       << in << " : { " << $5 << "| " << ex << ".stop } }");
+       << "at(" << $3.value() << ") " << in << ".freeze onleave "
+       << in << ".unfreeze|" << in << " : { " << $5.value() << "| "
+       << ex << ".stop } }");
     }
 /*
  *  This loop keyword can't be converted to a for, since it would
@@ -1009,22 +1012,22 @@ stmt:
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
       libport::Symbol id = libport::Symbol::fresh();
-      DESUGAR("for (var " << id << " = " << $3 << ";"
+      DESUGAR("for (var " << id << " = " << $3.value() << ";"
 	      << "    0 < " << id << ";"
 	      << "    " << id << "--)"
-	      << "  " << $5);
+	      << "  " << $5.value());
     }
 | "stopif" "(" softtest ")" stmt
     {
       libport::Symbol tag = libport::Symbol::fresh(SYMBOL(stopif));
       DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
-	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
-	      << "{ waituntil(" << $3 << ")|"
+	      << tag << " : { { " << $5.value() << "|" << tag << ".stop }" << "&"
+	      << "{ waituntil(" << $3.value() << ")|"
 	      << tag << ".stop } }");
     }
 | "timeout" "(" expr ")" stmt
     {
-      DESUGAR("stopif ({sleep(" << $3 << ") | true}) " << $5);
+      DESUGAR("stopif ({sleep(" << $3.value() << ") | true}) " << $5.value());
     }
 | "return" expr.opt
     {
@@ -1036,23 +1039,26 @@ stmt:
     }
 | "whenever" "(" expr ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("whenever_(" << $3 << ", " << $5 << ")");
+      DESUGAR("whenever_(" << $3.value() << ", " << $5.value() << ")");
     }
 | "whenever" "(" expr "~" expr ")" nstmt %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
-      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
-	      "whenever_(" << s << ".val, " << $7 << ")");
+      DESUGAR("var " << s << " = persist (" << $3.value() << ","
+              << $5.value() << ") | whenever_(" << s << ".val, "
+              << $7.value() << ")");
     }
 | "whenever" "(" expr ")" nstmt "else" nstmt
     {
-      DESUGAR("whenever_(" << $3 << ", " << $5 << ", " << $7 << ")");
+      DESUGAR("whenever_(" << $3.value() << ", " << $5.value()
+              << ", " << $7.value() << ")");
     }
 | "whenever" "(" expr "~" expr ")" nstmt "else" nstmt
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
-      DESUGAR("var " << s << " = persist (" << $3 << "," << $5 << ") |"
-	      "whenever_(" << s << ".val, " << $7 << ", " << $9 << ")");
+      DESUGAR("var " << s << " = persist (" << $3.value() << ","
+              << $5.value() << ") | whenever_(" << s << ".val, "
+              << $7.value() << ", " << $9.value() << ")");
     }
 | "while" "(" expr ")" stmt %prec CMDBLOCK
     {
@@ -1062,8 +1068,8 @@ stmt:
     }
 | "onevent" "identifier" formals block
     {
-      DESUGAR($2 << ".onEvent(function " << $3
-              << " { " << ast_exp($4) << " })");
+      DESUGAR($2.value() << ".onEvent(function " << $3
+              << " { " << ast_exp($4.value()) << " })");
     }
 ;
 
@@ -1075,8 +1081,8 @@ stmt:
 %token TOK_DO "do";
 
 expr:
-	    block   { $$ = ast_scope(@$,  0, $1); }
-| "do" expr block   { $$ = ast_scope(@$, $2, $3); }
+	    block   { $$ = ast_scope(@$,  0, $1.value()); }
+| "do" expr block   { $$ = ast_scope(@$, $2.value(), $3.value()); }
 ;
 
 /*---------------------------.
@@ -1097,9 +1103,9 @@ call:
   lvalue args
     {
       $$ = $1;
-      $$->args_get().transfer($$->args_get().end(), *$2);
-      delete $2;
-      $$->location_set(@$);
+      foreach (ast::rExp elt, *$2)
+        $$.value()->args_get().push_back(elt);
+      $$.value()->location_set(@$);
     }
 ;
 
@@ -1129,8 +1135,8 @@ id: "new";
 %left "identifier";
 
 expr:
-  new   { $$ = $1; }
-| call  { $$ = $1; }
+  new   { $$ = $1.value(); }
+| call  { $$ = $1.value(); }
 ;
 
 
@@ -1142,11 +1148,11 @@ expr:
 expr:
   "function" formals block
     {
-      $$ = new ast::Function (@$, $2, ast_scope (@$, $3));
+      $$ = new ast::Function (@$, $2, ast_scope (@$, $3.value()));
     }
 | "closure" formals block
     {
-      $$ = new ast::Closure (@$, $2, ast_scope (@$, $3));
+      $$ = new ast::Closure (@$, $2, ast_scope (@$, $3.value()));
     }
 ;
 
@@ -1283,22 +1289,22 @@ expr.opt:
 
 %token TOK__CALL "_call";
 lvalue:
-  "_call" "(" "integer" ")"    { $$ = metavar<ast::Call> (up, $3); }
+  "_call" "(" "integer" ")"    { $$ = metavar<ast::rCall> (up, $3); }
 ;
 
 %token TOK__EXP "_exp";
 expr:
-  "_exp" "(" "integer" ")"     { $$ = metavar<ast::Exp> (up, $3); }
+  "_exp" "(" "integer" ")"     { $$ = metavar<ast::rExp> (up, $3); }
 ;
 
 %token TOK__EXPS "_exps";
 exprs:
-  "_exps" "(" "integer" ")"    { $$ = metavar<ast::exps_type> (up, $3); }
+  "_exps" "(" "integer" ")"    { $$ = metavar<ast::exps_type*> (up, $3); }
 ;
 
 %token TOK__FORMALS "_formals";
 formals:
-  "_formals" "(" "integer" ")" { $$ = metavar<ast::symbols_type> (up, $3); }
+  "_formals" "(" "integer" ")" { $$ = metavar<ast::symbols_type*> (up, $3); }
 ;
 
 %token TOK_PERCENT_EXP_COLON "%exp:";

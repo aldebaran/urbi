@@ -6,16 +6,19 @@
 #ifndef BINDER_BIND_HH
 # define BINDER_BIND_HH
 
+# include <libport/shared-ptr.hh>
+
 namespace ast
 {
   class Ast;
+  typedef libport::shared_ptr<Ast> rAst;
 }
 
 namespace binder
 {
 
   /// Bind names in \a a.
-  void bind(ast::Ast& a);
+  void bind(ast::rAst a);
 
 } // namespace binder
 

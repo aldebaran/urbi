@@ -38,7 +38,7 @@ namespace parser
   }
 
   template <typename T>
-  T*
+  T
   Tweast::take (unsigned s) throw (std::range_error)
   {
     return MetavarMap<T>::take_ (s);

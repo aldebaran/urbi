@@ -17,24 +17,25 @@ namespace ast
 
   template <typename T>
   inline
-  T*
-  new_clone (const T& ast)
+  libport::shared_ptr<T>
+  new_clone (libport::shared_ptr<const T> ast)
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     Cloner cloner;
     cloner(ast);
-    T* res = dynamic_cast<T*>(cloner.result_get());
+    libport::shared_ptr<T> res = cloner.result_get().unsafe_cast<T>();
     assert (res);
     return res;
   }
 
   template <typename T>
   inline
-  typename boost::remove_const<T>::type*
-  new_clone (T* ast)
+  libport::shared_ptr<T>
+  new_clone (libport::shared_ptr<T> ast)
   {
-    return ast ? new_clone(*ast) : 0;
+    return new_clone(libport::shared_ptr<const T>(ast));
   }
+
 }
 
 #endif // !AST_CLONE_HXX

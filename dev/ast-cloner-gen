@@ -42,7 +42,7 @@ namespace %(clonerlib)s
     virtual ~Cloner ();
 
     // Return the cloned Ast.
-    ast::Ast* result_get ();
+    ast::rAst result_get ();
 
     // Visit methods.
   public:
@@ -56,10 +56,11 @@ print """\
 
   protected:
     template <typename T>
-    T* recurse (const T& t);
+    libport::shared_ptr<T> recurse (libport::shared_ptr<const T> t);
 
     template <typename T>
-    typename boost::remove_const<T>::type* recurse (T* t);
+    libport::shared_ptr<T>
+    recurse (libport::shared_ptr<T> t);
 
     /** \\brief Clone a collection object.
 
@@ -90,7 +91,7 @@ if dec_subclasses:
 
 print """
     /// The cloned Ast.
-    ast::Ast* result_;
+    ast::rAst result_;
   };
 
 } // namespace ast
@@ -106,7 +107,7 @@ tools.lazy_install(srcdir, "cloner.hh");
 ## Abstract syntax tree C++ clone visitor - implementation --------------------
 def attribute_dup(a):
   "Return a clone (an expression) of a's value."
-  accessor = "e." + a.name + "_get ()"
+  accessor = "e->" + a.name + "_get ()"
   # Non visitable attributes.
   if a.type in ast_params['non_visitable_types']:
     type = a.W_type ()
@@ -172,7 +173,7 @@ namespace %(clonerlib)s
   {
   }
 
-  Ast*
+  rAst
   Cloner::result_get ()
   {
     return result_;
@@ -181,7 +182,7 @@ namespace %(clonerlib)s
 
 for node in concrete:
   print "  void"
-  print "  Cloner::visit (const ast::%s& e)" % node.name
+  print "  Cloner::visit (ast::rConst%s e)" % node.name
   print "  {"
   if node.hide:
     print "    //<<"

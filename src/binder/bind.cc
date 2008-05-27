@@ -4,7 +4,7 @@
 namespace binder
 {
   void
-  bind(ast::Ast& a)
+  bind(ast::rAst a)
   {
     Binder bind;
     bind(a);

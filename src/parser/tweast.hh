@@ -25,10 +25,10 @@ namespace parser
   ///
   /// Aggregate string to parse and tables of metavariables.
   class Tweast
-    : public MetavarMap<ast::Call>,
-      public MetavarMap<ast::Exp>,
-      public MetavarMap<ast::exps_type>,
-      public MetavarMap<ast::symbols_type>
+    : public MetavarMap<ast::rCall>,
+      public MetavarMap<ast::rExp>,
+      public MetavarMap<ast::exps_type*>,
+      public MetavarMap<ast::symbols_type*>
   {
   public:
     Tweast ();
@@ -60,7 +60,7 @@ namespace parser
     template <typename T> Tweast& operator<< (const T& t);
 
     /// Metavariables manipulator.
-    template <typename T> T* take (unsigned s) throw (std::range_error);
+    template <typename T> T take (unsigned s) throw (std::range_error);
 
     /// Get the current input string.
     std::string input_get () const;
@@ -71,20 +71,19 @@ namespace parser
   protected:
     /// Store some typed data.
     /// \{
-    /// Define virtual std::string append_ (unsigned& key, ast::Call* data);
-    using MetavarMap<ast::Call>::append_;
-    using MetavarMap<ast::Exp>::append_;
-    using MetavarMap<ast::exps_type>::append_;
-    using MetavarMap<ast::symbols_type>::append_;
+    using MetavarMap<ast::rCall>::append_;
+    using MetavarMap<ast::rExp>::append_;
+    using MetavarMap<ast::exps_type*>::append_;
+    using MetavarMap<ast::symbols_type*>::append_;
     template <typename T> T& append_ (unsigned&, T& data) const;
     /// \}
 
     /// Whether the pointer must be registered only once.
     /// \{
-    using MetavarMap<ast::Call>::must_be_unique_;
-    using MetavarMap<ast::Exp>::must_be_unique_;
-    using MetavarMap<ast::exps_type>::must_be_unique_;
-    using MetavarMap<ast::symbols_type>::must_be_unique_;
+    using MetavarMap<ast::rCall>::must_be_unique_;
+    using MetavarMap<ast::rExp>::must_be_unique_;
+    using MetavarMap<ast::exps_type*>::must_be_unique_;
+    using MetavarMap<ast::symbols_type*>::must_be_unique_;
     template <typename T> bool must_be_unique_ (const T&) const;
     /// \}
 

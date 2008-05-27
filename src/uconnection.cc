@@ -255,13 +255,13 @@ UConnection::received (const char* buffer, size_t length)
     passert(result.get(), result->status != -1);
     result->process_errors(*active_command_);
 
-    if (ast::Nary* ast = result->ast_take().release())
+    if (ast::rNary ast = result->ast_take())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
-      binder::bind(*ast);
+      binder::bind(ast);
       ECHO ("bound: {{{" << *ast << "}}}");
       // Append to the current list.
-      active_command_->splice_back(*ast);
+      active_command_->splice_back(ast);
       ECHO ("appended: " << *active_command_ << "}}}");
     }
     else

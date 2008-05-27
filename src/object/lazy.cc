@@ -16,14 +16,15 @@ namespace object
   }
 
   rObject
-  mkLazy(runner::Runner& r, const ast::Exp& e)
+  mkLazy(runner::Runner& r, ast::rConstExp e)
   {
     // Strangely, this temporary variable is required. Calling the
     // ast::Function ctor inline in the make_code(...) call invokes
     // the ast copy ctor. Please post an explanation if you
     // understand the problem.
-    ast::Closure ast(e.location_get(), new ast::symbols_type(),
-		      new ast::Scope(e.location_get(), new_clone(e)));
+    ast::rClosure ast =
+      new ast::Closure(e->location_get(), new ast::symbols_type(),
+                       new ast::Scope(e->location_get(), new_clone(e)));
     rObject function = dynamic_cast<runner::Interpreter*>(&r)->make_code(ast);
     return mkLazy(r, function);
   }

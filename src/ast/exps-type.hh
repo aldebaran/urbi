@@ -2,7 +2,9 @@
 # define AST_EXPS_TYPE_HH
 
 # include <iosfwd>
-# include <boost/ptr_container/ptr_list.hpp>
+# include <list>
+
+# include <ast/fwd.hh>
 
 namespace ast
 {
@@ -19,7 +21,7 @@ namespace ast
   // just works.
 
   /// List of expressions, for List, Nary, Call etc.
-  typedef boost::ptr_list<Exp> exps_type;
+  typedef std::list<rExp> exps_type;
 
   /// Separated by commas.
   std::ostream&

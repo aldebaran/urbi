@@ -12,15 +12,11 @@ namespace ast
 {
 
   /// Clone the \a ast.
-  /// \precondition ast derives from Ast.
+  /// \precondition AstNode derives from Ast.
   template <typename AstNode>
-  AstNode* new_clone(const AstNode& ast);
-
-  /// Clone \a *ast.
-  /// Since ASTs are often handled as pointers, this is very
-  /// handy.  \a ast == 0 is valid and returns 0 too.
+  libport::shared_ptr<AstNode> new_clone(libport::shared_ptr<const AstNode> ast);
   template <typename AstNode>
-  typename boost::remove_const<AstNode>::type* new_clone(AstNode* ast);
+  libport::shared_ptr<AstNode> new_clone(libport::shared_ptr<AstNode> ast);
 
 }
 

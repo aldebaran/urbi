@@ -50,7 +50,7 @@ namespace binder
                           (Function)
                           (Scope));
     private:
-      typedef std::list<std::pair<ast::Ast*, int> > Bindings;
+      typedef std::list<std::pair<ast::rAst, int> > Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
       Environment env_;
@@ -63,18 +63,18 @@ namespace binder
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
-      void bind(const libport::Symbol& var, ast::Ast* decl);
+      void bind(const libport::Symbol& var, ast::rAst decl);
       /// Retarget a call according to whether the \a variable is set.
-      void retarget(ast::Call& call, const libport::Symbol& var);
+      void retarget(ast::rCall call, const libport::Symbol& var);
       /// Retarget a call to getSlot("self")
-      void targetSelf(ast::Call& call);
+      void targetSelf(ast::rCall call);
       /// Retarget a call to getSlot("code").context
-      void targetContext(ast::Call& call, int depth = 1);
+      void targetContext(ast::rCall call, int depth = 1);
       /// Whether \return 0 If the variable is local, or the depth in
       /// number of imbriqued function otherwise.
       int isLocal(const libport::Symbol& name);
       /// Factored method to handle scopes.
-      void handleScope(ast::AbstractScope& scope, bool setOnSelf);
+      void handleScope(ast::rAbstractScope scope, bool setOnSelf);
   };
 
 } // namespace binder

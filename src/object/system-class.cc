@@ -85,14 +85,13 @@ namespace object
   execute_parsed (runner::Runner& r,
                   parser::parse_result_type p, UrbiException e)
   {
-    ast::Nary errs;
-    p->process_errors(errs);
-    errs.accept(dynamic_cast<runner::Interpreter&>(r));
-    if (ast::Nary* ast = p->ast_take().release())
+    ast::rNary errs = new ast::Nary();
+    p->process_errors(*errs);
+    dynamic_cast<runner::Interpreter&>(r)(errs);
+    if (ast::rNary ast = p->ast_take())
     {
-      binder::bind(*ast);
-      // FIXME: Release AST.
-      return dynamic_cast<runner::Interpreter&>(r).eval(*ast);
+      binder::bind(ast);
+      return dynamic_cast<runner::Interpreter&>(r).eval(ast);
     }
     else
       throw e;

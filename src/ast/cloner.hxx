@@ -15,11 +15,11 @@ namespace ast
 {
 
   template <typename T>
-  T*
-  Cloner::recurse(const T& t)
+  libport::shared_ptr<T>
+  Cloner::recurse(libport::shared_ptr<const T> t)
   {
-    t.accept(*this);
-    T* res = dynamic_cast<T*>(result_);
+    t->accept(*this);
+    libport::shared_ptr<T> res = result_.unsafe_cast<T>();
     // We do have situations where t is not null, but result_ is, for
     // instance when we process a ParametricAst which substitutes a
     // MetaVar for a target, and the effective target is 0.
@@ -31,10 +31,11 @@ namespace ast
   }
 
   template <typename T>
-  typename boost::remove_const<T>::type*
-  Cloner::recurse (T* t)
+  libport::shared_ptr<T>
+  Cloner::recurse (libport::shared_ptr<T> t)
   {
-    return t ? recurse(*t) : 0;
+    libport::shared_ptr<const T> other = t;
+    return t ? recurse(other) : libport::shared_ptr<T>(0);
   }
 
   // args_type can include 0 in its list of args to denote the default
@@ -71,7 +72,7 @@ namespace ast
     // very needed override from ParametricAst.  As a result, we clone
     // the meta-ast instead of substituting the meta-vars with their
     // actual values.
-    foreach (const Exp& e, c)
+    foreach (rExp e, c)
       res->push_back(recurse(e));
     return res;
   }

@@ -12,6 +12,7 @@
 # include <libport/symbol.hh>
 
 # include "ast/fwd.hh"
+# include "ast/call.hh"
 # include "ast/loc.hh"
 
 # include "kernel/exception.hh"
@@ -36,7 +37,7 @@ namespace object
     virtual std::string what () const throw ();
 
     /// The call stack
-    typedef std::vector<const ast::Call*> call_stack_type;
+    typedef std::vector<ast::rConstCall> call_stack_type;
 
     ADD_FIELD (ast::loc, location)
     ADD_FIELD (call_stack_type, backtrace)

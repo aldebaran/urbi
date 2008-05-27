@@ -36,7 +36,7 @@ namespace parser
 
   template <typename Data>
   std::string
-  MetavarMap<Data>::append_ (unsigned& count, Data* data)
+  MetavarMap<Data>::append_ (unsigned& count, Data data)
   {
     map_[count] = data;
     std::string s = "_" + name_ + " (" +
@@ -45,7 +45,7 @@ namespace parser
   }
 
   template <typename Data>
-  Data*
+  Data
   MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
   {
     return map_.take (key);
@@ -53,7 +53,7 @@ namespace parser
 
   template <typename Data>
   bool
-  MetavarMap<Data>::must_be_unique_ (Data*) const
+  MetavarMap<Data>::must_be_unique_ (Data) const
   {
     return true;
   }

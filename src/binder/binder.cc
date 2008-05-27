@@ -26,12 +26,12 @@ namespace binder
   {}
 
   static inline
-  boost::optional<libport::Symbol> getFirstArg(const ast::Call& call)
+  boost::optional<libport::Symbol> getFirstArg(ast::rConstCall call)
   {
-    const ast::Ast& arg1 = *++call.args_get().begin();
-    if (!dynamic_cast<const ast::String*>(&arg1))
+    ast::rConstAst arg1 = *++call->args_get().begin();
+    if (!arg1.unsafe_cast<const ast::String>())
       return boost::optional<libport::Symbol>();
-    return libport::Symbol(dynamic_cast<const ast::String*>(&arg1)->value_get());
+    return libport::Symbol(arg1.unsafe_cast<const ast::String>()->value_get());
   }
 
   int Binder::isLocal(const libport::Symbol& name)
@@ -45,12 +45,12 @@ namespace binder
     }
   }
 
-  void Binder::visit (ast::Call& call)
+  void Binder::visit (ast::rCall call)
   {
     super_type::visit (call);
-    libport::Symbol name = call.name_get();
+    libport::Symbol name = call->name_get();
     // If this is a qualified call, nothing particular to do
-    if (call.target_implicit())
+    if (call->target_implicit())
     {
       if (name == SYMBOL(call)
           || name == SYMBOL(locals)
@@ -65,7 +65,7 @@ namespace binder
           if (setOnSelf_.back())
             targetSelf(call);
           else
-            bind(var.get(), &call);
+            bind(var.get(), call);
         else
           targetSelf(call);
       }
@@ -78,11 +78,11 @@ namespace binder
           retarget(call, var.get());
       }
       else
-        retarget(call, call.name_get());
+        retarget(call, call->name_get());
     }
   }
 
-  void Binder::retarget(ast::Call& call, const libport::Symbol& var)
+  void Binder::retarget(ast::rCall call, const libport::Symbol& var)
   {
     if (var == SYMBOL(call)
         || var == SYMBOL(locals)
@@ -97,55 +97,55 @@ namespace binder
       targetSelf(call);
   }
 
-  void Binder::visit (ast::Foreach& f)
+  void Binder::visit (ast::rForeach f)
   {
-    bind(f.index_get(), &f);
+    bind(f->index_get(), f);
     super_type::visit(f);
   }
 
-  void Binder::targetSelf(ast::Call& call)
+  void Binder::targetSelf(ast::rCall call)
   {
-    call.args_get().pop_front();
+    call->args_get().pop_front();
     ast::exps_type* args = new ast::exps_type;
-    args->push_back(new ast::Implicit(call.location_get()));
-    args->push_back(new ast::String(call.location_get(), "self"));
-    ast::Call* self = new ast::Call(call.location_get(), SYMBOL(getSlot), args);
-    call.args_get().push_front(self);
+    args->push_back(new ast::Implicit(call->location_get()));
+    args->push_back(new ast::String(call->location_get(), "self"));
+    ast::rCall self = new ast::Call(call->location_get(), SYMBOL(getSlot), args);
+    call->args_get().push_front(self);
   }
 
-  void Binder::targetContext(ast::Call& call, int depth)
+  void Binder::targetContext(ast::rCall call, int depth)
   {
-    call.args_get().pop_front();
-    ast::Call* code;
+    call->args_get().pop_front();
+    ast::rCall code;
     {
       ast::exps_type* args = new ast::exps_type;
-      args->push_back(new ast::Implicit(call.location_get()));
-      args->push_back(new ast::String(call.location_get(), "code"));
-      code = new ast::Call(call.location_get(), SYMBOL(getSlot), args);
+      args->push_back(new ast::Implicit(call->location_get()));
+      args->push_back(new ast::String(call->location_get(), "code"));
+      code = new ast::Call(call->location_get(), SYMBOL(getSlot), args);
     }
-    ast::Call* context;
+    ast::rCall context;
     {
       ast::exps_type* args = new ast::exps_type;
       args->push_back(code);
-      context = new ast::Call(call.location_get(), SYMBOL(context), args);
+      context = new ast::Call(call->location_get(), SYMBOL(context), args);
     }
     if (depth > 1)
-      targetContext(*code, depth - 1);
-    call.args_get().push_front(context);
+      targetContext(code, depth - 1);
+    call->args_get().push_front(context);
   }
 
-  void Binder::visit (ast::Scope& scope)
+  void Binder::visit (ast::rScope scope)
   {
     handleScope(scope, false);
   }
 
-  void Binder::visit (ast::Do& scope)
+  void Binder::visit (ast::rDo scope)
   {
-    scope.target_get().accept(*this);
+    scope->target_get()->accept(*this);
     handleScope(scope, true);
   }
 
-  void Binder::handleScope(ast::AbstractScope& scope, bool setOnSelf)
+  void Binder::handleScope(ast::rAbstractScope scope, bool setOnSelf)
   {
     libport::Finally finally;
     unbind_.push_back(libport::Finally());
@@ -155,29 +155,29 @@ namespace binder
     super_type::visit (scope);
   }
 
-  void Binder::visit(ast::Function& f)
+  void Binder::visit(ast::rFunction f)
   {
     depth_++;
-    if (f.formals_get())
+    if (f->formals_get())
     {
-      foreach (const libport::Symbol& arg, *f.formals_get())
-	bind(arg, &f);
+      foreach (const libport::Symbol& arg, *f->formals_get())
+	bind(arg, f);
     }
     super_type::visit (f);
     depth_--;
   }
 
-  void Binder::visit(ast::Closure& f)
+  void Binder::visit(ast::rClosure f)
   {
-    if (f.formals_get())
+    if (f->formals_get())
     {
-      foreach (const libport::Symbol& arg, *f.formals_get())
-	bind(arg, &f);
+      foreach (const libport::Symbol& arg, *f->formals_get())
+	bind(arg, f);
     }
     super_type::visit (f);
   }
 
-  void Binder::bind(const libport::Symbol& var, ast::Ast* decl)
+  void Binder::bind(const libport::Symbol& var, ast::rAst decl)
   {
     env_[var].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<

@@ -14,7 +14,7 @@ namespace ast
 
   ParametricAst::ParametricAst(const std::string& s)
     : exp_map_type("exp")
-    , ast_(parser::parse(s)->ast_xtake().release())
+    , ast_(parser::parse(s)->ast_xtake())
     , count_(0)
   {
   }
@@ -22,13 +22,12 @@ namespace ast
   ParametricAst::~ParametricAst()
   {
     passert(*this, empty());
-    delete ast_;
   }
 
   void
-  ParametricAst::visit (const ast::MetaExp& e)
+  ParametricAst::visit (ast::rConstMetaExp e)
   {
-    result_ = parser::MetavarMap<Exp>::take_(e.id_get () - 1);
+    result_ = parser::MetavarMap<ast::rExp>::take_(e->id_get () - 1);
   }
 
   bool
@@ -61,7 +60,7 @@ namespace ast
   | Free-standing functions.  |
   `--------------------------*/
 
-  Exp*
+  rExp
   exp (ParametricAst& a)
   {
     return a.result<Exp>();

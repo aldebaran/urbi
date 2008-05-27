@@ -108,10 +108,10 @@ for node in arr:
 	if attr == None:
 	  raise 'No such attribute \'%s\' for node \'%s\'' % (attrName, node.name)
 	mandatory = attr.mandatory
-	child = 'n.%s_get()' % (a[1:])
+	child = 'n->%s_get()' % (a[1:])
 	if a[0] == '~':
 	  if mandatory:
-	    action += '    %s.accept(*this);\n' % child
+	    action += '    %s->accept(*this);\n' % child
 	  else:
 	    action += '    if (%s) %s->accept(*this);\n' % (child, child)
 	else:
@@ -127,7 +127,7 @@ for node in arr:
 	action += '    ostr_ << %s;\n' % (a)
     print """\
   void
-  PrettyPrinter::visit (const %s& n)
+  PrettyPrinter::visit (rConst%s n)
   {
     // Don't warn about unused arguments.
     (void) n;

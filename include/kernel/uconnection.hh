@@ -30,7 +30,7 @@
 #  include <boost/thread.hpp>
 # endif
 # include <boost/shared_ptr.hpp>
-# include "libport/shared-ptr.hh"
+# include <libport/shared-ptr.hh>
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
 # include "kernel/ucomplaints.hh"
@@ -38,6 +38,7 @@
 namespace ast
 {
   class Nary;
+  typedef libport::shared_ptr<Nary> rNary;
 }
 
 namespace object
@@ -333,7 +334,7 @@ private:
   parser::UParser* parser_;
 
   /// The commands to be executed.
-  ast::Nary* active_command_;
+  ast::rNary active_command_;
 
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;

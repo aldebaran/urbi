@@ -3,6 +3,7 @@
 #ifndef PARSER_PARSE_RESULT_HH
 # define PARSER_PARSE_RESULT_HH
 
+# include <libport/shared-ptr.hh>
 # include <list>
 # include <string>
 
@@ -53,17 +54,17 @@ namespace parser
     /// The latest AST read by parse().
     ast_type* ast_get();
     /// Return the AST and reset \a ast_.
-    std::auto_ptr<ast_type> ast_take();
+    libport::shared_ptr<ast_type> ast_take();
     /// Same as \a ast_take, but assert the result.
-    std::auto_ptr<ast_type> ast_xtake();
+    libport::shared_ptr<ast_type> ast_xtake();
     /// Set \a ast_.
-    void ast_set(std::auto_ptr<ast_type> ast);
+    void ast_set(libport::shared_ptr<ast_type> ast);
     /// Give \a ast.
-    void ast_reset(ast_type* ast = 0);
+    void ast_reset(libport::shared_ptr<ast_type> ast = 0);
 
   private:
     /// The resulting AST.
-    std::auto_ptr<ast_type> ast_;
+      libport::shared_ptr<ast_type> ast_;
     /// \}
 
   public:

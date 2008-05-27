@@ -11,6 +11,7 @@
 # include <boost/tuple/tuple.hpp>
 
 # include "ast/default-visitor.hh"
+# include <ast/fwd.hh>
 # include "object/object.hh"
 # include "scheduler/scheduler.hh"
 # include "scheduler/job.hh"
@@ -41,7 +42,7 @@ namespace runner
     /// The new runner has no parent.
     Interpreter (rLobby lobby, rObject locals,
 		 scheduler::Scheduler& scheduler,
-		 const ast::Ast* ast,
+		 ast::rConstAst ast,
 		 bool free_ast_after_use,
 		 const libport::Symbol& name = SYMBOL());
 
@@ -51,7 +52,7 @@ namespace runner
 
     /// Create a copy of a runner starting with another ast.
     Interpreter (const Interpreter&,
-		 const ast::Ast* ast,
+		 ast::rConstAst ast,
 		 bool free_ast_after_use,
 		 const libport::Symbol& name = SYMBOL());
 
@@ -93,22 +94,19 @@ namespace runner
 			   const object::rList& args);
 
     /// Evaluate an expression in the current scope and return its result.
-    rObject eval (const ast::Ast&);
+    rObject eval (ast::rConstAst);
 
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
-    rObject eval_tag (const ast::Exp&);
+    rObject eval_tag (ast::rConstExp);
 
     /// Make an urbi function from an ast chunk
     rObject
-    make_code(const ast::Code& f) const;
+    make_code(ast::rConstCode f) const;
 
   protected:
     /// \name Evaluation.
     /// \{
-
-    std::pair<rObject, rObject>
-    target (const ast::Exp* n);
     typedef std::pair<bool, const Interpreter::rObject> locate_type;
 
     /// Build an evaluated arguments list containing \a tgt and
@@ -152,7 +150,7 @@ namespace runner
                               (While))
 
     /// Factor handling of Scope and Do
-    void visit (const ast::AbstractScope& e, rObject locals);
+    void visit (ast::rConstAbstractScope e, rObject locals);
     /// \}
 
 
@@ -175,7 +173,7 @@ namespace runner
 
   private:
     /// The root of the AST being executed.
-    const ast::Ast* ast_;
+    ast::rConstAst ast_;
 
     /// Should the AST be freed after use?
     bool free_ast_after_use_;

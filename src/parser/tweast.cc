@@ -15,10 +15,10 @@ namespace parser
   unsigned Tweast::count_ = 0;
 
   Tweast::Tweast()
-    : MetavarMap<ast::Call>::MetavarMap("call")
-    , MetavarMap<ast::Exp>::MetavarMap("exp")
-    , MetavarMap<ast::exps_type>::MetavarMap("exps")
-    , MetavarMap<ast::symbols_type>::MetavarMap("formals")
+    : MetavarMap<ast::rCall>::MetavarMap("call")
+    , MetavarMap<ast::rExp>::MetavarMap("exp")
+    , MetavarMap<ast::exps_type*>::MetavarMap("exps")
+    , MetavarMap<ast::symbols_type*>::MetavarMap("formals")
     , input_()
 #ifndef NDEBUG
     , unique_()
@@ -27,10 +27,10 @@ namespace parser
   }
 
   Tweast::Tweast (const std::string& str)
-    : MetavarMap<ast::Call>::MetavarMap("call")
-    , MetavarMap<ast::Exp>::MetavarMap("exp")
-    , MetavarMap<ast::exps_type>::MetavarMap("exps")
-    , MetavarMap<ast::symbols_type>::MetavarMap("formals")
+    : MetavarMap<ast::rCall>::MetavarMap("call")
+    , MetavarMap<ast::rExp>::MetavarMap("exp")
+    , MetavarMap<ast::exps_type*>::MetavarMap("exps")
+    , MetavarMap<ast::symbols_type*>::MetavarMap("formals")
     , input_(str)
 #ifndef NDEBUG
     , unique_()
@@ -54,10 +54,10 @@ namespace parser
     return o
       << "Input string:"
       << libport::incendl << input_.str () << libport::decendl
-      << static_cast<const MetavarMap<ast::Call>&>(*this)
-      << static_cast<const MetavarMap<ast::Exp>&>(*this)
-      << static_cast<const MetavarMap<ast::exps_type>&>(*this)
-      << static_cast<const MetavarMap<ast::symbols_type>&>(*this)
+      << static_cast<const MetavarMap<ast::rCall>&>(*this)
+      << static_cast<const MetavarMap<ast::rExp>&>(*this)
+      << static_cast<const MetavarMap<ast::exps_type*>&>(*this)
+      << static_cast<const MetavarMap<ast::symbols_type*>&>(*this)
       ;
   }
 

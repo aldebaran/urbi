@@ -39,9 +39,9 @@ do.hxx
 exp.cc
 exp.hh
 exp.hxx
-flavorable.cc
-flavorable.hh
-flavorable.hxx
+flavored.cc
+flavored.hh
+flavored.hxx
 float.cc
 float.hh
 float.hxx

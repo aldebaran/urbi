@@ -6,6 +6,7 @@
 #ifndef AST_PRINT_HH
 # define AST_PRINT_HH
 
+# include <ast/fwd.hh>
 # include <iosfwd>
 
 namespace ast

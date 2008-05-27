@@ -8,7 +8,7 @@ namespace ast
   operator<< (std::ostream& o, const Ast& a)
   {
     PrettyPrinter p (o);
-    p(a);
+    p(&a);
     return o;
   }
 

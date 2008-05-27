@@ -18,11 +18,11 @@ namespace ast
 
   class ParametricAst
     : public Cloner
-    , public parser::MetavarMap<ast::Exp>
+    , public parser::MetavarMap<ast::rExp>
   {
   public:
     typedef Cloner super_type;
-    typedef parser::MetavarMap<ast::Exp> exp_map_type;
+    typedef parser::MetavarMap<ast::rExp> exp_map_type;
 
     /// Build a ParametricAst whose textual part is \a s.
     ParametricAst(const std::string& s);
@@ -37,7 +37,7 @@ namespace ast
     /// Fire the substitution, and return the result.
     /// Calls clear.
     template <typename T>
-    T* result();
+    libport::shared_ptr<T> result();
 
     /// Check that the tables are empty.
     bool empty() const;
@@ -52,14 +52,14 @@ namespace ast
   protected:
     /// Import from super.
     using super_type::visit;
-    virtual void visit (const MetaExp& e);
+    CONST_VISITOR_VISIT_NODES((MetaExp));
 
     /// Metavariables manipulator.
-    template <typename T> T* take (unsigned s) throw (std::range_error);
+    template <typename T> T take (unsigned s) throw (std::range_error);
 
   private:
     /// The ast, possibly with meta-variables.
-    const Ast* ast_;
+    rConstAst ast_;
 
     /// The slot number for the next effective argument, starting at 0.
     unsigned count_;
@@ -71,7 +71,7 @@ namespace ast
   };
 
   /// Convenience wrapper around ParametricAst::result<Exp>.
-  Exp* exp (ParametricAst& t);
+  rExp exp (ParametricAst& t);
 
   /// Dump \a a on \a o.
   /// For debugging.

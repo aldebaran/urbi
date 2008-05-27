@@ -43,6 +43,7 @@ includes_map:
   "std::string":         '<string>'
   "symbols_type":        '"ast/symbols-type.hh"'
   "ufloat":              '<libport/ufloat.h>'
+  "libport::RefCounted": '<libport/ref-counted.hh>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
@@ -198,6 +199,7 @@ printer_cc_prologue: |2
 ## -------------- ##
 
 Ast:
+  super: 'libport::RefCounted'
   inline:
     header prologue: '# include "ast/fwd.hh"'
   attributes:
@@ -207,7 +209,8 @@ Ast:
         desc: Scanner position information
 
 Exp:
-  super: Ast
+  super:
+    - Ast
   inline:
     header inside: |2
         public:
@@ -237,15 +240,15 @@ MetaExp:
 Tag:
   super: Exp
   attributes:
-    - exp: { type: 'Exp*', desc: The tagging expression }
+    - exp: { type: 'rExp', desc: The tagging expression }
   printer:
     - ~exp
 
 TaggedStmt:
   super: Exp
   attributes:
-    - tag: { type: 'Tag*', desc: The tagging expression }
-    - exp: { type: 'Exp*', desc: The tagged expression }
+    - tag: { type: 'rTag', desc: The tagging expression }
+    - exp: { type: 'rExp', desc: The tagged expression }
   printer:
     - ~tag
     - '": "'
@@ -259,7 +262,7 @@ TaggedStmt:
 AbstractScope:
   super: Exp
   attributes:
-    - body:   { type: 'Exp*', desc: The scoped expression }
+    - body:   { type: 'rExp', desc: The scoped expression }
   printer:
     - '"{"'
     - 'libport::incendl'
@@ -270,24 +273,25 @@ AbstractScope:
 Scope:
   super: AbstractScope
   printer:
-    - '{ visit(static_cast<const AbstractScope&>(n)); }'
+    - '{ visit(n.unsafe_cast<const AbstractScope>()); }'
 
 Do:
   super: AbstractScope
   attributes:
-    - target: { type: 'Exp*', desc: The default target }
+    - target: { type: 'rExp', desc: The default target }
   default: |2
-    operator()(n.target_get());
-    visit(static_cast<typename Const<AbstractScope>::type&>(n));
+    operator()(n->target_get());
+    visit(libport::shared_ptr<typename Const<AbstractScope>::type>((AbstractScope*)n.get()));
   printer:
-    - '{ ostr_ << "do " << n.target_get() << " "; }'
-    - '{ visit(static_cast<const AbstractScope&>(n)); }'
+    - '{ ostr_ << "do " << *n->target_get() << " "; }'
+    - '{ visit(n.cast<const AbstractScope>()); }'
 
 ## -------------------- ##
 ## Composing commands.  ##
 ## -------------------- ##
 
-Flavorable:
+Flavored:
+  super: Exp
   attributes:
     - flavor: { type: flavor_type, desc: Execution model }
 
@@ -308,19 +312,18 @@ Message:
 
 Stmt:
   super:
-    - Exp
-    - Flavorable
+    - Flavored
   desc: /// An expression with its flavor
   attributes:
     - expression:
-        type: 'Exp*'
+        type: 'rExp'
         desc: Unqualified expression
         access: rw
   printer:
     - ~expression
     - '{
-         if (n.flavor_get() != flavor_none)
-           ostr_ << n.flavor_get();
+         if (n->flavor_get() != flavor_none)
+           ostr_ << n->flavor_get();
        }'
 
 Nary:
@@ -338,7 +341,7 @@ Nary:
         access: rW
         init: "false"
   default: |2
-    foreach (typename Const<ast::Ast>::type& c, n.children_get())
+    foreach (libport::shared_ptr<typename Const<ast::Ast>::type> c, n->children_get())
       operator()(c);
 
   printer:
@@ -358,7 +361,7 @@ Nary:
           bool empty() const;
 
           /// Push a new expression, creating a Statement node.
-          void push_back(Exp* e, flavor_type f = flavor_none);
+          void push_back(rExp e, flavor_type f = flavor_none);
 
           /// Push a message.
           void message_push(const std::string& text, const std::string& tag);
@@ -376,16 +379,16 @@ Nary:
           void pop_back ();
 
           /// Splice the content of \a rhs at the back this list.
-          void splice_back (Nary& rhs);
+          void splice_back (rNary rhs);
 
        private:
           /// Return the last child if there is one of the right type.
           template <typename T>
-          T* back ();
+          libport::shared_ptr<T> back ();
 
           /// Return the last child if there is one of the right type.
           template <typename T>
-          const T* back () const;
+          libport::shared_ptr<const T> back () const;
 
           /// Adjust the whole location.
           void location_adjust ();
@@ -424,13 +427,13 @@ Nary:
             location_.initialize(0);
           else
           {
-            location_.begin = children_->front().location_get().begin;
-            location_.end   = children_->back() .location_get().end;
+            location_.begin = children_->front()->location_get().begin;
+            location_.end   = children_->back() ->location_get().end;
           }
         }
 
         void
-        Nary::push_back(Exp* e, flavor_type f)
+        Nary::push_back(rExp e, flavor_type f)
         {
           children_->push_back(new Stmt(e->location_get(), f, e));
           location_adjust();
@@ -443,23 +446,25 @@ Nary:
         }
 
         template <typename T>
-        T*
+        libport::shared_ptr<T>
         Nary::back ()
         {
-          return empty() ? 0 : dynamic_cast<T*>(&children_->back());
+          return empty() ? libport::shared_ptr<T>()
+            : children_->back().unsafe_cast<T>();
         }
 
         template <typename T>
-        const T*
+        libport::shared_ptr<const T>
         Nary::back () const
         {
-          return empty() ? 0 : dynamic_cast<const T*>(&children_->back());
+          return empty() ? libport::shared_ptr<const T>()
+            : children_->back().unsafe_cast<const T>();
         }
 
         void
         Nary::back_flavor_set (flavor_type k, const loc& l)
         {
-          if (Stmt* b = back<Stmt>())
+          if (rStmt b = back<Stmt>())
           {
             b->flavor_get () = k;
             b->location_set(b->location_get () + l);
@@ -470,14 +475,14 @@ Nary:
         void
         Nary::back_flavor_set (flavor_type k)
         {
-          if (Stmt* b = back<Stmt>())
+          if (rStmt b = back<Stmt>())
              b->flavor_get () = k;
         }
 
         flavor_type
         Nary::back_flavor_get() const
         {
-          if (const Stmt* b = back<Stmt>())
+          if (rConstStmt b = back<Stmt>())
             return b->flavor_get ();
           return flavor_none;
         }
@@ -490,9 +495,11 @@ Nary:
         }
 
         void
-        Nary::splice_back(Nary& rhs)
+        Nary::splice_back(rNary rhs)
         {
-          children_->transfer(children_->end(), rhs.children_get());
+          foreach (rExp elt, rhs->children_get())
+            children_->push_back(elt);
+          rhs->clear();
           location_adjust();
         }
 
@@ -501,11 +508,11 @@ Binary:
   desc: /// Expressions with two sub expressions
   attributes:
     - lhs:
-        type: 'Exp*'
+        type: 'rExp'
         desc: Left-hand side expression
         access: rwW
     - rhs:
-        type: 'Exp*'
+        type: 'rExp'
         desc: Right-hand side expression
         access: rwW
 
@@ -529,13 +536,13 @@ If:
   super: Exp
   attributes:
     - test:
-        type: Exp*
+        type: rExp
         desc: Condition to select thenclause or elseclause
     - thenclause:
-        type: Exp*
+        type: rExp
         desc: Executed if test is true
     - elseclause:
-        type: Exp*
+        type: rExp
         desc: Executed if test is false
   printer:
     - '"if ("'
@@ -551,20 +558,19 @@ If:
 
 While:
   super:
-    - Exp
-    - Flavorable
+    - Flavored
   attributes:
     - test:
-        type: Exp*
+        type: rExp
         desc: Condition to continue
     - body:
-        type: Exp*
+        type: rExp
         desc: Executed if test is true
   printer:
     - '"while"'
     - '{
-         if (n.flavor_get() != flavor_semicolon)
-           ostr_ << n.flavor_get();
+         if (n->flavor_get() != flavor_semicolon)
+           ostr_ << n->flavor_get();
        }'
     - '"("'
     - ~test
@@ -575,21 +581,20 @@ While:
 
 Foreach:
   super:
-    - Exp
-    - Flavorable
+    - Flavored
   attributes:
     - index:
         type: 'libport::Symbol'
         desc: The variable storing de values on which iterate.
     - list:
-        type: Exp*
+        type: rExp
         desc: The list containing the values on which iterate.
     - body:
-        type: Exp*
+        type: rExp
         desc: Executed for each value in the list
   printer:
     - '"for "'
-    - '{ n.index_get().print_escaped(ostr_); }'
+    - '{ n->index_get().print_escaped(ostr_); }'
     - '" in "'
     - ~list
     - '" {"'
@@ -614,20 +619,20 @@ Throw:
         type: 'Throw::exception_kind'
         desc: The kind of the exception to throw.
     - value:
-        type: 'Exp*'
+        type: 'rExp'
         desc: The value to throw when visited. May be empty.
         mandatory: False
   printer:
     - '{
-         switch (n.kind_get())
+         switch (n->kind_get())
          {
            case Throw::exception_return: ostr_ << "return"; break;
            case Throw::exception_break:  ostr_ << "break";  break;
          }
        }'
     - "{
-         if (n.value_get())
-           ostr_ << ' ' << *n.value_get();
+         if (n->value_get())
+           ostr_ << ' ' << *n->value_get();
        }"
 
 Noop:
@@ -673,7 +678,7 @@ Slot:
     - name:
         type: 'libport::Symbol'
     - value:
-        type: 'Exp*'
+        type: 'rExp'
   printer:
     - $name
     - '": "'
@@ -689,7 +694,7 @@ String:
   printer:
     - "'\"'"
 # FIXME: It really stinks not to be able to use $value here.
-    - libport::escape(n.value_get())
+    - libport::escape(n->value_get())
     - "'\"'"
 
 List:
@@ -701,10 +706,10 @@ List:
         desc: Stored list value
   printer:
     - '"["'
-    - 'libport::separate (n.value_get(), ", ")'
+    - 'libport::separate (n->value_get(), ", ")'
     - '"]"'
   default: |2
-    foreach (typename Const<ast::Exp>::type& exp, n.value_get())
+    foreach (libport::shared_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
       operator()(exp);
 
 Call:
@@ -725,25 +730,25 @@ Call:
     inline inside: |2
           inline bool Call::target_implicit() const
           {
-            return args_->front().implicit();
+            return args_->front()->implicit();
           }
   default:
-      foreach (typename Const<ast::Exp>::type& e, n.args_get())
+      foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, n->args_get())
         operator()(e);
   printer:
     - '{
-         if (!dynamic_cast<const Implicit*>(&n.args_get().front()))
-           ostr_ << n.args_get().front() << " . ";
+         if (!(n->args_get().front().unsafe_cast<const Implicit>()))
+           ostr_ << *n->args_get().front() << " . ";
        }'
     - '{
-         n.name_get().print_escaped(ostr_);
+         n->name_get().print_escaped(ostr_);
        }'
     - '{
-         if (n.args_get ().size() >= 2)
+         if (n->args_get ().size() >= 2)
            ostr_
             << "("
             << libport::incindent
-            << libport::separate(boost::make_iterator_range(n.args_get(), 1, 0),
+            << libport::separate(boost::make_iterator_range(n->args_get(), 1, 0),
                                   ", ")
             << libport::decindent
             << ")";
@@ -757,7 +762,7 @@ Code:
         mandatory: False
         desc: Formal arguments.  If null, a lazy function.
     - body:
-        type: 'AbstractScope*'
+        type: 'rAbstractScope'
         access: rwW
         mandatory: False
         desc: Body
@@ -773,14 +778,14 @@ Code:
           }
   printer:
     - '{
-         if (dynamic_cast<const ast::Closure*>(&n))
+         if (n.unsafe_cast<const ast::Closure>())
            ostr_ << "closure ";
          else
            ostr_ << "function ";
        }'
     - '{
-         if (n.formals_get ())
-           ostr_ << "(" << *n.formals_get() << ") ";
+         if (n->formals_get ())
+           ostr_ << "(" << *n->formals_get() << ") ";
        }'
     - ~body
 
