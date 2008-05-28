@@ -41,7 +41,8 @@ class Global.Group
     var outer_call = call |
     function action (m)
     {
-      res << m.callMessage(outer_call)
+      var f = List.getSlot("push_back").voidVersion |
+      getSlot("f").apply([res.members, m.callMessage(outer_call)])
     }|
     members.each(getSlot("action"))|
     res
