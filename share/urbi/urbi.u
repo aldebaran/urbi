@@ -525,7 +525,16 @@ load("urbi/semaphore.u");
 ## ----------- ##
 
 # This class is used as a flag to recognize all kind of executable code
-class Global.Executable;
+class Global.Executable
+{
+  function voidVersion ()
+  {
+    var res = getSlot("self").clone |
+    getSlot("res").acceptVoid = true |
+    return getSlot("res") |
+  }
+};
+
 [Code, Primitive, Delegate].each(function (c) { c.addProto(Executable) });
 
 ## ------ ##
