@@ -103,6 +103,13 @@ namespace runner
 	  new_state =
 	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)));
 	}
+	catch (const object::UrbiException& ue)
+	{
+	  show_error_(ue);
+	  tags_need_rebuilding = true;
+	  job = jobs_.erase(job);
+	  continue;
+	}
 	catch (const kernel::exception& ke)
 	{
 	  std::cerr << "at condition triggered an exception: " << ke.what()
@@ -114,6 +121,7 @@ namespace runner
 	catch (...)
 	{
 	  std::cerr << "at condition triggered an exception\n";
+	  tags_need_rebuilding = true;
 	  job = jobs_.erase(job);
 	  continue;
 	}

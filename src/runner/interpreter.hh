@@ -163,9 +163,11 @@ namespace runner
     virtual void show_backtrace(const std::string& chan);
     virtual backtrace_type backtrace_get() const;
 
+  protected:
+    void show_error_ (const object::UrbiException& ue);
+
   private:
     void init();
-    void show_error_ (const object::UrbiException& ue);
     void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
     rObject apply_urbi (const rObject& func,
 			const libport::Symbol& msg,
