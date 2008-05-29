@@ -859,7 +859,6 @@ namespace runner
 
     // If the Nary is not the toplevel one, all subrunners must be finished when
     // the runner exits the Nary node.
-    // FIXME: There is a memory leak if the Nary is a toplevel one.
     if (!e->toplevel_get ())
     {
       foreach(const scheduler::rJob& r, runners)
@@ -1089,10 +1088,7 @@ namespace runner
       }
       catch (object::BreakException&)
       {
-	// FIXME: Fix for flavor "," and "&".
-	if (e->flavor_get() == ast::flavor_semicolon ||
-	    e->flavor_get() == ast::flavor_pipe)
-	  break;
+	break;
       }
       catch (object::ContinueException&)
       {
