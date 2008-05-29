@@ -45,6 +45,19 @@ namespace binder
     }
   }
 
+  ast::rCall Binder::changeSlot (const ast::loc& l,
+                                 const libport::Symbol& name,
+                                 const libport::Symbol& method,
+                                 ast::rConstExp value)
+  {
+      ast::exps_type* args = new ast::exps_type();
+      args->push_back(new ast::Implicit(l));
+      args->push_back(new ast::String(l, name));
+      super_type::operator() (value);
+      args->push_back(result_.unsafe_cast<ast::Exp>());
+      return new ast::Call(l, method, args);
+  }
+
   void Binder::visit(ast::rConstAssignment input)
   {
     int local = isLocal(input->what_get());
@@ -52,13 +65,10 @@ namespace binder
       super_type::visit(input);
     else
     {
-      ast::exps_type* args = new ast::exps_type();
-      args->push_back(new ast::Implicit(input->location_get()));
-      args->push_back(new ast::String(input->location_get(), input->what_get()));
-      super_type::operator() (input->value_get());
-      args->push_back(result_.unsafe_cast<ast::Exp>());
-      ast::rCall res = new ast::Call(input->location_get(),
-                                    SYMBOL(updateSlot), args);
+      ast::rCall res = changeSlot(input->location_get(),
+                                  input->what_get(),
+                                  SYMBOL(updateSlot),
+                                  input->value_get());
       if (local)
         targetContext(res, depth_ - local);
       else
@@ -71,12 +81,10 @@ namespace binder
   {
     if (setOnSelf_.back())
     {
-      ast::exps_type* args = new ast::exps_type;
-      args->push_back(new ast::Implicit(input->location_get()));
-      args->push_back(new ast::String(input->location_get(), input->what_get()));
-      super_type::operator() (input->value_get());
-      args->push_back(result_.unsafe_cast<ast::Exp>());
-      ast::rCall res = new ast::Call(input->location_get(), SYMBOL(setSlot), args);
+      ast::rCall res = changeSlot(input->location_get(),
+                                  input->what_get(),
+                                  SYMBOL(setSlot),
+                                  input->value_get());
       targetSelf(res);
       result_ = res;
     }

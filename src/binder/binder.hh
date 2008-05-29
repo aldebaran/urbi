@@ -77,6 +77,11 @@ namespace binder
       int isLocal(const libport::Symbol& name);
       /// Factored method to handle scopes.
       ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
+      /// Factored method to create updateSlot/setSlot calls.
+      ast::rCall changeSlot (const ast::loc& l,
+                             const libport::Symbol& name,
+                             const libport::Symbol& method,
+                             ast::rConstExp value);
   };
 
 } // namespace binder
