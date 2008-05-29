@@ -12,13 +12,14 @@ namespace ast
 {
   class Ast;
   typedef libport::shared_ptr<Ast> rAst;
+  typedef libport::shared_ptr<const Ast> rConstAst;
 }
 
 namespace binder
 {
 
   /// Bind names in \a a.
-  void bind(ast::rAst a);
+  ast::rAst bind(ast::rConstAst a);
 
 } // namespace binder
 

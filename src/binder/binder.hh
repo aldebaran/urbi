@@ -9,7 +9,7 @@
 # include <libport/finally.hh>
 # include <map>
 
-# include "ast/default-visitor.hh"
+# include <ast/cloner.hh>
 # include "ast/all.hh"
 # include "object/fwd.hh"
 
@@ -19,13 +19,13 @@ namespace binder
 {
 
   /// Ast local variables binder.
-  class Binder : public ast::DefaultVisitor
+  class Binder : public ast::Cloner
   {
     public:
       /// \name Useful shorthands.
       /// \{
       /// Super class type.
-      typedef ast::DefaultVisitor super_type;
+      typedef ast::Cloner super_type;
       /// Import rObject
       typedef object::rObject rObject;
       /// \}
@@ -43,14 +43,14 @@ namespace binder
       using super_type::visit;
 
     protected:
-      VISITOR_VISIT_NODES((Call)
-                          (Closure)
-                          (Do)
-                          (Foreach)
-                          (Function)
-                          (Scope));
+      CONST_VISITOR_VISIT_NODES((Call)
+                                (Closure)
+                                (Do)
+                                (Foreach)
+                                (Function)
+                                (Scope));
     private:
-      typedef std::list<std::pair<ast::rAst, int> > Bindings;
+      typedef std::list<std::pair<ast::rConstAst, int> > Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
       Environment env_;
@@ -63,7 +63,7 @@ namespace binder
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
-      void bind(const libport::Symbol& var, ast::rAst decl);
+      void bind(const libport::Symbol& var, ast::rConstAst decl);
       /// Retarget a call according to whether the \a variable is set.
       void retarget(ast::rCall call, const libport::Symbol& var);
       /// Retarget a call to getSlot("self")
@@ -74,7 +74,7 @@ namespace binder
       /// number of imbriqued function otherwise.
       int isLocal(const libport::Symbol& name);
       /// Factored method to handle scopes.
-      void handleScope(ast::rAbstractScope scope, bool setOnSelf);
+      ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
   };
 
 } // namespace binder

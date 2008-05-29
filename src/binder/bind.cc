@@ -3,10 +3,11 @@
 
 namespace binder
 {
-  void
-  bind(ast::rAst a)
+  ast::rAst
+  bind(ast::rConstAst a)
   {
     Binder bind;
     bind(a);
+    return bind.result_get();
   }
 } // namespace binder

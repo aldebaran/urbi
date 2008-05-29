@@ -38,6 +38,7 @@
 #include <libport/ref-pt.hh>
 
 #include "ast/nary.hh"
+#include "ast/print.hh"
 
 #include "binder/bind.hh"
 
@@ -258,7 +259,8 @@ UConnection::received (const char* buffer, size_t length)
     if (ast::rNary ast = result->ast_take())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
-      binder::bind(ast);
+      ast = binder::bind(ast).unsafe_cast<ast::Nary>();
+      assert(ast);
       ECHO ("bound: {{{" << *ast << "}}}");
       // Append to the current list.
       active_command_->splice_back(ast);

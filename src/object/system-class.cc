@@ -90,7 +90,8 @@ namespace object
     dynamic_cast<runner::Interpreter&>(r)(errs);
     if (ast::rNary ast = p->ast_take())
     {
-      binder::bind(ast);
+      ast = binder::bind(ast).unsafe_cast<ast::Nary>();
+      assert(ast);
       return dynamic_cast<runner::Interpreter&>(r).eval(ast);
     }
     else

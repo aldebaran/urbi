@@ -45,9 +45,10 @@ namespace binder
     }
   }
 
-  void Binder::visit (ast::rCall call)
+  void Binder::visit (ast::rConstCall input)
   {
-    super_type::visit (call);
+    super_type::visit (input);
+    ast::rCall call = result_.unsafe_cast<ast::Call>();
     libport::Symbol name = call->name_get();
     // If this is a qualified call, nothing particular to do
     if (call->target_implicit())
@@ -97,10 +98,10 @@ namespace binder
       targetSelf(call);
   }
 
-  void Binder::visit (ast::rForeach f)
+  void Binder::visit (ast::rConstForeach input)
   {
-    bind(f->index_get(), f);
-    super_type::visit(f);
+    bind(input->index_get(), input);
+    super_type::visit(input);
   }
 
   void Binder::targetSelf(ast::rCall call)
@@ -134,50 +135,60 @@ namespace binder
     call->args_get().push_front(context);
   }
 
-  void Binder::visit (ast::rScope scope)
+  void Binder::visit (ast::rConstScope input)
   {
-    handleScope(scope, false);
+    result_ = new ast::Scope(input->location_get(), handleScope(input, false));
   }
 
-  void Binder::visit (ast::rDo scope)
+  void Binder::visit (ast::rConstDo input)
   {
-    scope->target_get()->accept(*this);
-    handleScope(scope, true);
+    operator() (input->target_get());
+    ast::rExp target = result_.unsafe_cast<ast::Exp>();
+    result_ = new ast::Do(input->location_get(),
+                          handleScope(input, true),
+                          target);
   }
 
-  void Binder::handleScope(ast::rAbstractScope scope, bool setOnSelf)
+  ast::rExp Binder::handleScope(ast::rConstAbstractScope scope, bool setOnSelf)
   {
     libport::Finally finally;
+
+    // Push a finally on unbind_, and destroy it at the scope
+    // exit. Since bound variables register themselves for unbinding
+    // in unbind_'s top element, they will be unbound at scope exit.
     unbind_.push_back(libport::Finally());
     finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
+
     setOnSelf_.push_back(setOnSelf);
     finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
-    super_type::visit (scope);
+
+    operator() (scope->body_get());
+    return result_.unsafe_cast<ast::Exp>();
   }
 
-  void Binder::visit(ast::rFunction f)
+  void Binder::visit(ast::rConstFunction input)
   {
     depth_++;
-    if (f->formals_get())
+    if (input->formals_get())
     {
-      foreach (const libport::Symbol& arg, *f->formals_get())
-	bind(arg, f);
+      foreach (const libport::Symbol& arg, *input->formals_get())
+	bind(arg, input);
     }
-    super_type::visit (f);
+    super_type::visit (input);
     depth_--;
   }
 
-  void Binder::visit(ast::rClosure f)
+  void Binder::visit(ast::rConstClosure input)
   {
-    if (f->formals_get())
+    if (input->formals_get())
     {
-      foreach (const libport::Symbol& arg, *f->formals_get())
-	bind(arg, f);
+      foreach (const libport::Symbol& arg, *input->formals_get())
+	bind(arg, input);
     }
-    super_type::visit (f);
+    super_type::visit(input);
   }
 
-  void Binder::bind(const libport::Symbol& var, ast::rAst decl)
+  void Binder::bind(const libport::Symbol& var, ast::rConstAst decl)
   {
     env_[var].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<
