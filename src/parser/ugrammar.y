@@ -200,8 +200,7 @@
     ast_slot_set (const loc& l, ast::rCall lvalue,
 		  ast::rExp value)
     {
-      const ast::exps_type& args = lvalue->args_get();
-      if (args.size() == 1 && args.front()->implicit())
+      if (lvalue->args_get().front()->implicit())
         return new ast::Declaration(l, lvalue->name_get(), value);
       else
         return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
