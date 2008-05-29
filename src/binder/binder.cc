@@ -97,28 +97,28 @@ namespace binder
   void Binder::visit (ast::rConstCall input)
   {
     const ast::exps_type& args = input->arguments_get();
+    libport::Symbol name = input->name_get();
+    bool implicit = input->target_implicit();
     if (args.empty()
-        && input->target_implicit()
-        && isLocal(input->name_get()) == depth_)
+        && implicit
+        && isLocal(name) == depth_
+        || name == SYMBOL(call)
+        || name == SYMBOL(locals)
+        || name == SYMBOL(self))
     {
       result_ = new ast::Local(input->location_get(),
-                               input->name_get());
+                               name);
       return;
     }
     super_type::visit (input);
     ast::rCall call = result_.unsafe_cast<ast::Call>();
-    libport::Symbol name = call->name_get();
     // If this is a qualified call, nothing particular to do
-    if (call->target_implicit())
+    if (implicit)
     {
-      if (name == SYMBOL(call)
-          || name == SYMBOL(locals)
-          || name == SYMBOL(self))
-      {
-        retarget(call, name);
-        return;
-      }
-      else if (name == SYMBOL(getSlot)
+      assert(name != SYMBOL(call)
+             && name != SYMBOL(locals)
+             && name != SYMBOL(self));
+      if (name == SYMBOL(getSlot)
                || name == SYMBOL(locateSlot)
                || name == SYMBOL(updateSlot)
                || name == SYMBOL(removeSlot))
