@@ -45,6 +45,7 @@ namespace binder
     protected:
       CONST_VISITOR_VISIT_NODES((Call)
                                 (Closure)
+                                (Declaration)
                                 (Do)
                                 (Foreach)
                                 (Function)

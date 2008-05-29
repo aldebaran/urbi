@@ -795,6 +795,21 @@ Function:
 Closure:
   super: Code
 
+Declaration:
+  super: Exp
+  attributes:
+    - what:
+        type: 'libport::Symbol'
+        desc: Name of the symbol being declared.
+    - value:
+        type: rExp
+        desc: Initialization value.
+  printer:
+    - '"var "'
+    - $what
+    - '" = "'
+    - ~value
+
 # Local Variables:
 # mode: yaml
 # End:

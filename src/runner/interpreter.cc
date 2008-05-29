@@ -571,6 +571,11 @@ namespace runner
     // ECHO (AST(e) << " result: " << *current_);
   }
 
+  void
+  Interpreter::visit (ast::rConstDeclaration d)
+  {
+    locals_->slot_set(d->what_get(), eval(d->value_get()));
+  }
 
   void
   Interpreter::visit (ast::rConstFloat e)

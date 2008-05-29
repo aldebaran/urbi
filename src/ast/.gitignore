@@ -30,6 +30,9 @@ closure.hxx
 code.cc
 code.hh
 code.hxx
+declaration.cc
+declaration.hh
+declaration.hxx
 default-visitor.hh
 default-visitor.hxx
 default-visitor.stamp

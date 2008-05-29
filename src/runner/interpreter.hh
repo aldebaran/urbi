@@ -132,6 +132,7 @@ namespace runner
                               (Call)
                               (Closure)
                               (Do)
+                              (Declaration)
                               (Float)
                               (Foreach)
                               (Function)

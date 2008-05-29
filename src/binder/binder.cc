@@ -45,6 +45,26 @@ namespace binder
     }
   }
 
+  void Binder::visit(ast::rConstDeclaration input)
+  {
+    if (setOnSelf_.back())
+    {
+      ast::exps_type* args = new ast::exps_type;
+      args->push_back(new ast::Implicit(input->location_get()));
+      args->push_back(new ast::String(input->location_get(), input->what_get()));
+      super_type::operator() (input->value_get());
+      args->push_back(result_.unsafe_cast<ast::Exp>());
+      ast::rCall res = new ast::Call(input->location_get(), SYMBOL(setSlot), args);
+      targetSelf(res);
+      result_ = res;
+    }
+    else
+    {
+      bind(input->what_get(), input);
+      super_type::visit(input);
+    }
+  }
+
   void Binder::visit (ast::rConstCall input)
   {
     super_type::visit (input);
@@ -59,16 +79,6 @@ namespace binder
       {
         retarget(call, name);
         return;
-      }
-      if (name == SYMBOL(setSlot))
-      {
-        if (boost::optional<libport::Symbol> var = getFirstArg(call))
-          if (setOnSelf_.back())
-            targetSelf(call);
-          else
-            bind(var.get(), call);
-        else
-          targetSelf(call);
       }
       else if (name == SYMBOL(getSlot)
                || name == SYMBOL(locateSlot)
