@@ -45,7 +45,6 @@ XFAIL_TESTS +=					\
 1.x/every.chk					\
 1.x/every-emit.chk				\
 1.x/freeze-time.chk				\
-1.x/groups.chk					\
 1.x/hash-and-list.chk				\
 1.x/hierarchical-tags.chk			\
 1.x/init-in-pipe-with-time.chk			\

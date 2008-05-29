@@ -37,15 +37,20 @@ class Global.Group
   // arguments. There's no other way to do it for now.
   function fallback
   {
-    var res = Group.new |
+    var results = [] |
     var outer_call = call |
     function action (m)
     {
       var f = List.getSlot("push_back").voidVersion |
-      getSlot("f").apply([res.members, m.callMessage(outer_call)])
-    }|
-    members.each(getSlot("action"))|
-    res
+      getSlot("f").apply([results, m.callMessage(outer_call)])
+    } |
+    members.each(getSlot("action")) |
+    # If the resulting group contains only void, return void.
+    # FIXME: Use methodToFunction.
+    if (results.all(function (i) { i.isVoid }.voidVersion))
+      void
+    else
+      Group.getSlot("new").apply([Group] + results)
   };
 
   [
