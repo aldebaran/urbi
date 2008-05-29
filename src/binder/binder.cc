@@ -99,9 +99,9 @@ namespace binder
     const ast::exps_type& args = input->arguments_get();
     libport::Symbol name = input->name_get();
     bool implicit = input->target_implicit();
-    if (args.empty()
-        && implicit
-        && isLocal(name) == depth_
+    if ((args.empty()
+	 && implicit
+	 && isLocal(name) == depth_)
         || name == SYMBOL(call)
         || name == SYMBOL(locals)
         || name == SYMBOL(self))
