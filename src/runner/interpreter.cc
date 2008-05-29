@@ -266,8 +266,7 @@ namespace runner
     // tags.
 
     JAECHO ("lhs", e->lhs_get ());
-    scheduler::rJob lhs =
-      new Interpreter (*this, ast::new_clone(e->lhs_get ()), true);
+    scheduler::rJob lhs = new Interpreter(*this, e->lhs_get(), true);
 
     // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
@@ -615,6 +614,9 @@ namespace runner
       runners.reserve(content.size());
 
     bool first_iteration = true;
+    ast::rConstAst body = e->body_get();
+    ast::flavor_type flavor = e->flavor_get();
+    libport::Symbol index = e->index_get();
 
     // Iterate on each value.
     foreach (const rObject& o, content)
@@ -623,16 +625,15 @@ namespace runner
       rObject locals = object::Object::fresh();
       locals->locals_set(true);
       locals->proto_add(locals_);
-      locals->slot_set(e->index_get(), o);
+      locals->slot_set(index, o);
 
       // for& ... in loop.
-      if (e->flavor_get() == ast::flavor_and)
+      if (flavor == ast::flavor_and)
       {
 	// Create the new runner and launch it. We create a link so
 	// that an error in evaluation will stop other evaluations
 	// as well and propagate the exception.
-	Interpreter* new_runner =
-          new Interpreter(*this, ast::new_clone(e->body_get()), true);
+	Interpreter* new_runner = new Interpreter(*this, body, true);
 	link(new_runner);
 	runners.push_back(new_runner);
 	new_runner->locals_ = locals;
@@ -646,11 +647,11 @@ namespace runner
 	if (first_iteration)
 	  first_iteration = false;
 	else
-	  MAYBE_YIELD(e->flavor_get());
+	  MAYBE_YIELD(flavor);
 
 	try
 	{
-	  operator() (e->body_get());
+	  operator() (body);
 	}
 	catch (object::BreakException&)
 	{
