@@ -367,6 +367,7 @@
 	TOK_EQ           "="
 	TOK_BREAK        "break"
 	TOK_CLOSURE      "closure"
+	TOK_CONTINUE     "continue"
 	TOK_COLON        ":"
 	TOK_DELETE       "delete"
 	TOK_ELSE         "else"
@@ -1042,6 +1043,10 @@ stmt:
 | "break"
     {
       $$ = new ast::Throw(@$, ast::Throw::exception_break, 0);
+    }
+| "continue"
+    {
+      $$ = new ast::Throw(@$, ast::Throw::exception_continue, 0);
     }
 | "whenever" "(" expr ")" nstmt %prec CMDBLOCK
     {

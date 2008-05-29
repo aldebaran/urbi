@@ -34,6 +34,14 @@ namespace object
     COMPLETE_EXCEPTION (BreakException)
   };
 
+  /// \c ContinueException, thrown to manage break keyword.
+  class ContinueException : public FlowException
+  {
+  public:
+    explicit ContinueException(const ast::loc&);
+    COMPLETE_EXCEPTION (ContinueException)
+  };
+
   /// \c ReturnException, thrown to manage return keyword.
   class ReturnException : public FlowException
   {

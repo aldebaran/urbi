@@ -611,8 +611,9 @@ Throw:
         public:
           enum exception_kind
           {
-            exception_return,
             exception_break,
+            exception_continue,
+            exception_return,
           };
   attributes:
     - kind:
@@ -626,8 +627,9 @@ Throw:
     - '{
          switch (n->kind_get())
          {
-           case Throw::exception_return: ostr_ << "return"; break;
-           case Throw::exception_break:  ostr_ << "break";  break;
+           case Throw::exception_break:    ostr_ << "break";  break;
+           case Throw::exception_continue: ostr_ << "continue"; break;
+           case Throw::exception_return:   ostr_ << "return"; break;
          }
        }'
     - "{

@@ -480,6 +480,7 @@ FLAVOR   [;|,&]?
 "break"         RETURN(BREAK);
 "class"         RETURN(CLASS);
 "closure"       RETURN(CLOSURE);
+"continue"      RETURN(CONTINUE);
 "delete"        RETURN(DELETE);
 "delgroup"      RETURN(DELGROUP);
 "do"		RETURN(DO);

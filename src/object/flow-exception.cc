@@ -18,6 +18,11 @@ namespace object
   {
   }
 
+  ContinueException::ContinueException(const ast::loc& location)
+    : FlowException(location)
+  {
+  }
+
   ReturnException::ReturnException (const ast::loc& location,
 				    object::rObject result)
     : FlowException(location)

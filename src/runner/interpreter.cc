@@ -357,6 +357,12 @@ namespace runner
       propagate_error_(error, be.location_get());
       throw error;
     }
+    catch (object::ContinueException& be)
+    {
+      object::PrimitiveError error("continue", "outside a loop");
+      propagate_error_(error, be.location_get());
+      throw error;
+    }
     catch (object::ReturnException& re)
     {
       current_ = re.result_get();
@@ -657,6 +663,9 @@ namespace runner
 	{
 	  break;
 	}
+	catch (object::ContinueException&)
+	{
+	}
 	// Restore previous locals_, even if an exception was thrown.
 	PROPAGATE_EXCEPTION(e);
       }
@@ -803,6 +812,8 @@ namespace runner
           }
 	  CATCH_FLOW_EXCEPTION(object::BreakException,
 			       "break", "outside a loop")
+	  CATCH_FLOW_EXCEPTION(object::ContinueException,
+			       "continue", "outside a loop")
 	  CATCH_FLOW_EXCEPTION(object::ReturnException,
 			       "return", "outside a function")
 
@@ -840,6 +851,8 @@ namespace runner
 	}
         CATCH_FLOW_EXCEPTION(object::BreakException,
 			     "break", "outside a loop")
+	CATCH_FLOW_EXCEPTION(object::ContinueException,
+			     "continue", "outside a loop")
         CATCH_FLOW_EXCEPTION(object::ReturnException,
                              "return", "outside a function")
       }
@@ -1040,6 +1053,9 @@ namespace runner
       case ast::Throw::exception_break:
 	throw object::BreakException(e->location_get());
 
+    case ast::Throw::exception_continue:
+      throw object::ContinueException(e->location_get());
+
       case ast::Throw::exception_return:
 	if (e->value_get())
 	  operator() (e->value_get());
@@ -1078,7 +1094,10 @@ namespace runner
 	if (e->flavor_get() == ast::flavor_semicolon ||
 	    e->flavor_get() == ast::flavor_pipe)
 	  break;
-      };
+      }
+      catch (object::ContinueException&)
+      {
+      }
     }
     current_ = object::void_class;
   }
