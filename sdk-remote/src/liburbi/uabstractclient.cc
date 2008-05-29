@@ -542,7 +542,10 @@ namespace urbi
       //if (s->tag && s->tag[0])
       //  s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** stop"));
 
-      s->uc->send("speaker->blend=speaker.sendsoundsaveblend;");
+      std::string rDevice = (s->device) ? s->device : "speaker";
+      std::string message = rDevice + "->blend=" +
+	rDevice + ".sendsoundsaveblend;";
+      s->uc->send(message.c_str ());
       if (s->tag && s->tag[0])
 	s->uc->send("%s << 1;", s->tag);
       free(s->buffer);
@@ -582,8 +585,10 @@ namespace urbi
     if (sound.soundFormat == SOUND_WAV
 	|| sound.soundFormat == SOUND_RAW)
     {
-      send("speaker.sendsoundsaveblend = speaker->blend;"
-	   "speaker->blend=queue;");
+      std::string rDevice = (device) ? device : "speaker";
+      std::string message = rDevice + ".sendsoundsaveblend = " +
+	rDevice + "->blend;" + rDevice + "->blend=queue;";
+      send(message.c_str ());
       sendSoundData *s = new sendSoundData();
       char utag[16];
       makeUniqueTag(utag);
