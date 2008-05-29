@@ -45,6 +45,28 @@ namespace binder
     }
   }
 
+  void Binder::visit(ast::rConstAssignment input)
+  {
+    int local = isLocal(input->what_get());
+    if (local == depth_)
+      super_type::visit(input);
+    else
+    {
+      ast::exps_type* args = new ast::exps_type();
+      args->push_back(new ast::Implicit(input->location_get()));
+      args->push_back(new ast::String(input->location_get(), input->what_get()));
+      super_type::operator() (input->value_get());
+      args->push_back(result_.unsafe_cast<ast::Exp>());
+      ast::rCall res = new ast::Call(input->location_get(),
+                                    SYMBOL(updateSlot), args);
+      if (local)
+        targetContext(res, depth_ - local);
+      else
+        targetSelf(res);
+      result_ = res;
+    }
+  }
+
   void Binder::visit(ast::rConstDeclaration input)
   {
     if (setOnSelf_.back())

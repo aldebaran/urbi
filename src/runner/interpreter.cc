@@ -283,6 +283,12 @@ namespace runner
     current_ = object::void_class;
   }
 
+  void
+  Interpreter::visit (ast::rConstAssignment e)
+  {
+    locals_->slot_update(*this, e->what_get(), eval(e->value_get()));
+  }
+
   // Apply a function written in Urbi.
   object::rObject
   Interpreter::apply_urbi (const rObject& func,

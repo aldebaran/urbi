@@ -211,7 +211,10 @@
     ast_slot_update (const loc& l, ast::rCall lvalue,
                      ast::rExp value  )
     {
-      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
+      if (lvalue->args_get().front()->implicit())
+        return new ast::Assignment(l, lvalue->name_get(), value);
+      else
+        return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
 
     static

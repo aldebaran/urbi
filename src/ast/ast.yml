@@ -810,6 +810,20 @@ Declaration:
     - '" = "'
     - ~value
 
+Assignment:
+  super: Exp
+  attributes:
+    - what:
+        type: 'libport::Symbol'
+        desc: Name of the symbol being declared.
+    - value:
+        type: rExp
+        desc: Initialization value.
+  printer:
+    - $what
+    - '" = "'
+    - ~value
+
 # Local Variables:
 # mode: yaml
 # End:

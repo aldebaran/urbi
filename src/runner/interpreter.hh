@@ -129,6 +129,7 @@ namespace runner
     using super_type::visit;
 
     CONST_VISITOR_VISIT_NODES((And)
+                              (Assignment)
                               (Call)
                               (Closure)
                               (Do)

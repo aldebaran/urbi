@@ -43,7 +43,8 @@ namespace binder
       using super_type::visit;
 
     protected:
-      CONST_VISITOR_VISIT_NODES((Call)
+      CONST_VISITOR_VISIT_NODES((Assignment)
+                                (Call)
                                 (Closure)
                                 (Declaration)
                                 (Do)

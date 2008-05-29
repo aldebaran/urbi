@@ -6,6 +6,9 @@ all.stamp
 and.cc
 and.hh
 and.hxx
+assignment.cc
+assignment.hh
+assignment.hxx
 ast-fwd-gen.stamp
 ast-nodes-gen.stamp
 ast-nodes.mk
