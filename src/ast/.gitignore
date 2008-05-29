@@ -71,6 +71,9 @@ implicit.hxx
 list.cc
 list.hh
 list.hxx
+local-write.cc
+local-write.hh
+local-write.hxx
 message.cc
 message.hh
 message.hxx

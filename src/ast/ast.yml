@@ -795,15 +795,18 @@ Function:
 Closure:
   super: Code
 
-Declaration:
+LocalWrite:
   super: Exp
   attributes:
     - what:
         type: 'libport::Symbol'
-        desc: Name of the symbol being declared.
+        desc: Name of the symbol being declared or updated.
     - value:
         type: rExp
         desc: Initialization value.
+
+Declaration:
+  super: LocalWrite
   printer:
     - '"var "'
     - $what
@@ -811,14 +814,7 @@ Declaration:
     - ~value
 
 Assignment:
-  super: Exp
-  attributes:
-    - what:
-        type: 'libport::Symbol'
-        desc: Name of the symbol being declared.
-    - value:
-        type: rExp
-        desc: Initialization value.
+  super: LocalWrite
   printer:
     - $what
     - '" = "'
