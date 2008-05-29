@@ -70,9 +70,10 @@ const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 
 UServer::UServer(const char* mainName)
-  : search_path(LIBPORT_URBI_PATH),
-    scheduler_ (new scheduler::Scheduler (boost::bind(&UServer::getTime,
-						      boost::ref(*this)))),
+  : search_path(getenv("URBI_PATH") ? getenv("URBI_PATH") : LIBPORT_URBI_PATH,
+                ":"),
+    scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
+                                                    boost::ref(*this)))),
     debugOutput (false),
     mainName_ (mainName),
     stopall (false)

@@ -31,20 +31,6 @@ public:
   ConsoleServer(bool fast)
     : UServer("console"), fast(fast), ctime(0)
   {
-    if (const char* cp = getenv ("URBI_PATH"))
-    {
-      std::string up(cp);
-      std::list<std::string> paths;
-      foreach (const std::string& s, libport::make_tokenizer(up, ":"))
-      {
-	if (s[0] == '\\' && paths.back().length() == 1)
-	  paths.back() += ':' + s;
-	else
-	  paths.push_back(s);
-      }
-      foreach (const std::string& s, paths)
-	search_path.append_dir(s);
-    }
   }
 
   virtual ~ConsoleServer()
