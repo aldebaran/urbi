@@ -21,12 +21,12 @@
 %code requires // Output in ugrammar.hh.
 {
 #include <libport/pod-cast.hh>
-#include "kernel/fwd.hh"
-#include "kernel/utypes.hh"
-#include "ast/fwd.hh"
-#include "ast/exps-type.hh"
-#include "ast/symbols-type.hh"
-#include "parser/fwd.hh"
+#include <kernel/fwd.hh>
+#include <kernel/utypes.hh>
+#include <ast/fwd.hh>
+#include <ast/exps-type.hh>
+#include <ast/symbols-type.hh>
+#include <parser/fwd.hh>
 }
 
 // Locations.
@@ -54,17 +54,17 @@
 #include <libport/finally.hh>
 #include <libport/separator.hh>
 
-#include "ast/all.hh"
-#include "ast/new-clone.hh"
-#include "ast/parametric-ast.hh"
-#include "ast/print.hh"
+#include <ast/all.hh>
+#include <ast/new-clone.hh>
+#include <ast/parametric-ast.hh>
+#include <ast/print.hh>
 
-#include "object/atom.hh"
+#include <object/atom.hh>
 
-#include "parser/tweast.hh"
-#include "parser/parse.hh"
-#include "parser/parser-impl.hh"
-#include "parser/utoken.hh"
+#include <parser/tweast.hh>
+#include <parser/parse.hh>
+#include <parser/parser-impl.hh>
+#include <parser/utoken.hh>
 
   namespace
   {
@@ -407,7 +407,7 @@
 
 %code requires
 {
-#include "ast/flavor.hh"
+#include <ast/flavor.hh>
 };
 %code
 {
