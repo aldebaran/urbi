@@ -726,6 +726,11 @@ namespace runner
     //ECHO ("result: " << *current_);
   }
 
+  void
+  Interpreter::visit (ast::rConstLocal e)
+  {
+    urbi_call(*this, locals_, e->name_get());
+  }
 
   void
   Interpreter::visit (ast::rConstMessage e)

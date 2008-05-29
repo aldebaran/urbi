@@ -97,6 +97,15 @@ namespace binder
 
   void Binder::visit (ast::rConstCall input)
   {
+    const ast::exps_type& args = input->args_get();
+    if (args.size() == 1
+        && args.front()->implicit()
+        && isLocal(input->name_get()) == depth_)
+    {
+      result_ = new ast::Local(input->location_get(),
+                               input->name_get());
+      return;
+    }
     super_type::visit (input);
     ast::rCall call = result_.unsafe_cast<ast::Call>();
     libport::Symbol name = call->name_get();

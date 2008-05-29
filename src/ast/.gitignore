@@ -74,6 +74,9 @@ list.hxx
 local-write.cc
 local-write.hh
 local-write.hxx
+local.cc
+local.hh
+local.hxx
 message.cc
 message.hh
 message.hxx

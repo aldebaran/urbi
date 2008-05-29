@@ -139,6 +139,7 @@ namespace runner
                               (Function)
                               (If)
                               (List)
+                              (Local)
                               (Message)
                               (Nary)
                               (Noop)

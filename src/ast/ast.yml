@@ -820,6 +820,15 @@ Assignment:
     - '" = "'
     - ~value
 
+Local:
+  super: Exp
+  attributes:
+    - name:
+        type: 'libport::Symbol'
+        desc: Name of the local variable.
+  printer:
+    - $name
+
 # Local Variables:
 # mode: yaml
 # End:
