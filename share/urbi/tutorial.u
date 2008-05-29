@@ -1,0 +1,158 @@
+class Global.tutorial
+{
+
+  class entry
+  {
+    var name;
+    var onEnter;
+    var onLeave;
+    var condition;
+    var text;
+    var tag;
+    var entry;
+    function init2
+    {
+      name = call.argAt(1);
+      text = call.argAt(2);
+      onEnter = call.args.nth(3);
+      onLeave = call.args.nth(4);
+      condition = call.args.nth(5);
+      tutorial.entries.back.push_back(self);
+    };
+    function enter()
+    {
+      text.print;
+      tag = Tag.new;
+      onEnter.eval;
+      tag: at(condition.eval)
+      {
+	//("switching to next from " + name ).print;
+	tutorial.next2;
+	tag.stop
+      }
+    };
+    function leave()
+    {
+      onLeave.eval;
+    };
+  };
+  var content = Dictionary.new;
+  var entries = [[]];
+  var sectionNames = [];
+  var sectionIdByName = Dictionary.new;
+  var sectionDescs = [];
+  var current = -1;
+  var currentSection = 0;
+  function next2()
+  {
+    //"next ".print;
+    if (current >=0)
+      entries.nth(currentSection).nth(current).leave;
+    current++;
+    if (entries.nth(currentSection).size <= current)
+    {
+      currentSection++;
+      current = 0;
+      //cerr << "switching section "+currentSection.asString +" para "+current;
+      if (entries.size <= currentSection)
+      {
+	"The tutorial is over".print;
+	current = -1;
+	currentSection = 0;
+	return;
+      }
+      else
+      {
+	cout << "Starting next tutorial section: "
+	 + sectionDescs.nth(currentSection-1);
+      }
+    };
+    //cerr << "entering section "+currentSection.asString +" para "+current;
+    entries.nth(currentSection).nth(current).enter;
+  };
+  function next()
+  {
+    next2;
+    if (current)
+      entries.nth(currentSection).nth(current-1).tag.stop;
+  };
+  function help()
+  {
+    (
+    "Tutorial commands:\n"+
+    "  next;  : jump to the next paragraph\n"+
+    "  sections;   : list tutorial sections\n"+
+    "  jump(\"s\");  : jump to section 's'\n"
+    ).print;
+  };
+  function sections()
+  {
+    var s = "Tutorial sections:\n";
+    for (var i=0; i<sectionNames.size; i++)
+    {
+      s +=  "  " + sectionNames.nth(i)+": "+sectionDescs.nth(i)+"\n";
+    };
+    cout << s;
+  };
+  function jump(sectionName)
+  {
+    if (!sectionIdByName.has(sectionName))
+    {
+      ("Unknown tutorial section "+sectionName).print;
+      return
+    }
+    else
+    {
+      if (current >=0)
+	entries.nth(currentSection).nth(current).leave;
+      current = 0;
+      currentSection = sectionIdByName.get(sectionName) + 1;
+      entries.nth(currentSection).nth(current).enter;
+    };
+  };
+  function startSection(name, desc)
+  {
+    var i = sectionNames.size;
+    sectionIdByName.set(name, i);
+    sectionNames.push_back(name);
+    sectionDescs.push_back(desc);
+    tutorial.entries.push_back([]);
+  };
+  startSection("presentation", "an overview of the kernel");
+  entry.new.init2("intro",
+" Welcome to the very first Urbi kernel 2 Technical preview!
+Urbi v2 is a programming language which:
+  - is object oriented and prototype based
+  - is dynamically scoped
+  - has primitives for parallelism
+  - has advanced flow controle primitives (tags)
+This simple tutorial will assist you in the discovery of its main features.
+At any time, you can type 'next;' to jump to the the next tutorial entry.",{},{},false);
+  // init cant take a call message with tech-preview version of k2
+   entry.new.init2("object",
+	       "Everything in urbi is an object. An object is defined by its list of parents and its list of slots (key->object pairs). The top of the hierarchy is called Object. The syntax for creating a new slot is 'var anObject.aSlot = avalue. To go on, create a slot named 'foo' in 'Object'.", {}, {}, Object.slotNames.has("foo"));
+   entry.new.init2("object2", "Now add a slot bar to Object.foo",
+		     {
+		       if (!Object.slotNames.has("foo"))
+			 var Object.foo = 1;
+		     }, {}, {Object.foo.slotNames.has("bar")});
+   startSection("More advanced stuffs", "Stuffs that are more complicated");
+   entry.new.init2("woot", "trop fort", {}, {}, false);
+   entry.new.init2("end", "this marks the end of the urbi tutorial!", {},{},
+		     false);
+   entry.new.init2("pastend", "I told you it was over!", {}, tutorial.current--, false);
+};
+
+//Inheriting Tutorial rather? COW will screw everything up
+
+//FIXME: replace by the code below when implicit closures will work
+function Global.next() { tutorial.next};
+function Global.sections() { tutorial.sections};
+function Global.jump(s) { tutorial.jump(s)};
+/*
+for s in ["next", "sections", "jump"] {
+  Global.setSlot(s, function() {tutorial.getSlot(s).apply([tutorial]);});
+};*/
+Global.help = function() {tutorial.help};
+
+next;

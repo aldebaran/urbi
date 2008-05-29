@@ -1,0 +1,5 @@
+function Global.help()
+{
+  Global.load("urbi/tutorial.u");
+  help;
+};

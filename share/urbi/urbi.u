@@ -612,6 +612,8 @@ var Object.loaded = 1;
 // Force a yield
 sleep(10);
 
+// Make the tutorial available.
+load("urbi/help.u");
 // Load URBI.INI outside initialization phase.
 "Loading URBI.INI";
 load("URBI.INI");
