@@ -720,10 +720,14 @@ Call:
   desc: /// Function calls, and attribute look-ups.
   super: Exp
   attributes:
+    - target:
+        type: rExp
+        desc: The target of the call
+        access: rW
     - name:
         type: 'libport::Symbol'
         desc: Name of the called function
-    - args:
+    - arguments:
         type: 'exps_type*'
         desc: Arguments passed to the function
   inline:
@@ -734,26 +738,27 @@ Call:
     inline inside: |2
           inline bool Call::target_implicit() const
           {
-            return args_->front()->implicit();
+            return target_->implicit();
           }
-  default:
-      foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, n->args_get())
-        operator()(e);
+  default: |2
+    visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
+    operator()(n->target_get());
+    foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, n->arguments_get())
+      operator()(e);
   printer:
     - '{
-         if (!(n->args_get().front().unsafe_cast<const Implicit>()))
-           ostr_ << *n->args_get().front() << " . ";
+         if (!(n->target_get()->implicit()))
+           ostr_ << *n->target_get() << " . ";
        }'
     - '{
          n->name_get().print_escaped(ostr_);
        }'
     - '{
-         if (n->args_get ().size() >= 2)
+         if (!n->arguments_get().empty())
            ostr_
             << "("
             << libport::incindent
-            << libport::separate(boost::make_iterator_range(n->args_get(), 1, 0),
-                                  ", ")
+            << libport::separate(n->arguments_get(), ", ")
             << libport::decindent
             << ")";
        }'

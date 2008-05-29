@@ -28,7 +28,7 @@ namespace binder
   static inline
   boost::optional<libport::Symbol> getFirstArg(ast::rConstCall call)
   {
-    ast::rConstAst arg1 = *++call->args_get().begin();
+    ast::rConstAst arg1 = call->arguments_get().front();
     if (!arg1.unsafe_cast<const ast::String>())
       return boost::optional<libport::Symbol>();
     return libport::Symbol(arg1.unsafe_cast<const ast::String>()->value_get());
@@ -51,11 +51,10 @@ namespace binder
                                  ast::rConstExp value)
   {
       ast::exps_type* args = new ast::exps_type();
-      args->push_back(new ast::Implicit(l));
       args->push_back(new ast::String(l, name));
       super_type::operator() (value);
       args->push_back(result_.unsafe_cast<ast::Exp>());
-      return new ast::Call(l, method, args);
+      return new ast::Call(l, new ast::Implicit(l), method, args);
   }
 
   void Binder::visit(ast::rConstAssignment input)
@@ -97,9 +96,9 @@ namespace binder
 
   void Binder::visit (ast::rConstCall input)
   {
-    const ast::exps_type& args = input->args_get();
-    if (args.size() == 1
-        && args.front()->implicit()
+    const ast::exps_type& args = input->arguments_get();
+    if (args.empty()
+        && input->target_implicit()
         && isLocal(input->name_get()) == depth_)
     {
       result_ = new ast::Local(input->location_get(),
@@ -155,33 +154,29 @@ namespace binder
 
   void Binder::targetSelf(ast::rCall call)
   {
-    call->args_get().pop_front();
     ast::exps_type* args = new ast::exps_type;
-    args->push_back(new ast::Implicit(call->location_get()));
     args->push_back(new ast::String(call->location_get(), "self"));
-    ast::rCall self = new ast::Call(call->location_get(), SYMBOL(getSlot), args);
-    call->args_get().push_front(self);
+    ast::rCall self = new ast::Call(call->location_get(),
+                                    new ast::Implicit(call->location_get()),
+                                    SYMBOL(getSlot), args);
+    call->target_set(self);
   }
 
   void Binder::targetContext(ast::rCall call, int depth)
   {
-    call->args_get().pop_front();
     ast::rCall code;
     {
       ast::exps_type* args = new ast::exps_type;
-      args->push_back(new ast::Implicit(call->location_get()));
       args->push_back(new ast::String(call->location_get(), "code"));
-      code = new ast::Call(call->location_get(), SYMBOL(getSlot), args);
+      code = new ast::Call(call->location_get(),
+                           new ast::Implicit(call->location_get()),
+                           SYMBOL(getSlot), args);
     }
-    ast::rCall context;
-    {
-      ast::exps_type* args = new ast::exps_type;
-      args->push_back(code);
-      context = new ast::Call(call->location_get(), SYMBOL(context), args);
-    }
+    ast::rCall context = new ast::Call(call->location_get(), code,
+                                       SYMBOL(context), new ast::exps_type);
     if (depth > 1)
       targetContext(code, depth - 1);
-    call->args_get().push_front(context);
+    call->target_set(context);
   }
 
   void Binder::visit (ast::rConstScope input)

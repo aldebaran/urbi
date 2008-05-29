@@ -149,10 +149,10 @@ namespace runner
       ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c)
 	throw object::ImplicitTagComponentError(e->location_get());
-      if (c->args_get().size() > 1)
+      if (!c->arguments_get().empty())
         return std::make_pair(c, res);
       res.push_front (c);
-      e = c->args_get().front();
+      e = c->target_get();
     }
     assert (!res.empty ());
     return std::make_pair(ast::rExp(), res);
@@ -547,7 +547,7 @@ namespace runner
     try
     {
       // The invoked slot (probably a function).
-      ast::rConstExp ast_tgt = e->args_get().front();
+      ast::rConstExp ast_tgt = e->target_get();
       rObject tgt = ast_tgt->implicit() ? locals_ : eval(ast_tgt);
       assertion(tgt);
       rObject val = tgt->slot_get(e->name_get());
@@ -561,14 +561,18 @@ namespace runner
       object::objects_type args;
       args.push_back (tgt);
 
+      // FIXME: We probably don't want to include the target as first argument here.
+      ast::exps_type ast_args = e->arguments_get();
+      ast_args.push_front(e->target_get());
+
       // Build the call message for non-strict functions, otherwise the
       // evaluated argument list.
       rObject call_message;
       if (val->kind_get () == object::object_kind_code
           && !val.unsafe_cast<object::Code> ()->value_get ()->strict())
-        call_message = build_call_message (tgt, e->name_get(), e->args_get ());
+        call_message = build_call_message (tgt, e->name_get(), ast_args);
       else
-        push_evaluated_arguments (args, e->args_get (), !acceptVoid(val));
+        push_evaluated_arguments (args, ast_args, !acceptVoid(val));
 
       call_stack_.push_back(e);
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));

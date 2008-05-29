@@ -123,8 +123,7 @@
     ast_call (const loc& l,
 	      ast::rExp target, libport::Symbol method, ast::exps_type* args)
     {
-      args->push_front(target);
-      ast::rCall res = new ast::Call(l, method, args);
+      ast::rCall res = new ast::Call(l, target, method, args);
       return res;
     }
 
@@ -143,7 +142,7 @@
 	     ast::rExp target, libport::Symbol method, ast::rExp arg1)
     {
       ast::rCall res = ast_call(l, target, method);
-      res->args_get().push_back(arg1);
+      res->arguments_get().push_back(arg1);
       return res;
     }
 
@@ -157,10 +156,10 @@
 	     ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0)
     {
       ast::rCall res = ast_call(l, target, method);
-      res->args_get().push_back(arg1);
-      res->args_get().push_back(arg2);
+      res->arguments_get().push_back(arg1);
+      res->arguments_get().push_back(arg2);
       if (arg3)
-	res->args_get().push_back(arg3);
+	res->arguments_get().push_back(arg3);
       return res;
     }
 
@@ -187,10 +186,10 @@
       // FIXME: We leak lvalue itself.
       ast::rCall call =
         ast_call(l,
-                 lvalue->args_get().front(), change,
+                 lvalue->target_get(), change,
                  ast::rString(new ast::String(lvalue->location_get(), lvalue->name_get())));
       if (value)
-        call->args_get().push_back(value);
+        call->arguments_get().push_back(value);
       res = call;
       return res;
     }
@@ -200,7 +199,7 @@
     ast_slot_set (const loc& l, ast::rCall lvalue,
 		  ast::rExp value)
     {
-      if (lvalue->args_get().front()->implicit())
+      if (lvalue->target_implicit())
         return new ast::Declaration(l, lvalue->name_get(), value);
       else
         return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
@@ -211,7 +210,7 @@
     ast_slot_update (const loc& l, ast::rCall lvalue,
                      ast::rExp value  )
     {
-      if (lvalue->args_get().front()->implicit())
+      if (lvalue->target_implicit())
         return new ast::Assignment(l, lvalue->name_get(), value);
       else
         return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
@@ -691,12 +690,10 @@ stmt:
         // If the lvalue call is qualified, we need to store the
         // target in a variable to avoid evaluating it several times.
         tweast << "var " << owner
-               << " = " << new_clone($2.value()->args_get().front()) << "|";
-        ast::exps_type* args2 = new ast::exps_type();
-        args2->push_back(new ast::Implicit(@2));
-        ast::exps_type* args = new ast::exps_type();
-        args->push_back(new ast::Call(@2, owner, args2));
-        target = new ast::Call(@2, $2.value()->name_get(), args);
+               << " = " << new_clone($2.value()->target_get()) << "|";
+        target = ast_call(@2,
+                          ast_call(@2, new ast::Implicit(@2), owner),
+                          $2.value()->name_get());
       }
       tweast << "var " << new_clone(target) << "= Object.clone|"
              << "do " << new_clone(target) << " {"
@@ -848,7 +845,11 @@ stmt:
     }
 | "var" lvalue "=" expr
     {
-      $$ = ast_slot_set(@$, $2, $4);
+      ast::rCall a = $2;
+      ast::rExp b = $4;
+      ast_slot_set(@$, a, b);
+      ast::rExp res = ast_slot_set(@$, a, b);
+      $$ = res;
     }
 | "var" lvalue
     {
@@ -895,7 +896,7 @@ stmt:
   lvalue "->" id "=" expr
     {
       // FIXME: We leak lvalue itself.
-      $$ = ast_call(@$, $1.value()->args_get().front(), SYMBOL(setProperty),
+      $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(setProperty),
 		    new ast::String(@1, $1.value()->name_get()),
 		    new ast::String(@3, $3.value()),
 		    $5);
@@ -906,7 +907,7 @@ expr:
   lvalue "->" id
     {
       // FIXME: lvalue leaks.
-      $$ = ast_call(@$, $1.value()->args_get().front(), SYMBOL(getProperty),
+      $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(getProperty),
 		    new ast::String(@1, $1.value()->name_get()),
 		    new ast::String(@3, $3.value()));
     }
@@ -1115,7 +1116,7 @@ call:
     {
       $$ = $1;
       foreach (ast::rExp elt, *$2)
-        $$.value()->args_get().push_back(elt);
+        $$.value()->arguments_get().push_back(elt);
       $$.value()->location_set(@$);
     }
 ;
