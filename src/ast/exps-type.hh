@@ -24,8 +24,7 @@ namespace ast
   typedef std::list<rExp> exps_type;
 
   /// Separated by commas.
-  std::ostream&
-  operator<<(std::ostream& o, const ast::exps_type& ss);
+  std::ostream& operator<<(std::ostream& o, const ast::exps_type& ss);
 
 }
 
