@@ -68,7 +68,6 @@ namespace runner
   void
   AtHandler::work()
   {
-    bool check_for_blocked = true;
     bool tags_need_rebuilding = false;
 
     while (true)
@@ -159,7 +158,6 @@ namespace runner
       }
 
       non_interruptible_set(false);
-      check_for_blocked = false;
       yielding = true;
 
       // Rebuild tags if our list of jobs has changed.
