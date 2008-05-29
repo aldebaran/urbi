@@ -115,7 +115,7 @@ namespace object
   // returned by the parser.
   struct code_traits
   {
-    typedef ast::rCode type;
+    typedef ast::rConstCode type;
     enum { kind = object_kind_code };
   };
 

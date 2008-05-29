@@ -296,9 +296,9 @@ namespace runner
                            rObject call_message)
   {
     // The called function.
-    ast::rCode fn = func.unsafe_cast<object::Code> ()->value_get ();
+    ast::rConstCode fn = func.unsafe_cast<object::Code> ()->value_get ();
     // Whether it's an explicit closure
-    bool closure = fn.unsafe_cast<ast::Closure>();
+    bool closure = fn.unsafe_cast<const ast::Closure>();
 
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
@@ -682,7 +682,7 @@ namespace runner
   object::rObject
   Interpreter::make_code(ast::rConstCode e) const
   {
-    rObject res = object::Code::fresh(new_clone(e));
+    rObject res = object::Code::fresh(e);
     // Store the function declaration context. Use make_scope to add
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.
@@ -790,8 +790,7 @@ namespace runner
 	  c.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are.
-	Interpreter* subrunner =
-	  new Interpreter(*this, new_clone(c), true);
+	Interpreter* subrunner = new Interpreter(*this, c, true);
 	runners.push_back(subrunner);
 	subrunner->start_job ();
       }
