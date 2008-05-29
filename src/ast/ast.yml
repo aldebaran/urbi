@@ -449,16 +449,18 @@ Nary:
         libport::shared_ptr<T>
         Nary::back ()
         {
-          return empty() ? libport::shared_ptr<T>()
-            : children_->back().unsafe_cast<T>();
+          return (empty()
+                  ? libport::shared_ptr<T>()
+                  : libport::unsafe_cast<T>(children_->back()));
         }
 
         template <typename T>
         libport::shared_ptr<const T>
         Nary::back () const
         {
-          return empty() ? libport::shared_ptr<const T>()
-            : children_->back().unsafe_cast<const T>();
+          return (empty()
+                  ? libport::shared_ptr<const T>()
+                  : libport::unsafe_cast<const T>(children_->back()));
         }
 
         void
