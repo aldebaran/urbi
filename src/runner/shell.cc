@@ -13,6 +13,7 @@ namespace runner
 		  scheduler,
 		  0,
 		  name)
+    , executing_(false)
   {
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
@@ -25,6 +26,7 @@ namespace runner
     while (true)
     {
       // Wait until we have some work to do
+      executing_ = false;
       while (commands_.empty())
       {
 	bool side_effect_free_save = side_effect_free_get();
@@ -32,6 +34,7 @@ namespace runner
 	yield_until_things_changed();
 	side_effect_free_set(side_effect_free_save);
       }
+      executing_ = true;
 
       ast::rConstNary nary = commands_.front();
       commands_.pop_front();
@@ -44,6 +47,18 @@ namespace runner
   {
     commands_.push_back(command);
     scheduler_get().signal_world_change();
+  }
+
+  bool
+  Shell::pending_command_get() const
+  {
+    return executing_ || !commands_.empty();
+  }
+
+  void
+  Shell::pending_commands_clear()
+  {
+    commands_.clear();
   }
 
 } // namespace runner

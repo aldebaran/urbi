@@ -7,6 +7,7 @@
 # define BINDER_BINDER_HH
 
 # include <libport/finally.hh>
+# include <list>
 # include <map>
 
 # include <ast/cloner.hh>

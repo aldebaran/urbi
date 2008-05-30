@@ -863,12 +863,6 @@ namespace runner
       foreach(const scheduler::rJob& r, runners)
 	yield_until_terminated(*r);
     }
-
-    // FIXME: We violate the constness, but anyway this should not
-    // be done here.  Not to mention the leaks, as we don't delete the
-    // AST here.
-    if (e->toplevel_get ())
-      const_cast<ast::Nary*>(e.get())->clear();
   }
 
   void

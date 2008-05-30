@@ -73,8 +73,7 @@ UConnection::UConnection (UServer& server, size_t packetSize)
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
     lobby_ (object::Lobby::fresh(object::State(*this))),
-    parser_ (new parser::UParser ()),
-    active_command_ (new ast::Nary())
+    parser_ (new parser::UParser ())
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
   lobby_->slot_set(SYMBOL(lobby), lobby_);
@@ -244,14 +243,7 @@ UConnection::received (const char* buffer, size_t length)
   // Starts processing
   receiving_ = true;
 
-  // active_command_: The command to be executed (root of the AST).
-  // passert (*active_command_, active_command_->empty());
-
-  // If active_command_ is not empty, a runner is still alive, so set
-  // obstructed to true. This is a temporary fix to avoid having several
-  // runners on the same Nary, until runners become managed outside UConnection.
-  bool obstructed = !active_command_->empty();
-
+  ast::rNary active_command = new ast::Nary;
   // Get all the commands that are ready to be executed.
   for (std::string command = recv_queue_->pop_command();
        !command.empty();
@@ -259,7 +251,7 @@ UConnection::received (const char* buffer, size_t length)
   {
     parser::parse_result_type result(p.parse(command));
     passert(result.get(), result->status != -1);
-    result->process_errors(*active_command_);
+    result->process_errors(*active_command);
 
     if (ast::rNary ast = result->ast_take())
     {
@@ -268,8 +260,8 @@ UConnection::received (const char* buffer, size_t length)
       assert(ast);
       ECHO ("bound: {{{" << *ast << "}}}");
       // Append to the current list.
-      active_command_->splice_back(ast);
-      ECHO ("appended: " << *active_command_ << "}}}");
+      active_command->splice_back(ast);
+      ECHO ("appended: " << *active_command << "}}}");
     }
     else
       LIBPORT_ECHO("the parser returned NULL:" << std::endl
@@ -277,8 +269,7 @@ UConnection::received (const char* buffer, size_t length)
   }
 
   // Execute the new command.
-  if (!obstructed)
-    execute ();
+  execute (active_command);
 
   receiving_ = false;
   // p.ast_set (0);
@@ -361,21 +352,21 @@ UConnection::new_result (object::rObject result)
 }
 
 UConnection&
-UConnection::execute ()
+UConnection::execute (ast::rNary active_command)
 {
   PING ();
-  if (active_command_->empty())
+  if (active_command->empty())
     return *this;
 
-  ECHO("Command is: {{{" << *active_command_ << "}}}");
+  ECHO("Command is: {{{" << *active_command << "}}}");
 
   // Our active_command_ is a ast::Nary, we must now "tell" it that
   // it's a top-level Nary so that it can send its results back to the
   // UConnection.  It also entitles the Runner to clear this Nary when
   // it has evaluated it.
-  active_command_->toplevel_set (true);
+  active_command->toplevel_set (true);
 
-  shell_->append_command(const_cast<const ast::Nary*>(active_command_.get()));
+  shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
 
   PING ();
   return *this;
@@ -398,13 +389,13 @@ UConnection::make_prefix (const char* tag) const
 bool
 UConnection::has_pending_command () const
 {
-  return !active_command_->empty();
+  return shell_->pending_command_get();
 }
 
 void
 UConnection::drop_pending_commands ()
 {
-  active_command_->clear();
+  shell_->pending_commands_clear();
 }
 
 bool

@@ -280,7 +280,7 @@ protected:
    */
   virtual size_t effective_send (const char*, size_t length) = 0;
 
-  UConnection& execute ();
+  UConnection& execute (ast::rNary);
 
 public:
   /// Error return code for the constructor.
@@ -338,9 +338,6 @@ private:
 
   /// Our parser.  A pointer to stop dependencies.
   parser::UParser* parser_;
-
-  /// The commands to be executed.
-  ast::rNary active_command_;
 
   /// The current shell.
   runner::rShell shell_;
