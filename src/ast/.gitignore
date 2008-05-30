@@ -100,9 +100,6 @@ pretty-printer.stamp
 scope.cc
 scope.hh
 scope.hxx
-slot.cc
-slot.hh
-slot.hxx
 stmt.cc
 stmt.hh
 stmt.hxx

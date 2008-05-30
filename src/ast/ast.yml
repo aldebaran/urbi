@@ -39,7 +39,6 @@ includes_map:
   "flavor_type":         '"ast/flavor.hh"'
   "Throw::exception_kind": '"ast/throw.hh"'
   "libport::Symbol":     '<libport/symbol.hh>'
-  "slots_type":          '"ast/fwd.hh"'
   "std::string":         '<string>'
   "symbols_type":        '"ast/symbols-type.hh"'
   "ufloat":              '<libport/ufloat.h>'
@@ -61,7 +60,6 @@ non_visitable_types:
 # In the cloner, these require "recurse_collection".
 collections:
   - "exps_type"
-  - "slots_type"
   - "symbols_type"
 
 # The function to clear a list of pointers.
@@ -101,9 +99,6 @@ fwd_hh_prologue: |2
 
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
-
-    /// List of slots, for Object.
-    typedef boost::ptr_vector<Slot> slots_type;
 
 printer_cc_prologue: |2
 
@@ -675,18 +670,6 @@ Float:
         desc: Float value
   printer:
     - $value
-
-Slot:
-  super: Ast
-  attributes:
-    - name:
-        type: 'libport::Symbol'
-    - value:
-        type: 'rExp'
-  printer:
-    - $name
-    - '": "'
-    - ~value
 
 String:
   super: Exp
