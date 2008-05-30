@@ -50,6 +50,12 @@ namespace object
   typedef libport::shared_ptr<Atom<lobby_traits>, true > rLobby;
 }
 
+namespace runner
+{
+  class Shell;
+  typedef libport::shared_ptr<Shell, true> rShell;
+}
+
 # define ERR_SET(Val) (error_ = Val)
 # define CONN_ERR_RET(Val) do			\
   {						\
@@ -335,6 +341,9 @@ private:
 
   /// The commands to be executed.
   ast::rNary active_command_;
+
+  /// The current shell.
+  runner::rShell shell_;
 
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;

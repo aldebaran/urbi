@@ -55,7 +55,7 @@
 
 #include "binder/binder.hh"
 
-#include "runner/interpreter.hh"
+#include "runner/shell.hh"
 
 #include "ubanner.hh"
 #include "uqueue.hh"
@@ -90,6 +90,10 @@ UConnection::UConnection (UServer& server, size_t packetSize)
   tag->slot_set(SYMBOL(tag), box(scheduler::rTag,
 		scheduler::Tag::fresh(libport::Symbol(connection_tag_))));
   lobby_->slot_set(SYMBOL(connectionTag), tag);
+
+  // Create the shell.
+  shell_ = new runner::Shell(lobby_, server_.getScheduler(), SYMBOL(shell));
+  shell_->start_job();
 }
 
 UConnection::~UConnection ()
@@ -100,6 +104,7 @@ UConnection::~UConnection ()
   delete parser_;
   delete send_queue_;
   delete recv_queue_;
+  shell_->terminate_now();
   DEBUG(("done\n"));
 }
 
@@ -370,13 +375,7 @@ UConnection::execute ()
   // it has evaluated it.
   active_command_->toplevel_set (true);
 
-  runner::Interpreter* interpreter =
-    new runner::Interpreter(lobby_,
-			    0,
-			    ::urbiserver->getScheduler (),
-			    active_command_,
-			    libport::Symbol("<interpreter>"));
-  interpreter->start_job ();
+  shell_->append_command(const_cast<const ast::Nary*>(active_command_.get()));
 
   PING ();
   return *this;

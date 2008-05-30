@@ -49,6 +49,12 @@ namespace scheduler
     return get_time_ ();
   }
 
+  inline void
+  Scheduler::signal_world_change()
+  {
+    possible_side_effect_ = true;
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_SCHEDULER_HXX

@@ -96,6 +96,11 @@ namespace scheduler
     /// \return The currently non-terminated known jobs.
     std::vector<rJob> jobs_get() const;
 
+    /// Tell the scheduler that the world has changed because
+    /// of an external event.
+    ///
+    void signal_world_change();
+
   private:
     /// Execute one round in the scheduler.
     ///
