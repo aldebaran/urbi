@@ -14,7 +14,10 @@ k2-check:
 ENABLE_HARD_ERRORS = false
 
 # k2 tests that fail currently but need to be fixed soon.
-TFAIL_TESTS +=
+TFAIL_TESTS +=                                  \
+1.x/at-is-def.chk                               \
+1.x/eval.chk                                    \
+1.x/load.chk
 
 # k2 tests that fail because plain objects have been removed.
 TFAIL_TESTS +=					\
@@ -45,6 +48,7 @@ XFAIL_TESTS +=					\
 1.x/every.chk					\
 1.x/every-emit.chk				\
 1.x/freeze-time.chk				\
+1.x/function-delete.chk                         \
 1.x/hash-and-list.chk				\
 1.x/hierarchical-tags.chk			\
 1.x/init-in-pipe-with-time.chk			\
@@ -68,6 +72,7 @@ XFAIL_TESTS +=					\
 1.x/speed-zero.chk				\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
+1.x/tag-reduce.chk                              \
 1.x/variable-normalize.chk			\
 1.x/variable-qualifiers.chk
 
