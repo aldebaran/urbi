@@ -6,6 +6,8 @@
 #include <boost/bind.hpp>
 #include <boost/ptr_container/ptr_list.hpp>
 
+#include <libport/finally.hh>
+
 #include "scheduler/tag.hh"
 
 namespace runner
@@ -141,6 +143,9 @@ namespace runner
 	{
 	  // Temporarily install the needed tags as the current tags.
 	  tags_set(job->tags_get());
+	  libport::Finally finally(boost::bind(&AtHandler::tags_set,
+					       this,
+					       tags_get()));
 
 	  // We do not need to check for an exception here as "detach",
 	  // which is the function being called, will not throw and any
