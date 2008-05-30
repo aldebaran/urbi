@@ -52,7 +52,7 @@ namespace object
 
     runner::Interpreter* new_runner =
       new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
-			       arg1);
+			       rObject(arg1));
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
     args[0]->slot_set (SYMBOL (job),

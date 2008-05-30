@@ -163,12 +163,10 @@ namespace runner
 			    rObject locals,
 			    scheduler::Scheduler& sched,
 			    ast::rConstAst ast,
-			    bool free_ast_after_use,
 			    const libport::Symbol& name)
     : Interpreter::super_type(),
       Runner(lobby, sched, name),
       ast_(ast),
-      free_ast_after_use_(free_ast_after_use),
       code_(0),
       current_(0),
       locals_(locals)
@@ -181,7 +179,6 @@ namespace runner
     : Interpreter::super_type(),
       Runner(model, name),
       ast_(0),
-      free_ast_after_use_(false),
       code_(code),
       current_(0),
       locals_(model.locals_)
@@ -191,12 +188,10 @@ namespace runner
 
   Interpreter::Interpreter(const Interpreter& model,
 			   ast::rConstAst ast,
-			   bool free_ast_after_use,
 			   const libport::Symbol& name)
     : Interpreter::super_type (),
       Runner(model, name),
       ast_(ast),
-      free_ast_after_use_(free_ast_after_use),
       code_(0),
       current_(0),
       locals_(model.locals_)
@@ -266,7 +261,7 @@ namespace runner
     // tags.
 
     JAECHO ("lhs", e->lhs_get ());
-    scheduler::rJob lhs = new Interpreter(*this, e->lhs_get(), true);
+    scheduler::rJob lhs = new Interpreter(*this, ast::rConstAst(e->lhs_get()));
 
     // Propagate errors between left-hand side and right-hand side runners.
     link (lhs);
@@ -643,7 +638,7 @@ namespace runner
 	// Create the new runner and launch it. We create a link so
 	// that an error in evaluation will stop other evaluations
 	// as well and propagate the exception.
-	Interpreter* new_runner = new Interpreter(*this, body, true);
+	Interpreter* new_runner = new Interpreter(*this, body);
 	link(new_runner);
 	runners.push_back(new_runner);
 	new_runner->locals_ = locals;
@@ -794,7 +789,7 @@ namespace runner
 	  c.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are.
-	Interpreter* subrunner = new Interpreter(*this, c, true);
+	Interpreter* subrunner = new Interpreter(*this, ast::rConstAst(c));
 	runners.push_back(subrunner);
 	subrunner->start_job ();
       }

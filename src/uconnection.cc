@@ -375,7 +375,6 @@ UConnection::execute ()
 			    0,
 			    ::urbiserver->getScheduler (),
 			    active_command_,
-			    false,
 			    libport::Symbol("<interpreter>"));
   interpreter->start_job ();
 

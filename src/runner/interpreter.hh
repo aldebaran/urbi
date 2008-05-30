@@ -43,7 +43,6 @@ namespace runner
     Interpreter (rLobby lobby, rObject locals,
 		 scheduler::Scheduler& scheduler,
 		 ast::rConstAst ast,
-		 bool free_ast_after_use,
 		 const libport::Symbol& name = SYMBOL());
 
     Interpreter (const Interpreter&,
@@ -53,7 +52,6 @@ namespace runner
     /// Create a copy of a runner starting with another ast.
     Interpreter (const Interpreter&,
 		 ast::rConstAst ast,
-		 bool free_ast_after_use,
 		 const libport::Symbol& name = SYMBOL());
 
     /// Destroy a Interpreter.
@@ -179,9 +177,6 @@ namespace runner
   private:
     /// The root of the AST being executed.
     ast::rConstAst ast_;
-
-    /// Should the AST be freed after use?
-    bool free_ast_after_use_;
 
     /// The urbi Code object to execute
     rObject code_;
