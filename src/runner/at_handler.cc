@@ -36,6 +36,7 @@ namespace runner
 
   class AtHandler : public Interpreter
   {
+    typedef Interpreter super_type;
   public:
     AtHandler(const Interpreter&);
     virtual ~AtHandler();
@@ -212,12 +213,7 @@ namespace runner
   bool
   AtHandler::blocked() const
   {
-    if (!yielding)
-      return false;
-    foreach (const scheduler::rTag& t, tags_)
-      if (t->blocked())
-	return true;
-    return false;
+    return yielding && super_type::blocked();
   }
 
   void
