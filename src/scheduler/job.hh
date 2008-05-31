@@ -320,8 +320,12 @@ namespace scheduler
     /// Coro structure corresponding to this job.
     Coro* coro_;
 
+  protected:
+
     /// Tags this job depends on.
     scheduler::tags_type tags_;
+
+  private:
 
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the

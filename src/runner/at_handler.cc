@@ -49,7 +49,6 @@ namespace runner
     typedef boost::ptr_list<AtJob> at_jobs_type;
     at_jobs_type jobs_;
     bool yielding;
-    scheduler::tags_type tags_;
   };
 
   // There is only one at job handler. It will be created if it doesn't exist
@@ -62,6 +61,9 @@ namespace runner
 		  libport::Symbol("<at jobs handler>")),
       yielding(false)
   {
+    // There are no reason to inherit tags from our creator, as this service
+    // is not tied to any particular connection.
+    tags_.clear();
   }
 
   AtHandler::~AtHandler()
@@ -142,10 +144,10 @@ namespace runner
 	if (to_launch != object::nil_class)
 	{
 	  // Temporarily install the needed tags as the current tags.
-	  tags_set(job->tags_get());
+	  tags_ = job->tags_get();
 	  libport::Finally finally(boost::bind(&AtHandler::tags_set,
 					       this,
-					       tags_get()));
+					       tags_));
 
 	  // We do not need to check for an exception here as "detach",
 	  // which is the function being called, will not throw and any
