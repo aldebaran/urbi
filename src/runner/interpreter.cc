@@ -200,8 +200,6 @@ namespace runner
   void
   Interpreter::init()
   {
-    if (!locals_)
-      locals_ = object::Object::make_method_scope(lobby_);
     // If the lobby has a slot connectionTag, push it
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
