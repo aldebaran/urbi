@@ -59,19 +59,19 @@ namespace binder
 
   void Binder::visit(ast::rConstAssignment input)
   {
-    int local = isLocal(input->what_get());
-    if (local == depth_)
+    int depth = isLocal(input->what_get());
+    if (depth)
+    {
       super_type::visit(input);
+      result_.unsafe_cast<ast::Assignment>()->depth_set(depth_ - depth);
+    }
     else
     {
       ast::rCall res = changeSlot(input->location_get(),
                                   input->what_get(),
                                   SYMBOL(updateSlot),
                                   input->value_get());
-      if (local)
-        targetContext(res, depth_ - local);
-      else
-        targetSelf(res);
+      targetSelf(res);
       result_ = res;
     }
   }
@@ -98,37 +98,30 @@ namespace binder
   {
     libport::Symbol name = input->name_get();
     bool implicit = input->target_implicit();
-    if ((implicit
-	 && isLocal(name) == depth_)
-        || name == SYMBOL(call)
-        || name == SYMBOL(locals)
-        || name == SYMBOL(self))
-    {
-      const ast::exps_type* args = input->arguments_get();
-      result_ = new ast::Local(input->location_get(), name,
-                               args ? recurse_collection(*args) : 0);
-      return;
-    }
-    super_type::visit (input);
-    ast::rCall call = result_.unsafe_cast<ast::Call>();
     // If this is a qualified call, nothing particular to do
     if (implicit)
-      retarget(call, call->name_get());
-  }
-
-  void Binder::retarget(ast::rCall call, const libport::Symbol& var)
-  {
-    if (var == SYMBOL(call)
-        || var == SYMBOL(locals)
-        || var == SYMBOL(self))
-      return;
-    if (int depth = isLocal(var))
     {
-      if (depth < depth_)
-        targetContext(call, depth_ - depth);
+      int depth = isLocal(name);
+      if (name == SYMBOL(call)
+          || name == SYMBOL(locals)
+          || name == SYMBOL(self))
+        depth = depth_;
+      if (depth)
+      {
+        const ast::exps_type* args = input->arguments_get();
+        result_ = new ast::Local(
+          input->location_get(), name,
+          args ? recurse_collection(*args) : 0, depth_ - depth);
+        return;
+      }
+      else
+      {
+        super_type::visit (input);
+        targetSelf(result_.unsafe_cast<ast::Call>());
+      }
     }
     else
-      targetSelf(call);
+      super_type::visit (input);
   }
 
   void Binder::visit (ast::rConstForeach input)
@@ -139,24 +132,7 @@ namespace binder
 
   void Binder::targetSelf(ast::rCall call)
   {
-    call->target_set(new ast::Local(call->location_get(), SYMBOL(self), 0));
-  }
-
-  void Binder::targetContext(ast::rCall call, int depth)
-  {
-    ast::rCall code;
-    {
-      ast::exps_type* args = new ast::exps_type;
-      args->push_back(new ast::String(call->location_get(), "code"));
-      code = new ast::Call(call->location_get(),
-                           new ast::Implicit(call->location_get()),
-                           SYMBOL(getSlot), args);
-    }
-    ast::rCall context = new ast::Call(call->location_get(), code,
-                                       SYMBOL(context), new ast::exps_type);
-    if (depth > 1)
-      targetContext(code, depth - 1);
-    call->target_set(context);
+    call->target_set(new ast::Local(call->location_get(), SYMBOL(self), 0, 0));
   }
 
   void Binder::visit (ast::rConstScope input)

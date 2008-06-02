@@ -810,6 +810,11 @@ Declaration:
 
 Assignment:
   super: LocalWrite
+  attributes:
+    - depth:
+        type: unsigned
+        desc: the number of context to rewind to finde the actual variable
+        access: rwW
   printer:
     - $what
     - '" = "'
@@ -826,6 +831,11 @@ Local:
         access: rwW
         mandatory: false
         desc: Arguments passed to the function
+    - depth:
+        type: unsigned
+        access: rwW
+        desc: How many context we have to rewind to find the actual value of the
+              variable (thus 0 means this is an actual local variable).
   default: |2
     visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
     if (n->arguments_get())

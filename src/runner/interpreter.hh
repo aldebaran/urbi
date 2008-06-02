@@ -197,6 +197,9 @@ namespace runner
     call_stack_type call_stack_;
     void show_backtrace(const call_stack_type& bt,
                         const std::string& chan);
+
+    /// Retreive the n-frames-above context
+    rObject context(unsigned n);
   };
 
 } // namespace runner

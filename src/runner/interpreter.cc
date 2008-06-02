@@ -286,7 +286,8 @@ namespace runner
   void
   Interpreter::visit (ast::rConstAssignment e)
   {
-    locals_->slot_update(*this, e->what_get(), eval(e->value_get()));
+    rObject tgt = context(e->depth_get());
+    tgt->slot_update(*this, e->what_get(), eval(e->value_get()));
   }
 
   // Apply a function written in Urbi.
@@ -749,16 +750,28 @@ namespace runner
     //ECHO ("result: " << *current_);
   }
 
+  Interpreter::rObject Interpreter::context(unsigned n)
+  {
+    rObject res = locals_;
+    for (int i = n; i; i--)
+    {
+      res = res->slot_get(SYMBOL(code))->slot_get(SYMBOL(context));
+      assert(res);
+    }
+    return res;
+  }
+
   void
   Interpreter::visit (ast::rConstLocal e)
   {
     try
     {
+      rObject tgt = context(e->depth_get());
       // FIXME: Register in the call stack
       if (e->arguments_get())
-        current_ = apply(locals_, e->name_get(), e->arguments_get());
+        current_ = apply(tgt, e->name_get(), e->arguments_get());
       else
-        current_ = locals_->slot_get(e->name_get());
+        current_ = tgt->slot_get(e->name_get());
     }
     PROPAGATE_EXCEPTION(e);
   }

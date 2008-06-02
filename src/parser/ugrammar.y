@@ -211,7 +211,7 @@
                      ast::rExp value  )
     {
       if (lvalue->target_implicit())
-        return new ast::Assignment(l, lvalue->name_get(), value);
+        return new ast::Assignment(l, lvalue->name_get(), value, 0);
       else
         return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
     }
