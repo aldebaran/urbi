@@ -35,14 +35,15 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "exps_type":           '"ast/exps-type.hh"'
-  "flavor_type":         '"ast/flavor.hh"'
-  "Throw::exception_kind": '"ast/throw.hh"'
-  "libport::Symbol":     '<libport/symbol.hh>'
-  "std::string":         '<string>'
-  "symbols_type":        '"ast/symbols-type.hh"'
-  "ufloat":              '<libport/ufloat.h>'
-  "libport::RefCounted": '<libport/ref-counted.hh>'
+  "Throw::exception_kind": '<ast/throw.hh>'
+  "exps_type":             '<ast/exps-type.hh>'
+  "flavor_type":           '<ast/flavor.hh>'
+  "libport::RefCounted":   '<libport/ref-counted.hh>'
+  "libport::Symbol":       '<libport/symbol.hh>'
+  "slots_type":            '"ast/fwd.hh>'
+  "std::string":           '<string>'
+  "symbols_type":          '<ast/symbols-type.hh>'
+  "ufloat":                '<libport/ufloat.h>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
