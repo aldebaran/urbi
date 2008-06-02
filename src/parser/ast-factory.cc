@@ -4,6 +4,7 @@
 
 namespace parser
 {
+
   /// "<target> . <method> (args)".
   ast::rCall
   ast_call (const yy::location& l,
@@ -53,7 +54,10 @@ namespace parser
 
   /// Factor slot_set, slot_update, and slot_remove.
   /// \param l        source location.
-  /// \param lvalue   object and slot to change.
+  /// \param lvalue   object and slot to change.  This object is
+  ///                 destroyed by this function: its contents is
+  ///                 stolen, and its counter is decreased.  So the
+  ///                 comments in the code for details.
   /// \param change   the Urbi method to invoke.
   /// \param value    optional assigned value.
   /// \param modifier optional time modifier object.
@@ -61,9 +65,9 @@ namespace parser
   static
   inline
   ast::rExp
-  ast_slot_change (const yy::location& l,
-                   ast::rCall lvalue, libport::Symbol change,
-                   ast::rExp value)
+  ast_slot_change(const yy::location& l,
+                  ast::rCall lvalue, libport::Symbol change,
+                  ast::rExp value)
   {
     ast::rExp res = 0;
     bool implicit = lvalue->target_implicit();
@@ -91,27 +95,21 @@ namespace parser
   }
 
   ast::rExp
-  ast_slot_set (const yy::location& l, ast::rCall lvalue,
-                ast::rExp value)
+  ast_slot_set(const yy::location& l, ast::rCall lvalue,
+               ast::rExp value)
   {
-    if (lvalue->target_implicit())
-      return new ast::Declaration(l, lvalue->name_get(), value);
-    else
-      return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
+    return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
   }
 
   ast::rExp
-  ast_slot_update (const yy::location& l, ast::rCall lvalue,
-                   ast::rExp value  )
+  ast_slot_update(const yy::location& l, ast::rCall lvalue,
+                  ast::rExp value)
   {
-    if (lvalue->target_implicit())
-      return new ast::Assignment(l, lvalue->name_get(), value);
-    else
-      return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
+    return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
   }
 
   ast::rExp
-  ast_slot_remove  (const yy::location& l, ast::rCall lvalue)
+  ast_slot_remove(const yy::location& l, ast::rCall lvalue)
   {
     return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
   }
@@ -123,11 +121,10 @@ namespace parser
   {
     if (ast::rAbstractScope res = e.unsafe_cast<ast::AbstractScope>())
       return res;
+    else if (target)
+      return new ast::Do(l, e, target);
     else
-      if (target)
-        return new ast::Do(l, e, target);
-      else
-        return new ast::Scope(l, e);
+      return new ast::Scope(l, e);
   }
 
   ast::rAbstractScope
