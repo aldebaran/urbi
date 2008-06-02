@@ -618,7 +618,7 @@ namespace runner
     if (e->flavor_get() == ast::flavor_and)
       runners.reserve(content.size());
 
-    bool first_iteration = true;
+    bool tail = false;
     ast::rConstAst body = e->body_get();
     ast::flavor_type flavor = e->flavor_get();
     libport::Symbol index = e->index_get();
@@ -649,9 +649,7 @@ namespace runner
 	std::swap(locals, locals_);
 	Finally finally(swap(locals, locals_));
 
-	if (first_iteration)
-	  first_iteration = false;
-	else
+	if (tail++)
 	  MAYBE_YIELD(flavor);
 
 	try
@@ -1060,13 +1058,11 @@ namespace runner
   void
   Interpreter::visit (ast::rConstWhile e)
   {
-    bool first_iteration = true;
+    bool tail = false;
     // Evaluate the test.
     while (true)
     {
-      if (first_iteration)
-	first_iteration = false;
-      else
+      if (tail++)
 	MAYBE_YIELD (e->flavor_get());
       JAECHO ("while test", e.test_get ());
       operator() (e->test_get());
