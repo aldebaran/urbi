@@ -478,22 +478,25 @@ stmt:
     {
       ::parser::Tweast tweast;
       libport::Symbol owner = libport::Symbol::fresh(SYMBOL(__class__));
-      ast::rCall target = $2;
-      if (!$2.value()->target_implicit())
+      ast::rCall lvalue = $2;
+      libport::Symbol slot = lvalue->name_get();
+      if (!lvalue->target_implicit())
       {
         // If the lvalue call is qualified, we need to store the
         // target in a variable to avoid evaluating it several times.
         tweast << "var " << owner
-               << " = " << new_clone($2.value()->target_get()) << "|";
-        target = ast_call(@2,
+               << " = " << new_clone(lvalue->target_get()) << "|";
+        lvalue = ast_call(@2,
                           ast_call(@2, new ast::Implicit(@2), owner),
-                          $2.value()->name_get());
+                          slot);
+        // Kill the shell.
+        $2.value()->counter_dec();
       }
-      tweast << "var " << new_clone(target) << "= Object.clone|"
-             << "do " << new_clone(target) << " {"
+      tweast << "var " << new_clone(lvalue) << "= Object.clone|"
+             << "do " << lvalue << " {"
              << "var protoName = "
-             << ast_exp(new ast::String(@2, $2.value()->name_get())) << "|"
-             << "function " << ("as" + $2.value()->name_get().name_get()) << "() {self}|"
+             << ast_exp(new ast::String(@2, slot)) << "|"
+             << "function " << ("as" + slot.name_get()) << "() {self}|"
              << ast_exp($3.value()) << "}";
 
       $$ = ::parser::parse(tweast)->ast_take();
