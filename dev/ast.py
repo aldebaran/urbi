@@ -411,4 +411,3 @@ def visit(nodes, const):
   list += ")\n"
   res += tools.indent(width, list)
   return res
-
