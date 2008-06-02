@@ -143,18 +143,6 @@ namespace object
 
 
   /*--------.
-  | Global. |
-  `--------*/
-
-  struct global_traits
-  {
-    // FIXME: Global is not really an atom
-    typedef int type;
-    enum { kind = object_kind_global };
-  };
-
-
-  /*--------.
   | Float.  |
   `--------*/
 
@@ -216,17 +204,6 @@ namespace object
     enum { kind = object_kind_primitive };
   };
 
-
-  /*--------.
-  | Scope.  |
-  `--------*/
-
-  struct scope_traits
-  {
-    // FIXME: Scopes are not really atoms ...
-    typedef int type;
-    enum { kind = object_kind_scope };
-  };
 
   /*---------.
   | String.  |

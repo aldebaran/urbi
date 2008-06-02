@@ -39,12 +39,10 @@ namespace object
   Macro(delegate,   Delegate)				\
   Macro(dictionary, Dictionary)                         \
   Macro(float,      Float)				\
-  Macro(global,     Global)				\
   Macro(integer,    Integer)				\
   Macro(list,       List)				\
   Macro(lobby,      Lobby)				\
   Macro(primitive,  Primitive)				\
-  Macro(scope,      Scope)				\
   Macro(string,     String)
 
 
@@ -55,6 +53,8 @@ namespace object
 
 # define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
+  Macro(global,     Global)				\
+  Macro(scope,      Scope)				\
   Macro(tag, Tag)					\
   Macro(task, Task)
 
