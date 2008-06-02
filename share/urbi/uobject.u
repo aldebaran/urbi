@@ -81,7 +81,7 @@ do getSlot("uvar")
 
   function init(parent, name)
   {
-    parent.setSlot(name, getSlot("self"))|
+    parent.setSlot(name, self)|
     parent.setProperty(name, "updateHook", getSlot("updateHook"))
   };
 
@@ -118,8 +118,8 @@ do getSlot("uvar")
     var ret = function() {
       getSlot("code").accessor
     } |
-    getSlot("ret").addProto(self) |
-    do getSlot("ret") {
+    ret.addProto(self) |
+    do ret {
       var change = [] |
       var changeOwned = [] |
       var access = [] |
@@ -132,7 +132,7 @@ do getSlot("uvar")
       var loopTag = new Tag |
       var isUVar = 1
     } |
-    getSlot("ret")
+    ret
   };
   /** If both notifyChange and notifyAccess are present, call the notifyAccess
    *  periodically.
@@ -155,20 +155,20 @@ do getSlot("uvar")
   };
   function notifyChange(f)
   {
-    change += [getSlot("f")] |
+    change += [f] |
     if (change.size == 1)
       loopCheck |
     void
   };
   function notifyChangeOwned(f)
   {
-    changeOwned += [getSlot("f")] |
+    changeOwned += [f] |
     void
   };
   function notifyAccess(f)
   {
     nAccess++ |
-    access += [getSlot("f")] |
+    access += [f] |
     if (access.size == 1)
       loopCheck |
     void
@@ -231,11 +231,11 @@ class Global.'external' {
       waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
       var ret = Global.uobjects.getSlot(u);
       Global.uobjects.removeSlot(u);
-      getSlot("ret");
+      ret
     };
-    getSlot("cloner").inject("connection", lobby).inject("objectName",o);
+    cloner.inject("connection", lobby).inject("objectName",o);
     uobjects.setSlot(o, Object.clone);
-    uobjects.getSlot(o).setSlot("clone", getSlot("cloner"));
+    uobjects.getSlot(o).setSlot("clone", cloner);
     //Ensure load is bound. K1 uobj tries to do it before binding the object.
     'var'(o, "load", "dummy0");
     void
@@ -270,7 +270,7 @@ class Global.'external' {
       var v = obj.getSlot(varname);
       obj.removeSlot(varname);
       obj.setSlot(varname, getSlot("uvar").clone);
-      obj.updateSlot(varname, getSlot("v"));
+      obj.updateSlot(varname, v);
     };
     /* Create a 'notifyChange' function that generates the UObject message
      * and sends it through the remote connection.

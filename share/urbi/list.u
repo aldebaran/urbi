@@ -125,7 +125,7 @@ do List
 
   function foldl_head(action)
   {
-    tail.foldl(getSlot("action"), head)
+    tail.foldl(action, head)
   };
 
   # Apply \a f on every element
@@ -162,7 +162,7 @@ do List
       res = front.asPrintable |
       for| elt in tail
       {
-        res += ", " + getSlot("elt").asPrintable |
+        res += ", " + elt.asPrintable |
       }
     } |
     "[" + res + "]"

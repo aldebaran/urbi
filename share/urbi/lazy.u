@@ -5,7 +5,7 @@ class Global.Lazy
 
   function init(value)
   {
-    self.code = getSlot("value")|
+    self.code = value
   };
 
   function eval()

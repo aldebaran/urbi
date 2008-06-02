@@ -29,7 +29,7 @@ class Global.Event
       for| instance in (launched)
       {
         if (!prev_launched.hasSame (instance))
-          detach (getSlot ("func").apply ([self] + instance))
+          detach (func.apply ([self] + instance))
       } |
       prev_launched = launched
     }

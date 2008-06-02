@@ -20,10 +20,10 @@ class Global.Kernel1Functions
     var s = call.argString(1).split(". ") |
     var base = call.context |
     for c in s {
-      var v = getSlot("base").locateSlot(c) |
+      var v = base.locateSlot(c) |
       if (v.sameAs(nil))
         return false |
-      base = getSlot("v").getSlot(c).apply([getSlot("v").getSlot(c)])
+      base = v.getSlot(c).apply([v.getSlot(c)])
     } |
     return true
   };

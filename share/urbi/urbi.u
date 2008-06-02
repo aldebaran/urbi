@@ -56,12 +56,12 @@ do Object
 
   function '==' (other)
   {
-    sameAs(getSlot("other"))
+    sameAs(other)
   };
 
   function '===' (other)
   {
-    memSameAs(getSlot("other"))
+    memSameAs(other)
   };
 
   cloneSlot("setSlot", "setVoidSlot").acceptVoid = true;
@@ -84,8 +84,8 @@ do Object
     var res = call.getSlot("target").clone |
     # Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
-    getSlot("res").callMessage(call) |
-    getSlot("res")
+    res.callMessage(call) |
+    res
   };
 };
 
@@ -427,7 +427,7 @@ do Object
     if (list.size)
     {
       Object.tasks += [detach (f (list.head))];
-      eachBg (getSlot ("f"), list.tail)
+      eachBg (f, list.tail)
     };
   };
 };
@@ -442,7 +442,7 @@ do Object
 {
   function as(type)
   {
-    getSlot("self").getSlot("as" + getSlot("type").protoName).apply([self])
+    getSlot("as" + type.protoName).apply([self])
   }
 };
 
@@ -529,9 +529,9 @@ class Global.Executable
 {
   function voidVersion ()
   {
-    var res = getSlot("self").clone |
-    getSlot("res").acceptVoid = true |
-    return getSlot("res") |
+    var res = clone |
+    res.acceptVoid = true |
+    return res
   }
 };
 
@@ -570,10 +570,10 @@ do Object
     }
     else
       slotProps = properties.get(slot)|
-    slotProps.set(name, getSlot("value"))|
+    slotProps.set(name, value)|
     if (!self.getSlot(slot).locateSlot("propertyHook").isNil)
-      self.getSlot(slot).propertyHook(self, slot, name, getSlot("value"))|
-    getSlot("value")
+      self.getSlot(slot).propertyHook(self, slot, name, value)|
+    value
   };
 
   function getProperty(slot, name)

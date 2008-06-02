@@ -42,9 +42,9 @@ class Global.Group
     function action (m)
     {
       var f = List.getSlot("push_back").voidVersion |
-      getSlot("f").apply([results, m.callMessage(outer_call)])
+      f.apply([results, m.callMessage(outer_call)])
     } |
-    members.each(getSlot("action")) |
+    members.each(action) |
     # If the resulting group contains only void, return void.
     # FIXME: Use methodToFunction.
     if (results.all(function (i) { i.isVoid }.voidVersion))
