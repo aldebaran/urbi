@@ -71,7 +71,6 @@ namespace binder
                                   input->what_get(),
                                   SYMBOL(updateSlot),
                                   input->value_get());
-      targetSelf(res);
       result_ = res;
     }
   }
@@ -84,7 +83,6 @@ namespace binder
                                   input->what_get(),
                                   SYMBOL(setSlot),
                                   input->value_get());
-      targetSelf(res);
       result_ = res;
     }
     else
@@ -115,10 +113,7 @@ namespace binder
         return;
       }
       else
-      {
         super_type::visit (input);
-        targetSelf(result_.unsafe_cast<ast::Call>());
-      }
     }
     else
       super_type::visit (input);
@@ -128,11 +123,6 @@ namespace binder
   {
     bind(input->index_get(), input);
     super_type::visit(input);
-  }
-
-  void Binder::targetSelf(ast::rCall call)
-  {
-    call->target_set(new ast::Local(call->location_get(), SYMBOL(self), 0, 0));
   }
 
   void Binder::visit (ast::rConstScope input)

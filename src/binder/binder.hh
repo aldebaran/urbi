@@ -67,8 +67,6 @@ namespace binder
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
       void bind(const libport::Symbol& var, ast::rConstAst decl);
-      /// Retarget a call to getSlot("self")
-      void targetSelf(ast::rCall call);
       /// Whether \return 0 If the variable is local, or the depth in
       /// number of imbriqued function otherwise.
       int isLocal(const libport::Symbol& name);
