@@ -119,8 +119,7 @@ namespace object
     return
       execute_parsed(r,
                      parser::parse(arg1->value_get()),
-                     PrimitiveError("",
-                                    std::string("Error executing command.")));
+                     PrimitiveError("", "error executing command"));
   }
 
   static rObject
