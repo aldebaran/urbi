@@ -98,15 +98,15 @@ namespace binder
   {
     libport::Symbol name = input->name_get();
     bool implicit = input->target_implicit();
-    if ((!input->arguments_get()
-	 && implicit
+    if ((implicit
 	 && isLocal(name) == depth_)
         || name == SYMBOL(call)
         || name == SYMBOL(locals)
         || name == SYMBOL(self))
     {
-      result_ = new ast::Local(input->location_get(),
-                               name);
+      const ast::exps_type* args = input->arguments_get();
+      result_ = new ast::Local(input->location_get(), name,
+                               args ? recurse_collection(*args) : 0);
       return;
     }
     super_type::visit (input);
@@ -114,9 +114,6 @@ namespace binder
     // If this is a qualified call, nothing particular to do
     if (implicit)
     {
-      assert(name != SYMBOL(call)
-             && name != SYMBOL(locals)
-             && name != SYMBOL(self));
       if (name == SYMBOL(getSlot)
                || name == SYMBOL(locateSlot)
                || name == SYMBOL(updateSlot)

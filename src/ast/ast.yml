@@ -821,8 +821,27 @@ Local:
     - name:
         type: 'libport::Symbol'
         desc: Name of the local variable.
+    - arguments:
+        type: 'exps_type*'
+        access: rwW
+        mandatory: false
+        desc: Arguments passed to the function
+  default: |2
+    visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
+    if (n->arguments_get())
+      foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
+        operator()(e);
   printer:
     - $name
+    - '{
+         if (n->arguments_get())
+           ostr_
+            << "("
+            << libport::incindent
+            << libport::separate(*n->arguments_get(), ", ")
+            << libport::decindent
+            << ")";
+       }'
 
 # Local Variables:
 # mode: yaml

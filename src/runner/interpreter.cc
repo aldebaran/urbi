@@ -525,7 +525,7 @@ namespace runner
     object::objects_type lazy_args;
     boost::sub_range<const ast::exps_type> range(args);
     // The target can be unspecified.
-    if (args.front()->implicit())
+    if (!args.front() || args.front()->implicit())
     {
       lazy_args.push_back(object::nil_class);
       range = make_iterator_range(range, 1, 0);
@@ -544,36 +544,10 @@ namespace runner
       // The invoked slot (probably a function).
       ast::rConstExp ast_tgt = e->target_get();
       rObject tgt = ast_tgt->implicit() ? locals_ : eval(ast_tgt);
-      assertion(tgt);
-      rObject val = tgt->slot_get(e->name_get());
-      assertion(val);
-
-    /*-------------------------.
-    | Evaluate the arguments.  |
-    `-------------------------*/
-
-      // Gather the arguments, including the target.
-      object::objects_type args;
-      args.push_back (tgt);
-
-      // FIXME: We probably don't want to include the target as first
-      // argument here.
-      ast::exps_type ast_args =
-        e->arguments_get() ? *e->arguments_get() : ast::exps_type();
-      ast_args.push_front(e->target_get());
-
-      // Build the call message for non-strict functions, otherwise
-      // the evaluated argument list.
-      rObject call_message;
-      if (val->kind_get () == object::object_kind_code
-          && !val.unsafe_cast<object::Code> ()->value_get ()->strict())
-        call_message = build_call_message (tgt, e->name_get(), ast_args);
-      else
-        push_evaluated_arguments (args, ast_args, !acceptVoid(val));
 
       call_stack_.push_back(e);
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
-      apply (val, e->name_get(), args, call_message);
+      apply(tgt, e->name_get(), e->arguments_get());
     }
     PROPAGATE_EXCEPTION(e);
 
@@ -581,6 +555,41 @@ namespace runner
     // (a function that runs a while for instance).
     // passert (e, current_);
     // ECHO (AST(e) << " result: " << *current_);
+  }
+
+  Interpreter::rObject
+  Interpreter::apply (rObject tgt, const libport::Symbol& message,
+                      const ast::exps_type* input_ast_args)
+  {
+    // The invoked slot (probably a function).
+    rObject val = tgt->slot_get(message);
+    assertion(val);
+
+    /*-------------------------.
+    | Evaluate the arguments.  |
+    `-------------------------*/
+
+    // Gather the arguments, including the target.
+    object::objects_type args;
+    args.push_back (tgt);
+
+    ast::exps_type ast_args =
+      input_ast_args ? *input_ast_args : ast::exps_type();
+
+    // FIXME: This is the target, for compatibility reasons. We need
+    // to remove this, and stop assuming that arguments start at
+    // calls.args.nth(1)
+    ast_args.push_front(0);
+
+    // Build the call message for non-strict functions, otherwise
+    // the evaluated argument list.
+    rObject call_message;
+    if (val->kind_get () == object::object_kind_code
+        && !val.unsafe_cast<object::Code> ()->value_get ()->strict())
+      call_message = build_call_message (tgt, message, ast_args);
+    else
+      push_evaluated_arguments (args, ast_args, !acceptVoid(val));
+    return apply (val, message, args, call_message);
   }
 
   void
@@ -737,7 +746,15 @@ namespace runner
   void
   Interpreter::visit (ast::rConstLocal e)
   {
-    urbi_call(*this, locals_, e->name_get());
+    try
+    {
+      // FIXME: Register in the call stack
+      if (e->arguments_get())
+        current_ = apply(locals_, e->name_get(), e->arguments_get());
+      else
+        current_ = locals_->slot_get(e->name_get());
+    }
+    PROPAGATE_EXCEPTION(e);
   }
 
   void

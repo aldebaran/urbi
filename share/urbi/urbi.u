@@ -181,7 +181,7 @@ do Object
 {
   function Object.isNil ()
   {
-    nil === getSlot("self")
+    nil === self
   }
 };
 
@@ -366,7 +366,7 @@ do Object
 {
   function isProto ()
   {
-    locateSlot("protoName") === locals.getSlot("self")
+    locateSlot("protoName") === self
   };
 
   function type ()

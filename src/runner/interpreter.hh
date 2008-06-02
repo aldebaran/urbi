@@ -87,9 +87,14 @@ namespace runner
 			   object::objects_type args,
 			   rObject call_message = 0);
 
+    /// Helper to apply a function with the arguments as ast chunks
+    rObject apply (rObject tgt, const libport::Symbol& msg,
+                const ast::exps_type* args);
+
     /// Use an argument list coming from Urbi.
     virtual rObject apply (const rObject& func, const libport::Symbol msg,
 			   const object::rList& args);
+
 
     /// Evaluate an expression in the current scope and return its result.
     rObject eval (ast::rConstAst);
