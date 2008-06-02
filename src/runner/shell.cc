@@ -9,7 +9,6 @@ namespace runner
 	       scheduler::Scheduler& scheduler,
 	       const libport::Symbol& name)
     : Interpreter(lobby,
-		  object::Object::make_method_scope(lobby),
 		  scheduler,
 		  0,
 		  name)

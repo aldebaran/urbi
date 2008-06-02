@@ -156,7 +156,6 @@ namespace runner
 
 
   Interpreter::Interpreter (rLobby lobby,
-			    rObject locals,
 			    scheduler::Scheduler& sched,
 			    ast::rConstAst ast,
 			    const libport::Symbol& name)
@@ -165,7 +164,7 @@ namespace runner
       ast_(ast),
       code_(0),
       current_(0),
-      locals_(locals)
+      locals_(object::Object::make_method_scope(lobby))
   {
     init();
   }

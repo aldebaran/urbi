@@ -36,11 +36,11 @@ namespace runner
 
     /// \name Ctor & dtor.
     /// \{
-    /// Construct a \c Interpreter in the \a lobby.  The runner needs to
-    /// know its \a locals, who is its \a scheduler and will execute
-    /// \a ast.  Memory ownership of \a ast is transferred to the Interpreter.
-    /// The new runner has no parent.
-    Interpreter (rLobby lobby, rObject locals,
+    /// Construct a \c Interpreter in the \a lobby.  The runner needs
+    /// to know its \a scheduler and will execute \a ast.  Memory
+    /// ownership of \a ast is transferred to the Interpreter.  The
+    /// new runner has no parent.
+    Interpreter (rLobby lobby,
 		 scheduler::Scheduler& scheduler,
 		 ast::rConstAst ast,
 		 const libport::Symbol& name = SYMBOL());
