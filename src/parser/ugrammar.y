@@ -114,7 +114,7 @@
   /// Store in $$ the AST of the parsing of Code.
   // Fragile in case Bison changes its expansion of $$.
 # define DESUGAR(Code)				\
-    DESUGAR_(yyval.expr, Code)
+    DESUGAR_(yyval.exp, Code)
 
 
     /// "<target> . <method> (args)".
@@ -476,15 +476,15 @@
   typedef libport::pod_caster<ast::rNary> podNary;
   typedef libport::pod_caster<ast::rTag>  podTag;
 
-  podExp    expr;
+  podExp    exp;
   podCall   call;
   podNary   nary;
   podTag    tag;
 };
 
-%printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
+%printer { debug_stream() << libport::deref << $$; } <exp> <call> <nary>;
 
-%type <expr> expr expr.opt flag flags.0 flags.1 softtest stmt;
+%type <exp> exp exp.opt flag flags.0 flags.1 softtest stmt;
 
 
 /*----------------------.
@@ -582,7 +582,7 @@ stmts:
   }
 ;
 
-%type <expr> cstmt;
+%type <exp> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
 stmt            { assert($1.value()); $$ = $1; }
@@ -597,7 +597,7 @@ stmt            { assert($1.value()); $$ = $1; }
 
 %type <tag> tag;
 tag:
-  expr
+  exp
   {
     $$ = new ast::Tag (@$, $1);
   }
@@ -638,7 +638,7 @@ flags.0:
 
 stmt:
   /* empty */ { $$ = new ast::Noop (@$); }
-| expr        { $$ = $1; }
+| exp        { $$ = $1; }
 ;
 
 // Groups.
@@ -646,22 +646,22 @@ stmt:
 	TOK_DELGROUP     "delgroup"
 	TOK_GROUP        "group";
 stmt:
-  "group" "identifier" "{" exprs "}"
+  "group" "identifier" "{" exps "}"
   {
     DESUGAR("var " << $2 << " = Global.Group.new(" << $4 << ")");
   }
-| "addgroup" "identifier" "{" exprs "}"
+| "addgroup" "identifier" "{" exps "}"
   {
     DESUGAR($2 << ".add(" << $4 << ")");
   }
-| "delgroup" "identifier" "{" exprs "}"
+| "delgroup" "identifier" "{" exps "}"
   {
     DESUGAR($2 << ".remove(" << $4 << ")");
   }
 | "group" { NOT_IMPLEMENTED(@$); }
 
 ;
-expr:
+exp:
   "group" "identifier"    { DESUGAR($2 << ".members"); }
 ;
 
@@ -710,7 +710,7 @@ stmt:
     }
 ;
 
-%type <expr> identifier_as_string;
+%type <exp> identifier_as_string;
 identifier_as_string:
   "identifier"
     {
@@ -732,7 +732,7 @@ stmt:
     static ast::ParametricAst a("'external'.'var'(%exp:1, %exp:2, %exp:3)");
     $$ = exp(a % $3 % $5 % $7);
   }
-| "external" "function" "(" expr_integer ")"
+| "external" "function" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
   {
@@ -740,7 +740,7 @@ stmt:
       a("'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
     $$ = exp(a % $4 % $6 % $8 % $10);
   }
-| "external" "event" "(" expr_integer ")"
+| "external" "event" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
   {
@@ -767,7 +767,7 @@ stmt:
   {
     DESUGAR($2.value() << ".'emit'(" << $3 << ")");
   }
-| "emit" "(" expr.opt ")" k1_id args
+| "emit" "(" exp.opt ")" k1_id args
   {
     NOT_IMPLEMENTED(@$);
   }
@@ -839,11 +839,11 @@ k1_id:
 `-------------------*/
 
 stmt:
-  lvalue "=" expr
+  lvalue "=" exp
     {
       $$ = ast_slot_update(@$, $1, $3);
     }
-| "var" lvalue "=" expr
+| "var" lvalue "=" exp
     {
       ast::rCall a = $2;
       ast::rExp b = $4;
@@ -871,18 +871,18 @@ stmt:
 ;
 
 
-expr:
-  lvalue "+=" expr
+exp:
+  lvalue "+=" exp
   { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '+' << $3.value()); }
-| lvalue "-=" expr
+| lvalue "-=" exp
   { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '-' << $3.value()); }
-| lvalue "*=" expr
+| lvalue "*=" exp
   { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '*' << $3.value()); }
-| lvalue "/=" expr
+| lvalue "/=" exp
   { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '/' << $3.value()); }
 ;
 
-expr:
+exp:
   lvalue "--"      { DESUGAR('(' << $1.value() << "-= 1) + 1"); }
 | lvalue "++"      { DESUGAR('(' << $1.value() << "+= 1) - 1"); }
 ;
@@ -893,7 +893,7 @@ expr:
 `-------------*/
 %token TOK_MINUS_GT     "->";
 stmt:
-  lvalue "->" id "=" expr
+  lvalue "->" id "=" exp
     {
       // FIXME: We leak lvalue itself.
       $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(setProperty),
@@ -903,7 +903,7 @@ stmt:
     }
 ;
 
-expr:
+exp:
   lvalue "->" id
     {
       // FIXME: lvalue leaks.
@@ -918,7 +918,7 @@ expr:
 `---------------------*/
 
 // non-empty-statement: A statement that triggers a warning if empty.
-%type <expr> nstmt;
+%type <exp> nstmt;
 nstmt:
   stmt
     {
@@ -929,21 +929,21 @@ nstmt:
 ;
 
 stmt:
-  "at" "(" expr ")" nstmt %prec CMDBLOCK
+  "at" "(" exp ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst at("at_(%exp:1, detach(%exp:2))");
       $$ = exp (at % $3 % $5);
     }
-| "at" "(" expr ")" nstmt "onleave" nstmt
+| "at" "(" exp ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst at("at_(%exp:1, detach(%exp:2), detach(%exp:3))");
       $$ = exp (at % $3 % $5 % $7);
     }
-| "at" "(" expr "~" expr ")" nstmt %prec CMDBLOCK
+| "at" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
@@ -951,7 +951,7 @@ stmt:
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | at_( " << s << ", " << $7.value() << ")");
     }
-| "at" "(" expr "~" expr ")" nstmt "onleave" nstmt
+| "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
@@ -960,26 +960,26 @@ stmt:
               << $5.value() << ") | at_( " << s << ", "
               << $7.value() << ", " << $9.value() << ")");
     }
-| "every" "(" expr ")" nstmt
+| "every" "(" exp ")" nstmt
     {
       static ast::ParametricAst every("every_(%exp:1, %exp:2)");
       $$ = exp (every % $3 % $5);
     }
-| "if" "(" expr ")" nstmt %prec CMDBLOCK
+| "if" "(" exp ")" nstmt %prec CMDBLOCK
     {
       $$ = new ast::If(@$, $3, $5, new ast::Noop(@$));
     }
-| "if" "(" expr ")" nstmt "else" nstmt
+| "if" "(" exp ")" nstmt "else" nstmt
     {
       $$ = new ast::If(@$, $3, $5, $7);
     }
-| "for" "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
+| "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "for", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = ast_for (@$, $1, $3, $5, $7, $9);
     }
-| "for" "identifier" "in" expr block    %prec CMDBLOCK
+| "for" "identifier" "in" exp block    %prec CMDBLOCK
     {
       $$ = new ast::Foreach(@$, $1, $2, $4.value(), $5.value());
     }
@@ -1017,7 +1017,7 @@ stmt:
     {
       $$ = new ast::While(@$, $1, new ast::Float(@$, 1), $2);
     }
-| "for" "(" expr ")" stmt %prec CMDBLOCK
+| "for" "(" exp ")" stmt %prec CMDBLOCK
     {
       libport::Symbol id = libport::Symbol::fresh();
       DESUGAR("for (var " << id << " = " << $3.value() << ";"
@@ -1033,11 +1033,11 @@ stmt:
 	      << "{ waituntil(" << $3.value() << ")|"
 	      << tag << ".stop } }");
     }
-| "timeout" "(" expr ")" stmt
+| "timeout" "(" exp ")" stmt
     {
       DESUGAR("stopif ({sleep(" << $3.value() << ") | true}) " << $5.value());
     }
-| "return" expr.opt
+| "return" exp.opt
     {
       $$ = new ast::Throw(@$, ast::Throw::exception_return, $2);
     }
@@ -1049,30 +1049,30 @@ stmt:
     {
       $$ = new ast::Throw(@$, ast::Throw::exception_continue, 0);
     }
-| "whenever" "(" expr ")" nstmt %prec CMDBLOCK
+| "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {
       DESUGAR("whenever_(" << $3.value() << ", " << $5.value() << ")");
     }
-| "whenever" "(" expr "~" expr ")" nstmt %prec CMDBLOCK
+| "whenever" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | whenever_(" << s << ".val, "
               << $7.value() << ")");
     }
-| "whenever" "(" expr ")" nstmt "else" nstmt
+| "whenever" "(" exp ")" nstmt "else" nstmt
     {
       DESUGAR("whenever_(" << $3.value() << ", " << $5.value()
               << ", " << $7.value() << ")");
     }
-| "whenever" "(" expr "~" expr ")" nstmt "else" nstmt
+| "whenever" "(" exp "~" exp ")" nstmt "else" nstmt
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | whenever_(" << s << ".val, "
               << $7.value() << ", " << $9.value() << ")");
     }
-| "while" "(" expr ")" stmt %prec CMDBLOCK
+| "while" "(" exp ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "while", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
@@ -1087,14 +1087,14 @@ stmt:
 
 
 /*---------------------.
-| expr: Control flow.  |
+| exp: Control flow.  |
 `---------------------*/
 
 %token TOK_DO "do";
 
-expr:
+exp:
 	    block   { $$ = ast_scope(@$,  0, $1.value()); }
-| "do" expr block   { $$ = ast_scope(@$, $2.value(), $3.value()); }
+| "do" exp block   { $$ = ast_scope(@$, $2.value(), $3.value()); }
 ;
 
 /*---------------------------.
@@ -1103,8 +1103,8 @@ expr:
 
 %type <call> lvalue call;
 lvalue:
-	   id		{ $$ = ast_call(@$, new ast::Implicit(@$), $1); }
-| expr "." id		{ $$ = ast_call(@$, $1, $3); }
+	  id	{ $$ = ast_call(@$, new ast::Implicit(@$), $1); }
+| exp "." id	{ $$ = ast_call(@$, $1, $3); }
 ;
 
 id:
@@ -1123,7 +1123,7 @@ call:
 
 // Instantiation looks a lot like a function call.
 %token <symbol> TOK_NEW "new";
-%type <expr> new;
+%type <exp> new;
 new:
   "new" "identifier" args
   {
@@ -1146,7 +1146,7 @@ id: "new";
 %left "new";
 %left "identifier";
 
-expr:
+exp:
   new   { $$ = $1.value(); }
 | call  { $$ = $1.value(); }
 ;
@@ -1157,7 +1157,7 @@ expr:
 `------------*/
 
 // Anonymous function.
-expr:
+exp:
   "function" formals block
     {
       $$ = new ast::Function (@$, $2, ast_scope (@$, $3.value()));
@@ -1178,8 +1178,8 @@ expr:
 %token <ival>
 	TOK_INTEGER    "integer"
         TOK_FLAG       "flag";
-%type <expr> expr_integer;
-expr_integer:
+%type <exp> exp_integer;
+exp_integer:
   "integer"  { $$ = new ast::Float(@$, $1); }
 ;
 
@@ -1189,8 +1189,8 @@ expr_integer:
 %token <fval>
 	TOK_FLOAT      "float"
         TOK_DURATION   "duration";
-%type <expr> expr_float;
-expr_float:
+%type <exp> exp_float;
+exp_float:
   "float"  { $$ = new ast::Float(@$, $1); }
 ;
 
@@ -1207,20 +1207,20 @@ duration:
 
 
 /*-------.
-| expr.  |
+| exp.  |
 `-------*/
 
-expr:
-  expr_integer
-| expr_float
+exp:
+  exp_integer
+| exp_float
 | duration       { $$ = new ast::Float(@$, $1);        }
 | "string"       { $$ = new ast::String(@$, take($1)); }
-| "[" exprs "]"  { $$ = new ast::List(@$, $2);	       }
+| "[" exps "]"   { $$ = new ast::List(@$, $2);	       }
 ;
 
 
   /*---------.
-  | num expr |
+  | num exp |
   `---------*/
 // The name of the operators are the name of the messages.
 %token <symbol>
@@ -1236,18 +1236,18 @@ expr:
 	TOK_STAR_STAR  "**"
 ;
 
-expr:
-  expr "+" expr	          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "-" expr	          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "*" expr	          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "**" expr          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "/" expr	          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "%" expr	          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "^" expr	          { $$ = ast_call(@$, $1, $2, $3); }
-| expr "<<" expr          { $$ = ast_call(@$, $1, $2, $3); }
-| expr ">>" expr          { $$ = ast_call(@$, $1, $2, $3); }
-| "-" expr    %prec UNARY { $$ = ast_call(@$, $2, $1); }
-| "(" expr ")"            { $$ = $2; }
+exp:
+  exp "+" exp	          { $$ = ast_call(@$, $1, $2, $3); }
+| exp "-" exp	          { $$ = ast_call(@$, $1, $2, $3); }
+| exp "*" exp	          { $$ = ast_call(@$, $1, $2, $3); }
+| exp "**" exp            { $$ = ast_call(@$, $1, $2, $3); }
+| exp "/" exp	          { $$ = ast_call(@$, $1, $2, $3); }
+| exp "%" exp	          { $$ = ast_call(@$, $1, $2, $3); }
+| exp "^" exp	          { $$ = ast_call(@$, $1, $2, $3); }
+| exp "<<" exp            { $$ = ast_call(@$, $1, $2, $3); }
+| exp ">>" exp            { $$ = ast_call(@$, $1, $2, $3); }
+| "-" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
+| "(" exp ")"             { $$ = $2; }
 ;
 
 /*--------.
@@ -1270,28 +1270,28 @@ expr:
 	TOK_PIPE_PIPE            "||"
 ;
 
-expr:
-  expr "!="  expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "!==" expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "%="  expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "<"   expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "<="  expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "=="  expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "===" expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "=~=" expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr ">"   expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr ">="  expr { $$ = ast_call(@$, $1, $2, $3); }
-| expr "~="  expr { $$ = ast_call(@$, $1, $2, $3); }
+exp:
+  exp "!="  exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "!==" exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "%="  exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "<"   exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "<="  exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "=="  exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "===" exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "=~=" exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp ">"   exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp ">="  exp { $$ = ast_call(@$, $1, $2, $3); }
+| exp "~="  exp { $$ = ast_call(@$, $1, $2, $3); }
 
-| "!" expr        { $$ = ast_call(@$, $2, $1); }
+| "!" exp       { $$ = ast_call(@$, $2, $1); }
 
-| expr "&&" expr  { $$ = ast_call(@$, $1, $2, $3); }
-| expr "||" expr  { $$ = ast_call(@$, $1, $2, $3); }
+| exp "&&" exp  { $$ = ast_call(@$, $1, $2, $3); }
+| exp "||" exp  { $$ = ast_call(@$, $1, $2, $3); }
 ;
 
-expr.opt:
+exp.opt:
   /* nothing */ { $$ = 0; }
-| expr          { $$ = $1; }
+| exp          { $$ = $1; }
 ;
 
 
@@ -1305,12 +1305,12 @@ lvalue:
 ;
 
 %token TOK__EXP "_exp";
-expr:
+exp:
   "_exp" "(" "integer" ")"     { $$ = metavar<ast::rExp> (up, $3); }
 ;
 
 %token TOK__EXPS "_exps";
-exprs:
+exps:
   "_exps" "(" "integer" ")"    { $$ = metavar<ast::exps_type*> (up, $3); }
 ;
 
@@ -1320,7 +1320,7 @@ formals:
 ;
 
 %token TOK_PERCENT_EXP_COLON "%exp:";
-expr:
+exp:
   "%exp:" "integer"    { $$ = new ast::MetaExp(@$, $2); }
 ;
 
@@ -1329,36 +1329,36 @@ expr:
 | Expressions.  |
 `--------------*/
 
-%union { ast::exps_type* exprs; };
+%union { ast::exps_type* exps; };
 %printer
 {
   if ($$)
     debug_stream() << libport::separate (*$$, ", ");
   else
     debug_stream() << "NULL";
-} <exprs>;
-%type <exprs> exprs exprs.1 args;
+} <exps>;
+%type <exps> exps exps.1 args;
 
-exprs:
+exps:
   /* empty */ { $$ = new ast::exps_type; }
-| exprs.1     { $$ = $1; }
+| exps.1     { $$ = $1; }
 ;
 
-exprs.1:
-  expr             { $$ = new ast::exps_type; $$->push_back ($1); }
-| exprs.1 "," expr { $$->push_back($3); }
+exps.1:
+  exp             { $$ = new ast::exps_type; $$->push_back ($1); }
+| exps.1 "," exp  { $$->push_back($3); }
 ;
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
 args:
   /* empty */   { $$ = new ast::exps_type; }
-| "(" exprs ")" { $$ = $2; }
+| "(" exps ")"  { $$ = $2; }
 ;
 
 /*-----------.
 | softtest.  |
 `-----------*/
-softtest: expr
+softtest: exp
 
 
 /*----------------------.
