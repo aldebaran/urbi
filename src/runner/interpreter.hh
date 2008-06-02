@@ -61,8 +61,6 @@ namespace runner
     /// \ name Accessors.
     /// \{
   public:
-    /// Return the current locals for this runner.
-    const rObject& locals_get () const;
     /// \}
 
     /// Execute the code of function \a func with arguments \a args in
