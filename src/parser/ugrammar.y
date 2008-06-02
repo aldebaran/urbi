@@ -494,8 +494,7 @@ stmt:
       }
       tweast << "var " << new_clone(lvalue) << "= Object.clone|"
              << "do " << lvalue << " {"
-             << "var protoName = "
-             << ast_exp(new ast::String(@2, slot)) << "|"
+             << "var protoName = " << ast_exp(new ast::String(@2, slot)) << "|"
              << "function " << ("as" + slot.name_get()) << "() {self}|"
              << ast_exp($3.value()) << "}";
 
