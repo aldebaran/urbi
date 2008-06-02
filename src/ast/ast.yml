@@ -712,6 +712,8 @@ Call:
         desc: Name of the called function
     - arguments:
         type: 'exps_type*'
+        access: rwW
+        mandatory: false
         desc: Arguments passed to the function
   inline:
     header inside: |2
@@ -726,8 +728,9 @@ Call:
   default: |2
     visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
     operator()(n->target_get());
-    foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, n->arguments_get())
-      operator()(e);
+    if (n->arguments_get())
+      foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
+        operator()(e);
   printer:
     - '{
          if (!(n->target_get()->implicit()))
@@ -737,11 +740,11 @@ Call:
          n->name_get().print_escaped(ostr_);
        }'
     - '{
-         if (!n->arguments_get().empty())
+         if (n->arguments_get())
            ostr_
             << "("
             << libport::incindent
-            << libport::separate(n->arguments_get(), ", ")
+            << libport::separate(*n->arguments_get(), ", ")
             << libport::decindent
             << ")";
        }'

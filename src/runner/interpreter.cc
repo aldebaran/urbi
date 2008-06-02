@@ -149,7 +149,7 @@ namespace runner
       ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c)
 	throw object::ImplicitTagComponentError(e->location_get());
-      if (!c->arguments_get().empty())
+      if (c->arguments_get() && !c->arguments_get()->empty())
         return std::make_pair(c, res);
       res.push_front (c);
       e = c->target_get();
@@ -556,12 +556,14 @@ namespace runner
       object::objects_type args;
       args.push_back (tgt);
 
-      // FIXME: We probably don't want to include the target as first argument here.
-      ast::exps_type ast_args = e->arguments_get();
+      // FIXME: We probably don't want to include the target as first
+      // argument here.
+      ast::exps_type ast_args =
+        e->arguments_get() ? *e->arguments_get() : ast::exps_type();
       ast_args.push_front(e->target_get());
 
-      // Build the call message for non-strict functions, otherwise the
-      // evaluated argument list.
+      // Build the call message for non-strict functions, otherwise
+      // the evaluated argument list.
       rObject call_message;
       if (val->kind_get () == object::object_kind_code
           && !val.unsafe_cast<object::Code> ()->value_get ()->strict())

@@ -28,7 +28,7 @@ namespace binder
   static inline
   boost::optional<libport::Symbol> getFirstArg(ast::rConstCall call)
   {
-    ast::rConstAst arg1 = call->arguments_get().front();
+    ast::rConstAst arg1 = call->arguments_get()->front();
     if (!arg1.unsafe_cast<const ast::String>())
       return boost::optional<libport::Symbol>();
     return libport::Symbol(arg1.unsafe_cast<const ast::String>()->value_get());
@@ -96,10 +96,9 @@ namespace binder
 
   void Binder::visit (ast::rConstCall input)
   {
-    const ast::exps_type& args = input->arguments_get();
     libport::Symbol name = input->name_get();
     bool implicit = input->target_implicit();
-    if ((args.empty()
+    if ((!input->arguments_get()
 	 && implicit
 	 && isLocal(name) == depth_)
         || name == SYMBOL(call)

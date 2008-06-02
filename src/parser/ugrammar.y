@@ -132,7 +132,7 @@
     ast::rCall
     ast_call(const loc& l, ast::rExp target, libport::Symbol method)
     {
-      return ast_call(l, target, method, new ast::exps_type);
+      return ast_call(l, target, method, 0);
     }
 
     /// "<target> . <method> (<arg1>)".
@@ -141,8 +141,8 @@
     ast_call(const loc& l,
 	     ast::rExp target, libport::Symbol method, ast::rExp arg1)
     {
-      ast::rCall res = ast_call(l, target, method);
-      res->arguments_get().push_back(arg1);
+      ast::rCall res = ast_call(l, target, method, new ast::exps_type());
+      res->arguments_get()->push_back(arg1);
       return res;
     }
 
@@ -155,11 +155,11 @@
 	     ast::rExp target, libport::Symbol method,
 	     ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0)
     {
-      ast::rCall res = ast_call(l, target, method);
-      res->arguments_get().push_back(arg1);
-      res->arguments_get().push_back(arg2);
+      ast::rCall res = ast_call(l, target, method, new ast::exps_type());
+      res->arguments_get()->push_back(arg1);
+      res->arguments_get()->push_back(arg2);
       if (arg3)
-	res->arguments_get().push_back(arg3);
+	res->arguments_get()->push_back(arg3);
       return res;
     }
 
@@ -189,7 +189,7 @@
                  lvalue->target_get(), change,
                  ast::rString(new ast::String(lvalue->location_get(), lvalue->name_get())));
       if (value)
-        call->arguments_get().push_back(value);
+        call->arguments_get()->push_back(value);
       res = call;
       return res;
     }
@@ -1115,8 +1115,7 @@ call:
   lvalue args
     {
       $$ = $1;
-      foreach (ast::rExp elt, *$2)
-        $$.value()->arguments_get().push_back(elt);
+      $1.value()->arguments_set($2);
       $$.value()->location_set(@$);
     }
 ;
@@ -1351,7 +1350,7 @@ exps.1:
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
 args:
-  /* empty */   { $$ = new ast::exps_type; }
+  /* empty */   { $$ = 0; }
 | "(" exps ")"  { $$ = $2; }
 ;
 
