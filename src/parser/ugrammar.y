@@ -485,7 +485,7 @@ stmt:
         // If the lvalue call is qualified, we need to store the
         // target in a variable to avoid evaluating it several times.
         tweast << "var " << owner
-               << " = " << new_clone(lvalue->target_get()) << "|";
+               << " = " << lvalue->target_get() << "|";
         lvalue = ast_call(@2,
                           ast_call(@2, new ast::Implicit(@2), owner),
                           slot);
