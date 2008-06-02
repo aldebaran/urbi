@@ -9,23 +9,23 @@
 #include <memory>
 #include <sstream>
 
-#include "binder/bind.hh"
+#include <binder/bind.hh>
 
-#include "kernel/userver.hh"
-#include "kernel/uconnection.hh"
+#include <kernel/userver.hh>
+#include <kernel/uconnection.hh>
 
-#include "object/alien.hh"
-#include "object/system-class.hh"
-#include "object/task-class.hh"
+#include <object/alien.hh>
+#include <object/system-class.hh>
+#include <object/task-class.hh>
 
-#include "parser/parse.hh"
-#include "parser/parse-result.hh"
+#include <parser/parse.hh>
+#include <parser/parse-result.hh>
 
-#include "runner/at_handler.hh"
-#include "runner/runner.hh"
-#include "runner/interpreter.hh"
+#include <runner/at-handler.hh>
+#include <runner/runner.hh>
+#include <runner/interpreter.hh>
 
-#include "ast/nary.hh"
+#include <ast/nary.hh>
 
 namespace object
 {
