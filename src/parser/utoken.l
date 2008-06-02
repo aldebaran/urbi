@@ -18,9 +18,9 @@
 
 #include <libport/escape.hh>
 
-#include "parser/prescan.hh"
-#include "parser/parser-impl.hh"
-#include "parser/utoken.hh"
+#include <parser/prescan.hh>
+#include <parser/parser-impl.hh>
+#include <parser/utoken.hh>
 
 // Shorter access to the tokens.
 typedef yy::parser::token token;
