@@ -845,11 +845,7 @@ stmt:
     }
 | "var" lvalue "=" exp
     {
-      ast::rCall a = $2;
-      ast::rExp b = $4;
-      ast_slot_set(@$, a, b);
-      ast::rExp res = ast_slot_set(@$, a, b);
-      $$ = res;
+      $$ = ast_slot_set(@$, $2, $4);
     }
 | "var" lvalue
     {
@@ -1093,7 +1089,7 @@ stmt:
 %token TOK_DO "do";
 
 exp:
-	    block   { $$ = ast_scope(@$,  0, $1.value()); }
+	    block  { $$ = ast_scope(@$,  0, $1.value()); }
 | "do" exp block   { $$ = ast_scope(@$, $2.value(), $3.value()); }
 ;
 
