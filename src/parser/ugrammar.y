@@ -688,21 +688,21 @@ exp:
 stmt:
   lvalue "->" id "=" exp
     {
-      // FIXME: We leak lvalue itself.
       $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(setProperty),
 		    new ast::String(@1, $1.value()->name_get()),
 		    new ast::String(@3, $3.value()),
 		    $5);
+      $1.value()->counter_dec();
     }
 ;
 
 exp:
   lvalue "->" id
     {
-      // FIXME: lvalue leaks.
       $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(getProperty),
 		    new ast::String(@1, $1.value()->name_get()),
 		    new ast::String(@3, $3.value()));
+      $1.value()->counter_dec();
     }
 ;
 
