@@ -53,8 +53,8 @@ namespace object
 
 # define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
-  Macro(global,     Global)				\
-  Macro(scope,      Scope)				\
+  Macro(global, Global)					\
+  Macro(scope, Scope)					\
   Macro(tag, Tag)					\
   Macro(task, Task)
 
