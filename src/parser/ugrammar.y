@@ -61,6 +61,16 @@
 
 #include <object/atom.hh>
 
+#include <parser/ast-factory.hh>
+  using parser::ast_bin;
+  using parser::ast_call;
+  using parser::ast_for;
+  using parser::ast_nary;
+  using parser::ast_scope;
+  using parser::ast_slot_remove;
+  using parser::ast_slot_set;
+  using parser::ast_slot_update;
+
 #include <parser/tweast.hh>
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
@@ -68,9 +78,6 @@
 
   namespace
   {
-    /// Shorthand.
-    typedef yy::parser::location_type loc;
-
     /// Get the metavar from the specified map.
     template <typename T>
     static
@@ -102,11 +109,6 @@
     }
 
 
-
-    /*---------------------.
-    | Calls, lvalues etc.  |
-    `---------------------*/
-
   /// Store in Var the AST of the parsing of Code.
 # define DESUGAR_(Var, Code)				\
     Var = ::parser::parse(::parser::Tweast() << Code)->ast_take()
@@ -116,218 +118,6 @@
 # define DESUGAR(Code)				\
     DESUGAR_(yyval.exp, Code)
 
-
-    /// "<target> . <method> (args)".
-    static
-    ast::rCall
-    ast_call (const loc& l,
-	      ast::rExp target, libport::Symbol method, ast::exps_type* args)
-    {
-      ast::rCall res = new ast::Call(l, target, method, args);
-      return res;
-    }
-
-    /// "<target> . <method> ()".
-    static
-    ast::rCall
-    ast_call(const loc& l, ast::rExp target, libport::Symbol method)
-    {
-      return ast_call(l, target, method, 0);
-    }
-
-    /// "<target> . <method> (<arg1>)".
-    static
-    ast::rCall
-    ast_call(const loc& l,
-	     ast::rExp target, libport::Symbol method, ast::rExp arg1)
-    {
-      ast::rCall res = ast_call(l, target, method, new ast::exps_type());
-      res->arguments_get()->push_back(arg1);
-      return res;
-    }
-
-
-    /// "<target> . <method> (<arg1>, <arg2>)".
-    /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
-    static
-    ast::rCall
-    ast_call(const loc& l,
-	     ast::rExp target, libport::Symbol method,
-	     ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0)
-    {
-      ast::rCall res = ast_call(l, target, method, new ast::exps_type());
-      res->arguments_get()->push_back(arg1);
-      res->arguments_get()->push_back(arg2);
-      if (arg3)
-	res->arguments_get()->push_back(arg3);
-      return res;
-    }
-
-
-    /*-----------------.
-    | Changing slots.  |
-    `-----------------*/
-
-    /// Factor slot_set, slot_update, and slot_remove.
-    /// \param l        source location.
-    /// \param lvalue   object and slot to change.
-    /// \param change   the Urbi method to invoke.
-    /// \param value    optional assigned value.
-    /// \param modifier optional time modifier object.
-    /// \return The AST node calling the slot assignment.
-    static
-    inline
-    ast::rExp
-    ast_slot_change (const loc& l,
-		     ast::rCall lvalue, libport::Symbol change,
-		     ast::rExp value)
-    {
-      ast::rExp res = 0;
-      // FIXME: We leak lvalue itself.
-      ast::rCall call =
-        ast_call(l,
-                 lvalue->target_get(), change,
-                 ast::rString(new ast::String(lvalue->location_get(),
-                                              lvalue->name_get())));
-      if (value)
-        call->arguments_get()->push_back(value);
-      res = call;
-      return res;
-    }
-
-    static
-    ast::rExp
-    ast_slot_set (const loc& l, ast::rCall lvalue,
-		  ast::rExp value)
-    {
-      if (lvalue->target_implicit())
-        return new ast::Declaration(l, lvalue->name_get(), value);
-      else
-        return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
-    }
-
-    static
-    ast::rExp
-    ast_slot_update (const loc& l, ast::rCall lvalue,
-                     ast::rExp value  )
-    {
-      if (lvalue->target_implicit())
-        return new ast::Assignment(l, lvalue->name_get(), value, 0);
-      else
-        return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
-    }
-
-    static
-    ast::rExp
-    ast_slot_remove  (const loc& l, ast::rCall lvalue)
-    {
-      return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
-    }
-
-
-    /// Return \a e in a ast::Scope unless it is already one.
-    static
-    ast::rAbstractScope
-    ast_scope(const loc& l, ast::rExp target, ast::rExp e)
-    {
-      if (ast::rAbstractScope res = e.unsafe_cast<ast::AbstractScope>())
-	return res;
-      else
-        if (target)
-          return new ast::Do(l, e, target);
-        else
-          return new ast::Scope(l, e);
-    }
-
-    static
-    ast::rAbstractScope
-    ast_scope(const loc& l, ast::rExp e)
-    {
-      return ast_scope(l, 0, e);
-    }
-
-    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-    /// \param op must be & or |.
-    static
-    ast::rExp
-    ast_bin(const loc& l, ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
-    {
-      ast::rExp res = 0;
-      assert (lhs);
-      assert (rhs);
-      switch (op)
-      {
-	case ast::flavor_and:
-	  res = new ast::And (l, lhs, rhs);
-	  break;
-	case ast::flavor_pipe:
-	  res = new ast::Pipe (l, lhs, rhs);
-	  break;
-	default:
-	  pabort(op);
-      }
-      return res;
-    }
-
-    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-    /// \param op can be any of the four cases.
-    static
-    ast::rExp
-    ast_nary(const loc& l, ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
-    {
-      switch (op)
-      {
-	case ast::flavor_and:
-	case ast::flavor_pipe:
-	  return ast_bin(l, op, lhs, rhs);
-
-	case ast::flavor_comma:
-	case ast::flavor_semicolon:
-	{
-	  ast::rNary res = new ast::Nary(l);
-	  res->push_back(lhs, op);
-	  res->push_back(rhs);
-	  return res;
-	}
-	default:
-	  pabort(op);
-      }
-    }
-
-
-    /// Build a for loop.
-    // Since we don't have "continue", for is really a sugared
-    // while:
-    //
-    // "for OP ( INIT; TEST; INC ) BODY"
-    //
-    // ->
-    //
-    // "{ INIT OP WHILE OP (TEST) { BODY | INC } }"
-    //
-    // OP is either ";" or "|".
-    static
-    ast::rExp
-    ast_for (const loc& l, ast::flavor_type op,
-	     ast::rExp init, ast::rExp test, ast::rExp inc,
-	     ast::rExp body)
-    {
-      passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
-      assert (init);
-      assert (test);
-      assert (inc);
-      assert (body);
-
-      // BODY | INC.
-      ast::rExp loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
-
-      // WHILE OP (TEST) { BODY | INC }.
-      ast::While *while_loop =
-	new ast::While(l, op, test, ast_scope(l, loop_body));
-
-      // { INIT OP WHILE OP (TEST) { BODY | INC } }.
-      return ast_scope(l, ast_nary (l, op, init, while_loop));
-    }
 
 
     /*---------------.
@@ -589,7 +379,7 @@ stmts:
 %type <exp> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
-stmt            { assert($1.value()); $$ = $1; }
+  stmt            { assert($1.value()); $$ = $1; }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 | cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;

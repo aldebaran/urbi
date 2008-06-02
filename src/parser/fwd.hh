@@ -30,4 +30,10 @@ namespace parser
   class UParser;
 }
 
+namespace yy
+{
+  class location;
+  class position;
+}
+
 #endif // !PARSER_FWD_HH

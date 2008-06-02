@@ -1,4 +1,6 @@
 dist_libkernel_la_SOURCES +=			\
+parser/ast-factory.hh				\
+parser/ast-factory.cc				\
 parser/fwd.hh					\
 parser/metavar-map.hh				\
 parser/metavar-map.hxx				\
