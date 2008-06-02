@@ -121,6 +121,8 @@ namespace binder
       {
         if (boost::optional<libport::Symbol> var = getFirstArg(call))
           retarget(call, var.get());
+        else
+          targetSelf(call);
       }
       else
         retarget(call, call->name_get());
