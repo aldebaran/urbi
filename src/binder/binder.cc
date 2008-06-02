@@ -113,20 +113,7 @@ namespace binder
     ast::rCall call = result_.unsafe_cast<ast::Call>();
     // If this is a qualified call, nothing particular to do
     if (implicit)
-    {
-      if (name == SYMBOL(getSlot)
-               || name == SYMBOL(locateSlot)
-               || name == SYMBOL(updateSlot)
-               || name == SYMBOL(removeSlot))
-      {
-        if (boost::optional<libport::Symbol> var = getFirstArg(call))
-          retarget(call, var.get());
-        else
-          targetSelf(call);
-      }
-      else
-        retarget(call, call->name_get());
-    }
+      retarget(call, call->name_get());
   }
 
   void Binder::retarget(ast::rCall call, const libport::Symbol& var)
