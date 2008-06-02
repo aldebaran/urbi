@@ -1,5 +1,4 @@
 #include "ast/function.hh"
-#include "ast/new-clone.hh"
 #include "ast/scope.hh"
 #include "global-class.hh"
 #include "runner/interpreter.hh"
@@ -24,7 +23,7 @@ namespace object
     // understand the problem.
     ast::rClosure ast =
       new ast::Closure(e->location_get(), new ast::symbols_type(),
-                       new ast::Scope(e->location_get(), new_clone(e)));
+                       new ast::Scope(e->location_get(), const_cast<ast::Exp*>(e.get())));
     rObject function = dynamic_cast<runner::Interpreter*>(&r)->make_code(ast);
     return mkLazy(r, function);
   }

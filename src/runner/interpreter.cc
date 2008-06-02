@@ -17,7 +17,6 @@
 #include "kernel/exception.hh"
 #include "kernel/uconnection.hh"
 
-#include "ast/new-clone.hh"
 #include "ast/print.hh"
 
 #include "object/atom.hh"
