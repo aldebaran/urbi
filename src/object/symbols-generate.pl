@@ -15,6 +15,7 @@ my %char =
     'PIPE' => '|',
     'PLUS' => '+',
     'SLASH' => '/',
+    'SP' => ' ',
     'STAR' => '*',
     'TILDA' => '~',
 );
@@ -29,6 +30,11 @@ sub symbol ($)
     }
     $res;
 }
+
+# Check that no symbol::Symbol are called directly with literals.
+my $literals = `git grep -E 'libport::Symbol *\\("'`;
+die "use SYMBOL instead of direct calls to libport::Symbol:\n $literals\n"
+    if $literals;
 
 # Get the list of all the SYMBOL() uses.
 #

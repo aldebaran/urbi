@@ -59,7 +59,7 @@ namespace runner
   AtHandler::AtHandler(const Interpreter& model)
     : Interpreter(model,
 		  object::rObject(0),
-		  libport::Symbol("<at jobs handler>")),
+		  SYMBOL(LT_at_SP_jobs_SP_handler_GT)),
       yielding(false)
   {
     // There are no reason to inherit tags from our creator, as this service
