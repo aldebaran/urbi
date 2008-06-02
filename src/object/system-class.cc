@@ -181,7 +181,7 @@ namespace object
     CHECK_ARG_COUNT (1);
     rObject res = object::Object::fresh();
     res->proto_add (task_class);
-    res->slot_set (SYMBOL (runner), box (scheduler::rJob, &r));
+    res->slot_set (SYMBOL (job), box (scheduler::rJob, &r));
     return res;
   }
 
