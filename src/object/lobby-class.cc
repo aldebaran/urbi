@@ -9,7 +9,6 @@
 #include "kernel/uconnection.hh"
 
 #include "object/atom.hh"
-#include "object/scope-class.hh"
 #include "runner/runner.hh"
 
 namespace object

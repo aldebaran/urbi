@@ -24,7 +24,6 @@
 #include "object/list-class.hh"
 #include "object/object-class.hh"
 #include "object/primitive-class.hh"
-#include "object/scope-class.hh"
 #include "object/string-class.hh"
 #include "object/tag-class.hh"
 #include "object/task-class.hh"
