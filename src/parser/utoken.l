@@ -1,25 +1,6 @@
 %{
-/* \file utoken.l
- *******************************************************************************
-
- File: utoken.l\n
- Definition of scanner used by the UParser object.
- This scanned is defined with flex, using option c++.
-
- This file is part of
- %URBI, version 1.0\n
- (c) Jean-Christophe Baillie, 2004.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.net
-
- **************************************************************************** */
+  /// \file parser/utoken.l
+  /// \brief The scanner.
 
   // Unforunately the file libport/compiler.hh is included before, and
   // it is useless to define ENABLE_DEBUG_TRACES here as the guards

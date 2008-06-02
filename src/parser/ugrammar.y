@@ -187,7 +187,8 @@
       ast::rCall call =
         ast_call(l,
                  lvalue->target_get(), change,
-                 ast::rString(new ast::String(lvalue->location_get(), lvalue->name_get())));
+                 ast::rString(new ast::String(lvalue->location_get(),
+                                              lvalue->name_get())));
       if (value)
         call->arguments_get()->push_back(value);
       res = call;
