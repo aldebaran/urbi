@@ -48,15 +48,15 @@ namespace object
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
-  Macro(object,    Object)
+  Macro(object,     Object)
 
 
 # define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
-  Macro(global, Global)					\
-  Macro(scope, Scope)					\
-  Macro(tag, Tag)					\
-  Macro(task, Task)
+  Macro(global,     Global)					\
+  Macro(scope,      Scope)					\
+  Macro(tag,        Tag)					\
+  Macro(task,       Task)
 
 
 # define APPLY_ON_ALL_ROOT_CLASSES(Macro)	\
