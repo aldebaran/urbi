@@ -26,7 +26,7 @@ print tools.banner("ast/pretty-printer.hh",
 		   "Definition of ast::PrettyPrinter.") + """
 # include <iosfwd>
 
-# include "ast/default-visitor.hh"
+# include <ast/default-visitor.hh>
 
 namespace ast
 {
@@ -77,10 +77,10 @@ print tools.banner("ast/pretty-printer.cc",
 		   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
 
-#include "ast/all.hh"
-#include "ast/pretty-printer.hh"
-#include "ast/print.hh"
-""" + ast_params["printer_cc_prologue"] + """
+#include <ast/all.hh>
+#include <ast/pretty-printer.hh>
+#include <ast/print.hh>
+%(printer_cc_prologue)s
 namespace ast
 {
 
@@ -93,7 +93,7 @@ namespace ast
   {
   }
 
-"""
+""" % ast_params
 
 for node in arr:
   action = ''

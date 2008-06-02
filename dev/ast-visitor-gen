@@ -110,7 +110,7 @@ print """\
 
 } // namespace ast
 
-# include "ast/visitor.hxx"
+# include <ast/visitor.hxx>
 
 #endif // !AST_VISITOR_HH""" % ast_params
 

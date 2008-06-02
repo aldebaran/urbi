@@ -14,13 +14,13 @@ nodes, ast_params = loader.load (sys.stdin)
 all_hh = file ("all.hh.tmp", "w")
 print >>all_hh, tools.banner("ast/all.hh",
 			     """Include all the exported headers.""") + """
-# include "ast/fwd.hh"
+# include <ast/fwd.hh>
 """
 
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp (x.name, y.name))
 for node in arr:
-  print >>all_hh, '# include "ast/' + node.hh() + '"'
+  print >>all_hh, '# include <ast/' + node.hh() + '>'
 
 print >>all_hh, """
 

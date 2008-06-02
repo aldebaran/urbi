@@ -72,7 +72,7 @@ print >>visitor_hh, """    /// \\}
 
 } // namespace ast
 
-# include "ast/default-visitor.hxx"
+# include <ast/default-visitor.hxx>
 
 #endif // !AST_DEFAULT_VISITOR_HH
 """

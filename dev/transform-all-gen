@@ -130,9 +130,9 @@ sys.stdout = all_cc
 
 print tools.banner("transform/all.cc",
                    "Implementation of the visitor combinator transform::All.") + """
-#include "ast/all.hh"
-#include "transform/all.hh"
-#include "misc/symbol.hh"
+#include <ast/all.hh>
+#include <transform/all.hh>
+#include <misc/symbol.hh>
 
 namespace transform
 {
