@@ -1,7 +1,7 @@
 /// \file parser/uparser.cc
 
-#include "parser/uparser.hh"
-#include "parser/parser-impl.hh"
+#include <parser/uparser.hh>
+#include <parser/parser-impl.hh>
 
 namespace parser
 {

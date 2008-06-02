@@ -11,14 +11,14 @@
 
 #include <libport/foreach.hh>
 
-#include "ast/nary.hh"
-#include "ast/print.hh"
+#include <ast/nary.hh>
+#include <ast/print.hh>
 
-#include "parser/parser-impl.hh"
-#include "parser/tweast.hh"
-#include "parser/utoken.hh"
+#include <parser/parser-impl.hh>
+#include <parser/tweast.hh>
+#include <parser/utoken.hh>
 
-#include "server-timer.hh"
+#include <server-timer.hh>
 
 namespace parser
 {

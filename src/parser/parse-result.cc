@@ -86,28 +86,28 @@ namespace parser
   | Ast.  |
   `------*/
 
-  // Not in the *.hxx to avoid the #include "ast/nary.hh".
+  // Not in the *.hxx to avoid the #include <ast/nary.hh>.
   void
   ParseResult::ast_reset(libport::shared_ptr<ast_type> ast)
   {
     ast_ = ast;
   }
 
-  // Not in the *.hxx to avoid the #include "ast/nary.hh".
+  // Not in the *.hxx to avoid the #include <ast/nary.hh>.
   void
   ParseResult::ast_set(libport::shared_ptr<ast_type> ast)
   {
     ast_ = ast;
   }
 
-  // Not in the *.hxx to avoid the #include "ast/nary.hh".
+  // Not in the *.hxx to avoid the #include <ast/nary.hh>.
   libport::shared_ptr<ParseResult::ast_type>
   ParseResult::ast_take()
   {
     return ast_;
   }
 
-  // Not in the *.hxx to avoid the #include "ast/nary.hh".
+  // Not in the *.hxx to avoid the #include <ast/nary.hh>.
   libport::shared_ptr<ParseResult::ast_type>
   ParseResult::ast_xtake()
   {

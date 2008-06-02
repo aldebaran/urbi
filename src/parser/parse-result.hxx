@@ -1,7 +1,7 @@
 #ifndef PARSER_PARSE_RESULT_HXX
 # define PARSER_PARSE_RESULT_HXX
 
-# include "parser/parse-result.hh"
+# include <parser/parse-result.hh>
 
 namespace parser
 {

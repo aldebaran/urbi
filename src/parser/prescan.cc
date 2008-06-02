@@ -1,7 +1,7 @@
 #include <sstream>
 
-#include "parser/prescan.hh"
-#include "parser/utoken.hh"
+#include <parser/prescan.hh>
+#include <parser/utoken.hh>
 
 namespace parser
 {

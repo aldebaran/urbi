@@ -62,6 +62,6 @@ namespace parser
   operator<< (std::ostream& o, const MetavarMap<Data>& t);
 }
 
-# include "parser/metavar-map.hxx"
+# include <parser/metavar-map.hxx>
 
 #endif // !PARSER_METAVAR_MAP_HH

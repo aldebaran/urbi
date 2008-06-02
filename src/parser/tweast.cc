@@ -3,11 +3,11 @@
  ** \brief Implementation of parser::Tweast.
  */
 
-#include "ast/call.hh"
-#include "ast/exp.hh"
-#include "ast/print.hh"
+#include <ast/call.hh>
+#include <ast/exp.hh>
+#include <ast/print.hh>
 
-#include "parser/tweast.hh"
+#include <parser/tweast.hh>
 
 namespace parser
 {

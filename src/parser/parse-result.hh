@@ -105,6 +105,6 @@ namespace parser
 }
 
 
-# include "parser/parse-result.hxx"
+# include <parser/parse-result.hxx>
 
 #endif // !PARSER_PARSE_RESULT_HH

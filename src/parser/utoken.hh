@@ -1,8 +1,8 @@
 #ifndef PARSER_UTOKEN_HH
 # define PARSER_UTOKEN_HH
 
-# include "parser/flex-lexer.hh"
-# include "parser/ugrammar.hh"
+# include <parser/flex-lexer.hh>
+# include <parser/ugrammar.hh>
 
 # undef  YY_DECL
 # define YY_DECL							\

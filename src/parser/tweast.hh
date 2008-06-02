@@ -13,10 +13,10 @@
 # include <libport/symbol.hh>
 # include <libport/unique-pointer.hh>
 
-# include "ast/fwd.hh"
-# include "ast/symbols-type.hh"
+# include <ast/fwd.hh>
+# include <ast/symbols-type.hh>
 
-# include "parser/metavar-map.hh"
+# include <parser/metavar-map.hh>
 
 namespace parser
 {
@@ -104,6 +104,6 @@ namespace parser
 
 }
 
-# include "parser/tweast.hxx"
+# include <parser/tweast.hxx>
 
 #endif // !PARSER_TWEAST_HH

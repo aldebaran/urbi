@@ -7,9 +7,9 @@
 # include <memory>
 # include <string>
 
-# include "parser/fwd.hh"
-# include "parser/parse-result.hh"
-# include "parser/utoken.hh"
+# include <parser/fwd.hh>
+# include <parser/parse-result.hh>
+# include <parser/utoken.hh>
 
 namespace parser
 {

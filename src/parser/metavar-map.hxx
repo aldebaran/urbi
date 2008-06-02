@@ -7,7 +7,7 @@
 # define PARSER_METAVAR_MAP_HXX
 
 # include <sstream>
-# include "parser/metavar-map.hh"
+# include <parser/metavar-map.hh>
 
 namespace parser
 {
