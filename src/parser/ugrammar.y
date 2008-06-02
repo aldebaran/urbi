@@ -412,6 +412,9 @@
 %code
 {
 /// Generate a parse error for invalid keyword/flavor combination.
+/// The check is performed by the parser, not the scanner, because
+/// some keywords may, or may not, have some flavors dependencies
+/// on the syntactic construct.  See the various "for"s for instance.
 #define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)			\
   do									\
     if (!(Condition))							\

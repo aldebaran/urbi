@@ -259,16 +259,16 @@ do {						\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   }
 
-#define RETURN_FLAVORED_KEYWORD(Token)					\
-  {									\
-    PRE_SKIP();								\
-    switch (yytext[strlen(yytext) - 1])					\
-    {									\
-      case '|': RETURN_FLAVOR(Token, pipe);				\
-      case ',': RETURN_FLAVOR(Token, comma);				\
-      case '&': RETURN_FLAVOR(Token, and);				\
-      default:  RETURN_FLAVOR(Token, semicolon);			\
-    }									\
+#define RETURN_FLAVORED_KEYWORD(Token)                  \
+  {                                                     \
+    PRE_SKIP();                                         \
+    switch (yytext[yyleng - 1])                         \
+    {                                                   \
+      case '|': RETURN_FLAVOR(Token, pipe);             \
+      case ',': RETURN_FLAVOR(Token, comma);            \
+      case '&': RETURN_FLAVOR(Token, and);              \
+      default:  RETURN_FLAVOR(Token, semicolon);        \
+    }                                                   \
   }
 
 
