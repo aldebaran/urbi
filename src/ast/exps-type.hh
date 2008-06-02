@@ -9,8 +9,6 @@
 namespace ast
 {
 
-  class Exp;
-
   /// List of expressions, for List, Nary, Call etc.
   typedef std::deque<rExp> exps_type;
 
