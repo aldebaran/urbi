@@ -34,7 +34,7 @@ namespace object
     COMPLETE_EXCEPTION (BreakException)
   };
 
-  /// \c ContinueException, thrown to manage break keyword.
+  /// \c ContinueException, thrown to manage continue keyword.
   class ContinueException : public FlowException
   {
   public:
