@@ -146,13 +146,19 @@ namespace runner
     tag_chain_type res;
     while (!e->implicit())
     {
-      ast::rConstCall c = e.unsafe_cast<const ast::Call>();
-      if (!c)
-	throw object::ImplicitTagComponentError(e->location_get());
-      if (c->arguments_get() && !c->arguments_get()->empty())
+      if (ast::rConstCall c = e.unsafe_cast<const ast::Call>())
+      {
+        if (c->arguments_get() && !c->arguments_get()->empty())
+          return std::make_pair(c, res);
+        res.push_front (c);
+        e = c->target_get();
+      }
+      else if (ast::rConstLocal c = e.unsafe_cast<const ast::Local>())
+      {
         return std::make_pair(c, res);
-      res.push_front (c);
-      e = c->target_get();
+      }
+      else
+	throw object::ImplicitTagComponentError(e->location_get());
     }
     assert (!res.empty ());
     return std::make_pair(ast::rExp(), res);

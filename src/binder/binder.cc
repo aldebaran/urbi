@@ -152,12 +152,7 @@ namespace binder
 
   void Binder::targetSelf(ast::rCall call)
   {
-    ast::exps_type* args = new ast::exps_type;
-    args->push_back(new ast::String(call->location_get(), "self"));
-    ast::rCall self = new ast::Call(call->location_get(),
-                                    new ast::Implicit(call->location_get()),
-                                    SYMBOL(getSlot), args);
-    call->target_set(self);
+    call->target_set(new ast::Local(call->location_get(), SYMBOL(self), 0));
   }
 
   void Binder::targetContext(ast::rCall call, int depth)
