@@ -242,17 +242,14 @@ do Object
   };
 
   # at_ takes three expressions, a test and a code to execute each time the test
-  # becomes true and a code to execute each time the test becomes false
+  # becomes true and a code to execute each time the test becomes false.
   function at_
   {
-    if (call.args.size > 3)
-      registerAtJob(call.args.nth(1), call.args.nth(2), call.args.nth(3))
-    else
-      registerAtJob(call.args.nth(1), call.args.nth(2), nil)
+    registerAtJob(call.args.nth(1), call.args.nth(2), call.args.nth(3))
   };
 
   # whenever_ takes three expressions, a test and a code to execute each time the
-  # test is true and a code to execute each time the test then becomes false
+  # test is true and a code to execute each time the test then becomes false.
   function whenever_
   {
     detach ({
@@ -269,7 +266,7 @@ do Object
     })
   };
 
-  # waituntil takes an expression and waits until it becomes true
+  # waituntil takes an expression and waits until it becomes true.
   function waituntil {
     var t = currentRunner |
     t.setSideEffectFree (true) |
@@ -289,8 +286,8 @@ do Object
   #   var u = persist (condition, delay);
   #   at (u.val) action [onleave leaveaction]
   #
-  # FIXME: We need a way to scope the "at" and destroy it when "o" is
-  # no longer visible.
+  # The "persist" action will be controlled by the same tags as
+  # the initial "at" block.
   function persist
   {
     var res = false |

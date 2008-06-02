@@ -933,7 +933,7 @@ stmt:
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      static ast::ParametricAst at("at_(%exp:1, detach(%exp:2))");
+      static ast::ParametricAst at("at_(%exp:1, detach(%exp:2), nil)");
       $$ = exp (at % $3 % $5);
     }
 | "at" "(" exp ")" nstmt "onleave" nstmt
@@ -949,7 +949,7 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | at_( " << s << ", " << $7.value() << ")");
+              << $5.value() << ") | at( " << s << ") " << $7.value());
     }
 | "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
     {
@@ -957,8 +957,8 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | at_( " << s << ", "
-              << $7.value() << ", " << $9.value() << ")");
+              << $5.value() << ") | at( " << s << ") "
+              << $7.value() << " onleave " << $9.value() << "");
     }
 | "every" "(" exp ")" nstmt
     {
