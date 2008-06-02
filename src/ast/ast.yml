@@ -78,7 +78,7 @@ visitor_hh_prologue: |2
 
   # include <libport/select-const.hh>
 
-  # include "ast/fwd.hh"
+  # include <ast/fwd.hh>
 
 # The beginning of default-visitor.hh, for includes.
 default_visitor_hh_prologue: |2
@@ -88,7 +88,7 @@ default_visitor_hh_prologue: |2
 
   # include <libport/select-const.hh>
 
-  # include "ast/visitor.hh"
+  # include <ast/visitor.hh>
 
 # The beginning of fwd.hh, for includes.
 fwd_hh_prologue: |2
@@ -196,7 +196,7 @@ printer_cc_prologue: |2
 Ast:
   super: 'libport::RefCounted'
   inline:
-    header prologue: '# include "ast/fwd.hh"'
+    header prologue: '# include <ast/fwd.hh>'
   attributes:
     - location:
         type: loc
@@ -343,7 +343,7 @@ Nary:
     - $children
   inline:
     header prologue: |2
-      #include "ast/flavor.hh"
+      #include <ast/flavor.hh>
     header inside: |2
         public:
           /// A completely empty Nary node.
@@ -392,8 +392,8 @@ Nary:
       #include <libport/indent.hh>
       #include <libport/separator.hh>
 
-      #include "ast/message.hh"
-      #include "ast/stmt.hh"
+      #include <ast/message.hh>
+      #include <ast/stmt.hh>
 
     impl inside: |2
         Nary::Nary ()
