@@ -10,13 +10,13 @@
 
 # include <boost/tuple/tuple.hpp>
 
-# include "ast/default-visitor.hh"
+# include <ast/default-visitor.hh>
 # include <ast/fwd.hh>
-# include "object/object.hh"
-# include "scheduler/scheduler.hh"
-# include "scheduler/job.hh"
+# include <object/object.hh>
+# include <scheduler/scheduler.hh>
+# include <scheduler/job.hh>
 
-# include "runner/runner.hh"
+# include <runner/runner.hh>
 
 namespace runner
 {
@@ -202,6 +202,6 @@ namespace runner
 
 } // namespace runner
 
-# include "runner/interpreter.hxx"
+# include <runner/interpreter.hxx>
 
 #endif // !RUNNER_INTERPRETER_HH

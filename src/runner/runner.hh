@@ -10,9 +10,9 @@
 
 # include <boost/tuple/tuple.hpp>
 
-# include "object/object.hh"
-# include "scheduler/scheduler.hh"
-# include "scheduler/job.hh"
+# include <object/object.hh>
+# include <scheduler/scheduler.hh>
+# include <scheduler/job.hh>
 
 namespace runner
 {
@@ -107,6 +107,6 @@ namespace runner
 
 } // namespace runner
 
-# include "runner/runner.hxx"
+# include <runner/runner.hxx>
 
 #endif // !RUNNER_RUNNER_HH
