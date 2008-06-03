@@ -17,7 +17,6 @@
 #include "object/global-class.hh"
 #include "object/hash-slots.hh"
 #include "object/object-class.hh"
-#include "object/scope-class.hh"
 #include "object/urbi-exception.hh"
 
 #include "runner/runner.hh"
@@ -84,10 +83,8 @@ namespace object
   rObject
   Object::make_method_scope(const rObject& self, const rObject& parent)
   {
-    rObject res = Object::make_scope(parent ? parent : scope_class);
+    rObject res = Object::make_scope(parent ? parent : object_class);
     res->slot_set(SYMBOL(self), self);
-    res->slot_copy(SYMBOL(locals), scope_class);
-    res->slot_copy(SYMBOL(setSlot), scope_class);
     return res;
   }
 

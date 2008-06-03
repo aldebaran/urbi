@@ -135,37 +135,26 @@ namespace runner
   }
 
   // This function takes an expression and attempts to decompose it
-  // into a list of identifiers, and a potential expression that
-  // represents the owner of the new tag.
-  typedef std::deque<ast::rConstCall> tag_chain_type;
+  // into a list of identifiers.
+  typedef std::deque<libport::Symbol> tag_chain_type;
   static
-  std::pair<ast::rConstExp, tag_chain_type>
+  tag_chain_type
   decompose_tag_chain (ast::rConstExp e)
   {
     tag_chain_type res;
     while (!e->implicit())
     {
-      if (ast::rConstCall c = e.unsafe_cast<const ast::Call>())
-      {
-        if (c->arguments_get() && !c->arguments_get()->empty())
-          return std::make_pair(c, res);
-        res.push_front (c);
-        e = c->target_get();
-      }
-      else if (ast::rConstLocal c = e.unsafe_cast<const ast::Local>())
-      {
-        return std::make_pair(c, res);
-      }
-      else
-	throw object::ImplicitTagComponentError(e->location_get());
+      ast::rConstCall c = e.unsafe_cast<const ast::Call>();
+      if (!c || c->arguments_get())
+        throw object::ImplicitTagComponentError(e->location_get());
+      res.push_front (c->name_get());
+      e = c->target_get();
     }
-    assert (!res.empty ());
-    return std::make_pair(ast::rExp(), res);
+    return res;
   }
 
 
   Interpreter::Interpreter (rLobby lobby,
-			    rObject locals,
 			    scheduler::Scheduler& sched,
 			    ast::rConstAst ast,
 			    const libport::Symbol& name)
@@ -174,7 +163,7 @@ namespace runner
       ast_(ast),
       code_(0),
       current_(0),
-      locals_(locals)
+      locals_(object::Object::make_method_scope(lobby))
   {
     init();
   }
@@ -210,8 +199,6 @@ namespace runner
   void
   Interpreter::init()
   {
-    if (!locals_)
-      locals_ = object::Object::make_method_scope(lobby_);
     // If the lobby has a slot connectionTag, push it
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
@@ -549,7 +536,8 @@ namespace runner
     {
       // The invoked slot (probably a function).
       ast::rConstExp ast_tgt = e->target_get();
-      rObject tgt = ast_tgt->implicit() ? locals_ : eval(ast_tgt);
+      rObject tgt = ast_tgt->implicit() ?
+        locals_->slot_get(SYMBOL(self)) : eval(ast_tgt);
 
       call_stack_.push_back(e);
       Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
@@ -1023,6 +1011,7 @@ namespace runner
     }
     catch (object::LookupError &ue)
     {
+      ECHO("Implicit tag: " << *e);
       // We got a lookup error. It means that we have to automatically
       // create the tag. In this case, we only accept k1 style tags,
       // i.e. chains of identifiers, excluding function calls.
@@ -1035,39 +1024,41 @@ namespace runner
 
       // Tag represents the top level tag
       rObject toplevel = object::tag_class;
-      std::pair<ast::rConstExp, tag_chain_type> res = decompose_tag_chain(e);
-      // If the left part of the implicit tag is a call with argument,
-      // evaluate it to find the owner. Otherwise, store the new tag
-      // as a local variable.
-      //
-      // FIXME: This is naive. Perform a real setSlot.
-      rObject where = res.first ? eval(res.first) : locals_;
-      // If it is a tag, consider it as the parent of the new tag as well.
-      rObject base = is_a(where, object::tag_class) ? where : toplevel;
-      tag_chain_type chain = res.second;
-      foreach (ast::rConstCall element, chain)
+      rObject parent = toplevel;
+      rObject where = locals_->slot_get(SYMBOL(self));
+      tag_chain_type chain = decompose_tag_chain(e);
+      foreach (const libport::Symbol& elt, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-	if (rObject owner = base->slot_locate (element->name_get()))
-	  base = owner->own_slot_get (element->name_get());
+	if (rObject owner = where->slot_locate (elt))
+        {
+          ECHO("Component " << elt << " exists.");
+	  where = owner->own_slot_get (elt);
+          if (object::is_a(where, toplevel))
+          {
+            ECHO("It is a tag, so use it as the new parent.");
+            parent = where;
+          }
+        }
 	else
 	{
+          ECHO("Creating component " << elt << ".");
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
 	  rObject new_tag = toplevel->clone();
 	  object::objects_type args;
 	  args.push_back (new_tag);
-	  args.push_back (object::String::fresh (element->name_get()));
-	  args.push_back (base);
+	  args.push_back (object::String::fresh (elt));
+	  args.push_back (parent);
 	  apply (toplevel->own_slot_get (SYMBOL (init)), SYMBOL(init), args);
-	  where->slot_set (element->name_get(), new_tag);
-	  base = where = new_tag;
+	  where->slot_set (elt, new_tag);
+	  where = parent = new_tag;
 	}
       }
 
-      return base;
+      return parent;
     }
   }
 

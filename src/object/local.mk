@@ -77,8 +77,6 @@ object/primitive-class.hh			\
 object/primitives.hh				\
 object/root-classes.cc				\
 object/root-classes.hh				\
-object/scope-class.cc				\
-object/scope-class.hh				\
 object/sorted-vector-slots.hh			\
 object/sorted-vector-slots.hxx			\
 object/state.cc					\

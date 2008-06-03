@@ -10,13 +10,6 @@ namespace runner
 {
 
   inline
-  const object::rObject&
-  Interpreter::locals_get () const
-  {
-    return locals_;
-  }
-
-  inline
   Interpreter::rObject
   Interpreter::eval (ast::rConstAst e)
   {

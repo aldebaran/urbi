@@ -10,11 +10,12 @@ var Primitive.acceptVoid = 0;
 ## Constants ##
 ## --------- ##
 
-# Define true and false outside a do, since they are needed to run do
-# scopes' doSetSlot.
-class Global.Constants {};
-var Global.Constants.true   = 1.0;
-var Global.Constants.false  = 0.0;
+class Global.Constants
+{
+  var Global.Constants.true   = 1.0;
+  var Global.Constants.false  = 0.0;
+};
+
 Global.addProto (Global.Constants);
 
 do Global.Constants
@@ -22,15 +23,6 @@ do Global.Constants
   var pi     = 3.14159265358979323846264338327950288;
   var inf    = Float.inf;
   var nan    = Float.nan;
-};
-
-## ------- ##
-## Scope.  ##
-## ------- ##
-
-do Scope
-{
-  function init() { self.makeScope (true) };
 };
 
 

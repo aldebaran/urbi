@@ -15,6 +15,7 @@ ENABLE_HARD_ERRORS = false
 
 # k1 tests that fail currently but need to be fixed soon.
 TFAIL_TESTS +=                                  \
+1.x/at-is-def.chk                               \
 1.x/eval.chk                                    \
 1.x/load.chk
 

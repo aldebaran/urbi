@@ -53,7 +53,7 @@ namespace binder
                                 (Function)
                                 (Scope));
     private:
-      typedef std::list<std::pair<ast::rConstAst, int> > Bindings;
+      typedef std::list<std::pair<ast::rConstAst, unsigned> > Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
       Environment env_;
@@ -62,16 +62,14 @@ namespace binder
       /// Whether to apply setSlot on self
       std::list<bool> setOnSelf_;
       /// Level of function imbrication
-      int depth_;
+      unsigned depth_;
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
       void bind(const libport::Symbol& var, ast::rConstAst decl);
-      /// Retarget a call to getSlot("self")
-      void targetSelf(ast::rCall call);
-      /// Whether \return 0 If the variable is local, or the depth in
+      /// \return 0 If the variable is local, or the depth in
       /// number of imbriqued function otherwise.
-      int isLocal(const libport::Symbol& name);
+      unsigned isLocal(const libport::Symbol& name);
       /// Factored method to handle scopes.
       ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
       /// Factored method to create updateSlot/setSlot calls.
