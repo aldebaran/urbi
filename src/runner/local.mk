@@ -9,4 +9,6 @@ runner/runner.cc				\
 runner/runner.hh				\
 runner/runner.hxx				\
 runner/shell.cc					\
-runner/shell.hh
+runner/shell.hh					\
+runner/sneaker.cc				\
+runner/sneaker.hh

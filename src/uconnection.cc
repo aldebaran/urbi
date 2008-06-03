@@ -55,6 +55,7 @@
 
 #include "binder/binder.hh"
 
+#include "runner/sneaker.hh"
 #include "runner/shell.hh"
 
 #include "ubanner.hh"
@@ -93,6 +94,9 @@ UConnection::UConnection (UServer& server, size_t packetSize)
   // Create the shell.
   shell_ = new runner::Shell(lobby_, server_.getScheduler(), SYMBOL(shell));
   shell_->start_job();
+
+  // Create the sneaker if it needs to be.
+  dbg::create_sneaker_if_needed(lobby_, server_.getScheduler());
 }
 
 UConnection::~UConnection ()

@@ -18,9 +18,6 @@
 #include <object/system-class.hh>
 #include <object/task-class.hh>
 
-#include <parser/parse.hh>
-#include <parser/parse-result.hh>
-
 #include <runner/at-handler.hh>
 #include <runner/runner.hh>
 #include <runner/interpreter.hh>
@@ -81,7 +78,7 @@ namespace object
 			  r.time_shift_get()) / 1000.0);
   }
 
-  static rObject
+  rObject
   execute_parsed (runner::Runner& r,
                   parser::parse_result_type p, UrbiException e)
   {
@@ -115,7 +112,6 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     FETCH_ARG(1, String);
-    parser::parse_result_type p();
     return
       execute_parsed(r,
                      parser::parse(arg1->value_get()),
