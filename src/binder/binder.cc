@@ -21,7 +21,7 @@ namespace binder
   {
     unbind_.push_back(libport::Finally());
     setOnSelf_.push_back(true);
-    locals_size_.push_back(std::make_pair(0, 0));
+    push_frame_size();
   }
 
   Binder::~Binder()
@@ -169,8 +169,8 @@ namespace binder
     unbind_.push_back(libport::Finally());
     finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
 
-    locals_size_.push_back(std::make_pair(0, 0));
-    finally << boost::bind(&locals_size_type::pop_back, &locals_size_);
+    push_frame_size();
+    finally << boost::bind(&Binder::pop_frame_size, this);
     depth_++;
     finally << boost::bind(decrement, &depth_);
     if (input->formals_get())
@@ -180,7 +180,7 @@ namespace binder
     }
     super_type::visit (input);
     result_.unsafe_cast<ast::Function>()->
-      locals_size_set(locals_size_.back().second);
+      locals_size_set(frame_size());
   }
 
   void Binder::visit(ast::rConstClosure input)
@@ -199,6 +199,26 @@ namespace binder
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[var]);
 
+    inc_frame_size();
+  }
+
+  void Binder::push_frame_size()
+  {
+    locals_size_.push_back(std::make_pair(0, 0));
+  }
+
+  void Binder::pop_frame_size()
+  {
+    locals_size_.pop_back();
+  }
+
+  int Binder::frame_size()
+  {
+    return locals_size_.back().second;
+  }
+
+  void Binder::inc_frame_size()
+  {
     locals_size_.back().first++;
     unbind_.back() <<
       boost::bind(decrement, &locals_size_.back().first);

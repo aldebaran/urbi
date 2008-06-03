@@ -65,6 +65,13 @@ namespace binder
       /// number of local variable used by the current function.
       typedef std::list<std::pair<unsigned, unsigned> > locals_size_type;
       locals_size_type locals_size_;
+
+      ///
+      void push_frame_size();
+      void pop_frame_size();
+      void inc_frame_size();
+      int frame_size();
+
       /// Level of function imbrication
       unsigned depth_;
 
