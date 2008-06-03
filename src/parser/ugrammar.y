@@ -87,6 +87,50 @@
       return up.tweast_->template take<T> (key);
     }
 
+    /// If \c lvalue is composite, then store it in a local variable,
+    /// and change \c lvalue to point to it.  Possibly store in \c
+    /// tweast the initialization of the new \c lvalue.
+    ///
+    /// Use this function to avoid CPP-like problem when referring
+    /// several times to an lvalue.  For instance, do not desugar
+    ///
+    /// f(x).val += 1
+    ///
+    /// as
+    ///
+    /// f(x).val = f(x).val + 1
+    ///
+    /// but as
+    ///
+    /// var tmp = f(x) | tmp.val = tmp.val + 1
+    ///
+    /// This function puts
+    ///
+    /// var tmp = f(x) |
+    ///
+    /// in \c tweast, and changes \c lvalue from
+    ///
+    /// f(x).val
+    ///
+    /// to
+    ///
+    /// tmp.
+    ast::rCall
+    ast_lvalue_once(ast::rCall lvalue, ::parser::Tweast& tweast)
+    {
+      if (!lvalue->target_implicit())
+      {
+        libport::Symbol tmp = libport::Symbol::fresh(SYMBOL(__tmp__));
+        tweast << "var " << tmp << " = " << lvalue->target_get() << "|";
+        lvalue = ast_call(lvalue->location_get(),
+                          ast_call(lvalue->location_get(),
+                                   new ast::Implicit(lvalue->location_get()),
+                                   tmp),
+                          lvalue->name_get());
+      }
+      return lvalue;
+    }
+
     /// Return the value pointed to be \a s, and delete it.
     template <typename T>
     static
@@ -99,7 +143,7 @@
       return res;
     }
 
-    /// For some reason there are ambiguities bw MetaVar::append_ and
+    /// To use to solve the ambiguities bw MetaVar::append_ and
     /// Tweast::append_ when we don't use exactly ast::rExp.
     inline
     ast::rExp
@@ -109,14 +153,17 @@
     }
 
 
-  /// Store in Var the AST of the parsing of Code.
-# define DESUGAR_(Var, Code)				\
-    Var = ::parser::parse(::parser::Tweast() << Code)->ast_take()
+    /// Store in Var the AST of the parsing of Code.
+# define DESUGAR_(Var, Tweast)                  \
+    Var = ::parser::parse(Tweast)->ast_take()
+
+    /// Store in $$ the result of appending Code to \a tweast.
+# define DESUGAR_TWEAST(Code)                   \
+    DESUGAR_(yyval.exp, tweast << Code)
 
   /// Store in $$ the AST of the parsing of Code.
-  // Fragile in case Bison changes its expansion of $$.
 # define DESUGAR(Code)				\
-    DESUGAR_(yyval.exp, Code)
+    DESUGAR_(yyval.exp, ::parser::Tweast() << Code)
 
 
 
@@ -265,7 +312,7 @@
 
 %union
 {
-  typedef libport::pod_caster<ast::rExp> podExp;
+  typedef libport::pod_caster<ast::rExp>  podExp;
   typedef libport::pod_caster<ast::rCall> podCall;
   typedef libport::pod_caster<ast::rNary> podNary;
   typedef libport::pod_caster<ast::rTag>  podTag;
@@ -477,28 +524,14 @@ stmt:
   "class" lvalue block
     {
       ::parser::Tweast tweast;
-      libport::Symbol owner = libport::Symbol::fresh(SYMBOL(__class__));
-      ast::rCall lvalue = $2;
+      ast::rCall lvalue = ast_lvalue_once($2, tweast);
       libport::Symbol slot = lvalue->name_get();
-      if (!lvalue->target_implicit())
-      {
-        // If the lvalue call is qualified, we need to store the
-        // target in a variable to avoid evaluating it several times.
-        tweast << "var " << owner
-               << " = " << lvalue->target_get() << "|";
-        lvalue = ast_call(@2,
-                          ast_call(@2, new ast::Implicit(@2), owner),
-                          slot);
-        // Kill the shell.
-        $2.value()->counter_dec();
-      }
-      tweast << "var " << new_clone(lvalue) << "= Object.clone|"
-             << "do " << lvalue << " {"
-             << "var protoName = " << ast_exp(new ast::String(@2, slot)) << "|"
-             << "function " << ("as" + slot.name_get()) << "() {self}|"
-             << ast_exp($3.value()) << "}";
-
-      $$ = ::parser::parse(tweast)->ast_take();
+      DESUGAR_TWEAST(
+        "var " << new_clone(lvalue) << "= Object.clone|"
+        << "do " << lvalue << " {"
+        << "var protoName = " << ast_exp(new ast::String(@2, slot)) << "|"
+        << "function " << ("as" + slot.name_get()) << "() {self}|"
+        << ast_exp($3.value()) << "}");
     }
 | "class" lvalue
     {
