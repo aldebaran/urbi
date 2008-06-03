@@ -14,23 +14,23 @@
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
 
-#include "kernel/exception.hh"
-#include "kernel/uconnection.hh"
+#include <kernel/exception.hh>
+#include <kernel/uconnection.hh>
 
-#include "ast/print.hh"
+#include <ast/print.hh>
 
-#include "object/atom.hh"
-#include "object/global-class.hh"
-#include "object/idelegate.hh"
-#include "object/lazy.hh"
-#include "object/object.hh"
-#include "object/symbols.hh"
-#include "object/tag-class.hh"
-#include "object/urbi-exception.hh"
-#include "object/flow-exception.hh"
+#include <object/atom.hh>
+#include <object/global-class.hh>
+#include <object/idelegate.hh>
+#include <object/lazy.hh>
+#include <object/object.hh>
+#include <object/symbols.hh>
+#include <object/tag-class.hh>
+#include <object/urbi-exception.hh>
+#include <object/flow-exception.hh>
 
-#include "runner/interpreter.hh"
-#include "parser/uparser.hh"
+#include <runner/interpreter.hh>
+#include <parser/uparser.hh>
 
 namespace runner
 {

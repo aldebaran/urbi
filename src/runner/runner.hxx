@@ -6,7 +6,7 @@
 #ifndef RUNNER_RUNNER_HXX
 # define RUNNER_RUNNER_HXX
 
-# include "object/atom.hh"
+# include <object/atom.hh>
 
 namespace runner
 {
