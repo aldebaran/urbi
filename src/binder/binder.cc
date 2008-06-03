@@ -36,7 +36,7 @@ namespace binder
     return libport::Symbol(arg1.unsafe_cast<const ast::String>()->value_get());
   }
 
-  unsigned Binder::isLocal(const libport::Symbol& name)
+  unsigned Binder::depth_get(const libport::Symbol& name)
   {
     if (env_[name].empty())
       return 0;
@@ -61,7 +61,7 @@ namespace binder
 
   void Binder::visit(ast::rConstAssignment input)
   {
-    if (unsigned depth = isLocal(input->what_get()))
+    if (unsigned depth = depth_get(input->what_get()))
     {
       super_type::visit(input);
       result_.unsafe_cast<ast::Assignment>()->depth_set(depth_ - depth);
@@ -100,7 +100,7 @@ namespace binder
     // If this is a qualified call, nothing particular to do
     if (implicit)
     {
-      unsigned depth = isLocal(name);
+      unsigned depth = depth_get(name);
       if (name == SYMBOL(call)
           || name == SYMBOL(locals)
           || name == SYMBOL(self))

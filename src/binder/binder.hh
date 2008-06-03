@@ -78,9 +78,9 @@ namespace binder
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
       void bind(const libport::Symbol& var, ast::rConstAst decl);
-      /// \return 0 If the variable is local, or the depth in
+      /// \return 0 if the variable isn't local, or the depth in
       /// number of imbriqued function otherwise.
-      unsigned isLocal(const libport::Symbol& name);
+      unsigned depth_get(const libport::Symbol& name);
       /// Factored method to handle scopes.
       ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
       /// Factored method to create updateSlot/setSlot calls.
