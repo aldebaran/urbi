@@ -687,26 +687,33 @@ stmt:
     }
 ;
 
+%code // Output in ugrammar.cc.
+{
+# define DESUGAR_ASSIGN(Op, Lvalue, Exp)                                \
+  {                                                                     \
+    ::parser::Tweast tweast;                                            \
+    ast::rCall lvalue = ast_lvalue_once(Lvalue, tweast);                \
+    DESUGAR_TWEAST(new_clone(lvalue) << '='                             \
+                   << lvalue << Op << ast_exp(Exp));                    \
+  }
+};
+
 %token	TOK_SLASH_EQ    "/="
 	TOK_MINUS_EQ    "-="
-	TOK_MINUS_MINUS "--"
 	TOK_PLUS_EQ     "+="
-	TOK_PLUS_PLUS   "++"
 	TOK_STAR_EQ     "*="
 ;
 
-
 exp:
-  lvalue "+=" exp
-  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '+' << $3.value()); }
-| lvalue "-=" exp
-  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '-' << $3.value()); }
-| lvalue "*=" exp
-  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '*' << $3.value()); }
-| lvalue "/=" exp
-  { DESUGAR(new_clone($1.value()) << '=' << $1.value() << '/' << $3.value()); }
+  lvalue "+=" exp    { DESUGAR_ASSIGN('+', $1, $3); }
+| lvalue "-=" exp    { DESUGAR_ASSIGN('-', $1, $3); }
+| lvalue "*=" exp    { DESUGAR_ASSIGN('*', $1, $3); }
+| lvalue "/=" exp    { DESUGAR_ASSIGN('/', $1, $3); }
 ;
 
+%token  TOK_MINUS_MINUS "--"
+	TOK_PLUS_PLUS   "++"
+;
 exp:
   lvalue "--"      { DESUGAR('(' << $1.value() << "-= 1) + 1"); }
 | lvalue "++"      { DESUGAR('(' << $1.value() << "+= 1) - 1"); }
