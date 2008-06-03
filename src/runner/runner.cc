@@ -10,11 +10,10 @@
 namespace runner
 {
   void
-  Runner::send_message_ (const std::string& tag, const std::string& msg)
+  Runner::send_message(const std::string& tag, const std::string& msg)
   {
     UConnection& c = lobby_->value_get().connection;
-    c.send (msg.c_str(), tag.c_str());
-    c.endline();
+    c.send(msg.c_str(), msg.size(), tag.c_str());
   }
 
 } // namespace runner

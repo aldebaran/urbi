@@ -209,8 +209,8 @@ namespace runner
   Interpreter::show_error_ (const object::UrbiException& ue)
   {
     std::ostringstream o;
-    o << "!!! " << ue.location_get () << ": " << ue.what ();
-    send_message_ ("error", o.str ());
+    o << "!!! " << ue.location_get () << ": " << ue.what () << std::endl;
+    send_message("error", o.str ());
     show_backtrace(ue.backtrace_get(), "error");
   }
 
@@ -766,7 +766,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstMessage e)
   {
-    send_message_(e->tag_get(), e->text_get());
+    send_message(e->tag_get(), e->text_get() + "\n");
   }
 
 
@@ -1122,8 +1122,9 @@ namespace runner
                                         boost::rend(bt)))
     {
       std::ostringstream o;
-      o << "!!!    called from: " << c->location_get () << ": " << c->name_get ();
-      send_message_(chan, o.str());
+      o << "!!!    called from: " << c->location_get () << ": "
+	<< c->name_get () << std::endl;
+      send_message(chan, o.str());
     }
   }
 

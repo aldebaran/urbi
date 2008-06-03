@@ -61,7 +61,7 @@ namespace runner
     typedef std::vector<frame_type> backtrace_type;
     virtual backtrace_type backtrace_get() const = 0;
 
-    void send_message_ (const std::string& tag, const std::string& msg);
+    virtual void send_message(const std::string& tag, const std::string& msg);
 
     /// Execute the code of function \a func with arguments \a args in
     /// the local runner.

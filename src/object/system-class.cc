@@ -233,7 +233,7 @@ namespace object
     foreach (const runner::Runner::frame_type& elt,
 	     boost::make_iterator_range(boost::rbegin(bt),
 					boost::rend(bt)))
-      r.send_message_("backtrace", elt.first + " (" + elt.second + ")");
+      r.send_message("backtrace", elt.first + " (" + elt.second + ")\n");
     return void_class;
   }
 

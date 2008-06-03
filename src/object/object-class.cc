@@ -61,8 +61,7 @@ namespace object
       libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
     foreach(const std::string& line, tok)
-      r.lobby_get()->value_get().connection.send (
-	(system_header+line+"\n").c_str(), tag.c_str());
+      r.send_message(tag, system_header+line+"\n");
     return void_class;
   }
 
@@ -89,8 +88,7 @@ namespace object
       s = libport::unescape(s.substr(1, s.length()-2));
 
     std::string data = std::string(is_echo?"*** ":"") + s + "\n";
-    r.lobby_get()->value_get().connection.send(data.c_str(), data.size(),
-					       tag.c_str());
+    r.send_message(tag, data);
 
     return void_class;
   }
