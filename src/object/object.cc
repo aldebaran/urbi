@@ -340,7 +340,7 @@ namespace object
   }
 
   std::ostream&
-  Object::dump (std::ostream& o, runner::Runner& runner) const
+  Object::dump (std::ostream& o, runner::Runner& runner, int depth_max) const
   {
     id_dump(o, runner);
     /// Use xalloc/iword to store our current depth within the stream object.
@@ -348,7 +348,6 @@ namespace object
     long& current_depth = o.iword(idx);
 
     // Stop recursion at depth_max.
-    enum { depth_max = 3 };
     if (current_depth > depth_max)
       return o << " <...>";
     ++current_depth;
@@ -358,7 +357,7 @@ namespace object
     foreach(const Slots::slot_type& s, slots_.container())
     {
       o << s.first << " = ";
-      s.second->dump(o, runner) << libport::iendl;
+      s.second->dump(o, runner, depth_max) << libport::iendl;
     }
 
     o << libport::decindent << '}';

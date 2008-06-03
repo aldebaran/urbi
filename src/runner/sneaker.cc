@@ -55,10 +55,10 @@ namespace dbg
   }
 
   void
-  dump(const object::rObject& o)
+  dump(const object::rObject& o, int depth)
   {
     assert(sneaker);
-    o->dump(std::cerr, *sneaker);
+    o->dump(std::cerr, *sneaker, depth);
   }
 
   object::rObject

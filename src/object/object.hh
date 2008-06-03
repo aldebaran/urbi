@@ -203,7 +203,7 @@ namespace object
     std::ostream& print(std::ostream&, runner::Runner&) const;
 
     /// Report the content on \p o.  For debugging purpose.
-    std::ostream& dump(std::ostream&, runner::Runner&) const;
+    std::ostream& dump(std::ostream&, runner::Runner&, int depth_max) const;
     /// \}
 
     /// Clone, i.e., create a fresh object with this class as sole proto.

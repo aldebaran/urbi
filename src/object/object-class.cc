@@ -45,16 +45,26 @@ namespace object
   static rObject
   object_class_dump (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT_RANGE(1, 2);
-    // Second argument is the tag name.
-    std::string tag;
-    if (args.size() == 2)
+    CHECK_ARG_COUNT_RANGE(1, 3);
+
+    // Second argument is max depth.
+    int depth_max = 1;
+    if (args.size() >= 2)
     {
-      FETCH_ARG(1, String);
-      tag = arg1->value_get().name_get();
+      FETCH_ARG(1, Float);
+      depth_max = arg1->value_get();
     }
+
+    // Third argument is the tag name.
+    std::string tag;
+    if (args.size() >= 3)
+    {
+      FETCH_ARG(2, String);
+      tag = arg2->value_get().name_get();
+    }
+
     std::ostringstream os;
-    args[0]->dump(os, r);
+    args[0]->dump(os, r, depth_max);
     //for now our best choice is to dump line by line in "system" messages.
     const std::string stream = os.str();
     boost::tokenizer< boost::char_separator<char> > tok =
