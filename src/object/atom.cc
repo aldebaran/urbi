@@ -197,6 +197,16 @@ namespace object
 
   template <>
   std::ostream&
+  Atom<code_traits>::special_slots_dump (std::ostream& o,
+                                         runner::Runner&) const
+  {
+    o << "value" << " = " << libport::deref << value_ << libport::iendl;
+    o << "frame size = " << value_->locals_size_get() << libport::iendl;
+    return o;
+  }
+
+  template <>
+  std::ostream&
   Atom<list_traits>::special_slots_dump (std::ostream& o,
 					 runner::Runner& runner) const
   {
