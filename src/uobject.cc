@@ -514,11 +514,9 @@ namespace urbi
     }
     //clone uvar
     ECHO("creating uvar "<<name);
-    object::objects_type args;
     rObject protouvar = object::object_class->slot_get(SYMBOL(uvar));
-    args.push_back(o);
-    args.push_back(object::String::fresh(varName));
-    rObject uvar = urbi_call(getCurrentRunner(), protouvar, SYMBOL(new), args);
+    rObject uvar = urbi_call(getCurrentRunner(), protouvar, SYMBOL(new),
+			     o, object::String::fresh(varName));
     // If the variable existed but was not an uvar, copy its old value.
     if (initVal)
       o->slot_get(varName)->slot_update(getCurrentRunner(),
@@ -542,11 +540,10 @@ namespace urbi
   {
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
-    object::objects_type args;
-    args.push_back(object::String::fresh(Symbol(p.second)));
-    args.push_back(object::String::fresh(Symbol(UPropertyNames[prop])));
-    args.push_back(object::Float::fresh(v));
-    urbi_call(getCurrentRunner(), o, SYMBOL(setProperty), args);
+    urbi_call(getCurrentRunner(), o, SYMBOL(setProperty),
+	      object::String::fresh(Symbol(p.second)),
+	      object::String::fresh(Symbol(UPropertyNames[prop])),
+	      object::Float::fresh(v));
   }
 
   UValue
@@ -554,11 +551,10 @@ namespace urbi
   {
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
-    object::objects_type args;
-    args.push_back(object::String::fresh(Symbol(p.second)));
-    args.push_back(object::String::fresh(Symbol(UPropertyNames[prop])));
     return ::uvalue_cast(
-      urbi_call(getCurrentRunner(), o, SYMBOL(getProperty), args));
+      urbi_call(getCurrentRunner(), o, SYMBOL(getProperty),
+		object::String::fresh(Symbol(p.second)),
+		object::String::fresh(Symbol(UPropertyNames[prop]))));
   }
 
   UVar::~UVar()

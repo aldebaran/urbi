@@ -36,12 +36,31 @@ namespace object
     return urbi_call_function(r, self, self, msg, args);
   }
 
+#define CHECK_ARG(N)				\
+  if (!arg ## N)				\
+    goto done;					\
+  args.push_back(arg ## N)
+
   rObject urbi_call(runner::Runner& r,
 		    rObject self,
-		    libport::Symbol msg)
+		    libport::Symbol msg,
+		    rObject arg1,
+		    rObject arg2,
+		    rObject arg3,
+		    rObject arg4,
+		    rObject arg5)
   {
-    return urbi_call_function(r, self, self, msg);
+    objects_type args;
+    CHECK_ARG(1);
+    CHECK_ARG(2);
+    CHECK_ARG(3);
+    CHECK_ARG(4);
+    CHECK_ARG(5);
+  done:
+    return urbi_call_function(r, self, self, msg, args);
   }
+
+#undef CHECK_ARG
 
   rObject urbi_call_function(runner::Runner& r, rObject self,
                              rObject owner, libport::Symbol msg)

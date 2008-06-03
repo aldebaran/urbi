@@ -265,12 +265,20 @@ namespace object
 
   /// Helpers to call Urbi functions from C++.
 
-  // self.'msg'
-  rObject urbi_call(runner::Runner& r,
-                    rObject self, libport::Symbol msg);
   // self.'msg'(args)
   rObject urbi_call(runner::Runner& r,
 		    rObject self, libport::Symbol msg, objects_type args);
+
+  // self.'msg'(args) for up to five arguments
+  rObject urbi_call(runner::Runner& r,
+		    rObject self,
+		    libport::Symbol msg,
+		    rObject arg1 = 0,
+		    rObject arg2 = 0,
+		    rObject arg3 = 0,
+		    rObject arg4 = 0,
+		    rObject arg5 = 0);
+
   // owner.getSlot(msg).apply([self])
   rObject urbi_call_function(runner::Runner& r, rObject self,
                              rObject function_owner, libport::Symbol msg);

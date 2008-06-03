@@ -142,9 +142,7 @@ namespace object
   {
     // Unless overridden, structural equality is physical equality.
     CHECK_ARG_COUNT (2);
-    objects_type mem_args;
-    mem_args.push_back(args[1]);
-    return urbi_call(r, args[0], SYMBOL(memSameAs), mem_args);
+    return urbi_call(r, args[0], SYMBOL(memSameAs), args[1]);
   }
 
   /// Physical equality

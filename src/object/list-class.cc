@@ -146,10 +146,8 @@ namespace object
     static bool
     compareListItems (runner::Runner&, rObject a, rObject b)
     {
-      objects_type args;
-      args.push_back(b);
       return is_true(urbi_call(::urbiserver->getCurrentRunner(),
-                               a, SYMBOL(LT), args));
+                               a, SYMBOL(LT), b));
     }
 
     /// \brief Sort a list.
