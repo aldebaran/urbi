@@ -6,6 +6,7 @@
 #ifndef BINDER_BINDER_HH
 # define BINDER_BINDER_HH
 
+# include <boost/tuple/tuple.hpp>
 # include <libport/finally.hh>
 # include <list>
 # include <map>
@@ -53,7 +54,9 @@ namespace binder
                                 (Function)
                                 (Scope));
     private:
-      typedef std::list<std::pair<ast::rConstAst, unsigned> > Bindings;
+      /// Declaration * depth * local index
+      typedef boost::tuple<ast::rConstAst, unsigned, unsigned> binding_type;
+      typedef std::list<binding_type> Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
       Environment env_;
@@ -81,6 +84,9 @@ namespace binder
       /// \return 0 if the variable isn't local, or the depth in
       /// number of imbriqued function otherwise.
       unsigned depth_get(const libport::Symbol& name);
+      /// \return The local index of the given variable
+      /// \precondition The given local variable must exist
+      unsigned local_index_get(const libport::Symbol& name);
       /// Factored method to handle scopes.
       ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
       /// Factored method to create updateSlot/setSlot calls.

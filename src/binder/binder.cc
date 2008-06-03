@@ -42,9 +42,19 @@ namespace binder
       return 0;
     else
     {
-      assert(env_[name].back().second > 0);
-      return env_[name].back().second;
+      assert(env_[name].back().get<1>() > 0);
+      return env_[name].back().get<1>();
     }
+  }
+
+  unsigned Binder::local_index_get(const libport::Symbol& name)
+  {
+    if (name == SYMBOL(self))
+      return 0;
+    if (name == SYMBOL(call))
+      return 1;
+    assert(!env_[name].empty());
+    return env_[name].back().get<2>();
   }
 
   ast::rCall Binder::changeSlot (const ast::loc& l,
@@ -64,7 +74,9 @@ namespace binder
     if (unsigned depth = depth_get(input->what_get()))
     {
       super_type::visit(input);
-      result_.unsafe_cast<ast::Assignment>()->depth_set(depth_ - depth);
+      ast::rAssignment res = result_.unsafe_cast<ast::Assignment>();
+      res->depth_set(depth_ - depth);
+      res->local_index_set(local_index_get(input->what_get()));
     }
     else
     {
@@ -88,8 +100,10 @@ namespace binder
     }
     else
     {
+      int idx = locals_size_.back().first;
       bind(input->what_get(), input);
       super_type::visit(input);
+      result_.unsafe_cast<ast::Declaration>()->local_index_set(idx);
     }
   }
 
@@ -110,7 +124,9 @@ namespace binder
         const ast::exps_type* args = input->arguments_get();
         result_ = new ast::Local(
           input->location_get(), name,
-          args ? recurse_collection(*args) : 0, depth_ - depth);
+          args ? recurse_collection(*args) : 0,
+          depth_ - depth,
+          local_index_get(name));
         return;
       }
       else
@@ -195,7 +211,7 @@ namespace binder
 
   void Binder::bind(const libport::Symbol& var, ast::rConstAst decl)
   {
-    env_[var].push_back(std::make_pair(decl, depth_));
+    env_[var].push_back(boost::make_tuple(decl, depth_, locals_size_.back().first));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[var]);
 
@@ -204,7 +220,9 @@ namespace binder
 
   void Binder::push_frame_size()
   {
-    locals_size_.push_back(std::make_pair(0, 0));
+    // The initial size is two, for self and call.
+    // This might change when self becomes a keyword
+    locals_size_.push_back(std::make_pair(2, 2));
   }
 
   void Binder::pop_frame_size()

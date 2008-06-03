@@ -805,6 +805,10 @@ LocalWrite:
     - value:
         type: rExp
         desc: Initialization value.
+    - local_index:
+        type: unsigned
+        access: rwW
+        init: '0'
 
 Declaration:
   super: LocalWrite
@@ -842,6 +846,10 @@ Local:
         access: rwW
         desc: How many contexts we have to rewind to find the actual value of the
               variable (thus 0 means this is an actual local variable).
+    - local_index:
+        type: unsigned
+        access: rwW
+        desc: Index in the local frame.
   default: |2
     visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
     if (n->arguments_get())
