@@ -75,6 +75,15 @@ namespace binder
       void inc_frame_size();
       int frame_size();
 
+      /// Stack of closed variables
+      typedef std::set<libport::Symbol> closed_variables_type;
+      typedef std::vector<closed_variables_type> closed_variables_stack_type;
+      closed_variables_stack_type closed_variables_stack_;
+
+      void push_closed_variables();
+      void pop_closed_variables();
+      const closed_variables_type& closed_variables();
+
       /// Level of function imbrication
       unsigned depth_;
 

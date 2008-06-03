@@ -10,6 +10,7 @@
 #include "libport/escape.hh"
 
 #include "ast/print.hh"
+#include "ast/function.hh"
 
 #include "object/atom.hh"
 #include "object/primitives.hh"
@@ -202,6 +203,9 @@ namespace object
   {
     o << "value" << " = " << libport::deref << value_ << libport::iendl;
     o << "frame size = " << value_->locals_size_get() << libport::iendl;
+    if (ast::rConstFunction f = value_.unsafe_cast<const ast::Function>())
+      o << "closed-over variables = "
+        << f->closed_variables_get() << libport::iendl;
     return o;
   }
 

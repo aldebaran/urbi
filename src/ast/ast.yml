@@ -792,6 +792,11 @@ Code:
 
 Function:
   super: Code
+  attributes:
+    - closed_variables:
+        type: symbols_type
+        access: rwW
+        init: 'symbols_type()'
 
 Closure:
   super: Code

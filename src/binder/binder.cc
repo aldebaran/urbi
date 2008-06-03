@@ -121,6 +121,9 @@ namespace binder
         depth = depth_;
       if (depth)
       {
+        // This is a closed variable
+        for (unsigned i = 0; i < depth_ - depth; i++)
+          (closed_variables_stack_.end() - 1 - i)->insert(name);
         const ast::exps_type* args = input->arguments_get();
         result_ = new ast::Local(
           input->location_get(), name,
@@ -187,16 +190,23 @@ namespace binder
 
     push_frame_size();
     finally << boost::bind(&Binder::pop_frame_size, this);
+
+    push_closed_variables();
+    finally << boost::bind(&Binder::pop_closed_variables, this);
+
     depth_++;
     finally << boost::bind(decrement, &depth_);
+
     if (input->formals_get())
     {
       foreach (const libport::Symbol& arg, *input->formals_get())
 	bind(arg, input);
     }
     super_type::visit (input);
-    result_.unsafe_cast<ast::Function>()->
-      locals_size_set(frame_size());
+    ast::rFunction res = result_.unsafe_cast<ast::Function>();
+    res->locals_size_set(frame_size());
+    foreach (const libport::Symbol& var, closed_variables())
+      res->closed_variables_get().push_back(var);
   }
 
   void Binder::visit(ast::rConstClosure input)
@@ -243,6 +253,21 @@ namespace binder
 
     if (locals_size_.back().first > locals_size_.back().second)
       locals_size_.back().second = locals_size_.back().first;
+  }
+
+  void Binder::push_closed_variables()
+  {
+    closed_variables_stack_.push_back(closed_variables_type());
+  }
+
+  void Binder::pop_closed_variables()
+  {
+    closed_variables_stack_.pop_back();
+  }
+
+  const Binder::closed_variables_type& Binder::closed_variables()
+  {
+    return closed_variables_stack_.back();
   }
 
 } // namespace binder
