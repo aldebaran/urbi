@@ -58,6 +58,9 @@ namespace runner
     virtual ~Interpreter ();
     /// \}
 
+    /// The entry point: visit \a e.
+    virtual void operator() (ast::rConstAst e);
+
     /// \ name Accessors.
     /// \{
   public:
@@ -87,7 +90,7 @@ namespace runner
 
     /// Helper to apply a function with the arguments as ast chunks
     rObject apply (rObject tgt, const libport::Symbol& msg,
-                const ast::exps_type* args);
+                   const ast::exps_type* args);
 
     /// Use an argument list coming from Urbi.
     virtual rObject apply (const rObject& func, const libport::Symbol msg,
@@ -102,8 +105,7 @@ namespace runner
     rObject eval_tag (ast::rConstExp);
 
     /// Make an urbi function from an ast chunk
-    rObject
-    make_code(ast::rConstCode f) const;
+    rObject make_code(ast::rConstCode f) const;
 
   protected:
     /// \name Evaluation.

@@ -77,51 +77,6 @@ namespace runner
       YIELD();					\
   } while (0)
 
-/// Catch exceptions, execute Code, then display the error if not
-/// already done, and rethrow it. Also execute Code if no exception
-/// caught.
-///
-/// Since this is a macro, we are likely to capture identifiers.  In
-/// particular, don't use "e" to bind the name of the caught
-/// exceptions, since that's the name used by the formal argument of
-/// the visit methods.
-#define PROPAGATE_EXCEPTION(Node)			\
-  catch (object::UrbiException& propagate_exception)    \
-  {							\
-    current_.reset();					\
-    propagate_error_(propagate_exception,               \
-                     (Node)->location_get());           \
-    throw;						\
-  }							\
-  catch (object::FlowException&)                        \
-  {							\
-    current_.reset();					\
-    throw;						\
-  }							\
-  catch (scheduler::SchedulerException&)                \
-  {							\
-    current_.reset();					\
-    throw;						\
-  }							\
-  catch (kernel::exception& propagate_exception)        \
-  {							\
-    std::cerr << "Unexpected exception propagated: "	\
-	      << propagate_exception.what()             \
-              << std::endl;                             \
-    throw;						\
-  }							\
-  catch (std::exception& propagate_exception)		\
-  {							\
-    std::cerr << "Unexpected exception propagated: "	\
-	      << propagate_exception.what()             \
-              << std::endl;                             \
-    throw;						\
-  }							\
-  catch (...)						\
-  {							\
-    std::cerr << "Unknown exception propagated\n";	\
-    throw;						\
-  }
 
   // Helper to generate a function that swaps two rObjects.
   inline
@@ -152,6 +107,13 @@ namespace runner
     }
     return res;
   }
+
+
+
+
+  /*--------------.
+  | Interpreter.  |
+  `--------------*/
 
 
   Interpreter::Interpreter (rLobby lobby,
@@ -244,6 +206,51 @@ namespace runner
   /*----------------.
   | Regular visit.  |
   `----------------*/
+
+
+  void
+  Interpreter::operator() (ast::rConstAst e)
+  {
+    /// Catch exceptions, display the error if not already done, and
+    /// rethrow it.
+    try
+    {
+      if (e)
+        e->accept(*this);
+    }
+    catch (object::UrbiException& x)
+    {
+      current_.reset();
+      propagate_error_(x, e->location_get());
+      throw;
+    }
+    catch (object::FlowException&)
+    {
+      current_.reset();
+      throw;
+    }
+    catch (scheduler::SchedulerException&)
+    {
+      current_.reset();
+      throw;
+    }
+    catch (kernel::exception& x)
+    {
+      std::cerr << "Unexpected exception propagated: " << x.what() << std::endl;
+      throw;
+    }
+    catch (std::exception& x)
+    {
+      std::cerr << "Unexpected exception propagated: " << x.what() << std::endl;
+      throw;
+    }
+    catch (...)
+    {
+      std::cerr << "Unknown exception propagated" << std::endl;
+      throw;
+    }
+  }
+
 
   void
   Interpreter::visit (ast::rConstAnd e)
@@ -357,7 +364,6 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
-    PROPAGATE_EXCEPTION(fn);
 
     return current_;
   }
@@ -532,23 +538,14 @@ namespace runner
   void
   Interpreter::visit (ast::rConstCall e)
   {
-    try
-    {
-      // The invoked slot (probably a function).
-      ast::rConstExp ast_tgt = e->target_get();
-      rObject tgt = ast_tgt->implicit() ?
-        locals_->slot_get(SYMBOL(self)) : eval(ast_tgt);
+    // The invoked slot (probably a function).
+    ast::rConstExp ast_tgt = e->target_get();
+    rObject tgt = ast_tgt->implicit() ?
+      locals_->slot_get(SYMBOL(self)) : eval(ast_tgt);
 
-      call_stack_.push_back(e);
-      Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
-      apply(tgt, e->name_get(), e->arguments_get());
-    }
-    PROPAGATE_EXCEPTION(e);
-
-    // Because while returns 0, we can't have a call that returns 0
-    // (a function that runs a while for instance).
-    // passert (e, current_);
-    // ECHO (AST(e) << " result: " << *current_);
+    call_stack_.push_back(e);
+    Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
+    apply(tgt, e->name_get(), e->arguments_get());
   }
 
   Interpreter::rObject
@@ -605,12 +602,7 @@ namespace runner
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
     operator() (e->list_get());
-    try
-    {
-      TYPE_CHECK(current_, object::List);
-    }
-    PROPAGATE_EXCEPTION(e);
-
+    TYPE_CHECK(current_, object::List);
     JAECHO("foreach body", e.body_get());
 
     // We need to copy the pointer on the list, otherwise the list will be
@@ -668,8 +660,6 @@ namespace runner
 	catch (object::ContinueException&)
 	{
 	}
-	// Restore previous locals_, even if an exception was thrown.
-	PROPAGATE_EXCEPTION(e);
       }
     }
 
@@ -751,16 +741,12 @@ namespace runner
   void
   Interpreter::visit (ast::rConstLocal e)
   {
-    try
-    {
-      rObject tgt = context(e->depth_get());
-      // FIXME: Register in the call stack
-      if (e->arguments_get())
-        current_ = apply(tgt, e->name_get(), e->arguments_get());
-      else
-        current_ = tgt->slot_get(e->name_get());
-    }
-    PROPAGATE_EXCEPTION(e);
+    rObject tgt = context(e->depth_get());
+    // FIXME: Register in the call stack
+    if (e->arguments_get())
+      current_ = apply(tgt, e->name_get(), e->arguments_get());
+    else
+      current_ = tgt->slot_get(e->name_get());
   }
 
   void
@@ -824,12 +810,7 @@ namespace runner
 	  // Rewrite flow error if we are at toplevel
 	  try
 	  {
-	    // Propagate potential errors
-	    try
-	    {
-	      operator() (c);
-	    }
-	    PROPAGATE_EXCEPTION(e);
+            operator() (c);
           }
 	  CATCH_FLOW_EXCEPTION(object::BreakException,
 			       "break", "outside a loop")
@@ -928,11 +909,7 @@ namespace runner
     Finally finally;
     finally << swap(locals, locals_)
             << runner::non_interruptible_set(this, was_non_interruptible);
-    try
-    {
-      super_type::operator()(e->body_get());
-    }
-    PROPAGATE_EXCEPTION(e);
+    super_type::operator()(e->body_get());
   }
 
   void
@@ -999,7 +976,6 @@ namespace runner
       current_ = object::void_class;
       return;
     }
-    PROPAGATE_EXCEPTION(t);
   }
 
   object::rObject
@@ -1070,8 +1046,8 @@ namespace runner
       case ast::Throw::exception_break:
 	throw object::BreakException(e->location_get());
 
-    case ast::Throw::exception_continue:
-      throw object::ContinueException(e->location_get());
+      case ast::Throw::exception_continue:
+        throw object::ContinueException(e->location_get());
 
       case ast::Throw::exception_return:
 	if (e->value_get())
@@ -1115,7 +1091,8 @@ namespace runner
   }
 
   void
-  Interpreter::show_backtrace(const call_stack_type& bt, const std::string& chan)
+  Interpreter::show_backtrace(const call_stack_type& bt,
+                              const std::string& chan)
   {
     foreach (ast::rConstCall c,
              boost::make_iterator_range(boost::rbegin(bt),
