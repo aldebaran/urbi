@@ -87,8 +87,8 @@ sys.stdout = visitor_hxx
 
 print >>visitor_hxx, tools.banner("ast/default-visitor.hxx",
 				  "Implementation of ast::DefaultVisitor.") + """
-# include "default-visitor.hh"
-# include "all.hh"
+# include <ast/default-visitor.hh>
+# include <ast/all.hh>
 
 namespace ast
 {
