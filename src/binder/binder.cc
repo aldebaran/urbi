@@ -157,6 +157,11 @@ namespace binder
 
   void Binder::visit(ast::rConstFunction input)
   {
+    libport::Finally finally;
+
+    unbind_.push_back(libport::Finally());
+    finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
+
     depth_++;
     if (input->formals_get())
     {
