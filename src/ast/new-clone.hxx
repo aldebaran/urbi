@@ -9,8 +9,8 @@
 # include <boost/static_assert.hpp>
 # include <boost/type_traits/is_base_of.hpp>
 
-# include "ast/cloner.hh"
-# include "ast/new-clone.hh"
+# include <ast/cloner.hh>
+# include <ast/new-clone.hh>
 
 namespace ast
 {

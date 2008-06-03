@@ -8,10 +8,10 @@
 
 # include <libport/unique-pointer.hh>
 
-# include "ast/cloner.hh"
-# include "ast/exp.hh"
+# include <ast/cloner.hh>
+# include <ast/exp.hh>
 
-# include "parser/metavar-map.hh"
+# include <parser/metavar-map.hh>
 
 namespace ast
 {
@@ -79,6 +79,6 @@ namespace ast
 
 } // namespace ast
 
-# include "ast/parametric-ast.hxx"
+# include <ast/parametric-ast.hxx>
 
 #endif // !AST_PARAMETRIC_AST_HH

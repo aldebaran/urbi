@@ -20,6 +20,6 @@ namespace ast
 
 }
 
-# include "ast/new-clone.hxx"
+# include <ast/new-clone.hxx>
 
 #endif // !AST_NEW_CLONE_HH

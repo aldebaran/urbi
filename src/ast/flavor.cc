@@ -7,7 +7,7 @@
 
 #include <libport/assert.hh>
 
-#include "ast/flavor.hh"
+#include <ast/flavor.hh>
 
 namespace ast
 {

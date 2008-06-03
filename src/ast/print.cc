@@ -1,5 +1,5 @@
-#include "ast/pretty-printer.hh"
-#include "ast/print.hh"
+#include <ast/pretty-printer.hh>
+#include <ast/print.hh>
 
 namespace ast
 {

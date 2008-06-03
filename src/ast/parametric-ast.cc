@@ -3,11 +3,11 @@
  ** \brief Implementation of ast::ParametricAst.
  */
 
-#include "ast/parametric-ast.hh"
-#include "ast/print.hh"
+#include <ast/parametric-ast.hh>
+#include <ast/print.hh>
 
-#include "parser/parse.hh"
-#include "parser/parse-result.hh"
+#include <parser/parse.hh>
+#include <parser/parse-result.hh>
 
 namespace ast
 {

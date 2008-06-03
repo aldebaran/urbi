@@ -8,8 +8,8 @@
 
 # include <libport/foreach.hh>
 
-# include "ast/print.hh"
-# include "ast/cloner.hh"
+# include <ast/print.hh>
+# include <ast/cloner.hh>
 
 namespace ast
 {

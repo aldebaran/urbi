@@ -1,7 +1,7 @@
 #include <libport/separator.hh>
 #include <libport/symbol.hh>
 
-#include "ast/symbols-type.hh"
+#include <ast/symbols-type.hh>
 
 namespace std
 {

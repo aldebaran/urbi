@@ -8,7 +8,7 @@
 
 # include <libport/symbol.hh>
 
-# include "parser/location.hh"
+# include <parser/location.hh>
 
 namespace ast
 {
