@@ -7,6 +7,7 @@
 #include <boost/optional.hpp>
 #include <libport/foreach.hh>
 
+#include "ast/print.hh"
 #include "binder/binder.hh"
 #include "object/symbols.hh"
 #include "object/object.hh"
@@ -20,6 +21,7 @@ namespace binder
   {
     unbind_.push_back(libport::Finally());
     setOnSelf_.push_back(true);
+    locals_size_.push_back(std::make_pair(0, 0));
   }
 
   Binder::~Binder()
@@ -155,6 +157,11 @@ namespace binder
     return result_.unsafe_cast<ast::Exp>();
   }
 
+  static void decrement(unsigned* n)
+  {
+    (*n)--;
+  }
+
   void Binder::visit(ast::rConstFunction input)
   {
     libport::Finally finally;
@@ -162,14 +169,18 @@ namespace binder
     unbind_.push_back(libport::Finally());
     finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
 
+    locals_size_.push_back(std::make_pair(0, 0));
+    finally << boost::bind(&locals_size_type::pop_back, &locals_size_);
     depth_++;
+    finally << boost::bind(decrement, &depth_);
     if (input->formals_get())
     {
       foreach (const libport::Symbol& arg, *input->formals_get())
 	bind(arg, input);
     }
     super_type::visit (input);
-    depth_--;
+    result_.unsafe_cast<ast::Function>()->
+      locals_size_set(locals_size_.back().second);
   }
 
   void Binder::visit(ast::rConstClosure input)
@@ -187,6 +198,13 @@ namespace binder
     env_[var].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[var]);
+
+    locals_size_.back().first++;
+    unbind_.back() <<
+      boost::bind(decrement, &locals_size_.back().first);
+
+    if (locals_size_.back().first > locals_size_.back().second)
+      locals_size_.back().second = locals_size_.back().first;
   }
 
 } // namespace binder

@@ -61,6 +61,10 @@ namespace binder
       std::list<libport::Finally> unbind_;
       /// Whether to apply setSlot on self
       std::list<bool> setOnSelf_;
+      /// The stack of current number of local variables, and maximum
+      /// number of local variable used by the current function.
+      typedef std::list<std::pair<unsigned, unsigned> > locals_size_type;
+      locals_size_type locals_size_;
       /// Level of function imbrication
       unsigned depth_;
 

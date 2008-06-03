@@ -762,6 +762,11 @@ Code:
         access: rwW
         mandatory: False
         desc: Body
+    - locals_size:
+        type: unsigned
+        desc: '/// The size of the stack frame needed to run this function.'
+        init: '0'
+        access: rwW
   inline:
     header inside: |2
         public:
