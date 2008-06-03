@@ -48,7 +48,7 @@ namespace object
     CHECK_ARG_COUNT_RANGE(1, 3);
 
     // Second argument is max depth.
-    int depth_max = 1;
+    int depth_max = 0;
     if (args.size() >= 2)
     {
       FETCH_ARG(1, Float);
