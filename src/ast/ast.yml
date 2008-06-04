@@ -137,6 +137,9 @@ printer_cc_prologue: |2
 #       inside:   in the class definition/namespace
 #       epilogue: after the class definition, in the namespace.
 #
+#  * cloner_prologue
+#    Code to execute before cloning this node
+#
 #  * attributes:
 #    + name
 #      a C++ attribute name

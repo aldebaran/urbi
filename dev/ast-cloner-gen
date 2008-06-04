@@ -187,6 +187,8 @@ for node in concrete:
   if node.hide:
     print "    //<<"
 
+  if node.cloner_prologue:
+    print node.cloner_prologue
   children_clone(node)
   # Result.
   args = node.ctor_args (False, False)
