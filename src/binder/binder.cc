@@ -270,8 +270,10 @@ namespace binder
     ast::declarations_type* formals =
       input->formals_get () ? recurse_collection (*input->formals_get ()) : 0;
     if (formals)
+    {
       foreach (ast::rDeclaration arg, *formals)
 	bind(arg);
+    }
 
     ast::rAbstractScope body = recurse (input->body_get ());
     ast::rClosure res = new ast::Closure (input->location_get(), formals, body);
