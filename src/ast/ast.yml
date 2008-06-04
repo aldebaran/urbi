@@ -730,8 +730,10 @@ Call:
     visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
     operator()(n->target_get());
     if (n->arguments_get())
+    {
       foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
         operator()(e);
+    }
   printer:
     - '{
          if (!(n->target_get()->implicit()))
@@ -858,8 +860,10 @@ Local:
   default: |2
     visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
     if (n->arguments_get())
+    {
       foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
         operator()(e);
+    }
   printer:
     - $name
     - '{
