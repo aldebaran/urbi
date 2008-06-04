@@ -36,6 +36,7 @@ atomic_types:
 # from the name of the type.  Below are the exceptions.
 includes_map:
   "Throw::exception_kind": '<ast/throw.hh>'
+  "declarations_type":             '<ast/declarations-type.hh>'
   "exps_type":             '<ast/exps-type.hh>'
   "flavor_type":           '<ast/flavor.hh>'
   "libport::RefCounted":   '<libport/ref-counted.hh>'
@@ -61,6 +62,7 @@ non_visitable_types:
 # In the cloner, these require "recurse_collection".
 collections:
   - "exps_type"
+  - "declarations_type"
   - "symbols_type"
 
 # The function to clear a list of pointers.
@@ -756,7 +758,7 @@ Code:
   super: Exp
   attributes:
     - formals:
-        type: 'symbols_type*'
+        type: 'declarations_type*'
         mandatory: False
         desc: Formal arguments.  If null, a lazy function.
     - body:

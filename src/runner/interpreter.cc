@@ -17,6 +17,8 @@
 #include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
+#include <ast/declarations-type.hh>
+#include <ast/exps-type.hh>
 #include <ast/print.hh>
 
 #include <object/atom.hh>
@@ -322,13 +324,13 @@ namespace runner
     // arguments. Otherwise, bind the call message.
     if (fn->strict())
     {
-      const ast::symbols_type& formals = *fn->formals_get();
+      const ast::declarations_type& formals = *fn->formals_get();
       object::check_arg_count (formals.size() + 1, args.size(), msg.name_get());
       // Effective (evaluated) argument iterator.
       // Skip "self" which has already been handled.
       object::objects_type::const_iterator ei = ++args.begin();
-      foreach (const libport::Symbol s, formals)
-	scope->slot_set (s, *ei++);
+      foreach (ast::rConstDeclaration s, formals)
+	scope->slot_set (s->what_get(), *ei++);
     }
     else
       if (!closure)

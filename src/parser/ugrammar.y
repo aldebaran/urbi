@@ -195,6 +195,17 @@
     return scanner.yylex(val, loc, &up);
   }
 
+  static ast::declarations_type*
+    symbols_to_decs(const ast::symbols_type* symbols, const ast::loc& loc)
+  {
+    if (!symbols)
+      return 0;
+    ast::declarations_type* res = new ast::declarations_type();
+    foreach (const libport::Symbol& var, *symbols)
+      res->push_back(new ast::Declaration(loc, var, new ast::Implicit(loc)));
+    return res;
+  }
+
 } // %code requires.
 
 /* Tokens and nonterminal symbols, with their type */
@@ -611,13 +622,17 @@ stmt:
     {
       // Compiled as "var name = function args stmt"
       $$ = ast_slot_set(@$, $2.value(),
-			new ast::Function (@$, $3, ast_scope (@$, $4.value())));
+			new ast::Function (@$, symbols_to_decs($3, @3),
+                                           ast_scope (@$, $4.value())));
+      delete $3;
     }
 | "closure" k1_id formals block
     {
       // Compiled as "var name = closure args stmt"
       $$ = ast_slot_set(@$, $2.value(),
-			new ast::Closure (@$, $3, ast_scope (@$, $4.value())));
+			new ast::Closure (@$, symbols_to_decs($3, @3)
+                                          , ast_scope (@$, $4.value())));
+      delete $3;
     }
 ;
 
@@ -991,11 +1006,13 @@ exp:
 exp:
   "function" formals block
     {
-      $$ = new ast::Function (@$, $2, ast_scope (@$, $3.value()));
+      $$ = new ast::Function (@$, symbols_to_decs($2, @2),
+                              ast_scope (@$, $3.value()));
     }
 | "closure" formals block
     {
-      $$ = new ast::Closure (@$, $2, ast_scope (@$, $3.value()));
+      $$ = new ast::Closure (@$, symbols_to_decs($2, @2),
+                             ast_scope (@$, $3.value()));
     }
 ;
 

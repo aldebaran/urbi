@@ -194,14 +194,16 @@ namespace binder
     push_closed_variables();
     finally << boost::bind(&Binder::pop_closed_variables, this);
 
+    setOnSelf_.push_back(false);
+    finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
+
     depth_++;
     finally << boost::bind(decrement, &depth_);
 
     if (input->formals_get())
-    {
-      foreach (const libport::Symbol& arg, *input->formals_get())
-	bind(arg, input);
-    }
+      foreach (ast::rConstDeclaration arg, *input->formals_get())
+	bind(arg->what_get(), input);
+
     super_type::visit (input);
     ast::rFunction res = result_.unsafe_cast<ast::Function>();
     res->locals_size_set(frame_size());
@@ -212,10 +214,8 @@ namespace binder
   void Binder::visit(ast::rConstClosure input)
   {
     if (input->formals_get())
-    {
-      foreach (const libport::Symbol& arg, *input->formals_get())
-	bind(arg, input);
-    }
+      foreach (ast::rConstDeclaration arg, *input->formals_get())
+	bind(arg->what_get(), input);
     super_type::visit(input);
   }
 
