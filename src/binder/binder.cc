@@ -15,8 +15,8 @@
 namespace binder
 {
   Binder::Binder()
-    : env_()
-    , unbind_()
+    : unbind_()
+    , env_()
     , depth_(1)
   {
     unbind_.push_back(libport::Finally());
@@ -248,7 +248,7 @@ namespace binder
     locals_size_.pop_back();
   }
 
-  int Binder::frame_size()
+  unsigned Binder::frame_size() const
   {
     return locals_size_.back().second;
   }
@@ -273,7 +273,7 @@ namespace binder
     closed_variables_stack_.pop_back();
   }
 
-  const Binder::closed_variables_type& Binder::closed_variables()
+  const Binder::closed_variables_type& Binder::closed_variables() const
   {
     return closed_variables_stack_.back();
   }

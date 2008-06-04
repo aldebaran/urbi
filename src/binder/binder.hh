@@ -54,35 +54,38 @@ namespace binder
                                 (Function)
                                 (Scope));
     private:
+
+      /// Actions to perform at exit of the most inner scope
+      std::list<libport::Finally> unbind_;
+
       /// Declaration * depth * local index
       typedef boost::tuple<ast::rConstAst, unsigned, unsigned> binding_type;
       typedef std::list<binding_type> Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
       Environment env_;
-      /// Actions to perform at exit of the most inner scope
-      std::list<libport::Finally> unbind_;
+
       /// Whether to apply setSlot on self
       std::list<bool> setOnSelf_;
+
       /// The stack of current number of local variables, and maximum
       /// number of local variable used by the current function.
       typedef std::list<std::pair<unsigned, unsigned> > locals_size_type;
       locals_size_type locals_size_;
-
-      ///
+      /// Helpers functions to manipulate the frame size stack
       void push_frame_size();
       void pop_frame_size();
       void inc_frame_size();
-      int frame_size();
+      unsigned frame_size() const;
 
       /// Stack of closed variables
       typedef std::set<libport::Symbol> closed_variables_type;
       typedef std::vector<closed_variables_type> closed_variables_stack_type;
       closed_variables_stack_type closed_variables_stack_;
-
+      /// Helpers to manipulate the closed variables stack
       void push_closed_variables();
       void pop_closed_variables();
-      const closed_variables_type& closed_variables();
+      const closed_variables_type& closed_variables() const;
 
       /// Level of function imbrication
       unsigned depth_;
