@@ -49,6 +49,8 @@ namespace ast
     /// Dump the master AST and the state of the tables.
     std::ostream& dump(std::ostream& o) const;
 
+    void unique_clear();
+
   protected:
     /// Import from super.
     using super_type::visit;

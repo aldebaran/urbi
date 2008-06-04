@@ -41,6 +41,11 @@ namespace ast
     return parser::MetavarMap<T>::take_ (s);
   }
 
+  inline void ParametricAst::unique_clear()
+  {
+    unique_.clear();
+  }
+
 } // namespace ast
 
 #endif // !AST_PARAMETRIC_AST_HH
