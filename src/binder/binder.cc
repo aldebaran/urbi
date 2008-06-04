@@ -229,7 +229,8 @@ namespace binder
 
   void Binder::bind(const libport::Symbol& var, ast::rConstAst decl)
   {
-    env_[var].push_back(boost::make_tuple(decl, depth_, locals_size_.back().first));
+    env_[var].push_back(boost::make_tuple(decl, depth_,
+                                          locals_size_.back().first));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[var]);
 

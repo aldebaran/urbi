@@ -59,7 +59,8 @@ namespace binder
       std::list<libport::Finally> unbind_;
 
       /// Declaration * depth * local index
-      typedef boost::tuple<ast::rConstAst, unsigned, unsigned> binding_type;
+      typedef boost::tuple<ast::rConstDeclaration, unsigned, unsigned>
+        binding_type;
       typedef std::list<binding_type> Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
