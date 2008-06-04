@@ -191,6 +191,13 @@ namespace object
     return arg0->value_get()[index];
   }
 
+  static rObject
+  list_class_clone(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    return List::fresh(List::value_type());
+  }
+
   /*-------------------------.
   | Primitives declaration.  |
   `-------------------------*/
@@ -223,6 +230,7 @@ namespace object
     DECLARE(PLUS_EQ);
     DECLARE(back);
     DECLARE(clear);
+    DECLARE(clone);
     DECLARE(front);
     DECLARE(nth);
     DECLARE(pop_front);
