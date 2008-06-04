@@ -19,7 +19,7 @@ namespace dbg
   /// The following functions will be called from the debugger. Here
   /// are some example uses:
   ///
-  ///        (gdb) call dbg::dump(object::system_class)
+  ///        (gdb) call dbg::dump(object::system_class, 1)
   ///
   ///        (gdb) call dbg::eval("System")
   ///
