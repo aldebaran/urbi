@@ -149,7 +149,7 @@ namespace binder
     setOnSelf_.push_back(false);
     finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
 
-    bind(input->index_get()->what_get(), input);
+    bind(input->index_get()->what_get(), input->index_get());
     super_type::visit(input);
   }
 
@@ -210,7 +210,7 @@ namespace binder
 
     if (input->formals_get())
       foreach (ast::rConstDeclaration arg, *input->formals_get())
-	bind(arg->what_get(), input);
+	bind(arg->what_get(), arg);
 
     super_type::visit (input);
     ast::rFunction res = result_.unsafe_cast<ast::Function>();
@@ -223,11 +223,11 @@ namespace binder
   {
     if (input->formals_get())
       foreach (ast::rConstDeclaration arg, *input->formals_get())
-	bind(arg->what_get(), input);
+	bind(arg->what_get(), arg);
     super_type::visit(input);
   }
 
-  void Binder::bind(const libport::Symbol& var, ast::rConstAst decl)
+  void Binder::bind(const libport::Symbol& var, ast::rConstDeclaration decl)
   {
     env_[var].push_back(boost::make_tuple(decl, depth_,
                                           locals_size_.back().first));
