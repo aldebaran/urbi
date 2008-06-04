@@ -93,7 +93,7 @@ namespace binder
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
-      void bind(const libport::Symbol& var, ast::rConstDeclaration decl);
+      void bind(ast::rConstDeclaration decl);
       /// \return 0 if the variable isn't local, or the depth in
       /// number of imbriqued function otherwise.
       unsigned depth_get(const libport::Symbol& name);
