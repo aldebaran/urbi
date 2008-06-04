@@ -8,13 +8,13 @@
 #include <libport/foreach.hh>
 #include <libport/ufloat.hh>
 
-#include "kernel/userver.hh"
-#include "object/float-class.hh"
-#include "object/list-class.hh"
-#include "object/atom.hh"
-#include "object/object.hh"
-#include "primitives.hh"
-#include "runner/runner.hh"
+#include <kernel/userver.hh>
+#include <object/float-class.hh>
+#include <object/list-class.hh>
+#include <object/atom.hh>
+#include <object/object.hh>
+#include <object/primitives.hh>
+#include <runner/runner.hh>
 
 namespace object
 {

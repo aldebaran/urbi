@@ -12,10 +12,10 @@
 # include <map>
 
 # include <ast/cloner.hh>
-# include "ast/all.hh"
-# include "object/fwd.hh"
+# include <ast/all.hh>
+# include <object/fwd.hh>
 
-# include "binder/bind.hh"
+# include <binder/bind.hh>
 
 namespace binder
 {
@@ -111,6 +111,6 @@ namespace binder
 
 } // namespace binder
 
-# include "binder/binder.hxx"
+# include <binder/binder.hxx>
 
 #endif // !BINDER_BINDER_HH
