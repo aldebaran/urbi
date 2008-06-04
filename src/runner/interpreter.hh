@@ -107,6 +107,9 @@ namespace runner
     /// Make an urbi function from an ast chunk
     rObject make_code(ast::rConstCode f) const;
 
+    /// Return the current scope_tag, after creating it if needed.
+    scheduler::rTag scope_tag();
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -177,7 +180,7 @@ namespace runner
 			const libport::Symbol& msg,
 			const object::objects_type& args,
 			rObject call_message);
-
+    void cleanup_scope_tag();
 
   private:
     /// The root of the AST being executed.
@@ -191,6 +194,9 @@ namespace runner
 
     /// The (current set of) local variables, slots of the "locals" object.
     rObject locals_;
+
+    /// The scope tags stack.
+    std::vector<scheduler::rTag> scope_tags_;
 
     /// The call stack.
     typedef object::UrbiException::call_stack_type call_stack_type;

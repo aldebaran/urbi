@@ -129,6 +129,7 @@ namespace runner
       current_(0),
       locals_(object::Object::make_method_scope(lobby))
   {
+    scope_tags_.push_back(0);
     init();
   }
 
@@ -141,6 +142,7 @@ namespace runner
       current_(0),
       locals_(model.locals_)
   {
+    scope_tags_.push_back(0);
     init();
   }
 
@@ -154,6 +156,7 @@ namespace runner
       current_(0),
       locals_(model.locals_)
   {
+    scope_tags_.push_back(0);
   }
 
   Interpreter::~Interpreter ()
@@ -914,9 +917,35 @@ namespace runner
     super_type::operator()(e->body_get());
   }
 
+  scheduler::rTag
+  Interpreter::scope_tag()
+  {
+    scheduler::rTag tag = scope_tags_.back();
+    if (!tag)
+    {
+      // Create the tag on demand.
+      tag = scheduler::Tag::fresh
+             (libport::Symbol::fresh(SYMBOL(LT_scope_SP_tag_GT)));
+      *scope_tags_.rbegin() = tag;
+    }
+    return tag;
+  }
+
+  void
+  Interpreter::cleanup_scope_tag()
+  {
+    scheduler::rTag tag = scope_tags_.back();
+    scope_tags_.pop_back();
+    if (tag)
+      tag->stop(scheduler_get());
+  }
+
   void
   Interpreter::visit (ast::rConstScope e)
   {
+    scope_tags_.push_back(0);
+    libport::Finally finally(boost::bind(&Interpreter::cleanup_scope_tag,
+					 this));
     visit (e.unsafe_cast<const ast::AbstractScope>(),
            object::Object::make_scope(locals_));
   }
@@ -959,7 +988,7 @@ namespace runner
       push_tag (extract_tag (eval (t->tag_get ())));
       Finally finally(bind(&Interpreter::pop_tag, this));
       // If the latest tag causes us to be frozen or blocked, let the
-      // scheduler handler this properly to avoid duplicating the
+      // scheduler handle this properly to avoid duplicating the
       // logic.
       if (frozen () || blocked ())
 	yield ();

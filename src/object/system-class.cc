@@ -16,6 +16,7 @@
 
 #include <object/alien.hh>
 #include <object/system-class.hh>
+#include <object/tag-class.hh>
 #include <object/task-class.hh>
 
 #include <runner/at-handler.hh>
@@ -125,6 +126,15 @@ namespace object
     runner::register_at_job(dynamic_cast<runner::Interpreter&>(r),
 			    args[1], args[2], args[3]);
     return object::void_class;
+  }
+
+  static rObject
+  system_class_scopeTag(runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    scheduler::rTag scope_tag =
+      dynamic_cast<runner::Interpreter&>(r).scope_tag();
+    return create_tag(scope_tag);
   }
 
   static rObject
@@ -281,6 +291,7 @@ namespace object
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(registerAtJob);
+    DECLARE(scopeTag);
     DECLARE(searchFile);
     DECLARE(shiftedTime);
     DECLARE(shutdown);
