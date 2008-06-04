@@ -15,6 +15,10 @@ do List
     return false
   };
 
+  // FIXME: We need to use a single convention for physical-equality
+  // related functions. The first on used was prefix 'mem', as in
+  // memSameAs, from Caml. We should either rename this method as
+  // memHas, or choose another convention.
   function hasSame(e)
   {
     for| i in self
