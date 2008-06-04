@@ -10,6 +10,7 @@
 # include <boost/type_traits/is_base_of.hpp>
 
 # include <ast/parametric-ast.hh>
+# include <ast/print.hh>
 
 namespace ast
 {
@@ -18,7 +19,7 @@ namespace ast
   ParametricAst&
   ParametricAst::operator% (const T& t)
   {
-    passert (t, unique_(t));
+    passert (libport::deref << t, unique_(t));
     append_ (count_, t);
     return *this;
   }
