@@ -52,7 +52,14 @@ namespace object
     if (args.size() >= 2)
     {
       FETCH_ARG(1, Float);
-      depth_max = arg1->value_get();
+      try
+      {
+	depth_max = libport::ufloat_to_int(arg1->value_get());
+      }
+      catch (libport::bad_numeric_cast& ue)
+      {
+	throw BadInteger(arg1->value_get(), "dump");
+      }
     }
 
     // Third argument is the tag name.
