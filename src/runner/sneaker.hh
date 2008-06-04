@@ -27,9 +27,9 @@ namespace dbg
   ///
   ///        (gdb) call dbg::ps()
 
-  void dump(const object::rObject& o);
+  void dump(const object::rObject& o, int depth);
   object::rObject eval(const char* command);
-  void evalp(char* command);
+  void evalp(const char* command);
   void ps();
 
 } // namespace dbg
