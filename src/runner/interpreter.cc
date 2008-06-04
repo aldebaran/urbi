@@ -620,7 +620,7 @@ namespace runner
     bool tail = false;
     ast::rConstAst body = e->body_get();
     ast::flavor_type flavor = e->flavor_get();
-    libport::Symbol index = e->index_get();
+    libport::Symbol index = e->index_get()->what_get();
 
     // Iterate on each value.
     foreach (const rObject& o, content)

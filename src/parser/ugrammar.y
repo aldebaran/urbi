@@ -828,7 +828,9 @@ stmt:
     }
 | "for" "identifier" "in" exp block    %prec CMDBLOCK
     {
-      $$ = new ast::Foreach(@$, $1, $2, $4.value(), $5.value());
+      $$ = new ast::Foreach(@$, $1,
+                            new ast::Declaration(@2, $2, new ast::Implicit(@2)),
+                            $4.value(), $5.value());
     }
 | "freezeif" "(" softtest ")" stmt
     {

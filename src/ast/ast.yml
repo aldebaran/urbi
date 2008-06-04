@@ -584,7 +584,7 @@ Foreach:
     - Flavored
   attributes:
     - index:
-        type: 'libport::Symbol'
+        type: 'rDeclaration'
         desc: The variable storing de values on which iterate.
     - list:
         type: rExp
@@ -594,7 +594,7 @@ Foreach:
         desc: Executed for each value in the list
   printer:
     - '"for "'
-    - '{ n->index_get().print_escaped(ostr_); }'
+    - '{ n->index_get()->what_get().print_escaped(ostr_); }'
     - '" in "'
     - ~list
     - '" {"'

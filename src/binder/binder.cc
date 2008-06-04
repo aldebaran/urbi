@@ -141,7 +141,15 @@ namespace binder
 
   void Binder::visit (ast::rConstForeach input)
   {
-    bind(input->index_get(), input);
+    libport::Finally finally;
+
+    unbind_.push_back(libport::Finally());
+    finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
+
+    setOnSelf_.push_back(false);
+    finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
+
+    bind(input->index_get()->what_get(), input);
     super_type::visit(input);
   }
 
