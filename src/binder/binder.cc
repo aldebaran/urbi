@@ -209,8 +209,10 @@ namespace binder
     finally << boost::bind(decrement, &depth_);
 
     if (input->formals_get())
+    {
       foreach (ast::rConstDeclaration arg, *input->formals_get())
 	bind(arg);
+    }
 
     super_type::visit (input);
     ast::rFunction res = result_.unsafe_cast<ast::Function>();
@@ -222,8 +224,10 @@ namespace binder
   void Binder::visit(ast::rConstClosure input)
   {
     if (input->formals_get())
+    {
       foreach (ast::rConstDeclaration arg, *input->formals_get())
 	bind(arg);
+    }
     super_type::visit(input);
   }
 
