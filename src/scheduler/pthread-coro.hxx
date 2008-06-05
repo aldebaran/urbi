@@ -3,7 +3,7 @@
 #include <libport/thread.hh>
 #include <libport/semaphore.hh>
 
-#include "scheduler/coroutine.hh"
+#include <scheduler/coroutine.hh>
 /* Os-thread implementation of coroutines, using semaphores to ensure that only
  one coroutine is running at the same time.
 */

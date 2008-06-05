@@ -52,8 +52,8 @@ bool coroutine_stack_space_almost_gone(Coro* coro);
 void coroutine_initialize_main(Coro* coro);
 
 # ifdef SCHEDULER_CORO_OSTHREAD
-#  include "scheduler/pthread-coro.hxx"
+#  include <scheduler/pthread-coro.hxx>
 # else
-#  include "scheduler/coroutine.hxx"
+#  include <scheduler/coroutine.hxx>
 # endif
 #endif // SCHEDULER_COROUTINE_HH

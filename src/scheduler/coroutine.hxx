@@ -1,7 +1,7 @@
 #ifndef SCHEDULER_COROUTINE_HXX
 #define SCHEDULER_COROUTINE_HXX
 
-# include "kernel/kernconf.hh"
+# include <kernel/kernconf.hh>
 
 inline Coro*
 coroutine_new(size_t stack_size)

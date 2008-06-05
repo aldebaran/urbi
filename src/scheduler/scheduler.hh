@@ -171,6 +171,6 @@ namespace scheduler
 
 } // namespace scheduler
 
-# include "scheduler.hxx"
+# include <scheduler/scheduler.hxx>
 
 #endif // !SCHEDULER_SCHEDULER_HH
