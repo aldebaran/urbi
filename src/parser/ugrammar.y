@@ -121,12 +121,9 @@
       if (!lvalue->target_implicit())
       {
         libport::Symbol tmp = libport::Symbol::fresh(SYMBOL(__tmp__));
+        const yy::location& l = lvalue->location_get();
         tweast << "var " << tmp << " = " << lvalue->target_get() << "|";
-        lvalue = ast_call(lvalue->location_get(),
-                          ast_call(lvalue->location_get(),
-                                   new ast::Implicit(lvalue->location_get()),
-                                   tmp),
-                          lvalue->name_get());
+        lvalue = ast_call(l, ast_call(l, tmp), lvalue->name_get());
       }
       return lvalue;
     }
@@ -669,14 +666,8 @@ stmt:
 // for anonymous functions.  But that's not a good option IMHO (AD).
 %type <call> k1_id;
 k1_id:
-  "identifier"
-    {
-      $$ = ast_call(@$, new ast::Implicit(@$), $1);
-    }
-| "identifier" "." "identifier"
-    {
-      $$ = ast_call(@$,
-                    ast_call(@1, new ast::Implicit(@$), $1), $3); }
+  "identifier"                   { $$ = ast_call(@$, $1); }
+| "identifier" "." "identifier"  { $$ = ast_call(@$, ast_call(@1, $1), $3); }
 ;
 
 
@@ -695,8 +686,7 @@ stmt:
     }
 | "var" lvalue
     {
-      $$ = ast_slot_set(@$, $2,
-                        ast_call(@$, new ast::Implicit(@$), SYMBOL(nil)));
+      $$ = ast_slot_set(@$, $2, ast_call(@$, SYMBOL(nil)));
     }
 | "delete" lvalue
     {
@@ -956,7 +946,7 @@ exp:
 
 %type <call> lvalue call;
 lvalue:
-	  id	{ $$ = ast_call(@$, new ast::Implicit(@$), $1); }
+	  id	{ $$ = ast_call(@$, $1); }
 | exp "." id	{ $$ = ast_call(@$, $1, $3); }
 ;
 
@@ -980,7 +970,7 @@ new:
   "new" "identifier" args
   {
     // Compiled as "id . new (args)".
-    $$ = ast_call(@$, ast_call(@$, new ast::Implicit(@$), $2), SYMBOL(new), $3);
+    $$ = ast_call(@$, ast_call(@$, $2), SYMBOL(new), $3);
   }
 ;
 
@@ -1082,9 +1072,10 @@ exp:
   "this"         { $$ = new ast::This(@$); }
 | "call"         { $$ = new ast::CallMsg(@$); }
 
-/*---------.
-| num exp  |
-`---------*/
+
+/*-----------.
+| num. exp.  |
+`-----------*/
 // The name of the operators are the name of the messages.
 %token <symbol>
 	TOK_BANG       "!"
@@ -1217,6 +1208,7 @@ args:
   /* empty */   { $$ = 0; }
 | "(" exps ")"  { $$ = $2; }
 ;
+
 
 /*-----------.
 | softtest.  |

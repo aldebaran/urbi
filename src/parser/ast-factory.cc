@@ -5,6 +5,15 @@
 namespace parser
 {
 
+  /// "<method> (args)".
+  ast::rCall
+  ast_call (const yy::location& l,
+            libport::Symbol method)
+  {
+    return ast_call(l, new ast::Implicit(l), method);
+  }
+
+
   /// "<target> . <method> (args)".
   ast::rCall
   ast_call (const yy::location& l,
