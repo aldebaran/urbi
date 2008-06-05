@@ -6,7 +6,7 @@
 #ifndef OBJECT_INTEGER_CLASS_HH
 # define OBJECT_INTEGER_CLASS_HH
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

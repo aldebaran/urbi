@@ -8,7 +8,7 @@
 
 # include <libport/symbol.hh>
 
-# include "sdk/config.h"
+# include <sdk/config.h>
 
 
 # if defined SYMBOLS_PRECOMPILED
@@ -27,7 +27,7 @@
    code.  */
 
 #  define SYMBOL(Sym) object::symbol_ ## Sym
-#  include "object/precompiled-symbols.hh"
+#  include <object/precompiled-symbols.hh>
 
 namespace object
 {

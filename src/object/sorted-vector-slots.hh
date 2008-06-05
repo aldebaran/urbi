@@ -1,7 +1,7 @@
 #ifndef OBJECT_SORTED_VECTOR_SLOTS_HH
 # define OBJECT_SORTED_VECTOR_SLOTS_HH
 
-# include "object/slots.hh"
+# include <object/slots.hh>
 
 namespace object
 {
@@ -25,6 +25,6 @@ namespace object
   };
 }
 
-# include "sorted-vector-slots.hxx"
+# include <object/sorted-vector-slots.hxx>
 
 #endif

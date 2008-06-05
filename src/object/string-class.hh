@@ -6,7 +6,7 @@
 #ifndef OBJECT_STRING_CLASS_HH
 # define OBJECT_STRING_CLASS_HH
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

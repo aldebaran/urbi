@@ -19,13 +19,13 @@ namespace ast
   class Function;
 }
 
-# include "kernel/fwd.hh"
+# include <kernel/fwd.hh>
 
 # include <libport/hash.hh>
 # include <libport/ufloat.h>
 # include <libport/symbol.hh>
-# include "object/object.hh"
-# include "object/state.hh"
+# include <object/object.hh>
+# include <object/state.hh>
 
 namespace object
 {

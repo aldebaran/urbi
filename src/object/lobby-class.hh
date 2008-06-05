@@ -6,7 +6,7 @@
 #ifndef OBJECT_LOBBY_CLASS_HH
 # define OBJECT_LOBBY_CLASS_HH
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

@@ -8,7 +8,7 @@
 
 # include <libport/ufloat.hh>
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

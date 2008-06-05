@@ -8,8 +8,8 @@
 
 # include <iosfwd>
 
-# include "kernel/fwd.hh"
-# include "object/fwd.hh"
+# include <kernel/fwd.hh>
+# include <object/fwd.hh>
 
 namespace object
 {

@@ -1,7 +1,7 @@
 #ifndef OBJECT_IDELEGATE_HH
 # define OBJECT_IDELEGATE_HH
 
-#include "runner/runner.hh"
+#include <runner/runner.hh>
 
 namespace object
 {

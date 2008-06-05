@@ -8,7 +8,7 @@
 
 # include <boost/type_traits/remove_reference.hpp>
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {
@@ -29,6 +29,6 @@ namespace object
 
 } // namespace object
 
-# include "object/alien.hxx"
+# include <object/alien.hxx>
 
 #endif // OBJECT_ALIEN_HH

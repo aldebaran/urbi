@@ -15,12 +15,12 @@
 
 # include <libport/shared-ptr.hh>
 
-# include "object/fwd.hh"
-# include "object/object-kind.hh"
-# include "object/hash-slots.hh"
-# include "object/sorted-vector-slots.hh"
+# include <object/fwd.hh>
+# include <object/object-kind.hh>
+# include <object/hash-slots.hh>
+# include <object/sorted-vector-slots.hh>
 
-# include "runner/fwd.hh"
+# include <runner/fwd.hh>
 
 namespace object
 {
@@ -298,6 +298,6 @@ namespace object
 
 } // namespace object
 
-# include "object/object.hxx"
+# include <object/object.hxx>
 
 #endif // !OBJECT_OBJECT_HH

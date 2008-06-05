@@ -6,8 +6,8 @@
 #ifndef OBJECT_TAG_CLASS_HH
 # define OBJECT_TAG_CLASS_HH
 
-# include "object/fwd.hh"
-# include "scheduler/fwd.hh"
+# include <object/fwd.hh>
+# include <scheduler/fwd.hh>
 
 namespace object
 {

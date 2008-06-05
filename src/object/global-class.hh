@@ -6,7 +6,7 @@
 #ifndef OBJECT_GLOBAL_CLASS_HH
 # define OBJECT_GLOBAL_CLASS_HH
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

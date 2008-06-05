@@ -5,7 +5,7 @@
 
 # include <libport/symbol.hh>
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

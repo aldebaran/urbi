@@ -3,7 +3,7 @@
 
 # include <libport/hash.hh>
 
-# include "object/slots.hh"
+# include <object/slots.hh>
 
 namespace object
 {
@@ -27,6 +27,6 @@ namespace object
   };
 }
 
-# include "hash-slots.hxx"
+# include <object/hash-slots.hxx>
 
 #endif

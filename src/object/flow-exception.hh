@@ -8,10 +8,10 @@
 
 # include <ostream>
 
-# include "ast/loc.hh"
-# include "kernel/exception.hh"
-# include "object/fwd.hh"
-# include "object/object.hh"
+# include <ast/loc.hh>
+# include <kernel/exception.hh>
+# include <object/fwd.hh>
+# include <object/object.hh>
 
 namespace object
 {

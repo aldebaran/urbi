@@ -6,7 +6,7 @@
 #ifndef OBJECT_OBJECT_KIND_HH
 # define OBJECT_OBJECT_KIND_HH
 
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {

@@ -7,7 +7,7 @@
 # define OBJECT_DICTIONARY_CLASS_HH
 
 # include <libport/hash.hh>
-# include "object/fwd.hh"
+# include <object/fwd.hh>
 
 namespace object
 {
