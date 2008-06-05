@@ -139,9 +139,7 @@ namespace scheduler
     // If this is the current job we are talking about, the exception
     // is synchronous.
     if (scheduler_.is_current_job(*this))
-    {
       check_for_pending_exception();
-    }
     // Now that we acquired an exception to raise, we are active again,
     // even if we were previously sleeping or waiting for something.
     if (state_ != to_start && state_ != zombie)
