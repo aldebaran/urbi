@@ -116,7 +116,6 @@ namespace binder
     {
       unsigned depth = depth_get(name);
       if (name == SYMBOL(call)
-          || name == SYMBOL(locals)
           || name == SYMBOL(self))
         depth = depth_;
       if (depth)
