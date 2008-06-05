@@ -31,10 +31,10 @@ namespace parser
   ///
   /// Aggregate string to parse and tables of metavariables.
   class Tweast
-    : public MetavarMap<ast::rCall>,
-      public MetavarMap<ast::rExp>,
-      public MetavarMap<ast::exps_type*>,
-      public MetavarMap<ast::symbols_type*>
+    : public MetavarMap<ast::rCall>
+    , public MetavarMap<ast::rExp>
+    , public MetavarMap<ast::exps_type*>
+    , public MetavarMap<ast::symbols_type*>
   {
   public:
     Tweast ();
@@ -43,7 +43,7 @@ namespace parser
 
     /// \brief Stream manipulator.
     ///
-    /// Append Tiger expressions to the string to parse.
+    /// Append expressions to the string to parse.
     ///
     /// \precondition: If \a t is an AST pointer type, it must not
     /// have been already registered.
