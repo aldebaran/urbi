@@ -1,7 +1,7 @@
 #ifndef UBANNER_HH
 # define UBANNER_HH
 
-# include "libport/fwd.hh"
+# include <libport/fwd.hh>
 
 /// To display at the start of a session.
 extern const char* HEADER_BEFORE_CUSTOM[];

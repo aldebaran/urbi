@@ -25,7 +25,7 @@
 # include <deque>
 # include <vector>
 
-# include "kernel/utypes.hh"
+# include <kernel/utypes.hh>
 
 /// Dynamic expendable and shrinkable circular FIFO buffer
 /*! UQueue is a FIFO buffer which is both dynamic and circular.
@@ -138,6 +138,6 @@ private:
   std::vector<char> outputBuffer_;
 };
 
-# include "uqueue.hxx"
+# include <uqueue.hxx>
 
 #endif
