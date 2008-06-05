@@ -989,24 +989,27 @@ namespace runner
   void
   Interpreter::visit (ast::rConstTaggedStmt t)
   {
+    int current_depth = tags_.size();
     try
     {
-      push_tag (extract_tag (eval (t->tag_get ())));
+      scheduler::rTag tag = extract_tag(eval(t->tag_get()));
+      // If tag is blocked, do not start and ignore the
+      // statement completely.
+      if (tag->blocked())
+	return;
+      push_tag (tag);
       Finally finally(bind(&Interpreter::pop_tag, this));
-      // If the latest tag causes us to be frozen or blocked, let the
+      // If the latest tag causes us to be frozen, let the
       // scheduler handle this properly to avoid duplicating the
       // logic.
-      if (frozen () || blocked ())
-	yield ();
-      eval (t->exp_get ());
+      if (tag->frozen())
+	yield();
+      eval (t->exp_get());
     }
-    catch (scheduler::BlockedException& e)
+    catch (scheduler::StopException& e)
     {
-      // If we have been blocked, restore the tags list. We may have
-      // been blocked because of another tag in our stack, but we are
-      // not allowed to pop them ourselves. So check if we are still
-      // blocked and go up one level in this case.
-      if (blocked ())
+      // Rewind up to the appropriate depth.
+      if (e.depth_get() < current_depth)
 	throw;
       // Execution will go on as planned, but the interrupted expression
       // will evaluate to void.

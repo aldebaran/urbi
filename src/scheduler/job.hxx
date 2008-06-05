@@ -231,6 +231,12 @@ namespace scheduler
     tags_ = tags;
   }
 
+  inline bool
+  Job::has_pending_exception() const
+  {
+    return pending_exception_;
+  }
+
   inline std::ostream&
   operator<< (std::ostream& o, const Job& j)
   {

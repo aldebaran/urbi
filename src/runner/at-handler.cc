@@ -26,6 +26,7 @@ namespace runner
     bool triggered_get() const;
     void triggered_set(bool);
     const scheduler::tags_type& tags_get() const;
+    bool tag_held(const scheduler::rTag& tag) const;
   private:
     rObject condition_;
     rObject clause_;
@@ -42,14 +43,11 @@ namespace runner
     virtual ~AtHandler();
     virtual void work();
     virtual bool frozen() const;
-    virtual bool blocked() const;
     void add_job(AtJob*);
+    virtual void register_stopped_tag(const scheduler::rTag& tag);
   private:
-    void complete_tags(const AtJob&);
-    void rebuild_tags();
     typedef boost::ptr_list<AtJob> at_jobs_type;
     at_jobs_type jobs_;
-    bool yielding;
   };
 
   // There is only one at job handler. It will be created if it doesn't exist
@@ -59,8 +57,7 @@ namespace runner
   AtHandler::AtHandler(const Interpreter& model)
     : Interpreter(model,
 		  object::rObject(0),
-		  SYMBOL(LT_at_SP_jobs_SP_handler_GT)),
-      yielding(false)
+		  SYMBOL(LT_at_SP_jobs_SP_handler_GT))
   {
     // There are no reason to inherit tags from our creator, as this service
     // is not tied to any particular connection.
@@ -73,23 +70,18 @@ namespace runner
   }
 
   void
+  AtHandler::register_stopped_tag(const scheduler::rTag& tag)
+  {
+    // Remove all the jobs holding this tag.
+    jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, tag));
+  }
+
+  void
   AtHandler::work()
   {
-    bool tags_need_rebuilding = false;
-
     while (true)
     {
       non_interruptible_set(true);
-      yielding = false;
-
-      // If we have to check for blocked jobs, do it at the beginning
-      // to make sure we do not miss a "stop" because some condition
-      // evaluation mistakenly reenters the scheduler. We know that we
-      // have to check for blocked jobs because we have had an indication
-      // that tags needed to be rebuilt.
-
-      if (tags_need_rebuilding)
-	jobs_.erase_if(boost::bind(&AtJob::blocked, _1));
 
       for (at_jobs_type::iterator job = jobs_.begin();
 	   job != jobs_.end();
@@ -112,7 +104,6 @@ namespace runner
 	catch (const object::UrbiException& ue)
 	{
 	  show_error_(ue);
-	  tags_need_rebuilding = true;
 	  job = jobs_.erase(job);
 	  continue;
 	}
@@ -120,14 +111,12 @@ namespace runner
 	{
 	  std::cerr << "at condition triggered an exception: " << ke.what()
 		    << std::endl;
-	  tags_need_rebuilding = true;
 	  job = jobs_.erase(job);
 	  continue;
 	}
 	catch (...)
 	{
 	  std::cerr << "at condition triggered an exception\n";
-	  tags_need_rebuilding = true;
 	  job = jobs_.erase(job);
 	  continue;
 	}
@@ -167,28 +156,12 @@ namespace runner
 	terminate_now();
       }
 
-      non_interruptible_set(false);
-      yielding = true;
-
-      // Rebuild tags if our list of jobs has changed.
-      if (tags_need_rebuilding)
-	rebuild_tags();
-      tags_need_rebuilding = false;
-
       // Go to sleep
       try
       {
-	// We want to appear blocked only when explicitly yielding and
-	// catching the exception. If, by mistake, a condition evaluation
-	// yields and is blocked, we do not want it to get the bogus
-        // exception.
+	non_interruptible_set(false);
 	side_effect_free_set(true);
 	yield_until_things_changed();
-      }
-      catch (const scheduler::BlockedException& e)
-      {
-	// We have at least one "at" job which needs to be blocked.
-	tags_need_rebuilding = true;
       }
       catch (const kernel::exception& e)
       {
@@ -210,39 +183,10 @@ namespace runner
     return false;
   }
 
-  bool
-  AtHandler::blocked() const
-  {
-    return yielding && super_type::blocked();
-  }
-
   void
   AtHandler::add_job(AtJob* job)
   {
     jobs_.push_back(job);
-    complete_tags(*job);
-  }
-
-  void
-  AtHandler::rebuild_tags()
-  {
-    tags_.clear();
-    foreach (const AtJob& job, jobs_)
-      complete_tags(job);
-  }
-
-  void
-  AtHandler::complete_tags(const AtJob& job)
-  {
-    foreach (scheduler::rTag t, job.tags_get())
-    {
-      foreach (const scheduler::rTag& u, tags_)
-	if (t == u)
-	  goto already_found;
-      tags_.push_back(t);
-    already_found:
-      ;
-    }
   }
 
   AtJob::AtJob(rObject condition, rObject clause, rObject on_leave,
@@ -253,6 +197,15 @@ namespace runner
       triggered_(false),
       tags_(tags)
   {
+  }
+
+  bool
+  AtJob::tag_held(const scheduler::rTag& tag) const
+  {
+    foreach (const scheduler::rTag& t, tags_)
+      if (t == tag)
+	return true;
+    return false;
   }
 
   bool

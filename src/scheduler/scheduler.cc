@@ -46,10 +46,7 @@ namespace scheduler
     ECHO("======================================================== cycle "
 	  << cycle_);
 
-    libport::utime_t deadline = execute_round(false);
-
-    // If some jobs need to be stopped, do it as soon as possible.
-    deadline = std::min(deadline, check_for_stopped_tags(deadline));
+    libport::utime_t deadline = execute_round();
 
 #ifdef ENABLE_DEBUG_TRACES
     if (deadline)
@@ -63,7 +60,7 @@ namespace scheduler
   }
 
   libport::utime_t
-  Scheduler::execute_round(bool blocked_only)
+  Scheduler::execute_round()
   {
     // Run all the jobs in the run queue once. If any job declares upon entry or
     // return that it is not side-effect free, we remember that for the next
@@ -116,7 +113,7 @@ namespace scheduler
 	assert(false);
 	break;
       case running:
-	start = !blocked_only;
+	start = true;
 	break;
       case sleeping:
 	{
@@ -154,9 +151,8 @@ namespace scheduler
       else
 	job->notice_not_frozen(current_time);
 
-      // A blocked job will be started unconditionally as it has to
-      // handle this condition.
-      if (start || job->blocked())
+      // A job with an exception will start unconditionally.
+      if (start || job->has_pending_exception())
       {
 	ECHO("will resume job " << *job
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
@@ -192,24 +188,6 @@ namespace scheduler
     /// If we are ready to die and there are no jobs left, then die.
     if (ready_to_die_ && jobs_.empty())
       deadline = SCHED_EXIT;
-
-    return deadline;
-  }
-
-  libport::utime_t
-  Scheduler::check_for_stopped_tags(libport::utime_t old_deadline)
-  {
-    // If we have had no stopped tag, return immediately.
-    if (stopped_tags_.empty())
-      return old_deadline;
-
-    // Wake up blocked jobs if there are any.
-    libport::utime_t deadline = execute_round(true);
-
-    // Reset tags to their real blocked value and reset the list.
-    foreach (const tag_state_type& t, stopped_tags_)
-      t.first->set_blocked(t.second);
-    stopped_tags_.clear();
 
     return deadline;
   }
@@ -292,11 +270,15 @@ namespace scheduler
   }
 
   void
-  Scheduler::signal_stop(rTag t)
+  Scheduler::signal_stop(const rTag& tag)
   {
-    bool previous_state = t->own_blocked();
-    t->set_blocked(true);
-    stopped_tags_.push_back(std::make_pair(t, previous_state));
+    // Tell the jobs that a tag has been stopped, ending with
+    // the current job to avoid interrupting this method early.
+    foreach (rJob job, jobs_get())
+      if (job != current_job_)
+	job->register_stopped_tag(tag);
+    if (current_job_)
+      current_job_->register_stopped_tag(tag);
   }
 
   std::vector<rJob>

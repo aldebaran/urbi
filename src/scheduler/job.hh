@@ -171,7 +171,7 @@ namespace scheduler
     void async_throw(const kernel::exception& e);
 
     /// Maybe raise a deferred exception. Must be called from the scheduler
-    /// while resuming the job execution. For example, BlockedException
+    /// while resuming the job execution. For example, StopException
     /// may be raised from here if the job has been blocked by a tag.
     void check_for_pending_exception();
 
@@ -193,11 +193,6 @@ namespace scheduler
     ///
     /// \return This depends from the job tags state.
     virtual bool frozen() const;
-
-    /// Is the job blocked?
-    ///
-    /// \return This depends from the job tags state.
-    virtual bool blocked() const;
 
     /// Push a tag onto the current job tag stack.
     ///
@@ -281,6 +276,16 @@ namespace scheduler
     ///           at runner creation time.
     void time_shift_set(libport::utime_t ts);
 
+    /// Check and maybe register the fact that a tag has been stopped.
+    ///
+    /// \param tag The tag that has been stopped.
+    virtual void register_stopped_tag(const rTag& tag);
+
+    /// Check whether the job has a pending exception.
+    ///
+    /// \return true if the job has a pending exception.
+    bool has_pending_exception() const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -350,11 +355,13 @@ namespace scheduler
   std::ostream& operator<< (std::ostream&, const Job&);
 
   /// This exception will be raised to tell the job that it is currently
-  /// blocked and must try to unwind tags from its tag stack until it
-  /// is either dead or not blocked anymore.
-  struct BlockedException : public SchedulerException
+  /// stopped and must try to unwind tags from its tag stack until it
+  /// is either dead or not stopped anymore.
+  struct StopException : public SchedulerException
   {
-    COMPLETE_EXCEPTION(BlockedException);
+    StopException(int);
+    ADD_FIELD(int, depth)
+    COMPLETE_EXCEPTION(StopException)
   };
 
   // State names to string, for debugging purpose.

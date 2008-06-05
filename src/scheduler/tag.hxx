@@ -2,90 +2,72 @@ namespace scheduler
 {
 
   inline
-  Tag::Tag (libport::Symbol name)
-    : parent_ (0),
-      blocked_ (false),
-      frozen_ (false),
-      name_ (name)
+  Tag::Tag(libport::Symbol name)
+    : parent_(0),
+      blocked_(false),
+      frozen_(false),
+      name_(name)
   {
   }
 
   inline
-  Tag::~Tag ()
+  Tag::~Tag()
   {
   }
 
   inline rTag
-  Tag::fresh (libport::Symbol name)
+  Tag::fresh(libport::Symbol name)
   {
-    rTag res = new Tag (name);
+    rTag res = new Tag(name);
     return res;
   }
 
   inline rTag
-  Tag::fresh (rTag parent, libport::Symbol name)
+  Tag::fresh(rTag parent, libport::Symbol name)
   {
-    rTag res = new Tag (parent, name);
+    rTag res = new Tag(parent, name);
     return res;
   }
 
   inline bool
-  Tag::frozen () const
+  Tag::frozen() const
   {
-    return frozen_ || (parent_ && parent_->frozen ());
+    return frozen_ ||(parent_ && parent_->frozen());
   }
 
   inline bool
-  Tag::blocked () const
+  Tag::blocked() const
   {
-    return blocked_ || (parent_ && parent_->blocked ());
+    return blocked_ ||(parent_ && parent_->blocked());
   }
 
   inline void
-  Tag::freeze (Scheduler&)
+  Tag::freeze(Scheduler&)
   {
     frozen_ = true;
   }
 
   inline void
-  Tag::unfreeze (Scheduler&)
+  Tag::unfreeze(Scheduler&)
   {
     frozen_ = false;
   }
 
   inline void
-  Tag::block (Scheduler& sched)
+  Tag::block(Scheduler& sched)
   {
     blocked_ = true;
-    stop (sched);
+    stop(sched);
   }
 
   inline void
-  Tag::unblock (Scheduler&)
+  Tag::unblock(Scheduler&)
   {
     blocked_ = false;
   }
 
-  inline bool
-  Tag::own_blocked () const
-  {
-    return blocked_;
-  }
-
-  inline void
-  Tag::set_blocked (bool b)
-  {
-    blocked_ = b;
-  }
-
-  inline rTag
-  Tag::self () const
-  {
-    return rTag(const_cast<Tag*>(this));
-  }
-
   inline const libport::Symbol&
-  Tag::name_get () const
+  Tag::name_get() const
   {
     return name_;
   }

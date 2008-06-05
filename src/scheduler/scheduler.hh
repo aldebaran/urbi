@@ -92,7 +92,7 @@ namespace scheduler
     /// After this function has been called, the scheduler will determine,
     /// at the end of the current cycle, which jobs need to react to this
     /// action.
-    void signal_stop(rTag t);
+    void signal_stop(const rTag& t);
 
     /// Get the current cycle number.
     ///
@@ -117,20 +117,8 @@ namespace scheduler
   private:
     /// Execute one round in the scheduler.
     ///
-    /// \param blocked_only If true, this round only effect must be to wake up
-    ///        blocked jobs so that they can react to a \c stop or a
-    ///        \c block action on a tag.
-    ///
     /// \return See work().
-    libport::utime_t execute_round(bool blocked_only);
-
-    /// Check if we have stopped tags to handle.
-    ///
-    /// \param old_deadline The deadline to return if no tags have been
-    ///        signalled through signal_stop() during the previous round.
-    ///
-    /// \return See work().
-    libport::utime_t check_for_stopped_tags(libport::utime_t old_deadline);
+    libport::utime_t execute_round();
 
     /// Function to retrieve the current system time.
     boost::function0<libport::utime_t> get_time_;
@@ -162,11 +150,6 @@ namespace scheduler
 
     /// Ready to die when all jobs are also dead.
     bool ready_to_die_;
-
-    /// List of tags that have been stopped or blocked. \sa
-    /// signal_stop(), check_for_stopped_tags().
-    typedef std::pair<rTag, bool> tag_state_type;
-    std::vector<tag_state_type> stopped_tags_;
   };
 
 } // namespace scheduler

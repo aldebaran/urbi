@@ -18,6 +18,11 @@ namespace scheduler
     COMPLETE_EXCEPTION(TerminateException)
   };
 
+  StopException::StopException(int depth)
+    : depth_(depth)
+  {
+  }
+
   void
   Job::run()
   {
@@ -36,7 +41,7 @@ namespace scheduler
     {
       // Normal termination requested
     }
-    catch (BlockedException&)
+    catch (StopException&)
     {
       // Termination through "stop" or "block" on a top-level tag,
       // that is a tag inherited at the job creation time.
@@ -119,15 +124,6 @@ namespace scheduler
     return false;
   }
 
-  bool
-  Job::blocked() const
-  {
-    foreach (const rTag& tag, tags_)
-      if (tag->blocked())
-	return true;
-    return false;
-  }
-
   void
   Job::async_throw(const kernel::exception& e)
   {
@@ -147,17 +143,35 @@ namespace scheduler
   }
 
   void
-  Job::check_for_pending_exception()
+  Job::register_stopped_tag(const rTag& tag)
   {
-    // If we have been blocked, try to get up the chain. No need to
-    // handle another exception here.
-    if (blocked())
+    int max_tag_check = tags_.size();
+    if (pending_exception_)
     {
-      pending_exception_ = 0;
-      side_effect_free_ = false;
-      throw BlockedException();
+      // If we are going to terminate, do nothing
+      if (dynamic_cast<TerminateException*>(pending_exception_.get()))
+	return;
+      // If we already have a StopException stored, do not go any
+      // further.
+      StopException* exc =
+	dynamic_cast<StopException*>(pending_exception_.get());
+      if (exc)
+	max_tag_check = exc->depth_get();
     }
 
+    // Check if we are affected by this tag, up-to max_tag_check from
+    // the beginning of the tag list.
+    for (int i = 0; i < max_tag_check; i++)
+      if (tags_[i] == tag)
+      {
+	async_throw(StopException(i));
+	return;
+      }
+  }
+
+  void
+  Job::check_for_pending_exception()
+  {
     // If an exception has been stored for further rethrow, now is
     // a good time to do so.
     if (pending_exception_)

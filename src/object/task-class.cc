@@ -115,8 +115,8 @@ namespace object
     }
     if (job->frozen())
       status << " (frozen)";
-    if (job->blocked())
-      status << " (blocked)";
+    if (job->has_pending_exception())
+      status << " (pending exception)";
     if (job->side_effect_free_get())
       status << " (side effect free)";
     if (job->non_interruptible_get())

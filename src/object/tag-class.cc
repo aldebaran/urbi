@@ -83,13 +83,13 @@ namespace object
     CHECK_ARG_COUNT (1);					\
     scheduler::rTag self = extract_tag (args[0]);		\
     self->Action (r.scheduler_get ());				\
-    if (Yield && (r.frozen () || r.blocked ()))			\
+    if (Yield && r.frozen())					\
       r.yield ();						\
     return void_class;						\
   }
-  TAG_ACTION(block, true)
+  TAG_ACTION(block, false)
   TAG_ACTION(freeze, true)
-  TAG_ACTION(stop, true)
+  TAG_ACTION(stop, false)
   TAG_ACTION(unblock, false)
   TAG_ACTION(unfreeze, false)
 #undef TAG_ACTION

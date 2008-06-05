@@ -35,46 +35,29 @@ namespace scheduler
   {
   public:
     // Create a new tag, with or without a parent
-    static rTag fresh (libport::Symbol name);
-    static rTag fresh (rTag parent, libport::Symbol name);
-    virtual ~Tag ();
-
-    // Get a reference-counted pointer on the tag
-    rTag self () const;
+    static rTag fresh(libport::Symbol name);
+    static rTag fresh(rTag parent, libport::Symbol name);
+    virtual ~Tag();
 
     // Is this tag directly or indirectly frozen or blocked?
-    bool frozen () const;
-    bool blocked () const;
+    bool frozen() const;
+    bool blocked() const;
 
     // Act on a tag and make the scheduler take it into account
-    void freeze (Scheduler&);
-    void unfreeze (Scheduler&);
-    void block (Scheduler&);
-    void unblock (Scheduler&);
-    void stop (Scheduler&);
+    void freeze(Scheduler&);
+    void unfreeze(Scheduler&);
+    void block(Scheduler&);
+    void unblock(Scheduler&);
+    void stop(Scheduler&);
 
-    // Return true if the tag has been directly blocked through a call
-    // to "block". Return false if it is only indirectly blocked
-    // through its parent.
-    bool own_blocked () const;
-
-    // Mark the tag as blocked. This is supposed to be used by the
-    // scheduler to execute a "stop" command. It can also be used to
-    // block a tag but without necessarily resuming its execution so that
-    // it can rewind its call stack. For example, it can be used to stop
-    // jobs if we know that the tag is permanently attached to the job:
-    // if the job is currently sleeping, it may not be woken up just
-    // so that it can die, it may die after it is done sleeping.
-    void set_blocked (bool);
-
-    const libport::Symbol& name_get () const;
+    const libport::Symbol& name_get() const;
 
   private:
-    Tag (libport::Symbol name);
-    Tag (rTag parent, libport::Symbol name);
-    rTag            parent_;
-    bool            blocked_;
-    bool            frozen_;
+    Tag(libport::Symbol name);
+    Tag(rTag parent, libport::Symbol name);
+    rTag parent_;
+    bool blocked_;
+    bool frozen_;
     libport::Symbol name_;
   };
 
