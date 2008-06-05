@@ -9,7 +9,7 @@
 namespace ast
 {
 
-  /// List of expressions, for List, Nary, Call etc.
+  /// List of declarations
   typedef std::deque<rDeclaration> declarations_type;
 
   /// Separated by commas.
