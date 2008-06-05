@@ -81,7 +81,7 @@ namespace scheduler
 	job->state_set (running);
     to_wake_up_.clear ();
     state_ = zombie;
-    scheduler_->resume_scheduler (this);
+    scheduler_.resume_scheduler (this);
   }
 
   void
@@ -95,7 +95,7 @@ namespace scheduler
     {
       other.to_wake_up_.push_back (this);
       state_ = joining;
-      scheduler_->resume_scheduler (this);
+      scheduler_.resume_scheduler (this);
     }
   }
 
@@ -107,7 +107,7 @@ namespace scheduler
 	("attempt to wait for condition changes in non-interruptible code");
 
     state_ = waiting;
-    scheduler_->resume_scheduler (this);
+    scheduler_.resume_scheduler (this);
   }
 
   bool

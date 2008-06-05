@@ -309,7 +309,7 @@ namespace scheduler
     void terminate_cleanup ();
 
     /// Scheduler in charge of this job. Do not delete.
-    Scheduler* scheduler_;
+    Scheduler& scheduler_;
 
     /// This job name.
     libport::Symbol name_;

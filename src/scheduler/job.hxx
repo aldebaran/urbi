@@ -19,7 +19,7 @@ namespace scheduler
       state_ (to_start),
       frozen_since_ (0),
       time_shift_ (0),
-      scheduler_ (&scheduler),
+      scheduler_ (scheduler),
       name_ (name == SYMBOL () ? libport::Symbol::fresh (SYMBOL (job)) : name),
       coro_ (coroutine_new ()),
       non_interruptible_ (false),
@@ -54,7 +54,7 @@ namespace scheduler
   inline Scheduler&
   Job::scheduler_get () const
   {
-    return *scheduler_;
+    return scheduler_;
   }
 
   inline bool
@@ -73,7 +73,7 @@ namespace scheduler
       return;
 
     state_ = running;
-    scheduler_->resume_scheduler (this);
+    scheduler_.resume_scheduler (this);
   }
 
   inline void
@@ -84,7 +84,7 @@ namespace scheduler
 
     state_ = sleeping;
     deadline_ = deadline;
-    scheduler_->resume_scheduler (this);
+    scheduler_.resume_scheduler (this);
   }
 
   inline Coro*
@@ -98,7 +98,7 @@ namespace scheduler
   Job::start_job ()
   {
     assert (state_ == to_start);
-    scheduler_->add_job (this);
+    scheduler_.add_job (this);
   }
 
   inline void
