@@ -18,8 +18,9 @@ namespace scheduler
     COMPLETE_EXCEPTION(TerminateException)
   };
 
-  StopException::StopException(int depth)
+  StopException::StopException(int depth, boost::any payload)
     : depth_(depth)
+    , payload_(payload)
   {
   }
 
@@ -143,7 +144,7 @@ namespace scheduler
   }
 
   void
-  Job::register_stopped_tag(const rTag& tag)
+  Job::register_stopped_tag(const rTag& tag, boost::any payload)
   {
     int max_tag_check = tags_.size();
     if (pending_exception_)
@@ -164,7 +165,7 @@ namespace scheduler
     for (int i = 0; i < max_tag_check; i++)
       if (tags_[i] == tag)
       {
-	async_throw(StopException(i));
+	async_throw(StopException(i, payload));
 	return;
       }
   }

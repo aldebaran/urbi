@@ -943,7 +943,7 @@ namespace runner
     scheduler::rTag tag = scope_tags_.back();
     scope_tags_.pop_back();
     if (tag)
-      tag->stop(scheduler_get());
+      tag->stop(scheduler_get(), object::void_class);
   }
 
   void
@@ -1011,9 +1011,11 @@ namespace runner
       // Rewind up to the appropriate depth.
       if (e.depth_get() < current_depth)
 	throw;
-      // Execution will go on as planned, but the interrupted expression
-      // will evaluate to void.
-      current_ = object::void_class;
+      // Extract the value from the exception.
+      current_ = boost::any_cast<rObject>(e.payload_get());
+      // If we are frozen, reenter the scheduler for a while.
+      if (frozen())
+	yield();
       return;
     }
   }

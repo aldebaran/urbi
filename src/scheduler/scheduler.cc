@@ -270,15 +270,15 @@ namespace scheduler
   }
 
   void
-  Scheduler::signal_stop(const rTag& tag)
+  Scheduler::signal_stop(const rTag& tag, boost::any payload)
   {
     // Tell the jobs that a tag has been stopped, ending with
     // the current job to avoid interrupting this method early.
     foreach (rJob job, jobs_get())
       if (job != current_job_)
-	job->register_stopped_tag(tag);
+	job->register_stopped_tag(tag, payload);
     if (current_job_)
-      current_job_->register_stopped_tag(tag);
+      current_job_->register_stopped_tag(tag, payload);
   }
 
   std::vector<rJob>

@@ -54,10 +54,10 @@ namespace scheduler
   }
 
   inline void
-  Tag::block(Scheduler& sched)
+  Tag::block(Scheduler& sched, boost::any payload)
   {
     blocked_ = true;
-    stop(sched);
+    stop(sched, payload);
   }
 
   inline void

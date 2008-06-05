@@ -9,6 +9,7 @@
 # include <iosfwd>
 # include <vector>
 
+# include <boost/any.hpp>
 # include <boost/function.hpp>
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
@@ -87,12 +88,13 @@ namespace scheduler
 
     /// Signal that a \c stop or a \c block has been issued on a tag.
     ///
-    /// \param t The tag that has been recently stopped or blocked.
+    /// \param tag The tag that has been recently stopped or blocked.
+    /// \param payload The data to embed in the StopException.
     ///
     /// After this function has been called, the scheduler will determine,
     /// at the end of the current cycle, which jobs need to react to this
     /// action.
-    void signal_stop(const rTag& t);
+    void signal_stop(const rTag& tag, boost::any payload);
 
     /// Get the current cycle number.
     ///

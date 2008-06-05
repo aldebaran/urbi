@@ -44,7 +44,8 @@ namespace runner
     virtual void work();
     virtual bool frozen() const;
     void add_job(AtJob*);
-    virtual void register_stopped_tag(const scheduler::rTag& tag);
+    virtual void register_stopped_tag(const scheduler::rTag& tag,
+				      boost::any);
   private:
     typedef boost::ptr_list<AtJob> at_jobs_type;
     at_jobs_type jobs_;
@@ -70,7 +71,7 @@ namespace runner
   }
 
   void
-  AtHandler::register_stopped_tag(const scheduler::rTag& tag)
+  AtHandler::register_stopped_tag(const scheduler::rTag& tag, boost::any)
   {
     // Remove all the jobs holding this tag.
     jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, tag));

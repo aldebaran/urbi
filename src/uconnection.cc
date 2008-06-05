@@ -102,7 +102,7 @@ UConnection::UConnection (UServer& server, size_t packetSize)
 UConnection::~UConnection ()
 {
   extract_tag(lobby_->slot_get(SYMBOL(connectionTag)))
-    ->stop(server_.getScheduler());
+    ->stop(server_.getScheduler(), object::void_class);
   DEBUG(("Destroying UConnection..."));
   delete parser_;
   delete send_queue_;

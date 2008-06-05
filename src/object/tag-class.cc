@@ -87,12 +87,26 @@ namespace object
       r.yield ();						\
     return void_class;						\
   }
-  TAG_ACTION(block, false)
   TAG_ACTION(freeze, true)
-  TAG_ACTION(stop, false)
   TAG_ACTION(unblock, false)
   TAG_ACTION(unfreeze, false)
 #undef TAG_ACTION
+
+#define TAG_VALUED_ACTION(Action)					\
+  static rObject							\
+  tag_class_ ## Action(runner::Runner& r, objects_type args)		\
+  {									\
+    CHECK_ARG_COUNT_RANGE(1, 2);					\
+    scheduler::rTag self = extract_tag(args[0]);			\
+    boost::any payload =						\
+      boost::any_cast<rObject>						\
+        (args.size() == 2 ? args[1] : void_class);			\
+    self->Action(r.scheduler_get(), payload);				\
+    return void_class;							\
+  }
+  TAG_VALUED_ACTION(block)
+  TAG_VALUED_ACTION(stop)
+#undef TAG_VALUED_ACTION
 
   void
   tag_class_initialize ()

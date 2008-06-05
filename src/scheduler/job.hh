@@ -10,6 +10,8 @@
 # include <list>
 # include <vector>
 
+# include <boost/any.hpp>
+
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
 
@@ -279,7 +281,9 @@ namespace scheduler
     /// Check and maybe register the fact that a tag has been stopped.
     ///
     /// \param tag The tag that has been stopped.
-    virtual void register_stopped_tag(const rTag& tag);
+    ///
+    /// \param payload The data to embed in the StopException.
+    virtual void register_stopped_tag(const rTag& tag, boost::any payload);
 
     /// Check whether the job has a pending exception.
     ///
@@ -359,8 +363,9 @@ namespace scheduler
   /// is either dead or not stopped anymore.
   struct StopException : public SchedulerException
   {
-    StopException(int);
+    StopException(int, boost::any);
     ADD_FIELD(int, depth)
+    ADD_FIELD(boost::any, payload)
     COMPLETE_EXCEPTION(StopException)
   };
 
