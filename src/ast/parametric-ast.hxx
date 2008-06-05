@@ -19,8 +19,8 @@ namespace ast
   ParametricAst&
   ParametricAst::operator% (const T& t)
   {
-    passert (libport::deref << t, unique_(t));
-    append_ (count_, t);
+    passert(libport::deref << t, unique_(t));
+    append_(count_, t);
     return *this;
   }
 
@@ -36,14 +36,9 @@ namespace ast
 
   template <typename T>
   T
-  ParametricAst::take (unsigned s) throw (std::range_error)
+  ParametricAst::take(unsigned s) throw (std::range_error)
   {
-    return parser::MetavarMap<T>::take_ (s);
-  }
-
-  inline void ParametricAst::unique_clear()
-  {
-    unique_.clear();
+    return parser::MetavarMap<T>::take_(s);
   }
 
 } // namespace ast

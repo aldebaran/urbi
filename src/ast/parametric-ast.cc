@@ -40,6 +40,7 @@ namespace ast
   ParametricAst::clear()
   {
     passert(*this, empty());
+    unique_.clear();
     count_ = 0;
   }
 
