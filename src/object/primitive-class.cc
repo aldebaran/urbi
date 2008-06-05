@@ -3,11 +3,11 @@
  ** \brief Creation of the URBI object primitive.
  */
 
-#include "object/primitive-class.hh"
-#include "object/atom.hh"
-#include "object/object.hh"
+#include <object/primitive-class.hh>
+#include <object/atom.hh>
+#include <object/object.hh>
 
-#include "runner/runner.hh"
+#include <runner/runner.hh>
 
 namespace object
 {

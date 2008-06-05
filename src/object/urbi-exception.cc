@@ -3,7 +3,7 @@
  ** \brief Implementation of UrbiException
  */
 
-#include "object/urbi-exception.hh"
+#include <object/urbi-exception.hh>
 
 namespace object
 {

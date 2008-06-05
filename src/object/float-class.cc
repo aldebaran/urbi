@@ -7,15 +7,15 @@
 
 #include <boost/format.hpp>
 
-#include "sdk/config.h"
+#include <sdk/config.h>
 #ifndef HAVE_ROUND
 #  include <libport/ufloat.h>
 #endif
 
-#include "object/float-class.hh"
-#include "object/object.hh"
-#include "object/atom.hh"
-#include "object/urbi-exception.hh"
+#include <object/float-class.hh>
+#include <object/object.hh>
+#include <object/atom.hh>
+#include <object/urbi-exception.hh>
 
 namespace object
 {

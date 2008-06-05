@@ -3,7 +3,7 @@
  ** \brief Implementation of object::FlowException.
  */
 
-#include "object/flow-exception.hh"
+#include <object/flow-exception.hh>
 
 namespace object
 {

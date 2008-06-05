@@ -3,10 +3,10 @@
  ** \brief Creation of the URBI object dictionary.
  */
 
-#include "object/atom.hh"
-#include "object/dictionary-class.hh"
-#include "object/symbols.hh"
-#include "runner/runner.hh"
+#include <object/atom.hh>
+#include <object/dictionary-class.hh>
+#include <object/symbols.hh>
+#include <runner/runner.hh>
 
 namespace object
 {

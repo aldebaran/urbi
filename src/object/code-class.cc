@@ -5,14 +5,14 @@
 
 #include <libport/lexical-cast.hh>
 
-#include "ast/function.hh"
-#include "ast/print.hh"
+#include <ast/function.hh>
+#include <ast/print.hh>
 
-#include "object/atom.hh"
-#include "object/code-class.hh"
-#include "object/object.hh"
+#include <object/atom.hh>
+#include <object/code-class.hh>
+#include <object/object.hh>
 
-#include "runner/runner.hh"
+#include <runner/runner.hh>
 
 namespace object
 {

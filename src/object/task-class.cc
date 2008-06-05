@@ -7,15 +7,15 @@
 
 #include <boost/any.hpp>
 
-#include "object/task-class.hh"
+#include <object/task-class.hh>
 
-#include "object/alien.hh"
-#include "object/atom.hh"
-#include "object/object.hh"
-#include "object/tag-class.hh"
+#include <object/alien.hh>
+#include <object/atom.hh>
+#include <object/object.hh>
+#include <object/tag-class.hh>
 
-#include "runner/interpreter.hh"
-#include "runner/runner.hh"
+#include <runner/interpreter.hh>
+#include <runner/runner.hh>
 
 namespace object
 {

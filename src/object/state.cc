@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-#include "libport/indent.hh"
+#include <libport/indent.hh>
 
-#include "object/state.hh"
+#include <object/state.hh>
 
 namespace object
 {

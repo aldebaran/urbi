@@ -5,14 +5,14 @@
 
 #include <boost/any.hpp>
 
-#include "object/tag-class.hh"
+#include <object/tag-class.hh>
 
-#include "object/alien.hh"
-#include "object/atom.hh"
-#include "object/object.hh"
+#include <object/alien.hh>
+#include <object/atom.hh>
+#include <object/object.hh>
 
-#include "runner/runner.hh"
-#include "scheduler/tag.hh"
+#include <runner/runner.hh>
+#include <scheduler/tag.hh>
 
 namespace object
 {

@@ -3,9 +3,9 @@
  ** \brief Creation of the URBI object global.
  */
 
-#include "object/global-class.hh"
-#include "object/object.hh"
-#include "object/object-class.hh"
+#include <object/global-class.hh>
+#include <object/object.hh>
+#include <object/object-class.hh>
 
 namespace object
 {

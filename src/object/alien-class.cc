@@ -3,12 +3,12 @@
  ** \brief Creation of the URBI object alien.
  */
 
-#include "object/alien-class.hh"
+#include <object/alien-class.hh>
 
-#include "object/atom.hh"
-#include "object/object.hh"
+#include <object/atom.hh>
+#include <object/object.hh>
 
-#include "runner/runner.hh"
+#include <runner/runner.hh>
 
 namespace object
 {

@@ -9,14 +9,14 @@
 #include <libport/foreach.hh>
 #include <libport/tokenizer.hh>
 
-#include "kernel/uconnection.hh"
+#include <kernel/uconnection.hh>
 
-#include "runner/runner.hh"
+#include <runner/runner.hh>
 
-#include "object/atom.hh"
-#include "object/global-class.hh"
-#include "object/object-class.hh"
-#include "object/object.hh"
+#include <object/atom.hh>
+#include <object/global-class.hh>
+#include <object/object-class.hh>
+#include <object/object.hh>
 
 namespace object
 {

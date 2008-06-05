@@ -1,6 +1,6 @@
 #include <libport/assert.hh>
 
-#include "object/object-kind.hh"
+#include <object/object-kind.hh>
 
 namespace object
 {

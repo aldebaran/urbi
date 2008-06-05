@@ -6,13 +6,13 @@
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
 
-#include "libport/tokenizer.hh"
+#include <libport/tokenizer.hh>
 
-#include "object/string-class.hh"
-#include "object/object.hh"
-#include "object/primitives.hh"
-#include "object/atom.hh"
-#include "runner/runner.hh"
+#include <object/string-class.hh>
+#include <object/object.hh>
+#include <object/primitives.hh>
+#include <object/atom.hh>
+#include <runner/runner.hh>
 
 namespace object
 {
