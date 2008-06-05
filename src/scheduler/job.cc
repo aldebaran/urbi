@@ -140,7 +140,6 @@ namespace scheduler
     // is synchronous.
     if (scheduler_.is_current_job(*this))
     {
-      std::cerr << "Synchronous exception: " << e.what() << std::endl;
       check_for_pending_exception();
     }
     // Now that we acquired an exception to raise, we are active again,
