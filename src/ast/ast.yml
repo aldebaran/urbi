@@ -780,6 +780,11 @@ Code:
         init: "0"
         mandatory: False
         access: rwW
+    - captured_variables:
+        type: 'declarations_type*'
+        init: "new declarations_type()"
+        mandatory: False
+        access: rwW
   inline:
     header inside: |2
         public:

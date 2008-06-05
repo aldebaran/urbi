@@ -108,10 +108,28 @@ namespace binder
       unsigned depth = depth_get(name);
       if (depth)
       {
-        // This is a closed variable
         function_stack_type::iterator it = function_stack_.end();
-        for (int i = depth_ - depth; i; --i, --it)
+
+        if (depth_ > depth)
+          // The variable is captured
           decl_get(name)->closed_set(true);
+
+        function_stack_type::iterator f_it = function_stack_.end();
+        --f_it;
+        const ast::loc loc = input->location_get();
+        for (int i = depth_ - depth; i; --i, --f_it)
+        {
+          assert(f_it != function_stack_.begin() || i == 1);
+          ast::rFunction f = *f_it;
+          // Check whether it's already captured
+//           foreach (ast::rDeclaration dec, *f->captured_variables_get())
+//             if (dec->what_get() == name)
+//               goto stop;
+//           f->captured_variables_get()->push_back(
+//             new ast::Declaration(loc, name,
+//                                  new ast::Local(loc, name, 0, i - 1)));
+        }
+//         stop:
 
         const ast::exps_type* args = input->arguments_get();
         ast::rLocal res = new ast::Local(
