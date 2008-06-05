@@ -11,6 +11,7 @@
 
 #include <ast/print.hh>
 #include <ast/function.hh>
+#include <ast/local.hh>
 
 #include <object/atom.hh>
 #include <object/primitives.hh>
@@ -202,12 +203,32 @@ namespace object
                                          runner::Runner&) const
   {
     o << "value" << " = " << libport::deref << value_ << libport::iendl;
-    o << "local variables = ["
-      << *value_->local_variables_get() << "]" << libport::iendl;
-    o << "frame size = " << value_->locals_size_get() << libport::iendl;
     if (ast::rConstFunction f = value_.unsafe_cast<const ast::Function>())
-      o << "closed-over variables = ["
-        << f->closed_variables_get() << "]" << libport::iendl;
+    {
+      o << "local variables = " << libport::incindent;
+      foreach (ast::rConstDeclaration dec, *f->local_variables_get())
+      {
+        o << libport::iendl << dec->what_get() << ": "
+          << (dec->closed_get() ? "%closed_"  : "%local_")
+          << dec->local_index_get();
+      }
+      o << libport::decendl;
+      o << "capture map = " << libport::incindent;
+      foreach (ast::rConstDeclaration dec, *f->captured_variables_get())
+      {
+        ast::rConstLocal v = dec->value_get().unsafe_cast<const ast::Local>();
+        assert(v);
+        assert(v->closed_get());
+        o << libport::iendl << dec->what_get() << ": "
+          << "%captured_"
+          << dec->local_index_get()
+          << " = "
+          << (v->depth_get() ? "%captured_"  : "%closed_")
+          << v->local_index_get();
+      }
+      o << libport::decendl;
+    }
+
     return o;
   }
 

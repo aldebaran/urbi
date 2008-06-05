@@ -834,11 +834,11 @@ LocalWrite:
     - value:
         type: rExp
         desc: Initialization value.
+        access: rwW
     - local_index:
         type: unsigned
         access: rwW
         init: '0'
-
 
 Declaration:
   super: LocalWrite

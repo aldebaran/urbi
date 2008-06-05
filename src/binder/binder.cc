@@ -110,33 +110,50 @@ namespace binder
       {
         function_stack_type::iterator it = function_stack_.end();
 
-        if (depth_ > depth)
-          // The variable is captured
-          decl_get(name)->closed_set(true);
-
-        function_stack_type::iterator f_it = function_stack_.end();
-        --f_it;
-        const ast::loc loc = input->location_get();
-        for (int i = depth_ - depth; i; --i, --f_it)
-        {
-          assert(f_it != function_stack_.begin() || i == 1);
-          ast::rFunction f = *f_it;
-          // Check whether it's already captured
-//           foreach (ast::rDeclaration dec, *f->captured_variables_get())
-//             if (dec->what_get() == name)
-//               goto stop;
-//           f->captured_variables_get()->push_back(
-//             new ast::Declaration(loc, name,
-//                                  new ast::Local(loc, name, 0, i - 1)));
-        }
-//         stop:
+        ast::rDeclaration outer_decl = decl_get(name);
+        ast::rDeclaration decl = outer_decl;
 
         const ast::exps_type* args = input->arguments_get();
         ast::rLocal res = new ast::Local(
           input->location_get(), name,
           args ? recurse_collection(*args) : 0,
           depth_ - depth);
-        res->declaration_set(decl_get(name));
+        ast::rLocal current = res;
+
+        if (depth_ > depth)
+        {
+          // The variable is captured
+          decl->closed_set(true);
+
+          function_stack_type::iterator f_it = function_stack_.end();
+          --f_it;
+          const ast::loc loc = input->location_get();
+          for (int i = depth_ - depth; i; --i, --f_it)
+          {
+            assert(f_it != function_stack_.begin() || i == 1);
+            ast::rFunction f = *f_it;
+            // Check whether it's already captured
+            foreach (ast::rDeclaration dec, *f->captured_variables_get())
+              if (dec->what_get() == name)
+              {
+                outer_decl = dec;
+                goto stop;
+              }
+
+            decl = new ast::Declaration(loc, name, 0);
+            decl->closed_set(true);
+
+            current->declaration_set(decl_get(name));
+
+            current = new ast::Local(loc, name, 0, i - 1);
+            decl->value_set(current);
+
+            f->captured_variables_get()->push_back(decl);
+          }
+          stop: ;
+        }
+
+        current->declaration_set(outer_decl);
         result_ = res;
         return;
       }
@@ -232,13 +249,19 @@ namespace binder
     result_ = res;
 
     // Index local and closed variables
-    int local = 2;
+    int local = 0;
     int closed = 0;
     foreach (ast::rDeclaration dec, *res->local_variables_get())
       if (dec->closed_get())
         dec->local_index_set(closed++);
       else
         dec->local_index_set(local++);
+
+    // Index captured variables
+    int captured = 0;
+    foreach (ast::rDeclaration dec, *res->captured_variables_get())
+      dec->local_index_set(captured++);
+
   }
 
   void Binder::visit(ast::rConstClosure input)
