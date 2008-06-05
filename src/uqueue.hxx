@@ -1,7 +1,7 @@
 #ifndef UQUEUE_HXX
 # define UQUEUE_HXX
 
-# include "uqueue.hxx"
+# include <uqueue.hxx>
 
 inline
 size_t
