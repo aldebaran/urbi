@@ -296,7 +296,7 @@ namespace runner
                            rObject call_message)
   {
     // The called function.
-    ast::rConstCode fn = func.unsafe_cast<object::Code> ()->value_get ();
+    ast::rConstCode fn = func.unsafe_cast<object::Code>()->value_get().ast;
     // Whether it's an explicit closure
     bool closure = fn.unsafe_cast<const ast::Closure>();
 
@@ -404,7 +404,7 @@ namespace runner
     // look like a strict function call
     if (call_message &&
 	(func->kind_get() != object::object_kind_code
-	 || func->value<object::Code>()->strict()))
+	 || func->value<object::Code>().ast->strict()))
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
@@ -587,7 +587,7 @@ namespace runner
     // the evaluated argument list.
     rObject call_message;
     if (val->kind_get () == object::object_kind_code
-        && !val.unsafe_cast<object::Code> ()->value_get ()->strict())
+        && !val.unsafe_cast<object::Code>()->value_get().ast->strict())
       call_message = build_call_message (tgt, message, ast_args);
     else
       push_evaluated_arguments (args, ast_args, !acceptVoid(val));

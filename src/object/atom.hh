@@ -115,7 +115,14 @@ namespace object
   // returned by the parser.
   struct code_traits
   {
-    typedef ast::rConstCode type;
+    struct type
+    {
+      type(ast::rConstCode a)
+        : ast(a)
+      {}
+      ast::rConstCode ast;
+      std::vector<rObject> captures;
+    };
     enum { kind = object_kind_code };
   };
 

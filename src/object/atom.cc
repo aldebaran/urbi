@@ -202,8 +202,8 @@ namespace object
   Atom<code_traits>::special_slots_dump (std::ostream& o,
                                          runner::Runner&) const
   {
-    o << "value" << " = " << libport::deref << value_ << libport::iendl;
-    if (ast::rConstFunction f = value_.unsafe_cast<const ast::Function>())
+    o << "value" << " = " << libport::deref << value_.ast << libport::iendl;
+    if (ast::rConstFunction f = value_.ast.unsafe_cast<const ast::Function>())
     {
       o << "local variables = " << libport::incindent;
       foreach (ast::rConstDeclaration dec, *f->local_variables_get())

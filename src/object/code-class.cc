@@ -39,7 +39,7 @@ namespace object
     if (args[0] == code_class)
       return String::fresh(SYMBOL(LT_Code_GT));
     FETCH_ARG(0, Code);
-    return String::fresh(libport::Symbol(string_cast(*arg0->value_get())));
+    return String::fresh(libport::Symbol(string_cast(*arg0->value_get().ast)));
   }
 
   static rObject
@@ -52,7 +52,7 @@ namespace object
     return
       String::fresh(
         libport::Symbol(
-          string_cast(*arg0->value_get()->body_get()->body_get())));
+          string_cast(*arg0->value_get().ast->body_get()->body_get())));
   }
 
   void
