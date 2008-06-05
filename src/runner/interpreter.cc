@@ -553,6 +553,12 @@ namespace runner
     apply(tgt, e->name_get(), e->arguments_get());
   }
 
+  void
+  Interpreter::visit (ast::rConstCallMsg)
+  {
+    current_ = locals_->slot_get(SYMBOL(call));
+  }
+
   Interpreter::rObject
   Interpreter::apply (rObject tgt, const libport::Symbol& message,
                       const ast::exps_type* input_ast_args)
@@ -1007,6 +1013,12 @@ namespace runner
       current_ = object::void_class;
       return;
     }
+  }
+
+  void
+  Interpreter::visit (ast::rConstThis)
+  {
+    current_ = locals_->slot_get(SYMBOL(self));
   }
 
   object::rObject

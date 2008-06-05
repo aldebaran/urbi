@@ -459,6 +459,7 @@ FLAVOR   [;|,&]?
 "addgroup"      RETURN(ADDGROUP);
 "alias"         RETURN(ALIAS);
 "break"         RETURN(BREAK);
+"call"          RETURN(CALL);
 "class"         RETURN(CLASS);
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
@@ -482,6 +483,7 @@ FLAVOR   [;|,&]?
 "onevent"       RETURN(ONEVENT);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
+"self"          RETURN(THIS);
 "static"        DEPRECATED("");
 "stopif"        RETURN(STOPIF);
 "timeout"       RETURN(TIMEOUT);

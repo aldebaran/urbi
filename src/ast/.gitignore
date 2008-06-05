@@ -21,6 +21,9 @@ ast.hxx
 binary.cc
 binary.hh
 binary.hxx
+call-msg.cc
+call-msg.hh
+call-msg.hxx
 call.cc
 call.hh
 call.hxx
@@ -112,6 +115,9 @@ tag.hxx
 tagged-stmt.cc
 tagged-stmt.hh
 tagged-stmt.hxx
+this.cc
+this.hh
+this.hxx
 throw.cc
 throw.hh
 throw.hxx

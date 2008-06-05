@@ -214,6 +214,7 @@
 	TOK_ALIAS        "alias"
 	TOK_EQ           "="
 	TOK_BREAK        "break"
+        TOK_CALL         "call"
 	TOK_CLOSURE      "closure"
 	TOK_CONTINUE     "continue"
 	TOK_COLON        ":"
@@ -240,6 +241,7 @@
 	TOK_RPAREN       ")"
 	TOK_STATIC       "static"
 	TOK_STOPIF       "stopif"
+	TOK_THIS         "this"
 	TOK_TILDA        "~"
 	TOK_TIMEOUT      "timeout"
 	TOK_UNALIAS      "unalias"
@@ -1059,7 +1061,7 @@ duration:
 
 
 /*-------.
-| exp.  |
+| exp.   |
 `-------*/
 
 exp:
@@ -1071,9 +1073,18 @@ exp:
 ;
 
 
-  /*---------.
-  | num exp |
-  `---------*/
+/*--------------------.
+| special variables.  |
+`--------------------*/
+
+// These should probably be expressions, not lvalues
+exp:
+  "this"         { $$ = new ast::This(@$); }
+| "call"         { $$ = new ast::CallMsg(@$); }
+
+/*---------.
+| num exp  |
+`---------*/
 // The name of the operators are the name of the messages.
 %token <symbol>
 	TOK_BANG       "!"

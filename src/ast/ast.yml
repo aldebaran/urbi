@@ -881,6 +881,17 @@ Local:
             << ")";
        }'
 
+This:
+  super: Exp
+  printer:
+    - '"self"'
+
+CallMsg:
+  super: Exp
+  printer:
+    - '"call"'
+
+
 # Local Variables:
 # mode: yaml
 # End:

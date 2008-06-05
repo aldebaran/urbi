@@ -137,6 +137,7 @@ namespace runner
     CONST_VISITOR_VISIT_NODES((And)
                               (Assignment)
                               (Call)
+                              (CallMsg)
                               (Closure)
                               (Do)
                               (Declaration)
@@ -155,6 +156,7 @@ namespace runner
                               (String)
                               (Tag)
                               (TaggedStmt)
+                              (This)
                               (Throw)
                               (While))
 
