@@ -5,6 +5,29 @@
 namespace parser
 {
 
+  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+  /// \param op must be & or |.
+  ast::rExp
+  ast_bin(const yy::location& l,
+          ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
+  {
+    ast::rExp res = 0;
+    assert (lhs);
+    assert (rhs);
+    switch (op)
+    {
+      case ast::flavor_and:
+        res = new ast::And (l, lhs, rhs);
+        break;
+      case ast::flavor_pipe:
+        res = new ast::Pipe (l, lhs, rhs);
+        break;
+      default:
+        pabort(op);
+    }
+    return res;
+  }
+
   /// "<method> (args)".
   ast::rCall
   ast_call (const yy::location& l,
@@ -56,6 +79,84 @@ namespace parser
     return res;
   }
 
+
+  /// Build a for loop.
+  // Since we don't have "continue", for is really a sugared
+  // while:
+  //
+  // "for OP ( INIT; TEST; INC ) BODY"
+  //
+  // ->
+  //
+  // "{ INIT OP WHILE OP (TEST) { BODY | INC } }"
+  //
+  // OP is either ";" or "|".
+  ast::rExp
+  ast_for (const yy::location& l, ast::flavor_type op,
+           ast::rExp init, ast::rExp test, ast::rExp inc,
+           ast::rExp body)
+  {
+    passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
+    assert (init);
+    assert (test);
+    assert (inc);
+    assert (body);
+
+    // BODY | INC.
+    ast::rExp loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
+
+    // WHILE OP (TEST) { BODY | INC }.
+    ast::While *while_loop =
+      new ast::While(l, op, test, ast_scope(l, loop_body));
+
+    // { INIT OP WHILE OP (TEST) { BODY | INC } }.
+    return ast_scope(l, ast_nary (l, op, init, while_loop));
+  }
+
+
+  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+  /// \param op can be any of the four cases.
+  ast::rExp
+  ast_nary(const yy::location& l,
+           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
+  {
+    switch (op)
+    {
+      case ast::flavor_and:
+      case ast::flavor_pipe:
+        return ast_bin(l, op, lhs, rhs);
+
+      case ast::flavor_comma:
+      case ast::flavor_semicolon:
+      {
+        ast::rNary res = new ast::Nary(l);
+        res->push_back(lhs, op);
+        res->push_back(rhs);
+        return res;
+      }
+      default:
+        pabort(op);
+    }
+  }
+
+
+  /// Return \a e in a ast::Scope unless it is already one.
+  ast::rAbstractScope
+  ast_scope(const yy::location& l, ast::rExp target, ast::rExp e)
+  {
+    if (ast::rAbstractScope res = e.unsafe_cast<ast::AbstractScope>())
+      return res;
+    else if (target)
+      return new ast::Do(l, e, target);
+    else
+      return new ast::Scope(l, e);
+  }
+
+  ast::rAbstractScope
+  ast_scope(const yy::location& l, ast::rExp e)
+  {
+    return ast_scope(l, 0, e);
+  }
 
   /*-----------------.
   | Changing slots.  |
@@ -124,104 +225,5 @@ namespace parser
   }
 
 
-  /// Return \a e in a ast::Scope unless it is already one.
-  ast::rAbstractScope
-  ast_scope(const yy::location& l, ast::rExp target, ast::rExp e)
-  {
-    if (ast::rAbstractScope res = e.unsafe_cast<ast::AbstractScope>())
-      return res;
-    else if (target)
-      return new ast::Do(l, e, target);
-    else
-      return new ast::Scope(l, e);
-  }
-
-  ast::rAbstractScope
-  ast_scope(const yy::location& l, ast::rExp e)
-  {
-    return ast_scope(l, 0, e);
-  }
-
-  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op must be & or |.
-  ast::rExp
-  ast_bin(const yy::location& l,
-          ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
-  {
-    ast::rExp res = 0;
-    assert (lhs);
-    assert (rhs);
-    switch (op)
-    {
-      case ast::flavor_and:
-        res = new ast::And (l, lhs, rhs);
-        break;
-      case ast::flavor_pipe:
-        res = new ast::Pipe (l, lhs, rhs);
-        break;
-      default:
-        pabort(op);
-    }
-    return res;
-  }
-
-  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op can be any of the four cases.
-  ast::rExp
-  ast_nary(const yy::location& l,
-           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
-  {
-    switch (op)
-    {
-      case ast::flavor_and:
-      case ast::flavor_pipe:
-        return ast_bin(l, op, lhs, rhs);
-
-      case ast::flavor_comma:
-      case ast::flavor_semicolon:
-      {
-        ast::rNary res = new ast::Nary(l);
-        res->push_back(lhs, op);
-        res->push_back(rhs);
-        return res;
-      }
-      default:
-        pabort(op);
-    }
-  }
-
-
-  /// Build a for loop.
-  // Since we don't have "continue", for is really a sugared
-  // while:
-  //
-  // "for OP ( INIT; TEST; INC ) BODY"
-  //
-  // ->
-  //
-  // "{ INIT OP WHILE OP (TEST) { BODY | INC } }"
-  //
-  // OP is either ";" or "|".
-  ast::rExp
-  ast_for (const yy::location& l, ast::flavor_type op,
-           ast::rExp init, ast::rExp test, ast::rExp inc,
-           ast::rExp body)
-  {
-    passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
-    assert (init);
-    assert (test);
-    assert (inc);
-    assert (body);
-
-    // BODY | INC.
-    ast::rExp loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
-
-    // WHILE OP (TEST) { BODY | INC }.
-    ast::While *while_loop =
-      new ast::While(l, op, test, ast_scope(l, loop_body));
-
-    // { INIT OP WHILE OP (TEST) { BODY | INC } }.
-    return ast_scope(l, ast_nary (l, op, init, while_loop));
-  }
 
 }
