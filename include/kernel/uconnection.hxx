@@ -3,7 +3,7 @@
 #ifndef KERNEL_UCONNECTION_HXX
 # define KERNEL_UCONNECTION_HXX
 
-# include "kernel/uconnection.hh"
+# include <kernel/uconnection.hh>
 # include <sstream>
 
   /*----------.

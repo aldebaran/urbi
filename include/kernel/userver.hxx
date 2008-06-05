@@ -1,27 +1,10 @@
-/*!
- *******************************************************************************
-
- Definition of the USystem class.
-
- This file is part of
- %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2007.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.net
-
- **************************************************************************** */
+/// \file kernel/userver.hxx
+/// \brief Inline implementation of UServer.
 
 #ifndef KERNEL_USERVER_HXX
 # define KERNEL_USERVER_HXX
 
-# include "userver.hh"
+# include <kernel/userver.hh>
 
 inline libport::utime_t
 UServer::lastTime()
