@@ -36,11 +36,11 @@
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 
-# include "kernel/fwd.hh"
-# include "kernel/utypes.hh"
+# include <kernel/fwd.hh>
+# include <kernel/utypes.hh>
 
-# include "runner/fwd.hh"
-# include "scheduler/fwd.hh"
+# include <runner/fwd.hh>
+# include <scheduler/fwd.hh>
 
 extern const char* DISPLAY_FORMAT;
 extern const char* DISPLAY_FORMAT1;

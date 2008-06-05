@@ -25,15 +25,15 @@
 # include <cstdarg>
 # include <iomanip>
 
-# include "libport/config.h"
+# include <libport/config.h>
 # if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
 # include <boost/shared_ptr.hpp>
 # include <libport/shared-ptr.hh>
-# include "kernel/fwd.hh"
-# include "kernel/utypes.hh"
-# include "kernel/ucomplaints.hh"
+# include <kernel/fwd.hh>
+# include <kernel/utypes.hh>
+# include <kernel/ucomplaints.hh>
 
 namespace ast
 {
@@ -348,5 +348,5 @@ private:
 
 };
 
-# include "kernel/uconnection.hxx"
+# include <kernel/uconnection.hxx>
 #endif // !KERNEL_UCONNECTION_HH

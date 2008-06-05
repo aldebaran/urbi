@@ -42,6 +42,6 @@ private:								\
 
 } // namespace kernel
 
-# include "kernel/exception.hxx"
+# include <kernel/exception.hxx>
 
 #endif // KERNEL_EXCEPTION_HH
