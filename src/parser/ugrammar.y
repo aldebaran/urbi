@@ -69,6 +69,7 @@
   using parser::ast_slot_remove;
   using parser::ast_slot_set;
   using parser::ast_slot_update;
+  using parser::ast_string;
 
 #include <parser/tweast.hh>
 #include <parser/parse.hh>
@@ -536,7 +537,7 @@ stmt:
       DESUGAR_TWEAST(
         "var " << new_clone(lvalue) << "= Object.clone|"
         << "do " << lvalue << " {"
-        << "var protoName = " << ast_exp(new ast::String(@2, slot)) << "|"
+        << "var protoName = " << ast_string(@2, slot) << "|"
         << "function " << ("as" + slot.name_get()) << "() {self}|"
         << ast_exp($3.value()) << "}");
     }
@@ -550,7 +551,7 @@ stmt:
 identifier_as_string:
   "identifier"
     {
-      $$ = new ast::String(@1, $1.value());
+      $$ = ast_string(@1, $1.value());
     }
 ;
 
@@ -732,8 +733,8 @@ stmt:
   lvalue "->" id "=" exp
     {
       $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(setProperty),
-		    new ast::String(@1, $1.value()->name_get()),
-		    new ast::String(@3, $3.value()),
+		    ast_string(@1, $1.value()->name_get()),
+		    ast_string(@3, $3.value()),
 		    $5);
       $1.value()->counter_dec();
     }
@@ -743,8 +744,8 @@ exp:
   lvalue "->" id
     {
       $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(getProperty),
-		    new ast::String(@1, $1.value()->name_get()),
-		    new ast::String(@3, $3.value()));
+		    ast_string(@1, $1.value()->name_get()),
+		    ast_string(@3, $3.value()));
       $1.value()->counter_dec();
     }
 ;

@@ -224,6 +224,11 @@ namespace parser
     return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
   }
 
+  ast::rExp
+  ast_string(const yy::location& l, libport::Symbol s)
+  {
+    return new ast::String(l, s);
+  }
 
 
 }

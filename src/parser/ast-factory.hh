@@ -71,16 +71,18 @@ namespace parser
   `-----------------*/
 
   ast::rExp
-  ast_slot_set (const yy::location& l, ast::rCall lvalue,
-                ast::rExp value);
+  ast_slot_set(const yy::location& l, ast::rCall lvalue,
+               ast::rExp value);
 
   ast::rExp
-  ast_slot_update (const yy::location& l, ast::rCall lvalue,
-                   ast::rExp value  );
+  ast_slot_update(const yy::location& l, ast::rCall lvalue,
+                  ast::rExp value  );
 
   ast::rExp
-  ast_slot_remove  (const yy::location& l, ast::rCall lvalue);
+  ast_slot_remove(const yy::location& l, ast::rCall lvalue);
 
+  ast::rExp
+  ast_string(const yy::location& l, libport::Symbol s);
 
 }
 #endif // !PARSER_AST_FACTORY_HH
