@@ -13,8 +13,8 @@
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
 
-# include "scheduler/coroutine.hh"
-# include "scheduler/fwd.hh"
+# include <scheduler/coroutine.hh>
+# include <scheduler/fwd.hh>
 
 namespace scheduler
 {
@@ -31,10 +31,10 @@ namespace scheduler
     ///
     /// \param get_time A function which, when called, returns the
     ///        current system time.
-    Scheduler (boost::function0<libport::utime_t> get_time);
+    Scheduler(boost::function0<libport::utime_t> get_time);
 
     /// Destructor.
-    ~Scheduler ();
+    ~Scheduler();
 
   public:
     /// Do one cycle of work, and return the next time we expect to be called.
@@ -47,7 +47,7 @@ namespace scheduler
     ///
     /// Calling work() again before the returned time is useless as there will
     /// be nothing to do except if some new work has been entered in.
-    libport::utime_t work ();
+    libport::utime_t work();
 
     /// Add a job to the list of jobs to be run later.
     ///
@@ -56,18 +56,18 @@ namespace scheduler
     ///
     /// Jobs added during a cycle will be started at the next cycle by the
     /// scheduler.
-    void add_job (rJob job);
+    void add_job(rJob job);
 
     /// Terminate all jobs. This must be called only when the executable
     /// is going to terminate.
-    void killall_jobs ();
+    void killall_jobs();
 
     /// Resume scheduler execution.
     ///
     /// \param job Job currently being executed. This job will relinquish
     ///        the CPU to the scheduler. Note that the scheduler is free
     ///        to reschedule \a job immediately if it wishes to do so.
-    void resume_scheduler (rJob job);
+    void resume_scheduler(rJob job);
 
     /// Get the currently executing job.
     ///
@@ -76,7 +76,7 @@ namespace scheduler
     /// It is an error to call this method if no job is currently
     /// executing or to keep the reference after yielding since the
     /// Job may no longer be valid then.
-    Job& current_job () const;
+    Job& current_job() const;
 
     /// Check whether a job is the current job.
     ///
@@ -92,17 +92,17 @@ namespace scheduler
     /// After this function has been called, the scheduler will determine,
     /// at the end of the current cycle, which jobs need to react to this
     /// action.
-    void signal_stop (rTag t);
+    void signal_stop(rTag t);
 
     /// Get the current cycle number.
     ///
     /// \return The current cycle index, increasing by 1 at each cycle.
-    unsigned int cycle_get () const;
+    unsigned int cycle_get() const;
 
     /// Get the time as seen by the scheduler.
     ///
     /// \return The current system time.
-    libport::utime_t get_time () const;
+    libport::utime_t get_time() const;
 
     /// Get the current jobs list.
     ///
@@ -122,7 +122,7 @@ namespace scheduler
     ///        \c block action on a tag.
     ///
     /// \return See work().
-    libport::utime_t execute_round (bool blocked_only);
+    libport::utime_t execute_round(bool blocked_only);
 
     /// Check if we have stopped tags to handle.
     ///
@@ -130,7 +130,7 @@ namespace scheduler
     ///        signalled through signal_stop() during the previous round.
     ///
     /// \return See work().
-    libport::utime_t check_for_stopped_tags (libport::utime_t old_deadline);
+    libport::utime_t check_for_stopped_tags(libport::utime_t old_deadline);
 
     /// Function to retrieve the current system time.
     boost::function0<libport::utime_t> get_time_;

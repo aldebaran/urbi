@@ -6,35 +6,35 @@
 #ifndef SCHEDULER_SCHEDULER_HXX
 # define SCHEDULER_SCHEDULER_HXX
 
-# include "scheduler/scheduler.hh"
-# include "scheduler/job.hh"
+# include <scheduler/scheduler.hh>
+# include <scheduler/job.hh>
 
 namespace scheduler
 {
 
   inline
-  Scheduler::Scheduler (boost::function0<libport::utime_t> get_time)
-    : get_time_ (get_time)
-    , current_job_ (0)
-    , coro_ (coroutine_new ())
-    , possible_side_effect_ (true)
-    , cycle_ (0)
+  Scheduler::Scheduler(boost::function0<libport::utime_t> get_time)
+    : get_time_(get_time)
+    , current_job_(0)
+    , coro_(coroutine_new())
+    , possible_side_effect_(true)
+    , cycle_(0)
     , ready_to_die_(false)
   {
-    ECHO ("Initializing main coroutine");
-    coroutine_initialize_main (coro_);
+    ECHO("Initializing main coroutine");
+    coroutine_initialize_main(coro_);
   }
 
   inline
-  Scheduler::~Scheduler ()
+  Scheduler::~Scheduler()
   {
-    ECHO ("Destroying scheduler");
+    ECHO("Destroying scheduler");
   }
 
   inline Job&
-  Scheduler::current_job () const
+  Scheduler::current_job() const
   {
-    assert (current_job_);
+    assert(current_job_);
     return *current_job_;
   }
 
@@ -45,15 +45,15 @@ namespace scheduler
   }
 
   inline unsigned int
-  Scheduler::cycle_get () const
+  Scheduler::cycle_get() const
   {
     return cycle_;
   }
 
   inline libport::utime_t
-  Scheduler::get_time () const
+  Scheduler::get_time() const
   {
-    return get_time_ ();
+    return get_time_();
   }
 
   inline void

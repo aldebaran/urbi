@@ -12,7 +12,7 @@ class Coro
   bool die_;
 };
 # else
-#  include "scheduler/libcoroutine/Coro.h"
+#  include <scheduler/libcoroutine/Coro.h>
 # endif
 /// This package provides an interface to the \c libcoroutine. Using this
 /// interface allows for various checks and instrumentations to be

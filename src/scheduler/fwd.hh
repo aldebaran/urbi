@@ -8,7 +8,7 @@
 
 # include <libport/shared-ptr.hh>
 
-# include "kernel/exception.hh"
+# include <kernel/exception.hh>
 
 namespace scheduler
 {
@@ -25,7 +25,7 @@ namespace scheduler
   // way.
   struct SchedulerException : public kernel::exception
   {
-    COMPLETE_EXCEPTION (SchedulerException);
+    COMPLETE_EXCEPTION(SchedulerException);
   };
 
 } // namespace scheduler
