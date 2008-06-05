@@ -32,6 +32,9 @@ namespace parser
     /// Extract a metavariable.
     virtual Data take_ (unsigned key) throw (std::range_error);
 
+    /// Empty in another map.
+    void insert_(MetavarMap<Data>& other);
+
     /// Whether this value must be unique.
     /// Used to catch multiple uses of a unique pointer.
     virtual bool must_be_unique_ (Data) const;

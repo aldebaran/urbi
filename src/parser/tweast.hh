@@ -57,13 +57,16 @@ namespace parser
     /// once initially will be written twice in the result.  In that
     /// case you are likely to introduce several computations of the
     /// expressions (with possibly several times its side-effects)
-    /// which is wrong (thing of Cpp macros).  You typically need to
+    /// which is wrong (think of Cpp macros).  You typically need to
     /// introduce a temporary in that case.
     ///
     /// But of course sometimes you really want to use that tree
     /// several times.  In which case explicitly clone it on the call
     /// side.
     template <typename T> Tweast& operator<< (const T& t);
+
+    /// Append into \c this the contents of \a t.
+    Tweast& operator<< (Tweast& t);
 
     /// Metavariables manipulator.
     template <typename T> T take (unsigned s) throw (std::range_error);

@@ -42,6 +42,26 @@ namespace parser
   {
   }
 
+  // Yes, this is ugly and shows the limitations of our approach (by
+  // repeated inheritance).  Don't know how to make it cuter though.
+  Tweast&
+  Tweast::operator<< (Tweast& t)
+  {
+    // Steal the input string.
+    input_ << t.input_.str();
+    // Steal the contents.
+    MetavarMap<ast::rCall>
+      ::insert_(static_cast<MetavarMap<ast::rCall>&>(t));
+    MetavarMap<ast::rExp>
+      ::insert_(static_cast<MetavarMap<ast::rExp>&>(t));
+    MetavarMap<ast::exps_type*>
+      ::insert_(static_cast<MetavarMap<ast::exps_type*>&>(t));
+    MetavarMap<ast::symbols_type*>
+    ::insert_(static_cast<MetavarMap<ast::symbols_type*>&>(t));
+    return *this;
+  }
+
+
   std::string
   Tweast::input_get () const
   {

@@ -51,6 +51,15 @@ namespace parser
     return map_.take (key);
   }
 
+
+  template <typename Data>
+  void
+  MetavarMap<Data>::insert_(MetavarMap<Data>& other)
+  {
+    return map_.insert(other.map_);
+  }
+
+
   template <typename Data>
   bool
   MetavarMap<Data>::must_be_unique_ (Data) const
