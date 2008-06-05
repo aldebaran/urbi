@@ -23,7 +23,8 @@ namespace object
     // understand the problem.
     ast::rClosure ast =
       new ast::Closure(e->location_get(), new ast::declarations_type(),
-                       new ast::Scope(e->location_get(), const_cast<ast::Exp*>(e.get())));
+                       new ast::Scope(e->location_get(),
+                                      const_cast<ast::Exp*>(e.get())));
     rObject function = dynamic_cast<runner::Interpreter*>(&r)->make_code(ast);
     return mkLazy(r, function);
   }
