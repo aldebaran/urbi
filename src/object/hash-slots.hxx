@@ -1,6 +1,6 @@
 #include <libport/containers.hh>
 
-#include "object/object.hh"
+#include <object/object.hh>
 
 namespace object
 {

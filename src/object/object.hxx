@@ -16,10 +16,10 @@
 # include <libport/foreach.hh>
 # include <libport/shared-ptr.hh>
 
-# include "object/object.hh"
-# include "object/list-class.hh"
-# include "object/root-classes.hh"
-# include "object/primitives.hh"
+# include <object/object.hh>
+# include <object/list-class.hh>
+# include <object/root-classes.hh>
+# include <object/primitives.hh>
 
 namespace object
 {

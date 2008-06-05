@@ -9,8 +9,8 @@
 # include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
 
-# include "object/atom.hh"
-# include "object/primitives.hh"
+# include <object/atom.hh>
+# include <object/primitives.hh>
 
 namespace object
 {

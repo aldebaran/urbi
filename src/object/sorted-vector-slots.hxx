@@ -1,5 +1,5 @@
-#include "object/object.hh"
-#include "object/sorted-vector-slots.hh"
+#include <object/object.hh>
+#include <object/sorted-vector-slots.hh>
 
 namespace object
 {
