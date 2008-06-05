@@ -78,6 +78,13 @@ namespace scheduler
     /// Job may no longer be valid then.
     Job& current_job () const;
 
+    /// Check whether a job is the current job.
+    ///
+    /// \param job Job to be checked against the current job.
+    ///
+    /// \return \a true if \a job is the current job.
+    bool is_current_job(const Job& job) const;
+
     /// Signal that a \c stop or a \c block has been issued on a tag.
     ///
     /// \param t The tag that has been recently stopped or blocked.

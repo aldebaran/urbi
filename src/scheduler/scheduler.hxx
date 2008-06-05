@@ -38,8 +38,14 @@ namespace scheduler
     return *current_job_;
   }
 
-  inline
-  unsigned int Scheduler::cycle_get () const
+  inline bool
+  Scheduler::is_current_job(const Job& job) const
+  {
+    return current_job_ == &job;
+  }
+
+  inline unsigned int
+  Scheduler::cycle_get () const
   {
     return cycle_;
   }

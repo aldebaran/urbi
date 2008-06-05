@@ -132,6 +132,17 @@ namespace scheduler
   Job::async_throw (const kernel::exception& e)
   {
     pending_exception_ = e.clone ();
+    // A job which has received an exception is no longer side effect
+    // free or non-interruptible.
+    side_effect_free_ = false;
+    non_interruptible_ = false;
+    // If this is the current job we are talking about, the exception
+    // is synchronous.
+    if (scheduler_.is_current_job(*this))
+    {
+      std::cerr << "Synchronous exception: " << e.what() << std::endl;
+      check_for_pending_exception();
+    }
     // Now that we acquired an exception to raise, we are active again,
     // even if we were previously sleeping or waiting for something.
     if (state_ != to_start && state_ != zombie)
@@ -156,8 +167,6 @@ namespace scheduler
     {
       current_exception_ = pending_exception_;
       pending_exception_ = 0;
-      // If an exception is propagated, it may have side effects.
-      side_effect_free_ = false;
       kernel::rethrow (current_exception_);
     }
   }

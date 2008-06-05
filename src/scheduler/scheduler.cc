@@ -285,7 +285,10 @@ namespace scheduler
     // Since killing the current job will result in its immediate
     // termination, kill all other jobs before.
     foreach (rJob job, jobs_get())
-      job->terminate_now ();
+      if (job != current_job_)
+	job->terminate_now ();
+    if (current_job_)
+      current_job_->terminate_now();
   }
 
   void
