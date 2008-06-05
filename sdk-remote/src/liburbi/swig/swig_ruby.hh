@@ -8,7 +8,7 @@
 #  error "This file must be compiled with SWIG in ruby mode."
 # endif /* !SWIGRUBY */
 
-# include "uclient.h"
+# include <uclient.h>
 
 namespace urbi
 {

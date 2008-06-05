@@ -27,9 +27,9 @@
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
-#include "urbi/uobject.hh"
-#include "urbi/usyncclient.hh"
-#include "urbi/uexternal.hh"
+#include <urbi/uobject.hh>
+#include <urbi/usyncclient.hh>
+#include <urbi/uexternal.hh>
 
 //#define LIBURBIDEBUG
 

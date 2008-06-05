@@ -20,7 +20,7 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 
 #include <list>
 
-#include "urbi/uobject.hh"
+#include <urbi/uobject.hh>
 
 namespace urbi
 {

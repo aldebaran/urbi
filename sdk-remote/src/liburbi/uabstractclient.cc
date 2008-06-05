@@ -32,7 +32,7 @@
 
 #include <libport/lockable.hh>
 
-#include "urbi/uabstractclient.hh"
+#include <urbi/uabstractclient.hh>
 
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"

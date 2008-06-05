@@ -34,7 +34,7 @@
 # include <signal.h>
 #endif
 
-#include "urbi/uclient.hh"
+#include <urbi/uclient.hh>
 #include <libport/network.h>
 #include <libport/lockable.hh>
 #include <libport/thread.hh>

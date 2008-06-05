@@ -1,9 +1,9 @@
-#include "urbi/uconversion.hh"
+#include <urbi/uconversion.hh>
 
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
 
-# include "jpeg-6b/jpeglib.h"
+# include <jpeg-6b/jpeglib.h>
 
 namespace urbi
 {

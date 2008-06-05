@@ -1,4 +1,4 @@
-#include "tests.hh"
+#include <tests.hh>
 
 BEGIN_TEST(values, client, )
 client.setErrorCallback(callback(&dump));

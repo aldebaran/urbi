@@ -24,9 +24,9 @@
 
 #include <libport/program-name.hh>
 
-#include "urbi/ucallbacks.hh"
-#include "urbi/usyncclient.hh"
-#include "urbi/uexternal.hh"
+#include <urbi/ucallbacks.hh>
+#include <urbi/usyncclient.hh>
+#include <urbi/uexternal.hh>
 
 namespace urbi
 {

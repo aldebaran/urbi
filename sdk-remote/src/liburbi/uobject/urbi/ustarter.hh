@@ -18,7 +18,7 @@
 # include <algorithm>
 # include <string>
 
-# include "urbi/fwd.hh"
+# include <urbi/fwd.hh>
 
 /// This macro must be called once for every UObject class.
 # define UStart(X)							\

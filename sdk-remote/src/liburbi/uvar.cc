@@ -18,10 +18,10 @@
 
  **************************************************************************** */
 
-#include "urbi/uobject.hh"
-#include "urbi/ublend-type.hh"
-#include "urbi/uexternal.hh"
-#include "urbi/usyncclient.hh"
+#include <urbi/uobject.hh>
+#include <urbi/ublend-type.hh>
+#include <urbi/uexternal.hh>
+#include <urbi/usyncclient.hh>
 
 class UVariable {};
 

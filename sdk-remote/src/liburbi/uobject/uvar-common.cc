@@ -18,9 +18,9 @@ For more information, comments, bug reports: http://www.urbiforge.com
 
 **************************************************************************** */
 
-#include "urbi/uobject.hh"
-#include "urbi/uvalue.hh"
-#include "urbi/uvar.hh"
+#include <urbi/uobject.hh>
+#include <urbi/uvalue.hh>
+#include <urbi/uvar.hh>
 
 namespace urbi
 {

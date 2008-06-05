@@ -1,4 +1,4 @@
-#include "tests.hh"
+#include <tests.hh>
 BEGIN_TEST(removecallbacks, client, )
 client.setCallback(&dump, "error"); // ping
 urbi::UCallbackID i1 = client.setCallback(&dump, "output");

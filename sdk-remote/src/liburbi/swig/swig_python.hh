@@ -9,7 +9,7 @@
 # endif /* !SWIGPYTHON */
 
 # include <object.h>
-# include "uclient.h"
+# include <uclient.h>
 
 namespace urbi
 {

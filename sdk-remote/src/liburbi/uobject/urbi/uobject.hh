@@ -26,9 +26,9 @@
 # include <libport/fwd.hh>
 # include <libport/ufloat.h>
 # include <libport/package-info.hh>
-# include "urbi/fwd.hh"
-# include "urbi/ucallbacks.hh"
-# include "urbi/uvar.hh"
+# include <urbi/fwd.hh>
+# include <urbi/ucallbacks.hh>
+# include <urbi/uvar.hh>
 
 // Tell our users that it is fine to use void returning functions.
 #define USE_VOID 1
@@ -317,6 +317,6 @@ namespace urbi
 
 // This file needs the definition of UObject, so included last.
 // To be cleaned later.
-# include "urbi/ustarter.hh"
+# include <urbi/ustarter.hh>
 
 #endif // ! URBI_UOBJECT_HH

@@ -18,7 +18,7 @@
 
  **************************************************************************** */
 
-#include "urbi/uobject.hh"
+#include <urbi/uobject.hh>
 
 //! Global definition of the starterlist
 namespace urbi

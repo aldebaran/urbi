@@ -8,8 +8,8 @@
 #include <libport/thread.hh>
 #include <libport/assert.hh>
 
-#include "urbi/usyncclient.hh"
-#include "urbi/uconversion.hh"
+#include <urbi/usyncclient.hh>
+#include <urbi/uconversion.hh>
 
 /* "min" shouldn't be defined as a preprocessor macro. On windows, it is. So
  * using std::min leads to a parse error because CPP expands it as

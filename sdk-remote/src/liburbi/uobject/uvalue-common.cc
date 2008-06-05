@@ -25,7 +25,7 @@
 #include <libport/assert.hh>
 #include <libport/cstring>
 
-#include "urbi/uvalue.hh"
+#include <urbi/uvalue.hh>
 
 namespace urbi
 {

@@ -21,8 +21,8 @@
 # include <libport/fwd.hh>
 # include <libport/ufloat.hh>
 
-# include "urbi/uvalue.hh"
-# include "urbi/uproperty.hh"
+# include <urbi/uvalue.hh>
+# include <urbi/uproperty.hh>
 
 /// Define an attribute and its accessors.
 # define PRIVATE(Type, Name)			\

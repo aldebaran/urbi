@@ -18,8 +18,8 @@
 
  **************************************************************************** */
 
-#include "urbi/uobject.hh" // echo
-#include "urbi/usystem.hh"
+#include <urbi/uobject.hh> // echo
+#include <urbi/usystem.hh>
 
 namespace urbi
 {
