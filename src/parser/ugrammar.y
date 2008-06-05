@@ -674,13 +674,13 @@ k1_id:
 `-------------------*/
 
 stmt:
-  lvalue "=" exp
+  lvalue "=" exp modifiers
     {
-      $$ = ast_slot_update(@$, $1, $3);
+      $$ = ast_slot_update(@$, $1, $3, $4);
     }
-| "var" lvalue "=" exp
+| "var" lvalue "=" exp modifiers
     {
-      $$ = ast_slot_set(@$, $2, $4);
+      $$ = ast_slot_set(@$, $2, $4, $5);
     }
 | "var" lvalue
     {
@@ -1146,9 +1146,44 @@ exp:
 
 exp.opt:
   /* nothing */ { $$ = 0; }
-| exp          { $$ = $1; }
+| exp           { $$ = $1; }
 ;
 
+
+/*------------.
+| Modifiers.  |
+`------------*/
+
+%union { ::parser::Tweast* tweast; };
+%type <tweast> modifier modifiers.1;
+%type <exp> modifiers;
+%printer { debug_stream() << libport::deref << $$; } <tweast>;
+
+modifier:
+  "identifier" ":" exp
+  {
+    $$ = new ::parser::Tweast();
+    *$$ << ".set(" << ast_string(@1, $1) << ", " << ast_exp($3) << ")";
+  }
+;
+
+modifiers:
+  /* empty */    { $$ = 0;  }
+| modifiers.1    { $$ = ::parser::parse(*$1)->ast_take(); }
+;
+
+modifiers.1:
+  modifier
+    {
+      $$ = new ::parser::Tweast();
+      *$$ << "Dictionary.new" << *$1;
+    }
+| modifiers.1 modifier
+    {
+      $$ = $1;
+      *$$ << *$2;
+    }
+;
 
 /*----------------.
 | Metavariables.  |

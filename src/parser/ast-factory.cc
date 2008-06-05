@@ -1,4 +1,6 @@
 #include <ast/all.hh>
+#include <ast/new-clone.hh>
+#include <ast/parametric-ast.hh>
 #include <object/symbols.hh>
 #include <parser/ast-factory.hh>
 
@@ -177,51 +179,72 @@ namespace parser
   ast::rExp
   ast_slot_change(const yy::location& l,
                   ast::rCall lvalue, libport::Symbol change,
-                  ast::rExp value)
+                  ast::rExp value = 0,
+                  ast::rExp modifier = 0)
   {
     ast::rExp res = 0;
     bool implicit = lvalue->target_implicit();
 
-    if (implicit && change == SYMBOL(updateSlot))
-      res = new ast::Assignment(l, lvalue->name_get(), value, 0);
-    else if (implicit && change == SYMBOL(setSlot))
-      res = new ast::Declaration(l, lvalue->name_get(), value);
+    /// FIXME: This is far from being enough, but it is hard to finish
+    /// the implementation since the conversion to local vars
+    /// vs. field is not finished yet.  In particular things might go
+    /// wrong for the target (%exp:4) depending whether the assignment
+    /// is to a local or to a field.
+    if (modifier)
+    {
+      static ast::ParametricAst
+        traj("TrajectoryGenerator"
+             ".new(%exp:1, %exp:2, %exp:3)"
+             ".run(%exp:4, %exp:5)");
+      ast::rString name = new ast::String(l, lvalue->name_get());
+      res = exp(traj
+                %lvalue %value %modifier
+                %new_clone(lvalue->target_get()) %name);
+    }
     else
     {
-      ast::rCall call =
-        ast_call(l,
-                 lvalue->target_get(), change,
-                 ast::rString(new ast::String(lvalue->location_get(),
-                                              lvalue->name_get())));
-      if (value)
-        call->arguments_get()->push_back(value);
-      res = call;
+      if (implicit && change == SYMBOL(updateSlot))
+        res = new ast::Assignment(l, lvalue->name_get(), value, 0);
+      else if (implicit && change == SYMBOL(setSlot))
+        res = new ast::Declaration(l, lvalue->name_get(), value);
+      else
+      {
+        ast::rCall call =
+          ast_call(l,
+                   lvalue->target_get(), change,
+                   ast::rString(new ast::String(lvalue->location_get(),
+                                                lvalue->name_get())));
+        if (value)
+          call->arguments_get()->push_back(value);
+        res = call;
+      }
+      // Our parser stack does not obey the C++ semantics and it does
+      // not decrement the counters of the shared pointers.  So help it.
+      lvalue->counter_dec();
     }
-
-    // Our parser stack does not obey the C++ semantics and it does
-    // not decrement the counters of the shared pointers.  So help it.
-    lvalue->counter_dec();
     return res;
   }
 
   ast::rExp
   ast_slot_set(const yy::location& l, ast::rCall lvalue,
-               ast::rExp value)
+               ast::rExp value,
+               ast::rExp modifier)
   {
-    return ast_slot_change(l, lvalue, SYMBOL(setSlot), value);
+    return ast_slot_change(l, lvalue, SYMBOL(setSlot), value, modifier);
   }
 
   ast::rExp
   ast_slot_update(const yy::location& l, ast::rCall lvalue,
-                  ast::rExp value)
+                  ast::rExp value,
+                  ast::rExp modifier)
   {
-    return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value);
+    return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value, modifier);
   }
 
   ast::rExp
   ast_slot_remove(const yy::location& l, ast::rCall lvalue)
   {
-    return ast_slot_change(l, lvalue, SYMBOL(removeSlot), 0);
+    return ast_slot_change(l, lvalue, SYMBOL(removeSlot));
   }
 
   ast::rExp

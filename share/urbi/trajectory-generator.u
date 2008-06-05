@@ -20,32 +20,31 @@ class Global.TrajectoryGenerator
     }|
     self.targetValue = targetValue|
     self.startTime = time|
-    var content = Global._slotNames(args)|
-    if (content.has("time"))
+    if (args.has("time"))
     {
-      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
+      var self.adaptive = args.getWithDefault("adaptive", 0) |
       if (self.adaptive)
 	var self.get = getSlot("timeAdaptiveGet")
       else
 	var self.get = getSlot("timeGet") |
-      var self.duration = _getSlot(args, "time") |
+      var self.duration = args.get("time") |
     }
-    else if (content.has("smooth"))
+    else if (args.has("smooth"))
     {
-      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
+      var self.adaptive = args.getWithDefault("adaptive", 0) |
       var self.get = getSlot("smoothGet") |
-      var self.duration = _getSlot(args, "smooth") |
+      var self.duration = args.get("smooth") |
     }
-    else if (content.has("accel"))
+    else if (args.has("accel"))
     {
       var self.get = getSlot("accelGet") |
-      var self.accel = _getSlot(args, "accel") / 1000000 |
+      var self.accel = args.get("accel") / 1000000 |
       var self.duration = sqrt ( 2 * (targetValue - self.startValue) / accel)
     }
-    else if (content.has("speed"))
+    else if (args.has("speed"))
     {
-      var self.adaptive = _getLazyLocalSlot(args, "adaptive", 0, false) |
-      var self.speed = args.speed / 1000|
+      var self.adaptive = args.getWithDefault("adaptive", 0) |
+      var self.speed = args.get("speed") / 1000|
       var self.duration = abs(self.startValue - targetValue)  / speed |
       if (!adaptive)
       {
@@ -56,18 +55,18 @@ class Global.TrajectoryGenerator
 	var self.get = getSlot("adaptiveSpeedGet")
       }
     }
-    else if (content.has("sin") || content.has("cos"))
+    else if (args.has("sin") || args.has("cos"))
     {
       var self.get = getSlot("sinGet");
-      var self.phase = _getLazyLocalSlot(args, "phase", 0, false) |
-      var self.ampli = _getLazyLocalSlot(args, "ampli", 0, false) |
-      if (content.has("cos"))
+      var self.phase = args.getWithDefault("phase", 0) |
+      var self.ampli = args.getWithDefault("ampli", 0) |
+      if (args.has("cos"))
       {
-	var self.period =  args.cos |
+	var self.period =  args.get("cos") |
 	self.phase += pi/2
       }
       else
-	var self.period = args.sin
+	var self.period = args.get("sin")
     }
   };
 
