@@ -108,7 +108,7 @@ namespace binder
       unsigned depth = depth_get(name);
       if (depth)
       {
-        function_stack_type::iterator it = function_stack_.end();
+        function_stack_type::reverse_iterator it = function_stack_.rbegin();
 
         ast::rDeclaration outer_decl = decl_get(name);
         ast::rDeclaration decl = outer_decl;
@@ -128,7 +128,7 @@ namespace binder
           function_stack_type::iterator f_it = function_stack_.end();
           --f_it;
           const ast::loc loc = input->location_get();
-          for (int i = depth_ - depth; i; --i, --f_it)
+          for (int i = depth_ - depth; i; --i, ++f_it)
           {
             assert(f_it != function_stack_.begin() || i == 1);
             ast::rFunction f = *f_it;
