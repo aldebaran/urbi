@@ -19,16 +19,16 @@
  **************************************************************************** */
 
 #include <cstdarg>
-#include "libport/cstdio"
+#include <libport/cstdio>
 #include <list>
 
-#include "urbi/usystem.hh"
+#include <urbi/usystem.hh>
 
-#include "kernel/utypes.hh"
-#include "kernel/userver.hh"
-#include "kernel/uconnection.hh"
+#include <kernel/utypes.hh>
+#include <kernel/userver.hh>
+#include <kernel/uconnection.hh>
 
-#include "ughostconnection.hh"
+#include <ughostconnection.hh>
 
 #define LIBURBIDEBUG
 

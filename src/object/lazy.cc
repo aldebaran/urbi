@@ -1,8 +1,8 @@
-#include "ast/function.hh"
-#include "ast/scope.hh"
-#include "global-class.hh"
-#include "runner/interpreter.hh"
-#include "lazy.hh"
+#include <ast/function.hh>
+#include <ast/scope.hh>
+#include <object/global-class.hh>
+#include <object/lazy.hh>
+#include <runner/interpreter.hh>
 
 namespace object
 {

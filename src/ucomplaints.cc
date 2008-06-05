@@ -1,8 +1,8 @@
 /// \file ucomplaints.cc
 
 #include <cstdlib>
-#include "libport/assert.hh"
-#include "kernel/ucomplaints.hh"
+#include <libport/assert.hh>
+#include <kernel/ucomplaints.hh>
 
 static const char* messages[][250] =
   {

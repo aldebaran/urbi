@@ -22,10 +22,10 @@
 #include <libport/cstring>
 #include <libport/windows.hh>
 
-#include "kernel/utypes.hh"
-#include "kernel/userver.hh"
+#include <kernel/utypes.hh>
+#include <kernel/userver.hh>
 
-#include "ughostconnection.hh"
+#include <ughostconnection.hh>
 
 
 // Parameters used by the constructor, and other constants.

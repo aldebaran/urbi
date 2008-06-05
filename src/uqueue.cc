@@ -10,9 +10,9 @@
 #include <cassert>
 #include <string>
 
-#include "parser/prescan.hh"
+#include <parser/prescan.hh>
 
-#include "uqueue.hh"
+#include <uqueue.hh>
 
 UQueue::UQueue ()
   : buffer_(),

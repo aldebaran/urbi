@@ -9,18 +9,18 @@
 #include <libport/hash.hh>
 
 
-#include "object/atom.hh"
-#include "object/urbi-exception.hh"
-#include "object/primitives.hh"
-#include "object/idelegate.hh"
-#include "object/object.hh"
-#include "object/object-class.hh"
-#include "object/global-class.hh"
-#include "kernel/userver.hh"
-#include "kernel/uconnection.hh"
-#include "urbi/uobject.hh"
-#include "uvalue-cast.hh"
-#include "uobject.hh"
+#include <object/atom.hh>
+#include <object/urbi-exception.hh>
+#include <object/primitives.hh>
+#include <object/idelegate.hh>
+#include <object/object.hh>
+#include <object/object-class.hh>
+#include <object/global-class.hh>
+#include <kernel/userver.hh>
+#include <kernel/uconnection.hh>
+#include <urbi/uobject.hh>
+#include <uvalue-cast.hh>
+#include <uobject.hh>
 
 
 // Make it more readable.

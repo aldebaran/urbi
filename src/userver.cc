@@ -40,26 +40,26 @@
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
-#include "urbi/uobject.hh"
-#include "urbi/usystem.hh"
+#include <urbi/uobject.hh>
+#include <urbi/usystem.hh>
 
-#include "kernel/userver.hh"
-#include "kernel/utypes.hh"
+#include <kernel/userver.hh>
+#include <kernel/utypes.hh>
 
-#include "ast/ast.hh"
-#include "ast/nary.hh"
+#include <ast/ast.hh>
+#include <ast/nary.hh>
 
-#include "object/atom.hh"
-#include "object/object-class.hh"
-#include "object/primitives.hh"
-#include "runner/runner.hh"
-#include "scheduler/scheduler.hh"
+#include <object/atom.hh>
+#include <object/object-class.hh>
+#include <object/primitives.hh>
+#include <runner/runner.hh>
+#include <scheduler/scheduler.hh>
 
-#include "server-timer.hh"
-#include "ubanner.hh"
-#include "ughostconnection.hh"
-#include "uobject.hh"
-#include "uqueue.hh"
+#include <server-timer.hh>
+#include <ubanner.hh>
+#include <ughostconnection.hh>
+#include <uobject.hh>
+#include <uqueue.hh>
 
 // Global server reference
 UServer *urbiserver = 0;

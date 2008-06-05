@@ -2,13 +2,13 @@
 // frequently, so include it in a small file instead of userver.cc
 // which is demanding.
 
-#include "kernel/userver.hh"
+#include <kernel/userver.hh>
 
-#include "libport/package-info.hh"
+#include <libport/package-info.hh>
 
-#include "sdk/config.h"
-#include "version.hh"
-#include "ubanner.hh"
+#include <sdk/config.h>
+#include <version.hh>
+#include <ubanner.hh>
 
 // Standard header used by the server. Divided into "before" and
 // "after" the custom header defined by the real server.

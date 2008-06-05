@@ -1,4 +1,4 @@
-#include "kernel/kernconf.hh"
+#include <kernel/kernconf.hh>
 
 kernconf_type kernconf = {
   // Default is large enough until we enable a mechanism to dynamically
