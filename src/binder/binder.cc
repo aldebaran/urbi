@@ -106,11 +106,6 @@ namespace binder
     if (implicit)
     {
       unsigned depth = depth_get(name);
-      if (name == SYMBOL(call)
-          || name == SYMBOL(self))
-      {
-        depth = depth_;
-      }
       if (depth)
       {
         // This is a closed variable
