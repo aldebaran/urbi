@@ -764,6 +764,7 @@ Code:
         type: 'declarations_type*'
         mandatory: False
         desc: Formal arguments.  If null, a lazy function.
+        access: rwW
     - body:
         type: 'rAbstractScope'
         access: rwW
@@ -773,6 +774,11 @@ Code:
         type: unsigned
         desc: '/// The size of the stack frame needed to run this function.'
         init: '0'
+        access: rwW
+    - local_variables:
+        type: 'declarations_type*'
+        init: "0"
+        mandatory: False
         access: rwW
   inline:
     header inside: |2
@@ -804,9 +810,15 @@ Function:
         type: symbols_type
         access: rwW
         init: 'symbols_type()'
+  # Cloning a list of reference such as this one requires a mapping table
+  # in the cloner. Forbid it for now.
+  cloner_prologue: assert(!e->local_variables_get());
 
 Closure:
   super: Code
+  # Cloning a list of reference such as this one requires a mapping table
+  # in the cloner. Forbid it for now.
+  cloner_prologue: assert(!e->local_variables_get());
 
 LocalWrite:
   super: Exp
@@ -822,8 +834,15 @@ LocalWrite:
         access: rwW
         init: '0'
 
+
 Declaration:
   super: LocalWrite
+  attributes:
+    - closed:
+        type: 'bool'
+        desc: Whether this variable is closed-over by a subcontext
+        access: rW
+        init: 'false'
   printer:
     - '"var "'
     - $what
@@ -837,6 +856,19 @@ Assignment:
         type: unsigned
         desc: the number of contexts to rewind to find the actual variable
         access: rwW
+    - declaration:
+        type: rDeclaration
+        access: rwW
+        init: '0'
+  inline:
+    header inside: 'public: bool closed_get() const;'
+    impl inside: |2
+      bool Assignment::closed_get() const
+      {
+        assert(declaration_);
+        return declaration_->closed_get();
+      }
+  cloner_prologue: 'assert(!e->declaration_get());'
   printer:
     - $what
     - '" = "'
@@ -858,10 +890,27 @@ Local:
         access: rwW
         desc: How many contexts we have to rewind to find the actual value of the
               variable (thus 0 means this is an actual local variable).
-    - local_index:
-        type: unsigned
+    - declaration:
+        type: rDeclaration
         access: rwW
-        desc: Index in the local frame.
+        init: '0'
+  cloner_prologue: 'assert(!e->declaration_get());'
+  inline:
+    header inside: |2
+      public:
+        bool closed_get() const;
+        unsigned local_index_get() const;
+    impl inside: |2
+      bool Local::closed_get() const
+      {
+        assert(declaration_);
+        return declaration_->closed_get();
+      }
+      unsigned Local::local_index_get() const
+      {
+        assert(declaration_);
+        return declaration_->local_index_get();
+      }
   default: |2
     visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
     if (n->arguments_get())

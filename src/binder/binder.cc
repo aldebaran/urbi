@@ -21,20 +21,10 @@ namespace binder
   {
     unbind_.push_back(libport::Finally());
     setOnSelf_.push_back(true);
-    push_frame_size();
   }
 
   Binder::~Binder()
   {}
-
-  static inline
-  boost::optional<libport::Symbol> getFirstArg(ast::rConstCall call)
-  {
-    ast::rConstAst arg1 = call->arguments_get()->front();
-    if (!arg1.unsafe_cast<const ast::String>())
-      return boost::optional<libport::Symbol>();
-    return libport::Symbol(arg1.unsafe_cast<const ast::String>()->value_get());
-  }
 
   unsigned Binder::depth_get(const libport::Symbol& name)
   {
@@ -42,19 +32,15 @@ namespace binder
       return 0;
     else
     {
-      assert(env_[name].back().get<1>() > 0);
-      return env_[name].back().get<1>();
+      assert(env_[name].back().second > 0);
+      return env_[name].back().second;
     }
   }
 
-  unsigned Binder::local_index_get(const libport::Symbol& name)
+  ast::rDeclaration Binder::decl_get(const libport::Symbol& name)
   {
-    if (name == SYMBOL(self))
-      return 0;
-    if (name == SYMBOL(call))
-      return 1;
-    assert(!env_[name].empty());
-    return env_[name].back().get<2>();
+    assert (!env_[name].empty());
+    return env_[name].back().first;
   }
 
   ast::rCall Binder::changeSlot (const ast::loc& l,
@@ -71,12 +57,14 @@ namespace binder
 
   void Binder::visit(ast::rConstAssignment input)
   {
-    if (unsigned depth = depth_get(input->what_get()))
+    assert(!input->declaration_get());
+    libport::Symbol name = input->what_get();
+    if (unsigned depth = depth_get(name))
     {
       super_type::visit(input);
       ast::rAssignment res = result_.unsafe_cast<ast::Assignment>();
       res->depth_set(depth_ - depth);
-      res->local_index_set(local_index_get(input->what_get()));
+      res->declaration_set(decl_get(name));
     }
     else
     {
@@ -100,10 +88,13 @@ namespace binder
     }
     else
     {
-      int idx = locals_size_.back().first;
-      bind(input);
       super_type::visit(input);
-      result_.unsafe_cast<ast::Declaration>()->local_index_set(idx);
+      ast::rDeclaration res = result_.unsafe_cast<ast::Declaration>();
+      bind(res);
+      // FIXME: How should we handle the toplevel?
+      if (!function_stack_.empty())
+        function()->local_variables_get()->
+          push_back(res);
     }
   }
 
@@ -117,18 +108,23 @@ namespace binder
       unsigned depth = depth_get(name);
       if (name == SYMBOL(call)
           || name == SYMBOL(self))
+      {
         depth = depth_;
+      }
       if (depth)
       {
         // This is a closed variable
-        for (unsigned i = 0; i < depth_ - depth; i++)
-          (closed_variables_stack_.end() - 1 - i)->insert(name);
+        function_stack_type::iterator it = function_stack_.end();
+        for (int i = depth_ - depth; i; --i, --it)
+          decl_get(name)->closed_set(true);
+
         const ast::exps_type* args = input->arguments_get();
-        result_ = new ast::Local(
+        ast::rLocal res = new ast::Local(
           input->location_get(), name,
           args ? recurse_collection(*args) : 0,
-          depth_ - depth,
-          local_index_get(name));
+          depth_ - depth);
+        res->declaration_set(decl_get(name));
+        result_ = res;
         return;
       }
       else
@@ -143,10 +139,10 @@ namespace binder
     libport::Finally finally;
 
     unbind_.push_back(libport::Finally());
-    finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
+    finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
     setOnSelf_.push_back(false);
-    finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
+    finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
     bind(input->index_get());
     super_type::visit(input);
@@ -174,10 +170,10 @@ namespace binder
     // exit. Since bound variables register themselves for unbinding
     // in unbind_'s top element, they will be unbound at scope exit.
     unbind_.push_back(libport::Finally());
-    finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
+    finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
     setOnSelf_.push_back(setOnSelf);
-    finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
+    finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
     operator() (scope->body_get());
     return result_.unsafe_cast<ast::Exp>();
@@ -192,95 +188,82 @@ namespace binder
   {
     libport::Finally finally;
 
+    // Clone and push the function, without filling its body and arguments
+    ast::rFunction res = new ast::Function(input->location_get(), 0, 0);
+    res->local_variables_set(new ast::declarations_type());
+    push_function(res);
+    finally << boost::bind(&Binder::pop_function, this);
+
+    // Open a new scope
     unbind_.push_back(libport::Finally());
-    finally << boost::bind(&std::list<libport::Finally>::pop_back, &unbind_);
+    finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
-    push_frame_size();
-    finally << boost::bind(&Binder::pop_frame_size, this);
-
-    push_closed_variables();
-    finally << boost::bind(&Binder::pop_closed_variables, this);
-
+    // Do not setOnSelf in this scope
     setOnSelf_.push_back(false);
-    finally << boost::bind(&std::list<bool>::pop_back, &setOnSelf_);
+    finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
+    // Increase the nested functions depth
     depth_++;
     finally << boost::bind(decrement, &depth_);
 
-    if (input->formals_get())
-    {
-      foreach (ast::rConstDeclaration arg, *input->formals_get())
-	bind(arg);
-    }
+    // Bind and clone arguments
+    ast::declarations_type* formals =
+      input->formals_get () ? recurse_collection (*input->formals_get ()) : 0;
 
-    super_type::visit (input);
-    ast::rFunction res = result_.unsafe_cast<ast::Function>();
-    res->locals_size_set(frame_size());
-    foreach (const libport::Symbol& var, closed_variables())
-      res->closed_variables_get().push_back(var);
+    // Bind and clone the body
+    ast::rAbstractScope body = recurse (input->body_get ());
+
+    // Assemble the result
+    res->formals_set(formals);
+    res->body_set(body);
+    result_ = res;
+
+    // Index local and closed variables
+    int local = 2;
+    int closed = 0;
+    foreach (ast::rDeclaration dec, *res->local_variables_get())
+      if (dec->closed_get())
+        dec->local_index_set(closed++);
+      else
+        dec->local_index_set(local++);
   }
 
   void Binder::visit(ast::rConstClosure input)
   {
-    if (input->formals_get())
-    {
-      foreach (ast::rConstDeclaration arg, *input->formals_get())
+    assert(!input->local_variables_get());
+    ast::declarations_type* formals =
+      input->formals_get () ? recurse_collection (*input->formals_get ()) : 0;
+    if (formals)
+      foreach (ast::rDeclaration arg, *formals)
 	bind(arg);
-    }
-    super_type::visit(input);
+
+    ast::rAbstractScope body = recurse (input->body_get ());
+    ast::rClosure res = new ast::Closure (input->location_get(), formals, body);
+    result_ = res;
   }
 
-  void Binder::bind(ast::rConstDeclaration decl)
+  void Binder::bind(ast::rDeclaration decl)
   {
     assert(decl);
-    env_[decl->what_get()].push_back(boost::make_tuple(decl, depth_,
-                                          locals_size_.back().first));
+    env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
-
-    inc_frame_size();
   }
 
-  void Binder::push_frame_size()
+  void Binder::push_function(ast::rFunction f)
   {
-    // The initial size is two, for self and call.
-    // This might change when self becomes a keyword
-    locals_size_.push_back(std::make_pair(2, 2));
+    function_stack_.push_back(f);
   }
 
-  void Binder::pop_frame_size()
+  void Binder::pop_function()
   {
-    locals_size_.pop_back();
+    function_stack_.pop_back();
   }
 
-  unsigned Binder::frame_size() const
+  ast::rFunction Binder::function() const
   {
-    return locals_size_.back().second;
-  }
-
-  void Binder::inc_frame_size()
-  {
-    locals_size_.back().first++;
-    unbind_.back() <<
-      boost::bind(decrement, &locals_size_.back().first);
-
-    if (locals_size_.back().first > locals_size_.back().second)
-      locals_size_.back().second = locals_size_.back().first;
-  }
-
-  void Binder::push_closed_variables()
-  {
-    closed_variables_stack_.push_back(closed_variables_type());
-  }
-
-  void Binder::pop_closed_variables()
-  {
-    closed_variables_stack_.pop_back();
-  }
-
-  const Binder::closed_variables_type& Binder::closed_variables() const
-  {
-    return closed_variables_stack_.back();
+    assert(!function_stack_.empty());
+    return function_stack_.back();
   }
 
 } // namespace binder

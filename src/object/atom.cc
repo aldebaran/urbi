@@ -202,6 +202,8 @@ namespace object
                                          runner::Runner&) const
   {
     o << "value" << " = " << libport::deref << value_ << libport::iendl;
+    o << "local variables = ["
+      << *value_->local_variables_get() << "]" << libport::iendl;
     o << "frame size = " << value_->locals_size_get() << libport::iendl;
     if (ast::rConstFunction f = value_.unsafe_cast<const ast::Function>())
       o << "closed-over variables = ["
