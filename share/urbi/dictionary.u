@@ -23,4 +23,13 @@ do Global.Dictionary
       "Dictionary {" + res.join(", ") + "}"
     }
   };
+
+  function getWithDefault(name, default)
+  {
+    if (has(name))
+      get(name)
+    else
+      default
+  };
+
 };
