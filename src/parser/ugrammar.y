@@ -936,15 +936,15 @@ stmt_loop:
 ;
 
 
-/*---------------------.
+/*--------------------.
 | exp: Control flow.  |
-`---------------------*/
+`--------------------*/
 
 %token TOK_DO "do";
 
 exp:
-	    block  { $$ = ast_scope(@$,  0, $1.value()); }
-| "do" exp block   { $$ = ast_scope(@$, $2.value(), $3.value()); }
+	   block  { $$ = ast_scope(@$, 0, $1.value()); }
+| "do" exp block  { $$ = ast_scope(@$, $2.value(), $3.value()); }
 ;
 
 /*---------------------------.
