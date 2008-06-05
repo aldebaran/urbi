@@ -21,6 +21,12 @@
 namespace parser
 {
 
+# define TWEAST_META_VARS                       \
+  (ast::rCall)                                  \
+  (ast::rExp)                                   \
+  (ast::exps_type*)                             \
+  (ast::symbols_type*)
+
   /// \brief TWEAST stands for ``Text With Embedded Abstract Syntax Trees''.
   ///
   /// Aggregate string to parse and tables of metavariables.
@@ -70,22 +76,16 @@ namespace parser
 
   protected:
     /// Store some typed data.
-    /// \{
-    using MetavarMap<ast::rCall>::append_;
-    using MetavarMap<ast::rExp>::append_;
-    using MetavarMap<ast::exps_type*>::append_;
-    using MetavarMap<ast::symbols_type*>::append_;
     template <typename T> T& append_ (unsigned&, T& data) const;
-    /// \}
 
     /// Whether the pointer must be registered only once.
-    /// \{
-    using MetavarMap<ast::rCall>::must_be_unique_;
-    using MetavarMap<ast::rExp>::must_be_unique_;
-    using MetavarMap<ast::exps_type*>::must_be_unique_;
-    using MetavarMap<ast::symbols_type*>::must_be_unique_;
     template <typename T> bool must_be_unique_ (const T&) const;
-    /// \}
+
+# define TWEAST_USING_META_VARIABLE(R, Data, Elem)      \
+    using MetavarMap<Elem>::append_;                    \
+    using MetavarMap<Elem>::must_be_unique_;
+    BOOST_PP_SEQ_FOR_EACH(TWEAST_USING_META_VARIABLE, ~, TWEAST_META_VARS);
+# undef TWEAST_USING_META_VARIABLE
 
   protected:
     /// The next identifier suffix to create.
