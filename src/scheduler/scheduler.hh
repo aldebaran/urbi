@@ -19,6 +19,11 @@
 namespace scheduler
 {
 
+  enum {
+    SCHED_EXIT      = -1,
+    SCHED_IMMEDIATE = 0
+  };
+
   class Scheduler : boost::noncopyable
   {
   public:
@@ -34,10 +39,11 @@ namespace scheduler
   public:
     /// Do one cycle of work, and return the next time we expect to be called.
     ///
-    /// \return If we have work to do, 0 will be returned in order to
-    /// be called again as soon as possible. If we only have
-    /// time-suspended or dependent jobs, we will return the time of
-    /// the next scheduled one.
+    /// \return If we have work to do, 0 will be returned
+    /// (\p SCHED_IMMEDIATE) in order to be called again as soon as
+    /// possible. If we only have time-suspended or dependent jobs, we
+    /// will return the time of the next scheduled one. If \p killall_jobs()
+    /// has been called and all jobs are dead, \p SCHED_EXIT will be returned.
     ///
     /// Calling work() again before the returned time is useless as there will
     /// be nothing to do except if some new work has been entered in.
@@ -146,6 +152,9 @@ namespace scheduler
 
     /// Cycles counter.
     unsigned int cycle_;
+
+    /// Ready to die when all jobs are also dead.
+    bool ready_to_die_;
 
     /// List of tags that have been stopped or blocked. \sa
     /// signal_stop(), check_for_stopped_tags().

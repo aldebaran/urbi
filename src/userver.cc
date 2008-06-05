@@ -379,8 +379,6 @@ UServer::display(const char** b)
 void
 UServer::shutdown()
 {
-  // FIXME: If shutdown is overriden in subclasses, this code is
-  // not run.  Move it to the dtor?
   scheduler_->killall_jobs ();
 }
 

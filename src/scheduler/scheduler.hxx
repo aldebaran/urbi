@@ -14,11 +14,12 @@ namespace scheduler
 
   inline
   Scheduler::Scheduler (boost::function0<libport::utime_t> get_time)
-    : get_time_ (get_time),
-      current_job_ (0),
-      coro_ (coroutine_new ()),
-      possible_side_effect_ (true),
-      cycle_ (0)
+    : get_time_ (get_time)
+    , current_job_ (0)
+    , coro_ (coroutine_new ())
+    , possible_side_effect_ (true)
+    , cycle_ (0)
+    , ready_to_die_(false)
   {
     ECHO ("Initializing main coroutine");
     coroutine_initialize_main (coro_);
@@ -30,8 +31,8 @@ namespace scheduler
     ECHO ("Destroying scheduler");
   }
 
-  inline
-  Job& Scheduler::current_job () const
+  inline Job&
+  Scheduler::current_job () const
   {
     assert (current_job_);
     return *current_job_;
@@ -43,8 +44,8 @@ namespace scheduler
     return cycle_;
   }
 
-  inline
-  libport::utime_t Scheduler::get_time () const
+  inline libport::utime_t
+  Scheduler::get_time () const
   {
     return get_time_ ();
   }

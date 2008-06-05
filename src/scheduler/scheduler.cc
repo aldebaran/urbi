@@ -110,7 +110,7 @@ namespace scheduler
 	current_job_ = 0;
 	ECHO ("Job " << *job << " has been started");
 	assert (job->state_get () != to_start);
-	deadline = 0;
+	deadline = SCHED_IMMEDIATE;
 	continue;
       case zombie:
 	assert (false);
@@ -170,7 +170,7 @@ namespace scheduler
 	switch (job->state_get ())
 	{
 	case running:
-	  deadline = 0;
+	  deadline = SCHED_IMMEDIATE;
 	  break;
 	case sleeping:
 	  deadline = std::min (deadline, job->deadline_get ());
@@ -187,7 +187,11 @@ namespace scheduler
     /// start it. Also start if a possible side effect happened, it may have
     /// occurred later then the waiting jobs in the cycle.
     if (jobs_to_start_ || possible_side_effect_)
-      deadline = 0;
+      deadline = SCHED_IMMEDIATE;
+
+    /// If we are ready to die and there are no jobs left, then die.
+    if (ready_to_die_ && jobs_.empty())
+      deadline = SCHED_EXIT;
 
     return deadline;
   }
@@ -274,6 +278,12 @@ namespace scheduler
   {
     ECHO ("killing all jobs!");
 
+    // Mark the scheduler as ready to die when all the jobs are
+    // really dead.
+    ready_to_die_ = true;
+
+    // Since killing the current job will result in its immediate
+    // termination, kill all other jobs before.
     foreach (rJob job, jobs_get())
       job->terminate_now ();
   }

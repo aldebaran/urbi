@@ -22,6 +22,8 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
+#include <scheduler/scheduler.hh>
+
 #include "ubanner.hh"
 
 class ConsoleServer
@@ -36,11 +38,6 @@ public:
   virtual ~ConsoleServer()
   {}
 
-  virtual void shutdown()
-  {
-    UServer::shutdown ();
-    exit (EX_OK);
-  }
   virtual void beforeWork()
   {
   }
@@ -226,6 +223,10 @@ main (int argc, const char* argv[])
       Network::selectAndProcess(select_time);
 
     next_time = s.work ();
+    if (next_time == scheduler::SCHED_EXIT)
+      break;
     s.ctime = std::max (next_time, s.ctime + 1000L);
   }
+
+  exit(EX_OK);
 }
