@@ -333,7 +333,7 @@
 
 %printer { debug_stream() << libport::deref << $$; } <exp> <call> <nary>;
 
-%type <exp> exp exp.opt flag flags.0 flags.1 softtest stmt;
+%type <exp> exp exp.opt flag flags.0 flags.1 softtest stmt stmt_loop;
 
 
 /*----------------------.
@@ -766,7 +766,8 @@ nstmt:
 ;
 
 stmt:
-  "at" "(" exp ")" nstmt %prec CMDBLOCK
+  stmt_loop
+| "at" "(" exp ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
@@ -812,18 +813,6 @@ stmt:
     {
       $$ = new ast::If(@$, $3, $5, $7);
     }
-| "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
-    {
-      FLAVOR_CHECK(@$, "for", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
-      $$ = ast_for (@$, $1, $3, $5, $7, $9);
-    }
-| "for" "identifier" "in" exp block    %prec CMDBLOCK
-    {
-      $$ = new ast::Foreach(@$, $1,
-                            new ast::Declaration(@2, $2, new ast::Implicit(@2)),
-                            $4.value(), $5.value());
-    }
 | "freezeif" "(" softtest ")" stmt
     {
       libport::Symbol ex = libport::Symbol::fresh(SYMBOL(freezeif));
@@ -835,36 +824,6 @@ stmt:
        << "at(" << $3.value() << ") " << in << ".freeze onleave "
        << in << ".unfreeze|" << in << " : { " << $5.value() << "| "
        << ex << ".stop } }");
-    }
-/*
- *  This loop keyword can't be converted to a for, since it would
- *  cause an ambiguity in the language. Consider this line:
- *
- *      for (42);
- *
- *  It could be either:
- *
- *      for (42)
- *        ;
- *
- *  i.e, while 42 is true execute the empty instruction, either:
- *
- *      for
- *        42;
- *
- *  i.e. execute "42"  forever, with 42 being parenthesized.
- */
-| "loop" stmt %prec CMDBLOCK
-    {
-      $$ = new ast::While(@$, $1, new ast::Float(@$, 1), $2);
-    }
-| "for" "(" exp ")" stmt %prec CMDBLOCK
-    {
-      libport::Symbol id = libport::Symbol::fresh();
-      DESUGAR("for (var " << id << " = " << $3.value() << ";"
-	      << "    0 < " << id << ";"
-	      << "    " << id << "--)"
-	      << "  " << $5.value());
     }
 | "stopif" "(" softtest ")" stmt
     {
@@ -913,16 +872,66 @@ stmt:
               << $5.value() << ") | whenever_(" << s << ".val, "
               << $7.value() << ", " << $9.value() << ")");
     }
+| "onevent" "identifier" formals block
+    {
+      DESUGAR($2.value() << ".onEvent(function " << $3
+              << " { " << ast_exp($4.value()) << " })");
+    }
+;
+
+
+/*--------.
+| Loops.  |
+`--------*/
+
+stmt_loop:
+/*
+ *  This loop keyword can't be converted to a for, since it would
+ *  cause an ambiguity in the language. Consider this line:
+ *
+ *      for (42);
+ *
+ *  It could be either:
+ *
+ *      for (42)
+ *        ;
+ *
+ *  i.e, while 42 is true execute the empty instruction, either:
+ *
+ *      for
+ *        42;
+ *
+ *  i.e. execute "42"  forever, with 42 being parenthesized.
+ */
+  "loop" stmt %prec CMDBLOCK
+    {
+      $$ = new ast::While(@$, $1, new ast::Float(@$, 1), $2);
+    }
+| "for" "(" exp ")" stmt %prec CMDBLOCK
+    {
+      libport::Symbol id = libport::Symbol::fresh();
+      DESUGAR("for (var " << id << " = " << $3.value() << ";"
+	      << "    0 < " << id << ";"
+	      << "    " << id << "--)"
+	      << "  " << $5.value());
+    }
+| "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
+    {
+      FLAVOR_CHECK(@$, "for", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
+      $$ = ast_for (@$, $1, $3, $5, $7, $9);
+    }
+| "for" "identifier" "in" exp block    %prec CMDBLOCK
+    {
+      $$ = new ast::Foreach(@$, $1,
+                            new ast::Declaration(@2, $2, new ast::Implicit(@2)),
+                            $4.value(), $5.value());
+    }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "while", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = new ast::While(@$, $1, $3, $5);
-    }
-| "onevent" "identifier" formals block
-    {
-      DESUGAR($2.value() << ".onEvent(function " << $3
-              << " { " << ast_exp($4.value()) << " })");
     }
 ;
 
