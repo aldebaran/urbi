@@ -144,10 +144,9 @@ namespace object
 
     /// Binary predicate used to sort lists.
     static bool
-    compareListItems (runner::Runner&, rObject a, rObject b)
+    compareListItems (runner::Runner& r, rObject a, rObject b)
     {
-      return is_true(urbi_call(::urbiserver->getCurrentRunner(),
-                               a, SYMBOL(LT), b));
+      return is_true(urbi_call(r, a, SYMBOL(LT), b));
     }
 
     /// \brief Sort a list.
