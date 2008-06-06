@@ -1,7 +1,5 @@
 class Global.Event
 {
-  var asString = "<Event>";
-
   function init ()
   {
     var self.emitted = [] |
