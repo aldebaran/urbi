@@ -354,6 +354,14 @@ namespace scheduler
 
     /// The exception being propagated if any.
     kernel::exception_ptr current_exception_;
+
+  protected:
+    /// Exception used to terminate a job.
+    struct TerminateException : public SchedulerException
+    {
+      COMPLETE_EXCEPTION(TerminateException)
+    };
+
   };
 
   std::ostream& operator<< (std::ostream&, const Job&);

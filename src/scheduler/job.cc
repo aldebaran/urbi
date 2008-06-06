@@ -7,17 +7,6 @@
 
 namespace scheduler
 {
-  struct TerminateException : public SchedulerException
-  {
-    virtual std::string
-    what() const throw ()
-    {
-      return "TerminateException";
-    }
-
-    COMPLETE_EXCEPTION(TerminateException)
-  };
-
   StopException::StopException(int depth, boost::any payload)
     : depth_(depth)
     , payload_(payload)

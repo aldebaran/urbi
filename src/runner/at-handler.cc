@@ -164,6 +164,11 @@ namespace runner
 	side_effect_free_set(true);
 	yield_until_things_changed();
       }
+      catch (const TerminateException&)
+      {
+	// Regular termination.
+	break;
+      }
       catch (const kernel::exception& e)
       {
 	std::cerr << "at job handler exited with exception " << e.what()
