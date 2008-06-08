@@ -4,6 +4,9 @@ do Task {
    {
      echo("Task: " + name)|
      echo("  State: " + status) |
+     var t = timeShift |
+     if (t)
+       echo("  Timeshift: " + t + "ms") |
      var ts = "" |
      for| t in tags {
        ts += " " + t.name;
