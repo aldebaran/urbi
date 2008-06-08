@@ -1,4 +1,7 @@
+#include <algorithm>
 #include <iostream>
+
+#include <boost/mem_fn.hpp>
 
 #include <libport/compiler.hh>     // For ECHO
 #include <libport/foreach.hh>
@@ -108,10 +111,10 @@ namespace scheduler
   bool
   Job::frozen() const
   {
-    foreach (const rTag& tag, tags_)
-      if (tag->frozen())
-	return true;
-    return false;
+    return std::find_if(tags_.begin(),
+			tags_.end(),
+			boost::mem_fn(&scheduler::Tag::frozen))
+      != tags_.end();
   }
 
   void
