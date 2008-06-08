@@ -1,14 +1,15 @@
-#include <runner/at-handler.hh>
-
+#include <algorithm>
 #include <iostream>
 #include <list>
 
 #include <boost/bind.hpp>
+#include <boost/mem_fn.hpp>
 #include <boost/ptr_container/ptr_list.hpp>
 
 #include <libport/containers.hh>
 #include <libport/finally.hh>
 
+#include <runner/at-handler.hh>
 #include <scheduler/tag.hh>
 
 namespace runner
@@ -215,19 +216,19 @@ namespace runner
   bool
   AtJob::blocked() const
   {
-    foreach(const scheduler::rTag& tag, tags_)
-      if (tag->blocked())
-	return true;
-    return false;
+    return std::find_if(tags_.begin(),
+			tags_.end(),
+			boost::mem_fn(&scheduler::Tag::blocked))
+      != tags_.end();
   }
 
   bool
   AtJob::frozen() const
   {
-    foreach(const scheduler::rTag& tag, tags_)
-      if (tag->frozen())
-	return true;
-    return false;
+    return std::find_if(tags_.begin(),
+			tags_.end(),
+			boost::mem_fn(&scheduler::Tag::frozen))
+      != tags_.end();
   }
 
   const rObject&
