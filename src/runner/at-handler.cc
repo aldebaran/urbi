@@ -6,6 +6,7 @@
 #include <boost/bind.hpp>
 #include <boost/ptr_container/ptr_list.hpp>
 
+#include <libport/containers.hh>
 #include <libport/finally.hh>
 
 #include <scheduler/tag.hh>
@@ -208,10 +209,7 @@ namespace runner
   bool
   AtJob::tag_held(const scheduler::rTag& tag) const
   {
-    foreach (const scheduler::rTag& t, tags_)
-      if (t == tag)
-	return true;
-    return false;
+    return libport::has(tags_, tag);
   }
 
   bool
