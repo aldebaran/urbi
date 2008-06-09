@@ -45,12 +45,9 @@ def print_includes (node, header, inline, impl):
 
   includes = {}
 
-  # If the class has no parents, it derives from boost::noncopyable.
   if node.super:
     for sup in node.super:
       includes["<ast/" + sup.hh () + ">"] = True
-  else:
-    includes['<boost/utility.hpp>'] = True
 
   for inc in node.includes:
     includes[inc] = True
@@ -135,22 +132,12 @@ def print_class_open (node, header, inline, impl):
   sys.stdout = header
   decl = "class " + node.name
 
-  # Declare parents.  If there are non, declare that the class
-  # is non-copyable.
-  decl += " : "
-  if node.super:
-    tail = False
-    for sup in node.super:
-      if tail:
-	decl += ", "
-      else:
-	tail = True
-      decl += "public " + sup.name
-  else:
-    decl += "boost::noncopyable"
-
-  for sup in node.super_non_nodes:
-    decl += ", public " + sup
+  # Declare parents.
+  sups = [sup.name for sup in node.super]
+  parents = ", ".join(["public " + super
+		       for super in sups + node.super_non_nodes])
+  if parents:
+    decl += " : " + parents
 
   print node.description()
   print "  " + decl
