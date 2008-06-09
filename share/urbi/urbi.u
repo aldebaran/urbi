@@ -245,7 +245,6 @@ do Object
   function whenever_
   {
     detach ({
-      var t = currentRunner |
       loop {
         waituntil (call.evalArgAt (1)) |
         loop {
