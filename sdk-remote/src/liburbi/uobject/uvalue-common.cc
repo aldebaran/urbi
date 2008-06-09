@@ -646,15 +646,14 @@ namespace
     switch (type)
     {
       case DATA_DOUBLE:
-      {
-	std::ostringstream tstr;
-	tstr << val;
-	return tstr.str();
-      }
-      break;
+	{
+	  std::ostringstream tstr;
+	  tstr << val;
+	  return tstr.str();
+	}
+
       case DATA_STRING:
 	return *stringValue;
-	break;
 
       case DATA_BINARY:
 	// We cannot convert to UBinary because it is ambigous so we try until
