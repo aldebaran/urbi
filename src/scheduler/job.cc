@@ -159,7 +159,7 @@ namespace scheduler
     // Check if we are affected by this tag, up-to max_tag_check from
     // the beginning of the tag list.
     for (int i = 0; i < max_tag_check; i++)
-      if (tags_[i] == tag)
+      if (tags_[i]->derives_from(*tag))
       {
 	async_throw(StopException(i, payload));
 	return;

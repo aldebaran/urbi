@@ -43,6 +43,9 @@ namespace scheduler
     bool frozen() const;
     bool blocked() const;
 
+    // Is this tag identical to \a other, or does it derive from it?
+    bool derives_from(const Tag& other) const;
+
     // Act on a tag and make the scheduler take it into account
     void freeze(Scheduler&);
     void unfreeze(Scheduler&);
@@ -53,6 +56,7 @@ namespace scheduler
     const libport::Symbol& name_get() const;
 
   private:
+    explicit Tag(const Tag&);
     Tag(libport::Symbol name);
     Tag(rTag parent, libport::Symbol name);
     rTag parent_;

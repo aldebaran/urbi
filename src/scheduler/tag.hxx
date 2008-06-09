@@ -15,6 +15,12 @@ namespace scheduler
   {
   }
 
+  inline
+  Tag::Tag(const Tag&)
+  {
+    assert(false);
+  }
+
   inline rTag
   Tag::fresh(libport::Symbol name)
   {
@@ -32,13 +38,19 @@ namespace scheduler
   inline bool
   Tag::frozen() const
   {
-    return frozen_ ||(parent_ && parent_->frozen());
+    return frozen_ || (parent_ && parent_->frozen());
   }
 
   inline bool
   Tag::blocked() const
   {
-    return blocked_ ||(parent_ && parent_->blocked());
+    return blocked_ || (parent_ && parent_->blocked());
+  }
+
+  inline bool
+  Tag::derives_from(const Tag& other) const
+  {
+    return this == &other || (parent_ && parent_->derives_from(other));
   }
 
   inline void

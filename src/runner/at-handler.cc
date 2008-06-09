@@ -208,7 +208,9 @@ namespace runner
   bool
   AtJob::tag_held(const scheduler::rTag& tag) const
   {
-    return libport::has(tags_, tag);
+    return libport::any(tags_, boost::bind(&scheduler::Tag::derives_from,
+					   _1,
+					   boost::ref(*tag)));
   }
 
   bool
