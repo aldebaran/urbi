@@ -30,15 +30,15 @@ namespace object
     return res;
   }
 
-  /*-----------------.
-  | Tag primitives.  |
-  `-----------------*/
-
   scheduler::rTag
   extract_tag (const rObject& o)
   {
     return unbox (scheduler::rTag, o->slot_get (SYMBOL (tag)));
   }
+
+  /*-----------------.
+  | Tag primitives.  |
+  `-----------------*/
 
   static rObject
   tag_class_init (runner::Runner&, objects_type args)
