@@ -380,7 +380,6 @@ namespace runner
     static inline bool
     acceptVoid(object::rObject f)
     {
-      assertion(f);
       try
       {
 	return object::is_true(f->slot_get(SYMBOL(acceptVoid)));
