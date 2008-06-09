@@ -143,7 +143,7 @@ namespace binder
             decl = new ast::Declaration(loc, name, 0);
             decl->closed_set(true);
 
-            current->declaration_set(decl_get(name));
+            current->declaration_set(decl);
 
             current = new ast::Local(loc, name, 0, i - 1);
             decl->value_set(current);
