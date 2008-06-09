@@ -12,19 +12,13 @@ var Primitive.acceptVoid = 0;
 
 class Global.Constants
 {
-  var Global.Constants.true   = 1.0;
-  var Global.Constants.false  = 0.0;
-};
-
-Global.addProto (Global.Constants);
-
-do Global.Constants
-{
   var pi     = 3.14159265358979323846264338327950288;
   var inf    = Float.inf;
   var nan    = Float.nan;
 };
 
+
+Global.addProto (Global.Constants);
 
 ## -------- ##
 ## Object.  ##
@@ -155,6 +149,15 @@ load("urbi/list.u");
 ## ----------- ##
 
 load("urbi/singleton.u");
+
+## --------- ##
+## Booleans. ##
+## --------- ##
+
+true.addProto(Singleton);
+false.addProto(Singleton);
+true.asString = "true";
+false.asString = "false";
 
 ## ---- ##
 ## nil. ##

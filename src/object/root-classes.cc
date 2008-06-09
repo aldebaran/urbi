@@ -48,17 +48,20 @@ namespace object
   SYMBOL(asnil);
   SYMBOL(asSystem);
   SYMBOL(asvoid);
-  SYMBOL(nil);
   SYMBOL(Dictionary);
+  SYMBOL(false);
   SYMBOL(Global);
+  SYMBOL(nil);
   SYMBOL(System);
   SYMBOL(Tag);
+  SYMBOL(true);
   SYMBOL(void);
 
   */
 
+  CLASS_INITIALIZE(false);
   CLASS_INITIALIZE(nil);
-  // Where we store all the primitives (objects and functions).
+  CLASS_INITIALIZE(true);
   CLASS_INITIALIZE(void);
 #undef CLASS_INITIALIZE
 
@@ -91,10 +94,10 @@ namespace object
     {
       // Comparing two atoms with different types isn't an error, it
       // just return false
-      return Float::fresh(0);
+      return to_boolean(false);
     }
     libport::shared_ptr<T> arg1 = args[1].unsafe_cast<T>();
-    return Float::fresh(arg0->value_get() == arg1->value_get());
+    return to_boolean(arg0->value_get() == arg1->value_get());
   }
 
   /// Initialize the root classes.
@@ -161,6 +164,11 @@ namespace object
     CLASS_SETUP(system, System);
     CLASS_SETUP(void, void);
 
+    // Setup boolean entities.
+    true_class = Float::fresh(1.0);
+    false_class = Float::fresh(0.0);
+    CLASS_INIT(false, false);
+    CLASS_INIT(true, true);
 #undef SYMBOL_
 
 // This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
@@ -174,6 +182,7 @@ namespace object
 
     // Object.addProto(Global)
     object_class->proto_add(global_class);
+
   }
 
 } // namespace object

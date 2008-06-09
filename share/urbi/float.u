@@ -22,7 +22,7 @@ do Float
   function '=~='(x) { (self - x) <= self.delta + x.delta };
   function sgn() { if (self < 0) -1 else if (self > 0) 1 else 0 };
 
-  function '!'() { self == 0 };
+  function '!'() { self == false };
 
   // Create a list 0..(self - 1).
   function seq()

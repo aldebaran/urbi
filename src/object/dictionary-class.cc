@@ -45,7 +45,7 @@ namespace object
       FETCH_ARG(0, Dictionary);
       FETCH_ARG(1, String);
       Dict& d = arg0->value_get();
-      return Float::fresh(d.find(arg1->value_get()) != d.end());
+      return to_boolean(d.find(arg1->value_get()) != d.end());
     }
 
     static rObject

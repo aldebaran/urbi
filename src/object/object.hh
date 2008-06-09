@@ -293,8 +293,11 @@ namespace object
   /// Whether \b p is present in \b c's proto hierarchy.
   bool is_a(const rObject& c, const rObject& p);
 
-  /// Whether \o represents a true value
+  /// Whether \a o represents a true value.
   bool is_true(const rObject& o);
+
+  /// Return an Urbi boolean object corresponding to \a b.
+  rObject to_boolean(bool b);
 
 } // namespace object
 

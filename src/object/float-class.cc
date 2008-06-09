@@ -164,6 +164,15 @@ abs(libport::ufloat v)
     return arg0;
   }
 
+  /// Comparison operator.
+  static rObject
+  float_class_LT(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(2);
+    FETCH_ARG(0, Float);
+    FETCH_ARG(1, Float);
+    return to_boolean(arg0->value_get() < arg1->value_get());
+  }
 
   /// Unary or binary minus.
   static rObject
@@ -232,8 +241,6 @@ abs(libport::ufloat v)
   PRIMITIVE_2_FLOAT(LT_LT) // <<
   PRIMITIVE_2_FLOAT(GT_GT) // >>
   PRIMITIVE_2_FLOAT(CARET) // ^
-
-  PRIMITIVE_OP_FLOAT(LT, <)
 
   PRIMITIVE_0_FLOAT(sin)
   PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, -1, 1)

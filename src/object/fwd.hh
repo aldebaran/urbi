@@ -109,8 +109,10 @@ namespace object
   class WrongArgumentType;
   class WrongArgumentCount;
 
+  extern rObject false_class;
   extern rObject nil_class;
   extern rObject task_class;
+  extern rObject true_class;
   extern rObject void_class;
 } // namespace object
 

@@ -28,12 +28,12 @@ namespace object
     // Don't forget our Strings are wrapped in Symbols.
 #define PRIMITIVE_OP_STRING(Name, Op)			\
     static						\
-    rFloat						\
+    rObject						\
     Name (rString& a, rString& b)			\
     {							\
-      return Float::fresh(a->value_get ().name_get()    \
-                          Op				\
-                          b->value_get ().name_get());	\
+      return to_boolean(a->value_get ().name_get()	\
+			Op				\
+			b->value_get ().name_get());	\
     }
 
     PRIMITIVE_OP_STRING(LT,  <);

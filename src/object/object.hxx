@@ -244,6 +244,12 @@ namespace object
     return for_all_protos(r, f, objects);
   }
 
+  inline rObject
+  to_boolean(bool b)
+  {
+    return b ? true_class : false_class;
+  }
+
 } // namespace object
 
 #endif // !OBJECT_OBJECT_HXX
