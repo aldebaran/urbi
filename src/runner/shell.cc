@@ -1,3 +1,5 @@
+#include <libport/finally.hh>
+
 #include <object/object.hh>
 #include <object/tag-class.hh>
 #include <runner/shell.hh>
@@ -25,15 +27,24 @@ namespace runner
     while (true)
     {
       // Wait until we have some work to do
-      executing_ = false;
-      while (commands_.empty())
+      if (commands_.empty())
       {
-	bool side_effect_free_save = side_effect_free_get();
-	side_effect_free_set(true);
+	executing_ = false;
+
+	// The first yield will remember our possible side effect. Subsequent
+	// ones will not and will pretend that we didn't have any side effect,
+	// as we couldn't have influenced the system any further.
 	yield_until_things_changed();
-	side_effect_free_set(side_effect_free_save);
+
+	libport::Finally finally(boost::bind(&Job::side_effect_free_set,
+					     this,
+					     side_effect_free_get()));
+	side_effect_free_set(true);
+	while (commands_.empty())
+	  yield_until_things_changed();
+
+	executing_ = true;
       }
-      executing_ = true;
 
       ast::rConstNary nary = commands_.front();
       commands_.pop_front();

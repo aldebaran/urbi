@@ -138,7 +138,7 @@ namespace scheduler
 	// the previous run may have had some. Without it, we may miss some
 	// changes if the watching job is after the modifying job in the queue
 	// and the watched condition gets true for only one cycle.
-	start = start_waiting | possible_side_effect_;
+	start = start_waiting || possible_side_effect_;
 	break;
       case joining:
 	break;
