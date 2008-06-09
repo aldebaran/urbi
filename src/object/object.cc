@@ -324,17 +324,7 @@ namespace object
   std::ostream&
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
-    rObject data;
-    try
-    {
-      data = urbi_call(r, self(), SYMBOL(id));
-    }
-    catch (object::LookupError&)
-    {
-      // If this is a plain object, it has no 'id' method. Call
-      // Object's 'id' on it.
-      data = urbi_call_function(r, self(), object_class, SYMBOL(id));
-    }
+    rObject data = urbi_call(r, self(), SYMBOL(id));
     std::string s = data->value<String>().name_get();
     return o << s;
   }
