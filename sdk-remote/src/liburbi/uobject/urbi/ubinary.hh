@@ -87,6 +87,7 @@ namespace urbi
     {
       return !memcmp(this, &b, sizeof(USound));
     }
+    operator std::string() const;
   };
 
 

@@ -322,6 +322,29 @@ namespace urbi
     return "unknown format";
   }
 
+  USound::operator std::string() const
+  {
+    std::ostringstream tstr;
+    tstr << "sound(format: " << format_string() << ", "
+	 << "size: " << size << ", "
+	 << "channels: " << channels << ", "
+	 << "rate: " << rate << ", "
+	 << "sample size: " << sampleSize << ", "
+	 << "sample format: ";
+    switch (sampleFormat)
+    {
+      case SAMPLE_SIGNED:
+	tstr << "signed";
+	break;
+
+      case SAMPLE_UNSIGNED:
+	tstr << "unsigned";
+	break;
+    }
+    tstr << ")";
+    return tstr.str();
+  }
+
   /*---------.
   | UImage.  |
   `---------*/
@@ -632,6 +655,19 @@ namespace
       case DATA_STRING:
 	return *stringValue;
 	break;
+
+      case DATA_BINARY:
+	// We cannot convert to UBinary because it is ambigous so we try until
+	// we found the good type.
+ 	{
+ 	  USound snd(*this);
+	  if (snd.soundFormat == SOUND_UNKNOWN)
+	    //FIXME: handle UImage;
+	    return std::string("invalid");
+	  else
+	    return std::string(snd);
+	}
+
       default:
 	return std::string("invalid");
     }
@@ -803,7 +839,6 @@ namespace
     memcpy(common.data, b.common.data, b.common.size);
     return *this;
   }
-
 
   /*--------.
   | UList.  |
