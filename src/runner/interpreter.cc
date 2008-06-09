@@ -376,19 +376,13 @@ namespace runner
 
   namespace
   {
-    // Helper to determine whether a function accepts void parameters
+    // Helper to determine whether a function accepts void parameters.
     static inline bool
     acceptVoid(object::rObject f)
     {
-      try
-      {
-	return object::is_true(f->slot_get(SYMBOL(acceptVoid)));
-      }
-      catch (object::LookupError&)
-      {
-	// acceptVoid is undefined. Refuse void parameter by default.
-	return false;
-      }
+      // nil evaluates to false and makes a perfect default value here.
+      return object::is_true(f->slot_get(SYMBOL(acceptVoid),
+					 object::nil_class));
     }
   }
 
