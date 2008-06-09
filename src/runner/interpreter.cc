@@ -877,27 +877,15 @@ namespace runner
     operator() (e->rhs_get());
   }
 
-  namespace
-  {
-    static
-    inline
-    boost::function0<void>
-    non_interruptible_set(Interpreter* o, bool& value)
-    {
-      // Strangely, this indirection is needed
-      return boost::bind(&scheduler::Job::non_interruptible_set,
-                         o, boost::ref(value));
-    }
-  }
-
   void
   Interpreter::visit (ast::rConstAbstractScope e, rObject locals)
   {
-    bool was_non_interruptible = non_interruptible_get ();
     std::swap(locals, locals_);
     Finally finally;
     finally << swap(locals, locals_)
-            << runner::non_interruptible_set(this, was_non_interruptible);
+	    << boost::bind(&scheduler::Job::non_interruptible_set,
+			   this,
+			   non_interruptible_get());
     super_type::operator()(e->body_get());
   }
 
