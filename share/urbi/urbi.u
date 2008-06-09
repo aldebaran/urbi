@@ -208,15 +208,13 @@ do Object
   function detach
   {
     var outer_call = call |
-    new Task (function () { outer_call.evalArgAt (1) }) |
-    void
+    spawn (function () { outer_call.evalArgAt (1) })
   };
 
   function detach_linked
   {
     var outer_call = call |
-    new Task (function () { outer_call.evalArgAt (1) }, true) |
-    void
+    spawn (function () { outer_call.evalArgAt (1) }, true)
   };
 
   # every_ takes two arguments, a delay and an expression.

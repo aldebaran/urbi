@@ -45,31 +45,6 @@ namespace object
   `-------------------*/
 
   static rObject
-  task_class_init (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT_RANGE (2, 3);
-    FETCH_ARG (1, Code);
-
-    runner::Interpreter* new_runner =
-      new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
-			       rObject(arg1));
-    new_runner->copy_tags (r);
-    new_runner->time_shift_set (r.time_shift_get ());
-    args[0]->slot_set (SYMBOL (job),
-                       box (scheduler::rJob, new_runner));
-
-    if (args.size () == 3)
-    {
-      if (is_true (args[2]))
-	r.link (new_runner);
-    }
-
-    new_runner->start_job ();
-
-    return args[0];
-  }
-
-  static rObject
   task_class_name(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
@@ -193,7 +168,6 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(task, Name);
     DECLARE(backtrace);
-    DECLARE(init);
     DECLARE(name);
     DECLARE(setSideEffectFree);
     DECLARE(status);

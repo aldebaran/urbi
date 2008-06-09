@@ -227,6 +227,29 @@ namespace object
     return void_class;
   }
 
+  static rObject
+  system_class_spawn(runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT_RANGE (2, 3);
+    FETCH_ARG (1, Code);
+
+    runner::Interpreter* new_runner =
+      new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
+			       rObject(arg1));
+    new_runner->copy_tags (r);
+    new_runner->time_shift_set (r.time_shift_get ());
+
+    if (args.size () == 3)
+    {
+      if (is_true (args[2]))
+	r.link (new_runner);
+    }
+
+    new_runner->start_job ();
+
+    return object::void_class;
+  }
+
   // This should give a backtrace as an urbi object.
   static rObject
   system_class_backtrace(runner::Runner& r, objects_type args)
@@ -296,6 +319,7 @@ namespace object
     DECLARE(shiftedTime);
     DECLARE(shutdown);
     DECLARE(sleep);
+    DECLARE(spawn);
     DECLARE(stopall);
     DECLARE(time);
 #undef DECLARE
