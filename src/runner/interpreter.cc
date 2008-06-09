@@ -451,16 +451,6 @@ namespace runner
     return current_;
   }
 
-  object::rObject
-  Interpreter::apply (const rObject& func, const libport::Symbol msg,
-		      const object::rList& args)
-  {
-    object::objects_type apply_args;
-    foreach (const rObject arg, args->value_get ())
-      apply_args.push_back (arg);
-    return apply (func, msg, apply_args);
-  }
-
   void
   Interpreter::push_evaluated_arguments (object::objects_type& args,
 					 const ast::exps_type& ue_args,
@@ -505,12 +495,7 @@ namespace runner
     // Set the name of the message call.
     res->slot_set (SYMBOL(message), object::String::fresh(msg));
 
-    object::List::value_type largs;
-    foreach (const rObject& o, args)
-    {
-      largs.push_back(o);
-    }
-    res->slot_set (SYMBOL(args), object::List::fresh(largs));
+    res->slot_set (SYMBOL(args), object::List::fresh(args));
 
     // Store the current context in which the arguments must be evaluated.
     res->slot_set (SYMBOL(context), object::Object::make_scope(locals_));

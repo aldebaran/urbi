@@ -6,7 +6,7 @@
 #ifndef OBJECT_FWD_HH
 # define OBJECT_FWD_HH
 
-# include <vector>
+# include <deque>
 
 # include <libport/fwd.hh>
 # include <libport/shared-ptr.hh>
@@ -26,7 +26,7 @@ namespace object
   // We don't know yet that Object inherits RefCounted, so we have to force
   // the second template argument.
   typedef libport::shared_ptr<Object, true> rObject;
-  typedef std::vector<rObject> objects_type;
+  typedef std::deque<rObject> objects_type;
 
   /// \a Macro should be a binary macro whose first arg, \p What, is
   /// the lower case C++ name, and the second argument, \p Name, the

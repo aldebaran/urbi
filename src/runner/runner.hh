@@ -85,10 +85,6 @@ namespace runner
 			  object::objects_type args,
 			  rObject call_message = 0) = 0;
 
-    /// Use an argument list coming from Urbi.
-    virtual rObject apply(const rObject& func, const libport::Symbol msg,
-			  const object::rList& args) = 0;
-
   protected:
     /// \name Evaluation.
     /// \{

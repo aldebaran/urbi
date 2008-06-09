@@ -92,11 +92,6 @@ namespace runner
     rObject apply (rObject tgt, const libport::Symbol& msg,
                    const ast::exps_type* args);
 
-    /// Use an argument list coming from Urbi.
-    virtual rObject apply (const rObject& func, const libport::Symbol msg,
-			   const object::rList& args);
-
-
     /// Evaluate an expression in the current scope and return its result.
     rObject eval (ast::rConstAst);
 

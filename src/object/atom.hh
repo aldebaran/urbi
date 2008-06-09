@@ -6,8 +6,6 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
-# include <deque>
-
 # include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
 # include <boost/type_traits/add_reference.hpp>
@@ -24,6 +22,7 @@ namespace ast
 # include <libport/hash.hh>
 # include <libport/ufloat.h>
 # include <libport/symbol.hh>
+# include <object/fwd.hh>
 # include <object/object.hh>
 # include <object/state.hh>
 
@@ -181,7 +180,7 @@ namespace object
   // Lists, not arrays.
   struct list_traits
   {
-    typedef std::deque<rObject> type;
+    typedef objects_type type;
     enum { kind = object_kind_list };
   };
 

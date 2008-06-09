@@ -24,7 +24,7 @@ namespace object
     FETCH_ARG (1, List);
     if (arg1->value_get().empty())
       throw PrimitiveError ("apply", "list of arguments must begin with self");
-    return r.apply (args[0], SYMBOL(apply), arg1);
+    return r.apply (args[0], SYMBOL(apply), arg1->value_get());
   }
 
   void
