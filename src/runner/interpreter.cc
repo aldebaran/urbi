@@ -755,6 +755,13 @@ namespace runner
     else                                                        \
       throw;							\
   }
+#define CATCH_FLOW_EXCEPTIONS				\
+  CATCH_FLOW_EXCEPTION(object::BreakException,		\
+		       "break", "outside a loop")	\
+  CATCH_FLOW_EXCEPTION(object::ContinueException,	\
+		       "continue", "outside a loop")	\
+  CATCH_FLOW_EXCEPTION(object::ReturnException,		\
+		       "return", "outside a function")
 
   void
   Interpreter::visit (ast::rConstNary e)
@@ -797,12 +804,7 @@ namespace runner
 	  {
             operator() (c);
           }
-	  CATCH_FLOW_EXCEPTION(object::BreakException,
-			       "break", "outside a loop")
-	  CATCH_FLOW_EXCEPTION(object::ContinueException,
-			       "continue", "outside a loop")
-	  CATCH_FLOW_EXCEPTION(object::ReturnException,
-			       "return", "outside a function")
+	  CATCH_FLOW_EXCEPTIONS
 
 	  if (e->toplevel_get () && current_.get ())
 	  {
@@ -836,12 +838,7 @@ namespace runner
 	  else
 	    throw;
 	}
-        CATCH_FLOW_EXCEPTION(object::BreakException,
-			     "break", "outside a loop")
-	CATCH_FLOW_EXCEPTION(object::ContinueException,
-			     "continue", "outside a loop")
-        CATCH_FLOW_EXCEPTION(object::ReturnException,
-                             "return", "outside a function")
+        CATCH_FLOW_EXCEPTIONS
       }
     }
 
