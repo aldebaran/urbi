@@ -97,18 +97,26 @@ namespace scheduler
       switch (job->state_get())
       {
       case to_start:
+      {
 	// New job. Start its coroutine but do not start the job as it would be queued
 	// twice otherwise. It will start doing real work at the next cycle, so set
 	// deadline to 0. Note that we use "continue" here to avoid having the job
 	// requeued because it hasn't been started by setting "start".
+	//
+	// The code below takes care of destroying the rJob reference to the job, so
+	// that it does not stay in the call stack as a local variable. If it did,
+	// the job would never be destroyed. However, to prevent the job from being
+	// prematurely destroyed, we set current_job_ (global to the scheduler) to
+	// the rJob.
 	ECHO("Starting job " << *job);
 	current_job_ = job;
-	coroutine_start(coro_, job->coro_get(), run_job, job.get());
+	ECHO("Job " << *job << " is starting");
+	job = 0;
+	coroutine_start(coro_, current_job_->coro_get(), run_job, current_job_.get());
 	current_job_ = 0;
-	ECHO("Job " << *job << " has been started");
-	assert(job->state_get() != to_start);
 	deadline = SCHED_IMMEDIATE;
 	continue;
+      }
       case zombie:
 	assert(false);
 	break;
@@ -217,12 +225,20 @@ namespace scheduler
       if (!job->terminated())
 	jobs_.push_back(job);
 
-      // Switch back to the scheduler.
+      // Switch back to the scheduler. But in the case this job has been
+      // destroyed, erase the local variable first so that it doesn't keep
+      // a reference on it which will never be destroyed.
       assert(current_job_ == job);
-      current_job_ = 0;
       ECHO(*job << " has " << (job->terminated() ? "" : "not ") << "terminated\n\t"
-	    << "state: " << state_name(job->state_get()));
-      coroutine_switch_to(job->coro_get(), coro_);
+	   << "state: " << state_name(job->state_get()) << std::endl);
+      Coro* current_coro = job->coro_get();
+      if (job->terminated())
+	job = 0;
+      current_job_ = 0;
+      coroutine_switch_to(current_coro, coro_);
+
+      // If we regain control, we are not dead.
+      assert(job);
 
       // We regained control, we are again in the context of the job.
       assert(!current_job_);

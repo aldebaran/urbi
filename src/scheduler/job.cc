@@ -73,6 +73,7 @@ namespace scheduler
     // Remove pending links.
     foreach (rJob job, links_)
       job->links_.remove(this);
+    links_.clear();
     // Wake-up waiting jobs.
     foreach (rJob job, to_wake_up_)
       if (!job->terminated())
