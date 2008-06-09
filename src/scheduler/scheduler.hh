@@ -7,7 +7,6 @@
 # define SCHEDULER_SCHEDULER_HH
 
 # include <iosfwd>
-# include <vector>
 
 # include <boost/any.hpp>
 # include <boost/function.hpp>
@@ -109,7 +108,7 @@ namespace scheduler
     /// Get the current jobs list.
     ///
     /// \return The currently non-terminated known jobs.
-    std::vector<rJob> jobs_get() const;
+    jobs_type jobs_get() const;
 
     /// Tell the scheduler that the world has changed because
     /// of an external event.
@@ -128,10 +127,10 @@ namespace scheduler
     /// List of jobs we are in charge of. During a cycle execution,
     /// this is where jobs will accumulate themselves after they have
     /// been executed.
-    std::vector<rJob> jobs_;
+    jobs_type jobs_;
 
     /// List of jobs currently being scheduled during the current round.
-    std::vector<rJob> pending_;
+    jobs_type pending_;
 
     /// Current job.
     rJob current_job_;

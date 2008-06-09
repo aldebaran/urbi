@@ -619,7 +619,7 @@ namespace runner
 
     // The list of runners launched for each value in the list if the flavor
     // is "&".
-    std::vector<scheduler::rJob> runners;
+    scheduler::jobs_type runners;
     if (e->flavor_get() == ast::flavor_and)
       runners.reserve(content.size());
 
@@ -783,7 +783,7 @@ namespace runner
   Interpreter::visit (ast::rConstNary e)
   {
     // List of runners for Stmt flavored by a comma.
-    std::list<scheduler::rJob> runners;
+    scheduler::jobs_type runners;
 
     // In case we're empty.
     current_ = object::void_class;

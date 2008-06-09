@@ -8,7 +8,6 @@
 
 # include <iosfwd>
 # include <list>
-# include <vector>
 
 # include <boost/any.hpp>
 
@@ -324,7 +323,7 @@ namespace scheduler
     libport::Symbol name_;
 
     /// Other jobs to wake up when we terminate.
-    std::vector<rJob> to_wake_up_;
+    jobs_type to_wake_up_;
 
     /// Coro structure corresponding to this job.
     Coro* coro_;
