@@ -146,6 +146,10 @@ namespace scheduler
     /// \sa yield(), yield_until(), yield_until_things_changed()
     void yield_until_terminated(Job& other);
 
+    /// Same as \p yield_until_terminated above(), but wait for every
+    /// job in the collection.
+    void yield_until_terminated(jobs_type jobs);
+
     /// Wait for any other task to be scheduled.
     /// \sa yield(), yield_until_terminated(), yield_until()
     void yield_until_things_changed();

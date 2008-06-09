@@ -672,8 +672,7 @@ namespace runner
     }
 
     // Wait for all runners to terminate.
-    foreach(const scheduler::rJob& r, runners)
-      yield_until_terminated(*r);
+    yield_until_terminated(runners);
 
     // For the moment return void.
     current_ = object::void_class;
@@ -871,10 +870,7 @@ namespace runner
     // If the Nary is not the toplevel one, all subrunners must be finished when
     // the runner exits the Nary node.
     if (!e->toplevel_get ())
-    {
-      foreach(const scheduler::rJob& r, runners)
-	yield_until_terminated(*r);
-    }
+      yield_until_terminated(runners);
   }
 
   void

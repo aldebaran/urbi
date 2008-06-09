@@ -98,6 +98,13 @@ namespace scheduler
   }
 
   void
+  Job::yield_until_terminated(jobs_type jobs)
+  {
+    foreach (rJob job, jobs)
+      yield_until_terminated(*job);
+  }
+
+  void
   Job::yield_until_things_changed()
   {
     if (non_interruptible_ && !frozen())
