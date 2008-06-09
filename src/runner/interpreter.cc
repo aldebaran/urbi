@@ -6,6 +6,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
+#include <algorithm>
 #include <deque>
 
 #include <boost/range/iterator_range.hpp>
@@ -421,13 +422,9 @@ namespace runner
     // Check if any argument is void
     if (!acceptVoid(func))
     {
-      bool first = true;
-      foreach (const rObject& arg, args)
-      {
-	if (!first && arg == object::void_class)
-	  throw object::WrongArgumentType (msg);
-	first = false;
-      }
+      object::objects_type::iterator end = args.end();
+      if (std::find(++args.begin(), end, object::void_class) != end)
+	throw object::WrongArgumentType (msg);
     }
 
     switch (func->kind_get ())
