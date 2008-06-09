@@ -851,14 +851,14 @@ stmt:
     }
 | "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("whenever_(" << $3.value() << ", " << $5.value() << ")");
+      DESUGAR("whenever_(" << $3.value() << ", " << $5.value() << ", nil)");
     }
 | "whenever" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | whenever_(" << s << ".val, "
-              << $7.value() << ")");
+              << $7.value() << ", nil)");
     }
 | "whenever" "(" exp ")" nstmt "else" nstmt
     {
