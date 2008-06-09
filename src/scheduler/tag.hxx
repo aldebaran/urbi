@@ -17,6 +17,7 @@ namespace scheduler
 
   inline
   Tag::Tag(const Tag&)
+    : libport::RefCounted()
   {
     assert(false);
   }
