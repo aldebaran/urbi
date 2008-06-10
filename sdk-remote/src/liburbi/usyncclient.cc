@@ -325,7 +325,7 @@ namespace urbi
     send("syncgetsound = BIN 0;"
 	 " loopsound: loop syncgetsound = syncgetsound +  %s.val,"
 	 " { "
-	 "   wait(%d);"
+	 "   sleep(%d);"
 	 "   stop loopsound;"
 	 "   noop;"
 	 "   noop;"

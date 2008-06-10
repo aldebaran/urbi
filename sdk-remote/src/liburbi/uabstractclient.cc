@@ -532,7 +532,7 @@ namespace urbi
 #endif
 
     s->uc->sendBin(s->buffer+s->pos, tosend);
-    s->uc->send("wait(%s.remain < %d);"
+    s->uc->send("sleep(%s.remain < %d);"
 		" %s << ping;", s->device, playlength / 2, msg.tag.c_str());
     // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
