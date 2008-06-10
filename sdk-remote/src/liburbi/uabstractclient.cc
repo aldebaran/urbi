@@ -543,7 +543,7 @@ namespace urbi
       //  s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** stop"));
 
       std::string rDevice = (s->device) ? s->device : "speaker";
-      std::string message = rDevice + "->blend=" +
+      std::string message = rDevice + ".val->blend=" +
 	rDevice + ".sendsoundsaveblend;";
       s->uc->send(message.c_str ());
       if (s->tag && s->tag[0])
@@ -587,7 +587,7 @@ namespace urbi
     {
       std::string rDevice = (device) ? device : "speaker";
       std::string message = rDevice + ".sendsoundsaveblend = " +
-	rDevice + "->blend;" + rDevice + "->blend=queue;";
+	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
       send(message.c_str ());
       sendSoundData *s = new sendSoundData();
       char utag[16];
