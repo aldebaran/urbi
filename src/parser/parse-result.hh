@@ -52,7 +52,7 @@ namespace parser
     /// The type of AST node returned by the parser.
     typedef ast::Nary ast_type;
     /// The latest AST read by parse().
-    ast_type* ast_get();
+    libport::shared_ptr<ast_type> ast_get();
     /// Return the AST and reset \a ast_.
     libport::shared_ptr<ast_type> ast_take();
     /// Same as \a ast_take, but assert the result.
