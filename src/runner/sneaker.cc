@@ -1,5 +1,6 @@
 # include <libport/symbol.hh>
 
+#include <ast/print.hh>
 #include <object/system-class.hh>
 #include <object/urbi-exception.hh>
 #include <runner/sneaker.hh>
@@ -59,6 +60,12 @@ namespace dbg
   {
     assert(sneaker);
     o->dump(std::cerr, *sneaker, depth);
+  }
+
+  void
+  pp(ast::rAst ast)
+  {
+    std::cerr << *ast;
   }
 
   object::rObject
