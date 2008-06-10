@@ -107,7 +107,8 @@ namespace scheduler
 
     /// Get the current jobs list.
     ///
-    /// \return The currently non-terminated known jobs.
+    /// \return The currently non-terminated known jobs. The list may contain
+    ///         0, the caller has to filter them.
     jobs_type jobs_get() const;
 
     /// Tell the scheduler that the world has changed because
