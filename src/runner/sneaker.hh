@@ -1,6 +1,7 @@
 #ifndef RUNNER_SNEAKER_HH
 # define RUNNER_SNEAKER_HH
 
+# include <ast/ast.hh>
 # include <object/atom.hh>
 # include <object/primitives.hh>
 # include <scheduler/scheduler.hh>
@@ -31,6 +32,7 @@ namespace dbg
   object::rObject eval(const char* command);
   void evalp(const char* command);
   void ps();
+  void pp(ast::rAst);
 
 } // namespace dbg
 
