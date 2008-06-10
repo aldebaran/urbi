@@ -276,6 +276,12 @@ namespace object
     return List::fresh(res);
   }
 
+  static rObject
+  system_class_breakpoint(runner::Runner&, objects_type)
+  {
+    return void_class;
+  }
+
 #define SERVER_SET_VAR(Function, Variable, Value)			\
   static rObject							\
   system_class_ ## Function (runner::Runner&, objects_type args)	\
@@ -301,6 +307,7 @@ namespace object
 
     DECLARE(assert_);
     DECLARE(backtrace);
+    DECLARE(breakpoint);
     DECLARE(currentRunner);
     DECLARE(cycle);
     DECLARE(debugoff);
