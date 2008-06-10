@@ -53,13 +53,8 @@ namespace object
     static rList
     PLUS(rList lhs, rList rhs)
     {
-      // Copy lhs
-      list_traits::type l(lhs->value_get());
-      rList res = List::fresh(l);
-
-      // Append rhs
-      PLUS_EQ(res, rhs);
-      return res;
+      // Return a copy of lhs with rhs appended.
+      return PLUS_EQ(List::fresh(lhs->value_get()), rhs);
     }
 
 #define CHECK_NON_EMPTY							\
