@@ -201,7 +201,7 @@ namespace object
   template <>
   std::ostream&
   Atom<code_traits>::special_slots_dump (std::ostream& o,
-                                         runner::Runner&) const
+                                         runner::Runner& r) const
   {
     o << "value" << " = " << libport::deref << value_.ast << libport::iendl;
     if (ast::rConstFunction f = value_.ast.unsafe_cast<const ast::Function>())
@@ -215,6 +215,7 @@ namespace object
       }
       o << libport::decendl;
       o << "capture map = " << libport::incindent;
+      int i = 0;
       foreach (ast::rConstDeclaration dec, *f->captured_variables_get())
       {
         ast::rConstLocal v = dec->value_get().unsafe_cast<const ast::Local>();
@@ -223,9 +224,9 @@ namespace object
         o << libport::iendl << dec->what_get() << ": "
           << "%captured_"
           << dec->local_index_get()
-          << " = "
-          << (v->depth_get() ? "%captured_"  : "%closed_")
-          << v->local_index_get();
+          << " = ";
+        (*value_.captures[i])->print(o, r);
+        ++i;
       }
       o << libport::decendl;
     }

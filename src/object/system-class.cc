@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <sstream>
+#include <signal.h>
 
 #include <binder/bind.hh>
 
@@ -173,11 +174,28 @@ namespace object
       throw PrimitiveError("loadFile",
 			   "No such file: " + filename);
 
-    return
-      execute_parsed(r,
-                     parser::parse_file(filename),
-		     PrimitiveError("", //same message than k1
-				    "Error loading file: " + filename));
+    parser::parse_result_type res = parser::parse_file(filename);
+
+    // Report potential errors
+    {
+      ast::rNary errs = new ast::Nary();
+      res->process_errors(*errs);
+      dynamic_cast<runner::Interpreter&>(r)(errs);
+    }
+
+    ast::rConstAst ast = binder::bind(res->ast_get());
+    if (!ast)
+      throw PrimitiveError("", //same message than k1
+                           "Error loading file: " + filename);
+
+    runner::Interpreter* sub =
+      new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
+                              ast, SYMBOL(load));
+    dynamic_cast<runner::Interpreter&>(r).link(sub);
+    sub->start_job();
+    r.yield_until_terminated(*sub);
+
+    return object::void_class;
   }
 
   static rObject

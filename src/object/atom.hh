@@ -122,8 +122,13 @@ namespace object
       type(ast::rConstCode a)
         : ast(a)
       {}
+
+      /// Body of the function
       ast::rConstCode ast;
-      std::vector<rObject> captures;
+      /// Value of the captured variables
+      std::vector<rrObject> captures;
+      /// Captured 'this' and 'call'. Only set for closures.
+      rObject self, call;
     };
     enum { kind = object_kind_code };
   };

@@ -31,6 +31,8 @@ namespace runner
     /// Super class type.
     typedef ast::DefaultConstVisitor super_type;
     typedef object::rObject rObject;
+    typedef object::rrObject rrObject;
+    typedef object::rCode rCode;
     typedef object::rLobby rLobby;
     /// \}
 
@@ -88,8 +90,10 @@ namespace runner
 			   object::objects_type args,
 			   rObject call_message = 0);
 
-    /// Helper to apply a function with the arguments as ast chunks
+    /// Helpers to apply a function with the arguments as ast chunks
     rObject apply (rObject tgt, const libport::Symbol& msg,
+                   const ast::exps_type* args);
+    rObject apply (rObject tgt, rObject f, const libport::Symbol& msg,
                    const ast::exps_type* args);
 
     /// Evaluate an expression in the current scope and return its result.
@@ -100,7 +104,7 @@ namespace runner
     rObject eval_tag (ast::rConstExp);
 
     /// Make an urbi function from an ast chunk
-    rObject make_code(ast::rConstCode f) const;
+    object::rCode make_code(ast::rConstCode f) const;
 
     /// Return the current scope_tag, after creating it if needed.
     scheduler::rTag scope_tag();
@@ -158,6 +162,8 @@ namespace runner
 
     /// Factor handling of Scope and Do
     void visit (ast::rConstAbstractScope e, rObject locals);
+    /// Factor handling of Function and Closure
+    void visit (ast::rConstCode e, bool closure);
     /// \}
 
 
@@ -174,7 +180,7 @@ namespace runner
   private:
     void init();
     void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
-    rObject apply_urbi (const rObject& func,
+    rObject apply_urbi (rCode func,
 			const libport::Symbol& msg,
 			const object::objects_type& args,
 			rObject call_message);
@@ -202,8 +208,26 @@ namespace runner
     void show_backtrace(const call_stack_type& bt,
                         const std::string& chan);
 
+    /// The local stack
+    typedef std::vector<rObject> local_stack_type;
+    local_stack_type local_stack_;
+    /// The related frame pointer
+    unsigned local_pointer_;
+
+    /// The double-indirection local stack, for captured and
+    /// closed-over variables
+    typedef std::vector<rrObject> rlocal_stack_type;
+    rlocal_stack_type rlocal_stack_;
+    /// The captured variables frame pointer
+    unsigned captured_pointer_;
+    /// The closed variables frame pointer
+    unsigned closed_pointer_;
+
     /// Retreive the n-frames-above context
     rObject context(unsigned n);
+
+    void local_set(ast::rConstDeclaration d, rObject value);
+
   };
 
 } // namespace runner

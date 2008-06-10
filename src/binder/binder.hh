@@ -11,6 +11,7 @@
 # include <map>
 
 # include <ast/cloner.hh>
+# include <ast/cloner.hxx>
 # include <ast/all.hh>
 # include <object/fwd.hh>
 
@@ -52,6 +53,16 @@ namespace binder
                                 (Foreach)
                                 (Function)
                                 (Scope));
+
+      template <typename Code>
+      void handleCode(libport::shared_ptr<const Code> code, bool closure);
+
+      template <typename Node, typename NewNode>
+      void link_to_declaration(Node input,
+                               NewNode current,
+                               const libport::Symbol& name,
+                               unsigned depth);
+
     private:
 
       /// Actions to perform at exit of the most inner scope
@@ -72,15 +83,17 @@ namespace binder
 
       /// The stack of current number of local variables, and maximum
       /// number of local variable used by the current function.
-      typedef std::list<ast::rFunction> function_stack_type;
+      typedef std::list<ast::rCode> function_stack_type;
       function_stack_type function_stack_;
       /// Helpers functions to manipulate the frame size stack
-      void push_function(ast::rFunction f);
+      void push_function(ast::rCode f);
       void pop_function();
-      ast::rFunction function() const;
+      ast::rCode function() const;
 
       /// Level of function imbrication
       unsigned depth_;
+      /// Local index at the toplevel
+      unsigned toplevel_index_;
 
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration

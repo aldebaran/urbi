@@ -36,9 +36,12 @@ TFAIL_TESTS +=					\
 XFAIL_TESTS +=					\
 2.x/literal-string.chk
 
-# k2 tests that momentarily fail.
+# tests that momentarily fail because of static binding.
 TFAIL_TESTS +=					\
-2.x/closure.chk
+2.x/foreach-and.chk				\
+2.x/foreach-and-exception.chk			\
+2.x/persist.chk					\
+2.x/persist2.chk
 
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.

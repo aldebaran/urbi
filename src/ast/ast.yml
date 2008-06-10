@@ -782,11 +782,6 @@ Code:
         access: rwW
         mandatory: False
         desc: Body
-    - locals_size:
-        type: unsigned
-        desc: '/// The size of the stack frame needed to run this function.'
-        init: '0'
-        access: rwW
     - local_variables:
         type: 'declarations_type*'
         init: "0"
@@ -878,13 +873,22 @@ Assignment:
         access: rwW
         init: '0'
   inline:
-    header inside: 'public: bool closed_get() const;'
+    header inside: |2
+      public:
+        bool closed_get() const;
+        unsigned local_index_get() const;
     impl inside: |2
       bool Assignment::closed_get() const
       {
         assert(declaration_);
         return declaration_->closed_get();
       }
+      unsigned Assignment::local_index_get() const
+      {
+        assert(declaration_);
+        return declaration_->local_index_get();
+      }
+
   cloner_prologue: 'assert(!e->declaration_get());'
   printer:
     - $what

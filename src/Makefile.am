@@ -81,6 +81,7 @@ include scheduler/libcoroutine/local.mk
 urbiinclude_HEADERS = $(uobject_headers)
 
 dist_libkernel_la_SOURCES +=					\
+debug.cc debug.hh						\
 kernconf.cc							\
 server-timer.hh server-timer.cc					\
 ubanner.hh ubanner.cc						\

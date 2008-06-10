@@ -3,12 +3,16 @@
  ** \brief Implementation of binder::Binder.
  */
 
+// #define ENABLE_BIND_DEBUG_TRACES
+
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <libport/foreach.hh>
 
+#include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 #include <binder/binder.hh>
+#include <binder/bind-debug.hh>
 #include <object/symbols.hh>
 #include <object/object.hh>
 
@@ -18,6 +22,7 @@ namespace binder
     : unbind_()
     , env_()
     , depth_(1)
+    , toplevel_index_(0)
   {
     unbind_.push_back(libport::Finally());
     setOnSelf_.push_back(true);
@@ -55,27 +60,6 @@ namespace binder
       return new ast::Call(l, new ast::Implicit(l), method, args);
   }
 
-  void Binder::visit(ast::rConstAssignment input)
-  {
-    assert(!input->declaration_get());
-    libport::Symbol name = input->what_get();
-    if (unsigned depth = depth_get(name))
-    {
-      super_type::visit(input);
-      ast::rAssignment res = result_.unsafe_cast<ast::Assignment>();
-      res->depth_set(depth_ - depth);
-      res->declaration_set(decl_get(name));
-    }
-    else
-    {
-      ast::rCall res = changeSlot(input->location_get(),
-                                  input->what_get(),
-                                  SYMBOL(updateSlot),
-                                  input->value_get());
-      result_ = res;
-    }
-  }
-
   void Binder::visit(ast::rConstDeclaration input)
   {
     if (setOnSelf_.back())
@@ -88,19 +72,90 @@ namespace binder
     }
     else
     {
+      BIND_ECHO("Bind " << input->what_get());
       super_type::visit(input);
       ast::rDeclaration res = result_.unsafe_cast<ast::Declaration>();
       bind(res);
-      // FIXME: How should we handle the toplevel?
-      if (!function_stack_.empty())
-        function()->local_variables_get()->
-          push_back(res);
     }
+  }
+
+  template <typename Node, typename NewNode>
+  void Binder::link_to_declaration(Node input,
+                                   NewNode result,
+                                   const libport::Symbol& name,
+                                   unsigned depth)
+  {
+    BIND_ECHO("Linking " << name << " to its declaration");
+    ast::rDeclaration outer_decl = decl_get(name);
+    ast::rDeclaration decl = outer_decl;
+    ast::rLocal current;
+
+    if (depth_ > depth)
+    {
+      // The variable is captured
+      BIND_NECHO(libport::incindent);
+      BIND_ECHO("It's captured");
+      decl->closed_set(true);
+
+      function_stack_type::reverse_iterator f_it = function_stack_.rbegin();
+      const ast::loc loc = input->location_get();
+      for (int i = depth_ - depth; i; --i, ++f_it)
+      {
+        ast::rCode f = *f_it;
+        // Check whether it's already captured
+        foreach (ast::rDeclaration dec, *f->captured_variables_get())
+          if (dec->what_get() == name)
+          {
+            outer_decl = dec;
+            // Break foreach and for
+            goto stop;
+          }
+
+        decl = new ast::Declaration(loc, name, 0);
+        decl->closed_set(true);
+
+        if (current)
+          current->declaration_set(decl);
+        else
+          result->declaration_set(decl);
+
+        current = new ast::Local(loc, name, 0, i - 1);
+        decl->value_set(current);
+
+        f->captured_variables_get()->push_back(decl);
+      }
+      stop:
+      BIND_NECHO(libport::decindent);
+    }
+
+    if (current)
+      current->declaration_set(outer_decl);
+    else
+      result->declaration_set(outer_decl);
+  }
+
+  void Binder::visit(ast::rConstAssignment input)
+  {
+    assert(!input->declaration_get());
+    libport::Symbol name = input->what_get();
+    if (unsigned depth = depth_get(name))
+    {
+      super_type::visit(input);
+      ast::rAssignment res = result_.unsafe_cast<ast::Assignment>();
+      res->depth_set(depth_ - depth);
+      link_to_declaration(input, res, input->what_get(), depth);
+    }
+    else
+      result_ = changeSlot(input->location_get(),
+                           input->what_get(),
+                           SYMBOL(updateSlot),
+                           input->value_get());
   }
 
   void Binder::visit (ast::rConstCall input)
   {
     libport::Symbol name = input->name_get();
+    ast::loc loc = input->location_get();
     bool implicit = input->target_implicit();
     // If this is a qualified call, nothing particular to do
     if (implicit)
@@ -108,60 +163,52 @@ namespace binder
       unsigned depth = depth_get(name);
       if (depth)
       {
-        function_stack_type::reverse_iterator it = function_stack_.rbegin();
-
-        ast::rDeclaration outer_decl = decl_get(name);
-        ast::rDeclaration decl = outer_decl;
-
         const ast::exps_type* args = input->arguments_get();
         ast::rLocal res = new ast::Local(
-          input->location_get(), name,
+          loc, name,
           args ? recurse_collection(*args) : 0,
           depth_ - depth);
-        ast::rLocal current = res;
 
-        if (depth_ > depth)
-        {
-          // The variable is captured
-          decl->closed_set(true);
-
-          function_stack_type::iterator f_it = function_stack_.end();
-          --f_it;
-          const ast::loc loc = input->location_get();
-          for (int i = depth_ - depth; i; --i, ++f_it)
-          {
-            assert(f_it != function_stack_.begin() || i == 1);
-            ast::rFunction f = *f_it;
-            // Check whether it's already captured
-            foreach (ast::rDeclaration dec, *f->captured_variables_get())
-              if (dec->what_get() == name)
-              {
-                outer_decl = dec;
-                goto stop;
-              }
-
-            decl = new ast::Declaration(loc, name, 0);
-            decl->closed_set(true);
-
-            current->declaration_set(decl);
-
-            current = new ast::Local(loc, name, 0, i - 1);
-            decl->value_set(current);
-
-            f->captured_variables_get()->push_back(decl);
-          }
-          stop: ;
-        }
-
-        current->declaration_set(outer_decl);
+        link_to_declaration(input, res, name, depth);
         result_ = res;
-        return;
       }
       else
         super_type::visit (input);
     }
     else
       super_type::visit (input);
+
+    ast::rAst result = result_;
+
+    ast::exps_type* args = 0;
+    if (ast::rCall res = result_.unsafe_cast<ast::Call>())
+      args = res->arguments_get();
+    else if (ast::rLocal res = result_.unsafe_cast<ast::Local>())
+      args = res->arguments_get();
+
+    if (args)
+    {
+      assert(args->size() == input->arguments_get()->size());
+      for (unsigned i = 0; i < args->size(); ++i)
+      {
+        ast::rExp& arg = (*args)[i];
+        ast::loc loc = arg->location_get();
+        ast::rCall lazy = new ast::Call
+          (loc, new ast::Implicit(loc), SYMBOL(Lazy), 0);
+        ast::rCall clone = new ast::Call(loc, lazy, SYMBOL(clone), 0);
+        ast::rScope body =
+          new ast::Scope(loc, (*input->arguments_get())[i]);
+        ast::rClosure closure =
+          new ast::Closure(loc, new ast::declarations_type(), body);
+        operator()(closure);
+        ast::exps_type* init_args = new ast::exps_type();
+        init_args->push_back(result_.unsafe_cast<ast::Exp>());
+        ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
+        arg = new ast::Lazy(loc, init, arg);
+      }
+    }
+
+    result_ = result;
   }
 
   void Binder::visit (ast::rConstForeach input)
@@ -214,12 +261,14 @@ namespace binder
     (*n)--;
   }
 
-  void Binder::visit(ast::rConstFunction input)
+  template <typename Code>
+  void Binder::handleCode(libport::shared_ptr<const Code> input, bool)
   {
+    BIND_ECHO("Push" << libport::incindent);
     libport::Finally finally;
 
     // Clone and push the function, without filling its body and arguments
-    ast::rFunction res = new ast::Function(input->location_get(), 0, 0);
+    libport::shared_ptr<Code> res = new Code(input->location_get(), 0, 0);
     res->local_variables_set(new ast::declarations_type());
     push_function(res);
     finally << boost::bind(&Binder::pop_function, this);
@@ -262,33 +311,44 @@ namespace binder
     foreach (ast::rDeclaration dec, *res->captured_variables_get())
       dec->local_index_set(captured++);
 
+    BIND_NECHO(libport::decindent);
+    BIND_ECHO("Pop");
+
+  }
+
+  void Binder::visit(ast::rConstFunction input)
+  {
+    handleCode(input, false);
   }
 
   void Binder::visit(ast::rConstClosure input)
   {
-    assert(!input->local_variables_get());
-    ast::declarations_type* formals =
-      input->formals_get () ? recurse_collection (*input->formals_get ()) : 0;
-    if (formals)
-    {
-      foreach (ast::rDeclaration arg, *formals)
-	bind(arg);
-    }
-
-    ast::rAbstractScope body = recurse (input->body_get ());
-    ast::rClosure res = new ast::Closure (input->location_get(), formals, body);
-    result_ = res;
+    handleCode(input, true);
   }
 
   void Binder::bind(ast::rDeclaration decl)
   {
     assert(decl);
+
+    // If we are at the toplevel, we can't determine the local index.
+    if (function_stack_.empty())
+    {
+      // This indexing merges locals and closed, thus entailing too
+      // much toplevel stack allocation in Interpreter::local_set.
+      decl->local_index_set(toplevel_index_++);
+      unbind_.back() << boost::bind(decrement, &toplevel_index_);
+    }
+    else
+      function()->local_variables_get()->
+        push_back(decl);
+
+
     env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
 
-  void Binder::push_function(ast::rFunction f)
+  void Binder::push_function(ast::rCode f)
   {
     function_stack_.push_back(f);
   }
@@ -298,9 +358,10 @@ namespace binder
     function_stack_.pop_back();
   }
 
-  ast::rFunction Binder::function() const
+  ast::rCode Binder::function() const
   {
     assert(!function_stack_.empty());
+
     return function_stack_.back();
   }
 

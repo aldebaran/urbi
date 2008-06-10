@@ -3,7 +3,9 @@
  ** \brief Implementation of runner::Interpreter.
  */
 
-//#define ENABLE_DEBUG_TRACES
+// #define ENABLE_DEBUG_TRACES
+// #define ENABLE_STACK_DEBUG_TRACES
+
 #include <libport/compiler.hh>
 
 #include <algorithm>
@@ -25,7 +27,6 @@
 #include <object/atom.hh>
 #include <object/global-class.hh>
 #include <object/idelegate.hh>
-#include <object/lazy.hh>
 #include <object/object.hh>
 #include <object/symbols.hh>
 #include <object/tag-class.hh>
@@ -35,9 +36,13 @@
 #include <runner/interpreter.hh>
 #include <parser/uparser.hh>
 
+#include <runner/stack-debug.hh>
+
 namespace runner
 {
+
   using boost::bind;
+  using boost::ref;
   using libport::Finally;
 
 /// Address of \a Interpreter seen as a \c Job (Interpreter has multiple inheritance).
@@ -89,6 +94,15 @@ namespace runner
     // Strangely, this indirection is needed
     void (*f) (Interpreter::rObject&, Interpreter::rObject&) =
       std::swap<Interpreter::rObject>;
+    return boost::bind(f, boost::ref(lhs), boost::ref(rhs));
+  }
+
+  // Helper to generate a function that swaps two unsigned
+  inline
+  boost::function0<void>
+  swap(unsigned& lhs, unsigned& rhs)
+  {
+    void (*f) (unsigned&, unsigned&) = std::swap<unsigned>;
     return boost::bind(f, boost::ref(lhs), boost::ref(rhs));
   }
 
@@ -157,6 +171,13 @@ namespace runner
       current_(0),
       locals_(model.locals_)
   {
+    // FIXME: Ask Sam about calling init() here
+    {
+      // push toplevel's 'this' and 'call'
+      local_pointer_ = closed_pointer_ = captured_pointer_ = 0;
+      local_stack_.push_back(lobby_);
+      local_stack_.push_back(object::void_class);
+    }
     scope_tags_.push_back(0);
   }
 
@@ -171,6 +192,10 @@ namespace runner
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
       push_tag(extract_tag(connection_tag->slot_get(SYMBOL(connectionTag))));
+    // push toplevel's 'this' and 'call'
+    local_pointer_ = closed_pointer_ = captured_pointer_ = 0;
+    local_stack_.push_back(lobby_);
+    local_stack_.push_back(object::void_class);
   }
 
   void
@@ -285,72 +310,185 @@ namespace runner
   void
   Interpreter::visit (ast::rConstAssignment e)
   {
-    rObject tgt = context(e->depth_get());
-    tgt->slot_update(*this, e->what_get(), eval(e->value_get()));
+#define DBG                                   \
+    STACK_ECHO("Assign " << stack_debug(e, idx))
+
+    rObject value = eval(e->value_get());
+    if (e->closed_get())
+      if (e->depth_get())
+      {
+        unsigned idx = captured_pointer_ + e->local_index_get();
+        DBG;
+        *rlocal_stack_[idx] = value;
+      }
+      else
+      {
+        unsigned idx = closed_pointer_ + e->local_index_get();
+        DBG;
+        *rlocal_stack_[idx] = value;
+      }
+    else
+    {
+      unsigned idx = local_pointer_ + e->local_index_get() + 2;
+      DBG;
+      assert(!e->depth_get());
+      local_stack_[idx] = value;
+    }
+#undef DBG
   }
 
   // Apply a function written in Urbi.
   object::rObject
-  Interpreter::apply_urbi (const rObject& func,
+  Interpreter::apply_urbi (rCode func,
                            const libport::Symbol& msg,
                            const object::objects_type& args,
                            rObject call_message)
   {
+    STACK_ECHO("Call " << msg << libport::incindent);
+
+    libport::Finally finally;
+
     // The called function.
-    ast::rConstCode fn = func.unsafe_cast<object::Code>()->value_get().ast;
+    object::Code::value_type fn = func->value_get();
+    ast::rConstCode ast = fn.ast;
     // Whether it's an explicit closure
-    bool closure = fn.unsafe_cast<const ast::Closure>();
+    bool closure = ast.unsafe_cast<const ast::Closure>();
 
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
     // instance.
-    if (!fn->strict() && !call_message)
+    if (!ast->strict() && !call_message)
     {
       object::objects_type lazy_args;
       foreach (const rObject& o, args)
-	lazy_args.push_back(mkLazy(*this, o));
+      {
+        rObject lazy = object::global_class->slot_get(SYMBOL(Lazy))->clone();
+        lazy->slot_set(SYMBOL(code), o);
+        lazy_args.push_back(lazy);
+      }
       call_message = build_call_message(args[0], msg, lazy_args);
     }
 
-    // Create the function's outer scope, with the first argument as
-    // 'self'. The inner scope will be created when executing ()
-    // on ast::Scope.
-    rObject scope;
+    STACK_ECHO("Handle stacks " << libport::incindent);
+    // Handle local stacks
+
+    // Compute the frame size on the two stacks
+    unsigned local_size = 2; // Save two slots for 'this' and 'call'
+    unsigned closed_size = 0;
+    unsigned captured_size = ast->captured_variables_get()->size();
+
+    if (ast->local_variables_get())
+      foreach (ast::rConstDeclaration dec, *ast->local_variables_get())
+        if (dec->closed_get())
+          closed_size++;
+        else
+          local_size++;
+
+
+    STACK_ECHO("Local    variables frame: " << local_size);
+    STACK_ECHO("Closed   variables frame: " << closed_size);
+    STACK_ECHO("Captured variables frame: " << captured_size);
+    // Adjust the local frame pointer
+    unsigned old_local_pointer = local_pointer_;
+    local_pointer_ = local_stack_.size();
+    finally << swap(local_pointer_, old_local_pointer);
+
+    // Grow the local stack to store this function's local variables.
+    local_stack_.resize(local_pointer_ + local_size);
+    finally << boost::bind(&local_stack_type::resize,
+                           &local_stack_,
+                           local_pointer_,
+                           object::rObject());
+
+    // Adjust the captured frame pointer
+    unsigned old_captured_pointer = captured_pointer_;
+    captured_pointer_ = rlocal_stack_.size();
+    finally << swap(captured_pointer_, old_captured_pointer);
+
+    // Adjust the closed frame pointer
+    unsigned old_closed_pointer = closed_pointer_;
+    closed_pointer_ = captured_pointer_ + captured_size;
+    finally << swap(closed_pointer_, old_closed_pointer);
+
+    // Grow the rlocal stack to store this function's closed and
+    // captured variables.
+    unsigned size = captured_pointer_ + captured_size + closed_size;
+    rlocal_stack_.resize(size, 0);
+    for (unsigned i = captured_pointer_; i < size; ++i)
+      rlocal_stack_[i] = new rObject();
+    finally << boost::bind(&rlocal_stack_type::resize,
+                           &rlocal_stack_,
+                           captured_pointer_,
+                           object::rrObject());
+
+    // Bind 'this' and 'call'
+    STACK_ECHO("Bind 'this' @[" << local_pointer_ << "]");
+    STACK_ECHO("Bind 'call' @[" << local_pointer_ + 1 << "]");
+
     if (closure)
-      // For closures, use the context as parent scope.
-      scope = func->slot_get(SYMBOL(context));
+    {
+      assert(fn.self);
+      local_stack_[local_pointer_] = fn.self;
+      // FIXME: The call message can be undefined at the creation
+      // site for now.
+      // assert(fn.call);
+      local_stack_[local_pointer_ + 1] = fn.call;
+    }
     else
     {
-      scope = object::Object::make_method_scope(args.front());
-      scope->slot_set(SYMBOL(code), func);
+      local_stack_[local_pointer_] = args[0];
+      local_stack_[local_pointer_ + 1] = call_message;
     }
-    // If this is a strict function, check the arity and bind the formal
-    // arguments. Otherwise, bind the call message.
-    if (fn->strict())
+
+
+    // Bind arguments if the function is strict.
+    if (ast->strict())
     {
-      const ast::declarations_type& formals = *fn->formals_get();
+      const ast::declarations_type& formals = *ast->formals_get();
+      // Check arity
       object::check_arg_count (formals.size() + 1, args.size(), msg.name_get());
-      // Effective (evaluated) argument iterator.
-      // Skip "self" which has already been handled.
-      object::objects_type::const_iterator ei = ++args.begin();
+      // Skip 'this'
+      object::objects_type::const_iterator it = args.begin() + 1;
+      // Bind
       foreach (ast::rConstDeclaration s, formals)
-	scope->slot_set (s->what_get(), *ei++);
+      {
+#define DBG                                           \
+        STACK_ECHO("Bind argument " << stack_debug(s, idx))
+        if (s->closed_get())
+        {
+          unsigned idx = closed_pointer_ + s->local_index_get();
+          DBG;
+          rlocal_stack_[idx] = new rObject(*(it++));
+        }
+        else
+        {
+          unsigned idx = local_pointer_ + s->local_index_get() + 2;
+          DBG;
+          local_stack_[idx] = *(it++);
+        }
+#undef DBG
+      }
     }
-    else
-      if (!closure)
-        scope->slot_set (SYMBOL(call), call_message);
 
-    // Change the current context and call. But before, check that we
-    // are not exhausting the stack space, for example in an infinite
-    // recursion.
-    std::swap(scope, locals_);
-    Finally finally(swap(scope, locals_));
+    // Push captured variables
+    foreach (ast::rConstDeclaration dec, *ast->captured_variables_get())
+    {
+      unsigned idx = captured_pointer_ + dec->local_index_get();
+      rrObject value = func->value_get().captures[dec->local_index_get()];
+      rlocal_stack_[idx] = value;
+      STACK_ECHO("Bind captured variable "
+                 << dec->what_get() << " @[" << idx << "] = " << (*value).get());
+    }
+    STACK_ECHO(libport::decindent);
 
+    // Before calling, check that we are not exhausting the stack
+    // space, for example in an infinite recursion.
     check_stack_space ();
 
     try
     {
-      current_ = eval (fn->body_get());
+      STACK_ECHO("Execute " << msg << libport::incindent);
+      current_ = eval (ast->body_get());
     }
     catch (object::BreakException& be)
     {
@@ -370,7 +508,17 @@ namespace runner
       if (!current_)
 	current_ = object::void_class;
     }
+#ifdef ENABLE_STACK_DEBUG_TRACES
+    catch (...)
+    {
+      STACK_ECHO(libport::decindent << libport::decindent);
+      STACK_ECHO("Return from " << msg);
+      throw;
+    }
+#endif
 
+    STACK_ECHO(libport::decindent << libport::decindent);
+    STACK_ECHO("Return from " << msg);
     return current_;
   }
 
@@ -433,7 +581,8 @@ namespace runner
 	  ->operator()(*this, args);
 	break;
       case object::object_kind_code:
-	current_ = apply_urbi (func, msg, args, call_message);
+	current_ = apply_urbi (func.unsafe_cast<object::Code>(),
+                               msg, args, call_message);
 	break;
       default:
 	object::check_arg_count (1, args.size(), msg.name_get());
@@ -510,7 +659,13 @@ namespace runner
       range = make_iterator_range(range, 1, 0);
     }
     foreach (ast::rConstExp e, range)
-      lazy_args.push_back(object::mkLazy(*this, e));
+    {
+      /// Retreive and evaluate the lazy version of arguments.
+      ast::rConstLazy lazy = e.unsafe_cast<const ast::Lazy>();
+      assert(lazy);
+      rObject v = eval(lazy->lazy_get());
+      lazy_args.push_back(v);
+    }
 
     return build_call_message(tgt, msg, lazy_args);
   }
@@ -520,8 +675,14 @@ namespace runner
   {
     // The invoked slot (probably a function).
     ast::rConstExp ast_tgt = e->target_get();
-    rObject tgt = ast_tgt->implicit() ?
-      locals_->slot_get(SYMBOL(self)) : eval(ast_tgt);
+    rObject tgt;
+    if (ast_tgt->implicit())
+    {
+      STACK_ECHO("Read 'this' @[" << local_pointer_ << "]");
+      tgt = local_stack_[local_pointer_];
+    }
+    else
+      tgt = eval(ast_tgt);
 
     call_stack_.push_back(e);
     Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
@@ -531,15 +692,23 @@ namespace runner
   void
   Interpreter::visit (ast::rConstCallMsg)
   {
-    current_ = locals_->slot_get(SYMBOL(call));
+    unsigned idx = local_pointer_ + 1;
+    STACK_ECHO("Read 'call' @[" << idx << "]");
+    current_ = local_stack_[idx];
   }
 
   Interpreter::rObject
   Interpreter::apply (rObject tgt, const libport::Symbol& message,
                       const ast::exps_type* input_ast_args)
   {
-    // The invoked slot (probably a function).
-    rObject val = tgt->slot_get(message);
+    return apply(tgt, tgt->slot_get(message), message, input_ast_args);
+  }
+
+  Interpreter::rObject
+  Interpreter::apply (rObject tgt, rObject val,
+                      const libport::Symbol& message,
+                      const ast::exps_type* input_ast_args)
+  {
     assertion(val);
 
     /*-------------------------.
@@ -570,9 +739,51 @@ namespace runner
   }
 
   void
+  Interpreter::local_set(ast::rConstDeclaration d, rObject value)
+  {
+#define DBG STACK_ECHO("Define variable " << stack_debug(d, idx) << " = " << value.get())
+
+    // The toplevel's stack grows on demand.
+    if (local_pointer_ == 0)
+    {
+      // FIXME: We may have to grow the stacks by more than one
+      // because of a binder limitation. See FIXME in Binder::bind.
+      if (d->closed_get() && d->local_index_get() >= rlocal_stack_.size())
+      {
+        STACK_ECHO("Growing toplevel closed stack");
+        for (unsigned i = rlocal_stack_.size(); i <= d->local_index_get(); ++i)
+          rlocal_stack_.push_back(new rObject());
+      }
+      else if (d->local_index_get() + 2 >= local_stack_.size())
+      {
+        STACK_ECHO("Growing toplevel local stack");
+        for (unsigned i = local_stack_.size(); i <= d->local_index_get() + 2; ++i)
+          local_stack_.push_back(rObject());
+      }
+    }
+
+    if (d->closed_get())
+    {
+      unsigned idx = closed_pointer_ + d->local_index_get();
+      DBG;
+      assert(rlocal_stack_[idx]);
+      *rlocal_stack_[idx] = value;
+    }
+    else
+    {
+      unsigned idx = local_pointer_ + d->local_index_get() + 2;
+      DBG;
+      local_stack_[idx] = value;
+    }
+
+#undef DBG
+  }
+
+  void
   Interpreter::visit (ast::rConstDeclaration d)
   {
-    locals_->slot_set(d->what_get(), eval(d->value_get()));
+    rObject value = eval(d->value_get());
+    local_set(d, value);
   }
 
   void
@@ -604,7 +815,7 @@ namespace runner
     bool tail = false;
     ast::rConstAst body = e->body_get();
     ast::flavor_type flavor = e->flavor_get();
-    libport::Symbol index = e->index_get()->what_get();
+    ast::rConstDeclaration index = e->index_get();
 
     // Iterate on each value.
     foreach (const rObject& o, content)
@@ -613,7 +824,8 @@ namespace runner
       rObject locals = object::Object::fresh();
       locals->locals_set(true);
       locals->proto_add(locals_);
-      locals->slot_set(index, o);
+
+      local_set(index, o);
 
       // for& ... in loop.
       if (flavor == ast::flavor_and)
@@ -656,10 +868,10 @@ namespace runner
     current_ = object::void_class;
   }
 
-  object::rObject
+  object::rCode
   Interpreter::make_code(ast::rConstCode e) const
   {
-    rObject res = object::Code::fresh(e);
+    rCode res = object::Code::fresh(e);
     // Store the function declaration context. Use make_scope to add
     // an empty object above it, so as variables injected in the
     // context do not appear in the declaration scope.
@@ -667,17 +879,43 @@ namespace runner
     return res;
   }
 
+  void Interpreter::visit(ast::rConstCode e, bool closure)
+  {
+    rCode res = make_code(e);
+    current_ = res;
+
+    // Capture variables
+    foreach (ast::rDeclaration dec, *e->captured_variables_get())
+    {
+      ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
+      assert(local);
+      rrObject value;
+      assert(local->closed_get());
+      if (local->depth_get())
+        value = rlocal_stack_[captured_pointer_ + local->local_index_get()];
+      else
+        value = rlocal_stack_[closed_pointer_ + local->local_index_get()];
+      res->value_get().captures.push_back(value);
+    }
+
+    // Capture 'this' and 'call' in closures
+    if (closure)
+    {
+      res->value_get().self = local_stack_[local_pointer_];
+      res->value_get().call = local_stack_[local_pointer_ + 1];
+    }
+  }
 
   void
   Interpreter::visit (ast::rConstFunction e)
   {
-    current_ = make_code(e);
+    visit(e, false);
   }
 
   void
   Interpreter::visit (ast::rConstClosure e)
   {
-    current_ = make_code(e);
+    visit(e, true);
   }
 
 
@@ -732,12 +970,41 @@ namespace runner
   void
   Interpreter::visit (ast::rConstLocal e)
   {
-    rObject tgt = context(e->depth_get());
-    // FIXME: Register in the call stack
-    if (e->arguments_get())
-      current_ = apply(tgt, e->name_get(), e->arguments_get());
+    rObject value;
+#define DBG                                                           \
+    STACK_ECHO("Read variable " << stack_debug(e, idx) << " = " << value.get())
+
+    if (e->closed_get())
+      if (e->depth_get())
+      {
+        unsigned idx = captured_pointer_ + e->local_index_get();
+        value = *rlocal_stack_[idx];
+        DBG;
+      }
+      else
+      {
+        unsigned idx = closed_pointer_ + e->local_index_get();
+        value = *rlocal_stack_[idx];
+        DBG;
+      }
     else
-      current_ = tgt->slot_get(e->name_get());
+    {
+      assert(!e->depth_get());
+      unsigned idx = local_pointer_ + e->local_index_get() + 2;
+      value = local_stack_[idx];
+      DBG;
+    }
+
+#undef DBG
+
+    passert("Local variable read before being set", value);
+
+    if (e->arguments_get())
+      // FIXME: Register in the call stack
+      current_ = apply(object::void_class, value,
+                       e->name_get(), e->arguments_get());
+    else
+      current_ = value;
   }
 
   void
@@ -922,11 +1189,18 @@ namespace runner
   Interpreter::visit (ast::rConstDo e)
   {
     rObject tgt = eval(e->target_get());
+
+    STACK_ECHO("Switching 'this' @[" << local_pointer_ << "]");
+    rObject previous_this = local_stack_[local_pointer_];
+    local_stack_[local_pointer_] = tgt;
+
     visit (e.unsafe_cast<const ast::AbstractScope>(),
            object::Object::make_method_scope(tgt, locals_));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     current_ = tgt;
+    STACK_ECHO("Switching back 'this' @[" << local_pointer_ << "]");
+    local_stack_[local_pointer_] = previous_this;
   }
 
   void
@@ -988,7 +1262,9 @@ namespace runner
   void
   Interpreter::visit (ast::rConstThis)
   {
-    current_ = locals_->slot_get(SYMBOL(self));
+    unsigned idx = local_pointer_;
+    STACK_ECHO("Read 'this' @[" << idx << "]");
+    current_ = local_stack_[idx];
   }
 
   object::rObject
