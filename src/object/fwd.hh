@@ -44,6 +44,7 @@ namespace object
   Macro(list,       List)				\
   Macro(lobby,      Lobby)				\
   Macro(primitive,  Primitive)				\
+  Macro(semaphore,  Semaphore)				\
   Macro(string,     String)
 
 
@@ -52,8 +53,8 @@ namespace object
   Macro(object,     Object)
 
 
-# define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
+# define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)		\
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)			\
   Macro(global,     Global)					\
   Macro(tag,        Tag)					\
   Macro(task,       Task)

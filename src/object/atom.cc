@@ -26,6 +26,7 @@
 #include <object/list-class.hh>
 #include <object/object-class.hh>
 #include <object/primitive-class.hh>
+#include <object/semaphore-class.hh>
 #include <object/string-class.hh>
 #include <object/tag-class.hh>
 #include <object/task-class.hh>
@@ -234,6 +235,14 @@ namespace object
 
   template <>
   std::ostream&
+  Atom<delegate_traits>::special_slots_dump (std::ostream& o,
+					     runner::Runner&) const
+  {
+    return o << "delegate" << libport::iendl;
+  }
+
+  template <>
+  std::ostream&
   Atom<list_traits>::special_slots_dump (std::ostream& o,
 					 runner::Runner& runner) const
   {
@@ -244,10 +253,10 @@ namespace object
 
   template <>
   std::ostream&
-  Atom<delegate_traits>::special_slots_dump (std::ostream& o,
+  Atom<semaphore_traits>::special_slots_dump(std::ostream& o,
 					     runner::Runner&) const
   {
-    return o << "delegate" << libport::iendl;
+    return o << "counter = " << value_.first << libport::iendl;
   }
 
   /*-------.

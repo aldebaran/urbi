@@ -6,6 +6,8 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
+# include <deque>
+
 # include <boost/any.hpp>
 # include <boost/tuple/tuple.hpp>
 # include <boost/type_traits/add_reference.hpp>
@@ -18,6 +20,7 @@ namespace ast
 }
 
 # include <kernel/fwd.hh>
+# include <scheduler/fwd.hh>
 
 # include <libport/hash.hh>
 # include <libport/ufloat.h>
@@ -210,6 +213,16 @@ namespace object
     enum { kind = object_kind_primitive };
   };
 
+  /*------------.
+  | Semaphore.  |
+  `------------*/
+
+  // Urbi semaphores.
+  struct semaphore_traits
+  {
+    typedef std::pair< int, std::deque<scheduler::rJob> > type;
+    enum { kind = object_kind_semaphore };
+  };
 
   /*---------.
   | String.  |

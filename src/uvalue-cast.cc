@@ -17,6 +17,7 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::object_kind_dictionary:
   case object::object_kind_lobby:
   case object::object_kind_primitive:
+  case object::object_kind_semaphore:
     throw object::WrongArgumentType
       (object::object_kind_float, o->kind_get(), "cast");
     break;

@@ -16,6 +16,7 @@
 #include <object/object-class.hh>
 #include <object/primitive-class.hh>
 #include <object/root-classes.hh>
+#include <object/semaphore-class.hh>
 #include <object/string-class.hh>
 #include <object/system-class.hh>
 #include <object/tag-class.hh>

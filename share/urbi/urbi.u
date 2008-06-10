@@ -503,13 +503,6 @@ class Global.Profiling
 Global.addProto (Global.Profiling);
 
 ## ----------- ##
-## Semaphores. ##
-## ----------- ##
-
-load("urbi/semaphore.u");
-
-
-## ----------- ##
 ## Executable. ##
 ## ----------- ##
 

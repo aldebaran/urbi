@@ -77,6 +77,8 @@ object/primitive-class.hh			\
 object/primitives.hh				\
 object/root-classes.cc				\
 object/root-classes.hh				\
+object/semaphore-class.cc			\
+object/semaphore-class.hh			\
 object/sorted-vector-slots.hh			\
 object/sorted-vector-slots.hxx			\
 object/state.cc					\
