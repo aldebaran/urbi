@@ -53,6 +53,37 @@ namespace parser
            ast::rExp init, ast::rExp test, ast::rExp inc,
            ast::rExp body);
 
+  /// If \c lvalue is composite, then store it in a local variable,
+  /// and change \c lvalue to point to it.  Possibly store in \c
+  /// tweast the initialization of the new \c lvalue.
+  ///
+  /// Use this function to avoid CPP-like problem when referring
+  /// several times to an lvalue.  For instance, do not desugar
+  ///
+  /// f(x).val += 1
+  ///
+  /// as
+  ///
+  /// f(x).val = f(x).val + 1
+  ///
+  /// but as
+  ///
+  /// var tmp = f(x) | tmp.val = tmp.val + 1
+  ///
+  /// This function puts
+  ///
+  /// var tmp = f(x) |
+  ///
+  /// in \c tweast, and changes \c lvalue from
+  ///
+  /// f(x).val
+  ///
+  /// to
+  ///
+  /// tmp.
+  ast::rCall ast_lvalue_once(ast::rCall lvalue, Tweast& tweast);
+
+
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
   ast::rExp

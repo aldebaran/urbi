@@ -3,6 +3,9 @@
 #include <ast/parametric-ast.hh>
 #include <object/symbols.hh>
 #include <parser/ast-factory.hh>
+#include <parser/parse.hh>
+#include <parser/parse-result.hh>
+#include <parser/tweast.hh>
 
 namespace parser
 {
@@ -113,6 +116,20 @@ namespace parser
 
     // { INIT OP WHILE OP (TEST) { BODY | INC } }.
     return ast_scope(l, ast_nary (l, op, init, while_loop));
+  }
+
+
+  ast::rCall
+  ast_lvalue_once(ast::rCall lvalue, Tweast& tweast)
+  {
+    if (!lvalue->target_implicit())
+    {
+      libport::Symbol tmp = libport::Symbol::fresh(SYMBOL(__tmp__));
+      const yy::location& l = lvalue->location_get();
+      tweast << "var " << tmp << " = " << lvalue->target_get() << "|";
+      lvalue = ast_call(l, ast_call(l, tmp), lvalue->name_get());
+    }
+    return lvalue;
   }
 
 
