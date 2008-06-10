@@ -208,21 +208,21 @@ namespace runner
   bool
   AtJob::tag_held(const scheduler::rTag& tag) const
   {
-    return libport::any(tags_, boost::bind(&scheduler::Tag::derives_from,
-					   _1,
-					   boost::ref(*tag)));
+    return libport::has_if(tags_, boost::bind(&scheduler::Tag::derives_from,
+					      _1,
+					      boost::ref(*tag)));
   }
 
   bool
   AtJob::blocked() const
   {
-    return libport::any(tags_, boost::mem_fn(&scheduler::Tag::blocked));
+    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::blocked));
   }
 
   bool
   AtJob::frozen() const
   {
-    return libport::any(tags_, boost::mem_fn(&scheduler::Tag::blocked));
+    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::blocked));
   }
 
   const rObject&

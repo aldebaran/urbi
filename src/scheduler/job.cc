@@ -119,7 +119,7 @@ namespace scheduler
   bool
   Job::frozen() const
   {
-    return libport::any(tags_, boost::mem_fn(&scheduler::Tag::frozen));
+    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::frozen));
   }
 
   void

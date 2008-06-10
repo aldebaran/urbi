@@ -15,13 +15,6 @@ namespace scheduler
   {
   }
 
-  inline
-  Tag::Tag(const Tag&)
-    : libport::RefCounted()
-  {
-    assert(false);
-  }
-
   inline rTag
   Tag::fresh(libport::Symbol name)
   {
