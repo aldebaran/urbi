@@ -20,17 +20,17 @@ TFAIL_TESTS +=                                  \
 
 # k2 tests that fail because plain objects have been removed.
 TFAIL_TESTS +=					\
-2.x/modifier-accel-freeze.chk			\
-2.x/modifier-speed-adaptive-freeze.chk		\
-2.x/modifier-accel.chk				\
-2.x/modifier-smooth.chk				\
-2.x/modifier-speed.chk				\
-2.x/modifier-speed-freeze.chk			\
-2.x/modifier-speed-adaptive.chk			\
-2.x/modifier-time-freeze.chk			\
-2.x/modifier-time.chk				\
-2.x/modifier-time-adaptive.chk			\
-2.x/modifier-time-adaptive-freeze.chk
+2.x/modifier/accel-freeze.chk			\
+2.x/modifier/speed-adaptive-freeze.chk		\
+2.x/modifier/accel.chk				\
+2.x/modifier/smooth.chk				\
+2.x/modifier/speed.chk				\
+2.x/modifier/speed-freeze.chk			\
+2.x/modifier/speed-adaptive.chk			\
+2.x/modifier/time-freeze.chk			\
+2.x/modifier/time.chk				\
+2.x/modifier/time-adaptive.chk			\
+2.x/modifier/time-adaptive-freeze.chk
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
