@@ -8,3 +8,4 @@ include/libport
 lib/libport
 sdk
 src/liburbi/uobject/urbi/ucallbacks.hh
+jpeg-6b
