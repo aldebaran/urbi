@@ -141,7 +141,9 @@ namespace scheduler
     /// the current one. If the other job has already terminated, the
     /// caller will continue its execution.
     ///
-    /// \param other The job to wait for.
+    /// \param other The job to wait for. It is allowed to specify the
+    ///        same Job as the target and the waiting job, in which case
+    ///        the Job will only be woken up by an asynchronous exception.
     ///
     /// \sa yield(), yield_until(), yield_until_things_changed()
     void yield_until_terminated(Job& other);

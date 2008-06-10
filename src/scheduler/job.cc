@@ -93,7 +93,9 @@ namespace scheduler
 
     if (!other.terminated())
     {
-      other.to_wake_up_.push_back(this);
+      // We allow enqueuing on ourselves, but without doing it for real.
+      if (&other != this)
+	other.to_wake_up_.push_back(this);
       state_ = joining;
       try
       {
