@@ -23,9 +23,10 @@ namespace object
 
   // rObject & objects_type.
   class Object;
-  // We don't know yet that Object inherits RefCounted, so we have to force
-  // the second template argument.
-  typedef libport::shared_ptr<Object, true> rObject;
+
+  typedef libport::shared_ptr<Object> rObject;
+  // FIXME: we probably want libport::refcouned smart pointers here
+  typedef libport::shared_ptr<rObject, false> rrObject;
   typedef std::deque<rObject> objects_type;
 
   /// \a Macro should be a binary macro whose first arg, \p What, is
