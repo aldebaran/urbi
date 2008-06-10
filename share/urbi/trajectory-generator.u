@@ -105,6 +105,7 @@ class Global.TrajectoryGenerator
     } |
     startValue + (targetValue - startValue) * stat
   };
+
   function smoothGet(currentVal)
   {
     var stat =  (time - startTime) / duration |
@@ -116,6 +117,7 @@ class Global.TrajectoryGenerator
     startValue +
       (targetValue - startValue) * ( sin ( - pi / 2.0 + pi * stat) +1) / 2.0
   };
+
   function timeAdaptiveGet(currentVal)
   {
     if (abs(currentVal - targetValue) < delta)
@@ -128,10 +130,12 @@ class Global.TrajectoryGenerator
       return targetValue |
     currentVal + stat *  (targetValue - currentVal)
   };
+
   function sinGet(currentVal)
   {
     targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
   };
+
   function accelGet(currentVal)
   {
     if (time - startTime > duration)
@@ -142,6 +146,7 @@ class Global.TrajectoryGenerator
     var d = (time - startTime) |
     d * d * 0.5 * accel
   };
+
   function adaptiveSpeedGet(currentVal)
   {
     if (abs(currentVal - targetValue) < delta)
