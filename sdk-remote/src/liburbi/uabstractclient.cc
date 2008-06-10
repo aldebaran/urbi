@@ -586,7 +586,7 @@ namespace urbi
 	|| sound.soundFormat == SOUND_RAW)
     {
       std::string rDevice = (device) ? device : "speaker";
-      std::string message = rDevice + ".sendsoundsaveblend = " +
+      std::string message = "var " + rDevice + ".sendsoundsaveblend = " +
 	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
       send(message.c_str ());
       sendSoundData *s = new sendSoundData();
