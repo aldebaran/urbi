@@ -712,6 +712,12 @@ namespace runner
     //ECHO ("result: " << *current_);
   }
 
+  void
+  Interpreter::visit (ast::rConstLazy e)
+  {
+    operator()(e->strict_get());
+  }
+
   Interpreter::rObject Interpreter::context(unsigned n)
   {
     rObject res = locals_;

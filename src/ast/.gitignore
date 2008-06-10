@@ -71,6 +71,9 @@ ignores.stamp
 implicit.cc
 implicit.hh
 implicit.hxx
+lazy.cc
+lazy.hh
+lazy.hxx
 list.cc
 list.hh
 list.hxx

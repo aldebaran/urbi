@@ -140,6 +140,7 @@ namespace runner
                               (Foreach)
                               (Function)
                               (If)
+                              (Lazy)
                               (List)
                               (Local)
                               (Message)

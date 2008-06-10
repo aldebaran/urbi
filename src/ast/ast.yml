@@ -757,6 +757,18 @@ Call:
             << ")";
        }'
 
+Lazy:
+  super: Exp
+  attributes:
+    - lazy:
+        type: rExp
+        access: rwW
+    - strict:
+        type: rExp
+        access: rwW
+  printer:
+    - ~strict
+
 Code:
   super: Exp
   attributes:
