@@ -63,12 +63,14 @@ namespace scheduler
   Tag::block(Scheduler& sched, boost::any payload)
   {
     blocked_ = true;
+    payload_ = payload;
     stop(sched, payload);
   }
 
   inline void
   Tag::unblock(Scheduler&)
   {
+    payload_ = 0;
     blocked_ = false;
   }
 

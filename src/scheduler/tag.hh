@@ -43,6 +43,10 @@ namespace scheduler
     bool frozen() const;
     bool blocked() const;
 
+    // If the tag is blocked, what is its payload? It is a fatal error
+    // to call this method if the tag is not blocked.
+    const boost::any& payload_get() const;
+
     // Is this tag identical to \a other, or does it derive from it?
     bool derives_from(const Tag& other) const;
 
@@ -63,6 +67,7 @@ namespace scheduler
     bool blocked_;
     bool frozen_;
     libport::Symbol name_;
+    boost::any payload_;
   };
 
   typedef std::vector<rTag> tags_type;

@@ -21,4 +21,16 @@ namespace scheduler
     sched.signal_stop(this, payload);
   }
 
+  const boost::any&
+  Tag::payload_get() const
+  {
+    if (blocked_)
+      return payload_;
+    else if (parent_)
+      return parent_->payload_get();
+    else
+      throw object::SchedulingError
+	("attempt to retrieve payload of an unblocked tag");
+  }
+
 } // namespace scheduler

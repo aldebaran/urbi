@@ -950,9 +950,12 @@ namespace runner
     {
       scheduler::rTag tag = extract_tag(eval(t->tag_get()));
       // If tag is blocked, do not start and ignore the
-      // statement completely.
+      // statement completely but use the provided payload.
       if (tag->blocked())
+      {
+	current_ = boost::any_cast<rObject>(tag->payload_get());
 	return;
+      }
       push_tag (tag);
       Finally finally(bind(&Interpreter::pop_tag, this));
       // If the latest tag causes us to be frozen, let the
