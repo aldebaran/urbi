@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <boost/lambda/lambda.hpp>
 #include <boost/mem_fn.hpp>
 
 #include <libport/compiler.hh>     // For ECHO
@@ -94,7 +95,18 @@ namespace scheduler
     {
       other.to_wake_up_.push_back(this);
       state_ = joining;
-      scheduler_.resume_scheduler(this);
+      try
+      {
+	scheduler_.resume_scheduler(this);
+      }
+      catch (...)
+      {
+	// We have been awoken by an exception; in this case,
+	// dequeue ourselves from the other thread queue if
+	// we are still enqueued there.
+	libport::erase_if(other.to_wake_up_, boost::lambda::_1 == this);
+	throw;
+      }
     }
   }
 
