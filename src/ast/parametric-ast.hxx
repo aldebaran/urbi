@@ -29,7 +29,11 @@ namespace ast
   ParametricAst::result()
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
+    if (getenv("DESUGAR"))
+      LIBPORT_ECHO(*this);
     operator()(ast_);
+    if (getenv("DESUGAR"))
+      LIBPORT_ECHO(*result_);
     clear();
     return assert_exp(result_.unsafe_cast<T>());
   }
