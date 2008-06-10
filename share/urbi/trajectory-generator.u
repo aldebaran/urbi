@@ -46,14 +46,10 @@ class Global.TrajectoryGenerator
       var self.adaptive = args.getWithDefault("adaptive", 0) |
       var self.speed = args.get("speed") / 1000|
       var self.duration = abs(self.startValue - targetValue)  / speed |
-      if (!adaptive)
-      {
-      var self.get = getSlot("timeGet")
-      }
+      if (adaptive)
+        var self.get = getSlot("adaptiveSpeedGet")
       else
-      {
-	var self.get = getSlot("adaptiveSpeedGet")
-      }
+        var self.get = getSlot("timeGet")
     }
     else if (args.has("sin") || args.has("cos"))
     {
