@@ -209,14 +209,36 @@ namespace parser
     /// is to a local or to a field.
     if (modifier)
     {
+      // Currently, we cannot have lvalues as meta-variables, which
+      // prevents the use of ParametricAst :(
+# if 0
       static ast::ParametricAst
         traj("TrajectoryGenerator"
+             // startValue, targetValue, args.
              ".new(%exp:1, %exp:2, %exp:3)"
-             ".run(%exp:4, %exp:5)");
-      ast::rString name = new ast::String(l, lvalue->name_get());
+             // getter, setter.
+             ".run(function () { %exp:4 },"
+             "     function (v){ %exp:5 = v })");
       res = exp(traj
                 %lvalue %value %modifier
-                %new_clone(lvalue->target_get()) %name);
+                %new_clone(lvalue) %new_clone(lvalue));
+# else
+    Tweast tweast;
+    lvalue = ast_lvalue_once(lvalue, tweast);
+    tweast
+      << "TrajectoryGenerator"
+      << ".new("
+      // getter.
+      << "closure () { var res = " << new_clone(lvalue) << "|"
+      <<                "clog << (\"getter: \" + res.asString) | res },"
+      // setter.
+      << "closure (v){ clog << (\"setter: \" + v.asString) | "
+      <<                lvalue << " = v }, "
+      // targetValue, args.
+      << value << ", " << modifier
+      << ").run";
+    res = parse(tweast)->ast_take();
+# endif
     }
     else
     {
