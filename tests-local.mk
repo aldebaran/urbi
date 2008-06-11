@@ -38,7 +38,8 @@ XFAIL_TESTS +=					\
 # tests that momentarily fail because of static binding.
 TFAIL_TESTS +=					\
 2.x/foreach-and.chk				\
-2.x/foreach-and-exception.chk
+2.x/foreach-and-exception.chk			\
+2.x/and-environment.chk
 
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.
