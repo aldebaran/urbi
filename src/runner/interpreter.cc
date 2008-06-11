@@ -141,8 +141,7 @@ namespace runner
       Runner(lobby, sched, name),
       ast_(ast),
       code_(0),
-      current_(0),
-      locals_(object::Object::make_method_scope(lobby))
+      current_(0)
   {
     init();
   }
@@ -153,8 +152,7 @@ namespace runner
       Runner(model, name),
       ast_(0),
       code_(code),
-      current_(0),
-      locals_(model.locals_)
+      current_(0)
   {
     init();
   }
@@ -166,8 +164,7 @@ namespace runner
       Runner(model, name),
       ast_(ast),
       code_(0),
-      current_(0),
-      locals_(model.locals_)
+      current_(0)
   {
     init();
   }
@@ -229,7 +226,7 @@ namespace runner
     else
     {
       object::objects_type args;
-      args.push_back(locals_);
+      args.push_back(object::void_class);
       apply(code_, SYMBOL(task), args);
     }
   }
@@ -631,7 +628,7 @@ namespace runner
 
     // Set the sender to be the current self. self must always exist.
     res->slot_set (SYMBOL(sender),
-		   locals_->slot_get (SYMBOL(self)));
+		   local_stack_[local_pointer_]);
 
     // Set the target to be the object on which the function is applied.
     res->slot_set (SYMBOL(target), tgt);
@@ -640,9 +637,6 @@ namespace runner
     res->slot_set (SYMBOL(message), object::String::fresh(msg));
 
     res->slot_set (SYMBOL(args), object::List::fresh(args));
-
-    // Store the current context in which the arguments must be evaluated.
-    res->slot_set (SYMBOL(context), object::Object::make_scope(locals_));
 
     return res;
   }
@@ -822,11 +816,6 @@ namespace runner
     // Iterate on each value.
     foreach (const rObject& o, content)
     {
-      // Define a new local scope for each loop, and set the index.
-      rObject locals = object::Object::fresh();
-      locals->locals_set(true);
-      locals->proto_add(locals_);
-
       local_set(index, o);
 
       // for& ... in loop.
@@ -838,14 +827,10 @@ namespace runner
 	Interpreter* new_runner = new Interpreter(*this, body);
 	link(new_runner);
 	runners.push_back(new_runner);
-	new_runner->locals_ = locals;
 	new_runner->start_job();
       }
       else // for| and for;
       {
-	std::swap(locals, locals_);
-	Finally finally(swap(locals, locals_));
-
 	if (tail++)
 	  MAYBE_YIELD(flavor);
 
@@ -873,12 +858,7 @@ namespace runner
   object::rCode
   Interpreter::make_code(ast::rConstCode e) const
   {
-    rCode res = object::Code::fresh(e);
-    // Store the function declaration context. Use make_scope to add
-    // an empty object above it, so as variables injected in the
-    // context do not appear in the declaration scope.
-    res->slot_set(SYMBOL(context), locals_);
-    return res;
+    return object::Code::fresh(e);
   }
 
   void Interpreter::visit(ast::rConstCode e, bool closure)
@@ -956,17 +936,6 @@ namespace runner
   Interpreter::visit (ast::rConstLazy e)
   {
     operator()(e->strict_get());
-  }
-
-  Interpreter::rObject Interpreter::context(unsigned n)
-  {
-    rObject res = locals_;
-    for (int i = n; i; i--)
-    {
-      res = res->slot_get(SYMBOL(code))->slot_get(SYMBOL(context));
-      assert(res);
-    }
-    return res;
   }
 
   void
@@ -1143,14 +1112,11 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstAbstractScope e, rObject locals)
+  Interpreter::visit (ast::rConstAbstractScope e)
   {
-    std::swap(locals, locals_);
-    Finally finally;
-    finally << swap(locals, locals_)
-	    << boost::bind(&scheduler::Job::non_interruptible_set,
-			   this,
-			   non_interruptible_get());
+    Finally finally(boost::bind(&scheduler::Job::non_interruptible_set,
+                                this,
+                                non_interruptible_get()));
     super_type::operator()(e->body_get());
   }
 
@@ -1183,8 +1149,7 @@ namespace runner
     scope_tags_.push_back(0);
     libport::Finally finally(boost::bind(&Interpreter::cleanup_scope_tag,
 					 this));
-    visit (e.unsafe_cast<const ast::AbstractScope>(),
-           object::Object::make_scope(locals_));
+    visit (e.unsafe_cast<const ast::AbstractScope>());
   }
 
   void
@@ -1196,8 +1161,7 @@ namespace runner
     rObject previous_this = local_stack_[local_pointer_];
     local_stack_[local_pointer_] = tgt;
 
-    visit (e.unsafe_cast<const ast::AbstractScope>(),
-           object::Object::make_method_scope(tgt, locals_));
+    visit (e.unsafe_cast<const ast::AbstractScope>());
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     current_ = tgt;
@@ -1292,7 +1256,7 @@ namespace runner
       // Tag represents the top level tag
       rObject toplevel = object::tag_class;
       rObject parent = toplevel;
-      rObject where = locals_->slot_get(SYMBOL(self));
+      rObject where = local_stack_[local_pointer_];
       tag_chain_type chain = decompose_tag_chain(e);
       foreach (const libport::Symbol& elt, chain)
       {

@@ -161,7 +161,7 @@ namespace runner
                               (While))
 
     /// Factor handling of Scope and Do
-    void visit (ast::rConstAbstractScope e, rObject locals);
+    void visit (ast::rConstAbstractScope e);
     /// Factor handling of Function and Closure
     void visit (ast::rConstCode e, bool closure);
     /// \}
@@ -196,9 +196,6 @@ namespace runner
     /// The current value during the evaluation of the AST.
     rObject current_;
 
-    /// The (current set of) local variables, slots of the "locals" object.
-    rObject locals_;
-
     /// The scope tags stack.
     std::vector<scheduler::rTag> scope_tags_;
 
@@ -223,11 +220,7 @@ namespace runner
     /// The closed variables frame pointer
     unsigned closed_pointer_;
 
-    /// Retreive the n-frames-above context
-    rObject context(unsigned n);
-
     void local_set(ast::rConstDeclaration d, rObject value);
-
   };
 
 } // namespace runner

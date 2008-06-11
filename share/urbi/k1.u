@@ -18,12 +18,12 @@ class Global.Kernel1Functions
   function isdef
   {
     var s = call.argString(1).split(". ") |
-    var base = call.context |
+    var base = call.sender |
     for c in s {
       var v = base.locateSlot(c) |
-      if (v.sameAs(nil))
+      if (v.isNil)
         return false |
-      base = v.getSlot(c).apply([v.getSlot(c)])
+      base = v.getSlot(c).apply([v.getSlot(c)]) |
     } |
     return true
   };
