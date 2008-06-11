@@ -285,8 +285,8 @@ do Object
     var res = false |
     var tag = Tag.new("persist".fresh) |
     var delay = call.evalArgAt (2) |
-    at (call.evalArgAt (1)) tag: { sleep (delay) | res = true }
-      onleave { res = false | tag.stop } |
+    at_ (call.evalArgAt (1), detach({tag: { sleep (delay) | res = true }}),
+         detach({ res = false | tag.stop })) |
     return function () { res }
   };
 };

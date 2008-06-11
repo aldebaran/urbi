@@ -378,11 +378,13 @@ namespace runner
     unsigned captured_size = ast->captured_variables_get()->size();
 
     if (ast->local_variables_get())
+    {
       foreach (ast::rConstDeclaration dec, *ast->local_variables_get())
         if (dec->closed_get())
           closed_size++;
         else
           local_size++;
+    }
 
 
     STACK_ECHO("Local    variables frame: " << local_size);
