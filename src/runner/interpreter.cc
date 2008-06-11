@@ -144,7 +144,6 @@ namespace runner
       current_(0),
       locals_(object::Object::make_method_scope(lobby))
   {
-    scope_tags_.push_back(0);
     init();
   }
 
@@ -157,7 +156,6 @@ namespace runner
       current_(0),
       locals_(model.locals_)
   {
-    scope_tags_.push_back(0);
     init();
   }
 
@@ -171,14 +169,7 @@ namespace runner
       current_(0),
       locals_(model.locals_)
   {
-    // FIXME: Ask Sam about calling init() here
-    {
-      // push toplevel's 'this' and 'call'
-      local_pointer_ = closed_pointer_ = captured_pointer_ = 0;
-      local_stack_.push_back(lobby_);
-      local_stack_.push_back(object::void_class);
-    }
-    scope_tags_.push_back(0);
+    init();
   }
 
   Interpreter::~Interpreter ()
@@ -188,14 +179,23 @@ namespace runner
   void
   Interpreter::init()
   {
-    // If the lobby has a slot connectionTag, push it
+    // If the lobby has a slot connectionTag, push it unless it is already
+    // present.
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
-      push_tag(extract_tag(connection_tag->slot_get(SYMBOL(connectionTag))));
+    {
+      scheduler::rTag tag =
+	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
+      if (!libport::has(tags_, tag))
+	push_tag(tag);
+    }
     // push toplevel's 'this' and 'call'
     local_pointer_ = closed_pointer_ = captured_pointer_ = 0;
     local_stack_.push_back(lobby_);
     local_stack_.push_back(object::void_class);
+    // Push a dummy scope tag, in case we do have an "at" at the
+    // toplevel.
+    scope_tags_.push_back(0);
   }
 
   void
