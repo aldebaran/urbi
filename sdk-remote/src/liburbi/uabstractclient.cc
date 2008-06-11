@@ -442,23 +442,6 @@ namespace urbi
     bool startNotify;
   };
 
-  struct wavheader
-  {
-    char riff[4];
-    int length;
-    char wave[4];
-    char fmt[4];
-    int lnginfo;
-    short one;
-    short channels;
-    int freqechant;
-    int bytespersec;
-    short bytesperechant;
-    short bitperchannel;
-    char data[4];
-    int datalength;
-  };
-
   static UCallbackAction sendSound_(void * cb, const UMessage &msg)
   {
     //the idea is to cut the sound into small chunks,

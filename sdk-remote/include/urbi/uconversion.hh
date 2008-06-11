@@ -43,6 +43,22 @@ namespace urbi
   int convertYCrCbtoJPEG(const byte* source, int w, int h, byte* dest,
 			 int &size, int quality);
 
+  struct wavheader
+  {
+    char riff[4];
+    int length;
+    char wave[4];
+    char fmt[4];
+    int lnginfo;
+    short one;
+    short channels;
+    int freqechant;
+    int bytespersec;
+    short bytesperechant;
+    short bitperchannel;
+    char data[4];
+    int datalength;
+  };
 
   //sound format conversion functions.
   int convert(const USound &source, USound &destination);
