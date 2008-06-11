@@ -111,6 +111,9 @@ namespace binder
                              ast::rConstExp value);
       /// Make a lazy from \a arg
       ast::rExp lazify (ast::rExp arg, const ast::loc& loc);
+      /// Make a closure from \a arg
+      ast::rClosure make_closure(ast::rExp e, const ast::loc& loc);
+
   };
 
 } // namespace binder

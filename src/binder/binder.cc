@@ -207,15 +207,19 @@ namespace binder
     ast::rCall lazy = new ast::Call
       (loc, new ast::Implicit(loc), SYMBOL(Lazy), 0);
     ast::rCall clone = new ast::Call(loc, lazy, SYMBOL(clone), 0);
-    ast::rScope body =
-      new ast::Scope(loc, arg);
+    ast::exps_type* init_args = new ast::exps_type();
+    init_args->push_back(make_closure(arg, loc));
+    ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
+    return init;
+  }
+
+  ast::rClosure Binder::make_closure(ast::rExp e, const ast::loc& loc)
+  {
+    ast::rScope body = new ast::Scope(loc, e);
     ast::rClosure closure =
       new ast::Closure(loc, new ast::declarations_type(), body);
     operator()(closure);
-    ast::exps_type* init_args = new ast::exps_type();
-    init_args->push_back(result_.unsafe_cast<ast::Exp>());
-    ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
-    return init;
+    return result_.unsafe_cast<ast::Closure>();
   }
 
   void Binder::visit (ast::rConstForeach input)
