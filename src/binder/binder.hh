@@ -109,6 +109,8 @@ namespace binder
                              const libport::Symbol& name,
                              const libport::Symbol& method,
                              ast::rConstExp value);
+      /// Make a lazy from \a arg
+      ast::rExp lazify (ast::rExp arg, const ast::loc& loc);
   };
 
 } // namespace binder

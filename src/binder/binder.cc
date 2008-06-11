@@ -193,22 +193,29 @@ namespace binder
       {
         ast::rExp& arg = (*args)[i];
         ast::loc loc = arg->location_get();
-        ast::rCall lazy = new ast::Call
-          (loc, new ast::Implicit(loc), SYMBOL(Lazy), 0);
-        ast::rCall clone = new ast::Call(loc, lazy, SYMBOL(clone), 0);
-        ast::rScope body =
-          new ast::Scope(loc, (*input->arguments_get())[i]);
-        ast::rClosure closure =
-          new ast::Closure(loc, new ast::declarations_type(), body);
-        operator()(closure);
-        ast::exps_type* init_args = new ast::exps_type();
-        init_args->push_back(result_.unsafe_cast<ast::Exp>());
-        ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
-        arg = new ast::Lazy(loc, init, arg);
+        arg = new ast::Lazy
+          (loc, lazify((*input->arguments_get())[i], loc), arg);
       }
     }
 
     result_ = result;
+  }
+
+  ast::rExp Binder::lazify (ast::rExp arg, const ast::loc& loc)
+  {
+    // build Lazy.clone.init(closure () { %arg })
+    ast::rCall lazy = new ast::Call
+      (loc, new ast::Implicit(loc), SYMBOL(Lazy), 0);
+    ast::rCall clone = new ast::Call(loc, lazy, SYMBOL(clone), 0);
+    ast::rScope body =
+      new ast::Scope(loc, arg);
+    ast::rClosure closure =
+      new ast::Closure(loc, new ast::declarations_type(), body);
+    operator()(closure);
+    ast::exps_type* init_args = new ast::exps_type();
+    init_args->push_back(result_.unsafe_cast<ast::Exp>());
+    ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
+    return init;
   }
 
   void Binder::visit (ast::rConstForeach input)
