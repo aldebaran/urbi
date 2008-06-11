@@ -17,6 +17,7 @@
 # include <scheduler/job.hh>
 
 # include <runner/runner.hh>
+# include <runner/stacks.hh>
 
 namespace runner
 {
@@ -205,22 +206,8 @@ namespace runner
     void show_backtrace(const call_stack_type& bt,
                         const std::string& chan);
 
-    /// The local stack
-    typedef std::vector<rObject> local_stack_type;
-    local_stack_type local_stack_;
-    /// The related frame pointer
-    unsigned local_pointer_;
-
-    /// The double-indirection local stack, for captured and
-    /// closed-over variables
-    typedef std::vector<rrObject> rlocal_stack_type;
-    rlocal_stack_type rlocal_stack_;
-    /// The captured variables frame pointer
-    unsigned captured_pointer_;
-    /// The closed variables frame pointer
-    unsigned closed_pointer_;
-
-    void local_set(ast::rConstDeclaration d, rObject value);
+    /// The local variable stacks
+    Stacks stacks_;
   };
 
 } // namespace runner

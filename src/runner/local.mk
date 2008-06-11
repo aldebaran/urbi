@@ -11,4 +11,6 @@ runner/runner.hxx				\
 runner/shell.cc					\
 runner/shell.hh					\
 runner/sneaker.cc				\
-runner/sneaker.hh
+runner/sneaker.hh				\
+runner/stacks.cc				\
+runner/stacks.hh
