@@ -73,7 +73,10 @@ namespace urbi
     int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
 		     int format, int transmitFormat, int &width, int &height);
 
-    /// Get the value of a device in a synchronous way. Returns 1 on success, 0 on failure.
+    /// Get the value of any device in a synchronous way. Returns 1 on success, 0 on failure.
+    int syncGetValue(const char* valName, UValue& val);
+
+    /// Get the value of device.val in a synchronous way. Returns 1 on success, 0 on failure.
     int syncGetDevice(const char* device, double &val);
 
     /// Execute an URBI command, return the resulting double value. Returns 1 on success, 0 on failure.

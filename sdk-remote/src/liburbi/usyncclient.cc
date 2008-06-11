@@ -272,6 +272,21 @@ namespace urbi
   }
 
   int
+  USyncClient::syncGetValue(const char* valName, UValue& val)
+  {
+    UMessage *m = syncGet("%s;", valName);
+
+    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    {
+      delete m;
+      return 0;
+    }
+    val = (*(m->value));
+    delete m;
+    return 1;
+  }
+
+  int
   USyncClient::syncGetDevice(const char* device, double& val)
   {
     UMessage *m = syncGet("%s.val;", device);
