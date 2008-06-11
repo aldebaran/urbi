@@ -340,6 +340,9 @@ namespace urbi
       case SAMPLE_UNSIGNED:
 	tstr << "unsigned";
 	break;
+
+      default:
+	tstr << "unknown[" << (int)sampleFormat << "]";
     }
     tstr << ")";
     return tstr.str();
