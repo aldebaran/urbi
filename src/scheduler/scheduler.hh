@@ -10,6 +10,7 @@
 
 # include <boost/any.hpp>
 # include <boost/function.hpp>
+# include <libport/statistics.hh>
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
 
@@ -23,6 +24,8 @@ namespace scheduler
     SCHED_EXIT      = -1,
     SCHED_IMMEDIATE = 0
   };
+
+  typedef libport::Statistics<libport::utime_t> scheduler_stats_type;
 
   class Scheduler : boost::noncopyable
   {
@@ -116,6 +119,12 @@ namespace scheduler
     ///
     void signal_world_change();
 
+    /// Get current mean and standard deviation (in libport::utime_t units) of
+    /// the scheduler so far.
+    ///
+    /// \return Some scheduler statistics.
+    const scheduler_stats_type& stats_get() const;
+
   private:
     /// Execute one round in the scheduler.
     ///
@@ -152,6 +161,9 @@ namespace scheduler
 
     /// Ready to die when all jobs are also dead.
     bool ready_to_die_;
+
+    /// Statistics
+    scheduler_stats_type stats_;
   };
 
 } // namespace scheduler

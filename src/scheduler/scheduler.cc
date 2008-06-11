@@ -72,10 +72,12 @@ namespace scheduler
     // new job to start. Also, run waiting jobs only if the previous round
     // may have add a side effect and reset this indication for the current
     // job.
-    libport::utime_t deadline = get_time_() +  3600000000LL;
+    libport::utime_t start_time = get_time_();
+    libport::utime_t deadline = start_time +  3600000000LL;
     jobs_to_start_ = false;
     bool start_waiting = possible_side_effect_;
     possible_side_effect_ = false;
+    bool at_least_one_started = false;
 
     ECHO(pending_.size() << " jobs in the queue for this round");
     foreach (rJob job, pending_)
@@ -115,6 +117,7 @@ namespace scheduler
 	coroutine_start(coro_, current_job_->coro_get(), run_job, current_job_.get());
 	current_job_ = 0;
 	deadline = SCHED_IMMEDIATE;
+	at_least_one_started = true;
 	continue;
       }
       case zombie:
@@ -162,6 +165,7 @@ namespace scheduler
       // A job with an exception will start unconditionally.
       if (start || job->has_pending_exception())
       {
+	at_least_one_started = true;
 	ECHO("will resume job " << *job
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
 	possible_side_effect_ |= !job->side_effect_free_get();
@@ -196,6 +200,10 @@ namespace scheduler
     /// If we are ready to die and there are no jobs left, then die.
     if (ready_to_die_ && jobs_.empty())
       deadline = SCHED_EXIT;
+
+    // Compute statistics
+    if (at_least_one_started)
+      stats_.add_sample(get_time_() - start_time);
 
     return deadline;
   }
@@ -304,6 +312,12 @@ namespace scheduler
     // executing jobs (pending_), otherwise return the jobs_ content which
     // is complete.
     return current_job_ ? pending_ : jobs_;
+  }
+
+  const scheduler_stats_type&
+  Scheduler::stats_get() const
+  {
+    return stats_;
   }
 
 } // namespace scheduler

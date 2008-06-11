@@ -268,6 +268,27 @@ namespace object
     return object::void_class;
   }
 
+  static rObject
+  system_class_stats(runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    Dictionary::value_type res;
+    const scheduler::scheduler_stats_type& stats =
+      r.scheduler_get().stats_get();
+    // The space after "Symbol(" is mandatory to avoid triggering an error in
+    // symbol generation code
+#define ADDSTAT(Suffix, Function, Divisor)				\
+    res[libport::Symbol( "cycles" # Suffix)] = Float::fresh(stats.Function() / Divisor)
+    ADDSTAT(, samples, 1);
+    ADDSTAT(Max, max, 1000.0);
+    ADDSTAT(Mean, mean, 1000.0);
+    ADDSTAT(Min, min, 1000.0);
+    ADDSTAT(StdDev, standard_deviation, 1000.0);
+    ADDSTAT(Variance, variance, 1000.0);
+#undef ADDSTAT
+    return Dictionary::fresh(res);
+  }
+
   // This should give a backtrace as an urbi object.
   static rObject
   system_class_backtrace(runner::Runner& r, objects_type args)
@@ -343,6 +364,7 @@ namespace object
     DECLARE(scopeTag);
     DECLARE(searchFile);
     DECLARE(shiftedTime);
+    DECLARE(stats);
     DECLARE(shutdown);
     DECLARE(sleep);
     DECLARE(spawn);
