@@ -53,7 +53,6 @@ class Global.TrajectoryGenerator
         var self.get = getSlot("adaptiveSpeedGet")
       else
         var self.get = getSlot("timeGet") |
-      self.dump(1) |
     }
     else if (args.has("sin") || args.has("cos"))
     {
@@ -75,26 +74,14 @@ class Global.TrajectoryGenerator
   # Blocking until the trajectory is over.
   function run()
   {
-    clog << "Run" |
     var tag = Tag.new|
     tag:
     {
-      clog << "Tag" |
       every(getPeriod)
       {
-        clog << "Every" |
 	if (isOver)
-        {
-          clog << "isOver" |
           tag.stop|
-        }|
-        clog << "Before" |
-        var val = getter |
-        clog << ("Val: " + val.asString) |
-        val = get(val)|
-        clog << ("New: " + val.asString) |
-	setter(val) |
-        clog << ("Post new: " + getter) |
+	setter(get(getter)) |
       }|
       sleep(inf)
     }|

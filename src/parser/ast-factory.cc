@@ -229,15 +229,13 @@ namespace parser
       << "TrajectoryGenerator"
       << ".new("
       // getter.
-      << "closure () { var res = " << new_clone(lvalue) << "|"
-      <<                "clog << (\"getter: \" + res.asString) | res },"
+      << "closure () { " << new_clone(lvalue) << " }, "
       // setter.
-      << "closure (v){ clog << (\"setter: \" + v.asString) | "
-      <<                lvalue << " = v }, "
+      << "closure (v){ " << lvalue << " = v }, "
       // targetValue, args.
       << value << ", " << modifier
       << ").run";
-    res = parse(tweast)->ast_take();
+    res = parse(tweast)->ast_get();
 # endif
     }
     else

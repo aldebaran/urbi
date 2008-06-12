@@ -17,20 +17,6 @@ ENABLE_HARD_ERRORS = false
 TFAIL_TESTS +=                                  \
 1.x/eval.chk
 
-# k2 tests that fail because plain objects have been removed.
-TFAIL_TESTS +=					\
-2.x/modifier/accel-freeze.chk			\
-2.x/modifier/speed-adaptive-freeze.chk		\
-2.x/modifier/accel.chk				\
-2.x/modifier/smooth.chk				\
-2.x/modifier/speed.chk				\
-2.x/modifier/speed-freeze.chk			\
-2.x/modifier/speed-adaptive.chk			\
-2.x/modifier/time-freeze.chk			\
-2.x/modifier/time.chk				\
-2.x/modifier/time-adaptive.chk			\
-2.x/modifier/time-adaptive-freeze.chk
-
 # k2 tests that fail.
 XFAIL_TESTS +=					\
 2.x/literal-string.chk
@@ -58,15 +44,15 @@ XFAIL_TESTS +=					\
 1.x/init-in-pipe-with-time.chk			\
 1.x/lazy-test-eval.chk				\
 1.x/loadwav.chk					\
-1.x/modifier-accel-adaptive.chk			\
-1.x/modifier-accel.chk				\
-1.x/modifier-smooth-adaptive.chk		\
-1.x/modifier-smooth.chk				\
-1.x/modifier-speed-adaptive.chk			\
-1.x/modifier-speed.chk				\
-1.x/modifier-time-adaptive.chk			\
-1.x/modifier-time.chk				\
-1.x/modifier-syntax.chk				\
+1.x/modifier/accel-adaptive.chk			\
+1.x/modifier/accel.chk				\
+1.x/modifier/smooth-adaptive.chk		\
+1.x/modifier/smooth.chk				\
+1.x/modifier/speed-adaptive.chk			\
+1.x/modifier/speed.chk				\
+1.x/modifier/time-adaptive.chk			\
+1.x/modifier/time.chk				\
+1.x/modifier/syntax.chk				\
 1.x/nameresolution-array.chk			\
 1.x/nameresolution-dollar-computed.chk		\
 1.x/nameresolution-dollars.chk			\
