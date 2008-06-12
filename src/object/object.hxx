@@ -162,9 +162,9 @@ namespace object
   }
 
 
-  /*-------------.
-  | Properties.  |
-  `-------------*/
+  /*--------.
+  | Clone.  |
+  `--------*/
 
   inline rObject
   Object::clone() const

@@ -108,7 +108,7 @@ namespace object
 	   objects_set_type& marks) const;
 
     /// Lookup field in object hierarchy.
-    /// \param value Whether to retur the owner of the slot or its value
+    /// \param value Whether to return the owner of the slot or its value
     /// \return the Object containing slot \a k if \a value is false,
     ///         the slot value if \a value is true, 0 if not found.
     rObject
