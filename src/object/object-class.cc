@@ -286,16 +286,16 @@ namespace object
   static rObject
   object_class_setSlot (runner::Runner&, objects_type args)
   {
-    CHECK_ARG_COUNT (3);
-    FETCH_ARG (1, String);
-    args[0]->slot_set (arg1->value_get (), args[2]);
+    CHECK_ARG_COUNT(3);
+    FETCH_ARG(1, String);
+    args[0]->slot_set(arg1->value_get (), args[2]);
     return args[2];
   }
 
   static rObject
   object_class_updateSlot (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (3);
+    CHECK_ARG_COUNT(3);
     FETCH_ARG (1, String);
     args[0]->slot_update(r, arg1->value_get (), args[2]);
     return args[2];
@@ -304,11 +304,56 @@ namespace object
   static rObject
   object_class_changeSlot (runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (3);
+    CHECK_ARG_COUNT(3);
     FETCH_ARG (1, String);
     args[0]->slot_update(r, arg1->value_get (), args[2], false);
     return args[2];
   }
+
+
+  /*-------------.
+  | Properties.  |
+  `-------------*/
+
+  static rObject
+  object_class_getProperty (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(3);
+    FETCH_ARG(1, String);
+    FETCH_ARG(2, String);
+    rObject res =
+      args[0]->property_get(arg1->value_get(), arg2->value_get());
+    if (res)
+      return res;
+    else
+      return void_class;
+  }
+
+  static rObject
+  object_class_hasProperty (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(3);
+    FETCH_ARG(1, String);
+    FETCH_ARG(2, String);
+    return
+      args[0]->property_get(arg1->value_get(), arg2->value_get())
+      ? true_class
+      : false_class;
+  }
+
+  static rObject
+  object_class_setProperty (runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(4);
+    FETCH_ARG(1, String);
+    FETCH_ARG(2, String);
+    args[0]->property_set(arg1->value_get(), arg2->value_get(), args[3]);
+    return args[3];
+  }
+
+
+
+
 
   static rObject
   object_class_isA(runner::Runner&, objects_type args)
@@ -332,7 +377,9 @@ namespace object
     DECLARE(dump);
     DECLARE(echo); // This guy should be in System.
     DECLARE(getLazyLocalSlot);
+    DECLARE(getProperty);
     DECLARE(getSlot);
+    DECLARE(hasProperty);
     DECLARE(init);
     DECLARE(isA);
     DECLARE(locateSlot);
@@ -342,6 +389,7 @@ namespace object
     DECLARE(removeProto);
     DECLARE(removeSlot);
     DECLARE(sameAs);
+    DECLARE(setProperty);
     DECLARE(setSlot);
     DECLARE(slotNames);
     DECLARE(uid);

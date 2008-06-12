@@ -531,50 +531,6 @@ load("urbi/tuple.u");
 
 load("urbi/dictionary.u");
 
-## ----------- ##
-## Properties. ##
-## ----------- ##
-
-do Object
-{
-  var properties = Dictionary.new;
-
-  # Set the \a name property on slot \a slot to \a value
-  function setProperty(slot, name, value)
-  {
-    if (locateSlot("properties") !== self)
-      var self.properties = Dictionary.new|
-    var slotProps|
-    if (!properties.has(slot))
-    {
-      slotProps = Dictionary.new|
-      properties.set(slot, slotProps)|
-    }
-    else
-      slotProps = properties.get(slot)|
-    slotProps.set(name, value)|
-    if (!self.getSlot(slot).locateSlot("propertyHook").isNil)
-      self.getSlot(slot).propertyHook(self, slot, name, value)|
-    value
-  };
-
-  function getProperty(slot, name)
-  {
-    if (!hasProperty(slot, name))
-      return void|
-    properties.get(slot).get(name)
-  };
-
-  function hasProperty(slot, name)
-  {
-    # No '&&' yet.
-    if (properties.has(slot))
-      properties.get(slot).has(name)
-    else
-      return false
-  };
-};
-
 ## ------------------ ##
 ## Debugging helpers. ##
 ## ------------------ ##
