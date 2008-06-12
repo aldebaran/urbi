@@ -43,8 +43,9 @@ static rObject urbi_get(rObject r, const std::string& slot)
 {
   object::objects_type args;
   args.push_back(r);
-  ECHO("applying get for "<<slot<<"...");
-  rObject ret =  getCurrentRunner().apply(r->slot_get(Symbol(slot)), Symbol(slot), args);
+  ECHO("applying get for " << slot << "...");
+  rObject ret =  getCurrentRunner().apply(r->slot_get(Symbol(slot)),
+                                          Symbol(slot), args);
   ECHO("done");
   return ret;
 }

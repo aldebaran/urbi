@@ -53,9 +53,6 @@ namespace object
     /// the appropriate prototype will be added.
     Atom (const value_type v, bool add_proto = true);
 
-    /// Get a smart pointer to this
-    shared_type self() const;
-
     /// Destroy an Atom.
     virtual ~Atom ();
     /** \} */

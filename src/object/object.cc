@@ -100,10 +100,10 @@ namespace object
   }
 
   rObject
-  Object::make_method_scope(const rObject& self, const rObject& parent)
+  Object::make_method_scope(const rObject& parent)
   {
     rObject res = Object::make_scope(parent ? parent : object_class);
-    res->slot_set(SYMBOL(self), self);
+    res->slot_set(SYMBOL(self), this);
     return res;
   }
 
@@ -141,8 +141,8 @@ namespace object
     if (!libport::mhas(marks, this))
     {
       marks.insert(this);
-      assertion(self());
-      boost::optional<R> res = action(self());
+      // FIXME: rConstObject?
+      boost::optional<R> res = action(const_cast<Object*>(this));
       if (res)
 	return res;
       else
@@ -243,7 +243,7 @@ namespace object
 		       bool hook)
   {
     // The target of updateSlot
-    rObject context = self();
+    rObject context = this;
     // The owner of the updated slot
     rObject owner = context->safe_slot_locate(k);
 
@@ -324,7 +324,7 @@ namespace object
   std::ostream&
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
-    rObject data = urbi_call(r, self(), SYMBOL(id));
+    rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
     std::string s = data->value<String>().name_get();
     return o << s;
   }
@@ -380,7 +380,7 @@ namespace object
   {
     try
     {
-      rObject s = urbi_call(runner, self(), SYMBOL(asString));
+      rObject s = urbi_call(runner, const_cast<Object*>(this), SYMBOL(asString));
       o << s->value<String>().name_get();
       return o;
     }

@@ -58,14 +58,6 @@ namespace object
   {}
 
   template <typename Traits>
-  typename Atom<Traits>::shared_type
-  Atom<Traits>::self() const
-  {
-    rObject res = super_type::self();
-    return res.unsafe_cast<Atom<Traits> >();
-  }
-
-  template <typename Traits>
   Object::kind_type
   Atom<Traits>::kind_get () const
   {
@@ -260,8 +252,9 @@ namespace object
   rObject
   Atom<Traits>::clone () const
   {
-    rObject res = new Atom<Traits>(value_get (), false);
-    res->proto_add (self());
+    rObject res = new Atom<Traits>(value_get(), false);
+    // FIXME: clone should not be const.
+    res->proto_add(const_cast<Atom<Traits>*>(this));
     return res;
   }
 

@@ -26,16 +26,11 @@ namespace object
 
   inline
   Object::Object ()
-    : protos_ (new protos_type), slots_ (), locals_ (false)
+    : protos_(new protos_type)
+    , slots_()
+    , locals_(false)
   {
     root_classes_initialize();
-  }
-
-  inline
-  rObject
-  Object::self() const
-  {
-    return const_cast<Object*>(this);
   }
 
   inline
@@ -190,8 +185,10 @@ namespace object
   inline rObject
   Object::clone() const
   {
-    rObject res = new Object();
-    res->proto_add(self());
+    rObject res = new Object;
+    // FIXME: clone should not be const!  This was already noted,
+    // did the const come back at some point?
+    res->proto_add(const_cast<Object*>(this));
     return res;
   }
 
@@ -206,7 +203,7 @@ namespace object
   Object::value()
   {
     // This local variable seems to be needed by GCC 4.0.1 on OSX.
-    rObject s = self();
+    rObject s = this;
     TYPE_CHECK(s, T);
     return s.unsafe_cast<T>()->value_get();
   }

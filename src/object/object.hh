@@ -33,8 +33,6 @@ namespace object
   public:
     /// Create a new Object.
     Object ();
-    /// Get a smart pointer to this
-    rObject self() const;
 
     /// Destroy a Object.
     virtual ~Object ();
@@ -110,20 +108,23 @@ namespace object
     /// \param value Whether to retur the owner of the slot or its value
     /// \return the Object containing slot \a k if \a value is false,
     ///         the slot value if \a value is true, 0 if not found.
-    rObject slot_locate (const Slots::key_type& k, bool fallback = true, bool value = false) const;
+    rObject
+    slot_locate(const Slots::key_type& k,
+                bool fallback = true, bool value = false) const;
 
     /// Same as slot_locate, but raise LookupError if not found.
     /// \throw LookupError if the lookup fails.
-    rObject safe_slot_locate (const Slots::key_type& k, bool value = false) const;
+    rObject
+    safe_slot_locate(const Slots::key_type& k, bool value = false) const;
 
 
     /// Lookup field in object hierarchy.
     /// \param name The name of the slot to search
     /// \param def  The optional default value
     /// \throw LookupError if \a def isn't given and the slot isn't found.
-    rObject slot_get (
-      const Slots::key_type& k,
-      boost::optional<rObject> def = boost::optional<rObject>()) const;
+    rObject
+    slot_get(const Slots::key_type& k,
+             boost::optional<rObject> def = boost::optional<rObject>()) const;
 
     /// If the target is a "real" object, then updating means the same
     /// as slot_set: one never updates a proto.  If the target is a
@@ -219,17 +220,15 @@ namespace object
      **               becomes the parent)
      ** \return The new scope
      */
-    static rObject
-    make_scope(const rObject& parent = 0);
+    static rObject make_scope(const rObject& parent = 0);
 
     /// Make a method outer scope
     /**
      ** Similar to \see make_scope, but make the scope forward
-     ** messages to self when relevant
-     ** \return The new scope
+     ** messages to this object when relevant.
+     ** \return The new scope.
      **/
-    static rObject
-    make_method_scope(const rObject& self, const rObject& parent = 0);
+    rObject make_method_scope(const rObject& parent = 0);
 
     /// Return the value of \a atom as an Atom<T>.
     template <class T>
