@@ -30,8 +30,8 @@ namespace object
       CHECK_ARG_COUNT(2);
       FETCH_ARG(0, Dictionary);
       FETCH_ARG(1, String);
-      Dict& d = arg0->value_get();
-      Dict::iterator it = d.find(arg1->value_get());
+      dictionary_type& d = arg0->value_get();
+      dictionary_type::iterator it = d.find(arg1->value_get());
       if (it != d.end())
         return it->second;
       else
@@ -44,7 +44,7 @@ namespace object
       CHECK_ARG_COUNT(2);
       FETCH_ARG(0, Dictionary);
       FETCH_ARG(1, String);
-      Dict& d = arg0->value_get();
+      dictionary_type& d = arg0->value_get();
       return to_boolean(d.find(arg1->value_get()) != d.end());
     }
 
@@ -52,7 +52,7 @@ namespace object
     dictionary_class_clone(runner::Runner&, objects_type args)
     {
       CHECK_ARG_COUNT(1);
-      return new Dictionary(Dict());
+      return new Dictionary(dictionary_type());
     }
 
     static rObject
@@ -78,7 +78,7 @@ namespace object
   }
 
   std::ostream& operator << (std::ostream& where,
-                             const Dict& what)
+                             const dictionary_type& what)
   {
     where << &what << std::endl;
     return where;

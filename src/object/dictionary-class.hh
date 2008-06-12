@@ -15,12 +15,12 @@ namespace object
 
   namespace
   {
-    typedef libport::hash_map<libport::Symbol, rObject> Dict;
+    typedef libport::hash_map<libport::Symbol, rObject> dictionary_type;
   }
   /// Initialize the Dictionary class.
   void dictionary_class_initialize ();
   std::ostream& operator << (std::ostream& where,
-                             const Dict& what);
+                             const dictionary_type& what);
 
 }; // namespace object
 
