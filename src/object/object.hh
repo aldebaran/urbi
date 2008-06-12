@@ -126,23 +126,18 @@ namespace object
     slot_get(const Slots::key_type& k,
              boost::optional<rObject> def = boost::optional<rObject>()) const;
 
-    /// If the target is a "real" object, then updating means the same
-    /// as slot_set: one never updates a proto.  If the target is a
-    /// "locals" object, then updating really means updating the
-    /// existing slot, not creating a new slot in the inner scope.
-    /// Except if the existing source slot is a "real" object, in which case
-    /// updating means creating the slot in the result of "self" evaluation.
+    /// Implement copy-on-write if the owner of the scope is not this.
+    /// Otherwise, falls-thru to own_slot_update().
+    /// \param r        Runner to run the updateHook.
     /// \param k	The slot to update
     /// \param o	The new value
     /// \param hook	Whether to trigger the potential updateHook
-    void slot_update (runner::Runner& r,
-		      const Slots::key_type& k,
-		      rObject o,
-		      bool hook = true);
+    void slot_update(runner::Runner& r,
+                     const Slots::key_type& k, rObject o,
+                     bool hook = true);
 
-    void own_slot_update (const Slots::key_type& k,
-                          rObject o);
-
+    /// Update slot \c k to \a o.
+    void own_slot_update(const Slots::key_type& k, rObject o);
 
 
     /// \brief Update value in slot.

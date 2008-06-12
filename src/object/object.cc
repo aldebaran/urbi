@@ -236,35 +236,27 @@ namespace object
   }
 
   void
-  Object::slot_update (runner::Runner& r,
-		       const Slots::key_type& k,
-		       rObject o,
-		       bool hook)
+  Object::slot_update(runner::Runner& r,
+                      const Slots::key_type& k,
+                      rObject o,
+                      bool hook)
   {
-    // The target of updateSlot
-    rObject context = this;
     // The owner of the updated slot
-    rObject owner = context->safe_slot_locate(k);
-
-    // Class->class: copy on write.
-    rObject effective_target = context;
+    rObject owner = safe_slot_locate(k);
 
     // Check hook, only if we are not create-on-writing.
     /* If the current value in the slot to be written in has a slot named
      * 'updateHook', call it, passing the object owning the slot, the slot name
      * and the target.
      */
-    if (hook && effective_target == owner)
+    if (hook && owner == this)
     // FIXME: We probably want helper to access properties
-    if (rObject properties =
-        effective_target->slot_get(SYMBOL(properties), rObject()))
-    if (rObject slotProperties =
-        properties->slot_get(k, rObject()))
-    if (rObject hook =
-        slotProperties->slot_get(SYMBOL(updateHook), rObject()))
+    if (rObject properties = slot_get(SYMBOL(properties), rObject()))
+    if (rObject slotProperties = properties->slot_get(k, rObject()))
+    if (rObject hook = slotProperties->slot_get(SYMBOL(updateHook), rObject()))
     {
       objects_type args;
-      args.push_back(effective_target);
+      args.push_back(this);
       args.push_back(new String(k));
       args.push_back(o);
       rObject ret = r.apply(hook, SYMBOL(updateHook), args);
@@ -274,7 +266,7 @@ namespace object
 	return;
     }
     // If return-value of hook is not void, write it to slot.
-    effective_target->own_slot_update(k, o);
+    own_slot_update(k, o);
   };
 
   void
