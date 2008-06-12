@@ -23,21 +23,32 @@ namespace runner
       /// Build static stacks
       Stacks(rObject lobby);
 
-      /// Set values in the stacks
+      /// Update the given value
       void set(ast::rConstAssignment e, rObject v);
+      /// Define the given value
       void def(ast::rConstDeclaration e, rObject v);
+      /// Bind given argument
       void def_arg(ast::rConstDeclaration e, rObject v);
+      /// Bind given captured variable
       void def_captured(ast::rConstDeclaration e, rrObject v);
 
-      /// Get values from the stacks
+      /// Get value from the stack
       rObject get(ast::rConstLocal e);
+      /// Get value by double pointer (e must be closed or captured)
       rrObject rget(ast::rConstLocal e);
 
-      /// Get and set 'this' and 'call'
+      /// Set 'this'
       void self_set(rObject v);
+      /// Set 'call'
       void call_set(rObject v);
+      /// Get 'this'
       rObject self();
+      /// Get 'call'
       rObject call();
+
+      /// Switch the current 'this'
+      /** \return the action to switch back to the previous 'this'
+       */
       boost::function0<void> switch_self(rObject v);
 
       /// Signal the stacks a new execution is starting
