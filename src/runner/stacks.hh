@@ -6,10 +6,10 @@
 #ifndef RUNNER_STACKS_HH
 # define RUNNER_STACKS_HH
 
+# include <boost/function.hpp>
+
 # include <ast/fwd.hh>
 # include <object/object.hh>
-
- // FIXME: action
 
 namespace runner
 {
@@ -19,6 +19,9 @@ namespace runner
       // Import types
       typedef object:: rObject  rObject;
       typedef object::rrObject rrObject;
+
+      /// Type of callable entities
+      typedef boost::function0<void> action_type;
 
       /// Build static stacks
       Stacks(rObject lobby);
@@ -49,7 +52,7 @@ namespace runner
       /// Switch the current 'this'
       /** \return the action to switch back to the previous 'this'
        */
-      boost::function0<void> switch_self(rObject v);
+      action_type switch_self(rObject v);
 
       /// Signal the stacks a new execution is starting
       void execution_starts(const libport::Symbol& msg);
@@ -63,7 +66,7 @@ namespace runner
        *  \param call     Value of 'call' in the new frame.
        *  \return The action to restore the previous frame state.
        */
-      boost::function0<void>
+      action_type
       push_frame(const libport::Symbol& msg,
                  unsigned local, unsigned closed, unsigned captured,
                  rObject self, rObject call);

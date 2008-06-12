@@ -12,6 +12,8 @@
 
 namespace runner
 {
+  typedef Stacks::action_type action_type;
+
   Stacks::Stacks(rObject lobby)
     : local_pointer_(0)
     , closed_pointer_(0)
@@ -24,7 +26,7 @@ namespace runner
     STACK_ECHO("STACKS SPAWNED");
   }
 
-  boost::function0<void>
+  action_type
   Stacks::push_frame(const libport::Symbol& msg,
                      unsigned local, unsigned closed, unsigned captured,
                      rObject self, rObject call)
@@ -41,7 +43,7 @@ namespace runner
     STACK_ECHO("Captured : " << captured);
     STACK_NECHO(libport::decindent);
 
-    boost::function0<void> res =
+    action_type res =
       boost::bind(&Stacks::pop_frame, this, msg, local_pointer_,
                   closed_pointer_, captured_pointer_);
 
@@ -310,11 +312,11 @@ namespace runner
     return value;
   }
 
-  boost::function0<void>
+  action_type
   Stacks::switch_self(rObject v)
   {
     STACK_ECHO("Switching 'this':" << libport::incindent);
-    boost::function0<void> res =
+    action_type res =
       boost::bind(&Stacks::switch_self_back, this,
                   local_stack_[local_pointer_]);
     self_set(v);
