@@ -229,16 +229,6 @@ namespace object
     value();
 
   private:
-    typedef std::pair<bool, rObject> locate_type;
-    /// Lookup field in object hierarchy.
-    /// \param k   the key looked up for
-    /// \param os  the objects already looked up for, to break infinite
-    ///            recursions
-    /// \return (false,0) if k does not exist, (true,0) if k is in this,
-    ///          (true, ptr) if k is in ptr.
-    locate_type slot_locate(const key_type& k, objects_set_type& os) const;
-
-  private:
     /// The protos.
     protos_type* protos_;
 
