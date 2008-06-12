@@ -79,7 +79,7 @@ namespace object
     /// \}
 
     /// For debugging.
-    std::ostream& special_slots_dump (std::ostream& o, runner::Runner&) const;
+    std::ostream& special_slots_dump(std::ostream& o, runner::Runner&) const;
 
   private:
     /// The value.

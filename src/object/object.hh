@@ -38,6 +38,9 @@ namespace object
     virtual ~Object ();
     /// \}
 
+    /// Type of the keys.
+    typedef Slots::key_type key_type;
+
     /// Ref-couting.
     typedef libport::shared_ptr<Object> shared_type;
 
@@ -109,13 +112,13 @@ namespace object
     /// \return the Object containing slot \a k if \a value is false,
     ///         the slot value if \a value is true, 0 if not found.
     rObject
-    slot_locate(const Slots::key_type& k,
+    slot_locate(const key_type& k,
                 bool fallback = true, bool value = false) const;
 
     /// Same as slot_locate, but raise LookupError if not found.
     /// \throw LookupError if the lookup fails.
     rObject
-    safe_slot_locate(const Slots::key_type& k, bool value = false) const;
+    safe_slot_locate(const key_type& k, bool value = false) const;
 
 
     /// Lookup field in object hierarchy.
@@ -123,7 +126,7 @@ namespace object
     /// \param def  The optional default value
     /// \throw LookupError if \a def isn't given and the slot isn't found.
     rObject
-    slot_get(const Slots::key_type& k,
+    slot_get(const key_type& k,
              boost::optional<rObject> def = boost::optional<rObject>()) const;
 
     /// Implement copy-on-write if the owner of the scope is not this.
@@ -133,18 +136,18 @@ namespace object
     /// \param o	The new value
     /// \param hook	Whether to trigger the potential updateHook
     void slot_update(runner::Runner& r,
-                     const Slots::key_type& k, rObject o,
+                     const key_type& k, rObject o,
                      bool hook = true);
 
     /// Update slot \c k to \a o.
-    void own_slot_update(const Slots::key_type& k, rObject o);
+    void own_slot_update(const key_type& k, rObject o);
 
 
     /// \brief Update value in slot.
     ///
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
-    Object& slot_set (const Slots::key_type& k, rObject o);
+    Object& slot_set(const key_type& k, rObject o);
 
     /// \brief Copy another object's slot.
     ///
@@ -154,15 +157,15 @@ namespace object
     /// \param name The name of the slot to copy
     /// \param from The object to copy the slot from
     /// \return this
-    Object& slot_copy (const Slots::key_type& name, rObject from);
+    Object& slot_copy(const key_type& name, rObject from);
 
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
     /// protos).
-    rObject own_slot_get (const Slots::key_type& k) const;
+    rObject own_slot_get(const key_type& k) const;
 
     /// Remove slot.
-    Object& slot_remove (const Slots::key_type& k);
+    Object& slot_remove(const key_type& k);
     /// Read only access to slots.
     const slots_implem::content_type& slots_get () const;
 
@@ -233,8 +236,7 @@ namespace object
     ///            recursions
     /// \return (false,0) if k does not exist, (true,0) if k is in this,
     ///          (true, ptr) if k is in ptr.
-    locate_type
-    slot_locate (const Slots::key_type& k, objects_set_type& os) const;
+    locate_type slot_locate(const key_type& k, objects_set_type& os) const;
 
   private:
     /// The protos.

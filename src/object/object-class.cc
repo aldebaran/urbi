@@ -247,7 +247,7 @@ namespace object
     CHECK_ARG_COUNT (4);
 
     FETCH_ARG (1, String);
-    Slots::key_type slot_name = arg1->value_get ();
+    Object::key_type slot_name = arg1->value_get ();
 
     // If the slot already exists, return its content.
     if (rObject slot = args[0]->own_slot_get (slot_name))

@@ -166,7 +166,7 @@ namespace object
     {
     public:
       lookup_result
-      slot_lookup(rObject obj, const Slots::key_type& k, bool value)
+      slot_lookup(rObject obj, const Object::key_type& k, bool value)
       {
 	assertion(obj);
 	if (rObject x = obj->own_slot_get(k))
@@ -180,8 +180,9 @@ namespace object
     };
   }
 
-  rObject Object::slot_locate(const Slots::key_type& k,
-                              bool fallback, bool value) const
+  rObject
+  Object::slot_locate(const key_type& k,
+                      bool fallback, bool value) const
   {
     SlotLookup looker;
     lookup_action action =
@@ -196,7 +197,7 @@ namespace object
   }
 
   rObject
-  Object::safe_slot_locate(const Slots::key_type& k, bool value) const
+  Object::safe_slot_locate(const key_type& k, bool value) const
   {
     rObject r = slot_locate(k, true, value);
     if (!r)
@@ -205,8 +206,7 @@ namespace object
   }
 
   rObject
-  Object::slot_get (const Slots::key_type& k,
-                    boost::optional<rObject> def) const
+  Object::slot_get (const key_type& k, boost::optional<rObject> def) const
   {
     rObject value;
     if (def)
@@ -221,7 +221,7 @@ namespace object
 
 
   Object&
-  Object::slot_set (const Slots::key_type& k, rObject o)
+  Object::slot_set (const key_type& k, rObject o)
   {
     if (!slots_.set(k, o))
       throw RedefinitionError(k);
@@ -229,7 +229,7 @@ namespace object
   }
 
   Object&
-  Object::slot_copy (const Slots::key_type& name, rObject from)
+  Object::slot_copy (const key_type& name, rObject from)
   {
     this->slot_set(name, from->slot_get(name));
     return *this;
@@ -237,8 +237,7 @@ namespace object
 
   void
   Object::slot_update(runner::Runner& r,
-                      const Slots::key_type& k,
-                      rObject o,
+                      const key_type& k, rObject o,
                       bool hook)
   {
     // The owner of the updated slot
@@ -270,7 +269,7 @@ namespace object
   };
 
   void
-  Object::own_slot_update (const Slots::key_type& k, rObject v)
+  Object::own_slot_update (const key_type& k, rObject v)
   {
     slots_.update(k, v);
   }

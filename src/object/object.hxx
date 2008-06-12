@@ -141,14 +141,14 @@ namespace object
 
   inline
   rObject
-  Object::own_slot_get (const Slots::key_type& k) const
+  Object::own_slot_get(const key_type& k) const
   {
     return slots_.get(k);
   }
 
   inline
   Object&
-  Object::slot_remove (const Slots::key_type& k)
+  Object::slot_remove(const key_type& k)
   {
     slots_.erase (k);
     return *this;
