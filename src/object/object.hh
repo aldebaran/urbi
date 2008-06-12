@@ -150,6 +150,7 @@ namespace object
     ///
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
+    /// \return    *this.
     Object& slot_set(const key_type& k, rObject o);
 
     /// \brief Copy another object's slot.
@@ -181,12 +182,15 @@ namespace object
     /// \{
     /// Return the dictionary of the properties.
     /// Returns 0 if there is no slot "properties", or if it is not
-    /// a Dictionary.
+    /// a Dictionary.  Must be an "own" slot.
     rDictionary properties_get();
     /// Return the dictionary of the properties of slot \a k, or 0.
     rDictionary properties_get(const key_type& k);
     /// Return the property \a p of slot \a k, of 0.
     rObject property_get(const key_type& k, const key_type& p);
+    /// self.k->p = val.
+    /// Ensures that self.property exists.
+    void property_set(const key_type& k, const key_type& p, rObject val);
     /// \}
 
     /// \name Printing.

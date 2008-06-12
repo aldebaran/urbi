@@ -222,7 +222,7 @@ namespace object
 
 
   Object&
-  Object::slot_set (const key_type& k, rObject o)
+  Object::slot_set(const key_type& k, rObject o)
   {
     if (!slots_.set(k, o))
       throw RedefinitionError(k);
@@ -230,7 +230,7 @@ namespace object
   }
 
   Object&
-  Object::slot_copy (const key_type& name, rObject from)
+  Object::slot_copy(const key_type& name, rObject from)
   {
     this->slot_set(name, from->slot_get(name));
     return *this;
@@ -286,8 +286,9 @@ namespace object
   rDictionary
   Object::properties_get()
   {
-    rDictionary res =
-      slot_locate(SYMBOL(properties), false, true).unsafe_cast<Dictionary>();
+    rDictionary res;
+    if (slots_.has(SYMBOL(properties)))
+      res = slots_.get(SYMBOL(properties)).unsafe_cast<Dictionary>();
     return res;
   }
 
@@ -307,6 +308,31 @@ namespace object
     if (rDictionary ps = properties_get(k))
       res = libport::find0(ps->value_get(), p);
     return res;
+  }
+
+  void
+  Object::property_set(const key_type& k, const key_type& p, rObject value)
+  {
+    // Make sure the object has a properties dictionary.
+    rDictionary props = properties_get();
+    if (!props)
+    {
+      props = new Dictionary(dictionary_traits::type());
+      // This should die if there is a slot name "properties" which is
+      // not a dictionary, which is what we want, don't we?
+      slot_set(SYMBOL(properties), props);
+    }
+
+    // Make sure we have a dict for slot k.
+    rDictionary prop =
+      libport::find0(props->value_get(), k).unsafe_cast<Dictionary>();
+    if (!prop)
+    {
+      prop = new Dictionary(dictionary_traits::type());
+      props->value_get()[k] = prop;
+    }
+
+    prop->value_get()[p] = value;
   }
 
 
