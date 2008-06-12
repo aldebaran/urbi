@@ -93,7 +93,7 @@ namespace object
   rObject
   Object::make_scope(const rObject& parent)
   {
-    rObject res = object::Object::fresh();
+    rObject res = new object::Object();
     res->locals_set(true);
     res->proto_add(parent);
     return res;
@@ -116,7 +116,7 @@ namespace object
   {
     if (!protos_cache_)
     {
-      rList protos = List::fresh (*protos_);
+      rList protos = new List(*protos_);
       protos_cache_ = protos;
       delete protos_;
       protos_ = &protos->value_get ();
@@ -279,7 +279,7 @@ namespace object
     {
       objects_type args;
       args.push_back(effective_target);
-      args.push_back(String::fresh(k));
+      args.push_back(new String(k));
       args.push_back(o);
       rObject ret = r.apply(hook, SYMBOL(updateHook), args);
       // If the updateHook returned void, do nothing. Otherwise let

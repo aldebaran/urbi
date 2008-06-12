@@ -122,10 +122,10 @@ abs(libport::ufloat v)
   {
     CHECK_ARG_COUNT(1);
     if (args[0] == float_class)
-      return String::fresh(SYMBOL(LT_Float_GT));
+      return new String(SYMBOL(LT_Float_GT));
     FETCH_ARG(0, Float);
     static boost::format f("%g");
-    return String::fresh(libport::Symbol(str(f % float(arg0->value_get()))));
+    return new String(libport::Symbol(str(f % float(arg0->value_get()))));
   }
 
   /// Clone.
@@ -142,7 +142,7 @@ abs(libport::ufloat v)
   float_class_inf(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
-    return Float::fresh(std::numeric_limits<ufloat>::infinity());
+    return new Float(std::numeric_limits<ufloat>::infinity());
   }
 
   /// NaN
@@ -150,7 +150,7 @@ abs(libport::ufloat v)
   float_class_nan(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
-    return Float::fresh(std::numeric_limits<ufloat>::quiet_NaN());
+    return new Float(std::numeric_limits<ufloat>::quiet_NaN());
   }
 
   /// Change the value.
@@ -183,11 +183,11 @@ abs(libport::ufloat v)
     // Unary minus.
     FETCH_ARG(0, Float);
     if (args.size() == 1)
-      return Float::fresh(- arg0->value_get());
+      return new Float(- arg0->value_get());
 
     // Binary minus.
     FETCH_ARG(1, Float);
-    return Float::fresh(arg0->value_get() - arg1->value_get());
+    return new Float(arg0->value_get() - arg1->value_get());
   }
 
   // FIXME: Code duplication here, factor this macro with PRIMITIVE_1_
@@ -204,12 +204,12 @@ abs(libport::ufloat v)
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Float);                                        \
     Pre;                                                        \
-    return Float::fresh(Name(arg0->value_get()));               \
+    return new Float(Name(arg0->value_get()));                  \
   }
 
   /// Define a primitive for float numbers.
   /// \param Call Name primitive's name
-#define PRIMITIVE_0_FLOAT(Name)                            \
+#define PRIMITIVE_0_FLOAT(Name)                 \
   PRIMITIVE_0_FLOAT_(Name, )
 
 #define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name)			\

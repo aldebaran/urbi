@@ -139,8 +139,8 @@ namespace object
     static boost::format uid("0x%x");
     CHECK_ARG_COUNT(1);
     return
-      String::fresh(libport::Symbol
-                    (str(uid % reinterpret_cast<long long>(args[0].get()))));
+      new String(libport::Symbol
+                 (str(uid % reinterpret_cast<long long>(args[0].get()))));
   }
 
   /// Structural equality
@@ -177,7 +177,7 @@ namespace object
     libport::Symbol msg = args[1]->slot_get(SYMBOL(message))->value<String>();
     rObject code = args[0]->slot_get(msg);
     // FIXME: Sanity checks on the call message are probably required
-    object::objects_type self;
+    objects_type self;
     self.push_back(args[0]);
     return r.apply(code, msg, self, args[1]);
   }
@@ -223,11 +223,11 @@ namespace object
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
 
-    object::list_traits::type l;
+    list_traits::type l;
     foreach (const Slots::slot_type& p, obj->slots_get())
-      l.push_back (object::String::fresh(p.first));
+      l.push_back (new String(p.first));
 
-    return object::List::fresh(l);
+    return new List(l);
   }
 
   /// Get a slot content.
@@ -322,14 +322,14 @@ namespace object
   object_class_isScope (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return Float::fresh(!!args[0]->locals_get ());
+    return new Float(!!args[0]->locals_get ());
   }
 
   static rObject
   object_class_isA(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    return Float::fresh(is_a(args[0], args[1])? 1.0:0.0);
+    return new Float(is_a(args[0], args[1])? 1.0:0.0);
   }
 
   void

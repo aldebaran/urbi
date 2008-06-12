@@ -52,7 +52,7 @@ namespace object
     dictionary_class_clone(runner::Runner&, objects_type args)
     {
       CHECK_ARG_COUNT(1);
-      return Dictionary::fresh(Dict());
+      return new Dictionary(Dict());
     }
 
     static rObject
@@ -72,8 +72,8 @@ namespace object
       std::deque<rObject> res;
       typedef std::pair<libport::Symbol, rObject> Elt;
       foreach (const Elt& elt, arg0->value_get())
-        res.push_back(String::fresh(elt.first));
-      return List::fresh(res);
+        res.push_back(new String(elt.first));
+      return new List(res);
     }
   }
 

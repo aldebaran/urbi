@@ -535,9 +535,9 @@ namespace runner
     res->slot_set (SYMBOL(target), tgt);
 
     // Set the name of the message call.
-    res->slot_set (SYMBOL(message), object::String::fresh(msg));
+    res->slot_set (SYMBOL(message), new object::String(msg));
 
-    res->slot_set (SYMBOL(args), object::List::fresh(args));
+    res->slot_set (SYMBOL(args), new object::List(args));
 
     return res;
   }
@@ -642,7 +642,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstFloat e)
   {
-    current_ = object::Float::fresh(e->value_get());
+    current_ = new object::Float(e->value_get());
   }
 
 
@@ -715,7 +715,7 @@ namespace runner
   object::rCode
   Interpreter::make_code(ast::rConstCode e) const
   {
-    return object::Code::fresh(e);
+    return new object::Code(e);
   }
 
   void Interpreter::visit(ast::rConstCode e, bool closure)
@@ -779,7 +779,7 @@ namespace runner
     // Evaluate every expression in the list
     foreach (ast::rConstExp c, e->value_get())
       res.push_back(eval(c));
-    current_ = object::List::fresh(res);
+    current_ = new object::List(res);
     //ECHO ("result: " << *current_);
   }
 
@@ -953,8 +953,8 @@ namespace runner
     if (!tag)
     {
       // Create the tag on demand.
-      tag = scheduler::Tag::fresh
-             (libport::Symbol::fresh(SYMBOL(LT_scope_SP_tag_GT)));
+      tag =
+        new scheduler::Tag(libport::Symbol::fresh(SYMBOL(LT_scope_SP_tag_GT)));
       *scope_tags_.rbegin() = tag;
     }
     return tag;
@@ -1003,7 +1003,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstString e)
   {
-    current_ = object::String::fresh(libport::Symbol(e->value_get()));
+    current_ = new object::String(libport::Symbol(e->value_get()));
   }
 
   void
@@ -1103,7 +1103,7 @@ namespace runner
 	  rObject new_tag = toplevel->clone();
 	  object::objects_type args;
 	  args.push_back (new_tag);
-	  args.push_back (object::String::fresh (elt));
+	  args.push_back (new object::String(elt));
 	  args.push_back (parent);
 	  apply (toplevel->own_slot_get (SYMBOL (init)), SYMBOL(init), args);
 	  where->slot_set (elt, new_tag);

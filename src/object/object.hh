@@ -31,9 +31,8 @@ namespace object
     /// \name Ctor & dtor.
     /// \{
   public:
-    /// Create a new object.
-    static rObject fresh();
-
+    /// Create a new Object.
+    Object ();
     /// Get a smart pointer to this
     rObject self() const;
 
@@ -220,7 +219,8 @@ namespace object
      **               becomes the parent)
      ** \return The new scope
      */
-    static rObject make_scope(const rObject& parent = 0);
+    static rObject
+    make_scope(const rObject& parent = 0);
 
     /// Make a method outer scope
     /**
@@ -228,17 +228,13 @@ namespace object
      ** messages to self when relevant
      ** \return The new scope
      **/
-    static rObject make_method_scope(const rObject& self, const rObject& parent = 0);
+    static rObject
+    make_method_scope(const rObject& self, const rObject& parent = 0);
 
     /// Return the value of \a atom as an Atom<T>.
     template <class T>
     typename T::value_type
     value();
-
-  protected:
-    /// Protected constructor to force proper self_ initialization.
-    Object ();
-    /// Weak pointer to be able to retrieve smart pointer to this.
 
   private:
     typedef std::pair<bool, rObject> locate_type;
@@ -248,7 +244,8 @@ namespace object
     ///            recursions
     /// \return (false,0) if k does not exist, (true,0) if k is in this,
     ///          (true, ptr) if k is in ptr.
-    locate_type slot_locate (const Slots::key_type& k, objects_set_type& os) const;
+    locate_type
+    slot_locate (const Slots::key_type& k, objects_set_type& os) const;
 
   private:
     /// The protos.

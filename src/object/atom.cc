@@ -34,23 +34,7 @@
 
 namespace object
 {
-  template <typename Traits>
-  typename Atom<Traits>::shared_type
-  Atom<Traits>::fresh (const typename Traits::type v, bool add_proto)
-  {
-    shared_type res = new Atom<Traits>(v, add_proto);
-    return res;
-  }
 
-  template <typename Traits>
-  typename Atom<Traits>::shared_type
-  Atom<Traits>::self() const
-  {
-    rObject res = super_type::self();
-    return res.unsafe_cast<Atom<Traits> >();
-  }
-
-  // Protected. Use the static fresh method instead.
   template <typename Traits>
   Atom<Traits>::Atom (const typename Traits::type v, bool add_proto)
     : value_(v)
@@ -72,6 +56,14 @@ namespace object
   template <typename Traits>
   Atom<Traits>::~Atom ()
   {}
+
+  template <typename Traits>
+  typename Atom<Traits>::shared_type
+  Atom<Traits>::self() const
+  {
+    rObject res = super_type::self();
+    return res.unsafe_cast<Atom<Traits> >();
+  }
 
   template <typename Traits>
   Object::kind_type
@@ -268,7 +260,7 @@ namespace object
   rObject
   Atom<Traits>::clone () const
   {
-    rObject res = Atom<Traits>::fresh(value_get (), false);
+    rObject res = new Atom<Traits>(value_get (), false);
     res->proto_add (self());
     return res;
   }

@@ -33,14 +33,6 @@ namespace object
 
   inline
   rObject
-  Object::fresh ()
-  {
-    rObject res = new Object();
-    return res;
-  }
-
-  inline
-  rObject
   Object::self() const
   {
     return const_cast<Object*>(this);
@@ -196,10 +188,10 @@ namespace object
   }
 
   inline rObject
-  Object::clone () const
+  Object::clone() const
   {
-    rObject res = Object::fresh();
-    res->proto_add (self());
+    rObject res = new Object();
+    res->proto_add(self());
     return res;
   }
 

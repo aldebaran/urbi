@@ -37,9 +37,9 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
     if (args[0] == code_class)
-      return String::fresh(SYMBOL(LT_Code_GT));
+      return new String(SYMBOL(LT_Code_GT));
     FETCH_ARG(0, Code);
-    return String::fresh(libport::Symbol(string_cast(*arg0->value_get().ast)));
+    return new String(libport::Symbol(string_cast(*arg0->value_get().ast)));
   }
 
   static rObject
@@ -47,10 +47,10 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
     if (args[0] == code_class)
-      return String::fresh(SYMBOL(LT_Code_GT));
+      return new String(SYMBOL(LT_Code_GT));
     FETCH_ARG(0, Code);
     return
-      String::fresh(
+      new String(
         libport::Symbol(
           string_cast(*arg0->value_get().ast->body_get()->body_get())));
   }

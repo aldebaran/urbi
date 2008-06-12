@@ -35,8 +35,9 @@ namespace scheduler
   {
   public:
     // Create a new tag, with or without a parent
-    static rTag fresh(libport::Symbol name);
-    static rTag fresh(rTag parent, libport::Symbol name);
+    explicit Tag(const Tag&);
+    explicit Tag(libport::Symbol name);
+    Tag(rTag parent, libport::Symbol name);
     virtual ~Tag();
 
     // Is this tag directly or indirectly frozen or blocked?
@@ -60,9 +61,6 @@ namespace scheduler
     const libport::Symbol& name_get() const;
 
   private:
-    explicit Tag(const Tag&);
-    Tag(libport::Symbol name);
-    Tag(rTag parent, libport::Symbol name);
     rTag parent_;
     bool blocked_;
     bool frozen_;

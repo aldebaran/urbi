@@ -69,14 +69,14 @@ namespace object
   system_class_time (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return Float::fresh(r.scheduler_get().get_time() / 1000.0);
+    return new Float(r.scheduler_get().get_time() / 1000.0);
   }
 
   static rObject
   system_class_shiftedTime (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return Float::fresh ((r.scheduler_get().get_time() -
+    return new Float((r.scheduler_get().get_time() -
 			  r.time_shift_get()) / 1000.0);
   }
 
@@ -147,7 +147,7 @@ namespace object
     UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
     {
-      return String::fresh(libport::Symbol(
+      return new String(libport::Symbol(
 			     s.find_file(arg1->value_get ().name_get ())));
     }
     catch (libport::file_library::Not_found&)
@@ -202,7 +202,7 @@ namespace object
   system_class_currentRunner (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    rObject res = object::Object::fresh();
+    rObject res = new object::Object();
     res->proto_add (task_class);
     res->slot_set (SYMBOL (job), box (scheduler::rJob, &r));
     return res;
@@ -212,14 +212,14 @@ namespace object
   system_class_cycle (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return Float::fresh (r.scheduler_get ().cycle_get ());
+    return new Float(r.scheduler_get ().cycle_get ());
   }
 
   static rObject
   system_class_fresh (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return String::fresh(libport::Symbol::fresh());
+    return new String(libport::Symbol::fresh());
   }
 
   static rObject
@@ -278,7 +278,7 @@ namespace object
     // The space after "Symbol(" is mandatory to avoid triggering an error in
     // symbol generation code
 #define ADDSTAT(Suffix, Function, Divisor)				\
-    res[libport::Symbol( "cycles" # Suffix)] = Float::fresh(stats.Function() / Divisor)
+    res[libport::Symbol( "cycles" # Suffix)] = new Float(stats.Function() / Divisor)
     ADDSTAT(, samples, 1);
     ADDSTAT(Max, max, 1000.0);
     ADDSTAT(Mean, mean, 1000.0);
@@ -286,7 +286,7 @@ namespace object
     ADDSTAT(StdDev, standard_deviation, 1000.0);
     ADDSTAT(Variance, variance, 1000.0);
 #undef ADDSTAT
-    return Dictionary::fresh(res);
+    return new Dictionary(res);
   }
 
   // This should give a backtrace as an urbi object.
@@ -313,7 +313,7 @@ namespace object
     foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
       if (job)
 	res.push_back(create_task_from_job(job));
-    return List::fresh(res);
+    return new List(res);
   }
 
   static rObject

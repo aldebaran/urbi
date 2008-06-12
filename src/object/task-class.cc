@@ -48,7 +48,7 @@ namespace object
   task_class_name(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
-    return String::fresh(extract_job(args[0])->name_get());
+    return new String(extract_job(args[0])->name_get());
   }
 
   static rObject
@@ -58,7 +58,7 @@ namespace object
     List::value_type res;
     foreach(scheduler::rTag tag, extract_job(args[0])->tags_get())
       res.push_back(create_tag(tag));
-    return List::fresh(res);
+    return new List(res);
   }
 
   static rObject
@@ -96,7 +96,7 @@ namespace object
       status << " (side effect free)";
     if (job->non_interruptible_get())
       status << " (non interruptible)";
-    return String::fresh(libport::Symbol(status.str()));
+    return new String(libport::Symbol(status.str()));
   }
 
   static rObject
@@ -110,16 +110,16 @@ namespace object
     const runner::Runner* runner = dynamic_cast<runner::Runner*>(job.get());
 
     if (!runner)
-      return List::fresh(res);
+      return new List(res);
 
     foreach(runner::Runner::frame_type line, runner->backtrace_get())
     {
       List::value_type frame;
-      frame.push_back(String::fresh(libport::Symbol(line.first)));
-      frame.push_back(String::fresh(libport::Symbol(line.second)));
-      res.push_front(List::fresh(frame));
+      frame.push_back(new String(libport::Symbol(line.first)));
+      frame.push_back(new String(libport::Symbol(line.second)));
+      res.push_front(new List(frame));
     }
-    return List::fresh(res);
+    return new List(res);
   }
 
   static rObject
@@ -159,7 +159,7 @@ namespace object
   task_class_timeShift (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return Float::fresh (r.time_shift_get () / 1000.0);
+    return new Float(r.time_shift_get () / 1000.0);
   }
 
   void

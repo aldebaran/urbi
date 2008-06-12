@@ -4,9 +4,9 @@
 namespace scheduler
 {
   Tag::Tag(rTag parent, libport::Symbol name)
-    : parent_(parent),
-      blocked_(false),
-      frozen_(false)
+    : parent_(parent)
+    , blocked_(false)
+    , frozen_(false)
   {
     if (parent)
       name_ = libport::Symbol::Symbol

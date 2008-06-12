@@ -20,10 +20,10 @@ namespace object
   integer_class_asString(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    if (args[0] == integer_class)
-      return String::fresh(SYMBOL(LT_Integer_GT));
-    return String::fresh(libport::Symbol(boost::lexical_cast<std::string>
-                                         (args[0]->value<Integer>())));
+    return new String(args[0] == integer_class
+                      ? SYMBOL(LT_Integer_GT)
+                      : libport::Symbol(boost::lexical_cast<std::string>
+                                        (args[0]->value<Integer>())));
   }
 
   void
@@ -31,7 +31,7 @@ namespace object
   {
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(integer, Name)
-    DECLARE (asString);
+    DECLARE(asString);
 #undef DECLARE
   }
 

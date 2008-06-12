@@ -139,9 +139,9 @@ namespace object
 
 #define CLASS_INIT(What, Name)					\
     What ## _class->slot_set(SYMBOL(protoName),			\
-			     String::fresh(SYMBOL(Name)));      \
+			     new String(SYMBOL(Name)));      \
     What ## _class->slot_set(SYMBOL_(as ## Name),		\
-			     Primitive::fresh(id));             \
+			     new Primitive(id));             \
     What ## _class_initialize ();				\
     global_class->slot_set(SYMBOL(Name), What ## _class);
 
@@ -151,7 +151,7 @@ namespace object
     CLASS_INIT(What, Name)
 
     // Object is a special case: it is not built as a clone of itself.
-    object_class = Object::fresh();
+    object_class = new Object();
     // The other primitives.  Because primitive initialization depend
     // a lot on one another (e.g., String is used everywhere for slot
     // names, and Primitive is used for... all the primitive methods
@@ -166,8 +166,8 @@ namespace object
     CLASS_SETUP(void, void);
 
     // Setup boolean entities.
-    true_class = Float::fresh(1.0);
-    false_class = Float::fresh(0.0);
+    true_class = new Float(1.0);
+    false_class = new Float(0.0);
     CLASS_INIT(false, false);
     CLASS_INIT(true, true);
 #undef SYMBOL_
@@ -175,7 +175,7 @@ namespace object
 // This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
 // false atoms
 #define COMPARABLE(What, Name)		\
-    What ## _class->slot_set(SYMBOL(sameAs), Primitive::fresh(compare<Name>));
+    What ## _class->slot_set(SYMBOL(sameAs), new Primitive(compare<Name>));
 
     COMPARABLE(float,     Float);
     COMPARABLE(integer,   Integer);

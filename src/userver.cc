@@ -146,7 +146,7 @@ UServer::initialize()
   // Handle pluged UOBjects.
   // Create "uobject" in lobby where UObjects will be put.
   object::object_class->slot_set(SYMBOL(uobject_init),
-                                 object::Primitive::fresh(&uobject_initialize));
+                                 new object::Primitive(&uobject_initialize));
 
   // Force processing of urbi.u.
   while (!object::object_class->slot_locate(SYMBOL(loaded)))

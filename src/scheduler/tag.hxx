@@ -3,30 +3,16 @@ namespace scheduler
 
   inline
   Tag::Tag(libport::Symbol name)
-    : parent_(0),
-      blocked_(false),
-      frozen_(false),
-      name_(name)
+    : parent_(0)
+    , blocked_(false)
+    , frozen_(false)
+    , name_(name)
   {
   }
 
   inline
   Tag::~Tag()
   {
-  }
-
-  inline rTag
-  Tag::fresh(libport::Symbol name)
-  {
-    rTag res = new Tag(name);
-    return res;
-  }
-
-  inline rTag
-  Tag::fresh(rTag parent, libport::Symbol name)
-  {
-    rTag res = new Tag(parent, name);
-    return res;
   }
 
   inline bool

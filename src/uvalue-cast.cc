@@ -63,40 +63,43 @@ urbi::UValue uvalue_cast(object::rObject o)
   return res;
 }
 
-object::rObject object_cast(const urbi::UValue& v)
+object::rObject
+object_cast(const urbi::UValue& v)
 {
   object::rObject res;
   switch(v.type)
   {
     case urbi::DATA_DOUBLE:
-      return object::Float::fresh(v.val);
+      return new object::Float(v.val);
       break;
 
     case urbi::DATA_STRING:
-      return object::String::fresh(libport::Symbol(*v.stringValue));
+      return new object::String(libport::Symbol(*v.stringValue));
       break;
 
     case urbi::DATA_LIST:
-      res = object::List::fresh(object::list_traits::type());
+      res = new object::List(object::list_traits::type());
       foreach (urbi::UValue *cv, v.list->array)
 	res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
 
     case urbi::DATA_BINARY:
-      {
-	res = object::Object::fresh();
-	res->proto_add(object::global_class->slot_get(SYMBOL(Binary)));
-	std::string msg = v.binary->getMessage();
-	// Trim it.
-	if (!msg.empty() && msg[0] == ' ')
-	  msg = msg.substr(1, msg.npos);
-	res->slot_set(SYMBOL(keywords), object::String::fresh
-		    (libport::Symbol(msg)));
-	res->slot_set(SYMBOL(data), object::String::fresh(libport::Symbol(
-		std::string(static_cast<char*>(v.binary->common.data),
-	      v.binary->common.size))));
-      }
-      break;
+    {
+      res = new object::Object();
+      res->proto_add(object::global_class->slot_get(SYMBOL(Binary)));
+      std::string msg = v.binary->getMessage();
+      // Trim it.
+      if (!msg.empty() && msg[0] == ' ')
+        msg = msg.substr(1, msg.npos);
+      res->slot_set(SYMBOL(keywords),
+                    new object::String(libport::Symbol(msg)));
+      res->slot_set(SYMBOL(data),
+                    new object::String
+                    (libport::Symbol(
+                      std::string(static_cast<char*>(v.binary->common.data),
+                                  v.binary->common.size))));
+    }
+    break;
 
     default:
       throw

@@ -59,10 +59,9 @@ namespace object
     // as parent.
     scheduler::rTag mytag;
     if (args.size () == 3 && args[2] != tag_class)
-      mytag = scheduler::Tag::fresh (extract_tag (args[2]),
-				     tag_short_name);
+      mytag = new scheduler::Tag(extract_tag (args[2]), tag_short_name);
     else
-      mytag = scheduler::Tag::fresh (tag_short_name);
+      mytag = new scheduler::Tag(tag_short_name);
     args[0]->slot_set (SYMBOL (tag), box (scheduler::rTag, mytag));
 
     return args[0];
@@ -73,7 +72,7 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
 
-    return String::fresh(extract_tag (args[0])->name_get ());
+    return new String(extract_tag (args[0])->name_get ());
   }
 
 #define TAG_ACTION(Action, Yield)				\

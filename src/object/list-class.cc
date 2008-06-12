@@ -54,7 +54,7 @@ namespace object
     PLUS(rList lhs, rList rhs)
     {
       // Return a copy of lhs with rhs appended.
-      return PLUS_EQ(List::fresh(lhs->value_get()), rhs);
+      return PLUS_EQ(new List(lhs->value_get()), rhs);
     }
 
 #define CHECK_NON_EMPTY							\
@@ -86,7 +86,7 @@ namespace object
       CHECK_NON_EMPTY;
       List::value_type res = ul;
       res.pop_front();
-      return List::fresh(res);
+      return new List(res);
     }
 
     /// Insert \a elt at the end of \a l
@@ -161,14 +161,14 @@ namespace object
       List::value_type res;
       foreach(const rObject& o, s)
 	res.push_back(o);
-      return List::fresh(res);
+      return new List(res);
     }
 
     /// Its size.
     static rFloat
     size (rList l)
     {
-      return Float::fresh(l->value_get().size());
+      return new Float(l->value_get().size());
     }
 
   }
@@ -189,7 +189,7 @@ namespace object
   list_class_clone(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(1);
-    return List::fresh(List::value_type());
+    return new List(List::value_type());
   }
 
   /*-------------------------.

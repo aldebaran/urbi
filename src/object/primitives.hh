@@ -70,7 +70,7 @@
   PRIMITIVE_1_(Class, Name, , Type1, )
 
 #define PRIMITIVE_1_V(Class, Name, Ret, Type1)            \
-  PRIMITIVE_1_(Class, Name, Ret::fresh, Type1, ->value_get())
+  PRIMITIVE_1_(Class, Name, new Ret, Type1, ->value_get())
 
 
 /**
@@ -92,7 +92,7 @@
   PRIMITIVE_2_(Class, Name, , Type1, Type2, )
 
 #define PRIMITIVE_2_V(Class, Name, Ret, Type1, Type2)           \
-  PRIMITIVE_2_(Class, Name, Ret::fresh, Type1, Type2, ->value_get())
+  PRIMITIVE_2_(Class, Name, new Ret, Type1, Type2, ->value_get())
 
 /**
  * Define a primitive for class \a Class named \a Name, which takes
@@ -126,7 +126,7 @@
   PRIMITIVE_OP_(Class, Name, Op, , Type1, Type2, )
 
 #define PRIMITIVE_OP_V(Class, Name, Op, Ret, Type1, Type2)      \
-  PRIMITIVE_OP_(Class, Name, Op, Ret::fresh, Type1, Type2, ->value_get())
+  PRIMITIVE_OP_(Class, Name, Op, new Ret, Type1, Type2, ->value_get())
 
 /**
  * Declare a primitive \a Name in class \a Class with C++
@@ -134,6 +134,6 @@
  */
 #define DECLARE_PRIMITIVE(Class, Name)					\
   Class ## _class->slot_set (SYMBOL(Name),                              \
-			     Primitive::fresh(Class ## _class_ ## Name))
+			     new Primitive(Class ## _class_ ## Name))
 
 #endif // !OBJECT_PRIMITIVES_HH

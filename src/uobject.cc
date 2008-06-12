@@ -54,7 +54,7 @@ static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
   object::objects_type args;
   args.push_back(r);
-  args.push_back(object::String::fresh(Symbol(slot)));
+  args.push_back(new object::String(Symbol(slot)));
   args.push_back(v);
   ECHO("applying set...");
   rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
@@ -211,9 +211,9 @@ uobject_make_proto(const std::string& name)
   args.push_back(oc);
   getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
   oc->slot_set(SYMBOL(__uobject_cname),
-	       object::String::fresh(libport::Symbol(name)));
+	       new object::String(libport::Symbol(name)));
   oc->slot_set(SYMBOL(__uobject_base), oc);
-  oc->slot_set(SYMBOL(clone), object::Primitive::fresh(&uobject_clone));
+  oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
   return oc;
 }
 
@@ -370,7 +370,7 @@ namespace urbi
     {
       ECHO( "binding " << p.first << "." << method );
       me->slot_set(libport::Symbol(method),
-		   object::Delegate::fresh(new UWrapCallback(this)));
+		   new object::Delegate(new UWrapCallback(this)));
     }
     if (s.type == "var" || s.type == "varaccess")
     {
@@ -388,7 +388,7 @@ namespace urbi
       assertion(f);
       object::objects_type args;
       args.push_back(var);
-      args.push_back(object::Delegate::fresh(new UWrapNotify(this, p.first,
+      args.push_back(new object::Delegate(new UWrapNotify(this, p.first,
 		       method, s.owned, true)));
       getCurrentRunner().apply(f, sym, args);
     }
@@ -411,8 +411,8 @@ namespace urbi
     rObject f = me->slot_get(SYMBOL(setTimer));
     object::objects_type args;
     args.push_back(me);
-    args.push_back(object::Float::fresh(period));
-    args.push_back(object::Delegate::fresh(
+    args.push_back(new object::Float(period));
+    args.push_back(new object::Delegate(
 	uwrapfunction(boost::bind(&urbi::UTimerCallback::call,this))));
     getCurrentRunner().apply(f, SYMBOL(setTimer), args);
   }
@@ -424,11 +424,11 @@ namespace urbi
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
     me->slot_update(getCurrentRunner(), SYMBOL(update),
-		    object::Delegate::fresh(
+		    new object::Delegate(
 		      uwrapfunction(boost::bind(&urbi::UObject::update, this))));
     object::objects_type args;
     args.push_back(me);
-    args.push_back(object::Float::fresh(t));
+    args.push_back(new object::Float(t));
     getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
   }
   UObject::~UObject()
@@ -516,7 +516,7 @@ namespace urbi
     ECHO("creating uvar "<<name);
     rObject protouvar = object::object_class->slot_get(SYMBOL(uvar));
     rObject uvar = urbi_call(getCurrentRunner(), protouvar, SYMBOL(new),
-			     o, object::String::fresh(varName));
+			     o, new object::String(varName));
     // If the variable existed but was not an uvar, copy its old value.
     if (initVal)
       o->slot_get(varName)->slot_update(getCurrentRunner(),
@@ -530,8 +530,8 @@ namespace urbi
     // Write 1 to the Urbi-side uvar owned slot.
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
-    o->slot_get(Symbol(p.second))->slot_update(
-      getCurrentRunner(), SYMBOL(owned), object::Float::fresh(1));
+    o->slot_get(Symbol(p.second))
+      ->slot_update(getCurrentRunner(), SYMBOL(owned), new object::Float(1));
     ECHO("call to setowned on "<<name);
   }
 
@@ -541,9 +541,9 @@ namespace urbi
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
     urbi_call(getCurrentRunner(), o, SYMBOL(setProperty),
-	      object::String::fresh(Symbol(p.second)),
-	      object::String::fresh(Symbol(UPropertyNames[prop])),
-	      object::Float::fresh(v));
+	      new object::String(Symbol(p.second)),
+	      new object::String(Symbol(UPropertyNames[prop])),
+	      new object::Float(v));
   }
 
   UValue
@@ -553,8 +553,8 @@ namespace urbi
     rObject o = get_base(p.first);
     return ::uvalue_cast(
       urbi_call(getCurrentRunner(), o, SYMBOL(getProperty),
-		object::String::fresh(Symbol(p.second)),
-		object::String::fresh(Symbol(UPropertyNames[prop]))));
+		new object::String(Symbol(p.second)),
+		new object::String(Symbol(UPropertyNames[prop]))));
   }
 
   UVar::~UVar()
@@ -583,9 +583,9 @@ namespace urbi
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args;
     args.push_back(uob);
-    args.push_back(object::String::fresh(Symbol(name)));
-    args.push_back(object::Float::fresh(t));
-    args.push_back(object::Delegate::fresh(uwrapfunction(
+    args.push_back(new object::String(Symbol(name)));
+    args.push_back(new object::Float(t));
+    args.push_back(new object::Delegate(uwrapfunction(
 	boost::bind(&urbi::UObjectHub::update, this))));
     getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
   }

@@ -73,7 +73,7 @@ UConnection::UConnection (UServer& server, size_t packetSize)
     blocked_ (false),
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
-    lobby_ (object::Lobby::fresh(object::State(*this))),
+    lobby_ (new object::Lobby(object::State(*this))),
     parser_ (new parser::UParser ())
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
@@ -85,10 +85,10 @@ UConnection::UConnection (UServer& server, size_t packetSize)
   std::ostringstream o;
   o << 'U' << (long) this;
   connection_tag_ = o.str();
-  object::rObject tag = object::Object::fresh();
+  object::rObject tag = new object::Object();
   tag->proto_add(object::tag_class);
   tag->slot_set(SYMBOL(tag), box(scheduler::rTag,
-		scheduler::Tag::fresh(libport::Symbol(connection_tag_))));
+		new scheduler::Tag(libport::Symbol(connection_tag_))));
   lobby_->slot_set(SYMBOL(connectionTag), tag);
 
   // Create the shell.

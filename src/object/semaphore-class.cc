@@ -21,7 +21,7 @@ namespace object {
     int count = ufloat_to_int(arg1->value_get(), "new");
     if (count < 0)
       throw PrimitiveError("new", "initial count must be non-negative");
-    return Semaphore::fresh(make_pair(count, std::deque<scheduler::rJob>()));
+    return new Semaphore(make_pair(count, std::deque<scheduler::rJob>()));
   }
 
   static rObject
