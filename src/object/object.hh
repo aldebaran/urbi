@@ -178,11 +178,6 @@ namespace object
 
     /// \name Properties.
     /// \{
-    /// Whether this is an anynomous object containing local variables.
-    bool locals_get () const;
-    /// Change whether is a locals object.
-    /// \return this
-    Object& locals_set (bool b);
     /// \}
 
     /// \name Printing.
@@ -255,8 +250,6 @@ namespace object
 
     /// The slots.
     slots_implem slots_;
-    /// Whether is a locals object.
-    bool locals_;
   };
 
   /// Helpers to call Urbi functions from C++.

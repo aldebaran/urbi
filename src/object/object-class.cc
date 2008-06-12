@@ -311,21 +311,6 @@ namespace object
   }
 
   static rObject
-  object_class_makeScope (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (2);
-    args[0]->locals_set (is_true (args[1]));
-    return args[0];
-  }
-
-  static rObject
-  object_class_isScope (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    return new Float(!!args[0]->locals_get ());
-  }
-
-  static rObject
   object_class_isA(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
@@ -350,9 +335,7 @@ namespace object
     DECLARE(getSlot);
     DECLARE(init);
     DECLARE(isA);
-    DECLARE(isScope);
     DECLARE(locateSlot);
-    DECLARE(makeScope);
     DECLARE(memSameAs);
     DECLARE(print);
     DECLARE(protos);

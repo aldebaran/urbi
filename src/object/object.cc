@@ -94,7 +94,6 @@ namespace object
   Object::make_scope(const rObject& parent)
   {
     rObject res = new object::Object();
-    res->locals_set(true);
     res->proto_add(parent);
     return res;
   }
@@ -247,22 +246,9 @@ namespace object
     // The owner of the updated slot
     rObject owner = context->safe_slot_locate(k);
 
-    // We have to determine where the new value must be stored,
-    // depending on whether the slot owner and the context are scopes.
-    rObject effective_target;
+    // Class->class: copy on write.
+    rObject effective_target = context;
 
-    // If both are scopes, update the original scope.
-    if (context->locals_ && owner->locals_get())
-      effective_target = owner;
-    else if (context->locals_ && !owner->locals_get())
-    {
-      // Local->class: copyonwrite to "self" after evaluating it.
-      rObject self = urbi_call(r, context, SYMBOL(self));
-      assertion(self);
-      effective_target = self;
-    }
-    else // Class->class: copy on write.
-      effective_target = context;
     // Check hook, only if we are not create-on-writing.
     /* If the current value in the slot to be written in has a slot named
      * 'updateHook', call it, passing the object owning the slot, the slot name

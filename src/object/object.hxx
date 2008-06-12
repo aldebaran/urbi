@@ -28,7 +28,6 @@ namespace object
   Object::Object ()
     : protos_(new protos_type)
     , slots_()
-    , locals_(false)
   {
     root_classes_initialize();
   }
@@ -166,21 +165,6 @@ namespace object
   /*-------------.
   | Properties.  |
   `-------------*/
-
-  inline
-  bool
-  Object::locals_get () const
-  {
-    return locals_;
-  }
-
-  inline
-  Object&
-  Object::locals_set (bool b)
-  {
-    locals_ = b;
-    return *this;
-  }
 
   inline rObject
   Object::clone() const
