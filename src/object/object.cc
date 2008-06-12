@@ -14,6 +14,7 @@
 
 #include <object/object.hh>
 #include <object/atom.hh>
+#include <object/dictionary-class.hh>
 #include <object/global-class.hh>
 #include <object/hash-slots.hh>
 #include <object/object-class.hh>
@@ -243,27 +244,22 @@ namespace object
     // The owner of the updated slot
     rObject owner = safe_slot_locate(k);
 
-    // Check hook, only if we are not create-on-writing.
-    /* If the current value in the slot to be written in has a slot named
-     * 'updateHook', call it, passing the object owning the slot, the slot name
-     * and the target.
-     */
+    // If the current value in the slot to be written in has a slot
+    // named 'updateHook', call it, passing the object owning the
+    // slot, the slot name and the target.
     if (hook && owner == this)
-    // FIXME: We probably want helper to access properties
-    if (rObject properties = slot_get(SYMBOL(properties), rObject()))
-    if (rObject slotProperties = properties->slot_get(k, rObject()))
-    if (rObject hook = slotProperties->slot_get(SYMBOL(updateHook), rObject()))
-    {
-      objects_type args;
-      args.push_back(this);
-      args.push_back(new String(k));
-      args.push_back(o);
-      rObject ret = r.apply(hook, SYMBOL(updateHook), args);
-      // If the updateHook returned void, do nothing. Otherwise let
-      // the slot be overwritten.
-      if (ret == object::void_class)
-	return;
-    }
+      if (rObject hook = property_get(k, SYMBOL(updateHook)))
+      {
+        objects_type args;
+        args.push_back(this);
+        args.push_back(new String(k));
+        args.push_back(o);
+        rObject ret = r.apply(hook, SYMBOL(updateHook), args);
+        // If the updateHook returned void, do nothing. Otherwise let
+        // the slot be overwritten.
+        if (ret == object::void_class)
+          return;
+      }
     // If return-value of hook is not void, write it to slot.
     own_slot_update(k, o);
   };
@@ -281,6 +277,39 @@ namespace object
       if (!own_slot_get(slot.first))
         slot_set(slot.first, slot.second);
   }
+
+
+  /*-------------.
+  | Properties.  |
+  `-------------*/
+
+  rDictionary
+  Object::properties_get()
+  {
+    rDictionary res =
+      slot_locate(SYMBOL(properties), false, true).unsafe_cast<Dictionary>();
+    return res;
+  }
+
+  rDictionary
+  Object::properties_get(const key_type& k)
+  {
+    rDictionary res;
+    if (rDictionary ps = properties_get())
+      res = libport::find0(ps->value_get(), k).unsafe_cast<Dictionary>();
+    return res;
+  }
+
+  rObject
+  Object::property_get(const key_type& k, const key_type& p)
+  {
+    rObject res;
+    if (rDictionary ps = properties_get(k))
+      res = libport::find0(ps->value_get(), p);
+    return res;
+  }
+
+
 
   /*-----------.
   | Printing.  |

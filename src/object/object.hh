@@ -108,7 +108,10 @@ namespace object
 	   objects_set_type& marks) const;
 
     /// Lookup field in object hierarchy.
-    /// \param value Whether to return the owner of the slot or its value
+    /// \param k         Slot name.
+    /// \param fallback  Whether we agree to use the "fallback" method
+    ///                  when the slot does not exist.
+    /// \param value     Whether to return the owner of the slot or its value
     /// \return the Object containing slot \a k if \a value is false,
     ///         the slot value if \a value is true, 0 if not found.
     rObject
@@ -176,6 +179,14 @@ namespace object
 
     /// \name Properties.
     /// \{
+    /// Return the dictionary of the properties.
+    /// Returns 0 if there is no slot "properties", or if it is not
+    /// a Dictionary.
+    rDictionary properties_get();
+    /// Return the dictionary of the properties of slot \a k, or 0.
+    rDictionary properties_get(const key_type& k);
+    /// Return the property \a p of slot \a k, of 0.
+    rObject property_get(const key_type& k, const key_type& p);
     /// \}
 
     /// \name Printing.
