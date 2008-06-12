@@ -276,7 +276,7 @@ namespace urbi
   {
     UMessage *m = syncGet("%s;", valName);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    if (m->type != MESSAGE_DATA)
     {
       delete m;
       return 0;
