@@ -109,17 +109,9 @@ namespace parser
 
   // Not in the *.hxx to avoid the #include <ast/nary.hh>.
   libport::shared_ptr<ParseResult::ast_type>
-  ParseResult::ast_take()
+  ParseResult::ast_xget()
   {
-    return ast_;
-  }
-
-  // Not in the *.hxx to avoid the #include <ast/nary.hh>.
-  libport::shared_ptr<ParseResult::ast_type>
-  ParseResult::ast_xtake()
-  {
-    assert(ast_.get());
-    return ast_take();
+    return assert_exp(ast_get());
   }
 
 

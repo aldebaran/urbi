@@ -53,10 +53,8 @@ namespace parser
     typedef ast::Nary ast_type;
     /// The latest AST read by parse().
     libport::shared_ptr<ast_type> ast_get();
-    /// Return the AST and reset \a ast_.
-    libport::shared_ptr<ast_type> ast_take();
-    /// Same as \a ast_take, but assert the result.
-    libport::shared_ptr<ast_type> ast_xtake();
+    /// Same as \a ast_get, but assert the result.
+    libport::shared_ptr<ast_type> ast_xget();
     /// Set \a ast_.
     void ast_set(libport::shared_ptr<ast_type> ast);
     /// Give \a ast.
@@ -64,7 +62,7 @@ namespace parser
 
   private:
     /// The resulting AST.
-      libport::shared_ptr<ast_type> ast_;
+    libport::shared_ptr<ast_type> ast_;
     /// \}
 
   public:

@@ -14,7 +14,7 @@ namespace ast
 
   ParametricAst::ParametricAst(const std::string& s)
     : exp_map_type("exp")
-    , ast_(parser::parse(s)->ast_xtake())
+    , ast_(parser::parse(s)->ast_xget())
     , count_(0)
   {
   }

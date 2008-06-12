@@ -257,7 +257,7 @@ UConnection::received (const char* buffer, size_t length)
     passert(result.get(), result->status != -1);
     result->process_errors(*active_command);
 
-    if (ast::rNary ast = result->ast_take())
+    if (ast::rNary ast = result->ast_get())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
       ast = binder::bind(ast).unsafe_cast<ast::Nary>();

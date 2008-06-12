@@ -87,7 +87,7 @@ namespace object
     ast::rNary errs = new ast::Nary();
     p->process_errors(*errs);
     dynamic_cast<runner::Interpreter&>(r)(errs);
-    if (ast::rNary ast = p->ast_take())
+    if (ast::rNary ast = p->ast_get())
     {
       ast = binder::bind(ast).unsafe_cast<ast::Nary>();
       assert(ast);

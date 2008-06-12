@@ -111,7 +111,7 @@
 
     /// Store in Var the AST of the parsing of Code.
 # define DESUGAR_(Var, Tweast)                  \
-    Var = ::parser::parse(Tweast)->ast_take()
+    Var = ::parser::parse(Tweast)->ast_get()
 
     /// Store in $$ the result of appending Code to \a tweast.
 # define DESUGAR_TWEAST(Code)                   \
@@ -1137,7 +1137,7 @@ modifier:
 
 modifiers:
   /* empty */    { $$ = 0;  }
-| modifiers.1    { $$ = ::parser::parse(*$1)->ast_take(); }
+| modifiers.1    { $$ = ::parser::parse(*$1)->ast_get(); }
 ;
 
 modifiers.1:
