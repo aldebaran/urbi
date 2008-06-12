@@ -113,8 +113,6 @@ namespace runner
   protected:
     /// \name Evaluation.
     /// \{
-    typedef std::pair<bool, const Interpreter::rObject> locate_type;
-
     /// Build an evaluated arguments list containing \a tgt and
     /// arguments coming from \a args evaluated in the current context.
     /// If check_void is true, raise an error if any argument is void.
@@ -123,13 +121,13 @@ namespace runner
 				   bool check_void);
 
     /// Build a call message
-    virtual rObject build_call_message
-      (const rObject& tgt, const libport::Symbol& msg,
-       const object::objects_type& args);
+    virtual rObject
+    build_call_message(const rObject& tgt, const libport::Symbol& msg,
+                       const object::objects_type& args);
 
     /// Build a call message
-    rObject build_call_message (const rObject& tgt, const libport::Symbol& msg,
-				const ast::exps_type& args);
+    rObject build_call_message(const rObject& tgt, const libport::Symbol& msg,
+                               const ast::exps_type& args);
 
     /// Import from super.
     using super_type::visit;
