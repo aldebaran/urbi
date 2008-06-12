@@ -1057,6 +1057,12 @@ namespace urbi
     notifyCallbacks(m);
   }
 
+  int
+  UAbstractClient::getCurrentTimestamp () const
+  {
+    return currentTimestamp;
+  }
+
   UMessage::UMessage(UAbstractClient& client)
     : client(client), value(0)
   {

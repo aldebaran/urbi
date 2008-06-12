@@ -374,6 +374,10 @@ namespace urbi
 
     int	currentTimestamp;
 
+  public:
+    int getCurrentTimestamp () const;
+  private:
+
     std::list<UCallbackInfo>callbackList;
     /// Unique tag base.
     int uid;
