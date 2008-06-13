@@ -64,54 +64,6 @@ namespace urbi
   };
 
 
-  //! Timer mechanism
-  /*! This class stores a callback as a class method
-   */
-
-  class UTimerCallback
-  {
-  public:
-    UTimerCallback(const std::string& objname, ufloat period, UTimerTable& tt);
-    virtual ~UTimerCallback();
-
-    virtual void call() = 0;
-
-    ufloat period;
-    ufloat lastTimeCalled;
-    std::string objname;
-  };
-
-  // UTimerCallback subclasses
-
-  template <class T>
-  class UTimerCallbackobj : public UTimerCallback
-  {
-  public:
-# define MKUTimerCallBackObj(Const, IsConst)				\
-    UTimerCallbackobj(const std::string& objname,			\
-		      ufloat period, T* obj,				\
-		      int (T::*fun) () Const, UTimerTable &tt)		\
-      : UTimerCallback(objname, period,tt), obj(obj),			\
-	fun##Const(fun), is_const_ (IsConst)				\
-    {}
-
-    MKUTimerCallBackObj (/**/, false);
-    MKUTimerCallBackObj (const, true);
-
-# undef MKUTimerCallBackObj
-
-    virtual void call()
-    {
-      (is_const_) ? ((*obj).*funconst)() : ((*obj).*fun)();
-    }
-  private:
-    T* obj;
-    int (T::*fun) ();
-    int (T::*funconst) () const;
-    bool is_const_;
-  };
-
-
   /*------------------------------------------------.
   | This section is generated. Not for human eyes.  |
   `------------------------------------------------*/

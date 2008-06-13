@@ -39,20 +39,15 @@ namespace urbi
   //! object whose name is 'name'.
   void cleanTable(UTable &t, const std::string& name);
 
-  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
-  typedef std::list<UTimerCallback*> UTimerTable;
-
   // Lists and hashtables used.
   EXTERN_STATIC_INSTANCE(UTable, accessmap);
   EXTERN_STATIC_INSTANCE(UTable, eventendmap);
   EXTERN_STATIC_INSTANCE(UTable, eventmap);
   EXTERN_STATIC_INSTANCE(UTable, functionmap);
   EXTERN_STATIC_INSTANCE(UTable, monitormap);
-  EXTERN_STATIC_INSTANCE(UVarTable, varmap);
 
-  // Timer and update maps.
-  EXTERN_STATIC_INSTANCE(UTimerTable, timermap);
-  EXTERN_STATIC_INSTANCE(UTimerTable, updatemap);
+  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
+  EXTERN_STATIC_INSTANCE(UVarTable, varmap);
 
 } // end namespace urbi
 

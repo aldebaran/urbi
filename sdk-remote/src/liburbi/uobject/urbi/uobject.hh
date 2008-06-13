@@ -28,6 +28,7 @@
 # include <libport/package-info.hh>
 # include <urbi/fwd.hh>
 # include <urbi/ucallbacks.hh>
+# include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
 
 // Tell our users that it is fine to use void returning functions.

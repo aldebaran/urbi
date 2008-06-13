@@ -34,10 +34,6 @@ namespace urbi
   STATIC_INSTANCE(UTable, monitormap);
   STATIC_INSTANCE(UVarTable, varmap);
 
-  // Timer and update maps.
-  STATIC_INSTANCE(UTimerTable, timermap);
-  STATIC_INSTANCE(UTimerTable, updatemap);
-
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
   void
