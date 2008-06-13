@@ -204,8 +204,12 @@ do Global
   {
     function
     {
-      var args = call.evalArgs|
-      args.head.getSlot(name).apply(args)
+      var args = call.evalArgs |
+      var val = args.head.getSlot(name) |
+      if (val.isA(Executable))
+        return val.apply(args)
+      else
+        return val |
     }
   };
 };

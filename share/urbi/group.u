@@ -45,8 +45,7 @@ class Global.Group
     } |
     members.each(action) |
     # If the resulting group contains only void, return void.
-    # FIXME: Use methodToFunction.
-    if (results.all(function (i) { i.isVoid }))
+    if (results.all(methodToFunction("isVoid")))
       void
     else
       Group.getSlot("new").apply([Group] + results)
