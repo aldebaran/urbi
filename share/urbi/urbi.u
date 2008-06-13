@@ -2,9 +2,6 @@
 # we will have a fatal error when trying to determine the context
 # in which the function will be evaluated.
 var Code.context = nil;
-var Code.acceptVoid = 0;
-var Primitive.acceptVoid = 0;
-
 
 ## --------- ##
 ## Constants ##
@@ -49,9 +46,6 @@ do Object
   {
     memSameAs(other)
   };
-
-  cloneSlot("setSlot", "setVoidSlot").acceptVoid = true;
-  cloneSlot("updateSlot", "updateVoidSlot").acceptVoid = true;
 
   function hasSlot(name)
   {
@@ -149,6 +143,22 @@ load("urbi/list.u");
 ## ----------- ##
 
 load("urbi/singleton.u");
+
+## ------ ##
+## void.  ##
+## ------ ##
+
+# FIXME: Can't do this in urbi
+# void.addProto(Singleton);
+
+do Object
+{
+  var isVoid = false;
+  function acceptVoid ()
+  {
+    self
+  }
+};
 
 ## --------- ##
 ## Booleans. ##
@@ -293,19 +303,6 @@ do Object
 
 load("urbi/event.u");
 load("urbi/channel.u");
-
-
-## ------ ##
-## void.  ##
-## ------ ##
-
-void.addProto(Singleton);
-var void.asString = "void";
-// void prints nothing in the toplevel
-var void.asToplevelPrintable = "";
-var void.isProto = 1;
-var Object.isVoid = false;
-var void.isVoid = true;
 
 ## ------------ ##
 ## Comparable.  ##
@@ -507,15 +504,7 @@ Global.addProto (Global.Profiling);
 ## ----------- ##
 
 # This class is used as a flag to recognize all kind of executable code
-class Global.Executable
-{
-  function voidVersion ()
-  {
-    var res = clone |
-    res.acceptVoid = true |
-    return res
-  }
-};
+class Global.Executable;
 
 [Code, Primitive, Delegate].each(function (c) { c.addProto(Executable) });
 

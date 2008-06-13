@@ -41,13 +41,12 @@ class Global.Group
     var outer_call = call |
     function action (m)
     {
-      var f = List.getSlot("push_back").voidVersion |
-      f.apply([results, m.callMessage(outer_call)])
+      results.push_back(m.callMessage(outer_call).acceptVoid)
     } |
     members.each(action) |
     # If the resulting group contains only void, return void.
     # FIXME: Use methodToFunction.
-    if (results.all(function (i) { i.isVoid }.voidVersion))
+    if (results.all(function (i) { i.isVoid }))
       void
     else
       Group.getSlot("new").apply([Group] + results)

@@ -222,7 +222,7 @@ namespace runner
     else
     {
       object::objects_type args;
-      args.push_back(object::void_class);
+      args.push_back(lobby_);
       apply(code_, SYMBOL(task), args);
     }
   }
@@ -300,7 +300,8 @@ namespace runner
     rCode code = eval(e->children_get().front()).unsafe_cast<object::Code>();
     assert(code);
     object::objects_type args;
-    args.push_back(object::void_class);
+    // This is a closure, it won't use its 'this'
+    args.push_back(0);
     apply_urbi(code, SYMBOL(), args, 0);
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
@@ -431,18 +432,6 @@ namespace runner
     return current_;
   }
 
-  namespace
-  {
-    // Helper to determine whether a function accepts void parameters.
-    static inline bool
-    acceptVoid(object::rObject f)
-    {
-      // nil evaluates to false and makes a perfect default value here.
-      return object::is_true(f->slot_get(SYMBOL(acceptVoid),
-					 object::nil_class));
-    }
-  }
-
   object::rObject
   Interpreter::apply (const rObject& func,
 		      const libport::Symbol msg,
@@ -470,12 +459,9 @@ namespace runner
     assert (!call_message || args.size() == 1);
 
     // Check if any argument is void
-    if (!acceptVoid(func))
-    {
-      object::objects_type::iterator end = args.end();
-      if (std::find(++args.begin(), end, object::void_class) != end)
-	throw object::WrongArgumentType (msg);
-    }
+    object::objects_type::iterator end = args.end();
+    if (std::find(++args.begin(), end, object::void_class) != end)
+      throw object::WrongArgumentType (msg);
 
     switch (func->kind_get ())
     {
@@ -504,8 +490,7 @@ namespace runner
 
   void
   Interpreter::push_evaluated_arguments (object::objects_type& args,
-					 const ast::exps_type& ue_args,
-					 bool check_void)
+					 const ast::exps_type& ue_args)
   {
     bool tail = false;
     foreach (ast::rConstExp arg, ue_args)
@@ -515,9 +500,10 @@ namespace runner
 	continue;
       eval (arg);
       // Check if any argument is void. This will be checked again in
-      // Interpreter::apply, yet raising exception here gives better
-      // location (the argument and not the whole function invocation).
-      if (check_void && current_ == object::void_class)
+      // Interpreter::apply_urbi, yet raising exception here gives
+      // better location (the argument and not the whole function
+      // invocation).
+      if (current_ == object::void_class)
       {
 	object::WrongArgumentType e("");
 	e.location_set(arg->location_get());
@@ -603,7 +589,14 @@ namespace runner
   Interpreter::apply (rObject tgt, const libport::Symbol& message,
                       const ast::exps_type* input_ast_args)
   {
-    return apply(tgt, tgt->slot_get(message), message, input_ast_args);
+    rObject value = tgt->slot_get(message);
+    // Accept to call methods on void only if void itself is holding
+    // the method.
+    if (tgt == object::void_class)
+      if (!tgt->own_slot_get(message))
+        throw object::WrongArgumentType (message);
+    assert(value);
+    return apply(tgt, value, message, input_ast_args);
   }
 
   Interpreter::rObject
@@ -636,7 +629,7 @@ namespace runner
         && !val.unsafe_cast<object::Code>()->value_get().ast->strict())
       call_message = build_call_message (tgt, message, ast_args);
     else
-      push_evaluated_arguments (args, ast_args, !acceptVoid(val));
+      push_evaluated_arguments (args, ast_args);
     return apply (val, message, args, call_message);
   }
 
@@ -806,7 +799,7 @@ namespace runner
 
     if (e->arguments_get())
       // FIXME: Register in the call stack
-      current_ = apply(object::void_class, value,
+      current_ = apply(stacks_.self(), value,
                        e->name_get(), e->arguments_get());
     else
       current_ = value;

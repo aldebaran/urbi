@@ -25,14 +25,18 @@
 namespace object
 {
 
-  // The following initialization routines are useless, but allow a
-  // more systematic initialization of all the base classes.
 #define CLASS_INITIALIZE(What)					\
+  rObject What ## _class;					\
+  namespace { static void What ## _class_initialize (); }
+
+// Classes with nothing to initialize
+#define CLASS_EMPTY_INITIALIZE(What)                            \
   rObject What ## _class;					\
   namespace { static void What ## _class_initialize () { } }
 
   /* Help the generation of symbols.
 
+  SYMBOL(acceptedVoid);
   SYMBOL(asAlien);
   SYMBOL(asCode);
   SYMBOL(asDelegate);
@@ -60,10 +64,12 @@ namespace object
 
   */
 
-  CLASS_INITIALIZE(false);
-  CLASS_INITIALIZE(nil);
-  CLASS_INITIALIZE(true);
+  CLASS_INITIALIZE(accepted_void);
+  CLASS_EMPTY_INITIALIZE(false);
+  CLASS_EMPTY_INITIALIZE(nil);
+  CLASS_EMPTY_INITIALIZE(true);
   CLASS_INITIALIZE(void);
+
 #undef CLASS_INITIALIZE
 
   /*------------------------.
@@ -128,10 +134,11 @@ namespace object
     // 4. Register all these classes in Global, to make them
     // accessible from anywhere.
     //
-    // CLASS_CREATE does 1, CLASS_INIT does 2 to 4, and CLASS_SETUP
-    // runs 1 to 4.
+    // CLASS_CREATE does 1, CLASS_INIT does 2, CLASS_REGISTER does 3
+    // and 4.
+    // CLASS_SETUP runs 1 to 4.
 
-#define CLASS_CREATE(What, Name)		\
+#define CLASS_CREATE(What, Name)		                \
     What ## _class = object_class->clone();
 
 // Alias unmatched by symbols-generate.pl
@@ -139,16 +146,28 @@ namespace object
 
 #define CLASS_INIT(What, Name)					\
     What ## _class->slot_set(SYMBOL(protoName),			\
-			     new String(SYMBOL(Name)));      \
+			     new String(SYMBOL(Name)));         \
     What ## _class->slot_set(SYMBOL_(as ## Name),		\
-			     new Primitive(id));             \
+			     new Primitive(id));
+
+#define CLASS_REGISTER(What, Name)				\
     What ## _class_initialize ();				\
     global_class->slot_set(SYMBOL(Name), What ## _class);
 
 
-#define CLASS_SETUP(What, Name)			\
-    CLASS_CREATE(What, Name)			\
-    CLASS_INIT(What, Name)
+#define CLASS_SETUP(What, Name)                                 \
+    CLASS_CREATE(What, Name)                                    \
+    CLASS_INIT(What, Name)                                      \
+    CLASS_REGISTER(What, Name)
+
+#define ANONYMOUS_CLASS_SETUP(What, Name)                       \
+    CLASS_CREATE(What, Name)                                    \
+    CLASS_REGISTER(What, Name)
+
+#define EXISTING_CLASS_SETUP(What, Name)                        \
+    CLASS_INIT(What, Name)                                      \
+    CLASS_REGISTER(What, Name)
+
 
     // Object is a special case: it is not built as a clone of itself.
     object_class = new Object();
@@ -157,19 +176,21 @@ namespace object
     // names, and Primitive is used for... all the primitive methods
     // in the primitive classes), first create them all, then bind
     // them all.
+    // Setup boolean entities.
     APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(CLASS_CREATE);
+    APPLY_ON_ALL_ROOT_CLASSES(EXISTING_CLASS_SETUP);
 
-    APPLY_ON_ALL_ROOT_CLASSES(CLASS_INIT);
+    true_class = new Float(1.0);
+    false_class = new Float(0.0);
+    EXISTING_CLASS_SETUP(false, false);
+    EXISTING_CLASS_SETUP(true, true);
 
     CLASS_SETUP(nil, nil);
     CLASS_SETUP(system, System);
     CLASS_SETUP(void, void);
 
-    // Setup boolean entities.
-    true_class = new Float(1.0);
-    false_class = new Float(0.0);
-    CLASS_INIT(false, false);
-    CLASS_INIT(true, true);
+    ANONYMOUS_CLASS_SETUP(accepted_void, acceptedVoid);
+
 #undef SYMBOL_
 
 // This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
@@ -183,7 +204,43 @@ namespace object
 
     // Object.addProto(Global)
     object_class->proto_add(global_class);
+  }
 
+
+
+  /*--------.
+  |  void.  |
+  `--------*/
+  namespace
+  {
+    static rObject
+    void_class_acceptVoid(runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT(1);
+
+      return accepted_void_class;
+    }
+
+    static void
+    void_class_initialize()
+    {
+      void_class->slot_set(SYMBOL(asString), new String(SYMBOL(void)));
+      // void prints nothing in the toplevel
+      void_class->slot_set(SYMBOL(asToplevelPrintable), new String(SYMBOL()));
+      passert("void must be initialized after true", true_class);
+      std::cerr << true_class.get() << std::endl;
+      void_class->slot_set(SYMBOL(isVoid), true_class);
+      void_class->slot_set
+        (SYMBOL(acceptVoid), new Primitive(void_class_acceptVoid));
+    }
+
+    static void
+    accepted_void_class_initialize()
+    {
+      accepted_void_class->proto_remove(object_class);
+      passert("void must be initialized before acceptedVoid", void_class);
+      accepted_void_class->proto_add(void_class);
+    }
   }
 
 } // namespace object

@@ -163,10 +163,10 @@ do List
     var res = "" |
     if (size)
     {
-      res = front.asPrintable |
+      res = front.acceptVoid.asPrintable |
       for| elt in tail
       {
-        res += ", " + elt.asPrintable |
+        res += ", " + elt.acceptVoid.asPrintable |
       }
     } |
     "[" + res + "]"
