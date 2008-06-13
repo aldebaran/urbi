@@ -7,6 +7,7 @@
 # define AST_NEW_CLONE_HH
 
 # include <boost/type_traits/remove_const.hpp>
+# include <libport/shared-ptr.hh>
 
 namespace ast
 {

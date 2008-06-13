@@ -7,13 +7,14 @@
 # define RUNNER_STACKS_HH
 
 # include <boost/function.hpp>
+#include <boost/utility.hpp>
 
 # include <ast/fwd.hh>
 # include <object/object.hh>
 
 namespace runner
 {
-  class Stacks
+  class Stacks: public boost::noncopyable
   {
     public:
       // Import types

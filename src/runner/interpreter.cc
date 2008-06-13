@@ -286,9 +286,10 @@ namespace runner
     jobs.reserve(e->children_get().size());
 
     // Create separate runners for every child but the first
-    foreach (ast::rConstExp child, boost::make_iterator_range(e->children_get(), 1, 0))
+    foreach (ast::rConstExp child,
+             boost::make_iterator_range(e->children_get(), 1, 0))
     {
-      Interpreter* job = new Interpreter(*this, ast::rConstAst(child));
+      Interpreter* job = new Interpreter(*this, eval(child));
       // Propagate errors from subrunners.
       link(job);
       jobs.push_back(job);
@@ -296,7 +297,11 @@ namespace runner
     }
 
     // Evaluate the first child in this runner
-    eval(e->children_get().front());
+    rCode code = eval(e->children_get().front()).unsafe_cast<object::Code>();
+    assert(code);
+    object::objects_type args;
+    args.push_back(object::void_class);
+    apply_urbi(code, SYMBOL(), args, 0);
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
 

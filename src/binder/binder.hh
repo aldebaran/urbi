@@ -45,7 +45,8 @@ namespace binder
       using super_type::visit;
 
     protected:
-      CONST_VISITOR_VISIT_NODES((Assignment)
+      CONST_VISITOR_VISIT_NODES((And)
+                                (Assignment)
                                 (Call)
                                 (Closure)
                                 (Declaration)
@@ -112,7 +113,7 @@ namespace binder
       /// Make a lazy from \a arg
       ast::rExp lazify (ast::rExp arg, const ast::loc& loc);
       /// Make a closure from \a arg
-      ast::rClosure make_closure(ast::rExp e, const ast::loc& loc);
+      ast::rClosure make_closure(ast::rConstExp e, const ast::loc& loc);
 
   };
 

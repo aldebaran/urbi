@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 #include <libport/foreach.hh>
 
+#include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 #include <binder/binder.hh>
@@ -213,9 +214,9 @@ namespace binder
     return init;
   }
 
-  ast::rClosure Binder::make_closure(ast::rExp e, const ast::loc& loc)
+  ast::rClosure Binder::make_closure(ast::rConstExp e, const ast::loc& loc)
   {
-    ast::rScope body = new ast::Scope(loc, e);
+    ast::rScope body = new ast::Scope(loc, const_cast<ast::Exp*>(e.get()));
     ast::rClosure closure =
       new ast::Closure(loc, new ast::declarations_type(), body);
     operator()(closure);
@@ -374,6 +375,21 @@ namespace binder
     assert(!function_stack_.empty());
 
     return function_stack_.back();
+  }
+
+  void
+  Binder::visit(ast::rConstAnd input)
+  {
+    static ast::ParametricAst closure("closure () { %exp:1 }");
+
+    ast::rAnd res = new ast::And(input->location_get(), ast::exps_type());
+    foreach (ast::rExp child, input->children_get())
+    {
+      // Wrap every children in a closure
+      operator()((closure % child).result<ast::Exp>());
+      res->children_get().push_back(result_.unsafe_cast<ast::Exp>());
+    }
+    result_ = res;
   }
 
 } // namespace binder

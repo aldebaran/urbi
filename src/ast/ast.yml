@@ -523,9 +523,9 @@ And:
   super: Exp
   attributes:
     - children:
-        type: 'exps_type'
-        access:   rwW
-        desc:     Subexpressions
+        type:   'exps_type'
+        access: rwW
+        desc:   Subexpressions
   printer:
     - 'libport::separate(n->children_get(), " & ")'
 
