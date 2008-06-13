@@ -5,9 +5,11 @@
 
 #include <algorithm>
 
+#include <boost/assign/std/deque.hpp> // for 'operator+=()'
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
+using namespace boost::assign; // bring 'operator+=()' into scope
 
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
@@ -251,9 +253,7 @@ namespace object
       if (rObject hook = property_get(k, SYMBOL(updateHook)))
       {
         objects_type args;
-        args.push_back(this);
-        args.push_back(new String(k));
-        args.push_back(o);
+        args += this, new String(k), o;
         rObject ret = r.apply(hook, SYMBOL(updateHook), args);
         // If the updateHook returned void, do nothing. Otherwise let
         // the slot be overwritten.
