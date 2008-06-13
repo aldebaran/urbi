@@ -19,8 +19,8 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 #include <urbi/uobject.hh>
-#include <uvalue-cast.hh>
-#include <uobject.hh>
+#include <kernel/uvalue-cast.hh>
+#include <kernel/uobject.hh>
 
 
 // Make it more readable.

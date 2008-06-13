@@ -1,4 +1,4 @@
-/*! \file uqueue.hh
+/*! \file kernel/uqueue.hh
  *******************************************************************************
 
  File: uqueue.h\n
@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UQUEUE_HH
-# define UQUEUE_HH
+#ifndef KERNEL_UQUEUE_HH
+# define KERNEL_UQUEUE_HH
 
 # include <deque>
 # include <vector>
@@ -138,6 +138,6 @@ private:
   std::vector<char> outputBuffer_;
 };
 
-# include <uqueue.hxx>
+# include <kernel/uqueue.hxx>
 
-#endif
+#endif // !KERNEL_UQUEUE_HH

@@ -24,8 +24,7 @@
 
 #include <kernel/utypes.hh>
 #include <kernel/userver.hh>
-
-#include <ughostconnection.hh>
+#include <kernel/ughostconnection.hh>
 
 
 // Parameters used by the constructor, and other constants.

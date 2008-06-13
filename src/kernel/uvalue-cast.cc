@@ -4,7 +4,7 @@
 #include <object/global-class.hh>
 #include <object/urbi-exception.hh>
 #include <urbi/uvalue.hh>
-#include <uvalue-cast.hh>
+#include <kernel/uvalue-cast.hh>
 
 urbi::UValue uvalue_cast(object::rObject o)
 {

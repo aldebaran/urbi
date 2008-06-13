@@ -1,5 +1,5 @@
-#ifndef UBANNER_HH
-# define UBANNER_HH
+#ifndef KERNEL_UBANNER_HH
+# define KERNEL_UBANNER_HH
 
 # include <libport/fwd.hh>
 
@@ -13,4 +13,4 @@ extern const char* HEADER_AFTER_CUSTOM[];
 extern const char* uconsole_banner[];
 
 std::ostream& userver_package_info_dump (std::ostream& o);
-#endif //!UBANNER_HH
+#endif // !KERNEL_UBANNER_HH

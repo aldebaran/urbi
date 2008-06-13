@@ -1,5 +1,5 @@
-#ifndef DEBUG_HH
-# define DEBUG_HH
+#ifndef KERNEL_DEBUG_HH
+# define KERNEL_DEBUG_HH
 
 # define DEBUG_OPEN(Flag)                                       \
   do                                                            \
@@ -27,4 +27,4 @@
     SLEEP(1);							\
   } while (0)
 
-#endif
+#endif // !KERNEL_DEBUG_HH

@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UGHOSTCONNECTION_HH
-# define UGHOSTCONNECTION_HH
+#ifndef KERNEL_UGHOSTCONNECTION_HH
+# define KERNEL_UGHOSTCONNECTION_HH
 
 # include <kernel/fwd.hh>
 # include <kernel/uconnection.hh>
@@ -42,4 +42,4 @@ public:
   virtual UConnection& endline ();
 };
 
-#endif
+#endif // !KERNEL_UGHOSTCONNECTION_HH

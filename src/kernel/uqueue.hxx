@@ -1,7 +1,7 @@
-#ifndef UQUEUE_HXX
-# define UQUEUE_HXX
+#ifndef KERNEL_UQUEUE_HXX
+# define KERNEL_UQUEUE_HXX
 
-# include <uqueue.hxx>
+# include <kernel/uqueue.hh>
 
 inline
 size_t
@@ -24,4 +24,4 @@ UQueue::push (const char *s)
   push(s, strlen(s));
 }
 
-#endif
+#endif // !KERNEL_UQUEUE_HXX

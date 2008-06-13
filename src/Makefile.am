@@ -77,25 +77,9 @@ include object/local.mk
 include runner/local.mk
 include scheduler/local.mk
 include scheduler/libcoroutine/local.mk
+include kernel/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
-
-dist_libkernel_la_SOURCES +=					\
-debug.cc debug.hh						\
-kernconf.cc							\
-server-timer.hh server-timer.cc					\
-ubanner.hh ubanner.cc						\
-ucomplaints.cc							\
-uconnection.cc							\
-ughostconnection.hh ughostconnection.cc				\
-utypes.cc							\
-uobject.cc                                                      \
-uobject.hh                                                      \
-uqueue.hh uqueue.hxx uqueue.cc					\
-userver.cc							\
-usystem.cc                                                      \
-uvalue-cast.cc							\
-uvalue-cast.hh
 
 ## -------------- ##
 ## urbi-console.  ##

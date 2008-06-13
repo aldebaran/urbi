@@ -2,8 +2,8 @@
  ** \file server/timer.hh
  */
 
-#ifndef SERVER_TIMER_HH
-# define SERVER_TIMER_HH
+#ifndef KERNEL_SERVER_TIMER_HH
+# define KERNEL_SERVER_TIMER_HH
 
 # if defined NDEBUG
 
@@ -22,4 +22,4 @@ extern libport::timer server_timer;
 
 # endif // ! NDEBUG
 
-#endif // !SERVER_TIMER_HH
+#endif // !KERNEL_SERVER_TIMER_HH

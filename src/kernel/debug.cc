@@ -1,7 +1,7 @@
 #include <iostream>
 #include <libport/indent.hh>
 
-#include <debug.hh>
+#include <kernel/debug.hh>
 
 namespace
 {

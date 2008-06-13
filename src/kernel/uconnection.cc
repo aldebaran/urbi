@@ -58,8 +58,8 @@
 #include <runner/sneaker.hh>
 #include <runner/shell.hh>
 
-#include <ubanner.hh>
-#include <uqueue.hh>
+#include <kernel/ubanner.hh>
+#include <kernel/uqueue.hh>
 
 UConnection::UConnection (UServer& server, size_t packetSize)
   : uerror_ (USUCCESS),

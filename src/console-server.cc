@@ -24,7 +24,7 @@
 
 #include <scheduler/scheduler.hh>
 
-#include "ubanner.hh"
+#include <kernel/ubanner.hh>
 
 class ConsoleServer
   : public UServer

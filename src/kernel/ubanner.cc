@@ -8,7 +8,7 @@
 
 #include <sdk/config.h>
 #include <version.hh>
-#include <ubanner.hh>
+#include <kernel/ubanner.hh>
 
 // Standard header used by the server. Divided into "before" and
 // "after" the custom header defined by the real server.

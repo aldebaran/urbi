@@ -55,11 +55,11 @@
 #include <runner/runner.hh>
 #include <scheduler/scheduler.hh>
 
-#include <server-timer.hh>
-#include <ubanner.hh>
-#include <ughostconnection.hh>
-#include <uobject.hh>
-#include <uqueue.hh>
+#include <kernel/server-timer.hh>
+#include <kernel/ubanner.hh>
+#include <kernel/ughostconnection.hh>
+#include <kernel/uobject.hh>
+#include <kernel/uqueue.hh>
 
 // Global server reference
 UServer *urbiserver = 0;

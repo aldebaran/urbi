@@ -1,5 +1,5 @@
-#ifndef UOBJECT_HH
-# define UOBJECT_HH
+#ifndef KERNEL_UOBJECT_HH
+# define KERNEL_UOBJECT_HH
 
 #include <object/atom.hh>
 
@@ -11,4 +11,4 @@ object::rObject uobject_new(object::rObject proto, bool forceName=false);
 
 //! Initialize plugin UObjects.
 object::rObject uobject_initialize(runner::Runner&, object::objects_type args);
-#endif
+#endif // !KERNEL_UOBJECT_HH

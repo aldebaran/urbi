@@ -12,7 +12,7 @@
 
 #include <parser/prescan.hh>
 
-#include <uqueue.hh>
+#include <kernel/uqueue.hh>
 
 UQueue::UQueue ()
   : buffer_(),
