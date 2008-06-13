@@ -1,23 +1,5 @@
-/*! \file kernel/userver.hh
- *******************************************************************************
-
- File: userver.h\n
- Definition of the USystem class.
-
- This file is part of
- %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2005.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.net
-
- **************************************************************************** */
+/// \file kernel/userver.hh
+/// \brief Definition of the UServer class.
 
 #ifndef KERNEL_USERVER_HH
 # define KERNEL_USERVER_HH
@@ -39,8 +21,9 @@
 # include <kernel/fwd.hh>
 # include <kernel/utypes.hh>
 
-# include <runner/fwd.hh>
-# include <scheduler/fwd.hh>
+// Do not include runner/fwd.hh etc. which are not public.
+namespace runner    { class Runner; }
+namespace scheduler { class Scheduler; }
 
 extern const char* DISPLAY_FORMAT;
 extern const char* DISPLAY_FORMAT1;
