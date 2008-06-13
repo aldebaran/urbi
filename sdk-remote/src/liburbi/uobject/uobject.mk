@@ -19,12 +19,13 @@ uobject/urbi/uobject.hh				\
 uobject/urbi/uproperty.hh			\
 uobject/urbi/ustarter.hh			\
 uobject/urbi/usystem.hh				\
+uobject/urbi/utable.hh				\
 uobject/urbi/uvalue.hh				\
 uobject/urbi/uvar.hh
 
 dist_uobject_sources =				\
 uobject/uobject-hub-common.cc			\
-uobject/uobject-common.cc			\
+uobject/utable.cc				\
 uobject/uvalue-common.cc			\
 uobject/uvar-common.cc
 

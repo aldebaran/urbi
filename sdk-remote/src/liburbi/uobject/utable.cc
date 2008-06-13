@@ -1,7 +1,7 @@
-/*! \file uobject-common.cc
+/*! \file urbi/utable.cc
  *******************************************************************************
 
- File: uobject-common.cc\n
+ File: urbi/utable.cc\n
  Implementation of the UObject class.
 
  This file is part of LIBURBI\n
@@ -18,9 +18,8 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 
  **************************************************************************** */
 
-#include <list>
-
-#include <urbi/uobject.hh>
+#include <urbi/utable.hh>
+#include <urbi/ucallbacks.hh>
 
 namespace urbi
 {

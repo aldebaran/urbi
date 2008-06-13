@@ -20,39 +20,13 @@
 #ifndef URBI_UCALLBACKS_HH
 # define URBI_UCALLBACKS_HH
 
-# include <list>
 # include <string>
 
-# include "libport/singleton-ptr.hh"
-# include "libport/hash.hh"
-
+# include "urbi/utable.hh"
 # include "urbi/uvalue.hh"
 
 namespace urbi
 {
-
-  // A few list and hashtable types
-  typedef libport::hash_map_type<std::string,
-				 std::list<UGenericCallback*> >::type UTable;
-
-  //! Clean a callback UTable from all callbacks linked to the
-  //! object whose name is 'name'.
-  void cleanTable(UTable &t, const std::string& name);
-
-  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
-  typedef std::list<UTimerCallback*> UTimerTable;
-
-  // Lists and hashtables used.
-  EXTERN_STATIC_INSTANCE(UTable, accessmap);
-  EXTERN_STATIC_INSTANCE(UTable, eventendmap);
-  EXTERN_STATIC_INSTANCE(UTable, eventmap);
-  EXTERN_STATIC_INSTANCE(UTable, functionmap);
-  EXTERN_STATIC_INSTANCE(UTable, monitormap);
-  EXTERN_STATIC_INSTANCE(UVarTable, varmap);
-
-  // Timer and update maps.
-  EXTERN_STATIC_INSTANCE(UTimerTable, timermap);
-  EXTERN_STATIC_INSTANCE(UTimerTable, updatemap);
 
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the

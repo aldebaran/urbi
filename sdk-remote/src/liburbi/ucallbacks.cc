@@ -65,7 +65,7 @@ namespace urbi
     if (type == "varaccess")
       echo("Warning: NotifyAccess facility is not available for modules in "
 	   "remote mode.\n");
-  };
+  }
 
   //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
@@ -74,11 +74,11 @@ namespace urbi
     : objname(objname), name(name)
   {
     URBI(()) << "external " << type << " " << name << ";";
-  };
+  }
 
   UGenericCallback::~UGenericCallback()
   {
-  };
+  }
 
   void
   UGenericCallback::registerCallback(UTable& t)
