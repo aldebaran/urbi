@@ -311,8 +311,7 @@ namespace object
     CHECK_ARG_COUNT(1);
     List::value_type res;
     foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
-      if (job)
-	res.push_back(create_task_from_job(job));
+      res.push_back(create_task_from_job(job));
     return new List(res);
   }
 

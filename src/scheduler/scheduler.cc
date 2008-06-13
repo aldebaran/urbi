@@ -287,7 +287,7 @@ namespace scheduler
     // Since killing the current job will result in its immediate
     // termination, kill all other jobs before.
     foreach (rJob job, jobs_get())
-      if (job && job != current_job_)
+      if (job != current_job_)
 	job->terminate_now();
     if (current_job_)
       current_job_->terminate_now();
@@ -299,7 +299,7 @@ namespace scheduler
     // Tell the jobs that a tag has been stopped, ending with
     // the current job to avoid interrupting this method early.
     foreach (rJob job, jobs_get())
-      if (job && job != current_job_)
+      if (job != current_job_)
 	job->register_stopped_tag(tag, payload);
     if (current_job_)
       current_job_->register_stopped_tag(tag, payload);
