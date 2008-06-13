@@ -395,7 +395,20 @@ stmts:
 cstmt:
   stmt            { assert($1.value()); $$ = $1; }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
-| cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
+| cstmt "&" cstmt
+{
+  if (ast::rAnd lhs = $1.value().unsafe_cast<ast::And>())
+  {
+    lhs->children_get().push_back($3);
+  }
+  else
+  {
+    ast::rAnd res = new ast::And(@$, ast::exps_type());
+    res->children_get().push_back($1);
+    res->children_get().push_back($3);
+    $$ = res;
+  }
+}
 ;
 
 

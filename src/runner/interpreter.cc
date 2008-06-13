@@ -279,23 +279,26 @@ namespace runner
   void
   Interpreter::visit (ast::rConstAnd e)
   {
-    // lhs will be evaluated in another Interpreter, while rhs will be evaluated
-    // in this one. We will be the new runner parent, as we have the same
-    // tags.
+    using scheduler::rJob;
 
-    JAECHO ("lhs", e->lhs_get ());
-    scheduler::rJob lhs = new Interpreter(*this, ast::rConstAst(e->lhs_get()));
+    // Collect all subrunners
+    scheduler::jobs_type jobs;
+    jobs.reserve(e->children_get().size());
 
-    // Propagate errors between left-hand side and right-hand side runners.
-    link (lhs);
+    // Create separate runners for every child but the first
+    foreach (ast::rConstExp child, boost::make_iterator_range(e->children_get(), 1, 0))
+    {
+      Interpreter* job = new Interpreter(*this, ast::rConstAst(child));
+      // Propagate errors from subrunners.
+      link(job);
+      jobs.push_back(job);
+      job->start_job();
+    }
 
-    lhs->start_job ();
-
-    JAECHO ("rhs", e.rhs_get ());
-    eval (e->rhs_get ());
-
-    // Wait for lhs to terminate
-    yield_until_terminated (*lhs);
+    // Evaluate the first child in this runner
+    eval(e->children_get().front());
+    // Wait for all other jobs to terminate
+    yield_until_terminated(jobs);
 
     current_ = object::void_class;
   }

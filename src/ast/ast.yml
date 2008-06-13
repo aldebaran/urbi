@@ -520,12 +520,14 @@ Binary:
         access: rwW
 
 And:
-  super: Binary
+  super: Exp
+  attributes:
+    - children:
+        type: 'exps_type'
+        access:   rwW
+        desc:     Subexpressions
   printer:
-    - ~lhs
-    - '" &"'
-    - libport::iendl
-    - ~rhs
+    - 'libport::separate(n->children_get(), " & ")'
 
 Pipe:
   super: Binary

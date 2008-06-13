@@ -21,9 +21,6 @@ namespace parser
     assert (rhs);
     switch (op)
     {
-      case ast::flavor_and:
-        res = new ast::And (l, lhs, rhs);
-        break;
       case ast::flavor_pipe:
         res = new ast::Pipe (l, lhs, rhs);
         break;
