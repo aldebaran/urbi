@@ -1,7 +1,7 @@
 /// \file urbi/ustarter.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007 Gostai S.A.S.
+// Copyright (c) 2007, 2008 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -21,19 +21,18 @@
 # include <urbi/fwd.hh>
 
 /// This macro must be called once for every UObject class.
-# define UStart(X)							\
-  ::urbi::URBIStarter<X> X ##  ____URBI_object(std::string(#X),		\
-					       ::urbi::objectlist)
+# define UStartRename(Type, Name)                                       \
+  ::urbi::URBIStarter<Type>                                             \
+  Name ##  ____URBI_object(std::string(#Name), ::urbi::objectlist)
 
 /// This macro must be called once for every UObject class.
-# define UStartRename(X,Name)						\
-  ::urbi::URBIStarter<X> Name ##  ____URBI_object(std::string(#Name),	\
-					       ::urbi::objectlist)
+# define UStart(Type)							\
+  UStartRename(Type, Type)
 
 /// This macro must be called once for each UObjectHub class.
 # define UStartHub(X)							\
-  ::urbi::URBIStarterHub<X> x ##  ____URBI_object(std::string(#X),	\
-						  ::urbi::objecthublist)
+  ::urbi::URBIStarterHub<X>                                             \
+  x ##  ____URBI_object(std::string(#X), ::urbi::objecthublist)
 
 namespace urbi
 {
