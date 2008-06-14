@@ -34,6 +34,7 @@ umain.cc					\
 uobject.cc					\
 usyncclient.cc					\
 usystem.cc					\
+utimer-callback.cc				\
 uvar.cc
 
 liburbi_la_LIBADD = $(LIBADD)
