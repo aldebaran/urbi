@@ -79,7 +79,7 @@ namespace urbi
       : baseURBIStarter(name)
     {
       slist = &_slist;
-      slist->push_back(dynamic_cast<baseURBIStarter*>(this));
+      slist->push_back(this);
     }
 
     virtual ~URBIStarter()
@@ -91,8 +91,7 @@ namespace urbi
     {
       delete getUObject();
       UStartlist::iterator toerase =
-	std::find(slist->begin(), slist->end(),
-		  dynamic_cast<baseURBIStarter*>(this));
+	std::find(slist->begin(), slist->end(), this);
       if (toerase != slist->end())
 	slist->erase(toerase);
     }
@@ -102,7 +101,7 @@ namespace urbi
     {
       URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
       ustarter->init(objname);
-      UObject *uso = dynamic_cast<UObject*>(ustarter->object);
+      UObject* uso = ustarter->object;
       getUObject()->members.push_back(uso);
       uso->derived = true;
       uso->classname = getUObject()->classname;
@@ -113,7 +112,7 @@ namespace urbi
     /// Access to the object from the outside.
     virtual UObject* getUObject()
     {
-      return dynamic_cast<UObject*>(object);
+      return object;
     }
 
   protected:
@@ -123,8 +122,8 @@ namespace urbi
       object = new T(objname);
     }
 
-    UStartlist  *slist;
-    T*          object;
+    UStartlist* slist;
+    T* object;
   };
 
 
@@ -142,8 +141,8 @@ SETBACKCASTCTOR(int)
 SETBACKCASTCTOR(long)
 SETBACKCASTCTOR(ufloat)
 SETBACKCASTCTOR(UValue)
-SETBACKCASTCTOR(char *)
-SETBACKCASTCTOR(void *)
+SETBACKCASTCTOR(char*)
+SETBACKCASTCTOR(void*)
 SETBACKCASTCTOR(const std::string)
 SETBACKCASTCTOR(std::string)
 SETBACKCASTCTOR(const UBinary)
@@ -182,7 +181,7 @@ SETBACKCASTCTOR(const UImage)
       : baseURBIStarterHub(name)
     {
       slist = &_slist;
-      slist->push_back(dynamic_cast<baseURBIStarterHub*>(this));
+      slist->push_back(this);
     }
     virtual ~URBIStarterHub() {/* noone can kill a hub*/ };
 
@@ -196,11 +195,11 @@ SETBACKCASTCTOR(const UImage)
     /// Access to the object from the outside.
     virtual UObjectHub* getUObjectHub()
     {
-      return dynamic_cast<UObjectHub*>(object);
+      return object;
     }
 
-    UStartlistHub  *slist;
-    T*              object;
+    UStartlistHub* slist;
+    T* object;
   };
 
 
