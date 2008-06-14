@@ -31,9 +31,9 @@
 					       ::urbi::objectlist)
 
 /// This macro must be called once for each UObjectHub class.
-# define UStartHub(X)							\
-  ::urbi::URBIStarterHub<X> x ##  ____URBI_object(std::string(#X),	\
-						  ::urbi::objecthublist)
+# define UStartHub(Type)                                                \
+  ::urbi::URBIStarterHub<Type>                                          \
+  Type ##  ____URBI_object(std::string(#Type), ::urbi::objecthublist)
 
 namespace urbi
 {
