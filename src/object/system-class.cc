@@ -16,6 +16,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/alien.hh>
+#include <object/dictionary-class.hh>
 #include <object/system-class.hh>
 #include <object/tag-class.hh>
 #include <object/task-class.hh>

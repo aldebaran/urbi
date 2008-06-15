@@ -135,17 +135,6 @@ namespace object
   };
 
 
-  /*------------.
-  | Dictionary. |
-  `------------*/
-
-  struct dictionary_traits
-  {
-    typedef libport::hash_map<libport::Symbol, rObject> type;
-    enum { kind = object_kind_dictionary };
-  };
-
-
   /*--------.
   | Float.  |
   `--------*/

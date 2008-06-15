@@ -14,7 +14,6 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::object_kind_alien:
   case object::object_kind_code:
   case object::object_kind_delegate:
-  case object::object_kind_dictionary:
   case object::object_kind_lobby:
   case object::object_kind_primitive:
   case object::object_kind_semaphore:

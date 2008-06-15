@@ -38,7 +38,6 @@ namespace object
   Macro(alien,      Alien)				\
   Macro(code,       Code)				\
   Macro(delegate,   Delegate)				\
-  Macro(dictionary, Dictionary)                         \
   Macro(float,      Float)				\
   Macro(integer,    Integer)				\
   Macro(list,       List)				\
@@ -100,6 +99,9 @@ namespace object
    * of the operator-> used for the ref-counting.  Keep that in mind. */
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
 # undef DEFINE
+
+  class Dictionary;
+  typedef libport::shared_ptr<Dictionary> rDictionary;
 
   // urbi-exception.hh
   class IDelegate;

@@ -317,7 +317,7 @@ namespace object
     rDictionary props = properties_get();
     if (!props)
     {
-      props = new Dictionary(dictionary_traits::type());
+      props = new Dictionary();
       // This should die if there is a slot name "properties" which is
       // not a dictionary, which is what we want, don't we?
       slot_set(SYMBOL(properties), props);
@@ -328,7 +328,7 @@ namespace object
       libport::find0(props->value_get(), k).unsafe_cast<Dictionary>();
     if (!prop)
     {
-      prop = new Dictionary(dictionary_traits::type());
+      prop = new Dictionary();
       props->value_get()[k] = prop;
     }
 

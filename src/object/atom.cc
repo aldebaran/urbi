@@ -140,13 +140,6 @@ namespace object
 
   template <>
   bool
-  Atom<object::dictionary_traits>::operator< (const Atom& rhs) const
-  {
-    return this < &rhs;
-  }
-
-  template <>
-  bool
   Atom<object::lobby_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;

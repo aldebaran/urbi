@@ -8,20 +8,34 @@
 
 # include <libport/hash.hh>
 # include <object/fwd.hh>
+# include <object/cxx-object.hh>
 
 namespace object
 {
-  extern rObject dictionary_class;
-
-  namespace
+  class Dictionary: public CxxObject
   {
-    typedef libport::hash_map<libport::Symbol, rObject> dictionary_type;
-  }
-  /// Initialize the Dictionary class.
-  void dictionary_class_initialize ();
-  std::ostream& operator << (std::ostream& where,
-                             const dictionary_type& what);
+    public:
+      typedef libport::hash_map<libport::Symbol, rObject> value_type;
 
+      Dictionary();
+      Dictionary(const value_type& value);
+      const value_type& value_get() const;
+      value_type& value_get();
+
+      /// Urbi methods
+      rDictionary set(rString key, rObject value);
+      rObject get(rString key);
+      rObject has(rString key);
+      rDictionary clear();
+      rList keys();
+
+    private:
+      value_type content_;
+
+    public:
+      static void initialize(CxxObject::Binder<Dictionary>& binder);
+      static bool dictionary_added;
+  };
 }; // namespace object
 
 #endif // !OBJECT_DICTIONARY_CLASS_HH

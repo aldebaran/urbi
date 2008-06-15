@@ -3,98 +3,70 @@
  ** \brief Creation of the URBI object dictionary.
  */
 
-#include <object/atom.hh>
+#include <libport/containers.hh>
+
 #include <object/dictionary-class.hh>
-#include <object/symbols.hh>
-#include <runner/runner.hh>
 
 namespace object
 {
-  rObject dictionary_class;
+  Dictionary::Dictionary()
+  {}
 
-  namespace
+  Dictionary::Dictionary(const value_type& value)
+    : content_(value)
+  {}
+
+  const Dictionary::value_type& Dictionary::value_get() const
   {
-    static rObject
-    dictionary_class_set(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(3);
-      FETCH_ARG(0, Dictionary);
-      FETCH_ARG(1, String);
-      arg0->value_get()[arg1->value_get()] = args[2];
-      return arg0;
-    }
-
-    static rObject
-    dictionary_class_get(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(2);
-      FETCH_ARG(0, Dictionary);
-      FETCH_ARG(1, String);
-      dictionary_type& d = arg0->value_get();
-      dictionary_type::iterator it = d.find(arg1->value_get());
-      if (it != d.end())
-        return it->second;
-      else
-        return void_class;
-    }
-
-    static rObject
-    dictionary_class_has(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(2);
-      FETCH_ARG(0, Dictionary);
-      FETCH_ARG(1, String);
-      dictionary_type& d = arg0->value_get();
-      return to_boolean(d.find(arg1->value_get()) != d.end());
-    }
-
-    static rObject
-    dictionary_class_clone(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(1);
-      return new Dictionary(dictionary_type());
-    }
-
-    static rObject
-    dictionary_class_clear(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(1);
-      FETCH_ARG(0, Dictionary);
-      arg0->value_get().clear();
-      return arg0;
-    }
-
-    static rObject
-    dictionary_class_keys(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(1);
-      FETCH_ARG(0, Dictionary);
-      std::deque<rObject> res;
-      typedef std::pair<libport::Symbol, rObject> Elt;
-      foreach (const Elt& elt, arg0->value_get())
-        res.push_back(new String(elt.first));
-      return new List(res);
-    }
+    return content_;
   }
 
-  std::ostream& operator << (std::ostream& where,
-                             const dictionary_type& what)
+  Dictionary::value_type& Dictionary::value_get()
   {
-    where << &what << std::endl;
-    return where;
+    return content_;
   }
 
-  void
-  dictionary_class_initialize ()
+  rDictionary Dictionary::set(rString key, rObject val)
   {
-#define DECLARE(Name)                           \
-    DECLARE_PRIMITIVE(dictionary, Name)
-    DECLARE(clear);
-    DECLARE(clone);
-    DECLARE(get);
-    DECLARE(has);
-    DECLARE(keys);
-    DECLARE(set);
-#undef DECLARE
+    content_[key->value_get()] = val;
+    return this;
   }
+
+  rObject Dictionary::get(rString key)
+  {
+    return libport::mhas(content_, key->value_get()) ?
+      content_[key->value_get()] : void_class;
+  }
+
+  rDictionary Dictionary::clear()
+  {
+    content_.clear();
+    return this;
+  }
+
+  rList Dictionary::keys()
+  {
+    List::value_type res;
+    typedef const std::pair<libport::Symbol, rObject> elt_type;
+    foreach (elt_type& elt, content_)
+      res.push_back(new String(elt.first));
+    return new List(res);
+  }
+
+  rObject Dictionary::has(rString key)
+  {
+    return libport::mhas(content_, key->value_get()) ?
+      true_class : false_class;
+  }
+
+  void Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
+  {
+    bind(SYMBOL(set), &Dictionary::set);
+    bind(SYMBOL(get), &Dictionary::get);
+    bind(SYMBOL(has), &Dictionary::has);
+    bind(SYMBOL(clear), &Dictionary::clear);
+    bind(SYMBOL(keys), &Dictionary::keys);
+  }
+
+  bool Dictionary::dictionary_added = CxxObject::add<Dictionary>("Dictionary");
 }
