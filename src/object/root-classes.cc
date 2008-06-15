@@ -6,6 +6,7 @@
 #include <object/alien-class.hh>
 #include <object/atom.hh>
 #include <object/code-class.hh>
+#include <object/cxx-object.hh>
 #include <object/delegate-class.hh>
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
@@ -204,6 +205,7 @@ namespace object
 
     // Object.addProto(Global)
     object_class->proto_add(global_class);
+    CxxObject::initialize(global_class);
   }
 
 

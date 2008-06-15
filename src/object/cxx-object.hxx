@@ -1,0 +1,158 @@
+#ifndef CXX_OBJECT_HXX
+# define CXX_OBJECT_HXX
+
+# include <boost/bind.hpp>
+
+# include <object/atom.hh>
+# include <object/object-class.hh>
+# include <object/primitives.hh>
+
+namespace object
+{
+  template <typename T>
+  bool CxxObject::add(const std::string& name)
+  {
+    initializers_get().push_back(new TypeInitializer<T>(name));
+    return true;
+  }
+
+  template <typename T>
+  CxxObject::TypeInitializer<T>::TypeInitializer(const std::string& name)
+    : name_(name)
+  {}
+
+  namespace
+  {
+    template <typename T>
+    rObject cxx_object_clone(rObject parent, runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT(1);
+      rObject res = new T;
+      res->proto_add(parent);
+      return res;
+    }
+  }
+
+  template <typename T>
+  rObject
+  CxxObject::TypeInitializer<T>::make_class()
+  {
+    rObject res = new Object();
+    res->proto_add(object_class);
+    res->slot_set(SYMBOL(protoName), new String(name_));
+    res->slot_set(SYMBOL(clone),
+                  new Primitive(boost::bind(cxx_object_clone<T>, res, _1, _2)));
+    Binder<T> b(res);
+    T::initialize(b);
+    return res;
+  }
+
+  template <typename T>
+  libport::Symbol
+  CxxObject::TypeInitializer<T>::name()
+  {
+    return name_;
+  }
+
+  // BINDER
+
+  template <typename T>
+  CxxObject::Binder<T>::Binder(rObject tgt)
+    : tgt_(tgt)
+  {}
+
+  namespace
+  {
+
+# define PRINT_true(X) X
+# define PRINT_false(X)
+# define NPRINT_true(X)
+# define NPRINT_false(X) X
+
+# define WHEN(Cond, X) PRINT_##Cond(X)
+# define WHEN_NOT(Cond, X) NPRINT_##Cond(X)
+
+# define IF(Cond, Then, Else) WHEN(Cond, Then) WHEN_NOT(Cond, Else)
+
+# define COMMA_ ,
+# define COMMA(Cond) PRINT_##Cond(COMMA_)
+
+# define MET(Name, Ret, Arg1, Arg2, Arg3)               \
+    IF(Ret, libport::shared_ptr<R>, void)               \
+    (T::*Name)(                                         \
+      WHEN(Arg1, libport::shared_ptr<A1>)               \
+      COMMA(Arg2) WHEN(Arg2, libport::shared_ptr<A2>)   \
+      COMMA(Arg3) WHEN(Arg3, libport::shared_ptr<A3>)   \
+      )
+
+#define GET_ARG(N)                                                      \
+    libport::shared_ptr<A##N> a##N =  args[N].unsafe_cast<A##N>();      \
+    assert(a##N);
+
+#define PRIMITIVE(Return, ArgsC, Arg1, Arg2, Arg3)                      \
+    template <typename T                                                \
+              COMMA(Return) WHEN(Return, typename R)                    \
+      COMMA(Arg1) WHEN(Arg1, typename A1)                               \
+      COMMA(Arg2) WHEN(Arg2, typename A2)                               \
+      COMMA(Arg3) WHEN(Arg3, typename A3)                               \
+      >                                                                 \
+    struct primitive<T, MET(, Return, Arg1, Arg2, Arg3)>                \
+      {                                                                 \
+        static rObject make(MET(method, Return, Arg1, Arg2, Arg3),      \
+                            runner::Runner&, objects_type args)         \
+        {                                                               \
+          assert(args.size() == ArgsC + 1);                             \
+          libport::shared_ptr<T> tgt = args[0].unsafe_cast<T>();        \
+          assert(tgt);                                                  \
+          WHEN(Arg1, GET_ARG(1))                                        \
+          WHEN(Arg2, GET_ARG(2))                                        \
+          WHEN(Arg3, GET_ARG(3))                                        \
+          WHEN(Return, return)                                          \
+            (tgt.get()->*method)(                                       \
+              WHEN(Arg1, a1)                                            \
+              COMMA(Arg2) WHEN(Arg2, a2)                                \
+              COMMA(Arg3) WHEN(Arg3, a3)                                \
+              );                                                        \
+          return void_class;                                            \
+        }                                                               \
+      }
+
+    template <typename T, typename M>
+    struct primitive
+    {
+    };
+
+    /* Python for these:
+        max = 3
+        for ret in ('true', 'false'):
+            for nargs in range(max + 1):
+                print "    PRIMITIVE(%s, %i" % (ret, nargs),
+                for i in range(max):
+                    print ", %s" % str(i < nargs).lower(),
+                print ");"
+     */
+    PRIMITIVE(true, 0 , false , false , false );
+    PRIMITIVE(true, 1 , true , false , false );
+    PRIMITIVE(true, 2 , true , true , false );
+    PRIMITIVE(true, 3 , true , true , true );
+    PRIMITIVE(false, 0 , false , false , false );
+    PRIMITIVE(false, 1 , true , false , false );
+    PRIMITIVE(false, 2 , true , true , false );
+    PRIMITIVE(false, 3 , true , true , true );
+  }
+
+  template <typename T>
+  template <typename M>
+  void CxxObject::Binder<T>::operator()(const libport::Symbol& name,
+                                        M method)
+  {
+    // If make is unfound here, you passed an unsupported pointer type
+    // to the binder.
+    rObject p =
+      new Primitive(boost::bind(primitive<T, M>::make, method, _1, _2));
+    tgt_->slot_set(name, p);
+  }
+}
+
+
+#endif

@@ -43,6 +43,8 @@ object/atom.hh					\
 object/atom.cc					\
 object/code-class.cc				\
 object/code-class.hh				\
+object/cxx-object.cc				\
+object/cxx-object.hh				\
 object/delegate-class.cc			\
 object/delegate-class.hh			\
 object/dictionary-class.cc			\
