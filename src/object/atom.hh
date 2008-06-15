@@ -204,7 +204,7 @@ namespace object
   struct primitive_traits
   {
     // The type of the primitives.
-    typedef rObject (*type) (runner::Runner&, objects_type);
+    typedef boost::function2<rObject, runner::Runner&, objects_type> type;
     enum { kind = object_kind_primitive };
   };
 

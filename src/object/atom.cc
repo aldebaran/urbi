@@ -152,6 +152,13 @@ namespace object
     return this < &rhs;
   }
 
+  template <>
+  bool
+  Atom<object::primitive_traits>::operator< (const Atom& rhs) const
+  {
+    return this < &rhs;
+  }
+
   template <typename Traits>
   bool
   Atom<Traits>::operator< (const Object& rhs) const
@@ -234,6 +241,14 @@ namespace object
     o << "value" << " = " << libport::deref;
     print(o, runner);
     return o << libport::iendl;
+  }
+
+  template <>
+  std::ostream&
+  Atom<primitive_traits>::special_slots_dump (std::ostream& o,
+					  runner::Runner&) const
+  {
+    return o << "primitive" << libport::iendl;
   }
 
   template <>
