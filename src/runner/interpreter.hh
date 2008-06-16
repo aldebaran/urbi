@@ -121,11 +121,15 @@ namespace runner
 
     /// Build a call message
     virtual rObject
-    build_call_message(const rObject& tgt, const libport::Symbol& msg,
+    build_call_message(const rObject& tgt,
+		       const rObject& code,
+		       const libport::Symbol& msg,
                        const object::objects_type& args);
 
     /// Build a call message
-    rObject build_call_message(const rObject& tgt, const libport::Symbol& msg,
+    rObject build_call_message(const rObject& tgt,
+			       const rObject& code,
+			       const libport::Symbol& msg,
                                const ast::exps_type& args);
 
     /// Import from super.

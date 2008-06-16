@@ -343,7 +343,7 @@ namespace runner
         lazy->slot_set(SYMBOL(code), o);
         lazy_args.push_back(lazy);
       }
-      call_message = build_call_message(args[0], msg, lazy_args);
+      call_message = build_call_message(args[0], func, msg, lazy_args);
     }
 
     // Compute the frame size on the two stacks
@@ -517,6 +517,7 @@ namespace runner
 
   object::rObject
   Interpreter::build_call_message (const rObject& tgt,
+				   const rObject& code,
                                    const libport::Symbol& msg,
 				   const object::objects_type& args)
   {
@@ -528,6 +529,9 @@ namespace runner
     // Set the target to be the object on which the function is applied.
     res->slot_set (SYMBOL(target), tgt);
 
+    // Set the code slot.
+    res->slot_set (SYMBOL(code), code);
+
     // Set the name of the message call.
     res->slot_set (SYMBOL(message), new object::String(msg));
 
@@ -537,7 +541,9 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::build_call_message (const rObject& tgt, const libport::Symbol& msg,
+  Interpreter::build_call_message (const rObject& tgt,
+				   const rObject& code,
+				   const libport::Symbol& msg,
 				   const ast::exps_type& args)
   {
     // Build the list of lazy arguments
@@ -558,7 +564,7 @@ namespace runner
       lazy_args.push_back(v);
     }
 
-    return build_call_message(tgt, msg, lazy_args);
+    return build_call_message(tgt, code, msg, lazy_args);
   }
 
   void
@@ -627,7 +633,7 @@ namespace runner
     rObject call_message;
     if (val->kind_get () == object::object_kind_code
         && !val.unsafe_cast<object::Code>()->value_get().ast->strict())
-      call_message = build_call_message (tgt, message, ast_args);
+      call_message = build_call_message (tgt, val, message, ast_args);
     else
       push_evaluated_arguments (args, ast_args);
     return apply (val, message, args, call_message);

@@ -90,7 +90,9 @@ namespace runner
     /// \{
 
     /// Build a call message
-    virtual rObject build_call_message(const rObject& tgt, const libport::Symbol& msg,
+    virtual rObject build_call_message(const rObject& tgt,
+				       const rObject& code,
+				       const libport::Symbol& msg,
 				       const object::objects_type& args) = 0;
 
     /// Do the actual work.  Implementation of \c Job::run.
