@@ -61,6 +61,12 @@ namespace object
     : tgt_(tgt)
   {}
 
+  template <typename T>
+  void CxxObject::Binder<T>::store_class(rObject& tgt)
+  {
+    tgt = tgt_;
+  }
+
   namespace
   {
 
@@ -172,6 +178,5 @@ namespace object
     tgt_->slot_set(name, p);
   }
 }
-
 
 #endif

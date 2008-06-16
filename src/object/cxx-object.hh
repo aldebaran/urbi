@@ -40,6 +40,8 @@ namespace object
           /// Bind \a method with \a name
           template <typename M>
           void operator()(const libport::Symbol& name, M method);
+          /// Store the freshly created class in \a tgt
+          void store_class(rObject& tgt);
 
         private:
           friend class CxxObject;
