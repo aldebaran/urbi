@@ -16,6 +16,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/alien.hh>
+#include <object/code-class.hh>
 #include <object/dictionary-class.hh>
 #include <object/system-class.hh>
 #include <object/tag-class.hh>
@@ -250,7 +251,8 @@ namespace object
   system_class_spawn(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT_RANGE (2, 3);
-    FETCH_ARG (1, Code);
+    rObject arg1 = args[1]->as<Code>();
+    assert(arg1);
 
     runner::Interpreter* new_runner =
       new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),

@@ -18,52 +18,93 @@ namespace object
 {
   rObject code_class;
 
-  /*------------------.
-  | Code primitives.  |
-  `------------------*/
-
-  static rObject
-  code_class_apply (runner::Runner& r, objects_type args)
+  Code::Code()
   {
-    CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, List);
-    if (arg1->value_get().empty())
+    pabort("You can't instanciate Code manually.");
+  }
+
+  Code::Code(ast_type a)
+    : ast_(a)
+    , captures_()
+    , self_()
+    , call_()
+  {
+    proto_add(code_class);
+  }
+
+  Code::ast_type Code::ast_get() const
+  {
+    return ast_;
+  }
+
+  rObject Code::call_get() const
+  {
+    return call_;
+  }
+
+  const Code::captures_type& Code::captures_get() const
+  {
+    return captures_;
+  }
+
+  rObject Code::self_get() const
+  {
+    return self_;
+  }
+
+  Code::ast_type& Code::ast_get()
+  {
+    return ast_;
+  }
+
+  rObject& Code::call_get()
+  {
+    return call_;
+  }
+
+  Code::captures_type& Code::captures_get()
+  {
+    return captures_;
+  }
+
+  rObject& Code::self_get()
+  {
+    return self_;
+  }
+
+  rObject Code::apply(runner::Runner& r, rList args)
+  {
+    if (args->value_get().empty())
       throw PrimitiveError ("apply", "list of arguments must begin with self");
-    return r.apply (args[0], SYMBOL(apply), arg1->value_get());
+    return r.apply (this, SYMBOL(apply), args->value_get());
   }
 
-  static rObject
-  code_class_asString(runner::Runner&, objects_type args)
+  rString Code::as_string()
   {
-    CHECK_ARG_COUNT (1);
-    if (args[0] == code_class)
+    if (code_class == this)
       return new String(SYMBOL(LT_Code_GT));
-    FETCH_ARG(0, Code);
-    return new String(libport::Symbol(string_cast(*arg0->value_get().ast)));
+    return new String(libport::Symbol(string_cast(*ast_)));
+
   }
 
-  static rObject
-  code_class_bodyString(runner::Runner&, objects_type args)
+  rString Code::body_string()
   {
-    CHECK_ARG_COUNT (1);
-    if (args[0] == code_class)
+    if (code_class == this)
       return new String(SYMBOL(LT_Code_GT));
-    FETCH_ARG(0, Code);
     return
       new String(
         libport::Symbol(
-          string_cast(*arg0->value_get().ast->body_get()->body_get())));
+          string_cast(*ast_->body_get()->body_get())));
   }
 
-  void
-  code_class_initialize ()
+  void Code::initialize(CxxObject::Binder<Code>& bind)
   {
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(code, Name)
-    DECLARE (apply);
-    DECLARE (asString);
-    DECLARE (bodyString);
-#undef DECLARE
+    bind.store_class(code_class);
+    bind(SYMBOL(apply), &Code::apply);
+    bind(SYMBOL(asString), &Code::as_string);
+    bind(SYMBOL(bodyString), &Code::body_string);
   }
+
+  bool Code::code_added = CxxObject::add<Code>("Code");
 
 }; // namespace object

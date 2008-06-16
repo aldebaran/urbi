@@ -36,7 +36,6 @@ namespace object
   /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,      Alien)				\
-  Macro(code,       Code)				\
   Macro(delegate,   Delegate)				\
   Macro(float,      Float)				\
   Macro(integer,    Integer)				\
@@ -102,6 +101,8 @@ namespace object
 
   class Dictionary;
   typedef libport::shared_ptr<Dictionary> rDictionary;
+  class Code;
+  typedef libport::shared_ptr<Code> rCode;
 
   // urbi-exception.hh
   class IDelegate;

@@ -99,31 +99,6 @@ namespace object
   };
 
 
-  /*-------.
-  | Code.  |
-  `-------*/
-
-  // Functions that are written in Urbi, detached from the AST
-  // returned by the parser.
-  struct code_traits
-  {
-    struct type
-    {
-      type(ast::rConstCode a)
-        : ast(a)
-      {}
-
-      /// Body of the function
-      ast::rConstCode ast;
-      /// Value of the captured variables
-      std::vector<rrObject> captures;
-      /// Captured 'this' and 'call'. Only set for closures.
-      rObject self, call;
-    };
-    enum { kind = object_kind_code };
-  };
-
-
   /*----------.
   | Delegate. |
   `----------*/

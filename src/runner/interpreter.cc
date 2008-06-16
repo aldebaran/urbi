@@ -24,6 +24,7 @@
 #include <ast/print.hh>
 
 #include <object/atom.hh>
+#include <object/code-class.hh>
 #include <object/global-class.hh>
 #include <object/idelegate.hh>
 #include <object/object.hh>
@@ -322,12 +323,11 @@ namespace runner
                            const object::objects_type& args,
                            rObject call_message)
   {
-
     libport::Finally finally;
 
     // The called function.
-    object::Code::value_type fn = func->value_get();
-    ast::rConstCode ast = fn.ast;
+    object::Code::ast_type ast = func->ast_get();
+
     // Whether it's an explicit closure
     bool closure = ast.unsafe_cast<const ast::Closure>();
 
@@ -365,12 +365,12 @@ namespace runner
     rObject call;
     if (closure)
     {
-      assert(fn.self);
-      self = fn.self;
+      self = func->self_get();
+      assert(self);
       // FIXME: The call message can be undefined at the creation
       // site for now.
       // assert(fn.call);
-      call = fn.call;
+      call = func->call_get();
     }
     else
     {
@@ -398,7 +398,7 @@ namespace runner
     // Push captured variables
     foreach (ast::rConstDeclaration dec, *ast->captured_variables_get())
     {
-      rrObject value = func->value_get().captures[dec->local_index_get()];
+      rrObject value = func->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
     }
 
@@ -443,8 +443,8 @@ namespace runner
     // If we try to call a C++ primitive with a call message, make it
     // look like a strict function call
     if (call_message &&
-	(func->kind_get() != object::object_kind_code
-	 || func->value<object::Code>().ast->strict()))
+	(!func->is_a<object::Code>()
+	 || func->as<object::Code>()->ast_get()->strict()))
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
@@ -463,27 +463,28 @@ namespace runner
     if (std::find(++args.begin(), end, object::void_class) != end)
       throw object::WrongArgumentType (msg);
 
-    switch (func->kind_get ())
+    if (rCode c = func->as<object::Code>())
     {
-      case object::object_kind_primitive:
-	current_ =
-	  func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
-	break;
-      case object::object_kind_delegate:
-	current_ =
-	  func.unsafe_cast<object::Delegate>()
-          ->value_get()
-	  ->operator()(*this, args);
-	break;
-      case object::object_kind_code:
-	current_ = apply_urbi (func.unsafe_cast<object::Code>(),
-                               msg, args, call_message);
-	break;
-      default:
-	object::check_arg_count (1, args.size(), msg.name_get());
-	current_ = func;
-	break;
+      current_ = apply_urbi (c, msg, args, call_message);
     }
+    else
+      switch (func->kind_get ())
+      {
+        case object::object_kind_primitive:
+          current_ =
+            func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
+          break;
+        case object::object_kind_delegate:
+          current_ =
+            func.unsafe_cast<object::Delegate>()
+            ->value_get()
+            ->operator()(*this, args);
+          break;
+        default:
+          object::check_arg_count (1, args.size(), msg.name_get());
+          current_ = func;
+          break;
+      }
 
     return current_;
   }
@@ -631,8 +632,8 @@ namespace runner
     // Build the call message for non-strict functions, otherwise
     // the evaluated argument list.
     rObject call_message;
-    if (val->kind_get () == object::object_kind_code
-        && !val.unsafe_cast<object::Code>()->value_get().ast->strict())
+    rCode c = val->as<object::Code>();
+    if (c && !c->ast_get()->strict())
       call_message = build_call_message (tgt, val, message, ast_args);
     else
       push_evaluated_arguments (args, ast_args);
@@ -735,14 +736,14 @@ namespace runner
     {
       ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
       assert(local);
-      res->value_get().captures.push_back(stacks_.rget(local));
+      res->captures_get().push_back(stacks_.rget(local));
     }
 
     // Capture 'this' and 'call' in closures
     if (closure)
     {
-      res->value_get().self = stacks_.self();
-      res->value_get().call = stacks_.call();
+      res->self_get() = stacks_.self();
+      res->call_get() = stacks_.call();
     }
   }
 

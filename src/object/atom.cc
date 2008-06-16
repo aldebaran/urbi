@@ -94,13 +94,6 @@ namespace object
 
   template <>
   void
-  Atom<code_traits>::value_set (Atom<code_traits>::value_ref_type)
-  {
-    throw InternalError("cannot call object::Code::value_set");
-  }
-
-  template <>
-  void
   Atom<lobby_traits>::value_set (Atom<lobby_traits>::value_ref_type)
   {
     throw InternalError("cannot call object::Code::value_set");
@@ -120,13 +113,6 @@ namespace object
   template <>
   bool
   Atom<object::alien_traits>::operator< (const Atom& rhs) const
-  {
-    return this < &rhs;
-  }
-
-  template <>
-  bool
-  Atom<object::code_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
   }
@@ -180,42 +166,6 @@ namespace object
 					  runner::Runner&) const
   {
     return o << "type = " << value_.second << libport::iendl;
-  }
-
-  template <>
-  std::ostream&
-  Atom<code_traits>::special_slots_dump (std::ostream& o,
-                                         runner::Runner& r) const
-  {
-    o << "value" << " = " << libport::deref << value_.ast << libport::iendl;
-    if (ast::rConstFunction f = value_.ast.unsafe_cast<const ast::Function>())
-    {
-      o << "local variables = " << libport::incindent;
-      foreach (ast::rConstDeclaration dec, *f->local_variables_get())
-      {
-        o << libport::iendl << dec->what_get() << ": "
-          << (dec->closed_get() ? "%closed_"  : "%local_")
-          << dec->local_index_get();
-      }
-      o << libport::decendl;
-      o << "capture map = " << libport::incindent;
-      int i = 0;
-      foreach (ast::rConstDeclaration dec, *f->captured_variables_get())
-      {
-        ast::rConstLocal v = dec->value_get().unsafe_cast<const ast::Local>();
-        assert(v);
-        assert(v->closed_get());
-        o << libport::iendl << dec->what_get() << ": "
-          << "%captured_"
-          << dec->local_index_get()
-          << " = ";
-        (*value_.captures[i])->print(o, r);
-        ++i;
-      }
-      o << libport::decendl;
-    }
-
-    return o;
   }
 
   template <>
