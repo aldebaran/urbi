@@ -1,4 +1,5 @@
 #include <boost/bind.hpp>
+#include <boost/assign.hpp>
 
 #ifdef ENABLE_DEBUG_TRACES_UOBJECT
 # define ENABLE_DEBUG_TRACES
@@ -24,6 +25,7 @@
 
 
 // Make it more readable.
+using namespace boost::assign;
 using object::rObject;
 using object::rLobby;
 using object::objects_type;
@@ -41,8 +43,7 @@ static inline runner::Runner& getCurrentRunner()
 /// UObject read to an urbi variable.
 static rObject urbi_get(rObject r, const std::string& slot)
 {
-  object::objects_type args;
-  args.push_back(r);
+  object::objects_type args = list_of(r);
   ECHO("applying get for " << slot << "...");
   rObject ret =  getCurrentRunner().apply(r->slot_get(Symbol(slot)),
                                           Symbol(slot), args);
@@ -53,10 +54,8 @@ static rObject urbi_get(rObject r, const std::string& slot)
 /// UObject write to an urbi variable.
 static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
-  object::objects_type args;
-  args.push_back(r);
-  args.push_back(new object::String(Symbol(slot)));
-  args.push_back(v);
+  object::objects_type args = list_of
+    (r) (new object::String(Symbol(slot))) (v);
   ECHO("applying set...");
   rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
 					 SYMBOL(updateSlot), args);
@@ -208,8 +207,7 @@ rObject
 uobject_make_proto(const std::string& name)
 {
   rObject oc = object_class->slot_get(SYMBOL(UObject))->clone();
-  object::objects_type args;
-  args.push_back(oc);
+  object::objects_type args = list_of(oc);
   getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
   oc->slot_set(SYMBOL(__uobject_cname),
 	       new object::String(libport::Symbol(name)));
@@ -321,9 +319,7 @@ uvar_uowned_set(const std::string& name, rObject val)
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
   rObject v = o->slot_get(Symbol(p.second));
-  object::objects_type args;
-  args.push_back(v);
-  args.push_back(val);
+  object::objects_type args = list_of (v) (val);
   return getCurrentRunner().apply(v->slot_get(SYMBOL(writeOwned)), SYMBOL(writeOwned), args);
 }
 
@@ -387,10 +383,10 @@ namespace urbi
       }
       rObject f = var->slot_get(sym);
       assertion(f);
-      object::objects_type args;
-      args.push_back(var);
-      args.push_back(new object::Delegate(new UWrapNotify(this, p.first,
-		       method, s.owned, true)));
+      object::objects_type args = list_of
+	(var)
+	(new object::Delegate(new UWrapNotify(this, p.first,
+					      method, s.owned, true)));
       getCurrentRunner().apply(f, sym, args);
     }
     delete &s;
@@ -410,10 +406,10 @@ namespace urbi
   {
     rObject me = get_base(objname);
     rObject f = me->slot_get(SYMBOL(setTimer));
-    object::objects_type args;
-    args.push_back(me);
-    args.push_back(new object::Float(period));
-    args.push_back(new object::Delegate(
+    object::objects_type args = list_of
+      (me)
+      (new object::Float(period))
+      (new object::Delegate(
 	uwrapfunction(boost::bind(&urbi::UTimerCallback::call,this))));
     getCurrentRunner().apply(f, SYMBOL(setTimer), args);
   }
@@ -427,9 +423,7 @@ namespace urbi
     me->slot_update(getCurrentRunner(), SYMBOL(update),
 		    new object::Delegate(
 		      uwrapfunction(boost::bind(&urbi::UObject::update, this))));
-    object::objects_type args;
-    args.push_back(me);
-    args.push_back(new object::Float(t));
+    object::objects_type args = list_of (me) (new object::Float(t));
     getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
   }
   UObject::~UObject()
@@ -582,12 +576,12 @@ namespace urbi
      */
     rObject uob = object_class->slot_get(SYMBOL(UObject));
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
-    object::objects_type args;
-    args.push_back(uob);
-    args.push_back(new object::String(Symbol(name)));
-    args.push_back(new object::Float(t));
-    args.push_back(new object::Delegate(uwrapfunction(
-	boost::bind(&urbi::UObjectHub::update, this))));
+    object::objects_type args = list_of
+      (uob)
+      (new object::String(Symbol(name)))
+      (new object::Float(t))
+      (new object::Delegate
+       (uwrapfunction(boost::bind(&urbi::UObjectHub::update, this))));
     getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
   }
 
