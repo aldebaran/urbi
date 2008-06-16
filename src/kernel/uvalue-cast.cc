@@ -17,12 +17,17 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::object_kind_primitive:
   case object::object_kind_semaphore:
     throw object::WrongArgumentType
-      (object::object_kind_float, o->kind_get(), "cast");
+      (string_of(object::object_kind_float),
+       string_of(o->kind_get()),
+       "cast");
     break;
   case object::object_kind_object:
     if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
-      boost::throw_exception (object::WrongArgumentType
-       (object::object_kind_object, o->kind_get(), "bin-cast"));
+      boost::throw_exception (
+        object::WrongArgumentType
+        (string_of(object::object_kind_object),
+         string_of(o->kind_get()),
+         "bin-cast"));
       {
 	const std::string& data =
 	  o->slot_get(SYMBOL(data))->value<object::String>().name_get();
@@ -101,8 +106,9 @@ object_cast(const urbi::UValue& v)
 
     default:
       throw
-	object::WrongArgumentType(object::object_kind_float,
-				  object::object_kind_float, "backcast");
+	object::WrongArgumentType(string_of(object::object_kind_float),
+				  string_of(object::object_kind_float),
+                                  "backcast");
       break;
   }
   return res;

@@ -227,7 +227,7 @@ namespace object
   | Type conversions.  |
   `-------------------*/
 
-  template<typename T>
+  template <typename T>
   bool Object::is_a() const
   {
     return dynamic_cast<const T*>(this);
@@ -239,7 +239,7 @@ namespace object
     return dynamic_cast<const T*>(this);
   }
 
-  template<typename T>
+  template <typename T>
   libport::shared_ptr<T> Object::as()
   {
     return dynamic_cast<T*>(this);

@@ -17,14 +17,14 @@
 /**
  * Throw an exception if \a Obj is not of type \a Type.
  */
-#define TYPE_CHECK(Obj, Type)				\
-  do {							\
-    if (!(Obj)->type_is<Type>())			\
-      throw						\
-	object::WrongArgumentType			\
-	(object::Object::kind_type(Type::kind),		\
-	 (Obj)->kind_get(),				\
-	 "");						\
+#define TYPE_CHECK(Obj, Type)                                   \
+  do {                                                          \
+    if (!(Obj)->type_is<Type>())                                \
+      throw                                                     \
+	object::WrongArgumentType                               \
+	(string_of(object::Object::kind_type(Type::kind)),      \
+	 string_of((Obj)->kind_get()),                          \
+	 "");                                                   \
   } while (0)
 
 /**
