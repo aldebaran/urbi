@@ -223,6 +223,28 @@ namespace object
     return b ? true_class : false_class;
   }
 
+  /*-------------------.
+  | Type conversions.  |
+  `-------------------*/
+
+  template<typename T>
+  bool Object::is_a() const
+  {
+    return dynamic_cast<const T*>(this);
+  }
+
+  template <typename T>
+  libport::shared_ptr<T> Object::as() const
+  {
+    return dynamic_cast<const T*>(this);
+  }
+
+  template<typename T>
+  libport::shared_ptr<T> Object::as()
+  {
+    return dynamic_cast<T*>(this);
+  }
+
 } // namespace object
 
 #endif // !OBJECT_OBJECT_HXX

@@ -61,6 +61,18 @@ namespace object
     /// \}
 
 
+    /// Check whether this is of type \a T
+    template<typename T>
+    bool is_a() const;
+
+    /// Convert this to type \a T
+    /** \return This seen as a \a T, or 0 if it's not of type \a T
+     */
+    template<typename T>
+    libport::shared_ptr<T> as() const;
+    template<typename T>
+    libport::shared_ptr<T> as();
+
     /// \name The protos.
     /// \{
     /// The protos.
