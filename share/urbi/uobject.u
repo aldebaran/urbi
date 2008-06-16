@@ -57,11 +57,7 @@ class Object.UObject
   };
 };
 
-/// Urbi-side UVar. Function which calls notifyAccess when the value is read.
-var Object.uvar = new Global; //required by context resolution mechanism
-
-
-do getSlot("uvar")
+class Object.uvar
 {
   function accessor()
   {
@@ -115,8 +111,8 @@ do getSlot("uvar")
   var __clone = getSlot("clone");
   function clone()
   {
-    var ret = function() {
-      getSlot("code").accessor
+    var ret = function {
+      call.getSlot("code").accessor
     } |
     ret.addProto(self) |
     do ret {
@@ -131,8 +127,7 @@ do getSlot("uvar")
       var looping = false |
       var loopTag = new Tag |
       var isUVar = 1
-    } |
-    ret
+    }
   };
   /** If both notifyChange and notifyAccess are present, call the notifyAccess
    *  periodically.
@@ -175,13 +170,7 @@ do getSlot("uvar")
   };
   function callNotify(l)
   {
-    while (l.size)
-    {
-      var f = l.front |
-      f |
-      l = l.tail
-    } |
-    void
+    l.each(function (f) {f()})
   };
   void
 };
