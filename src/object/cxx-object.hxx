@@ -66,6 +66,10 @@ namespace object
 
 # define PRINT_true(X) X
 # define PRINT_false(X)
+# define PRINT_truetrue(X) X
+# define PRINT_falsetrue(X)
+# define PRINT_truefalse(X)
+# define PRINT_falsefalse(X)
 # define NPRINT_true(X)
 # define NPRINT_false(X) X
 
@@ -77,9 +81,12 @@ namespace object
 # define COMMA_ ,
 # define COMMA(Cond) PRINT_##Cond(COMMA_)
 
-# define MET(Name, Ret, Arg1, Arg2, Arg3)               \
+# define COMMA2(Cond1, Cond2) PRINT_##Cond1##Cond2(COMMA_)
+
+# define MET(Name, Ret, Run, Arg1, Arg2, Arg3)          \
     IF(Ret, libport::shared_ptr<R>, void)               \
     (T::*Name)(                                         \
+      WHEN(Run, runner::Runner&) COMMA2(Run, Arg1)      \
       WHEN(Arg1, libport::shared_ptr<A1>)               \
       COMMA(Arg2) WHEN(Arg2, libport::shared_ptr<A2>)   \
       COMMA(Arg3) WHEN(Arg3, libport::shared_ptr<A3>)   \
@@ -89,17 +96,19 @@ namespace object
     libport::shared_ptr<A##N> a##N =  args[N].unsafe_cast<A##N>();      \
     assert(a##N);
 
-#define PRIMITIVE(Return, ArgsC, Arg1, Arg2, Arg3)                      \
+#define PRIMITIVE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)                    \
     template <typename T                                                \
-              COMMA(Return) WHEN(Return, typename R)                    \
+              COMMA(Ret) WHEN(Ret, typename R)                          \
       COMMA(Arg1) WHEN(Arg1, typename A1)                               \
       COMMA(Arg2) WHEN(Arg2, typename A2)                               \
       COMMA(Arg3) WHEN(Arg3, typename A3)                               \
       >                                                                 \
-    struct primitive<T, MET(, Return, Arg1, Arg2, Arg3)>                \
-      {                                                                 \
-        static rObject make(MET(method, Return, Arg1, Arg2, Arg3),      \
-                            runner::Runner&, objects_type args)         \
+    struct primitive<T, MET(, Ret, Run, Arg1, Arg2, Arg3)>              \
+    {                                                                   \
+        static rObject make(                                            \
+          MET(method, Ret, Run, Arg1, Arg2, Arg3),                      \
+          runner::Runner& WHEN(Run, r),                                 \
+          objects_type args)                                            \
         {                                                               \
           assert(args.size() == ArgsC + 1);                             \
           libport::shared_ptr<T> tgt = args[0].unsafe_cast<T>();        \
@@ -107,8 +116,9 @@ namespace object
           WHEN(Arg1, GET_ARG(1))                                        \
           WHEN(Arg2, GET_ARG(2))                                        \
           WHEN(Arg3, GET_ARG(3))                                        \
-          WHEN(Return, return)                                          \
+            WHEN(Ret, return)                                           \
             (tgt.get()->*method)(                                       \
+              WHEN(Run, r) COMMA2(Run, Arg1)                            \
               WHEN(Arg1, a1)                                            \
               COMMA(Arg2) WHEN(Arg2, a2)                                \
               COMMA(Arg3) WHEN(Arg3, a3)                                \
@@ -125,20 +135,29 @@ namespace object
     /* Python for these:
         max = 3
         for ret in ('true', 'false'):
-            for nargs in range(max + 1):
-                print "    PRIMITIVE(%s, %i" % (ret, nargs),
-                for i in range(max):
-                    print ", %s" % str(i < nargs).lower(),
-                print ");"
-     */
-    PRIMITIVE(true, 0 , false , false , false );
-    PRIMITIVE(true, 1 , true , false , false );
-    PRIMITIVE(true, 2 , true , true , false );
-    PRIMITIVE(true, 3 , true , true , true );
-    PRIMITIVE(false, 0 , false , false , false );
-    PRIMITIVE(false, 1 , true , false , false );
-    PRIMITIVE(false, 2 , true , true , false );
-    PRIMITIVE(false, 3 , true , true , true );
+            for run in ('true', 'false'):
+                for nargs in range(max + 1):
+                    print "    PRIMITIVE(%s, %i, %s" % (ret, nargs, run),
+                    for i in range(max):
+                        print ", %s" % str(i < nargs).lower(),
+                    print ");"
+    */
+    PRIMITIVE(true, 0, true , false , false , false );
+    PRIMITIVE(true, 1, true , true , false , false );
+    PRIMITIVE(true, 2, true , true , true , false );
+    PRIMITIVE(true, 3, true , true , true , true );
+    PRIMITIVE(true, 0, false , false , false , false );
+    PRIMITIVE(true, 1, false , true , false , false );
+    PRIMITIVE(true, 2, false , true , true , false );
+    PRIMITIVE(true, 3, false , true , true , true );
+    PRIMITIVE(false, 0, true , false , false , false );
+    PRIMITIVE(false, 1, true , true , false , false );
+    PRIMITIVE(false, 2, true , true , true , false );
+    PRIMITIVE(false, 3, true , true , true , true );
+    PRIMITIVE(false, 0, false , false , false , false );
+    PRIMITIVE(false, 1, false , true , false , false );
+    PRIMITIVE(false, 2, false , true , true , false );
+    PRIMITIVE(false, 3, false , true , true , true );
   }
 
   template <typename T>
