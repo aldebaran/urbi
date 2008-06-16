@@ -216,6 +216,9 @@ namespace object
     return res;
   }
 
+  template <typename T>
+  const std::string Atom<T>::type_name = "Atom";
+
   // Force instantiation
 #define INSTANTIATE(What, Name) template class Atom<What ## _traits>;
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(INSTANTIATE)

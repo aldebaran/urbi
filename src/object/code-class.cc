@@ -105,6 +105,12 @@ namespace object
     bind(SYMBOL(bodyString), &Code::body_string);
   }
 
+  std::string Code::type_name_get() const
+  {
+    return type_name;
+  }
+
   bool Code::code_added = CxxObject::add<Code>("Code");
+  const std::string Code::type_name = "Code";
 
 }; // namespace object

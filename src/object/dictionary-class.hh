@@ -29,6 +29,9 @@ namespace object
       rDictionary clear();
       rList keys();
 
+      static const std::string type_name;
+      virtual std::string type_name_get() const;
+
     private:
       value_type content_;
 

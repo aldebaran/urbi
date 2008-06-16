@@ -28,6 +28,8 @@ namespace object
       template<typename T>
       static bool add(const std::string& name);
 
+      virtual std::string type_name_get() const = 0;
+
       /// Functor to bind methods on the urbi side.
       /** An instance of this class is given to the static initialize
        *  method of the bound classes. It can then be used to bind

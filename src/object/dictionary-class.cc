@@ -59,6 +59,11 @@ namespace object
       true_class : false_class;
   }
 
+  std::string Dictionary::type_name_get() const
+  {
+    return type_name;
+  }
+
   void Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
   {
     bind(SYMBOL(set), &Dictionary::set);
@@ -69,4 +74,5 @@ namespace object
   }
 
   bool Dictionary::dictionary_added = CxxObject::add<Dictionary>("Dictionary");
+  const std::string Dictionary::type_name = "Dictionary";
 }

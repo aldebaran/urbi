@@ -80,6 +80,8 @@ namespace object
     /// For debugging.
     std::ostream& special_slots_dump(std::ostream& o, runner::Runner&) const;
 
+    static const std::string type_name;
+
   private:
     /// The value.
     value_type value_;

@@ -36,6 +36,9 @@ namespace object
       rString as_string();
       rString body_string();
 
+      static const std::string type_name;
+      virtual std::string type_name_get() const;
+
     private:
       /// Body of the function
       ast_type ast_;
