@@ -134,7 +134,7 @@ class Object.uvar
    */
   function loopCheck()
   {
-    if (looping == 0 && change.size && access.size)
+    if (!looping && change.size && access.size)
     {
       looping = 1 |
       loopTag: detach({loop { callNotify(access); sleep(getPeriod)}})
@@ -170,7 +170,9 @@ class Object.uvar
   };
   function callNotify(l)
   {
-    l.each(function (f) {f()})
+    for f in l {
+      f()
+    }
   };
   void
 };
