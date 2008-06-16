@@ -36,9 +36,8 @@ class Object.UObject
       interval = minimumInterval;
     if (!self.locateSlot("timerTask").sameAs(self))
       timerTask = [];
-    //the sleep is required
     var tag = new Tag;
-    tag: detach({sleep(100);loop{ func; sleep(interval)}});
+    tag: detach({loop{ func; sleep(interval)}}) |
     timerTask += [tag]
   };
   /// Call hub update function \b for hub \b hubname
@@ -53,7 +52,7 @@ class Object.UObject
     self.getSlot(slotName).stop;
     if (0 < interval)
       self.getSlot(slotName):
-        detach({sleep(100);loop{ func; sleep(interval)}});
+        detach({loop{ func; sleep(interval)}})
   };
 };
 
