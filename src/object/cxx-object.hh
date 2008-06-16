@@ -74,6 +74,11 @@ namespace object
       typedef std::vector<Initializer*> initializers_type;
       static initializers_type& initializers_get();
   };
+
+  /// Raise an exception if this is not of type \a T
+  template<typename T>
+  void type_check(rObject o, const std::string& fun);
+
 }
 
 # include <object/cxx-object.hxx>

@@ -99,6 +99,7 @@ namespace object
       )
 
 #define GET_ARG(N)                                                      \
+    type_check<A##N>(args[N], name.name_get());                         \
     libport::shared_ptr<A##N> a##N =  args[N].unsafe_cast<A##N>();      \
     assert(a##N);
 
@@ -113,10 +114,12 @@ namespace object
     {                                                                   \
         static rObject make(                                            \
           MET(method, Ret, Run, Arg1, Arg2, Arg3),                      \
+          const libport::Symbol& name,                                  \
           runner::Runner& WHEN(Run, r),                                 \
           objects_type args)                                            \
         {                                                               \
           assert(args.size() == ArgsC + 1);                             \
+          type_check<T>(args[0], name.name_get());                      \
           libport::shared_ptr<T> tgt = args[0].unsafe_cast<T>();        \
           assert(tgt);                                                  \
           WHEN(Arg1, GET_ARG(1))                                        \
@@ -174,9 +177,40 @@ namespace object
     // If make is unfound here, you passed an unsupported pointer type
     // to the binder.
     rObject p =
-      new Primitive(boost::bind(primitive<T, M>::make, method, _1, _2));
+      new Primitive(boost::bind(primitive<T, M>::make,
+                                method, name, _1, _2));
     tgt_->slot_set(name, p);
   }
+
+
+  template <typename T>
+  inline void
+  type_check(rObject o, const std::string& fun)
+  {
+    libport::shared_ptr<CxxObject> co = o.unsafe_cast<CxxObject>();
+     // FIXME: I can't fill all the source type for now since some old
+     // atoms don't define type_name for now
+    if (!co)
+      throw object::WrongArgumentType(T::type_name, "Object", fun);
+    else if (!o->is_a<T>())
+      throw object::WrongArgumentType(T::type_name, co->type_name_get(), fun);
+  }
+
+  template <>
+  inline void
+  type_check<Object>(rObject, const std::string&)
+  {}
+
+  template <>
+  inline void
+  type_check<List>(rObject, const std::string&)
+  {}
+
+  template <>
+  inline void
+  type_check<String>(rObject, const std::string&)
+  {}
+
 }
 
 #endif
