@@ -228,7 +228,6 @@ namespace object
       // void prints nothing in the toplevel
       void_class->slot_set(SYMBOL(asToplevelPrintable), new String(SYMBOL()));
       passert("void must be initialized after true", true_class);
-      std::cerr << true_class.get() << std::endl;
       void_class->slot_set(SYMBOL(isVoid), true_class);
       void_class->slot_set
         (SYMBOL(acceptVoid), new Primitive(void_class_acceptVoid));
