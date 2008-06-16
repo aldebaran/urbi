@@ -7,18 +7,37 @@
 
 namespace object
 {
+  /// Base class for Urbi bound C++ classes
   class CxxObject: public Object
   {
     public:
+
+      /// Build a CxxObject
       CxxObject();
+
+      /// Bind all registered objects
+      /** This function should be called once to bind C++ objects.
+       *  \param global Where to store the new classes.
+       */
       static void initialize(rObject global);
+
+      /// Register a C++ class to be bound on the urbi side.
+      /** \param T      The class to bind.
+       *  \param name   Name of the class on the Urbi side.
+       */
       template<typename T>
       static bool add(const std::string& name);
 
+      /// Functor to bind methods on the urbi side.
+      /** An instance of this class is given to the static initialize
+       *  method of the bound classes. It can then be used to bind
+       *  method and/or attributes on the Urbi side.
+       */
       template <typename T>
       class Binder
       {
         public:
+          /// Bind \a method with \a name
           template <typename M>
           void operator()(const libport::Symbol& name, M method);
 
@@ -29,6 +48,7 @@ namespace object
       };
 
     private:
+
       class Initializer
       {
         public:
@@ -46,6 +66,7 @@ namespace object
         private:
           libport::Symbol name_;
       };
+
       typedef std::vector<Initializer*> initializers_type;
       static initializers_type& initializers_get();
   };
