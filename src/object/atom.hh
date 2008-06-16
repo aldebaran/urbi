@@ -9,7 +9,6 @@
 # include <deque>
 
 # include <boost/any.hpp>
-# include <boost/tuple/tuple.hpp>
 # include <boost/type_traits/add_reference.hpp>
 
 # include <ast/code.hh>
@@ -92,10 +91,10 @@ namespace object
   `--------*/
 
   // Aliens allow to store any kind of value.  For debugging purpose,
-  // we also store its C++ type, hence the tuple.
+  // we also store its C++ type, hence the pair.
   struct alien_traits
   {
-    typedef boost::tuple<boost::any, std::string> type;
+    typedef std::pair<boost::any, std::string> type;
     enum { kind = object_kind_alien };
   };
 

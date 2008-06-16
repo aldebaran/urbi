@@ -23,7 +23,7 @@ namespace object
   inline rObject
   box_with_type(const T& v, const std::string& type)
   {
-    return new Alien(boost::make_tuple(v, type));
+    return new Alien(std::make_pair(v, type));
   }
 
   template<typename T>
@@ -32,9 +32,7 @@ namespace object
   {
     TYPE_CHECK(o, Alien);
     rAlien a = o.unsafe_cast<Alien>();
-    // GCC 4.0.1 on OSX cannot grok the following version:
-    //    a->value_get().get<0>();
-    return boost::any_cast<T>(boost::get<0>(a->value_get()));
+    return boost::any_cast<T>(a->value_get().first);
   }
 
 } // namespace object

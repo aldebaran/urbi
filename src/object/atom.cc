@@ -179,7 +179,7 @@ namespace object
   Atom<alien_traits>::special_slots_dump (std::ostream& o,
 					  runner::Runner&) const
   {
-    return o << "type = " << value_.get<1>() << libport::iendl;
+    return o << "type = " << value_.second << libport::iendl;
   }
 
   template <>
