@@ -24,7 +24,7 @@ namespace object
       value_type& value_get();
 
       /// Urbi methods
-      rString operator+(rString rhs);
+      rString plus(runner::Runner& r, rObject rhs);
       rObject lt(rString rhs);
       rString fresh ();
       rString set(rString rhs);

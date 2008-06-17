@@ -53,10 +53,13 @@ namespace object
     return content_;
   }
 
-  rString String::operator+ (rString rhs)
+  rString String::plus (runner::Runner& r, rObject rhs)
   {
-    return new String(libport::Symbol(content_.name_get()
-                                      + rhs->value_get().name_get()));
+    rObject str = urbi_call(r, rhs, SYMBOL(asString));
+    type_check<String>(str, SYMBOL(PLUS));
+    return new String(libport::Symbol(
+                        content_.name_get()
+                        + str->as<String>()->value_get().name_get()));
   }
 
   rFloat String::size ()
@@ -129,7 +132,7 @@ namespace object
     bind(SYMBOL(asString), &as_string);
     bind(SYMBOL(fresh), &String::fresh);
     bind(SYMBOL(LT), &String::lt);
-    bind(SYMBOL(PLUS), &String::operator+);
+    bind(SYMBOL(PLUS), &String::plus);
     bind(SYMBOL(set), &String::set);
     bind(SYMBOL(size), &String::size);
     bind(SYMBOL(split), &String::split);
