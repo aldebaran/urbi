@@ -27,7 +27,7 @@ namespace object
   namespace
   {
     template <typename T>
-    rObject cxx_object_clone(rObject parent, runner::Runner&, objects_type args)
+    rObject cxx_object_clone(runner::Runner&, objects_type args)
     {
       CHECK_ARG_COUNT(1);
       rObject tgt = args[0];
@@ -36,7 +36,6 @@ namespace object
         res = new T(tgt->as<T>());
       else
         res = new T();
-      res->proto_add(parent);
       return res;
     }
   }
@@ -56,7 +55,7 @@ namespace object
     res_->slot_set(SYMBOL(protoName), new String(name_));
     res_->slot_set(SYMBOL(clone),
                    rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>,
-                                                        res_, _1, _2))));
+                                                        _1, _2))));
     Binder<T> b(res_);
     T::initialize(b);
     return res_;

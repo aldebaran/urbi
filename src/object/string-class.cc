@@ -26,11 +26,15 @@ namespace object
 
   String::String()
     : content_()
-  {}
+  {
+    proto_add(string_class);
+  }
 
   String::String(rString model)
     : content_(model->content_)
-  {}
+  {
+    proto_add(string_class);
+  }
 
   String::String(const value_type& v)
     : content_(v)

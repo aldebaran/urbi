@@ -37,7 +37,8 @@ namespace object
   Float::Float(rFloat model)
     : value_(model->value_get())
   {
-    proto_add(float_class);
+    proto_add(model);
+    proto_remove(float_class);
   }
 
   Float::value_type Float::value_get() const

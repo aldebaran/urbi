@@ -13,15 +13,21 @@ namespace object
   rObject dictionary_class;
 
   Dictionary::Dictionary()
-  {}
+  {
+    proto_add(dictionary_class);
+  }
 
   Dictionary::Dictionary(const value_type& value)
     : content_(value)
-  {}
+  {
+    proto_add(dictionary_class);
+  }
 
   Dictionary::Dictionary(rDictionary model)
     : content_(model->content_)
-  {}
+  {
+    proto_add(dictionary_class);
+  }
 
   const Dictionary::value_type& Dictionary::value_get() const
   {
