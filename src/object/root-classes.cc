@@ -92,13 +92,11 @@ namespace object
   compare(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    // FIXME: Some type checking was commented here
-    // TYPE_CHECK(args[0], T);
+    type_check<T>(args[0], SYMBOL(compare));
     libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
     try
     {
-      // FIXME: Some type checking was commented here
-      // TYPE_CHECK(args[1], T);
+      type_check<T>(args[1], SYMBOL(compare));
     }
     catch (WrongArgumentType&)
     {
@@ -106,7 +104,7 @@ namespace object
       // just return false
       return to_boolean(false);
     }
-    libport::shared_ptr<T> arg1 = args[1].unsafe_cast<T>();
+    libport::shared_ptr<T> arg1 = args[1]->as<T>();
     return to_boolean(arg0->value_get() == arg1->value_get());
   }
 
