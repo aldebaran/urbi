@@ -110,12 +110,14 @@ my_sleep 2
 valgrind=$(instrument "remote.val")
 cmd="$valgrind ../../tests localhost $(cat server.port) $meraw"
 echo "$cmd" >remote.cmd
-$cmd >remote.out.eff 2>remote.err &
+$cmd >remote.out.raw 2>remote.err &
 children_register remote
 
-
+# Let some time to run the tests.
 children_wait 10
 
+# Ignore the "client errors".
+sed -e '/^E client error/d' remote.out.raw >remote.out.eff
 # Compare expected output with actual output.
 rst_expect output remote.out
 rst_pre "Error output" remote.err

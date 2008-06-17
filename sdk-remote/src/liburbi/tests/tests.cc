@@ -7,6 +7,7 @@
 
 #include <tests.hh>
 
+// Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
 
 urbi::UCallbackAction
