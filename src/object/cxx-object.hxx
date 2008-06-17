@@ -114,8 +114,7 @@ namespace object
 
 #define FETCH_TGT()                                                     \
     type_check<T>(args[0], name.name_get());                            \
-    libport::shared_ptr<T> tgt = args[0].unsafe_cast<T>();              \
-    assert(tgt);                                                        \
+    libport::shared_ptr<T> tgt = args[0].unsafe_cast<T>();
 
 #define PRIMITIVE(Met, Ret, ArgsC, Run, Arg1, Arg2, Arg3)               \
     template <typename T                                                \
@@ -149,10 +148,53 @@ namespace object
         }                                                               \
       }
 
+#define LIST_MET(Name, Met, Ret, Run)                                  \
+    IF(Ret, R, void)                                                   \
+    (WHEN(Met, T::)*Name)(WHEN(Run, runner::Runner&) COMMA(Run)        \
+                          objects_type)                                \
+
+#define LIST_PRIMITIVE(Met, Ret, Run)                                   \
+    template <typename T                                                \
+              COMMA(Ret) WHEN(Ret, typename R)                          \
+      >                                                                 \
+    struct primitive<T, LIST_MET(, Met, Ret, Run)>                      \
+    {                                                                   \
+        static rObject make(                                            \
+          LIST_MET(method, Met, Ret, Run),                              \
+          const libport::Symbol& name,                                  \
+          runner::Runner& WHEN(Run, r),                                 \
+          objects_type args)                                            \
+        {                                                               \
+          WHEN(Met, FETCH_TGT());                                       \
+          WHEN(Met, args.pop_front());                                  \
+          WHEN(Ret, return)                                             \
+            (WHEN(Met, tgt.get()->*)method)(                            \
+              WHEN(Run, r) COMMA(Run)                                   \
+              args                                                      \
+              );                                                        \
+          return void_class;                                            \
+        }                                                               \
+      }
+
     template <typename T, typename M>
     struct primitive
     {
     };
+
+    /* Python for these:
+for met in ('true', 'false'):
+    for ret in ('true', 'false'):
+        for run in ('true', 'false'):
+            print "    LIST_PRIMITIVE(%s, %s, %s);" % (met, ret, run)
+     */
+    LIST_PRIMITIVE(true, true, true);
+    LIST_PRIMITIVE(true, true, false);
+    LIST_PRIMITIVE(true, false, true);
+    LIST_PRIMITIVE(true, false, false);
+    LIST_PRIMITIVE(false, true, true);
+    LIST_PRIMITIVE(false, true, false);
+    LIST_PRIMITIVE(false, false, true);
+    LIST_PRIMITIVE(false, false, false);
 
     /* Python for these:
 max = 3
