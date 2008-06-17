@@ -57,6 +57,7 @@ namespace object
       {
         public:
           Initializer(rObject& tgt);
+          virtual ~Initializer();
           virtual rObject make_class() = 0;
           virtual void create() = 0;
           virtual libport::Symbol name() = 0;
