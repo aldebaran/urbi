@@ -37,7 +37,7 @@ using libport::Symbol;
 
 static inline runner::Runner& getCurrentRunner()
 {
-  return  ::urbiserver->getCurrentRunner();
+  return ::urbiserver->getCurrentRunner();
 }
 
 /// UObject read to an urbi variable.
@@ -74,7 +74,7 @@ static rObject uvar_uowned_set(const std::string& name, rObject val);
 typedef std::pair<std::string, std::string> StringPair;
 
 /// Split a string of the form "a.b" in two
-static  StringPair split_name(const std::string& name)
+static StringPair split_name(const std::string& name)
 {
   int p = name.find_last_of(".");
   std::string oname = name.substr(0, p);
@@ -105,22 +105,22 @@ static libport::hash_map<std::string, rObject> uobject_map;
 
 class UWrapCallback: public object::IDelegate
 {
-  public:
+public:
   UWrapCallback(urbi::UGenericCallback* ugc)
-  :ugc_(ugc)
+    :ugc_(ugc)
   {}
   virtual ~UWrapCallback() {}
   virtual rObject operator() (runner::Runner&, object::objects_type);
-  private:
-  urbi::UGenericCallback * ugc_;
+private:
+  urbi::UGenericCallback* ugc_;
 };
 
 template<typename F>
 class UWrapFunction: public object::IDelegate
 {
-  public:
+public:
   UWrapFunction(const F& f)
-  :f_(f)
+    :f_(f)
   {}
   virtual ~UWrapFunction() {}
   virtual rObject operator() (runner::Runner&, object::objects_type)
@@ -128,8 +128,8 @@ class UWrapFunction: public object::IDelegate
     f_();
     return object::void_class;
   }
-  private:
-    F f_;
+private:
+  F f_;
 };
 
 template<typename F>
@@ -141,28 +141,30 @@ UWrapFunction<F>* uwrapfunction(const F& f)
 
 class UWrapNotify: public object::IDelegate
 {
-  public:
-    UWrapNotify(urbi::UGenericCallback* ugc, const std::string& obj,
-      const std::string& slot, bool owned, bool setter)
-  :ugc_(ugc),
-  obj(obj),
-  slot(slot),
-  owned_(owned),
-  setter_(setter)
+public:
+  UWrapNotify(urbi::UGenericCallback* ugc, const std::string& obj,
+              const std::string& slot, bool owned, bool setter)
+    : ugc_(ugc),
+      obj(obj),
+      slot(slot),
+      owned_(owned),
+      setter_(setter)
   {}
   virtual ~UWrapNotify() {}
   virtual rObject operator() (runner::Runner&, object::objects_type);
-  private:
+private:
   urbi::UGenericCallback * ugc_;
   std::string obj, slot;
   bool owned_;
   bool setter_;
 };
+
+
 rObject
 UWrapNotify::operator() (runner::Runner&, object::objects_type)
 {
   ECHO("uvwrapnotify "<<obj<<" "<<slot<<" o="<<owned_
-    << "  s="<<setter_);
+       << "  s="<<setter_);
   urbi::UVar v(obj, slot);
   if (owned_)
     v.setOwned();
@@ -177,14 +179,11 @@ rObject
 UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
 {
   urbi::UList l;
-  bool first = true;
+  bool tail = false;
   foreach (const rObject& co, ol)
   {
-    if (first)
-    {
-      first = false;
+    if (!tail++)
       continue;
-    }
     urbi::UValue v = uvalue_cast(co);
     l.array.push_back(new urbi::UValue(v));
   }
@@ -281,8 +280,6 @@ get_base(const std::string& objname)
   return res;
 }
 
-
-
 /// Get an rObject from its uvar name
 static rObject
 uvar_get(const std::string& name)
@@ -333,10 +330,10 @@ namespace urbi
     bool owned;
   };
   /* We cannot make any call that might trigger the callback, as this is
-  * the base class constructor.
-  * So just store the constructor arguments, and perform the real work in
-  * registerCallback()
-  */
+   * the base class constructor.
+   * So just store the constructor arguments, and perform the real work in
+   * registerCallback()
+   */
   UGenericCallback::UGenericCallback(const std::string&,
 				     const std::string& type,
 				     const std::string& name,
@@ -350,17 +347,17 @@ namespace urbi
   }
 
   /** Called by UNotifyChange, UNotifyAcces and UBindFunction calls.
-  */
+   */
   void UGenericCallback::registerCallback(UTable& )
   {
-    // Cheock if we handle this callback type.
+    // Check if we handle this callback type.
     if (!storage)
       return;
     CallbackStorage& s = *reinterpret_cast<CallbackStorage*>(storage);
     StringPair p = split_name(s.name);
     std::string method = p.second;
     ECHO("ugenericcallback " << s.type << " " << p.first << " "
-      << method << "  " << s.owned);
+         << method << "  " << s.owned);
     rObject me = get_base(p.first); //objname?
     assertion(me);
     if (s.type == "function")
@@ -395,7 +392,7 @@ namespace urbi
   UGenericCallback::UGenericCallback(const std::string&,
 				     const std::string&,
 				     const std::string&, urbi::UTable&)
-  :storage(0)
+    : storage(0)
   {
   }
 
@@ -413,9 +410,11 @@ namespace urbi
 	uwrapfunction(boost::bind(&urbi::UTimerCallback::call,this))));
     getCurrentRunner().apply(f, SYMBOL(setTimer), args);
   }
+
   UTimerCallback::~UTimerCallback()
   {
   }
+
   void UObject::USetUpdate(ufloat t)
   {
     rObject me = get_base(__name);
@@ -426,17 +425,19 @@ namespace urbi
     object::objects_type args = list_of (me) (new object::Float(t));
     getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
   }
+
   UObject::~UObject()
   {
   }
 
   UObject::UObject(const std::string& name)
-    :__name(name),
-    load(name, "load")
+    : __name(name),
+      load(name, "load")
   {
     ECHO( "Uobject ctor for " << __name );
     load = 1;
   }
+
   void
   UObject::UJoinGroup(const std::string&)
   {
@@ -454,22 +455,22 @@ namespace urbi
     return StringPair(oname, slot);
   }
 
-#define UVAR_OPERATORS(T, DT)				\
-  void UVar::operator = (DT t)				\
-  {							\
-  ECHO("uvar = operator for "<<name);  \
-  if (owned)                                            \
-    uvar_uowned_set(name, ::object_cast(urbi::UValue(t))); \
-  else                                                  \
-    uvar_set(name, ::object_cast(urbi::UValue(t)));	\
-  }							\
-  UVar::operator T()					\
-  {							\
-  ECHO("uvar cast operator for "<<name); \
-  if (owned)                                            \
-    return ::uvalue_cast(uvar_uowned_get(name));        \
-  else                                                  \
-    return ::uvalue_cast(uvar_get(name));		\
+#define UVAR_OPERATORS(T, DT)                                   \
+  void UVar::operator = (DT t)                                  \
+  {                                                             \
+    ECHO("uvar = operator for "<<name);                         \
+    if (owned)                                                  \
+      uvar_uowned_set(name, ::object_cast(urbi::UValue(t)));    \
+    else                                                        \
+      uvar_set(name, ::object_cast(urbi::UValue(t)));           \
+  }                                                             \
+  UVar::operator T()                                            \
+  {                                                             \
+    ECHO("uvar cast operator for "<<name);                      \
+    if (owned)                                                  \
+      return ::uvalue_cast(uvar_uowned_get(name));              \
+    else                                                        \
+      return ::uvalue_cast(uvar_get(name));                     \
   }
 
   UVAR_OPERATORS(ufloat, ufloat);
@@ -478,19 +479,20 @@ namespace urbi
   UVAR_OPERATORS(UList, const UList&);
   UVAR_OPERATORS(USound, const USound&);
   UVAR_OPERATORS(UImage, const UImage&);
+
   //no corresponding operator= for this one...
   UVar::operator int()
   {
-  if (owned)
-    return ::uvalue_cast(uvar_uowned_get(name));
-  else
-    return ::uvalue_cast(uvar_get(name));
+    if (owned)
+      return ::uvalue_cast(uvar_uowned_get(name));
+    else
+      return ::uvalue_cast(uvar_get(name));
   }
 
   void
   UVar::__init()
   {
-    ECHO("__init "<< name );
+    ECHO("__init " << name);
     owned = false;
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
@@ -564,6 +566,7 @@ namespace urbi
     vfprintf(stderr, format, arg);
     va_end(arg);
   }
+
   UObjectHub::~UObjectHub()
   {
   }
