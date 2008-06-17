@@ -5,11 +5,11 @@
 
 #include <algorithm>
 
-#include <boost/assign/std/deque.hpp> // for 'operator+=()'
+#include <boost/assign.hpp> // for 'list_of'
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
-using namespace boost::assign; // bring 'operator+=()' into scope
+using namespace boost::assign; // bring 'list_of' into scope
 
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
@@ -252,8 +252,7 @@ namespace object
     if (hook && owner == this)
       if (rObject hook = property_get(k, SYMBOL(updateHook)))
       {
-        objects_type args;
-        args += this, new String(k), o;
+        objects_type args = list_of (rObject(this)) (new String(k)) (o);
         rObject ret = r.apply(hook, SYMBOL(updateHook), args);
         // If the updateHook returned void, do nothing. Otherwise let
         // the slot be overwritten.
