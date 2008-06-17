@@ -52,10 +52,14 @@ namespace parser
   }
 
   parse_result_type
-  ParserImpl::parse (const std::string& command)
+  ParserImpl::parse(const std::string& s)
   {
-    std::istringstream is(command);
+    if (getenv("PARSE"))
+      LIBPORT_ECHO("Parsing: " << s);
+    std::istringstream is(s);
     parse_(is);
+    if (getenv("PARSE"))
+      LIBPORT_ECHO("Result: " << *result_);
     return result_;
   }
 
