@@ -9,7 +9,15 @@ namespace object
 
   }
 
-  // Initialization
+  CxxObject::Initializer::Initializer(rObject& tgt)
+    : res_(tgt)
+  {}
+
+  void CxxObject::create()
+  {
+    foreach (Initializer* init, initializers_get())
+      init->create();
+  }
 
   void CxxObject::initialize(rObject global)
   {

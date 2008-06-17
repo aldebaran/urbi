@@ -169,9 +169,11 @@ namespace object
     CLASS_INIT(What, Name)                                      \
     CLASS_REGISTER(What, Name)
 
-
     // Object is a special case: it is not built as a clone of itself.
     object_class = new Object();
+
+    CxxObject::create();
+
     // The other primitives.  Because primitive initialization depend
     // a lot on one another (e.g., String is used everywhere for slot
     // names, and Primitive is used for... all the primitive methods
@@ -180,6 +182,8 @@ namespace object
     // Setup boolean entities.
     APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(CLASS_CREATE);
     APPLY_ON_ALL_ROOT_CLASSES(EXISTING_CLASS_SETUP);
+
+    CxxObject::initialize(global_class);
 
     true_class = new Float(1.0);
     false_class = new Float(0.0);
@@ -205,7 +209,6 @@ namespace object
 
     // Object.addProto(Global)
     object_class->proto_add(global_class);
-    CxxObject::initialize(global_class);
   }
 
 

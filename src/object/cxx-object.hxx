@@ -10,15 +10,16 @@
 namespace object
 {
   template <typename T>
-  bool CxxObject::add(const std::string& name)
+  bool CxxObject::add(const std::string& name, rObject& tgt)
   {
-    initializers_get().push_back(new TypeInitializer<T>(name));
+    initializers_get().push_back(new TypeInitializer<T>(name, tgt));
     return true;
   }
 
   template <typename T>
-  CxxObject::TypeInitializer<T>::TypeInitializer(const std::string& name)
-    : name_(name)
+  CxxObject::TypeInitializer<T>::TypeInitializer(const std::string& name,
+                                                 rObject& tgt)
+    : Initializer(tgt), name_(name)
   {}
 
   namespace
@@ -27,24 +28,36 @@ namespace object
     rObject cxx_object_clone(rObject parent, runner::Runner&, objects_type args)
     {
       CHECK_ARG_COUNT(1);
-      rObject res = new T;
+      rObject tgt = args[0];
+      rObject res;
+      if (tgt->is_a<T>())
+        res = new T(tgt->as<T>());
+      else
+        res = new T();
       res->proto_add(parent);
       return res;
     }
   }
 
   template <typename T>
+  void
+  CxxObject::TypeInitializer<T>::create()
+  {
+    res_ = new Object();
+  }
+
+  template <typename T>
   rObject
   CxxObject::TypeInitializer<T>::make_class()
   {
-    rObject res = new Object();
-    res->proto_add(object_class);
-    res->slot_set(SYMBOL(protoName), new String(name_));
-    res->slot_set(SYMBOL(clone),
-                  new Primitive(boost::bind(cxx_object_clone<T>, res, _1, _2)));
-    Binder<T> b(res);
+    res_->proto_add(object_class);
+    res_->slot_set(SYMBOL(protoName), new String(name_));
+    res_->slot_set(SYMBOL(clone),
+                   new Primitive(boost::bind(cxx_object_clone<T>,
+                                             res_, _1, _2)));
+    Binder<T> b(res_);
     T::initialize(b);
-    return res;
+    return res_;
   }
 
   template <typename T>
@@ -60,12 +73,6 @@ namespace object
   CxxObject::Binder<T>::Binder(rObject tgt)
     : tgt_(tgt)
   {}
-
-  template <typename T>
-  void CxxObject::Binder<T>::store_class(rObject& tgt)
-  {
-    tgt = tgt_;
-  }
 
   namespace
   {

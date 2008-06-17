@@ -20,13 +20,15 @@ namespace object
        *  \param global Where to store the new classes.
        */
       static void initialize(rObject global);
+      static void create();
 
       /// Register a C++ class to be bound on the urbi side.
       /** \param T      The class to bind.
        *  \param name   Name of the class on the Urbi side.
+       *  \param tgt    Where to store the result.
        */
       template<typename T>
-      static bool add(const std::string& name);
+      static bool add(const std::string& name, rObject& tgt);
 
       virtual std::string type_name_get() const = 0;
 
@@ -42,8 +44,6 @@ namespace object
           /// Bind \a method with \a name
           template <typename M>
           void operator()(const libport::Symbol& name, M method);
-          /// Store the freshly created class in \a tgt
-          void store_class(rObject& tgt);
 
         private:
           friend class CxxObject;
@@ -56,16 +56,21 @@ namespace object
       class Initializer
       {
         public:
+          Initializer(rObject& tgt);
           virtual rObject make_class() = 0;
+          virtual void create() = 0;
           virtual libport::Symbol name() = 0;
+        protected:
+          rObject& res_;
       };
 
       template <typename T>
       class TypeInitializer: public Initializer
       {
         public:
-          TypeInitializer(const std::string& name);
+          TypeInitializer(const std::string& name, rObject& tgt);
           virtual rObject make_class();
+          virtual void create();
           virtual libport::Symbol name();
         private:
           libport::Symbol name_;

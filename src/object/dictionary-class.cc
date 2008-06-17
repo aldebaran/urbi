@@ -9,11 +9,17 @@
 
 namespace object
 {
+  rObject dictionary_class;
+
   Dictionary::Dictionary()
   {}
 
   Dictionary::Dictionary(const value_type& value)
     : content_(value)
+  {}
+
+  Dictionary::Dictionary(rDictionary model)
+    : content_(model->content_)
   {}
 
   const Dictionary::value_type& Dictionary::value_get() const
@@ -73,6 +79,7 @@ namespace object
     bind(SYMBOL(keys), &Dictionary::keys);
   }
 
-  bool Dictionary::dictionary_added = CxxObject::add<Dictionary>("Dictionary");
+  bool Dictionary::dictionary_added =
+    CxxObject::add<Dictionary>("Dictionary", dictionary_class);
   const std::string Dictionary::type_name = "Dictionary";
 }

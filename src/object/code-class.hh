@@ -21,6 +21,7 @@ namespace object
 
       Code();
       Code(ast_type a);
+      Code(rCode model);
       ast_type ast_get() const;
       rObject call_get() const;
       const captures_type& captures_get() const;

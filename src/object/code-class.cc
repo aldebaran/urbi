@@ -29,6 +29,17 @@ namespace object
     , self_()
     , call_()
   {
+    assert(code_class);
+    proto_add(code_class);
+  }
+
+  Code::Code(rCode model)
+    : ast_(model->ast_)
+    , captures_(model->captures_)
+    , self_(model->self_)
+    , call_(model->call_)
+  {
+    assert(code_class);
     proto_add(code_class);
   }
 
@@ -99,7 +110,6 @@ namespace object
 
   void Code::initialize(CxxObject::Binder<Code>& bind)
   {
-    bind.store_class(code_class);
     bind(SYMBOL(apply), &Code::apply);
     bind(SYMBOL(asString), &Code::as_string);
     bind(SYMBOL(bodyString), &Code::body_string);
@@ -110,7 +120,7 @@ namespace object
     return type_name;
   }
 
-  bool Code::code_added = CxxObject::add<Code>("Code");
+  bool Code::code_added = CxxObject::add<Code>("Code", code_class);
   const std::string Code::type_name = "Code";
 
 }; // namespace object

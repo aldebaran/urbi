@@ -18,6 +18,7 @@ namespace object
       typedef libport::hash_map<libport::Symbol, rObject> value_type;
 
       Dictionary();
+      Dictionary(rDictionary model);
       Dictionary(const value_type& value);
       const value_type& value_get() const;
       value_type& value_get();
