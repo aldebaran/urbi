@@ -15,6 +15,7 @@
 #ifndef URBI_UBINARY_HH
 # define URBI_UBINARY_HH
 
+# include <cstring>
 # include <list>
 # include <string>
 
