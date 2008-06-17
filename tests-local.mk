@@ -69,4 +69,4 @@ XFAIL_TESTS +=					\
 XFAIL_TESTS +=                                  \
 uob/group.chk                                   \
 uob/all-write-plug-prop.chk                     \
-  uob/all-write-remote-prop.chk
+uob/remote/all-write-prop.chk
