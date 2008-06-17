@@ -4,6 +4,7 @@
 # include <boost/bind.hpp>
 
 # include <object/atom.hh>
+# include <object/primitive-class.hh>
 # include <object/string-class.hh>
 # include <object/object-class.hh>
 # include <object/primitives.hh>

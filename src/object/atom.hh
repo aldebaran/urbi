@@ -138,18 +138,6 @@ namespace object
   };
 
 
- /*------------.
- | Primitive.  |
- `------------*/
-
-  // Code written in C++.
-  struct primitive_traits
-  {
-    // The type of the primitives.
-    typedef boost::function2<rObject, runner::Runner&, objects_type> type;
-    enum { kind = object_kind_primitive };
-  };
-
   /*------------.
   | Semaphore.  |
   `------------*/

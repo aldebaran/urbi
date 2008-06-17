@@ -18,7 +18,6 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::object_kind_alien:
   case object::object_kind_delegate:
   case object::object_kind_lobby:
-  case object::object_kind_primitive:
   case object::object_kind_semaphore:
     throw object::WrongArgumentType
       ("Float",

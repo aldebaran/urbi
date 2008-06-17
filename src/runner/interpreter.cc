@@ -30,6 +30,7 @@
 #include <object/idelegate.hh>
 #include <object/list-class.hh>
 #include <object/object.hh>
+#include <object/primitive-class.hh>
 #include <object/symbols.hh>
 #include <object/tag-class.hh>
 #include <object/urbi-exception.hh>
@@ -466,16 +467,12 @@ namespace runner
       throw object::WrongArgumentType (msg);
 
     if (rCode c = func->as<object::Code>())
-    {
       current_ = apply_urbi (c, msg, args, call_message);
-    }
+    else if (object::rPrimitive p = func->as<object::Primitive>())
+      current_ = p->value_get()(*this, args);
     else
       switch (func->kind_get ())
       {
-        case object::object_kind_primitive:
-          current_ =
-            func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
-          break;
         case object::object_kind_delegate:
           current_ =
             func.unsafe_cast<object::Delegate>()
