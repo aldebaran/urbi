@@ -54,8 +54,8 @@ namespace object
     res_->proto_add(object_class);
     res_->slot_set(SYMBOL(protoName), new String(name_));
     res_->slot_set(SYMBOL(clone),
-                   new Primitive(boost::bind(cxx_object_clone<T>,
-                                             res_, _1, _2)));
+                   rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>,
+                                                        res_, _1, _2))));
     Binder<T> b(res_);
     T::initialize(b);
     return res_;

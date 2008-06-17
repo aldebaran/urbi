@@ -126,18 +126,6 @@ namespace object
 
 
   /*-------.
-  | List.  |
-  `-------*/
-
-  // Lists, not arrays.
-  struct list_traits
-  {
-    typedef objects_type type;
-    enum { kind = object_kind_list };
-  };
-
-
-  /*-------.
   | Lobby.  |
   `-------*/
 

@@ -38,7 +38,6 @@ namespace object
   Macro(alien,      Alien)				\
   Macro(delegate,   Delegate)				\
   Macro(integer,    Integer)				\
-  Macro(list,       List)				\
   Macro(lobby,      Lobby)				\
   Macro(primitive,  Primitive)				\
   Macro(semaphore,  Semaphore)
@@ -103,6 +102,8 @@ namespace object
   typedef libport::shared_ptr<Dictionary> rDictionary;
   class Float;
   typedef libport::shared_ptr<Float> rFloat;
+  class List;
+  typedef libport::shared_ptr<List> rList;
   class String;
   typedef libport::shared_ptr<String> rString;
 

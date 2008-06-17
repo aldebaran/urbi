@@ -178,16 +178,6 @@ namespace object
 
   template <>
   std::ostream&
-  Atom<list_traits>::special_slots_dump (std::ostream& o,
-					 runner::Runner& runner) const
-  {
-    o << "value" << " = " << libport::deref;
-    print(o, runner);
-    return o << libport::iendl;
-  }
-
-  template <>
-  std::ostream&
   Atom<primitive_traits>::special_slots_dump (std::ostream& o,
 					  runner::Runner&) const
   {

@@ -10,6 +10,7 @@
 
 #include <object/atom.hh>
 #include <object/code-class.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 
 #include <runner/runner.hh>

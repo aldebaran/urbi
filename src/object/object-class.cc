@@ -16,6 +16,7 @@
 #include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
+#include <object/list-class.hh>
 #include <object/object-class.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
@@ -171,7 +172,8 @@ namespace object
   object_class_apply (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, List);
+    type_check<List>(args[1], SYMBOL(apply));
+    rList arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
       throw PrimitiveError ("apply", "first argument must be [self]");
     return arg1->value_get ().front ();
@@ -232,7 +234,7 @@ namespace object
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
 
-    list_traits::type l;
+    List::value_type l;
     foreach (const Slots::slot_type& p, obj->slots_get())
       l.push_back (new String(p.first));
 

@@ -19,6 +19,7 @@
 #include <object/code-class.hh>
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
+#include <object/list-class.hh>
 #include <object/system-class.hh>
 #include <object/tag-class.hh>
 #include <object/task-class.hh>

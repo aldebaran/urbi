@@ -10,6 +10,7 @@
 
 #include <object/atom.hh>
 #include <object/float-class.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <runner/runner.hh>
@@ -112,7 +113,7 @@ namespace object
     boost::tokenizer< boost::char_separator<char> > tok =
       libport::make_tokenizer(value_get().name_get(),
                               sep->value_get().name_get().c_str());
-    list_traits::type ret;
+  List::value_type ret;
     foreach(const std::string& i, tok)
       ret.push_back(new String(libport::Symbol(i)));
     return new List(ret);

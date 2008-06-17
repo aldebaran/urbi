@@ -6,6 +6,7 @@
 #include <libport/containers.hh>
 
 #include <object/dictionary-class.hh>
+#include <object/list-class.hh>
 
 namespace object
 {

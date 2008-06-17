@@ -57,15 +57,6 @@ urbi::UValue uvalue_cast(object::rObject o)
     break;
   HANDLE_TYPE(integer, Integer);
 #undef HANDLE_TYPE
-  case object::object_kind_list:
-    {
-      res.type = urbi::DATA_LIST;
-      res.list = new urbi::UList;
-      object::List::value_type& t = o.cast<object::List>()->value_get();
-      foreach (const object::rObject& co, t)
-	res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
-    }
-    break;
   }
   return res;
 }
@@ -82,12 +73,6 @@ object_cast(const urbi::UValue& v)
 
     case urbi::DATA_STRING:
       return new object::String(libport::Symbol(*v.stringValue));
-      break;
-
-    case urbi::DATA_LIST:
-      res = new object::List(object::list_traits::type());
-      foreach (urbi::UValue *cv, v.list->array)
-	res.cast<object::List>()->value_get().push_back(object_cast(*cv));
       break;
 
     case urbi::DATA_BINARY:

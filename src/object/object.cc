@@ -19,6 +19,7 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 #include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/hash-slots.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/object-class.hh>
 #include <object/urbi-exception.hh>

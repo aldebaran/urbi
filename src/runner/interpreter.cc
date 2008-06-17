@@ -28,6 +28,7 @@
 #include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/idelegate.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/symbols.hh>
 #include <object/tag-class.hh>
@@ -449,7 +450,7 @@ namespace runner
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
-	       urbi_args->value<object::List>())
+	       urbi_args->as<object::List>()->value_get())
 	args.push_back(arg);
       call_message = 0;
     }
@@ -661,12 +662,13 @@ namespace runner
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
     operator() (e->list_get());
-    TYPE_CHECK(current_, object::List);
+    object::type_check<object::List>(current_, SYMBOL(foreach));
     JAECHO("foreach body", e.body_get());
 
     // We need to copy the pointer on the list, otherwise the list will be
     // destroyed when children are visited and current_ is modified.
-    object::List::value_type content = current_->value<object::List>();
+    object::List::value_type content =
+      current_->as<object::List>()->value_get();
 
     // The list of runners launched for each value in the list if the flavor
     // is "&".
