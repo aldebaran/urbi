@@ -3,6 +3,12 @@
 # in which the function will be evaluated.
 var Code.context = nil;
 
+## -------------- ##
+## System version ##
+## -------------- ##
+
+var System.version="2.0";
+
 ## --------- ##
 ## Constants ##
 ## --------- ##
@@ -13,7 +19,6 @@ class Global.Constants
   var inf    = Float.inf;
   var nan    = Float.nan;
 };
-
 
 Global.addProto (Global.Constants);
 
