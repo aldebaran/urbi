@@ -1,8 +1,3 @@
-# This has to be present before the first function call, otherwise
-# we will have a fatal error when trying to determine the context
-# in which the function will be evaluated.
-var Code.context = nil;
-
 ## -------------- ##
 ## System version ##
 ## -------------- ##
