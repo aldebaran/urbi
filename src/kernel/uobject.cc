@@ -15,6 +15,7 @@
 #include <kernel/uobject.hh>
 
 #include <object/atom.hh>
+#include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/idelegate.hh>
 #include <object/object.hh>

@@ -22,286 +22,212 @@ namespace object
 {
   rObject float_class;
 
-  /*-----------------------------------------.
-  | Routines to implement float primitives.  |
-  `-----------------------------------------*/
-
-  // This macro is used to generate modulo
-  // and division functions.
-#define FCT_OP_PROTECTED(Name, Operator, ErrorMessage)                  \
-  static                                                                \
-  libport::ufloat                                                       \
-  Name (libport::ufloat l, libport::ufloat r)                           \
-  {                                                                     \
-    if (!r)								\
-      throw PrimitiveError("Operator " #Operator, ErrorMessage);	\
-    return l Operator r;                                                \
-  }
-
-#define FCT_M_PROTECTED(Name, Method, ErrorMessage)                     \
-  static                                                                \
-  libport::ufloat                                                       \
-  Name (libport::ufloat l, libport::ufloat r)                           \
-  {                                                                     \
-    if (!r)								\
-      throw PrimitiveError(#Method, ErrorMessage);			\
-    return Method(l, r);                                                \
-  }
-
-  FCT_OP_PROTECTED(SLASH, /, "division by 0")
-  FCT_M_PROTECTED(PERCENT, fmod, "modulo by 0")
-
-#undef FCT_M_PROTECTED
-#undef FCT_OP_PROTECTED
-
-  static float
-  random (libport::ufloat x)
+  Float::Float()
+    : value_(0)
   {
-    float res = 0.f;
-    const long long range = libport::to_long_long (x);
-    if (range)
-      res = rand () % range;
-    return res;
+    proto_add(float_class);
   }
 
-  int
-  ufloat_to_int (libport::ufloat val, const std::string& func)
+  Float::Float(value_type value)
+    : value_(value)
   {
-    try {
-      return libport::ufloat_to_int (val);
+    proto_add(float_class);
+  }
+
+  Float::Float(rFloat model)
+    : value_(model->value_get())
+  {
+    proto_add(float_class);
+  }
+
+  Float::value_type Float::value_get() const
+  {
+    return value_;
+  }
+
+  Float::value_type& Float::value_get()
+  {
+    return value_;
+  }
+
+  int Float::to_int(const std::string& func) const
+  {
+    try
+    {
+      return libport::ufloat_to_int (value_);
     }
     catch (libport::bad_numeric_cast& ue)
     {
-      throw BadInteger (val, func);
+      throw BadInteger (value_, func);
       return 0;  // Keep the compiler happy
     }
   }
 
-  // This is quite hideous, to be cleaned once we have integers.
-# define INTEGER_BIN_OP(Name, Op)				\
-  static float							\
-  Name (libport::ufloat lhs, libport::ufloat rhs)               \
-  {								\
-    int ilhs = ufloat_to_int (lhs, #Op);			\
-    int irhs = ufloat_to_int (rhs, #Op);			\
-    return ilhs Op irhs;					\
-  }
-
-  INTEGER_BIN_OP(LT_LT, <<)
-  INTEGER_BIN_OP(GT_GT, >>)
-  INTEGER_BIN_OP(CARET, ^)
-
-# undef INTEGER_BIN_OP
-
-#define BIN_WRAPPER(Name, Call)                                 \
-  static float                                                  \
-  Name (libport::ufloat lhs, libport::ufloat rhs)               \
-  {                                                             \
-    return Call(lhs, rhs);                                      \
-  }
-
-BIN_WRAPPER(STAR_STAR, powf)
-
-#undef BIN_WRAPPER
-
-static float
-abs(libport::ufloat v)
-{
-  return std::abs(v);
-}
-
-/*-------------------------------------------------------------------.
-| Float Primitives.                                                  |
-|                                                                    |
-| I.e., the signature is runner::Runner& x objects_type -> rObject.  |
-`--------------------------------------------------------------------*/
-
-
-  /// asString.
-  static rObject
-  float_class_asString(runner::Runner&, objects_type args)
+  rFloat Float::inf()
   {
-    CHECK_ARG_COUNT(1);
-    if (args[0] == float_class)
-      return new String(SYMBOL(LT_Float_GT));
-    FETCH_ARG(0, Float);
-    static boost::format f("%g");
-    return new String(libport::Symbol(str(f % float(arg0->value_get()))));
-  }
-
-  /// Clone.
-  static rObject
-  float_class_clone(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(1);
-    FETCH_ARG(0, Float);
-    return arg0->clone();
-  }
-
-  /// Infinity
-  static rObject
-  float_class_inf(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(1);
     return new Float(std::numeric_limits<ufloat>::infinity());
   }
 
-  /// NaN
-  static rObject
-  float_class_nan(runner::Runner&, objects_type args)
+  rFloat Float::nan()
   {
-    CHECK_ARG_COUNT(1);
     return new Float(std::numeric_limits<ufloat>::quiet_NaN());
   }
 
-  /// Change the value.
-  static rObject
-  float_class_set(runner::Runner&, objects_type args)
+  rString Float::as_string(rObject from)
   {
-    CHECK_ARG_COUNT(2);
-    FETCH_ARG(0, Float);
-    FETCH_ARG(1, Float);
-    arg0->value_set (arg1->value_get());
-    return arg0;
+    if (from.get() == float_class.get())
+      return new String(SYMBOL(LT_Float_GT));
+    {
+      static boost::format f("%g");
+      type_check<Float>(from, SYMBOL(asString));
+      rFloat fl = from->as<Float>();
+      return new String(libport::Symbol(str(f % float(fl->value_get()))));
+
+    }
   }
 
-  /// Comparison operator.
-  static rObject
-  float_class_LT(runner::Runner&, objects_type args)
+  rObject Float::operator <(rFloat rhs)
   {
-    CHECK_ARG_COUNT(2);
-    FETCH_ARG(0, Float);
-    FETCH_ARG(1, Float);
-    return to_boolean(arg0->value_get() < arg1->value_get());
+    return value_get() < rhs->value_get() ? true_class : false_class;
   }
 
-  /// Unary or binary minus.
-  static rObject
-  float_class_MINUS(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT_RANGE(1, 2);
-
-    // Unary minus.
-    FETCH_ARG(0, Float);
-    if (args.size() == 1)
-      return new Float(- arg0->value_get());
-
-    // Binary minus.
-    FETCH_ARG(1, Float);
-    return new Float(arg0->value_get() - arg1->value_get());
+#define BOUNCE_OP(Op, Check)                                            \
+  rFloat Float::operator Op(rFloat rhs)                                 \
+  {                                                                     \
+    WHEN(Check, if (!rhs->value_get())                                  \
+                  throw PrimitiveError("Operator " #Op,                 \
+                                       "division by 0"));               \
+    return new Float(value_get() Op rhs->value_get());                  \
   }
 
-  // FIXME: Code duplication here, factor this macro with PRIMITIVE_1_
-  // in primitives.hh.
+  BOUNCE_OP(+, false);
+  BOUNCE_OP(*, false);
+  BOUNCE_OP(/, true);
 
-  /// Internal macro used to define a primitive for float numbers.
-  /// \param Name primitive's name
-  /// \param Call C++ code executed when primitive is called.
-  /// \param Pre C++ code executed before call (typically to check args)
-#define PRIMITIVE_0_FLOAT_(Name, Pre)                           \
-  static rObject                                                \
-  float_class_ ## Name (runner::Runner&, objects_type args)	\
-  {                                                             \
-    CHECK_ARG_COUNT(1);                                         \
-    FETCH_ARG(0, Float);                                        \
-    Pre;                                                        \
-    return new Float(Name(arg0->value_get()));                  \
+#undef BOUNCE_OP
+
+  rFloat Float::operator %(rFloat rhs)
+  {
+    if (!rhs->value_get())
+      throw PrimitiveError("Operator %", "modulo by 0");
+    return new Float(fmod(value_get(), rhs->value_get()));
   }
 
-  /// Define a primitive for float numbers.
-  /// \param Call Name primitive's name
-#define PRIMITIVE_0_FLOAT(Name)                 \
-  PRIMITIVE_0_FLOAT_(Name, )
-
-#define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name)			\
-  PRIMITIVE_0_FLOAT_(Name,					\
-     if (args[0]->value<Float>() < 0)                           \
-       throw							\
-	 PrimitiveError(#Name,					\
-			"argument has to be positive"))
-
-#define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name,Min, Max)                    \
-  PRIMITIVE_0_FLOAT_(Name,						\
-     if (args[0]->value<Float>() < Min || Max < args[0]->value<Float>())\
-       throw PrimitiveError(#Name, "invalid range"))
-
-#define PRIMITIVE_2_FLOAT(Name)                            \
-  PRIMITIVE_2_V(float, Name, Float, Float, Float)
-
-#define PRIMITIVE_OP_FLOAT(Name, Op)                    \
-  PRIMITIVE_OP_V(float, Name, Op, Float, Float, Float)
-
-  // Binary arithmetics operators.
-  PRIMITIVE_OP_FLOAT(PLUS, +)
-  PRIMITIVE_2_FLOAT(SLASH)
-  PRIMITIVE_OP_FLOAT(STAR, *)
-  PRIMITIVE_2_FLOAT(PERCENT)
-
-  PRIMITIVE_2_FLOAT(STAR_STAR)
-
-  PRIMITIVE_2_FLOAT(LT_LT) // <<
-  PRIMITIVE_2_FLOAT(GT_GT) // >>
-  PRIMITIVE_2_FLOAT(CARET) // ^
-
-  PRIMITIVE_0_FLOAT(sin)
-  PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, -1, 1)
-  PRIMITIVE_0_FLOAT(cos)
-  PRIMITIVE_0_FLOAT_CHECK_RANGE(acos, -1, 1)
-  PRIMITIVE_0_FLOAT(tan)
-  PRIMITIVE_0_FLOAT(atan)
-  PRIMITIVE_0_FLOAT(abs)
-  PRIMITIVE_0_FLOAT(exp)
-  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(log)
-  PRIMITIVE_0_FLOAT(round)
-  PRIMITIVE_0_FLOAT(random)
-  PRIMITIVE_0_FLOAT(trunc)
-  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(sqrt)
-
-#undef PRIMITIVE_2_FLOAT
-#undef PRIMITIVE_0_FLOAT_CHECK_RANGE
-#undef PRIMITIVE_0_FLOAT_CHECK_POSITIVE
-#undef PRIMITIVE_0_FLOAT
-#undef PRIMITIVE_0_FLOAT_
-#undef PRIMITIVE_OP_FLOAT
-
-  /// Initialize the Float class.
-  void
-  float_class_initialize ()
+  rFloat Float::pow(rFloat rhs)
   {
-    /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Name)                      \
-    DECLARE_PRIMITIVE(float, Name)
+    return new Float(powf(value_get(), rhs->value_get()));
+  }
 
-    DECLARE(CARET);
-    DECLARE(GT_GT);
-    DECLARE(LT);
-    DECLARE(LT_LT);
-    DECLARE(MINUS);
-    DECLARE(PERCENT);
-    DECLARE(PLUS);
-    DECLARE(SLASH);
-    DECLARE(STAR);
-    DECLARE(STAR_STAR);
-    DECLARE(abs);
-    DECLARE(acos);
-    DECLARE(asString);
-    DECLARE(asin);
-    DECLARE(atan);
-    DECLARE(clone);
-    DECLARE(cos);
-    DECLARE(exp);
-    DECLARE(inf);
-    DECLARE(log);
-    DECLARE(nan);
-    DECLARE(random);
-    DECLARE(round);
-    DECLARE(set);
-    DECLARE(sin);
-    DECLARE(sqrt);
-    DECLARE(tan);
-    DECLARE(trunc);
-#undef DECLARE
 
+#define BOUNCE_INT_OP(Op)                               \
+  rFloat Float::operator Op(rFloat rhs)                 \
+  {                                                     \
+    return new Float(to_int(#Op) Op rhs->to_int(#Op));  \
+  }
+
+  BOUNCE_INT_OP(<<);
+  BOUNCE_INT_OP(>>);
+  BOUNCE_INT_OP(^);
+
+#undef BOUNCE_OP
+
+#define CHECK_POSITIVE(F)                                       \
+  if (value_ < 0)                                               \
+    throw PrimitiveError(#F, "argument has to be positive");
+
+#define CHECK_TRIGO_RANGE(F)                                    \
+  if (value_ < -1 || value_ > 1)                                \
+    throw PrimitiveError(#F, "invalid range");
+
+#define BOUNCE_FUN(F, Pos, Range)                       \
+  rFloat Float::F()                                     \
+  {                                                     \
+    WHEN(Pos, CHECK_POSITIVE(F));                       \
+    WHEN(Range, CHECK_TRIGO_RANGE(F));                  \
+    return new Float(::F(value_get()));                 \
+  }
+
+  BOUNCE_FUN(abs, false, false);
+  BOUNCE_FUN(acos, false, true);
+  BOUNCE_FUN(asin, false, true);
+  BOUNCE_FUN(atan, false, false);
+  BOUNCE_FUN(cos, false, false);
+  BOUNCE_FUN(exp, false, false);
+  BOUNCE_FUN(log, true, false);
+  BOUNCE_FUN(round, false, false);
+  BOUNCE_FUN(sin, false, false);
+  BOUNCE_FUN(sqrt, true, false);
+  BOUNCE_FUN(tan, false, false);
+  BOUNCE_FUN(trunc, false, false);
+
+#undef CHECK_POSITIVE
+#undef CHECK_TRIGO_RANGE
+#undef BOUNCE_FUN
+
+  rFloat
+  Float::random ()
+  {
+    value_type res = 0.f;
+    const long long range = libport::to_long_long (value_get());
+    if (range)
+      res = rand () % range;
+    return new Float(res);
+  }
+
+  rFloat Float::minus(objects_type args)
+  {
+    CHECK_ARG_COUNT_RANGE(0, 1);
+    if (args.empty())
+      return new Float(-value_get());
+    else
+    {
+      type_check<Float>(args[0], SYMBOL(MINUS));
+      return new Float(value_get() - args[0]->as<Float>()->value_get());
+    }
+  }
+
+  rFloat Float::set(rFloat rhs)
+  {
+    value_get() = rhs->value_get();
+    return this;
+  }
+
+  void Float::initialize(CxxObject::Binder<Float>& bind)
+  {
+    bind(SYMBOL(asString), &Float::as_string);
+    bind(SYMBOL(abs), &Float::abs);
+    bind(SYMBOL(acos), &Float::acos);
+    bind(SYMBOL(asin), &Float::asin);
+    bind(SYMBOL(atan), &Float::atan);
+    bind(SYMBOL(cos), &Float::cos);
+    bind(SYMBOL(exp), &Float::exp);
+    bind(SYMBOL(inf), &Float::inf);
+    bind(SYMBOL(log), &Float::log);
+    bind(SYMBOL(MINUS), &Float::minus);
+    bind(SYMBOL(nan), &Float::nan);
+    bind(SYMBOL(LT), static_cast<rObject (Float::*)(rFloat)>(&Float::operator<));
+    bind(SYMBOL(PLUS), &Float::operator+);
+    bind(SYMBOL(STAR), &Float::operator*);
+    bind(SYMBOL(SLASH), &Float::operator/);
+    bind(SYMBOL(PERCENT), &Float::operator%);
+    bind(SYMBOL(LT_LT), &Float::operator<<);
+    bind(SYMBOL(GT_GT), &Float::operator>>);
+    bind(SYMBOL(CARET), &Float::operator^);
+    bind(SYMBOL(STAR_STAR), &Float::pow);
+    bind(SYMBOL(random), &Float::random);
+    bind(SYMBOL(round), &Float::round);
+    bind(SYMBOL(set), &Float::set);
+    bind(SYMBOL(sin), &Float::sin);
+    bind(SYMBOL(sqrt), &Float::sqrt);
+    bind(SYMBOL(tan), &Float::tan);
+    bind(SYMBOL(trunc), &Float::trunc);
+  }
+
+  bool Float::float_added = CxxObject::add<Float>("Float", float_class);
+  const std::string Float::type_name = "Float";
+  std::string Float::type_name_get() const
+  {
+    return type_name;
   }
 
 }; // namespace object

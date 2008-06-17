@@ -112,18 +112,6 @@ namespace object
   };
 
 
-  /*--------.
-  | Float.  |
-  `--------*/
-
-  // The sole numerical value really supported for the time being.
-  struct float_traits
-  {
-    typedef libport::ufloat type;
-    enum { kind = object_kind_float };
-  };
-
-
   /*----------.
   | Integer.  |
   `----------*/

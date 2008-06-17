@@ -14,6 +14,7 @@
 #include <runner/runner.hh>
 
 #include <object/atom.hh>
+#include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/object-class.hh>
 #include <object/object.hh>
@@ -52,7 +53,8 @@ namespace object
     int depth_max = 0;
     if (args.size() >= 2)
     {
-      FETCH_ARG(1, Float);
+      type_check<Float>(args[1], SYMBOL(dump));
+      rFloat arg1 = args[1]->as<Float>();
       try
       {
 	depth_max = libport::ufloat_to_int(arg1->value_get());

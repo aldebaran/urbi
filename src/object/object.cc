@@ -14,11 +14,12 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 
-#include <object/object.hh>
 #include <object/atom.hh>
 #include <object/dictionary-class.hh>
+#include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/hash-slots.hh>
+#include <object/object.hh>
 #include <object/object-class.hh>
 #include <object/urbi-exception.hh>
 
@@ -439,7 +440,7 @@ namespace object
   {
     if (o == nil_class)
       return false;
-    if (o->type_is<object::Float>())
+    if (o->is_a<object::Float>())
       return o.unsafe_cast<object::Float>()->value_get();
     return true;
   }

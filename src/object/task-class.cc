@@ -11,6 +11,7 @@
 
 #include <object/alien.hh>
 #include <object/atom.hh>
+#include <object/float-class.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
 #include <object/tag-class.hh>

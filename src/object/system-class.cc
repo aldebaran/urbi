@@ -18,6 +18,7 @@
 #include <object/alien.hh>
 #include <object/code-class.hh>
 #include <object/dictionary-class.hh>
+#include <object/float-class.hh>
 #include <object/system-class.hh>
 #include <object/tag-class.hh>
 #include <object/task-class.hh>
@@ -56,7 +57,8 @@ namespace object
   system_class_sleep (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, Float);
+    type_check<Float>(args[1], SYMBOL(sleep));
+    rFloat arg1 = args[1]->as<Float>();
     libport::utime_t deadline;
     if (arg1->value_get() == std::numeric_limits<ufloat>::infinity())
       deadline = std::numeric_limits<libport::utime_t>::max();

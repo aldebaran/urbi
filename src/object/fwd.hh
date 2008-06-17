@@ -37,7 +37,6 @@ namespace object
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,      Alien)				\
   Macro(delegate,   Delegate)				\
-  Macro(float,      Float)				\
   Macro(integer,    Integer)				\
   Macro(list,       List)				\
   Macro(lobby,      Lobby)				\
@@ -102,6 +101,8 @@ namespace object
   typedef libport::shared_ptr<Code> rCode;
   class Dictionary;
   typedef libport::shared_ptr<Dictionary> rDictionary;
+  class Float;
+  typedef libport::shared_ptr<Float> rFloat;
   class String;
   typedef libport::shared_ptr<String> rString;
 

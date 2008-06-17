@@ -3,6 +3,7 @@
 #include <kernel/uvalue-cast.hh>
 
 #include <object/atom.hh>
+#include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/string-class.hh>
 #include <object/urbi-exception.hh>
@@ -20,7 +21,7 @@ urbi::UValue uvalue_cast(object::rObject o)
   case object::object_kind_primitive:
   case object::object_kind_semaphore:
     throw object::WrongArgumentType
-      (string_of(object::object_kind_float),
+      ("Float",
        string_of(o->kind_get()),
        "cast");
     break;
@@ -50,11 +51,10 @@ urbi::UValue uvalue_cast(object::rObject o)
 	return res;
       }
     break;
-#define HANDLE_TYPE(k, t) \
-  case object::object_kind_##k:  \
-    res = o.cast<object::t>()->value_get(); \
+#define HANDLE_TYPE(k, t)                       \
+    case object::object_kind_##k:               \
+      res = o.cast<object::t>()->value_get();   \
     break;
-  HANDLE_TYPE(float, Float);
   HANDLE_TYPE(integer, Integer);
 #undef HANDLE_TYPE
   case object::object_kind_list:
@@ -110,8 +110,8 @@ object_cast(const urbi::UValue& v)
 
     default:
       throw
-	object::WrongArgumentType(string_of(object::object_kind_float),
-				  string_of(object::object_kind_float),
+	object::WrongArgumentType("Float",
+				  "Float",
                                   "backcast");
       break;
   }

@@ -17,8 +17,9 @@ namespace object {
   semaphore_class_new(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, Float);
-    int count = ufloat_to_int(arg1->value_get(), "new");
+    type_check<Float>(args[1], SYMBOL(new));
+    rFloat arg1 = args[1]->as<Float>();
+    int count = arg1->to_int("new");
     if (count < 0)
       throw PrimitiveError("new", "initial count must be non-negative");
     return new Semaphore(make_pair(count, std::deque<scheduler::rJob>()));

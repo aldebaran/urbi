@@ -178,8 +178,9 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     FETCH_ARG(0, List);
-    FETCH_ARG(1, Float);
-    int index = ufloat_to_int(arg1->value_get(), "nth");
+    type_check<Float>(args[1], SYMBOL(nth));
+    rFloat arg1 = args[1]->as<Float>();
+    int index = arg1->to_int("nth");
     if (index < 0 || index >= static_cast<int>(arg0->value_get().size()))
       throw PrimitiveError("nth", "invalid index");
     return arg0->value_get()[index];
