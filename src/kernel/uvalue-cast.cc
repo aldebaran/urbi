@@ -1,10 +1,13 @@
 #include <boost/lexical_cast.hpp>
 
+#include <kernel/uvalue-cast.hh>
+
 #include <object/atom.hh>
 #include <object/global-class.hh>
+#include <object/string-class.hh>
 #include <object/urbi-exception.hh>
+
 #include <urbi/uvalue.hh>
-#include <kernel/uvalue-cast.hh>
 
 urbi::UValue uvalue_cast(object::rObject o)
 {
@@ -30,9 +33,11 @@ urbi::UValue uvalue_cast(object::rObject o)
          "bin-cast"));
       {
 	const std::string& data =
-	  o->slot_get(SYMBOL(data))->value<object::String>().name_get();
+	  o->slot_get(SYMBOL(data))->
+          as<object::String>()->value_get().name_get();
 	const std::string& keywords =
-	  o->slot_get(SYMBOL(keywords))->value<object::String>().name_get();
+	  o->slot_get(SYMBOL(keywords))->
+          as<object::String>()->value_get().name_get();
 	std::list<urbi::BinaryData> l;
 	l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
 			      data.size()));
@@ -51,7 +56,6 @@ urbi::UValue uvalue_cast(object::rObject o)
     break;
   HANDLE_TYPE(float, Float);
   HANDLE_TYPE(integer, Integer);
-  HANDLE_TYPE(string, String);
 #undef HANDLE_TYPE
   case object::object_kind_list:
     {

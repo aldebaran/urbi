@@ -4,9 +4,11 @@
  */
 
 #include <boost/lexical_cast.hpp>
+
+#include <object/atom.hh>
 #include <object/integer-class.hh>
 #include <object/object.hh>
-#include <object/atom.hh>
+#include <object/string-class.hh>
 
 namespace object
 {

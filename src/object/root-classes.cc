@@ -92,11 +92,13 @@ namespace object
   compare(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    TYPE_CHECK(args[0], T);
+    // FIXME: Some type checking was commented here
+    // TYPE_CHECK(args[0], T);
     libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
     try
     {
-      TYPE_CHECK(args[1], T);
+      // FIXME: Some type checking was commented here
+      // TYPE_CHECK(args[1], T);
     }
     catch (WrongArgumentType&)
     {

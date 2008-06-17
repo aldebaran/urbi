@@ -4,6 +4,7 @@
 # include <boost/bind.hpp>
 
 # include <object/atom.hh>
+# include <object/string-class.hh>
 # include <object/object-class.hh>
 # include <object/primitives.hh>
 
@@ -211,11 +212,6 @@ namespace object
   template <>
   inline void
   type_check<List>(rObject, const std::string&)
-  {}
-
-  template <>
-  inline void
-  type_check<String>(rObject, const std::string&)
   {}
 
 }

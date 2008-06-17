@@ -86,6 +86,8 @@ namespace object
 
 }
 
-# include <object/cxx-object.hxx>
+# ifndef OBJECT_STRING_CLASS_HH
+#  include <object/cxx-object.hxx>
+# endif
 
 #endif

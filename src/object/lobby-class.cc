@@ -9,6 +9,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/atom.hh>
+#include <object/string-class.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -27,7 +28,8 @@ namespace object
     std::string tag;
     if (args.size() == 3)
     {
-      FETCH_ARG(2, String);
+      rString arg2 = args[2].unsafe_cast<String>();
+      assert(arg2);
       tag = arg2->value_get().name_get();
     }
     FETCH_ARG(0, Lobby);

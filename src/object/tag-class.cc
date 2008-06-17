@@ -10,6 +10,7 @@
 #include <object/alien.hh>
 #include <object/atom.hh>
 #include <object/object.hh>
+#include <object/string-class.hh>
 
 #include <runner/runner.hh>
 #include <scheduler/tag.hh>
@@ -48,7 +49,8 @@ namespace object
 
     if (args.size () > 1)
     {
-      FETCH_ARG (1, String);
+      type_check<String>(args[1], SYMBOL(assert));
+      rString arg1 = args[1]->as<String>();
       tag_short_name = arg1->value_get ();
     }
     else

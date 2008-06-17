@@ -42,8 +42,7 @@ namespace object
   Macro(list,       List)				\
   Macro(lobby,      Lobby)				\
   Macro(primitive,  Primitive)				\
-  Macro(semaphore,  Semaphore)				\
-  Macro(string,     String)
+  Macro(semaphore,  Semaphore)
 
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
@@ -99,10 +98,12 @@ namespace object
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
 # undef DEFINE
 
-  class Dictionary;
-  typedef libport::shared_ptr<Dictionary> rDictionary;
   class Code;
   typedef libport::shared_ptr<Code> rCode;
+  class Dictionary;
+  typedef libport::shared_ptr<Dictionary> rDictionary;
+  class String;
+  typedef libport::shared_ptr<String> rString;
 
   // urbi-exception.hh
   class IDelegate;

@@ -357,7 +357,8 @@ namespace object
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
     rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
-    std::string s = data->value<String>().name_get();
+    type_check<String>(data, SYMBOL(id_dump));
+    libport::Symbol s = data->as<String>()->value_get();
     return o << s;
   }
 
@@ -413,7 +414,8 @@ namespace object
     try
     {
       rObject s = urbi_call(runner, const_cast<Object*>(this), SYMBOL(asString));
-      o << s->value<String>().name_get();
+      type_check<String>(s, SYMBOL(print));
+      o << s->as<String>()->value_get();
       return o;
     }
     // Check if asString was found, especially for bootstrap: asString

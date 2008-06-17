@@ -17,6 +17,7 @@
 #include <object/global-class.hh>
 #include <object/object-class.hh>
 #include <object/object.hh>
+#include <object/string-class.hh>
 
 namespace object
 {
@@ -66,7 +67,8 @@ namespace object
     std::string tag;
     if (args.size() >= 3)
     {
-      FETCH_ARG(2, String);
+      rString arg2 = args[2].unsafe_cast<String>();
+      assert(arg2);
       tag = arg2->value_get().name_get();
     }
 
@@ -89,17 +91,20 @@ namespace object
     std::string tag;
     if (args.size() == 3)
     {
-      FETCH_ARG(2, String);
+      type_check<String>(args[2], SYMBOL(echo));
+      rString arg2 = args[2].unsafe_cast<String>();
+      assert(arg2);
       tag = arg2->value_get().name_get();
     }
 
     rObject res = urbi_call(r, args[1], SYMBOL(asString));
-    std::string s = res->value<String>().name_get();
+    type_check<String>(res, SYMBOL(echo));
+    std::string s = res->as<String>()->value_get().name_get();
 
     // Hack: special case for Strings to have k1 behavior special case
     // for Strings.
     if (is_echo
-        && args[1]->kind_is(object_kind_string)
+        && args[1].unsafe_cast<String>()
         && s[0] == '"'
         && s.length() && s[s.length()-1] == '"')
       s = libport::unescape(s.substr(1, s.length()-2));
@@ -174,7 +179,9 @@ namespace object
   object_class_callMessage (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    libport::Symbol msg = args[1]->slot_get(SYMBOL(message))->value<String>();
+    rObject message = args[1]->slot_get(SYMBOL(message));
+    type_check<String>(message, "callMessage");
+    libport::Symbol msg = message->as<String>()->value_get();
     rObject code = args[0]->slot_get(msg);
     // FIXME: Sanity checks on the call message are probably required
     objects_type self;
@@ -236,7 +243,8 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
-    FETCH_ARG(1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
     return obj->slot_get(arg1->value_get());
   }
 
@@ -246,7 +254,8 @@ namespace object
   {
     CHECK_ARG_COUNT (4);
 
-    FETCH_ARG (1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
     Object::key_type slot_name = arg1->value_get ();
 
     // If the slot already exists, return its content.
@@ -267,7 +276,8 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
-    FETCH_ARG(1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
     obj->slot_remove(arg1->value_get());
     return obj;
   }
@@ -277,7 +287,8 @@ namespace object
   object_class_locateSlot (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
 
     rObject o = args[0]->slot_locate(arg1->value_get());
     return o ? o : nil_class;
@@ -287,7 +298,8 @@ namespace object
   object_class_setSlot (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG(1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
     args[0]->slot_set(arg1->value_get (), args[2]);
     return args[2];
   }
@@ -296,7 +308,8 @@ namespace object
   object_class_updateSlot (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG (1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
     args[0]->slot_update(r, arg1->value_get (), args[2]);
     return args[2];
   }
@@ -305,7 +318,8 @@ namespace object
   object_class_changeSlot (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG (1, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
     args[0]->slot_update(r, arg1->value_get (), args[2], false);
     return args[2];
   }
@@ -319,8 +333,10 @@ namespace object
   object_class_getProperty (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG(1, String);
-    FETCH_ARG(2, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
+    rString arg2 = args[2].unsafe_cast<String>();
+    assert(arg2);
     rObject res =
       args[0]->property_get(arg1->value_get(), arg2->value_get());
     if (res)
@@ -333,8 +349,10 @@ namespace object
   object_class_hasProperty (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG(1, String);
-    FETCH_ARG(2, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
+    rString arg2 = args[2].unsafe_cast<String>();
+    assert(arg2);
     return
       args[0]->property_get(arg1->value_get(), arg2->value_get())
       ? true_class
@@ -345,8 +363,10 @@ namespace object
   object_class_setProperty (runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(4);
-    FETCH_ARG(1, String);
-    FETCH_ARG(2, String);
+    rString arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
+    rString arg2 = args[2].unsafe_cast<String>();
+    assert(arg2);
     args[0]->property_set(arg1->value_get(), arg2->value_get(), args[3]);
     return args[3];
   }

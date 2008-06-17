@@ -103,7 +103,8 @@ namespace object
   system_class_assert_(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG(2, String);
+    type_check<String>(args[2], SYMBOL(assert));
+    rString arg2 = args[2]->as<String>();
     if (!is_true(args[1]))
       throw PrimitiveError
 	("assert_",
@@ -115,7 +116,8 @@ namespace object
   system_class_eval (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, String);
+    type_check<String>(args[1], SYMBOL(assert));
+    rString arg1 = args[1]->as<String>();
     return
       execute_parsed(r,
                      parser::parse(arg1->value_get()),
@@ -144,7 +146,8 @@ namespace object
   system_class_searchFile (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, String);
+    type_check<String>(args[1], SYMBOL(assert));
+    rString arg1 = args[1]->as<String>();
 
     UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
@@ -168,7 +171,8 @@ namespace object
   system_class_loadFile (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, String);
+    type_check<String>(args[1], SYMBOL(assert));
+    rString arg1 = args[1]->as<String>();
 
     std::string filename = arg1->value_get().name_get();
 

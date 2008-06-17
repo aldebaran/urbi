@@ -12,6 +12,7 @@
 #include <object/alien.hh>
 #include <object/atom.hh>
 #include <object/object.hh>
+#include <object/string-class.hh>
 #include <object/tag-class.hh>
 
 #include <runner/interpreter.hh>

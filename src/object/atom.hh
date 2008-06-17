@@ -185,19 +185,6 @@ namespace object
     enum { kind = object_kind_semaphore };
   };
 
-  /*---------.
-  | String.  |
-  `---------*/
-
-  // Internalized strings.  We should probably make them real
-  // std::string in the future, because currently any constructed
-  // string is kept endlessly.
-  struct string_traits
-  {
-    typedef libport::Symbol type;
-    enum { kind = object_kind_string };
-  };
-
 } // namespace object
 
 #endif // !OBJECT_ATOM_HH

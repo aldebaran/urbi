@@ -12,9 +12,10 @@
 #  include <libport/ufloat.h>
 #endif
 
+#include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/object.hh>
-#include <object/atom.hh>
+#include <object/string-class.hh>
 #include <object/urbi-exception.hh>
 
 namespace object
