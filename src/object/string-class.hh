@@ -26,8 +26,6 @@ namespace object
       /// Urbi methods
       rString operator+(rString rhs);
       rObject lt(rString rhs);
-      rString as_printable();
-      rString as_string();
       rString fresh ();
       rString set(rString rhs);
       rFloat  size();
@@ -44,6 +42,11 @@ namespace object
       static void initialize(CxxObject::Binder<String>& binder);
       static bool string_added;
   };
+
+  // Urbi functions
+  rString as_string(rObject from);
+  rString as_printable(rObject from);
+
 }; // namespace object
 
 # include <object/cxx-object.hxx>

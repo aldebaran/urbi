@@ -8,11 +8,12 @@
 
 #include <libport/tokenizer.hh>
 
-#include <object/string-class.hh>
+#include <object/atom.hh>
+#include <object/float-class.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
-#include <object/atom.hh>
 #include <runner/runner.hh>
+#include <object/string-class.hh>
 
 namespace object
 {
@@ -58,18 +59,31 @@ namespace object
     return new Float(content_.name_get().length());
   }
 
-  rString String::as_printable ()
+  rString as_printable (rObject from)
   {
-    return new String(
-      libport::Symbol('"'
-                      + string_cast(libport::escape(content_.name_get()))
-                      + '"'));
+    if (from.get() == string_class.get())
+      return as_string(from);
+    else
+    {
+      type_check<String>(from, SYMBOL(asPrintable));
+      rString str = from->as<String>();
+      return new String(
+        libport::Symbol('"'
+                        + string_cast(libport::escape(str->value_get()))
+                        + '"'));
+    }
   }
 
   rString
-  String::as_string ()
+  as_string (rObject from)
   {
-    return this;
+    if (from.get() == string_class.get())
+      return new String(SYMBOL(LT_String_GT));
+    else
+    {
+      type_check<String>(from, SYMBOL(asString));
+      return from->as<String>();
+    }
   }
 
   rObject
@@ -106,8 +120,8 @@ namespace object
 
   void String::initialize(CxxObject::Binder<String>& bind)
   {
-    bind(SYMBOL(asPrintable), &String::as_printable);
-    bind(SYMBOL(asString), &String::as_string);
+    bind(SYMBOL(asPrintable), &as_printable);
+    bind(SYMBOL(asString), &as_string);
     bind(SYMBOL(fresh), &String::fresh);
     bind(SYMBOL(LT), &String::lt);
     bind(SYMBOL(PLUS), &String::operator+);
