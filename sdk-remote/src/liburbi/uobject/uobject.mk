@@ -18,6 +18,7 @@ uobject/urbi/ublend-type.hh			\
 uobject/urbi/uobject.hh				\
 uobject/urbi/uproperty.hh			\
 uobject/urbi/ustarter.hh			\
+uobject/urbi/ustarter.hxx			\
 uobject/urbi/usystem.hh				\
 uobject/urbi/utable.hh				\
 uobject/urbi/utimer-callback.hh			\

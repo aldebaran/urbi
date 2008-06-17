@@ -49,10 +49,8 @@ namespace urbi
   class baseURBIStarter
   {
   public:
-    baseURBIStarter(const std::string& name)
-      : name(name)
-    {}
-    virtual ~baseURBIStarter() {}
+    baseURBIStarter(const std::string& name);
+    virtual ~baseURBIStarter();
 
     virtual UObject* getUObject() = 0;
 
@@ -75,52 +73,20 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& _slist)
-      : baseURBIStarter(name)
-    {
-      slist = &_slist;
-      slist->push_back(this);
-    }
+    URBIStarter(const std::string& name, UStartlist& _slist);
 
-    virtual ~URBIStarter()
-    {
-      clean();
-    }
+    virtual ~URBIStarter();
 
-    virtual void clean()
-    {
-      delete getUObject();
-      UStartlist::iterator toerase =
-	std::find(slist->begin(), slist->end(), this);
-      if (toerase != slist->end())
-	slist->erase(toerase);
-    }
+    virtual void clean();
 
-    virtual void
-    copy(const std::string& objname)
-    {
-      URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
-      ustarter->init(objname);
-      UObject* uso = ustarter->object;
-      getUObject()->members.push_back(uso);
-      uso->derived = true;
-      uso->classname = getUObject()->classname;
-      if (uso->autogroup)
-	uso->addAutoGroup();
-    }
+    virtual void copy(const std::string& objname);
 
     /// Access to the object from the outside.
-    virtual UObject* getUObject()
-    {
-      return object;
-    }
+    virtual UObject* getUObject();
 
   protected:
     /// Called when the object is ready to be initialized.
-    virtual void init(const std::string& objname)
-    {
-      object = new T(objname);
-    }
+    virtual void init(const std::string& objname);
 
     UStartlist* slist;
     T* object;
@@ -158,10 +124,8 @@ SETBACKCASTCTOR(const UImage)
   class baseURBIStarterHub
   {
   public:
-    baseURBIStarterHub(const std::string& name)
-      : name(name)
-    {};
-    virtual ~baseURBIStarterHub() {};
+    baseURBIStarterHub(const std::string& name);
+    virtual ~baseURBIStarterHub();
 
     /// Used to provide a wrapper to initialize objects in starterlist.
     virtual void init(const std::string&) = 0;
@@ -174,35 +138,27 @@ SETBACKCASTCTOR(const UImage)
    * UObject subclass, resulting in the initialization of this object
    * (registration to the kernel)
    */
-  template <class T> class URBIStarterHub : public baseURBIStarterHub
+  template <class T>
+  class URBIStarterHub
+    : public baseURBIStarterHub
   {
   public:
-    URBIStarterHub(const std::string& name, UStartlistHub& _slist)
-      : baseURBIStarterHub(name)
-    {
-      slist = &_slist;
-      slist->push_back(this);
-    }
-    virtual ~URBIStarterHub() {/* noone can kill a hub*/ };
+    URBIStarterHub(const std::string& name, UStartlistHub& _slist);
+    virtual ~URBIStarterHub();
 
   protected:
     /// Called when the object is ready to be initialized.
-    virtual void init(const std::string& objname)
-    {
-      object = new T(objname);
-    }
+    virtual void init(const std::string& objname);
 
     /// Access to the object from the outside.
-    virtual UObjectHub* getUObjectHub()
-    {
-      return object;
-    }
+    virtual UObjectHub* getUObjectHub();
 
     UStartlistHub* slist;
     T* object;
   };
 
-
 } // end namespace urbi
+
+# include <urbi/ustarter.hxx>
 
 #endif // ! URBI_STARTER_HH
