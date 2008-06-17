@@ -34,7 +34,7 @@ namespace object
 
       /// Urbi methods
       rObject apply(runner::Runner& r, rList args);
-      rString as_string();
+      static rString as_string(rObject what);
       rString body_string();
 
       static const std::string type_name;

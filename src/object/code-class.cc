@@ -91,11 +91,13 @@ namespace object
     return r.apply (this, SYMBOL(apply), args->value_get());
   }
 
-  rString Code::as_string()
+  rString Code::as_string(rObject what)
   {
-    if (code_class == this)
+    if (what.get() == code_class.get())
       return new String(SYMBOL(LT_Code_GT));
-    return new String(libport::Symbol(string_cast(*ast_)));
+    type_check<Code>(what, SYMBOL(asString));
+    return new String(libport::Symbol
+                      (string_cast(*what->as<Code>()->ast_get())));
 
   }
 
