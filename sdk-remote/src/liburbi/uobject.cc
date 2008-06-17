@@ -222,165 +222,162 @@ namespace urbi
       return URBI_CONTINUE;
     }
 
-    // UEM_ASSIGNVALUE
-    if ((USystemExternalMessage)(int)array[0] == UEM_ASSIGNVALUE)
+    switch ((USystemExternalMessage)(int)array[0])
     {
-      if (array.size() != 3)
+      case UEM_ASSIGNVALUE:
       {
-	msg.client.printf("Component Error: Invalid number "
-			"of arguments in the server message: %d"
-			" (expected 3)\n",
-			array.size());
-	return URBI_CONTINUE;
+        if (array.size() != 3)
+        {
+          msg.client.printf("Component Error: Invalid number "
+                            "of arguments in the server message: %d"
+                            " (expected 3)\n",
+                            array.size());
+          return URBI_CONTINUE;
+        }
+        UVarTable::iterator varmapfind = varmap->find(array[1]);
+        if (varmapfind != varmap->end())
+          for (std::list<UVar*>::iterator it = varmapfind->second.begin();
+               it != varmapfind->second.end();
+               ++it)
+            (*it)->__update(array[2]);
+
+        UTable::iterator monitormapfind = monitormap->find(array[1]);
+        if (monitormapfind != monitormap->end())
+          for (std::list<UGenericCallback*>::iterator
+                 cbit = monitormapfind->second.begin();
+               cbit != monitormapfind->second.end();
+               ++cbit)
+          {
+            // test of return value here
+            UList u;
+            u.array.push_back(new UValue());
+            u[0].storage = (*cbit)->storage;
+            (*cbit)->__evalcall(u);
+          }
       }
-      UVarTable::iterator varmapfind = varmap->find(array[1]);
-      if (varmapfind != varmap->end())
-	for (std::list<UVar*>::iterator it = varmapfind->second.begin();
-	     it != varmapfind->second.end();
-	     ++it)
-	  (*it)->__update(array[2]);
+      break;
 
-      UTable::iterator monitormapfind = monitormap->find(array[1]);
-      if (monitormapfind != monitormap->end())
-	for (std::list<UGenericCallback*>::iterator
-	       cbit = monitormapfind->second.begin();
-	     cbit != monitormapfind->second.end();
-	     ++cbit)
-	{
-	  // test of return value here
-	  UList u;
-	  u.array.push_back(new UValue());
-	  u[0].storage = (*cbit)->storage;
-	  (*cbit)->__evalcall(u);
-	}
-    }
-
-    // UEM_EVALFUNCTION
-    else if ((USystemExternalMessage)(int)array[0] == UEM_EVALFUNCTION)
-    {
-      /* For the moment, this iteration is useless since the list will
-       * contain one and only one element. There is no function overloading
-       * yet and still it would probably use a unique name identifier, hence
-       * a single element list again. */
-      if (functionmap->find(array[1]) != functionmap->end())
+      case UEM_EVALFUNCTION:
       {
-	std::list<UGenericCallback*> tmpfun = (*functionmap)[array[1]];
-	std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-	array.setOffset(3);
-	UValue retval = (*tmpfunit)->__evalcall(array);
-	array.setOffset(0);
-	if (retval.type == DATA_VOID)
-	  URBI(()) << "var " << (std::string) array[2];
-	else
-	{
-	  URBI(()) << "var " << (std::string) array[2] << "=";
-	  getDefaultClient()->send(retval);//I'd rather not use << for bins
-	}
-	URBI(()) << ";";
+        /* For the moment, this iteration is useless since the list will
+         * contain one and only one element. There is no function overloading
+         * yet and still it would probably use a unique name identifier, hence
+         * a single element list again. */
+        if (functionmap->find(array[1]) != functionmap->end())
+        {
+          std::list<UGenericCallback*> tmpfun = (*functionmap)[array[1]];
+          std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+          array.setOffset(3);
+          UValue retval = (*tmpfunit)->__evalcall(array);
+          array.setOffset(0);
+          if (retval.type == DATA_VOID)
+            URBI(()) << "var " << (std::string) array[2];
+          else
+          {
+            URBI(()) << "var " << (std::string) array[2] << "=";
+            getDefaultClient()->send(retval);//I'd rather not use << for bins
+          }
+          URBI(()) << ";";
+        }
+        else
+          msg.client.printf("Component Error: %s function unknown.\n",
+                            ((std::string) array[1]).c_str());
       }
-      else
-	msg.client.printf("Component Error: %s function unknown.\n",
-			  ((std::string) array[1]).c_str());
-    }
+      break;
 
-    // UEM_EMITEVENT
-    else if ((USystemExternalMessage)(int)array[0] == UEM_EMITEVENT)
-    {
-      if (eventmap->find(array[1]) != eventmap->end())
+      case UEM_EMITEVENT:
       {
-	std::list<UGenericCallback*> tmpfun = (*eventmap)[array[1]];
-	for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
-	     i != tmpfun.end();
-	     ++i)
-	{
-	  array.setOffset(2);
-	  (*i)->__evalcall(array);
-	  array.setOffset(0);
-	}
+        if (eventmap->find(array[1]) != eventmap->end())
+        {
+          std::list<UGenericCallback*> tmpfun = (*eventmap)[array[1]];
+          for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
+               i != tmpfun.end();
+               ++i)
+          {
+            array.setOffset(2);
+            (*i)->__evalcall(array);
+            array.setOffset(0);
+          }
+        }
       }
-    }
+      break;
 
-    // UEM_ENDEVENT
-    else if ((USystemExternalMessage)(int)array[0] == UEM_ENDEVENT)
-    {
-      if (eventendmap->find(array[1]) != eventendmap->end())
+      case UEM_ENDEVENT:
       {
-	std::list<UGenericCallback*> tmpfun = (*eventendmap)[array[1]];
-	for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
-	     i != tmpfun.end();
-	     ++i)
-	{
-	  array.setOffset(2);
-	  (*i)->__evalcall(array);
-	  array.setOffset(0);
-	}
+        if (eventendmap->find(array[1]) != eventendmap->end())
+        {
+          std::list<UGenericCallback*> tmpfun = (*eventendmap)[array[1]];
+          for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
+               i != tmpfun.end();
+               ++i)
+          {
+            array.setOffset(2);
+            (*i)->__evalcall(array);
+            array.setOffset(0);
+          }
+        }
       }
-    }
 
-    // UEM_NEW
-    else if ((USystemExternalMessage)(int)array[0] == UEM_NEW)
-    {
-      std::list<baseURBIStarter*>::iterator found = objectlist->end();
-      for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
-	   i != objectlist->end();
-	   ++i)
-	if ((*i)->name == (std::string)array[2])
-	{
-	  if (found != objectlist->end())
-	    msg.client.printf("Double object definition %s\n",
-			      (*i)->name.c_str());
-	  else
-	    found = i;
-	}
-
-      if (found == objectlist->end())
-	msg.client.printf("Unknown object definition %s\n",
-			  ((std::string) array[2]).c_str());
-      else
-	(*found)->copy((std::string) array[1]);
-
-    }
-
-    // UEM_DELETE
-    else if ((USystemExternalMessage)(int)array[0] == UEM_DELETE)
-    {
-      std::list<baseURBIStarter*>::iterator found = objectlist->end();
-      for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
-	   i != objectlist->end();
-	   ++i)
-	if ((*i)->name == (std::string)array[1])
-	{
-	  if (found != objectlist->end())
-	    msg.client.printf("Double object definition %s\n",
-			      (*i)->name.c_str());
-	  else
-	    found = i;
-	}
-
-      if (found == objectlist->end())
-	msg.client.printf("Unknown object definition %s\n",
-			  ((std::string) array[1]).c_str());
-      else
+      case UEM_NEW:
       {
-	// remove the object from objectlist or terminate
-	// the component if there is nothing left
-	if (objectlist->size() == 1)
-	  exit(0);
-	else
-	{
-	  // delete the object
-	  delete (*found);
-	}
+        std::list<baseURBIStarter*>::iterator found = objectlist->end();
+        for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
+             i != objectlist->end();
+             ++i)
+          if ((*i)->name == (std::string)array[2])
+          {
+            if (found != objectlist->end())
+              msg.client.printf("Double object definition %s\n",
+                                (*i)->name.c_str());
+            else
+              found = i;
+          }
+
+        if (found == objectlist->end())
+          msg.client.printf("Unknown object definition %s\n",
+                            ((std::string) array[2]).c_str());
+        else
+          (*found)->copy((std::string) array[1]);
+
       }
+      break;
+
+      case UEM_DELETE:
+      {
+        std::list<baseURBIStarter*>::iterator found = objectlist->end();
+        for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
+             i != objectlist->end();
+             ++i)
+          if ((*i)->name == (std::string)array[1])
+          {
+            if (found != objectlist->end())
+              msg.client.printf("Double object definition %s\n",
+                                (*i)->name.c_str());
+            else
+              found = i;
+          }
+
+        if (found == objectlist->end())
+          msg.client.printf("Unknown object definition %s\n",
+                            ((std::string) array[1]).c_str());
+        else
+        {
+          // remove the object from objectlist or terminate
+          // the component if there is nothing left
+          if (objectlist->size() == 1)
+            exit(0);
+          else
+            // delete the object
+            delete *found;
+        }
+      }
+      break;
+      
+      default:
+        msg.client.printf("Component Error: "
+                          "unknown server message type number %d\n",
+                          (int)array[0]);
     }
-
-
-    // DEFAULT
-    else
-      msg.client.printf("Component Error: "
-			"unknown server message type number %d\n",
-			(int)array[0]);
-
     return URBI_CONTINUE;
   }
 
@@ -424,10 +421,8 @@ namespace urbi
   debug(const UMessage& msg)
   {
     std::stringstream mesg;
-    mesg<<msg;
-    msg.client.printf("DEBUG: got a message  : %s\n",
-		      mesg.str().c_str());
-
+    mesg << msg;
+    msg.client.printf("DEBUG: got a message: %s\n",  mesg.str().c_str());
     return URBI_CONTINUE;
   }
 
@@ -435,9 +430,9 @@ namespace urbi
   endProgram(const UMessage& msg)
   {
     std::stringstream mesg;
-    mesg<<msg;
-    msg.client.printf("ERROR: got a disconnection message  : %s\n",
-		      mesg.str().c_str());
+    mesg << msg;
+    msg.client.printf("ERROR: got a disconnection message: %s\n",
+                      mesg.str().c_str());
     exit(1);
     return URBI_CONTINUE; //stupid gcc
   }
@@ -470,8 +465,8 @@ namespace urbi
   void
   version ()
   {
-    std::cout << urbi::package_info() << std::endl;
-    exit (0);
+    std::cout << urbi::package_info() << std::endl
+              << libport::exit (EX_OK);
   }
 
   void
@@ -530,9 +525,9 @@ namespace urbi
     new USyncClient(addr, port, buflen);
 
 #ifdef LIBURBIDEBUG
-    getDefaultClient()->setWildcardCallback(callback (&debug));
+    getDefaultClient()->setWildcardCallback(callback(&debug));
 #else
-    getDefaultClient()->setErrorCallback(callback (&debug));
+    getDefaultClient()->setErrorCallback(callback(&debug));
 #endif
 
     getDefaultClient()->setCallback(&dispatcher,
