@@ -115,6 +115,12 @@ namespace object
   }
 
   inline
+  ParserError::ParserError(const ast::loc& loc, const std::string& msg)
+    : UrbiException(msg, loc)
+  {
+  }
+
+  inline
   void
   check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {

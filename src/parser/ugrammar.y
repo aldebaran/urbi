@@ -744,7 +744,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst
-        at("scopeTag: at_(%exp:1, detach(%exp:2), nil)");
+        at("at_(%exp:1, detach(%exp:2), nil)");
       $$ = exp (at % $3.value() % $5.value());
     }
 | "at" "(" exp ")" nstmt "onleave" nstmt
@@ -752,7 +752,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst
-        at("scopeTag: at_(%exp:1, detach(%exp:2), detach(%exp:3))");
+        at("at_(%exp:1, detach(%exp:2), detach(%exp:3))");
       $$ = exp (at % $3.value() % $5.value() % $7.value());
     }
 | "at" "(" exp "~" exp ")" nstmt %prec CMDBLOCK

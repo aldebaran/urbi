@@ -14,10 +14,12 @@ class Object.UObject
   {
     "update not defined".print
   };
+
   function init()
   {
     updateTask = new Tag;
   };
+
   /// Set a timer to call update at specified interval.
   function setUpdate(interval)
   {
@@ -128,9 +130,9 @@ class Object.uvar
       var isUVar = 1
     }
   };
-  /** If both notifyChange and notifyAccess are present, call the notifyAccess
-   *  periodically.
-   */
+
+  // If both notifyChange and notifyAccess are present, call the notifyAccess
+  // periodically.
   function loopCheck()
   {
     if (!looping && change.size && access.size)
@@ -189,8 +191,12 @@ Global.uobjects.uobject_init();
 
 // UObject remote API.
 
-/* EXTERNALS */
-class Global.'external' {
+/*------------------.
+| Global.external.  |
+`------------------*/
+
+class Global.'external'
+{
   var MODULE_TAG = "__ExternalMessage__";
   var UEM_EVALFUNCTION = 0;
   var UEM_ASSIGNVALUE  = 1;
@@ -200,38 +206,38 @@ class Global.'external' {
   var UEM_DELETE       = 5;
 
   //var uobjects = Lobby.uobjects;
-  // external object toto: Set clone to send a UEM_NEW message.
-  var 'object' = function(o)
+  // external object <objname>: Set clone to send a UEM_NEW message.
+  function 'object'(objname)
   {
-    if (uobjects.locateSlot(o).sameAs(uobjects))
+    if (uobjects.locateSlot(objname).sameAs(uobjects))
       return;
-    /* The remote sent the code 'class <o> {};' just before calling this
-     * function, but we want o in uobjects, not lobby.
-     */
-    lobby.removeSlot(o);
+    // The remote sent the code 'class <objname> {};' just before
+    // calling this function, but we want objname in uobjects, not
+    // lobby.
+    lobby.removeSlot(objname);
     if (!Global.protos.has(uobjects))
       Global.addProto(uobjects);
-    ("external object "+o).print;
+    ("external object "+objname).print;
     function cloner()
     {
       var u = fresh;
       var msg = [  'external'.UEM_NEW, "Global.uobjects."+u, objectName];
-      connection.send(msg, 'external'.MODULE_TAG);
+      lobby.send(msg, 'external'.MODULE_TAG);
       // Wait until the remote fills the variable named u.
       waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
       var ret = Global.uobjects.getSlot(u);
       Global.uobjects.removeSlot(u);
       ret
     };
-    cloner.inject("connection", lobby).inject("objectName",o);
-    uobjects.setSlot(o, Object.clone);
-    uobjects.getSlot(o).setSlot("clone", cloner);
+    uobjects.setSlot(objname, Object.clone);
+    uobjects.getSlot(objname).setSlot("clone", cloner);
     //Ensure load is bound. K1 uobj tries to do it before binding the object.
-    'var'(o, "load", "dummy0");
+    'var'(objname, "load", "dummy0");
     void
   };
-  /// Notify the remote when <pbjname>.<varname> is modified.
-  var 'var' = function(objname, varname, fr)
+
+  /// Notify the remote when <objname>.<varname> is modified.
+  function 'var'(objname, varname, fr)
   {
     ("external var call "+varname).print;
     var fullname = objname + "." + varname;
@@ -253,8 +259,7 @@ class Global.'external' {
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.locateSlot(varname).sameAs(obj))
       obj.setSlot(varname, getSlot("uvar").clone)
-    else if
-      (obj.getSlot(varname).locateSlot("isUVar").sameAs(nil))
+    else if (obj.getSlot(varname).locateSlot("isUVar").sameAs(nil))
     {
       // The slot allready exists, but is not an uvar.
       var v = obj.getSlot(varname);
@@ -262,48 +267,45 @@ class Global.'external' {
       obj.setSlot(varname, getSlot("uvar").clone);
       obj.updateSlot(varname, v);
     };
-    /* Create a 'notifyChange' function that generates the UObject message
-     * and sends it through the remote connection.
-     */
+    // Create a 'notifyChange' function that generates the UObject
+    // message and sends it through the remote connection.
+    var uob = uobjects.getSlot(objname);
     function f()
     {
-      var msg = [  'external'.UEM_ASSIGNVALUE, fullname,
-      uob.getSlot(varname).val];
-      connection.send(msg, 'external'.MODULE_TAG);
+      var msg = ['external'.UEM_ASSIGNVALUE, 
+                 fullname,
+                 uob.getSlot(varname).val];
+      lobby.send(msg, 'external'.MODULE_TAG);
     };
-    getSlot("f").inject("connection", lobby)
-    	.inject("fullname", objname+"."+varname)
-	.inject("uob", uobjects.getSlot(objname))
-	.inject("varname", varname);
-    uobjects.getSlot(objname).getSlot(varname).notifyChange(getSlot("f"));
+    uobjects.getSlot(objname).getSlot(varname).notifyChange(f);
     void
   };
 
-  /* Bind a function call to the remote side.
-   * Write to the slot a function that will generate an uobject call message,
-   * send it to the remote side, and wait for the result.
-   */
-  var 'function' = function(nargs, objname, fname, fr)
+  // Bind a function call to the remote side.
+  // Write to the slot a function that will generate an uobject call message,
+  // send it to the remote side, and wait for the result.
+  function 'function'(nargs, objname, fname, fr)
   {
     ("external function call "+fname).print;
+    var functionName = objname + "." + fname;
     function f
     {
       var args = call.evalArgs;
       var u = fresh;
-      var msg = [ 'external'.UEM_EVALFUNCTION, functionName + "__"
-      + args.size.asString, "Global.uobjects."+u] + args;
-      connection.send(msg, 'external'.MODULE_TAG);
+      var msg = [ 'external'.UEM_EVALFUNCTION,
+                  functionName + "__" + args.size.asString,
+                  "Global.uobjects." + u ] + args;
+      lobby.send(msg, 'external'.MODULE_TAG);
       waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
-      var ret = Global.uobjects.getSlot(u);
+      var res = Global.uobjects.getSlot(u);
       Global.uobjects.removeSlot(u);
-      getSlot("ret")
+      res
     };
-    getSlot("f").inject("functionName", objname+"."+fname)
-    	.inject("connection", lobby);
-    Global.uobjects.getSlot(objname).setSlot(fname, getSlot("f"));
+    Global.uobjects.getSlot(objname).setSlot(fname, f);
     void
   };
-  var 'event' = function(nargs, objname, ename, fr)
+
+  function 'event'(nargs, objname, ename, fr)
   {
     // FIXME: implement when k2 will support events.
   };
