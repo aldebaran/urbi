@@ -786,7 +786,17 @@ namespace runner
     object::List::value_type res;
     // Evaluate every expression in the list
     foreach (ast::rConstExp c, e->value_get())
-      res.push_back(eval(c));
+    {
+      rObject v = eval(c);
+      // Refuse void in literal lists
+      if (v == object::void_class)
+      {
+        object::WrongArgumentType e(SYMBOL(new));
+        e.location_set(c->location_get());
+        throw e;
+      }
+      res.push_back(v);
+    }
     current_ = new object::List(res);
     //ECHO ("result: " << *current_);
   }
