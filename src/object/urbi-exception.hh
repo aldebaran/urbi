@@ -105,8 +105,8 @@ namespace object
    * \param fun         Primitive's name.  */
   struct WrongArgumentType: public UrbiException
   {
-    WrongArgumentType (object_kind_type formal,
-		       object_kind_type effective,
+    WrongArgumentType (const std::string& formal,
+		       const std::string& effective,
 		       const std::string& fun);
     /// Invalid use of void.
     WrongArgumentType(const std::string& fun);

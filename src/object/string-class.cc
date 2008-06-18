@@ -8,11 +8,13 @@
 
 #include <libport/tokenizer.hh>
 
-#include <object/string-class.hh>
+#include <object/atom.hh>
+#include <object/float-class.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
-#include <object/atom.hh>
 #include <runner/runner.hh>
+#include <object/string-class.hh>
 
 namespace object
 {
@@ -22,158 +24,125 @@ namespace object
   | String primitives.  |
   `--------------------*/
 
-  namespace
+  String::String()
+    : content_()
   {
+    proto_add(string_class);
+  }
 
-    // Don't forget our Strings are wrapped in Symbols.
-#define PRIMITIVE_OP_STRING(Name, Op)			\
-    static						\
-    rObject						\
-    Name (rString& a, rString& b)			\
-    {							\
-      return to_boolean(a->value_get ().name_get()	\
-			Op				\
-			b->value_get ().name_get());	\
-    }
+  String::String(rString model)
+    : content_(model->content_)
+  {
+    proto_add(string_class);
+  }
 
-    PRIMITIVE_OP_STRING(LT,  <);
+  String::String(const value_type& v)
+    : content_(v)
+  {
+    assert(string_class);
+    proto_add(string_class);
+  }
 
-#undef PRIMITIVE_OP_STRING
+  const String::value_type& String::value_get() const
+  {
+    return content_;
+  }
 
-    /// Return string's length.
-    static rFloat
-    size (rString& s)
+  String::value_type& String::value_get()
+  {
+    return content_;
+  }
+
+  rString String::plus (runner::Runner& r, rObject rhs)
+  {
+    rObject str = urbi_call(r, rhs, SYMBOL(asString));
+    type_check<String>(str, SYMBOL(PLUS));
+    return new String(libport::Symbol(
+                        content_.name_get()
+                        + str->as<String>()->value_get().name_get()));
+  }
+
+  rFloat String::size ()
+  {
+    return new Float(content_.name_get().length());
+  }
+
+  rString as_printable (rObject from)
+  {
+    if (from.get() == string_class.get())
+      return as_string(from);
+    else
     {
-      return new Float(s->value_get ().name_get ().size ());
-    }
-
-/*-------------------------------------------------------------------.
-| String Primitives.                                                 |
-|                                                                    |
-| I.e., the signature is runner::Runner& x objects_type -> rObject.  |
-`-------------------------------------------------------------------*/
-
-    static rObject
-    string_class_PLUS (runner::Runner& r, objects_type args)
-    {
-      CHECK_ARG_COUNT (2);
-      FETCH_ARG (0, String);
-      std::string str0 = arg0->value_get ().name_get ();
-      std::string str1;
-      if (args[1]->type_is<String> ())
-      {
-	FETCH_ARG (1, String);
-	str1 = arg1->value_get ().name_get ();
-      }
-      else
-      {
-	rObject as = urbi_call(r, args[1], SYMBOL(asString));
-	TYPE_CHECK (as, String);
-	rString arg1 = as.unsafe_cast<String> ();
-	str1 = arg1->value_get ().name_get ();
-      }
-      return new String(libport::Symbol (str0 + str1));
-    }
-
-    static rObject
-    string_class_asString(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT (1);
-      if (args[0] == string_class)
-	return new String(SYMBOL(LT_String_GT));
-      else
-      {
-	FETCH_ARG(0, String);
-        return arg0;
-      }
-    }
-
-    static rObject
-    string_class_asPrintable(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(1);
-      FETCH_ARG(0, String);
+      type_check<String>(from, SYMBOL(asPrintable));
+      rString str = from->as<String>();
       return new String(
         libport::Symbol('"'
-                        + string_cast(libport::escape(arg0->value_get().name_get()))
+                        + string_cast(libport::escape(str->value_get()))
                         + '"'));
-
-    }
-
-    /// Clone.
-    static rObject
-    string_class_clone(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(1);
-      FETCH_ARG(0, String);
-      return arg0->clone();
-    }
-
-
-    /// Change the value.
-    static rObject
-    string_class_set(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT(2);
-      FETCH_ARG(0, String);
-      FETCH_ARG(1, String);
-      arg0->value_set (arg1->value_get());
-      return arg0;
-    }
-
-    static rObject
-    string_class_split(runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT (2);
-      boost::tokenizer< boost::char_separator<char> > tok =
-	libport::make_tokenizer(args[0]->value<String>().name_get(),
-                                args[1]->value<String>().name_get().c_str());
-      list_traits::type ret;
-      foreach(std::string i, tok)
-	ret.push_back(new String(libport::Symbol(i)));
-      return new List(ret);
-    }
-
-    static rObject
-    string_class_fresh (runner::Runner&, objects_type args)
-    {
-      CHECK_ARG_COUNT (1);
-      FETCH_ARG (0, String);
-      return new String(libport::Symbol::fresh(arg0->value_get ()));
     }
   }
 
-#define PRIMITIVE_1_STRING(Name)                  \
-  PRIMITIVE_1(string, Name, String)
-
-#define PRIMITIVE_2_STRING(Name, Type2)		\
-  PRIMITIVE_2(string, Name, String, Type2)
-
-  PRIMITIVE_2_STRING(LT, String);
-
-  PRIMITIVE_1_STRING(size);
-
-#undef PRIMITIVE_2_STRING
-#undef PRIMITIVE_1_STRING
-
-  void
-  string_class_initialize ()
+  rString
+  as_string (rObject from)
   {
-    // String.asString was already defined to function () {self} in
-    // CLASS_INIT in primitives.cc
-    string_class->slot_remove(SYMBOL(asString));
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(string, Name)
-    DECLARE(LT);
-    DECLARE(PLUS);
-    DECLARE(asPrintable);
-    DECLARE(asString);
-    DECLARE(clone);
-    DECLARE(fresh);
-    DECLARE(set);
-    DECLARE(size);
-    DECLARE(split);
-#undef DECLARE
-
+    if (from.get() == string_class.get())
+      return new String(SYMBOL(LT_String_GT));
+    else
+    {
+      type_check<String>(from, SYMBOL(asString));
+      return from->as<String>();
+    }
   }
+
+  rObject
+  String::lt(rString rhs)
+  {
+    return value_get().name_get() < rhs->value_get().name_get() ?
+      true_class : false_class;
+  }
+
+  rString
+  String::set(rString rhs)
+  {
+    content_ = rhs->value_get();
+    return this;
+  }
+
+  rString
+  String::fresh ()
+  {
+    return new String(libport::Symbol::fresh(value_get()));
+  }
+
+  rList
+  String::split(rString sep)
+  {
+    boost::tokenizer< boost::char_separator<char> > tok =
+      libport::make_tokenizer(value_get().name_get(),
+                              sep->value_get().name_get().c_str());
+  List::value_type ret;
+    foreach(const std::string& i, tok)
+      ret.push_back(new String(libport::Symbol(i)));
+    return new List(ret);
+  }
+
+  void String::initialize(CxxObject::Binder<String>& bind)
+  {
+    bind(SYMBOL(asPrintable), &as_printable);
+    bind(SYMBOL(asString), &as_string);
+    bind(SYMBOL(fresh), &String::fresh);
+    bind(SYMBOL(LT), &String::lt);
+    bind(SYMBOL(PLUS), &String::plus);
+    bind(SYMBOL(set), &String::set);
+    bind(SYMBOL(size), &String::size);
+    bind(SYMBOL(split), &String::split);
+  }
+
+  bool String::string_added = CxxObject::add<String>("String", string_class);
+  const std::string String::type_name = "String";
+  std::string String::type_name_get() const
+  {
+    return type_name;
+  }
+
 }; // namespace object

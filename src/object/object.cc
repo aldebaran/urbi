@@ -14,11 +14,13 @@ using namespace boost::assign; // bring 'list_of' into scope
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 
-#include <object/object.hh>
 #include <object/atom.hh>
 #include <object/dictionary-class.hh>
+#include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/hash-slots.hh>
+#include <object/list-class.hh>
+#include <object/object.hh>
 #include <object/object-class.hh>
 #include <object/urbi-exception.hh>
 
@@ -316,7 +318,7 @@ namespace object
     rDictionary props = properties_get();
     if (!props)
     {
-      props = new Dictionary(dictionary_traits::type());
+      props = new Dictionary();
       // This should die if there is a slot name "properties" which is
       // not a dictionary, which is what we want, don't we?
       slot_set(SYMBOL(properties), props);
@@ -327,7 +329,7 @@ namespace object
       libport::find0(props->value_get(), k).unsafe_cast<Dictionary>();
     if (!prop)
     {
-      prop = new Dictionary(dictionary_traits::type());
+      prop = new Dictionary();
       props->value_get()[k] = prop;
     }
 
@@ -356,7 +358,8 @@ namespace object
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
     rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
-    std::string s = data->value<String>().name_get();
+    type_check<String>(data, SYMBOL(id_dump));
+    libport::Symbol s = data->as<String>()->value_get();
     return o << s;
   }
 
@@ -412,7 +415,8 @@ namespace object
     try
     {
       rObject s = urbi_call(runner, const_cast<Object*>(this), SYMBOL(asString));
-      o << s->value<String>().name_get();
+      type_check<String>(s, SYMBOL(print));
+      o << s->as<String>()->value_get();
       return o;
     }
     // Check if asString was found, especially for bootstrap: asString
@@ -436,7 +440,7 @@ namespace object
   {
     if (o == nil_class)
       return false;
-    if (o->type_is<object::Float>())
+    if (o->is_a<object::Float>())
       return o.unsafe_cast<object::Float>()->value_get();
     return true;
   }

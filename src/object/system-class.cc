@@ -16,6 +16,10 @@
 #include <kernel/uconnection.hh>
 
 #include <object/alien.hh>
+#include <object/code-class.hh>
+#include <object/dictionary-class.hh>
+#include <object/float-class.hh>
+#include <object/list-class.hh>
 #include <object/system-class.hh>
 #include <object/tag-class.hh>
 #include <object/task-class.hh>
@@ -54,7 +58,8 @@ namespace object
   system_class_sleep (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, Float);
+    type_check<Float>(args[1], SYMBOL(sleep));
+    rFloat arg1 = args[1]->as<Float>();
     libport::utime_t deadline;
     if (arg1->value_get() == std::numeric_limits<ufloat>::infinity())
       deadline = std::numeric_limits<libport::utime_t>::max();
@@ -101,7 +106,8 @@ namespace object
   system_class_assert_(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    FETCH_ARG(2, String);
+    type_check<String>(args[2], SYMBOL(assert));
+    rString arg2 = args[2]->as<String>();
     if (!is_true(args[1]))
       throw PrimitiveError
 	("assert_",
@@ -113,7 +119,8 @@ namespace object
   system_class_eval (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    FETCH_ARG(1, String);
+    type_check<String>(args[1], SYMBOL(assert));
+    rString arg1 = args[1]->as<String>();
     return
       execute_parsed(r,
                      parser::parse(arg1->value_get()),
@@ -142,7 +149,8 @@ namespace object
   system_class_searchFile (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, String);
+    type_check<String>(args[1], SYMBOL(assert));
+    rString arg1 = args[1]->as<String>();
 
     UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
@@ -166,7 +174,8 @@ namespace object
   system_class_loadFile (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG(1, String);
+    type_check<String>(args[1], SYMBOL(assert));
+    rString arg1 = args[1]->as<String>();
 
     std::string filename = arg1->value_get().name_get();
 
@@ -249,7 +258,8 @@ namespace object
   system_class_spawn(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT_RANGE (2, 3);
-    FETCH_ARG (1, Code);
+    rObject arg1 = args[1]->as<Code>();
+    assert(arg1);
 
     runner::Interpreter* new_runner =
       new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),

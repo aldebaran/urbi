@@ -6,6 +6,7 @@
 #include <object/alien-class.hh>
 #include <object/atom.hh>
 #include <object/code-class.hh>
+#include <object/cxx-object.hh>
 #include <object/delegate-class.hh>
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
@@ -91,11 +92,11 @@ namespace object
   compare(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    TYPE_CHECK(args[0], T);
+    type_check<T>(args[0], SYMBOL(compare));
     libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
     try
     {
-      TYPE_CHECK(args[1], T);
+      type_check<T>(args[1], SYMBOL(compare));
     }
     catch (WrongArgumentType&)
     {
@@ -103,7 +104,7 @@ namespace object
       // just return false
       return to_boolean(false);
     }
-    libport::shared_ptr<T> arg1 = args[1].unsafe_cast<T>();
+    libport::shared_ptr<T> arg1 = args[1]->as<T>();
     return to_boolean(arg0->value_get() == arg1->value_get());
   }
 
@@ -168,9 +169,11 @@ namespace object
     CLASS_INIT(What, Name)                                      \
     CLASS_REGISTER(What, Name)
 
-
     // Object is a special case: it is not built as a clone of itself.
     object_class = new Object();
+
+    CxxObject::create();
+
     // The other primitives.  Because primitive initialization depend
     // a lot on one another (e.g., String is used everywhere for slot
     // names, and Primitive is used for... all the primitive methods
@@ -179,6 +182,8 @@ namespace object
     // Setup boolean entities.
     APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(CLASS_CREATE);
     APPLY_ON_ALL_ROOT_CLASSES(EXISTING_CLASS_SETUP);
+
+    CxxObject::initialize(global_class);
 
     true_class = new Float(1.0);
     false_class = new Float(0.0);

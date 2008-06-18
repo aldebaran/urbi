@@ -80,6 +80,8 @@ namespace object
     /// For debugging.
     std::ostream& special_slots_dump(std::ostream& o, runner::Runner&) const;
 
+    static const std::string type_name;
+
   private:
     /// The value.
     value_type value_;
@@ -99,31 +101,6 @@ namespace object
   };
 
 
-  /*-------.
-  | Code.  |
-  `-------*/
-
-  // Functions that are written in Urbi, detached from the AST
-  // returned by the parser.
-  struct code_traits
-  {
-    struct type
-    {
-      type(ast::rConstCode a)
-        : ast(a)
-      {}
-
-      /// Body of the function
-      ast::rConstCode ast;
-      /// Value of the captured variables
-      std::vector<rrObject> captures;
-      /// Captured 'this' and 'call'. Only set for closures.
-      rObject self, call;
-    };
-    enum { kind = object_kind_code };
-  };
-
-
   /*----------.
   | Delegate. |
   `----------*/
@@ -132,29 +109,6 @@ namespace object
   {
     typedef IDelegate* type;
     enum { kind = object_kind_delegate };
-  };
-
-
-  /*------------.
-  | Dictionary. |
-  `------------*/
-
-  struct dictionary_traits
-  {
-    typedef libport::hash_map<libport::Symbol, rObject> type;
-    enum { kind = object_kind_dictionary };
-  };
-
-
-  /*--------.
-  | Float.  |
-  `--------*/
-
-  // The sole numerical value really supported for the time being.
-  struct float_traits
-  {
-    typedef libport::ufloat type;
-    enum { kind = object_kind_float };
   };
 
 
@@ -172,18 +126,6 @@ namespace object
 
 
   /*-------.
-  | List.  |
-  `-------*/
-
-  // Lists, not arrays.
-  struct list_traits
-  {
-    typedef objects_type type;
-    enum { kind = object_kind_list };
-  };
-
-
-  /*-------.
   | Lobby.  |
   `-------*/
 
@@ -196,18 +138,6 @@ namespace object
   };
 
 
- /*------------.
- | Primitive.  |
- `------------*/
-
-  // Code written in C++.
-  struct primitive_traits
-  {
-    // The type of the primitives.
-    typedef rObject (*type) (runner::Runner&, objects_type);
-    enum { kind = object_kind_primitive };
-  };
-
   /*------------.
   | Semaphore.  |
   `------------*/
@@ -217,19 +147,6 @@ namespace object
   {
     typedef std::pair< int, std::deque<scheduler::rJob> > type;
     enum { kind = object_kind_semaphore };
-  };
-
-  /*---------.
-  | String.  |
-  `---------*/
-
-  // Internalized strings.  We should probably make them real
-  // std::string in the future, because currently any constructed
-  // string is kept endlessly.
-  struct string_traits
-  {
-    typedef libport::Symbol type;
-    enum { kind = object_kind_string };
   };
 
 } // namespace object

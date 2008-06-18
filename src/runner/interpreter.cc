@@ -24,9 +24,13 @@
 #include <ast/print.hh>
 
 #include <object/atom.hh>
+#include <object/code-class.hh>
+#include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/idelegate.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
+#include <object/primitive-class.hh>
 #include <object/symbols.hh>
 #include <object/tag-class.hh>
 #include <object/urbi-exception.hh>
@@ -322,12 +326,11 @@ namespace runner
                            const object::objects_type& args,
                            rObject call_message)
   {
-
     libport::Finally finally;
 
     // The called function.
-    object::Code::value_type fn = func->value_get();
-    ast::rConstCode ast = fn.ast;
+    object::Code::ast_type ast = func->ast_get();
+
     // Whether it's an explicit closure
     bool closure = ast.unsafe_cast<const ast::Closure>();
 
@@ -365,12 +368,12 @@ namespace runner
     rObject call;
     if (closure)
     {
-      assert(fn.self);
-      self = fn.self;
+      self = func->self_get();
+      assert(self);
       // FIXME: The call message can be undefined at the creation
       // site for now.
       // assert(fn.call);
-      call = fn.call;
+      call = func->call_get();
     }
     else
     {
@@ -398,7 +401,7 @@ namespace runner
     // Push captured variables
     foreach (ast::rConstDeclaration dec, *ast->captured_variables_get())
     {
-      rrObject value = func->value_get().captures[dec->local_index_get()];
+      rrObject value = func->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
     }
 
@@ -443,12 +446,12 @@ namespace runner
     // If we try to call a C++ primitive with a call message, make it
     // look like a strict function call
     if (call_message &&
-	(func->kind_get() != object::object_kind_code
-	 || func->value<object::Code>().ast->strict()))
+	(!func->is_a<object::Code>()
+	 || func->as<object::Code>()->ast_get()->strict()))
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
-	       urbi_args->value<object::List>())
+	       urbi_args->as<object::List>()->value_get())
 	args.push_back(arg);
       call_message = 0;
     }
@@ -463,27 +466,24 @@ namespace runner
     if (std::find(++args.begin(), end, object::void_class) != end)
       throw object::WrongArgumentType (msg);
 
-    switch (func->kind_get ())
-    {
-      case object::object_kind_primitive:
-	current_ =
-	  func.unsafe_cast<object::Primitive>()->value_get()(*this, args);
-	break;
-      case object::object_kind_delegate:
-	current_ =
-	  func.unsafe_cast<object::Delegate>()
-          ->value_get()
-	  ->operator()(*this, args);
-	break;
-      case object::object_kind_code:
-	current_ = apply_urbi (func.unsafe_cast<object::Code>(),
-                               msg, args, call_message);
-	break;
-      default:
-	object::check_arg_count (1, args.size(), msg.name_get());
-	current_ = func;
-	break;
-    }
+    if (rCode c = func->as<object::Code>())
+      current_ = apply_urbi (c, msg, args, call_message);
+    else if (object::rPrimitive p = func->as<object::Primitive>())
+      current_ = p->value_get()(*this, args);
+    else
+      switch (func->kind_get ())
+      {
+        case object::object_kind_delegate:
+          current_ =
+            func.unsafe_cast<object::Delegate>()
+            ->value_get()
+            ->operator()(*this, args);
+          break;
+        default:
+          object::check_arg_count (1, args.size(), msg.name_get());
+          current_ = func;
+          break;
+      }
 
     return current_;
   }
@@ -631,8 +631,8 @@ namespace runner
     // Build the call message for non-strict functions, otherwise
     // the evaluated argument list.
     rObject call_message;
-    if (val->kind_get () == object::object_kind_code
-        && !val.unsafe_cast<object::Code>()->value_get().ast->strict())
+    rCode c = val->as<object::Code>();
+    if (c && !c->ast_get()->strict())
       call_message = build_call_message (tgt, val, message, ast_args);
     else
       push_evaluated_arguments (args, ast_args);
@@ -659,12 +659,13 @@ namespace runner
     // Evaluate the list attribute, and check its type.
     JAECHO ("foreach list", e.list_get());
     operator() (e->list_get());
-    TYPE_CHECK(current_, object::List);
+    object::type_check<object::List>(current_, SYMBOL(foreach));
     JAECHO("foreach body", e.body_get());
 
     // We need to copy the pointer on the list, otherwise the list will be
     // destroyed when children are visited and current_ is modified.
-    object::List::value_type content = current_->value<object::List>();
+    object::List::value_type content =
+      current_->as<object::List>()->value_get();
 
     // The list of runners launched for each value in the list if the flavor
     // is "&".
@@ -735,14 +736,14 @@ namespace runner
     {
       ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
       assert(local);
-      res->value_get().captures.push_back(stacks_.rget(local));
+      res->captures_get().push_back(stacks_.rget(local));
     }
 
     // Capture 'this' and 'call' in closures
     if (closure)
     {
-      res->value_get().self = stacks_.self();
-      res->value_get().call = stacks_.call();
+      res->self_get() = stacks_.self();
+      res->call_get() = stacks_.call();
     }
   }
 

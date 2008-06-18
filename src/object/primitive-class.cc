@@ -3,9 +3,10 @@
  ** \brief Creation of the URBI object primitive.
  */
 
-#include <object/primitive-class.hh>
 #include <object/atom.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
+#include <object/primitive-class.hh>
 
 #include <runner/runner.hh>
 
@@ -13,27 +14,48 @@ namespace object
 {
   rObject primitive_class;
 
-  /*-----------------------.
-  | Primitive primitives.  |
-  `-----------------------*/
-
-  static rObject
-  primitive_class_apply (runner::Runner& r, objects_type args)
+  Primitive::Primitive()
   {
-    CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, List);
-    if (arg1->value_get().empty())
-      throw PrimitiveError ("apply", "list of arguments must begin with self");
-    return r.apply (args[0], SYMBOL(apply), arg1->value_get());
+    pabort("You can't instanciate Primitives by hand!");
   }
 
-  void
-  primitive_class_initialize ()
+  Primitive::Primitive(rPrimitive model)
+    : content_(model->value_get())
   {
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(primitive, Name)
-    DECLARE (apply);
-#undef DECLARE
+    proto_add(primitive_class);
+  }
+
+  Primitive::Primitive(value_type value)
+    : content_(value)
+  {
+    proto_add(primitive_class);
+  }
+
+  Primitive::value_type Primitive::value_get() const
+  {
+    return content_;
+  }
+
+  const std::string Primitive::type_name = "Primitive";
+  std::string Primitive::type_name_get() const
+  {
+    return type_name;
+  }
+
+  void Primitive::initialize(CxxObject::Binder<Primitive>& bind)
+  {
+    bind(SYMBOL(apply), &Primitive::apply);
+  }
+
+  bool Primitive::primitive_added =
+    CxxObject::add<Primitive>("Primitive", primitive_class);
+
+  rObject
+  Primitive::apply (runner::Runner& r, rList args)
+  {
+    if (args->value_get().empty())
+      throw PrimitiveError ("apply", "list of arguments must begin with self");
+    return r.apply (this, SYMBOL(apply), args->value_get());
   }
 
 }; // namespace object

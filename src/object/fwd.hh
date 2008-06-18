@@ -36,16 +36,10 @@ namespace object
   /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,      Alien)				\
-  Macro(code,       Code)				\
   Macro(delegate,   Delegate)				\
-  Macro(dictionary, Dictionary)                         \
-  Macro(float,      Float)				\
   Macro(integer,    Integer)				\
-  Macro(list,       List)				\
   Macro(lobby,      Lobby)				\
-  Macro(primitive,  Primitive)				\
-  Macro(semaphore,  Semaphore)				\
-  Macro(string,     String)
+  Macro(semaphore,  Semaphore)
 
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
@@ -100,6 +94,19 @@ namespace object
    * of the operator-> used for the ref-counting.  Keep that in mind. */
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
 # undef DEFINE
+
+  class Code;
+  typedef libport::shared_ptr<Code> rCode;
+  class Dictionary;
+  typedef libport::shared_ptr<Dictionary> rDictionary;
+  class Float;
+  typedef libport::shared_ptr<Float> rFloat;
+  class List;
+  typedef libport::shared_ptr<List> rList;
+  class Primitive;
+  typedef libport::shared_ptr<Primitive> rPrimitive;
+  class String;
+  typedef libport::shared_ptr<String> rString;
 
   // urbi-exception.hh
   class IDelegate;

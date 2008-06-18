@@ -5,6 +5,7 @@
 
 #include <object/atom.hh>
 #include <object/delegate-class.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
 
@@ -22,7 +23,8 @@ namespace object
   delegate_class_apply (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    FETCH_ARG (1, List);
+    type_check<List>(args[1], SYMBOL(apply));
+    rList arg1 = args[1]->as<List>();
     return r.apply (args[0], SYMBOL(apply), arg1->value_get());
   }
 

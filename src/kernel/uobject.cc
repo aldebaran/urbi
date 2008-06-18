@@ -9,19 +9,22 @@
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
 
+#include <kernel/uconnection.hh>
+#include <kernel/userver.hh>
+#include <kernel/uvalue-cast.hh>
+#include <kernel/uobject.hh>
 
 #include <object/atom.hh>
-#include <object/urbi-exception.hh>
-#include <object/primitives.hh>
+#include <object/float-class.hh>
+#include <object/global-class.hh>
 #include <object/idelegate.hh>
 #include <object/object.hh>
 #include <object/object-class.hh>
-#include <object/global-class.hh>
-#include <kernel/userver.hh>
-#include <kernel/uconnection.hh>
+#include <object/primitives.hh>
+#include <object/string-class.hh>
+#include <object/urbi-exception.hh>
+
 #include <urbi/uobject.hh>
-#include <kernel/uvalue-cast.hh>
-#include <kernel/uobject.hh>
 
 
 // Make it more readable.
