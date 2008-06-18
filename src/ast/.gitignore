@@ -21,6 +21,9 @@ ast.hxx
 binary.cc
 binary.hh
 binary.hxx
+break.cc
+break.hh
+break.hxx
 call-msg.cc
 call-msg.hh
 call-msg.hxx
@@ -36,6 +39,9 @@ closure.hxx
 code.cc
 code.hh
 code.hxx
+continue.cc
+continue.hh
+continue.hxx
 declaration.cc
 declaration.hh
 declaration.hxx
@@ -103,6 +109,9 @@ pipe.hxx
 pretty-printer.cc
 pretty-printer.hh
 pretty-printer.stamp
+return.cc
+return.hh
+return.hxx
 scope.cc
 scope.hh
 scope.hxx
@@ -121,9 +130,6 @@ tagged-stmt.hxx
 this.cc
 this.hh
 this.hxx
-throw.cc
-throw.hh
-throw.hxx
 visitor.hh
 visitor.hxx
 visitor.stamp

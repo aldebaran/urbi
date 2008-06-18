@@ -339,6 +339,10 @@ namespace scheduler
     /// Tags this job depends on.
     scheduler::tags_type tags_;
 
+    /// Is the current job non-interruptible? If yes, yielding will
+    /// do nothing and blocking operations may raise an exception.
+    bool non_interruptible_;
+
   private:
 
     /// List of jobs having a link to this one. If the current job
@@ -346,10 +350,6 @@ namespace scheduler
     /// exception as well when they resume. This must be a list, as
     /// we may remove elements while we are iterating over it.
     std::list<rJob> links_;
-
-    /// Is the current job non-interruptible? If yes, yielding will
-    /// do nothing and blocking operations may raise an exception.
-    bool non_interruptible_;
 
     /// Is the current job side-effect free?
     bool side_effect_free_;

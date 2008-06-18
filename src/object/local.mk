@@ -51,8 +51,6 @@ object/dictionary-class.cc			\
 object/dictionary-class.hh			\
 object/float-class.cc				\
 object/float-class.hh				\
-object/flow-exception.cc			\
-object/flow-exception.hh			\
 object/fwd.hh					\
 object/global-class.cc				\
 object/global-class.hh				\

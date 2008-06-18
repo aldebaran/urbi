@@ -35,7 +35,6 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "Throw::exception_kind": '<ast/throw.hh>'
   "declarations_type":             '<ast/declarations-type.hh>'
   "exps_type":             '<ast/exps-type.hh>'
   "flavor_type":           '<ast/flavor.hh>'
@@ -52,7 +51,6 @@ includes_map:
 non_visitable_types:
   - "bool"
   - "flavor_type"
-  - "Throw::exception_kind"
   - "libport::Symbol"
   - "loc"
   - "std::string"
@@ -263,7 +261,10 @@ TaggedStmt:
 AbstractScope:
   super: Exp
   attributes:
-    - body:   { type: 'rExp', desc: The scoped expression }
+    - body:
+        type: 'rExp'
+        desc: The scoped expression
+        access: rwW
   printer:
     - '"{"'
     - 'libport::incendl'
@@ -364,6 +365,9 @@ Nary:
           /// Push a new expression, creating a Statement node.
           void push_back(rExp e, flavor_type f = flavor_none);
 
+          /// Idem, at the front.
+          void push_front(rExp e, flavor_type f = flavor_none);
+
           /// Push a message.
           void message_push(const std::string& text, const std::string& tag);
 
@@ -437,6 +441,13 @@ Nary:
         Nary::push_back(rExp e, flavor_type f)
         {
           children_->push_back(new Stmt(e->location_get(), f, e));
+          location_adjust();
+        }
+
+        void
+        Nary::push_front(rExp e, flavor_type f)
+        {
+          children_->push_front(new Stmt(e->location_get(), f, e));
           location_adjust();
         }
 
@@ -608,35 +619,28 @@ Foreach:
     - libport::decendl
     - '"}"'
 
-Throw:
-  desc: /// Throw an exception when visited, used to implement break, return, etc.
+Break:
+  desc: /// Break from a loop.
   super: Exp
-  inline:
-    header inside: |2
-        public:
-          enum exception_kind
-          {
-            exception_break,
-            exception_continue,
-            exception_return,
-          };
+  printer:
+    - '"break"'
+
+Continue:
+  desc: /// Continue execution of a loop.
+  super: Exp
+  printer:
+    - '"continue"'
+
+Return:
+  desc: /// Return a value from a function or closure.
+  super: Exp
   attributes:
-    - kind:
-        type: 'Throw::exception_kind'
-        desc: The kind of the exception to throw.
     - value:
         type: 'rExp'
-        desc: The value to throw when visited. May be empty.
+        desc: The value to return. May be empty.
         mandatory: False
   printer:
-    - '{
-         switch (n->kind_get())
-         {
-           case Throw::exception_break:    ostr_ << "break";  break;
-           case Throw::exception_continue: ostr_ << "continue"; break;
-           case Throw::exception_return:   ostr_ << "return"; break;
-         }
-       }'
+    - '"return"'
     - "{
          if (n->value_get())
            ostr_ << ' ' << *n->value_get();

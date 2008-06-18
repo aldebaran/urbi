@@ -811,15 +811,15 @@ stmt:
     }
 | "return" exp.opt
     {
-      $$ = new ast::Throw(@$, ast::Throw::exception_return, $2);
+      $$ = new ast::Return(@$, $2);
     }
 | "break"
     {
-      $$ = new ast::Throw(@$, ast::Throw::exception_break, 0);
+      $$ = new ast::Break(@$);
     }
 | "continue"
     {
-      $$ = new ast::Throw(@$, ast::Throw::exception_continue, 0);
+      $$ = new ast::Continue(@$);
     }
 | "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {

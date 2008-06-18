@@ -72,6 +72,7 @@ $(dist_uobject_sources)
 
 include ast/local.mk
 include binder/local.mk
+include flower/local.mk
 include parser/local.mk
 include object/local.mk
 include runner/local.mk

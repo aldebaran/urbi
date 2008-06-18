@@ -159,7 +159,6 @@ namespace runner
                               (Tag)
                               (TaggedStmt)
                               (This)
-                              (Throw)
                               (While))
 
     /// Factor handling of Scope and Do

@@ -42,6 +42,8 @@
 
 #include <binder/bind.hh>
 
+#include <flower/flower.hh>
+
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -53,7 +55,6 @@
 
 #include <parser/uparser.hh>
 #include <parser/parse-result.hh>
-#include <parser/parser-utils.hh>
 
 #include <binder/binder.hh>
 
@@ -262,21 +263,12 @@ UConnection::received (const char* buffer, size_t length)
     if (ast::rNary ast = result->ast_get())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
-      try
-      {
-	ast = binder::bind(ast).unsafe_cast<ast::Nary>();
-	assert(ast);
-	ECHO ("bound and flowed: {{{" << *ast << "}}}");
-	// Append to the current list.
-	active_command->splice_back(ast);
-	ECHO ("appended: " << *active_command << "}}}");
-      }
-      catch (const object::ParserError& pe)
-      {
-	std::string msg =
-	  parser::message_format(pe.location_get(), pe.msg_get()) + "\n";
-	send(msg.c_str(), "error");
-      }
+      ast = binder::bind(flower::flow(ast)).unsafe_cast<ast::Nary>();
+      assert(ast);
+      ECHO ("bound and flowed: {{{" << *ast << "}}}");
+      // Append to the current list.
+      active_command->splice_back(ast);
+      ECHO ("appended: " << *active_command << "}}}");
     }
     else
       LIBPORT_ECHO("the parser returned NULL:" << std::endl

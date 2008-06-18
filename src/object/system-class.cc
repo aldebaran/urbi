@@ -12,6 +12,8 @@
 
 #include <binder/bind.hh>
 
+#include <flower/flower.hh>
+
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -94,7 +96,7 @@ namespace object
     dynamic_cast<runner::Interpreter&>(r)(errs);
     if (ast::rNary ast = p->ast_get())
     {
-      ast = binder::bind(ast).unsafe_cast<ast::Nary>();
+      ast = binder::bind(flower::flow(ast)).unsafe_cast<ast::Nary>();
       assert(ast);
       return dynamic_cast<runner::Interpreter&>(r).eval(ast);
     }
@@ -192,7 +194,7 @@ namespace object
       dynamic_cast<runner::Interpreter&>(r)(errs);
     }
 
-    ast::rConstAst ast = binder::bind(res->ast_get());
+    ast::rConstAst ast = binder::bind(flower::flow(res->ast_get()));
     if (!ast)
       throw PrimitiveError("", //same message than k1
                            "Error loading file: " + filename);

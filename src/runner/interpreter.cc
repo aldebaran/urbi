@@ -34,7 +34,6 @@
 #include <object/symbols.hh>
 #include <object/tag-class.hh>
 #include <object/urbi-exception.hh>
-#include <object/flow-exception.hh>
 
 #include <runner/interpreter.hh>
 #include <parser/uparser.hh>
@@ -86,26 +85,6 @@ namespace runner
       YIELD();					\
   } while (0)
 
-
-  // Helper to generate a function that swaps two rObjects.
-  inline
-  boost::function0<void>
-  swap(Interpreter::rObject& lhs, Interpreter::rObject& rhs)
-  {
-    // Strangely, this indirection is needed
-    void (*f) (Interpreter::rObject&, Interpreter::rObject&) =
-      std::swap<Interpreter::rObject>;
-    return boost::bind(f, boost::ref(lhs), boost::ref(rhs));
-  }
-
-  // Helper to generate a function that swaps two unsigned
-  inline
-  boost::function0<void>
-  swap(unsigned& lhs, unsigned& rhs)
-  {
-    void (*f) (unsigned&, unsigned&) = std::swap<unsigned>;
-    return boost::bind(f, boost::ref(lhs), boost::ref(rhs));
-  }
 
   // This function takes an expression and attempts to decompose it
   // into a list of identifiers.
@@ -250,11 +229,6 @@ namespace runner
     {
       current_.reset();
       propagate_error_(x, e->location_get());
-      throw;
-    }
-    catch (object::FlowException&)
-    {
-      current_.reset();
       throw;
     }
     catch (scheduler::SchedulerException&)
@@ -409,29 +383,8 @@ namespace runner
     // space, for example in an infinite recursion.
     check_stack_space ();
 
-    try
-    {
-      stacks_.execution_starts(msg);
-      current_ = eval (ast->body_get());
-    }
-    catch (object::BreakException& be)
-    {
-      object::PrimitiveError error("break", "outside a loop");
-      propagate_error_(error, be.location_get());
-      throw error;
-    }
-    catch (object::ContinueException& be)
-    {
-      object::PrimitiveError error("continue", "outside a loop");
-      propagate_error_(error, be.location_get());
-      throw error;
-    }
-    catch (object::ReturnException& re)
-    {
-      current_ = re.result_get();
-      if (!current_)
-	current_ = object::void_class;
-    }
+    stacks_.execution_starts(msg);
+    current_ = eval (ast->body_get());
     return current_;
   }
 
@@ -699,17 +652,7 @@ namespace runner
 	if (tail++)
 	  MAYBE_YIELD(flavor);
 
-	try
-	{
-	  operator() (body);
-	}
-	catch (object::BreakException&)
-	{
-	  break;
-	}
-	catch (object::ContinueException&)
-	{
-	}
+	operator() (body);
       }
     }
 
@@ -829,28 +772,6 @@ namespace runner
   }
 
 
-// Forward flow exceptions up to the top-level, and handle them
-// there.  Makes only sense in a Nary.
-#define CATCH_FLOW_EXCEPTION(Type, Keyword, Error)              \
-  catch (Type flow_exception)                                   \
-  {                                                             \
-    if (e->toplevel_get ())                                     \
-    {                                                           \
-      object::PrimitiveError error(Keyword, Error);             \
-      propagate_error_(error, flow_exception.location_get());   \
-      throw error;						\
-    }                                                           \
-    else                                                        \
-      throw;							\
-  }
-#define CATCH_FLOW_EXCEPTIONS				\
-  CATCH_FLOW_EXCEPTION(object::BreakException,		\
-		       "break", "outside a loop")	\
-  CATCH_FLOW_EXCEPTION(object::ContinueException,	\
-		       "continue", "outside a loop")	\
-  CATCH_FLOW_EXCEPTION(object::ReturnException,		\
-		       "return", "outside a function")
-
   void
   Interpreter::visit (ast::rConstNary e)
   {
@@ -887,13 +808,7 @@ namespace runner
 	// If at toplevel, stop and print errors
 	try
 	{
-	  // Rewrite flow error if we are at toplevel
-	  try
-	  {
-            operator() (c);
-          }
-	  CATCH_FLOW_EXCEPTIONS
-
+	  operator() (c);
 	  if (e->toplevel_get () && current_.get ())
 	  {
 	    try
@@ -926,7 +841,6 @@ namespace runner
 	  else
 	    throw;
 	}
-        CATCH_FLOW_EXCEPTIONS
       }
     }
 
@@ -958,9 +872,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstAbstractScope e)
   {
-    Finally finally(boost::bind(&scheduler::Job::non_interruptible_set,
-                                this,
-                                non_interruptible_get()));
+    Finally finally(libport::restore(non_interruptible_));
     super_type::operator()(e->body_get());
   }
 
@@ -1134,27 +1046,6 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstThrow e)
-  {
-    switch (e->kind_get())
-    {
-      case ast::Throw::exception_break:
-	throw object::BreakException(e->location_get());
-
-      case ast::Throw::exception_continue:
-        throw object::ContinueException(e->location_get());
-
-      case ast::Throw::exception_return:
-	if (e->value_get())
-	  operator() (e->value_get());
-	else
-	  current_.reset();
-	throw object::ReturnException(e->location_get(), current_);
-    }
-  }
-
-
-  void
   Interpreter::visit (ast::rConstWhile e)
   {
     bool tail = false;
@@ -1170,17 +1061,7 @@ namespace runner
 
       JAECHO ("while body", e.body_get ());
 
-      try
-      {
-	operator() (e->body_get());
-      }
-      catch (object::BreakException&)
-      {
-	break;
-      }
-      catch (object::ContinueException&)
-      {
-      }
+      operator() (e->body_get());
     }
     current_ = object::void_class;
   }
