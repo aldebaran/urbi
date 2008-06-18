@@ -17,6 +17,8 @@ parser/parse-result.hxx				\
 parser/parse-result.cc				\
 parser/parser-impl.hh				\
 parser/parser-impl.cc				\
+parser/parser-utils.hh				\
+parser/parser-utils.cc				\
 parser/uparser.hh				\
 parser/uparser.cc
 

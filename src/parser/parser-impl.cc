@@ -15,6 +15,7 @@
 #include <ast/print.hh>
 
 #include <parser/parser-impl.hh>
+#include <parser/parser-utils.hh>
 #include <parser/tweast.hh>
 #include <parser/utoken.hh>
 
@@ -104,18 +105,6 @@ namespace parser
       std::swap(loc, loc_);
     }
     return result_;
-  }
-
-  namespace
-  {
-    static
-    std::string
-    message_format(const ParserImpl::location_type& l, const std::string& msg)
-    {
-      std::ostringstream o;
-      o << "!!! " << l << ": " << msg;
-      return o.str();
-    }
   }
 
   void
