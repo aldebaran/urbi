@@ -26,6 +26,10 @@ TFAIL_TESTS +=					\
 2.x/foreach-and.chk				\
 2.x/foreach-and-exception.chk
 
+# pending features
+TFAIL_TESTS +=					\
+2.x/unique-variable.chk
+
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
