@@ -3,18 +3,22 @@
  ** \brief Creation of the URBI object list.
  */
 
+#include <boost/assign.hpp>
 #include <boost/bind.hpp>
 
 #include <libport/foreach.hh>
 #include <libport/ufloat.hh>
 
 #include <kernel/userver.hh>
+#include <object/code-class.hh>
 #include <object/float-class.hh>
 #include <object/list-class.hh>
 #include <object/atom.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <runner/runner.hh>
+
+using namespace boost::assign;
 
 namespace object
 {
@@ -120,6 +124,13 @@ namespace object
     return new List(res);
   }
 
+  void
+  List::each(runner::Runner& r, rObject f)
+  {
+    foreach(const rObject& o, content_)
+      r.apply(f, SYMBOL(each), list_of (f) (o));
+  }
+
 #define BOUNCE(Name, Ret, Arg, Check)                           \
   IF(Ret, rObject, rList) List::Name(WHEN(Arg, rObject arg))    \
   {                                                             \
@@ -142,6 +153,7 @@ namespace object
   {
     bind(SYMBOL(back),         &List::back        );
     bind(SYMBOL(clear),        &List::clear       );
+    bind(SYMBOL(each),         &List::each        );
     bind(SYMBOL(front),        &List::front       );
     bind(SYMBOL(PLUS),         &List::operator+   );
     bind(SYMBOL(PLUS_EQ),      &List::operator+=  );

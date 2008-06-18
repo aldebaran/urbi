@@ -27,6 +27,7 @@ namespace object
       // Urbi method
       rObject back      ();
       rList   clear     ();
+      void    each      (runner::Runner&, rObject);
       rObject front     ();
       rList   pop_back  ();
       rList   pop_front ();
