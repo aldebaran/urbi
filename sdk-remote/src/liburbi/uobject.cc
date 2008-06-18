@@ -76,17 +76,17 @@ namespace urbi
   // **************************************************************************
   //! UObject constructor.
   UObject::UObject(const std::string& s)
-    : __name(s),
-      classname(s),
-      derived(false),
-      gc (0),
-      remote (true),
-      load(s, "load")
+    : __name(s)
+    , classname(s)
+    , derived(false)
+    , gc(0)
+    , remote(true)
+    , load(s, "load")
   {
     objecthub = 0;
     autogroup = false;
 
-    URBI(()) << "class " << __name << "{};";
+    URBI(()) << "class " << __name << " {};";
     URBI(()) << "external object " << __name << ";";
     period = -1;
 
@@ -96,9 +96,9 @@ namespace urbi
 
   //! Dummy UObject constructor.
   UObject::UObject(int index)
-    : derived(false),
-      gc (0),
-      remote (true)
+    : derived(false)
+    , gc(0)
+    , remote(true)
   {
     std::stringstream ss;
     ss << "dummy" << index;
@@ -161,7 +161,7 @@ namespace urbi
     if (it != cblist.end ())
     {
       cblist.erase (it);
-      delete (*it);
+      delete *it;
     }
 
     // Set period value
@@ -372,7 +372,7 @@ namespace urbi
         }
       }
       break;
-      
+
       default:
         msg.client.printf("Component Error: "
                           "unknown server message type number %d\n",
