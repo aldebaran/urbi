@@ -5,6 +5,7 @@
 #include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
+#include <object/list-class.hh>
 #include <object/string-class.hh>
 #include <object/urbi-exception.hh>
 
@@ -13,24 +14,37 @@
 urbi::UValue uvalue_cast(object::rObject o)
 {
   urbi::UValue res;
+  if (object::rFloat f = o->as<object::Float>())
+    res = f->value_get();
+  else if (object::rString s = o->as<object::String>())
+    res = s->value_get();
+  else if (object::rList s = o->as<object::List>())
+  {
+    res.type = urbi::DATA_LIST;
+    res.list = new urbi::UList;
+    object::List::value_type& t = o.cast<object::List>()->value_get();
+    foreach (const object::rObject& co, t)
+      res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
+  }
+  else
   switch(o->kind_get())
   {
-  case object::object_kind_alien:
-  case object::object_kind_delegate:
-  case object::object_kind_lobby:
-  case object::object_kind_semaphore:
-    throw object::WrongArgumentType
-      ("Float",
-       string_of(o->kind_get()),
-       "cast");
-    break;
-  case object::object_kind_object:
-    if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
-      boost::throw_exception (
-        object::WrongArgumentType
-        (string_of(object::object_kind_object),
+    case object::object_kind_alien:
+    case object::object_kind_delegate:
+    case object::object_kind_lobby:
+    case object::object_kind_semaphore:
+      throw object::WrongArgumentType
+        ("UValue",
          string_of(o->kind_get()),
-         "bin-cast"));
+         "cast");
+      break;
+    case object::object_kind_object:
+      if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
+        boost::throw_exception (
+          object::WrongArgumentType
+          (string_of(object::object_kind_object),
+           string_of(o->kind_get()),
+           "bin-cast"));
       {
 	const std::string& data =
 	  o->slot_get(SYMBOL(data))->
@@ -40,21 +54,21 @@ urbi::UValue uvalue_cast(object::rObject o)
           as<object::String>()->value_get().name_get();
 	std::list<urbi::BinaryData> l;
 	l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
-			      data.size()));
+                                     data.size()));
 	std::list<urbi::BinaryData>::iterator i = l.begin();
 	res.type = urbi::DATA_BINARY;
 	res.binary = new urbi::UBinary();
 	res.binary->parse(
-		   (boost::lexical_cast<std::string>(data.size()) +
-		   " " + keywords + '\n').c_str(), 0, l, i);
+          (boost::lexical_cast<std::string>(data.size()) +
+           " " + keywords + '\n').c_str(), 0, l, i);
 	return res;
       }
-    break;
+      break;
 #define HANDLE_TYPE(k, t)                       \
-    case object::object_kind_##k:               \
-      res = o.cast<object::t>()->value_get();   \
-    break;
-  HANDLE_TYPE(integer, Integer);
+      case object::object_kind_##k:             \
+        res = o.cast<object::t>()->value_get(); \
+      break;
+      HANDLE_TYPE(integer, Integer);
 #undef HANDLE_TYPE
   }
   return res;
@@ -74,6 +88,14 @@ object_cast(const urbi::UValue& v)
       return new object::String(libport::Symbol(*v.stringValue));
       break;
 
+    case urbi::DATA_LIST:
+    {
+      object::rList l = new object::List();
+      foreach (urbi::UValue *cv, v.list->array)
+	l->value_get().push_back(object_cast(*cv));
+      res = l;
+      break;
+    }
     case urbi::DATA_BINARY:
     {
       res = new object::Object();
@@ -94,8 +116,8 @@ object_cast(const urbi::UValue& v)
 
     default:
       throw
-	object::WrongArgumentType("Float",
-				  "Float",
+	object::WrongArgumentType("Object",
+				  "Not yet supported",
                                   "backcast");
       break;
   }
