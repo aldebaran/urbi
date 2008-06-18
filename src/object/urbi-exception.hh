@@ -166,6 +166,14 @@ namespace object
     COMPLETE_EXCEPTION (InternalError);
   };
 
+  /** Exception used when there is a parser/binder/flower/... error.
+   */
+  struct ParserError: public UrbiException
+  {
+    ParserError(const ast::loc&, const std::string& msg);
+    COMPLETE_EXCEPTION(ParserError);
+  };
+
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
   void check_arg_count (unsigned formal, unsigned effective,
