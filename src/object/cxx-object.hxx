@@ -38,6 +38,13 @@ namespace object
         res = new T();
       return res;
     }
+
+    template <typename T>
+    rObject cxx_object_id(runner::Runner&, objects_type args)
+    {
+      CHECK_ARG_COUNT(1);
+      return args[0];
+    }
   }
 
   template <typename T>
@@ -58,6 +65,13 @@ namespace object
                                                         _1, _2))));
     Binder<T> b(res_);
     T::initialize(b);
+
+    libport::Symbol conversion =
+      libport::Symbol(std::string("as") + name_.name_get());
+    if (!res_->slot_locate(conversion, 0))
+      res_->slot_set(conversion,
+                     rPrimitive(new Primitive(boost::bind(cxx_object_id<T>,
+                                                          _1, _2))));
     return res_;
   }
 
