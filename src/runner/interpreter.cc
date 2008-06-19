@@ -52,7 +52,7 @@ namespace runner
 #define ME JOB (this)
 
 #define AST(Ast)                                \
-  (Ast).location_get ()                         \
+  (Ast)->location_get ()                        \
   << libport::incendl                           \
   << "{{{"                                      \
   << libport::incendl                           \
@@ -199,7 +199,7 @@ namespace runner
   Interpreter::work ()
   {
     assert (ast_ || code_);
-    JAECHO ("starting evaluation of AST: ", *ast_);
+    JAECHO ("starting evaluation of AST: ", ast_);
     if (ast_)
       operator()(ast_);
     else
@@ -610,10 +610,10 @@ namespace runner
   Interpreter::visit (ast::rConstForeach e)
   {
     // Evaluate the list attribute, and check its type.
-    JAECHO ("foreach list", e.list_get());
+    JAECHO ("foreach list", e->list_get());
     operator() (e->list_get());
     object::type_check<object::List>(current_, SYMBOL(foreach));
-    JAECHO("foreach body", e.body_get());
+    JAECHO("foreach body", e->body_get());
 
     // We need to copy the pointer on the list, otherwise the list will be
     // destroyed when children are visited and current_ is modified.
@@ -712,12 +712,12 @@ namespace runner
 
     if (object::is_true(current_))
     {
-      JAECHO ("then", e.thenclause_get ());
+      JAECHO ("then", e->thenclause_get());
       operator() (e->thenclause_get());
     }
     else
     {
-      JAECHO ("else", e.elseclause_get ());
+      JAECHO ("else", e->elseclause_get());
       operator() (e->elseclause_get());
     }
   }
@@ -926,7 +926,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstStmt e)
   {
-    JAECHO ("expression", e.expression_get ());
+    JAECHO ("expression", e->expression_get());
     operator() (e->expression_get());
   }
 
@@ -1054,12 +1054,12 @@ namespace runner
     {
       if (tail++)
 	MAYBE_YIELD (e->flavor_get());
-      JAECHO ("while test", e.test_get ());
+      JAECHO ("while test", e->test_get());
       operator() (e->test_get());
       if (!object::is_true(current_))
 	break;
 
-      JAECHO ("while body", e.body_get ());
+      JAECHO ("while body", e->body_get());
 
       operator() (e->body_get());
     }
