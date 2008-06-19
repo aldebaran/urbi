@@ -10,6 +10,8 @@ namespace binder
   {
     TIMER_PUSH("bind");
     Binder bind;
+    if (getenv("BIND"))
+      LIBPORT_ECHO("Binding: " << *a);
     bind(a);
     ast::rAst ast = bind.result_get();
     TIMER_POP("bind");
