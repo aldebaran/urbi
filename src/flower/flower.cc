@@ -1,13 +1,13 @@
 #include <libport/finally.hh>
 
-#include <ast/flavor.hh>
+#include <ast/parametric-ast.hh>
 #include <flower/flower.hh>
 #include <kernel/server-timer.hh>
 #include <object/urbi-exception.hh>
-#include <parser/tweast.hh>
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
 #include <parser/parser-utils.hh>
+#include <parser/tweast.hh>
 
 namespace flower
 {
@@ -127,13 +127,11 @@ namespace flower
     super_type::visit(code);
     if (has_return_)
     {
-      ast::rAbstractScope copy = result_.unsafe_cast<ast::Function>()->body_get();
-      parser::Tweast tweast;
-      tweast << "var returnTag = new Tag | "
-	     << "returnTag: {"
-	     << copy->body_get()
-	     << "}";
-      copy->body_set(parser::parse(tweast)->ast_get());
+      static ast::ParametricAst a("var returnTag = new Tag | "
+                                  "returnTag: { %exp:1 }");
+      ast::rAbstractScope copy =
+        result_.unsafe_cast<ast::Function>()->body_get();
+      copy->body_set(exp(a % copy->body_get()));
     }
   }
 
