@@ -1,0 +1,193 @@
+#! /bin/bash
+# bibneat - Call a number of tools in order to clean a bib file.
+
+# Name of the program, and a function to report problems.
+me=$(basename $0)
+warn ()
+{
+  echo "$me:" "$@" >&2
+}
+
+# Tmp dir
+tmpdir=${TMPDIR:-/tmp}/bneat$$
+debug=:
+# By default, keep the comments
+kill=false
+
+# The version/usage strings
+version="bibneat 0.1"
+
+usage="\
+Usage: $me [OPTIONS] FILES
+Each BibTeX FILE is backed up, and various reformating are performed.
+
+Options:
+ -h, --help        display this help and exit
+ -v, --version     display version information and exit
+ -k, --kill        kill comments in the Bib source
+ -q, --quiet       don't print informational messages"
+
+help="Try \`$me --help' for more information."
+
+# Parse command line arguments.
+option_without_arguments='vhsqkD'
+
+# Push a token among the arguments that will be used to notice when
+# we ended options/arguments parsing.
+arg_sep="$$--$$"
+set dummy "${1+"$@"}" "$arg_sep"
+shift
+while test "x$1" != "x$arg_sep"; do
+
+  # Handle --option=value by splitting apart and putting back on argv.
+  case "$1" in
+    --*=*)
+      opt=`echo "$1" | sed -e 's/=.*//'`
+      val=`echo "$1" | sed -e 's/[^=]*=//'`
+      shift
+      set dummy "$opt" "$val" "${1+"$@"}"
+      shift
+      ;;
+
+    -[$option_without_arguments]?*)
+      # Prefix $1 with x to avoid running `echo -na' for instance.
+      opt=`echo "x$1" | sed -e 's/x-\(.\).*/-\1/'`
+      rest=`echo "x$1" | sed -e 's/x-.\(.*\)/-\1/'`
+      shift
+      set dummy "$opt" "$rest" "${1+"$@"}"
+      shift
+      ;;
+
+    # This case needs to be protected so that the case `-??*' does
+    # not split long options without arguments
+    --*)
+      ;;
+
+    # This is an option with argument.  Split apart and put back on argv.
+    -??*)
+      opt=`echo "x$1" | sed -e 's/x-\(.\).*/-\1/'`
+      arg=`echo "x$1" | sed -e 's/x-.\(.*\)/\1/'`
+      shift
+      set dummy "$opt" "$arg" "${1+"$@"}"
+      shift
+      ;;
+  esac
+
+  # Now, handle the options.  $1 is the option *only*.  If it has an
+  # argument, it is now necessarily in $2 etc.  Remember to shift
+  # when fetching an argument.
+  case "$1" in
+    -v | --v*) echo "$version"; exit 0;;
+    -h | --h*) echo "$usage"; exit 0;;
+    -q | -s | --s* | --q*) verbose=:;;
+    -k | --k* ) kill=:;;
+    # Delay debugging so that options parsing does not appear
+    -D | --debug)  debug=echo ;;
+
+    --) # What remains are not options.
+      shift
+      while test "x$1" != "x$arg_sep"; do
+        set dummy "${1+"$@"}" "$1"
+        shift
+	shift
+      done
+      break;;
+
+    -*)
+      echo "$program: Unknown or ambiguous option \`$1'." >&2
+      echo "$program: Try \`--help' for more information." >&2
+      exit 1;;
+    *) set dummy "${1+"$@"}" "$1"
+       shift
+       ;;
+   esac
+   shift
+done
+# Pop the token
+shift
+
+
+if test -n "`$debug true`"; then
+  # Set -x now if debugging
+  set -x
+else
+  # Temp dir.  Get ready not to leave junk (if not debugging)
+  trap "/bin/rm -rf $tmpdir" 0 1 2 3 13 15
+fi
+
+if (bibtool </dev/null) >/dev/null 2>&1; then :; else
+  echo "$0: bibtool is not installed" 1>&2
+  (exit 1); exit 1
+fi
+
+mkdir $tmpdir
+
+# Clean the bib file $1, and save the result in $2.
+# $1 and $2 can safely be the same path.
+bib_file_clean ()
+{
+  tmp=$tmpdir/$(basename $2)
+  (
+    # Get the heading comments of the file, since bibtool looses all
+    # comments.  (The convoluted sed script remove empty lines before
+    # the first @-line.  this is because bibtool already adds one
+    # empty line at the top of the file.)
+    $kill || sed -n '/^[ ]*@/{x;1!P;Q};/./!H;/./{x;1!p};' "$1"
+    # bibtool has this bad habit of leaving empty fields.
+    # Option -O is documented to do this, but is refused by the executable.
+    # Beware that grep may exit 1
+    bibtool -s "$1" | (egrep -v '{},?$'; true) |
+      sed "/month/{s/{[jJ]anuary}/jan/;
+                   s/{[jJ]anvier}/jan/;
+                   s/{[jJ]an\.\?}/jan/;
+                   s/{[fF]ebruary}/feb/;
+                   s/{[fF]eb\.\?}/feb/;
+                   s/{[fF].*vrier}/feb/;
+                   s/{[fF].*v\.\?}/feb/;
+                   s/{[mM]arch}/mar/;
+                   s/{[mM]ars}/mar/;
+                   s/{[mM]ar\.\?}/mar/;
+                   s/{[aA][pv]ril}/apr/;
+                   s/{[aA][pv]r\.\?}/apr/;
+                   s/{[mM]a[yi]}/may/;
+                   s/{[jJ]une}/jun/;
+                   s/{[jJ]un\.\?}/jun/;
+                   s/{[jJ]uin}/jun/;
+                   s/{[jJ]uly}/jul/;
+                   s/{[jJ]u[il]\.\?}/jun/;
+                   s/{[jJ]uil.*}/jul/;
+                   s/{[aA]ugust}/aug/;
+                   s/{[aA]ug\.\?}/aug/;
+                   s/{[aA].*ut}/aug/;
+                   s/{[sS]eptember}/sep/;
+                   s/{[sS]eptembre}/sep/;
+                   s/{[sS]ept\?\.\?}/sep/;
+                   s/{[oO]ctober}/oct/;
+                   s/{[oO]ctobre}/oct/;
+                   s/{[oO]ct\.\?}/oct/;
+                   s/{[nN]ovember}/nov/;
+                   s/{[nN]ovembre}/nov/;
+                   s/{[nN]ov\.\?}/nov/;
+                   s/{[dD]ecember}/dec/;
+                   s/{[dD]ecembre}/dec/;
+                   s/{[dD]ec\.\?}/dec/; }"
+    # Get the heading trailing comments of the file.
+    $kill || sed 1,`sed -n '/^}/=' "$1" | tail -n 1`d "$1"
+  ) > $tmp
+
+  mv $tmp $2
+}
+
+set -e
+
+for src in "$@"
+do
+  # We don't trust ourselves
+  cp -bf --backup=numbered "$src" "$src"
+
+  bib_file_clean "$src" "$src"
+
+  warn "$src: cleaned"
+done
+
+exit 0

@@ -1,0 +1,74 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{mycxx}[2007/12/06 v1.1
+			Writing C++ nicely]
+
+\RequirePackage{xspace}
+\RequirePackage{ifthen}
+
+\DeclareOption{normal}{\def\mycxx@style{}}
+\DeclareOption{sf}    {\def\mycxx@style{\sf}}
+
+%% Versions for TeX output.
+\DeclareRobustCommand{\CTeX}{\mycxx@style C}
+
+\DeclareRobustCommand{\CxxTeX}{%
+  \valign{\vfil\hbox{##}\vfil\cr
+    {\mycxx@style C\kern-.1em}\cr
+    $\hbox{\fontsize{\sf@size}{0}\textbf{+\kern-0.05em+}}$\cr}%
+}
+
+% From http://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29:
+%
+%   According to the ECMA-334 C# Language Specification, section 6,
+%   Acronyms and abbreviations[18] the name of the language is written
+%   "C#" ("LATIN CAPITAL LETTER C (U+0043) followed by the NUMBER
+%   SIGN # (U+0023)") and pronounced "C Sharp".
+\DeclareRobustCommand{\CsTeX}{\mycxx@style C\#}
+
+\DeclareRobustCommand{\DTeX}{\mycxx@style D}
+
+
+%% Same as \texorpdfstring, but if not defined expands the
+%% TeX part only.
+\newcommand{\mycxx@texorpdfstring}[2]
+{\ifthenelse{\NOT\isundefined{\texorpdfstring}}{%
+    \texorpdfstring{#1}{#2}}{%
+    #1}%
+}
+
+%% Versions that do not require hyperref to be loaded.  For some
+%% reason, ifthenelse does not seem to work very well in \section, in
+%% which case you should use the *HR versions below.
+\DeclareRobustCommand{\C}
+  {\mycxx@texorpdfstring{\CTeX}{C}\xspace}
+
+\DeclareRobustCommand{\Cxx}
+  {\mycxx@texorpdfstring{\CxxTeX}{C++}\xspace}
+
+\DeclareRobustCommand{\Cs}
+  {\mycxx@texorpdfstring{\CsTeX}{C\#}\xspace}
+
+\DeclareRobustCommand{\D}
+  {\mycxx@texorpdfstring{\DTeX}{D}\xspace}
+
+%% Versions that expect hyperref to be loaded, hence \texorpdfstring
+%% is defined.
+\DeclareRobustCommand{\CHR}
+  {\texorpdfstring{\CTeX}{C}\xspace}
+
+\DeclareRobustCommand{\CxxHR}
+  {\texorpdfstring{\CxxTeX}{C++}\xspace}
+
+\DeclareRobustCommand{\CsHR}
+  {\texorpdfstring{\CsTeX}{C\#}\xspace}
+
+\DeclareRobustCommand{\DHR}
+  {\texorpdfstring{\DTeX}{D}\xspace}
+
+\ExecuteOptions{normal}
+\ProcessOptions
+
+\endinput
+%%
+%% End of file `mycxx.sty'.

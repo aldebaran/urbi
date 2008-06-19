@@ -1,0 +1,10 @@
+\ifx\commented\undefined
+\RequirePackage{comment}
+\excludecomment{comment}
+\excludecomment{comments}
+\else
+\newenvironment{comment}{\begin{quote}\em}{\end{quote}}
+\newenvironment{comments}
+  {\begin{comment}\begin{itemize}}
+  {\end{itemize}\end{comment}}
+\fi

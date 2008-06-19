@@ -1,0 +1,13 @@
+%%		 					-*- LaTeX -*-
+
+%% \indexing{KEY}{VALUE}
+%% ---------------------
+%% Declare that \myindex{KEY} should run \index{VALUE}.
+\newcommand{\indexing}[2]{}
+
+%% \myindex{KEY}
+%% -------------
+%% Run \index on KEY's VALUE if declared, otherwise just KEY.
+\newcommand{\myindex}[1]{%
+  \index{#1}%
+}

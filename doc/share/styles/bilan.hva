@@ -1,0 +1,14 @@
+%%							-*- LaTeX -*-
+%% This is not needed: \usepackage{url}
+%% since it is done by hyperref.  Worse yet: there is not protection
+%% against multiple inclusion, so *do not include it*.
+\ifhevea
+  \usepackage{myhyperref}
+\else
+  \RequirePackage{url}
+\fi
+
+\RequirePackage[latin1]{inputenc}
+\RequirePackage[francais]{mybabel}
+\RequirePackage{myhyperref}
+\RequirePackage{misc}

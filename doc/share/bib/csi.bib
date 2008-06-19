@@ -1,0 +1,1787 @@
+
+
+@TechReport{	  abraham.07.seminar,
+  oldkeys	= {abraham.07.seminar.conceptgcc},
+  author	= {Alexandre Abraham},
+  title		= {{ConceptC++} study and possible integration in {SCOOP}},
+  titre		= {Etude de {ConceptC++} et possible int\'egration dans
+		  {SCOOP}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Abraham},
+  urllrde	= {200706-Seminar-Abraham},
+  abstract	= {At the end of this decade will arise C++0x and with it the
+		  new ``concept'' paradigm. Concepts provide abstract types
+		  as well as all the equipment to adapt concrete types to
+		  their abstraction, just like \emph{Static} library, a part
+		  of Olena project, does.\\
+
+		  We compare these two approaches, highlighting their
+		  respective strengths and weaknesses, in order to lay the
+		  foundations for the integration of concepts into SCOOP. In
+		  fact, concepts will simplify the client code and bring some
+		  new features to SCOOP.},
+  resume	= {La fin de cette d\'ecennie verra l'av\`enement de C++0x et
+		  avec lui du nouveau paradigme de \og concepts \fg{}. Les
+		  concepts fournissent un m\'ecanisme de typage abstrait pour
+		  les types param\'etr\'es ainsi que tout l'\'equipement
+		  d'adaptation des types concrets \`a ces types abstraits
+		  comme le fait actuellement la biblioth\`eque \emph{Static},
+		  composant du projet Olena.\\
+
+		  Nous proposons donc un comparatif de ces approches en
+		  exhibant leurs points forts et faibles ainsi que leurs
+		  capacit\'es particuli\`eres afin de proposer un support de
+		  documentation et une base pour la future int\'egration des
+		  concepts dans le paradigme SCOOP. Les concepts
+		  simplifieront l'\'ecriture du code client et enrichiront
+		  SCOOP de fonctions suppl\'ementaires.}
+}
+
+@TechReport{	  abraham.08.seminar,
+  author	= {Alexandre Abraham},
+  title		= {Topological Watershed},
+  titre		= {Ligne de partage des eaux topologique},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200806-Seminar-Abraham},
+  urllrde	= {200806-Seminar-Abraham},
+  abstract	= {Dividing a picture into area of interest is called picture
+		  segmentation, it is useful in particular to point out
+		  cancerous cells in medical imaging. The \emph{Watershed
+		  Transform} provides such a segementation and can be
+		  implemented in many ways. Here we will focus on the \emph{
+		  Topological Watershed}, a performant algorithm producing
+		  results with nice properties. In this report, we will show
+		  how this algorithm had been implemented in Milena, the C++
+		  generic image processing library of Olena, developed at the
+		  LRDE. We will first see how to treat usual image format and
+		  then generalize it to trickier formats like pictures mapped
+		  on general graphs.},
+  resume	= {Segmenter une image consiste \`a en extraire les r\'egions
+		  d'int\'er\^et, par exemple pour s\'eparer des cellules
+		  canc\'ereuses en imagerie m\'edicale. L'approche par
+		  transformation de la ligne de partage des eaux (LPE) ou
+		  \emph{Watershed Transform} permet d'obtenir une telle
+		  segmentation. Il en existe de nombreuses d\'efinitions,
+		  ainsi que diverses impl\'ementations, dont certaines sont
+		  \`a la fois performantes et produisent un r\'esultat avec
+		  de bonnes propri\'et\'es, comme le \emph{Topological
+		  Watershed}. Cet expos\'e pr\'esentera l'impl\'ementation
+		  d'un algorithme calculant cette LPE au sein de Milena, la
+		  biblioth\`eque C++ g\'en\'erique de traitement d'images de
+		  la plate-forme Olena, d\'evelopp\'ee au LRDE. Nous nous
+		  int\'eresserons tout d'abord aux formats d'images
+		  ``classiques'', puis \`a la g\'en\'eralisation \`a des
+		  formats d'images plus inhabituels (images \`a support de graphe g\'en\'eraux, etc.).}
+}
+
+@TechReport{	  anisko.03.seminar,
+  oldkeys	= {trans-tech-rep,anisko.03},
+  title		= {Transformers: a {C++} program transformation framework},
+  author	= {Robert Anisko and Valentin David and Cl\'ement Vasseur},
+  institution	= {LRDE},
+  year		= 2003,
+  number	= 0310,
+  urllrde	= {20030521-Seminar-ClementVasseur-Transformers-Report}
+}
+
+@TechReport{	  ballas.07.seminar,
+  oldkeys	= {ballas.07.seminar.olena.core},
+  author	= {Nicolas Ballas},
+  title		= {Software engineering in {O}lena {C}ore},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Ballas},
+  urllrde	= {200706-Seminar-Ballas},
+  abstract	= {Software engineering defines some methods in order to
+		  guarantee software quality. In the image processing field,
+		  several image types exist. Also, this is difficult to build
+		  a library dedicated to this field which provides reusable,
+		  extensible or compatible tools. We will see different
+		  approaches used by generic image processing libraries which
+		  deal with this problem.}
+}
+
+@TechReport{	  ballas.08.seminar,
+  author	= {Nicolas Ballas},
+  title		= {Image taxonomy in {M}ilena},
+  titre		= {Taxonomie des images de {M}ilena},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200806-Seminar-Ballas},
+  urllrde	= {200806-Seminar-Ballas},
+  abstract	= {Milena is the generic image processing library of the
+		  Olena platform. The library aims at remaining simple while
+		  providing high performances. The introduction of new image
+		  types based on graphs has revealed some design problems
+		  limit ing its genericity. For instance, we have always
+		  considered that "images have points"; yet some images have
+		  sites that are not points (but edges, facets, and even sets
+		  of points). Another erroneous assumption was to consider
+		  that sites are localized by a vector (e.g., (x,y) in the 2D
+		  plane), which cannot be true when sites are not point-wise.
+		  Therefore there was a need to reconsider the image types
+		  and their underlying images properties.In this seminar, we
+		  will present a new image taxonomy that solves those
+		  issues.},
+  resume	= {Milena est la biblioth\`eque de traitement d'images
+		  g\'en\'erique de la plate-forme Olena. Cette biblioth\`eque
+		  a pour but d'\^etre performante tout en restant simple.
+		  L'introduction dans Milena de nouveaux types d'images
+		  bas\'es sur des graphes a mis en \'evidence des probl\`emes
+		  de mod\'elisation qui sont un frein pour sa
+		  g\'en\'ericit\'e. Par exemple, nous avons toujours
+		  consid\'er\'e que "les images ont des points". N\'eanmoins,
+		  certains types d'images poss\`edent des sites qui ne sont
+		  pas des points (mais des arr\^etes, faces, ou m\^eme des
+		  ensembles de points). Une autre supposition erron\'ee
+		  \'etait de consid\'erer que les sites \'etaient toujours
+		  localis\'es par un vecteur (c\`ad, (x,y) dans le plan 2D).
+		  Cette supposition est fausse lorsque l'on manipule des
+		  sites qui ne sont pas "Pointwise". Il etait donc
+		  n\'ecessaire de modifier les types d'images utilis\'es dans
+		  Milena et les propri\'et\'ees qui leur sont associ\'ees.
+		  Pendant ce s\'eminaire, nous pr\'esenterons une nouvelle
+		  classification d'images permettant de r\'esoudre ces probl\`emes.}
+}
+
+@TechReport{	  berger.05.seminar,
+  author	= {Christophe Berger and Nicolas Widynski},
+  title		= {Using connected operators to manipulate image components},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  urllrde	= {200507-Seminar-Berger-Widynski},
+  year		= 2005,
+  abstract	= {Connected operators are morphological filters which have
+		  the property of keeping objects contours when simplifying
+		  images. They bring to the light objects situated in the
+		  image. To do it, an implementation of the Tarjan's
+		  Union-find algorithm is used for an easy manipulation of
+		  image components. A binary partition tree is built, in
+		  order to simplify the objects attributes computation and
+		  the filtering of image. First of all, we will introduce
+		  morphological filters and connected operators, then we will
+		  propose an overview of different kinds of methods used in
+		  the literature in order to create a binary partition tree
+		  and we will explain the Tarjan's "union-find" algorithm for
+		  the image filtering. At last, we will apply this method in
+		  order to clean and delete stars in space's images.}
+}
+
+@TechReport{	  berger.06.seminar,
+  oldkeys	= {berger.06.seminar.taxonomy},
+  author	= {Christophe Berger},
+  title		= {Image taxonomy in {O}lena},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  urllrde	= {200605-Seminar-Berger},
+  year		= 2006
+}
+
+@TechReport{	  bigaignon.05.seminar,
+  oldkeys	= {bigaignon.aut-to-exp.05.seminar},
+  author	= {Robert Bigaignon},
+  title		= {Computing the regular language recognized by a finite
+		  automaton},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2005,
+  urllrde	= {200506-Seminar-Bigaignon}
+}
+
+@TechReport{	  cadilhac.05.seminar,
+  oldkeys	= {cadilhac.cover-automata.05.seminar},
+  author	= {Micha\"el Cadilhac},
+  title		= {Cover automata for finite languages},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2005,
+  urllrde	= {20050622-Seminar-Cadilhac-CoverAutomata-Report}
+}
+
+@TechReport{	  charron.08.seminar,
+  author	= {Samuel Charron},
+  title		= {Homolib},
+  titre		= {Homolib},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/20080901-Seminar-Charron}
+		  ,
+  urllrde	= {20080901-Seminar-Charron},
+  abstract	= {Decision Diagrams are a family of data structures that
+		  represents huge data sets using a small amount of memory.
+		  These structures can be of fixed size (tuples), or varying
+		  size (lists, maps, ...), the DD handling being different
+		  for each one. Data Decision Diagrams and Set Decision
+		  Diagrams handle varying size data thanks to operations
+		  named homomorphisms. However, the definition of a correct
+		  operation can be hard because numerous errors hard to
+		  identify can happen. This seminar offers a presentation of
+		  an algorithms library that gives a more abstract view on
+		  handled data. This library contains the algorithms defined
+		  in "List" and "Map" modules from the Objective Caml
+		  standard library, allowing the user to focus on his
+		  specific problem.},
+  resume	= {Les Diagrammes de D\'ecision sont une famille de
+		  structures de donn\'ees permettant de repr\'esenter avec
+		  peu de m\'emoire de grands ensembles de donn\'ees. Ces
+		  structures peuvent \^etre de taille fixe (un tuple) ou
+		  variable (une liste, un conteneur associatif, \ldots), la
+		  manipulation du DD ne se faisant pas de la m\^eme
+		  mani\`ere. Les Data Decision Diagrams et Set Decision
+		  Diagrams manipulent des donn\'ees de taille variable
+		  gr\^ace \`a des op\'erations, les homomorphismes. Cependant
+		  la d\'efinition d'une op\'eration correcte peut d\'erouter
+		  l'utilisateur, et passe souvent par de nombreuses erreurs,
+		  difficiles identifier. Ce s\'eminaire propose une
+		  biblioth\`eque d\`ualgorithmes fournissant une vue plus
+		  abstraite que les homomorphismes "bruts" des donn\'ees
+		  manipul\'ees, en reprenant les algorithmes d\'efinis dans
+		  les modules "List" et "Map" d'Objective Caml. L'utilisateur
+		  peut se concentrer sur les parties sp\'ecifiques \`a son probl\`eme.}
+}
+
+@TechReport{	  claveirole.04.seminar.analysis,
+  oldkeys	= {claveirole.vcsn-analysis.04},
+  author	= {Thomas Claveirole},
+  title		= {Analysis of the {V}aucanson project},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2004,
+  urllrde	= {20040526-Seminar-Claveirole-Vaucanson_Analysis-Slides}
+}
+
+@TechReport{	  claveirole.04.seminar.overview,
+  oldkeys	= {claveirole.vcsn-overview.04},
+  author	= {Thomas Claveirole},
+  title		= {An overview of {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2004,
+  urllrde	= {20041124-Seminar-Claveirole-VaucansonOverview-Report}
+}
+
+@TechReport{	  d-halluin.08.seminar,
+  author	= {Florent D'Halluin},
+  title		= {{Y}et {A}nother {V}aucanson {GUI}},
+  titre		= {Interface graphique de {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {Vaucanson is a finite state machine manipulation platform.
+		  Since it was started in 2002, the project has been
+		  attracting more and more users. In that regard, it requires
+		  an efficient user front end.\par For non-expert users,
+		  automaton manipulation can be done via taf-kit, a set of
+		  command-line tools. A first GUI was developed in 2005. Its
+		  use was slow and complicated since it relied on taf-kit for
+		  every operation.\par This new GUI, plugged directly into
+		  the core of the Vaucanson library for efficiency,
+		  simplifies the automaton manipulation process and makes
+		  full use of the generic algorithms included in the library.},
+  resume	= {Vaucanson est une plateforme de manipulation d'automates
+		  finis. D\'ebut\'e en 2002, le projet attire de plus en plus
+		  d'utilisateurs. De ce fait, une interface utilisateur
+		  efficace est n\'ecessaire.\par Pour l'utilisateur non
+		  expert, la manipulation d'automates peut s'effectuer via
+		  taf-kit, une suite d'outils accessible en ligne de
+		  commande. Une premi\`ere interface graphique avait \'et\'e
+		  esquiss\'ee en 2005, mais son fonctionnement \'etait lent
+		  et compliqu\'e car elle s'appuyait sur taf-kit pour
+		  r\'ealiser chaque op\'eration.\par Cette nouvelle interface
+		  graphique, branch\'ee directement sur le c\oe{}ur de la
+		  biblioth\`eque pour plus d'efficacit\'e, simplifie la
+		  manipulation d'automates et rend accessible les algorithmes
+		  g\'en\'eriques de Vaucanson.},
+  url		= {http://publis.lrde.epita.fr/200807-Seminar-DHalluin},
+  urllrde	= {200807-Seminar-DHalluin}
+}
+
+@TechReport{	  david.04.seminar,
+  oldkeys	= {attr-tech-rep},
+  title		= {Attribute grammars for {C++} disambiguation},
+  author	= {Valentin David},
+  institution	= {LRDE},
+  year		= 2004,
+  urllrde	= {20041201-Seminar-David-Attribute-Report}
+}
+
+@TechReport{	  deledalle.07.seminar,
+  author	= {Charles-Alban Deledalle},
+  title		= {Factor analysis based channel compensation in speaker
+		  verification},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200705-Seminar-Deledalle}
+		  ,
+  urllrde	= {200705-Seminar-Deledalle}
+}
+
+@TechReport{	  deledalle.08.seminar,
+  author	= {Charles-Alban Deledalle},
+  title		= {{SVM} Kernel Combining System for Speaker Verification},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Deledalle}
+		  ,
+  urllrde	= {200801-Seminar-Deledalle},
+  abstract	= {The best speaker verification systems are based on score
+		  combination of several approaches. Support Vector Machines
+		  (SVM) give very hopeful results. Thus, combining these
+		  methods could be very efficient. In our approach, we
+		  propose a new combination method for speaker verification
+		  systems based on SVM methods. This one performs a linear
+		  combination of several kernel functions in order to produce
+		  a new kernel function. In this combination, the weights are
+		  speaker dependent, by opposition of score combination
+		  approach for which the weight are universal. The idea is to
+		  adapt the combination weights for each speaker in order to
+		  take the advantage of the best kernel. In our experiment,
+		  combinations are performed on several kernel functions: the
+		  GLDS kernel, linear and Gaussian GMM supervector kernels.
+		  The method can use every kernel functions with no
+		  modification. The experiments are done on the NIST-SRE 2005
+		  and 2006 (all trials) database.},
+  resume	= {Les meilleurs syst\`emes de Verification du Locuteur (VL)
+		  sont fond\'es sur la fusion des scores de d\'ecision de
+		  plusieurs approches. Les m\'ethodes bas\'ees sur les
+		  S\'eparateurs \`a Vaste Marge (SVM) donnent des r\'esultats
+		  tr\`es performants. En cons\'equence, l'apport de ces
+		  m\'ethodes est tr\`es important pour la fusion. Dans notre
+		  approche, nous proposons une nouvelle m\'ethode de fusion
+		  des syst\`emes de VL bas\'es sur les m\'ethodes SVM en
+		  construisant une nouvelle fonction noyau \`a partir d'une
+		  combinaison lin\'eaire de plusieurs fonctions. Dans cette
+		  combinaison, les poids utilis\'es varient selon les
+		  locuteurs, ce qui diff\`ere des approches par fusion de
+		  score qui elles utilisent des poids universels. L'id\'ee
+		  est donc de tirer avantage des performances de chacun des
+		  noyaux, et cela pour chaque locuteur donn\'e. Ces
+		  combinaisons sont effectu\'ees sur plusieurs types de
+		  noyaux dont les noyaux GLDS, GMM supervecteurs lin\'eaires
+		  et Gaussiens. Les exp\'eriences sont r\'ealis\'ees sur la
+		  base des corpus NIST-SRE 2005 et 2006.}
+}
+
+@TechReport{	  delmon.07.seminar,
+  oldkeys	= {delmon.07.seminar.eps.removal},
+  author	= {Vivien Delmon},
+  title		= {Generic epsilon-removal},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Delmon},
+  urllrde	= {200706-Seminar-Delmon}
+}
+
+@TechReport{	  delmon.08.seminar,
+  author	= {Vivien Delmon},
+  title		= {Rational Expression Parser},
+  titre		= {Parser d'expressions rationnelles},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200806-Seminar-Delmon},
+  urllrde	= {200806-Seminar-Delmon},
+  abstract	= {The Vaucanson library is designed to manipulate automata
+		  and transducers. Therefore we need a rational expression
+		  parser which deals with transducers. The current rational
+		  expression parser only takes as input weighted rational
+		  expression. The new parser allows us to specify any kind of
+		  weight and any kind of monoid like free monoid product.
+		  Both of these features are mandatory if we want to deal
+		  with transducers. The new parser is also less restrictive
+		  and provides more freedom to the user who can easily change
+		  the form of the grammar used to write its expression.},
+  resume	= {La biblioth\`eque Vaucanson permet de manipuler des
+		  automates et des transducteurs. Le parser d'expression
+		  rationnelles doit donc lui aussi traiter ces diff\'erentes
+		  structures. Malheureusement l'ancien parser ne permettait
+		  pas de lire des expressions rationnelles d\'ecrivant des
+		  transducteurs ou m\^eme des automates \`a poids autres que
+		  des nombres. Le nouveau parser permet de lire des
+		  expressions rationnelles contenant des poids de toutes
+		  sortes et des alphabets d\'efinis sur des produits de
+		  mono\"ides. Ces diff\'erentes am\'eliorations permettent
+		  d'interpr\'eter des expressions rationnelles complexes
+		  repr\'esentant entre autres des transducteurs. }
+}
+
+@TechReport{	  depres.05.seminar,
+  oldkeys	= {depres.reg-bench.05.seminar},
+  author	= { Nicolas Despres },
+  title		= { Regression benchmarking },
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2005,
+  urllrde	= {200506-Seminar-Despres}
+}
+
+@TechReport{	  duhamel.08.seminar,
+  author	= {Guillaume Duhamel},
+  title		= {Stage de traitement d'image au {LRDE}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Duhamel},
+  urllrde	= {200801-Seminar-Duhamel}
+}
+
+@TechReport{	  durlin.07.seminar,
+  oldkeys	= {durlin.07.seminar.disambiguation},
+  author	= {Renaud Durlin},
+  title		= {Semantics driven disambiguation},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Durlin},
+  urllrde	= {200706-Seminar-Durlin},
+  abstract	= {An elegant approach to manage ambiguous grammars consists
+		  in using a generalized LR parser which will not produce a
+		  parse tree but a parse forest. An additional step, called
+		  disambiguation, occurring just after the parsing, is then
+		  necessary. The disambiguation process consists in analyzing
+		  the parse forest to choose the only good parse tree using
+		  semantics rules. We use this approach in Transformers with
+		  the attribute grammars formalism. The lab work will be a
+		  comparison between this formalism and two other methods of
+		  disambiguation: the first one using ASF+SDF and the second
+		  one using Stratego language. The goal of this comparison
+		  will try to emphasize that attribute grammars are perfect
+		  to solve the disambiguation problem. Another thing will be
+		  to find the weakness of this method compared to the two
+		  others for a possible improvement of the system used in
+		  Transformers.},
+  resume	= {Une approche \'el\'egante pour g\'erer les grammaires
+		  ambigu\"es consiste \`a utiliser un parseur LR
+		  g\'en\'eralis\'e qui produira non pas un arbre mais une
+		  for\^et de parse. Une \'etape suppl\'ementaire, appel\'ee
+		  d\'esambiguisation, survenant juste apr\`es le parsing, est
+		  alors n\'ecessaire. Celle-ci consiste analyser cette
+		  for\^et pour obtenir l'unique arbre valide correspondant
+		  \`a l'entr\'ee en prenant en compte les r\`egles de
+		  s\'emantiques contextuelles. C'est cette approche qui a
+		  \'et retenue dans Transformers avec le formalisme des
+		  grammaires attribu\'ees. Le travail effectu\'e pr\'esentera
+		  une comparaison entre ce formalisme et deux autres
+		  techniques de d\'esambiguisation : la premi\`ere \`a l'aide
+		  d'ASF+SDF et la deuxi\`eme \`a l'aide du langage Stratego.
+		  Le but de cette comparaison sera double : montrer que les
+		  grammaires attribu\'ees sont parfaitement adapt\'ees \`a ce
+		  probl\`eme et exhiber les faiblesses de celles-ci par
+		  rapport aux deux autres m\'ethodes en vue d'une
+		  am\'elioration possible du syst\`eme utilis\'e dans Transformers.}
+}
+
+@TechReport{	  durlin.08.seminar,
+  author	= {Renaud Durlin},
+  title		= {Semantics driven disambiguation: A comparison of different
+		  approaches},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Durlin},
+  urllrde	= {200801-Seminar-Durlin},
+  abstract	= {Modularity, scalability and expressiveness, three main
+		  aspects for a disambiguation system. Disambiguation is the
+		  step occurring just after the parsing that consists in
+		  analyzing the output given by a generalized LR parser. The
+		  goal is to choose, amongst the many parse trees, the right
+		  one that corresponds to the input using semantics rules. By
+		  means of a comparison with two other methods based on SDF
+		  (the first one using ASF formalism and the second one using
+		  Stratego language), our approach, attribute grammars, will
+		  be evaluated with respect to these three aspects to bring
+		  out its strengths and its weaknesses.},
+  resume	= {Modularit\'e, extensibilit\'e et expressivit\'e, trois
+		  aspects fondamentaux pour un syst\`eme de
+		  d\'esambigu\"isation. La d\'esambigu\"isation est l'\'etape
+		  survenant juste apr\`es l'analyse syntaxique qui consiste
+		  \`a analyser la sortie obtenue lors de l'utilisation d'un
+		  parseur LR g\'en\'eralis\'e. Le but de cette \'etape
+		  \'etant de s\'electionner, parmi toute une for\^et,
+		  l'unique arbre valide correspondant \`a l'entr\'ee en
+		  prenant en compte les r\`egles de s\'emantique
+		  contextuelles. Au travers d'une comparaison avec deux
+		  autres techniques reposant sur SDF (le formalisme ASF et le
+		  langage Stratego), le syst\`eme de grammaires attribu\'ees
+		  utilis\'e dans Transformers sera \'evalu par rapport \`a
+		  ces aspect fondamentaux pour en faire ressortir les avantages et inconv\'enients.}
+}
+
+@TechReport{	  folio.08.seminar,
+  author	= {Etienne Folio},
+  title		= {Distance Transform},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  urllrde	= {200807-Seminar-Folio},
+  abstract	= {A distance transform, also known as distance map or
+		  distance field, is a representation of a distance function
+		  to an object, as an image. Such maps are used in several
+		  applications, especially in document image analysis. Some
+		  optimizations can be obtained by less generic methods: for
+		  example, maps calculated by front propagation can determine
+		  shorter paths, assuming that the image is non-convex. This
+		  presentation discusses different distance transform
+		  algorithms and underlines their advantages and weaknesses.
+		  Finally we will explain our choices.},
+  resume	= {Une carte de distances est une repr\'esentation sous forme
+		  d'image d'une fonction distance \`a un objet. Ces cartes
+		  sont utilis\'ees dans de nombreuses applications, en
+		  particulier en analyse d'images de documents qui nous
+		  serviront d'illustration. Certaines m\'ethodes de calcul de
+		  cartes moins g\'en\'eriques que d'autres peuvent s'av\'erer
+		  plus rapides : par exemple, des cartes calcul\'ees par
+		  propagation de fronts permettent de d\'eterminer des plus
+		  courts chemins mais ne fonctionnent que lorsque le support
+		  est connu pour \^etre non-convexe. Cette pr\'esentation
+		  fait un tour d'horizon des diff\'erents algorithmes de
+		  calculs de cartes de distances, met en \'evidence leurs
+		  atouts et faiblesses et explique les choix retenus.}
+}
+
+@TechReport{	  fosse.04.seminar,
+  oldkeys	= {fosse.dynamic-libs.04.seminar},
+  author	= {Lo\"ic Fosse},
+  title		= {Dynamic use of statically typed libraries, \textsc{Just In
+		  Time} compilation and other solutions},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2004,
+  urllrde	= {200406-Seminar-Fosse}
+}
+
+@TechReport{	  galtier.08.seminar,
+  author	= {J\'er\^ome Galtier},
+  title		= {Improving {Vaucanson}'s transducers composition
+		  algorithm},
+  titre		= {Am\'elioration de la composition des transducteurs dans
+		  {Vaucanson}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {Vaucanson is a library aimed at providing easy access and
+		  manipulation of common automata constructions and their
+		  algorithms. As such it provides schoolbook algorithms (and
+		  some others on the bleeding edge) such as determinization,
+		  accessible states calculation and so on. One of them is
+		  composition of transducers. This algorithm isn't from an
+		  obvious kind and his implementation in Vaucanson is
+		  perfectible. Improving such an algorithm implementation is
+		  consequently a good way to challenge Vaucanson design
+		  choices.},
+  resume	= {Vaucanson est une biblioth\`eque dont un des buts est de
+		  permettre un acc\`es facilit\'e \`a des automates et aux
+		  algorithmes qui leur sont associ\'es. Elle met donc \`a
+		  notre disposition plusieurs algorithmes standard (et
+		  d'autres moins conventionnels) tels que la
+		  d\'eterminisation, le calcul des \'etats accessibles etc.
+		  L'un de ces algorithmes est la composition de
+		  transducteurs. Celui-ci n'est pas d'une nature ais\'ee \`a
+		  aborder et son impl\'ementation dans Vaucanson est
+		  perfectible. Am\'eliorer l'impl\'ementation d'un tel
+		  algorithme est alors un bon moyen de mettre \`a l'\'epreuve
+		  certains choix de conception dans Vaucanson.},
+  url		= {http://publis.lrde.epita.fr/200807-Seminar-Galtier},
+  urllrde	= {200807-Seminar-Galtier}
+}
+
+@TechReport{	  garcia-ballester.08.seminar,
+  author	= {Jean-Philippe Garcia Ballester},
+  title		= {Fictious Play},
+  titre		= {\'Etude du fictitious play dans le cas d'un jeu \`a
+		  fonctions d'utilit\'e identiques},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  urllrde	= {200801-Seminar-Garcia},
+  abstract	= {Le fictitious play, en th\'eorie des jeux, est une r\`egle
+		  d'apprentissage dans laquelle chaque joueur suppose que ses
+		  adversaires jouent une strat\'egie fixe (potentiellement
+		  mixte, c'est-\`a-dire une distribution de probabilit\'e sur
+		  un ensemble de strat\'egies). \`A chaque tour, chaque
+		  joueur joue ainsi le meilleur coup contre la strat\'egie de
+		  ses adversaires, d\'etermin\'ee de mani\`ere empirique \`a
+		  partir de leurs coups pr\'ec\'edents. La convergence de
+		  telles strat\'egies n'est pas assur\'ee, mais on sait que
+		  si il y a convergence, alors les strat\'egies jou\'ees
+		  correspondront statistiquement \`a un \'equilibre de Nash.
+		  Il est donc tr\`es int\'eressant de conna\^itre les
+		  crit\`eres de convergence. Nous nous int\'eresserons pour
+		  cette pr\'esentation au cas des jeux o\`u les fonctions
+		  d'utilit\'e (le gain d'un joueur en fonction des
+		  strat\'egies jou\'ees) de chaque joueur sont identiques.
+		  Nous \'etudierons d'abord des r\'esultats de convergence
+		  dans ce cas particulier. Afin de r\'eduire la complexit\'e
+		  en temps, nous verrons une variante de cet algorithme, qui
+		  consiste \`a autoriser une erreur dans la meilleure
+		  r\'eponse des joueurs. Nous pr\'esenterons enfin un exemple
+		  d'application du fictitious play pour r\'esoudre un
+		  probl\`eme a priori non li\'e \`a la th\'eorie des jeux :
+		  un probl\`eme d'optimisation, c'est-\`a-dire calculer le maximum des valeurs prises par une fonction.},
+  resume	= {Fictitious play, in game theory, is a learning rule in
+		  which each player presumes that his opponents are playing a
+		  stationary strategy ---potentially mixed, i.e. a
+		  probability distribution over a set of strategies. At each
+		  round, each player thus best responds to his opponents'
+		  strategy, computed empirically using their previous moves.
+		  Convergence of such strategies is not always assured, yet
+		  we know that if there is convergence, then the strategies
+		  used will correspond statistically to a Nash-equilibrium.
+		  It is thus very interesting to know when fictitious play
+		  converges. We will address for this presentation the case
+		  where utility functions ---a player's payoff with respect
+		  to the played strategies--- of each player are identical.
+		  We will first study results about convergence in this
+		  special case. In order to reduce the computationnal
+		  complexity we will see a modified version of this algorithm
+		  that allows errors in players' best replies. We will
+		  finally introduce an example of use of fictitious play to
+		  solve a problem not a priori connected to game theory: an
+		  optimization problem, i.e. computing the maximum of the
+		  values taken by a function.}
+}
+
+@TechReport{	  garrigues.08.seminar,
+  author	= {Matthieu Garrigues},
+  title		= {Stage de traitement d'image au {LRDE}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Garrigues}
+		  ,
+  urllrde	= {200801-Seminar-Garrigues}
+}
+
+@TechReport{	  garrigues.08.seminar.fllt,
+  author	= {Matthieu Garrigues},
+  title		= {Fast Level Line Transform},
+  titre		= {Transformation des courbes de niveau rapide},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {The {Fast Level Line Transform} ({FLLT}) constructs a
+		  contrast-invariant representation of an image. This
+		  algorithm builds a tree which follows the inclusion of the
+		  shapes contained in an image. For an image filter, having
+		  the contrast-invariant property is interesting. For
+		  instance, in the field of document image analysis, this
+		  representation is precious to extract characters whatever
+		  their mean gray-levels are brighter or darker than their
+		  surroundings. This document presents how this algorithm is
+		  introduced in our image processing library and shows the
+		  results of some connected that can be derived from this
+		  representation.},
+  resume	= {La transformation rapide des courbes de niveaux ({FLLT})
+		  construit une repr\'esentation d'une image ind\'ependante
+		  du contraste. Cet algorithme construit un arbre suivant les
+		  inclusions des formes. Pour un filtre, \^etre invariant
+		  suivant le contraste est un plus. Par exemple, en analyse
+		  de document, cette repr\'esentation a le pr\'ecieux
+		  avantage d'extraire facilement et rapidement les
+		  caract\`eres ind\'ependamment du fait qu'ils soient plus
+		  clairs ou plus fonc\'es que leur voisinage. Ce document
+		  pr\'esente l'introduction de l'algorithme dans notre
+		  biblioth\`eque de traitement d'images et montre les
+		  r\'esultats de quelques filtres connect\'es que peut
+		  engendrer cette repr\'esentation.},
+  url		= {http://publis.lrde.epita.fr/200806-Seminar-garrigues},
+  urllrde	= {200806-Seminar-garrigues}
+}
+
+@TechReport{	  hocquet.06.seminar,
+  author	= {Quentin Hocquet},
+  title		= {{Scool} transformation towards {C++}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  urllrde	= {200607-Hocquet-Moulard},
+  year		= 2006
+}
+
+@TechReport{	  hocquet.08.seminar,
+  author	= {Beno\^it Sigoure and Quentin Hocquet},
+  title		= {{revCPP} A reversible {C++} preprocessor},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Hocquet},
+  urllrde	= {200801-Seminar-Hocquet},
+  abstract	= {Abstract: The Transformers project aims at creating a
+		  generic framework for C++ source to source transformation.
+		  Source to source transformation consists in refactoring the
+		  code and producing a modified source. The resulting code
+		  may be reread, reused, re-modified \ldots by programmers
+		  and thus must be human-readable. Moreover it should respect
+		  the original coding style. This process of preserving the
+		  original layout is called high fidelity program
+		  transformation. Transformers targets the C/C++ language.
+		  Unlike many other languages, C++ source code is
+		  preprocessed to obtain the actual source code. In our
+		  program transformation context we need to un-preprocess the
+		  code to give back a human-readable code to the programmer.
+		  This document presents the work and research carried out to
+		  implement a reversible C++ preprocessor and a
+		  postprocessor, i.e. a tool to obtain the original code from
+		  the preprocessed one. },
+  resume	= {Le but du projet Transformers est de cr\'eer un framework
+		  g\'en\'erique pour de la transformation source \`a source
+		  de code C++. Une transformation "source \`a source"
+		  consiste \`a retravailler le code et produire un fichier de
+		  code source modifi\'e. Ce code peut \^etre relu,
+		  r\'e-utilis\'e, modifi\'e ... par des programmeurs et doit
+		  donc \^etre lisible. De plus, il doit respecter le coding
+		  style d'origine. Ce processus de pr\'eservation de la mise
+		  en page est appel\'e "High fidelity program
+		  transformation". Transformers cible les langages C et C++.
+		  Contrairement \`a de nombreux langages, le C++ est un
+		  langage pr\'eprocess\'e pour obtenir le code source
+		  effectif. Dans le contexte de la transformation de
+		  programmes, il faut d\'e-pr\'eprocesser le code pour le
+		  rendre lisible au programmeur. Ce document pr\'esente le
+		  travail de recherche que nous avons men\'e pour
+		  impl\'ementer un pr\'eprocesseur de C++ r\'eversible et un
+		  postprocesseur, c'est-\`a-dire un outil permettant
+		  d'obtenir le code d'origine \`a partir du code pr\'eprocess\'e.}
+}
+
+@TechReport{	  jardonnet.07.seminar,
+  oldkeys	= {jardonnet.07.seminar.olena.canvas},
+  author	= {Ugo Jardonnet},
+  title		= {Canvas in Morphological Algorithms},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Jardonnet}
+		  ,
+  urllrde	= {200706-Seminar-Jardonnet},
+  abstract	= {Olena is a generic image processing library developed at
+		  LRDE. It provides many morphological algorithms.
+		  Mathematical morphology offers several powerful tools in
+		  image processing and analysis.\\ Similarities appear when
+		  writing morphological algorithms. Thereby, we can classify
+		  those tools and then build canvases of algorithms. This
+		  report presents what is a canvas and why canvases matter.
+		  We will see different manners to implement canvases with
+		  their pro and con arguments. Finally, we will explain which
+		  canvas implementation we have chosen for Olena and why.},
+  resume	= {Olena est une biblioth\`eque g\'en\'erique de traitement
+		  d'images d\'evelopp\'ee au LRDE. Elle propose un grand
+		  nombre d'algorithmes morphologiques. La morphologie
+		  math\'ematique, offre des outils tr\`es puissants de
+		  traitement et d'analyse d'images.\\ Des similarit\'es
+		  apparaissant dans l'\'ecriture des algorithmes
+		  morphologiques, il est possible de les classifier et,
+		  ainsi, de proposer un certain nombre de "canevas"
+		  d'algorithmes. Ce rapport d\'efinie ce que sont les canevas
+		  et les avantages qu'ils apportent. Apres une br\`eve
+		  introduction \`a la morphologie math\'ematique, cet
+		  expos\'e presentera diff\'erents canevas d'algorithmes retenus par Olena.}
+}
+
+@TechReport{	  jardonnet.08.seminar,
+  author	= {Ugo Jardonnet},
+  title		= {Fast Image Registration},
+  titre		= {Recalage d'images rapide},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200806-Seminar-jardonnet}
+		  ,
+  urllrde	= {200806-Seminar-jardonnet},
+  abstract	= {Image registration is a process widely used in image
+		  processing. Considering two measurements $A$ and $B$ of the
+		  same object (say, a radiography and an magnetic resonance
+		  image (MRI)), this technique estimates a transformation of
+		  $A$ so that the object in $A$ becomes aligned with the
+		  object in $B$. Basically this technique is able to
+		  superimpose the image $A$ over the image $B$, allowing the
+		  client to see mixed information. This presentation will
+		  discuss the implementation of a fast image registration
+		  algorithm in Milena, the \Cxx generic image processing
+		  library from the Olena platform, developed at LRDE.
+		  Specific techniques used to improve this process will be
+		  introduced.},
+  resume	= {Le recalage d'images est une technique classique en
+		  traitement d'images. Soit $A$ et $B$ deux images
+		  repr\'esentant le m\^eme objet (par exemple une
+		  radiographie et une image \`a r\'esonance magn\'etique
+		  (IRM)), on calcule une transformation de $A$ telle que le
+		  recalage de l'objet dans $A$ soit align\'e sur l'objet dans
+		  $B$. Typiquement, cette technique peut permettre la lecture
+		  simultan\'ee de deux mesures $A$ et $B$. Cet expos\'e
+		  discutera des proc\'ed\'es de recalage rapide utilis\'es
+		  dans Milena, la biblioth\`eque C++ g\'en\'erique de
+		  traitement d'images de la plate-forme Olena, d\'evelopp\'ee
+		  au LRDE. Certaines am\'eliorations seront pr\'esent\'ees.}
+}
+
+@TechReport{	  lazzara.07.seminar,
+  oldkeys	= {lazzara.ma.07.seminar.boosting.vcsn},
+  author	= {Guillame Lazzara and Jimmy Ma},
+  title		= {Boosting {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  abstract	= {The work performed last year underlined the fact that the
+		  overall performance issues of Vaucanson could be widely
+		  improved by an internal use of hash tables and, more
+		  particularly by the Multi Index from the Boost C++ library.
+		  We tried to make good use of the new functionalities
+		  provided by Boost. It results in the implementation of a
+		  new graph structure. We present in this report the
+		  different issues implied by these modifications on the
+		  graph implementation and we try to answer to the new issues
+		  about the genericity of Vaucanson.},
+  resume	= {Suite aux s\'eminaires de l'ann\'ee derni\`ere, il en
+		  ressort que les performances globales de Vaucanson
+		  pouvaient largement \^etre am\'elior\'ees par l'usage de
+		  tables de hachage et plus particuli\`erement les Multi
+		  Index de la biblioth\`eque Boost. Pour ce s\'eminaire, nous
+		  chercherons \`a tirer parti des nouvelles fonctionnalit\'es
+		  offertes par Boost. Ceci impliquera l'apparition d'une
+		  nouvelle impl\'ementation de graphe. Nous pr\'esenterons au
+		  cours de ce s\'eminaire les enjeux induits par ces
+		  changements sur l'impl\'ementation et tenterons de
+		  r\'epondre au probl\`ematiques soulev\'ees par la
+		  g\'en\'ericit\'e de Vaucanson.},
+  url		= {http://publications.lrde.epita.fr/200705-Seminar-Lazzara-Ma}
+		  ,
+  urllrde	= {200705-Seminar-Lazzara-Ma}
+}
+
+@TechReport{	  lazzara.08.seminar,
+  author	= {Guillaume Lazzara},
+  title		= {Boosting {Vaucanson}'s genericity},
+  titre		= {Booster la g\'en\'ericit\'e de {Vaucanson}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/2007312-Seminar-Lazzara}
+		  ,
+  urllrde	= {2007312-Seminar-Lazzara},
+  resume	= {L'architecture du projet Vaucanson a \'et\'e con\,c{}ue
+		  initialement autour du design pattern Element. Ce dernier a
+		  l'\'enorme avantage de distinguer \`a la fois les concepts
+		  et les impl\'ementations. C'est \`a dire que pour un type
+		  d'automate comme les automates bool\'eens, on peut
+		  th\'eoriquement avoir plusieurs impl\'ementations qui se
+		  c\^otoient dans un m\^eme programme. Malgr\'e toutes ces
+		  pr\'ecautions, aujourd'hui, ajouter une nouvelle structure
+		  s'av\`ere tr\`es d\'elicat et remet en cause de nombreux
+		  points au sein du projet. C'est pour cette raison que
+		  durant ce s\'eminaire nous tenterons de r\'epondre \`a ces
+		  probl\`emes. Les probl\`emes de performances qu'a pu
+		  rencontrer le projet sont \'egalement une bonne motivation
+		  pour s'attaquer \`a ce sujet : il est aujourd'hui
+		  indispensable de proposer des nouvelles structures plus
+		  efficaces, notamment impl\'ement\'ees avec la biblioth\`eque Boost.}
+}
+
+@TechReport{	  leblanc.07.seminar,
+  author	= {Antoine Leblanc},
+  title		= {Efficient algorithmic methods for {N}ash equilibria
+		  computation},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Leblanc},
+  urllrde	= {200706-Seminar-Leblanc},
+  abstract	= {One of the remaining problems with Nash equilibria is the
+		  lack of efficiency of best known algorithms. In general
+		  case their worst complexity is $ O(4^{n}) $. Those
+		  algorithms are usually old, and aren't likely to be
+		  improved. This study focuses first on main algorithms and
+		  methods and explains their advantages and their weaknesses.
+		  It then introduces a new algorithm developed at the LRDE
+		  based on a geometrical approach: a TOP computing method in
+		  $ d $ dimensions.},
+  resume	= {L'un des principaux probl\`emes rencontr\'es lors de la
+		  recherche d'\'equilibres de Nash est le manque
+		  d'efficacit\'e des principaux algorithmes. La plupart ont
+		  des complexit\'es en pire cas de l'ordre de $ O(4^{n}) $.
+		  Il n'est de plus que peu probable de r\'eussir \`a
+		  am\'eliorer ces algorithmes, qui sont pour la plupart
+		  relativement vieux. Cette \'etude d\'etaille tout d'abord
+		  les algorithmes principaux en sp\'ecifiant leurs avantages
+		  et inconv\'enients, puis pr\'esente un nouvel algorithme
+		  d\'evelopp\'e au LRDE bas\'e sur une approche
+		  g\'eom\'etrique : le calcul du TOP en dimension $ d $.}
+}
+
+@TechReport{	  leblanc.08.seminar,
+  author	= {Antoine Leblanc},
+  title		= {Alternate Fictitious Play study and implementation},
+  titre		= {\'Etude et impl\'ementation du Fictitious Play altern\'e},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200806-Seminar-Leblanc},
+  urllrde	= {200806-Seminar-Leblanc},
+  resume	= {Le calcul d'un \'equilibre de Nash dans un jeu fini est un
+		  probl\`eme d\'emontr\'e PPAD-complet, ce qui signifie qu'il
+		  para\^it impossible de trouver une m\'ethode de calcul
+		  efficace ; la complexit\'e en pire cas des algorithmes
+		  usuels est $ 2^{O(n)} $ pour un jeu de taille $ n $. La
+		  recherche en ce domaine s'oriente donc vers le calcul
+		  d'\'equilibres approch\'es, \`a savoir des situations
+		  v\'erifiant les conditions d'un \'equilibre de Nash \`a $
+		  \varepsilon $ pr\`es.
+
+		  L'algorithme du \emph{Fictitious Play} s'inscrit dans cette
+		  d\'emarche de recherche. Son principe est simple : \`a
+		  chaque it\'eration, chacun des joueurs ``renforce'' celle
+		  de ses strat\'egies pures qui est la plus efficace face \`a
+		  ses adversaires. Pour certains jeux, cet algorithme
+		  converge vers un \'equilibre de Nash, fournissant ainsi un
+		  algorithme d'approximation efficace. La convergence ne peut
+		  toutefois \^etre prouv\'ee que pour un nombre limit\'e de
+		  cas.
+
+		  Pour cette raison, il est int\'eressant d'\'etudier
+		  d'autres algorithmes bas\'es sur le \emph{Fictitious Play},
+		  afin de trouver d'autres cas de convergence. Nous allons
+		  \'etudier ici le \emph{Fictitious Play} altern\'e, dans
+		  lequel seul le joueur le plus ``\'eloign\'e'' de son gain
+		  optimal renforce sa strat\'egie la plus efficace.},
+  abstract	= {Nash equilibria computation in finite games is a problem
+		  which is known to be PPAD-complete, which means it
+		  currently seems impossible to find an efficient solution ;
+		  worst case complexity of well known algorithms is in $
+		  2^{0(n)} $ for any game of size $ n $. For this reason,
+		  research in this domain currently focuses on $ \varepsilon
+		  $-equilibria, situations which approximately satisfy the
+		  conditions of a Nash equilibrium.
+
+		  The \emph{Fictitious Play} algorithm fits in this approach.
+		  At each iteration of this algorithm, each of the players
+		  ``strengthens'' the strategy that has the highest utility
+		  in the current context. For some specific game classes this
+		  algorithm converges to a Nash equilibrium, therefore
+		  providing an efficient approximation method. However,
+		  convergence can only be proved for a small amount of game
+		  classes.
+
+		  It is therefore useful to study other algorithms (based on
+		  \emph{Fictitious Play}) in order to find other convergence
+		  cases. In this study, we will focus on the alternate
+		  \emph{Fictitious Play} algorithm, in which only one player
+		  at a time strengthens one of his strategies : the player
+		  which is the ``further'' from his maximum payoff.}
+}
+
+@TechReport{	  lefortier.08.seminar,
+  author	= {Damien Lefortier},
+  title		= {Translation of an extended {LTL} into {TBGA} in {S}pot},
+  titre		= {Traduction d'une {LTL} \'etendue en {TGBA} dans Spot},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {Spot is centered around the automata approach to model
+		  checking. The library can be used to verify that every
+		  behavior of a model, a transition-based generalized B\"uchi
+		  automata (TGBA), satisfies a given property, expressed
+		  using an linear temporal logic (LTL) formula. Spot offers
+		  two translation algorithms of LTL into TGBA, one of the two
+		  main stages of the approach. We present a new translation
+		  into TGBA of a LTL logic which has been extended by adding
+		  operators represented by finite automaton. This translation
+		  allows Spot to verify properties that were not expressible
+		  before.},
+  resume	= {Spot repose sur l'approche automate du \emph{model
+		  checking}. La biblioth\`eque permet de v\'erifier des
+		  propri\'et\'es exprim\'ees en logique temporelle \`a temps
+		  lin\'eaire (LTL) sur une mod\'elisation d'un syst\`eme
+		  repr\'esent\'ee par un automate de B\"uchi g\'en\'eralis\'e
+		  bas\'e sur les transitions (TGBA). Spot propose
+		  actuellement deux algorithmes de traduction de LTL en TGBA,
+		  une des deux \'etapes principales de l'approche automate.
+		  Nous pr\'esentons une nouvelle traduction en TGBA d'une
+		  logique LTL qui a \'et\'e \'etendue en y ajoutant des
+		  op\'erateurs repr\'esent\'es par des automates finis. Cette
+		  traduction permet \`a Spot de v\'erifier des propri\'et\'es
+		  qui n'\'etaient pas exprimables auparavant.},
+  url		= {http://publications.lrde.epita.fr/200807-Seminar-Lefortier}
+		  ,
+  urllrde	= {200807-Seminar-Lefortier}
+}
+
+@TechReport{	  legrand.08.seminar,
+  author	= {Antoine Legrand},
+  title		= {Generalized Linear Discriminant Sequence for Speaker
+		  Verification},
+  titre		= {Syst\`eme de discriminants lin\'eaires pour la
+		  v\'erification du locuteur},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {In speaker verification appplications, GMM models have an
+		  important place and have shown good perfomance. Actually,
+		  linear discriminant methods using support vector machines
+		  (SVM) provide better results. We will focus on a linear
+		  disciminant system, the SVM-GLDS. Its uses statistics
+		  directly extracted from the speech features to define the
+		  recognition model without using Gaussian mixture models
+		  (GMMs).\\ We\^all present and compare SVM-GLDS performance
+		  to SVM-GMM on NIST speaker evaluation tasks.},
+  resume	= {Dans la reconnaissance du locuteur, les mod\`eles GMM
+		  occupent une place tr\`es importante dans le
+		  d\'eveloppement des syst\`emes performants. Les m\'ethodes
+		  de discrimination lin\'eaire \`a base de SVM donnent
+		  actuellement de meilleurs r\'esultats. On s'int\'eressera
+		  ici \`a un syst\`eme de discriminant lin\'eaire (le
+		  SVM-GLDS). Celui-ci utilise directement, sans passer par un
+		  mod\`ele GMM, des statistiques issues de l'ensemble des
+		  param\`etres de la parole pour d\'efinir le mod\`ele de
+		  reconnaissance. On \'evaluera les performances d'un tel
+		  syst\`eme sur la base de donn\'ees NIST-SRE en le comparant
+		  avec les autres syst\`emes \`a base de SVM-GMM. },
+  url		= {http://publications.lrde.epita.fr/200807-Seminar-Legrand},
+  urllrde	= {200807-Seminar-Legrand}
+}
+
+@TechReport{	  leroi.08.seminar,
+  author	= {Guillaume Leroi},
+  title		= {Synchronized Tranducers},
+  titre		= {Transducteurs synchronis\'es},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200712-Seminar-Leroi},
+  urllrde	= {200712-Seminar-Leroi},
+  resume	= {Lors de cette pr\'esentation, un algorithme de
+		  resynchronisation sera d\'ecrit ainsi que son
+		  impl\'ementation dans Vaucanson. De plus, des explications
+		  sont donn\'ees sur l'ajout des transducteurs a d\'elai
+		  born\'e, ainsi que sur les difficult\'es qui peuvent \^etre
+		  rencontr\'ees lors de l'extension de la hierarchie de
+		  classes de Vaucanson.}
+}
+
+@TechReport{	  lesaint.07.seminar,
+  oldkeys	= {lesaint.07.seminar.xmlproposal},
+  author	= {Florian Lesaint},
+  title		= {{XML} Proposal and its Application in {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  abstract	= {The XML Proposal presented at CIAA 2005 (Conference on
+		  Implementation and Application of Automata) and updated by
+		  Florent Teronnes has some lacks. For example, labels with
+		  regular expressions were not clearly defined. Our work has
+		  for objective to finalize the proposal of a universal
+		  description format for automata to make communication
+		  between various tools easier. The second part of our work
+		  is to update Vaucanson to support this new format, with a
+		  reimplementation of its XML parser. It allowed us to change
+		  our parser from a DOM model to a SAX one, reducing memory
+		  usage and improving Vaucanson's input performances.},
+  resume	= {La proposition XML pr\'esent\'ee \`a CIAA 2005 (Conference
+		  on Implementation and Application of Automata) et enrichie
+		  depuis par Florent Terrones montrait certaines lacunes. Par
+		  exemple, la gestion des expressions rationnelles n'y
+		  \'etait pas clairement d\'efinie. Ce travail avait pour but
+		  de finaliser la proposition d'un format universel pour la
+		  description d'automates afin de faciliter la communication
+		  entre les divers outils qui leur sont consacr\'es et de
+		  reviser le parser de Vaucanson.},
+  url		= {http://publications.lrde.epita.fr/200744-Seminar-Lesaint},
+  urllrde	= {200744-Seminar-Lesaint}
+}
+
+@TechReport{	  lesaint.08.seminar,
+  author	= {Florian Lesaint},
+  title		= {{FSMXML} and its application in {V}aucanson},
+  titre		= {{FSMXML} et son utilisation dans {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {Last year, we started to work on a new proposal of an
+		  \textsc{XML} automata description format, now called
+		  \textsc{FSMXML}. This year we are presenting a final
+		  version of our work. It takes the form of an \emph{rfc}.
+		  \textsc{FSMXML} mainly includes a full generalized regular
+		  expressions support, can describe any kind of automaton and
+		  has been made easier to support. We redesigned the
+		  \textsc{Vaucanson} \textsc{XML} parser structure to get rid
+		  of a bad management of dependencies. It is updated
+		  according to the \emph{rfc}.},
+  resume	= {Nous avions commenc\'e l'ann\'ee derni\`ere \`a travailler
+		  sur une nouvelle proposition de format \textsc{XML} de
+		  description d'automates, devenu \textsc{FSMXML}. Nous
+		  pr\'esentons cette ann\'ee une version aboutie de ce
+		  travail sous forme de \emph{rfc}. \textsc{FSMXML} comprend
+		  notamment une gestion compl\`ete des expressions
+		  rationnelles g\'en\'eralis\'ees, il permet de d\'ecrire
+		  n'importe quel type d'automate et sa gestion est
+		  facilit\'ee. Nous avons repens\'e la structure du parseur
+		  \textsc{XML} de \textsc{Vaucanson} pour s'affranchir d'une
+		  mauvaise gestion de d\'ependances et l'avons mise \`a jour
+		  conform\'ement \`a la \emph{rfc}.},
+  url		= {http://publis.lrde.epita.fr/200806-Seminar-Lesaint},
+  urllrde	= {200806-Seminar-Lesaint}
+}
+
+@TechReport{	  ma.08.seminar,
+  author	= {Jimmy Ma},
+  title		= {Boosting {V}aucanson's Iterator},
+  titre		= {Booster les it\'erateurs de {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {Vaucanson is a generic finite state machine manipulation
+		  platform. We have based our genericity on the ability not
+		  only to support various types of automata, but also to use
+		  different data structures. In its current state, we have
+		  various techniques to work with transitions, however, none
+		  of them is really independent of the data structures. To
+		  overcome this problem, we will integrate the design pattern
+		  Iterator. Our goal is to assess the improvements given by
+		  this method in terms of performance and code writing.},
+  resume	= {Vaucanson est une biblioth\`eque g\'en\'erique de
+		  manipulation d'automates. Le c\oe{}ur de sa
+		  g\'en\'ericit\'e r\'eside dans le support de types
+		  d'automates vari\'es mais aussi sa capacit\'e \`a s'appuyer
+		  sur diff\'erentes structures de donn\'ees. Actuellement,
+		  nous avons diff\'erentes mani\`eres de manipuler des
+		  transitions. Cependant, aucune d'entre elles n'est
+		  r\'eellement ind\'ependante de la structure de donn\'ees
+		  utilis\'ee. Afin de pallier cela, nous allons nous tourner
+		  vers le design pattern Iterator. Nous \'evaluerons l'impact
+		  de ce design pattern sur les performances et sur
+		  l'utilisation de la biblioth\`eque en termes d'\'ecriture d'algorithmes.},
+  url		= {http://publis.lrde.epita.fr/200806-Seminar-Ma},
+  urllrde	= {200806-Seminar-Ma}
+}
+
+@TechReport{	  melin.07.seminar,
+  oldkeys	= {melin.ramakichenin.07.seminar},
+  author	= {Charles Melin and Julien Ramakichenin},
+  title		= {{LRDE}'s Speaker Verification Framework},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Ramakichenin-Melin-Report}
+		  ,
+  urllrde	= {200706-Seminar-Ramakichenin-Melin-Report}
+}
+
+@TechReport{	  moulard.06.seminar,
+  author	= {Thomas Moulard},
+  title		= {Conception of a static oriented language: an overview of
+		  {Scool}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  urllrde	= {200607-Hocquet-Moulard},
+  year		= 2006
+}
+
+@TechReport{	  moulard.07.seminar,
+  oldkeys	= {moulard.07.seminar.scoop.container},
+  author	= {Thomas Moulard},
+  title		= {{C++} container library with the {SCOOP} paradigm},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Moulard},
+  urllrde	= {200706-Seminar-Moulard}
+}
+
+@TechReport{	  moulard.08.seminar,
+  author	= {Thomas Moulard},
+  title		= {An overview of {Scoop}, a static object-oriented
+		  paradigm},
+  titre		= {Une introduction \`a {Scoop}, un paradigme \Cxx orient\'e
+		  objet},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200712-Seminar-Moulard},
+  urllrde	= {200712-Seminar-Moulard},
+  abstract	= {\Cxx has achieved to support classic object-oriented and
+		  generic programming, but some modelisation problems remain
+		  recurrent and difficult to solve. Scoop is a static
+		  Object-Oriented paradigm. The paradigm provides virtual
+		  methods, argument covariance, virtual types and
+		  multi-methods statically typed without extending the
+		  language. Scoop uses its own \Cxx library in order to make
+		  easier to design a library with this paradigm.},
+  resume	= {\Cxx a r\'eussi \`a supporter \`a la fois la programmation
+		  orient\'e objet classique et la programmation
+		  g\'en\'erique, cependant certains probl\`emes r\'ecurrents
+		  restent toujours difficiles \`a r\'esoudre. Scoop est un
+		  paradigme orient\'e objet. Il fournit des m\'ethodes
+		  virtuelles, les arguments covariants, les types virtuels et
+		  les multi-m\'ethodes typ\'ees statiquement sans avoir
+		  besoin d'\'etendre le langage. Scoop utilise sa propre
+		  biblioth\`eque \Cxx pour facilier la conception d'une
+		  biblioth\`eque utilisant ce paradigme.}
+}
+
+@TechReport{	  neri.07.seminar,
+  oldkeys	= {neri.07.seminar.learning},
+  author	= {Neri Nicolas},
+  title		= {Learning models for model-checking},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/20070509-Seminar-NicolasNeri-Report}
+		  ,
+  urllrde	= {20070509-Seminar-NicolasNeri-Report}
+}
+
+@TechReport{	  neri.08.seminar,
+  author	= {Nicolas Neri},
+  title		= {Transfinite Chomp},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Neri},
+  urllrde	= {200801-Seminar-Neri},
+  abstract	= {FILL ME},
+  resume	= {Dans ce rapport technique, nous nous attardons sur le jeu
+		  de la tablette de chocolat. On dispose d'une tablette de
+		  chocolat dont le carr\'e inf\'erieur gauche est
+		  empoisonn\'e. Les joueurs jouent \`a tour de r\^ole. Un
+		  coup consiste \`a choisir un carr\'e de chocolat et \`a le
+		  manger ainsi que tous les carr\'es qui sont \`a sa droite
+		  et au dessus de lui. Le joueur qui mange le carr\'e
+		  empoisonn\'e perd la partie. Dans cet expos\'e, nous nous
+		  int\'eresserons particuli\`erement au cas o\`u les
+		  dimensions du jeu sont de classe cardinale infinie. On
+		  pr\'esentera \'egalement, pour une meilleure
+		  compr\'ehension, les nombres ordinaux et leur ordre associ\'e.}
+}
+
+@TechReport{	  o-connor.04.seminar,
+  oldkeys	= {o-connor.transducer.04.seminar},
+  author	= {Sarah O'Connor},
+  title		= {Implementation of transducers in {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2004,
+  urllrde	= {20040623-Seminar-SarahOConnor-transducers-Slides}
+}
+
+@TechReport{	  odou.05.seminar,
+  oldkeys	= {odou.taxonomy.05.seminar},
+  author	= {Simon Odou},
+  title		= {Images taxonomy and modeling},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2005,
+  urllrde	= {200506-Seminar-Odou}
+}
+
+@TechReport{	  ordy.08.seminar,
+  author	= {Vincent Ordy},
+  title		= {Implementing a {C++} extension with {Transformers}:
+		  \texttt{class namespace}},
+  titre		= {Impl\'ementation d'une extension du {C++} dans
+		  {Transformers}: \texttt{class namespace}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  astract	= {C++ classes are closed, such that once a class definition
+		  is ended, nothing can be added to it. But most of the time,
+		  programmers are used to distinguish method definition from
+		  method implementation. As a consequence, using
+		  fully-qualified name of method names and return types are
+		  needed, which is repetitive and tedious, especially with
+		  template and nested classes. We propose extending C++
+		  grammar with a namespace-like syntax in order to define
+		  easily member functions and static data members already
+		  declared in the class definition. This work will be based
+		  on Tranformers' C++ grammar and transformation rules in
+		  Stratego Language.},
+  resume	= {Les classes en C++ sont ferm\'ees, c'est-\`a-dire qu'on ne
+		  peut rien leur ajouter une fois leur d\'efinition
+		  termin\'ee. Or, la plupart du temps, les programmeurs
+		  s\'eparent la d\'efinition de l'impl\'ementation, ce qui
+		  oblige \`a utiliser une syntaxe r\'ep\'etitive, en
+		  particulier dans le cas de patrons de classes ou de classes
+		  imbriqu\'ees. On se propose donc de faire une extension de
+		  la grammaire du C++ permettant via une syntaxe proche de
+		  celle des namespaces de d\'efinir plus ais\'ement des
+		  m\'ethodes ou attributs statiques d\'ej\`a d\'eclar\'es
+		  dans la d\'efinition de la classe. Dans ce but, nous
+		  utiliserons la grammaire du C++ impl\'ement\'ee dans
+		  Transformers, et des transformations \'ecrites en Stratego.},
+  url		= {http://publications.lrde.epita.fr/200807-Seminar-Ordy},
+  urllrde	= {200807-Seminar-Ordy}
+}
+
+@TechReport{	  pierron.07.seminar,
+  oldkeys	= {pierron.07.seminar.formal.def},
+  author	= {Nicolas Pierron},
+  title		= {Formal Definition of the Disambiguation with Attribute
+		  Grammars},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Pierron},
+  urllrde	= {200706-Seminar-Pierron},
+  astract	= {The current problem of the disambiguation in Transformers
+		  with attribute grammars is that no-one has a proof that
+		  allows certification of this approach. The current use of
+		  attribute grammars for the disambiguation of C and a part
+		  of C++ lets us think that this method is correct. In order
+		  to remove any doubt, a definition and a formalization of
+		  our approach are necessary. This work is split in two
+		  parts. The first one relates to the proof of the validity
+		  of the approach used in Transformers. The second one is
+		  devoted to the correction and the re-development of the
+		  existing tools according to the model defined.},
+  resume	= {Le probl\`eme actuel de la d\'esambigu\"isation dans
+		  Transformers avec des grammaires attribu\'ees est que l'on
+		  ne poss\`ede pas de preuve permettant de certifier cette
+		  approche. L'usage actuel des grammaires attribu\'ees pour
+		  la d\'esambigu\"isation du C et d'une partie du C++ laisse
+		  \`a penser que cette m\'ethode est correcte. Afin de
+		  supprimer tout doute, une d\'efinition et une formalisation
+		  de notre approche est n\'ecessaire. Ce travail comporte est
+		  divis\'e en deux parties. La premi\`ere porte sur la preuve
+		  de la validit\'e de l'approche utilis\'ee dans
+		  Transformers. La seconde est consacr\'ee \`a la correction
+		  et au re-d\'eveloppement des outils existants suivant le mod\`ele d\'efini.}
+}
+
+@TechReport{	  pierron.08.seminar,
+  author	= {Akim Demaille and Renaud Durlin and Nicolas Pierron and
+		  Beno\^it Sigoure},
+  title		= {Automatic Attribute Propagation for Modular Attribute
+		  Grammars},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Pierron},
+  urllrde	= {200801-Seminar-Pierron},
+  astract	= {Attribute grammars are well suited to describe (parts of)
+		  the semantics of programming languages: hooked on the
+		  syntactic production rules, they allow to express local
+		  relations that are later bound globally by a generic
+		  evaluator. However they fall short when working on large
+		  and complex languages. First attributes that are virtually
+		  needed everywhere need to be propagated by every single
+		  production rule. Second, this constraint hinders
+		  modularity, since adding a syntactic extension might
+		  require the propagation of new attributes in the rest of
+		  the language. This paper shows how to solve these problems
+		  by introducing a technique to automatically propagate
+		  attributes by completing the set of semantic rules. We
+		  formally define the propagation constraints such that it is
+		  optimized to avoid unnecessary addition of semantic rules.
+		  Attribute grammars are thus made more maintainable, modular
+		  and easier to use.},
+  resume	= {Les grammaires attribu\'ees sont plus adapt\'ees pour
+		  d\'ecrire (des parties de) la s\'emantique d'un langage de
+		  programmation : accroch\'ees sur les r\`egles de production
+		  syntaxique, elles permettent d'exprimer des relations
+		  locales qui sont par la suite li\'ees entre elles
+		  globalement par un \'evaluateur g\'en\'erique. Cependant
+		  elles ne passent pas \`a l'\'echelle quand on travaille
+		  avec des langages volumineux et complexes. Premi\`erement
+		  les attributs qui sont requis quasiment partout ont besoin
+		  d'\^etre v\'ehicul\'es par chaque r\`egle de production.
+		  Deuxi\`emement, ces contraintes cassent la modularit\'e car
+		  le fait d'\'etendre une grammaire n\'ecessite la
+		  propagation des nouveaux attributs \`a travers le reste du
+		  langage. Ce papier montre comment r\'esoudre ces
+		  probl\`emes en introduisant un syst\`eme de propagation
+		  automatique des attributs qui compl\`ete l'ensemble des
+		  r\`egles s\'emantiques. Nous avons d\'efini formellement
+		  les contraintes de propagations de mani\`ere optimis\'ee
+		  afin d'\'eviter l'ajout de r\`egles s\'emantiques inutiles.
+		  Ainsi les grammaires attribu\'ees sont devenus plus
+		  maintenables, modulaires et facile \`a utiliser.}
+}
+
+@TechReport{	  pouchet.04.seminar.gui,
+  oldkeys	= {pouchet.vgi.04.seminar},
+  author	= {Louis-Noel Pouch\"et},
+  title		= {D\'eveloppement d'une interface graphique pour
+		  {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2004,
+  note		= {Core curriculum internship of EPITA},
+  urllrde	= {FIXME}
+}
+
+@TechReport{	  pouchet.04.seminar.interpreter,
+  oldkeys	= {pouchet.vcsn-interpretor.04.seminar},
+  author	= {Louis-No\"el Pouchet},
+  title		= {An interpreter for {V}aucanson},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2004,
+  urllrde	= {20040623-Seminar-Pouchet-Vaucanson-Interpreter-Report}
+}
+
+@TechReport{	  querol.07.seminar,
+  author	= {Geoffroy Querol},
+  title		= {Speaker recognition evaluation: selective approaches and
+		  fusion},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200705-Seminar-Querol},
+  urllrde	= {200705-Seminar-Querol}
+}
+
+@TechReport{	  querol.08.seminar,
+  author	= {Geoffroy Querol},
+  title		= {{SVM-MLLR} for multi-speaker verification systems score
+		  fusion},
+  titre		= {{SVM-MLLR} et fusion pour la v\'erification du locuteur},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200756-Seminar-Querol},
+  urllrde	= {200756-Seminar-Querol},
+  resume	= {Afin d'am\'eliorer la performance globale des syst\`emes
+		  de v\'erification du locuteur, il faut diversifier les
+		  approches. Le but de ce travail est d'\'etudier les
+		  performances d'un syst\`eme SVM-MLLR. Cette m\'ethode se
+		  base sur la construction, \`a partir du mod\`ele du monde,
+		  d'une transformation lin\'eaire des vecteurs moyennes (mean
+		  supervectors) maximisant la vraisemblance du mod\`ele
+		  transform\'e par rapport aux donn\'ees locuteur. On
+		  \'evaluera deux approches diff\'erentes : Dans la
+		  premi\`ere, on utilisera directement le logarithme du
+		  rapport de vraisemblance (GMM-MLLR). Dans une deuxi\`eme
+		  exp\'erimentation, on utilisera les SVMs pour \'evaluer les
+		  scores de d\'ecision. La derni\`ere \'etape consiste \`a
+		  valuer l'apport d'une m\'ethode de compensation du canal
+		  (NAP: Nuisance Attribute Projection) sur les performances
+		  de ce syst\`eme). Une fusion des scores avec d'autres
+		  syst\`emes GMM sera \'etudi\'ee. Une fusion au niveau des
+		  noyaux sera quand \`a elle pr\'esent\'ee par Charles-Alban.
+		  Tous les tests vont \^etre men\'es sur les deux bases de
+		  donn\'ees NIST-SRE 2005 et 2006 all trials.}
+}
+
+@TechReport{	  queze.07.seminar,
+  oldkeys	= {queze.07.seminar.tools.ag.manipulation},
+  author	= {Florian Queze},
+  title		= {Tools for Attribute Grammars manipulation in
+		  Transformers},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-Queze},
+  urllrde	= {200706-Seminar-Queze}
+}
+
+@TechReport{	  queze.08.seminar,
+  author	= {Florian Qu\`eze},
+  title		= {C++ Program Slicing with {Transformers}},
+  titre		= {D\'ecoupage de programme C++ avec {Transformers}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publis.lrde.epita.fr/200806-Seminar-Queze},
+  urllrde	= {200806-Seminar-Queze},
+  abstract	= {Transformers is a C++ manipulation framework built on
+		  Stratego/XT. Program Slicing is an important field of
+		  program transformation. We will explain what Program
+		  Slicing is, give a quick overview of various aspects of
+		  Program Slicing and show how Transformers can be turned
+		  into a C++ Program Slicing tool.},
+  resume	= {Transformers est un emsemble d'outils bas\'es sur
+		  Stratego/XT permettant la manipulation de programmes C++.
+		  Le d\'ecoupage de programmes est un domaine important de la
+		  transformation de programmes. Nous allons expliquer ce
+		  qu'est le d\'ecoupage de programmes, donner un aper{\c c}u
+		  rapide de ses diff\'erents aspects et montrer comment
+		  Transformers pourrait \^etre utilis\'e comme un outil
+		  permettant le d\'ecoupage de programmes.}
+}
+
+@TechReport{	  raud.08.seminar,
+  author	= {C\'edric Raud},
+  title		= {{C}entaur: A generic framework simplifying {C++}
+		  transformation},
+  titre		= {{C}entaur : Une infrastructure g\'en\'erique simplifiant
+		  les transformations de {C++}},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://lrde.org/cgi-bin/twiki/view/Publications/200807-Seminar-Raud}
+		  ,
+  urllrde	= {200807-Seminar-Raud},
+  abstract	= {The C++ standard grammar was not thought to be easily
+		  parsable so its use in the context of program handling can
+		  be compared to the complexity of the AST generated by it.
+		  The aim of Centaur inside Tranformers is to propose a
+		  generic framework allowing to manipulate and digest this
+		  AST : program transformations are simplified thanks to an
+		  easier access to the parse tree data and its annotations.
+		  Thanks to this library, repetitive and error-prone tasks
+		  like enumerating a container's elements or the parent
+		  classes lookup of a class will be factorized by a function
+		  set corresponding to an extensible and modular model.},
+  resume	= {La grammaire du standard du C++ n'ayant pas \'et\'e
+		  con\c{c}ue pour etre ais\'ement analysable, son utilisation
+		  dans le cadre de la manipulation de programme est
+		  comparable \`a la complexit\'e de l'AST g\'en\'er\'e par
+		  celle-ci. Le r\^ole de Centaur au sein de Transformers est
+		  ainsi de fournir une infrastructure g\'en\'erique
+		  permettant de manipuler et de synth\'etiser cet AST : les
+		  transformations de programmes sont simplifi\'ees gr\`ace a
+		  un acc\`es plus ais\'e aux informations contenues dans
+		  l'arbre syntaxique et ses annotations. Gr\^ace \`a cette
+		  bibliotheque, les t\^aches r\'ep\'etitives et souvent
+		  g\'en\'eratrices d'erreurs, comme l'\'enum\'eration des
+		  \'el\'ements d'un conteneur ou la recherche des classes
+		  parentes d'une classe, seront factoris\'ees par un ensemble
+		  de fonctions correspondant \`a un mod\`ele modulaire et extensible.}
+}
+
+@TechReport{	  sadegh.08.seminar,
+  author	= {Guillaume Sadegh},
+  title		= {A Promela front-end for Spot},
+  titre		= {Front-end Promela dans Spot},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  abstract	= {Spot is a C++ library for model checking. For
+		  verification, Spot uses an input-format which describes a
+		  Transition-based Generalized B\"uchi Automata (TGBA).
+		  However, this format doesn't seem accessible for users with
+		  its poor abstraction and the need for often representing
+		  automaton with millions of states. Promela (Process
+		  Meta-Language) is a verification modeling language used by
+		  the Spin model checker. It lets users to describe a
+		  parallel system for verification in a high level
+		  programming language. We will present different ways to add
+		  a Promela front-end in Spot, which will allow to explore
+		  the state-graph on-the-fly, in order to avoid storing all
+		  the states.},
+  resume	= {Spot est une biblioth\`eque de model checking. Pour
+		  v\'erifier des mod\`eles, Spot utilise un format d'entr\'ee
+		  repr\'esentant des automates de B\"uchi g\'en\'eralis\'es
+		  bas\'es sur les transitions (TGBA). Ce format est peu
+		  pratique pour des utilisateurs, par son manque
+		  d'abstraction et par la taille des automates \`a
+		  repr\'esenter, souvent compos\'es de millions d'\'etats.
+		  Promela (Process Meta-Language) est un langage de
+		  sp\'ecification de syst\`emes asynchrones, utilis\'e par le
+		  model checker Spin. Il permet de repr\'esenter des
+		  syst\`emes concurrents dans un langage imp\'eratif de haut
+		  niveau. Nous allons pr\'esenter plusieurs approches pour
+		  l'ajout d'un front-end Promela dans Spot, qui devront
+		  permettre une exploration \`a la vol\'ee du graphe
+		  d'\'etats, afin d'\'eviter de conserver en m\'emoire tous les \'etats.},
+  url		= {http://publications.lrde.epita.fr/200807-Seminar-Sadegh},
+  urllrde	= {200807-Seminar-Sadegh}
+}
+
+@TechReport{	  seine.08.seminar,
+  author	= {Warren Seine},
+  titre		= {D\'esambigu\"isation des patrons de type C++ avec les
+		  Grammaires Attribu\'ees de Transformers},
+  title		= {C++ template disambiguation with {Transformers} Attribute
+		  Grammars},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200807-Seminar-Seine},
+  urllrde	= {200807-Seminar-Seine},
+  abstract	= {C++ is a context-sensitive language that can be parsed
+		  using a context-free but ambiguous grammar. Disambiguation
+		  is then required to select the unique semantically-valid
+		  parse tree. Transformers, a framework for C++ program
+		  transformation, uses attribute grammars to achieve that
+		  stage.
+
+		  One of the hardest ambiguity in the language is related to
+		  metaprogramming. In so far as code is generated when
+		  templates are instanciated, types are not fully known at
+		  the declaration site. Therefore, type-checking is needed to
+		  perfectly handle templates, and it poses a real challenge.
+
+		  This report focuses on template disambiguation, detailing
+		  the problems and how to resolve it, in order to provide a
+		  better platform for source manipulation.},
+  resume	= {Malgr\'e sa sensibilit\'e au contexte, le C++ est
+		  analysable avec une grammaire hors-contexte mais ambig\"ue.
+		  La d\'esambigu\"isation est ensuite n\'ec\'essaire pour
+		  s\'electionner le seul arbre syntaxique s\'emantiquement
+		  valide. Transformers est une collection d'outils pour la
+		  transformation de programmes C++ qui utilise les grammaires
+		  attribu\'ees pour r\'ealiser cette \'etape.
+
+		  Une des plus difficiles ambiguit\'es dans le langage
+		  concerne la m\'eta-programmation. Puisque du code est
+		  g\'en\'er\'e \`a l'instanciation, tous les types ne sont
+		  pas n\'ec\'essairement connus \`a la d\'eclaration. La
+		  v\'erification des types est donc obligatoire pour traiter
+		  totalement le cas des patrons, ce qui pose un v\'eritable
+		  d\'efi.
+
+		  Ce rapport se concentre sur la d\'esambigu\"isation des
+		  patrons de type et d\'etaille les probl\`emes et leur
+		  m\'ethode de r\'esolution, afin de fournir une meilleure
+		  plateforme de manipulation de sources.}
+}
+
+@TechReport{	  sigoure.06.seminar,
+  oldkeys	= {sigoure.06.seminar.xrm},
+  author	= {Beno\^it Sigoure},
+  title		= {{eX}tended {R}eactive {M}odules},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2006,
+  url		= {http://publications.lrde.epita.fr/200607-Seminar-Sigoure},
+  urllrde	= {200607-Seminar-Sigoure},
+  abstract	= {Reactive Modules is a formal model used to represent
+		  synchronous and asynchronous components of a system. PRISM
+		  is a widely used probabilistic model-checker. It introduced
+		  the PRISM language, highly based on the Reactive Modules
+		  formalism. This language quickly reaches its limit when it
+		  comes to large models.
+
+		  eXtended Reactive Modules (XRM) is an extension of the
+		  PRISM language. It comes with a compiler that translate XRM
+		  modules in PRISM modules, thus providing a comprehensive
+		  and reliable solution for people willing to write large
+		  models.},
+  resume	= {Reactive Modules est un mod\`ele formel utilis\'e pour
+		  d\'ecrire les \'el\'ements synchrones et asynchrones d'un
+		  syst\`eme. PRISM est un outil de model-checking
+		  probabiliste. Il a introduit le langage PRISM, grandement
+		  bas\'e sur le formalisme de Reactive Modules. Ce langage
+		  atteinte vite ses limites lorsqu'il s'agit de d\'ecrire des
+		  mod\`eles cons\'equants.
+
+		  eXtended Reactive Modules est une extension du langage
+		  PRISM. Il est fournit avec un compilateur qui traduit les
+		  modules XRM en modules PRISM, fournissant ainsi une
+		  solution fiable et compl\`ete pour les gens ayant besoin de
+		  d\'ecrire des syst\`emes cons\'equants.}
+}
+
+@TechReport{	  sigoure.07.seminar,
+  author	= {Beno\^it Sigoure and Quentin Hocquet},
+  title		= {{revCPP} A reversible {C++} preprocessor},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Hocquet},
+  urllrde	= {200801-Seminar-Hocquet}
+}
+
+@TechReport{	  sigoure.08.seminar,
+  author	= {Beno\^it Sigoure},
+  title		= {Run-Time Concrete-Syntax Program-Transformation in General
+		  Purpose Languages},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200801-Seminar-Sigoure-CC}
+		  ,
+  urllrde	= {200801-Seminar-Sigoure-CC},
+  abstract	= {Program transformation in general purpose languages such
+		  as \Cxx is tedious because it requires the \acf{ast} of the
+		  transformed program to be manipulated in abstract syntax
+		  (that is, in the host language, \Cxx here). The code to
+		  write is unwieldy and costly to maintain.
+
+		  This object of the seminar is to present the implementation
+		  of new concrete syntax program transformation techniques
+		  (that is, using directly the language of the transformed
+		  program) in a standard \Cxx environment. Our approach uses
+		  the parser at run-time to apply dynamic transformation
+		  rules. A Tiger compiler will be used to support the
+		  presentation.},
+  resume	= {La transformation de programmes dans des langages
+		  g\'en\'eralistes tels que le \Cxx est fastidieuse car elle
+		  n\'ecessite de manipuler l'\acf{ast} du programme transform
+		  en syntaxe abstraite (c'est-\`a-dire dans le langage
+		  h\^ote, ici le \Cxx). Le code \`a \'ecrire est lourd et
+		  co\^uteux maintenir.
+
+		  Le but de ce s\'eminaire est de pr\'esenter la mise en
+		  \oe{}uvre de nouvelles techniques de transformation de
+		  programmes en syntaxe concr\`ete (c'est-\`a-dire utilisant
+		  directement le langage du programme transform\'e) dans un
+		  environnement \Cxx standard. Notre approche utilise
+		  l'analyseur syntaxique l'ex\'ecution pour appliquer des
+		  r\`egles de transformation dynamiques. Un compilateur de
+		  Tiger servira de support \`a la pr\'esentation.}
+}
+
+@TechReport{	  terrones.05.seminar,
+  oldkeys	= {terrones.exp-to-aut.05.seminar},
+  author	= { Florent Terrones },
+  title		= { From an expression to the original automaton },
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2005,
+  urllrde	= {20050622-Seminar-Terrones-DerivedTerms-Slides}
+}
+
+@TechReport{	  thivolle.05.seminar,
+  oldkeys	= {thivolle.canvas-olena.05.seminar},
+  author	= {Damien Thivolle},
+  title		= {Canvas in {O}lena},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2005,
+  urllrde	= {200506-Seminar-Thivolle}
+}
+
+@TechReport{	  van-noppen.07.seminar,
+  oldkeys	= {van-noppen.07.seminar.scool},
+  author	= {Maxime van Noppen},
+  title		= {{SCOOL}: object orientation of a static language},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2007,
+  url		= {http://publications.lrde.epita.fr/200706-Seminar-van-Noppen}
+		  ,
+  urllrde	= {200706-Seminar-van-Noppen}
+}
+
+@TechReport{	  van-noppen.08.seminar,
+  author	= {Maxime van Noppen},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  url		= {http://publications.lrde.epita.fr/200806-Seminar-VanNoppen}
+		  ,
+  urllrde	= {200806-Seminar-VanNoppen},
+  titre		= {{SCOOL}: Programmation g\'en\'erique et concepts},
+  title		= {{SCOOL}: Concept-Oriented Programming},
+  resume	= {\textsc{Scool} est un langage statique orient\'e objet qui
+		  a \'et\'e cr\'e\'e afin de pouvoir utiliser toute la
+		  puissance du \Cxx statique de mani\`ere plus ais\'ee
+		  gr\^ace \`a une syntaxe plus expressive et agr\'eable. Il
+		  n'a pas pour but d'\^etre directement compil\'e mais
+		  d'\^etre traduit en \Cxx. Cette ann\'ee le travail rev\^et
+		  une importance particuli\`ere. En effet, \textsc{Scool} est
+		  d\'evelopp\'e en \'etroite collaboration avec l'\'equipe de
+		  d\'eveloppement de la biblioth\`eque de traitement d'images
+		  \textsc{Milena} de la plate-forme \textsc{Olena} ; l'an
+		  pass\'e a \'et\'e pour elle le cadre de grands changements
+		  internes. Un des axes majeurs du d\'eveloppement de
+		  \textsc{Scool} va donc \^etre de s'adapter aux nouveaux
+		  paradigmes et aux nouveaux besoins de la biblioth\`eque. Le
+		  second axe essentiel de travail est la poursuite du
+		  d\'eveloppement du langage. Cette ann\'ee le travail va
+		  \^etre concentr\'e sur la programmation par concepts qui
+		  est une approche permettant de formaliser facilement des
+		  contraintes sur la programmation g\'en\'erique.},
+  abstract	= {\textsc{Scool} is a static object-oriented language. It
+		  has been created to help one to take advantage of all the
+		  power of static \Cxx thanks to a more expressive syntax. It
+		  is not directly compiled but is translated into \Cxx. This
+		  year was quite important for the project. Indeed, there are
+		  tight links between \textsc{Scool}'s development and the
+		  generic image processing library \textsc{Milena} from the
+		  \textsc{Olena} platform. As some big changes occured in the
+		  library, work needs to be done to adapt the language to its
+		  new paradigms and to its new needs. Work also needs to be
+		  done to continue the implementation of the different
+		  features of \textsc{Scool}. This year the work will be
+		  focused on concept-oriented programming. This allows one to
+		  easily express constraints on generic programming.}
+}
+
+@TechReport{	  vasseur.04.seminar,
+  title		= {Semantics driven disambiguation: a comparison of different
+		  approaches},
+  author	= {Cl\'ement Vasseur},
+  institution	= {LRDE},
+  year		= 2004,
+  urllrde	= {20041201-Seminar-Vasseur-Disambiguation-Report}
+}
+
+@TechReport{	  vigouroux.08.seminar,
+  author	= {Caroline Vigouroux},
+  title		= {Color types in {M}ilena},
+  titre		= {Les types de couleur dans Milena},
+  institution	= {EPITA Research and Development Laboratory (LRDE)},
+  year		= 2008,
+  urllrde	= {200807-Seminar-Vigouroux},
+  abstract	= {The Olena project provides a generic library for image
+		  processing, Milena. We want this library to feature many
+		  value types so that the user can always choose the relevant
+		  types for his application. For instance, we provide many
+		  grey-level types, many color types, etc.
+
+		  This seminar focuses on how we implement color types in
+		  Milena. There are different color spaces (RGB, HSI, and so
+		  on) and several possible encodings for the same color space
+		  (rgb\_3x8, rgb\_f, etc.). One objective of ours is to make
+		  things easy for the user. In particular, we want the user
+		  to handle color values without being concerned of internal
+		  mechanisms. For instance, in conversion formulas, we do not
+		  want to see the details of implementation (division by
+		  255).},
+  resume	= {Le projet Olena fournit une biblioth\`eque g\'en\'erique
+		  pour le traitement d'images, Milena. Nous voulons que cette
+		  biblioth\`eque procure de nombreux types de valeur tels que
+		  l'utilisateur puisse toujours choisir le type adapt\'e pour
+		  son application. Par exemple, nous fournissons de nombreux
+		  encodages en niveau de gris, de nombreux espaces de
+		  couleur, etc.
+
+		  Nous pr\'esentons la mani\`ere dont nous mettons en
+		  \oe{}uvre les types de couleurs dans Milena. Il existe
+		  diff\'erents espaces de couleur (RGB, HSI, et bien
+		  d'autres) et il existe plusieurs encodages possibles pour
+		  les m\^emes espaces de couleur (rgb\_3x8, rgb\_f, etc.).
+		  Nous voulons rendre les choses plus faciles pour
+		  l'utilisateur. Donc, notre objectif est de rendre possible
+		  l'utilisation des espaces de couleur sans se soucier des
+		  m\'ecanismes internes. Par exemple, dans les formules de
+		  conversion, on ne veut pas faire appara\^itre les d\'etails
+		  d'impl\'ementation (division par 255).}
+}
+
+%%% Local Variables:
+%%% fill-column: 76
+%%% End:

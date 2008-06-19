@@ -1,0 +1,66 @@
+\ifx\latexofthepoor\undefined
+
+   %% ----------------------- %%
+   %% Not LaTeX of the poor.  %%
+   %% ----------------------- %%
+
+  \RequirePackage{hevea}
+  \RequirePackage{xcolor}
+  \input{mylistings.hva}
+
+  \definecolor{verylightgray}{rgb}{.9,.9,.9}
+  \lstdefinestyle{box}
+    {basicstyle=\normalsize,
+      keywordstyle=[1]\bfseries,
+      keywordstyle=[2]\slshape,
+      emphstyle=\slshape,
+      commentstyle=\slshape,
+      stringstyle=\sffamily,
+      backgroundcolor=\color{verylightgray}
+    }
+
+  \definecolor{darkorange}{rgb}{1,.25,0}
+  \definecolor{darkgreen}{rgb}{0,.5,0}
+
+  %% Like \alert, but remains in violet.
+  \ifx\warn\undefined
+    \newcommand{\warn}[1]{\alt<.>{\alert{#1}}{{\color{violet}{#1}}}}
+  \fi
+
+  % Some parameters to color the code and avoid visible spaces.
+  \lstdefinestyle{ttcolor}
+     {basicstyle={\ttfamily\scriptsize},%
+      showstringspaces=false,
+      keywordstyle=[1]{\color{blue}\bfseries},%
+      keywordstyle=[2]{\color{blue}},%
+      stringstyle={\color{darkgreen}},%
+      commentstyle={\color{darkorange}},%
+      emphstyle={\warn}}
+
+  \lstdefinestyle{colorbox}
+    {basicstyle=\normalsize,
+      keywordstyle=[1]{\color{blue}\bfseries},
+      keywordstyle=[2]{\color{blue}\slshape},
+      emphstyle={\color{red}\slshape},
+      commentstyle={\color{violet}\slshape},
+      stringstyle={\color{darkgreen}\sffamily},
+      backgroundcolor=\color{verylightgray}
+    }
+
+
+  %% Default style.
+  \lstset{style=ttcolor}
+
+\else
+
+   %% ------------------- %%
+   %% LaTeX of the poor.  %%
+   %% ------------------- %%
+
+  \RequirePackage{alltt}
+  \newcommand{\lstset}[1]{}
+  \newcommand{\lstnewenvironment}[2]{%
+    \newenvironment{#1}{\begin{alltt}}{\end{alltt}}%
+  }
+
+\fi

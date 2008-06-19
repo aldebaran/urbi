@@ -1,0 +1,107 @@
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{hevea}
+\RequirePackage{palatino}[2002/09/08]
+
+\RequirePackage{a4wide}
+
+\RequirePackage[final]{graphicx}[1999/02/16]
+
+\RequirePackage{url}
+
+\input{bilan.hva}
+
+\renewcommand\maketitle{%
+  \begin{titlepage}%
+    \vfil
+    \vskip60\p@
+    \begin{center}
+      {\Huge\bf\@title\\}
+      \vspace{1cm}
+      {\Large \@author\\}
+      \vspace{1cm}
+      {\large \@date\\}
+    \end{center}
+    \vfill
+    \begin{center}
+      \includegraphics[width=5cm]{figs/lrde-big}\\
+      {\small
+        Laboratoire de Recherche et Développement de l'\textsc{Epita}\\
+        14-16, rue Voltaire -- F-94276 Le Kremlin-Bicêtre cedex -- France\\
+        Tél. +33 1 53 14 59 47 -- Fax. +33 1 53 14 59 22\\
+        \url{lrde@lrde.epita.fr} -- \url{http://www.lrde.epita.fr}}
+      \thispagestyle{empty}
+    \end{center}\par
+    \vfil\null
+    \global\let\title\relax
+  \end{titlepage}%
+}
+
+\RequirePackage{multicol}
+\RequirePackage{eurosym}
+\RequirePackage{rotating}
+\RequirePackage{array}
+
+\RequirePackage{natbib}
+
+\RequirePackage{bibunits}
+% Same as the original definition, without \chapter*{\bibname}%
+\renewenvironment{thebibliography}[1]
+     {%\chapter*{\bibname}%
+      \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+
+\newcommand{\pastgoal}[4]
+{
+  \noindent
+  \begin{tabular}{|>{\sf}l|p{0.825\textwidth}|}
+    \multicolumn{2}{l}{\textbf{#1}}
+    \\ \hline
+    Objectif
+    &
+    #2
+    \\ \hline
+    Motivation
+    &
+    #3
+    \\ \hline
+    Bilan
+    &
+    #4
+    \\ \hline
+  \end{tabular}
+}
+
+\newcommand{\goal}[3]
+{
+  \noindent
+  \begin{tabular}{|>{\sf}l|p{0.825\textwidth}|}
+    \multicolumn{2}{l}{\textbf{#1}}
+    \\ \hline
+    Objectif
+    &
+    #2
+    \\ \hline
+    Motivation
+    &
+    #3
+    \\ \hline
+  \end{tabular}
+}
+
+
+\endinput

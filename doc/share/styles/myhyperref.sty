@@ -1,0 +1,89 @@
+\NeedsTeXFormat{LaTeX2e}
+
+%% Hyperref should always be included last.
+%% In particular, do not load float.sty or listing.sty after it.
+%% Don't include it if we are using entcs, since it loads it with a
+%% different set of options.
+
+%% Before the version [2003/11/30], there are problems when using
+%% colons in labels and refs when babel is active.
+\RequirePackageWithOptions{hyperref}[2003/11/30]
+
+%% Required to be compatible with the entcs style.
+\@ifclassloaded{entcs}{}
+{
+  \hypersetup{bookmarks, bookmarksnumbered, bookmarksopen,
+	      breaklinks,
+	      plainpages=false}
+}
+
+%% ------------------------- %%
+%% Change the link display.  %%
+%% ------------------------- %%
+\RequirePackage{myifthen}
+\newboolean{myhyperref@changeLinksColors}
+\setboolean{myhyperref@changeLinksColors}{true}
+\@ifclassloaded{entcs}{\setboolean{myhyperref@changeLinksColors}{false}}
+
+% If not in Final mode, do not use colors.
+\ifx\IsAFinal\undefined
+  \setboolean{myhyperref@changeLinksColors}{false}
+\fi
+
+% If using Beamer, don't change the colors.
+\@ifclassloaded{beamer}{\setboolean{myhyperref@changeLinksColors}{false}}
+
+\ifthen{\boolean{myhyperref@changeLinksColors}}{%
+  \hypersetup{colorlinks, citecolor=blue, linkcolor=blue, urlcolor=blue}}
+
+
+
+%% -------------- %%
+%% autorefnames.  %%
+%% -------------- %%
+
+%% Thanks to Micha and Thomas Hérault.
+\@ifpackageloaded{babel}%
+{%
+  \newcommand{\defautorefname}[3]{%
+    \expandafter\def\csname #1autorefname\endcsname{%
+      \iflanguage{french}{#3}{#2}%
+    }%
+  }%
+  %% Change the definition of \gf to avoid warnings such as:
+  %%
+  %% Package hyperref Warning: Token not allowed in a PDFDocEncoded string:
+  %% (hyperref)                \kern 2.18999pt plus 0.657pt minus 0.87599pt
+  %% (hyperref)                removed on input line 16.
+  %%
+  %% If using \og and \fg.
+  \renewcommand{\gf}[1]{\texorpdfstring{\og{}#1\fg{}}{«~#1~»}\xspace}%
+}%
+{%
+  \newcommand{\defautorefname}[3]{%
+    \expandafter\def\csname #1autorefname\endcsname{%
+      #2%
+    }%
+  }%
+}
+
+\defautorefname{algorithm} {algorithm} {algorithme}
+\defautorefname{appendix}  {Appendix}  {annexe}
+\defautorefname{chapter}   {Chapter}   {chapitre}
+\defautorefname{definition}{definition}{définition}
+\defautorefname{figure}    {Figure}    {figure}
+\defautorefname{lemma}     {lemma}     {lemme}
+\defautorefname{section}   {Section}   {section}
+\defautorefname{subfigure} {Figure}    {figure}
+\defautorefname{subsection}{Section}   {section}
+\defautorefname{subsubsection}{Section}{section}
+\defautorefname{table}     {Table}     {tableau}
+\defautorefname{theorem}   {theorem}   {théorème}
+
+%\AtBeginDocument{
+%\makeatletter
+% \hypersetup{pdftitle=\@title,pdfauthor=\@author}
+%\makeatother
+%}
+
+\endinput

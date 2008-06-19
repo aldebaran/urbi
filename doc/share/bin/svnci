@@ -1,0 +1,8 @@
+#! /bin/sh
+
+if svn status ChangeLog | grep '^M'; then :; else
+  echo >&2 "ChangeLog not updated"
+  exit 1
+fi
+
+svn ci -m "`sed -e '1!{/^2/{x;q;}}' ChangeLog`" "$@"

@@ -1,0 +1,31 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of Reactive Modules for listings package
+%%
+
+\lstdefinelanguage[]{Reactive Modules}
+  {otherkeywords={->,;,+,\&,\[\]},
+   morekeywords=[1]{const,endmodule,false,formula,init,module,true},
+   morekeywords=[2]{int},
+   sensitive,
+   morecomment=[l]{//}
+  }[keywords,comments]
+
+
+\lstdefinelanguage[Extended]{Reactive Modules}[]{Reactive Modules}%
+{%
+  morekeywords=[1]{do,else,end,for,from,if,in,
+    properties,rand,static_rand,step,then,to,
+    P, Pmax, Pmin, R, Rmax, Rmin, S, U},%
+  morekeywords=[2]{exp}%
+}[keywords]%
+
+
+%% I'm puzzled: in yacc.ldf I had to write \$1 etc., but here it
+%% doesn't work at all!
+\lstdefinelanguage[M4]{Reactive Modules}[]{Reactive Modules}%
+{%
+  otherkeywords={$1,$2},
+  morekeywords={U,m4_for,m4_define,m4_if,m4_eval},
+  morekeywords=[2]{rm_sensor},
+  morecomment=[l]{\#}
+}[keywords]%

@@ -1,0 +1,58 @@
+%% gettext.sty: Gettext for LaTeX.
+
+%% This file provides two commands that help maintaining sets of
+%% translated strings.
+%%
+%% \newtranslation{Original String}{Translated String}
+%% Register a new translation.  Both strings should be capitalized
+%% properly.
+%%
+%% \gettext[lc]{Original String}
+%% Return the registered translation for the current language,
+%% or the Original String if no translation is available.
+%% If [lc] is passed, then the strings (original and/or translated)
+%% will be lower cased.  Not named \translate, because Beamer already
+%% uses that name.
+%%
+%% One typically use babel's otherlanguage environment to register
+%% translations:
+%%
+%% \begin{otherlanguage}{french}
+%%   \newtranslation{Section}{Section}
+%%   \newtranslation{Chapter}{Chap\^itre}
+%% \end{otherlanguage}
+%%
+%% But this requires the language to be loaded, and that might
+%% not be desirable, so you may rather use
+%%
+%%   \newtranslation[french]{Section}{Section}
+%%   \newtranslation[french]{Chapter}{Chap\^itre}
+%%
+%% Please, register translations even when it is the identity, as
+%% for "Section" above, a missing translation is a problem.
+
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{gettext}[2007/12/01 v0.2
+			  Gettext for LaTeX]
+
+\newcommand{\newtranslation}[3][\languagename]{%
+  \expandafter\gdef\csname#2#1\endcsname{#3}%
+  \expandafter\gdef\csname#2lc#1\endcsname{\MakeLowercase{#3}}}
+
+\newcommand{\gettext}[2][]{%
+  \expandafter\let\expandafter\@tempa\csname#2#1\languagename\endcsname%
+  \expandafter\let\expandafter\@tempb\csname#1\endcsname%
+  \ifx\@tempa\relax%
+    #1%
+  \else
+    \ifx\@tempb\relax%
+      \@tempa%
+    \else
+      \MakeLowercase{\@tempa}%
+    \fi
+  \fi}
+
+\endinput
+
+%% gettext.sty ends here.

@@ -1,0 +1,40 @@
+#! /bin/sh
+
+set -e
+
+BIB_EXTERNALS="kernighan.bib richie.bib strategoxt.bib visser.bib"
+
+fetch()
+{
+  local url=http://$1
+  local bib=$2
+  if test "x$bib" = x; then
+      bib=$(basename "$1")
+  fi
+  wget "$url" -O "$bib"
+
+  # Missing commas.
+  perl -pi -e 's/(.\})$/\1,/g' "$bib"
+
+  # Useless empty fields.
+  perl -ni -e 'print unless /^\s*\w+\s*=\s*\{\},/' "$bib"
+}
+
+(
+    cd bib
+    chmod a+w $BIB_EXTERNALS
+    fetch netlib.bell-labs.com/cm/cs/bib/bwk.bib kernighan.bib
+    fetch cm.bell-labs.com/cm/cs/bib/dmr.bib richie.bib
+    fetch buildfarm.st.ewi.tudelft.nl/releases/strategoxt/publications-unstable-latest/publications/strategoxt/strategoxt.bib
+    perl -pi -e 's/Benoît/Beno{\^i}t/' strategoxt.bib
+
+    fetch buildfarm.st.ewi.tudelft.nl/releases/strategoxt/publications-unstable-latest/publications/visser/visser.bib
+
+    fetch tom.loria.fr/bibtex.php tom.bib
+    # This one has actually html mark up.
+    perl -ni -e 'print unless /^\s*</' tom.bib
+
+
+    # Avoid accidental edition.
+    chmod a-w $BIB_EXTERNALS
+)
