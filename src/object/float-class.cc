@@ -148,12 +148,12 @@ namespace object
     return new Float(::F(value_get()));                 \
   }
 
-  BOUNCE_FUN(abs, false, false);
   BOUNCE_FUN(acos, false, true);
   BOUNCE_FUN(asin, false, true);
   BOUNCE_FUN(atan, false, false);
   BOUNCE_FUN(cos, false, false);
   BOUNCE_FUN(exp, false, false);
+  BOUNCE_FUN(fabs, false, false);
   BOUNCE_FUN(log, true, false);
   BOUNCE_FUN(round, false, false);
   BOUNCE_FUN(sin, false, false);
@@ -196,12 +196,12 @@ namespace object
   void Float::initialize(CxxObject::Binder<Float>& bind)
   {
     bind(SYMBOL(asString), &Float::as_string);
-    bind(SYMBOL(abs), &Float::abs);
     bind(SYMBOL(acos), &Float::acos);
     bind(SYMBOL(asin), &Float::asin);
     bind(SYMBOL(atan), &Float::atan);
     bind(SYMBOL(cos), &Float::cos);
     bind(SYMBOL(exp), &Float::exp);
+    bind(SYMBOL(abs), &Float::fabs);
     bind(SYMBOL(inf), &Float::inf);
     bind(SYMBOL(log), &Float::log);
     bind(SYMBOL(MINUS), &Float::minus);

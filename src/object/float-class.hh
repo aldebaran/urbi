@@ -29,12 +29,12 @@ namespace object
       int to_int(const std::string& func) const;
 
       // Urbi methods
-      rFloat abs();
       rFloat acos();
       rFloat asin();
       rFloat atan();
       rFloat cos();
       rFloat exp();
+      rFloat fabs();
       rFloat log();
       rFloat minus(objects_type args);
       using Object::operator<;
