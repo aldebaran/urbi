@@ -145,6 +145,7 @@ namespace object
           runner::Runner& WHEN(Run, r),                                 \
           objects_type args)                                            \
         {                                                               \
+	  (void)args;							\
           assert(args.size() ==                                         \
                  ArgsC IF(Met, + 1, WHEN_NOT(Arg1, + 1)));              \
           WHEN(Met, FETCH_TGT());                                       \
