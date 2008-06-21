@@ -40,7 +40,9 @@ namespace ast
   ParametricAst::clear()
   {
     passert(*this, empty());
+#ifndef NDEBUG
     unique_.clear();
+#endif
     count_ = 0;
   }
 

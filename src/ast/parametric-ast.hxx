@@ -19,7 +19,9 @@ namespace ast
   ParametricAst&
   ParametricAst::operator% (const T& t)
   {
+#ifndef NDEBUG
     passert(libport::deref << t, unique_(t));
+#endif
     append_(count_, t);
     return *this;
   }
