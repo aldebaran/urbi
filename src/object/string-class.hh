@@ -14,33 +14,33 @@ namespace object
 
   class String: public CxxObject
   {
-    public:
-      typedef libport::Symbol value_type;
+  public:
+    typedef libport::Symbol value_type;
 
-      String();
-      String(rString model);
-      String(const value_type& value);
-      const value_type& value_get() const;
-      value_type& value_get();
+    String();
+    String(rString model);
+    String(const value_type& value);
+    const value_type& value_get() const;
+    value_type& value_get();
 
-      /// Urbi methods
-      rString plus(runner::Runner& r, rObject rhs);
-      rObject lt(rString rhs);
-      rString fresh ();
-      rString set(rString rhs);
-      rFloat  size();
-      rList   split(rString sep);
+    /// Urbi methods
+    rString plus(runner::Runner& r, rObject rhs);
+    rObject lt(rString rhs);
+    rString fresh ();
+    rString set(rString rhs);
+    rFloat  size();
+    rList   split(rString sep);
 
 
-      static const std::string type_name;
-      virtual std::string type_name_get() const;
+    static const std::string type_name;
+    virtual std::string type_name_get() const;
 
-    private:
-      value_type content_;
+  private:
+    value_type content_;
 
-    public:
-      static void initialize(CxxObject::Binder<String>& binder);
-      static bool string_added;
+  public:
+    static void initialize(CxxObject::Binder<String>& binder);
+    static bool string_added;
   };
 
   // Urbi functions

@@ -15,26 +15,26 @@ namespace object
 
   class Primitive: public CxxObject
   {
-    public:
-      typedef boost::function2<rObject, runner::Runner&, objects_type> value_type;
+  public:
+    typedef boost::function2<rObject, runner::Runner&, objects_type> value_type;
 
-      Primitive();
-      Primitive(rPrimitive model);
-      Primitive(value_type value);
-      value_type value_get() const;
+    Primitive();
+    Primitive(rPrimitive model);
+    Primitive(value_type value);
+    value_type value_get() const;
 
-      // Urbi methods
-      rObject apply(runner::Runner& r, rList args);
+    // Urbi methods
+    rObject apply(runner::Runner& r, rList args);
 
-      static const std::string type_name;
-      virtual std::string type_name_get() const;
+    static const std::string type_name;
+    virtual std::string type_name_get() const;
 
-    private:
-      value_type content_;
+  private:
+    value_type content_;
 
-    public:
-      static void initialize(CxxObject::Binder<Primitive>& binder);
-      static bool primitive_added;
+  public:
+    static void initialize(CxxObject::Binder<Primitive>& binder);
+    static bool primitive_added;
   };
 
 }; // namespace object

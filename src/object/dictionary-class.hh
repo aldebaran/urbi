@@ -14,31 +14,31 @@ namespace object
 {
   class Dictionary: public CxxObject
   {
-    public:
-      typedef libport::hash_map<libport::Symbol, rObject> value_type;
+  public:
+    typedef libport::hash_map<libport::Symbol, rObject> value_type;
 
-      Dictionary();
-      Dictionary(rDictionary model);
-      Dictionary(const value_type& value);
-      const value_type& value_get() const;
-      value_type& value_get();
+    Dictionary();
+    Dictionary(rDictionary model);
+    Dictionary(const value_type& value);
+    const value_type& value_get() const;
+    value_type& value_get();
 
-      /// Urbi methods
-      rDictionary set(rString key, rObject value);
-      rObject get(rString key);
-      rObject has(rString key);
-      rDictionary clear();
-      rList keys();
+    /// Urbi methods
+    rDictionary set(rString key, rObject value);
+    rObject get(rString key);
+    rObject has(rString key);
+    rDictionary clear();
+    rList keys();
 
-      static const std::string type_name;
-      virtual std::string type_name_get() const;
+    static const std::string type_name;
+    virtual std::string type_name_get() const;
 
-    private:
-      value_type content_;
+  private:
+    value_type content_;
 
-    public:
-      static void initialize(CxxObject::Binder<Dictionary>& binder);
-      static bool dictionary_added;
+  public:
+    static void initialize(CxxObject::Binder<Dictionary>& binder);
+    static bool dictionary_added;
   };
 }; // namespace object
 
