@@ -128,11 +128,12 @@ namespace runner
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
-			   const libport::Symbol& name)
+			   const libport::Symbol& name, const objects_type& args)
     : Interpreter::super_type(),
       Runner(model, name),
       ast_(0),
       code_(code),
+      args_(args),
       current_(0),
       stacks_(model.lobby_)
   {
@@ -204,9 +205,8 @@ namespace runner
       operator()(ast_);
     else
     {
-      object::objects_type args;
-      args.push_back(lobby_);
-      apply(code_, SYMBOL(task), args);
+      args_.push_front(lobby_);
+      apply(code_, SYMBOL(task), args_);
     }
   }
 

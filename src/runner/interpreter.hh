@@ -35,6 +35,7 @@ namespace runner
     typedef object::rrObject rrObject;
     typedef object::rCode rCode;
     typedef object::rLobby rLobby;
+    typedef object::objects_type objects_type;
     /// \}
 
     /// \name Ctor & dtor.
@@ -50,7 +51,8 @@ namespace runner
 
     Interpreter (const Interpreter&,
 		 rObject code,
-		 const libport::Symbol& name = SYMBOL());
+		 const libport::Symbol& name = SYMBOL(),
+                 const objects_type& args = objects_type());
 
     /// Create a copy of a runner starting with another ast.
     Interpreter (const Interpreter&,
@@ -193,6 +195,8 @@ namespace runner
 
     /// The urbi Code object to execute
     rObject code_;
+    /// Its arguments
+    objects_type args_;
 
     /// The current value during the evaluation of the AST.
     rObject current_;
