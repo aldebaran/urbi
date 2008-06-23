@@ -144,6 +144,9 @@ namespace scheduler
     /// Current job.
     rJob current_job_;
 
+    /// Iterator on the current job if iterating.
+    jobs_type::iterator job_p_;
+
     /// Coroutine corresponding to the scheduler.
     Coro* coro_;
 

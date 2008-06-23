@@ -22,13 +22,14 @@ namespace scheduler
   {
     assert(state_ == to_start);
     ECHO("In Job::run for " << this);
+
+    // We may get interrupted during our first run, in which case
+    // we better not be in the to_start state while we are executing
+    // or we would get removed abruptly from the scheduler pending_
+    // list.
+    state_ = running;
     try {
-      // The first yield, performed just after the job structure has
-      // been setup here by calling run(), has to be done from within
-      // the exception handler as this job may be killed by a "stop"
-      // or "block" of a tag that has been inherited at job creation
-      // time.
-      yield();
+      check_for_pending_exception();
       work();
     }
     catch (TerminateException&)

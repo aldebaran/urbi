@@ -261,7 +261,6 @@ namespace runner
 
     // Collect all subrunners
     scheduler::jobs_type jobs;
-    jobs.reserve(e->children_get().size());
 
     // Create separate runners for every child but the first
     foreach (ast::rConstExp child,
@@ -623,8 +622,6 @@ namespace runner
     // The list of runners launched for each value in the list if the flavor
     // is "&".
     scheduler::jobs_type runners;
-    if (e->flavor_get() == ast::flavor_and)
-      runners.reserve(content.size());
 
     bool tail = false;
     ast::rConstAst body = e->body_get();

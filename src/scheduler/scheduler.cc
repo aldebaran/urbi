@@ -35,8 +35,22 @@ namespace scheduler
   {
     assert(job);
     assert(!libport::has(jobs_, job));
-    jobs_.push_back(job);
-    jobs_to_start_ = true;
+    assert(!libport::has(pending_, job));
+    // If we are currently in a job, add it to the pending_ queue so that
+    // the job is started in the course of the current round. To make sure
+    // that it is not started too late even if the creator is located after
+    // the job that is causing the creation (think "at job handler" for
+    // example), insert it right after the current job.
+    if (current_job_)
+    {
+      jobs_type::iterator insert_before = job_p_;
+      pending_.insert(++insert_before, job);
+    }
+    else
+    {
+      jobs_.push_back(job);
+      jobs_to_start_ = true;
+    }
   }
 
   libport::utime_t
@@ -80,8 +94,14 @@ namespace scheduler
     bool at_least_one_started = false;
 
     ECHO(pending_.size() << " jobs in the queue for this round");
-    foreach (rJob job, pending_)
+
+    // Do not use libport::foreach here, as the list of jobs may grow if
+    // add_job() is called during the iteration.
+    for (job_p_ = pending_.begin();
+	 job_p_ != pending_.end();
+	 ++job_p_)
     {
+      rJob& job = *job_p_;
       // If the job has terminated during the previous round, remove the
       // references we have on it by just skipping it.
       if (job->terminated())
@@ -299,13 +319,22 @@ namespace scheduler
     // Tell the jobs that a tag has been stopped, ending with
     // the current job to avoid interrupting this method early.
     foreach (rJob job, jobs_get())
-      if (job != current_job_)
+    {
+      // Job started at this cycle, reset to avoid stack references.
+      if (!job)
+	continue;
+      // Job to be started during this cycle.
+      if (job->state_get() == to_start)
+	pending_.remove(job);
+      // Any other non-current job.
+      else if (job != current_job_)
 	job->register_stopped_tag(tag, payload);
+    }
     if (current_job_)
       current_job_->register_stopped_tag(tag, payload);
   }
 
-  std::vector<rJob>
+  jobs_type
   Scheduler::jobs_get() const
   {
     // If this method is called from within a job, return the currently

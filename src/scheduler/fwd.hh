@@ -6,7 +6,7 @@
 #ifndef SCHEDULER_FWD_HH
 # define SCHEDULER_FWD_HH
 
-# include <vector>
+# include <list>
 
 # include <libport/shared-ptr.hh>
 
@@ -18,7 +18,7 @@ namespace scheduler
   class Scheduler;
   class Job;
   typedef libport::shared_ptr<Job, true> rJob;
-  typedef std::vector<rJob> jobs_type;
+  typedef std::list<rJob> jobs_type;
   class Tag;
   typedef libport::shared_ptr<Tag, true> rTag;
 

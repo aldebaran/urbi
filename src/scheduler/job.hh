@@ -43,7 +43,7 @@ namespace scheduler
   /// \li   start_job()            : add job to the scheduler; the scheduler
   ///                                will call run(), and the job will
   ///                                yield() itself into the scheduler run
-  ///                                queue
+  ///                                queue during the course of work()
   ///
   /// \li   work()                 : this method, which must be overridden,
   ///                                does the real work
