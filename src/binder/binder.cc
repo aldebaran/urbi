@@ -392,4 +392,27 @@ namespace binder
     result_ = res;
   }
 
+  void
+  Binder::visit(ast::rConstNary input)
+  {
+    static ast::ParametricAst closure("closure () { %exp:1 }");
+
+    ast::rNary res = new ast::Nary(input->location_get());
+    foreach (ast::rExp child, (input->children_get()))
+    {
+      if (child.unsafe_cast<const ast::Stmt>() &&
+	  child.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
+      {
+        operator()((closure % child).result<ast::Exp>());
+        res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
+      }
+      else
+      {
+        operator()(child);
+        res->push_back(result_.unsafe_cast<ast::Exp>());
+      }
+    }
+    result_ = res;
+  }
+
 } // namespace binder
