@@ -100,7 +100,21 @@ namespace flower
       tweast << "var loopBreakTag = new Tag | "
 	     << "loopBreakTag:";
 
-    tweast << copy->list_get() << ".each(";
+    tweast << copy->list_get();
+
+    switch (code->flavor_get())
+    {
+    case ast::flavor_none:
+    case ast::flavor_semicolon:
+    case ast::flavor_pipe:
+      tweast << ".each(";
+      break;
+    case ast::flavor_and:
+      tweast << ".'each&'(";
+      break;
+    default:
+      pabort("Illegal flavor for 'for ... in': " << code->flavor_get());
+    }
 
     tweast << "closure(" << copy->index_get()->what_get() << ") {";
 

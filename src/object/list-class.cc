@@ -16,7 +16,9 @@
 #include <object/atom.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
+
 #include <runner/runner.hh>
+#include <runner/interpreter.hh>
 
 using namespace boost::assign;
 
@@ -131,6 +133,24 @@ namespace object
       r.apply(f, SYMBOL(each), list_of (f) (o));
   }
 
+  void
+  List::each_and(runner::Runner& r, rObject f)
+  {
+    scheduler::jobs_type jobs;
+
+    foreach(const rObject& o, content_)
+    {
+      scheduler::rJob job =
+        new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
+                                f, SYMBOL(each), list_of(o));
+      r.link(job);
+      job->start_job();
+      jobs.push_back(job);
+    }
+
+    r.yield_until_terminated(jobs);
+  }
+
 #define BOUNCE(Name, Ret, Arg, Check)                           \
   IF(Ret, rObject, rList) List::Name(WHEN(Arg, rObject arg))    \
   {                                                             \
@@ -151,21 +171,22 @@ namespace object
 
   void List::initialize(CxxObject::Binder<List>& bind)
   {
-    bind(SYMBOL(back),         &List::back        );
-    bind(SYMBOL(clear),        &List::clear       );
-    bind(SYMBOL(each),         &List::each        );
-    bind(SYMBOL(front),        &List::front       );
-    bind(SYMBOL(PLUS),         &List::operator+   );
-    bind(SYMBOL(PLUS_EQ),      &List::operator+=  );
-    bind(SYMBOL(nth),          &List::operator[]  );
-    bind(SYMBOL(push_back),    &List::push_back   );
-    bind(SYMBOL(push_front),   &List::push_front  );
-    bind(SYMBOL(pop_back),     &List::pop_back    );
-    bind(SYMBOL(pop_front),    &List::pop_front   );
-    bind(SYMBOL(removeById),   &List::remove_by_id);
-    bind(SYMBOL(size),         &List::size        );
-    bind(SYMBOL(sort),         &List::sort        );
-    bind(SYMBOL(tail),         &List::tail        );
+    bind(SYMBOL(back),           &List::back        );
+    bind(SYMBOL(clear),          &List::clear       );
+    bind(SYMBOL(each),           &List::each        );
+    bind(SYMBOL(each_AMPERSAND), &List::each_and    );
+    bind(SYMBOL(front),          &List::front       );
+    bind(SYMBOL(PLUS),           &List::operator+   );
+    bind(SYMBOL(PLUS_EQ),        &List::operator+=  );
+    bind(SYMBOL(nth),            &List::operator[]  );
+    bind(SYMBOL(push_back),      &List::push_back   );
+    bind(SYMBOL(push_front),     &List::push_front  );
+    bind(SYMBOL(pop_back),       &List::pop_back    );
+    bind(SYMBOL(pop_front),      &List::pop_front   );
+    bind(SYMBOL(removeById),     &List::remove_by_id);
+    bind(SYMBOL(size),           &List::size        );
+    bind(SYMBOL(sort),           &List::sort        );
+    bind(SYMBOL(tail),           &List::tail        );
   }
 
   std::string List::type_name_get() const

@@ -28,6 +28,7 @@ namespace object
     rObject back      ();
     rList   clear     ();
     void    each      (runner::Runner&, rObject);
+    void    each_and  (runner::Runner&, rObject);
     rObject front     ();
     rList   pop_back  ();
     rList   pop_front ();
