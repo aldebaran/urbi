@@ -799,7 +799,7 @@ namespace runner
 	  c.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are.
-	Interpreter* subrunner = new Interpreter(*this, ast::rConstAst(c));
+	Interpreter* subrunner = new Interpreter(*this, eval(c));
 	runners.push_back(subrunner);
 	subrunner->start_job ();
       }
