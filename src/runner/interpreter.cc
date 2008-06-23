@@ -845,9 +845,15 @@ namespace runner
     }
 
     // If the Nary is not the toplevel one, all subrunners must be finished when
-    // the runner exits the Nary node.
-    if (!e->toplevel_get ())
+    // the runner exits the Nary node. However, it we have a scopeTag, we must
+    // issue a "stop" which may interrupt subrunners.
+    if (!e->toplevel_get() && !runners.empty())
+    {
+      scheduler::rTag tag = scope_tags_.back();
+      if (tag)
+	tag->stop(scheduler_get(), object::void_class);
       yield_until_terminated(runners);
+    }
   }
 
   void
