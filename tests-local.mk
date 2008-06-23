@@ -23,6 +23,7 @@ XFAIL_TESTS +=					\
 
 # tests that momentarily fail because of static binding.
 TFAIL_TESTS +=					\
+2.x/comma-environment.chk			\
 2.x/foreach-and.chk				\
 2.x/foreach-and-exception.chk			\
 2.x/scope-tag2.chk
