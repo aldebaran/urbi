@@ -71,10 +71,14 @@ namespace runner
   }
 
   void
-  AtHandler::register_stopped_tag(const scheduler::rTag& tag, boost::any)
+  AtHandler::register_stopped_tag(const scheduler::rTag& tag, boost::any payload)
   {
-    // Remove all the jobs holding this tag.
-    jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, tag));
+    // If we are the current job, since we have no side effect, it must be
+    // a flow control tag. Otherwise, remove all jobs holding this tag.
+    if (scheduler_get().is_current_job(*this))
+      super_type::register_stopped_tag(tag, payload);
+    else
+      jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, tag));
   }
 
   void
