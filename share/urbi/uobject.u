@@ -163,7 +163,8 @@ class Object.uvar
   };
   function notifyAccess(f)
   {
-    nAccess++ |
+    //beware of the CoW
+    getSlot("uvar").nAccess++ |
     access += [f] |
     if (access.size == 1)
       loopCheck |
@@ -258,7 +259,7 @@ class Global.'external'
     var obj = uobjects.getSlot(objname);
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.locateSlot(varname).sameAs(obj))
-      obj.setSlot(varname, getSlot("uvar").clone)
+      new uvar(obj, varname)
     else if (obj.getSlot(varname).locateSlot("isUVar").sameAs(nil))
     {
       // The slot allready exists, but is not an uvar.
@@ -270,6 +271,7 @@ class Global.'external'
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
     var uob = uobjects.getSlot(objname);
+    var lobby = lobby;
     function f()
     {
       var msg = ['external'.UEM_ASSIGNVALUE, 
@@ -288,6 +290,7 @@ class Global.'external'
   {
     ("external function call "+fname).print;
     var functionName = objname + "." + fname;
+    var lobby = lobby;
     function f
     {
       var args = call.evalArgs;
