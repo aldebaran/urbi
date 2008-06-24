@@ -86,8 +86,6 @@ namespace runner
   {
     while (true)
     {
-      non_interruptible_set(true);
-
       for (at_jobs_type::iterator job = jobs_.begin();
 	   job != jobs_.end();
 	   /* Do not increment as we will also use erase() to advance */)
@@ -103,6 +101,7 @@ namespace runner
 	bool new_state;
 	try
 	{
+	  non_interruptible_set(true);
 	  new_state =
 	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)),
 			    SYMBOL(LT_at_SP_jobs_SP_handler_GT));
