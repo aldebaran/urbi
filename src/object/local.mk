@@ -93,7 +93,9 @@ object/task-class.cc				\
 object/task-class.hh				\
 object/urbi-exception.cc			\
 object/urbi-exception.hh			\
-object/urbi-exception.hxx
+object/urbi-exception.hxx			\
+object/vector-slots.hh				\
+object/vector-slots.hxx
 
 nodist_libkernel_la_SOURCES += 			\
 object/precompiled-symbols.hh

@@ -19,6 +19,7 @@
 # include <object/object-kind.hh>
 # include <object/hash-slots.hh>
 # include <object/sorted-vector-slots.hh>
+# include <object/vector-slots.hh>
 
 # include <runner/fwd.hh>
 
