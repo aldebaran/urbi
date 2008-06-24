@@ -112,8 +112,8 @@ namespace flower
     case ast::flavor_and:
       tweast << ".'each&'(";
       break;
-    default:
-      pabort("Illegal flavor for 'for ... in': " << code->flavor_get());
+    case ast::flavor_comma:
+      pabort("Invalid flavor for 'for ... in': " << code->flavor_get());
     }
 
     tweast << "closure(" << copy->index_get()->what_get() << ") {";
