@@ -52,6 +52,9 @@ namespace runner
     rLobby lobby_get();
     /// \}
 
+    /// Change lobby on fly
+    void lobby_set(rLobby);
+
     /// Send the current backtrace through the connection.
     /// \param chan The channel to print through.
     virtual void show_backtrace(const std::string& chan) = 0;

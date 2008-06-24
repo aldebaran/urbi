@@ -17,7 +17,7 @@ namespace runner
   {
   public:
     AtJob(rObject condition, rObject clause, rObject on_leave,
-	  scheduler::tags_type tags);
+	  scheduler::tags_type tags, object::rLobby lobby);
     bool blocked() const;
     bool frozen() const;
     const rObject& condition_get() const;
@@ -27,12 +27,14 @@ namespace runner
     void triggered_set(bool);
     const scheduler::tags_type& tags_get() const;
     bool tag_held(const scheduler::rTag& tag) const;
+    const object::rLobby& lobby_get() const;
   private:
     rObject condition_;
     rObject clause_;
     rObject on_leave_;
     bool triggered_;
     scheduler::tags_type tags_;
+    object::rLobby lobby_;
   };
 
   class AtHandler : public Interpreter
@@ -102,6 +104,7 @@ namespace runner
 	try
 	{
 	  non_interruptible_set(true);
+	  lobby_set(job->lobby_get());
 	  new_state =
 	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)),
 			    SYMBOL(LT_at_SP_jobs_SP_handler_GT));
@@ -148,6 +151,8 @@ namespace runner
 	  // which is the function being called, will not throw and any
 	  // exception thrown in the detached runner will not be caught
 	  // here anyway.
+	  non_interruptible_set(false);
+	  side_effect_free_set(false);
 	  urbi_call(*this, to_launch, SYMBOL(eval));
 	}
 	job->triggered_set(new_state);
@@ -200,12 +205,13 @@ namespace runner
   }
 
   AtJob::AtJob(rObject condition, rObject clause, rObject on_leave,
-	       scheduler::tags_type tags)
+	       scheduler::tags_type tags, object::rLobby lobby)
     : condition_(condition),
       clause_(clause),
       on_leave_(on_leave),
       triggered_(false),
-      tags_(tags)
+      tags_(tags),
+      lobby_(lobby)
   {
   }
 
@@ -265,6 +271,12 @@ namespace runner
     return tags_;
   }
 
+  const object::rLobby&
+  AtJob::lobby_get() const
+  {
+    return lobby_;
+  }
+
   void
   register_at_job(const runner::Interpreter& starter,
 		  rObject condition,
@@ -279,7 +291,8 @@ namespace runner
     AtJob* job = new AtJob(condition,
 			   clause,
 			   on_leave,
-			   starter.tags_get());
+			   starter.tags_get(),
+			   starter.lobby_get());
     at_job_handler->add_job(job);
   }
 

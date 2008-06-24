@@ -43,6 +43,12 @@ namespace runner
     return lobby_;
   }
 
+  inline void
+  Runner::lobby_set(rLobby lobby)
+  {
+    lobby_ = lobby;
+  }
+
 } // namespace runner
 
 #endif // RUNNER_RUNNER_HXX
