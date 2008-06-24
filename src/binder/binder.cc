@@ -396,15 +396,31 @@ namespace binder
   Binder::visit(ast::rConstNary input)
   {
     static ast::ParametricAst closure("closure () { %exp:1 }");
+    static ast::ParametricAst nil("nil");
 
     ast::rNary res = new ast::Nary(input->location_get());
     foreach (ast::rExp child, (input->children_get()))
     {
-      if (child.unsafe_cast<const ast::Stmt>() &&
-	  child.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
+      ast::rStmt stm = child.unsafe_cast<ast::Stmt>();
+      if (stm && stm->flavor_get() == ast::flavor_comma)
       {
-        operator()((closure % child).result<ast::Exp>());
-        res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
+        if (ast::rDeclaration dec =
+            stm->expression_get().unsafe_cast<ast::Declaration>())
+        {
+          const ast::loc loc = dec->location_get();
+          const libport::Symbol name = dec->what_get();
+          operator()(new ast::Declaration(loc, name, ast::exp(nil)));
+          res->push_back(result_.unsafe_cast<ast::Exp>(),
+                         ast::flavor_semicolon);
+          operator()(exp(closure %
+                         new ast::Assignment(loc, name, dec->value_get(), 0)));
+          res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
+        }
+        else
+        {
+          operator()((closure % child).result<ast::Exp>());
+          res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
+        }
       }
       else
       {
