@@ -110,7 +110,7 @@ namespace object
     CHECK_ARG_COUNT(3);
     type_check<String>(args[2], SYMBOL(assert));
     rString arg2 = args[2]->as<String>();
-    if (!is_true(args[1]))
+    if (!is_true(args[1], SYMBOL(assert_)))
       throw PrimitiveError
 	("assert_",
 	 "assertion `" + arg2->value_get().name_get() + "' failed");
@@ -271,7 +271,7 @@ namespace object
 
     if (args.size () == 3)
     {
-      if (is_true (args[2]))
+      if (is_true (args[2], SYMBOL(spawn)))
 	r.link (new_runner);
     }
 

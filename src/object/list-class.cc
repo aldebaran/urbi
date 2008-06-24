@@ -110,7 +110,7 @@ namespace object
   static bool
   compareListItems (runner::Runner& r, rObject a, rObject b)
   {
-    return is_true(urbi_call(r, a, SYMBOL(LT), b));
+    return is_true(urbi_call(r, a, SYMBOL(LT), b), SYMBOL(sort));
   }
 
   rList List::sort(runner::Runner& r)

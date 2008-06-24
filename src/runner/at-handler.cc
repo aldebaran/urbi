@@ -100,7 +100,8 @@ namespace runner
 	try
 	{
 	  new_state =
-	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)));
+	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)),
+			    SYMBOL(LT_at_SP_jobs_SP_handler_GT));
 	}
 	catch (const object::UrbiException& ue)
 	{

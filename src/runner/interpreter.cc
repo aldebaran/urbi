@@ -707,7 +707,7 @@ namespace runner
     JAECHO ("test", e->test_get ());
     operator() (e->test_get());
 
-    if (object::is_true(current_))
+    if (object::is_true(current_, SYMBOL(if)))
     {
       JAECHO ("then", e->thenclause_get());
       operator() (e->thenclause_get());
@@ -1059,7 +1059,7 @@ namespace runner
 	MAYBE_YIELD (e->flavor_get());
       JAECHO ("while test", e->test_get());
       operator() (e->test_get());
-      if (!object::is_true(current_))
+      if (!object::is_true(current_, SYMBOL(while)))
 	break;
 
       JAECHO ("while body", e->body_get());

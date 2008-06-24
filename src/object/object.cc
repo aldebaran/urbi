@@ -436,8 +436,10 @@ namespace object
   }
 
   bool
-  is_true(const rObject& o)
+  is_true(const rObject& o, const libport::Symbol& fun)
   {
+    if (o == void_class)
+      throw WrongArgumentType(fun.name_get());
     if (o == nil_class)
       return false;
     if (o->is_a<object::Float>())
