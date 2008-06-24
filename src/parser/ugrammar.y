@@ -1212,7 +1212,7 @@ exp:
 
 exps:
   /* empty */ { $$ = new ast::exps_type; }
-| exps.1     { $$ = $1; }
+| exps.1      { $$ = $1; }
 ;
 
 exps.1:

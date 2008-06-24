@@ -136,8 +136,8 @@ namespace flower
   Flower::visit(ast::rConstFunction code)
   {
     Finally finally;
-    finally << scoped_set(in_function_, true);
-    finally << scoped_set(has_return_, false);
+    finally << scoped_set(in_function_, true)
+            << scoped_set(has_return_, false);
     super_type::visit(code);
     if (has_return_)
     {
