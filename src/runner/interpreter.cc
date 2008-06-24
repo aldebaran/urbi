@@ -606,58 +606,9 @@ namespace runner
 
 
   void
-  Interpreter::visit (ast::rConstForeach e)
+  Interpreter::visit (ast::rConstForeach)
   {
-    // Evaluate the list attribute, and check its type.
-    JAECHO ("foreach list", e->list_get());
-    operator() (e->list_get());
-    object::type_check<object::List>(current_, SYMBOL(foreach));
-    JAECHO("foreach body", e->body_get());
-
-    // We need to copy the pointer on the list, otherwise the list will be
-    // destroyed when children are visited and current_ is modified.
-    object::List::value_type content =
-      current_->as<object::List>()->value_get();
-
-    // The list of runners launched for each value in the list if the flavor
-    // is "&".
-    scheduler::jobs_type runners;
-
-    bool tail = false;
-    ast::rConstAst body = e->body_get();
-    ast::flavor_type flavor = e->flavor_get();
-    ast::rConstDeclaration index = e->index_get();
-
-    // Iterate on each value.
-    foreach (const rObject& o, content)
-    {
-      stacks_.def(index, o);
-
-      // for& ... in loop.
-      if (flavor == ast::flavor_and)
-      {
-	// Create the new runner and launch it. We create a link so
-	// that an error in evaluation will stop other evaluations
-	// as well and propagate the exception.
-	Interpreter* new_runner = new Interpreter(*this, body);
-	link(new_runner);
-	runners.push_back(new_runner);
-	new_runner->start_job();
-      }
-      else // for| and for;
-      {
-	if (tail++)
-	  MAYBE_YIELD(flavor);
-
-	operator() (body);
-      }
-    }
-
-    // Wait for all runners to terminate.
-    yield_until_terminated(runners);
-
-    // For the moment return void.
-    current_ = object::void_class;
+    abort();
   }
 
   object::rCode
