@@ -1024,7 +1024,9 @@ namespace runner
   Interpreter::show_backtrace(const call_stack_type& bt,
                               const std::string& chan)
   {
-    rforeach (ast::rConstCall c, bt)
+    foreach (ast::rConstCall c,
+             boost::make_iterator_range(boost::rbegin(bt),
+                                        boost::rend(bt)))
     {
       std::ostringstream o;
       o << "!!!    called from: " << c->location_get () << ": "
