@@ -175,7 +175,9 @@ false.asString = "false";
 
 do nil
 {
+  # Singleton derives from Object.
   self.addProto(Singleton);
+  self.removeProto(Object);
   function '==' (x) { x.isNil };
   var asString = "nil";
   // nil prints nothing in the toplevel
@@ -510,7 +512,12 @@ Global.addProto (Global.Profiling);
 # This class is used as a flag to recognize all kind of executable code
 class Global.Executable;
 
-[Code, Primitive, Delegate].each(function (c) { c.addProto(Executable) });
+[Code, Primitive, Delegate].each(function (c)
+{
+  # Executable derives from Object.
+  c.addProto(Executable);
+  c.removeProto(Object);
+});
 
 ## ------ ##
 ## Tuple. ##

@@ -10,6 +10,8 @@ do String
   # to the locals :(
   self.addProto(Comparable);
   self.addProto(Orderable);
+  # They both derive from Object.
+  self.removeProto(Object);
 
   // Append in place.
   function '+='(x) { self.set (self + x) };
