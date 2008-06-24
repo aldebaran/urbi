@@ -310,9 +310,7 @@ namespace object
     CHECK_ARG_COUNT (1);
     runner::Runner::backtrace_type bt = r.backtrace_get();
     bt.pop_back();
-    foreach (const runner::Runner::frame_type& elt,
-	     boost::make_iterator_range(boost::rbegin(bt),
-					boost::rend(bt)))
+    rforeach (const runner::Runner::frame_type& elt, bt)
       r.send_message("backtrace", elt.first + " (" + elt.second + ")\n");
     return void_class;
   }
