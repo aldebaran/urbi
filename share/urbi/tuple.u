@@ -14,8 +14,9 @@ class Global.Tuple
 
   function asString ()
   {
-    if (self === Tuple)
-      "<TupleClass>"
+    # Can be run as Pair, Triplet etc., so don't "self === Tuple".
+    if (locateSlot("protoName") === self)
+      id
     else
       "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
   };
