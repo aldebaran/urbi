@@ -43,6 +43,18 @@ namespace parser
            ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0);
 
 
+  /// "class" lvalue block
+  /// "class" lvalue
+  ast::rExp
+  ast_class(const yy::location& l,
+            ast::rCall lvalue, ast::rExp block);
+
+  /// To use to solve the ambiguities bw MetaVar::append_ and
+  /// Tweast::append_ when we don't use exactly ast::rExp.
+  inline
+  ast::rExp
+  ast_exp (ast::rExp e);
+
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
   // while:
@@ -118,4 +130,7 @@ namespace parser
   ast_string(const yy::location& l, libport::Symbol s);
 
 }
+
+# include <parser/ast-factory.hxx>
+
 #endif // !PARSER_AST_FACTORY_HH

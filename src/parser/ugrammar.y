@@ -63,6 +63,8 @@
 #include <parser/ast-factory.hh>
   using parser::ast_bin;
   using parser::ast_call;
+  using parser::ast_class;
+  using parser::ast_exp;
   using parser::ast_for;
   using parser::ast_nary;
   using parser::ast_scope;
@@ -98,16 +100,6 @@
       delete s;
       return res;
     }
-
-    /// To use to solve the ambiguities bw MetaVar::append_ and
-    /// Tweast::append_ when we don't use exactly ast::rExp.
-    inline
-    ast::rExp
-    ast_exp (ast::rExp e)
-    {
-      return e;
-    }
-
 
     /// Store in Var the AST of the parsing of Code.
 # define DESUGAR_(Var, Tweast)                  \
@@ -503,19 +495,11 @@ block:
 stmt:
   "class" lvalue block
     {
-      ::parser::Tweast tweast;
-      ast::rCall lvalue = ast_lvalue_once($2, tweast);
-      libport::Symbol slot = lvalue->name_get();
-      DESUGAR_TWEAST(
-        "var " << new_clone(lvalue) << "= Object.clone|"
-        << "do " << lvalue << " {"
-        << "var protoName = " << ast_string(@2, slot) << "|"
-        << "function " << ("as" + slot.name_get()) << "() {self}|"
-        << ast_exp($3.value()) << "}");
+      $$ = ast_class(@2, $2, $3.value());
     }
 | "class" lvalue
     {
-      DESUGAR("var " << $2.value() << "= Object.clone");
+      $$ = ast_class(@2, $2, 0);
     }
 ;
 

@@ -82,6 +82,28 @@ namespace parser
   }
 
 
+  /// "class" lvalue block
+  /// "class" lvalue
+  ast::rExp
+  ast_class(const yy::location& l,
+            ast::rCall lvalue, ast::rExp block)
+  {
+    ::parser::Tweast tweast;
+    lvalue = ast_lvalue_once(lvalue, tweast);
+    libport::Symbol slot = lvalue->name_get();
+    tweast
+      << "var " << new_clone(lvalue) << "= Object.clone|"
+      << "do " << lvalue << " {"
+      << "var protoName = " << ast_string(l, slot) << "|";
+    if (block)
+      tweast
+        << "function " << ("as" + slot.name_get()) << "() {self}|"
+        << ast_exp(block);
+    tweast << "}";
+    return parse(tweast)->ast_get();
+  }
+
+
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
   // while:
