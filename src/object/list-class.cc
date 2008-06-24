@@ -137,14 +137,11 @@ namespace object
   List::each_and(runner::Runner& r, rObject f)
   {
     scheduler::jobs_type jobs;
-
-    for (objects_type::const_reverse_iterator o = content_.rbegin();
-	 o != content_.rend();
-	 ++o)
+    rforeach (rObject& o, content_)
     {
       scheduler::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
-                                f, SYMBOL(each), list_of(*o));
+                                f, SYMBOL(each), list_of(o));
       r.link(job);
       job->start_job();
       jobs.push_back(job);
