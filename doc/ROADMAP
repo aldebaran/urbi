@@ -128,3 +128,7 @@ used.
 *** Pattern matching
 
 It would be great to have broad pattern matching available.
+
+*** More numerical types
+
+We may need more numerical types, such as Integer, or even BigInteger.
