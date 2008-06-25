@@ -136,3 +136,15 @@ We may need more numerical types, such as Integer, or even BigInteger.
 *** Add time and space benchmarks
 
 We need a way to benchmark the kernel reliably, including with Uobjects.
+
+*** Exceptions
+
+We may want to throw and catch exceptions from Urbiscript.
+
+*** Charsets
+
+What are the correct input charset and encoding? ASCII? UTF8?
+
+*** Internationalization and localization
+
+Should we do something about that?
