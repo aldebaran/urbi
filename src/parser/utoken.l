@@ -164,6 +164,9 @@ do {						\
     ERROR("unexpected end of file in " + Where);	\
   } while(0)
 
+// Report the use of a reserved word.
+#define RESERVED_ERROR				\
+  ERROR("reserved symbol `" + yytext + "'")
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()				\
@@ -547,6 +550,57 @@ FLAVOR   [;|,&]?
 ";"             PRE_RETURN(); RETURN_FLAVOR(SEMICOLON, semicolon);
 ","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);
 
+
+"asm"           RESERVED_ERROR;
+"auto"          RESERVED_ERROR;
+"bool"          RESERVED_ERROR;
+"case"          RESERVED_ERROR;
+"catch"         RESERVED_ERROR;
+"char"          RESERVED_ERROR;
+"const"         RESERVED_ERROR;
+"const_cast"    RESERVED_ERROR;
+ /* "default"       RESERVED_ERROR; */
+"delete"        RESERVED_ERROR;
+"double"        RESERVED_ERROR;
+"dynamic_cast"  RESERVED_ERROR;
+"enum"          RESERVED_ERROR;
+"explicit"      RESERVED_ERROR;
+"export"        RESERVED_ERROR;
+"extern"        RESERVED_ERROR;
+"float"         RESERVED_ERROR;
+"friend"        RESERVED_ERROR;
+"goto"          RESERVED_ERROR;
+"inline"        RESERVED_ERROR;
+"int"           RESERVED_ERROR;
+"long"          RESERVED_ERROR;
+"mutable"       RESERVED_ERROR;
+"namespace"     RESERVED_ERROR;
+"operator"      RESERVED_ERROR;
+"private"       RESERVED_ERROR;
+"protected"     RESERVED_ERROR;
+"public"        RESERVED_ERROR;
+"register"      RESERVED_ERROR;
+"reinterpret_cast" RESERVED_ERROR;
+"short"         RESERVED_ERROR;
+"signed"        RESERVED_ERROR;
+"sizeof"        RESERVED_ERROR;
+"static"        RESERVED_ERROR;
+"static_cast"   RESERVED_ERROR;
+"struct"        RESERVED_ERROR;
+ /*"switch"        RESERVED_ERROR; */
+"template"      RESERVED_ERROR;
+"this"          RESERVED_ERROR;
+"throw"         RESERVED_ERROR;
+"try"           RESERVED_ERROR;
+"typedef"       RESERVED_ERROR;
+"typeid"        RESERVED_ERROR;
+"typename"      RESERVED_ERROR;
+"union"         RESERVED_ERROR;
+"unsigned"      RESERVED_ERROR;
+"using"         RESERVED_ERROR;
+"virtual"       RESERVED_ERROR;
+"volatile"      RESERVED_ERROR;
+"wchar_t"       RESERVED_ERROR;
 
   /*----------------------.
   | The infamous k1-BIN.  |
