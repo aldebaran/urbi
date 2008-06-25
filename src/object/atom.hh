@@ -112,19 +112,6 @@ namespace object
   };
 
 
-  /*----------.
-  | Integer.  |
-  `----------*/
-
-  // The future.  But requires intelligence to mix with other
-  // numerical values, so not used currently.
-  struct integer_traits
-  {
-    typedef int type;
-    enum { kind = object_kind_integer };
-  };
-
-
   /*-------.
   | Lobby.  |
   `-------*/

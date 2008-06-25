@@ -22,7 +22,6 @@
 #include <object/global-class.hh>
 #include <object/lobby-class.hh>
 #include <object/float-class.hh>
-#include <object/integer-class.hh>
 #include <object/list-class.hh>
 #include <object/object-class.hh>
 #include <object/primitive-class.hh>

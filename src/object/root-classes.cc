@@ -11,7 +11,6 @@
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
-#include <object/integer-class.hh>
 #include <object/lobby-class.hh>
 #include <object/object.hh>
 #include <object/object-class.hh>
@@ -204,7 +203,6 @@ namespace object
     What ## _class->slot_set(SYMBOL(sameAs), new Primitive(compare<Name>));
 
     COMPARABLE(float,     Float);
-    COMPARABLE(integer,   Integer);
     COMPARABLE(string,    String);
 
     // Object.addProto(Global)

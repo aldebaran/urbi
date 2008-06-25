@@ -64,12 +64,6 @@ urbi::UValue uvalue_cast(object::rObject o)
 	return res;
       }
       break;
-#define HANDLE_TYPE(k, t)                       \
-      case object::object_kind_##k:             \
-        res = o.cast<object::t>()->value_get(); \
-      break;
-      HANDLE_TYPE(integer, Integer);
-#undef HANDLE_TYPE
   }
   return res;
 }

@@ -37,7 +37,6 @@ namespace object
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,      Alien)				\
   Macro(delegate,   Delegate)				\
-  Macro(integer,    Integer)				\
   Macro(lobby,      Lobby)				\
   Macro(semaphore,  Semaphore)
 
