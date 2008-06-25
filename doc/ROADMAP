@@ -132,3 +132,7 @@ It would be great to have broad pattern matching available.
 *** More numerical types
 
 We may need more numerical types, such as Integer, or even BigInteger.
+
+*** Add time and space benchmarks
+
+We need a way to benchmark the kernel reliably, including with Uobjects.
