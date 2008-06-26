@@ -291,48 +291,51 @@
 | Operator precedence.  |
 `----------------------*/
 
-// man operator
+// man operator (precedences are increasing).
 
 // Operator                        Associativity
 // --------                        -------------
-// () [] -> .                      left to right
-// ! ~ ++ -- - (type) * & sizeof   right to left
-// * / %                           left to right
-// + -                             left to right
-// << >>                           left to right
-// < <= > >=                       left to right
-// == !=                           left to right
-// &                               left to right
-// ^                               left to right
-// |                               left to right
-// &&                              left to right
-// ||                              left to right
-// ?:                              right to left
-// = += -= etc.                    right to left
 // ,                               left to right
+// = += -= etc.                    right to left
+// ?:                              right to left
+// ||                              left to right
+// &&                              left to right
+// |                               left to right
+// ^                               left to right
+// &                               left to right
+// == !=                           left to right
+// < <= > >=                       left to right
+// << >>                           left to right
+// + -                             left to right
+// * / %                           left to right
+// ! ~ ++ -- - (type) * & sizeof   right to left
+// () [] -> .                      left to right
 
  /*
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
+// Precedences are increasing)
 %left  "," ";"
 %left  "|"
 %left  "&"
 %left  CMDBLOCK
 %left  "else" "onleave"
 
-%left  "=" "+=" "-=" "*=" "/="
-%nonassoc "~"
+%left  "=" "+=" "-=" "*=" "/=" "^="
+%nonassoc "~" // This is not the same as in C++, this is for "softest".
 %left  "||"
 %left  "&&"
+%left  "bitor"
 %left  "^"
+%left  "bitand"
 %nonassoc "==" "===" "~=" "%=" "=~=" "!=" "!=="
 %nonassoc "<" "<=" ">" ">="
 %left  "<<" ">>"
 %left  "+" "-"
 %left  "*" "/" "%"
 %right "**"
-%right "!" "++" "--" UNARY     /* Negation--unary minus */
+%right "!" "compl" "++" "--" UNARY     /* Negation--unary minus */
 %left  "("
 %left  "."
 
