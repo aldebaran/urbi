@@ -34,8 +34,26 @@ do Object
     self.setSlot(to, self.getSlot(frm).clone)
   };
 
+  # Some sort of k1 compatibility.
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");
+
+  # Change the whole set of parents.
+  function setProtos(ps)
+  {
+    # Beware that we may be losing the ancestry on Object, which has
+    # access to "Object".
+    var add = Object.getSlot("addProto")    |
+    var rem = Object.getSlot("removeProto") |
+    for| p in protos
+    {
+      rem.apply([self, p]);
+    } |
+    for| p in ps
+    {
+      add.apply([self, p]);
+    };
+  };
 
   function '==' (other)
   {
@@ -510,7 +528,7 @@ Global.addProto (Global.Profiling);
 ## ----------- ##
 
 # This class is used as a flag to recognize all kind of executable code
-class Global.Executable;
+class Global.Executable {};
 
 [Code, Primitive, Delegate].each(function (c)
 {

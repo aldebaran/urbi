@@ -62,6 +62,7 @@ do List
   };
 
   // Same contents except occurrences of e.
+  // Not in place.
   function remove(e)
   {
     var res = self - [e] |
