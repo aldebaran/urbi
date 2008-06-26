@@ -141,7 +141,8 @@ namespace object
     scheduler::jobs_type jobs;
     // Beware of iterations that modify the list in place: make a
     // copy.
-    rforeach (const rObject& o, value_type(content_))
+    value_type l(content_);
+    rforeach (const rObject& o, l)
     {
       scheduler::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
