@@ -43,11 +43,10 @@ namespace parser
            ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0);
 
 
-  /// "class" lvalue block
-  /// "class" lvalue
+  /// "class" lvalue protos block
   ast::rExp
   ast_class(const yy::location& l,
-            ast::rCall lvalue, ast::rExp block);
+            ast::rCall lvalue, ast::exps_type* protos, ast::rExp block);
 
   /// To use to solve the ambiguities bw MetaVar::append_ and
   /// Tweast::append_ when we don't use exactly ast::rExp.

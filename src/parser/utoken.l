@@ -569,6 +569,10 @@ FLAVOR   [;|,&]?
 "xor"           SYNONYM("^");
 "xor_eq"        SYNONYM("^=");
 
+"private"       RETURN(PRIVATE);
+"protected"     RETURN(PROTECTED);
+"public"        RETURN(PUBLIC);
+
 "asm"           RESERVED_ERROR;
 "auto"          RESERVED_ERROR;
 "bool"          RESERVED_ERROR;
@@ -593,9 +597,6 @@ FLAVOR   [;|,&]?
 "mutable"       RESERVED_ERROR;
 "namespace"     RESERVED_ERROR;
 "operator"      RESERVED_ERROR;
-"private"       RESERVED_ERROR;
-"protected"     RESERVED_ERROR;
-"public"        RESERVED_ERROR;
 "register"      RESERVED_ERROR;
 "reinterpret_cast" RESERVED_ERROR;
 "short"         RESERVED_ERROR;

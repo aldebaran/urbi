@@ -86,20 +86,25 @@ namespace parser
   /// "class" lvalue
   ast::rExp
   ast_class(const yy::location& l,
-            ast::rCall lvalue, ast::rExp block)
+            ast::rCall lvalue, ast::exps_type* protos, ast::rExp block)
   {
     ::parser::Tweast tweast;
     lvalue = ast_lvalue_once(lvalue, tweast);
-    libport::Symbol slot = lvalue->name_get();
+    libport::Symbol name = lvalue->name_get();
     tweast
-      << "var " << new_clone(lvalue) << "= Object.clone|"
-      << "do " << lvalue << " {"
-      << "var protoName = " << ast_string(l, slot) << "|";
-    if (block)
+      << "var " << new_clone(lvalue) << "= Object.clone|";
+    // Don't call setProtos from inside the do-scope: evaluate the
+    // protos in the current scope.
+    if (protos)
       tweast
-        << "function " << ("as" + slot.name_get()) << "() {self}|"
-        << ast_exp(block);
-    tweast << "}";
+        << new_clone(lvalue) << ".setProtos([" << *protos << "])|";
+    tweast
+      << "do " << lvalue
+      << " {"
+      <<   "var protoName = " << ast_string(l, name) << "|"
+      <<   "function " << ("as" + name.name_get()) << "() {self}|"
+      <<   ast_exp(block)
+      << "}";
     return parse(tweast)->ast_get();
   }
 

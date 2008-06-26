@@ -474,9 +474,12 @@ stmt:
   {
     DESUGAR($2 << ".remove(" << $4 << ")");
   }
-| "group" { NOT_IMPLEMENTED(@$); }
-
+| "group"
+  {
+    NOT_IMPLEMENTED(@$);
+  }
 ;
+
 exp:
   "group" "identifier"    { DESUGAR($2 << ".members"); }
 ;
@@ -493,16 +496,52 @@ block:
   "{" stmts "}"       { $$ = $2; }
 ;
 
-// Classes.
+/*----------.
+| Classes.  |
+`----------*/
+
+%token TOK_PRIVATE    "private"
+       TOK_PROTECTED  "protected"
+       TOK_PUBLIC     "public"
+       ;
+
+// A useless optional visibility.
+visibility:
+  /* Nothing. */
+| "private"
+| "protected"
+| "public"
+;
+
+%type <exp> proto;
+proto:
+  visibility exp   { $$ = $2; }
+;
+
+%type <exps> protos.1 protos;
+
+protos.1:
+  proto               { $$ = new ast::exps_type; $$->push_back ($1); }
+// Cannot add this part currently, as the prescanner cuts
+//
+//    class A : B, C {};
+//
+// at the comma.
+//
+// | protos.1 "," proto  { $$->push_back($3); }
+;
+
+// A list of parents to derive from.
+protos:
+  /* nothing */   { $$ = 0; }
+| ":" protos.1    { $$ = $2; }
+;
+
 %token TOK_CLASS "class";
 stmt:
-  "class" lvalue block
+  "class" lvalue protos block
     {
-      $$ = ast_class(@2, $2, $3.value());
-    }
-| "class" lvalue
-    {
-      $$ = ast_class(@2, $2, 0);
+      $$ = ast_class(@2, $2, $3, $4.value());
     }
 ;
 
