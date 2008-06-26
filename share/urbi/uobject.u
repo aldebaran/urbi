@@ -206,8 +206,21 @@ class Global.'external'
   var UEM_NEW          = 4;
   var UEM_DELETE       = 5;
 
-  //var uobjects = Lobby.uobjects;
-  // external object <objname>: Set clone to send a UEM_NEW message.
+  /* external object <objname>: Set clone to send a UEM_NEW message.
+  The remote upon reception of the UEM_NEW message 'instanciate <objname>
+  with name <newname>' will instanciate the UObject, and send:
+  - var <newname>.load, which will fail (<newname> does not exist)
+  - class <newname>{} (which will go in the lobby)
+  - external object <newname>
+  - external var/func <newname>.xxx from whatever
+
+  So in external.object we move the instance from lobby to Global.uobjects and
+  recreate <newname>.load, and in our custom cloner, we:
+  - send the NEW message passing a uid as <newname>
+  - wait until uobjects.<newname>.init is set
+  -  return the instance, which is also left in uobjects.<newname> because the
+  remote will use it using this name.
+  */
   function 'object'(objname)
   {
     if (uobjects.locateSlot(objname).sameAs(uobjects))
@@ -215,22 +228,24 @@ class Global.'external'
     // The remote sent the code 'class <objname> {};' just before
     // calling this function, but we want objname in uobjects, not
     // lobby.
-    lobby.removeSlot(objname);
     if (!Global.protos.has(uobjects))
       Global.addProto(uobjects);
+    uobjects.setSlot(objname, lobby.getSlot(objname));
+    lobby.removeSlot(objname);
     ("external object "+objname).print;
+    var lobby = lobby;
+
     function cloner()
     {
       var u = fresh;
-      var msg = [  'external'.UEM_NEW, "Global.uobjects."+u, objectName];
+      var msg = [  'external'.UEM_NEW, u, objname];
       lobby.send(msg, 'external'.MODULE_TAG);
-      // Wait until the remote fills the variable named u.
-      waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
+      // Wait until the remote defines u.init.
+      waituntil(!Global.uobjects.locateSlot(u).isNil
+		&& uobjects.getSlot(u).slotNames.has("init"));
       var ret = Global.uobjects.getSlot(u);
-      Global.uobjects.removeSlot(u);
       ret
     };
-    uobjects.setSlot(objname, Object.clone);
     uobjects.getSlot(objname).setSlot("clone", cloner);
     //Ensure load is bound. K1 uobj tries to do it before binding the object.
     'var'(objname, "load", "dummy0");
@@ -274,7 +289,7 @@ class Global.'external'
     var lobby = lobby;
     function f()
     {
-      var msg = ['external'.UEM_ASSIGNVALUE, 
+      var msg = ['external'.UEM_ASSIGNVALUE,
                  fullname,
                  uob.getSlot(varname).val];
       lobby.send(msg, 'external'.MODULE_TAG);
