@@ -157,3 +157,23 @@ What are the correct input charset and encoding? ASCII? UTF8?
 *** Internationalization and localization
 
 Should we do something about that?
+
+*** Push parser
+The current prescanner is really a PITA.  It forbids constructs such
+as
+
+        class a : b, c {};
+
+*** ICE
+We should catch the SEGVs, not only to display something nicer to the
+user, but also because SEGV are really a problem for the BF under
+Windows.
+
+*** Strings
+Currently all our strings are Symbols underneath.  This is a no-no.
+
+*** Boost
+Evaluate the difficulty of a migration towards 1.35.
+
+*** Flyweight
+See if it can be used for us.
