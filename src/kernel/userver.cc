@@ -250,12 +250,6 @@ UServer::work_handle_connections_ ()
       if (!c.blocked_get())
 	c.continue_send();
 
-      c.error_check_and_send(UERROR_MEMORY_OVERFLOW);
-      c.error_check_and_send(UERROR_MEMORY_WARNING);
-      c.error_check_and_send(UERROR_SEND_BUFFER_FULL);
-      c.error_check_and_send(UERROR_RECEIVE_BUFFER_FULL);
-      c.error_check_and_send(UERROR_RECEIVE_BUFFER_CORRUPTED);
-
       if (c.new_data_added_get())
       {
 	// used by load_file and eval to

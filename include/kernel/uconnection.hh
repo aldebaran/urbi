@@ -33,7 +33,6 @@
 # include <libport/shared-ptr.hh>
 # include <kernel/fwd.hh>
 # include <kernel/utypes.hh>
-# include <kernel/ucomplaints.hh>
 
 namespace ast
 {
@@ -136,25 +135,6 @@ public:
   UConnection&
   send (object::rObject result, const char* tag = 0, const char* p = 0);
 
-  //! Send an error message based on the error number.
-  /*! This command sends an error message through the connection, and to the
-    server output system, according to the error number n.
-    \param n the error number.
-   */
-  UConnection& send (UErrorCode n);
-
-  //! Send a warning message based on the warning number.
-  /*! This command sends an warning message through the connection, and to
-    the server output system, according to the warning number n.
-
-    \param n the warning number. Use the UWarningCode enum. Can be:
-    - 0 : Memory overflow warning
-
-    \param complement is a complement string added at the end
-    of the warning message.
-  */
-  UConnection& send (UWarningCode n);
-
   //! Send at most packetSize bytes in the connection, calling effective_send()
   /*! Must be called when the system tells that the connection is ready to
     accept new data for sending, in order to carry on the processing of the
@@ -239,9 +219,6 @@ public:
 
   /// Build a prefix [01234567:tag].
   std::string make_prefix (const char* tag) const;
-
-  void error_signal_set (UErrorCode n);
-  void error_check_and_send (UErrorCode n);
 
 protected:
   //! Send a buffer through the connection without flushing it.

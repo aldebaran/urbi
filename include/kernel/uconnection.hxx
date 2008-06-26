@@ -86,23 +86,6 @@ UConnection::closing_get()
 
 inline
 void
-UConnection::error_signal_set (UErrorCode n)
-{
-  error_signals_[(int)n] = true;
-}
-
-/// Check if the error_signal is active and tries to effectively send the message
-/// If the message can be sent, the error_signal is canceled, otherwise not.
-inline
-void
-UConnection::error_check_and_send (UErrorCode n)
-{
-  if (error_signals_[(int)n] && (send(n).error_get () == USUCCESS))
-    error_signals_[(int)n] = false;
-}
-
-inline
-void
 UConnection::flush ()
 {
   if (!blocked_)

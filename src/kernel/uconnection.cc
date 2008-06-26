@@ -288,41 +288,6 @@ UConnection::received (const char* buffer, size_t length)
 }
 
 UConnection&
-UConnection::send (UErrorCode n)
-{
-  const char* msg = message (UERRORCODE, n);
-  UErrorValue result = send(msg, "error").error_get ();
-  if (result == USUCCESS)
-  {
-    char buf[80];
-    strncpy (buf, msg, sizeof buf);
-    if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end.
-      buf[strlen(msg)-1] = 0;
-    server_.error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
-  }
-  CONN_ERR_RET(result);
-}
-
-UConnection&
-UConnection::send (UWarningCode n)
-{
-  const char* msg = message (UWARNINGCODE, n);
-  UErrorValue result = send(msg, "warning").error_get ();
-  if (result == USUCCESS)
-  {
-    char buf[80];
-    strncpy (buf, msg, sizeof buf);
-    if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end.
-      buf[strlen(msg)-1] = 0;
-    server_.echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
-		    "UConnection::warning", buf);
-  }
-  CONN_ERR_RET(result);
-}
-
-UConnection&
 UConnection::send (object::rObject result, const char* tag, const char* p)
 {
   // "Display" the result.

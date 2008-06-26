@@ -6,7 +6,6 @@ kernel/server-timer.hh				\
 kernel/server-timer.cc				\
 kernel/ubanner.hh				\
 kernel/ubanner.cc				\
-kernel/ucomplaints.cc				\
 kernel/uconnection.cc				\
 kernel/ughostconnection.hh			\
 kernel/ughostconnection.cc			\
