@@ -129,7 +129,9 @@ namespace object
   void
   List::each(runner::Runner& r, rObject f)
   {
-    foreach(const rObject& o, content_)
+    // Beware of iterations that modify the list in place: make a
+    // copy.
+    foreach (const rObject& o, value_type(content_))
       r.apply(f, SYMBOL(each), list_of (f) (o));
   }
 
@@ -137,7 +139,9 @@ namespace object
   List::each_and(runner::Runner& r, rObject f)
   {
     scheduler::jobs_type jobs;
-    rforeach (rObject& o, content_)
+    // Beware of iterations that modify the list in place: make a
+    // copy.
+    rforeach (const rObject& o, value_type(content_))
     {
       scheduler::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
