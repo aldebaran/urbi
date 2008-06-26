@@ -551,12 +551,17 @@ FLAVOR   [;|,&]?
 ","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);
 
 
+"and"           RESERVED_ERROR;
+"and_eq"        RESERVED_ERROR;
 "asm"           RESERVED_ERROR;
 "auto"          RESERVED_ERROR;
+"bitand"        RESERVED_ERROR;
+"bitor"         RESERVED_ERROR;
 "bool"          RESERVED_ERROR;
 "case"          RESERVED_ERROR;
 "catch"         RESERVED_ERROR;
 "char"          RESERVED_ERROR;
+"compl"         RESERVED_ERROR;
 "const"         RESERVED_ERROR;
 "const_cast"    RESERVED_ERROR;
  /* "default"       RESERVED_ERROR; */
@@ -575,7 +580,11 @@ FLAVOR   [;|,&]?
 "long"          RESERVED_ERROR;
 "mutable"       RESERVED_ERROR;
 "namespace"     RESERVED_ERROR;
+"not"           RESERVED_ERROR;
+"not_eq"        RESERVED_ERROR;
 "operator"      RESERVED_ERROR;
+"or"            RESERVED_ERROR;
+"or_eq"         RESERVED_ERROR;
 "private"       RESERVED_ERROR;
 "protected"     RESERVED_ERROR;
 "public"        RESERVED_ERROR;
@@ -601,6 +610,8 @@ FLAVOR   [;|,&]?
 "virtual"       RESERVED_ERROR;
 "volatile"      RESERVED_ERROR;
 "wchar_t"       RESERVED_ERROR;
+"xor"           RESERVED_ERROR;
+"xor_eq"        RESERVED_ERROR;
 
   /*----------------------.
   | The infamous k1-BIN.  |
