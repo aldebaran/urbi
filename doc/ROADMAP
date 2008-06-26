@@ -24,6 +24,10 @@ This requires:
   - or that we use a modified version of Bison which can use
     boost::variant or an equivalent type supporting non-POD C++ types
 
+*** Use on some robot
+
+Or maybe Webots, but a true robot is preferred.
+
 ** Version 2.0 technical preview 4 (date?)
 
 *** Implement events
@@ -123,7 +127,8 @@ the end of each cycle.
 *** Better syntax for lambda functions
 
 Lambda functions are quite verbose, a lightweight syntax should be
-used.
+used.  More generally, we should pay particular attention to C++-0x
+and try to anticipate the syntactic changes.
 
 *** Pattern matching
 
@@ -132,6 +137,10 @@ It would be great to have broad pattern matching available.
 *** More numerical types
 
 We may need more numerical types, such as Integer, or even BigInteger.
+
+*** Fix the Booleans
+
+They should no longer behave like Floats.
 
 *** Add time and space benchmarks
 
