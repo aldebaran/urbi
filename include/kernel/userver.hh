@@ -287,17 +287,10 @@ public:
   /// Stops all commands in all connections.
   bool stopall;
 
-
-
   enum
   {
     /// Urbi TCP Port.
     TCP_PORT = 54000,
-    /// Used by echo() & error().
-    // FIXME: Because of this stupid hard limit, we can't produce
-    // large outputs!  We should move to using C++.  Or some scheme
-    // that is robust to the size of the message.
-    MAXSIZE_INTERNALMESSAGE = 8192,
   };
 
 private:

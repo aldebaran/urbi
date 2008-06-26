@@ -70,6 +70,13 @@ const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
 const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 
+// Buffers used to output data.
+/// Used by echo() & error().
+// FIXME: Because of this stupid hard limit, we can't produce
+// large outputs!  We should move to using C++.  Or some scheme
+// that is robust to the size of the message.
+typedef char buffer_type[8192];
+
 UServer::UServer(const char* mainName)
   : search_path(getenv("URBI_PATH") ? getenv("URBI_PATH") : LIBPORT_URBI_PATH,
                 ":"),
@@ -305,9 +312,9 @@ UServer::vecho_key(const char* key, const char* s, va_list args)
     key_[5] = 0;
   }
 
-  char buf1[MAXSIZE_INTERNALMESSAGE];
+  buffer_type buf1;
   vsnprintf(buf1, sizeof buf1, s, args);
-  char buf2[MAXSIZE_INTERNALMESSAGE];
+  buffer_type buf2;
   snprintf(buf2, sizeof buf2, "%-90s [%5s]\n", buf1, key_);
   display(buf2);
 }
@@ -345,7 +352,7 @@ UServer::echo(const char* s, ...)
 void
 UServer::vdebug (const char* s, va_list args)
 {
-  char buf[MAXSIZE_INTERNALMESSAGE];
+  buffer_type buf;
   vsnprintf(buf, sizeof buf, s, args);
   effectiveDisplay(buf);
 }
