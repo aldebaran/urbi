@@ -290,6 +290,12 @@ do {						\
       pre_length -= _rewritten.length();		\
   } while (0)
 
+// We matched an alternative token, rescan with Str instead.
+#define SYNONYM(Str)                            \
+  {                                             \
+    PRE_SKIP();                                 \
+    UNPUT(Str);                                 \
+ }
 
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
@@ -526,6 +532,7 @@ FLAVOR   [;|,&]?
 ">="            RETURN_OP(GT_EQ);
 ">>"            RETURN_OP(GT_GT);
 "^"             RETURN_OP(CARET);
+"^="            RETURN_OP(CARET_EQ);
 "**"            RETURN_OP(STAR_STAR);
 "&&"            RETURN_OP(AMPERSAND_AMPERSAND);
 "||"            RETURN_OP(PIPE_PIPE);
@@ -550,18 +557,24 @@ FLAVOR   [;|,&]?
 ";"             PRE_RETURN(); RETURN_FLAVOR(SEMICOLON, semicolon);
 ","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);
 
+"and"           SYNONYM("&&");
+"and_eq"        SYNONYM("&=");
+"bitand"        RETURN_OP(BITAND);
+"bitor"         RETURN_OP(BITOR);
+"compl"         RETURN_OP(COMPL);
+"not"           SYNONYM("!");
+"not_eq"        SYNONYM("!=");
+"or"            SYNONYM("||");
+"or_eq"         SYNONYM("|=");
+"xor"           SYNONYM("^");
+"xor_eq"        SYNONYM("^=");
 
-"and"           RESERVED_ERROR;
-"and_eq"        RESERVED_ERROR;
 "asm"           RESERVED_ERROR;
 "auto"          RESERVED_ERROR;
-"bitand"        RESERVED_ERROR;
-"bitor"         RESERVED_ERROR;
 "bool"          RESERVED_ERROR;
 "case"          RESERVED_ERROR;
 "catch"         RESERVED_ERROR;
 "char"          RESERVED_ERROR;
-"compl"         RESERVED_ERROR;
 "const"         RESERVED_ERROR;
 "const_cast"    RESERVED_ERROR;
  /* "default"       RESERVED_ERROR; */
@@ -579,11 +592,7 @@ FLAVOR   [;|,&]?
 "long"          RESERVED_ERROR;
 "mutable"       RESERVED_ERROR;
 "namespace"     RESERVED_ERROR;
-"not"           RESERVED_ERROR;
-"not_eq"        RESERVED_ERROR;
 "operator"      RESERVED_ERROR;
-"or"            RESERVED_ERROR;
-"or_eq"         RESERVED_ERROR;
 "private"       RESERVED_ERROR;
 "protected"     RESERVED_ERROR;
 "public"        RESERVED_ERROR;
@@ -608,8 +617,6 @@ FLAVOR   [;|,&]?
 "virtual"       RESERVED_ERROR;
 "volatile"      RESERVED_ERROR;
 "wchar_t"       RESERVED_ERROR;
-"xor"           RESERVED_ERROR;
-"xor_eq"        RESERVED_ERROR;
 
   /*----------------------.
   | The infamous k1-BIN.  |

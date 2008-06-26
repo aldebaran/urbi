@@ -662,7 +662,8 @@ stmt:
   }
 };
 
-%token	TOK_SLASH_EQ    "/="
+%token	TOK_CARET_EQ    "^="
+	TOK_SLASH_EQ    "/="
 	TOK_MINUS_EQ    "-="
 	TOK_PLUS_EQ     "+="
 	TOK_STAR_EQ     "*="
@@ -673,6 +674,7 @@ exp:
 | lvalue "-=" exp    { DESUGAR_ASSIGN('-', $1, $3); }
 | lvalue "*=" exp    { DESUGAR_ASSIGN('*', $1, $3); }
 | lvalue "/=" exp    { DESUGAR_ASSIGN('/', $1, $3); }
+| lvalue "^=" exp    { DESUGAR_ASSIGN('^', $1, $3); }
 ;
 
 %token  TOK_MINUS_MINUS "--"
@@ -1048,7 +1050,10 @@ exp:
 // The name of the operators are the name of the messages.
 %token <symbol>
 	TOK_BANG       "!"
+	TOK_BITAND     "bitand"
+	TOK_BITOR      "bitor"
 	TOK_CARET      "^"
+	TOK_COMPL      "compl"
 	TOK_GT_GT      ">>"
 	TOK_LT_LT      "<<"
 	TOK_MINUS      "-"
@@ -1068,8 +1073,12 @@ exp:
 | exp "%" exp	          { $$ = ast_call(@$, $1, $2, $3); }
 | exp "^" exp	          { $$ = ast_call(@$, $1, $2, $3); }
 | exp "<<" exp            { $$ = ast_call(@$, $1, $2, $3); }
+| exp "bitand" exp        { $$ = ast_call(@$, $1, $2, $3); }
+| exp "bitor" exp         { $$ = ast_call(@$, $1, $2, $3); }
 | exp ">>" exp            { $$ = ast_call(@$, $1, $2, $3); }
 | "-" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
+| "!" exp                 { $$ = ast_call(@$, $2, $1); }
+| "compl" exp             { $$ = ast_call(@$, $2, $1); }
 | "(" exp ")"             { $$ = $2; }
 ;
 
@@ -1105,8 +1114,6 @@ exp:
 | exp ">"   exp { $$ = ast_call(@$, $1, $2, $3); }
 | exp ">="  exp { $$ = ast_call(@$, $1, $2, $3); }
 | exp "~="  exp { $$ = ast_call(@$, $1, $2, $3); }
-
-| "!" exp       { $$ = ast_call(@$, $2, $1); }
 
 | exp "&&" exp  { $$ = ast_call(@$, $1, $2, $3); }
 | exp "||" exp  { $$ = ast_call(@$, $1, $2, $3); }
