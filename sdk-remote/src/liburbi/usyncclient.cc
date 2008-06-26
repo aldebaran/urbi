@@ -93,8 +93,8 @@ namespace urbi
     if (!syncTag.empty() && syncTag == msg.tag)
     {
       this->msg = new UMessage(msg);
+      syncTag.clear();
       syncLock_++;
-      syncTag = "";
     }
     else
     {
@@ -109,7 +109,7 @@ namespace urbi
     syncTag = tag;
     queueLock_.unlock();
     syncLock_--;
-    syncTag = "";
+    //syncTag is reset by the other thread
     return msg;
   }
 
