@@ -179,7 +179,7 @@ main (int argc, const char* argv[])
 
 
   s.initialize ();
-  UConnection& c = s.getGhostConnection ();
+  UConnection& c = s.ghost_connection_get();
   std::cerr << libport::program_name
 	    << ": got ghost connection" << std::endl;
 
@@ -208,7 +208,7 @@ main (int argc, const char* argv[])
 	interactive = false;
       }
       if (!input.empty())
-	s.getGhostConnection().received(input.c_str(), input.length());
+	s.ghost_connection_get().received(input.c_str(), input.length());
     }
     libport::utime_t select_time = 0;
     if (!fast)

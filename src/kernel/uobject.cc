@@ -595,7 +595,7 @@ namespace urbi
   uobject_unarmorAndSend(const char* str)
   {
     // Feed this to the ghostconnection.
-    UConnection& ghost = urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->ghost_connection_get();
     if (strlen(str)>=2 && str[0]=='(')
       ghost.received(static_cast<const char *>(str+1), strlen(str)-2);
     else
@@ -606,14 +606,14 @@ namespace urbi
   send(const char* str)
   {
     // Feed this to the ghostconnection.
-    urbiserver->getGhostConnection().received(str);
+    urbiserver->ghost_connection_get().received(str);
   }
 
   void
   send(void* buf, int size)
   {
     // Feed this to the ghostconnection.
-    urbiserver->getGhostConnection().received(static_cast<const char*>(buf),
-					      size);
+    urbiserver->ghost_connection_get().received(static_cast<const char*>(buf),
+                                                size);
   }
 }

@@ -234,14 +234,20 @@ public:
   /// \precondition c != 0
   void connection_add(UConnection* c);
 
-  /// Remove from the connection list.
-  /// This function perform also some error testing on the connection
+  /// Remove from connection_.
+  /// Also perform some error testing on the connection
   /// value and UError return code
   /// Destroy \a c.
   void connection_remove(UConnection* c);
 
-  // A usual connection to stop dependencies.
-  UConnection& getGhostConnection();
+  /// \returns A usual connection to stop dependencies.
+  ///          (kernel/ghost-connection.hh is not public).
+  UConnection& ghost_connection_get();
+
+  /// Change the ghost connection.
+  /// \precondition c xor ghost_.
+  /// \precondition c is a GhostConnection.
+  void ghost_connection_set(UConnection* c);
 
 
   /*--------------------.
@@ -303,7 +309,9 @@ private:
   // FIXME: This is meant to become a runner::Job and move out of this class.
   boost::ptr_list<UConnection> connections_;
 
-  /// The ghost connection used for URBI.INI.
+  /// The ghost connection used for urbi.u, URBI.INI, etc.
+  // Does not need to be an auto_ptr, as it is stored in connections_
+  // which handles memory management.
   UGhostConnection* ghost_;
 };
 

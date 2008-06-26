@@ -471,13 +471,19 @@ UServer::connection_remove(UConnection* c)
        "UConnection closed", long(c));
 }
 
-
 UConnection&
-UServer::getGhostConnection ()
+UServer::ghost_connection_get()
 {
   return *ghost_;
 }
 
+void
+UServer::ghost_connection_set(UConnection* c)
+{
+  assert(!c xor !ghost_);
+  ghost_ = dynamic_cast<UGhostConnection*>(c);
+  assert(c && ghost_);
+}
 
 runner::Runner&
 UServer::getCurrentRunner () const
