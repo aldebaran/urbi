@@ -7,6 +7,8 @@
 # include <cstdarg>
 # include <sstream>
 
+# include <boost/ptr_container/ptr_list.hpp>
+
 # include <libport/config.h>
 # if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
@@ -299,7 +301,7 @@ private:
 
   /// List of active connections: includes one UGhostConnection.
   // FIXME: This is meant to become a runner::Job and move out of this class.
-  std::list<UConnection*> connections_;
+  boost::ptr_list<UConnection> connections_;
 
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;

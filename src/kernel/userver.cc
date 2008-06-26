@@ -26,6 +26,7 @@
 #include <fstream>
 #include <string>
 
+#include <boost/bind.hpp>
 #include <boost/format.hpp>
 #if ! defined LIBPORT_URBI_ENV_AIBO
 # include <boost/thread.hpp>
@@ -243,25 +244,25 @@ void
 UServer::work_handle_connections_ ()
 {
   // Scan currently opened connections for ongoing work
-  foreach (UConnection* c, connections_)
-    if (c->active_get())
+  foreach (UConnection& c, connections_)
+    if (c.active_get())
     {
-      if (!c->blocked_get())
-	c->continue_send();
+      if (!c.blocked_get())
+	c.continue_send();
 
-      c->error_check_and_send(UERROR_MEMORY_OVERFLOW);
-      c->error_check_and_send(UERROR_MEMORY_WARNING);
-      c->error_check_and_send(UERROR_SEND_BUFFER_FULL);
-      c->error_check_and_send(UERROR_RECEIVE_BUFFER_FULL);
-      c->error_check_and_send(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      c.error_check_and_send(UERROR_MEMORY_OVERFLOW);
+      c.error_check_and_send(UERROR_MEMORY_WARNING);
+      c.error_check_and_send(UERROR_SEND_BUFFER_FULL);
+      c.error_check_and_send(UERROR_RECEIVE_BUFFER_FULL);
+      c.error_check_and_send(UERROR_RECEIVE_BUFFER_CORRUPTED);
 
-      if (c->new_data_added_get())
+      if (c.new_data_added_get())
       {
 	// used by load_file and eval to
 	// delay the parsing after the completion
 	// of execute().
-	c->new_data_added_get() = false;
-	c->received("");
+	c.new_data_added_get() = false;
+	c.received("");
       }
     }
 }
@@ -271,23 +272,13 @@ UServer::work_handle_stopall_ ()
 {
   if (stopall)
   {
-    foreach (UConnection* c, connections_)
-      if (c->active_get() && c->has_pending_command ())
-	c->drop_pending_commands ();
+    foreach (UConnection& c, connections_)
+      if (c.active_get() && c.has_pending_command ())
+	c.drop_pending_commands ();
   }
 
   // Delete all connections with closing=true
-  for (std::list<UConnection *>::iterator i = connections_.begin();
-       i != connections_.end(); )
-  {
-    if ((*i)->closing_get())
-    {
-      delete *i;
-      i = connections_.erase(i);
-    }
-    else
-      i++;
-  }
+  connections_.erase_if(boost::bind(&UConnection::closing_get, _1));
 
   stopall = false;
 }
@@ -467,18 +458,17 @@ UServer::connection_add(UConnection* c)
 	  __PRETTY_FUNCTION__,
 	  "UConnection constructor failed");
   else
-    connections_.push_front (c);
+    connections_.push_front(c);
 }
 
 
 void
 UServer::connection_remove(UConnection* c)
 {
-  connections_.remove(c);
+  connections_.erase_if(&boost::lambda::_1 == c);
   echo(::DISPLAY_FORMAT1, long(this),
        __PRETTY_FUNCTION__,
-       "Connection closed", long(c));
-  delete c;
+       "UConnection closed", long(c));
 }
 
 
