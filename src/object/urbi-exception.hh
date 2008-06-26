@@ -39,6 +39,12 @@ namespace object
     /// The call stack
     typedef std::vector<ast::rConstCall> call_stack_type;
 
+    /// Returns true if the exception was allready displayed.
+    bool was_displayed() const;
+
+    /// Mark the exception as allready displayed.
+    void set_displayed();
+
     ADD_FIELD (ast::loc, location)
     ADD_FIELD (call_stack_type, backtrace)
     ADD_FIELD (std::string, msg)
@@ -63,6 +69,9 @@ namespace object
     UrbiException (const std::string& msg,
 		   const std::string& fun);
 
+    private:
+    /// Was the exception displayed
+    bool displayed_;
     COMPLETE_EXCEPTION (UrbiException)
   };
 

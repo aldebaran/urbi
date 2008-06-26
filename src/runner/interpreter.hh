@@ -178,7 +178,7 @@ namespace runner
     virtual backtrace_type backtrace_get() const;
 
   protected:
-    void show_error_ (const object::UrbiException& ue);
+    void show_error_ (object::UrbiException& ue);
 
   private:
     void init();

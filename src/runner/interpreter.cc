@@ -176,8 +176,11 @@ namespace runner
   }
 
   void
-  Interpreter::show_error_ (const object::UrbiException& ue)
+  Interpreter::show_error_ (object::UrbiException& ue)
   {
+    if (ue.was_displayed())
+      return;
+    ue.set_displayed();
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::endl;
     send_message("error", o.str ());
@@ -199,14 +202,23 @@ namespace runner
   void
   Interpreter::work ()
   {
-    assert (ast_ || code_);
-    JAECHO ("starting evaluation of AST: ", ast_);
-    if (ast_)
-      operator()(ast_);
-    else
+    try
     {
-      args_.push_front(lobby_);
-      apply(code_, SYMBOL(task), args_);
+      assert (ast_ || code_);
+      JAECHO ("starting evaluation of AST: ", ast_);
+      if (ast_)
+	operator()(ast_);
+      else
+      {
+	args_.push_front(lobby_);
+	apply(code_, SYMBOL(task), args_);
+      }
+      check_for_pending_exception();
+    }
+    catch(object::UrbiException& ue)
+    {
+      show_error_(ue);
+      throw;
     }
   }
 
@@ -748,12 +760,16 @@ namespace runner
       {
 	// The new runners are attached to the same tags as we are.
 	Interpreter* subrunner = new Interpreter(*this, eval(c));
+	// If the subrunner throws an exception, propagate it here ASAP, unless
+	// we are at the top level.
+	if (!e->toplevel_get())
+	  link(subrunner);
 	runners.push_back(subrunner);
 	subrunner->start_job ();
       }
       else
       {
-	// If at toplevel, stop and print errors
+	// If at toplevel, print errors and continue, else rethrow them
 	try
 	{
 	  operator() (c);

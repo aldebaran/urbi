@@ -137,6 +137,17 @@ namespace object
       throw WrongArgumentCount(minformal, maxformal, effective, fun);
   }
 
+  inline bool
+  UrbiException::was_displayed() const
+  {
+    return displayed_;
+  }
+
+  inline void
+  UrbiException::set_displayed()
+  {
+    displayed_ = true;
+  }
 }; // end of namespace object
 
 #endif //! OBJECT_URBI_EXCEPTION_HXX

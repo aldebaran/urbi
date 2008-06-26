@@ -109,7 +109,7 @@ namespace runner
 	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)),
 			    SYMBOL(LT_at_SP_jobs_SP_handler_GT));
 	}
-	catch (const object::UrbiException& ue)
+	catch (object::UrbiException& ue)
 	{
 	  show_error_(ue);
 	  job = jobs_.erase(job);

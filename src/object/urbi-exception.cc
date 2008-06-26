@@ -8,14 +8,16 @@
 namespace object
 {
   UrbiException::UrbiException (const std::string& msg)
-    : kernel::exception ()
+    : kernel::exception (),
+    displayed_(false)
   {
     msg_ = msg;
   }
 
   UrbiException::UrbiException (const std::string& msg,
 				const ast::loc& loc)
-    : kernel::exception ()
+    : kernel::exception (),
+    displayed_(false)
   {
     msg_ = msg;
     location_ = loc;
@@ -23,7 +25,8 @@ namespace object
 
   UrbiException::UrbiException (const std::string& msg,
 				const std::string& fun)
-    : kernel::exception ()
+    : kernel::exception (),
+    displayed_(false)
   {
     if (fun.empty ())
       msg_ = msg;
