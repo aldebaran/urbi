@@ -300,8 +300,10 @@ namespace urbi
                                    const unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
-    const char * getServerName() {return host;}
+    const char * getServerName() const {return host;}
 
+    /// Return the server port.
+    int getServerPort() const {return port;}
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
