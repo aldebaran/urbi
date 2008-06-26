@@ -565,7 +565,6 @@ FLAVOR   [;|,&]?
 "const"         RESERVED_ERROR;
 "const_cast"    RESERVED_ERROR;
  /* "default"       RESERVED_ERROR; */
-"delete"        RESERVED_ERROR;
 "double"        RESERVED_ERROR;
 "dynamic_cast"  RESERVED_ERROR;
 "enum"          RESERVED_ERROR;
@@ -593,7 +592,6 @@ FLAVOR   [;|,&]?
 "short"         RESERVED_ERROR;
 "signed"        RESERVED_ERROR;
 "sizeof"        RESERVED_ERROR;
-"static"        RESERVED_ERROR;
 "static_cast"   RESERVED_ERROR;
 "struct"        RESERVED_ERROR;
  /*"switch"        RESERVED_ERROR; */
