@@ -120,6 +120,21 @@ namespace object
   }
 
 
+  /*------------------.
+  | Unary operators.  |
+  `------------------*/
+#define BOUNCE_INT_OP(Op)                       \
+  rFloat Float::operator Op()                   \
+  {                                             \
+    return new Float(Op to_int(#Op));           \
+  }
+  BOUNCE_INT_OP(~);
+#undef BOUNCE_INT_OP
+
+
+  /*-------------------.
+  | Binary operators.  |
+  `-------------------*/
 #define BOUNCE_INT_OP(Op)                               \
   rFloat Float::operator Op(rFloat rhs)                 \
   {                                                     \
@@ -129,8 +144,11 @@ namespace object
   BOUNCE_INT_OP(<<);
   BOUNCE_INT_OP(>>);
   BOUNCE_INT_OP(^);
+  BOUNCE_INT_OP(|);
+  BOUNCE_INT_OP(&);
+#undef BOUNCE_INT_OP
 
-#undef BOUNCE_OP
+
 
 #define CHECK_POSITIVE(F)                                       \
   if (value_ < 0)                                               \
@@ -195,26 +213,29 @@ namespace object
 
   void Float::initialize(CxxObject::Binder<Float>& bind)
   {
-    bind(SYMBOL(asString), &Float::as_string);
+    bind(SYMBOL(CARET), &Float::operator^);
+    bind(SYMBOL(GT_GT), &Float::operator>>);
+    bind(SYMBOL(LT), static_cast<rObject (Float::*)(rFloat)>(&Float::operator<));
+    bind(SYMBOL(LT_LT), &Float::operator<<);
+    bind(SYMBOL(MINUS), &Float::minus);
+    bind(SYMBOL(PERCENT), &Float::operator%);
+    bind(SYMBOL(PLUS), &Float::operator+);
+    bind(SYMBOL(SLASH), &Float::operator/);
+    bind(SYMBOL(STAR), &Float::operator*);
+    bind(SYMBOL(STAR_STAR), &Float::pow);
+    bind(SYMBOL(abs), &Float::fabs);
     bind(SYMBOL(acos), &Float::acos);
+    bind(SYMBOL(asString), &Float::as_string);
     bind(SYMBOL(asin), &Float::asin);
     bind(SYMBOL(atan), &Float::atan);
+    bind(SYMBOL(bitand), &Float::operator&);
+    bind(SYMBOL(bitor), &Float::operator|);
+    bind(SYMBOL(compl), &Float::operator~);
     bind(SYMBOL(cos), &Float::cos);
     bind(SYMBOL(exp), &Float::exp);
-    bind(SYMBOL(abs), &Float::fabs);
     bind(SYMBOL(inf), &Float::inf);
     bind(SYMBOL(log), &Float::log);
-    bind(SYMBOL(MINUS), &Float::minus);
     bind(SYMBOL(nan), &Float::nan);
-    bind(SYMBOL(LT), static_cast<rObject (Float::*)(rFloat)>(&Float::operator<));
-    bind(SYMBOL(PLUS), &Float::operator+);
-    bind(SYMBOL(STAR), &Float::operator*);
-    bind(SYMBOL(SLASH), &Float::operator/);
-    bind(SYMBOL(PERCENT), &Float::operator%);
-    bind(SYMBOL(LT_LT), &Float::operator<<);
-    bind(SYMBOL(GT_GT), &Float::operator>>);
-    bind(SYMBOL(CARET), &Float::operator^);
-    bind(SYMBOL(STAR_STAR), &Float::pow);
     bind(SYMBOL(random), &Float::random);
     bind(SYMBOL(round), &Float::round);
     bind(SYMBOL(set), &Float::set);

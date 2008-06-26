@@ -39,6 +39,9 @@ namespace object
     rFloat minus(objects_type args);
     using Object::operator<;
     rObject operator <(rFloat rhs);
+    rFloat operator ~();
+    rFloat operator |(rFloat rhs);
+    rFloat operator &(rFloat rhs);
     rFloat operator +(rFloat rhs);
     rFloat operator *(rFloat rhs);
     rFloat operator /(rFloat rhs);
