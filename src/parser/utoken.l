@@ -29,14 +29,14 @@ typedef yy::parser::token token;
 /// "BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}";"
 /// setting \a keywords to the first char of keyword, and return the
 /// size.
-static size_t bin_split (char* yytext, size_t yyleng, char*& keywords);
+static size_t bin_split(char* yytext, size_t yyleng, char*& keywords);
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
-static Out lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t);
+static Out lexical_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 
 template <typename Out, typename In>
-static Out numeric_cast (parser::ParserImpl& up, const yy::location& loc, In t);
+static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 
 
 /*--------------------.
