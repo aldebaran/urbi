@@ -55,6 +55,9 @@ do Object
     };
   };
 
+  # Syntactic sugar for setProtos.
+  protos->updateHook = function(slot, value) { setProtos(value); };
+
   function '==' (other)
   {
     sameAs(other)
