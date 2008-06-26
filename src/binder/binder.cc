@@ -54,11 +54,11 @@ namespace binder
                                  const libport::Symbol& method,
                                  ast::rConstExp value)
   {
-      ast::exps_type* args = new ast::exps_type();
-      args->push_back(new ast::String(l, name));
-      super_type::operator() (value);
-      args->push_back(result_.unsafe_cast<ast::Exp>());
-      return new ast::Call(l, new ast::Implicit(l), method, args);
+    ast::exps_type* args = new ast::exps_type();
+    args->push_back(new ast::String(l, name));
+    super_type::operator() (value);
+    args->push_back(result_.unsafe_cast<ast::Exp>());
+    return new ast::Call(l, new ast::Implicit(l), method, args);
   }
 
   void Binder::visit(ast::rConstDeclaration input)
@@ -81,10 +81,11 @@ namespace binder
   }
 
   template <typename Node, typename NewNode>
-  void Binder::link_to_declaration(Node input,
-                                   NewNode result,
-                                   const libport::Symbol& name,
-                                   unsigned depth)
+  void
+  Binder::link_to_declaration(Node input,
+                              NewNode result,
+                              const libport::Symbol& name,
+                              unsigned depth)
   {
     BIND_ECHO("Linking " << name << " to its declaration");
     ast::rDeclaration outer_decl = decl_get(name);
@@ -384,18 +385,14 @@ namespace binder
 
     ast::rAnd res = new ast::And(input->location_get(), ast::exps_type());
     foreach (ast::rExp child, input->children_get())
-    {
       // Wrap every children in a closure
-      operator()((closure % child).result<ast::Exp>());
-      res->children_get().push_back(result_.unsafe_cast<ast::Exp>());
-    }
+      res->children_get().push_back(recurse(exp(closure % child)));
     result_ = res;
   }
 
   void
   Binder::visit(ast::rConstNary input)
   {
-    static ast::ParametricAst closure("closure () { %exp:1 }");
     static ast::ParametricAst nil("nil");
 
     ast::rNary res = new ast::Nary(input->location_get());
@@ -404,6 +401,7 @@ namespace binder
       ast::rStmt stm = child.unsafe_cast<ast::Stmt>();
       if (stm && stm->flavor_get() == ast::flavor_comma)
       {
+        static ast::ParametricAst closure("closure () { %exp:1 }");
         if (ast::rDeclaration dec =
             stm->expression_get().unsafe_cast<ast::Declaration>())
         {
@@ -418,7 +416,7 @@ namespace binder
         }
         else
         {
-          operator()((closure % child).result<ast::Exp>());
+          operator()(exp(closure % child));
           res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
         }
       }
