@@ -23,15 +23,27 @@ parser/parser-utils.cc				\
 parser/uparser.hh				\
 parser/uparser.cc
 
-## -------------- ##
-## Bison parser.  ##
-## -------------- ##
+
+## --------------------- ##
+## bison/flex wrappers.  ##
+## --------------------- ##
 
 # A Bison wrapper for C++.
 BISONXX = $(top_builddir)/build-aux/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 $(BISONXX): $(BISONXX_IN)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/bison++
+
+# A Flex wrapper for C++.
+FLEXXX = $(top_builddir)/build-aux/flex++
+FLEXXX_IN = $(top_srcdir)/build-aux/flex++.in
+$(FLEXXX): $(FLEXXX_IN)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/flex++
+
+
+## -------------- ##
+## Bison parser.  ##
+## -------------- ##
 
 parser_dir = $(top_srcdir)/src/parser
 
@@ -80,10 +92,6 @@ generate-parser: $(FROM_UGRAMMAR_Y)
 ## Flex Scanner.  ##
 ## -------------- ##
 
-# Flex 2.5.4's C++ output does not use std:: properly.  This is a Perl
-# regexp of entities to prefix with std::.
-flex_nonstd = 'cin|cout|cerr|[io]stream'
-
 FROM_UTOKEN_L =			\
 parser/utoken.cc
 
@@ -93,19 +101,12 @@ dist_libkernel_la_SOURCES += $(parser_dir)/flex-lexer.hh
 nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parser_dir)/utoken.l
-parser/utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/local.mk
+utoken_deps = $(FLEXXX_IN) $(parser_dir)/local.mk
+parser/utoken.stamp: $(parser_dir)/utoken.l $(utoken_deps)
+	$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-# -s to disable the default rule (ECHO).
-	$(FLEX) -s -+ -oparser/utoken.cc $(parser_dir)/utoken.l
-	perl -pi						\
-	     -e 's,<FlexLexer.h>,"parser/flex-lexer.hh",;'	\
-	     -e 's/class istream;/#include <iostream>/;'	\
-	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
-	     -e 's,# *include *<unistd.h>,#include "sdk/config.h"\n#ifndef WIN32\n$$&\n#endif,'	\
-	     parser/utoken.cc
-## For some reason, on Windows perl does not remove the back up file.
-	rm -f parser/utoken.cc.bak
+	$(FLEXXX) $(parser_dir)/utoken.l parser/utoken.cc
 	@mv -f $@.tmp $@
 
 $(FROM_UTOKEN_L): parser/utoken.stamp
