@@ -251,8 +251,8 @@ namespace object
     // If the current value in the slot to be written in has a slot
     // named 'updateHook', call it, passing the object owning the
     // slot, the slot name and the target.
-    if (hook && owner == this)
-      if (rObject hook = property_get(k, SYMBOL(updateHook)))
+    if (hook)
+      if (rObject hook = owner->property_get(k, SYMBOL(updateHook)))
       {
         objects_type args = list_of (rObject(this)) (new String(k)) (o);
         rObject ret = r.apply(hook, SYMBOL(updateHook), args);
