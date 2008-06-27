@@ -29,7 +29,9 @@ namespace scheduler
     // list.
     state_ = running;
     try {
-      check_for_pending_exception();
+      if (pending_exception_ &&
+	  dynamic_cast<SchedulerException*>(pending_exception_.get()))
+	check_for_pending_exception();
       work();
     }
     catch (TerminateException&)
