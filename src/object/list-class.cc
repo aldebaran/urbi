@@ -7,6 +7,7 @@
 #include <boost/bind.hpp>
 
 #include <libport/foreach.hh>
+#include <libport/lexical-cast.hh>
 #include <libport/ufloat.hh>
 
 #include <kernel/userver.hh>
@@ -70,7 +71,7 @@ namespace object
   {
     unsigned i = idx->to_int(SYMBOL(nth));
     if (i >= content_.size())
-      throw PrimitiveError("nth", "invalid index");
+      throw PrimitiveError("nth", "invalid index " + string_cast(i));
     return content_[i];
   }
 
