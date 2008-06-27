@@ -54,6 +54,10 @@ static token::yytokentype pre_wants_more =
 static token::yytokentype pre_complete =
   token::yytokentype(parser::pre_complete);
 
+// Skip the spaces in yytext.
+# define SKIP_SPACES()				\
+  while (isspace(*yytext))                      \
+    ++yytext;
 
 // Skip this action if in pre-parser.  Do not put this in a do-while,
 // as it would capture the "continue" which is meant to yylex's
@@ -335,6 +339,10 @@ NUMBER   {NATURAL}|{ENATURAL}|{FLOAT}
 
 FLAVOR   [;|,&]?
 
+  /* See [over.oper] in the C++ standard. */
+OPERATORS   "new"|"delete"|"new[]"|"delete[]"|"+"|"-"|"*"|"/"|"%"|"^"|"&"|"|"|"~"|"!"|"="|"<"|">"|"+="|"-="|"*="|"/="|"%="|"^="|"&="|"|="|"<<"|">>"|">>="|"<<="|"=="|"!="|"<="|">="|"&&"|"||"|"++"|"--"|","|"->*"|"->"|"()"|"[]"
+OPERATOR "operator"{BLANKS}?{OPERATORS}
+
 %%
 %{
 
@@ -354,16 +362,13 @@ FLAVOR   [;|,&]?
   `-----------------------------------*/
 ^"#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
   PRE_SKIP();
-# define SKIP_SPACES()				\
-  for (++yytext; isspace (*yytext); ++yytext)	\
-    continue;
-
+  ++yytext;
   SKIP_SPACES();
   bool push = yytext[0] == 'p';
   yytext += 4; // line|push.
 
+  ++yytext;
   SKIP_SPACES();
-# undef SKIP_SPACES
   char* line = yytext;
   yytext += strspn(yytext, "0123456789");
   *yytext = 0;
@@ -596,7 +601,6 @@ FLAVOR   [;|,&]?
 "long"          RESERVED_ERROR;
 "mutable"       RESERVED_ERROR;
 "namespace"     RESERVED_ERROR;
-"operator"      RESERVED_ERROR;
 "register"      RESERVED_ERROR;
 "reinterpret_cast" RESERVED_ERROR;
 "short"         RESERVED_ERROR;
@@ -663,6 +667,14 @@ FLAVOR   [;|,&]?
   s += '\'';
   DEPRECATED(s);
 }
+
+  /* operator XXX -> 'XXX'. */
+{OPERATOR}    {
+                PRE_SKIP();
+                yytext += strlen("operator");
+                SKIP_SPACES();
+                RETURN_SYMBOL(IDENTIFIER);
+              }
 
 {ID}            RETURN_SYMBOL(IDENTIFIER);
 
@@ -797,9 +809,7 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
   yytext[yyleng - 1] = 0;
   // Skip BIN.
   yytext += 3;
-# define SKIP_SPACES()				\
-  for (++yytext; isspace (*yytext); ++yytext)	\
-    continue;
+  ++yytext;
   SKIP_SPACES();
 
   char* size = yytext;
@@ -807,7 +817,7 @@ bin_split (char* yytext, size_t yyleng, char*& keywords)
     ++yytext;
   *yytext = 0;
   size_t res = boost::lexical_cast<size_t>(size);
-
+  ++yytext;
   SKIP_SPACES();
   keywords = yytext;
   return res;
