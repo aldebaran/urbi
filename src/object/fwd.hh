@@ -36,8 +36,7 @@ namespace object
   /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,      Alien)				\
-  Macro(delegate,   Delegate)				\
-  Macro(semaphore,  Semaphore)
+  Macro(delegate,   Delegate)
 
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
@@ -105,6 +104,8 @@ namespace object
   typedef libport::shared_ptr<Lobby> rLobby;
   class Primitive;
   typedef libport::shared_ptr<Primitive> rPrimitive;
+  class Semaphore;
+  typedef libport::shared_ptr<Semaphore> rSemaphore;
   class String;
   typedef libport::shared_ptr<String> rString;
 

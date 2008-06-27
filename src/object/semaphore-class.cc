@@ -4,36 +4,48 @@
 #include <runner/runner.hh>
 #include <scheduler/fwd.hh>
 
-namespace object {
+namespace object
+{
 
   rObject semaphore_class;
+
+  Semaphore::Semaphore()
+  {
+    proto_add(semaphore_class);
+  }
+
+  Semaphore::Semaphore(rSemaphore model)
+    : value_(model->value_)
+  {
+    proto_add(semaphore_class);
+  }
+
+  Semaphore::Semaphore(const value_type& value)
+    : value_(value)
+  {
+    proto_add(semaphore_class);
+  }
 
   struct SemaphoreException : public scheduler::SchedulerException
   {
     COMPLETE_EXCEPTION(SemaphoreException);
   };
 
-  static rObject
-  semaphore_class_new(runner::Runner&, objects_type args)
+  rSemaphore
+  Semaphore::_new(rObject, rFloat c)
   {
-    CHECK_ARG_COUNT(2);
-    type_check<Float>(args[1], SYMBOL(new));
-    rFloat arg1 = args[1]->as<Float>();
-    int count = arg1->to_int("new");
+    int count = c->to_int("new");
     if (count < 0)
       throw PrimitiveError("new", "initial count must be non-negative");
     return new Semaphore(make_pair(count, std::deque<scheduler::rJob>()));
   }
 
-  static rObject
-  semaphore_class_p(runner::Runner& r, objects_type args)
+  void
+  Semaphore::p(runner::Runner& r)
   {
-    CHECK_ARG_COUNT(1);
-    FETCH_ARG(0, Semaphore);
-    Semaphore::value_type& sem = arg0->value_get();
-    if (--sem.first < 0)
+    if (--value_.first < 0)
     {
-      sem.second.push_back(&r);
+      value_.second.push_back(&r);
       try
       {
 	r.yield_until_terminated(r);
@@ -43,32 +55,34 @@ namespace object {
 	// Regular wake up from a semaphore wait.
       }
     }
-    return void_class;
-  }
-
-  static rObject
-  semaphore_class_v(runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(1);
-    FETCH_ARG(0, Semaphore);
-    Semaphore::value_type& sem = arg0->value_get();
-    if (++sem.first <= 0)
-    {
-      sem.second.front()->async_throw(SemaphoreException());
-      sem.second.pop_front();
-    }
-    return void_class;
   }
 
   void
-  semaphore_class_initialize()
+  Semaphore::v()
   {
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(semaphore, Name)
-    DECLARE(new);
-    DECLARE(p);
-    DECLARE(v);
-#undef DECLARE
+    if (++value_.first <= 0)
+    {
+      value_.second.front()->async_throw(SemaphoreException());
+      value_.second.pop_front();
+    }
   }
+
+  const std::string Semaphore::type_name = "Semaphore";
+
+  std::string
+  Semaphore::type_name_get() const
+  {
+    return type_name;
+  }
+
+  void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)
+  {
+    bind(SYMBOL(new), &Semaphore::_new);
+    bind(SYMBOL(p),   &Semaphore::p   );
+    bind(SYMBOL(v),   &Semaphore::v   );
+  }
+
+  bool Semaphore::semaphore_added =
+    CxxObject::add<Semaphore>("Semaphore", semaphore_class);
 
 } // namespace object

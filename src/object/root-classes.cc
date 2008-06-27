@@ -209,7 +209,12 @@ namespace object
     object_class->proto_add(global_class);
   }
 
-
+  // This is only used to created references on unused classes, so
+  // as they get initialized anyway.
+  void dummy_references()
+  {
+    Semaphore s;
+  }
 
   /*--------.
   |  void.  |

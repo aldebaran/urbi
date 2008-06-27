@@ -154,14 +154,6 @@ namespace object
     return o << "delegate" << libport::iendl;
   }
 
-  template <>
-  std::ostream&
-  Atom<semaphore_traits>::special_slots_dump(std::ostream& o,
-					     runner::Runner&) const
-  {
-    return o << "counter = " << value_.first << libport::iendl;
-  }
-
   /*-------.
   | clone. |
   `-------*/

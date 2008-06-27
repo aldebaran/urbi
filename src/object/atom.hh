@@ -112,17 +112,6 @@ namespace object
   };
 
 
-  /*------------.
-  | Semaphore.  |
-  `------------*/
-
-  // Urbi semaphores.
-  struct semaphore_traits
-  {
-    typedef std::pair< int, std::deque<scheduler::rJob> > type;
-    enum { kind = object_kind_semaphore };
-  };
-
 } // namespace object
 
 #endif // !OBJECT_ATOM_HH
