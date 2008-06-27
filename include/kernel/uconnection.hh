@@ -43,10 +43,10 @@ namespace ast
 namespace object
 {
   class Object;
-  struct lobby_traits;
+  class Lobby;
   template<class T> class Atom;
   typedef libport::shared_ptr<Object, true> rObject;
-  typedef libport::shared_ptr<Atom<lobby_traits>, true > rLobby;
+  typedef libport::shared_ptr<Lobby, true > rLobby;
 }
 
 namespace runner

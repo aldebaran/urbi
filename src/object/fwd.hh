@@ -37,7 +37,6 @@ namespace object
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(alien,      Alien)				\
   Macro(delegate,   Delegate)				\
-  Macro(lobby,      Lobby)				\
   Macro(semaphore,  Semaphore)
 
 
@@ -102,6 +101,8 @@ namespace object
   typedef libport::shared_ptr<Float> rFloat;
   class List;
   typedef libport::shared_ptr<List> rList;
+  class Lobby;
+  typedef libport::shared_ptr<Lobby> rLobby;
   class Primitive;
   typedef libport::shared_ptr<Primitive> rPrimitive;
   class String;

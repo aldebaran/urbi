@@ -112,19 +112,6 @@ namespace object
   };
 
 
-  /*-------.
-  | Lobby.  |
-  `-------*/
-
-  // The object inside which user interaction (via the connections) is
-  // evaluated.
-  struct lobby_traits
-  {
-    typedef State type;
-    enum { kind = object_kind_lobby };
-  };
-
-
   /*------------.
   | Semaphore.  |
   `------------*/

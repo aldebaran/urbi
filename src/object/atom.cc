@@ -91,13 +91,6 @@ namespace object
     value_ = v;
   }
 
-  template <>
-  void
-  Atom<lobby_traits>::value_set (Atom<lobby_traits>::value_ref_type)
-  {
-    throw InternalError("cannot call object::Code::value_set");
-  }
-
   /*------------.
   | operator<.  |
   `------------*/
@@ -119,13 +112,6 @@ namespace object
   template <>
   bool
   Atom<object::delegate_traits>::operator< (const Atom& rhs) const
-  {
-    return this < &rhs;
-  }
-
-  template <>
-  bool
-  Atom<object::lobby_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
   }
