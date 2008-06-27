@@ -110,9 +110,18 @@ Decide what scoping is appropriate for "at" jobs.
 
 *** Use real slots
 
-We need to check what other languages have been using. Once we have
-real slots, we will be able to set properties on local variables as
-well.
+Check what other languages have been using. Once we have real slots,
+we will be able to set properties on local variables as well.
+
+We need:
+- to be able to capture set_x and get_x events
+
+- to be able to add properties to the slots themselves
+  (or whatever we need for contraints such as rangemin)
+
+- maybe be able to type them
+
+- be able to stack slot decorators.
 
 *** Real-time features
 
@@ -177,3 +186,15 @@ Evaluate the difficulty of a migration towards 1.35.
 
 *** Flyweight
 See if it can be used for us.
+
+*** Lookup
+Our current lookup algorithm is not resilient.  Look at the
+litterature and chose something better.
+
+*** on, off, switch
+Do we really need to keep this?  Besides, it's
+
+*** inline documentation
+We should find some scheme to document in the sources.  Maybe we want
+to define some grammar for some of our comments.  That's probably
+something else to store for some slots.
