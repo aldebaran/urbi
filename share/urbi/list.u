@@ -7,11 +7,9 @@ do List
   // Whether e is in the list.
   function has(e)
   {
-    for| i in self
-    {
+    for| (var i: self)
       if (i == e)
-	return true
-    } |
+	return true |
     return false
   };
 
@@ -21,11 +19,9 @@ do List
   // memHas, or choose another convention.
   function hasSame(e)
   {
-    for| i in self
-    {
+    for| (var i: self)
       if (i === e)
-        return true
-    } |
+        return true |
     return false
   };
 
@@ -67,9 +63,8 @@ do List
   {
     var res = self - [e] |
     clear |
-    for| i in (res) {
-      push_back (i)
-    } |
+    for| (var i: res)
+      push_back (i) |
     res
   };
 
@@ -77,11 +72,9 @@ do List
   function '-' (rhs)
   {
     var res = [] |
-    for| i in self
-    {
+    for| (var i: self)
       if (!rhs.has(i))
-	res.push_back(i)
-    } |
+	res.push_back(i) |
     return res
   };
 
@@ -142,7 +135,7 @@ do List
   function map (f)
   {
     var res = [] |
-    for| i in self { res.push_back (f (i)) } |
+    for| (var i: self) res.push_back (f (i)) |
     res
   };
 
@@ -162,26 +155,28 @@ do List
   # Check whether at least one element verifies the \a f predicate
   function any (f)
   {
-    for i in self { if (f (i)) return true } |
+    for| (var i: self)
+      if (f (i))
+        return true |
     false
   };
 
   # Check whether all elements verifies the \a f predicate
   function all (f)
   {
-    for i in self { if (!f (i)) return false } |
+    for| (var i: self)
+      if (!f (i))
+        return false |
     true
   };
 
   function filter()
   {
     var res = [] |
-    for elt in self
-    {
+    for| (var elt: self)
       if (predicate(elt))
-        res << elt;
-    };
-    return res;
+        res << elt |
+    return res
   };
 
   function asString ()
@@ -192,10 +187,8 @@ do List
     if (size)
     {
       res = front.acceptVoid.asPrintable |
-      for| elt in tail
-      {
+      for| (var elt: tail)
         res += ", " + elt.acceptVoid.asPrintable |
-      }
     } |
     "[" + res + "]"
   };

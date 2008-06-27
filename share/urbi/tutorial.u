@@ -150,9 +150,9 @@ function Global.next() { tutorial.next};
 function Global.sections() { tutorial.sections};
 function Global.jump(s) { tutorial.jump(s)};
 /*
-for s in ["next", "sections", "jump"] {
+for (var s: ["next", "sections", "jump"])
   Global.setSlot(s, function() {tutorial.getSlot(s).apply([tutorial]);});
-};*/
+*/
 Global.help = function() {tutorial.help};
 
 next;

@@ -172,9 +172,8 @@ class Object.uvar
   };
   function callNotify(l)
   {
-    for f in l {
+    for| (var f: l)
       f()
-    }
   };
   void
 };

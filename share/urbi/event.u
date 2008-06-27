@@ -24,11 +24,9 @@ class Global.Event
       waituntil (generation != prev_generation) |
       prev_generation = generation |
       var launched = emitted + [] |
-      for| instance in (launched)
-      {
+      for| (var instance: launched)
         if (!prev_launched.hasSame (instance))
-          detach (func.apply ([self] + instance))
-      } |
+          detach (func.apply ([self] + instance)) |
       prev_launched = launched
     }
   };

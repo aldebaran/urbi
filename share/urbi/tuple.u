@@ -23,7 +23,7 @@
       };
 
       var idx = 0;
-      for name in names.range(size)
+      for (var name: names.range(size))
       {
         var n = idx;
         setSlot(name, function () { members.nth(n) });

@@ -8,16 +8,15 @@ do Task {
      if (t)
        echo("  Timeshift: " + t + "ms") |
      var ts = "" |
-     for| t in tags {
+     for| (var t : tags) {
        ts += " " + t.name;
      } |
      echo("  Tags: " + ts) |
      var b = backtrace |
      if (!b.empty) {
        echo("  Backtrace:") |
-       for| l in backtrace {
+       for| (var l : backtrace)
          echo("    " + l.front + " (at " + l.back + ")")
-       }
      }
    }
 
@@ -26,7 +25,6 @@ do Task {
 function System.ps()
 {
    nonInterruptible |
-   for| t in jobs {
+   for| (var t : jobs)
      t.dump_state
-   }
 } | void;

@@ -45,10 +45,8 @@ do Object
     # access to "Object".
     var add = Object.getSlot("addProto") |
     protos.clear() |
-    for| p in ps.reverse
-    {
+    for| (var p: ps.reverse)
       add.apply([self, p]) |
-    } |
   };
 
   # Syntactic sugar for setProtos.
@@ -461,8 +459,8 @@ do Object
 
 class Global.Math
 {
-  for fn in ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
-             "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"]
+  for (var fn: ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
+               "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"])
   {
     Global.Math.setSlot (fn, bounce_named (fn))
   };
