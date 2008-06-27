@@ -1,49 +1,60 @@
-class Global.Tuple
-{
-  function init
-  {
-    var names = ["first", "second", "third", "fourth", "fifth", "sixth"] |
-    var self.members = call.evalArgs |
-    var self.size = members.size |
-    var tuple = self |
-    size.times(function (i) {
-      if (names.size > i)
-        tuple.setSlot(names.nth(i), function () { members.nth(i) })
-    })
-  };
-
-  function asString ()
-  {
-    # Can be run as Pair, Triplet etc., so don't "self === Tuple".
-    if (locateSlot("protoName") === self)
-      id
-    else
-      "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
-  };
-
-  function sameAs(other)
-  {
-    return members == other.members
-  };
-
-  function '<' (other)
-  {
-    members < other.members
-  };
-
-  function nth(n)
-  {
-    members.nth(n)
-  };
-};
-
 {
   function makeTupleClass(name, size)
   {
-    var res = Tuple.clone|
-    var res.protoName = name|
-    # FIXME: Check the number of argument in the ctor
-    Global.setSlot(name, res)
+    var names = ["first", "second", "third", "fourth", "fifth", "sixth"];
+
+    class Res
+    {
+      protoName = name;
+      var members = List.new(size, nil);
+      var size = size;
+
+      function asString ()
+      {
+        var strs = members.map(methodToFunction("asPrintable")) |
+        "(" + strs.join(", ") + ")"
+      };
+
+      function init
+      {
+        // if (call.argsCount >= size) throw;
+        members = call.evalArgs |
+        members += Res.members.range(size - members.size) |
+      };
+
+      var idx = 0;
+      for name in names.range(size)
+      {
+        var n = idx;
+        setSlot(name, function () { members.nth(n) });
+        setProperty(name, "updateHook",
+          function (name, val) {
+            // Copy members if needed before altering it
+            if (locateSlot("members") !== self)
+              members = members.clone;
+            members.setNth(n, val);
+            void;
+          });
+        idx++;
+      };
+
+      function sameAs(other)
+      {
+        return members == other.members
+      };
+
+      function '<' (other)
+      {
+        members < other.members
+      };
+
+      function nth(n)
+      {
+        members.nth(n)
+      };
+    };
+
+    Global.setSlot(name, Res);
   };
 
   makeTupleClass("Pair", 2);
