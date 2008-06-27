@@ -43,16 +43,12 @@ do Object
   {
     # Beware that we may be losing the ancestry on Object, which has
     # access to "Object".
-    var add = Object.getSlot("addProto")    |
-    var rem = Object.getSlot("removeProto") |
-    for| p in protos
-    {
-      rem.apply([self, p]);
-    } |
+    var add = Object.getSlot("addProto") |
+    protos.clear() |
     for| p in ps.reverse
     {
-      add.apply([self, p]);
-    };
+      add.apply([self, p]) |
+    } |
   };
 
   # Syntactic sugar for setProtos.
