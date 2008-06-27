@@ -92,6 +92,7 @@ do List
 
   # The Lisp-like name.
   copySlot ("front", "head");
+  copySlot ("push_back", "<<");
 
   function insert(e)
   {
@@ -106,6 +107,31 @@ do List
       ""
     else
       foldl_head(function (a, b) { a.asString + sep + b.asString })
+  };
+
+  # We might want separate Range objects, with a literal syntax (a..b, a:b, ...)
+  function range
+  {
+    var fr = 0;
+    var to = size;
+    if (call.argsCount >= 3) // FIXME: throw when > 2
+    {
+      fr = call.argAt(1);
+      to = call.argAt(2);
+    }
+    else
+      to = call.argAt(1);
+    var res = [];
+    for (var i = fr; i < to; i++)
+      res << nth(i);
+    res;
+  };
+
+  # Build a list containing \a size times \a value
+  function init(size, value)
+  {
+    // if (size < 0) throw;
+    size.times(closure (i) { self << value })
   };
 
   ## ------------------------ ##
@@ -145,6 +171,17 @@ do List
   {
     for i in self { if (!f (i)) return false } |
     true
+  };
+
+  function filter()
+  {
+    var res = [] |
+    for elt in self
+    {
+      if (predicate(elt))
+        res << elt;
+    };
+    return res;
   };
 
   function asString ()

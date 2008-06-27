@@ -74,6 +74,14 @@ namespace object
     return content_[i];
   }
 
+  rObject List::set(rFloat idx, rObject val)
+  {
+    unsigned i = idx->to_int(SYMBOL(nth));
+    if (i >= content_.size())
+      throw PrimitiveError("nth", "invalid index " + string_cast(i));
+    return content_[i] = val;
+  }
+
   rFloat List::size()
   {
     return new Float(content_.size());
@@ -188,6 +196,7 @@ namespace object
     bind(SYMBOL(pop_back),       &List::pop_back    );
     bind(SYMBOL(pop_front),      &List::pop_front   );
     bind(SYMBOL(removeById),     &List::remove_by_id);
+    bind(SYMBOL(setNth),         &List::set         );
     bind(SYMBOL(size),           &List::size        );
     bind(SYMBOL(sort),           &List::sort        );
     bind(SYMBOL(tail),           &List::tail        );
