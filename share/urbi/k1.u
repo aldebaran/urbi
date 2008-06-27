@@ -1,8 +1,6 @@
 # k1 compatibility.
 class Global.Kernel1Functions
 {
-  var asString = "<Kernel1Functions>";
-
   function copy(o)
   {
     warn("`copy(o)' is deprecated, use `o.copy'") |
