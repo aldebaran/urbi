@@ -205,6 +205,7 @@ namespace runner
     try
     {
       assert (ast_ || code_);
+      check_for_pending_exception();
       JAECHO ("starting evaluation of AST: ", ast_);
       if (ast_)
 	operator()(ast_);
@@ -213,7 +214,6 @@ namespace runner
 	args_.push_front(lobby_);
 	apply(code_, SYMBOL(task), args_);
       }
-      check_for_pending_exception();
     }
     catch(object::UrbiException& ue)
     {
