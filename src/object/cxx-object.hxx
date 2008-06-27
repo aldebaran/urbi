@@ -14,7 +14,6 @@ namespace object
   template <typename T>
   bool CxxObject::add(const std::string& name, rObject& tgt)
   {
-    std::cerr << "REGISTER: " << name << std::endl;
     initializers_get().push_back(new TypeInitializer<T>(name, tgt));
     return true;
   }
@@ -59,7 +58,6 @@ namespace object
   rObject
   CxxObject::TypeInitializer<T>::make_class()
   {
-    std::cerr << "INIT: " << name_ << std::endl;
     res_->proto_add(object_class);
     res_->slot_set(SYMBOL(protoName), new String(name_));
     res_->slot_set(SYMBOL(clone),
