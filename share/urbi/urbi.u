@@ -49,7 +49,7 @@ do Object
     {
       rem.apply([self, p]);
     } |
-    for| p in ps
+    for| p in ps.reverse
     {
       add.apply([self, p]);
     };
