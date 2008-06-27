@@ -182,6 +182,14 @@ namespace object
 
 #undef BOUNCE
 
+  rList List::reverse()
+  {
+    value_type res;
+    rforeach (const rObject& obj, content_)
+      res.push_back(obj);
+    return new List(res);
+  }
+
   void List::initialize(CxxObject::Binder<List>& bind)
   {
     bind(SYMBOL(back),           &List::back        );
@@ -197,6 +205,7 @@ namespace object
     bind(SYMBOL(pop_back),       &List::pop_back    );
     bind(SYMBOL(pop_front),      &List::pop_front   );
     bind(SYMBOL(removeById),     &List::remove_by_id);
+    bind(SYMBOL(reverse),        &List::reverse     );
     bind(SYMBOL(setNth),         &List::set         );
     bind(SYMBOL(size),           &List::size        );
     bind(SYMBOL(sort),           &List::sort        );

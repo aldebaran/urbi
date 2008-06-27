@@ -35,6 +35,7 @@ namespace object
     rList   push_back (rObject elt);
     rList   push_front(rObject elt);
     rList   remove_by_id(rObject elt);
+    rList   reverse   ();
     rObject set       (rFloat nth, rObject value);
     rFloat  size      ();
     rList   sort      (runner::Runner& r);
