@@ -15,7 +15,47 @@ in the initial phase where we are filling up features).
 
 * Planned features
 
-** Version 2.0 technical preview 3 (date?)
+** Version 2.0 technical preview 3 (2008-07-10)
+
+*** Boost 1.35
+We move to 1.35.  Or decide if we do, in particular, see the impact on:
+- compressed streams,
+- encryption.
+
+*** Webots
+This must be usable.
+
+*** Implement events
+
+We need to settle on the syntax used to represent unbound variables
+that will be matched against incoming events. We also need to
+implement proper events support, including timed events.
+
+See also the item on pattern matching.
+
+*** Use on some robot
+
+Or maybe Webots, but a true robot is preferred.
+
+*** Cleanup "at" scoping
+Decide what scoping is appropriate for "at" jobs.
+
+*** Fix the Booleans
+They should no longer behave like Floats.
+
+*** ICE
+We should catch the SEGVs, not only to display something nicer to the
+user, but also because SEGV are really a problem for the BF under
+Windows.
+
+*** on, off, switch
+Put this into some interface that we can derive from, but don't
+provide by default.
+
+** Version 2.0 technical preview 4 (2008-07-24)
+
+*** Start exploring dlopen
+We need to address the foreign dependencies such as Boost.
 
 *** Fix parser memory leaks
 
@@ -24,24 +64,29 @@ This requires:
   - or that we use a modified version of Bison which can use
     boost::variant or an equivalent type supporting non-POD C++ types
 
-*** Use on some robot
+*** Real-time features
 
-Or maybe Webots, but a true robot is preferred.
+We need to prioritize jobs or tagged jobs.
 
-** Version 2.0 technical preview 4 (date?)
+*** Add time and space benchmarks
 
-*** Implement events
+We need a way to benchmark the kernel reliably, including with
+Uobjects.  Code coverage (of the C++ code, not the Urbi code).
 
-We need to settle on the syntax used to represent unbound variables
-that will be matched against incoming events. We also need to
-implement proper events support, including timed events.
+** Version 2.0 beta 1 (2008-09-01)
 
-** Version 2.0 beta 1 (date?)
+This must be usable by real users (BA systems, Spanish team etc.).
+Blend modes are not required (dixit JCB).
 
 *** Add tags signalling
 
 The tools team will need to know when a tagged statement starts or
 ends its execution by use of a special event.
+
+*** Cleanup output presented to the user
+
+Right now, the user sees an expanded version of the tree which may not
+correspond to something that could be used as input.
 
 *** Add complete kernel documentation
 
@@ -53,18 +98,20 @@ effectors, and for the tools team to build their tools on them.
 We also need to document clearly the differences between kernel 1.x
 and kernel 2.0 so that developers can adapt their code easily.
 
-** Version 2.0 beta 2 (date?)
+** Version 2.0 beta 2 (2008-08-25)
 
 *** Tools support
 
 This version should have fixed problems found by the tools and engines
 teams. Tools should be roughly functional.
 
-** Version 2.0 release candidate 1 (date?)
-
 *** Engines
+Engines so that people can really use Urbi.
 
-We need some engines so that people can really use Urbi.
+*** Use dlopen
+To address the foreign dependencies such as Boost.
+
+** Version 2.0 release candidate 1 (date?)
 
 *** Tutorials
 
@@ -89,24 +136,14 @@ We might need to load compressed Urbiscript files in the kernel in
 order to reduce the space requirement on embedded targets.
 
 *** Embed .u files into the kernel
-
 It would be great to have Urbiscript files embedded into the kernel,
 in a compressed or uncompressed form, so that we can ship one sole
-executable.
-
-*** Cleanup output presented to the user
-
-Right now, the user sees an expanded version of the tree which may not
-correspond to something that could be used as input.
+executable.  Maybe store the serialized AST instead of the .u.
 
 *** Separate parser and execution modules
 
 We may not have enough room available on some targets to be able to
 embed the parser. Some sort of AST serialization is needed.
-
-*** Cleanup "at" scoping
-
-Decide what scoping is appropriate for "at" jobs.
 
 *** Use real slots
 
@@ -122,10 +159,6 @@ We need:
 - maybe be able to type them
 
 - be able to stack slot decorators.
-
-*** Real-time features
-
-We need to prioritize jobs or tagged jobs.
 
 *** Start-of-cycle and end-of-cycle executions
 
@@ -147,14 +180,6 @@ It would be great to have broad pattern matching available.
 
 We may need more numerical types, such as Integer, or even BigInteger.
 
-*** Fix the Booleans
-
-They should no longer behave like Floats.
-
-*** Add time and space benchmarks
-
-We need a way to benchmark the kernel reliably, including with Uobjects.
-
 *** Exceptions
 
 We may want to throw and catch exceptions from Urbiscript.
@@ -173,16 +198,8 @@ as
 
         class a : b, c {};
 
-*** ICE
-We should catch the SEGVs, not only to display something nicer to the
-user, but also because SEGV are really a problem for the BF under
-Windows.
-
 *** Strings
 Currently all our strings are Symbols underneath.  This is a no-no.
-
-*** Boost
-Evaluate the difficulty of a migration towards 1.35.
 
 *** Flyweight
 See if it can be used for us.
@@ -190,9 +207,6 @@ See if it can be used for us.
 *** Lookup
 Our current lookup algorithm is not resilient.  Look at the
 litterature and chose something better.
-
-*** on, off, switch
-Do we really need to keep this?  Besides, it's
 
 *** inline documentation
 We should find some scheme to document in the sources.  Maybe we want
