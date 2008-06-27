@@ -211,7 +211,8 @@ namespace object
 
   // This is only used to created references on unused classes, so
   // as they get initialized anyway.
-  void dummy_references()
+  void
+  dummy_references()
   {
     Semaphore s;
   }

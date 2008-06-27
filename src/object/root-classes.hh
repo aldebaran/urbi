@@ -9,6 +9,8 @@
 namespace object
 {
   void root_classes_initialize();
+  // For export purpose.
+  void dummy_references();
 }; // namespace object
 
 
