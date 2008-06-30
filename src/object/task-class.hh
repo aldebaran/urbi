@@ -8,17 +8,42 @@
 
 # include <scheduler/job.hh>
 
+# include <object/cxx-object.hh>
 # include <object/fwd.hh>
 
 namespace object
 {
   extern rObject task_class;
 
-  /// Create a task object from an existing job.
-  rObject create_task_from_job(const scheduler::rJob&);
+  class Task : public object::CxxObject
+  {
+  public:
+    typedef scheduler::rJob value_type;
 
-  /// Initialize the Task class.
-  void task_class_initialize ();
+    Task();
+    Task(const value_type& value);
+    Task(rTask model);
+    const value_type& value_get() const;
+
+    rList backtrace();
+    rString name();
+    void setSideEffectFree(rObject);
+    rString status();
+    rList tags();
+    void terminate();
+    rFloat timeShift();
+    void waitForChanges(runner::Runner&);
+    void waitForTermination(runner::Runner&);
+
+    static void initialize(CxxObject::Binder<Task>& bind);
+    static const std::string type_name;
+    static bool task_added;
+    virtual std::string type_name_get() const;
+
+  private:
+    value_type value_;
+  };
+
 }; // namespace object
 
 #endif // !OBJECT_TASK_CLASS_HH

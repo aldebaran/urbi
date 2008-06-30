@@ -24,53 +24,50 @@ namespace object
 {
   rObject task_class;
 
-  /*-------------------.
-  | Helper functions.  |
-  `-------------------*/
-
-  rObject
-  create_task_from_job(const scheduler::rJob& job)
+  Task::Task()
+    : value_(0)
   {
-    rObject res = task_class->clone();
-    res->slot_set(SYMBOL(job),
-		  box(scheduler::rJob, job));
-    return res;
+    proto_add(task_class);
   }
 
-  static scheduler::rJob
-  extract_job(const rObject& o)
+  Task::Task(const value_type& value)
+    : value_(value)
   {
-    return unbox(scheduler::rJob, o->slot_get(SYMBOL(job)));
+    proto_add(task_class);
   }
 
-  /*-------------------.
-  | Task primitives.  |
-  `-------------------*/
-
-  static rObject
-  task_class_name(runner::Runner&, objects_type args)
+  Task::Task(rTask model)
+    : value_(model->value_)
   {
-    CHECK_ARG_COUNT(1);
-    return new String(extract_job(args[0])->name_get());
+    proto_add(tag_class);
   }
 
-  static rObject
-  task_class_tags(runner::Runner&, objects_type args)
+  const Task::value_type&
+  Task::value_get() const
   {
-    CHECK_ARG_COUNT(1);
+    return value_;
+  }
+
+  rString
+  Task::name()
+  {
+    return new String(value_->name_get());
+  }
+
+  rList
+  Task::tags()
+  {
     List::value_type res;
-    foreach(scheduler::rTag tag, extract_job(args[0])->tags_get())
+    foreach(scheduler::rTag tag, value_->tags_get())
       res.push_back(new Tag(tag));
     return new List(res);
   }
 
-  static rObject
-  task_class_status(runner::Runner&, objects_type args)
+  rString
+  Task::status()
   {
-    CHECK_ARG_COUNT(1);
-    scheduler::rJob job = extract_job(args[0]);
     std::stringstream status;
-    switch(job->state_get())
+    switch(value_->state_get())
     {
     case scheduler::to_start:
       status << "starting";
@@ -91,26 +88,23 @@ namespace object
       status << "terminated";
       break;
     }
-    if (job->frozen())
+    if (value_->frozen())
       status << " (frozen)";
-    if (job->has_pending_exception())
+    if (value_->has_pending_exception())
       status << " (pending exception)";
-    if (job->side_effect_free_get())
+    if (value_->side_effect_free_get())
       status << " (side effect free)";
-    if (job->non_interruptible_get())
+    if (value_->non_interruptible_get())
       status << " (non interruptible)";
     return new String(libport::Symbol(status.str()));
   }
 
-  static rObject
-  task_class_backtrace(runner::Runner&, objects_type args)
+  rList
+  Task::backtrace()
   {
-    CHECK_ARG_COUNT(1);
-
     List::value_type res;
 
-    scheduler::rJob job = extract_job(args[0]);
-    const runner::Runner* runner = dynamic_cast<runner::Runner*>(job.get());
+    const runner::Runner* runner = dynamic_cast<runner::Runner*>(value_.get());
 
     if (!runner)
       return new List(res);
@@ -125,61 +119,54 @@ namespace object
     return new List(res);
   }
 
-  static rObject
-  task_class_waitForTermination (runner::Runner& r, objects_type args)
+  void
+  Task::waitForTermination(runner::Runner& r)
   {
-    CHECK_ARG_COUNT (1);
-    r.yield_until_terminated(*extract_job(args[0]));
-    return void_class;
-  }
-
-  static rObject
-  task_class_waitForChanges (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-
-    r.yield_until_things_changed ();
-    return void_class;
-  }
-
-  static rObject
-  task_class_terminate (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    extract_job(args[0])->terminate_now();
-    return void_class;
-  }
-
-  static rObject
-  task_class_setSideEffectFree (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (2);
-    r.side_effect_free_set (is_true (args[1], SYMBOL(setSideEffectFree)));
-    return void_class;
-  }
-
-  static rObject
-  task_class_timeShift (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-    return new Float(r.time_shift_get () / 1000.0);
+    r.yield_until_terminated(*value_);
   }
 
   void
-  task_class_initialize ()
+  Task::waitForChanges(runner::Runner& r)
   {
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(task, Name);
-    DECLARE(backtrace);
-    DECLARE(name);
-    DECLARE(setSideEffectFree);
-    DECLARE(status);
-    DECLARE(tags);
-    DECLARE(terminate);
-    DECLARE(timeShift);
-    DECLARE(waitForChanges);
-    DECLARE(waitForTermination);
-#undef DECLARE
+    r.yield_until_things_changed();
   }
 
+  void
+  Task::terminate()
+  {
+    value_->terminate_now();
+  }
+
+  void
+  Task::setSideEffectFree(rObject b)
+  {
+    value_->side_effect_free_set(is_true(b, SYMBOL(setSideEffectFree)));
+  }
+
+  rFloat
+  Task::timeShift()
+  {
+    return new Float(value_->time_shift_get() / 1000.0);
+  }
+
+  void
+  Task::initialize(CxxObject::Binder<Task>& bind)
+  {
+    bind(SYMBOL(backtrace), &Task::backtrace);
+    bind(SYMBOL(name), &Task::name);
+    bind(SYMBOL(setSideEffectFree), &Task::setSideEffectFree);
+    bind(SYMBOL(status), &Task::status);
+    bind(SYMBOL(tags), &Task::tags);
+    bind(SYMBOL(terminate), &Task::terminate);
+    bind(SYMBOL(timeShift), &Task::timeShift);
+    bind(SYMBOL(waitForChanges), &Task::waitForChanges);
+    bind(SYMBOL(waitForTermination), &Task::waitForTermination);
+  }
+
+  bool Task::task_added = CxxObject::add<Task>("Task", task_class);
+  const std::string Task::type_name = "Task";
+  std::string Task::type_name_get() const
+  {
+    return type_name;
+  }
 }; // namespace object

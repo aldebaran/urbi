@@ -213,10 +213,7 @@ namespace object
   system_class_currentRunner (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    rObject res = new object::Object();
-    res->proto_add (task_class);
-    res->slot_set (SYMBOL (job), box (scheduler::rJob, &r));
-    return res;
+    return new Task(&r);
   }
 
   static rObject
@@ -323,7 +320,7 @@ namespace object
     CHECK_ARG_COUNT(1);
     List::value_type res;
     foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
-      res.push_back(create_task_from_job(job));
+      res.push_back(new Task(job));
     return new List(res);
   }
 

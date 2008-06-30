@@ -46,8 +46,7 @@ namespace object
 
 # define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)		\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)			\
-  Macro(global,     Global)					\
-  Macro(task,       Task)
+  Macro(global,     Global)
 
 
 # define APPLY_ON_ALL_ROOT_CLASSES(Macro)	\
@@ -109,6 +108,8 @@ namespace object
   typedef libport::shared_ptr<String> rString;
   class Tag;
   typedef libport::shared_ptr<Tag> rTag;
+  class Task;
+  typedef libport::shared_ptr<Task> rTask;
 
   // urbi-exception.hh
   class IDelegate;
