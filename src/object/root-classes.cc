@@ -3,7 +3,6 @@
  ** \brief Creation of the root Objects.
  */
 
-#include <object/alien-class.hh>
 #include <object/atom.hh>
 #include <object/code-class.hh>
 #include <object/cxx-object.hh>
@@ -37,7 +36,6 @@ namespace object
   /* Help the generation of symbols.
 
   SYMBOL(acceptedVoid);
-  SYMBOL(asAlien);
   SYMBOL(asCode);
   SYMBOL(asDelegate);
   SYMBOL(asDictionary);

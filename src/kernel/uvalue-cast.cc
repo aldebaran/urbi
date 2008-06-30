@@ -29,7 +29,6 @@ urbi::UValue uvalue_cast(object::rObject o)
   else
   switch(o->kind_get())
   {
-    case object::object_kind_alien:
     case object::object_kind_delegate:
       throw object::WrongArgumentType
         ("UValue",

@@ -88,19 +88,6 @@ namespace object
   };
 
 
-  /*--------.
-  | Alien.  |
-  `--------*/
-
-  // Aliens allow to store any kind of value.  For debugging purpose,
-  // we also store its C++ type, hence the pair.
-  struct alien_traits
-  {
-    typedef std::pair<boost::any, std::string> type;
-    enum { kind = object_kind_alien };
-  };
-
-
   /*----------.
   | Delegate. |
   `----------*/

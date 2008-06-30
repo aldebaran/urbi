@@ -15,7 +15,6 @@
 
 #include <object/atom.hh>
 #include <object/primitives.hh>
-#include <object/alien-class.hh>
 #include <object/code-class.hh>
 #include <object/delegate-class.hh>
 #include <object/dictionary-class.hh>
@@ -104,13 +103,6 @@ namespace object
 
   template <>
   bool
-  Atom<object::alien_traits>::operator< (const Atom& rhs) const
-  {
-    return this < &rhs;
-  }
-
-  template <>
-  bool
   Atom<object::delegate_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
@@ -136,14 +128,6 @@ namespace object
   Atom<Traits>::special_slots_dump (std::ostream& o, runner::Runner&) const
   {
     return o << "value" << " = " << libport::deref << value_ << libport::iendl;
-  }
-
-  template <>
-  std::ostream&
-  Atom<alien_traits>::special_slots_dump (std::ostream& o,
-					  runner::Runner&) const
-  {
-    return o << "type = " << value_.second << libport::iendl;
   }
 
   template <>

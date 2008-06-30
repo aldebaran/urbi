@@ -9,7 +9,6 @@
 
 #include <object/task-class.hh>
 
-#include <object/alien.hh>
 #include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/list-class.hh>

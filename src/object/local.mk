@@ -35,10 +35,6 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 
 
 dist_libkernel_la_SOURCES +=			\
-object/alien-class.cc				\
-object/alien-class.hh				\
-object/alien.hh					\
-object/alien.hxx				\
 object/atom.hh					\
 object/atom.cc					\
 object/code-class.cc				\

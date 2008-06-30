@@ -35,7 +35,6 @@ namespace object
   /// such as defining enums, so we do not use terminators here (;
   /// etc.): Macro must do it.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
-  Macro(alien,      Alien)				\
   Macro(delegate,   Delegate)
 
 
@@ -56,7 +55,6 @@ namespace object
   /*
     Help the generation of precompiled symbols.
 
-    SYMBOL(Alien)
     SYMBOL(Call)
     SYMBOL(Code)
     SYMBOL(Delegate)

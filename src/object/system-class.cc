@@ -17,7 +17,6 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <object/alien.hh>
 #include <object/code-class.hh>
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
