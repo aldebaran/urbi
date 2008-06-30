@@ -205,7 +205,7 @@ do nil
   function '==' (x) { x.isNil };
   var asString = "nil";
   // nil prints nothing in the toplevel
-  var asToplevelPrintable = "";
+  var asToplevelPrintable = nil;
 };
 
 do Object
@@ -334,6 +334,8 @@ do Object
 load("urbi/event.u");
 load("urbi/channel.u");
 
+// Disable top-level display
+topLevel.enabled = false;
 ## ------------ ##
 ## Comparable.  ##
 ## ------------ ##
@@ -554,7 +556,9 @@ load("urbi/debug.u");
 load("urbi/uobject.u");
 
 // This variable is used by initialization code to detect the end of urbi.u.
-var Object.loaded = 1;
+topLevel.enabled = true |
+var Object.loaded = 1 |
+{};
 
 // Make the tutorial available.
 load("urbi/help.u");

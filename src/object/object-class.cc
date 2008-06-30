@@ -87,58 +87,6 @@ namespace object
     return void_class;
   }
 
-  static rObject
-  object_echo(runner::Runner& r, objects_type args, bool is_echo)
-  {
-    // Second argument is the tag name.
-    std::string tag;
-    if (args.size() == 3)
-    {
-      type_check<String>(args[2], SYMBOL(echo));
-      rString arg2 = args[2].unsafe_cast<String>();
-      assert(arg2);
-      tag = arg2->value_get().name_get();
-    }
-
-    rObject res = urbi_call(r, args[1], SYMBOL(asString));
-    type_check<String>(res, SYMBOL(echo));
-    std::string s = res->as<String>()->value_get().name_get();
-
-    // Hack: special case for Strings to have k1 behavior special case
-    // for Strings.
-    if (is_echo
-        && args[1].unsafe_cast<String>()
-        && s[0] == '"'
-        && s.length() && s[s.length()-1] == '"')
-      s = libport::unescape(s.substr(1, s.length()-2));
-
-    std::string data = std::string(is_echo?"*** ":"") + s + "\n";
-    r.send_message(tag, data);
-
-    return void_class;
-  }
-
-  /// Send pretty-printed args[1] to the connection.
-  static rObject
-  object_class_echo (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT_RANGE(2, 3);
-
-    return object_echo(r, args, true);
-  }
-
-  /// Send pretty-printed self on the connection.
-  /// args[1], if present, can be the tag to use.
-  static rObject
-  object_class_print (runner::Runner& r, objects_type args)
-  {
-    CHECK_ARG_COUNT_RANGE (1, 2);
-    objects_type nargs;
-    nargs.push_back(args[0]);
-    nargs.insert(nargs.end(),  args.begin(), args.end());
-    return object_echo(r, nargs, false);
-  }
-
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
@@ -399,7 +347,6 @@ namespace object
     DECLARE(changeSlot);
     DECLARE(clone);
     DECLARE(dump);
-    DECLARE(echo); // This guy should be in System.
     DECLARE(getLazyLocalSlot);
     DECLARE(getProperty);
     DECLARE(getSlot);
@@ -408,7 +355,6 @@ namespace object
     DECLARE(isA);
     DECLARE(locateSlot);
     DECLARE(memSameAs);
-    DECLARE(print);
     DECLARE(protos);
     DECLARE(removeProto);
     DECLARE(removeSlot);

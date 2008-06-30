@@ -220,7 +220,6 @@ public:
   /// Build a prefix [01234567:tag].
   std::string make_prefix (const char* tag) const;
 
-protected:
   //! Send a buffer through the connection without flushing it.
   /*! The function piles the buffer in the sending queue and calls
    continue_send() if the connection is not blocked (blocked means that
@@ -241,6 +240,8 @@ protected:
   \sa send(const char*)
   */
   virtual UConnection&	send_queue(const char* buffer, size_t length);
+
+protected:
 
   //! Sends a buffer through the real connection (redefined in the sub class)
   /*! Must be defined to implement the effective code that sends a

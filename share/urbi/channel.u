@@ -2,11 +2,47 @@
 ## Channel.  ##
 ## --------- ##
 
+
+function Object.print()
+{
+  topLevel << self
+};
+
+/* Implement in c++ for better performances
+function lobby.send
+{
+  var what = call.evalArgAt(1);
+  var tag = "";
+  if (call.argsCount > 2)
+    tag = call.evalArgAt(2);
+  write("[" + time.trunc + {if (tag == "") "" else ":"+tag} + "] " + what + "\n")
+};
+*/
+function Global.echo
+{
+  var tag = ""|
+  if (call.argsCount > 2)
+    tag = call.evalArgAt(2)|
+  lobby.send("*** "+call.evalArgAt(1).asString, tag)
+};
+
 // Does not have anything special.  Yet.
 class Global.Channel
 {
+  /// Display nothing if false
+  var enabled = true;
+  /// Use asTopLevelPrintable if set (display the string 'foo' as '"foo"')
+  var quote = true;
   function init(x) { var self.name = x };
-  function '<<' (x) { x.print (name); {} };
+  function '<<' (x)
+  {
+    if(enabled)
+    {
+      var toPrint = { if (quote) x.asToplevelPrintable else x.asString}|
+      if (!toPrint.isNil)
+	lobby.send ( toPrint, name);
+    }
+  };
 };
 
 // Default channels.
@@ -24,5 +60,12 @@ do Global
   var cout    = output;
   var cerr    = error;
 
+  // Top-levl channel
+  var topLevel = new Channel("");
+  Lobby.addProto(topLevel); //Now 'lobby << 1' displays in "lobby"'s context.
+
   function warn(msg) { echo (msg, "warning") };
 };
+
+
+{} // Global.asString is not yet defined: evaluate to void to avoid an error.

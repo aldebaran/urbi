@@ -185,7 +185,7 @@ namespace runner
       return;
     ue.set_displayed();
     std::ostringstream o;
-    o << "!!! " << ue.location_get () << ": " << ue.what () << std::endl;
+    o << "!!! " << ue.location_get () << ": " << ue.what ();
     send_message("error", o.str ());
     show_backtrace(ue.backtrace_get(), "error");
   }
@@ -731,7 +731,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstMessage e)
   {
-    send_message(e->tag_get(), e->text_get() + "\n");
+    send_message(e->tag_get(), e->text_get());
   }
 
 
@@ -776,13 +776,33 @@ namespace runner
 	try
 	{
 	  operator() (c);
-	  if (e->toplevel_get () && current_.get ())
+	  // We need to keep checking for void here because it can not be passed
+	  // to the << function
+	  if (e->toplevel_get () && current_.get ()
+	    && current_ != object::void_class)
 	  {
 	    try
 	    {
 	      assertion(current_);
 	      ECHO("toplevel: returning a result to the connection.");
-	      lobby_->value_get ().connection.new_result (current_);
+
+	      // Display the value using the topLevel channel.
+	      // If it is not (yet) defined, do nothing, unless the environment
+	      // variable TOPLEVEL_DEBUG is set.
+
+	      static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
+	      if (rObject topLevel =
+	        object::global_class->slot_locate(SYMBOL(topLevel), false,
+		  true))
+	      {
+		rObject e = topLevel->slot_get(SYMBOL(LT_LT_));
+		object::objects_type args;
+		args.push_back(topLevel);
+		args.push_back(current_);
+		apply(e, SYMBOL(topLevel), args);
+	      }
+	      else if (toplevel_debug)
+		lobby_->value_get ().connection.new_result (current_);
               current_.reset ();
 	    }
 	    catch (std::exception &ke)
@@ -1046,7 +1066,7 @@ namespace runner
     {
       std::ostringstream o;
       o << "!!!    called from: " << c->location_get () << ": "
-	<< c->name_get () << std::endl;
+	<< c->name_get ();
       send_message(chan, o.str());
     }
   }

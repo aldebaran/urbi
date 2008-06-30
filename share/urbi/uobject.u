@@ -205,6 +205,7 @@ class Global.'external'
   var UEM_NEW          = 4;
   var UEM_DELETE       = 5;
 
+
   /* external object <objname>: Set clone to send a UEM_NEW message.
   The remote upon reception of the UEM_NEW message 'instanciate <objname>
   with name <newname>' will instanciate the UObject, and send:
@@ -232,13 +233,13 @@ class Global.'external'
     uobjects.setSlot(objname, lobby.getSlot(objname));
     lobby.removeSlot(objname);
     ("external object "+objname).print;
-    var lobby = lobby;
-
+    var chan = new Channel(MODULE_TAG);
+    var chan.lobby = lobby;
     function cloner()
     {
       var u = fresh;
       var msg = [  'external'.UEM_NEW, u, objname];
-      lobby.send(msg, 'external'.MODULE_TAG);
+      chan << msg;
       // Wait until the remote defines u.init.
       waituntil(!Global.uobjects.locateSlot(u).isNil
 		&& uobjects.getSlot(u).slotNames.has("init"));
@@ -285,13 +286,14 @@ class Global.'external'
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
     var uob = uobjects.getSlot(objname);
-    var lobby = lobby;
+    var chan = new Channel(MODULE_TAG);
+    var chan.lobby = lobby;
     function f()
     {
       var msg = ['external'.UEM_ASSIGNVALUE,
                  fullname,
                  uob.getSlot(varname).val];
-      lobby.send(msg, 'external'.MODULE_TAG);
+      chan << msg;
     };
     uobjects.getSlot(objname).getSlot(varname).notifyChange(f);
     void
@@ -304,7 +306,8 @@ class Global.'external'
   {
     ("external function call "+fname).print;
     var functionName = objname + "." + fname;
-    var lobby = lobby;
+    var chan = new Channel(MODULE_TAG);
+    var chan.lobby = lobby;
     function f
     {
       var args = call.evalArgs;
@@ -312,7 +315,7 @@ class Global.'external'
       var msg = [ 'external'.UEM_EVALFUNCTION,
                   functionName + "__" + args.size.asString,
                   "Global.uobjects." + u ] + args;
-      lobby.send(msg, 'external'.MODULE_TAG);
+      chan << msg;
       waituntil(!Global.uobjects.locateSlot(u).sameAs(nil));
       var res = Global.uobjects.getSlot(u);
       Global.uobjects.removeSlot(u);

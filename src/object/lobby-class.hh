@@ -23,6 +23,7 @@ namespace object
     Lobby(value_type value);
 
     void send(objects_type args);
+    void write(rString data);
     value_type& value_get();
 
     static const std::string type_name;
