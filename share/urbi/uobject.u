@@ -290,10 +290,11 @@ class Global.'external'
     var chan.lobby = lobby;
     function f()
     {
-      var msg = ['external'.UEM_ASSIGNVALUE,
+      var v = uob.getSlot(varname).val.acceptVoid |
+      if (!v.isNil && !v.isVoid)
+	chan << ['external'.UEM_ASSIGNVALUE,
                  fullname,
-                 uob.getSlot(varname).val];
-      chan << msg;
+                 v]
     };
     uobjects.getSlot(objname).getSlot(varname).notifyChange(f);
     void
