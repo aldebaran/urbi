@@ -216,3 +216,13 @@ something else to store for some slots.
 *** Faith full parsing
 
 *** Caret errors
+
+** Point that must be dispatched, potentially to 2.0 beta
+
+*** Use asBool
+
+For now, any unknown object is considered true. We could use their
+asBool method to enable users to customize their object behavior in
+boolean context, and make code more robust by throwing type errors
+when irrelevant values are tested.
+
