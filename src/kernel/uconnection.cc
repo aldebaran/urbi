@@ -47,7 +47,6 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <object/alien.hh>
 #include <object/atom.hh>
 #include <object/object.hh>
 #include <object/tag-class.hh>
@@ -88,13 +87,9 @@ UConnection::UConnection (UServer& server, size_t packetSize)
   std::ostringstream o;
   o << 'U' << (long) this;
   connection_tag_ = o.str();
-  object::rObject tag = new object::Object();
-  tag->proto_add(object::tag_class);
-  tag->slot_set(SYMBOL(tag), box(scheduler::rTag,
-		new scheduler::Tag(libport::Symbol(connection_tag_))));
   lobby_->slot_set
     (SYMBOL(connectionTag),
-     new object::Tag(new scheduler::Tag(SYMBOL(LT_connection_SP_tag_GT))));
+     new object::Tag(new scheduler::Tag(libport::Symbol(connection_tag_))));
 
   // Create the shell.
   shell_ = new runner::Shell(lobby_, server_.getScheduler(), SYMBOL(shell));
