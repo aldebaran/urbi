@@ -65,6 +65,7 @@ namespace dbg
   void
   pp(ast::rAst ast)
   {
+    assert(sneaker);
     std::cerr << *ast;
   }
 
