@@ -19,4 +19,4 @@ namespace ast
   typedef libport::shared_ptr<const Nary> rConstNary;
 }
 
-#endif AST_NARY_FWD_HH
+#endif // AST_NARY_FWD_HH
