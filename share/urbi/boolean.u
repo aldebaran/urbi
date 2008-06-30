@@ -1,0 +1,27 @@
+true.setProtos([Singleton]);
+false.setProtos([Singleton]);
+var true.asString = "true";
+var false.asString = "false";
+
+## -------------------------- ##
+## Logic with short-circuit.  ##
+## -------------------------- ##
+
+for (var boolean : [true, false])
+  do boolean
+  {
+    function '&&'
+    {
+      if (self) call.evalArgAt (1) else self;
+    };
+
+    function '||'
+    {
+      if (self) self else call.evalArgAt (1);
+    };
+
+    function '!'()
+    {
+      self == false
+    };
+  };

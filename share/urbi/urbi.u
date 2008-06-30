@@ -185,10 +185,7 @@ do Object
 ## Booleans. ##
 ## --------- ##
 
-true.setProtos([Singleton]);
-false.setProtos([Singleton]);
-var true.asString = "true";
-var false.asString = "false";
+load("urbi/boolean.u");
 
 ## ---- ##
 ## nil. ##
@@ -482,28 +479,6 @@ Global.addProto (Global.Math);
 ## Groups.  ##
 ## -------- ##
 load("urbi/group.u");
-
-## -------------------------- ##
-## Logic with short-circuit.  ##
-## -------------------------- ##
-
-do Object
-{
-  function '&&'
-  {
-    if (self) call.evalArgAt (1) else self;
-  };
-
-  function '||'
-  {
-    if (self) self else call.evalArgAt (1);
-  };
-
-  function '!'()
-  {
-    self == false
-  };
-};
 
 load("urbi/binary.u");
 
