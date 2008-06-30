@@ -18,6 +18,7 @@
 
  **************************************************************************** */
 
+#include <libport/escape.hh>
 #include "urbi/uobject.hh"
 #include "urbi/ublend-type.hh"
 #include "urbi/uexternal.hh"
@@ -174,7 +175,7 @@ UVar::operator = (ufloat n)
   UVar::operator= (const std::string& s)
   {
     std::stringstream os;
-    os << name << "=\"" << s << "\";";
+    os << name << "=\"" << libport::escape(s) << "\";";
     URBI(()) << os.str();
   }
 

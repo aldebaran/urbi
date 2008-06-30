@@ -24,6 +24,7 @@
 
 #include "libport/assert.hh"
 #include "libport/cstring"
+#include "libport/escape.hh"
 
 #include "urbi/uvalue.hh"
 
@@ -260,7 +261,7 @@ namespace urbi
 	s << (float) val;
 	break;
       case DATA_STRING:
-	s << '"' << *stringValue << '"';
+	s << '"' << libport::escape(*stringValue) << '"';
 	break;
       case DATA_BINARY:
 	if (binary->type != BINARY_NONE
