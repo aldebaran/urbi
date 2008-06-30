@@ -63,7 +63,7 @@ namespace object
   }
 
   rString
-  Task::status()
+  Task::status(runner::Runner& r)
   {
     std::stringstream status;
     switch(value_->state_get())
@@ -87,6 +87,8 @@ namespace object
       status << "terminated";
       break;
     }
+    if (value_ == &r)
+      status << " (current task)";
     if (value_->frozen())
       status << " (frozen)";
     if (value_->has_pending_exception())

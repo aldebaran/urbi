@@ -28,7 +28,7 @@ namespace object
     rList backtrace();
     rString name();
     void setSideEffectFree(rObject);
-    rString status();
+    rString status(runner::Runner&);
     rList tags();
     void terminate();
     rFloat timeShift();
