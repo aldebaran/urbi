@@ -17,6 +17,12 @@ class Global.Constants
 
 Global.addProto (Global.Constants);
 
+## ----- ##
+## Tag.  ##
+## ----- ##
+
+Global.addProto (Global.Tag);
+
 ## -------- ##
 ## Object.  ##
 ## -------- ##

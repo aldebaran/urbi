@@ -17,111 +17,119 @@
 
 namespace object
 {
+
   rObject tag_class;
 
-  /*-------------------.
-  | Helper functions.  |
-  `-------------------*/
-
-  rObject
-  create_tag(scheduler::rTag tag)
+  Tag::Tag()
+    : value_(0)
   {
-    rObject res = tag_class->clone();
-    res->slot_set(SYMBOL(tag), box(scheduler::rTag, tag));
+    proto_add(tag_class);
+  }
+
+  Tag::Tag(const value_type& value)
+    : value_(value)
+  {
+    proto_add(tag_class);
+  }
+
+  Tag::Tag(rTag model)
+    : value_(model->value_)
+  {
+    proto_add(tag_class);
+  }
+
+  const Tag::value_type&
+  Tag::value_get() const
+  {
+    return value_;
+  }
+
+  void
+  Tag::block(runner::Runner& r, objects_type args)
+  {
+    CHECK_ARG_COUNT_RANGE(0, 1);
+    rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
+    value_->block(r.scheduler_get(), payload);
+  }
+
+  void
+  Tag::freeze(runner::Runner& r)
+  {
+    value_->freeze(r.scheduler_get());
+    if (r.frozen())
+      r.yield();
+  }
+
+  rString
+  Tag::name()
+  {
+    return new String(value_->name_get());
+  }
+
+  rTag
+  Tag::_new(objects_type args)
+  {
+    CHECK_ARG_COUNT_RANGE(1, 2);
+    libport::Symbol tag_short_name;
+
+    if (args.size() > 1)
+    {
+      type_check<String>(args[1], SYMBOL(new));
+      tag_short_name = args[1]->as<String>()->value_get();
+    }
+    else
+      tag_short_name = libport::Symbol::fresh(SYMBOL(tag));
+
+    rTag res = new Tag(args[0] == tag_class ?
+		       new scheduler::Tag(tag_short_name) :
+		       extract_tag(args[0]));
     return res;
   }
 
-  scheduler::rTag
-  extract_tag (const rObject& o)
+  void
+  Tag::stop(runner::Runner& r, objects_type args)
   {
-    return unbox (scheduler::rTag, o->slot_get (SYMBOL (tag)));
+    CHECK_ARG_COUNT_RANGE(0, 1);
+    rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
+    value_->stop(r.scheduler_get(), payload);
   }
-
-  /*-----------------.
-  | Tag primitives.  |
-  `-----------------*/
-
-  static rObject
-  tag_class_init (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT_RANGE (1, 3);
-    libport::Symbol tag_short_name;
-
-    if (args.size () > 1)
-    {
-      type_check<String>(args[1], SYMBOL(assert));
-      rString arg1 = args[1]->as<String>();
-      tag_short_name = arg1->value_get ();
-    }
-    else
-      tag_short_name = libport::Symbol::fresh (SYMBOL (tag));
-
-    // If a parent is specified and this is not Tag, then the
-    // underlying scheduler tag will get its underlying object
-    // as parent.
-    scheduler::rTag mytag;
-    if (args.size () == 3 && args[2] != tag_class)
-      mytag = new scheduler::Tag(extract_tag (args[2]), tag_short_name);
-    else
-      mytag = new scheduler::Tag(tag_short_name);
-    args[0]->slot_set (SYMBOL (tag), box (scheduler::rTag, mytag));
-
-    return args[0];
-  }
-
-  static rObject
-  tag_class_name (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT (1);
-
-    return new String(extract_tag (args[0])->name_get ());
-  }
-
-#define TAG_ACTION(Action, Yield)				\
-  static rObject						\
-  tag_class_ ## Action (runner::Runner& r, objects_type args)	\
-  {								\
-    CHECK_ARG_COUNT (1);					\
-    scheduler::rTag self = extract_tag (args[0]);		\
-    self->Action (r.scheduler_get ());				\
-    if (Yield && r.frozen())					\
-      r.yield ();						\
-    return void_class;						\
-  }
-  TAG_ACTION(freeze, true)
-  TAG_ACTION(unblock, false)
-  TAG_ACTION(unfreeze, false)
-#undef TAG_ACTION
-
-#define TAG_VALUED_ACTION(Action)					\
-  static rObject							\
-  tag_class_ ## Action(runner::Runner& r, objects_type args)		\
-  {									\
-    CHECK_ARG_COUNT_RANGE(1, 2);					\
-    scheduler::rTag self = extract_tag(args[0]);			\
-    boost::any payload =						\
-      boost::any_cast<rObject>						\
-        (args.size() == 2 ? args[1] : void_class);			\
-    self->Action(r.scheduler_get(), payload);				\
-    return void_class;							\
-  }
-  TAG_VALUED_ACTION(block)
-  TAG_VALUED_ACTION(stop)
-#undef TAG_VALUED_ACTION
 
   void
-  tag_class_initialize ()
+  Tag::unblock(runner::Runner& r)
   {
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(tag, Name)
-    DECLARE (block);
-    DECLARE (freeze);
-    DECLARE (init);
-    DECLARE (name);
-    DECLARE (stop);
-    DECLARE (unblock);
-    DECLARE (unfreeze);
-#undef DECLARE
+    value_->unblock(r.scheduler_get());
+  }
+
+  void
+  Tag::unfreeze(runner::Runner& r)
+  {
+    value_->unfreeze(r.scheduler_get());
+  }
+
+  void
+  Tag::initialize(CxxObject::Binder<Tag>& bind)
+  {
+    bind(SYMBOL(block), &Tag::block);
+    bind(SYMBOL(freeze), &Tag::freeze);
+    bind(SYMBOL(name), &Tag::name);
+    bind(SYMBOL(new), &Tag::_new);
+    bind(SYMBOL(stop), &Tag::stop);
+    bind(SYMBOL(unblock), &Tag::unblock);
+    bind(SYMBOL(unfreeze), &Tag::unfreeze);
+  }
+
+  bool Tag::tag_added = CxxObject::add<Tag>("Tag", tag_class);
+  const std::string Tag::type_name = "Tag";
+  std::string Tag::type_name_get() const
+  {
+    return type_name;
+  }
+
+  scheduler::rTag
+  extract_tag(const rObject& o)
+  {
+    type_check<Tag>(o, SYMBOL(extract_tag));
+    return o->as<Tag>()->value_get();
   }
 
 }; // namespace object

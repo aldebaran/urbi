@@ -144,7 +144,7 @@ namespace object
     CHECK_ARG_COUNT(1);
     scheduler::rTag scope_tag =
       dynamic_cast<runner::Interpreter&>(r).scope_tag();
-    return create_tag(scope_tag);
+    return new Tag(scope_tag);
   }
 
   static rObject

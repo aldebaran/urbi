@@ -92,7 +92,9 @@ UConnection::UConnection (UServer& server, size_t packetSize)
   tag->proto_add(object::tag_class);
   tag->slot_set(SYMBOL(tag), box(scheduler::rTag,
 		new scheduler::Tag(libport::Symbol(connection_tag_))));
-  lobby_->slot_set(SYMBOL(connectionTag), tag);
+  lobby_->slot_set
+    (SYMBOL(connectionTag),
+     new object::Tag(new scheduler::Tag(SYMBOL(LT_connection_SP_tag_GT))));
 
   // Create the shell.
   shell_ = new runner::Shell(lobby_, server_.getScheduler(), SYMBOL(shell));

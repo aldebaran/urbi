@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <deque>
 
+#include <boost/assign.hpp>
 #include <boost/range/iterator_range.hpp>
 
 #include <libport/finally.hh>
@@ -44,6 +45,8 @@ namespace runner
   using boost::bind;
   using boost::ref;
   using libport::Finally;
+
+  using namespace boost::assign;
 
 /// Address of \a Interpreter seen as a \c Job (Interpreter has multiple inheritance).
 #define JOB(Interpreter) static_cast<scheduler::Job*> (Interpreter)
@@ -909,7 +912,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstTag t)
   {
-    eval_tag (t->exp_get ());
+    current_ = eval_tag(t->exp_get());
   }
 
   void
@@ -956,13 +959,13 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::eval_tag (ast::rConstExp e)
+  Interpreter::eval_tag(ast::rConstExp e)
   {
     try {
       // Try to evaluate e as a normal expression.
       return eval(e);
     }
-    catch (object::LookupError &ue)
+    catch (object::LookupError& ue)
     {
       ECHO("Implicit tag: " << *e);
       // We got a lookup error. It means that we have to automatically
@@ -976,8 +979,8 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      rObject toplevel = object::tag_class;
-      rObject parent = toplevel;
+      object::rObject toplevel = object::tag_class;
+      object::rObject parent = toplevel;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
       foreach (const libport::Symbol& elt, chain)
@@ -988,11 +991,12 @@ namespace runner
         {
           ECHO("Component " << elt << " exists.");
 	  where = owner->own_slot_get (elt);
-          if (object::is_a(where, toplevel))
-          {
+	  object::rTag parent_ = dynamic_cast<object::Tag*>(where.get());
+	  if (parent_)
+	  {
             ECHO("It is a tag, so use it as the new parent.");
-            parent = where;
-          }
+	    parent = parent_;
+	  }
         }
 	else
 	{
@@ -1000,18 +1004,14 @@ namespace runner
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
-	  rObject new_tag = toplevel->clone();
-	  object::objects_type args;
-	  args.push_back (new_tag);
-	  args.push_back (new object::String(elt));
-	  args.push_back (parent);
-	  apply (toplevel->own_slot_get (SYMBOL (init)), SYMBOL(init), args);
-	  where->slot_set (elt, new_tag);
-	  where = parent = new_tag;
+	  where =
+	    object::Tag::_new(list_of (parent) (new object::String(elt)));
+	  parent->slot_set(elt, where);
+	  parent = where;
 	}
       }
 
-      return parent;
+      return where;
     }
   }
 

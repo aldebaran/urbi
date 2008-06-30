@@ -60,7 +60,7 @@ namespace object
     CHECK_ARG_COUNT(1);
     List::value_type res;
     foreach(scheduler::rTag tag, extract_job(args[0])->tags_get())
-      res.push_back(create_tag(tag));
+      res.push_back(new Tag(tag));
     return new List(res);
   }
 
