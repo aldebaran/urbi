@@ -43,7 +43,7 @@ Decide what scoping is appropriate for "at" jobs.
 *** Fix the Booleans (done: 43653fc957dd6bf3078097d8d99fd0d75c2c10e4)
 They should no longer behave like Floats.
 
-*** ICE
+*** ICE (done: f1645d70e538c8d9124049e50ffbbae3c828861f)
 We should catch the SEGVs, not only to display something nicer to the
 user, but also because SEGV are really a problem for the BF under
 Windows.
