@@ -20,6 +20,7 @@
  **************************************************************************** */
 //#define ENABLE_DEBUG_TRACES
 #include <cassert>
+#include <csignal>
 #include <cstdlib>
 #include <cstdarg>
 
@@ -37,6 +38,7 @@
 #include <libport/cstdio>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
+#include <libport/lexical-cast.hh>
 #include <libport/path.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
@@ -51,10 +53,13 @@
 #include <ast/nary.hh>
 
 #include <object/atom.hh>
+#include <object/object.hh>
 #include <object/object-class.hh>
 #include <object/primitive-class.hh>
 #include <object/primitives.hh>
+#include <object/system-class.hh>
 #include <runner/runner.hh>
+#include <runner/sneaker.hh>
 #include <scheduler/scheduler.hh>
 
 #include <kernel/server-timer.hh>
@@ -110,9 +115,54 @@ UServer::load_init_file(const char* fn)
   return res;
 }
 
+static void install_ice_catcher(void (*catcher)(int))
+{
+  signal(SIGSEGV, catcher);
+  signal(SIGABRT, catcher);
+}
+
+static void hard_ice(int i)
+{
+  std::cerr << "Killed with signal " << i
+            << " while trying to debug." << std::endl;
+  exit(1);
+}
+
+static void ice(int i)
+{
+  install_ice_catcher(hard_ice);
+
+  runner::Runner& r = ::urbiserver->getCurrentRunner();
+  static const std::string tag = "";
+
+  r.send_message(tag, "\n");
+  r.send_message(tag, "    **********************\n");
+  r.send_message(tag, "    *** INTERNAL ERROR ***\n");
+  r.send_message(tag, "    **********************\n");
+  r.send_message(tag, "\n");
+  r.send_message(tag, "The urbi kernel was killed by signal "
+                 + string_cast(i) + ".\n");
+  r.send_message(tag, "Please report this bug to report@gostai.com"
+                 " with this report,\n");
+  r.send_message(tag, "core dump if any, and what code/situation triggered it.\n");
+  r.send_message(tag, "\n");
+  r.send_message(tag, "I'm going to try giving more informations.\n");
+  r.send_message(tag, "Please include them in the report.\n");
+  r.send_message(tag, "\n");
+  r.send_message(tag, "---------- CURRENT BACKTRACE ----------\n");
+  r.show_backtrace(tag);
+  r.send_message(tag, "\n");
+  r.send_message(tag, "---------- PS ----------\n");
+  urbi_call(r, object::system_class, SYMBOL(ps));
+  r.send_message(tag, "\n");
+  exit(1);
+}
+
 void
 UServer::initialize()
 {
+  install_ice_catcher(ice);
+
   // Set the initial time to a valid value.
   updateTime();
 
