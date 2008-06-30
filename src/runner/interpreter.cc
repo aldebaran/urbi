@@ -753,10 +753,10 @@ namespace runner
       // immediately. However, we don't want to do it before the first
       // statement or if we only have one statement in the scope.
       if (tail++)
-	YIELD ();
+	YIELD();
 
-      result_.reset ();
-      JAECHO ("child", c);
+      result_.reset();
+      JAECHO("child", c);
 
       if (c.unsafe_cast<const ast::Stmt>() &&
 	  c.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)

@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <sstream>
-#include <signal.h>
 
 #include <binder/bind.hh>
 
@@ -33,6 +32,37 @@
 
 namespace object
 {
+
+
+  rObject
+  execute_parsed(runner::Runner& r,
+                 parser::parse_result_type p,
+                 libport::Symbol fun, UrbiException e)
+  {
+    runner::Interpreter& run = dynamic_cast<runner::Interpreter&>(r);
+
+    // Report potential errors
+    {
+      ast::rNary errs = new ast::Nary();
+      p->process_errors(*errs);
+      run(errs);
+    }
+
+    ast::rConstAst ast = binder::bind(flower::flow(p->ast_get()));
+    if (!ast)
+      throw e;
+
+    runner::Interpreter* sub = new runner::Interpreter(run, ast, fun);
+    // So that it will resist to the call to yield_until_terminated,
+    // and will be reclaimed at the end of the scope.
+    scheduler::rJob job = sub;
+    run.link(job);
+    sub->start_job();
+    run.yield_until_terminated(*job);
+    return sub->result_get();
+  }
+
+
   rObject system_class;
 
   /*--------------------.
@@ -86,23 +116,6 @@ namespace object
 			  r.time_shift_get()) / 1000.0);
   }
 
-  rObject
-  execute_parsed (runner::Runner& r,
-                  parser::parse_result_type p, UrbiException e)
-  {
-    ast::rNary errs = new ast::Nary();
-    p->process_errors(*errs);
-    dynamic_cast<runner::Interpreter&>(r)(errs);
-    if (ast::rNary ast = p->ast_get())
-    {
-      ast = binder::bind(flower::flow(ast));
-      assert(ast);
-      return dynamic_cast<runner::Interpreter&>(r).eval(ast);
-    }
-    else
-      throw e;
-  }
-
   static rObject
   system_class_assert_(runner::Runner&, objects_type args)
   {
@@ -123,9 +136,11 @@ namespace object
     type_check<String>(args[1], SYMBOL(assert));
     rString arg1 = args[1]->as<String>();
     return
-      execute_parsed(r,
-                     parser::parse(arg1->value_get()),
-                     PrimitiveError("", "error executing command"));
+      execute_parsed(r, parser::parse(arg1->value_get()),
+                     SYMBOL(eval),
+                     PrimitiveError("eval",
+                                    "error executing command: "
+                                    + arg1->value_get().name_get()));
   }
 
   static rObject
@@ -172,40 +187,22 @@ namespace object
   }
 
   static rObject
-  system_class_loadFile (runner::Runner& r, objects_type args)
+  system_class_loadFile(runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (2);
+    CHECK_ARG_COUNT(2);
     type_check<String>(args[1], SYMBOL(assert));
     rString arg1 = args[1]->as<String>();
 
     std::string filename = arg1->value_get().name_get();
 
-    if (!libport::path (filename).exists ())
+    if (!libport::path(filename).exists())
       throw PrimitiveError("loadFile",
 			   "No such file: " + filename);
-
-    parser::parse_result_type res = parser::parse_file(filename);
-
-    // Report potential errors
-    {
-      ast::rNary errs = new ast::Nary();
-      res->process_errors(*errs);
-      dynamic_cast<runner::Interpreter&>(r)(errs);
-    }
-
-    ast::rConstAst ast = binder::bind(flower::flow(res->ast_get()));
-    if (!ast)
-      throw PrimitiveError("", //same message than k1
-                           "Error loading file: " + filename);
-
-    runner::Interpreter* sub =
-      new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
-                              ast, SYMBOL(load));
-    dynamic_cast<runner::Interpreter&>(r).link(sub);
-    sub->start_job();
-    r.yield_until_terminated(*sub);
-
-    return object::void_class;
+    return
+      execute_parsed(r, parser::parse_file(filename),
+                     SYMBOL(loadFile),
+                     PrimitiveError("loadFile",
+                                    "error loading file: " + filename));
   }
 
   static rObject
