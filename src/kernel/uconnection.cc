@@ -42,7 +42,7 @@
 
 #include <binder/bind.hh>
 
-#include <flower/flower.hh>
+#include <flower/flow.hh>
 
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
@@ -260,7 +260,7 @@ UConnection::received (const char* buffer, size_t length)
     if (ast::rNary ast = result->ast_get())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
-      ast = binder::bind(flower::flow(ast)).unsafe_cast<ast::Nary>();
+      ast = binder::bind(flower::flow(ast));
       assert(ast);
       ECHO ("bound and flowed: {{{" << *ast << "}}}");
       // Append to the current list.

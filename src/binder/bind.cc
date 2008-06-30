@@ -1,3 +1,4 @@
+#include <ast/nary.hh>
 #include <binder/bind.hh>
 #include <binder/binder.hh>
 
@@ -5,8 +6,8 @@
 
 namespace binder
 {
-  ast::rAst
-  bind(ast::rConstAst a)
+  ast::rNary
+  bind(ast::rConstNary a)
   {
     TIMER_PUSH("bind");
     Binder bind;
@@ -15,6 +16,7 @@ namespace binder
     bind(a);
     ast::rAst ast = bind.result_get();
     TIMER_POP("bind");
-    return ast;
+    return ast.unsafe_cast<ast::Nary>();
   }
+
 } // namespace binder

@@ -30,8 +30,6 @@ namespace flower
     bool in_loop_;
   };
 
-  ast::rAst flow(ast::rConstAst);
-
 } // namespace flower
 
 #endif // FLOWER_FLOWER_HH

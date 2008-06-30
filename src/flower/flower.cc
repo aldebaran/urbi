@@ -2,11 +2,9 @@
 
 #include <ast/parametric-ast.hh>
 #include <flower/flower.hh>
-#include <kernel/server-timer.hh>
 #include <object/urbi-exception.hh>
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
-#include <parser/parser-utils.hh>
 #include <parser/tweast.hh>
 
 namespace flower
@@ -162,32 +160,6 @@ namespace flower
       tweast << "(" << exp << ")";
     result_ = parser::parse(tweast)->ast_get();
     has_return_ = true;
-  }
-
-  ast::rAst
-  flow(ast::rConstAst a)
-  {
-    ast::rAst res;
-    TIMER_PUSH("flow");
-    Flower flow;
-    try
-    {
-      flow(a);
-      res = flow.result_get();
-    }
-    catch (const object::ParserError& pe)
-    {
-      ast::rMessage msg =
-	new ast::Message(pe.location_get(),
-			 parser::message_format(pe.location_get(),
-						pe.msg_get()),
-			 "error");
-      ast::rNary nary = new ast::Nary(pe.location_get());
-      nary->push_back(msg);
-      res = nary;
-    }
-    TIMER_POP("flow");
-    return res;
   }
 
 } // namespace flower
