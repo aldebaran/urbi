@@ -135,7 +135,7 @@ class Object.uvar
   // periodically.
   function loopCheck()
   {
-    if (!looping && change.size && access.size)
+    if (!looping && change.size !=0 && access.size != 0)
     {
       looping = 1 |
       loopTag: detach({loop { callNotify(access); sleep(getPeriod)}})
