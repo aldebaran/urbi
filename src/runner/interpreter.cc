@@ -235,37 +235,39 @@ namespace runner
   {
     /// Catch exceptions, display the error if not already done, and
     /// rethrow it.
-    try
-    {
-      if (e)
+    if (e)
+      try
+      {
         e->accept(*this);
-    }
-    catch (object::UrbiException& x)
-    {
-      result_.reset();
-      propagate_error_(x, e->location_get());
-      throw;
-    }
-    catch (scheduler::SchedulerException&)
-    {
-      result_.reset();
-      throw;
-    }
-    catch (kernel::exception& x)
-    {
-      std::cerr << "Unexpected exception propagated: " << x.what() << std::endl;
-      throw;
-    }
-    catch (std::exception& x)
-    {
-      std::cerr << "Unexpected exception propagated: " << x.what() << std::endl;
-      throw;
-    }
-    catch (...)
-    {
-      std::cerr << "Unknown exception propagated" << std::endl;
-      throw;
-    }
+      }
+      catch (object::UrbiException& x)
+      {
+        result_.reset();
+        propagate_error_(x, e->location_get());
+        throw;
+      }
+      catch (scheduler::SchedulerException&)
+      {
+        result_.reset();
+        throw;
+      }
+      catch (kernel::exception& x)
+      {
+        std::cerr << "Unexpected exception propagated: "
+                  << x.what() << std::endl;
+        throw;
+      }
+      catch (std::exception& x)
+      {
+        std::cerr << "Unexpected exception propagated: "
+                  << x.what() << std::endl;
+        throw;
+      }
+      catch (...)
+      {
+        std::cerr << "Unknown exception propagated" << std::endl;
+        throw;
+      }
   }
 
 
@@ -440,16 +442,16 @@ namespace runner
     else
       switch (func->kind_get ())
       {
-        case object::object_kind_delegate:
-          result_ =
-            func.unsafe_cast<object::Delegate>()
-            ->value_get()
-            ->operator()(*this, args);
-          break;
-        default:
-          object::check_arg_count (1, args.size(), msg.name_get());
-          result_ = func;
-          break;
+      case object::object_kind_delegate:
+        result_ =
+          func.unsafe_cast<object::Delegate>()
+          ->value_get()
+          ->operator()(*this, args);
+        break;
+      default:
+        object::check_arg_count (1, args.size(), msg.name_get());
+        result_ = func;
+        break;
       }
 
     return result_;
@@ -723,7 +725,7 @@ namespace runner
     if (e->arguments_get())
       // FIXME: Register in the call stack
       result_ = apply(stacks_.self(), value,
-                       e->name_get(), e->arguments_get());
+                      e->name_get(), e->arguments_get());
     else
       result_ = value;
   }
