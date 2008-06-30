@@ -40,7 +40,7 @@ Or maybe Webots, but a true robot is preferred.
 *** Cleanup "at" scoping
 Decide what scoping is appropriate for "at" jobs.
 
-*** Fix the Booleans
+*** Fix the Booleans (done: 43653fc957dd6bf3078097d8d99fd0d75c2c10e4)
 They should no longer behave like Floats.
 
 *** ICE
