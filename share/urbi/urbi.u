@@ -178,8 +178,14 @@ do Object
   function acceptVoid ()
   {
     self
+  };
+  function unAcceptVoid()
+  {
+    self
   }
 };
+var void.acceptVoid.acceptVoid = function() { self.new};
+var void.acceptVoid.unAcceptVoid = function() { self.protos.front};
 
 ## --------- ##
 ## Booleans. ##

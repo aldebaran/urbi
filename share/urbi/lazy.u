@@ -11,14 +11,15 @@ class Global.Lazy
 
   function eval()
   {
-    val = self.code.acceptVoid
+    val = self.code.acceptVoid|
+    getSlot("val").unAcceptVoid
   };
 
   function value()
   {
     if (getSlot("val").isNil)
       eval|
-    getSlot("val")
+    getSlot("val").unAcceptVoid
   };
 
   function string ()
