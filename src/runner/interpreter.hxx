@@ -11,12 +11,19 @@ namespace runner
 
   inline
   Interpreter::rObject
-  Interpreter::eval (ast::rConstAst e)
+  Interpreter::result_get()
+  {
+    return result_;
+  }
+
+  inline
+  Interpreter::rObject
+  Interpreter::eval(ast::rConstAst e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
     operator()(e);
-    ECHO("Eval: " << &e << " = " << current_);
-    return current_;
+    ECHO("Eval: " << &e << " = " << result_);
+    return result_;
   }
 
 } // namespace runner

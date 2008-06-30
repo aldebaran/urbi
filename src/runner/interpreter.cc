@@ -120,25 +120,25 @@ namespace runner
 			    scheduler::Scheduler& sched,
 			    ast::rConstAst ast,
 			    const libport::Symbol& name)
-    : Interpreter::super_type(),
-      Runner(lobby, sched, name),
-      ast_(ast),
-      code_(0),
-      current_(0),
-      stacks_(lobby)
+    : Interpreter::super_type()
+    , Runner(lobby, sched, name)
+    , ast_(ast)
+    , code_(0)
+    , result_(0)
+    , stacks_(lobby)
   {
     init();
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
 			   const libport::Symbol& name, const objects_type& args)
-    : Interpreter::super_type(),
-      Runner(model, name),
-      ast_(0),
-      code_(code),
-      args_(args),
-      current_(0),
-      stacks_(model.lobby_)
+    : Interpreter::super_type()
+    , Runner(model, name)
+    , ast_(0)
+    , code_(code)
+    , args_(args)
+    , result_(0)
+    , stacks_(model.lobby_)
   {
     init();
   }
@@ -146,12 +146,12 @@ namespace runner
   Interpreter::Interpreter(const Interpreter& model,
 			   ast::rConstAst ast,
 			   const libport::Symbol& name)
-    : Interpreter::super_type (),
-      Runner(model, name),
-      ast_(ast),
-      code_(0),
-      current_(0),
-      stacks_(model.lobby_)
+    : Interpreter::super_type ()
+    , Runner(model, name)
+    , ast_(ast)
+    , code_(0)
+    , result_(0)
+    , stacks_(model.lobby_)
   {
     init();
   }
@@ -199,7 +199,7 @@ namespace runner
       ue.backtrace_set(call_stack_);
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
-    current_.reset ();
+    result_.reset ();
   }
 
   void
@@ -242,13 +242,13 @@ namespace runner
     }
     catch (object::UrbiException& x)
     {
-      current_.reset();
+      result_.reset();
       propagate_error_(x, e->location_get());
       throw;
     }
     catch (scheduler::SchedulerException&)
     {
-      current_.reset();
+      result_.reset();
       throw;
     }
     catch (kernel::exception& x)
@@ -298,7 +298,7 @@ namespace runner
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
 
-    current_ = object::void_class;
+    result_ = object::void_class;
   }
 
   void
@@ -398,8 +398,8 @@ namespace runner
     check_stack_space ();
 
     stacks_.execution_starts(msg);
-    current_ = eval (ast->body_get());
-    return current_;
+    result_ = eval (ast->body_get());
+    return result_;
   }
 
   object::rObject
@@ -434,25 +434,25 @@ namespace runner
       throw object::WrongArgumentType (msg);
 
     if (rCode c = func->as<object::Code>())
-      current_ = apply_urbi (c, msg, args, call_message);
+      result_ = apply_urbi (c, msg, args, call_message);
     else if (object::rPrimitive p = func->as<object::Primitive>())
-      current_ = p->value_get()(*this, args);
+      result_ = p->value_get()(*this, args);
     else
       switch (func->kind_get ())
       {
         case object::object_kind_delegate:
-          current_ =
+          result_ =
             func.unsafe_cast<object::Delegate>()
             ->value_get()
             ->operator()(*this, args);
           break;
         default:
           object::check_arg_count (1, args.size(), msg.name_get());
-          current_ = func;
+          result_ = func;
           break;
       }
 
-    return current_;
+    return result_;
   }
 
   void
@@ -470,15 +470,15 @@ namespace runner
       // Interpreter::apply_urbi, yet raising exception here gives
       // better location (the argument and not the whole function
       // invocation).
-      if (current_ == object::void_class)
+      if (result_ == object::void_class)
       {
 	object::WrongArgumentType e("");
 	e.location_set(arg->location_get());
 	throw e;
       }
 
-      passert (*arg, current_);
-      args.push_back (current_);
+      passert (*arg, result_);
+      args.push_back (result_);
     }
   }
 
@@ -555,7 +555,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstCallMsg)
   {
-    current_ = stacks_.call();
+    result_ = stacks_.call();
   }
 
   Interpreter::rObject
@@ -616,7 +616,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstFloat e)
   {
-    current_ = new object::Float(e->value_get());
+    result_ = new object::Float(e->value_get());
   }
 
 
@@ -635,7 +635,7 @@ namespace runner
   void Interpreter::visit(ast::rConstCode e, bool closure)
   {
     rCode res = make_code(e);
-    current_ = res;
+    result_ = res;
 
     // Capture variables
     foreach (ast::rDeclaration dec, *e->captured_variables_get())
@@ -673,7 +673,7 @@ namespace runner
     JAECHO ("test", e->test_get ());
     operator() (e->test_get());
 
-    if (object::is_true(current_, SYMBOL(if)))
+    if (object::is_true(result_, SYMBOL(if)))
     {
       JAECHO ("then", e->thenclause_get());
       operator() (e->thenclause_get());
@@ -703,8 +703,8 @@ namespace runner
       }
       res.push_back(v);
     }
-    current_ = new object::List(res);
-    //ECHO ("result: " << *current_);
+    result_ = new object::List(res);
+    //ECHO ("result: " << *result_);
   }
 
   void
@@ -722,10 +722,10 @@ namespace runner
 
     if (e->arguments_get())
       // FIXME: Register in the call stack
-      current_ = apply(stacks_.self(), value,
+      result_ = apply(stacks_.self(), value,
                        e->name_get(), e->arguments_get());
     else
-      current_ = value;
+      result_ = value;
   }
 
   void
@@ -742,7 +742,7 @@ namespace runner
     scheduler::jobs_type runners;
 
     // In case we're empty.
-    current_ = object::void_class;
+    result_ = object::void_class;
 
     bool tail = false;
     foreach (ast::rConstExp c, e->children_get())
@@ -755,7 +755,7 @@ namespace runner
       if (tail++)
 	YIELD ();
 
-      current_.reset ();
+      result_.reset ();
       JAECHO ("child", c);
 
       if (c.unsafe_cast<const ast::Stmt>() &&
@@ -778,12 +778,12 @@ namespace runner
 	  operator() (c);
 	  // We need to keep checking for void here because it can not be passed
 	  // to the << function
-	  if (e->toplevel_get () && current_.get ()
-	    && current_ != object::void_class)
+	  if (e->toplevel_get() && result_.get()
+	    && result_ != object::void_class)
 	  {
 	    try
 	    {
-	      assertion(current_);
+	      assertion(result_);
 	      ECHO("toplevel: returning a result to the connection.");
 
 	      // Display the value using the topLevel channel.
@@ -798,12 +798,12 @@ namespace runner
 		rObject e = topLevel->slot_get(SYMBOL(LT_LT_));
 		object::objects_type args;
 		args.push_back(topLevel);
-		args.push_back(current_);
+		args.push_back(result_);
 		apply(e, SYMBOL(topLevel), args);
 	      }
 	      else if (toplevel_debug)
-		lobby_->value_get ().connection.new_result (current_);
-              current_.reset ();
+		lobby_->value_get().connection.new_result(result_);
+              result_.reset();
 	    }
 	    catch (std::exception &ke)
 	    {
@@ -846,7 +846,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstNoop)
   {
-    current_ = object::void_class;
+    result_ = object::void_class;
   }
 
 
@@ -913,7 +913,7 @@ namespace runner
     visit (e.unsafe_cast<const ast::AbstractScope>());
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
-    current_ = tgt;
+    result_ = tgt;
   }
 
   void
@@ -926,19 +926,19 @@ namespace runner
   void
   Interpreter::visit (ast::rConstString e)
   {
-    current_ = new object::String(libport::Symbol(e->value_get()));
+    result_ = new object::String(libport::Symbol(e->value_get()));
   }
 
   void
   Interpreter::visit (ast::rConstTag t)
   {
-    current_ = eval_tag(t->exp_get());
+    result_ = eval_tag(t->exp_get());
   }
 
   void
   Interpreter::visit (ast::rConstTaggedStmt t)
   {
-    int current_depth = tags_.size();
+    int result_depth = tags_.size();
     try
     {
       scheduler::rTag tag = extract_tag(eval(t->tag_get()));
@@ -946,7 +946,7 @@ namespace runner
       // statement completely but use the provided payload.
       if (tag->blocked())
       {
-	current_ = boost::any_cast<rObject>(tag->payload_get());
+	result_ = boost::any_cast<rObject>(tag->payload_get());
 	return;
       }
       push_tag (tag);
@@ -961,10 +961,10 @@ namespace runner
     catch (scheduler::StopException& e)
     {
       // Rewind up to the appropriate depth.
-      if (e.depth_get() < current_depth)
+      if (e.depth_get() < result_depth)
 	throw;
       // Extract the value from the exception.
-      current_ = boost::any_cast<rObject>(e.payload_get());
+      result_ = boost::any_cast<rObject>(e.payload_get());
       // If we are frozen, reenter the scheduler for a while.
       if (frozen())
 	yield();
@@ -975,7 +975,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstThis)
   {
-    current_ = stacks_.self();
+    result_ = stacks_.self();
   }
 
   object::rObject
@@ -1046,14 +1046,14 @@ namespace runner
 	MAYBE_YIELD (e->flavor_get());
       JAECHO ("while test", e->test_get());
       operator() (e->test_get());
-      if (!object::is_true(current_, SYMBOL(while)))
+      if (!object::is_true(result_, SYMBOL(while)))
 	break;
 
       JAECHO ("while body", e->body_get());
 
       operator() (e->body_get());
     }
-    current_ = object::void_class;
+    result_ = object::void_class;
   }
 
   void

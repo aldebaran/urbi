@@ -44,23 +44,23 @@ namespace runner
     /// to know its \a scheduler and will execute \a ast.  Memory
     /// ownership of \a ast is transferred to the Interpreter.  The
     /// new runner has no parent.
-    Interpreter (rLobby lobby,
-		 scheduler::Scheduler& scheduler,
-		 ast::rConstAst ast,
-		 const libport::Symbol& name = SYMBOL());
+    Interpreter(rLobby lobby,
+                scheduler::Scheduler& scheduler,
+                ast::rConstAst ast,
+                const libport::Symbol& name = SYMBOL());
 
-    Interpreter (const Interpreter&,
-		 rObject code,
-		 const libport::Symbol& name = SYMBOL(),
-                 const objects_type& args = objects_type());
+    Interpreter(const Interpreter&,
+                rObject code,
+                const libport::Symbol& name = SYMBOL(),
+                const objects_type& args = objects_type());
 
     /// Create a copy of a runner starting with another ast.
-    Interpreter (const Interpreter&,
-		 ast::rConstAst ast,
-		 const libport::Symbol& name = SYMBOL());
+    Interpreter(const Interpreter&,
+                ast::rConstAst ast,
+                const libport::Symbol& name = SYMBOL());
 
     /// Destroy a Interpreter.
-    virtual ~Interpreter ();
+    virtual ~Interpreter();
     /// \}
 
     /// The entry point: visit \a e.
@@ -88,23 +88,26 @@ namespace runner
     ///             being Code.
     ///
     /// One cannot have both a call message and args.
-    virtual rObject apply (const rObject& func,
-			   const libport::Symbol msg,
-			   object::objects_type args,
-			   rObject call_message = 0);
+    virtual rObject apply(const rObject& func,
+                          const libport::Symbol msg,
+                          object::objects_type args,
+                          rObject call_message = 0);
 
     /// Helpers to apply a function with the arguments as ast chunks
-    rObject apply (rObject tgt, const libport::Symbol& msg,
-                   const ast::exps_type* args);
-    rObject apply (rObject tgt, rObject f, const libport::Symbol& msg,
-                   const ast::exps_type* args);
+    rObject apply(rObject tgt, const libport::Symbol& msg,
+                  const ast::exps_type* args);
+    rObject apply(rObject tgt, rObject f, const libport::Symbol& msg,
+                  const ast::exps_type* args);
+
+    /// Return the result of the latest evaluation.
+    virtual rObject result_get();
 
     /// Evaluate an expression in the current scope and return its result.
-    rObject eval (ast::rConstAst);
+    rObject eval(ast::rConstAst);
 
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
-    rObject eval_tag (ast::rConstExp);
+    rObject eval_tag(ast::rConstExp);
 
     /// Make an urbi function from an ast chunk
     object::rCode make_code(ast::rConstCode f) const;
@@ -199,7 +202,7 @@ namespace runner
     objects_type args_;
 
     /// The current value during the evaluation of the AST.
-    rObject current_;
+    rObject result_;
 
     /// The scope tags stack.
     std::vector<scheduler::rTag> scope_tags_;
