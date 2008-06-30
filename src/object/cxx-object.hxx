@@ -180,6 +180,7 @@ namespace object
           runner::Runner& WHEN(Run, r),                                 \
           objects_type args)                                            \
         {                                                               \
+	  (void)name;                                                   \
           WHEN(Met, FETCH_TGT());                                       \
           WHEN(Met, args.pop_front());                                  \
           WHEN(Ret, return)                                             \
