@@ -73,6 +73,9 @@ We need to prioritize jobs or tagged jobs.
 We need a way to benchmark the kernel reliably, including with
 Uobjects.  Code coverage (of the C++ code, not the Urbi code).
 
+*** Arrays
+We need "a[1]", "a[1] = 2" etc.
+
 ** Version 2.0 beta 1 (2008-09-01)
 
 This must be usable by real users (BA systems, Spanish team etc.).
