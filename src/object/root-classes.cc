@@ -184,8 +184,10 @@ namespace object
 
     CxxObject::initialize(global_class);
 
-    true_class = new Float(1.0);
-    false_class = new Float(0.0);
+    true_class = new Object();
+    false_class = new Object();
+    true_class->proto_add(object_class);
+    false_class->proto_add(object_class);
     EXISTING_CLASS_SETUP(false, false);
     EXISTING_CLASS_SETUP(true, true);
 

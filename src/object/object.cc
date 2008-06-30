@@ -438,13 +438,20 @@ namespace object
   bool
   is_true(const rObject& o, const libport::Symbol& fun)
   {
-    if (o == void_class)
-      throw WrongArgumentType(fun.name_get());
     if (o == nil_class)
       return false;
     if (o->is_a<object::Float>())
       return o.unsafe_cast<object::Float>()->value_get();
+    if (o == true_class)
+      return true;
+    if (o == false_class)
+      return false;
+    if (o == void_class)
+      throw WrongArgumentType(fun.name_get());
+    // FIXME: We will probably want to throw here.  This is related to
+    // maybe calling asBool on every tested value.
     return true;
+    // throw WrongArgumentType("Boolean", "Object", fun.name_get());
   }
 
 } // namespace object

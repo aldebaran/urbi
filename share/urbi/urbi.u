@@ -100,7 +100,7 @@ do Global
   };
 
   // Assertion control
-  var System.ndebug = 0;
+  var System.ndebug = false;
   function System.assert {
     if (!System.ndebug)
       System.assert_ (call.evalArgAt (1), call.argString (1));
@@ -179,10 +179,10 @@ do Object
 ## Booleans. ##
 ## --------- ##
 
-true.addProto(Singleton);
-false.addProto(Singleton);
-true.asString = "true";
-false.asString = "false";
+true.setProtos([Singleton]);
+false.setProtos([Singleton]);
+var true.asString = "true";
+var false.asString = "false";
 
 ## ---- ##
 ## nil. ##
@@ -483,12 +483,19 @@ load("urbi/group.u");
 
 do Object
 {
-  function '&&' {
+  function '&&'
+  {
     if (self) call.evalArgAt (1) else self;
   };
 
-  function '||' {
+  function '||'
+  {
     if (self) self else call.evalArgAt (1);
+  };
+
+  function '!'()
+  {
+    self == false
   };
 };
 
