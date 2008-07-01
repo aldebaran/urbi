@@ -1,0 +1,25 @@
+class Global.Loadable
+{
+  var load = false;
+
+  function __loadable_set__(val)
+  {
+    load = val |
+    self
+  };
+
+  function on()
+  {
+    __loadable_set__(true)
+  };
+
+  function off()
+  {
+    __loadable_set__(false)
+  };
+
+  function toggle()
+  {
+    __loadable_set__(!load)
+  };
+};

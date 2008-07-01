@@ -7,7 +7,7 @@ class Global.Kernel1Functions
     o.copy
   };
 
-  function ping ()
+  function ping()
   {
     echo ("pong time=" + time.asString);
   };
@@ -47,36 +47,6 @@ class Global.Kernel1Functions
 
 # K1 compatibility: import the k1 functions.
 Global.addProto(Global.Kernel1Functions);
-
-class Global.Kernel1Methods
-{
-  ## --------------------------------- ##
-  ## Dirty tricks to change foo.load.  ##
-  ## --------------------------------- ##
-
-  function on()
-  {
-    self.load = 1;
-    self
-  };
-
-  function off()
-  {
-    self.load = 0;
-    self
-  };
-
-  function switch()
-  {
-    if (self.load)
-      self.load = 0
-    else
-      self.load = 1;
-    self
-  };
-};
-Object.addProto(Global.Kernel1Methods);
-
 
 
 # Deprecated commands from k1.

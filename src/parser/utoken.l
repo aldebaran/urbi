@@ -608,7 +608,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "sizeof"        RESERVED_ERROR;
 "static_cast"   RESERVED_ERROR;
 "struct"        RESERVED_ERROR;
- /*"switch"        RESERVED_ERROR; */
+"switch"        RESERVED_ERROR;
 "template"      RESERVED_ERROR;
 "this"          RESERVED_ERROR;
 "throw"         RESERVED_ERROR;
