@@ -35,14 +35,21 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 
 
 dist_libkernel_la_SOURCES +=			\
+object/any-to-boost-function.hh			\
+object/any-to-boost-function.hxx		\
 object/atom.hh					\
 object/atom.cc					\
 object/barrier-class.cc				\
 object/barrier-class.hh				\
 object/code-class.cc				\
 object/code-class.hh				\
+object/cxx-conversions.hh			\
+object/cxx-conversions.hxx			\
+object/cxx-helper.hh				\
 object/cxx-object.cc				\
 object/cxx-object.hh				\
+object/cxx-primitive.hh				\
+object/cxx-primitive.hxx			\
 object/delegate-class.cc			\
 object/delegate-class.hh			\
 object/dictionary-class.cc			\
