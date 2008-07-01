@@ -11,6 +11,17 @@ namespace object
   struct MakePrimitive
   {};
 
+  namespace
+  {
+    inline void
+    check_args_count(unsigned formal, unsigned effective,
+                    const libport::Symbol& name)
+    {
+      if (formal != effective)
+        throw WrongArgumentCount(formal, effective, name);
+    }
+  }
+
 # define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) \
   boost::function##ArgsC                        \
   <IF(Ret, R, void),                            \
@@ -37,6 +48,7 @@ namespace object
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
     {                                                                   \
+      check_args_count(ArgsC WHEN(Run, - 1), args.size(), name);        \
       WHEN(Ret, return) f(                                              \
         CxxConvert<S>::to(args[0], name)                                \
         COMMA(Run) WHEN(Run, r)                                         \
