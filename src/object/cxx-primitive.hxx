@@ -1,4 +1,5 @@
 #include <boost/bind.hpp>
+ #include <boost/tr1/type_traits.hpp>
 
 #include <object/any-to-boost-function.hh>
 #include <object/cxx-conversions.hh>
@@ -20,6 +21,14 @@ namespace object
       if (formal != effective)
         throw WrongArgumentCount(formal, effective, name);
     }
+
+    // Remove const and reference
+    template <typename T>
+    struct Flatten
+    {
+      typedef typename boost::remove_const
+      <typename boost::remove_reference<T>::type>::type type;
+    };
   }
 
 # define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) \
@@ -49,15 +58,22 @@ namespace object
       const libport::Symbol& name)                                      \
     {                                                                   \
       check_args_count(ArgsC WHEN(Run, - 1), args.size(), name);        \
-      WHEN(Ret, return) f(                                              \
+      WHEN(Ret, R res =) f(                                             \
         CxxConvert<S>::to(args[0], name)                                \
         COMMA(Run) WHEN(Run, r)                                         \
-        COMMA(Arg1) WHEN(Arg1, CxxConvert<A1>::to(args[1], name))       \
-        COMMA(Arg2) WHEN(Arg2, CxxConvert<A2>::to(args[2], name))       \
-        COMMA(Arg3) WHEN(Arg3, CxxConvert<A3>::to(args[3], name))       \
+        COMMA(Arg1)                                                     \
+        WHEN(Arg1,                                                      \
+             CxxConvert<typename Flatten<A1>::type>::to(args[1], name)) \
+        COMMA(Arg2)                                                     \
+        WHEN(Arg2,                                                      \
+             CxxConvert<typename Flatten<A2>::type>::to(args[2], name)) \
+        COMMA(Arg3)                                                     \
+        WHEN(Arg3,                                                      \
+             CxxConvert<typename Flatten<A3>::type>::to(args[3], name)) \
         );                                                              \
-      return object::void_class;                                        \
-                                                                        \
+      IF(Ret,                                                           \
+         return CxxConvert<R>::from(res, name),                         \
+         return object::void_class);                                    \
     }                                                                   \
   };                                                                    \
 
@@ -94,8 +110,7 @@ namespace object
         WHEN(Run, r) COMMA(Run)                                 \
         args                                                    \
         );                                                      \
-      return object::void_class;                                \
-                                                                \
+      return void_class;                                        \
     }                                                           \
   };                                                            \
 
