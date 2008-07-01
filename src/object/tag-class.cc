@@ -7,7 +7,6 @@
 
 #include <object/tag-class.hh>
 
-#include <object/atom.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
 
