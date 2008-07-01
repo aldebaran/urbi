@@ -796,7 +796,7 @@ namespace runner
 	        object::global_class->slot_locate(SYMBOL(topLevel), false,
 		  true))
 	      {
-		rObject e = topLevel->slot_get(SYMBOL(LT_LT_));
+		rObject e = topLevel->slot_get(SYMBOL(LT_LT));
 		object::objects_type args;
 		args.push_back(topLevel);
 		args.push_back(result_);
