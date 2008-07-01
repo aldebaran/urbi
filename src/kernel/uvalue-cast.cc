@@ -30,10 +30,9 @@ urbi::UValue uvalue_cast(object::rObject o)
   switch(o->kind_get())
   {
     case object::object_kind_delegate:
-      throw object::WrongArgumentType
-        ("UValue",
-         string_of(o->kind_get()),
-         "cast");
+      throw object::WrongArgumentType("UValue",
+                                      string_of(o->kind_get()),
+                                      SYMBOL(cast));
       break;
     case object::object_kind_object:
       if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
@@ -41,7 +40,7 @@ urbi::UValue uvalue_cast(object::rObject o)
           object::WrongArgumentType
           (string_of(object::object_kind_object),
            string_of(o->kind_get()),
-           "bin-cast"));
+           SYMBOL(cast)));
       {
 	const std::string& data =
 	  o->slot_get(SYMBOL(data))->
@@ -87,6 +86,7 @@ object_cast(const urbi::UValue& v)
       res = l;
       break;
     }
+
     case urbi::DATA_BINARY:
     {
       res = new object::Object();
@@ -109,7 +109,7 @@ object_cast(const urbi::UValue& v)
       throw
 	object::WrongArgumentType("Object",
 				  "Not yet supported",
-                                  "backcast");
+                                  SYMBOL(backcast));
       break;
   }
   return res;

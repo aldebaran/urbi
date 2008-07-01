@@ -51,15 +51,16 @@ namespace object
     return value_;
   }
 
-  int Float::to_int(const std::string& func) const
+  int
+  Float::to_int(const libport::Symbol func) const
   {
     try
     {
-      return libport::ufloat_to_int (value_);
+      return libport::ufloat_to_int(value_);
     }
     catch (libport::bad_numeric_cast& ue)
     {
-      throw BadInteger (value_, func);
+      throw BadInteger(value_, func);
       return 0;  // Keep the compiler happy
     }
   }
@@ -93,11 +94,13 @@ namespace object
   }
 
 #define BOUNCE_OP(Op, Check)                                            \
-  rFloat Float::operator Op(rFloat rhs)                                 \
+  rFloat                                                                \
+  Float::operator Op(rFloat rhs)                                        \
   {                                                                     \
-    WHEN(Check, if (!rhs->value_get())                                  \
-                  throw PrimitiveError("Operator " #Op,                 \
-                                       "division by 0"));               \
+    static libport::Symbol op(#Op);                                     \
+    WHEN(Check,                                                         \
+         if (!rhs->value_get())                                         \
+           throw PrimitiveError(op, "division by 0"));                  \
     return new Float(value_get() Op rhs->value_get());                  \
   }
 
@@ -107,10 +110,11 @@ namespace object
 
 #undef BOUNCE_OP
 
-  rFloat Float::operator %(rFloat rhs)
+  rFloat
+  Float::operator %(rFloat rhs)
   {
     if (!rhs->value_get())
-      throw PrimitiveError("Operator %", "modulo by 0");
+      throw PrimitiveError(SYMBOL(PERCENT), "modulo by 0");
     return new Float(fmod(value_get(), rhs->value_get()));
   }
 
@@ -123,10 +127,12 @@ namespace object
   /*------------------.
   | Unary operators.  |
   `------------------*/
-#define BOUNCE_INT_OP(Op)                       \
-  rFloat Float::operator Op()                   \
-  {                                             \
-    return new Float(Op to_int(#Op));           \
+#define BOUNCE_INT_OP(Op)                               \
+  rFloat                                                \
+  Float::operator Op()                                  \
+  {                                                     \
+    static libport::Symbol op(#Op);                     \
+    return new Float(Op to_int(op));                    \
   }
   BOUNCE_INT_OP(~);
 #undef BOUNCE_INT_OP
@@ -136,9 +142,11 @@ namespace object
   | Binary operators.  |
   `-------------------*/
 #define BOUNCE_INT_OP(Op)                               \
-  rFloat Float::operator Op(rFloat rhs)                 \
+  rFloat                                                \
+  Float::operator Op(rFloat rhs)                        \
   {                                                     \
-    return new Float(to_int(#Op) Op rhs->to_int(#Op));  \
+    static libport::Symbol op(#Op);                     \
+    return new Float(to_int(op) Op rhs->to_int(op));    \
   }
 
   BOUNCE_INT_OP(<<);
@@ -152,36 +160,37 @@ namespace object
 
 #define CHECK_POSITIVE(F)                                       \
   if (value_ < 0)                                               \
-    throw PrimitiveError(#F, "argument has to be positive");
+    throw PrimitiveError(F, "argument has to be positive");
 
 #define CHECK_TRIGO_RANGE(F)                                    \
   if (value_ < -1 || value_ > 1)                                \
-    throw PrimitiveError(#F, "invalid range");
+    throw PrimitiveError(F, "invalid range");
 
-#define BOUNCE_FUN(F, Pos, Range)                       \
-  rFloat Float::F()                                     \
+#define BOUNCE(F, Pos, Range)                           \
+  rFloat                                                \
+  Float::F()                                            \
   {                                                     \
-    WHEN(Pos, CHECK_POSITIVE(F));                       \
-    WHEN(Range, CHECK_TRIGO_RANGE(F));                  \
+    WHEN(Pos, CHECK_POSITIVE(SYMBOL(F)));               \
+    WHEN(Range, CHECK_TRIGO_RANGE(SYMBOL(F)));          \
     return new Float(::F(value_get()));                 \
   }
 
-  BOUNCE_FUN(acos, false, true);
-  BOUNCE_FUN(asin, false, true);
-  BOUNCE_FUN(atan, false, false);
-  BOUNCE_FUN(cos, false, false);
-  BOUNCE_FUN(exp, false, false);
-  BOUNCE_FUN(fabs, false, false);
-  BOUNCE_FUN(log, true, false);
-  BOUNCE_FUN(round, false, false);
-  BOUNCE_FUN(sin, false, false);
-  BOUNCE_FUN(sqrt, true, false);
-  BOUNCE_FUN(tan, false, false);
-  BOUNCE_FUN(trunc, false, false);
+  BOUNCE(acos,  false, true);
+  BOUNCE(asin,  false, true);
+  BOUNCE(atan,  false, false);
+  BOUNCE(cos,   false, false);
+  BOUNCE(exp,   false, false);
+  BOUNCE(fabs,  false, false);
+  BOUNCE(log,   true,  false);
+  BOUNCE(round, false, false);
+  BOUNCE(sin,   false, false);
+  BOUNCE(sqrt,  true,  false);
+  BOUNCE(tan,   false, false);
+  BOUNCE(trunc, false, false);
 
 #undef CHECK_POSITIVE
 #undef CHECK_TRIGO_RANGE
-#undef BOUNCE_FUN
+#undef BOUNCE
 
   rFloat
   Float::random ()

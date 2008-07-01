@@ -379,7 +379,7 @@ namespace runner
     {
       const ast::declarations_type& formals = *ast->formals_get();
       // Check arity
-      object::check_arg_count (formals.size() + 1, args.size(), msg.name_get());
+      object::check_arg_count (formals.size() + 1, args.size(), msg);
       // Skip 'this'
       object::objects_type::const_iterator it = args.begin() + 1;
       // Bind
@@ -448,7 +448,7 @@ namespace runner
           ->operator()(*this, args);
         break;
       default:
-        object::check_arg_count (1, args.size(), msg.name_get());
+        object::check_arg_count (1, args.size(), msg);
         result_ = func;
         break;
       }
@@ -473,7 +473,7 @@ namespace runner
       // invocation).
       if (result_ == object::void_class)
       {
-	object::WrongArgumentType e("");
+	object::WrongArgumentType e(SYMBOL());
 	e.location_set(arg->location_get());
 	throw e;
       }

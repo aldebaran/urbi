@@ -87,7 +87,7 @@ namespace object
 
   /// Raise an exception if this is not of type \a T
   template<typename T>
-  void type_check(rObject o, const std::string& fun);
+  void type_check(rObject o, const libport::Symbol fun);
 
 
 }

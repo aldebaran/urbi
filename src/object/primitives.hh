@@ -40,14 +40,14 @@
  * \param N expected number of arguments (including self).
  */
 #define CHECK_ARG_COUNT(N)                              \
-  check_arg_count(N, args.size(), __PRETTY_FUNCTION__)
+  check_arg_count(N, args.size(), libport::Symbol(__PRETTY_FUNCTION__))
 
 /**
  * Check argument count and throw an Urbi exception if it does not
  * fall into the expected \param MIN - \param MAX range, including self.
  */
 #define CHECK_ARG_COUNT_RANGE(MIN, MAX)				\
-  check_arg_count(MIN, MAX, args.size(), __PRETTY_FUNCTION__)
+  check_arg_count(MIN, MAX, args.size(), libport::Symbol(__PRETTY_FUNCTION__))
 
 /**
  * Define a primitive for class \a Class named \a Name, which takes

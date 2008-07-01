@@ -87,8 +87,9 @@ namespace object
   rObject Code::apply(runner::Runner& r, rList args)
   {
     if (args->value_get().empty())
-      throw PrimitiveError ("apply", "list of arguments must begin with self");
-    return r.apply (this, SYMBOL(apply), args->value_get());
+      throw PrimitiveError(SYMBOL(apply),
+                           "list of arguments must begin with self");
+    return r.apply(this, SYMBOL(apply), args->value_get());
   }
 
   rString Code::as_string(rObject what)

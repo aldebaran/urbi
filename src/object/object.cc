@@ -447,7 +447,7 @@ namespace object
     if (o == false_class)
       return false;
     if (o == void_class)
-      throw WrongArgumentType(fun.name_get());
+      throw WrongArgumentType(fun);
     // FIXME: We will probably want to throw here.  This is related to
     // maybe calling asBool on every tested value.
     return true;

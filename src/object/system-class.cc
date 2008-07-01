@@ -102,14 +102,14 @@ namespace object
   }
 
   static rObject
-  system_class_time (runner::Runner& r, objects_type args)
+  system_class_time(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
     return new Float(r.scheduler_get().get_time() / 1000.0);
   }
 
   static rObject
-  system_class_shiftedTime (runner::Runner& r, objects_type args)
+  system_class_shiftedTime(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
     return new Float((r.scheduler_get().get_time() -
@@ -120,25 +120,25 @@ namespace object
   system_class_assert_(runner::Runner&, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    type_check<String>(args[2], SYMBOL(assert));
+    type_check<String>(args[2], SYMBOL(assert_UL));
     rString arg2 = args[2]->as<String>();
-    if (!is_true(args[1], SYMBOL(assert_)))
+    if (!is_true(args[1], SYMBOL(assert_UL)))
       throw PrimitiveError
-	("assert_",
+	(SYMBOL(assert_UL),
 	 "assertion `" + arg2->value_get().name_get() + "' failed");
     return void_class;
   }
 
   static rObject
-  system_class_eval (runner::Runner& r, objects_type args)
+  system_class_eval(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    type_check<String>(args[1], SYMBOL(assert));
+    type_check<String>(args[1], SYMBOL(eval));
     rString arg1 = args[1]->as<String>();
     return
       execute_parsed(r, parser::parse(arg1->value_get()),
                      SYMBOL(eval),
-                     PrimitiveError("eval",
+                     PrimitiveError(SYMBOL(eval),
                                     "error executing command: "
                                     + arg1->value_get().name_get()));
   }
@@ -177,7 +177,7 @@ namespace object
     catch (libport::file_library::Not_found&)
     {
       throw
-	PrimitiveError("searchFile",
+	PrimitiveError(SYMBOL(searchFile),
 		       "Unable to find file: "
 		       + arg1->value_get().name_get());
       // Never reached
@@ -196,12 +196,12 @@ namespace object
     std::string filename = arg1->value_get().name_get();
 
     if (!libport::path(filename).exists())
-      throw PrimitiveError("loadFile",
+      throw PrimitiveError(SYMBOL(loadFile),
 			   "No such file: " + filename);
     return
       execute_parsed(r, parser::parse_file(filename),
                      SYMBOL(loadFile),
-                     PrimitiveError("loadFile",
+                     PrimitiveError(SYMBOL(loadFile),
                                     "error loading file: " + filename));
   }
 

@@ -57,11 +57,12 @@ namespace object
 #define CHECK_NON_EMPTY(Name)                                           \
   if (content_.empty ())                                                \
     throw PrimitiveError						\
-      (Name, "operation cannot be applied onto empty list")
+      (SYMBOL(Name), "cannot be applied onto empty list")
 
-  rList List::tail()
+  rList
+  List::tail()
   {
-    CHECK_NON_EMPTY("tail");
+    CHECK_NON_EMPTY(SYMBOL(tail));
     value_type res = content_;
     res.pop_front();
     return new List(res);
@@ -71,7 +72,7 @@ namespace object
   {
     unsigned i = idx->to_int(SYMBOL(nth));
     if (i >= content_.size())
-      throw PrimitiveError("nth", "invalid index " + string_cast(i));
+      throw PrimitiveError(SYMBOL(nth), "invalid index " + string_cast(i));
     return content_[i];
   }
 
@@ -79,7 +80,7 @@ namespace object
   {
     unsigned i = idx->to_int(SYMBOL(nth));
     if (i >= content_.size())
-      throw PrimitiveError("nth", "invalid index " + string_cast(i));
+      throw PrimitiveError(SYMBOL(nth), "invalid index " + string_cast(i));
     return content_[i] = val;
   }
 
@@ -165,9 +166,10 @@ namespace object
   }
 
 #define BOUNCE(Name, Ret, Arg, Check)                           \
-  IF(Ret, rObject, rList) List::Name(WHEN(Arg, rObject arg))    \
+  IF(Ret, rObject, rList)                                       \
+  List::Name(WHEN(Arg, rObject arg))                            \
   {                                                             \
-    WHEN(Check, CHECK_NON_EMPTY(#Name));                        \
+    WHEN(Check, CHECK_NON_EMPTY(Name));                         \
     WHEN(Ret, return) content_.Name(WHEN(Arg, arg));            \
     return this;                                                \
   }

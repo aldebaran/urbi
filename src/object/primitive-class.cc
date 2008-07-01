@@ -51,11 +51,12 @@ namespace object
     CxxObject::add<Primitive>("Primitive", primitive_class);
 
   rObject
-  Primitive::apply (runner::Runner& r, rList args)
+  Primitive::apply(runner::Runner& r, rList args)
   {
     if (args->value_get().empty())
-      throw PrimitiveError ("apply", "list of arguments must begin with self");
-    return r.apply (this, SYMBOL(apply), args->value_get());
+      throw PrimitiveError(SYMBOL(apply),
+                           "list of arguments must begin with self");
+    return r.apply(this, SYMBOL(apply), args->value_get());
   }
 
 }; // namespace object

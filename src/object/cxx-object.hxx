@@ -100,7 +100,7 @@ namespace object
 
   template <typename T>
   inline void
-  type_check(rObject o, const std::string& fun)
+  type_check(rObject o, const libport::Symbol fun)
   {
     libport::shared_ptr<CxxObject> co = o.unsafe_cast<CxxObject>();
      // FIXME: I can't fill all the source type for now since some old

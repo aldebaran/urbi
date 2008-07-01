@@ -27,14 +27,13 @@ namespace object
   Lobby::Lobby()
     : state_(*dummy)
   {
-    pabort("Cannot instanciate lobbies by hand");
+    throw PrimitiveError(SYMBOL(clone), "cloning Lobby is invalid");
   }
 
   Lobby::Lobby(rLobby)
     : state_(*dummy)
   {
-    throw WrongArgumentType("foobar");
-    pabort("Cannot clone lobbies");
+    throw PrimitiveError(SYMBOL(clone), "cloning a lobby is invalid");
   }
 
   Lobby::value_type&
@@ -53,12 +52,12 @@ namespace object
     {
       rString name = args[1].unsafe_cast<String>();
       if (!name)
-	throw WrongArgumentType("String", "Object", "send");
+	throw WrongArgumentType("String", "Object", SYMBOL(send));
       tag = name->value_get().name_get();
     }
     rString rdata = args[0].unsafe_cast<String>();
     if (!rdata)
-      throw WrongArgumentType("String", "Object", "send");
+      throw WrongArgumentType("String", "Object", SYMBOL(send));
     std::string data = rdata->value_get().name_get() + "\n";
     state_.connection.send (data.c_str(), data.length(), tag.c_str());
   }

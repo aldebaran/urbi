@@ -62,7 +62,7 @@ namespace object
       }
       catch (libport::bad_numeric_cast& ue)
       {
-	throw BadInteger(arg1->value_get(), "dump");
+	throw BadInteger(arg1->value_get(), SYMBOL(dump));
       }
     }
 
@@ -117,14 +117,14 @@ namespace object
   }
 
   static rObject
-  object_class_apply (runner::Runner&, objects_type args)
+  object_class_apply(runner::Runner&, objects_type args)
   {
-    CHECK_ARG_COUNT (2);
+    CHECK_ARG_COUNT(2);
     type_check<List>(args[1], SYMBOL(apply));
     rList arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
-      throw PrimitiveError ("apply", "first argument must be [self]");
-    return arg1->value_get ().front ();
+      throw PrimitiveError(SYMBOL(apply), "first argument must be [self]");
+    return arg1->value_get().front();
   }
 
   static rObject
@@ -132,7 +132,7 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     rObject message = args[1]->slot_get(SYMBOL(message));
-    type_check<String>(message, "callMessage");
+    type_check<String>(message, SYMBOL(callMessage));
     libport::Symbol msg = message->as<String>()->value_get();
     rObject code = args[0]->slot_get(msg);
     // FIXME: Sanity checks on the call message are probably required

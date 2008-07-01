@@ -28,13 +28,13 @@ namespace object
   {
   public:
     /// Destructor.
-    virtual ~UrbiException () throw ();
+    virtual ~UrbiException() throw ();
 
     /// Initialize message (add debug information if required).
-    void initialize_msg () throw ();
+    void initialize_msg() throw ();
 
     /// Return the exception's error message.
-    virtual std::string what () const throw ();
+    virtual std::string what() const throw ();
 
     /// The call stack
     typedef std::vector<ast::rConstCall> call_stack_type;
@@ -45,34 +45,34 @@ namespace object
     /// Mark the exception as allready displayed.
     void set_displayed();
 
-    ADD_FIELD (ast::loc, location)
-    ADD_FIELD (call_stack_type, backtrace)
-    ADD_FIELD (std::string, msg)
-    ADD_FIELD (std::string, function);
+    ADD_FIELD(ast::loc, location)
+    ADD_FIELD(call_stack_type, backtrace)
+    ADD_FIELD(std::string, msg)
+    ADD_FIELD(libport::Symbol, function);
 
   protected:
     /**
      * \brief Construct an exception which contains a raw message.
      * \param msg raw error message.  */
-    explicit UrbiException (const std::string& msg);
+    explicit UrbiException(const std::string& msg);
 
     /**
      * \brief Construct an exception which contains a raw message.
      * \param msg raw Error message.
      * \param loc Error's location.  */
-    UrbiException (const std::string& msg, const ast::loc&);
+    UrbiException(const std::string& msg, const ast::loc&);
 
     /**
      * \brief Construct an exception which contains a raw message.
      * \param msg raw Error message.
      * \param fun C++ function that raised.  */
-    UrbiException (const std::string& msg,
-		   const std::string& fun);
+    UrbiException(const std::string& msg,
+                  const libport::Symbol fun);
 
     private:
     /// Was the exception displayed
     bool displayed_;
-    COMPLETE_EXCEPTION (UrbiException)
+    COMPLETE_EXCEPTION(UrbiException)
   };
 
 
@@ -103,9 +103,9 @@ namespace object
    * \param msg         error message which will be sent.  */
   struct PrimitiveError: public UrbiException
   {
-    PrimitiveError (const std::string& primitive,
-		    const std::string& msg);
-    COMPLETE_EXCEPTION (PrimitiveError)
+    PrimitiveError(const libport::Symbol primitive,
+                   const std::string& msg);
+    COMPLETE_EXCEPTION(PrimitiveError)
   };
 
   /** Exception for type mismatch in a primitive usage.
@@ -116,9 +116,9 @@ namespace object
   {
     WrongArgumentType (const std::string& formal,
 		       const std::string& effective,
-		       const std::string& fun);
+		       const libport::Symbol fun);
     /// Invalid use of void.
-    WrongArgumentType(const std::string& fun);
+    WrongArgumentType(const libport::Symbol fun);
 
     COMPLETE_EXCEPTION (WrongArgumentType)
   };
@@ -133,9 +133,9 @@ namespace object
   struct WrongArgumentCount: public UrbiException
   {
     WrongArgumentCount (unsigned formal, unsigned effective,
-			const std::string& fun);
+			const libport::Symbol fun);
     WrongArgumentCount (unsigned minformal, unsigned maxformal,
-			unsigned effective, const std::string& fun);
+			unsigned effective, const libport::Symbol fun);
     COMPLETE_EXCEPTION (WrongArgumentCount)
   };
 
@@ -145,7 +145,7 @@ namespace object
    */
   struct BadInteger: public UrbiException
   {
-    BadInteger (libport::ufloat effective, const std::string& fun);
+    BadInteger (libport::ufloat effective, const libport::Symbol fun);
     COMPLETE_EXCEPTION (BadInteger)
   };
 
@@ -186,12 +186,12 @@ namespace object
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
   void check_arg_count (unsigned formal, unsigned effective,
-		       const std::string& fun);
+		       const libport::Symbol fun);
 
   /// Same as above, with a minimum and maximum number of
   /// formal parameters.
   void check_arg_count (unsigned minformal, unsigned maxformal,
-			unsigned effective, const std::string& fun);
+			unsigned effective, const libport::Symbol fun);
 
 } // namespace object
 
