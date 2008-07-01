@@ -24,12 +24,12 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
-    rString plus(runner::Runner& r, rObject rhs);
-    rObject lt(rString rhs);
-    rString fresh ();
-    rString set(rString rhs);
+    std::string plus(runner::Runner& r, rObject rhs);
+    rObject lt(const std::string& rhs);
+    std::string fresh ();
+    std::string set(const std::string& rhs);
     rFloat  size();
-    rList   split(rString sep);
+    rList   split(const std::string& sep);
 
 
     static const std::string type_name;

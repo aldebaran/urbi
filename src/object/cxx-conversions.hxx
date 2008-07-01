@@ -2,6 +2,7 @@
 # define CXX_CONVERSIONS_HXX
 
 # include <object/cxx-object.hh>
+# include <object/string-class.hh>
 
 namespace object
 {
@@ -40,6 +41,24 @@ namespace object
     from(const T& v,  const libport::Symbol&)
     {
       return v;
+    }
+  };
+
+  // Conversion with std::strings
+  template <>
+  struct CxxConvert<std::string>
+  {
+    static std::string
+    to(rObject o, const libport::Symbol& name)
+    {
+      type_check<String>(o, name);
+      return o->as<String>()->value_get().name_get();
+    }
+
+    static rObject
+    from(const std::string& v,  const libport::Symbol&)
+    {
+      return new String(libport::Symbol(v));
     }
   };
 

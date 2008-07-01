@@ -53,13 +53,11 @@ namespace object
     return content_;
   }
 
-  rString String::plus (runner::Runner& r, rObject rhs)
+  std::string String::plus (runner::Runner& r, rObject rhs)
   {
     rObject str = urbi_call(r, rhs, SYMBOL(asString));
     type_check<String>(str, SYMBOL(PLUS));
-    return new String(libport::Symbol(
-                        content_.name_get()
-                        + str->as<String>()->value_get().name_get()));
+    return content_.name_get() + str->as<String>()->value_get().name_get();
   }
 
   rFloat String::size ()
@@ -95,32 +93,31 @@ namespace object
   }
 
   rObject
-  String::lt(rString rhs)
+  String::lt(const std::string& rhs)
   {
-    return value_get().name_get() < rhs->value_get().name_get() ?
-      true_class : false_class;
+    return value_get().name_get() < rhs ? true_class : false_class;
   }
 
-  rString
-  String::set(rString rhs)
+  std::string
+  String::set(const std::string& rhs)
   {
-    content_ = rhs->value_get();
-    return this;
+    content_ = libport::Symbol(rhs);
+    return rhs;
   }
 
-  rString
+  std::string
   String::fresh ()
   {
-    return new String(libport::Symbol::fresh(value_get()));
+    return libport::Symbol::fresh(value_get()).name_get();
   }
 
   rList
-  String::split(rString sep)
+  String::split(const std::string& sep)
   {
     boost::tokenizer< boost::char_separator<char> > tok =
       libport::make_tokenizer(value_get().name_get(),
-                              sep->value_get().name_get().c_str());
-  List::value_type ret;
+                              sep.c_str());
+    List::value_type ret;
     foreach(const std::string& i, tok)
       ret.push_back(new String(libport::Symbol(i)));
     return new List(ret);
