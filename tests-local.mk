@@ -25,7 +25,8 @@ XFAIL_TESTS +=					\
 TFAIL_TESTS +=					\
 2.x/onevent.chk					\
 2.x/list-primitives.chk				\
-2.x/unique-variable.chk
+2.x/unique-variable.chk                         \
+2.x/modifier/speed-adaptive-freeze.log
 
 # k1 tests that currently don't pass, but we should.
 # In fact, the above list has been removed to gain some time
