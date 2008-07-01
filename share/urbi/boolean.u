@@ -7,21 +7,27 @@ var false.asString = "false";
 ## Logic with short-circuit.  ##
 ## -------------------------- ##
 
-for (var boolean : [true, false])
-  do boolean
+function true.'&&'(a) { a };
+function true.'||' { true };
+var true.'!' = false;
+function false.'&&' { false };
+function false.'||'(a) { a };
+var false.'!' = true;
+
+do Object
+{
+  function '&&'
   {
-    function '&&'
-    {
-      if (self) call.evalArgAt (1) else self;
-    };
-
-    function '||'
-    {
-      if (self) self else call.evalArgAt (1);
-    };
-
-    function '!'()
-    {
-      self == false
-    };
+    if (self) call.evalArgAt (1) else self;
   };
+
+  function '||'
+  {
+    if (self) self else call.evalArgAt (1);
+  };
+
+  function '!'()
+  {
+    self == false
+  };
+};
