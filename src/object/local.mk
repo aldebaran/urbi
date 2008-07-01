@@ -37,6 +37,8 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 dist_libkernel_la_SOURCES +=			\
 object/atom.hh					\
 object/atom.cc					\
+object/barrier-class.cc				\
+object/barrier-class.hh				\
 object/code-class.cc				\
 object/code-class.hh				\
 object/cxx-object.cc				\

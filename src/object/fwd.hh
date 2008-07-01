@@ -88,6 +88,8 @@ namespace object
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
 # undef DEFINE
 
+  class Barrier;
+  typedef libport::shared_ptr<Barrier> rBarrier;
   class Code;
   typedef libport::shared_ptr<Code> rCode;
   class Dictionary;
