@@ -7,6 +7,7 @@ my %char =
     'AMPERSAND' => '&',
     'BANG' => '!',
     'CARET' => '^',
+    'COLON' => ':',
     'EQ' => '=',
     'GT' => '>',
     'LT' => '<',
@@ -18,6 +19,7 @@ my %char =
     'SP' => ' ',
     'STAR' => '*',
     'TILDA' => '~',
+    'UL' => '_',
 );
 
 # Convert a symbol name into its representation.
@@ -32,8 +34,8 @@ sub symbol ($)
 }
 
 # Check that no symbol::Symbol are called directly with literals.
-my $literals = `git grep -E 'libport::Symbol *\\("'`;
-die "use SYMBOL instead of direct calls to libport::Symbol:\n $literals\n"
+my $literals = `git grep -E -n 'libport::Symbol *\\("[^"]*")'`;
+die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
     if $literals;
 
 # Get the list of all the SYMBOL() uses.
@@ -53,7 +55,7 @@ die "git grep failed"
 
 my %symbol =
     map { $_ => symbol($_) }
-	($symbols =~ /\b(?:DECLARE|SYMBOL|RETURN_OP) *\(([^,\)]*)/gm);
+	($symbols =~ /\b(?:BOUNCE|DECLARE|RETURN_OP|SYMBOL) *\(([^,\)]*)/gm);
 
 print <<'EOF';
 /**
