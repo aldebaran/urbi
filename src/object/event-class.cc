@@ -10,6 +10,7 @@
 #include <object/event-class.hh>
 #include <object/float-class.hh>
 #include <object/list-class.hh>
+#include <object/object.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -72,8 +73,9 @@ namespace object
   Event::onEvent(runner::Runner& r, rCode handler)
   {
     rObject instance = barrier_->wait(r);
-    r.apply(handler, SYMBOL(onEvent),
-	    list_of (instance) (instance->as<Event>()->value_));
+    objects_type args = objects_type(instance->as<Event>()->value_);
+    args.push_front(instance);
+    r.apply(handler, SYMBOL(onEvent), args);
   }
 
   void
@@ -96,6 +98,12 @@ namespace object
 
   rList
   Event::values()
+  {
+    return value_;
+  }
+
+  const Event::value_type&
+  Event::value_get() const
   {
     return value_;
   }
