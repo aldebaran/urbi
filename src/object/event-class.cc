@@ -94,6 +94,12 @@ namespace object
     return instance;
   }
 
+  rList
+  Event::values()
+  {
+    return value_;
+  }
+
   void
   Event::initialize(CxxObject::Binder<Event>& bind)
   {
@@ -103,6 +109,7 @@ namespace object
     bind(SYMBOL(onEvent), &Event::onEvent);
     bind(SYMBOL(stop), &Event::stop);
     bind(SYMBOL(trigger), &Event::trigger);
+    bind(SYMBOL(values), &Event::values);
   }
 
   bool Event::event_added = CxxObject::add<Event>("Event", event_class);

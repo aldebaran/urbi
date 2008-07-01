@@ -36,6 +36,7 @@ namespace object
     void onEvent(runner::Runner&, rCode);
     void stop();
     rEvent trigger(objects_type);
+    rList values();
 
     static void initialize(CxxObject::Binder<Event>& bind);
     static const std::string type_name;
