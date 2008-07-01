@@ -1,0 +1,115 @@
+/**
+ ** \file object/event-class.cc
+ ** \brief Creation of the URBI object event.
+ */
+
+#include <boost/assign.hpp>
+
+#include <object/barrier-class.hh>
+#include <object/code-class.hh>
+#include <object/event-class.hh>
+#include <object/float-class.hh>
+#include <object/list-class.hh>
+#include <runner/runner.hh>
+
+namespace object
+{
+  using namespace boost::assign;
+
+  rObject event_class;
+
+  Event::Event()
+    : value_(new List)
+    , active_(false)
+    , barrier_(new Barrier)
+  {
+    proto_add(event_class);
+  }
+
+  Event::Event(const value_type& value)
+    : value_(value)
+    , active_(false)
+    , barrier_(new Barrier)
+  {
+    proto_add(event_class);
+  }
+
+  Event::Event(rEvent model)
+    : value_(model->value_)
+    , active_(false)
+    , barrier_(model->barrier_)
+  {
+    proto_add(event_class);
+  }
+
+  rObject
+  Event::active()
+  {
+    return active_get() ? true_class : false_class;
+  }
+
+  bool
+  Event::active_get() const
+  {
+    return active_;
+  }
+
+  void
+  Event::emit(objects_type payload)
+  {
+    rEvent instance = new Event(this);
+    instance->value_ = new List(payload);
+    barrier_->signalAll(instance);
+  }
+
+  rList
+  Event::alive()
+  {
+    return live_;
+  }
+
+  void
+  Event::onEvent(runner::Runner& r, rCode handler)
+  {
+    rObject instance = barrier_->wait(r);
+    r.apply(handler, SYMBOL(onEvent),
+	    list_of (instance) (instance->as<Event>()->value_));
+  }
+
+  void
+  Event::stop()
+  {
+    active_ = false;
+    live_->remove_by_id(this);
+  }
+
+  rEvent
+  Event::trigger(objects_type payload)
+  {
+    rEvent instance = new Event(this);
+    instance->value_ = new List(payload);
+    instance->active_ = true;
+    live_->push_back(instance);
+    barrier_->signalAll(instance);
+    return instance;
+  }
+
+  void
+  Event::initialize(CxxObject::Binder<Event>& bind)
+  {
+    bind(SYMBOL(active), &Event::active);
+    bind(SYMBOL(alive), &Event::alive);
+    bind(SYMBOL(emit), &Event::emit);
+    bind(SYMBOL(onEvent), &Event::onEvent);
+    bind(SYMBOL(stop), &Event::stop);
+    bind(SYMBOL(trigger), &Event::trigger);
+  }
+
+  bool Event::event_added = CxxObject::add<Event>("Event", event_class);
+  const std::string Event::type_name = "Event";
+  std::string Event::type_name_get() const
+  {
+    return type_name;
+  }
+
+} // namespace object

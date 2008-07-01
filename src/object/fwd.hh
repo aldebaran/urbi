@@ -94,6 +94,8 @@ namespace object
   typedef libport::shared_ptr<Code> rCode;
   class Dictionary;
   typedef libport::shared_ptr<Dictionary> rDictionary;
+  class Event;
+  typedef libport::shared_ptr<Event> rEvent;
   class Float;
   typedef libport::shared_ptr<Float> rFloat;
   class List;

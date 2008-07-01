@@ -330,7 +330,6 @@ do Object
   };
 };
 
-load("urbi/event.u");
 load("urbi/channel.u");
 
 // Disable top-level display

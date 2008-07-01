@@ -4,11 +4,11 @@
  */
 
 #include <object/atom.hh>
-#include <object/barrier-class.hh>
 #include <object/code-class.hh>
 #include <object/cxx-object.hh>
 #include <object/delegate-class.hh>
 #include <object/dictionary-class.hh>
+#include <object/event-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/lobby-class.hh>
@@ -215,7 +215,7 @@ namespace object
   void
   dummy_references()
   {
-    Barrier b;
+    Event e;
     Semaphore s;
   }
 
