@@ -24,12 +24,12 @@ do Global.Dictionary
     }
   };
 
-  function getWithDefault(name, default)
+  function getWithDefault(name, otherwise)
   {
     if (has(name))
       get(name)
     else
-      default
+      otherwise
   };
 
 };
