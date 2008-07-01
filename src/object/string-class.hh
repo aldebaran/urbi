@@ -25,7 +25,7 @@ namespace object
 
     /// Urbi methods
     std::string plus(runner::Runner& r, rObject rhs);
-    rObject lt(const std::string& rhs);
+    bool lt(const std::string& rhs);
     std::string fresh ();
     std::string set(const std::string& rhs);
     rFloat  size();

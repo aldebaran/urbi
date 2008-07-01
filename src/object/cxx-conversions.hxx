@@ -62,6 +62,23 @@ namespace object
     }
   };
 
+  // Conversion with bools
+  template <>
+  struct CxxConvert<bool>
+  {
+    static bool
+    to(rObject o, const libport::Symbol& name)
+    {
+      return is_true(o, name);
+    }
+
+    static rObject
+    from(bool v,  const libport::Symbol&)
+    {
+      return v ? true_class : false_class;
+    }
+  };
+
 }
 
 #endif

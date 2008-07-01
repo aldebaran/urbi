@@ -92,10 +92,10 @@ namespace object
     }
   }
 
-  rObject
+  bool
   String::lt(const std::string& rhs)
   {
-    return value_get().name_get() < rhs ? true_class : false_class;
+    return value_get().name_get() < rhs;
   }
 
   std::string
