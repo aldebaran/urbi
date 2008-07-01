@@ -22,13 +22,15 @@ namespace kernel
 
   void rethrow (const exception_ptr&);
 
+/// \def ADD_FIELD(Type, Name)
+/// Define an optional field Name, and accessors.
 #define ADD_FIELD(Type, Name)						\
-  public:								\
-  bool Name ## _is_set () const { return Name ## _; };			\
-  const Type& Name ## _get () const { return Name ## _ .get (); };	\
-  void Name ## _set (const Type& data) { Name ## _ = data; };		\
-private:								\
- boost::optional<Type> Name ## _;
+ public:                                                                \
+   bool Name ## _is_set () const { return Name ## _; };			\
+   const Type& Name ## _get () const { return Name ## _ .get (); };	\
+   void Name ## _set (const Type& data) { Name ## _ = data; };		\
+ private:								\
+   boost::optional<Type> Name ## _;
 
 #define COMPLETE_EXCEPTION(Name)		\
   virtual exception* clone () const		\
