@@ -202,7 +202,19 @@ as
         class a : b, c {};
 
 *** Strings
+**** Symbols
 Currently all our strings are Symbols underneath.  This is a no-no.
+
+**** Long string
+Support something like """..."""?
+
+**** Operator%
+Interpolation a la Python.
+
+**** Binary
+We need to be able to use binary strings, in particular to send raw
+Binaries, something based on the length.  This enables compressed
+strings btw.
 
 *** Flyweight
 See if it can be used for us.
