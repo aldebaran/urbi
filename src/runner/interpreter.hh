@@ -185,7 +185,8 @@ namespace runner
 
   private:
     void init();
-    void propagate_error_ (object::UrbiException& ue, const ast::loc& l);
+    /// Reset result_, set the location and call stack of ue.
+    void propagate_error_(object::UrbiException& ue, const ast::loc& l);
     rObject apply_urbi (rCode func,
 			const libport::Symbol& msg,
 			const object::objects_type& args,

@@ -191,15 +191,15 @@ namespace runner
   }
 
   void
-  Interpreter::propagate_error_ (object::UrbiException& ue, const ast::loc& l)
+  Interpreter::propagate_error_(object::UrbiException& ue, const ast::loc& l)
   {
+    // Reset the current result: there was an error so whatever value
+    // it has, it must not be used.
+    result_.reset();
     if (!ue.location_is_set())
       ue.location_set(l);
     if (!ue.backtrace_is_set())
       ue.backtrace_set(call_stack_);
-    // Reset the current value: there was an error so whatever value it has,
-    // it must not be used.
-    result_.reset ();
   }
 
   void
@@ -242,7 +242,6 @@ namespace runner
       }
       catch (object::UrbiException& x)
       {
-        result_.reset();
         propagate_error_(x, e->location_get());
         throw;
       }
