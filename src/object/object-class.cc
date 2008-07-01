@@ -83,7 +83,7 @@ namespace object
       libport::make_tokenizer(stream, "\n");
     std::string system_header("*** ");
     foreach(const std::string& line, tok)
-      r.send_message(tag, system_header+line+"\n");
+      r.send_message(tag, system_header+line);
     return void_class;
   }
 
