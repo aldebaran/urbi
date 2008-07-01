@@ -229,3 +229,5 @@ asBool method to enable users to customize their object behavior in
 boolean context, and make code more robust by throwing type errors
 when irrelevant values are tested.
 
+*** "element in container"
+Bounces to "container.has(element)".
