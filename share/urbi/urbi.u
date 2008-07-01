@@ -48,7 +48,7 @@ do Object
   function setProtos(ps)
   {
     # Beware that we may be losing the ancestry on Object, which has
-    # access to "Object".
+    # access to "addProto".
     var add = Object.getSlot("addProto") |
     protos.clear() |
     for| (var p: ps.reverse)
@@ -200,8 +200,7 @@ load("urbi/boolean.u");
 do nil
 {
   # Singleton derives from Object.
-  self.addProto(Singleton);
-  self.removeProto(Object);
+  setProtos([Singleton]);
   function '==' (x) { x.isNil };
   var asString = "nil";
   // nil prints nothing in the toplevel
@@ -210,7 +209,7 @@ do nil
 
 do Object
 {
-  function Object.isNil ()
+  function isNil()
   {
     nil === self
   }
@@ -523,12 +522,9 @@ Global.addProto (Global.Profiling);
 # This class is used as a flag to recognize all kind of executable code
 class Global.Executable {};
 
-[Code, Primitive, Delegate].each(function (c)
-{
-  # Executable derives from Object.
-  c.addProto(Executable);
-  c.removeProto(Object);
-});
+# Executable derives from Object.
+[Code, Primitive, Delegate].each(function (c) { c.setProtos([Executable]); });
+
 
 load("urbi/loadable.u");
 

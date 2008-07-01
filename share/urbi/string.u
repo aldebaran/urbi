@@ -6,12 +6,11 @@
 do String
 {
   # The connectives == and < are builtins.
-  # FIXME: I'd like to put the addProto in a do, but then it goes
-  # to the locals :(
-  self.addProto(Comparable);
-  self.addProto(Orderable);
-  # They both derive from Object.
-  self.removeProto(Object);
+  #
+  # Warning: We derive from Orderable first so that we use its
+  # Object.==, otherwise String would use both Comparable.== and
+  # Comparable.!= that bounce endlessly one on the other.
+  setProtos([Orderable, Comparable]);
 
   // Append in place.
   function '+='(x) { self.set (self + x) };
