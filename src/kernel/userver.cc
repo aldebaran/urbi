@@ -156,7 +156,7 @@ static void ice(int i)
   r.send_message(tag, "---------- PS ----------");
   urbi_call(r, object::system_class, SYMBOL(ps));
   r.send_message(tag, "");
-  exit(1);
+  exit(EX_SOFTWARE);
 }
 
 void
