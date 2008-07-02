@@ -255,10 +255,10 @@ namespace object
       if (rObject hook = owner->property_get(k, SYMBOL(updateHook)))
       {
         objects_type args = list_of (rObject(this)) (new String(k)) (o);
-        rObject ret = r.apply(hook, SYMBOL(updateHook), args);
+        o = r.apply(hook, SYMBOL(updateHook), args);
         // If the updateHook returned void, do nothing. Otherwise let
         // the slot be overwritten.
-        if (ret == object::void_class)
+        if (o == object::void_class)
           return;
       }
     // If return-value of hook is not void, write it to slot.
