@@ -2,10 +2,8 @@ class Global.TrajectoryGenerator
 {
   /// Stop adaptive trajectory if error is below this value.
   var delta = 2;
-  function init(getter, setter, targetValue, args)
+  function getStartValue()
   {
-    var self.getter = getter |
-    var self.setter = setter |
     var self.startValue = getter() |
     if (startValue.type == "Float")
       self.startValue = startValue
@@ -20,11 +18,17 @@ class Global.TrajectoryGenerator
     {
       self.startValue = 0|
       "Warning: setting dummy startValue".print
-    }|
+    }
+  };
+  function init(getter, setter, targetValue, args)
+  {
+    var self.getter = getter |
+    var self.setter = setter |
     self.targetValue = targetValue|
     self.startTime = time|
     if (args.has("time"))
     {
+      getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
       if (self.adaptive)
 	var self.get = getSlot("timeAdaptiveGet")
@@ -34,18 +38,21 @@ class Global.TrajectoryGenerator
     }
     else if (args.has("smooth"))
     {
+      getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
       var self.get = getSlot("smoothGet") |
       var self.duration = args.get("smooth") |
     }
     else if (args.has("accel"))
     {
+      getStartValue()|
       var self.get = getSlot("accelGet") |
       var self.accel = args.get("accel") / 1000000 |
       var self.duration = sqrt ( 2 * (targetValue - self.startValue) / accel)
     }
     else if (args.has("speed"))
     {
+      getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
       var self.speed = args.get("speed") / 1000|
       var self.duration = abs(self.startValue - targetValue)  / speed |
@@ -134,7 +141,7 @@ class Global.TrajectoryGenerator
     currentVal + stat *  (targetValue - currentVal)
   };
 
-  function sinGet(currentVal)
+  function sinGet
   {
     targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
   };
