@@ -168,12 +168,9 @@ UWrapNotify::operator() (runner::Runner&, object::objects_type)
 {
   ECHO("uvwrapnotify "<<obj<<" "<<slot<<" o="<<owned_
        << "  s="<<setter_);
-  urbi::UVar v(obj, slot);
-  if (owned_)
-    v.setOwned();
   urbi::UList l;
   l.array.push_back(new urbi::UValue());
-  l[0].storage = &v;
+  l[0].storage = ugc_->storage;
   ugc_->__evalcall(l);
   return object::void_class;
 }
@@ -602,6 +599,12 @@ namespace urbi
       ghost.received(str);
   }
 
+  int
+  UObject::send(const std::string& str)
+  {
+    urbiserver->ghost_connection_get().received(str.c_str(), str.length());
+    return 0;
+  }
   void
   send(const char* str)
   {
