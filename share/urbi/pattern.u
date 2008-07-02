@@ -1,0 +1,22 @@
+class Global.Pattern
+{
+  var pattern;
+
+  function init(p)
+  {
+    pattern = p |
+  };
+
+  function match(value)
+  {
+    return matchPattern(pattern, value) |
+  };
+
+  function matchPattern(pattern, value)
+  {
+    if (value.locateSlot("matchAgainst").isNil)
+      return value == pattern
+    else
+      return value.matchAgainst(self, pattern) |
+  };
+};

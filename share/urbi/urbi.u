@@ -546,6 +546,12 @@ load("urbi/dictionary.u");
 
 load("urbi/debug.u");
 
+## ----------------- ##
+## Pattern matching. ##
+## ----------------- ##
+
+load("urbi/pattern.u");
+
 ## -------- ##
 ## UObject. ##
 ## -------- ##

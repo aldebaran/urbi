@@ -192,4 +192,20 @@ do List
     } |
     "[" + res + "]"
   };
+
+  # Pattern matching
+  function matchAgainst(handler, pattern)
+  {
+    if (!pattern.isA(List) || pattern.size != size)
+      return false |
+    # FIXME: do this with a crossed map
+    var i = 0 |
+    for (var e : self)
+    {
+      if (!handler.matchPattern(pattern.nth(i), e))
+        return false |
+      i++ |
+    } |
+    return true |
+  }
 };
