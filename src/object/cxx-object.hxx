@@ -34,7 +34,11 @@ namespace object
       rObject tgt = args[0];
       rObject res;
       if (tgt->is_a<T>())
+      {
         res = new T(tgt->as<T>());
+        res->all_slots_copy(tgt);
+        // FIXME: init should also be called
+      }
       else
         res = new T();
       return res;
