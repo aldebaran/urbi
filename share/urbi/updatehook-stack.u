@@ -20,3 +20,19 @@ do getSlot("UpdateHookStack")
     hooks << f;
   };
 };
+
+function Global.installUpdateHookStack(o, slot)
+{
+  if (!o.hasProperty(slot, "updateHook"))
+    o.setProperty(slot, "updateHook", getSlot("UpdateHookStack").new);
+
+  function setProperty(slot, prop, v)
+  {
+    if (prop == "updateHook")
+      getProperty(slot, prop).addHook(v)
+    else
+      Object.getSlot("setProperty").apply([self, slot, prop, v]);
+  };
+
+  o.setProperty = setProperty;
+}
