@@ -205,7 +205,8 @@ namespace object
     bool property_has(const key_type& k, const key_type& p);
     /// self.k->p = val.
     /// Ensures that self.property exists.
-    rObject property_set(const key_type& k, const key_type& p, rObject val);
+    rObject property_set(runner::Runner& r,
+                         const key_type& k, const key_type& p, rObject val);
     /// \}
 
     /// \name Printing.

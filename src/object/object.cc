@@ -326,7 +326,8 @@ namespace object
   }
 
   rObject
-  Object::property_set(const key_type& k, const key_type& p, rObject value)
+  Object::property_set(runner::Runner& r,
+                       const key_type& k, const key_type& p, rObject value)
   {
     // Forbid setting properties on nonexistent slots
     safe_slot_locate(k);
@@ -349,6 +350,11 @@ namespace object
       prop = new Dictionary();
       props->value_get()[k] = prop;
     }
+
+    rObject target = slot_get(k);
+    if (target->slot_locate(SYMBOL(propertyHook)))
+      urbi_call(r, target, SYMBOL(propertyHook),
+                this, new String(k), new String(p), value);
 
     prop->value_get()[p] = value;
     return value;
