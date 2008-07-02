@@ -43,6 +43,9 @@ class Global.Kernel1Functions
   {
     s.length
   };
+
+  var system = System;
+  var system.ghostID = "";
 };
 
 # K1 compatibility: import the k1 functions.
