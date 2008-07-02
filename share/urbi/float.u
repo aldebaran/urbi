@@ -46,26 +46,14 @@ do Float
 
   function propertyHook(parent, name, prop, value)
   {
-    if (!parent.getSlot(name).locateSlot("noFuckingPropertyHook").isNil)
-      return |
-
     installUpdateHookStack(parent, name);
 
     function override_if(predicate, value)
     {
       function hook(slot, val)
       {
-        var min = getProperty(slot, "rangemin");
-        var max = getProperty(slot, "rangemax");
         if (predicate(val))
-          val = value |
-        {
-          nonInterruptible |
-          var tgt = parent.getSlot(name)|
-          var tgt.noFuckingPropertyHook |
-          setProperty(slot, "'n", (val - min) / (max - min)) |
-          tgt.removeSlot("noFuckingPropertyHook") |
-        };
+          return value |
         return val |
       };
       parent.setProperty(name, "updateHook", hook);
@@ -78,10 +66,6 @@ do Float
         override_if(closure (v) { v < value }, value);
       case "rangemax":
         override_if(closure (v) { v > value }, value);
-      case "'n":
-        var min = parent.getProperty(name, "rangemin");
-        var max = parent.getProperty(name, "rangemax");
-        parent.updateSlot(name, value * (max - min) + min);
     };
   };
 
