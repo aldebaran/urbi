@@ -21,6 +21,9 @@ ast.hxx
 binary.cc
 binary.hh
 binary.hxx
+binding.cc
+binding.hh
+binding.hxx
 break.cc
 break.hh
 break.hxx

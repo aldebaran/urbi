@@ -967,6 +967,15 @@ CallMsg:
   printer:
     - '"call"'
 
+Binding:
+  super: Exp
+  attributes:
+    - name:
+        type: 'libport::Symbol'
+        access: r
+  printer:
+    - '"var "'
+    - $name
 
 # Local Variables:
 # mode: yaml

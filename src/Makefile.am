@@ -75,6 +75,7 @@ include binder/local.mk
 include flower/local.mk
 include parser/local.mk
 include object/local.mk
+include rewrite/local.mk
 include runner/local.mk
 include scheduler/local.mk
 include scheduler/libcoroutine/local.mk

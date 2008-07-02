@@ -14,9 +14,34 @@ class Global.Pattern
 
   function matchPattern(pattern, value)
   {
-    if (value.locateSlot("matchAgainst").isNil)
-      return value == pattern
+    if (!pattern.locateSlot("match").isNil)
+      return pattern.match(self, value)
+    else if (!value.locateSlot("matchAgainst").isNil)
+      return value.matchAgainst(self, pattern)
     else
-      return value.matchAgainst(self, pattern) |
+      return value == pattern |
+  };
+
+  class Binding
+  {
+    var setter;
+    var name;
+
+    function init(n, s)
+    {
+      name = n |
+      setter = s |
+    };
+
+    function asString()
+    {
+      return "var " + name |
+    };
+
+    function match(pattern, value)
+    {
+      setter(value) |
+      return true |
+    };
   };
 };

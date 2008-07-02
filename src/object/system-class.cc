@@ -10,8 +10,8 @@
 #include <sstream>
 
 #include <binder/bind.hh>
-
 #include <flower/flow.hh>
+#include <rewrite/rewrite.hh>
 
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
@@ -48,7 +48,8 @@ namespace object
       run(errs);
     }
 
-    ast::rConstAst ast = binder::bind(flower::flow(p->ast_get()));
+    ast::rConstAst ast =
+      binder::bind(flower::flow(rewrite::rewrite(p->ast_get())));
     if (!ast)
       throw e;
 

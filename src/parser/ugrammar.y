@@ -671,6 +671,12 @@ k1_id:
 | Stmt: Assignment.  |
 `-------------------*/
 
+exp:
+  "(" "var" "identifier" ")"
+    {
+      $$ = new ast::Binding(@$, $3);
+    }
+
 stmt:
   lvalue "=" exp modifiers
     {
