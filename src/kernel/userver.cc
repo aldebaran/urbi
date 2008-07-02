@@ -118,8 +118,9 @@ UServer::load_init_file(const char* fn)
 static void install_ice_catcher(void (*catcher)(int))
 {
   // FIXME: this might not be portable
-  signal(SIGSEGV, catcher);
   signal(SIGABRT, catcher);
+  signal(SIGBUS,  catcher);
+  signal(SIGSEGV, catcher);
 }
 
 static void hard_ice(int i)
