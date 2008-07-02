@@ -54,7 +54,10 @@ do Float
           return value |
         return val |
       };
-      parent.setProperty(name, "updateHook", hook);
+      if (!parent.hasProperty(name, "updateHook"))
+        parent.setProperty(name, "updateHook", getSlot("UpdateHookStack").new);
+      parent.getProperty(name, "updateHook").slotNames.print;
+      parent.getProperty(name, "updateHook").addHook(hook);
     };
 
     # FIXME: this doesn't scale to several propertyHooks ...
