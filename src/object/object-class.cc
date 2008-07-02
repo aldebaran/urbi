@@ -132,14 +132,17 @@ namespace object
   object_class_callMessage (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    rObject message = args[1]->slot_get(SYMBOL(message));
+    // We need to set the 'code' slot: make a copy of the call message.
+    rObject call_message = args[1]->clone();
+    rObject message = call_message->slot_get(SYMBOL(message));
     type_check<String>(message, SYMBOL(callMessage));
     libport::Symbol msg = message->as<String>()->value_get();
     rObject code = args[0]->slot_get(msg);
+    call_message->slot_update(r, SYMBOL(code), code);
     // FIXME: Sanity checks on the call message are probably required
     objects_type self;
     self.push_back(args[0]);
-    return r.apply(code, msg, self, args[1]);
+    return r.apply(code, msg, self, call_message);
   }
 
   /*---------.
