@@ -296,6 +296,9 @@ namespace object
   rDictionary
   Object::properties_get(const key_type& k)
   {
+    // Forbid searching properties on nonexistent slots
+    safe_slot_locate(k);
+
     rDictionary res;
     if (rDictionary ps = properties_get())
       res = libport::find0(ps->value_get(), k).unsafe_cast<Dictionary>();
@@ -314,6 +317,9 @@ namespace object
   bool
   Object::property_has(const key_type& k, const key_type& p)
   {
+    // Forbid searching properties on nonexistent slots
+    safe_slot_locate(k);
+
     if (rDictionary ps = properties_get(k))
       return libport::find0(ps->value_get(), p);
     return false;
@@ -322,6 +328,9 @@ namespace object
   rObject
   Object::property_set(const key_type& k, const key_type& p, rObject value)
   {
+    // Forbid setting properties on nonexistent slots
+    safe_slot_locate(k);
+
     // Make sure the object has a properties dictionary.
     rDictionary props = properties_get();
     if (!props)
