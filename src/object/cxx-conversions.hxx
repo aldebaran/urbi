@@ -1,6 +1,8 @@
 #ifndef CXX_CONVERSIONS_HXX
 # define CXX_CONVERSIONS_HXX
 
+# include <libport/symbol.hh>
+
 # include <object/cxx-object.hh>
 # include <object/string-class.hh>
 
@@ -59,6 +61,24 @@ namespace object
     from(const std::string& v,  const libport::Symbol&)
     {
       return new String(libport::Symbol(v));
+    }
+  };
+
+  // Conversion with libport::Symbols
+  template <>
+  struct CxxConvert<libport::Symbol>
+  {
+    static libport::Symbol
+    to(rObject o, const libport::Symbol& name)
+    {
+      type_check<String>(o, name);
+      return o->as<String>()->value_get();
+    }
+
+    static rObject
+    from(const libport::Symbol& v,  const libport::Symbol&)
+    {
+      return new String(v);
     }
   };
 
