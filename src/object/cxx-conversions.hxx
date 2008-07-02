@@ -22,6 +22,8 @@ namespace object
     static rObject
     from(rObject o,  const libport::Symbol&)
     {
+      if (!o)
+        return void_class;
       return o;
     }
   };
