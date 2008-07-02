@@ -143,7 +143,7 @@ static void ice(int i)
   r.send_message(tag, "    **********************");
   r.send_message(tag, "");
   r.send_message(tag, "The urbi kernel was killed by signal "
-                 + string_cast(i) + ".");
+                 + string_cast(i) + ": " + strsignal(i) + ".");
   r.send_message(tag, "Please report this bug to report@gostai.com"
                  " with this report,");
   r.send_message(tag, "core dump if any, and what code/situation triggered it.");
