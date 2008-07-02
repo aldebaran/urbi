@@ -199,11 +199,13 @@ namespace object
     rDictionary properties_get();
     /// Return the dictionary of the properties of slot \a k, or 0.
     rDictionary properties_get(const key_type& k);
-    /// Return the property \a p of slot \a k, of 0.
+    /// Return the property \a p of slot \a k, or 0.
     rObject property_get(const key_type& k, const key_type& p);
+    /// Return whether slot \a k has a property \a p.
+    bool property_has(const key_type& k, const key_type& p);
     /// self.k->p = val.
     /// Ensures that self.property exists.
-    void property_set(const key_type& k, const key_type& p, rObject val);
+    rObject property_set(const key_type& k, const key_type& p, rObject val);
     /// \}
 
     /// \name Printing.

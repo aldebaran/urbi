@@ -311,7 +311,15 @@ namespace object
     return res;
   }
 
-  void
+  bool
+  Object::property_has(const key_type& k, const key_type& p)
+  {
+    if (rDictionary ps = properties_get(k))
+      return libport::find0(ps->value_get(), p);
+    return false;
+  }
+
+  rObject
   Object::property_set(const key_type& k, const key_type& p, rObject value)
   {
     // Make sure the object has a properties dictionary.
@@ -334,6 +342,7 @@ namespace object
     }
 
     prop->value_get()[p] = value;
+    return value;
   }
 
 
@@ -453,5 +462,7 @@ namespace object
     return true;
     // throw WrongArgumentType("Boolean", "Object", fun.name_get());
   }
+
+
 
 } // namespace object

@@ -14,6 +14,7 @@
 #include <runner/runner.hh>
 
 #include <object/atom.hh>
+#include <object/cxx-primitive.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/list-class.hh>
@@ -276,57 +277,6 @@ namespace object
     return args[2];
   }
 
-
-  /*-------------.
-  | Properties.  |
-  `-------------*/
-
-  static rObject
-  object_class_getProperty (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(3);
-    rString arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    rString arg2 = args[2].unsafe_cast<String>();
-    assert(arg2);
-    rObject res =
-      args[0]->property_get(arg1->value_get(), arg2->value_get());
-    if (res)
-      return res;
-    else
-      return void_class;
-  }
-
-  static rObject
-  object_class_hasProperty (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(3);
-    rString arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    rString arg2 = args[2].unsafe_cast<String>();
-    assert(arg2);
-    return
-      args[0]->property_get(arg1->value_get(), arg2->value_get())
-      ? true_class
-      : false_class;
-  }
-
-  static rObject
-  object_class_setProperty (runner::Runner&, objects_type args)
-  {
-    CHECK_ARG_COUNT(4);
-    rString arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    rString arg2 = args[2].unsafe_cast<String>();
-    assert(arg2);
-    args[0]->property_set(arg1->value_get(), arg2->value_get(), args[3]);
-    return args[3];
-  }
-
-
-
-
-
   static rObject
   object_class_isA(runner::Runner&, objects_type args)
   {
@@ -348,9 +298,7 @@ namespace object
     DECLARE(clone);
     DECLARE(dump);
     DECLARE(getLazyLocalSlot);
-    DECLARE(getProperty);
     DECLARE(getSlot);
-    DECLARE(hasProperty);
     DECLARE(init);
     DECLARE(isA);
     DECLARE(locateSlot);
@@ -359,11 +307,18 @@ namespace object
     DECLARE(removeProto);
     DECLARE(removeSlot);
     DECLARE(sameAs);
-    DECLARE(setProperty);
     DECLARE(setSlot);
     DECLARE(slotNames);
     DECLARE(uid);
     DECLARE(updateSlot);
+#undef DECLARE
+
+#define DECLARE(Name, Code)                     \
+    object_class->slot_set(SYMBOL(Name), make_primitive(Code, SYMBOL(Name)))
+
+    DECLARE(getProperty, &Object::property_get);
+    DECLARE(hasProperty, &Object::property_has);
+    DECLARE(setProperty, &Object::property_set);
 #undef DECLARE
   }
 
