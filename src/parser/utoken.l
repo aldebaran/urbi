@@ -474,6 +474,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "alias"         RETURN(ALIAS);
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);
+"case"          RETURN(CASE);
 "class"         RETURN(CLASS);
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
@@ -500,6 +501,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "self"          RETURN(THIS);
 "static"        DEPRECATED("");
 "stopif"        RETURN(STOPIF);
+"switch"        RETURN(SWITCH);
 "timeout"       RETURN(TIMEOUT);
 "unalias"       RETURN(UNALIAS);
 "var"           RETURN(VAR);
@@ -581,7 +583,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "asm"              |
 "auto"             |
 "bool"             |
-"case"             |
 "catch"            |
 "char"             |
 "const"            |
@@ -608,7 +609,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "sizeof"           |
 "static_cast"      |
 "struct"           |
-"switch"           |
 "template"         |
 "this"             |
 "throw"            |

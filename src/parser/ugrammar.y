@@ -21,11 +21,16 @@
 %code requires // Output in ugrammar.hh.
 {
 #include <libport/pod-cast.hh>
+#include <list>
 #include <kernel/fwd.hh>
 #include <ast/fwd.hh>
 #include <ast/exps-type.hh>
 #include <ast/symbols-type.hh>
 #include <parser/fwd.hh>
+
+  // Typedef shorthands
+  typedef std::pair<ast::rExp, ast::rNary> case_type;
+  typedef std::list<case_type> cases_type;
 }
 
 // Locations.
@@ -162,6 +167,7 @@
 	TOK_ALIAS        "alias"
 	TOK_EQ           "="
 	TOK_BREAK        "break"
+	TOK_CASE         "case"
 	TOK_CLOSURE      "closure"
 	TOK_CONTINUE     "continue"
 	TOK_COLON        ":"
@@ -188,6 +194,7 @@
 	TOK_RPAREN       ")"
 	TOK_STATIC       "static"
 	TOK_STOPIF       "stopif"
+	TOK_SWITCH       "switch"
 	TOK_TILDA        "~"
 	TOK_TIMEOUT      "timeout"
 	TOK_UNALIAS      "unalias"
@@ -883,8 +890,56 @@ stmt:
       DESUGAR($2.value() << ".onEvent(function " << $3
               << " { " << ast_exp($4.value()) << " })");
     }
+| "switch" "(" exp ")" "{" cases "}"
+    {
+      ::parser::Tweast tweast;
+      libport::Symbol switched = libport::Symbol::fresh(SYMBOL(switched));
+      tweast << "var " << switched << " = ";
+      tweast << $3.value() << ";";
+      ast::ParametricAst nil("nil");
+      ast::rExp inner = exp(nil);
+      rforeach (const case_type& c, *$6)
+      {
+       ast::ParametricAst a(
+         "if (Pattern.new(%exp:1).match(%exp:2)) %exp:3 else %exp:4");
+        a % c.first
+          % ast_call(@3, switched)
+          % c.second
+          % inner;
+        inner = ast::exp(a);
+      }
+      tweast << inner;
+      $$ = ::parser::parse(tweast)->ast_get();
+      delete $6;
+    }
 ;
 
+/*--------.
+| Cases.  |
+`--------*/
+
+%union { cases_type* cases; };
+%type <cases> cases;
+
+cases:
+  /* empty */
+    {
+      $$ = new cases_type();
+    }
+| cases _case
+    {
+      $$ = $1;
+      $$->push_back(take($2));
+    }
+
+%union { case_type* _case; };
+%type <_case> _case;
+
+_case:
+  "case" exp ":" stmts
+    {
+      $$ = new case_type($2, $4);
+    }
 
 /*--------.
 | Loops.  |
