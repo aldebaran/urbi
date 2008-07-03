@@ -1,13 +1,20 @@
-\lstdefinelanguage{Urbi}%
-{morekeywords=%
-  {addgroup,alias,at,bin,binder,class,copy,def,delgroup,disinherits,echo,%
-    else,emit,event,every,expression,block,false,flag,flag,identifier,flag,%
-    test,flag,time,for,freezeif,from,function,group,identifier,if,in,%
-    inherits,loop,new,noop,number,object,onleave,operator,operator,command,%
-    return,static,stopif,string,tag,time,timeout,true,unalias,var,%
-    var-operator,wait,waituntil,whenever,while%
-  },%
-  sensitive=true,%
-  morecomment=[l]{\#},%
-  morestring=[b]{"},%
-}[keywords,comments,strings]%
+\lstdefinelanguage[]{Urbi}
+{
+  morekeywords={at, call, class, do, else, emit, every, for, function, if,%
+    in, loop, new, onleave, return, self, var, whenever, while},
+  morecomment=[l]{//},
+  morecomment=[l]{\#},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  sensitive=true,
+}
+
+\definecolor{urbiAnswers}{rgb}{0.5,0.5,0.5}
+\newcommand{\urbiAnswerStyle}{\color{urbiAnswers}}
+
+\lstdefinelanguage[interactive]{Urbi}[]{Urbi}
+{
+  moredelim=[il][\urbiAnswerStyle]{..},
+  moredelim=[l][\urbiAnswerStyle]{[00000000]},
+  moredelim=[l][\urbiAnswerStyle]{[00000000:error]},
+}
