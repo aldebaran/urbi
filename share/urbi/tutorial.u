@@ -20,6 +20,13 @@ class Global.tutorial
     var debug = Global.tutorial.debug;
     var tag;
     var entry;
+
+    # init2(name of the section, explanation text,
+    #       code to run when entering,
+    #       code to run when leaving (either via "next" or automatically,
+    #             typically used to ensure some conditions expected by
+    #             the following sections),
+    #       condition to fulfill to pass automatically to the next section).
     function init2
     {
       var self.name = call.argAt(1);
@@ -138,16 +145,29 @@ class Global.tutorial
   startSection("presentation", "an overview of the kernel");
   entry.new.init2("intro",
 "Welcome to the very first Urbi kernel 2 Technical preview!
+
 Urbi v2 is a programming language which:
   - is object oriented and prototype based
   - is dynamically scoped
   - has primitives for parallelism
   - has advanced control-flow primitives (tags)
+
 This simple tutorial will assist you in the discovery of its main features.
 At any time, you can type 'next;' to jump to the the next tutorial entry.",{},{},false);
   // init cant take a call message with tech-preview version of k2
    entry.new.init2("object",
-	       "Everything in urbi is an object. An object is defined by its list of parents and its list of slots (key->object pairs). The top of the hierarchy is called Object. The syntax for creating a new slot is 'var anObject.aSlot = avalue. To go on, create a slot named 'foo' in 'Object'.", {}, {}, Object.slotNames.has("foo"));
+"Everything in Urbi is an object.
+
+An object is defined by its parents (a list of objects) and its
+slots (or \"members\", or \"attributes\": a mapping from names to objects).
+
+The top of the hierarchy is \"Object\".
+
+To create a new slot, run
+
+	var anObject.aSlot = avalue
+
+To go on, create a slot named 'foo' in 'Object'.", {}, {}, Object.slotNames.has("foo"));
    entry.new.init2("object2", "Now add a slot bar to Object.foo",
 		     {
 		       if (!Object.slotNames.has("foo"))
