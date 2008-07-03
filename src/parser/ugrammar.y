@@ -454,29 +454,6 @@ stmt:
 | exp         { $$ = $1; }
 ;
 
-// Groups.
-%token	TOK_ADDGROUP     "addgroup"
-	TOK_DELGROUP     "delgroup"
-	TOK_GROUP        "group";
-stmt:
-  "group" "identifier" "{" exps "}"
-  {
-    DESUGAR("var " << $2 << " = Global.Group.new(" << $4 << ")");
-  }
-| "addgroup" "identifier" "{" exps "}"
-  {
-    DESUGAR($2 << ".add(" << $4 << ")");
-  }
-| "delgroup" "identifier" "{" exps "}"
-  {
-    DESUGAR($2 << ".remove(" << $4 << ")");
-  }
-| "group"
-  {
-    NOT_IMPLEMENTED(@$);
-  }
-;
-
 exp:
   "group" "identifier"    { DESUGAR($2 << ".members"); }
 ;

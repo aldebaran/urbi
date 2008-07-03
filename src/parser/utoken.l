@@ -470,7 +470,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "%exp:"		RETURN(PERCENT_EXP_COLON);
 
-"addgroup"      RETURN(ADDGROUP);
 "alias"         RETURN(ALIAS);
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);
@@ -479,7 +478,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
 "delete"        RETURN(DELETE);
-"delgroup"      RETURN(DELGROUP);
 "do"		RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);
@@ -489,7 +487,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "freezeif"      RETURN(FREEZEIF);
 "from"          RETURN(FROM);
 "function"      RETURN(FUNCTION);
-"group"         RETURN(GROUP);
 "if"            RETURN(IF);
 "in"            RETURN(IN);
 "loopn"         DEPRECATED("for");
