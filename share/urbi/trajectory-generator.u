@@ -55,7 +55,9 @@ class Global.TrajectoryGenerator
       getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
       var self.speed = args.get("speed") / 1000|
-      var self.duration = abs(self.startValue - targetValue)  / speed |
+      var self.duration = Float.inf;
+      if (speed != 0)
+        self.duration = abs(self.startValue - targetValue)  / speed |
       if (adaptive)
         var self.get = getSlot("adaptiveSpeedGet")
       else
