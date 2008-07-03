@@ -325,6 +325,26 @@
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
+// This is very painful: because we want to declare the resolution
+// in the following case, we give a relative precedence between "in"
+// and "identifier" which kills the support of "for (var i in c)".
+// We cannot address this properly, unless we have scoped precedences.
+//
+// Here, because we have "identifier" < "in", we promote the shift,
+// which is what we want.  But it is sucks hard.
+//
+// There is a shift/reduce conflict that results from the two uses of "new":
+//
+//   new -> "new" . "identifier" args
+//   id  -> "new" .
+//    "identifier"  shift, and go to state 108
+//    "identifier"  [reduce using rule 89 (id)]
+//
+// Obviously the shift should win.
+%left "new";
+%left "identifier";
+
+
 // Precedences are increasing)
 %left  "," ";"
 %left  "|"
@@ -336,6 +356,7 @@
 %nonassoc "~" // This is not the same as in C++, this is for "softest".
 %left  "||"
 %left  "&&"
+%nonassoc "in"
 %left  "bitor"
 %left  "^"
 %left  "bitand"
@@ -1005,17 +1026,6 @@ new:
 // Allow Object.new etc.
 id: "new";
 
-// There is a shift/reduce conflict that results from the two uses of "new":
-//
-//   new -> "new" . "identifier" args
-//   id  -> "new" .
-//    "identifier"  shift, and go to state 108
-//    "identifier"  [reduce using rule 89 (id)]
-//
-// Obviously the shift should win.
-%left "new";
-%left "identifier";
-
 exp:
   new   { $$ = $1.value(); }
 | call  { $$ = $1.value(); }
@@ -1177,6 +1187,19 @@ exp:
 
 | exp "&&" exp  { $$ = ast_call(@$, $1, $2, $3); }
 | exp "||" exp  { $$ = ast_call(@$, $1, $2, $3); }
+;
+
+// e in c => c.has(e).
+exp:
+  exp "in" exp
+  {
+    $$ = ast_call(@$, $3, SYMBOL(has), $1);
+  }
+// "!" is a synonym for "not", typing "not in" is "! in" here.
+| exp "!" "in" exp
+  {
+    $$ = ast_call(@$, ast_call(@$, $4, SYMBOL(has), $1), SYMBOL(BANG));
+  }
 ;
 
 exp.opt:
