@@ -86,6 +86,10 @@ We need "a[1]", "a[1] = 2" etc.
 This must be usable by real users (BA systems, Spanish team etc.).
 Blend modes are not required (dixit JCB).
 
+*** Nary, vs. Pipe, vs. And
+The point was to have a single structure to support them all,
+something was lost during the evolution.  Try to factor again.
+
 *** Add tags signalling
 
 The tools team will need to know when a tagged statement starts or
