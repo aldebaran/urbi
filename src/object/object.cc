@@ -310,8 +310,10 @@ namespace object
   rObject
   Object::property_get(const key_type& k, const key_type& p)
   {
+    rObject owner = safe_slot_locate(k);
+
     rObject res;
-    if (rDictionary ps = properties_get(k))
+    if (rDictionary ps = owner->properties_get(k))
       res = libport::find0(ps->value_get(), p);
     return res;
   }
