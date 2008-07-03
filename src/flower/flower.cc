@@ -51,9 +51,9 @@ namespace flower
   Flower::visit(ast::rConstWhile code)
   {
     Finally finally;
-    finally << scoped_set(in_loop_, true);
-    finally << scoped_set(has_break_, false);
-    finally << scoped_set(has_continue_, false);
+    finally << scoped_set(in_loop_, true)
+            << scoped_set(has_break_, false)
+            << scoped_set(has_continue_, false);
     super_type::visit(code);
 
     // Do nothing if neither break nor continue.
@@ -86,9 +86,9 @@ namespace flower
   Flower::visit(ast::rConstForeach code)
   {
     Finally finally;
-    finally << scoped_set(in_loop_, true);
-    finally << scoped_set(has_break_, false);
-    finally << scoped_set(has_continue_, false);
+    finally << scoped_set(in_loop_, true)
+            << scoped_set(has_break_, false)
+            << scoped_set(has_continue_, false);
     super_type::visit(code);
 
     parser::Tweast tweast;
