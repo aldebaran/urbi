@@ -1,32 +1,40 @@
 class Global.tutorial
 {
+  # Don't use the topLevel channel, since it quotes the \n and so on.
+  class tuto : Channel
+  {
+    init("tuto");
+    quote = false;
+    var line = "-" * 76 + "\n";
+    # A special "<<" that puts the result between lines.
+    function '<<' (s)
+    {
+      lobby.send("\n" + line + s + "\n" + line, name)
+    };
+  };
 
   class entry
   {
-    var name;
-    var onEnter;
-    var onLeave;
-    var condition;
-    var text;
+    var tuto = Global.tutorial.tuto;
     var tag;
     var entry;
     function init2
     {
-      name = call.argAt(1);
-      text = call.argAt(2);
-      onEnter = call.args.nth(3);
-      onLeave = call.args.nth(4);
-      condition = call.args.nth(5);
+      var self.name = call.argAt(1);
+      var self.text = call.argAt(2);
+      var self.onEnter = call.args.nth(3);
+      var self.onLeave = call.args.nth(4);
+      var self.condition = call.args.nth(5);
       tutorial.entries.back.push_back(self);
     };
     function enter()
     {
-      text.print;
+      tuto << text;
       tag = Tag.new;
       onEnter.eval;
       tag: at(condition.eval)
       {
-	//("switching to next from " + name ).print;
+	//tuto << ("switching to next from " + name );
 	tutorial.next2;
 	tag.stop
       }
@@ -36,6 +44,7 @@ class Global.tutorial
       onLeave.eval;
     };
   };
+
   var content = Dictionary.new;
   var entries = [[]];
   var sectionNames = [];
@@ -45,8 +54,8 @@ class Global.tutorial
   var currentSection = 0;
   function next2()
   {
-    //"next ".print;
-    if (current >=0)
+    //tuto << "next ";
+    if (0 <= current)
       entries.nth(currentSection).nth(current).leave;
     current++;
     if (entries.nth(currentSection).size <= current)
@@ -56,35 +65,38 @@ class Global.tutorial
       //cerr << "switching section "+currentSection.asString +" para "+current;
       if (entries.size <= currentSection)
       {
-	"The tutorial is over".print;
+	tuto << "The tutorial is over";
 	current = -1;
 	currentSection = 0;
 	return;
       }
       else
       {
-	cout << "Starting next tutorial section: "
+	tuto << "Starting next tutorial section: "
 	 + sectionDescs.nth(currentSection-1);
       }
     };
+
     //cerr << "entering section "+currentSection.asString +" para "+current;
     entries.nth(currentSection).nth(current).enter;
   };
+
   function next()
   {
     next2;
     if (current)
       entries.nth(currentSection).nth(current-1).tag.stop;
   };
+
   function help()
   {
-    (
-    "Tutorial commands:\n"+
-    "  next;  : jump to the next paragraph\n"+
-    "  sections;   : list tutorial sections\n"+
-    "  jump(\"s\");  : jump to section 's'\n"
-    ).print;
+    tuto <<
+      "Tutorial commands:\n"+
+      "  next;       : jump to the next paragraph\n"+
+      "  sections;   : list tutorial sections\n"+
+      "  jump(\"s\");  : jump to section 's'";
   };
+
   function sections()
   {
     var s = "Tutorial sections:\n";
@@ -92,13 +104,13 @@ class Global.tutorial
     {
       s +=  "  " + sectionNames.nth(i)+": "+sectionDescs.nth(i)+"\n";
     };
-    cout << s;
+    tuto << s;
   };
   function jump(sectionName)
   {
     if (!sectionIdByName.has(sectionName))
     {
-      ("Unknown tutorial section "+sectionName).print;
+      tuto << ("Unknown tutorial section "+sectionName);
       return
     }
     else
@@ -110,6 +122,7 @@ class Global.tutorial
       entries.nth(currentSection).nth(current).enter;
     };
   };
+
   function startSection(name, desc)
   {
     var i = sectionNames.size;
@@ -118,14 +131,15 @@ class Global.tutorial
     sectionDescs.push_back(desc);
     tutorial.entries.push_back([]);
   };
+
   startSection("presentation", "an overview of the kernel");
   entry.new.init2("intro",
-" Welcome to the very first Urbi kernel 2 Technical preview!
+"Welcome to the very first Urbi kernel 2 Technical preview!
 Urbi v2 is a programming language which:
   - is object oriented and prototype based
   - is dynamically scoped
   - has primitives for parallelism
-  - has advanced flow controle primitives (tags)
+  - has advanced control-flow primitives (tags)
 This simple tutorial will assist you in the discovery of its main features.
 At any time, you can type 'next;' to jump to the the next tutorial entry.",{},{},false);
   // init cant take a call message with tech-preview version of k2
