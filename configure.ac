@@ -74,8 +74,12 @@ AC_DEFINE_UNQUOTED([URBI_PATH],
 ## Target.  ##
 ## -------- ##
 URBI_OPENR
+# URBI_LIBPORT requires 1.34, but it may be too soon to update its
+# request, since the rest of the dev team might not have Boost 1.35.
+# So require it here.
+BOOST_REQUIRE([1.35])
 URBI_LIBPORT
-dnl URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
+# URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 BOOST_TOKENIZER
 
 
