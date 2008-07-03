@@ -1,8 +1,13 @@
 #! /bin/sh
 
-fatal ()
+stderr ()
 {
   echo >&2 "$0: $@"
+}
+
+fatal ()
+{
+  stderr "$0: $@"
   exit 1
 }
 

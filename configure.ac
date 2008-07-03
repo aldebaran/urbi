@@ -29,7 +29,10 @@ URBI_DOC
 
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
-TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
+# TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
+# We use our own Bison.
+AC_CONFIG_SUBDIRS([bison])
+AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 # FIXME: -fno-strict-aliasing must be removed once we use a Bison with
@@ -73,11 +76,11 @@ AC_DEFINE_UNQUOTED([URBI_PATH],
 ## -------- ##
 ## Target.  ##
 ## -------- ##
-URBI_OPENR
 # URBI_LIBPORT requires 1.34, but it may be too soon to update its
 # request, since the rest of the dev team might not have Boost 1.35.
 # So require it here.
 BOOST_REQUIRE([1.35])
+URBI_OPENR
 URBI_LIBPORT
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 BOOST_TOKENIZER
