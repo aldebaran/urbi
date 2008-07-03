@@ -21,14 +21,38 @@ namespace parser
     assert (rhs);
     switch (op)
     {
-      case ast::flavor_pipe:
-        res = new ast::Pipe (l, lhs, rhs);
-        break;
-      default:
-        pabort(op);
+    case ast::flavor_pipe:
+      res = new ast::Pipe (l, lhs, rhs);
+      break;
+    case ast::flavor_and:
+    {
+      ast::rAnd rand;
+      if (rand = lhs.unsafe_cast<ast::And>())
+        rand->children_get().push_back(rhs);
+      else
+      {
+        rand = new ast::And(l, ast::exps_type());
+        rand->children_get().push_back(lhs);
+        rand->children_get().push_back(rhs);
+      }
+      res = rand;
+      break;
+    }
+    case ast::flavor_comma:
+    case ast::flavor_semicolon:
+    {
+      ast::rNary nary = new ast::Nary(l);
+      nary->push_back(lhs, op);
+      nary->push_back(rhs);
+      res = nary;
+      break;
+    }
+    case ast::flavor_none:
+      pabort(op);
     }
     return res;
   }
+
 
   /// "<method> (args)".
   ast::rCall
@@ -132,14 +156,14 @@ namespace parser
     assert (body);
 
     // BODY | INC.
-    ast::rExp loop_body = ast_nary (l, ast::flavor_pipe, body, inc);
+    ast::rExp loop_body = ast_bin(l, ast::flavor_pipe, body, inc);
 
     // WHILE OP (TEST) { BODY | INC }.
     ast::While *while_loop =
       new ast::While(l, op, test, ast_scope(l, loop_body));
 
     // { INIT OP WHILE OP (TEST) { BODY | INC } }.
-    return ast_scope(l, ast_nary (l, op, init, while_loop));
+    return ast_scope(l, ast_bin(l, op, init, while_loop));
   }
 
 
@@ -154,32 +178,6 @@ namespace parser
       lvalue = ast_call(l, ast_call(l, tmp), lvalue->name_get());
     }
     return lvalue;
-  }
-
-
-  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op can be any of the four cases.
-  ast::rExp
-  ast_nary(const yy::location& l,
-           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
-  {
-    switch (op)
-    {
-      case ast::flavor_and:
-      case ast::flavor_pipe:
-        return ast_bin(l, op, lhs, rhs);
-
-      case ast::flavor_comma:
-      case ast::flavor_semicolon:
-      {
-        ast::rNary res = new ast::Nary(l);
-        res->push_back(lhs, op);
-        res->push_back(rhs);
-        return res;
-      }
-      default:
-        pabort(op);
-    }
   }
 
 

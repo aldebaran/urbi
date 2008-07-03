@@ -622,9 +622,9 @@ namespace runner
 
 
   void
-  Interpreter::visit (ast::rConstForeach)
+  Interpreter::visit (ast::rConstForeach e)
   {
-    abort();
+    pabort(e);
   }
 
   object::rCode

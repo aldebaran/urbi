@@ -71,7 +71,6 @@
   using parser::ast_class;
   using parser::ast_exp;
   using parser::ast_for;
-  using parser::ast_nary;
   using parser::ast_scope;
   using parser::ast_slot_remove;
   using parser::ast_slot_set;
@@ -125,8 +124,12 @@
     `---------------*/
 
 # define NOT_IMPLEMENTED(Loc)                                           \
-    pabort(Loc << ": rule not implemented in the parser.\n"             \
-	   "Rerun with YYDEBUG=1 in the environment to know more.")
+  do {                                                                  \
+    error(Loc,                                                          \
+          ("rule not implemented in the parser.\n"                      \
+	   "Rerun with YYDEBUG=1 in the environment to know more."));   \
+    YYERROR;                                                            \
+  } while (0)
 
     /// Whether the \a e was the empty command.
     static bool
@@ -138,7 +141,7 @@
 
   } // anon namespace
 
-  /// Direct the call from 'bison' to the scanner in the right parser::ParserImpl.
+  /// Use the scanner in the right parser::ParserImpl.
   inline
     yy::parser::token_type
     yylex(yy::parser::semantic_type* val, yy::location* loc,
@@ -397,20 +400,7 @@ stmts:
 cstmt:
   stmt            { assert($1.value()); $$ = $1; }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
-| cstmt "&" cstmt
-{
-  if (ast::rAnd lhs = $1.value().unsafe_cast<ast::And>())
-  {
-    lhs->children_get().push_back($3);
-  }
-  else
-  {
-    ast::rAnd res = new ast::And(@$, ast::exps_type());
-    res->children_get().push_back($1);
-    res->children_get().push_back($3);
-    $$ = res;
-  }
-}
+| cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;
 
 
@@ -461,7 +451,7 @@ flags.0:
 
 stmt:
   /* empty */ { $$ = new ast::Noop (@$); }
-| exp        { $$ = $1; }
+| exp         { $$ = $1; }
 ;
 
 // Groups.

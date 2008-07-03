@@ -8,7 +8,7 @@
 namespace parser
 {
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op must be & or |.
+  /// \param op can be any of the four cases.
   ast::rExp
   ast_bin(const yy::location& l,
           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs);
@@ -94,12 +94,6 @@ namespace parser
   /// tmp.
   ast::rCall ast_lvalue_once(ast::rCall lvalue, Tweast& tweast);
 
-
-  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op can be any of the four cases.
-  ast::rExp
-  ast_nary(const yy::location& l,
-           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs);
 
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rAbstractScope
