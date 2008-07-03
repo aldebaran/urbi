@@ -475,10 +475,6 @@ stmt:
 | exp         { $$ = $1; }
 ;
 
-exp:
-  "group" "identifier"    { DESUGAR($2 << ".members"); }
-;
-
 // Aliases.
 stmt:
   "alias"             { NOT_IMPLEMENTED(@$); }
