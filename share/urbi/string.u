@@ -12,9 +12,6 @@ do String
   # Comparable.!= that bounce endlessly one on the other.
   setProtos([Orderable, Comparable]);
 
-  // Append in place.
-  function '+='(x) { self.set (self + x) };
-
   // Whether the string is empty.
   function empty () { self == "" };
 
