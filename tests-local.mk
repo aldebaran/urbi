@@ -62,8 +62,6 @@ TO_CHECK_TESTS =				\
 1.-/modifier/time.chk				\
 1.-/modifier/syntax.chk				\
 1.-/nameresolution-array.chk			\
-1.-/nameresolution-dollar-computed.chk		\
-1.-/nameresolution-dollars.chk			\
 1.-/nameresolution-objects.chk			\
 1.-/object-events.chk
 
