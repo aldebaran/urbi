@@ -15,6 +15,11 @@ do getSlot("UpdateHookStack")
 {
   var hooks = [];
 
+  function init()
+  {
+    var self.hooks = hooks.clone;
+  };
+
   function addHook(f)
   {
     hooks << f;
