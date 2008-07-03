@@ -24,6 +24,10 @@ namespace object
     const value_type& value_get() const;
     value_type& value_get();
 
+    /// Check that the function fun is using a valid index, and return it.
+    size_t index(rFloat idx, const libport::Symbol fun) const
+      throw (BadInteger, PrimitiveError);
+
     // Urbi method
     rObject back      ();
     rList   clear     ();

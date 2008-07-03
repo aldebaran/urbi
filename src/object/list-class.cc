@@ -68,20 +68,25 @@ namespace object
     return new List(res);
   }
 
+  size_t
+  List::index(rFloat idx, const libport::Symbol fun) const
+    throw (BadInteger, PrimitiveError)
+  {
+    // We use ints, since the user used an rFloat, which is signed.
+    int i = idx->to_int(SYMBOL(nth));
+    if (! (0 <= i && unsigned(i) < content_.size()))
+      throw PrimitiveError(fun, "invalid index: " + string_cast(i));
+    return i;
+  }
+
   rObject List::operator[](rFloat idx)
   {
-    unsigned i = idx->to_int(SYMBOL(nth));
-    if (i >= content_.size())
-      throw PrimitiveError(SYMBOL(nth), "invalid index " + string_cast(i));
-    return content_[i];
+    return content_[index(idx, SYMBOL(nth))];
   }
 
   rObject List::set(rFloat idx, rObject val)
   {
-    unsigned i = idx->to_int(SYMBOL(nth));
-    if (i >= content_.size())
-      throw PrimitiveError(SYMBOL(nth), "invalid index " + string_cast(i));
-    return content_[i] = val;
+    return content_[index(idx, SYMBOL(nth))] = val;
   }
 
   rFloat List::size()
