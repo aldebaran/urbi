@@ -470,7 +470,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "%exp:"		RETURN(PERCENT_EXP_COLON);
 
-"alias"         RETURN(ALIAS);
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);
 "case"          RETURN(CASE);
@@ -500,7 +499,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "stopif"        RETURN(STOPIF);
 "switch"        RETURN(SWITCH);
 "timeout"       RETURN(TIMEOUT);
-"unalias"       RETURN(UNALIAS);
 "var"           RETURN(VAR);
 "whenever"      RETURN(WHENEVER);
 

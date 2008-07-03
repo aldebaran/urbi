@@ -167,7 +167,6 @@
 /* Tokens and nonterminal symbols, with their type */
 
 %token
-	TOK_ALIAS        "alias"
 	TOK_EQ           "="
 	TOK_BREAK        "break"
 	TOK_CASE         "case"
@@ -200,7 +199,6 @@
 	TOK_SWITCH       "switch"
 	TOK_TILDA        "~"
 	TOK_TIMEOUT      "timeout"
-	TOK_UNALIAS      "unalias"
 	TOK_VAR          "var"
 	TOK_WHENEVER     "whenever"
 
@@ -473,14 +471,6 @@ flags.0:
 stmt:
   /* empty */ { $$ = new ast::Noop (@$); }
 | exp         { $$ = $1; }
-;
-
-// Aliases.
-stmt:
-  "alias"             { NOT_IMPLEMENTED(@$); }
-| "alias" k1_id k1_id { NOT_IMPLEMENTED(@$); }
-| "alias" k1_id       { NOT_IMPLEMENTED(@$); }
-| "unalias" k1_id     { NOT_IMPLEMENTED(@$); }
 ;
 
 block:
