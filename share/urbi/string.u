@@ -18,4 +18,13 @@ do String
   // It is more natural to refer to the length of a string.  Besides,
   // other encodings will make a difference between size and length.
   copySlot("size", "length");
+
+  // Repetition of a string.
+  function operator* (times)
+  {
+    var res = "" |
+    for (times)
+      res += self |
+    res
+  };
 };
