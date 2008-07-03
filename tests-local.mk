@@ -44,29 +44,15 @@ TO_CHECK_TESTS =				\
 1.-/channels-tags.chk				\
 # +connection                                   \
 1.-/connection-delete.chk			\
+# emit foo                                      \
 1.-/events.chk					\
 1.-/events-emit-then-return-in-function.chk	\
 1.-/every-emit.chk				\
-# freeze foo                                    \
-1.-/freeze-time.chk				\
-# deletes local vars                            \
-1.-/function-delete.chk                         \
 # []-access to list and hash                    \
 1.-/hash-and-list.chk				\
-# stop foo                                      \
-1.-/hierarchical-tags.chk			\
 # events                                        \
 1.-/lazy-test-eval.chk				\
 1.-/loadwav.chk					\
-1.-/modifier/accel-adaptive.chk			\
-1.-/modifier/accel.chk				\
-1.-/modifier/smooth-adaptive.chk		\
-1.-/modifier/smooth.chk				\
-1.-/modifier/speed-adaptive.chk			\
-1.-/modifier/speed.chk				\
-1.-/modifier/time-adaptive.chk			\
-1.-/modifier/time.chk				\
-1.-/modifier/syntax.chk				\
 1.-/object-events.chk
 
 # Uobject tests that we fail because features are not implemented
