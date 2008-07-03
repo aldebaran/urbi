@@ -964,18 +964,11 @@ stmt_loop:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = ast_for (@$, $1, $3, $5, $7, $9);
     }
-| "for" "(" "var" "identifier" ":" exp ")" stmt    %prec CMDBLOCK
+| "for" "(" "var" "identifier" in_or_colon exp ")" stmt    %prec CMDBLOCK
     {
       $$ = new ast::Foreach(@$, $1,
                             new ast::Declaration(@4, $4, new ast::Implicit(@4)),
                             $6.value(), $8.value());
-    }
-| "for" "identifier" "in" exp block    %prec CMDBLOCK
-    {
-      // FIXME: Deprecation message.
-      $$ = new ast::Foreach(@$, $1,
-                            new ast::Declaration(@2, $2, new ast::Implicit(@2)),
-                            $4.value(), $5.value());
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
@@ -985,6 +978,7 @@ stmt_loop:
     }
 ;
 
+in_or_colon: "in" | ":";
 
 /*--------------------.
 | exp: Control flow.  |
