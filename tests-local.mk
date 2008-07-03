@@ -17,6 +17,12 @@ ENABLE_HARD_ERRORS = false
 TFAIL_TESTS +=                                  \
 1.x/eval.chk
 
+# k1 tests that we want to pass someday
+TFAIL_TESTS +=                                  \
+2.x/modifier/speed-adaptive-freeze.log		\
+1.x/synchro-assignment.chk
+
+
 # k2 tests that fail.
 XFAIL_TESTS +=					\
 2.x/literal-string.chk
@@ -25,8 +31,7 @@ XFAIL_TESTS +=					\
 TFAIL_TESTS +=					\
 2.x/onevent.chk					\
 2.x/list-primitives.chk				\
-2.x/unique-variable.chk                         \
-2.x/modifier/speed-adaptive-freeze.log
+2.x/unique-variable.chk
 
 # k1 tests that currently don't pass, but we should.
 # In fact, the above list has been removed to gain some time
@@ -60,14 +65,7 @@ TO_CHECK_TESTS =				\
 1.-/nameresolution-dollar-computed.chk		\
 1.-/nameresolution-dollars.chk			\
 1.-/nameresolution-objects.chk			\
-1.-/object-events.chk				\
-1.-/sinus.chk					\
-1.-/speed-zero.chk				\
-1.-/synchro-assignment.chk			\
-1.-/tag.chk					\
-1.-/tag-reduce.chk                              \
-1.-/variable-normalize.chk			\
-1.-/variable-qualifiers.chk
+1.-/object-events.chk
 
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=                                  \
