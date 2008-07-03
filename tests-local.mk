@@ -57,7 +57,7 @@ TO_CHECK_TESTS =				\
 1.-/object-events.chk
 
 # Uobject tests that we fail because features are not implemented
-XFAIL_TESTS +=                                  \
-uob/group.chk                                   \
-uob/all-write-plug-prop.chk                     \
+XFAIL_TESTS +=					\
+2.x/uobject-group.chk				\
+uob/all-write-plug-prop.chk			\
 uob/remote/all-write-prop.chk
