@@ -24,7 +24,7 @@ do getSlot("UpdateHookStack")
 function Global.installUpdateHookStack(o, slot)
 {
   if (o.hasProperty(slot, "updateHook")
-    && o.getProperty(slot, "updateHook").isA(getSlot("UpdateHookStack")))
+      && o.getProperty(slot, "updateHook").isA(getSlot("UpdateHookStack")))
     return;
 
   o.setProperty(slot, "updateHook", getSlot("UpdateHookStack").new);
