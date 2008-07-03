@@ -912,24 +912,16 @@ stmt:
 %type <cases> cases;
 
 cases:
-  /* empty */
-    {
-      $$ = new cases_type();
-    }
-| cases _case
-    {
-      $$ = $1;
-      $$->push_back(take($2));
-    }
+  /* empty */  { $$ = new cases_type();            }
+| cases case   { $$ = $1; $$->push_back(take($2)); }
+;
 
 %union { case_type* _case; };
-%type <_case> _case;
+%type <_case> case;
 
-_case:
-  "case" exp ":" stmts
-    {
-      $$ = new case_type($2, $4);
-    }
+case:
+  "case" exp ":" stmts  {  $$ = new case_type($2, $4); }
+;
 
 /*--------.
 | Loops.  |
