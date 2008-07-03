@@ -21,13 +21,13 @@ class Global.tutorial
     var tag;
     var entry;
 
-    # init2(name of the section, explanation text,
+    # init(name of the section, explanation text,
     #       code to run when entering,
     #       code to run when leaving (either via "next" or automatically,
     #             typically used to ensure some conditions expected by
     #             the following sections),
     #       condition to fulfill to pass automatically to the next section).
-    function init2
+    function init
     {
       var self.name = call.argAt(1);
       var self.text = call.argAt(2);
@@ -143,8 +143,8 @@ class Global.tutorial
   };
 
   startSection("presentation", "an overview of the kernel");
-  entry.new.init2("intro",
-"Welcome to the very first Urbi kernel 2 Technical preview!
+  entry.new("intro",
+"Welcome to the Urbi 2 Technical preview!
 
 Urbi v2 is a programming language which:
   - is object oriented and prototype based
@@ -155,7 +155,7 @@ Urbi v2 is a programming language which:
 This simple tutorial will assist you in the discovery of its main features.
 At any time, you can type 'next;' to jump to the the next tutorial entry.",{},{},false);
   // init cant take a call message with tech-preview version of k2
-   entry.new.init2("object",
+   entry.new("object",
 "Everything in Urbi is an object.
 
 An object is defined by its parents (a list of objects) and its
@@ -165,19 +165,19 @@ The top of the hierarchy is \"Object\".
 
 To create a new slot, run
 
-	var anObject.aSlot = avalue
+	var anObject.aSlot = avalue;
 
-To go on, create a slot named 'foo' in 'Object'.", {}, {}, Object.slotNames.has("foo"));
-   entry.new.init2("object2", "Now add a slot bar to Object.foo",
+To go on, create a slot named 'foo' in 'Object'.", {}, {}, { Object.slotNames.has("foo")} );
+   entry.new("object2", "Now add a slot bar to Object.foo",
 		     {
 		       if (!Object.slotNames.has("foo"))
 			 var Object.foo = 1;
 		     }, {}, {Object.foo.slotNames.has("bar")});
    startSection("More advanced stuffs", "Stuffs that are more complicated");
-   entry.new.init2("stuffs", "This is a placeholder.", {}, {}, false);
-   entry.new.init2("end", "this marks the end of the urbi tutorial!", {},{},
+   entry.new("woot", "trop fort", {}, {}, false);
+   entry.new("end", "this marks the end of the urbi tutorial!", {},{},
 		     false);
-   entry.new.init2("pastend", "I told you it was over!", {}, tutorial.current--, false);
+   entry.new("pastend", "I told you it was over!", {}, tutorial.current--, false);
 };
 
 //Inheriting Tutorial rather? COW will screw everything up
