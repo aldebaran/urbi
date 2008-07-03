@@ -73,7 +73,7 @@ do List
   {
     var res = [] |
     for| (var i: self)
-      if (!rhs.has(i))
+      if (i not in rhs)
 	res.push_back(i) |
     return res
   };

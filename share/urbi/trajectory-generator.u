@@ -26,7 +26,7 @@ class Global.TrajectoryGenerator
     var self.setter = setter |
     self.targetValue = targetValue|
     self.startTime = time|
-    if (args.has("time"))
+    if ("time" in args)
     {
       getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
@@ -36,21 +36,21 @@ class Global.TrajectoryGenerator
 	var self.get = getSlot("timeGet") |
       var self.duration = args.get("time") |
     }
-    else if (args.has("smooth"))
+    else if ("smooth" in args)
     {
       getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
       var self.get = getSlot("smoothGet") |
       var self.duration = args.get("smooth") |
     }
-    else if (args.has("accel"))
+    else if ("accel" in args)
     {
       getStartValue()|
       var self.get = getSlot("accelGet") |
       var self.accel = args.get("accel") / 1000000 |
       var self.duration = sqrt ( 2 * (targetValue - self.startValue) / accel)
     }
-    else if (args.has("speed"))
+    else if ("speed" in args)
     {
       getStartValue()|
       var self.adaptive = args.getWithDefault("adaptive", 0) |
@@ -63,12 +63,12 @@ class Global.TrajectoryGenerator
       else
         var self.get = getSlot("timeGet") |
     }
-    else if (args.has("sin") || args.has("cos"))
+    else if ("sin" in args || "cos" in args)
     {
       var self.get = getSlot("sinGet");
       var self.phase = args.getWithDefault("phase", 0) |
       var self.ampli = args.getWithDefault("ampli", 0) |
-      if (args.has("cos"))
+      if ("cos" in args)
       {
 	var self.period =  args.get("cos") |
 	self.phase += pi/2

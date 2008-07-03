@@ -228,7 +228,7 @@ class Global.'external'
     // The remote sent the code 'class <objname> {};' just before
     // calling this function, but we want objname in uobjects, not
     // lobby.
-    if (!Global.protos.has(uobjects))
+    if (uobjects not in Global.protos)
       Global.addProto(uobjects);
     uobjects.setSlot(objname, lobby.getSlot(objname));
     lobby.removeSlot(objname);
@@ -242,7 +242,7 @@ class Global.'external'
       chan << msg;
       // Wait until the remote defines u.init.
       waituntil(!Global.uobjects.locateSlot(u).isNil
-		&& uobjects.getSlot(u).slotNames.has("init"));
+		&& "init" in uobjects.getSlot(u).slotNames);
       var ret = Global.uobjects.getSlot(u);
       ret
     };
@@ -266,9 +266,9 @@ class Global.'external'
     };
     // Ignore duplicate binds of same var.
     var lid = lobby.uid;
-    if (!self.slotNames.has(lid))
+    if (lid not in self.slotNames)
       self.setSlot(lid, []);
-    if (self.getSlot(lid).has(fullname))
+    if (fullname in self.getSlot(lid))
       return;
     self.getSlot(lid).push_back(fullname);
     var obj = uobjects.getSlot(objname);

@@ -118,7 +118,7 @@ class Global.tutorial
   };
   function jump(sectionName)
   {
-    if (!sectionIdByName.has(sectionName))
+    if (sectionName not in sectionIdByName)
     {
       tuto << ("Unknown tutorial section "+sectionName);
       return
@@ -167,12 +167,12 @@ To create a new slot, run
 
 	var anObject.aSlot = avalue;
 
-To go on, create a slot named 'foo' in 'Object'.", {}, {}, { Object.slotNames.has("foo")} );
+To go on, create a slot named 'foo' in 'Object'.", {}, {}, { "foo" in Object.slotNames} );
    entry.new("object2", "Now add a slot bar to Object.foo",
 		     {
-		       if (!Object.slotNames.has("foo"))
+		       if ("foo" not in Object.slotNames)
 			 var Object.foo = 1;
-		     }, {}, {Object.foo.slotNames.has("bar")});
+		     }, {}, {"bar" in Object.foo.slotNames});
    startSection("More advanced stuffs", "Stuffs that are more complicated");
    entry.new("woot", "trop fort", {}, {}, false);
    entry.new("end", "this marks the end of the urbi tutorial!", {},{},
