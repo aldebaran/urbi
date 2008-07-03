@@ -240,13 +240,14 @@ namespace object
     return *this;
   }
 
-  void
+  rObject
   Object::slot_update(runner::Runner& r,
                       const key_type& k, rObject o,
                       bool hook)
   {
     // The owner of the updated slot
     rObject owner = safe_slot_locate(k);
+    rObject v = o;
 
     // If the current value in the slot to be written in has a slot
     // named 'updateHook', call it, passing the object owning the
@@ -255,14 +256,15 @@ namespace object
       if (rObject hook = owner->property_get(k, SYMBOL(updateHook)))
       {
         objects_type args = list_of (rObject(this)) (new String(k)) (o);
-        o = r.apply(hook, SYMBOL(updateHook), args);
+        v = r.apply(hook, SYMBOL(updateHook), args);
         // If the updateHook returned void, do nothing. Otherwise let
         // the slot be overwritten.
-        if (o == object::void_class)
-          return;
+        if (v == object::void_class)
+          return o;
       }
     // If return-value of hook is not void, write it to slot.
-    own_slot_update(k, o);
+    own_slot_update(k, v);
+    return v;
   };
 
   void

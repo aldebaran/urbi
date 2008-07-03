@@ -151,12 +151,14 @@ namespace object
     /// \param k	The slot to update
     /// \param o	The new value
     /// \param hook	Whether to trigger the potential updateHook
-    void slot_update(runner::Runner& r,
-                     const key_type& k, rObject o,
-                     bool hook = true);
+    rObject
+    slot_update(runner::Runner& r,
+                const key_type& k, rObject o,
+                bool hook = true);
 
     /// Update slot \c k to \a o.
-    void own_slot_update(const key_type& k, rObject o);
+    void
+    own_slot_update(const key_type& k, rObject o);
 
 
     /// \brief Update value in slot.

@@ -266,8 +266,7 @@ namespace object
     CHECK_ARG_COUNT(3);
     rString arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    args[0]->slot_update(r, arg1->value_get (), args[2]);
-    return args[2];
+    return args[0]->slot_update(r, arg1->value_get (), args[2]);
   }
 
   static rObject
