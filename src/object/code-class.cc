@@ -40,8 +40,7 @@ namespace object
     , self_(model->self_)
     , call_(model->call_)
   {
-    assert(code_class);
-    proto_add(code_class);
+    proto_add(model);
   }
 
   Code::ast_type Code::ast_get() const
