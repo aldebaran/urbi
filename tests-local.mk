@@ -38,18 +38,24 @@ TFAIL_TESTS +=					\
 # when running tests. The following tests should be examined
 # and reintroduced in 1.x as needed.
 TO_CHECK_TESTS =				\
+# +begin, +end                                  \
 1.-/begin-end-report.chk			\
+# chan << echo(foo) goes in chan                \
 1.-/channels-tags.chk				\
+# +connection                                   \
 1.-/connection-delete.chk			\
 1.-/events.chk					\
 1.-/events-emit-then-return-in-function.chk	\
-1.-/every.chk					\
 1.-/every-emit.chk				\
+# freeze foo                                    \
 1.-/freeze-time.chk				\
+# deletes local vars                            \
 1.-/function-delete.chk                         \
+# []-access to list and hash                    \
 1.-/hash-and-list.chk				\
+# stop foo                                      \
 1.-/hierarchical-tags.chk			\
-1.-/init-in-pipe-with-time.chk			\
+# events                                        \
 1.-/lazy-test-eval.chk				\
 1.-/loadwav.chk					\
 1.-/modifier/accel-adaptive.chk			\
