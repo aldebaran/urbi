@@ -8,16 +8,19 @@ function Object.print()
   topLevel << self
 };
 
-/* Implement in c++ for better performances
+/* Implemented in C++ for better performances.
 function lobby.send
 {
   var what = call.evalArgAt(1);
   var tag = "";
   if (call.argsCount > 2)
     tag = call.evalArgAt(2);
-  write("[" + time.trunc + {if (tag == "") "" else ":"+tag} + "] " + what + "\n")
+  write("[" + time.trunc
+        + { if (tag == "") "" else ":" + tag}
+        + "] " + what + "\n")
 };
 */
+
 function Global.echo
 {
   var tag = ""|
@@ -29,18 +32,18 @@ function Global.echo
 // Does not have anything special.  Yet.
 class Global.Channel
 {
-  /// Display nothing if false
+  /// Display nothing if false.
   var enabled = true;
   /// Use asTopLevelPrintable if set (display the string 'foo' as '"foo"')
   var quote = true;
   function init(x) { var self.name = x };
-  function '<<' (x)
+  function '<<'(x)
   {
-    if(enabled)
+    if (enabled)
     {
-      var toPrint = { if (quote) x.asToplevelPrintable else x.asString}|
+      var toPrint = { if (quote) x.asToplevelPrintable else x.asString }|
       if (!toPrint.isNil)
-	lobby.send ( toPrint, name);
+	lobby.send(toPrint, name);
     }
   };
 };
