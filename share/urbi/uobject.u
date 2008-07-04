@@ -79,7 +79,22 @@ class Object.uvar
   function init(parent, name)
   {
     parent.setSlot(name, this)|
-    parent.setProperty(name, "updateHook", getSlot("updateHook"))
+    parent.setProperty(name, "updateHook", getSlot("updateHook"));
+    var self.propertyHook = getSlot("propertyHook_");
+    var slotName = name + "_quote_n";
+    parent.setSlot(slotName, function ()
+      {
+        var min = parent.getSlot(name).getProperty("val", "rangemin");
+        var max = parent.getSlot(name).getProperty("val", "rangemax");
+        return (parent.getSlot(name).'()' - min) / (max - min);
+      });
+    parent.setProperty(slotName, "updateHook", function(slot, value)
+	{
+          var min = parent.getSlot(name).getProperty("val", "rangemin");
+          var max = parent.getSlot(name).getProperty("val", "rangemax");
+          parent.updateSlot(name, min + (max - min) * value);
+        });
+    {}
   };
 
   /// Global number of notifyaccess
@@ -90,7 +105,10 @@ class Object.uvar
   {
     getSlot(slot).update_(slot, newval);
   };
-
+  function propertyHook_(parent, name, prop, value)
+  {
+   parent.getSlot(name).setProperty("val", prop, value);
+  };
   function update_(slot, newval)
   {
     // Urbi or C++ not-owned set: write to val.
@@ -108,7 +126,7 @@ class Object.uvar
     } |
     void
   };
-
+  var apply = Code.getSlot("apply");
   var __clone = getSlot("clone");
   function clone()
   {
