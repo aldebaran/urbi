@@ -24,9 +24,9 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
-    rDictionary set(rString key, rObject value);
-    rObject get(rString key);
-    rObject has(rString key);
+    rDictionary set(const libport::Symbol& key, rObject value);
+    rObject get(const libport::Symbol& key);
+    bool has(const libport::Symbol& key);
     rDictionary clear();
     rList keys();
 

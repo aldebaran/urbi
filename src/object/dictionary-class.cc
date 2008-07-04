@@ -39,16 +39,15 @@ namespace object
     return content_;
   }
 
-  rDictionary Dictionary::set(rString key, rObject val)
+  rDictionary Dictionary::set(const libport::Symbol& key, rObject val)
   {
-    content_[key->value_get()] = val;
+    content_[key] = val;
     return this;
   }
 
-  rObject Dictionary::get(rString key)
+  rObject Dictionary::get(const libport::Symbol& key)
   {
-    return libport::mhas(content_, key->value_get()) ?
-      content_[key->value_get()] : void_class;
+    return libport::mhas(content_, key) ? content_[key] : rObject();
   }
 
   rDictionary Dictionary::clear()
@@ -66,10 +65,9 @@ namespace object
     return new List(res);
   }
 
-  rObject Dictionary::has(rString key)
+  bool Dictionary::has(const libport::Symbol& key)
   {
-    return libport::mhas(content_, key->value_get()) ?
-      true_class : false_class;
+    return libport::mhas(content_, key);
   }
 
   std::string Dictionary::type_name_get() const
