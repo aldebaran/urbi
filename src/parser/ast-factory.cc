@@ -115,22 +115,23 @@ namespace parser
     ::parser::Tweast tweast;
     libport::Symbol name = lvalue->name_get();
     tweast << "var " << lvalue << "= {"
-           << "var '" << name << "' = Object.clone |";
+           << "var '$tmp' = Object.clone |";
     // Don't call setProtos from inside the do-scope: evaluate the
     // protos in the current scope.
     if (protos)
       tweast
-        << "'" << name << "'.setProtos([" << *protos << "])|";
+        << "'$tmp'.setProtos([" << *protos << "])|";
     tweast
-      << "do '" << name << "'"
+      << "do '$tmp'"
       << " {"
       <<   "var protoName = " << ast_string(l, name) << "|"
       <<   "function " << ("as" + name.name_get()) << "() {self}|"
       <<   ast_exp(block)
       << "} |"
-      << "'" << name << "'"
+      << "'$tmp'"
       << "}";
-    return parse(tweast)->ast_get();
+    ast::rExp res = parse(tweast)->ast_get();
+    return res;
   }
 
 
