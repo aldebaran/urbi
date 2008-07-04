@@ -4,7 +4,7 @@
 
 class Global.Singleton
 {
-  function clone() { self };
-  function 'new' { self };
+  function clone() { this };
+  function 'new' { this };
   function init {};
 };

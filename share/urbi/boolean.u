@@ -18,16 +18,16 @@ do Object
 {
   function '&&'
   {
-    if (self) call.evalArgAt (1) else self;
+    if (this) call.evalArgAt (1) else this;
   };
 
   function '||'
   {
-    if (self) self else call.evalArgAt (1);
+    if (this) this else call.evalArgAt (1);
   };
 
   function '!'()
   {
-    self == false
+    this == false
   };
 };

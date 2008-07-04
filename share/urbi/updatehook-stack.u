@@ -17,7 +17,7 @@ do getSlot("UpdateHookStack")
 
   function init()
   {
-    var self.hooks = hooks.clone;
+    var this.hooks = hooks.clone;
   };
 
   function addHook(f)
@@ -43,7 +43,7 @@ function Global.installUpdateHookStack(o, slot)
     if (prop == "updateHook")
       getProperty(slot, prop).addHook(v)
     else
-      Object.getSlot("setProperty").apply([self, slot, prop, v]);
+      Object.getSlot("setProperty").apply([this, slot, prop, v]);
   };
 
   o.setProperty = setProperty;

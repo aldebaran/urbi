@@ -2,13 +2,13 @@ class Global.Binary
 {
   function init(k, v)
   {
-    var self.keywords = k |
-    var self.data = v
+    var this.keywords = k |
+    var this.data = v
   };
 
   function asString()
   {
-    if (self === Binary)
+    if (this === Binary)
       "<" + protoName + ">"
     else
     {

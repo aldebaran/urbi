@@ -2,16 +2,16 @@ class Global.Group
 {
   function init
   {
-    var self.members = call.evalArgs |
-    self
+    var this.members = call.evalArgs |
+    this
   };
 
   # n-ary strict: add the arguments as group members.
   function add
   {
     # Fetch Object's updateSlot or we will trigger the fallback
-    Object.getSlot("updateSlot").apply([self, "members", members + call.evalArgs])|
-    self
+    Object.getSlot("updateSlot").apply([this, "members", members + call.evalArgs])|
+    this
   };
 
   copySlot("add", "<<");
@@ -21,13 +21,13 @@ class Global.Group
   function remove
   {
     # Fetch Object's updateSlot or we will trigger the fallback
-    Object.getSlot("updateSlot").apply([self, "members", members - call.evalArgs])|
-    self
+    Object.getSlot("updateSlot").apply([this, "members", members - call.evalArgs])|
+    this
   };
 
   function asString ()
   {
-    if (self === Group)
+    if (this === Group)
       "<" + protoName + ">"
     else
       protoName + " " + members.asString

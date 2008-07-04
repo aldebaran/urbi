@@ -52,7 +52,7 @@ do Object
     var add = Object.getSlot("addProto") |
     protos.clear() |
     for| (var p: ps.reverse)
-      add.apply([self, p]) |
+      add.apply([this, p]) |
   };
 
   # Syntactic sugar for setProtos.
@@ -75,7 +75,7 @@ do Object
 
   function '!==' (rhs)
   {
-    !(self === rhs)
+    !(this === rhs)
   };
 
   // Invoke "clone", then "init".
@@ -177,11 +177,11 @@ do Object
   var isVoid = false;
   function acceptVoid ()
   {
-    self
+    this
   };
   function unAcceptVoid()
   {
-    self
+    this
   }
 };
 var void.acceptVoid.acceptVoid = function() { new };
@@ -211,7 +211,7 @@ do Object
 {
   function isNil()
   {
-    nil === self
+    nil === this
   }
 };
 
@@ -340,8 +340,8 @@ topLevel.enabled = false;
 
 class Global.Comparable
 {
-  function '!=' (rhs) { ! (self == rhs) };
-  function '==' (rhs) { ! (self != rhs) };
+  function '!=' (rhs) { ! (this == rhs) };
+  function '==' (rhs) { ! (this != rhs) };
 };
 # Provide !=.
 Object.addProto(Comparable);
@@ -352,10 +352,10 @@ Object.addProto(Comparable);
 
 class Global.Orderable
 {
-  function '<'  (rhs) { rhs > self };
-  function '<=' (rhs) { self < rhs || self == rhs };
-  function '>'  (rhs) { rhs < self };
-  function '>=' (rhs) { self > rhs || self == rhs };
+  function '<'  (rhs) { rhs > this };
+  function '<=' (rhs) { this < rhs || this == rhs };
+  function '>'  (rhs) { rhs < this };
+  function '>=' (rhs) { this > rhs || this == rhs };
 };
 
 
@@ -383,7 +383,7 @@ do Object
 {
   function isProto ()
   {
-    locateSlot("protoName") === self
+    locateSlot("protoName") === this
   };
 
   function type ()
@@ -459,7 +459,7 @@ do Object
 {
   function as(type)
   {
-    getSlot("as" + type.protoName).apply([self])
+    getSlot("as" + type.protoName).apply([this])
   }
 };
 

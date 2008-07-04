@@ -36,7 +36,7 @@ class Object.UObject
   {
     if (interval < minimumInterval)
       interval = minimumInterval;
-    if (!locateSlot("timerTask").sameAs(self))
+    if (!locateSlot("timerTask").sameAs(this))
       timerTask = [];
     var tag = new Tag;
     tag: detach({loop{ func(); sleep(interval)}}) |
@@ -78,7 +78,7 @@ class Object.uvar
 
   function init(parent, name)
   {
-    parent.setSlot(name, self)|
+    parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", getSlot("updateHook"))
   };
 
@@ -115,7 +115,7 @@ class Object.uvar
     var ret = function {
       call.getSlot("code").accessor
     } |
-    ret.addProto(self) |
+    ret.addProto(this) |
     do ret {
       var change = [] |
       var changeOwned = [] |

@@ -29,12 +29,12 @@ class Global.tutorial
     #       condition to fulfill to pass automatically to the next section).
     function init
     {
-      var self.name = call.argAt(1);
-      var self.text = call.argAt(2);
-      var self.onEnter = call.args.nth(3);
-      var self.onLeave = call.args.nth(4);
-      var self.condition = call.args.nth(5);
-      tutorial.entries.back.push_back(self);
+      var this.name = call.argAt(1);
+      var this.text = call.argAt(2);
+      var this.onEnter = call.args.nth(3);
+      var this.onLeave = call.args.nth(4);
+      var this.condition = call.args.nth(5);
+      tutorial.entries.back.push_back(this);
     };
     function enter()
     {

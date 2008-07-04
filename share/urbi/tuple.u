@@ -30,7 +30,7 @@
         setProperty(name, "updateHook",
           function (name, val) {
             // Copy members if needed before altering it
-            if (locateSlot("members") !== self)
+            if (locateSlot("members") !== this)
               members = members.clone;
             members.setNth(n, val);
             void;

@@ -9,26 +9,26 @@ do Float
 
   function init(x) { set(x) };
 
-  function sqr() { self * self };
+  function sqr() { this * this };
 
-  function '~='(x) { (self - x).abs <= epsilontilde };
-  function '%='(x) { (1.0 - self / x).abs <= epsilonpercent };
+  function '~='(x) { (this - x).abs <= epsilontilde };
+  function '%='(x) { (1.0 - this / x).abs <= epsilonpercent };
   # FIXME: =~= cannot be correctly implemented without properties.
-  function '=~='(x) { (self - x) <= delta + x.delta };
-  function sgn() { if (self < 0) -1 else if (self > 0) 1 else 0 };
+  function '=~='(x) { (this - x) <= delta + x.delta };
+  function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
 
-  // Create a list 0..(self - 1).
+  // Create a list 0..(this - 1).
   function seq()
   {
     var result = [] |
-    for| (var i = 0; i < self; i++)
+    for| (var i = 0; i < this; i++)
       result.push_back(i.clone) |
     result
   };
 
   function '\'n'()
   {
-    (self - rangemin) / (rangemax - rangemin)
+    (this - rangemin) / (rangemax - rangemin)
   };
 
   function getNormHook() {
@@ -75,10 +75,10 @@ do Float
     };
   };
 
-  # Repeat \a action \a self times.
+  # Repeat \a action \a this times.
   function times (action)
   {
-    for| (var i = 0; i < self; i++)
+    for| (var i = 0; i < this; i++)
       action(i)
   };
 };

@@ -5,7 +5,7 @@ class Global.Loadable
   function __loadable_set__(val)
   {
     load = val |
-    self
+    this
   };
 
   function on()

@@ -5,8 +5,8 @@ class Global.Lazy
 
   function init(value)
   {
-    self.code = value |
-    self
+    this.code = value |
+    this
   };
 
   function eval()

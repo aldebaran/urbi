@@ -498,6 +498,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "static"        DEPRECATED("");
 "stopif"        RETURN(STOPIF);
 "switch"        RETURN(SWITCH);
+"this"          RETURN(THIS);
 "timeout"       RETURN(TIMEOUT);
 "var"           RETURN(VAR);
 "whenever"      RETURN(WHENEVER);
@@ -607,7 +608,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "static_cast"      |
 "struct"           |
 "template"         |
-"this"             |
 "throw"            |
 "try"              |
 "typedef"          |

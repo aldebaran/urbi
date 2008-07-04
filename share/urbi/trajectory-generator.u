@@ -4,77 +4,77 @@ class Global.TrajectoryGenerator
   var delta = 2;
   function getStartValue()
   {
-    var self.startValue = getter() |
+    var this.startValue = getter() |
     if (startValue.type == "Float")
-      self.startValue = startValue
+      this.startValue = startValue
     else if (startValue.type == "Group")
     {
       var v = startValue.members.head |
       while (v.type == "List")
 	v = v.head |
-      self.startValue = v
+      this.startValue = v
     }
     else
     {
-      self.startValue = 0|
+      this.startValue = 0|
       "Warning: setting dummy startValue".print
     }
   };
   function init(getter, setter, targetValue, args)
   {
-    var self.getter = getter |
-    var self.setter = setter |
-    self.targetValue = targetValue|
-    self.startTime = time|
+    var this.getter = getter |
+    var this.setter = setter |
+    this.targetValue = targetValue|
+    this.startTime = time|
     if ("time" in args)
     {
       getStartValue()|
-      var self.adaptive = args.getWithDefault("adaptive", 0) |
-      if (self.adaptive)
-	var self.get = getSlot("timeAdaptiveGet")
+      var this.adaptive = args.getWithDefault("adaptive", 0) |
+      if (this.adaptive)
+	var this.get = getSlot("timeAdaptiveGet")
       else
-	var self.get = getSlot("timeGet") |
-      var self.duration = args.get("time") |
+	var this.get = getSlot("timeGet") |
+      var this.duration = args.get("time") |
     }
     else if ("smooth" in args)
     {
       getStartValue()|
-      var self.adaptive = args.getWithDefault("adaptive", 0) |
-      var self.get = getSlot("smoothGet") |
-      var self.duration = args.get("smooth") |
+      var this.adaptive = args.getWithDefault("adaptive", 0) |
+      var this.get = getSlot("smoothGet") |
+      var this.duration = args.get("smooth") |
     }
     else if ("accel" in args)
     {
       getStartValue()|
-      var self.get = getSlot("accelGet") |
-      var self.accel = args.get("accel") / 1000000 |
-      var self.duration = sqrt ( 2 * (targetValue - self.startValue) / accel)
+      var this.get = getSlot("accelGet") |
+      var this.accel = args.get("accel") / 1000000 |
+      var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
     }
     else if ("speed" in args)
     {
       getStartValue()|
-      var self.adaptive = args.getWithDefault("adaptive", 0) |
-      var self.speed = args.get("speed") / 1000|
-      var self.duration = Float.inf;
+      var this.adaptive = args.getWithDefault("adaptive", 0) |
+      var this.speed = args.get("speed") / 1000|
+      var this.duration = Float.inf;
       if (speed != 0)
-        self.duration = abs(self.startValue - targetValue)  / speed |
+        this.duration = abs(this.startValue - targetValue)  / speed |
       if (adaptive)
-        var self.get = getSlot("adaptiveSpeedGet")
+        var this.get = getSlot("adaptiveSpeedGet")
       else
-        var self.get = getSlot("timeGet") |
+        var this.get = getSlot("timeGet") |
     }
     else if ("sin" in args || "cos" in args)
     {
-      var self.get = getSlot("sinGet");
-      var self.phase = args.getWithDefault("phase", 0) |
-      var self.ampli = args.getWithDefault("ampli", 0) |
+      var this.get = getSlot("sinGet");
+      var this.phase = args.getWithDefault("phase", 0) |
+      var this.ampli = args.getWithDefault("ampli", 0) |
       if ("cos" in args)
       {
-	var self.period =  args.get("cos") |
-	self.phase += pi/2
+	var this.period =  args.get("cos") |
+	this.phase += pi/2
       }
       else
-	var self.period = args.get("sin")
+	var this.period = args.get("sin")
     }
   };
 

@@ -2,7 +2,7 @@ do Global.Dictionary
 {
   function asList ()
   {
-    var dictionary = self|
+    var dictionary = this|
     var res = []|
     for (var k: keys)
       res.push_back(Pair.new (k, dictionary.get (k)))|
@@ -11,7 +11,7 @@ do Global.Dictionary
 
   function asString ()
   {
-    if (self === Dictionary)
+    if (this === Dictionary)
       "<Dictionary>"
     else
     {

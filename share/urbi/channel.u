@@ -5,7 +5,7 @@
 
 function Object.print()
 {
-  topLevel << self
+  topLevel << this
 };
 
 /* Implemented in C++ for better performances.
@@ -36,7 +36,7 @@ class Global.Channel
   var enabled = true;
   /// Use asTopLevelPrintable if set (display the string 'foo' as '"foo"')
   var quote = true;
-  function init(x) { var self.name = x };
+  function init(x) { var this.name = x };
   function '<<'(x)
   {
     if (enabled)
