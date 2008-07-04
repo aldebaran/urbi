@@ -355,12 +355,17 @@ namespace object
       props->value_get()[k] = prop;
     }
 
+    bool had = prop->has(p);
+
     prop->value_get()[p] = value;
 
-    rObject target = slot_get(k);
-    if (target->slot_locate(SYMBOL(propertyHook)))
-      urbi_call(r, target, SYMBOL(propertyHook),
-                this, new String(k), new String(p), value);
+    if (!had)
+    {
+      rObject target = slot_get(k);
+      if (target->slot_locate(SYMBOL(newPropertyHook)))
+        urbi_call(r, target, SYMBOL(newPropertyHook),
+                  this, new String(k), new String(p), value);
+    }
 
     return value;
   }

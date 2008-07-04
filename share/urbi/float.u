@@ -44,28 +44,34 @@ do Float
     }
   };
 
-  function propertyHook(parent, name, prop, value)
+  function newPropertyHook(parent, name, prop, value)
   {
     installUpdateHookStack(parent, name);
 
-    function override_if(predicate, value)
+    function rangeminHook(slot, val)
     {
-      function hook(slot, val)
-      {
-        if (predicate(val))
-          return value |
-        return val |
-      };
-      parent.setProperty(name, "updateHook", hook);
+      var min = getProperty(slot, "rangemin");
+      if (val < min)
+        min
+      else
+        val
     };
 
-    # FIXME: this doesn't scale to several propertyHooks ...
+    function rangemaxHook(slot, val)
+    {
+      var max = getProperty(slot, "rangemax");
+      if (val > max)
+        max
+      else
+        val
+    };
+
     switch (prop)
     {
       case "rangemin":
-        override_if(closure (v) { v < value }, value);
+        parent.setProperty(name, "updateHook", rangeminHook);
       case "rangemax":
-        override_if(closure (v) { v > value }, value);
+        parent.setProperty(name, "updateHook", rangemaxHook);
     };
   };
 
