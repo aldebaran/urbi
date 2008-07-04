@@ -19,7 +19,7 @@
       {
         // if (call.argsCount >= size) throw;
         members = call.evalArgs |
-        members += Res.members.range(size - members.size) |
+        members += members.range(size - members.size) |
       };
 
       var idx = 0;
