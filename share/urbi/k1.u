@@ -71,7 +71,7 @@ class Global.DeprecatedCommands
                   "uservars",
                   "vars"
                     ])
-    DeprecatedCommands.setSlot(name,
+    setSlot(name,
       function () { echo("`" + name + "' is deprecated." ) })
 };
 

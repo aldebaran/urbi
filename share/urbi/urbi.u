@@ -472,7 +472,7 @@ class Global.Math
   for (var fn: ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
                "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"])
   {
-    Math.setSlot (fn, bounce_named (fn))
+    setSlot (fn, bounce_named (fn))
   };
 
   # Global variables
