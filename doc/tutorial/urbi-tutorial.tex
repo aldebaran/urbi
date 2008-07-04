@@ -4,16 +4,14 @@
 \usepackage{a4wide}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
+\usepackage{mycxx}
 \usepackage{myhyperref}
 \usepackage{mylistings}
 \usepackage{xspace}
 
 % SHORTHANDS
 \newcommand{\ai}{AI\xspace}
-\newcommand{\C}{C\xspace}
-\newcommand{\caml}{CamL\xspace}
-\newcommand{\Cs}{C\#\xspace}
-\newcommand{\Cxx}{C++\xspace}
+\newcommand{\caml}{Caml\xspace}
 \newcommand{\io}{Io\xspace}
 \newcommand{\java}{Java\xspace}
 \newcommand{\js}{JavaScript\xspace}
@@ -96,34 +94,34 @@
 \chapter{Introduction}
 
 Urbi is a programming language primarily designed for robotics. It's a
-dynamic, prototype-based, objective scripting language. It supports
-and emphasizes parallel and event-based programming, which are very
-popular paradigms in the robotics domain, by providing core primitive
-and language construct.
+dynamic, prototype-based, object oriented scripting language. It
+supports and emphasizes parallel and event-based programming, which
+are very popular paradigms in robotics, by providing core primitives
+and language constructs.
 
 Its main features are:
 \begin{itemize}
 \item \urbi is designed to be syntactically close to \Cxx. If you know
-  \C or \C++, you can easily write \urbi programs.
+  \C or \Cxx, you can easily write \urbi programs.
 \item \urbi is fully integrated with \Cxx. You can bind \Cxx classes
   in \urbi seamlessly. \urbi is also integrated with many other
   languages such as \java, \matlab or \python.
 \item \urbi is object oriented. It supports encapsulation, inheritance
   and inclusion polymorphism. Dynamic dispatching is available through
-  monomethods - just as \Cxx, \Cs or \java.
-\item \urbi includes parallelism at the core of its semantic. It
+  monomethods --- just as \Cxx, \Cs or \java.
+\item \urbi includes parallelism at the core of its semantics. It
   provides you with natural constructs to run and control high numbers
-  of interacting parallel tasks.
-\item \urbi support event-based programming. Triggering events and
+  of interacting concurrent tasks.
+\item \urbi supports event-based programming. Triggering events and
   reacting to them is absolutely straightforward.
 \item \urbi supports functional programming, inspired from languages
   such as \lisp or \caml. This includes first class functions and
   pattern matching.
-\item \urbi uses a server architecture: the interpreter accepts
-  multiple connexions from different sources (human users, robots,
+\item \urbi uses a client/server architecture: the interpreter accepts
+  multiple connections from different sources (human users, robots,
   other servers \ldots) and enables them to interact.
-\item \urbi support distributed architecture: you can run objects in a
-  different process, potentially on another computer across the
+\item \urbi supports distributed architectures: you can run objects in
+  different processes, potentially on another computer across the
   network.
 \end{itemize}
 
@@ -131,7 +129,7 @@ Its main features are:
 
 Once you've got an \urbi server running, you can connect to it with a
 text client such as telnet or netcat on port 54000. You can then start
-inputting command, terminated by semicolons. Like most interactive
+inputting commands, terminated by semicolons. Like most interactive
 interpreters, \urbi will evaluate the given commands and print out the
 results (\lst{interaction}).
 
@@ -141,16 +139,16 @@ results (\lst{interaction}).
 \end{lstlisting}
 
 Here we see that 42, as an integer literal, evaluates to itself. Note
-that any output of the server is prefixed by a number surrounded by
-square brackets: this is the timestamp of the date at which that line
+that any output from the server is prefixed by a number surrounded by
+square brackets: this is the timestamps of the date at which that line
 was sent by the server. This happens to be really useful in many
 occasions, since \urbi is meant to run many parallel commands. Anyway,
 since those timestamp can be irrelevant to some examples, they will
 often be filled with zeroes through this documentation.
 
-Let's now try to perform some real computation, by inputting some
-basic mathematical expressions, as in \lst{expr}. Again, the server
-prints out the result of the evaluation of every line.
+Let's now try to perform some real computation, e.g. some basic
+mathematical expressions, as in \lst{expr}. Again, the server prints
+out the result of the evaluation of every line.
 
 \begin{lstlisting}[caption=Evaluating composite expressions,label=lst:expr]
   25 * 2 + 1;
@@ -161,16 +159,16 @@ prints out the result of the evaluation of every line.
 
 You can now send commands to your \urbi server. If at any point you
 get lost, or want a fresh start, you can simply close and reopen your
-connexion to the server to get a clean environment.
+connection to the server to get a clean environment.
 
 \chapter{First steps}
 
 \section{Introduction}
 
-This section intends to provide you with the most basic notions to
-write \urbi code. Some aspects are presented only superficially. The
-point of this section is to bootstrap yourself with the \urbi
-language, to be able to study examples more in-depth after.
+This section intends to provide the most basic notions to write \urbi
+code. Some aspects are presented only superficially. The point of this
+section is to bootstrap yourself with the \urbi language, to be able
+to study more in-depth examples after.
 
 \section{Comments}
 
@@ -181,7 +179,7 @@ can be left as documentation, reminder, \ldots \urbi support \C style,
 
 \begin{itemize}
 \item \C style comments start with \texttt{/*} and end with \texttt{*/}.
-\item \C++ style comments start with \texttt{//} and last until the
+\item \Cxx style comments start with \texttt{//} and last until the
   end of the line
 \item Shell-script style comments start with \texttt{\#} and last
   until the end of the line
@@ -204,11 +202,11 @@ can be left as documentation, reminder, \ldots \urbi support \C style,
 
 \section{Literal values}
 
-As we've already seen, we can evaluate literal integers. \urbi
-supports several other literals, such as:
+As already seen, we can evaluate literal integers. \urbi supports
+several other literals, such as:
 
 \begin{itemize}
-\item floats: floating point real numbers.
+\item floats: floating point numbers.
 \item strings: character strings.
 \item lists: ordered collection of values.
 \item nil: neutral value. Think of it as the value that fits anywhere.
@@ -231,10 +229,10 @@ These literal values can be obtained with the syntax presented in
   void;
 \end{lstlisting}
 
-Listing \ref{lst:literals} highlights some points:
+Listing \ref{lst:literals} highlights some point:
 \begin{itemize}
-\item Lists in \urbi are polymorphic. That is, one single list can
-  hold values of different types.
+\item Lists in \urbi are polymorphic. That is, one list can hold
+  values of different types.
 \item The printing of nil and void is empty.
 \end{itemize}
 
@@ -269,7 +267,7 @@ void, no evaluation result is printed.
 \section{Variables}
 
 Variables can be introduced with the \texttt{var} keyword, given a
-name and an initial value. They can be affected new values with the
+name and an initial value. They can be assigned new values with the
 \texttt{=} operator (\lst{variables}).
 
 \begin{lstlisting}[caption=Using variables,label=lst:variables]
@@ -308,7 +306,7 @@ nil (\lst{local-uninit}).
 \section{Scopes}
 
 Scopes can be introduced with curly brackets (\texttt{\{\}}), and can
-contain any number of expressions. Variable declared in a scope only
+contain any number of expressions. Variables declared in a scope only
 exist within this scope (\lst{scope}).
 
 \begin{lstlisting}[caption=Scoping a variable,label=lst:scope]
@@ -321,13 +319,13 @@ exist within this scope (\lst{scope}).
 \end{lstlisting}
 
 Note that the interpreter waits for the whole scope to be inputted to
-evaluate it. Also note the terminating semicolon after the closing
-curly bracket.
+evaluate it. Also note the mandatory terminating semicolon after the
+closing curly bracket.
 
 \section{Method calls}
 
-Method are called on object with the same dot (\texttt{.}) notation as
-\Cxx. Method calls can be chained. Method with no arguments don't
+Methods are called on objects with the dot (\texttt{.}) notation as in
+\Cxx. Method calls can be chained. Methods with no arguments don't
 require the parentheses (\lst{method-call}).
 
 \begin{lstlisting}[caption=Calling methods,label=lst:method-call]
@@ -345,8 +343,9 @@ require the parentheses (\lst{method-call}).
   [00000000] 1
 \end{lstlisting}
 
-In \lstinline|obj.method|, we say that \texttt{obj} is the target, and
-that we are sending him the \texttt{method} message.
+In \lstinline|obj.method|, we say that \texttt{obj} is the {\em
+  target}, and that we are sending him the \texttt{method} {\em
+  message}.
 
 \section{Function definition}
 
@@ -378,7 +377,7 @@ be printing the function you just typed in again. This is because
 function definitions evaluates to the freshly created function.
 
 Since \urbi supports functional programming, function are first class
-citizen. Which mean they are values, just as \texttt{0} or
+citizen. Which means they are values, just as \texttt{0} or
 \texttt{"foobar"}. So your function definition evaluation yields the
 new function, and as always, the interpreter prints out the evaluation
 result, thus showing you the function again. \lst{function-values}
@@ -407,9 +406,9 @@ might help you understanding this.
 
 Here you can see that f is actually a simple value. You can just
 evaluate it to see its value, that is, its body. By adding the
-parentheses, you can actually calls the function. This is a difference
-with method calling, where empty parentheses are optional: method are
-always evaluated, you can not retrieve their functional value - of
+parentheses, you can actually call the function. This is a difference
+with methods calling, where empty parentheses are optional: method are
+always evaluated, you cannot retrieve their functional value --- of
 course, you can with a different construct, but that's not the point
 here.
 
@@ -431,7 +430,7 @@ printed result, replacing it with an ellipse (\ldots), as in
 
 As you probably guessed, the \texttt{return} keyword enables you to
 return a value from the function. If no \texttt{return} statement is
-encountered, the evaluation of the last expression is returned
+executed, the evaluation of the last expression is returned
 (\lst{no-return}).
 
   \begin{lstlisting}[caption=Return value is the last evaluated value,
@@ -445,26 +444,26 @@ encountered, the evaluation of the last expression is returned
 \section{Conclusion}
 
 You're now up and running with basic \urbi code, and we can dive in
-detail into advanced \urbi code.
+details into advanced \urbi code.
 
 \chapter{Basic objects, \urbi values model} % FIXME: values model
 
 \section{Introduction}
 
-In this section, we will focus on urbi values as objects, and study
-\urbi by-reference values model. We won't study classes and actual
-objective programming yet, these point will be presented in
+In this section, we focus on urbi values as objects, and study \urbi
+by-reference values model. We won't study classes and actual objective
+programming yet, these points will be presented in
 \autoref{section:objective}.
 
-\section{Objects in urbi}
+\section{Objects in \urbi}
 
-An object in urbi is a rather simple concept: a list of slots. Slots
+An object in \urbi is a rather simple concept: a list of slots. Slots
 are a value associated to a name. So an object is a list of slot
-names, each of which indexes a value - just like a dictionary. You can
-get an object's slot value by using the dot (\texttt{.}) operator on
-this object, followed by the name of the slot. You can list the names
-of the slots of an object with the \texttt{slotNames}
-method. \lst{object-slots} make this very clear: we dissect an object
+names, each of which indexes a value --- just like a dictionary. You
+can get an object's slot value by using the dot (\texttt{.}) operator
+on this object, followed by the name of the slot. You can list the
+names of the slots of an object with the \texttt{slotNames}
+method. \lst{object-slots} makes this very clear: we dissect an object
 to point out its structure.
 
 \begin{lstlisting}[caption=Inspecting an \urbi
@@ -473,7 +472,7 @@ to point out its structure.
   // Let's inspect it.
   o.slotNames;
   [00000000] ["a", "b"]
-  // We now know the name of its slot.
+  // We now know the name of its slots.
   // Let's see what their value is.
   o.a;
   [00000000] 42
@@ -487,7 +486,7 @@ parent type of every object (in fact, since \urbi is prototype-based,
 \texttt{Object} is the uppermost prototype of every object, but we'll
 talk about prototypes later). An instance of object, is an empty,
 neutral object, so let's start by instanciating one with the
-\texttt{new} method of \texttt{Object} (\lst{object-new}).
+\texttt{clone} method of \texttt{Object} (\lst{object-new}).
 
 \begin{lstlisting}[caption=Instanciating a new object,
   label=lst:object-new]
@@ -499,21 +498,21 @@ neutral object, so let's start by instanciating one with the
   [00000000] []
 \end{lstlisting}
 
-As you can see, we obtain an empty fresh object. Note that it stills
-inherits from \texttt{Object} functionnalities that all objects share,
-such as the \texttt{slotNames} method.
+As you can see, we obtain an empty fresh object. Note that it still
+inherits from \texttt{Object} features that all objects share, such as
+the \texttt{slotNames} method.
 
 Also note how o is printed out: \texttt{Object\_}, followed by an
-hexadecimal number. Since this object is rather empty, its printing is
-rather generic: its type (\texttt{Object}), and its unique indentifier
-(every \urbi object has one). Since these identifiers are often
-irrelevant and will differ between two execution of they same code,
-they are often filled with zeroes in this document.
+hexadecimal number. Since this object is empty, its printing is quite
+generic: its type (\texttt{Object}), and its unique identifier (every
+\urbi object has one). Since these identifiers are often irrelevant
+and might differ between two executions, they are often filled with
+zeroes in this document.
 
 We're now getting back to our empty object. We want to give it two
 slots, \texttt{a} and \texttt{b}, with values \lstinline|42| and
 \lstinline|"foo"| respectively. We can do this with the
-\texttt{setSlot} method (\lst{setslot}), which take the slot name and
+\texttt{setSlot} method (\lst{setslot}), which takes the slot name and
 its value.
 
 \begin{lstlisting}[caption=Defining slots, label=lst:setslot]
@@ -543,9 +542,9 @@ the name of the slot at the time of writing the code. With the former
 one, you can compute the slot name at execution time. Likewise, you
 can read a slot with a run-time determined name with the
 \texttt{getSlot} method, which takes the slot name as
-argument. \lst{getslot-setslot} illustrate the use of \texttt{getSlot}
-and \texttt{setSlot} to read and write slots whose name is unknown at
-code-writing time.
+argument. \lst{getslot-setslot} illustrates the use of
+\texttt{getSlot} and \texttt{setSlot} to read and write slots whose
+names are unknown at code-writing time.
 
 % mefyl: FIXME: I never introduced that '+' concatenates strings.
 
@@ -631,8 +630,8 @@ and subsequent writes must be done with \texttt{updateSlot}
   [00000000] 1
 \end{lstlisting}
 
-Finally, we may want to remove a slot from an object. This is again
-doable with a method whose name I let you guess (\lst{removeslot}).
+Finally, we may want to remove a slot from an object. This can be done
+with a method whose name I let you guess (\lst{removeslot}).
 
 \begin{lstlisting}[caption=Removing a slot, label=lst:removeslot]
   o.slotNames;
@@ -659,13 +658,13 @@ slot which does not exist is, of course an error
 
 \section{Methods}
 
-Methods in \urbi are simply object slots that are functions. We made a
-little simplification earlier by saying that \lstinline|obj.slot| is
+Methods in \urbi are simply object slots containing functions. We made
+a little simplification earlier by saying that \lstinline|obj.slot| is
 equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
 executable code such as a function, the dot form evaluates it, as
 illustrated by \lst{auto-eval}. Inside a method, you can get the
 target with the \lstinline|self| keyword - the equivalent of \Cxx's
-\texttt{this}. However, \lstinline|self| can be omitted if there is no
+\texttt{this}. \lstinline|self| can be omitted if there is no
 ambiguity with local variables.
 
 \begin{lstlisting}[caption=Function in object are automatically evaluated,
@@ -683,7 +682,7 @@ ambiguity with local variables.
   // The slot value is the function
   obj.getSlot("f");
   [00000000] function () { ... }
-  // Huho, the function was invoked!
+  // Huho, the function is invoked!
   obj.f;
   [00000000] *** This is f with target Object_0x0
   [00000000] 42
@@ -694,7 +693,7 @@ ambiguity with local variables.
 \end{lstlisting}
 
 This was designed this way so as one can replace an attribute, such as
-an integer, with a function that computes the value. This enable to
+an integer, with a function that computes the value. This enables to
 replace an attribute with a method without changing the object
 interface, since the parentheses are optional.
 
@@ -717,7 +716,7 @@ to avoid invoking slots, as shown by \lst{getslot-function}.
   ..}
 \end{lstlisting}
 
-So the empty function simply check whether the target string is empty
+So the empty function simply checks whether the target string is empty
 with the equality operator! Let's try getSloting another method in
 \lst{getslot-primitive}.
 
@@ -731,14 +730,14 @@ with the equality operator! Let's try getSloting another method in
 So strings' \texttt{size} method is another type of object, a
 \texttt{Primitive}. These object are executable, just like function,
 but they are actually primitives implemented in \Cxx, not \urbi. You
-have thus no mean to see their inner code.
+have thus no means to see their inner code.
 
 \section{Everything is an object}
 
 If you're wondering what is an object and what isn't, the answer is
 simple: every single bit of value you manipulate in \urbi is an
 object, including primitive types, types themselves, functions, \ldots
-\lst{everything-object} illustrate this.
+\lst{everything-object} illustrates this.
 
 % FIXME: This does actually not work like this because the toplevel
 % isn't a local scope! puke puke puke!
@@ -770,9 +769,9 @@ values are stored and passed around. The whole point is to understand
 when variables are the same. For this, we are going to introduce a new
 method, \texttt{uid}. This method returns the target's unique
 identifier - the same one that was printed when we evaluated
-\lstinline|Object.clone|. See \lst{uid}. Of course, uids vary from an
-execution to another, so their value here are dummy, yet not null to
-be able to differentiate them.
+\lstinline|Object.clone|. See \lst{uid}. Of course, uids might vary
+from an execution to another, so their value here are dummy, yet not
+null to be able to differentiate them.
 
 \begin{lstlisting}[caption=Uids, label=lst:uid]
   var o = Object.clone;
@@ -791,7 +790,7 @@ different objects. Note that inputting the same integer twice
 (\texttt{42} here) yields different objects. Let's introduce new
 operators before diving in this concept. First the equality operator:
 \texttt{==}. This operator is the exact same as \C or \Cxx's one, it
-simply returns whether its two operand are semantically equal. The
+simply returns whether its two operands are semantically equal. The
 second operator is \texttt{===}, which is the physical equality
 operator. It returns whether its two operands are the same object,
 which is equivalent to having the same uid. This can seem a bit
@@ -809,7 +808,7 @@ confusing; let's take a look at \lst{phy-eq} to have a first example.
   [00000000] false
 \end{lstlisting}
 
-Here, the \texttt{==} operator show us that a and b are equal -
+Here, the \texttt{==} operator shows us that a and b are equal ---
 indeed, they both evaluate to 42. Yet, the \texttt{===} operator show
 us that they are not the same object, that they are two different
 instances of integers, even if they both equal 42.
@@ -889,7 +888,7 @@ Understanding the two latter examples is really important, to be aware
 of what your variable are referring to.
 
 Finally, function and method arguments are also passed by
-reference. Which mean they can be modified by the function
+reference. Which means they can be modified by the function
 (\lst{arg-mod}).
 
 \begin{lstlisting}[caption=Function modifying its argument,
@@ -936,8 +935,8 @@ have the behavior you may have expected.
 \section{Conclusion}
 
 You should now understand the reference semantic of local variables,
-slot and arguments. It's very important to keep them in mind,
-otherwise you will end up modifying variable you didn't want, or
+slots and arguments. It's very important to keep them in mind,
+otherwise you will end up modifying variables you didn't want, or
 change a copy of reference, failing to update the desired one.
 
 \chapter{Flow control constructs}
@@ -945,7 +944,7 @@ change a copy of reference, failing to update the desired one.
 \section{Introduction}
 
 In this section, we'll introduce some flow control structures that
-will prove handful later. Most of them are inspired by \C/\Cxx.
+will prove handy later. Most of them are inspired by \C/\Cxx.
 
 \section{if}
 
@@ -965,6 +964,13 @@ present (\lst{if}).
   else
     echo("ok");
   [00000000] *** ok
+\end{lstlisting}
+
+Note that \lstinline|if| themselves are values (\lst{if-value}).
+
+\begin{lstlisting}[caption=\texttt{if} are values, label=lst:if-value]
+  echo({ if (false) "a" else "b" });
+  [00000000] *** b
 \end{lstlisting}
 
 \section{while}
@@ -1008,16 +1014,16 @@ The \texttt{for} construct is still the same as \C/\Cxx one.
 \section{for \ldots in}
 
 The \texttt{for ... in} construct enables you to iterate over a
-collection such as a list. The \texttt{for} keyword, followed by an
-identifier, the \texttt{in} keyword, an expression and a scope,
-executes the scope for every element in the collection resulting of
-the evaluation of the expression, with the variable named with the
-identifier referring to the list element. If you didn't get the
-sentence, don't worry, \lst{for-in} is pretty self explanatory.
+collection such as a list. The \texttt{for} keyword, followed by
+\lstinline|var|, an identifier, a semicolon, an expression and a
+scope, executes the scope for every element in the collection
+resulting of the evaluation of the expression, with the variable named
+with the identifier referring to the list element. If you didn't get
+the sentence, don't worry, \lst{for-in} is self explanatory.
 
 \begin{lstlisting}[caption=Collection iteration with \texttt{for},
   label=lst:for-in]
-  for elt in [1, 2, 3] { echo(elt) };
+  for (var elt : [1, 2, 3]) { echo(elt) };
   [00000000] *** 1
   [00000000] *** 2
   [00000000] *** 3
@@ -1092,9 +1098,9 @@ to the \pascal ``\texttt{with}'' construct.
 
 \section{Introduction}
 
-This section will present you advanced use of function and scoping, as
-well as their combo: lexical closures, which proves to be a very
-powerful tool once you master it.
+This section presents advanced use of functions and scoping, as well
+as their combo: lexical closures, which prov to be a very powerful
+tool.
 
 \section{Scopes as expressions}
 
@@ -1116,7 +1122,7 @@ expressions. Note that the last semicolon inside a scope is optional.
 \section{Advanced scoping}
 
 Scopes can be nested. Variables can be redefined in subscope. In this
-case, the new variables hides the old one in this scope (that is, the
+case, the new variables hide the old one in this scope (that is, the
 innermost variable takes precedence), as illustrated in
 \lst{scope-hiding}.
 
@@ -1146,10 +1152,10 @@ innermost variable takes precedence), as illustrated in
 
 \section{Local functions}
 
-Functions can be defined anywhere local variables can be defined -
-that is, about anywhere. These function's visibility are limited to
-the scope they're defined in, like variables. This enables for
-instance to write local helper functions (\lst{helper}).
+Functions can be defined anywhere local variables can --- that is,
+about anywhere. These functions' visibility are limited to the scope
+they're defined in, like variables. This enables for instance to write
+local helper functions (\lst{helper}).
 
 \begin{lstlisting}[caption=Local helper function, label=lst:helper]
   function max3(a, b, c) // Max of three values
@@ -1168,7 +1174,7 @@ instance to write local helper functions (\lst{helper}).
 \section{Lexical closures}
 
 A closure are the capture by a function of a variable external to this
-function. \urbi supports lexical closure: function can refer to outer
+function. \urbi supports lexical closure: functions can refer to outer
 local variables, as long as they are visible from the point of
 declaration of the function \lst{read-closure}.
 
@@ -1179,7 +1185,7 @@ declaration of the function \lst{read-closure}.
     var charges = 100;
     function computeSalary(hours)
     {
-      // Here base and charges are captured
+      // Here rate and charges are captured
       // from the environment by closure
       rate * hours - charges
     };
@@ -1240,16 +1246,15 @@ define and use classes.
 \section{Prototype-based programing in \urbi}
 
 You're probably already familiar with class-based object programing,
-since this is the \C and \Cxx model. Prototype-based object programing
-is slightly different: it has no actual types. Instead, you have an
+since this is the \Cxx model. Prototype-based object programing is
+slightly different: it has no actual types. Instead, you have an
 object, that is already an instance, and that you might clone to
 obtain a new one that you can modify afterwards. Prototype-based
-programming was introduced by the Self language (fixme: citation
-needed), and is used in several popular script language such as \lua,
-\io or \js.
+programming was introduced by the Self language, and is used in
+several popular script languages such as \io or \js.
 
-Consider pairs for instance. Pairs are object that hold two values,
-first and second, like an \texttt{std::pair} in \Cxx. Since \urbi is
+Consider pairs for instance. Pairs are objects that hold two values,
+first and second, like an \texttt{std$::$pair} in \Cxx. Since \urbi is
 prototype-based, there is no pair class. Instead, \lstinline|Pair| is
 really a pair (\lst{proto}).
 
@@ -1258,8 +1263,8 @@ really a pair (\lst{proto}).
   [00000000] (nil, nil)
 \end{lstlisting}
 
-We can see here that Pair is a pair whose two values equals nil -
-which is a reasonable neutral value. To get a pair of our own, we
+We can see here that Pair is a pair whose two values are equal to nil
+--- which is a reasonable neutral value. To get a pair of our own, we
 simply clone \lstinline|Pair| (\lst{clone}). We can then use it as a
 regular pair.
 
@@ -1294,8 +1299,8 @@ these modification (\lst{alter-proto}).
 
 In prototype-based language, 'is-a' relations (being an instance of
 some type) and inheritance relations (extending another type) are
-simplified in a single relation: prototyping. You can inspect a type
-prototypes with the \texttt{protos} method (\lst{protos}).
+simplified in a single relation: prototyping. You can inspect an
+object prototypes with the \texttt{protos} method (\lst{protos}).
 
 \begin{lstlisting}[caption=Inspecting prototypes, label=lst:protos]
   var p = Pair.clone;
@@ -1323,9 +1328,9 @@ was always a slot of obj. Yet, this call can be valid even if obj has
 no ``slot'' slot, because slots are also looked up in prototypes. For
 instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
 ``first'' or ``second'' slots. Yet, \lstinline|p.first| and
-\lstinline|p.second| succeed because these slot are present in
-\lstinline|Pair|, which is \lstinline|p|'s prototype, as we already
-checked. This is illustrated by \lst{simple-lookup}.
+\lstinline|p.second| succeed because these slots are present in
+\lstinline|Pair|, which is \lstinline|p|'s prototype. This is
+illustrated by \lst{simple-lookup}.
 
 \begin{lstlisting}[caption=Slot found by lookup, label=lst:simple-lookup]
   var p = Pair.clone;
@@ -1452,9 +1457,9 @@ The answer is, of course, no, as illustrated by \lst{copy-on-write}.
   [00000000] Object_0x1
   var proto.x = 0;
   [00000000] 0
-  var o1 = Object.clone;
+  var o1 = proto.clone;
   [00000000] Object_0x2
-  var o2 = Object.clone;
+  var o2 = proto.clone;
   [00000000] Object_0x3
   // Are we modifying proto's x slot here?
   o1.x = 1;
@@ -1563,8 +1568,8 @@ constructors, accessible by calling \texttt{new} instead of
 
 While \texttt{clone} guarantees you obtain a empty fresh object
 inheriting from the prototype, \texttt{new} behavior is left to the
-discretion of the cloned prototype - although its behavior is the same
-as \texttt{clone} by default.
+discretion of the cloned prototype --- although its behavior is the
+same as \texttt{clone} by default.
 
 To define such constructors, prototypes only need to provide an
 \texttt{init} method, that will be called with the arguments given to
@@ -1626,18 +1631,18 @@ object, you can simply use \texttt{setSlot}, as illustrated by
   [00000000] *** hello
 \end{lstlisting}
 
-This enable you to write some very powerful pieces of code, like
-function that take function as argument. For instance, consider the
-\texttt{all} function: given a list and a function, it applies the
-function to each element of the list, and returns whether all calls
-returned true. This enable you to check very simply if all elements in
-a list verify a predicate (\lst{all}).
+This enables to write powerful pieces of code, like functions that
+take function as argument. For instance, consider the \texttt{all}
+function: given a list and a function, it applies the function to each
+element of the list, and returns whether all calls returned true. This
+enables to check very simply if all elements in a list verify a
+predicate (\lst{all}).
 
 \begin{lstlisting}[caption=Functional programming: the \texttt{all}
   function, label=lst:all]
   function all(list, predicate)
   {
-    for elt in list
+    for (var elt : list)
       if (!predicate(elt))
         return false;
     return true;
@@ -1656,7 +1661,7 @@ a list verify a predicate (\lst{all}).
 \section{Lambda functions}
 
 Another nice feature is the ability to write lambda functions, which
-are anonymous function. You can create a functional value as an
+are anonymous functions. You can create a functional value as an
 expression, without naming it, with the syntax shown in \lst{lambda}.
 
 \begin{lstlisting}[caption=Lambda function, label=lst:lambda]
@@ -1670,28 +1675,28 @@ expression, without naming it, with the syntax shown in \lst{lambda}.
 \end{lstlisting}
 
 In fact, the \texttt{function} construct we saw earlier is only a
-shorthand for a variable affectation (\lst{function-sugar}).
+shorthand for a variable assignment (\lst{function-sugar}).
 
 \begin{lstlisting}[caption=The function sugar,
   label=lst:function-sugar]
   // This ...
-  function obj.f () {/*...*/};
+  function obj.f (/*...*/) {/*...*/};
   // ... is actually a shorthand for this
-  var obj.f = function () {/* ... */};
+  var obj.f = function (/*...*/) {/* ... */};
 \end{lstlisting}
 
 % This should maybe be outside the functional section. It is also
 % incomplete.
 \section{Lazy arguments}
 
-Most popular programming language user strict arguments evaluation:
-argument are evaluated before function are called. Other language use
-lazy evaluation: argument are evaluated by the function only when
+Most popular programming languages use strict arguments evaluation:
+arguments are evaluated before functions are called. Other languages
+use lazy evaluation: argument are evaluated by the function only when
 needed. In \urbi, evaluation is strict by default, but you can ask a
-function not to evaluate its arguments, and do it by hand. This work
-by not specifying a function formal arguments. The function is
-provided with a \texttt{call} object that enables you to evaluate
-arguments (\lst{lazy}).
+function not to evaluate its arguments, and do it by hand. This works
+by not specifying formal arguments. The function is provided with a
+\texttt{call} object that enables you to evaluate arguments
+(\lst{lazy}).
 
 \begin{lstlisting}[caption=Tweaking arguments evaluation,
   label=lst:lazy]
@@ -1711,7 +1716,7 @@ arguments (\lst{lazy}).
     call.evalArgs;
   };
   [00000000] ...
-  first(echo("first"), echo("second"));
+  twice(echo("first"), echo("second"));
   [00000000] *** first
   [00000000] *** second
   [00000000] *** first
@@ -1719,11 +1724,11 @@ arguments (\lst{lazy}).
 \end{lstlisting}
 
 A good example are logic operators. Although \Cxx is a strict
-language, it uses a few logic operator. For instance, the logical and
+language, it uses a few logic operators. For instance, the logical and
 (\texttt{\&\&}) does not evaluate its right operand if the left
 operand is false (the result will be false anyway).
 
-\urbi logic operator mimic this behavior. \lst{short-circuits} show
+\urbi logic operator mimic this behavior. \lst{short-circuits} shows
 how one can implement such a behavior.
 
 \begin{lstlisting}[caption=Implementing logic short circuits,
@@ -1746,6 +1751,7 @@ how one can implement such a behavior.
   and(false, f());
   [00000000] false
   and(true, f());
+  [00000000] *** f executed
   [00000000] true
 \end{lstlisting}
 
@@ -1764,23 +1770,23 @@ agents, such as robotics or \ai.
 
 \section{Parralelism operators}
 
-For now, we've separated our different command with a semicolon
+For now, we've separated our different commands with a semicolon
 (\texttt{;}). There are actually other separators in \urbi:
 
 \begin{itemize}
-\item \texttt{;}: Serialization operator. Wait for the left operand to
-  finish before continuing.
-\item \texttt{\&}: Parallelism n-ary operator. All operands are
+\item ``\texttt{;}'': Serialization operator. Wait for the left
+  operand to finish before continuing.
+\item ``\texttt{\&}'': Parallelism n-ary operator. All operands are
   started simultaneously, and executed in parallel. The \texttt{\&}
   block itself finishes when both operands finish. \texttt{\&} has
   higher precedence than other separators.
-\item \texttt{\,}: Background operator. Left operand is started, and
-  evaluation continues immediately. End of execution of the left
+\item ``\texttt{,}'': Background operator. Left operand is started,
+  and evaluation continues immediately. End of execution of the left
   operand is waited at the exit of the scope.
 \end{itemize}
 
-\lst{parallelism-operators} show a usage of \texttt{\&} to launch two
-function in parallel.
+\lst{parallelism-operators} show usage of \texttt{\&} to launch two
+functions in parallel.
 
 \begin{lstlisting}[caption=Parallelism operator,
   label=lst:parallelism-operators]
@@ -1831,7 +1837,7 @@ subtle:
 
 \begin{lstlisting}[caption=Difference between ``\texttt{\&}'' and
   ``\texttt{,}'', label=lst:and-comma]
-  // This run test and echo("right") in parallel,
+  // This runs test and echo("right") in parallel,
   // and wait until both are done before continuing
   test("left") & echo("right"); echo("done");
   [00000000] *** left: 1
@@ -1840,7 +1846,7 @@ subtle:
   [00000000] *** left: 3
   [00000000] *** done
   // This runs test in background,
-  // then both echo without waiting.
+  // then both echos without waiting.
   test("left") , echo("right"); echo("done");
   [00000000] *** left: 1
   [00000000] *** right
@@ -1872,14 +1878,14 @@ end of the scope (\lst{detach}).
   ..[00005000] *** foo
 \end{lstlisting}
 
-\section{Tags for parallel flows control}
+\section{Tags for parallel control flows}
 
 Tags are a multipurpose code execution control and instrumentation
 feature. Any chunk of code can be tagged, by preceding it with a tag
-and a colon (\texttt{:}). Tag can be created with
+and a colon (\texttt{$:$}). Tag can be created with
 \lstinline|Tag.new("name")|. Giving tags a name is optional, yet it's
-probably a better idea since it will be used for may
-features. \lst{tagging} illustrate how to tag chunks of code.
+probably a better idea since it will be used for many
+features. \lst{tagging} illustrates how to tag chunks of code.
 
 \begin{lstlisting}[caption=Tagging a block of code, label=lst:tagging]
   // Create a new tag
@@ -1888,7 +1894,7 @@ features. \lst{tagging} illustrate how to tag chunks of code.
   // Tag the evaluation of 42
   mytag: 42;
   [00000000] 42
-  // Tag the evaluation of a scope
+  // Tag the evaluation of a block
   mytag: { "foo"; 51 };
   [00000000] 51
   // Tag the execution of a function
@@ -1904,14 +1910,14 @@ practice in regular code.
 
 \begin{lstlisting}[caption=Tag created implicitly,
   label=lst:implicit-tag]
-  // Since tag is not declared, this will first do:
+  // Since mytag is not declared, this will first do:
   // var Tag.mytag = new Tag("mytag");
   mytag : 42;
   [00000000] 42
 \end{lstlisting}
 
 So you can tag code, yet what's the use? One of the primary purpose of
-tag is to be able to control the execution of code running in
+tags is to be able to control the execution of code running in
 parallel. Tags have a few control methods:
 
 \begin{itemize}
@@ -1924,7 +1930,7 @@ parallel. Tags have a few control methods:
   \begin{itemize}
   \item Stop it.
   \item When an execution flow encounters the tagged block, it simply
-    skip it.
+    skips it.
   \end{itemize}
   You can think of block like a permanent stop.
 \item \texttt{unblock}: Stop blocking the tagged code.
@@ -1950,7 +1956,7 @@ features.
   ..[00002000] *** ping
   // Suspend execution
   mytag.freeze;
-  // No printing happen anymore
+  // No printing anymore
   sleep(5s);
   // Resume execution
   mytag.unfreeze;
@@ -1992,7 +1998,7 @@ features.
   while (true)
   {
     echo("ping"); sleep(1s);
-    mytag: { echo("ping"); sleep(1s); };
+    mytag: { echo("pong"); sleep(1s); };
   };
 
   // Execution flow will jump here
@@ -2020,12 +2026,12 @@ features.
 
 \section{Advanced example with parallelism and tags}
 
-In this section, we are going to a implement more advanced example
-with parallelism.
+In this section, we implement a more advanced example with
+parallelism.
 
-\lst{timeout} present how to implement a \texttt{timeOut} function,
-that take code to execute and a timeout as arguments. It executes the
-code, and return its return value. However, if the code execution
+\lst{timeout} presents how to implement a \texttt{timeOut} function,
+that takes code to execute and a timeout as arguments. It executes the
+code, and returns its return value. However, if the code execution
 takes longer than the given timeout, it aborts it, print
 \lstinline|"Timeout!"| and returns void. In this example, we use:
 
@@ -2039,7 +2045,7 @@ takes longer than the given timeout, it aborts it, print
 \begin{lstlisting}[caption=Implementing a timeout method, label=lst:timeout]
   function timeOut
   {
-    // In background, we launch a timeout job, that wait
+    // In background, we launch a timeout job, that waits
     // for the given duration before aborting the function.
     // call.evalArgAt is the second argument, the delay
     {
