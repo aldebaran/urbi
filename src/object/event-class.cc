@@ -73,9 +73,8 @@ namespace object
   Event::onEvent(runner::Runner& r, rCode handler)
   {
     rObject instance = barrier_->wait(r);
-    objects_type args = objects_type(instance->as<Event>()->value_);
-    args.push_front(instance);
-    r.apply(handler, SYMBOL(onEvent), args);
+    r.apply(handler, SYMBOL(onEvent),
+	    list_of (instance) (instance));
   }
 
   void
