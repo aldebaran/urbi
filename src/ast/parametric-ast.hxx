@@ -23,6 +23,11 @@ namespace ast
     passert(libport::deref << t, unique_(t));
 #endif
     append_(count_, t);
+    // Compute the location of the source text we used.
+    if (!effective_location_.begin.filename)
+      effective_location_ = t->location_get();
+    else
+      effective_location_ = effective_location_ + t->location_get();
     return *this;
   }
 
@@ -34,8 +39,9 @@ namespace ast
     if (getenv("DESUGAR"))
       LIBPORT_ECHO(*this);
     operator()(ast_);
+    result_->location_set(effective_location_);
     if (getenv("DESUGAR"))
-      LIBPORT_ECHO(*result_);
+      LIBPORT_ECHO(result_->location_get() << ": " << *result_);
     clear();
     return assert_exp(result_.unsafe_cast<T>());
   }

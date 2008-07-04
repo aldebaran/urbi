@@ -548,7 +548,7 @@ stmt:
 	     "from" identifier_as_string
   {
     static ast::ParametricAst a("'external'.'var'(%exp:1, %exp:2, %exp:3)");
-    $$ = exp(a % $3 % $5 % $7);
+    $$ = exp(a % $3.value() % $5.value() % $7.value());
   }
 | "external" "function" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
@@ -556,7 +556,7 @@ stmt:
   {
     static ast::ParametricAst
       a("'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
-    $$ = exp(a % $4 % $6 % $8 % $10);
+    $$ = exp(a % $4.value() % $6.value() % $8.value() % $10.value());
   }
 | "external" "event" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
@@ -564,7 +564,7 @@ stmt:
   {
     static ast::ParametricAst
       a("'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
-    $$ = exp(a % $4 % $6 % $8 % $10);
+    $$ = exp(a % $4.value() % $6.value() % $8.value() % $10.value());
   }
 ;
 
@@ -813,7 +813,7 @@ stmt:
 | "every" "(" exp ")" nstmt
     {
       static ast::ParametricAst every("every_(%exp:1, %exp:2)");
-      $$ = exp (every % $3 % $5);
+      $$ = exp (every % $3.value() % $5.value());
     }
 | "if" "(" exp ")" nstmt %prec CMDBLOCK
     {
@@ -1118,12 +1118,12 @@ exp:
   exp "[" exp "]"
   {
     static ast::ParametricAst rewrite("%exp:1 .'[]'(%exp:2)");
-    $$ = ast::exp(rewrite % $1 % $3);
+    $$ = ast::exp(rewrite % $1.value() % $3.value());
   }
 | exp "[" exp "]" "=" exp
   {
     static ast::ParametricAst rewrite("%exp:1 .'[]='(%exp:2, %exp:3)");
-    $$ = ast::exp(rewrite % $1 % $3 % $6);
+    $$ = ast::exp(rewrite % $1.value() % $3.value() % $6.value());
   }
 ;
 

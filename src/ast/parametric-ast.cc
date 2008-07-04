@@ -15,6 +15,7 @@ namespace ast
   ParametricAst::ParametricAst(const std::string& s)
     : exp_map_type("exp")
     , ast_(parser::parse(s)->ast_xget())
+    , effective_location_()
     , count_(0)
   {
   }
@@ -43,6 +44,7 @@ namespace ast
 #ifndef NDEBUG
     unique_.clear();
 #endif
+    effective_location_.initialize(0);
     count_ = 0;
   }
 
@@ -64,7 +66,7 @@ namespace ast
   `--------------------------*/
 
   rExp
-  exp (ParametricAst& a)
+  exp(ParametricAst& a)
   {
     return a.result<Exp>();
   }
@@ -72,7 +74,7 @@ namespace ast
   std::ostream&
   operator<< (std::ostream& o, const ParametricAst& a)
   {
-    return a.dump (o);
+    return a.dump(o);
   }
 
 } // namespace ast

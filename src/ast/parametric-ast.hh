@@ -61,6 +61,9 @@ namespace ast
     /// The ast, possibly with meta-variables.
     rConstAst ast_;
 
+    /// The location, based on provided arguments.
+    loc effective_location_;
+
     /// The slot number for the next effective argument, starting at 0.
     unsigned count_;
 
