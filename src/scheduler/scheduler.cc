@@ -325,7 +325,15 @@ namespace scheduler
 	continue;
       // Job to be started during this cycle.
       if (job->state_get() == to_start)
-	pending_.remove(job);
+      {
+	// Check if this job deserves to be removed.
+	foreach (const rTag& t, job->tags_get())
+	  if (t->derives_from(*tag))
+	  {
+	    pending_.remove(job);
+	    continue;
+	  }
+      }
       // Any other non-current job.
       else if (job != current_job_)
 	job->register_stopped_tag(tag, payload);
