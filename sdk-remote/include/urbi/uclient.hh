@@ -44,7 +44,7 @@ namespace urbi
 
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;
-    
+
     //! For internal use.
     void listenThread();
 
@@ -59,9 +59,6 @@ namespace urbi
     int             sd;                  ///< Socket file descriptor.
 
   private:
-    //! Callback for "PONG' reception
-    UCallbackAction pongCallback(const UMessage& msg);
-
     /// Pipe for termination notification
     int             control_fd[2];       ///< Pipe for termination notification.
     void*           thread;

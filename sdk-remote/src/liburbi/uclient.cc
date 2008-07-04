@@ -199,14 +199,6 @@ namespace urbi
   }
 
 
-  UCallbackAction
-  UClient::pongCallback(const UMessage &)
-  {
-    waitingPong = false;
-    return URBI_CONTINUE;
-  }
-
-
   void
   UClient::listenThread()
   {
@@ -216,8 +208,6 @@ namespace urbi
 
     maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
-
-    setCallback(callback(*this, &UClient::pongCallback), pongTag);
 
     while (true)
     {
@@ -281,6 +271,9 @@ namespace urbi
 
       if (selectReturn > 0)
       {
+        // We receive data, at least the "1" value sent through the pongTag
+        // channel so we are no longer waiting for a pong.
+        waitingPong = false;
         int count = ::recv(sd, &recvBuffer[recvBufferPosition],
                            buflen - recvBufferPosition - 1, 0);
 
