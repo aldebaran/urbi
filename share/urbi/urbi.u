@@ -523,8 +523,8 @@ Global.addProto (Global.Profiling);
 class Global.Executable {};
 
 # Executable derives from Object.
-[Code, Primitive, Delegate].each(function (c) { c.setProtos([Executable]); });
-
+for (var c: [Code, Primitive, Delegate])
+  c.setProtos([Executable]);
 
 load("urbi/loadable.u");
 

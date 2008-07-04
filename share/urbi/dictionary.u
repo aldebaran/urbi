@@ -4,9 +4,8 @@ do Global.Dictionary
   {
     var dictionary = self|
     var res = []|
-    keys.each (function(k) {
-      res.push_back(Pair.new (k, dictionary.get (k)))
-    })|
+    for (var k: keys)
+      res.push_back(Pair.new (k, dictionary.get (k)))|
     res
   };
 
