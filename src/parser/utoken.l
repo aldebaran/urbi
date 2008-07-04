@@ -539,6 +539,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "&&"            RETURN_OP(AMPERSAND_AMPERSAND);
 "||"            RETURN_OP(PIPE_PIPE);
 
+"?"             RETURN(INT_MARK);
+
 "="             RETURN(EQ);
 
 "->"            RETURN(MINUS_GT);

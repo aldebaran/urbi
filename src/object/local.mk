@@ -54,6 +54,8 @@ object/delegate-class.cc			\
 object/delegate-class.hh			\
 object/dictionary-class.cc			\
 object/dictionary-class.hh			\
+object/event-class.cc				\
+object/event-class.hh				\
 object/float-class.cc				\
 object/float-class.hh				\
 object/fwd.hh					\

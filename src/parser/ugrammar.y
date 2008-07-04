@@ -240,6 +240,7 @@
 	TOK_LOOP         "loop"
 	TOK_WHILE        "while"
 	TOK_AT           "at"
+        TOK_INT_MARK     "?"
 ;
 %printer { debug_stream() << $$; } <flavor>;
 
@@ -787,6 +788,27 @@ stmt:
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | at( " << s << ") "
               << $7.value() << " onleave " << $9.value() << "");
+    }
+| "at" "(" "?" "(" exp ")" ")" nstmt
+    {
+      DESUGAR("at(?(" << $5.value() << ")())" << $8.value());
+    }
+| "at" "(" "?" "(" exp ")" "(" exps ")" ")" nstmt
+    {
+      libport::Symbol handle = libport::Symbol::fresh(SYMBOL(handle));
+      DESUGAR("detach({while(true) " << $5.value() << ".onEvent(closure ("
+	      << handle << ") {"
+	      << "if (Pattern.new(" << ast::rExp(new ast::List(@8, $8)) << ").match("
+	      << handle << ".values))" << $11.value() << "})})");
+    }
+| "at" "(" "?" k1_id "(" exps ")" ")" nstmt
+    {
+      DESUGAR("at(?(" << $4.value() << ") (" << $6
+	      << "))" << $9.value());
+    }
+| "at" "(" "?" k1_id ")" nstmt
+    {
+      DESUGAR("at(?(" << $4.value() << ")())" << $6.value());
     }
 | "every" "(" exp ")" nstmt
     {
