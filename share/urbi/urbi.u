@@ -32,12 +32,12 @@ do Object
   # Cannot use "from" which is a k1 reserved word.
   function copySlot (frm, to)
   {
-    self.setSlot(to, self.getSlot(frm))
+    setSlot(to, getSlot(frm))
   };
 
   function cloneSlot (frm, to)
   {
-    self.setSlot(to, self.getSlot(frm).clone)
+    setSlot(to, getSlot(frm).clone)
   };
 
   # Some sort of k1 compatibility.
@@ -97,7 +97,7 @@ do Object
 do Global
 {
   // Import the primitives.
-  self.addProto(System);
+  addProto(System);
 
   // Look for file and load file.
   function load (file)
@@ -184,8 +184,8 @@ do Object
     self
   }
 };
-var void.acceptVoid.acceptVoid = function() { self.new};
-var void.acceptVoid.unAcceptVoid = function() { self.protos.front};
+var void.acceptVoid.acceptVoid = function() { new };
+var void.acceptVoid.unAcceptVoid = function() { protos.front };
 
 ## --------- ##
 ## Booleans. ##

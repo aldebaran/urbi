@@ -11,7 +11,7 @@ class Global.Lazy
 
   function eval()
   {
-    val = self.code.acceptVoid|
+    val = code.acceptVoid|
     getSlot("val").unAcceptVoid
   };
 
@@ -24,6 +24,6 @@ class Global.Lazy
 
   function string ()
   {
-    self.getSlot("code").bodyString
+    getSlot("code").bodyString
   };
 };

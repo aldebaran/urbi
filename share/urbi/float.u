@@ -7,14 +7,14 @@ do Float
   addProto(Comparable);
   addProto(Orderable);
 
-  function init(x) { self.set(x) };
+  function init(x) { set(x) };
 
   function sqr() { self * self };
 
   function '~='(x) { (self - x).abs <= epsilontilde };
   function '%='(x) { (1.0 - self / x).abs <= epsilonpercent };
   # FIXME: =~= cannot be correctly implemented without properties.
-  function '=~='(x) { (self - x) <= self.delta + x.delta };
+  function '=~='(x) { (self - x) <= delta + x.delta };
   function sgn() { if (self < 0) -1 else if (self > 0) 1 else 0 };
 
   // Create a list 0..(self - 1).
@@ -28,13 +28,13 @@ do Float
 
   function '\'n'()
   {
-    (self - self.rangemin) / (self.rangemax - self.rangemin)
+    (self - rangemin) / (rangemax - rangemin)
   };
 
   function getNormHook() {
     function(n, value) {
-      var rmin = self.rangemin|
-      var rmax = self.rangemax|
+      var rmin = rangemin|
+      var rmax = rangemax|
       value = value*(rmax-rmin) + rmin|
       var value.rangemin = rmin|
       var value.rangemax = rmax|

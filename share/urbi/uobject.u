@@ -36,7 +36,7 @@ class Object.UObject
   {
     if (interval < minimumInterval)
       interval = minimumInterval;
-    if (!self.locateSlot("timerTask").sameAs(self))
+    if (!locateSlot("timerTask").sameAs(self))
       timerTask = [];
     var tag = new Tag;
     tag: detach({loop{ func(); sleep(interval)}}) |
@@ -49,11 +49,11 @@ class Object.UObject
       interval = minimumInterval;
     // Ensure only one instance is running using a tag in slot hub<hubname>.
     var slotName = "hub"+hubname;
-    if (self.locateSlot(slotName).sameAs(nil))
-      self.setSlot(slotName, new Tag);
-    self.getSlot(slotName).stop;
+    if (locateSlot(slotName).sameAs(nil))
+      setSlot(slotName, new Tag);
+    getSlot(slotName).stop;
     if (0 < interval)
-      self.getSlot(slotName):
+      getSlot(slotName):
         detach({loop{ func(); sleep(interval)}})
   };
 };
@@ -88,7 +88,7 @@ class Object.uvar
   /// Hook write attempts to the UVar.
   function updateHook(slot, newval)
   {
-    self.getSlot(slot).update_(slot, newval);
+    getSlot(slot).update_(slot, newval);
   };
 
   function update_(slot, newval)
@@ -266,11 +266,11 @@ class Global.'external'
     };
     // Ignore duplicate binds of same var.
     var lid = lobby.uid;
-    if (lid not in self.slotNames)
-      self.setSlot(lid, []);
-    if (fullname in self.getSlot(lid))
+    if (lid not in slotNames)
+      setSlot(lid, []);
+    if (fullname in getSlot(lid))
       return;
-    self.getSlot(lid).push_back(fullname);
+    getSlot(lid).push_back(fullname);
     var obj = uobjects.getSlot(objname);
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.locateSlot(varname).sameAs(obj))
