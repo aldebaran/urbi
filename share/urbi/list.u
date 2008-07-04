@@ -4,6 +4,9 @@
 
 do List
 {
+  copySlot("nth", "[]");
+  copySlot("setNth", "[]=");
+
   // Whether e is in the list.
   function has(e)
   {

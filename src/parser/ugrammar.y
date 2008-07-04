@@ -366,6 +366,7 @@
 %right "**"
 %right "!" "compl" "++" "--" UNARY     /* Negation--unary minus */
 %left  "("
+%nonassoc "["
 %left  "."
 
 /* URBI Grammar */
@@ -1084,6 +1085,24 @@ exp:
 | duration       { $$ = new ast::Float(@$, $1);        }
 | "string"       { $$ = new ast::String(@$, take($1)); }
 | "[" exps "]"   { $$ = new ast::List(@$, $2);	       }
+;
+
+
+/*---------------------------.
+| Square brackets operator.  |
+`---------------------------*/
+
+exp:
+  exp "[" exp "]"
+  {
+    static ast::ParametricAst rewrite("%exp:1 .'[]'(%exp:2)");
+    $$ = ast::exp(rewrite % $1 % $3);
+  }
+| exp "[" exp "]" "=" exp
+  {
+    static ast::ParametricAst rewrite("%exp:1 .'[]='(%exp:2, %exp:3)");
+    $$ = ast::exp(rewrite % $1 % $3 % $6);
+  }
 ;
 
 
