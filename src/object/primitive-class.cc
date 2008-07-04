@@ -50,12 +50,14 @@ namespace object
   bool Primitive::primitive_added =
     CxxObject::add<Primitive>("Primitive", primitive_class);
 
+  // FIXME: Code duplication with Code::apply.  Maybe there are more
+  // opportunity to factor.
   rObject
   Primitive::apply(runner::Runner& r, rList args)
   {
     if (args->value_get().empty())
       throw PrimitiveError(SYMBOL(apply),
-                           "list of arguments must begin with self");
+                           "list of arguments must begin with this");
     return r.apply(this, SYMBOL(apply), args->value_get());
   }
 

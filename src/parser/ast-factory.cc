@@ -125,7 +125,7 @@ namespace parser
       << "do '$tmp'"
       << " {"
       <<   "var protoName = " << ast_string(l, name) << "|"
-      <<   "function " << ("as" + name.name_get()) << "() {self}|"
+      <<   "function " << ("as" + name.name_get()) << "() { this }|"
       <<   ast_exp(block)
       << "} |"
       << "'$tmp'"

@@ -960,7 +960,7 @@ Local:
 This:
   super: Exp
   printer:
-    - '"self"'
+    - '"this"'
 
 CallMsg:
   super: Exp

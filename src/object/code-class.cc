@@ -87,7 +87,7 @@ namespace object
   {
     if (args->value_get().empty())
       throw PrimitiveError(SYMBOL(apply),
-                           "list of arguments must begin with self");
+                           "list of arguments must begin with this");
     return r.apply(this, SYMBOL(apply), args->value_get());
   }
 
