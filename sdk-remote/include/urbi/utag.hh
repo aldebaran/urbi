@@ -28,6 +28,7 @@ namespace urbi
 {
 
    static const std::string connectionTimeoutTag = "__URBI_TAG_CONNECTION_TIMEOUT";
+   static const std::string internalPongTag = "__URBI_TAG_INTERNAL_PONG";
 
 } // namespace urbi
 

@@ -202,8 +202,6 @@ namespace urbi
   void
   UClient::listenThread()
   {
-    const char* pongTag = "__URBI_INTERNAL_PONG";
-
     int maxfd;
 
     maxfd = 1 + std::max(sd, control_fd[0]);
@@ -264,14 +262,14 @@ namespace urbi
         }
         else // Timeout : Ping_interval
         {
-          send("%s << 1,", pongTag);
+          send("%s << 1,", internalPongTag.c_str());
           waitingPong = true;
         }
       }
 
       if (selectReturn > 0)
       {
-        // We receive data, at least the "1" value sent through the pongTag
+        // We receive data, at least the "1" value sent through the pong tag
         // channel so we are no longer waiting for a pong.
         waitingPong = false;
         int count = ::recv(sd, &recvBuffer[recvBufferPosition],
