@@ -658,9 +658,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   // Push back "n.'\''" in the stream.
   char* quote = strchr(yytext, '\'');
   std::string s (yytext, quote - yytext);
-  s += ".'\\'";
-  s += quote[1] == '\'' ? "\\'" : quote + 1;
-  s += '\'';
+  s += "_quote_";
+  s += quote[1] == '\'' ? "quote" : quote + 1;
   DEPRECATED(s);
 }
 
