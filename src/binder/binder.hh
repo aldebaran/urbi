@@ -57,7 +57,7 @@ namespace binder
                                 (Scope));
 
       template <typename Code>
-      void handleCode(libport::shared_ptr<const Code> code, bool closure);
+      void handleRoutine(libport::shared_ptr<const Code> code);
 
       template <typename Node, typename NewNode>
       void link_to_declaration(Node input,
@@ -66,14 +66,12 @@ namespace binder
                                unsigned depth);
 
     private:
-
-      /// Actions to perform at exit of the most inner scope
+      /// Actions to perform at exit of the innermost scope.
       typedef std::list<libport::Finally> unbind_type;
       unbind_type unbind_;
 
       /// Declaration * depth
-      typedef std::pair<ast::rDeclaration, unsigned>
-        binding_type;
+      typedef std::pair<ast::rDeclaration, unsigned> binding_type;
       typedef std::list<binding_type> Bindings;
       typedef std::map<libport::Symbol, Bindings> Environment;
       /// Map of currently bound variables
@@ -84,15 +82,17 @@ namespace binder
       set_on_self_type setOnSelf_;
 
       /// The stack of current number of local variables, and maximum
-      /// number of local variable used by the current function.
-      typedef std::list<ast::rCode> function_stack_type;
-      function_stack_type function_stack_;
-      /// Helpers functions to manipulate the frame size stack
-      void push_function(ast::rCode f);
-      void pop_function();
-      ast::rCode function() const;
+      /// number of local variable used by the current routine.
+      typedef std::list<ast::rCode> routine_stack_type;
+      routine_stack_type routine_stack_;
+      /// Helpers routines to manipulate the frame size stack
+      void routine_push(ast::rCode f);
+      void routine_pop();
+      /// The routine currently defined.
+      /// Cannot be called if there is none.
+      ast::rCode routine() const;
 
-      /// Level of function imbrication
+      /// Level of routine nesting.
       unsigned depth_;
       /// Local index at the toplevel
       unsigned toplevel_index_;
@@ -100,22 +100,26 @@ namespace binder
       /// Register that \a var is bound in any subscope, \a being its
       /// declaration
       void bind(ast::rDeclaration decl);
+
       /// \return 0 if the variable isn't local, or the depth in
-      /// number of imbriqued function otherwise.
+      /// number of nested routines otherwise.
       unsigned depth_get(const libport::Symbol& name);
       ast::rDeclaration decl_get(const libport::Symbol& name);
+
       /// Factored method to handle scopes.
       ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
+
       /// Factored method to create updateSlot/setSlot calls.
       ast::rCall changeSlot(const ast::loc& l,
                             const libport::Symbol& name,
                             const libport::Symbol& method,
                             ast::rConstExp value);
+
       /// Make a lazy from \a arg
       ast::rExp lazify (ast::rExp arg, const ast::loc& loc);
+
       /// Make a closure from \a arg
       ast::rClosure make_closure(ast::rConstExp e, const ast::loc& loc);
-
   };
 
 } // namespace binder

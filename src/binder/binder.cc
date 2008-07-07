@@ -68,10 +68,10 @@ namespace binder
   }
 
   ast::rCall
-  Binder::changeSlot (const ast::loc& l,
-                      const libport::Symbol& name,
-                      const libport::Symbol& method,
-                      ast::rConstExp value)
+  Binder::changeSlot(const ast::loc& l,
+                     const libport::Symbol& name,
+                     const libport::Symbol& method,
+                     ast::rConstExp value)
   {
     ast::exps_type* args = new ast::exps_type();
     args->push_back(new ast::String(l, name));
@@ -114,7 +114,7 @@ namespace binder
       BIND_ECHO("It's captured");
       decl->closed_set(true);
 
-      function_stack_type::reverse_iterator f_it = function_stack_.rbegin();
+      routine_stack_type::reverse_iterator f_it = routine_stack_.rbegin();
       const ast::loc loc = input->location_get();
       for (int i = depth_ - depth; i; --i, ++f_it)
       {
@@ -151,7 +151,9 @@ namespace binder
       result->declaration_set(outer_decl);
   }
 
-  void Binder::visit(ast::rConstAssignment input)
+
+  void
+  Binder::visit(ast::rConstAssignment input)
   {
     assert(!input->declaration_get());
     libport::Symbol name = input->what_get();
@@ -169,7 +171,9 @@ namespace binder
                            input->value_get());
   }
 
-  void Binder::visit (ast::rConstCall input)
+
+  void
+  Binder::visit(ast::rConstCall input)
   {
     libport::Symbol name = input->name_get();
     ast::loc loc = input->location_get();
@@ -298,7 +302,7 @@ namespace binder
 
   template <typename Code>
   void
-  Binder::handleCode(libport::shared_ptr<const Code> input, bool)
+  Binder::handleRoutine(libport::shared_ptr<const Code> input)
   {
     BIND_ECHO("Push" << libport::incindent);
     libport::Finally finally;
@@ -306,8 +310,8 @@ namespace binder
     // Clone and push the function, without filling its body and arguments
     libport::shared_ptr<Code> res = new Code(input->location_get(), 0, 0);
     res->local_variables_set(new ast::declarations_type());
-    push_function(res);
-    finally << boost::bind(&Binder::pop_function, this);
+    routine_push(res);
+    finally << boost::bind(&Binder::routine_pop, this);
 
     // Open a new scope
     unbind_.push_back(libport::Finally());
@@ -322,15 +326,10 @@ namespace binder
     finally << boost::bind(decrement, &depth_);
 
     // Bind and clone arguments
-    ast::declarations_type* formals =
-      input->formals_get () ? recurse_collection (*input->formals_get ()) : 0;
+    res->formals_set(recurse_collection(input->formals_get()));
 
     // Bind and clone the body
-    ast::rAbstractScope body = recurse (input->body_get ());
-
-    // Assemble the result
-    res->formals_set(formals);
-    res->body_set(body);
+    res->body_set(recurse(input->body_get ()));
     result_ = res;
 
     // Index local and closed variables
@@ -355,13 +354,13 @@ namespace binder
   void
   Binder::visit(ast::rConstFunction input)
   {
-    handleCode(input, false);
+    handleRoutine(input);
   }
 
   void
   Binder::visit(ast::rConstClosure input)
   {
-    handleCode(input, true);
+    handleRoutine(input);
   }
 
   void
@@ -370,7 +369,7 @@ namespace binder
     assert(decl);
 
     // If we are at the toplevel, we can't determine the local index.
-    if (function_stack_.empty())
+    if (routine_stack_.empty())
     {
       // This indexing merges locals and closed, thus entailing too
       // much toplevel stack allocation in Interpreter::local_set.
@@ -378,7 +377,7 @@ namespace binder
       unbind_.back() << boost::bind(decrement, &toplevel_index_);
     }
     else
-      function()->local_variables_get()->push_back(decl);
+      routine()->local_variables_get()->push_back(decl);
 
 
     env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
@@ -387,23 +386,22 @@ namespace binder
   }
 
   void
-  Binder::push_function(ast::rCode f)
+  Binder::routine_push(ast::rCode f)
   {
-    function_stack_.push_back(f);
+    routine_stack_.push_back(f);
   }
 
   void
-  Binder::pop_function()
+  Binder::routine_pop()
   {
-    function_stack_.pop_back();
+    routine_stack_.pop_back();
   }
 
   ast::rCode
-  Binder::function() const
+  Binder::routine() const
   {
-    assert(!function_stack_.empty());
-
-    return function_stack_.back();
+    assert(!routine_stack_.empty());
+    return routine_stack_.back();
   }
 
   void
