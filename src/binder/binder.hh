@@ -107,10 +107,10 @@ namespace binder
       /// Factored method to handle scopes.
       ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
       /// Factored method to create updateSlot/setSlot calls.
-      ast::rCall changeSlot (const ast::loc& l,
-                             const libport::Symbol& name,
-                             const libport::Symbol& method,
-                             ast::rConstExp value);
+      ast::rCall changeSlot(const ast::loc& l,
+                            const libport::Symbol& name,
+                            const libport::Symbol& method,
+                            ast::rConstExp value);
       /// Make a lazy from \a arg
       ast::rExp lazify (ast::rExp arg, const ast::loc& loc);
       /// Make a closure from \a arg

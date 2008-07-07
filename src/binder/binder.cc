@@ -32,7 +32,8 @@ namespace binder
   Binder::~Binder()
   {}
 
-  unsigned Binder::depth_get(const libport::Symbol& name)
+  unsigned
+  Binder::depth_get(const libport::Symbol& name)
   {
     if (env_[name].empty())
       return 0;
@@ -43,16 +44,18 @@ namespace binder
     }
   }
 
-  ast::rDeclaration Binder::decl_get(const libport::Symbol& name)
+  ast::rDeclaration
+  Binder::decl_get(const libport::Symbol& name)
   {
     assert (!env_[name].empty());
     return env_[name].back().first;
   }
 
-  ast::rCall Binder::changeSlot (const ast::loc& l,
-                                 const libport::Symbol& name,
-                                 const libport::Symbol& method,
-                                 ast::rConstExp value)
+  ast::rCall
+  Binder::changeSlot (const ast::loc& l,
+                      const libport::Symbol& name,
+                      const libport::Symbol& method,
+                      ast::rConstExp value)
   {
     ast::exps_type* args = new ast::exps_type();
     args->push_back(new ast::String(l, name));
@@ -61,16 +64,12 @@ namespace binder
     return new ast::Call(l, new ast::Implicit(l), method, args);
   }
 
-  void Binder::visit(ast::rConstDeclaration input)
+  void
+  Binder::visit(ast::rConstDeclaration input)
   {
     if (setOnSelf_.back())
-    {
-      ast::rCall res = changeSlot(input->location_get(),
-                                  input->what_get(),
-                                  SYMBOL(setSlot),
-                                  input->value_get());
-      result_ = res;
-    }
+      result_ = changeSlot(input->location_get(), input->what_get(),
+                           SYMBOL(setSlot), input->value_get());
     else
     {
       BIND_ECHO("Bind " << input->what_get());
@@ -126,7 +125,7 @@ namespace binder
 
         f->captured_variables_get()->push_back(decl);
       }
-      stop:
+    stop:
       BIND_NECHO(libport::decindent);
     }
 
@@ -177,8 +176,6 @@ namespace binder
         super_type::visit(input);
     }
 
-    ast::rAst result = result_;
-
     ast::exps_type* args = 0;
     if (ast::rCall res = result_.unsafe_cast<ast::Call>())
       args = res->arguments_get();
@@ -196,11 +193,10 @@ namespace binder
           (loc, lazify((*input->arguments_get())[i], loc), arg);
       }
     }
-
-    result_ = result;
   }
 
-  ast::rExp Binder::lazify (ast::rExp arg, const ast::loc& loc)
+  ast::rExp
+  Binder::lazify (ast::rExp arg, const ast::loc& loc)
   {
     // build Lazy.clone.init(closure () { %arg })
     ast::rCall lazy = new ast::Call
@@ -212,16 +208,24 @@ namespace binder
     return init;
   }
 
-  ast::rClosure Binder::make_closure(ast::rConstExp e, const ast::loc& loc)
+  ast::rClosure
+  Binder::make_closure(ast::rConstExp e, const ast::loc& loc)
   {
     ast::rScope body = new ast::Scope(loc, const_cast<ast::Exp*>(e.get()));
     ast::rClosure closure =
       new ast::Closure(loc, new ast::declarations_type(), body);
+
+    // FIXME: Maybe started another Binder would be better?
+    ast::rAst res;
+    std::swap(res, result_);
     operator()(closure);
-    return result_.unsafe_cast<ast::Closure>();
+    std::swap(res, result_);
+
+    return res.unsafe_cast<ast::Closure>();
   }
 
-  void Binder::visit (ast::rConstForeach input)
+  void
+  Binder::visit (ast::rConstForeach input)
   {
     libport::Finally finally;
 
@@ -235,12 +239,14 @@ namespace binder
     super_type::visit(input);
   }
 
-  void Binder::visit (ast::rConstScope input)
+  void
+  Binder::visit (ast::rConstScope input)
   {
     result_ = new ast::Scope(input->location_get(), handleScope(input, false));
   }
 
-  void Binder::visit (ast::rConstDo input)
+  void
+  Binder::visit (ast::rConstDo input)
   {
     operator() (input->target_get());
     ast::rExp target = result_.unsafe_cast<ast::Exp>();
@@ -249,7 +255,8 @@ namespace binder
                           target);
   }
 
-  ast::rExp Binder::handleScope(ast::rConstAbstractScope scope, bool setOnSelf)
+  ast::rExp
+  Binder::handleScope(ast::rConstAbstractScope scope, bool setOnSelf)
   {
     libport::Finally finally;
 
@@ -266,13 +273,16 @@ namespace binder
     return result_.unsafe_cast<ast::Exp>();
   }
 
-  static void decrement(unsigned* n)
+  static
+  void
+  decrement(unsigned* n)
   {
     (*n)--;
   }
 
   template <typename Code>
-  void Binder::handleCode(libport::shared_ptr<const Code> input, bool)
+  void
+  Binder::handleCode(libport::shared_ptr<const Code> input, bool)
   {
     BIND_ECHO("Push" << libport::incindent);
     libport::Finally finally;
@@ -326,17 +336,20 @@ namespace binder
 
   }
 
-  void Binder::visit(ast::rConstFunction input)
+  void
+  Binder::visit(ast::rConstFunction input)
   {
     handleCode(input, false);
   }
 
-  void Binder::visit(ast::rConstClosure input)
+  void
+  Binder::visit(ast::rConstClosure input)
   {
     handleCode(input, true);
   }
 
-  void Binder::bind(ast::rDeclaration decl)
+  void
+  Binder::bind(ast::rDeclaration decl)
   {
     assert(decl);
 
@@ -349,8 +362,7 @@ namespace binder
       unbind_.back() << boost::bind(decrement, &toplevel_index_);
     }
     else
-      function()->local_variables_get()->
-        push_back(decl);
+      function()->local_variables_get()->push_back(decl);
 
 
     env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
@@ -358,17 +370,20 @@ namespace binder
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
 
-  void Binder::push_function(ast::rCode f)
+  void
+  Binder::push_function(ast::rCode f)
   {
     function_stack_.push_back(f);
   }
 
-  void Binder::pop_function()
+  void
+  Binder::pop_function()
   {
     function_stack_.pop_back();
   }
 
-  ast::rCode Binder::function() const
+  ast::rCode
+  Binder::function() const
   {
     assert(!function_stack_.empty());
 
