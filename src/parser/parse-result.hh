@@ -7,10 +7,7 @@
 # include <list>
 # include <string>
 
-namespace ast
-{
-  class Nary;
-}
+# include <ast/error.hh>
 
 namespace parser
 {
@@ -67,10 +64,10 @@ namespace parser
 
   public:
     /// Declare an error about \a msg.
-    void error(const std::string& msg);
+    void error(const ast::loc& l, const std::string& msg);
 
     /// Warn about \a msg.
-    void warn(const std::string& msg);
+    void warn(const ast::loc& l, const std::string& msg);
 
     /// Dump all the errors on std::cerr.
     /// For developpers.
@@ -81,14 +78,8 @@ namespace parser
     void process_errors(ast_type& target);
 
   private:
-    /// Errors and warnings.
-    typedef std::list<std::string> messages_type;
-
     /// List of parse error messages.
-    messages_type errors_;
-
-    /// List of warnings.
-    messages_type warnings_;
+    ast::Error errors_;
 
     /// Whether the errors and warnings were output or given.
     mutable bool reported_;

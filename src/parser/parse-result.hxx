@@ -8,18 +8,16 @@ namespace parser
 
   inline
   void
-  ParseResult::error (const std::string& msg)
+  ParseResult::error(const ast::loc& l, const std::string& msg)
   {
-    reported_ = false;
-    errors_.push_back(msg);
+    errors_.error(l, msg);
   }
 
   inline
   void
-  ParseResult::warn (const std::string& msg)
+  ParseResult::warn(const ast::loc& l, const std::string& msg)
   {
-    reported_ = false;
-    warnings_.push_back(msg);
+    errors_.warn(l, msg);
   }
 
   inline

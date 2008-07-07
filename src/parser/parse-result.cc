@@ -17,25 +17,10 @@
 namespace parser
 {
 
-  namespace
-  {
-    static
-    std::ostream&
-    operator<<(std::ostream& o,
-               const std::list<std::string>& ms)
-    {
-      std::copy(ms.begin(), ms.end(),
-                std::ostream_iterator<std::string>(o, "\n"));
-      return o;
-    }
-  }
-
   ParseResult::ParseResult()
     : status(-1)
     , ast_(0)
     , errors_()
-    , warnings_()
-    , reported_(false)
   {
   }
 
@@ -43,8 +28,6 @@ namespace parser
     : status(rhs.status)
     , ast_(rhs.ast_) // The ast is stolen here.
     , errors_(rhs.errors_)
-    , warnings_(rhs.warnings_)
-    , reported_(rhs.reported_)
   {
     // It is now up to the most recent object to output the result.
     reported_ = true;
@@ -52,9 +35,6 @@ namespace parser
 
   ParseResult::~ParseResult()
   {
-    if (!reported_
-        && (!errors_.empty() || !warnings_.empty()))
-      dump_errors();
   }
 
   bool
@@ -62,23 +42,19 @@ namespace parser
   {
     return (!status
             && ast_.get()
-            && errors_.empty()
-            && warnings_.empty());
+            && errors_.good());
   }
 
   std::ostream&
-  ParseResult::dump (std::ostream& o) const
+  ParseResult::dump(std::ostream& o) const
   {
-    reported_ = true;
     return o
       << "Status:"
       << libport::incendl << status << libport ::decendl
       << "Ast:"
       << libport::incendl << libport::deref << *ast_ << libport ::decendl
-      << "Errors: "
+      << "Error: "
       << libport::incendl << errors_ << libport ::decendl
-      << "Warnings: "
-      << libport::incendl << warnings_ << libport ::decindent
       ;
   }
 
@@ -122,25 +98,17 @@ namespace parser
   void
   ParseResult::dump_errors() const
   {
-    std::cerr << errors_ << warnings_;
+    if (!errors_.good())
+      std::cerr << errors_;
   }
 
   void
   ParseResult::process_errors(ast::Nary& target)
   {
     reported_ = true;
-    foreach(const std::string& e, warnings_)
-      target.message_push(e, "warning");
-    warnings_.clear();
-
-    // Errors handling
-    if (!errors_.empty())
-    {
+    if (!errors_.good())
       ast_.reset();
-      foreach(const std::string& e, errors_)
-	target.message_push(e, "error");
-      errors_.clear();
-    }
+    errors_.process_errors(target);
   }
 
 }

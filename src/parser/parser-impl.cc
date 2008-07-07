@@ -110,13 +110,13 @@ namespace parser
   void
   ParserImpl::error(const location_type& l, const std::string& msg)
   {
-    result_->error(message_format(l, msg));
+    result_->error(l, msg);
   }
 
   void
   ParserImpl::warn(const location_type& l, const std::string& msg)
   {
-    result_->warn(message_format(l, msg));
+    result_->warn(l, msg);
   }
 
 }
