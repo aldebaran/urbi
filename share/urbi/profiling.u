@@ -4,22 +4,40 @@
 
 class Global.Profiling
 {
-  function timen {
-    var niters = call.evalArgAt (2);
+  /// timen(CODE, #ITERATIONS).
+  /// e.g. timen(2+2, 42).
+  function timen
+  {
+    echo (self.new(call.argAt(1), call.argAt(2)))
+  };
+
+  /// timen(CODE, #ITERATIONS).
+  /// e.g. init(2+2, 42).
+  function init
+  {
+    var self.expr   = call.argString(1);
+    var self.niters = call.evalArgAt (2);
     var start_time = time;
     var start_cycle = cycle |
-    { for (var i = 0; i < niters; i++)
-        call.evalArgAt (1)
-    } |
-    var ncycles = cycle - start_cycle - 1;
-    var expired = time - start_time;
-    echo ("Profiling information");
-    echo ("  Expression:       " + call.argString (1));
-    echo ("  Iterations:       " + niters);
-    echo ("  Cycles:           " + ncycles);
-    echo ("  Total time:       " + expired + " ms");
-    echo ("  Single iteration: " + expired / niters + " ms");
-    echo ("                    " + ncycles / niters + " cycles");
+
+    // Bench.
+    for (niters)
+      call.evalArgAt (1) |
+
+    var self.ncycles = cycle - start_cycle - 1;
+    var self.expired = time - start_time;
+  };
+
+  // Display the results.
+  function asString()
+  {
+      "Profiling information\n"
+    + "  Expression:       " + expr + "\n"
+    + "  Iterations:       " + niters + "\n"
+    + "  Cycles:           " + ncycles + "\n"
+    + "  Total time:       " + expired + " ms\n"
+    + "  Single iteration: " + expired / niters + " ms\n"
+    + "                    " + ncycles / niters + " cycles";
   };
 };
-Global.addProto(Global.Profiling);
+
