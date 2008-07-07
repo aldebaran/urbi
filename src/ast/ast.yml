@@ -35,12 +35,11 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "declarations_type":             '<ast/declarations-type.hh>'
+  "declarations_type":     '<ast/declarations-type.hh>'
   "exps_type":             '<ast/exps-type.hh>'
   "flavor_type":           '<ast/flavor.hh>'
   "libport::RefCounted":   '<libport/ref-counted.hh>'
   "libport::Symbol":       '<libport/symbol.hh>'
-  "slots_type":            '"ast/fwd.hh>'
   "std::string":           '<string>'
   "symbols_type":          '<ast/symbols-type.hh>'
   "ufloat":                '<libport/ufloat.h>'
@@ -764,6 +763,10 @@ Call:
        }'
 
 Lazy:
+  desc:
+    /// When calling a function, it is unknown whether it will
+    /// needed the lazy (AST) or strict (value) version of the arguments.
+    /// So we pass both, and let the function decide.
   super: Exp
   attributes:
     - lazy:
@@ -774,6 +777,7 @@ Lazy:
         access: rwW
   printer:
     - ~strict
+    - '{ if (getenv("PRINTER")) ostr_ << "/* " << *n->lazy_get() << " */"; }'
 
 Code:
   super: Exp
@@ -804,17 +808,11 @@ Code:
           /// Whether the arguments must be evaluated.
           bool strict () const;
     inline inside: |2
-          inline bool Code::strict () const
+          inline bool Code::strict() const
           {
             return formals_;
           }
   printer:
-    - '{
-         if (n.unsafe_cast<const ast::Closure>())
-           ostr_ << "closure ";
-         else
-           ostr_ << "function ";
-       }'
     - '{
          if (n->formals_get ())
            ostr_ << "(" << *n->formals_get() << ") ";
@@ -831,12 +829,18 @@ Function:
   # Cloning a list of reference such as this one requires a mapping table
   # in the cloner. Forbid it for now.
   cloner_prologue: assert(!e->local_variables_get());
+  printer:
+    - '"function "'
+    - '{visit(n.unsafe_cast<const Code>());}'
 
 Closure:
   super: Code
   # Cloning a list of reference such as this one requires a mapping table
   # in the cloner. Forbid it for now.
   cloner_prologue: assert(!e->local_variables_get());
+  printer:
+    - '"closure "'
+    - '{visit(n.unsafe_cast<const Code>());}'
 
 LocalWrite:
   super: Exp
