@@ -1,6 +1,6 @@
 // Publisher-subscriber interface
 
-class PubSub
+class Global.PubSub
 {
 
   class Subscriber
