@@ -24,11 +24,12 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
-    rDictionary set(const libport::Symbol& key, rObject value);
+    rDictionary clear();
+    rDictionary erase(libport::Symbol key);
     rObject get(const libport::Symbol& key);
     bool has(const libport::Symbol& key);
-    rDictionary clear();
     rList keys();
+    rDictionary set(const libport::Symbol& key, rObject value);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;

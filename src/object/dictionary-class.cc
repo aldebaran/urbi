@@ -56,6 +56,13 @@ namespace object
     return this;
   }
 
+  rDictionary
+  Dictionary::erase(libport::Symbol key)
+  {
+    content_.erase(key);
+    return this;
+  }
+
   rList Dictionary::keys()
   {
     List::value_type res;
@@ -77,11 +84,12 @@ namespace object
 
   void Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
   {
-    bind(SYMBOL(set), &Dictionary::set);
+    bind(SYMBOL(clear), &Dictionary::clear);
+    bind(SYMBOL(erase), &Dictionary::erase);
     bind(SYMBOL(get), &Dictionary::get);
     bind(SYMBOL(has), &Dictionary::has);
-    bind(SYMBOL(clear), &Dictionary::clear);
     bind(SYMBOL(keys), &Dictionary::keys);
+    bind(SYMBOL(set), &Dictionary::set);
   }
 
   bool Dictionary::dictionary_added =
