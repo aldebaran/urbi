@@ -78,13 +78,13 @@ namespace object
                              rObject owner, libport::Symbol msg,
                              objects_type args)
   {
-    assertion(self);
+    assert(self);
     rObject message = owner->slot_get(msg);
     if (!message)
       throw LookupError(msg);
     args.insert(args.begin(), self);
     rObject res = r.apply(message, msg, args);
-    assertion(res);
+    assert(res);
     return res;
   }
 
@@ -173,7 +173,7 @@ namespace object
       lookup_result
       slot_lookup(rObject obj, const Object::key_type& k, bool value)
       {
-	assertion(obj);
+	assert(obj);
 	if (rObject x = obj->own_slot_get(k))
 	  return value ? x : obj;
 	if (!fallback)
