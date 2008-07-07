@@ -75,7 +75,7 @@ namespace binder
   `----------------*/
 
   void
-  Binder::routine_push(ast::rCode f)
+  Binder::routine_push(ast::rRoutine f)
   {
     routine_stack_.push_back(f);
   }
@@ -86,7 +86,7 @@ namespace binder
     routine_stack_.pop_back();
   }
 
-  ast::rCode
+  ast::rRoutine
   Binder::routine() const
   {
     assert(!routine_stack_.empty());
@@ -96,7 +96,7 @@ namespace binder
   ast::rFunction
   Binder::function() const
   {
-    rforeach(ast::rCode r, routine_stack_)
+    rforeach(ast::rRoutine r, routine_stack_)
       if (ast::rFunction res = r.unsafe_cast<ast::Function>())
         return res;
     return 0;
@@ -140,7 +140,7 @@ namespace binder
       const ast::loc loc = input->location_get();
       for (int i = depth_ - depth; i; --i, ++f_it)
       {
-        ast::rCode f = *f_it;
+        ast::rRoutine f = *f_it;
         // Check whether it's already captured
         foreach (ast::rDeclaration dec, *f->captured_variables_get())
           if (dec->what_get() == name)

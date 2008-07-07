@@ -779,7 +779,7 @@ Lazy:
     - ~strict
     - '{ if (getenv("PRINTER")) ostr_ << "/* " << *n->lazy_get() << " */"; }'
 
-Code:
+Routine:
   super: Exp
   attributes:
     - formals:
@@ -808,7 +808,7 @@ Code:
           /// Whether the arguments must be evaluated.
           bool strict () const;
     inline inside: |2
-          inline bool Code::strict() const
+          inline bool Routine::strict() const
           {
             return formals_;
           }
@@ -820,7 +820,7 @@ Code:
     - ~body
 
 Function:
-  super: Code
+  super: Routine
   attributes:
     - closed_variables:
         type: symbols_type
@@ -831,16 +831,16 @@ Function:
   cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"function "'
-    - '{visit(n.unsafe_cast<const Code>());}'
+    - '{visit(n.unsafe_cast<const Routine>());}'
 
 Closure:
-  super: Code
+  super: Routine
   # Cloning a list of reference such as this one requires a mapping table
   # in the cloner. Forbid it for now.
   cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"closure "'
-    - '{visit(n.unsafe_cast<const Code>());}'
+    - '{visit(n.unsafe_cast<const Routine>());}'
 
 LocalWrite:
   super: Exp

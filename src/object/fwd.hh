@@ -80,7 +80,7 @@ namespace object
   typedef libport::shared_ptr < Name, true > r ## Name;
 
   /* You have to understand that the primitives are defined here.  For
-   * example, a Code is manipulated through a rCode (r = ref counted) and in
+   * example, a Code is manipulated through a rRoutine (r = ref counted) and in
    * fact Code is just a typedef for Atom<code_traits>.  If you get compilation
    * errors about non existent members, it's most likely because you did
    * obj.get_value () instead of obj->get_value ().  This is a side effect
@@ -91,7 +91,7 @@ namespace object
   class Barrier;
   typedef libport::shared_ptr<Barrier> rBarrier;
   class Code;
-  typedef libport::shared_ptr<Code> rCode;
+  typedef libport::shared_ptr<Code> rRoutine;
   class Dictionary;
   typedef libport::shared_ptr<Dictionary> rDictionary;
   class Event;

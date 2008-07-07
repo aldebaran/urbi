@@ -290,7 +290,7 @@ namespace runner
     }
 
     // Evaluate the first child in this runner
-    rCode code = eval(e->children_get().front()).unsafe_cast<object::Code>();
+    rRoutine code = eval(e->children_get().front()).unsafe_cast<object::Code>();
     assert(code);
     object::objects_type args;
     // This is a closure, it won't use its 'this'
@@ -310,7 +310,7 @@ namespace runner
 
   // Apply a function written in Urbi.
   object::rObject
-  Interpreter::apply_urbi (rCode func,
+  Interpreter::apply_urbi (rRoutine func,
                            const libport::Symbol& msg,
                            const object::objects_type& args,
                            rObject call_message)
@@ -434,7 +434,7 @@ namespace runner
     if (std::find(++args.begin(), end, object::void_class) != end)
       throw object::WrongArgumentType (msg);
 
-    if (rCode c = func->as<object::Code>())
+    if (rRoutine c = func->as<object::Code>())
       result_ = apply_urbi (c, msg, args, call_message);
     else if (object::rPrimitive p = func->as<object::Primitive>())
       result_ = p->value_get()(*this, args);
@@ -592,7 +592,7 @@ namespace runner
     // Build the call message for non-strict functions, otherwise
     // the evaluated argument list.
     rObject call_message;
-    rCode c = val->as<object::Code>();
+    rRoutine c = val->as<object::Code>();
     if (c && !c->ast_get()->strict())
       call_message = build_call_message (tgt, val, message, ast_args);
     else
@@ -620,15 +620,15 @@ namespace runner
     pabort(e);
   }
 
-  object::rCode
-  Interpreter::make_code(ast::rConstCode e) const
+  object::rRoutine
+  Interpreter::make_routine(ast::rConstRoutine e) const
   {
     return new object::Code(e);
   }
 
-  void Interpreter::visit(ast::rConstCode e, bool closure)
+  void Interpreter::visit(ast::rConstRoutine e, bool closure)
   {
-    rCode res = make_code(e);
+    rRoutine res = make_routine(e);
     result_ = res;
 
     // Capture variables

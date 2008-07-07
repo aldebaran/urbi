@@ -39,9 +39,6 @@ cloner.stamp
 closure.cc
 closure.hh
 closure.hxx
-code.cc
-code.hh
-code.hxx
 continue.cc
 continue.hh
 continue.hxx
@@ -115,6 +112,9 @@ pretty-printer.stamp
 return.cc
 return.hh
 return.hxx
+routine.cc
+routine.hh
+routine.hxx
 scope.cc
 scope.hh
 scope.hxx

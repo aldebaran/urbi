@@ -85,15 +85,15 @@ namespace binder
     /// \{
     /// The stack of current number of local variables, and maximum
     /// number of local variable used by the current routine.
-    typedef std::list<ast::rCode> routine_stack_type;
+    typedef std::list<ast::rRoutine> routine_stack_type;
     routine_stack_type routine_stack_;
     /// Helpers routines to manipulate the frame size stack
-    void routine_push(ast::rCode f);
+    void routine_push(ast::rRoutine f);
     void routine_pop();
 
     /// The routine currently defined.
     /// Cannot be called if there is none.
-    ast::rCode routine() const;
+    ast::rRoutine routine() const;
 
     /// The innermost function (not closure).
     /// May return 0.

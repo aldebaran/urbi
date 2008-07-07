@@ -31,7 +31,7 @@ namespace runner
     typedef ast::DefaultConstVisitor super_type;
     typedef object::rObject rObject;
     typedef object::rrObject rrObject;
-    typedef object::rCode rCode;
+    typedef object::rRoutine rRoutine;
     typedef object::rLobby rLobby;
     typedef object::objects_type objects_type;
     /// \}
@@ -108,7 +108,7 @@ namespace runner
     rObject eval_tag(ast::rConstExp);
 
     /// Make an urbi function from an ast chunk
-    object::rCode make_code(ast::rConstCode f) const;
+    object::rRoutine make_routine(ast::rConstRoutine f) const;
 
   protected:
     /// \name Evaluation.
@@ -164,7 +164,7 @@ namespace runner
     /// Factor handling of Scope and Do
     void visit (ast::rConstAbstractScope e);
     /// Factor handling of Function and Closure
-    void visit (ast::rConstCode e, bool closure);
+    void visit (ast::rConstRoutine e, bool closure);
     /// \}
 
 
@@ -182,7 +182,7 @@ namespace runner
     void init();
     /// Reset result_, set the location and call stack of ue.
     void propagate_error_(object::UrbiException& ue, const ast::loc& l);
-    rObject apply_urbi (rCode func,
+    rObject apply_urbi (rRoutine func,
 			const libport::Symbol& msg,
 			const object::objects_type& args,
 			rObject call_message);

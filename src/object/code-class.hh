@@ -16,12 +16,12 @@ namespace object
   class Code: public CxxObject
   {
   public:
-    typedef ast::rConstCode ast_type;
+    typedef ast::rConstRoutine ast_type;
     typedef std::vector<rrObject> captures_type;
 
     Code();
     Code(ast_type a);
-    Code(rCode model);
+    Code(rRoutine model);
     ast_type ast_get() const;
     rObject call_get() const;
     const captures_type& captures_get() const;
