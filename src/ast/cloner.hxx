@@ -52,6 +52,16 @@ namespace ast
     return res;
   }
 
+  template <typename CollectionType>
+  CollectionType*
+  Cloner::recurse_collection (const CollectionType* c)
+  {
+    if (c)
+      return recurse_collection(*c);
+    else
+      return 0;
+  }
+
   // Specializations to workaround some limitations of ast-cloner-gen.
   template <>
   inline

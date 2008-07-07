@@ -72,7 +72,11 @@ print """\
 	using different names.
      */
     template <typename CollectionType>
-    CollectionType* recurse_collection (const CollectionType& c);"""
+    CollectionType* recurse_collection (const CollectionType& c);
+
+    /// Likewise, but \\a c can be 0.
+    template <typename CollectionType>
+    CollectionType* recurse_collection (const CollectionType* c);"""
 
 if dec_subclasses:
   print """
@@ -119,10 +123,7 @@ def attribute_dup(a):
   # Collection attributes.
   elif a.root_type () in ast_params['collections']:
     if a.pointer_p ():
-      if a.mandatory:
-        return "recurse_collection (" + accessor + ")"
-      else:
-        return accessor + " ? recurse_collection (*" + accessor + ") : 0"
+      return "recurse_collection (" + accessor + ")"
     else:
       return "*recurse_collection (" + accessor + ")"
 
