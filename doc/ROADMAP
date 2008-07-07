@@ -229,8 +229,8 @@ We need to be able to use binary strings, in particular to send raw
 Binaries, something based on the length.  This enables compressed
 strings btw.
 
-*** Flyweight
-See if it can be used for us.
+*** Boost.Flyweight
+See if useful.
 
 *** Lookup
 Our current lookup algorithm is not resilient.  Look at the
