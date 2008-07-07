@@ -20,6 +20,37 @@
 namespace binder
 {
 
+  /*----------.
+  | Helpers.  |
+  `----------*/
+
+  namespace
+  {
+    static
+    ast::rExp
+    make_declaration(const ast::loc& l, libport::Symbol s)
+    {
+      static ast::ParametricAst a("nil");
+      return new ast::Declaration(l, s, exp(a));
+    }
+
+    static
+    ast::rExp
+    make_closure(ast::rExp value)
+    {
+      static ast::ParametricAst a("closure () { %exp:1 }");
+      return exp(a % value);
+    }
+
+    static
+    ast::rExp
+    make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
+    {
+      return make_closure(new ast::Assignment(l, s, value, 0));
+    }
+  }
+
+
   /*---------.
   | Binder.  |
   `---------*/
@@ -231,8 +262,9 @@ namespace binder
       {
         ast::rExp& arg = (*args)[i];
         ast::loc loc = arg->location_get();
-        arg = new ast::Lazy
-          (loc, lazify((*input->arguments_get())[i], loc), arg);
+        arg = new ast::Lazy(loc,
+                            lazify((*input->arguments_get())[i], loc),
+                            arg);
       }
     }
   }
@@ -258,25 +290,17 @@ namespace binder
       (loc, new ast::Implicit(loc), SYMBOL(Lazy), 0);
     ast::rCall clone = new ast::Call(loc, lazy, SYMBOL(clone), 0);
     ast::exps_type* init_args = new ast::exps_type();
-    init_args->push_back(make_closure(arg, loc));
+
+    {
+      // FIXME: Maybe started another Binder would be better?
+      ast::rAst res;
+      std::swap(res, result_);
+      init_args->push_back(recurse(make_closure(arg)));
+      std::swap(res, result_);
+    }
+
     ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
     return init;
-  }
-
-  ast::rClosure
-  Binder::make_closure(ast::rConstExp e, const ast::loc& loc)
-  {
-    ast::rScope body = new ast::Scope(loc, const_cast<ast::Exp*>(e.get()));
-    ast::rClosure closure =
-      new ast::Closure(loc, new ast::declarations_type(), body);
-
-    // FIXME: Maybe started another Binder would be better?
-    ast::rAst res;
-    std::swap(res, result_);
-    operator()(closure);
-    std::swap(res, result_);
-
-    return res.unsafe_cast<ast::Closure>();
   }
 
   void
@@ -414,11 +438,11 @@ namespace binder
     else
       routine()->local_variables_get()->push_back(decl);
 
-
     env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
+
   void
   Binder::visit(ast::rConstAnd input)
   {
@@ -427,45 +451,34 @@ namespace binder
     ast::rAnd res = new ast::And(input->location_get(), ast::exps_type());
     foreach (ast::rExp child, input->children_get())
       // Wrap every children in a closure
-      res->children_get().push_back(recurse(exp(closure % child)));
+      res->children_get().push_back(recurse(make_closure(child)));
     result_ = res;
   }
 
   void
   Binder::visit(ast::rConstNary input)
   {
-    static ast::ParametricAst nil("nil");
-
     ast::rNary res = new ast::Nary(input->location_get());
     foreach (ast::rExp child, (input->children_get()))
     {
       ast::rStmt stm = child.unsafe_cast<ast::Stmt>();
       if (stm && stm->flavor_get() == ast::flavor_comma)
       {
-        static ast::ParametricAst closure("closure () { %exp:1 }");
         if (ast::rDeclaration dec =
             stm->expression_get().unsafe_cast<ast::Declaration>())
         {
-          const ast::loc loc = dec->location_get();
-          const libport::Symbol name = dec->what_get();
-          operator()(new ast::Declaration(loc, name, ast::exp(nil)));
-          res->push_back(result_.unsafe_cast<ast::Exp>(),
+          const ast::loc l = dec->location_get();
+          const libport::Symbol s = dec->what_get();
+          res->push_back(recurse(make_declaration(l, s)),
                          ast::flavor_semicolon);
-          operator()(exp(closure %
-                         new ast::Assignment(loc, name, dec->value_get(), 0)));
-          res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
+          res->push_back(recurse(make_assignment(l, s, dec->value_get())),
+                         ast::flavor_comma);
         }
         else
-        {
-          operator()(exp(closure % child));
-          res->push_back(result_.unsafe_cast<ast::Exp>(), ast::flavor_comma);
-        }
+          res->push_back(recurse(make_closure(child)), ast::flavor_comma);
       }
       else
-      {
-        operator()(child);
-        res->push_back(result_.unsafe_cast<ast::Exp>());
-      }
+        res->push_back(recurse(child));
     }
     result_ = res;
   }
