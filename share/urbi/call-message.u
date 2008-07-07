@@ -1,0 +1,31 @@
+/*---------------.
+| Call message.  |
+`---------------*/
+
+class Global.CallMessage
+{
+  function argString(i)
+  {
+    args.nth(i).string
+  };
+
+  function evalArgAt(i)
+  {
+    args.nth(i).eval
+  };
+
+  function argAt(i)
+  {
+    args.nth(i).value
+  };
+
+  function evalArgs()
+  {
+    args.tail.map(function (arg) { arg.eval })
+  };
+
+  function argsCount
+  {
+    args.size
+  };
+};
