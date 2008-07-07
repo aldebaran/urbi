@@ -446,8 +446,6 @@ namespace binder
   void
   Binder::visit(ast::rConstAnd input)
   {
-    static ast::ParametricAst closure("closure () { %exp:1 }");
-
     ast::rAnd res = new ast::And(input->location_get(), ast::exps_type());
     foreach (ast::rExp child, input->children_get())
       // Wrap every children in a closure
