@@ -470,7 +470,7 @@ class Global.Math
   var epsilontilde = 0.0001;
   var epsilonpercent = 0.0001;
 };
-Global.addProto (Global.Math);
+Global.addProto(Global.Math);
 
 
 /*---------.
@@ -504,7 +504,7 @@ class Global.Profiling
     echo ("                    " + ncycles / niters + " cycles");
   };
 };
-Global.addProto (Global.Profiling);
+Global.addProto(Global.Profiling);
 
 /*-------------.
 | Executable.  |

@@ -64,7 +64,7 @@ do Global
 
   // Top-levl channel
   var topLevel = new Channel("");
-  Lobby.addProto(topLevel); //Now 'lobby << 1' displays in "lobby"'s context.
+  Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
 
   function warn(msg) { echo (msg, "warning") };
 };

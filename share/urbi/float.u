@@ -4,8 +4,12 @@
 
 do Float
 {
-  addProto(Comparable);
-  addProto(Orderable);
+  // The connectives == and < are builtins.
+  //
+  // Warning: We derive from Orderable first so that we use its
+  // Object.==, otherwise String would use both Comparable.== and
+  // Comparable.!= that bounce endlessly one on the other.
+  setProtos([Orderable, Comparable]);
 
   function init(x) { set(x) };
 
