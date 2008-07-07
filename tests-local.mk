@@ -22,11 +22,6 @@ TFAIL_TESTS +=                                  \
 2.x/modifier/speed-adaptive-freeze.log		\
 1.x/synchro-assignment.chk
 
-
-# k2 tests that fail.
-XFAIL_TESTS +=					\
-2.x/literal-string.chk
-
 # pending features
 TFAIL_TESTS +=					\
 2.x/onevent.chk					\
