@@ -359,18 +359,9 @@ class Global.Orderable
 };
 
 
-/*--------.
-| Float.  |
-`--------*/
-
 load("urbi/updatehook-stack.u");
 load("urbi/float.u");
-
 load("urbi/trajectory-generator.u");
-
-/*---------.
-| String.  |
-`---------*/
 load("urbi/string.u");
 
 
