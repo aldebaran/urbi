@@ -48,6 +48,7 @@ namespace binder
       CONST_VISITOR_VISIT_NODES((And)
                                 (Assignment)
                                 (Call)
+                                (CallMsg)
                                 (Closure)
                                 (Declaration)
                                 (Do)
@@ -81,6 +82,9 @@ namespace binder
       typedef std::list<bool> set_on_self_type;
       set_on_self_type setOnSelf_;
 
+      /// \name Routine stack.
+      /// \{
+
       /// The stack of current number of local variables, and maximum
       /// number of local variable used by the current routine.
       typedef std::list<ast::rCode> routine_stack_type;
@@ -88,9 +92,15 @@ namespace binder
       /// Helpers routines to manipulate the frame size stack
       void routine_push(ast::rCode f);
       void routine_pop();
+
       /// The routine currently defined.
       /// Cannot be called if there is none.
       ast::rCode routine() const;
+
+      /// The innermost function (not closure).
+      /// May return 0.
+      ast::rFunction function() const;
+      /// \}
 
       /// Level of routine nesting.
       unsigned depth_;

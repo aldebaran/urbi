@@ -80,6 +80,39 @@ namespace binder
     return new ast::Call(l, new ast::Implicit(l), method, args);
   }
 
+
+  /*----------------.
+  | Routine stack.  |
+  `----------------*/
+
+  void
+  Binder::routine_push(ast::rCode f)
+  {
+    routine_stack_.push_back(f);
+  }
+
+  void
+  Binder::routine_pop()
+  {
+    routine_stack_.pop_back();
+  }
+
+  ast::rCode
+  Binder::routine() const
+  {
+    assert(!routine_stack_.empty());
+    return routine_stack_.back();
+  }
+
+  ast::rFunction
+  Binder::function() const
+  {
+    rforeach(ast::rCode r, routine_stack_)
+      if (ast::rFunction res = r.unsafe_cast<ast::Function>())
+        return res;
+    return 0;
+  }
+
   void
   Binder::visit(ast::rConstDeclaration input)
   {
@@ -213,6 +246,19 @@ namespace binder
           (loc, lazify((*input->arguments_get())[i], loc), arg);
       }
     }
+  }
+
+
+  void
+  Binder::visit(ast::rConstCallMsg input)
+  {
+    ast::rFunction fun = function();
+    if (!fun)
+      error(input, "call", "used outside any function");
+    else if (fun->strict())
+      error(input, "call", "used in a strict function");
+    else
+      return super_type::visit(input);
   }
 
   ast::rExp
@@ -384,26 +430,6 @@ namespace binder
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
-
-  void
-  Binder::routine_push(ast::rCode f)
-  {
-    routine_stack_.push_back(f);
-  }
-
-  void
-  Binder::routine_pop()
-  {
-    routine_stack_.pop_back();
-  }
-
-  ast::rCode
-  Binder::routine() const
-  {
-    assert(!routine_stack_.empty());
-    return routine_stack_.back();
-  }
-
   void
   Binder::visit(ast::rConstAnd input)
   {
