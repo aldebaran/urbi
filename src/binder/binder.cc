@@ -158,27 +158,24 @@ namespace binder
   {
     libport::Symbol name = input->name_get();
     ast::loc loc = input->location_get();
-    bool implicit = input->target_implicit();
-    // If this is a qualified call, nothing particular to do
-    if (implicit)
-    {
-      unsigned depth = depth_get(name);
-      if (depth)
-      {
-        const ast::exps_type* args = input->arguments_get();
-        ast::rLocal res = new ast::Local(
-          loc, name,
-          args ? recurse_collection(*args) : 0,
-          depth_ - depth);
 
+    {
+      bool implicit;
+      unsigned depth;
+      // If this is a qualified call, nothing particular to do
+      if ((implicit = input->target_implicit())
+          && (depth = depth_get(name)))
+      {
+        ast::rLocal res =
+          new ast::Local(loc, name,
+                         recurse_collection(input->arguments_get()),
+                         depth_ - depth);
         link_to_declaration(input, res, name, depth);
         result_ = res;
       }
       else
-        super_type::visit (input);
+        super_type::visit(input);
     }
-    else
-      super_type::visit (input);
 
     ast::rAst result = result_;
 
