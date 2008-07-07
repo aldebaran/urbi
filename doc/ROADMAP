@@ -25,7 +25,7 @@ We move to 1.35.  Or decide if we do, in particular, see the impact on:
 *** Webots
 This must be usable.
 
-*** Implement events
+*** Implement events (0be5e2a7dc02e7c0c6c2b74dffcaaf2624975377)
 
 We need to settle on the syntax used to represent unbound variables
 that will be matched against incoming events. We also need to
@@ -68,6 +68,10 @@ This requires:
   - that we delete unused data structures in the grammar;
   - or that we use a modified version of Bison which can use
     boost::variant or an equivalent type supporting non-POD C++ types
+
+*** Fix events memory leaks
+
+This requires that we can properly execute some code at scope exit time.
 
 *** Real-time features
 
