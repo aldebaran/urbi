@@ -1,0 +1,73 @@
+// Publisher-subscriber interface
+
+class PubSub
+{
+
+  class Subscriber
+  {
+    function init()
+    {
+       var self.barrier = Barrier.new |
+       var self.queue = []
+    };
+
+    function enqueue(ev)
+    {
+       queue.push_back(ev) |
+       barrier.signal(nil)
+    };
+
+    function getOne()
+    {
+      if (queue.empty)
+        barrier.wait |
+      var ev = queue.front |
+      queue.pop_front |
+      ev
+    };
+
+    function getAll()
+    {
+      if (queue.empty)
+        barrier.wait |
+      // Take a copy of the list before clearing it
+      var evs = queue.clone |
+      queue.clear |
+      evs
+    };
+  };
+
+  function init()
+  {
+    var self.subscribers = Dictionary.new
+  };
+
+  function subscribe()
+  {
+    var id = fresh |
+    subscribers.set(id, Subscriber.new) |
+    return id
+  };
+
+  function unsubscribe(id)
+  {
+    subscribers.erase(id)
+  };
+
+  function publish(ev)
+  {
+    for| (var id: subscribers.keys)
+      subscribers.get(id).enqueue(ev) |
+    ev
+  };
+
+  function getOne(id)
+  {
+    subscribers.get(id).getOne
+  };
+
+  function getAll(id)
+  {
+    subscribers.get(id).getAll
+  };
+};

@@ -543,6 +543,12 @@ load("urbi/debug.u");
 
 load("urbi/pattern.u");
 
+/*--------------------.
+| Publish-subscribe.  |
+`--------------------*/
+
+load("urbi/pubsub.u");
+
 /*----------.
 | UObject.  |
 `----------*/
