@@ -11,6 +11,8 @@ BUILT_SOURCES += $(BUILT_SOURCES_ast)
 BUILT_SOURCES_ast =				\
 ast/fwd.hh					\
 ast/all.hh					\
+ast/analyzer.hh					\
+ast/analyzer.cc					\
 ast/error.hh					\
 ast/error.hxx					\
 ast/error.cc					\

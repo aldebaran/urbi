@@ -1,15 +1,15 @@
 #ifndef FLOWER_FLOWER_HH
 # define FLOWER_FLOWER_HH
 
-# include <ast/cloner.hh>
+# include <ast/analyzer.hh>
 
 namespace flower
 {
 
-  class Flower : public ast::Cloner
+  class Flower : public ast::Analyzer
   {
   public:
-    typedef ast::Cloner super_type;
+    typedef ast::Analyzer super_type;
     using super_type::visit;
 
     Flower();

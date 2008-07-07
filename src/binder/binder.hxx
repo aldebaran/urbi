@@ -9,13 +9,6 @@
 namespace binder
 {
 
-  inline
-  ast::Error&
-  Binder::errors_get()
-  {
-    return errors_;
-  }
-
 } // namespace binder
 
 #endif // !BINDER_BINDER_HXX

@@ -13,15 +13,6 @@ namespace flower
   using libport::Finally;
   using libport::scoped_set;
 
-  static void
-  error(const ast::rConstAst& node,
-	const std::string keyword,
-	const std::string msg)
-  {
-    throw object::ParserError(node->location_get(),
-			      keyword + ": " + msg);
-  }
-
   Flower::Flower()
   {
     in_function_ = in_loop_ = false;
@@ -31,7 +22,7 @@ namespace flower
   Flower::visit(ast::rConstBreak b)
   {
     if (!in_loop_)
-      error(b, "break", "outside a loop");
+      errors_.error(b->location_get(), "break: outside a loop");
 
     result_ = parser::parse("loopBreakTag.stop")->ast_get();
     has_break_ = true;
@@ -41,7 +32,7 @@ namespace flower
   Flower::visit(ast::rConstContinue c)
   {
     if (!in_loop_)
-      error(c, "continue", "outside a loop");
+      errors_.error(c->location_get(), "continue: outside a loop");
 
     result_ = parser::parse("loopContinueTag.stop")->ast_get();
     has_continue_ = true;
@@ -151,7 +142,7 @@ namespace flower
   Flower::visit(ast::rConstReturn ret)
   {
     if (!in_function_)
-      error(ret, "return", "outside a function");
+      errors_.error(ret->location_get(), "return: outside a function");
 
     parser::Tweast tweast;
     ast::rExp exp = ret->value_get();
