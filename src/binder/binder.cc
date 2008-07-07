@@ -16,20 +16,9 @@
 #include <binder/bind-debug.hh>
 #include <object/symbols.hh>
 #include <object/object.hh>
-#include <parser/parser-impl.hh> // ParseError
-
 
 namespace binder
 {
-  static void
-  error(const ast::rConstAst& node,
-	const std::string keyword,
-	const std::string msg)
-  {
-    throw object::ParserError(node->location_get(),
-			      keyword + ": " + msg);
-  }
-
 
   /*---------.
   | Binder.  |
@@ -254,9 +243,9 @@ namespace binder
   {
     ast::rFunction fun = function();
     if (!fun)
-      error(input, "call", "used outside any function");
+      errors_.error(input->location_get(), "call: used outside any function");
     else if (fun->strict())
-      error(input, "call", "used in a strict function");
+      errors_.error(input->location_get(), "call: used in a strict function");
     else
       return super_type::visit(input);
   }

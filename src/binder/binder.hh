@@ -10,12 +10,12 @@
 # include <list>
 # include <map>
 
+# include <ast/all.hh>
 # include <ast/cloner.hh>
 # include <ast/cloner.hxx>
-# include <ast/all.hh>
-# include <object/fwd.hh>
-
+# include <ast/error.hxx>
 # include <binder/bind.hh>
+# include <object/fwd.hh>
 
 namespace binder
 {
@@ -43,6 +43,9 @@ namespace binder
 
     /// Import visit from DefaultVisitor.
     using super_type::visit;
+
+    /// The errors seen so far.
+    ast::Error& errors_get();
 
   protected:
     CONST_VISITOR_VISIT_NODES((And)
@@ -82,9 +85,11 @@ namespace binder
     typedef std::list<bool> set_on_self_type;
     set_on_self_type setOnSelf_;
 
+    /// The errors found so far.
+    ast::Error errors_;
+
     /// \name Routine stack.
     /// \{
-
     /// The stack of current number of local variables, and maximum
     /// number of local variable used by the current routine.
     typedef std::list<ast::rCode> routine_stack_type;
