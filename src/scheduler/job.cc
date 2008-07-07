@@ -90,7 +90,7 @@ namespace scheduler
   void
   Job::yield_until_terminated(Job& other)
   {
-    if (non_interruptible_)
+    if (non_interruptible_ && this != &other)
       throw object::SchedulingError
 	("dependency on other task in non-interruptible code");
 
