@@ -57,7 +57,7 @@ namespace parser
     /// The current location.
     location_type loc_;
 
-    /// A stack of locations to support #push/#pop.
+    /// A stack of locations to support //#push and //#pop.
     std::stack<yy::location> synclines_;
 
     /// The resut of the parsing.

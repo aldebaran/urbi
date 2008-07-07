@@ -360,9 +360,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   /*-----------------------------------.
   | Internal rules for generated code. |
   `-----------------------------------*/
-^"#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
+^"//#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
   PRE_SKIP();
-  ++yytext;
+  yytext += strlen("//#");
   SKIP_SPACES();
   bool push = yytext[0] == 'p';
   yytext += 4; // line|push.
@@ -389,7 +389,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   STEP();
 }
 
-^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
+^"//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
   PRE_SKIP();
   *locp = up->synclines_.top();
   up->synclines_.pop();
@@ -729,7 +729,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
     | White spaces and comments.  |
     `----------------------------*/
 
-("//"|"#").*   STEP(); // One-line comments.
+"//".*         STEP(); // One-line comment.
 "/*"           BEGIN SC_C_COMMENT;
 
 {BLANKS}       STEP();
