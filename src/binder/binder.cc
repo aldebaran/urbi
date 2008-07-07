@@ -16,9 +16,25 @@
 #include <binder/bind-debug.hh>
 #include <object/symbols.hh>
 #include <object/object.hh>
+#include <parser/parser-impl.hh> // ParseError
+
 
 namespace binder
 {
+  static void
+  error(const ast::rConstAst& node,
+	const std::string keyword,
+	const std::string msg)
+  {
+    throw object::ParserError(node->location_get(),
+			      keyword + ": " + msg);
+  }
+
+
+  /*---------.
+  | Binder.  |
+  `---------*/
+
   Binder::Binder()
     : unbind_()
     , env_()
