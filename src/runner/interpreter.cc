@@ -540,14 +540,7 @@ namespace runner
   {
     // The invoked slot (probably a function).
     ast::rConstExp ast_tgt = e->target_get();
-    rObject tgt;
-    if (ast_tgt->implicit())
-    {
-      tgt = stacks_.self();
-    }
-    else
-      tgt = eval(ast_tgt);
-
+    rObject tgt = ast_tgt->implicit() ? stacks_.self() : eval(ast_tgt);
     call_stack_.push_back(e);
     Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
     apply(tgt, e->name_get(), e->arguments_get());

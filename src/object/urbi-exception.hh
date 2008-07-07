@@ -66,8 +66,7 @@ namespace object
      * \brief Construct an exception which contains a raw message.
      * \param msg raw Error message.
      * \param fun C++ function that raised.  */
-    UrbiException(const std::string& msg,
-                  const libport::Symbol fun);
+    UrbiException(const std::string& msg, const libport::Symbol fun);
 
     private:
     /// Was the exception displayed
