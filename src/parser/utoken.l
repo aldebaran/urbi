@@ -491,7 +491,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "loopn"         DEPRECATED("for");
 "new"           RETURN_OP(NEW);
 "object"        RETURN(OBJECT);
-"onevent"       RETURN(ONEVENT);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
 "self"          RETURN(THIS);

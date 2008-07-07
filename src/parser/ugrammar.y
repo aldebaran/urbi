@@ -187,7 +187,6 @@
 	TOK_LBRACKET     "["
 	TOK_LPAREN       "("
 	TOK_OBJECT       "object"
-	TOK_ONEVENT      "onevent"
 	TOK_ONLEAVE      "onleave"
 	TOK_POINT        "."
 	TOK_RBRACE       "}"
@@ -573,15 +572,7 @@ stmt:
 | Events.  |
 `---------*/
 stmt:
- "event" k1_id formals
-  {
-    if ($3)
-      up.warn(@3, "ignored arguments in event declaration");
-    delete $3;
-    DESUGAR("var " << $2.value()
-            << "= Global.Event.new(\"" << $2.value()->name_get() << "\")");
-  }
-| "emit" k1_id args
+  "emit" k1_id args
   {
     DESUGAR($2.value() << ".'emit'(" << $3 << ")");
   }
@@ -881,11 +872,6 @@ stmt:
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | whenever_(" << s << ".val, "
               << $7.value() << ", " << $9.value() << ")");
-    }
-| "onevent" "identifier" formals block
-    {
-      DESUGAR($2.value() << ".onEvent(function " << $3
-              << " { " << ast_exp($4.value()) << " })");
     }
 | "switch" "(" exp ")" "{" cases "}"
     {
