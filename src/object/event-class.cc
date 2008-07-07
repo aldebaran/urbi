@@ -21,6 +21,7 @@ namespace object
   Event::Event()
     : value_(new List)
     , active_(false)
+    , live_(new List)
   {
     proto_add(event_class);
   }
@@ -28,6 +29,7 @@ namespace object
   Event::Event(const value_type& value)
     : value_(value)
     , active_(false)
+    , live_(new List)
   {
     proto_add(event_class);
   }
@@ -35,6 +37,7 @@ namespace object
   Event::Event(rEvent model)
     : value_(model->value_)
     , active_(false)
+    , live_(model->live_)
   {
     proto_add(event_class);
   }
