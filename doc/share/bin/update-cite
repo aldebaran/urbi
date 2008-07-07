@@ -1,0 +1,141 @@
+#! /usr/bin/perl -w
+
+use strict;
+use IO::File;
+use File::Glob ':glob';
+use Getopt::Long qw(GetOptions);
+
+sub help ()
+{
+  print <<EOF;
+Usage: $0 [OPTIONS] FILES
+
+Update the (LaTeX) files citations to newer BibTeX keys.  A copy of
+the original file is left with a ~ appended.
+
+The BibTeX files are looked for in share.  They must have an oldkeys
+entry listing the previous keys.  For instance:
+
+\@Book{muchnick.97.advanced,
+  oldkeys =      {Muchnick97, muchnick.97},
+  ...
+
+Options:
+  -h, --help        Display this message and exit successfully
+  -s, --share=DIR   Specify the path to the share directory [share]
+EOF
+  exit 0;
+}
+
+# Location of the share directory.
+my $share = 'share';
+
+# The sed program to update old cite keys.
+my $updater = '';
+
+# contents ($FILE_NAME)
+# ---------------------
+sub contents ($)
+{
+  my ($file) = @_;
+  local $/;			# Turn on slurp-mode.
+  my $f = new IO::File "< $file";
+  my $contents = $f->getline;
+  $f->close;
+  return $contents;
+}
+
+# Extend UPDATER given this FILE.
+sub learn_from_bib ($)
+{
+  my ($file) = @_;
+  my $fh = new IO::File $file;
+  my $key;
+  while ($_ = $fh->getline)
+    {
+      if (/^@\w+\{\s*(\S+?),$/)
+	{
+	  $key = $1;
+	}
+      elsif (/oldkeys\s*=\s*\{(.+?)\}/)
+	{
+	  my $older = '\Q' . join ('\E|\Q', split (/,\s*/, $1)) . '\E';
+	  $updater = $updater
+	    # Unfortunately look-behinds must be fixed width.
+	    . "s!(?<=[{, ])(?:${older})(?=[.}])!$key!gm;\n";
+	}
+    }
+  print "$updater\n";
+}
+
+# Backup this FILE.
+sub backup ($)
+{
+  my ($from) = @_;
+  my $SIMPLE_BACKUP_SUFFIX = $ENV{'SIMPLE_BACKUP_SUFFIX'} || '~';
+  my $to = "$from$SIMPLE_BACKUP_SUFFIX";
+  use File::Copy;
+  move ($from, $to)
+    or die "cannot backup $from: $!";
+  return $to;
+}
+
+# Update this FILE.
+sub update ($)
+{
+  my ($file) = @_;
+  my $backup = backup ($file);
+
+  # Update.
+  $_ = contents ($backup);
+  eval $updater;
+  my $out = new IO::File ">$file" or die;
+  print $out $_;
+}
+
+# Parse ARGV, return the list of files to update.
+sub parse_options ()
+{
+  use Getopt::Long;
+  Getopt::Long::config ("bundling", "pass_through");
+  Getopt::Long::GetOptions
+    (
+     's|share=s' => \$share,
+     'h|help'    => sub { help; },
+    )
+    or die;
+
+  foreach my $arg (@ARGV)
+    {
+      if ($arg =~ /^-./)
+	{
+	  print STDERR "$0: unrecognized option `$arg'\n";
+	  print STDERR "Try `$0 --help' for more information.\n";
+	  exit (1);
+	}
+    }
+  return @ARGV;
+}
+
+my @tex = parse_options ();
+learn_from_bib ($_)
+  foreach bsd_glob ('share/bib/*.bib');
+update ($_)
+  foreach @tex;
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

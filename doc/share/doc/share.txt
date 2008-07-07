@@ -1,0 +1,529 @@
+-*- outline -*-
+
+* Pourquoi share/ ?
+Ce répertoire cherche à fédérer les différents fichiers (LaTeX,
+BibTeX, Make etc.) qui sont utilisés pour écrire nos articles,
+rapports, présentations etc.
+
+Pour une utilisation normale, ne surtout pas dépendre de lui « par
+l'extérieur », du genre `-I ../share/styles' depuis votre dossier, car
+alors si dans le futur un changement incompatible a lieu (e.g., clef
+BibTeX qui change), alors votre document ne compilera plus.  Pour
+éviter ce défaut, exécutez
+
+       share/bin/svn-externals --subscribe=share
+
+depuis votre répertoire de travail : une indirection (svn:externals)
+sera installée dans votre répertoire vers la version *courante* de
+share .  Cette indirection portant le numéro courant de révision de
+share/, il n'y a aucun risque que dans le futur il ne soit pas
+compatible avec votre document.
+
+** Pour augmenter le contenu de share
+Choisissez de travailler soit dans le vrai "maître", i.e.,
+
+     https://svn.lrde.epita.fr/svn/lrde-publis/trunk/share
+
+soit dans votre checkout local.  Dans les deux cas, faire un "svn up"
+pour être certain de travailler sur la version courante.  Une fois les
+changements faits, comme d'habitude, un ChangeLog, un commit, un post
+dans lrde-patches@lrde.epita.fr.
+
+Depuis votre projet embarquant share/ vous pouvez aussi faire
+
+     make share-ci
+
+qui utilise vcs pour faire un checkin de share/, puis svn-externals
+pour mettre à jour la dépendance de votre projet hôte.
+
+** Pour mettre à jour votre version local de share/
+Si votre Makefile inclut share/bin/share.mk, alors taper "make
+share-up" le fera pour vous.  Sinon, à la main, faire
+"share/bin/svn-externals --update".  Ne pas oublier de faire un
+checkin de votre répertoire de travail, sinon la mise à jour de la
+dépendance sur share/ reste locale à votre répertoire de travail.
+
+* share/bin
+** abstract
+Crée des pages avec abstract et résumé à partir d'entrées de csi.bib
+ou lrde.bib.
+
+** beamer2handout
+Un script au dessus de pdfnup (disponible dans le paquet Debian
+pdfjam) pour produire des polycopiés (handouts) à partir de fichiers
+Beamer PDF.  Remplace feu beamer-handout.
+
+** bibneat
+Reformate et trie un fichier *.bib.
+
+** latin2tex
+Convertir les accents des fichiers donnés en ligne de commande de
+Latin 1 vers TeX.  Ressemble à recode, mais ne change pas les {, les \
+etc.  Pratique pour normaliser les fichiers BibTeX.
+
+** make-bib.pl
+Un script qui engendre la biblio du labo.
+
+** psbbox
+Une application qui corrige les "BoundingBoxes" de fichiers
+PostScript.  Il est en effet courant que les fichiers déclarent
+utiliser plus d'espace qu'ils n'en utilisent vraiment.  Assez lent.
+
+** psfit
+Prend un fichier PostScript et le modifie pour qu'il occupe le plus
+d'espace possible sur une feuille A4.  Très utile avant un "a2ps
+-=book" pour garder le plus de lisibilité possible.
+
+Noter que passer -expand à Acroread ne donne pas les résultats
+attendus, sans compter que ça ne marche que pour les PDF.
+
+** svnci, svndiff
+Deux petits scripts qui facilitent l'utilisation de svn.  Utilisés
+pour gérer la biblio du labo.
+
+** svn-externals
+Gestion simplifiée des svn:externals attachés à un numéro de révision
+particulier.
+
+Typiquement appelé par "make share-up".  Il est utile de l'appeler
+directement pour créer une dépendance sur share avec numéro de
+révision (svn:externals).
+
+** texi2dvi
+Une version récente qui sache compiler dans un sous-répertoire comme
+tmp.t2d, et évite les problèmes quand on fait à la fois du DVI et du
+PDF.  Début de support pour le HTML.
+
+** update-cite
+Se sert des balises "oldkeys" dans les fichier BibTeX de share/ pour
+mettre à jour les clefs de citation.
+
+       share/bin/update-cite --share=share article.tex
+
+La version précédente du fichier est sauvegardée (en ~).
+
+
+* share/bib
+Les bibliographies en BibTeX utilisées au labo, y compris le maître de
+lrde.bib.  Merci de les exploiter et de les augmenter.  Pour que cela
+fonctionne correctement en non Latin 1, se contraindre à des accents
+LaTeX, pas de caractères accentués.  bin/latin2tex aide à faire la
+conversion.
+
+Essayer de maintenir les clefs selon la convention LRDE :
+<nom-premier-auteur>.<année>.<sigle> (où le <sigle> est celui de la
+conf, du livre etc.).  Pour les pages www, utiliser "<projet>.www".
+S'il faut un "a", "b", etc., le mettre sur le <sigle>, pas l'<année>.
+
+Si vous changez une clé, mettre l'ancienne dans une entrée "oldkeys"
+comme ceci :
+
+   @Book{muchnick.97.advanced,
+     oldkeys =      {Muchnick97, muchnick.97},
+     ...
+
+ce qui permettra une mise à jour automatique avec update-cite.
+
+Si une publication est également disponible dans /lrde/doc, merci de
+l'indiquer par un champ lrdedoc (il n'y a pas d'extension dans le
+deuxième cas parce qu'il s'agit d'un répertoire) :
+
+   @InProceedings{waddington.05.ldta,
+     oldkeys         = {WY05},
+     author          = {D. G. Waddington and B. Yao},
+     title           = {High Fidelity {C++} Code Transformation},
+     ...
+     lrdedoc         = {comp/lang/stratego/waddington.05.ldta.pdf},
+   }
+
+   @Book{gamma.95.dp,
+     oldkeys =   {Gamma1995, gamma95.dp},
+     author =    {Erich Gamma and Richard Helm and Ralph Johnson and
+                 John Vlissides},
+     title =     {Design Patterns: {E}lements of Reusable
+                 Object-Oriented Software},
+     ...
+     lrdedoc =   {comp/prog/pattern/gamma.95.dp},
+   }
+
+N'hésitez pas à (re)nommer le fichier selon la clef (comme c'est le
+cas ici : le deuxième cas est un répertoire, donc sans extension).
+
+Merci de garder les fichiers triés et justifiés comme Emacs sait le
+faire.  Pour éviter les problèmes avec les cross-références (bibtex
+veut les voir après les appels), utiliser "zzzref.<année>.<sigle>".
+Utiliser des minuscules, car Z < a.  Ne pas normaliser les .bib qui
+viennent verbatim de l'internet et sont maintenus (tels que ceux de
+E. Visser), puisque le travail serait à reprendre sans arrêt.
+
+
+Des fichiers .bib contenant des définitions de sigles/acronymes
+(titres de journaux/conférences, lieux, etc.) sont également
+disponibles dans ce répertoire.  Leur intérêt est double ; d'une part,
+ils permettent de raccourcir les entrées BibTeX (par ex., le titres
+d'une conférence); et d'autre part, comme ces définitions existent en
+version longue (IEEEfull.bib, acronyms.bib) et courte (IEEEabrv.bib,
+acronyms-abrv.bib), il est possible de réduire la taille de la
+bibliographie produite par LaTeX et BibTeX en changeant un (ou
+plusieurs) fichiers .bib dans la commande \bibliography.
+
+Par exemple, considérons l'entrée suivante du fichier sip.bib :
+
+   @Article{salembier.98.itip,
+     author =	 {Philippe Salembier and Albert Oliveras and Luis Garrido},
+     title =	 {Antiextensive connected operators for image and
+                  sequence processing},
+     journal =	 IEEE_J_IP,
+     year =	 {1998},
+     volume =	 {7},
+     number =	 {4},
+     pages =	 {555--570},
+     lrdedoc =	 {sip/image/morpho/connected_filters/salembier.98.itip.pdf},
+   }
+
+La chaîne « IEEE_J_IP » dispose d'une définition longue dans
+IEEEfull.bib :
+
+   @STRING{IEEE_J_IP         = "{IEEE} Transactions on Image Processing"}
+
+ainsi qu'une version courte dans le fichier IEEEabrv.bib :
+
+   @STRING{IEEE_J_IP         = "{IEEE} Trans. Image Processing"}
+
+Pour que le document produit utilise la version longue, utiliser le
+premier fichier :
+
+  \bibliography{IEEEfull,sip}
+
+et le second pour obtenir la version courte :
+
+  \bibliography{IEEEabrv,sip}
+
+
+** IEEEfull.bib, IEEEabrv.bib
+Des définitions de titres de journaux et magazines IEEE (pas de
+conférences).  La première version (IEEEfull.bib) étend les titres
+dans leur version complète, la seconde (IEEEabrv.bib) dans leur
+version abrégée.
+
+** acronyms.bib, acronyms-abrv.bib
+Des raccourcis pour les sigles et acronymes classiques.  La seconde
+version (acronyms-abrv.bib) donne des version raccourcies des
+définitions.
+
+** compilation.bib
+Un peu de tout qui intervient et dans la compilation et dans
+l'enseignement de l'informatique.  Il faudrait sortir un
+computer-history.bib de ce fichier.
+
+** csi.bib
+Tous les rapports des étudiants.  Suivre le même style que conseillé
+pour lrde.bib.  Utiliser des clefs NOM.ANNEE.seminar, voire
+NOM.ANNEE.seminar.TOPIC en cas de conflit et seulement dans ce cas.
+Comme partout ailleurs, seul le premier auteur entre dans la clef.
+Le champ url n'est pas nécessaire, contrairement au champ urllrde.
+Remplir le champs "abstract" serait un bien.  Par exemple :
+
+    @TechReport{berger.05.seminar,
+      author =       {Christophe Berger and Nicolas Widynski},
+      title =        {Using connected operators to manipulate image
+                      components},
+      institution =  {EPITA Research and Development Laboratory (LRDE)},
+      urllrde =      {200507-Seminar-Berger-Widynski},
+      year =         2005,
+      abstract =     {Connected operators are morphological filters which
+                      have the property of keeping objects contours when
+                      simplifying images. They bring to the light objects
+                      situated in the image. To do it, an implementation
+                      of the Tarjan's Union-find algorithm is used for an
+                      easy manipulation of image components. A binary
+                      partition tree is built, in order to simplify the
+                      objects attributes computation and the filtering of
+                      image.  First of all, we will introduce
+                      morphological filters and connected operators, then
+                      we will propose an overview of different kinds of
+                      methods used in the literature in order to create a
+                      binary partition tree and we will explain the
+                      Tarjan's "union-find" algorithm for the image
+                      filtering. At last, we will apply this method in
+                      order to clean and delete stars in space's images.},
+    }
+
+
+** richie.bib
+Denis Ritchie.
+<URL:http://cm.bell-labs.com/cm/cs/bib/dmr.bib>.
+
+** kernighan.bib
+La biblio de Brian Kernighan, depuis
+<URL:http://netlib.bell-labs.com/cm/cs/bib/bwk.bib>.
+
+** lrde.bib
+Les papiers du laboratoire.
+
+- Conférences nationales
+  Mettre category = {national}
+
+- Articles non publiés
+  Faire note = {Submitted} ou {Accepted} ou {Rejected}
+
+- URL LRDE
+  Pensez à inclure l'URL au LRDE de cette façon :
+
+  urllrde = {200102-Wscg},
+
+  si l'url est http://www.lrde.[...]/Publications/200102-Wscg
+
+** mc.bib
+Model checking.
+
+Le format suit celui du labo.  Tapez "make neat" après chaque
+modification.
+
+Les papiers sont rangés dans des sous-répertoires de
+/lrde/doc/comp/mc/ en respectant les noms de clefs dans la biblio.
+
+** model-checking.bib
+Model checking, probabiliste ou non.
+Obsolete : utilisez mc.bib à la place, migrez les références en les
+mettant au bon format s'il le faut.
+
+** sip.bib
+Traitement du signal et de l'image.  À éclater en plusieurs fichiers.
+
+** sensor-networks.bib
+
+* share/doc
+Des morceaux de documentations qui peuvent être utiles par exemple
+pour initier à l'utilisation de certains outils.  Merci d'éviter les
+documents volumineux (e.g. les PDF), puisque share/ étant typiquement
+présent de nombreuses fois sur un compte, ça finit par peser lourd en
+espace disque.  /lrde/doc/comp/text/latex devrait mieux convenir.
+
+* share/make
+Morceaux de Makefile qui vont bien.
+
+** dist.mk
+Fournit les cibles "dist", "distdir", et "distcheck" comparables à
+celles d'Automake, en moins puissant bien sûr.  Définir data_DATA
+et/ou EXTRA_DIST pour spécifier ce qu'il faut inclure.  "share" et
+Makefile sont inclus systématiquement.
+
+** dload.mk
+Définit install, hooké à install, pour installer au bon endroit les
+contenus des variables suivantes : papers_DATA (/lrde/papers),
+dload_DATA (http://www.lrde.epita.fr/dload/papers).
+
+** handout.mk
+Définit des cibles supplémentaires pour créer des polycopiés
+(handouts), au format A4 (suffixe `-handout.pdf') ou au format livret
+A4 (suffixe `-handout-4.pdf').
+
+** pdf-figs.mk
+Des règles de conversion depuis un certain nombre de formats de figure
+(Dia, Dot, GNU Plot, XFig etc.) vers PDF, voire PNG dans le cas de Dia
+(la conversion vers PDF échoue).
+
+Exporte aussi des fonctions GNU Make utiles.
+
+Lire le Makefile qui est commenté.
+
+*** share_convert_to_pdf FILES
+Convertit les extensions reconnues des FILES vers pdf.  Exemple
+d'utilisation:
+
+FIGS_PDF = $(notdir $(call share_convert_to_pdf,$(DOCUMENT_IMAGES)))
+
+** share.mk
+Le minimum syndical pour utiliser share/.  Une target "update" pour
+mettre à jour share/.  Définir share_dir = path/to/share avant.
+
+** share-am.mk
+Le même, mais à utiliser quand inclus dans un Makefile.am au lieu de
+Makefile.
+
+** tex.mk
+De quoi compiler du *.tex ou *.ltx vers du *.dvi, *.pdf, ou *.html.
+
+*** rev.tex
+tex.mk permet aussi de constuire "rev.tex" si vous le souhaitez, qui
+contient le numéro de révision du ChangeLog (s'il est possible de
+l'obtenir) dans la macro \SvnRev.  Faire par exemple :
+
+     article.pdf: rev.tex
+
+pour que ça fonctionne.
+
+Il cherche $(ChangeLog) qui vaut "ChangeLog" par défaut.
+
+* share/styles
+Ce répertoire fournit des styles courants mais pas omniprésents (e.g.,
+qtree, bibunits etc.), des paquets pratiques mais rares (e.g., texi,
+bilan), mais également des wrappers pour certains paquetages de façon
+à les "améliorer" (listings -> mylistings).  Dans ce dernier cas, on
+ajoute :
+
+- des alarmes pour les ordres dangereux
+- des paramètres par défaut pour les cas courants
+- un support étendu (plus de langages etc.)
+
+On essaie aussi de fournir un support pour HeVeA.  C'est un peu
+pénible, voir l'item HeVeA.
+
+** atbeginend.sty
+Un paquet qui permet d'accrocher du code avant ou après le début ou la
+fin d'un environnement. Très pratique pour gagner de la place dans les
+listes.  Par exemple :
+
+   % Reduce space between itemize items.
+   \usepackage{atbeginend}
+   \AfterBegin{itemize}{\addtolength{\itemsep}{-0.6\baselineskip}}
+
+Plus d'informations :
+
+  http://www.eng.cam.ac.uk/help/tpl/textprocessing/squeeze.html
+
+  ``The atbeginend.sty package provides
+  \BeforeBegin{environment}{code-to-execute}, \AfterEnd ... etc.
+  These commands can be used to remove space around and within
+  environments. This can be useful in situations where the
+  environment resets values that over-ride those you've created.''
+
+** abbrv-fr.bst, alpha-fr.bst, plain-fr.bst, unsrt-fr.bst
+** abbrvnat-fr.bst, plainnat-fr.bst, unsrtnat-fr.bst
+** apalike-fr.bst, ieeetr-fr.bst, siam-fr.bst
+Des versions françaises des styles BibTeX du même nom. Trouvés sur
+http://www.lsv.ens-cachan.fr/~markey/bibla.php
+
+  « Styles bibliographiques francisés (disponibles sur CTAN dans
+  biblio/bibtex/contrib/bib-fr).
+  http://www.ctan.org/tex-archive/biblio/bibtex/contrib/bib-fr/ »
+
+** beamerthemeKremlinBicetre
+Un style simple basé sur Copenhagen, qui numérote les transparents, et
+qui affiche titre de section et de sous-section automatiquement.
+
+** curve.cls 1.10.
+Pour faire son CV.
+http://www.lrde.epita.fr/~didier/comp/development/software.php#curve
+
+** IEEEbib.bst, IEEEbib-abrv.bst
+Un style de bibliographie IEEE, utilisé notamment pour ICIP.  La
+version originale fournie par l'IEEE est IEEEbib.bst ;
+IEEEbib-abrv.bst est une déclinaison qui n'affiche que les initiales
+des prénoms.
+
+** IEEEtran.cls, IEEEtran.bst, IEEEtranS.bst
+Le style IEEE.  Pour la doc, cf.  /lrde/doc/comp/text/latex/IEEEtran/.
+IEEEtran.bst numérote dans l'ordre d'apparition, IEEEtranS.bst (Sort)
+trie par auteur, mais ce n'est pas recommandé par IEEE.
+
+** latex8.bst, latex8.sty
+IEEE 8.5 x 11-Inch Proceedings Style `latex8.sty'.  Et son style
+BibTeX.  Documenté dans /lrde/doc/comp/text/latex/latex8.pdf et
+/lrde/doc/comp/text/latex/latex8.tex.
+
+** lrde.bst
+Style BibTeX pour générer la bibliographie du lrde et celles de l'Air
+de rien.  Pour l'instant, encore en chantier, sera accompagnée d'un
+lrde-bst.sty.  Pour s'en servir, définir les macros suivantes:
+
+  \lrdebibauthor{AUTHOR}
+  \lrdebibkey{KEY}
+  \lrdebibtitle{TITLE}{URL-LRDE}
+  \lrdebiburl{URL}
+  \lrdebibyear{YEAR}
+
+** lrde-bulletin.sty
+Le style utilisé pour L'air de rien. Remplace GRASSnews.sty.
+
+** mybabel
+L'utiliser avec les langues en options, comme le vrai.  Il vaut mieux
+l'appeler en premier pour éviter les conflits par la suite.
+
+** myacronyms
+Les acronymes les plus utilisés au labo.  Introduit aussi \acr and
+\acrp qui sont similaires à \acf et \acfp, mais en mettant l'acronyme
+devant.
+
+** myentcs
+A style that makes easy to produce better looking PDFs than the stock
+entcs.cls.  To get the stock entcs.cls result, define \IsFinal before.
+In the future, it would be better to decode the option "draft".
+Beware that there can be huge differences in the number of pages, so
+keep an eye on the "final" version (which is the shortest).
+
+** myhyperref
+Définit ce qu'il faut pour que \autoref marche bien.  Mieux vaut
+l'inclure parmi les derniers.  Si \IsAFinal est défini, les liens sont
+en noirs (plus adéquat pour l'impression), sinon en bleu.
+
+** mylisting
+Emballe listing.sty pour qu'il fonctionne correctement dans les cas
+attendus.
+
+*** Nouveaux langages
+- ATerm pour les ATerms
+- Box pour les formules Box
+- Grammar, pour des grammaires hors-contexte.
+- HIR, langage intermédiaire d'Appel.
+- [Mips]Assembler,
+- parse-testsuite (Stratego/XT)
+
+- prism, and [xrm]prism
+- {Reactive Modules}, [Extended]{Reactive Modules}
+  These two pairs should probably be merged.
+
+- RTG, Regular Tree Grammar (Stratego/XT)
+- SDF, [Boxed]SDF, [AG]SDF
+- STL (C++ + typedef de stl)
+- Stratego
+- [Appel]Tiger, [EPITA]Tiger (dialecte par défaut)
+- Vaucanson (STL + typedef et structures de contrôle de Vcn)
+- Yacc, [Bison]Yacc (aka Bison)
+
+*** Nouveaux environnements
+- asgsdf
+- boxedsdf
+- sdf
+
+*** Nouveaux lst styles
+- box, plutôt pour le papier, sur fond légèrement grisé.
+- ttcolor, plutôt pour les transparents
+
+** mysig-alternate.cls
+Pareil que sig-alternate, mais fournit \SqueezeMetaData (pour
+condenser les « category and subject descriptors » et
+\SqueezeBibliography pour utiliser \small dans la bibliography.  Le
+premier est officiellement toléré, le deuxième est un peu pirate...
+
+Fournit aussi les environnements compactdescription et compactitemize.
+
+** numberslides
+Change l'info line dans les style Beamer pour faire apparaître le
+numéro du transparents courant.
+
+** prooftree
+Un environnement LaTeX pour faire des arbres de preuve.
+
+** texi
+Un style écrit par Didier pour avoir des commandes sémantiques comme
+en Texinfo :
+
+  abbr::          Indicating abbreviations.
+  acronym::       Indicating acronyms.
+  code::          Indicating program code.
+  command::       Indicating command names.
+  dfn::           Specifying definitions.
+  email::         Indicating an electronic mail address.
+  env::           Indicating environment variables.
+  file::          Indicating file names.
+  indicateurl::   Indicating an example URL.
+  kbd::           Showing keyboard input.
+  key::           Specifying keys.
+  link{ulr, title} ou link{url}
+  option::        Indicating option names.
+  samp::          Indicating a literal sequence of characters.
+  strong::        Strong emphasis.
+  var::           Indicating metasyntactic variables.
+  verb::          Indicating a verbatim sequence of characters.

@@ -1,0 +1,23 @@
+							-*- outline -*-
+
+* Utilisation d'HeVeA
+Lorsqu'un document fait un \usepackage{foo}, si foo.hva existe, il est
+lu *sinon c'est tout*.  En particulier HeVeA ne tente même pas de lire
+foo.sty.  Du coup, pour les cas les plus courants, il faut implémenter
+un foo.hva, qui est un fichier en syntaxe LaTeX : seules quelques
+commandes sont absentes.  En conséquence un fichier foo.sty et foo.hva
+sont extraordinairement semblables ; trop semblables : on a envie de
+les partager.  Mais dans ce cas, c'est plutôt le hva qui doit être
+inclus par le sty, puisque ce dernier est plus riche en syntaxe.
+
+On peut imaginer d'autres schémas, e.g., le sty contient des balises
+\ifhevea pour gérer ce cas-là, et foo.hva se contente d'inclure
+foo.sty.  Je (Akim) n'ai pas encore les idées claires sur ce qui est
+le plus élégant, le plus pratique.  Je cherche, et je suis preneur
+d'opinions.
+
+Chose importante et très pénible : les fichiers hva ne sont pas
+protégés en double inclusion, et RequirePackage n'existe pas en
+HeVeA.  Résultat des courses, il faut faire des \usepackage, en
+faisant attention de ne pas en faire deux fois.  C'est très pénible
+quand on veut inclure deux fichiers qui ont la même dépendance :(

@@ -1,0 +1,62 @@
+%% texi.sty: Semantically meaningful macros inspired from Texinfo.
+
+%% The following Texinfo-like macros are provided:
+%% \code, \env, \command, \samp, \file, \option, \kbd, \key, \var, \dfn.
+
+%% In addition, the following macros are provided:
+%% - \link{URL}: format a cliquable link URL.
+%% - \link[TEXT]{URL}: display TEXT with an associated cliquable footnote
+%%                     displaying URL.
+%% - \email{EMAIL}: format a cliquable email link EMAIL.
+%% - \email[TEXT]{EMAIL}: display TEXT with an associated cliquable footnote
+%%                        displaying EMAIL.
+
+%% Note that with \link, you have to specify the locator's header: http, ftp
+%% etc. However, \email adds the "mailto:" part for you. See also the hyperref
+%% macro \href, and the url macro \url. "hyperref" requires "url".
+
+%% abbr::          Indicating abbreviations.
+%% acronym::       Indicating acronyms.
+%% cite::          Referring to books not in the Info system.
+%% code::          Indicating program code.
+%% command::       Indicating command names.
+%% dfn::           Specifying definitions.
+%% email::         Indicating an electronic mail address.
+%% env::           Indicating environment variables.
+%% file::          Indicating file names.
+%% indicateurl::   Indicating an example URL.
+%% kbd::           Showing keyboard input.
+%% key::           Specifying keys.
+%% option::        Indicating option names.
+%% samp::          Indicating a literal sequence of characters.
+%% var::           Indicating metasyntactic variables.
+%% verb::          Indicating a verbatim sequence of characters.
+
+%% FIXME: Support a color version for use with Beamer.
+
+%% \newcommand{\abbr}[1]{\textsc{#1}}
+%% \newcommand{\acronym}[1]{\textsc{#1}}
+%% \newcommand{\code}[1]{\texttt{#1}}
+%% \newcommand{\command}[1]{`\texttt{#1}'}
+%% \newcommand{\dfn}[1]{\warn{\textsf{#1}}}
+%% \newcommand{\env}[1]{{\color{violet}{\textsf{#1}}}}
+%% % Do not use blue, since it is barely legible in titles.
+%% \newcommand{\file}[1]{{\color{darkgreen}{\textit{\begingroup \urlstyle{sf}\Url{#1
+%% }}}}}
+%% \newcommand{\kbd}[1]{\texttt{#1}}
+%% \newcommand{\option}[1]{\texttt{#1}}
+%% \newcommand{\samp}[1]{\texttt{#1}}
+%% \newcommand{\var}[1]{\texttt{#1}}
+
+
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{texi}[2006/05/19 v0.2
+		       Semantically meaningful macros inspired from Texinfo]
+
+\RequirePackage{hevea}
+\input{texi.hva}
+
+\endinput
+
+%% texi.sty ends here.

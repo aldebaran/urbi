@@ -1,0 +1,29 @@
+%% myindex.sty: Seamless complex index entries.
+
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{myindex}[2007/10/05 v0.1
+                          Factoring complex index entries]
+
+%% \indexing{KEY}{VALUE}
+%% ---------------------
+%% Declare that \myindex{KEY} should run \index{VALUE}.
+\newcommand{\indexing}[2]{%
+  \expandafter\gdef\csname @myindex #1 \endcsname{{#2}}%
+}
+
+%% \myindex{KEY}
+%% -------------
+%% Run \index on KEY's VALUE if declared, otherwise just KEY.
+\newcommand{\myindex}[1]{%
+  \expandafter\let\expandafter\@tempa\csname @myindex #1 \endcsname%
+  \ifx\@tempa\relax%
+    \index{#1}%
+  \else%
+    \expandafter \index \@tempa%
+  \fi%
+}
+
+\endinput
+
+%% myindex.sty ends here.

@@ -1,0 +1,9 @@
+\renewenvironment{VCPicture}[2][0]%
+  {\settoheight{\VertShiftH}{$\{$}%
+   \settodepth{\VertShiftD}{$\{$}%
+   \setlength{\VertShift}{.5\VertShiftD-.5\VertShiftH}%
+   \begin{pspicture}[shift=#1]#2%
+   \ifVCFrame \FrameStyle \psframe#2\fi%
+   \ifVCGrid \FrameStyle\GridStyle \psgrid#2\fi}%
+  {\RstState\RstEdge%
+   \end{pspicture}}

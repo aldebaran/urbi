@@ -1,0 +1,16 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of HAVM's HIR for listings package
+%%
+
+\lstdefinelanguage{HIR}%
+  {morekeywords=%
+    {const,name,temp,binop,mem,call,eseq,% exps
+      move,sxp,jump,cjump,seq,label,% stms
+      eq,ne,lt,gt,le,ge,% relop
+      add,mul,sub,div,mod,%arithmentics
+      fp,\$fp,sp,\$sp,rv,\$v0% temps
+    },%
+    sensitive=true,%
+    morecomment=[l]{\#},%
+    morestring=[b]{"},%
+  }[keywords,comments,strings]%

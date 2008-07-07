@@ -1,0 +1,69 @@
+#!/bin/sh
+
+{
+  svn info | sed -n '/^URL: /{s///;p;q;}'
+  echo
+  svn diff --diff-cmd "`which diff`" -x "-w -u" $@ >$$.diffs
+  # Don't fail if missing.
+  diffstat $$.diffs 2>/dev/null
+  echo
+  sed $$.diffs -e "# do not try this at home !
+/^Index: .*ChangeLog\$/{
+n
+N
+N
+N
+N
+s/.*\n.*\n.*\n.*[0-9]*-[0-9]*-[0-9]*/from/
+n
+:chlg
+/^\+/b db
+s/^.//
+n
+\${
+g
+s/^\n//
+q
+}
+/^Index: /!b chlg
+b continue
+:db
+/^\+/{
+s/^.//
+n
+b db
+}
+N
+s/.*\n//
+\${
+g
+s/^\n//
+q
+}
+/^Index: /!b db
+:continue
+x
+s/^\n//
+G
+:finish
+/^==*\$/{
+N
+s/^==*\n//
+}
+n
+\$q
+b finish
+}
+/^==*\$/d
+\${
+x
+s/^\n//
+p
+g
+p
+}
+H
+d"
+} | tee diffs.patch
+
+rm $$.diffs

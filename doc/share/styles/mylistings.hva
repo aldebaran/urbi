@@ -1,0 +1,49 @@
+%%					 -*- LaTeX -*-
+%%
+%% This file is read by HeVeA and LaTeX.
+
+\ifhevea
+  \usepackage{listings}
+\else
+  \RequirePackage{listings}
+\fi
+
+% When there is no <+-> running, \alert<.> does not work.
+\lstdefinestyle{alert}{emphstyle={\alert}}
+
+\usepackage{ldf/asf}
+\usepackage{ldf/asn1}
+\usepackage{ldf/aterm}
+\usepackage{ldf/bnf}
+\usepackage{ldf/box}
+\usepackage{ldf/grammar}
+\usepackage{ldf/hir}
+\usepackage{ldf/leopard}
+\usepackage{ldf/lex}
+\usepackage{ldf/mips}
+\usepackage{ldf/parse-testsuite}
+\usepackage{ldf/prism}
+\usepackage{ldf/reactive-modules}
+\usepackage{ldf/rtg}
+\usepackage{ldf/sdf}
+\usepackage{ldf/stl}
+\usepackage{ldf/stratego}
+\usepackage{ldf/tiger}
+\usepackage{ldf/urbi}
+\usepackage{ldf/vaucanson}
+\usepackage{ldf/yacc}
+
+
+%% Give a means to have color requests.
+\lstdefinelanguage{Colors}%
+  {moredelim=*[is][\color{green}]{g(}{)},
+   moredelim=*[is][\color{red}]{r(}{)},
+   moredelim=*[is][\color{cyan}]{c(}{)}}
+
+%% Give a means to have emphasis requests.
+\lstdefinelanguage{Emphasis}%
+  {moredelim=*[is][\alert]{bf(}{)}}
+
+%%
+\lstdefinelanguage{Underline}%
+  {moredelim=*[is][\underbar]{__}{__}}

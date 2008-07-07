@@ -1,0 +1,20 @@
+\lstdefinelanguage[]{Urbi}
+{
+  morekeywords={at, call, class, do, else, emit, every, for, function, if,%
+    in, loop, new, onleave, return, self, var, whenever, while},
+  morecomment=[l]{//},
+  morecomment=[l]{\#},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  sensitive=true,
+}
+
+\definecolor{urbiAnswers}{rgb}{0.5,0.5,0.5}
+\newcommand{\urbiAnswerStyle}{\color{urbiAnswers}}
+
+\lstdefinelanguage[interactive]{Urbi}[]{Urbi}
+{
+  moredelim=[il][\urbiAnswerStyle]{..},
+  moredelim=[l][\urbiAnswerStyle]{[00000000]},
+  moredelim=[l][\urbiAnswerStyle]{[00000000:error]},
+}

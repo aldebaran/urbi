@@ -1,0 +1,128 @@
+#! /usr/bin/env python
+
+# usage: list2bib <file.list >file.bib
+
+# This script was written for a specific purpose (converting a
+# bibliography in a personal/non-standard format to a BibTeX file),
+# but it might serve as a basis for other scripts.
+#
+#
+# The input follows this layout:
+#
+#   # A comment.
+#   # Another comment.
+#
+#   # A title.
+#   Compiler construction bibliography
+#
+#   
+#   *** A section.
+#
+#   http://www.an.url.org
+#    A title.
+#    An author.
+#    A year.
+#
+#
+# Hence, entries are formated like this:
+#
+#   http://citeseer.ist.psu.edu/briggs92register.html
+#    Register Allocation via Graph Coloring
+#    Preston Briggs
+#    1992
+
+
+import sys, re
+
+# Read a line, removing white space and comments
+def read_line (input):
+  line = input.readline ()
+  while line:
+    line = line.lstrip ()
+    # Strip white space and comments.
+    if not line or line[0] in ['\n', '\r', '#', '*']:
+      line = input.readline ()
+    else:
+      break
+  # Remove trailing \n and \r.
+  return line.rstrip ("\n\r")
+
+# Wrap a line.
+def wrap (s, width, indent_char = '{'):
+  # Look for the first occurrence of INDENT_CHAR to get the level of
+  # indentation.
+  indent = s.find (indent_char) + 1
+  pieces = s.split(' ')
+  output = ""
+  line = pieces.pop (0)
+  sep = " "
+  while pieces:
+    piece = pieces.pop (0)
+    if len (line) + len (sep) + len (piece) > width:
+      # "Flush" the current line, and start a new one.
+      output += line + "\n"
+      line = " " * indent + piece
+    else:
+      line += sep + piece
+  output += line
+  return output
+
+class Entry:
+  """A BibTeX entry."""
+
+  def __init__(self, title, author, year, url):
+    self.title = title
+    self.author = self.gen_author (author)
+    self.year = year
+    self.url = url
+    self.key = self.gen_key (author, year)
+
+  def __str__ (self):
+    return "@Article{" + self.key + "\n" + \
+           wrap ("  title =        {" + self.title + "}", 75) + "\n" + \
+           wrap ("  author =       {" + self.author + "}", 75)  + "\n" + \
+           "  year =         {" + self.year + "}\n" + \
+           "  url =          {" + self.url + "}\n" + \
+           "}\n"
+
+  def gen_author (self, author):
+    as = author.split (',')
+    authors = [a.strip () for a in as]
+    return " and ".join (authors)
+
+  def gen_key (self, author, year):
+    authors = author.split (',')
+    names = authors[0].split (" ")
+    lastname = names[-1].lower ()
+    digits = str (year)[-2:]
+    return lastname + "." + digits
+
+# Tag proper nouns as verbatim.
+def verbatimize (s):
+  proper_nouns = ["ANSI", "Bison", "BURS", "C", "CISC", "DAGs", "Flex",
+                  "Forth", "GCC", "HARE", "IA-64", "Impact-I", "Intel",
+                  "Java", "MBURG", "RISC", "RTL", "sigma-SSA", "SSA", "SELF"]
+  verb = s
+  for n in proper_nouns:
+    verb = re.sub ("\\b" + n + "\\b", "{" + n + "}", verb);
+  return verb
+
+# Driver.
+input = sys.stdin
+line = read_line (input)
+entries = []
+# Skip header.
+if line == "Compiler construction bibliography":
+  line = read_line (input)
+while line:
+  url = line
+  title = verbatimize (read_line (input))
+  author = read_line (input)
+  year = read_line (input)
+  e = Entry (title, author, year, url)
+  entries.append (e)
+  # Next.
+  line = read_line (input)
+entries.sort (lambda x, y: cmp(x.key, y.key))
+for e in entries:
+  print (e)

@@ -1,0 +1,43 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of Yacc/Bison for listings package
+%%
+
+%% Yacc
+\lstdefinelanguage[]{Yacc}%
+  {otherkeywords=%
+    {\%left,
+      \%nonassoc,\%prec,\%right,\%skeleton,
+      \%start,\%token,\%type,\%union,
+      \%\%,\%\{,\%\},|,:,
+      \$\$,\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9
+    },%
+    morecomment=[n]{/*}{*/},%
+    morestring=[b]{"},%
+    sensitive=true
+  }[keywords]%
+
+
+%% Yacc: Bison
+
+%% Listings does not support ``moreotherkeywords'', so we cannot
+%% simply inherit.  To bad for code duplication.
+\lstdefinelanguage[Bison]{Yacc}%
+  {otherkeywords=%
+    {\%binary,\%debug,\%default-prec,\%define,\%defines,\%destructor,
+      \%dprec,\%error-verbose,\%expect,\%expect-rr,\%file-prefix,
+      \%fixed-output-files,\%initial-action,\%glr-parser,\%left,
+      \%lex-param,\%locations,\%merge,\%name-prefix,\%no-default-prec,
+      \%no-lines,\%nonassoc,\%nondeterministic-parser,\%nterm,\%output,
+      \%parse-param,\%prec,\%printer,\%pure-parser,\%right,\%skeleton,
+      \%start,\%term,\%token,\%token-table,\%type,\%union,\%verbose,\%yacc,
+      \%\%,\%\{,\%\},|,:,
+      \$\$,\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9,
+      @\$,@1,@2,@3,@4,@5,@6,@7,@8,@9
+    },%
+    morecomment=[n]{/*}{*/},%
+    morecomment=[s]{//},%
+    morestring=[b]{"},%
+    sensitive=true
+  }[keywords]%
+
+\lstdefinelanguage{Bison}[Bison]{Yacc}{}

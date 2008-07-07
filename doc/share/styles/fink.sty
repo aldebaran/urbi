@@ -1,0 +1,120 @@
+%%
+%% This is file `fink.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% fink.dtx 
+%% 
+
+
+%% Copyright (C) 1999, 2000, 2001, 2002, 2007 Didier Verna
+
+%% This file is part of FiNK.
+
+%% FiNK may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.1
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%% http://www.latex-project.org/lppl.txt
+%% and version 1.1 or later is part of all distributions of LaTeX
+%% version 1999/06/01 or later.
+
+%% FiNK consists of all files listed in the file `README'.
+
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{fink}[2008/02/27 v2.1.1
+                       Keep track of the current filename]
+
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=fnk,prefix=fnk@}
+
+\DeclareStringOption[\@currdir]{maindir}
+\DeclareStringOption[tex]{mainext}
+
+\newcommand*\@fink@mainext[1]{\setkeys{fnk}{mainext={#1}}}
+\newcommand*\fink@mainext{%
+  \expandafter\@fink@mainext\expandafter{\CurrentOption}}
+\DeclareVoidOption{tex}{\fink@mainext}
+\DeclareVoidOption{ltx}{\fink@mainext}
+
+\newcommand*\finkextension[1]{%
+  \PackageError{FiNK}{%
+    \protect\finkextension\space shouldn't be used anymore.\MessageBreak
+    Please use the `mainext' package option instead.}{%
+    No big deal right ?\MessageBreak
+    Type X to quit and modify your source.}}
+\@onlypreamble\finkextension
+
+\ProcessKeyvalOptions*
+
+\newcommand*\finkdir{\fnk@maindir}
+\newcommand*\finkbase{\jobname}
+\newcommand*\finkext{\fnk@mainext}
+
+\newcommand*\finkfile{}
+\newcommand*\fink@file[2]{#1\ifx\\#2\\\else.#2\fi}
+\xdef\finkfile{\fink@file{\jobname}{\fnk@mainext}}
+
+\newcommand*\finkpath{}
+\xdef\finkpath{\finkdir\finkfile}
+
+\PackageInfo{FiNK}{main file set to "\finkpath"}
+
+\newcommand*\fink@prepare[1]{%
+  \begingroup%
+    \filename@parse{#1}%
+    \xdef\fink@nextdir{%
+      \ifx\filename@area\@empty%
+        \fnk@maindir%
+      \else%
+        \fnk@maindir\filename@area%
+      \fi}%
+    \xdef\fink@nextbase{\filename@base}%
+    \xdef\fink@nextext{\ifx\filename@ext\relax tex\else\filename@ext\fi}%
+    \xdef\fink@nextfile{\fink@file{\fink@nextbase}{\fink@nextext}}%
+    \xdef\fink@nextpath{\fink@nextdir\fink@nextfile}%
+  \endgroup}
+
+\newcommand*\fink@input{%
+  \xdef\finkdir{\fink@nextdir}%
+  \xdef\finkbase{\fink@nextbase}%
+  \xdef\finkext{\fink@nextext}%
+  \xdef\finkfile{\fink@nextfile}%
+  \xdef\finkpath{\fink@nextpath}%
+  \@@input\@filef@und}
+\newcommand*\fink@restore[1]{%
+  \begingroup%
+    \filename@parse{#1}%
+    \xdef\finkdir{\filename@area}%
+    \xdef\finkbase{\filename@base}%
+    \xdef\finkext{\filename@ext}%
+    \xdef\finkfile{\fink@file{\finkbase}{\finkext}}%
+    \xdef\finkpath{\finkdir\finkfile}%
+  \endgroup}
+
+\long\def\InputIfFileExists#1#2{%
+  \IfFileExists{#1}{%
+    #2\@addtofilelist{#1}%
+    \fink@prepare{#1}%
+    \expandafter\fink@input%
+    \expandafter\fink@restore\expandafter{\finkpath}}}
+
+\endinput
+%%
+%% End of file `fink.sty'.

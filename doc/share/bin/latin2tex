@@ -1,0 +1,66 @@
+#! /bin/sh
+
+# Change all the latin 1 accents to TeX accents.  We don't use recode,
+# because we don't want to convert { into \{ and so forth.
+
+recode_lower=$(echo "
+s/á/\\'a/g;
+s/à/\\\`a/g;
+s/â/\\^a/g;
+s/ä/\\\"a/g;
+s/ã/\\~a/g;
+s/ß/\\ss{}/g;
+s/é/\\'e/g;
+s/è/\\\`e/g;
+s/ê/\\^e/g;
+s/ë/\\\"e/g;
+s/î/\\^i/g;
+s/ï/\\\"i/g;
+s/ó/\\'o/g;
+s/ô/\\^o/g;
+s/ö/\\\"o/g;
+s/ø/\\o{}/g;
+s/ü/\\\"u/g;
+s/û/\\^u/g;
+s/ù/\\\`u/g;
+s/ç/\\,c{}/g;
+" | sed -e 's/[\\`"]/\\&/g')
+
+recode_upper=$(echo "$recode_lower" |
+	       sed -e 's/\"/\\\"/g' |
+	       tr '[:lower:]' '[:upper:]' |
+	       sed 's/^S/s/g;s/G;$/g;/g')
+
+recode_one_file ()
+{
+  local file=$1
+
+  sed -i~ -e "$recode_lower" -e "$recode_upper" $file
+}
+
+for opt
+do
+  case $opt in
+  -h | --help)
+     cat <<-EOF
+	$0 [OPTIONS] FILES
+
+	Convert the latin 1 accents in the BibTeX FILES to be 7
+	bit clean.  Recode cannot be used, as it changes the special
+	characters ({, } etc.) too.  A backup is left with ~ appended.
+
+	Options:
+	  -h, --help        Display this message and exit successfully
+EOF
+     exit 0
+     ;;
+  -*)
+     echo >&2 "unknown option: $opt"
+     exit 1
+     ;;
+
+  *)
+     recode_one_file "$opt"
+     ;;
+  esac
+done

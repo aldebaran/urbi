@@ -1,0 +1,22 @@
+\RequirePackage{xspace}
+
+\newcommand{\lisp}{\textsc{Lisp}\xspace}
+\newcommand{\cl}{\textsc{Common} \textsc{Lisp}\xspace}
+\newcommand{\clos}{\textsc{Clos}\xspace}
+
+\newcommand{\ie}{\emph{i.e.},}
+\newcommand{\eg}{\emph{e.g.},}
+\newcommand{\etc}{{\itshape etc.\/}\xspace}
+
+\newcommand{\LRDE}{\textsc{LRDE}\xspace}
+\newcommand{\lrde}{\textsc{LRDE}\xspace}
+\newcommand{\EPITA}{\textsc{EPITA}\xspace}
+\newcommand{\epita}{\textsc{EPITA}\xspace}
+\newcommand{\csi}{\textsc{CSI}\xspace}
+\newcommand{\cti}{CTI\xspace}
+
+\newcommand{\bslash}{\texttt{\symbol{92}}}
+
+%% Local Variables:
+%% mode: latex
+%% End:

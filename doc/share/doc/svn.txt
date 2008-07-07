@@ -1,0 +1,111 @@
+                                                   -*- outline -*-
+
+* Qu'est-ce que Subversion) ?  Pourquoi s'en servir ?
+Subversion (svn en ligne de commande), est le descendant du bien connu
+CVS.  Son métier est d'assurer la coordination d'un travail
+collaboratif en maintenant un "dépôt", c'est-à-dire un historique des
+changements effectués dans un ensemble de fichiers.
+
+Svn est largement utilisés dans le monde pour coordonner des équipes
+de développements logiciels, mais aussi des sites web, des documents,
+etc.
+
+* Quels sont les principes de bases ?
+Chaque utilisateur a une copie locale du répertoire, que l'on appelle
+« copie de travail », et ce répertoire se « souvient » de l'adresse du
+dépôt dont il dépend.
+
+Chaque fois qu'un utilisateur a fini de faire les modifications qu'il
+voulait faire (e.g., corriger un bug, rajouter une section), il les
+enregistre dans le dépôt central.
+
+Il arrive parfois que quelqu'un d'autre ait fait des modifications
+entre-temps.  Deux cas de figures se présentent alors :
+
+- pas de collision (on parle de « conflit »), et il n'y a rien à
+  faire.
+
+- des portions de fichiers ont été éditées au même moment, il y a
+  conflit.  Dans de cas, il vous faudra régler les conflits à la main,
+  c'est-à-dire, éditer le fichier en conflit et faire le choix de
+  garder la version déjà enregistrée, garder la vôtre, ou même un
+  mélange.  Lorsque tous les conflits sont résolus, il restera à
+  prévenir l'outil que tout va bien.
+
+Lorsque l'on se prépare à travailler sur un fichier, il est utile de
+demander auparavant une mise à jour de la copie locale.
+
+* Quels fichiers doivent être mis dans le dépôt ?
+Tout ce qui est nécessaire à la bonne utilisation du dépôt doit y être
+inclus.  Mais dans la mesure du possible, il faut éviter d'enregistrer
+les produits tels que les .o, .eps, .pdf qui peuvent être obtenus
+autrement.
+
+Pour le bien de tous, il est utile d'inclure un Makefile qui fasse
+tout le nécessaire pour production des fichiers produits nécessaires.
+Si par exemple on a besoin d'un *.pdf issu d'un *.fig, alors
+enregistrer le *.fig dans le dépôt, mettre la règle de conversion dans
+le Makefile, et par contre, ne pas inclure le *.pdf dans le dépôt.
+
+* Qu'est-ce qu'un ChangeLog ?
+Simplement par politesse envers ses pairs, et de façon à faciliter la
+compréhension de l'évolution du dépôt, on maintient un fichier nommé
+« ChangeLog » qui décrit brièvement les changements apportés.  Pour le
+remplir, procéder par imitation des entrées précédentes.
+
+* Le cycle de travail
+
+** Création initiale : svn checkout (ou co)
+Une URL vous a certainement été donnée : c'est l'adresse du dépôt.
+En règle générale on ne s'en sert qu'une seule fois : à la création de
+votre copie locale.
+
+Faire :
+
+      svn co URL
+
+** Mettre à jour une copie locale : svn update (ou up)
+Se mettre dedans, faire
+
+      svn up
+
+** Éditer les documents
+Se servir d'Emacs, vi, ce que vous voulez.
+
+** Tenir à jour la liste des fichiers à enregistrer : svn add/rm
+Si vous introduisez un nouveau fichier, faites
+
+      svn add fichier
+
+Si vous en effacez un, faites
+
+      svn rm fichier
+
+** Comparer la liste de fichiers locale avec celle du dépôt
+Faire « svn status » pour regarder si tous les fichiers sont
+correctement déclarés : aucun des fichiers que les autres collaborateurs
+doivent obtenir ne doit apparaître avec un « ? » devant.  NB: pas
+la peine d'enregistrer les produits (e.g., *.o, ou *.pdf), par contre
+inclure toutes les sources (e.g., *.c, ou *.tex).
+
+      svn st
+
+** Comparer les différences
+Faire
+
+      svn diff
+
+pour regarder si les changements ont une bonne tête.
+
+** Enregistrer
+Faire
+
+      svn ci
+
+pour enregistrer les modifications.
+
+* Pour en savoir plus
+
+Lire la documentation de Subversion :
+
+		   http://svnbook.red-bean.com/

@@ -1,0 +1,73 @@
+#!/bin/bash
+# beamer2handout is just a small convenient interface to pdfnup
+# (http://www2.warwick.ac.uk/fac/sci/statistics/staff/academic/firth/software/pdfjam/)
+#
+# beamer2handout creates 4up or 6up a4-sized pdf docs of your
+# input pdf (intented for and tested with latex-beamer docs)
+# $Id: beamer2handout 604 2005-04-27 11:00:56Z adam $
+# by Arthur van dam, useful hints by David Firth and Eelco Dolstra.
+
+# Customize this to your own needs:
+pdfnup="pdfnup";
+addArgs="";
+
+if ! ($pdfnup --help) >/dev/null 2>&1; then
+  echo >&2 "$0: pdfnup not found.  On Debian, install pdfjam"
+  exit 1
+fi
+
+usagetext=\
+"Usage:
+  $ beamer2handout (input.pdf) [(4up|6up) [output.pdf]]"
+
+helptext=\
+"beamer2handout converts a (latex-beamer) pdf file to A4-sized handouts.
+One can choose for either four (default) or six slides on one page.
+$usagetext"
+
+if test -n "${1}"; then
+	case "${1}" in
+		*".pdf");;
+		"--help") echo "$helptext";
+			  exit 0;;
+		*) echo "beamer2handout: first argument must be input pdf filename.";
+		   echo "$usagetext";
+		   exit 1;;
+	esac
+	inFile=${1};
+else
+	echo "beamer2handout: Missing arguments";
+    echo "$usagetext";
+	exit 1;
+fi
+if test -n "${2}"; then
+	case "${2}" in
+		"4up") nup="2x2"; orient="landscape";;
+		"6up") nup="2x3"; orient="portrait";;
+		*) nup="2x2"; orient="landscape";
+		   echo "beamer2handout warning: ignoring invalid 2nd argument '${2}'.
+			 Defaulting to 2x2.";;
+	esac
+else
+	nup="2x2"; orient="landscape";
+fi
+if test -n "${3}"; then
+	case "${3}" in
+		*".pdf") addArgs="$addArgs --outfile ${3}";;
+		*) echo "beamer2handout: Third argument (when used) should be output pdf filename.";
+		   echo "$usagetext";
+		   exit 1;;
+	esac
+fi
+
+# Use array instead of string for nupCmd, to allow argvalues with spaces.
+nupCmd=\
+($pdfnup $inFile --paper a4paper --nup $nup --orient $orient \
+--noautoscale false --scale 0.95 --delta "3mm 3mm" --frame true \
+$addArgs);
+
+# Now run it!
+echo "beamer2handout: calling pdfnup:
+${nupCmd[@]}";
+
+"${nupCmd[@]}";

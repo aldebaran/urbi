@@ -1,0 +1,99 @@
+%% ---------- %%
+%% Acronyms.  %%
+%% ---------- %%
+
+\RequirePackage{acronym}
+
+% Similar to \acl and \aclp, but the acronyms comes first.
+%
+% \acf{fubar} -> Fucked Up Beyong All Repair (FUBAR)
+% \acr{fubar} -> FUBAR (Fucked Up Beyong All Repair)
+%
+% `R' stands for reversed for lack of a better idea.
+\newcommand{\acr}[1]{\acs{#1} (\acl{#1})}
+\newcommand{\acrp}[1]{\acsp{#1} (\aclp{#1})}
+
+
+\RequirePackage{mycxx}
+\RequirePackage{myhyperref}
+
+% APMC
+\acrodef{apmc}[APMC]{Approximate Probabilistic Model Checker}
+\acrodef{ctmc}[CTMC]{Continuous-Time Markov Chain}
+\acrodef{csl}[CSL]{Continuous Stochastic Logic}
+\acrodef{dtmc}[DTMC]{Discrete-Time Markov Chain}
+\acrodef{fpras}[FPRAS]{Fully Polynomial Randomized Approximation Scheme}
+\acrodef{ltl}[LTL]{Linear Time Logic}
+\acrodef{prism}[PRISM]{PRobabilistic symbolIc Model Checker}
+\acrodef{pts}[PTS]{Probabilistic Transition System}
+\acrodef{rm}[RM]{Reactive Modules}
+\acrodef{wsn}[WSN]{Wireless Sensor Network}
+\acrodef{xrm}[XRM]{eXtended Reactive Modules}
+
+% Stratego/XT, Transformers, etc.
+\acrodef{ag}[AG]{Attribute Grammar}
+\acrodef{asf}[ASF]{Algebraic Specification Formalism}
+\acrodef{asf+sdf}[ASF+SDF]{Algebraic Specification Formalism \& Syntax Definition Formalism}
+\acrodef{ast}[AST]{Abstract Syntax Tree}
+\acrodef{bnf}[BNF]{Backus Naur Form}
+\acrodef{cfg}[CFG]{Context-Free Grammar}
+\acrodef{cfl}[CFL]{Context-Free Language}
+\acrodef{dsel}[DSEL]{Domain Specific Embedded Language}
+\acrodef{dsl}[DSL]{Domain Specific Language}
+\acrodef{esdf}[ESDF]{Extended SDF}
+\acrodef{glr}[GLR]{Generalized LR}
+\acrodef{gpp}[GPP]{Generic Pretty-Printer}
+\acrodef{pt}[PT]{Parse Tree}
+\acrodef{rerag}[ReRAG]{Rewritable Reference Attribute Grammar}
+\acrodef{sdf}[SDF]{Syntax Definition Formalism}
+\acrodef{sglr}[SGLR]{Scanner-less Generalized LR}
+\acrodef{uuag}[UU-AG]{Utrecht University Attribute Grammar System}
+
+% C, C++ etc.
+\acrodef{cpp}[\texttt{cpp}]{\C preprocessor}
+\acrodef{ratfor}[RATFOR]{Rational Fortran}
+\acrodef{stl}[STL]{Standard Template Library}
+
+% Compilation.
+\acrodef{cisc}[CISC]{Complex Instruction Set Computer}
+\acrodef{il}[IL]{Intermediate Language}
+\acrodef{ir}[IR]{Intermediate Representation}
+\acrodef{mips}[MIPS]{Microprocessor without Interlocked Pipeline Stages}
+\acrodef{risc}[RISC]{Reduced Instruction Set Computer}
+
+% Object Oriented, etc.
+\acrodef{aop}[AOP]{Aspect Oriented Programming}
+\acrodef{dp}[DP]{Design Pattern}
+\acrodef{gp}[GP]{Generic Programming}
+\acrodef{gui}[GUI]{Graphical User Interface}
+\acrodef{oo}[OO]{Object Oriented}
+\acrodef{oop}[OOP]{Object-Oriented Program\-ming}
+\acrodef{scoop}[SCOOP]{Static \Cxx Object Oriented Programming}
+
+% Vaucanson.
+\acrodef{dfa}[DFA]{Deterministic Finite Automaton}
+\acrodef{nfa}[NFA]{Nondeterministic Finite Automaton}
+\acrodef{mdfa}[MDFA]{Minimal Deterministic Finite Automaton}
+\acrodef{fsm}[FSM]{Finite State Machine}
+\acrodef{fsml}[FSM Library]{\textsc{at\&t} Finite State Machine library}
+
+% Programs, tools.
+\acrodef{burg}[BURG]{Bottom Up Rewrite Generator}
+\acrodef{swig}[SWIG]{Simplified Wrapper and Interface Generator}
+\acrodef{treecc}[Treecc]{Tree Compiler Compiler}
+\acrodef{yacc}[YACC]{Yet Another Compiler Compiler}
+
+% Others.
+\acrodef{api}[API]{Application Program Interface}
+\acrodef{lgpl}[GNU LGPL]{GNU Lesser General Public License}
+\acrodef{gpl}[GNU GPL]{GNU General Public License}
+
+% Organizations.
+\acrodef{enst}[ENST]{\href{http://www.enst.fr}{\'Ecole Nationale
+    Sup\'erieure des T\'el\'ecommunications de Paris}}
+\acrodef{epita}[EPITA]{\href{http://www.epita.fr}{\'Ecole Pour
+    l'Informatique et les Techniques Avanc\'ees}}
+\acrodef{liafa}[LIAFA]{\href{http://www.liafa.jussieu.fr}{Laboratoire
+    d'Informatique Algorithmique, Fondements et Applications}}
+\acrodef{lrde}[LRDE]{\href{http://www.lrde.epita.fr}{EPITA Research
+    and Development Laboratory}}

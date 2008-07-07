@@ -1,0 +1,255 @@
+#! /bin/sh
+
+case $VERBOSE in
+  x) set -x;;
+esac
+
+papers_dir=/lrde/doc/lrde/papers
+share_dir=$(dirname $(dirname "$PWD/$0"))
+share_bib_dir=$share_dir/bib
+
+test "X$AM_COLOR_TESTS" != Xno &&		\
+test "X$TERM" != Xdumb &&			\
+{						\
+  test "X$AM_COLOR_TESTS" = Xalways ||	\
+  {						\
+    test -t 1 2>/dev/null &&			\
+    tput bold 1 >/dev/null 2>&1 &&		\
+    tput setaf 1 >/dev/null 2>&1 &&		\
+    tput sgr0 >/dev/null 2>&1;			\
+  }						\
+} &&						\
+{						\
+  red=$(tput setaf 1);				\
+  grn=$(tput setaf 2);				\
+  lgn=$(tput bold)$(tput setaf 2);		\
+  blu=$(tput setaf 4);				\
+  std=$(tput sgr0);				\
+}
+
+
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+}
+
+# Indent, and put in red
+red ()
+{
+  sed >&2 -e "s/.*/  ${red}&${std}/" "$@"
+}
+
+msg_checking ()
+{
+  msg_checking_msg_=$1
+  echo >&2
+  stderr "*** Checking $msg_checking_msg_"
+}
+
+msg_result ()
+{
+  stderr "$msg_checking_msg_: $(truth $1)"
+  echo >&2
+  msg_checking_msg_=
+}
+
+
+truth()
+{
+  local sta=$?
+  if test $# -eq 1; then
+    sta=$1
+  fi
+  case $sta in
+    0) echo "${grn}OK${std}";;
+    1) echo "${red}KO${std}";;
+    *) echo "${red}KO ($?)${std}";;
+  esac
+}
+
+
+check_char ()
+{
+  msg_checking "for invalid characters"
+  local fail=0
+  LC_ALL=C grep '[^[:print:][:blank:]]' "$@" && fail=1
+  msg_result $fail
+}
+
+check_style ()
+{
+  msg_checking "for double-quotes"
+  local b
+  local fail=0
+  for b
+  do
+    LC_ALL=C grep '=[	 ]*"' $b /dev/null && fail=1
+  done
+  msg_result $fail
+}
+
+# AS_TMPDIR([bibtex-check])
+my_mktemp ()
+{
+  # Create a (secure) tmp directory for tmp files.
+  : ${TMPDIR=/tmp}
+  {
+    tmp=`(umask 077 && mktemp -d "$TMPDIR/bibtex-checkXXXXXX") 2>/dev/null` &&
+    test -n "$tmp" && test -d "$tmp"
+  }  ||
+  {
+    tmp=$TMPDIR/bibtex-check$$-$RANDOM
+    (umask 077 && mkdir "$tmp")
+  } ||
+  {
+     echo "$me: cannot create a temporary directory in $TMPDIR" >&2
+     { (exit 1); exit 1; }
+  }
+  echo $tmp
+}
+
+
+# check_pdf BIBFILE DIRECTORY
+# ---------------------------
+# Check that the papers in BIBFILE are also available in DIRECTORY.
+check_pdf ()
+{
+  msg_checking "for BibTeX/PDF correspondance"
+  local bib=$1
+  local dir=$2
+  local fail=0
+  (cd $dir && ls -1 *.pdf) |
+     grep -Ev '^lrde(-private)?\.pdf$' |
+     sed -e 's/\.pdf$//' |
+     sort >/tmp/list.pdf
+  sed -ne '/^@.*{[ \t]*/{s///;s/,//;p}' $bib |
+     sort >/tmp/list.bib
+  if cmp -s /tmp/list.pdf /tmp/list.bib; then :; else
+    echo "Files in $dir not in $bib:"
+    comm -23 /tmp/list.pdf /tmp/list.bib | red
+    echo
+    echo "Files in $bib not in $dir:"
+    comm -13 /tmp/list.pdf /tmp/list.bib | red
+    echo
+    fail=1
+  fi
+  msg_result $fail
+}
+
+check_urllrde ()
+{
+  msg_checking "for urllrde in $@"
+  local fail=0
+  local b
+  for b
+  do
+    bib2bib -q -c 'not urllrde : "."' -oc check.bib $b >/dev/null
+    if test -s check.bib; then
+      stderr "$b: entries that lack an urllrde field:"
+      red check.bib
+      fail=1
+    fi &&
+    rm -f check.bib
+  done
+  msg_result $fail
+}
+
+check_wikilinks ()
+{
+  local i=0
+  local regexp='s,.*<a href="\(http://www.lrde.epita.fr/dload/[^"]*\)".*,\1,p'
+  local urls=$(sed -ne "$regexp" "$1")
+  for url in $urls 'X'; do
+    if test $url = 'X'; then
+      test $i -eq 0 && echo >&2 "${red}WARNING${std}: no URL given in $u"
+      continue
+    fi
+    i=1
+    if ! wget -q -O /dev/null $url; then
+      echo >&2 "${red}WARNING${std}: $url is invalid"
+    fi
+  done
+}
+
+check_wiki ()
+{
+  msg_checking "for existence of the urllrde page"
+  local fail=0
+  dir=$(my_mktemp)
+  echo >&2 "$dir"
+  local b
+  for b
+  do
+    sed -ne 's/.*urllrde.*{\(.*\)\}.*/\1/p' $b |
+      while read u;
+      do
+	printf >&2 "    $u... "
+        if wget -q -O $dir/$u http://publis.lrde.epita.fr/$u; then
+	  echo >&2 "${grn}PASS${std}"
+          check_wikilinks "$dir/$u"
+	else
+	  echo >&2 "${red}FAIL${std}"
+          fail=1
+        fi
+      done
+  done
+  rm -rf $dir
+  
+  msg_result $fail
+}
+
+
+# check_bib BIBFILES...
+# ---------------------
+# Basic checks for bibtex files.
+check_bib()
+{
+  check_char  "$@"
+  check_style "$@"
+}
+
+# check_perms_or_student BIBFILE DIRECTORY
+# ----------------------------------------
+# More elaborate checks for bibtex files about our own papers.
+check_perms_or_student ()
+{
+  local bib=$1
+  local dir=$2
+  check_bib     $bib
+  check_pdf     $bib $dir
+  check_urllrde $bib
+  check_wiki    $bib
+}
+
+check_perms ()
+{
+  check_perms_or_student $share_bib_dir/lrde.bib /lrde/doc/lrde/papers
+}
+
+check_students ()
+{
+  check_perms_or_student $share_bib_dir/csi.bib /lrde/doc/lrde/student-reports
+}
+
+check_all ()
+{
+  check_char     "$@"
+  check_perms
+  check_students
+}
+
+case $1 in
+  -h|--help)
+     echo "$0 [perms | csi | all | FILES...]"
+     echo
+     echo "Run a number of sanity check on bib files."
+     ;;
+  perms) check_perms;;
+  csi)   check_students;;
+  all)   check_all $share_bib_dir/*.bib;;
+  *)     check_bib "$@"
+esac

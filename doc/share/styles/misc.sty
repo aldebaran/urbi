@@ -1,0 +1,22 @@
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{myifthen}
+\RequirePackage{hevea}
+
+\newcommand{\@CurVe}{%
+  \mbox{\fontseries{b}\fontshape{it}\selectfont%
+    C%
+    \hspace{-.3ex}\protect\raisebox{-.3ex}{\textmd{u}}%
+    \hspace{-.1ex}\textmd{r}%
+    \hspace{-.2ex}V%
+    \hspace{-.6ex}\protect\raisebox{-.3ex}{\textmd{e}}}}
+
+% If \texorpdfstring exists, use it to avoid gratuitous warnings.  The
+% \ifthenelse is inside the \newcommand, so that we don't need to load
+% hyperref first.
+\newcommand{\CurVe}{%
+  \ifthenelse{\NOT\isundefined{\texorpdfstring}}{%
+    \texorpdfstring{\@CurVe}{CurVe}}{%
+    \@CurVe}}
+
+\input{misc.hva}
+\endinput

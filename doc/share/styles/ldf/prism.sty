@@ -1,0 +1,17 @@
+\lstdefinelanguage{prism}%
+  {morekeywords=[1]{C,ctmc,dtmc,endinit,endmodule,%
+      endrewards,endsystem,F,false,formula,G,global,I,init,label,%
+      mdp,module,nondeterministic,P,Pmin,Pmax,probabilistic,R,%
+      rewards,Rmin,Rmax,S,stochastic,system,true,U,X},%
+   morekeywords=[2]{double,const,bool,int,prob,rate},%
+   morekeywords=[3]{ceil,floor,max,min,func,pow},%
+   %otherkeywords={->,;,+,\&,\[\]},
+   sensitive,%
+   morecomment=[l]//,%
+   morestring=[b]",%
+  }[keywords,comments,strings]%
+
+\lstdefinelanguage{xrm}[]{prism}%
+  {morekeywords=[4]{for,from,to,step,in,do,end,if,then,else,rand,static_rand,properties},%
+   morekeywords=[3]{rand,static_rand},%
+  }[keywords,comments,strings]%

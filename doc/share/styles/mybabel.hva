@@ -1,0 +1,44 @@
+%						-*- LaTeX -*-
+
+\ifhevea
+  % Ask for the same languages.
+  \usepackage[\@pkg@opts]{babel}
+\fi
+
+%% Guillemets français.
+%% Keep this sync' with the redefinition in myhyperref.
+\newcommand{\gf}[1]{\og{}#1\fg{}\xspace}
+
+%% Using \oe{} is really a pain: it looks ugly, and annoys the
+%% spell-checker which wants to know what "uds" is in "n\oe{}uds".
+\newcommand{\coeurs} {c\oe{}urs\xspace}
+\newcommand{\coeur}  {c\oe{}ur\xspace}
+\newcommand{\noeuds} {n\oe{}uds\xspace}
+\newcommand{\noeud}  {n\oe{}ud\xspace}
+\newcommand{\oeuvres}{\oe{}uvres\xspace}
+\newcommand{\oeuvre} {\oe{}uvre\xspace}
+\newcommand{\soeurs} {s\oe{}urs\xspace}
+\newcommand{\soeur}  {s\oe{}ur\xspace}
+\newcommand{\voeu}   {v\oe{}u\xspace}
+\newcommand{\voeux}  {v\oe{}ux\xspace}
+
+%% Babel does not seem to make it possible to load a language on
+%% demand.  Try to implement that.  It might not be very portable :(
+\newcommand{\BabelRequireLanguage}[1]{
+  \expandafter\ifx\csname l@#1\endcsname\relax%
+    \input{#1.ldf}%
+  \else
+    \expandafter\PackageWarning\csname l@#1\endcsname
+  \fi%
+}
+
+%% A switch/case on languages.
+\newenvironment{switchlanguage}%
+{% \begin{switchlanguage}
+  \renewcommand{\item}[2][english]{%
+    \iflanguage{##1}{##2}{}%
+  }%
+}
+{% \end{switchlanguage}
+  %
+}

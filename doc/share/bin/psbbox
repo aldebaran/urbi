@@ -1,0 +1,283 @@
+#! /usr/bin/perl -w
+
+use strict;
+use diagnostics;
+use IO::File;
+
+# How to invoke gs so that it prints the effective bboxes of a file.
+my $gs_bbox = "gs -q -dBATCH -sDEVICE=bbox -dNOPAUSE";
+
+sub display_help ()
+{
+  print <<EOF;
+usage: $0 [OPTIONS] [INPUT] [OUTPUT]
+
+Fix the BoundingBox Document Structuring Comments in a PostScript file.
+
+Options:
+  -h, --help       display this help and exit
+  -v, --verbose    display debugging date
+  -q, --quiet      don\'t display informational messages
+
+  -f, --fix        fix the input file\'s bounding boxes
+  -c, --claimed    display claimed bounding boxes
+  -e, --effective  display effective bounding boxes
+
+  -a, --pages=SEL  select the set of pages to sample [-]
+                   SEL   ::= RANGE (, RANGE)*
+                   RANGE ::= PAGE | [PAGE] - [PAGE]
+
+If INPUT is unspecified, or equal to \`-\', then it stands for the
+standard input.  If OUTPUT to \`-\', it stands for standard output.
+
+If INPUT is specified but OUTPUT is not, then INPUT is fixed in place
+and a copy of the original is left as INPUT.bak.
+
+Todo:
+  - don\'t use all the page, just sample some of them using psselect,
+    as the gs invocation is really longuish.
+    Find a nice sampling scheme
+  - do not duplicate code between psbbox and psfit.
+  - do not backup when not needed, or remove the back up file if useless
+EOF
+  exit 0;
+}
+
+sub stderr ($)
+{
+  print STDERR @_, "\n";
+}
+
+my $verbose_p = 1;
+
+sub verbose ($)
+{
+  stderr @_
+    if $verbose_p;
+}
+
+
+
+
+sub set_min (\$$)
+{
+  my ($ref, $val) = @_;
+  $$ref = $val
+    unless (defined $$ref && $$ref < $val);
+}
+
+sub set_max (\$$)
+{
+  my ($ref, $val) = @_;
+  $$ref = $val
+    unless (defined $$ref && $$ref > $val);
+}
+
+sub set_union (\@@)
+{
+  my ($bbox, @new) = @_;
+  set_min ($$bbox[0], $new[0]);
+  set_min ($$bbox[1], $new[1]);
+  set_max ($$bbox[2], $new[2]);
+  set_max ($$bbox[3], $new[3]);
+}
+
+
+
+=item C<bbox ($input)>
+Compute the bbox and high res bbox for C<$input>, and return them in
+a hash with keys (if available) C<BoundingBox> and C<HiResBoundingBox>,
+and array as values (left, bottom, right, top).
+=cut
+
+sub bbox ($)
+{
+  my ($input) = @_;
+  my $in = new IO::File ($input) or die;
+  my $res = ();
+
+  while ($_ = $in->getline)
+    {
+      if (/%%((?:HiRes)?BoundingBox): ([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+)/)
+	{
+	  set_union (@{$res->{$1}}, $2, $3, $4, $5);
+	}
+    }
+  return $res;
+}
+
+
+sub print_bbox ($\%)
+{
+  my ($msg, $bbox) = @_;
+  foreach my $k (sort keys %$bbox)
+    {
+      print "$msg $k: @{$bbox->{$k}}\n";
+    }
+}
+
+
+=item C<save_stdin ()>
+Save the standard input in a temporary file, and return its name.
+=cut
+
+sub save_stdin ()
+{
+  use File::Temp qw/ tempfile /;
+  my ($fh, $filename) = tempfile();
+  my $line;
+  for (;;)
+    {
+      undef $!;
+      unless (defined( $line = <> ))
+	{
+	  die $! if $!;
+	  last; # reached EOF
+	}
+      print $fh $line;
+    }
+  return $filename;
+}
+
+
+=item C<backup ($file)>
+Rename C<$file> with a back up extensions, and return this name.
+=cut
+
+sub backup ($)
+{
+  my ($file) = @_;
+  use File::Copy;
+  my $SIMPLE_BACKUP_SUFFIX = $ENV{'SIMPLE_BACKUP_SUFFIX'} || '~';
+
+  # Back up and install the new one.
+  my $backup = "$file$SIMPLE_BACKUP_SUFFIX";
+  copy ($file, $backup)
+    or die "cannot backup $file: $!";
+  return $backup;
+}
+
+
+=item C<psbbox ($file, $out, %bbox)>
+Fix the claimed bounding boxed of C<$file> to be the effective values
+C<%bbox>, and save the result in the file handle C<$out>.
+=cut
+
+sub psbbox ($$\%)
+{
+  my ($file, $out, $bbox) = @_;
+
+  my $in = new IO::File ($file) or die;
+  while ($_ = $in->getline ())
+    {
+      # FIXME: Maybe we should fix all the PageBoundingBoxes?
+      if (/%%((?:Page)?((?:HiRes)?BoundingBox))/)
+	{
+	  print $out "%%$1: @{$bbox->{$2}}\n";
+	}
+      else
+	{
+	  print $out $_;
+	}
+    }
+}
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+my $fix_p = 0;
+my $claimed_p = 0;
+my $effective_p = 0;
+# Page ranges to print, in psselect/a2ps syntax.  By default, all.
+my $pages = "-";
+
+use Getopt::Long;
+Getopt::Long::GetOptions
+  (
+   'v|verbose'    => \$verbose_p,
+   'q|quiet'      => sub { $verbose_p = 0; },
+   'f|fix'        => \$fix_p,
+   'c|claimed'    => \$claimed_p,
+   'e|effective'  => \$effective_p,
+   'h|help'       => \&display_help,
+   'a|pages'      => \$pages,
+   )
+  or exit 1;
+
+die "incorrect number of arguments"
+  unless 0 <= $#ARGV && $#ARGV <= 2;
+
+
+# ---------------------------- #
+# Compute $input and $output.  #
+# ---------------------------- #
+
+my $input = $ARGV[0];
+my $output = $ARGV[1];
+
+# Always save the input.  When we just want the claimed bboxes, this
+# is overkill, but this is rare enough to be ignored.
+if (!defined $input || $input eq "-")
+{
+  # We really need a file, cannot work with stdin.
+  $input = save_stdin;
+  $output = "-";
+}
+elsif (!defined $output)
+{
+  # There is no output set: backup the input, and set the output to the
+  # original file name.
+  $output = $input;
+  $input = backup ($input);
+}
+
+
+# --------- #
+# Process.  #
+# --------- #
+
+# A pipe to select $pages from the input file.
+my $psselect = ($pages ? "psselect -q -p$pages <" : "cat") . " \"$input\"";
+
+my $claimed = bbox ("$psselect |");
+print_bbox "Claimed", %$claimed
+  if $claimed_p;
+
+my $effective = bbox ("$psselect | $gs_bbox - 2>&1 >/dev/null |");
+stderr "$effective";
+
+print_bbox "Effective", %$effective
+  if $effective_p;
+
+if ($fix_p)
+{
+  my $out;
+  if ($output eq "-")
+    {
+      $out = *STDOUT;
+    }
+  else
+    {
+      $out = new IO::File (">$output") or die;
+    }
+  psbbox $input, $out, %$effective
+}
+
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

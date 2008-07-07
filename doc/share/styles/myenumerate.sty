@@ -1,0 +1,28 @@
+% Contributed by Didier Verna, so that \autoref works proprely with
+% enumerate.
+
+\RequirePackage{hyperref}
+\RequirePackage{enumerate}
+
+\def\label@enumerate#1{%
+  \@bsphack
+  \begingroup
+  \@onelevel@sanitize\@currentlabelname
+  \edef\@currentlabelname{%
+    \expandafter\strip@period\@currentlabelname\relax.\relax\@@@%
+  }%
+  \protected@write\@auxout{}{%
+    \string\newlabel{#1}{%
+      {\csname label\@enumctr\endcsname}%
+      {\thepage}%
+      {\@currentlabelname}%
+      {\@currentHref}{}%
+    }%
+  }%
+  \endgroup
+  \@esphack
+}
+\let\old@enum@\@enum@
+\def\@enum@{\old@enum@\let\label\label@enumerate}
+% Don't produce "item (i)", but "(i)".  Defining to empty produces " (i)".
+\renewcommand\itemautorefname{\@gobble}

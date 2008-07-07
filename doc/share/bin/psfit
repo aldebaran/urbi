@@ -1,0 +1,268 @@
+#! /usr/bin/perl -w
+
+use strict;
+
+# Margin apply on the four borders.
+my $margin = 20;
+my $inner  = 12;
+my $duplex = 0;
+
+=item C<display_help>
+Display help and exit
+=cut
+
+sub display_help ()
+{
+  print <<EOF;
+usage: $0 [OPTIONS] [INPUT] [OUTPUT]
+
+Scale the PostScript INPUT file to fit in the A4 paper.  Save the
+result in OUTPUT.  The BoundingBox comments on FILE are fixed as a
+side effect.
+
+The processing is long.
+
+Options:
+  -h, --help               display this help and exit
+  -v, --verbose            display debugging date
+  -q, --quiet              do not display informational messages
+  -m, --margin=SIZE        margin in PostScript points  [$margin]
+                           applies to bottom, top, left, and right.
+  -i, --inner-margin=SIZE  inner margin for binding [$inner]
+                           (added to the whole margin)
+  -d, --duplex             inner margin side depends on parity of the page
+
+If INPUT is unspecified, or equal to \`-\', then it stands for the
+standard input.  If OUTPUT to \`-\', it stands for standard output.
+
+If INPUT is specified but OUTPUT is not, then INPUT is scaled in place
+and a copy of the original is left as INPUT.bak.
+
+Use with a2ps:
+  Using psfit to print booklets proves to be both extremely useful, and
+  very slow.  I use another user option: \`bookf\'.  To use it, put
+  the following in your ~/.a2ps/a2psrc:
+
+    # Use acroread as a pdf -> ps filter.
+    Variable: del.acroread \\
+       acroread -toPostScript
+
+    # When delegating to acrobat, apply n-uping and page selection on
+    # the output.
+    Delegation: Acrobat pdf:ps \\
+       #{del.acroread} < '\$f' | #{del.psselnup}
+
+    # Invoke psfit before launching the stock psbook sequence.
+    Variable: lp.hook.book.fit \\
+       psfit --duplex | #{lp.hook.book}
+
+    # Define a user option `-=bookf'.  Use `book' if you want
+    # to override the default `-=book' user option.
+    UserOption: bookf \\
+      -1Dlp.hook=#{lp.hook.book.fit} -s1
+
+  and run \`a2ps -=bookf foo.ps bar.pdf\'.
+
+Todo:
+  - fix the resulting BoundingBox (why psresize does not do it?)
+  - support various output formats
+  - do not duplicate code between psbbox and psfit.
+    actually, there are so similar, that they could be a single program
+    maybe under two names (or a default mode).
+EOF
+  exit 0;
+}
+
+
+my $verbose_p = 0;
+
+sub verbose ($)
+{
+  print STDERR @_, "\n"
+      if $verbose_p;
+}
+
+=item C<save_stdin ()>
+Save the standard input in a temporary file, and return its name.
+=cut
+
+sub save_stdin ()
+{
+  use File::Temp qw/ tempfile /;
+  my ($fh, $filename) = tempfile();
+  my $line;
+  for (;;)
+    {
+      undef $!;
+      unless (defined( $line = <> ))
+	{
+	  die $! if $!;
+	  last; # reached EOF
+	}
+      print $fh $line;
+    }
+  return $filename;
+}
+
+
+=item C<backup ($file)>
+Rename C<$file> with a back up extensions, and return this name.
+=cut
+
+sub backup ($)
+{
+  my ($file) = @_;
+  use File::Copy;
+  my $SIMPLE_BACKUP_SUFFIX = $ENV{'SIMPLE_BACKUP_SUFFIX'} || '~';
+
+  # Back up and install the new one.
+  my $backup = "$file$SIMPLE_BACKUP_SUFFIX";
+  move ($file, $backup)
+    or die "cannot backup $file: $!";
+  return $backup;
+}
+
+
+
+sub min ($$)
+{
+  my ($a, $b) = @_;
+  return ($a < $b) ? $a : $b;
+}
+
+
+sub psfit ($$$)
+{
+  my ($in, $out, $margin) = @_;
+
+  # We must know the right bounding box, so compute it.
+  # We don't need to fix the file though.
+  my $cmd = "psbbox -e $in /dev/null " . ($verbose_p ? "--verbose" : "--quiet");
+  my $psbbox_log = `$cmd` ;
+  die "psbbox returned nothing"
+    unless $psbbox_log;
+  chomp $psbbox_log;
+  verbose "LOG: $psbbox_log";
+  my $bbox;
+  # Prefer the high res bbox if available.
+  foreach my $dsc ("HiResBoundingBox", "BoundingBox")
+    {
+      ($bbox) = ($psbbox_log =~ m/.*Effective $dsc: ([\d.\s]*).*/s);
+      last
+	if $bbox;
+    }
+  verbose "BBOX: $bbox";
+
+  # Input dimensions: left bottom right top
+  my @idims = split ' ', $bbox;
+  # Output dimensions: paper size
+  my @odims = split ' ', "0 0 595 842";
+
+  # Input width and height.
+  my $iw = $idims[2] - $idims[0];
+  my $ih = $idims[3] - $idims[1];
+
+  # Output width and height.
+  my $ow = $odims[2] - $odims[0];
+  my $oh = $odims[3] - $odims[1];
+
+  # Maximum width and height scales, taking into account margins.
+  my $ratio_w = ($ow - 2 * $margin - $inner) / $iw;
+  my $ratio_h = ($oh - 2 * $margin) / $ih;
+
+  verbose "RATIO: $ratio_w, $ratio_h";
+
+  # The common scale.
+  my $scale = min ($ratio_h, $ratio_w);
+
+  verbose "SCALE: $scale";
+
+  # Effective final width and height.
+  my $ew = $iw * $scale;
+  my $eh = $ih * $scale;
+
+  verbose "EFFECTIVE: $ew, $eh";
+
+  # Output width and height margins (well, halves).
+  my $owm = ($ow - $ew - $inner) / 2;
+  my $ohm = ($oh - $eh) / 2;
+
+  verbose "MARGINS: w = $owm (i = $inner), h = $ohm";
+
+  # Offset before applying the scale
+  my $woff = ($odims[0] - $idims[0]) * $scale + $owm;
+  my $even_woff = $woff + $inner;
+  my $odd_woff = $woff + ($duplex ? 0 : $inner);
+  my $hoff = ($odims[1] - $idims[1]) * $scale + $ohm;
+
+  my $request =
+    sprintf ("2:0\@%.3f(%.3f,%.3f),1\@%.3f(%.3f,%.3f)",
+	     $scale, $even_woff, $hoff,
+	     $scale, $odd_woff,  $hoff);
+  verbose "REQUEST: $request";
+
+  if ($out eq "-")
+    {
+      system ("pstops", $request, $in) == 0
+	or die;
+    }
+  else
+    {
+      system ("pstops", $request, $in, $out) == 0
+	or die;
+    }
+}
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+use Getopt::Long;
+Getopt::Long::GetOptions
+  (
+   'v|verbose'  => sub { $verbose_p = 1; },
+   'q|quiet'    => sub { $verbose_p = 0; },
+   'h|help'     => \&display_help,
+   'm|margin=s' => \$margin,
+   'i|inner=s'  => \$inner,
+   'd|duplex'   => \$duplex,
+   )
+  or exit 1;
+
+my $input = $ARGV[0];
+my $output = $ARGV[1];
+
+if (!defined $input || $input eq "-")
+{
+  # We really need a file, cannot work with stdin.
+  $input = save_stdin;
+  $output = "-";
+}
+elsif (!defined $output)
+{
+  # There is no output set: backup the input, and set the output to the
+  # original file name.
+  $output = $input;
+  $input = backup ($input);
+}
+
+psfit $input, $output, $margin;
+
+
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

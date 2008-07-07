@@ -1,0 +1,219 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+# Display help text and exit.
+sub display_help ()
+{
+  print <<EOF;
+usage: $0 [OPTIONS] REGEXPS...
+
+For each BibTeX entries matching REGEXPS, build a LaTeX document
+showing the abstract in English and French.
+
+Options:
+  -h, --help               display this help and exit
+  -v, --verbose            display debugging date
+  -b, --bib=DIR            location of csi.bib and lrde.bib
+      --pdf                run texi2pdf on the output LaTeX files
+      --french             output only the french abstract
+      --english            output only the english abstract
+EOF
+  exit 0;
+}
+
+my $bib; 			# directory holding csi.bib and lrde.bib
+
+my $pdf = 0;			# whether we should compile the pdf
+my $french = 1;			# output the french abstract?
+my $english = 1;		# output the english abstract?
+
+# Tags to retrieve from BibTeX entries
+my @common_tags = qw(author);
+my @french_tags = qw(titre resume);
+my @english_tags = qw(title abstract);
+my @wanted_tags = (@common_tags, @french_tags, @english_tags);
+
+my $verb = 0;			# Whether to be verbose.
+
+# Output a line when verbose.
+sub verb ($)
+{
+  print STDERR "@_\n" if $verb;
+}
+
+
+# Retrieve the @wanted_tags from all bibtex entries matching the
+# supplied regex.  Return a list of hashes of the form
+#  ({ key => kkk, author => aaa, title => ttt, ... }, { key => ... })
+sub getbibentries ($)
+{
+    my ($regex) = @_;
+    my $cmd = "bibtool -X '$regex' '$bib/csi.bib' '$bib/lrde.bib'";
+    verb "running $cmd";
+    local $/;			# Turn on slurp-mode.
+    open(BIB, "$cmd|");
+    my $bib = <BIB>;
+    close(BIB);
+
+    my @res = ();
+
+    for my $b (split(/^@/som, $bib))
+    {
+	# skip any empty chunk
+	next if $b =~ /^\s*$/so;
+
+	# Retrieve the actual BibTeX key.
+	$b =~ /^\w+\s*{\s*([\w.]+),/;
+	my $key = $1;
+
+	# Scan for the fields we need.
+	my %res = (key => $key);
+	for my $tag (@wanted_tags)
+	{
+	    $b =~ /^\s*$tag\s*=\s*\{(.*?)},?\s*\n[^\t]/sm;
+	    my $val = $1;
+	    unless ($val)
+	    {
+		print STDERR "$key does not define '$tag'\n";
+		$val = '';
+	    }
+	    $res{$tag} = $val;
+	}
+
+	verb "read $key";
+
+	push @res, \%res;
+    }
+
+    return @res;
+}
+
+# Output a LaTeX document the bibtex entry passed in argument.  Should
+# be an hash as computed by getbibentries.
+sub output_tex ($)
+{
+    my ($r) = @_;
+    my %res = %$r;
+
+    my $key = $res{key};
+
+    my $name = "$key.tex";
+
+    open(OUT, ">$name");
+    print OUT <<"EOF";
+\\documentclass{article}
+\\usepackage[a4paper]{geometry}
+\\usepackage{times}
+\\usepackage[latin1]{inputenc}
+\\usepackage{url}
+\\usepackage{amssymb}
+\\usepackage{wasysym}
+\\usepackage{bbold}
+\\usepackage[english,french]{babel}
+\\usepackage{natbib}
+
+\\begin{document}
+EOF
+
+    if ($english) {
+	print OUT <<"EOF";
+\\otherlanguage{english}
+\\begin{center}
+{\\LARGE\\bf $res{title} \\\\}
+\\bigskip
+{\\large\\bf $res{author}\\\\}
+\\end{center}
+\\medskip
+$res{abstract}
+
+\\vspace{1cm}
+EOF
+}
+
+    if ($french) {
+	print OUT <<"EOF";
+\\otherlanguage{french}
+\\begin{center}
+{\\LARGE\\bf $res{titre} \\\\}
+\\bigskip
+{\\large\\bf $res{author}\\\\}
+\\end{center}
+\\medskip
+$res{resume}
+
+\\vspace{1cm}
+EOF
+}
+
+    print OUT '\otherlanguage{english}' if $french && $english;
+
+    print OUT <<"EOF";
+\\nocite{$key}
+\\bibliographystyle{plainnat}
+\\bibliography{lrde,csi}
+
+\\end{document}
+EOF
+    close(OUT);
+
+    return $name;
+}
+
+# Build a pdf from the supplied LaTeX file name.
+sub build_pdf ($)
+{
+    my ($name) = @_;
+    my $cmd = "BIBINPUTS=$bib: texi2pdf --batch --clean --pdf $name";
+    verb "running $cmd";
+    system $cmd;
+}
+
+
+# Parse the command line.
+use Getopt::Long;
+Getopt::Long::GetOptions
+  (
+   'b|bib=s'    => \$bib,
+   'english'    => sub { $french = 0;
+			 @wanted_tags=(@common_tags, @english_tags); },
+   'french'     => sub { $english = 0;
+			 @wanted_tags=(@common_tags, @french_tags); },
+   'h|help'     => \&display_help,
+   'pdf'        => sub { $pdf = 1; },
+   'v|verbose'  => sub { $verb = 1; },
+   )
+  or exit 1;
+
+display_help unless $#ARGV >= 0;
+
+# Try to automatically locate the bibliography files...
+unless ($bib)
+{
+    for my $b (qw(trunk/share/bib share/bib bib ../bib ../share/bib))
+    {
+	if (-f "$b/csi.bib")
+	{
+	    $bib = $b;
+	    last;
+	}
+    }
+}
+# ... or complain.
+unless ($bib)
+{
+    print STDERR "Use -b to specify the location of the BibTeX files.\n";
+    exit 1;
+}
+
+verb "BibTeX files in $bib";
+
+for my $key (@ARGV)
+{
+    my @res = getbibentries $key;
+    for my $r (@res)
+    {
+	my $name = output_tex $r;
+	build_pdf $name if $pdf;
+    }
+}

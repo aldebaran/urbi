@@ -1,0 +1,26 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{lrde-bst}
+%
+%
+\DeclareOption{l-air-de-rien}{
+  %% Clickable title.
+  \newcommand{\lrdebibtitle}[2]{\href{http://publis.lrde.epita.fr/#2}{#1}}
+  \newcommand{\lrdebibauthor}[1]{\textbf{\textsc{#1}}}
+  %% We don't output the key, nor the year.
+  \newcommand{\lrdebibkey}[1]{}
+  \newcommand{\lrdebibnote}[1]{}
+  \newcommand{\lrdebiburl}[1]{}
+  \newcommand{\lrdebibyear}[1]{}
+}
+%
+\DeclareOption{biblio}{
+  %% Clickable title.
+  \newcommand{\lrdebibtitle}[2]{\href{http://publis.lrde.epita.fr/#2}{\textbf{#1}}}
+  \newcommand{\lrdebibauthor}[1]{\textsc{#1}}
+  \newcommand{\lrdebibkey}[1]{#1. }
+  \newcommand{\lrdebibnote}[1]{#1. }
+  \newcommand{\lrdebiburl}[1]{\url{http://publis.lrde.epita.fr/#1}. }
+  \newcommand{\lrdebibyear}[1]{#1}
+}
+%
+\ProcessOptions

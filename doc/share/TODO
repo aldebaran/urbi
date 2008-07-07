@@ -1,0 +1,2 @@
+* make/tex.mk: rev.tex
+Maybe using svninfo.sty would be a better option.

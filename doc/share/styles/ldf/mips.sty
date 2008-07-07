@@ -1,0 +1,23 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of MIPS Assembler for listings package
+%%
+
+\lstdefinelanguage[Mips]{Assembler}%
+  {morekeywords={add,addu,addi,addiu,sub,subu,neg,negu,abs,mul,div,divu,rem,%
+      remu,sll,sllv,sra,srav,srl,srlv,rol,ror,and,andi,or,ori,xor,%
+      xori,nor,not,seq,sne,sge,sgeu,sgt,sgtu,sle,sleu,slt,sltu,slti,%
+      sltiu,beq,beqz,bne,bnez,bge,bgeu,bgez,bgezal,bgt,bgtu,bgtz,ble,%
+      bleu,blez,blt,bltu,bltz,bltzal,j,jal,jr,jalr,lb,lbu,lw,lui,li,la,%
+      sb,sw,move,mfhi,mflo,mthi,mtlo,mfc0,mtc0,syscall,nop},%
+   sensitive=true,%
+   morecomment=[l]{\#},%
+   morestring=[b]{"},%
+   morekeywords={\$zero,\$at,\$v0,\$v1,\$a0,\$a1,\$a2,\$a3,%
+   \$t0,\$t1,\$t2,\$t3,\$t4,\$t5,\$t6,\$t7,\$t8,\$t9,%
+   \$s0,\$s1,\$s2,\$s3,\$s4,\$s5,\$s6,\$s7,\$k0,\$k1,%
+   \$gp,\$sp,\$fp,\$ra}%
+  }[keywords,comments,strings]%
+
+%for i in {0..99}; echo -n '\\$x'$i, 
+\lstdefinelanguage[Nolimips]{Assembler}[Mips]{Assembler}%
+  {morekeywords={\$x0,\$x1,\$x2,\$x3,\$x4,\$x5,\$x6,\$x7,\$x8,\$x9,\$x10,\$x11,\$x12,\$x13,\$x14,\$x15,\$x16,\$x17,\$x18,\$x19,\$x20,\$x21,\$x22,\$x23,\$x24,\$x25,\$x26,\$x27,\$x28,\$x29,\$x30,\$x31,\$x32,\$x33,\$x34,\$x35,\$x36,\$x37,\$x38,\$x39,\$x40,\$x41,\$x42,\$x43,\$x44,\$x45,\$x46,\$x47,\$x48,\$x49,\$x50,\$x51,\$x52,\$x53,\$x54,\$x55,\$x56,\$x57,\$x58,\$x59,\$x60,\$x61,\$x62,\$x63,\$x64,\$x65,\$x66,\$x67,\$x68,\$x69,\$x70,\$x71,\$x72,\$x73,\$x74,\$x75,\$x76,\$x77,\$x78,\$x79,\$x80,\$x81,\$x82,\$x83,\$x84,\$x85,\$x86,\$x87,\$x88,\$x89,\$x90,\$x91,\$x92,\$x93,\$x94,\$x95,\$x96,\$x97,\$x98,\$x99}}

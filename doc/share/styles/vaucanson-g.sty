@@ -1,0 +1,26 @@
+\ProvidesPackage{vaucanson-g}[2007/09/13 package wrapper for Vaucanson-G]
+% Upgrade by Akim Demaille
+% Backward compatibility.
+\DeclareOption{pstricks1-10}{}
+\DeclareOption{slides}{\AtEndOfPackage{\input VCPref-slides.tex}}
+\DeclareOption{beamer}{\AtEndOfPackage{\input VCPref-beamer.tex}}
+\ProcessOptions
+\RequirePackage{ifthen}
+\RequirePackage{xcolor}
+% PSTricks 1.10 changed the interface.  Compatibility hacks.
+\RequirePackage{pstricks}
+\@ifpackagelater{pstricks}{2005/20/08}
+{% More recent.
+\def\scalebox{\psscalebox}%
+\AtEndOfPackage{\input VCpatch-pstricks-1-10.tex}}
+{% Obsolete.
+}
+\input{dvipsnam.def}
+\RequirePackage{pst-node}
+\RequirePackage{pst-plot}
+\RequirePackage{pst-coil}
+\RequirePackage{multido}
+\RequirePackage{pst-3d}
+\RequirePackage{calc}
+\input Vaucanson-G.tex
+\endinput
