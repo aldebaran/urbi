@@ -1,12 +1,12 @@
-## ---------------- ##
-## System version.  ##
-## ---------------- ##
+/*-----------------.
+| System version.  |
+`-----------------*/
 
 var System.version="2.0";
 
-## ----------- ##
-## Constants.  ##
-## ----------- ##
+/*------------.
+| Constants.  |
+`------------*/
 
 class Global.Constants
 {
@@ -17,19 +17,19 @@ class Global.Constants
 
 Global.addProto (Global.Constants);
 
-## ----- ##
-## Tag.  ##
-## ----- ##
+/*------.
+| Tag.  |
+`------*/
 
 Global.addProto (Global.Tag);
 
-## -------- ##
-## Object.  ##
-## -------- ##
+/*---------.
+| Object.  |
+`---------*/
 
 do Object
 {
-  # Cannot use "from" which is a k1 reserved word.
+  // Cannot use "from" which is a k1 reserved word.
   function copySlot (frm, to)
   {
     setSlot(to, getSlot(frm))
@@ -40,22 +40,22 @@ do Object
     setSlot(to, getSlot(frm).clone)
   };
 
-  # Some sort of k1 compatibility.
+  // Some sort of k1 compatibility.
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");
 
-  # Change the whole set of parents.
+  // Change the whole set of parents.
   function setProtos(ps)
   {
-    # Beware that we may be losing the ancestry on Object, which has
-    # access to "addProto".
+    // Beware that we may be losing the ancestry on Object, which has
+    // access to "addProto".
     var add = Object.getSlot("addProto") |
     protos.clear() |
     for| (var p: ps.reverse)
       add.apply([this, p]) |
   };
 
-  # Syntactic sugar for setProtos.
+  // Syntactic sugar for setProtos.
   protos->updateHook = function(slot, value) { setProtos(value); };
 
   function '==' (other)
@@ -81,18 +81,18 @@ do Object
   // Invoke "clone", then "init".
   function 'new'
   {
-    # The fresh child.
+    // The fresh child.
     var res = call.getSlot("target").clone |
-    # Call the "init" from the parent, retargetted to the child.
+    // Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
     res.callMessage(call) |
     res
   };
 };
 
-## -------- ##
-## Global.  ##
-## -------- ##
+/*---------.
+| Global.  |
+`---------*/
 
 do Global
 {
@@ -115,9 +115,9 @@ do Global
   function noop () {};
 };
 
-## -------------- ##
-## Call message.  ##
-## -------------- ##
+/*---------------.
+| Call message.  |
+`---------------*/
 
 class Global.CallMessage
 {
@@ -147,30 +147,30 @@ class Global.CallMessage
   };
 };
 
-## ----- ##
-## Lazy. ##
-## ----- ##
+/*-------.
+| Lazy.  |
+`-------*/
 
 load("urbi/lazy.u");
 
-## ------ ##
-## List.  ##
-## ------ ##
+/*-------.
+| List.  |
+`-------*/
 
 load("urbi/list.u");
 
-## ----------- ##
-## Singleton.  ##
-## ----------- ##
+/*------------.
+| Singleton.  |
+`------------*/
 
 load("urbi/singleton.u");
 
-## ------ ##
-## void.  ##
-## ------ ##
+/*-------.
+| void.  |
+`-------*/
 
-# FIXME: Can't do this in urbi
-# void.addProto(Singleton);
+// FIXME: Can't do this in urbi
+// void.addProto(Singleton);
 
 do Object
 {
@@ -187,19 +187,19 @@ do Object
 var void.acceptVoid.acceptVoid = function() { new };
 var void.acceptVoid.unAcceptVoid = function() { protos.front };
 
-## --------- ##
-## Booleans. ##
-## --------- ##
+/*-----------.
+| Booleans.  |
+`-----------*/
 
 load("urbi/boolean.u");
 
-## ---- ##
-## nil. ##
-## ---- ##
+/*------.
+| nil.  |
+`------*/
 
 do nil
 {
-  # Singleton derives from Object.
+  // Singleton derives from Object.
   setProtos([Singleton]);
   function '==' (x) { x.isNil };
   var asString = "nil";
@@ -215,16 +215,16 @@ do Object
   }
 };
 
-## ------------------------ ##
-## Method function wrappers ##
-## ------------------------ ##
+/*-------------------------.
+| Method function wrappers |
+`-------------------------*/
 
 do Global
 {
-  # Make a function f from a method m, so as f(a, b, c) is equivalent
-  # to a.m(b, c)
-  # FIXME: I'm not satisfied with the name, but can't find anything
-  # better
+  // Make a function f from a method m, so as f(a, b, c) is equivalent
+  // to a.m(b, c)
+  // FIXME: I'm not satisfied with the name, but can't find anything
+  // better
   function methodToFunction(name)
   {
     function
@@ -239,12 +239,12 @@ do Global
   };
 };
 
-## -------------------- ##
-## Task related stuff.  ##
-## -------------------- ##
+/*---------------------.
+| Task related stuff.  |
+`---------------------*/
 
-# Detach takes an expression and evaluates it in background within
-# the caller's context.
+// Detach takes an expression and evaluates it in background within
+// the caller's context.
 do Object
 {
   function detach
@@ -259,7 +259,7 @@ do Object
     spawn (function () { outer_call.evalArgAt (1) }, true)
   };
 
-  # every_ takes two arguments, a delay and an expression.
+  // every_ takes two arguments, a delay and an expression.
   function every_
   {
     detach ({
@@ -273,15 +273,15 @@ do Object
     })
   };
 
-  # at_ takes three expressions, a test and a code to execute each time the test
-  # becomes true and a code to execute each time the test becomes false.
+  // at_ takes three expressions, a test and a code to execute each time the test
+  // becomes true and a code to execute each time the test becomes false.
   function at_
   {
     registerAtJob(call.args.nth(1), call.args.nth(2), call.args.nth(3))
   };
 
-  # whenever_ takes three expressions, a test and a code to execute each time the
-  # test is true and a code to execute each time the test then becomes false.
+  // whenever_ takes three expressions, a test and a code to execute each time the
+  // test is true and a code to execute each time the test then becomes false.
   function whenever_
   {
     detach ({
@@ -297,7 +297,7 @@ do Object
     })
   };
 
-  # waituntil takes an expression and waits until it becomes true.
+  // waituntil takes an expression and waits until it becomes true.
   function waituntil {
     var t = currentRunner |
     t.setSideEffectFree (true) |
@@ -307,18 +307,18 @@ do Object
     t.setSideEffectFree (false)
   };
 
-  # persist takes an expression and a delay, and returns an object
-  # whose val slot evaluates to true if the expression has been
-  # continously true for this delay and false otherwise.
-  #
-  # This function is used to implement
-  #   at (condition ~ delay) action [onleave leaveaction]
-  # as
-  #   var u = persist (condition, delay);
-  #   at (u.val) action [onleave leaveaction]
-  #
-  # The "persist" action will be controlled by the same tags as
-  # the initial "at" block.
+  // persist takes an expression and a delay, and returns an object
+  // whose val slot evaluates to true if the expression has been
+  // continously true for this delay and false otherwise.
+  //
+  // This function is used to implement
+  //   at (condition ~ delay) action [onleave leaveaction]
+  // as
+  //   var u = persist (condition, delay);
+  //   at (u.val) action [onleave leaveaction]
+  //
+  // The "persist" action will be controlled by the same tags as
+  // the initial "at" block.
   function persist
   {
     var res = false |
@@ -334,21 +334,21 @@ load("urbi/channel.u");
 
 // Disable top-level display
 topLevel.enabled = false;
-## ------------ ##
-## Comparable.  ##
-## ------------ ##
+/*-------------.
+| Comparable.  |
+`-------------*/
 
 class Global.Comparable
 {
   function '!=' (rhs) { ! (this == rhs) };
   function '==' (rhs) { ! (this != rhs) };
 };
-# Provide !=.
+// Provide !=.
 Object.addProto(Comparable);
 
-## ----------- ##
-## Orderable.  ##
-## ----------- ##
+/*------------.
+| Orderable.  |
+`------------*/
 
 class Global.Orderable
 {
@@ -359,25 +359,25 @@ class Global.Orderable
 };
 
 
-## ------- ##
-## Float.  ##
-## ------- ##
+/*--------.
+| Float.  |
+`--------*/
 
 load("urbi/updatehook-stack.u");
 load("urbi/float.u");
 
 load("urbi/trajectory-generator.u");
 
-## -------- ##
-## String.  ##
-## -------- ##
+/*---------.
+| String.  |
+`---------*/
 load("urbi/string.u");
 
 
 
-## --------- ##
-## Printing. ##
-## --------- ##
+/*-----------.
+| Printing.  |
+`-----------*/
 
 do Object
 {
@@ -451,9 +451,9 @@ do Object
 
 load("urbi/k1.u");
 
-## ------------ ##
-## Conversions. ##
-## ------------ ##
+/*--------------.
+| Conversions.  |
+`--------------*/
 
 do Object
 {
@@ -463,9 +463,9 @@ do Object
   }
 };
 
-## ----- ##
-## Math. ##
-## ----- ##
+/*-------.
+| Math.  |
+`-------*/
 
 class Global.Math
 {
@@ -475,23 +475,23 @@ class Global.Math
     setSlot (fn, bounce_named (fn))
   };
 
-  # Global variables
+  // Global variables
   var epsilontilde = 0.0001;
   var epsilonpercent = 0.0001;
 };
 Global.addProto (Global.Math);
 
 
-## -------- ##
-## Groups.  ##
-## -------- ##
+/*---------.
+| Groups.  |
+`---------*/
 load("urbi/group.u");
 
 load("urbi/binary.u");
 
-## ---------------------- ##
-## Profiling operations.  ##
-## ---------------------- ##
+/*-----------------------.
+| Profiling operations.  |
+`-----------------------*/
 
 class Global.Profiling
 {
@@ -515,46 +515,46 @@ class Global.Profiling
 };
 Global.addProto (Global.Profiling);
 
-## ----------- ##
-## Executable. ##
-## ----------- ##
+/*-------------.
+| Executable.  |
+`-------------*/
 
-# This class is used as a flag to recognize all kind of executable code
+// This class is used as a flag to recognize all kind of executable code
 class Global.Executable {};
 
-# Executable derives from Object.
+// Executable derives from Object.
 for (var c: [Code, Primitive, Delegate])
   c.setProtos([Executable]);
 
 load("urbi/loadable.u");
 
-## ------ ##
-## Tuple. ##
-## ------ ##
+/*--------.
+| Tuple.  |
+`--------*/
 
 load("urbi/tuple.u");
 
-## ----------- ##
-## Dictionary. ##
-## ----------- ##
+/*-------------.
+| Dictionary.  |
+`-------------*/
 
 load("urbi/dictionary.u");
 
-## ------------------ ##
-## Debugging helpers. ##
-## ------------------ ##
+/*--------------------.
+| Debugging helpers.  |
+`--------------------*/
 
 load("urbi/debug.u");
 
-## ----------------- ##
-## Pattern matching. ##
-## ----------------- ##
+/*-------------------.
+| Pattern matching.  |
+`-------------------*/
 
 load("urbi/pattern.u");
 
-## -------- ##
-## UObject. ##
-## -------- ##
+/*----------.
+| UObject.  |
+`----------*/
 
 "Initializing uobjects NOW";
 load("urbi/uobject.u");
@@ -570,10 +570,9 @@ load("urbi/help.u");
 "Loading URBI.INI";
 load("URBI.INI");
 
-## ------------- ##
-## Ready to go.  ##
-## ------------- ##
-# This string is special and expected by uconsole-check as the
-# signal that we have loaded urbi.u.  Messages before, and including
-# this one, are ignored.
+/*-----------------------------------------------------------.
+| Ready to go.  This string is special and expected by       |
+|  uconsole-check as the signal that we have loaded urbi.u.  |
+|  Messages before, and including this one, are ignored.     |
+`-----------------------------------------------------------*/
 "Urbi is up and running.";

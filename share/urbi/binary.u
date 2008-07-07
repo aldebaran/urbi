@@ -20,7 +20,7 @@ class Global.Binary
     }
   };
 
-  # The semantics is mandated by K1 compatibility.
+  // The semantics is mandated by K1 compatibility.
   function '+'(lhs)
   {
     var res = Global.Binary.new(keywords, data + lhs.data)|

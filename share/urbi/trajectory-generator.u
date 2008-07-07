@@ -78,9 +78,9 @@ class Global.TrajectoryGenerator
     }
   };
 
-  # Update the variable according to the trajectory.
-  # Use the functions getter/setter to read/update the variable.
-  # Blocking until the trajectory is over.
+  // Update the variable according to the trajectory.
+  // Use the functions getter/setter to read/update the variable.
+  // Blocking until the trajectory is over.
   function run()
   {
     var tag = Tag.new|

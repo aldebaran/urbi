@@ -3,9 +3,9 @@ false.setProtos([Singleton]);
 var true.asString = "true";
 var false.asString = "false";
 
-## -------------------------- ##
-## Logic with short-circuit.  ##
-## -------------------------- ##
+/*---------------------------.
+| Logic with short-circuit.  |
+`---------------------------*/
 
 function true.'&&'(a) { a };
 function true.'||' { true };

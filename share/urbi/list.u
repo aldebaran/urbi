@@ -1,6 +1,6 @@
-## ----- ##
-## List. ##
-## ----- ##
+/*-------.
+| List.  |
+`-------*/
 
 do List
 {
@@ -86,7 +86,7 @@ do List
     return size == 0
   };
 
-  # The Lisp-like name.
+  // The Lisp-like name.
   copySlot ("front", "head");
   copySlot ("push_back", "<<");
 
@@ -96,7 +96,7 @@ do List
     push_back(e)
   };
 
-  # Concatenate the string representation of the members, separated by \a sep
+  // Concatenate the string representation of the members, separated by \a sep
   function join(sep)
   {
     if (empty)
@@ -105,7 +105,7 @@ do List
       foldl_head(function (a, b) { a.asString + sep + b.asString })
   };
 
-  # We might want separate Range objects, with a literal syntax (a..b, a:b, ...)
+  // We might want separate Range objects, with a literal syntax (a..b, a:b, ...)
   function range
   {
     var fr = 0;
@@ -123,18 +123,18 @@ do List
     res;
   };
 
-  # Build a list containing \a size times \a value
+  // Build a list containing \a size times \a value
   function init(size, value)
   {
     // if (size < 0) throw;
     size.times(closure (i) { this << value })
   };
 
-  ## ------------------------ ##
-  ## Functional programming.  ##
-  ## ------------------------ ##
+  //# ------------------------ ##
+  //# Functional programming.  ##
+  //# ------------------------ ##
 
-  # Build a new list containing the result of \a f applied to all elements
+  // Build a new list containing the result of \a f applied to all elements
   function map (f)
   {
     var res = [] |
@@ -155,7 +155,7 @@ do List
     tail.foldl(action, head)
   };
 
-  # Check whether at least one element verifies the \a f predicate
+  // Check whether at least one element verifies the \a f predicate
   function any (f)
   {
     for| (var i: this)
@@ -164,7 +164,7 @@ do List
     false
   };
 
-  # Check whether all elements verifies the \a f predicate
+  // Check whether all elements verifies the \a f predicate
   function all (f)
   {
     for| (var i: this)
@@ -196,12 +196,12 @@ do List
     "[" + res + "]"
   };
 
-  # Pattern matching
+  // Pattern matching
   function matchAgainst(handler, pattern)
   {
     if (!pattern.isA(List) || pattern.size != size)
       return false |
-    # FIXME: do this with a crossed map
+    // FIXME: do this with a crossed map
     var i = 0 |
     for (var e : this)
     {

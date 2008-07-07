@@ -1,4 +1,4 @@
-# k1 compatibility.
+// k1 compatibility.
 class Global.Kernel1Functions
 {
   function copy(o)
@@ -48,12 +48,12 @@ class Global.Kernel1Functions
   var system.ghostID = "";
 };
 
-# K1 compatibility: import the k1 functions.
+// K1 compatibility: import the k1 functions.
 Global.addProto(Global.Kernel1Functions);
 
 
-# Deprecated commands from k1.
-# FIXME: Some commands should be rewritten once it becomes possible.
+// Deprecated commands from k1.
+// FIXME: Some commands should be rewritten once it becomes possible.
 class Global.DeprecatedCommands
 {
   for (var name: [

@@ -6,21 +6,21 @@ class Global.Group
     this
   };
 
-  # n-ary strict: add the arguments as group members.
+  // n-ary strict: add the arguments as group members.
   function add
   {
-    # Fetch Object's updateSlot or we will trigger the fallback
+    // Fetch Object's updateSlot or we will trigger the fallback
     Object.getSlot("updateSlot").apply([this, "members", members + call.evalArgs])|
     this
   };
 
   copySlot("add", "<<");
 
-  # n-ary strict: remove the arguments as group members.
-  # Removing a non-member is ok.
+  // n-ary strict: remove the arguments as group members.
+  // Removing a non-member is ok.
   function remove
   {
-    # Fetch Object's updateSlot or we will trigger the fallback
+    // Fetch Object's updateSlot or we will trigger the fallback
     Object.getSlot("updateSlot").apply([this, "members", members - call.evalArgs])|
     this
   };
@@ -44,7 +44,7 @@ class Global.Group
       results.push_back(m.callMessage(outer_call).acceptVoid)
     } |
     members.each(action) |
-    # If the resulting group contains only void, return void.
+    // If the resulting group contains only void, return void.
     if (results.all(methodToFunction("isVoid")))
       void
     else

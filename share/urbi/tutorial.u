@@ -1,12 +1,12 @@
 class Global.tutorial
 {
-  # Don't use the topLevel channel, since it quotes the \n and so on.
+  // Don't use the topLevel channel, since it quotes the \n and so on.
   class tuto : Channel
   {
     init("tuto");
     quote = false;
     var line = "-" * 76 + "\n";
-    # A special "<<" that puts the result between lines.
+    // A special "<<" that puts the result between lines.
     function '<<' (s)
     {
       lobby.write("\n" + line + s + "\n" + line)
@@ -21,12 +21,12 @@ class Global.tutorial
     var tag;
     var entry;
 
-    # init(name of the section, explanation text,
-    #       code to run when entering,
-    #       code to run when leaving (either via "next" or automatically,
-    #             typically used to ensure some conditions expected by
-    #             the following sections),
-    #       condition to fulfill to pass automatically to the next section).
+    // init(name of the section, explanation text,
+    //       code to run when entering,
+    //       code to run when leaving (either via "next" or automatically,
+    //             typically used to ensure some conditions expected by
+    //             the following sections),
+    //       condition to fulfill to pass automatically to the next section).
     function init
     {
       var this.name = call.argAt(1);
