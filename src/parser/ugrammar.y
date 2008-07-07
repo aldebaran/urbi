@@ -795,11 +795,11 @@ stmt:
     }
 | "at" "(" "?" "(" exp ")" "(" exps ")" ")" nstmt
     {
-      libport::Symbol handle = libport::Symbol::fresh(SYMBOL(handle));
-      DESUGAR("detach({while(true) " << $5.value() << ".onEvent(closure ("
-	      << handle << ") {"
+      libport::Symbol values = libport::Symbol::fresh(SYMBOL(values));
+      DESUGAR("detach({" << $5.value() << ".onEvent(closure ("
+	      << values << ") {"
 	      << "if (Pattern.new(" << ast::rExp(new ast::List(@8, $8)) << ").match("
-	      << handle << ".values))" << $11.value() << "})})");
+	      << values << "))" << $11.value() << "})})");
     }
 | "at" "(" "?" k1_id "(" exps ")" ")" nstmt
     {

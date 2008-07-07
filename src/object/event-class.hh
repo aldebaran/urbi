@@ -8,7 +8,6 @@
 
 # include <libport/utime.hh>
 
-# include <object/barrier-class.hh>
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
 # include <object/list-class.hh>
@@ -32,10 +31,8 @@ namespace object
     // Urbi primitives.
     rObject active();
     rList alive();
-    void emit(objects_type);
-    void onEvent(runner::Runner&, rCode);
     void stop();
-    rEvent trigger(objects_type);
+    rEvent trigger(runner::Runner&, objects_type);
     rList values();
 
     static void initialize(CxxObject::Binder<Event>& bind);
@@ -46,7 +43,6 @@ namespace object
   private:
     value_type value_;
     bool       active_;
-    rBarrier   barrier_;
     rList      live_;
   };
 

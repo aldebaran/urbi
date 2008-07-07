@@ -549,6 +549,12 @@ load("urbi/pattern.u");
 
 load("urbi/pubsub.u");
 
+/*---------.
+| Events.  |
+`---------*/
+
+load("urbi/event.u");
+
 /*----------.
 | UObject.  |
 `----------*/

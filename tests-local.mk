@@ -29,7 +29,6 @@ XFAIL_TESTS +=					\
 
 # pending features
 TFAIL_TESTS +=					\
-2.x/events.chk					\
 2.x/onevent.chk					\
 2.x/string/escape.chk				\
 2.x/unique-variable.chk

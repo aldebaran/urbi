@@ -1,0 +1,23 @@
+// Completion of events code
+
+do Event
+{
+  function init()
+  {
+    var self.pubsub = PubSub.new
+  };
+
+  function 'emit'
+  {
+    pubsub.publish(call.evalArgs) |
+    void
+  };
+
+  function onEvent(code)
+  {
+    var id = pubsub.subscribe |
+    while|(true)
+      for| (var payload: pubsub.getAll(id))
+        code(payload)
+  };
+};

@@ -4,6 +4,7 @@
  */
 
 #include <object/atom.hh>
+#include <object/barrier-class.hh>
 #include <object/code-class.hh>
 #include <object/cxx-object.hh>
 #include <object/delegate-class.hh>
@@ -215,6 +216,7 @@ namespace object
   void
   dummy_references()
   {
+    Barrier b;
     Event e;
     Semaphore s;
   }
