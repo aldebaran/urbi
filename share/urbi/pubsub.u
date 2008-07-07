@@ -19,6 +19,7 @@ class Global.PubSub
 
     function getOne()
     {
+      nonInterruptible |
       if (queue.empty)
         barrier.wait |
       var ev = queue.front |
@@ -28,6 +29,7 @@ class Global.PubSub
 
     function getAll()
     {
+      nonInterruptible |
       if (queue.empty)
         barrier.wait |
       // Take a copy of the list before clearing it
