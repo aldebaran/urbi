@@ -215,9 +215,9 @@ do Object
   }
 };
 
-/*-------------------------.
-| Method function wrappers |
-`-------------------------*/
+/*---------------------------.
+| Method function wrappers.  |
+`---------------------------*/
 
 do Global
 {
@@ -239,9 +239,10 @@ do Global
   };
 };
 
-/*---------------------.
-| Task related stuff.  |
-`---------------------*/
+
+/*--------.
+| Tasks.  |
+`--------*/
 
 // Detach takes an expression and evaluates it in background within
 // the caller's context.
