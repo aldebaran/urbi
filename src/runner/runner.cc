@@ -21,4 +21,39 @@ namespace runner
     //c.send(msg.c_str(), msg.size(), tag.c_str());
   }
 
+  void
+  Runner::create_scope_tag()
+  {
+    scope_tags_.push_back(0);
+  }
+
+  scheduler::rTag
+  Runner::scope_tag_get() const
+  {
+    return scope_tags_.back();
+  }
+
+  scheduler::rTag
+  Runner::scope_tag()
+  {
+    scheduler::rTag tag = scope_tags_.back();
+    if (!tag)
+    {
+      // Create the tag on demand.
+      tag =
+        new scheduler::Tag(libport::Symbol::fresh(SYMBOL(LT_scope_SP_tag_GT)));
+      *scope_tags_.rbegin() = tag;
+    }
+    return tag;
+  }
+
+  void
+  Runner::cleanup_scope_tag()
+  {
+    scheduler::rTag tag = scope_tags_.back();
+    scope_tags_.pop_back();
+    if (tag)
+      tag->stop(scheduler_get(), object::void_class);
+  }
+
 } // namespace runner

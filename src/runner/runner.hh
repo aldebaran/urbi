@@ -91,6 +91,9 @@ namespace runner
 			  object::objects_type args,
 			  rObject call_message = 0) = 0;
 
+    /// Return the current scope_tag, after creating it if needed.
+    scheduler::rTag scope_tag();
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -104,9 +107,23 @@ namespace runner
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work() = 0;
 
+    /// Create dummy scope tag.
+    void create_scope_tag();
+
+    /// To be called at the end of a scope.
+    void cleanup_scope_tag();
+
+    /// Ditto, but may return 0 if there are no scope tag.
+    scheduler::rTag scope_tag_get() const;
+
     /// The URBI Lobby used to evaluate.
     /// Wraps an UConnection (ATM).
     rLobby lobby_;
+
+  private:
+    /// The scope tags stack.
+    std::vector<scheduler::rTag> scope_tags_;
+
   };
 
 } // namespace runner

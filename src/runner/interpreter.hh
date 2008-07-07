@@ -6,8 +6,6 @@
 #ifndef RUNNER_INTERPRETER_HH
 # define RUNNER_INTERPRETER_HH
 
-# include <vector>
-
 # include <boost/tuple/tuple.hpp>
 
 # include <ast/default-visitor.hh>
@@ -112,9 +110,6 @@ namespace runner
     /// Make an urbi function from an ast chunk
     object::rCode make_code(ast::rConstCode f) const;
 
-    /// Return the current scope_tag, after creating it if needed.
-    scheduler::rTag scope_tag();
-
   protected:
     /// \name Evaluation.
     /// \{
@@ -191,7 +186,6 @@ namespace runner
 			const libport::Symbol& msg,
 			const object::objects_type& args,
 			rObject call_message);
-    void cleanup_scope_tag();
 
   private:
     /// The root of the AST being executed.
@@ -204,9 +198,6 @@ namespace runner
 
     /// The current value during the evaluation of the AST.
     rObject result_;
-
-    /// The scope tags stack.
-    std::vector<scheduler::rTag> scope_tags_;
 
     /// The call stack.
     typedef object::UrbiException::call_stack_type call_stack_type;

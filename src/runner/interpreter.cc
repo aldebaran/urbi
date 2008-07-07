@@ -175,7 +175,7 @@ namespace runner
     }
     // Push a dummy scope tag, in case we do have an "at" at the
     // toplevel.
-    scope_tags_.push_back(0);
+    create_scope_tag();
   }
 
   void
@@ -837,7 +837,7 @@ namespace runner
     // issue a "stop" which may interrupt subrunners.
     if (!e->toplevel_get() && !runners.empty())
     {
-      scheduler::rTag tag = scope_tags_.back();
+      scheduler::rTag tag = scope_tag_get();
       if (tag)
 	tag->stop(scheduler_get(), object::void_class);
       yield_until_terminated(runners);
@@ -870,33 +870,10 @@ namespace runner
     super_type::operator()(e->body_get());
   }
 
-  scheduler::rTag
-  Interpreter::scope_tag()
-  {
-    scheduler::rTag tag = scope_tags_.back();
-    if (!tag)
-    {
-      // Create the tag on demand.
-      tag =
-        new scheduler::Tag(libport::Symbol::fresh(SYMBOL(LT_scope_SP_tag_GT)));
-      *scope_tags_.rbegin() = tag;
-    }
-    return tag;
-  }
-
-  void
-  Interpreter::cleanup_scope_tag()
-  {
-    scheduler::rTag tag = scope_tags_.back();
-    scope_tags_.pop_back();
-    if (tag)
-      tag->stop(scheduler_get(), object::void_class);
-  }
-
   void
   Interpreter::visit (ast::rConstScope e)
   {
-    scope_tags_.push_back(0);
+    create_scope_tag();
     libport::Finally finally(boost::bind(&Interpreter::cleanup_scope_tag,
 					 this));
     visit (e.unsafe_cast<const ast::AbstractScope>());
