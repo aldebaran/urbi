@@ -1,4 +1,5 @@
-class Global.tutorial
+class Global.tutorial{};
+do tutorial
 {
   // Don't use the topLevel channel, since it quotes the \n and so on.
   class tuto : Channel
