@@ -53,7 +53,9 @@ do Global
   // Long names are k1 compatible.
   var output  = new Channel("output");
   var error   = new Channel("error");
+  error.quote = false;
   var warning = new Channel("warning");
+  warning.quote = false;
   var clog    = new Channel("clog");
   // This one is used by urbiimage.
   var uimg    = new Channel("uimg");
