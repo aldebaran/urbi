@@ -138,6 +138,7 @@ namespace runner
     , code_(code)
     , args_(args)
     , result_(0)
+    , call_stack_(model.call_stack_)
     , stacks_(model.lobby_)
   {
     init();
