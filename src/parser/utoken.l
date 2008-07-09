@@ -500,6 +500,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "this"          RETURN(THIS);
 "timeout"       RETURN(TIMEOUT);
 "var"           RETURN(VAR);
+"waituntil"     RETURN(WAITUNTIL);
 "whenever"      RETURN(WHENEVER);
 
 "for"{FLAVOR}   RETURN_FLAVORED_KEYWORD(FOR);

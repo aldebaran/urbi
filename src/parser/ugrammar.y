@@ -200,6 +200,7 @@
 	TOK_TILDA        "~"
 	TOK_TIMEOUT      "timeout"
 	TOK_VAR          "var"
+        TOK_WAITUNTIL    "waituntil"
 	TOK_WHENEVER     "whenever"
 
 %token TOK_EOF 0 "end of command"
@@ -840,6 +841,11 @@ stmt:
 | "continue"
     {
       $$ = new ast::Continue(@$);
+    }
+| "waituntil" "(" exp ")"
+    {
+      static ast::ParametricAst a("'Control'.'waituntil'(%exp:1)");
+      $$ = exp(a % $3.value());
     }
 | "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {

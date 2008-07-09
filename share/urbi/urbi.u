@@ -272,16 +272,6 @@ do Object
     })
   };
 
-  // waituntil takes an expression and waits until it becomes true.
-  function waituntil {
-    var t = currentRunner |
-    t.setSideEffectFree (true) |
-    while (!call.evalArgAt (1)) {
-      t.waitForChanges
-    } |
-    t.setSideEffectFree (false)
-  };
-
   // persist takes an expression and a delay, and returns an object
   // whose val slot evaluates to true if the expression has been
   // continously true for this delay and false otherwise.
@@ -305,6 +295,7 @@ do Object
   };
 };
 
+load("urbi/control.u");
 load("urbi/channel.u");
 
 // Disable top-level display
