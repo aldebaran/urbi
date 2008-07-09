@@ -790,7 +790,7 @@ stmt:
       DESUGAR("detach({" << $5.value() << ".onEvent(closure ("
 	      << values << ") {"
 	      << "if (Pattern.new(" << ast::rExp(new ast::List(@8, $8)) << ").match("
-	      << values << "))" << $11.value() << "})})");
+	      << values << ")) detach({" << $11.value() << "})})})");
     }
 | "at" "(" "?" k1_id "(" exps ")" ")" nstmt
     {
