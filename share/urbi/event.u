@@ -16,8 +16,8 @@ do Event
   function onEvent(code)
   {
     var id = pubsub.subscribe |
-    for| (var instances: alive)
-      code(instances.values) |
+    for| (var instance: alive)
+      code(instance.values) |
     while|(true)
       for| (var payload: pubsub.getAll(id))
         code(payload)
