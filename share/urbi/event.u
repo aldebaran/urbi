@@ -37,11 +37,9 @@ class Global.Event
   function onEvent(code)
   {
     var id = pubsub.subscribe |
-    for| (var e: alive)
-      code(e.payload) |
-    while|(true)
-      for| (var e: pubsub.getAll(id))
-        code(e.payload)
+    alive.each(code) |
+    while| (true)
+      pubsub.getAll(id).each(code)
   };
 
   function 'waituntil'(pattern)

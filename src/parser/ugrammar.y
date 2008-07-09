@@ -784,13 +784,13 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt
     {
-      libport::Symbol values = libport::Symbol::fresh(SYMBOL(values));
+      libport::Symbol e = libport::Symbol::fresh(SYMBOL(_event_));
       DESUGAR("detach({" << $3->first << ".onEvent(closure ("
-	      << values << ") {"
+	      << e << ") {"
 	      << "if (Pattern.new("
 	      << ast::rExp(new ast::List(@3, $3->second))
 	      << ").match("
-	      << values << ")) detach({" << $5.value() << "})})})");
+	      << e << ".payload)) detach({" << $5.value() << "})})})");
       delete $3;
     }
 | "every" "(" exp ")" nstmt
