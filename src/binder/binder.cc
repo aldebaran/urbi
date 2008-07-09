@@ -12,7 +12,6 @@
 #include <parser/ast-factory.hh>
 #include <ast/cloner.hxx>       // Needed for recurse_collection templates
 #include <ast/new-clone.hh>
-#include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 #include <binder/binder.hh>
 #include <binder/bind-debug.hh>
@@ -21,29 +20,6 @@
 
 namespace binder
 {
-
-  /*----------.
-  | Helpers.  |
-  `----------*/
-
-  namespace
-  {
-    static
-    ast::rExp
-    make_declaration(const ast::loc& l, libport::Symbol s)
-    {
-      static ast::ParametricAst a("nil");
-      return new ast::Declaration(l, s, exp(a));
-    }
-
-    static
-    ast::rExp
-    make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
-    {
-      return parser::ast_closure(new ast::Assignment(l, s, value, 0));
-    }
-  }
-
 
   /*---------.
   | Binder.  |
@@ -435,35 +411,6 @@ namespace binder
     env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
-  }
-
-  void
-  Binder::visit(ast::rConstNary input)
-  {
-    ast::rNary res = new ast::Nary(input->location_get());
-    foreach (ast::rExp child, (input->children_get()))
-    {
-      ast::rStmt stm = child.unsafe_cast<ast::Stmt>();
-      if (stm && stm->flavor_get() == ast::flavor_comma)
-      {
-        if (ast::rDeclaration dec =
-            stm->expression_get().unsafe_cast<ast::Declaration>())
-        {
-          const ast::loc l = dec->location_get();
-          const libport::Symbol s = dec->what_get();
-          res->push_back(recurse(make_declaration(l, s)),
-                         ast::flavor_semicolon);
-          res->push_back(recurse(make_assignment(l, s, dec->value_get())),
-                         ast::flavor_comma);
-        }
-        else
-          res->push_back(recurse(parser::ast_closure(child)),
-                         ast::flavor_comma);
-      }
-      else
-        res->push_back(recurse(child));
-    }
-    result_ = res;
   }
 
 } // namespace binder

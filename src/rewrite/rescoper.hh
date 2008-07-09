@@ -45,7 +45,10 @@ namespace rewrite
     using super_type::visit;
 
   protected:
-    CONST_VISITOR_VISIT_NODES((And));
+    CONST_VISITOR_VISIT_NODES(
+      (And)
+      (Nary)
+      );
   };
 }
 

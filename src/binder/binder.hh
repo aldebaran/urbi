@@ -53,7 +53,6 @@ namespace binder
                               (Do)
                               (Foreach)
                               (Function)
-                              (Nary)
                               (Scope));
 
     template <typename Code>
