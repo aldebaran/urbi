@@ -784,7 +784,7 @@ stmt:
               << $5.value() << ") | at( " << s << ") "
               << $7.value() << " onleave " << $9.value() << "");
     }
-| "at" "(" event_match ")" nstmt
+| "at" "(" event_match ")" nstmt "onleave" nstmt
     {
       libport::Symbol e = libport::Symbol::fresh(SYMBOL(_event_));
       DESUGAR("detach({" << $3->first << ".onEvent(closure ("
@@ -792,8 +792,15 @@ stmt:
 	      << "if (Pattern.new("
 	      << ast::rExp(new ast::List(@3, $3->second))
 	      << ").match("
-	      << e << ".payload)) detach({" << $5.value() << "})})})");
+	      << e << ".payload)) detach({" << $5.value()
+	      << "| waituntil (!" << e << ".active) | " << $7.value()
+	      << "})})})");
       delete $3;
+    }
+| "at" "(" event_match ")" nstmt %prec CMDBLOCK
+    {
+      DESUGAR("at(?(" << $3->first << ")(" << $3->second << "))"
+	      << $5.value() << " onleave {}");
     }
 | "every" "(" exp ")" nstmt
     {
