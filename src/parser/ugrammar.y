@@ -579,7 +579,10 @@ stmt:
   }
 | "emit" "(" exp.opt ")" k1_id args
   {
-    NOT_IMPLEMENTED(@$);
+    libport::Symbol e = libport::Symbol::fresh(SYMBOL(_emit_));
+    DESUGAR("{var " << e << " = " << $5.value() << ".trigger(" << $6
+	    << ") | detach({sleep(" << $3.value() << ") | "
+	    << e << ".'stop'})}");
   }
 ;
 
