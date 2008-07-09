@@ -135,6 +135,14 @@ namespace parser
   }
 
 
+  ast::rExp
+  ast_closure(ast::rExp value)
+  {
+    static ast::ParametricAst a("closure () { %exp:1 }");
+    return exp(a % value);
+  }
+
+
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
   // while:
@@ -313,6 +321,4 @@ namespace parser
   {
     return new ast::String(l, s);
   }
-
-
 }

@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 #include <libport/foreach.hh>
 
+#include <parser/ast-factory.hh>
 #include <ast/cloner.hxx>       // Needed for recurse_collection templates
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
@@ -37,17 +38,9 @@ namespace binder
 
     static
     ast::rExp
-    make_closure(ast::rExp value)
-    {
-      static ast::ParametricAst a("closure () { %exp:1 }");
-      return exp(a % value);
-    }
-
-    static
-    ast::rExp
     make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
     {
-      return make_closure(new ast::Assignment(l, s, value, 0));
+      return parser::ast_closure(new ast::Assignment(l, s, value, 0));
     }
   }
 
@@ -296,7 +289,7 @@ namespace binder
       // FIXME: Maybe started another Binder would be better?
       ast::rAst res;
       std::swap(res, result_);
-      init_args->push_back(recurse(make_closure(arg)));
+      init_args->push_back(recurse(parser::ast_closure(arg)));
       std::swap(res, result_);
     }
 
@@ -445,16 +438,6 @@ namespace binder
   }
 
   void
-  Binder::visit(ast::rConstAnd input)
-  {
-    ast::rAnd res = new ast::And(input->location_get(), ast::exps_type());
-    foreach (ast::rExp child, input->children_get())
-      // Wrap every children in a closure
-      res->children_get().push_back(recurse(make_closure(child)));
-    result_ = res;
-  }
-
-  void
   Binder::visit(ast::rConstNary input)
   {
     ast::rNary res = new ast::Nary(input->location_get());
@@ -474,7 +457,8 @@ namespace binder
                          ast::flavor_comma);
         }
         else
-          res->push_back(recurse(make_closure(child)), ast::flavor_comma);
+          res->push_back(recurse(parser::ast_closure(child)),
+                         ast::flavor_comma);
       }
       else
         res->push_back(recurse(child));

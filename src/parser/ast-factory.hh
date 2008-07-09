@@ -1,6 +1,8 @@
 #ifndef PARSER_AST_FACTORY_HH
 # define PARSER_AST_FACTORY_HH
 
+# include <ast/exps-type.hh>
+# include <ast/flavor.hh>
 # include <ast/fwd.hh>
 # include <libport/fwd.hh>
 # include <parser/fwd.hh>
@@ -47,6 +49,12 @@ namespace parser
   ast::rExp
   ast_class(const yy::location& l,
             ast::rCall lvalue, ast::exps_type* protos, ast::rExp block);
+
+
+  /// closure () { <value> }
+  ast::rExp
+  ast_closure(ast::rExp value);
+
 
   /// To use to solve the ambiguities bw MetaVar::append_ and
   /// Tweast::append_ when we don't use exactly ast::rExp.
