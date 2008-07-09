@@ -844,8 +844,14 @@ stmt:
     }
 | "waituntil" "(" exp ")"
     {
-      static ast::ParametricAst a("'Control'.'waituntil'(%exp:1)");
+      static ast::ParametricAst a("Control.'waituntil'(%exp:1)");
       $$ = exp(a % $3.value());
+    }
+| "waituntil" "(" exp "~" exp ")"
+    {
+      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_waituntil_));
+      DESUGAR("{var " << s << " = persist (" << $3.value() << ","
+	      << $5.value() << ") | waituntil(" << s << "())}");
     }
 | "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {
