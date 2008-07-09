@@ -883,6 +883,25 @@ stmt:
               << $5.value() << ") | Control.whenever_(" << s << ".val, "
               << $7.value() << ", " << $9.value() << ")");
     }
+| "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
+    {
+      DESUGAR("whenever(?(" << $3->first << ")(" << $3->second << "))"
+	      << $5.value() << " else {}");
+      delete $3;
+    }
+| "whenever" "(" event_match ")" nstmt "else" nstmt
+    {
+      libport::Symbol e = libport::Symbol::fresh(SYMBOL(_event_));
+      DESUGAR("detach({" << $3->first << ".onEvent(closure ("
+	      << e << ") {"
+	      << "if (Pattern.new("
+	      << ast::rExp(new ast::List(@3, $3->second))
+	      << ").match("
+	      << e << ".payload)) detach({while (true){" << $5.value()
+	      << " | if(!" << e << ".active) break } | " << $7.value()
+	      << "})})})");
+      delete $3;
+    }
 | "switch" "(" exp ")" "{" cases "}"
     {
       ::parser::Tweast tweast;

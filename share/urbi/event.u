@@ -29,7 +29,7 @@ class Global.Event
 
   function 'stop'()
   {
-    alive.erase(this) |
+    alive.removeById(this) |
     active = false |
     this
   };
