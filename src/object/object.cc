@@ -370,7 +370,26 @@ namespace object
     return value;
   }
 
+  rObject
+  Object::property_remove(const key_type& k, const key_type& p)
+  {
+     // Forbid searching properties on nonexistent slots
+    safe_slot_locate(k);
 
+    if (rDictionary ps = properties_get(k))
+    {
+      Dictionary::value_type& dict = ps->value_get();
+      rObject res = void_class;
+      Dictionary::value_type::iterator i = dict.find(p);
+      if (i != dict.end())
+      {
+	res = i->second;
+	dict.erase(i);
+      }
+      return res;
+    }
+    return void_class;
+  }
 
   /*-----------.
   | Printing.  |

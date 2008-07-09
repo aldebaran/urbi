@@ -52,6 +52,33 @@ do Float
   {
     installUpdateHookStack(parent, name);
 
+    // Setup 'n mecanism
+    {
+      var slotName = name + "_quote_n";
+
+      if (parent.locateSlot(slotName).isNil)
+      {
+        function quote_n()
+        {
+          var max = parent.getProperty(name, "rangemax") |
+          var min = parent.getProperty(name, "rangemin") |
+          var val =  parent.getSlot(name) |
+          return (val - min) / (max - min) |
+        };
+
+        function hook(slot, val)
+        {
+          var max = parent.getProperty(name, "rangemax") |
+          var min = parent.getProperty(name, "rangemin") |
+          updateSlot(name, min + (max - min) * val) |
+          return |
+        };
+
+        parent.setSlot(slotName, quote_n);
+        parent.setProperty(slotName, "updateHook", hook);
+      };
+    };
+
     function rangeminHook(slot, val)
     {
       var min = getProperty(slot, "rangemin");

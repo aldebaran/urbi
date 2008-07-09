@@ -38,12 +38,12 @@ function Global.installUpdateHookStack(o, slot)
 
   o.setProperty(slot, "updateHook", getSlot("UpdateHookStack").new);
 
-  function setProperty(slot, prop, v)
+  function setProperty(name, prop, v)
   {
-    if (prop == "updateHook")
+    if (name == slot && prop == "updateHook")
       getProperty(slot, prop).addHook(v)
     else
-      Object.getSlot("setProperty").apply([this, slot, prop, v]);
+      Object.getSlot("setProperty").apply([this, name, prop, v]);
   };
 
   o.setProperty = setProperty;

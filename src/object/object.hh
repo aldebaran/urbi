@@ -209,6 +209,8 @@ namespace object
     /// Ensures that self.property exists.
     rObject property_set(runner::Runner& r,
                          const key_type& k, const key_type& p, rObject val);
+    /// Remove property \a p from slot \a k. Returns what was removed.
+    rObject property_remove(const key_type& k, const key_type& p);
     /// \}
 
     /// \name Printing.
