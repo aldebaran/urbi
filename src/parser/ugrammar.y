@@ -31,6 +31,7 @@
   // Typedef shorthands
   typedef std::pair<ast::rExp, ast::rNary> case_type;
   typedef std::list<case_type> cases_type;
+  typedef std::pair<ast::rExp, ast::exps_type*> event_match_type;
 }
 
 // Locations.
@@ -780,26 +781,16 @@ stmt:
               << $5.value() << ") | at( " << s << ") "
               << $7.value() << " onleave " << $9.value() << "");
     }
-| "at" "(" "?" "(" exp ")" ")" nstmt
-    {
-      DESUGAR("at(?(" << $5.value() << ")())" << $8.value());
-    }
-| "at" "(" "?" "(" exp ")" "(" exps ")" ")" nstmt
+| "at" "(" event_match ")" nstmt
     {
       libport::Symbol values = libport::Symbol::fresh(SYMBOL(values));
-      DESUGAR("detach({" << $5.value() << ".onEvent(closure ("
+      DESUGAR("detach({" << $3->first << ".onEvent(closure ("
 	      << values << ") {"
-	      << "if (Pattern.new(" << ast::rExp(new ast::List(@8, $8)) << ").match("
-	      << values << ")) detach({" << $11.value() << "})})})");
-    }
-| "at" "(" "?" k1_id "(" exps ")" ")" nstmt
-    {
-      DESUGAR("at(?(" << $4.value() << ") (" << $6
-	      << "))" << $9.value());
-    }
-| "at" "(" "?" k1_id ")" nstmt
-    {
-      DESUGAR("at(?(" << $4.value() << ")())" << $6.value());
+	      << "if (Pattern.new("
+	      << ast::rExp(new ast::List(@3, $3->second))
+	      << ").match("
+	      << values << ")) detach({" << $5.value() << "})})})");
+      delete $3;
     }
 | "every" "(" exp ")" nstmt
     {
@@ -1095,6 +1086,31 @@ exp:
 | "[" exps "]"   { $$ = new ast::List(@$, $2);	       }
 ;
 
+
+/*---------.
+| Events.  |
+`---------*/
+
+%union { event_match_type* _event_match; };
+%type <_event_match> event_match;
+event_match:
+  "?" "(" exp ")" "(" exps ")"
+  {
+    $$ = new event_match_type($3.value(), $6);
+  }
+| "?" "(" exp ")"
+  {
+    $$ = new event_match_type($3.value(), new ast::exps_type);
+  }
+| "?" k1_id "(" exps ")"
+  {
+    $$ = new event_match_type($2.value(), $4);
+  }
+| "?" k1_id
+  {
+    $$ = new event_match_type($2.value(), new ast::exps_type);
+  }
+;
 
 /*---------------------------.
 | Square brackets operator.  |
