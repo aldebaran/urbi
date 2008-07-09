@@ -29,7 +29,7 @@ namespace rewrite
     ast::rExp
     make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
     {
-      return parser::ast_closure(new ast::Assignment(l, s, value, 0));
+      return new ast::Assignment(l, s, value, 0);
     }
   }
 
@@ -41,11 +41,24 @@ namespace rewrite
 
   void Rescoper::visit(ast::rConstAnd a)
   {
-    ast::rAnd res = new ast::And(a->location_get(), ast::exps_type());
+    ast::loc l = a->location_get();
+    ast::rAnd res = new ast::And(l, ast::exps_type());
+    ast::rNary nary = new ast::Nary(l);
     foreach (ast::rExp child, a->children_get())
-      // Wrap every children in a closure
+    {
+      if (ast::rConstDeclaration dec =
+          child.unsafe_cast<const ast::Declaration>())
+      {
+        const libport::Symbol name = dec->what_get();
+        nary->push_back(make_declaration(l, name), ast::flavor_pipe);
+        child = make_assignment(l, name, dec->value_get());
+      }
+      // Wrap every child in a closure
       res->children_get().push_back(recurse(parser::ast_closure(child)));
-    result_ = res;
+    }
+
+    nary->push_back(res);
+    result_ = nary;
   }
 
   void
@@ -64,8 +77,10 @@ namespace rewrite
           const libport::Symbol s = dec->what_get();
           res->push_back(recurse(make_declaration(l, s)),
                          ast::flavor_semicolon);
-          res->push_back(recurse(make_assignment(l, s, dec->value_get())),
-                         ast::flavor_comma);
+          res->push_back(
+            recurse(
+              parser::ast_closure(make_assignment(l, s, dec->value_get()))),
+            ast::flavor_comma);
         }
         else
           res->push_back(recurse(parser::ast_closure(child)),
