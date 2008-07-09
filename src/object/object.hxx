@@ -39,36 +39,6 @@ namespace object
   }
 
 
-  /*-------.
-  | kind.  |
-  `-------*/
-
-  inline
-  Object::kind_type
-  Object::kind_get () const
-  {
-    return object_kind_object;
-  }
-
-  inline
-  bool
-  Object::kind_is(kind_type k) const
-  {
-    return kind_get () == k;
-  }
-
-  template <typename Type>
-  inline
-  bool
-  Object::type_is() const
-  {
-    // FIXME: static_assert Obj derives from Object.
-    // FIXME: Is this really faster than using dynamic_cast? Or RTTI?
-    return kind_is(kind_type(Type::kind));
-  }
-
-
-
   /*---------.
   | Protos.  |
   `---------*/
@@ -92,20 +62,7 @@ namespace object
       itself an atom of the same kind (this pattern is used when
       literals are evaluated, for instance).
     */
-    switch(p->kind_get())
-    {
-#define FORBID(L, U)                                                    \
-      case object_kind_ ## L:                                           \
-        if (kind_get() != object_kind_ ## L)                            \
-          pabort("You can't inherit from atoms for now. Atom type: "    \
-                 #U ".");                                               \
-      break;
-      APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(FORBID)
-#undef FORBID
-      case object_kind_object:
-        // Nothing. Inheriting from objects is Ok.
-        break;
-    }
+    // FIXME: Actually check it!
 
     if (!libport::has(*protos_, p))
       protos_->push_front (p);
@@ -173,22 +130,6 @@ namespace object
     // did the const come back at some point?
     res->proto_add(const_cast<Object*>(this));
     return res;
-  }
-
-
-  /*--------.
-  | Atoms.  |
-  `--------*/
-
-  template <typename T>
-  inline
-  typename T::value_type
-  Object::value()
-  {
-    // This local variable seems to be needed by GCC 4.0.1 on OSX.
-    rObject s = this;
-    TYPE_CHECK(s, T);
-    return s.unsafe_cast<T>()->value_get();
   }
 
 

@@ -14,7 +14,6 @@
 #include <object/code-class.hh>
 #include <object/float-class.hh>
 #include <object/list-class.hh>
-#include <object/atom.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
 

@@ -24,11 +24,9 @@
 #include <ast/exps-type.hh>
 #include <ast/print.hh>
 
-#include <object/atom.hh>
 #include <object/code-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
-#include <object/idelegate.hh>
 #include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/primitive-class.hh>
@@ -440,20 +438,10 @@ namespace runner
     else if (object::rPrimitive p = func->as<object::Primitive>())
       result_ = p->value_get()(*this, args);
     else
-      switch (func->kind_get ())
-      {
-      case object::object_kind_delegate:
-        result_ =
-          func.unsafe_cast<object::Delegate>()
-          ->value_get()
-          ->operator()(*this, args);
-        break;
-      default:
-        object::check_arg_count (1, args.size(), msg);
-        result_ = func;
-        break;
-      }
-
+    {
+      object::check_arg_count (1, args.size(), msg);
+      result_ = func;
+    }
     return result_;
   }
 

@@ -14,11 +14,8 @@
 # include <ast/fwd.hh>
 # include <ast/call.hh>
 # include <ast/loc.hh>
-
 # include <kernel/exception.hh>
-
 # include <object/fwd.hh>
-# include <object/object-kind.hh>
 
 namespace object
 {

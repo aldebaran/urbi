@@ -3,7 +3,6 @@
  ** \brief Creation of the URBI object primitive.
  */
 
-#include <object/atom.hh>
 #include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/primitive-class.hh>

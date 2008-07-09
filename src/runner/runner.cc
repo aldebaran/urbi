@@ -4,7 +4,6 @@
  */
 
 #include <kernel/uconnection.hh>
-#include <object/atom.hh>
 #include <runner/runner.hh>
 
 namespace runner

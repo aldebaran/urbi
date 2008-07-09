@@ -16,7 +16,6 @@
 # include <libport/shared-ptr.hh>
 
 # include <object/fwd.hh>
-# include <object/object-kind.hh>
 # include <object/hash-slots.hh>
 # include <object/sorted-vector-slots.hh>
 # include <object/vector-slots.hh>
@@ -44,23 +43,6 @@ namespace object
 
     /// Ref-couting.
     typedef libport::shared_ptr<Object> shared_type;
-
-    /// \name Kind
-    /// \{
-    /// The kinds of primitive objects.
-    typedef object_kind_type kind_type;
-
-    /// Return the kind of this Object.
-    virtual kind_type kind_get () const;
-
-    /// Whether kind == \a k.
-    bool kind_is(Object::kind_type k) const;
-
-    /// Whether \a Type has the same kind as \a this.
-    /// Very similar to testing via dynamic_cast, might not be faster.
-    template <typename Type> bool type_is() const;
-    /// \}
-
 
     /// Check whether this is of type \a T
     template<typename T>
@@ -257,11 +239,6 @@ namespace object
      ** \return The new scope.
      **/
     rObject make_method_scope(const rObject& parent = 0);
-
-    /// Return the value of \a atom as an Atom<T>.
-    template <class T>
-    typename T::value_type
-    value();
 
   private:
     /// The protos.

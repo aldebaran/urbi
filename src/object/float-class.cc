@@ -9,10 +9,10 @@
 
 #include <sdk/config.h>
 #ifndef HAVE_ROUND
-#  include <libport/ufloat.h>
+# include <libport/ufloat.h>
 #endif
+#include <libport/ufloat.hh>
 
-#include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
@@ -67,12 +67,12 @@ namespace object
 
   rFloat Float::inf()
   {
-    return new Float(std::numeric_limits<ufloat>::infinity());
+    return new Float(std::numeric_limits<libport::ufloat>::infinity());
   }
 
   rFloat Float::nan()
   {
-    return new Float(std::numeric_limits<ufloat>::quiet_NaN());
+    return new Float(std::numeric_limits<libport::ufloat>::quiet_NaN());
   }
 
   rString Float::as_string(rObject from)

@@ -387,7 +387,7 @@ load("urbi/profiling.u");
 class Global.Executable {};
 
 // Executable derives from Object.
-for (var c: [Code, Primitive, Delegate])
+for (var c: [Code, Primitive])
   c.setProtos([Executable]);
 var Object.'()' = function()
 {

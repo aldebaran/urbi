@@ -3,7 +3,6 @@
 
 # include <boost/bind.hpp>
 
-# include <object/atom.hh>
 # include <object/cxx-primitive.hh>
 # include <object/primitive-class.hh>
 # include <object/string-class.hh>

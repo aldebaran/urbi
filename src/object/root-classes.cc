@@ -3,11 +3,9 @@
  ** \brief Creation of the root Objects.
  */
 
-#include <object/atom.hh>
 #include <object/barrier-class.hh>
 #include <object/code-class.hh>
 #include <object/cxx-object.hh>
-#include <object/delegate-class.hh>
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
@@ -38,7 +36,6 @@ namespace object
 
   SYMBOL(acceptedVoid);
   SYMBOL(asCode);
-  SYMBOL(asDelegate);
   SYMBOL(asDictionary);
   SYMBOL(asFloat);
   SYMBOL(asGlobal);

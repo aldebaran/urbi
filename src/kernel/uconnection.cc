@@ -47,7 +47,6 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <object/atom.hh>
 #include <object/object.hh>
 #include <object/tag-class.hh>
 #include <object/urbi-exception.hh>

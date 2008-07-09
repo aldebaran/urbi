@@ -14,7 +14,6 @@ using namespace boost::assign; // bring 'list_of' into scope
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 
-#include <object/atom.hh>
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>

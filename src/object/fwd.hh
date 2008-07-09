@@ -29,27 +29,17 @@ namespace object
   typedef libport::shared_ptr<rObject, false> rrObject;
   typedef std::deque<rObject> objects_type;
 
-  /// \a Macro should be a binary macro whose first arg, \p What, is
-  /// the lower case C++ name, and the second argument, \p Name, the
-  /// capitalized URBI name.  This is used in many different contexts,
-  /// such as defining enums, so we do not use terminators here (;
-  /// etc.): Macro must do it.
-# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
-  Macro(delegate,   Delegate)
-
-
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
   Macro(object,     Object)
 
 
 # define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)		\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)			\
   Macro(global,     Global)
 
 
 # define APPLY_ON_ALL_ROOT_CLASSES(Macro)	\
-  APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)	\
+  APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)   \
   Macro(object, Object)
 
   /*
@@ -57,7 +47,6 @@ namespace object
 
     SYMBOL(Call)
     SYMBOL(Code)
-    SYMBOL(Delegate)
     SYMBOL(Float)
     SYMBOL(Integer)
     SYMBOL(List)
@@ -72,21 +61,6 @@ namespace object
   // All the atoms.
   template <typename Traits>
   class Atom;
-
-  /// Define a primitive as an Atom parametrized with a traits.
-# define DEFINE(What, Name)				\
-  struct What ## _traits;				\
-  typedef Atom< What ## _traits > Name;			\
-  typedef libport::shared_ptr < Name, true > r ## Name;
-
-  /* You have to understand that the primitives are defined here.  For
-   * example, a Code is manipulated through a rRoutine (r = ref counted) and in
-   * fact Code is just a typedef for Atom<code_traits>.  If you get compilation
-   * errors about non existent members, it's most likely because you did
-   * obj.get_value () instead of obj->get_value ().  This is a side effect
-   * of the operator-> used for the ref-counting.  Keep that in mind. */
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
-# undef DEFINE
 
   class Barrier;
   typedef libport::shared_ptr<Barrier> rBarrier;
@@ -114,7 +88,6 @@ namespace object
   typedef libport::shared_ptr<Task> rTask;
 
   // urbi-exception.hh
-  class IDelegate;
   class UrbiException;
   class LookupError;
   class RedefinitionError;

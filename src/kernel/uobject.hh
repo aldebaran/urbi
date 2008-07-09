@@ -1,8 +1,6 @@
 #ifndef KERNEL_UOBJECT_HH
 # define KERNEL_UOBJECT_HH
 
-#include <object/atom.hh>
-
 //! create and return a new prototype for a bound UObject
 object::rObject uobject_make_proto(const std::string& name);
 

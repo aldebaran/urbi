@@ -2,7 +2,6 @@
 
 #include <kernel/uvalue-cast.hh>
 
-#include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/list-class.hh>
@@ -27,39 +26,28 @@ urbi::UValue uvalue_cast(object::rObject o)
       res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
   }
   else
-  switch(o->kind_get())
   {
-    case object::object_kind_delegate:
-      throw object::WrongArgumentType("UValue",
-                                      string_of(o->kind_get()),
-                                      SYMBOL(cast));
-      break;
-    case object::object_kind_object:
-      if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
-        boost::throw_exception (
-          object::WrongArgumentType
-          (string_of(object::object_kind_object),
-           string_of(o->kind_get()),
-           SYMBOL(cast)));
-      {
-	const std::string& data =
-	  o->slot_get(SYMBOL(data))->
-          as<object::String>()->value_get().name_get();
-	const std::string& keywords =
-	  o->slot_get(SYMBOL(keywords))->
-          as<object::String>()->value_get().name_get();
-	std::list<urbi::BinaryData> l;
-	l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
-                                     data.size()));
-	std::list<urbi::BinaryData>::iterator i = l.begin();
-	res.type = urbi::DATA_BINARY;
-	res.binary = new urbi::UBinary();
-	res.binary->parse(
-          (boost::lexical_cast<std::string>(data.size()) +
-           " " + keywords + '\n').c_str(), 0, l, i);
-	return res;
-      }
-      break;
+    if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
+      boost::throw_exception(
+        object::WrongArgumentType("Binary", "Object", SYMBOL(cast)));
+    {
+      const std::string& data =
+        o->slot_get(SYMBOL(data))->
+        as<object::String>()->value_get().name_get();
+      const std::string& keywords =
+        o->slot_get(SYMBOL(keywords))->
+        as<object::String>()->value_get().name_get();
+      std::list<urbi::BinaryData> l;
+      l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
+                                   data.size()));
+      std::list<urbi::BinaryData>::iterator i = l.begin();
+      res.type = urbi::DATA_BINARY;
+      res.binary = new urbi::UBinary();
+      res.binary->parse(
+        (boost::lexical_cast<std::string>(data.size()) +
+         " " + keywords + '\n').c_str(), 0, l, i);
+      return res;
+    }
   }
   return res;
 }

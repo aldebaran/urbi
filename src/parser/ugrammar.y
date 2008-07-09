@@ -26,6 +26,7 @@
 #include <ast/fwd.hh>
 #include <ast/exps-type.hh>
 #include <ast/symbols-type.hh>
+#include <object/symbols.hh>
 #include <parser/fwd.hh>
 
   // Typedef shorthands
@@ -63,8 +64,6 @@
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
-
-#include <object/atom.hh>
 
 #include <parser/ast-factory.hh>
   using parser::ast_bin;

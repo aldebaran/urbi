@@ -37,8 +37,6 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 dist_libkernel_la_SOURCES +=			\
 object/any-to-boost-function.hh			\
 object/any-to-boost-function.hxx		\
-object/atom.hh					\
-object/atom.cc					\
 object/barrier-class.cc				\
 object/barrier-class.hh				\
 object/code-class.cc				\
@@ -50,8 +48,6 @@ object/cxx-object.cc				\
 object/cxx-object.hh				\
 object/cxx-primitive.hh				\
 object/cxx-primitive.hxx			\
-object/delegate-class.cc			\
-object/delegate-class.hh			\
 object/dictionary-class.cc			\
 object/dictionary-class.hh			\
 object/float-class.cc				\
@@ -61,15 +57,12 @@ object/global-class.cc				\
 object/global-class.hh				\
 object/hash-slots.hh				\
 object/hash-slots.hxx				\
-object/idelegate.hh				\
 object/list-class.cc				\
 object/list-class.hh				\
 object/lobby-class.cc				\
 object/lobby-class.hh				\
 object/object-class.cc				\
 object/object-class.hh				\
-object/object-kind.cc				\
-object/object-kind.hh				\
 object/object.cc				\
 object/object.hh				\
 object/object.hxx				\

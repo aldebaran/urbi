@@ -1,4 +1,3 @@
-#include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/semaphore-class.hh>
 #include <runner/runner.hh>

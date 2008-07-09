@@ -8,6 +8,7 @@
 
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
+# include <object/state.hh>
 
 namespace object
 {

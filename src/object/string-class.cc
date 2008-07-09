@@ -7,7 +7,6 @@
 #include <libport/lexical-cast.hh>
 #include <libport/tokenizer.hh>
 
-#include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/list-class.hh>
 #include <object/object.hh>

@@ -13,7 +13,6 @@
 
 #include <runner/runner.hh>
 
-#include <object/atom.hh>
 #include <object/cxx-primitive.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>

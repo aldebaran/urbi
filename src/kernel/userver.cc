@@ -52,7 +52,6 @@
 #include <ast/ast.hh>
 #include <ast/nary.hh>
 
-#include <object/atom.hh>
 #include <object/object.hh>
 #include <object/object-class.hh>
 #include <object/primitive-class.hh>

@@ -8,7 +8,6 @@
 
 #include <kernel/uconnection.hh>
 
-#include <object/atom.hh>
 #include <object/string-class.hh>
 #include <runner/runner.hh>
 
