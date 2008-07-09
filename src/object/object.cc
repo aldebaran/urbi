@@ -321,10 +321,10 @@ namespace object
   bool
   Object::property_has(const key_type& k, const key_type& p)
   {
-    // Forbid searching properties on nonexistent slots
-    safe_slot_locate(k);
+    // Look for properties in the owner of the slot
+    rObject owner = safe_slot_locate(k);
 
-    if (rDictionary ps = properties_get(k))
+    if (rDictionary ps = owner->properties_get(k))
       return libport::find0(ps->value_get(), p);
     return false;
   }
