@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 #include <libport/foreach.hh>
 
+#include <ast/cloner.hxx>       // Needed for recurse_collection templates
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
