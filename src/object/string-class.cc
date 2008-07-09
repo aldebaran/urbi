@@ -5,7 +5,6 @@
 
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
-
 #include <libport/tokenizer.hh>
 
 #include <object/atom.hh>
@@ -123,12 +122,56 @@ namespace object
     return new List(ret);
   }
 
+  std::string String::format(runner::Runner& r, rList _values)
+  {
+    const char* str = content_.name_get().c_str();
+    const char* next;
+    std::string res;
+
+    const objects_type& values = _values->value_get();
+    objects_type::const_iterator it  = values.begin();
+    objects_type::const_iterator end = values.end();
+
+    while ((next = strchr(str, '%')))
+    {
+      res += std::string(str, next - str);
+      str = next + 2;
+      const char format = next[1];
+      if (format == 0)
+        throw PrimitiveError(SYMBOL(PERCENT), "Trailing %");
+      switch (format)
+      {
+        case '%':
+          res += '%';
+          break;
+        case 's':
+        {
+          if (it == end)
+            throw PrimitiveError(SYMBOL(PERCENT), "Too few arguments for format");
+          rObject as_string = urbi_call(r, *it, SYMBOL(asString));
+          res += as_string->as<String>()->value_get();
+          it++;
+          break;
+        }
+        default:
+          throw PrimitiveError(SYMBOL(PERCENT),
+                               std::string("Unrecognized format: %") + format);
+          break;
+      }
+    }
+    if (it != end)
+      throw PrimitiveError(SYMBOL(PERCENT), "Too many arguments for format");
+    res += str;
+    return res;
+  }
+
   void String::initialize(CxxObject::Binder<String>& bind)
   {
     bind(SYMBOL(asPrintable), &as_printable);
     bind(SYMBOL(asString), &as_string);
     bind(SYMBOL(fresh), &String::fresh);
     bind(SYMBOL(LT), &String::lt);
+    bind(SYMBOL(PERCENT), &String::format);
     bind(SYMBOL(PLUS), &String::plus);
     bind(SYMBOL(set), &String::set);
     bind(SYMBOL(size), &String::size);

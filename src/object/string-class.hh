@@ -24,6 +24,7 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
+    std::string format(runner::Runner& r, rList values);
     std::string plus(runner::Runner& r, rObject rhs);
     bool lt(const std::string& rhs);
     std::string fresh ();
