@@ -853,6 +853,13 @@ stmt:
       DESUGAR("{var " << s << " = persist (" << $3.value() << ","
 	      << $5.value() << ") | waituntil(" << s << "())}");
     }
+| "waituntil" "(" event_match ")"
+    {
+      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_waituntil_));
+      DESUGAR("var " << s << " = Pattern.new("
+	      << ast::rExp(new ast::List(@3, $3->second))
+	      << ") | " << $3->first << ".'waituntil'(" << s << ")");
+    }
 | "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {
       DESUGAR("Control.whenever_(" << $3.value() << ", "

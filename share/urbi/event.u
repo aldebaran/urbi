@@ -22,4 +22,22 @@ do Event
       for| (var payload: pubsub.getAll(id))
         code(payload)
   };
+
+  function 'waituntil'(pattern)
+  {
+    var id = pubsub.subscribe |
+    for| (var instance: alive)
+      if (pattern.match(instance.values))
+      {
+        pubsub.unsubscribe(id) |
+        return
+      } |
+    while| (true)
+      for| (var payload: pubsub.getAll(id))
+        if (pattern.match(payload))
+        {
+          pubsub.unsubscribe(id) |
+          return
+        }
+  };
 };
