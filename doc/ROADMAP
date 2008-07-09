@@ -52,7 +52,7 @@ Windows.
 Put this into some interface that we can derive from, but don't
 provide by default.
 
-*** Synonyms
+*** Synonyms (done)
 "and" is an alias for "&&" etc., with the same behavior (binary
 operator, same associativity and precedence).  How far should we go?
 Should '&&' be equal to 'and'?
