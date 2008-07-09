@@ -1,5 +1,78 @@
 class Global.Control
 {
+  function detach
+  {
+    var outer_call = call |
+    spawn (function () { outer_call.evalArgAt (1) })
+  };
+
+  function detach_linked
+  {
+    var outer_call = call |
+    spawn (function () { outer_call.evalArgAt (1) }, true)
+  };
+
+  // every_ takes two arguments, a delay and an expression.
+  function every_
+  {
+    detach ({
+      var delay = call.evalArgAt (1) |
+      var deadline = shiftedTime |
+      loop {
+        detach (call.evalArgAt (2)) |
+	deadline += delay |
+        sleep (deadline - shiftedTime)
+      }
+    })
+  };
+
+  // at_ takes three expressions, a test and a code to execute each time the test
+  // becomes true and a code to execute each time the test becomes false.
+  function at_
+  {
+    registerAtJob(call.args.nth(1), call.args.nth(2), call.args.nth(3))
+  };
+
+  // whenever_ takes three expressions, a test and a code to execute each time the
+  // test is true and a code to execute each time the test then becomes false.
+  function whenever_
+  {
+    detach ({
+      loop {
+        waituntil (call.evalArgAt (1)) |
+        loop {
+          call.evalArgAt (2) |
+          if (!call.evalArgAt (1))
+            break
+        };
+        call.evalArgAt (3)
+      }
+    })
+  };
+
+  // persist takes an expression and a delay, and returns an object
+  // whose val slot evaluates to true if the expression has been
+  // continously true for this delay and false otherwise.
+  //
+  // This function is used to implement
+  //   at (condition ~ delay) action [onleave leaveaction]
+  // as
+  //   var u = persist (condition, delay);
+  //   at (u.val) action [onleave leaveaction]
+  //
+  // The "persist" action will be controlled by the same tags as
+  // the initial "at" block.
+  function persist
+  {
+    var res = false |
+    var tag = Tag.new("persist".fresh) |
+    var delay = call.evalArgAt (2) |
+    Control.at_ (call.evalArgAt (1),
+                 detach({tag: { sleep (delay) | res = true }}),
+                 detach({ res = false | tag.stop })) |
+    function () { res }
+  };
+
   // waituntil takes an expression and waits until it becomes true.
   function 'waituntil' {
     var t = currentRunner |
@@ -12,3 +85,7 @@ class Global.Control
 
 };
 
+// Import those at the global level
+var Global.persist = Control.getSlot("persist");
+var Global.detach = Control.getSlot("detach");
+var Global.detach_linked = Control.getSlot("detach_linked");

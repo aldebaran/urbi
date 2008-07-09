@@ -754,7 +754,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst
-        at("at_(%exp:1, detach(%exp:2), nil)");
+        at("Control.at_(%exp:1, detach(%exp:2), nil)");
       $$ = exp (at % $3.value() % $5.value());
     }
 | "at" "(" exp ")" nstmt "onleave" nstmt
@@ -762,7 +762,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst
-        at("at_(%exp:1, detach(%exp:2), detach(%exp:3))");
+        at("Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
       $$ = exp (at % $3.value() % $5.value() % $7.value());
     }
 | "at" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
@@ -795,7 +795,7 @@ stmt:
     }
 | "every" "(" exp ")" nstmt
     {
-      static ast::ParametricAst every("every_(%exp:1, %exp:2)");
+      static ast::ParametricAst every("Control.every_(%exp:1, %exp:2)");
       $$ = exp (every % $3.value() % $5.value());
     }
 | "if" "(" exp ")" nstmt %prec CMDBLOCK
@@ -855,25 +855,26 @@ stmt:
     }
 | "whenever" "(" exp ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("whenever_(" << $3.value() << ", " << $5.value() << ", nil)");
+      DESUGAR("Control.whenever_(" << $3.value() << ", "
+	      << $5.value() << ", nil)");
     }
 | "whenever" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | whenever_(" << s << ".val, "
+              << $5.value() << ") | Control.whenever_(" << s << ".val, "
               << $7.value() << ", nil)");
     }
 | "whenever" "(" exp ")" nstmt "else" nstmt
     {
-      DESUGAR("whenever_(" << $3.value() << ", " << $5.value()
+      DESUGAR("Control.whenever_(" << $3.value() << ", " << $5.value()
               << ", " << $7.value() << ")");
     }
 | "whenever" "(" exp "~" exp ")" nstmt "else" nstmt
     {
       libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | whenever_(" << s << ".val, "
+              << $5.value() << ") | Control.whenever_(" << s << ".val, "
               << $7.value() << ", " << $9.value() << ")");
     }
 | "switch" "(" exp ")" "{" cases "}"
