@@ -17,7 +17,6 @@
 #include <object/atom.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
-#include <object/idelegate.hh>
 #include <object/object.hh>
 #include <object/object-class.hh>
 #include <object/primitives.hh>
@@ -37,6 +36,11 @@ using object::nil_class;
 using object::object_class;
 using runner::Runner;
 using libport::Symbol;
+
+#define MAKE_VOIDCALL(ptr, cls, meth) \
+    object::make_primitive( \
+		boost::function1<void, rObject>(\
+		boost::bind(&cls::meth, ptr)), SYMBOL(callback))
 
 static inline runner::Runner& getCurrentRunner()
 {
@@ -105,78 +109,19 @@ rObject uobject_initialize(runner::Runner&, objects_type args)
 
 static libport::hash_map<std::string, rObject> uobject_map;
 
-
-class UWrapCallback: public object::IDelegate
+static rObject wrap_ucallback_notify(runner::Runner&, object::objects_type,
+			      urbi::UGenericCallback* ugc)
 {
-public:
-  UWrapCallback(urbi::UGenericCallback* ugc)
-    :ugc_(ugc)
-  {}
-  virtual ~UWrapCallback() {}
-  virtual rObject operator() (runner::Runner&, object::objects_type);
-private:
-  urbi::UGenericCallback* ugc_;
-};
-
-template<typename F>
-class UWrapFunction: public object::IDelegate
-{
-public:
-  UWrapFunction(const F& f)
-    :f_(f)
-  {}
-  virtual ~UWrapFunction() {}
-  virtual rObject operator() (runner::Runner&, object::objects_type)
-  {
-    f_();
-    return object::void_class;
-  }
-private:
-  F f_;
-};
-
-template<typename F>
-UWrapFunction<F>* uwrapfunction(const F& f)
-{
-  return new UWrapFunction<F>(f);
-}
-
-
-class UWrapNotify: public object::IDelegate
-{
-public:
-  UWrapNotify(urbi::UGenericCallback* ugc, const std::string& obj,
-              const std::string& slot, bool owned, bool setter)
-    : ugc_(ugc),
-      obj(obj),
-      slot(slot),
-      owned_(owned),
-      setter_(setter)
-  {}
-  virtual ~UWrapNotify() {}
-  virtual rObject operator() (runner::Runner&, object::objects_type);
-private:
-  urbi::UGenericCallback * ugc_;
-  std::string obj, slot;
-  bool owned_;
-  bool setter_;
-};
-
-
-rObject
-UWrapNotify::operator() (runner::Runner&, object::objects_type)
-{
-  ECHO("uvwrapnotify "<<obj<<" "<<slot<<" o="<<owned_
-       << "  s="<<setter_);
+  ECHO("uvwrapnotify");
   urbi::UList l;
   l.array.push_back(new urbi::UValue());
-  l[0].storage = ugc_->storage;
-  ugc_->__evalcall(l);
+  l[0].storage = ugc->storage;
+  ugc->__evalcall(l);
   return object::void_class;
 }
 
-rObject
-UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
+static rObject wrap_ucallback(runner::Runner&, object::objects_type ol,
+		       urbi::UGenericCallback* ugc)
 {
   urbi::UList l;
   bool tail = false;
@@ -187,7 +132,7 @@ UWrapCallback::operator() (runner::Runner&, object::objects_type ol)
     urbi::UValue v = uvalue_cast(co);
     l.array.push_back(new urbi::UValue(v));
   }
-  urbi::UValue r = ugc_->__evalcall(l);
+  urbi::UValue r = ugc->__evalcall(l);
   return object_cast(r);
 }
 
@@ -364,7 +309,9 @@ namespace urbi
     {
       ECHO( "binding " << p.first << "." << method );
       me->slot_set(libport::Symbol(method),
-		   new object::Delegate(new UWrapCallback(this)));
+		   object::make_primitive(
+	boost::function2<rObject, Runner&, objects_type>
+	(boost::bind(&wrap_ucallback, _1 ,_2, this)), SYMBOL(callback)));
     }
     if (s.type == "var" || s.type == "varaccess")
     {
@@ -382,8 +329,9 @@ namespace urbi
       assertion(f);
       object::objects_type args = list_of
 	(var)
-	(new object::Delegate(new UWrapNotify(this, p.first,
-					      method, s.owned, true)));
+	(object::make_primitive(
+	boost::function2<rObject, Runner&, objects_type>
+	(boost::bind(&wrap_ucallback_notify, _1 ,_2, this)), SYMBOL(callback)));
       getCurrentRunner().apply(f, sym, args);
     }
     delete &s;
@@ -406,8 +354,8 @@ namespace urbi
     object::objects_type args = list_of
       (me)
       (new object::Float(period))
-      (new object::Delegate(
-	uwrapfunction(boost::bind(&urbi::UTimerCallback::call,this))));
+      (
+       MAKE_VOIDCALL(this, urbi::UTimerCallback, call));
     getCurrentRunner().apply(f, SYMBOL(setTimer), args);
   }
 
@@ -420,8 +368,7 @@ namespace urbi
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
     me->slot_update(getCurrentRunner(), SYMBOL(update),
-		    new object::Delegate(
-		      uwrapfunction(boost::bind(&urbi::UObject::update, this))));
+		    MAKE_VOIDCALL(this, urbi::UObject, update));
     object::objects_type args = list_of (me) (new object::Float(t));
     getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
   }
@@ -574,7 +521,7 @@ namespace urbi
   void
   UObjectHub::USetUpdate(ufloat t)
   {
-    /* Call Urbi-side setHubUpdate, passing an IDelegate wrapping the 'update'
+    /* Call Urbi-side setHubUpdate, passing an rPrimitive wrapping the 'update'
      * call.
      */
     rObject uob = object_class->slot_get(SYMBOL(UObject));
@@ -583,8 +530,8 @@ namespace urbi
       (uob)
       (new object::String(Symbol(name)))
       (new object::Float(t))
-      (new object::Delegate
-       (uwrapfunction(boost::bind(&urbi::UObjectHub::update, this))));
+      (
+       MAKE_VOIDCALL(this, urbi::UObjectHub, update));
     getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
   }
 
