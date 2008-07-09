@@ -17,22 +17,21 @@ namespace rewrite
 
   namespace
   {
-    static
-    ast::rExp
+    /// Build 'var <s>'
+    static ast::rExp
     make_declaration(const ast::loc& l, libport::Symbol s)
     {
       static ast::ParametricAst a("nil");
       return new ast::Declaration(l, s, exp(a));
     }
 
-    static
-    ast::rExp
+    /// Build '<s> = <value>'
+    static ast::rExp
     make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
     {
       return new ast::Assignment(l, s, value, 0);
     }
 
-    static
     /**
      *  Helper to extract declarations to a nary.
      *
@@ -40,7 +39,8 @@ namespace rewrite
      *  and return 'x = v;'
      *  Otherwise, just return \a subject.
      */
-    ast::rExp unscope(ast::rExp subject, ast::rNary nary)
+    static ast::rExp
+    unscope(ast::rExp subject, ast::rNary nary)
     {
       if (ast::rConstDeclaration dec =
           subject.unsafe_cast<const ast::Declaration>())
