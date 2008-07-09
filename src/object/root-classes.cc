@@ -9,7 +9,6 @@
 #include <object/cxx-object.hh>
 #include <object/delegate-class.hh>
 #include <object/dictionary-class.hh>
-#include <object/event-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
 #include <object/lobby-class.hh>
@@ -217,7 +216,6 @@ namespace object
   dummy_references()
   {
     Barrier b;
-    Event e;
     Semaphore s;
   }
 

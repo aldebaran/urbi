@@ -1,40 +1,61 @@
 // Completion of events code
 
-do Event
+class Global.Event
 {
   function init()
   {
-    var self.pubsub = PubSub.new
+    var this.pubsub = PubSub.new |
+    var this.alive = []
   };
 
   function 'emit'
   {
-    pubsub.publish(call.evalArgs) |
+    var res = clone |
+    var res.payload = call.evalArgs |
+    var res.active = false |
+    pubsub.publish(res) |
     void
+  };
+
+  function trigger
+  {
+    var res = clone |
+    var res.payload = call.evalArgs |
+    var res.active = true |
+    alive.push_back(res) |
+    pubsub.publish(res) |
+    res
+  };
+
+  function 'stop'()
+  {
+    alive.erase(this) |
+    active = false |
+    this
   };
 
   function onEvent(code)
   {
     var id = pubsub.subscribe |
-    for| (var instance: alive)
-      code(instance.values) |
+    for| (var e: alive)
+      code(e.payload) |
     while|(true)
-      for| (var payload: pubsub.getAll(id))
-        code(payload)
+      for| (var e: pubsub.getAll(id))
+        code(e.payload)
   };
 
   function 'waituntil'(pattern)
   {
     var id = pubsub.subscribe |
-    for| (var instance: alive)
-      if (pattern.match(instance.values))
+    for| (var e: alive)
+      if (pattern.match(e.payload))
       {
         pubsub.unsubscribe(id) |
         return
       } |
     while| (true)
-      for| (var payload: pubsub.getAll(id))
-        if (pattern.match(payload))
+      for| (var e: pubsub.getAll(id))
+        if (pattern.match(e.payload))
         {
           pubsub.unsubscribe(id) |
           return
