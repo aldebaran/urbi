@@ -35,7 +35,6 @@ namespace scheduler
   {
   public:
     // Create a new tag, with or without a parent
-    explicit Tag(const Tag&);
     explicit Tag(libport::Symbol name);
     Tag(rTag parent, libport::Symbol name);
     virtual ~Tag();
@@ -61,6 +60,8 @@ namespace scheduler
     const libport::Symbol& name_get() const;
 
   private:
+    explicit Tag(const Tag&);
+
     rTag parent_;
     bool blocked_;
     bool frozen_;
