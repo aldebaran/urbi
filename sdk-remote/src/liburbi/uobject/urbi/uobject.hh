@@ -120,9 +120,10 @@ namespace urbi
   /** Initialisation method.
    * Both plugin and remote libraries include a main function whose only
    * effect is to call urbi::main. If you need to write your own main, call
-   * urbi::main(argc, argv) after your work is done. This function never returns.
+   * urbi::main(argc, argv) after your work is done.
+   * This function returns if block is set to false.
    */
-  int main(int argc, const char *argv[]);
+  int main(int argc, const char *argv[], bool block = true);
 
 #ifdef URBI_ENV_REMOTE
   /** Initialisation method, for remote mode only, that returns.

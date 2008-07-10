@@ -519,7 +519,7 @@ namespace urbi
   }
 
   int
-  main(int argc, const char* argv[])
+  main(int argc, const char* argv[], bool block)
   {
     libport::program_name = argv[0];
 
@@ -572,8 +572,10 @@ namespace urbi
     }
 
    initialize(addr, port, buflen, exitOnDisconnect);
-    while (true)
-      usleep(30000000);
+
+   if (block)
+     while (true)
+       usleep(30000000);
     return 0;
   }
 

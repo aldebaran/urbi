@@ -33,7 +33,6 @@ uabstractclient.cc				\
 ucallbacks.cc					\
 uclient.cc					\
 uconversion.cc					\
-umain.cc					\
 uobject.cc					\
 usyncclient.cc					\
 usystem.cc					\
