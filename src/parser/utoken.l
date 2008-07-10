@@ -493,7 +493,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "object"        RETURN(OBJECT);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
-"self"          RETURN(THIS);
+"self"          DEPRECATED("this");
 "static"        DEPRECATED("");
 "stopif"        RETURN(STOPIF);
 "switch"        RETURN(SWITCH);

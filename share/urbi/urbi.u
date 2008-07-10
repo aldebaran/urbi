@@ -391,7 +391,7 @@ for (var c: [Code, Primitive])
   c.setProtos([Executable]);
 var Object.'()' = function()
 {
-  self.apply([self]);
+  this.apply([this]);
 };
 
 load("urbi/loadable.u");

@@ -80,7 +80,7 @@ class Object.uvar
   {
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", getSlot("updateHook"));
-    var self.newPropertyHook = getSlot("newPropertyHook_");
+    var this.newPropertyHook = getSlot("newPropertyHook_");
     var slotName = name + "_quote_n";
     parent.setSlot(slotName, function ()
       {
@@ -103,7 +103,7 @@ class Object.uvar
   /// Hook write attempts to the UVar.
   function updateHook(slot, newval)
   {
-    self.getSlot(slot).update_(slot, newval)
+    this.getSlot(slot).update_(slot, newval)
   };
   function newPropertyHook_(parent, name, prop, value)
   {

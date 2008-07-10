@@ -7,8 +7,8 @@ class Global.PubSub
   {
     function init()
     {
-       var self.barrier = Barrier.new |
-       var self.queue = []
+       var this.barrier = Barrier.new |
+       var this.queue = []
     };
 
     function enqueue(ev)
@@ -41,7 +41,7 @@ class Global.PubSub
 
   function init()
   {
-    var self.subscribers = Dictionary.new
+    var this.subscribers = Dictionary.new
   };
 
   function subscribe()
