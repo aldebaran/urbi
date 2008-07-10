@@ -321,4 +321,27 @@ namespace parser
   {
     return new ast::String(l, s);
   }
+
+  ast::rExp
+  ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases)
+  {
+    ::parser::Tweast tweast;
+    libport::Symbol switched = libport::Symbol::fresh(SYMBOL(switched));
+    tweast << "var " << switched << " = ";
+    tweast << cond << ";";
+    static ast::ParametricAst nil("nil");
+    ast::rExp inner = exp(nil);
+    rforeach (const case_type& c, cases)
+    {
+      static ast::ParametricAst a(
+        "if (Pattern.new(%exp:1).match(%exp:2)) %exp:3 else %exp:4");
+      a % c.first
+        % ast_call(l, switched)
+        % c.second
+        % inner;
+      inner = ast::exp(a);
+    }
+    tweast << inner;
+    return ::parser::parse(tweast)->ast_get();
+  }
 }

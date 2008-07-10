@@ -2,6 +2,7 @@
 # define PARSER_AST_FACTORY_HXX
 
 # include <parser/ast-factory.hh>
+# include <ast/exp.hh>
 
 namespace parser
 {

@@ -1,6 +1,8 @@
 #ifndef PARSER_AST_FACTORY_HH
 # define PARSER_AST_FACTORY_HH
 
+# include <list>
+
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
 # include <ast/fwd.hh>
@@ -130,6 +132,15 @@ namespace parser
   ast::rExp
   ast_string(const yy::location& l, libport::Symbol s);
 
+  /*--------.
+  | Switch  |
+  `--------*/
+
+  typedef std::pair<ast::rExp, ast::rNary> case_type;
+  typedef std::list<case_type> cases_type;
+
+  ast::rExp
+  ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases);
 }
 
 # include <parser/ast-factory.hxx>
