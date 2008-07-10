@@ -25,8 +25,7 @@ TFAIL_TESTS +=                                  \
 # pending features
 TFAIL_TESTS +=					\
 2.x/onevent.chk					\
-2.x/string/escape.chk				\
-2.x/unique-variable.chk
+2.x/string/escape.chk
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
