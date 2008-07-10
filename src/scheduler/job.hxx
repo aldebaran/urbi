@@ -20,7 +20,7 @@ namespace scheduler
       frozen_since_(0),
       time_shift_(0),
       scheduler_(scheduler),
-      name_(name == SYMBOL() ? libport::Symbol::fresh(SYMBOL(job)) : name),
+      name_(name.empty() ? libport::Symbol::fresh("job") : name),
       coro_(coroutine_new()),
       non_interruptible_(false),
       side_effect_free_(false),
@@ -35,7 +35,7 @@ namespace scheduler
       frozen_since_(0),
       time_shift_(model.time_shift_),
       scheduler_(model.scheduler_),
-      name_(name == SYMBOL() ? libport::Symbol::fresh(model.name_get()) : name),
+      name_(name.empty() ? libport::Symbol::fresh(model.name_get()) : name),
       coro_(coroutine_new()),
       tags_(model.tags_),
       non_interruptible_(false),
@@ -80,7 +80,8 @@ namespace scheduler
   Job::yield_until(libport::utime_t deadline)
   {
     if (non_interruptible_)
-      throw object::SchedulingError("attempt to sleep in non-interruptible code");
+      throw object::SchedulingError("attempt to sleep in"
+                                    " non-interruptible code");
 
     state_ = sleeping;
     deadline_ = deadline;

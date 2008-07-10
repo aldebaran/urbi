@@ -182,7 +182,7 @@ namespace parser
   {
     if (!lvalue->target_implicit())
     {
-      libport::Symbol tmp = libport::Symbol::fresh(SYMBOL(__tmp__));
+      libport::Symbol tmp = libport::Symbol::fresh("__tmp__");
       const yy::location& l = lvalue->location_get();
       tweast << "var " << tmp << " = " << lvalue->target_get() << "|";
       lvalue = ast_call(l, ast_call(l, tmp), lvalue->name_get());
@@ -326,7 +326,7 @@ namespace parser
   ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases)
   {
     ::parser::Tweast tweast;
-    libport::Symbol switched = libport::Symbol::fresh(SYMBOL(switched));
+    libport::Symbol switched = libport::Symbol::fresh("switched");
     tweast << "var " << switched << " = ";
     tweast << cond << ";";
     static ast::ParametricAst nil("nil");

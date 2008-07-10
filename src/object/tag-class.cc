@@ -76,7 +76,7 @@ namespace object
       tag_short_name = args[1]->as<String>()->value_get();
     }
     else
-      tag_short_name = libport::Symbol::fresh(SYMBOL(tag));
+      tag_short_name = libport::Symbol::fresh("tag");
 
     rTag res = new Tag(args[0] == tag_class ?
 		       new scheduler::Tag(tag_short_name) :

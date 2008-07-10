@@ -578,7 +578,7 @@ stmt:
   }
 | "emit" "(" exp.opt ")" k1_id args
   {
-    libport::Symbol e = libport::Symbol::fresh(SYMBOL(_emit_));
+    libport::Symbol e = libport::Symbol::fresh("_emit_");
     DESUGAR("{var " << e << " = " << $5.value() << ".trigger(" << $6
 	    << ") | detach({sleep(" << $3.value() << ") | "
 	    << e << ".'stop'})}");
@@ -770,7 +770,7 @@ stmt:
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
+      libport::Symbol s = libport::Symbol::fresh("_at_");
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | at( " << s << ") " << $7.value());
     }
@@ -778,14 +778,14 @@ stmt:
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_at_));
+      libport::Symbol s = libport::Symbol::fresh("_at_");
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | at( " << s << ") "
               << $7.value() << " onleave " << $9.value() << "");
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
-      libport::Symbol e = libport::Symbol::fresh(SYMBOL(_event_));
+      libport::Symbol e = libport::Symbol::fresh("_event_");
       DESUGAR("detach({" << $3->first << ".onEvent(closure ("
 	      << e << ") {"
 	      << "if (Pattern.new("
@@ -816,8 +816,8 @@ stmt:
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      libport::Symbol ex = libport::Symbol::fresh(SYMBOL(freezeif));
-      libport::Symbol in = libport::Symbol::fresh(SYMBOL(freezeif));
+      libport::Symbol ex = libport::Symbol::fresh("freezeif");
+      libport::Symbol in = libport::Symbol::fresh("freezeif");
       DESUGAR
       ("var " << ex << " = " << "new Tag (\"" << ex << "\")|"
        << "var " << in << " = " << "new Tag (\"" << in << "\")|"
@@ -828,7 +828,7 @@ stmt:
     }
 | "stopif" "(" softtest ")" stmt
     {
-      libport::Symbol tag = libport::Symbol::fresh(SYMBOL(stopif));
+      libport::Symbol tag = libport::Symbol::fresh("stopif");
       DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
 	      << tag << " : { { " << $5.value() << "|" << tag << ".stop }" << "&"
 	      << "{ waituntil(" << $3.value() << ")|"
@@ -857,13 +857,13 @@ stmt:
     }
 | "waituntil" "(" exp "~" exp ")"
     {
-      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_waituntil_));
+      libport::Symbol s = libport::Symbol::fresh("_waituntil_");
       DESUGAR("{var " << s << " = persist (" << $3.value() << ","
 	      << $5.value() << ") | waituntil(" << s << "())}");
     }
 | "waituntil" "(" event_match ")"
     {
-      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_waituntil_));
+      libport::Symbol s = libport::Symbol::fresh("_waituntil_");
       DESUGAR("var " << s << " = Pattern.new("
 	      << ast::rExp(new ast::List(@3, $3->second))
 	      << ") | " << $3->first << ".'waituntil'(" << s << ")");
@@ -875,7 +875,7 @@ stmt:
     }
 | "whenever" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
-      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
+      libport::Symbol s = libport::Symbol::fresh("_whenever_");
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | Control.whenever_(" << s << ".val, "
               << $7.value() << ", nil)");
@@ -887,7 +887,7 @@ stmt:
     }
 | "whenever" "(" exp "~" exp ")" nstmt "else" nstmt
     {
-      libport::Symbol s = libport::Symbol::fresh(SYMBOL(_whenever_));
+      libport::Symbol s = libport::Symbol::fresh("_whenever_");
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | Control.whenever_(" << s << ".val, "
               << $7.value() << ", " << $9.value() << ")");
@@ -900,7 +900,7 @@ stmt:
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt
     {
-      libport::Symbol e = libport::Symbol::fresh(SYMBOL(_event_));
+      libport::Symbol e = libport::Symbol::fresh("_event_");
       DESUGAR("detach({" << $3->first << ".onEvent(closure ("
 	      << e << ") {"
 	      << "if (Pattern.new("

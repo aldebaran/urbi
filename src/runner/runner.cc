@@ -51,8 +51,7 @@ namespace runner
     if (!tag)
     {
       // Create the tag on demand.
-      tag =
-        new scheduler::Tag(libport::Symbol::fresh(SYMBOL(LT_scope_SP_tag_GT)));
+      tag = new scheduler::Tag(libport::Symbol::fresh("<scope tag>"));
       *scope_tags_.rbegin() = tag;
     }
     return tag;
