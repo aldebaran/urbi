@@ -69,8 +69,9 @@ namespace binder
     typedef std::list<libport::Finally> unbind_type;
     unbind_type unbind_;
 
-    /// Declaration * depth
-    typedef std::pair<ast::rDeclaration, unsigned> binding_type;
+    /// Declaration * (routine_depth * scope_depth)
+    typedef std::pair<ast::rDeclaration,
+                      std::pair<unsigned, unsigned> > binding_type;
     typedef std::list<binding_type> Bindings;
     typedef std::map<libport::Symbol, Bindings> Environment;
     /// Map of currently bound variables
@@ -100,7 +101,9 @@ namespace binder
     /// \}
 
     /// Level of routine nesting.
-    unsigned depth_;
+    unsigned routine_depth_;
+    /// Level of scope nesting.
+    unsigned scope_depth_;
     /// Local index at the toplevel
     unsigned toplevel_index_;
 
@@ -110,7 +113,8 @@ namespace binder
 
     /// \return 0 if the variable isn't local, or the depth in
     /// number of nested routines otherwise.
-    unsigned depth_get(const libport::Symbol& name);
+    unsigned routine_depth_get(const libport::Symbol& name);
+    unsigned scope_depth_get(const libport::Symbol& name);
     ast::rDeclaration decl_get(const libport::Symbol& name);
 
     /// Factored method to handle scopes.

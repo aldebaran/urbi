@@ -28,7 +28,8 @@ namespace binder
   Binder::Binder()
     : unbind_()
     , env_()
-    , depth_(1)
+    , routine_depth_(1)
+    , scope_depth_(1)
     , toplevel_index_(0)
   {
     unbind_.push_back(libport::Finally());
@@ -39,14 +40,26 @@ namespace binder
   {}
 
   unsigned
-  Binder::depth_get(const libport::Symbol& name)
+  Binder::routine_depth_get(const libport::Symbol& name)
   {
     if (env_[name].empty())
       return 0;
     else
     {
-      assert(env_[name].back().second > 0);
-      return env_[name].back().second;
+      assert(env_[name].back().second.first > 0);
+      return env_[name].back().second.first;
+    }
+  }
+
+  unsigned
+  Binder::scope_depth_get(const libport::Symbol& name)
+  {
+    if (env_[name].empty())
+      return 0;
+    else
+    {
+      assert(env_[name].back().second.second > 0);
+      return env_[name].back().second.second;
     }
   }
 
@@ -106,6 +119,11 @@ namespace binder
   void
   Binder::visit(ast::rConstDeclaration input)
   {
+    if (scope_depth_ == scope_depth_get(input->what_get()))
+      errors_.error(input->location_get(),
+                    "variable redefinition: "
+                    + input->what_get().name_get());
+
     if (setOnSelf_.back())
       result_ = changeSlot(input->location_get(), input->what_get(),
                            SYMBOL(setSlot), input->value_get());
@@ -130,7 +148,7 @@ namespace binder
     ast::rDeclaration decl = outer_decl;
     ast::rLocal current;
 
-    if (depth_ > depth)
+    if (routine_depth_ > depth)
     {
       // The variable is captured
       BIND_NECHO(libport::incindent);
@@ -139,7 +157,7 @@ namespace binder
 
       routine_stack_type::reverse_iterator f_it = routine_stack_.rbegin();
       const ast::loc loc = input->location_get();
-      for (int i = depth_ - depth; i; --i, ++f_it)
+      for (int i = routine_depth_ - depth; i; --i, ++f_it)
       {
         ast::rRoutine f = *f_it;
         // Check whether it's already captured
@@ -180,11 +198,11 @@ namespace binder
   {
     assert(!input->declaration_get());
     libport::Symbol name = input->what_get();
-    if (unsigned depth = depth_get(name))
+    if (unsigned depth = routine_depth_get(name))
     {
       super_type::visit(input);
       ast::rAssignment res = result_.unsafe_cast<ast::Assignment>();
-      res->depth_set(depth_ - depth);
+      res->depth_set(routine_depth_ - depth);
       link_to_declaration(input, res, input->what_get(), depth);
     }
     else
@@ -206,12 +224,12 @@ namespace binder
       unsigned depth;
       // If this is a qualified call, nothing particular to do
       if ((implicit = input->target_implicit())
-          && (depth = depth_get(name)))
+          && (depth = routine_depth_get(name)))
       {
         ast::rLocal res =
           new ast::Local(loc, name,
                          recurse_collection(input->arguments_get()),
-                         depth_ - depth);
+                         routine_depth_ - depth);
         link_to_declaration(input, res, name, depth);
         result_ = res;
       }
@@ -304,10 +322,20 @@ namespace binder
                           target);
   }
 
+  static
+  void
+  decrement(unsigned* n)
+  {
+    (*n)--;
+  }
+
   ast::rExp
   Binder::handleScope(ast::rConstAbstractScope scope, bool setOnSelf)
   {
     libport::Finally finally;
+
+    scope_depth_++;
+    finally << boost::bind(decrement, &scope_depth_);
 
     // Push a finally on unbind_, and destroy it at the scope
     // exit. Since bound variables register themselves for unbinding
@@ -320,13 +348,6 @@ namespace binder
 
     operator() (scope->body_get());
     return result_.unsafe_cast<ast::Exp>();
-  }
-
-  static
-  void
-  decrement(unsigned* n)
-  {
-    (*n)--;
   }
 
   template <typename Code>
@@ -351,8 +372,8 @@ namespace binder
     finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
     // Increase the nested functions depth
-    depth_++;
-    finally << boost::bind(decrement, &depth_);
+    routine_depth_++;
+    finally << boost::bind(decrement, &routine_depth_);
 
     // Bind and clone arguments
     res->formals_set(recurse_collection(input->formals_get()));
@@ -408,7 +429,8 @@ namespace binder
     else
       routine()->local_variables_get()->push_back(decl);
 
-    env_[decl->what_get()].push_back(std::make_pair(decl, depth_));
+    env_[decl->what_get()].push_back(
+      std::make_pair(decl, std::make_pair(routine_depth_, scope_depth_)));
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
