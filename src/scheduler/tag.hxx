@@ -7,6 +7,7 @@ namespace scheduler
     , blocked_(false)
     , frozen_(false)
     , name_(name)
+    , prio_(PRIO_DEFAULT)
   {
   }
 
@@ -64,6 +65,18 @@ namespace scheduler
   Tag::name_get() const
   {
     return name_;
+  }
+
+  inline prio_type
+  Tag::prio_get() const
+  {
+    return prio_;
+  }
+
+  inline void
+  Tag::prio_set(prio_type prio)
+  {
+    prio_ = prio;
   }
 
 } // namespace scheduler

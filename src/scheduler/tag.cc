@@ -7,6 +7,7 @@ namespace scheduler
     : parent_(parent)
     , blocked_(false)
     , frozen_(false)
+    , prio_(parent->prio_)
   {
     if (parent)
       name_ = libport::Symbol::Symbol

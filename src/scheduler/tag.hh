@@ -58,6 +58,10 @@ namespace scheduler
     // Is this tag identical to \a other, or does it derive from it?
     bool derives_from(const Tag& other) const;
 
+    // Set and get the priority.
+    void prio_set(prio_type);
+    prio_type prio_get() const;
+
     // Act on a tag and make the scheduler take it into account
     void freeze(Scheduler&);
     void unfreeze(Scheduler&);
@@ -75,6 +79,7 @@ namespace scheduler
     bool frozen_;
     libport::Symbol name_;
     boost::any payload_;
+    prio_type prio_;
   };
 
   typedef std::vector<rTag> tags_type;
