@@ -37,9 +37,6 @@ See also the item on pattern matching.
 
 Or maybe Webots, but a true robot is preferred.
 
-*** Cleanup "at" scoping
-Decide what scoping is appropriate for "at" jobs.
-
 *** Fix the Booleans (done: 43653fc957dd6bf3078097d8d99fd0d75c2c10e4)
 They should no longer behave like Floats.
 
@@ -58,6 +55,9 @@ operator, same associativity and precedence).  How far should we go?
 Should '&&' be equal to 'and'?
 
 ** Version 2.0 technical preview 4 (2008-07-24)
+
+*** Cleanup "at" scoping
+Decide what scoping is appropriate for "at" jobs.
 
 *** Start exploring dlopen
 We need to address the foreign dependencies such as Boost.
@@ -114,7 +114,7 @@ effectors, and for the tools team to build their tools on them.
 We also need to document clearly the differences between kernel 1.x
 and kernel 2.0 so that developers can adapt their code easily.
 
-** Version 2.0 beta 2 (2008-08-25)
+** Version 2.0 beta 2 (2008-09-25)
 
 *** Tools support
 
