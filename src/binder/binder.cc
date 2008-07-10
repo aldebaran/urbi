@@ -371,9 +371,11 @@ namespace binder
     setOnSelf_.push_back(false);
     finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
-    // Increase the nested functions depth
+    // Increase the nested functions and scopes depth
     routine_depth_++;
     finally << boost::bind(decrement, &routine_depth_);
+    scope_depth_++;
+    finally << boost::bind(decrement, &scope_depth_);
 
     // Bind and clone arguments
     res->formals_set(recurse_collection(input->formals_get()));
