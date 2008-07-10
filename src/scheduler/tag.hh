@@ -9,6 +9,14 @@
 
 namespace scheduler
 {
+  // Tag priorities
+  typedef unsigned int prio_type;
+  enum
+  {
+    PRIO_MIN = 0,
+    PRIO_DEFAULT = 64,
+    PRIO_MAX = 127
+  };
 
   // A Tag is an entity attached to zero or more scheduler jobs. Each job
   // can have zero or more tags. When a new job is created, it usually
