@@ -572,15 +572,15 @@ stmt:
 | Events.  |
 `---------*/
 stmt:
-  "emit" k1_id args
+  "emit" k1_id args %prec CMDBLOCK
   {
     DESUGAR($2.value() << ".'emit'(" << $3 << ")");
   }
-| "emit" "(" exp.opt ")" k1_id args
+| "emit" k1_id args "~" exp
   {
     libport::Symbol e = libport::Symbol::fresh("_emit_");
-    DESUGAR("{var " << e << " = " << $5.value() << ".trigger(" << $6
-	    << ") | detach({sleep(" << $3.value() << ") | "
+    DESUGAR("{var " << e << " = " << $2.value() << ".trigger(" << $3
+	    << ") | detach({sleep(" << $5.value() << ") | "
 	    << e << ".'stop'})}");
   }
 ;
