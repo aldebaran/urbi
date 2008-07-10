@@ -347,7 +347,7 @@
 %left  "," ";"
 %left  "|"
 %left  "&"
-%left  CMDBLOCK
+%left  CMDBLOCK ELSE_LESS
 %left  "else" "onleave"
 
 %left  "=" "+=" "-=" "*=" "/=" "^="
@@ -834,6 +834,10 @@ stmt:
 	      << "{ waituntil(" << $3.value() << ")|"
 	      << tag << ".stop } }");
     }
+| "switch" "(" exp ")" "{" cases "}"
+    {
+      $$ = ast_switch(@3, $3.value(), take($6));
+    }
 | "timeout" "(" exp ")" stmt
     {
       DESUGAR("stopif ({sleep(" << $3.value() << ") | true}) " << $5.value());
@@ -868,29 +872,33 @@ stmt:
 	      << ast::rExp(new ast::List(@3, $3->second))
 	      << ") | " << $3->first << ".'waituntil'(" << s << ")");
     }
-| "whenever" "(" exp ")" nstmt %prec CMDBLOCK
+;
+
+// An optional else branch for a whenever.
+%type <exp> else_stmt;
+else_stmt:
+  /* nothing. */ %prec ELSE_LESS // ELSE_LESS < "else" to promote shift.
+  {
+    static ast::ParametricAst a("nil"); $$ = exp(a);
+  }
+| "else" nstmt
+  {
+    $$ = $2;
+  }
+;
+
+stmt:
+  "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
     {
       DESUGAR("Control.whenever_(" << $3.value() << ", "
-	      << $5.value() << ", nil)");
+	      << $5.value() << ", " << $6.value() << ")");
     }
-| "whenever" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
+| "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh("_whenever_");
       DESUGAR("var " << s << " = persist (" << $3.value() << ","
               << $5.value() << ") | Control.whenever_(" << s << ".val, "
-              << $7.value() << ", nil)");
-    }
-| "whenever" "(" exp ")" nstmt "else" nstmt
-    {
-      DESUGAR("Control.whenever_(" << $3.value() << ", " << $5.value()
-              << ", " << $7.value() << ")");
-    }
-| "whenever" "(" exp "~" exp ")" nstmt "else" nstmt
-    {
-      libport::Symbol s = libport::Symbol::fresh("_whenever_");
-      DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | Control.whenever_(" << s << ".val, "
-              << $7.value() << ", " << $9.value() << ")");
+              << $7.value() << ", " << $8.value() << ")");
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
@@ -898,7 +906,7 @@ stmt:
 	      << $5.value() << " else {}");
       delete $3;
     }
-| "whenever" "(" event_match ")" nstmt "else" nstmt
+| "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
       DESUGAR("detach({" << $3->first << ".onEvent(closure ("
@@ -910,10 +918,6 @@ stmt:
 	      << " | if(!" << e << ".active) break } | " << $7.value()
 	      << "})})})");
       delete $3;
-    }
-| "switch" "(" exp ")" "{" cases "}"
-    {
-      $$ = ast_switch(@3, $3.value(), take($6));
     }
 ;
 
