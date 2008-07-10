@@ -606,6 +606,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstForeach e)
   {
+    (void)e;
     pabort(e);
   }
 
