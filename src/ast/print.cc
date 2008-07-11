@@ -7,11 +7,9 @@ namespace ast
   std::ostream&
   operator<< (std::ostream& o, const Ast& a)
   {
-    PrettyPrinter p (o);
+    PrettyPrinter p(o);
     p(&a);
     return o;
   }
 
 } // namespace ast
-
-

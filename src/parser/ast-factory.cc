@@ -159,11 +159,11 @@ namespace parser
            ast::rExp init, ast::rExp test, ast::rExp inc,
            ast::rExp body)
   {
-    passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
-    assert (init);
-    assert (test);
-    assert (inc);
-    assert (body);
+    passert(op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
+    assert(init);
+    assert(test);
+    assert(inc);
+    assert(body);
 
     // BODY | INC.
     ast::rExp loop_body = ast_bin(l, ast::flavor_pipe, body, inc);

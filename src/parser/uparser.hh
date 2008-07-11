@@ -12,7 +12,7 @@ namespace parser
 {
 
   /// Persistent parsing.
-  /// 
+  ///
   /// The main point of this class is to allow parsing of a pseudo
   /// stream while maintaining a stack of locations.  It is actually a
   /// facade around a ParserImpl in order to avoid useless

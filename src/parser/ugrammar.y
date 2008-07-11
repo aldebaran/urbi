@@ -1059,13 +1059,13 @@ exp:
 exp:
   "function" formals block
     {
-      $$ = new ast::Function (@$, symbols_to_decs($2, @2),
-                              ast_scope (@$, $3.value()));
+      $$ = new ast::Function(@$, symbols_to_decs($2, @2),
+                             ast_scope(@$, $3.value()));
     }
 | "closure" formals block
     {
-      $$ = new ast::Closure (@$, symbols_to_decs($2, @2),
-                             ast_scope (@$, $3.value()));
+      $$ = new ast::Closure(@$, symbols_to_decs($2, @2),
+                            ast_scope(@$, $3.value()));
     }
 ;
 
