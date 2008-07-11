@@ -8,6 +8,7 @@
 # include <string>
 
 # include <ast/error.hh>
+# include <ast/nary-fwd.hh>
 
 namespace parser
 {
@@ -47,17 +48,17 @@ namespace parser
     /// \name The resulting AST.
     /// \{
     /// The type of AST node returned by the parser.
-    typedef ast::Nary ast_type;
+    typedef ast::rNary ast_type;
     /// The latest AST read by parse().
-    libport::shared_ptr<ast_type> ast_get();
+    ast_type ast_get();
     /// Same as \a ast_get, but assert the result.
-    libport::shared_ptr<ast_type> ast_xget();
+    ast_type ast_xget();
     /// Set \a ast_.
-    void ast_set(libport::shared_ptr<ast_type> ast);
+    void ast_set(ast_type ast);
 
   private:
     /// The resulting AST.
-    libport::shared_ptr<ast_type> ast_;
+    ast_type ast_;
     /// \}
 
   public:
@@ -73,7 +74,7 @@ namespace parser
 
     /// Push all warning and error messages in \b target.
     /// If errors were pushed, the ast is deleted and set to 0.
-    void process_errors(ast_type& target);
+    void process_errors(ast::Nary& target);
 
   private:
     /// List of parse error messages.
