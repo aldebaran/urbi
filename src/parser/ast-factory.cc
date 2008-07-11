@@ -287,9 +287,6 @@ namespace parser
           call->arguments_get()->push_back(value);
         res = call;
       }
-      // Our parser stack does not obey the C++ semantics and it does
-      // not decrement the counters of the shared pointers.  So help it.
-      lvalue->counter_dec();
     }
     return res;
   }

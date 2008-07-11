@@ -181,21 +181,21 @@ do {						\
 #define SET_VAL(Field, Value)			\
   do {						\
     if (up)					\
-      valp->Field = Value;			\
+      *valp = Value;                            \
   } while(0)
 
 // Extend the string value of valp.
 #define GROW_VAL(Value)				\
   do {						\
     if (up)					\
-      *valp->str += Value;			\
+      boost::get<std::string>(*valp) += Value;  \
   } while(0)
 
 // Extend the string value of valp.
-#define APPEND_VAL(Arg1, Arg2)			\
-  do {						\
-    if (up)					\
-      valp->str->append (Arg1, Arg2);		\
+#define APPEND_VAL(Arg1, Arg2)                                  \
+  do {                                                          \
+    if (up)                                                     \
+      boost::get<std::string>(*valp).append(Arg1, Arg2);        \
   } while(0)
 
 
@@ -240,7 +240,7 @@ do {						\
     PRE_SKIP();                                                         \
     libport::Symbol res (Val);                                          \
     SET_VAL(symbol, res);                                               \
-    std::cerr << "Id: " << valp->symbol                                 \
+    std::cerr << "Id: " << *valp                                 \
               << "@" << std::hex << reinterpret_cast<unsigned&>(res) << std::endl; \
     RETURN(Token);                                                      \
       }
@@ -438,7 +438,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 	      }
 
 [\"\']        {
-		SET_VAL(str, new std::string);
+                SET_VAL(str, std::string());
 		delimiter = *yytext;
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
@@ -685,7 +685,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        {
 	 BEGIN sc_default;
 	 if (*yytext == '\'')
-	   RETURN_SOME_SYMBOL(IDENTIFIER, *valp->str)
+	   RETURN_SOME_SYMBOL(IDENTIFIER, boost::get<std::string>(*valp))
 	 else
 	   RETURN(STRING);
        }

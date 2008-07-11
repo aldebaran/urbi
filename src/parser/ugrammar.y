@@ -29,9 +29,17 @@
 #include <object/symbols.hh>
 #include <parser/ast-factory.hh>
 #include <parser/fwd.hh>
+#include <ast/call.hh>
+#include <ast/nary.hh>
+#include <ast/tag.hh>
 
   // Typedef shorthands
   typedef std::pair<ast::rExp, ast::exps_type*> event_match_type;
+
+  // It is inconvenient to use the pointer notation with the variants.
+  typedef ast::exps_type* exps_pointer;
+  typedef ast::symbols_type* symbols_pointer;
+  typedef ::parser::Tweast* tweast_pointer;
 }
 
 // Locations.
@@ -76,10 +84,23 @@
   using parser::ast_string;
   using parser::ast_switch;
 
-#include <parser/tweast.hh>
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
+#include <parser/tweast.hh>
 #include <parser/utoken.hh>
+
+    /// Store in Var the AST of the parsing of Code.
+static
+void
+DESUGAR_(yy::parser::semantic_type& Var, ::parser::Tweast& Tweast)
+    {
+      ast::rExp res =
+        ::parser::parse(Tweast)->ast_get().unsafe_cast<ast::Exp>();
+      LIBPORT_ECHO("res: " << *res);
+      Var = res;
+      LIBPORT_ECHO("res: " << *res);
+      LIBPORT_ECHO("Var: " << *boost::get<ast::rExp>(Var));
+    }
 
   namespace
   {
@@ -87,35 +108,18 @@
     template <typename T>
     static
     T
-    metavar (parser::ParserImpl& up, unsigned key)
+    metavar(parser::ParserImpl& up, unsigned key)
     {
-      return up.tweast_->template take<T> (key);
+      return up.tweast_->template take<T>(key);
     }
-
-    /// Return the value pointed to be \a s, and delete it.
-    template <typename T>
-    static
-    T
-    take (T* s)
-    {
-      assert (s);
-      T res = *s;
-      delete s;
-      return res;
-    }
-
-    /// Store in Var the AST of the parsing of Code.
-# define DESUGAR_(Var, Tweast)                  \
-    Var = ::parser::parse(Tweast)->ast_get()
 
     /// Store in $$ the result of appending Code to \a tweast.
 # define DESUGAR_TWEAST(Code)                   \
-    DESUGAR_(yyval.exp, tweast << Code)
+    DESUGAR_(yyval, tweast << Code)
 
   /// Store in $$ the AST of the parsing of Code.
 # define DESUGAR(Code)				\
-    DESUGAR_(yyval.exp, ::parser::Tweast() << Code)
-
+    DESUGAR_(yyval, ::parser::Tweast() << Code)
 
 
     /*---------------.
@@ -151,7 +155,8 @@
   }
 
   static ast::declarations_type*
-    symbols_to_decs(const ast::symbols_type* symbols, const ast::loc& loc)
+    symbols_to_decs(const ast::symbols_type* symbols,
+                    const ast::loc& loc)
   {
     if (!symbols)
       return 0;
@@ -229,8 +234,29 @@
     }									\
   while (0)
 };
-%union { ast::flavor_type flavor; };
-%token <flavor>
+
+%code variant
+{
+  ast::flavor_type,
+  std::string,
+  libport::Symbol,
+  ast::rExp,
+  ast::rCall,
+  ast::rNary,
+  ast::rTag,
+  ::parser::cases_type,
+  ::parser::case_type,
+  int,
+  float,
+  event_match_type,
+  tweast_pointer,
+  exps_pointer,
+  symbols_pointer
+};
+%printer { debug_stream() << libport::deref << $$; } <ast::rCall>;
+
+
+%token <ast::flavor_type>
 	TOK_COMMA        ","
 	TOK_SEMICOLON    ";"
 	TOK_AMPERSAND    "&"
@@ -241,58 +267,36 @@
 	TOK_AT           "at"
         TOK_INT_MARK     "?"
 ;
-%printer { debug_stream() << $$; } <flavor>;
+%printer { debug_stream() << $$; } <ast::flavor_type>;
 
 
  /*---------.
  | String.  |
  `---------*/
-%union { std::string* str; };
-%token  <str>  TOK_STRING  "string";
-%destructor { delete $$; } <str>;
-%printer { debug_stream() << libport::deref << $$; } <str>;
+%token  <std::string>  TOK_STRING  "string";
+%printer { debug_stream() << $$; } <std::string>;
 
 
  /*---------.
  | Symbol.  |
  `---------*/
 
-%union
-{
-  typedef libport::pod_caster<libport::Symbol> symbol_type;
-  symbol_type symbol;
-}
-
-%token <symbol> TOK_IDENTIFIER "identifier";
+%token <libport::Symbol> TOK_IDENTIFIER "identifier";
 
 // id is meant to enclose all the symbols we use as operators.  For
 // instance "+" is special so that we do have the regular priority and
 // asssociativity, yet we can write "foo . + (2)" and call foo's +.
-%type <symbol> id;
+%type <libport::Symbol> id;
 
-%printer { debug_stream() << $$.value(); } <symbol>;
+%printer { debug_stream() << $$; } <libport::Symbol>;
 
 
 /*--------------.
 | Expressions.  |
 `--------------*/
 
-%union
-{
-  typedef libport::pod_caster<ast::rExp>  podExp;
-  typedef libport::pod_caster<ast::rCall> podCall;
-  typedef libport::pod_caster<ast::rNary> podNary;
-  typedef libport::pod_caster<ast::rTag>  podTag;
-
-  podExp    exp;
-  podCall   call;
-  podNary   nary;
-  podTag    tag;
-};
-
-%printer { debug_stream() << libport::deref << $$; } <exp> <call> <nary>;
-
-%type <exp> exp exp.opt flag flags.0 flags.1 softtest stmt stmt_loop;
+%printer { debug_stream() << libport::deref << $$; } <ast::rExp>;
+%type <ast::rExp> exp exp.opt flag flags.0 flags.1 softtest stmt stmt_loop;
 
 
 /*----------------------.
@@ -393,7 +397,8 @@ root:
 | stmts.  |
 `--------*/
 
-%type <nary> block root stmts;
+%type <ast::rNary> block root stmts;
+%printer { debug_stream() << libport::deref << $$; } <ast::rNary>;
 
 // Statements: with ";" and ",".
 stmts:
@@ -401,28 +406,30 @@ stmts:
   {
     $$ = new ast::Nary(@$);
     if (!implicit ($1))
-      $$.value()->push_back ($1);
+      $$->push_back ($1);
   }
 | stmts ";" cstmt
   {
-    if ($$.value()->back_flavor_get() == ast::flavor_none)
-      $$.value()->back_flavor_set ($2, @2);
+    $$ = $1;
+    if ($$->back_flavor_get() == ast::flavor_none)
+      $$->back_flavor_set ($2, @2);
     if (!implicit ($3))
-      $$.value()->push_back($3);
+      $$->push_back($3);
   }
 | stmts "," cstmt
   {
-    if ($$.value()->back_flavor_get() == ast::flavor_none)
-      $$.value()->back_flavor_set ($2, @2);
+    $$ = $1;
+    if ($$->back_flavor_get() == ast::flavor_none)
+      $$->back_flavor_set ($2, @2);
     if (!implicit ($3))
-      $$.value()->push_back($3);
+      $$->push_back($3);
   }
 ;
 
-%type <exp> cstmt;
+%type <ast::rExp> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
-  stmt            { assert($1.value()); $$ = $1; }
+  stmt            { assert($1); $$ = $1; }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 | cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;
@@ -432,7 +439,8 @@ cstmt:
 | tagged and flagged stmt.  |
 `--------------------------*/
 
-%type <tag> tag;
+%type <ast::rTag> tag;
+%printer { debug_stream() << libport::deref << $$; } <ast::rTag>;
 tag:
   exp
   {
@@ -499,12 +507,13 @@ visibility:
 | "public"
 ;
 
-%type <exp> proto;
+%type <ast::rExp> proto;
 proto:
   visibility exp   { $$ = $2; }
 ;
 
-%type <exps> protos.1 protos;
+%type <exps_pointer> protos.1 protos;
+%printer { debug_stream() << libport::deref << $$; } <exps_pointer>;
 
 protos.1:
   proto               { $$ = new ast::exps_type; $$->push_back ($1); }
@@ -514,7 +523,7 @@ protos.1:
 //
 // at the comma.
 //
-// | protos.1 "," proto  { $$->push_back($3); }
+// | protos.1 "," proto  { $$ = $1; $$->push_back($3); }
 ;
 
 // A list of parents to derive from.
@@ -527,15 +536,15 @@ protos:
 stmt:
   "class" lvalue protos block
     {
-      $$ = ast_class(@2, $2, $3, $4.value());
+      $$ = ast_class(@2, $2, $3, $4);
     }
 ;
 
-%type <exp> identifier_as_string;
+%type <ast::rExp> identifier_as_string;
 identifier_as_string:
   "identifier"
     {
-      $$ = ast_string(@1, $1.value());
+      $$ = ast_string(@1, $1);
     }
 ;
 
@@ -545,13 +554,13 @@ stmt:
   "external" "object" identifier_as_string
   {
     static ast::ParametricAst a("'external'.'object'(%exp:1)");
-    $$ = exp(a % $3.value());
+    $$ = exp(a % $3);
   }
 | "external" "var" identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
   {
     static ast::ParametricAst a("'external'.'var'(%exp:1, %exp:2, %exp:3)");
-    $$ = exp(a % $3.value() % $5.value() % $7.value());
+    $$ = exp(a % $3 % $5 % $7);
   }
 | "external" "function" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
@@ -559,7 +568,7 @@ stmt:
   {
     static ast::ParametricAst
       a("'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
-    $$ = exp(a % $4.value() % $6.value() % $8.value() % $10.value());
+    $$ = exp(a % $4 % $6 % $8 % $10);
   }
 | "external" "event" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
@@ -567,7 +576,7 @@ stmt:
   {
     static ast::ParametricAst
       a("'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
-    $$ = exp(a % $4.value() % $6.value() % $8.value() % $10.value());
+    $$ = exp(a % $4 % $6 % $8 % $10);
   }
 ;
 
@@ -578,13 +587,13 @@ stmt:
 stmt:
   "emit" k1_id args %prec CMDBLOCK
   {
-    DESUGAR($2.value() << ".'emit'(" << $3 << ")");
+    DESUGAR($2 << ".'emit'(" << $3 << ")");
   }
 | "emit" k1_id args "~" exp
   {
     libport::Symbol e = libport::Symbol::fresh("_emit_");
-    DESUGAR("{var " << e << " = " << $2.value() << ".trigger(" << $3
-	    << ") | detach({sleep(" << $5.value() << ") | "
+    DESUGAR("{var " << e << " = " << $2 << ".trigger(" << $3
+	    << ") | detach({sleep(" << $5 << ") | "
 	    << e << ".'stop'})}");
   }
 ;
@@ -597,18 +606,16 @@ stmt:
   "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt"
-      $$ = ast_slot_set(@$, $2.value(),
-			new ast::Function (@$, symbols_to_decs($3, @3),
-                                           ast_scope (@$, $4.value())));
-      delete $3;
+      $$ = ast_slot_set(@$, $2,
+			new ast::Function(@$, symbols_to_decs($3, @3),
+                                          ast_scope (@$, $4)));
     }
 | "closure" k1_id formals block
     {
       // Compiled as "var name = closure args stmt"
-      $$ = ast_slot_set(@$, $2.value(),
-			new ast::Closure (@$, symbols_to_decs($3, @3)
-                                          , ast_scope (@$, $4.value())));
-      delete $3;
+      $$ = ast_slot_set(@$, $2,
+			new ast::Closure(@$, symbols_to_decs($3, @3),
+                                         ast_scope (@$, $4)));
     }
 ;
 
@@ -641,7 +648,7 @@ stmt:
 //
 // Another option would have been to use two keywords, say using "lambda"
 // for anonymous functions.  But that's not a good option IMHO (AD).
-%type <call> k1_id;
+%type <ast::rCall> k1_id;
 k1_id:
   "identifier"                   { $$ = ast_call(@$, $1); }
 | "identifier" "." "identifier"  { $$ = ast_call(@$, ast_call(@1, $1), $3); }
@@ -685,6 +692,8 @@ stmt:
     ast::rCall lvalue = ast_lvalue_once(Lvalue, tweast);                \
     DESUGAR_TWEAST(new_clone(lvalue) << '='                             \
                    << lvalue << Op << ast_exp(Exp));                    \
+    LIBPORT_ECHO("Id: " << typeid(*boost::get<ast::rExp>(yyval)).name());\
+    LIBPORT_ECHO("DESUGAR_ASSIGN: " << *boost::get<ast::rExp>(yyval));   \
   }
 };
 
@@ -707,8 +716,8 @@ exp:
 	TOK_PLUS_PLUS   "++"
 ;
 exp:
-  lvalue "--"      { DESUGAR('(' << $1.value() << "-= 1) + 1"); }
-| lvalue "++"      { DESUGAR('(' << $1.value() << "+= 1) - 1"); }
+  lvalue "--"      { DESUGAR('(' << $1 << "-= 1) + 1"); }
+| lvalue "++"      { DESUGAR('(' << $1 << "+= 1) - 1"); }
 ;
 
 
@@ -719,21 +728,21 @@ exp:
 stmt:
   lvalue "->" id "=" exp
     {
-      $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(setProperty),
-		    ast_string(@1, $1.value()->name_get()),
-		    ast_string(@3, $3.value()),
+      $$ = ast_call(@$, $1->target_get(), SYMBOL(setProperty),
+		    ast_string(@1, $1->name_get()),
+		    ast_string(@3, $3),
 		    $5);
-      $1.value()->counter_dec();
+      $1->counter_dec();
     }
 ;
 
 exp:
   lvalue "->" id
     {
-      $$ = ast_call(@$, $1.value()->target_get(), SYMBOL(getProperty),
-		    ast_string(@1, $1.value()->name_get()),
-		    ast_string(@3, $3.value()));
-      $1.value()->counter_dec();
+      $$ = ast_call(@$, $1->target_get(), SYMBOL(getProperty),
+		    ast_string(@1, $1->name_get()),
+		    ast_string(@3, $3));
+      $1->counter_dec();
     }
 ;
 
@@ -742,10 +751,11 @@ exp:
 `---------------------*/
 
 // non-empty-statement: A statement that triggers a warning if empty.
-%type <exp> nstmt;
+%type <ast::rExp> nstmt;
 nstmt:
   stmt
     {
+      $$ = $1;
       if (implicit($1))
 	up.warn(@1,
 		"implicit empty instruction.  Use '{}' to make it explicit.");
@@ -754,13 +764,16 @@ nstmt:
 
 stmt:
   stmt_loop
+    {
+      $$ = $1;
+    }
 | "at" "(" exp ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst
         at("Control.at_(%exp:1, detach(%exp:2), nil)");
-      $$ = exp (at % $3.value() % $5.value());
+      $$ = exp (at % $3 % $5);
     }
 | "at" "(" exp ")" nstmt "onleave" nstmt
     {
@@ -768,47 +781,46 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       static ast::ParametricAst
         at("Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
-      $$ = exp (at % $3.value() % $5.value() % $7.value());
+      $$ = exp (at % $3 % $5 % $7);
     }
 | "at" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh("_at_");
-      DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | at( " << s << ") " << $7.value());
+      DESUGAR("var " << s << " = persist (" << $3 << ","
+              << $5 << ") | at( " << s << ") " << $7);
     }
 | "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh("_at_");
-      DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | at( " << s << ") "
-              << $7.value() << " onleave " << $9.value() << "");
+      DESUGAR("var " << s << " = persist (" << $3 << ","
+              << $5 << ") | at( " << s << ") "
+              << $7 << " onleave " << $9 << "");
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
-      DESUGAR("detach({" << $3->first << ".onEvent(closure ("
+      DESUGAR("detach({" << $3.first << ".onEvent(closure ("
 	      << e << ") {"
 	      << "if (Pattern.new("
-	      << ast::rExp(new ast::List(@3, $3->second))
+	      << ast::rExp(new ast::List(@3, $3.second))
 	      << ").match("
-	      << e << ".payload)) detach({" << $5.value()
-	      << "| waituntil (!" << e << ".active) | " << $7.value()
+	      << e << ".payload)) detach({" << $5
+	      << "| waituntil (!" << e << ".active) | " << $7
 	      << "})})})");
-      delete $3;
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("at(?(" << $3->first << ")(" << $3->second << "))"
-	      << $5.value() << " onleave {}");
+      DESUGAR("at(?(" << $3.first << ")(" << $3.second << "))"
+	      << $5 << " onleave {}");
     }
 | "every" "(" exp ")" nstmt
     {
       static ast::ParametricAst every("Control.every_(%exp:1, %exp:2)");
-      $$ = exp (every % $3.value() % $5.value());
+      $$ = exp (every % $3 % $5);
     }
 | "if" "(" exp ")" nstmt %prec CMDBLOCK
     {
@@ -826,25 +838,25 @@ stmt:
       ("var " << ex << " = " << "new Tag (\"" << ex << "\")|"
        << "var " << in << " = " << "new Tag (\"" << in << "\")|"
        << ex << " : { "
-       << "at(" << $3.value() << ") " << in << ".freeze onleave "
-       << in << ".unfreeze|" << in << " : { " << $5.value() << "| "
+       << "at(" << $3 << ") " << in << ".freeze onleave "
+       << in << ".unfreeze|" << in << " : { " << $5 << "| "
        << ex << ".stop } }");
     }
 | "stopif" "(" softtest ")" stmt
     {
       libport::Symbol tag = libport::Symbol::fresh("stopif");
       DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
-	      << tag << " : { { " << $5.value() << "|" << tag << ".stop }" << "&"
-	      << "{ waituntil(" << $3.value() << ")|"
+	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
+	      << "{ waituntil(" << $3 << ")|"
 	      << tag << ".stop } }");
     }
 | "switch" "(" exp ")" "{" cases "}"
     {
-      $$ = ast_switch(@3, $3.value(), take($6));
+      $$ = ast_switch(@3, $3, $6);
     }
 | "timeout" "(" exp ")" stmt
     {
-      DESUGAR("stopif ({sleep(" << $3.value() << ") | true}) " << $5.value());
+      DESUGAR("stopif ({sleep(" << $3 << ") | true}) " << $5);
     }
 | "return" exp.opt
     {
@@ -861,29 +873,30 @@ stmt:
 | "waituntil" "(" exp ")"
     {
       static ast::ParametricAst a("Control.'waituntil'(%exp:1)");
-      $$ = exp(a % $3.value());
+      $$ = exp(a % $3);
     }
 | "waituntil" "(" exp "~" exp ")"
     {
       libport::Symbol s = libport::Symbol::fresh("_waituntil_");
-      DESUGAR("{var " << s << " = persist (" << $3.value() << ","
-	      << $5.value() << ") | waituntil(" << s << "())}");
+      DESUGAR("{var " << s << " = persist (" << $3 << ","
+	      << $5 << ") | waituntil(" << s << "())}");
     }
 | "waituntil" "(" event_match ")"
     {
       libport::Symbol s = libport::Symbol::fresh("_waituntil_");
       DESUGAR("var " << s << " = Pattern.new("
-	      << ast::rExp(new ast::List(@3, $3->second))
-	      << ") | " << $3->first << ".'waituntil'(" << s << ")");
+	      << ast::rExp(new ast::List(@3, $3.second))
+	      << ") | " << $3.first << ".'waituntil'(" << s << ")");
     }
 ;
 
 // An optional else branch for a whenever.
-%type <exp> else_stmt;
+%type <ast::rExp> else_stmt;
 else_stmt:
   /* nothing. */ %prec ELSE_LESS // ELSE_LESS < "else" to promote shift.
   {
-    static ast::ParametricAst a("nil"); $$ = exp(a);
+    static ast::ParametricAst a("nil");
+    $$ = exp(a);
   }
 | "else" nstmt
   {
@@ -894,34 +907,32 @@ else_stmt:
 stmt:
   "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
     {
-      DESUGAR("Control.whenever_(" << $3.value() << ", "
-	      << $5.value() << ", " << $6.value() << ")");
+      DESUGAR("Control.whenever_(" << $3 << ", "
+	      << $5 << ", " << $6 << ")");
     }
 | "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh("_whenever_");
-      DESUGAR("var " << s << " = persist (" << $3.value() << ","
-              << $5.value() << ") | Control.whenever_(" << s << ".val, "
-              << $7.value() << ", " << $8.value() << ")");
+      DESUGAR("var " << s << " = persist (" << $3 << ","
+              << $5 << ") | Control.whenever_(" << s << ".val, "
+              << $7 << ", " << $8 << ")");
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("whenever(?(" << $3->first << ")(" << $3->second << "))"
-	      << $5.value() << " else {}");
-      delete $3;
+      DESUGAR("whenever(?(" << $3.first << ")(" << $3.second << "))"
+	      << $5 << " else {}");
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
-      DESUGAR("detach({" << $3->first << ".onEvent(closure ("
+      DESUGAR("detach({" << $3.first << ".onEvent(closure ("
 	      << e << ") {"
 	      << "if (Pattern.new("
-	      << ast::rExp(new ast::List(@3, $3->second))
+	      << ast::rExp(new ast::List(@3, $3.second))
 	      << ").match("
-	      << e << ".payload)) detach({while (true){" << $5.value()
-	      << " | if(!" << e << ".active) break } | " << $7.value()
+	      << e << ".payload)) detach({while (true){" << $5
+	      << " | if(!" << e << ".active) break } | " << $7
 	      << "})})})");
-      delete $3;
     }
 ;
 
@@ -929,19 +940,17 @@ stmt:
 | Cases.  |
 `--------*/
 
-%union { ::parser::cases_type* cases; };
-%type <cases> cases;
+%type < ::parser::cases_type > cases;
 
 cases:
-  /* empty */  { $$ = new ::parser::cases_type();            }
-| cases case   { $$ = $1; $$->push_back(take($2)); }
+  /* empty */  { $$ = ::parser::cases_type();            }
+| cases case   { $$ = $1; $$.push_back($2); }
 ;
 
-%union { ::parser::case_type* _case; };
-%type <_case> case;
+%type < ::parser::case_type > case;
 
 case:
-  "case" exp ":" stmts  {  $$ = new ::parser::case_type($2, $4); }
+  "case" exp ":" stmts  {  $$ = ::parser::case_type($2, $4); }
 ;
 
 /*--------.
@@ -974,10 +983,10 @@ stmt_loop:
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
       libport::Symbol id = libport::Symbol::fresh();
-      DESUGAR("for (var " << id << " = " << $3.value() << ";"
+      DESUGAR("for (var " << id << " = " << $3 << ";"
 	      << "    0 < " << id << ";"
 	      << "    " << id << "--)"
-	      << "  " << $5.value());
+	      << "  " << $5);
     }
 | "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
     {
@@ -989,7 +998,7 @@ stmt_loop:
     {
       $$ = new ast::Foreach(@$, $1,
                             new ast::Declaration(@4, $4, new ast::Implicit(@4)),
-                            $6.value(), $8.value());
+                            $6, $8);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
@@ -1008,36 +1017,36 @@ in_or_colon: "in" | ":";
 %token TOK_DO "do";
 
 exp:
-	   block  { $$ = ast_scope(@$, 0, $1.value()); }
-| "do" exp block  { $$ = ast_scope(@$, $2.value(), $3.value()); }
+	   block  { $$ = ast_scope(@$, 0, $1); }
+| "do" exp block  { $$ = ast_scope(@$, $2, $3); }
 ;
 
 /*---------------------------.
 | Function calls, messages.  |
 `---------------------------*/
 
-%type <call> lvalue call;
+%type <ast::rCall> lvalue call;
 lvalue:
 	  id	{ $$ = ast_call(@$, $1); }
 | exp "." id	{ $$ = ast_call(@$, $1, $3); }
 ;
 
 id:
-  "identifier"
+  "identifier"  { $$ = $1; }
 ;
 
 call:
   lvalue args
     {
       $$ = $1;
-      $1.value()->arguments_set($2);
-      $$.value()->location_set(@$);
+      $1->arguments_set($2);
+      $$->location_set(@$);
     }
 ;
 
 // Instantiation looks a lot like a function call.
-%token <symbol> TOK_NEW "new";
-%type <exp> new;
+%token <libport::Symbol> TOK_NEW "new";
+%type <ast::rExp> new;
 new:
   "new" "identifier" args
   {
@@ -1047,11 +1056,13 @@ new:
 ;
 
 // Allow Object.new etc.
-id: "new";
+id:
+  "new" { $$ = $1; }
+;
 
 exp:
-  new   { $$ = $1.value(); }
-| call  { $$ = $1.value(); }
+  new   { $$ = $1; }
+| call  { $$ = $1; }
 ;
 
 
@@ -1064,12 +1075,12 @@ exp:
   "function" formals block
     {
       $$ = new ast::Function(@$, symbols_to_decs($2, @2),
-                             ast_scope(@$, $3.value()));
+                             ast_scope(@$, $3));
     }
 | "closure" formals block
     {
       $$ = new ast::Closure(@$, symbols_to_decs($2, @2),
-                            ast_scope(@$, $3.value()));
+                            ast_scope(@$, $3));
     }
 ;
 
@@ -1078,23 +1089,21 @@ exp:
 | Numbers.  |
 `----------*/
 
-%union { int ival; };
-%printer { debug_stream() << $$; } <ival>;
-%token <ival>
+%printer { debug_stream() << $$; } <int>;
+%token <int>
 	TOK_INTEGER    "integer"
         TOK_FLAG       "flag";
-%type <exp> exp_integer;
+%type <ast::rExp> exp_integer;
 exp_integer:
   "integer"  { $$ = new ast::Float(@$, $1); }
 ;
 
 
-%union { float fval; };
-%printer { debug_stream() << $$; } <fval>;
-%token <fval>
+%printer { debug_stream() << $$; } <float>;
+%token <float>
 	TOK_FLOAT      "float"
         TOK_DURATION   "duration";
-%type <exp> exp_float;
+%type <ast::rExp> exp_float;
 exp_float:
   "float"  { $$ = new ast::Float(@$, $1); }
 ;
@@ -1104,9 +1113,9 @@ exp_float:
 | duration.  |
 `-----------*/
 
-%type <fval> duration;
+%type <float> duration;
 duration:
-  "duration"
+  "duration"          { $$ = $1;  }
 | duration "duration" { $$ += $2; }
 ;
 
@@ -1116,11 +1125,11 @@ duration:
 `-------*/
 
 exp:
-  exp_integer
-| exp_float
-| duration       { $$ = new ast::Float(@$, $1);        }
-| "string"       { $$ = new ast::String(@$, take($1)); }
-| "[" exps "]"   { $$ = new ast::List(@$, $2);	       }
+  exp_integer    { $$ = $1;  }
+| exp_float      { $$ = $1;  }
+| duration       { $$ = new ast::Float(@$, $1);  }
+| "string"       { $$ = new ast::String(@$, $1); }
+| "[" exps "]"   { $$ = new ast::List(@$, $2); }
 ;
 
 
@@ -1128,24 +1137,23 @@ exp:
 | Events.  |
 `---------*/
 
-%union { event_match_type* _event_match; };
-%type <_event_match> event_match;
+%type <event_match_type> event_match;
 event_match:
   "?" "(" exp ")" "(" exps ")"
   {
-    $$ = new event_match_type($3.value(), $6);
+    $$ = event_match_type($3, $6);
   }
 | "?" "(" exp ")"
   {
-    $$ = new event_match_type($3.value(), new ast::exps_type);
+    $$ = event_match_type($3, new ast::exps_type);
   }
 | "?" k1_id "(" exps ")"
   {
-    $$ = new event_match_type($2.value(), $4);
+    $$ = event_match_type($2, $4);
   }
 | "?" k1_id
   {
-    $$ = new event_match_type($2.value(), new ast::exps_type);
+    $$ = event_match_type($2, new ast::exps_type);
   }
 ;
 
@@ -1157,12 +1165,12 @@ exp:
   exp "[" exp "]"
   {
     static ast::ParametricAst rewrite("%exp:1 .'[]'(%exp:2)");
-    $$ = ast::exp(rewrite % $1.value() % $3.value());
+    $$ = ast::exp(rewrite % $1 % $3);
   }
 | exp "[" exp "]" "=" exp
   {
     static ast::ParametricAst rewrite("%exp:1 .'[]='(%exp:2, %exp:3)");
-    $$ = ast::exp(rewrite % $1.value() % $3.value() % $6.value());
+    $$ = ast::exp(rewrite % $1 % $3 % $6);
   }
 ;
 
@@ -1184,7 +1192,7 @@ exp:
 | num. exp.  |
 `-----------*/
 // The name of the operators are the name of the messages.
-%token <symbol>
+%token <libport::Symbol>
 	TOK_BANG       "!"
 	TOK_BITAND     "bitand"
 	TOK_BITOR      "bitor"
@@ -1221,7 +1229,7 @@ exp:
 /*--------.
 | Tests.  |
 `--------*/
-%token <symbol>
+%token <libport::Symbol>
 	TOK_EQ_TILDA_EQ   "=~="
 	TOK_EQ_EQ         "=="
 	TOK_EQ_EQ_EQ      "==="
@@ -1278,10 +1286,9 @@ exp.opt:
 | Modifiers.  |
 `------------*/
 
-%union { ::parser::Tweast* tweast; };
-%type <tweast> modifier modifiers.1;
-%type <exp> modifiers;
-%printer { debug_stream() << libport::deref << $$; } <tweast>;
+%type <tweast_pointer> modifier modifiers.1;
+%type <ast::rExp> modifiers;
+%printer { debug_stream() << libport::deref << $$; } <tweast_pointer>;
 
 modifier:
   "identifier" ":" exp
@@ -1343,15 +1350,7 @@ exp:
 | Expressions.  |
 `--------------*/
 
-%union { ast::exps_type* exps; };
-%printer
-{
-  if ($$)
-    debug_stream() << libport::separate (*$$, ", ");
-  else
-    debug_stream() << "NULL";
-} <exps>;
-%type <exps> exps exps.1 args;
+%type <exps_pointer> exps exps.1 args;
 
 exps:
   /* empty */ { $$ = new ast::exps_type; }
@@ -1359,8 +1358,8 @@ exps:
 ;
 
 exps.1:
-  exp             { $$ = new ast::exps_type; $$->push_back ($1); }
-| exps.1 "," exp  { $$->push_back($3); }
+  exp             { $$ = new ast::exps_type; $$->push_back($1); }
+| exps.1 "," exp  { $$ = $1; $$->push_back($3); }
 ;
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
@@ -1373,8 +1372,9 @@ args:
 /*-----------.
 | softtest.  |
 `-----------*/
-softtest: exp
-
+softtest:
+  exp    { $$ = $1;  }
+;
 
 /*----------------------.
 | List of identifiers.  |
@@ -1386,15 +1386,8 @@ var.opt:
 | "var"
 ;
 
-%union { ast::symbols_type* symbols; };
-%printer
-{
-  if ($$)
-    debug_stream() << *$$;
-  else
-    debug_stream() << "NULL";
-} <symbols>;
-%type <symbols> identifiers identifiers.1 formals;
+%printer { debug_stream() << libport::deref << $$; } <symbols_pointer>;
+%type <symbols_pointer> identifiers identifiers.1 formals;
 
 // One or several comma-separated identifiers.
 identifiers.1:
