@@ -24,6 +24,9 @@ urbiinclude_HEADERS = $(uobject_headers)
 ## liburbi.la.  ##
 ## ------------ ##
 
+umaindir=$(datadir)/umain
+umain_DATA = umain.cc
+
 env_LTLIBRARIES = liburbi.la
 
 liburbi_la_SOURCES =				\
