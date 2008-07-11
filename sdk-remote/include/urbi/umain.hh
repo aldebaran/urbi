@@ -32,9 +32,9 @@
 
 # define UMAIN()				\
   int						\
-  main(int argc, const char *argv[], true)	\
+  main(int argc, const char *argv[])		\
   {						\
-    urbi::main(argc, argv);			\
+    urbi::main(argc, argv, true);		\
     while (1)					\
       usleep(100000);				\
   }
