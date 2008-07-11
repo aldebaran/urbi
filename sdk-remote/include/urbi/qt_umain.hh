@@ -31,11 +31,10 @@
 #  include <unistd.h>
 # endif
 
-# include <QApplication>
-# include <QObject>
+# ifdef URBI_ENV_REMOTE
 
-namespace urbi
-{
+#  include <QApplication>
+#  include <QObject>
 
   /**
    *
@@ -44,7 +43,9 @@ namespace urbi
    *
    */
 
-# define UMAIN()				\
+#  define UMAIN()				\
+  namespace urbi				\
+  {						\
 						\
   class ProcessUrbiEvent:			\
     public ::QObject				\
@@ -85,5 +86,8 @@ namespace urbi
 						\
    return app.exec();				\
  }
+# else
+#  define UMAIN()
+# endif /* !URBI_ENV_REMOTE */
 
 #endif /* !URBI_UMAIN_HH */
