@@ -54,8 +54,6 @@ namespace parser
     libport::shared_ptr<ast_type> ast_xget();
     /// Set \a ast_.
     void ast_set(libport::shared_ptr<ast_type> ast);
-    /// Give \a ast.
-    void ast_reset(libport::shared_ptr<ast_type> ast = 0);
 
   private:
     /// The resulting AST.

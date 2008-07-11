@@ -64,13 +64,6 @@ namespace parser
 
   // Not in the *.hxx to avoid the #include <ast/nary.hh>.
   void
-  ParseResult::ast_reset(libport::shared_ptr<ast_type> ast)
-  {
-    ast_ = ast;
-  }
-
-  // Not in the *.hxx to avoid the #include <ast/nary.hh>.
-  void
   ParseResult::ast_set(libport::shared_ptr<ast_type> ast)
   {
     ast_ = ast;

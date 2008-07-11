@@ -374,14 +374,18 @@
 
 %start start;
 start:
-  root  { up.loc_ = @$; }
+  root
+  {
+    up.result_->ast_set($1);
+    up.loc_ = @$;
+  }
 ;
 
 root:
     /* Minimal error recovery, so that all the tokens are read,
        especially the end-of-lines, to keep error messages in sync. */
-  error  { up.result_->ast_reset(); /* FIXME: We should probably free it. */ }
-| stmts  { up.result_->ast_reset($1); }
+  error  { $$ = 0;  }
+| stmts  { std::swap($$, $1); }
 ;
 
 
@@ -389,7 +393,7 @@ root:
 | stmts.  |
 `--------*/
 
-%type <nary> stmts block;
+%type <nary> block root stmts;
 
 // Statements: with ";" and ",".
 stmts:
