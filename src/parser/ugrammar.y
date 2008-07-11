@@ -92,14 +92,10 @@
     /// Store in Var the AST of the parsing of Code.
 static
 void
-DESUGAR_(yy::parser::semantic_type& Var, ::parser::Tweast& Tweast)
+  DESUGAR_(ast::rExp& res, ::parser::Tweast& Tweast)
     {
-      ast::rExp res =
-        ::parser::parse(Tweast)->ast_get().unsafe_cast<ast::Exp>();
+      res = ::parser::parse(Tweast)->ast_get().unsafe_cast<ast::Exp>();
       LIBPORT_ECHO("res: " << *res);
-      Var = res;
-      LIBPORT_ECHO("res: " << *res);
-      LIBPORT_ECHO("Var: " << *boost::get<ast::rExp>(Var));
     }
 
   namespace
@@ -114,12 +110,12 @@ DESUGAR_(yy::parser::semantic_type& Var, ::parser::Tweast& Tweast)
     }
 
     /// Store in $$ the result of appending Code to \a tweast.
-# define DESUGAR_TWEAST(Code)                   \
-    DESUGAR_(yyval, tweast << Code)
+# define DESUGAR_TWEAST(Var, Code)               \
+    DESUGAR_(Var, tweast << Code)
 
   /// Store in $$ the AST of the parsing of Code.
-# define DESUGAR(Code)				\
-    DESUGAR_(yyval, ::parser::Tweast() << Code)
+# define DESUGAR(Var, Code)                      \
+    DESUGAR_(Var, ::parser::Tweast() << Code)
 
 
     /*---------------.
@@ -587,12 +583,12 @@ stmt:
 stmt:
   "emit" k1_id args %prec CMDBLOCK
   {
-    DESUGAR($2 << ".'emit'(" << $3 << ")");
+    DESUGAR($$, $2 << ".'emit'(" << $3 << ")");
   }
 | "emit" k1_id args "~" exp
   {
     libport::Symbol e = libport::Symbol::fresh("_emit_");
-    DESUGAR("{var " << e << " = " << $2 << ".trigger(" << $3
+    DESUGAR($$, "{var " << e << " = " << $2 << ".trigger(" << $3
 	    << ") | detach({sleep(" << $5 << ") | "
 	    << e << ".'stop'})}");
   }
@@ -686,14 +682,18 @@ stmt:
 
 %code // Output in ugrammar.cc.
 {
-# define DESUGAR_ASSIGN(Op, Lvalue, Exp)                                \
-  {                                                                     \
-    ::parser::Tweast tweast;                                            \
-    ast::rCall lvalue = ast_lvalue_once(Lvalue, tweast);                \
-    DESUGAR_TWEAST(new_clone(lvalue) << '='                             \
-                   << lvalue << Op << ast_exp(Exp));                    \
-    LIBPORT_ECHO("Id: " << typeid(*boost::get<ast::rExp>(yyval)).name());\
-    LIBPORT_ECHO("DESUGAR_ASSIGN: " << *boost::get<ast::rExp>(yyval));   \
+//# define DESUGAR_ASSIGN(Op, Lvalue, Exp)
+static
+void
+  DESUGAR_ASSIGN(ast::rExp& yyval,
+               char Op, ast::rCall Lvalue, ast::rExp Exp)
+  {
+    ::parser::Tweast tweast;
+    ast::rCall lvalue = ast_lvalue_once(Lvalue, tweast);
+    DESUGAR_TWEAST(yyval, new_clone(lvalue) << '='
+                   << lvalue << Op << ast_exp(Exp));
+    LIBPORT_ECHO("Id: " << typeid(*yyval).name());
+    LIBPORT_ECHO("DESUGAR_ASSIGN: " << *yyval);
   }
 };
 
@@ -705,19 +705,19 @@ stmt:
 ;
 
 exp:
-  lvalue "+=" exp    { DESUGAR_ASSIGN('+', $1, $3); }
-| lvalue "-=" exp    { DESUGAR_ASSIGN('-', $1, $3); }
-| lvalue "*=" exp    { DESUGAR_ASSIGN('*', $1, $3); }
-| lvalue "/=" exp    { DESUGAR_ASSIGN('/', $1, $3); }
-| lvalue "^=" exp    { DESUGAR_ASSIGN('^', $1, $3); }
+  lvalue "+=" exp    { DESUGAR_ASSIGN($$, '+', $1, $3); }
+| lvalue "-=" exp    { DESUGAR_ASSIGN($$, '-', $1, $3); }
+| lvalue "*=" exp    { DESUGAR_ASSIGN($$, '*', $1, $3); }
+| lvalue "/=" exp    { DESUGAR_ASSIGN($$, '/', $1, $3); }
+| lvalue "^=" exp    { DESUGAR_ASSIGN($$, '^', $1, $3); }
 ;
 
 %token  TOK_MINUS_MINUS "--"
 	TOK_PLUS_PLUS   "++"
 ;
 exp:
-  lvalue "--"      { DESUGAR('(' << $1 << "-= 1) + 1"); }
-| lvalue "++"      { DESUGAR('(' << $1 << "+= 1) - 1"); }
+  lvalue "--"      { DESUGAR($$, '(' << $1 << "-= 1) + 1"); }
+| lvalue "++"      { DESUGAR($$, '(' << $1 << "+= 1) - 1"); }
 ;
 
 
@@ -788,7 +788,7 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh("_at_");
-      DESUGAR("var " << s << " = persist (" << $3 << ","
+      DESUGAR($$, "var " << s << " = persist (" << $3 << ","
               << $5 << ") | at( " << s << ") " << $7);
     }
 | "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
@@ -796,14 +796,14 @@ stmt:
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh("_at_");
-      DESUGAR("var " << s << " = persist (" << $3 << ","
+      DESUGAR($$, "var " << s << " = persist (" << $3 << ","
               << $5 << ") | at( " << s << ") "
               << $7 << " onleave " << $9 << "");
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
-      DESUGAR("detach({" << $3.first << ".onEvent(closure ("
+      DESUGAR($$, "detach({" << $3.first << ".onEvent(closure ("
 	      << e << ") {"
 	      << "if (Pattern.new("
 	      << ast::rExp(new ast::List(@3, $3.second))
@@ -814,7 +814,7 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("at(?(" << $3.first << ")(" << $3.second << "))"
+      DESUGAR($$, "at(?(" << $3.first << ")(" << $3.second << "))"
 	      << $5 << " onleave {}");
     }
 | "every" "(" exp ")" nstmt
@@ -835,17 +835,18 @@ stmt:
       libport::Symbol ex = libport::Symbol::fresh("freezeif");
       libport::Symbol in = libport::Symbol::fresh("freezeif");
       DESUGAR
-      ("var " << ex << " = " << "new Tag (\"" << ex << "\")|"
-       << "var " << in << " = " << "new Tag (\"" << in << "\")|"
-       << ex << " : { "
-       << "at(" << $3 << ") " << in << ".freeze onleave "
-       << in << ".unfreeze|" << in << " : { " << $5 << "| "
-       << ex << ".stop } }");
+        ($$,
+         "var " << ex << " = " << "new Tag (\"" << ex << "\")|"
+         << "var " << in << " = " << "new Tag (\"" << in << "\")|"
+         << ex << " : { "
+         << "at(" << $3 << ") " << in << ".freeze onleave "
+         << in << ".unfreeze|" << in << " : { " << $5 << "| "
+         << ex << ".stop } }");
     }
 | "stopif" "(" softtest ")" stmt
     {
       libport::Symbol tag = libport::Symbol::fresh("stopif");
-      DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
+      DESUGAR($$, "var " << tag << " = " << "new Tag (\"" << tag << "\")|"
 	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
 	      << "{ waituntil(" << $3 << ")|"
 	      << tag << ".stop } }");
@@ -856,7 +857,7 @@ stmt:
     }
 | "timeout" "(" exp ")" stmt
     {
-      DESUGAR("stopif ({sleep(" << $3 << ") | true}) " << $5);
+      DESUGAR($$, "stopif ({sleep(" << $3 << ") | true}) " << $5);
     }
 | "return" exp.opt
     {
@@ -878,13 +879,13 @@ stmt:
 | "waituntil" "(" exp "~" exp ")"
     {
       libport::Symbol s = libport::Symbol::fresh("_waituntil_");
-      DESUGAR("{var " << s << " = persist (" << $3 << ","
+      DESUGAR($$, "{var " << s << " = persist (" << $3 << ","
 	      << $5 << ") | waituntil(" << s << "())}");
     }
 | "waituntil" "(" event_match ")"
     {
       libport::Symbol s = libport::Symbol::fresh("_waituntil_");
-      DESUGAR("var " << s << " = Pattern.new("
+      DESUGAR($$, "var " << s << " = Pattern.new("
 	      << ast::rExp(new ast::List(@3, $3.second))
 	      << ") | " << $3.first << ".'waituntil'(" << s << ")");
     }
@@ -907,25 +908,25 @@ else_stmt:
 stmt:
   "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
     {
-      DESUGAR("Control.whenever_(" << $3 << ", "
+      DESUGAR($$, "Control.whenever_(" << $3 << ", "
 	      << $5 << ", " << $6 << ")");
     }
 | "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh("_whenever_");
-      DESUGAR("var " << s << " = persist (" << $3 << ","
+      DESUGAR($$, "var " << s << " = persist (" << $3 << ","
               << $5 << ") | Control.whenever_(" << s << ".val, "
               << $7 << ", " << $8 << ")");
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      DESUGAR("whenever(?(" << $3.first << ")(" << $3.second << "))"
+      DESUGAR($$, "whenever(?(" << $3.first << ")(" << $3.second << "))"
 	      << $5 << " else {}");
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
-      DESUGAR("detach({" << $3.first << ".onEvent(closure ("
+      DESUGAR($$, "detach({" << $3.first << ".onEvent(closure ("
 	      << e << ") {"
 	      << "if (Pattern.new("
 	      << ast::rExp(new ast::List(@3, $3.second))
@@ -983,7 +984,7 @@ stmt_loop:
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
       libport::Symbol id = libport::Symbol::fresh();
-      DESUGAR("for (var " << id << " = " << $3 << ";"
+      DESUGAR($$, "for (var " << id << " = " << $3 << ";"
 	      << "    0 < " << id << ";"
 	      << "    " << id << "--)"
 	      << "  " << $5);
