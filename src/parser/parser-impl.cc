@@ -46,9 +46,12 @@ namespace parser
     scanner.switch_streams(&source, 0);
     parser_type p(*this, scanner);
     p.set_debug_level (!!getenv ("YYDEBUG"));
-    ECHO("====================== Parse begin");
+    if (p.debug_level())
+      LIBPORT_ECHO("====================== Parse begin");
     result_->status = p.parse();
-    ECHO("====================== Parse end: " << res);
+    if (p.debug_level())
+      LIBPORT_ECHO("====================== Parse end:" << std::endl
+                   << *result_);
     TIMER_POP("parse");
   }
 
