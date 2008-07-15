@@ -687,7 +687,7 @@ stmt:
 {
   static
     ast::rExp
-    desugar_assign(ast::rCall lvalue, char op, ast::rExp exp)
+    desugar_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp)
   {
     ::parser::Tweast tweast;
     lvalue = ast_lvalue_once(lvalue, tweast);
@@ -704,7 +704,8 @@ stmt:
   }
 };
 
-%token	TOK_CARET_EQ    "^="
+%token <libport::Symbol>
+	TOK_CARET_EQ    "^="
 	TOK_SLASH_EQ    "/="
 	TOK_MINUS_EQ    "-="
 	TOK_PLUS_EQ     "+="
@@ -712,11 +713,11 @@ stmt:
 ;
 
 exp:
-  lvalue "+=" exp    { $$ = desugar_assign($1, '+', $3); }
-| lvalue "-=" exp    { $$ = desugar_assign($1, '-', $3); }
-| lvalue "*=" exp    { $$ = desugar_assign($1, '*', $3); }
-| lvalue "/=" exp    { $$ = desugar_assign($1, '/', $3); }
-| lvalue "^=" exp    { $$ = desugar_assign($1, '^', $3); }
+  lvalue "+=" exp    { $$ = desugar_assign($1, $2, $3); }
+| lvalue "-=" exp    { $$ = desugar_assign($1, $2, $3); }
+| lvalue "*=" exp    { $$ = desugar_assign($1, $2, $3); }
+| lvalue "/=" exp    { $$ = desugar_assign($1, $2, $3); }
+| lvalue "^=" exp    { $$ = desugar_assign($1, $2, $3); }
 ;
 
 %token  TOK_MINUS_MINUS "--"

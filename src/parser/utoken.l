@@ -257,6 +257,12 @@ do {						\
 #define RETURN_OP(Token)			\
   RETURN_SYMBOL(Token)
 
+// Return an assignment operator: its value is the base operator.
+#define RETURN_ASSIGN_OP(Token)                 \
+  PRE_SKIP();                                   \
+  yytext[1] = 0;                                \
+  RETURN_OP(Token);
+
 // UnitSize is the number of letters used for the unit.
 #define RETURN_DURATION(UnitSize, Scale)				\
   {									\
@@ -511,15 +517,17 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "!"             RETURN_OP(BANG);
 "%"             RETURN_OP(PERCENT);
 "*"             RETURN_OP(STAR);
-"*="            RETURN(STAR_EQ);
 "+"             RETURN_OP(PLUS);
-"+="            RETURN(PLUS_EQ);
 "++"            RETURN(PLUS_PLUS);
 "-"             RETURN_OP(MINUS);
-"-="            RETURN(MINUS_EQ);
 "--"            RETURN(MINUS_MINUS);
 "/"             RETURN_OP(SLASH);
-"/="            RETURN(SLASH_EQ);
+
+"*="            RETURN_ASSIGN_OP(STAR_EQ);
+"+="            RETURN_ASSIGN_OP(PLUS_EQ);
+"-="            RETURN_ASSIGN_OP(MINUS_EQ);
+"/="            RETURN_ASSIGN_OP(SLASH_EQ);
+"^="            RETURN_ASSIGN_OP(CARET_EQ);
 
 "<"             RETURN_OP(LT);
 "<="            RETURN_OP(LT_EQ);
@@ -535,7 +543,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 ">="            RETURN_OP(GT_EQ);
 ">>"            RETURN_OP(GT_GT);
 "^"             RETURN_OP(CARET);
-"^="            RETURN_OP(CARET_EQ);
 "**"            RETURN_OP(STAR_STAR);
 "&&"            RETURN_OP(AMPERSAND_AMPERSAND);
 "||"            RETURN_OP(PIPE_PIPE);
