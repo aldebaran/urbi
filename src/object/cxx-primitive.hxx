@@ -59,7 +59,7 @@ namespace object
     {                                                                   \
       check_args_count(ArgsC WHEN(Run, - 1), args.size(), name);        \
       WHEN(Ret, R res =) f(                                             \
-        CxxConvert<S>::to(args[0], name)                                \
+        CxxConvert<typename Flatten<S>::type>::to(args[0], name)        \
         COMMA(Run) WHEN(Run, r)                                         \
         COMMA(Arg1)                                                     \
         WHEN(Arg1,                                                      \
@@ -72,7 +72,7 @@ namespace object
              CxxConvert<typename Flatten<A3>::type>::to(args[3], name)) \
         );                                                              \
       IF(Ret,                                                           \
-         return CxxConvert<R>::from(res, name),                         \
+         return CxxConvert<typename Flatten<R>::type>::from(res, name), \
          return object::void_class);                                    \
     }                                                                   \
   };                                                                    \
