@@ -49,8 +49,8 @@ TC_CXX_WARNINGS([[-Wcast-align],
 
 AM_PROG_AS
 
-# We don't need shared libraries, speed the compilation up.
-AC_ENABLE_SHARED([no])
+# Disable static libraries. Loading modules as shared libraries requires us to be one.
+AC_ENABLE_STATIC([no])
 AC_PROG_LIBTOOL
 
 # FIXME: Bind this with a more general debug/optimize compilation switch.

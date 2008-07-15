@@ -21,21 +21,19 @@ AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 ## ----------- ##
 
 env_LTLIBRARIES = libkernel.la
-libkernel_la_LDFLAGS = -static $(BOOST_THREAD_LDFLAGS)
+libkernel_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
 
 # The separation in two different targets is needed to be sure that
 # the libs are installed before we try to move them.
 install-exec-local:
-	sed -e 's/libdir=.*/libdir=/' \
-	    -e 's/installed=.*/installed=no/' \
-	    .libs/libkernel.lai >libkernel.lai.new
-	mv -f libkernel.lai.new .libs/libkernel.lai
 
 install-data-hook:
-	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
-	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
-	$(LN_S) .libs/libkernel.la $(DESTDIR)$(envdir)
-	$(LN_S) .libs/libkernel.a $(DESTDIR)$(envdir)
+	rm $(DESTDIR)$(envdir)/.libs
+	$(LN_S) . $(DESTDIR)$(envdir)/.libs
+#	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
+#	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
+#	$(LN_S) .libs/libkernel.la $(DESTDIR)$(envdir)
+#	$(LN_S) .libs/libkernel.a $(DESTDIR)$(envdir)
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
