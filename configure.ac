@@ -62,6 +62,8 @@ case $enable_precompiled_symbols in
                  [Define if Urbi symbols should be precompiled]);;
 esac
 
+URBI_WITH_LTDL
+
 # Where we look for the installed files.
 pkgdatadir=${datadir}/$PACKAGE
 AC_SUBST([urbidir], [${pkgdatadir}/urbi])

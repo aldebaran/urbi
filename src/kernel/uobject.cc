@@ -9,6 +9,12 @@
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
 
+#include <sdk/config.h>
+
+#if WITH_LTDL
+#include <ltdl.h>
+#endif
+
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
 #include <kernel/uvalue-cast.hh>
@@ -88,21 +94,55 @@ static StringPair split_name(const std::string& name)
   return StringPair(oname, slot);
 }
 
+static std::list<void*> initialized;
+static rObject where;
+
+static void uobjects_reload(rObject where)
+{
+  foreach (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+    if (!libport::has(initialized, i))
+    {
+      i->init(i->name);
+      initialized.push_back(i);
+    }
+  foreach (urbi::baseURBIStarter* i, *urbi::objectlist)
+    if (!libport::has(initialized, i))
+    {
+      object::rObject proto = uobject_make_proto(i->name);
+      where->slot_set(libport::Symbol(i->name + "_class"), proto);
+      // Make our first instance.
+      where->slot_set(libport::Symbol(i->name), uobject_new(proto, true));
+      initialized.push_back(i);
+    }
+}
+
+#if WITH_LTDL
+void uobjects_load_module(rObject, const std::string& name)
+{
+  lt_dlinit();
+  lt_dlhandle handle = lt_dlopen(name.c_str());
+  if (!handle)
+  {
+    const char* error = lt_dlerror();
+    throw object::PrimitiveError(SYMBOL(loadModule), "Failed to open " + name
+				 + " " + (error?error:" no error"));
+  };
+  uobjects_reload(where);
+}
+#endif
+
 /*! Initialize plugin UObjects.
  \param args object in which the instances will be stored.
 */
 rObject uobject_initialize(runner::Runner&, objects_type args)
 {
-  rObject where = args.front();
-  foreach (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
-    i->init(i->name);
-  foreach (urbi::baseURBIStarter* i, *urbi::objectlist)
-  {
-    object::rObject proto = uobject_make_proto(i->name);
-    where->slot_set(libport::Symbol(i->name + "_class"), proto);
-    // Make our first instance.
-    where->slot_set(libport::Symbol(i->name), uobject_new(proto, true));
-  }
+  where = args.front();
+  uobjects_reload(where);
+#if WITH_LTDL
+  object::global_class->slot_set(SYMBOL(loadModule),
+		  object::make_primitive(&uobjects_load_module,
+                           SYMBOL(loadModule)));
+#endif
   return object::void_class;
 }
 
