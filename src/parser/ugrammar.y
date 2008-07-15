@@ -401,23 +401,23 @@ stmts:
   cstmt
   {
     $$ = new ast::Nary(@$);
-    if (!implicit ($1))
-      $$->push_back ($1);
+    if (!implicit($1))
+      $$->push_back($1);
   }
 | stmts ";" cstmt
   {
-    $$ = $1;
+    std::swap($$, $1);
     if ($$->back_flavor_get() == ast::flavor_none)
-      $$->back_flavor_set ($2, @2);
-    if (!implicit ($3))
+      $$->back_flavor_set($2, @2);
+    if (!implicit($3))
       $$->push_back($3);
   }
 | stmts "," cstmt
   {
-    $$ = $1;
+    std::swap($$, $1);
     if ($$->back_flavor_get() == ast::flavor_none)
-      $$->back_flavor_set ($2, @2);
-    if (!implicit ($3))
+      $$->back_flavor_set($2, @2);
+    if (!implicit($3))
       $$->push_back($3);
   }
 ;
@@ -425,7 +425,7 @@ stmts:
 %type <ast::rExp> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
-  stmt            { assert($1); $$ = $1; }
+  stmt            { assert($1); std::swap($$, $1); }
 | cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 | cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
 ;
@@ -479,11 +479,11 @@ flags.0:
 
 stmt:
   /* empty */ { $$ = new ast::Noop (@$); }
-| exp         { $$ = $1; }
+| exp         { std::swap($$, $1); }
 ;
 
 block:
-  "{" stmts "}"       { $$ = $2; }
+  "{" stmts "}"       { std::swap($$, $2); }
 ;
 
 /*----------.
@@ -505,7 +505,7 @@ visibility:
 
 %type <ast::rExp> proto;
 proto:
-  visibility exp   { $$ = $2; }
+  visibility exp   { std::swap($$, $2); }
 ;
 
 %type <exps_pointer> protos.1 protos;
@@ -519,13 +519,13 @@ protos.1:
 //
 // at the comma.
 //
-// | protos.1 "," proto  { $$ = $1; $$->push_back($3); }
+// | protos.1 "," proto  { std::swap($$, $1); $$->push_back($3); }
 ;
 
 // A list of parents to derive from.
 protos:
   /* nothing */   { $$ = 0; }
-| ":" protos.1    { $$ = $2; }
+| ":" protos.1    { std::swap($$, $2); }
 ;
 
 %token TOK_CLASS "class";
@@ -762,8 +762,8 @@ exp:
 nstmt:
   stmt
     {
-      $$ = $1;
-      if (implicit($1))
+      std::swap($$, $1);
+      if (implicit($$))
 	up.warn(@1,
 		"implicit empty instruction.  Use '{}' to make it explicit.");
     }
@@ -772,7 +772,7 @@ nstmt:
 stmt:
   stmt_loop
     {
-      $$ = $1;
+      std::swap($$, $1);
     }
 | "at" "(" exp ")" nstmt %prec CMDBLOCK
     {
@@ -907,7 +907,7 @@ else_stmt:
   }
 | "else" nstmt
   {
-    $$ = $2;
+    std::swap($$, $2);
   }
 ;
 
@@ -951,7 +951,7 @@ stmt:
 
 cases:
   /* empty */  { $$ = ::parser::cases_type();            }
-| cases case   { $$ = $1; $$.push_back($2); }
+| cases case   { std::swap($$, $1); $$.push_back($2); }
 ;
 
 %type < ::parser::case_type > case;
@@ -1039,14 +1039,14 @@ lvalue:
 ;
 
 id:
-  "identifier"  { $$ = $1; }
+  "identifier"  { std::swap($$, $1); }
 ;
 
 call:
   lvalue args
     {
-      $$ = $1;
-      $1->arguments_set($2);
+      std::swap($$, $1);
+      $$->arguments_set($2);
       $$->location_set(@$);
     }
 ;
@@ -1064,12 +1064,12 @@ new:
 
 // Allow Object.new etc.
 id:
-  "new" { $$ = $1; }
+  "new" { std::swap($$, $1); }
 ;
 
 exp:
-  new   { $$ = $1; }
-| call  { $$ = $1; }
+  new   { std::swap($$, $1); }
+| call  { $$ = $1; }  // They don't have the same type, this is not a swap.
 ;
 
 
@@ -1122,7 +1122,7 @@ exp_float:
 
 %type <float> duration;
 duration:
-  "duration"          { $$ = $1;  }
+  "duration"          { std::swap($$, $1);  }
 | duration "duration" { $$ += $2; }
 ;
 
@@ -1132,8 +1132,8 @@ duration:
 `-------*/
 
 exp:
-  exp_integer    { $$ = $1;  }
-| exp_float      { $$ = $1;  }
+  exp_integer    { std::swap($$, $1);  }
+| exp_float      { std::swap($$, $1);  }
 | duration       { $$ = new ast::Float(@$, $1);  }
 | "string"       { $$ = new ast::String(@$, $1); }
 | "[" exps "]"   { $$ = new ast::List(@$, $2); }
@@ -1230,7 +1230,7 @@ exp:
 | "-" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
 | "!" exp                 { $$ = ast_call(@$, $2, $1); }
 | "compl" exp             { $$ = ast_call(@$, $2, $1); }
-| "(" exp ")"             { $$ = $2; }
+| "(" exp ")"             { std::swap($$, $2); }
 ;
 
 /*--------.
@@ -1285,7 +1285,7 @@ exp:
 
 exp.opt:
   /* nothing */ { $$ = 0; }
-| exp           { $$ = $1; }
+| exp           { std::swap($$, $1); }
 ;
 
 
@@ -1318,7 +1318,7 @@ modifiers.1:
     }
 | modifiers.1 modifier
     {
-      $$ = $1;
+      std::swap($$, $1);
       *$$ << *$2;
     }
 ;
@@ -1361,18 +1361,18 @@ exp:
 
 exps:
   /* empty */ { $$ = new ast::exps_type; }
-| exps.1      { $$ = $1; }
+| exps.1      { std::swap($$, $1); }
 ;
 
 exps.1:
   exp             { $$ = new ast::exps_type; $$->push_back($1); }
-| exps.1 "," exp  { $$ = $1; $$->push_back($3); }
+| exps.1 "," exp  { std::swap($$, $1); $$->push_back($3); }
 ;
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
 args:
   /* empty */   { $$ = 0; }
-| "(" exps ")"  { $$ = $2; }
+| "(" exps ")"  { std::swap($$, $2); }
 ;
 
 
@@ -1380,7 +1380,7 @@ args:
 | softtest.  |
 `-----------*/
 softtest:
-  exp    { $$ = $1;  }
+  exp    { std::swap($$, $1);  }
 ;
 
 /*----------------------.
@@ -1405,7 +1405,7 @@ identifiers.1:
   }
 | identifiers.1 "," var.opt "identifier"
   {
-    $$ = $1;
+    std::swap($$, $1);
     $$->push_back($4);
   }
 ;
@@ -1413,13 +1413,13 @@ identifiers.1:
 // Zero or several comma-separated identifiers.
 identifiers:
   /* empty */     { $$ = new ast::symbols_type; }
-| identifiers.1   { $$ = $1; }
+| identifiers.1   { std::swap($$, $1); }
 ;
 
 // Function formal arguments.
 formals:
   /* empty */         { $$ = 0; }
-| "(" identifiers ")" { $$ = $2; }
+| "(" identifiers ")" { std::swap($$, $2); }
 ;
 
 
