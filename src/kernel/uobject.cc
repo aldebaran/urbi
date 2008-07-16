@@ -117,7 +117,7 @@ static void uobjects_reload(rObject where)
 }
 
 #if WITH_LTDL
-void uobjects_load_module(rObject, const std::string& name)
+static void uobjects_load_module(rObject, const std::string& name)
 {
   lt_dlinit();
   lt_dlhandle handle = lt_dlopen(name.c_str());
@@ -125,7 +125,7 @@ void uobjects_load_module(rObject, const std::string& name)
   {
     const char* error = lt_dlerror();
     throw object::PrimitiveError(SYMBOL(loadModule), "Failed to open " + name
-				 + " " + (error?error:" no error"));
+				 + " " + (error ? error : "unknown error"));
   };
   uobjects_reload(where);
 }
