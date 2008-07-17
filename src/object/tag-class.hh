@@ -8,7 +8,7 @@
 
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
-# include <scheduler/fwd.hh>
+# include <scheduler/tag.hh>
 
 namespace object
 {
@@ -28,6 +28,8 @@ namespace object
     static rTag _new(objects_type);
     void freeze(runner::Runner&);
     rString name();
+    scheduler::prio_type prio();
+    scheduler::prio_type prio_set(scheduler::prio_type);
     void stop(runner::Runner&, objects_type);
     void unblock(runner::Runner&);
     void unfreeze(runner::Runner&);

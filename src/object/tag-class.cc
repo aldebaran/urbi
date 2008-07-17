@@ -84,6 +84,18 @@ namespace object
     return res;
   }
 
+  scheduler::prio_type
+  Tag::prio()
+  {
+    return value_->prio_get();
+  }
+
+  scheduler::prio_type
+  Tag::prio_set(scheduler::prio_type prio)
+  {
+    return value_->prio_set(prio);
+  }
+
   void
   Tag::stop(runner::Runner& r, objects_type args)
   {
@@ -111,6 +123,8 @@ namespace object
     bind(SYMBOL(freeze), &Tag::freeze);
     bind(SYMBOL(name), &Tag::name);
     bind(SYMBOL(new), &Tag::_new);
+    bind(SYMBOL(prio), &Tag::prio);
+    bind(SYMBOL(prio_set), &Tag::prio_set);
     bind(SYMBOL(stop), &Tag::stop);
     bind(SYMBOL(unblock), &Tag::unblock);
     bind(SYMBOL(unfreeze), &Tag::unfreeze);
