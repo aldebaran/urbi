@@ -37,8 +37,8 @@ namespace scheduler
       scheduler_(model.scheduler_),
       name_(name.empty() ? libport::Symbol::fresh(model.name_get()) : name),
       coro_(coroutine_new()),
-      tags_(model.tags_),
       non_interruptible_(false),
+      tags_(model.tags_),
       side_effect_free_(false),
       pending_exception_(0)
   {
@@ -230,6 +230,12 @@ namespace scheduler
   Job::tags_set(tags_type tags)
   {
     tags_ = tags;
+  }
+
+  inline void
+  Job::tags_clear()
+  {
+    tags_.clear();
   }
 
   inline bool

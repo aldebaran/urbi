@@ -64,7 +64,7 @@ namespace runner
   {
     // There are no reason to inherit tags from our creator, as this service
     // is not tied to any particular connection.
-    tags_.clear();
+    tags_clear();
   }
 
   AtHandler::~AtHandler()
@@ -142,10 +142,10 @@ namespace runner
 	if (to_launch != object::nil_class)
 	{
 	  // Temporarily install the needed tags as the current tags.
-	  tags_ = job->tags_get();
 	  libport::Finally finally(boost::bind(&AtHandler::tags_set,
 					       this,
-					       tags_));
+					       tags_get()));
+	  tags_set(job->tags_get());
 
 	  // We do not need to check for an exception here as "detach",
 	  // which is the function being called, will not throw and any

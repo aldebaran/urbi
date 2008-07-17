@@ -169,7 +169,7 @@ namespace runner
     {
       scheduler::rTag tag =
 	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
-      if (!libport::has(tags_, tag))
+      if (!libport::has(tags_get(), tag))
 	push_tag(tag);
     }
     // Push a dummy scope tag, in case we do have an "at" at the
@@ -899,7 +899,7 @@ namespace runner
   void
   Interpreter::visit (ast::rConstTaggedStmt t)
   {
-    int result_depth = tags_.size();
+    int result_depth = tags_get().size();
     try
     {
       scheduler::rTag tag = extract_tag(eval(t->tag_get()));

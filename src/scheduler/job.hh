@@ -224,6 +224,9 @@ namespace scheduler
     /// \param tags Set the tags attached to the current job.
     void tags_set(tags_type tags);
 
+    /// Clear the current tags.
+    void tags_clear();
+
     /// Get the current job state.
     ///
     /// \return The current job state.
@@ -336,14 +339,14 @@ namespace scheduler
 
   protected:
 
-    /// Tags this job depends on.
-    scheduler::tags_type tags_;
-
     /// Is the current job non-interruptible? If yes, yielding will
     /// do nothing and blocking operations may raise an exception.
     bool non_interruptible_;
 
   private:
+
+    /// Tags this job depends on.
+    scheduler::tags_type tags_;
 
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the
