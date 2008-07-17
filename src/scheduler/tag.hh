@@ -58,8 +58,9 @@ namespace scheduler
     // Is this tag identical to \a other, or does it derive from it?
     bool derives_from(const Tag& other) const;
 
-    // Set and get the priority.
-    void prio_set(prio_type);
+    // Set and get the priority. When setting the priority, cap it with
+    // the minimum and maximum values and return the chosen one.
+    prio_type prio_set(prio_type);
     prio_type prio_get() const;
 
     // Act on a tag and make the scheduler take it into account
