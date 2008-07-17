@@ -23,6 +23,7 @@ namespace scheduler
       name_(name.empty() ? libport::Symbol::fresh("job") : name),
       coro_(coroutine_new()),
       non_interruptible_(false),
+      prio_(PRIO_DEFAULT),
       side_effect_free_(false),
       pending_exception_(0)
   {
@@ -39,9 +40,11 @@ namespace scheduler
       coro_(coroutine_new()),
       non_interruptible_(false),
       tags_(model.tags_),
+      prio_(PRIO_DEFAULT),
       side_effect_free_(false),
       pending_exception_(0)
   {
+    recompute_prio();
   }
 
   inline
@@ -206,18 +209,22 @@ namespace scheduler
   Job::push_tag(rTag tag)
   {
     tags_.push_back(tag);
+    recompute_prio(*tag);
   }
 
   inline void
   Job::pop_tag()
   {
+    rTag prev = tags_.back();
     tags_.pop_back();
+    recompute_prio(*prev);
   }
 
   inline void
   Job::copy_tags(const Job& other)
   {
     tags_set(other.tags_get());
+    recompute_prio();
   }
 
   inline tags_type
@@ -230,18 +237,26 @@ namespace scheduler
   Job::tags_set(tags_type tags)
   {
     tags_ = tags;
+    recompute_prio();
   }
 
   inline void
   Job::tags_clear()
   {
     tags_.clear();
+    recompute_prio();
   }
 
   inline bool
   Job::has_pending_exception() const
   {
     return pending_exception_;
+  }
+
+  inline prio_type
+  Job::prio_get() const
+  {
+    return prio_;
   }
 
   inline std::ostream&

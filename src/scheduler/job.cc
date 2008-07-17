@@ -197,4 +197,24 @@ namespace scheduler
     }
   }
 
+  void
+  Job::recompute_prio()
+  {
+    if (tags_.empty())
+    {
+      prio_ = PRIO_DEFAULT;
+      return;
+    }
+    prio_ = PRIO_MIN;
+    foreach(rTag tag, tags_)
+      prio_ = std::max(prio_, tag->prio_get());
+  }
+
+  void
+  Job::recompute_prio(const Tag& tag)
+  {
+    if (tag.prio_get() >= prio_ || tags_.empty())
+      recompute_prio();
+  }
+
 }

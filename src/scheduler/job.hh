@@ -298,6 +298,11 @@ namespace scheduler
     /// \return true if the job has a pending exception.
     bool has_pending_exception() const;
 
+    /// Get the current job priority.
+    ///
+    /// \return The job priority, as previously computed.
+    prio_type prio_get() const;
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -325,6 +330,13 @@ namespace scheduler
     /// Ensure proper cleanup;
     void terminate_cleanup();
 
+    /// Recompute the current priority after a tag operation.
+    void recompute_prio();
+
+    /// Recompute the current priority if a particular tag could have
+    /// affected it (addition or removal).
+    void recompute_prio(const Tag&);
+
     /// Scheduler in charge of this job. Do not delete.
     Scheduler& scheduler_;
 
@@ -346,7 +358,10 @@ namespace scheduler
   private:
 
     /// Tags this job depends on.
-    scheduler::tags_type tags_;
+    tags_type tags_;
+
+    /// Current priority.
+    prio_type prio_;
 
     /// List of jobs having a link to this one. If the current job
     /// terminates with an exception, any linked job will throw the
