@@ -50,8 +50,10 @@ namespace runner
     scheduler::rTag tag = scope_tags_.back();
     if (!tag)
     {
-      // Create the tag on demand.
+      // Create the tag on demand. It must have the lowest possible priority to
+      // avoid influencing the scheduling algorithm.
       tag = new scheduler::Tag(libport::Symbol::fresh("<scope tag>"));
+      tag->prio_set(scheduler::PRIO_MIN);
       *scope_tags_.rbegin() = tag;
     }
     return tag;
