@@ -4,7 +4,9 @@
 # include <libport/symbol.hh>
 
 # include <object/cxx-object.hh>
+# include <object/float-class.hh>
 # include <object/string-class.hh>
+# include <scheduler/tag.hh>
 
 namespace object
 {
@@ -46,6 +48,28 @@ namespace object
     {
       return v;
     }
+  };
+
+  // Conversion with prio_type
+  template<>
+  struct CxxConvert<scheduler::prio_type>
+  {
+    static scheduler::prio_type
+    to(rObject o, const libport::Symbol& name)
+      {
+	type_check<Float>(o, name);
+	rFloat f = o->as<Float>();
+	int res = f->to_int(name);
+	if (res < 0)
+	  throw BadInteger(f->value_get(), name);
+	return res;
+      }
+
+    static rObject
+    from(const scheduler::prio_type& v, const libport::Symbol&)
+      {
+	return new Float(v);
+      }
   };
 
   // Conversion with std::strings

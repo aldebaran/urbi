@@ -92,7 +92,8 @@ namespace object
 
 }
 
-# ifndef OBJECT_STRING_CLASS_HH
+# if not defined(OBJECT_STRING_CLASS_HH) \
+  && not defined(OBJECT_FLOAT_CLASS_HH)
 #  include <object/cxx-object.hxx>
 # endif
 
