@@ -1,7 +1,7 @@
 class Global.Tutorial {};
-
 do Global.Tutorial
 {
+  var Tutorial = this;
 
   // Don't use the topLevel channel, since it quotes the \n and so on.
   class channel : Channel
@@ -150,10 +150,13 @@ do Global.Tutorial
     sectionDescs.push_back(desc);
     entries.push_back([]);
   };
+};
 
-  startSection("presentation", "an overview of the kernel");
+// Fill in the tutorial
 
-  Entry.new("intro",
+Tutorial.startSection("presentation", "an overview of the kernel");
+
+Tutorial.Entry.new("intro",
 "Welcome to the Urbi 2 Technical preview!
 
 Urbi v2 is a programming language which:
@@ -163,9 +166,10 @@ Urbi v2 is a programming language which:
   - has advanced control-flow primitives (tags)
 
 This simple tutorial will assist you in the discovery of its main features.
-At any time, you can type 'next;' to jump to the the next tutorial entry.",{},{},false);
+At any time, you can type 'next;' to jump to the the next tutorial entry.",
+{},{},false);
   // init cant take a call message with tech-preview version of k2
-   Entry.new("object",
+Tutorial.Entry.new("object",
 "Everything in Urbi is an object.
 
 An object is defined by its parents (a list of objects) and its
@@ -177,21 +181,24 @@ To create a new slot, run
 
 	var anObject.aSlot = avalue;
 
-To go on, create a slot named 'foo' in 'Object'.", {}, {}, { "foo" in Object.slotNames} );
-   Entry.new("object2", "Now add a slot bar to Object.foo",
-		     {
-		       if ("foo" not in Object.slotNames)
-			 var Object.foo = 1;
-		     }, {}, {"bar" in Object.foo.slotNames});
-   startSection("More advanced stuffs", "Stuffs that are more complicated");
-   Entry.new("woot", "trop fort", {}, {}, false);
-   Entry.new("end", "this marks the end of the urbi tutorial!", {},{},
-		     false);
-   Entry.new("pastend", "I told you it was over!", {}, Tutorial.current--, false);
-};
+To go on, create a slot named 'foo' in 'Object'.",
+{}, {}, { "foo" in Object.slotNames} );
+Tutorial.Entry.new("object2", "Now add a slot bar to Object.foo",
+{
+  if ("foo" not in Object.slotNames)
+    var Object.foo = 1;
+}, {}, {"bar" in Object.foo.slotNames});
+
+
+Tutorial.startSection("More advanced stuffs", "Stuffs that are more complicated");
+Tutorial.Entry.new("woot", "trop fort",
+                   {}, {}, false);
+Tutorial.Entry.new("end", "this marks the end of the urbi tutorial!",
+                   {},{}, false);
+Tutorial.Entry.new("pastend", "I told you it was over!",
+                   {}, Tutorial.current--, false);
 
 // Don't try to inherit Tutorial instead, COW will screw everything up
-
 for (var s: ["next", "sections", "jump"])
   Global.setSlot(s, function() {Tutorial.getSlot(s).apply([Tutorial]);});
 
