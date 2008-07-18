@@ -1,10 +1,12 @@
-class Global.tutorial{};
-do tutorial
+class Global.Tutorial {};
+
+do Global.Tutorial
 {
+
   // Don't use the topLevel channel, since it quotes the \n and so on.
-  class tuto : Channel
+  class channel : Channel
   {
-    init("tuto");
+    init("tutorial");
     quote = false;
     var line = "-" * 76 + "\n";
     // A special "<<" that puts the result between lines.
@@ -13,12 +15,14 @@ do tutorial
       lobby.write("\n" + line + s + "\n" + line)
     };
   };
+
   var  debug = Channel.new("debug");
   debug.enabled = false;
-  class entry
+
+  class Entry
   {
-    var tuto = Global.tutorial.tuto;
-    var debug = Global.tutorial.debug;
+    var channel = Global.Tutorial.channel;
+    var debug = Global.Tutorial.debug;
     var tag;
     var entry;
 
@@ -35,11 +39,12 @@ do tutorial
       var this.onEnter = call.args.nth(3);
       var this.onLeave = call.args.nth(4);
       var this.condition = call.args.nth(5);
-      tutorial.entries.back.push_back(this);
+      Tutorial.entries.back.push_back(this);
     };
+
     function enter()
     {
-      tuto << text;
+      channel << text;
       tag = Tag.new;
       onEnter.eval;
       debug << ("setting condition for " + name );
@@ -47,10 +52,11 @@ do tutorial
 		 debug << ("waiting condition for " + name );
 		 waituntil(condition.eval);
 		 debug << ("switching to next from " + name );
-		 tutorial.next2;
+		 Tutorial.doNext;
 		 debug << ("terminating " + name );
       });
     };
+
     function leave()
     {
       onLeave.eval;
@@ -64,27 +70,28 @@ do tutorial
   var sectionDescs = [];
   var current = -1;
   var currentSection = 0;
-  function next2()
+
+  function doNext()
   {
     debug << "next ";
-    if (0 <= current)
+    if (current >= 0)
       entries.nth(currentSection).nth(current).leave;
     current++;
-    if (entries.nth(currentSection).size <= current)
+    if (current >= entries.nth(currentSection).size)
     {
       currentSection++;
       current = 0;
-      //cerr << "switching section "+currentSection.asString +" para "+current;
+
       if (entries.size <= currentSection)
       {
-	tuto << "The tutorial is over";
+	channel << "The tutorial is over";
 	current = -1;
 	currentSection = 0;
 	return;
       }
       else
       {
-	tuto << "Starting next tutorial section: "
+	channel << "Starting next tutorial section: "
 	 + sectionDescs.nth(currentSection-1);
       }
     };
@@ -96,12 +103,12 @@ do tutorial
   {
     if (current >= 0)
       entries.nth(currentSection).nth(current).tag.stop;
-    next2
+    doNext
   };
 
   function help()
   {
-    tuto <<
+    channel <<
       "Tutorial commands:\n"+
       "  next;       : jump to the next paragraph\n"+
       "  sections;   : list tutorial sections\n"+
@@ -115,13 +122,14 @@ do tutorial
     {
       s +=  "  " + sectionNames.nth(i)+": "+sectionDescs.nth(i)+"\n";
     };
-    tuto << s;
+    channel << s;
   };
+
   function jump(sectionName)
   {
     if (sectionName not in sectionIdByName)
     {
-      tuto << ("Unknown tutorial section "+sectionName);
+      channel << ("Unknown tutorial section "+sectionName);
       return
     }
     else
@@ -144,7 +152,8 @@ do tutorial
   };
 
   startSection("presentation", "an overview of the kernel");
-  entry.new("intro",
+
+  Entry.new("intro",
 "Welcome to the Urbi 2 Technical preview!
 
 Urbi v2 is a programming language which:
@@ -156,7 +165,7 @@ Urbi v2 is a programming language which:
 This simple tutorial will assist you in the discovery of its main features.
 At any time, you can type 'next;' to jump to the the next tutorial entry.",{},{},false);
   // init cant take a call message with tech-preview version of k2
-   entry.new("object",
+   Entry.new("object",
 "Everything in Urbi is an object.
 
 An object is defined by its parents (a list of objects) and its
@@ -169,28 +178,23 @@ To create a new slot, run
 	var anObject.aSlot = avalue;
 
 To go on, create a slot named 'foo' in 'Object'.", {}, {}, { "foo" in Object.slotNames} );
-   entry.new("object2", "Now add a slot bar to Object.foo",
+   Entry.new("object2", "Now add a slot bar to Object.foo",
 		     {
 		       if ("foo" not in Object.slotNames)
 			 var Object.foo = 1;
 		     }, {}, {"bar" in Object.foo.slotNames});
    startSection("More advanced stuffs", "Stuffs that are more complicated");
-   entry.new("woot", "trop fort", {}, {}, false);
-   entry.new("end", "this marks the end of the urbi tutorial!", {},{},
+   Entry.new("woot", "trop fort", {}, {}, false);
+   Entry.new("end", "this marks the end of the urbi tutorial!", {},{},
 		     false);
-   entry.new("pastend", "I told you it was over!", {}, tutorial.current--, false);
+   Entry.new("pastend", "I told you it was over!", {}, Tutorial.current--, false);
 };
 
-//Inheriting Tutorial rather? COW will screw everything up
+// Don't try to inherit Tutorial instead, COW will screw everything up
 
-//FIXME: replace by the code below when implicit closures will work
-function Global.next() { tutorial.next};
-function Global.sections() { tutorial.sections};
-function Global.jump(s) { tutorial.jump(s)};
-/*
 for (var s: ["next", "sections", "jump"])
-  Global.setSlot(s, function() {tutorial.getSlot(s).apply([tutorial]);});
-*/
-Global.help = function() {tutorial.help};
+  Global.setSlot(s, function() {Tutorial.getSlot(s).apply([Tutorial]);});
+
+function Global.help() {Tutorial.help};
 
 next;
