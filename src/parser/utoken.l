@@ -178,24 +178,24 @@ do {						\
 
 
 // valp->Field = Value.
-#define SET_VAL(Field, Value)			\
+#define SET_VAL(Field, Type, Value)             \
   do {						\
     if (up)					\
-      *valp = Value;                            \
+      valp->build<Type>() = Value;              \
   } while(0)
 
 // Extend the string value of valp.
 #define GROW_VAL(Value)				\
   do {						\
     if (up)					\
-      boost::get<std::string>(*valp) += Value;  \
+      valp->as<std::string>() += Value;         \
   } while(0)
 
 // Extend the string value of valp.
 #define APPEND_VAL(Arg1, Arg2)                                  \
   do {                                                          \
     if (up)                                                     \
-      boost::get<std::string>(*valp).append(Arg1, Arg2);        \
+      valp->as<std::string>().append(Arg1, Arg2);               \
   } while(0)
 
 
@@ -210,28 +210,28 @@ do {						\
   }
 
 
-#define RETURN_VALUE(Token, Field, Value)	\
-  {						\
-    PRE_SKIP();					\
-    SET_VAL(Field, Value);			\
-    RETURN(Token);				\
+#define RETURN_VALUE(Token, Field, Type, Value)         \
+  {                                                     \
+    PRE_SKIP();                                         \
+    SET_VAL(Field, Type, Value);			\
+    RETURN(Token);                                      \
   }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
 #define RETURN_FLAVOR(Symbol, Flavor)					\
-  RETURN_VALUE(Symbol, flavor, ast::flavor_ ## Flavor)
+  RETURN_VALUE(Symbol, flavor, ast::flavor_type, ast::flavor_ ## Flavor)
 
 /// Return an fval of type Token with Value.
 #define RETURN_FVAL(Token, Value)		\
-  RETURN_VALUE(Token, fval, Value)
+  RETURN_VALUE(Token, fval, float, Value)
 
 /// Return an ival of type Token with Value.
 #define RETURN_IVAL(Token, Value)		\
-  RETURN_VALUE(Token, ival, Value)
+  RETURN_VALUE(Token, ival, int, Value)
 
 // Store yytext in valp->str, and return Token.
-#define RETURN_STR(Token)				\
-  RETURN_VALUE(Token, str, new std::string(yytext))
+#define RETURN_STR(Token)                       \
+  RETURN_VALUE(Token, str, std::string, yytext)
 
 // Store Val in valp->symbol, and return Token.
 #if 0
@@ -239,14 +239,14 @@ do {						\
   {                                                                     \
     PRE_SKIP();                                                         \
     libport::Symbol res (Val);                                          \
-    SET_VAL(symbol, res);                                               \
-    std::cerr << "Id: " << *valp                                 \
+    SET_VAL(symbol, libport::Symbol, res);                              \
+    std::cerr << "Id: " << *valp                                        \
               << "@" << std::hex << reinterpret_cast<unsigned&>(res) << std::endl; \
     RETURN(Token);                                                      \
       }
 #else
 #define RETURN_SOME_SYMBOL(Token, Val)                  \
-  RETURN_VALUE(Token, symbol, libport::Symbol(Val))
+  RETURN_VALUE(Token, symbol, libport::Symbol, libport::Symbol(Val))
 #endif
 
 // Store yytext in valp->symbol, and return Token.
@@ -268,7 +268,7 @@ do {						\
   {									\
     PRE_SKIP();								\
     yytext[yyleng - UnitSize] = 0;					\
-    RETURN_VALUE(DURATION, fval,					\
+    RETURN_VALUE(DURATION, fval, float,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   }
 
@@ -444,7 +444,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 	      }
 
 [\"\']        {
-                SET_VAL(str, std::string());
+                SET_VAL(str, std::string, std::string());
 		delimiter = *yytext;
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
@@ -692,7 +692,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        {
 	 BEGIN sc_default;
 	 if (*yytext == '\'')
-	   RETURN_SOME_SYMBOL(IDENTIFIER, boost::get<std::string>(*valp))
+	   RETURN_SOME_SYMBOL(IDENTIFIER, valp->as<std::string>())
 	 else
 	   RETURN(STRING);
        }
