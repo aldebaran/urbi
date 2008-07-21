@@ -949,6 +949,7 @@ stmt:
 `--------*/
 
 %type < ::parser::cases_type > cases;
+%printer { debug_stream() << $$; } < ::parser::cases_type >;
 
 cases:
   /* empty */  { $$ = ::parser::cases_type();   }
@@ -956,6 +957,7 @@ cases:
 ;
 
 %type < ::parser::case_type > case;
+%printer { debug_stream() << $$; } < ::parser::case_type >;
 
 case:
   "case" exp ":" stmts  {  $$ = ::parser::case_type($2, $4); }

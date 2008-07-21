@@ -7,6 +7,31 @@
 #include <parser/parse-result.hh>
 #include <parser/tweast.hh>
 
+namespace std
+{
+
+  ostream&
+  operator<< (ostream& o, const parser::case_type& c)
+  {
+    return o << "/* " << (void*) &c << " */ "
+             << "case "
+             << libport::deref << c.first
+             << " => "
+             << libport::deref << c.second;
+  }
+
+  ostream&
+  operator<< (ostream& o, const parser::cases_type& cs)
+  {
+    o << "/* " << (void*) &cs << " */ "
+      << "{" << endl;
+    foreach (const parser::case_type& c, cs)
+      o << "  " << c << endl;
+    return o << "}";
+  }
+
+}
+
 namespace parser
 {
 
@@ -322,10 +347,8 @@ namespace parser
   ast::rExp
   ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases)
   {
-    ::parser::Tweast tweast;
     libport::Symbol switched = libport::Symbol::fresh("switched");
-    tweast << "var " << switched << " = ";
-    tweast << cond << ";";
+
     static ast::ParametricAst nil("nil");
     ast::rExp inner = exp(nil);
     rforeach (const case_type& c, cases)
@@ -338,7 +361,11 @@ namespace parser
         % inner;
       inner = ast::exp(a);
     }
-    tweast << inner;
-    return ::parser::parse(tweast)->ast_get();
+
+    ::parser::Tweast tweast;
+    tweast << "var " << switched << " = " << cond << ";"
+           << inner;
+    ast::rExp res = ::parser::parse(tweast)->ast_get();
+    return res;
   }
 }

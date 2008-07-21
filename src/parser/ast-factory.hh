@@ -132,6 +132,7 @@ namespace parser
   ast::rExp
   ast_string(const yy::location& l, libport::Symbol s);
 
+
   /*--------.
   | Switch  |
   `--------*/
@@ -141,6 +142,14 @@ namespace parser
 
   ast::rExp
   ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases);
+}
+
+namespace std
+{
+  // The structure (list) live in std, that's where Koening look-up
+  // will look for them.
+  ostream& operator<< (ostream& o, const parser::case_type& c);
+  ostream& operator<< (ostream& o, const parser::cases_type& c);
 }
 
 # include <parser/ast-factory.hxx>
