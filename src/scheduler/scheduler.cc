@@ -191,7 +191,8 @@ namespace scheduler
 	possible_side_effect_ |= !job->side_effect_free_get();
 	assert(!current_job_);
 	coroutine_switch_to(coro_, job->coro_get());
-	assert(!current_job_);
+	assert(current_job_);
+	current_job_ = 0;
 	possible_side_effect_ |= !job->side_effect_free_get();
 	ECHO("back from job " << *job
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
@@ -262,7 +263,6 @@ namespace scheduler
       Coro* current_coro = job->coro_get();
       if (job->terminated())
 	job = 0;
-      current_job_ = 0;
       coroutine_switch_to(current_coro, coro_);
 
       // If we regain control, we are not dead.
