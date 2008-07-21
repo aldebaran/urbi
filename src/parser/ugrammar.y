@@ -9,7 +9,7 @@
 %require "2.3"
 %error-verbose
 %defines
-%skeleton "lalr1.cc"
+%skeleton "lalr1-fusion.cc"
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
 %parse-param {::parser::ParserImpl& up}
