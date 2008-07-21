@@ -255,19 +255,19 @@ namespace parser
                 %lvalue %value %modifier
                 %new_clone(lvalue) %new_clone(lvalue));
 # else
-    Tweast tweast;
-    lvalue = ast_lvalue_once(lvalue, tweast);
-    tweast
-      << "TrajectoryGenerator"
-      << ".new("
-      // getter.
-      << "closure () { " << new_clone(lvalue) << " }, "
-      // setter.
-      << "closure (v){ " << lvalue << " = v }, "
-      // targetValue, args.
-      << value << ", " << modifier
-      << ").run";
-    res = parse(tweast)->ast_get();
+      Tweast tweast;
+      lvalue = ast_lvalue_once(lvalue, tweast);
+      tweast
+        << "TrajectoryGenerator"
+        << ".new("
+        // getter.
+        << "closure () { " << new_clone(lvalue) << " }, "
+        // setter.
+        << "closure (v){ " << lvalue << " = v }, "
+        // targetValue, args.
+        << value << ", " << modifier
+        << ").run";
+      res = parse(tweast)->ast_get();
 # endif
     }
     else
