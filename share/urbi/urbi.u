@@ -68,11 +68,6 @@ do Object
     memSameAs(other)
   };
 
-  function hasSlot(name)
-  {
-    !locateSlot(name).isNil
-  };
-
   function '!==' (rhs)
   {
     !(this === rhs)

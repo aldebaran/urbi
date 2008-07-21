@@ -102,6 +102,12 @@ namespace object
     lookup(boost::function1<boost::optional<R>, rObject> action,
 	   objects_set_type& marks) const;
 
+    /// Whether \a this has a \a k slot
+    /// \param k         Slot name.
+    /// \return Whether the \a k slot exists
+    bool
+    slot_has(const key_type& k);
+
     /// Lookup field in object hierarchy.
     /// \param k         Slot name.
     /// \param fallback  Whether we agree to use the "fallback" method

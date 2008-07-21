@@ -319,6 +319,7 @@ namespace object
 
     DECLARE(getProperty, &Object::property_get);
     DECLARE(hasProperty, &Object::property_has);
+    DECLARE(hasSlot, &Object::slot_has);
     DECLARE(setProperty, &Object::property_set);
     DECLARE(removeProperty, &Object::property_remove);
 #undef DECLARE

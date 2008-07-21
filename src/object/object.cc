@@ -239,6 +239,12 @@ namespace object
     return *this;
   }
 
+  bool
+  Object::slot_has(const key_type& k)
+  {
+    return slot_locate(k);
+  }
+
   rObject
   Object::slot_update(runner::Runner& r,
                       const key_type& k, rObject o,
