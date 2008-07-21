@@ -76,8 +76,7 @@ namespace scheduler
   inline prio_type
   Tag::prio_set(prio_type prio)
   {
-    prio_ = std::min(std::max(prio, static_cast<prio_type>(PRIO_MIN)),
-		     static_cast<prio_type>(PRIO_MAX));
+    prio_ = std::min(std::max(prio, PRIO_MIN), PRIO_MAX);
     return prio_;
   }
 
