@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<tutorial>
+
+  <section>
+
+    <title>Section 1</title>
+
+    <point>
+      <name>Test point 1</name>
+      <description>Try to create a foo slot in Object</description>
+      <start></start>
+      <end>if (!Object.hasSlot("foo")) Object.setSlot("foo", Object.new);</end>
+      <condition>Object.hasSlot("foo")</condition>
+    </point>
+
+    <point>
+      <name>Test point 2</name>
+      <description>Try to create a bar slot in Object.foo</description>
+      <start></start>
+      <end></end>
+      <condition>Object.foo.hasSlot("bar")</condition>
+    </point>
+
+  </section>
+
+</tutorial>
