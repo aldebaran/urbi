@@ -243,6 +243,11 @@ namespace scheduler
     if (job->state_get() == running && side_effect_free_save)
       return;
 
+    if (job->state_get() == running &&
+	job->prio_get() >= PRIO_RT_MIN &&
+	!job->frozen())
+      return;
+
     // We may have to suspend the job several time in case it makes no sense
     // to start it back. Let's do it in a loop and we'll break when we want
     // to resume the job.
