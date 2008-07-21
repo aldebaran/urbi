@@ -89,6 +89,7 @@ namespace scheduler
     std::swap(pending_, jobs_);
 
     // Sort all the jobs according to their priority.
+    if (real_time_behaviour_)
     {
       static std::vector<rJob> tmp;
       tmp.reserve(pending_.size());

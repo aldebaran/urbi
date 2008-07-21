@@ -91,9 +91,9 @@ namespace object
   }
 
   scheduler::prio_type
-  Tag::prio_set(scheduler::prio_type prio)
+  Tag::prio_set(runner::Runner& r, scheduler::prio_type prio)
   {
-    return value_->prio_set(prio);
+    return value_->prio_set(r.scheduler_get(), prio);
   }
 
   void

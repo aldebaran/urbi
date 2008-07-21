@@ -29,7 +29,7 @@ namespace object
     void freeze(runner::Runner&);
     rString name();
     scheduler::prio_type prio();
-    scheduler::prio_type prio_set(scheduler::prio_type);
+    scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
     void stop(runner::Runner&, objects_type);
     void unblock(runner::Runner&);
     void unfreeze(runner::Runner&);

@@ -1,3 +1,8 @@
+#ifndef SCHEDULER_TAG_HXX
+# define SCHEDULER_TAG_HXX
+
+# include <scheduler/scheduler.hh>
+
 namespace scheduler
 {
 
@@ -74,10 +79,14 @@ namespace scheduler
   }
 
   inline prio_type
-  Tag::prio_set(prio_type prio)
+  Tag::prio_set(Scheduler& sched, prio_type prio)
   {
+    if (prio >= PRIO_RT_MIN)
+      sched.real_time_behaviour_set();
     prio_ = std::min(std::max(prio, PRIO_MIN), PRIO_MAX);
     return prio_;
   }
 
 } // namespace scheduler
+
+#endif // SCHEDULER_TAG_HXX

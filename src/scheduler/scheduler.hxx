@@ -20,6 +20,7 @@ namespace scheduler
     , possible_side_effect_(true)
     , cycle_(0)
     , ready_to_die_(false)
+    , real_time_behaviour_(false)
   {
     ECHO("Initializing main coroutine");
     coroutine_initialize_main(coro_);
@@ -60,6 +61,12 @@ namespace scheduler
   Scheduler::signal_world_change()
   {
     possible_side_effect_ = true;
+  }
+
+  inline void
+  Scheduler::real_time_behaviour_set()
+  {
+    real_time_behaviour_ = true;
   }
 
 } // namespace scheduler

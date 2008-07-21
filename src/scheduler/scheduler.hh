@@ -124,6 +124,10 @@ namespace scheduler
     /// \return Some scheduler statistics.
     const scheduler_stats_type& stats_get() const;
 
+    /// Indicate that we now want real-time behaviour (which may be already
+    /// on).
+    void real_time_behaviour_set();
+
   private:
     /// Execute one round in the scheduler.
     ///
@@ -166,6 +170,9 @@ namespace scheduler
 
     /// Statistics
     scheduler_stats_type stats_;
+
+    /// Is real-time behavior desired?
+    bool real_time_behaviour_;
   };
 
 } // namespace scheduler
