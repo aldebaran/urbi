@@ -953,7 +953,7 @@ stmt:
 
 cases:
   /* empty */  { $$ = ::parser::cases_type();   }
-| cases case   { $$.swap($1); $$.push_back($2); }
+| cases case   { std::swap($$, $1); $$.push_back($2); }
 ;
 
 %type < ::parser::case_type > case;
