@@ -5,6 +5,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 
+#include <algorithm>
 #include <cassert>
 #include <cstdlib>
 
@@ -73,6 +74,11 @@ namespace scheduler
     return deadline;
   }
 
+  static bool prio_gt(const rJob& j1, const rJob& j2)
+  {
+    return j2->prio_get() < j1->prio_get();
+  }
+
   libport::utime_t
   Scheduler::execute_round()
   {
@@ -81,6 +87,19 @@ namespace scheduler
     // cycle.
     pending_.clear();
     std::swap(pending_, jobs_);
+
+    // Sort all the jobs according to their priority.
+    {
+      static std::vector<rJob> tmp;
+      tmp.reserve(pending_.size());
+      tmp.clear();
+      foreach(rJob job, pending_)
+	tmp.push_back(job);
+      std::stable_sort(tmp.begin(), tmp.end(), prio_gt);
+      pending_.clear();
+      foreach(rJob job, tmp)
+	pending_.push_back(job);
+    }
 
     // By default, wake us up after one hour and consider that we have no
     // new job to start. Also, run waiting jobs only if the previous round
