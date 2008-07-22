@@ -12,7 +12,6 @@
 #include <iomanip>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 #include <boost/version.hpp>
 
 #include <libport/assert.hh>
