@@ -54,14 +54,16 @@ namespace object
   }
 
 #define CHECK_NON_EMPTY(Name)                                           \
-  if (content_.empty ())                                                \
-    throw PrimitiveError						\
-      (SYMBOL(Name), "cannot be applied onto empty list")
+  do {                                                                  \
+    if (content_.empty())                                               \
+      throw PrimitiveError(SYMBOL(Name),                                \
+                           "cannot be applied onto empty list");        \
+  } while (0)
 
   rList
   List::tail()
   {
-    CHECK_NON_EMPTY(SYMBOL(tail));
+    CHECK_NON_EMPTY(tail);
     value_type res = content_;
     res.pop_front();
     return new List(res);

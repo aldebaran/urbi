@@ -34,6 +34,10 @@ namespace object
 
   /* Help the generation of symbols.
 
+  SYMBOL(Dictionary);
+  SYMBOL(Global);
+  SYMBOL(System);
+  SYMBOL(Tag);
   SYMBOL(acceptedVoid);
   SYMBOL(asCode);
   SYMBOL(asDictionary);
@@ -42,19 +46,17 @@ namespace object
   SYMBOL(asInteger);
   SYMBOL(asList);
   SYMBOL(asLobby);
+  SYMBOL(asObject);
   SYMBOL(asPrimitive);
+  SYMBOL(asSystem);
   SYMBOL(asTag);
   SYMBOL(asTask);
-  SYMBOL(asObject);
+  SYMBOL(asfalse);
   SYMBOL(asnil);
-  SYMBOL(asSystem);
+  SYMBOL(astrue);
   SYMBOL(asvoid);
-  SYMBOL(Dictionary);
   SYMBOL(false);
-  SYMBOL(Global);
   SYMBOL(nil);
-  SYMBOL(System);
-  SYMBOL(Tag);
   SYMBOL(true);
   SYMBOL(void);
 
