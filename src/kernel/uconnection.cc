@@ -60,8 +60,6 @@ UConnection::UConnection (UServer& server, size_t packetSize)
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
   lobby_->slot_set(SYMBOL(lobby), lobby_);
-  for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
-    error_signals_[i] = false;
 
   // initialize the connection tag used to reference local variables
   std::ostringstream o;

@@ -289,9 +289,6 @@ protected:
   UErrorValue error_;
 
 private:
-  /// Max number of error signals used.
-  enum { MAX_ERRORSIGNALS = 20 };
-
   /// A pointer to stop dependencies.
   UQueue* send_queue_;
 
@@ -303,9 +300,6 @@ private:
 
   /// The state of the connection.
   bool blocked_;
-
-  /// Error flags.
-  bool error_signals_[MAX_ERRORSIGNALS];
 
   /// True when the connection is reading to send/receive data (usualy
   /// set at "true" on start).
