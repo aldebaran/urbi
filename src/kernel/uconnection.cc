@@ -49,8 +49,8 @@ UConnection::UConnection (UServer& server, size_t packetSize)
     receiving_ (false),
     new_data_added_ (false),
     server_ (server),
-    send_queue_ (new UQueue ()),
-    recv_queue_ (new UQueue ()),
+    send_queue_ (new UQueue()),
+    recv_queue_ (new UQueue()),
     packet_size_ (packetSize),
     blocked_ (false),
     // Initial state of the connection: unblocked, not receiving binary.
@@ -77,14 +77,11 @@ UConnection::UConnection (UServer& server, size_t packetSize)
   dbg::create_sneaker_if_needed(lobby_, server_.getScheduler());
 }
 
-UConnection::~UConnection ()
+UConnection::~UConnection()
 {
   extract_tag(lobby_->slot_get(SYMBOL(connectionTag)))
     ->stop(server_.getScheduler(), object::void_class);
   DEBUG(("Destroying UConnection..."));
-  delete parser_;
-  delete send_queue_;
-  delete recv_queue_;
   shell_->terminate_now();
   DEBUG(("done\n"));
 }

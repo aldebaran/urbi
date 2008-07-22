@@ -290,10 +290,10 @@ protected:
 
 private:
   /// A pointer to stop dependencies.
-  UQueue* send_queue_;
+  std::auto_ptr<UQueue> send_queue_;
 
   /// A pointer to stop dependencies.
-  UQueue* recv_queue_;
+  std::auto_ptr<UQueue> recv_queue_;
 
   /// Each call to effective_send() will send packetSize byte (or less)..
   size_t packet_size_;
@@ -309,7 +309,7 @@ private:
   object::rLobby lobby_;
 
   /// Our parser.  A pointer to stop dependencies.
-  parser::UParser* parser_;
+  std::auto_ptr<parser::UParser> parser_;
 
   /// The current shell.
   runner::rShell shell_;
