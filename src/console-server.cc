@@ -228,5 +228,5 @@ main (int argc, const char* argv[])
     s.ctime = std::max (next_time, s.ctime + 1000L);
   }
 
-  exit(EX_OK);
+  return EX_OK;
 }
