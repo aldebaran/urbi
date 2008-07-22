@@ -81,9 +81,7 @@ UConnection::~UConnection()
 {
   extract_tag(lobby_->slot_get(SYMBOL(connectionTag)))
     ->stop(server_.getScheduler(), object::void_class);
-  DEBUG(("Destroying UConnection..."));
   shell_->terminate_now();
-  DEBUG(("done\n"));
 }
 
 UConnection&

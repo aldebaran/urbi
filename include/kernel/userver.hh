@@ -244,11 +244,6 @@ public:
   ///          (kernel/ghost-connection.hh is not public).
   UConnection& ghost_connection_get();
 
-  /// Change the ghost connection.
-  /// \precondition c xor ghost_.
-  /// \precondition c is a GhostConnection.
-  void ghost_connection_set(UConnection* c);
-
 
   /*--------------------.
   | Scheduler, runner.  |

@@ -506,28 +506,16 @@ UServer::connection_add(UConnection* c)
     connections_.push_front(c);
 }
 
-
 void
 UServer::connection_remove(UConnection* c)
 {
   connections_.erase_if(&boost::lambda::_1 == c);
-  echo(::DISPLAY_FORMAT1, long(this),
-       __PRETTY_FUNCTION__,
-       "UConnection closed", long(c));
 }
 
 UConnection&
 UServer::ghost_connection_get()
 {
   return *ghost_;
-}
-
-void
-UServer::ghost_connection_set(UConnection* c)
-{
-  assert(!c xor !ghost_);
-  ghost_ = dynamic_cast<UGhostConnection*>(c);
-  assert(c && ghost_);
 }
 
 runner::Runner&

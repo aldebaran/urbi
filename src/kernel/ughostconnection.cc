@@ -50,8 +50,6 @@ UGhostConnection::UGhostConnection (UServer& s)
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
-  server_.connection_remove(this);
-  server_.ghost_connection_set(0);
 }
 
 //! Close the connection
