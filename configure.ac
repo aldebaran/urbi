@@ -46,6 +46,8 @@ compilation_mode_set ()
     case $mode in
       (debug)
         compiler_flags '-O2 -ggdb'
+        # Not all the code includes config.h.
+        CPPFLAGS="$CPPFLAGS -DURBI_DEBUG -D_GLIBCXX_DEBUG"
         AC_DEFINE([URBI_DEBUG], [1],
                   [Define to enable Urbi debugging tools.])
         AC_DEFINE([_GLIBCXX_DEBUG], [1],
