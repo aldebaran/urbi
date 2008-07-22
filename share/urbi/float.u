@@ -110,6 +110,13 @@ do Float
   function times (action)
   {
     for| (var i = 0; i < this; i++)
+      action()
+  };
+
+  // Repeat \a action \a this times.
+  function each (action)
+  {
+    for| (var i = 0; i < this; i++)
       action(i)
   };
 };
