@@ -777,7 +777,7 @@ Lazy:
         access: rwW
   printer:
     - ~strict
-    - '{ if (getenv("PRINTER")) ostr_ << "/* " << *n->lazy_get() << " */"; }'
+    - '{ if (getenv("PPRINTER")) ostr_ << "/* " << *n->lazy_get() << " */"; }'
 
 Routine:
   super: Exp
