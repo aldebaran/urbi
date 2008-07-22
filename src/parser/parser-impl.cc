@@ -1,5 +1,7 @@
 /// \file uparser.cc
 
+#include <sdk/config.h> // YYDEBUG.
+
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
@@ -29,27 +31,37 @@ namespace parser
   `-------------*/
 
   ParserImpl::ParserImpl()
-    : tweast_ (0),
+    : tweast_(0),
       loc_(),
       synclines_(),
-      result_(0)
+      result_(0),
+      debug_(!!getenv("YYDEBUG"))
   {
   }
 
   void
-  ParserImpl::parse_ (std::istream& source)
+  ParserImpl::parse_(std::istream& source)
   {
     TIMER_PUSH("parse");
+    // Set up result_.
     passert(*result_, !result_.get());
     result_.reset(new ParseResult);
+
+    // Set up scanner.
     yyFlexLexer scanner;
     scanner.switch_streams(&source, 0);
+
+    // Set up parser.
     parser_type p(*this, scanner);
-    p.set_debug_level (!!getenv ("YYDEBUG"));
-    if (p.debug_level())
+#if defined YYDEBUG && YYDEBUG
+    p.set_debug_level(debug_);
+#endif
+
+    // Parse.
+    if (debug_)
       LIBPORT_ECHO("====================== Parse begin");
     result_->status = p.parse();
-    if (p.debug_level())
+    if (debug_)
       LIBPORT_ECHO("====================== Parse end:" << std::endl
                    << *result_);
     TIMER_POP("parse");
@@ -58,17 +70,17 @@ namespace parser
   parse_result_type
   ParserImpl::parse(const std::string& s)
   {
-    if (getenv("PARSE"))
+    if (debug_)
       LIBPORT_ECHO("Parsing: " << s);
     std::istringstream is(s);
     parse_(is);
-    if (getenv("PARSE"))
+    if (debug_)
       LIBPORT_ECHO("Result: " << *result_);
     return result_;
   }
 
   parse_result_type
-  ParserImpl::parse (Tweast& t)
+  ParserImpl::parse(Tweast& t)
   {
     // Recursive calls are forbidden.  If we want to relax this
     // constraint, note that we also need to save and restore other
@@ -84,7 +96,7 @@ namespace parser
   }
 
   parse_result_type
-  ParserImpl::parse_file (const std::string& fn)
+  ParserImpl::parse_file(const std::string& fn)
   {
     std::ifstream f(fn.c_str());
     if (!f.good())

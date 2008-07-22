@@ -16,10 +16,11 @@
 %parse-param {FlexLexer& scanner}
 %lex-param   {::parser::ParserImpl& up}
 %lex-param   {FlexLexer& scanner}
-%debug
 
 %code requires // Output in ugrammar.hh.
 {
+#include <sdk/config.h> // YYDEBUG.
+
 #include <libport/pod-cast.hh>
 #include <list>
 #include <kernel/fwd.hh>

@@ -52,6 +52,8 @@ compilation_mode_set ()
                   [Define to enable Urbi debugging tools.])
         AC_DEFINE([_GLIBCXX_DEBUG], [1],
                   [Define to enable STL debug mode.])
+        AC_DEFINE([YYDEBUG], [1],
+                  [Define to enable parser runtime debug traces.])
         # Pass USE_VALGRIND only if valgrind/valgrind.h exists.
         AC_CHECK_HEADER([valgrind/valgrind.h],
                         [AC_DEFINE([USE_VALGRIND], [1],
