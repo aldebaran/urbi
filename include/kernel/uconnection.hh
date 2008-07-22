@@ -110,14 +110,14 @@ public:
 
     \sa UQueue */
   UConnection(UServer& userver, size_t packetSize);
-  virtual ~UConnection ();
+  virtual ~UConnection();
 
   //! Initializes the connection, by sending the standard header for URBI
   /*! This function must be called once the connection is operational and
     able to send data. It is a requirement for URBI compliance to send
     the header at start, so this function must be called.
   */
-  UConnection& initialize ();
+  UConnection& initialize();
 
   /*-----------------------.
   | Send/receive functions |
@@ -125,15 +125,15 @@ public:
 
   /// The "base" high-level send function. Calls the send_queue() function.
   UConnection&
-  send (const char* buf, int len, const char* tag = 0, bool flush = true);
+  send(const char* buf, int len, const char* tag = 0, bool flush = true);
 
   /// Overload using 'strlen' to compute buf size.
   UConnection&
-  send (const char* buf, const char* tag = 0, bool flush = true);
+  send(const char* buf, const char* tag = 0, bool flush = true);
 
   /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
   UConnection&
-  send (object::rObject result, const char* tag = 0, const char* p = 0);
+  send(object::rObject result, const char* tag = 0, const char* p = 0);
 
   //! Send at most packetSize bytes in the connection, calling effective_send()
   /*! Must be called when the system tells that the connection is ready to
@@ -145,12 +145,12 @@ public:
     - USUCCESS: successful
     - UFAIL   : effective_send() failed or not enough memory
    */
-  UConnection& continue_send ();
+  UConnection& continue_send();
 
   /// Notify the connection that a new result is available.  This will
   /// typically print the result on the console or send it through the
   /// network.
-  void new_result (object::rObject result);
+  void new_result(object::rObject result);
 
   /// Handle an incoming string.
   /*! Must be called each time a string is received by the connection.
@@ -159,7 +159,7 @@ public:
    \return UMEMORYFAIL critical memory overflow
    \return USUCCESS otherwise
    */
-  UConnection& received (const char* s);
+  UConnection& received(const char* s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -169,7 +169,7 @@ public:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UConnection& received (const char* buffer, size_t length);
+  UConnection& received(const char* buffer, size_t length);
 
   /// A generic << operator, to easily send every kind of data through the
   ///connection.
@@ -183,30 +183,30 @@ public:
   /*! The implementation of this function must set 'closing_' to true, to
     tell the UConnection to stop sending data.
   */
-  virtual UConnection& close () = 0;
+  virtual UConnection& close() = 0;
 
   /// Abstract end of line.
-  virtual UConnection&	endline() = 0;
+  virtual UConnection& endline() = 0;
 
-  void flush ();
+  void flush();
 
   /*------------.
   | Accessors.  |
   `------------*/
 
-  UErrorValue error_get () const;
-  parser::UParser& parser_get ();
+  UErrorValue error_get() const;
+  parser::UParser& parser_get();
   UServer& server_get() const;
   object::rLobby& lobby_get();
 
-  bool send_queue_empty () const;
+  bool send_queue_empty() const;
 
-  UQueue& recv_queue_get ();
-  UQueue& send_queue_get ();
+  UQueue& recv_queue_get();
+  UQueue& send_queue_get();
 
-  bool& active_get ();
-  bool& blocked_get ();
-  bool& closing_get ();
+  bool& active_get();
+  bool& blocked_get();
+  bool& closing_get();
 
   bool& new_data_added_get();
 
@@ -214,11 +214,11 @@ public:
   | Utility functions |
   \------------------*/
 
-  bool has_pending_command () const;
-  void drop_pending_commands ();
+  bool has_pending_command() const;
+  void drop_pending_commands();
 
   /// Build a prefix [01234567:tag].
-  std::string make_prefix (const char* tag) const;
+  std::string make_prefix(const char* tag) const;
 
   //! Send a buffer through the connection without flushing it.
   /*! The function piles the buffer in the sending queue and calls
@@ -256,9 +256,9 @@ protected:
     \return  the number of bytes effectively sent.
 	     -1 upon error.
    */
-  virtual size_t effective_send (const char*, size_t length) = 0;
+  virtual size_t effective_send(const char*, size_t length) = 0;
 
-  UConnection& execute (ast::rNary);
+  UConnection& execute(ast::rNary);
 
 public:
   /// Error return code for the constructor.
