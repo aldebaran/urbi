@@ -264,7 +264,7 @@ namespace scheduler
       return;
 
     if (job->state_get() == running &&
-	job->prio_get() >= PRIO_RT_MIN &&
+	job->prio_get() >= UPRIO_RT_MIN &&
 	!job->frozen())
       return;
 

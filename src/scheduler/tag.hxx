@@ -12,7 +12,7 @@ namespace scheduler
     , blocked_(false)
     , frozen_(false)
     , name_(name)
-    , prio_(PRIO_DEFAULT)
+    , prio_(UPRIO_DEFAULT)
   {
   }
 
@@ -81,9 +81,9 @@ namespace scheduler
   inline prio_type
   Tag::prio_set(Scheduler& sched, prio_type prio)
   {
-    if (prio >= PRIO_RT_MIN)
+    if (prio >= UPRIO_RT_MIN)
       sched.real_time_behaviour_set();
-    prio_ = std::min(std::max(prio, PRIO_MIN), PRIO_MAX);
+    prio_ = std::min(std::max(prio, UPRIO_MIN), UPRIO_MAX);
     return prio_;
   }
 

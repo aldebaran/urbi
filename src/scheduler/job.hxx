@@ -23,7 +23,7 @@ namespace scheduler
       name_(name.empty() ? libport::Symbol::fresh("job") : name),
       coro_(coroutine_new()),
       non_interruptible_(false),
-      prio_(PRIO_DEFAULT),
+      prio_(UPRIO_DEFAULT),
       side_effect_free_(false),
       pending_exception_(0)
   {
@@ -40,7 +40,7 @@ namespace scheduler
       coro_(coroutine_new()),
       non_interruptible_(false),
       tags_(model.tags_),
-      prio_(PRIO_DEFAULT),
+      prio_(UPRIO_DEFAULT),
       side_effect_free_(false),
       pending_exception_(0)
   {

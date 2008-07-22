@@ -202,10 +202,10 @@ namespace scheduler
   {
     if (tags_.empty())
     {
-      prio_ = PRIO_DEFAULT;
+      prio_ = UPRIO_DEFAULT;
       return;
     }
-    prio_ = PRIO_MIN;
+    prio_ = UPRIO_MIN;
     foreach(rTag tag, tags_)
       prio_ = std::max(prio_, tag->prio_get());
   }

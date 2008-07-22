@@ -9,21 +9,24 @@
 
 namespace scheduler
 {
-  // Tag priorities
+  /// Tag priorities
   typedef unsigned int prio_type;
 
-  // Unused for priority computations.
-  static const prio_type PRIO_NONE = 0;
-  // Minimum non-real-time priority.
-  static const prio_type PRIO_MIN = PRIO_NONE;
-  // Default job priority when none is given.
-  static const prio_type PRIO_DEFAULT = PRIO_MIN + 1;
-  // Lowest real-time priority.
-  static const prio_type PRIO_RT_MIN = PRIO_DEFAULT + 1;
-  // Highest real-time priority.
-  static const prio_type PRIO_RT_MAX = 16;
-  // Highest priority.
-  static const prio_type PRIO_MAX = PRIO_RT_MAX;
+  // The following names stay away from PRIO_* which is used in
+  // sys/resource.h under OSX.
+
+  /// Unused for priority computations.
+  static const prio_type UPRIO_NONE = 0;
+  /// Minimum non-real-time priority.
+  static const prio_type UPRIO_MIN = UPRIO_NONE;
+  /// Default job priority when none is given.
+  static const prio_type UPRIO_DEFAULT = UPRIO_MIN + 1;
+  /// Lowest real-time priority.
+  static const prio_type UPRIO_RT_MIN = UPRIO_DEFAULT + 1;
+  /// Highest real-time priority.
+  static const prio_type UPRIO_RT_MAX = 16;
+  /// Highest priority.
+  static const prio_type UPRIO_MAX = UPRIO_RT_MAX;
 
   // A Tag is an entity attached to zero or more scheduler jobs. Each job
   // can have zero or more tags. When a new job is created, it usually
