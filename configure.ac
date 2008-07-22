@@ -53,7 +53,7 @@ compilation_mode_set ()
         # Pass USE_VALGRIND only if valgrind/valgrind.h exists.
         AC_CHECK_HEADER([valgrind/valgrind.h],
                         [AC_DEFINE([USE_VALGRIND], [1],
-                                   [Define if valgrind/valgrind.h exists])])
+                                   [Define if <valgrind/valgrind.h> exists.])])
         ;;
 
       (fast)
