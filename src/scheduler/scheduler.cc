@@ -140,21 +140,24 @@ namespace scheduler
       {
       case to_start:
       {
-	// New job. Start its coroutine but do not start the job as it would be queued
-	// twice otherwise. It will start doing real work at the next cycle, so set
-	// deadline to 0. Note that we use "continue" here to avoid having the job
-	// requeued because it hasn't been started by setting "start".
-	//
-	// The code below takes care of destroying the rJob reference to the job, so
-	// that it does not stay in the call stack as a local variable. If it did,
-	// the job would never be destroyed. However, to prevent the job from being
-	// prematurely destroyed, we set current_job_ (global to the scheduler) to
-	// the rJob.
+        // New job. Start its coroutine but do not start the job as it
+        // would be queued twice otherwise. It will start doing real
+        // work at the next cycle, so set deadline to 0. Note that we
+        // use "continue" here to avoid having the job requeued
+        // because it hasn't been started by setting "start".
+        //
+        // The code below takes care of destroying the rJob reference
+        // to the job, so that it does not stay in the call stack as a
+        // local variable. If it did, the job would never be
+        // destroyed. However, to prevent the job from being
+        // prematurely destroyed, we set current_job_ (global to the
+        // scheduler) to the rJob.
 	ECHO("Starting job " << *job);
 	current_job_ = job;
 	ECHO("Job " << *job << " is starting");
 	job = 0;
-	coroutine_start(coro_, current_job_->coro_get(), run_job, current_job_.get());
+	coroutine_start(coro_,
+                        current_job_->coro_get(), run_job, current_job_.get());
 	current_job_ = 0;
 	deadline = SCHED_IMMEDIATE;
 	at_least_one_started = true;
