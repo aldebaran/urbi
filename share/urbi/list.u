@@ -127,7 +127,7 @@ do List
   function init(size, value)
   {
     // if (size < 0) throw;
-    size.times(closure (i) { this << value })
+    size.each(closure (i) { this << value })
   };
 
   //# ------------------------ ##
