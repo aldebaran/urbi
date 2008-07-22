@@ -41,7 +41,7 @@ compilation_mode_set ()
   do
     case $mode in
       (debug) compiler_flags '-O2 -ggdb'
-              CPPFLAGS="$CPPFLAGS -DURBI_DEBUG -D_GLIBCXX_DEBUG"
+              CPPFLAGS="$CPPFLAGS -DURBI_DEBUG -D_GLIBCXX_DEBUG -DUSE_VALGRIND"
               ;;
 
       (fast)  compiler_flags '-O0'
@@ -50,7 +50,9 @@ compilation_mode_set ()
       (ndebug)CPPFLAGS="$CPPFLAGS -DNDEBUG"
               ;;
 
-      (space) compiler_flags '-Os'
+      (space) compiler_flags '-Os -fomit-frame-pointer' \
+                             '-fdata-sections -ffunction-sections'
+              LDFLAGS="$LDFLAGS --gc-sections"
               ;;
 
       (speed) compiler_flags '-O3'
@@ -59,6 +61,10 @@ compilation_mode_set ()
 
       (symbols)
               enable_precompiled_symbols=yes
+              ;;
+
+      (threads)
+              CPPFLAGS="$CPPFLAGS -DSCHEDULER_CORO_OSTHREAD"
               ;;
 
       (*)
@@ -78,10 +84,11 @@ compilation_mode_set ()
 # Indididual components:
 #  - ndebug: Define NDEBUG.
 #  - symbols: Activate precompiled-symbols.
-URBI_ARG_ENABLE([compilation-mode],
-                [Compilaton mode],
-                [(space|speed|debug|fast|ndebug|symbols)(,(space|speed|debug|fast|ndebug|symbols))*],
-                [debug])
+#  - threads: Implement coroutines with threads.
+URBI_ARGLIST_ENABLE([compilation-mode],
+                   [Compilaton mode],
+                   [debug|fast|ndebug|space|speed|symbols|threads],
+                   [debug])
 AC_MSG_CHECKING([for compilation mode])
 compilation_mode=$(echo $enable_compilation_mode | tr ',' ' ')
 AC_MSG_RESULT([$compilation_mode])
