@@ -62,7 +62,7 @@ Decide what scoping is appropriate for "at" jobs.
 *** Start exploring dlopen
 We need to address the foreign dependencies such as Boost.
 
-*** Fix parser memory leaks
+*** Fix parser memory leaks (done)
 
 This requires:
   - that we delete unused data structures in the grammar;
