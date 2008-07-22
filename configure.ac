@@ -27,6 +27,66 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
+compiler_flags ()
+{
+  CFLAGS="$CFLAGS $@"
+  CXXFLAGS="$CXXFLAGS $@"
+}
+
+# Compilation mode.
+compilation_mode_set ()
+{
+  local mode
+  for mode
+  do
+    case $mode in
+      (debug) compiler_flags '-O2 -ggdb'
+              CPPFLAGS="$CPPFLAGS -DURBI_DEBUG -D_GLIBCXX_DEBUG"
+              ;;
+
+      (fast)  compiler_flags '-O0'
+              ;;
+
+      (ndebug)CPPFLAGS="$CPPFLAGS -DNDEBUG"
+              ;;
+
+      (space) compiler_flags '-Os'
+              ;;
+
+      (speed) compiler_flags '-O3'
+              compilation_mode_set ndebug symbols
+              ;;
+
+      (symbols)
+              enable_precompiled_symbols=yes
+              ;;
+
+      (*)
+              AC_MSG_ERROR([invalid compilation mode: $mode])
+              ;;
+    esac
+  done
+}
+
+#
+# Levels:
+#  - space: Optimize for smaller space (implies ndebug).
+#  - speed: Optimize for speed (implies ndebug).
+#  - debug: Enable debug information.
+#  - fast: Enable fast compilation.
+#
+# Indididual components:
+#  - ndebug: Define NDEBUG.
+#  - symbols: Activate precompiled-symbols.
+URBI_ARG_ENABLE([compilation-mode],
+                [Compilaton mode],
+                [(space|speed|debug|fast|ndebug|symbols)(,(space|speed|debug|fast|ndebug|symbols))*],
+                [debug])
+AC_MSG_CHECKING([for compilation mode])
+compilation_mode=$(echo $enable_compilation_mode | tr ',' ' ')
+AC_MSG_RESULT([$compilation_mode])
+compilation_mode_set $compilation_mode
+
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
 # TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
@@ -52,6 +112,7 @@ AM_PROG_AS
 # Disable static libraries. Loading modules as shared libraries requires us to be one.
 AC_ENABLE_STATIC([no])
 AC_PROG_LIBTOOL
+
 
 # FIXME: Bind this with a more general debug/optimize compilation switch.
 # Whether we want to precompile the symbols.
