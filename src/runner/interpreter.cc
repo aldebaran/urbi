@@ -403,12 +403,26 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::apply (const rObject& func,
-		      const libport::Symbol msg,
-		      object::objects_type args,
-		      rObject call_message)
+  Interpreter::apply(const rObject& func,
+                     const libport::Symbol msg,
+                     object::objects_type args,
+                     rObject call_message)
+  {
+    return apply(func, msg, args, boost::optional<ast::loc>(), call_message);
+  }
+
+
+  object::rObject
+  Interpreter::apply(const rObject& func,
+                     const libport::Symbol msg,
+                     object::objects_type args,
+                     boost::optional<ast::loc> loc,
+                     rObject call_message)
   {
     precondition(func);
+
+    call_stack_.push_back(std::make_pair(msg, loc));
+    Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
 
     // If we try to call a C++ primitive with a call message, make it
     // look like a strict function call
@@ -530,9 +544,7 @@ namespace runner
     // The invoked slot (probably a function).
     ast::rConstExp ast_tgt = e->target_get();
     rObject tgt = ast_tgt->implicit() ? stacks_.self() : eval(ast_tgt);
-    call_stack_.push_back(e);
-    Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
-    apply(tgt, e->name_get(), e->arguments_get());
+    apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
   void
@@ -543,7 +555,8 @@ namespace runner
 
   Interpreter::rObject
   Interpreter::apply (rObject tgt, const libport::Symbol& message,
-                      const ast::exps_type* input_ast_args)
+                      const ast::exps_type* input_ast_args,
+                      boost::optional<ast::loc> loc)
   {
     rObject value = tgt->slot_get(message);
     // Accept to call methods on void only if void itself is holding
@@ -552,13 +565,14 @@ namespace runner
       if (!tgt->own_slot_get(message))
         throw object::WrongArgumentType (message);
     assert(value);
-    return apply(tgt, value, message, input_ast_args);
+    return apply(tgt, value, message, input_ast_args, loc);
   }
 
   Interpreter::rObject
   Interpreter::apply (rObject tgt, rObject val,
                       const libport::Symbol& message,
-                      const ast::exps_type* input_ast_args)
+                      const ast::exps_type* input_ast_args,
+                      boost::optional<ast::loc> loc)
   {
     assertion(val);
 
@@ -586,7 +600,7 @@ namespace runner
       call_message = build_call_message (tgt, val, message, ast_args);
     else
       push_evaluated_arguments (args, ast_args);
-    return apply (val, message, args, call_message);
+    return apply(val, message, args, loc, call_message);
   }
 
   void
@@ -707,7 +721,8 @@ namespace runner
     if (e->arguments_get())
       // FIXME: Register in the call stack
       result_ = apply(stacks_.self(), value,
-                      e->name_get(), e->arguments_get());
+                      e->name_get(), e->arguments_get(),
+                      e->location_get());
     else
       result_ = value;
   }
@@ -871,7 +886,8 @@ namespace runner
 
     finally << stacks_.switch_self(tgt);
 
-    visit (e.unsafe_cast<const ast::AbstractScope>());
+    ast::rConstAbstractScope scope = e.unsafe_cast<const ast::AbstractScope>();
+    visit (scope);
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     result_ = tgt;
@@ -1021,13 +1037,15 @@ namespace runner
   Interpreter::show_backtrace(const call_stack_type& bt,
                               const std::string& chan)
   {
-    foreach (ast::rConstCall c,
+    foreach (call_type c,
              boost::make_iterator_range(boost::rbegin(bt),
                                         boost::rend(bt)))
     {
       std::ostringstream o;
-      o << "!!!    called from: " << c->location_get () << ": "
-	<< c->name_get ();
+      o << "!!!    called from: ";
+      if (c.second)
+        o << *c.second << ": ";
+      o << c.first;
       send_message(chan, o.str());
     }
   }
@@ -1042,11 +1060,11 @@ namespace runner
   Interpreter::backtrace_get() const
   {
     backtrace_type res;
-    foreach (ast::rConstCall c, call_stack_)
+    foreach (call_type c, call_stack_)
     {
       std::ostringstream o;
-      o << c->location_get();
-      res.push_back(std::make_pair(c->name_get().name_get(), o.str()));
+      o << c.second;
+      res.push_back(std::make_pair(c.first.name_get(), o.str()));
     }
     return res;
   }

@@ -34,7 +34,9 @@ namespace object
     virtual std::string what() const throw ();
 
     /// The call stack
-    typedef std::vector<ast::rConstCall> call_stack_type;
+    typedef std::pair<libport::Symbol,
+                      boost::optional<ast::loc> > call_type;
+    typedef std::vector<call_type> call_stack_type;
 
     /// Returns true if the exception was allready displayed.
     bool was_displayed() const;

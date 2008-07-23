@@ -8,6 +8,8 @@
 
 # include <boost/tuple/tuple.hpp>
 
+# include <libport/hash.hh>
+
 # include <ast/default-visitor.hh>
 # include <ast/fwd.hh>
 # include <object/object.hh>
@@ -91,11 +93,19 @@ namespace runner
                           object::objects_type args,
                           rObject call_message = 0);
 
+    virtual rObject apply(const rObject& func,
+                          const libport::Symbol msg,
+                          object::objects_type args,
+                          boost::optional<ast::loc> loc,
+                          rObject call_message = 0);
+
     /// Helpers to apply a function with the arguments as ast chunks
     rObject apply(rObject tgt, const libport::Symbol& msg,
-                  const ast::exps_type* args);
+                  const ast::exps_type* args,
+                  boost::optional<ast::loc> loc);
     rObject apply(rObject tgt, rObject f, const libport::Symbol& msg,
-                  const ast::exps_type* args);
+                  const ast::exps_type* args,
+                  boost::optional<ast::loc> loc);
 
     /// Return the result of the latest evaluation.
     virtual rObject result_get();
@@ -201,6 +211,7 @@ namespace runner
 
     /// The call stack.
     typedef object::UrbiException::call_stack_type call_stack_type;
+    typedef object::UrbiException::call_type call_type;
     call_stack_type call_stack_;
     void show_backtrace(const call_stack_type& bt,
                         const std::string& chan);
