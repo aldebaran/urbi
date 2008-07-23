@@ -22,6 +22,24 @@
 namespace scheduler
 {
 
+  Scheduler::Scheduler(boost::function0<libport::utime_t> get_time)
+    : get_time_(get_time)
+    , current_job_(0)
+    , coro_(coroutine_new())
+    , possible_side_effect_(true)
+    , cycle_(0)
+    , ready_to_die_(false)
+    , real_time_behaviour_(false)
+  {
+    ECHO("Initializing main coroutine");
+    coroutine_initialize_main(coro_);
+  }
+
+  Scheduler::~Scheduler()
+  {
+    ECHO("Destroying scheduler");
+  }
+
   // This function is required to start a new job using the libcoroutine.
   // Its only purpose is to create the context and start the execution
   // of the new job.
