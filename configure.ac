@@ -27,10 +27,6 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-# A macro so that AC_REQUIRE works properly.  When satisfying
-# will be moved in build-aux.
-AC_DEFUN([URBI_ARG_ENABLE_COMPILATION_MODE],
-[
 compiler_flags ()
 {
   CFLAGS="$CFLAGS $@"
@@ -44,52 +40,36 @@ compilation_mode_set ()
   for mode
   do
     case $mode in
-      (debug)
-        compiler_flags '-O2 -ggdb'
-        # Not all the code includes config.h.
-        CPPFLAGS="$CPPFLAGS -DURBI_DEBUG -D_GLIBCXX_DEBUG"
-        AC_DEFINE([URBI_DEBUG], [1],
-                  [Define to enable Urbi debugging tools.])
-        AC_DEFINE([_GLIBCXX_DEBUG], [1],
-                  [Define to enable STL debug mode.])
-        AC_DEFINE([YYDEBUG], [1],
-                  [Define to enable parser runtime debug traces.])
-        # Pass USE_VALGRIND only if valgrind/valgrind.h exists.
-        AC_CHECK_HEADER([valgrind/valgrind.h],
-                        [AC_DEFINE([USE_VALGRIND], [1],
-                                   [Define if <valgrind/valgrind.h> exists.])])
-        ;;
+      (debug) compiler_flags '-O2 -ggdb'
+              CPPFLAGS="$CPPFLAGS -DURBI_DEBUG -D_GLIBCXX_DEBUG -DUSE_VALGRIND"
+              ;;
 
-      (fast)
-        compiler_flags '-O0'
-        ;;
+      (fast)  compiler_flags '-O0'
+              ;;
 
-      (ndebug)
-        CPPFLAGS="$CPPFLAGS -DNDEBUG"
-        ;;
+      (ndebug)CPPFLAGS="$CPPFLAGS -DNDEBUG"
+              ;;
 
-      (space)
-        compiler_flags '-Os -fomit-frame-pointer' \
-                       '-fdata-sections -ffunction-sections'
-        LDFLAGS="$LDFLAGS --gc-sections"
-        ;;
+      (space) compiler_flags '-Os -fomit-frame-pointer' \
+                             '-fdata-sections -ffunction-sections'
+              LDFLAGS="$LDFLAGS --gc-sections"
+              ;;
 
-      (speed)
-        compiler_flags '-O3'
-        compilation_mode_set ndebug symbols
-        ;;
+      (speed) compiler_flags '-O3'
+              compilation_mode_set ndebug symbols
+              ;;
 
       (symbols)
-        enable_precompiled_symbols=yes
-        ;;
+              enable_precompiled_symbols=yes
+              ;;
 
       (threads)
-        CPPFLAGS="$CPPFLAGS -DSCHEDULER_CORO_OSTHREAD"
-        ;;
+              CPPFLAGS="$CPPFLAGS -DSCHEDULER_CORO_OSTHREAD"
+              ;;
 
       (*)
-        AC_MSG_ERROR([invalid compilation mode: $mode])
-        ;;
+              AC_MSG_ERROR([invalid compilation mode: $mode])
+              ;;
     esac
   done
 }
@@ -113,9 +93,6 @@ AC_MSG_CHECKING([for compilation mode])
 compilation_mode=$(echo $enable_compilation_mode | tr ',' ' ')
 AC_MSG_RESULT([$compilation_mode])
 compilation_mode_set $compilation_mode
-])
-
-URBI_ARG_ENABLE_COMPILATION_MODE
 
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])

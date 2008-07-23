@@ -19,6 +19,7 @@ do Global.Dictionary
       res = res.map(function (p) {
         p.first.asPrintable + " => " + p.second.asPrintable
       })|
+      breakpoint;
       "Dictionary {" + res.join(", ") + "}"
     }
   };
