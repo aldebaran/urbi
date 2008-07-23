@@ -44,7 +44,12 @@ namespace parser
   {
     TIMER_PUSH("parse");
     // Set up result_.
-    passert(*result_, !result_.get());
+
+    // FIXME: This check will evaluate (void)*result_ in NDEBUG,
+    // entailing an abortion since result_ == 0. Passert should
+    // probably be fixed.
+    // passert(*result_, !result_.get());
+
     result_.reset(new ParseResult);
 
     // Set up scanner.
