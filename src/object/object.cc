@@ -87,26 +87,6 @@ namespace object
     return res;
   }
 
-  /*---------.
-  | Scopes.  |
-  `---------*/
-
-  rObject
-  Object::make_scope(const rObject& parent)
-  {
-    rObject res = new object::Object();
-    res->proto_add(parent);
-    return res;
-  }
-
-  rObject
-  Object::make_method_scope(const rObject& parent)
-  {
-    rObject res = Object::make_scope(parent ? parent : object_class);
-    res->slot_set(SYMBOL(self), this);
-    return res;
-  }
-
   /*--------.
   | Slots.  |
   `--------*/

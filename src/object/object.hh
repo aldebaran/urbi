@@ -204,22 +204,6 @@ namespace object
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;
 
-    /// Create a fresh scope
-    /**
-     ** \param parent The parent scope (optional, in which case lobby
-     **               becomes the parent)
-     ** \return The new scope
-     */
-    static rObject make_scope(const rObject& parent = 0);
-
-    /// Make a method outer scope
-    /**
-     ** Similar to \see make_scope, but make the scope forward
-     ** messages to this object when relevant.
-     ** \return The new scope.
-     **/
-    rObject make_method_scope(const rObject& parent = 0);
-
   private:
     rObject
     slot_locate(const key_type& k,
