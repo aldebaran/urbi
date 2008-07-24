@@ -80,28 +80,6 @@ namespace object
     /// One slot.
     typedef std::set<const Object*> objects_set_type;
 
-    /// Abstract lookup traversal
-    ///
-    /// Traverse the inheritance hierarchy, calling \a action on each
-    /// encountered object. If the lookup is successful, \a action
-    /// should return the result. Otherwise, it should return an empty
-    /// boost::optional, so as the lookup continues. This enables to
-    /// perform different kind of searches without duplicating the
-    /// traversal algorithm.
-    ///
-    /// \param action The search to apply on each encountered object.
-    /// \return The result returned by \a action, or an empty
-    /// boost::optional if the lookup failed.
-    template <typename R>
-    boost::optional<R>
-    lookup(boost::function1<boost::optional<R>, rObject> action) const;
-
-    /// Lookup helper, with a mark table
-    template <typename R>
-    boost::optional<R>
-    lookup(boost::function1<boost::optional<R>, rObject> action,
-	   objects_set_type& marks) const;
-
     /// Whether \a this has a \a k slot
     /// \param k         Slot name.
     /// \return Whether the \a k slot exists
@@ -247,6 +225,13 @@ namespace object
     rObject make_method_scope(const rObject& parent = 0);
 
   private:
+    rObject
+    slot_locate(const key_type& k,
+                bool fallback,
+                bool value,
+                objects_set_type& marks) const;
+
+
     /// The protos.
     protos_type* protos_;
 

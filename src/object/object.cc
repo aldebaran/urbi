@@ -91,9 +91,6 @@ namespace object
   | Scopes.  |
   `---------*/
 
-  typedef boost::optional<rObject> lookup_result;
-  typedef boost::function1<lookup_result, rObject> lookup_action;
-
   rObject
   Object::make_scope(const rObject& parent)
   {
@@ -136,68 +133,30 @@ namespace object
     protos_ = &l.unsafe_cast<object::List>()->value_get ();
   }
 
-  template <typename R>
-  boost::optional<R>
-  Object::lookup(boost::function1<boost::optional<R>, rObject> action,
-		 objects_set_type& marks) const
+  inline rObject
+  Object::slot_locate(const key_type& k,
+                      bool fallback, bool value, objects_set_type& marks) const
   {
-    if (!libport::mhas(marks, this))
-    {
-      marks.insert(this);
-      // FIXME: rConstObject?
-      boost::optional<R> res = action(const_cast<Object*>(this));
-      if (res)
-	return res;
-      else
-	foreach (const rObject& proto, protos_get())
-	  if (boost::optional<R> res = proto->lookup(action, marks))
-	    return res;
-    }
-    return boost::optional<R>();
-  }
-
-  template <typename R>
-  boost::optional<R>
-  Object::lookup(boost::function1<boost::optional<R>, rObject> action) const
-  {
-    objects_set_type marks;
-    return lookup(action, marks);
-  }
-
-  namespace
-  {
-    class SlotLookup
-    {
-    public:
-      lookup_result
-      slot_lookup(rObject obj, const Object::key_type& k, bool value)
-      {
-	assert(obj);
-	if (rObject x = obj->own_slot_get(k))
-	  return value ? x : obj;
-	if (!fallback)
-          if (rObject f = obj->own_slot_get(SYMBOL(fallback)))
-            fallback = value ? f : obj;
-	return boost::optional<rObject>();
-      }
-      rObject fallback;
-    };
+    if (libport::mhas(marks, this))
+      return 0;
+    marks.insert(this);
+    rObject res;
+    if (res = own_slot_get(k))
+      return value ? res : const_cast<Object*>(this);
+    foreach (rObject proto, protos_get())
+      if (rObject rec = proto->slot_locate(k, fallback, value, marks))
+        return rec;
+    if (fallback)
+      return own_slot_get(SYMBOL(fallback));
+    return 0;
   }
 
   rObject
   Object::slot_locate(const key_type& k,
                       bool fallback, bool value) const
   {
-    SlotLookup looker;
-    lookup_action action =
-      boost::bind(&SlotLookup::slot_lookup, &looker, _1, k, value);
-    boost::optional<rObject> res = lookup(action);
-    if (!res && fallback && looker.fallback)
-      res = looker.fallback;
-    if (res)
-      return res.get();
-    else
-      return 0;
+    objects_set_type marks;
+    return slot_locate(k, fallback, value, marks);
   }
 
   rObject
