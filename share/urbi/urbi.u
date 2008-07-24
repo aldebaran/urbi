@@ -459,4 +459,3 @@ load("URBI.INI");
 |  Messages before, and including this one, are ignored.     |
 `-----------------------------------------------------------*/
 "Urbi is up and running.";
-shutdown;
