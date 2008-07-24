@@ -35,8 +35,27 @@ namespace object
     return libport::mhas(content_, key);
   }
 
-  const HashSlots::content_type& HashSlots::container() const
+  inline HashSlots::iterator
+  HashSlots::begin()
   {
-    return content_;
+    return content_.begin();
+  }
+
+  inline HashSlots::iterator
+  HashSlots::end()
+  {
+    return content_.end();
+  }
+
+  inline HashSlots::const_iterator
+  HashSlots::begin() const
+  {
+    return content_.begin();
+  }
+
+  inline HashSlots::const_iterator
+  HashSlots::end() const
+  {
+    return content_.end();
   }
 }

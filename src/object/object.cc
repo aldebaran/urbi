@@ -386,7 +386,7 @@ namespace object
     o << " {" << libport::incendl;
     protos_dump(o, runner);
     special_slots_dump (o, runner);
-    foreach(const Slots::slot_type& s, slots_.container())
+    foreach(const Slots::slot_type& s, slots_)
     {
       o << s.first << " = ";
       s.second->dump(o, runner, depth_max) << libport::iendl;

@@ -148,7 +148,7 @@ namespace object
     /// Remove slot.
     Object& slot_remove(const key_type& k);
     /// Read only access to slots.
-    const slots_implem::content_type& slots_get () const;
+    const slots_implem& slots_get () const;
 
     /// Copy another object local slots, if not already present.
     void all_slots_copy(const rObject& other);

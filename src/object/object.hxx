@@ -110,11 +110,10 @@ namespace object
     return *this;
   }
 
-  inline
-  const Object::slots_implem::content_type&
+  inline const Object::slots_implem&
   Object::slots_get () const
   {
-    return slots_.container();
+    return slots_;
   }
 
 

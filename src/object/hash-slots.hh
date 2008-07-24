@@ -20,7 +20,10 @@ namespace object
       inline void erase(const key_type& key);
       inline bool has(const key_type& key) const;
       inline std::pair<bool, iterator> where(const key_type& key);
-      inline const content_type& container() const;
+      iterator begin();
+      iterator end();
+      const_iterator begin() const;
+      const_iterator end() const;
 
     private:
       content_type content_;
