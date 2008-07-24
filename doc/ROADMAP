@@ -73,9 +73,12 @@ This requires:
 
 This requires that we can properly execute some code at scope exit time.
 
-*** Real-time features
+*** Real-time features (done)
 
 We need to prioritize jobs or tagged jobs.
+
+Note: a working implementation has been coded and will need to be
+later refined according to real-world use cases.
 
 *** Add time and space benchmarks
 
