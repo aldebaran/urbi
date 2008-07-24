@@ -4,7 +4,8 @@
 
 namespace object
 {
-  bool HashSlots::set(const key_type& key, value_type v)
+  inline bool
+  HashSlots::set(const key_type& key, value_type v)
   {
     std::pair<iterator, bool> where = content_.insert(std::make_pair(key, v));
     if (!where.second)
@@ -12,12 +13,14 @@ namespace object
     return true;
   }
 
-  void HashSlots::update(const key_type& key, value_type v)
+  inline void
+  HashSlots::update(const key_type& key, value_type v)
   {
     content_[key] = v;
   }
 
-  HashSlots::value_type HashSlots::get(const key_type& key) const
+  inline HashSlots::value_type
+  HashSlots::get(const key_type& key) const
   {
     const_iterator where = content_.find(key);
     if (where == content_.end())
@@ -25,12 +28,14 @@ namespace object
     return where->second;
   }
 
-  void HashSlots::erase(const key_type& key)
+  inline void
+  HashSlots::erase(const key_type& key)
   {
     content_.erase(key);
   }
 
-  bool HashSlots::has(const key_type& key) const
+  inline bool
+  HashSlots::has(const key_type& key) const
   {
     return libport::mhas(content_, key);
   }
