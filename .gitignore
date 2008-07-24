@@ -6,6 +6,7 @@ build-aux
 configure
 dev/*.pyc
 include/libport
+lib
 lib/libport
 lib/network
 sdk
