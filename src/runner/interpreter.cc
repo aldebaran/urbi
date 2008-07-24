@@ -291,10 +291,8 @@ namespace runner
     // Evaluate the first child in this runner
     rRoutine code = eval(e->children_get().front()).unsafe_cast<object::Code>();
     assert(code);
-    object::objects_type args;
     // This is a closure, it won't use its 'this'
-    args.push_back(0);
-    apply_urbi(code, SYMBOL(), args, 0);
+    apply_urbi(code, SYMBOL(), list_of (rObject()), 0);
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
 
@@ -581,8 +579,7 @@ namespace runner
     `-------------------------*/
 
     // Gather the arguments, including the target.
-    object::objects_type args;
-    args.push_back (tgt);
+    object::objects_type args = list_of (tgt);
 
     ast::exps_type ast_args =
       input_ast_args ? *input_ast_args : ast::exps_type();
@@ -795,10 +792,7 @@ namespace runner
 		  true))
 	      {
 		rObject e = topLevel->slot_get(SYMBOL(LT_LT));
-		object::objects_type args;
-		args.push_back(topLevel);
-		args.push_back(result_);
-		apply(e, SYMBOL(topLevel), args);
+		apply(e, SYMBOL(topLevel), list_of (topLevel) (result_));
 	      }
 	      else if (toplevel_debug)
 		lobby_->value_get().connection.new_result(result_);
