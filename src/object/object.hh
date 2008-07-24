@@ -11,7 +11,6 @@
 # include <set>
 
 # include <boost/function.hpp>
-# include <boost/optional.hpp>
 
 # include <libport/shared-ptr.hh>
 
@@ -102,14 +101,11 @@ namespace object
     rObject
     safe_slot_locate(const key_type& k, bool value = false) const;
 
-
     /// Lookup field in object hierarchy.
     /// \param name The name of the slot to search
-    /// \param def  The optional default value
-    /// \throw LookupError if \a def isn't given and the slot isn't found.
+    /// \throw LookupError if the slot isn't found.
     rObject
-    slot_get(const key_type& k,
-             boost::optional<rObject> def = boost::optional<rObject>()) const;
+    slot_get(const key_type& k) const;
 
     /// Implement copy-on-write if the owner of the scope is not this.
     /// Otherwise, falls-thru to own_slot_update().

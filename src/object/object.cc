@@ -169,17 +169,9 @@ namespace object
   }
 
   rObject
-  Object::slot_get (const key_type& k, boost::optional<rObject> def) const
+  Object::slot_get (const key_type& k) const
   {
-    rObject value;
-    if (def)
-      value = slot_locate(k, true, true);
-    else
-      value = safe_slot_locate(k, true);
-    if (value)
-      return value;
-    else
-      return def.get();
+    return safe_slot_locate(k, true);
   }
 
 
