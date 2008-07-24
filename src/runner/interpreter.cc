@@ -970,8 +970,8 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      object::rObject toplevel = object::tag_class;
-      object::rObject parent = toplevel;
+      rObject toplevel = object::tag_class;
+      rObject parent = toplevel;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
       foreach (const libport::Symbol& elt, chain)
