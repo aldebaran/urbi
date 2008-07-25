@@ -207,6 +207,8 @@ namespace object
 
     // Object.addProto(Global)
     object_class->proto_add(global_class);
+
+    CxxObject::cleanup();
   }
 
   // This is only used to created references on unused classes, so

@@ -21,6 +21,7 @@ namespace object
      */
     static void initialize(rObject global);
     static void create();
+    static void cleanup();
 
     /// Register a C++ class to be bound on the urbi side.
     /** \param T      The class to bind.
