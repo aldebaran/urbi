@@ -45,28 +45,29 @@ namespace flower
     finally << scoped_set(in_loop_, true)
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
-    super_type::visit(code);
 
     // Do nothing if neither break nor continue.
     if (!has_break_ && !has_continue_)
+    {
+      super_type::visit(code);
       return;
+    }
 
-    ast::rWhile copy = result_.unsafe_cast<ast::While>();
     parser::Tweast tweast;
 
     if (has_break_)
       tweast << "var loopBreakTag = new Tag | "
 	     << "loopBreakTag:";
 
-    tweast << "while (" << copy->test_get() << ") {";
+    tweast << "while (" << code->test_get() << ") {";
 
     if (has_continue_)
       tweast << "var loopContinueTag = new Tag | "
 	     << "loopContinueTag: {"
-	     << copy->body_get()
+	     << code->body_get()
 	     << "}";
     else
-      tweast << copy->body_get();
+      tweast << code->body_get();
 
     tweast << "}";
 
@@ -80,16 +81,14 @@ namespace flower
     finally << scoped_set(in_loop_, true)
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
-    super_type::visit(code);
 
     parser::Tweast tweast;
 
-    ast::rForeach copy = result_.unsafe_cast<ast::Foreach>();
     if (has_break_)
       tweast << "var loopBreakTag = new Tag | "
 	     << "loopBreakTag:";
 
-    tweast << copy->list_get();
+    tweast << code->list_get();
 
     switch (code->flavor_get())
     {
@@ -105,13 +104,13 @@ namespace flower
       pabort("Invalid flavor for 'for ... in': " << code->flavor_get());
     }
 
-    tweast << "closure(" << copy->index_get()->what_get() << ") {";
+    tweast << "closure(" << code->index_get()->what_get() << ") {";
 
     if (has_continue_)
       tweast << "var loopContinueTag = new Tag | "
 	     << "loopContinueTag: {";
 
-    tweast << copy->body_get();
+    tweast << code->body_get();
 
     if (has_continue_)
       tweast << "}";
