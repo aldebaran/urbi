@@ -11,7 +11,7 @@ include $(top_srcdir)/build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = bison lib/libport src sdk tests . doc
+SUBDIRS = bison sdk lib/libport src tests . doc
 
 # build-aux.
 EXTRA_DIST +=					\
