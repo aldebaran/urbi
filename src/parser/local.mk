@@ -68,7 +68,7 @@ nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 # from the Automake documentation.
 EXTRA_DIST += $(parser_dir)/ugrammar.y
 precompiled_symbols_hh_deps += $(parser_dir)/ugrammar.y
-ugrammar_deps = $(BISONXX_IN) $(parser_dir)/local.mk
+ugrammar_deps = $(BISONXX_IN) $(top_srcdir)/build-aux/fuse-switch $(parser_dir)/local.mk
 parser/ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
