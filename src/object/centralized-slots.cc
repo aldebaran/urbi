@@ -2,6 +2,9 @@
 
 namespace object
 {
+  // Allocated dynamically to avoid static destruction order
+  // fiasco. Some objects could indeed be destroyed after the hash
+  // table is destroyed.
   CentralizedSlots::content_type*
     CentralizedSlots::content_ =
     new CentralizedSlots::content_type();
