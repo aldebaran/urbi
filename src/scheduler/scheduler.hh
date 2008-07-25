@@ -152,7 +152,7 @@ namespace scheduler
     jobs_type::iterator job_p_;
 
     /// Coroutine corresponding to the scheduler.
-    Coro* coro_;
+    Coro coro_;
 
     /// Has there been a possible side-effect since last time we reset
     /// this field?

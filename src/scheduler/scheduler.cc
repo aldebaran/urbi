@@ -25,20 +25,18 @@ namespace scheduler
   Scheduler::Scheduler(boost::function0<libport::utime_t> get_time)
     : get_time_(get_time)
     , current_job_(0)
-    , coro_(new Coro)
     , possible_side_effect_(true)
     , cycle_(0)
     , ready_to_die_(false)
     , real_time_behaviour_(false)
   {
     ECHO("Initializing main coroutine");
-    coroutine_initialize_main(coro_);
+    coroutine_initialize_main(&coro_);
   }
 
   Scheduler::~Scheduler()
   {
     ECHO("Destroying scheduler");
-    delete coro_;
   }
 
   // This function is required to start a new job using the libcoroutine.
@@ -175,7 +173,7 @@ namespace scheduler
 	current_job_ = job;
 	ECHO("Job " << *job << " is starting");
 	job = 0;
-	coroutine_start(coro_,
+	coroutine_start(&coro_,
                         current_job_->coro_get(), run_job, current_job_.get());
 	current_job_ = 0;
 	deadline = SCHED_IMMEDIATE;
@@ -232,7 +230,7 @@ namespace scheduler
 	      << (job->side_effect_free_get() ? " (side-effect free)" : ""));
 	possible_side_effect_ |= !job->side_effect_free_get();
 	assert(!current_job_);
-	coroutine_switch_to(coro_, job->coro_get());
+	coroutine_switch_to(&coro_, job->coro_get());
 	assert(current_job_);
 	current_job_ = 0;
 	possible_side_effect_ |= !job->side_effect_free_get();
@@ -310,7 +308,7 @@ namespace scheduler
       Coro* current_coro = job->coro_get();
       if (job->terminated())
 	job = 0;
-      coroutine_switch_to(current_coro, coro_);
+      coroutine_switch_to(current_coro, &coro_);
 
       // If we regain control, we are not dead.
       assert(job);
