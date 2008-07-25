@@ -331,6 +331,12 @@ UServer::work_handle_stopall_ ()
 //! UServer destructor.
 UServer::~UServer()
 {
+  // When a connection gets destroyed, it indirectly calls the scheduler
+  // in order to stop its associated connection tag. Since we are going
+  // to destroy the scheduler, we must ensure that those actions are
+  // carried out first.
+  connections_.clear();
+  delete scheduler_;
 }
 
 void
