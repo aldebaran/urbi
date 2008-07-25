@@ -28,6 +28,7 @@
 #include <string>
 
 #include <boost/bind.hpp>
+#include <boost/checked_delete.hpp>
 #include <boost/format.hpp>
 #if ! defined LIBPORT_URBI_ENV_AIBO
 # include <boost/thread.hpp>
@@ -470,13 +471,14 @@ UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   bool isStdin = (base == std::string("/dev/stdin"));
   libport::Finally finally;
   if (isStdin)
-    is = & std::cin;
+    is = &std::cin;
   else
   {
     try
     {
-      is = new std::ifstream(find_file (base).c_str (), std::ios::binary);
-      finally << boost::bind(operator delete, is);
+      std::string file = find_file(base);
+      is = new std::ifstream(file.c_str(), std::ios::binary);
+      finally << boost::bind(boost::checked_delete<std::istream>, is);
     }
     catch (libport::file_library::Not_found&)
     {
