@@ -16,7 +16,7 @@ namespace object
   class Primitive: public CxxObject
   {
   public:
-    typedef boost::function2<rObject, runner::Runner&, objects_type> value_type;
+    typedef boost::function2<rObject, runner::Runner&, objects_type&> value_type;
 
     Primitive();
     Primitive(rPrimitive model);

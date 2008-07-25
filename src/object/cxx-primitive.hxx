@@ -1,5 +1,5 @@
 #include <boost/bind.hpp>
- #include <boost/tr1/type_traits.hpp>
+#include <boost/tr1/type_traits.hpp>
 
 #include <object/any-to-boost-function.hh>
 #include <object/cxx-conversions.hh>
@@ -31,15 +31,15 @@ namespace object
     };
   }
 
-# define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) \
-  boost::function##ArgsC                        \
-  <IF(Ret, R, void),                            \
-   S                                            \
-   COMMA(Run)  WHEN(Run, runner::Runner&)       \
-   COMMA(Arg1) WHEN(Arg1, A1)                   \
-   COMMA(Arg2) WHEN(Arg2, A2)                   \
-   COMMA(Arg3) WHEN(Arg3, A3)                   \
-   >                                            \
+# define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)  \
+  boost::function##ArgsC                                \
+  <IF(Ret, R, void),                                    \
+   S                                                    \
+   COMMA(Run)  WHEN(Run, runner::Runner&)               \
+   COMMA(Arg1) WHEN(Arg1, A1)                           \
+   COMMA(Arg2) WHEN(Arg2, A2)                           \
+   COMMA(Arg3) WHEN(Arg3, A3)                           \
+   >                                                    \
 
 # define PRIMITIVE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)                   \
   template                                                              \
@@ -53,7 +53,7 @@ namespace object
   {                                                                     \
     static rObject primitive(                                           \
       runner::Runner& WHEN(Run, r),                                     \
-      object::objects_type args,                                        \
+      object::objects_type& args,                                       \
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
     {                                                                   \
@@ -98,7 +98,7 @@ namespace object
   {                                                             \
     static rObject primitive(                                   \
       runner::Runner& WHEN(Run, r),                             \
-      object::objects_type args,                                \
+      object::objects_type& args,                               \
       BOOST_LIST_TYPE_MET(Ret, ArgsC, Run) f,                   \
       const libport::Symbol& name)                              \
     {                                                           \
@@ -120,7 +120,7 @@ namespace object
   {                                                             \
     static rObject primitive(                                   \
       runner::Runner& WHEN(Run, r),                             \
-      object::objects_type args,                                \
+      object::objects_type& args,                               \
       BOOST_LIST_TYPE(Ret, ArgsC, Run) f,                       \
       const libport::Symbol&)                                   \
     {                                                           \
