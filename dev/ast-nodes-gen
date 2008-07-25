@@ -265,7 +265,9 @@ def print_attributes (node, header, inline, impl):
 	print "  " + node.name + "::" + a.name + "_set (" + \
 	      ast.decl (a.W_type (), a.name) + ")"
 	print "  {"
-	print "    " + a.name + "_ = "+ a.name +";"
+	if a.pointer_p():
+	  print "    delete %s;" % a.name_()
+	print "    %s = %s;" % (a.name_(), a.name)
 	print "  }"
 	if a.hide:
 	  print "  //->>"
