@@ -692,7 +692,13 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        {
 	 BEGIN sc_default;
 	 if (*yytext == '\'')
-	   RETURN_SOME_SYMBOL(IDENTIFIER, valp->as<std::string>())
+	 {
+	   PRE_SKIP();
+	   std::string res;
+	   std::swap(res, valp->as<std::string>());
+	   valp->destroy<std::string>();
+	   RETURN_SOME_SYMBOL(IDENTIFIER, res);
+	 }
 	 else
 	   RETURN(STRING);
        }
