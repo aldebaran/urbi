@@ -830,9 +830,9 @@ Function:
   super: Routine
   attributes:
     - closed_variables:
-        type: symbols_type
+        type: symbols_type*
         access: rwW
-        init: 'symbols_type()'
+        init: 'new symbols_type()'
   # Cloning a list of reference such as this one requires a mapping table
   # in the cloner. Forbid it for now.
   cloner_prologue: assert(!e->local_variables_get());
