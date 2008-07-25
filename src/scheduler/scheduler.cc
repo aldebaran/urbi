@@ -253,13 +253,13 @@ namespace scheduler
 	jobs_.push_back(job);   // Job not started, keep it in queue
     }
 
-    /// If during this cycle a new job has been created by an existing job,
-    /// start it. Also start if a possible side effect happened, it may have
-    /// occurred later then the waiting jobs in the cycle.
+    // If during this cycle a new job has been created by an existing job,
+    // start it. Also start if a possible side effect happened, it may have
+    // occurred later then the waiting jobs in the cycle.
     if (jobs_to_start_ || possible_side_effect_)
       deadline = SCHED_IMMEDIATE;
 
-    /// If we are ready to die and there are no jobs left, then die.
+    // If we are ready to die and there are no jobs left, then die.
     if (ready_to_die_ && jobs_.empty())
       deadline = SCHED_EXIT;
 

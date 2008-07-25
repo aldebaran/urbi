@@ -11,7 +11,6 @@
 
 namespace scheduler
 {
-
   inline Job&
   Scheduler::current_job() const
   {
