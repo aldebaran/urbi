@@ -223,30 +223,6 @@ namespace object
     slots_implem slots_;
   };
 
-  /// Helpers to call Urbi functions from C++.
-
-  // self.'msg'(args)
-  rObject urbi_call(runner::Runner& r,
-		    rObject self, libport::Symbol msg, objects_type args);
-
-  // self.'msg'(args) for up to five arguments
-  rObject urbi_call(runner::Runner& r,
-		    rObject self,
-		    libport::Symbol msg,
-		    rObject arg1 = 0,
-		    rObject arg2 = 0,
-		    rObject arg3 = 0,
-		    rObject arg4 = 0,
-		    rObject arg5 = 0);
-
-  // owner.getSlot(msg).apply([self])
-  rObject urbi_call_function(runner::Runner& r, rObject self,
-                             rObject function_owner, libport::Symbol msg);
-  // owner.getSlot(msg).apply([self, args])
-  rObject urbi_call_function(runner::Runner& r, rObject self,
-                             rObject function_owner, libport::Symbol msg,
-                             objects_type args);
-
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
   template<class F> bool for_all_protos(rObject& r, F& f);
 

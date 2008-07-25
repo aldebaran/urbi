@@ -33,7 +33,9 @@
 #include <object/tag-class.hh>
 #include <object/urbi-exception.hh>
 
+#include <runner/call.hh>
 #include <runner/interpreter.hh>
+
 #include <parser/uparser.hh>
 
 namespace runner

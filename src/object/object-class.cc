@@ -11,8 +11,6 @@
 
 #include <kernel/uconnection.hh>
 
-#include <runner/runner.hh>
-
 #include <object/cxx-primitive.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
@@ -20,6 +18,9 @@
 #include <object/object-class.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
+
+#include <runner/call.hh>
+#include <runner/runner.hh>
 
 namespace object
 {

@@ -58,8 +58,11 @@
 #include <object/primitive-class.hh>
 #include <object/primitives.hh>
 #include <object/system-class.hh>
+
+#include <runner/call.hh>
 #include <runner/runner.hh>
 #include <runner/sneaker.hh>
+
 #include <scheduler/scheduler.hh>
 
 #include <kernel/server-timer.hh>

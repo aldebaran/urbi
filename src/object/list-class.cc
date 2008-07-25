@@ -16,6 +16,7 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 
+#include <runner/call.hh>
 #include <runner/runner.hh>
 #include <runner/interpreter.hh>
 

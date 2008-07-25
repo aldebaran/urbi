@@ -8,6 +8,8 @@
 #include <libport/finally.hh>
 
 #include <runner/at-handler.hh>
+#include <runner/call.hh>
+
 #include <scheduler/tag.hh>
 
 namespace runner

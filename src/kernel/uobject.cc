@@ -28,6 +28,9 @@
 #include <object/string-class.hh>
 #include <object/urbi-exception.hh>
 
+# include <runner/call.hh>
+# include <runner/runner.hh>
+
 #include <urbi/uobject.hh>
 
 

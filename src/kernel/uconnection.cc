@@ -37,6 +37,7 @@
 
 #include <binder/binder.hh>
 
+#include <runner/call.hh>
 #include <runner/sneaker.hh>
 #include <runner/shell.hh>
 

@@ -1,6 +1,8 @@
 dist_libkernel_la_SOURCES +=			\
 runner/at-handler.cc				\
 runner/at-handler.hh				\
+runner/call.cc					\
+runner/call.hh					\
 runner/fwd.hh					\
 runner/interpreter.cc				\
 runner/interpreter.hh				\
