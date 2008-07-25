@@ -15,6 +15,7 @@
 # include <libport/shared-ptr.hh>
 
 # include <object/fwd.hh>
+# include <object/centralized-slots.hh>
 # include <object/hash-slots.hh>
 # include <object/sorted-vector-slots.hh>
 # include <object/vector-slots.hh>
@@ -75,7 +76,7 @@ namespace object
     /// \name The slots.
     /// \{
     /// The slots implementation
-    typedef HashSlots slots_implem;
+    typedef CentralizedSlots slots_implem;
     /// One slot.
     typedef std::set<const Object*> objects_set_type;
 

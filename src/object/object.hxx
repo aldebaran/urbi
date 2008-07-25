@@ -34,6 +34,7 @@ namespace object
   inline
   Object::~Object ()
   {
+    slots_.finalize(this);
     if (!protos_cache_)
       delete protos_;
   }
@@ -99,14 +100,14 @@ namespace object
   rObject
   Object::own_slot_get(const key_type& k) const
   {
-    return slots_.get(k);
+    return slots_.get(this, k);
   }
 
   inline
   Object&
   Object::slot_remove(const key_type& k)
   {
-    slots_.erase (k);
+    slots_.erase(this, k);
     return *this;
   }
 

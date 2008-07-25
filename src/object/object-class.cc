@@ -186,8 +186,10 @@ namespace object
     rObject obj = args[0];
 
     List::value_type l;
-    foreach (const Slots::slot_type& p, obj->slots_get())
-      l.push_back (new String(p.first));
+    for (Object::slots_implem::iterator slot = obj->slots_get().begin(obj.get());
+         slot != obj->slots_get().end(obj.get());
+         ++slot)
+      l.push_back (new String(slot->first.second));
 
     return new List(l);
   }

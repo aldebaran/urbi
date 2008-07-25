@@ -39,6 +39,9 @@ object/any-to-boost-function.hh			\
 object/any-to-boost-function.hxx		\
 object/barrier-class.cc				\
 object/barrier-class.hh				\
+object/centralized-slots.hh			\
+object/centralized-slots.hxx			\
+object/centralized-slots.cc			\
 object/code-class.cc				\
 object/code-class.hh				\
 object/cxx-conversions.hh			\

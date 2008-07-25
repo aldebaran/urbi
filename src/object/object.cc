@@ -158,7 +158,7 @@ namespace object
   Object&
   Object::slot_set(const key_type& k, rObject o)
   {
-    if (!slots_.set(k, o))
+    if (!slots_.set(this, k, o))
       throw RedefinitionError(k);
     return *this;
   }
@@ -206,15 +206,17 @@ namespace object
   void
   Object::own_slot_update (const key_type& k, rObject v)
   {
-    slots_.update(k, v);
+    slots_.update(this, k, v);
   }
 
   void
   Object::all_slots_copy(const rObject& other)
   {
-    foreach (const Slots::slot_type& slot, other->slots_get())
-      if (!own_slot_get(slot.first))
-        slot_set(slot.first, slot.second);
+    for (slots_implem::iterator slot = slots_.begin(other.get());
+         slot != slots_.end(other.get());
+         ++slot)
+      if (!own_slot_get(slot->first.second))
+        slot_set(slot->first.second, slot->second);
   }
 
 
@@ -226,8 +228,8 @@ namespace object
   Object::properties_get()
   {
     rDictionary res;
-    if (slots_.has(SYMBOL(properties)))
-      res = slots_.get(SYMBOL(properties)).unsafe_cast<Dictionary>();
+    if (slots_.has(this, SYMBOL(properties)))
+      res = slots_.get(this, SYMBOL(properties)).unsafe_cast<Dictionary>();
     return res;
   }
 
@@ -386,10 +388,13 @@ namespace object
     o << " {" << libport::incendl;
     protos_dump(o, runner);
     special_slots_dump (o, runner);
-    foreach(const Slots::slot_type& s, slots_)
+
+    for (slots_implem::const_iterator slot = slots_.begin(this);
+         slot != slots_.end(this);
+         ++slot)
     {
-      o << s.first << " = ";
-      s.second->dump(o, runner, depth_max) << libport::iendl;
+      o << slot->first.second << " = ";
+      slot->second->dump(o, runner, depth_max) << libport::iendl;
     }
 
     o << libport::decindent << '}';
