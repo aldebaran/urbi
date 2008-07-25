@@ -36,7 +36,7 @@ namespace object
     rFloat exp();
     rFloat fabs();
     rFloat log();
-    rFloat minus(objects_type args);
+    rFloat minus(objects_type& args);
     using Object::operator<;
     rObject operator <(rFloat rhs);
     rFloat operator ~();

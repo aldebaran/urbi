@@ -202,7 +202,7 @@ namespace object
     return new Float(res);
   }
 
-  rFloat Float::minus(objects_type args)
+  rFloat Float::minus(objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(0, 1);
     if (args.empty())

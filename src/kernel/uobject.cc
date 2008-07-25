@@ -137,7 +137,7 @@ static void uobjects_load_module(rObject, const std::string& name)
 /*! Initialize plugin UObjects.
  \param args object in which the instances will be stored.
 */
-rObject uobject_initialize(runner::Runner&, objects_type args)
+rObject uobject_initialize(runner::Runner&, objects_type& args)
 {
   where = args.front();
   uobjects_reload(where);
@@ -151,7 +151,7 @@ rObject uobject_initialize(runner::Runner&, objects_type args)
 
 static libport::hash_map<std::string, rObject> uobject_map;
 
-static rObject wrap_ucallback_notify(runner::Runner&, object::objects_type,
+static rObject wrap_ucallback_notify(runner::Runner&, object::objects_type&,
 			      urbi::UGenericCallback* ugc)
 {
   ECHO("uvwrapnotify");
@@ -162,7 +162,7 @@ static rObject wrap_ucallback_notify(runner::Runner&, object::objects_type,
   return object::void_class;
 }
 
-static rObject wrap_ucallback(runner::Runner&, object::objects_type ol,
+static rObject wrap_ucallback(runner::Runner&, object::objects_type& ol,
 		       urbi::UGenericCallback* ugc)
 {
   urbi::UList l;
@@ -181,7 +181,7 @@ static rObject wrap_ucallback(runner::Runner&, object::objects_type ol,
 
 
 static rObject
-uobject_clone(runner::Runner&, object::objects_type l)
+uobject_clone(runner::Runner&, object::objects_type& l)
 {
   rObject proto = l.front();
   return uobject_new(proto);
@@ -352,7 +352,7 @@ namespace urbi
       ECHO( "binding " << p.first << "." << method );
       me->slot_set(libport::Symbol(method),
 		   object::make_primitive(
-	boost::function2<rObject, Runner&, objects_type>
+	boost::function2<rObject, Runner&, objects_type&>
 	(boost::bind(&wrap_ucallback, _1 ,_2, this)), SYMBOL(callback)));
     }
     if (s.type == "var" || s.type == "varaccess")
@@ -372,7 +372,7 @@ namespace urbi
       object::objects_type args = list_of
 	(var)
 	(object::make_primitive(
-	boost::function2<rObject, Runner&, objects_type>
+	boost::function2<rObject, Runner&, objects_type&>
 	(boost::bind(&wrap_ucallback_notify, _1 ,_2, this)), SYMBOL(callback)));
       getCurrentRunner().apply(f, sym, args);
     }

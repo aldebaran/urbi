@@ -23,7 +23,7 @@ namespace object
     Lobby(rLobby model);
     Lobby(value_type value);
 
-    void send(objects_type args);
+    void send(objects_type& args);
     void write(rString data);
     value_type& value_get();
 

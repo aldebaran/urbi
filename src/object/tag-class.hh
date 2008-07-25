@@ -24,13 +24,13 @@ namespace object
     Tag(rTag model);
     const value_type& value_get() const;
 
-    void block(runner::Runner&, objects_type);
-    static rTag _new(objects_type);
+    void block(runner::Runner&, objects_type&);
+    static rTag _new(objects_type&);
     void freeze(runner::Runner&);
     rString name();
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
-    void stop(runner::Runner&, objects_type);
+    void stop(runner::Runner&, objects_type&);
     void unblock(runner::Runner&);
     void unfreeze(runner::Runner&);
 

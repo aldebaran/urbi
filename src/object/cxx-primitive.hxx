@@ -82,14 +82,14 @@ namespace object
   <IF(Ret, R, void),                            \
    S,                                           \
    WHEN(Run, runner::Runner&) COMMA(Run)        \
-   object::objects_type                         \
+   object::objects_type&                        \
    >                                            \
 
 # define BOOST_LIST_TYPE(Ret, ArgsC, Run)       \
   boost::function##ArgsC                        \
   <IF(Ret, R, void),                            \
    WHEN(Run, runner::Runner&) COMMA(Run)        \
-   object::objects_type                         \
+   object::objects_type&                        \
    >                                            \
 
 # define PRIMITIVE_LIST_MET(Ret, ArgsC, Run)                    \

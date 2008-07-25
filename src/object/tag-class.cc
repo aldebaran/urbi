@@ -43,7 +43,7 @@ namespace object
   }
 
   void
-  Tag::block(runner::Runner& r, objects_type args)
+  Tag::block(runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(0, 1);
     rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
@@ -65,7 +65,7 @@ namespace object
   }
 
   rTag
-  Tag::_new(objects_type args)
+  Tag::_new(objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(1, 2);
     libport::Symbol tag_short_name;
@@ -97,7 +97,7 @@ namespace object
   }
 
   void
-  Tag::stop(runner::Runner& r, objects_type args)
+  Tag::stop(runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(0, 1);
     rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);

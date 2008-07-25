@@ -42,7 +42,7 @@ namespace object
   }
 
   void
-  Lobby::send(objects_type args)
+  Lobby::send(objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE (1, 2);
     // Second argument is the tag name.
