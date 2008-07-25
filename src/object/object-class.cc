@@ -31,14 +31,14 @@ namespace object
   `--------------------*/
 
   static rObject
-  object_class_clone (runner::Runner&, objects_type args)
+  object_class_clone (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT (1);
     return args[0]->clone();
   }
 
   static rObject
-  object_class_init (runner::Runner&, objects_type args)
+  object_class_init (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT (1);
     return args[0];
@@ -47,7 +47,7 @@ namespace object
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_dump (runner::Runner& r, objects_type args)
+  object_class_dump (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(1, 3);
 
@@ -91,7 +91,7 @@ namespace object
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
-  object_class_uid (runner::Runner&, objects_type args)
+  object_class_uid (runner::Runner&, objects_type& args)
   {
     static boost::format uid("0x%x");
     CHECK_ARG_COUNT(1);
@@ -102,7 +102,7 @@ namespace object
 
   /// Structural equality
   static rObject
-  object_class_sameAs(runner::Runner& r, objects_type args)
+  object_class_sameAs(runner::Runner& r, objects_type& args)
   {
     // Unless overridden, structural equality is physical equality.
     CHECK_ARG_COUNT (2);
@@ -111,14 +111,14 @@ namespace object
 
   /// Physical equality
   static rObject
-  object_class_memSameAs(runner::Runner&, objects_type args)
+  object_class_memSameAs(runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT (2);
     return to_boolean(args[0] == args[1]);
   }
 
   static rObject
-  object_class_apply(runner::Runner&, objects_type args)
+  object_class_apply(runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
     type_check<List>(args[1], SYMBOL(apply));
@@ -129,7 +129,7 @@ namespace object
   }
 
   static rObject
-  object_class_callMessage (runner::Runner& r, objects_type args)
+  object_class_callMessage (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT (2);
     // We need to set the 'code' slot: make a copy of the call message.
@@ -152,7 +152,7 @@ namespace object
   /// Adding or removing protos. \a Verb is "add" or "remove".
 #define CHANGE_PARENTS(Verb)						\
   static rObject							\
-  object_class_ ## Verb ## Proto (runner::Runner&, objects_type args)	\
+  object_class_ ## Verb ## Proto (runner::Runner&, objects_type& args)	\
   {									\
     CHECK_ARG_COUNT(2);							\
     args[0]->proto_ ## Verb (args[1]);					\
@@ -167,7 +167,7 @@ namespace object
 
   /// Get protos' list.
   static rObject
-  object_class_protos (runner::Runner&, objects_type args)
+  object_class_protos (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(1);
     return args[0]->urbi_protos_get ();
@@ -181,7 +181,7 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (runner::Runner&, objects_type args)
+  object_class_slotNames (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
@@ -197,7 +197,7 @@ namespace object
 
   /// Get a slot content.
   static rObject
-  object_class_getSlot (runner::Runner&, objects_type args)
+  object_class_getSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
@@ -208,7 +208,7 @@ namespace object
 
   // self.getLazyLocalSlot(SLOT-NAME, DEFAULT-VALUE, CREATE?).
   static rObject
-  object_class_getLazyLocalSlot (runner::Runner&, objects_type args)
+  object_class_getLazyLocalSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT (4);
 
@@ -230,7 +230,7 @@ namespace object
 
   /// Remove a slot.
   static rObject
-  object_class_removeSlot (runner::Runner&, objects_type args)
+  object_class_removeSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
@@ -242,7 +242,7 @@ namespace object
 
    /// Locate a slot.
   static rObject
-  object_class_locateSlot (runner::Runner&, objects_type args)
+  object_class_locateSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
     rString arg1 = args[1].unsafe_cast<String>();
@@ -253,7 +253,7 @@ namespace object
   }
 
   static rObject
-  object_class_setSlot (runner::Runner&, objects_type args)
+  object_class_setSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
     rString arg1 = args[1].unsafe_cast<String>();
@@ -263,7 +263,7 @@ namespace object
   }
 
   static rObject
-  object_class_updateSlot (runner::Runner& r, objects_type args)
+  object_class_updateSlot (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
     rString arg1 = args[1].unsafe_cast<String>();
@@ -272,7 +272,7 @@ namespace object
   }
 
   static rObject
-  object_class_changeSlot (runner::Runner& r, objects_type args)
+  object_class_changeSlot (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
     rString arg1 = args[1].unsafe_cast<String>();
@@ -282,7 +282,7 @@ namespace object
   }
 
   static rObject
-  object_class_isA(runner::Runner&, objects_type args)
+  object_class_isA(runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT (2);
     return new Float(is_a(args[0], args[1])? 1.0:0.0);
