@@ -223,24 +223,11 @@
   while (0)
 };
 
-%code variant
-{
-  ast::flavor_type,
-  std::string,
-  libport::Symbol,
-  ast::rExp,
-  ast::rCall,
-  ast::rNary,
-  ast::rTag,
-  ::parser::cases_type,
-  ::parser::case_type,
-  int,
-  float,
-  event_match_type,
-  tweast_pointer,
-  exps_pointer,
-  symbols_pointer
-};
+// We use variants.
+%define variant
+// Make sure we do not stupid thing.
+%define assert
+
 %printer { debug_stream() << libport::deref << $$; } <ast::rCall>;
 
 
