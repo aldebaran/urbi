@@ -21,10 +21,6 @@
 #include <ast/nary.hh>
 #include <ast/print.hh>
 
-#include <binder/bind.hh>
-#include <flower/flow.hh>
-#include <rewrite/rewrite.hh>
-
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -34,6 +30,7 @@
 
 #include <parser/uparser.hh>
 #include <parser/parse-result.hh>
+#include <parser/transform.hh>
 
 #include <binder/binder.hh>
 
@@ -229,7 +226,7 @@ UConnection::received (const char* buffer, size_t length)
     if (ast::rNary ast = result->ast_get())
     {
       ECHO ("parsed: {{{" << *ast << "}}}");
-      ast = binder::bind(flower::flow(rewrite::rewrite(ast)));
+      ast = parser::transform(ast);
       assert(ast);
       ECHO ("bound and flowed: {{{" << *ast << "}}}");
       // Append to the current list.

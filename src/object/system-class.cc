@@ -9,10 +9,6 @@
 #include <memory>
 #include <sstream>
 
-#include <binder/bind.hh>
-#include <flower/flow.hh>
-#include <rewrite/rewrite.hh>
-
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -23,6 +19,8 @@
 #include <object/system-class.hh>
 #include <object/tag-class.hh>
 #include <object/task-class.hh>
+
+#include <parser/transform.hh>
 
 #include <runner/at-handler.hh>
 #include <runner/runner.hh>
@@ -48,8 +46,7 @@ namespace object
       run(errs);
     }
 
-    ast::rConstAst ast =
-      binder::bind(flower::flow(rewrite::rewrite(p->ast_get())));
+    ast::rConstAst ast = parser::transform(p->ast_get());
     if (!ast)
       throw e;
 

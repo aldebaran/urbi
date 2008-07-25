@@ -20,6 +20,8 @@ parser/parser-impl.hh				\
 parser/parser-impl.cc				\
 parser/parser-utils.hh				\
 parser/parser-utils.cc				\
+parser/transform.hh				\
+parser/transform.cc				\
 parser/uparser.hh				\
 parser/uparser.cc
 
