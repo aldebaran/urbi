@@ -90,20 +90,23 @@ namespace runner
     /// One cannot have both a call message and args.
     virtual rObject apply(const rObject& func,
                           const libport::Symbol msg,
-                          object::objects_type args,
+                          object::objects_type& args,
                           rObject call_message = 0);
 
     virtual rObject apply(const rObject& func,
                           const libport::Symbol msg,
-                          object::objects_type args,
+                          object::objects_type& args,
                           boost::optional<ast::loc> loc,
                           rObject call_message = 0);
 
     /// Helpers to apply a function with the arguments as ast chunks
-    rObject apply(rObject tgt, const libport::Symbol& msg,
+    rObject apply(rObject tgt,
+                  const libport::Symbol& msg,
                   const ast::exps_type* args,
                   boost::optional<ast::loc> loc);
-    rObject apply(rObject tgt, rObject f, const libport::Symbol& msg,
+    rObject apply(rObject tgt,
+                  rObject f,
+                  const libport::Symbol& msg,
                   const ast::exps_type* args,
                   boost::optional<ast::loc> loc);
 

@@ -88,7 +88,7 @@ namespace runner
     /// One cannot have both a call message and args.
     virtual rObject apply(const rObject& func,
 			  const libport::Symbol msg,
-			  object::objects_type args,
+			  object::objects_type& args,
 			  rObject call_message = 0) = 0;
 
     /// Return the current scope_tag, after creating it if needed.
@@ -99,6 +99,10 @@ namespace runner
     /// \{
 
     /// Build a call message
+    /**
+     *  \a args is taken by reference for performance sake, and might
+     *  be arbitrarily modified by apply!
+     */
     virtual rObject build_call_message(const rObject& tgt,
 				       const rObject& code,
 				       const libport::Symbol& msg,

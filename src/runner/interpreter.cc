@@ -402,7 +402,7 @@ namespace runner
   object::rObject
   Interpreter::apply(const rObject& func,
                      const libport::Symbol msg,
-                     object::objects_type args,
+                     object::objects_type& args,
                      rObject call_message)
   {
     return apply(func, msg, args, boost::optional<ast::loc>(), call_message);
@@ -412,7 +412,7 @@ namespace runner
   object::rObject
   Interpreter::apply(const rObject& func,
                      const libport::Symbol msg,
-                     object::objects_type args,
+                     object::objects_type& args,
                      boost::optional<ast::loc> loc,
                      rObject call_message)
   {
