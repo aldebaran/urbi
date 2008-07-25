@@ -157,6 +157,7 @@ class Node:
     self.super = ""
     self.super_non_nodes = []
     self.cloner_prologue = ""
+    self.clone_by_ref = False
     self.derived = []
     self.desc = ""
     self.inline = {}
@@ -187,6 +188,7 @@ class Node:
 	'printer',
 	'super',
         'cloner_prologue',
+	'clone_by_ref',
 	]:
 	warning ('unknown Node attribute: ' + name + "::" + key)
       self.__dict__[key] = dict[key]

@@ -190,20 +190,25 @@ for node in concrete:
 
   if node.cloner_prologue:
     print node.cloner_prologue
-  children_clone(node)
-  # Result.
-  args = node.ctor_args (False, False)
-  print "    %s* res = new %s (%s);" % (node.name, node.name, str(args))
-  # Copy the fields that are not passed as ctor arguments: the hidden
-  # one, and those with an "init" field.
-  for a in node.attributes:
-    if a.hide:
-      print "   //<<-"
-    if a.hide or a.init != None:
-      print "    res->%s_set(%s);" % (a.name, str(attribute_dup(a)))
-    if a.hide:
-      print "   //->>"
-  print "    result_ = res;"
+
+  if node.clone_by_ref:
+    print "    result_ = ast::r%s(const_cast<ast::%s*>(e.get()));" % \
+	  (node.name, node.name)
+  else:
+    children_clone(node)
+    # Result.
+    args = node.ctor_args (False, False)
+    print "    %s* res = new %s (%s);" % (node.name, node.name, str(args))
+    # Copy the fields that are not passed as ctor arguments: the hidden
+    # one, and those with an "init" field.
+    for a in node.attributes:
+      if a.hide:
+	print "   //<<-"
+      if a.hide or a.init != None:
+	print "    res->%s_set(%s);" % (a.name, str(attribute_dup(a)))
+      if a.hide:
+	print "   //->>"
+    print "    result_ = res;"
   if node.hide:
     print "    //>>"
   print """  }

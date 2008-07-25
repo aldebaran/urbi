@@ -134,6 +134,10 @@ printer_cc_prologue: |2
 #       inside:   in the class definition/namespace
 #       epilogue: after the class definition, in the namespace.
 #
+#  * clone_by_ref
+#    Boolean, by default false. If true, the cloner will simply
+#    reuse the node itself as it will never change.
+#
 #  * cloner_prologue
 #    Code to execute before cloning this node
 #
@@ -659,6 +663,7 @@ Noop:
 Implicit:
   super: Exp
   desc: /// Implicit target for messages.
+  clone_by_ref: true
   inline:
     header inside: |2
         public:
@@ -679,6 +684,7 @@ Float:
         type: ufloat
         access: r
         desc: Float value
+  clone_by_ref: true
   printer:
     - $value
 
@@ -689,6 +695,7 @@ String:
         type: 'std::string'
         access: r
         desc: String value
+  clone_by_ref: true
   printer:
     - "'\"'"
 # FIXME: It really stinks not to be able to use $value here.
