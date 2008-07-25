@@ -152,7 +152,7 @@
   }
 
   static ast::declarations_type*
-    symbols_to_decs(const ast::symbols_type* symbols,
+    symbols_to_decs(ast::symbols_type* symbols,
                     const ast::loc& loc)
   {
     if (!symbols)
@@ -160,6 +160,7 @@
     ast::declarations_type* res = new ast::declarations_type();
     foreach (const libport::Symbol& var, *symbols)
       res->push_back(new ast::Declaration(loc, var, new ast::Implicit(loc)));
+    delete symbols;
     return res;
   }
 
