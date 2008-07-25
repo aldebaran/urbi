@@ -62,7 +62,7 @@ namespace object
 
 private:
 
-  static content_type content_;
+  static content_type* content_;
 
   static loc_index_type& loc_index_;
 

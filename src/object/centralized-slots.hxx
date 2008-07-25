@@ -29,7 +29,7 @@ namespace object
   {
     if (has(owner, key))
       return false;
-    content_.insert(content(owner, key, v));
+    content_->insert(content(owner, key, v));
     return true;
   }
 
@@ -37,8 +37,8 @@ namespace object
   CentralizedSlots::update(Object* owner, const key_type& key, value_type v)
   {
     loc_index_type::iterator it = where(owner, key);
-    if (it == content_.end())
-      content_.insert(content(owner, key, v));
+    if (it == content_->end())
+      content_->insert(content(owner, key, v));
     else
       loc_index_.replace(it, content(owner, key, v));
   }
@@ -47,7 +47,7 @@ namespace object
   CentralizedSlots::get(const Object* owner, const key_type& key)
   {
     loc_index_type::iterator it = where(owner, key);
-    if (it == content_.end())
+    if (it == content_->end())
       return 0;
     return it->second;
   }
@@ -63,7 +63,7 @@ namespace object
   CentralizedSlots::has(Object* owner, const key_type& key)
   {
     loc_index_type::iterator it = where(owner, key);
-    return it != content_.end();
+    return it != content_->end();
   }
 
   inline CentralizedSlots::loc_index_type::iterator
