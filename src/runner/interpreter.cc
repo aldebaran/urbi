@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <deque>
 
-#include <boost/assign.hpp>
 #include <boost/range/iterator_range.hpp>
 
 #include <libport/finally.hh>
@@ -43,8 +42,6 @@ namespace runner
   using boost::bind;
   using boost::ref;
   using libport::Finally;
-
-  using namespace boost::assign;
 
 /// Address of \a Interpreter seen as a \c Job (Interpreter has multiple inheritance).
 #define JOB(Interpreter) static_cast<scheduler::Job*> (Interpreter)
@@ -292,7 +289,9 @@ namespace runner
     rRoutine code = eval(e->children_get().front()).unsafe_cast<object::Code>();
     assert(code);
     // This is a closure, it won't use its 'this'
-    apply_urbi(code, SYMBOL(), list_of (rObject()), 0);
+    object::objects_type args;
+    args.push_back(rObject());
+    apply_urbi(code, SYMBOL(), args, 0);
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
 
@@ -579,7 +578,8 @@ namespace runner
     `-------------------------*/
 
     // Gather the arguments, including the target.
-    object::objects_type args = list_of (tgt);
+    object::objects_type args;
+    args.push_back(tgt);
 
     ast::exps_type ast_args =
       input_ast_args ? *input_ast_args : ast::exps_type();
@@ -792,7 +792,10 @@ namespace runner
 		  true))
 	      {
 		rObject e = topLevel->slot_get(SYMBOL(LT_LT));
-		apply(e, SYMBOL(topLevel), list_of (topLevel) (result_));
+                objects_type args;
+                args.push_back(topLevel);
+                args.push_back(result_);
+		apply(e, SYMBOL(topLevel), args);
 	      }
 	      else if (toplevel_debug)
 		lobby_->value_get().connection.new_result(result_);
@@ -995,8 +998,11 @@ namespace runner
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
+          object::objects_type args;
+          args.push_back(parent);
+          args.push_back(new object::String(elt));
 	  where =
-	    object::Tag::_new(list_of (parent) (new object::String(elt)));
+	    object::Tag::_new(args);
 	  parent->slot_set(elt, where);
 	  parent = where;
 	}

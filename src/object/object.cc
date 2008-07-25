@@ -5,11 +5,9 @@
 
 #include <algorithm>
 
-#include <boost/assign.hpp> // for 'list_of'
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
-using namespace boost::assign; // bring 'list_of' into scope
 
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
@@ -191,7 +189,10 @@ namespace object
     if (hook)
       if (rObject hook = owner->property_get(k, SYMBOL(updateHook)))
       {
-        objects_type args = list_of (rObject(this)) (new String(k)) (o);
+        objects_type args;
+        args.push_back(rObject(this));
+        args.push_back(new String(k));
+        args.push_back(o);
         v = r.apply(hook, SYMBOL(updateHook), args);
         // If the updateHook returned void, do nothing. Otherwise let
         // the slot be overwritten.

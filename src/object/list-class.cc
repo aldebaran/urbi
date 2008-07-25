@@ -3,7 +3,6 @@
  ** \brief Creation of the URBI object list.
  */
 
-#include <boost/assign.hpp>
 #include <boost/bind.hpp>
 
 #include <libport/foreach.hh>
@@ -19,8 +18,6 @@
 
 #include <runner/runner.hh>
 #include <runner/interpreter.hh>
-
-using namespace boost::assign;
 
 namespace object
 {
@@ -148,7 +145,12 @@ namespace object
     // Beware of iterations that modify the list in place: make a
     // copy.
     foreach (const rObject& o, value_type(content_))
-      r.apply(f, SYMBOL(each), list_of (f) (o));
+    {
+      objects_type args;
+      args.push_back(f);
+      args.push_back(o);
+      r.apply(f, SYMBOL(each), args);
+    }
   }
 
   void
@@ -160,9 +162,11 @@ namespace object
     value_type l(content_);
     rforeach (const rObject& o, l)
     {
+      object::objects_type args;
+      args.push_back(o);
       scheduler::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
-                                f, SYMBOL(each), list_of(o));
+                                f, SYMBOL(each), args);
       r.link(job);
       job->start_job();
       jobs.push_back(job);

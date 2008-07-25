@@ -3,31 +3,34 @@
  ** \brief Implementation of runner::Runner.
  */
 
-#include <boost/assign.hpp>
-
 #include <kernel/uconnection.hh>
 #include <runner/runner.hh>
 
 namespace runner
 {
-  using namespace boost::assign;
-
   void
   Runner::send_message(const std::string& tag, const std::string& msg)
   {
     // If there is a Channel object with name 'tag', use it.
     rObject chan = lobby_->slot_locate(libport::Symbol(tag), true, true);
+    object::objects_type args;
     if (chan && is_a(chan, lobby_->slot_get(SYMBOL(Channel))))
+    {
+      args.push_back(chan);
+      args.push_back(object::rString(new object::String(libport::Symbol(msg))));
       apply(chan->slot_get(SYMBOL(LT_LT_)),
 	    SYMBOL(LT_LT_),
-	    list_of (chan)
-	            (object::rString(new object::String(libport::Symbol(msg)))));
+	    args);
+    }
     else
+    {
+      args.push_back(rObject(lobby_));
+      args.push_back(new object::String(libport::Symbol(msg)));
+      args.push_back(new object::String(libport::Symbol(tag)));
       apply(lobby_->slot_get(SYMBOL(send)),
 	    SYMBOL(send),
-	    list_of (rObject(lobby_))
-	            (new object::String(libport::Symbol(msg)))
-	            (new object::String(libport::Symbol(tag))));
+            args);
+    }
   }
 
   void
