@@ -137,7 +137,7 @@ namespace object
     return type_name;
   }
 
-  scheduler::rTag
+  const scheduler::rTag&
   extract_tag(const rObject& o)
   {
     type_check<Tag>(o, SYMBOL(extract_tag));

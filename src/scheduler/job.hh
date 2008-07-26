@@ -203,8 +203,8 @@ namespace scheduler
 
     /// Push a tag onto the current job tag stack.
     ///
-    /// \param rTag The tag to push.
-    void push_tag(rTag);
+    /// \param tag The tag to push.
+    void push_tag(const rTag& tag);
 
     /// Pop the latest pushed tag from the job tag stack.
     void pop_tag();

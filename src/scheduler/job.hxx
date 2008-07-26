@@ -206,7 +206,7 @@ namespace scheduler
   }
 
   inline void
-  Job::push_tag(rTag tag)
+  Job::push_tag(const rTag& tag)
   {
     tags_.push_back(tag);
     recompute_prio(*tag);

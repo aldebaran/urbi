@@ -43,7 +43,7 @@ namespace object
     value_type value_;
   };
 
-  scheduler::rTag
+  const scheduler::rTag&
   extract_tag(const rObject& o);
 
 } // namespace object
