@@ -78,13 +78,6 @@ namespace runner
     yield ();                                   \
   } while (0)
 
-#define MAYBE_YIELD(Flavor)			\
-  do						\
-  {						\
-    if (Flavor == ast::flavor_semicolon)	\
-      YIELD();					\
-  } while (0)
-
 
   // This function takes an expression and attempts to decompose it
   // into a list of identifiers.
@@ -1028,12 +1021,13 @@ namespace runner
   void
   Interpreter::visit (ast::rConstWhile e)
   {
+    const bool must_yield = e->flavor_get() == ast::flavor_semicolon;
     bool tail = false;
     // Evaluate the test.
     while (true)
     {
-      if (tail++)
-	MAYBE_YIELD (e->flavor_get());
+      if (must_yield && tail++)
+	YIELD();
       JAECHO ("while test", e->test_get());
       operator() (e->test_get());
       if (!object::is_true(result_, SYMBOL(while)))
