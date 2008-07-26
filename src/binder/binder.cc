@@ -330,7 +330,7 @@ namespace binder
   }
 
   ast::rExp
-  Binder::handleScope(ast::rConstAbstractScope scope, bool setOnSelf)
+  Binder::handleScope(ast::rConstScope scope, bool setOnSelf)
   {
     libport::Finally finally;
 

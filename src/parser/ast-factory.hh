@@ -106,10 +106,10 @@ namespace parser
 
 
   /// Return \a e in a ast::Scope unless it is already one.
-  ast::rAbstractScope
+  ast::rScope
   ast_scope(const yy::location& l, ast::rExp target, ast::rExp e);
 
-  ast::rAbstractScope
+  ast::rScope
   ast_scope(const yy::location& l, ast::rExp e);
 
   /*-----------------.

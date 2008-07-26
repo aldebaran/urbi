@@ -863,19 +863,13 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstAbstractScope e)
-  {
-    Finally finally(libport::restore(non_interruptible_));
-    super_type::operator()(e->body_get());
-  }
-
-  void
   Interpreter::visit (ast::rConstScope e)
   {
+    libport::Finally finally;
     create_scope_tag();
-    libport::Finally finally(boost::bind(&Interpreter::cleanup_scope_tag,
-					 this));
-    visit (e.unsafe_cast<const ast::AbstractScope>());
+    finally << boost::bind(&Interpreter::cleanup_scope_tag, this);
+    finally << libport::restore(non_interruptible_);
+    super_type::operator()(e->body_get());
   }
 
   void
@@ -887,7 +881,7 @@ namespace runner
 
     finally << stacks_.switch_self(tgt);
 
-    ast::rConstAbstractScope scope = e.unsafe_cast<const ast::AbstractScope>();
+    ast::rConstScope scope = e.unsafe_cast<const ast::Scope>();
     visit (scope);
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.

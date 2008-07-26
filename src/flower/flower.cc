@@ -132,7 +132,7 @@ namespace flower
     {
       static ast::ParametricAst a("var returnTag = new Tag | "
                                   "returnTag: { %exp:1 }");
-      ast::rAbstractScope copy =
+      ast::rScope copy =
         result_.unsafe_cast<ast::Function>()->body_get();
       copy->body_set(exp(a % copy->body_get()));
     }

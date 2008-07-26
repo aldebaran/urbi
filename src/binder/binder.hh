@@ -118,7 +118,7 @@ namespace binder
     ast::rDeclaration decl_get(const libport::Symbol& name);
 
     /// Factored method to handle scopes.
-    ast::rExp handleScope(ast::rConstAbstractScope scope, bool setOnSelf);
+    ast::rExp handleScope(ast::rConstScope scope, bool setOnSelf);
 
     /// Factored method to create updateSlot/setSlot calls.
     ast::rCall changeSlot(const ast::loc& l,

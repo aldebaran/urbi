@@ -261,8 +261,9 @@ TaggedStmt:
 ## Scope.  ##
 ## ------- ##
 
-AbstractScope:
+Scope:
   super: Exp
+  concrete: True
   attributes:
     - body:
         type: 'rExp'
@@ -275,21 +276,16 @@ AbstractScope:
     - 'libport::decendl'
     - '"}"'
 
-Scope:
-  super: AbstractScope
-  printer:
-    - '{ visit(n.unsafe_cast<const AbstractScope>()); }'
-
 Do:
-  super: AbstractScope
+  super: Scope
   attributes:
     - target: { type: 'rExp', desc: The default target }
   default: |2
     operator()(n->target_get());
-    visit(libport::shared_ptr<typename Const<AbstractScope>::type>((AbstractScope*)n.get()));
+    visit(libport::shared_ptr<typename Const<Scope>::type>((Scope*)n.get()));
   printer:
     - '{ ostr_ << "do " << *n->target_get() << " "; }'
-    - '{ visit(n.cast<const AbstractScope>()); }'
+    - '{ visit(n.cast<const Scope>()); }'
 
 ## -------------------- ##
 ## Composing commands.  ##
@@ -795,7 +791,7 @@ Routine:
         desc: Formal arguments.  If null, a lazy function.
         access: rwW
     - body:
-        type: 'rAbstractScope'
+        type: 'rScope'
         access: rwW
         mandatory: False
         desc: Body

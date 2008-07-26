@@ -196,8 +196,6 @@ namespace runner
 			rObject call_message);
 
   private:
-    /// Factor handling of Scope and Do
-    void visit (ast::rConstAbstractScope e);
     /// Factor handling of Function and Closure
     void visit (ast::rConstRoutine e, bool closure);
 

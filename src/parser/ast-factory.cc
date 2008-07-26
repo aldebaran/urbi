@@ -217,10 +217,10 @@ namespace parser
 
 
   /// Return \a e in a ast::Scope unless it is already one.
-  ast::rAbstractScope
+  ast::rScope
   ast_scope(const yy::location& l, ast::rExp target, ast::rExp e)
   {
-    if (ast::rAbstractScope res = e.unsafe_cast<ast::AbstractScope>())
+    if (ast::rScope res = e.unsafe_cast<ast::Scope>())
       return res;
     else if (target)
       return new ast::Do(l, e, target);
@@ -228,7 +228,7 @@ namespace parser
       return new ast::Scope(l, e);
   }
 
-  ast::rAbstractScope
+  ast::rScope
   ast_scope(const yy::location& l, ast::rExp e)
   {
     return ast_scope(l, 0, e);
