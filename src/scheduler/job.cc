@@ -116,7 +116,7 @@ namespace scheduler
   }
 
   void
-  Job::yield_until_terminated(jobs_type jobs)
+  Job::yield_until_terminated(jobs_type& jobs)
   {
     foreach (rJob job, jobs)
       yield_until_terminated(*job);
