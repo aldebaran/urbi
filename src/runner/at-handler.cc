@@ -49,7 +49,7 @@ namespace runner
     virtual bool frozen() const;
     void add_job(AtJob*);
     virtual void register_stopped_tag(const scheduler::rTag& tag,
-				      boost::any);
+				      const boost::any&);
   private:
     typedef boost::ptr_list<AtJob> at_jobs_type;
     at_jobs_type jobs_;
@@ -75,7 +75,8 @@ namespace runner
   }
 
   void
-  AtHandler::register_stopped_tag(const scheduler::rTag& tag, boost::any payload)
+  AtHandler::register_stopped_tag
+    (const scheduler::rTag& tag, const boost::any& payload)
   {
     // If we are the current job, since we have no side effect, it must be
     // a flow control tag. Otherwise, remove all jobs holding this tag.

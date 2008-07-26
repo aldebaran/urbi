@@ -158,7 +158,7 @@ namespace scheduler
   }
 
   void
-  Job::register_stopped_tag(const rTag& tag, boost::any payload)
+  Job::register_stopped_tag(const rTag& tag, const boost::any& payload)
   {
     int max_tag_check = tags_.size();
     if (pending_exception_)

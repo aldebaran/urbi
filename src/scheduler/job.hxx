@@ -234,7 +234,7 @@ namespace scheduler
   }
 
   inline void
-  Job::tags_set(tags_type tags)
+  Job::tags_set(const tags_type& tags)
   {
     tags_ = tags;
     recompute_prio();

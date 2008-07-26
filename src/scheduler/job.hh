@@ -222,7 +222,7 @@ namespace scheduler
     /// Set the current tags.
     ///
     /// \param tags Set the tags attached to the current job.
-    void tags_set(tags_type tags);
+    void tags_set(const tags_type& tags);
 
     /// Clear the current tags.
     void tags_clear();
@@ -291,7 +291,8 @@ namespace scheduler
     /// \param tag The tag that has been stopped.
     ///
     /// \param payload The data to embed in the StopException.
-    virtual void register_stopped_tag(const rTag& tag, boost::any payload);
+    virtual void register_stopped_tag
+      (const rTag& tag, const boost::any& payload);
 
     /// Check whether the job has a pending exception.
     ///
