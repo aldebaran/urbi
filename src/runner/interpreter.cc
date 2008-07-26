@@ -275,8 +275,6 @@ namespace runner
   void
   Interpreter::visit (ast::rConstAnd e)
   {
-    using scheduler::rJob;
-
     // Collect all subrunners
     scheduler::jobs_type jobs;
 
