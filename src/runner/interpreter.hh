@@ -173,11 +173,6 @@ namespace runner
                               (TaggedStmt)
                               (This)
                               (While))
-
-    /// Factor handling of Scope and Do
-    void visit (ast::rConstAbstractScope e);
-    /// Factor handling of Function and Closure
-    void visit (ast::rConstRoutine e, bool closure);
     /// \}
 
 
@@ -201,6 +196,11 @@ namespace runner
 			rObject call_message);
 
   private:
+    /// Factor handling of Scope and Do
+    void visit (ast::rConstAbstractScope e);
+    /// Factor handling of Function and Closure
+    void visit (ast::rConstRoutine e, bool closure);
+
     /// The root of the AST being executed.
     ast::rConstAst ast_;
 
