@@ -218,6 +218,8 @@ def print_attribute_get (attr, const, header, inline, impl):
       type = attr.r_type()
     else:
       type = attr.w_type()
+    if type[-1] not in "*&":
+      type += "&"
     const_cv = ""
     if const:
       const_cv = " const"

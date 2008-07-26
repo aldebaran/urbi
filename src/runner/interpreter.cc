@@ -320,7 +320,7 @@ namespace runner
     libport::Finally finally;
 
     // The called function.
-    object::Code::ast_type ast = func->ast_get();
+    const object::Code::ast_type& ast = func->ast_get();
 
     // Whether it's an explicit closure
     bool closure = ast.unsafe_cast<const ast::Closure>();
@@ -545,7 +545,7 @@ namespace runner
   Interpreter::visit (ast::rConstCall e)
   {
     // The invoked slot (probably a function).
-    ast::rConstExp ast_tgt = e->target_get();
+    const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = ast_tgt->implicit() ? stacks_.self() : eval(ast_tgt);
     apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
