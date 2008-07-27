@@ -805,6 +805,14 @@ Routine:
         init: "new declarations_type()"
         mandatory: False
         access: rwW
+    - local_size:
+        type: unsigned
+        init: '0'
+        access: rW
+    - closed_size:
+        type: unsigned
+        init: '0'
+        access: rW
   inline:
     header inside: |2
         public:

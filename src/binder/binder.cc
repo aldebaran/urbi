@@ -393,6 +393,9 @@ namespace binder
       else
         dec->local_index_set(local++);
 
+    res->local_size_set(local);
+    res->closed_size_set(closed);
+
     // Index captured variables
     int captured = 0;
     foreach (ast::rDeclaration dec, *res->captured_variables_get())

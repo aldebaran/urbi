@@ -338,20 +338,6 @@ namespace runner
       call_message = build_call_message(args[0], func, msg, lazy_args);
     }
 
-    // Compute the frame size on the two stacks
-    unsigned local_size = 0;
-    unsigned closed_size = 0;
-    unsigned captured_size = ast->captured_variables_get()->size();
-
-    if (ast->local_variables_get())
-    {
-      foreach (ast::rConstDeclaration dec, *ast->local_variables_get())
-        if (dec->closed_get())
-          closed_size++;
-        else
-          local_size++;
-    }
-
     // Determine the function's 'this' and 'call'
     rObject self;
     rObject call;
@@ -371,7 +357,10 @@ namespace runner
     }
 
     // Push new frames on the stacks
-    finally << stacks_.push_frame(msg, local_size, closed_size, captured_size,
+    finally << stacks_.push_frame(msg,
+                                  ast->local_size_get(),
+                                  ast->closed_size_get(),
+                                  ast->captured_variables_get()->size(),
                                   self, call);
 
     // Bind arguments if the function is strict.
