@@ -102,8 +102,6 @@ AC_CONFIG_SUBDIRS([bison])
 AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
-# FIXME: -fno-strict-aliasing must be removed once we use a Bison with
-# variant and do not need the PODcaster anymore.
 URBI_PROG_CXX
 TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wcast-qual],
@@ -111,8 +109,7 @@ TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wstrict-prototypes],
 		 [-Wwrite-strings],
 		 [-Wbad-function-cast],
-		 [-Wmissing-declarations],
-		 [-fno-strict-aliasing]])
+		 [-Wmissing-declarations]])
 
 AM_PROG_AS
 
