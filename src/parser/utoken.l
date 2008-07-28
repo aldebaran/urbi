@@ -234,20 +234,8 @@ do {						\
   RETURN_VALUE(Token, str, std::string, yytext)
 
 // Store Val in valp->symbol, and return Token.
-#if 0
-#define RETURN_SOME_SYMBOL(Token, Val)                                  \
-  {                                                                     \
-    PRE_SKIP();                                                         \
-    libport::Symbol res (Val);                                          \
-    SET_VAL(symbol, libport::Symbol, res);                              \
-    std::cerr << "Id: " << *valp                                        \
-              << "@" << std::hex << reinterpret_cast<unsigned&>(res) << std::endl; \
-    RETURN(Token);                                                      \
-      }
-#else
 #define RETURN_SOME_SYMBOL(Token, Val)                  \
   RETURN_VALUE(Token, symbol, libport::Symbol, libport::Symbol(Val))
-#endif
 
 // Store yytext in valp->symbol, and return Token.
 #define RETURN_SYMBOL(Token)                    \
