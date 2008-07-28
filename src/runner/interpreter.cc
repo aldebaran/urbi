@@ -903,7 +903,6 @@ namespace runner
       // If we are frozen, reenter the scheduler for a while.
       if (frozen())
 	yield();
-      return;
     }
   }
 
