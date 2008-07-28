@@ -868,7 +868,12 @@ namespace runner
     int result_depth = tags_get().size();
     try
     {
-      scheduler::rTag tag = extract_tag(eval(t->tag_get()));
+      // FIXME: might be simplified after type checking code is moved
+      // to Object
+      object::rObject unchecked_tag = eval(t->tag_get());
+      object::type_check<object::Tag>(unchecked_tag, SYMBOL(tagged_stmt));
+      object::rTag urbi_tag = unchecked_tag->as<object::Tag>();
+      scheduler::rTag tag = urbi_tag->value_get();
       // If tag is blocked, do not start and ignore the
       // statement completely but use the provided payload.
       if (tag->blocked())
@@ -883,7 +888,10 @@ namespace runner
       // logic.
       if (tag->frozen())
 	yield();
-      eval (t->exp_get());
+      urbi_tag->triggerEnter(*this);
+      rObject res = eval (t->exp_get());
+      urbi_tag->triggerLeave(*this);
+      result_ = res;
     }
     catch (scheduler::StopException& e)
     {

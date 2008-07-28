@@ -34,6 +34,16 @@ namespace object
     void unblock(runner::Runner&);
     void unfreeze(runner::Runner&);
 
+    /// Return, potentially creating first, the enter event for \a this
+    rObject enter(runner::Runner& r);
+    /// Return, potentially creating first, the leave event for \a this
+    rObject leave(runner::Runner& r);
+
+    /// Trigger \a this' enter event
+    void triggerEnter(runner::Runner& r);
+    /// Trigger \a this' leave event
+    void triggerLeave(runner::Runner& r);
+
     static void initialize(CxxObject::Binder<Tag>& bind);
     static const std::string type_name;
     static bool tag_added;

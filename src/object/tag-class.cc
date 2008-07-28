@@ -7,10 +7,13 @@
 
 #include <object/tag-class.hh>
 
+#include <object/global-class.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
 
+#include <runner/call.hh>
 #include <runner/runner.hh>
+
 #include <scheduler/tag.hh>
 
 namespace object
@@ -116,11 +119,50 @@ namespace object
     value_->unfreeze(r.scheduler_get());
   }
 
+  static inline rObject
+  tag_event(Tag* owner, runner::Runner& r, libport::Symbol& field)
+  {
+    if (!owner->slot_has(field))
+    {
+      rObject evt =
+        urbi_call(r, global_class->slot_get(SYMBOL(Event)), SYMBOL(new));
+      owner->slot_set(field, evt);
+      return evt;
+    }
+    return owner->slot_get(field);
+  }
+
+  rObject
+  Tag::enter(runner::Runner& r)
+  {
+    return tag_event(this, r, SYMBOL(enterEvent));
+  }
+
+  rObject
+  Tag::leave(runner::Runner& r)
+  {
+    return tag_event(this, r, SYMBOL(leaveEvent));
+  }
+
+  void
+  Tag::triggerEnter(runner::Runner& r)
+  {
+    urbi_call(r, enter(r), SYMBOL(emit));
+  }
+
+  void
+  Tag::triggerLeave(runner::Runner& r)
+  {
+    urbi_call(r, leave(r), SYMBOL(emit));
+  }
+
   void
   Tag::initialize(CxxObject::Binder<Tag>& bind)
   {
     bind(SYMBOL(block), &Tag::block);
+    bind(SYMBOL(enter), &Tag::enter);
     bind(SYMBOL(freeze), &Tag::freeze);
+    bind(SYMBOL(leave), &Tag::leave);
     bind(SYMBOL(name), &Tag::name);
     bind(SYMBOL(new), &Tag::_new);
     bind(SYMBOL(prio), &Tag::prio);
