@@ -183,7 +183,7 @@ namespace %(clonerlib)s
 
 for node in concrete:
   print "  void"
-  print "  Cloner::visit (ast::rConst%s e)" % node.name
+  print "  Cloner::visit (const ast::%s* e)" % node.name
   print "  {"
   if node.hide:
     print "    //<<"
@@ -192,7 +192,7 @@ for node in concrete:
     print node.cloner_prologue
 
   if node.clone_by_ref:
-    print "    result_ = ast::r%s(const_cast<ast::%s*>(e.get()));" % \
+    print "    result_ = ast::r%s(const_cast<ast::%s*>(e));" % \
 	  (node.name, node.name)
   else:
     children_clone(node)

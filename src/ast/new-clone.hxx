@@ -22,7 +22,7 @@ namespace ast
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     Cloner cloner;
-    cloner(ast);
+    cloner(ast.get());
     libport::shared_ptr<T> res = libport::unsafe_cast<T>(cloner.result_get());
     assert (res);
     return res;

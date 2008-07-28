@@ -11,10 +11,10 @@ namespace rewrite
     Rescoper rescope;
     ast::rAst res;
 
-    rescope(nary);
+    rescope(nary.get());
     res = rescope.result_get();
 
-    rewrite_patterns(res);
+    rewrite_patterns(res.get());
     res = rewrite_patterns.result_get();
 
     return res.unsafe_cast<ast::Nary>();

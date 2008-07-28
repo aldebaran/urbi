@@ -64,7 +64,7 @@ namespace runner
     /// \}
 
     /// The entry point: visit \a e.
-    virtual void operator() (ast::rConstAst e);
+    virtual void operator() (const ast::Ast* e);
 
     /// \ name Accessors.
     /// \{
@@ -197,7 +197,7 @@ namespace runner
 
   private:
     /// Factor handling of Function and Closure
-    void visit (ast::rConstRoutine e, bool closure);
+    void visit(const ast::Routine* e, bool closure);
 
     /// The root of the AST being executed.
     ast::rConstAst ast_;

@@ -129,17 +129,16 @@ for node in arr:
 #          "visit(static_cast<boost::shared_ptr<typename Const<%s>::type> >(n));" \
 #          % (super.name)
       action +=  \
-          "visit(libport::shared_ptr<typename Const<%s>::type>((%s*) n.get()));" \
-          % (super.name, super.name)
+          "visit((typename Const<%s>::type*) n);" % super.name
     for attr in node.attributes:
       if attr.visitable_p():
         if action != '':
           action += "\n"
         if attr.mandatory:
-          action += "operator()(n->%s_get());" % (attr.name)
+          action += "operator()(n->%s_get().get());" % (attr.name)
         else:
           action += "if (n->%s_get())\n" % attr.name
-          action += "  operator()(n->%s_get());" % (attr.name)
+          action += "  operator()(n->%s_get().get());" % (attr.name)
   if action != '':
     action = "\n" + tools.indent(4, action) + "\n  "
     var = ' n'
@@ -148,7 +147,7 @@ for node in arr:
   print """\
   template <template <typename> class Const>
   void
-  GenDefaultVisitor<Const>::visit (libport::shared_ptr<typename Const<%s>::type> %s)
+  GenDefaultVisitor<Const>::visit (typename Const<%s>::type* %s)
   {%s}
 """ % (node.name, var, action)
 

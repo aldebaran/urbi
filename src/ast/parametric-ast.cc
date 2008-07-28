@@ -26,7 +26,7 @@ namespace ast
   }
 
   void
-  ParametricAst::visit (ast::rConstMetaExp e)
+  ParametricAst::visit(const ast::MetaExp* e)
   {
     result_ = parser::MetavarMap<ast::rExp>::take_(e->id_get () - 1);
   }

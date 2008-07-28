@@ -12,7 +12,7 @@ namespace rewrite
   {}
 
   void
-  PatternRewriter::visit(ast::rConstBinding binding)
+  PatternRewriter::visit(const ast::Binding* binding)
   {
     static ast::ParametricAst
       rewrite("Pattern.Binding.new(%exp:1, closure (v) { %exp:2 })");
@@ -21,12 +21,13 @@ namespace rewrite
     rewrite
       % parser::ast_string(loc, name)
       % new ast::Assignment(loc, name, parser::ast_call(loc, SYMBOL(v)), 0);
-    operator() (exp(rewrite));
+    ast::rConstAst rewritten = exp(rewrite);
+    operator() (rewritten.get());
     decs_.back().insert(name);
   }
 
   void
-  PatternRewriter::visit(ast::rConstNary nary)
+  PatternRewriter::visit(const ast::Nary* nary)
   {
     static ast::ParametricAst nil("nil");
     decs_.push_back(declarations_type());

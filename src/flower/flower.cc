@@ -19,7 +19,7 @@ namespace flower
   }
 
   void
-  Flower::visit(ast::rConstBreak b)
+  Flower::visit(const ast::Break* b)
   {
     if (!in_loop_)
       errors_.error(b->location_get(), "break: outside a loop");
@@ -29,7 +29,7 @@ namespace flower
   }
 
   void
-  Flower::visit(ast::rConstContinue c)
+  Flower::visit(const ast::Continue* c)
   {
     if (!in_loop_)
       errors_.error(c->location_get(), "continue: outside a loop");
@@ -39,7 +39,7 @@ namespace flower
   }
 
   void
-  Flower::visit(ast::rConstWhile code)
+  Flower::visit(const ast::While* code)
   {
     Finally finally;
     finally << scoped_set(in_loop_, true)
@@ -74,7 +74,7 @@ namespace flower
   }
 
   void
-  Flower::visit(ast::rConstForeach code)
+  Flower::visit(const ast::Foreach* code)
   {
     Finally finally;
     finally << scoped_set(in_loop_, true)
@@ -122,7 +122,7 @@ namespace flower
   }
 
   void
-  Flower::visit(ast::rConstFunction code)
+  Flower::visit(const ast::Function* code)
   {
     Finally finally;
     finally << scoped_set(in_function_, true)
@@ -139,7 +139,7 @@ namespace flower
   }
 
   void
-  Flower::visit(ast::rConstReturn ret)
+  Flower::visit(const ast::Return* ret)
   {
     if (!in_function_)
       errors_.error(ret->location_get(), "return: outside a function");

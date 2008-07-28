@@ -127,7 +127,7 @@ for node in arr:
 	action += '    ostr_ << %s;\n' % (a)
     print """\
   void
-  PrettyPrinter::visit (rConst%s n)
+  PrettyPrinter::visit (const %s* n)
   {
     // Don't warn about unused arguments.
     (void) n;

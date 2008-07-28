@@ -78,7 +78,7 @@ namespace binder
   {
     ast::exps_type* args = new ast::exps_type();
     args->push_back(new ast::String(l, name));
-    super_type::operator() (value);
+    super_type::operator() (value.get());
     args->push_back(result_.unsafe_cast<ast::Exp>());
     return new ast::Call(l, new ast::Implicit(l), method, args);
   }
@@ -117,7 +117,7 @@ namespace binder
   }
 
   void
-  Binder::visit(ast::rConstDeclaration input)
+  Binder::visit(const ast::Declaration* input)
   {
     if (scope_depth_ == scope_depth_get(input->what_get()))
       errors_.error(input->location_get(),
@@ -194,7 +194,7 @@ namespace binder
 
 
   void
-  Binder::visit(ast::rConstAssignment input)
+  Binder::visit(const ast::Assignment* input)
   {
     assert(!input->declaration_get());
     libport::Symbol name = input->what_get();
@@ -214,7 +214,7 @@ namespace binder
 
 
   void
-  Binder::visit(ast::rConstCall input)
+  Binder::visit(const ast::Call* input)
   {
     libport::Symbol name = input->name_get();
     ast::loc loc = input->location_get();
@@ -259,7 +259,7 @@ namespace binder
 
 
   void
-  Binder::visit(ast::rConstCallMsg input)
+  Binder::visit(const ast::CallMsg* input)
   {
     ast::rFunction fun = function();
     if (!fun)
@@ -292,7 +292,7 @@ namespace binder
   }
 
   void
-  Binder::visit (ast::rConstForeach input)
+  Binder::visit (const ast::Foreach* input)
   {
     libport::Finally finally;
 
@@ -307,15 +307,15 @@ namespace binder
   }
 
   void
-  Binder::visit (ast::rConstScope input)
+  Binder::visit (const ast::Scope* input)
   {
     result_ = new ast::Scope(input->location_get(), handleScope(input, false));
   }
 
   void
-  Binder::visit (ast::rConstDo input)
+  Binder::visit (const ast::Do* input)
   {
-    operator() (input->target_get());
+    operator() (input->target_get().get());
     ast::rExp target = result_.unsafe_cast<ast::Exp>();
     result_ = new ast::Do(input->location_get(),
                           handleScope(input, true),
@@ -346,13 +346,13 @@ namespace binder
     setOnSelf_.push_back(setOnSelf);
     finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
-    operator() (scope->body_get());
+    operator() (scope->body_get().get());
     return result_.unsafe_cast<ast::Exp>();
   }
 
   template <typename Code>
   void
-  Binder::handleRoutine(libport::shared_ptr<const Code> input)
+  Binder::handleRoutine(const Code* input)
   {
     BIND_ECHO("Push" << libport::incindent);
     libport::Finally finally;
@@ -407,13 +407,13 @@ namespace binder
   }
 
   void
-  Binder::visit(ast::rConstFunction input)
+  Binder::visit(const ast::Function* input)
   {
     handleRoutine(input);
   }
 
   void
-  Binder::visit(ast::rConstClosure input)
+  Binder::visit(const ast::Closure* input)
   {
     handleRoutine(input);
   }

@@ -43,7 +43,7 @@ namespace object
     {
       ast::rNary errs = new ast::Nary();
       p->process_errors(*errs);
-      run(errs);
+      run(errs.get());
     }
 
     ast::rConstAst ast = parser::transform(p->ast_get());

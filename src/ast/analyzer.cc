@@ -15,7 +15,7 @@ namespace ast
   ast::rNary
   analyze(Analyzer& analyze, ast::rConstNary a)
   {
-    analyze(a);
+    analyze(a.get());
 
     ast::rNary res;
     if (analyze.errors_get().empty())

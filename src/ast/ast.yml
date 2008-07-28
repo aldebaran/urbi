@@ -281,11 +281,11 @@ Do:
   attributes:
     - target: { type: 'rExp', desc: The default target }
   default: |2
-    operator()(n->target_get());
-    visit(libport::shared_ptr<typename Const<Scope>::type>((Scope*)n.get()));
+    operator()(n->target_get().get());
+    visit((typename Const<Scope>::type*) n);
   printer:
     - '{ ostr_ << "do " << *n->target_get() << " "; }'
-    - '{ visit(n.cast<const Scope>()); }'
+    - '{ visit(reinterpret_cast<const Scope*>(n)); }'
 
 ## -------------------- ##
 ## Composing commands.  ##
@@ -343,7 +343,7 @@ Nary:
         init: "false"
   default: |2
     foreach (libport::shared_ptr<typename Const<ast::Ast>::type> c, n->children_get())
-      operator()(c);
+      operator()(c.get());
 
   printer:
     - $children
@@ -711,7 +711,7 @@ List:
     - '"]"'
   default: |2
     foreach (libport::shared_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
-      operator()(exp);
+      operator()(exp.get());
 
 Call:
   desc: /// Function calls, and attribute look-ups.
@@ -740,12 +740,12 @@ Call:
             return target_->implicit();
           }
   default: |2
-    visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
-    operator()(n->target_get());
+    visit((typename Const<Exp>::type*) n);
+    operator()(n->target_get().get());
     if (n->arguments_get())
     {
       foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
-        operator()(e);
+        operator()(e.get());
     }
   printer:
     - '{
@@ -842,7 +842,7 @@ Function:
   cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"function "'
-    - '{visit(n.unsafe_cast<const Routine>());}'
+    - '{visit(reinterpret_cast<const Routine*>(n));}'
 
 Closure:
   super: Routine
@@ -851,7 +851,7 @@ Closure:
   cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"closure "'
-    - '{visit(n.unsafe_cast<const Routine>());}'
+    - '{visit(reinterpret_cast<const Routine*>(n));}'
 
 LocalWrite:
   super: Exp
@@ -954,11 +954,11 @@ Local:
         return declaration_->local_index_get();
       }
   default: |2
-    visit(libport::shared_ptr<typename Const<Exp>::type>((Exp*) n.get()));
+    visit((typename Const<Exp>::type*) n);
     if (n->arguments_get())
     {
       foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
-        operator()(e);
+        operator()(e.get());
     }
   printer:
     - $name

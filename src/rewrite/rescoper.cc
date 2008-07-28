@@ -62,7 +62,7 @@ namespace rewrite
   Rescoper::~Rescoper()
   {}
 
-  void Rescoper::visit(ast::rConstAnd a)
+  void Rescoper::visit(const ast::And* a)
   {
     ast::loc l = a->location_get();
     ast::rAnd res = new ast::And(l, ast::exps_type());
@@ -79,7 +79,7 @@ namespace rewrite
   }
 
   void
-  Rescoper::visit(ast::rConstNary nary)
+  Rescoper::visit(const ast::Nary* nary)
   {
     ast::rNary res = new ast::Nary(nary->location_get());
     foreach (ast::rExp child, (nary->children_get()))

@@ -38,7 +38,7 @@ namespace ast
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     if (getenv("DESUGAR"))
       LIBPORT_ECHO(*this);
-    operator()(ast_);
+    operator()(ast_.get());
     result_->location_set(effective_location_);
     if (getenv("DESUGAR"))
       LIBPORT_ECHO(result_->location_get() << ": " << *result_);

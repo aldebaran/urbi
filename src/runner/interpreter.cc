@@ -202,7 +202,7 @@ namespace runner
       check_for_pending_exception();
       JAECHO ("starting evaluation of AST: ", ast_);
       if (ast_)
-	operator()(ast_);
+	operator()(ast_.get());
       else
       {
 	args_.push_front(lobby_);
@@ -222,7 +222,7 @@ namespace runner
 
 
   void
-  Interpreter::operator() (ast::rConstAst e)
+  Interpreter::operator() (const ast::Ast* e)
   {
     /// Catch exceptions, set the location and backtrace if not
     /// already done, and rethrow it.
@@ -239,7 +239,7 @@ namespace runner
 
 
   void
-  Interpreter::visit (ast::rConstAnd e)
+  Interpreter::visit(const ast::And* e)
   {
     // Collect all subrunners
     scheduler::jobs_type jobs;
@@ -269,7 +269,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstAssignment e)
+  Interpreter::visit(const ast::Assignment* e)
   {
     stacks_.set(e, eval(e->value_get()));
   }
@@ -495,7 +495,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstCall e)
+  Interpreter::visit(const ast::Call* e)
   {
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
@@ -504,7 +504,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstCallMsg)
+  Interpreter::visit(const ast::CallMsg*)
   {
     result_ = stacks_.call();
   }
@@ -560,21 +560,21 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstDeclaration d)
+  Interpreter::visit(const ast::Declaration* d)
   {
     rObject value = eval(d->value_get());
     stacks_.def(d, value);
   }
 
   void
-  Interpreter::visit (ast::rConstFloat e)
+  Interpreter::visit(const ast::Float* e)
   {
     result_ = new object::Float(e->value_get());
   }
 
 
   void
-  Interpreter::visit (ast::rConstForeach e)
+  Interpreter::visit(const ast::Foreach* e)
   {
     (void)e;
     pabort(e);
@@ -586,7 +586,7 @@ namespace runner
     return new object::Code(e);
   }
 
-  void Interpreter::visit(ast::rConstRoutine e, bool closure)
+  void Interpreter::visit(const ast::Routine* e, bool closure)
   {
     rRoutine res = make_routine(e);
     result_ = res;
@@ -608,40 +608,40 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstFunction e)
+  Interpreter::visit(const ast::Function* e)
   {
     visit(e, false);
   }
 
   void
-  Interpreter::visit (ast::rConstClosure e)
+  Interpreter::visit(const ast::Closure* e)
   {
     visit(e, true);
   }
 
 
   void
-  Interpreter::visit (ast::rConstIf e)
+  Interpreter::visit(const ast::If* e)
   {
     // Evaluate the test.
     JAECHO ("test", e->test_get ());
-    operator() (e->test_get());
+    operator() (e->test_get().get());
 
     if (object::is_true(result_, SYMBOL(if)))
     {
       JAECHO ("then", e->thenclause_get());
-      operator() (e->thenclause_get());
+      operator() (e->thenclause_get().get());
     }
     else
     {
       JAECHO ("else", e->elseclause_get());
-      operator() (e->elseclause_get());
+      operator() (e->elseclause_get().get());
     }
   }
 
 
   void
-  Interpreter::visit (ast::rConstList e)
+  Interpreter::visit(const ast::List* e)
   {
     object::List::value_type res;
     // Evaluate every expression in the list
@@ -662,13 +662,13 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstLazy e)
+  Interpreter::visit(const ast::Lazy* e)
   {
-    operator()(e->strict_get());
+    operator()(e->strict_get().get());
   }
 
   void
-  Interpreter::visit (ast::rConstLocal e)
+  Interpreter::visit(const ast::Local* e)
   {
     rObject value = stacks_.get(e);
 
@@ -684,14 +684,14 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstMessage e)
+  Interpreter::visit(const ast::Message* e)
   {
     send_message(e->tag_get(), e->text_get());
   }
 
 
   void
-  Interpreter::visit (ast::rConstNary e)
+  Interpreter::visit(const ast::Nary* e)
   {
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
@@ -730,7 +730,7 @@ namespace runner
 	// If at toplevel, print errors and continue, else rethrow them
 	try
 	{
-	  operator() (c);
+	  operator() (c.get());
 	  // We need to keep checking for void here because it can not be passed
 	  // to the << function
 	  if (e->toplevel_get() && result_.get()
@@ -799,36 +799,36 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstNoop)
+  Interpreter::visit(const ast::Noop*)
   {
     result_ = object::void_class;
   }
 
 
   void
-  Interpreter::visit (ast::rConstPipe e)
+  Interpreter::visit(const ast::Pipe* e)
   {
     // lhs
     JAECHO ("lhs", e->lhs_get ());
-    operator() (e->lhs_get());
+    operator() (e->lhs_get().get());
 
     // rhs:  start the execution immediately.
     JAECHO ("rhs", e->rhs_get ());
-    operator() (e->rhs_get());
+    operator() (e->rhs_get().get());
   }
 
   void
-  Interpreter::visit (ast::rConstScope e)
+  Interpreter::visit(const ast::Scope* e)
   {
     libport::Finally finally;
     create_scope_tag();
     finally << boost::bind(&Interpreter::cleanup_scope_tag, this);
     finally << libport::restore(non_interruptible_);
-    super_type::operator()(e->body_get());
+    super_type::operator()(e->body_get().get());
   }
 
   void
-  Interpreter::visit (ast::rConstDo e)
+  Interpreter::visit(const ast::Do* e)
   {
     Finally finally;
 
@@ -836,34 +836,34 @@ namespace runner
 
     finally << stacks_.switch_self(tgt);
 
-    ast::rConstScope scope = e.unsafe_cast<const ast::Scope>();
-    visit (scope);
+    const ast::Scope* scope = reinterpret_cast<const ast::Scope*>(e);
+    visit(scope);
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     result_ = tgt;
   }
 
   void
-  Interpreter::visit (ast::rConstStmt e)
+  Interpreter::visit(const ast::Stmt* e)
   {
     JAECHO ("expression", e->expression_get());
-    operator() (e->expression_get());
+    operator() (e->expression_get().get());
   }
 
   void
-  Interpreter::visit (ast::rConstString e)
+  Interpreter::visit(const ast::String* e)
   {
     result_ = new object::String(libport::Symbol(e->value_get()));
   }
 
   void
-  Interpreter::visit (ast::rConstTag t)
+  Interpreter::visit(const ast::Tag* t)
   {
     result_ = eval_tag(t->exp_get());
   }
 
   void
-  Interpreter::visit (ast::rConstTaggedStmt t)
+  Interpreter::visit(const ast::TaggedStmt* t)
   {
     int result_depth = tags_get().size();
     try
@@ -900,7 +900,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstThis)
+  Interpreter::visit(const ast::This*)
   {
     result_ = stacks_.self();
   }
@@ -966,7 +966,7 @@ namespace runner
   }
 
   void
-  Interpreter::visit (ast::rConstWhile e)
+  Interpreter::visit(const ast::While* e)
   {
     const bool must_yield = e->flavor_get() == ast::flavor_semicolon;
     bool tail = false;
@@ -976,13 +976,13 @@ namespace runner
       if (must_yield && tail++)
 	YIELD();
       JAECHO ("while test", e->test_get());
-      operator() (e->test_get());
+      operator() (e->test_get().get());
       if (!object::is_true(result_, SYMBOL(while)))
 	break;
 
       JAECHO ("while body", e->body_get());
 
-      operator() (e->body_get());
+      operator() (e->body_get().get());
     }
     result_ = object::void_class;
   }

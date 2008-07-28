@@ -56,7 +56,7 @@ namespace binder
                               (Scope));
 
     template <typename Code>
-    void handleRoutine(libport::shared_ptr<const Code> code);
+    void handleRoutine(const Code* code);
 
     template <typename Node, typename NewNode>
     void link_to_declaration(Node input,
