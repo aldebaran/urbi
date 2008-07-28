@@ -178,7 +178,7 @@ do {						\
 
 
 // valp->Field = Value.
-#define SET_VAL(Field, Type, Value)             \
+#define SET_VAL(Type, Value)                    \
   do {						\
     if (up)					\
       valp->build<Type>() = Value;              \
@@ -210,34 +210,34 @@ do {						\
   }
 
 
-#define RETURN_VALUE(Token, Field, Type, Value)         \
-  {                                                     \
-    PRE_SKIP();                                         \
-    SET_VAL(Field, Type, Value);			\
-    RETURN(Token);                                      \
+#define RETURN_VALUE(Token, Type, Value)        \
+  {                                             \
+    PRE_SKIP();                                 \
+    SET_VAL(Type, Value);			\
+    RETURN(Token);                              \
   }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
 #define RETURN_FLAVOR(Symbol, Flavor)					\
-  RETURN_VALUE(Symbol, flavor, ast::flavor_type, ast::flavor_ ## Flavor)
+  RETURN_VALUE(Symbol, ast::flavor_type, ast::flavor_ ## Flavor)
 
-/// Return an fval of type Token with Value.
+/// Return a float of kind Token with Value.
 #define RETURN_FVAL(Token, Value)		\
-  RETURN_VALUE(Token, fval, float, Value)
+  RETURN_VALUE(Token, float, Value)
 
-/// Return an ival of type Token with Value.
+/// Return an int of kind Token with Value.
 #define RETURN_IVAL(Token, Value)		\
-  RETURN_VALUE(Token, ival, int, Value)
+  RETURN_VALUE(Token, int, Value)
 
-// Store yytext in valp->str, and return Token.
+// Return a std::string of kind Token with yytext as value.
 #define RETURN_STR(Token)                       \
-  RETURN_VALUE(Token, str, std::string, yytext)
+  RETURN_VALUE(Token, std::string, yytext)
 
-// Store Val in valp->symbol, and return Token.
-#define RETURN_SOME_SYMBOL(Token, Val)                  \
-  RETURN_VALUE(Token, symbol, libport::Symbol, libport::Symbol(Val))
+// Return a Symbol of kind Token with Value.
+#define RETURN_SOME_SYMBOL(Token, Value)                        \
+  RETURN_VALUE(Token, libport::Symbol, libport::Symbol(Value))
 
-// Store yytext in valp->symbol, and return Token.
+// Return a Symbol of kind Token with yytext as Value.
 #define RETURN_SYMBOL(Token)                    \
   RETURN_SOME_SYMBOL(Token, yytext)
 
@@ -251,12 +251,12 @@ do {						\
   yytext[1] = 0;                                \
   RETURN_OP(Token);
 
-// UnitSize is the number of letters used for the unit.
-#define RETURN_DURATION(UnitSize, Scale)				\
+// UnitLength is the number of letters used for the unit.
+#define RETURN_DURATION(UnitLength, Scale)				\
   {									\
     PRE_SKIP();								\
-    yytext[yyleng - UnitSize] = 0;					\
-    RETURN_VALUE(DURATION, fval, float,					\
+    yytext[yyleng - UnitLength] = 0;					\
+    RETURN_VALUE(DURATION, float,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   }
 
@@ -432,7 +432,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 	      }
 
 [\"\']        {
-                SET_VAL(str, std::string, std::string());
+                SET_VAL(std::string, std::string());
 		delimiter = *yytext;
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
