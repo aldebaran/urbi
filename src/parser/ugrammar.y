@@ -768,7 +768,7 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh("_at_");
       $$ = DESUGAR("var " << s << " = persist (" << $3 << ","
-              << $5 << ") | at( " << s << ") " << $7);
+                   << $5 << ") | at( " << s << ") " << $7);
     }
 | "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
     {
@@ -776,25 +776,25 @@ stmt:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       libport::Symbol s = libport::Symbol::fresh("_at_");
       $$ = DESUGAR("var " << s << " = persist (" << $3 << ","
-              << $5 << ") | at( " << s << ") "
-              << $7 << " onleave " << $9 << "");
+                   << $5 << ") | at( " << s << ") "
+                   << $7 << " onleave " << $9 << "");
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
       $$ = DESUGAR("detach({" << $3.first << ".onEvent(closure ("
-	      << e << ") {"
-	      << "if (Pattern.new("
-	      << ast::rExp(new ast::List(@3, $3.second))
-	      << ").match("
-	      << e << ".payload)) detach({" << $5
-	      << "| waituntil (!" << e << ".active) | " << $7
-	      << "})})})");
+                   << e << ") {"
+                   << "if (Pattern.new("
+                   << ast::rExp(new ast::List(@3, $3.second))
+                   << ").match("
+                   << e << ".payload)) detach({" << $5
+                   << "| waituntil (!" << e << ".active) | " << $7
+                   << "})})})");
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
       $$ = DESUGAR("at(?(" << $3.first << ")(" << $3.second << "))"
-	      << $5 << " onleave {}");
+                   << $5 << " onleave {}");
     }
 | "every" "(" exp ")" nstmt
     {
@@ -825,9 +825,9 @@ stmt:
     {
       libport::Symbol tag = libport::Symbol::fresh("stopif");
       $$ = DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
-	      << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
-	      << "{ waituntil(" << $3 << ")|"
-	      << tag << ".stop } }");
+                   << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
+                   << "{ waituntil(" << $3 << ")|"
+                   << tag << ".stop } }");
     }
 | "switch" "(" exp ")" "{" cases "}"
     {
@@ -858,14 +858,14 @@ stmt:
     {
       libport::Symbol s = libport::Symbol::fresh("_waituntil_");
       $$ = DESUGAR("{var " << s << " = persist (" << $3 << ","
-	      << $5 << ") | waituntil(" << s << "())}");
+                   << $5 << ") | waituntil(" << s << "())}");
     }
 | "waituntil" "(" event_match ")"
     {
       libport::Symbol s = libport::Symbol::fresh("_waituntil_");
       $$ = DESUGAR("var " << s << " = Pattern.new("
-	      << ast::rExp(new ast::List(@3, $3.second))
-	      << ") | " << $3.first << ".'waituntil'(" << s << ")");
+                   << ast::rExp(new ast::List(@3, $3.second))
+                   << ") | " << $3.first << ".'waituntil'(" << s << ")");
     }
 ;
 
@@ -887,31 +887,31 @@ stmt:
   "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
     {
       $$ = DESUGAR("Control.whenever_(" << $3 << ", "
-	      << $5 << ", " << $6 << ")");
+                   << $5 << ", " << $6 << ")");
     }
 | "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
     {
       libport::Symbol s = libport::Symbol::fresh("_whenever_");
       $$ = DESUGAR("var " << s << " = persist (" << $3 << ","
-              << $5 << ") | Control.whenever_(" << s << ".val, "
-              << $7 << ", " << $8 << ")");
+                   << $5 << ") | Control.whenever_(" << s << ".val, "
+                   << $7 << ", " << $8 << ")");
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
       $$ = DESUGAR("whenever(?(" << $3.first << ")(" << $3.second << "))"
-	      << $5 << " else {}");
+                   << $5 << " else {}");
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
       libport::Symbol e = libport::Symbol::fresh("_event_");
       $$ = DESUGAR("detach({" << $3.first << ".onEvent(closure ("
-	      << e << ") {"
-	      << "if (Pattern.new("
-	      << ast::rExp(new ast::List(@3, $3.second))
-	      << ").match("
-	      << e << ".payload)) detach({while (true){" << $5
-	      << " | if(!" << e << ".active) break } | " << $7
-	      << "})})})");
+                   << e << ") {"
+                   << "if (Pattern.new("
+                   << ast::rExp(new ast::List(@3, $3.second))
+                   << ").match("
+                   << e << ".payload)) detach({while (true){" << $5
+                   << " | if(!" << e << ".active) break } | " << $7
+                   << "})})})");
     }
 ;
 
