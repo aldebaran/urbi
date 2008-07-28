@@ -236,39 +236,6 @@ namespace runner
         propagate_error_(x, e->location_get());
         throw;
       }
-      // Catching and rethrowing scheduler exceptions here is *way*
-      // too expensive. For instance, when a stop exception is raised
-      // (which happens when a simple 'return' statement is issued),
-      // it would be caught at every level of the ast.
-# if 0
-      catch (scheduler::SchedulerException&)
-      {
-        result_.reset();
-        throw;
-      }
-#endif
-      // Unfortunately, since SchedulerExceptions can't be caught, we
-      // cannot leave the following fallbacks, because they would
-      // catch StopExceptions and print out errors.
-#if 0
-      catch (kernel::exception& x)
-      {
-        std::cerr << "Unexpected exception propagated: "
-                  << x.what() << std::endl;
-        throw;
-      }
-      catch (std::exception& x)
-      {
-        std::cerr << "Unexpected exception propagated: "
-                  << x.what() << std::endl;
-        throw;
-      }
-      catch (...)
-      {
-        std::cerr << "Unknown exception propagated" << std::endl;
-        throw;
-      }
-#endif
   }
 
 
