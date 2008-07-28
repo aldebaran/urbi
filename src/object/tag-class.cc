@@ -147,13 +147,13 @@ namespace object
   void
   Tag::triggerEnter(runner::Runner& r)
   {
-    urbi_call(r, enter(r), SYMBOL(emit));
+    urbi_call(r, enter(r), SYMBOL(syncEmit));
   }
 
   void
   Tag::triggerLeave(runner::Runner& r)
   {
-    urbi_call(r, leave(r), SYMBOL(emit));
+    urbi_call(r, leave(r), SYMBOL(syncEmit));
   }
 
   void
