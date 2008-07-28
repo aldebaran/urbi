@@ -224,18 +224,17 @@ namespace runner
   void
   Interpreter::operator() (ast::rConstAst e)
   {
-    /// Catch exceptions, display the error if not already done, and
-    /// rethrow it.
-    if (e)
-      try
-      {
-        e->accept(*this);
-      }
-      catch (object::UrbiException& x)
-      {
-        propagate_error_(x, e->location_get());
-        throw;
-      }
+    /// Catch exceptions, set the location and backtrace if not
+    /// already done, and rethrow it.
+    try
+    {
+      e->accept(*this);
+    }
+    catch (object::UrbiException& x)
+    {
+      propagate_error_(x, e->location_get());
+      throw;
+    }
   }
 
 
