@@ -120,7 +120,7 @@ namespace object
   }
 
   static inline rObject
-  tag_event(Tag* owner, runner::Runner& r, libport::Symbol& field)
+  tag_event(Tag* owner, runner::Runner& r, const libport::Symbol& field)
   {
     if (!owner->slot_has(field))
     {
