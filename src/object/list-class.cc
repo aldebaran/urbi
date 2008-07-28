@@ -161,7 +161,7 @@ namespace object
     // Beware of iterations that modify the list in place: make a
     // copy.
     value_type l(content_);
-    rforeach (const rObject& o, l)
+    foreach (const rObject& o, l)
     {
       object::objects_type args;
       args.push_back(o);
