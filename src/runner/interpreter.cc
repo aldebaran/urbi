@@ -262,10 +262,11 @@ namespace runner
     object::objects_type args;
     args.push_back(rObject());
     apply_urbi(code, SYMBOL(), args, 0);
-    // Wait for all other jobs to terminate
-    yield_until_terminated(jobs);
 
     result_ = object::void_class;
+
+    // Wait for all other jobs to terminate
+    yield_until_terminated(jobs);
   }
 
   void
