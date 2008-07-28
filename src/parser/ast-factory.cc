@@ -35,6 +35,35 @@ namespace std
 namespace parser
 {
 
+  ast::rExp
+  desugar(::parser::Tweast& t)
+  {
+    ast::rExp res = ::parser::parse(t)->ast_get().unsafe_cast<ast::Exp>();
+    if (!!getenv("DESUGAR"))
+      LIBPORT_ECHO("res: " << get_pointer(res)
+                   << ": " << libport::deref << res);
+    return res;
+  }
+
+
+  ast::rExp
+  ast_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp)
+  {
+    ::parser::Tweast tweast;
+    lvalue = ast_lvalue_once(lvalue, tweast);
+    ast::rExp res =
+      desugar(tweast
+              << new_clone(lvalue) << '=' << lvalue << op << exp);
+    if (!!getenv("DESUGAR"))
+    {
+      LIBPORT_ECHO("Id: " << typeid(*res).name()
+                   << " (" << get_pointer(res) << ")");
+      LIBPORT_ECHO("DESUGAR_ASSIGN: " << *res);
+    }
+    return res;
+  }
+
+
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op must be & or |.
   ast::rExp

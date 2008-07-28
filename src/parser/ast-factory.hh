@@ -11,6 +11,13 @@
 
 namespace parser
 {
+  /// Return the parsing of \a Tweast.
+  ast::rExp desugar(::parser::Tweast& t);
+
+  /// <lvalue> <op>= <exp>.
+  ast::rExp
+  ast_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp);
+
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
   ast::rExp
@@ -19,14 +26,14 @@ namespace parser
 
   /// "<method>"
   ast::rCall
-  ast_call (const yy::location& l,
-            libport::Symbol method);
+  ast_call(const yy::location& l,
+           libport::Symbol method);
 
 
   /// "<target> . <method> (args)".
   ast::rCall
-  ast_call (const yy::location& l,
-            ast::rExp target, libport::Symbol method, ast::exps_type* args);
+  ast_call(const yy::location& l,
+           ast::rExp target, libport::Symbol method, ast::exps_type* args);
 
   /// "<target> . <method> ()".
   ast::rCall

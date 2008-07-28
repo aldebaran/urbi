@@ -73,6 +73,8 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
+  using parser::desugar;
+  using parser::ast_assign;
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
@@ -101,18 +103,6 @@
       return up.tweast_->template take<T>(key);
     }
 
-
-    /// Return the parsing of \a Tweast.
-    static
-    ast::rExp
-    desugar(::parser::Tweast& t)
-    {
-      ast::rExp res = ::parser::parse(t)->ast_get().unsafe_cast<ast::Exp>();
-      if (!!getenv("DESUGAR"))
-        LIBPORT_ECHO("res: " << get_pointer(res)
-                     << ": " << libport::deref << res);
-      return res;
-    }
 
   /// Return the parsing of Code.
 # define DESUGAR(Code)                          \
@@ -685,27 +675,6 @@ stmt:
     }
 ;
 
-%code // Output in ugrammar.cc.
-{
-  static
-    ast::rExp
-    desugar_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp)
-  {
-    ::parser::Tweast tweast;
-    lvalue = ast_lvalue_once(lvalue, tweast);
-    ast::rExp res = desugar(tweast
-                            << new_clone(lvalue) << '='
-                            << lvalue << op << exp);
-    if (!!getenv("DESUGAR"))
-    {
-      LIBPORT_ECHO("Id: " << typeid(*res).name()
-                   << " (" << get_pointer(res) << ")");
-      LIBPORT_ECHO("DESUGAR_ASSIGN: " << *res);
-    }
-    return res;
-  }
-};
-
 %token <libport::Symbol>
 	TOK_CARET_EQ    "^="
 	TOK_SLASH_EQ    "/="
@@ -715,11 +684,11 @@ stmt:
 ;
 
 exp:
-  lvalue "+=" exp    { $$ = desugar_assign($1, $2, $3); }
-| lvalue "-=" exp    { $$ = desugar_assign($1, $2, $3); }
-| lvalue "*=" exp    { $$ = desugar_assign($1, $2, $3); }
-| lvalue "/=" exp    { $$ = desugar_assign($1, $2, $3); }
-| lvalue "^=" exp    { $$ = desugar_assign($1, $2, $3); }
+  lvalue "+=" exp    { $$ = ast_assign($1, $2, $3); }
+| lvalue "-=" exp    { $$ = ast_assign($1, $2, $3); }
+| lvalue "*=" exp    { $$ = ast_assign($1, $2, $3); }
+| lvalue "/=" exp    { $$ = ast_assign($1, $2, $3); }
+| lvalue "^=" exp    { $$ = ast_assign($1, $2, $3); }
 ;
 
 %token  TOK_MINUS_MINUS "--"
