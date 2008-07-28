@@ -88,7 +88,7 @@ urbiinclude_HEADERS = $(uobject_headers)
 if !OPENR
 bin_PROGRAMS = urbi-console
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LDADD)
+urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS)
 
 dist_libkernel_la_SOURCES +=			\
 console-server.cc				\
