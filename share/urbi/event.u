@@ -4,8 +4,10 @@ class Global.Event
 {
   function init()
   {
-    var this.pubsub = PubSub.new |
-    var this.alive = []
+    var this.on_pubsub = PubSub.new |
+    var this.wu_pubsub = PubSub.new |
+    var this.alive = [] |
+    var this.codes = [] |
   };
 
   function 'emit'
@@ -13,7 +15,22 @@ class Global.Event
     var res = clone |
     var res.payload = call.evalArgs |
     var res.active = false |
-    pubsub.publish(res) |
+    on_pubsub.publish(res) |
+    wu_pubsub.publish(res) |
+    void
+  };
+
+  function syncEmit
+  {
+    var res = clone |
+    var res.payload = call.evalArgs |
+    var res.active = false |
+    // Publish event on the waituntil channel, to unfreeze other
+    // waiting jobs
+    wu_pubsub.publish(res) |
+    // Then call synchronously 'at' subscribers
+    for& (var code : codes)
+      code(res) |
     void
   };
 
@@ -23,7 +40,8 @@ class Global.Event
     var res.payload = call.evalArgs |
     var res.active = true |
     alive.push_back(res) |
-    pubsub.publish(res) |
+    on_pubsub.publish(res) |
+    wu_pubsub.publish(res) |
     res
   };
 
@@ -36,26 +54,32 @@ class Global.Event
 
   function onEvent(code)
   {
-    var id = pubsub.subscribe |
-    alive.each(code) |
+    codes << code |
+    var id = on_pubsub.subscribe |
+    // We cannot replace those for loop of detached code with a for&,
+    // since it would delay subsequent onEvent execution if code
+    // doesn't return immediately.
+    for (var evt : alive)
+      detach(code(evt)) |
     while| (true)
-      pubsub.getAll(id).each(code)
+      for (var evt : on_pubsub.getAll(id))
+        detach(code(evt)) |
   };
 
   function 'waituntil'(pattern)
   {
-    var id = pubsub.subscribe |
+    var id = wu_pubsub.subscribe |
     for| (var e: alive)
       if (pattern.match(e.payload))
       {
-        pubsub.unsubscribe(id) |
+        wu_pubsub.unsubscribe(id) |
         return
       } |
     while| (true)
-      for| (var e: pubsub.getAll(id))
+      for| (var e: wu_pubsub.getAll(id))
         if (pattern.match(e.payload))
         {
-          pubsub.unsubscribe(id) |
+          wu_pubsub.unsubscribe(id) |
           return
         }
   };

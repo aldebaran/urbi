@@ -787,9 +787,9 @@ stmt:
                    << "if (Pattern.new("
                    << ast::rExp(new ast::List(@3, $3.second))
                    << ").match("
-                   << e << ".payload)) detach({" << $5
+                   << e << ".payload)) {" << $5
                    << "| waituntil (!" << e << ".active) | " << $7
-                   << "})})})");
+                   << "}})})");
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
