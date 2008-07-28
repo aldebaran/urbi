@@ -645,14 +645,14 @@ stmt:
 // "function (" is starting an lambda expression ("a = function (){ 1 }")
 // or a named function ("function (a).f() { 1 }").  So I chose to limit
 // named function to what we need to be compatible with k1: basically
-// "function a ()" and "function a.b()".
+// "function a ()", "function a.b()", and so on.
 //
 // Another option would have been to use two keywords, say using "lambda"
 // for anonymous functions.  But that's not a good option IMHO (AD).
 %type <ast::rCall> k1_id;
 k1_id:
-  "identifier"                   { $$ = ast_call(@$, $1); }
-| "identifier" "." "identifier"  { $$ = ast_call(@$, ast_call(@1, $1), $3); }
+  "identifier"               { $$ = ast_call(@$, $1); }
+| k1_id "." "identifier"     { $$ = ast_call(@$, ast::rExp($1), $3); }
 ;
 
 
