@@ -64,10 +64,7 @@ namespace scheduler
     if (current_job_)
       pending_.insert(next_job_p_, job);
     else
-    {
       jobs_.push_back(job);
-      jobs_to_start_ = true;
-    }
   }
 
   libport::utime_t
@@ -124,7 +121,6 @@ namespace scheduler
     // job.
     libport::utime_t start_time = get_time_();
     libport::utime_t deadline = start_time +  3600000000LL;
-    jobs_to_start_ = false;
     bool start_waiting = possible_side_effect_;
     possible_side_effect_ = false;
     bool at_least_one_started = false;
@@ -257,7 +253,7 @@ namespace scheduler
     // If during this cycle a new job has been created by an existing job,
     // start it. Also start if a possible side effect happened, it may have
     // occurred later then the waiting jobs in the cycle.
-    if (jobs_to_start_ || possible_side_effect_)
+    if (possible_side_effect_)
       deadline = SCHED_IMMEDIATE;
 
     // If we are ready to die and there are no jobs left, then die.

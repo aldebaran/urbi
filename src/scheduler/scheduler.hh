@@ -159,10 +159,6 @@ namespace scheduler
     /// this field?
     bool possible_side_effect_;
 
-    /// Has a new job been added to the list of jobs to start in the current
-    /// cycle?
-    bool jobs_to_start_;
-
     /// Cycles counter.
     unsigned int cycle_;
 
