@@ -56,6 +56,11 @@ namespace object
     return this;
   }
 
+  bool Dictionary::empty()
+  {
+    return content_.empty();
+  }
+
   rDictionary
   Dictionary::erase(libport::Symbol key)
   {
@@ -85,6 +90,7 @@ namespace object
   void Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
   {
     bind(SYMBOL(clear), &Dictionary::clear);
+    bind(SYMBOL(empty), &Dictionary::empty);
     bind(SYMBOL(erase), &Dictionary::erase);
     bind(SYMBOL(get), &Dictionary::get);
     bind(SYMBOL(has), &Dictionary::has);

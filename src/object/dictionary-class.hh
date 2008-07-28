@@ -25,6 +25,7 @@ namespace object
 
     /// Urbi methods
     rDictionary clear();
+    bool empty();
     rDictionary erase(libport::Symbol key);
     rObject get(const libport::Symbol& key);
     bool has(const libport::Symbol& key);
