@@ -96,7 +96,7 @@ namespace scheduler
     /// After this function has been called, the scheduler will determine,
     /// at the end of the current cycle, which jobs need to react to this
     /// action.
-    void signal_stop(const rTag& tag, boost::any payload);
+    void signal_stop(const Tag& tag, const boost::any& payload);
 
     /// Get the current cycle number.
     ///

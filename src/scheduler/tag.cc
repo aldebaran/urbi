@@ -17,9 +17,9 @@ namespace scheduler
   }
 
   void
-  Tag::stop(Scheduler& sched, boost::any payload)
+  Tag::stop(Scheduler& sched, const boost::any& payload) const
   {
-    sched.signal_stop(this, payload);
+    sched.signal_stop(*this, payload);
   }
 
   const boost::any&

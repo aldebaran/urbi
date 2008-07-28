@@ -357,7 +357,7 @@ namespace scheduler
   }
 
   void
-  Scheduler::signal_stop(const rTag& tag, boost::any payload)
+  Scheduler::signal_stop(const Tag& tag, const boost::any& payload)
   {
     // Tell the jobs that a tag has been stopped, ending with
     // the current job to avoid interrupting this method early.
@@ -371,7 +371,7 @@ namespace scheduler
       {
 	// Check if this job deserves to be removed.
 	foreach (const rTag& t, job->tags_get())
-	  if (t->derives_from(*tag))
+	  if (t->derives_from(tag))
 	  {
 	    pending_.remove(job);
 	    continue;

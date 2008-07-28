@@ -52,7 +52,7 @@ namespace scheduler
   }
 
   inline void
-  Tag::block(Scheduler& sched, boost::any payload)
+  Tag::block(Scheduler& sched, const boost::any& payload)
   {
     blocked_ = true;
     payload_ = payload;

@@ -158,7 +158,7 @@ namespace scheduler
   }
 
   void
-  Job::register_stopped_tag(const rTag& tag, const boost::any& payload)
+  Job::register_stopped_tag(const Tag& tag, const boost::any& payload)
   {
     int max_tag_check = tags_.size();
     if (pending_exception_)
@@ -177,7 +177,7 @@ namespace scheduler
     // Check if we are affected by this tag, up-to max_tag_check from
     // the beginning of the tag list.
     for (int i = 0; i < max_tag_check; i++)
-      if (tags_[i]->derives_from(*tag))
+      if (tags_[i]->derives_from(tag))
       {
 	async_throw(StopException(i, payload));
 	return;

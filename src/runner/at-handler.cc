@@ -28,7 +28,7 @@ namespace runner
     bool triggered_get() const;
     void triggered_set(bool);
     const scheduler::tags_type& tags_get() const;
-    bool tag_held(const scheduler::rTag& tag) const;
+    bool tag_held(const scheduler::Tag& tag) const;
     const object::rLobby& lobby_get() const;
   private:
     rObject condition_;
@@ -48,7 +48,7 @@ namespace runner
     virtual void work();
     virtual bool frozen() const;
     void add_job(AtJob*);
-    virtual void register_stopped_tag(const scheduler::rTag& tag,
+    virtual void register_stopped_tag(const scheduler::Tag& tag,
 				      const boost::any&);
   private:
     typedef boost::ptr_list<AtJob> at_jobs_type;
@@ -76,14 +76,14 @@ namespace runner
 
   void
   AtHandler::register_stopped_tag
-    (const scheduler::rTag& tag, const boost::any& payload)
+    (const scheduler::Tag& tag, const boost::any& payload)
   {
     // If we are the current job, since we have no side effect, it must be
     // a flow control tag. Otherwise, remove all jobs holding this tag.
     if (scheduler_get().is_current_job(*this))
       super_type::register_stopped_tag(tag, payload);
     else
-      jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, tag));
+      jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, boost::cref(tag)));
   }
 
   void
@@ -219,11 +219,11 @@ namespace runner
   }
 
   bool
-  AtJob::tag_held(const scheduler::rTag& tag) const
+  AtJob::tag_held(const scheduler::Tag& tag) const
   {
     return libport::has_if(tags_, boost::bind(&scheduler::Tag::derives_from,
 					      _1,
-					      boost::ref(*tag)));
+					      boost::cref(tag)));
   }
 
   bool

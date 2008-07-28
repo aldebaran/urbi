@@ -76,9 +76,9 @@ namespace scheduler
     // Act on a tag and make the scheduler take it into account
     void freeze(Scheduler&);
     void unfreeze(Scheduler&);
-    void block(Scheduler&, boost::any);
+    void block(Scheduler&, const boost::any&);
     void unblock(Scheduler&);
-    void stop(Scheduler&, boost::any);
+    void stop(Scheduler&, const boost::any&) const;
 
     const libport::Symbol& name_get() const;
 
