@@ -58,12 +58,11 @@ namespace scheduler
     // the job is started in the course of the current round. To make sure
     // that it is not started too late even if the creator is located after
     // the job that is causing the creation (think "at job handler" for
-    // example), insert it right after the current job.
+    // example), insert it right before the job which was right after the
+    // current one. This way, jobs inserted successively will get queued
+    // in the right order.
     if (current_job_)
-    {
-      jobs_type::iterator insert_before = job_p_;
-      pending_.insert(++insert_before, job);
-    }
+      pending_.insert(next_job_p_, job);
     else
     {
       jobs_.push_back(job);
@@ -134,11 +133,14 @@ namespace scheduler
 
     // Do not use libport::foreach here, as the list of jobs may grow if
     // add_job() is called during the iteration.
-    for (job_p_ = pending_.begin();
-	 job_p_ != pending_.end();
-	 ++job_p_)
+    for (jobs_type::iterator job_p = pending_.begin();
+	 job_p != pending_.end();
+	 ++job_p)
     {
-      rJob& job = *job_p_;
+      rJob& job = *job_p;
+      // Store the next job so that insertions happen before it.
+      next_job_p_ = job_p;
+      ++next_job_p_;
       // If the job has terminated during the previous round, remove the
       // references we have on it by just skipping it.
       if (job->terminated())
