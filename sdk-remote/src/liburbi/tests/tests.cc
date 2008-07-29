@@ -10,29 +10,27 @@
 // Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
 
+static char
+char_of(urbi::UMessageType t)
+{
+  switch (t)
+  {
+    case urbi::MESSAGE_DATA:   return 'D';
+    case urbi::MESSAGE_ERROR:  return 'E';
+    case urbi::MESSAGE_SYSTEM: return 'S';
+    default:                   return '?';
+  }
+}
+
 urbi::UCallbackAction
 dump(const urbi::UMessage& msg)
 {
   if (msg.tag == "start" || msg.tag == "ident")
     return urbi::URBI_CONTINUE;
-  if (getenv("VERBOSE")) LIBPORT_ECHO("got a message: " << msg);
-  unsigned char type;
-  switch (msg.type)
-  {
-    case urbi::MESSAGE_DATA:
-      type = 'D';
-      break;
-    case urbi::MESSAGE_ERROR:
-      type = 'E';
-      break;
-    case urbi::MESSAGE_SYSTEM:
-      type = 'S';
-      break;
-    default:
-      type = '?';
-  }
+  if (getenv("VERBOSE"))
+    LIBPORT_ECHO("got a message: " << msg);
 
-  std::cout << type << ' ';
+  std::cout << char_of(msg.type) << ' ';
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
@@ -41,7 +39,7 @@ dump(const urbi::UMessage& msg)
 
     case urbi::MESSAGE_ERROR:
     case urbi::MESSAGE_SYSTEM:
-      std::cout  << msg.tag << ' ' << msg.message << std::endl;
+      std::cout << msg.tag << ' ' << msg.message << std::endl;
       break;
   }
   dumpSem++;
