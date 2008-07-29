@@ -349,7 +349,7 @@ namespace scheduler
 
     // Since killing the current job will result in its immediate
     // termination, kill all other jobs before.
-    foreach (rJob job, jobs_get())
+    foreach (const rJob& job, jobs_get())
       if (job != current_job_)
 	job->terminate_now();
     if (current_job_)
@@ -361,7 +361,7 @@ namespace scheduler
   {
     // Tell the jobs that a tag has been stopped, ending with
     // the current job to avoid interrupting this method early.
-    foreach (rJob job, jobs_get())
+    foreach (const rJob& job, jobs_get())
     {
       // Job started at this cycle, reset to avoid stack references.
       if (!job)

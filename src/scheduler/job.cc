@@ -46,7 +46,7 @@ namespace scheduler
     catch (const kernel::exception& e)
     {
       // Signal the exception to each linked job in turn.
-      foreach (rJob job, links_)
+      foreach (const rJob& job, links_)
       {
 	job->links_.remove(this);
 	job->async_throw(e);
@@ -75,11 +75,11 @@ namespace scheduler
   Job::terminate_cleanup()
   {
     // Remove pending links.
-    foreach (rJob job, links_)
+    foreach (const rJob& job, links_)
       job->links_.remove(this);
     links_.clear();
     // Wake-up waiting jobs.
-    foreach (rJob job, to_wake_up_)
+    foreach (const rJob& job, to_wake_up_)
       if (!job->terminated())
 	job->state_set(running);
     to_wake_up_.clear();
@@ -118,7 +118,7 @@ namespace scheduler
   void
   Job::yield_until_terminated(const jobs_type& jobs)
   {
-    foreach (rJob job, jobs)
+    foreach (const rJob& job, jobs)
       yield_until_terminated(*job);
   }
 
@@ -206,7 +206,7 @@ namespace scheduler
       return;
     }
     prio_ = UPRIO_MIN;
-    foreach(rTag tag, tags_)
+    foreach(const rTag& tag, tags_)
       prio_ = std::max(prio_, tag->prio_get());
   }
 

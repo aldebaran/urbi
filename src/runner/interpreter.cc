@@ -245,7 +245,7 @@ namespace runner
     scheduler::jobs_type jobs;
 
     // Create separate runners for every child but the first
-    foreach (ast::rConstExp child,
+    foreach (const ast::rConstExp& child,
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
       Interpreter* job = new Interpreter(*this, eval(child));
@@ -256,7 +256,7 @@ namespace runner
     }
 
     // Evaluate the first child in this runner
-    rRoutine code = eval(e->children_get().front()).unsafe_cast<object::Code>();
+    const rRoutine& code = eval(e->children_get().front()).unsafe_cast<object::Code>();
     assert(code);
     // This is a closure, it won't use its 'this'
     object::objects_type args;
@@ -339,14 +339,14 @@ namespace runner
       // Skip 'this'
       object::objects_type::const_iterator it = args.begin() + 1;
       // Bind
-      foreach (ast::rConstDeclaration s, formals)
+      foreach (const ast::rConstDeclaration& s, formals)
         stacks_.def_arg(s, *(it++));
     }
 
     // Push captured variables
-    foreach (ast::rConstDeclaration dec, *ast->captured_variables_get())
+    foreach (const ast::rConstDeclaration& dec, *ast->captured_variables_get())
     {
-      rrObject value = func->captures_get()[dec->local_index_get()];
+      const rrObject& value = func->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
     }
 
@@ -404,9 +404,9 @@ namespace runner
     if (std::find(++args.begin(), end, object::void_class) != end)
       throw object::WrongArgumentType (msg);
 
-    if (rRoutine c = func->as<object::Code>())
+    if (const rRoutine& c = func->as<object::Code>())
       result_ = apply_urbi (c, msg, args, call_message);
-    else if (object::rPrimitive p = func->as<object::Primitive>())
+    else if (const object::rPrimitive& p = func->as<object::Primitive>())
       result_ = p->value_get()(*this, args);
     else
     {
@@ -421,7 +421,7 @@ namespace runner
 					 const ast::exps_type& ue_args)
   {
     bool tail = false;
-    foreach (ast::rConstExp arg, ue_args)
+    foreach (const ast::rConstExp& arg, ue_args)
     {
       // Skip target, the first argument.
       if (!tail++)
@@ -483,10 +483,10 @@ namespace runner
       lazy_args.push_back(object::nil_class);
       range = make_iterator_range(range, 1, 0);
     }
-    foreach (ast::rConstExp e, range)
+    foreach (const ast::rConstExp& e, range)
     {
       /// Retreive and evaluate the lazy version of arguments.
-      ast::rConstLazy lazy = e.unsafe_cast<const ast::Lazy>();
+      const ast::rConstLazy& lazy = e.unsafe_cast<const ast::Lazy>();
       assert(lazy);
       rObject v = eval(lazy->lazy_get());
       lazy_args.push_back(v);
@@ -552,7 +552,7 @@ namespace runner
     // Build the call message for non-strict functions, otherwise
     // the evaluated argument list.
     rObject call_message;
-    rRoutine c = val->as<object::Code>();
+    const object::Code* c = val->as<object::Code>().get();
     if (c && !c->ast_get()->strict())
       call_message = build_call_message (tgt, val, message, ast_args);
     else
@@ -593,7 +593,7 @@ namespace runner
     result_ = res;
 
     // Capture variables
-    foreach (ast::rDeclaration dec, *e->captured_variables_get())
+    foreach (const ast::rDeclaration& dec, *e->captured_variables_get())
     {
       ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
       assert(local);
@@ -646,7 +646,7 @@ namespace runner
   {
     object::List::value_type res;
     // Evaluate every expression in the list
-    foreach (ast::rConstExp c, e->value_get())
+    foreach (const ast::rConstExp& c, e->value_get())
     {
       rObject v = eval(c);
       // Refuse void in literal lists
@@ -671,7 +671,7 @@ namespace runner
   void
   Interpreter::visit(const ast::Local* e)
   {
-    rObject value = stacks_.get(e);
+    const rObject& value = stacks_.get(e);
 
     passert("Local variable read before being set", value);
 
@@ -701,7 +701,7 @@ namespace runner
     result_ = object::void_class;
 
     bool tail = false;
-    foreach (ast::rConstExp c, e->children_get())
+    foreach (const ast::rConstExp& c, e->children_get())
     {
       // Allow some time to pass before we execute what follows.  If
       // we don't do this, the ;-operator would act almost like the
@@ -751,7 +751,7 @@ namespace runner
 	        object::global_class->slot_locate(SYMBOL(topLevel), false,
 		  true))
 	      {
-		rObject e = topLevel->slot_get(SYMBOL(LT_LT));
+		const rObject& e = topLevel->slot_get(SYMBOL(LT_LT));
                 objects_type args;
                 args.push_back(topLevel);
                 args.push_back(result_);
@@ -792,7 +792,7 @@ namespace runner
     // issue a "stop" which may interrupt subrunners.
     if (!e->toplevel_get() && !runners.empty())
     {
-      scheduler::rTag tag = scope_tag_get();
+      const scheduler::rTag& tag = scope_tag_get();
       if (tag)
 	tag->stop(scheduler_get(), object::void_class);
       yield_until_terminated(runners);
@@ -873,8 +873,8 @@ namespace runner
       // to Object
       object::rObject unchecked_tag = eval(t->tag_get());
       object::type_check<object::Tag>(unchecked_tag, SYMBOL(tagged_stmt));
-      object::rTag urbi_tag = unchecked_tag->as<object::Tag>();
-      scheduler::rTag tag = urbi_tag->value_get();
+      const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
+      const scheduler::rTag& tag = urbi_tag->value_get();
       // If tag is blocked, do not start and ignore the
       // statement completely but use the provided payload.
       if (tag->blocked())
@@ -934,7 +934,7 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      rObject toplevel = object::tag_class;
+      const rObject& toplevel = object::tag_class;
       rObject parent = toplevel;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
@@ -942,11 +942,11 @@ namespace runner
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-	if (rObject owner = where->slot_locate (elt))
+	if (const rObject& owner = where->slot_locate (elt))
         {
           ECHO("Component " << elt << " exists.");
 	  where = owner->own_slot_get (elt);
-	  object::rTag parent_ = dynamic_cast<object::Tag*>(where.get());
+	  object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get());
 	  if (parent_)
 	  {
             ECHO("It is a tag, so use it as the new parent.");
