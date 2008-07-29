@@ -25,18 +25,18 @@ libkernel_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
 
 # The separation in two different targets is needed to be sure that
 # the libs are installed before we try to move them.
-install-exec-local:
+# install-exec-local:
 
-install-data-hook:
-	rm $(DESTDIR)$(envdir)/.libs
-	$(LN_S) . $(DESTDIR)$(envdir)/.libs
+#install-data-hook:
+#	rm $(DESTDIR)$(envdir)/.libs
+#	$(LN_S) . $(DESTDIR)$(envdir)/.libs
 #	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
 #	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
 #	$(LN_S) .libs/libkernel.la $(DESTDIR)$(envdir)
 #	$(LN_S) .libs/libkernel.a $(DESTDIR)$(envdir)
 
-uninstall-local:
-	rm -rf $(DESTDIR)$(envdir)/.libs
+#uninstall-local:
+#	rm -rf $(DESTDIR)$(envdir)/.libs
 
 ## ------------ ##
 ## version.hh.  ##
