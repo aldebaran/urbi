@@ -3,7 +3,7 @@
 
 namespace scheduler
 {
-  Tag::Tag(rTag parent, libport::Symbol name)
+  Tag::Tag(const rTag& parent, libport::Symbol name)
     : parent_(parent)
     , blocked_(false)
     , frozen_(false)

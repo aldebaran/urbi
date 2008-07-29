@@ -57,7 +57,7 @@ namespace scheduler
   public:
     // Create a new tag, with or without a parent
     explicit Tag(libport::Symbol name);
-    Tag(rTag parent, libport::Symbol name);
+    Tag(const rTag& parent, libport::Symbol name);
     virtual ~Tag();
 
     // Is this tag directly or indirectly frozen or blocked?
