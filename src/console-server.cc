@@ -183,7 +183,7 @@ main (int argc, const char* argv[])
     // = 0).
     arg_stack_size *= 1024;
     size_t pagesize = getpagesize();
-    arg_stack_size = (arg_stack_size / pagesize) * pagesize;
+    arg_stack_size = ((arg_stack_size + pagesize - 1) / pagesize) * pagesize;
     kernconf.default_stack_size = arg_stack_size;
   }
 
