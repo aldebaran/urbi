@@ -157,7 +157,7 @@ namespace object
     return for_all_protos(r, f, objects);
   }
 
-  inline rObject
+  inline const rObject&
   to_boolean(bool b)
   {
     return b ? true_class : false_class;

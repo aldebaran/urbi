@@ -235,7 +235,7 @@ namespace object
   bool is_true(const rObject& o, const libport::Symbol& fun);
 
   /// Return an Urbi boolean object corresponding to \a b.
-  rObject to_boolean(bool b);
+  const rObject& to_boolean(bool b);
 
 } // namespace object
 
