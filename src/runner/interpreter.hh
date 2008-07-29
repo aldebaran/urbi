@@ -100,12 +100,12 @@ namespace runner
                           rObject call_message = 0);
 
     /// Helpers to apply a function with the arguments as ast chunks
-    rObject apply(rObject tgt,
+    rObject apply(const rObject& tgt,
                   const libport::Symbol& msg,
                   const ast::exps_type* args,
                   boost::optional<ast::loc> loc);
-    rObject apply(rObject tgt,
-                  rObject f,
+    rObject apply(const rObject& tgt,
+                  const rObject& f,
                   const libport::Symbol& msg,
                   const ast::exps_type* args,
                   boost::optional<ast::loc> loc);

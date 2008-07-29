@@ -511,11 +511,11 @@ namespace runner
   }
 
   Interpreter::rObject
-  Interpreter::apply (rObject tgt, const libport::Symbol& message,
+  Interpreter::apply (const rObject& tgt, const libport::Symbol& message,
                       const ast::exps_type* input_ast_args,
                       boost::optional<ast::loc> loc)
   {
-    rObject value = tgt->slot_get(message);
+    const rObject value = tgt->slot_get(message);
     // Accept to call methods on void only if void itself is holding
     // the method.
     if (tgt == object::void_class)
@@ -526,7 +526,7 @@ namespace runner
   }
 
   Interpreter::rObject
-  Interpreter::apply (rObject tgt, rObject val,
+  Interpreter::apply (const rObject& tgt, const rObject& val,
                       const libport::Symbol& message,
                       const ast::exps_type* input_ast_args,
                       boost::optional<ast::loc> loc)
