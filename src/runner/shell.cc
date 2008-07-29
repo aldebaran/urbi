@@ -7,7 +7,7 @@
 
 namespace runner
 {
-  Shell::Shell(rLobby lobby,
+  Shell::Shell(const rLobby& lobby,
 	       scheduler::Scheduler& scheduler,
 	       const libport::Symbol& name)
     : Interpreter(lobby,
@@ -53,7 +53,7 @@ namespace runner
   }
 
   void
-  Shell::append_command(ast::rConstNary command)
+  Shell::append_command(const ast::rConstNary& command)
   {
     commands_.push_back(command);
     scheduler_get().signal_world_change();

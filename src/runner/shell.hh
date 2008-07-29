@@ -14,11 +14,11 @@ namespace runner
   class Shell : public Interpreter
   {
   public:
-    Shell(rLobby lobby,
+    Shell(const rLobby& lobby,
 	  scheduler::Scheduler& scheduler,
 	  const libport::Symbol& name = SYMBOL());
     virtual void work();
-    void append_command(ast::rConstNary command);
+    void append_command(const ast::rConstNary& command);
     bool pending_command_get() const;
     void pending_commands_clear();
   private:
