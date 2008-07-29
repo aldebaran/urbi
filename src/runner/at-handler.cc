@@ -18,8 +18,10 @@ namespace runner
   class AtJob
   {
   public:
-    AtJob(rObject condition, rObject clause, rObject on_leave,
-	  scheduler::tags_type tags, object::rLobby lobby);
+    AtJob(const rObject& condition, const rObject& clause,
+	  const rObject& on_leave,
+	  const scheduler::tags_type& tags,
+	  const object::rLobby& lobby);
     bool blocked() const;
     bool frozen() const;
     const rObject& condition_get() const;
@@ -207,8 +209,10 @@ namespace runner
     jobs_.push_back(job);
   }
 
-  AtJob::AtJob(rObject condition, rObject clause, rObject on_leave,
-	       scheduler::tags_type tags, object::rLobby lobby)
+  AtJob::AtJob(const rObject& condition, const rObject& clause,
+	       const rObject& on_leave,
+	       const scheduler::tags_type& tags,
+	       const object::rLobby& lobby)
     : condition_(condition),
       clause_(clause),
       on_leave_(on_leave),
@@ -282,9 +286,9 @@ namespace runner
 
   void
   register_at_job(const runner::Interpreter& starter,
-		  rObject condition,
-		  rObject clause,
-		  rObject on_leave)
+		  const rObject& condition,
+		  const rObject& clause,
+		  const rObject& on_leave)
   {
     if (!at_job_handler)
     {

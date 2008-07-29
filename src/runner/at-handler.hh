@@ -21,9 +21,9 @@ namespace runner
   /// \param con_leave A lambda representing the code to run when \a condition
   ///        becomes false, or nil. This lambda must start a detach task.
   void register_at_job(const runner::Interpreter& starter,
-		       rObject condition,
-		       rObject clause,
-		       rObject on_leave);
+		       const rObject& condition,
+		       const rObject& clause,
+		       const rObject& on_leave);
 
 } // namespace runner
 
