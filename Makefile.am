@@ -11,13 +11,18 @@ include $(top_srcdir)/build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = bison sdk lib/libport src tests . doc
+SUBDIRS = bison lib/libport src tests . doc
 
 # build-aux.
 EXTRA_DIST +=					\
 build-aux/bison++.in				\
 build-aux/move-if-change			\
 build-aux/output-to-dot
+
+# sdk/.
+host_SCRIPTS =
+nodist_host_DATA =
+include sdk/local.mk
 
 # dev.
 devdir = dev/
