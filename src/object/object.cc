@@ -31,26 +31,26 @@ namespace object
   | Slots.  |
   `--------*/
 
-  rObject
-  Object::urbi_protos_get ()
+  rList
+  Object::urbi_protos_get()
   {
-    if (!protos_cache_)
-    {
-      rList protos = new List(*protos_);
-      protos_cache_ = protos;
-      delete protos_;
-      protos_ = &protos->value_get ();
-    }
-    return protos_cache_;
+    if (protos_cache_)
+      return protos_cache_->as<List>();
+
+    rList protos = new List(*protos_);
+    protos_cache_ = protos;
+    delete protos_;
+    protos_ = &protos->value_get();
+    return protos;
   }
 
   void
-  Object::protos_set (const rObject& l)
+  Object::protos_set(const rList& l)
   {
     if (!protos_cache_)
       delete protos_;
     protos_cache_ = l;
-    protos_ = &l.unsafe_cast<object::List>()->value_get ();
+    protos_ = &l->value_get();
   }
 
   inline rObject

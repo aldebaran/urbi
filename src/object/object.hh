@@ -68,9 +68,9 @@ namespace object
     /// Read only access to protos.
     const protos_type& protos_get () const;
     /// Change the whole set of protos.
-    void protos_set (const rObject&);
+    void protos_set (const rList&);
     // Urbi access to protos.
-    rObject urbi_protos_get ();
+    rList urbi_protos_get ();
     /// \}
 
     /// \name The slots.
