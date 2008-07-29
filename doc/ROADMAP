@@ -97,7 +97,7 @@ Blend modes are not required (dixit JCB).
 The point was to have a single structure to support them all,
 something was lost during the evolution.  Try to factor again.
 
-*** Add tags signalling
+*** Add tags signalling (done)
 
 The tools team will need to know when a tagged statement starts or
 ends its execution by use of a special event.
