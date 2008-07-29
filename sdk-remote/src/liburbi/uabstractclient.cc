@@ -608,9 +608,7 @@ namespace urbi
       {
 	if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
 				   std::list<BinaryData>()))==URBI_REMOVE)
-	{
 	  deleteCallback(cid);
-	}
       }
       else
 	deleteCallback(cid);
@@ -909,47 +907,38 @@ namespace urbi
 	while (parsePosition < recvBufferPosition)
 	{
 	  if (inString)
-	  {
-	    if (recvBuffer[parsePosition]=='\\')
-	    {
+            switch (recvBuffer[parsePosition])
+            {
+            case '\\':
 	      if (parsePosition == recvBufferPosition-1)
-	      {
 		//we cant handle the '\\'
 		return;
-	      }
 	      parsePosition+=2; //ignore next character
 	      continue;
-	    }
-	    if (recvBuffer[parsePosition]=='"')
-	    {
-	      inString = false;
-	      ++parsePosition;
-	      continue;
-	    }
-	  }
+            case '"':
+              inString = false;
+              ++parsePosition;
+              continue;
+            }
 	  else
 	  {
-	    if (recvBuffer[parsePosition]=='"')
-	    {
+            switch (recvBuffer[parsePosition])
+            {
+            case '"':
 	      inString = true;
 	      ++parsePosition;
 	      continue;
-	    }
-	    if (recvBuffer[parsePosition]=='[')
-	    {
+	    case '[':
 	      ++nBracket;
 	      ++parsePosition;
 	      continue;
-	    }
-	    if (recvBuffer[parsePosition]==']')
-	    {
+	    case ']':
 	      --nBracket;
 	      ++parsePosition;
 	      continue;
-	    }
-	    if (recvBuffer[parsePosition]=='\n')
-	    {
-	      if (true /*XXX: handle '[' in echoed messages or errors nBracket == 0*/)
+	    case '\n':
+              /* XXX: handle '[' in echoed messages or errors nBracket == 0 */
+	      if (true)
 	      {
 		//end of command
 		recvBuffer[parsePosition]=0;
@@ -973,15 +962,17 @@ namespace urbi
 		}
 		break; //restart
 	      }
-	      //this should not happen: \n should have been handled by binary code below
+              // this should not happen: \n should have been handled
+              // by binary code below
 	      std::cerr << "FATAL PARSE ERROR" << std::endl;
-	    }
+            }
 	    if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
 	    {
 	      //very important: scan starts below current point
 	      //compute length
-	      char * endLength;
-	      binaryBufferLength = strtol(recvBuffer+parsePosition+1, &endLength, 0);
+	      char* endLength;
+	      binaryBufferLength =
+                strtol(recvBuffer+parsePosition+1, &endLength, 0);
 	      if (endLength == recvBuffer+parsePosition+1)
 	      {
 		std::cerr << "UClient::read, error parsing bin data length."
