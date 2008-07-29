@@ -240,7 +240,6 @@
 	TOK_LOOP         "loop"
 	TOK_WHILE        "while"
 	TOK_AT           "at"
-        TOK_INT_MARK     "?"
 ;
 %printer { debug_stream() << $$; } <ast::flavor_type>;
 
@@ -1105,6 +1104,7 @@ exp:
 | Events.  |
 `---------*/
 
+%token TOK_QUEST_MARK "?";
 %type <event_match_type> event_match;
 event_match:
   "?" "(" exp ")" "(" exps ")"
