@@ -22,7 +22,7 @@ namespace object
 
     Float();
     Float(value_type value_);
-    Float(rFloat model);
+    Float(const rFloat& model);
 
     value_type& value_get();
     value_type  value_get() const;
@@ -38,28 +38,28 @@ namespace object
     rFloat log();
     rFloat minus(objects_type& args);
     using Object::operator<;
-    rObject operator <(rFloat rhs);
+    rObject operator <(const rFloat& rhs);
     rFloat operator ~();
-    rFloat operator |(rFloat rhs);
-    rFloat operator &(rFloat rhs);
-    rFloat operator +(rFloat rhs);
-    rFloat operator *(rFloat rhs);
-    rFloat operator /(rFloat rhs);
-    rFloat operator %(rFloat rhs);
-    rFloat operator <<(rFloat rhs);
-    rFloat operator >>(rFloat rhs);
-    rFloat operator ^(rFloat rhs);
-    rFloat pow(rFloat rhs);
+    rFloat operator |(const rFloat& rhs);
+    rFloat operator &(const rFloat& rhs);
+    rFloat operator +(const rFloat& rhs);
+    rFloat operator *(const rFloat& rhs);
+    rFloat operator /(const rFloat& rhs);
+    rFloat operator %(const rFloat& rhs);
+    rFloat operator <<(const rFloat& rhs);
+    rFloat operator >>(const rFloat& rhs);
+    rFloat operator ^(const rFloat& rhs);
+    rFloat pow(const rFloat& rhs);
     rFloat random();
     rFloat round();
-    rFloat set(rFloat rhs);
+    rFloat set(const rFloat& rhs);
     rFloat sin();
     rFloat sqrt();
     rFloat tan();
     rFloat trunc();
 
     // Urbi functions
-    static rString as_string(rObject from);
+    static rString as_string(const rObject& from);
     static rFloat inf();
     static rFloat nan();
 

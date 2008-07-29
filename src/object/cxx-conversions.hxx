@@ -16,7 +16,7 @@ namespace object
   {
   public:
     static rObject
-    to(rObject o, const libport::Symbol&)
+    to(const rObject& o, const libport::Symbol&)
     {
       return o;
     }
@@ -37,7 +37,7 @@ namespace object
     typedef libport::shared_ptr<Urbi, true> T;
 
     static T
-    to(rObject o, const libport::Symbol& name)
+    to(const rObject& o, const libport::Symbol& name)
     {
       type_check<Urbi>(o, name);
       return o->as<Urbi>();
@@ -55,7 +55,7 @@ namespace object
   struct CxxConvert<scheduler::prio_type>
   {
     static scheduler::prio_type
-    to(rObject o, const libport::Symbol& name)
+    to(const rObject& o, const libport::Symbol& name)
       {
 	type_check<Float>(o, name);
 	rFloat f = o->as<Float>();
@@ -77,7 +77,7 @@ namespace object
   struct CxxConvert<std::string>
   {
     static std::string
-    to(rObject o, const libport::Symbol& name)
+    to(const rObject& o, const libport::Symbol& name)
     {
       type_check<String>(o, name);
       return o->as<String>()->value_get().name_get();
@@ -95,7 +95,7 @@ namespace object
   struct CxxConvert<libport::Symbol>
   {
     static libport::Symbol
-    to(rObject o, const libport::Symbol& name)
+    to(const rObject& o, const libport::Symbol& name)
     {
       type_check<String>(o, name);
       return o->as<String>()->value_get();
@@ -113,7 +113,7 @@ namespace object
   struct CxxConvert<bool>
   {
     static bool
-    to(rObject o, const libport::Symbol& name)
+    to(const rObject& o, const libport::Symbol& name)
     {
       return is_true(o, name);
     }

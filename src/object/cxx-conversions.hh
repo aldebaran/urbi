@@ -9,7 +9,7 @@ namespace object
   struct CxxConvert
   {
     static rObject
-    to(rObject o, const libport::Symbol& name)
+    to(const rObject& o, const libport::Symbol& name)
     {
       return T::No_such_conversion;
     }

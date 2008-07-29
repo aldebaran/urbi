@@ -34,7 +34,7 @@ namespace object
     proto_add(float_class);
   }
 
-  Float::Float(rFloat model)
+  Float::Float(const rFloat& model)
     : value_(model->value_get())
   {
     proto_add(model);
@@ -75,27 +75,27 @@ namespace object
     return new Float(std::numeric_limits<libport::ufloat>::quiet_NaN());
   }
 
-  rString Float::as_string(rObject from)
+  rString Float::as_string(const rObject& from)
   {
     if (from.get() == float_class.get())
       return new String(SYMBOL(LT_Float_GT));
     {
       static boost::format f("%g");
       type_check<Float>(from, SYMBOL(asString));
-      rFloat fl = from->as<Float>();
+      const rFloat& fl = from->as<Float>();
       return new String(libport::Symbol(str(f % float(fl->value_get()))));
 
     }
   }
 
-  rObject Float::operator <(rFloat rhs)
+  rObject Float::operator <(const rFloat& rhs)
   {
     return value_get() < rhs->value_get() ? true_class : false_class;
   }
 
 #define BOUNCE_OP(Op, Check)                                            \
   rFloat                                                                \
-  Float::operator Op(rFloat rhs)                                        \
+  Float::operator Op(const rFloat& rhs)                                        \
   {                                                                     \
     static libport::Symbol op(#Op);                                     \
     WHEN(Check,                                                         \
@@ -111,14 +111,14 @@ namespace object
 #undef BOUNCE_OP
 
   rFloat
-  Float::operator %(rFloat rhs)
+  Float::operator %(const rFloat& rhs)
   {
     if (!rhs->value_get())
       throw PrimitiveError(SYMBOL(PERCENT), "modulo by 0");
     return new Float(fmod(value_get(), rhs->value_get()));
   }
 
-  rFloat Float::pow(rFloat rhs)
+  rFloat Float::pow(const rFloat& rhs)
   {
     return new Float(powf(value_get(), rhs->value_get()));
   }
@@ -143,7 +143,7 @@ namespace object
   `-------------------*/
 #define BOUNCE_INT_OP(Op)                               \
   rFloat                                                \
-  Float::operator Op(rFloat rhs)                        \
+  Float::operator Op(const rFloat& rhs)                        \
   {                                                     \
     static libport::Symbol op(#Op);                     \
     return new Float(to_int(op) Op rhs->to_int(op));    \
@@ -214,7 +214,7 @@ namespace object
     }
   }
 
-  rFloat Float::set(rFloat rhs)
+  rFloat Float::set(const rFloat& rhs)
   {
     value_get() = rhs->value_get();
     return this;
@@ -224,7 +224,7 @@ namespace object
   {
     bind(SYMBOL(CARET), &Float::operator^);
     bind(SYMBOL(GT_GT), &Float::operator>>);
-    bind(SYMBOL(LT), static_cast<rObject (Float::*)(rFloat)>(&Float::operator<));
+    bind(SYMBOL(LT), static_cast<rObject (Float::*)(const rFloat&)>(&Float::operator<));
     bind(SYMBOL(LT_LT), &Float::operator<<);
     bind(SYMBOL(MINUS), &Float::minus);
     bind(SYMBOL(PERCENT), &Float::operator%);
