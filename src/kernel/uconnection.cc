@@ -1,4 +1,5 @@
 /// \file kernel/uconnection.cc
+/// \brief Implementation of UConnection.
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
@@ -41,20 +42,20 @@
 #include <kernel/ubanner.hh>
 #include <kernel/uqueue.hh>
 
-UConnection::UConnection (UServer& server, size_t packetSize)
-  : uerror_ (USUCCESS),
-    closing_ (false),
-    receiving_ (false),
-    new_data_added_ (false),
-    server_ (server),
-    send_queue_ (new UQueue()),
-    recv_queue_ (new UQueue()),
-    packet_size_ (packetSize),
-    blocked_ (false),
+UConnection::UConnection(UServer& server, size_t packetSize)
+  : uerror_(USUCCESS),
+    closing_(false),
+    receiving_(false),
+    new_data_added_(false),
+    server_(server),
+    send_queue_(new UQueue()),
+    recv_queue_(new UQueue()),
+    packet_size_(packetSize),
+    blocked_(false),
     // Initial state of the connection: unblocked, not receiving binary.
-    active_ (true),
-    lobby_ (new object::Lobby(object::State(*this))),
-    parser_ (new parser::UParser ())
+    active_(true),
+    lobby_(new object::Lobby(object::State(*this))),
+    parser_(new parser::UParser())
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
   lobby_->slot_set(SYMBOL(lobby), lobby_);
@@ -82,7 +83,7 @@ UConnection::~UConnection()
   shell_->terminate_now();
 }
 
-UConnection&
+void
 UConnection::initialize()
 {
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
@@ -112,42 +113,44 @@ UConnection::initialize()
 
   server_.load_file("CLIENT.INI", *recv_queue_);
   new_data_added_ = true;
-  return *this;
 }
 
-UConnection&
-UConnection::send (const char* buf, int len, const char* tag, bool flush)
+void
+UConnection::send(const char* buf, int len, const char* tag, bool flush_p)
 {
   if (tag)
   {
-    std::string pref = make_prefix (tag);
-    send_queue (pref.c_str(), pref.length());
+    std::string pref = make_prefix(tag);
+    send_queue(pref.c_str(), pref.length());
   }
   if (buf)
   {
-    UErrorValue ret = send_queue (buf, len).error_get ();
+    send_queue(buf, len);
+    UErrorValue res = error_;
 
-    if (flush && ret != UFAIL)
-      this->flush ();
+    if (flush_p && res != UFAIL)
+      flush();
 
-    CONN_ERR_RET(ret);
+    error_ = res;
   }
-  return *this;
 }
 
-UConnection&
-UConnection::send_queue (const char* buf, size_t len)
+void
+UConnection::send_queue(const char* buf, size_t len)
 {
   if (!closing_)
     send_queue_->push(buf, len);
-  CONN_ERR_RET(USUCCESS);
+  error_ = USUCCESS;
 }
 
-UConnection&
+void
 UConnection::continue_send ()
 {
   if (closing_)
-    CONN_ERR_RET(UFAIL);
+  {
+    error_ = UFAIL;
+    return;
+  }
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
 # endif
@@ -158,7 +161,10 @@ UConnection::continue_send ()
   ECHO(toSend);
 
   if (!toSend)
-    CONN_ERR_RET(USUCCESS);
+  {
+    error_ = USUCCESS;
+    return;
+  }
 
   if (char* popData = send_queue_->front(toSend))
   {
@@ -166,21 +172,27 @@ UConnection::continue_send ()
     int wasSent = effective_send (popData, toSend);
 
     if (wasSent < 0)
-      CONN_ERR_RET(UFAIL);
+    {
+      error_ = UFAIL;
+      return;
+    }
     else if (wasSent == 0 || send_queue_->pop(wasSent))
-      CONN_ERR_RET(USUCCESS);
+    {
+      error_ = USUCCESS;
+      return;
+    }
   }
 
-  CONN_ERR_RET(UFAIL);
+  error_ = UFAIL;
 }
 
-UConnection&
+void
 UConnection::received (const char* s)
 {
-  return received (s, strlen (s));
+  received (s, strlen (s));
 }
 
-UConnection&
+void
 UConnection::received (const char* buffer, size_t length)
 {
   PING();
@@ -203,7 +215,8 @@ UConnection::received (const char* buffer, size_t length)
 #endif
   {
     new_data_added_ = true; //server will call us again right after work
-    CONN_ERR_RET(USUCCESS);
+    error_ = USUCCESS;
+    return;
   }
 
   parser::UParser& p = parser_get();
@@ -247,10 +260,10 @@ UConnection::received (const char* buffer, size_t length)
   tree_lock.unlock();
 #endif
 
-  CONN_ERR_RET(USUCCESS);
+  error_ = USUCCESS;
 }
 
-UConnection&
+void
 UConnection::send (object::rObject result, const char* tag, const char* p)
 {
   // "Display" the result.
@@ -275,7 +288,6 @@ UConnection::send (object::rObject result, const char* tag, const char* p)
     send_queue (os.str ().c_str(), os.str().length());
     endline ();
   }
-  return *this;
 }
 
 void
@@ -286,12 +298,13 @@ UConnection::new_result (object::rObject result)
   send (result, 0, 0);
 }
 
-UConnection&
+
+void
 UConnection::execute (ast::rNary active_command)
 {
   PING ();
   if (active_command->empty())
-    return *this;
+    return;
 
   ECHO("Command is: {{{" << *active_command << "}}}");
 
@@ -304,7 +317,6 @@ UConnection::execute (ast::rNary active_command)
   shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
 
   PING ();
-  return *this;
 }
 
 std::string

@@ -112,10 +112,10 @@ UConnection::operator<<(std::ostream& (*pf)(std::ostream&))
 }
 
 inline
-UConnection&
+void
 UConnection::send(const char* buf, const char* tag, bool flush)
 {
-  return send(buf, strlen(buf), tag, flush);
+  send(buf, strlen(buf), tag, flush);
 }
 
 #endif // !KERNEL_UCONNECTION_HXX

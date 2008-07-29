@@ -37,13 +37,6 @@ namespace runner
   typedef libport::shared_ptr<Shell, true> rShell;
 }
 
-# define ERR_SET(Val) (error_ = Val)
-# define CONN_ERR_RET(Val) do			\
-  {						\
-    ERR_SET(Val);				\
-    return *this;				\
-  } while (0)
-
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
     here on the kind of underlying connection (TCP, IPC, OPENR, ...).
@@ -99,22 +92,22 @@ public:
     able to send data. It is a requirement for URBI compliance to send
     the header at start, so this function must be called.
   */
-  UConnection& initialize();
+  void initialize();
 
   /*-----------------------.
   | Send/receive functions |
   \-----------------------*/
 
   /// The "base" high-level send function. Calls the send_queue() function.
-  UConnection&
+  void
   send(const char* buf, int len, const char* tag = 0, bool flush = true);
 
   /// Overload using 'strlen' to compute buf size.
-  UConnection&
+  void
   send(const char* buf, const char* tag = 0, bool flush = true);
 
   /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
-  UConnection&
+  void
   send(object::rObject result, const char* tag = 0, const char* p = 0);
 
   //! Send at most packetSize bytes in the connection, calling effective_send()
@@ -127,7 +120,7 @@ public:
     - USUCCESS: successful
     - UFAIL   : effective_send() failed or not enough memory
    */
-  UConnection& continue_send();
+  void continue_send();
 
   /// Notify the connection that a new result is available.  This will
   /// typically print the result on the console or send it through the
@@ -141,7 +134,7 @@ public:
    \return UMEMORYFAIL critical memory overflow
    \return USUCCESS otherwise
    */
-  UConnection& received(const char* s);
+  void received(const char* s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -151,7 +144,7 @@ public:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UConnection& received(const char* buffer, size_t length);
+  void received(const char* buffer, size_t length);
 
   /// A generic << operator, to easily send every kind of data through the
   ///connection.
@@ -165,10 +158,10 @@ public:
   /*! The implementation of this function must set 'closing_' to true, to
     tell the UConnection to stop sending data.
   */
-  virtual UConnection& close() = 0;
+  virtual void close() = 0;
 
   /// Abstract end of line.
-  virtual UConnection& endline() = 0;
+  virtual void endline() = 0;
 
   void flush();
 
@@ -221,7 +214,7 @@ public:
   send queue.
   \sa send(const char*)
   */
-  virtual UConnection&	send_queue(const char* buffer, size_t length);
+  virtual void send_queue(const char* buffer, size_t length);
 
 protected:
 
@@ -240,7 +233,7 @@ protected:
    */
   virtual size_t effective_send(const char*, size_t length) = 0;
 
-  UConnection& execute(ast::rNary);
+  void execute(ast::rNary);
 
 public:
   /// Error return code for the constructor.

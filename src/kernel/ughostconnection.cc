@@ -55,11 +55,11 @@ UGhostConnection::~UGhostConnection()
 //! Close the connection
 /*! This function does nothing. The ghost connection cannot be closed.
 */
-UConnection&
+void
 UGhostConnection::close()
 {
   closing_ = true;
-  CONN_ERR_RET(USUCCESS);
+  error_ = USUCCESS;
 }
 
 //! Does nothing. No output for the ghosts...
@@ -81,10 +81,10 @@ UGhostConnection::effective_send(const char* buffer, size_t length)
 }
 
 //! Send a "\n" through the connection
-UConnection&
+void
 UGhostConnection::endline ()
 {
   //FIXME: test send error
   send("\n");
-  CONN_ERR_RET(USUCCESS);
+  error_ = USUCCESS;
 }

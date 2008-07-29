@@ -15,12 +15,12 @@ class UGhostConnection : public UConnection
 public:
   UGhostConnection(UServer& s);
   virtual ~UGhostConnection();
-  virtual UConnection& close();
+  virtual void close();
 
 protected:
   virtual size_t effective_send(const char* buffer, size_t length);
 public:
-  virtual UConnection& endline();
+  virtual void endline();
 };
 
 #endif // !KERNEL_UGHOSTCONNECTION_HH
