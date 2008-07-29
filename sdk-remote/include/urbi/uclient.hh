@@ -4,7 +4,8 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
+ * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +36,7 @@ namespace urbi
   class UClient: public UAbstractClient
   {
   public:
-    UClient(const char *_host,int _port = URBI_PORT,int _buflen = URBI_BUFLEN);
+    UClient(const char *host, int port = URBI_PORT, int buflen = URBI_BUFLEN);
 
     virtual ~UClient();
 
@@ -45,15 +46,17 @@ namespace urbi
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;
     virtual void setPingInterval(unsigned int msTime);
-    
+
     //! For internal use.
     void listenThread();
     UCallbackAction pong(const UMessage& msg);
+
   protected:
     virtual int  effectiveSend(const void * buffer, int size);
     virtual bool canSend(int size);
 
     int             sd;                  ///< Socket file descriptor.
+
   private:
     int             control_fd[2];       ///< Pipe for termination notification.
     void           *thread;
