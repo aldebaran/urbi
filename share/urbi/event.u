@@ -7,7 +7,7 @@ class Global.Event
     var this.on_pubsub = PubSub.new |
     var this.wu_pubsub = PubSub.new |
     var this.alive = [] |
-    var this.codes = [] |
+    var this.listeners = [] |
   };
 
   function 'emit'
@@ -29,7 +29,7 @@ class Global.Event
     // waiting jobs
     wu_pubsub.publish(res) |
     // Then call synchronously 'at' subscribers
-    for& (var code : codes)
+    for& (var code : listeners)
       code(res) |
     void
   };
@@ -54,9 +54,9 @@ class Global.Event
 
   function onEvent(code)
   {
-    codes << code |
+    listeners << code |
     var id = on_pubsub.subscribe |
-    // We cannot replace those for loop of detached code with a for&,
+    // We cannot replace these for loops of detached code with a for&,
     // since it would delay subsequent onEvent execution if code
     // doesn't return immediately.
     for (var evt : alive)
