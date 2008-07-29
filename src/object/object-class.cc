@@ -134,10 +134,10 @@ namespace object
     CHECK_ARG_COUNT (2);
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
-    const rObject& message = call_message->slot_get(SYMBOL(message));
+    const rObject message = call_message->slot_get(SYMBOL(message));
     type_check<String>(message, SYMBOL(callMessage));
     libport::Symbol msg = message->as<String>()->value_get();
-    const rObject& code = args[0]->slot_get(msg);
+    const rObject code = args[0]->slot_get(msg);
     call_message->slot_update(r, SYMBOL(code), code);
     // FIXME: Sanity checks on the call message are probably required
     objects_type self;

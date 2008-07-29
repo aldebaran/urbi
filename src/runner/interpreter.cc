@@ -256,7 +256,7 @@ namespace runner
     }
 
     // Evaluate the first child in this runner
-    const rRoutine& code = eval(e->children_get().front()).unsafe_cast<object::Code>();
+    const rRoutine code = eval(e->children_get().front()).unsafe_cast<object::Code>();
     assert(code);
     // This is a closure, it won't use its 'this'
     object::objects_type args;
@@ -751,7 +751,7 @@ namespace runner
 	        object::global_class->slot_locate(SYMBOL(topLevel), false,
 		  true))
 	      {
-		const rObject& e = topLevel->slot_get(SYMBOL(LT_LT));
+		const rObject e = topLevel->slot_get(SYMBOL(LT_LT));
                 objects_type args;
                 args.push_back(topLevel);
                 args.push_back(result_);
