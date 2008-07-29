@@ -154,7 +154,7 @@ namespace object
   system_class_scopeTag(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(1);
-    scheduler::rTag scope_tag =
+    const scheduler::rTag& scope_tag =
       dynamic_cast<runner::Interpreter&>(r).scope_tag();
     return new Tag(scope_tag);
   }

@@ -92,7 +92,7 @@ namespace runner
 			  rObject call_message = 0) = 0;
 
     /// Return the current scope_tag, after creating it if needed.
-    scheduler::rTag scope_tag();
+    const scheduler::rTag& scope_tag();
 
   protected:
     /// \name Evaluation.
@@ -118,7 +118,7 @@ namespace runner
     void cleanup_scope_tag();
 
     /// Ditto, but may return 0 if there are no scope tag.
-    scheduler::rTag scope_tag_get() const;
+    const scheduler::rTag& scope_tag_get() const;
 
     /// The URBI Lobby used to evaluate.
     /// Wraps an UConnection (ATM).

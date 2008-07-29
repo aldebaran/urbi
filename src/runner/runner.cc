@@ -39,23 +39,22 @@ namespace runner
     scope_tags_.push_back(0);
   }
 
-  scheduler::rTag
+  const scheduler::rTag&
   Runner::scope_tag_get() const
   {
     return scope_tags_.back();
   }
 
-  scheduler::rTag
+  const scheduler::rTag&
   Runner::scope_tag()
   {
-    scheduler::rTag tag = scope_tags_.back();
+    scheduler::rTag& tag = scope_tags_.back();
     if (!tag)
     {
       // Create the tag on demand. It must have the lowest possible priority to
       // avoid influencing the scheduling algorithm.
       tag = new scheduler::Tag(libport::Symbol::fresh("<scope tag>"));
       tag->prio_set(scheduler_get(), scheduler::UPRIO_NONE);
-      *scope_tags_.rbegin() = tag;
     }
     return tag;
   }
@@ -63,10 +62,10 @@ namespace runner
   void
   Runner::cleanup_scope_tag()
   {
-    scheduler::rTag tag = scope_tags_.back();
-    scope_tags_.pop_back();
+    const scheduler::rTag& tag = scope_tags_.back();
     if (tag)
       tag->stop(scheduler_get(), object::void_class);
+    scope_tags_.pop_back();
   }
 
 } // namespace runner
