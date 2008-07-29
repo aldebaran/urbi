@@ -29,7 +29,6 @@ TESTS_ENVIRONMENT =				\
 
 # tests(*).
 check_PROGRAMS = tests
-check_SCRIPTS = liburbi-check
 
 tests_SOURCES = tests.hh tests.cc $(TESTS)
 tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
