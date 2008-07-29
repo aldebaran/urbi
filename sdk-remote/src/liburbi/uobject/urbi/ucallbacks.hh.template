@@ -22,8 +22,8 @@
 
 # include <string>
 
-# include "urbi/utable.hh"
-# include "urbi/uvalue.hh"
+# include <urbi/utable.hh>
+# include <urbi/uvalue.hh>
 
 namespace urbi
 {

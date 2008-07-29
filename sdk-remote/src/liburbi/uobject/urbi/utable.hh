@@ -23,10 +23,10 @@
 # include <list>
 # include <string>
 
-# include "libport/singleton-ptr.hh"
-# include "libport/hash.hh"
+# include <libport/singleton-ptr.hh>
+# include <libport/hash.hh>
 
-# include "urbi/uvalue.hh"
+# include <urbi/uvalue.hh>
 
 namespace urbi
 {

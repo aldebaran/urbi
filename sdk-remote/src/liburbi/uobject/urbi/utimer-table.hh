@@ -4,9 +4,9 @@
 # define URBI_UTIMER_TABLE_HH
 
 # include <list>
-# include "libport/singleton-ptr.hh"
+# include <libport/singleton-ptr.hh>
 
-# include "urbi/uvalue.hh"
+# include <urbi/uvalue.hh>
 
 namespace urbi
 {
