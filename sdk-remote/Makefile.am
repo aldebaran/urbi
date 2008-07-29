@@ -4,10 +4,10 @@ include $(top_srcdir)/build-aux/build-aux.mk
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
 SUBDIRS =					\
+	.					\
 	jpeg-6b lib/libport			\
-	src .					\
+	src					\
 	doc
-SVN_EXTERNALS += jpeg-6b sdk libport
 
 host_SCRIPTS =
 nodist_host_DATA =
