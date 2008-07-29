@@ -35,7 +35,7 @@ namespace object
     proto_add(list_class);
   }
 
-  List::List(rList model)
+  List::List(const rList& model)
     : content_(model->content_)
   {
     proto_add(list_class);
@@ -68,7 +68,7 @@ namespace object
   }
 
   size_t
-  List::index(rFloat idx, const libport::Symbol fun) const
+  List::index(const rFloat& idx, const libport::Symbol fun) const
     throw (BadInteger, PrimitiveError)
   {
     // We use ints, since the user used an rFloat, which is signed.
@@ -78,12 +78,12 @@ namespace object
     return i;
   }
 
-  rObject List::operator[](rFloat idx)
+  rObject List::operator[](const rFloat& idx)
   {
     return content_[index(idx, SYMBOL(nth))];
   }
 
-  rObject List::set(rFloat idx, rObject val)
+  rObject List::set(const rFloat& idx, const rObject& val)
   {
     return content_[index(idx, SYMBOL(nth))] = val;
   }
@@ -93,7 +93,7 @@ namespace object
     return new Float(content_.size());
   }
 
-  rList List::remove_by_id(rObject elt)
+  rList List::remove_by_id(const rObject& elt)
   {
     value_type::iterator it = content_.begin();
     while (it != content_.end())
@@ -104,7 +104,7 @@ namespace object
     return this;
   }
 
-  rList List::operator+=(rList rhs)
+  rList List::operator+=(const rList& rhs)
   {
     // Copy the list to make a += a work
     value_type other = rhs->value_get();
@@ -113,7 +113,7 @@ namespace object
     return this;
   }
 
-  rList List::operator+(rList rhs)
+  rList List::operator+(const rList& rhs)
   {
     rList res = new List(this);
     *res += rhs;
@@ -122,7 +122,7 @@ namespace object
 
   /// Binary predicate used to sort lists.
   static bool
-  compareListItems (runner::Runner& r, rObject a, rObject b)
+  compareListItems (runner::Runner& r, const rObject& a, const rObject& b)
   {
     return is_true(urbi_call(r, a, SYMBOL(LT), b), SYMBOL(sort));
   }
@@ -141,7 +141,7 @@ namespace object
   }
 
   void
-  List::each(runner::Runner& r, rObject f)
+  List::each(runner::Runner& r, const rObject& f)
   {
     // Beware of iterations that modify the list in place: make a
     // copy.
@@ -155,7 +155,7 @@ namespace object
   }
 
   void
-  List::each_and(runner::Runner& r, rObject f)
+  List::each_and(runner::Runner& r, const rObject& f)
   {
     scheduler::jobs_type jobs;
     // Beware of iterations that modify the list in place: make a
@@ -178,7 +178,7 @@ namespace object
 
 #define BOUNCE(Name, Ret, Arg, Check)                           \
   IF(Ret, rObject, rList)                                       \
-  List::Name(WHEN(Arg, rObject arg))                            \
+  List::Name(WHEN(Arg, const rObject& arg))			\
   {                                                             \
     WHEN(Check, CHECK_NON_EMPTY(Name));                         \
     WHEN(Ret, return) content_.Name(WHEN(Arg, arg));            \

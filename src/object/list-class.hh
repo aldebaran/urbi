@@ -20,33 +20,33 @@ namespace object
 
     List();
     List(const value_type& value);
-    List(rList model);
+    List(const rList& model);
     const value_type& value_get() const;
     value_type& value_get();
 
     /// Check that the function fun is using a valid index, and return it.
-    size_t index(rFloat idx, const libport::Symbol fun) const
+    size_t index(const rFloat& idx, const libport::Symbol fun) const
       throw (BadInteger, PrimitiveError);
 
     // Urbi method
     rObject back      ();
     rList   clear     ();
-    void    each      (runner::Runner&, rObject);
-    void    each_and  (runner::Runner&, rObject);
+    void    each      (runner::Runner&, const rObject&);
+    void    each_and  (runner::Runner&, const rObject&);
     rObject front     ();
     rList   pop_back  ();
     rList   pop_front ();
-    rList   push_back (rObject elt);
-    rList   push_front(rObject elt);
-    rList   remove_by_id(rObject elt);
+    rList   push_back (const rObject& elt);
+    rList   push_front(const rObject& elt);
+    rList   remove_by_id(const rObject& elt);
     rList   reverse   ();
-    rObject set       (rFloat nth, rObject value);
+    rObject set       (const rFloat& nth, const rObject& value);
     rFloat  size      ();
     rList   sort      (runner::Runner& r);
     rList   tail      ();
-    rList   operator+ (rList rhs);
-    rList   operator+=(rList rhs);
-    rObject operator[](rFloat idx);
+    rList   operator+ (const rList& rhs);
+    rList   operator+=(const rList& rhs);
+    rObject operator[](const rFloat& idx);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;
