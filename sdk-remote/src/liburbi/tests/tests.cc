@@ -80,9 +80,18 @@ main(int argc, const char* argv[])
   }
   const char* host = argv[1];
   int port = boost::lexical_cast<int>(argv[2]);
+
   urbi::UClient client(host, port);
+  if (client.error())
+    std::cerr << "Failed to set up properly the client" << std::endl
+              << libport::exit(EX_SOFTWARE);
+
   urbi::USyncClient syncClient(host, port);
   client.setClientErrorCallback(callback(&doExit));
+  if (syncClient.error())
+    std::cerr << "Failed to set up properly the syncClient" << std::endl
+              << libport::exit(EX_SOFTWARE);
+
   for (int i = 3; i < argc; ++i)
   {
     if (getenv("VERBOSE"))
