@@ -19,6 +19,7 @@
 #include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
+#include <ast/all.hh>
 #include <ast/declarations-type.hh>
 #include <ast/exps-type.hh>
 #include <ast/print.hh>
@@ -110,8 +111,7 @@ namespace runner
 			    scheduler::Scheduler& sched,
 			    ast::rConstAst ast,
 			    const libport::Symbol& name)
-    : Interpreter::super_type()
-    , Runner(lobby, sched, name)
+    : Runner(lobby, sched, name)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -122,8 +122,7 @@ namespace runner
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
 			   const libport::Symbol& name, const objects_type& args)
-    : Interpreter::super_type()
-    , Runner(model, name)
+    : Runner(model, name)
     , ast_(0)
     , code_(code)
     , args_(args)
@@ -137,8 +136,7 @@ namespace runner
   Interpreter::Interpreter(const Interpreter& model,
 			   ast::rConstAst ast,
 			   const libport::Symbol& name)
-    : Interpreter::super_type ()
-    , Runner(model, name)
+    : Runner(model, name)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -228,7 +226,7 @@ namespace runner
     /// already done, and rethrow it.
     try
     {
-      e->accept(*this);
+      e->eval(*this);
     }
     catch (object::UrbiException& x)
     {
@@ -838,7 +836,7 @@ namespace runner
     create_scope_tag();
     finally << boost::bind(&Interpreter::cleanup_scope_tag, this);
     finally << libport::restore(non_interruptible_);
-    super_type::operator()(e->body_get().get());
+    operator()(e->body_get().get());
   }
 
   void
@@ -1041,5 +1039,22 @@ namespace runner
     }
     return res;
   }
+
+  // Invalid nodes
+#define INVALID(Node)                           \
+  void                                          \
+  Interpreter::visit(const ast::Node*)          \
+  {                                             \
+    assert(0);                                  \
+  }                                             \
+
+  INVALID(Binding);
+  INVALID(Break);
+  INVALID(Continue);
+  INVALID(Implicit);
+  INVALID(MetaExp);
+  INVALID(Return);
+
+#undef INVALID
 
 } // namespace runner

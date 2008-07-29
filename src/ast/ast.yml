@@ -203,7 +203,9 @@ printer_cc_prologue: |2
 Ast:
   super: 'libport::RefCounted'
   inline:
-    header prologue: '# include <ast/fwd.hh>'
+    header prologue: |2
+      # include <ast/fwd.hh>
+      namespace runner { class Interpreter; }
   attributes:
     - location:
         type: loc

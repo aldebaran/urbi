@@ -27,6 +27,7 @@
 #include <runner/interpreter.hh>
 
 #include <ast/nary.hh>
+#include <ast/routine.hh>
 
 namespace object
 {

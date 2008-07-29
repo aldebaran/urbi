@@ -10,7 +10,6 @@
 
 # include <libport/hash.hh>
 
-# include <ast/default-visitor.hh>
 # include <ast/fwd.hh>
 # include <object/object.hh>
 # include <scheduler/scheduler.hh>
@@ -23,14 +22,13 @@ namespace runner
 {
 
   /// Ast executor.
-  class Interpreter : public ast::DefaultConstVisitor,
-		      public runner::Runner
+  class Interpreter : public runner::Runner
   {
   public:
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
-    typedef ast::DefaultConstVisitor super_type;
+    typedef runner::Runner super_type;
     typedef object::rObject rObject;
     typedef object::rrObject rrObject;
     typedef object::rRoutine rRoutine;
@@ -145,34 +143,40 @@ namespace runner
 			       const libport::Symbol& msg,
                                const ast::exps_type& args);
 
-    /// Import from super.
-    using super_type::visit;
+  public:
 
-    CONST_VISITOR_VISIT_NODES((And)
-                              (Assignment)
-                              (Call)
-                              (CallMsg)
-                              (Closure)
-                              (Do)
-                              (Declaration)
-                              (Float)
-                              (Foreach)
-                              (Function)
-                              (If)
-                              (Lazy)
-                              (List)
-                              (Local)
-                              (Message)
-                              (Nary)
-                              (Noop)
-                              (Pipe)
-                              (Scope)
-                              (Stmt)
-                              (String)
-                              (Tag)
-                              (TaggedStmt)
-                              (This)
-                              (While))
+    void visit(const ast::And* n);
+    void visit(const ast::Assignment* n);
+    void visit(const ast::Call* n);
+    void visit(const ast::CallMsg* n);
+    void visit(const ast::Closure* n);
+    void visit(const ast::Do* n);
+    void visit(const ast::Declaration* n);
+    void visit(const ast::Float* n);
+    void visit(const ast::Foreach* n);
+    void visit(const ast::Function* n);
+    void visit(const ast::If* n);
+    void visit(const ast::Lazy* n);
+    void visit(const ast::List* n);
+    void visit(const ast::Local* n);
+    void visit(const ast::Message* n);
+    void visit(const ast::Nary* n);
+    void visit(const ast::Noop* n);
+    void visit(const ast::Pipe* n);
+    void visit(const ast::Scope* n);
+    void visit(const ast::Stmt* n);
+    void visit(const ast::String* n);
+    void visit(const ast::Tag* n);
+    void visit(const ast::TaggedStmt* n);
+    void visit(const ast::This* n);
+    void visit(const ast::While* n);
+
+    void visit(const ast::Binding* n);
+    void visit(const ast::Break* n);
+    void visit(const ast::Continue* n);
+    void visit(const ast::Implicit* n);
+    void visit(const ast::MetaExp* n);
+    void visit(const ast::Return* n);
     /// \}
 
 
