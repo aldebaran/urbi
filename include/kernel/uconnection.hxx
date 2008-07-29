@@ -1,10 +1,10 @@
-/// \file uconnection.hxx
+/// \file kernel/uconnection.hxx
 
 #ifndef KERNEL_UCONNECTION_HXX
 # define KERNEL_UCONNECTION_HXX
 
-# include <kernel/uconnection.hh>
 # include <sstream>
+# include <kernel/uconnection.hh>
 
   /*----------.
   | Accessors |
@@ -12,28 +12,28 @@
 
 inline
 UQueue&
-UConnection::recv_queue_get ()
+UConnection::recv_queue_get()
 {
   return *recv_queue_;
 }
 
 inline
 UQueue&
-UConnection::send_queue_get ()
+UConnection::send_queue_get()
 {
   return *send_queue_;
 }
 
 inline
 parser::UParser&
-UConnection::parser_get ()
+UConnection::parser_get()
 {
   return *parser_;
 }
 
 inline
 UErrorValue
-UConnection::error_get () const
+UConnection::error_get() const
 {
   return error_;
 }
@@ -54,7 +54,7 @@ UConnection::active_get()
 
 inline
 bool&
-UConnection::blocked_get ()
+UConnection::blocked_get()
 {
   return blocked_ ;
 }
@@ -86,7 +86,7 @@ UConnection::closing_get()
 
 inline
 void
-UConnection::flush ()
+UConnection::flush()
 {
   if (!blocked_)
     continue_send();
@@ -113,7 +113,7 @@ UConnection::operator<<(std::ostream& (*pf)(std::ostream&))
 
 inline
 UConnection&
-UConnection::send (const char* buf, const char* tag, bool flush)
+UConnection::send(const char* buf, const char* tag, bool flush)
 {
   return send(buf, strlen(buf), tag, flush);
 }
