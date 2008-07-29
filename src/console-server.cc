@@ -19,6 +19,7 @@
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
+#include <kernel/kernconf.hh>
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -104,6 +105,7 @@ namespace
       "  -n, --no-network      disable networking.\n"
       "  -f, --fast            ignore system time, go as fast as possible\n"
       "  -i, --interactive     read and parse stdin in a nonblocking way\n"
+      "  -s, --stack-size=SIZE  set the job stack size in Kb\n"
       "  -w, --port-file FILE  write port number to specified file.\n"
       ;
     exit (EX_OK);
@@ -130,40 +132,59 @@ main (int argc, const char* argv[])
   int arg_port = 0;
   /// Where to write the port we use.
   const char* arg_port_filename = 0;
+  /// The size of the stacks.
+  size_t arg_stack_size = 0;
   /// fast mode
   bool fast = false;
   /// interactive mode
   bool interactive = false;
   /// enable network
   bool network = true;
-  // Parse the command line.
-  {
-    for (int i = 1; i < argc; ++i)
-    {
-      std::string arg = argv[i];
 
-      if (arg == "--fast" || arg == "-f")
-	fast = true;
-      else if (arg == "--help" || arg == "-h")
-	usage();
-      else if (arg == "--interactive" || arg == "-i")
-	interactive = true;
-      else if (arg == "--no-network" || arg == "-n")
-	network = false;
-      else if (arg == "--period" || arg == "-P")
-	(void) libport::convert_argument<int> (arg, argv[++i]);
-      else if (arg == "--port" || arg == "-p")
-	arg_port = libport::convert_argument<int> (arg, argv[++i]);
-      else if (arg == "--port-file" || arg == "-w")
-	arg_port_filename = argv[++i];
-      else if (arg == "--version" || arg == "-v")
-	version();
-      else if (arg[0] == '-' && arg[1] != 0)
-	libport::invalid_option (arg);
-      else
-	// An argument: a file.
-        files.push_back(STREQ(argv[i], "-") ? "/dev/stdin" : argv[i]);
-    }
+  // Parse the command line.
+  for (int i = 1; i < argc; ++i)
+  {
+    std::string arg = argv[i];
+
+    if (arg == "--fast" || arg == "-f")
+      fast = true;
+    else if (arg == "--help" || arg == "-h")
+      usage();
+    else if (arg == "--interactive" || arg == "-i")
+      interactive = true;
+    else if (arg == "--no-network" || arg == "-n")
+      network = false;
+    else if (arg == "--period" || arg == "-P")
+      (void) libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--port" || arg == "-p")
+      arg_port = libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--port-file" || arg == "-w")
+      arg_port_filename = argv[++i];
+    else if (arg == "--stack-size" || arg == "-s")
+      arg_stack_size = libport::convert_argument<size_t> (arg, argv[++i]);
+    else if (arg == "--version" || arg == "-v")
+      version();
+    else if (arg[0] == '-' && arg[1] != 0)
+      libport::invalid_option (arg);
+    else
+      // An argument: a file.
+      files.push_back(STREQ(argv[i], "-") ? "/dev/stdin" : argv[i]);
+  }
+
+  // If not defined in line, use the envvar.
+  if (!arg_stack_size
+      && getenv("URBI_STACK_SIZE"))
+    arg_stack_size = libport::convert_envvar<size_t> ("URBI_STACK_SIZE");
+
+  if (arg_stack_size)
+  {
+    // Make sure the result is a multiple of the page size.  This
+    // required at least on OSX (which unfortunately fails with errno
+    // = 0).
+    arg_stack_size *= 1024;
+    size_t pagesize = getpagesize();
+    arg_stack_size = (arg_stack_size / pagesize) * pagesize;
+    kernconf.default_stack_size = arg_stack_size;
   }
 
   ConsoleServer s(fast);
