@@ -25,7 +25,6 @@ TESTS_ENVIRONMENT =				\
  srcdir='$(srcdir)'				\
  INSTRUMENT=$(INSTRUMENT)			\
  PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
- URBI_PATH='$(top_srcdir)/share/urbi'		\
  URBI_SERVER=$(URBI_SERVER)
 
 # tests(*).
