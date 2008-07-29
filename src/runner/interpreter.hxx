@@ -24,6 +24,26 @@ namespace runner
     return operator()(e.get());
   }
 
+  /*----------------.
+  | Regular visit.  |
+  `----------------*/
+
+  inline object::rObject
+  Interpreter::operator() (const ast::Ast* e)
+  {
+    /// Catch exceptions, set the location and backtrace if not
+    /// already done, and rethrow it.
+    try
+    {
+      return e->eval(*this);
+    }
+    catch (object::UrbiException& x)
+    {
+      propagate_error_(x, e->location_get());
+      throw;
+    }
+  }
+
 } // namespace runner
 
 #endif // RUNNER_INTERPRETER_HXX

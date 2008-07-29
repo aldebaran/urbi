@@ -214,27 +214,6 @@ namespace runner
     }
   }
 
-  /*----------------.
-  | Regular visit.  |
-  `----------------*/
-
-
-  object::rObject
-  Interpreter::operator() (const ast::Ast* e)
-  {
-    /// Catch exceptions, set the location and backtrace if not
-    /// already done, and rethrow it.
-    try
-    {
-      return e->eval(*this);
-    }
-    catch (object::UrbiException& x)
-    {
-      propagate_error_(x, e->location_get());
-      throw;
-    }
-  }
-
   // Apply a function written in Urbi.
   object::rObject
   Interpreter::apply_urbi (rRoutine func,

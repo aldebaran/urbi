@@ -62,7 +62,7 @@ namespace runner
     /// \}
 
     /// The entry point: visit \a e.
-    virtual object::rObject operator() (const ast::Ast* e);
+    object::rObject operator() (const ast::Ast* e);
 
     /// \ name Accessors.
     /// \{
