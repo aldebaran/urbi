@@ -70,4 +70,3 @@ check-%:
 
 check-clean-local:
 	rm -rf $(TESTS:.cc=.dir)
-
