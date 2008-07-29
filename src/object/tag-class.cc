@@ -56,7 +56,7 @@ namespace object
   void
   Tag::freeze(runner::Runner& r)
   {
-    value_->freeze(r.scheduler_get());
+    value_->freeze();
     if (r.frozen())
       r.yield();
   }
@@ -108,15 +108,15 @@ namespace object
   }
 
   void
-  Tag::unblock(runner::Runner& r)
+  Tag::unblock()
   {
-    value_->unblock(r.scheduler_get());
+    value_->unblock();
   }
 
   void
-  Tag::unfreeze(runner::Runner& r)
+  Tag::unfreeze()
   {
-    value_->unfreeze(r.scheduler_get());
+    value_->unfreeze();
   }
 
   static inline rObject

@@ -31,8 +31,8 @@ namespace object
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
     void stop(runner::Runner&, objects_type&);
-    void unblock(runner::Runner&);
-    void unfreeze(runner::Runner&);
+    void unblock();
+    void unfreeze();
 
     /// Return, potentially creating first, the enter event for \a this
     rObject enter(runner::Runner& r);

@@ -77,10 +77,10 @@ namespace scheduler
     prio_type prio_get() const;
 
     // Act on a tag and make the scheduler take it into account
-    void freeze(Scheduler&);
-    void unfreeze(Scheduler&);
+    void freeze();
+    void unfreeze();
     void block(Scheduler&, const boost::any&);
-    void unblock(Scheduler&);
+    void unblock();
     void stop(Scheduler&, const boost::any&) const;
 
     const libport::Symbol& name_get() const;

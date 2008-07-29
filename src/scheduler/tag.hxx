@@ -40,13 +40,13 @@ namespace scheduler
   }
 
   inline void
-  Tag::freeze(Scheduler&)
+  Tag::freeze()
   {
     frozen_ = true;
   }
 
   inline void
-  Tag::unfreeze(Scheduler&)
+  Tag::unfreeze()
   {
     frozen_ = false;
   }
@@ -60,7 +60,7 @@ namespace scheduler
   }
 
   inline void
-  Tag::unblock(Scheduler&)
+  Tag::unblock()
   {
     payload_ = 0;
     blocked_ = false;
@@ -83,7 +83,8 @@ namespace scheduler
   {
     if (prio >= UPRIO_RT_MIN)
       sched.real_time_behaviour_set();
-    prio_ = std::min(std::max(prio, prio_type(UPRIO_MIN)), prio_type(UPRIO_MAX));
+    prio_ = std::min(std::max(prio, prio_type(UPRIO_MIN)),
+		     prio_type(UPRIO_MAX));
     return prio_;
   }
 
