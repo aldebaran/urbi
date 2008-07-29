@@ -73,7 +73,7 @@ parser/ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(BISONXX) $(parser_dir)/ugrammar.y parser/ugrammar.cc -d -ra
+	$(BISONXX) $(parser_dir)/ugrammar.y parser/ugrammar.cc -d -ra $(BISON_FLAGS)
 	@mv -f $@.tmp $@
 
 $(FROM_UGRAMMAR_Y): parser/ugrammar.stamp

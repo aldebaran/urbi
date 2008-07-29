@@ -225,8 +225,6 @@
 
 // We use variants.
 %define variant
-// Make sure we do not stupid thing.
-%define assert
 
 %printer { debug_stream() << libport::deref << $$; } <ast::rCall>;
 
