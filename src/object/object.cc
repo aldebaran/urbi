@@ -45,7 +45,7 @@ namespace object
   }
 
   void
-  Object::protos_set (rObject l)
+  Object::protos_set (const rObject& l)
   {
     if (!protos_cache_)
       delete protos_;
@@ -63,7 +63,7 @@ namespace object
     rObject res;
     if (res = own_slot_get(k))
       return value ? res : const_cast<Object*>(this);
-    foreach (rObject proto, protos_get())
+    foreach (const rObject& proto, protos_get())
       if (rObject rec = proto->slot_locate(k, fallback, value, marks))
         return rec;
     if (fallback)
@@ -96,7 +96,7 @@ namespace object
 
 
   Object&
-  Object::slot_set(const key_type& k, rObject o)
+  Object::slot_set(const key_type& k, const rObject& o)
   {
     if (!slots_.set(this, k, o))
       throw RedefinitionError(k);
@@ -104,7 +104,7 @@ namespace object
   }
 
   Object&
-  Object::slot_copy(const key_type& name, rObject from)
+  Object::slot_copy(const key_type& name, const rObject& from)
   {
     this->slot_set(name, from->slot_get(name));
     return *this;
@@ -118,7 +118,7 @@ namespace object
 
   rObject
   Object::slot_update(runner::Runner& r,
-                      const key_type& k, rObject o,
+                      const key_type& k, const rObject& o,
                       bool hook)
   {
     // The owner of the updated slot
@@ -147,7 +147,7 @@ namespace object
   };
 
   void
-  Object::own_slot_update (const key_type& k, rObject v)
+  Object::own_slot_update (const key_type& k, const rObject& v)
   {
     slots_.update(this, k, v);
   }
@@ -170,10 +170,9 @@ namespace object
   rDictionary
   Object::properties_get()
   {
-    rDictionary res;
     if (slots_.has(this, SYMBOL(properties)))
-      res = slots_.get(this, SYMBOL(properties)).unsafe_cast<Dictionary>();
-    return res;
+      return slots_.get(this, SYMBOL(properties)).unsafe_cast<Dictionary>();
+    return 0;
   }
 
   rDictionary
@@ -182,10 +181,9 @@ namespace object
     // Forbid searching properties on nonexistent slots
     safe_slot_locate(k);
 
-    rDictionary res;
     if (rDictionary ps = properties_get())
-      res = libport::find0(ps->value_get(), k).unsafe_cast<Dictionary>();
-    return res;
+      return libport::find0(ps->value_get(), k).unsafe_cast<Dictionary>();
+    return 0;
   }
 
   rObject
@@ -193,10 +191,9 @@ namespace object
   {
     rObject owner = safe_slot_locate(k);
 
-    rObject res;
     if (rDictionary ps = owner->properties_get(k))
-      res = libport::find0(ps->value_get(), p);
-    return res;
+      return libport::find0(ps->value_get(), p);
+    return 0;
   }
 
   bool
@@ -212,7 +209,9 @@ namespace object
 
   rObject
   Object::property_set(runner::Runner& r,
-                       const key_type& k, const key_type& p, rObject value)
+                       const key_type& k,
+		       const key_type& p,
+		       const rObject& value)
   {
     // Forbid setting properties on nonexistent slots
     safe_slot_locate(k);
@@ -236,7 +235,7 @@ namespace object
       props->value_get()[k] = prop;
     }
 
-    bool had = prop->has(p);
+    const bool had = prop->has(p);
 
     prop->value_get()[p] = value;
 
@@ -257,19 +256,19 @@ namespace object
      // Forbid searching properties on nonexistent slots
     safe_slot_locate(k);
 
+    rObject res = void_class;
+
     if (rDictionary ps = properties_get(k))
     {
       Dictionary::value_type& dict = ps->value_get();
-      rObject res = void_class;
-      Dictionary::value_type::iterator i = dict.find(p);
+      const Dictionary::value_type::iterator i = dict.find(p);
       if (i != dict.end())
       {
 	res = i->second;
 	dict.erase(i);
       }
-      return res;
     }
-    return void_class;
+    return res;
   }
 
   /*-----------.

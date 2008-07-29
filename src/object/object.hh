@@ -68,7 +68,7 @@ namespace object
     /// Read only access to protos.
     const protos_type& protos_get () const;
     /// Change the whole set of protos.
-    void protos_set (rObject);
+    void protos_set (const rObject&);
     // Urbi access to protos.
     rObject urbi_protos_get ();
     /// \}
@@ -116,12 +116,12 @@ namespace object
     /// \param hook	Whether to trigger the potential updateHook
     rObject
     slot_update(runner::Runner& r,
-                const key_type& k, rObject o,
+                const key_type& k, const rObject& o,
                 bool hook = true);
 
     /// Update slot \c k to \a o.
     void
-    own_slot_update(const key_type& k, rObject o);
+    own_slot_update(const key_type& k, const rObject& v);
 
 
     /// \brief Update value in slot.
@@ -129,7 +129,7 @@ namespace object
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
     /// \return    *this.
-    Object& slot_set(const key_type& k, rObject o);
+    Object& slot_set(const key_type& k, const rObject& o);
 
     /// \brief Copy another object's slot.
     ///
@@ -139,7 +139,7 @@ namespace object
     /// \param name The name of the slot to copy
     /// \param from The object to copy the slot from
     /// \return this
-    Object& slot_copy(const key_type& name, rObject from);
+    Object& slot_copy(const key_type& name, const rObject& from);
 
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
@@ -171,7 +171,8 @@ namespace object
     /// self.k->p = val.
     /// Ensures that self.property exists.
     rObject property_set(runner::Runner& r,
-                         const key_type& k, const key_type& p, rObject val);
+                         const key_type& k, const key_type& p,
+			 const rObject& val);
     /// Remove property \a p from slot \a k. Returns what was removed.
     rObject property_remove(const key_type& k, const key_type& p);
     /// \}

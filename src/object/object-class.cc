@@ -56,7 +56,7 @@ namespace object
     if (args.size() >= 2)
     {
       type_check<Float>(args[1], SYMBOL(dump));
-      rFloat arg1 = args[1]->as<Float>();
+      const rFloat& arg1 = args[1]->as<Float>();
       try
       {
 	depth_max = libport::ufloat_to_int(arg1->value_get());
@@ -71,7 +71,7 @@ namespace object
     std::string tag;
     if (args.size() >= 3)
     {
-      rString arg2 = args[2].unsafe_cast<String>();
+      const rString& arg2 = args[2].unsafe_cast<String>();
       assert(arg2);
       tag = arg2->value_get().name_get();
     }
@@ -82,7 +82,7 @@ namespace object
     const std::string stream = os.str();
     boost::tokenizer< boost::char_separator<char> > tok =
       libport::make_tokenizer(stream, "\n");
-    std::string system_header("*** ");
+    const std::string system_header("*** ");
     foreach(const std::string& line, tok)
       r.send_message(tag, system_header+line);
     return void_class;
@@ -122,7 +122,7 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     type_check<List>(args[1], SYMBOL(apply));
-    rList arg1 = args[1]->as<List>();
+    const rList& arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
       throw PrimitiveError(SYMBOL(apply), "first argument must be [this]");
     return arg1->value_get().front();
@@ -134,10 +134,10 @@ namespace object
     CHECK_ARG_COUNT (2);
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
-    rObject message = call_message->slot_get(SYMBOL(message));
+    const rObject& message = call_message->slot_get(SYMBOL(message));
     type_check<String>(message, SYMBOL(callMessage));
     libport::Symbol msg = message->as<String>()->value_get();
-    rObject code = args[0]->slot_get(msg);
+    const rObject& code = args[0]->slot_get(msg);
     call_message->slot_update(r, SYMBOL(code), code);
     // FIXME: Sanity checks on the call message are probably required
     objects_type self;
@@ -184,7 +184,7 @@ namespace object
   object_class_slotNames (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(1);
-    rObject obj = args[0];
+    const rObject& obj = args[0];
 
     List::value_type l;
     for (Object::slots_implem::iterator slot = obj->slots_get().begin(obj.get());
@@ -200,8 +200,8 @@ namespace object
   object_class_getSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
-    rObject obj = args[0];
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rObject& obj = args[0];
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     return obj->slot_get(arg1->value_get());
   }
@@ -212,9 +212,9 @@ namespace object
   {
     CHECK_ARG_COUNT (4);
 
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    Object::key_type slot_name = arg1->value_get ();
+    const Object::key_type& slot_name = arg1->value_get ();
 
     // If the slot already exists, return its content.
     if (rObject slot = args[0]->own_slot_get (slot_name))
@@ -233,8 +233,8 @@ namespace object
   object_class_removeSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
-    rObject obj = args[0];
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rObject& obj = args[0];
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     obj->slot_remove(arg1->value_get());
     return obj;
@@ -245,7 +245,7 @@ namespace object
   object_class_locateSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
 
     rObject o = args[0]->slot_locate(arg1->value_get());
@@ -256,7 +256,7 @@ namespace object
   object_class_setSlot (runner::Runner&, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     args[0]->slot_set(arg1->value_get (), args[2]);
     return args[2];
@@ -266,7 +266,7 @@ namespace object
   object_class_updateSlot (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     return args[0]->slot_update(r, arg1->value_get (), args[2]);
   }
@@ -275,7 +275,7 @@ namespace object
   object_class_changeSlot (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
-    rString arg1 = args[1].unsafe_cast<String>();
+    const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     args[0]->slot_update(r, arg1->value_get (), args[2], false);
     return args[2];
