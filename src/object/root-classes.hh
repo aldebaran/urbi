@@ -11,6 +11,8 @@ namespace object
   void root_classes_initialize();
   // For export purpose.
   void dummy_references();
+  // Remove references onto existing objects referenced in C++.
+  void cleanup_existing_objects();
 }; // namespace object
 
 

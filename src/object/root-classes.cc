@@ -9,6 +9,7 @@
 #include <object/dictionary-class.hh>
 #include <object/float-class.hh>
 #include <object/global-class.hh>
+#include <object/list-class.hh>
 #include <object/lobby-class.hh>
 #include <object/object.hh>
 #include <object/object-class.hh>
@@ -212,12 +213,45 @@ namespace object
   }
 
   // This is only used to created references on unused classes, so
-  // as they get initialized anyway.
+  // they get initialized anyway.
   void
   dummy_references()
   {
     Barrier b;
     Semaphore s;
+  }
+
+  namespace
+  {
+    static void
+    cleanup_object(rObject& o)
+    {
+      o->protos_set(new object::List(object::List::value_type()));
+      o.reset();
+    }
+  }
+
+  void
+  cleanup_existing_objects()
+  {
+    cleanup_object(barrier_class);
+    cleanup_object(code_class);
+    cleanup_object(dictionary_class);
+    cleanup_object(false_class);
+    cleanup_object(float_class);
+    cleanup_object(global_class);
+    cleanup_object(lobby_class);
+    cleanup_object(object_class);
+    cleanup_object(primitive_class);
+    cleanup_object(semaphore_class);
+    cleanup_object(string_class);
+    cleanup_object(system_class);
+    cleanup_object(tag_class);
+    cleanup_object(task_class);
+    cleanup_object(true_class);
+    cleanup_object(void_class);
+    // List must be last, because it is used in cleanup_object.
+    cleanup_object(list_class);
   }
 
   /*--------.

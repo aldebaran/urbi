@@ -57,6 +57,7 @@
 #include <object/object-class.hh>
 #include <object/primitive-class.hh>
 #include <object/primitives.hh>
+#include <object/root-classes.hh>
 #include <object/system-class.hh>
 
 #include <runner/call.hh>
@@ -341,6 +342,8 @@ UServer::~UServer()
   // carried out first.
   connections_.clear();
   delete scheduler_;
+
+  object::cleanup_existing_objects();
 }
 
 void

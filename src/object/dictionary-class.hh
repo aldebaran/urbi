@@ -12,6 +12,8 @@
 
 namespace object
 {
+  extern rObject dictionary_class;
+
   class Dictionary: public CxxObject
   {
   public:
