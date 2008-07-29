@@ -24,7 +24,7 @@
 #ifndef URBI_UCLIENT_HH
 # define URBI_UCLIENT_HH
 
-# include "urbi/uabstractclient.hh"
+# include <urbi/uabstractclient.hh>
 
 namespace urbi
 {

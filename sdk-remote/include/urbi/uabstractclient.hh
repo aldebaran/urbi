@@ -1,10 +1,10 @@
 /*! \file uabstractclient.hh
  ****************************************************************************
- * $Id: uabstractclient.hh,v 1.9 2005/09/30 17:48:00 nottale Exp $
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
+ * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 
 # include <cstdio>
 # include <sys/types.h>
-# include "libport/cstring"
+# include <libport/cstring>
 # include <cstdlib>
 # include <cstdarg>
 
@@ -35,11 +35,11 @@
 # include <iostream>
 # include <string>
 
-# include "libport/fwd.hh"
+# include <libport/fwd.hh>
 
-# include "urbi/fwd.hh"
-# include "urbi/uobject.hh"
-# include "urbi/uconversion.hh"
+# include <urbi/fwd.hh>
+# include <urbi/uobject.hh>
+# include <urbi/uconversion.hh>
 
 namespace urbi
 {

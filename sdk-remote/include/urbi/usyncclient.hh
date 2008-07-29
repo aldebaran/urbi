@@ -23,11 +23,11 @@
 #ifndef URBI_USYNCCLIENT_HH
 # define URBI_USYNCCLIENT_HH
 
-# include "libport/fwd.hh"
-# include "libport/lockable.hh"
-# include "libport/semaphore.hh"
+# include <libport/fwd.hh>
+# include <libport/lockable.hh>
+# include <libport/semaphore.hh>
 
-# include "urbi/uclient.hh"
+# include <urbi/uclient.hh>
 
 namespace urbi
 {
