@@ -1,17 +1,10 @@
-################################################################################
-#
-# URBI - (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie.
-#
-# This software is provided "as is" without warranty of any kind,
-# either expressed or implied, including but not limited to the
-# implied warranties of fitness for a particular purpose.
-#
-################################################################################
 include $(top_srcdir)/build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = bison lib/libport src tests . doc
+# Process "." before the sub dirs to make sure sdk/config.h and
+# libport/config.h are propery built.
+SUBDIRS = bison . lib/libport src tests doc
 
 # build-aux.
 EXTRA_DIST +=					\
