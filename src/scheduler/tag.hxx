@@ -83,7 +83,7 @@ namespace scheduler
   {
     if (prio >= UPRIO_RT_MIN)
       sched.real_time_behaviour_set();
-    prio_ = std::min(std::max(prio, UPRIO_MIN), UPRIO_MAX);
+    prio_ = std::min(std::max(prio, prio_type(UPRIO_MIN)), prio_type(UPRIO_MAX));
     return prio_;
   }
 
