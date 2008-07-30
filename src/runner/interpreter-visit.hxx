@@ -8,6 +8,7 @@
 # include <libport/foreach.hh>
 
 # include <ast/all.hh>
+# include <ast/print.hh>
 
 # include <kernel/exception.hh>
 # include <kernel/uconnection.hh>
@@ -42,7 +43,7 @@ namespace runner
   using boost::bind;
   using libport::Finally;
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::And* e)
   {
     // Collect all subrunners
@@ -67,49 +68,52 @@ namespace runner
     args.push_back(rObject());
     apply_urbi(code, SYMBOL(), args, 0);
 
-    result_ = object::void_class;
-
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
+
+    return object::void_class;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Assignment* e)
   {
-    stacks_.set(e, eval(e->value_get()));
+    rObject val = eval(e->value_get());
+    stacks_.set(e, val);
+    return val;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Call* e)
   {
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = ast_tgt->implicit() ? stacks_.self() : eval(ast_tgt);
-    apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
+    return apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::CallMsg*)
   {
-    result_ = stacks_.call();
+    return stacks_.call();
   }
 
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Declaration* d)
   {
-    rObject value = eval(d->value_get());
-    stacks_.def(d, value);
+    rObject val = eval(d->value_get());
+    stacks_.def(d, val);
+    return val;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Float* e)
   {
-    result_ = new object::Float(e->value_get());
+    return new object::Float(e->value_get());
   }
 
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Foreach* e)
   {
     (void)e;
@@ -117,10 +121,9 @@ namespace runner
   }
 
 
-  inline void Interpreter::visit(const ast::Routine* e, bool closure)
+  inline object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
   {
     rRoutine res = make_routine(e);
-    result_ = res;
 
     // Capture variables
     foreach (const ast::rDeclaration& dec, *e->captured_variables_get())
@@ -136,42 +139,44 @@ namespace runner
       res->self_get() = stacks_.self();
       res->call_get() = stacks_.call();
     }
+
+    return res;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Function* e)
   {
-    visit(e, false);
+    return visit(e, false);
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Closure* e)
   {
-    visit(e, true);
+    return visit(e, true);
   }
 
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::If* e)
   {
     // Evaluate the test.
     JAECHO ("test", e->test_get ());
-    operator() (e->test_get().get());
+    rObject cond = operator()(e->test_get().get());
 
-    if (object::is_true(result_, SYMBOL(if)))
+    if (object::is_true(cond, SYMBOL(if)))
     {
       JAECHO ("then", e->thenclause_get());
-      operator() (e->thenclause_get().get());
+      return operator()(e->thenclause_get().get());
     }
     else
     {
       JAECHO ("else", e->elseclause_get());
-      operator() (e->elseclause_get().get());
+      return operator()(e->elseclause_get().get());
     }
   }
 
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::List* e)
   {
     object::List::value_type res;
@@ -188,17 +193,17 @@ namespace runner
       }
       res.push_back(v);
     }
-    result_ = new object::List(res);
+    return new object::List(res);
     //ECHO ("result: " << *result_);
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Lazy* e)
   {
-    operator()(e->strict_get().get());
+    return operator()(e->strict_get().get());
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Local* e)
   {
     const rObject& value = stacks_.get(e);
@@ -207,28 +212,29 @@ namespace runner
 
     if (e->arguments_get())
       // FIXME: Register in the call stack
-      result_ = apply(stacks_.self(), value,
-                      e->name_get(), e->arguments_get(),
-                      e->location_get());
+      return apply(stacks_.self(), value,
+                   e->name_get(), e->arguments_get(),
+                   e->location_get());
     else
-      result_ = value;
+      return value;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Message* e)
   {
     send_message(e->tag_get(), e->text_get());
+    return object::void_class;
   }
 
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
 
-    // In case we're empty.
-    result_ = object::void_class;
+    // In case we're empty, {} evaluates to void.
+    rObject res = object::void_class;
 
     bool tail = false;
     foreach (const ast::rConstExp& c, e->children_get())
@@ -241,7 +247,6 @@ namespace runner
       if (tail++)
 	YIELD();
 
-      result_.reset();
       JAECHO("child", c);
 
       if (c.unsafe_cast<const ast::Stmt>() &&
@@ -266,12 +271,13 @@ namespace runner
           res = c->eval(*this);
 	  // We need to keep checking for void here because it can not be passed
 	  // to the << function
-	  if (e->toplevel_get() && result_.get()
-	    && result_ != object::void_class)
+	  if (e->toplevel_get()
+              && res.get() // FIXME: What's that for?
+              && res != object::void_class)
 	  {
 	    try
 	    {
-	      assertion(result_);
+	      assertion(res);
 	      ECHO("toplevel: returning a result to the connection.");
 
 	      // Display the value using the topLevel channel.
@@ -286,12 +292,11 @@ namespace runner
 		rObject e = topLevel->slot_get(SYMBOL(LT_LT));
                 objects_type args;
                 args.push_back(topLevel);
-                args.push_back(result_);
+                args.push_back(res);
 		apply(e, SYMBOL(topLevel), args);
 	      }
 	      else if (toplevel_debug)
-		lobby_->value_get().connection.new_result(result_);
-              result_.reset();
+		lobby_->value_get().connection.new_result(res);
 	    }
 	    catch (std::exception &ke)
 	    {
@@ -330,16 +335,18 @@ namespace runner
 	tag->stop(scheduler_get(), object::void_class);
       yield_until_terminated(runners);
     }
+
+    return res;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Noop*)
   {
-    result_ = object::void_class;
+    return object::void_class;
   }
 
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Pipe* e)
   {
     // lhs
@@ -348,20 +355,20 @@ namespace runner
 
     // rhs:  start the execution immediately.
     JAECHO ("rhs", e->rhs_get ());
-    operator() (e->rhs_get().get());
+    return operator() (e->rhs_get().get());
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
     libport::Finally finally;
     create_scope_tag();
     finally << boost::bind(&Interpreter::cleanup_scope_tag, this);
     finally << libport::restore(non_interruptible_);
-    operator()(e->body_get().get());
+    return operator()(e->body_get().get());
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Do* e)
   {
     Finally finally;
@@ -374,29 +381,29 @@ namespace runner
     visit(scope);
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
-    result_ = tgt;
+    return tgt;
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Stmt* e)
   {
     JAECHO ("expression", e->expression_get());
-    operator() (e->expression_get().get());
+    return operator()(e->expression_get().get());
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::String* e)
   {
-    result_ = new object::String(libport::Symbol(e->value_get()));
+    return new object::String(libport::Symbol(e->value_get()));
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::Tag* t)
   {
-    result_ = eval_tag(t->exp_get());
+    return eval_tag(t->exp_get());
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::TaggedStmt* t)
   {
     int result_depth = tags_get().size();
@@ -408,13 +415,12 @@ namespace runner
       object::type_check<object::Tag>(unchecked_tag, SYMBOL(tagged_stmt));
       const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
       const scheduler::rTag& tag = urbi_tag->value_get();
+
       // If tag is blocked, do not start and ignore the
       // statement completely but use the provided payload.
       if (tag->blocked())
-      {
-	result_ = boost::any_cast<rObject>(tag->payload_get());
-	return;
-      }
+	return boost::any_cast<rObject>(tag->payload_get());
+
       push_tag (tag);
       Finally finally(bind(&Interpreter::pop_tag, this));
       // If the latest tag causes us to be frozen, let the
@@ -425,7 +431,7 @@ namespace runner
       urbi_tag->triggerEnter(*this);
       rObject res = eval (t->exp_get());
       urbi_tag->triggerLeave(*this);
-      result_ = res;
+      return res;
     }
     catch (scheduler::StopException& e)
     {
@@ -433,20 +439,20 @@ namespace runner
       if (e.depth_get() < result_depth)
 	throw;
       // Extract the value from the exception.
-      result_ = boost::any_cast<rObject>(e.payload_get());
+      return boost::any_cast<rObject>(e.payload_get());
       // If we are frozen, reenter the scheduler for a while.
       if (frozen())
 	yield();
     }
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::This*)
   {
-    result_ = stacks_.self();
+    return stacks_.self();
   }
 
-  inline void
+  inline object::rObject
   Interpreter::visit(const ast::While* e)
   {
     const bool must_yield = e->flavor_get() == ast::flavor_semicolon;
@@ -457,15 +463,15 @@ namespace runner
       if (must_yield && tail++)
 	YIELD();
       JAECHO ("while test", e->test_get());
-      operator() (e->test_get().get());
-      if (!object::is_true(result_, SYMBOL(while)))
+      rObject cond = operator()(e->test_get().get());
+      if (!object::is_true(cond, SYMBOL(while)))
 	break;
 
       JAECHO ("while body", e->body_get());
 
-      operator() (e->body_get().get());
+      operator()(e->body_get().get());
     }
-    result_ = object::void_class;
+    return object::void_class;
   }
 
   // Invalid nodes

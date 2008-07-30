@@ -62,7 +62,7 @@ namespace runner
     /// \}
 
     /// The entry point: visit \a e.
-    virtual void operator() (const ast::Ast* e);
+    virtual object::rObject operator() (const ast::Ast* e);
 
     /// \ name Accessors.
     /// \{
@@ -145,38 +145,38 @@ namespace runner
 
   public:
 
-    void visit(const ast::And* n);
-    void visit(const ast::Assignment* n);
-    void visit(const ast::Call* n);
-    void visit(const ast::CallMsg* n);
-    void visit(const ast::Closure* n);
-    void visit(const ast::Do* n);
-    void visit(const ast::Declaration* n);
-    void visit(const ast::Float* n);
-    void visit(const ast::Foreach* n);
-    void visit(const ast::Function* n);
-    void visit(const ast::If* n);
-    void visit(const ast::Lazy* n);
-    void visit(const ast::List* n);
-    void visit(const ast::Local* n);
-    void visit(const ast::Message* n);
-    void visit(const ast::Nary* n);
-    void visit(const ast::Noop* n);
-    void visit(const ast::Pipe* n);
-    void visit(const ast::Scope* n);
-    void visit(const ast::Stmt* n);
-    void visit(const ast::String* n);
-    void visit(const ast::Tag* n);
-    void visit(const ast::TaggedStmt* n);
-    void visit(const ast::This* n);
-    void visit(const ast::While* n);
+    object::rObject visit(const ast::And* n);
+    object::rObject visit(const ast::Assignment* n);
+    object::rObject visit(const ast::Call* n);
+    object::rObject visit(const ast::CallMsg* n);
+    object::rObject visit(const ast::Closure* n);
+    object::rObject visit(const ast::Do* n);
+    object::rObject visit(const ast::Declaration* n);
+    object::rObject visit(const ast::Float* n);
+    object::rObject visit(const ast::Foreach* n);
+    object::rObject visit(const ast::Function* n);
+    object::rObject visit(const ast::If* n);
+    object::rObject visit(const ast::Lazy* n);
+    object::rObject visit(const ast::List* n);
+    object::rObject visit(const ast::Local* n);
+    object::rObject visit(const ast::Message* n);
+    object::rObject visit(const ast::Nary* n);
+    object::rObject visit(const ast::Noop* n);
+    object::rObject visit(const ast::Pipe* n);
+    object::rObject visit(const ast::Scope* n);
+    object::rObject visit(const ast::Stmt* n);
+    object::rObject visit(const ast::String* n);
+    object::rObject visit(const ast::Tag* n);
+    object::rObject visit(const ast::TaggedStmt* n);
+    object::rObject visit(const ast::This* n);
+    object::rObject visit(const ast::While* n);
 
-    void visit(const ast::Binding* n);
-    void visit(const ast::Break* n);
-    void visit(const ast::Continue* n);
-    void visit(const ast::Implicit* n);
-    void visit(const ast::MetaExp* n);
-    void visit(const ast::Return* n);
+    object::rObject visit(const ast::Binding* n);
+    object::rObject visit(const ast::Break* n);
+    object::rObject visit(const ast::Continue* n);
+    object::rObject visit(const ast::Implicit* n);
+    object::rObject visit(const ast::MetaExp* n);
+    object::rObject visit(const ast::Return* n);
     /// \}
 
 
@@ -201,7 +201,7 @@ namespace runner
 
   private:
     /// Factor handling of Function and Closure
-    void visit(const ast::Routine* e, bool closure);
+    object::rObject visit(const ast::Routine* e, bool closure);
 
     /// The root of the AST being executed.
     ast::rConstAst ast_;

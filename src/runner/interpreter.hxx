@@ -21,9 +21,7 @@ namespace runner
   Interpreter::eval(ast::rConstAst e)
   {
     ECHO("Eval: " << &e << " {{{" << e << "}}}");
-    operator()(e.get());
-    ECHO("Eval: " << &e << " = " << result_);
-    return result_;
+    return operator()(e.get());
   }
 
 } // namespace runner

@@ -200,11 +200,11 @@ namespace runner
       check_for_pending_exception();
       JAECHO ("starting evaluation of AST: ", ast_);
       if (ast_)
-	operator()(ast_.get());
+	result_ = operator()(ast_.get());
       else
       {
 	args_.push_front(lobby_);
-	apply(code_, SYMBOL(task), args_);
+	result_ = apply(code_, SYMBOL(task), args_);
       }
     }
     catch(object::UrbiException& ue)
@@ -219,14 +219,14 @@ namespace runner
   `----------------*/
 
 
-  void
+  object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
     /// Catch exceptions, set the location and backtrace if not
     /// already done, and rethrow it.
     try
     {
-      e->eval(*this);
+      return e->eval(*this);
     }
     catch (object::UrbiException& x)
     {
@@ -315,8 +315,7 @@ namespace runner
     check_stack_space ();
 
     stacks_.execution_starts(msg);
-    result_ = eval (ast->body_get());
-    return result_;
+    return eval (ast->body_get());
   }
 
   object::rObject
@@ -365,15 +364,14 @@ namespace runner
       throw object::WrongArgumentType (msg);
 
     if (const rRoutine& c = func->as<object::Code>())
-      result_ = apply_urbi (c, msg, args, call_message);
+      return apply_urbi (c, msg, args, call_message);
     else if (const object::rPrimitive& p = func->as<object::Primitive>())
-      result_ = p->value_get()(*this, args);
+      return p->value_get()(*this, args);
     else
     {
       object::check_arg_count (1, args.size(), msg);
-      result_ = func;
+      return func;
     }
-    return result_;
   }
 
   void
@@ -386,20 +384,20 @@ namespace runner
       // Skip target, the first argument.
       if (!tail++)
 	continue;
-      eval (arg);
+      rObject val = eval (arg);
       // Check if any argument is void. This will be checked again in
       // Interpreter::apply_urbi, yet raising exception here gives
       // better location (the argument and not the whole function
       // invocation).
-      if (result_ == object::void_class)
+      if (val == object::void_class)
       {
 	object::WrongArgumentType e(SYMBOL());
 	e.location_set(arg->location_get());
 	throw e;
       }
 
-      passert (*arg, result_);
-      args.push_back (result_);
+      passert (*arg, val);
+      args.push_back (val);
     }
   }
 
