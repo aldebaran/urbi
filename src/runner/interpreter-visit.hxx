@@ -45,6 +45,7 @@ namespace runner
   using boost::bind;
   using libport::Finally;
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
@@ -76,6 +77,7 @@ namespace runner
     return object::void_class;
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Assignment* e)
   {
@@ -83,6 +85,7 @@ namespace runner
     stacks_.set(e, val);
     return val;
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Call* e)
@@ -92,6 +95,7 @@ namespace runner
     rObject tgt = ast_tgt->implicit() ? stacks_.self() : eval(ast_tgt);
     return apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::CallMsg*)
@@ -108,11 +112,13 @@ namespace runner
     return val;
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Float* e)
   {
     return new object::Float(e->value_get());
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
   {
@@ -136,11 +142,13 @@ namespace runner
     return res;
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Function* e)
   {
     return visit(e, false);
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Closure* e)
@@ -190,6 +198,7 @@ namespace runner
     //ECHO ("result: " << *result_);
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Lazy* e)
   {
@@ -211,6 +220,7 @@ namespace runner
     else
       return value;
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Message* e)
@@ -332,6 +342,7 @@ namespace runner
     return res;
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Noop*)
   {
@@ -351,6 +362,7 @@ namespace runner
     return operator() (e->rhs_get().get());
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
@@ -360,6 +372,7 @@ namespace runner
     finally << libport::restore(non_interruptible_);
     return operator()(e->body_get().get());
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Do* e)
@@ -377,6 +390,7 @@ namespace runner
     return tgt;
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Stmt* e)
   {
@@ -384,17 +398,20 @@ namespace runner
     return operator()(e->expression_get().get());
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::String* e)
   {
     return new object::String(libport::Symbol(e->value_get()));
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Tag* t)
   {
     return eval_tag(t->exp_get());
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::TaggedStmt* t)
@@ -439,11 +456,13 @@ namespace runner
     }
   }
 
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::This*)
   {
     return stacks_.self();
   }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::While* e)
@@ -466,6 +485,7 @@ namespace runner
     }
     return object::void_class;
   }
+
 
   // Invalid nodes
 #define INVALID(Node)                                      \
