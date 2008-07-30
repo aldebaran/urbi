@@ -778,7 +778,7 @@ namespace runner
 	      std::cerr << "Exception when printing result: "
                         << ke.what() << std::endl;
 	    }
-	    catch (object::UrbiException& ue)
+	    catch (object::UrbiException&)
 	    {
 	      throw;
 	    }
