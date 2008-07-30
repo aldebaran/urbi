@@ -146,38 +146,13 @@ namespace runner
 
   public:
 
-    object::rObject visit(const ast::And* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Assignment* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Call* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::CallMsg* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Closure* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Do* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Declaration* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Float* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Foreach* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Function* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::If* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Lazy* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::List* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Local* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Message* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Nary* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Noop* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Pipe* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Scope* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Stmt* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::String* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Tag* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::TaggedStmt* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::This* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::While* n) LIBPORT_SPEED_ALWAYS_INLINE;
+#define VISIT(Macro, Data, Node)                                        \
+    object::rObject visit(const ast::Node* n) LIBPORT_SPEED_ALWAYS_INLINE;
 
-    object::rObject visit(const ast::Binding* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Break* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Continue* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Implicit* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::MetaExp* n) LIBPORT_SPEED_ALWAYS_INLINE;
-    object::rObject visit(const ast::Return* n) LIBPORT_SPEED_ALWAYS_INLINE;
+    AST_FOR_EACH_NODE(VISIT);
+
+#undef VISIT
+
     /// \}
 
 
