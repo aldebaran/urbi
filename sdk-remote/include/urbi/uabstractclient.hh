@@ -177,10 +177,12 @@ namespace urbi
 
     // Sending
 
-    /// Function for backward compatibility. Will be removed in future versions.
+    /// Function for backward compatibility. Will be removed in future
+    /// versions.
     int send() { endPack(); return 0;}
 
-    /// Send an Urbi command. The syntax is similar to the printf() function.
+    /// Send an Urbi command. The syntax is similar to the printf()
+    /// function.
     int send(const char* format,...);
 
     ///send the value without any prefix or terminator
@@ -192,13 +194,16 @@ namespace urbi
     /// Send an Urbi header followed by binary data.
     int sendBin(const void*, int len,const char * header,...);
 
-    /// Lock the send buffer (for backward compatibility, will be removed in future versions).
+    /// Lock the send buffer (for backward compatibility, will be
+    /// removed in future versions).
     int startPack();
 
-    /// Unlock the send buffer (for backward compatibility, will be removed in future versions).
+    /// Unlock the send buffer (for backward compatibility, will be
+    /// removed in future versions).
     int endPack();
 
-    /// Append Urbi commands to the send buffer (for backward compatibility, will be removed in future versions).
+    /// Append Urbi commands to the send buffer (for backward
+    /// compatibility, will be removed in future versions).
     int pack(const char*,...);
 
     /// va_list version of pack.
@@ -207,10 +212,12 @@ namespace urbi
     /// Send urbi commands contained in a file.
     int sendFile(const char * filename);
 
-    /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
+    /// Send a command, prefixing it with a tag, and associate the
+    /// given callback with this tag.
     UCallbackID sendCommand(UCallback ,const char*,...);
 
-    /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
+    /// Send a command, prefixing it with a tag, and associate the
+    /// given callback with this tag.
     UCallbackID sendCommand(UCustomCallback ,void *,const char*,...);
 
     /// Send sound data to the robot for immediate playback.
