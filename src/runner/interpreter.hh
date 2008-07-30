@@ -62,7 +62,7 @@ namespace runner
     /// \}
 
     /// The entry point: visit \a e.
-    object::rObject operator() (const ast::Ast* e);
+    object::rObject operator() (const ast::Ast* e) __attribute__((always_inline));
 
     /// \ name Accessors.
     /// \{
@@ -145,38 +145,38 @@ namespace runner
 
   public:
 
-    object::rObject visit(const ast::And* n);
-    object::rObject visit(const ast::Assignment* n);
-    object::rObject visit(const ast::Call* n);
-    object::rObject visit(const ast::CallMsg* n);
-    object::rObject visit(const ast::Closure* n);
-    object::rObject visit(const ast::Do* n);
-    object::rObject visit(const ast::Declaration* n);
-    object::rObject visit(const ast::Float* n);
-    object::rObject visit(const ast::Foreach* n);
-    object::rObject visit(const ast::Function* n);
-    object::rObject visit(const ast::If* n);
-    object::rObject visit(const ast::Lazy* n);
-    object::rObject visit(const ast::List* n);
-    object::rObject visit(const ast::Local* n);
-    object::rObject visit(const ast::Message* n);
-    object::rObject visit(const ast::Nary* n);
-    object::rObject visit(const ast::Noop* n);
-    object::rObject visit(const ast::Pipe* n);
-    object::rObject visit(const ast::Scope* n);
-    object::rObject visit(const ast::Stmt* n);
-    object::rObject visit(const ast::String* n);
-    object::rObject visit(const ast::Tag* n);
-    object::rObject visit(const ast::TaggedStmt* n);
-    object::rObject visit(const ast::This* n);
-    object::rObject visit(const ast::While* n);
+    object::rObject visit(const ast::And* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Assignment* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Call* n) __attribute__((always_inline));
+    object::rObject visit(const ast::CallMsg* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Closure* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Do* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Declaration* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Float* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Foreach* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Function* n) __attribute__((always_inline));
+    object::rObject visit(const ast::If* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Lazy* n) __attribute__((always_inline));
+    object::rObject visit(const ast::List* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Local* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Message* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Nary* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Noop* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Pipe* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Scope* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Stmt* n) __attribute__((always_inline));
+    object::rObject visit(const ast::String* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Tag* n) __attribute__((always_inline));
+    object::rObject visit(const ast::TaggedStmt* n) __attribute__((always_inline));
+    object::rObject visit(const ast::This* n) __attribute__((always_inline));
+    object::rObject visit(const ast::While* n) __attribute__((always_inline));
 
-    object::rObject visit(const ast::Binding* n);
-    object::rObject visit(const ast::Break* n);
-    object::rObject visit(const ast::Continue* n);
-    object::rObject visit(const ast::Implicit* n);
-    object::rObject visit(const ast::MetaExp* n);
-    object::rObject visit(const ast::Return* n);
+    object::rObject visit(const ast::Binding* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Break* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Continue* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Implicit* n) __attribute__((always_inline));
+    object::rObject visit(const ast::MetaExp* n) __attribute__((always_inline));
+    object::rObject visit(const ast::Return* n) __attribute__((always_inline));
     /// \}
 
 
