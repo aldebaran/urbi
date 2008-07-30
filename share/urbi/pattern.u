@@ -14,9 +14,9 @@ class Global.Pattern
 
   function matchPattern(pattern, value)
   {
-    if (!pattern.locateSlot("match").isNil)
+    if (pattern.hasSlot("match"))
       return pattern.match(this, value)
-    else if (!value.locateSlot("matchAgainst").isNil)
+    else if (value.hasSlot("matchAgainst"))
       return value.matchAgainst(this, pattern)
     else
       return value == pattern |

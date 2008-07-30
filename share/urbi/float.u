@@ -35,47 +35,39 @@ do Float
     (this - rangemin) / (rangemax - rangemin)
   };
 
-  function getNormHook() {
-    function(n, value) {
-      var rmin = rangemin|
-      var rmax = rangemax|
-      value = value*(rmax-rmin) + rmin|
-      var value.rangemin = rmin|
-      var value.rangemax = rmax|
-      value.setProperty("'n", "updateHook",
-	Float.getNormHook.inject("parent",parent).inject("name", name) )|
-      parent.changeSlot(name, value)|
-    }
-  };
-
-  function newPropertyHook(parent, name, prop, value)
+  /// owner: The object that owns the slot onto which a property will be
+  ///        given.
+  /// name:  Slot name.
+  /// prop:  Property name (e.g., "rangemin").
+  /// value: Property value (e.g., 0).
+  function newPropertyHook(owner, name, prop, value)
   {
-    installUpdateHookStack(parent, name);
+    installUpdateHookStack(owner, name);
 
     // Setup 'n mecanism
     {
       var slotName = name + "_quote_n";
 
-      if (parent.locateSlot(slotName).isNil)
+      if (!owner.hasSlot(slotName))
       {
         function quote_n()
         {
-          var max = parent.getProperty(name, "rangemax") |
-          var min = parent.getProperty(name, "rangemin") |
-          var val =  parent.getSlot(name) |
+          var max = owner.getProperty(name, "rangemax") |
+          var min = owner.getProperty(name, "rangemin") |
+          var val =  owner.getSlot(name) |
           return (val - min) / (max - min) |
         };
 
         function hook(slot, val)
         {
-          var max = parent.getProperty(name, "rangemax") |
-          var min = parent.getProperty(name, "rangemin") |
+          var max = owner.getProperty(name, "rangemax") |
+          var min = owner.getProperty(name, "rangemin") |
           updateSlot(name, min + (max - min) * val) |
           return |
         };
 
-        parent.setSlot(slotName, quote_n);
-        parent.setProperty(slotName, "updateHook", hook);
+        owner.setSlot(slotName, quote_n);
+        owner.setProperty(slotName, "updateHook", hook);
       };
     };
 
@@ -100,9 +92,9 @@ do Float
     switch (prop)
     {
       case "rangemin":
-        parent.setProperty(name, "updateHook", rangeminHook);
+        owner.setProperty(name, "updateHook", rangeminHook);
       case "rangemax":
-        parent.setProperty(name, "updateHook", rangemaxHook);
+        owner.setProperty(name, "updateHook", rangemaxHook);
     };
   };
 
