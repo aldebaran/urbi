@@ -32,8 +32,10 @@ namespace object
     SymbolMap()
       : map_()
     {
+      libport::Symbol value;
 # define SYMBOL_DEFINE(Name, Value)		\
-      map_[#Name] = libport::Symbol(Value);
+      value = libport::Symbol(Value);		\
+      map_[#Name] = value;
       SYMBOLS_APPLY(SYMBOL_DEFINE);
 # undef SYMBOL_DEFINE
     }

@@ -85,6 +85,9 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 // FIXME: Because of this stupid hard limit, we can't produce
 // large outputs!  We should move to using C++.  Or some scheme
 // that is robust to the size of the message.
+// NOTE: Do not *ever* create an object of this type on the stack.
+// All instances must be marked as static. And the functions using
+// them will not be reentrant. You have been warned.
 typedef char buffer_type[8192];
 
 UServer::UServer(const char* mainName)
@@ -179,7 +182,7 @@ UServer::initialize()
     display(::HEADER_BEFORE_CUSTOM);
 
     int i = 0;
-    char customHeader[1024];
+    static char customHeader[1024];
     do {
       getCustomHeader(i, customHeader, 1024);
       if (customHeader[0])
@@ -361,9 +364,9 @@ UServer::vecho_key(const char* key, const char* s, va_list args)
     key_[5] = 0;
   }
 
-  buffer_type buf1;
+  static buffer_type buf1;
   vsnprintf(buf1, sizeof buf1, s, args);
-  buffer_type buf2;
+  static buffer_type buf2;
   snprintf(buf2, sizeof buf2, "%-90s [%5s]\n", buf1, key_);
   display(buf2);
 }
@@ -401,7 +404,7 @@ UServer::echo(const char* s, ...)
 void
 UServer::vdebug (const char* s, va_list args)
 {
-  buffer_type buf;
+  static buffer_type buf;
   vsnprintf(buf, sizeof buf, s, args);
   effectiveDisplay(buf);
 }
@@ -500,7 +503,7 @@ UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   }
   while (is->good ())
   {
-    char buf[BUFSIZ];
+    static char buf[BUFSIZ];
     is->read (buf, sizeof buf);
     q.push(buf, is->gcount());
   }
