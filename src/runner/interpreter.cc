@@ -697,8 +697,20 @@ namespace runner
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
 
-    // In case we're empty.
-    result_ = object::void_class;
+    // Are we empty?
+    unsigned int nary_size = e->children_get().size();
+    if (!nary_size)
+    {
+      result_ = object::void_class;
+      return;
+    }
+
+    // If we only have one statement in the nary and we are not at
+    // the toplevel, then it is equivalent to executing the statement
+    // independently, even if it uses a comma flavour since we would
+    // wait for it anyway. Returning void is ok here.
+    if (!e->toplevel_get() && nary_size == 1)
+      return e->children_get().front()->accept(*this);
 
     bool tail = false;
     foreach (const ast::rConstExp& c, e->children_get())
