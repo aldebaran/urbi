@@ -21,19 +21,19 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 #include <urbi/utable.hh>
 #include <urbi/ucallbacks.hh>
 
+STATIC_INSTANCE_NS(UStartlist,    objectlist,    urbi);
+STATIC_INSTANCE_NS(UStartlistHub, objecthublist, urbi);
+
+// Lists and hashtables used.
+STATIC_INSTANCE_NS(UTable,    accessmap,   urbi);
+STATIC_INSTANCE_NS(UTable,    eventendmap, urbi);
+STATIC_INSTANCE_NS(UTable,    eventmap,    urbi);
+STATIC_INSTANCE_NS(UTable,    functionmap, urbi);
+STATIC_INSTANCE_NS(UTable,    monitormap,  urbi);
+STATIC_INSTANCE_NS(UVarTable, varmap,      urbi);
+
 namespace urbi
 {
-  STATIC_INSTANCE_(UStartlist, objectlist);
-  STATIC_INSTANCE_(UStartlistHub, objecthublist);
-
-  // Lists and hashtables used.
-  STATIC_INSTANCE_(UTable, accessmap);
-  STATIC_INSTANCE_(UTable, eventendmap);
-  STATIC_INSTANCE_(UTable, eventmap);
-  STATIC_INSTANCE_(UTable, functionmap);
-  STATIC_INSTANCE_(UTable, monitormap);
-  STATIC_INSTANCE_(UVarTable, varmap);
-
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
   void
