@@ -58,17 +58,15 @@ namespace flower
       tweast << "var loopBreakTag = new Tag | "
 	     << "loopBreakTag:";
 
-    tweast << "while (" << copy->test_get() << ") {";
+    tweast << "while (" << copy->test_get() << ")";
 
     if (has_continue_)
-      tweast << "var loopContinueTag = new Tag | "
-	     << "loopContinueTag: {"
-	     << copy->body_get()
+      tweast << "{ var loopContinueTag = new Tag | "
+	     << "loopContinueTag:"
+	     << ast::rExp(copy->body_get())
 	     << "}";
     else
-      tweast << copy->body_get();
-
-    tweast << "}";
+      tweast << ast::rExp(copy->body_get());
 
     result_ = parser::parse(tweast)->ast_get();
   }
@@ -111,7 +109,7 @@ namespace flower
       tweast << "var loopContinueTag = new Tag | "
 	     << "loopContinueTag: {";
 
-    tweast << copy->body_get();
+    tweast << copy->body_get()->body_get();
 
     if (has_continue_)
       tweast << "}";

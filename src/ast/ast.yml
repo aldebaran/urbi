@@ -554,22 +554,21 @@ If:
         type: rExp
         desc: Condition to select thenclause or elseclause
     - thenclause:
-        type: rExp
+        type: rScope
         desc: Executed if test is true
     - elseclause:
-        type: rExp
+        type: rScope
         desc: Executed if test is false
   printer:
     - '"if ("'
     - ~test
     - '")"'
-    - libport::incendl
+    - libport::iendl
     - ~thenclause
-    - libport::decendl
+    - libport::iendl
     - '"else"'
-    - libport::incendl
+    - libport::iendl
     - ~elseclause
-    - libport::decindent
 
 While:
   super:
@@ -579,7 +578,7 @@ While:
         type: rExp
         desc: Condition to continue
     - body:
-        type: rExp
+        type: rScope
         desc: Executed if test is true
   printer:
     - '"while"'
@@ -590,9 +589,8 @@ While:
     - '"("'
     - ~test
     - '")"'
-    - libport::incendl
+    - libport::iendl
     - ~body
-    - libport::decindent
 
 Foreach:
   super:
@@ -605,18 +603,15 @@ Foreach:
         type: rExp
         desc: The list containing the values on which iterate.
     - body:
-        type: rExp
+        type: rScope
         desc: Executed for each value in the list
   printer:
     - '"for "'
     - '{ n->index_get()->what_get().print_escaped(ostr_); }'
     - '" in "'
     - ~list
-    - '" {"'
-    - libport::incendl
+    - libport::iendl
     - ~body
-    - libport::decendl
-    - '"}"'
 
 Break:
   desc: /// Break from a loop.
@@ -646,7 +641,7 @@ Return:
        }"
 
 Noop:
-  super: Exp
+  super: Scope
   desc: /// Also known as nop, noop etc.
   printer:
     - '"{}"'
