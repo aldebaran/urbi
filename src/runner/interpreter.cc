@@ -583,3 +583,7 @@ namespace runner
   }
 
 } // namespace runner
+
+#ifndef LIBPORT_SPEED // If not in speed mode, compile visit method here
+# include <runner/interpreter-visit.hxx>
+#endif

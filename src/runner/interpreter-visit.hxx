@@ -21,6 +21,8 @@
 
 # include <runner/interpreter.hh>
 
+# include <libport/compilation.hh>
+
 /// Job echo.
 #define JECHO(Title, Content)                           \
   ECHO ("job " << ME << ", " Title ": " << Content)
@@ -43,7 +45,7 @@ namespace runner
   using boost::bind;
   using libport::Finally;
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
     // Collect all subrunners
@@ -74,7 +76,7 @@ namespace runner
     return object::void_class;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Assignment* e)
   {
     rObject val = eval(e->value_get());
@@ -82,7 +84,7 @@ namespace runner
     return val;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Call* e)
   {
     // The invoked slot (probably a function).
@@ -91,14 +93,14 @@ namespace runner
     return apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::CallMsg*)
   {
     return stacks_.call();
   }
 
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Declaration* d)
   {
     rObject val = eval(d->value_get());
@@ -106,14 +108,14 @@ namespace runner
     return val;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Float* e)
   {
     return new object::Float(e->value_get());
   }
 
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Foreach* e)
   {
     (void)e;
@@ -121,7 +123,7 @@ namespace runner
   }
 
 
-  inline object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
+  LIBPORT_SPEED_INLINE object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
   {
     rRoutine res = make_routine(e);
 
@@ -143,20 +145,20 @@ namespace runner
     return res;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Function* e)
   {
     return visit(e, false);
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Closure* e)
   {
     return visit(e, true);
   }
 
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::If* e)
   {
     // Evaluate the test.
@@ -176,7 +178,7 @@ namespace runner
   }
 
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::List* e)
   {
     object::List::value_type res;
@@ -197,13 +199,13 @@ namespace runner
     //ECHO ("result: " << *result_);
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Lazy* e)
   {
     return operator()(e->strict_get().get());
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Local* e)
   {
     const rObject& value = stacks_.get(e);
@@ -219,7 +221,7 @@ namespace runner
       return value;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Message* e)
   {
     send_message(e->tag_get(), e->text_get());
@@ -227,7 +229,7 @@ namespace runner
   }
 
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
     // List of runners for Stmt flavored by a comma.
@@ -339,14 +341,14 @@ namespace runner
     return res;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Noop*)
   {
     return object::void_class;
   }
 
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Pipe* e)
   {
     // lhs
@@ -358,7 +360,7 @@ namespace runner
     return operator() (e->rhs_get().get());
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
     libport::Finally finally;
@@ -368,7 +370,7 @@ namespace runner
     return operator()(e->body_get().get());
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Do* e)
   {
     Finally finally;
@@ -384,26 +386,26 @@ namespace runner
     return tgt;
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Stmt* e)
   {
     JAECHO ("expression", e->expression_get());
     return operator()(e->expression_get().get());
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::String* e)
   {
     return new object::String(libport::Symbol(e->value_get()));
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Tag* t)
   {
     return eval_tag(t->exp_get());
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::TaggedStmt* t)
   {
     int result_depth = tags_get().size();
@@ -446,13 +448,13 @@ namespace runner
     }
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::This*)
   {
     return stacks_.self();
   }
 
-  inline object::rObject
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::While* e)
   {
     const bool must_yield = e->flavor_get() == ast::flavor_semicolon;
@@ -476,7 +478,7 @@ namespace runner
 
   // Invalid nodes
 #define INVALID(Node)                                      \
-  inline object::rObject                                   \
+  LIBPORT_SPEED_INLINE object::rObject                                   \
   Interpreter::visit(const ast::Node* n)                   \
   {                                                        \
     static_cast<void>(n);                                  \

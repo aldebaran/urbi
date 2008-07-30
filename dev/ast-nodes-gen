@@ -83,9 +83,13 @@ def print_includes (node, header, inline, impl):
   sys.stdout = impl
   if need_misc_algorithm:
     print >>impl, "#include <libport/containers.hh>"
-  print >>impl, "#include <ast/visitor.hh>"
-  print >>impl, "#include <ast/" + node.hh () + ">"
-  print >>impl, "#include <runner/interpreter-visit.hxx>"
+  print >>impl, """#include <ast/visitor.hh>
+#include <ast/%s>
+#include <runner/interpreter.hh>
+#include <libport/compilation.hh>
+#ifdef LIBPORT_SPEED // If in speed mode, inline Interpreters visit methods.
+# include <runner/interpreter-visit.hxx>
+#endif""" % node.hh()
   print_inline_code (node, "impl", "prologue")
 
 
