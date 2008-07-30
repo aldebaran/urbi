@@ -144,7 +144,7 @@ UConnection::send_queue(const char* buf, size_t len)
 }
 
 void
-UConnection::continue_send ()
+UConnection::continue_send()
 {
   if (closing_)
   {
@@ -169,7 +169,7 @@ UConnection::continue_send ()
   if (char* popData = send_queue_->front(toSend))
   {
     ECHO(popData);
-    int wasSent = effective_send (popData, toSend);
+    int wasSent = effective_send(popData, toSend);
 
     if (wasSent < 0)
     {
@@ -187,13 +187,13 @@ UConnection::continue_send ()
 }
 
 void
-UConnection::received (const char* s)
+UConnection::received(const char* s)
 {
-  received (s, strlen (s));
+  received(s, strlen(s));
 }
 
 void
-UConnection::received (const char* buffer, size_t length)
+UConnection::received(const char* buffer, size_t length)
 {
   PING();
 
@@ -221,7 +221,7 @@ UConnection::received (const char* buffer, size_t length)
 
   parser::UParser& p = parser_get();
   // There should be no tree sitting in the parser.
-  //  passert (*p.ast_get(), !p.ast_get());
+  //  passert(*p.ast_get(), !p.ast_get());
 
   // Starts processing
   receiving_ = true;
@@ -238,13 +238,13 @@ UConnection::received (const char* buffer, size_t length)
 
     if (ast::rNary ast = result->ast_get())
     {
-      ECHO ("parsed: {{{" << *ast << "}}}");
+      ECHO("parsed: {{{" << *ast << "}}}");
       ast = parser::transform(ast);
       assert(ast);
-      ECHO ("bound and flowed: {{{" << *ast << "}}}");
+      ECHO("bound and flowed: {{{" << *ast << "}}}");
       // Append to the current list.
       active_command->splice_back(ast);
-      ECHO ("appended: " << *active_command << "}}}");
+      ECHO("appended: " << *active_command << "}}}");
     }
     else
       LIBPORT_ECHO("the parser returned NULL:" << std::endl
@@ -252,10 +252,10 @@ UConnection::received (const char* buffer, size_t length)
   }
 
   // Execute the new command.
-  execute (active_command);
+  execute(active_command);
 
   receiving_ = false;
-  // p.ast_set (0);
+  // p.ast_set(0);
 #if ! defined LIBPORT_URBI_ENV_AIBO
   tree_lock.unlock();
 #endif
@@ -264,7 +264,7 @@ UConnection::received (const char* buffer, size_t length)
 }
 
 void
-UConnection::send (object::rObject result, const char* tag, const char* p)
+UConnection::send(object::rObject result, const char* tag, const char* p)
 {
   // "Display" the result.
   std::ostringstream os;
@@ -279,30 +279,30 @@ UConnection::send (object::rObject result, const char* tag, const char* p)
   {
     // nothing
   }
-  result->print (os, r);
+  result->print(os, r);
 
-  if (!os.str ().empty ())
+  if (!os.str().empty())
   {
-    std::string prefix = make_prefix (tag);
-    send (prefix.c_str (), (const char*)0, false);
-    send_queue (os.str ().c_str(), os.str().length());
-    endline ();
+    std::string prefix = make_prefix(tag);
+    send(prefix.c_str(), (const char*)0, false);
+    send_queue(os.str().c_str(), os.str().length());
+    endline();
   }
 }
 
 void
-UConnection::new_result (object::rObject result)
+UConnection::new_result(object::rObject result)
 {
-  // The prefix should be (getTag().c_str()) instead of 0.
+  // The prefix should be(getTag().c_str()) instead of 0.
   // FIXME: the prefix should not be built manually.
-  send (result, 0, 0);
+  send(result, 0, 0);
 }
 
 
 void
-UConnection::execute (ast::rNary active_command)
+UConnection::execute(ast::rNary active_command)
 {
-  PING ();
+  PING();
   if (active_command->empty())
     return;
 
@@ -312,15 +312,15 @@ UConnection::execute (ast::rNary active_command)
   // it's a top-level Nary so that it can send its results back to the
   // UConnection.  It also entitles the Runner to clear this Nary when
   // it has evaluated it.
-  active_command->toplevel_set (true);
+  active_command->toplevel_set(true);
 
   shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
 
-  PING ();
+  PING();
 }
 
 std::string
-UConnection::make_prefix (const char* tag) const
+UConnection::make_prefix(const char* tag) const
 {
   std::ostringstream o;
   char fill = o.fill('0');
@@ -330,23 +330,23 @@ UConnection::make_prefix (const char* tag) const
     o << ':' << tag;
   o << "] ";
 
-  return o.str ();
+  return o.str();
 }
 
 bool
-UConnection::has_pending_command () const
+UConnection::has_pending_command() const
 {
   return shell_->pending_command_get();
 }
 
 void
-UConnection::drop_pending_commands ()
+UConnection::drop_pending_commands()
 {
   shell_->pending_commands_clear();
 }
 
 bool
-UConnection::send_queue_empty () const
+UConnection::send_queue_empty() const
 {
   return send_queue_->empty();
 }
