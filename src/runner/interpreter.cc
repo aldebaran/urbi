@@ -731,7 +731,7 @@ namespace runner
 	// If at toplevel, print errors and continue, else rethrow them
 	try
 	{
-	  operator() (c.get());
+	  c->accept(*this);
 	  // We need to keep checking for void here because it can not be passed
 	  // to the << function
 	  if (e->toplevel_get() && result_.get()
@@ -766,9 +766,9 @@ namespace runner
 	      std::cerr << "Exception when printing result: "
                         << ke.what() << std::endl;
 	    }
-	    catch (object::UrbiException& e)
+	    catch (object::UrbiException& ue)
 	    {
-	      show_error_(e);
+	      throw;
 	    }
 	    catch (...)
 	    {
@@ -779,6 +779,7 @@ namespace runner
 	}
 	catch (object::UrbiException& ue)
 	{
+	  propagate_error_(ue, c->location_get());
 	  if (e->toplevel_get())
 	    show_error_(ue);
 	  else
