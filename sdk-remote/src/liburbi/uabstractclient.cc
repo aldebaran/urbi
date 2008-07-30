@@ -34,6 +34,8 @@
 
 #include <urbi/uabstractclient.hh>
 
+#include "libport/cstring"
+
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"
 
@@ -440,23 +442,6 @@ namespace urbi
     bool startNotify;
   };
 
-  struct wavheader
-  {
-    char riff[4];
-    int length;
-    char wave[4];
-    char fmt[4];
-    int lnginfo;
-    short one;
-    short channels;
-    int freqechant;
-    int bytespersec;
-    short bytesperechant;
-    short bitperchannel;
-    char data[4];
-    int datalength;
-  };
-
   static UCallbackAction sendSound_(void * cb, const UMessage &msg)
   {
     //the idea is to cut the sound into small chunks,
@@ -530,7 +515,7 @@ namespace urbi
 #endif
 
     s->uc->sendBin(s->buffer+s->pos, tosend);
-    s->uc->send("wait(%s.remain < %d);"
+    s->uc->send("sleep(%s.remain < %d);"
 		" %s << ping;", s->device, playlength / 2, msg.tag.c_str());
     // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
@@ -540,7 +525,10 @@ namespace urbi
       //if (s->tag && s->tag[0])
       //  s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** stop"));
 
-      s->uc->send("speaker->blend=speaker.sendsoundsaveblend;");
+      std::string rDevice = (s->device) ? s->device : "speaker";
+      std::string message = rDevice + ".val->blend=" +
+	rDevice + ".sendsoundsaveblend;";
+      s->uc->send(message.c_str ());
       if (s->tag && s->tag[0])
 	s->uc->send("%s << 1;", s->tag);
       free(s->buffer);
@@ -580,8 +568,10 @@ namespace urbi
     if (sound.soundFormat == SOUND_WAV
 	|| sound.soundFormat == SOUND_RAW)
     {
-      send("speaker.sendsoundsaveblend = speaker->blend;"
-	   "speaker->blend=queue;");
+      std::string rDevice = (device) ? device : "speaker";
+      std::string message = "var " + rDevice + ".sendsoundsaveblend = " +
+	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
+      send(message.c_str ());
       sendSoundData *s = new sendSoundData();
       char utag[16];
       makeUniqueTag(utag);
@@ -1050,11 +1040,17 @@ namespace urbi
     if (message && erc)
       msg += " : ";
     if (erc)
-      msg+=strerror(erc);
+      msg += libport::strerror(erc);
     m.message = m.rawMessage = msg; //rawMessage is incorrect but we dont care
     m.timestamp = 0;
     m.tag = CLIENTERROR_TAG;
     notifyCallbacks(m);
+  }
+
+  int
+  UAbstractClient::getCurrentTimestamp () const
+  {
+    return currentTimestamp;
   }
 
   UMessage::UMessage(UAbstractClient& client)

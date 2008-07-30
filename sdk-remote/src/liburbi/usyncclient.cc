@@ -35,6 +35,8 @@ namespace urbi
       syncTag (""),
       stopCallbackThread_(false)
   {
+    if (error())
+      return;
     libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
@@ -65,9 +67,10 @@ namespace urbi
   {
     stopCallbackThread_ = true;
   }
-  void USyncClient::processEvents()
+  void USyncClient::processEvents(const libport::utime_t timeout)
   {
-    while (true)
+    libport::utime_t startTime = libport::utime();
+    while (timeout < 0 || libport::utime() - startTime <= timeout)
     {
       queueLock_.lock();
       if (queue.empty())
@@ -90,8 +93,8 @@ namespace urbi
     if (!syncTag.empty() && syncTag == msg.tag)
     {
       this->msg = new UMessage(msg);
+      syncTag.clear();
       syncLock_++;
-      syncTag = "";
     }
     else
     {
@@ -106,7 +109,7 @@ namespace urbi
     syncTag = tag;
     queueLock_.unlock();
     syncLock_--;
-    syncTag = "";
+    //syncTag is reset by the other thread
     return msg;
   }
 
@@ -269,6 +272,21 @@ namespace urbi
   }
 
   int
+  USyncClient::syncGetValue(const char* valName, UValue& val)
+  {
+    UMessage *m = syncGet("%s;", valName);
+
+    if (m->type != MESSAGE_DATA)
+    {
+      delete m;
+      return 0;
+    }
+    val = (*(m->value));
+    delete m;
+    return 1;
+  }
+
+  int
   USyncClient::syncGetDevice(const char* device, double& val)
   {
     UMessage *m = syncGet("%s.val;", device);
@@ -322,7 +340,7 @@ namespace urbi
     send("syncgetsound = BIN 0;"
 	 " loopsound: loop syncgetsound = syncgetsound +  %s.val,"
 	 " { "
-	 "   wait(%d);"
+	 "   sleep(%d);"
 	 "   stop loopsound;"
 	 "   noop;"
 	 "   noop;"

@@ -90,6 +90,9 @@ namespace urbi
 
     void init(const std::string&, const std::string&);
     void setOwned();
+
+    UDataType type () const;
+
     void syncValue ();
 
     void reset (ufloat);
@@ -107,7 +110,7 @@ namespace urbi
     void operator = (const UValue &v);
 
     operator int ();
-    operator bool ()  {return (int)(*this);}
+    operator bool ()  {return static_cast<int>(*this) != 0;}
 
     /// Deep copy.
     operator UBinary ();
@@ -124,6 +127,7 @@ namespace urbi
     /// not be valid after the calling function returns. Changes to
     /// the other fields of the structure have no effect..
     operator USound();
+
     operator ufloat ();
     operator std::string ();
     operator UList();

@@ -21,7 +21,6 @@
 **********************************************************************/
 
 #include <cstdlib>
-#include <libport/cstdio>
 #include <cerrno>
 
 #include <locale.h>
@@ -40,6 +39,9 @@
 #include <libport/thread.hh>
 #include <libport/utime.hh>
 
+#include "urbi/uclient.hh"
+#include "urbi/utag.hh"
+
 namespace urbi
 {
   /*! Establish the connection with the server.
@@ -48,7 +50,8 @@ namespace urbi
    */
   UClient::UClient(const char *_host, int _port, int _buflen)
     : UAbstractClient(_host, _port, _buflen),
-      thread(0), pingInterval(0), lastPong(0)
+      thread(0),
+      pingInterval(0)
   {
     setlocale(LC_NUMERIC, "C");
     control_fd[0] = control_fd[1] = -1;
@@ -57,7 +60,7 @@ namespace urbi
     if (::pipe(control_fd) == -1)
     {
       rc = -1;
-      perror("UClient::UClient failed to create pipe");
+      libport::perror("UClient::UClient failed to create pipe");
       return;
     }
     //block sigpipe
@@ -84,9 +87,9 @@ namespace urbi
       sa.sin_addr.s_addr = inet_addr(host);
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
-	std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
-	rc = -1;
-	return;
+        std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
+        rc = -1;
+        return;
       }
     }
     else
@@ -95,7 +98,7 @@ namespace urbi
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0)
     {
-      perror("UClient::UClient socket");
+      libport::perror("UClient::UClient socket");
       rc = -1;
       return;
     }
@@ -113,7 +116,7 @@ namespace urbi
     // Check there was no error.
     if (rc)
     {
-      perror("UClient::UClient connect");
+      libport::perror("UClient::UClient connect");
       return;
     }
 
@@ -123,7 +126,7 @@ namespace urbi
       pos = ::recv(sd, recvBuffer, buflen, 0);
     if (pos<0)
     {
-      perror("UClient::UClient recv");
+      libport::perror("UClient::UClient recv");
       rc = pos;
       return;
     }
@@ -137,12 +140,13 @@ namespace urbi
 
   UClient::~UClient()
   {
-    if (close(sd) == -1)
-      perror ("cannot close sd");
+    if (libport::closeSocket(sd) == -1)
+      libport::perror ("cannot close sd");
+
     sd = -1;
     if (control_fd[1] != -1
-	&& ::write(control_fd[1], "a", 1) == -1)
-      perror ("cannot write to control_fd[1]");
+        && ::write(control_fd[1], "a", 1) == -1)
+      libport::perror ("cannot write to control_fd[1]");
 
     // If the connection has failed while building the client, the
     // thread is not created.
@@ -151,11 +155,11 @@ namespace urbi
       libport::joinThread(thread);
 
     if (control_fd[1] != -1
-	&& close(control_fd[1]) == -1)
-      perror ("cannot close controlfd[1]");
+        && close(control_fd[1]) == -1)
+      libport::perror ("cannot close controlfd[1]");
     if (control_fd[0] != -1
-	&& close(control_fd[0]) == -1)
-      perror ("cannot close controlfd[0]");
+        && close(control_fd[0]) == -1)
+      libport::perror ("cannot close controlfd[0]");
   }
 
 
@@ -183,119 +187,124 @@ namespace urbi
       int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
       if (retval< 0)
       {
-	rc = retval;
-	clientError("send error", rc);
-	return rc;
+        rc = retval;
+        clientError("send error", rc);
+        return rc;
       }
       pos += retval;
     }
     return 0;
   }
 
-  UCallbackAction
-  UClient::pong(const UMessage &)
-  {
-    lastPong++;
-    return URBI_CONTINUE;
-  }
 
   void
   UClient::listenThread()
   {
-    const char* pingTag = "_liburbi_ping";
-    fd_set rfds, efds;
-    int res;
-    int maxfd = 1 + std::max(sd, control_fd[0]);
-    long long lastPing = libport::utime();
-    lastPong = libport::utime();
-    setCallback(callback(*this, &UClient::pong), pingTag);
+    int maxfd;
+
+    maxfd = 1 + std::max(sd, control_fd[0]);
+    waitingPong = false;
+
     while (true)
     {
-      do {
-	if (sd==-1)
-	  return;
-	FD_ZERO(&rfds);
-	FD_ZERO(&efds);
-	LIBPORT_FD_SET(sd, &rfds);
-	LIBPORT_FD_SET(sd, &efds);
+      if (sd == -1)
+        return;
+
+      fd_set rfds;
+      fd_set efds;
+
+      FD_ZERO(&rfds);
+      FD_ZERO(&efds);
+      LIBPORT_FD_SET(sd, &rfds);
+      LIBPORT_FD_SET(sd, &efds);
 #ifndef WIN32
-	LIBPORT_FD_SET(control_fd[0], &rfds);
+      LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
-	unsigned int msTime = pingInterval? pingInterval:1000;
-	struct timeval tme;
-	tme.tv_sec = msTime / 1000;
-	tme.tv_usec = (msTime%1000)*1000;
-	res = select(maxfd+1, &rfds, NULL, &efds, &tme);
-	if (res < 0 && errno != EINTR)
-	{
-	  rc = -1;
-#ifdef WIN32
-	  res = WSAGetLastError();
-#endif
-	  clientError("select error", res);
-	  std::cerr << "select error " << res << std::endl;
-	  //TODO when error will be implemented, send an error msg
-	  //TODO maybe try to reconnect?
-	  return;
-	}
-	if (pingInterval)
-	{
-	  long long currentTime = libport::utime();
-	  if (currentTime - lastPing > pingInterval * 1000)
-	  {
-	    if (0 < lastPong)
-	    {
-	      send("%s << 1,", pingTag);
-	      lastPong = 0;
-	    }
-	    else
-	    {
-	      lastPong --;
-	      if (lastPong <= -3)
-	      {
-		clientError("ping timeout", 0);
-		return;
-	      }
-	    }
-	    lastPing = currentTime;
-	  }
-	}
-	if (res == -1)
-	{
-	  res = 0;
-	  continue;
-	}
-#ifndef WIN32
-	if (res != 0 && FD_ISSET(control_fd[0], &rfds))
-	  return;
-#endif
-      } while (!res);
-      int count = ::recv(sd,
-			 &recvBuffer[recvBufferPosition],
-			 buflen - recvBufferPosition - 1, 0);
-      //TODO when error will be implemented, send an error msg
-      //TODO maybe try to reconnect?
-      if (count < 0)
+
+      int selectReturn;
+      if (pingInterval != 0)
       {
-	perror ("recv error");
-	clientError("recv error, errno =", count);
-	rc = -1;
-	return;
+        const unsigned delay = waitingPong ? pongTimeout : pingInterval;
+        struct timeval timeout = { delay / 1000, (delay % 1000) * 1000};
+        selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, &timeout);
       }
-      else if (!count)
+      else
       {
-	std::cerr << "recv error: connection closed" << std::endl;
-	clientError("recv error: connection closed");
-	rc = -1;
-	return;
+        selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, NULL);
       }
 
-      recvBufferPosition += count;
-      recvBuffer[recvBufferPosition] = 0;
-      processRecvBuffer();
+      // Treat error
+      if (selectReturn < 0 && errno != EINTR)
+      {
+        rc = -1;
+        clientError("Connection error : ", errno);
+        notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+                                 "!!! Connection error", std::list<BinaryData>() ));
+        return;
+      }
+      if (selectReturn < 0)  // ::select catch a signal (errno == EINTR)
+        continue;
+
+      // timeout
+      if (selectReturn == 0)
+      {
+        if (waitingPong) // Timeout while waiting PONG
+        {
+          rc = -1;
+          // FIXME: Choose between two differents way to alert user program
+          clientError("Lost connection with server");
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+                                   "!!! Lost connection with server",
+                                   std::list<BinaryData>() ));
+          return;
+        }
+        else // Timeout : Ping_interval
+        {
+          send("%s << 1,", internalPongTag.c_str());
+          waitingPong = true;
+        }
+      }
+
+      if (selectReturn > 0)
+      {
+        // We receive data, at least the "1" value sent through the pong tag
+        // channel so we are no longer waiting for a pong.
+        waitingPong = false;
+        int count = ::recv(sd, &recvBuffer[recvBufferPosition],
+                           buflen - recvBufferPosition - 1, 0);
+
+        if (count <= 0)
+        {
+          std::string errorMsg;
+          int         errorCode = 0;
+
+          if (count < 0)
+          {
+#ifdef WIN32
+            errorCode = WSAGetLastError();
+#else
+            errorCode = errno;
+#endif
+            errorMsg = "!!! Connection error";
+          }
+          else // count == 0  => Connection close
+          {
+            errorMsg = "!!! Connection closed";
+          }
+
+          rc = -1;
+          clientError(errorMsg.c_str(), errorCode);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+                                   errorMsg.c_str(), std::list<BinaryData>() ));
+          return;
+        }
+
+        recvBufferPosition += count;
+        recvBuffer[recvBufferPosition] = 0;
+        processRecvBuffer();
+      }
     }
   }
-
 
   void
   UClient::printf(const char * format, ...)
@@ -335,10 +344,16 @@ namespace urbi
     return *new UClient(host);
   }
 
-
-  void UClient::setPingInterval(unsigned int msTime)
+  void disconnect(UClient &client)
   {
-    pingInterval = msTime;
+    delete &client;
+  }
+
+  void UClient::setKeepAliveCheck(const unsigned    pingInterval,
+                                  const unsigned    pongTimeout)
+  {
+    this->pingInterval = pingInterval;
+    this->pongTimeout  = pongTimeout;
   }
 
 } // namespace urbi

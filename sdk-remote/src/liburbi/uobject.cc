@@ -85,9 +85,10 @@ namespace urbi
   {
     objecthub = 0;
     autogroup = false;
-
-    URBI(()) << "class " << __name << " {};";
-    URBI(()) << "external object " << __name << ";";
+    std::stringstream ss;
+    ss << "class " << __name << "{};";
+    ss << "external object " << __name << ";";
+    URBI(()) << ss.str();
     period = -1;
 
     // default
@@ -259,29 +260,20 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
       {
-        /* For the moment, this iteration is useless since the list will
-         * contain one and only one element. There is no function overloading
-         * yet and still it would probably use a unique name identifier, hence
-         * a single element list again. */
-        if (functionmap->find(array[1]) != functionmap->end())
-        {
-          std::list<UGenericCallback*> tmpfun = (*functionmap)[array[1]];
-          std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-          array.setOffset(3);
-          UValue retval = (*tmpfunit)->__evalcall(array);
-          array.setOffset(0);
-          if (retval.type == DATA_VOID)
-            URBI(()) << "var " << (std::string) array[2];
-          else
-          {
-            URBI(()) << "var " << (std::string) array[2] << "=";
-            getDefaultClient()->send(retval);//I'd rather not use << for bins
-          }
-          URBI(()) << ";";
-        }
-        else
-          msg.client.printf("Component Error: %s function unknown.\n",
-                            ((std::string) array[1]).c_str());
+	std::list<UGenericCallback*> tmpfun = (*functionmap)[array[1]];
+	std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+	array.setOffset(3);
+	UValue retval = (*tmpfunit)->__evalcall(array);
+	array.setOffset(0);
+	std::stringstream os;
+	if (retval.type == DATA_VOID)
+	  os << "var " << (std::string) array[2];
+	else
+	{
+	  os << "var " << (std::string) array[2] << "=" << retval;
+	}
+	os << ";";
+	URBI(()) << os.str();
       }
       break;
 
@@ -442,11 +434,7 @@ namespace urbi
   usage (const char* name)
   {
     std::cout <<
-      "usage:\n" << name << " [OPTIONS...] [ADDR] [PORT]\n"
-      "\n"
-      "   ADDR   Urbi server IP (e.g., \"localhost\")\n"
-      "   PORT   Port to listen to (defaults to 54000)\n"
-      "   LEN    Size of the input buffer\n"
+      "usage:\n" << name << " [OPTION]...\n"
       "\n"
       "Options:\n"
       "  -b, --buffer SIZE  input buffer size"
@@ -469,8 +457,66 @@ namespace urbi
               << libport::exit (EX_OK);
   }
 
-  void
-  main(int argc, char* argv[])
+  int
+  initialize(const char* addr, int port, int buflen, bool exitOnDisconnect)
+  {
+    std::cerr << libport::program_name
+	      << ": " << urbi::package_info() << std::endl
+	      << libport::program_name
+	      << ": Remote Component Running on "
+	      << addr << " " << port << std::endl;
+
+    new USyncClient(addr, port, buflen);
+
+    if (exitOnDisconnect)
+    {
+      if (!getDefaultClient() || getDefaultClient()->error())
+	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
+		  << libport::exit(1);
+      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
+    }
+   if (!getDefaultClient() || getDefaultClient()->error())
+      return 1;
+
+#ifdef LIBURBIDEBUG
+    getDefaultClient()->setWildcardCallback(callback (&debug));
+#else
+    getDefaultClient()->setErrorCallback(callback (&debug));
+#endif
+
+    getDefaultClient()->setCallback(&dispatcher,
+				    externalModuleTag.c_str());
+
+    dummyUObject = new UObject (0);
+    for (UStartlist::iterator i = objectlist->begin();
+	 i != objectlist->end();
+	 ++i)
+      (*i)->init((*i)->name);
+    return 0;
+  }
+
+  namespace
+  {
+    static
+    void
+    argument_with_option(const char* longopt,
+                         char shortopt,
+                         const char* val)
+    {
+      std::cerr
+        << libport::program_name
+        << ": warning: arguments without options are deprecated"
+        << std::endl
+        << "use `-" << shortopt << ' ' << val << '\''
+        << " or `--" << longopt << ' ' << val << "' instead"
+        << std::endl
+        << "Try `" << libport::program_name << " --help' for more information."
+        << std::endl;
+    }
+  }
+
+  int
+  main(int argc, const char* argv[], bool block)
   {
     libport::program_name = argv[0];
 
@@ -485,7 +531,7 @@ namespace urbi
     {
       std::string arg = argv[i];
       if (arg == "--buffer" || arg == "-b")
-	buflen = libport::convert_argument<int> (arg, argv[++i]);
+	buflen = libport::convert_argument<unsigned> (arg, argv[++i]);
       else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
       else if (arg == "--stay-alive" || arg == "-s")
@@ -495,7 +541,7 @@ namespace urbi
       else if (arg == "--host" || arg == "-H")
 	addr = libport::convert_argument<const char*>(arg, argv[++i]);
       else if (arg == "--port" || arg == "-p")
-	port = libport::convert_argument<int> (arg, argv[++i]);
+	port = libport::convert_argument<unsigned> (arg, argv[++i]);
       else if (arg == "--version" || arg == "-v")
 	version ();
       else if (arg[0] == '-')
@@ -506,9 +552,11 @@ namespace urbi
 	{
 	  case 1:
 	    addr = argv[i];
+            argument_with_option("host", 'H', addr);
 	    break;
 	  case 2:
-	    port = libport::convert_argument<int> ("port", argv[i]);
+	    port = libport::convert_argument<unsigned> ("port", argv[i]);
+            argument_with_option("port", 'p', addr);
 	    break;
 	  default:
 	    std::cerr << "unexpected argument: " << arg << std::endl
@@ -516,35 +564,12 @@ namespace urbi
 	}
     }
 
-    std::cerr << libport::program_name
-	      << ": " << urbi::package_info() << std::endl
-	      << libport::program_name
-	      << ": Remote Component Running on "
-	      << addr << " " << port << std::endl;
+   initialize(addr, port, buflen, exitOnDisconnect);
 
-    new USyncClient(addr, port, buflen);
-
-#ifdef LIBURBIDEBUG
-    getDefaultClient()->setWildcardCallback(callback(&debug));
-#else
-    getDefaultClient()->setErrorCallback(callback(&debug));
-#endif
-
-    getDefaultClient()->setCallback(&dispatcher,
-				    externalModuleTag.c_str());
-    if (exitOnDisconnect)
-    {
-      if (getDefaultClient()->error())
-	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
-		  << libport::exit(1);
-      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
-    }
-
-    dummyUObject = new UObject (0);
-    for (UStartlist::iterator i = objectlist->begin();
-	 i != objectlist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+   if (block)
+     while (true)
+       usleep(30000000);
+    return 0;
   }
 
 } // namespace urbi

@@ -514,23 +514,6 @@ namespace urbi
 
 namespace urbi
 {
-  struct wavheader
-  {
-    char riff[4];
-    int length;
-    char wave[4];
-    char fmt[4];
-    int lnginfo;
-    short one;
-    short channels;
-    int freqechant;
-    int bytespersec;
-    short bytesperechant;
-    short bitperchannel;
-    char data[4];
-    int datalength;
-  };
-
   template<class S, class D>
   void copy(S* src, D* dst,
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)

@@ -1,12 +1,15 @@
 include $(top_srcdir)/flags.mk
 
+# Path to envdir from top/install_prefix
+topenvdir=$(PACKAGE_BRAND)/core/$(URBI_HOST)/$(URBI_ENV)
+
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 SUBDIRS =
 if BINDINGS
  SUBDIRS += swig
 endif
-SUBDIRS += . tests
+SUBDIRS += . #tests
 
 ## --------- ##
 ## uobject.  ##
@@ -21,6 +24,9 @@ urbiinclude_HEADERS = $(uobject_headers)
 ## liburbi.la.  ##
 ## ------------ ##
 
+umaindir=$(datadir)/umain
+umain_DATA = umain.cc
+
 env_LTLIBRARIES = liburbi.la
 
 liburbi_la_SOURCES =				\
@@ -30,7 +36,6 @@ uabstractclient.cc				\
 ucallbacks.cc					\
 uclient.cc					\
 uconversion.cc					\
-umain.cc					\
 uobject.cc					\
 usyncclient.cc					\
 usystem.cc					\
@@ -60,5 +65,5 @@ liburbi_la_LIBADD = $(LIBADD)
 # is wrong here, fetch inspiration there.
 install-exec-hook:
 	$(mkdir_p) $(DESTDIR)$(libdir)
-	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)$(envdir)/liburbi.la
-	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)$(envdir)/liburbi.a
+	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)../$(topenvdir)/liburbi.la
+	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)../$(topenvdir)/liburbi.a

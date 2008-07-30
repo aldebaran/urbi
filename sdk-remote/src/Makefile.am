@@ -1,6 +1,6 @@
 include $(top_srcdir)/build-aux/init.mk
 
-SUBDIRS = liburbi 
+SUBDIRS = liburbi
 
 if EXAMPLES
 SUBDIRS += utils examples

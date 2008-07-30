@@ -24,6 +24,7 @@
 
 #include <libport/assert.hh>
 #include <libport/cstring>
+#include <libport/escape.hh>
 
 #include <urbi/uvalue.hh>
 
@@ -260,7 +261,7 @@ namespace urbi
 	s << (float) val;
 	break;
       case DATA_STRING:
-	s << '"' << *stringValue << '"';
+	s << '"' << libport::escape(*stringValue) << '"';
 	break;
       case DATA_BINARY:
 	if (binary->type != BINARY_NONE
@@ -320,6 +321,32 @@ namespace urbi
     //        This is not done because data is stored in an union in UBinary and
     //        union members cannot have constructors.
     return "unknown format";
+  }
+
+  USound::operator std::string() const
+  {
+    std::ostringstream tstr;
+    tstr << "sound(format: " << format_string() << ", "
+	 << "size: " << size << ", "
+	 << "channels: " << channels << ", "
+	 << "rate: " << rate << ", "
+	 << "sample size: " << sampleSize << ", "
+	 << "sample format: ";
+    switch (sampleFormat)
+    {
+      case SAMPLE_SIGNED:
+	tstr << "signed";
+	break;
+
+      case SAMPLE_UNSIGNED:
+	tstr << "unsigned";
+	break;
+
+      default:
+	tstr << "unknown[" << (int)sampleFormat << "]";
+    }
+    tstr << ")";
+    return tstr.str();
   }
 
   /*---------.
@@ -623,15 +650,27 @@ namespace
     switch (type)
     {
       case DATA_DOUBLE:
-      {
-	std::ostringstream tstr;
-	tstr << val;
-	return tstr.str();
-      }
-      break;
+	{
+	  std::ostringstream tstr;
+	  tstr << val;
+	  return tstr.str();
+	}
+
       case DATA_STRING:
 	return *stringValue;
-	break;
+
+      case DATA_BINARY:
+	// We cannot convert to UBinary because it is ambigous so we try until
+	// we found the good type.
+	{
+	  USound snd(*this);
+	  if (snd.soundFormat == SOUND_UNKNOWN)
+	    //FIXME: handle UImage;
+	    return std::string("invalid");
+	  else
+	    return std::string(snd);
+	}
+
       default:
 	return std::string("invalid");
     }
@@ -803,7 +842,6 @@ namespace
     memcpy(common.data, b.common.data, b.common.size);
     return *this;
   }
-
 
   /*--------.
   | UList.  |

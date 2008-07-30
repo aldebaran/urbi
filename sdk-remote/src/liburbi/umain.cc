@@ -16,16 +16,6 @@
 
  **************************************************************************** */
 
-#include <urbi/uobject.hh>
-#include <libport/windows.hh>
-#ifndef WIN32
-# include <unistd.h>
-#endif
+#include <urbi/umain.hh>
 
-int
-main(int argc, char *argv[])
-{
-  urbi::main(argc, argv);
-  while (1)
-    usleep(100000); //urbi::execute();
-}
+UMAIN ();

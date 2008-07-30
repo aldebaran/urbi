@@ -18,6 +18,8 @@
 
  **************************************************************************** */
 
+#include <libport/escape.hh>
+
 #include <urbi/uobject.hh>
 #include <urbi/ublend-type.hh>
 #include <urbi/uexternal.hh>
@@ -71,13 +73,17 @@ namespace urbi
   void
   UVar::setProp(UProperty p, const UValue& v)
   {
-    URBI(()) << name << "->" << urbi::name(p) << "=" << v << ";";
+    std::stringstream os;
+    os << name << "->" << urbi::name(p) << "=" << v << ";";
+    URBI(()) << os.str();
   }
 
   void
   UVar::setProp(UProperty p, const char* v)
   {
-    URBI(()) << name << "->" << urbi::name(p) << "=" << v << ";";
+    std::stringstream os;
+    os << name << "->" << urbi::name(p) << "=" << v << ";";
+    URBI(()) << os.str();
   }
 
   void
@@ -86,12 +92,14 @@ namespace urbi
     // FIXME: This is not the right way to do it.  Generalize
     // conversions between enums and strings.
     int i = static_cast<int>(v);
+    std::stringstream os;
     if (p == PROP_BLEND && is_blendtype(i))
-      URBI(()) << name << "->"<< urbi::name(p) << "="
+      os << name << "->"<< urbi::name(p) << "="
 	       << urbi::name(static_cast<UBlendType>(i)) << ";";
     else
-      URBI(()) << name << "->"<< urbi::name(p) << "="
+      os << name << "->"<< urbi::name(p) << "="
 	       << v << ";";
+    URBI(()) << os.str();
   }
 
   UValue
@@ -134,38 +142,42 @@ namespace urbi
   }
 
   //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
-  void
-  UVar::setZombie ()
-  {
-    // no effect in remote mode.
-  }
+void
+UVar::setZombie ()
+{
+  // no effect in remote mode.
+}
 
-  //! Return the internal variable.
-  UVariable*
-  UVar::variable()
-  {
-    return 0;
-  }
+//! Return the internal variable.
+UVariable*
+UVar::variable()
+{
+  return 0;
+}
 
-  //! UVar reset  (deep assignement)
-  void
-  UVar::reset (ufloat n)
-  {
-    *this = n;
-  }
+//! UVar reset  (deep assignement)
+void
+UVar::reset (ufloat n)
+{
+  *this = n;
+}
 
-  //! UVar float assignment
-  void
-  UVar::operator = (ufloat n)
-  {
-    URBI(()) << name << "=" << n << ";";
-  }
+//! UVar float assignment
+void
+UVar::operator = (ufloat n)
+{
+  std::stringstream os;
+  os << name << "=" << n << ";";
+  URBI(()) << os.str();
+}
 
   //! UVar string assignment
   void
   UVar::operator= (const std::string& s)
   {
-    URBI(()) << name << "=\"" << s << "\";";
+    std::stringstream os;
+    os << name << "=\"" << libport::escape(s) << "\";";
+    URBI(()) << os.str();
   }
 
   //! UVar binary assignment
@@ -203,11 +215,13 @@ namespace urbi
   void
   UVar::operator= (const UList& l)
   {
-    URBI(()) << name << "=";
+    std::stringstream os;
+    os << name << "=";
     UValue v;
     v.type = DATA_LIST;
     v.list = &const_cast<UList&>(l);
-    URBI(()) << v << ";";
+    os << v << ";";
+    URBI(()) << os.str();
     v.type = DATA_VOID;
     v.list = 0;
   }
@@ -287,26 +301,34 @@ namespace urbi
     owned = true;
   }
 
+  //! Get Uvalue type
+  UDataType
+  UVar::type () const
+  {
+    return value.type;
+  }
+
   void
   UVar::requestValue()
   {
     //build a getvalue message  that will be parsed and returned by the server
-    URBI(()) << externalModuleTag << "<<"
-	     <<'[' << UEM_ASSIGNVALUE << ","
-	     << '"' << name << '"' << ',' << name << "];";
+    std::stringstream os;
+    os << externalModuleTag << "<<"
+       <<'[' << UEM_ASSIGNVALUE << ","
+       << '"' << name << '"' << ',' << name << "];";
+    URBI(()) << os.str();
   }
 
   void
   UVar::syncValue ()
   {
-    USyncClient&	client = (USyncClient&) URBI(());
+    USyncClient&	client = dynamic_cast<USyncClient&> (URBI(()));
     UMessage*		m;
     char		tag[32];
 
     client.makeUniqueTag(tag);
-    client.send ("if (isdef (%s) && !isvoid (%s)) { %s<<%s } else { %s<<1/0 };",
-		 name.c_str (), name.c_str (), tag, name.c_str (), tag);
-    m = client.waitForTag(tag);
+    m = client.syncGetTag("if (isdef (%s) && !isvoid (%s)) { %s<<%s } else { %s<<1/0 };",
+                     tag, 0, name.c_str (), name.c_str (), tag, name.c_str (), tag);
     if (m->type == MESSAGE_DATA)
       __update (*m->value);
   }
