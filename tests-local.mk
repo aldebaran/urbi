@@ -13,15 +13,6 @@ k2-check:
 # while running make check.
 ENABLE_HARD_ERRORS = false
 
-# k1 tests that fail currently but need to be fixed soon.
-TFAIL_TESTS +=                                  \
-1.x/eval.chk
-
-# k1 tests that we want to pass someday
-TFAIL_TESTS +=                                  \
-2.x/modifier/speed-adaptive-freeze.log		\
-1.x/synchro-assignment.chk
-
 # pending features
 TFAIL_TESTS +=					\
 2.x/onevent.chk					\
