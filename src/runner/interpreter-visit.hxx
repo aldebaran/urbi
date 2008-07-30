@@ -114,15 +114,6 @@ namespace runner
     return new object::Float(e->value_get());
   }
 
-
-  LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Foreach* e)
-  {
-    (void)e;
-    pabort(e);
-  }
-
-
   LIBPORT_SPEED_INLINE object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
   {
     rRoutine res = make_routine(e);
@@ -488,6 +479,7 @@ namespace runner
   INVALID(Binding);
   INVALID(Break);
   INVALID(Continue);
+  INVALID(Foreach);
   INVALID(Implicit);
   INVALID(MetaExp);
   INVALID(Return);
