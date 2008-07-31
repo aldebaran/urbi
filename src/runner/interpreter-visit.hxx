@@ -167,12 +167,12 @@ namespace runner
     if (object::is_true(cond, SYMBOL(if)))
     {
       JAECHO ("then", e->thenclause_get());
-      return operator()(e->thenclause_get().get());
+      return e->thenclause_get()->eval(*this);
     }
     else
     {
       JAECHO ("else", e->elseclause_get());
-      return operator()(e->elseclause_get().get());
+      return e->elseclause_get()->eval(*this);
     }
   }
 
@@ -481,7 +481,7 @@ namespace runner
 
       JAECHO ("while body", e->body_get());
 
-      operator()(e->body_get().get());
+      e->body_get()->eval(*this);
     }
     return object::void_class;
   }
