@@ -383,8 +383,7 @@ namespace runner
 
     finally << stacks_.switch_self(tgt);
 
-    const ast::Scope* scope = reinterpret_cast<const ast::Scope*>(e);
-    visit(scope);
+    visit(static_cast<const ast::Scope*>(e));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
     return tgt;
