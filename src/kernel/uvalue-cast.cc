@@ -28,8 +28,14 @@ urbi::UValue uvalue_cast(object::rObject o)
   else
   {
     if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
+    {
+      libport::shared_ptr<object::String> rs =
+        o->slot_get(SYMBOL(protoName))->as<object::String>();
+      std::string t = rs->value_get().name_get();
       boost::throw_exception(
-        object::WrongArgumentType("Binary", "Object", SYMBOL(cast)));
+        object::WrongArgumentType("Binary", t, SYMBOL(cast)));
+    }
+    else
     {
       const std::string& data =
         o->slot_get(SYMBOL(data))->
