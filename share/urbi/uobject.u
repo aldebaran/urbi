@@ -94,6 +94,18 @@ class Object.uvar
           var max = parent.getSlot(name).getProperty("val", "rangemax")|
           parent.updateSlot(name, min + (max - min) * value)
         });
+    if (!parent.hasSlot("__has_uvar"))
+    {
+      var parent_getprop = parent.getSlot("getProperty");
+      parent.getProperty = function(varname, propname)
+      {
+        if (parent.getSlot(varname).isA(uvar))
+          parent.getSlot(varname).getProperty("val", propname)
+      else
+        parent_getprop.apply([parent, varname, propname])
+      };
+      var parent.__has_uvar = 1
+    };
     {}
   };
 
