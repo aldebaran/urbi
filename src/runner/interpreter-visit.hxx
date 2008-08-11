@@ -488,7 +488,7 @@ namespace runner
 
   // Invalid nodes
 #define INVALID(Node)                                      \
-  LIBPORT_SPEED_INLINE object::rObject                                   \
+  LIBPORT_SPEED_INLINE object::rObject                     \
   Interpreter::visit(const ast::Node* n)                   \
   {                                                        \
     static_cast<void>(n);                                  \
