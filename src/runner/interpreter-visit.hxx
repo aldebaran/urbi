@@ -500,6 +500,7 @@ namespace runner
   INVALID(Continue);
   INVALID(Foreach);
   INVALID(Implicit);
+  INVALID(Incrementation);
   INVALID(MetaExp);
   INVALID(Return);
 

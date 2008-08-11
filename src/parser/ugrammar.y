@@ -690,7 +690,7 @@ exp:
 ;
 exp:
   lvalue "--"      { $$ = DESUGAR('(' << $1 << "-= 1) + 1"); }
-| lvalue "++"      { $$ = DESUGAR('(' << $1 << "+= 1) - 1"); }
+| lvalue "++"      { $$ = new ast::Incrementation(@$, $1); }
 ;
 
 

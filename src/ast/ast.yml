@@ -989,6 +989,16 @@ Binding:
     - '"var "'
     - $name
 
+Incrementation:
+  super: Exp
+  attributes:
+    - exp:
+        type: rExp
+        access: r
+  printer:
+    - ~exp
+    - '"++"'
+
 # Local Variables:
 # mode: yaml
 # End:

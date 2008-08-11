@@ -74,6 +74,9 @@ ignores.stamp
 implicit.cc
 implicit.hh
 implicit.hxx
+incrementation.cc
+incrementation.hh
+incrementation.hxx
 lazy.cc
 lazy.hh
 lazy.hxx
