@@ -61,7 +61,7 @@ def define_id (s):
 def file_id (s):
   """Return a conventional file name from a pseudo-file name.
   (ast/FooBar.hh -> ast/foo-bar.hh)."""
-  s = re.sub("^r([A-Z])", "\\1", s) # remove the refcounting mark
+  s = re.sub("^r(Const)?([A-Z])", "\\2", s) # remove the refcounting mark
   return re.sub ("([a-z])([A-Z])", "\\1-\\2", s).lower ()
 
 # FIXME: Improve this generator

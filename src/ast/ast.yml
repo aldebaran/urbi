@@ -211,6 +211,11 @@ Ast:
         type: loc
         access: rW
         desc: Scanner position information
+    - original:
+        type: rConstAst
+        access: rW
+        desc: Original node, if this is a rewrite
+        init: "0"
 
 Exp:
   super:

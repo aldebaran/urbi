@@ -14,6 +14,8 @@ namespace rewrite
     operator()(inc->exp_get().get());
     // FIXME: Use a static cast
     tweast << "(" << result_.cast<ast::Call>() << " += 1) - 1";
-    result_ = parser::desugar(tweast);
+    ast::rExp res = parser::desugar(tweast);
+    res->original_set(inc);
+    result_ = res;
   }
 }

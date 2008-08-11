@@ -44,6 +44,9 @@ namespace %(clonerlib)s
     // Return the cloned Ast.
     ast::rAst result_get ();
 
+    /// Visit entry point
+    virtual void operator() (const Ast* e);
+
     // Visit methods.
   public:
     // Import overloaded virtual functions.
@@ -179,6 +182,19 @@ namespace %(clonerlib)s
   {
     return result_;
   }
+
+  void Cloner::operator() (const Ast* e)
+  {
+    // We must check e and result_, because cloners may return NULL
+    // in case of errors.
+    if (e)
+    {
+      e->accept(*this);
+      if (result_ && !result_->original_get())
+        result_->original_set(e->original_get());
+    }
+  }
+
 """ % ast_params
 
 for node in concrete:

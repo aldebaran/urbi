@@ -18,7 +18,7 @@ namespace ast
   libport::shared_ptr<T>
   Cloner::recurse(libport::shared_ptr<const T> t)
   {
-    t->accept(*this);
+    operator()(t.get());
     libport::shared_ptr<T> res = result_.unsafe_cast<T>();
     // We do have situations where t is not null, but result_ is, for
     // instance when we process a ParametricAst which substitutes a
