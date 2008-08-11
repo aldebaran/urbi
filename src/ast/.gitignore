@@ -42,6 +42,9 @@ continue.hxx
 declaration.cc
 declaration.hh
 declaration.hxx
+decrementation.cc
+decrementation.hh
+decrementation.hxx
 default-visitor.hh
 default-visitor.hxx
 default-visitor.stamp
@@ -133,6 +136,9 @@ tagged-stmt.hxx
 this.cc
 this.hh
 this.hxx
+unary.cc
+unary.hh
+unary.hxx
 visitor.hh
 visitor.hxx
 visitor.stamp

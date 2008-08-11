@@ -18,4 +18,15 @@ namespace rewrite
     res->original_set(inc);
     result_ = res;
   }
+
+  void Desugarer::visit(const ast::Decrementation* dec)
+  {
+    parser::Tweast tweast;
+
+    operator()(dec->exp_get().get());
+    tweast << "(" << result_.cast<ast::Call>() << " -= 1) + 1";
+    ast::rExp res = parser::desugar(tweast);
+    res->original_set(dec);
+    result_ = res;
+  }
 }

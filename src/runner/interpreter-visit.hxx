@@ -498,6 +498,7 @@ namespace runner
   INVALID(Binding);
   INVALID(Break);
   INVALID(Continue);
+  INVALID(Decrementation);
   INVALID(Foreach);
   INVALID(Implicit);
   INVALID(Incrementation);

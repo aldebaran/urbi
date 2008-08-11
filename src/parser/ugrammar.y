@@ -689,7 +689,7 @@ exp:
 	TOK_PLUS_PLUS   "++"
 ;
 exp:
-  lvalue "--"      { $$ = DESUGAR('(' << $1 << "-= 1) + 1"); }
+  lvalue "--"      { $$ = new ast::Decrementation(@$, $1); }
 | lvalue "++"      { $$ = new ast::Incrementation(@$, $1); }
 ;
 

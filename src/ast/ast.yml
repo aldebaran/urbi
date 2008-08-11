@@ -994,15 +994,26 @@ Binding:
     - '"var "'
     - $name
 
-Incrementation:
+Unary:
   super: Exp
+  desc: /// Expressions with a expression
   attributes:
     - exp:
         type: rExp
+        desc: Operand
         access: r
+
+Incrementation:
+  super: Unary
   printer:
     - ~exp
     - '"++"'
+
+Decrementation:
+  super: Unary
+  printer:
+    - ~exp
+    - '"--"'
 
 # Local Variables:
 # mode: yaml
