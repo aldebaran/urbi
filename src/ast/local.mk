@@ -35,13 +35,13 @@ include $(top_srcdir)/dev/ast-gen.mk
 
 dist_libkernel_la_SOURCES +=                    \
 ast/all.hh                                      \
-ast/declarations-type.hh                        \
-ast/declarations-type.cc                        \
 ast/exps-type.hh                                \
 ast/exps-type.cc                                \
 ast/flavor.hh                                   \
 ast/flavor.cc                                   \
 ast/loc.hh                                      \
+ast/local-declarations-type.cc                  \
+ast/local-declarations-type.hh                  \
 ast/nary-fwd.hh                                 \
 ast/new-clone.hh                                \
 ast/new-clone.hxx                               \

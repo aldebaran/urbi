@@ -22,14 +22,14 @@ namespace rewrite
     make_declaration(const ast::loc& l, libport::Symbol s)
     {
       static ast::ParametricAst a("nil");
-      return new ast::Declaration(l, s, exp(a));
+      return new ast::LocalDeclaration(l, s, exp(a));
     }
 
     /// Build '<s> = <value>'
     static ast::rExp
     make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
     {
-      return new ast::Assignment(l, s, value, 0);
+      return new ast::LocalAssignment(l, s, value, 0);
     }
 
     /**
@@ -42,8 +42,8 @@ namespace rewrite
     static ast::rExp
     unscope(ast::rExp subject, ast::rNary nary)
     {
-      if (ast::rConstDeclaration dec =
-          subject.unsafe_cast<const ast::Declaration>())
+      if (ast::rConstLocalDeclaration dec =
+          subject.unsafe_cast<const ast::LocalDeclaration>())
       {
         ast::loc l = subject->location_get();
         const libport::Symbol name = dec->what_get();

@@ -4,16 +4,17 @@
 # include <deque>
 # include <iosfwd>
 
-# include <ast/declaration.hh>
+# include <ast/local-declaration.hh>
 
 namespace ast
 {
 
   /// List of declarations
-  typedef std::deque<rDeclaration> declarations_type;
+  typedef std::deque<rLocalDeclaration> local_declarations_type;
 
   /// Separated by commas.
-  std::ostream& operator<<(std::ostream& o, const ast::declarations_type& ss);
+  std::ostream&
+  operator<<(std::ostream& o, const ast::local_declarations_type& ss);
 
 }
 

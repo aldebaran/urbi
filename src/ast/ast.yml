@@ -35,14 +35,14 @@ atomic_types:
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "declarations_type":     '<ast/declarations-type.hh>'
-  "exps_type":             '<ast/exps-type.hh>'
-  "flavor_type":           '<ast/flavor.hh>'
-  "libport::RefCounted":   '<libport/ref-counted.hh>'
-  "libport::Symbol":       '<libport/symbol.hh>'
-  "std::string":           '<string>'
-  "symbols_type":          '<ast/symbols-type.hh>'
-  "ufloat":                '<libport/ufloat.h>'
+  "local_declarations_type":    '<ast/local-declarations-type.hh>'
+  "exps_type":                  '<ast/exps-type.hh>'
+  "flavor_type":                '<ast/flavor.hh>'
+  "libport::RefCounted":        '<libport/ref-counted.hh>'
+  "libport::Symbol":            '<libport/symbol.hh>'
+  "std::string":                '<string>'
+  "symbols_type":               '<ast/symbols-type.hh>'
+  "ufloat":                     '<libport/ufloat.h>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
@@ -59,7 +59,7 @@ non_visitable_types:
 # In the cloner, these require "recurse_collection".
 collections:
   - "exps_type"
-  - "declarations_type"
+  - "local_declarations_type"
   - "symbols_type"
 
 # The function to clear a list of pointers.
@@ -604,7 +604,7 @@ Foreach:
     - Flavored
   attributes:
     - index:
-        type: 'rDeclaration'
+        type: 'rLocalDeclaration'
         desc: The variable storing de values on which iterate.
     - list:
         type: rExp
@@ -788,7 +788,7 @@ Routine:
   super: Exp
   attributes:
     - formals:
-        type: 'declarations_type*'
+        type: 'local_declarations_type*'
         mandatory: False
         desc: Formal arguments.  If null, a lazy function.
         access: rwW
@@ -798,13 +798,13 @@ Routine:
         mandatory: False
         desc: Body
     - local_variables:
-        type: 'declarations_type*'
+        type: 'local_declarations_type*'
         init: "0"
         mandatory: False
         access: rwW
     - captured_variables:
-        type: 'declarations_type*'
-        init: "new declarations_type()"
+        type: 'local_declarations_type*'
+        init: "new local_declarations_type()"
         mandatory: False
         access: rwW
     - local_size:
@@ -870,7 +870,7 @@ LocalWrite:
         access: rwW
         init: '0'
 
-Declaration:
+LocalDeclaration:
   super: LocalWrite
   attributes:
     - closed:
@@ -884,7 +884,7 @@ Declaration:
     - '" = "'
     - ~value
 
-Assignment:
+LocalAssignment:
   super: LocalWrite
   attributes:
     - depth:
@@ -892,7 +892,7 @@ Assignment:
         desc: the number of contexts to rewind to find the actual variable
         access: rwW
     - declaration:
-        type: rDeclaration
+        type: rLocalDeclaration
         access: rwW
         init: '0'
   inline:
@@ -901,12 +901,12 @@ Assignment:
         bool closed_get() const;
         unsigned local_index_get() const;
     impl inside: |2
-      bool Assignment::closed_get() const
+      bool LocalAssignment::closed_get() const
       {
         assert(declaration_);
         return declaration_->closed_get();
       }
-      unsigned Assignment::local_index_get() const
+      unsigned LocalAssignment::local_index_get() const
       {
         assert(declaration_);
         return declaration_->local_index_get();
@@ -935,7 +935,7 @@ Local:
         desc: How many contexts we have to rewind to find the actual value of the
               variable (thus 0 means this is an actual local variable).
     - declaration:
-        type: rDeclaration
+        type: rLocalDeclaration
         access: rwW
         init: '0'
   cloner_prologue: 'assert(!e->declaration_get());'

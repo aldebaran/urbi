@@ -20,7 +20,7 @@
 #include <kernel/uconnection.hh>
 
 #include <ast/all.hh>
-#include <ast/declarations-type.hh>
+#include <ast/local-declarations-type.hh>
 #include <ast/exps-type.hh>
 #include <ast/print.hh>
 
@@ -272,18 +272,20 @@ namespace runner
     // Bind arguments if the function is strict.
     if (ast->strict())
     {
-      const ast::declarations_type& formals = *ast->formals_get();
+      const ast::local_declarations_type& formals =
+        *ast->formals_get();
       // Check arity
       object::check_arg_count (formals.size() + 1, args.size(), msg);
       // Skip 'this'
       object::objects_type::const_iterator it = args.begin() + 1;
       // Bind
-      foreach (const ast::rConstDeclaration& s, formals)
+      foreach (const ast::rConstLocalDeclaration& s, formals)
         stacks_.def_arg(s, *(it++));
     }
 
     // Push captured variables
-    foreach (const ast::rConstDeclaration& dec, *ast->captured_variables_get())
+    foreach (const ast::rConstLocalDeclaration& dec,
+             *ast->captured_variables_get())
     {
       const rrObject& value = func->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);

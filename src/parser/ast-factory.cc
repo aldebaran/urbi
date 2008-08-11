@@ -327,9 +327,9 @@ namespace parser
     else
     {
       if (implicit && change == SYMBOL(updateSlot))
-        res = new ast::Assignment(l, lvalue->name_get(), value, 0);
+        res = new ast::LocalAssignment(l, lvalue->name_get(), value, 0);
       else if (implicit && change == SYMBOL(setSlot))
-        res = new ast::Declaration(l, lvalue->name_get(), value);
+        res = new ast::LocalDeclaration(l, lvalue->name_get(), value);
       else
       {
         ast::rCall call =

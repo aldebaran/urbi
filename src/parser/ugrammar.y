@@ -141,15 +141,16 @@
     return scanner.yylex(val, loc, &up);
   }
 
-  static ast::declarations_type*
+  static ast::local_declarations_type*
     symbols_to_decs(ast::symbols_type* symbols,
                     const ast::loc& loc)
   {
     if (!symbols)
       return 0;
-    ast::declarations_type* res = new ast::declarations_type();
+    ast::local_declarations_type* res =
+      new ast::local_declarations_type();
     foreach (const libport::Symbol& var, *symbols)
-      res->push_back(new ast::Declaration(loc, var, new ast::Implicit(loc)));
+      res->push_back(new ast::LocalDeclaration(loc, var, new ast::Implicit(loc)));
     delete symbols;
     return res;
   }
@@ -977,7 +978,7 @@ stmt_loop:
 | "for" "(" "var" "identifier" in_or_colon exp ")" stmt    %prec CMDBLOCK
     {
       $$ = new ast::Foreach(@$, $1,
-                            new ast::Declaration(@4, $4, new ast::Implicit(@4)),
+                            new ast::LocalDeclaration(@4, $4, new ast::Implicit(@4)),
                             $6, enclose_in_scope($8));
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK

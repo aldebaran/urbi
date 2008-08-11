@@ -63,7 +63,7 @@ namespace binder
     }
   }
 
-  ast::rDeclaration
+  ast::rLocalDeclaration
   Binder::decl_get(const libport::Symbol& name)
   {
     assert (!env_[name].empty());
@@ -117,7 +117,7 @@ namespace binder
   }
 
   void
-  Binder::visit(const ast::Declaration* input)
+  Binder::visit(const ast::LocalDeclaration* input)
   {
     if (scope_depth_ == scope_depth_get(input->what_get()))
       errors_.error(input->location_get(),
@@ -131,7 +131,8 @@ namespace binder
     {
       BIND_ECHO("Bind " << input->what_get());
       super_type::visit(input);
-      ast::rDeclaration res = result_.unsafe_cast<ast::Declaration>();
+      ast::rLocalDeclaration res =
+        result_.unsafe_cast<ast::LocalDeclaration>();
       bind(res);
     }
   }
@@ -144,8 +145,8 @@ namespace binder
                               unsigned depth)
   {
     BIND_ECHO("Linking " << name << " to its declaration");
-    ast::rDeclaration outer_decl = decl_get(name);
-    ast::rDeclaration decl = outer_decl;
+    ast::rLocalDeclaration outer_decl = decl_get(name);
+    ast::rLocalDeclaration decl = outer_decl;
     ast::rLocal current;
 
     if (routine_depth_ > depth)
@@ -161,7 +162,7 @@ namespace binder
       {
         ast::rRoutine f = *f_it;
         // Check whether it's already captured
-        foreach (ast::rDeclaration dec, *f->captured_variables_get())
+        foreach (ast::rLocalDeclaration dec, *f->captured_variables_get())
           if (dec->what_get() == name)
           {
             outer_decl = dec;
@@ -169,7 +170,7 @@ namespace binder
             goto stop;
           }
 
-        decl = new ast::Declaration(loc, name, 0);
+        decl = new ast::LocalDeclaration(loc, name, 0);
         decl->closed_set(true);
 
         if (current)
@@ -194,14 +195,14 @@ namespace binder
 
 
   void
-  Binder::visit(const ast::Assignment* input)
+  Binder::visit(const ast::LocalAssignment* input)
   {
     assert(!input->declaration_get());
     libport::Symbol name = input->what_get();
     if (unsigned depth = routine_depth_get(name))
     {
       super_type::visit(input);
-      ast::rAssignment res = result_.unsafe_cast<ast::Assignment>();
+      ast::rLocalAssignment res = result_.unsafe_cast<ast::LocalAssignment>();
       res->depth_set(routine_depth_ - depth);
       link_to_declaration(input, res, input->what_get(), depth);
     }
@@ -359,7 +360,7 @@ namespace binder
 
     // Clone and push the function, without filling its body and arguments
     libport::shared_ptr<Code> res = new Code(input->location_get(), 0, 0);
-    res->local_variables_set(new ast::declarations_type());
+    res->local_variables_set(new ast::local_declarations_type());
     routine_push(res);
     finally << boost::bind(&Binder::routine_pop, this);
 
@@ -387,7 +388,7 @@ namespace binder
     // Index local and closed variables
     int local = 0;
     int closed = 0;
-    foreach (ast::rDeclaration dec, *res->local_variables_get())
+    foreach (ast::rLocalDeclaration dec, *res->local_variables_get())
       if (dec->closed_get())
         dec->local_index_set(closed++);
       else
@@ -398,7 +399,7 @@ namespace binder
 
     // Index captured variables
     int captured = 0;
-    foreach (ast::rDeclaration dec, *res->captured_variables_get())
+    foreach (ast::rLocalDeclaration dec, *res->captured_variables_get())
       dec->local_index_set(captured++);
 
     BIND_NECHO(libport::decindent);
@@ -419,7 +420,7 @@ namespace binder
   }
 
   void
-  Binder::bind(ast::rDeclaration decl)
+  Binder::bind(ast::rLocalDeclaration decl)
   {
     assert(decl);
 
