@@ -119,20 +119,6 @@ namespace parser
   ast::rScope
   ast_scope(const yy::location& l, ast::rExp e);
 
-  /*-----------------.
-  | Changing slots.  |
-  `-----------------*/
-
-  ast::rExp
-  ast_slot_set(const yy::location& l, ast::rCall lvalue,
-               ast::rExp value,
-               ast::rExp modifier = 0);
-
-  ast::rExp
-  ast_slot_update(const yy::location& l, ast::rCall lvalue,
-                  ast::rExp value,
-                  ast::rExp modifier = 0);
-
   ast::rExp
   ast_slot_remove(const yy::location& l, ast::rCall lvalue);
 
