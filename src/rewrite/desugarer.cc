@@ -1,5 +1,6 @@
 #include <ast/cloner.hxx>
 #include <ast/new-clone.hh>
+#include <ast/parametric-ast.hh>
 
 #include <parser/ast-factory.hh>
 #include <parser/parse.hh>
@@ -9,6 +10,9 @@
 
 namespace rewrite
 {
+  using parser::ast_string;
+  using ast::ParametricAst;
+
   void Desugarer::visit(const ast::Decrementation* dec)
   {
     parser::Tweast tweast;
@@ -43,5 +47,30 @@ namespace rewrite
     ast::rExp res = parser::parse(tweast)->ast_get();
     res->original_set(a);
     result_ = res;
+  }
+
+  void Desugarer::visit(const ast::PropertyRead* p)
+  {
+    static ParametricAst read("%exp:1.getProperty(%exp:2, %exp:3)");
+
+    ast::rCall owner = p->owner_get();
+    read % owner->target_get()
+      % ast_string(owner->location_get(), owner->name_get())
+      % ast_string(p->location_get(), p->name_get());
+    result_ = exp(read);
+    result_->original_set(p);
+  }
+
+  void Desugarer::visit(const ast::PropertyWrite* p)
+  {
+    static ParametricAst read("%exp:1.setProperty(%exp:2, %exp:3, %exp:4)");
+
+    ast::rCall owner = p->owner_get();
+    read % owner->target_get()
+      % ast_string(owner->location_get(), owner->name_get())
+      % ast_string(p->location_get(), p->name_get())
+      % p->value_get();
+    result_ = exp(read);
+    result_->original_set(p);
   }
 }

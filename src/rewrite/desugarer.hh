@@ -23,6 +23,8 @@ namespace rewrite
       (Decrementation)
       (Incrementation)
       (OpAssignment)
+      (PropertyRead)
+      (PropertyWrite)
       );
 
   };

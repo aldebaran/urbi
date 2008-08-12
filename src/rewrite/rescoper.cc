@@ -7,6 +7,7 @@
 #include <ast/parametric-ast.hh>
 #include <parser/ast-factory.hh>
 #include <rewrite/rescoper.hh>
+#include <ast/cloner.hxx>
 
 namespace rewrite
 {

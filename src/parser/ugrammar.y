@@ -699,21 +699,14 @@ exp:
 stmt:
   lvalue "->" id "=" exp
     {
-      $$ = ast_call(@$, $1->target_get(), SYMBOL(setProperty),
-		    ast_string(@1, $1->name_get()),
-		    ast_string(@3, $3),
-		    $5);
-      $1->counter_dec();
+      $$ = new ast::PropertyWrite(@$, $1, $3, $5);
     }
 ;
 
 exp:
   lvalue "->" id
     {
-      $$ = ast_call(@$, $1->target_get(), SYMBOL(getProperty),
-		    ast_string(@1, $1->name_get()),
-		    ast_string(@3, $3));
-      $1->counter_dec();
+      $$ = new ast::PropertyRead(@$, $1, $3);
     }
 ;
 

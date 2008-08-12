@@ -507,6 +507,8 @@ namespace runner
   INVALID(Incrementation);
   INVALID(MetaExp);
   INVALID(OpAssignment);
+  INVALID(PropertyRead);
+  INVALID(PropertyWrite);
   INVALID(Return);
 
 #undef INVALID

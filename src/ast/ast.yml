@@ -1056,6 +1056,31 @@ Decrementation:
     - ~exp
     - '"--"'
 
+PropertyAction:
+  super: Exp
+  attributes:
+    - owner:
+        type: rCall
+    - name:
+        type: libport::Symbol
+  printer:
+    - ~owner
+    - '"->"'
+    - $name
+
+PropertyWrite:
+  super: PropertyAction
+  attributes:
+    - value:
+        type: rExp
+  printer:
+    - '{ visit(static_cast<const PropertyAction*>(n)); }'
+    - '" = "'
+    - ~value
+
+PropertyRead:
+  super: PropertyAction
+
 # Local Variables:
 # mode: yaml
 # End:
