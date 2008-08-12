@@ -26,7 +26,7 @@ namespace ast
     //
     // FIXME: We should stop accepting 0 in our tree, this is really
     // painful and dangerous.
-    passert(t, !result_ || res);
+    passert(*t, !result_ || res);
     return res;
   }
 
