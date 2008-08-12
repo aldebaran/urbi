@@ -48,6 +48,7 @@ namespace parser
   Data
   MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
   {
+    assert(libport::mhas(map_, key));
     return map_.take (key);
   }
 
