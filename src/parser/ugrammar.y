@@ -74,7 +74,6 @@
 #include <ast/print.hh>
 
   using parser::desugar;
-  using parser::ast_assign;
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
@@ -677,11 +676,11 @@ stmt:
 ;
 
 exp:
-  lvalue "+=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "-=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "*=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "/=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "^=" exp    { $$ = ast_assign($1, $2, $3); }
+  lvalue "+=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "-=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "*=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "/=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "^=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
 ;
 
 %token  TOK_MINUS_MINUS "--"

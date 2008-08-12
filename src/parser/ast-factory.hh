@@ -14,10 +14,6 @@ namespace parser
   /// Return the parsing of \a Tweast.
   ast::rExp desugar(::parser::Tweast& t);
 
-  /// <lvalue> <op>= <exp>.
-  ast::rExp
-  ast_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp);
-
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
   ast::rExp

@@ -22,6 +22,7 @@ namespace rewrite
     CONST_VISITOR_VISIT_NODES(
       (Decrementation)
       (Incrementation)
+      (OpAssignment)
       );
 
   };

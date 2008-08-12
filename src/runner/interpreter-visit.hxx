@@ -506,6 +506,7 @@ namespace runner
   INVALID(Implicit);
   INVALID(Incrementation);
   INVALID(MetaExp);
+  INVALID(OpAssignment);
   INVALID(Return);
 
 #undef INVALID

@@ -112,6 +112,9 @@ nodes.stamp
 noop.cc
 noop.hh
 noop.hxx
+op-assignment.cc
+op-assignment.hh
+op-assignment.hxx
 pipe.cc
 pipe.hh
 pipe.hxx

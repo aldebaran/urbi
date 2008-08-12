@@ -947,6 +947,18 @@ Declaration:
 Assignment:
   super: Write
 
+OpAssignment:
+  super: Write
+  attributes:
+    - op:
+        type: 'libport::Symbol'
+  printer:
+    - ~what
+    - '" "'
+    - $op
+    - '"= "'
+    - ~value
+
 Local:
   super: Exp
   attributes:
@@ -1028,7 +1040,7 @@ Unary:
   desc: /// Expressions with a expression
   attributes:
     - exp:
-        type: rExp
+        type: rCall
         desc: Operand
         access: r
 
