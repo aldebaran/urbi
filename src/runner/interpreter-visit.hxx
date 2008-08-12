@@ -496,9 +496,11 @@ namespace runner
     pabort("Invalid node in the Interpreter: " << *n);     \
   }                                                        \
 
+  INVALID(Assignment);
   INVALID(Binding);
   INVALID(Break);
   INVALID(Continue);
+  INVALID(Declaration);
   INVALID(Decrementation);
   INVALID(Foreach);
   INVALID(Implicit);

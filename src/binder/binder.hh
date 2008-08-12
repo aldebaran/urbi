@@ -45,14 +45,15 @@ namespace binder
 
   protected:
     CONST_VISITOR_VISIT_NODES(
-                              (LocalAssignment)
+                              (Assignment)
                               (Call)
                               (CallMsg)
                               (Closure)
-                              (LocalDeclaration)
+                              (Declaration)
                               (Do)
                               (Foreach)
                               (Function)
+                              (LocalDeclaration)
                               (Scope));
 
     template <typename Code>
@@ -122,12 +123,16 @@ namespace binder
 
     /// Factored method to create updateSlot/setSlot calls.
     ast::rCall changeSlot(const ast::loc& l,
+                          const ast::rExp& target,
                           const libport::Symbol& name,
                           const libport::Symbol& method,
                           ast::rConstExp value);
 
     /// Make a lazy from \a arg
     ast::rExp lazify(ast::rExp arg, const ast::loc& loc);
+
+    /// Wether to report errors
+    bool report_errors_;
   };
 
 } // namespace binder

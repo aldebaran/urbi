@@ -15,45 +15,44 @@ namespace rewrite
   | Helpers.  |
   `----------*/
 
-  namespace
+  /// Build 'var <s>'
+  ast::rExp
+  Rescoper::make_declaration(const ast::loc& l, ast::rConstCall what)
   {
-    /// Build 'var <s>'
-    static ast::rExp
-    make_declaration(const ast::loc& l, libport::Symbol s)
-    {
-      static ast::ParametricAst a("nil");
-      return new ast::LocalDeclaration(l, s, exp(a));
-    }
+    static ast::ParametricAst a("nil");
+    return new ast::Declaration(l, recurse(what), exp(a), 0);
+  }
 
-    /// Build '<s> = <value>'
-    static ast::rExp
-    make_assignment(const ast::loc& l, libport::Symbol s, ast::rExp value)
-    {
-      return new ast::LocalAssignment(l, s, value, 0);
-    }
+  /// Build '<s> = <value>'
+  ast::rExp
+  Rescoper::make_assignment(const ast::loc& l, ast::rConstCall what,
+                            ast::rConstExp value, ast::rConstExp modifiers)
+  {
+    return new ast::Assignment(l, recurse(what), recurse(value),
+                               modifiers ? recurse(modifiers) : ast::rExp());
+  }
 
-    /**
-     *  Helper to extract declarations to a nary.
-     *
-     *  If \a subject is 'var x = v;', push back 'var x;' in \a nary
-     *  and return 'x = v;'
-     *  Otherwise, just return \a subject.
-     */
-    static ast::rExp
-    unscope(ast::rExp subject, ast::rNary nary)
+  /**
+   *  Helper to extract declarations to a nary.
+   *
+   *  If \a subject is 'var x = v;', push back 'var x;' in \a nary
+   *  and return 'x = v;'
+   *  Otherwise, just return \a subject.
+   */
+  ast::rExp
+  Rescoper::unscope(ast::rExp subject, ast::rNary nary)
+  {
+    if (ast::rConstDeclaration dec =
+        subject.unsafe_cast<const ast::Declaration>())
     {
-      if (ast::rConstLocalDeclaration dec =
-          subject.unsafe_cast<const ast::LocalDeclaration>())
-      {
-        ast::loc l = subject->location_get();
-        const libport::Symbol name = dec->what_get();
-        nary->push_back(make_declaration(l, name),
-                        ast::flavor_pipe);
-        return make_assignment(l, name, dec->value_get());
-      }
-      else
-        return subject;
+      ast::loc l = dec->location_get();
+      ast::rConstCall call = dec->what_get();
+      nary->push_back(make_declaration(l, call),
+                      ast::flavor_pipe);
+      return make_assignment(l, call, dec->value_get(), dec->modifiers_get());
     }
+    else
+      return subject;
   }
 
   Rescoper::Rescoper()

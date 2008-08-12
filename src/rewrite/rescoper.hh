@@ -49,6 +49,16 @@ namespace rewrite
       (And)
       (Nary)
       );
+
+  private:
+    // Helpers
+    ast::rExp
+    make_declaration(const ast::loc& l, ast::rConstCall what);
+    ast::rExp
+    make_assignment(const ast::loc& l, ast::rConstCall what,
+                    ast::rConstExp value, ast::rConstExp modifiers);
+    ast::rExp
+    unscope(ast::rExp subject, ast::rNary nary);
   };
 }
 

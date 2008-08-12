@@ -918,6 +918,35 @@ LocalAssignment:
     - '" = "'
     - ~value
 
+Write:
+  super: Exp
+  attributes:
+    - what:
+        type: rCall
+        desc: What is being declared
+        access: r
+    - value:
+        type: rExp
+        desc: Initialization value.
+        access: r
+    - modifiers:
+        type: rExp
+        desc: Time and trajectory modifiers
+        access: rW
+  printer:
+    - ~what
+    - '" = "'
+    - ~value
+
+Declaration:
+  super: Write
+  printer:
+    - '"var "'
+    - '{ visit(static_cast<const ast::Write*>(n)); }'
+
+Assignment:
+  super: Write
+
 Local:
   super: Exp
   attributes:

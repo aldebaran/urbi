@@ -82,8 +82,6 @@
   using parser::ast_for;
   using parser::ast_scope;
   using parser::ast_slot_remove;
-  using parser::ast_slot_set;
-  using parser::ast_slot_update;
   using parser::ast_string;
   using parser::ast_switch;
 
@@ -592,16 +590,16 @@ stmt:
   "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt"
-      $$ = ast_slot_set(@$, $2,
-			new ast::Function(@$, symbols_to_decs($3, @3),
-                                          ast_scope (@$, $4)));
+      $$ = new ast::Declaration(@$, $2,
+                                new ast::Function(@$, symbols_to_decs($3, @3),
+                                                  ast_scope (@$, $4)), 0);
     }
 | "closure" k1_id formals block
     {
       // Compiled as "var name = closure args stmt"
-      $$ = ast_slot_set(@$, $2,
-			new ast::Closure(@$, symbols_to_decs($3, @3),
-                                         ast_scope (@$, $4)));
+      $$ = new ast::Declaration(@$, $2,
+                                new ast::Closure(@$, symbols_to_decs($3, @3),
+                                                 ast_scope (@$, $4)), 0);
     }
 ;
 
@@ -654,15 +652,15 @@ exp:
 stmt:
   lvalue "=" exp modifiers
     {
-      $$ = ast_slot_update(@$, $1, $3, $4);
+      $$ = new ast::Assignment(@$, $1, $3, $4);
     }
 | "var" lvalue "=" exp modifiers
     {
-      $$ = ast_slot_set(@$, $2, $4, $5);
+      $$ = new ast::Declaration(@$, $2, $4, $5);
     }
 | "var" lvalue
     {
-      $$ = ast_slot_set(@$, $2, ast_call(@$, SYMBOL(nil)));
+      $$ = new ast::Declaration(@$, $2, ast_call(@$, SYMBOL(nil)), 0);
     }
 | "delete" lvalue
     {
