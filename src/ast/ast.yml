@@ -1081,6 +1081,15 @@ PropertyWrite:
 PropertyRead:
   super: PropertyAction
 
+Delete:
+  super: Exp
+  attributes:
+    - what:
+        type: rCall
+  printer:
+    - '"delete "'
+    - ~what
+
 # Local Variables:
 # mode: yaml
 # End:

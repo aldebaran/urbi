@@ -116,9 +116,6 @@ namespace parser
   ast_scope(const yy::location& l, ast::rExp e);
 
   ast::rExp
-  ast_slot_remove(const yy::location& l, ast::rCall lvalue);
-
-  ast::rExp
   ast_string(const yy::location& l, libport::Symbol s);
 
 

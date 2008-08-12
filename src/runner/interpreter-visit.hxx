@@ -502,6 +502,7 @@ namespace runner
   INVALID(Continue);
   INVALID(Declaration);
   INVALID(Decrementation);
+  INVALID(Delete);
   INVALID(Foreach);
   INVALID(Implicit);
   INVALID(Incrementation);

@@ -23,6 +23,17 @@ namespace rewrite
     result_ = res;
   }
 
+  void Desugarer::visit(const ast::Delete* d)
+  {
+    static ParametricAst del("%exp:1.removeSlot(%exp:2)");
+
+    ast::rCall call = d->what_get();
+    del % call->target_get()
+      % ast_string(call->location_get(), call->name_get());
+    result_ = exp(del);
+    result_->original_set(d);
+  }
+
   void Desugarer::visit(const ast::Incrementation* inc)
   {
     // FIXME: We can't use parametric ast here because of the grammar

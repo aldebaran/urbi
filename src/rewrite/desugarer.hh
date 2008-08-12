@@ -21,6 +21,7 @@ namespace rewrite
     /// Nodes to desugar
     CONST_VISITOR_VISIT_NODES(
       (Decrementation)
+      (Delete)
       (Incrementation)
       (OpAssignment)
       (PropertyRead)

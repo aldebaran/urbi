@@ -245,19 +245,6 @@ namespace parser
     return ast_scope(l, 0, e);
   }
 
-  /*-----------------.
-  | Changing slots.  |
-  `-----------------*/
-
-  ast::rExp
-  ast_slot_remove(const yy::location& l, ast::rCall lvalue)
-  {
-    return ast_call(l,
-                    lvalue->target_get(), SYMBOL(removeSlot),
-                    ast::rString(new ast::String(lvalue->location_get(),
-                                                 lvalue->name_get())));
-  }
-
   ast::rExp
   ast_string(const yy::location& l, libport::Symbol s)
   {

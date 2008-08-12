@@ -80,7 +80,6 @@
   using parser::ast_exp;
   using parser::ast_for;
   using parser::ast_scope;
-  using parser::ast_slot_remove;
   using parser::ast_string;
   using parser::ast_switch;
 
@@ -663,7 +662,7 @@ stmt:
     }
 | "delete" lvalue
     {
-      $$ = ast_slot_remove(@$, $2);
+      $$ = new ast::Delete(@$, $2);
     }
 ;
 
