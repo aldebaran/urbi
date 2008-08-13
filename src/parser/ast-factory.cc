@@ -267,11 +267,8 @@ namespace parser
       inner = ast::exp(a);
     }
 
-    ::parser::Tweast tweast;
-    tweast << "var '$switch' = " << cond << ";"
-           << inner;
-    ast::rExp res = ::parser::parse(tweast)->ast_get();
-    return res;
+    static ParametricAst sw("{ var '$switch' = %exp:1 | %exp:2 }");
+    return exp(sw % cond % inner);
   }
 
   ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue)
