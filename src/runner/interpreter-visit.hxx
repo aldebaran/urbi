@@ -506,7 +506,9 @@ namespace runner
   INVALID(Foreach);
   INVALID(Implicit);
   INVALID(Incrementation);
+  INVALID(MetaCall);
   INVALID(MetaExp);
+  INVALID(MetaLValue);
   INVALID(OpAssignment);
   INVALID(PropertyRead);
   INVALID(PropertyWrite);

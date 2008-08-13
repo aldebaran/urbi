@@ -11,17 +11,24 @@
 
 #include <ast/cloner.hxx>       // Needed for recurse_collection templates
 #include <ast/new-clone.hh>
+#include <ast/parametric-ast.hh>
 #include <ast/print.hh>
+
 #include <binder/binder.hh>
 #include <binder/bind-debug.hh>
+
 #include <object/symbols.hh>
 #include <object/object.hh>
+
 #include <parser/ast-factory.hh>
 #include <parser/parse.hh>
-#include <parser/tweast.hh>
 
 namespace binder
 {
+  using ast::ParametricAst;
+  using parser::ast_exp;
+  using parser::ast_lvalue_once;
+  using parser::ast_lvalue_wrap;
 
   /*---------.
   | Binder.  |
@@ -83,7 +90,7 @@ namespace binder
     ast::exps_type* args = new ast::exps_type();
     args->push_back(new ast::String(l, name));
     args->push_back(const_cast<ast::Exp*>(value.get()));
-    return recurse(ast::rCall(new ast::Call(l, target, method, args)));;
+    return recurse(ast::rCall(new ast::Call(l, args, target, method)));;
   }
 
 
@@ -123,7 +130,8 @@ namespace binder
   Binder::visit(const ast::Declaration* input)
   {
     ast::loc loc = input->location_get();
-    ast::rCall call = input->what_get();
+    ast::rCall call = input->what_get()->call();
+
     libport::Symbol name = call->name_get();
 
     if (!call->target_implicit() || setOnSelf_.back())
@@ -167,29 +175,33 @@ namespace binder
   Binder::visit(const ast::Assignment* input)
   {
     ast::loc loc = input->location_get();
-    ast::rCall call = input->what_get();
+    ast::rCall call = input->what_get()->call();
+    ast::rExp target_value = recurse(input->value_get());
     libport::Symbol name = call->name_get();
     ast::rExp modifiers = input->modifiers_get();
     unsigned depth = routine_depth_get(name);
 
     if (modifiers)
     {
-      parser::Tweast tweast;
-      call = parser::ast_lvalue_once(call, tweast);
-      tweast
-        << "TrajectoryGenerator"
-        << ".new("
-        // getter.
-        << "closure () { " << new_clone(call) << " }, "
-        // setter.
-        << "closure (v){ " << call << " = v }, "
-        // targetValue, args.
-        << recurse(input->value_get()) << ", " << modifiers
-        << ").run";
-      operator()(::parser::parse(tweast)->ast_get().get());
+      ast::rLValue tgt = ast_lvalue_once(call);
+      static ParametricAst trajectory(
+        "TrajectoryGenerator.new("
+        "  closure ( ) { %exp:1 }," // getter
+        "  closure (v) { %lvalue:2 = v }," // Setter
+        "  %exp:3," // Target value
+        "  %exp:4" // modifiers
+        ").run"
+        );
+
+      trajectory % ast_exp(tgt)
+        % tgt
+        % target_value
+        % modifiers;
+
+      operator()(ast_lvalue_wrap(call, exp(trajectory).get()).get());
       return; // Return here to avoid setting the original ast.
     }
-    else if (depth && input->what_get()->target_implicit())
+    else if (depth && call->target_implicit())
     {
       // Assignment to a local variables
 
@@ -334,8 +346,8 @@ namespace binder
   {
     // build Lazy.clone.init(closure () { %arg })
     ast::rCall lazy = new ast::Call
-      (loc, new ast::Implicit(loc), SYMBOL(Lazy), 0);
-    ast::rCall clone = new ast::Call(loc, lazy, SYMBOL(clone), 0);
+      (loc, new ast::exps_type(), new ast::Implicit(loc), SYMBOL(Lazy));
+    ast::rCall clone = new ast::Call(loc, new ast::exps_type(), lazy, SYMBOL(clone));
     ast::exps_type* init_args = new ast::exps_type();
 
     {
@@ -346,7 +358,7 @@ namespace binder
       std::swap(res, result_);
     }
 
-    ast::rCall init = new ast::Call(loc, clone, SYMBOL(init), init_args);
+    ast::rCall init = new ast::Call(loc, init_args, clone, SYMBOL(init));
     return init;
   }
 

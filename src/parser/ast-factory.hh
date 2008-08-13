@@ -77,35 +77,30 @@ namespace parser
            ast::rExp init, ast::rExp test, ast::rExp inc,
            ast::rExp body);
 
-  /// If \c lvalue is composite, then store it in a local variable,
-  /// and change \c lvalue to point to it.  Possibly store in \c
-  /// tweast the initialization of the new \c lvalue.
-  ///
-  /// Use this function to avoid CPP-like problem when referring
-  /// several times to an lvalue.  For instance, do not desugar
-  ///
-  /// f(x).val += 1
-  ///
-  /// as
-  ///
-  /// f(x).val = f(x).val + 1
-  ///
-  /// but as
-  ///
-  /// var tmp = f(x) | tmp.val = tmp.val + 1
-  ///
-  /// This function puts
-  ///
-  /// var tmp = f(x) |
-  ///
-  /// in \c tweast, and changes \c lvalue from
-  ///
-  /// f(x).val
-  ///
-  /// to
-  ///
-  /// tmp.
-  ast::rCall ast_lvalue_once(ast::rCall lvalue, Tweast& tweast);
+  /** Use these functions to avoid CPP-like problem when referring
+   *  several times to an lvalue.  For instance, do not desugar
+   *
+   *  f(x).val += 1
+   *
+   *  as
+   *
+   *  f(x).val = f(x).val + 1
+   *
+   *  but as
+   *
+   *  var tmp = f(x) | tmp.val = tmp.val + 1
+   *
+   * 1/ Use ast_lvalue_once to get the actual slot owner to use.
+   * 2/ Transform your code
+   * 3/ Use ast_lvalue_wrap to potentially define the cached owner.
+   *
+   */
+  // We need two separate functions. This could be improved if
+  // ParametricAst where able to pick the same variable several times,
+  // which should pose no problem now that ast are refcounted.
+  ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue);
+  ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e);
+
 
 
   /// Return \a e in a ast::Scope unless it is already one.

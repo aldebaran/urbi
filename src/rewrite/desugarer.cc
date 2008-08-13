@@ -2,23 +2,27 @@
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 
+#include <object/symbols.hh>
+
 #include <parser/ast-factory.hh>
 #include <parser/parse.hh>
-#include <parser/tweast.hh>
 
 #include <rewrite/desugarer.hh>
 
 namespace rewrite
 {
-  using parser::ast_string;
   using ast::ParametricAst;
+  using parser::ast_call;
+  using parser::ast_exp;
+  using parser::ast_string;
+  using parser::ast_lvalue_once;
+  using parser::ast_lvalue_wrap;
 
   void Desugarer::visit(const ast::Decrementation* dec)
   {
-    parser::Tweast tweast;
+    static ast::ParametricAst decrement("(%lvalue:1 -= 1) + 1");
 
-    tweast << "(" << dec->exp_get() << " -= 1) + 1";
-    ast::rExp res = recurse(parser::parse(tweast)->ast_get());
+    ast::rExp res = recurse(exp(decrement % dec->exp_get()));
     res->original_set(dec);
     result_ = res;
   }
@@ -27,7 +31,7 @@ namespace rewrite
   {
     static ParametricAst del("%exp:1.removeSlot(%exp:2)");
 
-    ast::rCall call = d->what_get();
+    ast::rCall call = d->what_get()->call();
     del % call->target_get()
       % ast_string(call->location_get(), call->name_get());
     result_ = exp(del);
@@ -36,28 +40,27 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Incrementation* inc)
   {
-    // FIXME: We can't use parametric ast here because of the grammar
-    // illness
-    // static ast::ParametricAst increment("%exp:1 += 1) - 1");
-    parser::Tweast tweast;
+    static ast::ParametricAst increment("(%lvalue:1 += 1) - 1");
 
-    tweast << "(" << inc->exp_get() << " += 1) - 1";
-    ast::rExp res = recurse(parser::parse(tweast)->ast_get());
+    ast::rExp res = recurse(exp(increment % inc->exp_get()));
     res->original_set(inc);
     result_ = res;
   }
 
   void Desugarer::visit(const ast::OpAssignment* a)
   {
-    parser::Tweast tweast;
-    tweast << "{";
-    ast::rCall what = parser::ast_lvalue_once(a->what_get(), tweast);
-    tweast << new_clone(what) << " = "
-           << what << ".'" << a->op_get() << "'(" << a->value_get() << ")";
-    tweast << "}";
-    ast::rExp res = parser::parse(tweast)->ast_get();
-    res->original_set(a);
-    result_ = res;
+    static ParametricAst desugar("%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
+
+    ast::rLValue what = recurse(a->what_get());
+    ast::rLValue tgt = ast_lvalue_once(what);
+
+    desugar % tgt
+      % ast_exp(new_clone(tgt))
+      % a->op_get()
+      % recurse(a->value_get());
+
+    result_ = ast_lvalue_wrap(what, exp(desugar));
+    result_->original_set(a);
   }
 
   void Desugarer::visit(const ast::PropertyRead* p)

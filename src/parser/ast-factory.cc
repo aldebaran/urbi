@@ -9,7 +9,6 @@
 
 namespace std
 {
-
   ostream&
   operator<< (ostream& o, const parser::case_type& c)
   {
@@ -34,6 +33,7 @@ namespace std
 
 namespace parser
 {
+  using ast::ParametricAst;
 
   ast::rExp
   desugar(::parser::Tweast& t)
@@ -104,7 +104,7 @@ namespace parser
   ast_call (const yy::location& l,
             ast::rExp target, libport::Symbol method, ast::exps_type* args)
   {
-    ast::rCall res = new ast::Call(l, target, method, args);
+    ast::rCall res = new ast::Call(l, args, target, method);
     return res;
   }
 
@@ -148,25 +148,39 @@ namespace parser
   ast_class(const yy::location& l,
             ast::rCall lvalue, ast::exps_type* protos, ast::rExp block)
   {
-    ::parser::Tweast tweast;
     libport::Symbol name = lvalue->name_get();
-    tweast << "var " << lvalue << "= {"
-           << "var '$tmp' = Object.clone |";
-    // Don't call setProtos from inside the do-scope: evaluate the
-    // protos in the current scope.
+
+    static ParametricAst desugar(
+      "var %lvalue:1 ="
+      "{"
+      "  var '$tmp' = Object.clone |"
+      "  %exp:2 |"
+      "  '$tmp'.setSlot(\"protoName\", %exp:3) |"
+      "  '$tmp'.setSlot(%exp:4, function () { this }) |"
+      "  do '$tmp'"
+      "  {"
+      "    %exp:5 |"
+      "  } |"
+      "  '$tmp'"
+      "}"
+      );
+
+    ast::rExp protos_set;
     if (protos)
-      tweast
-        << "'$tmp'.setProtos([" << *protos << "])|";
-    tweast
-      << "do '$tmp'"
-      << " {"
-      <<   "var protoName = " << ast_string(l, name) << "|"
-      <<   "function " << ("as" + name.name_get()) << "() { this }|"
-      <<   ast_exp(block)
-      << "} |"
-      << "'$tmp'"
-      << "}";
-    ast::rExp res = parse(tweast)->ast_get();
+    {
+      static ParametricAst setProtos("'$tmp'.setProtos(%exp:1)");
+      protos_set = exp(setProtos % new ast::List(l, protos));
+    }
+    else
+      protos_set = new ast::Noop(l, 0);
+
+    desugar % ast::rLValue(lvalue)
+      % protos_set
+      % ast_string(l, name)
+      % ast_string(l, libport::Symbol("as" + name.name_get()))
+      % ast_exp(block);
+
+    ast::rExp res = exp(desugar);
     return res;
   }
 
@@ -212,21 +226,6 @@ namespace parser
     return ast_scope(l, ast_bin(l, op, init, while_loop));
   }
 
-
-  ast::rCall
-  ast_lvalue_once(ast::rCall lvalue, Tweast& tweast)
-  {
-    if (!lvalue->target_implicit())
-    {
-      libport::Symbol tmp = libport::Symbol::fresh("__tmp__");
-      const yy::location& l = lvalue->location_get();
-      tweast << "var " << tmp << " = " << lvalue->target_get() << "|";
-      lvalue = ast_call(l, ast_call(l, tmp), lvalue->name_get());
-    }
-    return lvalue;
-  }
-
-
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope
   ast_scope(const yy::location& l, ast::rExp target, ast::rExp e)
@@ -254,25 +253,50 @@ namespace parser
   ast::rExp
   ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases)
   {
-    libport::Symbol switched = libport::Symbol::fresh("switched");
+    (void) l;
 
     static ast::ParametricAst nil("nil");
     ast::rExp inner = exp(nil);
     rforeach (const case_type& c, cases)
     {
       static ast::ParametricAst a(
-        "if (Pattern.new(%exp:1).match(%exp:2)) %exp:3 else %exp:4");
+        "if (Pattern.new(%exp:1).match('$switch')) %exp:2 else %exp:3");
       a % c.first
-        % ast_call(l, switched)
-        % c.second
+        % ast_exp(c.second)
         % inner;
       inner = ast::exp(a);
     }
 
-    ::parser::Tweast tweast;
-    tweast << "var " << switched << " = " << cond << ";"
-           << inner;
-    ast::rExp res = ::parser::parse(tweast)->ast_get();
-    return res;
+    static ParametricAst sw("{ var '$switch' = %exp:1 | %exp:2 }");
+    return exp(sw % cond % inner);
   }
+
+  ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue)
+  {
+    ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL($tmp));
+
+    if (lvalue->call()->target_implicit())
+      return lvalue.get();
+    else
+      return ast_call(lvalue->location_get(), tmp, lvalue->call()->name_get());
+  }
+
+  ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e)
+  {
+    static ParametricAst wrap(
+      "{"
+      "var '$tmp' = %exp:1;"
+      "%exp:2;"
+      "}"
+      );
+
+    if (lvalue->call()->target_implicit())
+      return e;
+    else
+    {
+      wrap % lvalue->call()->target_get() % e;
+      return exp(wrap);
+    }
+  }
+
 }

@@ -16,22 +16,6 @@ namespace ast
 {
 
   template <typename T>
-  ParametricAst&
-  ParametricAst::operator% (const T& t)
-  {
-#ifndef NDEBUG
-    passert(libport::deref << t, unique_(t));
-#endif
-    append_(count_, t);
-    // Compute the location of the source text we used.
-    if (!effective_location_.begin.filename)
-      effective_location_ = t->location_get();
-    else
-      effective_location_ = effective_location_ + t->location_get();
-    return *this;
-  }
-
-  template <typename T>
   libport::shared_ptr<T>
   ParametricAst::result()
   {

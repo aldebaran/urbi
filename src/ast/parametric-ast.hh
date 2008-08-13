@@ -10,6 +10,7 @@
 
 # include <ast/cloner.hh>
 # include <ast/exp.hh>
+# include <ast/lvalue.hh>
 
 # include <parser/metavar-map.hh>
 
@@ -19,10 +20,14 @@ namespace ast
   class ParametricAst
     : public Cloner
     , public parser::MetavarMap<ast::rExp>
+    , public parser::MetavarMap<ast::rLValue>
+    , public parser::MetavarMap<libport::Symbol>
   {
   public:
     typedef Cloner super_type;
     typedef parser::MetavarMap<ast::rExp> exp_map_type;
+    typedef parser::MetavarMap<ast::rLValue> lvalue_map_type;
+    typedef parser::MetavarMap<libport::Symbol> id_map_type;
 
     /// Build a ParametricAst whose textual part is \a s.
     ParametricAst(const std::string& s);
@@ -31,8 +36,11 @@ namespace ast
     virtual ~ParametricAst();
 
     /// Pass the n-th argument.
-    template <typename T>
-    ParametricAst& operator% (const T& t);
+    // The template version of the operator fails with an
+    // incomprehensible ambiguity. It's duplicated for now.
+    ParametricAst& operator% (ast::rExp t);
+    ParametricAst& operator% (ast::rLValue t);
+    ParametricAst& operator% (libport::Symbol id);
 
     /// Fire the substitution, and return the result.
     /// Calls clear.
@@ -52,7 +60,11 @@ namespace ast
   protected:
     /// Import from super.
     using super_type::visit;
-    CONST_VISITOR_VISIT_NODES((MetaExp));
+    CONST_VISITOR_VISIT_NODES(
+      (MetaExp)
+      (MetaLValue)
+      (MetaCall)
+      );
 
     /// Metavariables manipulator.
     template <typename T> T take (unsigned s) throw (std::range_error);
