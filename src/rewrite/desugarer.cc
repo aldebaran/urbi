@@ -2,6 +2,8 @@
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 
+#include <object/symbols.hh>
+
 #include <parser/ast-factory.hh>
 #include <parser/parse.hh>
 #include <parser/tweast.hh>
@@ -10,8 +12,10 @@
 
 namespace rewrite
 {
-  using parser::ast_string;
   using ast::ParametricAst;
+  using parser::ast_call;
+  using parser::ast_exp;
+  using parser::ast_string;
 
   void Desugarer::visit(const ast::Decrementation* dec)
   {
@@ -42,17 +46,61 @@ namespace rewrite
     result_ = res;
   }
 
+  namespace
+  {
+    /* Helpers to evaluate lvalues only once
+     * 1/ Use lvalue_once to get the actual slot owner to use.
+     * 2/ Transform your code
+     * 3/ Use lvalue_wrap to potentially define the cached owner.
+     */
+    static ast::rLValue lvalue_once(const ast::rLValue& lvalue)
+    {
+      ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL($tmp));
+
+      if (lvalue->call()->target_implicit())
+        return lvalue.get();
+      else
+        return ast_call(lvalue->location_get(), tmp, lvalue->call()->name_get());
+    }
+
+    static ast::rExp lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e)
+    {
+      static ParametricAst wrap(
+        "{"
+        "var '$tmp' = %exp:1;"
+        "%exp:2;"
+        "}"
+        );
+
+      if (lvalue->call()->target_implicit())
+        return e;
+      else
+      {
+        wrap % lvalue->call()->target_get() % e;
+        return exp(wrap);
+      }
+    }
+  }
+
   void Desugarer::visit(const ast::OpAssignment* a)
   {
-    parser::Tweast tweast;
-    tweast << "{";
-    ast::rCall what = parser::ast_lvalue_once(a->what_get()->call(), tweast);
-    tweast << new_clone(what) << " = "
-           << what << ".'" << a->op_get() << "'(" << a->value_get() << ")";
-    tweast << "}";
-    ast::rExp res = parser::parse(tweast)->ast_get();
-    res->original_set(a);
-    result_ = res;
+    static ParametricAst desugar("%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
+
+    // We need to call lvalue_once and lvalue_wrap to avoid
+    // reevaluating the target. This could be improved if
+    // ParametricAst where able to pick the same variable several
+    // times, which should pose no problem now that ast are
+    // refcounted.
+    ast::rLValue what = recurse(a->what_get());
+    ast::rLValue tgt = lvalue_once(what);
+
+    desugar % tgt
+      % ast_exp(new_clone(tgt))
+      % a->op_get()
+      % recurse(a->value_get());
+
+    result_ = lvalue_wrap(what, exp(desugar));
+    result_->original_set(a);
   }
 
   void Desugarer::visit(const ast::PropertyRead* p)
