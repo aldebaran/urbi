@@ -21,11 +21,13 @@ namespace ast
     : public Cloner
     , public parser::MetavarMap<ast::rExp>
     , public parser::MetavarMap<ast::rLValue>
+    , public parser::MetavarMap<libport::Symbol>
   {
   public:
     typedef Cloner super_type;
     typedef parser::MetavarMap<ast::rExp> exp_map_type;
     typedef parser::MetavarMap<ast::rLValue> lvalue_map_type;
+    typedef parser::MetavarMap<libport::Symbol> id_map_type;
 
     /// Build a ParametricAst whose textual part is \a s.
     ParametricAst(const std::string& s);
@@ -38,6 +40,7 @@ namespace ast
     // incomprehensible ambiguity. It's duplicated for now.
     ParametricAst& operator% (ast::rExp t);
     ParametricAst& operator% (ast::rLValue t);
+    ParametricAst& operator% (libport::Symbol id);
 
     /// Fire the substitution, and return the result.
     /// Calls clear.
@@ -60,6 +63,7 @@ namespace ast
     CONST_VISITOR_VISIT_NODES(
       (MetaExp)
       (MetaLValue)
+      (MetaCall)
       );
 
     /// Metavariables manipulator.

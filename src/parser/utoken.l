@@ -464,6 +464,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "%exp:"		RETURN(PERCENT_EXP_COLON);
 "%lvalue:"	RETURN(PERCENT_LVALUE_COLON);
+"%id:"          RETURN(PERCENT_ID_COLON);
 
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);

@@ -107,6 +107,9 @@ lvalue.hxx
 message.cc
 message.hh
 message.hxx
+meta-call.cc
+meta-call.hh
+meta-call.hxx
 meta-exp.cc
 meta-exp.hh
 meta-exp.hxx

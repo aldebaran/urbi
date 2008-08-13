@@ -1119,6 +1119,14 @@ Delete:
     - '"delete "'
     - ~what
 
+MetaCall:
+  super: LValue
+  attributes:
+    - target:
+        type: rExp
+    - id:
+        type: unsigned
+
 # Local Variables:
 # mode: yaml
 # End:

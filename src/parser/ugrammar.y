@@ -1327,6 +1327,13 @@ lvalue:
   }
 ;
 
+%token TOK_PERCENT_ID_COLON "%id:";
+lvalue:
+  exp "." "%id:" "integer"
+  {
+    $$ = new ast::MetaCall(@$, 0, $1, $4);
+  }
+;
 
 /*--------------.
 | Expressions.  |

@@ -16,6 +16,7 @@ namespace ast
   ParametricAst::ParametricAst(const std::string& s)
     : exp_map_type("exp")
     , lvalue_map_type("lvalue")
+    , id_map_type("id")
     , ast_(parser::parse(s)->ast_xget())
     , effective_location_()
     , count_(0)
@@ -41,10 +42,22 @@ namespace ast
     assert(result_);
   }
 
+  void
+  ParametricAst::visit(const ast::MetaCall* e)
+  {
+    libport::Symbol name = id_map_type::take_(e->id_get () - 1);
+
+    result_ = new ast::Call(e->location_get(),
+                            recurse_collection(e->arguments_get()),
+                            recurse(e->target_get()), name);
+  }
+
   bool
   ParametricAst::empty() const
   {
-    return exp_map_type::empty_() && lvalue_map_type::empty_() ;
+    return exp_map_type::empty_()
+      && lvalue_map_type::empty_()
+      && id_map_type::empty_();
   }
 
   void
@@ -68,6 +81,7 @@ namespace ast
       << libport::incendl << *ast_ << libport::decendl
       << static_cast<const exp_map_type&>(*this)
       << static_cast<const lvalue_map_type&>(*this)
+      << static_cast<const id_map_type&>(*this)
       << libport::decendl;
   }
 
@@ -119,6 +133,16 @@ namespace ast
       effective_location_ = t->location_get();
     else
       effective_location_ = effective_location_ + t->location_get();
+    return *this;
+  }
+
+  ParametricAst&
+  ParametricAst::operator% (libport::Symbol id)
+  {
+#ifndef NDEBUG
+    passert(libport::deref << id, unique_(id));
+#endif
+    id_map_type::append_(count_, id);
     return *this;
   }
 
