@@ -70,8 +70,10 @@ namespace ast
     virtual ~GenVisitor ();
     /** \\} */
 
+    /// This intermediate typedef is required by VCXX 2005
+    typedef typename Const<Ast>::type* ast_type;
     /// The entry point: visit \\a e.
-    virtual void operator() (typename Const<Ast>::type* e);
+    virtual void operator() (ast_type e);
 
   protected:""" % ast_params
 

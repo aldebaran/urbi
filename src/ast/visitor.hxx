@@ -18,7 +18,7 @@ namespace ast
   template < template <typename> class Const >
   inline
   void
-  GenVisitor<Const>::operator() (typename Const<Ast>::type* e)
+  GenVisitor<Const>::operator() (ast_type e)
   {
     if (e)
       e->accept(*this);
