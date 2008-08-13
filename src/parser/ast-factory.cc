@@ -148,25 +148,39 @@ namespace parser
   ast_class(const yy::location& l,
             ast::rCall lvalue, ast::exps_type* protos, ast::rExp block)
   {
-    ::parser::Tweast tweast;
     libport::Symbol name = lvalue->name_get();
-    tweast << "var " << lvalue << "= {"
-           << "var '$tmp' = Object.clone |";
-    // Don't call setProtos from inside the do-scope: evaluate the
-    // protos in the current scope.
+
+    static ParametricAst desugar(
+      "var %lvalue:1 ="
+      "{"
+      "  var '$tmp' = Object.clone |"
+      "  %exp:2 |"
+      "  '$tmp'.setSlot(\"protoName\", %exp:3) |"
+      "  '$tmp'.setSlot(%exp:4, function () { this }) |"
+      "  do '$tmp'"
+      "  {"
+      "    %exp:5 |"
+      "  } |"
+      "  '$tmp'"
+      "}"
+      );
+
+    ast::rExp protos_set;
     if (protos)
-      tweast
-        << "'$tmp'.setProtos([" << *protos << "])|";
-    tweast
-      << "do '$tmp'"
-      << " {"
-      <<   "var protoName = " << ast_string(l, name) << "|"
-      <<   "function " << ("as" + name.name_get()) << "() { this }|"
-      <<   ast_exp(block)
-      << "} |"
-      << "'$tmp'"
-      << "}";
-    ast::rExp res = parse(tweast)->ast_get();
+    {
+      static ParametricAst setProtos("'$tmp'.setProtos(%exp:1)");
+      protos_set = exp(setProtos % new ast::List(l, protos));
+    }
+    else
+      protos_set = new ast::Noop(l, 0);
+
+    desugar % ast::rLValue(lvalue)
+      % protos_set
+      % ast_string(l, name)
+      % ast_string(l, libport::Symbol("as" + name.name_get()))
+      % ast_exp(block);
+
+    ast::rExp res = exp(desugar);
     return res;
   }
 
