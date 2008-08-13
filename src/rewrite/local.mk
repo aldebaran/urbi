@@ -1,4 +1,6 @@
 dist_libkernel_la_SOURCES +=			\
+rewrite/desugarer.cc				\
+rewrite/desugarer.hh				\
 rewrite/fwd.hh					\
 rewrite/pattern-rewriter.cc			\
 rewrite/pattern-rewriter.hh			\

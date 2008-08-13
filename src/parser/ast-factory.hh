@@ -14,10 +14,6 @@ namespace parser
   /// Return the parsing of \a Tweast.
   ast::rExp desugar(::parser::Tweast& t);
 
-  /// <lvalue> <op>= <exp>.
-  ast::rExp
-  ast_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp);
-
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
   ast::rExp
@@ -118,23 +114,6 @@ namespace parser
 
   ast::rScope
   ast_scope(const yy::location& l, ast::rExp e);
-
-  /*-----------------.
-  | Changing slots.  |
-  `-----------------*/
-
-  ast::rExp
-  ast_slot_set(const yy::location& l, ast::rCall lvalue,
-               ast::rExp value,
-               ast::rExp modifier = 0);
-
-  ast::rExp
-  ast_slot_update(const yy::location& l, ast::rCall lvalue,
-                  ast::rExp value,
-                  ast::rExp modifier = 0);
-
-  ast::rExp
-  ast_slot_remove(const yy::location& l, ast::rCall lvalue);
 
   ast::rExp
   ast_string(const yy::location& l, libport::Symbol s);

@@ -46,24 +46,6 @@ namespace parser
   }
 
 
-  ast::rExp
-  ast_assign(ast::rCall lvalue, libport::Symbol op, ast::rExp exp)
-  {
-    ::parser::Tweast tweast;
-    lvalue = ast_lvalue_once(lvalue, tweast);
-    ast::rExp res =
-      desugar(tweast
-              << new_clone(lvalue) << '=' << lvalue << op << exp);
-    if (!!getenv("DESUGAR"))
-    {
-      LIBPORT_ECHO("Id: " << typeid(*res).name()
-                   << " (" << get_pointer(res) << ")");
-      LIBPORT_ECHO("DESUGAR_ASSIGN: " << *res);
-    }
-    return res;
-  }
-
-
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op must be & or |.
   ast::rExp
@@ -261,110 +243,6 @@ namespace parser
   ast_scope(const yy::location& l, ast::rExp e)
   {
     return ast_scope(l, 0, e);
-  }
-
-  /*-----------------.
-  | Changing slots.  |
-  `-----------------*/
-
-  /// Factor slot_set, slot_update, and slot_remove.
-  /// \param l        source location.
-  /// \param lvalue   object and slot to change.  This object is
-  ///                 destroyed by this function: its contents is
-  ///                 stolen, and its counter is decreased.  So the
-  ///                 comments in the code for details.
-  /// \param change   the Urbi method to invoke.
-  /// \param value    optional assigned value.
-  /// \param modifier optional time modifier object.
-  /// \return The AST node calling the slot assignment.
-  static
-  inline
-  ast::rExp
-  ast_slot_change(const yy::location& l,
-                  ast::rCall lvalue, libport::Symbol change,
-                  ast::rExp value = 0,
-                  ast::rExp modifier = 0)
-  {
-    ast::rExp res = 0;
-    bool implicit = lvalue->target_implicit();
-
-    /// FIXME: This is far from being enough, but it is hard to finish
-    /// the implementation since the conversion to local vars
-    /// vs. field is not finished yet.  In particular things might go
-    /// wrong for the target (%exp:4) depending whether the assignment
-    /// is to a local or to a field.
-    if (modifier)
-    {
-      // Currently, we cannot have lvalues as meta-variables, which
-      // prevents the use of ParametricAst :(
-# if 0
-      static ast::ParametricAst
-        traj("TrajectoryGenerator"
-             // startValue, targetValue, args.
-             ".new(%exp:1, %exp:2, %exp:3)"
-             // getter, setter.
-             ".run(function () { %exp:4 },"
-             "     function (v){ %exp:5 = v })");
-      res = exp(traj
-                %lvalue %value %modifier
-                %new_clone(lvalue) %new_clone(lvalue));
-# else
-      Tweast tweast;
-      lvalue = ast_lvalue_once(lvalue, tweast);
-      tweast
-        << "TrajectoryGenerator"
-        << ".new("
-        // getter.
-        << "closure () { " << new_clone(lvalue) << " }, "
-        // setter.
-        << "closure (v){ " << lvalue << " = v }, "
-        // targetValue, args.
-        << value << ", " << modifier
-        << ").run";
-      res = parse(tweast)->ast_get();
-# endif
-    }
-    else
-    {
-      if (implicit && change == SYMBOL(updateSlot))
-        res = new ast::Assignment(l, lvalue->name_get(), value, 0);
-      else if (implicit && change == SYMBOL(setSlot))
-        res = new ast::Declaration(l, lvalue->name_get(), value);
-      else
-      {
-        ast::rCall call =
-          ast_call(l,
-                   lvalue->target_get(), change,
-                   ast::rString(new ast::String(lvalue->location_get(),
-                                                lvalue->name_get())));
-        if (value)
-          call->arguments_get()->push_back(value);
-        res = call;
-      }
-    }
-    return res;
-  }
-
-  ast::rExp
-  ast_slot_set(const yy::location& l, ast::rCall lvalue,
-               ast::rExp value,
-               ast::rExp modifier)
-  {
-    return ast_slot_change(l, lvalue, SYMBOL(setSlot), value, modifier);
-  }
-
-  ast::rExp
-  ast_slot_update(const yy::location& l, ast::rCall lvalue,
-                  ast::rExp value,
-                  ast::rExp modifier)
-  {
-    return ast_slot_change(l, lvalue, SYMBOL(updateSlot), value, modifier);
-  }
-
-  ast::rExp
-  ast_slot_remove(const yy::location& l, ast::rCall lvalue)
-  {
-    return ast_slot_change(l, lvalue, SYMBOL(removeSlot));
   }
 
   ast::rExp

@@ -28,13 +28,13 @@ namespace runner
       Stacks(rObject lobby);
 
       /// Update the given value
-      void set(ast::rConstAssignment e, rObject v);
+      void set(ast::rConstLocalAssignment e, rObject v);
       /// Define the given value
-      void def(ast::rConstDeclaration e, rObject v);
+      void def(ast::rConstLocalDeclaration e, rObject v);
       /// Bind given argument
-      void def_arg(ast::rConstDeclaration e, rObject v);
+      void def_arg(ast::rConstLocalDeclaration e, rObject v);
       /// Bind given captured variable
-      void def_captured(ast::rConstDeclaration e, rrObject v);
+      void def_captured(ast::rConstLocalDeclaration e, rrObject v);
 
       /// Get value from the stack
       rObject get(ast::rConstLocal e);

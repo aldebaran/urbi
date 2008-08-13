@@ -6,6 +6,7 @@
 # include <memory>
 
 # include <parser/fwd.hh>
+# include <parser/parse-result.hh>
 
 namespace parser
 {

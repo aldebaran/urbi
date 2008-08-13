@@ -74,16 +74,12 @@
 #include <ast/print.hh>
 
   using parser::desugar;
-  using parser::ast_assign;
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
   using parser::ast_exp;
   using parser::ast_for;
   using parser::ast_scope;
-  using parser::ast_slot_remove;
-  using parser::ast_slot_set;
-  using parser::ast_slot_update;
   using parser::ast_string;
   using parser::ast_switch;
 
@@ -141,15 +137,16 @@
     return scanner.yylex(val, loc, &up);
   }
 
-  static ast::declarations_type*
+  static ast::local_declarations_type*
     symbols_to_decs(ast::symbols_type* symbols,
                     const ast::loc& loc)
   {
     if (!symbols)
       return 0;
-    ast::declarations_type* res = new ast::declarations_type();
+    ast::local_declarations_type* res =
+      new ast::local_declarations_type();
     foreach (const libport::Symbol& var, *symbols)
-      res->push_back(new ast::Declaration(loc, var, new ast::Implicit(loc)));
+      res->push_back(new ast::LocalDeclaration(loc, var, new ast::Implicit(loc)));
     delete symbols;
     return res;
   }
@@ -591,16 +588,16 @@ stmt:
   "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt"
-      $$ = ast_slot_set(@$, $2,
-			new ast::Function(@$, symbols_to_decs($3, @3),
-                                          ast_scope (@$, $4)));
+      $$ = new ast::Declaration(@$, $2,
+                                new ast::Function(@$, symbols_to_decs($3, @3),
+                                                  ast_scope (@$, $4)), 0);
     }
 | "closure" k1_id formals block
     {
       // Compiled as "var name = closure args stmt"
-      $$ = ast_slot_set(@$, $2,
-			new ast::Closure(@$, symbols_to_decs($3, @3),
-                                         ast_scope (@$, $4)));
+      $$ = new ast::Declaration(@$, $2,
+                                new ast::Closure(@$, symbols_to_decs($3, @3),
+                                                 ast_scope (@$, $4)), 0);
     }
 ;
 
@@ -653,19 +650,19 @@ exp:
 stmt:
   lvalue "=" exp modifiers
     {
-      $$ = ast_slot_update(@$, $1, $3, $4);
+      $$ = new ast::Assignment(@$, $1, $3, $4);
     }
 | "var" lvalue "=" exp modifiers
     {
-      $$ = ast_slot_set(@$, $2, $4, $5);
+      $$ = new ast::Declaration(@$, $2, $4, $5);
     }
 | "var" lvalue
     {
-      $$ = ast_slot_set(@$, $2, ast_call(@$, SYMBOL(nil)));
+      $$ = new ast::Declaration(@$, $2, ast_call(@$, SYMBOL(nil)), 0);
     }
 | "delete" lvalue
     {
-      $$ = ast_slot_remove(@$, $2);
+      $$ = new ast::Delete(@$, $2);
     }
 ;
 
@@ -678,19 +675,19 @@ stmt:
 ;
 
 exp:
-  lvalue "+=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "-=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "*=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "/=" exp    { $$ = ast_assign($1, $2, $3); }
-| lvalue "^=" exp    { $$ = ast_assign($1, $2, $3); }
+  lvalue "+=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "-=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "*=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "/=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "^=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
 ;
 
 %token  TOK_MINUS_MINUS "--"
 	TOK_PLUS_PLUS   "++"
 ;
 exp:
-  lvalue "--"      { $$ = DESUGAR('(' << $1 << "-= 1) + 1"); }
-| lvalue "++"      { $$ = DESUGAR('(' << $1 << "+= 1) - 1"); }
+  lvalue "--"      { $$ = new ast::Decrementation(@$, $1); }
+| lvalue "++"      { $$ = new ast::Incrementation(@$, $1); }
 ;
 
 
@@ -701,21 +698,14 @@ exp:
 stmt:
   lvalue "->" id "=" exp
     {
-      $$ = ast_call(@$, $1->target_get(), SYMBOL(setProperty),
-		    ast_string(@1, $1->name_get()),
-		    ast_string(@3, $3),
-		    $5);
-      $1->counter_dec();
+      $$ = new ast::PropertyWrite(@$, $1, $3, $5);
     }
 ;
 
 exp:
   lvalue "->" id
     {
-      $$ = ast_call(@$, $1->target_get(), SYMBOL(getProperty),
-		    ast_string(@1, $1->name_get()),
-		    ast_string(@3, $3));
-      $1->counter_dec();
+      $$ = new ast::PropertyRead(@$, $1, $3);
     }
 ;
 
@@ -977,7 +967,7 @@ stmt_loop:
 | "for" "(" "var" "identifier" in_or_colon exp ")" stmt    %prec CMDBLOCK
     {
       $$ = new ast::Foreach(@$, $1,
-                            new ast::Declaration(@4, $4, new ast::Implicit(@4)),
+                            new ast::LocalDeclaration(@4, $4, new ast::Implicit(@4)),
                             $6, enclose_in_scope($8));
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK

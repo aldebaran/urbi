@@ -13,6 +13,7 @@
 # include <libport/symbol.hh>
 # include <libport/unique-pointer.hh>
 
+# include <ast/exps-type.hh>
 # include <ast/fwd.hh>
 # include <ast/symbols-type.hh>
 

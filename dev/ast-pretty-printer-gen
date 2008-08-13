@@ -47,6 +47,9 @@ namespace ast
     virtual ~PrettyPrinter ();
     /** \\} */
 
+    /// Visit entry point
+    virtual void operator() (const Ast* e);
+
   protected:
     using super_type::visit;
 """ % ast_params
@@ -93,6 +96,17 @@ namespace ast
   {
   }
 
+  void
+  PrettyPrinter::operator() (const Ast* e)
+  {
+    static bool desugar = getenv("URBI_DESUGAR");
+    rConstAst original = e->original_get();
+    if (!desugar && original)
+      operator()(original.get());
+    else
+      super_type::operator()(e);
+  }
+
 """ % ast_params
 
 for node in arr:
@@ -111,9 +125,9 @@ for node in arr:
 	child = 'n->%s_get()' % (a[1:])
 	if a[0] == '~':
 	  if mandatory:
-	    action += '    %s->accept(*this);\n' % child
+	    action += '    operator()(%s.get());\n' % child
 	  else:
-	    action += '    if (%s) %s->accept(*this);\n' % (child, child)
+	    action += '    if (%s) operator()(%s.get());\n' % (child, child)
 	else:
 	  if mandatory:
 	    action += '    ostr_ << %s;\n' % (child)

@@ -53,6 +53,7 @@ namespace binder
                               (Do)
                               (Foreach)
                               (Function)
+                              (LocalDeclaration)
                               (Scope));
 
     template <typename Code>
@@ -70,7 +71,7 @@ namespace binder
     unbind_type unbind_;
 
     /// Declaration * (routine_depth * scope_depth)
-    typedef std::pair<ast::rDeclaration,
+    typedef std::pair<ast::rLocalDeclaration,
                       std::pair<unsigned, unsigned> > binding_type;
     typedef std::list<binding_type> Bindings;
     typedef std::map<libport::Symbol, Bindings> Environment;
@@ -109,25 +110,29 @@ namespace binder
 
     /// Register that \a var is bound in any subscope, \a being its
     /// declaration
-    void bind(ast::rDeclaration decl);
+    void bind(ast::rLocalDeclaration decl);
 
     /// \return 0 if the variable isn't local, or the depth in
     /// number of nested routines otherwise.
     unsigned routine_depth_get(const libport::Symbol& name);
     unsigned scope_depth_get(const libport::Symbol& name);
-    ast::rDeclaration decl_get(const libport::Symbol& name);
+    ast::rLocalDeclaration decl_get(const libport::Symbol& name);
 
     /// Factored method to handle scopes.
     ast::rExp handleScope(ast::rConstScope scope, bool setOnSelf);
 
     /// Factored method to create updateSlot/setSlot calls.
     ast::rCall changeSlot(const ast::loc& l,
+                          const ast::rExp& target,
                           const libport::Symbol& name,
                           const libport::Symbol& method,
                           ast::rConstExp value);
 
     /// Make a lazy from \a arg
     ast::rExp lazify(ast::rExp arg, const ast::loc& loc);
+
+    /// Wether to report errors
+    bool report_errors_;
   };
 
 } // namespace binder

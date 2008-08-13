@@ -3,8 +3,8 @@
 // Uncomment this to get exhaustive execution debug output
 // #define ENABLE_STACK_DEBUG_TRACES
 
-#include <ast/assignment.hh>
-#include <ast/declaration.hh>
+#include <ast/local-assignment.hh>
+#include <ast/local-declaration.hh>
 #include <ast/local.hh>
 #include <runner/stacks.hh>
 #include <runner/stack-debug.hh>
@@ -119,7 +119,7 @@ namespace runner
   }
 
   void
-  Stacks::set(ast::rConstAssignment e, rObject v)
+  Stacks::set(ast::rConstLocalAssignment e, rObject v)
   {
     STACK_OPEN();
     STACK_NECHO("Setting " << e->what_get()
@@ -160,7 +160,7 @@ namespace runner
   }
 
   void
-  Stacks::def(ast::rConstDeclaration e, rObject v)
+  Stacks::def(ast::rConstLocalDeclaration e, rObject v)
   {
     // The toplevel's stack grows on demand.
     if (local_pointer_ == 0)
@@ -193,7 +193,7 @@ namespace runner
   }
 
   void
-  Stacks::def_arg(ast::rConstDeclaration e, rObject v)
+  Stacks::def_arg(ast::rConstLocalDeclaration e, rObject v)
   {
     STACK_OPEN();
     STACK_NECHO("Bind argument " << e->what_get()
@@ -205,7 +205,7 @@ namespace runner
   }
 
   void
-  Stacks::def_captured(ast::rConstDeclaration e, rrObject v)
+  Stacks::def_captured(ast::rConstLocalDeclaration e, rrObject v)
   {
     STACK_OPEN();
     STACK_NECHO("Bind capture " << e->what_get()

@@ -79,7 +79,7 @@ namespace runner
 
 
   LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Assignment* e)
+  Interpreter::visit(const ast::LocalAssignment* e)
   {
     rObject val = eval(e->value_get());
     stacks_.set(e, val);
@@ -105,7 +105,7 @@ namespace runner
 
 
   LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Declaration* d)
+  Interpreter::visit(const ast::LocalDeclaration* d)
   {
     rObject val = eval(d->value_get());
     stacks_.def(d, val);
@@ -125,7 +125,8 @@ namespace runner
     rRoutine res = make_routine(e);
 
     // Capture variables
-    foreach (const ast::rDeclaration& dec, *e->captured_variables_get())
+    foreach (const ast::rLocalDeclaration& dec,
+             *e->captured_variables_get())
     {
       ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
       assert(local);
@@ -495,12 +496,20 @@ namespace runner
     pabort("Invalid node in the Interpreter: " << *n);     \
   }                                                        \
 
+  INVALID(Assignment);
   INVALID(Binding);
   INVALID(Break);
   INVALID(Continue);
+  INVALID(Declaration);
+  INVALID(Decrementation);
+  INVALID(Delete);
   INVALID(Foreach);
   INVALID(Implicit);
+  INVALID(Incrementation);
   INVALID(MetaExp);
+  INVALID(OpAssignment);
+  INVALID(PropertyRead);
+  INVALID(PropertyWrite);
   INVALID(Return);
 
 #undef INVALID
