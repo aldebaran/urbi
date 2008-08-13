@@ -715,9 +715,32 @@ List:
     foreach (libport::shared_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
       operator()(exp.get());
 
+LValue:
+  super: Exp
+  attributes:
+    - arguments:
+        type: 'exps_type*'
+        access: rwW
+        mandatory: false
+        desc: Arguments passed to the function
+  inline:
+    header prologue: |2
+      # include <ast/print.hh>
+    header inside: |2
+        public:
+          /// This lvalue as a call
+          ast::rCall call();
+    impl inside: |2
+          ast::rCall LValue::call()
+          {
+            ast::rCall res = dynamic_cast<ast::Call*>(this);
+            passert("Invalid call: " << *this, res);
+            return res;
+          }
+
 Call:
   desc: /// Function calls, and attribute look-ups.
-  super: Exp
+  super: LValue
   attributes:
     - target:
         type: rExp
@@ -726,11 +749,6 @@ Call:
     - name:
         type: 'libport::Symbol'
         desc: Name of the called function
-    - arguments:
-        type: 'exps_type*'
-        access: rwW
-        mandatory: false
-        desc: Arguments passed to the function
   inline:
     header inside: |2
         public:
@@ -766,6 +784,17 @@ Call:
             << libport::decindent
             << ")";
        }'
+
+MetaLValue:
+  desc: /// A node which is a placeholder for a Call.
+  super: LValue
+  attributes:
+    - id:
+        type: unsigned
+        desc: The index of the meta-variable.
+  printer:
+    - '"%lvalue:"'
+    - $id
 
 Lazy:
   desc:
@@ -922,7 +951,7 @@ Write:
   super: Exp
   attributes:
     - what:
-        type: rCall
+        type: rLValue
         desc: What is being declared
         access: r
     - value:
@@ -1040,7 +1069,7 @@ Unary:
   desc: /// Expressions with a expression
   attributes:
     - exp:
-        type: rCall
+        type: rLValue
         desc: Operand
         access: r
 
@@ -1085,7 +1114,7 @@ Delete:
   super: Exp
   attributes:
     - what:
-        type: rCall
+        type: rLValue
   printer:
     - '"delete "'
     - ~what

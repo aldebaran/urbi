@@ -18,7 +18,7 @@ namespace rewrite
 
   /// Build 'var <s>'
   ast::rExp
-  Rescoper::make_declaration(const ast::loc& l, ast::rConstCall what)
+  Rescoper::make_declaration(const ast::loc& l, ast::rConstLValue what)
   {
     static ast::ParametricAst a("nil");
     return new ast::Declaration(l, recurse(what), exp(a), 0);
@@ -26,7 +26,7 @@ namespace rewrite
 
   /// Build '<s> = <value>'
   ast::rExp
-  Rescoper::make_assignment(const ast::loc& l, ast::rConstCall what,
+  Rescoper::make_assignment(const ast::loc& l, ast::rConstLValue what,
                             ast::rConstExp value, ast::rConstExp modifiers)
   {
     return new ast::Assignment(l, recurse(what), recurse(value),
@@ -47,7 +47,7 @@ namespace rewrite
         subject.unsafe_cast<const ast::Declaration>())
     {
       ast::loc l = dec->location_get();
-      ast::rConstCall call = dec->what_get();
+      ast::rConstLValue call = dec->what_get();
       nary->push_back(make_declaration(l, call),
                       ast::flavor_pipe);
       return make_assignment(l, call, dec->value_get(), dec->modifiers_get());

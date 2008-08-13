@@ -104,7 +104,7 @@ namespace parser
   ast_call (const yy::location& l,
             ast::rExp target, libport::Symbol method, ast::exps_type* args)
   {
-    ast::rCall res = new ast::Call(l, target, method, args);
+    ast::rCall res = new ast::Call(l, args, target, method);
     return res;
   }
 
@@ -263,8 +263,8 @@ namespace parser
       static ast::ParametricAst a(
         "if (Pattern.new(%exp:1).match(%exp:2)) %exp:3 else %exp:4");
       a % c.first
-        % ast_call(l, switched)
-        % c.second
+        % ast_exp(ast_call(l, switched))
+        % ast_exp(c.second)
         % inner;
       inner = ast::exp(a);
     }

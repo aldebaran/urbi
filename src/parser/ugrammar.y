@@ -515,7 +515,7 @@ protos:
 stmt:
   "class" lvalue protos block
     {
-      $$ = ast_class(@2, $2, $3, $4);
+      $$ = ast_class(@2, $2.cast<ast::Call>(), $3, $4);
     }
 ;
 
@@ -698,14 +698,14 @@ exp:
 stmt:
   lvalue "->" id "=" exp
     {
-      $$ = new ast::PropertyWrite(@$, $1, $3, $5);
+      $$ = new ast::PropertyWrite(@$, $1->call(), $3, $5);
     }
 ;
 
 exp:
   lvalue "->" id
     {
-      $$ = new ast::PropertyRead(@$, $1, $3);
+      $$ = new ast::PropertyRead(@$, $1->call(), $3);
     }
 ;
 
@@ -995,7 +995,7 @@ exp:
 | Function calls, messages.  |
 `---------------------------*/
 
-%type <ast::rCall> lvalue call;
+%type <ast::rLValue> lvalue call;
 lvalue:
 	  id	{ $$ = ast_call(@$, $1); }
 | exp "." id	{ $$ = ast_call(@$, $1, $3); }
@@ -1313,7 +1313,18 @@ formals:
 
 %token TOK_PERCENT_EXP_COLON "%exp:";
 exp:
-  "%exp:" "integer"    { $$ = new ast::MetaExp(@$, $2); }
+  "%exp:" "integer"
+  {
+    $$ = new ast::MetaExp(@$, $2);
+  }
+;
+
+%token TOK_PERCENT_LVALUE_COLON "%lvalue:";
+lvalue:
+  "%lvalue:" "integer"
+  {
+    $$ = new ast::MetaLValue(@$, new ast::exps_type(), $2);
+  }
 ;
 
 
