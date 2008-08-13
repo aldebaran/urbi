@@ -9,7 +9,6 @@
 
 namespace std
 {
-
   ostream&
   operator<< (ostream& o, const parser::case_type& c)
   {
@@ -34,6 +33,7 @@ namespace std
 
 namespace parser
 {
+  using ast::ParametricAst;
 
   ast::rExp
   desugar(::parser::Tweast& t)
@@ -212,21 +212,6 @@ namespace parser
     return ast_scope(l, ast_bin(l, op, init, while_loop));
   }
 
-
-  ast::rCall
-  ast_lvalue_once(ast::rCall lvalue, Tweast& tweast)
-  {
-    if (!lvalue->target_implicit())
-    {
-      libport::Symbol tmp = libport::Symbol::fresh("__tmp__");
-      const yy::location& l = lvalue->location_get();
-      tweast << "var " << tmp << " = " << lvalue->target_get() << "|";
-      lvalue = ast_call(l, ast_call(l, tmp), lvalue->name_get());
-    }
-    return lvalue;
-  }
-
-
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope
   ast_scope(const yy::location& l, ast::rExp target, ast::rExp e)
@@ -275,4 +260,33 @@ namespace parser
     ast::rExp res = ::parser::parse(tweast)->ast_get();
     return res;
   }
+
+  ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue)
+  {
+    ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL($tmp));
+
+    if (lvalue->call()->target_implicit())
+      return lvalue.get();
+    else
+      return ast_call(lvalue->location_get(), tmp, lvalue->call()->name_get());
+  }
+
+  ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e)
+  {
+    static ParametricAst wrap(
+      "{"
+      "var '$tmp' = %exp:1;"
+      "%exp:2;"
+      "}"
+      );
+
+    if (lvalue->call()->target_implicit())
+      return e;
+    else
+    {
+      wrap % lvalue->call()->target_get() % e;
+      return exp(wrap);
+    }
+  }
+
 }
