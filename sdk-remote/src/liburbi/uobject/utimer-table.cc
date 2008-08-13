@@ -5,6 +5,6 @@
 namespace urbi
 {
   // Timer and update maps.
-  STATIC_INSTANCE(UTimerTable, timermap);
-  STATIC_INSTANCE(UTimerTable, updatemap);
+  STATIC_INSTANCE_(UTimerTable, timermap);
+  STATIC_INSTANCE_(UTimerTable, updatemap);
 }

@@ -23,16 +23,16 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 
 namespace urbi
 {
-  STATIC_INSTANCE(UStartlist, objectlist);
-  STATIC_INSTANCE(UStartlistHub, objecthublist);
+  STATIC_INSTANCE_(UStartlist, objectlist);
+  STATIC_INSTANCE_(UStartlistHub, objecthublist);
 
   // Lists and hashtables used.
-  STATIC_INSTANCE(UTable, accessmap);
-  STATIC_INSTANCE(UTable, eventendmap);
-  STATIC_INSTANCE(UTable, eventmap);
-  STATIC_INSTANCE(UTable, functionmap);
-  STATIC_INSTANCE(UTable, monitormap);
-  STATIC_INSTANCE(UVarTable, varmap);
+  STATIC_INSTANCE_(UTable, accessmap);
+  STATIC_INSTANCE_(UTable, eventendmap);
+  STATIC_INSTANCE_(UTable, eventmap);
+  STATIC_INSTANCE_(UTable, functionmap);
+  STATIC_INSTANCE_(UTable, monitormap);
+  STATIC_INSTANCE_(UVarTable, varmap);
 
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
