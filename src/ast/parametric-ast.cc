@@ -21,6 +21,23 @@ namespace ast
     , effective_location_()
     , count_(0)
   {
+    /*  Simplify the result as much as possible
+     *
+     *  Typically, even when parsing "42", the result is included in a
+     *  useless singleton nary and a statement.
+     */
+
+    // FIXME: Use a static cast
+    ast::rConstNary nary = ast_.unsafe_cast<const ast::Nary>();
+    passert("ParametricAst result is not a Nary", res);
+
+    // Remove useless nary and statement if there.s only one child
+    if (nary->children_get().size() == 1)
+    {
+      ast::rConstStmt stmt = nary->children_get().front().unsafe_cast<const ast::Stmt>();
+      passert("ParametricAst's Nary child isn't a statement", res);
+      ast_ = stmt->expression_get();
+    }
   }
 
   ParametricAst::~ParametricAst()
