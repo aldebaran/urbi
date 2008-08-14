@@ -9,7 +9,7 @@
 
 namespace flower
 {
-
+  using ast::ParametricAst;
   using libport::Finally;
   using libport::scoped_set;
 
@@ -45,30 +45,32 @@ namespace flower
     finally << scoped_set(in_loop_, true)
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
-    super_type::visit(code);
 
-    // Do nothing if neither break nor continue.
-    if (!has_break_ && !has_continue_)
-      return;
+    ast::rExp test = recurse(code->test_get());
+    ast::rExp body = recurse(code->body_get()->body_get());
 
-    ast::rWhile copy = result_.unsafe_cast<ast::While>();
-    parser::Tweast tweast;
+    static ParametricAst brk(
+      "var loopBreakTag = new Tag |"
+      "loopBreakTag: %exp:1");
 
-    if (has_break_)
-      tweast << "var loopBreakTag = new Tag | "
-	     << "loopBreakTag:";
+    static ParametricAst cont(
+      "var loopContinueTag = new Tag |"
+      "loopContinueTag: %exp:1");
 
-    tweast << "while (" << copy->test_get() << ")";
+    static ParametricAst whle(
+      "while (%exp:1) %exp:2");
+
+    ast::rExp res = body;
 
     if (has_continue_)
-      tweast << "{ var loopContinueTag = new Tag | "
-	     << "loopContinueTag:"
-	     << ast::rExp(copy->body_get())
-	     << "}";
-    else
-      tweast << ast::rExp(copy->body_get());
+      res = exp(cont % res);
+    res = exp(whle % test % res);
+    // FIXME: Use a static cast
+    res.unsafe_cast<ast::While>()->flavor_set(code->flavor_get());
+    if (has_break_)
+      res = exp(brk % res);
 
-    result_ = parser::parse(tweast)->ast_get();
+    result_ = res;
   }
 
   void

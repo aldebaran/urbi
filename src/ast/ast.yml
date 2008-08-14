@@ -301,7 +301,11 @@ Do:
 Flavored:
   super: Exp
   attributes:
-    - flavor: { type: flavor_type, desc: Execution model }
+    - flavor:
+        type: flavor_type
+        desc: Execution model
+        access: rW
+
 
 Message:
   super: Exp
@@ -494,7 +498,7 @@ Nary:
         {
           if (rStmt b = back<Stmt>())
           {
-            b->flavor_get () = k;
+            b->flavor_set(k);
             b->location_set(b->location_get () + l);
           }
           location_adjust();
@@ -504,7 +508,7 @@ Nary:
         Nary::back_flavor_set (flavor_type k)
         {
           if (rStmt b = back<Stmt>())
-             b->flavor_get () = k;
+             b->flavor_set(k);
         }
 
         flavor_type
