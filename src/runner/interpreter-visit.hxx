@@ -354,13 +354,13 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Pipe* e)
   {
-    // lhs
-    JAECHO ("lhs", e->lhs_get ());
-    operator() (e->lhs_get().get());
+    object::rObject res;
 
-    // rhs:  start the execution immediately.
-    JAECHO ("rhs", e->rhs_get ());
-    return operator() (e->rhs_get().get());
+    // Run all child without yielding
+    foreach (const ast::rConstExp& child, e->children_get())
+      res = operator()(child.get());
+
+    return res;
   }
 
 

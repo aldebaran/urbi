@@ -523,36 +523,23 @@ Nary:
           location_adjust();
         }
 
-Binary:
-  super: Exp
-  desc: /// Expressions with two sub expressions
-  attributes:
-    - lhs:
-        type: 'rExp'
-        desc: Left-hand side expression
-        access: rwW
-    - rhs:
-        type: 'rExp'
-        desc: Right-hand side expression
-        access: rwW
-
-And:
+Composite:
   super: Exp
   attributes:
     - children:
         type:   'exps_type'
         access: rwW
         desc:   Subexpressions
+
+And:
+  super: Composite
   printer:
     - 'libport::separate(n->children_get(), " & ")'
 
 Pipe:
-  super: Binary
+  super: Composite
   printer:
-    - ~lhs
-    - '" |"'
-    - libport::iendl
-    - ~rhs
+    - 'libport::separate(n->children_get(), " | ")'
 
 If:
   super: Exp

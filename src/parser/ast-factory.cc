@@ -58,8 +58,19 @@ namespace parser
     switch (op)
     {
     case ast::flavor_pipe:
-      res = new ast::Pipe (l, lhs, rhs);
+    {
+      ast::rPipe pipe;
+      if (pipe = lhs.unsafe_cast<ast::Pipe>())
+        pipe->children_get().push_back(rhs);
+      else
+      {
+        pipe = new ast::Pipe(l, ast::exps_type());
+        pipe->children_get().push_back(lhs);
+        pipe->children_get().push_back(rhs);
+      }
+      res = pipe;
       break;
+    }
     case ast::flavor_and:
     {
       ast::rAnd rand;

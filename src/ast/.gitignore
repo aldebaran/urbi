@@ -15,9 +15,6 @@ ast.cc
 ast.dot
 ast.hh
 ast.hxx
-binary.cc
-binary.hh
-binary.hxx
 binding.cc
 binding.hh
 binding.hxx
@@ -36,6 +33,9 @@ cloner.stamp
 closure.cc
 closure.hh
 closure.hxx
+composite.cc
+composite.hh
+composite.hxx
 continue.cc
 continue.hh
 continue.hxx
