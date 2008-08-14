@@ -443,17 +443,25 @@ Nary:
           }
         }
 
+        static ast::Stmt* stmt(ast::Exp* e, flavor_type f)
+        {
+          if (ast::Stmt* s = dynamic_cast<ast::Stmt*>(e))
+            return s;
+          else
+            return new Stmt(e->location_get(), f, e);
+        }
+
         void
         Nary::push_back(rExp e, flavor_type f)
         {
-          children_->push_back(new Stmt(e->location_get(), f, e));
+          children_->push_back(stmt(e.get(), f));
           location_adjust();
         }
 
         void
         Nary::push_front(rExp e, flavor_type f)
         {
-          children_->push_front(new Stmt(e->location_get(), f, e));
+          children_->push_front(stmt(e.get(), f));
           location_adjust();
         }
 
