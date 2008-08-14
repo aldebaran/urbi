@@ -253,11 +253,13 @@ namespace runner
 
       JAECHO("child", c);
 
-      if (c.unsafe_cast<const ast::Stmt>() &&
-	  c.unsafe_cast<const ast::Stmt>()->flavor_get() == ast::flavor_comma)
+      const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
+      const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
+
+      if (stmt && stmt->flavor_get() == ast::flavor_comma)
       {
 	// The new runners are attached to the same tags as we are.
-	Interpreter* subrunner = new Interpreter(*this, eval(c));
+	Interpreter* subrunner = new Interpreter(*this, operator()(exp));
 	// If the subrunner throws an exception, propagate it here ASAP, unless
 	// we are at the top level.
 	if (!e->toplevel_get())
@@ -272,7 +274,7 @@ namespace runner
 	{
           // We do not use operator() to avoid duplicating the catch
           // of UrbiExceptions
-          res = c->eval(*this);
+          res = operator()(exp);
 	  // We need to keep checking for void here because it can not be passed
 	  // to the << function
 	  if (e->toplevel_get()
