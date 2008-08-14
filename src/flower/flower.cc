@@ -144,12 +144,16 @@ namespace flower
     if (!in_function_)
       errors_.error(ret->location_get(), "return: outside a function");
 
-    parser::Tweast tweast;
-    ast::rExp exp = ret->value_get();
-    tweast << "returnTag.stop";
-    if (exp)
-      tweast << "(" << exp << ")";
-    result_ = parser::parse(tweast)->ast_get();
+    ast::rExp e = ret->value_get();
+
+    static ParametricAst simple("returnTag.stop");
+    static ParametricAst valued("returnTag.stop(%exp:1)");
+
+    if (e)
+      result_ = exp(valued % e);
+    else
+      result_ = exp(simple);
+
     has_return_ = true;
   }
 
