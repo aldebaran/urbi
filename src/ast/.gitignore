@@ -54,6 +54,9 @@ delete.hxx
 do.cc
 do.hh
 do.hxx
+dot-printer.cc
+dot-printer.hh
+dot-printer.stamp
 exp.cc
 exp.hh
 exp.hxx
@@ -170,7 +173,6 @@ unary.cc
 unary.hh
 unary.hxx
 visitor.hh
-visitor.hxx
 visitor.stamp
 while.cc
 while.hh

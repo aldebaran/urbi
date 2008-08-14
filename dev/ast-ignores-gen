@@ -27,6 +27,9 @@ ignores = \
   "default-visitor.hh",
   "default-visitor.hxx",
   "default-visitor.stamp",
+  "dot-printer.hh",
+  "dot-printer.cc",
+  "dot-printer.stamp",
   "fwd.hh",
   "fwd.stamp",
   "graph.stamp",
@@ -38,7 +41,6 @@ ignores = \
   "pretty-printer.hh",
   "pretty-printer.stamp",
   "visitor.hh",
-  "visitor.hxx",
   "visitor.stamp",
 ];
 

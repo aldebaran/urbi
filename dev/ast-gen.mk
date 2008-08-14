@@ -82,4 +82,8 @@ $(ast_basedir)visitor.hh: $(ast_srcdir)/visitor.stamp
 EXTRA_DIST += $(ast_basedir)pretty-printer.stamp
 $(ast_basedir)pretty-printer.hh $(ast_basedir)pretty-printer.hxx $(ast_basedir)pretty-printer.cc: $(ast_srcdir)/pretty-printer.stamp
 
+## Dot
+EXTRA_DIST += $(ast_basedir)dot-printer.stamp
+$(ast_basedir)dot-printer.hh $(ast_basedir)dot-printer.cc: $(ast_srcdir)/dot-printer.stamp
+
 MAINTAINERCLEANFILES += $(BUILT_SOURCES_ast)
