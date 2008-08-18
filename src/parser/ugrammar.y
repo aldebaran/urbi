@@ -83,6 +83,7 @@
   using parser::ast_scope;
   using parser::ast_string;
   using parser::ast_switch;
+  using parser::ast_whenever_event;
   using parser::desugar;
 
 #include <parser/parse.hh>
@@ -877,32 +878,27 @@ else_stmt:
 stmt:
   "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
     {
-      $$ = DESUGAR("Control.whenever_(" << $3 << ", "
-                   << $5 << ", " << $6 << ")");
+      static ast::ParametricAst desugar(
+        "Control.whenever_(%exp:1, %exp:2, %exp:3)");
+      $$ = exp(desugar % $3 % $5 % $6);
     }
 | "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
     {
-      libport::Symbol s = libport::Symbol::fresh("_whenever_");
-      $$ = DESUGAR("var " << s << " = persist (" << $3 << ","
-                   << $5 << ") | Control.whenever_(" << s << ".val, "
-                   << $7 << ", " << $8 << ")");
+      static ast::ParametricAst desugar(
+        "var '$whenever' = persist(%exp:1, %exp:2) |"
+        "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'"
+        );
+      $$ = exp(desugar % $3 % $5 % $7 % $8);
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = DESUGAR("whenever(?(" << $3.first << ")(" << $3.second << "))"
-                   << $5 << " else {}");
+      $$ = ast_whenever_event(@$, $3.first,
+                              ast::rExp(new ast::List(@3, $3.second)), $5);
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
-      libport::Symbol e = libport::Symbol::fresh("_event_");
-      $$ = DESUGAR("detach({" << $3.first << ".onEvent(closure ("
-                   << e << ") {"
-                   << "if (Pattern.new("
-                   << ast::rExp(new ast::List(@3, $3.second))
-                   << ").match("
-                   << e << ".payload)) detach({while (true){" << $5
-                   << " | if(!" << e << ".active) break } | " << $7
-                   << "})})})");
+      $$ = ast_whenever_event(@$, $3.first,
+                              ast::rExp(new ast::List(@3, $3.second)), $5, $7);
     }
 ;
 

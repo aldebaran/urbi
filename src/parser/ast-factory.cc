@@ -95,6 +95,38 @@ namespace parser
     return exp(desugar % event % payload % at % onleave);
   }
 
+  ast::rExp
+  ast_whenever_event(const ast::loc& loc,
+                     ast::rExp event, ast::rExp payload,
+                     ast::rExp body, ast::rExp onleave)
+  {
+    if (!onleave)
+      onleave = new ast::Noop(loc, 0);
+
+    ast::ParametricAst desugar(
+      "detach("
+      "{"
+      "%exp:1.onEvent("
+      "  closure ('$whenever')"
+      "  {"
+      "    if (Pattern.new(%exp:2).match('$whenever'.payload))"
+      "      detach("
+      "        {"
+      "          while (true)"
+      "          {"
+      "            %exp:3 |"
+      "            if(!'$whenever'.active)"
+      "              break"
+      "          } |"
+      "          %exp:4"
+      "        })"
+      "  })"
+      "})");
+
+    return exp(desugar % event
+               % payload
+               % body % onleave);
+  }
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op must be & or |.

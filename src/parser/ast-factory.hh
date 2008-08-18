@@ -25,7 +25,13 @@ namespace parser
   ast::rExp
   ast_at_event(const yy::location& loc,
                ast::rExp event, ast::rExp payload,
-               ast::rExp at, ast::rExp onleave = 0);
+               ast::rExp body, ast::rExp onleave = 0);
+
+  /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
+  ast::rExp
+  ast_whenever_event(const yy::location& loc,
+                     ast::rExp event, ast::rExp payload,
+                     ast::rExp body, ast::rExp onleave = 0);
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
