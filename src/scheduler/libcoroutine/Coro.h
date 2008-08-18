@@ -59,9 +59,7 @@
 	#define CORO_IMPLEMENTATION "setjmp"
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 
 typedef struct Coro Coro;
 
@@ -105,7 +103,4 @@ CORO_API void Coro_startCoro_(Coro *self, Coro *other, void *context, CoroStartC
 CORO_API void Coro_switchTo_(Coro *self, Coro *next);
 CORO_API void Coro_setup(Coro *self, void *arg); // private
 
-#ifdef __cplusplus
-}
-#endif
 #endif
