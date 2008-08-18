@@ -50,7 +50,7 @@ namespace object
 
 namespace object
 {
-  libport::Symbol symbol_get(const std::string& s);
+  libport::Symbol symbol_get(const std::string& s = "");
 }
 
 #  define SYMBOL(Sym) ::object::symbol_get(#Sym)
