@@ -54,6 +54,7 @@ typedef long long int64_t;
 // Enable fibers
 #define _WIN32_WINNT 0x0400
 
+#include <libport/windows.hh>
 // this also includes windows.h
 #include <winsock2.h>
 
