@@ -780,15 +780,24 @@ stmt:
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      libport::Symbol ex = libport::Symbol::fresh("freezeif");
-      libport::Symbol in = libport::Symbol::fresh("freezeif");
-      $$ = DESUGAR
-        ("var " << ex << " = " << "new Tag (\"" << ex << "\")|"
-         << "var " << in << " = " << "new Tag (\"" << in << "\")|"
-         << ex << " : { "
-         << "at(" << $3 << ") " << in << ".freeze onleave "
-         << in << ".unfreeze|" << in << " : { " << $5 << "| "
-         << ex << ".stop } }");
+      ast::ParametricAst desugar(
+        "var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
+        "var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
+        "'$freezeif_ex' :"
+        "{"
+        "  at(%exp:1)"
+        "    '$freezeif_ex'.freeze"
+        "  onleave"
+        "    '$freezeif_ex'.unfreeze |"
+        "  '$freezeif_in' :"
+        "  {"
+        "    %exp:2 |"
+        "    '$freezeif_ex'.stop |"
+        "    "
+        "  }"
+        "}"
+        );
+      $$ = exp(desugar % $3 % $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
