@@ -14,6 +14,19 @@ namespace parser
   /// Return the parsing of \a Tweast.
   ast::rExp desugar(::parser::Tweast& t);
 
+  /// at (%cond ~ %duration) {%body} onleave {%onleave}
+  ast::rExp
+  ast_at(const yy::location& loc,
+         ast::rExp cond,
+         ast::rExp at, ast::rExp onleave = 0,
+         ast::rExp duration = 0);
+
+  /// at (?(%event)(%payload) {%body} onleave {%onleave}
+  ast::rExp
+  ast_at_event(const yy::location& loc,
+               ast::rExp event, ast::rExp payload,
+               ast::rExp at, ast::rExp onleave = 0);
+
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
   ast::rExp

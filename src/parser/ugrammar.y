@@ -73,7 +73,8 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
-  using parser::desugar;
+  using parser::ast_at;
+  using parser::ast_at_event;
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
@@ -82,6 +83,7 @@
   using parser::ast_scope;
   using parser::ast_string;
   using parser::ast_switch;
+  using parser::desugar;
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
@@ -731,51 +733,33 @@ stmt:
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      static ast::ParametricAst
-        at("Control.at_(%exp:1, detach(%exp:2), nil)");
-      $$ = exp (at % $3 % $5);
+      $$ = ast_at(@$, $3, $5);
     }
 | "at" "(" exp ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      static ast::ParametricAst
-        at("Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
-      $$ = exp (at % $3 % $5 % $7);
+      $$ = ast_at(@$, $3, $5, $7);
     }
 | "at" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      libport::Symbol s = libport::Symbol::fresh("_at_");
-      $$ = DESUGAR("var " << s << " = persist (" << $3 << ","
-                   << $5 << ") | at( " << s << ") " << $7);
+      $$ = ast_at(@$, $3, $7, 0, $5);
     }
 | "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      libport::Symbol s = libport::Symbol::fresh("_at_");
-      $$ = DESUGAR("var " << s << " = persist (" << $3 << ","
-                   << $5 << ") | at( " << s << ") "
-                   << $7 << " onleave " << $9 << "");
-    }
-| "at" "(" event_match ")" nstmt "onleave" nstmt
-    {
-      libport::Symbol e = libport::Symbol::fresh("_event_");
-      $$ = DESUGAR("detach({" << $3.first << ".onEvent(closure ("
-                   << e << ") {"
-                   << "if (Pattern.new("
-                   << ast::rExp(new ast::List(@3, $3.second))
-                   << ").match("
-                   << e << ".payload)) {" << $5
-                   << "| waituntil (!" << e << ".active) | " << $7
-                   << "}})})");
+      $$ = ast_at(@$, $3, $7, $9, $5);
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = DESUGAR("at(?(" << $3.first << ")(" << $3.second << "))"
-                   << $5 << " onleave {}");
+      $$ = ast_at_event(@$, $3.first, new ast::List(@3, $3.second), $5);
+    }
+| "at" "(" event_match ")" nstmt "onleave" nstmt
+    {
+      $$ = ast_at_event(@$, $3.first, new ast::List(@3, $3.second), $5, $7);
     }
 | "every" "(" exp ")" nstmt
     {

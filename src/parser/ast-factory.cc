@@ -44,6 +44,57 @@ namespace parser
     return res;
   }
 
+  ast::rExp
+  ast_at(const yy::location& loc,
+         ast::rExp cond,
+         ast::rExp at, ast::rExp onleave,
+         ast::rExp duration)
+  {
+    if (!onleave)
+      onleave = new ast::Noop(loc, 0);
+
+    if (duration)
+    {
+      static ast::ParametricAst desugar(
+        "var '$at' = persist(%exp:1, %exp:2) |"
+        "at ('$at') %exp:3 onleave %exp:4");
+
+      return exp(desugar % cond % duration % at % onleave);
+    }
+    else
+    {
+      static ast::ParametricAst desugar(
+        "Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
+
+      return exp(desugar % cond % at % onleave);
+    }
+  }
+
+  ast::rExp
+  ast_at_event(const ast::loc& loc,
+               ast::rExp event, ast::rExp payload,
+               ast::rExp at, ast::rExp onleave)
+  {
+    if (!onleave)
+      onleave = new ast::Noop(loc, 0);
+
+    static ast::ParametricAst desugar(
+      "detach("
+      "{"
+      "  %exp:1.onEvent(closure ('$at')"
+      "  {"
+      "    if (Pattern.new(%exp:2).match('$at'.payload))"
+      "    {"
+      "      %exp:3 |"
+      "      waituntil(!'$at'.active) |"
+      "      %exp:4"
+      "    }"
+      "  })"
+      "})");
+
+    return exp(desugar % event % payload % at % onleave);
+  }
+
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op must be & or |.
