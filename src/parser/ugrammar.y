@@ -843,16 +843,20 @@ stmt:
     }
 | "waituntil" "(" exp "~" exp ")"
     {
-      libport::Symbol s = libport::Symbol::fresh("_waituntil_");
-      $$ = DESUGAR("{var " << s << " = persist (" << $3 << ","
-                   << $5 << ") | waituntil(" << s << "())}");
+      static ast::ParametricAst desugar(
+        "{"
+        "  var '$waituntil' = persist(%exp:1, %exp:2) |"
+        "  waituntil('$waituntil'())"
+        "}"
+        );
+      $$ = exp(desugar % $3 % $5);
     }
 | "waituntil" "(" event_match ")"
     {
-      libport::Symbol s = libport::Symbol::fresh("_waituntil_");
-      $$ = DESUGAR("var " << s << " = Pattern.new("
-                   << ast::rExp(new ast::List(@3, $3.second))
-                   << ") | " << $3.first << ".'waituntil'(" << s << ")");
+      static ast::ParametricAst desugar(
+        "%exp:2.'waituntil'(Pattern.new(%exp:1))"
+        );
+      $$ = exp(desugar % new ast::List(@3, $3.second) % $3.first);
     }
 ;
 
