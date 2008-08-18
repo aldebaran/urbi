@@ -486,6 +486,12 @@ namespace runner
     return object::void_class;
   }
 
+// MSVC seems to disregard the noreturn attribute of what pabort expands to.
+#ifdef _MSC_VER
+# define INVALID_RET return object::void_class;
+#else
+# define INVALID_RET
+#endif
 
   // Invalid nodes
 #define INVALID(Node)                                      \
@@ -494,6 +500,7 @@ namespace runner
   {                                                        \
     static_cast<void>(n);                                  \
     pabort("Invalid node in the Interpreter: " << *n);     \
+    INVALID_RET                                            \
   }                                                        \
 
   INVALID(Assignment);
@@ -518,7 +525,7 @@ namespace runner
   INVALID(Return);
 
 #undef INVALID
-
+#undef INVALID_RET
 }
 
 
