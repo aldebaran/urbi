@@ -10,6 +10,7 @@
 
 #include <object/code-class.hh>
 #include <object/list-class.hh>
+#include <object/string-class.hh>
 #include <object/object.hh>
 #include <object/urbi-exception.hh>
 

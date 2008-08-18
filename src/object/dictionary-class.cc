@@ -7,6 +7,7 @@
 
 #include <object/dictionary-class.hh>
 #include <object/list-class.hh>
+#include <object/string-class.hh>
 
 namespace object
 {
