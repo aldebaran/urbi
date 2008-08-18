@@ -13,9 +13,9 @@ namespace flower
   using libport::scoped_set;
 
   Flower::Flower()
-  {
-    in_function_ = in_loop_ = false;
-  }
+    : in_function_(false)
+    , in_loop_(false)
+  {}
 
   void
   Flower::visit(const ast::Break* b)
