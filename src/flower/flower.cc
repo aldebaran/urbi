@@ -5,7 +5,6 @@
 #include <object/urbi-exception.hh>
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
-#include <parser/tweast.hh>
 
 namespace flower
 {
@@ -80,45 +79,51 @@ namespace flower
     finally << scoped_set(in_loop_, true)
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
-    super_type::visit(code);
 
-    parser::Tweast tweast;
+    ast::rExp list = recurse(code->list_get());
+    ast::rExp body = recurse(code->body_get());
 
-    ast::rForeach copy = result_.unsafe_cast<ast::Foreach>();
-    if (has_break_)
-      tweast << "var loopBreakTag = new Tag | "
-	     << "loopBreakTag:";
+    static ParametricAst brk(
+      "var loopBreakTag = new Tag |"
+      "loopBreakTag: %exp:1");
 
-    tweast << copy->list_get();
+    static ParametricAst cont(
+      "var loopContinueTag = new Tag |"
+      "loopContinueTag: %exp:1");
+
+    static ParametricAst each("%exp:1 . %id:2 (%exp:3)");
+    // 'fillme' is a placeholder filled later. Parametric ASTs can't
+    // parametrize formal arguments for now.
+    static ParametricAst closure("closure (fillme) {%exp:1}");
+
+    each % list;
 
     switch (code->flavor_get())
     {
     case ast::flavor_none:
     case ast::flavor_semicolon:
     case ast::flavor_pipe:
-      tweast << ".each(";
+      each % SYMBOL(each);
       break;
     case ast::flavor_and:
-      tweast << ".'each&'(";
+      each % SYMBOL(each_AMPERSAND);
       break;
     case ast::flavor_comma:
       pabort("Invalid flavor for 'for ... in': " << code->flavor_get());
     }
 
-    tweast << "closure(" << copy->index_get()->what_get() << ") {";
-
     if (has_continue_)
-      tweast << "var loopContinueTag = new Tag | "
-	     << "loopContinueTag: {";
+      body = exp(cont % body);
 
-    tweast << copy->body_get()->body_get();
+    ast::rClosure c = (closure % body).result<ast::Closure>();
+    // Rename the 'fillme' closure formal argument
+    c->formals_get()->front()->what_set(code->index_get()->what_get());
+    each % ast::rExp(c);
 
-    if (has_continue_)
-      tweast << "}";
-
-    tweast << "})";
-
-    result_ = parser::parse(tweast)->ast_get();
+    if (has_break_)
+      result_ = exp(brk % exp(each));
+    else
+      result_ = exp(each);
   }
 
   void

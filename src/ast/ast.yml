@@ -887,8 +887,9 @@ LocalWrite:
   super: Exp
   attributes:
     - what:
-        type: 'libport::Symbol'
-        desc: Name of the symbol being declared or updated.
+        type:   'libport::Symbol'
+        desc:   Name of the symbol being declared or updated.
+        access: rW
     - value:
         type: rExp
         desc: Initialization value.
