@@ -1009,7 +1009,8 @@ call:
   lvalue args
     {
       std::swap($$, $1);
-      $$->arguments_set($2);
+      // FIXME: Use a static cast
+      $$.unsafe_cast<ast::LValueArgs>()->arguments_set($2);
       $$->location_set(@$);
     }
 ;
@@ -1332,6 +1333,15 @@ lvalue:
   exp "." "%id:" "integer"
   {
     $$ = new ast::MetaCall(@$, 0, $1, $4);
+  }
+;
+
+%token TOK_PERCENT_EXPS_COLON "%exps:";
+call:
+  lvalue "(" "%exps:" "integer" ")"
+  {
+    assert(!lvalue->arguments_get());
+    $$ = new ast::MetaArgs(@$, $1, $4);
   }
 ;
 

@@ -716,12 +716,6 @@ List:
 
 LValue:
   super: Exp
-  attributes:
-    - arguments:
-        type: 'exps_type*'
-        access: rwW
-        mandatory: false
-        desc: Arguments passed to the function
   inline:
     header prologue: |2
       # include <ast/print.hh>
@@ -737,9 +731,19 @@ LValue:
             return res;
           }
 
+LValueArgs:
+  super: LValue
+  attributes:
+    - arguments:
+        type: 'exps_type*'
+        access: rwW
+        mandatory: false
+        desc: Arguments passed to the function
+
+
 Call:
   desc: /// Function calls, and attribute look-ups.
-  super: LValue
+  super: LValueArgs
   attributes:
     - target:
         type: rExp
@@ -786,7 +790,7 @@ Call:
 
 MetaLValue:
   desc: /// A node which is a placeholder for a Call.
-  super: LValue
+  super: LValueArgs
   attributes:
     - id:
         type: unsigned
@@ -794,6 +798,21 @@ MetaLValue:
   printer:
     - '"%lvalue:"'
     - $id
+
+MetaArgs:
+  super: LValue
+  attributes:
+    - lvalue:
+        type: rLValue
+        desc: Target metavalue
+    - id:
+        type: unsigned
+        desc: Index of the arguments meta-variable
+  printer:
+    - ~lvalue
+    - '"(%exps:"'
+    - $id
+    - '")"'
 
 Lazy:
   desc:
@@ -1120,7 +1139,7 @@ Delete:
     - ~what
 
 MetaCall:
-  super: LValue
+  super: LValueArgs
   attributes:
     - target:
         type: rExp

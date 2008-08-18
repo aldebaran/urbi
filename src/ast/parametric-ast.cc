@@ -17,6 +17,7 @@ namespace ast
     : exp_map_type("exp")
     , lvalue_map_type("lvalue")
     , id_map_type("id")
+    , exps_map_type("exps")
     , ast_(parser::parse(s)->ast_xget())
     , effective_location_()
     , count_(0)
@@ -46,6 +47,24 @@ namespace ast
   }
 
   void
+  ParametricAst::visit(const ast::MetaArgs* e)
+  {
+    ast::rLValue lvalue = recurse(e->lvalue_get());
+    lvalue->call()->arguments_set(exps_map_type::take_(e->id_get () - 1));
+    result_ = lvalue;
+  }
+
+  void
+  ParametricAst::visit(const ast::MetaCall* e)
+  {
+    libport::Symbol name = id_map_type::take_(e->id_get () - 1);
+
+    result_ = new ast::Call(e->location_get(),
+                            recurse_collection(e->arguments_get()),
+                            recurse(e->target_get()), name);
+  }
+
+  void
   ParametricAst::visit(const ast::MetaExp* e)
   {
     result_ = exp_map_type::take_(e->id_get () - 1);
@@ -59,22 +78,13 @@ namespace ast
     assert(result_);
   }
 
-  void
-  ParametricAst::visit(const ast::MetaCall* e)
-  {
-    libport::Symbol name = id_map_type::take_(e->id_get () - 1);
-
-    result_ = new ast::Call(e->location_get(),
-                            recurse_collection(e->arguments_get()),
-                            recurse(e->target_get()), name);
-  }
-
   bool
   ParametricAst::empty() const
   {
     return exp_map_type::empty_()
       && lvalue_map_type::empty_()
-      && id_map_type::empty_();
+      && id_map_type::empty_()
+      && exps_map_type::empty_();
   }
 
   void
@@ -99,6 +109,7 @@ namespace ast
       << static_cast<const exp_map_type&>(*this)
       << static_cast<const lvalue_map_type&>(*this)
       << static_cast<const id_map_type&>(*this)
+      << static_cast<const exps_map_type&>(*this)
       << libport::decendl;
   }
 
@@ -160,6 +171,16 @@ namespace ast
     passert(libport::deref << id, unique_(id));
 #endif
     id_map_type::append_(count_, id);
+    return *this;
+  }
+
+  ParametricAst&
+  ParametricAst::operator% (ast::exps_type* exps)
+  {
+#ifndef NDEBUG
+    passert(libport::deref << exps, unique_(exps));
+#endif
+    exps_map_type::append_(count_, exps);
     return *this;
   }
 
