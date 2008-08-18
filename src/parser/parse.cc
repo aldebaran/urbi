@@ -4,6 +4,11 @@
 // FIXME: Understand why.
 #include <ast/nary.hh>
 
+// Template instanciation: ur doing it wrong
+#ifdef _MSC_VER
+# include <ast/all.hh>
+#endif
+
 #include <parser/parse.hh>
 #include <parser/parse-result.hh>
 #include <parser/tweast.hh>
