@@ -17,6 +17,7 @@
 	#define CORO_STACK_SIZE_MIN 8192
 #endif
 
+/* We dont build libcoro as a separate library: comment this.
 #if !defined(__MINGW32__) && defined(WIN32)
 #if defined(BUILDING_CORO_DLL) || defined(BUILDING_IOVMALL_DLL)
 #define CORO_API __declspec(dllexport)
@@ -27,6 +28,8 @@
 #else
 #define CORO_API
 #endif
+*/
+#define CORO_API
 
 /*
 #if defined(__amd64__) && !defined(__x86_64__)
