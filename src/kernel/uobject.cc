@@ -42,6 +42,7 @@ using object::objects_type;
 using object::void_class;
 using object::nil_class;
 using object::object_class;
+using object::urbi_call;
 using runner::Runner;
 using libport::Symbol;
 
