@@ -60,6 +60,9 @@ do.hxx
 dot-printer.cc
 dot-printer.hh
 dot-printer.stamp
+emit.cc
+emit.hh
+emit.hxx
 exp.cc
 exp.hh
 exp.hxx

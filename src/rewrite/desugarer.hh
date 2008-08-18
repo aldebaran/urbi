@@ -23,6 +23,7 @@ namespace rewrite
       (Class)
       (Decrementation)
       (Delete)
+      (Emit)
       (Incrementation)
       (OpAssignment)
       (PropertyRead)

@@ -1177,6 +1177,21 @@ Class:
     - 'libport::decendl'
     - '"}"'
 
+Emit:
+  super: Exp
+  attributes:
+    - event:
+        type: rExp
+        desc: The emitted event
+    - arguments:
+        type: exps_type*
+        desc: Values carried by the event
+        mandatory: false
+    - duration:
+        type: rExp
+        desc: Duration of the emission
+        mandatory: false
+
 # Local Variables:
 # mode: yaml
 # End:

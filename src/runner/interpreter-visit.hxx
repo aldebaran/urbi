@@ -506,9 +506,11 @@ namespace runner
   INVALID(Declaration);
   INVALID(Decrementation);
   INVALID(Delete);
+  INVALID(Emit);
   INVALID(Foreach);
   INVALID(Implicit);
   INVALID(Incrementation);
+  INVALID(MetaArgs);
   INVALID(MetaCall);
   INVALID(MetaExp);
   INVALID(MetaLValue);

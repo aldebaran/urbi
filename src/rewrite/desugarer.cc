@@ -80,6 +80,26 @@ namespace rewrite
     result_->original_set(d);
   }
 
+  void Desugarer::visit(const ast::Emit* e)
+  {
+    ast::rExp event = recurse(e->event_get());
+    ast::exps_type* args = recurse_collection(e->arguments_get());
+
+    if (ast::rExp duration = e->duration_get())
+    {
+      static ast::ParametricAst emit("var '$emit' = %exp:1.trigger(%exps:2) |"
+                                     "detach({ sleep(%exp:3) | '$emit'.stop})");
+
+      result_ = exp(emit %  event % args % duration);
+    }
+    else
+    {
+      static ast::ParametricAst emit("%exp:1 . 'emit'(%exps:2)");
+      result_ = exp(emit % event % args);
+    }
+    result_->original_set(e);
+  }
+
   void Desugarer::visit(const ast::Incrementation* inc)
   {
     static ast::ParametricAst increment("(%lvalue:1 += 1) - 1");

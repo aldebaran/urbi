@@ -566,14 +566,11 @@ stmt:
 stmt:
   "emit" k1_id args %prec CMDBLOCK
   {
-    $$ = DESUGAR($2 << ".'emit'(" << $3 << ")");
+    $$ = new ast::Emit(@$, $2, $3, 0);
   }
 | "emit" k1_id args "~" exp
   {
-    libport::Symbol e = libport::Symbol::fresh("_emit_");
-    $$ = DESUGAR("{var " << e << " = " << $2 << ".trigger(" << $3
-                 << ") | detach({sleep(" << $5 << ") | "
-                 << e << ".'stop'})}");
+    $$ = new ast::Emit(@$, $2, $3, $5);
   }
 ;
 
