@@ -801,11 +801,17 @@ stmt:
     }
 | "stopif" "(" softtest ")" stmt
     {
-      libport::Symbol tag = libport::Symbol::fresh("stopif");
-      $$ = DESUGAR("var " << tag << " = " << "new Tag (\"" << tag << "\")|"
-                   << tag << " : { { " << $5 << "|" << tag << ".stop }" << "&"
-                   << "{ waituntil(" << $3 << ")|"
-                   << tag << ".stop } }");
+      static ast::ParametricAst desugar(
+        "{"
+        "  var '$stopif' = Tag.new(\"$stopif\") |"
+        "  '$stopif':"
+        "  {"
+        "    { %exp:1 | '$stopif'.stop } &"
+        "    { waituntil(%exp:2) | '$stopif'.stop }"
+        "  } |"
+        "}"
+        );
+      $$ = exp(desugar % $5 % $3);
     }
 | "switch" "(" exp ")" "{" cases "}"
     {
