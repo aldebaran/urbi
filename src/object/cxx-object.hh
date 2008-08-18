@@ -79,8 +79,8 @@ namespace object
     private:
       Binder(rObject tgt);
       // This method is allowed to construct a Binder.
-      template <typename U>
-      friend rObject TypeInitializer<U>::make_class();
+      // VC++ is not a friend of friend method templates, so friend the class.
+      friend class TypeInitializer<T>;
       rObject tgt_;
     };
 
