@@ -819,7 +819,10 @@ stmt:
     }
 | "timeout" "(" exp ")" stmt
     {
-      $$ = DESUGAR("stopif ({sleep(" << $3 << ") | true}) " << $5);
+      ast::ParametricAst desugar(
+        "stopif ({sleep(%exp:1) | true}) %exp:2"
+        );
+      $$ = exp(desugar % $3 % $5);
     }
 | "return" exp.opt
     {
