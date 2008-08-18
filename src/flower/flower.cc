@@ -37,6 +37,28 @@ namespace flower
     has_continue_ = true;
   }
 
+  static inline
+  ast::rExp
+  brk(ast::rExp e)
+  {
+    static ParametricAst brk(
+      "var loopBreakTag = new Tag |"
+      "loopBreakTag: %exp:1");
+
+    return exp(brk % e);
+  }
+
+  static inline
+  ast::rExp
+  cont(ast::rExp e)
+  {
+    static ParametricAst cont(
+      "var loopContinueTag = new Tag |"
+      "loopContinueTag: %exp:1");
+
+    return exp(cont % e);
+  }
+
   void
   Flower::visit(const ast::While* code)
   {
@@ -48,26 +70,18 @@ namespace flower
     ast::rExp test = recurse(code->test_get());
     ast::rExp body = recurse(code->body_get()->body_get());
 
-    static ParametricAst brk(
-      "var loopBreakTag = new Tag |"
-      "loopBreakTag: %exp:1");
-
-    static ParametricAst cont(
-      "var loopContinueTag = new Tag |"
-      "loopContinueTag: %exp:1");
-
     static ParametricAst whle(
       "while (%exp:1) %exp:2");
 
     ast::rExp res = body;
 
     if (has_continue_)
-      res = exp(cont % res);
+      res = cont(res.get());
     res = exp(whle % test % res);
     // FIXME: Use a static cast
     res.unsafe_cast<ast::While>()->flavor_set(code->flavor_get());
     if (has_break_)
-      res = exp(brk % res);
+      res = brk(res);
 
     result_ = res;
   }
@@ -82,14 +96,6 @@ namespace flower
 
     ast::rExp list = recurse(code->list_get());
     ast::rExp body = recurse(code->body_get());
-
-    static ParametricAst brk(
-      "var loopBreakTag = new Tag |"
-      "loopBreakTag: %exp:1");
-
-    static ParametricAst cont(
-      "var loopContinueTag = new Tag |"
-      "loopContinueTag: %exp:1");
 
     static ParametricAst each("%exp:1 . %id:2 (%exp:3)");
     // 'fillme' is a placeholder filled later. Parametric ASTs can't
@@ -113,7 +119,7 @@ namespace flower
     }
 
     if (has_continue_)
-      body = exp(cont % body);
+      body = cont(body);
 
     ast::rClosure c = (closure % body).result<ast::Closure>();
     // Rename the 'fillme' closure formal argument
@@ -121,7 +127,7 @@ namespace flower
     each % ast::rExp(c);
 
     if (has_break_)
-      result_ = exp(brk % exp(each));
+      result_ = brk(exp(each));
     else
       result_ = exp(each);
   }
