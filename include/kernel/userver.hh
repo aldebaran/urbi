@@ -10,6 +10,14 @@
 # include <boost/ptr_container/ptr_list.hpp>
 
 # include <libport/config.h>
+
+
+# if LIBPORT_HAVE_WINDOWS_H
+// Without this, windows.h may include winsock.h, which will conflict with
+// winsock2.h when we will try to include it.
+#  define WIN32_LEAN_AND_MEAN
+# endif
+
 # if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
