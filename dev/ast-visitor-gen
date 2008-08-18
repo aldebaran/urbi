@@ -40,9 +40,16 @@ namespace ast
 # define ABSTRACT_VISITOR_VISIT_NODES(Nodes)                    \\
   BOOST_PP_SEQ_FOR_EACH(ABSTRACT_VISITOR_VISIT_NODE_, ~, Nodes)
 
+/// Required, or for some reason a space is inserted in the concatenation
+/// below (tested with gcc and vcxx).
+#ifndef CONCAT
+# define CONCAT(a,b) a##b
+#endif
+
 /// Declare a visit method for Elem for a GenVisitor.
-# define GEN_VISITOR_VISIT_NODE_(R, Data, Elem)            \\
-    virtual void visit (typename Const<ast::Elem>::type* e);
+# define GEN_VISITOR_VISIT_NODE_(R, Data, Elem)                   \\
+    typedef typename Const<ast::Elem>::type CONCAT(Elem,_type);   \\
+    virtual void visit (CONCAT(Elem,_type)* e);
 
 /// Declare visits for a GenVisitor.
 # define GEN_VISITOR_VISIT_NODES(Nodes)                    \\

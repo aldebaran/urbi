@@ -147,7 +147,7 @@ for node in arr:
   print """\
   template <template <typename> class Const>
   void
-  GenDefaultVisitor<Const>::visit (typename Const<%s>::type* %s)
+  GenDefaultVisitor<Const>::visit (%s_type* %s)
   {%s}
 """ % (node.name, var, action)
 
