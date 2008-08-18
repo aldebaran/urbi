@@ -515,7 +515,7 @@ protos:
 stmt:
   "class" lvalue protos block
     {
-      $$ = ast_class(@2, $2.cast<ast::Call>(), $3, $4);
+      $$ = new ast::Class(@$, $2, $3, $4);
     }
 ;
 

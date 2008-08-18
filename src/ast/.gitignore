@@ -27,6 +27,9 @@ call-msg.hxx
 call.cc
 call.hh
 call.hxx
+class.cc
+class.hh
+class.hxx
 cloner.cc
 cloner.hh
 cloner.stamp

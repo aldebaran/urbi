@@ -501,6 +501,7 @@ namespace runner
   INVALID(Assignment);
   INVALID(Binding);
   INVALID(Break);
+  INVALID(Class);
   INVALID(Continue);
   INVALID(Declaration);
   INVALID(Decrementation);

@@ -18,6 +18,48 @@ namespace rewrite
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
 
+  void Desugarer::visit(const ast::Class* c)
+  {
+    ast::loc l = c->location_get();
+    ast::rLValue what = recurse(c->what_get());
+    libport::Symbol name = what->call()->name_get();
+    ast::rNary content = recurse(c->content_get());
+
+    static ParametricAst desugar(
+      "var %lvalue:1 ="
+      "{"
+      "  var '$tmp' = Object.clone |"
+      "  %exp:2 |"
+      "  '$tmp'.setSlot(\"protoName\", %exp:3) |"
+      "  '$tmp'.setSlot(%exp:4, function () { this }) |"
+      "  do '$tmp'"
+      "  {"
+      "    %exp:5 |"
+      "  } |"
+      "  '$tmp'"
+      "}"
+      );
+
+    ast::exps_type* protos = recurse_collection(c->protos_get());
+    ast::rExp protos_set;
+    if (protos)
+    {
+      static ParametricAst setProtos("'$tmp'.setProtos(%exp:1)");
+      protos_set = exp(setProtos % new ast::List(l, protos));
+    }
+    else
+      protos_set = new ast::Noop(l, 0);
+
+    desugar % what
+      % protos_set
+      % ast_string(l, name)
+      % ast_string(l, libport::Symbol("as" + name.name_get()))
+      % ast_exp(content);
+
+    result_ = exp(desugar);
+    result_->original_set(c);
+  }
+
   void Desugarer::visit(const ast::Decrementation* dec)
   {
     static ast::ParametricAst decrement("(%lvalue:1 -= 1) + 1");

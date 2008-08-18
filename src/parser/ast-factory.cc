@@ -152,49 +152,6 @@ namespace parser
   }
 
 
-  /// "class" lvalue block
-  /// "class" lvalue
-  ast::rExp
-  ast_class(const yy::location& l,
-            ast::rCall lvalue, ast::exps_type* protos, ast::rExp block)
-  {
-    libport::Symbol name = lvalue->name_get();
-
-    static ParametricAst desugar(
-      "var %lvalue:1 ="
-      "{"
-      "  var '$tmp' = Object.clone |"
-      "  %exp:2 |"
-      "  '$tmp'.setSlot(\"protoName\", %exp:3) |"
-      "  '$tmp'.setSlot(%exp:4, function () { this }) |"
-      "  do '$tmp'"
-      "  {"
-      "    %exp:5 |"
-      "  } |"
-      "  '$tmp'"
-      "}"
-      );
-
-    ast::rExp protos_set;
-    if (protos)
-    {
-      static ParametricAst setProtos("'$tmp'.setProtos(%exp:1)");
-      protos_set = exp(setProtos % new ast::List(l, protos));
-    }
-    else
-      protos_set = new ast::Noop(l, 0);
-
-    desugar % ast::rLValue(lvalue)
-      % protos_set
-      % ast_string(l, name)
-      % ast_string(l, libport::Symbol("as" + name.name_get()))
-      % ast_exp(block);
-
-    ast::rExp res = exp(desugar);
-    return res;
-  }
-
-
   ast::rExp
   ast_closure(ast::rExp value)
   {

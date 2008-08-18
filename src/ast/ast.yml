@@ -1127,6 +1127,37 @@ MetaCall:
     - id:
         type: unsigned
 
+Class:
+  super: Exp
+  attributes:
+    - what:
+        type: rLValue
+        desc: Lvalue where to store the class
+    - protos:
+        type: 'exps_type*'
+        mandatory: false
+        desc: Prototypes
+    - content:
+        type: rNary
+        desc: Class content
+  printer:
+    - '"class "'
+    - ~what
+    -  '{
+          if (const exps_type* protos = n->protos_get())
+          {
+            ostr_ << ": ";
+            (void) protos;
+            ostr_ << libport::separate(*protos, ", ");
+          }
+        }'
+    - 'libport::iendl'
+    - '"{"'
+    - 'libport::incendl'
+    - ~content
+    - 'libport::decendl'
+    - '"}"'
+
 # Local Variables:
 # mode: yaml
 # End:
