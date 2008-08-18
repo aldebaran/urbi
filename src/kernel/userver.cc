@@ -27,6 +27,9 @@
 #include <fstream>
 #include <string>
 
+// Include our header first to avoid duplicating some of its tricks.
+#include <kernel/userver.hh>
+
 #include <boost/bind.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/format.hpp>
@@ -124,6 +127,7 @@ UServer::load_init_file(const char* fn)
   return res;
 }
 
+#if !defined WIN32 && !defined _MSC_VER
 static void install_ice_catcher(void (*catcher)(int))
 {
   // FIXME: this might not be portable
@@ -169,11 +173,14 @@ static void ice(int i)
   exit(EX_SOFTWARE);
 }
 
+#endif
+
 void
 UServer::initialize()
 {
+#if !defined WIN32 && !defined _MSC_VER
   install_ice_catcher(ice);
-
+#endif
   // Set the initial time to a valid value.
   updateTime();
 
