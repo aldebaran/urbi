@@ -102,12 +102,6 @@
       return up.tweast_->template take<T>(key);
     }
 
-
-  /// Return the parsing of Code.
-# define DESUGAR(Code)                          \
-    desugar(::parser::Tweast() << Code)
-
-
     /*---------------.
     | Warnings etc.  |
     `---------------*/
@@ -951,11 +945,13 @@ stmt_loop:
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      libport::Symbol id = libport::Symbol::fresh();
-      $$ = DESUGAR("for (var " << id << " = " << $3 << ";"
-                   << "    0 < " << id << ";"
-                   << "    " << id << "--)"
-                   << "  " << $5);
+      static ast::ParametricAst desugar(
+        "for (var '$for' = %exp:1;"
+        "     '$for' > 0;"
+        "     '$for'--)"
+        "  %exp:2"
+        );
+      $$ = exp(desugar % $3 % $5);
     }
 | "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
     {
