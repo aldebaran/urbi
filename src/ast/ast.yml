@@ -1191,6 +1191,24 @@ Emit:
         type: rExp
         desc: Duration of the emission
         mandatory: false
+  printer:
+    - '"emit "'
+    - ~event
+    -  '{
+          if (const exps_type* args = n->arguments_get())
+          {
+            ostr_ << "(";
+            ostr_ << libport::separate(*args, ", ");
+            ostr_ << ")";
+          }
+        }'
+    -  '{
+          if (rConstExp duration = n->duration_get())
+          {
+            ostr_ << " ~ ";
+            operator()(duration.get());
+          }
+        }'
 
 # Local Variables:
 # mode: yaml
