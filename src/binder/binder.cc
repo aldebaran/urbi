@@ -147,8 +147,7 @@ namespace binder
       BIND_ECHO("Bind " << name);
 
       operator()(input->value_get().get());
-      // FIXME: Use a static cast
-      ast::rExp value = result_.unsafe_cast<ast::Exp>();
+      ast::rExp value = result_.unchecked_cast<ast::Exp>();
       ast::rLocalDeclaration res =
         new ast::LocalDeclaration(loc, name, value);
       bind(res);
@@ -221,8 +220,7 @@ namespace binder
       // Assignment to a local variables
 
       operator()(input->value_get().get());
-      // FIXME: Use a static cast
-      ast::rExp value = result_.unsafe_cast<ast::Exp>();
+      ast::rExp value = result_.unchecked_cast<ast::Exp>();
       ast::rLocalAssignment res =
         new ast::LocalAssignment(loc, name, value, routine_depth_ - depth);
       link_to_declaration(input, res, name, depth);

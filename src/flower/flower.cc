@@ -78,8 +78,7 @@ namespace flower
     if (has_continue_)
       res = cont(res.get());
     res = exp(whle % test % res);
-    // FIXME: Use a static cast
-    res.unsafe_cast<ast::While>()->flavor_set(code->flavor_get());
+    res.unchecked_cast<ast::While>()->flavor_set(code->flavor_get());
     if (has_break_)
       res = brk(res);
 

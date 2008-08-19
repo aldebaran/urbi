@@ -27,8 +27,7 @@ namespace ast
      *  useless singleton nary and a statement.
      */
 
-    // FIXME: Use a static cast
-    ast::rConstNary nary = ast_.unsafe_cast<const ast::Nary>();
+    ast::rConstNary nary = ast_.unchecked_cast<const ast::Nary>();
     passert("ParametricAst result is not a Nary", nary);
 
     // Remove useless nary and statement if there.s only one child

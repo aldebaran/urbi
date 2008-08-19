@@ -1004,8 +1004,7 @@ call:
   lvalue args
     {
       std::swap($$, $1);
-      // FIXME: Use a static cast
-      $$.unsafe_cast<ast::LValueArgs>()->arguments_set($2);
+      $$.unchecked_cast<ast::LValueArgs>()->arguments_set($2);
       $$->location_set(@$);
     }
 ;
