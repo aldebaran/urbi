@@ -32,8 +32,7 @@ urbi::UValue uvalue_cast(object::rObject o)
       libport::shared_ptr<object::String> rs =
         o->slot_get(SYMBOL(protoName))->as<object::String>();
       std::string t = rs->value_get().name_get();
-      boost::throw_exception(
-        object::WrongArgumentType("Binary", t, SYMBOL(cast)));
+      throw object::WrongArgumentType("Binary", t, SYMBOL(cast));
     }
     else
     {
