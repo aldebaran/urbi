@@ -90,8 +90,10 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 // them will not be reentrant. You have been warned.
 typedef char buffer_type[8192];
 
+static char* urbi_path = getenv("URBI_PATH");
+
 UServer::UServer(const char* mainName)
-  : search_path(getenv("URBI_PATH") ? getenv("URBI_PATH") : LIBPORT_URBI_PATH,
+  : search_path(urbi_path ? urbi_path : LIBPORT_URBI_PATH,
                 ":"),
     scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
                                                     boost::ref(*this)))),

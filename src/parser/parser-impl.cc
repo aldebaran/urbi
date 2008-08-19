@@ -30,12 +30,14 @@ namespace parser
   | ParserImpl.  |
   `-------------*/
 
+  static bool yydebug = getenv("YYDEBUG");
+
   ParserImpl::ParserImpl()
     : tweast_(0),
       loc_(),
       synclines_(),
       result_(0),
-      debug_(!!getenv("YYDEBUG"))
+      debug_(yydebug)
   {
   }
 

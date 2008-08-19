@@ -103,9 +103,11 @@ static token::yytokentype pre_complete =
   }
 
 # define YY_USER_INIT							\
-  yy_flex_debug = !!getenv("FLEX_DEBUG");				\
+  static bool flex_debug = !!getenv("FLEX_DEBUG");                      \
+  yy_flex_debug = flex_debug;                                           \
 									\
-  if (getenv ("UCONSOLE_MODE"))						\
+  static bool uconsole_mode = getenv ("UCONSOLE_MODE");                 \
+  if (uconsole_mode)                                                    \
   {									\
     std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."	\
 	      << std::endl;						\

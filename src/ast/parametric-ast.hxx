@@ -19,12 +19,13 @@ namespace ast
   libport::shared_ptr<T>
   ParametricAst::result()
   {
+    static bool desugar = getenv("DESUGAR");
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
-    if (getenv("DESUGAR"))
+    if (desugar)
       LIBPORT_ECHO(*this);
     operator()(ast_.get());
     result_->location_set(effective_location_);
-    if (getenv("DESUGAR"))
+    if (desugar)
       LIBPORT_ECHO(result_->location_get() << ": " << *result_);
     clear();
     return assert_exp(result_.unsafe_cast<T>());

@@ -37,8 +37,9 @@ namespace parser
   ast::rExp
   desugar(::parser::Tweast& t)
   {
+    static bool desugar = !!getenv("DESUGAR");
     ast::rExp res = ::parser::parse(t)->ast_get().unsafe_cast<ast::Exp>();
-    if (!!getenv("DESUGAR"))
+    if (desugar)
       LIBPORT_ECHO("res: " << get_pointer(res)
                    << ": " << libport::deref << res);
     return res;
