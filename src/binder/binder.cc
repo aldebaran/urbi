@@ -216,7 +216,6 @@ namespace binder
         % modifiers;
 
       operator()(ast_lvalue_wrap(call, exp(trajectory).get()).get());
-      return; // Return here to avoid setting the original ast.
     }
     else if (depth && call->target_implicit())
     {
