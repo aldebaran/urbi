@@ -43,6 +43,7 @@ includes_map:
   "std::string":                '<string>'
   "symbols_type":               '<ast/symbols-type.hh>'
   "ufloat":                     '<libport/ufloat.h>'
+  "modifiers_type":             '<libport/hash.hh>'
 
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
@@ -61,6 +62,7 @@ collections:
   - "exps_type"
   - "local_declarations_type"
   - "symbols_type"
+  - "modifiers_type"
 
 # The function to clear a list of pointers.
 deep_clear: "libport::deep_clear"
@@ -95,10 +97,13 @@ fwd_hh_prologue: |2
   # include <boost/ptr_container/ptr_vector.hpp>
 
   # include <libport/fwd.hh>
+  # include <libport/hash.hh>
   # include <libport/separator.hh>
 
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
+
+  typedef libport::hash_map<libport::Symbol, ast::rExp> modifiers_type;
 
 printer_cc_prologue: |2
 
@@ -978,9 +983,10 @@ Write:
         desc: Initialization value.
         access: r
     - modifiers:
-        type: rExp
+        type: modifiers_type*
         desc: Time and trajectory modifiers
         access: rW
+        mandatory: false
   printer:
     - ~what
     - '" = "'

@@ -56,7 +56,8 @@ namespace rewrite
     make_declaration(const ast::loc& l, ast::rConstLValue what);
     ast::rExp
     make_assignment(const ast::loc& l, ast::rConstLValue what,
-                    ast::rConstExp value, ast::rConstExp modifiers);
+                    ast::rConstExp value,
+                    const ast::modifiers_type* modifiers);
     ast::rExp
     unscope(ast::rExp subject, ast::rNary nary);
   };

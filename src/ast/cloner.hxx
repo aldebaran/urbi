@@ -87,6 +87,22 @@ namespace ast
     return res;
   }
 
+  template <>
+  inline
+  modifiers_type*
+  Cloner::recurse_collection<modifiers_type> (const modifiers_type* modifiers)
+  {
+    if (!modifiers)
+      return 0;
+
+    modifiers_type* res = new modifiers_type();
+
+    foreach (const modifiers_type::value_type& m, *modifiers)
+      (*res)[m.first] = recurse(m.second);
+
+    return res;
+  }
+
 } // namespace ast
 
 #endif // !AST_CLONER_HXX

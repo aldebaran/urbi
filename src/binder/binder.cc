@@ -178,7 +178,24 @@ namespace binder
     ast::rCall call = input->what_get()->call();
     ast::rExp target_value = recurse(input->value_get());
     libport::Symbol name = call->name_get();
-    ast::rExp modifiers = input->modifiers_get();
+
+    ast::rExp modifiers = 0;
+    if (const ast::modifiers_type* source = input->modifiers_get())
+    {
+      static ast::ParametricAst dict("Dictionary.new");
+
+      modifiers = exp(dict);
+      foreach (const ast::modifiers_type::value_type& elt, *source)
+      {
+        static ast::ParametricAst add("%exp:1.set(%exp:2, %exp:3)");
+
+        add % modifiers
+          % new ast::String(input->location_get(), elt.first)
+          % recurse(elt.second);
+        modifiers = exp(add);
+      }
+    }
+
     unsigned depth = routine_depth_get(name);
 
     if (modifiers)

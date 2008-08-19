@@ -188,6 +188,11 @@ namespace %(ns)s
   DotPrinter::recurse<symbols_type>(const symbols_type&)
   {}
 
+  template<>
+  void
+  DotPrinter::recurse<ast::modifiers_type>(const ast::modifiers_type&)
+  {}
+
   template<typename T>
   void
   DotPrinter::recurse(const T* c)

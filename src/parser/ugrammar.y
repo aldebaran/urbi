@@ -21,6 +21,7 @@
 {
 #include <sdk/config.h> // YYDEBUG.
 
+#include <libport/hash.hh>
 #include <libport/pod-cast.hh>
 #include <list>
 #include <kernel/fwd.hh>
@@ -40,7 +41,7 @@
   // It is inconvenient to use the pointer notation with the variants.
   typedef ast::exps_type* exps_pointer;
   typedef ast::symbols_type* symbols_pointer;
-  typedef ::parser::Tweast* tweast_pointer;
+  typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
 }
 
 // Locations.
@@ -91,16 +92,17 @@
 #include <parser/tweast.hh>
 #include <parser/utoken.hh>
 
+  /// Get the metavar from the specified map.
+  template <typename T>
+  static
+  T
+  metavar(parser::ParserImpl& up, unsigned key)
+  {
+    return up.tweast_->template take<T>(key);
+  }
+
   namespace
   {
-    /// Get the metavar from the specified map.
-    template <typename T>
-    static
-    T
-    metavar(parser::ParserImpl& up, unsigned key)
-    {
-      return up.tweast_->template take<T>(key);
-    }
 
     /*---------------.
     | Warnings etc.  |
@@ -1253,33 +1255,32 @@ exp.opt:
 | Modifiers.  |
 `------------*/
 
-%type <tweast_pointer> modifier modifiers.1;
-%type <ast::rExp> modifiers;
-%printer { debug_stream() << libport::deref << $$; } <tweast_pointer>;
+%type <modifier_type> modifier;
+%type <ast::modifiers_type*> modifiers modifiers.1;
 
 modifier:
   "identifier" ":" exp
   {
-    $$ = new ::parser::Tweast();
-    *$$ << ".set(" << ast_string(@1, $1) << ", " << ast_exp($3) << ")";
+    $$.first = $1;
+    $$.second = $3;
   }
 ;
 
 modifiers:
-  /* empty */    { $$ = 0;  }
-| modifiers.1    { $$ = ::parser::parse(*$1)->ast_get(); }
+  /* empty */    { $$ = 0; }
+| modifiers.1    { $$ = $1; }
 ;
 
 modifiers.1:
   modifier
     {
-      $$ = new ::parser::Tweast();
-      *$$ << "Dictionary.new" << *$1;
+      $$ = new ast::modifiers_type();
+      (*$$)[$1.first] = $1.second;
     }
 | modifiers.1 modifier
     {
-      std::swap($$, $1);
-      *$$ << *$2;
+      $$ = $1;
+      (*$$)[$2.first] = $2.second;
     }
 ;
 

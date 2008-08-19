@@ -27,10 +27,10 @@ namespace rewrite
   /// Build '<s> = <value>'
   ast::rExp
   Rescoper::make_assignment(const ast::loc& l, ast::rConstLValue what,
-                            ast::rConstExp value, ast::rConstExp modifiers)
+                            ast::rConstExp value, const ast::modifiers_type* modifiers)
   {
     return new ast::Assignment(l, recurse(what), recurse(value),
-                               modifiers ? recurse(modifiers) : ast::rExp());
+                               modifiers ? recurse_collection<ast::modifiers_type>(modifiers) : 0);
   }
 
   /**
