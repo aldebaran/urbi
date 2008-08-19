@@ -124,7 +124,7 @@ namespace flower
     ast::rClosure c = (closure % body).result<ast::Closure>();
     // Rename the 'fillme' closure formal argument
     c->formals_get()->front()->what_set(code->index_get()->what_get());
-    each % ast::rExp(c);
+    each % c;
 
     if (has_break_)
       result_ = brk(exp(each));

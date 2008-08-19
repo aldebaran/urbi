@@ -20,14 +20,12 @@ namespace ast
   class ParametricAst
     : public Cloner
     , public parser::MetavarMap<ast::rExp>
-    , public parser::MetavarMap<ast::rLValue>
     , public parser::MetavarMap<libport::Symbol>
     , public parser::MetavarMap<ast::exps_type*>
   {
   public:
     typedef Cloner super_type;
     typedef parser::MetavarMap<ast::rExp> exp_map_type;
-    typedef parser::MetavarMap<ast::rLValue> lvalue_map_type;
     typedef parser::MetavarMap<libport::Symbol> id_map_type;
     typedef parser::MetavarMap<ast::exps_type*> exps_map_type;
 
@@ -41,7 +39,6 @@ namespace ast
     // The template version of the operator fails with an
     // incomprehensible ambiguity. It's duplicated for now.
     ParametricAst& operator% (ast::rExp t);
-    ParametricAst& operator% (ast::rLValue t);
     ParametricAst& operator% (libport::Symbol id);
     ParametricAst& operator% (ast::exps_type* exps);
 

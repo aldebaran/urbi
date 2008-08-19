@@ -26,7 +26,6 @@
 namespace binder
 {
   using ast::ParametricAst;
-  using parser::ast_exp;
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
 
@@ -210,7 +209,7 @@ namespace binder
         ").run"
         );
 
-      trajectory % ast_exp(tgt)
+      trajectory % tgt
         % tgt
         % target_value
         % modifiers;

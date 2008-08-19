@@ -302,7 +302,7 @@ namespace parser
       static ast::ParametricAst a(
         "if (Pattern.new(%exp:1).match('$switch')) %exp:2 else %exp:3");
       a % c.first
-        % ast_exp(c.second)
+        % c.second
         % inner;
       inner = ast::exp(a);
     }

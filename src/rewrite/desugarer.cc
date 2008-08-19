@@ -13,7 +13,6 @@ namespace rewrite
 {
   using ast::ParametricAst;
   using parser::ast_call;
-  using parser::ast_exp;
   using parser::ast_string;
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
@@ -54,7 +53,7 @@ namespace rewrite
       % protos_set
       % ast_string(l, name)
       % ast_string(l, libport::Symbol("as" + name.name_get()))
-      % ast_exp(content);
+      % content;
 
     result_ = exp(desugar);
     result_->original_set(c);
@@ -117,7 +116,7 @@ namespace rewrite
     ast::rLValue tgt = ast_lvalue_once(what);
 
     desugar % tgt
-      % ast_exp(new_clone(tgt))
+      % new_clone(tgt)
       % a->op_get()
       % recurse(a->value_get());
 

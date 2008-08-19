@@ -79,7 +79,6 @@
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
-  using parser::ast_exp;
   using parser::ast_for;
   using parser::ast_scope;
   using parser::ast_string;

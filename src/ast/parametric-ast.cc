@@ -15,7 +15,6 @@ namespace ast
 
   ParametricAst::ParametricAst(const std::string& s)
     : exp_map_type("exp")
-    , lvalue_map_type("lvalue")
     , id_map_type("id")
     , exps_map_type("exps")
     , ast_(parser::parse(s)->ast_xget())
@@ -74,7 +73,8 @@ namespace ast
   void
   ParametricAst::visit(const ast::MetaLValue* e)
   {
-    result_ = lvalue_map_type::take_(e->id_get () - 1);
+    result_ = exp_map_type::take_(e->id_get () - 1);
+    assert(result_.unsafe_cast<const ast::LValue>());
     assert(result_);
   }
 
@@ -82,7 +82,6 @@ namespace ast
   ParametricAst::empty() const
   {
     return exp_map_type::empty_()
-      && lvalue_map_type::empty_()
       && id_map_type::empty_()
       && exps_map_type::empty_();
   }
@@ -107,7 +106,6 @@ namespace ast
       << "Ast:"
       << libport::incendl << *ast_ << libport::decendl
       << static_cast<const exp_map_type&>(*this)
-      << static_cast<const lvalue_map_type&>(*this)
       << static_cast<const id_map_type&>(*this)
       << static_cast<const exps_map_type&>(*this)
       << libport::decendl;
@@ -141,21 +139,6 @@ namespace ast
     // here. Factoring the two % operator in a template method is thus
     // impossible.
     exp_map_type::append_(count_, t);
-    // Compute the location of the source text we used.
-    if (!effective_location_.begin.filename)
-      effective_location_ = t->location_get();
-    else
-      effective_location_ = effective_location_ + t->location_get();
-    return *this;
-  }
-
-  ParametricAst&
-  ParametricAst::operator% (ast::rLValue t)
-  {
-#ifndef NDEBUG
-    passert(libport::deref << t, unique_(t));
-#endif
-    lvalue_map_type::append_(count_, t);
     // Compute the location of the source text we used.
     if (!effective_location_.begin.filename)
       effective_location_ = t->location_get();
