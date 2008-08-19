@@ -85,7 +85,6 @@
   using parser::ast_string;
   using parser::ast_switch;
   using parser::ast_whenever_event;
-  using parser::desugar;
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>

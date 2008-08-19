@@ -35,17 +35,6 @@ namespace parser
   using ast::ParametricAst;
 
   ast::rExp
-  desugar(::parser::Tweast& t)
-  {
-    static bool desugar = !!getenv("DESUGAR");
-    ast::rExp res = ::parser::parse(t)->ast_get().unsafe_cast<ast::Exp>();
-    if (desugar)
-      LIBPORT_ECHO("res: " << get_pointer(res)
-                   << ": " << libport::deref << res);
-    return res;
-  }
-
-  ast::rExp
   ast_at(const yy::location& loc,
          ast::rExp cond,
          ast::rExp at, ast::rExp onleave,

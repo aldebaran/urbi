@@ -11,9 +11,6 @@
 
 namespace parser
 {
-  /// Return the parsing of \a Tweast.
-  ast::rExp desugar(::parser::Tweast& t);
-
   /// at (%cond ~ %duration) {%body} onleave {%onleave}
   ast::rExp
   ast_at(const yy::location& loc,
