@@ -1335,7 +1335,8 @@ lvalue:
 call:
   lvalue "(" "%exps:" "integer" ")"
   {
-    assert(!lvalue->arguments_get());
+    assert($1.unsafe_cast<ast::LValueArgs>());
+    assert(!$1.unsafe_cast<ast::LValueArgs>()->arguments_get());
     $$ = new ast::MetaArgs(@$, $1, $4);
   }
 ;
