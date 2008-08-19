@@ -83,7 +83,9 @@ namespace object
   };                                                                    \
 
   ALL_PRIMITIVE(A2F_FUNCTION);
-  ALL_PRIMITIVE(A2F_METHOD);
+
+  // We do not need the return-void partial specialisation
+  HALF_PRIMITIVE(A2F_METHOD, true);
 
   // Treat the case of argument-less functions manually
   namespace

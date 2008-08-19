@@ -28,22 +28,18 @@
 # define COMMA2(Cond1, Cond2) PRINT_##Cond1##Cond2(COMMA_)
 
 #define ALL_PRIMITIVE(Macro)                            \
-  Macro (true, 2, true , false , false , false );       \
-  Macro (true, 3, true , true , false , false );        \
-  Macro (true, 4, true , true , true , false );         \
-  Macro (true, 5, true , true , true , true );          \
-  Macro (true, 1, false , false , false , false );      \
-  Macro (true, 2, false , true , false , false );       \
-  Macro (true, 3, false , true , true , false );        \
-  Macro (true, 4, false , true , true , true );         \
-  Macro (false, 2, true , false , false , false );      \
-  Macro (false, 3, true , true , false , false );       \
-  Macro (false, 4, true , true , true , false );        \
-  Macro (false, 5, true , true , true , true );         \
-  Macro (false, 1, false , false , false , false );     \
-  Macro (false, 2, false , true , false , false );      \
-  Macro (false, 3, false , true , true , false );       \
-  Macro (false, 4, false , true , true , true );        \
+   HALF_PRIMITIVE(Macro, false)                         \
+   HALF_PRIMITIVE(Macro, true)                          \
+
+#define HALF_PRIMITIVE(Macro, Ret)                     \
+  Macro (Ret, 2, true , false , false , false );       \
+  Macro (Ret, 3, true , true , false , false );        \
+  Macro (Ret, 4, true , true , true , false );         \
+  Macro (Ret, 5, true , true , true , true );          \
+  Macro (Ret, 1, false , false , false , false );      \
+  Macro (Ret, 2, false , true , false , false );       \
+  Macro (Ret, 3, false , true , true , false );        \
+  Macro (Ret, 4, false , true , true , true );         \
 
 
 #endif
