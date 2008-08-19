@@ -23,8 +23,6 @@ ast/cloner.hxx					\
 ast/cloner.cc					\
 ast/default-visitor.hh				\
 ast/default-visitor.hxx				\
-ast/dot-printer.hh				\
-ast/dot-printer.cc				\
 ast/pretty-printer.hh				\
 ast/pretty-printer.cc				\
 $(ast_nodes)
