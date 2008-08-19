@@ -949,7 +949,7 @@ stmt_loop:
     {
       static ast::ParametricAst desugar(
         "for (var '$for' = %exp:1;"
-        "     '$for' > 0;"
+        "     0 < '$for';" // Use 0 < n, not n > 0, since < is quicker
         "     '$for'--)"
         "  %exp:2"
         );
