@@ -56,7 +56,7 @@ namespace runner
     foreach (const ast::rConstExp& child,
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
-      Interpreter* job = new Interpreter(*this, eval(child));
+      Interpreter* job = new Interpreter(*this, operator()(child.get()));
       // Propagate errors from subrunners.
       link(job);
       jobs.push_back(job);
@@ -64,7 +64,8 @@ namespace runner
     }
 
     // Evaluate the first child in this runner
-    rRoutine code = eval(e->children_get().front()).unsafe_cast<object::Code>();
+    rRoutine code = operator()(e->children_get().front().get())
+      .unsafe_cast<object::Code>();
     assert(code);
     // This is a closure, it won't use its 'this'
     object::objects_type args;
@@ -81,7 +82,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::LocalAssignment* e)
   {
-    rObject val = eval(e->value_get());
+    rObject val = operator()(e->value_get().get());
     stacks_.set(e, val);
     return val;
   }
@@ -92,7 +93,7 @@ namespace runner
   {
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
-    rObject tgt = ast_tgt->implicit() ? stacks_.self() : eval(ast_tgt);
+    rObject tgt = ast_tgt->implicit() ? stacks_.self() : operator()(ast_tgt.get());
     return apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
@@ -107,7 +108,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::LocalDeclaration* d)
   {
-    rObject val = eval(d->value_get());
+    rObject val = operator()(d->value_get().get());
     stacks_.def(d, val);
     return val;
   }
@@ -185,7 +186,7 @@ namespace runner
     // Evaluate every expression in the list
     foreach (const ast::rConstExp& c, e->value_get())
     {
-      rObject v = eval(c);
+      rObject v = operator()(c.get());
       // Refuse void in literal lists
       if (v == object::void_class)
       {
@@ -382,7 +383,7 @@ namespace runner
   {
     Finally finally;
 
-    rObject tgt = eval(e->target_get());
+    rObject tgt = operator()(e->target_get().get());
 
     finally << stacks_.switch_self(tgt);
 
@@ -423,7 +424,7 @@ namespace runner
     {
       // FIXME: might be simplified after type checking code is moved
       // to Object
-      object::rObject unchecked_tag = eval(t->tag_get());
+      object::rObject unchecked_tag = operator()(t->tag_get().get());
       object::type_check<object::Tag>(unchecked_tag, SYMBOL(tagged_stmt));
       const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
       const scheduler::rTag& tag = urbi_tag->value_get();
@@ -441,7 +442,7 @@ namespace runner
       if (tag->frozen())
 	yield();
       urbi_tag->triggerEnter(*this);
-      rObject res = eval (t->exp_get());
+      rObject res = operator()(t->exp_get().get());
       urbi_tag->triggerLeave(*this);
       return res;
     }

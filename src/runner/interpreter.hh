@@ -112,9 +112,6 @@ namespace runner
     /// Return the result of the latest evaluation.
     virtual rObject result_get();
 
-    /// Evaluate an expression in the current scope and return its result.
-    rObject eval(ast::rConstAst);
-
     /// Evaluate a tag and create it as well as the intermediate levels
     /// if needed.
     rObject eval_tag(ast::rConstExp);

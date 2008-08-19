@@ -52,7 +52,7 @@ namespace runner
 
       ast::rConstNary nary = commands_.front();
       commands_.pop_front();
-      eval(nary);
+      operator()(nary.get());
     }
   }
 

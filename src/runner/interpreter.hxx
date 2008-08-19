@@ -16,14 +16,6 @@ namespace runner
     return result_;
   }
 
-  inline
-  Interpreter::rObject
-  Interpreter::eval(ast::rConstAst e)
-  {
-    ECHO("Eval: " << &e << " {{{" << e << "}}}");
-    return operator()(e.get());
-  }
-
   /*----------------.
   | Regular visit.  |
   `----------------*/

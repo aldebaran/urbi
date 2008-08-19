@@ -296,7 +296,7 @@ namespace runner
     check_stack_space ();
 
     stacks_.execution_starts(msg);
-    return eval (ast->body_get());
+    return operator()(ast->body_get().get());
   }
 
   object::rObject
@@ -365,7 +365,7 @@ namespace runner
       // Skip target, the first argument.
       if (!tail++)
 	continue;
-      rObject val = eval (arg);
+      rObject val = operator()(arg.get());
       // Check if any argument is void. This will be checked again in
       // Interpreter::apply_urbi, yet raising exception here gives
       // better location (the argument and not the whole function
@@ -427,7 +427,7 @@ namespace runner
       /// Retreive and evaluate the lazy version of arguments.
       const ast::rConstLazy& lazy = e.unsafe_cast<const ast::Lazy>();
       assert(lazy);
-      rObject v = eval(lazy->lazy_get());
+      rObject v = operator()(lazy->lazy_get().get());
       lazy_args.push_back(v);
     }
 
@@ -493,9 +493,10 @@ namespace runner
   object::rObject
   Interpreter::eval_tag(ast::rConstExp e)
   {
-    try {
+    try
+    {
       // Try to evaluate e as a normal expression.
-      return eval(e);
+      return operator()(e.get());
     }
     catch (object::LookupError& ue)
     {
