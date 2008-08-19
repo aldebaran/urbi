@@ -103,7 +103,7 @@ namespace parser
     if (!onleave)
       onleave = new ast::Noop(loc, 0);
 
-    ast::ParametricAst desugar(
+    static ast::ParametricAst desugar(
       "detach("
       "{"
       "%exp:1.onEvent("

@@ -777,7 +777,7 @@ stmt:
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      ast::ParametricAst desugar(
+      static ast::ParametricAst desugar(
         "var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
         "var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
         "'$freezeif_ex' :"
@@ -816,7 +816,7 @@ stmt:
     }
 | "timeout" "(" exp ")" stmt
     {
-      ast::ParametricAst desugar(
+      static ast::ParametricAst desugar(
         "stopif ({sleep(%exp:1) | true}) %exp:2"
         );
       $$ = exp(desugar % $3 % $5);
