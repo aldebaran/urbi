@@ -206,7 +206,7 @@ namespace object
 // This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
 // false atoms
 #define COMPARABLE(What, Name)		\
-    What ## _class->slot_set(SYMBOL(sameAs), new Primitive(compare<Name>));
+    What ## _class->slot_set(SYMBOL(sameAs), new Primitive(&compare<Name>));
 
     COMPARABLE(float,     Float);
     COMPARABLE(string,    String);
