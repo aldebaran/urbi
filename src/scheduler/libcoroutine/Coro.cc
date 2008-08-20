@@ -179,7 +179,8 @@ void Coro_initializeMainCoro(Coro *self)
 	self->isMain = 1;
 #ifdef USE_FIBERS
 	// We must convert the current thread into a fiber if it hasn't already been done.
-	if ((LPVOID) 0x1e00 == GetCurrentFiber()) // value returned when not a fiber
+        LPVOID currentFiber = GetCurrentFiber();
+	if ((LPVOID) 0x1e00 == currentFiber || !currentFiber) // value returned when not a fiber, 0 under wine.
 	{
 		// Make this thread a fiber and set its data field to the main coro's address
 		ConvertThreadToFiber(self);
@@ -244,6 +245,7 @@ void Coro_switchTo_(Coro *self, Coro *next)
 	ProcessUIEvent();
 #elif defined(USE_FIBERS)
 	SwitchToFiber(next->fiber);
+        (void)self;
 #elif defined(USE_UCONTEXT)
 	swapcontext(&self->env, &next->env);
 #elif defined(USE_SETJMP)
