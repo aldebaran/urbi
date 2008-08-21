@@ -88,8 +88,9 @@ namespace binder
   {
     ast::exps_type* args = new ast::exps_type();
     args->push_back(new ast::String(l, name));
-    args->push_back(const_cast<ast::Exp*>(value.get()));
-    return recurse(ast::rCall(new ast::Call(l, args, target, method)));;
+    if (value)
+      args->push_back(const_cast<ast::Exp*>(value.get()));
+    return recurse(ast::rCall(new ast::Call(l, args, target, method)));
   }
 
 
@@ -130,12 +131,17 @@ namespace binder
   {
     ast::loc loc = input->location_get();
     ast::rCall call = input->what_get()->call();
+    ast::rExp value = input->value_get();
 
     libport::Symbol name = call->name_get();
 
     if (!call->target_implicit() || setOnSelf_.back())
-      result_ = changeSlot(loc, call->target_get(), name,
-                           SYMBOL(setSlot), input->value_get());
+      if (value)
+        result_ = changeSlot(loc, call->target_get(), name,
+                             SYMBOL(setSlot), value);
+      else
+        result_ = changeSlot(loc, call->target_get(), name,
+                             SYMBOL(setVoidSlot));
     else
     {
       // Check this is not a redefinition
@@ -146,8 +152,11 @@ namespace binder
 
       BIND_ECHO("Bind " << name);
 
-      operator()(input->value_get().get());
-      ast::rExp value = result_.unchecked_cast<ast::Exp>();
+      if (value)
+      {
+        operator()(value.get());
+        value = result_.unchecked_cast<ast::Exp>();
+      }
       ast::rLocalDeclaration res =
         new ast::LocalDeclaration(loc, name, value);
       bind(res);

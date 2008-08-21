@@ -652,7 +652,7 @@ stmt:
     }
 | "var" lvalue
     {
-      $$ = new ast::Declaration(@$, $2, ast_call(@$, SYMBOL(nil)), 0);
+      $$ = new ast::Declaration(@$, $2, 0, 0);
     }
 | "delete" lvalue
     {

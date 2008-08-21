@@ -48,7 +48,7 @@ function Global.installUpdateHookStack(o, slot)
 
   o.setProperty = setProperty;
 
-  if (!old.isNil)
+  if (!old.isVoid)
     o.setProperty(slot, "updateHook", old);
 
   void;

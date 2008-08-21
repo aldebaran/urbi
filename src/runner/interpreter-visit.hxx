@@ -108,7 +108,8 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::LocalDeclaration* d)
   {
-    rObject val = operator()(d->value_get().get());
+    ast::rExp v = d->value_get();
+    rObject val = v ? operator()(v.get()) : object::void_class;
     stacks_.def(d, val);
     return val;
   }

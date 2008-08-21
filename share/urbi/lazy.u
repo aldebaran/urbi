@@ -17,7 +17,7 @@ class Global.Lazy
 
   function value()
   {
-    if (getSlot("val").isNil)
+    if (getSlot("val").isVoid)
       eval|
     getSlot("val").unAcceptVoid
   };

@@ -126,7 +126,7 @@ namespace binder
                           const ast::rExp& target,
                           const libport::Symbol& name,
                           const libport::Symbol& method,
-                          ast::rConstExp value);
+                          ast::rConstExp value = 0);
 
     /// Make a lazy from \a arg
     ast::rExp lazify(ast::rExp arg, const ast::loc& loc);

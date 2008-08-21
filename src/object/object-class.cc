@@ -263,6 +263,16 @@ namespace object
   }
 
   static rObject
+  object_class_setVoidSlot (runner::Runner&, objects_type& args)
+  {
+    CHECK_ARG_COUNT(2);
+    const rString& arg1 = args[1].unsafe_cast<String>();
+    assert(arg1);
+    args[0]->slot_set(arg1->value_get (), void_class);
+    return void_class;
+  }
+
+  static rObject
   object_class_updateSlot (runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT(3);
@@ -312,6 +322,7 @@ namespace object
     DECLARE(removeSlot);
     DECLARE(sameAs);
     DECLARE(setSlot);
+    DECLARE(setVoidSlot);
     DECLARE(slotNames);
     DECLARE(uid);
     DECLARE(updateSlot);

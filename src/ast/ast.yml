@@ -938,8 +938,13 @@ LocalDeclaration:
   printer:
     - '"var "'
     - $what
-    - '" = "'
-    - ~value
+    - '{
+         if (n->value_get())
+         {
+           ostr_ << " = ";
+           operator()(n->value_get().get());
+         }
+       }'
 
 LocalAssignment:
   super: LocalWrite
