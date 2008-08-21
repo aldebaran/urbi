@@ -1,0 +1,195 @@
+\documentclass[openright,twoside,12pt]{report}
+
+% PACKAGES
+\usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{mycxx}
+\usepackage{myhyperref}
+\usepackage{mylistings}
+\usepackage{xspace}
+
+% SHORTHANDS
+\newcommand{\ai}{AI\xspace}
+\newcommand{\api}{API\xspace}
+\newcommand{\caml}{Caml\xspace}
+\newcommand{\io}{Io\xspace}
+\newcommand{\java}{Java\xspace}
+\newcommand{\js}{JavaScript\xspace}
+\newcommand{\lua}{Lua}
+\newcommand{\lisp}{Lisp}
+\newcommand{\matlab}{MatLab\xspace}
+\newcommand{\pascal}{PASCAL\xspace}
+\newcommand{\python}{Python\xspace}
+\newcommand{\ruby}{Ruby\xspace}
+\newcommand{\sdk}{SDK\xspace}
+\newcommand{\urbi}{Urbi\xspace}
+\newcommand{\umake}{umake\xspace}
+\newcommand{\us}{UrbiScript\xspace}
+
+% LISTINGS
+
+\lstset{language=[interactive]Urbi}
+
+\definecolor{keywords}{rgb}{0.2,0.2,0.8}
+\definecolor{comments}{rgb}{0.8,0.5,0}
+\definecolor{string}{rgb}{0.0,0.5,0.0}
+\definecolor{bg}{rgb}{0.9,0.9,1}
+
+\lstset{
+  keywordstyle=\color{keywords}\bfseries,
+  commentstyle=\color{comments},
+  stringstyle=\color{string},
+  backgroundcolor=\color{bg},
+  aboveskip=.6cm,
+  captionpos=b,
+  frame=single,
+  basicstyle=\ttfamily,
+  showstringspaces=false,
+}
+
+% COMMANDS
+\newcommand{\lst}[1]{\autoref{lst:#1}}
+
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{titlepage}
+
+    \vfill
+
+    \begin{figure}[htp]
+      \centering
+      \includegraphics[width=12cm]{img/urbi-logo}
+    \end{figure}
+
+    \begin{center}
+      {\Huge\bf\@title\\}
+      \vspace{1cm}
+      {\Large \@author\\}
+      \vspace{1cm}
+      {\large \@date\\}
+    \end{center}
+
+    \vfill
+
+    \begin{figure}[htp]
+      \centering
+      \includegraphics[width=12cm]{img/gostai}
+    \end{figure}
+
+    \vfill
+    \global\let\title\relax
+  \end{titlepage}
+}
+\makeatother
+
+% STYLE
+\hypersetup{colorlinks, citecolor=blue, linkcolor=blue, urlcolor=blue}
+
+% CONFIGURATION
+\title{\us 2.0 specifications}
+\author{Kernel Team}
+
+% DOCUMENT
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+%FIXME: chapter is overkill
+\chapter{Introduction}
+
+\section{Status of this document}
+
+This document defines the specifications of the \us language version
+2.0. It defines the expected behavior from the \us interpreter, the
+standard library, and the \sdk. It can be used to check that some code
+is valid, or browse \us or \Cxx \api for a desired feature. Reading
+some parts with no particular reason can also provide you with
+advanced knowledge or subtleties about some \us aspects.
+
+This document is however not fit to be used as a start guide to learn
+\us, since it is not structured in a progressive manner and too
+detailed. You can think of this document as a dictionary: one does not
+% FIXME: give directions to the tutorials
+learn a foreign language by reading a dictionary. The \us Tutorial, or
+the live \us tutorial built in the interpreter are good introduction
+to \us.
+
+This document doesn't either aim at giving advanced programming
+techniques. Its only goal is to defined how the language and its
+libraries should behave.
+
+\section{\us}
+
+\us is an interpreted language designed for highly interactive and
+parallel behavior programming. %FILLME
+
+\section{Structuration of this document}
+
+This document is divided in four chapters:
+
+\begin{itemize}
+\item Tools specifications: presentation and usage of the different
+  tools available with the \urbi framework related to \us, such as the
+  \urbi server, the command line client, \umake, \ldots
+\item \us language specifications: definition of the core constructs
+  of the language and their behavior.
+\item \us standard library specifications: listing of all classes and
+  methods provided in the standard library.
+\item \urbi \sdk specifications: definition of the \urbi software
+  development kit that enables you to interact with \urbi from \Cxx.
+\end{itemize}
+
+\chapter{Tools specifications}
+
+\section{\urbi kernel}
+\section{Console server}
+\section{\umake}
+
+\chapter{\us language specifications}
+
+\section{Local variables}
+\section{Objects}
+\section{Flow control}
+\section{Parallelism}
+\section{Events}
+\section{Pattern matching}
+\section{Trajectories}
+
+\chapter{\us standard library specifications}
+
+\section{Boolean}
+\section{Channel}
+\section{Code}
+\section{Comparable}
+\section{Dictionary}
+\section{Event}
+\section{Float}
+\section{Group}
+\section{Lazy}
+\section{List}
+\section{Lobby}
+\section{Object}
+\section{Orderable}
+\section{Pattern}
+\section{Primitive}
+\section{String}
+\section{Tag}
+\section{Tuple}
+
+\chapter{\urbi SDK specifications}
+
+% I just don't know
+% what to do
+% with myself
+
+\end{document}
+
+% printing, operators, waituntil
+
+% LocalWords:  Urbi monomethods netcat cosinus timestamp subscopes subscope lst
+% LocalWords:  getSlot setSlot updateSlot slotNames removeSlot uid arg ok ko ss
+% LocalWords:  elt baz quux FIXME getslot lookup protos proto addProto asString
+% LocalWords:  removeProto locateSlot locateslot lhs evalArgAt evalArgs ary
+% LocalWords:  mytag timeOut myEvent Tuple
