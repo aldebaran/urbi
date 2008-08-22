@@ -8,21 +8,21 @@ class Global.Profiling
   /// e.g. timen(2+2, 42).
   function timen
   {
-    echo (this.new(call.argAt(1), call.argAt(2)))
+    echo (this.new(call.argAt(0), call.argAt(0)))
   };
 
   /// timen(CODE, #ITERATIONS).
   /// e.g. init(2+2, 42).
   function init
   {
-    var this.expr   = call.argString(1);
-    var this.niters = call.evalArgAt (2);
+    var this.expr   = call.argString(0);
+    var this.niters = call.evalArgAt (1);
     var start_time = time;
     var start_cycle = cycle |
 
     // Bench.
     for (niters)
-      call.evalArgAt (1) |
+      call.evalArgAt (0) |
 
     var this.ncycles = cycle - start_cycle - 1;
     var this.expired = time - start_time;

@@ -110,13 +110,13 @@ do List
   {
     var fr = 0;
     var to = size;
-    if (call.argsCount >= 3) // FIXME: throw when > 2
+    if (call.argsCount >= 2) // FIXME: throw when > 2
     {
-      fr = call.argAt(1);
-      to = call.argAt(2);
+      fr = call.argAt(0);
+      to = call.argAt(1);
     }
     else
-      to = call.argAt(1);
+      to = call.argAt(0);
     var res = [];
     for (var i = fr; i < to; i++)
       res << nth(i);

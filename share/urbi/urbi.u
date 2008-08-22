@@ -110,9 +110,10 @@ do Global
 
   // Assertion control
   var System.ndebug = false;
-  function System.assert {
+  function System.assert
+  {
     if (!System.ndebug)
-      System.assert_ (call.evalArgAt (1), call.argString (1));
+      System.assert_ (call.evalArgAt (0), call.argString (0));
   };
 
   function noop () {};

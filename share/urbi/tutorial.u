@@ -106,11 +106,11 @@ do Global.Tutorial
     // condition to fulfill to pass automatically to the next section).
     function init
     {
-      var this.name = call.argAt(1);
-      var this.text = call.argAt(2);
-      var this.onEnter = call.args.nth(3);
-      var this.onLeave = call.args.nth(4);
-      var this.condition = call.args.nth(5);
+      var this.name = call.argAt(0);
+      var this.text = call.argAt(1);
+      var this.onEnter = call.args.nth(2);
+      var this.onLeave = call.args.nth(3);
+      var this.condition = call.args.nth(4);
     };
 
     function start()

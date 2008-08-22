@@ -21,7 +21,7 @@ class Global.CallMessage
 
   function evalArgs()
   {
-    args.tail.map(function (arg) { arg.eval })
+    args.map(function (arg) { arg.eval })
   };
 
   function argsCount

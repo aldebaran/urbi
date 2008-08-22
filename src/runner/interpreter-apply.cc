@@ -95,20 +95,15 @@ namespace runner
     ast::exps_type ast_args =
       input_ast_args ? *input_ast_args : ast::exps_type();
 
-    // FIXME: This is the target, for compatibility reasons. We need
-    // to remove this, and stop assuming that arguments start at
-    // calls.args.nth(1)
-    ast_args.push_front(0);
-
     rObject call_message;
 
     const object::Code* c = routine->as<object::Code>().get();
     if (c && !c->ast_get()->strict())
       // If the function is lazy, build a call message.
-      call_message = build_call_message (target, routine, message, ast_args);
+      call_message = build_call_message(target, routine, message, ast_args);
     else
       // Otherwise, evaluate the arguments.
-      push_evaluated_arguments (args, ast_args);
+      push_evaluated_arguments(args, ast_args);
     return apply(target, routine, message, args, call_message, loc);
   }
 
@@ -204,11 +199,11 @@ namespace runner
   `-----------------------------------------------*/
 
   object::rObject
-  Interpreter::apply_urbi (const rObject& target,
-                           const rCode& function,
-                           const libport::Symbol& msg,
-                           const object::objects_type& args,
-                           const rObject& call_message)
+  Interpreter::apply_urbi(const rObject& target,
+                          const rCode& function,
+                          const libport::Symbol& msg,
+                          const object::objects_type& args,
+                          const rObject& call_message)
   {
     libport::Finally finally;
 
@@ -224,10 +219,6 @@ namespace runner
     if (!ast->strict() && !call_message)
     {
       object::objects_type lazy_args;
-
-      rObject lazy = object::global_class->slot_get(SYMBOL(Lazy))->clone();
-      lazy->slot_set(SYMBOL(code), target);
-      lazy_args.push_back(lazy);
 
       foreach (const rObject& o, args)
       {
@@ -299,15 +290,11 @@ namespace runner
   `--------*/
 
   void
-  Interpreter::push_evaluated_arguments (object::objects_type& args,
-					 const ast::exps_type& ue_args)
+  Interpreter::push_evaluated_arguments(object::objects_type& args,
+					const ast::exps_type& ue_args)
   {
-    bool tail = false;
     foreach (const ast::rConstExp& arg, ue_args)
     {
-      // Skip target, the first argument.
-      if (!tail++)
-	continue;
       rObject val = operator()(arg.get());
       // Check if any argument is void. This will be checked again in
       // Interpreter::apply_urbi, yet raising exception here gives
@@ -319,7 +306,6 @@ namespace runner
 	e.location_set(arg->location_get());
 	throw e;
       }
-
       passert (*arg, val);
       args.push_back (val);
     }
@@ -358,14 +344,7 @@ namespace runner
   {
     // Build the list of lazy arguments
     object::objects_type lazy_args;
-    boost::sub_range<const ast::exps_type> range(args);
-    // The target can be unspecified.
-    if (!args.front() || args.front()->implicit())
-    {
-      lazy_args.push_back(object::nil_class);
-      range = make_iterator_range(range, 1, 0);
-    }
-    foreach (const ast::rConstExp& e, range)
+    foreach (const ast::rConstExp& e, args)
     {
       /// Retreive and evaluate the lazy version of arguments.
       const ast::rConstLazy& lazy = e.unsafe_cast<const ast::Lazy>();

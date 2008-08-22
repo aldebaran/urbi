@@ -3,23 +3,23 @@ class Global.Control
   function detach
   {
     var outer_call = call |
-    spawn (function () { outer_call.evalArgAt (1) })
+    spawn (function () { outer_call.evalArgAt (0) })
   };
 
   function detach_linked
   {
     var outer_call = call |
-    spawn (function () { outer_call.evalArgAt (1) }, true)
+    spawn (function () { outer_call.evalArgAt (0) }, true)
   };
 
   // every_ takes two arguments, a delay and an expression.
   function every_
   {
     detach ({
-      var delay = call.evalArgAt (1) |
+      var delay = call.evalArgAt (0) |
       var deadline = shiftedTime |
       loop {
-        detach (call.evalArgAt (2)) |
+        detach (call.evalArgAt (1)) |
 	deadline += delay |
         sleep (deadline - shiftedTime)
       }
@@ -30,7 +30,7 @@ class Global.Control
   // becomes true and a code to execute each time the test becomes false.
   function at_
   {
-    registerAtJob(call.args.nth(1), call.args.nth(2), call.args.nth(3))
+    registerAtJob(call.args.nth(0), call.args.nth(1), call.args.nth(2))
   };
 
   // whenever_ takes three expressions, a test and a code to execute each time the
@@ -39,13 +39,13 @@ class Global.Control
   {
     detach ({
       loop {
-        waituntil (call.evalArgAt (1)) |
+        waituntil (call.evalArgAt (0)) |
         loop {
-          call.evalArgAt (2) |
-          if (!call.evalArgAt (1))
+          call.evalArgAt (1) |
+          if (!call.evalArgAt (0))
             break
         };
-        call.evalArgAt (3)
+        call.evalArgAt (2)
       }
     })
   };
@@ -66,8 +66,8 @@ class Global.Control
   {
     var res = false |
     var tag = Tag.new("persist".fresh) |
-    var delay = call.evalArgAt (2) |
-    Control.at_ (call.evalArgAt (1),
+    var delay = call.evalArgAt (1) |
+    Control.at_ (call.evalArgAt (0),
                  detach({tag: { sleep (delay) | res = true }}),
                  detach({ res = false | tag.stop })) |
     function () { res }
@@ -77,7 +77,7 @@ class Global.Control
   function 'waituntil' {
     var t = currentRunner |
     t.setSideEffectFree (true) |
-    while (!call.evalArgAt (1)) {
+    while (!call.evalArgAt (0)) {
       t.waitForChanges
     } |
     t.setSideEffectFree (false)
