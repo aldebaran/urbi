@@ -26,44 +26,6 @@
 
 namespace runner
 {
-
-  using boost::bind;
-  using boost::ref;
-
-/// Address of \a Interpreter seen as a \c Job (Interpreter has multiple inheritance).
-#define JOB(Interpreter) static_cast<scheduler::Job*> (Interpreter)
-
-/// Address of \c this seen as a \c Job (Interpreter has multiple inheritance).
-#define ME JOB (this)
-
-#define AST(Ast)                                \
-  (Ast)->location_get ()                        \
-  << libport::incendl                           \
-  << "{{{"                                      \
-  << libport::incendl                           \
-  << Ast                                        \
-  << libport::decendl                           \
-  << "}}}"                                      \
-  << libport::decindent
-
-/// Job echo.
-#define JECHO(Title, Content)                           \
-  ECHO ("job " << ME << ", " Title ": " << Content)
-
-/// Job & astecho.
-#define JAECHO(Title, Ast)                      \
-  JECHO (Title, AST(Ast))
-
-/* Yield and trace. */
-#define YIELD()                                 \
-  do                                            \
-  {                                             \
-    ECHO ("job " << ME << " yielding on AST: "  \
-	  << &e << ' ' << AST(e));              \
-    yield ();                                   \
-  } while (0)
-
-
   // This function takes an expression and attempts to decompose it
   // into a list of identifiers.
   typedef std::deque<libport::Symbol> tag_chain_type;
@@ -84,12 +46,9 @@ namespace runner
   }
 
 
-
-
   /*--------------.
   | Interpreter.  |
   `--------------*/
-
 
   Interpreter::Interpreter (rLobby lobby,
 			    scheduler::Scheduler& sched,
@@ -182,7 +141,6 @@ namespace runner
     {
       assert (ast_ || code_);
       check_for_pending_exception();
-      JAECHO ("starting evaluation of AST: ", ast_);
       if (ast_)
 	result_ = operator()(ast_.get());
       else
