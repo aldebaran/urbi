@@ -33,13 +33,13 @@ namespace runner
   // location it the call stack. It is optional because call
   // originating from C++ have no locations.
   //
-  // * apply(target, message, args)
+  // * apply_ast(target, message, args)
   //
   // Call %target.%message(%args), args being given as ast
   // chunks. This enable to either evaluate the arguments, either
   // build a call message.
   //
-  // * apply(target, function, function, message, args)
+  // * apply_ast(target, function, function, message, args)
   //
   // Same as above, but both target and function are specified. This
   // enable to call a method with another target than the holder of
@@ -60,30 +60,36 @@ namespace runner
   `-------------------------------------*/
 
   Interpreter::rObject
-  Interpreter::apply (const rObject& target,
+  Interpreter::apply_ast (const rObject& target,
                       const libport::Symbol& message,
-                      const ast::exps_type* args,
-                      boost::optional<ast::loc> loc)
+                      const ast::exps_type* arguments,
+                      boost::optional<ast::loc> location)
   {
-    rObject value = target->slot_get(message);
     // Accept to call methods on void only if void itself is holding
     // the method.
     if (target == object::void_class)
       if (!target->own_slot_get(message))
         throw object::WrongArgumentType (message);
-    assert(value);
-    return apply(target, value, message, args, loc);
+
+    // Bounce on apply_ast overload
+    return apply_ast(target,
+                     target->slot_get(message),
+                     message,
+                     arguments, location);
   }
 
   Interpreter::rObject
-  Interpreter::apply (const rObject& target, const rObject& val,
-                      const libport::Symbol& message,
-                      const ast::exps_type* input_ast_args,
-                      boost::optional<ast::loc> loc)
+  Interpreter::apply_ast (const rObject& target,
+                          const rObject& routine,
+                          const libport::Symbol& message,
+                          const ast::exps_type* input_ast_args,
+                          boost::optional<ast::loc> loc)
   {
-    assertion(val);
+    assertion(routine);
+    assertion(target);
 
-    // Evaluate the arguments
+    // Evaluated arguments. Even if the function is lazy, it holds the
+    // target.
     object::objects_type args;
     args.push_back(target);
 
@@ -95,15 +101,16 @@ namespace runner
     // calls.args.nth(1)
     ast_args.push_front(0);
 
-    // Build the call message for non-strict functions, otherwise
-    // the evaluated argument list.
     rObject call_message;
-    const object::Code* c = val->as<object::Code>().get();
+
+    const object::Code* c = routine->as<object::Code>().get();
     if (c && !c->ast_get()->strict())
-      call_message = build_call_message (target, val, message, ast_args);
+      // If the function is lazy, build a call message.
+      call_message = build_call_message (target, routine, message, ast_args);
     else
+      // Otherwise, evaluate the arguments.
       push_evaluated_arguments (args, ast_args);
-    return apply(val, message, args, loc, call_message);
+    return apply(routine, message, args, loc, call_message);
   }
 
   /*-----------------------------------------------------------.

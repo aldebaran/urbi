@@ -91,22 +91,22 @@ namespace runner
                           object::objects_type& args,
                           rObject call_message = 0);
 
-    virtual rObject apply(const rObject& func,
-                          const libport::Symbol msg,
-                          object::objects_type& args,
-                          boost::optional<ast::loc> loc,
-                          rObject call_message = 0);
+    rObject apply(const rObject& func,
+                  const libport::Symbol msg,
+                  object::objects_type& args,
+                  boost::optional<ast::loc> loc,
+                  rObject call_message = 0);
 
-    /// Helpers to apply a function with the arguments as ast chunks
-    rObject apply(const rObject& tgt,
-                  const libport::Symbol& msg,
-                  const ast::exps_type* args,
-                  boost::optional<ast::loc> loc);
-    rObject apply(const rObject& tgt,
-                  const rObject& f,
-                  const libport::Symbol& msg,
-                  const ast::exps_type* args,
-                  boost::optional<ast::loc> loc);
+    /// Apply a function with the arguments as ast chunks.
+    rObject apply_ast(const rObject& tgt,
+                      const libport::Symbol& msg,
+                      const ast::exps_type* args,
+                      boost::optional<ast::loc> loc);
+    rObject apply_ast(const rObject& tgt,
+                      const rObject& f,
+                      const libport::Symbol& msg,
+                      const ast::exps_type* args,
+                      boost::optional<ast::loc> loc);
 
     /// Return the result of the latest evaluation.
     virtual rObject result_get();

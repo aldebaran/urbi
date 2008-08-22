@@ -94,7 +94,7 @@ namespace runner
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = ast_tgt->implicit() ? stacks_.self() : operator()(ast_tgt.get());
-    return apply(tgt, e->name_get(), e->arguments_get(), e->location_get());
+    return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
 
@@ -217,9 +217,9 @@ namespace runner
 
     if (e->arguments_get())
       // FIXME: Register in the call stack
-      return apply(stacks_.self(), value,
-                   e->name_get(), e->arguments_get(),
-                   e->location_get());
+      return apply_ast(stacks_.self(), value,
+                       e->name_get(), e->arguments_get(),
+                       e->location_get());
     else
       return value;
   }
