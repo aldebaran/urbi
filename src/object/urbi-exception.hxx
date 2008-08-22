@@ -55,21 +55,13 @@ namespace object
   {
   }
 
-  // In WrongArgumentCount constructors, we subtract one to all number
-  // of arguments, provided or expected. This is because we expect the
-  // target to be included when checking the number of arguments because
-  // it seems more natural to do so, as this looks like the argc check
-  // in main(). However, it is more user-friendly to tell the user about
-  // the number of real arguments, not including the target, to avoid
-  // confusion.
-
   inline
   WrongArgumentCount::WrongArgumentCount(unsigned formal,
                                          unsigned effective,
                                          const libport::Symbol fun)
     : UrbiException((boost::format ("expected %1% arguments, given %2%")
-		      % (formal-1)
-		      % (effective-1)).str (),
+		      % (formal)
+		      % (effective)).str (),
 		     fun)
   {
   }

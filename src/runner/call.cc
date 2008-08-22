@@ -59,8 +59,7 @@ namespace object
     rObject message = owner->slot_get(msg);
     if (!message)
       throw LookupError(msg);
-    args.insert(args.begin(), self);
-    rObject res = r.apply(message, msg, args);
+    rObject res = r.apply(self, message, msg, args);
     assert(res);
     return res;
   }

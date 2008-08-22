@@ -57,7 +57,8 @@ namespace object
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
     {                                                                   \
-      check_args_count(ArgsC WHEN(Run, - 1), args.size(), name);        \
+      check_args_count(ArgsC WHEN(Run, - 1) - 1,                        \
+                       args.size() - 1, name);                          \
       WHEN(Ret, R res =) f(                                             \
         CxxConvert<typename Flatten<S>::type>::to(args[0], name)        \
         COMMA(Run) WHEN(Run, r)                                         \

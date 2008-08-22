@@ -91,7 +91,6 @@ namespace runner
     // Evaluated arguments. Even if the function is lazy, it holds the
     // target.
     object::objects_type args;
-    args.push_back(target);
 
     ast::exps_type ast_args =
       input_ast_args ? *input_ast_args : ast::exps_type();
@@ -110,68 +109,94 @@ namespace runner
     else
       // Otherwise, evaluate the arguments.
       push_evaluated_arguments (args, ast_args);
-    return apply(routine, message, args, loc, call_message);
+    return apply(target, routine, message, args, call_message, loc);
   }
 
-  /*-----------------------------------------------------------.
-  | Apply with either a call message, either already evaluated |
-  | arguments                                                  |
-  `-----------------------------------------------------------*/
+  /*-----------------------------------------------------------------.
+  | Apply with evaluated arguments, and potentially a call message.  |
+  `-----------------------------------------------------------------*/
 
   object::rObject
-  Interpreter::apply(const rObject& func,
+  Interpreter::apply(const rObject& target,
+                     const rObject& function,
                      const libport::Symbol msg,
                      object::objects_type& args,
-                     rObject call_message)
+                     const rObject& call_message)
   {
-    return apply(func, msg, args, boost::optional<ast::loc>(), call_message);
+    return apply(target,function, msg, args, call_message,
+                 boost::optional<ast::loc>());
   }
 
-
   object::rObject
-  Interpreter::apply(const rObject& func,
+  Interpreter::apply(const rObject& target,
+                     const rObject& function,
                      const libport::Symbol msg,
                      object::objects_type& args,
-                     boost::optional<ast::loc> loc,
-                     rObject call_message)
+                     const rObject& call_message,
+                     boost::optional<ast::loc> loc)
   {
-    precondition(func);
+    precondition(function);
+    precondition(target);
 
     call_stack_.push_back(std::make_pair(msg, loc));
     Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
 
-    // If we try to call a C++ primitive with a call message, make it
-    // look like a strict function call
-    if (call_message &&
-	(!func->is_a<object::Code>()
-	 || func->as<object::Code>()->ast_get()->strict()))
+    // Check if any argument is void
+    foreach (const rObject& arg, args)
+      if (arg == object::void_class)
+        throw object::WrongArgumentType (msg);
+
+    if (const rCode& code = function->as<object::Code>())
+      return apply_urbi (target, code, msg, args, call_message);
+    else if (const object::rPrimitive& p = function->as<object::Primitive>())
+    {
+      args.push_front(target);
+      return p->value_get()(*this, args);
+    }
+    else
+    {
+      object::check_arg_count (0, args.size(), msg);
+      return function;
+    }
+  }
+
+  /*--------------------------.
+  | Apply with a call message |
+  `--------------------------*/
+
+
+  object::rObject
+  Interpreter::apply_call_message(const rObject& function,
+                                  const libport::Symbol msg,
+                                  const rObject& call_message)
+  {
+    return apply_call_message(function, msg, call_message,
+                              boost::optional<ast::loc>());
+  }
+
+  object::rObject
+  Interpreter::apply_call_message(const rObject& function,
+                     const libport::Symbol msg,
+                     const rObject& call_message,
+                     boost::optional<ast::loc> loc)
+  {
+    rObject target = call_message->slot_get(SYMBOL(target));
+    object::objects_type args;
+
+    // This function is called when arguments haven't been evaluated:
+    // only a call message is provided.  If the called function is
+    // strict, we need to extract arguments values for it.  This can
+    // happen when
+    if (!function->is_a<object::Code>()
+        || function->as<object::Code>()->ast_get()->strict())
     {
       rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
 	       urbi_args->as<object::List>()->value_get())
 	args.push_back(arg);
-      call_message = 0;
     }
 
-    // Even with call message, there is at least one argument: self.
-    assert (!args.empty());
-    // If we use a call message, "self" is the only argument.
-    assert (!call_message || args.size() == 1);
-
-    // Check if any argument is void
-    object::objects_type::iterator end = args.end();
-    if (std::find(++args.begin(), end, object::void_class) != end)
-      throw object::WrongArgumentType (msg);
-
-    if (const rCode& c = func->as<object::Code>())
-      return apply_urbi (c, msg, args, call_message);
-    else if (const object::rPrimitive& p = func->as<object::Primitive>())
-      return p->value_get()(*this, args);
-    else
-    {
-      object::check_arg_count (1, args.size(), msg);
-      return func;
-    }
+    return apply(target, function, msg, args, call_message, loc);
   }
 
   /*-----------------------------------------------.
@@ -179,15 +204,16 @@ namespace runner
   `-----------------------------------------------*/
 
   object::rObject
-  Interpreter::apply_urbi (rCode func,
+  Interpreter::apply_urbi (const rObject& target,
+                           const rCode& function,
                            const libport::Symbol& msg,
                            const object::objects_type& args,
-                           rObject call_message)
+                           const rObject& call_message)
   {
     libport::Finally finally;
 
     // The called function.
-    const object::Code::ast_type& ast = func->ast_get();
+    const object::Code::ast_type& ast = function->ast_get();
 
     // Whether it's an explicit closure
     bool closure = ast.unsafe_cast<const ast::Closure>();
@@ -198,13 +224,19 @@ namespace runner
     if (!ast->strict() && !call_message)
     {
       object::objects_type lazy_args;
+
+      rObject lazy = object::global_class->slot_get(SYMBOL(Lazy))->clone();
+      lazy->slot_set(SYMBOL(code), target);
+      lazy_args.push_back(lazy);
+
       foreach (const rObject& o, args)
       {
         rObject lazy = object::global_class->slot_get(SYMBOL(Lazy))->clone();
         lazy->slot_set(SYMBOL(code), o);
         lazy_args.push_back(lazy);
       }
-      call_message = build_call_message(args[0], func, msg, lazy_args);
+      const_cast<rObject&>(call_message) =
+        build_call_message(target, function, msg, lazy_args);
     }
 
     // Determine the function's 'this' and 'call'
@@ -212,16 +244,16 @@ namespace runner
     rObject call;
     if (closure)
     {
-      self = func->self_get();
+      self = function->self_get();
       assert(self);
       // FIXME: The call message can be undefined at the creation
       // site for now.
       // assert(fn.call);
-      call = func->call_get();
+      call = function->call_get();
     }
     else
     {
-      self = args[0];
+      self = target;
       call = call_message;
     }
 
@@ -238,9 +270,8 @@ namespace runner
       const ast::local_declarations_type& formals =
         *ast->formals_get();
       // Check arity
-      object::check_arg_count (formals.size() + 1, args.size(), msg);
-      // Skip 'this'
-      object::objects_type::const_iterator it = args.begin() + 1;
+      object::check_arg_count (formals.size(), args.size(), msg);
+      object::objects_type::const_iterator it = args.begin();
       // Bind
       foreach (const ast::rConstLocalDeclaration& s, formals)
         stacks_.def_arg(s, *(it++));
@@ -250,13 +281,14 @@ namespace runner
     foreach (const ast::rConstLocalDeclaration& dec,
              *ast->captured_variables_get())
     {
-      const rrObject& value = func->captures_get()[dec->local_index_get()];
+      const rrObject& value = function->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
     }
 
     // Before calling, check that we are not exhausting the stack
     // space, for example in an infinite recursion.
     check_stack_space ();
+
 
     stacks_.execution_starts(msg);
     return operator()(ast->body_get().get());

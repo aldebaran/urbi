@@ -35,7 +35,12 @@ class Global.Channel
   var enabled = true;
   /// Use asTopLevelPrintable if set (display the string 'foo' as '"foo"')
   var quote = true;
-  function init(x) { var this.name = x };
+
+  function init(x)
+  {
+    var this.name = x
+  };
+
   function '<<'(x)
   {
     if (enabled)

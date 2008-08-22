@@ -86,10 +86,15 @@ namespace runner
     ///             being Code.
     ///
     /// One cannot have both a call message and args.
-    virtual rObject apply(const rObject& func,
+    virtual rObject apply(const rObject& target,
+                          const rObject& function,
 			  const libport::Symbol msg,
 			  object::objects_type& args,
-			  rObject call_message = 0) = 0;
+			  const rObject& call_message = 0) = 0;
+
+    virtual rObject apply_call_message(const rObject& function,
+                                       const libport::Symbol msg,
+                                       const rObject& call_message) = 0;
 
     /// Return the current scope_tag, after creating it if needed.
     const scheduler::rTag& scope_tag();

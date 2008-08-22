@@ -87,7 +87,10 @@ namespace object
     if (args->value_get().empty())
       throw PrimitiveError(SYMBOL(apply),
                            "list of arguments must begin with this");
-    return r.apply(this, SYMBOL(apply), args->value_get());
+    List::value_type a = args->value_get();
+    rObject tgt = a.front();
+    a.pop_front();
+    return r.apply(tgt, this, SYMBOL(apply), a);
   }
 
   rString Code::as_string(rObject what)

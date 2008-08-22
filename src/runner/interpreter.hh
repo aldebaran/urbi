@@ -86,16 +86,27 @@ namespace runner
     /// \param call_message  the callMessage.  Valid only for \a func
     ///             being Code.
     ///
-    virtual rObject apply(const rObject& func,
+    virtual rObject apply(const rObject& target,
+                          const rObject& function,
                           const libport::Symbol msg,
                           object::objects_type& args,
-                          rObject call_message = 0);
+                          const rObject& call_message = 0);
 
-    rObject apply(const rObject& func,
+    rObject apply(const rObject& target,
+                  const rObject& function,
                   const libport::Symbol msg,
                   object::objects_type& args,
-                  boost::optional<ast::loc> loc,
-                  rObject call_message = 0);
+                  const rObject& call_message,
+                  boost::optional<ast::loc> loc);
+
+    virtual rObject apply_call_message(const rObject& function,
+                               const libport::Symbol msg,
+                               const rObject& call_message);
+
+    rObject apply_call_message(const rObject& function,
+                               const libport::Symbol msg,
+                               const rObject& call_message,
+                               boost::optional<ast::loc> loc);
 
     /// Apply a function with the arguments as ast chunks.
     rObject apply_ast(const rObject& tgt,
@@ -166,10 +177,11 @@ namespace runner
     void init();
     /// Reset result_, set the location and call stack of ue.
     void propagate_error_(object::UrbiException& ue, const ast::loc& l);
-    rObject apply_urbi (rCode func,
+    rObject apply_urbi (const rObject& target,
+                        const rCode& function,
 			const libport::Symbol& msg,
 			const object::objects_type& args,
-			rObject call_message);
+			const rObject& call_message);
 
   private:
     /// Factor handling of Function and Closure

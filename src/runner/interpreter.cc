@@ -144,10 +144,7 @@ namespace runner
       if (ast_)
 	result_ = operator()(ast_.get());
       else
-      {
-	args_.push_front(lobby_);
-	result_ = apply(code_, SYMBOL(task), args_);
-      }
+	result_ = apply(lobby_, code_, SYMBOL(task), args_);
     }
     catch(object::UrbiException& ue)
     {

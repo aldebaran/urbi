@@ -148,9 +148,8 @@ namespace object
     foreach (const rObject& o, value_type(content_))
     {
       objects_type args;
-      args.push_back(f);
       args.push_back(o);
-      r.apply(f, SYMBOL(each), args);
+      r.apply(f, f, SYMBOL(each), args);
     }
   }
 

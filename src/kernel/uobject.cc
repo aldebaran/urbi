@@ -58,9 +58,9 @@ static inline runner::Runner& getCurrentRunner()
 /// UObject read to an urbi variable.
 static rObject urbi_get(rObject r, const std::string& slot)
 {
-  object::objects_type args = list_of(r);
+  object::objects_type args;
   ECHO("applying get for " << slot << "...");
-  rObject ret =  getCurrentRunner().apply(r->slot_get(Symbol(slot)),
+  rObject ret =  getCurrentRunner().apply(r, r->slot_get(Symbol(slot)),
                                           Symbol(slot), args);
   ECHO("done");
   return ret;
@@ -69,10 +69,10 @@ static rObject urbi_get(rObject r, const std::string& slot)
 /// UObject write to an urbi variable.
 static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
-  object::objects_type args = list_of
-    (r) (new object::String(Symbol(slot))) (v);
+  rObject name = new object::String(Symbol(slot));
+  object::objects_type args = list_of (name) (v);
   ECHO("applying set...");
-  rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
+  rObject ret = getCurrentRunner().apply(r, r->slot_get(SYMBOL(updateSlot)),
 					 SYMBOL(updateSlot), args);
   ECHO("done");
   return ret;
@@ -193,8 +193,8 @@ rObject
 uobject_make_proto(const std::string& name)
 {
   rObject oc = object_class->slot_get(SYMBOL(UObject))->clone();
-  object::objects_type args = list_of(oc);
-  getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
+  object::objects_type args;
+  getCurrentRunner().apply(oc, oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
   oc->slot_set(SYMBOL(__uobject_cname),
 	       new object::String(libport::Symbol(name)));
   oc->slot_set(SYMBOL(__uobject_base), oc);
@@ -303,8 +303,8 @@ uvar_uowned_set(const std::string& name, rObject val)
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
   rObject v = o->slot_get(Symbol(p.second));
-  object::objects_type args = list_of (v) (val);
-  return getCurrentRunner().apply(v->slot_get(SYMBOL(writeOwned)), SYMBOL(writeOwned), args);
+  object::objects_type args = list_of (val);
+  return getCurrentRunner().apply(v, v->slot_get(SYMBOL(writeOwned)), SYMBOL(writeOwned), args);
 }
 
 namespace urbi
@@ -370,11 +370,10 @@ namespace urbi
       rObject f = var->slot_get(sym);
       assertion(f);
       object::objects_type args = list_of
-	(var)
 	(object::make_primitive(
 	boost::function2<rObject, Runner&, objects_type&>
 	(boost::bind(&wrap_ucallback_notify, _1 ,_2, this)), SYMBOL(callback)));
-      getCurrentRunner().apply(f, sym, args);
+      getCurrentRunner().apply(var, f, sym, args);
     }
     delete &s;
   }
@@ -393,12 +392,10 @@ namespace urbi
   {
     rObject me = get_base(objname);
     rObject f = me->slot_get(SYMBOL(setTimer));
-    object::objects_type args = list_of
-      (me)
-      (new object::Float(period))
-      (
-       MAKE_VOIDCALL(this, urbi::UTimerCallback, call));
-    getCurrentRunner().apply(f, SYMBOL(setTimer), args);
+    rObject p = new object::Float(period);
+    rObject call = MAKE_VOIDCALL(this, urbi::UTimerCallback, call);
+    object::objects_type args = list_of (p) (call);
+    getCurrentRunner().apply(me, f, SYMBOL(setTimer), args);
   }
 
   UTimerCallback::~UTimerCallback()
@@ -411,8 +408,8 @@ namespace urbi
     rObject f = me->slot_get(SYMBOL(setUpdate));
     me->slot_update(getCurrentRunner(), SYMBOL(update),
 		    MAKE_VOIDCALL(this, urbi::UObject, update));
-    object::objects_type args = list_of (me) (new object::Float(t));
-    getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
+    object::objects_type args = list_of(new object::Float(t));
+    getCurrentRunner().apply(me, f, SYMBOL(setUpdate), args);
   }
 
   UObject::~UObject()
@@ -569,12 +566,11 @@ namespace urbi
     rObject uob = object_class->slot_get(SYMBOL(UObject));
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args = list_of
-      (uob)
-      (new object::String(Symbol(name)))
+      (rObject(new object::String(Symbol(name))))
       (new object::Float(t))
       (
        MAKE_VOIDCALL(this, urbi::UObjectHub, update));
-    getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
+    getCurrentRunner().apply(uob, f, SYMBOL(setHubUpdate), args);
   }
 
   void

@@ -19,6 +19,7 @@
 # include <object/tag-class.hh>
 # include <object/symbols.hh>
 
+# include <runner/call.hh>
 # include <runner/interpreter.hh>
 
 # include <libport/compilation.hh>
@@ -67,10 +68,11 @@ namespace runner
     rCode code = operator()(e->children_get().front().get())
       .unsafe_cast<object::Code>();
     assert(code);
-    // This is a closure, it won't use its 'this'
+
     object::objects_type args;
-    args.push_back(rObject());
-    apply_urbi(code, SYMBOL(), args, 0);
+    // FIXME: This is a closure, it won't use its 'this', but this is
+    // gory.
+    apply_urbi(rObject(), code, SYMBOL(), args, 0);
 
     // Wait for all other jobs to terminate
     yield_until_terminated(jobs);
@@ -294,15 +296,9 @@ namespace runner
 
 	      static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
 	      if (rObject topLevel =
-	        object::global_class->slot_locate(SYMBOL(topLevel), false,
-		  true))
-	      {
-		rObject e = topLevel->slot_get(SYMBOL(LT_LT));
-                objects_type args;
-                args.push_back(topLevel);
-                args.push_back(res);
-		apply(e, SYMBOL(topLevel), args);
-	      }
+                  object::global_class->slot_locate(SYMBOL(topLevel), false,
+                                                    true))
+                object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
 	      else if (toplevel_debug)
 		lobby_->value_get().connection.new_result(res);
 	    }

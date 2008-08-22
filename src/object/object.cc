@@ -132,10 +132,9 @@ namespace object
       if (rObject hook = owner->property_get(k, SYMBOL(updateHook)))
       {
         objects_type args;
-        args.push_back(rObject(this));
         args.push_back(new String(k));
         args.push_back(o);
-        v = r.apply(hook, SYMBOL(updateHook), args);
+        v = r.apply(rObject(this), hook, SYMBOL(updateHook), args);
         // If the updateHook returned void, do nothing. Otherwise let
         // the slot be overwritten.
         if (v == object::void_class)

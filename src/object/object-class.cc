@@ -137,12 +137,12 @@ namespace object
     const rObject message = call_message->slot_get(SYMBOL(message));
     type_check<String>(message, SYMBOL(callMessage));
     libport::Symbol msg = message->as<String>()->value_get();
-    const rObject code = args[0]->slot_get(msg);
+    rObject target = args[0];
+    const rObject code = target->slot_get(msg);
     call_message->slot_update(r, SYMBOL(code), code);
+    call_message->slot_update(r, SYMBOL(target), target);
     // FIXME: Sanity checks on the call message are probably required
-    objects_type self;
-    self.push_back(args[0]);
-    return r.apply(code, msg, self, call_message);
+    return r.apply_call_message(code, msg, call_message);
   }
 
   /*---------.

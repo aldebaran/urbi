@@ -40,7 +40,7 @@
  * \param N expected number of arguments (including self).
  */
 #define CHECK_ARG_COUNT(N)                              \
-  check_arg_count(N, args.size(), libport::Symbol(__PRETTY_FUNCTION__))
+  check_arg_count(N - 1, args.size() - 1, libport::Symbol(__PRETTY_FUNCTION__))
 
 /**
  * Check argument count and throw an Urbi exception if it does not
