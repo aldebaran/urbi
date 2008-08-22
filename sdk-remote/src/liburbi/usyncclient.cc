@@ -125,7 +125,8 @@ namespace urbi
       ++p;
     while (format[p] == ' ')
       ++p;
-    passert(format[p], format[p]!= ':' && format[p] != '<');
+    if (format[p]== ':' || format[p] == '<')
+      return 0;
     //check if there is a command separator
     p = strlen(format) - 1;
     while (format[p] == ' ')
