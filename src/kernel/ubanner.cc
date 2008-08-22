@@ -13,7 +13,7 @@
 // Standard header used by the server. Divided into "before" and
 // "after" the custom header defined by the real server.
 
-const char* HEADER_BEFORE_CUSTOM[] =
+USDK_API const char* HEADER_BEFORE_CUSTOM[] =
   {
     "*** **********************************************************\n",
     "*** URBI Kernel version " PACKAGE_VERSION_REV "\n",
@@ -22,7 +22,7 @@ const char* HEADER_BEFORE_CUSTOM[] =
     0
   };
 
-const char* HEADER_AFTER_CUSTOM[] =
+USDK_API const char* HEADER_AFTER_CUSTOM[] =
   {
     "***\n",
     "*** URBI comes with ABSOLUTELY NO WARRANTY;\n",
@@ -34,7 +34,7 @@ const char* HEADER_AFTER_CUSTOM[] =
     0
   };
 
-const char* uconsole_banner[] =
+USDK_API const char* uconsole_banner[] =
 {
   "***      URBI Kernel Console " PACKAGE_VERSION_REV "\n",
   "***      "

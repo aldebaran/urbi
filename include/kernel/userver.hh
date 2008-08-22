@@ -29,6 +29,7 @@
 # include <libport/utime.hh>
 
 # include <kernel/fwd.hh>
+# include <urbi/export.hh>
 # include <kernel/utypes.hh>
 
 // Do not include runner/fwd.hh etc. which are not public.
@@ -52,7 +53,7 @@ extern class UServer* urbiserver;
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class UServer
+class USDK_API  UServer
 {
 public:
   UServer(const char* mainName);

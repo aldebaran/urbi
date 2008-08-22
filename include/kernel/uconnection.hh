@@ -21,6 +21,7 @@
 # include <boost/shared_ptr.hpp>
 # include <libport/shared-ptr.hh>
 # include <kernel/fwd.hh>
+# include <urbi/export.hh>
 # include <kernel/utypes.hh>
 
 namespace ast
@@ -71,7 +72,7 @@ namespace runner
     system is actually sending data through the real connection.
  */
 
-class UConnection
+class USDK_API UConnection
 {
   friend class UServer;
 

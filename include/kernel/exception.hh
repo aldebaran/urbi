@@ -6,10 +6,11 @@
 # include <boost/optional.hpp>
 
 # include <libport/shared-ptr.hh>
+# include <urbi/export.hh>
 
 namespace kernel
 {
-  class exception
+  class USDK_API exception
   {
   public:
     virtual ~exception ();
