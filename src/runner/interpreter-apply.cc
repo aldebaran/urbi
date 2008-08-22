@@ -27,7 +27,150 @@ namespace runner
 {
   using libport::Finally;
 
-  // Apply a function written in Urbi.
+  // Apply methods summary:
+  //
+  // Location in all apply methods is used to register the call
+  // location it the call stack. It is optional because call
+  // originating from C++ have no locations.
+  //
+  // * apply(target, message, args)
+  //
+  // Call %target.%message(%args), args being given as ast
+  // chunks. This enable to either evaluate the arguments, either
+  // build a call message.
+  //
+  // * apply(target, function, function, message, args)
+  //
+  // Same as above, but both target and function are specified. This
+  // enable to call a method with another target than the holder of
+  // the function
+  //
+  // * apply(function, msg, args, call_message)
+  //
+  // Apply %function.  If the function is strict, you must give the
+  // arguments in args, the first being the target.  If it is lazy,
+  // you might either give the call message, either the arguments, in
+  // which case a call message will be forged.  A call message must be
+  // forged when a lazy function is called from C++ or with eval: we
+  // only have the evaluated arguments.
+
+
+  /*-------------------------------------.
+  | Apply with arguments as ast chunks.  |
+  `-------------------------------------*/
+
+  Interpreter::rObject
+  Interpreter::apply (const rObject& target,
+                      const libport::Symbol& message,
+                      const ast::exps_type* args,
+                      boost::optional<ast::loc> loc)
+  {
+    rObject value = target->slot_get(message);
+    // Accept to call methods on void only if void itself is holding
+    // the method.
+    if (target == object::void_class)
+      if (!target->own_slot_get(message))
+        throw object::WrongArgumentType (message);
+    assert(value);
+    return apply(target, value, message, args, loc);
+  }
+
+  Interpreter::rObject
+  Interpreter::apply (const rObject& target, const rObject& val,
+                      const libport::Symbol& message,
+                      const ast::exps_type* input_ast_args,
+                      boost::optional<ast::loc> loc)
+  {
+    assertion(val);
+
+    // Evaluate the arguments
+    object::objects_type args;
+    args.push_back(target);
+
+    ast::exps_type ast_args =
+      input_ast_args ? *input_ast_args : ast::exps_type();
+
+    // FIXME: This is the target, for compatibility reasons. We need
+    // to remove this, and stop assuming that arguments start at
+    // calls.args.nth(1)
+    ast_args.push_front(0);
+
+    // Build the call message for non-strict functions, otherwise
+    // the evaluated argument list.
+    rObject call_message;
+    const object::Code* c = val->as<object::Code>().get();
+    if (c && !c->ast_get()->strict())
+      call_message = build_call_message (target, val, message, ast_args);
+    else
+      push_evaluated_arguments (args, ast_args);
+    return apply(val, message, args, loc, call_message);
+  }
+
+  /*-----------------------------------------------------------.
+  | Apply with either a call message, either already evaluated |
+  | arguments                                                  |
+  `-----------------------------------------------------------*/
+
+  object::rObject
+  Interpreter::apply(const rObject& func,
+                     const libport::Symbol msg,
+                     object::objects_type& args,
+                     rObject call_message)
+  {
+    return apply(func, msg, args, boost::optional<ast::loc>(), call_message);
+  }
+
+
+  object::rObject
+  Interpreter::apply(const rObject& func,
+                     const libport::Symbol msg,
+                     object::objects_type& args,
+                     boost::optional<ast::loc> loc,
+                     rObject call_message)
+  {
+    precondition(func);
+
+    call_stack_.push_back(std::make_pair(msg, loc));
+    Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
+
+    // If we try to call a C++ primitive with a call message, make it
+    // look like a strict function call
+    if (call_message &&
+	(!func->is_a<object::Code>()
+	 || func->as<object::Code>()->ast_get()->strict()))
+    {
+      rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
+      foreach (const rObject& arg,
+	       urbi_args->as<object::List>()->value_get())
+	args.push_back(arg);
+      call_message = 0;
+    }
+
+    // Even with call message, there is at least one argument: self.
+    assert (!args.empty());
+    // If we use a call message, "self" is the only argument.
+    assert (!call_message || args.size() == 1);
+
+    // Check if any argument is void
+    object::objects_type::iterator end = args.end();
+    if (std::find(++args.begin(), end, object::void_class) != end)
+      throw object::WrongArgumentType (msg);
+
+    if (const rCode& c = func->as<object::Code>())
+      return apply_urbi (c, msg, args, call_message);
+    else if (const object::rPrimitive& p = func->as<object::Primitive>())
+      return p->value_get()(*this, args);
+    else
+    {
+      object::check_arg_count (1, args.size(), msg);
+      return func;
+    }
+  }
+
+  /*-----------------------------------------------.
+  | Apply an urbi function (i.e., not a primitive) |
+  `-----------------------------------------------*/
+
   object::rObject
   Interpreter::apply_urbi (rCode func,
                            const libport::Symbol& msg,
@@ -112,62 +255,9 @@ namespace runner
     return operator()(ast->body_get().get());
   }
 
-  object::rObject
-  Interpreter::apply(const rObject& func,
-                     const libport::Symbol msg,
-                     object::objects_type& args,
-                     rObject call_message)
-  {
-    return apply(func, msg, args, boost::optional<ast::loc>(), call_message);
-  }
-
-
-  object::rObject
-  Interpreter::apply(const rObject& func,
-                     const libport::Symbol msg,
-                     object::objects_type& args,
-                     boost::optional<ast::loc> loc,
-                     rObject call_message)
-  {
-    precondition(func);
-
-    call_stack_.push_back(std::make_pair(msg, loc));
-    Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
-
-    // If we try to call a C++ primitive with a call message, make it
-    // look like a strict function call
-    if (call_message &&
-	(!func->is_a<object::Code>()
-	 || func->as<object::Code>()->ast_get()->strict()))
-    {
-      rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
-      foreach (const rObject& arg,
-	       urbi_args->as<object::List>()->value_get())
-	args.push_back(arg);
-      call_message = 0;
-    }
-
-    // Even with call message, there is at least one argument: self.
-    assert (!args.empty());
-    // If we use a call message, "self" is the only argument.
-    assert (!call_message || args.size() == 1);
-
-    // Check if any argument is void
-    object::objects_type::iterator end = args.end();
-    if (std::find(++args.begin(), end, object::void_class) != end)
-      throw object::WrongArgumentType (msg);
-
-    if (const rCode& c = func->as<object::Code>())
-      return apply_urbi (c, msg, args, call_message);
-    else if (const object::rPrimitive& p = func->as<object::Primitive>())
-      return p->value_get()(*this, args);
-    else
-    {
-      object::check_arg_count (1, args.size(), msg);
-      return func;
-    }
-  }
-
+  /*--------.
+  | Helpers |
+  `--------*/
 
   void
   Interpreter::push_evaluated_arguments (object::objects_type& args,
@@ -247,57 +337,6 @@ namespace runner
 
     return build_call_message(tgt, code, msg, lazy_args);
   }
-
-  Interpreter::rObject
-  Interpreter::apply (const rObject& tgt, const libport::Symbol& message,
-                      const ast::exps_type* input_ast_args,
-                      boost::optional<ast::loc> loc)
-  {
-    rObject value = tgt->slot_get(message);
-    // Accept to call methods on void only if void itself is holding
-    // the method.
-    if (tgt == object::void_class)
-      if (!tgt->own_slot_get(message))
-        throw object::WrongArgumentType (message);
-    assert(value);
-    return apply(tgt, value, message, input_ast_args, loc);
-  }
-
-  Interpreter::rObject
-  Interpreter::apply (const rObject& tgt, const rObject& val,
-                      const libport::Symbol& message,
-                      const ast::exps_type* input_ast_args,
-                      boost::optional<ast::loc> loc)
-  {
-    assertion(val);
-
-    /*-------------------------.
-    | Evaluate the arguments.  |
-    `-------------------------*/
-
-    // Gather the arguments, including the target.
-    object::objects_type args;
-    args.push_back(tgt);
-
-    ast::exps_type ast_args =
-      input_ast_args ? *input_ast_args : ast::exps_type();
-
-    // FIXME: This is the target, for compatibility reasons. We need
-    // to remove this, and stop assuming that arguments start at
-    // calls.args.nth(1)
-    ast_args.push_front(0);
-
-    // Build the call message for non-strict functions, otherwise
-    // the evaluated argument list.
-    rObject call_message;
-    const object::Code* c = val->as<object::Code>().get();
-    if (c && !c->ast_get()->strict())
-      call_message = build_call_message (tgt, val, message, ast_args);
-    else
-      push_evaluated_arguments (args, ast_args);
-    return apply(val, message, args, loc, call_message);
-  }
-
 
   object::rCode
   Interpreter::make_routine(ast::rConstRoutine e) const

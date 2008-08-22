@@ -86,7 +86,6 @@ namespace runner
     /// \param call_message  the callMessage.  Valid only for \a func
     ///             being Code.
     ///
-    /// One cannot have both a call message and args.
     virtual rObject apply(const rObject& func,
                           const libport::Symbol msg,
                           object::objects_type& args,
