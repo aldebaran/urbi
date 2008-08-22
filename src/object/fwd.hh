@@ -58,10 +58,6 @@ namespace object
 
   */
 
-  // All the atoms.
-  template <typename Traits>
-  class Atom;
-
   class Barrier;
   typedef libport::shared_ptr<Barrier> rBarrier;
   class Code;
