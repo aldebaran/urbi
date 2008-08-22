@@ -59,10 +59,18 @@ namespace urbi
 		int _buflen = URBI_BUFLEN);
 
   protected:
+    /** Synchronously ask the server for the value of an expression.
+     * \param expression the URBI expression to evaluate. It must be a single expression and must not start with a tag.
+     * \param mtag tag to use, or 0 to generate one.
+     * \param mmod modifier to use on the tag, or 0 for none.
+     * \return the resulting message, or 0 in case of error.
+     */
     UMessage * syncGet_ (const char * expression, const char* mtag, const char* mmod, va_list& arg);
 
   public:
+    /// Synchronously evaluate an Urbi expression. The expression must not start with a tag or channel.
     UMessage * syncGet (const char * expression, ...);
+    /// Synchronously evaluate an Urbi expression, specifying the tag and modifiers to prepend to it.
     UMessage * syncGetTag (const char * expression, const char* mtag, const char* mmod, ...);
 
 
