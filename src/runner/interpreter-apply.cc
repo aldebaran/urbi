@@ -98,12 +98,15 @@ namespace runner
     rObject call_message;
 
     const object::Code* c = routine->as<object::Code>().get();
-    if (c && !c->ast_get()->strict())
-      // If the function is lazy, build a call message.
+
+    // Build a call message if the function uses it.
+    if (c && c->ast_get()->uses_call_get())
       call_message = build_call_message(target, routine, message, ast_args);
-    else
-      // Otherwise, evaluate the arguments.
+
+    // Unless the function is lazy, evaluate the arguments.
+    if (!c || c->ast_get()->strict())
       push_evaluated_arguments(args, ast_args);
+
     return apply(target, routine, message, args, call_message, loc);
   }
 
@@ -216,7 +219,7 @@ namespace runner
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
     // instance.
-    if (!ast->strict() && !call_message)
+    if (ast->uses_call_get() && !call_message)
     {
       object::objects_type lazy_args;
 

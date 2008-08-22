@@ -871,6 +871,10 @@ Routine:
         type: unsigned
         init: '0'
         access: rW
+    - uses_call:
+        type: bool
+        init: 'false'
+        access: rW
   inline:
     header inside: |2
         public:

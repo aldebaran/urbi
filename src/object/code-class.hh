@@ -37,6 +37,9 @@ namespace object
     static rString as_string(rObject what);
     rString body_string();
 
+    virtual std::ostream& special_slots_dump (std::ostream& o,
+					      runner::Runner&) const;
+
     static const std::string type_name;
     virtual std::string type_name_get() const;
 

@@ -113,6 +113,14 @@ namespace object
           string_cast(*ast_->body_get()->body_get())));
   }
 
+  std::ostream& Code::special_slots_dump(std::ostream& o,
+                                         runner::Runner&) const
+  {
+    o << "value: " << *ast_get() << libport::iendl;
+    return o;
+  }
+
+
   void Code::initialize(CxxObject::Binder<Code>& bind)
   {
     bind(SYMBOL(apply), &Code::apply);

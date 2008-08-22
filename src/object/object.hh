@@ -181,15 +181,15 @@ namespace object
     /// \{
     /// Dump the list of protos.
     /// FIXME: Should become useless when protos become Urbi lists.
-    std::ostream& protos_dump (std::ostream& o,
-			       runner::Runner& r) const;
+    std::ostream& protos_dump(std::ostream& o,
+                              runner::Runner& r) const;
     /// Report a short string describing the identity.
-    std::ostream& id_dump (std::ostream& o,
-			   runner::Runner& r) const;
+    std::ostream& id_dump(std::ostream& o,
+                          runner::Runner& r) const;
 
     /// Dump the special slots if there are.
-    virtual std::ostream& special_slots_dump (std::ostream& o,
-					      runner::Runner&) const;
+    virtual std::ostream& special_slots_dump(std::ostream& o,
+                                             runner::Runner&) const;
 
     // Print out the value. Suitable for user interaction.
     std::ostream& print(std::ostream&, runner::Runner&) const;
@@ -201,7 +201,7 @@ namespace object
     /// Clone, i.e., create a fresh object with this class as sole proto.
     // It is tempting to make it const, but then the list of protos
     // must be const too.
-    virtual rObject clone () const;
+    virtual rObject clone() const;
 
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;

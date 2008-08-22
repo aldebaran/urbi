@@ -350,17 +350,10 @@ namespace binder
   {
     ast::rFunction fun = function();
     if (!fun)
-    {
       if (report_errors_)
         errors_.error(input->location_get(), "call: used outside any function");
-    }
-    else if (fun->strict())
-    {
-      if (report_errors_)
-        errors_.error(input->location_get(), "call: used in a strict function");
-    }
-    else
-      return super_type::visit(input);
+    fun->uses_call_set(true);
+    super_type::visit(input);
   }
 
   ast::rExp
