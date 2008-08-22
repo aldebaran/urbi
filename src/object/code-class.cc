@@ -33,7 +33,7 @@ namespace object
     proto_add(code_class);
   }
 
-  Code::Code(rRoutine model)
+  Code::Code(rCode model)
     : ast_(model->ast_)
     , captures_(model->captures_)
     , self_(model->self_)

@@ -64,7 +64,7 @@ namespace runner
     }
 
     // Evaluate the first child in this runner
-    rRoutine code = operator()(e->children_get().front().get())
+    rCode code = operator()(e->children_get().front().get())
       .unsafe_cast<object::Code>();
     assert(code);
     // This is a closure, it won't use its 'this'
@@ -124,7 +124,7 @@ namespace runner
 
   LIBPORT_SPEED_INLINE object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
   {
-    rRoutine res = make_routine(e);
+    rCode res = make_routine(e);
 
     // Capture variables
     foreach (const ast::rLocalDeclaration& dec,

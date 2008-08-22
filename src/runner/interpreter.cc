@@ -216,7 +216,7 @@ namespace runner
 
   // Apply a function written in Urbi.
   object::rObject
-  Interpreter::apply_urbi (rRoutine func,
+  Interpreter::apply_urbi (rCode func,
                            const libport::Symbol& msg,
                            const object::objects_type& args,
                            rObject call_message)
@@ -344,7 +344,7 @@ namespace runner
     if (std::find(++args.begin(), end, object::void_class) != end)
       throw object::WrongArgumentType (msg);
 
-    if (const rRoutine& c = func->as<object::Code>())
+    if (const rCode& c = func->as<object::Code>())
       return apply_urbi (c, msg, args, call_message);
     else if (const object::rPrimitive& p = func->as<object::Primitive>())
       return p->value_get()(*this, args);
@@ -484,7 +484,7 @@ namespace runner
     return apply(val, message, args, loc, call_message);
   }
 
-  object::rRoutine
+  object::rCode
   Interpreter::make_routine(ast::rConstRoutine e) const
   {
     return new object::Code(e);

@@ -58,30 +58,22 @@ namespace object
 
   */
 
-  class Barrier;
-  typedef libport::shared_ptr<Barrier> rBarrier;
-  class Code;
-  typedef libport::shared_ptr<Code> rRoutine;
-  class Dictionary;
-  typedef libport::shared_ptr<Dictionary> rDictionary;
-  class Event;
-  typedef libport::shared_ptr<Event> rEvent;
-  class Float;
-  typedef libport::shared_ptr<Float> rFloat;
-  class List;
-  typedef libport::shared_ptr<List> rList;
-  class Lobby;
-  typedef libport::shared_ptr<Lobby> rLobby;
-  class Primitive;
-  typedef libport::shared_ptr<Primitive> rPrimitive;
-  class Semaphore;
-  typedef libport::shared_ptr<Semaphore> rSemaphore;
-  class String;
-  typedef libport::shared_ptr<String> rString;
-  class Tag;
-  typedef libport::shared_ptr<Tag> rTag;
-  class Task;
-  typedef libport::shared_ptr<Task> rTask;
+#define FWD_DECL(Class)                                 \
+  class Class;                                          \
+  typedef libport::shared_ptr<Class> r ## Class         \
+
+  FWD_DECL(Barrier);
+  FWD_DECL(Code);
+  FWD_DECL(Dictionary);
+  FWD_DECL(Event);
+  FWD_DECL(Float);
+  FWD_DECL(List);
+  FWD_DECL(Lobby);
+  FWD_DECL(Primitive);
+  FWD_DECL(Semaphore);
+  FWD_DECL(String);
+  FWD_DECL(Tag);
+  FWD_DECL(Task);
 
   // urbi-exception.hh
   class UrbiException;

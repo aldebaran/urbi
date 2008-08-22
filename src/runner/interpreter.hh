@@ -32,7 +32,7 @@ namespace runner
     typedef runner::Runner super_type;
     typedef object::rObject rObject;
     typedef object::rrObject rrObject;
-    typedef object::rRoutine rRoutine;
+    typedef object::rCode rCode;
     typedef object::rLobby rLobby;
     typedef object::objects_type objects_type;
     /// \}
@@ -117,7 +117,7 @@ namespace runner
     rObject eval_tag(ast::rConstExp);
 
     /// Make an urbi function from an ast chunk
-    object::rRoutine make_routine(ast::rConstRoutine f) const;
+    object::rCode make_routine(ast::rConstRoutine f) const;
 
   protected:
     /// \name Evaluation.
@@ -167,7 +167,7 @@ namespace runner
     void init();
     /// Reset result_, set the location and call stack of ue.
     void propagate_error_(object::UrbiException& ue, const ast::loc& l);
-    rObject apply_urbi (rRoutine func,
+    rObject apply_urbi (rCode func,
 			const libport::Symbol& msg,
 			const object::objects_type& args,
 			rObject call_message);
