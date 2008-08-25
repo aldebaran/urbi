@@ -585,19 +585,21 @@ stmt:
 stmt:
   // If you want to use something more general than "k1_id", read the
   // comment of k1_id.
-  "function" k1_id formals block
+  "function" k1_id formals doc block
     {
       // Compiled as "var name = function args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Function(@$, symbols_to_decs($3, @3),
-                                                  ast_scope (@$, $4)), 0);
+                                                  ast_scope (@$, $5)), 0);
+      $$->doc_set($4);
     }
-| "closure" k1_id formals block
+| "closure" k1_id formals doc block
     {
       // Compiled as "var name = closure args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Closure(@$, symbols_to_decs($3, @3),
-                                                 ast_scope (@$, $4)), 0);
+                                                 ast_scope (@$, $5)), 0);
+      $$->doc_set($4);
     }
 ;
 
@@ -652,9 +654,10 @@ stmt:
     {
       $$ = new ast::Assignment(@$, $1, $3, $4);
     }
-| "var" lvalue "=" exp modifiers
+| "var" lvalue doc "=" exp modifiers
     {
-      $$ = new ast::Declaration(@$, $2, $4, $5);
+      $$ = new ast::Declaration(@$, $2, $5, $6);
+      $$->doc_set($3);
     }
 | "var" lvalue
     {
@@ -1421,6 +1424,16 @@ formals:
 | "(" identifiers ")" { std::swap($$, $2); }
 ;
 
+/*--------------.
+| Documentation |
+`--------------*/
+
+%token <std::string> TOK_DOC "documentation";
+%type <std::string> doc;
+
+doc:
+  /* empty */   { $$ = ""; }
+| TOK_DOC       { $$ = $1; }
 
 %%
 

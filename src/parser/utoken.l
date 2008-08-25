@@ -314,7 +314,7 @@ do {						\
 %}
 %option noyywrap debug
 
-%x SC_C_COMMENT SC_STRING_OR_SYMBOL
+%x SC_C_COMMENT SC_DOC_COMMENT SC_STRING_OR_SYMBOL
 %s SC_UCONSOLE
 
 BLANKS   [ \t]+
@@ -736,24 +736,37 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "//".*         STEP(); // One-line comment.
 "/*"           BEGIN SC_C_COMMENT;
+"/*!"          SET_VAL(std::string, ""); BEGIN SC_DOC_COMMENT;
 
 {BLANKS}       STEP();
 {EOL}          LINES(1); STEP();
 
-<SC_C_COMMENT>{ /* Comments. */
-  "*/" { /* End of the comment. */
-    STEP();
-    BEGIN sc_default;
-  }
-
-  [^*/\n\r]+	|
-  [*/]		continue;
-  {EOL}	        LINES(1);
-
+<SC_C_COMMENT,SC_DOC_COMMENT>{ /* Comments. */
   <<EOF>> {
     EOF_ERROR("a comment");
     STEP();
     BEGIN sc_default;
+  }
+}
+
+<SC_C_COMMENT>{ /* Comments. */
+  [^*/\n\r]+	|
+  [*/]		continue;
+  {EOL}	        LINES(1);
+  "*/" { /* End of the comment. */
+    STEP();
+    BEGIN sc_default;
+  }
+}
+
+<SC_DOC_COMMENT>{
+  [^*/\n\r]+	|
+  [*/]          GROW_VAL(yytext); continue;
+  {EOL}	        GROW_VAL(yytext); LINES(1);
+  "*/" { /* End of the comment. */
+    STEP();
+    BEGIN sc_default;
+    RETURN(DOC);
   }
 }
 

@@ -100,6 +100,31 @@ namespace binder
     return recurse(ast::rCall(call.result<ast::Call>()));
   }
 
+  ast::rExp
+  Binder::changeSlot(const ast::loc& l,
+                     const ast::rExp& target,
+                     const libport::Symbol& name,
+                     const std::string& doc,
+                     ast::rConstExp value)
+  {
+    static ast::ParametricAst document
+      ("{"
+       "  %exp:1 . setVoidSlot(%exp:2) | "
+       "  %exp:3 . setProperty(%exp:4, %exp:5, %exp:6) |"
+       "  %exp:7"
+       "}");
+
+    ast::rExp res = changeSlot(l, target, name, SYMBOL(updateSlot), value);
+    document
+      % target
+      % new ast::String(l, name)
+      % target
+      % new ast::String(l, name)
+      % new ast::String(l, SYMBOL(doc))
+      % new ast::String(l, libport::Symbol(doc))
+      % res;
+    return (exp(document));
+  }
 
   /*----------------.
   | Routine stack.  |
@@ -144,8 +169,15 @@ namespace binder
 
     if (!call->target_implicit() || setOnSelf_.back())
       if (value)
-        result_ = changeSlot(loc, call->target_get(), name,
-                             SYMBOL(setSlot), value);
+      {
+        std::string doc = input->doc_get();
+        if (doc != "")
+          result_ = changeSlot(loc, call->target_get(), name,
+                               doc, value);
+        else
+          result_ = changeSlot(loc, call->target_get(), name,
+                               SYMBOL(setSlot), value);
+      }
       else
         result_ = changeSlot(loc, call->target_get(), name,
                              SYMBOL(setVoidSlot));

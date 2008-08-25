@@ -212,6 +212,10 @@ Ast:
       # include <ast/fwd.hh>
       namespace runner { class Interpreter; }
   attributes:
+    - doc:
+        type: 'std::string'
+        access: rW
+        init: '""'
     - location:
         type: loc
         access: rW
