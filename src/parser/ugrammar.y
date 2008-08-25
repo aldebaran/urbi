@@ -249,6 +249,7 @@
  /*---------.
  | String.  |
  `---------*/
+
 %token  <std::string>  TOK_STRING  "string";
 %printer { debug_stream() << $$; } <std::string>;
 
@@ -524,7 +525,11 @@ identifier_as_string:
     }
 ;
 
-// Bindings.
+
+/*-----------.
+| Bindings.  |
+`-----------*/
+
 %token TOK_EXTERNAL "external";
 stmt:
   "external" "object" identifier_as_string
@@ -560,6 +565,7 @@ stmt:
 /*---------.
 | Events.  |
 `---------*/
+
 stmt:
   "emit" k1_id args %prec CMDBLOCK
   {
@@ -688,6 +694,7 @@ exp:
 /*-------------.
 | Properties.  |
 `-------------*/
+
 %token TOK_MINUS_GT     "->";
 stmt:
   lvalue "->" id "=" exp
@@ -975,9 +982,10 @@ stmt_loop:
 
 in_or_colon: "in" | ":";
 
-/*--------------------.
-| exp: Control flow.  |
-`--------------------*/
+
+/*---------------.
+| Control flow.  |
+`---------------*/
 
 %token TOK_DO "do";
 
@@ -1075,7 +1083,7 @@ exp_float:
 
 
 /*-----------.
-| duration.  |
+| Duration.  |
 `-----------*/
 
 %type <float> duration;
@@ -1085,9 +1093,9 @@ duration:
 ;
 
 
-/*-------.
-| exp.   |
-`-------*/
+/*-----------.
+| Literals.  |
+`-----------*/
 
 exp:
   exp_integer    { std::swap($$, $1);  }
@@ -1142,7 +1150,7 @@ exp:
 
 
 /*--------------------.
-| special variables.  |
+| Special variables.  |
 `--------------------*/
 
 %token  TOK_CALL         "call"
@@ -1154,9 +1162,10 @@ exp:
 | "call"         { $$ = new ast::CallMsg(@$); }
 ;
 
-/*-----------.
-| num. exp.  |
-`-----------*/
+/*---------------------.
+| Numeric operations.  |
+`---------------------*/
+
 // The name of the operators are the name of the messages.
 %token <libport::Symbol>
 	TOK_BANG       "!"
@@ -1281,6 +1290,7 @@ modifiers.1:
     }
 ;
 
+
 /*----------------.
 | Metavariables.  |
 `----------------*/
@@ -1339,6 +1349,7 @@ call:
   }
 ;
 
+
 /*--------------.
 | Expressions.  |
 `--------------*/
@@ -1362,12 +1373,14 @@ args:
 ;
 
 
-/*-----------.
-| softtest.  |
-`-----------*/
+/*------------.
+| Soft test.  |
+`------------*/
+
 softtest:
   exp    { std::swap($$, $1);  }
 ;
+
 
 /*----------------------.
 | List of identifiers.  |
