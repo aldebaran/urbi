@@ -7,6 +7,8 @@
 
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
+
+#include <libport/containers.hh>
 #include <libport/foreach.hh>
 
 #include <ast/cloner.hxx>       // Needed for recurse_collection templates
@@ -86,11 +88,16 @@ namespace binder
                      const libport::Symbol& method,
                      ast::rConstExp value)
   {
-    ast::exps_type* args = new ast::exps_type();
-    args->push_back(new ast::String(l, name));
+    static ast::ParametricAst call("%exp:1 . %id:2 (%exps:3)");
+
+    ast::exps_type* args = new ast::exps_type;
+    *args << new ast::String(l, name);
     if (value)
-      args->push_back(const_cast<ast::Exp*>(value.get()));
-    return recurse(ast::rCall(new ast::Call(l, args, target, method)));
+      *args << const_cast<ast::Exp*>(value.get());
+    call % target
+      % method
+      % args;
+    return recurse(ast::rCall(call.result<ast::Call>()));
   }
 
 
@@ -147,8 +154,7 @@ namespace binder
       // Check this is not a redefinition
       if (scope_depth_ == scope_depth_get(name))
         if (report_errors_)
-          errors_.error(input->location_get(),
-                        "variable redefinition: " + name.name_get());
+          errors_.error(loc, "variable redefinition: " + name.name_get());
 
       BIND_ECHO("Bind " << name);
 
