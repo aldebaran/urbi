@@ -2,6 +2,7 @@
 
 % PACKAGES
 \usepackage{a4wide}
+\usepackage{afterpage}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage{mycxx}
@@ -50,7 +51,8 @@
 
 % COMMANDS
 \newcommand{\lst}[1]{\autoref{lst:#1}}
-
+\newcommand{\tab}[1]{\autoref{tab:#1}}
+\newcommand{\flushfloat}{\afterpage{\clearpage}}
 \makeatletter
 \renewcommand{\maketitle}{
   \begin{titlepage}
@@ -149,6 +151,101 @@ This document is divided in four chapters:
 
 \chapter{\us language specifications}
 
+\section{Syntax}
+\subsection{Literals}
+\subsubsection{Durations}
+
+Durations are floats (see \autoref{sect-syn-lit-flo}) followed by a
+% FIXME: formulation
+time unit. They are simply equivalent to the same float, expressed in
+millisecond. For instance, \lstinline|1s|, which stands for ``one
+second'', is strictly equivalent to \lstinline|1000|. Available units
+and their equivalent are shown in \tab{durations}.
+
+\begin{table}[htp]
+  \caption{Duration units}
+  \label{tab:durations}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    unit        & abbreviation & equivalence for n         \\
+    \hline
+    millisecond & ms           & $n$                       \\
+    second      & s            & $n * 1000$                \\
+    minute      & m            & $n * 1000 * 60$           \\
+    hour        & h            & $n * 1000 * 60 * 60$      \\
+    day         & d            & $n * 1000 * 60 * 60 * 24$ \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsubsection{Floats}
+\label{sect-syn-lit-flo}
+
+Literal floats consist in a succession of digit, representing the
+integral part of the number in decimal base, possibly followed by a
+dot (\lstinline|.|) and another succession of digit representing the
+decimal part. Briefly, float literals must verify the
+\lstinline|[0-9]+(\.[0-9]+)?| regular expression. \lst{literal-floats}
+is an example of literal floats.
+
+\begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=htp]
+  1;
+  [00000000] 1
+  1.1;
+  [00000000] 1.1
+\end{lstlisting}
+
+\subsubsection{Lists}
+
+Literal lists are represented with a comma-separated, potentially
+empty list of arbitrary expressions enclosed in square brackets
+(\lstinline|[]|), as shown in \lst{literal-lists}.
+
+\begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=htp]
+  []; // The empty list
+  [00000000] []
+  [1, 2, 3];
+  [00000000] [1, 2, 3]
+\end{lstlisting}
+
+\subsubsection{Strings}
+
+String are enclosed in double quotes (\lstinline|"|) and can contain
+arbitrary characters, which stand for themselves, with the exception
+of the escapement character, backslash (\lstinline|\|), as we can see
+in \lst{literal-strings}. Backslash can introduce the following escapements:
+
+\begin{itemize}
+  \item \lstinline |\\|: an actual backslash
+  \item \lstinline|\a|: a bell ring
+  \item \lstinline|\b|: a backspace
+  \item \lstinline|\f|: a form feed
+  \item \lstinline|\n|: a line feed
+  \item \lstinline|\r|: a carriage return
+  \item \lstinline|\t|: a tabulation
+  \item \lstinline|\v|: a vertical tabulation
+\end{itemize}
+
+Note that the interpreter print escaped strings. That is, line feed
+will be printed out as \lstinline|\n| when a string result is
+dumped. An actual line feed will of course be output if a string
+content is printed with echo for instance.
+
+\begin{lstlisting}[caption=Literal strings,label=lst:literal-strings,float=htp]
+  "";
+  [00000000] ""
+  "foo";
+  [00000000] ""
+  "a\nb"; // UrbiScript escapes string when dumping them
+  [00000000] "a\nb"
+  echo("a\nb"); // We can see there is an actual line feed
+  [00000000] *** a
+  ..b
+  echo("a\\nb");
+  [00000000] a\nb
+\end{lstlisting}
+
 \section{Local variables}
 \section{Objects}
 \section{Flow control}
@@ -167,6 +264,7 @@ This document is divided in four chapters:
 \section{Event}
 \section{Float}
 \section{Group}
+\section{Integer}
 \section{Lazy}
 \section{List}
 \section{Lobby}
