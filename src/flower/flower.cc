@@ -115,7 +115,9 @@ namespace flower
       break;
     case ast::flavor_comma:
       each.clear();
-      pabort("Invalid flavor for 'for ... in': " << code->flavor_get());
+      errors_.error(code->location_get(),
+		    "invalid flavor for 'for ... in': ,");
+      return;
     }
 
     if (has_continue_)
