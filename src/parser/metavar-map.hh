@@ -40,11 +40,12 @@ namespace parser
     virtual bool must_be_unique_ (Data) const;
 
     /// Check the tables are empty.
-    ///
-    /// We do not provide means to clear the tables: tables should be
-    /// empty, otherwise it means we don't use one of the arguments,
     /// which is abnormal.
     bool empty_() const;
+
+    /// Clear the tables. This must be used only while recovering from
+    /// abnormal conditions.
+    void clear_();
 
     /// Name of the kind of variable.
     const std::string name_;

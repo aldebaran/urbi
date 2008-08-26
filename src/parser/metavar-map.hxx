@@ -76,6 +76,13 @@ namespace parser
     return map_.empty();
   }
 
+  template <typename Data>
+  void
+  MetavarMap<Data>::clear_()
+  {
+    map_.clear();
+  }
+
 
   /*--------------------------.
   | Free standing functions.  |
