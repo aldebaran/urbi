@@ -96,6 +96,15 @@ namespace ast
     count_ = 0;
   }
 
+  void
+  ParametricAst::clear()
+  {
+    exp_map_type::clear_();
+    id_map_type::clear_();
+    exps_map_type::empty_();
+    reset();
+  }
+
   std::ostream&
   ParametricAst::dump(std::ostream& o) const
   {

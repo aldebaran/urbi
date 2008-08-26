@@ -50,6 +50,12 @@ namespace ast
     /// Dump the master AST and the state of the tables.
     std::ostream& dump(std::ostream& o) const;
 
+    /// Clear a possibly partially filled AST and prepare
+    /// it for a new use. This method must be used when
+    /// the AST filling may have been aborted before the
+    /// result has been get.
+    void clear();
+
   protected:
     /// Import from super.
     using super_type::visit;
