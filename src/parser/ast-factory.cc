@@ -187,8 +187,7 @@ namespace parser
   ast_call (const yy::location& l,
             ast::rExp target, libport::Symbol method, ast::exps_type* args)
   {
-    ast::rCall res = new ast::Call(l, args, target, method);
-    return res;
+    return new ast::Call(l, args, target, method);
   }
 
   /// "<target> . <method> ()".

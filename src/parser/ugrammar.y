@@ -1002,6 +1002,7 @@ exp:
 `---------------------------*/
 
 %type <ast::rLValue> lvalue call;
+%printer { debug_stream() << *$$; } <ast::rLValue>;
 lvalue:
 	  id	{ $$ = ast_call(@$, $1); }
 | exp "." id	{ $$ = ast_call(@$, $1, $3); }
