@@ -40,12 +40,12 @@ namespace object
     rFloat fabs();
     rFloat log();
     rFloat minus(objects_type& args);
+    rFloat plus(objects_type& args);
     using Object::operator<;
     rObject operator <(const rFloat& rhs);
     rFloat operator ~();
     rFloat operator |(const rFloat& rhs);
     rFloat operator &(const rFloat& rhs);
-    rFloat operator +(const rFloat& rhs);
     rFloat operator *(const rFloat& rhs);
     rFloat operator /(const rFloat& rhs);
     rFloat operator %(const rFloat& rhs);

@@ -123,7 +123,6 @@ namespace object
     return new Float(value_get() Op rhs->value_get());                  \
   }
 
-  BOUNCE_OP(+, false);
   BOUNCE_OP(*, false);
   BOUNCE_OP(/, true);
 
@@ -221,6 +220,18 @@ namespace object
     return new Float(res);
   }
 
+  rFloat Float::plus(objects_type& args)
+  {
+    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(PLUS));
+    if (args.empty())
+      return this;
+    else
+    {
+      type_check<Float>(args[0], SYMBOL(PLUS));
+      return new Float(value_get() + args[0]->as<Float>()->value_get());
+    }
+  }
+
   rFloat Float::minus(objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(MINUS));
@@ -257,7 +268,7 @@ namespace object
     bind(SYMBOL(LT_LT), &Float::operator<<);
     bind(SYMBOL(MINUS), &Float::minus);
     bind(SYMBOL(PERCENT), &Float::operator%);
-    bind(SYMBOL(PLUS), &Float::operator+);
+    bind(SYMBOL(PLUS), &Float::plus);
     bind(SYMBOL(SLASH), &Float::operator/);
     bind(SYMBOL(STAR), &Float::operator*);
     bind(SYMBOL(STAR_STAR), &Float::pow);

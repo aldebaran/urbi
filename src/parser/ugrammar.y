@@ -1199,6 +1199,7 @@ exp:
 | exp "bitand" exp        { $$ = ast_call(@$, $1, $2, $3); }
 | exp "bitor" exp         { $$ = ast_call(@$, $1, $2, $3); }
 | exp ">>" exp            { $$ = ast_call(@$, $1, $2, $3); }
+| "+" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
 | "-" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
 | "!" exp                 { $$ = ast_call(@$, $2, $1); }
 | "compl" exp             { $$ = ast_call(@$, $2, $1); }
