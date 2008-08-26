@@ -53,6 +53,7 @@ namespace object
     rFloat pow(const rFloat& rhs);
     rFloat random();
     rFloat round();
+    rList seq();
     rFloat set(const rFloat& rhs);
     rFloat sin();
     rFloat sqrt();

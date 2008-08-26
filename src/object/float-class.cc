@@ -14,6 +14,7 @@
 #include <libport/ufloat.hh>
 
 #include <object/float-class.hh>
+#include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/string-class.hh>
 #include <object/urbi-exception.hh>
@@ -232,6 +233,16 @@ namespace object
     }
   }
 
+  rList
+  Float::seq()
+  {
+    unsigned int n = to_unsigned_int(SYMBOL(seq));
+    List::value_type res;
+    for (unsigned int i = 0; i < n; i++)
+      res.push_back(new Float(i));
+    return new List(res);
+  }
+
   rFloat Float::set(const rFloat& rhs)
   {
     value_get() = rhs->value_get();
@@ -265,6 +276,7 @@ namespace object
     bind(SYMBOL(nan), &Float::nan);
     bind(SYMBOL(random), &Float::random);
     bind(SYMBOL(round), &Float::round);
+    bind(SYMBOL(seq), &Float::seq);
     bind(SYMBOL(set), &Float::set);
     bind(SYMBOL(sin), &Float::sin);
     bind(SYMBOL(sqrt), &Float::sqrt);

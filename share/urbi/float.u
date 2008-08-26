@@ -21,15 +21,6 @@ do Float
   function '=~='(x) { (this - x) <= delta + x.delta };
   function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
 
-  // Create a list 0..(this - 1).
-  function seq()
-  {
-    var result = [] |
-    for| (var i = 0; i < this; i++)
-      result.push_back(i.clone) |
-    result
-  };
-
   function '\'n'()
   {
     (this - rangemin) / (rangemax - rangemin)
