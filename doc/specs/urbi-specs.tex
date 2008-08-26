@@ -55,6 +55,7 @@
 
 % COMMANDS
 \newcommand{\lst}[1]{\autoref{lst:#1}}
+\newcommand{\sect}[1]{\autoref{sect:#1}}
 \newcommand{\tab}[1]{\autoref{tab:#1}}
 \newcommand{\flushfloat}{\afterpage{\clearpage}}
 \makeatletter
@@ -178,11 +179,53 @@ Comments are used to document the code, and are totally ignored by the
   /* These comments /* do */ nest */
 \end{lstlisting}
 
+\subsection{Identifiers}
+
+Identifiers in \us are composed of one or more alphanumeric or
+underscore (\lstinline|_|) characters, given that they must not start
+with a digit. That is, identifiers must match the
+\lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular expression (see
+\lst{identifiers}).  Additionally, identifiers must not match any of
+the \us reserved word which are documented in \sect{syn-key}. The only
+exception to this rule is \lstinline|new|, which can be used as the
+method identifier in a method call, as shown in
+\lst{identifiers-keywords}.  Finally, identifiers can also be written
+between simple quotes (\lstinline|'|), in which case they may contain
+any characters, as in \lst{escape-identifiers}.
+
+\begin{lstlisting}[caption=Identifiers,label=lst:identifiers,float=htp]
+  var x;
+  var foobar51;
+  obj.met_hod();
+  // Those are invalid.
+// var 3x;
+// obj.3x();
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Identifiers cannot be keywords,
+  label=lst:identifiers-keywords,float=htp]
+  // Those are invalid because "if" is a keyword.
+// var if;
+// obj.if();
+  // However, keywords can be escaped with simple quotes
+  var 'if';
+  obj.'if'();
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Escaping identifiers with simple quotes,
+  label=lst:escape-identifiers,float=htp]
+  // Identifiers can be escaped with simple quotes
+  var '#x';
+  var '1 2 3';
+  obj.'[]';
+\end{lstlisting}
+
 \subsection{Keywords}
+\label{sect:syn-key}
 
 Keywords are reserved words that cannot be used as identifiers, for
 instance.  They are listed in \tab{keywords}.  Keywords can be
-escaped, and thus used as identifer by surrounding them with simple
+escaped, and thus used as identifier by surrounding them with simple
 quotes (\lstinline|'|), as shown in \lst{escape-keyword}.
 
 \renewcommand{\baselinestretch}{.85}
