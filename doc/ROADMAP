@@ -25,6 +25,10 @@ We move to 1.35.  Or decide if we do, in particular, see the impact on:
 *** Webots
 This must be usable.
 
+**** 2008-08-26
+It works, but according to MN it is still not fast enough.  But we
+need to check again.
+
 *** Implement events (0be5e2a7dc02e7c0c6c2b74dffcaaf2624975377)
 
 We need to settle on the syntax used to represent unbound variables
@@ -36,6 +40,10 @@ See also the item on pattern matching.
 *** Use on some robot
 
 Or maybe Webots, but a true robot is preferred.
+
+**** 2008-08-26
+At the beginning of August, it worked on a Bioloid.  Urbi code for
+Bioloid had to be fixed.  Should be tried again.
 
 *** Fix the Booleans (done: 43653fc957dd6bf3078097d8d99fd0d75c2c10e4)
 They should no longer behave like Floats.
@@ -59,7 +67,18 @@ Should '&&' be equal to 'and'?
 *** Cleanup "at" scoping
 Decide what scoping is appropriate for "at" jobs.
 
-*** Start exploring dlopen
+**** 2008-08-26
+- Emit the "stop" at the end of the scopes.
+
+- "at" are scoped (already the case).
+
+- detach removes all the implicit tags but keeps all the
+  user-specified tags.
+
+- maybe detach should be handled as a tag (detach: <stmt>) instead of
+  a function.
+
+*** Start exploring dlopen (done)
 We need to address the foreign dependencies such as Boost.
 
 *** Fix parser memory leaks (done)
@@ -71,7 +90,12 @@ This requires:
 
 *** Fix events memory leaks
 
-This requires that we can properly execute some code at scope exit time.
+This requires that we can properly execute some code at scope exit
+time.
+
+**** 2008-08-26
+Related to the scoping of the "at" (when a publisher dies, the
+susbcribers are still alive).
 
 *** Real-time features (done)
 
@@ -85,15 +109,30 @@ later refined according to real-world use cases.
 We need a way to benchmark the kernel reliably, including with
 Uobjects.  Code coverage (of the C++ code, not the Urbi code).
 
+**** 2008-08-26
+MN has started to work on this.  More is needed.
+
+AD will have a look at C++ code coverage.
+
 *** Arrays (done)
 We need "a[1]", "a[1] = 2" etc.
+
+**** 2008-08-26
+There are many issues to clarify.  This is left for the future.  For
+instance, what's the meaning of
+
+    var foo[1];
+
+or
+
+    class foo[1] { ... };
 
 ** Version 2.0 beta 1 (2008-09-01)
 
 This must be usable by real users (BA systems, Spanish team etc.).
 Blend modes are not required (dixit JCB).
 
-*** Nary, vs. Pipe, vs. And
+*** Nary, vs. Pipe, vs. And (done)
 The point was to have a single structure to support them all,
 something was lost during the evolution.  Try to factor again.
 
@@ -102,7 +141,7 @@ something was lost during the evolution.  Try to factor again.
 The tools team will need to know when a tagged statement starts or
 ends its execution by use of a special event.
 
-*** Cleanup output presented to the user
+*** Cleanup output presented to the user (done)
 
 Right now, the user sees an expanded version of the tree which may not
 correspond to something that could be used as input.
