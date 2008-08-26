@@ -36,7 +36,8 @@ using namespace parser;
 
 static const int sz = 4096;
 
-void print(rAst ast)
+static void
+print(rAst ast)
 {
   static int fd = 2;
   ++fd;
@@ -46,7 +47,8 @@ void print(rAst ast)
   write(fd, output.str().c_str(), output.str().length());
 }
 
-int main()
+int
+main()
 {
   char buf[sz + 1];
   std::string source;
