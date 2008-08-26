@@ -67,7 +67,8 @@ namespace object
   }
 
   unsigned int
-  Float::to_unsigned_int(const libport::Symbol func) const
+  Float::to_unsigned_int(const libport::Symbol func,
+			 const std::string fmt) const
   {
     try
     {
@@ -78,8 +79,7 @@ namespace object
     }
     catch (libport::bad_numeric_cast& ue)
     {
-      throw BadInteger(value_, func,
-		       "expected non-negative integer, got %1%");
+      throw BadInteger(value_, func, fmt);
       return 0;  // Keep the compiler happy
     }
   }
