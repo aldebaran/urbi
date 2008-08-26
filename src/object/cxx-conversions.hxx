@@ -50,23 +50,19 @@ namespace object
     }
   };
 
-  // Conversion with prio_type
+  // Conversion with unsigned int
   template<>
-  struct CxxConvert<scheduler::prio_type>
+  struct CxxConvert<unsigned int>
   {
-    static scheduler::prio_type
+    static unsigned int
     to(const rObject& o, const libport::Symbol& name)
       {
 	type_check<Float>(o, name);
-	rFloat f = o->as<Float>();
-	int res = f->to_int(name);
-	if (res < 0)
-	  throw BadInteger(f->value_get(), name);
-	return res;
+	return o->as<Float>()->to_unsigned_int(name);
       }
 
     static rObject
-    from(const scheduler::prio_type& v, const libport::Symbol&)
+    from(const unsigned int& v, const libport::Symbol&)
       {
 	return new Float(v);
       }
