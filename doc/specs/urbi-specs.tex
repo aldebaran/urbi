@@ -439,6 +439,310 @@ content is printed with echo for instance.
   [00000000] a\nb
 \end{lstlisting}
 
+\subsection{Operators}
+
+\us supports many operators, most of which are inspired from
+\Cxx. Their syntax is presented here, and they are sorted and
+described with their original semantic - that is, \lstinline|+| is an
+arithmetic operator that sums two numeric values. However, as in \Cxx,
+these operators might be use for any other purpose - that is,
+\lstinline|+| can also be used as the concatenation operator on lists
+and strings. Their semantic is thus not limited to what is presented
+here.
+
+Tables in this section sort operators top-down, by precedence order.
+Group of rows (not separated by horizontal lines) describe operators
+that have the same precedence. Many operators are syntactic sugar that
+bounce on a method. In this case, the equivalent desugared expression
+is shown in the ``Equivalence'' column. This can help you determine
+what method to override to define an operator for an object (see
+\sect{fixme}).
+
+\subsubsection{Arithmetic operators}
+
+\us supports classic arithmetic operators, with the classic semantic
+on numeric values. See \tab{arithmetic-operators} and
+\lst{arithmetic-operators}.
+
+\begin{table}[htp]
+  \caption{Arithmetic operators}
+  \label{tab:arithmetic-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator            & Use    & Associativity & Original semantic
+    & Equivalence             \\
+    \hline
+    \lstinline|+|       & a + b  & Left          & Sum
+    & \lstinline|a.'+'(b)|    \\
+    \lstinline|-|       & a - b  & Left          & Difference
+    & \lstinline|a.'-'(b)|    \\
+    \hline
+    \lstinline|*|       & a * b  & Left          & Multiplication
+    & \lstinline|a.'*'(b)|    \\
+    \lstinline|/|       & a / b  & Left          & Division
+    & \lstinline|a.'/'(b)|    \\
+    \hline
+    \lstinline|**|      & a ** b & Right         & Exponentiation
+    & \lstinline|a.'**'(b)|   \\
+    \hline
+    unary \lstinline|+| & +a     & -             & Identity
+    & \lstinline|a.'+'()|     \\
+    unary \lstinline|-| & -a     & -             & Negation
+    & \lstinline|a.'-'()|     \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Arithmetic operators,
+  label=lst:arithmetic-operators,float=htp]
+  1 + 1;
+  [00000000] 2
+  1 - 2;
+  [00000000] -1
+  2 * 3;
+  [00000000] 6
+  10 / 2;
+  [00000000] 5
+  2 ** 10;
+  [00000000] 1024
+  -(1 + 2);
+  [00000000] -3
+\end{lstlisting}
+
+\subsubsection{Assignment operators}
+
+Assignment in \us can be performed with the \lstinline|=| operator. A
+large variety of shorthands such as \lstinline|+=| exist. Those are
+not directly redefinable since they are equivalent to a normal
+affectation combined with another operator. See
+\tab{assignment-operators} and \lst{assignment-operators}.
+
+
+\begin{table}[htp]
+  \caption{Assignment operators}
+  \label{tab:assignment-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator            & Use                  & Associativity
+    & Original semantic         & Equivalence             \\
+    \hline
+    \lstinline|=|       & \lstinline|x = val|  & Right
+    & Assignment & \lstinline|updateSlot("x", val)| \footnotemark \\
+    \lstinline|+=|      & \lstinline|x += val| & Right
+    & In-place sum              & \lstinline|x = x + val|     \\
+    \lstinline|-=|      & \lstinline|x -= val| & Right
+    & In-place difference       & \lstinline|x = x - val|     \\
+    \lstinline|*=|      & \lstinline|x *= val| & Right
+    & In-place multiplication   & \lstinline|x = x * val|     \\
+    \lstinline|/=|      & \lstinline|x /= val| & Right
+    & In-place division         & \lstinline|x = x / val|     \\
+    \lstinline|%=|      & \lstinline|x %= val| & Right
+    & In-place modulo           & \lstinline|x = x \% val|    \\
+    \lstinline|^=|      & \lstinline|x ^= val| & Right
+    & In-place exclusive or     & \lstinline|x = x \^ val|    \\
+    \lstinline|~=|      & \lstinline|x ~= val| & Right
+    & In-place bitwise negation & \lstinline|x = x \~ val|    \\
+    \hline
+    \lstinline|++|      & \lstinline|x++|      & -
+    & Incrementation            & \lstinline|(x = x + 1) - 1| \\
+    \lstinline|--|      & \lstinline|x--|      & -
+    & Decrementation            & \lstinline|(x = x - 1) + 1| \\
+    \hline
+  \end{tabular}
+\end{table}
+\footnotetext{For object fields only.
+  Assignment to local variables cannot be redefined. }
+
+\begin{lstlisting}[caption=Assignment operators,
+  label=lst:assignment-operators,float=htp]
+  var x = 0;
+  [00000000] 0
+  x = 10;
+  [00000000] 10
+  x += 10;
+  [00000000] 20
+  x /= 5;
+  [00000000] 4
+  x %= 3;
+  [00000000] 1
+  x++;
+  [00000000] 1
+  x;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{Bitwise operators}
+
+\us supports some bitwise operators, although they are often use for
+other purpose than bit-related operations. See \tab{bitwise-operators}
+and \lst{bitwise-operators}.
+
+\begin{table}[htp]
+  \caption{Bitwise operators}
+  \label{tab:bitwise-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator            & Use                & Associativity
+    & Original semantic & Equivalence           \\
+    \hline
+    \lstinline|<<|      & \lstinline|a << b| & Left
+    & Left bit shift    & \lstinline|a.'<<'(b)| \\
+    \lstinline|>>|      & \lstinline|a >> b| & Left
+    & Right bit shift   & \lstinline|a.'>>'(b)| \\
+    \lstinline|^|       & \lstinline|a ^ b| & Left
+    & Bitwise exclusive or & \lstinline|a.'^'(b)| \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Bitwise operators,
+  label=lst:bitwise-operators,float=htp]
+  4 << 2;
+  [00000000] 16
+  4 >> 2;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{Logic operators}
+
+\us support classic logic operators. See \tab{logic-operators} and
+\lst{logic-operators}.
+
+\begin{table}[htp]
+  \caption{Logic operators}
+  \label{tab:logic-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator            & Use    & Associativity
+    & Original semantic & Equivalence           \\
+    \hline
+    \lstinline-||-      & \lstinline-a || b- & Left
+    & Logical or        & \lstinline-a.'||'(b)-             \\
+    \hline
+    \lstinline|&&|      & \lstinline|a && b| & Left
+    & Logical and       & \lstinline|a.'&&'(b)|             \\
+    \hline
+    \lstinline|!|       & \lstinline|!a|     & -
+    & Logical negation  & \lstinline|a.'!'()|               \\
+    \hline
+  \end{tabular}
+\end{table}
+
+
+\begin{lstlisting}[caption=Logic operators,
+  label=lst:logic-operators,float=htp]
+  true && true;
+  [00000000] true
+  true || false;
+  [00000000] true
+  !true;
+  [00000000] false
+\end{lstlisting}
+
+\subsubsection{Comparison operators}
+
+\us support classic comparison operators. See \tab{comparison-operators} and
+\lst{comparison-operators}.
+
+\begin{table}[htp]
+  \caption{Comparison operators}
+  \label{tab:comparison-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator            & Use    & Associativity
+    & Original semantic & Equivalence   \\
+    \hline
+    \lstinline|<|   & \lstinline|a < b|      & Non associative
+    & Inferior & \lstinline|a.'<'(b)|               \\
+    \lstinline|<=|  & \lstinline|a <= b|     & Non associative
+    & Inferior or equal & \lstinline|a.'<='(b)|     \\
+    \lstinline|>|   & \lstinline|a > b|      & Non associative
+    & Superior & \lstinline|a.'>'(b)|               \\
+    \lstinline|>=|  & \lstinline|a >= b|     & Non associative
+    & Superior or equal  & \lstinline|a.'>='(b)|    \\
+    \lstinline|==|  & \lstinline|a == b|     & Non associative
+    & Equal & \lstinline|a.'=='(b)|                 \\
+    \lstinline|===| & \lstinline|a === b|    & Non associative
+    & Physically equal & \lstinline|a.'==='(b)|     \\
+    \lstinline|!=|  & \lstinline|a != b|     & Non associative
+    & Different & \lstinline|a.'!='(b)|             \\
+    \lstinline|!==| & \lstinline|a !== b|    & Non associative
+    & Physically different & \lstinline|a.'!=='(b)| \\
+    \lstinline|=~=| & \lstinline|a =~= b|    & Non associative
+    & Approximately equal  & \lstinline|a.'=~='(b)| \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Comparison operators,
+  label=lst:comparison-operators,float=htp]
+  0 < 0;
+  [00000000] false
+  0 <= 0;
+  [00000000] true
+  0 == 0;
+  [00000000] true
+  0 === 0;
+  [00000000] false
+  var x = 0;
+  [00000000] 0
+  x === x;
+  [00000000] true
+  x !== x;
+  [00000000] false
+\end{lstlisting}
+
+\subsection{Miscellaneous operators}
+
+Those operators cannot be classified in other categories. See
+\tab{miscellaneous-operators} and \lst{miscellaneous-operators}. Note
+that the subscript (square bracket) operator is variadic: it can take
+any number of arguments, that will be passed to the \lstinline|'[]'|
+method of the targeted object.
+
+\begin{table}[htp]
+  \caption{Miscellaneous operators}
+  \label{tab:miscellaneous-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator               & Use                                    & Associativity
+    & Original semantic    & Equivalence                            \\
+    \hline
+    \lstinline|.|          & \lstinline|a.b|, \lstinline|a.b(args)| & -
+    & Slot access, method call & Not redefinable                    \\
+    \hline
+    \lstinline|[]|         & \lstinline|a[b, c, etc]|               & -
+    & Subscript            & \lstinline|a.'[]'(b, c, etc)|          \\
+    \lstinline|[] =|       & \lstinline|a[b, c, etc] = v|           & -
+    & Subscript assignment & \lstinline|a.'[]='(b, c, etc, v)|      \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Miscellaneous operators,
+  label=lst:miscellaneous-operators,float=htp]
+  0 < 0;
+  [00000000] false
+  0 <= 0;
+  [00000000] true
+  0 == 0;
+  [00000000] true
+  0 === 0;
+  [00000000] false
+  var x = 0;
+  [00000000] 0
+  x === x;
+  [00000000] true
+  x !== x;
+  [00000000] false
+\end{lstlisting}
+
 \section{Local variables}
 \section{Objects}
 \section{Flow control}
@@ -483,4 +787,4 @@ content is printed with echo for instance.
 % LocalWords:  getSlot setSlot updateSlot slotNames removeSlot uid arg ok ko ss
 % LocalWords:  elt baz quux FIXME getslot lookup protos proto addProto asString
 % LocalWords:  removeProto locateSlot locateslot lhs evalArgAt evalArgs ary
-% LocalWords:  mytag timeOut myEvent Tuple
+% LocalWords:  mytag timeOut myEvent Tuple redefinable
