@@ -114,6 +114,7 @@ namespace flower
       each % SYMBOL(each_AMPERSAND);
       break;
     case ast::flavor_comma:
+      each.clear();
       pabort("Invalid flavor for 'for ... in': " << code->flavor_get());
     }
 
