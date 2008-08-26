@@ -143,7 +143,8 @@ namespace object
    */
   struct BadInteger: public UrbiException
   {
-    BadInteger (libport::ufloat effective, const libport::Symbol fun);
+    BadInteger (libport::ufloat effective, const libport::Symbol fun,
+		std::string fmt = "expected integer, got %1%");
     COMPLETE_EXCEPTION (BadInteger)
   };
 

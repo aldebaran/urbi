@@ -81,8 +81,9 @@ namespace object
   }
 
   inline
-  BadInteger::BadInteger(libport::ufloat effective, const libport::Symbol fun)
-    : UrbiException((boost::format("expected integer, got %1%")
+  BadInteger::BadInteger(libport::ufloat effective, const libport::Symbol fun,
+			 std::string fmt)
+    : UrbiException((boost::format(fmt)
                      % effective).str(),
                     fun)
   {
