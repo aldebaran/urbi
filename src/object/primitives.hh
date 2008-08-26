@@ -44,10 +44,10 @@
 
 /**
  * Check argument count and throw an Urbi exception if it does not
- * fall into the expected \param MIN - \param MAX range, including self.
+ * fall into the expected \param Min - \param Max range
  */
-#define CHECK_ARG_COUNT_RANGE(MIN, MAX)				\
-  check_arg_count(MIN, MAX, args.size(), libport::Symbol(__PRETTY_FUNCTION__))
+#define CHECK_ARG_COUNT_RANGE(Min, Max, Func)				\
+  check_arg_count(Min, Max, args.size(), Func)
 
 /**
  * Define a primitive for class \a Class named \a Name, which takes

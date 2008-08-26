@@ -49,7 +49,7 @@ namespace object
   static rObject
   object_class_dump (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(1, 3);
+    CHECK_ARG_COUNT_RANGE(1, 3, SYMBOL(dump));
 
     // Second argument is max depth.
     int depth_max = 0;

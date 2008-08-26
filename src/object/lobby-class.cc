@@ -44,7 +44,7 @@ namespace object
   void
   Lobby::send(objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE (1, 2);
+    CHECK_ARG_COUNT_RANGE (1, 2, SYMBOL(send));
     // Second argument is the tag name.
     std::string tag;
     if (args.size() == 2)

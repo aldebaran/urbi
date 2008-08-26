@@ -251,7 +251,7 @@ namespace object
   static rObject
   system_class_spawn(runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT_RANGE (2, 3);
+    CHECK_ARG_COUNT_RANGE (2, 3, SYMBOL(spawn));
     rObject arg1 = args[1]->as<Code>();
     assert(arg1);
 

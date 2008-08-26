@@ -223,7 +223,7 @@ namespace object
 
   rFloat Float::minus(objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1);
+    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(MINUS));
     if (args.empty())
       return new Float(-value_get());
     else
