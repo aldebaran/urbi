@@ -155,6 +155,28 @@ This document is divided in four chapters:
 \chapter{\us language specifications}
 
 \section{Syntax}
+\subsection{Comments}
+
+Comments are used to document the code, and are totally ignored by the
+\us interpreter. \Cxx-style and \C-style comments are supported.
+
+\begin{itemize}
+\item A \lstinline|//| introduces a comment that lasts until the end
+  of the line.
+\item A \lstinline|/*| introduces a comment that lasts until
+  \lstinline|*/| is encountered. A difference with \C is that these
+  comments nest; that is, if two \lstinline|/*| are encountered, the
+  comment will end after two \lstinline|*/|, not one.
+\end{itemize}
+
+\lst{comments} illustrates this.
+
+\begin{lstlisting}[caption=Comments,label=lst:comments,float=htp]
+  // C++ style comment
+  /* C style comment */
+  /* These comments /* do */ nest */
+\end{lstlisting}
+
 \subsection{Literals}
 \subsubsection{Durations}
 
