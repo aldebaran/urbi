@@ -479,7 +479,7 @@ namespace binder
   Binder::handleRoutine(const Code* input)
   {
     BIND_ECHO("Push" << libport::incindent);
-    libport::Finally finally;
+    libport::Finally finally(5);
 
     // Clone and push the function, without filling its body and arguments
     libport::shared_ptr<Code> res = new Code(input->location_get(), 0, 0);
