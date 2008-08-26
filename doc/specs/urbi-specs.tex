@@ -458,6 +458,12 @@ is shown in the ``Equivalence'' column. This can help you determine
 what method to override to define an operator for an object (see
 \sect{fixme}).
 
+Although code examples are present, this section does not intend do
+define those operators behaviors; it only present their syntax and
+grammatical rules, such as precedence and associativity. The behavior
+of those operators is described in the documentation of the classes on
+which they are applicable, in \autoref{chap:std}.
+
 \subsubsection{Arithmetic operators}
 
 \us supports classic arithmetic operators, with the classic semantic
@@ -473,23 +479,25 @@ on numeric values. See \tab{arithmetic-operators} and
     Operator            & Use    & Associativity & Original semantic
     & Equivalence             \\
     \hline
-    \lstinline|+|       & a + b  & Left          & Sum
-    & \lstinline|a.'+'(b)|    \\
-    \lstinline|-|       & a - b  & Left          & Difference
-    & \lstinline|a.'-'(b)|    \\
+    unary \lstinline|+| & +a     & -             & Identity
+    & \lstinline|a.'+'()|     \\
+    unary \lstinline|-| & -a     & -             & Negation
+    & \lstinline|a.'-'()|     \\
+    \hline
+    \lstinline|**|      & a ** b & Right         & Exponentiation
+    & \lstinline|a.'**'(b)|   \\
     \hline
     \lstinline|*|       & a * b  & Left          & Multiplication
     & \lstinline|a.'*'(b)|    \\
     \lstinline|/|       & a / b  & Left          & Division
     & \lstinline|a.'/'(b)|    \\
+    \lstinline|%|       & \lstinline|a % b|    & Left
+    & Modulo            & \lstinline|a.'%'(b)| \\
     \hline
-    \lstinline|**|      & a ** b & Right         & Exponentiation
-    & \lstinline|a.'**'(b)|   \\
-    \hline
-    unary \lstinline|+| & +a     & -             & Identity
-    & \lstinline|a.'+'()|     \\
-    unary \lstinline|-| & -a     & -             & Negation
-    & \lstinline|a.'-'()|     \\
+    \lstinline|+|       & a + b  & Left          & Sum
+    & \lstinline|a.'+'(b)|    \\
+    \lstinline|-|       & a - b  & Left          & Difference
+    & \lstinline|a.'-'(b)|    \\
     \hline
   \end{tabular}
 \end{table}
@@ -620,14 +628,14 @@ and \lst{bitwise-operators}.
     Operator            & Use    & Associativity
     & Original semantic & Equivalence           \\
     \hline
-    \lstinline-||-      & \lstinline-a || b- & Left
-    & Logical or        & \lstinline-a.'||'(b)-             \\
+    \lstinline|!|       & \lstinline|!a|     & -
+    & Logical negation  & \lstinline|a.'!'()|               \\
     \hline
     \lstinline|&&|      & \lstinline|a && b| & Left
     & Logical and       & \lstinline|a.'&&'(b)|             \\
     \hline
-    \lstinline|!|       & \lstinline|!a|     & -
-    & Logical negation  & \lstinline|a.'!'()|               \\
+    \lstinline-||-      & \lstinline-a || b- & Left
+    & Logical or        & \lstinline-a.'||'(b)-             \\
     \hline
   \end{tabular}
 \end{table}
@@ -752,6 +760,7 @@ method of the targeted object.
 \section{Trajectories}
 
 \chapter{\us standard library specifications}
+\label{chap:std}
 
 \section{Boolean}
 \section{Channel}
