@@ -1006,8 +1006,10 @@ Write:
         mandatory: false
   printer:
     - ~what
-    - '" = "'
-    - ~value
+    - '{
+         if (const rExp& value = n->value_get())
+           ostr_ << " = " << *value;
+       }'
     - '{
          if (const modifiers_type* modifiers = n->modifiers_get())
          {
