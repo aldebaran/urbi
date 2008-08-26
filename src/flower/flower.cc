@@ -67,18 +67,15 @@ namespace flower
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
 
-    ast::rExp test = recurse(code->test_get());
-    ast::rExp body = recurse(code->body_get()->body_get());
-
-    static ParametricAst whle(
-      "while (%exp:1) %exp:2");
-
-    ast::rExp res = body;
+    ast::rExp res = recurse(code->body_get()->body_get());
 
     if (has_continue_)
       res = cont(res.get());
-    res = exp(whle % test % res);
+
+    static ParametricAst whle("while (%exp:1) %exp:2");
+    res = exp(whle % recurse(code->test_get()) % res);
     res.unchecked_cast<ast::While>()->flavor_set(code->flavor_get());
+
     if (has_break_)
       res = brk(res);
 
@@ -93,15 +90,8 @@ namespace flower
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
 
-    ast::rExp list = recurse(code->list_get());
-    ast::rExp body = recurse(code->body_get());
-
     static ParametricAst each("%exp:1 . %id:2 (%exp:3)");
-    // 'fillme' is a placeholder filled later. Parametric ASTs can't
-    // parametrize formal arguments for now.
-    static ParametricAst closure("closure (fillme) {%exp:1}");
-
-    each % list;
+    each % recurse(code->list_get());
 
     switch (code->flavor_get())
     {
@@ -119,9 +109,13 @@ namespace flower
       return;
     }
 
+    ast::rExp body = recurse(code->body_get());
     if (has_continue_)
       body = cont(body);
 
+    // 'fillme' is a placeholder filled later. Parametric ASTs can't
+    // parametrize formal arguments for now.
+    static ParametricAst closure("closure (fillme) {%exp:1}");
     ast::rClosure c = (closure % body).result<ast::Closure>();
     // Rename the 'fillme' closure formal argument
     c->formals_get()->front()->what_set(code->index_get()->what_get());
@@ -156,15 +150,16 @@ namespace flower
     if (!in_function_)
       errors_.error(ret->location_get(), "return: outside a function");
 
-    ast::rExp e = ret->value_get();
-
-    static ParametricAst simple("returnTag.stop");
-    static ParametricAst valued("returnTag.stop(%exp:1)");
-
-    if (e)
-      result_ = exp(valued % e);
+    if (ast::rExp e = ret->value_get())
+    {
+      static ParametricAst a("returnTag.stop(%exp:1)");
+      result_ = exp(a % e);
+    }
     else
-      result_ = exp(simple);
+    {
+      static ParametricAst a("returnTag.stop");
+      result_ = exp(a);
+    }
 
     has_return_ = true;
   }
