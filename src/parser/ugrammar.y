@@ -4,12 +4,10 @@
 /// This parser is defined with bison, using the option %pure_parser
 /// to make it reentrant. For more details about reentrancy issues,
 /// check the definition of the UServer class.
-
-%expect 0
 %require "2.3"
+%language "C++"
 %error-verbose
 %defines
-%skeleton "lalr1-fusion.cc"
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
 %parse-param {::parser::ParserImpl& up}
@@ -279,6 +277,8 @@
 /*----------------------.
 | Operator precedence.  |
 `----------------------*/
+
+%expect 0
 
 // man operator (precedences are increasing).
 
