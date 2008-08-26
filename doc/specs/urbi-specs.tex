@@ -181,8 +181,9 @@ Comments are used to document the code, and are totally ignored by the
 \subsection{Keywords}
 
 Keywords are reserved words that cannot be used as identifiers, for
-instance.  They are listed in \tab{keywords}.
-
+instance.  They are listed in \tab{keywords}.  Keywords can be
+escaped, and thus used as identifer by surrounding them with simple
+quotes (\lstinline|'|), as shown in \lst{escape-keyword}.
 
 \renewcommand{\baselinestretch}{.85}
 \begin{table}[htp]
@@ -293,6 +294,13 @@ instance.  They are listed in \tab{keywords}.
   \end{tabular}
 \end{table}
 \renewcommand{\baselinestretch}{1}
+
+\begin{lstlisting}[caption=Escaping keywords,label=lst:escape-keyword,float=htp]
+  var 'if' = 21;
+  [00000000] 21
+  'if' * 2;
+  [00000000] 42
+\end{lstlisting}
 
 \subsection{Literals}
 \subsubsection{Durations}
