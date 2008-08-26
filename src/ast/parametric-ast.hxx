@@ -27,7 +27,7 @@ namespace ast
     result_->location_set(effective_location_);
     if (desugar)
       LIBPORT_ECHO(result_->location_get() << ": " << *result_);
-    clear();
+    reset();
     return assert_exp(result_.unsafe_cast<T>());
   }
 

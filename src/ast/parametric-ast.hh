@@ -69,7 +69,7 @@ namespace ast
 
     /// Reset for a new instantiation (the ast is kept).
     /// \precondition empty()
-    void clear();
+    void reset();
 
     /// The ast, possibly with meta-variables.
     rConstAst ast_;

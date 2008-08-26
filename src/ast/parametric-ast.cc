@@ -86,7 +86,7 @@ namespace ast
   }
 
   void
-  ParametricAst::clear()
+  ParametricAst::reset()
   {
     passert(*this, empty());
 #ifndef NDEBUG
