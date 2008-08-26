@@ -46,6 +46,7 @@ namespace object
     rList   tail      ();
     rList   operator+ (const rList& rhs);
     rList   operator+=(const rList& rhs);
+    rList   operator* (unsigned int times);
     rObject operator[](const rFloat& idx);
 
     static const std::string type_name;

@@ -120,6 +120,17 @@ namespace object
     return res;
   }
 
+  rList List::operator*(unsigned int times)
+  {
+    List::value_type res;
+    unsigned int s = content_.size();
+    for (unsigned int i = 0; i < times; ++i)
+      for (unsigned int j = 0; j < s; ++j)
+	res.push_back(content_[j]);
+
+    return new List(res);
+  }
+
   /// Binary predicate used to sort lists.
   static bool
   compareListItems (runner::Runner& r, const rObject& a, const rObject& b)
@@ -209,9 +220,9 @@ namespace object
     bind(SYMBOL(each),           &List::each        );
     bind(SYMBOL(each_AMPERSAND), &List::each_and    );
     bind(SYMBOL(front),          &List::front       );
+    bind(SYMBOL(nth),            &List::operator[]  );
     bind(SYMBOL(PLUS),           &List::operator+   );
     bind(SYMBOL(PLUS_EQ),        &List::operator+=  );
-    bind(SYMBOL(nth),            &List::operator[]  );
     bind(SYMBOL(push_back),      &List::push_back   );
     bind(SYMBOL(push_front),     &List::push_front  );
     bind(SYMBOL(pop_back),       &List::pop_back    );
@@ -221,6 +232,7 @@ namespace object
     bind(SYMBOL(setNth),         &List::set         );
     bind(SYMBOL(size),           &List::size        );
     bind(SYMBOL(sort),           &List::sort        );
+    bind(SYMBOL(STAR),           &List::operator*   );
     bind(SYMBOL(tail),           &List::tail        );
   }
 
