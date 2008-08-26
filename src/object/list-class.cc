@@ -71,9 +71,8 @@ namespace object
   List::index(const rFloat& idx, const libport::Symbol fun) const
     throw (BadInteger, PrimitiveError)
   {
-    // We use ints, since the user used an rFloat, which is signed.
-    int i = idx->to_int(SYMBOL(nth));
-    if (! (0 <= i && unsigned(i) < content_.size()))
+    size_t i = idx->to_unsigned_int(SYMBOL(nth), "invalid index: %1%");
+    if (content_.size() <= i)
       throw PrimitiveError(fun, "invalid index: " + string_cast(i));
     return i;
   }
