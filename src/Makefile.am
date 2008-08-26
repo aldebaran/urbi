@@ -88,9 +88,10 @@ urbiinclude_HEADERS = $(uobject_headers)
 if !OPENR
 bin_PROGRAMS = urbi-console ast-dump
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS) -lboost_regex
-ast_dump_SOURCES = ast-dump.cc
-ast_dump_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS) -lboost_regex
+urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS)
+ast_dump_SOURCES = ast-dump.cc ast/dot-printer.cc
+ast_dump_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS) \
+	$(BOOST_REGEX_LDFLAGS) $(BOOST_REGEX_LIBS)
 
 dist_libkernel_la_SOURCES +=			\
 console-server.cc				\

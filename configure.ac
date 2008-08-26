@@ -89,6 +89,7 @@ URBI_OPENR
 URBI_LIBPORT
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 BOOST_TOKENIZER
+BOOST_REGEX
 
 
 ## ------ ##

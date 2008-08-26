@@ -8,7 +8,7 @@ EXTRA_DIST += ast/ast.yml
 BUILT_SOURCES += $(BUILT_SOURCES_ast)
 # Don't use LOCAL_BUILT_SOURCES since it looks like the SOURCES of the
 # program `LOCAL_BUILT' and triggers Automake warnings.
-BUILT_SOURCES_ast =				\
+BUILT_SOURCES_ast_libkernel =			\
 ast/fwd.hh					\
 ast/all.hh					\
 ast/analyzer.hh					\
@@ -23,11 +23,14 @@ ast/cloner.hxx					\
 ast/cloner.cc					\
 ast/default-visitor.hh				\
 ast/default-visitor.hxx				\
-ast/dot-printer.hh				\
-ast/dot-printer.cc				\
 ast/pretty-printer.hh				\
 ast/pretty-printer.cc				\
 $(ast_nodes)
+
+BUILT_SOURCES_ast = 				\
+$(BUILT_SOURCES_ast_libkernel) 			\
+ast/dot-printer.hh				\
+ast/dot-printer.cc
 
 gen_dir = $(top_srcdir)/dev
 ast_gen_deps = $(gen_dir)/ast.py \
@@ -54,4 +57,4 @@ ast/print.hh ast/print.cc                       \
 ast/symbols-type.hh                             \
 ast/symbols-type.cc                             \
 ast/visitor.hxx                                 \
-$(BUILT_SOURCES_ast)
+$(BUILT_SOURCES_ast_libkernel)
