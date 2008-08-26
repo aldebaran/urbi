@@ -27,6 +27,7 @@ namespace object
     value_type& value_get();
     value_type  value_get() const;
     int to_int(const libport::Symbol func) const;
+    unsigned int to_unsigned_int(const libport::Symbol func) const;
 
     // Urbi methods
     rFloat acos();

@@ -65,6 +65,24 @@ namespace object
     }
   }
 
+  unsigned int
+  Float::to_unsigned_int(const libport::Symbol func) const
+  {
+    try
+    {
+      int res = libport::ufloat_to_int(value_);
+      if (res < 0)
+	throw libport::bad_numeric_cast();
+      return res;
+    }
+    catch (libport::bad_numeric_cast& ue)
+    {
+      throw BadInteger(value_, func,
+		       "expected non-negative integer, got %1%");
+      return 0;  // Keep the compiler happy
+    }
+  }
+
   rFloat Float::inf()
   {
     return new Float(std::numeric_limits<libport::ufloat>::infinity());
