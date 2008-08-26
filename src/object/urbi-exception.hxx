@@ -73,9 +73,9 @@ namespace object
                                          const libport::Symbol fun)
     : UrbiException((boost::format("expected between %1% and %2% arguments, "
                                    "given %3%")
-                     % (minformal-1)
-                     % (maxformal-1)
-                     % (effective-1)).str(),
+                     % minformal
+                     % maxformal
+                     % effective).str(),
                     fun)
   {
   }
