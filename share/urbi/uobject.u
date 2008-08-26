@@ -238,8 +238,8 @@ class Global.'external'
 
 
   /* external object <objname>: Set clone to send a UEM_NEW message.
-  The remote upon reception of the UEM_NEW message 'instanciate <objname>
-  with name <newname>' will instanciate the UObject, and send:
+  The remote upon reception of the UEM_NEW message 'instantiate <objname>
+  with name <newname>' will instantiate the UObject, and send:
   - var <newname>.load, which will fail (<newname> does not exist)
   - class <newname>{} (which will go in the lobby)
   - external object <newname>
