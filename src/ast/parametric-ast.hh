@@ -47,13 +47,6 @@ namespace ast
     template <typename T>
     libport::shared_ptr<T> result();
 
-    /// Check that the tables are empty.
-    bool empty() const;
-
-    /// Reset for a new instantiation (the ast is kept).
-    /// \precondition empty()
-    void clear();
-
     /// Dump the master AST and the state of the tables.
     std::ostream& dump(std::ostream& o) const;
 
@@ -71,6 +64,13 @@ namespace ast
     template <typename T> T take (unsigned s) throw (std::range_error);
 
   private:
+    /// Check that the tables are empty.
+    bool empty() const;
+
+    /// Reset for a new instantiation (the ast is kept).
+    /// \precondition empty()
+    void clear();
+
     /// The ast, possibly with meta-variables.
     rConstAst ast_;
 
