@@ -1010,12 +1010,14 @@ Write:
     - ~value
     - '{
          if (const modifiers_type* modifiers = n->modifiers_get())
+         {
            foreach (const modifiers_type::value_type& modifier, *modifiers)
            {
              ostr_ << " ";
              ostr_ << modifier.first << ": ";
              operator()(modifier.second.get());
            }
+         }
        }'
 
 Declaration:
