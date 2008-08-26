@@ -6,6 +6,7 @@
 #include <object/list-class.hh>
 #include <object/object.hh>
 #include <object/primitive-class.hh>
+#include <object/urbi-exception.hh>
 
 #include <runner/runner.hh>
 
@@ -15,7 +16,8 @@ namespace object
 
   Primitive::Primitive()
   {
-    pabort("You can't instanciate Primitives by hand!");
+    throw PrimitiveError(SYMBOL(clone),
+			 "`Primitive' objects cannot be cloned");
   }
 
   Primitive::Primitive(rPrimitive model)

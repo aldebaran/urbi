@@ -11,6 +11,7 @@
 #include <object/code-class.hh>
 #include <object/list-class.hh>
 #include <object/object.hh>
+#include <object/urbi-exception.hh>
 
 #include <runner/runner.hh>
 
@@ -20,7 +21,8 @@ namespace object
 
   Code::Code()
   {
-    pabort("You can't instanciate Code manually.");
+    throw PrimitiveError(SYMBOL(clone),
+			 "`Code' objects cannot be cloned");
   }
 
   Code::Code(ast_type a)
