@@ -12,6 +12,7 @@
 \usepackage{myhyperref}
 \usepackage{mylistings}
 \usepackage{xspace}
+\usepackage{supertabular}
 
 % SHORTHANDS
 \newcommand{\ai}{AI\xspace}
@@ -176,6 +177,122 @@ Comments are used to document the code, and are totally ignored by the
   /* C style comment */
   /* These comments /* do */ nest */
 \end{lstlisting}
+
+\subsection{Keywords}
+
+Keywords are reserved words that cannot be used as identifiers, for
+instance.  They are listed in \tab{keywords}.
+
+
+\renewcommand{\baselinestretch}{.85}
+\begin{table}[htp]
+  \caption{Keywords}
+  \label{tab:keywords}
+  \centering
+  \begin{tabular}{|c|c||c|c|}
+    \hline
+    Keyword                       & Remark                                  &
+    Keyword                       & Remark                                  \\
+    \hline
+    \lstinline"and"               & Synonym for  operator                   &
+    \lstinline"long"              & Unused                                  \\
+    \lstinline"and_eq"            & Synonym for  operator                   &
+    \lstinline"loop"              & \lstinline|loop&| and
+                                    \lstinline-loop|- flavors               \\
+    \lstinline"asm"               & Unused                                  &
+    \lstinline"loopn"             & Deprecated in favor of for              \\
+    \lstinline"at"                &                                         &
+    \lstinline"mutable"           & Unused                                  \\
+    \lstinline"auto"              & Unused                                  &
+    \lstinline"namespace"         & Unused                                  \\
+    \lstinline"bitand"            & Synonym for \lstinline|&| operator      &
+    \lstinline"new"               &                                         \\
+    \lstinline"bitor"             & Synonym for \lstinline-|- operator      &
+    \lstinline"not"               & Synonym for \lstinline|!| operator      \\
+    \lstinline"bool"              & Unused                                  &
+    \lstinline"not_eq"            & Synonym for \lstinline|!=| operator     \\
+    \lstinline"break"             &                                         &
+    \lstinline"object"            &                                         \\
+    \lstinline"call"              &                                         &
+    \lstinline"onleave"           &                                         \\
+    \lstinline"case"              &                                         &
+    \lstinline"or"                & Synonym for \lstinline-||- operator     \\
+    \lstinline"catch"             & Unused                                  &
+    \lstinline"or_eq"             & Synonym for \lstinline-|=- operator     \\
+    \lstinline"char"              & Unused                                  &
+    \lstinline"private"           & Ignored                                 \\
+    \lstinline"class"             &                                         &
+    \lstinline"protected"         & Ignored                                 \\
+    \lstinline"closure"           &                                         &
+    \lstinline"public"            & Ignored                                 \\
+    \lstinline"compl"             & Synonym for \lstinline|~|               &
+    \lstinline"register"          & Unused                                  \\
+    \lstinline"const"             & Unused                                  &
+    \lstinline"reinterpret_cast"  & Unnused                                 \\
+    \lstinline"const_cast"        & Unused                                  &
+    \lstinline"return"            &                                         \\
+    \lstinline"continue"          &                                         &
+    \lstinline"short"             & Unused                                  \\
+    \lstinline"default"           & Unused                                  &
+    \lstinline"signed"            & Unused                                  \\
+    \lstinline"delete"            &                                         &
+    \lstinline"sizeof"            & Unused                                  \\
+    \lstinline"do"                &                                         &
+    \lstinline"static"            & Deprecated                              \\
+    \lstinline"double"            & Unused                                  &
+    \lstinline"static_cast"       & Unused                                  \\
+    \lstinline"dynamic_cast"      & Unused                                  &
+    \lstinline"stopif"            &                                         \\
+    \lstinline"else"              &                                         &
+    \lstinline"struct"            & Unused                                  \\
+    \lstinline"emit"              &                                         &
+    \lstinline"switch"            &                                         \\
+    \lstinline"enum"              & Unused                                  &
+    \lstinline"template"          & Unused                                  \\
+    \lstinline"event"             &                                         &
+    \lstinline"this"              &                                         \\
+    \lstinline"every"             &                                         &
+    \lstinline"throw"             & Unused                                  \\
+    \lstinline"explicit"          & Unused                                  &
+    \lstinline"timeout"           &                                         \\
+    \lstinline"export"            & Unused                                  &
+    \lstinline"try"               & Unused                                  \\
+    \lstinline"extern"            & Unused                                  &
+    \lstinline"typedef"           & Unused                                  \\
+    \lstinline"external"          &                                         &
+    \lstinline"typeid"            & Unused                                  \\
+    \lstinline"float"             & Unused                                  &
+    \lstinline"typename"          & Unused                                  \\
+    \lstinline"for"               & \lstinline|for&| and                    &
+                                    \lstinline-for|- flavors
+    \lstinline"union"             & Unused                                  \\
+    \lstinline"foreach"           & Deprecated in favor of for              &
+    \lstinline"unsigned"          & Unused                                  \\
+    \lstinline"freezeif"          &                                         &
+    \lstinline"using"             & Unused                                  \\
+    \lstinline"friend"            & Unused                                  &
+    \lstinline"var"               &                                         \\
+    \lstinline"from"              &                                         &
+    \lstinline"virtual"           & Unused                                  \\
+    \lstinline"function"          &                                         &
+    \lstinline"volatile"          & Unused                                  \\
+    \lstinline"goto"              & Unused                                  &
+    \lstinline"waituntil"         &                                         \\
+    \lstinline"if"                &                                         &
+    \lstinline"wchar_t"           & Unused                                  \\
+    \lstinline"in"                &                                         &
+    \lstinline"whenever"          &                                         \\
+    \lstinline"inline"            & Unused                                  &
+    \lstinline"while"             & \lstinline|while&| and
+                                    \lstinline-while|- flavors              \\
+    \lstinline"int"               & Unused                                  &
+    inline"xor"                   & Synonym for \lstinline|^| operator      \\
+    \lstinline"internal"          & Deprecated                              &
+    \lstinline"xor_eq"            & Synonym \lstinline|^=| operator         \\
+    \hline
+  \end{tabular}
+\end{table}
+\renewcommand{\baselinestretch}{1}
 
 \subsection{Literals}
 \subsubsection{Durations}
