@@ -7,6 +7,10 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 #include <libport/cstring>
 
 #include <libport/cli.hh>
@@ -14,6 +18,7 @@
 #include <libport/foreach.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
+#include <libport/thread.hh>
 #include <libport/tokenizer.hh>
 #include <libport/utime.hh>
 
@@ -26,6 +31,7 @@
 #include <scheduler/scheduler.hh>
 
 #include <kernel/ubanner.hh>
+#include <urbi/export.hh>
 
 class ConsoleServer
   : public UServer
@@ -120,11 +126,25 @@ namespace
   }
 }
 
-int
-main (int argc, const char* argv[])
+namespace urbi {
+
+
+/// Command line options needed in the main loop.
+struct LoopData
+{
+  bool interactive;
+  bool fast;
+  bool network;
+  ConsoleServer* s;
+};
+
+int main_loop(LoopData& l);
+
+USDK_API int
+main (int argc, const char* argv[], bool block)
 {
   libport::program_name = argv[0];
-
+  LoopData data;
   // Input files.
   typedef std::vector<const char*> files_type;
   files_type files;
@@ -135,11 +155,11 @@ main (int argc, const char* argv[])
   /// The size of the stacks.
   size_t arg_stack_size = 0;
   /// fast mode
-  bool fast = false;
+  data.fast = false;
   /// interactive mode
-  bool interactive = false;
+  data.interactive = false;
   /// enable network
-  bool network = true;
+  data.network = true;
 
   // Parse the command line.
   for (int i = 1; i < argc; ++i)
@@ -147,13 +167,13 @@ main (int argc, const char* argv[])
     std::string arg = argv[i];
 
     if (arg == "--fast" || arg == "-f")
-      fast = true;
+      data.fast = true;
     else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--interactive" || arg == "-i")
-      interactive = true;
+      data.interactive = true;
     else if (arg == "--no-network" || arg == "-n")
-      network = false;
+      data.network = false;
     else if (arg == "--period" || arg == "-P")
       (void) libport::convert_argument<int> (arg, argv[++i]);
     else if (arg == "--port" || arg == "-p")
@@ -187,9 +207,10 @@ main (int argc, const char* argv[])
     kernconf.default_stack_size = arg_stack_size;
   }
 
-  ConsoleServer s(fast);
+  data.s = new ConsoleServer(data.fast);
+  ConsoleServer& s = *data.s;
   int port = 0;
-  if (network && !(port=Network::createTCPServer(arg_port, "localhost")))
+  if (data.network && !(port=Network::createTCPServer(arg_port, "localhost")))
     std::cerr << libport::program_name
 	      << ": cannot bind to port " << arg_port
 	      << " on localhost" << std::endl
@@ -213,10 +234,21 @@ main (int argc, const char* argv[])
   c.new_data_added_get() = true;
 
   std::cerr << libport::program_name << ": going to work..." << std::endl;
+  if (block)
+    return main_loop(data);
+  else
+    libport::startThread(new boost::function0<void>(
+      boost::bind(&main_loop, data)));
+  return 0;
+  }
+
+int main_loop(LoopData& data)
+{
+  ConsoleServer& s = *data.s;
   libport::utime_t next_time = 0;
   while (true)
   {
-    if (interactive)
+    if (data.interactive)
     {
       std::string input;
       try
@@ -226,21 +258,21 @@ main (int argc, const char* argv[])
       catch (libport::exception::Exception e)
       {
 	std::cerr << e.what() << std::endl;
-	interactive = false;
+	data.interactive = false;
       }
       if (!input.empty())
 	s.ghost_connection_get().received(input.c_str(), input.length());
     }
     libport::utime_t select_time = 0;
-    if (!fast)
+    if (!data.fast)
     {
       libport::utime_t ctime = libport::utime();
       if (ctime < next_time)
 	select_time = next_time - ctime;
-      if (interactive)
+      if (data.interactive)
 	select_time = std::min(100000LL, select_time);
     }
-    if (network)
+    if (data.network)
       Network::selectAndProcess(select_time);
 
     next_time = s.work ();
@@ -250,4 +282,11 @@ main (int argc, const char* argv[])
   }
 
   return EX_OK;
+}
+
+}
+
+
+int main(int argc, const char* argv[]){
+  return urbi::main(argc, argv, true);
 }
