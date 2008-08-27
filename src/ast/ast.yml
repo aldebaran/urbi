@@ -748,7 +748,16 @@ LValueArgs:
         access: rwW
         mandatory: false
         desc: Arguments passed to the function
-
+  printer:
+    - '{
+         if (n->arguments_get())
+           ostr_
+            << "("
+            << libport::incindent
+            << libport::separate(*n->arguments_get(), ", ")
+            << libport::decindent
+            << ")";
+       }'
 
 Call:
   desc: /// Function calls, and attribute look-ups.
@@ -787,15 +796,7 @@ Call:
     - '{
          n->name_get().print_escaped(ostr_);
        }'
-    - '{
-         if (n->arguments_get())
-           ostr_
-            << "("
-            << libport::incindent
-            << libport::separate(*n->arguments_get(), ", ")
-            << libport::decindent
-            << ")";
-       }'
+    - '{ visit(static_cast<const LValueArgs*>(n)); }'
 
 MetaLValue:
   desc: /// A node which is a placeholder for a Call.
@@ -1181,6 +1182,12 @@ MetaCall:
         type: rExp
     - id:
         type: unsigned
+  printer:
+    - ~target
+    - '" . %id:"'
+    - $id
+    - '" "'
+    - '{ visit(static_cast<const LValueArgs*>(n)); }'
 
 Class:
   super: Exp
