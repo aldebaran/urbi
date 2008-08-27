@@ -494,7 +494,7 @@ which they are applicable, in \autoref{chap:std}.
   & Equivalence\\}
 
 
-\newcommand{\operator}[5]{\lstinline@#1@&\lstinline@#2@&#3&#4&\lstinline@#5@\\}
+\newcommand{\operator}[6][ ]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1\\}
 \newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
 \newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
 
@@ -502,7 +502,9 @@ which they are applicable, in \autoref{chap:std}.
 \newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
 \newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}                {a.'[]'(args)}          }
 \newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}     {a.'[]='(args, v)}      }
-\newcommand{\operatorass}    {\operator  {=}    {a = b}            {Right} {Assignment}               {updateSlot("a", b)}    }
+\newcommand{\operatorass}[2][ ]    {\operator[#1]
+                                         {=}    {a = b}            {Right} {Assignment}               {updateSlot("a", b)}    }
+
 \newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}      {a = a #1 b}            }
 \newcommand{\operatorsiass}  {
     \operatoriass{+}
@@ -602,13 +604,13 @@ affectation combined with another operator. See
     \hline
     \operatorhead
     \hline
-    \operatorass
+    \operatorass[\footnotemark]{}
     \operatorsiass
     \hline
   \end{tabular}
 \end{table}
-\footnotetext{For object fields only.
-  Assignment to local variables cannot be redefined. }
+\footnotetext{For object fields only. Assignment to local variables
+  cannot be redefined. }
 
 \begin{lstlisting}[caption=Assignment operators,
   label=lst:assignment-operators,float=\floatposh]
