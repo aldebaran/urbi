@@ -1,7 +1,8 @@
 \documentclass[openright,twoside,12pt]{report}
 
-% Number subsubsections
+% Number subsubsections and include them in the TOC
 \setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 % PACKAGES
 \usepackage{a4wide}
@@ -731,7 +732,7 @@ and \lst{bitwise-operators}.
   [00000000] false
 \end{lstlisting}
 
-\subsection{Miscellaneous operators}
+\subsubsection{Miscellaneous operators}
 
 Those operators cannot be classified in other categories. See
 \tab{miscellaneous-operators} and \lst{miscellaneous-operators}. Note
@@ -774,7 +775,7 @@ method of the targeted object.
   [00000000] false
 \end{lstlisting}
 
-\subsection{All operators summary}
+\subsubsection{All operators summary}
 
 \tab{operators-summary} is a summary of all operators, to highlight
 the overall precedences. Operators are sorted vertically by decreasing
