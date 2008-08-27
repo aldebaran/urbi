@@ -519,16 +519,23 @@ namespace urbi
     ECHO("call to setowned on "<<name);
   }
 
-  void
-  UVar::setProp(urbi::UProperty prop, ufloat v)
-  {
-    StringPair p = split_name(name);
-    rObject o = get_base(p.first);
-    urbi_call(getCurrentRunner(), o, SYMBOL(setProperty),
-	      new object::String(Symbol(p.second)),
-	      new object::String(Symbol(UPropertyNames[prop])),
-	      new object::Float(v));
+#define SET_PROP(argtype, out)                                   \
+  void                                                           \
+  UVar::setProp(urbi::UProperty prop, argtype v)                 \
+  {                                                              \
+    StringPair p = split_name(name);                             \
+    rObject o = get_base(p.first);                               \
+    urbi_call(getCurrentRunner(), o, SYMBOL(setProperty),        \
+	      new object::String(Symbol(p.second)),              \
+	      new object::String(Symbol(UPropertyNames[prop])),  \
+	      out);                                              \
   }
+
+  SET_PROP(const char*, new object::String(Symbol(v)))
+  SET_PROP(ufloat, new object::Float(v))
+  SET_PROP(const urbi::UValue&, object_cast(v))
+
+#undef SET_PROP
 
   UValue
   UVar::getProp(urbi::UProperty prop)
