@@ -3,13 +3,13 @@ class Global.Control
   function detach
   {
     var outer_call = call |
-    spawn (function () { outer_call.evalArgAt (0) })
+    unscope: spawn (function () { outer_call.evalArgAt (0) })
   };
 
   function detach_linked
   {
     var outer_call = call |
-    spawn (function () { outer_call.evalArgAt (0) }, true)
+    unscope: spawn (function () { outer_call.evalArgAt (0) }, true)
   };
 
   // every_ takes two arguments, a delay and an expression.
