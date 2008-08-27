@@ -30,17 +30,11 @@
 #  include <unistd.h>
 # endif
 
-# ifdef URBI_ENV_REMOTE
 #  define UMAIN()				\
   int						\
   main(int argc, const char *argv[])		\
   {						\
     urbi::main(argc, argv, true);		\
-    while (1)					\
-      usleep(100000);				\
   }
-# else
-#  define UMAIN()
-# endif /* !URBI_ENV_REMOTE */
 
 #endif /* !URBI_UMAIN_HH */
