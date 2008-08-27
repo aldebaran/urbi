@@ -19,6 +19,7 @@
 # include <string>
 
 # include <urbi/fwd.hh>
+# include <urbi/export.hh>
 
 /// This macro must be called once for every UObject class.
 # define UStartRename(Type, Name)                                       \
@@ -41,12 +42,12 @@ namespace urbi
   typedef std::list<baseURBIStarterHub*> UStartlistHub;
 
   // Two singleton lists to handle the object and hubobject registration.
-  EXTERN_STATIC_INSTANCE(UStartlist, objectlist);
-  EXTERN_STATIC_INSTANCE(UStartlistHub, objecthublist);
+  EXTERN_STATIC_INSTANCE_EX(UStartlist, objectlist, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UStartlistHub, objecthublist, USDK_API);
 
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist.
-  class baseURBIStarter
+  class USDK_API baseURBIStarter
   {
   public:
     baseURBIStarter(const std::string& name);
@@ -121,7 +122,7 @@ SETBACKCASTCTOR(const UImage)
 
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist
-  class baseURBIStarterHub
+  class USDK_API baseURBIStarterHub
   {
   public:
     baseURBIStarterHub(const std::string& name);

@@ -27,6 +27,7 @@
 # include <libport/ufloat.h>
 # include <libport/package-info.hh>
 # include <urbi/fwd.hh>
+# include <urbi/export.hh>
 # include <urbi/ucallbacks.hh>
 # include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
@@ -124,7 +125,7 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
-  int main(int argc, const char *argv[], bool block = true);
+  USDK_API int main(int argc, const char *argv[], bool block = true);
 
 #ifdef URBI_ENV_REMOTE
   /** Initialisation method, for remote mode only, that returns.
@@ -136,37 +137,37 @@ namespace urbi
    * \param exitOnDisconnect call exit() if we get disconnected from server.
    * \return 0 if no error occured.
    */
-   int initialize(const char* host, int port, int buflen,
+   int USDK_API initialize(const char* host, int port, int buflen,
 		  bool exitOnDisconnect);
 #endif
   /// an empty dummy UObject used by UVar to set a NotifyChange
   /// This avoid coupling a UVar to a particular object
-  extern UObject* dummyUObject;
+  extern USDK_API UObject* dummyUObject;
 
   // Global function of the urbi:: namespace to access kernel features
 
   /// Write a message to the server debug output. Printf syntax.
-  void echo(const char* format, ... );
+  USDK_API void echo(const char* format, ... );
   /// Retrieve a UObjectHub based on its name or return 0 if not found.
-  UObjectHub* getUObjectHub(const std::string& n);
+  USDK_API UObjectHub* getUObjectHub(const std::string& n);
   /// Retrieve a UObject based on its name or return 0 if not found.
-  UObject* getUObject(const std::string& n);
+  USDK_API UObject* getUObject(const std::string& n);
 
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
-  void uobject_unarmorAndSend(const char* str);
+  USDK_API void uobject_unarmorAndSend(const char* str);
 
   /// Send the string to the connection hosting the UObject.
-  void send(const char* str);
+  USDK_API void send(const char* str);
 
   /// Send buf to the connection hosting the UObject.
-  void send(void* buf, int size);
+  USDK_API void send(void* buf, int size);
 
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object. It provides mechanisms to
       bind variables and functions between C++ and URBI.
   */
-  class UObject
+  class USDK_API UObject
   {
   public:
 
@@ -347,7 +348,7 @@ namespace urbi
 
 
   //! Main UObjectHub class definition
-  class UObjectHub
+  class USDK_API UObjectHub
   {
   public:
 

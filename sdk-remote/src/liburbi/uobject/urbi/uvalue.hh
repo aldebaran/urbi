@@ -21,6 +21,7 @@
 # include <libport/ufloat.h>
 
 # include <urbi/fwd.hh>
+# include <urbi/export.hh>
 # include <urbi/ubinary.hh>
 
 namespace urbi
@@ -40,7 +41,7 @@ namespace urbi
   };
 
   /// Class storing URBI List type
-  class UList
+  class USDK_API UList
   {
   public:
     std::vector<UValue *> array;
@@ -70,7 +71,7 @@ namespace urbi
     int offset;
   };
 
-  class UNamedValue
+  class USDK_API UNamedValue
   {
   public:
     UNamedValue(const std::string& n, UValue* v)
@@ -83,7 +84,7 @@ namespace urbi
     std::string name;
   };
 
-  class UObjectStruct
+  class USDK_API UObjectStruct
   {
   public:
     UObjectStruct();
@@ -108,7 +109,7 @@ namespace urbi
 
   /** Container for a value that handles all types known to URBI.
    */
-  class UValue
+  class USDK_API UValue
   {
   public:
     UDataType       type;
@@ -309,7 +310,7 @@ namespace urbi
   // The following ones are defined in uvalue-common.cc.
 
   template <>
-  struct uvalue_caster<UVar>
+  struct USDK_API uvalue_caster<UVar>
   {
     UVar& operator () (UValue& v);
   };
@@ -317,8 +318,7 @@ namespace urbi
 
 # define UVALUE_CASTER_DECLARE(Type)		\
   template <>					\
-  struct uvalue_caster<Type>			\
-  {						\
+  struct USDK_API uvalue_caster<Type> {		\
     Type operator () (UValue& v);		\
   };
 

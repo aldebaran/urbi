@@ -22,6 +22,7 @@
 
 # include <string>
 
+# include <urbi/export.hh>
 # include <urbi/utable.hh>
 # include <urbi/uvalue.hh>
 
@@ -33,7 +34,7 @@ namespace urbi
     the interface user point's of view.
   */
 
-  class UGenericCallback
+  class USDK_API UGenericCallback
   {
   public:
     UGenericCallback(const std::string& objname,

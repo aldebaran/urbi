@@ -21,6 +21,7 @@
 # define URBI_UTIMER_CALLBACK_HH
 
 # include <string>
+# include <urbi/export.hh>
 # include <urbi/utimer-table.hh>
 
 namespace urbi
@@ -30,7 +31,7 @@ namespace urbi
   /*! This class stores a callback as a class method
    */
 
-  class UTimerCallback
+  class USDK_API UTimerCallback
   {
   public:
     UTimerCallback(const std::string& objname, ufloat period, UTimerTable& tt);

@@ -29,6 +29,8 @@
 # include <libport/ufloat.h>
 # include <libport/hash.hh>
 
+# include <urbi/export.hh>
+
 namespace urbi
 {
   /// Possible value types a UValue can contain.
@@ -40,7 +42,7 @@ namespace urbi
   /** USystemMessage class definition.
       USystemMessage provides a generic container for system messages.
    */
-  class USystemMessage
+  class USDK_API USystemMessage
   {
   public:
 
@@ -51,7 +53,7 @@ namespace urbi
   /** UStringSystemMessage class definition.
       USystemMessage provides a std::string container for system messages.
    */
-  class UStringSystemMessage : public USystemMessage
+  class USDK_API UStringSystemMessage : public USystemMessage
   {
   public:
 
@@ -75,7 +77,7 @@ namespace urbi
       NEW_CHANNEL: send a message when a new command fail, with the name of
 		   the requested object in a UStringSystemMessage
   */
-  class USystem
+  class USDK_API USystem
   {
   public:
 

@@ -26,6 +26,7 @@
 # include <libport/singleton-ptr.hh>
 # include <libport/hash.hh>
 
+# include <urbi/export.hh>
 # include <urbi/uvalue.hh>
 
 namespace urbi
@@ -40,14 +41,14 @@ namespace urbi
   void cleanTable(UTable &t, const std::string& name);
 
   // Lists and hashtables used.
-  EXTERN_STATIC_INSTANCE(UTable, accessmap);
-  EXTERN_STATIC_INSTANCE(UTable, eventendmap);
-  EXTERN_STATIC_INSTANCE(UTable, eventmap);
-  EXTERN_STATIC_INSTANCE(UTable, functionmap);
-  EXTERN_STATIC_INSTANCE(UTable, monitormap);
+  EXTERN_STATIC_INSTANCE_EX(UTable, accessmap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, eventendmap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, eventmap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, functionmap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, monitormap, USDK_API);
 
   typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
-  EXTERN_STATIC_INSTANCE(UVarTable, varmap);
+  EXTERN_STATIC_INSTANCE_EX(UVarTable, varmap, USDK_API);
 
 } // end namespace urbi
 

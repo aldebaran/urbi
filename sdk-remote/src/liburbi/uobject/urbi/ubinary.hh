@@ -19,6 +19,8 @@
 # include <list>
 # include <string>
 
+# include <urbi/export.hh>
+
 namespace urbi
 {
 
@@ -64,7 +66,7 @@ namespace urbi
 
    This class does not handle its memory: the data field msut be
    freed manualy.  */
-  class USound
+  class USDK_API USound
   {
   public:
     char                  *data;            ///< pointer to sound data
@@ -100,7 +102,7 @@ namespace urbi
 
    This class does not handle its memory: the data field msut be
    freed manualy.  */
-  class UImage
+  class USDK_API UImage
   {
   public:
     unsigned char         *data;            ///< pointer to image data
@@ -119,7 +121,7 @@ namespace urbi
   `--------------*/
 
   //internal use: unparsed binary data
-  class BinaryData
+  class USDK_API BinaryData
   {
   public:
     BinaryData()
@@ -141,7 +143,7 @@ namespace urbi
   /** Class containing binary data of known or unknown type.
    Handles its memory: the data field will be freed when the destructor is called.
    */
-  class UBinary
+  class USDK_API UBinary
   {
   public:
 
