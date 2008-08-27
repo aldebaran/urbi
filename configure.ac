@@ -106,6 +106,8 @@ URBI_SDK
 ## Output.  ##
 ## -------- ##
 
+URBI_LIBTOOL
+
 URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile lib/libport/Makefile])
 AC_OUTPUT
