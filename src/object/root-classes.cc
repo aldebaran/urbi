@@ -21,6 +21,8 @@
 #include <object/tag-class.hh>
 #include <object/task-class.hh>
 
+#include <runner/unscoper.hh>
+
 namespace object
 {
 
@@ -195,6 +197,9 @@ namespace object
     CLASS_SETUP(void, void);
 
     ANONYMOUS_CLASS_SETUP(accepted_void, acceptedVoid);
+
+    global_class->slot_set(SYMBOL(unscope),
+			   new Tag(new runner::Unscoper(SYMBOL(unscope))));
 
 #undef SYMBOL_
 
