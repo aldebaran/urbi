@@ -15,6 +15,7 @@ namespace scheduler
     , frozen_(false)
     , name_(name)
     , prio_(UPRIO_DEFAULT)
+    , flow_control_(false)
   {
   }
 
@@ -88,6 +89,18 @@ namespace scheduler
     prio_ = std::min(std::max(prio, prio_type(UPRIO_MIN)),
 		     prio_type(UPRIO_MAX));
     return prio_;
+  }
+
+  inline void
+  Tag::flow_control_set()
+  {
+    flow_control_ = true;
+  }
+
+  inline bool
+  Tag::flow_control_get() const
+  {
+    return flow_control_;
   }
 
 } // namespace scheduler

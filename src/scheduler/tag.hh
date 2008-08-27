@@ -86,6 +86,10 @@ namespace scheduler
     // given.
     virtual void apply_tag(tags_type& tags, libport::Finally* finally);
 
+    // Set and get the flow_control property.
+    void flow_control_set();
+    bool flow_control_get() const;
+
     // Act on a tag and make the scheduler take it into account
     void freeze();
     void unfreeze();
@@ -104,6 +108,7 @@ namespace scheduler
     libport::Symbol name_;
     boost::any payload_;
     prio_type prio_;
+    bool flow_control_;
   };
 
 } // namespace scheduler
