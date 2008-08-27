@@ -35,8 +35,12 @@ URBI_COMPILATION_MODE
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
 # TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
-# We use our own Bison.
-AC_CONFIG_SUBDIRS([bison])
+# We use our own Bison as a host tool.
+mkdir -p bison
+cd bison
+../$srcdir/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
+cd ..
+
 AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 

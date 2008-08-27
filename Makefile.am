@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
 # Process "." before the sub dirs to make sure sdk/config.h and
 # libport/config.h are propery built.
-SUBDIRS = bison . lib/libport src tests doc
+SUBDIRS = . lib/libport src tests doc
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -96,3 +96,8 @@ check-%:
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
+
+all: $top_builddir/bison/src/bison
+
+$top_builddir/bison/src/bison:
+	(cd bison && make)
