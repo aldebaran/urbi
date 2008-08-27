@@ -140,7 +140,7 @@ namespace ast
   ParametricAst::operator% (libport::shared_ptr<ast::Exp, true> t)
   {
 #ifndef NDEBUG
-    passert(libport::deref << t, unique_(t));
+    passert(libport::deref << t, unique_(t.get()));
 #endif
 
     // Strangely, the exp_map_type qualification is required
@@ -158,9 +158,6 @@ namespace ast
   ParametricAst&
   ParametricAst::operator% (libport::Symbol id)
   {
-#ifndef NDEBUG
-    passert(libport::deref << id, unique_(id));
-#endif
     id_map_type::append_(count_, id);
     return *this;
   }
