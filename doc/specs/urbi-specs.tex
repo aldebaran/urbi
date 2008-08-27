@@ -32,6 +32,28 @@
 \newcommand{\umake}{umake\xspace}
 \newcommand{\us}{UrbiScript\xspace}
 
+% FLOATS
+
+% % This version tries to either put floats HERE, or regroup them on pages
+
+% \newcommand   {\floatpos}          {htbp}
+% \newcommand   {\flushfloat}        {\afterpage{\clearpage}}
+% \renewcommand {\floatpagefraction} {0.8}
+
+
+% This version tries to insert float as near as possible from the
+% declaration point, but after it.
+
+% Don't insert a float at the top of a page before it's referred to!
+\usepackage{flafter}
+
+\newcommand   {\floatpos}          {htbp}
+\newcommand   {\flushfloat}        {\afterpage{\clearpage}}
+\setcounter   {topnumber}          {3} % Enable up to two float at the top of pages
+\setcounter   {bottomnumber}       {2} % Enable up to two float at the bottom of pages
+\renewcommand {\floatpagefraction} {0.8}
+
+
 % LISTINGS
 
 \lstset{language=[interactive]Urbi}
@@ -54,11 +76,9 @@
 }
 
 % COMMANDS
-\newcommand{\floatpos}{htp}
 \newcommand{\lst}[1]{\autoref{lst:#1}}
 \newcommand{\sect}[1]{\autoref{sect:#1}}
 \newcommand{\tab}[1]{\autoref{tab:#1}}
-\newcommand{\flushfloat}{\afterpage{\clearpage}}
 \makeatletter
 \renewcommand{\maketitle}{
   \begin{titlepage}
