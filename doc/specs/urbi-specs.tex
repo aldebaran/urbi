@@ -12,8 +12,9 @@
 \usepackage{mycxx}
 \usepackage{myhyperref}
 \usepackage{mylistings}
-\usepackage{xspace}
+\usepackage{placeins}
 \usepackage{supertabular}
+\usepackage{xspace}
 
 % SHORTHANDS
 \newcommand{\ai}{AI\xspace}
@@ -38,6 +39,7 @@
 % % This version tries to either put floats HERE, or regroup them on pages
 
 % \newcommand   {\floatpos}          {htbp}
+% \newcommand   {\floatposh}         {htbp}
 % \newcommand   {\flushfloat}        {\afterpage{\clearpage}}
 % \renewcommand {\floatpagefraction} {0.8}
 
@@ -49,9 +51,10 @@
 \usepackage{flafter}
 
 \newcommand   {\floatpos}          {htbp}
+\newcommand   {\floatposh}         {!htb}
 \newcommand   {\flushfloat}        {\afterpage{\clearpage}}
-\setcounter   {topnumber}          {3} % Enable up to two float at the top of pages
-\setcounter   {bottomnumber}       {2} % Enable up to two float at the bottom of pages
+\setcounter   {topnumber}          {3} % Enable up to n floats at the top of pages
+\setcounter   {bottomnumber}       {2} % Enable up to n floats at the bottom of pages
 \renewcommand {\floatpagefraction} {0.8}
 
 
@@ -72,7 +75,7 @@
   aboveskip=.6cm,
   captionpos=b,
   frame=single,
-  basicstyle=\ttfamily,
+  basicstyle=\ttfamily\footnotesize,
   showstringspaces=false,
 }
 
@@ -543,7 +546,7 @@ which they are applicable, in \autoref{chap:std}.
 on numeric values. See \tab{arithmetic-operators} and
 \lst{arithmetic-operators}.
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Arithmetic operators}
   \label{tab:arithmetic-operators}
   \centering
@@ -567,7 +570,7 @@ on numeric values. See \tab{arithmetic-operators} and
 \end{table}
 
 \begin{lstlisting}[caption=Arithmetic operators,
-  label=lst:arithmetic-operators,float=\floatpos]
+  label=lst:arithmetic-operators,float=\floatposh]
   1 + 1;
   [00000000] 2
   1 - 2;
@@ -591,7 +594,7 @@ affectation combined with another operator. See
 \tab{assignment-operators} and \lst{assignment-operators}.
 
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Assignment operators}
   \label{tab:assignment-operators}
   \centering
@@ -608,7 +611,7 @@ affectation combined with another operator. See
   Assignment to local variables cannot be redefined. }
 
 \begin{lstlisting}[caption=Assignment operators,
-  label=lst:assignment-operators,float=\floatpos]
+  label=lst:assignment-operators,float=\floatposh]
   var x = 0;
   [00000000] 0
   x = 10;
@@ -631,7 +634,7 @@ affectation combined with another operator. See
 other purpose than bit-related operations. See \tab{bitwise-operators}
 and \lst{bitwise-operators}.
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Bitwise operators}
   \label{tab:bitwise-operators}
   \centering
@@ -648,7 +651,7 @@ and \lst{bitwise-operators}.
 \end{table}
 
 \begin{lstlisting}[caption=Bitwise operators,
-  label=lst:bitwise-operators,float=\floatpos]
+  label=lst:bitwise-operators,float=\floatposh]
   4 << 2;
   [00000000] 16
   4 >> 2;
@@ -660,7 +663,7 @@ and \lst{bitwise-operators}.
 \us support classic logic operators. See \tab{logic-operators} and
 \lst{logic-operators}.
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Logic operators}
   \label{tab:logic-operators}
   \centering
@@ -677,9 +680,8 @@ and \lst{bitwise-operators}.
   \end{tabular}
 \end{table}
 
-
 \begin{lstlisting}[caption=Logic operators,
-  label=lst:logic-operators,float=\floatpos]
+  label=lst:logic-operators,float=\floatposh]
   true && true;
   [00000000] true
   true || false;
@@ -693,7 +695,7 @@ and \lst{bitwise-operators}.
 \us support classic comparison operators. See \tab{comparison-operators} and
 \lst{comparison-operators}.
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Comparison operators}
   \label{tab:comparison-operators}
   \centering
@@ -715,7 +717,7 @@ and \lst{bitwise-operators}.
 \end{table}
 
 \begin{lstlisting}[caption=Comparison operators,
-  label=lst:comparison-operators,float=\floatpos]
+  label=lst:comparison-operators,float=\floatposh]
   0 < 0;
   [00000000] false
   0 <= 0;
@@ -740,7 +742,7 @@ that the subscript (square bracket) operator is variadic: it can take
 any number of arguments, that will be passed to the \lstinline|'[]'|
 method of the targeted object.
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Miscellaneous operators}
   \label{tab:miscellaneous-operators}
   \centering
@@ -758,7 +760,7 @@ method of the targeted object.
 \end{table}
 
 \begin{lstlisting}[caption=Miscellaneous operators,
-  label=lst:miscellaneous-operators,float=\floatpos]
+  label=lst:miscellaneous-operators,float=\floatposh]
   0 < 0;
   [00000000] false
   0 <= 0;
@@ -775,6 +777,7 @@ method of the targeted object.
   [00000000] false
 \end{lstlisting}
 
+\clearpage
 \subsubsection{All operators summary}
 
 \tab{operators-summary} is a summary of all operators, to highlight
@@ -782,10 +785,13 @@ the overall precedences. Operators are sorted vertically by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
 
-\begin{table}[\floatpos]
+\begin{table}[\floatposh]
   \caption{Operators summary}
   \label{tab:operators-summary}
   \centering
+  % This is *required* for the table to fit in the same page.
+  \renewcommand{\baselinestretch}{0.99}
+  \begin{footnotesize}
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
     Operator               & Use                                    & Associativity
@@ -837,7 +843,11 @@ precedence.
     \operatordec
     \hline
   \end{tabular}
+  \end{footnotesize}
+  \renewcommand{\baselinestretch}{1}
+
 \end{table}
+\FloatBarrier
 
 \section{Local variables}
 \section{Objects}
