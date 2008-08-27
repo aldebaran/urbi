@@ -53,7 +53,7 @@ namespace runner
     {
       // Create the tag on demand. It must have the lowest possible priority to
       // avoid influencing the scheduling algorithm.
-      tag = new scheduler::Tag(libport::Symbol::fresh("<scope tag>"));
+      tag = new scheduler::Tag(SYMBOL(scopeTag));
       tag->prio_set(scheduler_get(), scheduler::UPRIO_NONE);
     }
     return tag;

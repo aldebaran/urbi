@@ -42,7 +42,7 @@ namespace flower
   brk(ast::rExp e)
   {
     static ParametricAst brk(
-      "var loopBreakTag = new Tag |"
+      "var loopBreakTag = Tag.newFlowControl(\"breakTag\") |"
       "loopBreakTag: %exp:1");
 
     return exp(brk % e);
@@ -53,7 +53,7 @@ namespace flower
   cont(ast::rExp e)
   {
     static ParametricAst cont(
-      "var loopContinueTag = new Tag |"
+      "var loopContinueTag = Tag.newFlowControl(\"continueTag\") |"
       "loopContinueTag: %exp:1");
 
     return exp(cont % e);
@@ -136,7 +136,8 @@ namespace flower
     super_type::visit(code);
     if (has_return_)
     {
-      static ast::ParametricAst a("var returnTag = new Tag | "
+      static ast::ParametricAst a("var returnTag = "
+				  "Tag.newFlowControl(\"returnTag\") | "
                                   "returnTag: %exp:1");
       ast::rScope copy =
         result_.unsafe_cast<ast::Function>()->body_get();
