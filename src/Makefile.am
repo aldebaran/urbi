@@ -21,8 +21,10 @@ AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 ## ----------- ##
 
 env_LTLIBRARIES = libkernel.la
-libkernel_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
-
+#the -DBUILDING_LIBPORT is required since libport/network/* are considered as kernel sources.
+libkernel_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
+libkernel_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) -no-undefined
+libkernel_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
 # The separation in two different targets is needed to be sure that
 # the libs are installed before we try to move them.
 # install-exec-local:
@@ -100,7 +102,6 @@ console-server.cc				\
 ../lib/network/bsdnet/network.hh		\
 ../lib/network/bsdnet/network.cc
 
-libkernel_la_LIBADD = $(top_builddir)/lib/libport/libport.la
 
 endif
 
