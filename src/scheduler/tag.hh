@@ -84,7 +84,7 @@ namespace scheduler
     // Apply a tag by changing the \a tags list and register the action
     // to be taken when the tag is removed into the \a finally object if
     // given.
-    void apply_tag(tags_type& tags, libport::Finally* finally);
+    virtual void apply_tag(tags_type& tags, libport::Finally* finally);
 
     // Act on a tag and make the scheduler take it into account
     void freeze();
