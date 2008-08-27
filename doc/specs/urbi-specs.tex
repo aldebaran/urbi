@@ -54,6 +54,7 @@
 }
 
 % COMMANDS
+\newcommand{\floatpos}{htp}
 \newcommand{\lst}[1]{\autoref{lst:#1}}
 \newcommand{\sect}[1]{\autoref{sect:#1}}
 \newcommand{\tab}[1]{\autoref{tab:#1}}
@@ -173,7 +174,7 @@ Comments are used to document the code, and are totally ignored by the
 
 \lst{comments} illustrates this.
 
-\begin{lstlisting}[caption=Comments,label=lst:comments,float=htp]
+\begin{lstlisting}[caption=Comments,label=lst:comments,float=\floatpos]
   // C++ style comment
   /* C style comment */
   /* These comments /* do */ nest */
@@ -193,7 +194,7 @@ method identifier in a method call, as shown in
 between simple quotes (\lstinline|'|), in which case they may contain
 any characters, as in \lst{escape-identifiers}.
 
-\begin{lstlisting}[caption=Identifiers,label=lst:identifiers,float=htp]
+\begin{lstlisting}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
   var x;
   var foobar51;
   obj.met_hod();
@@ -203,7 +204,7 @@ any characters, as in \lst{escape-identifiers}.
 \end{lstlisting}
 
 \begin{lstlisting}[caption=Identifiers cannot be keywords,
-  label=lst:identifiers-keywords,float=htp]
+  label=lst:identifiers-keywords,float=\floatpos]
   // Those are invalid because "if" is a keyword.
 // var if;
 // obj.if();
@@ -213,7 +214,7 @@ any characters, as in \lst{escape-identifiers}.
 \end{lstlisting}
 
 \begin{lstlisting}[caption=Escaping identifiers with simple quotes,
-  label=lst:escape-identifiers,float=htp]
+  label=lst:escape-identifiers,float=\floatpos]
   // Identifiers can be escaped with simple quotes
   var '#x';
   var '1 2 3';
@@ -229,7 +230,7 @@ escaped, and thus used as identifier by surrounding them with simple
 quotes (\lstinline|'|), as shown in \lst{escape-keyword}.
 
 \renewcommand{\baselinestretch}{.85}
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Keywords}
   \label{tab:keywords}
   \centering
@@ -338,7 +339,7 @@ quotes (\lstinline|'|), as shown in \lst{escape-keyword}.
 \end{table}
 \renewcommand{\baselinestretch}{1}
 
-\begin{lstlisting}[caption=Escaping keywords,label=lst:escape-keyword,float=htp]
+\begin{lstlisting}[caption=Escaping keywords,label=lst:escape-keyword,float=\floatpos]
   var 'if' = 21;
   [00000000] 21
   'if' * 2;
@@ -355,7 +356,7 @@ millisecond. For instance, \lstinline|1s|, which stands for ``one
 second'', is strictly equivalent to \lstinline|1000|. Available units
 and their equivalent are shown in \tab{durations}.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Duration units}
   \label{tab:durations}
   \centering
@@ -382,7 +383,7 @@ decimal part. Briefly, float literals must verify the
 \lstinline|[0-9]+(\.[0-9]+)?| regular expression. \lst{literal-floats}
 is an example of literal floats.
 
-\begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=htp]
+\begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
   1;
   [00000000] 1
   1.1;
@@ -395,7 +396,7 @@ Literal lists are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
 (\lstinline|[]|), as shown in \lst{literal-lists}.
 
-\begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=htp]
+\begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
   []; // The empty list
   [00000000] []
   [1, 2, 3];
@@ -425,7 +426,7 @@ will be printed out as \lstinline|\n| when a string result is
 dumped. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
-\begin{lstlisting}[caption=Literal strings,label=lst:literal-strings,float=htp]
+\begin{lstlisting}[caption=Literal strings,label=lst:literal-strings,float=\floatpos]
   "";
   [00000000] ""
   "foo";
@@ -521,7 +522,7 @@ which they are applicable, in \autoref{chap:std}.
 on numeric values. See \tab{arithmetic-operators} and
 \lst{arithmetic-operators}.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Arithmetic operators}
   \label{tab:arithmetic-operators}
   \centering
@@ -545,7 +546,7 @@ on numeric values. See \tab{arithmetic-operators} and
 \end{table}
 
 \begin{lstlisting}[caption=Arithmetic operators,
-  label=lst:arithmetic-operators,float=htp]
+  label=lst:arithmetic-operators,float=\floatpos]
   1 + 1;
   [00000000] 2
   1 - 2;
@@ -569,7 +570,7 @@ affectation combined with another operator. See
 \tab{assignment-operators} and \lst{assignment-operators}.
 
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Assignment operators}
   \label{tab:assignment-operators}
   \centering
@@ -586,7 +587,7 @@ affectation combined with another operator. See
   Assignment to local variables cannot be redefined. }
 
 \begin{lstlisting}[caption=Assignment operators,
-  label=lst:assignment-operators,float=htp]
+  label=lst:assignment-operators,float=\floatpos]
   var x = 0;
   [00000000] 0
   x = 10;
@@ -609,7 +610,7 @@ affectation combined with another operator. See
 other purpose than bit-related operations. See \tab{bitwise-operators}
 and \lst{bitwise-operators}.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Bitwise operators}
   \label{tab:bitwise-operators}
   \centering
@@ -626,7 +627,7 @@ and \lst{bitwise-operators}.
 \end{table}
 
 \begin{lstlisting}[caption=Bitwise operators,
-  label=lst:bitwise-operators,float=htp]
+  label=lst:bitwise-operators,float=\floatpos]
   4 << 2;
   [00000000] 16
   4 >> 2;
@@ -638,7 +639,7 @@ and \lst{bitwise-operators}.
 \us support classic logic operators. See \tab{logic-operators} and
 \lst{logic-operators}.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Logic operators}
   \label{tab:logic-operators}
   \centering
@@ -657,7 +658,7 @@ and \lst{bitwise-operators}.
 
 
 \begin{lstlisting}[caption=Logic operators,
-  label=lst:logic-operators,float=htp]
+  label=lst:logic-operators,float=\floatpos]
   true && true;
   [00000000] true
   true || false;
@@ -671,7 +672,7 @@ and \lst{bitwise-operators}.
 \us support classic comparison operators. See \tab{comparison-operators} and
 \lst{comparison-operators}.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Comparison operators}
   \label{tab:comparison-operators}
   \centering
@@ -693,7 +694,7 @@ and \lst{bitwise-operators}.
 \end{table}
 
 \begin{lstlisting}[caption=Comparison operators,
-  label=lst:comparison-operators,float=htp]
+  label=lst:comparison-operators,float=\floatpos]
   0 < 0;
   [00000000] false
   0 <= 0;
@@ -718,7 +719,7 @@ that the subscript (square bracket) operator is variadic: it can take
 any number of arguments, that will be passed to the \lstinline|'[]'|
 method of the targeted object.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Miscellaneous operators}
   \label{tab:miscellaneous-operators}
   \centering
@@ -736,7 +737,7 @@ method of the targeted object.
 \end{table}
 
 \begin{lstlisting}[caption=Miscellaneous operators,
-  label=lst:miscellaneous-operators,float=htp]
+  label=lst:miscellaneous-operators,float=\floatpos]
   0 < 0;
   [00000000] false
   0 <= 0;
@@ -760,7 +761,7 @@ the overall precedences. Operators are sorted vertically by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
 
-\begin{table}[htp]
+\begin{table}[\floatpos]
   \caption{Operators summary}
   \label{tab:operators-summary}
   \centering
