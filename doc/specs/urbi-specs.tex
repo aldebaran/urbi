@@ -205,6 +205,7 @@ Comments are used to document the code, and are totally ignored by the
 \end{lstlisting}
 
 \subsection{Identifiers}
+\label{sect:us-syn-id}
 
 Identifiers in \us are composed of one or more alphanumeric or
 underscore (\lstinline|_|) characters, given that they must not start
@@ -791,9 +792,6 @@ precedence.
   \caption{Operators summary}
   \label{tab:operators-summary}
   \centering
-  % This is *required* for the table to fit in the same page.
-  \renewcommand{\baselinestretch}{0.99}
-  \begin{footnotesize}
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
     Operator               & Use                                    & Associativity
@@ -845,13 +843,106 @@ precedence.
     \operatordec
     \hline
   \end{tabular}
-  \end{footnotesize}
-  \renewcommand{\baselinestretch}{1}
 
 \end{table}
 \FloatBarrier
 
-\section{Local variables}
+\section{Scopes and local variables}
+
+\subsection{Scopes}
+
+% FIXME: This is wrong: the last separator isn't ignored; a pipe voids
+% the result, for instance.
+Scopes in \us are sequences of expressions, enclosed in curly brackets
+(\lstinline|{}|). Expressions are separated with the four expression
+separators (see \sect{fixme}). The last separator is optional and
+ignored if present. Scopes are themselves expressions, and can thus be
+used in composite expressions, nested, \ldots
+
+\begin{lstlisting}[caption=Scopes,label=lst:scopes,float=\floatpos]
+  // Scopes evaluate to their last expression
+  {
+    1;
+    2;
+    3;
+  };
+  [00000000] 3
+  // Scopes can be used as expressions
+  {1; 2; 3} + 1;
+  [00000000] 4
+\end{lstlisting}
+
+\subsection{Local variables}
+
+Local variables are introduced with the \lstinline|var| keyword,
+followed by a valid identifier (see \sect{us-syn-id}) and an optional
+initialization value assignment. If the initial value is omitted, it
+defaults to void (\sect{std-void}). Variable declarations evaluate to
+the initialization value. They can later be referred to by their
+name. Their value can be changed with the assignment operator; such an
+assignment expression returns the new value. The use of local
+variables is illustrated in \lst{local-variables}.
+
+\begin{lstlisting}[caption=Using local variables,
+  label=lst:local-variables,float=\floatpos]
+  // This declare variable x with value 42, and evaluates to 42.
+  var x = 42;
+  [00000000] 42
+  // x equals 42
+  x;
+  [00000000] 42
+  // We can assign it a new value
+  x = 51;
+  [00000000] 51
+  x;
+  [00000000] 51
+  // Initialization defaults to void
+  var y;
+  y.isVoid;
+  [00000000] true
+\end{lstlisting}
+
+Local variables lifespan is the same as their enclosing scope. They
+are thus only accessible from their scope and its
+subscopes\footnote{Local variables can actually escape their scope
+  with lexical closures, as explained in \sect{us-fun-closures}}. Two
+variables with the same name cannot be defined in the same scope. A
+variable with the same name can be redefined in a subscope, in which
+case references refer to the innermost variable, as shown in
+\lst{local-variables-scoping}.
+
+\begin{lstlisting}[caption=Local variables scoping,
+  label=lst:local-variables-scoping,float=\floatpos]
+  {
+    var x = 0;
+    var y = 1;
+    {
+      var y = 2;
+      var z = 3;
+      // We can access variables of parent scopes.
+      echo(x);
+      // This refers to the inner y.
+      echo(y);
+      echo(z);
+    };
+    // This refers to the outer y.
+    echo(y);
+    // This would be invalid: z does not exist anymore.
+    // echo(z);
+    // This would be invalid: x is already declared in this scope.
+    // var x;
+  };
+  [00000000] *** 0
+  [00000000] *** 2
+  [00000000] *** 3
+  [00000000] *** 1
+\end{lstlisting}
+
+\section{Functions}
+
+\subsection{Lexical closures}
+\label{sect:us-fun-closures}
+
 \section{Objects}
 \section{Flow control}
 \section{Parallelism}
@@ -881,6 +972,8 @@ precedence.
 \section{String}
 \section{Tag}
 \section{Tuple}
+\section{Void}
+\label{sect:std-void}
 
 \chapter{\urbi SDK specifications}
 
