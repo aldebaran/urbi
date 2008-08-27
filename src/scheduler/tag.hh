@@ -3,6 +3,7 @@
 
 # include <vector>
 
+# include <libport/finally.hh>
 # include <libport/symbol.hh>
 
 # include <scheduler/fwd.hh>
@@ -30,6 +31,8 @@ namespace scheduler
     /// Highest priority.
     UPRIO_MAX = UPRIO_RT_MAX
   };
+
+  typedef std::vector<rTag> tags_type;
 
   // A Tag is an entity attached to zero or more scheduler jobs. Each job
   // can have zero or more tags. When a new job is created, it usually
@@ -76,6 +79,11 @@ namespace scheduler
     prio_type prio_set(Scheduler&, prio_type);
     prio_type prio_get() const;
 
+    // Apply a tag by changing the \a tags list and register the action
+    // to be taken when the tag is removed into the \a finally object if
+    // given.
+    void apply_tag(tags_type& tags, libport::Finally* finally);
+
     // Act on a tag and make the scheduler take it into account
     void freeze();
     void unfreeze();
@@ -95,8 +103,6 @@ namespace scheduler
     boost::any payload_;
     prio_type prio_;
   };
-
-  typedef std::vector<rTag> tags_type;
 
 } // namespace scheduler
 

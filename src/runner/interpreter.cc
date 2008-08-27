@@ -103,7 +103,7 @@ namespace runner
       scheduler::rTag tag =
 	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
       if (!libport::has(tags_get(), tag))
-	push_tag(tag);
+	apply_tag(tag, 0);
     }
     // Push a dummy scope tag, in case we do have an "at" at the
     // toplevel.

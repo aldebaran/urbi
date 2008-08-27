@@ -7,6 +7,9 @@
 # define SCHEDULER_JOB_HXX
 
 # include <cassert>
+
+# include <boost/bind.hpp>
+
 # include <scheduler/scheduler.hh>
 # include <scheduler/coroutine.hh>
 
@@ -206,18 +209,12 @@ namespace scheduler
   }
 
   inline void
-  Job::push_tag(const rTag& tag)
+  Job::apply_tag(const rTag& tag, libport::Finally* finally)
   {
-    tags_.push_back(tag);
+    tag->apply_tag(tags_, finally);
+    if (finally)
+      *finally << boost::bind(&Job::recompute_prio, this, boost::ref(*tag));
     recompute_prio(*tag);
-  }
-
-  inline void
-  Job::pop_tag()
-  {
-    rTag prev = tags_.back();
-    tags_.pop_back();
-    recompute_prio(*prev);
   }
 
   inline void

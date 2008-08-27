@@ -11,6 +11,7 @@
 
 # include <boost/any.hpp>
 
+# include <libport/finally.hh>
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
 
@@ -201,13 +202,14 @@ namespace scheduler
     /// \return This depends from the job tags state.
     virtual bool frozen() const;
 
-    /// Push a tag onto the current job tag stack.
+    /// Apply a tag to the current job tag stack.
     ///
-    /// \param tag The tag to push.
-    void push_tag(const rTag& tag);
-
-    /// Pop the latest pushed tag from the job tag stack.
-    void pop_tag();
+    /// \param tag The tag to apply.
+    ///
+    /// \param finally The action executed when the
+    ///                tag is removed. No action is
+    ///                inserted if 0 is given.
+    void apply_tag(const rTag& tag, libport::Finally* finally);
 
     /// Copy the tags from another job.
     ///

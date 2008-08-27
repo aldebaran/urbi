@@ -431,8 +431,8 @@ namespace runner
       if (tag->blocked())
 	return boost::any_cast<rObject>(tag->payload_get());
 
-      push_tag (tag);
-      Finally finally(bind(&Interpreter::pop_tag, this));
+      Finally finally;
+      apply_tag(tag, &finally);
       // If the latest tag causes us to be frozen, let the
       // scheduler handle this properly to avoid duplicating the
       // logic.
