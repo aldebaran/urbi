@@ -464,6 +464,57 @@ grammatical rules, such as precedence and associativity. The behavior
 of those operators is described in the documentation of the classes on
 which they are applicable, in \autoref{chap:std}.
 
+% Operator generators
+\newcommand{\operatorhead}{Operator & Use & Associativity & Original semantic
+  & Equivalence\\}
+
+
+\newcommand{\operator}[5]{\lstinline@#1@&\lstinline@#2@&#3&#4&\lstinline@#5@\\}
+\newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
+\newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
+
+\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}          {Not redefinable}       }
+\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
+\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}                {a.'[]'(args)}          }
+\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}     {a.'[]='(args, v)}      }
+\newcommand{\operatorass}    {\operator  {=}    {a = b}            {Right} {Assignment}               {updateSlot("a", b)}    }
+\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}      {a = a #1 b}            }
+\newcommand{\operatorsiass}  {
+    \operatoriass{+}
+    \operatoriass{-}
+    \operatoriass{*}
+    \operatoriass{/}
+    \operatoriass{\%}
+    \operatoriass{\^}
+    \operatoriass{\~}
+}
+\newcommand{\operatorinc}    {\operator  {++}   {a++}              {-}     {Incrementation}           {(a = a + 1) - 1}       }
+\newcommand{\operatordec}    {\operator  {--}   {a--}              {-}     {Incrementation}           {(a = a - 1) + 1}       }
+
+\newcommand{\operatoruplus}  {\poperator {+}    {-}                {Identity}               }
+\newcommand{\operatorumin}   {\poperator {-}    {-}                {Opposite}               }
+\newcommand{\operatorexp}    {\boperator {**}   {Right}            {Exponentiation}         }
+\newcommand{\operatormult}   {\boperator {*}    {Left}             {Multiplication}         }
+\newcommand{\operatordiv}    {\boperator {/}    {Left}             {Division}               }
+\newcommand{\operatormod}    {\boperator {\%}   {Left}             {Modulo}                 }
+\newcommand{\operatorplus}   {\boperator {+}    {Left}             {Sum}                    }
+\newcommand{\operatorminus}  {\boperator {-}    {Left}             {Difference}             }
+\newcommand{\operatorlshift} {\boperator {<<}   {Left}             {Left bit shift}         }
+\newcommand{\operatorrshift} {\boperator {>>}   {Left}             {Right bit shift}        }
+\newcommand{\operatoreq}     {\boperator {==}   {Non Associative}  {Equality}               }
+\newcommand{\operatorneq}    {\boperator {!=}   {Non Associative}  {Inequality}             }
+\newcommand{\operatorpeq}    {\boperator {===}  {Non Associative}  {Physical equality}      }
+\newcommand{\operatorpneq}   {\boperator {!==}  {Non Associative}  {Physical Inequality}    }
+\newcommand{\operatoraeq}    {\boperator {=~=}  {Non Associative}  {Approximative equality} }
+\newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Inferior}               }
+\newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Inferior or equal}      }
+\newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Superior}               }
+\newcommand{\operatorsupeq}  {\boperator {>=}   {Non Associative}  {Superior or equal}      }
+\newcommand{\operatorbxor}   {\boperator {^}    {Left}             {Bitwise exclusive or}   }
+\newcommand{\operatorneg}    {\poperator {!}    {Left}             {Logical negation}       }
+\newcommand{\operatorand}    {\boperator {\&\&} {Left}             {Logical and}            }
+\newcommand{\operatoror}     {\boperator {||}   {Left}             {Logical or}             }
+
 \subsubsection{Arithmetic operators}
 
 \us supports classic arithmetic operators, with the classic semantic
@@ -476,28 +527,19 @@ on numeric values. See \tab{arithmetic-operators} and
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    Operator            & Use    & Associativity & Original semantic
-    & Equivalence             \\
+    \operatorhead
     \hline
-    unary \lstinline|+| & +a     & -             & Identity
-    & \lstinline|a.'+'()|     \\
-    unary \lstinline|-| & -a     & -             & Negation
-    & \lstinline|a.'-'()|     \\
+    \operatoruplus
+    \operatorumin
     \hline
-    \lstinline|**|      & a ** b & Right         & Exponentiation
-    & \lstinline|a.'**'(b)|   \\
+    \operatorexp
     \hline
-    \lstinline|*|       & a * b  & Left          & Multiplication
-    & \lstinline|a.'*'(b)|    \\
-    \lstinline|/|       & a / b  & Left          & Division
-    & \lstinline|a.'/'(b)|    \\
-    \lstinline|%|       & \lstinline|a % b|    & Left
-    & Modulo            & \lstinline|a.'%'(b)| \\
+    \operatormult
+    \operatordiv
+    \operatormod
     \hline
-    \lstinline|+|       & a + b  & Left          & Sum
-    & \lstinline|a.'+'(b)|    \\
-    \lstinline|-|       & a - b  & Left          & Difference
-    & \lstinline|a.'-'(b)|    \\
+    \operatorplus
+    \operatorminus
     \hline
   \end{tabular}
 \end{table}
@@ -533,30 +575,10 @@ affectation combined with another operator. See
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    Operator            & Use                  & Associativity
-    & Original semantic         & Equivalence             \\
+    \operatorhead
     \hline
-    \lstinline|=|       & \lstinline|x = val|  & Right
-    & Assignment & \lstinline|updateSlot("x", val)| \footnotemark \\
-    \lstinline|+=|      & \lstinline|x += val| & Right
-    & In-place sum              & \lstinline|x = x + val|     \\
-    \lstinline|-=|      & \lstinline|x -= val| & Right
-    & In-place difference       & \lstinline|x = x - val|     \\
-    \lstinline|*=|      & \lstinline|x *= val| & Right
-    & In-place multiplication   & \lstinline|x = x * val|     \\
-    \lstinline|/=|      & \lstinline|x /= val| & Right
-    & In-place division         & \lstinline|x = x / val|     \\
-    \lstinline|%=|      & \lstinline|x %= val| & Right
-    & In-place modulo           & \lstinline|x = x \% val|    \\
-    \lstinline|^=|      & \lstinline|x ^= val| & Right
-    & In-place exclusive or     & \lstinline|x = x \^ val|    \\
-    \lstinline|~=|      & \lstinline|x ~= val| & Right
-    & In-place bitwise negation & \lstinline|x = x \~ val|    \\
-    \hline
-    \lstinline|++|      & \lstinline|x++|      & -
-    & Incrementation            & \lstinline|(x = x + 1) - 1| \\
-    \lstinline|--|      & \lstinline|x--|      & -
-    & Decrementation            & \lstinline|(x = x - 1) + 1| \\
+    \operatorass
+    \operatorsiass
     \hline
   \end{tabular}
 \end{table}
@@ -593,15 +615,12 @@ and \lst{bitwise-operators}.
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    Operator            & Use                & Associativity
-    & Original semantic & Equivalence           \\
+    \operatorhead
     \hline
-    \lstinline|<<|      & \lstinline|a << b| & Left
-    & Left bit shift    & \lstinline|a.'<<'(b)| \\
-    \lstinline|>>|      & \lstinline|a >> b| & Left
-    & Right bit shift   & \lstinline|a.'>>'(b)| \\
-    \lstinline|^|       & \lstinline|a ^ b| & Left
-    & Bitwise exclusive or & \lstinline|a.'^'(b)| \\
+    \operatorlshift
+    \operatorrshift
+    \hline
+    \operatorbxor
     \hline
   \end{tabular}
 \end{table}
@@ -625,17 +644,13 @@ and \lst{bitwise-operators}.
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    Operator            & Use    & Associativity
-    & Original semantic & Equivalence           \\
+    \operatorhead
     \hline
-    \lstinline|!|       & \lstinline|!a|     & -
-    & Logical negation  & \lstinline|a.'!'()|               \\
+    \operatorneg
     \hline
-    \lstinline|&&|      & \lstinline|a && b| & Left
-    & Logical and       & \lstinline|a.'&&'(b)|             \\
+    \operatorand
     \hline
-    \lstinline-||-      & \lstinline-a || b- & Left
-    & Logical or        & \lstinline-a.'||'(b)-             \\
+    \operatoror
     \hline
   \end{tabular}
 \end{table}
@@ -662,27 +677,17 @@ and \lst{bitwise-operators}.
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    Operator            & Use    & Associativity
-    & Original semantic & Equivalence   \\
+    \operatorhead
     \hline
-    \lstinline|<|   & \lstinline|a < b|      & Non associative
-    & Inferior & \lstinline|a.'<'(b)|               \\
-    \lstinline|<=|  & \lstinline|a <= b|     & Non associative
-    & Inferior or equal & \lstinline|a.'<='(b)|     \\
-    \lstinline|>|   & \lstinline|a > b|      & Non associative
-    & Superior & \lstinline|a.'>'(b)|               \\
-    \lstinline|>=|  & \lstinline|a >= b|     & Non associative
-    & Superior or equal  & \lstinline|a.'>='(b)|    \\
-    \lstinline|==|  & \lstinline|a == b|     & Non associative
-    & Equal & \lstinline|a.'=='(b)|                 \\
-    \lstinline|===| & \lstinline|a === b|    & Non associative
-    & Physically equal & \lstinline|a.'==='(b)|     \\
-    \lstinline|!=|  & \lstinline|a != b|     & Non associative
-    & Different & \lstinline|a.'!='(b)|             \\
-    \lstinline|!==| & \lstinline|a !== b|    & Non associative
-    & Physically different & \lstinline|a.'!=='(b)| \\
-    \lstinline|=~=| & \lstinline|a =~= b|    & Non associative
-    & Approximately equal  & \lstinline|a.'=~='(b)| \\
+    \operatoreq
+    \operatorneq
+    \operatorpeq
+    \operatorpneq
+    \operatoraeq
+    \operatorinf
+    \operatorinfeq
+    \operatorsup
+    \operatorsupeq
     \hline
   \end{tabular}
 \end{table}
@@ -719,16 +724,13 @@ method of the targeted object.
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    Operator               & Use                                    & Associativity
-    & Original semantic    & Equivalence                            \\
+    \operatorhead
     \hline
-    \lstinline|.|          & \lstinline|a.b|, \lstinline|a.b(args)| & -
-    & Slot access, method call & Not redefinable                    \\
+    \operatordot
+    \operatordota
     \hline
-    \lstinline|[]|         & \lstinline|a[b, c, etc]|               & -
-    & Subscript            & \lstinline|a.'[]'(b, c, etc)|          \\
-    \lstinline|[] =|       & \lstinline|a[b, c, etc] = v|           & -
-    & Subscript assignment & \lstinline|a.'[]='(b, c, etc, v)|      \\
+    \operatorsub
+    \operatorsubass
     \hline
   \end{tabular}
 \end{table}
@@ -750,6 +752,70 @@ method of the targeted object.
   x !== x;
   [00000000] false
 \end{lstlisting}
+
+\subsection{All operators summary}
+
+\tab{operators-summary} is a summary of all operators, to highlight
+the overall precedences. Operators are sorted vertically by decreasing
+precedence. Groups of rows represent operators with the same
+precedence.
+
+\begin{table}[htp]
+  \caption{Operators summary}
+  \label{tab:operators-summary}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator               & Use                                    & Associativity
+    & Original semantic    & Equivalence                            \\
+    \hline
+    \operatordot
+    \operatordota
+    \hline
+    \operatorsub
+    \operatorsubass
+    \hline
+    \operatoruplus
+    \operatorumin
+    \hline
+    \operatorexp
+    \hline
+    \operatormult
+    \operatordiv
+    \operatormod
+    \hline
+    \operatorplus
+    \operatorminus
+    \hline
+    \operatorlshift
+    \operatorrshift
+    \hline
+    \operatoreq
+    \operatorneq
+    \operatorpeq
+    \operatorpneq
+    \operatoraeq
+    \operatorinf
+    \operatorinfeq
+    \operatorsup
+    \operatorsupeq
+    \hline
+    \operatorbxor
+    \hline
+    \operatorneg
+    \hline
+    \operatorand
+    \hline
+    \operatoror
+    \hline
+    \operatorass
+    \operatorsiass
+    \hline
+    \operatorinc
+    \operatordec
+    \hline
+  \end{tabular}
+\end{table}
 
 \section{Local variables}
 \section{Objects}
