@@ -17,4 +17,6 @@ runner/shell.hh					\
 runner/sneaker.cc				\
 runner/sneaker.hh				\
 runner/stacks.cc				\
-runner/stacks.hh
+runner/stacks.hh				\
+runner/unscoper.cc				\
+runner/unscoper.hh
