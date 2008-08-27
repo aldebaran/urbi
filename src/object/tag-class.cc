@@ -87,6 +87,14 @@ namespace object
     return res;
   }
 
+  rTag
+  Tag::new_flow_control(objects_type& args)
+  {
+    rTag res = _new(args);
+    res->value_get()->flow_control_set();
+    return res;
+  }
+
   scheduler::prio_type
   Tag::prio()
   {
@@ -167,6 +175,7 @@ namespace object
     bind(SYMBOL(leave), &Tag::leave);
     bind(SYMBOL(name), &Tag::name);
     bind(SYMBOL(new), &Tag::_new);
+    bind(SYMBOL(newFlowControl), &Tag::new_flow_control);
     bind(SYMBOL(prio), &Tag::prio);
     bind(SYMBOL(prio_set), &Tag::prio_set);
     bind(SYMBOL(stop), &Tag::stop);

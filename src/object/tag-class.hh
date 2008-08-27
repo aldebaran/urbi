@@ -28,6 +28,7 @@ namespace object
     static rTag _new(objects_type&);
     void freeze(runner::Runner&);
     rString name();
+    static rTag new_flow_control(objects_type&);
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
     void stop(runner::Runner&, objects_type&);
