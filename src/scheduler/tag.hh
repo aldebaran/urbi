@@ -3,6 +3,8 @@
 
 # include <vector>
 
+# include <boost/any.hpp>
+
 # include <libport/finally.hh>
 # include <libport/symbol.hh>
 
