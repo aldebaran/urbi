@@ -1,4 +1,3 @@
-
 #ifndef PORTABLEUCONTEXT_DEFINED
 #define PORTABLEUCONTEXT_DEFINED 1
 
@@ -34,13 +33,22 @@
 typedef unsigned long ulong;
 
 #if defined(__FreeBSD__) && __FreeBSD__ < 5
+# ifdef __cplusplus
+extern "C"
+{
+# endif
 extern	int		getmcontext(mcontext_t*);
 extern	void		setmcontext(mcontext_t*);
 #define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
 #define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
 extern	int		swapcontext(ucontext_t*, ucontext_t*);
 extern	void		makecontext(ucontext_t*, void(*)(), int, ...);
+# ifdef __cplusplus
+}
+# endif
 #endif
+
+
 
 #if defined(__APPLE__)
 #	define mcontext libthread_mcontext
@@ -102,4 +110,3 @@ void setmcontext(const mcontext_t*);
 
 #endif
 #endif
-

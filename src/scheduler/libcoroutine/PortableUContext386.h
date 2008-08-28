@@ -1,6 +1,10 @@
 #include <stdarg.h>
 #include <sys/ucontext.h>
 
+#if defined __cplusplus
+extern "C" {
+#endif
+
 #define setcontext(u) setmcontext(&(u)->uc_mcontext)
 #define getcontext(u) getmcontext(&(u)->uc_mcontext)
 typedef struct mcontext mcontext_t;
@@ -94,4 +98,6 @@ struct ucontext {
 	long               __spare__[8];
 };
 
-
+#if defined __cplusplus
+}
+#endif

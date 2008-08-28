@@ -55,7 +55,18 @@
 #if defined(USE_FIBERS)
 	#define CORO_IMPLEMENTATION "fibers"
 #elif defined(USE_UCONTEXT)
+// OSX (at least 10.5.4) does define all the function (swapcontext
+// etc.) we want, but the currently this library still wants to define
+// (and declare) them.  Since they are declared, with different
+// prototypes, in <ucontext.h>, there is a clash.  So instead of
+// pulling the definition of these functions from <ucontext.h>, just
+// pull the definition of the structures we need from <sys/ucontext.h>
+// and let this library provide its functions.
+# if defined __APPLE__
+	#include <sys/ucontext.h>
+# else
 	#include <ucontext.h>
+#endif
 	#define CORO_IMPLEMENTATION "ucontext"
 #elif defined(USE_SETJMP)
 	#include <setjmp.h>
