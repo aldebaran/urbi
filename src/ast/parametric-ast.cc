@@ -140,7 +140,8 @@ namespace ast
   ParametricAst::operator% (libport::shared_ptr<ast::Exp, true> t)
   {
 #ifndef NDEBUG
-    passert(libport::deref << t, unique_(t.get()));
+    // Implicit are shared
+    passert(libport::deref << t, t.unsafe_cast<ast::Implicit>() || unique_(t.get()));
 #endif
 
     // Strangely, the exp_map_type qualification is required
