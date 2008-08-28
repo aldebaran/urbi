@@ -80,18 +80,15 @@ public:
   virtual void yy_delete_buffer( struct yy_buffer_state* b ) = 0;
   virtual void yyrestart( std::istream* s ) = 0;
 
-  virtual yy::parser::token_type
-  yylex(yy::parser::semantic_type* val = 0,
-	yy::location* loc = 0, parser::ParserImpl* p = 0) = 0;
+  virtual yy::parser::symbol_type yylex(parser::ParserImpl* p = 0) = 0;
 
   // Call yylex with new input/output sources.
-  yy::parser::token_type yylex(yy::parser::semantic_type* val,
-			       yy::location* loc, parser::ParserImpl* p,
-			       std::istream* new_in,
-			       std::ostream* new_out = 0)
+  yy::parser::symbol_type yylex(parser::ParserImpl* p,
+                                std::istream* new_in,
+                                std::ostream* new_out = 0)
   {
-    switch_streams( new_in, new_out );
-    return yylex(val, loc, p);
+    switch_streams(new_in, new_out);
+    return yylex(p);
   }
 
   // Switch to new input/output streams.  A nil stream pointer
@@ -143,9 +140,7 @@ public:
   void yy_delete_buffer( struct yy_buffer_state* b );
   void yyrestart( std::istream* s );
 
-  virtual yy::parser::token_type
-  yylex(yy::parser::semantic_type* val = 0,
-	yy::location* loc = 0, parser::ParserImpl* p = 0);
+  virtual yy::parser::symbol_type yylex(parser::ParserImpl* p = 0);
   virtual void switch_streams( std::istream* new_in, std::ostream* new_out );
 
 protected:
@@ -225,6 +220,12 @@ public:
 
   // The default start condition: the one replacing INITIAL.
   int sc_default;
+
+  // The string or symbol currenty being grown.
+  std::string grown_string;
+
+  // The current location.
+  yy::location loc;
 };
 
 #endif // !PARSER_FLEX_LEXER_HH

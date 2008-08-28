@@ -8,6 +8,9 @@
 %language "C++"
 %error-verbose
 %defines
+ // Instead of "yytoken yylex (yylval, yylloc)", use
+ // symbol_type yylex ().
+%define lex_symbol
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
 %parse-param {::parser::ParserImpl& up}
@@ -124,12 +127,10 @@
 
   /// Use the scanner in the right parser::ParserImpl.
   inline
-    yy::parser::token_type
-    yylex(yy::parser::semantic_type* val, yy::location* loc,
-          parser::ParserImpl& up,
-	  FlexLexer& scanner)
+    yy::parser::symbol_type
+    yylex(parser::ParserImpl& up, FlexLexer& scanner)
   {
-    return scanner.yylex(val, loc, &up);
+    return scanner.yylex(&up);
   }
 
   static ast::local_declarations_type*
@@ -158,7 +159,10 @@
 
 } // %code requires.
 
-/* Tokens and nonterminal symbols, with their type */
+
+/*---------.
+| Tokens.  |
+`---------*/
 
 %token
 	TOK_EQ           "="
@@ -198,6 +202,10 @@
 
 %token TOK_EOF 0 "end of command"
 
+ // Special tokens for the prescanner.
+%token TOK_PRE_EOF        "prescanner end of file"
+       TOK_PRE_WANTS_MORE "prescanner needs more input" // no terminator found
+       TOK_PRE_COMPLETE   "prescanner found command" // Complete sentence.
 
 /*----------.
 | Flavors.  |

@@ -43,17 +43,6 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 | Prescanner macros.  |
 `--------------------*/
 
-// Import Prescanner return values.
-/// End of file.
-static token::yytokentype pre_eof =
-  token::yytokentype(parser::pre_eof);
-/// No terminator found.
-static token::yytokentype pre_wants_more =
-  token::yytokentype(parser::pre_wants_more);
-/// A complete sentence was found.
-static token::yytokentype pre_complete =
-  token::yytokentype(parser::pre_complete);
-
 // Skip the spaces in yytext.
 # define SKIP_SPACES()				\
   while (isspace(*yytext))                      \
@@ -89,17 +78,17 @@ static token::yytokentype pre_complete =
       /* Syntax error (unbalanced closers).  Return as if the sentence	\
 	 was correct.  The parser will report the error itself. */	\
       ECHO("Pre: Unexpected character: " << yytext);			\
-      return pre_complete;						\
+      return yy::parser::make_symbol<token::TOK_PRE_COMPLETE>(loc);     \
     }									\
   }
 
-# define PRE_RETURN();				\
-  if (!up)					\
-  {						\
-    if (pre_closers.empty())			\
-      return pre_complete;			\
-    else					\
-      continue;					\
+# define PRE_RETURN();                                                  \
+  if (!up)                                                              \
+  {                                                                     \
+    if (pre_closers.empty())                                            \
+      return yy::parser::make_symbol<token::TOK_PRE_COMPLETE>(loc);     \
+    else                                                                \
+      continue;                                                         \
   }
 
 # define YY_USER_INIT							\
@@ -131,7 +120,7 @@ static token::yytokentype pre_complete =
 #define STEP()					\
   do {						\
     if (up)					\
-      locp->step();				\
+      loc.step();				\
   } while (0)
 
 // To avoid differences between versions of Bison, set by hand the
@@ -140,8 +129,8 @@ static token::yytokentype pre_complete =
   do {						\
     if (up)					\
     {						\
-      locp->lines(Num);				\
-      locp->end.column = 1;			\
+      loc.lines(Num);				\
+      loc.end.column = 1;			\
     }						\
   } while (0)
 
@@ -149,7 +138,7 @@ static token::yytokentype pre_complete =
   do {							\
     if (up)						\
       /* At each match, adjust the end cursor. */	\
-      locp->columns(Num);				\
+      loc.columns(Num);                                 \
     else						\
       pre_length += Num;				\
  } while (0)
@@ -158,16 +147,16 @@ static token::yytokentype pre_complete =
 #define ERROR(Msg)				\
 do {						\
   if (up)					\
-    up->error(*locp, std::string () + Msg);	\
+    up->error(loc, std::string () + Msg);	\
 } while(0)
 
 // Report an EOF error.  In that case, the prescanner must return
 // non-null, since null means there is not enough data.
-#define EOF_ERROR(Where)				\
-  do {							\
-    if (!up)						\
-      return pre_eof;					\
-    ERROR("unexpected end of file in " + Where);	\
+#define EOF_ERROR(Where)                                                \
+  do {                                                                  \
+    if (!up)                                                            \
+      return yy::parser::make_symbol<token::TOK_PRE_EOF>(loc);          \
+    ERROR("unexpected end of file in " + Where);                        \
   } while(0)
 
 // Report the use of a reserved word.
@@ -175,29 +164,24 @@ do {						\
   ERROR("reserved symbol `" + yytext + "'")
 
 // Otherwise Flex returns an int instead of an enum.
-#define yyterminate()				\
-  return up ? token::TOK_EOF : pre_wants_more;
+#define yyterminate()                                                   \
+  return (up                                                            \
+          ? yy::parser::make_symbol<token::TOK_EOF>(loc)                \
+          : yy::parser::make_symbol<token::TOK_PRE_WANTS_MORE>(loc));
 
-
-// valp->Field = Value.
-#define SET_VAL(Type, Value)                    \
-  do {						\
-    if (up)					\
-      valp->build<Type>() = Value;              \
-  } while(0)
 
 // Extend the string value of valp.
 #define GROW_VAL(Value)				\
   do {						\
     if (up)					\
-      valp->as<std::string>() += Value;         \
+      grown_string += Value;                    \
   } while(0)
 
 // Extend the string value of valp.
-#define APPEND_VAL(Arg1, Arg2)                                  \
-  do {                                                          \
-    if (up)                                                     \
-      valp->as<std::string>().append(Arg1, Arg2);               \
+#define APPEND_VAL(Arg1, Arg2)                  \
+  do {                                          \
+    if (up)                                     \
+      grown_string.append(Arg1, Arg2);          \
   } while(0)
 
 
@@ -205,18 +189,19 @@ do {						\
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
-#define RETURN(Symbol)				\
-  {						\
-    PRE_SKIP();					\
-    return token::TOK_ ## Symbol;		\
+#define RETURN(Symbol)                                          \
+  {                                                             \
+    PRE_SKIP();                                                 \
+    return yy::parser::make_symbol<token::TOK_ ## Symbol>(loc); \
   }
 
 
-#define RETURN_VALUE(Token, Type, Value)        \
-  {                                             \
-    PRE_SKIP();                                 \
-    SET_VAL(Type, Value);			\
-    RETURN(Token);                              \
+#define RETURN_VALUE(Token, Type, Value)                \
+  {                                                     \
+    PRE_SKIP();                                         \
+    return                                              \
+      yy::parser::make_symbol<token::TOK_ ## Token>     \
+      (Value, loc);                                     \
   }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
@@ -307,7 +292,7 @@ do {						\
     std::string rewritten = New;					\
     if (!rewritten.empty())						\
       warn += " Use `" + rewritten + "' instead.";			\
-    up->warn(*locp, warn);						\
+    up->warn(loc, warn);						\
     UNPUT(rewritten);							\
   }
 
@@ -378,16 +363,16 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   }
 
   if (push)
-    up->synclines_.push(*locp);
+    up->synclines_.push(loc);
 
-  locp->initialize(!file || STREQ(file, "-") ? 0 : new libport::Symbol(file));
-  locp->lines (lexical_cast<int>(*up, *locp, line) - 1);
+  loc.initialize(!file || STREQ(file, "-") ? 0 : new libport::Symbol(file));
+  loc.lines (lexical_cast<int>(*up, loc, line) - 1);
   STEP();
 }
 
 ^"//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
   PRE_SKIP();
-  *locp = up->synclines_.top();
+  loc = up->synclines_.top();
   up->synclines_.pop();
 }
 
@@ -421,20 +406,20 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"s"   RETURN_DURATION(1, 1000);
 {NUMBER}"ms"  RETURN_DURATION(2, 1);
 
-{NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, *locp, yytext));
-{FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, *locp, yytext));
+{NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, loc, yytext));
+{FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, loc, yytext));
 {ENATURAL}    {
 		PRE_SKIP();
-		float res = lexical_cast<float>(*up, *locp, yytext);
+		float res = lexical_cast<float>(*up, loc, yytext);
 		// Do not put semicolons here: RETURN_?VAL expands into {}.
 		if (res < 1)
 		  RETURN_FVAL(FLOAT, res)
 		else
-		  RETURN_IVAL(INTEGER, numeric_cast<int>(*up, *locp, res))
+		  RETURN_IVAL(INTEGER, numeric_cast<int>(*up, loc, res))
 	      }
 
 [\"\']        {
-                SET_VAL(std::string, std::string());
+                grown_string.clear();
 		delimiter = *yytext;
 		BEGIN SC_STRING_OR_SYMBOL;
 	      }
@@ -687,13 +672,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 	 if (*yytext == '\'')
 	 {
 	   PRE_SKIP();
-	   std::string res;
-	   std::swap(res, valp->as<std::string>());
-	   valp->destroy<std::string>();
-	   RETURN_SOME_SYMBOL(IDENTIFIER, res);
+	   RETURN_SOME_SYMBOL(IDENTIFIER, grown_string);
 	 }
 	 else
-	   RETURN(STRING);
+	   RETURN_VALUE(STRING, std::string, grown_string);
        }
        else
 	 GROW_VAL(*yytext);
@@ -736,7 +718,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "//".*         STEP(); // One-line comment.
 "/*"           BEGIN SC_C_COMMENT;
-"/*!"          SET_VAL(std::string, ""); BEGIN SC_DOC_COMMENT;
+"/*!"          grown_string.clear(); BEGIN SC_DOC_COMMENT;
 
 {BLANKS}       STEP();
 {EOL}          LINES(1); STEP();
@@ -766,7 +748,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   "*/" { /* End of the comment. */
     STEP();
     BEGIN sc_default;
-    RETURN(DOC);
+    RETURN_VALUE(DOC, std::string, grown_string);
   }
 }
 

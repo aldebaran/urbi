@@ -14,12 +14,15 @@ namespace parser
     scanner.switch_streams(&is, 0);
 
     // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
-    int c = scanner.yylex();
-    passert(c, c == pre_eof || c == pre_wants_more || c == pre_complete);
+    yy::parser::symbol_type s = scanner.yylex();
+    yy::parser::token_type t = s.token();
+    assert(t == yy::parser::token::TOK_PRE_EOF
+           || t == yy::parser::token::TOK_PRE_WANTS_MORE
+           || t == yy::parser::token::TOK_PRE_COMPLETE);
     // The number of read bytes.
     size_t length = scanner.pre_length;
-    ECHO("res: " << c << ", length: " << length);
-    if (c == pre_complete)
+    ECHO("res: " << t << ", length: " << length);
+    if (t == yy::parser::token::TOK_PRE_COMPLETE)
       return length;
     else
       // We met EOF before reaching a terminator.
