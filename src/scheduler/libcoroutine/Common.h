@@ -1,4 +1,3 @@
-
 /*
  docCopyright("Steve Dekorte", 2002)
  docLicense("BSD revised")
@@ -185,6 +184,3 @@ BASEKIT_API void *io_freerealloc(void *p, size_t size);
 #endif
 
 #endif
-
-
-

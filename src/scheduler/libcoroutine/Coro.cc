@@ -696,6 +696,3 @@ void Coro_setup(Coro *self, void *arg)
 					buf[SUN_STACK_END_INDEX] = (JBTYPE)x;
 
 					*/
-
-
-

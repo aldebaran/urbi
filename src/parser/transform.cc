@@ -13,4 +13,3 @@ namespace parser
     return binder::bind(flower::flow(rewrite::rewrite(ast)));
   }
 } // namespace parser
-
