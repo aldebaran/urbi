@@ -286,8 +286,3 @@ int main_loop(LoopData& data)
 }
 
 }
-
-
-int main(int argc, const char* argv[]){
-  return urbi::main(argc, argv, true);
-}
