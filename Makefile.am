@@ -100,4 +100,4 @@ check-buildfarm:
 all: $top_builddir/bison/src/bison
 
 $top_builddir/bison/src/bison:
-	(cd bison && make)
+	$(MAKE) -C bison MAKEFLAGS=
