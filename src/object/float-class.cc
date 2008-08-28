@@ -99,11 +99,16 @@ namespace object
     if (from.get() == float_class.get())
       return new String(SYMBOL(LT_Float_GT));
     {
-      static boost::format f("%g");
       type_check<Float>(from, SYMBOL(asString));
-      const rFloat& fl = from->as<Float>();
-      return new String(libport::Symbol(str(f % float(fl->value_get()))));
-
+      float fl = from->as<Float>()->value_get();
+      // Do not rely on boost::format to print inf and nan since
+      // behavior differs under Win32
+      if (isinf(fl))
+        return new String(libport::Symbol(fl > 0 ? "inf" : "-inf"));
+      if (isnan(fl))
+        return new String(libport::Symbol("nan"));
+      static boost::format f("%g");
+      return new String(libport::Symbol(str(f % fl)));
     }
   }
 
