@@ -104,9 +104,9 @@ namespace object
       // Do not rely on boost::format to print inf and nan since
       // behavior differs under Win32
       if (isinf(fl))
-        return new String(libport::Symbol(fl > 0 ? "inf" : "-inf"));
+        return new String(fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf));
       if (isnan(fl))
-        return new String(libport::Symbol("nan"));
+        return new String(SYMBOL(nan));
       static boost::format f("%g");
       return new String(libport::Symbol(str(f % fl)));
     }
