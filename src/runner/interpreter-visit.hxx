@@ -276,8 +276,6 @@ namespace runner
 	// If at toplevel, print errors and continue, else rethrow them
 	try
 	{
-          // We do not use operator() to avoid duplicating the catch
-          // of UrbiExceptions
           res = operator()(exp);
 	  // We need to keep checking for void here because it can not be passed
 	  // to the << function
