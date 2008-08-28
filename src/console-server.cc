@@ -32,6 +32,7 @@
 
 #include <kernel/ubanner.hh>
 #include <urbi/export.hh>
+#include <urbi/uobject.hh>
 
 class ConsoleServer
   : public UServer
