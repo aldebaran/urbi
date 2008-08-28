@@ -255,8 +255,12 @@ namespace binder
         ").run"
         );
 
-      trajectory % tgt
-        % tgt
+      ast::rExp tgt1 = recurse(tgt);
+      ast::rExp tgt2 = recurse(tgt);
+
+      trajectory
+        % tgt1
+        % tgt2
         % target_value
         % modifiers;
 
