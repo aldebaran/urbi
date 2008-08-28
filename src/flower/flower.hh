@@ -6,6 +6,11 @@
 namespace flower
 {
 
+  /// Transform goto-like control-flow structures into tag-based code.
+  ///
+  /// The following syntactic constructs are eliminated:
+  /// - "break", "continue" (which impacts "while" and "foreach")
+  /// - "return" (which impacts "function", not "closure").
   class Flower : public ast::Analyzer
   {
   public:
