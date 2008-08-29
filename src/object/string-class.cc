@@ -123,6 +123,17 @@ namespace object
     return new List(ret);
   }
 
+  std::string
+  String::star(unsigned int times)
+  {
+    const std::string& content = value_get().name_get();
+    std::string res;
+    res.reserve(times * content.size());
+    for (unsigned int i = 0; i < times; i++)
+      res += content;
+    return res;
+  }
+
   std::string String::format(runner::Runner& r, rList _values)
   {
     const char* str = content_.name_get().c_str();
@@ -177,6 +188,7 @@ namespace object
     bind(SYMBOL(set), &String::set);
     bind(SYMBOL(size), &String::size);
     bind(SYMBOL(split), &String::split);
+    bind(SYMBOL(STAR), &String::star);
   }
 
   bool String::string_added = CxxObject::add<String>("String", string_class);

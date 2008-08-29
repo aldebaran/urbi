@@ -18,12 +18,4 @@ do String
   // other encodings will make a difference between size and length.
   copySlot("size", "length");
 
-  // Repetition of a string.
-  function operator* (times)
-  {
-    var res = "" |
-    for (times)
-      res += this |
-    res
-  };
 };

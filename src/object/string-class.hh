@@ -31,7 +31,7 @@ namespace object
     std::string set(const std::string& rhs);
     rFloat  size();
     rList   split(const std::string& sep);
-
+    std::string star(unsigned int times);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;
