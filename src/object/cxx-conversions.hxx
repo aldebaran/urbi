@@ -76,13 +76,13 @@ namespace object
     to(const rObject& o, const libport::Symbol& name)
     {
       type_check<String>(o, name);
-      return o->as<String>()->value_get().name_get();
+      return o->as<String>()->value_get();
     }
 
     static rObject
     from(const std::string& v,  const libport::Symbol&)
     {
-      return new String(libport::Symbol(v));
+      return new String(v);
     }
   };
 
@@ -94,13 +94,13 @@ namespace object
     to(const rObject& o, const libport::Symbol& name)
     {
       type_check<String>(o, name);
-      return o->as<String>()->value_get();
+      return libport::Symbol(o->as<String>()->value_get());
     }
 
     static rObject
     from(const libport::Symbol& v,  const libport::Symbol&)
     {
-      return new String(v);
+      return new String(v.name_get());
     }
   };
 

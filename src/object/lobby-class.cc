@@ -49,23 +49,23 @@ namespace object
     std::string tag;
     if (args.size() == 2)
     {
-      rString name = args[1].unsafe_cast<String>();
+      const rString& name = args[1].unsafe_cast<String>();
       if (!name)
 	throw WrongArgumentType("String", "Object", SYMBOL(send));
-      tag = name->value_get().name_get();
+      tag = name->value_get();
     }
-    rString rdata = args[0].unsafe_cast<String>();
+    const rString& rdata = args[0].unsafe_cast<String>();
     if (!rdata)
       throw WrongArgumentType("String", "Object", SYMBOL(send));
-    std::string data = rdata->value_get().name_get() + "\n";
+    const std::string data = rdata->value_get() + "\n";
     state_.connection.send (data.c_str(), data.length(), tag.c_str());
   }
 
   void
   Lobby::write(rString data)
   {
-    state_.connection.send_queue(data->value_get().name_get().c_str(),
-				 data->value_get().name_get().length());
+    state_.connection.send_queue(data->value_get().c_str(),
+				 data->size());
     state_.connection.flush();
   }
 

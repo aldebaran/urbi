@@ -29,19 +29,19 @@ urbi::UValue uvalue_cast(object::rObject o)
   {
     if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
     {
-      libport::shared_ptr<object::String> rs =
+      const object::rString& rs =
         o->slot_get(SYMBOL(protoName))->as<object::String>();
-      std::string t = rs->value_get().name_get();
+      const std::string& t = rs->value_get();
       throw object::WrongArgumentType("Binary", t, SYMBOL(cast));
     }
     else
     {
       const std::string& data =
         o->slot_get(SYMBOL(data))->
-        as<object::String>()->value_get().name_get();
+        as<object::String>()->value_get();
       const std::string& keywords =
         o->slot_get(SYMBOL(keywords))->
-        as<object::String>()->value_get().name_get();
+        as<object::String>()->value_get();
       std::list<urbi::BinaryData> l;
       l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
                                    data.size()));

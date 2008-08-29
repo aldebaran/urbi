@@ -57,12 +57,13 @@ namespace object
   {
     rObject str = urbi_call(r, rhs, SYMBOL(asString));
     type_check<String>(str, SYMBOL(PLUS));
-    return content_.name_get() + str->as<String>()->value_get().name_get();
+    return content_ + str->as<String>()->value_get();
   }
 
-  rFloat String::size ()
+  size_t
+  String::size ()
   {
-    return new Float(content_.name_get().length());
+    return content_.size();
   }
 
   rString as_printable (rObject from)
@@ -95,7 +96,7 @@ namespace object
   bool
   String::lt(const std::string& rhs)
   {
-    return value_get().name_get() < rhs;
+    return value_get() < rhs;
   }
 
   std::string
@@ -108,35 +109,34 @@ namespace object
   std::string
   String::fresh ()
   {
-    return libport::Symbol::fresh(value_get()).name_get();
+    return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
   }
 
   rList
   String::split(const std::string& sep)
   {
     boost::tokenizer< boost::char_separator<char> > tok =
-      libport::make_tokenizer(value_get().name_get(),
+      libport::make_tokenizer(value_get(),
                               sep.c_str());
     List::value_type ret;
     foreach(const std::string& i, tok)
-      ret.push_back(new String(libport::Symbol(i)));
+      ret.push_back(new String(i));
     return new List(ret);
   }
 
   std::string
   String::star(unsigned int times)
   {
-    const std::string& content = value_get().name_get();
     std::string res;
-    res.reserve(times * content.size());
+    res.reserve(times * size());
     for (unsigned int i = 0; i < times; i++)
-      res += content;
+      res += value_get();
     return res;
   }
 
   std::string String::format(runner::Runner& r, rList _values)
   {
-    const char* str = content_.name_get().c_str();
+    const char* str = content_.c_str();
     const char* next;
     std::string res;
 

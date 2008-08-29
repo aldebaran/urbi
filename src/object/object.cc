@@ -291,8 +291,7 @@ namespace object
   {
     rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
     type_check<String>(data, SYMBOL(id_dump));
-    libport::Symbol s = data->as<String>()->value_get();
-    return o << s;
+    return o << data->as<String>()->value_get();
   }
 
 

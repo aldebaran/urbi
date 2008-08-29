@@ -124,7 +124,7 @@ namespace object
     if (!is_true(args[1], SYMBOL(assert_UL)))
       throw PrimitiveError
 	(SYMBOL(assert_UL),
-	 "assertion `" + arg2->value_get().name_get() + "' failed");
+	 "assertion `" + arg2->value_get() + "' failed");
     return void_class;
   }
 
@@ -139,7 +139,7 @@ namespace object
                      SYMBOL(eval),
                      PrimitiveError(SYMBOL(eval),
                                     "error executing command: "
-                                    + arg1->value_get().name_get()));
+                                    + arg1->value_get()));
   }
 
   static rObject
@@ -165,20 +165,19 @@ namespace object
   {
     CHECK_ARG_COUNT (2);
     type_check<String>(args[1], SYMBOL(assert));
-    rString arg1 = args[1]->as<String>();
+    const rString& arg1 = args[1]->as<String>();
 
     UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
     {
-      return new String(libport::Symbol(
-			     s.find_file(arg1->value_get ().name_get ())));
+      return new String(s.find_file(arg1->value_get()));
     }
     catch (libport::file_library::Not_found&)
     {
       throw
 	PrimitiveError(SYMBOL(searchFile),
 		       "Unable to find file: "
-		       + arg1->value_get().name_get());
+		       + arg1->value_get());
       // Never reached
       assertion(false);
       return 0;
@@ -190,9 +189,9 @@ namespace object
   {
     CHECK_ARG_COUNT(2);
     type_check<String>(args[1], SYMBOL(assert));
-    rString arg1 = args[1]->as<String>();
+    const rString& arg1 = args[1]->as<String>();
 
-    std::string filename = arg1->value_get().name_get();
+    const std::string& filename = arg1->value_get();
 
     if (!libport::path(filename).exists())
       throw PrimitiveError(SYMBOL(loadFile),

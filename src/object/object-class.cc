@@ -73,7 +73,7 @@ namespace object
     {
       const rString& arg2 = args[2].unsafe_cast<String>();
       assert(arg2);
-      tag = arg2->value_get().name_get();
+      tag = arg2->value_get();
     }
 
     std::ostringstream os;
@@ -134,11 +134,11 @@ namespace object
     CHECK_ARG_COUNT (2);
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
-    const rObject message = call_message->slot_get(SYMBOL(message));
+    const rObject& message = call_message->slot_get(SYMBOL(message));
     type_check<String>(message, SYMBOL(callMessage));
-    libport::Symbol msg = message->as<String>()->value_get();
-    rObject target = args[0];
-    const rObject code = target->slot_get(msg);
+    const libport::Symbol msg = libport::Symbol(message->as<String>()->value_get());
+    const rObject& target = args[0];
+    const rObject& code = target->slot_get(msg);
     call_message->slot_update(r, SYMBOL(code), code);
     call_message->slot_update(r, SYMBOL(target), target);
     // FIXME: Sanity checks on the call message are probably required
@@ -203,7 +203,7 @@ namespace object
     const rObject& obj = args[0];
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    return obj->slot_get(arg1->value_get());
+    return obj->slot_get(libport::Symbol(arg1->value_get()));
   }
 
   // self.getLazyLocalSlot(SLOT-NAME, DEFAULT-VALUE, CREATE?).
@@ -214,7 +214,7 @@ namespace object
 
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    const Object::key_type& slot_name = arg1->value_get ();
+    const Object::key_type& slot_name = libport::Symbol(arg1->value_get());
 
     // If the slot already exists, return its content.
     if (rObject slot = args[0]->own_slot_get (slot_name))
@@ -236,7 +236,7 @@ namespace object
     const rObject& obj = args[0];
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    obj->slot_remove(arg1->value_get());
+    obj->slot_remove(libport::Symbol(arg1->value_get()));
     return obj;
   }
 
@@ -248,7 +248,7 @@ namespace object
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
 
-    rObject o = args[0]->slot_locate(arg1->value_get());
+    rObject o = args[0]->slot_locate(libport::Symbol(arg1->value_get()));
     return o ? o : nil_class;
   }
 
@@ -258,7 +258,7 @@ namespace object
     CHECK_ARG_COUNT(3);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    args[0]->slot_set(arg1->value_get (), args[2]);
+    args[0]->slot_set(libport::Symbol(arg1->value_get()), args[2]);
     return args[2];
   }
 
@@ -268,7 +268,7 @@ namespace object
     CHECK_ARG_COUNT(2);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    args[0]->slot_set(arg1->value_get (), void_class);
+    args[0]->slot_set(libport::Symbol(arg1->value_get()), void_class);
     return void_class;
   }
 
@@ -278,7 +278,7 @@ namespace object
     CHECK_ARG_COUNT(3);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    return args[0]->slot_update(r, arg1->value_get (), args[2]);
+    return args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2]);
   }
 
   static rObject
@@ -287,7 +287,7 @@ namespace object
     CHECK_ARG_COUNT(3);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
-    args[0]->slot_update(r, arg1->value_get (), args[2], false);
+    args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2], false);
     return args[2];
   }
 

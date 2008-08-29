@@ -15,7 +15,7 @@ namespace object
   class String: public CxxObject
   {
   public:
-    typedef libport::Symbol value_type;
+    typedef std::string value_type;
 
     String();
     String(rString model);
@@ -29,7 +29,7 @@ namespace object
     bool lt(const std::string& rhs);
     std::string fresh ();
     std::string set(const std::string& rhs);
-    rFloat  size();
+    size_t size();
     rList   split(const std::string& sep);
     std::string star(unsigned int times);
 

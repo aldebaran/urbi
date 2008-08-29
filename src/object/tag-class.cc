@@ -76,7 +76,8 @@ namespace object
     if (args.size() > 1)
     {
       type_check<String>(args[1], SYMBOL(new));
-      tag_short_name = args[1]->as<String>()->value_get();
+      tag_short_name =
+	libport::Symbol(args[1]->as<String>()->value_get());
     }
     else
       tag_short_name = libport::Symbol::fresh("tag");
