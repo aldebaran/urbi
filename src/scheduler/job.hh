@@ -219,7 +219,7 @@ namespace scheduler
     /// Get the current tags.
     ///
     /// \return The tags attached to the current job.
-    tags_type tags_get() const;
+    const tags_type& tags_get() const;
 
     /// Set the current tags.
     ///

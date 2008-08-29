@@ -224,7 +224,7 @@ namespace scheduler
     recompute_prio();
   }
 
-  inline tags_type
+  inline const tags_type&
   Job::tags_get() const
   {
     return tags_;
