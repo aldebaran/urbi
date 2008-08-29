@@ -42,7 +42,9 @@ usystem.cc					\
 utimer-callback.cc				\
 uvar.cc
 
+liburbi_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
 liburbi_la_LIBADD = $(LIBADD)
+liburbi_la_LDFLAGS = -no-undefined
 
 # We install twice liburbi: once for application using it to
 # communicate with a server, and once for remote-components (which

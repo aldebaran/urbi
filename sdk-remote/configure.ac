@@ -36,12 +36,15 @@ AC_CONFIG_FILES([build-aux/test.sh],
 AC_PROG_CC
 URBI_PROG_CXX
 
-# We don't need shared libraries, speed the compilation up.
-AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL
 
 # X11.
-AC_PATH_XTRA
+# AC_PATH_XTRA will find us X11 headers even if we are cross-compiling for windows
+case $ac_cv_host in
+(*pw32*|*win32*) no_x=yes;;
+(*)  AC_PATH_XTRA ;;
+esac
+
 AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
 # FIXME: -lXext should be checked too.
 if test x"$no_x" != xyes; then
@@ -111,6 +114,9 @@ if test x"$enable_bindings" != xno; then
    SWIG_ENABLE_CXX
  fi
 fi
+
+
+URBI_LIBTOOL
 
 ## -------- ##
 ## Output.  ##

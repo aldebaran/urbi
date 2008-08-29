@@ -38,6 +38,7 @@
 # include <libport/fwd.hh>
 
 # include <urbi/fwd.hh>
+# include <urbi/export.hh>
 # include <urbi/uconversion.hh>
 # include <urbi/uobject.hh>
 # include <urbi/utag.hh>
@@ -82,7 +83,7 @@ namespace urbi
     };
 
   /// Class containing all informations related to an URBI message.
-  class UMessage
+  class USDK_API UMessage
   {
   public:
     /// Connection from which originated the message.
@@ -163,7 +164,7 @@ namespace urbi
    See the liburbi-cpp documentation for more informations on
    how to use this class.
   */
-  class UAbstractClient : public std::ostream
+  class USDK_API UAbstractClient : public std::ostream
   {
   public:
     /// Connection Buffer size.
@@ -660,23 +661,23 @@ namespace urbi
   static const char comma = ',';
 
   /// Must be called at the last line of your main() function.
-  void execute(void);
+  USDK_API void execute(void);
   /// Terminate your URBI program.
-  void exit(int code);
+  USDK_API void exit(int code);
   /// Create a new UClient object
-  UClient& connect(const char * host);
+  USDK_API UClient& connect(const char * host);
   /// Destroy an UClient object
   /// Be careful: don't use client after called this function
-  void disconnect(UClient &client);
+  USDK_API void disconnect(UClient &client);
   /// Return the first UClient created by the program. Used by the URBI macro
-  UClient* getDefaultClient();
+  USDK_API UClient* getDefaultClient();
   /// Redefine the default client
-  void setDefaultClient(UClient * cl);
+  USDK_API void setDefaultClient(UClient * cl);
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
-  std::ostream& unarmorAndSend(const char * str);
+  USDK_API std::ostream& unarmorAndSend(const char * str);
 # endif
-  extern UClient* defaultClient;
+  USDK_API extern UClient* defaultClient;
 
 } // namespace urbi
 

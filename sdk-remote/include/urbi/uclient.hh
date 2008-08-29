@@ -33,7 +33,7 @@ namespace urbi
   /*! This implementation creates a thread for each instance of UClient, which
     listens on the associated socket.
   */
-  class UClient: public UAbstractClient
+  class USDK_API UClient: public UAbstractClient
   {
   public:
     UClient(const char *host, int port = URBI_PORT, int buflen = URBI_BUFLEN);

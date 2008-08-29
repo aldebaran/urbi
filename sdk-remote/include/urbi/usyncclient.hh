@@ -51,7 +51,7 @@ namespace urbi
   @stopCallbackThread, then regularly call @processEvents. Each call will call
   callbacks for all pending messages in the current thread.
   */
-  class USyncClient: public UClient
+  class USDK_API USyncClient: public UClient
   {
   public:
     USyncClient(const char *_host,

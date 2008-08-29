@@ -50,6 +50,7 @@ urbiimage
 if WIN32
 #bin_PROGRAMS += $(monitor_programs)
 monitor_sources = monitor-win.h monitor-win.cc
+X11_LDADD += -lgdi32 -luser32
 endif
 
 if X11
