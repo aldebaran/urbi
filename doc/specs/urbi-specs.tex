@@ -940,8 +940,190 @@ case references refer to the innermost variable, as shown in
 
 \section{Functions}
 
+\subsection{Functions creation}
+
+Functions in \us are first class citizen. Which mean, unlike \C and
+related languages, a function is a normal value, just like an integer
+or a string is. One can create a functional value thanks to the
+\lstinline|function| keyword, followed by the list of formal arguments
+and a scope representing the body of the function. Formal arguments
+are a comma separated list of identifiers. \lst{function} illustrates
+this.
+
+\begin{lstlisting}[caption=Functional
+  value,label=lst:function,float=\floatpos]
+  function (arg1, arg2) { echo(0) };
+  [00000000] function(arg1, arg2) {
+  ..  echo(0)
+  ..}
+\end{lstlisting}
+
+The whole point of a function is to be called later, so storing it in
+a variable is the most common usage. \us provide a simple sugar to
+initialize a new variable with a given function, presented in
+\lst{function-sugar}.
+
+\begin{lstlisting}[caption=Storing functions in variables,
+  label=lst:function-sugar,float=\floatpos]
+  // Functions are often stored in variables to call them later
+  var f1 = function () {
+    echo("hello")
+  };
+  f1();
+  [00000000] *** hello
+  // This form is strictly equivalent, yet simpler
+  function f2()
+  {
+    echo("hello");
+  }
+  f2();
+  [00000000] *** hello
+\end{lstlisting}
+
+\subsection{Arguments}
+
+The list of formal arguments defines the number of argument the
+function requires. They are accessible by their name from within the
+body, as shown in \lst{function-args}. The list of formal arguments
+can be omitted, in which case the number of given arguments isn't
+check, and arguments themselves are not evaluated. Arguments can then
+be manipulated with the call message, explained in
+\sect{us-fun-callmsg}.
+
+\begin{lstlisting}[caption=Storing and calling
+  functions,label=lst:function-args,float=\floatpos]
+  var f = function(a, b) {
+    echo(b);
+    echo(a);
+  };
+  f(1, 0);
+  [00000000] *** 0
+  [00000000] *** 1
+  // Calling a function with the wrong number of argument is an error
+  f(0);
+  [00000000:error] !!! f: expected 2 arguments, given 1
+  f(0, 1, 2);
+  [00000000:error] !!! f: expected 2 arguments, given 3
+\end{lstlisting}
+
+\subsection{Return value}
+
+The return value of the function is the evaluation of its body - that
+is, since the body is a scope, the last evaluated expression in the
+scope. However, value can be returned manually with the
+\lstinline|return| keyword followed by the value, in which case the
+evaluation of the function is stopped. If \lstinline|return| is used
+with no value, the functions returns void. See \lst{function-return}.
+
+\begin{lstlisting}[caption=Returning values from functions,
+  label=lst:function-return,float=\floatpos]
+  function f(a, b)
+  {
+    echo(a);
+    echo(b);
+    a // Return value is a
+  };
+  f(1, 2)
+  [00000000] *** 1
+  [00000000] *** 2
+  [00000000] 1
+  function g(a, b)
+  {
+    echo(a);
+    return a; // Stop execution at this point and return a
+    echo(b); // This is not executed
+  };
+  g(1, 2);
+  [00000000] *** 1
+  [00000000] 1
+  function h()
+  {
+    return; // Stop execution at this point and return void
+    echo(0); // This is not executed
+  };
+  h(); // Returns void, so nothing is printed.
+\end{lstlisting}
+
+\subsection{Call messages}
+\label{sect:us-fun-callmsg}
+
+Functions can access meta-information about how they were called,
+through a \lstinline|CallMessage| object. The call message associated
+with a function can be accessed with the \lstinline|call| keyword. It
+contains several information such as not-yet evaluated arguments, the
+name of the function, the target \ldots
+
+One of the main usage of call message is to create lazy function, by
+not specifying the formal arguments so as arguments are not evaluated
+at the call site, and evaluate them by hand. A quick example is given
+in \lst{function-lazy}. More information about this can be found in
+the CallMessage class documentation (\sect{std-callmsg}).
+
+\begin{lstlisting}[caption=Lazy
+  function,label=lst:function-lazy,float=\floatpos]
+  // Do not specify formal arguments, so as
+  // effective arguments are not evaluated at call site
+  function lazy
+  {
+    // Evaluate only the first argument, twice
+    call.evalArgAt(0);
+    call.evalArgAt(0);
+  };
+  lazy(echo("a"), echo("b"));
+  [00000000] *** a
+  [00000000] *** a
+\end{lstlisting}
+
 \subsection{Lexical closures}
 \label{sect:us-fun-closures}
+
+Lexical closure are an additional scoping rule, with which a function
+can refer to a local variable located outside the function - but still
+in the current context. \us supports read/write lexical closures,
+meaning that the variable is shared between the function and the outer
+environment, as shown in \lst{function-closure}.
+
+\begin{lstlisting}[caption=Lexical
+  closure,label=lst:function-closure,float=\floatpos]
+  var x = 0;
+
+  function cl()
+  {
+    // x refers to a variable outside the function
+    x++;
+    echo(x);
+  };
+  cl();
+  [00000000] *** 1
+  x;
+  [00000000] 1
+  x++;
+  [00000000] 1
+  cl();
+  [00000000] *** 3
+\end{lstlisting}
+
+\lst{function-closure-escape} illustrate that local variables can even
+escape their declaration scope by lexical closure.
+
+\begin{lstlisting}[caption=Local variable escaping its scope by
+  lexical closure.,label=lst:function-closure-escape,float=\floatpos]
+  function wrapper()
+  {
+    // Normally, x is local to 'wrapper', and is limited to this scope.
+    var x = 0;
+    at (x > 1)
+      echo("ping");
+    // Here we make it escape the scope by returning a closure on it.
+    return function() { x++ };
+  };
+  var f = wrapper();
+  f();
+  [00000000] 1
+  f();
+  [00000000] 2
+  [00000000] *** ping
+\end{lstlisting}
 
 \section{Objects}
 \section{Flow control}
@@ -954,6 +1136,8 @@ case references refer to the innermost variable, as shown in
 \label{chap:std}
 
 \section{Boolean}
+\section{CallMessage}
+\label{sect:std-callmsg}
 \section{Channel}
 \section{Code}
 \section{Comparable}
