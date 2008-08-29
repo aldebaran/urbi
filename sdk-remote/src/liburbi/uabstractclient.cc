@@ -950,7 +950,7 @@ namespace urbi
 		  free(bins.front().data);
 		  bins.pop_front();
 		}
-		break; //restart
+		goto line_finished; //restart
 	      }
               // this should not happen: \n should have been handled
               // by binary code below
@@ -983,6 +983,7 @@ namespace urbi
 	  }
 	  ++parsePosition;
 	}
+        line_finished:
 	//either we ate all characters, or we were asked to restart
 	if (parsePosition == recvBufferPosition)
 	  return;
