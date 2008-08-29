@@ -24,8 +24,9 @@ namespace object
     Lobby(value_type value);
 
     void send(objects_type& args);
-    void write(rString data);
+    void write(const std::string& data);
     value_type& value_get();
+    const value_type& value_get() const;
 
     static const std::string type_name;
     virtual std::string type_name_get() const;

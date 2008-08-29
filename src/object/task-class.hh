@@ -26,10 +26,10 @@ namespace object
     const value_type& value_get() const;
 
     rList backtrace();
-    rString name();
+    libport::Symbol name();
     void setSideEffectFree(rObject);
-    rString status(runner::Runner&);
-    rList tags();
+    std::string status(runner::Runner&);
+    const scheduler::tags_type& tags();
     void terminate();
     rFloat timeShift();
     void waitForChanges(runner::Runner&);

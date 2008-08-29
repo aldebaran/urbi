@@ -46,22 +46,19 @@ namespace object
     return value_;
   }
 
-  rString
+  libport::Symbol
   Task::name()
   {
-    return new String(value_->name_get());
+    return value_->name_get();
   }
 
-  rList
+  const scheduler::tags_type&
   Task::tags()
   {
-    List::value_type res;
-    foreach(scheduler::rTag tag, value_->tags_get())
-      res.push_back(new Tag(tag));
-    return new List(res);
+    return value_->tags_get();
   }
 
-  rString
+  std::string
   Task::status(runner::Runner& r)
   {
     std::stringstream status;
@@ -96,7 +93,7 @@ namespace object
       status << " (side effect free)";
     if (value_->non_interruptible_get())
       status << " (non interruptible)";
-    return new String(libport::Symbol(status.str()));
+    return status.str();
   }
 
   rList

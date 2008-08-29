@@ -41,6 +41,12 @@ namespace object
     return state_;
   }
 
+  const Lobby::value_type&
+  Lobby::value_get() const
+  {
+    return state_;
+  }
+
   void
   Lobby::send(objects_type& args)
   {
@@ -62,10 +68,10 @@ namespace object
   }
 
   void
-  Lobby::write(rString data)
+  Lobby::write(const std::string& data)
   {
-    state_.connection.send_queue(data->value_get().c_str(),
-				 data->size());
+    state_.connection.send_queue(data.c_str(),
+				 data.size());
     state_.connection.flush();
   }
 

@@ -34,8 +34,8 @@ namespace object
 
     /// Urbi methods
     rObject apply(runner::Runner& r, rList args);
-    static rString as_string(rObject what);
-    rString body_string();
+    static std::string as_string(rObject what);
+    std::string body_string();
 
     virtual std::ostream& special_slots_dump (std::ostream& o,
 					      runner::Runner&) const;

@@ -96,24 +96,21 @@ namespace object
     return r.apply(tgt, this, SYMBOL(apply), a);
   }
 
-  rString Code::as_string(rObject what)
+  std::string Code::as_string(rObject what)
   {
     if (what.get() == code_class.get())
-      return new String(SYMBOL(LT_Code_GT));
+      return SYMBOL(LT_Code_GT);
     type_check<Code>(what, SYMBOL(asString));
-    return new String(libport::Symbol
-                      (string_cast(*what->as<Code>()->ast_get())));
+    return string_cast(*what->as<Code>()->ast_get());
 
   }
 
-  rString Code::body_string()
+  std::string Code::body_string()
   {
     if (code_class == this)
-      return new String(SYMBOL(LT_Code_GT));
+      return SYMBOL(LT_Code_GT);
     return
-      new String(
-        libport::Symbol(
-          string_cast(*ast_->body_get()->body_get())));
+      string_cast(*ast_->body_get()->body_get());
   }
 
   std::ostream& Code::special_slots_dump(std::ostream& o,

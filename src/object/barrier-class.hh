@@ -27,8 +27,8 @@ namespace object
 
     static rBarrier _new(rObject);
     rObject wait(runner::Runner&);
-    rFloat signal(rObject);
-    rFloat signalAll(rObject);
+    unsigned int signal(rObject);
+    unsigned int signalAll(rObject);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;

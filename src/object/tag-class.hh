@@ -27,7 +27,7 @@ namespace object
     void block(runner::Runner&, objects_type&);
     static rTag _new(objects_type&);
     void freeze(runner::Runner&);
-    rString name();
+    libport::Symbol name();
     static rTag new_flow_control(objects_type&);
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
@@ -58,5 +58,7 @@ namespace object
   extract_tag(const rObject& o);
 
 } // namespace object
+
+# include <object/cxx-object.hxx>
 
 #endif // !OBJECT_TAG_CLASS_HH

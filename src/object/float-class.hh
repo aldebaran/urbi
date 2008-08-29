@@ -25,47 +25,47 @@ namespace object
     Float(const rFloat& model);
 
     value_type& value_get();
-    value_type  value_get() const;
+    const value_type&  value_get() const;
     int to_int(const libport::Symbol func) const;
     unsigned int to_unsigned_int
      (const libport::Symbol func,
       const std::string fmt = "expected non-negative integer, got %1%") const;
 
     // Urbi methods
-    rFloat acos();
-    rFloat asin();
-    rFloat atan();
-    rFloat cos();
-    rFloat exp();
-    rFloat fabs();
-    rFloat log();
+    value_type acos();
+    value_type asin();
+    value_type atan();
+    value_type cos();
+    value_type exp();
+    value_type fabs();
+    value_type log();
     rFloat minus(objects_type& args);
     rFloat plus(objects_type& args);
     using Object::operator<;
-    rObject operator <(const rFloat& rhs);
-    rFloat operator ~();
-    rFloat operator |(const rFloat& rhs);
-    rFloat operator &(const rFloat& rhs);
-    rFloat operator *(const rFloat& rhs);
-    rFloat operator /(const rFloat& rhs);
-    rFloat operator %(const rFloat& rhs);
-    rFloat operator <<(const rFloat& rhs);
-    rFloat operator >>(const rFloat& rhs);
-    rFloat operator ^(const rFloat& rhs);
-    rFloat pow(const rFloat& rhs);
-    rFloat random();
-    rFloat round();
+    bool operator <(value_type rhs);
+    int operator ~();
+    int operator |(int rhs);
+    int operator &(int rhs);
+    int operator ^(int rhs);
+    value_type operator *(value_type rhs);
+    value_type operator /(value_type rhs);
+    value_type operator %(value_type rhs);
+    int operator <<(unsigned int rhs);
+    int operator >>(unsigned int rhs);
+    value_type pow(value_type rhs);
+    int random();
+    value_type round();
     rList seq();
-    rFloat set(const rFloat& rhs);
-    rFloat sin();
-    rFloat sqrt();
-    rFloat tan();
-    rFloat trunc();
+    rFloat set(value_type rhs);
+    value_type sin();
+    value_type sqrt();
+    value_type tan();
+    value_type trunc();
 
     // Urbi functions
-    static rString as_string(const rObject& from);
-    static rFloat inf();
-    static rFloat nan();
+    static std::string as_string(const rObject& from);
+    static value_type inf();
+    static value_type nan();
 
     // Binding mechanisms
     static void initialize(CxxObject::Binder<Float>& binder);

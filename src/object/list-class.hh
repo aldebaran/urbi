@@ -62,4 +62,6 @@ namespace object
 
 }; // namespace object
 
+# include <object/cxx-object.hxx>
+
 #endif // !OBJECT_LIST_CLASS_HH

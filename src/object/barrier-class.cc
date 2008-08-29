@@ -63,21 +63,21 @@ namespace object
     }
   }
 
-  rFloat
+  unsigned int
   Barrier::signal(rObject payload)
   {
     if (value_.empty())
-      return new Float(0);
+      return 0;
 
     value_.front()->async_throw(BarrierException(payload));
     value_.pop_front();
-    return new Float(1);
+    return 1;
   }
 
-  rFloat
+  unsigned int
   Barrier::signalAll(rObject payload)
   {
-    rFloat res = new Float(value_.size());
+    const unsigned int res = value_.size();
 
     foreach (scheduler::rJob job, value_)
       job->async_throw(BarrierException(payload));

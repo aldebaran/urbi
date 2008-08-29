@@ -61,10 +61,10 @@ namespace object
       r.yield();
   }
 
-  rString
+  libport::Symbol
   Tag::name()
   {
-    return new String(value_->name_get());
+    return value_->name_get();
   }
 
   rTag

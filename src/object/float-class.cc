@@ -42,12 +42,14 @@ namespace object
     proto_remove(float_class);
   }
 
-  Float::value_type Float::value_get() const
+  const Float::value_type&
+  Float::value_get() const
   {
     return value_;
   }
 
-  Float::value_type& Float::value_get()
+  Float::value_type&
+  Float::value_get()
   {
     return value_;
   }
@@ -84,102 +86,110 @@ namespace object
     }
   }
 
-  rFloat Float::inf()
+  Float::value_type
+  Float::inf()
   {
-    return new Float(std::numeric_limits<libport::ufloat>::infinity());
+    return std::numeric_limits<libport::ufloat>::infinity();
   }
 
-  rFloat Float::nan()
+  Float::value_type
+  Float::nan()
   {
-    return new Float(std::numeric_limits<libport::ufloat>::quiet_NaN());
+    return std::numeric_limits<libport::ufloat>::quiet_NaN();
   }
 
-  rString Float::as_string(const rObject& from)
+  std::string
+  Float::as_string(const rObject& from)
   {
     if (from.get() == float_class.get())
-      return new String(SYMBOL(LT_Float_GT));
+      return SYMBOL(LT_Float_GT);
     {
       type_check<Float>(from, SYMBOL(asString));
       float fl = from->as<Float>()->value_get();
       // Do not rely on boost::format to print inf and nan since
       // behavior differs under Win32
       if (isinf(fl))
-        return new String(fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf));
+        return fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
       if (isnan(fl))
-        return new String(SYMBOL(nan));
+        return SYMBOL(nan);
       static boost::format f("%g");
-      return new String(libport::Symbol(str(f % fl)));
+      return str(f % fl);
     }
   }
 
-  rObject Float::operator <(const rFloat& rhs)
-  {
-    return value_get() < rhs->value_get() ? true_class : false_class;
-  }
-
-#define BOUNCE_OP(Op, Check)                                            \
-  rFloat                                                                \
-  Float::operator Op(const rFloat& rhs)                                        \
+#define BOUNCE_OP(Op, ResType, Check)					\
+  ResType								\
+  Float::operator Op(value_type rhs)					\
   {                                                                     \
     static libport::Symbol op(#Op);                                     \
     WHEN(Check,                                                         \
-         if (!rhs->value_get())                                         \
+         if (!rhs)							\
            throw PrimitiveError(op, "division by 0"));                  \
-    return new Float(value_get() Op rhs->value_get());                  \
+    return value_get() Op rhs;						\
   }
 
-  BOUNCE_OP(*, false);
-  BOUNCE_OP(/, true);
+  BOUNCE_OP(*, Float::value_type, false)
+  BOUNCE_OP(/, Float::value_type, true)
+  BOUNCE_OP(<, bool, false)
 
 #undef BOUNCE_OP
 
-  rFloat
-  Float::operator %(const rFloat& rhs)
+  Float::value_type
+  Float::operator %(value_type rhs)
   {
-    if (!rhs->value_get())
+    if (!rhs)
       throw PrimitiveError(SYMBOL(PERCENT), "modulo by 0");
-    return new Float(fmod(value_get(), rhs->value_get()));
+    return fmod(value_get(), rhs);
   }
 
-  rFloat Float::pow(const rFloat& rhs)
+  Float::value_type
+  Float::pow(value_type rhs)
   {
-    return new Float(powf(value_get(), rhs->value_get()));
+    return powf(value_get(), rhs);
   }
 
 
   /*------------------.
   | Unary operators.  |
   `------------------*/
-#define BOUNCE_INT_OP(Op)                               \
-  rFloat                                                \
-  Float::operator Op()                                  \
-  {                                                     \
-    static libport::Symbol op(#Op);                     \
-    return new Float(Op to_int(op));                    \
+#define BOUNCE_INT_OP(Op)			\
+  int						\
+  Float::operator Op()				\
+  {						\
+    static libport::Symbol op(#Op);		\
+    return Op to_int(op);			\
   }
-  BOUNCE_INT_OP(~);
+BOUNCE_INT_OP(~)
 #undef BOUNCE_INT_OP
 
 
   /*-------------------.
   | Binary operators.  |
   `-------------------*/
-#define BOUNCE_INT_OP(Op)                               \
-  rFloat                                                \
-  Float::operator Op(const rFloat& rhs)                        \
-  {                                                     \
-    static libport::Symbol op(#Op);                     \
-    return new Float(to_int(op) Op rhs->to_int(op));    \
-  }
+#define BOUNCE_INT_OP(Op)			\
+  int						\
+  Float::operator Op(int rhs)			\
+  {						\
+    static libport::Symbol op(#Op);		\
+    return to_int(op) Op rhs;			\
+}
 
-  BOUNCE_INT_OP(<<);
-  BOUNCE_INT_OP(>>);
-  BOUNCE_INT_OP(^);
-  BOUNCE_INT_OP(|);
-  BOUNCE_INT_OP(&);
+  BOUNCE_INT_OP(^)
+  BOUNCE_INT_OP(|)
+  BOUNCE_INT_OP(&)
 #undef BOUNCE_INT_OP
 
+#define BOUNCE_UNSIGNED_INT_OP(Op)		\
+  int						\
+  Float::operator Op(unsigned int rhs)		\
+  {						\
+    static libport::Symbol op(#Op);		\
+    return to_int(op) Op rhs;			\
+}
 
+  BOUNCE_UNSIGNED_INT_OP(<<)
+  BOUNCE_UNSIGNED_INT_OP(>>)
+#undef BOUNCE_UNSIGNED_INT_OP
 
 #define CHECK_POSITIVE(F)                                       \
   if (value_ < 0)                                               \
@@ -190,12 +200,12 @@ namespace object
     throw PrimitiveError(F, "invalid range");
 
 #define BOUNCE(F, Pos, Range)                           \
-  rFloat                                                \
+  Float::value_type					\
   Float::F()                                            \
   {                                                     \
     WHEN(Pos, CHECK_POSITIVE(SYMBOL(F)));               \
     WHEN(Range, CHECK_TRIGO_RANGE(SYMBOL(F)));          \
-    return new Float(::F(value_get()));                 \
+    return ::F(value_get());				\
   }
 
   BOUNCE(acos,  false, true);
@@ -215,17 +225,18 @@ namespace object
 #undef CHECK_TRIGO_RANGE
 #undef BOUNCE
 
-  rFloat
-  Float::random ()
+  int
+  Float::random()
   {
-    value_type res = 0.f;
-    const long long range = libport::to_long_long (value_get());
-    if (range)
-      res = rand () % range;
-    return new Float(res);
+    static const std::string fmt = "expected positive integer, got %1%";
+    unsigned int upper_bound = to_unsigned_int(SYMBOL(random), fmt);
+    if (!upper_bound)
+      throw BadInteger(value_get(), SYMBOL(random), fmt);
+    return rand() % upper_bound;
   }
 
-  rFloat Float::plus(objects_type& args)
+  rFloat
+  Float::plus(objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(PLUS));
     if (args.empty())
@@ -237,7 +248,8 @@ namespace object
     }
   }
 
-  rFloat Float::minus(objects_type& args)
+  rFloat
+  Float::minus(objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(MINUS));
     if (args.empty())
@@ -259,17 +271,19 @@ namespace object
     return new List(res);
   }
 
-  rFloat Float::set(const rFloat& rhs)
+  rFloat
+  Float::set(value_type rhs)
   {
-    value_get() = rhs->value_get();
+    value_ = rhs;
     return this;
   }
 
-  void Float::initialize(CxxObject::Binder<Float>& bind)
+  void
+  Float::initialize(CxxObject::Binder<Float>& bind)
   {
     bind(SYMBOL(CARET), &Float::operator^);
     bind(SYMBOL(GT_GT), &Float::operator>>);
-    bind(SYMBOL(LT), static_cast<rObject (Float::*)(const rFloat&)>(&Float::operator<));
+    bind(SYMBOL(LT), static_cast<bool (Float::*)(value_type)>(&Float::operator<));
     bind(SYMBOL(LT_LT), &Float::operator<<);
     bind(SYMBOL(MINUS), &Float::minus);
     bind(SYMBOL(PERCENT), &Float::operator%);
@@ -302,7 +316,8 @@ namespace object
 
   bool Float::float_added = CxxObject::add<Float>("Float", float_class);
   const std::string Float::type_name = "Float";
-  std::string Float::type_name_get() const
+  std::string
+  Float::type_name_get() const
   {
     return type_name;
   }
