@@ -400,7 +400,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::String* e)
   {
-    return new object::String(libport::Symbol(e->value_get()));
+    return new object::String(e->value_get());
   }
 
 

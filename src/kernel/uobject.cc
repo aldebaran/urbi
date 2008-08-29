@@ -70,7 +70,7 @@ static rObject urbi_get(rObject r, const std::string& slot)
 /// UObject write to an urbi variable.
 static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
-  rObject name = new object::String(Symbol(slot));
+  rObject name = new object::String(slot);
   object::objects_type args = list_of (name) (v);
   ECHO("applying set...");
   rObject ret = getCurrentRunner().apply(r, r->slot_get(SYMBOL(updateSlot)),
@@ -197,7 +197,7 @@ uobject_make_proto(const std::string& name)
   object::objects_type args;
   getCurrentRunner().apply(oc, oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
   oc->slot_set(SYMBOL(__uobject_cname),
-	       new object::String(libport::Symbol(name)));
+	       new object::String(name));
   oc->slot_set(SYMBOL(__uobject_base), oc);
   oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
   return oc;
@@ -526,12 +526,12 @@ namespace urbi
     StringPair p = split_name(name);                             \
     rObject o = get_base(p.first);                               \
     urbi_call(getCurrentRunner(), o, SYMBOL(setProperty),        \
-	      new object::String(Symbol(p.second)),              \
-	      new object::String(Symbol(UPropertyNames[prop])),  \
+	      new object::String(p.second),			 \
+	      new object::String(UPropertyNames[prop]),		 \
 	      out);                                              \
   }
 
-  SET_PROP(const char*, new object::String(Symbol(v)))
+  SET_PROP(const char*, new object::String(v))
   SET_PROP(ufloat, new object::Float(v))
   SET_PROP(const urbi::UValue&, object_cast(v))
 
@@ -544,8 +544,8 @@ namespace urbi
     rObject o = get_base(p.first);
     return ::uvalue_cast(
       urbi_call(getCurrentRunner(), o, SYMBOL(getProperty),
-		new object::String(Symbol(p.second)),
-		new object::String(Symbol(UPropertyNames[prop]))));
+		new object::String(p.second),
+		new object::String(UPropertyNames[prop])));
   }
 
   UVar::~UVar()
@@ -574,7 +574,7 @@ namespace urbi
     rObject uob = object_class->slot_get(SYMBOL(UObject));
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args = list_of
-      (rObject(new object::String(Symbol(name))))
+      (rObject(new object::String(name)))
       (new object::Float(t))
       (
        MAKE_VOIDCALL(this, urbi::UObjectHub, update));

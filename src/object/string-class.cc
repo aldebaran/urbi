@@ -66,30 +66,28 @@ namespace object
     return content_.size();
   }
 
-  rString as_printable (rObject from)
+  std::string
+  as_printable (rObject from)
   {
     if (from.get() == string_class.get())
       return as_string(from);
     else
     {
       type_check<String>(from, SYMBOL(asPrintable));
-      rString str = from->as<String>();
-      return new String(
-        libport::Symbol('"'
-                        + string_cast(libport::escape(str->value_get()))
-                        + '"'));
+      const std::string& str = from->as<String>()->value_get();
+      return '"' + string_cast(libport::escape(str)) + '"';
     }
   }
 
-  rString
+  std::string
   as_string (rObject from)
   {
     if (from.get() == string_class.get())
-      return new String(SYMBOL(LT_String_GT));
+      return SYMBOL(LT_String_GT);
     else
     {
       type_check<String>(from, SYMBOL(asString));
-      return from->as<String>();
+      return from->as<String>()->value_get();
     }
   }
 

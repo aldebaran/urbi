@@ -16,7 +16,7 @@ namespace runner
     object::objects_type args;
     if (chan && is_a(chan, lobby_->slot_get(SYMBOL(Channel))))
     {
-      args.push_back(object::rString(new object::String(libport::Symbol(msg))));
+      args.push_back(new object::String(msg));
       apply(chan,
             chan->slot_get(SYMBOL(LT_LT_)),
 	    SYMBOL(LT_LT_),
@@ -24,8 +24,8 @@ namespace runner
     }
     else
     {
-      args.push_back(new object::String(libport::Symbol(msg)));
-      args.push_back(new object::String(libport::Symbol(tag)));
+      args.push_back(new object::String(msg));
+      args.push_back(new object::String(tag));
       apply(lobby_,
             lobby_->slot_get(SYMBOL(send)),
 	    SYMBOL(send),

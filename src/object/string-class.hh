@@ -45,8 +45,8 @@ namespace object
   };
 
   // Urbi functions
-  rString as_string(rObject from);
-  rString as_printable(rObject from);
+  std::string as_string(rObject from);
+  std::string as_printable(rObject from);
 
 }; // namespace object
 

@@ -109,8 +109,8 @@ namespace object
     foreach(runner::Runner::frame_type line, runner->backtrace_get())
     {
       List::value_type frame;
-      frame.push_back(new String(libport::Symbol(line.first)));
-      frame.push_back(new String(libport::Symbol(line.second)));
+      frame.push_back(new String(line.first));
+      frame.push_back(new String(line.second));
       res.push_front(new List(frame));
     }
     return new List(res);

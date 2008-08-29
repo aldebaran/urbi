@@ -68,7 +68,7 @@ object_cast(const urbi::UValue& v)
       break;
 
     case urbi::DATA_STRING:
-      return new object::String(libport::Symbol(*v.stringValue));
+      return new object::String(*v.stringValue);
       break;
 
     case urbi::DATA_LIST:
@@ -89,12 +89,11 @@ object_cast(const urbi::UValue& v)
       if (!msg.empty() && msg[0] == ' ')
         msg = msg.substr(1, msg.npos);
       res->slot_set(SYMBOL(keywords),
-                    new object::String(libport::Symbol(msg)));
+                    new object::String(msg));
       res->slot_set(SYMBOL(data),
                     new object::String
-                    (libport::Symbol(
-                      std::string(static_cast<char*>(v.binary->common.data),
-                                  v.binary->common.size))));
+                    (std::string(static_cast<char*>(v.binary->common.data),
+				 v.binary->common.size)));
     }
     break;
 

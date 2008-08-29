@@ -96,8 +96,7 @@ namespace object
     static boost::format uid("0x%x");
     CHECK_ARG_COUNT(1);
     return
-      new String(libport::Symbol
-                 (str(uid % reinterpret_cast<long long>(args[0].get()))));
+      new String(str(uid % reinterpret_cast<long long>(args[0].get())));
   }
 
   /// Structural equality
