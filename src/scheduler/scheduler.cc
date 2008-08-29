@@ -179,7 +179,7 @@ namespace scheduler
 	continue;
       }
       case zombie:
-	assert(false);
+	abort();
 	break;
       case running:
 	start = true;

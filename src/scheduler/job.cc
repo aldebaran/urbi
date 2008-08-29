@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 
 #include <boost/lambda/lambda.hpp>
@@ -61,7 +62,7 @@ namespace scheduler
     terminate_cleanup();
 
     // We should never go there as the scheduler will have terminated us.
-    assert(false);
+    abort();
   }
 
   void

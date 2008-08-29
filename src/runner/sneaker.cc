@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include <libport/symbol.hh>
 
 #include <ast/print.hh>
@@ -37,7 +39,7 @@ namespace dbg
   {
     // This will never be called as the sneaker is not supposed to be
     // registered with the scheduler.
-    assert(false);
+    abort();
   }
 
   void
