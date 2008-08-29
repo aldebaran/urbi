@@ -171,6 +171,8 @@ UConnection::continue_send()
     ECHO(popData);
     int wasSent = effective_send(popData, toSend);
 
+    // FIXME: This can never happen, as effective_send
+    // returns a size_t which cannot be negative.
     if (wasSent < 0)
     {
       error_ = UFAIL;

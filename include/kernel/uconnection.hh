@@ -238,6 +238,7 @@ protected:
 
     \return  the number of bytes effectively sent.
 	     -1 upon error.
+	     FIXME: How can -1 be returned in a size_t? Type is wrong.
    */
   virtual size_t effective_send(const char*, size_t length) = 0;
 
