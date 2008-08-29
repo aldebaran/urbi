@@ -1,22 +1,18 @@
 /// \file parser/ugrammar.y
 /// \brief Definition of the parser used by the ParserImpl object.
-///
-/// This parser is defined with bison, using the option %pure_parser
-/// to make it reentrant. For more details about reentrancy issues,
-/// check the definition of the UServer class.
+
 %require "2.3"
 %language "C++"
 %error-verbose
 %defines
- // Instead of "yytoken yylex (yylval, yylloc)", use
- // symbol_type yylex ().
+// Instead of "yytoken yylex(yylval, yylloc)", use "symbol_type yylex()".
 %define lex_symbol
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
 %parse-param {::parser::ParserImpl& up}
-%parse-param {FlexLexer& scanner}
+%parse-param {yyFlexLexer& scanner}
 %lex-param   {::parser::ParserImpl& up}
-%lex-param   {FlexLexer& scanner}
+%lex-param   {yyFlexLexer& scanner}
 
 %code requires // Output in ugrammar.hh.
 {
@@ -54,7 +50,7 @@
 %initial-action
 {
   // Saved when exiting the start symbol.
-  @$ = up.loc_;
+  scanner.loc = up.loc_;
 }
 
 
@@ -128,7 +124,7 @@
   /// Use the scanner in the right parser::ParserImpl.
   inline
     yy::parser::symbol_type
-    yylex(parser::ParserImpl& up, FlexLexer& scanner)
+    yylex(parser::ParserImpl& up, yyFlexLexer& scanner)
   {
     return scanner.yylex(&up);
   }

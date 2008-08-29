@@ -10,7 +10,7 @@
 # include <memory>
 
 // flex-lexer.hh.
-class FlexLexer;
+class yyFlexLexer;
 
 namespace parser
 {
