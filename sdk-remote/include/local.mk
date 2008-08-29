@@ -3,12 +3,10 @@ include_HEADERS =				\
 include/uobject.h
 
 urbiinclude_HEADERS =				\
-include/urbi/qt_umain.hh			\
 include/urbi/uabstractclient.hh			\
 include/urbi/uclient.hh				\
 include/urbi/uconversion.hh			\
 include/urbi/uexternal.hh			\
-include/urbi/umain.hh				\
 include/urbi/usyncclient.hh			\
 include/urbi/utag.hh
 

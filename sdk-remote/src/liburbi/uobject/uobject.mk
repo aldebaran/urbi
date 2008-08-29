@@ -13,8 +13,10 @@ $(ucallbacks_hh)
 
 dist_uobject_headers =				\
 uobject/urbi/fwd.hh				\
+uobject/urbi/qt_umain.hh			\
 uobject/urbi/ubinary.hh				\
 uobject/urbi/ublend-type.hh			\
+uobject/urbi/umain.hh				\
 uobject/urbi/uobject.hh				\
 uobject/urbi/uproperty.hh			\
 uobject/urbi/ustarter.hh			\
