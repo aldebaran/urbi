@@ -414,7 +414,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::TaggedStmt* t)
   {
-    int result_depth = tags_get().size();
+    size_t result_depth = tags_get().size();
     try
     {
       // FIXME: might be simplified after type checking code is moved

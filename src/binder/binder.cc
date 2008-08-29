@@ -304,7 +304,7 @@ namespace binder
 
       routine_stack_type::reverse_iterator f_it = routine_stack_.rbegin();
       const ast::loc loc = input->location_get();
-      for (int i = routine_depth_ - depth; i; --i, ++f_it)
+      for (unsigned int i = routine_depth_ - depth; i; --i, ++f_it)
       {
         ast::rRoutine f = *f_it;
         // Check whether it's already captured
@@ -513,8 +513,8 @@ namespace binder
     result_ = res;
 
     // Index local and closed variables
-    int local = 0;
-    int closed = 0;
+    unsigned int local = 0;
+    unsigned int closed = 0;
     foreach (ast::rLocalDeclaration dec, *res->local_variables_get())
       if (dec->closed_get())
         dec->local_index_set(closed++);
@@ -525,7 +525,7 @@ namespace binder
     res->closed_size_set(closed);
 
     // Index captured variables
-    int captured = 0;
+    unsigned int captured = 0;
     foreach (ast::rLocalDeclaration dec, *res->captured_variables_get())
       dec->local_index_set(captured++);
 

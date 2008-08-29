@@ -92,7 +92,7 @@ typedef std::pair<std::string, std::string> StringPair;
 /// Split a string of the form "a.b" in two
 static StringPair split_name(const std::string& name)
 {
-  int p = name.find_last_of(".");
+  size_t p = name.find_last_of(".");
   std::string oname = name.substr(0, p);
   std::string slot = name.substr(p + 1, name.npos);
   return StringPair(oname, slot);
@@ -436,7 +436,7 @@ namespace urbi
   static StringPair
   split_name(const std::string& name)
   {
-    int p = name.find_last_of(".");
+    size_t p = name.find_last_of(".");
     std::string oname = name.substr(0, p);
     std::string slot = name.substr(p + 1, name.npos);
     return StringPair(oname, slot);

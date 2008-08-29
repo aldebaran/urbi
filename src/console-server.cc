@@ -66,7 +66,8 @@ public:
   }
 
   //! Called to display the header at each coonection start
-  virtual void getCustomHeader(int line, char* header, int maxlength)
+  virtual void
+  getCustomHeader(unsigned int line, char* header, size_t maxlength)
   {
     // FIXME: This interface is really really ridiculous and fragile.
     strncpy(header, uconsole_banner[line], maxlength);

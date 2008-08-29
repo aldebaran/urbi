@@ -190,7 +190,7 @@ UServer::initialize()
     debugOutput = true;
     display(::HEADER_BEFORE_CUSTOM);
 
-    int i = 0;
+    unsigned int i = 0;
     static char customHeader[1024];
     do {
       getCustomHeader(i, customHeader, 1024);
@@ -459,7 +459,7 @@ UServer::updateTime()
 }
 
 void
-UServer::getCustomHeader (int, char* header, int)
+UServer::getCustomHeader (unsigned int, char* header, size_t)
 {
   header[0] = 0; // empty string
 }

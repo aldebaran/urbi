@@ -89,7 +89,7 @@ UConnection::initialize()
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
     send(::HEADER_BEFORE_CUSTOM[i], "start");
 
-  for (int i = 0; ; ++i)
+  for (unsigned int i = 0; ; ++i)
   {
     char buf[1024];
     server_.getCustomHeader(i, buf, sizeof buf);
@@ -116,7 +116,7 @@ UConnection::initialize()
 }
 
 void
-UConnection::send(const char* buf, int len, const char* tag, bool flush_p)
+UConnection::send(const char* buf, size_t len, const char* tag, bool flush_p)
 {
   if (tag)
   {

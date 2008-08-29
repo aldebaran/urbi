@@ -12,7 +12,7 @@
 
 namespace scheduler
 {
-  StopException::StopException(int depth, boost::any payload)
+  StopException::StopException(unsigned depth, boost::any payload)
     : depth_(depth)
     , payload_(payload)
   {
@@ -161,7 +161,7 @@ namespace scheduler
   void
   Job::register_stopped_tag(const Tag& tag, const boost::any& payload)
   {
-    int max_tag_check = tags_.size();
+    size_t max_tag_check = tags_.size();
     if (pending_exception_)
     {
       // If we are going to terminate, do nothing
@@ -177,7 +177,7 @@ namespace scheduler
 
     // Check if we are affected by this tag, up-to max_tag_check from
     // the beginning of the tag list.
-    for (int i = 0; i < max_tag_check; i++)
+    for (unsigned int i = 0; i < max_tag_check; i++)
       if (tags_[i]->derives_from(tag))
       {
 	async_throw(StopException(i, payload));

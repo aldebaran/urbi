@@ -397,8 +397,8 @@ namespace scheduler
   /// is either dead or not stopped anymore.
   struct StopException : public SchedulerException
   {
-    StopException(int, boost::any);
-    ADD_FIELD(int, depth)
+    StopException(unsigned int, boost::any);
+    ADD_FIELD(unsigned int, depth)
     ADD_FIELD(boost::any, payload)
     COMPLETE_EXCEPTION(StopException)
   };

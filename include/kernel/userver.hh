@@ -163,8 +163,8 @@ public:
    has been malloc'ed for that size). Typical size is 1024 octets and
    should be enough for any reasonable header.
    */
-  virtual void      getCustomHeader (int line, char* header,
-				     int maxlength) = 0;
+  virtual void      getCustomHeader (unsigned int line, char* header,
+				     size_t maxlength) = 0;
 
   /// Path to explore when looking for .u files.
   libport::file_library search_path;

@@ -108,7 +108,7 @@ public:
 
   /// The "base" high-level send function. Calls the send_queue() function.
   void
-  send(const char* buf, int len, const char* tag = 0, bool flush = true);
+  send(const char* buf, size_t len, const char* tag = 0, bool flush = true);
 
   /// Overload using 'strlen' to compute buf size.
   void
