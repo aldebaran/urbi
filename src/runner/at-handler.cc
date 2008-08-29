@@ -9,6 +9,7 @@
 
 #include <runner/at-handler.hh>
 #include <runner/call.hh>
+#include <runner/unscoper.hh>
 
 #include <scheduler/tag.hh>
 
@@ -295,10 +296,12 @@ namespace runner
       at_job_handler = new AtHandler(starter);
       at_job_handler->start_job();
     }
+    // When registering a new at job, remove the scope tags so that
+    // the "at" doesn't get killed if the enclosing scope ends.
     AtJob* job = new AtJob(condition,
 			   clause,
 			   on_leave,
-			   starter.tags_get(),
+			   runner::remove_scope_tags(starter.tags_get()),
 			   starter.lobby_get());
     at_job_handler->add_job(job);
   }

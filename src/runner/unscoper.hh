@@ -14,6 +14,9 @@ namespace runner
 			   libport::Finally* finally);
   };
 
+  // Helper function
+  scheduler::tags_type remove_scope_tags(const scheduler::tags_type&);
+
 } // namespace runner
 
 #endif // RUNNER_UNSCOPER_HH
