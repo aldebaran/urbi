@@ -206,25 +206,13 @@ do {						\
 #define RETURN_FLAVOR(Symbol, Flavor)					\
   RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
 
-/// Return a float of kind Token with Value.
-#define RETURN_FVAL(Token, Value)		\
-  RETURN_VALUE(Token, Value)
-
-/// Return an int of kind Token with Value.
-#define RETURN_IVAL(Token, Value)		\
-  RETURN_VALUE(Token, Value)
-
 // Return a std::string of kind Token with yytext as value.
 #define RETURN_STR(Token)                       \
   RETURN_VALUE(Token, yytext)
 
-// Return a Symbol of kind Token with Value.
-#define RETURN_SOME_SYMBOL(Token, Value)                        \
-  RETURN_VALUE(Token, libport::Symbol(Value))
-
 // Return a Symbol of kind Token with yytext as Value.
 #define RETURN_SYMBOL(Token)                    \
-  RETURN_SOME_SYMBOL(Token, yytext)
+  RETURN_VALUE(Token, libport::Symbol(yytext))
 
 // Return an operator whose string representation is kept as a Symbol.
 #define RETURN_OP(Token)			\
@@ -388,14 +376,14 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   `------------*/
 
   /*  FIXME: This is really sick. */
-"+report"     RETURN_IVAL(FLAG, 1);
-"+error"      RETURN_IVAL(FLAG, 2);
-"+end"        RETURN_IVAL(FLAG, 3);
-"+begin"      RETURN_IVAL(FLAG, 4);
-"+top"        RETURN_IVAL(FLAG, 7);
-"+bg"         RETURN_IVAL(FLAG, 10);
-"+freeze"     RETURN_IVAL(FLAG, 11);
-"+stop"       RETURN_IVAL(FLAG, 12);
+"+report"     RETURN_VALUE(FLAG, 1);
+"+error"      RETURN_VALUE(FLAG, 2);
+"+end"        RETURN_VALUE(FLAG, 3);
+"+begin"      RETURN_VALUE(FLAG, 4);
+"+top"        RETURN_VALUE(FLAG, 7);
+"+bg"         RETURN_VALUE(FLAG, 10);
+"+freeze"     RETURN_VALUE(FLAG, 11);
+"+stop"       RETURN_VALUE(FLAG, 12);
 
 {NUMBER}"d"   RETURN_DURATION(1, 1000*60*60*24);
 {NUMBER}"h"   RETURN_DURATION(1, 1000*60*60);
@@ -403,16 +391,16 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"s"   RETURN_DURATION(1, 1000);
 {NUMBER}"ms"  RETURN_DURATION(2, 1);
 
-{NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (*up, loc, yytext));
-{FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(*up, loc, yytext));
+{NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<int>  (*up, loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<float>(*up, loc, yytext));
 {ENATURAL}    {
 		PRE_SKIP();
 		float res = lexical_cast<float>(*up, loc, yytext);
 		// Do not put semicolons here: RETURN_?VAL expands into {}.
 		if (res < 1)
-		  RETURN_FVAL(FLOAT, res)
+		  RETURN_VALUE(FLOAT, res)
 		else
-		  RETURN_IVAL(INTEGER, numeric_cast<int>(*up, loc, res))
+		  RETURN_VALUE(INTEGER, numeric_cast<int>(*up, loc, res))
 	      }
 
 [\"\']        {
@@ -669,7 +657,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 	 if (*yytext == '\'')
 	 {
 	   PRE_SKIP();
-	   RETURN_SOME_SYMBOL(IDENTIFIER, grown_string);
+	   RETURN_VALUE(IDENTIFIER, libport::Symbol(grown_string));
 	 }
 	 else
 	   RETURN_VALUE(STRING, grown_string);
