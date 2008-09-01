@@ -1,4 +1,4 @@
-dist_libkernel_la_SOURCES +=			\
+dist_libuobject_la_SOURCES +=			\
 kernel/debug.cc					\
 kernel/debug.hh					\
 kernel/kernconf.cc				\

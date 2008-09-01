@@ -1,4 +1,4 @@
-dist_libkernel_la_SOURCES +=			\
+dist_libuobject_la_SOURCES +=			\
 parser/ast-factory.hh				\
 parser/ast-factory.hxx				\
 parser/ast-factory.cc				\
@@ -60,7 +60,7 @@ parser/ugrammar.cc
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += parser/ugrammar.{html,output,stamp,xml}
-nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
+nodist_libuobject_la_SOURCES += $(FROM_UGRAMMAR_Y)
 
 
 # Compile the parser and save cycles.
@@ -99,8 +99,8 @@ parser/utoken.cc
 
 BUILT_SOURCES += $(FROM_UTOKEN_L)
 CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
-dist_libkernel_la_SOURCES += $(parser_dir)/flex-lexer.hh
-nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
+dist_libuobject_la_SOURCES += $(parser_dir)/flex-lexer.hh
+nodist_libuobject_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parser_dir)/utoken.l
 utoken_deps = $(FLEXXX_IN) $(parser_dir)/local.mk

@@ -4,11 +4,11 @@
 
 precompiled_symbols_hh = object/precompiled-symbols.hh
 precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
-# We don't include $(nodist_libkernel_la_SOURCES) here, since it
+# We don't include $(nodist_libuobject_la_SOURCES) here, since it
 # includes symbols.hh itself.  Currently there seems to be no need to
 # support generated files.
 precompiled_symbols_hh_deps +=			\
-	 $(dist_libkernel_la_SOURCES)		\
+	 $(dist_libuobject_la_SOURCES)		\
 	object/symbols-generate.pl
 $(precompiled_symbols_stamp): $(precompiled_symbols_hh_deps)
 	@rm -f $@.tmp
@@ -34,7 +34,7 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	fi
 
 
-dist_libkernel_la_SOURCES +=			\
+dist_libuobject_la_SOURCES +=			\
 object/any-to-boost-function.hh			\
 object/any-to-boost-function.hxx		\
 object/barrier.cc				\
@@ -96,5 +96,5 @@ object/urbi-exception.hxx			\
 object/vector-slots.hh				\
 object/vector-slots.hxx
 
-nodist_libkernel_la_SOURCES += 			\
+nodist_libuobject_la_SOURCES += 			\
 object/precompiled-symbols.hh

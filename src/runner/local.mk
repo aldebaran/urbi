@@ -1,4 +1,4 @@
-dist_libkernel_la_SOURCES +=			\
+dist_libuobject_la_SOURCES +=			\
 runner/at-handler.cc				\
 runner/at-handler.hh				\
 runner/call.cc					\

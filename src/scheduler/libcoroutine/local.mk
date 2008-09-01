@@ -1,4 +1,4 @@
-dist_libkernel_la_SOURCES +=			\
+dist_libuobject_la_SOURCES +=			\
 scheduler/libcoroutine/Base.h			\
 scheduler/libcoroutine/Common.h			\
 scheduler/libcoroutine/Coro.cc			\

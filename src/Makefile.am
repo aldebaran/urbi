@@ -17,14 +17,14 @@ AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 
 
 ## ----------- ##
-## libkernel.  ##
+## libuobject.  ##
 ## ----------- ##
 
-env_LTLIBRARIES = libkernel.la
+env_LTLIBRARIES = libuobject.la
 #the -DBUILDING_LIBPORT is required since libport/network/* are considered as kernel sources.
-libkernel_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
-libkernel_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) -no-undefined
-libkernel_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
+libuobject_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
+libuobject_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) -no-undefined
+libuobject_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
 # The separation in two different targets is needed to be sure that
 # the libs are installed before we try to move them.
 # install-exec-local:
@@ -34,8 +34,8 @@ libkernel_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/l
 #	$(LN_S) . $(DESTDIR)$(envdir)/.libs
 #	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
 #	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
-#	$(LN_S) .libs/libkernel.la $(DESTDIR)$(envdir)
-#	$(LN_S) .libs/libkernel.a $(DESTDIR)$(envdir)
+#	$(LN_S) .libs/libuobject.la $(DESTDIR)$(envdir)
+#	$(LN_S) .libs/libuobject.a $(DESTDIR)$(envdir)
 
 #uninstall-local:
 #	rm -rf $(DESTDIR)$(envdir)/.libs
@@ -49,9 +49,9 @@ include $(top_srcdir)/build-aux/revision.mk
 
 
 kernelinclude_HEADERS =
-dist_libkernel_la_SOURCES =
-nodist_libkernel_la_SOURCES =
-BUILT_SOURCES += $(nodist_libkernel_la_SOURCES)
+dist_libuobject_la_SOURCES =
+nodist_libuobject_la_SOURCES =
+BUILT_SOURCES += $(nodist_libuobject_la_SOURCES)
 # Needed in object/local.mk, used potentially everywhere else (maybe
 # before, so initialize it here).
 precompiled_symbols_hh_deps =
@@ -63,7 +63,7 @@ precompiled_symbols_hh_deps =
 include $(top_srcdir)/build-aux/svn-externals.mk
 
 include uobject/uobject.mk
-dist_libkernel_la_SOURCES +=				\
+dist_libuobject_la_SOURCES +=				\
 $(dist_uobject_sources)
 
 ## ----------------- ##
@@ -93,14 +93,14 @@ bin_PROGRAMS += urbi-console
 if !WIN32
 bin_PROGRAMS += ast-dump
 ast_dump_SOURCES = ast-dump.cc ast/dot-printer.cc
-ast_dump_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS) \
+ast_dump_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS) \
         $(BOOST_REGEX_LDFLAGS) $(BOOST_REGEX_LIBS)
 endif
 
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS) $(LTDL_LIBS)
+urbi_console_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS)
 
-dist_libkernel_la_SOURCES +=			\
+dist_libuobject_la_SOURCES +=			\
 console-server.cc				\
 ../lib/network/bsdnet/connection.hh		\
 ../lib/network/bsdnet/connection.cc		\
