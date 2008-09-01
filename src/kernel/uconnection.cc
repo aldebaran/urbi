@@ -166,7 +166,7 @@ UConnection::continue_send()
     return;
   }
 
-  if (const char* popData = send_queue_->peek(toSend))
+  if (const char* popData = send_queue_->front(toSend))
   {
     ECHO(popData);
     int wasSent = effective_send(popData, toSend);
