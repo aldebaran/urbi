@@ -31,12 +31,7 @@ namespace object
     {
       CHECK_ARG_COUNT(1);
       rObject tgt = args[0];
-      rObject res;
-      if (tgt->is_a<T>())
-        res = new T(tgt->as<T>());
-      else
-        res = new T();
-      return res;
+      return tgt->is_a<T>() ? new T(tgt->as<T>()) : new T();
     }
 
     template <typename T>
@@ -90,8 +85,9 @@ namespace object
 
   template <typename T>
   template <typename M>
-  void CxxObject::Binder<T>::operator()(const libport::Symbol& name,
-                                        M method)
+  void
+  CxxObject::Binder<T>::operator()(const libport::Symbol& name,
+                                   M method)
   {
     tgt_->slot_set(name, make_primitive(method, name));
   }
