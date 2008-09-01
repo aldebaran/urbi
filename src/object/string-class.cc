@@ -60,8 +60,8 @@ namespace object
     return content_ + str->as<String>()->value_get();
   }
 
-  size_t
-  String::size ()
+  String::size_type
+  String::size()
   {
     return content_.size();
   }

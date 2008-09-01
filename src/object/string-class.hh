@@ -17,6 +17,14 @@ namespace object
   public:
     typedef std::string value_type;
 
+    // size_t would make more sense, but the only conversion coded is
+    // "unsigned int", and on some machines (OSX) size_t is "unsigned
+    // long".  Can't define conversion for "size_t" since in that
+    // case, machines with "size_t == unsigned int" (e.g., Linux 386)
+    // would break.  Either convert everthing to size_t, or to
+    // "unsigned int".
+    typedef unsigned int size_type;
+
     String();
     String(rString model);
     String(const value_type& value);
@@ -27,10 +35,10 @@ namespace object
     std::string format(runner::Runner& r, rList values);
     std::string plus(runner::Runner& r, rObject rhs);
     bool lt(const std::string& rhs);
-    std::string fresh ();
+    std::string fresh();
     std::string set(const std::string& rhs);
-    size_t size();
-    rList   split(const std::string& sep);
+    size_type size();
+    rList split(const std::string& sep);
     std::string star(unsigned int times);
 
     static const std::string type_name;
