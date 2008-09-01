@@ -3,9 +3,9 @@
  ** \brief Creation of the URBI object float.
  */
 
-#include <cmath>
-
 #include <boost/format.hpp>
+
+#include <libport/cmath>
 
 #include <sdk/config.h>
 #ifndef HAVE_ROUND
@@ -108,9 +108,9 @@ namespace object
       float fl = from->as<Float>()->value_get();
       // Do not rely on boost::format to print inf and nan since
       // behavior differs under Win32
-      if (isinf(fl))
+      if (std::isinf(fl))
         return fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
-      if (isnan(fl))
+      if (std::isnan(fl))
         return SYMBOL(nan);
       static boost::format f("%g");
       return str(f % fl);
