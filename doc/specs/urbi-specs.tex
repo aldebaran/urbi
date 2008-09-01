@@ -1138,6 +1138,9 @@ escape their declaration scope by lexical closure.
 \section{Boolean}
 \section{CallMessage}
 \label{sect:std-callmsg}
+\subsection{Examples}
+\subsubsection{Evaluating an argument several times}
+\label{sect:std-callmsg-examples-several}
 \section{Channel}
 \section{Code}
 \section{Comparable}
@@ -1147,6 +1150,95 @@ escape their declaration scope by lexical closure.
 \section{Group}
 \section{Integer}
 \section{Lazy}
+
+\subsection{Rationale}
+
+Lazy are object that hold a lazy value; that is, a not-yet evaluated
+value. They provide facilities to evaluate their content only once
+(memoization) or several times. Lazy are essentially used in call
+messages, to represent lazy arguments, as described in
+\sect{std-callmsg}.
+
+\subsection{Construction}
+
+Lazy are seldom instantiated manually. They are mainly created
+automatically when a lazy function call is made (see
+\sect{us-fun-callmsg}). One can however create a lazy value with the
+standard \lstinline|new| method of \lstinline|Lazy|, giving it an
+argument-less function which evaluates to the lazified value
+(\lst{new-lazy}).
+
+\begin{lstlisting}[caption=Creating a lazy value, label=lst:new-lazy,
+  float=\floatpos]
+  Lazy.new(closure () { /* Value to lazify */ });
+\end{lstlisting}
+
+\subsection{Methods}
+\subsubsection{eval}
+
+The \lstinline|eval| method forces evaluation of the held lazy
+value. Two calls to \lstinline|eval| will systematically evaluate the
+expression twice, which can be useful to duplicates its side effects.
+
+\subsubsection{value}
+
+The \lstinline|value| method returns the held value, potentially
+evaluating it before. \lstinline|value| performs memoization, that is,
+only the first call will actually evaluate the expression, subsequent
+calls will return the cached value. Unless you want to explicitly
+trigger side effects from the expression by evaluating it several
+time, this should be preferred over \lstinline|eval| to avoid
+evaluating the expression several times uselessly.
+
+\subsection{Examples}
+
+\subsubsection{Evaluating once}
+
+One usage of lazy values is to avoid evaluating an expression unless
+it's actually needed, because it's expensive or has undesired side
+effects. \lst{lazy-once} present a situation where an
+expensive-to-compute value (\lstinline|heavy_computation|) might be
+needed zero, one or two times. The objective is to save time by:
+
+\begin{itemize}
+\item Not evaluating it if it's not needed.
+\item Evaluating it only once if it's needed one or two time.
+\end{itemize}
+
+We thus make the wanted expression lazy, and use the \lstinline|value|
+method to fetch its value when needed.
+
+\begin{lstlisting}[caption=, label=lst:lazy-once, float=\floatpos]
+  // This function supposedly performs expensive computations.
+  function heavy_computation()
+  {
+    echo("Heavy computation");
+    return 1 + 1;
+  };
+  // We want to do the heavy computations only if needed,
+  // and make it a lazy value to be able to evaluate it "on demand".
+  var v = Lazy.new(closure () { heavy_computation() });
+  [00000000] Lazy_0xADDR
+  /* some code */;
+  // So far, the value was not needed, and heavy_computation
+  // was not evaluated.
+  /* some code */;
+  // If the value is needed, heavy_computation is evaluated.
+  v.value;
+  [00000000] *** Heavy computation
+  [00000000] 2
+  // If the value is needed a second time, heavy_computation
+  // is not reevaluated.
+  v.value;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{Evaluating several time}
+
+Evaluating a lazy several time only makes sense with lazy arguments
+and call messages. See example with call messages in
+\sect{std-callmsg-examples-several}.
+
 \section{List}
 \section{Lobby}
 \section{Object}
@@ -1173,4 +1265,4 @@ escape their declaration scope by lexical closure.
 % LocalWords:  getSlot setSlot updateSlot slotNames removeSlot uid arg ok ko ss
 % LocalWords:  elt baz quux FIXME getslot lookup protos proto addProto asString
 % LocalWords:  removeProto locateSlot locateslot lhs evalArgAt evalArgs ary
-% LocalWords:  mytag timeOut myEvent Tuple redefinable
+% LocalWords:  mytag timeOut myEvent Tuple redefinable CallMessage memoization
