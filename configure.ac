@@ -72,7 +72,8 @@ esac
 URBI_WITH_LTDL
 
 # Where we look for the installed files.
-pkgdatadir=${datadir}/$PACKAGE
+# Do not use $package here, kernel is a too generic name.
+pkgdatadir=${datadir}/gostai
 AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 # Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
 # sole use of URBI_RESOLVE_DIR_PREPARE.
