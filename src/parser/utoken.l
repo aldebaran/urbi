@@ -196,33 +196,31 @@ do {						\
   }
 
 
-#define RETURN_VALUE(Token, Type, Value)                \
-  {                                                     \
-    PRE_SKIP();                                         \
-    return                                              \
-      yy::parser::make_symbol<token::TOK_ ## Token>     \
-      (Value, loc);                                     \
+#define RETURN_VALUE(Token, Value)                                      \
+  {                                                                     \
+    PRE_SKIP();                                                         \
+    return yy::parser::make_symbol<token::TOK_ ## Token> (Value, loc);  \
   }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
 #define RETURN_FLAVOR(Symbol, Flavor)					\
-  RETURN_VALUE(Symbol, ast::flavor_type, ast::flavor_ ## Flavor)
+  RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
 
 /// Return a float of kind Token with Value.
 #define RETURN_FVAL(Token, Value)		\
-  RETURN_VALUE(Token, float, Value)
+  RETURN_VALUE(Token, Value)
 
 /// Return an int of kind Token with Value.
 #define RETURN_IVAL(Token, Value)		\
-  RETURN_VALUE(Token, int, Value)
+  RETURN_VALUE(Token, Value)
 
 // Return a std::string of kind Token with yytext as value.
 #define RETURN_STR(Token)                       \
-  RETURN_VALUE(Token, std::string, yytext)
+  RETURN_VALUE(Token, yytext)
 
 // Return a Symbol of kind Token with Value.
 #define RETURN_SOME_SYMBOL(Token, Value)                        \
-  RETURN_VALUE(Token, libport::Symbol, libport::Symbol(Value))
+  RETURN_VALUE(Token, libport::Symbol(Value))
 
 // Return a Symbol of kind Token with yytext as Value.
 #define RETURN_SYMBOL(Token)                    \
@@ -243,8 +241,7 @@ do {						\
   {									\
     PRE_SKIP();								\
     yytext[yyleng - UnitLength] = 0;					\
-    RETURN_VALUE(DURATION, float,					\
-		 boost::lexical_cast<float>(yytext) * (Scale));		\
+    RETURN_VALUE(DURATION, boost::lexical_cast<float>(yytext) * (Scale)); \
   }
 
 #define RETURN_FLAVORED_KEYWORD(Token)                  \
@@ -675,7 +672,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 	   RETURN_SOME_SYMBOL(IDENTIFIER, grown_string);
 	 }
 	 else
-	   RETURN_VALUE(STRING, std::string, grown_string);
+	   RETURN_VALUE(STRING, grown_string);
        }
        else
 	 GROW_VAL(*yytext);
@@ -748,7 +745,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   "*/" { /* End of the comment. */
     STEP();
     BEGIN sc_default;
-    RETURN_VALUE(DOC, std::string, grown_string);
+    RETURN_VALUE(DOC, grown_string);
   }
 }
 
