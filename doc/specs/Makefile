@@ -6,4 +6,4 @@ CLEANFILES += ${PDFS}
 
 all: ${PDFS}
 
-urbi-specs.pdf: float.tex
+urbi-specs.pdf: float.tex list.tex
