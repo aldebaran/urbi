@@ -7,6 +7,10 @@
 %defines
 // Instead of "yytoken yylex(yylval, yylloc)", use "symbol_type yylex()".
 %define lex_symbol
+
+ // Prefix all our external definition of token names with "TOK_"
+%define token.prefix "TOK_"
+
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
 %parse-param {::parser::ParserImpl& up}
@@ -161,47 +165,47 @@
 `---------*/
 
 %token
-	TOK_EQ           "="
-	TOK_BREAK        "break"
-	TOK_CASE         "case"
-	TOK_CLOSURE      "closure"
-	TOK_CONTINUE     "continue"
-	TOK_COLON        ":"
-	TOK_DELETE       "delete"
-	TOK_ELSE         "else"
-	TOK_EMIT         "emit"
-	TOK_EVENT        "event"
-	TOK_EVERY        "every"
-	TOK_FREEZEIF     "freezeif"
-	TOK_FROM         "from"
-	TOK_FUNCTION     "function"
-	TOK_IF           "if"
-	TOK_IN           "in"
-	TOK_LBRACE       "{"
-	TOK_LBRACKET     "["
-	TOK_LPAREN       "("
-	TOK_OBJECT       "object"
-	TOK_ONLEAVE      "onleave"
-	TOK_POINT        "."
-	TOK_RBRACE       "}"
-	TOK_RBRACKET     "]"
-	TOK_RETURN       "return"
-	TOK_RPAREN       ")"
-	TOK_STATIC       "static"
-	TOK_STOPIF       "stopif"
-	TOK_SWITCH       "switch"
-	TOK_TILDA        "~"
-	TOK_TIMEOUT      "timeout"
-	TOK_VAR          "var"
-        TOK_WAITUNTIL    "waituntil"
-	TOK_WHENEVER     "whenever"
+        EQ           "="
+        BREAK        "break"
+        CASE         "case"
+        CLOSURE      "closure"
+        CONTINUE     "continue"
+        COLON        ":"
+        DELETE       "delete"
+        ELSE         "else"
+        EMIT         "emit"
+        EVENT        "event"
+        EVERY        "every"
+        FREEZEIF     "freezeif"
+        FROM         "from"
+        FUNCTION     "function"
+        IF           "if"
+        IN           "in"
+        LBRACE       "{"
+        LBRACKET     "["
+        LPAREN       "("
+        OBJECT       "object"
+        ONLEAVE      "onleave"
+        POINT        "."
+        RBRACE       "}"
+        RBRACKET     "]"
+        RETURN       "return"
+        RPAREN       ")"
+        STATIC       "static"
+        STOPIF       "stopif"
+        SWITCH       "switch"
+        TILDA        "~"
+        TIMEOUT      "timeout"
+        VAR          "var"
+        WAITUNTIL    "waituntil"
+        WHENEVER     "whenever"
 
-%token TOK_EOF 0 "end of command"
+%token EOF 0 "end of command"
 
  // Special tokens for the prescanner.
-%token TOK_PRE_EOF        "prescanner end of file"
-       TOK_PRE_WANTS_MORE "prescanner needs more input" // no terminator found
-       TOK_PRE_COMPLETE   "prescanner found command" // Complete sentence.
+%token PRE_EOF        "prescanner end of file"
+       PRE_WANTS_MORE "prescanner needs more input" // no terminator found
+       PRE_COMPLETE   "prescanner found command" // Complete sentence.
 
 /*----------.
 | Flavors.  |
@@ -236,14 +240,14 @@
 
 
 %token <ast::flavor_type>
-	TOK_COMMA        ","
-	TOK_SEMICOLON    ";"
-	TOK_AMPERSAND    "&"
-	TOK_PIPE         "|"
-	TOK_FOR          "for"
-	TOK_LOOP         "loop"
-	TOK_WHILE        "while"
-	TOK_AT           "at"
+        COMMA        ","
+        SEMICOLON    ";"
+        AMPERSAND    "&"
+        PIPE         "|"
+        FOR          "for"
+        LOOP         "loop"
+        WHILE        "while"
+        AT           "at"
 ;
 %printer { debug_stream() << $$; } <ast::flavor_type>;
 
@@ -252,7 +256,7 @@
  | String.  |
  `---------*/
 
-%token  <std::string>  TOK_STRING  "string";
+%token  <std::string>  STRING  "string";
 %printer { debug_stream() << $$; } <std::string>;
 
 
@@ -260,7 +264,7 @@
  | Symbol.  |
  `---------*/
 
-%token <libport::Symbol> TOK_IDENTIFIER "identifier";
+%token <libport::Symbol> IDENTIFIER "identifier";
 
 // id is meant to enclose all the symbols we use as operators.  For
 // instance "+" is special so that we do have the regular priority and
@@ -439,7 +443,7 @@ stmt:
 `--------*/
 
 flag:
-  TOK_FLAG         { NOT_IMPLEMENTED(@$); }
+  FLAG         { NOT_IMPLEMENTED(@$); }
 ;
 
 // One or more "flag"s.
@@ -475,9 +479,9 @@ block:
 | Classes.  |
 `----------*/
 
-%token TOK_PRIVATE    "private"
-       TOK_PROTECTED  "protected"
-       TOK_PUBLIC     "public"
+%token PRIVATE    "private"
+       PROTECTED  "protected"
+       PUBLIC     "public"
        ;
 
 // A useless optional visibility.
@@ -513,7 +517,7 @@ protos:
 | ":" protos.1    { std::swap($$, $2); }
 ;
 
-%token TOK_CLASS "class";
+%token CLASS "class";
 stmt:
   "class" lvalue protos block
     {
@@ -534,7 +538,7 @@ identifier_as_string:
 | Bindings.  |
 `-----------*/
 
-%token TOK_EXTERNAL "external";
+%token EXTERNAL "external";
 stmt:
   "external" "object" identifier_as_string
   {
@@ -674,11 +678,11 @@ stmt:
 ;
 
 %token <libport::Symbol>
-	TOK_CARET_EQ    "^="
-	TOK_SLASH_EQ    "/="
-	TOK_MINUS_EQ    "-="
-	TOK_PLUS_EQ     "+="
-	TOK_STAR_EQ     "*="
+        CARET_EQ    "^="
+        SLASH_EQ    "/="
+        MINUS_EQ    "-="
+        PLUS_EQ     "+="
+        STAR_EQ     "*="
 ;
 
 exp:
@@ -689,8 +693,8 @@ exp:
 | lvalue "^=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
 ;
 
-%token  TOK_MINUS_MINUS "--"
-	TOK_PLUS_PLUS   "++"
+%token  MINUS_MINUS "--"
+        PLUS_PLUS   "++"
 ;
 exp:
   lvalue "--"      { $$ = new ast::Decrementation(@$, $1); }
@@ -702,7 +706,7 @@ exp:
 | Properties.  |
 `-------------*/
 
-%token TOK_MINUS_GT     "->";
+%token MINUS_GT     "->";
 stmt:
   lvalue "->" id "=" exp
     {
@@ -994,7 +998,7 @@ in_or_colon: "in" | ":";
 | Control flow.  |
 `---------------*/
 
-%token TOK_DO "do";
+%token DO "do";
 
 exp:
 	   block  { $$ = ast_scope(@$, 0, $1); }
@@ -1026,7 +1030,7 @@ call:
 ;
 
 // Instantiation looks a lot like a function call.
-%token <libport::Symbol> TOK_NEW "new";
+%token <libport::Symbol> NEW "new";
 %type <ast::rExp> new;
 new:
   "new" "identifier" args
@@ -1072,8 +1076,8 @@ exp:
 
 %printer { debug_stream() << $$; } <int>;
 %token <int>
-	TOK_INTEGER    "integer"
-        TOK_FLAG       "flag";
+        INTEGER    "integer"
+        FLAG       "flag";
 %type <ast::rExp> exp_integer;
 exp_integer:
   "integer"  { $$ = new ast::Float(@$, $1); }
@@ -1082,8 +1086,8 @@ exp_integer:
 
 %printer { debug_stream() << $$; } <float>;
 %token <float>
-	TOK_FLOAT      "float"
-        TOK_DURATION   "duration";
+        FLOAT      "float"
+        DURATION   "duration";
 %type <ast::rExp> exp_float;
 exp_float:
   "float"  { $$ = new ast::Float(@$, $1); }
@@ -1118,7 +1122,7 @@ exp:
 | Events.  |
 `---------*/
 
-%token TOK_QUEST_MARK "?";
+%token QUEST_MARK "?";
 %type <event_match_type> event_match;
 event_match:
   "?" "(" exp ")" "(" exps ")"
@@ -1161,8 +1165,8 @@ exp:
 | Special variables.  |
 `--------------------*/
 
-%token  TOK_CALL         "call"
-        TOK_THIS         "this"
+%token  CALL         "call"
+        THIS         "this"
 ;
 
 exp:
@@ -1176,19 +1180,19 @@ exp:
 
 // The name of the operators are the name of the messages.
 %token <libport::Symbol>
-	TOK_BANG       "!"
-	TOK_BITAND     "bitand"
-	TOK_BITOR      "bitor"
-	TOK_CARET      "^"
-	TOK_COMPL      "compl"
-	TOK_GT_GT      ">>"
-	TOK_LT_LT      "<<"
-	TOK_MINUS      "-"
-	TOK_PERCENT    "%"
-	TOK_PLUS       "+"
-	TOK_SLASH      "/"
-	TOK_STAR       "*"
-	TOK_STAR_STAR  "**"
+        BANG       "!"
+        BITAND     "bitand"
+        BITOR      "bitor"
+        CARET      "^"
+        COMPL      "compl"
+        GT_GT      ">>"
+        LT_LT      "<<"
+        MINUS      "-"
+        PERCENT    "%"
+        PLUS       "+"
+        SLASH      "/"
+        STAR       "*"
+        STAR_STAR  "**"
 ;
 
 exp:
@@ -1214,20 +1218,20 @@ exp:
 | Tests.  |
 `--------*/
 %token <libport::Symbol>
-	TOK_EQ_TILDA_EQ   "=~="
-	TOK_EQ_EQ         "=="
-	TOK_EQ_EQ_EQ      "==="
-	TOK_GT_EQ         ">="
-	TOK_GT            ">"
-	TOK_LT_EQ         "<="
-	TOK_LT            "<"
-	TOK_BANG_EQ       "!="
-	TOK_BANG_EQ_EQ    "!=="
-	TOK_PERCENT_EQ    "%="
-	TOK_TILDA_EQ      "~="
+        EQ_TILDA_EQ   "=~="
+        EQ_EQ         "=="
+        EQ_EQ_EQ      "==="
+        GT_EQ         ">="
+        GT            ">"
+        LT_EQ         "<="
+        LT            "<"
+        BANG_EQ       "!="
+        BANG_EQ_EQ    "!=="
+        PERCENT_EQ    "%="
+        TILDA_EQ      "~="
 
-	TOK_AMPERSAND_AMPERSAND  "&&"
-	TOK_PIPE_PIPE            "||"
+        AMPERSAND_AMPERSAND  "&&"
+        PIPE_PIPE            "||"
 ;
 
 exp:
@@ -1304,27 +1308,27 @@ modifiers.1:
 | Metavariables.  |
 `----------------*/
 
-%token TOK__CALL "_call";
+%token _CALL "_call";
 lvalue:
   "_call" "(" "integer" ")"    { $$ = metavar<ast::rCall> (up, $3); }
 ;
 
-%token TOK__EXP "_exp";
+%token _EXP "_exp";
 exp:
   "_exp" "(" "integer" ")"     { $$ = metavar<ast::rExp> (up, $3); }
 ;
 
-%token TOK__EXPS "_exps";
+%token _EXPS "_exps";
 exps:
   "_exps" "(" "integer" ")"    { $$ = metavar<ast::exps_type*> (up, $3); }
 ;
 
-%token TOK__FORMALS "_formals";
+%token _FORMALS "_formals";
 formals:
   "_formals" "(" "integer" ")" { $$ = metavar<ast::symbols_type*> (up, $3); }
 ;
 
-%token TOK_PERCENT_EXP_COLON "%exp:";
+%token PERCENT_EXP_COLON "%exp:";
 exp:
   "%exp:" "integer"
   {
@@ -1332,7 +1336,7 @@ exp:
   }
 ;
 
-%token TOK_PERCENT_LVALUE_COLON "%lvalue:";
+%token PERCENT_LVALUE_COLON "%lvalue:";
 lvalue:
   "%lvalue:" "integer"
   {
@@ -1340,7 +1344,7 @@ lvalue:
   }
 ;
 
-%token TOK_PERCENT_ID_COLON "%id:";
+%token PERCENT_ID_COLON "%id:";
 lvalue:
   exp "." "%id:" "integer"
   {
@@ -1348,7 +1352,7 @@ lvalue:
   }
 ;
 
-%token TOK_PERCENT_EXPS_COLON "%exps:";
+%token PERCENT_EXPS_COLON "%exps:";
 call:
   lvalue "(" "%exps:" "integer" ")"
   {
@@ -1434,12 +1438,12 @@ formals:
 | Documentation |
 `--------------*/
 
-%token <std::string> TOK_DOC "documentation";
+%token <std::string> DOC "documentation";
 %type <std::string> doc;
 
 doc:
   /* empty */   { $$ = ""; }
-| TOK_DOC       { $$ = $1; }
+| DOC       { $$ = $1; }
 
 %%
 
