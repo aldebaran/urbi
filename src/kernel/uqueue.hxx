@@ -1,27 +1,27 @@
 #ifndef KERNEL_UQUEUE_HXX
 # define KERNEL_UQUEUE_HXX
 
-inline size_t
-UQueue::size() const
+# include <kernel/uqueue.hh>
+
+inline
+size_t
+UQueue::size () const
 {
-  return next_character_ - first_character_;
+  return buffer_.size();
 }
 
-inline bool UQueue::empty() const
+inline
+bool
+UQueue::empty () const
 {
-  return !size();
+  return buffer_.empty();
 }
 
-inline void
-UQueue::push(const char *s)
+inline
+void
+UQueue::push (const char *s)
 {
   push(s, strlen(s));
-}
-
-inline void
-UQueue::clear()
-{
-  first_character_ = next_character_ = buffer_;
 }
 
 #endif // !KERNEL_UQUEUE_HXX
