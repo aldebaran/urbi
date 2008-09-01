@@ -5,3 +5,5 @@ PDFS = urbi-specs.pdf
 CLEANFILES += ${PDFS}
 
 all: ${PDFS}
+
+urbi-specs.pdf: float.tex

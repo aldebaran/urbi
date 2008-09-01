@@ -1,0 +1,423 @@
+
+\subsection{Rationale}
+
+Float is an \us primitive to represent floating point number.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item Comparable (\sect{std-comparable}).
+\item Orderable (\sect{std-orderable})
+\end{itemize}
+
+\subsection{Construction}
+
+The most common way to create fresh floats is by using the literal
+syntax presented in \sect{us-syn-lit-float}. A null float can also be
+obtained with \lstinline|Float|'s \lstinline|new| method
+(\lst{new-float}).
+
+\begin{lstlisting}[caption=Creating a new float, label=lst:new-float,
+  float=\floatpos]
+  Float.new; [00000000] 0
+\end{lstlisting}
+
+\subsection{Methods}
+
+
+\subsubsection{abs}
+
+Return the absolute value of the target (\lst{float-abs}).
+
+\begin{lstlisting}[caption=Float.abs, label=lst:float-abs,
+  float=\floatposh]
+  (-5).abs;
+  [00000000] 5
+  (5).abs;
+  [00000000] 5
+\end{lstlisting}
+
+\subsubsection{acos}
+
+Return the arcosinus of the target.
+
+\begin{lstlisting}[caption=Float.acos, label=lst:float-acos,
+  float=\floatposh]
+  1.acos;
+  [00000000] 0
+\end{lstlisting}
+
+\subsubsection{asin}
+
+Return the arcsinus of the target.
+
+\begin{lstlisting}[caption=Float.asin, label=lst:float-asin,
+  float=\floatposh]
+  0.asin;
+  [00000000] 0
+\end{lstlisting}
+
+\subsubsection{asString}
+
+Return a string representing the target (\lst{float-asString}).
+
+\begin{lstlisting}[caption=Float.asString, label=lst:float-asString,
+  float=\floatposh]
+  42.asString;
+  [00000000] "42"
+\end{lstlisting}
+
+\subsubsection{atan}
+
+Return the arctangent of the target (\lst{float-atan}).
+
+\begin{lstlisting}[caption=Float.atan, label=lst:float-atan,
+  float=\floatposh]
+  0.atan;
+  [00000000] 0
+\end{lstlisting}
+
+\subsubsection{bitand}
+
+Return the bitwise and between the target and the argument (\lst{float-bitand}).
+
+\begin{lstlisting}[caption=Float.bitand, label=lst:float-bitand,
+  float=\floatposh]
+  3 bitand 6;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{bitor}
+
+Return the bitwise or between the target and the argument (\lst{float-bitor}).
+
+\begin{lstlisting}[caption=Float.bitor, label=lst:float-bitor,
+  float=\floatposh]
+  3 bitand 6;
+  [00000000] 7
+\end{lstlisting}
+
+\subsubsection{clone}
+
+Return a fresh Float with the same value as the target (\lst{float-clone}).
+
+\begin{lstlisting}[caption=Float.clone, label=lst:float-clone,
+  float=\floatposh]
+  var x = 0;
+  [00000000] 0
+  var y = x.clone;
+  [00000000] 0
+  x === y;
+  [00000000] false
+\end{lstlisting}
+
+\subsubsection{compl}
+
+Return the 1-complement of the target (\lst{float-compl}).
+
+\begin{lstlisting}[caption=Float.compl, label=lst:float-compl,
+  float=\floatposh]
+  compl 1;
+  [00000000] -2
+\end{lstlisting}
+
+\subsubsection{cos}
+
+Return the cosinus of the target (\lst{float-cos}).
+
+\begin{lstlisting}[caption=Float.cos, label=lst:float-cos,
+  float=\floatposh]
+  0.cos;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{exp}
+
+Return the exponential of the target (\lst{float-exp}).
+
+\begin{lstlisting}[caption=Float.exp, label=lst:float-exp,
+  float=\floatposh]
+  1.exp;
+  [00000000] 2.71828
+\end{lstlisting}
+
+\subsubsection{inf}
+
+Return the infinity (\lst{float-inf}).
+
+\begin{lstlisting}[caption=Float.inf, label=lst:float-inf,
+  float=\floatposh]
+  Float.inf;
+  [00000000] inf
+\end{lstlisting}
+
+\subsubsection{log}
+
+Return the logarithm of the target (\lst{float-log}).
+
+\begin{lstlisting}[caption=Float.log, label=lst:float-log,
+  float=\floatposh]
+  2.71828.log;
+  [00000000] 0.999999
+\end{lstlisting}
+
+\subsubsection{nan}
+
+Return the ``not a number'' special float value (\lst{float-nan}).
+
+\begin{lstlisting}[caption=Float.nan, label=lst:float-nan,
+  float=\floatposh]
+  Float.nan;
+  [00000000] nan
+\end{lstlisting}
+
+\subsubsection{random}
+
+Return a random number between 0 and the target(\lst{float-random}).
+
+\begin{lstlisting}[caption=Float.random, label=lst:float-random,
+  float=\floatposh]
+  5.random;
+  [00000000] 3
+  5.random;
+  [00000000] 1
+  5.random;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{round}
+
+Return the target, rounded (\lst{float-round}).
+
+\begin{lstlisting}[caption=Float.round, label=lst:float-round,
+  float=\floatposh]
+  1.6.round;
+  [00000000] 2
+  1.4.round;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{seq}
+
+Return the sequence of integer from 0 to target - 1 as a list (\lst{float-seq}).
+
+\begin{lstlisting}[caption=Float.seq, label=lst:float-seq,
+  float=\floatposh]
+  3.seq;
+  [00000000] [0, 1, 2]
+\end{lstlisting}
+
+\subsubsection{sin}
+
+Return the sinus of the target (\lst{float-sin}).
+
+\begin{lstlisting}[caption=Float.sin, label=lst:float-sin,
+  float=\floatposh]
+  0.sin;
+  [00000000] 0
+\end{lstlisting}
+
+\subsubsection{sqrt}
+
+Return the square root of the target (\lst{float-sqrt}).
+
+\begin{lstlisting}[caption=Float.sqrt, label=lst:float-sqrt,
+  float=\floatposh]
+  1024.sqrt;
+  [00000000] 32
+\end{lstlisting}
+
+\subsubsection{tan}
+
+Return the tangent of the target (\lst{float-tan}).
+
+\begin{lstlisting}[caption=Float.tan, label=lst:float-tan,
+  float=\floatposh]
+  0.tan;
+  [00000000] 0
+\end{lstlisting}
+
+\subsubsection{trunc}
+
+Return the target truncated  (\lst{float-trunc}).
+
+\begin{lstlisting}[caption=Float.trunc, label=lst:float-trunc,
+  float=\floatposh]
+  1.9.trunc;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{asFloat}
+
+Return the target (\lst{float-asFloat}).
+
+\begin{lstlisting}[caption=Float.asFloat, label=lst:float-asFloat,
+  float=\floatposh]
+  51.asFloat;
+  [00000000] 51
+\end{lstlisting}
+
+\subsubsection{sqr}
+
+Return the square of the target (\lst{float-sqr}).
+
+\begin{lstlisting}[caption=Float.sqr, label=lst:float-sqr,
+  float=\floatposh]
+  32.sqr;
+  [00000000] 1024
+\end{lstlisting}
+
+\subsubsection{sgn}
+
+Return 1 if the target is positive, -1 otherwise (\lst{float-sgn}).
+
+\begin{lstlisting}[caption=Float.sgn, label=lst:float-sgn,
+  float=\floatposh]
+  (-1164).sgn;
+  [00000000] -1
+  (1164).sgn;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{times}
+
+Take one functional argument and call it target times (\lst{float-times}).
+
+\begin{lstlisting}[caption=Float.times, label=lst:float-times,
+  float=\floatposh]
+  5.times(function (i) { echo("ping")});
+  [00000000] *** ping
+  [00000000] *** ping
+  [00000000] *** ping
+  [00000000] *** ping
+  [00000000] *** ping
+\end{lstlisting}
+
+\subsubsection{each}
+
+Take one functional argument and call it on every integer from 0 to
+target - 1 (\lst{float-each}).
+
+\begin{lstlisting}[caption=Float.each, label=lst:float-each,
+  float=\floatposh]
+  5.each(function (i) { echo(i * 2)});
+  [00000000] *** 0
+  [00000000] *** 2
+  [00000000] *** 4
+  [00000000] *** 6
+  [00000000] *** 8
+\end{lstlisting}
+
+\subsubsection{\^{}}
+
+Return the bitwise exclusive or between the target and the first argument.
+
+\begin{lstlisting}[caption=Float.'\^{}', label=lst:float-bitxor,
+  float=\floatposh]
+  3 ^ 6;
+  [00000000] 5
+\end{lstlisting}
+
+\subsubsection{$>>$}
+
+\lstinline|a >> b| return the \lstinline|a| shifted by \lstinline|b|
+bit towards the right (\lst{float-rshift}).
+
+\begin{lstlisting}[caption=Float.'$>>$', label=lst:float-rshift,
+  float=\floatposh]
+  4 >> 2;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{$<$}
+
+\lstinline|a < b| returns whether \lstinline|a| is inferior to
+\lstinline|b| (\lst{float-inf}). Note that other comparison operators
+(\lstinline|<=|, \lstinline|>|, \ldots) can thus also be applied on
+floats since Float inherits Orderable (see \lst{std-orderable}).
+
+\begin{lstlisting}[caption=Float.'$<$', label=lst:float-inf,
+  float=\floatposh]
+  0 < 1;
+  [00000000] true
+  1 < 0;
+  [00000000] false
+\end{lstlisting}
+
+\subsubsection{$<<$}
+
+\lstinline|a << b| return the \lstinline|a| shifted by \lstinline|b|
+bit towards the left (\lst{float-lshift}).
+
+\begin{lstlisting}[caption=Float.'$<<$', label=lst:float-lshift,
+  float=\floatposh]
+  4 << 2;
+  [00000000] 16
+\end{lstlisting}
+
+\subsubsection{-}
+
+\lstinline|a - b| returns \lstinline|a| minus \lstinline|b| (\lst{float-minus}).
+
+\begin{lstlisting}[caption=Float.'-', label=lst:float-minus,
+  float=\floatposh]
+  6 - 3;
+  [00000000] 3
+\end{lstlisting}
+
+\subsubsection{+}
+
+\lstinline|a + b| returns \lstinline|a| plus \lstinline|b| (\lst{float-plus}).
+
+\begin{lstlisting}[caption=Float.'+', label=lst:float-plus, float=\floatposh]
+  1 + 1;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{/}
+
+\lstinline|a / b| returns the quotient of \lstinline|a| divided by
+\lstinline|b| (\lst{float-div}).
+
+\begin{lstlisting}[caption=Float.'/', label=lst:float-div, float=\floatposh]
+  50 / 11;
+  [00000000] 4
+\end{lstlisting}
+
+\subsubsection{\%}
+
+\lstinline|a \% b| returns \lstinline|a| modulo \lstinline|b| (\lst{float-mod}).
+
+\begin{lstlisting}[caption=Float.'\%', label=lst:float-mod, float=\floatposh]
+  50 % 11;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{*}
+
+\lstinline|a * b| returns \lstinline|a| times \lstinline|b| (\lst{float-times}).
+
+\begin{lstlisting}[caption=Float.'*', label=lst:float-times, float=\floatposh]
+  2 * 3;
+  [00000000] 6
+\end{lstlisting}
+
+\subsubsection{**}
+
+\lstinline|a ** b| returns \lstinline|a| to the \lstinline|b| power (\lst{float-exp}).
+
+\begin{lstlisting}[caption=Float.'**', label=lst:float-exp, float=\floatposh]
+  2 ** 10;
+  [00000000] 1024
+\end{lstlisting}
+
+\subsubsection{==}
+
+\lstinline|a == b| returns whether \lstinline|a| equals \lstinline|b| (\lst{float-eq}).
+
+\begin{lstlisting}[caption={Float.'=='}, label=lst:float-eq, float=\floatposh]
+  1 == 1;
+  [00000000] true
+  1 == 2;
+  [00000000] false
+\end{lstlisting}
