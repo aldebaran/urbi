@@ -8,9 +8,8 @@ client.send("output << 1;");
 //= D output 1
 client.send("output << \"coin\";");
 //= D output "coin"
-client.send("error << non.existent;");
-//= E error 1.39-50: Unknown identifier: non.existent
-//= E error 1.39-50: EXPR evaluation failed
+client.send("error << nonexistent;");
+//= E error 1.39-49: lookup failed: nonexistent
 client.send("var mybin = BIN 10 mybin header;1234567890;output << mybin;");
 //= D output BIN 10  mybin header;1234567890
 client.send("output << [\"coin\", 5, [3, mybin, 0]];");
