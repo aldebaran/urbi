@@ -175,6 +175,82 @@ namespace object
     return res;
   }
 
+  void String::check_bounds(unsigned int from, unsigned int to,
+                            const libport::Symbol& msg)
+  {
+    if (from >= content_.length())
+      throw PrimitiveError(msg, "invalid index: " + string_cast(from));
+    if (to >  content_.length())
+      throw PrimitiveError(msg, "invalid index: " + string_cast(to));
+    if (from > to)
+      throw PrimitiveError(msg, "range starting after its end does not make sense: "
+                           + string_cast(from) + ", " + string_cast(to));
+  }
+
+
+  std::string String::sub(unsigned int idx)
+  {
+    return sub(idx, idx + 1);
+  }
+
+  std::string String::sub_eq(unsigned int idx, const std::string& v)
+  {
+    return sub_eq(idx, idx + 1, v);
+  }
+
+  std::string String::sub(unsigned int from, unsigned int to)
+  {
+    check_bounds(from, to, SYMBOL(SBL_SBR));
+    return content_.substr(from, to - from);
+  }
+
+  std::string String::sub_eq(unsigned int from, unsigned int to,
+                             const std::string& v)
+  {
+    check_bounds(from, to, SYMBOL(SBL_SBR_EQ));
+    content_ = content_.substr(0, from)
+      + v
+      + content_.substr(to, std::string::npos);
+    return content_;
+  }
+
+#define OVERLOAD_2(Name, Msg, N1, V1, N2, V2)                           \
+                                                                        \
+  static rObject Name(runner::Runner& r, object::objects_type args)     \
+  {                                                                     \
+    static rPrimitive v1 = make_primitive(V1, SYMBOL(Msg));             \
+    static rPrimitive v2 = make_primitive(V2, SYMBOL(Msg));             \
+                                                                        \
+    object::check_arg_count (N1, N2, args.size(), SYMBOL(Msg));         \
+    switch (args.size())                                                \
+    {                                                                   \
+      case N1:                                                          \
+        return (*v1)(r, args);                                          \
+        break;                                                          \
+      case N2:                                                          \
+        return (*v2)(r, args);                                          \
+        break;                                                          \
+      default:                                                          \
+        pabort("Unreachable");                                          \
+    }                                                                   \
+  }                                                                     \
+
+  OVERLOAD_2(sub_bouncer, SBL_SBR,
+             2,
+             (std::string (String::*) (unsigned)) (&String::sub),
+             3,
+             (std::string (String::*) (unsigned, unsigned)) (&String::sub)
+    );
+
+  OVERLOAD_2(sub_eq_bouncer, SBL_SBR_EQ,
+             3,
+             (std::string (String::*) (unsigned, const std::string&))
+             (&String::sub_eq),
+             4,
+             (std::string (String::*) (unsigned, unsigned, const std::string&))
+             (&String::sub_eq)
+    );
+
   void String::initialize(CxxObject::Binder<String>& bind)
   {
     bind(SYMBOL(asPrintable), &as_printable);
@@ -187,6 +263,9 @@ namespace object
     bind(SYMBOL(size), &String::size);
     bind(SYMBOL(split), &String::split);
     bind(SYMBOL(STAR), &String::star);
+
+    string_class->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
+    string_class->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
   }
 
   bool String::string_added = CxxObject::add<String>("String", string_class);

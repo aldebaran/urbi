@@ -40,12 +40,21 @@ namespace object
     size_type size();
     rList split(const std::string& sep);
     std::string star(unsigned int times);
+    std::string sub(unsigned int from, unsigned int to);
+    std::string sub(unsigned int idx);
+    std::string sub_eq(unsigned int from, unsigned int to,
+                       const std::string& v);
+    std::string sub_eq(unsigned int idx,
+                       const std::string& v);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;
 
   private:
     value_type content_;
+
+    void check_bounds(unsigned int from, unsigned int to,
+                      const libport::Symbol& msg);
 
   public:
     static void initialize(CxxObject::Binder<String>& binder);
