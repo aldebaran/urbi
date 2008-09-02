@@ -17,6 +17,13 @@ AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc foreign])
 URBI_PACKAGE_KIND([sdk])
 URBI_DIRS([remote])
 
+AC_PROG_CC
+
+URBI_PROG_CXX
+
+AC_PROG_LIBTOOL
+
+
 URBI_SDK
 
 # Doc generation.
@@ -33,10 +40,12 @@ AC_CONFIG_FILES([lib/libport/Makefile])
 AC_CONFIG_FILES([build-aux/test.sh],
 		[chmod a=rx build-aux/test.sh])
 
-AC_PROG_CC
-URBI_PROG_CXX
 
-AC_PROG_LIBTOOL
+
+BOOST_REQUIRE([1.34])
+BOOST_FILESYSTEM
+
+URBI_WITH_LTDL
 
 # X11.
 # AC_PATH_XTRA will find us X11 headers even if we are cross-compiling for windows
@@ -118,11 +127,14 @@ fi
 
 URBI_LIBTOOL
 
+AC_DEFINE_UNQUOTED([URBI_HOST], ["$host"], [Define as the host name.])
+AC_DEFINE_UNQUOTED([URBI_PREFIX], ["$prefix"], [Define as the install prefix.])
+AC_DEFINE_UNQUOTED([URBI_SHREXT], ["$shrext_cmds"],
+                   [Define as the shared library extension])
 ## -------- ##
 ## Output.  ##
 ## -------- ##
 
-ac_configure_args=" $ac_configure_args --disable-programs --disable-shared"
 AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  src/Makefile

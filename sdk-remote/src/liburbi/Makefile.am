@@ -57,3 +57,10 @@ libuobject_la_LDFLAGS = -no-undefined
 
 
 
+bin_PROGRAMS = urbi-launch
+urbi_launch_SOURCES = urbi-launch.cc
+urbi_launch_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
+urbi_launch_LDADD = $(AM_LDADD) $(BOOST_FILESYSTEM_LIBS) $(LTDL_LIBS) liburbi.la
+urbi_launch_LDFLAGS = $(AM_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS)
+
+	cd $(DESTDIR)$(libdir) && $(LN_S) -f $(DESTDIR)../$(topenvdir)/liburbi.a
