@@ -108,7 +108,11 @@
   ::urbi::uobject_unarmorAndSend(# A)
 # endif
 
-
+extern "C"
+{
+  /** Bouncer to urbi::main() for easier access through dlsym()*/
+  USDK_API int urbi_main(int argc, const char *argv[], int block);
+}
 namespace urbi
 {
 

@@ -33,6 +33,7 @@ uobject/uobject-hub-common.cc			\
 uobject/utable.cc				\
 uobject/utimer-table.cc				\
 uobject/uvalue-common.cc			\
+uobject/urbi-main.cc			        \
 uobject/uvar-common.cc
 
 uobject_headers = $(nodist_uobject_headers) $(dist_uobject_headers)
