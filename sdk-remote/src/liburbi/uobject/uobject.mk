@@ -12,6 +12,7 @@ nodist_uobject_headers =			\
 $(ucallbacks_hh)
 
 dist_uobject_headers =				\
+uobject/urbi/export.hh				\
 uobject/urbi/fwd.hh				\
 uobject/urbi/qt_umain.hh			\
 uobject/urbi/ubinary.hh				\
