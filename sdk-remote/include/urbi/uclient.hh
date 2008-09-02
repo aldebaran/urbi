@@ -36,7 +36,10 @@ namespace urbi
   class USDK_API UClient: public UAbstractClient
   {
   public:
-    UClient(const char *host, int port = URBI_PORT, int buflen = URBI_BUFLEN);
+    UClient(const char *_host,
+	    int _port = URBI_PORT,
+	    int _buflen = URBI_BUFLEN,
+	    bool _server = false);
 
     virtual ~UClient();
 

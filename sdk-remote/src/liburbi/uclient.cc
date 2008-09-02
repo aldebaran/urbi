@@ -50,11 +50,13 @@ namespace urbi
    Spawn a new thread that will listen to the socket, parse the incoming URBI
    messages, and notify the appropriate callbacks.
    */
-  UClient::UClient(const char *_host, int _port, int _buflen)
-    : UAbstractClient(_host, _port, _buflen),
+  UClient::UClient(const char *_host, int _port, int _buflen, bool _server)
+    : UAbstractClient(_host, _port, _buflen, _server),
       thread(0),
       pingInterval(0)
   {
+    int pos = 0;
+
     setlocale(LC_NUMERIC, "C");
     control_fd[0] = control_fd[1] = -1;
 
@@ -100,40 +102,84 @@ namespace urbi
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0)
     {
-      libport::perror("UClient::UClient socket");
       rc = -1;
+      libport::perror("UClient::UClient socket");
       return;
     }
 
-    // now connect to the remote server.
-    rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
-
-    // If we attempt to connect too fast to aperios ipstack it will fail.
-    if (rc)
+    if (!server_)
     {
-      usleep(20000);
+      // Connect on given host and port
       rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
-    }
+      // If we attempt to connect too fast to aperios ipstack it will fail.
+      if (rc)
+      {
+	usleep(20000);
+	rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
+      }
 
-    // Check there was no error.
-    if (rc)
-    {
-      libport::perror("UClient::UClient connect");
-      return;
-    }
+      // Check there was no error.
+      if (rc)
+      {
+	rc = -1;
+	libport::perror("UClient::UClient connect");
+	return;
+      }
 
-    //check that it really worked
-    int pos=0;
-    while (pos==0)
-      pos = ::recv(sd, recvBuffer, buflen, 0);
-    if (pos<0)
-    {
-      libport::perror("UClient::UClient recv");
-      rc = pos;
-      return;
+      // Check that it really worked.
+      while (pos==0)
+	pos = ::recv(sd, recvBuffer, buflen, 0);
+      if (pos<0)
+      {
+	rc = -1;
+	libport::perror("UClient::UClient recv");
+	return;
+      }
+
     }
     else
-      recvBufferPosition = pos;
+    {
+      // Bind socket
+      rc = bind (sd, (struct sockaddr *) &sa, sizeof sa);
+      if (rc)
+      {
+	rc = -1;
+	libport::perror("UClient::UClient cannot bind");
+	return;
+      }
+      // Activate listen/passive mode, do not allow queued connections
+      rc = listen (sd, 0);
+      if (rc)
+      {
+	rc = -1;
+	libport::perror("UClient::UClient cannot listen");
+	return;
+      }
+
+      // Accept one connection
+      struct sockaddr_in saClient;
+      socklen_t addrlenClient;
+      int acceptFD = 0;
+      acceptFD = accept (sd, (struct sockaddr *) &saClient, &addrlenClient);
+      if (acceptFD < 0)
+      {
+	libport::perror("UClient::UClient cannot accept");
+	rc = -1;
+	return;
+      }
+
+      // Store client connection info
+      delete host;
+      host = strdup (inet_ntoa (saClient.sin_addr));
+      port = saClient.sin_port;
+
+      // Do not listen anymore.
+      close (sd);
+      // Redirect send/receive on accepted connection.
+      sd = acceptFD;
+    }
+
+    recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
     thread = libport::startThread(this, &UClient::listenThread);
     if (!defaultClient)

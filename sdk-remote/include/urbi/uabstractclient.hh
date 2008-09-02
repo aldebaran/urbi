@@ -174,7 +174,8 @@ namespace urbi
     /// Create a new instance and connect to the Urbi server.
     UAbstractClient(const char *_host,
 		    int _port = URBI_PORT,
-		    int _buflen = URBI_BUFLEN);
+		    int _buflen = URBI_BUFLEN,
+		    bool _server = false);
 
     virtual ~UAbstractClient();
 
@@ -339,6 +340,10 @@ namespace urbi
     char	     *host;
     /// Urbi Port.
     int	     port;
+
+    /// Server mode
+    bool server_;
+
     /// Urbi Buffer length.
     int	     buflen;
     /// System calls return value storage.
