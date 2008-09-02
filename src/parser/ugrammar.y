@@ -1148,15 +1148,16 @@ event_match:
 `---------------------------*/
 
 exp:
-  exp "[" exp "]"
+  exp "[" exps "]"
   {
-    static ast::ParametricAst rewrite("%exp:1 .'[]'(%exp:2)");
+    static ast::ParametricAst rewrite("%exp:1 .'[]'(%exps:2)");
     $$ = ast::exp(rewrite % $1 % $3);
   }
-| exp "[" exp "]" "=" exp
+| exp "[" exps "]" "=" exp
   {
-    static ast::ParametricAst rewrite("%exp:1 .'[]='(%exp:2, %exp:3)");
-    $$ = ast::exp(rewrite % $1 % $3 % $6);
+    static ast::ParametricAst rewrite("%exp:1 .'[]='(%exps:2)");
+    $3->push_back($6);
+    $$ = ast::exp(rewrite % $1 % $3);
   }
 ;
 
