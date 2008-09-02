@@ -173,7 +173,7 @@ do List
     true
   };
 
-  function filter()
+  function filter(predicate)
   {
     var res = [] |
     for| (var elt: this)
