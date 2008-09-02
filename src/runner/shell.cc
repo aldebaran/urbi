@@ -3,7 +3,7 @@
 #include <ast/nary.hh>
 
 #include <object/object.hh>
-#include <object/tag-class.hh>
+#include <object/tag.hh>
 
 #include <runner/shell.hh>
 

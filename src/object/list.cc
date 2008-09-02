@@ -10,9 +10,9 @@
 #include <libport/ufloat.hh>
 
 #include <kernel/userver.hh>
-#include <object/code-class.hh>
-#include <object/float-class.hh>
-#include <object/list-class.hh>
+#include <object/code.hh>
+#include <object/float.hh>
+#include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
 

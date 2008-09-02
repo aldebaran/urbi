@@ -5,9 +5,9 @@
 
 #include <libport/containers.hh>
 
-#include <object/dictionary-class.hh>
-#include <object/list-class.hh>
-#include <object/string-class.hh>
+#include <object/dictionary.hh>
+#include <object/list.hh>
+#include <object/string.hh>
 
 namespace object
 {

@@ -20,12 +20,12 @@
 #include <kernel/uvalue-cast.hh>
 #include <kernel/uobject.hh>
 
-#include <object/float-class.hh>
-#include <object/global-class.hh>
+#include <object/float.hh>
+#include <object/global.hh>
 #include <object/object.hh>
-#include <object/object-class.hh>
+#include <object/object.hh>
 #include <object/primitives.hh>
-#include <object/string-class.hh>
+#include <object/string.hh>
 #include <object/urbi-exception.hh>
 
 # include <runner/call.hh>

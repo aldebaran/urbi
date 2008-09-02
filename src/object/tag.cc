@@ -5,11 +5,11 @@
 
 #include <boost/any.hpp>
 
-#include <object/tag-class.hh>
+#include <object/tag.hh>
 
-#include <object/global-class.hh>
+#include <object/global.hh>
 #include <object/object.hh>
-#include <object/string-class.hh>
+#include <object/string.hh>
 
 #include <runner/call.hh>
 #include <runner/runner.hh>

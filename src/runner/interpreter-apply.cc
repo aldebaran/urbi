@@ -13,11 +13,11 @@
 #include <ast/routine.hh>
 #include <ast/print.hh>
 
-#include <object/code-class.hh>
-#include <object/global-class.hh>
-#include <object/list-class.hh>
+#include <object/code.hh>
+#include <object/global.hh>
+#include <object/list.hh>
 #include <object/object.hh>
-#include <object/primitive-class.hh>
+#include <object/primitive.hh>
 #include <object/symbols.hh>
 
 #include <runner/call.hh>

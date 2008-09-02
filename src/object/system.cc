@@ -12,13 +12,13 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <object/code-class.hh>
-#include <object/dictionary-class.hh>
-#include <object/float-class.hh>
-#include <object/list-class.hh>
-#include <object/system-class.hh>
-#include <object/tag-class.hh>
-#include <object/task-class.hh>
+#include <object/code.hh>
+#include <object/dictionary.hh>
+#include <object/float.hh>
+#include <object/list.hh>
+#include <object/system.hh>
+#include <object/tag.hh>
+#include <object/task.hh>
 
 #include <parser/transform.hh>
 

@@ -18,7 +18,7 @@
 #include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
-#include <object/tag-class.hh>
+#include <object/tag.hh>
 
 #include <runner/interpreter.hh>
 

@@ -5,10 +5,10 @@
 # include <libport/symbol.hh>
 
 # include <object/cxx-object.hh>
-# include <object/float-class.hh>
-# include <object/list-class.hh>
-# include <object/string-class.hh>
-# include <object/tag-class.hh>
+# include <object/float.hh>
+# include <object/list.hh>
+# include <object/string.hh>
+# include <object/tag.hh>
 # include <scheduler/tag.hh>
 
 namespace object

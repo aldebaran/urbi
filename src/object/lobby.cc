@@ -3,12 +3,12 @@
  ** \brief Creation of the URBI object lobby.
  */
 
-#include <object/lobby-class.hh>
+#include <object/lobby.hh>
 #include <object/object.hh>
 
 #include <kernel/uconnection.hh>
 
-#include <object/string-class.hh>
+#include <object/string.hh>
 #include <runner/runner.hh>
 
 namespace object

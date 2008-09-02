@@ -12,12 +12,12 @@
 #include <kernel/uconnection.hh>
 
 #include <object/cxx-primitive.hh>
-#include <object/float-class.hh>
-#include <object/global-class.hh>
-#include <object/list-class.hh>
-#include <object/object-class.hh>
+#include <object/float.hh>
+#include <object/global.hh>
+#include <object/list.hh>
 #include <object/object.hh>
-#include <object/string-class.hh>
+#include <object/object.hh>
+#include <object/string.hh>
 
 #include <runner/call.hh>
 #include <runner/runner.hh>

@@ -7,11 +7,11 @@
 #include <libport/lexical-cast.hh>
 #include <libport/tokenizer.hh>
 
-#include <object/float-class.hh>
-#include <object/list-class.hh>
+#include <object/float.hh>
+#include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitives.hh>
-#include <object/string-class.hh>
+#include <object/string.hh>
 
 #include <runner/call.hh>
 #include <runner/runner.hh>

@@ -4,8 +4,8 @@
 # include <boost/bind.hpp>
 
 # include <object/cxx-primitive.hh>
-# include <object/primitive-class.hh>
-# include <object/string-class.hh>
+# include <object/primitive.hh>
+# include <object/string.hh>
 # include <object/object-class.hh>
 # include <object/primitives.hh>
 

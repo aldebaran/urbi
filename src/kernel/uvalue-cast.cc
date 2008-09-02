@@ -2,10 +2,10 @@
 
 #include <kernel/uvalue-cast.hh>
 
-#include <object/float-class.hh>
-#include <object/global-class.hh>
-#include <object/list-class.hh>
-#include <object/string-class.hh>
+#include <object/float.hh>
+#include <object/global.hh>
+#include <object/list.hh>
+#include <object/string.hh>
 #include <object/urbi-exception.hh>
 
 #include <urbi/uvalue.hh>

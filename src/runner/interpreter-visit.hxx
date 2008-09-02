@@ -13,10 +13,10 @@
 # include <kernel/exception.hh>
 # include <kernel/uconnection.hh>
 
-# include <object/code-class.hh>
-# include <object/global-class.hh>
-# include <object/list-class.hh>
-# include <object/tag-class.hh>
+# include <object/code.hh>
+# include <object/global.hh>
+# include <object/list.hh>
+# include <object/tag.hh>
 # include <object/symbols.hh>
 
 # include <runner/call.hh>

@@ -57,11 +57,11 @@
 #include <ast/nary.hh>
 
 #include <object/object.hh>
-#include <object/object-class.hh>
-#include <object/primitive-class.hh>
+#include <object/object.hh>
+#include <object/primitive.hh>
 #include <object/primitives.hh>
 #include <object/root-classes.hh>
-#include <object/system-class.hh>
+#include <object/system.hh>
 
 #include <runner/call.hh>
 #include <runner/runner.hh>

@@ -8,9 +8,9 @@
 #include <ast/function.hh>
 #include <ast/print.hh>
 
-#include <object/code-class.hh>
-#include <object/list-class.hh>
-#include <object/string-class.hh>
+#include <object/code.hh>
+#include <object/list.hh>
+#include <object/string.hh>
 #include <object/object.hh>
 #include <object/urbi-exception.hh>
 

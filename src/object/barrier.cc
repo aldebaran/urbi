@@ -2,8 +2,8 @@
 
 #include <libport/containers.hh>
 
-#include <object/barrier-class.hh>
-#include <object/float-class.hh>
+#include <object/barrier.hh>
+#include <object/float.hh>
 
 namespace object
 {

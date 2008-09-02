@@ -3,23 +3,23 @@
  ** \brief Creation of the root Objects.
  */
 
-#include <object/barrier-class.hh>
-#include <object/code-class.hh>
+#include <object/barrier.hh>
+#include <object/code.hh>
 #include <object/cxx-object.hh>
-#include <object/dictionary-class.hh>
-#include <object/float-class.hh>
-#include <object/global-class.hh>
-#include <object/list-class.hh>
-#include <object/lobby-class.hh>
+#include <object/dictionary.hh>
+#include <object/float.hh>
+#include <object/global.hh>
+#include <object/list.hh>
+#include <object/lobby.hh>
 #include <object/object.hh>
-#include <object/object-class.hh>
-#include <object/primitive-class.hh>
+#include <object/object.hh>
+#include <object/primitive.hh>
 #include <object/root-classes.hh>
-#include <object/semaphore-class.hh>
-#include <object/string-class.hh>
-#include <object/system-class.hh>
-#include <object/tag-class.hh>
-#include <object/task-class.hh>
+#include <object/semaphore.hh>
+#include <object/string.hh>
+#include <object/system.hh>
+#include <object/tag.hh>
+#include <object/task.hh>
 
 #include <runner/unscoper.hh>
 

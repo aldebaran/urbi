@@ -12,13 +12,13 @@
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 
-#include <object/dictionary-class.hh>
-#include <object/float-class.hh>
-#include <object/global-class.hh>
+#include <object/dictionary.hh>
+#include <object/float.hh>
+#include <object/global.hh>
 #include <object/hash-slots.hh>
-#include <object/list-class.hh>
+#include <object/list.hh>
 #include <object/object.hh>
-#include <object/object-class.hh>
+#include <object/object.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>

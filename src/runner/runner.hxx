@@ -6,7 +6,7 @@
 #ifndef RUNNER_RUNNER_HXX
 # define RUNNER_RUNNER_HXX
 
-# include <object/lobby-class.hh>
+# include <object/lobby.hh>
 
 namespace runner
 {

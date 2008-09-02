@@ -4,7 +4,7 @@
 
 #include <ast/print.hh>
 
-#include <object/system-class.hh>
+#include <object/system.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>

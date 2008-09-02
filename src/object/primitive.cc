@@ -3,9 +3,9 @@
  ** \brief Creation of the URBI object primitive.
  */
 
-#include <object/list-class.hh>
+#include <object/list.hh>
 #include <object/object.hh>
-#include <object/primitive-class.hh>
+#include <object/primitive.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/runner.hh>

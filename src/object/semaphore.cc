@@ -1,5 +1,5 @@
-#include <object/float-class.hh>
-#include <object/semaphore-class.hh>
+#include <object/float.hh>
+#include <object/semaphore.hh>
 #include <runner/runner.hh>
 #include <scheduler/fwd.hh>
 

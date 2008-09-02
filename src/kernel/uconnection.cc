@@ -26,7 +26,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/object.hh>
-#include <object/tag-class.hh>
+#include <object/tag.hh>
 #include <object/urbi-exception.hh>
 
 #include <parser/uparser.hh>
