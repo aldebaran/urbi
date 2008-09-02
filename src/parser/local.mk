@@ -1,3 +1,4 @@
+
 dist_libuobject_la_SOURCES +=			\
 parser/ast-factory.hh				\
 parser/ast-factory.hxx				\
@@ -117,13 +118,3 @@ $(FROM_UTOKEN_L): parser/utoken.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) parser/utoken.stamp; \
 	fi
 
-
-# Kludge to install userver.hh.
-kernelinclude_HEADERS +=			\
-parser/stack.hh					\
-parser/position.hh				\
-parser/location.hh				\
-parser/ugrammar.hh
-
-nobase_kernelinclude_HEADERS = 		\
-parser/flex-lexer.hh
