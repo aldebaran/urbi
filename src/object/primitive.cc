@@ -65,4 +65,9 @@ namespace object
     return r.apply(tgt, this, SYMBOL(apply), a);
   }
 
+  rObject Primitive::operator() (runner::Runner& r, object::objects_type args)
+  {
+    return content_(r, args);
+  }
+
 }; // namespace object

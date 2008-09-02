@@ -22,6 +22,7 @@ namespace object
     Primitive(rPrimitive model);
     Primitive(value_type value);
     value_type value_get() const;
+    rObject operator() (runner::Runner& r, object::objects_type args);
 
     // Urbi methods
     rObject apply(runner::Runner& r, rList args);
