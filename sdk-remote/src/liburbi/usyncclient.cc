@@ -142,11 +142,11 @@ namespace urbi
       strcat(sendBuffer, ",");
     const char * separator = "<<";
     char tag[100];
-    if (mtag != 0)
+    if (mtag != 0 && strlen(mtag) != 0)
     {
       strcpy (tag, mtag);
       if (mmod != 0)
-	strcat (tag, mmod);
+        strcat (tag, mmod);
     }
     else
       makeUniqueTag(tag);
@@ -274,7 +274,13 @@ namespace urbi
   int
   USyncClient::syncGetValue(const char* valName, UValue& val)
   {
-    UMessage *m = syncGet("%s;", valName);
+    return syncGetValue(0, valName, val);
+  }
+
+  int
+  USyncClient::syncGetValue(const char* tag, const char* valName, UValue& val)
+  {
+    UMessage *m = syncGetTag("%s;", tag, 0, valName);
 
     if (m->type != MESSAGE_DATA)
     {
