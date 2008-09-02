@@ -76,6 +76,7 @@ namespace urbi
 
     /// Get the value of any device in a synchronous way. Returns 1 on success, 0 on failure.
     int syncGetValue(const char* valName, UValue& val);
+    int syncGetValue(const char* tag, const char* valName, UValue& val);
 
     /// Get the value of device.val in a synchronous way. Returns 1 on success, 0 on failure.
     int syncGetDevice(const char* device, double &val);
