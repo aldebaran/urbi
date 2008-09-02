@@ -47,7 +47,6 @@ libuobject_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
 
-
 kernelinclude_HEADERS =
 dist_libuobject_la_SOURCES =
 nodist_libuobject_la_SOURCES =
@@ -110,3 +109,9 @@ console-server.cc				\
 
 endif
 
+
+if ! INSTALL_KERNEL_HEADERS
+install-data-hook: remove_kheaders
+remove_kheaders:
+	$(RM) -r $(prefix)/gostai/kernel
+endif

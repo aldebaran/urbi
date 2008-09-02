@@ -69,6 +69,10 @@ case $enable_precompiled_symbols in
                  [Define if Urbi symbols should be precompiled]);;
 esac
 
+URBI_ARG_ENABLE([enable-headers-install],
+                [Install kernel headers], [yes|no], [no])
+AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
+               [ test x$enable_headers_install = xyes])
 URBI_WITH_LTDL
 
 # Where we look for the installed files.
