@@ -55,7 +55,8 @@ namespace urbi
   public:
     USyncClient(const char *_host,
 		int _port = URBI_PORT,
-		int _buflen = URBI_BUFLEN);
+		int _buflen = URBI_BUFLEN,
+		bool _server = false);
 
   protected:
     /** Synchronously ask the server for the value of an expression.

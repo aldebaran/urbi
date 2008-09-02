@@ -26,8 +26,11 @@
 
 namespace urbi
 {
-  USyncClient::USyncClient(const char *_host, int _port, int _buflen)
-    : UClient(_host, _port, _buflen),
+  USyncClient::USyncClient(const char *_host,
+			   int _port,
+			   int _buflen,
+			   bool _server)
+    : UClient(_host, _port, _buflen, _server),
       sem_(),
       queueLock_(),
       msg(0),

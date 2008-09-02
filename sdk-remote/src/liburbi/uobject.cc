@@ -444,6 +444,7 @@ namespace urbi
 		 << " [" << UAbstractClient::URBI_BUFLEN << "]\n"
       "  -h, --help         display this message and exit\n"
       "  -H, --host ADDR    server host name   [localhost]\n"
+      "      --server       put remote in server mode\n"
       "  -p, --port PORT    tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
       "  -v, --version      print version information and exit\n"
@@ -461,7 +462,8 @@ namespace urbi
   }
 
   int
-  initialize(const char* addr, int port, int buflen, bool exitOnDisconnect)
+  initialize(const char* addr, int port, int buflen,
+	     bool exitOnDisconnect, bool server)
   {
     std::cerr << libport::program_name
 	      << ": " << urbi::package_info() << std::endl
@@ -469,7 +471,7 @@ namespace urbi
 	      << ": Remote Component Running on "
 	      << addr << " " << port << std::endl;
 
-    new USyncClient(addr, port, buflen);
+    new USyncClient(addr, port, buflen, server);
 
     if (exitOnDisconnect)
     {
@@ -526,6 +528,7 @@ namespace urbi
     const char* addr = "localhost";
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
+    bool server = false;
     int buflen = UAbstractClient::URBI_BUFLEN;
 
     // The number of the next (non-option) argument.
@@ -549,6 +552,8 @@ namespace urbi
       }
       else if (arg == "--port" || arg == "-p")
 	port = libport::convert_argument<unsigned> (arg, argv[++i]);
+      else if (arg == "--server")
+	server = true;
       else if (arg == "--version" || arg == "-v")
 	version ();
       else if (arg[0] == '-')
@@ -571,7 +576,7 @@ namespace urbi
 	}
     }
 
-   initialize(addr, port, buflen, exitOnDisconnect);
+   initialize(addr, port, buflen, exitOnDisconnect, server);
 
    if (block)
      while (true)

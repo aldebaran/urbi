@@ -165,13 +165,17 @@ namespace urbi
    \param _buflen size of send and receive buffers.
    Implementations should establish the connection in their constructor.
    */
-  UAbstractClient::UAbstractClient(const char *_host, int _port, int _buflen)
+  UAbstractClient::UAbstractClient(const char *_host,
+				   int _port,
+				   int _buflen,
+				   bool _server)
     : std::ostream(new UClientStreambuf(this)),
       // Irk, *new...
       sendBufferLock(*new libport::Lockable()),
       listLock(*new libport::Lockable()),
       host (NULL),
       port (_port),
+      server_ (_server),
       buflen (_buflen),
       rc (0),
 
