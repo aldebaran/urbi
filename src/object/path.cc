@@ -10,8 +10,8 @@
 
 #include <boost/format.hpp>
 
+#include <object/directory.hh>
 #include <object/path.hh>
-
 
 namespace object
 {
@@ -125,7 +125,7 @@ namespace object
 
   bool Path::readable()
   {
-    int fd = open(path_.to_string().c_str(), O_RDONLY | O_LARGEFILE);
+    int fd = ::open(path_.to_string().c_str(), O_RDONLY | O_LARGEFILE);
 
     if (fd != -1)
     {
@@ -151,8 +151,8 @@ namespace object
 
   bool Path::writable()
   {
-    int fd = open(path_.to_string().c_str(),
-                  O_WRONLY | O_LARGEFILE | O_APPEND);
+    int fd = ::open(path_.to_string().c_str(),
+                    O_WRONLY | O_LARGEFILE | O_APPEND);
 
     if (fd != -1)
     {
@@ -186,6 +186,15 @@ namespace object
   std::string Path::dirname()
   {
     return path_.dirname();
+  }
+
+  rObject Path::open()
+  {
+    if (is_dir())
+      return new Directory(path_);
+    throw PrimitiveError
+      (SYMBOL(open),
+       str(boost::format("Unsupported file type: '%s'.") % path_));
   }
 
   // Conversions
@@ -348,6 +357,7 @@ namespace object
     bind(SYMBOL(init), &Path::init);
     bind(SYMBOL(isDir), &Path::is_dir);
     bind(SYMBOL(isReg), &Path::is_reg);
+    bind(SYMBOL(open), &Path::open);
     bind(SYMBOL(readable), &Path::readable);
     bind(SYMBOL(SLASH), &Path::concat);
     bind(SYMBOL(writable), &Path::writable);

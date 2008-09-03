@@ -35,9 +35,10 @@ namespace object
     static rPath cwd();
 
     // Operations
-    rPath concat(rPath other);
     std::string basename();
+    rPath concat(rPath other);
     std::string dirname();
+    rObject open();
 
     // Stat
     bool absolute();
