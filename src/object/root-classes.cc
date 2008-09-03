@@ -8,6 +8,7 @@
 #include <object/cxx-object.hh>
 #include <object/dictionary.hh>
 #include <object/directory.hh>
+#include <object/file.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/list.hh>
@@ -226,6 +227,7 @@ namespace object
   {
     Barrier     b;
     Directory   d;
+    File        f;
     Path        p;
     Semaphore   s;
   }

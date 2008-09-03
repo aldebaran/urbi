@@ -55,6 +55,8 @@ object/dictionary.cc				\
 object/dictionary.hh				\
 object/directory.cc				\
 object/directory.hh				\
+object/file.cc					\
+object/file.hh					\
 object/float.cc					\
 object/float.hh					\
 object/fwd.hh					\
