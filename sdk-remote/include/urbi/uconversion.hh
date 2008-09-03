@@ -23,7 +23,8 @@
 
 #ifndef URBI_UCONVERSION_HH
 # define URBI_UCONVERSION_HH
-# include <urbi/uobject.hh>
+# include <urbi/export.hh>
+# include <urbi/uvalue.hh>
 
 namespace urbi
 {

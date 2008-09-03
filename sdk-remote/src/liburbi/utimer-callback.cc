@@ -25,6 +25,7 @@
 #include <libport/program-name.hh>
 
 #include <urbi/utimer-callback.hh>
+#include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 #include <urbi/uexternal.hh>
 

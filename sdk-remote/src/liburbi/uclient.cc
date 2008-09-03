@@ -34,7 +34,9 @@
 #endif
 
 #include <urbi/uclient.hh>
+#include <libport/cstdio>
 #include <libport/network.h>
+#include <libport/errors.hh>
 #include <libport/lockable.hh>
 #include <libport/thread.hh>
 #include <libport/utime.hh>

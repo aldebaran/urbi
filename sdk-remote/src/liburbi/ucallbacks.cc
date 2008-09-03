@@ -27,6 +27,7 @@
 #include <urbi/ucallbacks.hh>
 #include <urbi/usyncclient.hh>
 #include <urbi/uexternal.hh>
+#include <urbi/uobject.hh>
 
 namespace urbi
 {
