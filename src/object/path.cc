@@ -11,6 +11,7 @@
 #include <boost/format.hpp>
 
 #include <object/directory.hh>
+#include <object/file.hh>
 #include <object/path.hh>
 
 namespace object
@@ -192,6 +193,8 @@ namespace object
   {
     if (is_dir())
       return new Directory(path_);
+    if (is_reg())
+      return new File(path_);
     throw PrimitiveError
       (SYMBOL(open),
        str(boost::format("Unsupported file type: '%s'.") % path_));
