@@ -69,6 +69,7 @@ namespace object
   FWD_DECL(Float);
   FWD_DECL(List);
   FWD_DECL(Lobby);
+  FWD_DECL(Path);
   FWD_DECL(Primitive);
   FWD_DECL(Semaphore);
   FWD_DECL(String);

@@ -69,6 +69,8 @@ object/object-class.hh				\
 object/object.cc				\
 object/object.hh				\
 object/object.hxx				\
+object/path.cc					\
+object/path.hh					\
 object/primitive.cc				\
 object/primitive.hh				\
 object/primitives.hh				\

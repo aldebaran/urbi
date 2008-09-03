@@ -13,6 +13,7 @@
 #include <object/lobby.hh>
 #include <object/object.hh>
 #include <object/object.hh>
+#include <object/path.hh>
 #include <object/primitive.hh>
 #include <object/root-classes.hh>
 #include <object/semaphore.hh>
@@ -222,8 +223,9 @@ namespace object
   void
   dummy_references()
   {
-    Barrier b;
-    Semaphore s;
+    Barrier     b;
+    Path        p;
+    Semaphore   s;
   }
 
   namespace
