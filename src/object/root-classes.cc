@@ -7,6 +7,7 @@
 #include <object/code.hh>
 #include <object/cxx-object.hh>
 #include <object/dictionary.hh>
+#include <object/directory.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/list.hh>
@@ -224,6 +225,7 @@ namespace object
   dummy_references()
   {
     Barrier     b;
+    Directory   d;
     Path        p;
     Semaphore   s;
   }

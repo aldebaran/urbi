@@ -65,6 +65,7 @@ namespace object
   FWD_DECL(Barrier);
   FWD_DECL(Code);
   FWD_DECL(Dictionary);
+  FWD_DECL(Directory);
   FWD_DECL(Event);
   FWD_DECL(Float);
   FWD_DECL(List);
