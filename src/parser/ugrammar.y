@@ -1152,12 +1152,14 @@ exp:
   {
     static ast::ParametricAst rewrite("%exp:1 .'[]'(%exps:2)");
     $$ = ast::exp(rewrite % $1 % $3);
+    $$->location_set(@$);
   }
 | exp "[" exps "]" "=" exp
   {
     static ast::ParametricAst rewrite("%exp:1 .'[]='(%exps:2)");
     $3->push_back($6);
     $$ = ast::exp(rewrite % $1 % $3);
+    $$->location_set(@$);
   }
 ;
 
