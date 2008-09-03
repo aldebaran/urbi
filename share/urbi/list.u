@@ -212,3 +212,9 @@ do List
     return true |
   }
 };
+
+
+function Object.each(f)
+{
+  asList.each(f)
+};
