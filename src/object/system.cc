@@ -13,6 +13,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/code.hh>
+#include <object/cxx-primitive.hh>
 #include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/list.hh>
@@ -23,8 +24,9 @@
 #include <parser/transform.hh>
 
 #include <runner/at-handler.hh>
-#include <runner/runner.hh>
+#include <runner/call.hh>
 #include <runner/interpreter.hh>
+#include <runner/runner.hh>
 
 #include <ast/nary.hh>
 #include <ast/routine.hh>
@@ -339,10 +341,41 @@ namespace object
 
 #undef SERVER_SET_VAR
 
+  static rObject system_getenv(rObject, const std::string& name)
+  {
+    char* res = getenv(name.c_str());
+    return res ? new String(res) : 0;
+  }
+
+  static rObject system_setenv(rObject, runner::Runner& r,
+                               const std::string& name, rObject value)
+  {
+    rString v = urbi_call(r, value, SYMBOL(asString))->as<String>();
+    setenv(name.c_str(), v->value_get().c_str(), 1);
+    return v;
+  }
+
+  static rObject system_unsetenv(rObject, const std::string& name)
+  {
+    rObject res = system_getenv(0, name);
+    unsetenv(name.c_str());
+    return res;
+  }
 
   void
   system_class_initialize ()
   {
+#define DECLARE(Name)                                                   \
+    system_class->slot_set                                              \
+      (SYMBOL(Name),                                                    \
+       make_primitive(&system_##Name, SYMBOL(Name)))                    \
+
+    DECLARE(getenv);
+    DECLARE(setenv);
+    DECLARE(unsetenv);
+
+#undef DECLARE
+
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(system, Name)
