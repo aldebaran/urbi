@@ -40,7 +40,6 @@
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
 # include <urbi/uconversion.hh>
-# include <urbi/uobject.hh>
 # include <urbi/utag.hh>
 
 /**
