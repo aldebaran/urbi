@@ -109,20 +109,6 @@ namespace object
   | Details |
   `--------*/
 
-#define OVERLOAD_TYPE(Name, Msg, T1, V1, T2, V2)                        \
-                                                                        \
-  static rObject Name(runner::Runner& r, object::objects_type args)     \
-  {                                                                     \
-    static rPrimitive v1 = make_primitive(V1, SYMBOL(Msg));             \
-    static rPrimitive v2 = make_primitive(V2, SYMBOL(Msg));             \
-                                                                        \
-    object::check_arg_count (2, args.size(), SYMBOL(Msg));              \
-    if (args[1]->is_a<T2>())                                            \
-      return (*v2)(r, args);                                            \
-    else                                                                \
-      return (*v1)(r, args);                                            \
-  }                                                                     \
-
   OVERLOAD_TYPE(init_bouncer, init,
                 Path,
                 (void (File::*)(rPath)) &File::init,

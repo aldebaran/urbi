@@ -214,31 +214,9 @@ namespace object
     return content_;
   }
 
-#define OVERLOAD_2(Name, Msg, N1, V1, N2, V2)                           \
-                                                                        \
-  static rObject Name(runner::Runner& r, object::objects_type args)     \
-  {                                                                     \
-    static rPrimitive v1 = make_primitive(V1, SYMBOL(Msg));             \
-    static rPrimitive v2 = make_primitive(V2, SYMBOL(Msg));             \
-                                                                        \
-    object::check_arg_count (N1, N2, args.size(), SYMBOL(Msg));         \
-    switch (args.size())                                                \
-    {                                                                   \
-      case N1:                                                          \
-        return (*v1)(r, args);                                          \
-        break;                                                          \
-      case N2:                                                          \
-        return (*v2)(r, args);                                          \
-        break;                                                          \
-      default:                                                          \
-        pabort("Unreachable");                                          \
-    }                                                                   \
-  }                                                                     \
-
   OVERLOAD_2(sub_bouncer, SBL_SBR,
              2,
              (std::string (String::*) (unsigned)) (&String::sub),
-             3,
              (std::string (String::*) (unsigned, unsigned)) (&String::sub)
     );
 
@@ -246,7 +224,6 @@ namespace object
              3,
              (std::string (String::*) (unsigned, const std::string&))
              (&String::sub_eq),
-             4,
              (std::string (String::*) (unsigned, unsigned, const std::string&))
              (&String::sub_eq)
     );
