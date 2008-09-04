@@ -1,5 +1,0 @@
-% Just ignore it, but swallow the argument to avoid
-% seeing it in the output (as is the case with the default
-% behavior).
-
-\newenvironment{multicols}[1]{}{}

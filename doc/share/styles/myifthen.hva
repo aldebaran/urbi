@@ -1,2 +1,0 @@
-\RequirePackage{ifthen}
-\newcommand{\ifthen}[2]{\ifthenelse{#1}{#2}{}}
