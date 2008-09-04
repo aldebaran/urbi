@@ -146,7 +146,7 @@ namespace urbi
       strcat(sendBuffer, ",");
     const char * separator = "<<";
     char tag[100];
-    if (mtag != 0 && strlen(mtag) != 0)
+    if (mtag && *mtag)
     {
       strcpy (tag, mtag);
       if (mmod != 0)
