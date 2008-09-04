@@ -179,6 +179,12 @@ namespace object
     return path_.basename();
   }
 
+  rPath Path::cd()
+  {
+    chdir(as_string().c_str());
+    return cwd();
+  }
+
   rPath Path::concat(rPath other)
   {
     return new Path(path_ / (*other).path_);
@@ -354,6 +360,7 @@ namespace object
     bind(SYMBOL(asPrintable), &Path::as_printable);
     bind(SYMBOL(asString), &Path::as_string);
     bind(SYMBOL(basename), &Path::basename);
+    bind(SYMBOL(cd), &Path::cd);
     bind(SYMBOL(cwd), &Path::cwd);
     bind(SYMBOL(dirname), &Path::dirname);
     bind(SYMBOL(exists), &Path::exists);
