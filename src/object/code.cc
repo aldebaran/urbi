@@ -116,7 +116,7 @@ namespace object
   std::ostream& Code::special_slots_dump(std::ostream& o,
                                          runner::Runner&) const
   {
-    o << "value: " << *ast_get() << libport::iendl;
+    o << "value = " << *ast_get() << libport::iendl;
     return o;
   }
 
