@@ -113,11 +113,10 @@ namespace object
       string_cast(*ast_->body_get()->body_get());
   }
 
-  std::ostream& Code::special_slots_dump(std::ostream& o,
-                                         runner::Runner&) const
+  std::ostream&
+  Code::special_slots_dump(std::ostream& o, runner::Runner&) const
   {
-    o << "value = " << *ast_get() << libport::iendl;
-    return o;
+    return o << "value = " << *ast_get() << libport::iendl;
   }
 
 
