@@ -326,9 +326,11 @@ namespace object
       return o << " <...>";
     ++current_depth;
     o << " {" << libport::incendl;
+    o << "/* Special slots */" << libport::iendl;
     protos_dump(o, runner);
     special_slots_dump (o, runner);
 
+    o << "/* Slots */" << libport::iendl;
     for (slots_implem::const_iterator slot = slots_.begin(this);
          slot != slots_.end(this);
          ++slot)
