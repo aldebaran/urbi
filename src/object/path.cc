@@ -16,6 +16,7 @@
 
 namespace object
 {
+  using boost::format;
 
   /*------------.
   | C++ methods |
@@ -181,6 +182,10 @@ namespace object
 
   rPath Path::cd()
   {
+    if (!is_dir())
+      throw PrimitiveError
+        (SYMBOL(cd),
+         str(format("Not a directory: %s.") % path_.to_string()));
     chdir(as_string().c_str());
     return cwd();
   }
@@ -203,7 +208,7 @@ namespace object
       return new File(path_);
     throw PrimitiveError
       (SYMBOL(open),
-       str(boost::format("Unsupported file type: '%s'.") % path_));
+       str(format("Unsupported file type: '%s'.") % path_));
   }
 
   // Conversions
@@ -215,7 +220,7 @@ namespace object
 
   std::string Path::as_printable()
   {
-    return str(boost::format("\"%s\"") % as_string());
+    return str(format("\"%s\"") % as_string());
   }
 
   rList Path::as_list()
@@ -249,7 +254,7 @@ namespace object
         // Theoretically impossible, since O_LARGEFILE is always used
         throw PrimitiveError
           (msg,
-           str(boost::format("Unhandled error: file too big: %s.") % path_));
+           str(format("Unhandled error: file too big: %s.") % path_));
       case EINTR:
         // Theoretically impossible.
         throw PrimitiveError
@@ -258,21 +263,21 @@ namespace object
       case ELOOP:
         throw PrimitiveError
           (msg,
-           str(boost::format("Too many symbolic link: '%s'.") % path_));
+           str(format("Too many symbolic link: '%s'.") % path_));
       case EMFILE:
         throw PrimitiveError
           (msg,
-           str(boost::format("The kernel has reached"
+           str(format("The kernel has reached"
                              " its maximum opened file limit: '%s'.") % path_));
       case ENAMETOOLONG:
         throw PrimitiveError
           (msg,
-           str(boost::format("File name too long: '%s'.") % path_));
+           str(format("File name too long: '%s'.") % path_));
 
       case ENFILE:
         throw PrimitiveError
           (msg,
-           str(boost::format("The system has reached"
+           str(format("The system has reached"
                              " its maximum opened file limit: '%s'.") % path_));
       case ENOMEM:
         // Out of memory.
@@ -280,7 +285,7 @@ namespace object
       case ENOSPC:
         throw PrimitiveError
           (msg,
-           str(boost::format("No space left on device: '%s'.") % path_));
+           str(format("No space left on device: '%s'.") % path_));
       default:
         // Nothing
         break;
@@ -293,13 +298,13 @@ namespace object
     {
       case EACCES:
         throw PrimitiveError
-          (msg, str(boost::format("Permission denied "
+          (msg, str(format("Permission denied "
                                   "for a parent directory: '%s'.")
                     % path_));
       case ENOENT:
       case ENOTDIR:
         throw PrimitiveError
-          (msg, str(boost::format("No such file or directory: '%s'.")
+          (msg, str(format("No such file or directory: '%s'.")
                     % path_));
       default:
         // Nothing
@@ -313,24 +318,24 @@ namespace object
     {
       case EEXIST:
         throw PrimitiveError
-          (msg, str(boost::format("File already exists: '%s'.")
+          (msg, str(format("File already exists: '%s'.")
                     % path_));
       case EISDIR:
         throw PrimitiveError
-          (msg, str(boost::format("File is a directory: '%s'.")
+          (msg, str(format("File is a directory: '%s'.")
                     % path_));
       case EROFS:
         throw PrimitiveError
-          (msg, str(boost::format("File is on a read only file-system: '%s'.")
+          (msg, str(format("File is on a read only file-system: '%s'.")
                     % path_));
       case ETXTBSY:
         throw PrimitiveError
-          (msg, str(boost::format("File is currently being executed: '%s'.")
+          (msg, str(format("File is currently being executed: '%s'.")
                     % path_));
       case ENODEV:
       case ENXIO:
         throw PrimitiveError
-          (msg, str(boost::format("File is an unopened FIFO "
+          (msg, str(format("File is an unopened FIFO "
                                   "or an orphaned device: '%s'.")
                     % path_));
       default:
@@ -343,7 +348,7 @@ namespace object
   {
     throw PrimitiveError
       (msg,
-       str(boost::format("Unhandled errno for stat(2): %i (%s).")
+       str(format("Unhandled errno for stat(2): %i (%s).")
            % errno
            % strerror(errno)));
   }
