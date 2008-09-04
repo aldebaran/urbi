@@ -78,17 +78,17 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
       /* Syntax error (unbalanced closers).  Return as if the sentence	\
 	 was correct.  The parser will report the error itself. */	\
       ECHO("Pre: Unexpected character: " << yytext);			\
-      return yy::parser::make_symbol<token::TOK_PRE_COMPLETE>(loc);     \
+      return yy::parser::make_PRE_COMPLETE(loc);                        \
     }									\
   }
 
-# define PRE_RETURN();                                                  \
-  if (!up)                                                              \
-  {                                                                     \
-    if (pre_closers.empty())                                            \
-      return yy::parser::make_symbol<token::TOK_PRE_COMPLETE>(loc);     \
-    else                                                                \
-      continue;                                                         \
+# define PRE_RETURN();                                  \
+  if (!up)                                              \
+  {                                                     \
+    if (pre_closers.empty())                            \
+      return yy::parser::make_PRE_COMPLETE(loc);        \
+    else                                                \
+      continue;                                         \
   }
 
 # define YY_USER_INIT							\
@@ -152,11 +152,11 @@ do {						\
 
 // Report an EOF error.  In that case, the prescanner must return
 // non-null, since null means there is not enough data.
-#define EOF_ERROR(Where)                                                \
-  do {                                                                  \
-    if (!up)                                                            \
-      return yy::parser::make_symbol<token::TOK_PRE_EOF>(loc);          \
-    ERROR("unexpected end of file in " + Where);                        \
+#define EOF_ERROR(Where)                                \
+  do {                                                  \
+    if (!up)                                            \
+      return yy::parser::make_PRE_EOF(loc);             \
+    ERROR("unexpected end of file in " + Where);        \
   } while(0)
 
 // Report the use of a reserved word.
@@ -164,10 +164,10 @@ do {						\
   ERROR("reserved symbol `" + yytext + "'")
 
 // Otherwise Flex returns an int instead of an enum.
-#define yyterminate()                                                   \
-  return (up                                                            \
-          ? yy::parser::make_symbol<token::TOK_EOF>(loc)                \
-          : yy::parser::make_symbol<token::TOK_PRE_WANTS_MORE>(loc));
+#define yyterminate()                                   \
+  return (up                                            \
+          ? yy::parser::make_EOF(loc)                   \
+          : yy::parser::make_PRE_WANTS_MORE(loc));
 
 
 // Extend the string value of valp.
@@ -189,17 +189,17 @@ do {						\
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
-#define RETURN(Symbol)                                          \
-  {                                                             \
-    PRE_SKIP();                                                 \
-    return yy::parser::make_symbol<token::TOK_ ## Symbol>(loc); \
+#define RETURN(Symbol)                          \
+  {                                             \
+    PRE_SKIP();                                 \
+    return yy::parser::make_ ## Symbol(loc);    \
   }
 
 
-#define RETURN_VALUE(Token, Value)                                      \
-  {                                                                     \
-    PRE_SKIP();                                                         \
-    return yy::parser::make_symbol<token::TOK_ ## Token> (Value, loc);  \
+#define RETURN_VALUE(Token, Value)                      \
+  {                                                     \
+    PRE_SKIP();                                         \
+    return yy::parser::make_ ## Token(Value, loc);      \
   }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
