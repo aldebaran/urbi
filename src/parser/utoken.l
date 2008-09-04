@@ -326,39 +326,72 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   /*-----------------------------------.
   | Internal rules for generated code. |
   `-----------------------------------*/
+
 ^"//#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
+
+  /* synclines are mainly made to get correct locations when loading a
+     file: save the current location before loading the file, then
+     restore it afterwards.
+
+     This is simple to implement using cpp like synclines: "//#line",
+     "//#push", and "//#pop".  The semantics of the first one is
+     simple: it contains the location of the *next* line.  The
+     semantics of //#push and //#pop is that the outer location is the
+     same as if everything was removed from the push to the pop (both
+     included).
+
+     But we have to display errors about //#pop.  What's its location?
+     It is chosen to the location of current location.  That's how the
+     LINES and STEP etc. were placed as they are in the
+     synclines-rules below.  */
+
   PRE_SKIP();
+
   yytext += strlen("//#");
   SKIP_SPACES();
-  bool push = yytext[0] == 'p';
-  yytext += 4; // line|push.
 
-  ++yytext;
+  // line|push.
+  if (yytext[0] == 'p')
+  {
+    // When pushing, store the location that *precedes* this request,
+    // that of the starting cursor.
+    loc.end = loc.begin;
+    up->synclines_.push(loc);
+  }
+  yytext += 4;
+
   SKIP_SPACES();
   char* line = yytext;
   yytext += strspn(yytext, "0123456789");
   *yytext = 0;
   ++yytext;
 
-  char* file = strchr (yytext, '"');
+  char* file = strchr(yytext, '"');
   if (file)
   {
     ++file;
-    *strchr (file, '"') = 0;
+    // FIXME: We do not support " in file names, nor quotes.
+    *strchr(file, '"') = 0;
   }
-
-  if (push)
-    up->synclines_.push(loc);
 
   loc.initialize(!file || STREQ(file, "-") ? 0 : new libport::Symbol(file));
   loc.lines (lexical_cast<int>(*up, loc, line) - 1);
-  STEP();
+  loc.step();
 }
 
 ^"//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
   PRE_SKIP();
-  loc = up->synclines_.top();
-  up->synclines_.pop();
+  if (up->synclines_.empty())
+  {
+    ERROR("too many //#pop");
+    LINES(1);
+    STEP();
+  }
+  else
+  {
+    loc = up->synclines_.top();
+    up->synclines_.pop();
+  }
 }
 
   /*--------------------------------------------------------------.
