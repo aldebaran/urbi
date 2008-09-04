@@ -61,6 +61,7 @@ namespace object
   private:
     value_type path_;
 
+    void handle_any_error(const libport::Symbol& msg)  __attribute__ ((noreturn));
     // Handle EBADF, EFAULT, ELOOP, ENAMETOOLONG, ENOMEM
     void handle_hard_error(const libport::Symbol& msg);
     // Handle EACCES, ENOENT, ENOTDIR

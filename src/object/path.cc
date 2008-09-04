@@ -182,11 +182,8 @@ namespace object
 
   rPath Path::cd()
   {
-    if (!is_dir())
-      throw PrimitiveError
-        (SYMBOL(cd),
-         str(format("Not a directory: %s.") % path_.to_string()));
-    chdir(as_string().c_str());
+    if (chdir(as_string().c_str()))
+      handle_any_error(SYMBOL(cd));
     return cwd();
   }
 
@@ -235,6 +232,14 @@ namespace object
   /*--------.
   | Details |
   `--------*/
+
+  void Path::handle_any_error(const libport::Symbol& msg)
+  {
+    handle_hard_error(msg);
+    handle_access_error(msg);
+    handle_perm_error(msg);
+    unhandled_error(msg);
+  }
 
   void Path::handle_hard_error(const libport::Symbol& msg)
   {
@@ -302,9 +307,12 @@ namespace object
                                   "for a parent directory: '%s'.")
                     % path_));
       case ENOENT:
-      case ENOTDIR:
         throw PrimitiveError
           (msg, str(format("No such file or directory: '%s'.")
+                    % path_));
+      case ENOTDIR:
+        throw PrimitiveError
+          (msg, str(format("One component is not a directory: '%s'.")
                     % path_));
       default:
         // Nothing
