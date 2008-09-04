@@ -205,7 +205,7 @@ namespace object
       return new File(path_);
     throw PrimitiveError
       (SYMBOL(open),
-       str(format("Unsupported file type: '%s'.") % path_));
+       str(format("Unsupported file type: %s.") % path_));
   }
 
   // Conversions
@@ -268,29 +268,29 @@ namespace object
       case ELOOP:
         throw PrimitiveError
           (msg,
-           str(format("Too many symbolic link: '%s'.") % path_));
+           str(format("Too many symbolic link: %s.") % path_));
       case EMFILE:
         throw PrimitiveError
           (msg,
            str(format("The kernel has reached"
-                             " its maximum opened file limit: '%s'.") % path_));
+                             " its maximum opened file limit: %s.") % path_));
       case ENAMETOOLONG:
         throw PrimitiveError
           (msg,
-           str(format("File name too long: '%s'.") % path_));
+           str(format("File name too long: %s.") % path_));
 
       case ENFILE:
         throw PrimitiveError
           (msg,
            str(format("The system has reached"
-                             " its maximum opened file limit: '%s'.") % path_));
+                             " its maximum opened file limit: %s.") % path_));
       case ENOMEM:
         // Out of memory.
         throw std::bad_alloc();
       case ENOSPC:
         throw PrimitiveError
           (msg,
-           str(format("No space left on device: '%s'.") % path_));
+           str(format("No space left on device: %s.") % path_));
       default:
         // Nothing
         break;
@@ -304,15 +304,15 @@ namespace object
       case EACCES:
         throw PrimitiveError
           (msg, str(format("Permission denied "
-                                  "for a parent directory: '%s'.")
+                                  "for a parent directory: %s.")
                     % path_));
       case ENOENT:
         throw PrimitiveError
-          (msg, str(format("No such file or directory: '%s'.")
+          (msg, str(format("No such file or directory: %s.")
                     % path_));
       case ENOTDIR:
         throw PrimitiveError
-          (msg, str(format("One component is not a directory: '%s'.")
+          (msg, str(format("One component is not a directory: %s.")
                     % path_));
       default:
         // Nothing
@@ -326,25 +326,25 @@ namespace object
     {
       case EEXIST:
         throw PrimitiveError
-          (msg, str(format("File already exists: '%s'.")
+          (msg, str(format("File already exists: %s.")
                     % path_));
       case EISDIR:
         throw PrimitiveError
-          (msg, str(format("File is a directory: '%s'.")
+          (msg, str(format("File is a directory: %s.")
                     % path_));
       case EROFS:
         throw PrimitiveError
-          (msg, str(format("File is on a read only file-system: '%s'.")
+          (msg, str(format("File is on a read only file-system: %s.")
                     % path_));
       case ETXTBSY:
         throw PrimitiveError
-          (msg, str(format("File is currently being executed: '%s'.")
+          (msg, str(format("File is currently being executed: %s.")
                     % path_));
       case ENODEV:
       case ENXIO:
         throw PrimitiveError
           (msg, str(format("File is an unopened FIFO "
-                                  "or an orphaned device: '%s'.")
+                                  "or an orphaned device: %s.")
                     % path_));
       default:
         // Nothing
