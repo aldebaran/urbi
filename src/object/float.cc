@@ -278,6 +278,22 @@ BOUNCE_INT_OP(~)
     return this;
   }
 
+  /*--------.
+  | Details |
+  `--------*/
+
+  std::ostream& Float::special_slots_dump(std::ostream& o,
+                                          runner::Runner&) const
+  {
+    o << "value = " << value_ << libport::iendl;
+    return o;
+  }
+
+
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   void
   Float::initialize(CxxObject::Binder<Float>& bind)
   {

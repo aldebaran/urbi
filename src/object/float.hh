@@ -17,13 +17,14 @@ namespace object
 
   class Float: public CxxObject
   {
+
+  /*------------.
+  | C++ methods |
+  `------------*/
+
   public:
+
     typedef libport::ufloat value_type;
-
-    Float();
-    Float(value_type value_);
-    Float(const rFloat& model);
-
     value_type& value_get();
     const value_type&  value_get() const;
     int to_int(const libport::Symbol func) const;
@@ -31,7 +32,23 @@ namespace object
      (const libport::Symbol func,
       const std::string fmt = "expected non-negative integer, got %1%") const;
 
-    // Urbi methods
+    virtual
+    std::ostream& special_slots_dump(std::ostream& o,
+                                     runner::Runner&) const;
+
+
+  /*-------------.
+  | Urbi methods |
+  `-------------*/
+
+  public:
+
+    // Construction
+
+    Float();
+    Float(value_type value_);
+    Float(const rFloat& model);
+
     value_type acos();
     value_type asin();
     value_type atan();
@@ -62,19 +79,38 @@ namespace object
     value_type tan();
     value_type trunc();
 
-    // Urbi functions
+
+  /*---------------.
+  | Urbi functions |
+  `---------------*/
+
+  public:
+
     static std::string as_string(const rObject& from);
     static value_type inf();
     static value_type nan();
 
-    // Binding mechanisms
+
+  /*--------.
+  | Details |
+  `--------*/
+
+  private:
+
+    value_type value_;
+
+
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
+  public:
+
     static void initialize(CxxObject::Binder<Float>& binder);
     static const std::string type_name;
     static bool float_added;
     virtual std::string type_name_get() const;
 
-  private:
-    value_type value_;
   };
 
 } // namespace object
