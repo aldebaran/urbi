@@ -109,7 +109,7 @@ namespace binder
   {
     static ast::ParametricAst document
       ("{"
-       "  %exp:1 . setVoidSlot(%exp:2) | "
+       "  %exp:1 . createSlot(%exp:2) | "
        "  %exp:3 . setProperty(%exp:4, %exp:5, %exp:6) |"
        "  %exp:7"
        "}");
@@ -180,7 +180,7 @@ namespace binder
       }
       else
         result_ = changeSlot(loc, call->target_get(), name,
-                             SYMBOL(setVoidSlot));
+                             SYMBOL(createSlot));
     else
     {
       // Check this is not a redefinition
