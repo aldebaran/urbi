@@ -179,8 +179,10 @@ This document is divided in four chapters:
 \section{Console server}
 \section{\umake}
 
+\FloatBarrier
 \chapter{\us language specifications}
 
+\FloatBarrier
 \section{Syntax}
 \subsection{Comments}
 
@@ -848,6 +850,7 @@ precedence.
 \end{table}
 \FloatBarrier
 
+\FloatBarrier
 \section{Scopes and local variables}
 
 \subsection{Scopes}
@@ -939,6 +942,7 @@ case references refer to the innermost variable, as shown in
   [00000000] *** 1
 \end{lstlisting}
 
+\FloatBarrier
 \section{Functions}
 
 \subsection{Functions creation}
@@ -1126,11 +1130,233 @@ escape their declaration scope by lexical closure.
   [00000000] *** ping
 \end{lstlisting}
 
+\FloatBarrier
 \section{Objects}
+
+Any value in \us is an object. Objects contain:
+
+\begin{itemize}
+\item A list of prototypes, which are also objects.
+\item A list of slots, which to a name associate an object.
+\end{itemize}
+
+\subsection{Slots}
+
+\subsubsection{Manipulation}
+
+Objects can contain any number of slots, every slot has a name and a
+value. They are often call ``fields'' or ``members'' in other object
+oriented language.
+
+The \lstinline|createSlot| is used to add a slot to an object with the
+void (\sect{std-void}) value. The \lstinline|updateSlot| can be later
+used to change the value of the slot, while the \lstinline|getSlot|
+method can be used to read it. The \lstinline|setSlot| method can be
+used to create a slot with a given value instead of void. Finally, the
+\lstinline|slotNames| method can be used to get the list of the object
+slot's name. \lst{slots} shows how to manipulate slots. More
+documentation about these method can be found in \sect{std-object}.
+
+\begin{lstlisting}[caption=Manipulating slots, label=lst:slots,
+  float=\floatpos]
+  var o = Object.new;
+  o.slotNames;
+  [00000000] []
+  o.createSlot("test");
+  [00000000] ["test"]
+  o.slotNames;
+  [00000000] ["test"]
+  o.getSlot("test").asString;
+  [00000000] "void"
+  o.updateSlot("test", 42);
+  [00000000] 42
+  o.getSlot("test");
+  [00000000] 42
+\end{lstlisting}
+
+\subsubsection{Sugars}
+
+Several sugars exist to ease the use of slot methods:
+
+\begin{itemize}
+\item \lstinline|var o.name| is equivalent to
+  \lstinline|o.createSlot("name")|.
+\item \lstinline|var o.name = value| is equivalent to
+  \lstinline|o.setSlot("name", value)|.
+\item \lstinline|o.name = value| is equivalent to
+  \lstinline|o.updateSlot("name", value)|.
+\item \lstinline|delete o.name| is equivalent to
+  \lstinline|o.removeSlot("name")|.
+\end{itemize}
+
+
+\subsection{Prototypes}
+
+\subsubsection{Manipulation}
+
+\us is a prototype-based language, unlike most classical object
+oriented language, which are class-based. In prototype-based
+languages, objects have no type, only prototypes, from which they
+inherits behavior.
+
+In \us, an object can have several prototypes. The list of prototypes
+can be read with the \lstinline|protos| method. Prototypes can be add
+or removed with the \lstinline|addProto| and \lstinline|removeProto|
+methods respectively, as illustrated by \lst{prototypes}. More
+documentation about these methods can be found in \sect{std-object}.
+
+\begin{lstlisting}[caption=Manipulating prototypes, label=lst:prototypes,
+  float=\floatpos]
+  var o = Object.new;
+  o.protos;
+  [00000000] [<Object>]
+  o.addProto(Pair);
+  o.protos;
+  [00000000] [<Object>, <Pair>]
+  o.removeProto(Object);
+  o.protos;
+  [00000000] [<Pair>]
+\end{lstlisting}
+
+\subsubsection{Inheritance}
+
+Objects inherit their prototypes' slots: \lstinline|getSlot| will also
+look in an object prototypes' slots. \lstinline|getSlot| performs a
+depth-first traversal of the prototypes hierarchy to find slots. That
+is, when looking for a slot in an object:
+
+\begin{itemize}
+\item \lstinline|getSlot| checks first if the object itself has the
+  requested slot. If so, it returns its value.
+\item Otherwise, it applies the same research on every prototype, in
+  the order of the prototype list (since addProto inserts in the front
+  of the prototype list, the last prototype added has priority). This
+  search is recursive: \lstinline|getSlot| will also look in the first
+  prototype's prototype, etc before looking in the second
+  prototype. If the slot is found in a prototype, it is returned.
+\item Finally, if no prototype had the slot, an error is raised.
+\end{itemize}
+
+\lst{inheritance} shows how slots are inherited.
+
+\begin{lstlisting}[caption=Slots inheritance, label=lst:inheritance,
+  float=\floatpos]
+  var a = Object.new;
+  var b = Object.new;
+  var c = Object.new;
+  a.setSlot("x", "slot in a");
+  b.setSlot("x", "slot in b");
+  // c has no "x" slot
+  c.getSlot("x");
+  [00000000:error] !!! lookup failed: x
+  // c can inherit the "x" slot from a
+  c.addProto(a);
+  c.getSlot("x");
+  [00000000] "slot in a"
+  // b is prepended to the prototype list, and has thus priority
+  c.addProto(b);
+  c.getSlot("x");
+  [00000000] "slot in b"
+  // a local slot in c has priority over prototypes
+  c.setSlot("x", "slot in c");
+  c.getSlot("x");
+  [00000000] "slot in c"
+\end{lstlisting}
+
+\subsubsection{Copy on write}
+
+The \lstinline|updateSlot| method has a particular behavior with
+respect to prototypes. Although performing an \lstinline|updateSlot|
+on a non existent slot is an error, it is valid if the slot is
+inherited from a prototype. In this case, the slot is however not
+updated in the prototype, but rather created in the object itself,
+with the new value. This process is called {\em copy on write}; thanks
+to it, prototypes are not altered when the slot is overridden in a
+child object (see \lst{copy-on-write}).
+
+\begin{lstlisting}[caption=Copy on write, label=lst:copy-on-write,
+  float=\floatpos]
+  var p = Object.new;
+  var p.slot = 0;
+  var c = Object.new;
+  c.addProto(p);
+  c.slot;
+  [00000000] 0
+  c.slot = 1;
+  [00000000] 1
+  // p's slot was not altered
+  p.slot;
+  [00000000] 0
+  // It was copied in c
+  c.slot;
+  [00000000] 1
+\end{lstlisting}
+
+\subsection{Sending messages}
+
+A message in \us consists in a message name and arguments. One can
+send a message to an object with the dot (\lstinline|.|) operator,
+followed by the message name (which can be any valid identifier) and
+the arguments, as shown in \lst{messages}. When there are no
+arguments, the empty parentheses can be omitted. As you might see,
+sending messages is very similar to calling methods in classical
+languages.
+
+\begin{lstlisting}[caption=Sending messages, label=lst:messages,
+  float=\floatpos]
+  // Send the message msg to object obj, with arguments arg1 and arg2
+  obj.msg(arg1, arg2);
+  // Send the message msg to object obj, with no arguments
+  obj.msg();
+  // This is strictly equivalent
+  obj.msg;
+\end{lstlisting}
+
+When a message ``msg'' is sent to object \lstinline|obj|:
+
+\begin{itemize}
+\item The ``msg'' slot of \lstinline|obj| is retrieved (i.e.,
+  \lstinline|obj.getSlot("msg")|). If the slot is not found, the
+  classic lookup error is raised.
+\item If the object is not a \lstinline|Routine| (\sect{fixme}), it's
+  the result of the message sending. In this case, there must be no
+  argument, otherwise an error is raised.
+\item If the object is a \lstinline|Routine|, it is invoked with the
+  message sending arguments, and the returned value is the result. As
+  a consequence, the number of arguments in the message sending must
+  match the one required by the \lstinline|Routine|.
+\end{itemize}
+
+Such message sending is illustrated by \lst{send-message}.
+
+\begin{lstlisting}[caption=Sending messages, label=lst:send-message,
+  float=\floatpos]
+  var obj = Object.new;
+  var obj.a = 42;
+  var obj.b = function (x) { x + 1 };
+  obj.a;
+  [00000000] 42
+  obj.a();
+  [00000000] 42
+  obj.a(50);
+  [00000000:error] !!! a: expected 0 arguments, given 1
+  obj.b;
+  [00000000:error] !!! b: expected 1 arguments, given 0
+  obj.b();
+  [00000000:error] !!! b: expected 1 arguments, given 0
+  obj.b(50);
+  [00000000] 51
+\end{lstlisting}
+
+\FloatBarrier
 \section{Flow control}
+\FloatBarrier
 \section{Parallelism}
+\FloatBarrier
 \section{Events}
+\FloatBarrier
 \section{Pattern matching}
+\FloatBarrier
 \section{Trajectories}
 
 \chapter{\us standard library specifications}
@@ -1249,6 +1475,22 @@ and call messages. See example with call messages in
 
 \section{Lobby}
 \section{Object}
+\label{sect:std-object}
+
+\subsection{Methods}
+
+\subsubsection{createSlot}
+\label{sect:std-object-createslot}
+
+\subsubsection{getSlot}
+\label{sect:std-object-getslot}
+
+\subsubsection{setSlot}
+\label{sect:std-object-setslot}
+
+\subsubsection{updateSlot}
+\label{sect:std-object-updateslot}
+
 \section{Orderable}
 \label{sect:std-orderable}
 \section{Pattern}
@@ -1274,3 +1516,4 @@ and call messages. See example with call messages in
 % LocalWords:  elt baz quux FIXME getslot lookup protos proto addProto asString
 % LocalWords:  removeProto locateSlot locateslot lhs evalArgAt evalArgs ary
 % LocalWords:  mytag timeOut myEvent Tuple redefinable CallMessage memoization
+% LocalWords:  prepended
