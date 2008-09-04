@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include <boost/format.hpp>
 
 #include <fstream>
@@ -65,16 +67,14 @@ namespace object
     std::ifstream s(path_->as_string().c_str());
     List::value_type res;
 
-    const int size = 512;
-    char buf[513];
+    char buf[BUFSIZ + 1];
     std::string line;
 
     // Split in lines, 'Back in the stone age' version.
     while (!s.eof())
     {
-      s.read(buf, size);
-      int n = s.gcount();
-      buf[n] = 0;
+      s.read(buf, sizeof buf - 1);
+      buf[s.gcount()] = 0;
       char* str = buf;
       while (char* cut = strstr(str, "\n"))
       {
@@ -93,8 +93,6 @@ namespace object
 
     return new List(res);
   }
-
-
 
   std::string File::as_string()
   {
