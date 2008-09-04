@@ -1,5 +1,6 @@
-include share/make/share.mk
-include share/make/tex.mk
+share_dir=document-aux
+include document-aux/make/share.mk
+include document-aux/make/tex.mk
 
 PDFS = urbi-specs.pdf
 CLEANFILES += ${PDFS}
