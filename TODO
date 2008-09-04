@@ -1,0 +1,9 @@
+* Factor ast::Decrement and Increment
+
+* Test (from Tsuna)
+Pour k2: http://code.google.com/p/googletest/ (announcement:
+http://googletesting.blogspot.com/2008/07/announcing-new-google-c-testing.html
+doc: http://code.google.com/p/googletest/w/list ) et "gmock" (qui sera
+releasé sous le nom de Google C++ Mocking Library ou un truc du genre
+aka googlemock) sera releasé bientôt (je pensais que c'était déjà fait
+mais en fait c'est en cours de faisage).
