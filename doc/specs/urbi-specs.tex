@@ -14,6 +14,7 @@
 \usepackage{mylistings}
 \usepackage{placeins}
 \usepackage{supertabular}
+\usepackage{texi}
 \usepackage{xspace}
 
 % SHORTHANDS
@@ -77,6 +78,8 @@
   frame=single,
   basicstyle=\ttfamily\footnotesize,
   showstringspaces=false,
+%  moredelim=[is][]{`}{`},
+%  breaklines,
 }
 
 % COMMANDS
@@ -243,7 +246,7 @@ any characters, as in \lst{escape-identifiers}.
 \begin{lstlisting}[caption=Escaping identifiers with simple quotes,
   label=lst:escape-identifiers,float=\floatpos]
   // Identifiers can be escaped with simple quotes
-  var '#x';
+  var '%x';
   var '1 2 3';
   obj.'[]';
 \end{lstlisting}
@@ -1352,14 +1355,252 @@ Such message sending is illustrated by \lst{send-message}.
 \section{Imperative flow control}
 
 \subsection{break}
+
+When encountered within a \lstinline|for| or a \lstinline|while| loop,
+\lstinline|break| makes execution jump after the loop. See
+\lst{break}.
+
+\begin{lstlisting}[caption=Using break, label=lst:break,
+  float=\floatpos]
+  var i = 5;
+  for (; true; echo(i))
+  {
+    if (i > 8)
+      break;
+    i++;
+  }
+  [00000000] *** 6
+  [00000000] *** 7
+  [00000000] *** 8
+  [00000000] *** 9
+\end{lstlisting}
+
 \subsection{continue}
+
+When encountered within a \lstinline|for| or a \lstinline|while| loop,
+\lstinline|break| makes execution jump at the loop's body end. See
+\lst{continue}.
+
+\begin{lstlisting}[caption=Using continue, label=lst:continue,
+  float=\floatpos]
+  for (var i = 0; i < 8; i++)
+  {
+    if (i % 2 != 0)
+      continue;
+    echo(i);
+  }
+  [00000000] *** 0
+  [00000000] *** 2
+  [00000000] *** 4
+  [00000000] *** 6
+\end{lstlisting}
+
 \subsection{do}
-\subsection{for (;;)}
-\subsection{for (:)}
-\subsection{for (n)}
+
+The \lstinline|do| construct enables do evaluate an expression with a
+different ``\lstinline|this|''.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  do target
+  {
+    body
+  }
+\end{lstlisting}
+
+It evaluates \lstinline|body|, with \lstinline|this| being
+\lstinline|target|, as shown in \lst{do}.  The \lstinline|do| itself
+evaluates to \lstinline|body|.
+
+\begin{lstlisting}[caption=Using \lstinline|do|, label=lst:do,
+  float=\floatpos]
+  var x = 42;
+  do x
+  {
+    echo(this);
+    echo(sqrt);
+    setSlot("y", 0);
+    42;
+  };
+  [00000000] 42
+\end{lstlisting}
+
+\subsection{for}
+
+\us support the classical \C-like \lstinline|for| construct.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  for (initialization; condition; increment)
+    body;
+\end{lstlisting}
+
+It has the exact same behavior as \C's \lstinline|for|:
+
+\begin{enumerate}
+\item The \lstinline|initialization| is evaluated.
+\item The \lstinline|condition| is evaluated. If the result is false,
+  executions jumps after the \lstinline|for|.
+\item The \lstinline|body| is evaluated. If \lstinline|continue| is
+  encountered, execution jumps to point 4. If \lstinline|break| is
+  encountered, executions jumps after the \lstinline|for|.
+\item The \lstinline|increment| is evaluated.
+\item Execution jumps to point 2.
+\end{enumerate}
+
+\subsection{for in}
+
+\us support iteration over a collection with another form of the
+\lstinline|for| loop.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  for (var name in collection)
+    action;
+\end{lstlisting}
+
+It evaluates \lstinline|action| for each element in
+\lstinline|collection|. Inside \lstinline|action|, the current element
+is accessible via the \lstinline|name| local variable. \lst{foreach}
+illustrates this.
+
+
+\begin{lstlisting}[caption=Iterating over a collection with for, label=lst:foreach,
+  float=\floatpos]
+  for (var x in [0, 1, 2, 3, 4])
+    echo(0.sqr);
+  [00000000] *** 0
+  [00000000] *** 1
+  [00000000] *** 4
+  [00000000] *** 9
+  [00000000] *** 16
+\end{lstlisting}
+
+This form of \lstinline|for| simply sends the ``each'' message to
+\lstinline|collection| with one argument: the function that takes the
+current element and performs \lstinline|action| over it. Thus, you can
+make any object acceptable in a \lstinline|for| by defining an
+adequate \lstinline|each| method.
+
+\begin{lstlisting}
+  var Hobbits = Object.new;
+  function Hobbits.each (action)
+  {
+    action("Frodo");
+    action("Merry");
+    action("Pippin");
+    action("Sam");
+  };
+
+  for (var name in Hobbits)
+    echo("%s is a hobbit." % name);
+  [00000000] Frodo is a hobbit
+  [00000000] Merry is a hobbit
+  [00000000] Pipin is a hobbit
+  [00000000] Sam is a hobbit
+  // This for statement is equivalent to:
+  Hobbits.each(function (name) { echo("%s is a hobbit." % name) });
+\end{lstlisting}
+
 \subsection{if}
+
+\us support classical \lstinline|if| construct.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  if (condition)
+    action;
+
+  if (condition)
+    action
+  else
+    otherwise;
+\end{lstlisting}
+
+If the \lstinline|condition| evaluation is true, \lstinline|action| is
+evaluated. Otherwise, in the latter version, \lstinline|otherwise| is
+executed.
+
 \subsection{switch}
+
+The \lstinline|switch| statement in \us is similiar to \C's one.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  switch (value)
+  {
+    case value_one:
+      action_one;
+    case value_two:
+      action_two;
+  //case ...:
+  //  ...
+    default:
+      default_action;
+  };
+\end{lstlisting}
+
+It might contain an arbitrary number of cases, and optionally a
+default case. The \lstinline|value| is evaluated first, and then the
+result is compared sequentially with the evaluation of all cases
+values, with the \lstinline|==| operator, until one comparison is
+true. If such a match is found, the corresponding action is executed,
+and execution jumps after the \lstinline|switch|. Otherwise, the
+default case - if any - is executed, and execution jumps after the
+switch. The switch itself evaluates to case that was evaluated, or to
+void if no match was found and there's no default case. \lst{switch}
+illustrates \lstinline|switch| usage.
+
+Note that, unlike in \C, no \lstinline|break| are required inside the
+\lstinline|switch|: execution will never span over several cases. Also
+note that, since the comparison is done with the generic '=='
+operator, switch can be performed on any comparable data type, unlike
+in \C where it need be integral.
+
+\begin{lstlisting}[caption=The \lstinline|switch| construct,
+  label=lst:switch, float=\floatpos]
+  function sw(v)
+  {
+    switch (v)
+    {
+      case "":
+        echo("Empty string");
+      case "foo":
+        "bar";
+      default:
+        v[0];
+    }
+  };
+  sw("");
+  [00000000] *** Empty string
+  sw("foo");
+  [00000000] "bar"
+  sw("foobar");
+  [00000000] "f"
+\end{lstlisting}
+
 \subsection{while}
+
+The \lstinline|while| loop is similar to \C's one.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  while (condition)
+    body;
+\end{lstlisting}
+
+If \lstinline|condition| evaluation, is true, \lstinline|body| is
+evaluated and execution jumps before the \lstinline|while|, otherwise execution
+jumps after the \lstinline|while|. See \lst{while}.
+
+\begin{lstlisting}[caption=The \lstinline|while| construct, label=lst:while,
+  float=\floatpos]
+  var i = 5;
+  while (i > 0)
+  {
+    echo(i);
+    i--;
+  };
+  [00000000] *** 5
+  [00000000] *** 4
+  [00000000] *** 3
+  [00000000] *** 2
+  [00000000] *** 1
+\end{lstlisting}
 
 \FloatBarrier
 \section{Parallel and event-based flow control}
