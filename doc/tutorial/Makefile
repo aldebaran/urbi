@@ -3,6 +3,8 @@ include document-aux/make/share.mk
 include document-aux/make/tex.mk
 
 PDFS = urbi-tutorial.pdf
-CLEANFILES += ${PDFS}
+CLEANFILES += $(PDFS)
 
-all: ${PDFS}
+all: $(PDFS)
+view: $(PDFS)
+	xpdf $<

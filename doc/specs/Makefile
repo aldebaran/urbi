@@ -3,8 +3,11 @@ include document-aux/make/share.mk
 include document-aux/make/tex.mk
 
 PDFS = urbi-specs.pdf
-CLEANFILES += ${PDFS}
+CLEANFILES += $(PDFS)
 
-all: ${PDFS}
+all: $(PDFS)
+
+view: $(PDFS)
+	xpdf $<
 
 urbi-specs.pdf: float.tex list.tex
