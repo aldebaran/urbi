@@ -15,7 +15,6 @@ ENABLE_HARD_ERRORS = false
 
 # pending features
 TFAIL_TESTS +=					\
-2.x/onevent.chk					\
 2.x/string/escape.chk
 
 # test we don't want to care about temporarily
