@@ -2,7 +2,7 @@
   /// \file parser/utoken.l
   /// \brief The scanner.
 
-  // Unforunately the file libport/compiler.hh is included before, and
+  // Unfortunately the file libport/compiler.hh is included before, and
   // it is useless to define ENABLE_DEBUG_TRACES here as the guards
   // avoid the redefinition.  Use LIBPORT_ECHO instead of ECHO.
   // #define ENABLE_DEBUG_TRACES

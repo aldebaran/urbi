@@ -42,7 +42,7 @@ cd bison
 cd ..
 
 AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
-TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
+TC_PROG([flex],  [>= 2.5.33], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
 TC_CXX_WARNINGS([[-Wcast-align],
