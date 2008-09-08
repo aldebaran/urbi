@@ -86,6 +86,11 @@ namespace object
     return new List(res);
   }
 
+
+  /*--------.
+  | Details |
+  `--------*/
+
   namespace details
   {
     rObject mk_string(Directory&, const std::string&);
@@ -103,10 +108,6 @@ namespace object
       return new Path(d.value_get()->value_get() / entry);
     }
   }
-
-  /*--------.
-  | Details |
-  `--------*/
 
 
   /*---------------.
