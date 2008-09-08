@@ -98,8 +98,9 @@ BOOST_REQUIRE([1.35])
 URBI_OPENR
 URBI_LIBPORT
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
-BOOST_TOKENIZER
+BOOST_FILESYSTEM
 BOOST_REGEX
+BOOST_TOKENIZER
 
 
 ## ------ ##

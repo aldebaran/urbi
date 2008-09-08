@@ -1,6 +1,4 @@
-#include <dirent.h>
-#include <sys/types.h>
-
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include <object/directory.hh>
@@ -70,18 +68,14 @@ namespace object
   template <rObject (*F) (Directory& d, const std::string& entry)>
   rList Directory::list()
   {
+    using boost::filesystem::directory_iterator;
     List::value_type res;
 
-    DIR* dir = opendir(as_string().c_str());
-    // FIXME: check errors!
-    while (dirent* entry = readdir(dir))
-    {
-      std::string name = entry->d_name;
-      if (name == "." || name == "..")
-        continue;
-      res << F(*this, name);
-    }
-    closedir(dir);
+    directory_iterator end;
+    for (directory_iterator it (path_->value_get().to_string());
+         it != end;
+         ++it)
+      res << F(*this, it->path().string());
 
     return new List(res);
   }

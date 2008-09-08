@@ -92,12 +92,15 @@ bin_PROGRAMS += urbi-console
 if !WIN32
 bin_PROGRAMS += ast-dump
 ast_dump_SOURCES = ast-dump.cc ast/dot-printer.cc
-ast_dump_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS) \
-        $(BOOST_REGEX_LDFLAGS) $(BOOST_REGEX_LIBS)
+ast_dump_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS)	\
+        $(BOOST_REGEX_LDFLAGS) $(BOOST_REGEX_LIBS)		\
+	$(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_FILESYSTEM_LIBS)
 endif
 
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS)
+urbi_console_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS)	\
+	$(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_FILESYSTEM_LIBS)
+
 
 dist_libuobject_la_SOURCES +=			\
 console-server.cc				\
