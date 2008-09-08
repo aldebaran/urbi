@@ -88,6 +88,9 @@ namespace object
 
   namespace details
   {
+    rObject mk_string(Directory&, const std::string&);
+    rObject mk_path(Directory&, const std::string&);
+
     rObject
     mk_string(Directory&, const std::string& entry)
     {
