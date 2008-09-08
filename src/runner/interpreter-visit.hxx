@@ -319,6 +319,26 @@ namespace runner
 	catch (object::UrbiException& ue)
 	{
           propagate_error_(ue, c->location_get());
+	  // If the Nary is not the toplevel one, all subrunners must be finished when
+	  // the runner exits the Nary node. However, it we have a scopeTag, we must
+	  // issue a "stop" which may interrupt subrunners.
+#define CLEANUP								\
+	  if (!e->toplevel_get() && !runners.empty())			\
+	  {								\
+	    const scheduler::rTag& tag = scope_tag_get();		\
+	    if (tag)							\
+	      tag->stop(scheduler_get(), object::void_class);		\
+	    yield_until_terminated(runners);				\
+	  }
+
+	  // Kill subrunners if not at top-level
+	  if (!e->toplevel_get())
+	  {
+	    foreach(scheduler::rJob& job, runners)
+	      job->terminate_now();
+	  }
+	  CLEANUP
+
 	  if (e->toplevel_get())
 	    show_error_(ue);
 	  else
@@ -327,16 +347,8 @@ namespace runner
       }
     }
 
-    // If the Nary is not the toplevel one, all subrunners must be finished when
-    // the runner exits the Nary node. However, it we have a scopeTag, we must
-    // issue a "stop" which may interrupt subrunners.
-    if (!e->toplevel_get() && !runners.empty())
-    {
-      const scheduler::rTag& tag = scope_tag_get();
-      if (tag)
-	tag->stop(scheduler_get(), object::void_class);
-      yield_until_terminated(runners);
-    }
+    CLEANUP
+#undef CLEANUP
 
     return res;
   }
