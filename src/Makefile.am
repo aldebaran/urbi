@@ -1,13 +1,3 @@
-################################################################################
-#
-# URBI - Copyright (C) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie
-#
-# This software is provided "as is" without warranty of any kind,
-# either expressed or implied, including but not limited to the
-# implied warranties of fitness for a particular purpose.
-#
-################################################################################
-
 ## ---------------- ##
 ## Initialization.  ##
 ## ---------------- ##
@@ -21,24 +11,11 @@ AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 ## ----------- ##
 
 env_LTLIBRARIES = libuobject.la
-#the -DBUILDING_LIBPORT is required since libport/network/* are considered as kernel sources.
+# The -DBUILDING_LIBPORT is required since libport/network/* are
+# considered as kernel sources.
 libuobject_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
 libuobject_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) -no-undefined
 libuobject_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
-# The separation in two different targets is needed to be sure that
-# the libs are installed before we try to move them.
-# install-exec-local:
-
-#install-data-hook:
-#	rm $(DESTDIR)$(envdir)/.libs
-#	$(LN_S) . $(DESTDIR)$(envdir)/.libs
-#	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
-#	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
-#	$(LN_S) .libs/libuobject.la $(DESTDIR)$(envdir)
-#	$(LN_S) .libs/libuobject.a $(DESTDIR)$(envdir)
-
-#uninstall-local:
-#	rm -rf $(DESTDIR)$(envdir)/.libs
 
 ## ------------ ##
 ## version.hh.  ##
