@@ -23,8 +23,11 @@ namespace flower
     if (!in_loop_)
       errors_.error(b->location_get(), "break: outside a loop");
 
-    result_ = parser::parse("loopBreakTag.stop")->ast_get();
     has_break_ = true;
+
+    static ParametricAst res("loopBreakTag.stop");
+    result_ = exp(res);
+    result_->original_set(b);
   }
 
   void
@@ -33,8 +36,11 @@ namespace flower
     if (!in_loop_)
       errors_.error(c->location_get(), "continue: outside a loop");
 
-    result_ = parser::parse("loopContinueTag.stop")->ast_get();
     has_continue_ = true;
+
+    static ParametricAst res("loopContinueTag.stop");
+    result_ = exp(res);
+    result_->original_set(c);
   }
 
   static inline
@@ -80,6 +86,7 @@ namespace flower
       res = brk(res);
 
     result_ = res;
+    result_->original_set(code);
   }
 
   void
@@ -125,6 +132,8 @@ namespace flower
       result_ = brk(exp(each));
     else
       result_ = exp(each);
+
+    result_->original_set(code);
   }
 
   void
@@ -143,6 +152,7 @@ namespace flower
         result_.unsafe_cast<ast::Function>()->body_get();
       copy->body_set(exp(a % copy->body_get()));
     }
+    result_->original_set(code);
   }
 
   void
@@ -150,6 +160,8 @@ namespace flower
   {
     if (!in_function_)
       errors_.error(ret->location_get(), "return: outside a function");
+
+    has_return_ = true;
 
     if (ast::rExp e = ret->value_get())
     {
@@ -162,7 +174,7 @@ namespace flower
       result_ = exp(a);
     }
 
-    has_return_ = true;
+    result_->original_set(ret);
   }
 
 } // namespace flower
