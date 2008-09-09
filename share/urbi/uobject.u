@@ -1,7 +1,7 @@
 /* Urbi side of 2.0 UObject plugin/remote implementation.
 */
 /// FIXME: implement in C++ to get the period passed on command line.
-var Object.getPeriod = 20;
+var Object.getPeriod = 20ms;
 
 class Object.UObject
 {

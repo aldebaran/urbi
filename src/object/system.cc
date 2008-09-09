@@ -98,7 +98,7 @@ namespace object
       deadline = std::numeric_limits<libport::utime_t>::max();
     else
       deadline = r.scheduler_get().get_time() +
-	static_cast<libport::utime_t>(arg1->value_get() * 1000.0);
+	static_cast<libport::utime_t>(arg1->value_get() * 1000000.0);
     r.yield_until (deadline);
     return void_class;
   }
@@ -107,7 +107,7 @@ namespace object
   system_class_time(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return new Float(r.scheduler_get().get_time() / 1000.0);
+    return new Float(r.scheduler_get().get_time() / 1000000.0);
   }
 
   static rObject
@@ -115,7 +115,7 @@ namespace object
   {
     CHECK_ARG_COUNT (1);
     return new Float((r.scheduler_get().get_time() -
-			  r.time_shift_get()) / 1000.0);
+			  r.time_shift_get()) / 1000000.0);
   }
 
   static rObject

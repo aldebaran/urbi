@@ -47,14 +47,14 @@ class Global.TrajectoryGenerator
     {
       getStartValue()|
       var this.get = getSlot("accelGet") |
-      var this.accel = args.get("accel") / 1000000 |
+      var this.accel = args.get("accel") |
       var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
     }
     else if ("speed" in args)
     {
       getStartValue()|
       var this.adaptive = args.getWithDefault("adaptive", 0) |
-      var this.speed = args.get("speed") / 1000|
+      var this.speed = args.get("speed") |
       var this.duration = Float.inf;
       if (speed != 0)
         this.duration = abs(this.startValue - targetValue)  / speed |

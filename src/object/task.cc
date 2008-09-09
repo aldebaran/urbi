@@ -143,7 +143,7 @@ namespace object
   rFloat
   Task::timeShift()
   {
-    return new Float(value_->time_shift_get() / 1000.0);
+    return new Float(value_->time_shift_get() / 1000000.0);
   }
 
   void
