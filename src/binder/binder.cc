@@ -224,6 +224,7 @@ namespace binder
     ast::rExp target_value = recurse(input->value_get());
     libport::Symbol name = call->name_get();
 
+    // Build dictionary for the (potential) modifiers
     ast::rExp modifiers = 0;
     if (const ast::modifiers_type* source = input->modifiers_get())
     {
@@ -242,6 +243,8 @@ namespace binder
     }
 
     unsigned depth = routine_depth_get(name);
+    // Whether this is an assignment to a local variable
+    bool local = depth && call->target_implicit();
 
     if (modifiers)
     {
@@ -249,27 +252,27 @@ namespace binder
       static ParametricAst trajectory(
         "TrajectoryGenerator.new("
         "  closure ( ) { %exp:1 }," // getter
-        "  closure (v) { %lvalue:2 = v }," // Setter
+        "  closure (v) { %exp:2 }," // Setter
         "  %exp:3," // Target value
         "  %exp:4" // modifiers
         ").run"
         );
 
-      ast::rExp tgt1 = recurse(tgt);
-      ast::rExp tgt2 = recurse(tgt);
+      ast::rExp read = new_clone(tgt);
+      ast::rExp write = new ast::Assignment(loc, new_clone(tgt),
+                                            parser::ast_call(loc, SYMBOL(v)), 0);
 
       trajectory
-        % tgt1
-        % tgt2
+        % read
+        % write
         % target_value
         % modifiers;
 
-      operator()(ast_lvalue_wrap(call, exp(trajectory).get()).get());
+      operator()(ast_lvalue_wrap(call, exp(trajectory)).get());
     }
-    else if (depth && call->target_implicit())
+    // Assignment to a local variables
+    else if (local)
     {
-      // Assignment to a local variables
-
       operator()(input->value_get().get());
       ast::rExp value = result_.unchecked_cast<ast::Exp>();
       ast::rLocalAssignment res =
@@ -277,6 +280,7 @@ namespace binder
       link_to_declaration(input, res, name, depth);
       result_ = res;
     }
+    // Assignment to a slot
     else
         result_ = changeSlot(loc, call->target_get(), name,
                              SYMBOL(updateSlot), input->value_get());
