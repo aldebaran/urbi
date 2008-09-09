@@ -25,7 +25,7 @@ namespace flower
 
     has_break_ = true;
 
-    static ParametricAst res("loopBreakTag.stop");
+    static ParametricAst res("'$loopBreakTag'.stop");
     result_ = exp(res);
     result_->original_set(b);
   }
@@ -38,7 +38,7 @@ namespace flower
 
     has_continue_ = true;
 
-    static ParametricAst res("loopContinueTag.stop");
+    static ParametricAst res("'$loopContinueTag'.stop");
     result_ = exp(res);
     result_->original_set(c);
   }
@@ -48,8 +48,8 @@ namespace flower
   brk(ast::rExp e)
   {
     static ParametricAst brk(
-      "var loopBreakTag = Tag.newFlowControl(\"breakTag\") |"
-      "loopBreakTag: %exp:1");
+      "{var '$loopBreakTag' = Tag.newFlowControl(\"loopBreakTag\") |"
+      "'$loopBreakTag': %exp:1}");
 
     return exp(brk % e);
   }
@@ -59,8 +59,8 @@ namespace flower
   cont(ast::rExp e)
   {
     static ParametricAst cont(
-      "var loopContinueTag = Tag.newFlowControl(\"continueTag\") |"
-      "loopContinueTag: %exp:1");
+      "{var '$loopContinueTag' = Tag.newFlowControl(\"loopContinueTag\") |"
+      "'$loopContinueTag': %exp:1}");
 
     return exp(cont % e);
   }
@@ -145,9 +145,9 @@ namespace flower
     super_type::visit(code);
     if (has_return_)
     {
-      static ast::ParametricAst a("var returnTag = "
+      static ast::ParametricAst a("var '$returnTag' = "
 				  "Tag.newFlowControl(\"returnTag\") | "
-                                  "returnTag: %exp:1");
+                                  "'$returnTag': %exp:1");
       ast::rScope copy =
         result_.unsafe_cast<ast::Function>()->body_get();
       copy->body_set(exp(a % copy->body_get()));
@@ -165,12 +165,12 @@ namespace flower
 
     if (ast::rExp e = ret->value_get())
     {
-      static ParametricAst a("returnTag.stop(%exp:1)");
+      static ParametricAst a("'$returnTag'.stop(%exp:1)");
       result_ = exp(a % e);
     }
     else
     {
-      static ParametricAst a("returnTag.stop");
+      static ParametricAst a("'$returnTag'.stop");
       result_ = exp(a);
     }
 
