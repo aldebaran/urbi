@@ -72,7 +72,7 @@ def print_includes (node, header, inline, impl):
   for i in includes:
     print >>header, "# include " + i
   print_inline_code (node, "header", "prologue")
-  print >>header, "#include <object/fwd.hh>"
+  print >>header, "# include <object/fwd.hh>"
 
   # *.hxx
   sys.stdout = inline
