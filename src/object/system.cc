@@ -5,6 +5,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
+#include <libport/environ.hh>
 
 #include <memory>
 #include <sstream>
