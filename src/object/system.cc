@@ -210,7 +210,7 @@ namespace object
   system_class_currentRunner (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (1);
-    return new Task(&r);
+    return r.as_task();
   }
 
   static rObject

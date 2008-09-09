@@ -306,6 +306,9 @@ namespace scheduler
     /// \return The job priority, as previously computed.
     prio_type prio_get() const;
 
+    /// Ensure proper cleanup.
+    virtual void terminate_cleanup();
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -329,9 +332,6 @@ namespace scheduler
     /// The value we have to deduce from system time because we have
     /// been frozen.
     libport::utime_t time_shift_;
-
-    /// Ensure proper cleanup;
-    void terminate_cleanup();
 
     /// Recompute the current priority after a tag operation.
     void recompute_prio();

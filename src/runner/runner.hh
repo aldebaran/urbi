@@ -11,6 +11,7 @@
 # include <boost/tuple/tuple.hpp>
 
 # include <object/object.hh>
+# include <object/task.hh>
 # include <scheduler/scheduler.hh>
 # include <scheduler/job.hh>
 
@@ -24,6 +25,9 @@ namespace runner
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
+    typedef scheduler::Job super_type;
+
+    /// Shorthands used everywhere.
     typedef object::rObject rObject;
     typedef object::rLobby rLobby;
     /// \}
@@ -99,6 +103,10 @@ namespace runner
     /// Return the current scope_tag, after creating it if needed.
     const scheduler::rTag& scope_tag();
 
+    /// Get the current runner as an Urbi Task or nil if the task is
+    /// terminated.
+    rObject as_task();
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -116,6 +124,9 @@ namespace runner
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work() = 0;
 
+    // Ensure proper cleanup.
+    virtual void terminate_cleanup();
+
     /// Create dummy scope tag.
     void create_scope_tag();
 
@@ -132,6 +143,9 @@ namespace runner
   private:
     /// The scope tags stack.
     std::vector<scheduler::rTag> scope_tags_;
+
+    /// The runner seen as an Urbi Task.
+    object::rTask task_;
 
   };
 

@@ -68,4 +68,23 @@ namespace runner
     scope_tags_.pop_back();
   }
 
+  void
+  Runner::terminate_cleanup()
+  {
+    // Do not keep a reference on a task which keeps a reference onto ourselves.
+    task_ = 0;
+    // Parent cleanup.
+    super_type::terminate_cleanup();
+  }
+
+  object::rObject
+  Runner::as_task()
+  {
+    if (terminated())
+      return object::nil_class;
+    if (!task_)
+      task_ = new object::Task(this);
+    return task_;
+  }
+
 } // namespace runner
