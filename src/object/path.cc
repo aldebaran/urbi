@@ -5,9 +5,12 @@
 #include <libport/unistd.h>
 #include <fcntl.h>
 
+#include <libport/filesystem.hh>
+
 // For bad_alloc
 #include <exception>
 
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include <object/directory.hh>
@@ -62,13 +65,7 @@ namespace object
 
   rPath Path::cwd()
   {
-    // C *sucks*
-    static char buf[PATH_MAX];
-    char* res =  getcwd(buf, PATH_MAX);
-    if (!res)
-      throw PrimitiveError(SYMBOL(pwd),
-                           "Current directory name too long.");
-    return new Path(res);
+    return new Path(boost::filesystem::current_path().string());
   }
 
   // Stats
