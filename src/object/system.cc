@@ -17,6 +17,7 @@
 #include <object/cxx-primitive.hh>
 #include <object/dictionary.hh>
 #include <object/float.hh>
+#include <object/global.hh>
 #include <object/list.hh>
 #include <object/system.hh>
 #include <object/tag.hh>
@@ -368,6 +369,9 @@ namespace object
     rObject handler = r.as_task()->slot_get(SYMBOL(exceptionHandlerTag));
     if (handler->is_a<Tag>())
     {
+      if (is_a(value, global_class->slot_get(SYMBOL(Exception))))
+        value->slot_update(r, SYMBOL(backtrace),
+                           r.as_task()->as<Task>()->backtrace());
       objects_type args;
       args << value;
       handler->as<Tag>()->stop(r, args);

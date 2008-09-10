@@ -436,6 +436,12 @@ load("urbi/pubsub.u");
 
 load("urbi/event.u");
 
+/*------------.
+| Exception.  |
+`------------*/
+
+load("urbi/exception.u");
+
 /*----------.
 | UObject.  |
 `----------*/

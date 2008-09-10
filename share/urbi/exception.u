@@ -1,0 +1,10 @@
+class Global.Exception
+{
+  var message;
+  var backtrace;
+
+  function init(msg)
+  {
+    self.message = msg
+  }
+}
