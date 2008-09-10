@@ -363,6 +363,21 @@ namespace object
     return res;
   }
 
+  static void system_throw(rObject /*self*/, runner::Runner& r, rObject value)
+  {
+    rObject handler = r.as_task()->slot_get(SYMBOL(exceptionHandlerTag));
+    if (handler->is_a<Tag>())
+    {
+      objects_type args;
+      args << value;
+      handler->as<Tag>()->stop(r, args);
+    }
+    else
+      throw PrimitiveError
+        (SYMBOL(throw), "Unhandled exception: " +
+         urbi_call(r, value, SYMBOL(asString))->as<String>()->value_get());
+  }
+
   void
   system_class_initialize ()
   {
@@ -373,6 +388,7 @@ namespace object
 
     DECLARE(getenv);
     DECLARE(setenv);
+    DECLARE(throw);
     DECLARE(unsetenv);
 
 #undef DECLARE
