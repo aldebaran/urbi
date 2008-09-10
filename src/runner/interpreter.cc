@@ -18,6 +18,7 @@
 #include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
+#include <object/global.hh>
 #include <object/tag.hh>
 
 #include <runner/interpreter.hh>
@@ -253,6 +254,23 @@ namespace runner
   Interpreter::call_stack_get() const
   {
     return call_stack_;
+  }
+
+  void Interpreter::except(rObject exn)
+  {
+    rObject handler = as_task()->slot_get(SYMBOL(exceptionHandlerTag));
+
+    if (handler->is_a<object::Tag>())
+    {
+      if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
+        exn->slot_update(*this, SYMBOL(backtrace),
+                         as_task()->as<object::Task>()->backtrace());
+      objects_type args;
+      args << exn;
+      handler->as<object::Tag>()->stop(*this, args);
+    }
+    else
+      throw object::UnhandledException(exn, call_stack_get());
   }
 
 } // namespace runner

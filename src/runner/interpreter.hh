@@ -171,6 +171,8 @@ namespace runner
     virtual backtrace_type backtrace_get() const;
     object::call_stack_type call_stack_get() const;
 
+    virtual void except(rObject exn);
+
   protected:
     void show_error_ (object::UrbiException& ue);
 

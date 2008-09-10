@@ -366,19 +366,7 @@ namespace object
 
   static void system_throw(rObject /*self*/, runner::Runner& r, rObject value)
   {
-    rObject handler = r.as_task()->slot_get(SYMBOL(exceptionHandlerTag));
-    if (handler->is_a<Tag>())
-    {
-      if (is_a(value, global_class->slot_get(SYMBOL(Exception))))
-        value->slot_update(r, SYMBOL(backtrace),
-                           r.as_task()->as<Task>()->backtrace());
-      objects_type args;
-      args << value;
-      handler->as<Tag>()->stop(r, args);
-    }
-    else
-      throw UnhandledException(value,
-                               dynamic_cast<runner::Interpreter&>(r).call_stack_get());
+    r.except(value);
   }
 
   void
