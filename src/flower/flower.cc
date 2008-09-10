@@ -1,8 +1,12 @@
 #include <libport/finally.hh>
 
+#include <ast/cloner.hxx>
 #include <ast/parametric-ast.hh>
+
 #include <flower/flower.hh>
+
 #include <object/urbi-exception.hh>
+
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
 
