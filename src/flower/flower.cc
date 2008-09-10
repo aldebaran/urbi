@@ -171,7 +171,7 @@ namespace flower
   void
   Flower::visit(const ast::Throw* t)
   {
-    static ParametricAst res("currentRunner.exceptionHandlerTag.stop(%exp:1)");
+    static ParametricAst res("System.'throw'(%exp:1)");
     result_ = exp(res % recurse(t->value_get()));
     result_->original_set(t);
   }
