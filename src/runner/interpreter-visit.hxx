@@ -528,6 +528,7 @@ namespace runner
   INVALID(MetaArgs);
   INVALID(MetaCall);
   INVALID(MetaExp);
+  INVALID(MetaId);
   INVALID(MetaLValue);
   INVALID(OpAssignment);
   INVALID(PropertyRead);

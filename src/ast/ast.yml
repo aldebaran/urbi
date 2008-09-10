@@ -1189,6 +1189,15 @@ MetaCall:
     - '" "'
     - '{ visit(static_cast<const LValueArgs*>(n)); }'
 
+MetaId:
+  super: LValue
+  attributes:
+    - id:
+        type: unsigned
+  printer:
+    - '"%id:"'
+    - $id
+
 Class:
   super: Exp
   attributes:

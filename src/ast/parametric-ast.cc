@@ -3,12 +3,13 @@
  ** \brief Implementation of ast::ParametricAst.
  */
 
+#include <ast/cloner.hxx>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
+#include <parser/ast-factory.hh>
 #include <parser/parse.hh>
 #include <parser/parse-result.hh>
-#include <ast/cloner.hxx>
 
 namespace ast
 {
@@ -67,6 +68,14 @@ namespace ast
   {
     result_ = exp_map_type::take_(e->id_get () - 1);
     assert(result_);
+  }
+
+  void
+  ParametricAst::visit(const ast::MetaId* e)
+  {
+    libport::Symbol name = id_map_type::take_(e->id_get () - 1);
+
+    result_ = parser::ast_call(e->location_get(), name);
   }
 
   void

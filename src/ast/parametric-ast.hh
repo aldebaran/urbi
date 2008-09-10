@@ -63,6 +63,7 @@ namespace ast
       (MetaArgs)
       (MetaCall)
       (MetaExp)
+      (MetaId)
       (MetaLValue)
       );
 

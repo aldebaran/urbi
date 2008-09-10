@@ -1349,7 +1349,11 @@ lvalue:
 
 %token PERCENT_ID_COLON "%id:";
 lvalue:
-  exp "." "%id:" "integer"
+  "%id:" "integer"
+  {
+    $$ = new ast::MetaId(@$, $2);
+  }
+| exp "." "%id:" "integer"
   {
     $$ = new ast::MetaCall(@$, 0, $1, $4);
   }
