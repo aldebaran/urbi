@@ -249,6 +249,12 @@ namespace runner
     return res;
   }
 
+  object::call_stack_type
+  Interpreter::call_stack_get() const
+  {
+    return call_stack_;
+  }
+
 } // namespace runner
 
 #ifndef LIBPORT_SPEED // If not in speed mode, compile visit method here

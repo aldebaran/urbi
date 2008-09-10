@@ -19,6 +19,23 @@
 
 namespace object
 {
+  /// The call stack
+  typedef std::pair<libport::Symbol,
+                    boost::optional<ast::loc> > call_type;
+  typedef std::vector<call_type> call_stack_type;
+
+  class UnhandledException
+  {
+  public:
+    UnhandledException(object::rObject value, const call_stack_type& bt);
+    std::string what(runner::Runner& r);
+    call_stack_type backtrace();
+
+  private:
+    object::rObject value_;
+    call_stack_type bt_;
+  };
+
   /// This class defines an exception used when an error
   /// occurs in an URBI primitive.
   class UrbiException : public kernel::exception
@@ -32,11 +49,6 @@ namespace object
 
     /// Return the exception's error message.
     virtual std::string what() const throw ();
-
-    /// The call stack
-    typedef std::pair<libport::Symbol,
-                      boost::optional<ast::loc> > call_type;
-    typedef std::vector<call_type> call_stack_type;
 
     /// Returns true if the exception was allready displayed.
     bool was_displayed() const;

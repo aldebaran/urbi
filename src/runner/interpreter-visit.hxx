@@ -344,6 +344,19 @@ namespace runner
 	  else
 	    throw;
 	}
+        // Catch and print unhandled exceptions
+	catch (object::UnhandledException& exn)
+	{
+	  if (e->toplevel_get())
+          {
+            std::ostringstream o;
+            o << "!!! " << exn.what(*this);
+            send_message("error", o.str ());
+            show_backtrace(exn.backtrace(), "error");
+          }
+          else
+            throw;
+        }
       }
     }
 

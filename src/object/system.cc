@@ -377,9 +377,8 @@ namespace object
       handler->as<Tag>()->stop(r, args);
     }
     else
-      throw PrimitiveError
-        (SYMBOL(throw), "Unhandled exception: " +
-         urbi_call(r, value, SYMBOL(asString))->as<String>()->value_get());
+      throw UnhandledException(value,
+                               dynamic_cast<runner::Interpreter&>(r).call_stack_get());
   }
 
   void

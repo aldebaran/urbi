@@ -169,6 +169,7 @@ namespace runner
 
     virtual void show_backtrace(const std::string& chan);
     virtual backtrace_type backtrace_get() const;
+    object::call_stack_type call_stack_get() const;
 
   protected:
     void show_error_ (object::UrbiException& ue);
@@ -199,8 +200,8 @@ namespace runner
     rObject result_;
 
     /// The call stack.
-    typedef object::UrbiException::call_stack_type call_stack_type;
-    typedef object::UrbiException::call_type call_type;
+    typedef object::call_stack_type call_stack_type;
+    typedef object::call_type call_type;
     call_stack_type call_stack_;
     void show_backtrace(const call_stack_type& bt,
                         const std::string& chan);
