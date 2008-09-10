@@ -242,7 +242,8 @@ namespace runner
     foreach (call_type c, call_stack_)
     {
       std::ostringstream o;
-      o << c.second;
+      if (c.second)
+        o << c.second.get();
       res.push_back(std::make_pair(c.first.name_get(), o.str()));
     }
     return res;
