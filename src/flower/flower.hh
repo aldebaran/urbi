@@ -21,10 +21,13 @@ namespace flower
 
   protected:
     CONST_VISITOR_VISIT_NODES((Break)
+			      (Catch)
 			      (Continue)
 			      (Foreach)
 			      (Function)
 			      (Return)
+			      (Throw)
+			      (Try)
 			      (While));
 
   private:
@@ -33,6 +36,7 @@ namespace flower
     bool has_return_;
     bool in_function_;
     bool in_loop_;
+    unsigned int catch_all_;
   };
 
 } // namespace flower

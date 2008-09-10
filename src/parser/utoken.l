@@ -581,10 +581,13 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "protected"     RETURN(PROTECTED);
 "public"        RETURN(PUBLIC);
 
+"catch"         RETURN(CATCH);
+"throw"         RETURN(THROW);
+"try"           RETURN(TRY);
+
 "asm"              |
 "auto"             |
 "bool"             |
-"catch"            |
 "char"             |
 "const"            |
 "const_cast"       |
@@ -611,8 +614,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "static_cast"      |
 "struct"           |
 "template"         |
-"throw"            |
-"try"              |
 "typedef"          |
 "typeid"           |
 "typename"         |

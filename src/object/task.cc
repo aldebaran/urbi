@@ -32,6 +32,7 @@ namespace object
     : value_(value)
   {
     proto_add(task_class);
+    slot_set(SYMBOL(exceptionHandlerTag), nil_class);
   }
 
   Task::Task(rTask model)

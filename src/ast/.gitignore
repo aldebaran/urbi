@@ -27,6 +27,9 @@ call-msg.hxx
 call.cc
 call.hh
 call.hxx
+catch.cc
+catch.hh
+catch.hxx
 class.cc
 class.hh
 class.hxx
@@ -184,6 +187,12 @@ tagged-stmt.hxx
 this.cc
 this.hh
 this.hxx
+throw.cc
+throw.hh
+throw.hxx
+try.cc
+try.hh
+try.hxx
 unary.cc
 unary.hh
 unary.hxx

@@ -516,6 +516,7 @@ namespace runner
   INVALID(Assignment);
   INVALID(Binding);
   INVALID(Break);
+  INVALID(Catch);
   INVALID(Class);
   INVALID(Continue);
   INVALID(Declaration);
@@ -534,6 +535,8 @@ namespace runner
   INVALID(PropertyRead);
   INVALID(PropertyWrite);
   INVALID(Return);
+  INVALID(Throw);
+  INVALID(Try);
 
 #undef INVALID
 #undef INVALID_RET

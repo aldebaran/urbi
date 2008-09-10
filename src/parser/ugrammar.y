@@ -168,6 +168,7 @@
         EQ           "="
         BREAK        "break"
         CASE         "case"
+        CATCH        "catch"
         CLOSURE      "closure"
         CONTINUE     "continue"
         COLON        ":"
@@ -194,8 +195,10 @@
         STATIC       "static"
         STOPIF       "stopif"
         SWITCH       "switch"
+        THROW        "throw"
         TILDA        "~"
         TIMEOUT      "timeout"
+        TRY          "try"
         VAR          "var"
         WAITUNTIL    "waituntil"
         WHENEVER     "whenever"
@@ -931,6 +934,39 @@ cases:
 
 case:
   "case" exp ":" stmts  {  $$ = ::parser::case_type($2, $4); }
+;
+
+/*-------------.
+| Exceptions.  |
+`-------------*/
+
+%type <ast::exps_type> catches;
+catches:
+  /* empty */ { $$ = ast::exps_type(); }
+| catches catch { std::swap($$, $1); $$.push_back($2); }
+;
+
+%type <ast::rCatch> catch;
+catch:
+  "catch" "(" exp "identifier" ")" block
+  {
+    $$ = new ast::Catch(@$, $4, $3, $6);
+  }
+| "catch" "(" "identifier" ")" block
+  {
+    $$ = new ast::Catch(@$, $3, 0, $5);
+  }
+;
+
+stmt:
+  "try" block catches
+  {
+    $$ = new ast::Try(@$, $2, $3);
+  }
+| "throw" exp
+  {
+    $$ = new ast::Throw(@$, $2);
+  }
 ;
 
 /*--------.
