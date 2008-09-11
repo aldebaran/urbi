@@ -790,6 +790,20 @@ stmt:
 		       enclose_in_scope($5),
 		       enclose_in_scope($7));
     }
+| "if" "(" "var" "identifier" "=" exp ")" nstmt %prec CMDBLOCK
+   {
+     static ast::ParametricAst desugar(
+       "{var %id:1 = %exp:2 |"
+       "if (%id:3) %exp:4}");
+     $$ = exp(desugar % $4 % $6 % $4 % $8);
+   }
+| "if" "(" "var" "identifier" "=" exp ")" nstmt "else" nstmt
+   {
+     static ast::ParametricAst desugar(
+       "{var %id:1 = %exp:2 |"
+       "if (%id:3) %exp:4 else %exp:5}");
+     $$ = exp(desugar % $4 % $6 % $4 % $8 % $10);
+   }
 | "freezeif" "(" softtest ")" stmt
     {
       static ast::ParametricAst desugar(
