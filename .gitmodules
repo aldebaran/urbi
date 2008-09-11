@@ -1,9 +1,6 @@
 [submodule "tests"]
 	path = tests
 	url = git@core.gostai.com:urbivalid.git
-[submodule "libport"]
-	path = externals/libport
-	url = git@core.gostai.com:libport.git
 [submodule "sdk-remote"]
 	path = externals/sdk-remote
 	url = git@core.gostai.com:sdk-remote.git
