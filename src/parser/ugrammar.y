@@ -191,7 +191,6 @@
         RBRACKET     "]"
         RETURN       "return"
         RPAREN       ")"
-        STATIC       "static"
         STOPIF       "stopif"
         SWITCH       "switch"
         TILDA        "~"
