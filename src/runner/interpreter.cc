@@ -258,19 +258,33 @@ namespace runner
 
   void Interpreter::except(rObject exn)
   {
-    rObject handler = as_task()->slot_get(SYMBOL(exceptionHandlerTag));
+    // Fill the exception location and backtrace
+    if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
+    {
+      std::stringstream o;
+      o << (call_stack_get().end() - 1)->second.get();
+      exn->slot_update(*this, SYMBOL(location),
+                       new object::String(o.str()));
+      object::rList urbi_bt = as_task()->as<object::Task>()->backtrace();
+      urbi_bt->pop_back();
+      exn->slot_update(*this, SYMBOL(backtrace), urbi_bt);
+    }
 
+    rObject handler = as_task()->slot_get(SYMBOL(exceptionHandlerTag));
+    // There's a handler, use it.
     if (handler->is_a<object::Tag>())
     {
-      if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
-        exn->slot_update(*this, SYMBOL(backtrace),
-                         as_task()->as<object::Task>()->backtrace());
       objects_type args;
       args << exn;
       handler->as<object::Tag>()->stop(*this, args);
     }
+    // No handler, just throw.
     else
-      throw object::UnhandledException(exn, call_stack_get());
+    {
+      call_stack_type bt = call_stack_get();
+      bt.pop_back();
+      throw object::UnhandledException(exn, bt);
+    }
   }
 
 } // namespace runner
