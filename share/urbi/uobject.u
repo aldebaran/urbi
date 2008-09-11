@@ -306,13 +306,15 @@ class Global.'external'
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.ownsSlot(varname))
       new uvar(obj, varname)
-    else if (!obj.getSlot(varname).hasSlot("isUVar"))
+    else if (obj.getSlot(varname).isVoid
+        || !obj.getSlot(varname).hasSlot("isUVar"))
     {
       // The slot allready exists, but is not an uvar.
       var v = obj.getSlot(varname);
       obj.removeSlot(varname);
       obj.setSlot(varname, getSlot("uvar").clone);
-      obj.updateSlot(varname, v);
+      if (!v.isVoid())
+        obj.updateSlot(varname, v);
     };
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
