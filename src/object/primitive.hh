@@ -11,8 +11,6 @@
 
 namespace object
 {
-  extern rObject primitive_class;
-
   class Primitive: public CxxObject
   {
   public:
@@ -36,6 +34,8 @@ namespace object
   public:
     static void initialize(CxxObject::Binder<Primitive>& binder);
     static bool primitive_added;
+    static rObject proto;
+
   };
 
 }; // namespace object

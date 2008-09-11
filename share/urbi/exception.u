@@ -29,7 +29,7 @@ class Global.TypeError: Exception
   {
     expected = exp;
     effective = eff;
-    message = "%s: unexpected argument type `%s', expected `%s'." %
+    message = "%s: unexpected argument type `%s', expected `%s'" %
     [routine, eff.protoName, exp.protoName]
   }
 };

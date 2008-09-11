@@ -55,7 +55,7 @@ namespace object
     int depth_max = 0;
     if (args.size() >= 2)
     {
-      type_check<Float>(args[1], SYMBOL(dump));
+      type_check(args[1], Float::proto, r, SYMBOL(dump));
       const rFloat& arg1 = args[1]->as<Float>();
       try
       {
@@ -117,10 +117,10 @@ namespace object
   }
 
   static rObject
-  object_class_apply(runner::Runner&, objects_type& args)
+  object_class_apply(runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT(2);
-    type_check<List>(args[1], SYMBOL(apply));
+    type_check(args[1], List::proto, r, SYMBOL(apply));
     const rList& arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
       throw PrimitiveError(SYMBOL(apply), "first argument must be [this]");
@@ -134,7 +134,7 @@ namespace object
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
     const rObject& message = call_message->slot_get(SYMBOL(message));
-    type_check<String>(message, SYMBOL(callMessage));
+    type_check(message, String::proto, r, SYMBOL(callMessage));
     const libport::Symbol msg = libport::Symbol(message->as<String>()->value_get());
     const rObject& target = args[0];
     const rObject& code = target->slot_get(msg);

@@ -1,4 +1,6 @@
+#include <object/global.hh>
 #include <object/cxx-object.hh>
+#include <runner/call.hh>
 
 namespace object
 {
@@ -40,5 +42,20 @@ namespace object
   {
     foreach (Initializer* init, initializers_get())
       delete init;
+  }
+
+  void
+  type_check(const rObject& o, const rObject& exp,
+             runner::Runner& r, const libport::Symbol fun)
+  {
+    assert(o);
+    assert(exp);
+    if (!is_a(o, exp))
+    {
+      rObject exn =
+        urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
+                  SYMBOL(new), new String(fun), exp, o);
+      r.except(exn);
+    }
   }
 }

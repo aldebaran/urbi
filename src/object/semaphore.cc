@@ -5,24 +5,21 @@
 
 namespace object
 {
-
-  rObject semaphore_class;
-
   Semaphore::Semaphore()
   {
-    proto_add(semaphore_class);
+    proto_add(proto);
   }
 
   Semaphore::Semaphore(rSemaphore model)
     : value_(model->value_)
   {
-    proto_add(semaphore_class);
+    proto_add(proto);
   }
 
   Semaphore::Semaphore(const value_type& value)
     : value_(value)
   {
-    proto_add(semaphore_class);
+    proto_add(proto);
   }
 
   struct SemaphoreException : public scheduler::SchedulerException
@@ -82,6 +79,9 @@ namespace object
   }
 
   bool Semaphore::semaphore_added =
-    CxxObject::add<Semaphore>("Semaphore", semaphore_class);
+    CxxObject::add<Semaphore>("Semaphore", Semaphore::proto);
+  rObject Semaphore::proto;
+
+
 
 } // namespace object

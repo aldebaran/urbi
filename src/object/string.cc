@@ -18,8 +18,6 @@
 
 namespace object
 {
-  rObject string_class;
-
   /*--------------------.
   | String primitives.  |
   `--------------------*/
@@ -27,20 +25,20 @@ namespace object
   String::String()
     : content_()
   {
-    proto_add(string_class);
+    proto_add(proto);
   }
 
   String::String(rString model)
     : content_(model->content_)
   {
-    proto_add(string_class);
+    proto_add(proto);
   }
 
   String::String(const value_type& v)
     : content_(v)
   {
-    assert(string_class);
-    proto_add(string_class);
+    assert(proto);
+    proto_add(proto);
   }
 
   const String::value_type& String::value_get() const
@@ -56,7 +54,7 @@ namespace object
   std::string String::plus (runner::Runner& r, rObject rhs)
   {
     rObject str = urbi_call(r, rhs, SYMBOL(asString));
-    type_check<String>(str, SYMBOL(PLUS));
+    type_check(str, String::proto, r, SYMBOL(PLUS));
     return content_ + str->as<String>()->value_get();
   }
 
@@ -67,26 +65,26 @@ namespace object
   }
 
   std::string
-  as_printable (rObject from)
+  as_printable (runner::Runner& r, rObject from)
   {
-    if (from.get() == string_class.get())
-      return as_string(from);
+    if (from == String::proto)
+      return as_string(r, from);
     else
     {
-      type_check<String>(from, SYMBOL(asPrintable));
+      type_check(from, String::proto, r, SYMBOL(asPrintable));
       const std::string& str = from->as<String>()->value_get();
       return '"' + string_cast(libport::escape(str)) + '"';
     }
   }
 
   std::string
-  as_string (rObject from)
+  as_string (runner::Runner& r, rObject from)
   {
-    if (from.get() == string_class.get())
+    if (from == String::proto)
       return SYMBOL(LT_String_GT);
     else
     {
-      type_check<String>(from, SYMBOL(asString));
+      type_check(from, String::proto, r, SYMBOL(asString));
       return from->as<String>()->value_get();
     }
   }
@@ -241,12 +239,14 @@ namespace object
     bind(SYMBOL(split), &String::split);
     bind(SYMBOL(STAR), &String::star);
 
-    string_class->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
-    string_class->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
+    proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
+    proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
   }
 
-  bool String::string_added = CxxObject::add<String>("String", string_class);
+  bool String::string_added = CxxObject::add<String>("String", String::proto);
   const std::string String::type_name = "String";
+  rObject String::proto;
+
   std::string String::type_name_get() const
   {
     return type_name;

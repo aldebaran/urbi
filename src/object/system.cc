@@ -92,7 +92,9 @@ namespace object
   system_class_sleep (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    type_check<Float>(args[1], SYMBOL(sleep));
+
+    type_check(args[1], Float::proto, r, SYMBOL(sleep));
+
     rFloat arg1 = args[1]->as<Float>();
     libport::utime_t deadline;
     if (arg1->value_get() == std::numeric_limits<ufloat>::infinity())
@@ -120,10 +122,10 @@ namespace object
   }
 
   static rObject
-  system_class_assert_(runner::Runner&, objects_type args)
+  system_class_assert_(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(3);
-    type_check<String>(args[2], SYMBOL(assert_UL));
+    type_check(args[2], String::proto, r, SYMBOL(assert_UL));
     rString arg2 = args[2]->as<String>();
     if (!is_true(args[1], SYMBOL(assert_UL)))
       throw PrimitiveError
@@ -136,7 +138,7 @@ namespace object
   system_class_eval(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    type_check<String>(args[1], SYMBOL(eval));
+    type_check(args[1], String::proto, r, SYMBOL(eval));
     rString arg1 = args[1]->as<String>();
     return
       execute_parsed(r, parser::parse(arg1->value_get()),
@@ -168,7 +170,7 @@ namespace object
   system_class_searchFile (runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT (2);
-    type_check<String>(args[1], SYMBOL(assert));
+    type_check(args[1], String::proto, r, SYMBOL(assert));
     const rString& arg1 = args[1]->as<String>();
 
     UServer& s = r.lobby_get()->value_get().connection.server_get();
@@ -192,7 +194,7 @@ namespace object
   system_class_loadFile(runner::Runner& r, objects_type args)
   {
     CHECK_ARG_COUNT(2);
-    type_check<String>(args[1], SYMBOL(assert));
+    type_check(args[1], String::proto, r, SYMBOL(assert));
     const rString& arg1 = args[1]->as<String>();
 
     const std::string& filename = arg1->value_get();
@@ -349,7 +351,7 @@ namespace object
     return res ? new String(res) : 0;
   }
 
-  static rObject system_setenv(rObject, runner::Runner& r,
+  static rObject system_setenv(runner::Runner& r, rObject,
                                const std::string& name, rObject value)
   {
     rString v = urbi_call(r, value, SYMBOL(asString))->as<String>();
@@ -364,7 +366,7 @@ namespace object
     return res;
   }
 
-  static void system_throw(rObject /*self*/, runner::Runner& r, rObject value)
+  static void system_throw(runner::Runner& r, rObject /*self*/, rObject value)
   {
     r.except(value);
   }

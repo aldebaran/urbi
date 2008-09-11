@@ -31,15 +31,15 @@ namespace object
     };
   }
 
-# define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)  \
-  boost::function##ArgsC                                \
-  <IF(Ret, R, void),                                    \
-   S                                                    \
-   COMMA(Run)  WHEN(Run, runner::Runner&)               \
-   COMMA(Arg1) WHEN(Arg1, A1)                           \
-   COMMA(Arg2) WHEN(Arg2, A2)                           \
-   COMMA(Arg3) WHEN(Arg3, A3)                           \
-   >                                                    \
+# define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)          \
+  boost::function##ArgsC                                        \
+  <IF(Ret, R, void)                                             \
+   COMMA(Run)  WHEN(Run, runner::Runner&)                       \
+   , S                                                          \
+   COMMA(Arg1) WHEN(Arg1, A1)                                   \
+   COMMA(Arg2) WHEN(Arg2, A2)                                   \
+   COMMA(Arg3) WHEN(Arg3, A3)                                   \
+   >                                                            \
 
 # define PRIMITIVE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)                   \
   template                                                              \
@@ -52,7 +52,7 @@ namespace object
   struct MakePrimitive<BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3)>   \
   {                                                                     \
     static rObject primitive(                                           \
-      runner::Runner& WHEN(Run, r),                                     \
+      runner::Runner& r,                                                \
       object::objects_type& args,                                       \
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
@@ -60,37 +60,40 @@ namespace object
       check_args_count(ArgsC WHEN(Run, - 1) - 1,                        \
                        args.size() - 1, name);                          \
       WHEN(Ret, R res =) f(                                             \
-        CxxConvert<typename Flatten<S>::type>::to(args[0], name)        \
-        COMMA(Run) WHEN(Run, r)                                         \
+                                                                        \
+        WHEN(Run, r) COMMA(Run)                                         \
+                                                                        \
+        CxxConvert<typename Flatten<S>::type>                           \
+        ::to(args[0], name, r)                                          \
+                                                                        \
         COMMA(Arg1)                                                     \
         WHEN(Arg1,                                                      \
-             CxxConvert<typename Flatten<A1>::type>::to(args[1], name)) \
+             CxxConvert<typename Flatten<A1>::type>                     \
+             ::to(args[1], name, r))                                    \
+                                                                        \
         COMMA(Arg2)                                                     \
         WHEN(Arg2,                                                      \
-             CxxConvert<typename Flatten<A2>::type>::to(args[2], name)) \
+             CxxConvert<typename Flatten<A2>::type>                     \
+             ::to(args[2], name, r))                                    \
+                                                                        \
         COMMA(Arg3)                                                     \
         WHEN(Arg3,                                                      \
-             CxxConvert<typename Flatten<A3>::type>::to(args[3], name)) \
+             CxxConvert<typename Flatten<A3>::type>                     \
+             ::to(args[3], name, r))                                    \
         );                                                              \
       IF(Ret,                                                           \
-         return CxxConvert<typename Flatten<R>::type>::from(res, name), \
+         return CxxConvert<typename Flatten<R>::type>                   \
+         ::from(res, name, r),                                          \
          return object::void_class);                                    \
     }                                                                   \
   };                                                                    \
 
 # define BOOST_LIST_TYPE_MET(Ret, ArgsC, Run)   \
   boost::function##ArgsC                        \
-  <IF(Ret, R, void),                            \
-   S,                                           \
-   WHEN(Run, runner::Runner&) COMMA(Run)        \
-   object::objects_type&                        \
-   >                                            \
-
-# define BOOST_LIST_TYPE(Ret, ArgsC, Run)       \
-  boost::function##ArgsC                        \
-  <IF(Ret, R, void),                            \
-   WHEN(Run, runner::Runner&) COMMA(Run)        \
-   object::objects_type&                        \
+  <IF(Ret, R, void)                             \
+   COMMA(Run) WHEN(Run, runner::Runner&)        \
+   , S                                          \
+   , object::objects_type&                      \
    >                                            \
 
 # define PRIMITIVE_LIST_MET(Ret, ArgsC, Run)                    \
@@ -98,22 +101,29 @@ namespace object
   struct MakePrimitive<BOOST_LIST_TYPE_MET(Ret, ArgsC, Run)>    \
   {                                                             \
     static rObject primitive(                                   \
-      runner::Runner& WHEN(Run, r),                             \
+      runner::Runner& r,                                        \
       object::objects_type& args,                               \
       BOOST_LIST_TYPE_MET(Ret, ArgsC, Run) f,                   \
       const libport::Symbol& name)                              \
     {                                                           \
       S tgt =                                                   \
-        CxxConvert<S>::to(args[0], name);                       \
+        CxxConvert<S>::to(args[0], name, r);                    \
       args.pop_front();                                         \
       WHEN(Ret, return) f(                                      \
-        tgt,                                                    \
         WHEN(Run, r) COMMA(Run)                                 \
+        tgt,                                                    \
         args                                                    \
         );                                                      \
       return void_class;                                        \
     }                                                           \
   };                                                            \
+
+# define BOOST_LIST_TYPE(Ret, ArgsC, Run)       \
+  boost::function##ArgsC                        \
+  <IF(Ret, R, void),                            \
+   WHEN(Run, runner::Runner&) COMMA(Run)        \
+   object::objects_type&                        \
+   >                                            \
 
 # define PRIMITIVE_LIST(Ret, ArgsC, Run)                        \
   template <WHEN(Ret, typename R)>                              \
@@ -140,6 +150,23 @@ namespace object
   PRIMITIVE_LIST_MET(false, 3, true);
   PRIMITIVE_LIST(true, 1, false);
   PRIMITIVE_LIST(true, 2, true);
+
+//   boost::function2<libport::shared_ptr<object::Tag, true>, object::objects_type&, runner::Runner&, std::allocator<boost::function_base> >
+
+//   template <typename R>
+//   struct MakePrimitive<boost::function2 <R, runner::Runner&, object::objects_type&> >
+//   {
+//     static rObject primitive(
+//       runner::Runner& r,
+//       object::objects_type& args,
+//       boost::function2 <R, runner::Runner&, object::objects_type&> f,
+//       const libport::Symbol&)
+//     {
+//       return f(r, args);
+//       return object::void_class;
+//     }
+//   };
+
   PRIMITIVE_LIST(false, 1, false);
   PRIMITIVE_LIST(false, 2, true);
   ALL_PRIMITIVE(PRIMITIVE);

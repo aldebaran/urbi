@@ -92,20 +92,6 @@ namespace object
     tgt_->slot_set(name, make_primitive(method, name));
   }
 
-
-  template <typename T>
-  inline void
-  type_check(const rObject& o, const libport::Symbol fun)
-  {
-    libport::shared_ptr<CxxObject> co = o.unsafe_cast<CxxObject>();
-     // FIXME: I can't fill all the source type for now since some old
-     // atoms don't define type_name for now
-    if (!co)
-      throw object::WrongArgumentType(T::type_name, "Object", fun);
-    else if (!o->is_a<T>())
-      throw object::WrongArgumentType(T::type_name, co->type_name_get(), fun);
-  }
-
 }
 
 #endif

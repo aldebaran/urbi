@@ -12,8 +12,6 @@
 
 namespace object
 {
-  rObject primitive_class;
-
   Primitive::Primitive()
   {
     throw PrimitiveError(SYMBOL(clone),
@@ -23,13 +21,13 @@ namespace object
   Primitive::Primitive(rPrimitive model)
     : content_(model->value_get())
   {
-    proto_add(primitive_class);
+    proto_add(proto);
   }
 
   Primitive::Primitive(value_type value)
     : content_(value)
   {
-    proto_add(primitive_class);
+    proto_add(proto);
   }
 
   Primitive::value_type Primitive::value_get() const
@@ -49,7 +47,9 @@ namespace object
   }
 
   bool Primitive::primitive_added =
-    CxxObject::add<Primitive>("Primitive", primitive_class);
+    CxxObject::add<Primitive>("Primitive", Primitive::proto);
+  rObject Primitive::proto;
+
 
   // FIXME: Code duplication with Code::apply.  Maybe there are more
   // opportunity to factor.

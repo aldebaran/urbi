@@ -7,24 +7,21 @@
 
 namespace object
 {
-
-  rObject barrier_class;
-
   Barrier::Barrier()
   {
-    proto_add(barrier_class);
+    proto_add(proto);
   }
 
   Barrier::Barrier(rBarrier model)
     : value_(model->value_)
   {
-    proto_add(barrier_class);
+    proto_add(proto);
   }
 
   Barrier::Barrier(const value_type& value)
     : value_(value)
   {
-    proto_add(barrier_class);
+    proto_add(proto);
   }
 
   struct BarrierException : public scheduler::SchedulerException
@@ -94,15 +91,31 @@ namespace object
     return type_name;
   }
 
+
+
+  template <typename T>
+  void blerg()
+  {
+    T::gnark;
+  }
+
+  template <typename M>
+  void blah(M)
+  {
+    blerg<typename AnyToBoostFunction<M>::type>();
+  }
+
   void Barrier::initialize(CxxObject::Binder<Barrier>& bind)
   {
     bind(SYMBOL(new),       &Barrier::_new);
     bind(SYMBOL(signal),    &Barrier::signal);
     bind(SYMBOL(signalAll), &Barrier::signalAll);
+//     blah(&Barrier::wait);
     bind(SYMBOL(wait),      &Barrier::wait);
   }
 
   bool Barrier::barrier_added =
-    CxxObject::add<Barrier>("Barrier", barrier_class);
+    CxxObject::add<Barrier>("Barrier", Barrier::proto);
+  rObject Barrier::proto;
 
 } // namespace object

@@ -13,8 +13,6 @@
 
 namespace object
 {
-  extern rObject task_class;
-
   class Task : public object::CxxObject
   {
   public:
@@ -39,6 +37,7 @@ namespace object
     static const std::string type_name;
     static bool task_added;
     virtual std::string type_name_get() const;
+    static rObject proto;
 
   private:
     value_type value_;

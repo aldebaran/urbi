@@ -18,8 +18,6 @@
 
 namespace object
 {
-  rObject code_class;
-
   Code::Code()
   {
     throw PrimitiveError(SYMBOL(clone),
@@ -32,8 +30,8 @@ namespace object
     , self_()
     , call_()
   {
-    assert(code_class);
-    proto_add(code_class);
+    assert(proto);
+    proto_add(proto);
   }
 
   Code::Code(rCode model)
@@ -96,18 +94,18 @@ namespace object
     return r.apply(tgt, this, SYMBOL(apply), a);
   }
 
-  std::string Code::as_string(rObject what)
+  std::string Code::as_string(runner::Runner& r, rObject what)
   {
-    if (what.get() == code_class.get())
+    if (what == proto)
       return SYMBOL(LT_Code_GT);
-    type_check<Code>(what, SYMBOL(asString));
+    type_check(what, proto, r, SYMBOL(asString));
     return string_cast(*what->as<Code>()->ast_get());
 
   }
 
   std::string Code::body_string()
   {
-    if (code_class == this)
+    if (proto == this)
       return SYMBOL(LT_Code_GT);
     return
       string_cast(*ast_->body_get()->body_get());
@@ -120,9 +118,22 @@ namespace object
   }
 
 
+  template <typename T>
+  void blerg()
+  {
+    T::gnark;
+  }
+
+  template <typename M>
+  void blah(M)
+  {
+    blerg<typename AnyToBoostFunction<M>::type>();
+  }
+
   void Code::initialize(CxxObject::Binder<Code>& bind)
   {
     bind(SYMBOL(apply), &Code::apply);
+//     blah(&Code::as_string);
     bind(SYMBOL(asString), &Code::as_string);
     bind(SYMBOL(bodyString), &Code::body_string);
   }
@@ -132,7 +143,8 @@ namespace object
     return type_name;
   }
 
-  bool Code::code_added = CxxObject::add<Code>("Code", code_class);
+  bool Code::code_added = CxxObject::add<Code>("Code", Code::proto);
   const std::string Code::type_name = "Code";
+  rObject Code::proto;
 
 }; // namespace object

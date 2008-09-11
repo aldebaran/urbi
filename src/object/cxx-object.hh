@@ -86,9 +86,9 @@ namespace object
 
   };
 
-  /// Raise an exception if this is not of type \a T
-  template<typename T>
-  void type_check(const rObject& o, const libport::Symbol fun);
+  /// Raise an exception if \a o is not a \a exp
+  void type_check(const rObject& o, const rObject& exp,
+                  runner::Runner& r, const libport::Symbol fun);
 
 
 }

@@ -119,6 +119,12 @@ do Global
   function noop () {};
 };
 
+/*------------.
+| Exception.  |
+`------------*/
+
+load("urbi/exception.u");
+
 /*---------------.
 | Call message.  |
 `---------------*/
@@ -435,12 +441,6 @@ load("urbi/pubsub.u");
 `---------*/
 
 load("urbi/event.u");
-
-/*------------.
-| Exception.  |
-`------------*/
-
-load("urbi/exception.u");
 
 /*----------.
 | UObject.  |

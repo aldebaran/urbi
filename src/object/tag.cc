@@ -18,25 +18,22 @@
 
 namespace object
 {
-
-  rObject tag_class;
-
   Tag::Tag()
     : value_(0)
   {
-    proto_add(tag_class);
+    proto_add(proto);
   }
 
   Tag::Tag(const value_type& value)
     : value_(value)
   {
-    proto_add(tag_class);
+    proto_add(proto);
   }
 
   Tag::Tag(rTag model)
     : value_(model->value_)
   {
-    proto_add(tag_class);
+    proto_add(proto);
   }
 
   const Tag::value_type&
@@ -68,30 +65,30 @@ namespace object
   }
 
   rTag
-  Tag::_new(objects_type& args)
+  Tag::_new(runner::Runner& r, objects_type& args)
   {
     CHECK_ARG_COUNT_RANGE(1, 2, SYMBOL(new));
     libport::Symbol tag_short_name;
 
     if (args.size() > 1)
     {
-      type_check<String>(args[1], SYMBOL(new));
+      type_check(args[1], String::proto, r, SYMBOL(new));
       tag_short_name =
 	libport::Symbol(args[1]->as<String>()->value_get());
     }
     else
       tag_short_name = libport::Symbol::fresh("tag");
 
-    rTag res = new Tag(args[0] == tag_class ?
+    rTag res = new Tag(args[0] == proto ?
 		       new scheduler::Tag(tag_short_name) :
-		       extract_tag(args[0]));
+		       extract_tag(args[0], r));
     return res;
   }
 
   rTag
-  Tag::new_flow_control(objects_type& args)
+  Tag::new_flow_control(runner::Runner& r, objects_type& args)
   {
-    rTag res = _new(args);
+    rTag res = _new(r, args);
     res->value_get()->flow_control_set();
     return res;
   }
@@ -184,17 +181,19 @@ namespace object
     bind(SYMBOL(unfreeze), &Tag::unfreeze);
   }
 
-  bool Tag::tag_added = CxxObject::add<Tag>("Tag", tag_class);
+  bool Tag::tag_added = CxxObject::add<Tag>("Tag", Tag::proto);
   const std::string Tag::type_name = "Tag";
   std::string Tag::type_name_get() const
   {
     return type_name;
   }
+  rObject Tag::proto;
+
 
   const scheduler::rTag&
-  extract_tag(const rObject& o)
+  extract_tag(const rObject& o, runner::Runner& r)
   {
-    type_check<Tag>(o, SYMBOL(extract_tag));
+    type_check(o, Tag::proto, r, SYMBOL(extract_tag));
     return o->as<Tag>()->value_get();
   }
 

@@ -12,8 +12,6 @@
 
 namespace object
 {
-  extern rObject lobby_class;
-
   class Lobby: public CxxObject
   {
   public:
@@ -34,10 +32,14 @@ namespace object
   private:
     value_type state_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<Lobby>& binder);
     static bool lobby_added;
-
+    static rObject proto;
   };
 }; // namespace object
 

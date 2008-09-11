@@ -12,8 +12,6 @@
 
 namespace object
 {
-  extern rObject dictionary_class;
-
   class Dictionary: public CxxObject
   {
   public:
@@ -40,9 +38,15 @@ namespace object
   private:
     value_type content_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<Dictionary>& binder);
     static bool dictionary_added;
+    static rObject proto;
+
   };
 }; // namespace object
 

@@ -11,8 +11,6 @@
 
 namespace object
 {
-  extern rObject code_class;
-
   class Code: public CxxObject
   {
   public:
@@ -34,7 +32,7 @@ namespace object
 
     /// Urbi methods
     rObject apply(runner::Runner& r, rList args);
-    static std::string as_string(rObject what);
+    static std::string as_string(runner::Runner& r, rObject what);
     std::string body_string();
 
     virtual std::ostream& special_slots_dump (std::ostream& o,
@@ -51,9 +49,14 @@ namespace object
     /// Captured 'this' and 'call'. Only set for closures.
     rObject self_, call_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<Code>& binder);
     static bool code_added;
+    static rObject proto;
   };
 }; // namespace object
 
