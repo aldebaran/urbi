@@ -74,40 +74,6 @@ namespace urbi
     return v.stringValue->c_str();
   }
 
-  /*-----------------.
-  | UValue Parsing.  |
-  `-----------------*/
-
-  static void unescape(std::string& data)
-  {
-    int src = 0;
-    int dst = 0;
-    while (data[src])
-    {
-      if (data[src] != '\\')
-	data[dst] = data[src];
-      else
-	switch(data[++src])
-	{
-	  case 'n':
-	    data[dst] = '\n';
-	    break;
-	  case '\\':
-	    data[dst] = '\\';
-	    break;
-	  case '"':
-	    data[dst] = '"';
-	    break;
-	  default:
-	    data[dst] = data[src];
-	    break;
-	}
-
-      ++src;
-      ++dst;
-    }
-    data = data.substr(0, dst);
-  }
 
   /*---------.
   | UValue.  |
@@ -138,8 +104,8 @@ namespace urbi
       if (!message[p])
 	return -p; //parse error
 
-      stringValue = new std::string(message + pos + 1, p - pos - 1);
-      unescape(*stringValue);
+      stringValue = new std::string(
+          libport::unescape(std::string(message + pos + 1, p - pos - 1)));
       return p + 1;
     }
 
