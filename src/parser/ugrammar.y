@@ -1002,6 +1002,12 @@ stmt_loop:
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = new ast::While(@$, $1, $3, enclose_in_scope($5));
     }
+| "while" "(" "var" "identifier" "=" exp ")" stmt %prec CMDBLOCK
+  {
+    static ast::ParametricAst desugar("while(true) {var %id:1 = %exp:2 |"
+				      "if (%id:3) %exp:4 else break }");
+    $$ = exp(desugar % $4 % $6 % $4 % $8);
+  }
 ;
 
 in_or_colon: "in" | ":";
