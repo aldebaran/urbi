@@ -56,4 +56,4 @@ EOF
 fi
 
 # Finally, install the GNU Build System and our submodules.
-exec externals/libport/build-aux/bootstrap "$@"
+exec externals/sdk-remote/externals/libport/build-aux/bootstrap "$@"

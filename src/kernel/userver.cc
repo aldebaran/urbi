@@ -47,6 +47,8 @@
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
+#include <sdk/config.h>
+
 #include <urbi/uobject.hh>
 #include <urbi/usystem.hh>
 
@@ -96,7 +98,7 @@ typedef char buffer_type[8192];
 static char* urbi_path = getenv("URBI_PATH");
 
 UServer::UServer(const char* mainName)
-  : search_path(urbi_path ? urbi_path : LIBPORT_URBI_PATH,
+  : search_path(urbi_path ? urbi_path : URBI_PATH,
                 ":"),
     scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
                                                     boost::ref(*this)))),

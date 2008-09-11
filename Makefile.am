@@ -4,18 +4,13 @@ ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
 # Process "." before the sub dirs to make sure sdk/config.h and
 # libport/config.h are propery built.
-SUBDIRS = . lib/libport src tests doc
+SUBDIRS = sdk-remote . src tests doc
 
 # build-aux.
 EXTRA_DIST +=					\
 build-aux/bison++.in				\
 build-aux/move-if-change			\
 build-aux/output-to-dot
-
-# sdk/.
-host_SCRIPTS =
-nodist_host_DATA =
-include sdk/local.mk
 
 # dev.
 devdir = dev/
@@ -42,8 +37,6 @@ include share/urbi/local.mk
 nodist_kernelincludekernel_HEADERS =		\
 include/kernel/version.hh
 
-include_libport = include/libport
-include include/libport/libport.mk
 
 
 ## ------------------------------------- ##
@@ -54,10 +47,6 @@ include include/libport/libport.mk
 symbols:
 	$(MAKE) $(AM_MAKEFLAGS) -C src $@
 
-## --------------- ##
-## Svn externals.  ##
-## --------------- ##
-SVN_EXTERNALS += libport tests src/uobject src/network sdk
 
 
 ## ------- ##

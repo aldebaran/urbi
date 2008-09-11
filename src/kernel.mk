@@ -12,6 +12,11 @@ AM_CPPFLAGS += -I$(srcdir)/uobject -Iuobject
 ## Find the kernel, libport, etc. headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include -I$(top_builddir)/include
 
+## Find stuffs imported from sdk-remote.
+AM_CPPFLAGS += -I$(top_srcdir)/sdk-remote/include   \
+	       -I$(top_builddir)/sdk-remote/include \
+	       -I$(top_builddir)/sdk-remote
+
 ## lib/network
 AM_CPPFLAGS += -I$(top_srcdir)/lib
 

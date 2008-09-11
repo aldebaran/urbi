@@ -15,7 +15,7 @@ env_LTLIBRARIES = libuobject.la
 # considered as kernel sources.
 libuobject_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
 libuobject_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) -no-undefined
-libuobject_la_LIBADD = $(PTHREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
+libuobject_la_LIBADD = $(PTHREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(LTDL_LIBS) $(top_builddir)/sdk-remote/lib/libport/libport.la
 
 ## ------------ ##
 ## version.hh.  ##

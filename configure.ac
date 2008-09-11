@@ -80,13 +80,6 @@ URBI_WITH_LTDL
 # Do not use $package here, kernel is a too generic name.
 pkgdatadir=${datadir}/gostai
 AC_SUBST([urbidir], [${pkgdatadir}/urbi])
-# Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
-# sole use of URBI_RESOLVE_DIR_PREPARE.
-URBI_RESOLVE_DIR_PREPARE
-AC_DEFINE_UNQUOTED([URBI_PATH],
-                   ["`URBI_RESOLVE_DIR([$pkgdatadir])`"],
-                   [Define to the path where library files are installed.])
-
 
 ## -------- ##
 ## Target.  ##
@@ -96,11 +89,16 @@ AC_DEFINE_UNQUOTED([URBI_PATH],
 # So require it here.
 BOOST_REQUIRE([1.35])
 URBI_OPENR
-URBI_LIBPORT
+# done by liburbi URBI_LIBPORT
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
+URBI_PTHREAD
+
 BOOST_FILESYSTEM
 BOOST_REGEX
+BOOST_THREADS
 BOOST_TOKENIZER
+
+
 SDK_LDFLAGS="$SDK_LDFLAGS $BOOST_FILESYSTEM_LDFLAGS"
 SDK_LIBS="$SDK_LIBS $BOOST_FILESYSTEM_LIBS"
 
@@ -109,8 +107,9 @@ SDK_LIBS="$SDK_LIBS $BOOST_FILESYSTEM_LIBS"
 ## sdk/.  ##
 ## ------ ##
 
-URBI_SDK
+AC_CONFIG_SUBDIRS([sdk-remote])
 
+AC_CONFIG_HEADERS([dummyconfig.h])
 ## -------- ##
 ## Output.  ##
 ## -------- ##
@@ -118,5 +117,5 @@ URBI_SDK
 URBI_LIBTOOL
 
 URBI_TESTS
-AC_CONFIG_FILES([Makefile src/Makefile lib/libport/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
