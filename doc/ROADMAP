@@ -188,6 +188,23 @@ This will be a bugfix version.
 
 ** Future features not associated with any particular version
 
+*** Loadable
+AD>
+   Loadable.
+       The k1 interface is too invasive on several regards.  The use of
+   "swich" is really a problem as it is the keyword for switch/case.
+   These routines were included for all, which is ugly, and prevented
+   the default definition of "load".
+       So now one has to derive from Loadable which brings "load", "on",
+   "off", and "toggle" (instead of switch).
+       IMHO, it is a pity to use "load", "on" and "off".  Especially the
+   first two.  Can't we rename "load" to something else?
+
+JC> Yes, we can. For example: activity, level... And we can rename
+switch into toggle.  But we need to update the naming standard
+immediately at the same time or it will never be done.
+
+
 *** Load compressed .u files in the kernel
 
 We might need to load compressed Urbiscript files in the kernel in
