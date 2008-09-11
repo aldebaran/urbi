@@ -14,8 +14,8 @@ env_LTLIBRARIES = libuobject.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
 libuobject_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
-libuobject_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) -no-undefined
-libuobject_la_LIBADD = $(PTHREAD_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
+libuobject_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) -no-undefined
+libuobject_la_LIBADD = $(PTHREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(LTDL_LIBS) $(top_builddir)/lib/libport/libport.la
 
 ## ------------ ##
 ## version.hh.  ##
@@ -59,26 +59,18 @@ include kernel/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
-## -------------- ##
-## urbi-console.  ##
-## -------------- ##
+## ---------- ##
+## programs.  ##
+## ---------- ##
 
-bin_PROGRAMS=
+bin_PROGRAMS =
 if !OPENR
+
+# urbi-console.
 bin_PROGRAMS += urbi-console
-if !WIN32
-bin_PROGRAMS += ast-dump
-ast_dump_SOURCES = ast-dump.cc ast/dot-printer.cc
-ast_dump_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS)	\
-        $(BOOST_REGEX_LDFLAGS) $(BOOST_REGEX_LIBS)		\
-	$(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_FILESYSTEM_LIBS)
-endif
 
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libuobject.la $(PTHREAD_LIBS) $(LTDL_LIBS)	\
-	$(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_FILESYSTEM_LIBS)
-
-
+urbi_console_LDADD = libuobject.la
 dist_libuobject_la_SOURCES +=			\
 console-server.cc				\
 ../lib/network/bsdnet/connection.hh		\
@@ -86,8 +78,14 @@ console-server.cc				\
 ../lib/network/bsdnet/network.hh		\
 ../lib/network/bsdnet/network.cc
 
-
-endif
+if !WIN32
+# ast-dump.
+bin_PROGRAMS += ast-dump
+dist_ast_dump_SOURCES = ast-dump.cc ast/dot-printer.cc
+ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
+ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la
+endif !WIN32
+endif !OPENR
 
 
 if ! INSTALL_KERNEL_HEADERS
