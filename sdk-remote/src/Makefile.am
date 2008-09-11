@@ -44,6 +44,7 @@ include utils/local.mk
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
 
+nodist_env_DATA = version.hh
 
 ## ------------- ##
 ## Urbi-launch.  ##
