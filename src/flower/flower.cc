@@ -125,20 +125,22 @@ namespace flower
       new_handlers->push_back(recurse(e));
 
     static ParametricAst try_block
-      ("var '$previousHandlerTag' = currentRunner.exceptionHandlerTag |"
-       "var '$noExceptionTag' = Tag.newFlowControl(\"noExceptionTag\") |"
-       "currentRunner.exceptionHandlerTag = Tag.newFlowControl(\"handlerTag\") |"
-       "'$noExceptionTag': {"
-       "  var '$exception' = {"
-       "    currentRunner.exceptionHandlerTag: {"
-       "      var '$res' = %exp:1 |"
-       "      currentRunner.exceptionHandlerTag = '$previousHandlerTag' |"
-       "      '$noExceptionTag'.stop('$res')"
-       "    }"
-       "  } |"
-       "  currentRunner.exceptionHandlerTag = '$previousHandlerTag' |"
-       "  %exp:2 |"
-       "  currentRunner.exceptionHandlerTag.stop('$exception')"
+      ("{"
+       "  var '$previousHandlerTag' = currentRunner.exceptionHandlerTag |"
+       "  var '$noExceptionTag' = Tag.newFlowControl(\"noExceptionTag\") |"
+       "  currentRunner.exceptionHandlerTag = Tag.newFlowControl(\"handlerTag\") |"
+       "  '$noExceptionTag': {"
+       "    var '$exception' = {"
+       "      currentRunner.exceptionHandlerTag: {"
+       "        var '$res' = %exp:1 |"
+       "        currentRunner.exceptionHandlerTag = '$previousHandlerTag' |"
+       "        '$noExceptionTag'.stop('$res')"
+       "      }"
+       "    } |"
+       "    currentRunner.exceptionHandlerTag = '$previousHandlerTag' |"
+       "    %exp:2 |"
+       "    currentRunner.exceptionHandlerTag.stop('$exception')"
+       "  }"
        "}");
 
     result_ = exp(try_block % recurse(n->body_get()) % new_handlers);
