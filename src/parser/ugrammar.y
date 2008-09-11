@@ -1350,7 +1350,7 @@ lvalue:
 lvalue:
   "%id:" "integer"
   {
-    $$ = new ast::MetaId(@$, $2);
+    $$ = new ast::MetaId(@$, 0, $2);
   }
 | exp "." "%id:" "integer"
   {

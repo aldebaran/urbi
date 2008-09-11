@@ -1190,7 +1190,7 @@ MetaCall:
     - '{ visit(static_cast<const LValueArgs*>(n)); }'
 
 MetaId:
-  super: LValue
+  super: LValueArgs
   attributes:
     - id:
         type: unsigned
