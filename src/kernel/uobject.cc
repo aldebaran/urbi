@@ -393,7 +393,7 @@ namespace urbi
   {
     rObject me = get_base(objname);
     rObject f = me->slot_get(SYMBOL(setTimer));
-    rObject p = new object::Float(period);
+    rObject p = new object::Float(period / 1000.0);
     rObject call = MAKE_VOIDCALL(this, urbi::UTimerCallback, call);
     object::objects_type args = list_of (p) (call);
     getCurrentRunner().apply(me, f, SYMBOL(setTimer), args);
@@ -409,7 +409,7 @@ namespace urbi
     rObject f = me->slot_get(SYMBOL(setUpdate));
     me->slot_update(getCurrentRunner(), SYMBOL(update),
 		    MAKE_VOIDCALL(this, urbi::UObject, update));
-    object::objects_type args = list_of(new object::Float(t));
+    object::objects_type args = list_of(new object::Float(t / 1000.0));
     getCurrentRunner().apply(me, f, SYMBOL(setUpdate), args);
   }
 
@@ -575,7 +575,7 @@ namespace urbi
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args = list_of
       (rObject(new object::String(name)))
-      (new object::Float(t))
+      (new object::Float(t / 1000.0))
       (
        MAKE_VOIDCALL(this, urbi::UObjectHub, update));
     getCurrentRunner().apply(uob, f, SYMBOL(setHubUpdate), args);
