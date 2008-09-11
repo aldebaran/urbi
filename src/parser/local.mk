@@ -96,6 +96,16 @@ $(FROM_UGRAMMAR_Y): parser/ugrammar.stamp
 generate-parser: $(FROM_UGRAMMAR_Y)
 
 
+## --------------------------- ##
+## Keyword list for listings.  ##
+## --------------------------- ##
+
+.PHONY: keywords
+keywords: $(parser_dir)/utoken.l
+	perl -ne 'BEGIN { use Text::Wrap; }' \
+	     -e '/^"(\w+)"/ && push @k, $$1;' \
+	     -e 'END { print wrap ("    ", "    ", join (", ", map { s/_/\\_/g; $$_ } sort @k)), "\n" };' $<
+
 ## -------------- ##
 ## Flex Scanner.  ##
 ## -------------- ##
