@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   const char *usage = "usage:  urbisound robot milisecondtime  :plays sound recorded by the aibo to /dev/dsp\n"
     "\turbisound robot milisecondtime file [withoutheader] : write recorded sound to a file, with a wav header except if argument withoutheader is set to anything\n";
   //16000 1 16
-  if (argc != 3)
+  if (argc != 3 && argc !=4 && argc != 5)
   {
     printf(usage);
     exit(1);
