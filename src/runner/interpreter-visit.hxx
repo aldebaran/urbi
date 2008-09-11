@@ -81,10 +81,23 @@ namespace runner
   }
 
 
+  static void check_void(libport::Symbol name,
+                         const ast::loc& loc,
+                         const object::rObject& v)
+  {
+    if (v == object::void_class)
+    {
+      object::WrongArgumentType exn(name);
+      exn.location_set(loc);
+      throw exn;
+    }
+  }
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::LocalAssignment* e)
   {
     rObject val = operator()(e->value_get().get());
+    check_void(e->what_get(), e->location_get(), val);
     stacks_.set(e, val);
     return val;
   }
@@ -112,6 +125,8 @@ namespace runner
   {
     ast::rExp v = d->value_get();
     rObject val = v ? operator()(v.get()) : object::void_class;
+    if (v)
+      check_void(d->what_get(), d->location_get(), val);
     stacks_.def(d, val);
     return val;
   }
