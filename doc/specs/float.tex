@@ -18,7 +18,8 @@ obtained with \lstinline|Float|'s \lstinline|new| method
 
 \begin{urbiscript}[caption=Creating a new float, label=lst:new-float,
   float=\floatpos]
-  Float.new; [00000000] 0
+Float.new;
+[00000000] 0
 \end{urbiscript}
 
 \subsection{Methods}
@@ -30,10 +31,10 @@ Return the absolute value of the target (\autoref{lst:float-abs}).
 
 \begin{urbiscript}[caption=Float.abs, label=lst:float-abs,
   float=\floatposh]
-  (-5).abs;
-  [00000000] 5
-  (5).abs;
-  [00000000] 5
+(-5).abs;
+[00000000] 5
+(5).abs;
+[00000000] 5
 \end{urbiscript}
 
 \subsubsection{acos}
@@ -42,8 +43,8 @@ Return the arcosinus of the target.
 
 \begin{urbiscript}[caption=Float.acos, label=lst:float-acos,
   float=\floatposh]
-  1.acos;
-  [00000000] 0
+1.acos;
+[00000000] 0
 \end{urbiscript}
 
 \subsubsection{asin}
@@ -52,8 +53,8 @@ Return the arcsinus of the target.
 
 \begin{urbiscript}[caption=Float.asin, label=lst:float-asin,
   float=\floatposh]
-  0.asin;
-  [00000000] 0
+0.asin;
+[00000000] 0
 \end{urbiscript}
 
 \subsubsection{asString}
@@ -62,8 +63,8 @@ Return a string representing the target (\autoref{lst:float-asString}).
 
 \begin{urbiscript}[caption=Float.asString, label=lst:float-asString,
   float=\floatposh]
-  42.asString;
-  [00000000] "42"
+42.asString;
+[00000000] "42"
 \end{urbiscript}
 
 \subsubsection{atan}
@@ -72,8 +73,8 @@ Return the arctangent of the target (\autoref{lst:float-atan}).
 
 \begin{urbiscript}[caption=Float.atan, label=lst:float-atan,
   float=\floatposh]
-  0.atan;
-  [00000000] 0
+0.atan;
+[00000000] 0
 \end{urbiscript}
 
 \subsubsection{bitand}
@@ -82,8 +83,8 @@ Return the bitwise and between the target and the argument (\autoref{lst:float-b
 
 \begin{urbiscript}[caption=Float.bitand, label=lst:float-bitand,
   float=\floatposh]
-  3 bitand 6;
-  [00000000] 2
+3 bitand 6;
+[00000000] 2
 \end{urbiscript}
 
 \subsubsection{bitor}
@@ -92,8 +93,8 @@ Return the bitwise or between the target and the argument (\autoref{lst:float-bi
 
 \begin{urbiscript}[caption=Float.bitor, label=lst:float-bitor,
   float=\floatposh]
-  3 bitand 6;
-  [00000000] 7
+3 bitand 6;
+[00000000] 7
 \end{urbiscript}
 
 \subsubsection{clone}
@@ -102,12 +103,12 @@ Return a fresh Float with the same value as the target (\autoref{lst:float-clone
 
 \begin{urbiscript}[caption=Float.clone, label=lst:float-clone,
   float=\floatposh]
-  var x = 0;
-  [00000000] 0
-  var y = x.clone;
-  [00000000] 0
-  x === y;
-  [00000000] false
+var x = 0;
+[00000000] 0
+var y = x.clone;
+[00000000] 0
+x === y;
+[00000000] false
 \end{urbiscript}
 
 \subsubsection{compl}
@@ -116,8 +117,8 @@ Return the 1-complement of the target (\autoref{lst:float-compl}).
 
 \begin{urbiscript}[caption=Float.compl, label=lst:float-compl,
   float=\floatposh]
-  compl 1;
-  [00000000] -2
+compl 1;
+[00000000] -2
 \end{urbiscript}
 
 \subsubsection{cos}
@@ -126,8 +127,8 @@ Return the cosinus of the target (\autoref{lst:float-cos}).
 
 \begin{urbiscript}[caption=Float.cos, label=lst:float-cos,
   float=\floatposh]
-  0.cos;
-  [00000000] 1
+0.cos;
+[00000000] 1
 \end{urbiscript}
 
 \subsubsection{exp}
@@ -136,8 +137,8 @@ Return the exponential of the target (\autoref{lst:float-exp}).
 
 \begin{urbiscript}[caption=Float.exp, label=lst:float-exp,
   float=\floatposh]
-  1.exp;
-  [00000000] 2.71828
+1.exp;
+[00000000] 2.71828
 \end{urbiscript}
 
 \subsubsection{inf}
@@ -146,8 +147,8 @@ Return the infinity (\autoref{lst:float-inf}).
 
 \begin{urbiscript}[caption=Float.inf, label=lst:float-inf,
   float=\floatposh]
-  Float.inf;
-  [00000000] inf
+Float.inf;
+[00000000] inf
 \end{urbiscript}
 
 \subsubsection{log}
@@ -156,8 +157,8 @@ Return the logarithm of the target (\autoref{lst:float-log}).
 
 \begin{urbiscript}[caption=Float.log, label=lst:float-log,
   float=\floatposh]
-  2.71828.log;
-  [00000000] 0.999999
+2.71828.log;
+[00000000] 0.999999
 \end{urbiscript}
 
 \subsubsection{nan}
@@ -166,8 +167,8 @@ Return the ``not a number'' special float value (\autoref{lst:float-nan}).
 
 \begin{urbiscript}[caption=Float.nan, label=lst:float-nan,
   float=\floatposh]
-  Float.nan;
-  [00000000] nan
+Float.nan;
+[00000000] nan
 \end{urbiscript}
 
 \subsubsection{random}
@@ -176,12 +177,12 @@ Return a random number between 0 and the target(\autoref{lst:float-random}).
 
 \begin{urbiscript}[caption=Float.random, label=lst:float-random,
   float=\floatposh]
-  5.random;
-  [00000000] 3
-  5.random;
-  [00000000] 1
-  5.random;
-  [00000000] 2
+5.random;
+[00000000] 3
+5.random;
+[00000000] 1
+5.random;
+[00000000] 2
 \end{urbiscript}
 
 \subsubsection{round}
@@ -190,10 +191,10 @@ Return the target, rounded (\autoref{lst:float-round}).
 
 \begin{urbiscript}[caption=Float.round, label=lst:float-round,
   float=\floatposh]
-  1.6.round;
-  [00000000] 2
-  1.4.round;
-  [00000000] 1
+1.6.round;
+[00000000] 2
+1.4.round;
+[00000000] 1
 \end{urbiscript}
 
 \subsubsection{seq}
@@ -202,8 +203,8 @@ Return the sequence of integer from 0 to target - 1 as a list (\autoref{lst:floa
 
 \begin{urbiscript}[caption=Float.seq, label=lst:float-seq,
   float=\floatposh]
-  3.seq;
-  [00000000] [0, 1, 2]
+3.seq;
+[00000000] [0, 1, 2]
 \end{urbiscript}
 
 \subsubsection{sin}
@@ -212,8 +213,8 @@ Return the sinus of the target (\autoref{lst:float-sin}).
 
 \begin{urbiscript}[caption=Float.sin, label=lst:float-sin,
   float=\floatposh]
-  0.sin;
-  [00000000] 0
+0.sin;
+[00000000] 0
 \end{urbiscript}
 
 \subsubsection{sqrt}
@@ -222,8 +223,8 @@ Return the square root of the target (\autoref{lst:float-sqrt}).
 
 \begin{urbiscript}[caption=Float.sqrt, label=lst:float-sqrt,
   float=\floatposh]
-  1024.sqrt;
-  [00000000] 32
+1024.sqrt;
+[00000000] 32
 \end{urbiscript}
 
 \subsubsection{tan}
@@ -232,8 +233,8 @@ Return the tangent of the target (\autoref{lst:float-tan}).
 
 \begin{urbiscript}[caption=Float.tan, label=lst:float-tan,
   float=\floatposh]
-  0.tan;
-  [00000000] 0
+0.tan;
+[00000000] 0
 \end{urbiscript}
 
 \subsubsection{trunc}
@@ -242,8 +243,8 @@ Return the target truncated  (\autoref{lst:float-trunc}).
 
 \begin{urbiscript}[caption=Float.trunc, label=lst:float-trunc,
   float=\floatposh]
-  1.9.trunc;
-  [00000000] 1
+1.9.trunc;
+[00000000] 1
 \end{urbiscript}
 
 \subsubsection{asFloat}
@@ -252,8 +253,8 @@ Return the target (\autoref{lst:float-asFloat}).
 
 \begin{urbiscript}[caption=Float.asFloat, label=lst:float-asFloat,
   float=\floatposh]
-  51.asFloat;
-  [00000000] 51
+51.asFloat;
+[00000000] 51
 \end{urbiscript}
 
 \subsubsection{sqr}
@@ -262,8 +263,8 @@ Return the square of the target (\autoref{lst:float-sqr}).
 
 \begin{urbiscript}[caption=Float.sqr, label=lst:float-sqr,
   float=\floatposh]
-  32.sqr;
-  [00000000] 1024
+32.sqr;
+[00000000] 1024
 \end{urbiscript}
 
 \subsubsection{sgn}
@@ -272,10 +273,10 @@ Return 1 if the target is positive, -1 otherwise (\autoref{lst:float-sgn}).
 
 \begin{urbiscript}[caption=Float.sgn, label=lst:float-sgn,
   float=\floatposh]
-  (-1164).sgn;
-  [00000000] -1
-  (1164).sgn;
-  [00000000] 1
+(-1164).sgn;
+[00000000] -1
+(1164).sgn;
+[00000000] 1
 \end{urbiscript}
 
 \subsubsection{times}
@@ -284,12 +285,12 @@ Take one functional argument and call it target times (\autoref{lst:float-times}
 
 \begin{urbiscript}[caption=Float.times, label=lst:float-times,
   float=\floatposh]
-  5.times(function (i) { echo("ping")});
-  [00000000] *** ping
-  [00000000] *** ping
-  [00000000] *** ping
-  [00000000] *** ping
-  [00000000] *** ping
+5.times(function (i) { echo("ping")});
+[00000000] *** ping
+[00000000] *** ping
+[00000000] *** ping
+[00000000] *** ping
+[00000000] *** ping
 \end{urbiscript}
 
 \subsubsection{each}
@@ -299,12 +300,12 @@ target - 1 (\autoref{lst:float-each}).
 
 \begin{urbiscript}[caption=Float.each, label=lst:float-each,
   float=\floatposh]
-  5.each(function (i) { echo(i * 2)});
-  [00000000] *** 0
-  [00000000] *** 2
-  [00000000] *** 4
-  [00000000] *** 6
-  [00000000] *** 8
+5.each(function (i) { echo(i * 2)});
+[00000000] *** 0
+[00000000] *** 2
+[00000000] *** 4
+[00000000] *** 6
+[00000000] *** 8
 \end{urbiscript}
 
 \subsubsection{\^{}}
@@ -313,8 +314,8 @@ Return the bitwise exclusive or between the target and the first argument.
 
 \begin{urbiscript}[caption=Float.'\^{}', label=lst:float-bitxor,
   float=\floatposh]
-  3 ^ 6;
-  [00000000] 5
+3 ^ 6;
+[00000000] 5
 \end{urbiscript}
 
 \subsubsection{$>>$}
@@ -324,8 +325,8 @@ bit towards the right (\autoref{lst:float-rshift}).
 
 \begin{urbiscript}[caption=Float.'$>>$', label=lst:float-rshift,
   float=\floatposh]
-  4 >> 2;
-  [00000000] 1
+4 >> 2;
+[00000000] 1
 \end{urbiscript}
 
 \subsubsection{$<$}
@@ -337,10 +338,10 @@ floats since Float inherits Orderable (see \autoref{sec:std-orderable}).
 
 \begin{urbiscript}[caption=Float.'$<$', label=lst:float-LT,
   float=\floatposh]
-  0 < 1;
-  [00000000] true
-  1 < 0;
-  [00000000] false
+0 < 1;
+[00000000] true
+1 < 0;
+[00000000] false
 \end{urbiscript}
 
 \subsubsection{$<<$}
@@ -350,8 +351,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 
 \begin{urbiscript}[caption=Float.'$<<$', label=lst:float-lshift,
   float=\floatposh]
-  4 << 2;
-  [00000000] 16
+4 << 2;
+[00000000] 16
 \end{urbiscript}
 
 \subsubsection{-}
@@ -360,8 +361,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 
 \begin{urbiscript}[caption=Float.'-', label=lst:float-minus,
   float=\floatposh]
-  6 - 3;
-  [00000000] 3
+6 - 3;
+[00000000] 3
 \end{urbiscript}
 
 \subsubsection{+}
@@ -369,8 +370,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|a + b| returns \lstinline|a| plus \lstinline|b| (\autoref{lst:float-plus}).
 
 \begin{urbiscript}[caption=Float.'+', label=lst:float-plus, float=\floatposh]
-  1 + 1;
-  [00000000] 2
+1 + 1;
+[00000000] 2
 \end{urbiscript}
 
 \subsubsection{/}
@@ -379,8 +380,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|b| (\autoref{lst:float-div}).
 
 \begin{urbiscript}[caption=Float.'/', label=lst:float-div, float=\floatposh]
-  50 / 11;
-  [00000000] 4
+50 / 11;
+[00000000] 4
 \end{urbiscript}
 
 \subsubsection{\%}
@@ -388,8 +389,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|a \% b| returns \lstinline|a| modulo \lstinline|b| (\autoref{lst:float-mod}).
 
 \begin{urbiscript}[caption=Float.'\%', label=lst:float-mod, float=\floatposh]
-  50 % 11;
-  [00000000] 2
+50 % 11;
+[00000000] 2
 \end{urbiscript}
 
 \subsubsection{*}
@@ -397,8 +398,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|a * b| returns \lstinline|a| times \lstinline|b| (\autoref{lst:float-STAR}).
 
 \begin{urbiscript}[caption=Float.'*', label=lst:float-STAR, float=\floatposh]
-  2 * 3;
-  [00000000] 6
+2 * 3;
+[00000000] 6
 \end{urbiscript}
 
 \subsubsection{**}
@@ -406,8 +407,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|a ** b| returns \lstinline|a| to the \lstinline|b| power (\autoref{lst:float-STAR-STAR}).
 
 \begin{urbiscript}[caption=Float.'**', label=lst:float-STAR-STAR, float=\floatposh]
-  2 ** 10;
-  [00000000] 1024
+2 ** 10;
+[00000000] 1024
 \end{urbiscript}
 
 \subsubsection{==}
@@ -415,8 +416,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|a == b| returns whether \lstinline|a| equals \lstinline|b| (\autoref{lst:float-eq}).
 
 \begin{urbiscript}[caption={Float.'=='}, label=lst:float-eq, float=\floatposh]
-  1 == 1;
-  [00000000] true
-  1 == 2;
-  [00000000] false
+1 == 1;
+[00000000] true
+1 == 2;
+[00000000] false
 \end{urbiscript}

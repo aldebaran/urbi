@@ -963,22 +963,22 @@ environment, as shown in \autoref{lst:function-closure}.
 
 \begin{urbiscript}[caption=Lexical
   closure,label=lst:function-closure,float=\floatpos]
-  var x = 0;
+var x = 0;
 
-  function cl()
-  {
-    // x refers to a variable outside the function
-    x++;
-    echo(x);
-  };
-  cl();
-  [00000000] *** 1
-  x;
-  [00000000] 1
+function cl()
+{
+  // x refers to a variable outside the function
   x++;
-  [00000000] 1
-  cl();
-  [00000000] *** 3
+  echo(x);
+};
+cl();
+[00000000] *** 1
+x;
+[00000000] 1
+x++;
+[00000000] 1
+cl();
+[00000000] *** 3
 \end{urbiscript}
 
 \autoref{lst:function-closure-escape} illustrate that local variables can even
@@ -986,21 +986,21 @@ escape their declaration scope by lexical closure.
 
 \begin{urbiscript}[caption=Local variable escaping its scope by
   lexical closure.,label=lst:function-closure-escape,float=\floatpos]
-  function wrapper()
-  {
-    // Normally, x is local to 'wrapper', and is limited to this scope.
-    var x = 0;
-    at (x > 1)
-      echo("ping");
-    // Here we make it escape the scope by returning a closure on it.
-    return function() { x++ };
-  };
-  var f = wrapper();
-  f();
-  [00000000] 1
-  f();
-  [00000000] 2
-  [00000000] *** ping
+function wrapper()
+{
+  // Normally, x is local to 'wrapper', and is limited to this scope.
+  var x = 0;
+  at (x > 1)
+    echo("ping");
+  // Here we make it escape the scope by returning a closure on it.
+  return function() { x++ };
+};
+var f = wrapper();
+f();
+[00000000] 1
+f();
+[00000000] 2
+[00000000] *** ping
 \end{urbiscript}
 
 \FloatBarrier
@@ -1017,7 +1017,7 @@ Any value in \us is an object. Objects contain:
 
 \subsubsection{Manipulation}
 
-Objects can contain any number of slots, every slot has a name and a
+Objects can contain any number of \dfn[slot]{slots}, every slot has a name and a
 value. They are often call ``fields'' or ``members'' in other object
 oriented language.
 
@@ -1025,7 +1025,8 @@ The \lstinline|createSlot| is used to add a slot to an object with the
 void (\autoref{sec:std-void}) value. The \lstinline|updateSlot| can be later
 used to change the value of the slot, while the \lstinline|getSlot|
 method can be used to read it. The \lstinline|setSlot| method can be
-used to create a slot with a given value instead of void. Finally, the
+used to create a slot with a given value instead of
+\lstinline|void|. Finally, the
 \lstinline|slotNames| method can be used to get the list of the object
 slot's name. \autoref{lst:slots} shows how to manipulate slots. More
 documentation about these method can be found in \autoref{sec:std-object}.
@@ -1114,26 +1115,26 @@ is, when looking for a slot in an object:
 
 \begin{urbiscript}[caption=Slots inheritance, label=lst:inheritance,
   float=\floatpos]
-  var a = Object.new;
-  var b = Object.new;
-  var c = Object.new;
-  a.setSlot("x", "slot in a");
-  b.setSlot("x", "slot in b");
-  // c has no "x" slot
-  c.getSlot("x");
-  [00000000:error] !!! lookup failed: x
-  // c can inherit the "x" slot from a
-  c.addProto(a);
-  c.getSlot("x");
-  [00000000] "slot in a"
-  // b is prepended to the prototype list, and has thus priority
-  c.addProto(b);
-  c.getSlot("x");
-  [00000000] "slot in b"
-  // a local slot in c has priority over prototypes
-  c.setSlot("x", "slot in c");
-  c.getSlot("x");
-  [00000000] "slot in c"
+var a = Object.new;
+var b = Object.new;
+var c = Object.new;
+a.setSlot("x", "slot in a");
+b.setSlot("x", "slot in b");
+// c has no "x" slot
+c.getSlot("x");
+[00000000:error] !!! lookup failed: x
+// c can inherit the "x" slot from a
+c.addProto(a);
+c.getSlot("x");
+[00000000] "slot in a"
+// b is prepended to the prototype list, and has thus priority
+c.addProto(b);
+c.getSlot("x");
+[00000000] "slot in b"
+// a local slot in c has priority over prototypes
+c.setSlot("x", "slot in c");
+c.getSlot("x");
+[00000000] "slot in c"
 \end{urbiscript}
 
 \subsubsection{Copy on write}
@@ -1149,20 +1150,20 @@ child object (see \autoref{lst:copy-on-write}).
 
 \begin{urbiscript}[caption=Copy on write, label=lst:copy-on-write,
   float=\floatpos]
-  var p = Object.new;
-  var p.slot = 0;
-  var c = Object.new;
-  c.addProto(p);
-  c.slot;
-  [00000000] 0
-  c.slot = 1;
-  [00000000] 1
-  // p's slot was not altered
-  p.slot;
-  [00000000] 0
-  // It was copied in c
-  c.slot;
-  [00000000] 1
+var p = Object.new;
+var p.slot = 0;
+var c = Object.new;
+c.addProto(p);
+c.slot;
+[00000000] 0
+c.slot = 1;
+[00000000] 1
+// p's slot was not altered
+p.slot;
+[00000000] 0
+// It was copied in c
+c.slot;
+[00000000] 1
 \end{urbiscript}
 
 \subsection{Sending messages}
@@ -1177,12 +1178,12 @@ languages.
 
 \begin{urbiscript}[caption=Sending messages, label=lst:messages,
   float=\floatpos]
-  // Send the message msg to object obj, with arguments arg1 and arg2
-  obj.msg(arg1, arg2);
-  // Send the message msg to object obj, with no arguments
-  obj.msg();
-  // This is strictly equivalent
-  obj.msg;
+// Send the message msg to object obj, with arguments arg1 and arg2
+obj.msg(arg1, arg2);
+// Send the message msg to object obj, with no arguments
+obj.msg();
+// This is strictly equivalent
+obj.msg;
 \end{urbiscript}
 
 When a message ``msg'' is sent to object \lstinline|obj|:
@@ -1204,21 +1205,21 @@ Such message sending is illustrated by \autoref{lst:send-message}.
 
 \begin{urbiscript}[caption=Sending messages, label=lst:send-message,
   float=\floatpos]
-  var obj = Object.new;
-  var obj.a = 42;
-  var obj.b = function (x) { x + 1 };
-  obj.a;
-  [00000000] 42
-  obj.a();
-  [00000000] 42
-  obj.a(50);
-  [00000000:error] !!! a: expected 0 arguments, given 1
-  obj.b;
-  [00000000:error] !!! b: expected 1 arguments, given 0
-  obj.b();
-  [00000000:error] !!! b: expected 1 arguments, given 0
-  obj.b(50);
-  [00000000] 51
+var obj = Object.new;
+var obj.a = 42;
+var obj.b = function (x) { x + 1 };
+obj.a;
+[00000000] 42
+obj.a();
+[00000000] 42
+obj.a(50);
+[00000000:error] !!! a: expected 0 arguments, given 1
+obj.b;
+[00000000:error] !!! b: expected 1 arguments, given 0
+obj.b();
+[00000000:error] !!! b: expected 1 arguments, given 0
+obj.b(50);
+[00000000] 51
 \end{urbiscript}
 
 \FloatBarrier
@@ -1232,17 +1233,17 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 
 \begin{urbiscript}[caption=Using break, label=lst:break,
   float=\floatpos]
-  var i = 5;
-  for (; true; echo(i))
-  {
-    if (i > 8)
-      break;
-    i++;
-  }
-  [00000000] *** 6
-  [00000000] *** 7
-  [00000000] *** 8
-  [00000000] *** 9
+var i = 5;
+for (; true; echo(i))
+{
+  if (i > 8)
+    break;
+  i++;
+}
+[00000000] *** 6
+[00000000] *** 7
+[00000000] *** 8
+[00000000] *** 9
 \end{urbiscript}
 
 \subsection{continue}
@@ -1253,16 +1254,16 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 
 \begin{urbiscript}[caption=Using continue, label=lst:continue,
   float=\floatpos]
-  for (var i = 0; i < 8; i++)
-  {
-    if (i % 2 != 0)
-      continue;
-    echo(i);
-  }
-  [00000000] *** 0
-  [00000000] *** 2
-  [00000000] *** 4
-  [00000000] *** 6
+for (var i = 0; i < 8; i++)
+{
+  if (i % 2 != 0)
+    continue;
+  echo(i);
+}
+[00000000] *** 0
+[00000000] *** 2
+[00000000] *** 4
+[00000000] *** 6
 \end{urbiscript}
 
 \subsection{do}
@@ -1271,10 +1272,10 @@ The \lstinline|do| construct enables do evaluate an expression with a
 different ``\lstinline|this|''.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-  do target
-  {
-    body
-  }
+do target
+{
+  body
+}
 \end{urbiscript}
 
 It evaluates \lstinline|body|, with \lstinline|this| being
@@ -1283,15 +1284,15 @@ evaluates to \lstinline|body|.
 
 \begin{urbiscript}[caption=Using \lstinline|do|, label=lst:do,
   float=\floatpos]
-  var x = 42;
-  do x
-  {
-    echo(this);
-    echo(sqrt);
-    setSlot("y", 0);
-    42;
-  };
-  [00000000] 42
+var x = 42;
+do x
+{
+  echo(this);
+  echo(sqrt);
+  setSlot("y", 0);
+  42;
+};
+[00000000] 42
 \end{urbiscript}
 
 \subsection{for}
@@ -1299,8 +1300,8 @@ evaluates to \lstinline|body|.
 \us support the classical \C-like \lstinline|for| construct.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-  for (initialization; condition; increment)
-    body;
+for (initialization; condition; increment)
+  body;
 \end{urbiscript}
 
 It has the exact same behavior as \C's \lstinline|for|:
@@ -1334,13 +1335,13 @@ illustrates this.
 
 \begin{urbiscript}[caption=Iterating over a collection with for, label=lst:foreach,
   float=\floatpos]
-  for (var x in [0, 1, 2, 3, 4])
-    echo(0.sqr);
-  [00000000] *** 0
-  [00000000] *** 1
-  [00000000] *** 4
-  [00000000] *** 9
-  [00000000] *** 16
+for (var x in [0, 1, 2, 3, 4])
+  echo(0.sqr);
+[00000000] *** 0
+[00000000] *** 1
+[00000000] *** 4
+[00000000] *** 9
+[00000000] *** 16
 \end{urbiscript}
 
 This form of \lstinline|for| simply sends the ``each'' message to
@@ -1350,23 +1351,23 @@ make any object acceptable in a \lstinline|for| by defining an
 adequate \lstinline|each| method.
 
 \begin{urbiscript}
-  var Hobbits = Object.new;
-  function Hobbits.each (action)
-  {
-    action("Frodo");
-    action("Merry");
-    action("Pippin");
-    action("Sam");
-  };
+var Hobbits = Object.new;
+function Hobbits.each (action)
+{
+  action("Frodo");
+  action("Merry");
+  action("Pippin");
+  action("Sam");
+};
 
-  for (var name in Hobbits)
-    echo("%s is a hobbit." % name);
-  [00000000] Frodo is a hobbit
-  [00000000] Merry is a hobbit
-  [00000000] Pipin is a hobbit
-  [00000000] Sam is a hobbit
-  // This for statement is equivalent to:
-  Hobbits.each(function (name) { echo("%s is a hobbit." % name) });
+for (var name in Hobbits)
+  echo("%s is a hobbit." % name);
+[00000000] Frodo is a hobbit
+[00000000] Merry is a hobbit
+[00000000] Pipin is a hobbit
+[00000000] Sam is a hobbit
+// This for statement is equivalent to:
+Hobbits.each(function (name) { echo("%s is a hobbit." % name) });
 \end{urbiscript}
 
 \subsection{if}
@@ -1374,13 +1375,13 @@ adequate \lstinline|each| method.
 \us support classical \lstinline|if| construct.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-  if (condition)
-    action;
+if (condition)
+  action;
 
-  if (condition)
-    action
-  else
-    otherwise;
+if (condition)
+  action
+else
+  otherwise;
 \end{urbiscript}
 
 If the \lstinline|condition| evaluation is true, \lstinline|action| is
@@ -1392,17 +1393,17 @@ executed.
 The \lstinline|switch| statement in \us is similiar to \C's one.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-  switch (value)
-  {
-    case value_one:
-      action_one;
-    case value_two:
-      action_two;
-  //case ...:
-  //  ...
-    default:
-      default_action;
-  };
+switch (value)
+{
+  case value_one:
+    action_one;
+  case value_two:
+    action_two;
+//case ...:
+//  ...
+  default:
+    default_action;
+};
 \end{urbiscript}
 
 It might contain an arbitrary number of cases, and optionally a
@@ -1411,7 +1412,7 @@ result is compared sequentially with the evaluation of all cases
 values, with the \lstinline|==| operator, until one comparison is
 true. If such a match is found, the corresponding action is executed,
 and execution jumps after the \lstinline|switch|. Otherwise, the
-default case - if any - is executed, and execution jumps after the
+default case --- if any --- is executed, and execution jumps after the
 switch. The switch itself evaluates to case that was evaluated, or to
 void if no match was found and there's no default case. \autoref{lst:switch}
 illustrates \lstinline|switch| usage.
@@ -1424,24 +1425,24 @@ in \C where it need be integral.
 
 \begin{urbiscript}[caption=The \lstinline|switch| construct,
   label=lst:switch, float=\floatpos]
-  function sw(v)
+function sw(v)
+{
+  switch (v)
   {
-    switch (v)
-    {
-      case "":
-        echo("Empty string");
-      case "foo":
-        "bar";
-      default:
-        v[0];
-    }
-  };
-  sw("");
-  [00000000] *** Empty string
-  sw("foo");
-  [00000000] "bar"
-  sw("foobar");
-  [00000000] "f"
+    case "":
+      echo("Empty string");
+    case "foo":
+      "bar";
+    default:
+      v[0];
+  }
+};
+sw("");
+[00000000] *** Empty string
+sw("foo");
+[00000000] "bar"
+sw("foobar");
+[00000000] "f"
 \end{urbiscript}
 
 \subsection{while}
@@ -1459,17 +1460,17 @@ jumps after the \lstinline|while|. See \autoref{lst:while}.
 
 \begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
-  var i = 5;
-  while (i > 0)
-  {
-    echo(i);
-    i--;
-  };
-  [00000000] *** 5
-  [00000000] *** 4
-  [00000000] *** 3
-  [00000000] *** 2
-  [00000000] *** 1
+var i = 5;
+while (i > 0)
+{
+  echo(i);
+  i--;
+};
+[00000000] *** 5
+[00000000] *** 4
+[00000000] *** 3
+[00000000] *** 2
+[00000000] *** 1
 \end{urbiscript}
 
 \FloatBarrier
