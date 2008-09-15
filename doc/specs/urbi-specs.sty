@@ -67,7 +67,6 @@
 %% -------- %%
 
 \RequirePackage{mylistings}
-\lstset{language=[interactive]Urbi}
 
 \definecolor{keywords}{rgb}{0.2,0.2,0.8}
 \definecolor{comments}{rgb}{0.8,0.5,0}
@@ -82,11 +81,22 @@
   aboveskip=.6cm,
   captionpos=b,
   frame=single,
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily,
   showstringspaces=false,
 %  moredelim=[is][]{`}{`},
 %  breaklines,
 }
+
+% This is so that \lstinline corresponds to urbiScript code in normal
+% size.
+\lstset{language=[interactive]Urbi}
+
+% This is so that code examples use a small font.
+\lstnewenvironment{urbiscript}[1][]
+  {\lstset{language=[interactive]urbi,
+      basicstyle=\ttfamily\footnotesize,
+      #1}}
+  {}
 
 %% ----------- %%
 %% maketitle.  %%

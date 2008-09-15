@@ -18,11 +18,11 @@ Comments are used to document the code, they are ignored by the
 
 \autoref{lst:comments} illustrates this.
 
-\begin{lstlisting}[caption=Comments,label=lst:comments,float=\floatpos]
+\begin{urbiscript}[caption=Comments,label=lst:comments,float=\floatpos]
 // C++ style comment
 /* C style comment */
 /* These comments /* do */ nest */
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Identifiers}
 \label{sec:us-syn-id}
@@ -39,16 +39,16 @@ method identifier in a method call, as shown in
 between simple quotes (\lstinline|'|), in which case they may contain
 any characters, as in \autoref{lst:escape-identifiers}.
 
-\begin{lstlisting}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
+\begin{urbiscript}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
 var x;
 var foobar51;
 obj.met_hod();
 // Those are invalid.
 // var 3x;
 // obj.3x();
-\end{lstlisting}
+\end{urbiscript}
 
-\begin{lstlisting}[caption=Identifiers cannot be keywords,
+\begin{urbiscript}[caption=Identifiers cannot be keywords,
   label=lst:identifiers-keywords,float=\floatpos]
 // Those are invalid because "if" is a keyword.
 // var if;
@@ -56,15 +56,15 @@ obj.met_hod();
 // However, keywords can be escaped with simple quotes
 var 'if';
 obj.'if'();
-\end{lstlisting}
+\end{urbiscript}
 
-\begin{lstlisting}[caption=Escaping identifiers with simple quotes,
+\begin{urbiscript}[caption=Escaping identifiers with simple quotes,
   label=lst:escape-identifiers,float=\floatpos]
 // Identifiers can be escaped with simple quotes
 var '%x';
 var '1 2 3';
 obj.'[]';
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Keywords}
 \label{sec:syn-key}
@@ -183,12 +183,12 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
 \end{table}
 \renewcommand{\baselinestretch}{1}
 
-\begin{lstlisting}[caption=Escaping keywords,label=lst:escape-keyword,float=\floatpos]
+\begin{urbiscript}[caption=Escaping keywords,label=lst:escape-keyword,float=\floatpos]
   var 'if' = 21;
   [00000000] 21
   'if' * 2;
   [00000000] 42
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Literals}
 \subsubsection{Durations}
@@ -228,12 +228,12 @@ decimal part. Briefly, float literals must match the
 \lstinline|[0-9]+(\.[0-9]+)?| regular expression. \autoref{lst:literal-floats}
 is an example of literal floats.
 
-\begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
+\begin{urbiscript}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
 1;
 [00000000] 1
 1.1;
 [00000000] 1.1
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Lists}
 \label{sec:us-syn-lit-list}
@@ -242,12 +242,12 @@ Literal lists are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
 (\lstinline|[]|), as shown in \autoref{lst:literal-lists}.
 
-\begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
+\begin{urbiscript}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
 []; // The empty list
 [00000000] []
 [1, 2, 3];
 [00000000] [1, 2, 3]
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Strings}
 
@@ -272,7 +272,7 @@ will be printed out as \lstinline|\n| when a string result is
 dumped. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
-\begin{lstlisting}[caption=Literal strings,label=lst:literal-strings,float=\floatpos]
+\begin{urbiscript}[caption=Literal strings,label=lst:literal-strings,float=\floatpos]
 "";
 [00000000] ""
 "foo";
@@ -284,7 +284,7 @@ echo("a\nb"); // We can see there is an actual line feed
 ..b
 echo("a\\nb");
 [00000000] a\nb
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Operators}
 
@@ -393,7 +393,7 @@ on numeric values. See \autoref{tab:arithmetic-operators} and
   \label{tab:arithmetic-operators}
 \end{table}
 
-\begin{lstlisting}[caption=Arithmetic operators,
+\begin{urbiscript}[caption=Arithmetic operators,
   label=lst:arithmetic-operators,float=\floatposh]
 1 + 1;
 [00000000] 2
@@ -407,7 +407,7 @@ on numeric values. See \autoref{tab:arithmetic-operators} and
 [00000000] 1024
 -(1 + 2);
 [00000000] -3
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Assignment operators}
 
@@ -434,7 +434,7 @@ affectation combined with another operator. See
 \footnotetext{For object fields only. Assignment to local variables
   cannot be redefined. }
 
-\begin{lstlisting}[caption=Assignment operators,
+\begin{urbiscript}[caption=Assignment operators,
   label=lst:assignment-operators,float=\floatposh]
 var x = 0;
 [00000000] 0
@@ -450,7 +450,7 @@ x++;
 [00000000] 1
 x;
 [00000000] 2
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Bitwise operators}
 
@@ -474,13 +474,13 @@ and \autoref{lst:bitwise-operators}.
   \label{tab:bitwise-operators}
 \end{table}
 
-\begin{lstlisting}[caption=Bitwise operators,
+\begin{urbiscript}[caption=Bitwise operators,
   label=lst:bitwise-operators,float=\floatposh]
 4 << 2;
 [00000000] 16
 4 >> 2;
 [00000000] 1
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Boolean operators}
 
@@ -506,7 +506,7 @@ evaluated only if needed.
   \label{tab:logic-operators}
 \end{table}
 
-\begin{lstlisting}[caption=Boolean operators,
+\begin{urbiscript}[caption=Boolean operators,
   label=lst:bool-operators,float=\floatposh]
 true && true;
 [00000000] true
@@ -518,7 +518,7 @@ true || (1 / 0);
 [00000000] true
 false && (1 / 0);
 [00000000] false
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Comparison operators}
 
@@ -546,7 +546,7 @@ false && (1 / 0);
   \label{tab:comparison-operators}
 \end{table}
 
-\begin{lstlisting}[caption=Comparison operators,
+\begin{urbiscript}[caption=Comparison operators,
   label=lst:comparison-operators,float=\floatposh]
 0 < 0;
 [00000000] false
@@ -562,7 +562,7 @@ x === x;
 [00000000] true
 x !== x;
 [00000000] false
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Miscellaneous operators}
 
@@ -589,7 +589,7 @@ method of the targeted object.\fixme{The examples are wrong}
   \end{tabular}
 \end{table}
 
-\begin{lstlisting}[caption=Miscellaneous operators,
+\begin{urbiscript}[caption=Miscellaneous operators,
   label=lst:miscellaneous-operators,float=\floatposh]
 0 < 0;
 [00000000] false
@@ -605,7 +605,7 @@ x === x;
 [00000000] true
 x !== x;
 [00000000] false
-\end{lstlisting}
+\end{urbiscript}
 
 \clearpage
 \subsubsection{All operators summary}
@@ -685,9 +685,9 @@ Scopes in \us are sequences of expressions, enclosed in curly brackets
 (\lstinline|{}|). Expressions are separated with the four expression
 separators (see \fixme{autoref{sec:fixme}}). The last separator is optional and
 ignored if present. Scopes are themselves expressions, and can thus be
-used in composite expressions, nested, \ldots
+used in composite expressions, nested, and so forth.
 
-\begin{lstlisting}[caption=Scopes,label=lst:scopes,float=\floatpos]
+\begin{urbiscript}[caption=Scopes,label=lst:scopes,float=\floatpos]
 // Scopes evaluate to their last expression
 {
   1;
@@ -698,7 +698,7 @@ used in composite expressions, nested, \ldots
 // Scopes can be used as expressions
 {1; 2; 3} + 1;
 [00000000] 4
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Local variables}
 
@@ -711,7 +711,7 @@ name. Their value can be changed with the assignment operator; such an
 assignment expression returns the new value. The use of local
 variables is illustrated in \autoref{lst:local-variables}.
 
-\begin{lstlisting}[caption=Using local variables,
+\begin{urbiscript}[caption=Using local variables,
   label=lst:local-variables,float=\floatpos]
 // This declare variable x with value 42, and evaluates to 42.
 var x = 42;
@@ -728,7 +728,7 @@ x;
 var y;
 y.isVoid;
 [00000000] true
-\end{lstlisting}
+\end{urbiscript}
 
 Local variables lifespan is the same as their enclosing scope. They
 are thus only accessible from their scope and its
@@ -739,7 +739,7 @@ variable with the same name can be redefined in a subscope, in which
 case references refer to the innermost variable, as shown in
 \autoref{lst:local-variables-scoping}.
 
-\begin{lstlisting}[caption=Local variables scoping,
+\begin{urbiscript}[caption=Local variables scoping,
   label=lst:local-variables-scoping,float=\floatpos]
 {
   var x = 0;
@@ -764,7 +764,7 @@ case references refer to the innermost variable, as shown in
 [00000000] *** 2
 [00000000] *** 3
 [00000000] *** 1
-\end{lstlisting}
+\end{urbiscript}
 
 \FloatBarrier
 \section{Functions}
@@ -779,20 +779,20 @@ and a scope representing the body of the function. Formal arguments
 are a comma separated list of identifiers. \autoref{lst:function} illustrates
 this.
 
-\begin{lstlisting}[caption=Functional
+\begin{urbiscript}[caption=Functional
   value,label=lst:function,float=\floatpos]
 function (arg1, arg2) { echo(0) };
 [00000000] function(arg1, arg2) {
 ..  echo(0)
 ..}
-\end{lstlisting}
+\end{urbiscript}
 
 The whole point of a function is to be called later, so storing it in
 a variable is the most common usage. \us provide a simple sugar to
 initialize a new variable with a given function, presented in
 \autoref{lst:function-sugar}.
 
-\begin{lstlisting}[caption=Storing functions in variables,
+\begin{urbiscript}[caption=Storing functions in variables,
   label=lst:function-sugar,float=\floatpos]
 // Functions are often stored in variables to call them later
 var f1 = function () {
@@ -807,7 +807,7 @@ function f2()
 }
 f2();
 [00000000] *** hello
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Arguments}
 
@@ -819,7 +819,7 @@ check, and arguments themselves are not evaluated. Arguments can then
 be manipulated with the call message, explained in
 \autoref{sec:us-fun-callmsg}.
 
-\begin{lstlisting}[caption=Storing and calling
+\begin{urbiscript}[caption=Storing and calling
   functions,label=lst:function-args,float=\floatpos]
 var f = function(a, b) {
   echo(b);
@@ -833,7 +833,7 @@ f(0);
 [00000000:error] !!! f: expected 2 arguments, given 1
 f(0, 1, 2);
 [00000000:error] !!! f: expected 2 arguments, given 3
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Return value}
 
@@ -844,7 +844,7 @@ scope. However, value can be returned manually with the
 evaluation of the function is stopped. If \lstinline|return| is used
 with no value, the functions returns void. See \autoref{lst:function-return}.
 
-\begin{lstlisting}[caption=Returning values from functions,
+\begin{urbiscript}[caption=Returning values from functions,
   label=lst:function-return,float=\floatpos]
   function f(a, b)
   {
@@ -871,7 +871,7 @@ with no value, the functions returns void. See \autoref{lst:function-return}.
     echo(0); // This is not executed
   };
   h(); // Returns void, so nothing is printed.
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Call messages}
 \label{sec:us-fun-callmsg}
@@ -888,7 +888,7 @@ at the call site, and evaluate them by hand. A quick example is given
 in \autoref{lst:function-lazy}. More information about this can be found in
 the CallMessage class documentation (\autoref{sec:std-callmsg}).
 
-\begin{lstlisting}[caption=Lazy
+\begin{urbiscript}[caption=Lazy
   function,label=lst:function-lazy,float=\floatposh]
   // Do not specify formal arguments, so as
   // effective arguments are not evaluated at call site
@@ -901,7 +901,7 @@ the CallMessage class documentation (\autoref{sec:std-callmsg}).
   lazy(echo("a"), echo("b"));
   [00000000] *** a
   [00000000] *** a
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Lexical closures}
 \label{sec:us-fun-closures}
@@ -912,7 +912,7 @@ in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
 environment, as shown in \autoref{lst:function-closure}.
 
-\begin{lstlisting}[caption=Lexical
+\begin{urbiscript}[caption=Lexical
   closure,label=lst:function-closure,float=\floatpos]
   var x = 0;
 
@@ -930,12 +930,12 @@ environment, as shown in \autoref{lst:function-closure}.
   [00000000] 1
   cl();
   [00000000] *** 3
-\end{lstlisting}
+\end{urbiscript}
 
 \autoref{lst:function-closure-escape} illustrate that local variables can even
 escape their declaration scope by lexical closure.
 
-\begin{lstlisting}[caption=Local variable escaping its scope by
+\begin{urbiscript}[caption=Local variable escaping its scope by
   lexical closure.,label=lst:function-closure-escape,float=\floatpos]
   function wrapper()
   {
@@ -952,7 +952,7 @@ escape their declaration scope by lexical closure.
   f();
   [00000000] 2
   [00000000] *** ping
-\end{lstlisting}
+\end{urbiscript}
 
 \FloatBarrier
 \section{Objects}
@@ -981,7 +981,7 @@ used to create a slot with a given value instead of void. Finally, the
 slot's name. \autoref{lst:slots} shows how to manipulate slots. More
 documentation about these method can be found in \autoref{sec:std-object}.
 
-\begin{lstlisting}[caption=Manipulating slots, label=lst:slots,
+\begin{urbiscript}[caption=Manipulating slots, label=lst:slots,
   float=\floatpos]
   var o = Object.new;
   o.slotNames;
@@ -996,7 +996,7 @@ documentation about these method can be found in \autoref{sec:std-object}.
   [00000000] 42
   o.getSlot("test");
   [00000000] 42
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Sugars}
 
@@ -1029,7 +1029,7 @@ or removed with the \lstinline|addProto| and \lstinline|removeProto|
 methods respectively, as illustrated by \autoref{lst:prototypes}. More
 documentation about these methods can be found in \autoref{sec:std-object}.
 
-\begin{lstlisting}[caption=Manipulating prototypes, label=lst:prototypes,
+\begin{urbiscript}[caption=Manipulating prototypes, label=lst:prototypes,
   float=\floatpos]
   var o = Object.new;
   o.protos;
@@ -1040,7 +1040,7 @@ documentation about these methods can be found in \autoref{sec:std-object}.
   o.removeProto(Object);
   o.protos;
   [00000000] [<Pair>]
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Inheritance}
 
@@ -1063,7 +1063,7 @@ is, when looking for a slot in an object:
 
 \autoref{lst:inheritance} shows how slots are inherited.
 
-\begin{lstlisting}[caption=Slots inheritance, label=lst:inheritance,
+\begin{urbiscript}[caption=Slots inheritance, label=lst:inheritance,
   float=\floatpos]
   var a = Object.new;
   var b = Object.new;
@@ -1085,7 +1085,7 @@ is, when looking for a slot in an object:
   c.setSlot("x", "slot in c");
   c.getSlot("x");
   [00000000] "slot in c"
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Copy on write}
 
@@ -1098,7 +1098,7 @@ with the new value. This process is called \emph{copy on write}; thanks
 to it, prototypes are not altered when the slot is overridden in a
 child object (see \autoref{lst:copy-on-write}).
 
-\begin{lstlisting}[caption=Copy on write, label=lst:copy-on-write,
+\begin{urbiscript}[caption=Copy on write, label=lst:copy-on-write,
   float=\floatpos]
   var p = Object.new;
   var p.slot = 0;
@@ -1114,7 +1114,7 @@ child object (see \autoref{lst:copy-on-write}).
   // It was copied in c
   c.slot;
   [00000000] 1
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Sending messages}
 
@@ -1126,7 +1126,7 @@ arguments, the empty parentheses can be omitted. As you might see,
 sending messages is very similar to calling methods in classical
 languages.
 
-\begin{lstlisting}[caption=Sending messages, label=lst:messages,
+\begin{urbiscript}[caption=Sending messages, label=lst:messages,
   float=\floatpos]
   // Send the message msg to object obj, with arguments arg1 and arg2
   obj.msg(arg1, arg2);
@@ -1134,7 +1134,7 @@ languages.
   obj.msg();
   // This is strictly equivalent
   obj.msg;
-\end{lstlisting}
+\end{urbiscript}
 
 When a message ``msg'' is sent to object \lstinline|obj|:
 
@@ -1153,7 +1153,7 @@ When a message ``msg'' is sent to object \lstinline|obj|:
 
 Such message sending is illustrated by \autoref{lst:send-message}.
 
-\begin{lstlisting}[caption=Sending messages, label=lst:send-message,
+\begin{urbiscript}[caption=Sending messages, label=lst:send-message,
   float=\floatpos]
   var obj = Object.new;
   var obj.a = 42;
@@ -1170,7 +1170,7 @@ Such message sending is illustrated by \autoref{lst:send-message}.
   [00000000:error] !!! b: expected 1 arguments, given 0
   obj.b(50);
   [00000000] 51
-\end{lstlisting}
+\end{urbiscript}
 
 \FloatBarrier
 \section{Imperative flow control}
@@ -1181,7 +1181,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes execution jump after the loop. See
 \autoref{lst:break}.
 
-\begin{lstlisting}[caption=Using break, label=lst:break,
+\begin{urbiscript}[caption=Using break, label=lst:break,
   float=\floatpos]
   var i = 5;
   for (; true; echo(i))
@@ -1194,7 +1194,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
   [00000000] *** 7
   [00000000] *** 8
   [00000000] *** 9
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{continue}
 
@@ -1202,7 +1202,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes execution jump at the loop's body end. See
 \autoref{lst:continue}.
 
-\begin{lstlisting}[caption=Using continue, label=lst:continue,
+\begin{urbiscript}[caption=Using continue, label=lst:continue,
   float=\floatpos]
   for (var i = 0; i < 8; i++)
   {
@@ -1214,25 +1214,25 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
   [00000000] *** 2
   [00000000] *** 4
   [00000000] *** 6
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{do}
 
 The \lstinline|do| construct enables do evaluate an expression with a
 different ``\lstinline|this|''.
 
-\begin{lstlisting}[frame=, backgroundcolor=, ]
+\begin{urbiscript}[frame=, backgroundcolor=, ]
   do target
   {
     body
   }
-\end{lstlisting}
+\end{urbiscript}
 
 It evaluates \lstinline|body|, with \lstinline|this| being
 \lstinline|target|, as shown in \autoref{lst:do}.  The \lstinline|do| itself
 evaluates to \lstinline|body|.
 
-\begin{lstlisting}[caption=Using \lstinline|do|, label=lst:do,
+\begin{urbiscript}[caption=Using \lstinline|do|, label=lst:do,
   float=\floatpos]
   var x = 42;
   do x
@@ -1243,16 +1243,16 @@ evaluates to \lstinline|body|.
     42;
   };
   [00000000] 42
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{for}
 
 \us support the classical \C-like \lstinline|for| construct.
 
-\begin{lstlisting}[frame=, backgroundcolor=, ]
+\begin{urbiscript}[frame=, backgroundcolor=, ]
   for (initialization; condition; increment)
     body;
-\end{lstlisting}
+\end{urbiscript}
 
 It has the exact same behavior as \C's \lstinline|for|:
 
@@ -1272,10 +1272,10 @@ It has the exact same behavior as \C's \lstinline|for|:
 \us support iteration over a collection with another form of the
 \lstinline|for| loop.
 
-\begin{lstlisting}[frame=, backgroundcolor=, ]
+\begin{urbiscript}[frame=, backgroundcolor=, ]
   for (var name in collection)
     action;
-\end{lstlisting}
+\end{urbiscript}
 
 It evaluates \lstinline|action| for each element in
 \lstinline|collection|. Inside \lstinline|action|, the current element
@@ -1283,7 +1283,7 @@ is accessible via the \lstinline|name| local variable. \autoref{lst:foreach}
 illustrates this.
 
 
-\begin{lstlisting}[caption=Iterating over a collection with for, label=lst:foreach,
+\begin{urbiscript}[caption=Iterating over a collection with for, label=lst:foreach,
   float=\floatpos]
   for (var x in [0, 1, 2, 3, 4])
     echo(0.sqr);
@@ -1292,7 +1292,7 @@ illustrates this.
   [00000000] *** 4
   [00000000] *** 9
   [00000000] *** 16
-\end{lstlisting}
+\end{urbiscript}
 
 This form of \lstinline|for| simply sends the ``each'' message to
 \lstinline|collection| with one argument: the function that takes the
@@ -1300,7 +1300,7 @@ current element and performs \lstinline|action| over it. Thus, you can
 make any object acceptable in a \lstinline|for| by defining an
 adequate \lstinline|each| method.
 
-\begin{lstlisting}
+\begin{urbiscript}
   var Hobbits = Object.new;
   function Hobbits.each (action)
   {
@@ -1318,13 +1318,13 @@ adequate \lstinline|each| method.
   [00000000] Sam is a hobbit
   // This for statement is equivalent to:
   Hobbits.each(function (name) { echo("%s is a hobbit." % name) });
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{if}
 
 \us support classical \lstinline|if| construct.
 
-\begin{lstlisting}[frame=, backgroundcolor=, ]
+\begin{urbiscript}[frame=, backgroundcolor=, ]
   if (condition)
     action;
 
@@ -1332,7 +1332,7 @@ adequate \lstinline|each| method.
     action
   else
     otherwise;
-\end{lstlisting}
+\end{urbiscript}
 
 If the \lstinline|condition| evaluation is true, \lstinline|action| is
 evaluated. Otherwise, in the latter version, \lstinline|otherwise| is
@@ -1342,7 +1342,7 @@ executed.
 
 The \lstinline|switch| statement in \us is similiar to \C's one.
 
-\begin{lstlisting}[frame=, backgroundcolor=, ]
+\begin{urbiscript}[frame=, backgroundcolor=, ]
   switch (value)
   {
     case value_one:
@@ -1354,7 +1354,7 @@ The \lstinline|switch| statement in \us is similiar to \C's one.
     default:
       default_action;
   };
-\end{lstlisting}
+\end{urbiscript}
 
 It might contain an arbitrary number of cases, and optionally a
 default case. The \lstinline|value| is evaluated first, and then the
@@ -1373,7 +1373,7 @@ note that, since the comparison is done with the generic '=='
 operator, switch can be performed on any comparable data type, unlike
 in \C where it need be integral.
 
-\begin{lstlisting}[caption=The \lstinline|switch| construct,
+\begin{urbiscript}[caption=The \lstinline|switch| construct,
   label=lst:switch, float=\floatpos]
   function sw(v)
   {
@@ -1393,22 +1393,22 @@ in \C where it need be integral.
   [00000000] "bar"
   sw("foobar");
   [00000000] "f"
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{while}
 
 The \lstinline|while| loop is similar to \C's one.
 
-\begin{lstlisting}[frame=, backgroundcolor=, ]
+\begin{urbiscript}[frame=, backgroundcolor=, ]
   while (condition)
     body;
-\end{lstlisting}
+\end{urbiscript}
 
 If \lstinline|condition| evaluation, is true, \lstinline|body| is
 evaluated and execution jumps before the \lstinline|while|, otherwise execution
 jumps after the \lstinline|while|. See \autoref{lst:while}.
 
-\begin{lstlisting}[caption=The \lstinline|while| construct, label=lst:while,
+\begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
   var i = 5;
   while (i > 0)
@@ -1421,7 +1421,7 @@ jumps after the \lstinline|while|. See \autoref{lst:while}.
   [00000000] *** 3
   [00000000] *** 2
   [00000000] *** 1
-\end{lstlisting}
+\end{urbiscript}
 
 \FloatBarrier
 \section{Parallel and event-based flow control}

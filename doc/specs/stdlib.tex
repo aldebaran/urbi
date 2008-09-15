@@ -38,10 +38,10 @@ standard \lstinline|new| method of \lstinline|Lazy|, giving it an
 argument-less function which evaluates to the lazified value
 (\autoref{lst:new-lazy}).
 
-\begin{lstlisting}[caption=Creating a lazy value, label=lst:new-lazy,
+\begin{urbiscript}[caption=Creating a lazy value, label=lst:new-lazy,
   float=\floatpos]
   Lazy.new(closure () { /* Value to lazify */ });
-\end{lstlisting}
+\end{urbiscript}
 
 \subsection{Methods}
 \subsubsection{eval}
@@ -78,7 +78,7 @@ needed zero, one or two times. The objective is to save time by:
 We thus make the wanted expression lazy, and use the \lstinline|value|
 method to fetch its value when needed.
 
-\begin{lstlisting}[caption=, label=lst:lazy-once, float=\floatpos]
+\begin{urbiscript}[caption=, label=lst:lazy-once, float=\floatpos]
   // This function supposedly performs expensive computations.
   function heavy_computation()
   {
@@ -101,7 +101,7 @@ method to fetch its value when needed.
   // is not reevaluated.
   v.value;
   [00000000] 2
-\end{lstlisting}
+\end{urbiscript}
 
 \subsubsection{Evaluating several time}
 
