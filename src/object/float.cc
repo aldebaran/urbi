@@ -102,7 +102,7 @@ namespace object
     if (from == proto)
       return SYMBOL(LT_Float_GT);
     {
-      type_check(from, proto, r, SYMBOL(asString));
+      type_check(from, proto, r, SYMBOL(asString), 1);
       float fl = from->as<Float>()->value_get();
       // Do not rely on boost::format to print inf and nan since
       // behavior differs under Win32
@@ -236,12 +236,12 @@ BOUNCE_INT_OP(~)
   rFloat
   Float::plus(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(PLUS));
+    check_arg_count(r, args.size(), 0, 1);
     if (args.empty())
       return this;
     else
     {
-      type_check(args[0], proto, r, SYMBOL(PLUS));
+      type_check(args[0], proto, r, SYMBOL(PLUS), 1);
       return new Float(value_get() + args[0]->as<Float>()->value_get());
     }
   }
@@ -249,12 +249,12 @@ BOUNCE_INT_OP(~)
   rFloat
   Float::minus(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(MINUS));
+    check_arg_count(r, args.size(), 0, 1);
     if (args.empty())
       return new Float(-value_get());
     else
     {
-      type_check(args[0], proto, r, SYMBOL(MINUS));
+      type_check(args[0], proto, r, SYMBOL(MINUS), 1);
       return new Float(value_get() - args[0]->as<Float>()->value_get());
     }
   }

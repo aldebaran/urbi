@@ -83,9 +83,9 @@ namespace object
   bool root_classes_initialized = false;
 
   static rObject
-  id(runner::Runner&, objects_type args)
+  id(runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (1);
+    check_arg_count(r, args.size() - 1, 0);
     return args.front();
   }
 
@@ -93,7 +93,7 @@ namespace object
   static rObject
   compare(runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT(2);
+    check_arg_count(r, args.size() - 1, 1);
     type_check(args[0], T::proto, r, SYMBOL(compare));
     libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
 
@@ -266,9 +266,9 @@ namespace object
   namespace
   {
     static rObject
-    void_class_acceptVoid(runner::Runner&, objects_type args)
+    void_class_acceptVoid(runner::Runner& r, objects_type args)
     {
-      CHECK_ARG_COUNT(1);
+      check_arg_count(r, args.size() - 1, 0);
 
       return accepted_void_class;
     }

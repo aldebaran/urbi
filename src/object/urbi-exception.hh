@@ -196,16 +196,6 @@ namespace object
     COMPLETE_EXCEPTION(ParserError);
   };
 
-  /// Throw an exception if formal != effective.
-  /// \note: \c self is included in the count.
-  void check_arg_count (unsigned formal, unsigned effective,
-		       const libport::Symbol fun);
-
-  /// Same as above, with a minimum and maximum number of
-  /// formal parameters.
-  void check_arg_count (unsigned minformal, unsigned maxformal,
-			unsigned effective, const libport::Symbol fun);
-
 } // namespace object
 
 # include <object/urbi-exception.hxx>

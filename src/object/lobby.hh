@@ -21,7 +21,7 @@ namespace object
     Lobby(rLobby model);
     Lobby(value_type value);
 
-    void send(objects_type& args);
+    void send(runner::Runner& r, objects_type& args);
     void write(const std::string& data);
     value_type& value_get();
     const value_type& value_get() const;

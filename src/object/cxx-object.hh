@@ -92,6 +92,15 @@ namespace object
                   runner::Runner& r, const libport::Symbol fun,
                   boost::optional<unsigned> idx = boost::optional<unsigned>());
 
+  /// Throw an exception if formal != effective.
+  /// \note: \c self is included in the count.
+  void check_arg_count (runner::Runner& r,
+                        unsigned effective, unsigned formal);
+
+  /// Same as above, with a minimum and maximum number of
+  /// formal parameters.
+  void check_arg_count (runner::Runner& r,
+                        unsigned effective, unsigned minformal, unsigned maxformal);
 
 }
 

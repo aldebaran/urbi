@@ -26,7 +26,7 @@ namespace object
     static rPrimitive v1 = make_primitive(V1, SYMBOL(Msg));             \
     static rPrimitive v2 = make_primitive(V2, SYMBOL(Msg));             \
                                                                         \
-    object::check_arg_count (2, args.size(), SYMBOL(Msg));              \
+    object::check_arg_count (r, args.size() - 1, 1);                    \
     if (args[1]->is_a<T2>())                                            \
       return (*v2)(r, args);                                            \
     else                                                                \
@@ -48,7 +48,7 @@ namespace object
     static rPrimitive v1 = make_primitive(V1, SYMBOL(Msg));             \
     static rPrimitive v2 = make_primitive(V2, SYMBOL(Msg));             \
                                                                         \
-    object::check_arg_count (N, N + 1, args.size(), SYMBOL(Msg));       \
+    object::check_arg_count (r, args.size() - 1, N - 1, N);             \
     switch (args.size())                                                \
     {                                                                   \
       case N:                                                           \

@@ -31,16 +31,17 @@ namespace object
   `--------------------*/
 
   static rObject
-  object_class_clone (runner::Runner&, objects_type& args)
+  object_class_clone (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT (1);
+    check_arg_count(r, args.size() - 1, 0);
+
     return args[0]->clone();
   }
 
   static rObject
-  object_class_init (runner::Runner&, objects_type& args)
+  object_class_init (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT (1);
+    check_arg_count(r, args.size() - 1, 0);
     return args[0];
   }
 
@@ -49,7 +50,7 @@ namespace object
   static rObject
   object_class_dump (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(1, 3, SYMBOL(dump));
+    check_arg_count(r, args.size() - 1, 1, 2);
 
     // Second argument is max depth.
     int depth_max = 0;
@@ -91,10 +92,10 @@ namespace object
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
-  object_class_uid (runner::Runner&, objects_type& args)
+  object_class_uid (runner::Runner& r, objects_type& args)
   {
     static boost::format uid("0x%x");
-    CHECK_ARG_COUNT(1);
+    check_arg_count(r, args.size() - 1, 0);
     return
       new String(str(uid % reinterpret_cast<long long>(args[0].get())));
   }
@@ -104,22 +105,22 @@ namespace object
   object_class_sameAs(runner::Runner& r, objects_type& args)
   {
     // Unless overridden, structural equality is physical equality.
-    CHECK_ARG_COUNT (2);
+    check_arg_count(r, args.size() - 1, 1);
     return urbi_call(r, args[0], SYMBOL(memSameAs), args[1]);
   }
 
   /// Physical equality
   static rObject
-  object_class_memSameAs(runner::Runner&, objects_type& args)
+  object_class_memSameAs(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT (2);
+    check_arg_count(r, args.size() - 1, 1);
     return to_boolean(args[0] == args[1]);
   }
 
   static rObject
   object_class_apply(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(2);
+    check_arg_count(r, args.size() - 1, 1);
     type_check(args[1], List::proto, r, SYMBOL(apply));
     const rList& arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
@@ -130,7 +131,7 @@ namespace object
   static rObject
   object_class_callMessage (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT (2);
+    check_arg_count(r, args.size() - 1, 1);
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
     const rObject& message = call_message->slot_get(SYMBOL(message));
@@ -149,11 +150,12 @@ namespace object
   `---------*/
 
   /// Adding or removing protos. \a Verb is "add" or "remove".
-#define CHANGE_PARENTS(Verb)						\
-  static rObject							\
-  object_class_ ## Verb ## Proto (runner::Runner&, objects_type& args)	\
+#define CHANGE_PARENTS(Verb)                                            \
+  static rObject                                                        \
+  object_class_ ## Verb ## Proto (runner::Runner& r,                    \
+                                  objects_type& args)                   \
   {									\
-    CHECK_ARG_COUNT(2);							\
+    check_arg_count(r, args.size() - 1, 1);                             \
     args[0]->proto_ ## Verb (args[1]);					\
     return args[0];							\
   }
@@ -166,9 +168,9 @@ namespace object
 
   /// Get protos' list.
   static rObject
-  object_class_protos (runner::Runner&, objects_type& args)
+  object_class_protos (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(1);
+    check_arg_count(r, args.size() - 1, 0);
     return args[0]->urbi_protos_get ();
   }
 
@@ -180,9 +182,9 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (runner::Runner&, objects_type& args)
+  object_class_slotNames (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(1);
+    check_arg_count(r, args.size() - 1, 0);
     const rObject& obj = args[0];
 
     List::value_type l;
@@ -196,9 +198,9 @@ namespace object
 
   /// Get a slot content.
   static rObject
-  object_class_getSlot (runner::Runner&, objects_type& args)
+  object_class_getSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(2);
+    check_arg_count(r, args.size() - 1, 1);
     const rObject& obj = args[0];
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
@@ -207,9 +209,9 @@ namespace object
 
   // self.getLazyLocalSlot(SLOT-NAME, DEFAULT-VALUE, CREATE?).
   static rObject
-  object_class_getLazyLocalSlot (runner::Runner&, objects_type& args)
+  object_class_getLazyLocalSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT (4);
+    check_arg_count(r, args.size() - 1, 3);
 
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
@@ -229,9 +231,9 @@ namespace object
 
   /// Remove a slot.
   static rObject
-  object_class_removeSlot (runner::Runner&, objects_type& args)
+  object_class_removeSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(2);
+    check_arg_count(r, args.size() - 1, 1);
     const rObject& obj = args[0];
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
@@ -241,9 +243,9 @@ namespace object
 
    /// Locate a slot.
   static rObject
-  object_class_locateSlot (runner::Runner&, objects_type& args)
+  object_class_locateSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(2);
+    check_arg_count(r, args.size() - 1, 1);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
 
@@ -252,9 +254,9 @@ namespace object
   }
 
   static rObject
-  object_class_setSlot (runner::Runner&, objects_type& args)
+  object_class_setSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(3);
+    check_arg_count(r, args.size() - 1, 2);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     args[0]->slot_set(libport::Symbol(arg1->value_get()), args[2]);
@@ -262,9 +264,9 @@ namespace object
   }
 
   static rObject
-  object_class_createSlot (runner::Runner&, objects_type& args)
+  object_class_createSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(2);
+    check_arg_count(r, args.size() - 1, 1);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     args[0]->slot_set(libport::Symbol(arg1->value_get()), void_class);
@@ -274,7 +276,7 @@ namespace object
   static rObject
   object_class_updateSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(3);
+    check_arg_count(r, args.size() - 1, 2);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     return args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2]);
@@ -283,7 +285,7 @@ namespace object
   static rObject
   object_class_changeSlot (runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT(3);
+    check_arg_count(r, args.size() - 1, 2);
     const rString& arg1 = args[1].unsafe_cast<String>();
     assert(arg1);
     args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2], false);
@@ -291,9 +293,9 @@ namespace object
   }
 
   static rObject
-  object_class_isA(runner::Runner&, objects_type& args)
+  object_class_isA(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT (2);
+    check_arg_count(r, args.size() - 1, 1);
     return new Float(is_a(args[0], args[1])? 1.0:0.0);
   }
 

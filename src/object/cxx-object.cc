@@ -62,4 +62,29 @@ namespace object
       r.raise(exn);
     }
   }
+
+  void check_arg_count (runner::Runner& r,
+                        unsigned effective, unsigned formal)
+  {
+    if (formal != effective)
+    {
+      rObject exn =
+        urbi_call(r, global_class->slot_get(SYMBOL(ArityError)), SYMBOL(new),
+                  new Float(effective), new Float(formal));
+      r.raise(exn);
+    }
+  }
+
+  void check_arg_count (runner::Runner& r,
+                        unsigned effective, unsigned min, unsigned max)
+  {
+    if (effective < min || effective > max)
+    {
+      rObject exn =
+        urbi_call(r, global_class->slot_get(SYMBOL(ArityError)), SYMBOL(new),
+                  new Float(effective), new Float(min), new Float(max));
+      r.raise(exn);
+    }
+  }
+
 }

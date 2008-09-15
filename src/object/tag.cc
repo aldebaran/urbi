@@ -45,7 +45,7 @@ namespace object
   void
   Tag::block(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(block));
+    check_arg_count(r, args.size(), 0, 1);
     rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
     value_->block(r.scheduler_get(), payload);
   }
@@ -67,7 +67,7 @@ namespace object
   rTag
   Tag::_new(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(1, 2, SYMBOL(new));
+    check_arg_count(r, args.size() - 1, 0, 1);
     libport::Symbol tag_short_name;
 
     if (args.size() > 1)
@@ -108,7 +108,7 @@ namespace object
   void
   Tag::stop(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(stop));
+    check_arg_count(r, args.size(), 0, 1);
     rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
     value_->stop(r.scheduler_get(), payload);
   }

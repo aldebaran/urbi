@@ -14,14 +14,6 @@ namespace object
 
   namespace
   {
-    inline void
-    check_args_count(unsigned formal, unsigned effective,
-                    const libport::Symbol& name)
-    {
-      if (formal != effective)
-        throw WrongArgumentCount(formal, effective, name);
-    }
-
     // Remove const and reference
     template <typename T>
     struct Flatten
@@ -57,8 +49,7 @@ namespace object
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
     {                                                                   \
-      check_args_count(ArgsC WHEN(Run, - 1) - 1,                        \
-                       args.size() - 1, name);                          \
+      check_arg_count(r, args.size() - 1, ArgsC WHEN(Run, - 1) - 1);    \
       WHEN(Ret, R res =) f(                                             \
                                                                         \
         WHEN(Run, r) COMMA(Run)                                         \

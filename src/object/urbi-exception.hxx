@@ -113,24 +113,6 @@ namespace object
   {
   }
 
-  inline
-  void
-  check_arg_count(unsigned formal, unsigned effective,
-                  const libport::Symbol fun)
-  {
-    if (formal != effective)
-      throw WrongArgumentCount(formal, effective, fun);
-  }
-
-  inline
-  void
-  check_arg_count(unsigned minformal, unsigned maxformal,
-                  unsigned effective, const libport::Symbol fun)
-  {
-    if (effective < minformal || maxformal < effective)
-      throw WrongArgumentCount(minformal, maxformal, effective, fun);
-  }
-
   inline bool
   Exception::was_displayed() const
   {
