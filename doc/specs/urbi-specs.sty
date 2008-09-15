@@ -14,6 +14,7 @@
 \RequirePackage{supertabular}
 \RequirePackage{texi}
 \RequirePackage{xspace}
+\RequirePackage[draft,margin]{fixme}
 
 %% ---------- %%
 %% SHORTHANDS %%
@@ -87,13 +88,10 @@
 %  breaklines,
 }
 
-%% -------- %%
-%% COMMANDS %%
-%% -------- %%
-\newcommand{\lst}[1]{\autoref{lst:#1}}
-\newcommand{\sect}[1]{\autoref{sect:#1}}
-\newcommand{\tab}[1]{\autoref{tab:#1}}
-\makeatletter
+%% ----------- %%
+%% maketitle.  %%
+%% ----------- %%
+
 \renewcommand{\maketitle}{
   \begin{titlepage}
 
@@ -123,7 +121,6 @@
     \global\let\title\relax
   \end{titlepage}
 }
-\makeatother
 
 %% ---------- %%
 %% Hyperref.  %%

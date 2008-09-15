@@ -14,6 +14,7 @@
 
 %FIXME: chapter is overkill
 \chapter{Introduction}
+\label{sec:intro}
 
 \section{Status of this document}
 
@@ -33,8 +34,8 @@ the live \us tutorial built in the interpreter are good introduction
 to \us.
 
 This document doesn't either aim at giving advanced programming
-techniques. Its only goal is to defined how the language and its
-libraries should behave.
+techniques. Its only goal is to define how the language and its
+libraries behave.
 
 \section{\us}
 
@@ -58,6 +59,7 @@ This document is divided in four chapters:
 \end{itemize}
 
 \chapter{Tools specifications}
+\label{sec:tools}
 
 \section{\urbi kernel}
 \section{Console server}
@@ -65,6 +67,7 @@ This document is divided in four chapters:
 
 \FloatBarrier
 \chapter{\us language specifications}
+\label{sec:lang}
 
 \FloatBarrier
 \section{Syntax}
@@ -82,7 +85,7 @@ Comments are used to document the code, and are totally ignored by the
   comment will end after two \lstinline|*/|, not one.
 \end{itemize}
 
-\lst{comments} illustrates this.
+\autoref{lst:comments} illustrates this.
 
 \begin{lstlisting}[caption=Comments,label=lst:comments,float=\floatpos]
   // C++ style comment
@@ -91,19 +94,19 @@ Comments are used to document the code, and are totally ignored by the
 \end{lstlisting}
 
 \subsection{Identifiers}
-\label{sect:us-syn-id}
+\label{sec:us-syn-id}
 
 Identifiers in \us are composed of one or more alphanumeric or
 underscore (\lstinline|_|) characters, given that they must not start
 with a digit. That is, identifiers must match the
 \lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular expression (see
-\lst{identifiers}).  Additionally, identifiers must not match any of
-the \us reserved word which are documented in \sect{syn-key}. The only
+\autoref{lst:identifiers}).  Additionally, identifiers must not match any of
+the \us reserved word which are documented in \autoref{sec:syn-key}. The only
 exception to this rule is \lstinline|new|, which can be used as the
 method identifier in a method call, as shown in
-\lst{identifiers-keywords}.  Finally, identifiers can also be written
+\autoref{lst:identifiers-keywords}.  Finally, identifiers can also be written
 between simple quotes (\lstinline|'|), in which case they may contain
-any characters, as in \lst{escape-identifiers}.
+any characters, as in \autoref{lst:escape-identifiers}.
 
 \begin{lstlisting}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
   var x;
@@ -133,12 +136,12 @@ any characters, as in \lst{escape-identifiers}.
 \end{lstlisting}
 
 \subsection{Keywords}
-\label{sect:syn-key}
+\label{sec:syn-key}
 
 Keywords are reserved words that cannot be used as identifiers, for
-instance.  They are listed in \tab{keywords}.  Keywords can be
+instance.  They are listed in \autoref{tab:keywords}.  Keywords can be
 escaped, and thus used as identifier by surrounding them with simple
-quotes (\lstinline|'|), as shown in \lst{escape-keyword}.
+quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
 
 \renewcommand{\baselinestretch}{.85}
 \begin{table}[\floatpos]
@@ -260,12 +263,12 @@ quotes (\lstinline|'|), as shown in \lst{escape-keyword}.
 \subsection{Literals}
 \subsubsection{Durations}
 
-Durations are floats (see \autoref{sect-syn-lit-flo}) followed by a
+Durations are floats (see \autoref{sec:us-syn-lit-float}) followed by a
 % FIXME: formulation
 time unit. They are simply equivalent to the same float, expressed in
 millisecond. For instance, \lstinline|1s|, which stands for ``one
 second'', is strictly equivalent to \lstinline|1000|. Available units
-and their equivalent are shown in \tab{durations}.
+and their equivalent are shown in \autoref{tab:durations}.
 
 \begin{table}[\floatpos]
   \caption{Duration units}
@@ -285,13 +288,13 @@ and their equivalent are shown in \tab{durations}.
 \end{table}
 
 \subsubsection{Floats}
-\label{sect:us-syn-lit-float}
+\label{sec:us-syn-lit-float}
 
 Literal floats consist in a succession of digit, representing the
 integral part of the number in decimal base, possibly followed by a
 dot (\lstinline|.|) and another succession of digit representing the
 decimal part. Briefly, float literals must verify the
-\lstinline|[0-9]+(\.[0-9]+)?| regular expression. \lst{literal-floats}
+\lstinline|[0-9]+(\.[0-9]+)?| regular expression. \autoref{lst:literal-floats}
 is an example of literal floats.
 
 \begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
@@ -302,11 +305,11 @@ is an example of literal floats.
 \end{lstlisting}
 
 \subsubsection{Lists}
-\label{sect:us-syn-lit-list}
+\label{sec:us-syn-lit-list}
 
 Literal lists are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
-(\lstinline|[]|), as shown in \lst{literal-lists}.
+(\lstinline|[]|), as shown in \autoref{lst:literal-lists}.
 
 \begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
   []; // The empty list
@@ -320,7 +323,7 @@ empty list of arbitrary expressions enclosed in square brackets
 String are enclosed in double quotes (\lstinline|"|) and can contain
 arbitrary characters, which stand for themselves, with the exception
 of the escapement character, backslash (\lstinline|\|), as we can see
-in \lst{literal-strings}. Backslash can introduce the following escapements:
+in \autoref{lst:literal-strings}. Backslash can introduce the following escapements:
 
 \begin{itemize}
   \item \lstinline |\\|: an actual backslash
@@ -369,13 +372,13 @@ that have the same precedence. Many operators are syntactic sugar that
 bounce on a method. In this case, the equivalent desugared expression
 is shown in the ``Equivalence'' column. This can help you determine
 what method to override to define an operator for an object (see
-\sect{fixme}).
+\fixme{autoref{sec:fixme}}).
 
 Although code examples are present, this section does not intend do
 define those operators behaviors; it only present their syntax and
 grammatical rules, such as precedence and associativity. The behavior
 of those operators is described in the documentation of the classes on
-which they are applicable, in \autoref{chap:std}.
+which they are applicable, in \autoref{sec:std}.
 
 % Operator generators
 \newcommand{\operatorhead}{Operator & Use & Associativity & Original semantic
@@ -433,8 +436,8 @@ which they are applicable, in \autoref{chap:std}.
 \subsubsection{Arithmetic operators}
 
 \us supports classic arithmetic operators, with the classic semantic
-on numeric values. See \tab{arithmetic-operators} and
-\lst{arithmetic-operators}.
+on numeric values. See \autoref{tab:arithmetic-operators} and
+\autoref{lst:arithmetic-operators}.
 
 \begin{table}[\floatposh]
   \caption{Arithmetic operators}
@@ -481,7 +484,7 @@ Assignment in \us can be performed with the \lstinline|=| operator. A
 large variety of shorthands such as \lstinline|+=| exist. Those are
 not directly redefinable since they are equivalent to a normal
 affectation combined with another operator. See
-\tab{assignment-operators} and \lst{assignment-operators}.
+\autoref{tab:assignment-operators} and \autoref{lst:assignment-operators}.
 
 
 \begin{table}[\floatposh]
@@ -521,8 +524,8 @@ affectation combined with another operator. See
 \subsubsection{Bitwise operators}
 
 \us supports some bitwise operators, although they are often use for
-other purpose than bit-related operations. See \tab{bitwise-operators}
-and \lst{bitwise-operators}.
+other purpose than bit-related operations. See \autoref{tab:bitwise-operators}
+and \autoref{lst:bitwise-operators}.
 
 \begin{table}[\floatposh]
   \caption{Bitwise operators}
@@ -550,8 +553,8 @@ and \lst{bitwise-operators}.
 
 \subsubsection{Logic operators}
 
-\us support classic logic operators. See \tab{logic-operators} and
-\lst{logic-operators}.
+\us support classic logic operators. See \autoref{tab:logic-operators} and
+\autoref{lst:logic-operators}.
 
 \begin{table}[\floatposh]
   \caption{Logic operators}
@@ -582,8 +585,8 @@ and \lst{bitwise-operators}.
 
 \subsubsection{Comparison operators}
 
-\us support classic comparison operators. See \tab{comparison-operators} and
-\lst{comparison-operators}.
+\us support classic comparison operators. See \autoref{tab:comparison-operators} and
+\autoref{lst:comparison-operators}.
 
 \begin{table}[\floatposh]
   \caption{Comparison operators}
@@ -627,7 +630,7 @@ and \lst{bitwise-operators}.
 \subsubsection{Miscellaneous operators}
 
 Those operators cannot be classified in other categories. See
-\tab{miscellaneous-operators} and \lst{miscellaneous-operators}. Note
+\autoref{tab:miscellaneous-operators} and \autoref{lst:miscellaneous-operators}. Note
 that the subscript (square bracket) operator is variadic: it can take
 any number of arguments, that will be passed to the \lstinline|'[]'|
 method of the targeted object.
@@ -670,7 +673,7 @@ method of the targeted object.
 \clearpage
 \subsubsection{All operators summary}
 
-\tab{operators-summary} is a summary of all operators, to highlight
+\autoref{tab:operators-summary} is a summary of all operators, to highlight
 the overall precedences. Operators are sorted vertically by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
@@ -743,7 +746,7 @@ precedence.
 % the result, for instance.
 Scopes in \us are sequences of expressions, enclosed in curly brackets
 (\lstinline|{}|). Expressions are separated with the four expression
-separators (see \sect{fixme}). The last separator is optional and
+separators (see \fixme{autoref{sec:fixme}}). The last separator is optional and
 ignored if present. Scopes are themselves expressions, and can thus be
 used in composite expressions, nested, \ldots
 
@@ -763,13 +766,13 @@ used in composite expressions, nested, \ldots
 \subsection{Local variables}
 
 Local variables are introduced with the \lstinline|var| keyword,
-followed by a valid identifier (see \sect{us-syn-id}) and an optional
+followed by a valid identifier (see \autoref{sec:us-syn-id}) and an optional
 initialization value assignment. If the initial value is omitted, it
-defaults to void (\sect{std-void}). Variable declarations evaluate to
+defaults to void (\autoref{sec:std-void}). Variable declarations evaluate to
 the initialization value. They can later be referred to by their
 name. Their value can be changed with the assignment operator; such an
 assignment expression returns the new value. The use of local
-variables is illustrated in \lst{local-variables}.
+variables is illustrated in \autoref{lst:local-variables}.
 
 \begin{lstlisting}[caption=Using local variables,
   label=lst:local-variables,float=\floatpos]
@@ -793,11 +796,11 @@ variables is illustrated in \lst{local-variables}.
 Local variables lifespan is the same as their enclosing scope. They
 are thus only accessible from their scope and its
 subscopes\footnote{Local variables can actually escape their scope
-  with lexical closures, as explained in \sect{us-fun-closures}}. Two
+  with lexical closures, as explained in \autoref{sec:us-fun-closures}}. Two
 variables with the same name cannot be defined in the same scope. A
 variable with the same name can be redefined in a subscope, in which
 case references refer to the innermost variable, as shown in
-\lst{local-variables-scoping}.
+\autoref{lst:local-variables-scoping}.
 
 \begin{lstlisting}[caption=Local variables scoping,
   label=lst:local-variables-scoping,float=\floatpos]
@@ -836,7 +839,7 @@ related languages, a function is a normal value, just like an integer
 or a string is. One can create a functional value thanks to the
 \lstinline|function| keyword, followed by the list of formal arguments
 and a scope representing the body of the function. Formal arguments
-are a comma separated list of identifiers. \lst{function} illustrates
+are a comma separated list of identifiers. \autoref{lst:function} illustrates
 this.
 
 \begin{lstlisting}[caption=Functional
@@ -850,7 +853,7 @@ this.
 The whole point of a function is to be called later, so storing it in
 a variable is the most common usage. \us provide a simple sugar to
 initialize a new variable with a given function, presented in
-\lst{function-sugar}.
+\autoref{lst:function-sugar}.
 
 \begin{lstlisting}[caption=Storing functions in variables,
   label=lst:function-sugar,float=\floatpos]
@@ -873,11 +876,11 @@ initialize a new variable with a given function, presented in
 
 The list of formal arguments defines the number of argument the
 function requires. They are accessible by their name from within the
-body, as shown in \lst{function-args}. The list of formal arguments
+body, as shown in \autoref{lst:function-args}. The list of formal arguments
 can be omitted, in which case the number of given arguments isn't
 check, and arguments themselves are not evaluated. Arguments can then
 be manipulated with the call message, explained in
-\sect{us-fun-callmsg}.
+\autoref{sec:us-fun-callmsg}.
 
 \begin{lstlisting}[caption=Storing and calling
   functions,label=lst:function-args,float=\floatpos]
@@ -902,7 +905,7 @@ is, since the body is a scope, the last evaluated expression in the
 scope. However, value can be returned manually with the
 \lstinline|return| keyword followed by the value, in which case the
 evaluation of the function is stopped. If \lstinline|return| is used
-with no value, the functions returns void. See \lst{function-return}.
+with no value, the functions returns void. See \autoref{lst:function-return}.
 
 \begin{lstlisting}[caption=Returning values from functions,
   label=lst:function-return,float=\floatpos]
@@ -934,7 +937,7 @@ with no value, the functions returns void. See \lst{function-return}.
 \end{lstlisting}
 
 \subsection{Call messages}
-\label{sect:us-fun-callmsg}
+\label{sec:us-fun-callmsg}
 
 Functions can access meta-information about how they were called,
 through a \lstinline|CallMessage| object. The call message associated
@@ -945,8 +948,8 @@ name of the function, the target \ldots
 One of the main usage of call message is to create lazy function, by
 not specifying the formal arguments so as arguments are not evaluated
 at the call site, and evaluate them by hand. A quick example is given
-in \lst{function-lazy}. More information about this can be found in
-the CallMessage class documentation (\sect{std-callmsg}).
+in \autoref{lst:function-lazy}. More information about this can be found in
+the CallMessage class documentation (\autoref{sec:std-callmsg}).
 
 \begin{lstlisting}[caption=Lazy
   function,label=lst:function-lazy,float=\floatposh]
@@ -964,13 +967,13 @@ the CallMessage class documentation (\sect{std-callmsg}).
 \end{lstlisting}
 
 \subsection{Lexical closures}
-\label{sect:us-fun-closures}
+\label{sec:us-fun-closures}
 
 Lexical closure are an additional scoping rule, with which a function
 can refer to a local variable located outside the function - but still
 in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
-environment, as shown in \lst{function-closure}.
+environment, as shown in \autoref{lst:function-closure}.
 
 \begin{lstlisting}[caption=Lexical
   closure,label=lst:function-closure,float=\floatpos]
@@ -992,7 +995,7 @@ environment, as shown in \lst{function-closure}.
   [00000000] *** 3
 \end{lstlisting}
 
-\lst{function-closure-escape} illustrate that local variables can even
+\autoref{lst:function-closure-escape} illustrate that local variables can even
 escape their declaration scope by lexical closure.
 
 \begin{lstlisting}[caption=Local variable escaping its scope by
@@ -1033,13 +1036,13 @@ value. They are often call ``fields'' or ``members'' in other object
 oriented language.
 
 The \lstinline|createSlot| is used to add a slot to an object with the
-void (\sect{std-void}) value. The \lstinline|updateSlot| can be later
+void (\autoref{sec:std-void}) value. The \lstinline|updateSlot| can be later
 used to change the value of the slot, while the \lstinline|getSlot|
 method can be used to read it. The \lstinline|setSlot| method can be
 used to create a slot with a given value instead of void. Finally, the
 \lstinline|slotNames| method can be used to get the list of the object
-slot's name. \lst{slots} shows how to manipulate slots. More
-documentation about these method can be found in \sect{std-object}.
+slot's name. \autoref{lst:slots} shows how to manipulate slots. More
+documentation about these method can be found in \autoref{sec:std-object}.
 
 \begin{lstlisting}[caption=Manipulating slots, label=lst:slots,
   float=\floatpos]
@@ -1086,8 +1089,8 @@ inherits behavior.
 In \us, an object can have several prototypes. The list of prototypes
 can be read with the \lstinline|protos| method. Prototypes can be add
 or removed with the \lstinline|addProto| and \lstinline|removeProto|
-methods respectively, as illustrated by \lst{prototypes}. More
-documentation about these methods can be found in \sect{std-object}.
+methods respectively, as illustrated by \autoref{lst:prototypes}. More
+documentation about these methods can be found in \autoref{sec:std-object}.
 
 \begin{lstlisting}[caption=Manipulating prototypes, label=lst:prototypes,
   float=\floatpos]
@@ -1121,7 +1124,7 @@ is, when looking for a slot in an object:
 \item Finally, if no prototype had the slot, an error is raised.
 \end{itemize}
 
-\lst{inheritance} shows how slots are inherited.
+\autoref{lst:inheritance} shows how slots are inherited.
 
 \begin{lstlisting}[caption=Slots inheritance, label=lst:inheritance,
   float=\floatpos]
@@ -1156,7 +1159,7 @@ inherited from a prototype. In this case, the slot is however not
 updated in the prototype, but rather created in the object itself,
 with the new value. This process is called {\em copy on write}; thanks
 to it, prototypes are not altered when the slot is overridden in a
-child object (see \lst{copy-on-write}).
+child object (see \autoref{lst:copy-on-write}).
 
 \begin{lstlisting}[caption=Copy on write, label=lst:copy-on-write,
   float=\floatpos]
@@ -1181,7 +1184,7 @@ child object (see \lst{copy-on-write}).
 A message in \us consists in a message name and arguments. One can
 send a message to an object with the dot (\lstinline|.|) operator,
 followed by the message name (which can be any valid identifier) and
-the arguments, as shown in \lst{messages}. When there are no
+the arguments, as shown in \autoref{lst:messages}. When there are no
 arguments, the empty parentheses can be omitted. As you might see,
 sending messages is very similar to calling methods in classical
 languages.
@@ -1202,7 +1205,7 @@ When a message ``msg'' is sent to object \lstinline|obj|:
 \item The ``msg'' slot of \lstinline|obj| is retrieved (i.e.,
   \lstinline|obj.getSlot("msg")|). If the slot is not found, the
   classic lookup error is raised.
-\item If the object is not a \lstinline|Routine| (\sect{fixme}), it's
+\item If the object is not a \lstinline|Routine| (\fixme{autoref{sec:fixme}}), it's
   the result of the message sending. In this case, there must be no
   argument, otherwise an error is raised.
 \item If the object is a \lstinline|Routine|, it is invoked with the
@@ -1211,7 +1214,7 @@ When a message ``msg'' is sent to object \lstinline|obj|:
   match the one required by the \lstinline|Routine|.
 \end{itemize}
 
-Such message sending is illustrated by \lst{send-message}.
+Such message sending is illustrated by \autoref{lst:send-message}.
 
 \begin{lstlisting}[caption=Sending messages, label=lst:send-message,
   float=\floatpos]
@@ -1239,7 +1242,7 @@ Such message sending is illustrated by \lst{send-message}.
 
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes execution jump after the loop. See
-\lst{break}.
+\autoref{lst:break}.
 
 \begin{lstlisting}[caption=Using break, label=lst:break,
   float=\floatpos]
@@ -1260,7 +1263,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes execution jump at the loop's body end. See
-\lst{continue}.
+\autoref{lst:continue}.
 
 \begin{lstlisting}[caption=Using continue, label=lst:continue,
   float=\floatpos]
@@ -1289,7 +1292,7 @@ different ``\lstinline|this|''.
 \end{lstlisting}
 
 It evaluates \lstinline|body|, with \lstinline|this| being
-\lstinline|target|, as shown in \lst{do}.  The \lstinline|do| itself
+\lstinline|target|, as shown in \autoref{lst:do}.  The \lstinline|do| itself
 evaluates to \lstinline|body|.
 
 \begin{lstlisting}[caption=Using \lstinline|do|, label=lst:do,
@@ -1339,7 +1342,7 @@ It has the exact same behavior as \C's \lstinline|for|:
 
 It evaluates \lstinline|action| for each element in
 \lstinline|collection|. Inside \lstinline|action|, the current element
-is accessible via the \lstinline|name| local variable. \lst{foreach}
+is accessible via the \lstinline|name| local variable. \autoref{lst:foreach}
 illustrates this.
 
 
@@ -1424,7 +1427,7 @@ true. If such a match is found, the corresponding action is executed,
 and execution jumps after the \lstinline|switch|. Otherwise, the
 default case - if any - is executed, and execution jumps after the
 switch. The switch itself evaluates to case that was evaluated, or to
-void if no match was found and there's no default case. \lst{switch}
+void if no match was found and there's no default case. \autoref{lst:switch}
 illustrates \lstinline|switch| usage.
 
 Note that, unlike in \C, no \lstinline|break| are required inside the
@@ -1466,7 +1469,7 @@ The \lstinline|while| loop is similar to \C's one.
 
 If \lstinline|condition| evaluation, is true, \lstinline|body| is
 evaluated and execution jumps before the \lstinline|while|, otherwise execution
-jumps after the \lstinline|while|. See \lst{while}.
+jumps after the \lstinline|while|. See \autoref{lst:while}.
 
 \begin{lstlisting}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
@@ -1499,18 +1502,18 @@ jumps after the \lstinline|while|. See \lst{while}.
 \section{Trajectories}
 
 \chapter{\us standard library specifications}
-\label{chap:std}
+\label{sec:std}
 
 \section{Boolean}
 \section{CallMessage}
-\label{sect:std-callmsg}
+\label{sec:std-callmsg}
 \subsection{Examples}
 \subsubsection{Evaluating an argument several times}
-\label{sect:std-callmsg-examples-several}
+\label{sec:std-callmsg-examples-several}
 \section{Channel}
 \section{Code}
 \section{Comparable}
-\label{sect:std-comparable}
+\label{sec:std-comparable}
 \section{Dictionary}
 \section{Event}
 
@@ -1527,16 +1530,16 @@ Lazy are object that hold a lazy value; that is, a not-yet evaluated
 value. They provide facilities to evaluate their content only once
 (memoization) or several times. Lazy are essentially used in call
 messages, to represent lazy arguments, as described in
-\sect{std-callmsg}.
+\autoref{sec:std-callmsg}.
 
 \subsection{Construction}
 
 Lazy are seldom instantiated manually. They are mainly created
 automatically when a lazy function call is made (see
-\sect{us-fun-callmsg}). One can however create a lazy value with the
+\autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
 standard \lstinline|new| method of \lstinline|Lazy|, giving it an
 argument-less function which evaluates to the lazified value
-(\lst{new-lazy}).
+(\autoref{lst:new-lazy}).
 
 \begin{lstlisting}[caption=Creating a lazy value, label=lst:new-lazy,
   float=\floatpos]
@@ -1566,7 +1569,7 @@ evaluating the expression several times uselessly.
 
 One usage of lazy values is to avoid evaluating an expression unless
 it's actually needed, because it's expensive or has undesired side
-effects. \lst{lazy-once} present a situation where an
+effects. \autoref{lst:lazy-once} present a situation where an
 expensive-to-compute value (\lstinline|heavy_computation|) might be
 needed zero, one or two times. The objective is to save time by:
 
@@ -1607,38 +1610,38 @@ method to fetch its value when needed.
 
 Evaluating a lazy several time only makes sense with lazy arguments
 and call messages. See example with call messages in
-\sect{std-callmsg-examples-several}.
+\autoref{sec:std-callmsg-examples-several}.
 
 \section{List}
 \input{list.tex}
 
 \section{Lobby}
 \section{Object}
-\label{sect:std-object}
+\label{sec:std-object}
 
 \subsection{Methods}
 
 \subsubsection{createSlot}
-\label{sect:std-object-createslot}
+\label{sec:std-object-createslot}
 
 \subsubsection{getSlot}
-\label{sect:std-object-getslot}
+\label{sec:std-object-getslot}
 
 \subsubsection{setSlot}
-\label{sect:std-object-setslot}
+\label{sec:std-object-setslot}
 
 \subsubsection{updateSlot}
-\label{sect:std-object-updateslot}
+\label{sec:std-object-updateslot}
 
 \section{Orderable}
-\label{sect:std-orderable}
+\label{sec:std-orderable}
 \section{Pattern}
 \section{Primitive}
 \section{String}
 \section{Tag}
 \section{Tuple}
 \section{Void}
-\label{sect:std-void}
+\label{sec:std-void}
 
 \chapter{\urbi SDK specifications}
 

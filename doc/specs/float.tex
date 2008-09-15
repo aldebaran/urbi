@@ -1,4 +1,3 @@
-
 \subsection{Rationale}
 
 Float is an \us primitive to represent floating point number.
@@ -6,16 +5,16 @@ Float is an \us primitive to represent floating point number.
 \subsection{Prototypes}
 
 \begin{itemize}
-\item Comparable (\sect{std-comparable}).
-\item Orderable (\sect{std-orderable})
+\item Comparable (\autoref{sec:std-comparable}).
+\item Orderable (\autoref{sec:std-orderable})
 \end{itemize}
 
 \subsection{Construction}
 
 The most common way to create fresh floats is by using the literal
-syntax presented in \sect{us-syn-lit-float}. A null float can also be
+syntax presented in \autoref{sec:us-syn-lit-float}. A null float can also be
 obtained with \lstinline|Float|'s \lstinline|new| method
-(\lst{new-float}).
+(\autoref{lst:new-float}).
 
 \begin{lstlisting}[caption=Creating a new float, label=lst:new-float,
   float=\floatpos]
@@ -27,7 +26,7 @@ obtained with \lstinline|Float|'s \lstinline|new| method
 
 \subsubsection{abs}
 
-Return the absolute value of the target (\lst{float-abs}).
+Return the absolute value of the target (\autoref{lst:float-abs}).
 
 \begin{lstlisting}[caption=Float.abs, label=lst:float-abs,
   float=\floatposh]
@@ -59,7 +58,7 @@ Return the arcsinus of the target.
 
 \subsubsection{asString}
 
-Return a string representing the target (\lst{float-asString}).
+Return a string representing the target (\autoref{lst:float-asString}).
 
 \begin{lstlisting}[caption=Float.asString, label=lst:float-asString,
   float=\floatposh]
@@ -69,7 +68,7 @@ Return a string representing the target (\lst{float-asString}).
 
 \subsubsection{atan}
 
-Return the arctangent of the target (\lst{float-atan}).
+Return the arctangent of the target (\autoref{lst:float-atan}).
 
 \begin{lstlisting}[caption=Float.atan, label=lst:float-atan,
   float=\floatposh]
@@ -79,7 +78,7 @@ Return the arctangent of the target (\lst{float-atan}).
 
 \subsubsection{bitand}
 
-Return the bitwise and between the target and the argument (\lst{float-bitand}).
+Return the bitwise and between the target and the argument (\autoref{lst:float-bitand}).
 
 \begin{lstlisting}[caption=Float.bitand, label=lst:float-bitand,
   float=\floatposh]
@@ -89,7 +88,7 @@ Return the bitwise and between the target and the argument (\lst{float-bitand}).
 
 \subsubsection{bitor}
 
-Return the bitwise or between the target and the argument (\lst{float-bitor}).
+Return the bitwise or between the target and the argument (\autoref{lst:float-bitor}).
 
 \begin{lstlisting}[caption=Float.bitor, label=lst:float-bitor,
   float=\floatposh]
@@ -99,7 +98,7 @@ Return the bitwise or between the target and the argument (\lst{float-bitor}).
 
 \subsubsection{clone}
 
-Return a fresh Float with the same value as the target (\lst{float-clone}).
+Return a fresh Float with the same value as the target (\autoref{lst:float-clone}).
 
 \begin{lstlisting}[caption=Float.clone, label=lst:float-clone,
   float=\floatposh]
@@ -113,7 +112,7 @@ Return a fresh Float with the same value as the target (\lst{float-clone}).
 
 \subsubsection{compl}
 
-Return the 1-complement of the target (\lst{float-compl}).
+Return the 1-complement of the target (\autoref{lst:float-compl}).
 
 \begin{lstlisting}[caption=Float.compl, label=lst:float-compl,
   float=\floatposh]
@@ -123,7 +122,7 @@ Return the 1-complement of the target (\lst{float-compl}).
 
 \subsubsection{cos}
 
-Return the cosinus of the target (\lst{float-cos}).
+Return the cosinus of the target (\autoref{lst:float-cos}).
 
 \begin{lstlisting}[caption=Float.cos, label=lst:float-cos,
   float=\floatposh]
@@ -133,7 +132,7 @@ Return the cosinus of the target (\lst{float-cos}).
 
 \subsubsection{exp}
 
-Return the exponential of the target (\lst{float-exp}).
+Return the exponential of the target (\autoref{lst:float-exp}).
 
 \begin{lstlisting}[caption=Float.exp, label=lst:float-exp,
   float=\floatposh]
@@ -143,7 +142,7 @@ Return the exponential of the target (\lst{float-exp}).
 
 \subsubsection{inf}
 
-Return the infinity (\lst{float-inf}).
+Return the infinity (\autoref{lst:float-inf}).
 
 \begin{lstlisting}[caption=Float.inf, label=lst:float-inf,
   float=\floatposh]
@@ -153,7 +152,7 @@ Return the infinity (\lst{float-inf}).
 
 \subsubsection{log}
 
-Return the logarithm of the target (\lst{float-log}).
+Return the logarithm of the target (\autoref{lst:float-log}).
 
 \begin{lstlisting}[caption=Float.log, label=lst:float-log,
   float=\floatposh]
@@ -163,7 +162,7 @@ Return the logarithm of the target (\lst{float-log}).
 
 \subsubsection{nan}
 
-Return the ``not a number'' special float value (\lst{float-nan}).
+Return the ``not a number'' special float value (\autoref{lst:float-nan}).
 
 \begin{lstlisting}[caption=Float.nan, label=lst:float-nan,
   float=\floatposh]
@@ -173,7 +172,7 @@ Return the ``not a number'' special float value (\lst{float-nan}).
 
 \subsubsection{random}
 
-Return a random number between 0 and the target(\lst{float-random}).
+Return a random number between 0 and the target(\autoref{lst:float-random}).
 
 \begin{lstlisting}[caption=Float.random, label=lst:float-random,
   float=\floatposh]
@@ -187,7 +186,7 @@ Return a random number between 0 and the target(\lst{float-random}).
 
 \subsubsection{round}
 
-Return the target, rounded (\lst{float-round}).
+Return the target, rounded (\autoref{lst:float-round}).
 
 \begin{lstlisting}[caption=Float.round, label=lst:float-round,
   float=\floatposh]
@@ -199,7 +198,7 @@ Return the target, rounded (\lst{float-round}).
 
 \subsubsection{seq}
 
-Return the sequence of integer from 0 to target - 1 as a list (\lst{float-seq}).
+Return the sequence of integer from 0 to target - 1 as a list (\autoref{lst:float-seq}).
 
 \begin{lstlisting}[caption=Float.seq, label=lst:float-seq,
   float=\floatposh]
@@ -209,7 +208,7 @@ Return the sequence of integer from 0 to target - 1 as a list (\lst{float-seq}).
 
 \subsubsection{sin}
 
-Return the sinus of the target (\lst{float-sin}).
+Return the sinus of the target (\autoref{lst:float-sin}).
 
 \begin{lstlisting}[caption=Float.sin, label=lst:float-sin,
   float=\floatposh]
@@ -219,7 +218,7 @@ Return the sinus of the target (\lst{float-sin}).
 
 \subsubsection{sqrt}
 
-Return the square root of the target (\lst{float-sqrt}).
+Return the square root of the target (\autoref{lst:float-sqrt}).
 
 \begin{lstlisting}[caption=Float.sqrt, label=lst:float-sqrt,
   float=\floatposh]
@@ -229,7 +228,7 @@ Return the square root of the target (\lst{float-sqrt}).
 
 \subsubsection{tan}
 
-Return the tangent of the target (\lst{float-tan}).
+Return the tangent of the target (\autoref{lst:float-tan}).
 
 \begin{lstlisting}[caption=Float.tan, label=lst:float-tan,
   float=\floatposh]
@@ -239,7 +238,7 @@ Return the tangent of the target (\lst{float-tan}).
 
 \subsubsection{trunc}
 
-Return the target truncated  (\lst{float-trunc}).
+Return the target truncated  (\autoref{lst:float-trunc}).
 
 \begin{lstlisting}[caption=Float.trunc, label=lst:float-trunc,
   float=\floatposh]
@@ -249,7 +248,7 @@ Return the target truncated  (\lst{float-trunc}).
 
 \subsubsection{asFloat}
 
-Return the target (\lst{float-asFloat}).
+Return the target (\autoref{lst:float-asFloat}).
 
 \begin{lstlisting}[caption=Float.asFloat, label=lst:float-asFloat,
   float=\floatposh]
@@ -259,7 +258,7 @@ Return the target (\lst{float-asFloat}).
 
 \subsubsection{sqr}
 
-Return the square of the target (\lst{float-sqr}).
+Return the square of the target (\autoref{lst:float-sqr}).
 
 \begin{lstlisting}[caption=Float.sqr, label=lst:float-sqr,
   float=\floatposh]
@@ -269,7 +268,7 @@ Return the square of the target (\lst{float-sqr}).
 
 \subsubsection{sgn}
 
-Return 1 if the target is positive, -1 otherwise (\lst{float-sgn}).
+Return 1 if the target is positive, -1 otherwise (\autoref{lst:float-sgn}).
 
 \begin{lstlisting}[caption=Float.sgn, label=lst:float-sgn,
   float=\floatposh]
@@ -281,7 +280,7 @@ Return 1 if the target is positive, -1 otherwise (\lst{float-sgn}).
 
 \subsubsection{times}
 
-Take one functional argument and call it target times (\lst{float-times}).
+Take one functional argument and call it target times (\autoref{lst:float-times}).
 
 \begin{lstlisting}[caption=Float.times, label=lst:float-times,
   float=\floatposh]
@@ -296,7 +295,7 @@ Take one functional argument and call it target times (\lst{float-times}).
 \subsubsection{each}
 
 Take one functional argument and call it on every integer from 0 to
-target - 1 (\lst{float-each}).
+target - 1 (\autoref{lst:float-each}).
 
 \begin{lstlisting}[caption=Float.each, label=lst:float-each,
   float=\floatposh]
@@ -321,7 +320,7 @@ Return the bitwise exclusive or between the target and the first argument.
 \subsubsection{$>>$}
 
 \lstinline|a >> b| return the \lstinline|a| shifted by \lstinline|b|
-bit towards the right (\lst{float-rshift}).
+bit towards the right (\autoref{lst:float-rshift}).
 
 \begin{lstlisting}[caption=Float.'$>>$', label=lst:float-rshift,
   float=\floatposh]
@@ -332,11 +331,11 @@ bit towards the right (\lst{float-rshift}).
 \subsubsection{$<$}
 
 \lstinline|a < b| returns whether \lstinline|a| is inferior to
-\lstinline|b| (\lst{float-inf}). Note that other comparison operators
+\lstinline|b| (\autoref{lst:float-LT}). Note that other comparison operators
 (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be applied on
-floats since Float inherits Orderable (see \lst{std-orderable}).
+floats since Float inherits Orderable (see \autoref{sec:std-orderable}).
 
-\begin{lstlisting}[caption=Float.'$<$', label=lst:float-inf,
+\begin{lstlisting}[caption=Float.'$<$', label=lst:float-LT,
   float=\floatposh]
   0 < 1;
   [00000000] true
@@ -347,7 +346,7 @@ floats since Float inherits Orderable (see \lst{std-orderable}).
 \subsubsection{$<<$}
 
 \lstinline|a << b| return the \lstinline|a| shifted by \lstinline|b|
-bit towards the left (\lst{float-lshift}).
+bit towards the left (\autoref{lst:float-lshift}).
 
 \begin{lstlisting}[caption=Float.'$<<$', label=lst:float-lshift,
   float=\floatposh]
@@ -357,7 +356,7 @@ bit towards the left (\lst{float-lshift}).
 
 \subsubsection{-}
 
-\lstinline|a - b| returns \lstinline|a| minus \lstinline|b| (\lst{float-minus}).
+\lstinline|a - b| returns \lstinline|a| minus \lstinline|b| (\autoref{lst:float-minus}).
 
 \begin{lstlisting}[caption=Float.'-', label=lst:float-minus,
   float=\floatposh]
@@ -367,7 +366,7 @@ bit towards the left (\lst{float-lshift}).
 
 \subsubsection{+}
 
-\lstinline|a + b| returns \lstinline|a| plus \lstinline|b| (\lst{float-plus}).
+\lstinline|a + b| returns \lstinline|a| plus \lstinline|b| (\autoref{lst:float-plus}).
 
 \begin{lstlisting}[caption=Float.'+', label=lst:float-plus, float=\floatposh]
   1 + 1;
@@ -377,7 +376,7 @@ bit towards the left (\lst{float-lshift}).
 \subsubsection{/}
 
 \lstinline|a / b| returns the quotient of \lstinline|a| divided by
-\lstinline|b| (\lst{float-div}).
+\lstinline|b| (\autoref{lst:float-div}).
 
 \begin{lstlisting}[caption=Float.'/', label=lst:float-div, float=\floatposh]
   50 / 11;
@@ -386,7 +385,7 @@ bit towards the left (\lst{float-lshift}).
 
 \subsubsection{\%}
 
-\lstinline|a \% b| returns \lstinline|a| modulo \lstinline|b| (\lst{float-mod}).
+\lstinline|a \% b| returns \lstinline|a| modulo \lstinline|b| (\autoref{lst:float-mod}).
 
 \begin{lstlisting}[caption=Float.'\%', label=lst:float-mod, float=\floatposh]
   50 % 11;
@@ -395,25 +394,25 @@ bit towards the left (\lst{float-lshift}).
 
 \subsubsection{*}
 
-\lstinline|a * b| returns \lstinline|a| times \lstinline|b| (\lst{float-times}).
+\lstinline|a * b| returns \lstinline|a| times \lstinline|b| (\autoref{lst:float-STAR}).
 
-\begin{lstlisting}[caption=Float.'*', label=lst:float-times, float=\floatposh]
+\begin{lstlisting}[caption=Float.'*', label=lst:float-STAR, float=\floatposh]
   2 * 3;
   [00000000] 6
 \end{lstlisting}
 
 \subsubsection{**}
 
-\lstinline|a ** b| returns \lstinline|a| to the \lstinline|b| power (\lst{float-exp}).
+\lstinline|a ** b| returns \lstinline|a| to the \lstinline|b| power (\autoref{lst:float-STAR-STAR}).
 
-\begin{lstlisting}[caption=Float.'**', label=lst:float-exp, float=\floatposh]
+\begin{lstlisting}[caption=Float.'**', label=lst:float-STAR-STAR, float=\floatposh]
   2 ** 10;
   [00000000] 1024
 \end{lstlisting}
 
 \subsubsection{==}
 
-\lstinline|a == b| returns whether \lstinline|a| equals \lstinline|b| (\lst{float-eq}).
+\lstinline|a == b| returns whether \lstinline|a| equals \lstinline|b| (\autoref{lst:float-eq}).
 
 \begin{lstlisting}[caption={Float.'=='}, label=lst:float-eq, float=\floatposh]
   1 == 1;

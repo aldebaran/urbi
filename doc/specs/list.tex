@@ -6,15 +6,15 @@ elements.
 \subsection{Prototypes}
 
 \begin{itemize}
-\item Object (\sect{std-object})
+\item Object (\autoref{sec:std-object})
 \end{itemize}
 
 \subsection{Construction}
 
 List can be created with their literal syntax, as shown in
-\sect{us-syn-lit-list}. They can also be created with the
+\autoref{sec:us-syn-lit-list}. They can also be created with the
 \lstinline|new| method of \lstinline|List|, given the size and an
-initialization value (\lst{new-list}).
+initialization value (\autoref{lst:new-list}).
 
 \begin{lstlisting}[caption=List.new, label=lst:new-list,
   float=\floatposh]
@@ -28,7 +28,7 @@ initialization value (\lst{new-list}).
 
 % FIXME: link to predicate glossary entry
 Return whether all the members of the target verify the given
-predicate (\lst{list-all}).
+predicate (\autoref{lst:list-all}).
 
 \begin{lstlisting}[caption=List.all, label=lst:list-all, float=\floatposh]
   // Are all elements positive?
@@ -43,7 +43,7 @@ predicate (\lst{list-all}).
 
 % FIXME: link to predicate glossary entry
 Return whether at least one of the members of the target verify the
-given predicate (\lst{list-any}).
+given predicate (\autoref{lst:list-any}).
 
 \begin{lstlisting}[caption=List.any, label=lst:list-any, float=\floatposh]
   // Is there any even element?
@@ -56,7 +56,7 @@ given predicate (\lst{list-any}).
 
 \subsubsection{asList}
 
-Return the target (\lst{list-asList}).
+Return the target (\autoref{lst:list-asList}).
 
 \begin{lstlisting}[caption=List.asList, label=lst:list-asList, float=\floatposh]
   [0, 1, 2].asList;
@@ -66,7 +66,7 @@ Return the target (\lst{list-asList}).
 \subsubsection{asString}
 
 Return the target as a string describing the list
-(\lst{list-asString}).
+(\autoref{lst:list-asString}).
 
 \begin{lstlisting}[caption=List.asString, label=lst:list-asString, float=\floatposh]
   [0, 1, 2].asString;
@@ -76,7 +76,7 @@ Return the target as a string describing the list
 \subsubsection{back}
 
 Return the last element of the target. An error if the target is empty
-(\lst{list-back}).
+(\autoref{lst:list-back}).
 
 \begin{lstlisting}[caption=List.back, label=lst:list-back, float=\floatposh]
   [0, 1, 2].back;
@@ -87,7 +87,7 @@ Return the last element of the target. An error if the target is empty
 
 \subsubsection{clear}
 
-Empty the target (\lst{list-clear}).
+Empty the target (\autoref{lst:list-clear}).
 
 \begin{lstlisting}[caption=List.clear, label=lst:list-clear, float=\floatposh]
   var x = [0, 1, 2];
@@ -98,7 +98,7 @@ Empty the target (\lst{list-clear}).
 
 \subsubsection{each}
 
-Apply the given functional value on all members (\lst{list-each})
+Apply the given functional value on all members (\autoref{lst:list-each})
 sequentially.
 
 \begin{lstlisting}[caption=List.each, label=lst:list-each, float=\floatposh]
@@ -114,7 +114,7 @@ sequentially.
 \subsubsection{each\&}
 
 Apply the given functional value on all members simultaneously
-(\lst{list-each-and}).
+(\autoref{lst:list-each-and}).
 
 \begin{lstlisting}[caption=List.each, label=lst:list-each-and, float=\floatposh]
   [0, 1, 2].'each&'(function (v) {echo (v * v); echo (v * v)});
@@ -128,7 +128,7 @@ Apply the given functional value on all members simultaneously
 
 \subsubsection{empty}
 
-Return whether the target is empty (\lst{list-empty}).
+Return whether the target is empty (\autoref{lst:list-empty}).
 
 \begin{lstlisting}[caption=List.empty, label=lst:list-empty, float=\floatposh]
   [].empty;
@@ -140,7 +140,7 @@ Return whether the target is empty (\lst{list-empty}).
 \subsubsection{filter}
 
 Return the list of all member of the target that verify the given
-predicate (\lst{list-filter}).
+predicate (\autoref{lst:list-filter}).
 
 \begin{lstlisting}[caption=List.filter, label=lst:list-filter, float=\floatposh]
   // Keep only odd numbers
@@ -151,17 +151,17 @@ predicate (\lst{list-filter}).
 \subsubsection{foldl}
 
 FIXME: this is too damn hard to explain, yet so simple
-(\lst{list-foldl}).
+(\autoref{lst:list-foldl}).
 
 \begin{lstlisting}[caption=List.foldl, label=lst:list-foldl, float=\floatposh]
 
 \end{lstlisting}
 
 \subsubsection{front}
-\label{sect:std-list-front}
+\label{sec:std-list-front}
 
 Return the first element of the target. An error if the target is
-empty (\lst{list-front}).
+empty (\autoref{lst:list-front}).
 
 \begin{lstlisting}[caption=List.front, label=lst:list-front, float=\floatposh]
   [0, 1, 2].front;
@@ -173,7 +173,7 @@ empty (\lst{list-front}).
 \subsubsection{has}
 
 Return whether one of the member of the target equals the argument
-(\lst{list-has}).
+(\autoref{lst:list-has}).
 
 \begin{lstlisting}[caption=List.has, label=lst:list-has, float=\floatposh]
   [0, 1, 2].has(1);
@@ -185,7 +185,7 @@ Return whether one of the member of the target equals the argument
 \subsubsection{hasSame}
 
 Return whether one of the member of the target is physically equal to
-the argument (\lst{list-hasSame}).
+the argument (\autoref{lst:list-hasSame}).
 
 \begin{lstlisting}[caption=List.hasSame, label=lst:list-hasSame, float=\floatposh]
   var x = 1;
@@ -197,12 +197,12 @@ the argument (\lst{list-hasSame}).
 
 \subsubsection{head}
 
-Synonym for \lstinline|front| (\sect{std-list-front}).
+Synonym for \lstinline|front| (\autoref{sec:std-list-front}).
 
 \subsubsection{join}
 
 Concatenate all members of the target to form a string, separating
-them with the given separator (\lst{list-join}).
+them with the given separator (\autoref{lst:list-join}).
 
 \begin{lstlisting}[caption=List.join, label=lst:list-join, float=\floatposh]
   ["b", "ob", "b"].join("a");
@@ -212,7 +212,7 @@ them with the given separator (\lst{list-join}).
 \subsubsection{map}
 
 Apply the given functional value on every member, and return the list
-of results (\lst{list-map}).
+of results (\autoref{lst:list-map}).
 
 \begin{lstlisting}[caption=List.map, label=lst:list-map, float=\floatposh]
   [0, 1, 2, 3].map(function (v) { v % 2 == 0});
@@ -220,10 +220,10 @@ of results (\lst{list-map}).
 \end{lstlisting}
 
 \subsubsection{nth}
-\label{sect:std-list-nth}
+\label{sec:std-list-nth}
 
 Return the nth member of the target (indexing is zero-based). An error
-if out of bounds (\lst{list-nth}).
+if out of bounds (\autoref{lst:list-nth}).
 
 \begin{lstlisting}[caption=List.nth, label=lst:list-nth, float=\floatposh]
   [0, 1, 2].nth(1);
@@ -235,7 +235,7 @@ if out of bounds (\lst{list-nth}).
 \subsubsection{pop\_back}
 
 Remove and return the last element of the target. An error if the
-target is empty (\lst{list-popback}).
+target is empty (\autoref{lst:list-popback}).
 
 \begin{lstlisting}[caption=List.pop\_back, label=lst:list-popback, float=\floatposh]
   var x = [0, 1, 2];
@@ -251,7 +251,7 @@ target is empty (\lst{list-popback}).
 \subsubsection{pop\_front}
 
 Remove and return the first element from the target. An error if the
-target is empty (\lst{list-popfront}).
+target is empty (\autoref{lst:list-popfront}).
 
 \begin{lstlisting}[caption=List.pop\_front, label=lst:list-popfront, float=\floatposh]
   var x = [0, 1, 2];
@@ -265,10 +265,10 @@ target is empty (\lst{list-popfront}).
 \end{lstlisting}
 
 \subsubsection{push\_back}
-\label{sect:std-list-pushback}
+\label{sec:std-list-pushback}
 
 Insert the given element at the end of the target
-(\lst{list-pushback}).
+(\autoref{lst:list-pushback}).
 
 \begin{lstlisting}[caption=List.push\_back, label=lst:list-pushback, float=\floatposh]
   var x = [0, 1];
@@ -282,7 +282,7 @@ Insert the given element at the end of the target
 \subsubsection{push\_front}
 
 Insert the given element at the beginning of the target
-(\lst{list-pushfront}).
+(\autoref{lst:list-pushfront}).
 
 \begin{lstlisting}[caption=List.push\_front, label=lst:list-pushfront, float=\floatposh]
   var x = [1, 2];
@@ -296,7 +296,7 @@ Insert the given element at the beginning of the target
 \subsubsection{range}
 
 Return a subrange of the string, from the first index included to the
-second index excluded. An error if out of bounds (\lst{list-range}).
+second index excluded. An error if out of bounds (\autoref{lst:list-range}).
 
 \begin{lstlisting}[caption=List.range, label=lst:list-range, float=\floatposh]
   [0, 1, 2, 3].range(1, 3);
@@ -309,7 +309,7 @@ second index excluded. An error if out of bounds (\lst{list-range}).
 \subsubsection{remove}
 
 Remove all elements from the target that equals the argument
-(\lst{list-remove}).
+(\autoref{lst:list-remove}).
 
 \begin{lstlisting}[caption=List.remove, label=lst:list-remove, float=\floatposh]
   var x = [0, 1, 0, 2, 0, 3];
@@ -323,7 +323,7 @@ Remove all elements from the target that equals the argument
 \subsubsection{removeById}
 
 Remove all elements from the target that physically equals the
-argument (\lst{list-removeById}).
+argument (\autoref{lst:list-removeById}).
 
 \begin{lstlisting}[caption=List.removeById, label=lst:list-removeById,
   float=\floatposh]
@@ -340,7 +340,7 @@ argument (\lst{list-removeById}).
 \subsubsection{reverse}
 
 Return the target with the order of elements inverted
-(\lst{list-reverse}).
+(\autoref{lst:list-reverse}).
 
 \begin{lstlisting}[caption=List.reverse, label=lst:list-reverse, float=\floatposh]
   [0, 1, 2].reverse;
@@ -350,7 +350,7 @@ Return the target with the order of elements inverted
 \subsubsection{==}
 
 Check whether all elements in the target and the first argument, are
-equal two by two (\lst{list-sameAs}).
+equal two by two (\autoref{lst:list-sameAs}).
 
 \begin{lstlisting}[caption={List.==}, label=lst:list-sameAs, float=\floatposh]
   [0, 1, 2] == [0, 1, 2];
@@ -360,10 +360,10 @@ equal two by two (\lst{list-sameAs}).
 \end{lstlisting}
 
 \subsubsection{setNth}
-\label{sect:std-list-setnth}
+\label{sec:std-list-setnth}
 
 Assign a value to the element of the target at the given index
-(\lst{list-setNth}).
+(\autoref{lst:list-setNth}).
 
 \begin{lstlisting}[caption=List.setNth, label=lst:list-setNth, float=\floatposh]
   var x = [0, 1, 2];
@@ -376,7 +376,7 @@ Assign a value to the element of the target at the given index
 
 \subsubsection{size}
 
-Return the number of elements in the target (\lst{list-size}).
+Return the number of elements in the target (\autoref{lst:list-size}).
 
 \begin{lstlisting}[caption=List.size, label=lst:list-size, float=\floatposh]
   [1, 2, 3].size;
@@ -388,7 +388,7 @@ Return the number of elements in the target (\lst{list-size}).
 \subsubsection{sort}
 
 Return the target, sorted with respect to the \lstinline|<| criteria
-(\lst{list-sort}).
+(\autoref{lst:list-sort}).
 
 \begin{lstlisting}[caption=List.sort, label=lst:list-sort, float=\floatposh]
   [1, 0, 3, 2].sort;
@@ -398,7 +398,7 @@ Return the target, sorted with respect to the \lstinline|<| criteria
 \subsubsection{tail}
 
 Return the target, minus the first element. An error if the target is
-empty (\lst{list-tail}).
+empty (\autoref{lst:list-tail}).
 
 \begin{lstlisting}[caption=List.tail, label=lst:list-tail, float=\floatposh]
   [0, 1, 2].tail;
@@ -410,7 +410,7 @@ empty (\lst{list-tail}).
 \subsubsection{*}
 
 Return the target, concatenated n times to itself, n being the
-argument (\lst{list-times}).
+argument (\autoref{lst:list-times}).
 
 \begin{lstlisting}[caption=List.'*', label=lst:list-times,
   float=\floatposh]
@@ -421,7 +421,7 @@ argument (\lst{list-times}).
 \subsubsection{+}
 
 Return the concatenation of the target and the given list
-(\lst{list-plus}).
+(\autoref{lst:list-plus}).
 
 \begin{lstlisting}[caption=List.'+', label=lst:list-plus,
   float=\floatpos]
@@ -432,7 +432,7 @@ Return the concatenation of the target and the given list
 \subsubsection{-}
 
 Return the target without all element that equals any element in the
-given list(\lst{list-minus}).
+given list(\autoref{lst:list-minus}).
 
 \begin{lstlisting}[caption=List.'', label=lst:list-minus,
   float=\floatpos]
@@ -442,14 +442,14 @@ given list(\lst{list-minus}).
 
 \subsubsection{$<<$}
 
-A synonym for \lstinline|push_back| (\sect{std-list-pushback}).
+A synonym for \lstinline|push_back| (\autoref{sec:std-list-pushback}).
 
 \subsubsection{$<$}
 
 Return whether the target is inferior to the given list. A list is
 inferior to another if at least one of its element differs from the
 other, and the first differing element is inferior to the other
-(\lst{list-inf}).
+(\autoref{lst:list-inf}).
 
 \begin{lstlisting}[caption=List.'', label=lst:list-inf,
   float=\floatpos]
@@ -462,8 +462,8 @@ other, and the first differing element is inferior to the other
 \end{lstlisting}
 
 \subsubsection{[]}
-A synonym for \lstinline|nth| (\sect{std-list-nth}).
+A synonym for \lstinline|nth| (\autoref{sec:std-list-nth}).
 
 \subsubsection{[]=}
-A synonym for \lstinline|setNth| (\sect{std-list-setnth}).
+A synonym for \lstinline|setNth| (\autoref{sec:std-list-setnth}).
 
