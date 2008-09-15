@@ -703,9 +703,10 @@ used in composite expressions, nested, and so forth.
 \subsection{Local variables}
 
 Local variables are introduced with the \lstinline|var| keyword,
-followed by a valid identifier (see \autoref{sec:us-syn-id}) and an optional
+followed by an identifier (see \autoref{sec:us-syn-id}) and an optional
 initialization value assignment. If the initial value is omitted, it
-defaults to void (\autoref{sec:std-void}). Variable declarations evaluate to
+defaults to \lstinline"void" (\autoref{sec:std-void}). Variable
+declarations evaluate to
 the initialization value. They can later be referred to by their
 name. Their value can be changed with the assignment operator; such an
 assignment expression returns the new value. The use of local
@@ -733,20 +734,20 @@ y.isVoid;
 Local variables lifespan is the same as their enclosing scope. They
 are thus only accessible from their scope and its
 subscopes\footnote{Local variables can actually escape their scope
-  with lexical closures, as explained in \autoref{sec:us-fun-closures}}. Two
+  with lexical closures, see \autoref{sec:us-fun-closures}.}. Two
 variables with the same name cannot be defined in the same scope. A
-variable with the same name can be redefined in a subscope, in which
+variable with the same name can be redefined in an inner scope, in which
 case references refer to the innermost variable, as shown in
 \autoref{lst:local-variables-scoping}.
 
 \begin{urbiscript}[caption=Local variables scoping,
   label=lst:local-variables-scoping,float=\floatpos]
 {
-  var x = 0;
-  var y = 1;
+  var x = "x";
+  var y = "outer y";
   {
-    var y = 2;
-    var z = 3;
+    var y = "inner y";
+    var z = "z";
     // We can access variables of parent scopes.
     echo(x);
     // This refers to the inner y.
@@ -760,47 +761,47 @@ case references refer to the innermost variable, as shown in
   // This would be invalid: x is already declared in this scope.
   // var x;
 };
-[00000000] *** 0
-[00000000] *** 2
-[00000000] *** 3
-[00000000] *** 1
+[00000000] *** "x"
+[00000000] *** "inner y"
+[00000000] *** "z"
+[00000000] *** "outer y"
 \end{urbiscript}
 
 \FloatBarrier
 \section{Functions}
 
-\subsection{Functions creation}
+\subsection{Function Definition}
 
-Functions in \us are first class citizen. Which mean, unlike \C and
-related languages, a function is a normal value, just like an integer
-or a string is. One can create a functional value thanks to the
+Functions in \us are first class citizens:  a function is a
+value, just like an integer
+or a string is, and can be handled as such.
+This is different from most \C-like languages.
+One can create a functional value thanks to the
 \lstinline|function| keyword, followed by the list of formal arguments
-and a scope representing the body of the function. Formal arguments
+and a compound statement representing the body of the function. Formal arguments
 are a comma separated list of identifiers. \autoref{lst:function} illustrates
 this.
 
-\begin{urbiscript}[caption=Functional
-  value,label=lst:function,float=\floatpos]
+\begin{urbiscript}[caption=Functional value,label=lst:function,float=\floatpos]
 function (arg1, arg2) { echo(0) };
 [00000000] function(arg1, arg2) {
 ..  echo(0)
 ..}
 \end{urbiscript}
 
-The whole point of a function is to be called later, so storing it in
-a variable is the most common usage. \us provide a simple sugar to
-initialize a new variable with a given function, presented in
-\autoref{lst:function-sugar}.
+Usually functions are bound to an identifier to be invoked later.
+\autoref{lst:function-sugar} shows a short-hand to define a named
+function.
 
-\begin{urbiscript}[caption=Storing functions in variables,
+\begin{urbiscript}[caption=Named functions,
   label=lst:function-sugar,float=\floatpos]
-// Functions are often stored in variables to call them later
+// Functions are often stored in variables to call them later.
 var f1 = function () {
   echo("hello")
 };
 f1();
 [00000000] *** hello
-// This form is strictly equivalent, yet simpler
+// This form is equivalent, yet simpler.
 function f2()
 {
   echo("hello");
@@ -808,6 +809,7 @@ function f2()
 f2();
 [00000000] *** hello
 \end{urbiscript}
+
 
 \subsection{Arguments}
 
@@ -837,40 +839,40 @@ f(0, 1, 2);
 
 \subsection{Return value}
 
-The return value of the function is the evaluation of its body - that
+The return value of the function is the evaluation of its body --- that
 is, since the body is a scope, the last evaluated expression in the
 scope. However, value can be returned manually with the
 \lstinline|return| keyword followed by the value, in which case the
 evaluation of the function is stopped. If \lstinline|return| is used
-with no value, the functions returns void. See \autoref{lst:function-return}.
+with no value, the function returns void. See \autoref{lst:function-return}.
 
 \begin{urbiscript}[caption=Returning values from functions,
   label=lst:function-return,float=\floatpos]
-  function f(a, b)
-  {
-    echo(a);
-    echo(b);
-    a // Return value is a
-  };
-  f(1, 2)
-  [00000000] *** 1
-  [00000000] *** 2
-  [00000000] 1
-  function g(a, b)
-  {
-    echo(a);
-    return a; // Stop execution at this point and return a
-    echo(b); // This is not executed
-  };
-  g(1, 2);
-  [00000000] *** 1
-  [00000000] 1
-  function h()
-  {
-    return; // Stop execution at this point and return void
-    echo(0); // This is not executed
-  };
-  h(); // Returns void, so nothing is printed.
+function f(a, b)
+{
+  echo(a);
+  echo(b);
+  a // Return value is a
+};
+f(1, 2)
+[00000000] *** 1
+[00000000] *** 2
+[00000000] 1
+function g(a, b)
+{
+  echo(a);
+  return a; // Stop execution at this point and return a
+  echo(b); // This is not executed
+};
+g(1, 2);
+[00000000] *** 1
+[00000000] 1
+function h()
+{
+  return; // Stop execution at this point and return void
+  echo(0); // This is not executed
+};
+h(); // Returns void, so nothing is printed.
 \end{urbiscript}
 
 \subsection{Call messages}
@@ -882,32 +884,79 @@ with a function can be accessed with the \lstinline|call| keyword. It
 contains several information such as not-yet evaluated arguments, the
 name of the function, the target \ldots
 
-One of the main usage of call message is to create lazy function, by
-not specifying the formal arguments so as arguments are not evaluated
-at the call site, and evaluate them by hand. A quick example is given
-in \autoref{lst:function-lazy}. More information about this can be found in
-the CallMessage class documentation (\autoref{sec:std-callmsg}).
+\subsection{Strictness}
+
+\us features two different function calls: \dfn{strict} function
+calls, effective arguments are evaluated before invoking the function,
+and \dfn{lazy} function calls, arguments are passed as-is to the
+function.  As a matter of fact, the difference is rather that there
+are strict functions and lazy function.
+
+Functions defined with a possibly empty list of formal arguments in
+parentheses are strict: the effective arguments are first evaluated,
+and then their value is given to the called function.  See
+\autoref{lst:us-fun-strict}.
+
+\begin{urbiscript}[caption=Strict Functions,
+  label=lst:us-fun-strict,float=\floatpos]
+function first(a, b) {
+  echo(a); echo(a)
+};
+first({echo "Arg1"; 1},
+      {echo "Arg2"; 2});
+[00000000] *** Arg1
+[00000000] *** Arg2
+[00000000] *** 1
+[00000000] *** 2
+\end{urbiscript}
+
+A function declared with formal argument is lazy, and one uses its
+call message to manipulate its \emph{unevaluated} arguments.
+\autoref{lst:function-lazy} gives an example.  More information about
+this can be found in the CallMessage class documentation
+(\autoref{sec:std-callmsg}).
 
 \begin{urbiscript}[caption=Lazy
   function,label=lst:function-lazy,float=\floatposh]
-  // Do not specify formal arguments, so as
-  // effective arguments are not evaluated at call site
-  function lazy
-  {
-    // Evaluate only the first argument, twice
-    call.evalArgAt(0);
-    call.evalArgAt(0);
-  };
-  lazy(echo("a"), echo("b"));
-  [00000000] *** a
-  [00000000] *** a
+function first
+{
+  echo(call.evalArgAt(0));
+  echo(call.evalArgAt(0));
+};
+first({echo "Arg1"; 1},
+      {echo "Arg2"; 2});
+[00000000] *** Arg1
+[00000000] *** 1
+[00000000] *** Arg1
+[00000000] *** 1
+\end{urbiscript}
+
+A lazy function may implement a strict interface by evaluating its
+arguments and storing them as local variables, see
+\autoref{lst:lazy-2-strict}.  This is less efficient than defining a
+strict function.
+
+\begin{urbiscript}[caption=Lazy functions with strict semantics,
+  label=lst:lazy-2-strict,float=\floatposh]
+function first
+{
+  var a = call.evalArgAt(0);
+  var b = call.evalArgAt(2);
+  echo(a); echo(a);
+};
+first({echo "Arg1"; 1},
+      {echo "Arg2"; 2});
+[00000000] *** Arg1
+[00000000] *** Arg2
+[00000000] *** 1
+[00000000] *** 1
 \end{urbiscript}
 
 \subsection{Lexical closures}
 \label{sec:us-fun-closures}
 
-Lexical closure are an additional scoping rule, with which a function
-can refer to a local variable located outside the function - but still
+Lexical closures are an additional scoping rule, with which a function
+can refer to a local variable located outside the function --- but still
 in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
 environment, as shown in \autoref{lst:function-closure}.
@@ -983,19 +1032,19 @@ documentation about these method can be found in \autoref{sec:std-object}.
 
 \begin{urbiscript}[caption=Manipulating slots, label=lst:slots,
   float=\floatpos]
-  var o = Object.new;
-  o.slotNames;
-  [00000000] []
-  o.createSlot("test");
-  [00000000] ["test"]
-  o.slotNames;
-  [00000000] ["test"]
-  o.getSlot("test").asString;
-  [00000000] "void"
-  o.updateSlot("test", 42);
-  [00000000] 42
-  o.getSlot("test");
-  [00000000] 42
+var o = Object.new;
+o.slotNames;
+[00000000] []
+o.createSlot("test");
+[00000000] ["test"]
+o.slotNames;
+[00000000] ["test"]
+o.getSlot("test").asString;
+[00000000] "void"
+o.updateSlot("test", 42);
+[00000000] 42
+o.getSlot("test");
+[00000000] 42
 \end{urbiscript}
 
 \subsubsection{Sugars}
@@ -1031,15 +1080,15 @@ documentation about these methods can be found in \autoref{sec:std-object}.
 
 \begin{urbiscript}[caption=Manipulating prototypes, label=lst:prototypes,
   float=\floatpos]
-  var o = Object.new;
-  o.protos;
-  [00000000] [<Object>]
-  o.addProto(Pair);
-  o.protos;
-  [00000000] [<Object>, <Pair>]
-  o.removeProto(Object);
-  o.protos;
-  [00000000] [<Pair>]
+var o = Object.new;
+o.protos;
+[00000000] [<Object>]
+o.addProto(Pair);
+o.protos;
+[00000000] [<Object>, <Pair>]
+o.removeProto(Object);
+o.protos;
+[00000000] [<Pair>]
 \end{urbiscript}
 
 \subsubsection{Inheritance}
