@@ -76,8 +76,6 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
 
 \renewcommand{\baselinestretch}{.85}
 \begin{table}[\floatpos]
-  \caption{Keywords}
-  \label{tab:keywords}
   \centering
   \begin{tabular}{|c|c||c|c|}
     \hline
@@ -90,7 +88,7 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
     \lstinline"loop"              & \lstinline|loop&| and
                                     \lstinline-loop|- flavors               \\
     \lstinline"asm"               & Unused                                  &
-    \lstinline"loopn"             & Deprecated in favor of for              \\
+    \lstinline"loopn"             & Deprecated, use \lstinline|for|         \\
     \lstinline"at"                &                                         &
     \lstinline"mutable"           & Unused                                  \\
     \lstinline"auto"              & Unused                                  &
@@ -118,7 +116,7 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
     \lstinline"compl"             & Synonym for \lstinline|~|               &
     \lstinline"register"          & Unused                                  \\
     \lstinline"const"             & Unused                                  &
-    \lstinline"reinterpret_cast"  & Unnused                                 \\
+    \lstinline"reinterpret_cast"  & Unused                                 \\
     \lstinline"const_cast"        & Unused                                  &
     \lstinline"return"            &                                         \\
     \lstinline"continue"          &                                         &
@@ -153,10 +151,9 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
     \lstinline"typeid"            & Unused                                  \\
     \lstinline"float"             & Unused                                  &
     \lstinline"typename"          & Unused                                  \\
-    \lstinline"for"               & \lstinline|for&| and                    &
-                                    \lstinline-for|- flavors
+    \lstinline"for"               & \lstinline|for&| and \lstinline-for|- flavors&
     \lstinline"union"             & Unused                                  \\
-    \lstinline"foreach"           & Deprecated in favor of for              &
+    \lstinline"foreach"           & Deprecated, use \lstinline|for|    &
     \lstinline"unsigned"          & Unused                                  \\
     \lstinline"freezeif"          &                                         &
     \lstinline"using"             & Unused                                  \\
@@ -181,6 +178,8 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
     \lstinline"xor_eq"            & Synonym \lstinline|^=| operator         \\
     \hline
   \end{tabular}
+  \caption{Keywords}
+  \label{tab:keywords}
 \end{table}
 \renewcommand{\baselinestretch}{1}
 
@@ -203,20 +202,20 @@ second and 1 millisecond'', is strictly equivalent to
 and their equivalent are shown in \autoref{tab:durations}.
 
 \begin{table}[\floatpos]
-  \caption{Duration units}
-  \label{tab:durations}
   \centering
   \begin{tabular}{|c|c|c|}
     \hline
     unit        & abbreviation & equivalence for n         \\
     \hline
-    millisecond & ms           & $n$                       \\
-    second      & s            & $n * 1000$                \\
-    minute      & m            & $n * 1000 * 60$           \\
-    hour        & h            & $n * 1000 * 60 * 60$      \\
-    day         & d            & $n * 1000 * 60 * 60 * 24$ \\
+    millisecond & ms           & $n / 1000$         \\
+    second      & s            & $n$                \\
+    minute      & m            & $n * 60$           \\
+    hour        & h            & $n * 60 * 60$      \\
+    day         & d            & $n * 60 * 60 * 24$ \\
     \hline
   \end{tabular}
+  \caption{Duration units}
+  \label{tab:durations}
 \end{table}
 
 \subsubsection{Floats}
@@ -225,15 +224,15 @@ and their equivalent are shown in \autoref{tab:durations}.
 Literal floats consist in a succession of digit, representing the
 integral part of the number in decimal base, possibly followed by a
 dot (\lstinline|.|) and another succession of digit representing the
-decimal part. Briefly, float literals must verify the
+decimal part. Briefly, float literals must match the
 \lstinline|[0-9]+(\.[0-9]+)?| regular expression. \autoref{lst:literal-floats}
 is an example of literal floats.
 
 \begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
-  1;
-  [00000000] 1
-  1.1;
-  [00000000] 1.1
+1;
+[00000000] 1
+1.1;
+[00000000] 1.1
 \end{lstlisting}
 
 \subsubsection{Lists}
@@ -244,18 +243,18 @@ empty list of arbitrary expressions enclosed in square brackets
 (\lstinline|[]|), as shown in \autoref{lst:literal-lists}.
 
 \begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
-  []; // The empty list
-  [00000000] []
-  [1, 2, 3];
-  [00000000] [1, 2, 3]
+[]; // The empty list
+[00000000] []
+[1, 2, 3];
+[00000000] [1, 2, 3]
 \end{lstlisting}
 
 \subsubsection{Strings}
 
-String are enclosed in double quotes (\lstinline|"|) and can contain
+String literals are enclosed in double quotes (\lstinline|"|) and can contain
 arbitrary characters, which stand for themselves, with the exception
-of the escapement character, backslash (\lstinline|\|), as we can see
-in \autoref{lst:literal-strings}. Backslash can introduce the following escapements:
+of the escapement character, backslash (\lstinline|\|), see
+\autoref{lst:literal-strings}. Backslash introduces the following escapements:
 
 \begin{itemize}
   \item \lstinline |\\|: an actual backslash
@@ -274,24 +273,24 @@ dumped. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
 \begin{lstlisting}[caption=Literal strings,label=lst:literal-strings,float=\floatpos]
-  "";
-  [00000000] ""
-  "foo";
-  [00000000] ""
-  "a\nb"; // UrbiScript escapes string when dumping them
-  [00000000] "a\nb"
-  echo("a\nb"); // We can see there is an actual line feed
-  [00000000] *** a
-  ..b
-  echo("a\\nb");
-  [00000000] a\nb
+"";
+[00000000] ""
+"foo";
+[00000000] ""
+"a\nb"; // UrbiScript escapes string when dumping them
+[00000000] "a\nb"
+echo("a\nb"); // We can see there is an actual line feed
+[00000000] *** a
+..b
+echo("a\\nb");
+[00000000] a\nb
 \end{lstlisting}
 
 \subsection{Operators}
 
 \us supports many operators, most of which are inspired from
 \Cxx. Their syntax is presented here, and they are sorted and
-described with their original semantic - that is, \lstinline|+| is an
+described with their original semantic --- that is, \lstinline|+| is an
 arithmetic operator that sums two numeric values. However, as in \Cxx,
 these operators might be use for any other purpose - that is,
 \lstinline|+| can also be used as the concatenation operator on lists
@@ -356,10 +355,10 @@ which they are applicable, in \autoref{sec:stdlib}.
 \newcommand{\operatorpeq}    {\boperator {===}  {Non Associative}  {Physical equality}      }
 \newcommand{\operatorpneq}   {\boperator {!==}  {Non Associative}  {Physical Inequality}    }
 \newcommand{\operatoraeq}    {\boperator {=~=}  {Non Associative}  {Approximative equality} }
-\newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Inferior}               }
-\newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Inferior or equal}      }
-\newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Superior}               }
-\newcommand{\operatorsupeq}  {\boperator {>=}   {Non Associative}  {Superior or equal}      }
+\newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Less than}              }
+\newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Less than or equal to}  }
+\newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Greater than}           }
+\newcommand{\operatorsupeq}  {\boperator {>=}   {Non Associative}  {Greater than or equal to}}
 \newcommand{\operatorbxor}   {\boperator {^}    {Left}             {Bitwise exclusive or}   }
 \newcommand{\operatorneg}    {\poperator {!}    {Left}             {Logical negation}       }
 \newcommand{\operatorand}    {\boperator {\&\&} {Left}             {Logical and}            }
@@ -367,13 +366,11 @@ which they are applicable, in \autoref{sec:stdlib}.
 
 \subsubsection{Arithmetic operators}
 
-\us supports classic arithmetic operators, with the classic semantic
+\us supports classic arithmetic operators, with the classic semantics
 on numeric values. See \autoref{tab:arithmetic-operators} and
 \autoref{lst:arithmetic-operators}.
 
 \begin{table}[\floatposh]
-  \caption{Arithmetic operators}
-  \label{tab:arithmetic-operators}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -392,22 +389,24 @@ on numeric values. See \autoref{tab:arithmetic-operators} and
     \operatorminus
     \hline
   \end{tabular}
+  \caption{Arithmetic operators}
+  \label{tab:arithmetic-operators}
 \end{table}
 
 \begin{lstlisting}[caption=Arithmetic operators,
   label=lst:arithmetic-operators,float=\floatposh]
-  1 + 1;
-  [00000000] 2
-  1 - 2;
-  [00000000] -1
-  2 * 3;
-  [00000000] 6
-  10 / 2;
-  [00000000] 5
-  2 ** 10;
-  [00000000] 1024
-  -(1 + 2);
-  [00000000] -3
+1 + 1;
+[00000000] 2
+1 - 2;
+[00000000] -1
+2 * 3;
+[00000000] 6
+10 / 2;
+[00000000] 5
+2 ** 10;
+[00000000] 1024
+-(1 + 2);
+[00000000] -3
 \end{lstlisting}
 
 \subsubsection{Assignment operators}
@@ -420,8 +419,6 @@ affectation combined with another operator. See
 
 
 \begin{table}[\floatposh]
-  \caption{Assignment operators}
-  \label{tab:assignment-operators}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -431,37 +428,37 @@ affectation combined with another operator. See
     \operatorsiass
     \hline
   \end{tabular}
+  \caption{Assignment operators}
+  \label{tab:assignment-operators}
 \end{table}
 \footnotetext{For object fields only. Assignment to local variables
   cannot be redefined. }
 
 \begin{lstlisting}[caption=Assignment operators,
   label=lst:assignment-operators,float=\floatposh]
-  var x = 0;
-  [00000000] 0
-  x = 10;
-  [00000000] 10
-  x += 10;
-  [00000000] 20
-  x /= 5;
-  [00000000] 4
-  x %= 3;
-  [00000000] 1
-  x++;
-  [00000000] 1
-  x;
-  [00000000] 2
+var x = 0;
+[00000000] 0
+x = 10;
+[00000000] 10
+x += 10;
+[00000000] 20
+x /= 5;
+[00000000] 4
+x %= 3;
+[00000000] 1
+x++;
+[00000000] 1
+x;
+[00000000] 2
 \end{lstlisting}
 
 \subsubsection{Bitwise operators}
 
-\us supports some bitwise operators, although they are often use for
+\us features bitwise operators.  They are also used for
 other purpose than bit-related operations. See \autoref{tab:bitwise-operators}
 and \autoref{lst:bitwise-operators}.
 
 \begin{table}[\floatposh]
-  \caption{Bitwise operators}
-  \label{tab:bitwise-operators}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -473,24 +470,26 @@ and \autoref{lst:bitwise-operators}.
     \operatorbxor
     \hline
   \end{tabular}
+  \caption{Bitwise operators}
+  \label{tab:bitwise-operators}
 \end{table}
 
 \begin{lstlisting}[caption=Bitwise operators,
   label=lst:bitwise-operators,float=\floatposh]
-  4 << 2;
-  [00000000] 16
-  4 >> 2;
-  [00000000] 1
+4 << 2;
+[00000000] 16
+4 >> 2;
+[00000000] 1
 \end{lstlisting}
 
-\subsubsection{Logic operators}
+\subsubsection{Boolean operators}
 
-\us support classic logic operators. See \autoref{tab:logic-operators} and
-\autoref{lst:logic-operators}.
+\us supports the usual Boolean operators. See \autoref{tab:bool-operators} and
+\autoref{lst:bool-operators}.  The operators \lstinline|&&| and
+\lstinline-||- are short-circuiting: their right-hand side is
+evaluated only if needed.
 
 \begin{table}[\floatposh]
-  \caption{Logic operators}
-  \label{tab:logic-operators}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -503,16 +502,22 @@ and \autoref{lst:bitwise-operators}.
     \operatoror
     \hline
   \end{tabular}
+  \caption{Boolean operators}
+  \label{tab:logic-operators}
 \end{table}
 
-\begin{lstlisting}[caption=Logic operators,
-  label=lst:logic-operators,float=\floatposh]
-  true && true;
-  [00000000] true
-  true || false;
-  [00000000] true
-  !true;
-  [00000000] false
+\begin{lstlisting}[caption=Boolean operators,
+  label=lst:bool-operators,float=\floatposh]
+true && true;
+[00000000] true
+true || false;
+[00000000] true
+!true;
+[00000000] false
+true || (1 / 0);
+[00000000] true
+false && (1 / 0);
+[00000000] false
 \end{lstlisting}
 
 \subsubsection{Comparison operators}
@@ -521,8 +526,6 @@ and \autoref{lst:bitwise-operators}.
 \autoref{lst:comparison-operators}.
 
 \begin{table}[\floatposh]
-  \caption{Comparison operators}
-  \label{tab:comparison-operators}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -539,24 +542,26 @@ and \autoref{lst:bitwise-operators}.
     \operatorsupeq
     \hline
   \end{tabular}
+  \caption{Comparison operators}
+  \label{tab:comparison-operators}
 \end{table}
 
 \begin{lstlisting}[caption=Comparison operators,
   label=lst:comparison-operators,float=\floatposh]
-  0 < 0;
-  [00000000] false
-  0 <= 0;
-  [00000000] true
-  0 == 0;
-  [00000000] true
-  0 === 0;
-  [00000000] false
-  var x = 0;
-  [00000000] 0
-  x === x;
-  [00000000] true
-  x !== x;
-  [00000000] false
+0 < 0;
+[00000000] false
+0 <= 0;
+[00000000] true
+0 == 0;
+[00000000] true
+0 === 0;
+[00000000] false
+var x = 0;
+[00000000] 0
+x === x;
+[00000000] true
+x !== x;
+[00000000] false
 \end{lstlisting}
 
 \subsubsection{Miscellaneous operators}
@@ -565,7 +570,7 @@ Those operators cannot be classified in other categories. See
 \autoref{tab:miscellaneous-operators} and \autoref{lst:miscellaneous-operators}. Note
 that the subscript (square bracket) operator is variadic: it can take
 any number of arguments, that will be passed to the \lstinline|'[]'|
-method of the targeted object.
+method of the targeted object.\fixme{The examples are wrong}
 
 \begin{table}[\floatposh]
   \caption{Miscellaneous operators}
@@ -586,27 +591,27 @@ method of the targeted object.
 
 \begin{lstlisting}[caption=Miscellaneous operators,
   label=lst:miscellaneous-operators,float=\floatposh]
-  0 < 0;
-  [00000000] false
-  0 <= 0;
-  [00000000] true
-  0 == 0;
-  [00000000] true
-  0 === 0;
-  [00000000] false
-  var x = 0;
-  [00000000] 0
-  x === x;
-  [00000000] true
-  x !== x;
-  [00000000] false
+0 < 0;
+[00000000] false
+0 <= 0;
+[00000000] true
+0 == 0;
+[00000000] true
+0 === 0;
+[00000000] false
+var x = 0;
+[00000000] 0
+x === x;
+[00000000] true
+x !== x;
+[00000000] false
 \end{lstlisting}
 
 \clearpage
 \subsubsection{All operators summary}
 
 \autoref{tab:operators-summary} is a summary of all operators, to highlight
-the overall precedences. Operators are sorted vertically by decreasing
+the overall precedences. Operators are sorted by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
 
@@ -667,9 +672,9 @@ precedence.
   \end{tabular}
 
 \end{table}
-\FloatBarrier
 
 \FloatBarrier
+
 \section{Scopes and local variables}
 
 \subsection{Scopes}
@@ -683,16 +688,16 @@ ignored if present. Scopes are themselves expressions, and can thus be
 used in composite expressions, nested, \ldots
 
 \begin{lstlisting}[caption=Scopes,label=lst:scopes,float=\floatpos]
-  // Scopes evaluate to their last expression
-  {
-    1;
-    2;
-    3;
-  };
-  [00000000] 3
-  // Scopes can be used as expressions
-  {1; 2; 3} + 1;
-  [00000000] 4
+// Scopes evaluate to their last expression
+{
+  1;
+  2;
+  3;
+};
+[00000000] 3
+// Scopes can be used as expressions
+{1; 2; 3} + 1;
+[00000000] 4
 \end{lstlisting}
 
 \subsection{Local variables}
@@ -708,21 +713,21 @@ variables is illustrated in \autoref{lst:local-variables}.
 
 \begin{lstlisting}[caption=Using local variables,
   label=lst:local-variables,float=\floatpos]
-  // This declare variable x with value 42, and evaluates to 42.
-  var x = 42;
-  [00000000] 42
-  // x equals 42
-  x;
-  [00000000] 42
-  // We can assign it a new value
-  x = 51;
-  [00000000] 51
-  x;
-  [00000000] 51
-  // Initialization defaults to void
-  var y;
-  y.isVoid;
-  [00000000] true
+// This declare variable x with value 42, and evaluates to 42.
+var x = 42;
+[00000000] 42
+// x equals 42
+x;
+[00000000] 42
+// We can assign it a new value
+x = 51;
+[00000000] 51
+x;
+[00000000] 51
+// Initialization defaults to void
+var y;
+y.isVoid;
+[00000000] true
 \end{lstlisting}
 
 Local variables lifespan is the same as their enclosing scope. They
@@ -736,29 +741,29 @@ case references refer to the innermost variable, as shown in
 
 \begin{lstlisting}[caption=Local variables scoping,
   label=lst:local-variables-scoping,float=\floatpos]
+{
+  var x = 0;
+  var y = 1;
   {
-    var x = 0;
-    var y = 1;
-    {
-      var y = 2;
-      var z = 3;
-      // We can access variables of parent scopes.
-      echo(x);
-      // This refers to the inner y.
-      echo(y);
-      echo(z);
-    };
-    // This refers to the outer y.
+    var y = 2;
+    var z = 3;
+    // We can access variables of parent scopes.
+    echo(x);
+    // This refers to the inner y.
     echo(y);
-    // This would be invalid: z does not exist anymore.
-    // echo(z);
-    // This would be invalid: x is already declared in this scope.
-    // var x;
+    echo(z);
   };
-  [00000000] *** 0
-  [00000000] *** 2
-  [00000000] *** 3
-  [00000000] *** 1
+  // This refers to the outer y.
+  echo(y);
+  // This would be invalid: z does not exist anymore.
+  // echo(z);
+  // This would be invalid: x is already declared in this scope.
+  // var x;
+};
+[00000000] *** 0
+[00000000] *** 2
+[00000000] *** 3
+[00000000] *** 1
 \end{lstlisting}
 
 \FloatBarrier
@@ -776,10 +781,10 @@ this.
 
 \begin{lstlisting}[caption=Functional
   value,label=lst:function,float=\floatpos]
-  function (arg1, arg2) { echo(0) };
-  [00000000] function(arg1, arg2) {
-  ..  echo(0)
-  ..}
+function (arg1, arg2) { echo(0) };
+[00000000] function(arg1, arg2) {
+..  echo(0)
+..}
 \end{lstlisting}
 
 The whole point of a function is to be called later, so storing it in
@@ -789,19 +794,19 @@ initialize a new variable with a given function, presented in
 
 \begin{lstlisting}[caption=Storing functions in variables,
   label=lst:function-sugar,float=\floatpos]
-  // Functions are often stored in variables to call them later
-  var f1 = function () {
-    echo("hello")
-  };
-  f1();
-  [00000000] *** hello
-  // This form is strictly equivalent, yet simpler
-  function f2()
-  {
-    echo("hello");
-  }
-  f2();
-  [00000000] *** hello
+// Functions are often stored in variables to call them later
+var f1 = function () {
+  echo("hello")
+};
+f1();
+[00000000] *** hello
+// This form is strictly equivalent, yet simpler
+function f2()
+{
+  echo("hello");
+}
+f2();
+[00000000] *** hello
 \end{lstlisting}
 
 \subsection{Arguments}
@@ -816,18 +821,18 @@ be manipulated with the call message, explained in
 
 \begin{lstlisting}[caption=Storing and calling
   functions,label=lst:function-args,float=\floatpos]
-  var f = function(a, b) {
-    echo(b);
-    echo(a);
-  };
-  f(1, 0);
-  [00000000] *** 0
-  [00000000] *** 1
-  // Calling a function with the wrong number of argument is an error
-  f(0);
-  [00000000:error] !!! f: expected 2 arguments, given 1
-  f(0, 1, 2);
-  [00000000:error] !!! f: expected 2 arguments, given 3
+var f = function(a, b) {
+  echo(b);
+  echo(a);
+};
+f(1, 0);
+[00000000] *** 0
+[00000000] *** 1
+// Calling a function with the wrong number of argument is an error
+f(0);
+[00000000:error] !!! f: expected 2 arguments, given 1
+f(0, 1, 2);
+[00000000:error] !!! f: expected 2 arguments, given 3
 \end{lstlisting}
 
 \subsection{Return value}
