@@ -46,7 +46,7 @@ namespace object
 
   void
   type_check(const rObject& o, const rObject& exp,
-             runner::Runner& r, const libport::Symbol fun)
+             runner::Runner& r, const libport::Symbol)
   {
     assert(o);
     assert(exp);
@@ -54,8 +54,8 @@ namespace object
     {
       rObject exn =
         urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
-                  SYMBOL(new), new String(fun), exp, o);
-      r.except(exn);
+                  SYMBOL(new), exp, o);
+      r.raise(exn);
     }
   }
 }

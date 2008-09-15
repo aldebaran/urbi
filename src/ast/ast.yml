@@ -36,6 +36,7 @@ atomic_types:
 # from the name of the type.  Below are the exceptions.
 includes_map:
   "local_declarations_type":    '<ast/local-declarations-type.hh>'
+  "catches_type":               '<ast/catches-type.hh>'
   "exps_type":                  '<ast/exps-type.hh>'
   "flavor_type":                '<ast/flavor.hh>'
   "libport::RefCounted":        '<libport/ref-counted.hh>'
@@ -1270,7 +1271,7 @@ Try:
         type: rNary
         desc: The code to protect against an exception
     - handlers:
-        type: exps_type
+        type: catches_type
         desc: The exception handlers
   printer:
     - '"try {"'
@@ -1299,6 +1300,10 @@ Catch:
     - body:
         type: rNary
         desc: The handler to execute if we have a match
+    - declaration:
+        type: rLocalDeclaration
+        access: rW
+        init: '0'
   printer:
     - '"catch ("'
     - '{

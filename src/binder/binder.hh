@@ -48,6 +48,7 @@ namespace binder
                               (Assignment)
                               (Call)
                               (CallMsg)
+                              (Catch)
                               (Closure)
                               (Declaration)
                               (Do)
@@ -120,6 +121,8 @@ namespace binder
 
     /// Factored method to handle scopes.
     ast::rExp handleScope(ast::rConstScope scope, bool setOnSelf);
+    libport::Finally::Action scope_open(bool set_on_self);
+    void scope_close();
 
     /// Factored method to create updateSlot/setSlot calls.
     ast::rCall changeSlot(const ast::loc& l,

@@ -345,14 +345,15 @@ namespace runner
 	    throw;
 	}
         // Catch and print unhandled exceptions
-	catch (object::UnhandledException& exn)
+	catch (object::MyException& exn)
 	{
-	  if (e->toplevel_get())
+          if (e->toplevel_get())
           {
+            rObject str = urbi_call(*this, exn.value_get(), SYMBOL(asString));
             std::ostringstream o;
-            o << "!!! " << exn.what(*this);
+            o << "!!! " << str->as<object::String>()->value_get();
             send_message("error", o.str ());
-            show_backtrace(exn.backtrace(), "error");
+            show_backtrace(exn.backtrace_get(), "error");
           }
           else
             throw;
@@ -489,6 +490,40 @@ namespace runner
 
 
   LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Throw* e)
+  {
+    raise(operator()(e->value_get().get()), e->location_get());
+    pabort("Unreachable");
+    return 0;
+  }
+
+
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Try* e)
+  {
+    try
+    {
+      return operator()(e->body_get().get());
+    }
+    catch (object::MyException& exn)
+    {
+      rObject value = exn.value_get();
+      foreach (ast::rCatch handler, e->handlers_get())
+      {
+        if (ast::rExp match = handler->match_get())
+          if (!is_a(value, operator()(match.get())))
+            continue;
+        stacks_.def(handler->declaration_get().get(), value);
+        return operator()(handler->body_get().get());
+      }
+      // No handler matched, rethrow.
+      throw;
+    }
+  }
+
+
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::While* e)
   {
     const bool must_yield = e->flavor_get() == ast::flavor_semicolon;
@@ -549,8 +584,6 @@ namespace runner
   INVALID(PropertyRead);
   INVALID(PropertyWrite);
   INVALID(Return);
-  INVALID(Throw);
-  INVALID(Try);
 
 #undef INVALID
 #undef INVALID_RET

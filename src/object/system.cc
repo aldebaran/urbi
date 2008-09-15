@@ -366,11 +366,6 @@ namespace object
     return res;
   }
 
-  static void system_throw(runner::Runner& r, rObject /*self*/, rObject value)
-  {
-    r.except(value);
-  }
-
   void
   system_class_initialize ()
   {
@@ -381,7 +376,6 @@ namespace object
 
     DECLARE(getenv);
     DECLARE(setenv);
-    DECLARE(throw);
     DECLARE(unsetenv);
 
 #undef DECLARE

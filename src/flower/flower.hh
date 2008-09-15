@@ -21,13 +21,10 @@ namespace flower
 
   protected:
     CONST_VISITOR_VISIT_NODES((Break)
-			      (Catch)
 			      (Continue)
 			      (Foreach)
 			      (Function)
 			      (Return)
-			      (Throw)
-			      (Try)
 			      (While));
 
   private:

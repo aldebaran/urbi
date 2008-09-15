@@ -171,7 +171,10 @@ namespace runner
     virtual backtrace_type backtrace_get() const;
     object::call_stack_type call_stack_get() const;
 
-    virtual void except(rObject exn);
+    virtual void raise(rObject exn)
+      __attribute__ ((noreturn));
+    virtual void raise(rObject exn, const ast::loc& loc)
+      __attribute__ ((noreturn));
 
   protected:
     void show_error_ (object::UrbiException& ue);

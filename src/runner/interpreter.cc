@@ -256,35 +256,35 @@ namespace runner
     return call_stack_;
   }
 
-  void Interpreter::except(rObject exn)
+  void
+  Interpreter::raise(rObject exn)
   {
-    // Fill the exception location and backtrace
     if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
     {
       std::stringstream o;
-      o << (call_stack_get().end() - 1)->second.get();
       exn->slot_update(*this, SYMBOL(location),
-                       new object::String(o.str()));
-      object::rList urbi_bt = as_task()->as<object::Task>()->backtrace();
-      urbi_bt->pop_back();
-      exn->slot_update(*this, SYMBOL(backtrace), urbi_bt);
+                       new object::String(""));
+      exn->slot_update(*this, SYMBOL(backtrace),
+                       as_task()->as<object::Task>()->backtrace());
     }
 
-    rObject handler = as_task()->slot_get(SYMBOL(exceptionHandlerTag));
-    // There's a handler, use it.
-    if (handler->is_a<object::Tag>())
+    throw object::MyException(exn, call_stack_get());
+  }
+
+  void
+  Interpreter::raise(rObject exn, const ast::loc& loc)
+  {
+    if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
     {
-      objects_type args;
-      args << exn;
-      handler->as<object::Tag>()->stop(*this, args);
+      std::stringstream o;
+      o << loc;
+      exn->slot_update(*this, SYMBOL(location),
+                       new object::String(o.str()));
+      exn->slot_update(*this, SYMBOL(backtrace),
+                       as_task()->as<object::Task>()->backtrace());
     }
-    // No handler, just throw.
-    else
-    {
-      call_stack_type bt = call_stack_get();
-      bt.pop_back();
-      throw object::UnhandledException(exn, bt);
-    }
+
+    throw object::MyException(exn, call_stack_get());
   }
 
 } // namespace runner

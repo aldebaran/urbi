@@ -401,6 +401,18 @@ namespace binder
     super_type::visit(input);
   }
 
+  void
+  Binder::visit(const ast::Catch* input)
+  {
+    libport::Finally finally(scope_open(false));
+
+    ast::rLocalDeclaration decl = new ast::LocalDeclaration
+      (input->location_get(), input->name_get(), 0);
+    ast::rLocalDeclaration clone = recurse(decl);
+    super_type::visit(input);
+    result_.unchecked_cast<ast::Catch>()->declaration_set(clone);
+  }
+
   ast::rExp
   Binder::lazify (ast::rExp arg, const ast::loc& loc)
   {
@@ -460,23 +472,30 @@ namespace binder
     (*n)--;
   }
 
-  ast::rExp
-  Binder::handleScope(ast::rConstScope scope, bool setOnSelf)
+  libport::Finally::Action
+  Binder::scope_open(bool set_on_self)
   {
-    libport::Finally finally;
-
     scope_depth_++;
-    finally << boost::bind(decrement, &scope_depth_);
-
     // Push a finally on unbind_, and destroy it at the scope
     // exit. Since bound variables register themselves for unbinding
     // in unbind_'s top element, they will be unbound at scope exit.
     unbind_.push_back(libport::Finally());
-    finally << boost::bind(&unbind_type::pop_back, &unbind_);
+    setOnSelf_.push_back(set_on_self);
+    return boost::bind(&Binder::scope_close, this);
+  }
 
-    setOnSelf_.push_back(setOnSelf);
-    finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
+  void
+  Binder::scope_close()
+  {
+    scope_depth_--;
+    unbind_.pop_back();
+    setOnSelf_.pop_back();
+  }
 
+  ast::rExp
+  Binder::handleScope(ast::rConstScope scope, bool setOnSelf)
+  {
+    libport::Finally finally(scope_open(setOnSelf));
     operator() (scope->body_get().get());
     return result_.unsafe_cast<ast::Exp>();
   }

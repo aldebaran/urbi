@@ -15,7 +15,7 @@
 # include <ast/call.hh>
 # include <ast/loc.hh>
 # include <kernel/exception.hh>
-# include <object/fwd.hh>
+# include <object/object.hh>
 
 namespace object
 {
@@ -24,16 +24,17 @@ namespace object
                     boost::optional<ast::loc> > call_type;
   typedef std::vector<call_type> call_stack_type;
 
-  class UnhandledException
+  class MyException: public kernel::exception
   {
   public:
-    UnhandledException(object::rObject value, const call_stack_type& bt);
-    std::string what(runner::Runner& r);
-    call_stack_type backtrace();
+    MyException(rObject value, const call_stack_type& bt);
+    rObject value_get();
+    const call_stack_type& backtrace_get();
 
   private:
-    object::rObject value_;
+    rObject value_;
     call_stack_type bt_;
+    COMPLETE_EXCEPTION(MyException);
   };
 
   /// This class defines an exception used when an error

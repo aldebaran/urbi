@@ -9,23 +9,24 @@
 
 namespace object
 {
-  /*-------------------.
-  | UnhandledException |
-  `-------------------*/
 
-  UnhandledException::UnhandledException(object::rObject value,
-                                         const call_stack_type& bt)
+  /*------------.
+  | MyException |
+  `------------*/
+
+  MyException::MyException(rObject value, const call_stack_type& bt)
     : value_(value)
     , bt_(bt)
   {}
 
-  std::string UnhandledException::what(runner::Runner& r)
+  rObject
+  MyException::value_get()
   {
-    return urbi_call(r, value_,
-                     SYMBOL(asString))->as<object::String>()->value_get();
+    return value_;
   }
 
-  call_stack_type UnhandledException::backtrace()
+  const call_stack_type&
+  MyException::backtrace_get()
   {
     return bt_;
   }

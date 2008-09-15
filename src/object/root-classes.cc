@@ -14,7 +14,6 @@
 #include <object/list.hh>
 #include <object/lobby.hh>
 #include <object/object.hh>
-#include <object/object.hh>
 #include <object/path.hh>
 #include <object/primitive.hh>
 #include <object/root-classes.hh>

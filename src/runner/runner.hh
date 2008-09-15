@@ -107,8 +107,7 @@ namespace runner
     /// terminated.
     rObject as_task();
 
-    /// Throw the given value
-    virtual void except(rObject exn) = 0;
+    virtual void raise(rObject exn) __attribute__ ((noreturn)) = 0;
 
   protected:
     /// \name Evaluation.

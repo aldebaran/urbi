@@ -26,6 +26,7 @@
 #include <libport/pod-cast.hh>
 #include <list>
 #include <kernel/fwd.hh>
+#include <ast/catches-type.hh>
 #include <ast/fwd.hh>
 #include <ast/exps-type.hh>
 #include <ast/symbols-type.hh>
@@ -940,9 +941,9 @@ case:
 | Exceptions.  |
 `-------------*/
 
-%type <ast::exps_type> catches;
+%type <ast::catches_type> catches;
 catches:
-  /* empty */ { $$ = ast::exps_type(); }
+  /* empty */ { $$ = ast::catches_type(); }
 | catches catch { std::swap($$, $1); $$.push_back($2); }
 ;
 
@@ -952,9 +953,9 @@ catch:
   {
     $$ = new ast::Catch(@$, $4, $3, $6);
   }
-| "catch" "(" "identifier" ")" block
+| "catch" "(" "var" "identifier" ")" block
   {
-    $$ = new ast::Catch(@$, $3, 0, $5);
+    $$ = new ast::Catch(@$, $4, 0, $6);
   }
 ;
 

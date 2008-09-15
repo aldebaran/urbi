@@ -38,8 +38,10 @@ ast_gen_deps = $(gen_dir)/ast.py \
 
 include $(top_srcdir)/dev/ast-gen.mk
 
-dist_libuobject_la_SOURCES +=                    \
+dist_libuobject_la_SOURCES +=                   \
 ast/all.hh                                      \
+ast/catches-type.hh                             \
+ast/catches-type.cc                             \
 ast/exps-type.hh                                \
 ast/exps-type.cc                                \
 ast/flavor.hh                                   \
