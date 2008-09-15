@@ -177,12 +177,12 @@ namespace runner
       __attribute__ ((noreturn));
 
   protected:
-    void show_error_ (object::UrbiException& ue);
+    void show_error_ (object::Exception& ue);
 
   private:
     void init();
     /// Reset result_, set the location and call stack of ue.
-    void propagate_error_(object::UrbiException& ue, const ast::loc& l);
+    void propagate_error_(object::Exception& ue, const ast::loc& l);
     rObject apply_urbi (const rObject& target,
                         const rCode& function,
 			const libport::Symbol& msg,

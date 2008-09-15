@@ -112,7 +112,7 @@ namespace runner
   }
 
   void
-  Interpreter::show_error_ (object::UrbiException& ue)
+  Interpreter::show_error_ (object::Exception& ue)
   {
     if (ue.was_displayed())
       return;
@@ -124,7 +124,7 @@ namespace runner
   }
 
   void
-  Interpreter::propagate_error_(object::UrbiException& ue, const ast::loc& l)
+  Interpreter::propagate_error_(object::Exception& ue, const ast::loc& l)
   {
     // Reset the current result: there was an error so whatever value
     // it has, it must not be used.
@@ -147,7 +147,7 @@ namespace runner
       else
 	result_ = apply(lobby_, code_, SYMBOL(task), args_);
     }
-    catch(object::UrbiException& ue)
+    catch(object::Exception& ue)
     {
       show_error_(ue);
       throw;
@@ -268,7 +268,7 @@ namespace runner
                        as_task()->as<object::Task>()->backtrace());
     }
 
-    throw object::MyException(exn, call_stack_get());
+    throw object::UrbiException(exn, call_stack_get());
   }
 
   void
@@ -284,7 +284,7 @@ namespace runner
                        as_task()->as<object::Task>()->backtrace());
     }
 
-    throw object::MyException(exn, call_stack_get());
+    throw object::UrbiException(exn, call_stack_get());
   }
 
 } // namespace runner

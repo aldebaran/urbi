@@ -1,6 +1,6 @@
 /**
  ** \file object/urbi-exception.cc
- ** \brief Implementation of UrbiException
+ ** \brief Implementation of Exception
  */
 
 #include <object/symbols.hh>
@@ -10,39 +10,39 @@
 namespace object
 {
 
-  /*------------.
-  | MyException |
-  `------------*/
+  /*--------------.
+  | UrbiException |
+  `--------------*/
 
-  MyException::MyException(rObject value, const call_stack_type& bt)
+  UrbiException::UrbiException(rObject value, const call_stack_type& bt)
     : value_(value)
     , bt_(bt)
   {}
 
   rObject
-  MyException::value_get()
+  UrbiException::value_get()
   {
     return value_;
   }
 
   const call_stack_type&
-  MyException::backtrace_get()
+  UrbiException::backtrace_get()
   {
     return bt_;
   }
 
-  /*--------------.
-  | UrbiException |
-  `--------------*/
+  /*----------.
+  | Exception |
+  `----------*/
 
-  UrbiException::UrbiException(const std::string& msg)
+  Exception::Exception(const std::string& msg)
     : kernel::exception()
     , displayed_(false)
   {
     msg_ = msg;
   }
 
-  UrbiException::UrbiException(const std::string& msg,
+  Exception::Exception(const std::string& msg,
                                const ast::loc& loc)
     : kernel::exception()
     , displayed_(false)
@@ -51,7 +51,7 @@ namespace object
     location_ = loc;
   }
 
-  UrbiException::UrbiException(const std::string& msg,
+  Exception::Exception(const std::string& msg,
                                const libport::Symbol fun)
     : kernel::exception()
     , msg_(fun.empty() ? msg : fun.name_get() + ": " + msg)
@@ -60,12 +60,12 @@ namespace object
   {
   }
 
-  UrbiException::~UrbiException() throw ()
+  Exception::~Exception() throw ()
   {
   }
 
   std::string
-  UrbiException::what () const throw ()
+  Exception::what () const throw ()
   {
     return msg_get ();
   }

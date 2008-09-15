@@ -29,7 +29,7 @@ namespace runner
     {
       return e->eval(*this);
     }
-    catch (object::UrbiException& x)
+    catch (object::Exception& x)
     {
       propagate_error_(x, e->location_get());
       throw;

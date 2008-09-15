@@ -305,7 +305,7 @@ namespace runner
 	      std::cerr << "Exception when printing result: "
                         << ke.what() << std::endl;
 	    }
-	    catch (object::UrbiException& e)
+	    catch (object::Exception& e)
 	    {
 	      throw;
 	    }
@@ -316,7 +316,7 @@ namespace runner
 	    }
 	  }
 	}
-	catch (object::UrbiException& ue)
+	catch (object::Exception& ue)
 	{
           propagate_error_(ue, c->location_get());
 	  // If the Nary is not the toplevel one, all subrunners must be finished when
@@ -345,7 +345,7 @@ namespace runner
 	    throw;
 	}
         // Catch and print unhandled exceptions
-	catch (object::MyException& exn)
+	catch (object::UrbiException& exn)
 	{
           if (e->toplevel_get())
           {
@@ -506,7 +506,7 @@ namespace runner
     {
       return operator()(e->body_get().get());
     }
-    catch (object::MyException& exn)
+    catch (object::UrbiException& exn)
     {
       rObject value = exn.value_get();
       foreach (ast::rCatch handler, e->handlers_get())

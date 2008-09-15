@@ -29,7 +29,7 @@
 
 /**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.
- * If the argument's type is wrong, throw an UrbiException.
+ * If the argument's type is wrong, throw an Exception.
  */
 #define FETCH_ARG(N, Type)				\
   TYPE_CHECK(args[N], Type);				\

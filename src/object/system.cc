@@ -40,7 +40,7 @@ namespace object
   rObject
   execute_parsed(runner::Runner& r,
                  parser::parse_result_type p,
-                 libport::Symbol fun, UrbiException e)
+                 libport::Symbol fun, Exception e)
   {
     runner::Interpreter& run = dynamic_cast<runner::Interpreter&>(r);
 

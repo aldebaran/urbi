@@ -79,7 +79,7 @@ namespace object
   FWD_DECL(Task);
 
   // urbi-exception.hh
-  class UrbiException;
+  class Exception;
   class LookupError;
   class RedefinitionError;
   class PrimitiveError;
