@@ -1,0 +1,131 @@
+% Number subsubsections and include them in the TOC
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+%% -------- %%
+%% PACKAGES %%
+%% -------- %%
+\RequirePackage{a4wide}
+\RequirePackage{afterpage}
+\RequirePackage{graphicx}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{mycxx}
+\RequirePackage{myhyperref}
+\RequirePackage{mylistings}
+\RequirePackage{placeins}
+\RequirePackage{supertabular}
+\RequirePackage{texi}
+\RequirePackage{xspace}
+
+%% ---------- %%
+%% SHORTHANDS %%
+%% ---------- %%
+\newcommand{\ai}{AI\xspace}
+\newcommand{\api}{API\xspace}
+\newcommand{\caml}{Caml\xspace}
+\newcommand{\io}{Io\xspace}
+\newcommand{\java}{Java\xspace}
+\newcommand{\js}{JavaScript\xspace}
+\newcommand{\lua}{Lua}
+\newcommand{\lisp}{Lisp}
+\newcommand{\matlab}{MatLab\xspace}
+\newcommand{\pascal}{PASCAL\xspace}
+\newcommand{\python}{Python\xspace}
+\newcommand{\ruby}{Ruby\xspace}
+\newcommand{\sdk}{SDK\xspace}
+\newcommand{\urbi}{Urbi\xspace}
+\newcommand{\umake}{umake\xspace}
+\newcommand{\us}{UrbiScript\xspace}
+
+%% ------ %%
+%% FLOATS %%
+%% ------ %%
+
+% % This version tries to either put floats HERE, or regroup them on pages
+
+% \newcommand   {\floatpos}          {htbp}
+% \newcommand   {\floatposh}         {htbp}
+% \newcommand   {\flushfloat}        {\afterpage{\clearpage}}
+% \renewcommand {\floatpagefraction} {0.8}
+
+
+% This version tries to insert float as near as possible from the
+% declaration point, but after it.
+
+% Don't insert a float at the top of a page before it's referred to!
+\RequirePackage{flafter}
+
+\newcommand   {\floatpos}          {htbp}
+\newcommand   {\floatposh}         {!htb}
+\newcommand   {\flushfloat}        {\afterpage{\clearpage}}
+\setcounter   {topnumber}          {3} % Enable up to n floats at the top of pages
+\setcounter   {bottomnumber}       {2} % Enable up to n floats at the bottom of pages
+\renewcommand {\floatpagefraction} {0.8}
+
+
+%% -------- %%
+%% LISTINGS %%
+%% -------- %%
+
+\lstset{language=[interactive]Urbi}
+
+\definecolor{keywords}{rgb}{0.2,0.2,0.8}
+\definecolor{comments}{rgb}{0.8,0.5,0}
+\definecolor{string}{rgb}{0.0,0.5,0.0}
+\definecolor{bg}{rgb}{0.9,0.9,1}
+
+\lstset{
+  keywordstyle=\color{keywords}\bfseries,
+  commentstyle=\color{comments},
+  stringstyle=\color{string},
+  backgroundcolor=\color{bg},
+  aboveskip=.6cm,
+  captionpos=b,
+  frame=single,
+  basicstyle=\ttfamily\footnotesize,
+  showstringspaces=false,
+%  moredelim=[is][]{`}{`},
+%  breaklines,
+}
+
+%% -------- %%
+%% COMMANDS %%
+%% -------- %%
+\newcommand{\lst}[1]{\autoref{lst:#1}}
+\newcommand{\sect}[1]{\autoref{sect:#1}}
+\newcommand{\tab}[1]{\autoref{tab:#1}}
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{titlepage}
+
+    \vfill
+
+    \begin{figure}[htp]
+      \centering
+      \includegraphics[width=12cm]{img/urbi-logo}
+    \end{figure}
+
+    \begin{center}
+      {\Huge\bf\@title\\}
+      \vspace{1cm}
+      {\Large \@author\\}
+      \vspace{1cm}
+      {\large \@date\\}
+    \end{center}
+
+    \vfill
+
+    \begin{figure}[htp]
+      \centering
+      \includegraphics[width=12cm]{img/gostai}
+    \end{figure}
+
+    \vfill
+    \global\let\title\relax
+  \end{titlepage}
+}
+\makeatother
+
+% STYLE
+\hypersetup{colorlinks, citecolor=blue, linkcolor=blue, urlcolor=blue}
+
