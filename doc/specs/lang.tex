@@ -1,0 +1,1438 @@
+\chapter{\us language specifications}
+\label{sec:lang}
+
+\section{Syntax}
+\subsection{Comments}
+
+Comments are used to document the code, and are totally ignored by the
+\us interpreter. \Cxx-style and \C-style comments are supported.
+
+\begin{itemize}
+\item A \lstinline|//| introduces a comment that lasts until the end
+  of the line.
+\item A \lstinline|/*| introduces a comment that lasts until
+  \lstinline|*/| is encountered. A difference with \C is that these
+  comments nest; that is, if two \lstinline|/*| are encountered, the
+  comment will end after two \lstinline|*/|, not one.
+\end{itemize}
+
+\autoref{lst:comments} illustrates this.
+
+\begin{lstlisting}[caption=Comments,label=lst:comments,float=\floatpos]
+  // C++ style comment
+  /* C style comment */
+  /* These comments /* do */ nest */
+\end{lstlisting}
+
+\subsection{Identifiers}
+\label{sec:us-syn-id}
+
+Identifiers in \us are composed of one or more alphanumeric or
+underscore (\lstinline|_|) characters, given that they must not start
+with a digit. That is, identifiers must match the
+\lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular expression (see
+\autoref{lst:identifiers}).  Additionally, identifiers must not match any of
+the \us reserved word which are documented in \autoref{sec:syn-key}. The only
+exception to this rule is \lstinline|new|, which can be used as the
+method identifier in a method call, as shown in
+\autoref{lst:identifiers-keywords}.  Finally, identifiers can also be written
+between simple quotes (\lstinline|'|), in which case they may contain
+any characters, as in \autoref{lst:escape-identifiers}.
+
+\begin{lstlisting}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
+  var x;
+  var foobar51;
+  obj.met_hod();
+  // Those are invalid.
+// var 3x;
+// obj.3x();
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Identifiers cannot be keywords,
+  label=lst:identifiers-keywords,float=\floatpos]
+  // Those are invalid because "if" is a keyword.
+// var if;
+// obj.if();
+  // However, keywords can be escaped with simple quotes
+  var 'if';
+  obj.'if'();
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Escaping identifiers with simple quotes,
+  label=lst:escape-identifiers,float=\floatpos]
+  // Identifiers can be escaped with simple quotes
+  var '%x';
+  var '1 2 3';
+  obj.'[]';
+\end{lstlisting}
+
+\subsection{Keywords}
+\label{sec:syn-key}
+
+Keywords are reserved words that cannot be used as identifiers, for
+instance.  They are listed in \autoref{tab:keywords}.  Keywords can be
+escaped, and thus used as identifier by surrounding them with simple
+quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
+
+\renewcommand{\baselinestretch}{.85}
+\begin{table}[\floatpos]
+  \caption{Keywords}
+  \label{tab:keywords}
+  \centering
+  \begin{tabular}{|c|c||c|c|}
+    \hline
+    Keyword                       & Remark                                  &
+    Keyword                       & Remark                                  \\
+    \hline
+    \lstinline"and"               & Synonym for  operator                   &
+    \lstinline"long"              & Unused                                  \\
+    \lstinline"and_eq"            & Synonym for  operator                   &
+    \lstinline"loop"              & \lstinline|loop&| and
+                                    \lstinline-loop|- flavors               \\
+    \lstinline"asm"               & Unused                                  &
+    \lstinline"loopn"             & Deprecated in favor of for              \\
+    \lstinline"at"                &                                         &
+    \lstinline"mutable"           & Unused                                  \\
+    \lstinline"auto"              & Unused                                  &
+    \lstinline"namespace"         & Unused                                  \\
+    \lstinline"bitand"            & Synonym for \lstinline|&| operator      &
+    \lstinline"new"               &                                         \\
+    \lstinline"bitor"             & Synonym for \lstinline-|- operator      &
+    \lstinline"not"               & Synonym for \lstinline|!| operator      \\
+    \lstinline"bool"              & Unused                                  &
+    \lstinline"not_eq"            & Synonym for \lstinline|!=| operator     \\
+    \lstinline"break"             &                                         &
+    \lstinline"object"            &                                         \\
+    \lstinline"call"              &                                         &
+    \lstinline"onleave"           &                                         \\
+    \lstinline"case"              &                                         &
+    \lstinline"or"                & Synonym for \lstinline-||- operator     \\
+    \lstinline"catch"             & Unused                                  &
+    \lstinline"or_eq"             & Synonym for \lstinline-|=- operator     \\
+    \lstinline"char"              & Unused                                  &
+    \lstinline"private"           & Ignored                                 \\
+    \lstinline"class"             &                                         &
+    \lstinline"protected"         & Ignored                                 \\
+    \lstinline"closure"           &                                         &
+    \lstinline"public"            & Ignored                                 \\
+    \lstinline"compl"             & Synonym for \lstinline|~|               &
+    \lstinline"register"          & Unused                                  \\
+    \lstinline"const"             & Unused                                  &
+    \lstinline"reinterpret_cast"  & Unnused                                 \\
+    \lstinline"const_cast"        & Unused                                  &
+    \lstinline"return"            &                                         \\
+    \lstinline"continue"          &                                         &
+    \lstinline"short"             & Unused                                  \\
+    \lstinline"default"           & Unused                                  &
+    \lstinline"signed"            & Unused                                  \\
+    \lstinline"delete"            &                                         &
+    \lstinline"sizeof"            & Unused                                  \\
+    \lstinline"do"                &                                         &
+    \lstinline"static"            & Deprecated                              \\
+    \lstinline"double"            & Unused                                  &
+    \lstinline"static_cast"       & Unused                                  \\
+    \lstinline"dynamic_cast"      & Unused                                  &
+    \lstinline"stopif"            &                                         \\
+    \lstinline"else"              &                                         &
+    \lstinline"struct"            & Unused                                  \\
+    \lstinline"emit"              &                                         &
+    \lstinline"switch"            &                                         \\
+    \lstinline"enum"              & Unused                                  &
+    \lstinline"template"          & Unused                                  \\
+    \lstinline"event"             &                                         &
+    \lstinline"this"              &                                         \\
+    \lstinline"every"             &                                         &
+    \lstinline"throw"             & Unused                                  \\
+    \lstinline"explicit"          & Unused                                  &
+    \lstinline"timeout"           &                                         \\
+    \lstinline"export"            & Unused                                  &
+    \lstinline"try"               & Unused                                  \\
+    \lstinline"extern"            & Unused                                  &
+    \lstinline"typedef"           & Unused                                  \\
+    \lstinline"external"          &                                         &
+    \lstinline"typeid"            & Unused                                  \\
+    \lstinline"float"             & Unused                                  &
+    \lstinline"typename"          & Unused                                  \\
+    \lstinline"for"               & \lstinline|for&| and                    &
+                                    \lstinline-for|- flavors
+    \lstinline"union"             & Unused                                  \\
+    \lstinline"foreach"           & Deprecated in favor of for              &
+    \lstinline"unsigned"          & Unused                                  \\
+    \lstinline"freezeif"          &                                         &
+    \lstinline"using"             & Unused                                  \\
+    \lstinline"friend"            & Unused                                  &
+    \lstinline"var"               &                                         \\
+    \lstinline"from"              &                                         &
+    \lstinline"virtual"           & Unused                                  \\
+    \lstinline"function"          &                                         &
+    \lstinline"volatile"          & Unused                                  \\
+    \lstinline"goto"              & Unused                                  &
+    \lstinline"waituntil"         &                                         \\
+    \lstinline"if"                &                                         &
+    \lstinline"wchar_t"           & Unused                                  \\
+    \lstinline"in"                &                                         &
+    \lstinline"whenever"          &                                         \\
+    \lstinline"inline"            & Unused                                  &
+    \lstinline"while"             & \lstinline|while&| and
+                                    \lstinline-while|- flavors              \\
+    \lstinline"int"               & Unused                                  &
+    \lstinline"xor"               & Synonym for \lstinline|^| operator      \\
+    \lstinline"internal"          & Deprecated                              &
+    \lstinline"xor_eq"            & Synonym \lstinline|^=| operator         \\
+    \hline
+  \end{tabular}
+\end{table}
+\renewcommand{\baselinestretch}{1}
+
+\begin{lstlisting}[caption=Escaping keywords,label=lst:escape-keyword,float=\floatpos]
+  var 'if' = 21;
+  [00000000] 21
+  'if' * 2;
+  [00000000] 42
+\end{lstlisting}
+
+\subsection{Literals}
+\subsubsection{Durations}
+
+Durations are floats (see \autoref{sec:us-syn-lit-float}) followed by a
+% FIXME: formulation
+time unit. They are simply equivalent to the same float, expressed in
+millisecond. For instance, \lstinline|1s|, which stands for ``one
+second'', is strictly equivalent to \lstinline|1000|. Available units
+and their equivalent are shown in \autoref{tab:durations}.
+
+\begin{table}[\floatpos]
+  \caption{Duration units}
+  \label{tab:durations}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    unit        & abbreviation & equivalence for n         \\
+    \hline
+    millisecond & ms           & $n$                       \\
+    second      & s            & $n * 1000$                \\
+    minute      & m            & $n * 1000 * 60$           \\
+    hour        & h            & $n * 1000 * 60 * 60$      \\
+    day         & d            & $n * 1000 * 60 * 60 * 24$ \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsubsection{Floats}
+\label{sec:us-syn-lit-float}
+
+Literal floats consist in a succession of digit, representing the
+integral part of the number in decimal base, possibly followed by a
+dot (\lstinline|.|) and another succession of digit representing the
+decimal part. Briefly, float literals must verify the
+\lstinline|[0-9]+(\.[0-9]+)?| regular expression. \autoref{lst:literal-floats}
+is an example of literal floats.
+
+\begin{lstlisting}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
+  1;
+  [00000000] 1
+  1.1;
+  [00000000] 1.1
+\end{lstlisting}
+
+\subsubsection{Lists}
+\label{sec:us-syn-lit-list}
+
+Literal lists are represented with a comma-separated, potentially
+empty list of arbitrary expressions enclosed in square brackets
+(\lstinline|[]|), as shown in \autoref{lst:literal-lists}.
+
+\begin{lstlisting}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
+  []; // The empty list
+  [00000000] []
+  [1, 2, 3];
+  [00000000] [1, 2, 3]
+\end{lstlisting}
+
+\subsubsection{Strings}
+
+String are enclosed in double quotes (\lstinline|"|) and can contain
+arbitrary characters, which stand for themselves, with the exception
+of the escapement character, backslash (\lstinline|\|), as we can see
+in \autoref{lst:literal-strings}. Backslash can introduce the following escapements:
+
+\begin{itemize}
+  \item \lstinline |\\|: an actual backslash
+  \item \lstinline|\a|: a bell ring
+  \item \lstinline|\b|: a backspace
+  \item \lstinline|\f|: a form feed
+  \item \lstinline|\n|: a line feed
+  \item \lstinline|\r|: a carriage return
+  \item \lstinline|\t|: a tabulation
+  \item \lstinline|\v|: a vertical tabulation
+\end{itemize}
+
+Note that the interpreter print escaped strings. That is, line feed
+will be printed out as \lstinline|\n| when a string result is
+dumped. An actual line feed will of course be output if a string
+content is printed with echo for instance.
+
+\begin{lstlisting}[caption=Literal strings,label=lst:literal-strings,float=\floatpos]
+  "";
+  [00000000] ""
+  "foo";
+  [00000000] ""
+  "a\nb"; // UrbiScript escapes string when dumping them
+  [00000000] "a\nb"
+  echo("a\nb"); // We can see there is an actual line feed
+  [00000000] *** a
+  ..b
+  echo("a\\nb");
+  [00000000] a\nb
+\end{lstlisting}
+
+\subsection{Operators}
+
+\us supports many operators, most of which are inspired from
+\Cxx. Their syntax is presented here, and they are sorted and
+described with their original semantic - that is, \lstinline|+| is an
+arithmetic operator that sums two numeric values. However, as in \Cxx,
+these operators might be use for any other purpose - that is,
+\lstinline|+| can also be used as the concatenation operator on lists
+and strings. Their semantic is thus not limited to what is presented
+here.
+
+Tables in this section sort operators top-down, by precedence order.
+Group of rows (not separated by horizontal lines) describe operators
+that have the same precedence. Many operators are syntactic sugar that
+bounce on a method. In this case, the equivalent desugared expression
+is shown in the ``Equivalence'' column. This can help you determine
+what method to override to define an operator for an object (see
+\fixme{autoref{sec:fixme}}).
+
+Although code examples are present, this section does not intend do
+define those operators behaviors; it only present their syntax and
+grammatical rules, such as precedence and associativity. The behavior
+of those operators is described in the documentation of the classes on
+which they are applicable, in \autoref{sec:stdlib}.
+
+% Operator generators
+\newcommand{\operatorhead}{Operator & Use & Associativity & Original semantic
+  & Equivalence\\}
+
+
+\newcommand{\operator}[6][ ]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1\\}
+\newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
+\newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
+
+\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}          {Not redefinable}       }
+\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
+\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}                {a.'[]'(args)}          }
+\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}     {a.'[]='(args, v)}      }
+\newcommand{\operatorass}[2][ ]    {\operator[#1]
+                                         {=}    {a = b}            {Right} {Assignment}               {updateSlot("a", b)}    }
+
+\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}      {a = a #1 b}            }
+\newcommand{\operatorsiass}  {
+    \operatoriass{+}
+    \operatoriass{-}
+    \operatoriass{*}
+    \operatoriass{/}
+    \operatoriass{\%}
+    \operatoriass{\^}
+    \operatoriass{\~}
+}
+\newcommand{\operatorinc}    {\operator  {++}   {a++}              {-}     {Incrementation}           {(a = a + 1) - 1}       }
+\newcommand{\operatordec}    {\operator  {--}   {a--}              {-}     {Incrementation}           {(a = a - 1) + 1}       }
+
+\newcommand{\operatoruplus}  {\poperator {+}    {-}                {Identity}               }
+\newcommand{\operatorumin}   {\poperator {-}    {-}                {Opposite}               }
+\newcommand{\operatorexp}    {\boperator {**}   {Right}            {Exponentiation}         }
+\newcommand{\operatormult}   {\boperator {*}    {Left}             {Multiplication}         }
+\newcommand{\operatordiv}    {\boperator {/}    {Left}             {Division}               }
+\newcommand{\operatormod}    {\boperator {\%}   {Left}             {Modulo}                 }
+\newcommand{\operatorplus}   {\boperator {+}    {Left}             {Sum}                    }
+\newcommand{\operatorminus}  {\boperator {-}    {Left}             {Difference}             }
+\newcommand{\operatorlshift} {\boperator {<<}   {Left}             {Left bit shift}         }
+\newcommand{\operatorrshift} {\boperator {>>}   {Left}             {Right bit shift}        }
+\newcommand{\operatoreq}     {\boperator {==}   {Non Associative}  {Equality}               }
+\newcommand{\operatorneq}    {\boperator {!=}   {Non Associative}  {Inequality}             }
+\newcommand{\operatorpeq}    {\boperator {===}  {Non Associative}  {Physical equality}      }
+\newcommand{\operatorpneq}   {\boperator {!==}  {Non Associative}  {Physical Inequality}    }
+\newcommand{\operatoraeq}    {\boperator {=~=}  {Non Associative}  {Approximative equality} }
+\newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Inferior}               }
+\newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Inferior or equal}      }
+\newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Superior}               }
+\newcommand{\operatorsupeq}  {\boperator {>=}   {Non Associative}  {Superior or equal}      }
+\newcommand{\operatorbxor}   {\boperator {^}    {Left}             {Bitwise exclusive or}   }
+\newcommand{\operatorneg}    {\poperator {!}    {Left}             {Logical negation}       }
+\newcommand{\operatorand}    {\boperator {\&\&} {Left}             {Logical and}            }
+\newcommand{\operatoror}     {\boperator {||}   {Left}             {Logical or}             }
+
+\subsubsection{Arithmetic operators}
+
+\us supports classic arithmetic operators, with the classic semantic
+on numeric values. See \autoref{tab:arithmetic-operators} and
+\autoref{lst:arithmetic-operators}.
+
+\begin{table}[\floatposh]
+  \caption{Arithmetic operators}
+  \label{tab:arithmetic-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \operatorhead
+    \hline
+    \operatoruplus
+    \operatorumin
+    \hline
+    \operatorexp
+    \hline
+    \operatormult
+    \operatordiv
+    \operatormod
+    \hline
+    \operatorplus
+    \operatorminus
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Arithmetic operators,
+  label=lst:arithmetic-operators,float=\floatposh]
+  1 + 1;
+  [00000000] 2
+  1 - 2;
+  [00000000] -1
+  2 * 3;
+  [00000000] 6
+  10 / 2;
+  [00000000] 5
+  2 ** 10;
+  [00000000] 1024
+  -(1 + 2);
+  [00000000] -3
+\end{lstlisting}
+
+\subsubsection{Assignment operators}
+
+Assignment in \us can be performed with the \lstinline|=| operator. A
+large variety of shorthands such as \lstinline|+=| exist. Those are
+not directly redefinable since they are equivalent to a normal
+affectation combined with another operator. See
+\autoref{tab:assignment-operators} and \autoref{lst:assignment-operators}.
+
+
+\begin{table}[\floatposh]
+  \caption{Assignment operators}
+  \label{tab:assignment-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \operatorhead
+    \hline
+    \operatorass[\footnotemark]{}
+    \operatorsiass
+    \hline
+  \end{tabular}
+\end{table}
+\footnotetext{For object fields only. Assignment to local variables
+  cannot be redefined. }
+
+\begin{lstlisting}[caption=Assignment operators,
+  label=lst:assignment-operators,float=\floatposh]
+  var x = 0;
+  [00000000] 0
+  x = 10;
+  [00000000] 10
+  x += 10;
+  [00000000] 20
+  x /= 5;
+  [00000000] 4
+  x %= 3;
+  [00000000] 1
+  x++;
+  [00000000] 1
+  x;
+  [00000000] 2
+\end{lstlisting}
+
+\subsubsection{Bitwise operators}
+
+\us supports some bitwise operators, although they are often use for
+other purpose than bit-related operations. See \autoref{tab:bitwise-operators}
+and \autoref{lst:bitwise-operators}.
+
+\begin{table}[\floatposh]
+  \caption{Bitwise operators}
+  \label{tab:bitwise-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \operatorhead
+    \hline
+    \operatorlshift
+    \operatorrshift
+    \hline
+    \operatorbxor
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Bitwise operators,
+  label=lst:bitwise-operators,float=\floatposh]
+  4 << 2;
+  [00000000] 16
+  4 >> 2;
+  [00000000] 1
+\end{lstlisting}
+
+\subsubsection{Logic operators}
+
+\us support classic logic operators. See \autoref{tab:logic-operators} and
+\autoref{lst:logic-operators}.
+
+\begin{table}[\floatposh]
+  \caption{Logic operators}
+  \label{tab:logic-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \operatorhead
+    \hline
+    \operatorneg
+    \hline
+    \operatorand
+    \hline
+    \operatoror
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Logic operators,
+  label=lst:logic-operators,float=\floatposh]
+  true && true;
+  [00000000] true
+  true || false;
+  [00000000] true
+  !true;
+  [00000000] false
+\end{lstlisting}
+
+\subsubsection{Comparison operators}
+
+\us support classic comparison operators. See \autoref{tab:comparison-operators} and
+\autoref{lst:comparison-operators}.
+
+\begin{table}[\floatposh]
+  \caption{Comparison operators}
+  \label{tab:comparison-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \operatorhead
+    \hline
+    \operatoreq
+    \operatorneq
+    \operatorpeq
+    \operatorpneq
+    \operatoraeq
+    \operatorinf
+    \operatorinfeq
+    \operatorsup
+    \operatorsupeq
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Comparison operators,
+  label=lst:comparison-operators,float=\floatposh]
+  0 < 0;
+  [00000000] false
+  0 <= 0;
+  [00000000] true
+  0 == 0;
+  [00000000] true
+  0 === 0;
+  [00000000] false
+  var x = 0;
+  [00000000] 0
+  x === x;
+  [00000000] true
+  x !== x;
+  [00000000] false
+\end{lstlisting}
+
+\subsubsection{Miscellaneous operators}
+
+Those operators cannot be classified in other categories. See
+\autoref{tab:miscellaneous-operators} and \autoref{lst:miscellaneous-operators}. Note
+that the subscript (square bracket) operator is variadic: it can take
+any number of arguments, that will be passed to the \lstinline|'[]'|
+method of the targeted object.
+
+\begin{table}[\floatposh]
+  \caption{Miscellaneous operators}
+  \label{tab:miscellaneous-operators}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \operatorhead
+    \hline
+    \operatordot
+    \operatordota
+    \hline
+    \operatorsub
+    \operatorsubass
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{lstlisting}[caption=Miscellaneous operators,
+  label=lst:miscellaneous-operators,float=\floatposh]
+  0 < 0;
+  [00000000] false
+  0 <= 0;
+  [00000000] true
+  0 == 0;
+  [00000000] true
+  0 === 0;
+  [00000000] false
+  var x = 0;
+  [00000000] 0
+  x === x;
+  [00000000] true
+  x !== x;
+  [00000000] false
+\end{lstlisting}
+
+\clearpage
+\subsubsection{All operators summary}
+
+\autoref{tab:operators-summary} is a summary of all operators, to highlight
+the overall precedences. Operators are sorted vertically by decreasing
+precedence. Groups of rows represent operators with the same
+precedence.
+
+\begin{table}[\floatposh]
+  \caption{Operators summary}
+  \label{tab:operators-summary}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Operator               & Use                                    & Associativity
+    & Original semantic    & Equivalence                            \\
+    \hline
+    \operatordot
+    \operatordota
+    \hline
+    \operatorsub
+    \operatorsubass
+    \hline
+    \operatoruplus
+    \operatorumin
+    \hline
+    \operatorexp
+    \hline
+    \operatormult
+    \operatordiv
+    \operatormod
+    \hline
+    \operatorplus
+    \operatorminus
+    \hline
+    \operatorlshift
+    \operatorrshift
+    \hline
+    \operatoreq
+    \operatorneq
+    \operatorpeq
+    \operatorpneq
+    \operatoraeq
+    \operatorinf
+    \operatorinfeq
+    \operatorsup
+    \operatorsupeq
+    \hline
+    \operatorbxor
+    \hline
+    \operatorneg
+    \hline
+    \operatorand
+    \hline
+    \operatoror
+    \hline
+    \operatorass
+    \operatorsiass
+    \hline
+    \operatorinc
+    \operatordec
+    \hline
+  \end{tabular}
+
+\end{table}
+\FloatBarrier
+
+\FloatBarrier
+\section{Scopes and local variables}
+
+\subsection{Scopes}
+
+% FIXME: This is wrong: the last separator isn't ignored; a pipe voids
+% the result, for instance.
+Scopes in \us are sequences of expressions, enclosed in curly brackets
+(\lstinline|{}|). Expressions are separated with the four expression
+separators (see \fixme{autoref{sec:fixme}}). The last separator is optional and
+ignored if present. Scopes are themselves expressions, and can thus be
+used in composite expressions, nested, \ldots
+
+\begin{lstlisting}[caption=Scopes,label=lst:scopes,float=\floatpos]
+  // Scopes evaluate to their last expression
+  {
+    1;
+    2;
+    3;
+  };
+  [00000000] 3
+  // Scopes can be used as expressions
+  {1; 2; 3} + 1;
+  [00000000] 4
+\end{lstlisting}
+
+\subsection{Local variables}
+
+Local variables are introduced with the \lstinline|var| keyword,
+followed by a valid identifier (see \autoref{sec:us-syn-id}) and an optional
+initialization value assignment. If the initial value is omitted, it
+defaults to void (\autoref{sec:std-void}). Variable declarations evaluate to
+the initialization value. They can later be referred to by their
+name. Their value can be changed with the assignment operator; such an
+assignment expression returns the new value. The use of local
+variables is illustrated in \autoref{lst:local-variables}.
+
+\begin{lstlisting}[caption=Using local variables,
+  label=lst:local-variables,float=\floatpos]
+  // This declare variable x with value 42, and evaluates to 42.
+  var x = 42;
+  [00000000] 42
+  // x equals 42
+  x;
+  [00000000] 42
+  // We can assign it a new value
+  x = 51;
+  [00000000] 51
+  x;
+  [00000000] 51
+  // Initialization defaults to void
+  var y;
+  y.isVoid;
+  [00000000] true
+\end{lstlisting}
+
+Local variables lifespan is the same as their enclosing scope. They
+are thus only accessible from their scope and its
+subscopes\footnote{Local variables can actually escape their scope
+  with lexical closures, as explained in \autoref{sec:us-fun-closures}}. Two
+variables with the same name cannot be defined in the same scope. A
+variable with the same name can be redefined in a subscope, in which
+case references refer to the innermost variable, as shown in
+\autoref{lst:local-variables-scoping}.
+
+\begin{lstlisting}[caption=Local variables scoping,
+  label=lst:local-variables-scoping,float=\floatpos]
+  {
+    var x = 0;
+    var y = 1;
+    {
+      var y = 2;
+      var z = 3;
+      // We can access variables of parent scopes.
+      echo(x);
+      // This refers to the inner y.
+      echo(y);
+      echo(z);
+    };
+    // This refers to the outer y.
+    echo(y);
+    // This would be invalid: z does not exist anymore.
+    // echo(z);
+    // This would be invalid: x is already declared in this scope.
+    // var x;
+  };
+  [00000000] *** 0
+  [00000000] *** 2
+  [00000000] *** 3
+  [00000000] *** 1
+\end{lstlisting}
+
+\FloatBarrier
+\section{Functions}
+
+\subsection{Functions creation}
+
+Functions in \us are first class citizen. Which mean, unlike \C and
+related languages, a function is a normal value, just like an integer
+or a string is. One can create a functional value thanks to the
+\lstinline|function| keyword, followed by the list of formal arguments
+and a scope representing the body of the function. Formal arguments
+are a comma separated list of identifiers. \autoref{lst:function} illustrates
+this.
+
+\begin{lstlisting}[caption=Functional
+  value,label=lst:function,float=\floatpos]
+  function (arg1, arg2) { echo(0) };
+  [00000000] function(arg1, arg2) {
+  ..  echo(0)
+  ..}
+\end{lstlisting}
+
+The whole point of a function is to be called later, so storing it in
+a variable is the most common usage. \us provide a simple sugar to
+initialize a new variable with a given function, presented in
+\autoref{lst:function-sugar}.
+
+\begin{lstlisting}[caption=Storing functions in variables,
+  label=lst:function-sugar,float=\floatpos]
+  // Functions are often stored in variables to call them later
+  var f1 = function () {
+    echo("hello")
+  };
+  f1();
+  [00000000] *** hello
+  // This form is strictly equivalent, yet simpler
+  function f2()
+  {
+    echo("hello");
+  }
+  f2();
+  [00000000] *** hello
+\end{lstlisting}
+
+\subsection{Arguments}
+
+The list of formal arguments defines the number of argument the
+function requires. They are accessible by their name from within the
+body, as shown in \autoref{lst:function-args}. The list of formal arguments
+can be omitted, in which case the number of given arguments isn't
+check, and arguments themselves are not evaluated. Arguments can then
+be manipulated with the call message, explained in
+\autoref{sec:us-fun-callmsg}.
+
+\begin{lstlisting}[caption=Storing and calling
+  functions,label=lst:function-args,float=\floatpos]
+  var f = function(a, b) {
+    echo(b);
+    echo(a);
+  };
+  f(1, 0);
+  [00000000] *** 0
+  [00000000] *** 1
+  // Calling a function with the wrong number of argument is an error
+  f(0);
+  [00000000:error] !!! f: expected 2 arguments, given 1
+  f(0, 1, 2);
+  [00000000:error] !!! f: expected 2 arguments, given 3
+\end{lstlisting}
+
+\subsection{Return value}
+
+The return value of the function is the evaluation of its body - that
+is, since the body is a scope, the last evaluated expression in the
+scope. However, value can be returned manually with the
+\lstinline|return| keyword followed by the value, in which case the
+evaluation of the function is stopped. If \lstinline|return| is used
+with no value, the functions returns void. See \autoref{lst:function-return}.
+
+\begin{lstlisting}[caption=Returning values from functions,
+  label=lst:function-return,float=\floatpos]
+  function f(a, b)
+  {
+    echo(a);
+    echo(b);
+    a // Return value is a
+  };
+  f(1, 2)
+  [00000000] *** 1
+  [00000000] *** 2
+  [00000000] 1
+  function g(a, b)
+  {
+    echo(a);
+    return a; // Stop execution at this point and return a
+    echo(b); // This is not executed
+  };
+  g(1, 2);
+  [00000000] *** 1
+  [00000000] 1
+  function h()
+  {
+    return; // Stop execution at this point and return void
+    echo(0); // This is not executed
+  };
+  h(); // Returns void, so nothing is printed.
+\end{lstlisting}
+
+\subsection{Call messages}
+\label{sec:us-fun-callmsg}
+
+Functions can access meta-information about how they were called,
+through a \lstinline|CallMessage| object. The call message associated
+with a function can be accessed with the \lstinline|call| keyword. It
+contains several information such as not-yet evaluated arguments, the
+name of the function, the target \ldots
+
+One of the main usage of call message is to create lazy function, by
+not specifying the formal arguments so as arguments are not evaluated
+at the call site, and evaluate them by hand. A quick example is given
+in \autoref{lst:function-lazy}. More information about this can be found in
+the CallMessage class documentation (\autoref{sec:std-callmsg}).
+
+\begin{lstlisting}[caption=Lazy
+  function,label=lst:function-lazy,float=\floatposh]
+  // Do not specify formal arguments, so as
+  // effective arguments are not evaluated at call site
+  function lazy
+  {
+    // Evaluate only the first argument, twice
+    call.evalArgAt(0);
+    call.evalArgAt(0);
+  };
+  lazy(echo("a"), echo("b"));
+  [00000000] *** a
+  [00000000] *** a
+\end{lstlisting}
+
+\subsection{Lexical closures}
+\label{sec:us-fun-closures}
+
+Lexical closure are an additional scoping rule, with which a function
+can refer to a local variable located outside the function - but still
+in the current context. \us supports read/write lexical closures,
+meaning that the variable is shared between the function and the outer
+environment, as shown in \autoref{lst:function-closure}.
+
+\begin{lstlisting}[caption=Lexical
+  closure,label=lst:function-closure,float=\floatpos]
+  var x = 0;
+
+  function cl()
+  {
+    // x refers to a variable outside the function
+    x++;
+    echo(x);
+  };
+  cl();
+  [00000000] *** 1
+  x;
+  [00000000] 1
+  x++;
+  [00000000] 1
+  cl();
+  [00000000] *** 3
+\end{lstlisting}
+
+\autoref{lst:function-closure-escape} illustrate that local variables can even
+escape their declaration scope by lexical closure.
+
+\begin{lstlisting}[caption=Local variable escaping its scope by
+  lexical closure.,label=lst:function-closure-escape,float=\floatpos]
+  function wrapper()
+  {
+    // Normally, x is local to 'wrapper', and is limited to this scope.
+    var x = 0;
+    at (x > 1)
+      echo("ping");
+    // Here we make it escape the scope by returning a closure on it.
+    return function() { x++ };
+  };
+  var f = wrapper();
+  f();
+  [00000000] 1
+  f();
+  [00000000] 2
+  [00000000] *** ping
+\end{lstlisting}
+
+\FloatBarrier
+\section{Objects}
+
+Any value in \us is an object. Objects contain:
+
+\begin{itemize}
+\item A list of prototypes, which are also objects.
+\item A list of slots, which to a name associate an object.
+\end{itemize}
+
+\subsection{Slots}
+
+\subsubsection{Manipulation}
+
+Objects can contain any number of slots, every slot has a name and a
+value. They are often call ``fields'' or ``members'' in other object
+oriented language.
+
+The \lstinline|createSlot| is used to add a slot to an object with the
+void (\autoref{sec:std-void}) value. The \lstinline|updateSlot| can be later
+used to change the value of the slot, while the \lstinline|getSlot|
+method can be used to read it. The \lstinline|setSlot| method can be
+used to create a slot with a given value instead of void. Finally, the
+\lstinline|slotNames| method can be used to get the list of the object
+slot's name. \autoref{lst:slots} shows how to manipulate slots. More
+documentation about these method can be found in \autoref{sec:std-object}.
+
+\begin{lstlisting}[caption=Manipulating slots, label=lst:slots,
+  float=\floatpos]
+  var o = Object.new;
+  o.slotNames;
+  [00000000] []
+  o.createSlot("test");
+  [00000000] ["test"]
+  o.slotNames;
+  [00000000] ["test"]
+  o.getSlot("test").asString;
+  [00000000] "void"
+  o.updateSlot("test", 42);
+  [00000000] 42
+  o.getSlot("test");
+  [00000000] 42
+\end{lstlisting}
+
+\subsubsection{Sugars}
+
+Several sugars exist to ease the use of slot methods:
+
+\begin{itemize}
+\item \lstinline|var o.name| is equivalent to
+  \lstinline|o.createSlot("name")|.
+\item \lstinline|var o.name = value| is equivalent to
+  \lstinline|o.setSlot("name", value)|.
+\item \lstinline|o.name = value| is equivalent to
+  \lstinline|o.updateSlot("name", value)|.
+\item \lstinline|delete o.name| is equivalent to
+  \lstinline|o.removeSlot("name")|.
+\end{itemize}
+
+
+\subsection{Prototypes}
+
+\subsubsection{Manipulation}
+
+\us is a prototype-based language, unlike most classical object
+oriented language, which are class-based. In prototype-based
+languages, objects have no type, only prototypes, from which they
+inherits behavior.
+
+In \us, an object can have several prototypes. The list of prototypes
+can be read with the \lstinline|protos| method. Prototypes can be add
+or removed with the \lstinline|addProto| and \lstinline|removeProto|
+methods respectively, as illustrated by \autoref{lst:prototypes}. More
+documentation about these methods can be found in \autoref{sec:std-object}.
+
+\begin{lstlisting}[caption=Manipulating prototypes, label=lst:prototypes,
+  float=\floatpos]
+  var o = Object.new;
+  o.protos;
+  [00000000] [<Object>]
+  o.addProto(Pair);
+  o.protos;
+  [00000000] [<Object>, <Pair>]
+  o.removeProto(Object);
+  o.protos;
+  [00000000] [<Pair>]
+\end{lstlisting}
+
+\subsubsection{Inheritance}
+
+Objects inherit their prototypes' slots: \lstinline|getSlot| will also
+look in an object prototypes' slots. \lstinline|getSlot| performs a
+depth-first traversal of the prototypes hierarchy to find slots. That
+is, when looking for a slot in an object:
+
+\begin{itemize}
+\item \lstinline|getSlot| checks first if the object itself has the
+  requested slot. If so, it returns its value.
+\item Otherwise, it applies the same research on every prototype, in
+  the order of the prototype list (since addProto inserts in the front
+  of the prototype list, the last prototype added has priority). This
+  search is recursive: \lstinline|getSlot| will also look in the first
+  prototype's prototype, etc before looking in the second
+  prototype. If the slot is found in a prototype, it is returned.
+\item Finally, if no prototype had the slot, an error is raised.
+\end{itemize}
+
+\autoref{lst:inheritance} shows how slots are inherited.
+
+\begin{lstlisting}[caption=Slots inheritance, label=lst:inheritance,
+  float=\floatpos]
+  var a = Object.new;
+  var b = Object.new;
+  var c = Object.new;
+  a.setSlot("x", "slot in a");
+  b.setSlot("x", "slot in b");
+  // c has no "x" slot
+  c.getSlot("x");
+  [00000000:error] !!! lookup failed: x
+  // c can inherit the "x" slot from a
+  c.addProto(a);
+  c.getSlot("x");
+  [00000000] "slot in a"
+  // b is prepended to the prototype list, and has thus priority
+  c.addProto(b);
+  c.getSlot("x");
+  [00000000] "slot in b"
+  // a local slot in c has priority over prototypes
+  c.setSlot("x", "slot in c");
+  c.getSlot("x");
+  [00000000] "slot in c"
+\end{lstlisting}
+
+\subsubsection{Copy on write}
+
+The \lstinline|updateSlot| method has a particular behavior with
+respect to prototypes. Although performing an \lstinline|updateSlot|
+on a non existent slot is an error, it is valid if the slot is
+inherited from a prototype. In this case, the slot is however not
+updated in the prototype, but rather created in the object itself,
+with the new value. This process is called \emph{copy on write}; thanks
+to it, prototypes are not altered when the slot is overridden in a
+child object (see \autoref{lst:copy-on-write}).
+
+\begin{lstlisting}[caption=Copy on write, label=lst:copy-on-write,
+  float=\floatpos]
+  var p = Object.new;
+  var p.slot = 0;
+  var c = Object.new;
+  c.addProto(p);
+  c.slot;
+  [00000000] 0
+  c.slot = 1;
+  [00000000] 1
+  // p's slot was not altered
+  p.slot;
+  [00000000] 0
+  // It was copied in c
+  c.slot;
+  [00000000] 1
+\end{lstlisting}
+
+\subsection{Sending messages}
+
+A message in \us consists in a message name and arguments. One can
+send a message to an object with the dot (\lstinline|.|) operator,
+followed by the message name (which can be any valid identifier) and
+the arguments, as shown in \autoref{lst:messages}. When there are no
+arguments, the empty parentheses can be omitted. As you might see,
+sending messages is very similar to calling methods in classical
+languages.
+
+\begin{lstlisting}[caption=Sending messages, label=lst:messages,
+  float=\floatpos]
+  // Send the message msg to object obj, with arguments arg1 and arg2
+  obj.msg(arg1, arg2);
+  // Send the message msg to object obj, with no arguments
+  obj.msg();
+  // This is strictly equivalent
+  obj.msg;
+\end{lstlisting}
+
+When a message ``msg'' is sent to object \lstinline|obj|:
+
+\begin{itemize}
+\item The ``msg'' slot of \lstinline|obj| is retrieved (i.e.,
+  \lstinline|obj.getSlot("msg")|). If the slot is not found, the
+  classic lookup error is raised.
+\item If the object is not a \lstinline|Routine| (\fixme{autoref{sec:fixme}}), it's
+  the result of the message sending. In this case, there must be no
+  argument, otherwise an error is raised.
+\item If the object is a \lstinline|Routine|, it is invoked with the
+  message sending arguments, and the returned value is the result. As
+  a consequence, the number of arguments in the message sending must
+  match the one required by the \lstinline|Routine|.
+\end{itemize}
+
+Such message sending is illustrated by \autoref{lst:send-message}.
+
+\begin{lstlisting}[caption=Sending messages, label=lst:send-message,
+  float=\floatpos]
+  var obj = Object.new;
+  var obj.a = 42;
+  var obj.b = function (x) { x + 1 };
+  obj.a;
+  [00000000] 42
+  obj.a();
+  [00000000] 42
+  obj.a(50);
+  [00000000:error] !!! a: expected 0 arguments, given 1
+  obj.b;
+  [00000000:error] !!! b: expected 1 arguments, given 0
+  obj.b();
+  [00000000:error] !!! b: expected 1 arguments, given 0
+  obj.b(50);
+  [00000000] 51
+\end{lstlisting}
+
+\FloatBarrier
+\section{Imperative flow control}
+
+\subsection{break}
+
+When encountered within a \lstinline|for| or a \lstinline|while| loop,
+\lstinline|break| makes execution jump after the loop. See
+\autoref{lst:break}.
+
+\begin{lstlisting}[caption=Using break, label=lst:break,
+  float=\floatpos]
+  var i = 5;
+  for (; true; echo(i))
+  {
+    if (i > 8)
+      break;
+    i++;
+  }
+  [00000000] *** 6
+  [00000000] *** 7
+  [00000000] *** 8
+  [00000000] *** 9
+\end{lstlisting}
+
+\subsection{continue}
+
+When encountered within a \lstinline|for| or a \lstinline|while| loop,
+\lstinline|break| makes execution jump at the loop's body end. See
+\autoref{lst:continue}.
+
+\begin{lstlisting}[caption=Using continue, label=lst:continue,
+  float=\floatpos]
+  for (var i = 0; i < 8; i++)
+  {
+    if (i % 2 != 0)
+      continue;
+    echo(i);
+  }
+  [00000000] *** 0
+  [00000000] *** 2
+  [00000000] *** 4
+  [00000000] *** 6
+\end{lstlisting}
+
+\subsection{do}
+
+The \lstinline|do| construct enables do evaluate an expression with a
+different ``\lstinline|this|''.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  do target
+  {
+    body
+  }
+\end{lstlisting}
+
+It evaluates \lstinline|body|, with \lstinline|this| being
+\lstinline|target|, as shown in \autoref{lst:do}.  The \lstinline|do| itself
+evaluates to \lstinline|body|.
+
+\begin{lstlisting}[caption=Using \lstinline|do|, label=lst:do,
+  float=\floatpos]
+  var x = 42;
+  do x
+  {
+    echo(this);
+    echo(sqrt);
+    setSlot("y", 0);
+    42;
+  };
+  [00000000] 42
+\end{lstlisting}
+
+\subsection{for}
+
+\us support the classical \C-like \lstinline|for| construct.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  for (initialization; condition; increment)
+    body;
+\end{lstlisting}
+
+It has the exact same behavior as \C's \lstinline|for|:
+
+\begin{enumerate}
+\item The \lstinline|initialization| is evaluated.
+\item The \lstinline|condition| is evaluated. If the result is false,
+  executions jumps after the \lstinline|for|.
+\item The \lstinline|body| is evaluated. If \lstinline|continue| is
+  encountered, execution jumps to point 4. If \lstinline|break| is
+  encountered, executions jumps after the \lstinline|for|.
+\item The \lstinline|increment| is evaluated.
+\item Execution jumps to point 2.
+\end{enumerate}
+
+\subsection{for in}
+
+\us support iteration over a collection with another form of the
+\lstinline|for| loop.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  for (var name in collection)
+    action;
+\end{lstlisting}
+
+It evaluates \lstinline|action| for each element in
+\lstinline|collection|. Inside \lstinline|action|, the current element
+is accessible via the \lstinline|name| local variable. \autoref{lst:foreach}
+illustrates this.
+
+
+\begin{lstlisting}[caption=Iterating over a collection with for, label=lst:foreach,
+  float=\floatpos]
+  for (var x in [0, 1, 2, 3, 4])
+    echo(0.sqr);
+  [00000000] *** 0
+  [00000000] *** 1
+  [00000000] *** 4
+  [00000000] *** 9
+  [00000000] *** 16
+\end{lstlisting}
+
+This form of \lstinline|for| simply sends the ``each'' message to
+\lstinline|collection| with one argument: the function that takes the
+current element and performs \lstinline|action| over it. Thus, you can
+make any object acceptable in a \lstinline|for| by defining an
+adequate \lstinline|each| method.
+
+\begin{lstlisting}
+  var Hobbits = Object.new;
+  function Hobbits.each (action)
+  {
+    action("Frodo");
+    action("Merry");
+    action("Pippin");
+    action("Sam");
+  };
+
+  for (var name in Hobbits)
+    echo("%s is a hobbit." % name);
+  [00000000] Frodo is a hobbit
+  [00000000] Merry is a hobbit
+  [00000000] Pipin is a hobbit
+  [00000000] Sam is a hobbit
+  // This for statement is equivalent to:
+  Hobbits.each(function (name) { echo("%s is a hobbit." % name) });
+\end{lstlisting}
+
+\subsection{if}
+
+\us support classical \lstinline|if| construct.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  if (condition)
+    action;
+
+  if (condition)
+    action
+  else
+    otherwise;
+\end{lstlisting}
+
+If the \lstinline|condition| evaluation is true, \lstinline|action| is
+evaluated. Otherwise, in the latter version, \lstinline|otherwise| is
+executed.
+
+\subsection{switch}
+
+The \lstinline|switch| statement in \us is similiar to \C's one.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  switch (value)
+  {
+    case value_one:
+      action_one;
+    case value_two:
+      action_two;
+  //case ...:
+  //  ...
+    default:
+      default_action;
+  };
+\end{lstlisting}
+
+It might contain an arbitrary number of cases, and optionally a
+default case. The \lstinline|value| is evaluated first, and then the
+result is compared sequentially with the evaluation of all cases
+values, with the \lstinline|==| operator, until one comparison is
+true. If such a match is found, the corresponding action is executed,
+and execution jumps after the \lstinline|switch|. Otherwise, the
+default case - if any - is executed, and execution jumps after the
+switch. The switch itself evaluates to case that was evaluated, or to
+void if no match was found and there's no default case. \autoref{lst:switch}
+illustrates \lstinline|switch| usage.
+
+Note that, unlike in \C, no \lstinline|break| are required inside the
+\lstinline|switch|: execution will never span over several cases. Also
+note that, since the comparison is done with the generic '=='
+operator, switch can be performed on any comparable data type, unlike
+in \C where it need be integral.
+
+\begin{lstlisting}[caption=The \lstinline|switch| construct,
+  label=lst:switch, float=\floatpos]
+  function sw(v)
+  {
+    switch (v)
+    {
+      case "":
+        echo("Empty string");
+      case "foo":
+        "bar";
+      default:
+        v[0];
+    }
+  };
+  sw("");
+  [00000000] *** Empty string
+  sw("foo");
+  [00000000] "bar"
+  sw("foobar");
+  [00000000] "f"
+\end{lstlisting}
+
+\subsection{while}
+
+The \lstinline|while| loop is similar to \C's one.
+
+\begin{lstlisting}[frame=, backgroundcolor=, ]
+  while (condition)
+    body;
+\end{lstlisting}
+
+If \lstinline|condition| evaluation, is true, \lstinline|body| is
+evaluated and execution jumps before the \lstinline|while|, otherwise execution
+jumps after the \lstinline|while|. See \autoref{lst:while}.
+
+\begin{lstlisting}[caption=The \lstinline|while| construct, label=lst:while,
+  float=\floatpos]
+  var i = 5;
+  while (i > 0)
+  {
+    echo(i);
+    i--;
+  };
+  [00000000] *** 5
+  [00000000] *** 4
+  [00000000] *** 3
+  [00000000] *** 2
+  [00000000] *** 1
+\end{lstlisting}
+
+\FloatBarrier
+\section{Parallel and event-based flow control}
+
+\subsection{at}
+\subsection{every}
+\subsection{for\& (:)}
+\subsection{for\& (n)}
+\subsection{waituntil}
+\subsection{whenever}
+
+\FloatBarrier
+\section{Pattern matching}
+\FloatBarrier
+\section{Trajectories}
+
+% Local Variables:
+%%% mode: latex
+%%% TeX-master: "urbi-specs"
+%%% End:
