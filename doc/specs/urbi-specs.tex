@@ -12,11 +12,10 @@
 \maketitle
 \tableofcontents
 
-%FIXME: chapter is overkill
-\chapter{Introduction}
-\label{sec:intro}
+\chapter*{Introduction}
 
-\section{Status of this document}
+
+\section*{Status of this document}
 
 This document defines the specifications of the \us language version
 2.0. It defines the expected behavior from the \us interpreter, the
@@ -37,26 +36,32 @@ This document doesn't either aim at giving advanced programming
 techniques. Its only goal is to define how the language and its
 libraries behave.
 
-\section{\us}
+\section*{\us}
 
 \us is an interpreted language designed for highly interactive and
 parallel behavior programming. %FILLME
 
-\section{Structuration of this document}
+\section*{Structure of this document}
 
 This document is divided in four chapters:
 
-\begin{itemize}
-\item Tools specifications: presentation and usage of the different
-  tools available with the \urbi framework related to \us, such as the
-  \urbi server, the command line client, \umake, \ldots
-\item \us language specifications: definition of the core constructs
-  of the language and their behavior.
-\item \us standard library specifications: listing of all classes and
-  methods provided in the standard library.
-\item \urbi \sdk specifications: definition of the \urbi software
-  development kit that enables you to interact with \urbi from \Cxx.
-\end{itemize}
+\begin{description}
+  \newcommand{\xitem}[2]{\item[\autoref{#1} --- #2]~\\}
+\xitem{sec:tools}{Tools specifications}%
+  Presentation and usage of the different tools available with the
+  \urbi framework related to \us, such as the \urbi server, the
+  command line client, \umake, \ldots
+
+\xitem{sec:lang}{\us language specifications}%
+  Core constructs of the language and their behavior.
+
+\xitem{sec:stdlib}{\us standard library specifications}%
+  Listing of all classes and methods provided in the standard library.
+
+\xitem{sec:sdk}{\urbi \sdk specifications}%
+  The \urbi software development kit that enable to
+  interact with \urbi from \Cxx.
+\end{description}
 
 \chapter{Tools specifications}
 \label{sec:tools}
@@ -378,7 +383,7 @@ Although code examples are present, this section does not intend do
 define those operators behaviors; it only present their syntax and
 grammatical rules, such as precedence and associativity. The behavior
 of those operators is described in the documentation of the classes on
-which they are applicable, in \autoref{sec:std}.
+which they are applicable, in \autoref{sec:stdlib}.
 
 % Operator generators
 \newcommand{\operatorhead}{Operator & Use & Associativity & Original semantic
@@ -1502,7 +1507,7 @@ jumps after the \lstinline|while|. See \autoref{lst:while}.
 \section{Trajectories}
 
 \chapter{\us standard library specifications}
-\label{sec:std}
+\label{sec:stdlib}
 
 \section{Boolean}
 \section{CallMessage}
@@ -1644,6 +1649,7 @@ and call messages. See example with call messages in
 \label{sec:std-void}
 
 \chapter{\urbi SDK specifications}
+\label{sec:sdk}
 
 % I just don't know
 % what to do
