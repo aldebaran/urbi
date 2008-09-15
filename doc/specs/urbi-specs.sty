@@ -10,8 +10,6 @@
 \RequirePackage{graphicx}
 \RequirePackage[utf8]{inputenc}
 \RequirePackage{mycxx}
-\RequirePackage{myhyperref}
-\RequirePackage{mylistings}
 \RequirePackage{placeins}
 \RequirePackage{supertabular}
 \RequirePackage{texi}
@@ -67,6 +65,7 @@
 %% LISTINGS %%
 %% -------- %%
 
+\RequirePackage{mylistings}
 \lstset{language=[interactive]Urbi}
 
 \definecolor{keywords}{rgb}{0.2,0.2,0.8}
@@ -126,6 +125,9 @@
 }
 \makeatother
 
-% STYLE
+%% ---------- %%
+%% Hyperref.  %%
+%% ---------- %%
+\RequirePackage{myhyperref}
 \hypersetup{colorlinks, citecolor=blue, linkcolor=blue, urlcolor=blue}
 

@@ -10,4 +10,4 @@ all: $(PDFS)
 view: $(PDFS)
 	xpdf $<
 
-urbi-specs.pdf: float.tex list.tex
+urbi-specs.pdf: urbi-specs.sty float.tex list.tex
