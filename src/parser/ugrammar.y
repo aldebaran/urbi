@@ -957,6 +957,14 @@ catch:
   {
     $$ = new ast::Catch(@$, $4, 0, $6);
   }
+| "catch" "(" exp ")" block
+  {
+    $$ = new ast::Catch(@$, SYMBOL(), $3, $5);
+  }
+| "catch" block
+  {
+    $$ = new ast::Catch(@$, SYMBOL(), 0, $2);
+  }
 ;
 
 stmt:
