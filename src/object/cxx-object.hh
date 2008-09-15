@@ -86,9 +86,11 @@ namespace object
 
   };
 
-  /// Raise an exception if \a o is not a \a exp
+  /// Raise an exception if \a o is not a \a exp. If \a idx is given,
+  /// report the type error for argument \a idx.
   void type_check(const rObject& o, const rObject& exp,
-                  runner::Runner& r, const libport::Symbol fun);
+                  runner::Runner& r, const libport::Symbol fun,
+                  boost::optional<unsigned> idx = boost::optional<unsigned>());
 
 
 }

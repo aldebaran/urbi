@@ -32,7 +32,20 @@ class Global.TypeError: Exception
   {
     expected = exp;
     effective = eff;
-    message = "unexpected argument type `%s', expected `%s'" %
+    message = "unexpected `%s', expected `%s'" %
     [eff.protoName, exp.protoName]
+  }
+};
+
+class Global.ArgumentTypeError: TypeError
+{
+  var index;
+
+  function init(idx, exp, eff)
+  {
+    TypeError.getSlot("init").apply([this, exp, eff]);
+    index = idx;
+    message = "unexpected `%s' for argument %s, expected `%s'" %
+    [eff.protoName, idx, exp.protoName]
   }
 };

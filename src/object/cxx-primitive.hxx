@@ -64,22 +64,22 @@ namespace object
         WHEN(Run, r) COMMA(Run)                                         \
                                                                         \
         CxxConvert<typename Flatten<S>::type>                           \
-        ::to(args[0], name, r)                                          \
+        ::to(args[0], name, r, 0)                                       \
                                                                         \
         COMMA(Arg1)                                                     \
         WHEN(Arg1,                                                      \
              CxxConvert<typename Flatten<A1>::type>                     \
-             ::to(args[1], name, r))                                    \
+             ::to(args[1], name, r, 1))                                 \
                                                                         \
         COMMA(Arg2)                                                     \
         WHEN(Arg2,                                                      \
              CxxConvert<typename Flatten<A2>::type>                     \
-             ::to(args[2], name, r))                                    \
+             ::to(args[2], name, r, 2))                                 \
                                                                         \
         COMMA(Arg3)                                                     \
         WHEN(Arg3,                                                      \
              CxxConvert<typename Flatten<A3>::type>                     \
-             ::to(args[3], name, r))                                    \
+             ::to(args[3], name, r, 3))                                 \
         );                                                              \
       IF(Ret,                                                           \
          return CxxConvert<typename Flatten<R>::type>                   \
@@ -107,7 +107,7 @@ namespace object
       const libport::Symbol& name)                              \
     {                                                           \
       S tgt =                                                   \
-        CxxConvert<S>::to(args[0], name, r);                    \
+        CxxConvert<S>::to(args[0], name, r, 0);                 \
       args.pop_front();                                         \
       WHEN(Ret, return) f(                                      \
         WHEN(Run, r) COMMA(Run)                                 \

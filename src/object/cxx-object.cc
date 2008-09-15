@@ -46,15 +46,19 @@ namespace object
 
   void
   type_check(const rObject& o, const rObject& exp,
-             runner::Runner& r, const libport::Symbol)
+             runner::Runner& r, const libport::Symbol,
+             boost::optional<unsigned> idx)
   {
     assert(o);
     assert(exp);
     if (!is_a(o, exp))
     {
       rObject exn =
-        urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
-                  SYMBOL(new), exp, o);
+        idx
+        ? urbi_call(r, global_class->slot_get(SYMBOL(ArgumentTypeError)),
+                    SYMBOL(new), new Float(idx.get()), exp, o)
+        : urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
+                    SYMBOL(new), exp, o);
       r.raise(exn);
     }
   }
