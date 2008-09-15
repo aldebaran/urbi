@@ -25,4 +25,4 @@ share-ci:
 	cd $(share_dir) && git push origin master
 	git commit -m "Update $(share_dir)." $(share_dir)
 
-urbi-specs.pdf: urbi-specs.sty float.tex list.tex
+urbi-specs.pdf: urbi-specs.sty $(wildcard *.tex)
