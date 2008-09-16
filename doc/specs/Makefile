@@ -26,3 +26,8 @@ share-ci:
 	git commit -m "Update $(share_dir)." $(share_dir)
 
 urbi-specs.pdf: urbi-specs.sty $(wildcard *.tex)
+
+URBI_CONSOLE = urbi-console
+
+check:
+	URBI_CONSOLE=$(URBI_CONSOLE) ../check.py lang.tex

@@ -184,10 +184,10 @@ quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
 \renewcommand{\baselinestretch}{1}
 
 \begin{urbiscript}[caption=Escaping keywords,label=lst:escape-keyword,float=\floatpos]
-  var 'if' = 21;
-  [00000000] 21
-  'if' * 2;
-  [00000000] 42
+var 'if' = 21;
+[00000000] 21
+'if' * 2;
+[00000000] 42
 \end{urbiscript}
 
 \subsection{Literals}
@@ -276,14 +276,14 @@ content is printed with echo for instance.
 "";
 [00000000] ""
 "foo";
-[00000000] ""
+[00000000] "foo"
 "a\nb"; // UrbiScript escapes string when dumping them
 [00000000] "a\nb"
 echo("a\nb"); // We can see there is an actual line feed
 [00000000] *** a
 ..b
 echo("a\\nb");
-[00000000] a\nb
+[00000000] *** a\nb
 \end{urbiscript}
 
 \subsection{Operators}
@@ -434,6 +434,11 @@ affectation combined with another operator. See
 \footnotetext{For object fields only. Assignment to local variables
   cannot be redefined. }
 
+% FIXME: this in place modulo example was removed
+%         because %= is a lame Urbi operator.
+%  x %= 3;
+
+
 \begin{urbiscript}[caption=Assignment operators,
   label=lst:assignment-operators,float=\floatposh]
 var x = 0;
@@ -444,12 +449,10 @@ x += 10;
 [00000000] 20
 x /= 5;
 [00000000] 4
-x %= 3;
-[00000000] 1
 x++;
-[00000000] 1
+[00000000] 4
 x;
-[00000000] 2
+[00000000] 5
 \end{urbiscript}
 
 \subsubsection{Bitwise operators}
@@ -761,10 +764,10 @@ case references refer to the innermost variable, as shown in
   // This would be invalid: x is already declared in this scope.
   // var x;
 };
-[00000000] *** "x"
-[00000000] *** "inner y"
-[00000000] *** "z"
-[00000000] *** "outer y"
+[00000000] *** x
+[00000000] *** inner y
+[00000000] *** z
+[00000000] *** outer y
 \end{urbiscript}
 
 \FloatBarrier
@@ -784,7 +787,7 @@ this.
 
 \begin{urbiscript}[caption=Functional value,label=lst:function,float=\floatpos]
 function (arg1, arg2) { echo(0) };
-[00000000] function(arg1, arg2) {
+[00000000] function (arg1, arg2) {
 ..  echo(0)
 ..}
 \end{urbiscript}
@@ -793,19 +796,27 @@ Usually functions are bound to an identifier to be invoked later.
 \autoref{lst:function-sugar} shows a short-hand to define a named
 function.
 
-\begin{urbiscript}[caption=Named functions,
+\begin{urbiscript}[caption=Storing functions in variables,
   label=lst:function-sugar,float=\floatpos]
-// Functions are often stored in variables to call them later.
+// Functions are often stored in variables to call them later
 var f1 = function () {
   echo("hello")
 };
+[00000000:hide] function () {
+..  echo("hello")
+..}
+
 f1();
 [00000000] *** hello
-// This form is equivalent, yet simpler.
+// This form is strictly equivalent, yet simpler
 function f2()
 {
-  echo("hello");
-}
+  echo("hello")
+};
+[00000000:hide] function () {
+..  echo("hello")
+..}
+
 f2();
 [00000000] *** hello
 \end{urbiscript}
@@ -827,14 +838,19 @@ var f = function(a, b) {
   echo(b);
   echo(a);
 };
+[00000000:hide] function (a, b) {
+..  echo(b);
+..  echo(a);
+..}
+
 f(1, 0);
 [00000000] *** 0
 [00000000] *** 1
 // Calling a function with the wrong number of argument is an error
 f(0);
-[00000000:error] !!! f: expected 2 arguments, given 1
+[00000000:error] !!! Expected 2 arguments, given 1
 f(0, 1, 2);
-[00000000:error] !!! f: expected 2 arguments, given 3
+[00000000:error] !!! Expected 2 arguments, given 3
 \end{urbiscript}
 
 \subsection{Return value}
@@ -854,7 +870,13 @@ function f(a, b)
   echo(b);
   a // Return value is a
 };
-f(1, 2)
+[00000000:hide] function (a, b) {
+..  echo(a);
+..  echo(b);
+..  a
+..}
+
+f(1, 2);
 [00000000] *** 1
 [00000000] *** 2
 [00000000] 1
@@ -864,6 +886,12 @@ function g(a, b)
   return a; // Stop execution at this point and return a
   echo(b); // This is not executed
 };
+[00000000:hide] function (a, b) {
+..  echo(a);
+..  return a;
+..  echo(b);
+..}
+
 g(1, 2);
 [00000000] *** 1
 [00000000] 1
@@ -872,6 +900,11 @@ function h()
   return; // Stop execution at this point and return void
   echo(0); // This is not executed
 };
+[00000000:hide] function () {
+..  return;
+..  echo(0);
+..}
+
 h(); // Returns void, so nothing is printed.
 \end{urbiscript}
 
@@ -900,10 +933,15 @@ and then their value is given to the called function.  See
 \begin{urbiscript}[caption=Strict Functions,
   label=lst:us-fun-strict,float=\floatpos]
 function first(a, b) {
-  echo(a); echo(a)
+  echo(a); echo(b)
 };
-first({echo "Arg1"; 1},
-      {echo "Arg2"; 2});
+[00000000:hide] function (a, b) {
+..  echo(a);
+..  echo(b)
+..}
+
+first({echo("Arg1"); 1},
+      {echo("Arg2"); 2});
 [00000000] *** Arg1
 [00000000] *** Arg2
 [00000000] *** 1
@@ -921,14 +959,19 @@ this can be found in the CallMessage class documentation
 function first
 {
   echo(call.evalArgAt(0));
-  echo(call.evalArgAt(0));
+  echo(call.evalArgAt(1));
 };
-first({echo "Arg1"; 1},
-      {echo "Arg2"; 2});
+[00000000:hide] function {
+..  echo(call . evalArgAt(0));
+..  echo(call . evalArgAt(1));
+..}
+
+first({echo("Arg1"); 1},
+      {echo("Arg2"); 2});
 [00000000] *** Arg1
 [00000000] *** 1
-[00000000] *** Arg1
-[00000000] *** 1
+[00000000] *** Arg2
+[00000000] *** 2
 \end{urbiscript}
 
 A lazy function may implement a strict interface by evaluating its
@@ -941,15 +984,22 @@ strict function.
 function first
 {
   var a = call.evalArgAt(0);
-  var b = call.evalArgAt(2);
-  echo(a); echo(a);
+  var b = call.evalArgAt(1);
+  echo(a); echo(b);
 };
-first({echo "Arg1"; 1},
-      {echo "Arg2"; 2});
+[00000000:hide] function {
+..  var a = call . evalArgAt(0);
+..  var b = call . evalArgAt(1);
+..  echo(a);
+..  echo(b);
+..}
+
+first({echo("Arg1"); 1},
+      {echo("Arg2"); 2});
 [00000000] *** Arg1
 [00000000] *** Arg2
 [00000000] *** 1
-[00000000] *** 1
+[00000000] *** 2
 \end{urbiscript}
 
 \subsection{Lexical closures}
@@ -964,6 +1014,7 @@ environment, as shown in \autoref{lst:function-closure}.
 \begin{urbiscript}[caption=Lexical
   closure,label=lst:function-closure,float=\floatpos]
 var x = 0;
+[00000000:hide] 0
 
 function cl()
 {
@@ -971,6 +1022,11 @@ function cl()
   x++;
   echo(x);
 };
+[00000000] function () {
+..  x++;
+..  echo(x);
+..}
+
 cl();
 [00000000] *** 1
 x;
@@ -995,11 +1051,22 @@ function wrapper()
   // Here we make it escape the scope by returning a closure on it.
   return function() { x++ };
 };
+[00000000:hide] function () {
+..  var x = 0;
+..  Control . at_(x . '>'(1), detach(echo("ping")), detach({}));
+..  return function () {
+..    x++
+..  };
+..}
+
 var f = wrapper();
+[00000000:hide] function () {
+..  x++
+..}
+f();
+[00000000] 0
 f();
 [00000000] 1
-f();
-[00000000] 2
 [00000000] *** ping
 \end{urbiscript}
 
@@ -1034,10 +1101,10 @@ documentation about these method can be found in \autoref{sec:std-object}.
 \begin{urbiscript}[caption=Manipulating slots, label=lst:slots,
   float=\floatpos]
 var o = Object.new;
+[00000000:hide] Object_0xADDR
 o.slotNames;
 [00000000] []
 o.createSlot("test");
-[00000000] ["test"]
 o.slotNames;
 [00000000] ["test"]
 o.getSlot("test").asString;
@@ -1082,14 +1149,18 @@ documentation about these methods can be found in \autoref{sec:std-object}.
 \begin{urbiscript}[caption=Manipulating prototypes, label=lst:prototypes,
   float=\floatpos]
 var o = Object.new;
+[00000000:hide] Object_0xADDR
+
 o.protos;
 [00000000] [<Object>]
 o.addProto(Pair);
+[00000000:hide] (nil, nil)
 o.protos;
-[00000000] [<Object>, <Pair>]
+[00000000] [(nil, nil), <Object>]
 o.removeProto(Object);
+[00000000:hide] (nil, nil)
 o.protos;
-[00000000] [<Pair>]
+[00000000] [(nil, nil)]
 \end{urbiscript}
 
 \subsubsection{Inheritance}
@@ -1116,23 +1187,34 @@ is, when looking for a slot in an object:
 \begin{urbiscript}[caption=Slots inheritance, label=lst:inheritance,
   float=\floatpos]
 var a = Object.new;
+[00000000:hide] Object_0xADDR
+
 var b = Object.new;
+[00000000:hide] Object_0xADDR
+
 var c = Object.new;
+[00000000:hide] Object_0xADDR
+
 a.setSlot("x", "slot in a");
+[00000000:hide] "slot in a"
 b.setSlot("x", "slot in b");
+[00000000:hide] "slot in b"
 // c has no "x" slot
 c.getSlot("x");
 [00000000:error] !!! lookup failed: x
 // c can inherit the "x" slot from a
 c.addProto(a);
+[00000000:hide] Object_0xADDR
 c.getSlot("x");
 [00000000] "slot in a"
 // b is prepended to the prototype list, and has thus priority
 c.addProto(b);
+[00000000:hide] Object_0xADDR
 c.getSlot("x");
 [00000000] "slot in b"
 // a local slot in c has priority over prototypes
 c.setSlot("x", "slot in c");
+[00000000:hide] "slot in c"
 c.getSlot("x");
 [00000000] "slot in c"
 \end{urbiscript}
@@ -1151,9 +1233,17 @@ child object (see \autoref{lst:copy-on-write}).
 \begin{urbiscript}[caption=Copy on write, label=lst:copy-on-write,
   float=\floatpos]
 var p = Object.new;
+[00000000:hide] Object_0xADDR
+
 var p.slot = 0;
+[00000000:hide] 0
+
 var c = Object.new;
+[00000000:hide] Object_0xADDR
+
 c.addProto(p);
+[00000000:hide] Object_0xADDR
+
 c.slot;
 [00000000] 0
 c.slot = 1;
@@ -1205,20 +1295,28 @@ Such message sending is illustrated by \autoref{lst:send-message}.
 
 \begin{urbiscript}[caption=Sending messages, label=lst:send-message,
   float=\floatpos]
-var obj = Object.new;
-var obj.a = 42;
-var obj.b = function (x) { x + 1 };
-obj.a;
+var o = Object.new;
+[00000000:hide] Object_0xADDR
+
+var o.a = 42;
+[00000000:hide] 42
+
+var o.b = function (x) { x + 1 };
+[00000000:hide] function (x) {
+..  x . '+'(1)
+..}
+
+o.a;
 [00000000] 42
-obj.a();
+o.a();
 [00000000] 42
-obj.a(50);
-[00000000:error] !!! a: expected 0 arguments, given 1
-obj.b;
-[00000000:error] !!! b: expected 1 arguments, given 0
-obj.b();
-[00000000:error] !!! b: expected 1 arguments, given 0
-obj.b(50);
+o.a(50);
+[00000000:error] !!! Expected 0 argument, given 1
+o.b;
+[00000000:error] !!! Expected 1 argument, given 0
+o.b();
+[00000000:error] !!! Expected 1 argument, given 0
+o.b(50);
 [00000000] 51
 \end{urbiscript}
 
@@ -1234,12 +1332,14 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \begin{urbiscript}[caption=Using break, label=lst:break,
   float=\floatpos]
 var i = 5;
+[00000000:hide] 5
+
 for (; true; echo(i))
 {
   if (i > 8)
     break;
   i++;
-}
+};
 [00000000] *** 6
 [00000000] *** 7
 [00000000] *** 8
@@ -1259,7 +1359,7 @@ for (var i = 0; i < 8; i++)
   if (i % 2 != 0)
     continue;
   echo(i);
-}
+};
 [00000000] *** 0
 [00000000] *** 2
 [00000000] *** 4
@@ -1275,7 +1375,9 @@ different ``\lstinline|this|''.
 do target
 {
   body
-}
+};
+[00000000:hide] Object_0xADDR
+
 \end{urbiscript}
 
 It evaluates \lstinline|body|, with \lstinline|this| being
@@ -1284,15 +1386,18 @@ evaluates to \lstinline|body|.
 
 \begin{urbiscript}[caption=Using \lstinline|do|, label=lst:do,
   float=\floatpos]
-var x = 42;
+var x = 1024;
+[00000000:hide] 1024
+
 do x
 {
   echo(this);
   echo(sqrt);
   setSlot("y", 0);
-  42;
 };
-[00000000] 42
+[00000000] *** 1024
+[00000000] *** 32
+[00000000] 1024
 \end{urbiscript}
 
 \subsection{for}
@@ -1323,8 +1428,8 @@ It has the exact same behavior as \C's \lstinline|for|:
 \lstinline|for| loop.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-  for (var name in collection)
-    action;
+for (var name in collection)
+  action;
 \end{urbiscript}
 
 It evaluates \lstinline|action| for each element in
@@ -1336,7 +1441,7 @@ illustrates this.
 \begin{urbiscript}[caption=Iterating over a collection with for, label=lst:foreach,
   float=\floatpos]
 for (var x in [0, 1, 2, 3, 4])
-  echo(0.sqr);
+  echo(x.sqr);
 [00000000] *** 0
 [00000000] *** 1
 [00000000] *** 4
@@ -1352,6 +1457,7 @@ adequate \lstinline|each| method.
 
 \begin{urbiscript}
 var Hobbits = Object.new;
+[00000000:hide] Object_0xADDR
 function Hobbits.each (action)
 {
   action("Frodo");
@@ -1359,15 +1465,25 @@ function Hobbits.each (action)
   action("Pippin");
   action("Sam");
 };
+[00000000:hide] function (action) {
+..  action("Frodo");
+..  action("Merry");
+..  action("Pippin");
+..  action("Sam");
+..}
 
 for (var name in Hobbits)
-  echo("%s is a hobbit." % name);
-[00000000] Frodo is a hobbit
-[00000000] Merry is a hobbit
-[00000000] Pipin is a hobbit
-[00000000] Sam is a hobbit
+  echo("%s is a hobbit." % [name]);
+[00000000] *** Frodo is a hobbit.
+[00000000] *** Merry is a hobbit.
+[00000000] *** Pippin is a hobbit.
+[00000000] *** Sam is a hobbit.
 // This for statement is equivalent to:
-Hobbits.each(function (name) { echo("%s is a hobbit." % name) });
+Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
+[00000000] *** Frodo is a hobbit.
+[00000000] *** Merry is a hobbit.
+[00000000] *** Pippin is a hobbit.
+[00000000] *** Sam is a hobbit.
 \end{urbiscript}
 
 \subsection{if}
@@ -1382,6 +1498,7 @@ if (condition)
   action
 else
   otherwise;
+[00000000:hide] Object_0xADDR
 \end{urbiscript}
 
 If the \lstinline|condition| evaluation is true, \lstinline|action| is
@@ -1404,6 +1521,8 @@ switch (value)
   default:
     default_action;
 };
+[00000000:hide] 3
+
 \end{urbiscript}
 
 It might contain an arbitrary number of cases, and optionally a
@@ -1437,6 +1556,26 @@ function sw(v)
       v[0];
   }
 };
+[00000000:hide] function (v) {
+..  {
+..    var '$switch' = v | if (Pattern . new("") . match('$switch'))
+..    {
+..      echo("Empty string");
+..    }
+..    else
+..    {
+..      if (Pattern . new("foo") . match('$switch'))
+..      {
+..        "bar";
+..      }
+..      else
+..      {
+..        v . '[]'(0);
+..      }
+..    }
+..  }
+..}
+
 sw("");
 [00000000] *** Empty string
 sw("foo");
@@ -1444,14 +1583,15 @@ sw("foo");
 sw("foobar");
 [00000000] "f"
 \end{urbiscript}
+% $ Pacify emacs math mode.
 
 \subsection{while}
 
 The \lstinline|while| loop is similar to \C's one.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-  while (condition)
-    body;
+while (condition)
+  body;
 \end{urbiscript}
 
 If \lstinline|condition| evaluation, is true, \lstinline|body| is
@@ -1461,6 +1601,8 @@ jumps after the \lstinline|while|. See \autoref{lst:while}.
 \begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
 var i = 5;
+[00000000:hide] 5
+
 while (i > 0)
 {
   echo(i);
