@@ -57,16 +57,6 @@ AM_PROG_AS
 AC_ENABLE_STATIC([no])
 AC_PROG_LIBTOOL
 
-
-# FIXME: Bind this with a more general debug/optimize compilation switch.
-# Whether we want to precompile the symbols.
-URBI_ARG_ENABLE([enable-precompiled-symbols],
-                [Precompile the symbols], [yes|no], [no])
-case $enable_precompiled_symbols in
-  yes) AC_DEFINE([SYMBOLS_PRECOMPILED], 1,
-                 [Define if Urbi symbols should be precompiled]);;
-esac
-
 URBI_ARG_ENABLE([enable-headers-install],
                 [Install kernel headers], [yes|no], [no])
 AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
