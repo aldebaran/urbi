@@ -33,6 +33,8 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
+URBI_COMPILATION_MODE
+
 # URBI_LIBPORT AC_REQUIREs URBI_PTHREAD, so run the latter first.
 URBI_PTHREAD
 URBI_LIBPORT
