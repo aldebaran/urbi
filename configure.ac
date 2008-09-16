@@ -68,14 +68,6 @@ URBI_WITH_LTDL
 pkgdatadir=${datadir}/gostai
 AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 
-# By default, do not build programs in sub-configures
-URBI_ARG_ENABLE([enable-programs],
-		[Build extra programs], [yes|no], [no])
-case $enable_programs in
-  yes) ac_configure_args="$ac_configure_args --enable-programs";;
-  *)   ac_configure_args="$ac_configure_args --disable-programs";;
-esac
-
 # Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
 # sole use of URBI_RESOLVE_DIR_PREPARE.
 URBI_RESOLVE_DIR_PREPARE
