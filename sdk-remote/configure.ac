@@ -124,14 +124,6 @@ if test x"$enable_bindings" != xno; then
  fi
 fi
 
-# Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
-# sole use of URBI_RESOLVE_DIR_PREPARE.
-URBI_RESOLVE_DIR_PREPARE
-AC_DEFINE_UNQUOTED([URBI_PATH],
-                   ["`URBI_RESOLVE_DIR([${datadir}/gostai])`"],
-		   [Define to the path where library files are installed.])
-
-
 URBI_LIBTOOL
 
 AC_DEFINE_UNQUOTED([URBI_HOST], ["$host"], [Define as the host name.])
