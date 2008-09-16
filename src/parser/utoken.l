@@ -478,6 +478,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "class"         RETURN(CLASS);
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
+"default"       RETURN(DEFAULT);
 "delete"        RETURN(DELETE);
 "do"		RETURN(DO);
 "else"          RETURN(ELSE);
@@ -591,7 +592,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "char"             |
 "const"            |
 "const_cast"       |
-"default"          |
 "double"           |
 "dynamic_cast"     |
 "enum"             |

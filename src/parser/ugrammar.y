@@ -173,6 +173,7 @@
         CLOSURE      "closure"
         CONTINUE     "continue"
         COLON        ":"
+        DEFAULT       "default"
         DELETE       "delete"
         ELSE         "else"
         EMIT         "emit"
@@ -832,7 +833,11 @@ stmt:
     }
 | "switch" "(" exp ")" "{" cases "}"
     {
-      $$ = ast_switch(@3, $3, $6);
+      $$ = ast_switch(@3, $3, $6, 0);
+    }
+| "switch" "(" exp ")" "{" cases "default" ":" stmts "}"
+    {
+      $$ = ast_switch(@3, $3, $6, $9);
     }
 | "timeout" "(" exp ")" stmt
     {

@@ -285,12 +285,13 @@ namespace parser
   }
 
   ast::rExp
-  ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases)
+  ast_switch(const yy::location& l, ast::rExp cond,
+             const cases_type& cases, ast::rExp def)
   {
     (void) l;
 
     static ast::ParametricAst nil("nil");
-    ast::rExp inner = exp(nil);
+    ast::rExp inner = def ? def : exp(nil);
     rforeach (const case_type& c, cases)
     {
       static ast::ParametricAst a(
