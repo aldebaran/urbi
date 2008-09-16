@@ -473,11 +473,11 @@ namespace runner
       // Rewind up to the appropriate depth.
       if (e.depth_get() < result_depth)
 	throw;
-      // Extract the value from the exception.
-      return boost::any_cast<rObject>(e.payload_get());
       // If we are frozen, reenter the scheduler for a while.
       if (frozen())
 	yield();
+      // Extract the value from the exception.
+      return boost::any_cast<rObject>(e.payload_get());
     }
   }
 
