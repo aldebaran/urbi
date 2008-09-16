@@ -848,9 +848,9 @@ f(1, 0);
 [00000000] *** 1
 // Calling a function with the wrong number of argument is an error
 f(0);
-[00000000:error] !!! Expected 2 arguments, given 1
+[00000000:error] !!! f: Expected 2 arguments, given 1
 f(0, 1, 2);
-[00000000:error] !!! Expected 2 arguments, given 3
+[00000000:error] !!! f: Expected 2 arguments, given 3
 \end{urbiscript}
 
 \subsection{Return value}
@@ -1201,7 +1201,7 @@ b.setSlot("x", "slot in b");
 [00000000:hide] "slot in b"
 // c has no "x" slot
 c.getSlot("x");
-[00000000:error] !!! lookup failed: x
+[00000000:error] !!! Lookup failed: x
 // c can inherit the "x" slot from a
 c.addProto(a);
 [00000000:hide] Object_0xADDR
@@ -1311,11 +1311,11 @@ o.a;
 o.a();
 [00000000] 42
 o.a(50);
-[00000000:error] !!! Expected 0 argument, given 1
+[00000000:error] !!! a: Expected 0 argument, given 1
 o.b;
-[00000000:error] !!! Expected 1 argument, given 0
+[00000000:error] !!! b: Expected 1 argument, given 0
 o.b();
-[00000000:error] !!! Expected 1 argument, given 0
+[00000000:error] !!! b: Expected 1 argument, given 0
 o.b(50);
 [00000000] 51
 \end{urbiscript}
