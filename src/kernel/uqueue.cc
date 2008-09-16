@@ -4,81 +4,102 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include <cstdlib>
+#include <libport/assert.hh>
 #include <libport/cstring>
 
-#include <cassert>
-#include <string>
-
+#include <kernel/uqueue.hh>
 #include <parser/prescan.hh>
 
-#include <kernel/uqueue.hh>
-
-UQueue::UQueue ()
-  : buffer_(),
-    outputBuffer_()
+UQueue::UQueue(size_t chunk_size)
+  : chunk_size_(chunk_size)
+  , buffer_(static_cast<char*>(malloc(chunk_size_)))
+  , capacity_(chunk_size_)
+  , first_character_(buffer_)
+  , next_character_(buffer_)
 {
+  passert(buffer_, buffer_);
 }
 
 UQueue::~UQueue()
 {
+  free(buffer_);
 }
 
 void
-UQueue::clear()
+UQueue::push(const char *buf, size_t len)
 {
-  buffer_.clear();
-  outputBuffer_.clear();
-}
+  // Compute the new size of the stored data and a null character.
+  size_t nsz = size() + len + 1;
 
-void
-UQueue::push (const char *buf, size_t len)
-{
-  buffer_.insert(buffer_.end(), buf, buf + len);
-}
-
-char*
-UQueue::front (size_t len)
-{
-  // FIXME: Our interface is bad, this is needed.
-  if (!len)
+  // Check whether we need to move data around, along with a possible
+  // larger buffer if needed.
+  if (first_character_ + nsz > buffer_ + capacity_)
   {
-    static char res = 0;
-    return &res;
-  }
-  // Not enough data to pop 'len'.
-  else if (buffer_.size() < len)
-    return 0;
+    // If the existing buffer is already large enough, move data
+    // to the beginning, otherwise increase capacity and reallocate.
+    if (nsz <= capacity_)
+      memmove(buffer_, first_character_, size());
+    else
+    {
+      // Increase the buffer capacity by multiples of chunk_size.
+      capacity_ = chunk_size_ * (1 + (nsz - 1) / chunk_size_);
 
-  outputBuffer_.clear();
-  outputBuffer_.insert(outputBuffer_.begin(),
-		       buffer_.begin(), buffer_.begin() + len);
-  outputBuffer_.push_back(0);
-  ECHO("Output: "
-       << std::string(&outputBuffer_[0], len));
-  ECHO("Output size: " << outputBuffer_.size());
-  return &outputBuffer_[0];
+      // Rather than using realloc(), allocate a new buffer so that
+      // we do not copy useless data located before first_character_.
+      char* old_buffer = buffer_;
+      buffer_ = static_cast<char*>(malloc(capacity_));
+      passert(buffer_, buffer_);
+      memcpy(buffer_, first_character_, size());
+      free(old_buffer);
+    }
+
+    // Data has been moved, recompute the bounds.
+    next_character_ += buffer_ - first_character_;
+    first_character_ = buffer_;
+  }
+
+  // Append the new data and adjust the next character address.
+  memcpy(next_character_, buf, len);
+  next_character_ += len;
+
+  // Null-terminate the stored data.
+  *next_character_ = '\0';
 }
 
-char*
-UQueue::pop (size_t len)
+const char*
+UQueue::front(size_t len) const
 {
-  char* res = front(len);
-  buffer_.erase(buffer_.begin(), buffer_.begin() + len);
+  // Return the data if we have enough, 0 otherwise.
+  return size() < len ? 0 : first_character_;
+}
+
+const char*
+UQueue::pop(size_t len)
+{
+  const char* res = front(len);
+  if (res)
+  {
+    first_character_ += len;
+
+    // If we have just emptied the buffer, start again at the
+    // beginning so that no reallocation will be needed in the near
+    // future.
+    if (empty())
+      clear();
+  }
   return res;
 }
 
 std::string
-UQueue::pop_command ()
+UQueue::pop_command()
 {
-  ECHO("Size: " << buffer_.size());
-  char *buf = front(buffer_.size());
-  ECHO("buf: {{{" << std::string(buf) << "}}}");
-  size_t len = parser::prescan(buf);
+  // The buffer is null-terminated when used in full, so we can use it
+  // without computing its length.
+  ECHO("Size: " << size());
+  ECHO("buf: {{{" << std::string(first_character_) << "}}}");
+  size_t len = parser::prescan(first_character_);
   ECHO("Len: " << len);
-  buf = pop(len);
-  assert(buf);
-  std::string res (buf, len);
+  const std::string res(pop(len), len);
   ECHO("Res: " << res);
   return res;
 }
