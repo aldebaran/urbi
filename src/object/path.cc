@@ -5,8 +5,6 @@
 #include <libport/unistd.h>
 #include <fcntl.h>
 
-#include <libport/filesystem.hh>
-
 // For bad_alloc
 #include <exception>
 
