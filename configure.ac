@@ -89,6 +89,14 @@ case $enable_programs in
   *)   ac_configure_args="$ac_configure_args --disable-programs";;
 esac
 
+# Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
+# sole use of URBI_RESOLVE_DIR_PREPARE.
+URBI_RESOLVE_DIR_PREPARE
+AC_DEFINE_UNQUOTED([URBI_PATH],
+                   ["`URBI_RESOLVE_DIR([${datadir}/gostai])`"],
+		   [Define to the path where library files are installed.])
+
+
 ## -------- ##
 ## Target.  ##
 ## -------- ##
@@ -117,7 +125,6 @@ SDK_LIBS="$SDK_LIBS $BOOST_FILESYSTEM_LIBS"
 
 AC_CONFIG_SUBDIRS([sdk-remote])
 
-AC_CONFIG_HEADERS([dummyconfig.h])
 ## -------- ##
 ## Output.  ##
 ## -------- ##
@@ -126,4 +133,5 @@ URBI_LIBTOOL
 
 URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_HEADERS([kernelconfig.h])
 AC_OUTPUT

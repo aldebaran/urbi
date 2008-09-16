@@ -7,7 +7,7 @@
 
 #include <libport/cmath>
 
-#include <sdk/config.h>
+#include <kernelconfig.h>
 #ifndef HAVE_ROUND
 # include <libport/ufloat.h>
 #endif

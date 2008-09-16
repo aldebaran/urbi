@@ -1,6 +1,6 @@
 /// \file uparser.cc
 
-#include <sdk/config.h> // YYDEBUG.
+#include <kernelconfig.h> // YYDEBUG.
 
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>

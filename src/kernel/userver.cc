@@ -47,7 +47,7 @@
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
-#include <sdk/config.h>
+#include <kernelconfig.h>
 
 #include <urbi/uobject.hh>
 #include <urbi/usystem.hh>

@@ -1,7 +1,7 @@
 #ifndef SCHEDULER_PTHREAD_CORO_HH
 # define SCHEDULER_PTHREAD_CORO_HH
 
-# include <sdk/config.h>
+# include <kernelconfig.h>
 
 // Define SCHEDULER_CORO_OSTHREAD to use the os-thread implementation of coros.
 # ifdef SCHEDULER_CORO_OSTHREAD

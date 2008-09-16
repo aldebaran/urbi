@@ -8,7 +8,7 @@
 
 # include <libport/symbol.hh>
 
-# include <sdk/config.h>
+# include <kernelconfig.h>
 
 
 # if defined SYMBOLS_PRECOMPILED
