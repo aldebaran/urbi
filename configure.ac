@@ -27,9 +27,6 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-# A macro so that AC_REQUIRE works properly.  When satisfying
-# will be moved in build-aux.
-
 URBI_COMPILATION_MODE
 
 # Bison.
