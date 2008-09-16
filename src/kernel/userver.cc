@@ -1,26 +1,8 @@
-/*! \file userver.cc
- *******************************************************************************
+/// \file kernel/userver.cc
 
- File: userver.cc\n
- Implementation of the UServer class.
-
- This file is part of
- %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2005.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.net
-
- **************************************************************************** */
 //#define ENABLE_DEBUG_TRACES
 #include <cassert>
-#include <csignal>
+#include <libport/csignal>
 #include <cstdlib>
 #include <cstdarg>
 
@@ -130,9 +112,9 @@ UServer::load_init_file(const char* fn)
 }
 
 #if !defined WIN32 && !defined _MSC_VER
-static void install_ice_catcher(void (*catcher)(int))
+static void
+install_ice_catcher(void (*catcher)(int))
 {
-  // FIXME: this might not be portable
   signal(SIGABRT, catcher);
   signal(SIGBUS,  catcher);
   signal(SIGSEGV, catcher);
@@ -142,7 +124,11 @@ static void hard_ice(int i)
 {
   std::cerr << "Killed with signal " << i
             << " while trying to debug." << std::endl;
-  exit(1);
+  libport::signal(i, SIG_DFL);
+  if (kill(getpid(), i))
+    perror("kill");
+  // Pacify noreturn.
+  exit(EX_HARD);
 }
 
 static void ice(int i)
