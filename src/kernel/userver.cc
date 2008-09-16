@@ -149,8 +149,8 @@ static void ice(int i)
                  " with this report,");
   r.send_message(tag, "core dump if any, and what code/situation triggered it.");
   r.send_message(tag, "");
-  r.send_message(tag, "I'm going to try giving more informations.");
-  r.send_message(tag, "Please include them in the report.");
+  r.send_message(tag, "Trying to give more information.");
+  r.send_message(tag, "Please include it in the report.");
   r.send_message(tag, "");
   r.send_message(tag, "---------- CURRENT BACKTRACE ----------");
   r.show_backtrace(tag);
