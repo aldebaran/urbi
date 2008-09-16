@@ -132,11 +132,33 @@ AC_DEFINE_UNQUOTED([URBI_HOST], ["$host"], [Define as the host name.])
 AC_DEFINE_UNQUOTED([URBI_PREFIX], ["$prefix"], [Define as the install prefix.])
 AC_DEFINE_UNQUOTED([URBI_SHREXT], ["$shrext_cmds"],
                    [Define as the shared library extension])
+
+
+## --------- ##
+## libjpeg.  ##
+## --------- ##
+
+# Whether we should build (and test) the libjpeg executables.
+# Reverses the default behavior in libjpeg, that's why we don't simply
+# rely on configure's argument passing.
+URBI_ARG_ENABLE([enable-programs],
+		[Build extra programs], [yes|no], [no])
+case $enable_programs in
+  yes) # No need to pass --enable-programs, because (i) it's the
+       # default for libjpeg, and (ii) if --enable-programs is
+       # passed to this configure, it gives it to its subconfigures,
+       # so we would just duplicate the request.
+       ;;
+  *)   ac_configure_args="$ac_configure_args --disable-programs";;
+esac
+
+AC_CONFIG_SUBDIRS([jpeg-6b])
+
+
 ## -------- ##
 ## Output.  ##
 ## -------- ##
 
-AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  src/Makefile
 	  src/examples/Makefile
