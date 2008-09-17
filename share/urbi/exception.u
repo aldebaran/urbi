@@ -89,3 +89,16 @@ class Global.ArgumentTypeError: TypeError
     [eff.protoName, idx, exp.protoName]
   }
 };
+
+class Global.LookupError: Exception
+{
+  var msg;
+  var obj;
+
+  function init(m, o)
+  {
+    msg = m |
+    obj = o |
+    Exception.getSlot("init").apply([this, "Lookup failed: %s" % [m]])
+  };
+};
