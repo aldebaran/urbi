@@ -127,6 +127,12 @@ namespace scheduler
     other->links_.push_back(this);
   }
 
+  inline bool
+  Job::linked()
+  {
+    return !links_.empty();
+  }
+
   inline const libport::Symbol&
   Job::name_get() const
   {

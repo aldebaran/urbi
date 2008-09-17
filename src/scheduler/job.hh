@@ -188,6 +188,11 @@ namespace scheduler
     /// \param other The job to link to.
     void link(rJob other);
 
+    /// Determine whether this job is linked to any other job
+    ///
+    /// \return Whether this job is linked to at least one job
+    bool linked();
+
     /// Get the job name
     ///
     /// \return The job name as set from the constructor.
