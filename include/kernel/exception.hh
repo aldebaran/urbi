@@ -34,7 +34,7 @@ namespace kernel
    boost::optional<Type> Name ## _;
 
 #define COMPLETE_EXCEPTION(Name)		\
-  virtual exception* clone () const		\
+  virtual Name* clone () const                  \
   {						\
     return new Name (*this);			\
   };						\
