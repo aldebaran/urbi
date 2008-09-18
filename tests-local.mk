@@ -19,7 +19,8 @@ TFAIL_TESTS +=					\
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
-2.x/derive.chk
+2.x/derive.chk					\
+2.x/profiling.chk
 
 # k1 tests that currently don't pass, but we should.
 # In fact, the above list has been removed to gain some time
