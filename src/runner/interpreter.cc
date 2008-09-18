@@ -291,27 +291,12 @@ namespace runner
     if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
     {
       std::stringstream o;
-      exn->slot_update(*this, SYMBOL(location),
-                       new object::String(""));
-      exn->slot_update(*this, SYMBOL(backtrace),
-                       as_task()->as<object::Task>()->backtrace());
-    }
-    throw object::UrbiException(exn, call_stack_get());
-  }
-
-  void
-  Interpreter::raise(rObject exn, const ast::loc& loc)
-  {
-    if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
-    {
-      std::stringstream o;
-      o << loc;
+      o << innermost_node_->location_get();
       exn->slot_update(*this, SYMBOL(location),
                        new object::String(o.str()));
       exn->slot_update(*this, SYMBOL(backtrace),
                        as_task()->as<object::Task>()->backtrace());
     }
-
     throw object::UrbiException(exn, call_stack_get());
   }
 

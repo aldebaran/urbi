@@ -27,6 +27,7 @@ namespace runner
     /// already done, and rethrow it.
     try
     {
+      libport::Finally finally(scoped_set(innermost_node_, e));
       return e->eval(*this);
     }
     catch (object::Exception& x)

@@ -173,8 +173,6 @@ namespace runner
 
     virtual void raise(rObject exn)
       __attribute__ ((noreturn));
-    virtual void raise(rObject exn, const ast::loc& loc)
-      __attribute__ ((noreturn));
 
   protected:
     void show_error_ (object::Exception& e);
@@ -214,6 +212,8 @@ namespace runner
 
     /// The local variable stacks
     Stacks stacks_;
+
+    const ast::Ast* innermost_node_;
   };
 
 } // namespace runner

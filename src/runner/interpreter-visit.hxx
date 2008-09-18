@@ -538,7 +538,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Throw* e)
   {
-    raise(operator()(e->value_get().get()), e->location_get());
+    raise(operator()(e->value_get().get()));
     pabort("Unreachable");
     return 0;
   }
