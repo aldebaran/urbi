@@ -319,7 +319,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   // A stack of expected closing braces: ), ], } etc.
   std::vector<char> pre_closers;
 
-  STEP();
+  // Nesting C comments.
+  unsigned int comment_level = 0;
 
 %}
 
@@ -735,7 +736,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
     `----------------------------*/
 
 "//".*         STEP(); // One-line comment.
-"/*"           BEGIN SC_C_COMMENT;
+"/*"           ++comment_level; BEGIN SC_C_COMMENT;
 "/*!"          grown_string.clear(); BEGIN SC_DOC_COMMENT;
 
 {BLANKS}       STEP();
@@ -753,9 +754,13 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   [^*/\n\r]+	|
   [*/]		continue;
   {EOL}	        LINES(1);
+  "/*"	++comment_level;
   "*/" { /* End of the comment. */
-    STEP();
-    BEGIN sc_default;
+    if (!--comment_level)
+      {
+        STEP();
+	BEGIN INITIAL;
+      }
   }
 }
 
