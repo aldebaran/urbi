@@ -1,5 +1,14 @@
 do Global.Dictionary
 {
+  /// Dictionary.init(KEY1, VAL1, ...).
+  // FIXME: throw on invalid arg number.
+  function init
+  {
+    for| (var i = 0; i < call.argsCount; i += 2)
+      set(call.evalArgAt(i), call.evalArgAt(i + 1)) |
+    this
+  };
+
   function asList ()
   {
     var dictionary = this|
@@ -31,4 +40,7 @@ do Global.Dictionary
       otherwise
   };
 
+  // Syntactic sugar.
+  copySlot("set", "[]=");
+  copySlot("get", "[]");
 };
