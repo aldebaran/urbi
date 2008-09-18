@@ -57,7 +57,7 @@ do List
       l = l.tail|
       r = r.tail|
     }|
-    return l.empty|
+    return l.empty && !r.empty |
   };
 
   // Same contents except occurrences of e.

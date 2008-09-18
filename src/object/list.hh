@@ -32,8 +32,8 @@ namespace object
     void    each      (runner::Runner&, const rObject&);
     void    each_and  (runner::Runner&, const rObject&);
     rObject front     ();
-    rList   pop_back  ();
-    rList   pop_front ();
+    rObject pop_back  ();
+    rObject pop_front ();
     rList   push_back (const rObject& elt);
     rList   push_front(const rObject& elt);
     rList   remove_by_id(const rObject& elt);

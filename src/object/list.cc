@@ -195,12 +195,28 @@ namespace object
   BOUNCE(back,       true,  false, true );
   BOUNCE(clear,      false, false, false);
   BOUNCE(front,      true,  false, true );
-  BOUNCE(pop_back,   false, false, true );
-  BOUNCE(pop_front,  false, false, true );
   BOUNCE(push_back,  false, true,  false);
   BOUNCE(push_front, false, true,  false);
 
 #undef BOUNCE
+
+  rObject
+  List::pop_back()
+  {
+    CHECK_NON_EMPTY(pop_back);
+    rObject res = content_.back();
+    content_.pop_back();
+    return res;
+  }
+
+  rObject
+  List::pop_front()
+  {
+    CHECK_NON_EMPTY(pop_front);
+    rObject res = content_.front();
+    content_.pop_front();
+    return res;
+  }
 
   rList List::reverse()
   {
