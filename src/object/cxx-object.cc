@@ -1,6 +1,8 @@
 #include <object/global.hh>
 #include <object/cxx-object.hh>
+
 #include <runner/call.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -53,38 +55,26 @@ namespace object
     assert(exp);
     if (!is_a(o, exp))
     {
-      rObject exn =
-        idx
-        ? urbi_call(r, global_class->slot_get(SYMBOL(ArgumentTypeError)),
-                    SYMBOL(new), new Float(idx.get()), exp, o)
-        : urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
-                    SYMBOL(new), exp, o);
-      r.raise(exn);
+      if (idx)
+        runner::raise_argument_type_error(idx.get(), o, exp);
+      else
+        r.raise(urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
+                          SYMBOL(new), exp, o));
     }
   }
 
-  void check_arg_count (runner::Runner& r,
+  void check_arg_count (runner::Runner&,
                         unsigned effective, unsigned formal)
   {
     if (formal != effective)
-    {
-      rObject exn =
-        urbi_call(r, global_class->slot_get(SYMBOL(ArityError)), SYMBOL(new),
-                  new Float(effective), new Float(formal));
-      r.raise(exn);
-    }
+      runner::raise_arity_error(effective, formal);
   }
 
-  void check_arg_count (runner::Runner& r,
+  void check_arg_count (runner::Runner&,
                         unsigned effective, unsigned min, unsigned max)
   {
     if (effective < min || effective > max)
-    {
-      rObject exn =
-        urbi_call(r, global_class->slot_get(SYMBOL(ArityError)), SYMBOL(new),
-                  new Float(effective), new Float(min), new Float(max));
-      r.raise(exn);
-    }
+      runner::raise_arity_error(effective, min, max);
   }
 
 }

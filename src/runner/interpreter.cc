@@ -286,7 +286,7 @@ namespace runner
   }
 
   void
-  Interpreter::raise(rObject exn)
+  Interpreter::raise(rObject exn, bool skip_last)
   {
     if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
     {
@@ -297,7 +297,10 @@ namespace runner
       exn->slot_update(*this, SYMBOL(backtrace),
                        as_task()->as<object::Task>()->backtrace());
     }
-    throw object::UrbiException(exn, call_stack_get());
+    call_stack_type bt = call_stack_get();
+    if (skip_last)
+      bt.pop_back();
+    throw object::UrbiException(exn, bt);
   }
 
 } // namespace runner

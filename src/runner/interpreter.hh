@@ -171,8 +171,15 @@ namespace runner
     virtual backtrace_type backtrace_get() const;
     object::call_stack_type call_stack_get() const;
 
-    virtual void raise(rObject exn)
+    /// Throw an excpetion.
+    /**
+     * \param exn Value to throw
+     * \param skip_last Skip last call when reporting the backtrace
+     */
+    virtual void raise(rObject exn, bool skip_last = false)
       __attribute__ ((noreturn));
+
+    virtual libport::Symbol innermost_call_get() const;
 
   protected:
     void show_error_ (object::Exception& e);

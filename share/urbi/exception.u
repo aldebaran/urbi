@@ -25,6 +25,7 @@ class Global.Exception
 
 class Global.ArityError: Exception
 {
+  var routine;
   var effective;
   var minimum;
   var maximum;
@@ -35,30 +36,31 @@ class Global.ArityError: Exception
     // object (1..3)
     var args = call.evalArgs;
 
-    if (args.size not in [2, 3])
+    if (args.size not in [3, 4])
       // Throw
       {};
 
     var plural = "";
 
-    effective = args[0];
-    minimum = args[1];
+    routine = args[0];
+    effective = args[1];
+    minimum = args[2];
 
     switch (args.size)
     {
-      case 2:
-        if (args[1] > 1)
-          plural = "s";
-        var msg = "Expected %s argument%s, given %s";
-        Exception.getSlot("init").apply
-          ([this, msg % [minimum, plural, effective]]);
       case 3:
-        maximum = args[2];
+        if (args[2] > 1)
+          plural = "s";
+        var msg = "%s: Expected %s argument%s, given %s";
+        Exception.getSlot("init").apply
+          ([this, msg % [routine, minimum, plural, effective]]);
+      case 4:
+        maximum = args[3];
         if (maximum > 1)
           plural = "s";
-        var msg = "Expected between %s and %s argument%s, given %s";
+        var msg = "%s: Expected between %s and %s argument%s, given %s";
         Exception.getSlot("init").apply
-          ([this, msg % [minimum, maximum, plural, effective]]);
+          ([this, msg % [routine, minimum, maximum, plural, effective]]);
     };
   }
 };
@@ -80,13 +82,15 @@ class Global.TypeError: Exception
 class Global.ArgumentTypeError: TypeError
 {
   var index;
+  var routine;
 
-  function init(idx, exp, eff)
+  function init(routine, idx, exp, eff)
   {
     TypeError.getSlot("init").apply([this, exp, eff]);
+    routine = routine;
     index = idx;
-    message = "unexpected `%s' for argument %s, expected `%s'" %
-    [eff.protoName, idx, exp.protoName]
+    message = "%s: unexpected `%s' for argument %s, expected `%s'" %
+    [routine, eff.protoName, idx, exp.protoName]
   }
 };
 

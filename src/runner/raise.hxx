@@ -16,12 +16,62 @@ namespace runner
   inline void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
-    runner::Runner& r = ::urbiserver->getCurrentRunner();
+    Runner& r = ::urbiserver->getCurrentRunner();
     object::rObject exn =
       urbi_call(r,
                 object::global_class->slot_get(SYMBOL(LookupError)),
                 SYMBOL(new), new object::String(msg), obj);
     r.raise(exn);
+    pabort("Unreachable");
+  }
+
+
+  inline void
+  raise_arity_error(unsigned effective,
+                    unsigned expected)
+  {
+    Runner& r = ::urbiserver->getCurrentRunner();
+    object::rObject exn =
+      urbi_call(r, object::global_class->slot_get(SYMBOL(ArityError)),
+                SYMBOL(new),
+                new object::String(r.innermost_call_get()),
+                new object::Float(effective),
+                new object::Float(expected));
+    r.raise(exn, true);
+    pabort("Unreachable");
+  }
+
+  inline void
+  raise_arity_error(unsigned effective,
+                    unsigned minimum,
+                    unsigned maximum)
+  {
+    Runner& r = ::urbiserver->getCurrentRunner();
+    object::rObject exn =
+      urbi_call(r, object::global_class->slot_get(SYMBOL(ArityError)),
+                SYMBOL(new),
+                new object::String(r.innermost_call_get()),
+                new object::Float(effective),
+                new object::Float(minimum),
+                new object::Float(maximum));
+    r.raise(exn, true);
+    pabort("Unreachable");
+  }
+
+  inline void
+  raise_argument_type_error(unsigned idx,
+                            object::rObject effective,
+                            object::rObject expected)
+  {
+    Runner& r = ::urbiserver->getCurrentRunner();
+    r.raise(
+      urbi_call(r, object::global_class->slot_get(SYMBOL(ArgumentTypeError)),
+                SYMBOL(new),
+                new object::String(r.innermost_call_get()),
+                new object::Float(idx),
+                expected,
+                effective),
+      true);
     pabort("Unreachable");
   }
 

@@ -16,6 +16,14 @@ namespace runner
     return result_;
   }
 
+  inline
+  libport::Symbol
+  Interpreter::innermost_call_get() const
+  {
+    assert(!call_stack_.empty());
+    return call_stack_.back().first;
+  }
+
   /*----------------.
   | Regular visit.  |
   `----------------*/
