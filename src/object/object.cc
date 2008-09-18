@@ -22,6 +22,7 @@
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -84,7 +85,7 @@ namespace object
   {
     rObject r = slot_locate(k, true, value);
     if (!r)
-      throw LookupError(k);
+      runner::raise_lookup_error(k, const_cast<Object*>(this));
     return iassertion(r);
   }
 
@@ -358,7 +359,7 @@ namespace object
     // Check if asString was found, especially for bootstrap: asString
     // is implemented in urbi/urbi.u, but print is called to show
     // result in the toplevel before its definition.
-    catch (LookupError&)
+    catch (UrbiException&)
     {
       // If no asString method is supplied, print the unique id
       return o << std::hex << this;

@@ -1,4 +1,5 @@
 #include <runner/call.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -58,7 +59,7 @@ namespace object
     assert(self);
     rObject message = owner->slot_get(msg);
     if (!message)
-      throw LookupError(msg);
+      runner::raise_lookup_error(msg, self);
     rObject res = r.apply(self, message, msg, args);
     assert(res);
     return res;

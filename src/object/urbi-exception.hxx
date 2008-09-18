@@ -12,13 +12,6 @@ namespace object
 {
 
   inline
-  LookupError::LookupError (libport::Symbol slot)
-    : Exception ((boost::format ("lookup failed: %1%")
-		      % slot.name_get()).str())
-  {
-  }
-
-  inline
   RedefinitionError::RedefinitionError (libport::Symbol slot)
     : Exception ((boost::format ("slot redefinition: %1%")
 		      % slot.name_get()).str())

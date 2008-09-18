@@ -80,7 +80,6 @@ namespace object
 
   // urbi-exception.hh
   class Exception;
-  class LookupError;
   class RedefinitionError;
   class PrimitiveError;
   class WrongArgumentType;

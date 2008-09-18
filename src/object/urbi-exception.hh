@@ -87,15 +87,6 @@ namespace object
     COMPLETE_EXCEPTION(Exception)
   };
 
-
-  /** Exception for lookup failures.
-   * \param slot Searched slot.  */
-  struct LookupError: public Exception
-  {
-    explicit LookupError (libport::Symbol slot);
-    COMPLETE_EXCEPTION (LookupError)
-  };
-
   /// Explicit for slots redefined.
   struct RedefinitionError: public Exception
   {

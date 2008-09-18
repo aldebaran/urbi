@@ -41,41 +41,71 @@
     yield ();                                   \
   } while (0)
 
+// Rewind up to the appropriate depth when catching a StopException
+#define REWIND_STOP(Lvl)                        \
+  if (e.depth_get() < Lvl)             \
+    throw;                                      \
+
+
 namespace runner
 {
   using boost::bind;
   using libport::Finally;
-
+  using object::rTag;
+  using object::Tag;
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
     // Collect all subrunners
     scheduler::jobs_type jobs;
+    scheduler::rTag tag = new scheduler::Tag(SYMBOL(AMPERSAND));
+
+    size_t result_depth = tags_get().size();
+
+    Finally finally;
+    apply_tag(tag, &finally);
 
     // Create separate runners for every child but the first
     foreach (const ast::rConstExp& child,
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
       Interpreter* job = new Interpreter(*this, operator()(child.get()));
+      job->fork_point_set(tag);
       // Propagate errors from subrunners.
       link(job);
       jobs.push_back(job);
       job->start_job();
     }
 
-    // Evaluate the first child in this runner
     rCode code = operator()(e->children_get().front().get())
       .unsafe_cast<object::Code>();
     assert(code);
 
-    object::objects_type args;
-    // FIXME: This is a closure, it won't use its 'this', but this is
-    // gory.
-    apply_urbi(rObject(), code, SYMBOL(), args, 0);
+    try
+    {
+      // Evaluate the first child in this runner
+      object::objects_type args;
+      // FIXME: This is a closure, it won't use its 'this', but this is
+      // gory.
+      try
+      {
+        apply_urbi(rObject(), code, SYMBOL(), args, 0);
+      }
+      catch (object::UrbiException& e)
+      {
+        tag->stop(scheduler_get(), e);
+      }
 
-    // Wait for all other jobs to terminate
-    yield_until_terminated(jobs);
+      // Wait for all other jobs to terminate
+      yield_until_terminated(jobs);
+    }
+    catch (scheduler::StopException& e)
+    {
+      REWIND_STOP(result_depth);
+      // Rethrow the linked exception
+      throw boost::any_cast<object::UrbiException>(e.payload_get());
+    }
 
     return object::void_class;
   }
@@ -238,127 +268,145 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
+    Finally finally;
+
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
 
     // In case we're empty, {} evaluates to void.
     rObject res = object::void_class;
 
+    size_t tag_depth = tags_get().size();
+    scheduler::rTag tag;
+
     bool tail = false;
-    foreach (const ast::rConstExp& c, e->children_get())
+    try
     {
-      // Allow some time to pass before we execute what follows.  If
-      // we don't do this, the ;-operator would act almost like the
-      // |-operator because it would always start to execute its RHS
-      // immediately. However, we don't want to do it before the first
-      // statement or if we only have one statement in the scope.
-      if (tail++)
-	YIELD();
-
-      JAECHO("child", c);
-
-      const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
-      const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
-
-      if (stmt && stmt->flavor_get() == ast::flavor_comma)
+      foreach (const ast::rConstExp& c, e->children_get())
       {
-	// The new runners are attached to the same tags as we are.
-	Interpreter* subrunner = new Interpreter(*this, operator()(exp));
-	// If the subrunner throws an exception, propagate it here ASAP, unless
-	// we are at the top level.
-	if (!e->toplevel_get())
-	  link(subrunner);
-	runners.push_back(subrunner);
-	subrunner->start_job ();
-      }
-      else
-      {
-	// If at toplevel, print errors and continue, else rethrow them
-	try
-	{
-          res = operator()(exp);
-	  // We need to keep checking for void here because it can not be passed
-	  // to the << function
-	  if (e->toplevel_get()
-              && res.get() // FIXME: What's that for?
-              && res != object::void_class)
-	  {
-	    try
-	    {
-	      assertion(res);
-	      ECHO("toplevel: returning a result to the connection.");
+        // Allow some time to pass before we execute what follows.  If
+        // we don't do this, the ;-operator would act almost like the
+        // |-operator because it would always start to execute its RHS
+        // immediately. However, we don't want to do it before the first
+        // statement or if we only have one statement in the scope.
+        if (tail++)
+          YIELD();
 
-	      // Display the value using the topLevel channel.
-	      // If it is not (yet) defined, do nothing, unless the environment
-	      // variable TOPLEVEL_DEBUG is set.
+        JAECHO("child", c);
 
-	      static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
-	      if (rObject topLevel =
-                  object::global_class->slot_locate(SYMBOL(topLevel), false,
-                                                    true))
-                object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
-	      else if (toplevel_debug)
-		lobby_->value_get().connection.new_result(res);
-	    }
-	    catch (std::exception &ke)
-	    {
-	      std::cerr << "Exception when printing result: "
-                        << ke.what() << std::endl;
-	    }
-	    catch (object::Exception& e)
-	    {
-	      throw;
-	    }
-	    catch (...)
-	    {
-	      std::cerr << "Unknown exception when printing result"
-                        << std::endl;
-	    }
-	  }
-	}
-	catch (object::Exception& ue)
-	{
-          propagate_error_(ue, c->location_get());
-	  // If the Nary is not the toplevel one, all subrunners must be finished when
-	  // the runner exits the Nary node. However, it we have a scopeTag, we must
-	  // issue a "stop" which may interrupt subrunners.
-#define CLEANUP								\
-	  if (!e->toplevel_get() && !runners.empty())			\
-	  {								\
-	    const scheduler::rTag& tag = scope_tag_get();		\
-	    if (tag)							\
-	      tag->stop(scheduler_get(), object::void_class);		\
-	    yield_until_terminated(runners);				\
-	  }
+        const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
+        const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
 
-	  // Kill subrunners if not at top-level
-	  if (!e->toplevel_get())
-	  {
-	    foreach(scheduler::rJob& job, runners)
-	      job->terminate_now();
-	  }
-	  CLEANUP
-
-	  if (e->toplevel_get())
-	    show_error_(ue);
-	  else
-	    throw;
-	}
-        // Catch and print unhandled exceptions
-	catch (object::UrbiException& exn)
-	{
-          if (e->toplevel_get())
+        if (stmt && stmt->flavor_get() == ast::flavor_comma)
+        {
+          // The new runners are attached to the same tags as we are.
+          Interpreter* subrunner = new Interpreter(*this, operator()(exp));
+          // If the subrunner throws an exception, propagate it here ASAP, unless
+          // we are at the top level.
+          if (!e->toplevel_get())
           {
-            rObject str = urbi_call(*this, exn.value_get(), SYMBOL(asString));
-            std::ostringstream o;
-            o << "!!! " << str->as<object::String>()->value_get();
-            send_message("error", o.str ());
-            show_backtrace(exn.backtrace_get(), "error");
+            if (!tag)
+            {
+              tag = new scheduler::Tag(SYMBOL(AMPERSAND));
+              apply_tag(tag, &finally);
+            }
+            link(subrunner);
+            subrunner->fork_point_set(tag);
           }
-          else
-            throw;
+          runners.push_back(subrunner);
+          subrunner->start_job ();
+        }
+        else
+        {
+          // If at toplevel, print errors and continue, else rethrow them
+          try
+          {
+            res = operator()(exp);
+            // We need to keep checking for void here because it can not be passed
+            // to the << function
+            if (e->toplevel_get()
+                && res.get() // FIXME: What's that for?
+                && res != object::void_class)
+            {
+              try
+              {
+                assertion(res);
+                ECHO("toplevel: returning a result to the connection.");
+
+                // Display the value using the topLevel channel.
+                // If it is not (yet) defined, do nothing, unless the environment
+                // variable TOPLEVEL_DEBUG is set.
+
+                static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
+                if (rObject topLevel =
+                    object::global_class->slot_locate(SYMBOL(topLevel), false,
+                                                      true))
+                  object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
+                else if (toplevel_debug)
+                  lobby_->value_get().connection.new_result(res);
+              }
+              catch (std::exception &ke)
+              {
+                std::cerr << "Exception when printing result: "
+                          << ke.what() << std::endl;
+              }
+              catch (object::Exception& e)
+              {
+                throw;
+              }
+              catch (...)
+              {
+                std::cerr << "Unknown exception when printing result"
+                          << std::endl;
+              }
+            }
+          }
+          catch (object::Exception& ue)
+          {
+            propagate_error_(ue, c->location_get());
+            // If the Nary is not the toplevel one, all subrunners must be finished when
+            // the runner exits the Nary node. However, it we have a scopeTag, we must
+            // issue a "stop" which may interrupt subrunners.
+#define CLEANUP                                                 \
+            if (!e->toplevel_get() && !runners.empty())         \
+            {                                                   \
+              const scheduler::rTag& tag = scope_tag_get();     \
+              if (tag)                                          \
+                tag->stop(scheduler_get(), object::void_class); \
+              yield_until_terminated(runners);                  \
+            }
+
+            // Kill subrunners if not at top-level
+            if (!e->toplevel_get())
+            {
+              foreach(scheduler::rJob& job, runners)
+                job->terminate_now();
+            }
+            CLEANUP
+
+              if (e->toplevel_get())
+                show_error_(ue);
+              else
+                throw;
+          }
+          // Catch and print unhandled exceptions
+          catch (object::UrbiException& exn)
+          {
+            if (e->toplevel_get())
+              show_exception_(exn);
+            else
+              throw;
+          }
         }
       }
+    }
+    catch (scheduler::StopException& e)
+    {
+      if (!tag)
+        throw;
+      REWIND_STOP(tag_depth);
+      // Rethrow the linked exception
+      throw boost::any_cast<object::UrbiException>(e.payload_get());
     }
 
     CLEANUP
@@ -440,22 +488,22 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::TaggedStmt* t)
   {
+    // FIXME: might be simplified after type checking code is moved
+    // to Object
+    object::rObject unchecked_tag = operator()(t->tag_get().get());
+    object::type_check(unchecked_tag, object::Tag::proto,
+                       *this, SYMBOL(tagged_stmt));
+    const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
+    const scheduler::rTag& tag = urbi_tag->value_get();
+
+    // If tag is blocked, do not start and ignore the
+    // statement completely but use the provided payload.
+    if (tag->blocked())
+      return boost::any_cast<rObject>(tag->payload_get());
+
     size_t result_depth = tags_get().size();
     try
     {
-      // FIXME: might be simplified after type checking code is moved
-      // to Object
-      object::rObject unchecked_tag = operator()(t->tag_get().get());
-      object::type_check(unchecked_tag, object::Tag::proto,
-                         *this, SYMBOL(tagged_stmt));
-      const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
-      const scheduler::rTag& tag = urbi_tag->value_get();
-
-      // If tag is blocked, do not start and ignore the
-      // statement completely but use the provided payload.
-      if (tag->blocked())
-	return boost::any_cast<rObject>(tag->payload_get());
-
       Finally finally;
       apply_tag(tag, &finally);
       // If the latest tag causes us to be frozen, let the
@@ -470,9 +518,7 @@ namespace runner
     }
     catch (scheduler::StopException& e)
     {
-      // Rewind up to the appropriate depth.
-      if (e.depth_get() < result_depth)
-	throw;
+      REWIND_STOP(result_depth);
       // Extract the value from the exception.
       return boost::any_cast<rObject>(e.payload_get());
       // If we are frozen, reenter the scheduler for a while.

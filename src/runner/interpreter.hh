@@ -177,7 +177,8 @@ namespace runner
       __attribute__ ((noreturn));
 
   protected:
-    void show_error_ (object::Exception& ue);
+    void show_error_ (object::Exception& e);
+    void show_exception_ (object::UrbiException& ue);
 
   private:
     void init();

@@ -6,6 +6,7 @@
 // #define ENABLE_DEBUG_TRACES
 
 #include <libport/compiler.hh>
+#include <libport/finally.hh>
 
 #include <algorithm>
 #include <deque>
@@ -21,12 +22,15 @@
 #include <object/global.hh>
 #include <object/tag.hh>
 
+#include <runner/call.hh>
 #include <runner/interpreter.hh>
 
 #include <parser/uparser.hh>
 
 namespace runner
 {
+  using libport::Finally;
+
   // This function takes an expression and attempts to decompose it
   // into a list of identifiers.
   typedef std::deque<libport::Symbol> tag_chain_type;
@@ -124,6 +128,16 @@ namespace runner
   }
 
   void
+  Interpreter::show_exception_ (object::UrbiException& ue)
+  {
+    rObject str = urbi_call(*this, ue.value_get(), SYMBOL(asString));
+    std::ostringstream o;
+    o << "!!! " << str->as<object::String>()->value_get();
+    send_message("error", o.str ());
+    show_backtrace(ue.backtrace_get(), "error");
+  }
+
+  void
   Interpreter::propagate_error_(object::Exception& ue, const ast::loc& l)
   {
     // Reset the current result: there was an error so whatever value
@@ -147,10 +161,25 @@ namespace runner
       else
 	result_ = apply(lobby_, code_, SYMBOL(task), args_);
     }
-    catch(object::Exception& ue)
+    catch (object::Exception& ue)
     {
       show_error_(ue);
       throw;
+    }
+    catch (object::UrbiException& exn)
+    {
+      if (scheduler::rTag fork = fork_point_get())
+      // This runner has a parent, rethrow the exception at fork point
+        fork->stop(scheduler_get(), exn);
+      else
+      // This is a detached runner, show the error.
+      {
+        // Yielding inside a catch is forbidden
+        Finally finally (boost::bind(&Runner::non_interruptible_set,
+                                     this, non_interruptible_get()));
+        non_interruptible_set(true);
+        show_exception_(exn);
+      }
     }
   }
 
@@ -162,7 +191,7 @@ namespace runner
       // Try to evaluate e as a normal expression.
       return operator()(e.get());
     }
-    catch (object::LookupError& ue)
+    catch (object::UrbiException&)
     {
       ECHO("Implicit tag: " << *e);
       // We got a lookup error. It means that we have to automatically
@@ -267,7 +296,6 @@ namespace runner
       exn->slot_update(*this, SYMBOL(backtrace),
                        as_task()->as<object::Task>()->backtrace());
     }
-
     throw object::UrbiException(exn, call_stack_get());
   }
 

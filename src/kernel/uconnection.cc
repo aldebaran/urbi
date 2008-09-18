@@ -277,7 +277,7 @@ UConnection::send(object::rObject result, const char* tag, const char* p)
   {
     result = urbi_call(r, result, SYMBOL(asToplevelPrintable));
   }
-  catch (object::LookupError&)
+  catch (object::UrbiException&)
   {
     // nothing
   }
