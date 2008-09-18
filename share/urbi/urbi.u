@@ -260,6 +260,7 @@ class Global.Orderable
 
 
 load("urbi/updatehook-stack.u");
+load("urbi/dictionary.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
 load("urbi/string.u");
@@ -405,12 +406,6 @@ load("urbi/loadable.u");
 `--------*/
 
 load("urbi/tuple.u");
-
-/*-------------.
-| Dictionary.  |
-`-------------*/
-
-load("urbi/dictionary.u");
 
 /*--------------------.
 | Debugging helpers.  |

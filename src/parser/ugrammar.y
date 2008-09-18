@@ -1125,7 +1125,7 @@ exp_float:
 //
 // state 31
 //
-//  104 exp_integer -> "integer" .  ["end of command", "case", ":",
+//  104 exp_float -> "integer" .  ["end of command", "case", ":",
 //                                  "else", "in", "{", "[", "onleave",
 //                                  ".", "}", "]", ")", "~", ",", ";",
 //                                  "&", "|", "identifier", "flag",
@@ -1139,14 +1139,15 @@ exp_float:
 //
 //    "identifier"  shift, and go to state 106
 //
-//    "identifier"  [reduce using rule 104 (exp_integer)]
-//    $default      reduce using rule 104 (exp_integer)
+//    "identifier"  [reduce using rule 104 (exp_float)]
+//    $default      reduce using rule 104 (exp_float)
 //
 // So we clearly want "identifier" win over rule 104, which is
 // given the "WEAKEST" precendence,
 %type <ast::rExp> quantity quantities;
 quantity:
-  exp_integer identifier_as_string  { $$ = ast_call(@$, $1, SYMBOL(unit), $2); }
+  exp_float   identifier_as_string  { $$ = ast_call(@$, $1, SYMBOL(unit), $2); }
+| exp_integer identifier_as_string  { $$ = ast_call(@$, $1, SYMBOL(unit), $2); }
 ;
 
 quantities:
@@ -1160,9 +1161,9 @@ quantities:
 `-----------*/
 
 exp:
-  exp_integer  %prec WEAKEST   { std::swap($$, $1);  }
-| exp_float                    { std::swap($$, $1);  }
-| quantities                   { $$ = new ast::Float(@$, $1);  }
+  exp_integer  %prec WEAKEST   { std::swap($$, $1); }
+| exp_float    %prec WEAKEST   { std::swap($$, $1); }
+| quantities                   { std::swap($$, $1); }
 | "string"                     { $$ = new ast::String(@$, $1); }
 | "[" exps "]"                 { $$ = new ast::List(@$, $2); }
 ;
