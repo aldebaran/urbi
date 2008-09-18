@@ -317,7 +317,7 @@ namespace object
     CHECK_ARG_COUNT(1);
     List::value_type res;
     foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
-      res.push_back(new Task(job));
+      res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
     return new List(res);
   }
 
