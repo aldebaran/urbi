@@ -89,17 +89,7 @@
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
-#include <parser/tweast.hh>
 #include <parser/utoken.hh>
-
-  /// Get the metavar from the specified map.
-  template <typename T>
-  static
-  T
-  metavar(parser::ParserImpl& up, unsigned key)
-  {
-    return up.tweast_->template take<T>(key);
-  }
 
   namespace
   {
@@ -1379,26 +1369,6 @@ modifiers.1:
 /*----------------.
 | Metavariables.  |
 `----------------*/
-
-%token _CALL "_call";
-lvalue:
-  "_call" "(" "integer" ")"    { $$ = metavar<ast::rCall> (up, $3); }
-;
-
-%token _EXP "_exp";
-exp:
-  "_exp" "(" "integer" ")"     { $$ = metavar<ast::rExp> (up, $3); }
-;
-
-%token _EXPS "_exps";
-exps:
-  "_exps" "(" "integer" ")"    { $$ = metavar<ast::exps_type*> (up, $3); }
-;
-
-%token _FORMALS "_formals";
-formals:
-  "_formals" "(" "integer" ")" { $$ = metavar<ast::symbols_type*> (up, $3); }
-;
 
 %token PERCENT_EXP_COLON "%exp:";
 exp:

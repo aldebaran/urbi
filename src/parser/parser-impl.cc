@@ -18,7 +18,6 @@
 
 #include <parser/parser-impl.hh>
 #include <parser/parser-utils.hh>
-#include <parser/tweast.hh>
 #include <parser/utoken.hh>
 
 #include <kernel/server-timer.hh>
@@ -33,11 +32,10 @@ namespace parser
   static bool yydebug = getenv("YYDEBUG");
 
   ParserImpl::ParserImpl()
-    : tweast_(0),
-      loc_(),
-      synclines_(),
-      result_(0),
-      debug_(yydebug)
+    : loc_()
+    , synclines_()
+    , result_(0)
+    , debug_(yydebug)
   {
   }
 
@@ -83,22 +81,6 @@ namespace parser
     parse_(is);
     if (debug_)
       LIBPORT_ECHO("Result: " << *result_);
-    return result_;
-  }
-
-  parse_result_type
-  ParserImpl::parse(Tweast& t)
-  {
-    // Recursive calls are forbidden.  If we want to relax this
-    // constraint, note that we also need to save and restore other
-    // member changed during the parsing, such as warnings_ and
-    // errors_.  But it is simpler to recurse with the standalone
-    // parse functions.
-    passert(tweast_, !tweast_);
-    tweast_ = &t;
-    std::istringstream is(t.input_get());
-    parse_(is);
-    tweast_ = 0;
     return result_;
   }
 

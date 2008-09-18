@@ -28,14 +28,6 @@ namespace parser
     /// Parse the command from a buffer.
     parse_result_type parse(const std::string& code);
 
-    /// Parse the command from a TWEAST.
-    /// \param t  the Tweast to process.  Emptied as it is used.
-    /// \note   Recursive calls are forbidden.
-    parse_result_type parse(parser::Tweast& t);
-
-    /// The TWEAST currently analyzed (if there is one).
-    parser::Tweast* tweast_;
-
     /// Parse a file.
     parse_result_type parse_file(const std::string& fn);
 

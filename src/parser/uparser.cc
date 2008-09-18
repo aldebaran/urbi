@@ -31,12 +31,6 @@ namespace parser
   }
 
   parse_result_type
-  UParser::parse(Tweast& t)
-  {
-    return pimpl_->parse(t);
-  }
-
-  parse_result_type
   UParser::parse_file(const std::string& fn)
   {
     return pimpl_->parse_file(fn);

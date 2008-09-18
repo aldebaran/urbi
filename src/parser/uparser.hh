@@ -28,12 +28,6 @@ namespace parser
     /// \return yyparse's result (0 on success).
     parse_result_type parse(const std::string& code);
 
-    /// Parse the command from a TWEAST.
-    /// \param t  the Tweast to process.  Emptied as it is used.
-    /// \return yyparse's result (0 on success).
-    /// \note   Recursive calls are forbidden.
-    parse_result_type parse(parser::Tweast& t);
-
     /// Parse a file.
     /// \return yyparse's result (0 on success).
     parse_result_type parse_file(const std::string& fn);

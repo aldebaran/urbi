@@ -9,9 +9,6 @@ parser/parse.hh					\
 parser/parse.cc					\
 parser/prescan.hh				\
 parser/prescan.cc				\
-parser/tweast.hh				\
-parser/tweast.hxx				\
-parser/tweast.cc				\
 parser/utoken.hh				\
 parser/parse-result.hh				\
 parser/parse-result.hxx				\

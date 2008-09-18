@@ -464,12 +464,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
 
- /* Meta variables. */
-"_call"         RETURN(_CALL);
-"_exp"          RETURN(_EXP);
-"_exps"         RETURN(_EXPS);
-"_formals"      RETURN(_FORMALS);
-
 "%exp:"         RETURN(PERCENT_EXP_COLON);
 "%exps:"        RETURN(PERCENT_EXPS_COLON);
 "%id:"          RETURN(PERCENT_ID_COLON);
