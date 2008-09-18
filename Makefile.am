@@ -85,6 +85,3 @@ check-%:
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
-
-all-local:
-	$(MAKE) -C bison MAKEFLAGS=

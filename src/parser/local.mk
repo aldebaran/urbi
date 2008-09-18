@@ -77,6 +77,7 @@ ugrammar_deps =						\
 	$(wildcard $(top_builddir)/bison/data/*.m4)
 parser/ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
+	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	@rm -f $@.tmp
 	@touch $@.tmp
 	$(BISONXX) $(parser_dir)/ugrammar.y parser/ugrammar.cc -d -ra $(BISON_FLAGS)
