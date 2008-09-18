@@ -309,6 +309,9 @@ namespace scheduler
     /// Ensure proper cleanup.
     virtual void terminate_cleanup();
 
+    /// Number of jobs created and not yet destroyed.
+    static unsigned int alive_jobs();
+
   protected:
 
     /// Must be implemented to do something useful. If an exception is
@@ -381,6 +384,9 @@ namespace scheduler
     /// The exception being propagated if any.
     kernel::exception_ptr current_exception_;
 
+    /// Number of jobs created and not yet destroyed.
+    static unsigned int alive_jobs_;
+
   protected:
     /// Exception used to terminate a job.
     struct TerminateException : public SchedulerException
@@ -403,7 +409,7 @@ namespace scheduler
     COMPLETE_EXCEPTION(StopException)
   };
 
-  // State names to string, for debugging purpose.
+  /// State names to string, for debugging purpose.
   const char* state_name(job_state);
 
 } // namespace scheduler

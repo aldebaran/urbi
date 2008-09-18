@@ -12,6 +12,8 @@
 
 namespace scheduler
 {
+  extern unsigned int Job::alive_jobs_;
+
   StopException::StopException(unsigned depth, boost::any payload)
     : depth_(depth)
     , payload_(payload)
@@ -216,6 +218,12 @@ namespace scheduler
   {
     if (tag.prio_get() >= prio_ || tags_.empty())
       recompute_prio();
+  }
+
+  unsigned int
+  Job::alive_jobs()
+  {
+    return alive_jobs_;
   }
 
 }

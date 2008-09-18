@@ -30,6 +30,7 @@ namespace scheduler
       side_effect_free_(false),
       pending_exception_(0)
   {
+    alive_jobs_++;
   }
 
   inline
@@ -47,6 +48,7 @@ namespace scheduler
       side_effect_free_(false),
       pending_exception_(0)
   {
+    alive_jobs_++;
     recompute_prio();
   }
 
@@ -55,6 +57,7 @@ namespace scheduler
   {
     pending_exception_ = 0;
     coroutine_free(coro_);
+    alive_jobs_--;
   }
 
   inline Scheduler&

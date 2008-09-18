@@ -322,6 +322,13 @@ namespace object
   }
 
   static rObject
+  system_class_aliveJobs(runner::Runner&, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    return new Float(scheduler::Job::alive_jobs());
+  }
+
+  static rObject
   system_class_breakpoint(runner::Runner&, objects_type)
   {
     return void_class;
@@ -381,6 +388,7 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(system, Name)
 
+    DECLARE(aliveJobs);
     DECLARE(assert_);
     DECLARE(backtrace);
     DECLARE(breakpoint);
