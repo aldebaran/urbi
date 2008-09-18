@@ -1,4 +1,6 @@
 \section{Float}
+\labelObject{Float}
+
 \subsection{Rationale}
 
 Float is an \us primitive to represent floating point number.
@@ -6,8 +8,8 @@ Float is an \us primitive to represent floating point number.
 \subsection{Prototypes}
 
 \begin{itemize}
-\item Comparable (\autoref{sec:std-comparable}).
-\item Orderable (\autoref{sec:std-orderable})
+\item \refObject{Comparable}
+\item \refObject{Orderable}
 \end{itemize}
 
 \subsection{Construction}
@@ -24,7 +26,6 @@ Float.new;
 \end{urbiscript}
 
 \subsection{Methods}
-
 
 \subsubsection{abs}
 
@@ -319,7 +320,7 @@ Return the bitwise exclusive or between the target and the first argument.
 [00000000] 5
 \end{urbiscript}
 
-\subsubsection{$>>$}
+\subsubsection{\textgreater\textgreater}
 
 \lstinline|a >> b| return the \lstinline|a| shifted by \lstinline|b|
 bit towards the right (\autoref{lst:float-rshift}).
@@ -330,12 +331,12 @@ bit towards the right (\autoref{lst:float-rshift}).
 [00000000] 1
 \end{urbiscript}
 
-\subsubsection{$<$}
+\subsubsection{\textless}
 
 \lstinline|a < b| returns whether \lstinline|a| is inferior to
 \lstinline|b| (\autoref{lst:float-LT}). Note that other comparison operators
 (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be applied on
-floats since Float inherits Orderable (see \autoref{sec:std-orderable}).
+floats since Float inherits \refObject{Orderable}.
 
 \begin{urbiscript}[caption=Float.'$<$', label=lst:float-LT,
   float=\floatposh]
@@ -345,7 +346,7 @@ floats since Float inherits Orderable (see \autoref{sec:std-orderable}).
 [00000000] false
 \end{urbiscript}
 
-\subsubsection{$<<$}
+\subsubsection{\textless\textless}
 
 \lstinline|a << b| return the \lstinline|a| shifted by \lstinline|b|
 bit towards the left (\autoref{lst:float-lshift}).
