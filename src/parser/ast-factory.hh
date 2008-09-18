@@ -138,7 +138,8 @@ namespace parser
   typedef std::list<case_type> cases_type;
 
   ast::rExp
-  ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases);
+  ast_switch(const yy::location& l, ast::rExp cond,
+             const cases_type& cases, ast::rExp def);
 }
 
 namespace std

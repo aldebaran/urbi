@@ -16,6 +16,14 @@ namespace runner
     return result_;
   }
 
+  inline
+  libport::Symbol
+  Interpreter::innermost_call_get() const
+  {
+    assert(!call_stack_.empty());
+    return call_stack_.back().first;
+  }
+
   /*----------------.
   | Regular visit.  |
   `----------------*/
@@ -27,9 +35,10 @@ namespace runner
     /// already done, and rethrow it.
     try
     {
+      libport::Finally finally(scoped_set(innermost_node_, e));
       return e->eval(*this);
     }
-    catch (object::UrbiException& x)
+    catch (object::Exception& x)
     {
       propagate_error_(x, e->location_get());
       throw;

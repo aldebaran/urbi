@@ -6,6 +6,7 @@
 // #define ENABLE_DEBUG_TRACES
 
 #include <libport/compiler.hh>
+#include <libport/finally.hh>
 
 #include <algorithm>
 #include <deque>
@@ -18,14 +19,18 @@
 #include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
+#include <object/global.hh>
 #include <object/tag.hh>
 
+#include <runner/call.hh>
 #include <runner/interpreter.hh>
 
 #include <parser/uparser.hh>
 
 namespace runner
 {
+  using libport::Finally;
+
   // This function takes an expression and attempts to decompose it
   // into a list of identifiers.
   typedef std::deque<libport::Symbol> tag_chain_type;
@@ -101,7 +106,7 @@ namespace runner
     if (connection_tag)
     {
       scheduler::rTag tag =
-	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
+	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)), *this);
       if (!libport::has(tags_get(), tag))
 	apply_tag(tag, 0);
     }
@@ -111,7 +116,7 @@ namespace runner
   }
 
   void
-  Interpreter::show_error_ (object::UrbiException& ue)
+  Interpreter::show_error_ (object::Exception& ue)
   {
     if (ue.was_displayed())
       return;
@@ -123,7 +128,17 @@ namespace runner
   }
 
   void
-  Interpreter::propagate_error_(object::UrbiException& ue, const ast::loc& l)
+  Interpreter::show_exception_ (object::UrbiException& ue)
+  {
+    rObject str = urbi_call(*this, ue.value_get(), SYMBOL(asString));
+    std::ostringstream o;
+    o << "!!! " << str->as<object::String>()->value_get();
+    send_message("error", o.str ());
+    show_backtrace(ue.backtrace_get(), "error");
+  }
+
+  void
+  Interpreter::propagate_error_(object::Exception& ue, const ast::loc& l)
   {
     // Reset the current result: there was an error so whatever value
     // it has, it must not be used.
@@ -146,10 +161,25 @@ namespace runner
       else
 	result_ = apply(lobby_, code_, SYMBOL(task), args_);
     }
-    catch(object::UrbiException& ue)
+    catch (object::Exception& ue)
     {
       show_error_(ue);
       throw;
+    }
+    catch (object::UrbiException& exn)
+    {
+      if (scheduler::rTag fork = fork_point_get())
+      // This runner has a parent, rethrow the exception at fork point
+        fork->stop(scheduler_get(), exn);
+      else
+      // This is a detached runner, show the error.
+      {
+        // Yielding inside a catch is forbidden
+        Finally finally (boost::bind(&Runner::non_interruptible_set,
+                                     this, non_interruptible_get()));
+        non_interruptible_set(true);
+        show_exception_(exn);
+      }
     }
   }
 
@@ -161,7 +191,7 @@ namespace runner
       // Try to evaluate e as a normal expression.
       return operator()(e.get());
     }
-    catch (object::LookupError& ue)
+    catch (object::UrbiException&)
     {
       ECHO("Implicit tag: " << *e);
       // We got a lookup error. It means that we have to automatically
@@ -175,7 +205,7 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      const rObject& toplevel = object::tag_class;
+      const rObject& toplevel = object::Tag::proto;
       rObject parent = toplevel;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
@@ -204,7 +234,7 @@ namespace runner
           args.push_back(parent);
           args.push_back(new object::String(elt));
 	  where =
-	    object::Tag::_new(args);
+	    object::Tag::_new(*this, args);
 	  parent->slot_set(elt, where);
 	  parent = where;
 	}
@@ -242,10 +272,35 @@ namespace runner
     foreach (call_type c, call_stack_)
     {
       std::ostringstream o;
-      o << c.second;
+      if (c.second)
+        o << c.second.get();
       res.push_back(std::make_pair(c.first.name_get(), o.str()));
     }
     return res;
+  }
+
+  object::call_stack_type
+  Interpreter::call_stack_get() const
+  {
+    return call_stack_;
+  }
+
+  void
+  Interpreter::raise(rObject exn, bool skip_last)
+  {
+    if (is_a(exn, object::global_class->slot_get(SYMBOL(Exception))))
+    {
+      std::stringstream o;
+      o << innermost_node_->location_get();
+      exn->slot_update(*this, SYMBOL(location),
+                       new object::String(o.str()));
+      exn->slot_update(*this, SYMBOL(backtrace),
+                       as_task()->as<object::Task>()->backtrace());
+    }
+    call_stack_type bt = call_stack_get();
+    if (skip_last)
+      bt.pop_back();
+    throw object::UrbiException(exn, bt);
   }
 
 } // namespace runner

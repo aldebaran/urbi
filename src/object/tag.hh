@@ -12,8 +12,6 @@
 
 namespace object
 {
-  extern rObject tag_class;
-
   class Tag : public object::CxxObject
   {
   public:
@@ -25,10 +23,10 @@ namespace object
     const value_type& value_get() const;
 
     void block(runner::Runner&, objects_type&);
-    static rTag _new(objects_type&);
+    static rTag _new(runner::Runner&, objects_type&);
     void freeze(runner::Runner&);
     libport::Symbol name();
-    static rTag new_flow_control(objects_type&);
+    static rTag new_flow_control(runner::Runner& r, objects_type&);
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
     void stop(runner::Runner&, objects_type&);
@@ -45,17 +43,22 @@ namespace object
     /// Trigger \a this' leave event
     void triggerLeave(runner::Runner& r);
 
+    /*---------------.
+    | Binding system |
+    `---------------*/
+
     static void initialize(CxxObject::Binder<Tag>& bind);
     static const std::string type_name;
     static bool tag_added;
     virtual std::string type_name_get() const;
+    static rObject proto;
 
   private:
     value_type value_;
   };
 
   const scheduler::rTag&
-  extract_tag(const rObject& o);
+  extract_tag(const rObject& o, runner::Runner& r);
 
 } // namespace object
 

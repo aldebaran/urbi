@@ -21,25 +21,23 @@
 
 namespace object
 {
-  rObject float_class;
-
   Float::Float()
     : value_(0)
   {
-    proto_add(float_class);
+    proto_add(proto);
   }
 
   Float::Float(value_type value)
     : value_(value)
   {
-    proto_add(float_class);
+    proto_add(proto);
   }
 
   Float::Float(const rFloat& model)
     : value_(model->value_get())
   {
     proto_add(model);
-    proto_remove(float_class);
+    proto_remove(proto);
   }
 
   const Float::value_type&
@@ -99,12 +97,12 @@ namespace object
   }
 
   std::string
-  Float::as_string(const rObject& from)
+  Float::as_string(runner::Runner& r, const rObject& from)
   {
-    if (from.get() == float_class.get())
+    if (from == proto)
       return SYMBOL(LT_Float_GT);
     {
-      type_check<Float>(from, SYMBOL(asString));
+      type_check(from, proto, r, SYMBOL(asString), 1);
       float fl = from->as<Float>()->value_get();
       // Do not rely on boost::format to print inf and nan since
       // behavior differs under Win32
@@ -236,27 +234,27 @@ BOUNCE_INT_OP(~)
   }
 
   rFloat
-  Float::plus(objects_type& args)
+  Float::plus(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(PLUS));
+    check_arg_count(r, args.size(), 0, 1);
     if (args.empty())
       return this;
     else
     {
-      type_check<Float>(args[0], SYMBOL(PLUS));
+      type_check(args[0], proto, r, SYMBOL(PLUS), 1);
       return new Float(value_get() + args[0]->as<Float>()->value_get());
     }
   }
 
   rFloat
-  Float::minus(objects_type& args)
+  Float::minus(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE(0, 1, SYMBOL(MINUS));
+    check_arg_count(r, args.size(), 0, 1);
     if (args.empty())
       return new Float(-value_get());
     else
     {
-      type_check<Float>(args[0], SYMBOL(MINUS));
+      type_check(args[0], proto, r, SYMBOL(MINUS), 1);
       return new Float(value_get() - args[0]->as<Float>()->value_get());
     }
   }
@@ -330,8 +328,9 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(trunc), &Float::trunc);
   }
 
-  bool Float::float_added = CxxObject::add<Float>("Float", float_class);
+  bool Float::float_added = CxxObject::add<Float>("Float", Float::proto);
   const std::string Float::type_name = "Float";
+  rObject Float::proto;
   std::string
   Float::type_name_get() const
   {

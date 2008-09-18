@@ -1,0 +1,108 @@
+class Global.Exception
+{
+  var message;
+  var backtrace;
+  var location;
+
+  function init(msg)
+  {
+    message = msg
+  };
+
+  function asString()
+  {
+    var res = message;
+    if (!location.empty)
+      res = "%s: %s" % [location, res];
+    return res;
+  };
+
+  function asPrintable()
+  {
+    "%s `%s'" % [protoName, message]
+  };
+};
+
+class Global.ArityError: Exception
+{
+  var routine;
+  var effective;
+  var minimum;
+  var maximum;
+
+  function init
+  {
+    // FIXME: a range of argument should be handled with a range
+    // object (1..3)
+    var args = call.evalArgs;
+
+    if (args.size not in [3, 4])
+      // Throw
+      {};
+
+    var plural = "";
+
+    routine = args[0];
+    effective = args[1];
+    minimum = args[2];
+
+    switch (args.size)
+    {
+      case 3:
+        if (args[2] > 1)
+          plural = "s";
+        var msg = "%s: Expected %s argument%s, given %s";
+        Exception.getSlot("init").apply
+          ([this, msg % [routine, minimum, plural, effective]]);
+      case 4:
+        maximum = args[3];
+        if (maximum > 1)
+          plural = "s";
+        var msg = "%s: Expected between %s and %s argument%s, given %s";
+        Exception.getSlot("init").apply
+          ([this, msg % [routine, minimum, maximum, plural, effective]]);
+    };
+  }
+};
+
+class Global.TypeError: Exception
+{
+  var expected;
+  var effective;
+
+  function init(exp, eff)
+  {
+    expected = exp;
+    effective = eff;
+    message = "unexpected `%s', expected `%s'" %
+    [eff.protoName, exp.protoName]
+  }
+};
+
+class Global.ArgumentTypeError: TypeError
+{
+  var index;
+  var routine;
+
+  function init(routine, idx, exp, eff)
+  {
+    TypeError.getSlot("init").apply([this, exp, eff]);
+    routine = routine;
+    index = idx;
+    message = "%s: unexpected `%s' for argument %s, expected `%s'" %
+    [routine, eff.protoName, idx, exp.protoName]
+  }
+};
+
+class Global.LookupError: Exception
+{
+  var msg;
+  var obj;
+
+  function init(m, o)
+  {
+    msg = m |
+    obj = o |
+    Exception.getSlot("init").apply([this, "Lookup failed: %s" % [m]])
+  };
+};

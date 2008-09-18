@@ -11,8 +11,6 @@
 
 namespace object
 {
-  extern rObject semaphore_class;
-
   class Semaphore: public CxxObject
   {
   public:
@@ -37,6 +35,7 @@ namespace object
   public:
     static void initialize(CxxObject::Binder<Semaphore>& binder);
     static bool semaphore_added;
+    static rObject proto;
   };
 
 }; // namespace object

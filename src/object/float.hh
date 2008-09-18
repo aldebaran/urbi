@@ -13,8 +13,6 @@
 namespace object
 {
 
-  extern rObject float_class;
-
   class Float: public CxxObject
   {
 
@@ -56,8 +54,8 @@ namespace object
     value_type exp();
     value_type fabs();
     value_type log();
-    rFloat minus(objects_type& args);
-    rFloat plus(objects_type& args);
+    rFloat minus(runner::Runner& r, objects_type& args);
+    rFloat plus(runner::Runner& r, objects_type& args);
     using Object::operator<;
     bool operator <(value_type rhs);
     int operator ~();
@@ -86,7 +84,7 @@ namespace object
 
   public:
 
-    static std::string as_string(const rObject& from);
+    static std::string as_string(runner::Runner&, const rObject& from);
     static value_type inf();
     static value_type nan();
 
@@ -110,6 +108,7 @@ namespace object
     static const std::string type_name;
     static bool float_added;
     virtual std::string type_name_get() const;
+    static rObject proto;
 
   };
 

@@ -11,8 +11,6 @@
 
 namespace object
 {
-  extern rObject list_class;
-
   class List: public object::CxxObject
   {
   public:
@@ -55,9 +53,14 @@ namespace object
   private:
     value_type content_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<List>& binder);
     static bool list_added;
+    static rObject proto;
   };
 
 }; // namespace object

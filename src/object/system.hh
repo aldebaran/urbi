@@ -26,7 +26,7 @@ namespace object
   /// \returns the result of the evaluation.
   rObject
   execute_parsed (runner::Runner& r, parser::parse_result_type p,
-                  libport::Symbol fun, UrbiException e);
+                  libport::Symbol fun, Exception e);
 
   /// Initialize the System class.
   void system_class_initialize ();

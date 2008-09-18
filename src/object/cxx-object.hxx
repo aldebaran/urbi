@@ -27,17 +27,17 @@ namespace object
   namespace
   {
     template <typename T>
-    rObject cxx_object_clone(runner::Runner&, objects_type args)
+    rObject cxx_object_clone(runner::Runner& r, objects_type args)
     {
-      CHECK_ARG_COUNT(1);
+      check_arg_count(r, args.size() - 1, 0);
       rObject tgt = args[0];
       return tgt->is_a<T>() ? new T(tgt->as<T>()) : new T();
     }
 
     template <typename T>
-    rObject cxx_object_id(runner::Runner&, objects_type args)
+    rObject cxx_object_id(runner::Runner& r, objects_type args)
     {
-      CHECK_ARG_COUNT(1);
+      check_arg_count(r, args.size() - 1, 0);
       return args[0];
     }
   }
@@ -90,20 +90,6 @@ namespace object
                                    M method)
   {
     tgt_->slot_set(name, make_primitive(method, name));
-  }
-
-
-  template <typename T>
-  inline void
-  type_check(const rObject& o, const libport::Symbol fun)
-  {
-    libport::shared_ptr<CxxObject> co = o.unsafe_cast<CxxObject>();
-     // FIXME: I can't fill all the source type for now since some old
-     // atoms don't define type_name for now
-    if (!co)
-      throw object::WrongArgumentType(T::type_name, "Object", fun);
-    else if (!o->is_a<T>())
-      throw object::WrongArgumentType(T::type_name, co->type_name_get(), fun);
   }
 
 }

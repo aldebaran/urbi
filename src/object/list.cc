@@ -22,23 +22,21 @@
 
 namespace object
 {
-  rObject list_class;
-
   List::List()
   {
-    proto_add(list_class);
+    proto_add(List::proto);
   }
 
   List::List(const value_type& value)
     : content_(value)
   {
-    proto_add(list_class);
+    proto_add(List::proto);
   }
 
   List::List(const rList& model)
     : content_(model->content_)
   {
-    proto_add(list_class);
+    proto_add(List::proto);
   }
 
   const List::value_type& List::value_get() const
@@ -241,8 +239,8 @@ namespace object
   }
 
   bool List::list_added =
-    CxxObject::add<List>("List", list_class);
+    CxxObject::add<List>("List", List::proto);
   const std::string List::type_name = "List";
-
+  rObject List::proto;
 
 } // namespace object

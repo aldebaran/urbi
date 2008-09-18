@@ -12,8 +12,6 @@
 
 namespace object
 {
-  extern rObject barrier_class;
-
   class Barrier: public CxxObject
   {
   public:
@@ -36,9 +34,14 @@ namespace object
   private:
     value_type value_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<Barrier>& binder);
     static bool barrier_added;
+    static rObject proto;
   };
 
 }; // namespace object

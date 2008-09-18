@@ -33,8 +33,17 @@ namespace object
     )                                                                   \
 
 # define BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3, Self)            \
-  boost::function##ArgsC<IF(Ret, R, void),                              \
-                         Self                                           \
+  boost::function##ArgsC<IF(Ret, R, void)                               \
+                         COMMA(Run) WHEN(Run, runner::Runner&)          \
+                         , Self                                         \
+                         COMMA(Arg1) WHEN(Arg1, A1)                     \
+                         COMMA(Arg2) WHEN(Arg2, A2)                     \
+                         COMMA(Arg3) WHEN(Arg3, A3)                     \
+                         >                                              \
+
+# define BOOST_MET_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3, Self)        \
+  boost::function##ArgsC<IF(Ret, R, void)                               \
+                         , Self                                         \
                          COMMA(Run) WHEN(Run, runner::Runner&)          \
                          COMMA(Arg1) WHEN(Arg1, A1)                     \
                          COMMA(Arg2) WHEN(Arg2, A2)                     \
@@ -53,7 +62,7 @@ namespace object
   <FUN_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3, )>                       \
   {                                                                     \
     typedef BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3,               \
-                       S) type;                                         \
+                           S) type;                                     \
     static type                                                         \
       convert(FUN_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3, v))           \
     {                                                                   \
@@ -75,10 +84,19 @@ namespace object
   {                                                                     \
     typedef BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3,               \
                        libport::shared_ptr<S>) type;                    \
+    typedef BOOST_MET_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3,           \
+                           libport::shared_ptr<S>) met_type;            \
     static type                                                         \
       convert(MET_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3, v))           \
     {                                                                   \
-      return v;                                                         \
+      IF(Run,                                                           \
+         return boost::bind(met_type(v), _2, _1                         \
+                            COMMA(Arg1) WHEN(Arg1, _3)                  \
+                            COMMA(Arg2) WHEN(Arg2, _4)                  \
+                            COMMA(Arg3) WHEN(Arg3, _5)                  \
+           ),                                                           \
+         return type(v)                                                 \
+        );                                                              \
     }                                                                   \
   };                                                                    \
 

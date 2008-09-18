@@ -22,6 +22,7 @@
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -84,7 +85,7 @@ namespace object
   {
     rObject r = slot_locate(k, true, value);
     if (!r)
-      throw LookupError(k);
+      runner::raise_lookup_error(k, const_cast<Object*>(this));
     return iassertion(r);
   }
 
@@ -290,7 +291,7 @@ namespace object
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
     rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
-    type_check<String>(data, SYMBOL(id_dump));
+    type_check(data, String::proto, r, SYMBOL(id_dump));
     return o << data->as<String>()->value_get();
   }
 
@@ -351,14 +352,14 @@ namespace object
     try
     {
       rObject s = urbi_call(runner, const_cast<Object*>(this), SYMBOL(asString));
-      type_check<String>(s, SYMBOL(print));
+      type_check(s, String::proto, runner, SYMBOL(print));
       o << s->as<String>()->value_get();
       return o;
     }
     // Check if asString was found, especially for bootstrap: asString
     // is implemented in urbi/urbi.u, but print is called to show
     // result in the toplevel before its definition.
-    catch (LookupError&)
+    catch (UrbiException&)
     {
       // If no asString method is supplied, print the unique id
       return o << std::hex << this;

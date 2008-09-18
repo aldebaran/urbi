@@ -10,8 +10,6 @@
 
 namespace object
 {
-  extern rObject string_class;
-
   class String: public CxxObject
   {
   public:
@@ -49,6 +47,8 @@ namespace object
 
     static const std::string type_name;
     virtual std::string type_name_get() const;
+    static rObject proto;
+
 
   private:
     value_type content_;
@@ -62,8 +62,8 @@ namespace object
   };
 
   // Urbi functions
-  std::string as_string(rObject from);
-  std::string as_printable(rObject from);
+  std::string as_string(runner::Runner& r, rObject from);
+  std::string as_printable(runner::Runner& r, rObject from);
 
 }; // namespace object
 

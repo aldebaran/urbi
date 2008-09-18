@@ -13,12 +13,10 @@
 
 namespace object
 {
-  rObject lobby_class;
-
   Lobby::Lobby(value_type value)
     : state_(value)
   {
-    proto_add(lobby_class);
+    proto_add(proto);
   }
 
   static UConnection* dummy = 0;
@@ -48,9 +46,9 @@ namespace object
   }
 
   void
-  Lobby::send(objects_type& args)
+  Lobby::send(runner::Runner& r, objects_type& args)
   {
-    CHECK_ARG_COUNT_RANGE (1, 2, SYMBOL(send));
+    check_arg_count(r, args.size(), 1, 2);
     // Second argument is the tag name.
     std::string tag;
     if (args.size() == 2)
@@ -89,7 +87,9 @@ namespace object
   }
 
   bool Lobby::lobby_added =
-    CxxObject::add<Lobby>("Lobby", lobby_class);
+    CxxObject::add<Lobby>("Lobby", Lobby::proto);
   const std::string Lobby::type_name = "Lobby";
+  rObject Lobby::proto;
+
 
 }; // namespace object

@@ -107,6 +107,13 @@ namespace runner
     /// terminated.
     rObject as_task();
 
+    virtual void raise(rObject exn, bool skip_last = false)
+      __attribute__ ((noreturn)) = 0;
+    virtual libport::Symbol innermost_call_get() const = 0;
+
+    scheduler::rTag fork_point_get() const;
+    void fork_point_set(scheduler::rTag fork);
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -147,6 +154,7 @@ namespace runner
     /// The runner seen as an Urbi Task.
     object::rTask task_;
 
+    scheduler::rTag fork_point_;
   };
 
 } // namespace runner

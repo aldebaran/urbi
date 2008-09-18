@@ -11,23 +11,21 @@
 
 namespace object
 {
-  rObject dictionary_class;
-
   Dictionary::Dictionary()
   {
-    proto_add(dictionary_class);
+    proto_add(proto);
   }
 
   Dictionary::Dictionary(const value_type& value)
     : content_(value)
   {
-    proto_add(dictionary_class);
+    proto_add(proto);
   }
 
   Dictionary::Dictionary(rDictionary model)
     : content_(model->content_)
   {
-    proto_add(dictionary_class);
+    proto_add(proto);
   }
 
   const Dictionary::value_type&
@@ -110,6 +108,7 @@ namespace object
   }
 
   bool Dictionary::dictionary_added =
-    CxxObject::add<Dictionary>("Dictionary", dictionary_class);
+    CxxObject::add<Dictionary>("Dictionary", Dictionary::proto);
   const std::string Dictionary::type_name = "Dictionary";
+  rObject Dictionary::proto;
 }

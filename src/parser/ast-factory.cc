@@ -233,36 +233,31 @@ namespace parser
 
 
   /// Build a for loop.
-  // Since we don't have "continue", for is really a sugared
-  // while:
-  //
-  // "for OP ( INIT; TEST; INC ) BODY"
-  //
-  // ->
-  //
-  // "{ INIT OP WHILE OP (TEST) { BODY | INC } }"
-  //
-  // OP is either ";" or "|".
+  // The increment is included directly in the condition to make sure
+  // it is executed on `continue'.
   ast::rExp
-  ast_for (const yy::location& l, ast::flavor_type op,
+  ast_for (const yy::location&, ast::flavor_type,
            ast::rExp init, ast::rExp test, ast::rExp inc,
            ast::rExp body)
   {
-    passert(op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
-    assert(init);
-    assert(test);
-    assert(inc);
-    assert(body);
+    // FIXME: for| is handled as a simple for
+    static ParametricAst desugar(
 
-    // BODY | INC.
-    ast::rExp loop_body = ast_bin(l, ast::flavor_pipe, body, inc);
+      "{"
+      "  %exp:1 |"
+      "  var '$tmp-for-first' = true |"
+      "  while ({ if ('$tmp-for-first') '$tmp-for-first' = false else %exp:2 | %exp:3})"
+      "    %exp:4 |"
+      "}"
+      );
 
-    // WHILE OP (TEST) { BODY | INC }.
-    ast::While *while_loop =
-      new ast::While(l, op, test, ast_scope(l, loop_body));
+    desugar
+      % init
+      % inc
+      % test
+      % body;
 
-    // { INIT OP WHILE OP (TEST) { BODY | INC } }.
-    return ast_scope(l, ast_bin(l, op, init, while_loop));
+    return exp(desugar);
   }
 
   /// Return \a e in a ast::Scope unless it is already one.
@@ -290,12 +285,13 @@ namespace parser
   }
 
   ast::rExp
-  ast_switch(const yy::location& l, ast::rExp cond, const cases_type& cases)
+  ast_switch(const yy::location& l, ast::rExp cond,
+             const cases_type& cases, ast::rExp def)
   {
     (void) l;
 
     static ast::ParametricAst nil("nil");
-    ast::rExp inner = exp(nil);
+    ast::rExp inner = def ? def : exp(nil);
     rforeach (const case_type& c, cases)
     {
       static ast::ParametricAst a(

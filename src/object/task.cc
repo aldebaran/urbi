@@ -20,24 +20,23 @@
 
 namespace object
 {
-  rObject task_class;
-
   Task::Task()
     : value_(0)
   {
-    proto_add(task_class);
+    proto_add(Task::proto);
   }
 
   Task::Task(const value_type& value)
     : value_(value)
   {
-    proto_add(task_class);
+    proto_add(Task::proto);
+    slot_set(SYMBOL(exceptionHandlerTag), nil_class);
   }
 
   Task::Task(rTask model)
     : value_(model->value_)
   {
-    proto_add(tag_class);
+    proto_add(Tag::proto);
   }
 
   const Task::value_type&
@@ -160,10 +159,12 @@ namespace object
     bind(SYMBOL(waitForTermination), &Task::waitForTermination);
   }
 
-  bool Task::task_added = CxxObject::add<Task>("Task", task_class);
+  bool Task::task_added = CxxObject::add<Task>("Task", Task::proto);
   const std::string Task::type_name = "Task";
   std::string Task::type_name_get() const
   {
     return type_name;
   }
+
+  rObject Task::proto;
 }; // namespace object

@@ -12,8 +12,6 @@
 
 namespace object
 {
-  extern rObject lobby_class;
-
   class Lobby: public CxxObject
   {
   public:
@@ -23,7 +21,7 @@ namespace object
     Lobby(rLobby model);
     Lobby(value_type value);
 
-    void send(objects_type& args);
+    void send(runner::Runner& r, objects_type& args);
     void write(const std::string& data);
     value_type& value_get();
     const value_type& value_get() const;
@@ -34,10 +32,14 @@ namespace object
   private:
     value_type state_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<Lobby>& binder);
     static bool lobby_added;
-
+    static rObject proto;
   };
 }; // namespace object
 

@@ -1,6 +1,6 @@
 /**
  ** \file object/urbi-exception.hxx
- ** \brief Implementation of UrbiException
+ ** \brief Implementation of Exception
  */
 
 #ifndef OBJECT_URBI_EXCEPTION_HXX
@@ -12,15 +12,8 @@ namespace object
 {
 
   inline
-  LookupError::LookupError (libport::Symbol slot)
-    : UrbiException ((boost::format ("lookup failed: %1%")
-		      % slot.name_get()).str())
-  {
-  }
-
-  inline
   RedefinitionError::RedefinitionError (libport::Symbol slot)
-    : UrbiException ((boost::format ("slot redefinition: %1%")
+    : Exception ((boost::format ("slot redefinition: %1%")
 		      % slot.name_get()).str())
   {
   }
@@ -28,13 +21,13 @@ namespace object
   inline
   PrimitiveError::PrimitiveError (const libport::Symbol primitive,
 				  const std::string& msg)
-    : UrbiException(msg, primitive)
+    : Exception(msg, primitive)
   {
   }
 
   inline
   StackExhaustedError::StackExhaustedError(const std::string& msg)
-    : UrbiException(msg)
+    : Exception(msg)
   {
   }
 
@@ -42,7 +35,7 @@ namespace object
   WrongArgumentType::WrongArgumentType(const std::string& formal,
                                        const std::string& effective,
                                        const libport::Symbol fun)
-    : UrbiException (std::string("unexpected argument type `")
+    : Exception (std::string("unexpected argument type `")
 		     + effective + "', expected `"
 		     + formal + '\'',
 		     fun)
@@ -51,7 +44,7 @@ namespace object
 
   inline
   WrongArgumentType::WrongArgumentType (const libport::Symbol fun)
-    : UrbiException("unexpected void", fun)
+    : Exception("unexpected void", fun)
   {
   }
 
@@ -59,7 +52,7 @@ namespace object
   WrongArgumentCount::WrongArgumentCount(unsigned formal,
                                          unsigned effective,
                                          const libport::Symbol fun)
-    : UrbiException((boost::format ("expected %1% arguments, given %2%")
+    : Exception((boost::format ("expected %1% arguments, given %2%")
 		      % (formal)
 		      % (effective)).str (),
 		     fun)
@@ -71,7 +64,7 @@ namespace object
                                          unsigned maxformal,
                                          unsigned effective,
                                          const libport::Symbol fun)
-    : UrbiException((boost::format("expected between %1% and %2% arguments, "
+    : Exception((boost::format("expected between %1% and %2% arguments, "
                                    "given %3%")
                      % minformal
                      % maxformal
@@ -83,7 +76,7 @@ namespace object
   inline
   BadInteger::BadInteger(libport::ufloat effective, const libport::Symbol fun,
 			 std::string fmt)
-    : UrbiException((boost::format(fmt)
+    : Exception((boost::format(fmt)
                      % effective).str(),
                     fun)
   {
@@ -91,54 +84,36 @@ namespace object
 
   inline
   ImplicitTagComponentError::ImplicitTagComponentError(const ast::loc& l)
-    : UrbiException("illegal component for implicit tag", l)
+    : Exception("illegal component for implicit tag", l)
   {
   }
 
   inline
   SchedulingError::SchedulingError(const std::string& msg)
-    : UrbiException(msg)
+    : Exception(msg)
   {
   }
 
   inline
   InternalError::InternalError(const std::string& msg)
-    : UrbiException(msg)
+    : Exception(msg)
   {
   }
 
   inline
   ParserError::ParserError(const ast::loc& loc, const std::string& msg)
-    : UrbiException(msg, loc)
+    : Exception(msg, loc)
   {
-  }
-
-  inline
-  void
-  check_arg_count(unsigned formal, unsigned effective,
-                  const libport::Symbol fun)
-  {
-    if (formal != effective)
-      throw WrongArgumentCount(formal, effective, fun);
-  }
-
-  inline
-  void
-  check_arg_count(unsigned minformal, unsigned maxformal,
-                  unsigned effective, const libport::Symbol fun)
-  {
-    if (effective < minformal || maxformal < effective)
-      throw WrongArgumentCount(minformal, maxformal, effective, fun);
   }
 
   inline bool
-  UrbiException::was_displayed() const
+  Exception::was_displayed() const
   {
     return displayed_;
   }
 
   inline void
-  UrbiException::set_displayed()
+  Exception::set_displayed()
   {
     displayed_ = true;
   }

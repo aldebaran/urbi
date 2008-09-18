@@ -14,7 +14,6 @@
 #include <object/list.hh>
 #include <object/lobby.hh>
 #include <object/object.hh>
-#include <object/object.hh>
 #include <object/path.hh>
 #include <object/primitive.hh>
 #include <object/root-classes.hh>
@@ -84,29 +83,25 @@ namespace object
   bool root_classes_initialized = false;
 
   static rObject
-  id(runner::Runner&, objects_type args)
+  id(runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT (1);
+    check_arg_count(r, args.size() - 1, 0);
     return args.front();
   }
 
   template <typename T>
   static rObject
-  compare(runner::Runner&, objects_type args)
+  compare(runner::Runner& r, objects_type args)
   {
-    CHECK_ARG_COUNT(2);
-    type_check<T>(args[0], SYMBOL(compare));
+    check_arg_count(r, args.size() - 1, 1);
+    type_check(args[0], T::proto, r, SYMBOL(compare));
     libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
-    try
-    {
-      type_check<T>(args[1], SYMBOL(compare));
-    }
-    catch (WrongArgumentType&)
-    {
-      // Comparing two atoms with different types isn't an error, it
-      // just return false
+
+    // Comparing two atoms with different types isn't an error, it
+    // just return false
+    if (!is_a(args[1], T::proto))
       return to_boolean(false);
-    }
+
     libport::shared_ptr<T> arg1 = args[1]->as<T>();
     return to_boolean(arg0->value_get() == arg1->value_get());
   }
@@ -209,7 +204,7 @@ namespace object
 // This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
 // false atoms
 #define COMPARABLE(What, Name)		\
-    What ## _class->slot_set(SYMBOL(sameAs), new Primitive(&compare<Name>));
+    Name::proto->slot_set(SYMBOL(sameAs), new Primitive(&compare<Name>));
 
     COMPARABLE(float,     Float);
     COMPARABLE(string,    String);
@@ -245,24 +240,24 @@ namespace object
   void
   cleanup_existing_objects()
   {
-    cleanup_object(barrier_class);
-    cleanup_object(code_class);
-    cleanup_object(dictionary_class);
+    cleanup_object(Barrier::proto);
+    cleanup_object(Code::proto);
+    cleanup_object(Dictionary::proto);
     cleanup_object(false_class);
-    cleanup_object(float_class);
+    cleanup_object(Float::proto);
     cleanup_object(global_class);
-    cleanup_object(lobby_class);
-    cleanup_object(object_class);
-    cleanup_object(primitive_class);
-    cleanup_object(semaphore_class);
-    cleanup_object(string_class);
+    cleanup_object(Lobby::proto);
+    cleanup_object(object_class); // FIXME
+    cleanup_object(Primitive::proto);
+    cleanup_object(Semaphore::proto);
+    cleanup_object(String::proto);
     cleanup_object(system_class);
-    cleanup_object(tag_class);
-    cleanup_object(task_class);
+    cleanup_object(Tag::proto);
+    cleanup_object(Task::proto);
     cleanup_object(true_class);
     cleanup_object(void_class);
     // List must be last, because it is used in cleanup_object.
-    cleanup_object(list_class);
+    cleanup_object(List::proto);
   }
 
   /*--------.
@@ -271,9 +266,9 @@ namespace object
   namespace
   {
     static rObject
-    void_class_acceptVoid(runner::Runner&, objects_type args)
+    void_class_acceptVoid(runner::Runner& r, objects_type args)
     {
-      CHECK_ARG_COUNT(1);
+      check_arg_count(r, args.size() - 1, 0);
 
       return accepted_void_class;
     }

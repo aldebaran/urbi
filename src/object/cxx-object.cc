@@ -1,4 +1,8 @@
+#include <object/global.hh>
 #include <object/cxx-object.hh>
+
+#include <runner/call.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -41,4 +45,36 @@ namespace object
     foreach (Initializer* init, initializers_get())
       delete init;
   }
+
+  void
+  type_check(const rObject& o, const rObject& exp,
+             runner::Runner& r, const libport::Symbol,
+             boost::optional<unsigned> idx)
+  {
+    assert(o);
+    assert(exp);
+    if (!is_a(o, exp))
+    {
+      if (idx)
+        runner::raise_argument_type_error(idx.get(), o, exp);
+      else
+        r.raise(urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
+                          SYMBOL(new), exp, o));
+    }
+  }
+
+  void check_arg_count (runner::Runner&,
+                        unsigned effective, unsigned formal)
+  {
+    if (formal != effective)
+      runner::raise_arity_error(effective, formal);
+  }
+
+  void check_arg_count (runner::Runner&,
+                        unsigned effective, unsigned min, unsigned max)
+  {
+    if (effective < min || effective > max)
+      runner::raise_arity_error(effective, min, max);
+  }
+
 }

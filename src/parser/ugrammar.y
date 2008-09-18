@@ -26,6 +26,7 @@
 #include <libport/pod-cast.hh>
 #include <list>
 #include <kernel/fwd.hh>
+#include <ast/catches-type.hh>
 #include <ast/fwd.hh>
 #include <ast/exps-type.hh>
 #include <ast/symbols-type.hh>
@@ -168,9 +169,11 @@
         EQ           "="
         BREAK        "break"
         CASE         "case"
+        CATCH        "catch"
         CLOSURE      "closure"
         CONTINUE     "continue"
         COLON        ":"
+        DEFAULT       "default"
         DELETE       "delete"
         ELSE         "else"
         EMIT         "emit"
@@ -193,8 +196,10 @@
         RPAREN       ")"
         STOPIF       "stopif"
         SWITCH       "switch"
+        THROW        "throw"
         TILDA        "~"
         TIMEOUT      "timeout"
+        TRY          "try"
         VAR          "var"
         WAITUNTIL    "waituntil"
         WHENEVER     "whenever"
@@ -841,7 +846,11 @@ stmt:
     }
 | "switch" "(" exp ")" "{" cases "}"
     {
-      $$ = ast_switch(@3, $3, $6);
+      $$ = ast_switch(@3, $3, $6, 0);
+    }
+| "switch" "(" exp ")" "{" cases "default" ":" stmts "}"
+    {
+      $$ = ast_switch(@3, $3, $6, $9);
     }
 | "timeout" "(" exp ")" stmt
     {
@@ -944,6 +953,47 @@ cases:
 
 case:
   "case" exp ":" stmts  {  $$ = ::parser::case_type($2, $4); }
+;
+
+/*-------------.
+| Exceptions.  |
+`-------------*/
+
+%type <ast::catches_type> catches;
+catches:
+  /* empty */ { $$ = ast::catches_type(); }
+| catches catch { std::swap($$, $1); $$.push_back($2); }
+;
+
+%type <ast::rCatch> catch;
+catch:
+  "catch" "(" exp "identifier" ")" block
+  {
+    $$ = new ast::Catch(@$, $4, $3, $6);
+  }
+| "catch" "(" "var" "identifier" ")" block
+  {
+    $$ = new ast::Catch(@$, $4, 0, $6);
+  }
+| "catch" "(" exp ")" block
+  {
+    $$ = new ast::Catch(@$, SYMBOL(), $3, $5);
+  }
+| "catch" block
+  {
+    $$ = new ast::Catch(@$, SYMBOL(), 0, $2);
+  }
+;
+
+stmt:
+  "try" block catches
+  {
+    $$ = new ast::Try(@$, $2, $3);
+  }
+| "throw" exp
+  {
+    $$ = new ast::Throw(@$, $2);
+  }
 ;
 
 /*--------.

@@ -481,6 +481,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "class"         RETURN(CLASS);
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
+"default"       RETURN(DEFAULT);
 "delete"        RETURN(DELETE);
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
@@ -584,14 +585,16 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "protected"     RETURN(PROTECTED);
 "public"        RETURN(PUBLIC);
 
+"catch"         RETURN(CATCH);
+"throw"         RETURN(THROW);
+"try"           RETURN(TRY);
+
 "asm"              |
 "auto"             |
 "bool"             |
-"catch"            |
 "char"             |
 "const"            |
 "const_cast"       |
-"default"          |
 "double"           |
 "dynamic_cast"     |
 "enum"             |
@@ -614,8 +617,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "static_cast"      |
 "struct"           |
 "template"         |
-"throw"            |
-"try"              |
 "typedef"          |
 "typeid"           |
 "typename"         |

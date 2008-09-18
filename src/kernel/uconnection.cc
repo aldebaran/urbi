@@ -78,7 +78,7 @@ UConnection::UConnection(UServer& server, size_t packetSize)
 
 UConnection::~UConnection()
 {
-  extract_tag(lobby_->slot_get(SYMBOL(connectionTag)))
+  lobby_->slot_get(SYMBOL(connectionTag))->as<object::Tag>()->value_get()
     ->stop(server_.getScheduler(), object::void_class);
   shell_->terminate_now();
 }
@@ -277,7 +277,7 @@ UConnection::send(object::rObject result, const char* tag, const char* p)
   {
     result = urbi_call(r, result, SYMBOL(asToplevelPrintable));
   }
-  catch (object::LookupError&)
+  catch (object::UrbiException&)
   {
     // nothing
   }

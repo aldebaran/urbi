@@ -36,6 +36,7 @@ atomic_types:
 # from the name of the type.  Below are the exceptions.
 includes_map:
   "local_declarations_type":    '<ast/local-declarations-type.hh>'
+  "catches_type":               '<ast/catches-type.hh>'
   "exps_type":                  '<ast/exps-type.hh>'
   "flavor_type":                '<ast/flavor.hh>'
   "libport::RefCounted":        '<libport/ref-counted.hh>'
@@ -59,6 +60,7 @@ non_visitable_types:
 
 # In the cloner, these require "recurse_collection".
 collections:
+  - "catches_type"
   - "exps_type"
   - "local_declarations_type"
   - "symbols_type"
@@ -1261,6 +1263,72 @@ Emit:
             operator()(duration.get());
           }
         }'
+
+Try:
+  super: Exp
+  attributes:
+    - body:
+        type: rNary
+        desc: The code to protect against an exception
+    - handlers:
+        type: catches_type
+        desc: The exception handlers
+  printer:
+    - '"try {"'
+    - 'libport::incendl'
+    - ~body
+    - 'libport::decendl'
+    - '"}"'
+    - '{
+         foreach(const ast::rConstExp& e, n->handlers_get())
+         {
+           ostr_ << libport::iendl;
+           operator()(e.get());
+         }
+       }'
+
+Catch:
+  super: Exp
+  attributes:
+    - name:
+        type: libport::Symbol
+        desc: The local name of the exception
+    - match:
+        type: rExp
+        desc: The prototype to match if present
+        mandatory: False
+    - body:
+        type: rNary
+        desc: The handler to execute if we have a match
+    - declaration:
+        type: rLocalDeclaration
+        access: rW
+        init: '0'
+  printer:
+    - '"catch ("'
+    - '{
+         if (rConstExp m = n->match_get())
+         {
+           operator()(m.get());
+           ostr_ << " ";
+         }
+       }'
+    - $name
+    - '") {"'
+    - 'libport::incendl'
+    - ~body
+    - 'libport::decendl'
+    - '"}"'
+
+Throw:
+  super: Exp
+  attributes:
+    - value:
+        type: rExp
+        desc: The value to throw
+  printer:
+    - '"throw "'
+    - ~value
 
 # Local Variables:
 # mode: yaml

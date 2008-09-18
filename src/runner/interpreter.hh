@@ -169,14 +169,26 @@ namespace runner
 
     virtual void show_backtrace(const std::string& chan);
     virtual backtrace_type backtrace_get() const;
+    object::call_stack_type call_stack_get() const;
+
+    /// Throw an excpetion.
+    /**
+     * \param exn Value to throw
+     * \param skip_last Skip last call when reporting the backtrace
+     */
+    virtual void raise(rObject exn, bool skip_last = false)
+      __attribute__ ((noreturn));
+
+    virtual libport::Symbol innermost_call_get() const;
 
   protected:
-    void show_error_ (object::UrbiException& ue);
+    void show_error_ (object::Exception& e);
+    void show_exception_ (object::UrbiException& ue);
 
   private:
     void init();
     /// Reset result_, set the location and call stack of ue.
-    void propagate_error_(object::UrbiException& ue, const ast::loc& l);
+    void propagate_error_(object::Exception& ue, const ast::loc& l);
     rObject apply_urbi (const rObject& target,
                         const rCode& function,
 			const libport::Symbol& msg,
@@ -199,14 +211,16 @@ namespace runner
     rObject result_;
 
     /// The call stack.
-    typedef object::UrbiException::call_stack_type call_stack_type;
-    typedef object::UrbiException::call_type call_type;
+    typedef object::call_stack_type call_stack_type;
+    typedef object::call_type call_type;
     call_stack_type call_stack_;
     void show_backtrace(const call_stack_type& bt,
                         const std::string& chan);
 
     /// The local variable stacks
     Stacks stacks_;
+
+    const ast::Ast* innermost_node_;
   };
 
 } // namespace runner
