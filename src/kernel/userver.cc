@@ -29,7 +29,7 @@
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
-#include <kernelconfig.h>
+#include <kernel/config.h>
 
 #include <urbi/uobject.hh>
 #include <urbi/usystem.hh>

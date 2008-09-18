@@ -20,7 +20,7 @@
 
 %code requires // Output in ugrammar.hh.
 {
-#include <kernelconfig.h> // YYDEBUG.
+#include <kernel/config.h> // YYDEBUG.
 
 #include <libport/hash.hh>
 #include <libport/pod-cast.hh>

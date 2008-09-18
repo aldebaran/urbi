@@ -6,7 +6,7 @@
 
 #include <libport/package-info.hh>
 
-#include <kernelconfig.h>
+#include <kernel/config.h>
 #include <version.hh>
 #include <kernel/ubanner.hh>
 

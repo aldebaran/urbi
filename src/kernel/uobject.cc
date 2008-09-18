@@ -9,7 +9,7 @@
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
 
-#include <kernelconfig.h>
+#include <kernel/config.h>
 
 #if WITH_LTDL
 #include <ltdl.h>
