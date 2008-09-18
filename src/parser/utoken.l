@@ -224,14 +224,6 @@ do {                                            \
   yytext[1] = 0;                                \
   RETURN_OP(Token);
 
-// UnitLength is the number of letters used for the unit.
-#define RETURN_DURATION(UnitLength, Scale)                              \
-  {                                                                     \
-    PRE_SKIP();                                                         \
-    yytext[yyleng - UnitLength] = 0;                                    \
-    RETURN_VALUE(DURATION, boost::lexical_cast<float>(yytext) * (Scale)); \
-  }
-
 #define RETURN_FLAVORED_KEYWORD(Token)                  \
   {                                                     \
     PRE_SKIP();                                         \
@@ -420,12 +412,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "+bg"         RETURN_VALUE(FLAG, 10);
 "+freeze"     RETURN_VALUE(FLAG, 11);
 "+stop"       RETURN_VALUE(FLAG, 12);
-
-{NUMBER}"d"   RETURN_DURATION(1, 60*60*24);
-{NUMBER}"h"   RETURN_DURATION(1, 60*60);
-{NUMBER}"m"   RETURN_DURATION(1, 60);
-{NUMBER}"s"   RETURN_DURATION(1, 1);
-{NUMBER}"ms"  RETURN_DURATION(2, 0.001);
 
 {NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<int>  (*up, loc, yytext));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<float>(*up, loc, yytext));

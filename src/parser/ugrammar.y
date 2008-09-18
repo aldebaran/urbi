@@ -307,6 +307,8 @@
 // ! ~ ++ -- - (type) * & sizeof   right to left
 // () [] -> .                      left to right
 
+%precedence WEAKEST;
+
  /*
    ! < ( so that !m(x) be read as !(m(x)).
  */
@@ -1099,14 +1101,13 @@ exp:
         FLAG       "flag";
 %type <ast::rExp> exp_integer;
 exp_integer:
-  "integer"  { $$ = new ast::Float(@$, $1); }
+  "integer"   { $$ = new ast::Float(@$, $1); }
 ;
 
 
 %printer { debug_stream() << $$; } <float>;
 %token <float>
-        FLOAT      "float"
-        DURATION   "duration";
+	FLOAT      "float";
 %type <ast::rExp> exp_float;
 exp_float:
   "float"  { $$ = new ast::Float(@$, $1); }
@@ -1114,13 +1115,43 @@ exp_float:
 
 
 /*-----------.
-| Duration.  |
+| Quantity.  |
 `-----------*/
 
-%type <float> duration;
-duration:
-  "duration"          { std::swap($$, $1);  }
-| duration "duration" { $$ += $2; }
+// There is a very fishy S/R conflict here that I do not understand,
+// and I am not willing to spend too much time on it.  I believe it's
+// a "mysterious conflict", so it does not deserve attention.
+// Fortunately, the conflict is as follows:
+//
+// state 31
+//
+//  104 exp_integer -> "integer" .  ["end of command", "case", ":",
+//                                  "else", "in", "{", "[", "onleave",
+//                                  ".", "}", "]", ")", "~", ",", ";",
+//                                  "&", "|", "identifier", "flag",
+//                                  "!", "bitand", "bitor", "^", ">>",
+//                                  "<<", "-", "%", "+", "/", "*",
+//                                  "**", "=~=", "==", "===", ">=",
+//                                  ">", "<=", "<", "!=", "!==", "%=",
+//                                  "~=", "&&", "||"]
+//
+//  106 quantity -> "integer" . "identifier"
+//
+//    "identifier"  shift, and go to state 106
+//
+//    "identifier"  [reduce using rule 104 (exp_integer)]
+//    $default      reduce using rule 104 (exp_integer)
+//
+// So we clearly want "identifier" win over rule 104, which is
+// given the "WEAKEST" precendence,
+%type <ast::rExp> quantity quantities;
+quantity:
+  exp_integer identifier_as_string  { $$ = ast_call(@$, $1, SYMBOL(unit), $2); }
+;
+
+quantities:
+  quantity              { std::swap($$, $1); }
+| quantities quantity   { $$ = ast_call(@$, $1, SYMBOL(PLUS), $2); }
 ;
 
 
@@ -1129,11 +1160,11 @@ duration:
 `-----------*/
 
 exp:
-  exp_integer    { std::swap($$, $1);  }
-| exp_float      { std::swap($$, $1);  }
-| duration       { $$ = new ast::Float(@$, $1);  }
-| "string"       { $$ = new ast::String(@$, $1); }
-| "[" exps "]"   { $$ = new ast::List(@$, $2); }
+  exp_integer  %prec WEAKEST   { std::swap($$, $1);  }
+| exp_float                    { std::swap($$, $1);  }
+| quantities                   { $$ = new ast::Float(@$, $1);  }
+| "string"                     { $$ = new ast::String(@$, $1); }
+| "[" exps "]"                 { $$ = new ast::List(@$, $2); }
 ;
 
 
