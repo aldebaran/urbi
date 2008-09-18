@@ -1062,8 +1062,8 @@ in_or_colon: "in" | ":";
 %token DO "do";
 
 exp:
-	   block  { $$ = ast_scope(@$, 0, $1); }
-| "do" exp block  { $$ = ast_scope(@$, $2, $3); }
+	           block  { $$ = ast_scope(@$, 0, $1);  }
+| "do" "(" exp ")" block  { $$ = ast_scope(@$, $3, $5); }
 ;
 
 /*---------------------------.

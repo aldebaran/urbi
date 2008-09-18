@@ -11,7 +11,7 @@ function Global.UpdateHookStack (name, value)
   return res;
 };
 
-do getSlot("UpdateHookStack")
+do (getSlot("UpdateHookStack"))
 {
   var hooks = [];
 

@@ -14,7 +14,7 @@ function false.'&&' { false };
 function false.'||'(a) { a };
 var false.'!' = true;
 
-do Object
+do (Object)
 {
   function '&&'
   {

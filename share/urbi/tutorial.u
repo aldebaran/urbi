@@ -1,5 +1,5 @@
 class Global.Tutorial {};
-do Global.Tutorial
+do (Global.Tutorial)
 {
   // Don't use the topLevel channel, since it quotes the \n and so on.
   class channel : Channel

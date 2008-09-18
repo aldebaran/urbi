@@ -147,7 +147,8 @@ class Object.uvar
       call.getSlot("code").accessor
     } |
     ret.addProto(this) |
-    do ret {
+    do (ret)
+    {
       var change = [] |
       var changeOwned = [] |
       var access = [] |

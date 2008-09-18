@@ -2,7 +2,7 @@
 | Float.  |
 `--------*/
 
-do Float
+do (Float)
 {
   // The connectives == and < are builtins.
   //

@@ -1,4 +1,4 @@
-do Global.Dictionary
+do (Global.Dictionary)
 {
   /// Dictionary.init(KEY1, VAL1, ...).
   // FIXME: throw on invalid arg number.

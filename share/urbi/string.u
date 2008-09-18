@@ -2,7 +2,7 @@
 | String.  |
 `---------*/
 
-do String
+do (String)
 {
   // The connectives == and < are builtins.
   //

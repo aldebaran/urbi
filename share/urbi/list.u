@@ -2,7 +2,7 @@
 | List.  |
 `-------*/
 
-do List
+do (List)
 {
   // Whether e is in the list.
   function has(e)

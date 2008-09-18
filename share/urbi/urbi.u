@@ -27,7 +27,7 @@ Global.addProto (Global.Tag);
 | Object.  |
 `---------*/
 
-do Object
+do (Object)
 {
   // Cannot use "from" which is a k1 reserved word.
   function copySlot (frm, to)
@@ -87,7 +87,7 @@ do Object
 | Global.  |
 `---------*/
 
-do Global
+do (Global)
 {
   // Import the primitives.
   addProto(System);
@@ -146,7 +146,7 @@ load("urbi/singleton.u");
 // FIXME: Can't do this in urbi
 // void.addProto(Singleton);
 
-do Object
+do (Object)
 {
   var isVoid = false;
   function acceptVoid ()
@@ -171,7 +171,7 @@ load("urbi/boolean.u");
 | nil.  |
 `------*/
 
-do nil
+do (nil)
 {
   // Singleton derives from Object.
   setProtos([Singleton]);
@@ -181,7 +181,7 @@ do nil
   var asToplevelPrintable = nil;
 };
 
-do Object
+do (Object)
 {
   function isNil()
   {
@@ -193,7 +193,7 @@ do Object
 | Method function wrappers.  |
 `---------------------------*/
 
-do Global
+do (Global)
 {
   // Make a function f from a method m, so as f(a, b, c) is equivalent
   // to a.m(b, c)
@@ -266,7 +266,7 @@ load("urbi/string.u");
 | Printing.  |
 `-----------*/
 
-do Object
+do (Object)
 {
   function isProto ()
   {
@@ -307,7 +307,7 @@ do Object
   };
 };
 
-do Object
+do (Object)
 {
   function bounce_named (fn)
   {
@@ -322,7 +322,7 @@ do Object
   };
 };
 
-do Object
+do (Object)
 {
   var tasks = [];
 
@@ -342,7 +342,7 @@ load("urbi/k1.u");
 | Conversions.  |
 `--------------*/
 
-do Object
+do (Object)
 {
   function as(type)
   {
