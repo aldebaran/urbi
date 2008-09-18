@@ -30,4 +30,6 @@ urbi-specs.pdf: urbi-specs.sty $(wildcard *.tex)
 URBI_CONSOLE = urbi-console
 
 check:
-	URBI_CONSOLE=$(URBI_CONSOLE) ../check.py lang.tex
+	for f in $(wildcard *.tex); do				\
+		URBI_CONSOLE=$(URBI_CONSOLE) ../check.py $$f;	\
+	done
