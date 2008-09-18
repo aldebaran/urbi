@@ -44,42 +44,42 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 `--------------------*/
 
 // Skip the spaces in yytext.
-# define SKIP_SPACES()				\
+# define SKIP_SPACES()                          \
   while (isspace(*yytext))                      \
     ++yytext;
 
 // Skip this action if in pre-parser.  Do not put this in a do-while,
 // as it would capture the "continue" which is meant to yylex's
 // "while(1)".
-#define PRE_SKIP()				\
-  if (!up)					\
-  {						\
-    ECHO("Skipping: {{{" << yytext << "}}}");	\
-    continue;					\
+#define PRE_SKIP()                              \
+  if (!up)                                      \
+  {                                             \
+    ECHO("Skipping: {{{" << yytext << "}}}");   \
+    continue;                                   \
   }
 
-# define PRE_PUSH(Char)				\
-  if (!up)					\
-  {						\
-    pre_closers.push_back(Char);		\
-    continue;					\
+# define PRE_PUSH(Char)                         \
+  if (!up)                                      \
+  {                                             \
+    pre_closers.push_back(Char);                \
+    continue;                                   \
   }
 
-# define PRE_POP()							\
-  if (!up)								\
-  {									\
-    if (!pre_closers.empty() && pre_closers.back() == yytext[0])	\
-    {									\
-      pre_closers.pop_back();						\
-      continue;								\
-    }									\
-    else								\
-    {									\
-      /* Syntax error (unbalanced closers).  Return as if the sentence	\
-	 was correct.  The parser will report the error itself. */	\
-      ECHO("Pre: Unexpected character: " << yytext);			\
+# define PRE_POP()                                                      \
+  if (!up)                                                              \
+  {                                                                     \
+    if (!pre_closers.empty() && pre_closers.back() == yytext[0])        \
+    {                                                                   \
+      pre_closers.pop_back();                                           \
+      continue;                                                         \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+      /* Syntax error (unbalanced closers).  Return as if the sentence  \
+         was correct.  The parser will report the error itself. */      \
+      ECHO("Pre: Unexpected character: " << yytext);                    \
       return yy::parser::make_PRE_COMPLETE(loc);                        \
-    }									\
+    }                                                                   \
   }
 
 # define PRE_RETURN();                                  \
@@ -91,63 +91,63 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
       continue;                                         \
   }
 
-# define YY_USER_INIT							\
+# define YY_USER_INIT                                                   \
   static bool flex_debug = !!getenv("FLEX_DEBUG");                      \
   yy_flex_debug = flex_debug;                                           \
-									\
+                                                                        \
   static bool uconsole_mode = getenv ("UCONSOLE_MODE");                 \
   if (uconsole_mode)                                                    \
-  {									\
-    std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."	\
-	      << std::endl;						\
-    sc_default = SC_UCONSOLE;						\
-  }									\
-  else									\
-    sc_default = INITIAL;						\
-  BEGIN sc_default;							\
-									\
-  if (!up)								\
-  {									\
-    pre_length = 0;							\
-    pre_closers.clear();						\
+  {                                                                     \
+    std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."     \
+              << std::endl;                                             \
+    sc_default = SC_UCONSOLE;                                           \
+  }                                                                     \
+  else                                                                  \
+    sc_default = INITIAL;                                               \
+  BEGIN sc_default;                                                     \
+                                                                        \
+  if (!up)                                                              \
+  {                                                                     \
+    pre_length = 0;                                                     \
+    pre_closers.clear();                                                \
   }
 
 
-#define YY_USER_ACTION				\
+#define YY_USER_ACTION                          \
   COLUMNS(yyleng);
 
 // Move the front cursor to the end cursor.
-#define STEP()					\
-  do {						\
-    if (up)					\
-      loc.step();				\
+#define STEP()                                  \
+  do {                                          \
+    if (up)                                     \
+      loc.step();                               \
   } while (0)
 
 // To avoid differences between versions of Bison, set by hand the
 // initial columns when advancing lines.
-#define LINES(Num)				\
-  do {						\
-    if (up)					\
-    {						\
-      loc.lines(Num);				\
-      loc.end.column = 1;			\
-    }						\
+#define LINES(Num)                              \
+  do {                                          \
+    if (up)                                     \
+    {                                           \
+      loc.lines(Num);                           \
+      loc.end.column = 1;                       \
+    }                                           \
   } while (0)
 
-#define COLUMNS(Num)					\
-  do {							\
-    if (up)						\
-      /* At each match, adjust the end cursor. */	\
+#define COLUMNS(Num)                                    \
+  do {                                                  \
+    if (up)                                             \
+      /* At each match, adjust the end cursor. */       \
       loc.columns(Num);                                 \
-    else						\
-      pre_length += Num;				\
+    else                                                \
+      pre_length += Num;                                \
  } while (0)
 
 // Report an error.
-#define ERROR(Msg)				\
-do {						\
-  if (up)					\
-    up->error(loc, std::string () + Msg);	\
+#define ERROR(Msg)                              \
+do {                                            \
+  if (up)                                       \
+    up->error(loc, std::string () + Msg);       \
 } while(0)
 
 // Report an EOF error.  In that case, the prescanner must return
@@ -160,7 +160,7 @@ do {						\
   } while(0)
 
 // Report the use of a reserved word.
-#define RESERVED_ERROR				\
+#define RESERVED_ERROR                          \
   ERROR("reserved symbol `" + yytext + "'")
 
 // Otherwise Flex returns an int instead of an enum.
@@ -171,9 +171,9 @@ do {						\
 
 
 // Extend the string value of valp.
-#define GROW_VAL(Value)				\
-  do {						\
-    if (up)					\
+#define GROW_VAL(Value)                         \
+  do {                                          \
+    if (up)                                     \
       grown_string += Value;                    \
   } while(0)
 
@@ -203,7 +203,7 @@ do {						\
   }
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
-#define RETURN_FLAVOR(Symbol, Flavor)					\
+#define RETURN_FLAVOR(Symbol, Flavor)                                   \
   RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
 
 // Return a std::string of kind Token with yytext as value.
@@ -215,7 +215,7 @@ do {						\
   RETURN_VALUE(Token, libport::Symbol(yytext))
 
 // Return an operator whose string representation is kept as a Symbol.
-#define RETURN_OP(Token)			\
+#define RETURN_OP(Token)                        \
   RETURN_SYMBOL(Token)
 
 // Return an assignment operator: its value is the base operator.
@@ -225,10 +225,10 @@ do {						\
   RETURN_OP(Token);
 
 // UnitLength is the number of letters used for the unit.
-#define RETURN_DURATION(UnitLength, Scale)				\
-  {									\
-    PRE_SKIP();								\
-    yytext[yyleng - UnitLength] = 0;					\
+#define RETURN_DURATION(UnitLength, Scale)                              \
+  {                                                                     \
+    PRE_SKIP();                                                         \
+    yytext[yyleng - UnitLength] = 0;                                    \
     RETURN_VALUE(DURATION, boost::lexical_cast<float>(yytext) * (Scale)); \
   }
 
@@ -251,13 +251,13 @@ do {						\
 // in prescanner mode, otherwise the prescanner will count too many
 // characters: those of the original string, and those of the unput
 // string.
-#define UNPUT(Str)					\
-  do {							\
-    std::string _rewritten = Str;			\
-    for (int i = _rewritten.length() - 1; 0 <= i; --i)	\
-      unput(_rewritten[i]);				\
-    if (!up)						\
-      pre_length -= _rewritten.length();		\
+#define UNPUT(Str)                                      \
+  do {                                                  \
+    std::string _rewritten = Str;                       \
+    for (int i = _rewritten.length() - 1; 0 <= i; --i)  \
+      unput(_rewritten[i]);                             \
+    if (!up)                                            \
+      pre_length -= _rewritten.length();                \
   } while (0)
 
 // We matched an alternative token, rescan with Str instead.
@@ -270,15 +270,15 @@ do {						\
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
 // needed to scope msg and rewritten.
-#define DEPRECATED(New)							\
-  {									\
-    PRE_SKIP();								\
-    std::string warn = std::string("`") + yytext + "' is deprecated.";	\
-    std::string rewritten = New;					\
-    if (!rewritten.empty())						\
-      warn += " Use `" + rewritten + "' instead.";			\
-    up->warn(loc, warn);						\
-    UNPUT(rewritten);							\
+#define DEPRECATED(New)                                                 \
+  {                                                                     \
+    PRE_SKIP();                                                         \
+    std::string warn = std::string("`") + yytext + "' is deprecated.";  \
+    std::string rewritten = New;                                        \
+    if (!rewritten.empty())                                             \
+      warn += " Use `" + rewritten + "' instead.";                      \
+    up->warn(loc, warn);                                                \
+    UNPUT(rewritten);                                                   \
   }
 
 %}
@@ -330,7 +330,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   | Internal rules for generated code. |
   `-----------------------------------*/
 
-^"//#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
+^"//#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}      {
 
   /* synclines are mainly made to get correct locations when loading a
      file: save the current location before loading the file, then
@@ -430,20 +430,20 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<int>  (*up, loc, yytext));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<float>(*up, loc, yytext));
 {ENATURAL}    {
-		PRE_SKIP();
-		float res = lexical_cast<float>(*up, loc, yytext);
-		// Do not put semicolons here: RETURN_?VAL expands into {}.
-		if (res < 1)
-		  RETURN_VALUE(FLOAT, res)
-		else
-		  RETURN_VALUE(INTEGER, numeric_cast<int>(*up, loc, res))
-	      }
+                PRE_SKIP();
+                float res = lexical_cast<float>(*up, loc, yytext);
+                // Do not put semicolons here: RETURN_?VAL expands into {}.
+                if (res < 1)
+                  RETURN_VALUE(FLOAT, res)
+                else
+                  RETURN_VALUE(INTEGER, numeric_cast<int>(*up, loc, res))
+              }
 
 [\"\']        {
                 grown_string.clear();
-		delimiter = *yytext;
-		BEGIN SC_STRING_OR_SYMBOL;
-	      }
+                delimiter = *yytext;
+                BEGIN SC_STRING_OR_SYMBOL;
+              }
 
  /*
    FIXME: Surprisingly enough, these are strings, not symbols,
@@ -470,10 +470,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "_exps"         RETURN(_EXPS);
 "_formals"      RETURN(_FORMALS);
 
-"%exp:"		RETURN(PERCENT_EXP_COLON);
-"%exps:"	RETURN(PERCENT_EXPS_COLON);
+"%exp:"         RETURN(PERCENT_EXP_COLON);
+"%exps:"        RETURN(PERCENT_EXPS_COLON);
 "%id:"          RETURN(PERCENT_ID_COLON);
-"%lvalue:"	RETURN(PERCENT_LVALUE_COLON);
+"%lvalue:"      RETURN(PERCENT_LVALUE_COLON);
 
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);
@@ -482,7 +482,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
 "delete"        RETURN(DELETE);
-"do"		RETURN(DO);
+"do"            RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);
 "event"         RETURN(EVENT);
@@ -645,18 +645,18 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
     switch (int c = yyinput())
     {
       case EOF:
-	EOF_ERROR("BIN");
-	goto out_of_loop;
+        EOF_ERROR("BIN");
+        goto out_of_loop;
       default:
-	// Keep track of the locations.
-	COLUMNS(1);
-	data += c;
-	break;
+        // Keep track of the locations.
+        COLUMNS(1);
+        data += c;
+        break;
     }
   out_of_loop:
   std::ostringstream rewritten;
   rewritten << "Global.Binary.new (\"" << keywords << "\", "
-	    <<                   " \"" << libport::escape(data) << "\");";
+            <<                   " \"" << libport::escape(data) << "\");";
   UNPUT(rewritten.str());
 }
 
@@ -689,38 +689,38 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      [\"\'] {
        if (*yytext == delimiter)
        {
-	 BEGIN sc_default;
-	 if (*yytext == '\'')
-	 {
-	   PRE_SKIP();
-	   RETURN_VALUE(IDENTIFIER, libport::Symbol(grown_string));
-	 }
-	 else
-	   RETURN_VALUE(STRING, grown_string);
+         BEGIN sc_default;
+         if (*yytext == '\'')
+         {
+           PRE_SKIP();
+           RETURN_VALUE(IDENTIFIER, libport::Symbol(grown_string));
+         }
+         else
+           RETURN_VALUE(STRING, grown_string);
        }
        else
-	 GROW_VAL(*yytext);
+         GROW_VAL(*yytext);
      }
 
-     \\[0-7]{3}		{
+     \\[0-7]{3}         {
        long c = strtol (yytext + 1, 0, 8);
        if (c > 255)
-	 ERROR("invalid escape: `" + yytext + '\'');
+         ERROR("invalid escape: `" + yytext + '\'');
        else
-	 GROW_VAL(c);
+         GROW_VAL(c);
      }
 
-     \\x[0-9a-fA-F]{2}	 GROW_VAL(strtol (yytext + 2, 0, 16));
+     \\x[0-9a-fA-F]{2}   GROW_VAL(strtol (yytext + 2, 0, 16));
 
-     \\a	GROW_VAL('\a');
-     \\b	GROW_VAL('\b');
-     \\f	GROW_VAL('\f');
-     \\n	GROW_VAL('\n');
-     \\r	GROW_VAL('\r');
-     \\t	GROW_VAL('\t');
-     \\v	GROW_VAL('\v');
+     \\a        GROW_VAL('\a');
+     \\b        GROW_VAL('\b');
+     \\f        GROW_VAL('\f');
+     \\n        GROW_VAL('\n');
+     \\r        GROW_VAL('\r');
+     \\t        GROW_VAL('\t');
+     \\v        GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
-     \\.	ERROR("invalid escape: `" + yytext + '\'');
+     \\.        ERROR("invalid escape: `" + yytext + '\'');
 
      [^\"\'\n\r\\]+      APPEND_VAL(yytext, yyleng);
 
@@ -753,10 +753,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 }
 
 <SC_C_COMMENT>{ /* Comments. */
-  [^*/\n\r]+	|
-  [*/]		continue;
-  {EOL}	        LINES(1);
-  "/*"	        ++comment_level;
+  [^*/\n\r]+    |
+  [*/]          continue;
+  {EOL}         LINES(1);
+  "/*"          ++comment_level;
   "*/"          {
                   if (!--comment_level)
                     {
@@ -767,9 +767,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 }
 
 <SC_DOC_COMMENT>{
-  [^*/\n\r]+	|
+  [^*/\n\r]+    |
   [*/]          GROW_VAL(yytext); continue;
-  {EOL}	        GROW_VAL(yytext); LINES(1);
+  {EOL}         GROW_VAL(yytext); LINES(1);
   "*/" { /* End of the comment. */
     STEP();
     BEGIN sc_default;
@@ -779,9 +779,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 <*>{
    .      {
-	     ERROR("invalid character: " + yytext);
-	     STEP();
-	  }
+             ERROR("invalid character: " + yytext);
+             STEP();
+          }
 }
 
 %%
@@ -798,7 +798,7 @@ lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t)
   catch (boost::bad_lexical_cast)
   {
     up.error(loc,
-	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+             (boost::format ("invalid numerical litteral: %1%") % t).str());
     return 0;
   }
 }
@@ -814,7 +814,7 @@ numeric_cast (parser::ParserImpl& up, const yy::location& loc, In t)
   catch (boost::bad_numeric_cast)
   {
     up.error(loc,
-	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+             (boost::format ("invalid numerical litteral: %1%") % t).str());
     return 0;
   }
 }
