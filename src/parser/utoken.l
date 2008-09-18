@@ -322,6 +322,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   // Nesting C comments.
   unsigned int comment_level = 0;
 
+  // Calling yylex for a new token, reset the cursor.
+  STEP();
 %}
 
   /*-----------------------------------.
@@ -754,14 +756,14 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   [^*/\n\r]+	|
   [*/]		continue;
   {EOL}	        LINES(1);
-  "/*"	++comment_level;
-  "*/" { /* End of the comment. */
-    if (!--comment_level)
-      {
-        STEP();
-	BEGIN INITIAL;
-      }
-  }
+  "/*"	        ++comment_level;
+  "*/"          {
+                  if (!--comment_level)
+                    {
+                      STEP();
+                      BEGIN INITIAL;
+                    }
+                }
 }
 
 <SC_DOC_COMMENT>{
