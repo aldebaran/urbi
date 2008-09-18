@@ -133,7 +133,7 @@ namespace scheduler
 	 job_p != pending_.end();
 	 ++job_p)
     {
-      rJob& job = *job_p;
+      rJob job = *job_p;
       // Store the next job so that insertions happen before it.
       next_job_p_ = job_p;
       ++next_job_p_;
@@ -363,8 +363,8 @@ namespace scheduler
     // the current job to avoid interrupting this method early.
     foreach (const rJob& job, jobs_get())
     {
-      // Job started at this cycle, reset to avoid stack references.
-      if (!job)
+      // The current job will be handled last.
+      if (job == current_job_)
 	continue;
       // Job to be started during this cycle.
       if (job->state_get() == to_start)
@@ -377,10 +377,11 @@ namespace scheduler
 	    continue;
 	  }
       }
-      // Any other non-current job.
-      else if (job != current_job_)
+      // Any other job.
+      else
 	job->register_stopped_tag(tag, payload);
     }
+    // Handle the current job situation.
     if (current_job_)
       current_job_->register_stopped_tag(tag, payload);
   }
