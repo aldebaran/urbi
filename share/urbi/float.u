@@ -102,37 +102,6 @@ do Float
     for| (var i = 0; i < this; i++)
       action(i)
   };
-
-
-  /*--------.
-  | Units.  |
-  `--------*/
-  function unit(u)
-  {
-    this * '$units'[u]
-  };
-
-  var this.'$units' = Dictionary.new;
-  do '$units'
-  {
-    // Duration.
-    set("us", 1/1000000);
-    set("ms", 1/1000);
-    set("s",  1);
-    set("mn", 60 s);
-    set("h",  60 mn);
-    set("d",  24 h);
-    set("y",  365.25 d);
-
-    // Distance.
-    set("mm", 1/1000);
-    set("cm", 1/100);
-    set("dm", 1/10);
-    set("m", 1);
-    set("km", 1000 m);
-    set("in", 2.54 cm);
-  };
-
 };
 
 
