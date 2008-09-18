@@ -11,10 +11,9 @@ do Global.Dictionary
 
   function asList ()
   {
-    var dictionary = this|
     var res = []|
     for (var k: keys)
-      res.push_back(Pair.new (k, dictionary.get (k)))|
+      res.push_back(Pair.new (k, get (k)))|
     res
   };
 
