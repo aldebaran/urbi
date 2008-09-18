@@ -51,7 +51,7 @@ given predicate (\autoref{lst:list-any}).
 [-3, 1, -1].all(function (e) { e % 2 == 0 });
 [00000000] false
 // Is there any positive element?
-[-3, 1, -1].all(function (e) { e > 0 });
+[-3, 1, -1].any(function (e) { e > 0 });
 [00000000] true
 \end{urbiscript}
 
@@ -106,8 +106,8 @@ sequentially.
 [0, 1, 2].each(function (v) {echo (v * v); echo (v * v)});
 [00000000] *** 0
 [00000000] *** 0
-[00000000] *** 2
-[00000000] *** 2
+[00000000] *** 1
+[00000000] *** 1
 [00000000] *** 4
 [00000000] *** 4
 \end{urbiscript}
@@ -120,10 +120,10 @@ Apply the given functional value on all members simultaneously
 \begin{urbiscript}[caption=List.each, label=lst:list-each-and, float=\floatposh]
 [0, 1, 2].'each&'(function (v) {echo (v * v); echo (v * v)});
 [00000000] *** 0
-[00000000] *** 2
+[00000000] *** 1
 [00000000] *** 4
 [00000000] *** 0
-[00000000] *** 2
+[00000000] *** 1
 [00000000] *** 4
 \end{urbiscript}
 
@@ -190,9 +190,11 @@ the argument (\autoref{lst:list-hasSame}).
 
 \begin{urbiscript}[caption=List.hasSame, label=lst:list-hasSame, float=\floatposh]
 var x = 1;
-[0, x, 2].has(1);
+[00000000:hide] 1
+
+[0, x, 2].hasSame(1);
 [00000000] false
-[0, x, 2].has(x);
+[0, x, 2].hasSame(x);
 [00000000] true
 \end{urbiscript}
 
@@ -314,11 +316,11 @@ Remove all elements from the target that equals the argument
 
 \begin{urbiscript}[caption=List.remove, label=lst:list-remove, float=\floatposh]
 var x = [0, 1, 0, 2, 0, 3];
-[00000000] [0, 1, 0, 2, 0, 3];
+[00000000] [0, 1, 0, 2, 0, 3]
 x.remove(0);
-[00000000] [1, 2, 3];
+[00000000] [1, 2, 3]
 x;
-[00000000] [1, 2, 3];
+[00000000] [1, 2, 3]
 \end{urbiscript}
 
 \subsubsection{removeById}

@@ -40,6 +40,7 @@ argument-less function which evaluates to the lazified value
 \begin{urbiscript}[caption=Creating a lazy value, label=lst:new-lazy,
   float=\floatpos]
 Lazy.new(closure () { /* Value to lazify */ });
+[00000000:hide] Lazy_0xADDR
 \end{urbiscript}
 
 \subsection{Methods}
@@ -84,6 +85,11 @@ function heavy_computation()
   echo("Heavy computation");
   return 1 + 1;
 };
+[00000000:hide] function () {
+..  echo("Heavy computation");
+..  return 1 . '+'(1);
+..}
+
 // We want to do the heavy computations only if needed,
 // and make it a lazy value to be able to evaluate it "on demand".
 var v = Lazy.new(closure () { heavy_computation() });

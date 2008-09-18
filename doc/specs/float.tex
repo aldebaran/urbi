@@ -94,7 +94,7 @@ Return the bitwise or between the target and the argument (\autoref{lst:float-bi
 
 \begin{urbiscript}[caption=Float.bitor, label=lst:float-bitor,
   float=\floatposh]
-3 bitand 6;
+3 bitor 6;
 [00000000] 7
 \end{urbiscript}
 
@@ -286,7 +286,7 @@ Take one functional argument and call it target times (\autoref{lst:float-times}
 
 \begin{urbiscript}[caption=Float.times, label=lst:float-times,
   float=\floatposh]
-5.times(function (i) { echo("ping")});
+5.times(function () { echo("ping")});
 [00000000] *** ping
 [00000000] *** ping
 [00000000] *** ping
@@ -381,8 +381,8 @@ bit towards the left (\autoref{lst:float-lshift}).
 \lstinline|b| (\autoref{lst:float-div}).
 
 \begin{urbiscript}[caption=Float.'/', label=lst:float-div, float=\floatposh]
-50 / 11;
-[00000000] 4
+50 / 10;
+[00000000] 5
 \end{urbiscript}
 
 \subsubsection{\%}
@@ -391,7 +391,7 @@ bit towards the left (\autoref{lst:float-lshift}).
 
 \begin{urbiscript}[caption=Float.'\%', label=lst:float-mod, float=\floatposh]
 50 % 11;
-[00000000] 2
+[00000000] 6
 \end{urbiscript}
 
 \subsubsection{*}

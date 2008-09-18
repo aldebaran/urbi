@@ -135,7 +135,7 @@ for (n, in_, out_) in tests:
     def rewrite(line):
         line = re.sub(r'\[\d{8}(:\w+)?]', '[00000000]', line)
         line = re.sub('0x[0-9a-fA-F]+', '0xADDR', line)
-        line = re.sub('!!! /tmp/[^:]*:[^:]*: ', '!!! ', line)
+        line = re.sub('!!! /[^:]*:[^:]*: ', '!!! ', line)
         return line
 
     def remove(line):
