@@ -1,3 +1,9 @@
+%% Redefine \section is this chapter so that we don't have to
+%% call \labelObject each time.  See the bottom of this file for the
+%% restoring of \section.
+\let\sectionOrig\section
+\renewcommand{\section}[1]{\sectionOrig{\labelObject{#1}#1}}
+
 \chapter{\us Standard Library}
 \label{sec:stdlib}
 
@@ -10,7 +16,6 @@
 \section{Channel}
 \section{Code}
 \section{Comparable}
-\labelObject{Comparable}
 \section{Dictionary}
 \section{Event}
 
@@ -135,8 +140,6 @@ and call messages. See example with call messages in
 \label{sec:std-object-updateslot}
 
 \section{Orderable}
-\labelObject{Orderable}
-
 \section{Pattern}
 \section{Primitive}
 \section{String}
@@ -145,7 +148,8 @@ and call messages. See example with call messages in
 \section{Void}
 \label{sec:std-void}
 
-
+%% Restore the definition of \section.
+\let\section\sectionOrig
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "urbi-specs"
