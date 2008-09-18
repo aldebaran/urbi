@@ -20,9 +20,6 @@ AM_CPPFLAGS += -I$(top_srcdir)/sdk-remote/include   \
 ## lib/network
 AM_CPPFLAGS += -I$(top_srcdir)/lib
 
-## Find kernelconfig.h.
-AM_CPPFLAGS += -I$(top_builddir)
-
 ## Find uobject headers.
 AM_CPPFLAGS += -I$(srcdir)/uobject
 
