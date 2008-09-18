@@ -29,10 +29,10 @@ namespace object
     rDictionary clear();
     bool empty();
     rDictionary erase(libport::Symbol key);
-    rObject get(const libport::Symbol& key);
-    bool has(const libport::Symbol& key);
+    rObject get(libport::Symbol key);
+    bool has(libport::Symbol key);
     rList keys();
-    rDictionary set(const libport::Symbol& key, rObject value);
+    rDictionary set(libport::Symbol key, rObject value);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;

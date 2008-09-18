@@ -30,34 +30,40 @@ namespace object
     proto_add(dictionary_class);
   }
 
-  const Dictionary::value_type& Dictionary::value_get() const
+  const Dictionary::value_type&
+  Dictionary::value_get() const
   {
     return content_;
   }
 
-  Dictionary::value_type& Dictionary::value_get()
+  Dictionary::value_type&
+  Dictionary::value_get()
   {
     return content_;
   }
 
-  rDictionary Dictionary::set(const libport::Symbol& key, rObject val)
+  rDictionary
+  Dictionary::set(libport::Symbol key, rObject val)
   {
     content_[key] = val;
     return this;
   }
 
-  rObject Dictionary::get(const libport::Symbol& key)
+  rObject
+  Dictionary::get(libport::Symbol key)
   {
     return libport::mhas(content_, key) ? content_[key] : rObject();
   }
 
-  rDictionary Dictionary::clear()
+  rDictionary
+  Dictionary::clear()
   {
     content_.clear();
     return this;
   }
 
-  bool Dictionary::empty()
+  bool
+  Dictionary::empty()
   {
     return content_.empty();
   }
@@ -69,7 +75,8 @@ namespace object
     return this;
   }
 
-  rList Dictionary::keys()
+  rList
+  Dictionary::keys()
   {
     List::value_type res;
     typedef const std::pair<libport::Symbol, rObject> elt_type;
@@ -78,25 +85,28 @@ namespace object
     return new List(res);
   }
 
-  bool Dictionary::has(const libport::Symbol& key)
+  bool
+  Dictionary::has(libport::Symbol key)
   {
     return libport::mhas(content_, key);
   }
 
-  std::string Dictionary::type_name_get() const
+  std::string
+  Dictionary::type_name_get() const
   {
     return type_name;
   }
 
-  void Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
+  void
+  Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
   {
     bind(SYMBOL(clear), &Dictionary::clear);
     bind(SYMBOL(empty), &Dictionary::empty);
     bind(SYMBOL(erase), &Dictionary::erase);
-    bind(SYMBOL(get), &Dictionary::get);
-    bind(SYMBOL(has), &Dictionary::has);
-    bind(SYMBOL(keys), &Dictionary::keys);
-    bind(SYMBOL(set), &Dictionary::set);
+    bind(SYMBOL(get),   &Dictionary::get);
+    bind(SYMBOL(has),   &Dictionary::has);
+    bind(SYMBOL(keys),  &Dictionary::keys);
+    bind(SYMBOL(set),   &Dictionary::set);
   }
 
   bool Dictionary::dictionary_added =
