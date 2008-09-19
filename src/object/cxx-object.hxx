@@ -27,17 +27,17 @@ namespace object
   namespace
   {
     template <typename T>
-    rObject cxx_object_clone(runner::Runner& r, objects_type args)
+    rObject cxx_object_clone(runner::Runner&, objects_type args)
     {
-      check_arg_count(r, args.size() - 1, 0);
+      check_arg_count(args.size() - 1, 0);
       rObject tgt = args[0];
       return tgt->is_a<T>() ? new T(tgt->as<T>()) : new T();
     }
 
     template <typename T>
-    rObject cxx_object_id(runner::Runner& r, objects_type args)
+    rObject cxx_object_id(runner::Runner&, objects_type args)
     {
-      check_arg_count(r, args.size() - 1, 0);
+      check_arg_count(args.size() - 1, 0);
       return args[0];
     }
   }

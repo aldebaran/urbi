@@ -83,18 +83,18 @@ namespace object
   bool root_classes_initialized = false;
 
   static rObject
-  id(runner::Runner& r, objects_type args)
+  id(runner::Runner&, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return args.front();
   }
 
   template <typename T>
   static rObject
-  compare(runner::Runner& r, objects_type args)
+  compare(runner::Runner&, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 1);
-    type_check(args[0], T::proto, r, SYMBOL(compare));
+    check_arg_count(args.size() - 1, 1);
+    type_check(args[0], T::proto);
     libport::shared_ptr<T> arg0 = args[0].unsafe_cast<T>();
 
     // Comparing two atoms with different types isn't an error, it
@@ -266,9 +266,9 @@ namespace object
   namespace
   {
     static rObject
-    void_class_acceptVoid(runner::Runner& r, objects_type args)
+    void_class_acceptVoid(runner::Runner&, objects_type args)
     {
-      check_arg_count(r, args.size() - 1, 0);
+      check_arg_count(args.size() - 1, 0);
 
       return accepted_void_class;
     }

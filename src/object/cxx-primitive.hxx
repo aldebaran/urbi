@@ -49,7 +49,7 @@ namespace object
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
     {                                                                   \
-      check_arg_count(r, args.size() - 1, ArgsC WHEN(Run, - 1) - 1);    \
+      check_arg_count(args.size() - 1, ArgsC WHEN(Run, - 1) - 1);       \
       WHEN(Ret, R res =) f(                                             \
                                                                         \
         WHEN(Run, r) COMMA(Run)                                         \

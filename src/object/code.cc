@@ -94,11 +94,11 @@ namespace object
     return r.apply(tgt, this, SYMBOL(apply), a);
   }
 
-  std::string Code::as_string(runner::Runner& r, rObject what)
+  std::string Code::as_string(runner::Runner&, rObject what)
   {
     if (what == proto)
       return SYMBOL(LT_Code_GT);
-    type_check(what, proto, r, SYMBOL(asString));
+    type_check(what, proto);
     return string_cast(*what->as<Code>()->ast_get());
 
   }

@@ -22,7 +22,7 @@ namespace runner
   {
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
-      apply_tag(extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)), *this),
+      apply_tag(extract_tag(connection_tag->slot_get(SYMBOL(connectionTag))),
 		0);
   }
 

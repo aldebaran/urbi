@@ -54,7 +54,7 @@ namespace object
   std::string String::plus (runner::Runner& r, rObject rhs)
   {
     rObject str = urbi_call(r, rhs, SYMBOL(asString));
-    type_check(str, String::proto, r, SYMBOL(PLUS));
+    type_check(str, String::proto);
     return content_ + str->as<String>()->value_get();
   }
 
@@ -65,26 +65,26 @@ namespace object
   }
 
   std::string
-  as_printable (runner::Runner& r, rObject from)
+  as_printable (rObject from)
   {
     if (from == String::proto)
-      return as_string(r, from);
+      return as_string(from);
     else
     {
-      type_check(from, String::proto, r, SYMBOL(asPrintable));
+      type_check(from, String::proto);
       const std::string& str = from->as<String>()->value_get();
       return '"' + string_cast(libport::escape(str)) + '"';
     }
   }
 
   std::string
-  as_string (runner::Runner& r, rObject from)
+  as_string (rObject from)
   {
     if (from == String::proto)
       return SYMBOL(LT_String_GT);
     else
     {
-      type_check(from, String::proto, r, SYMBOL(asString));
+      type_check(from, String::proto);
       return from->as<String>()->value_get();
     }
   }

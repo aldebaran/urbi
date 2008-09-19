@@ -506,8 +506,7 @@ namespace runner
     // FIXME: might be simplified after type checking code is moved
     // to Object
     object::rObject unchecked_tag = operator()(t->tag_get().get());
-    object::type_check(unchecked_tag, object::Tag::proto,
-                       *this, SYMBOL(tagged_stmt));
+    object::type_check(unchecked_tag, object::Tag::proto);
     const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
     const scheduler::rTag& tag = urbi_tag->value_get();
 

@@ -47,10 +47,10 @@ namespace object
   }
 
   void
-  type_check(const rObject& o, const rObject& exp,
-             runner::Runner& r, const libport::Symbol,
-             boost::optional<unsigned> idx)
+  type_check(const rObject& o, const rObject& exp, boost::optional<unsigned> idx)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     assert(o);
     assert(exp);
     if (!is_a(o, exp))
@@ -63,15 +63,13 @@ namespace object
     }
   }
 
-  void check_arg_count (runner::Runner&,
-                        unsigned effective, unsigned formal)
+  void check_arg_count (unsigned effective, unsigned formal)
   {
     if (formal != effective)
       runner::raise_arity_error(effective, formal);
   }
 
-  void check_arg_count (runner::Runner&,
-                        unsigned effective, unsigned min, unsigned max)
+  void check_arg_count (unsigned effective, unsigned min, unsigned max)
   {
     if (effective < min || effective > max)
       runner::raise_arity_error(effective, min, max);

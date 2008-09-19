@@ -153,7 +153,7 @@ namespace runner
     }
     else
     {
-      object::check_arg_count(*this, args.size(), 0);
+      object::check_arg_count(args.size(), 0);
       return function;
     }
   }
@@ -264,7 +264,7 @@ namespace runner
       const ast::local_declarations_type& formals =
         *ast->formals_get();
       // Check arity
-      object::check_arg_count (*this, args.size(), formals.size());
+      object::check_arg_count (args.size(), formals.size());
       object::objects_type::const_iterator it = args.begin();
       // Bind
       foreach (const ast::rConstLocalDeclaration& s, formals)

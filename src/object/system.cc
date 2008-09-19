@@ -75,9 +75,9 @@ namespace object
 
 #define SERVER_FUNCTION(Function)					\
   static rObject							\
-  system_class_ ## Function (runner::Runner& r, objects_type args)	\
+  system_class_ ## Function (runner::Runner&, objects_type args)	\
   {									\
-    check_arg_count(r, args.size() - 1, 0);						\
+    check_arg_count(args.size() - 1, 0);                                \
     ::urbiserver->Function();						\
     return void_class;							\
   }
@@ -91,9 +91,9 @@ namespace object
   static rObject
   system_class_sleep (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 1);
+    check_arg_count(args.size() - 1, 1);
 
-    type_check(args[1], Float::proto, r, SYMBOL(sleep));
+    type_check(args[1], Float::proto);
 
     rFloat arg1 = args[1]->as<Float>();
     libport::utime_t deadline;
@@ -109,23 +109,23 @@ namespace object
   static rObject
   system_class_time(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return new Float(r.scheduler_get().get_time() / 1000000.0);
   }
 
   static rObject
   system_class_shiftedTime(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return new Float((r.scheduler_get().get_time() -
 			  r.time_shift_get()) / 1000000.0);
   }
 
   static rObject
-  system_class_assert_(runner::Runner& r, objects_type args)
+  system_class_assert_(runner::Runner&, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 2);
-    type_check(args[2], String::proto, r, SYMBOL(assert_UL));
+    check_arg_count(args.size() - 1, 2);
+    type_check(args[2], String::proto);
     rString arg2 = args[2]->as<String>();
     if (!is_true(args[1], SYMBOL(assert_UL)))
       throw PrimitiveError
@@ -137,8 +137,8 @@ namespace object
   static rObject
   system_class_eval(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 1);
-    type_check(args[1], String::proto, r, SYMBOL(eval));
+    check_arg_count(args.size() - 1, 1);
+    type_check(args[1], String::proto);
     rString arg1 = args[1]->as<String>();
     return
       execute_parsed(r, parser::parse(arg1->value_get()),
@@ -151,7 +151,7 @@ namespace object
   static rObject
   system_class_registerAtJob (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 3);
+    check_arg_count(args.size() - 1, 3);
     runner::register_at_job(dynamic_cast<runner::Interpreter&>(r),
 			    args[1], args[2], args[3]);
     return object::void_class;
@@ -160,7 +160,7 @@ namespace object
   static rObject
   system_class_scopeTag(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     const scheduler::rTag& scope_tag =
       dynamic_cast<runner::Interpreter&>(r).scope_tag();
     return new Tag(scope_tag);
@@ -169,8 +169,8 @@ namespace object
   static rObject
   system_class_searchFile (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 1);
-    type_check(args[1], String::proto, r, SYMBOL(assert));
+    check_arg_count(args.size() - 1, 1);
+    type_check(args[1], String::proto);
     const rString& arg1 = args[1]->as<String>();
 
     UServer& s = r.lobby_get()->value_get().connection.server_get();
@@ -193,8 +193,8 @@ namespace object
   static rObject
   system_class_loadFile(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 1);
-    type_check(args[1], String::proto, r, SYMBOL(assert));
+    check_arg_count(args.size() - 1, 1);
+    type_check(args[1], String::proto);
     const rString& arg1 = args[1]->as<String>();
 
     const std::string& filename = arg1->value_get();
@@ -212,35 +212,35 @@ namespace object
   static rObject
   system_class_currentRunner (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return r.as_task();
   }
 
   static rObject
   system_class_cycle (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return new Float(r.scheduler_get ().cycle_get ());
   }
 
   static rObject
-  system_class_fresh (runner::Runner& r, objects_type args)
+  system_class_fresh (runner::Runner&, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return new String(libport::Symbol::fresh());
   }
 
   static rObject
   system_class_lobby (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     return r.lobby_get();
   }
 
   static rObject
   system_class_nonInterruptible (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     r.non_interruptible_set (true);
     return void_class;
   }
@@ -248,7 +248,7 @@ namespace object
   static rObject
   system_class_quit (runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     r.lobby_get()->value_get().connection.close();
     return void_class;
   }
@@ -256,7 +256,7 @@ namespace object
   static rObject
   system_class_spawn(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 1, 2);
+    check_arg_count(args.size() - 1, 1, 2);
     rObject arg1 = args[1]->as<Code>();
     assert(arg1);
 
@@ -280,7 +280,7 @@ namespace object
   static rObject
   system_class_stats(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     Dictionary::value_type res;
     const scheduler::scheduler_stats_type& stats =
       r.scheduler_get().stats_get();
@@ -304,7 +304,7 @@ namespace object
   {
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     runner::Runner::backtrace_type bt = r.backtrace_get();
     bt.pop_back();
     foreach (const runner::Runner::frame_type& elt,
@@ -317,7 +317,7 @@ namespace object
   static rObject
   system_class_jobs(runner::Runner& r, objects_type args)
   {
-    check_arg_count(r, args.size() - 1, 0);
+    check_arg_count(args.size() - 1, 0);
     List::value_type res;
     foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
       res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
@@ -325,9 +325,9 @@ namespace object
   }
 
   static rObject
-  system_class_aliveJobs(runner::Runner& r, objects_type args)
+  system_class_aliveJobs(runner::Runner&, objects_type args)
   {
-    CHECK_ARG_COUNT(1);
+    check_arg_count(args.size() - 1, 0);
     return new Float(scheduler::Job::alive_jobs());
   }
 
@@ -339,9 +339,9 @@ namespace object
 
 #define SERVER_SET_VAR(Function, Variable, Value)			\
   static rObject							\
-  system_class_ ## Function (runner::Runner& r, objects_type args)	\
+  system_class_ ## Function (runner::Runner&, objects_type args)	\
   {									\
-    check_arg_count(r, args.size() - 1, 0);                             \
+    check_arg_count(args.size() - 1, 0);                                \
     ::urbiserver->Variable = Value;					\
     return void_class;							\
   }

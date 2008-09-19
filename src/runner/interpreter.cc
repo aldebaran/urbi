@@ -106,7 +106,7 @@ namespace runner
     if (connection_tag)
     {
       scheduler::rTag tag =
-	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)), *this);
+	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
       if (!libport::has(tags_get(), tag))
 	apply_tag(tag, 0);
     }
@@ -234,7 +234,7 @@ namespace runner
           args.push_back(parent);
           args.push_back(new object::String(elt));
 	  where =
-	    object::Tag::_new(*this, args);
+	    object::Tag::_new(args);
 	  parent->slot_set(elt, where);
 	  parent = where;
 	}

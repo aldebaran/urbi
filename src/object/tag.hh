@@ -23,10 +23,10 @@ namespace object
     const value_type& value_get() const;
 
     void block(runner::Runner&, objects_type&);
-    static rTag _new(runner::Runner&, objects_type&);
+    static rTag _new(objects_type& args);
     void freeze(runner::Runner&);
     libport::Symbol name();
-    static rTag new_flow_control(runner::Runner& r, objects_type&);
+    static rTag new_flow_control(objects_type&);
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
     void stop(runner::Runner&, objects_type&);
@@ -58,7 +58,7 @@ namespace object
   };
 
   const scheduler::rTag&
-  extract_tag(const rObject& o, runner::Runner& r);
+  extract_tag(const rObject& o);
 
 } // namespace object
 

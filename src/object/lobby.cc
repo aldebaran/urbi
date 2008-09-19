@@ -46,9 +46,9 @@ namespace object
   }
 
   void
-  Lobby::send(runner::Runner& r, objects_type& args)
+  Lobby::send(objects_type& args)
   {
-    check_arg_count(r, args.size(), 1, 2);
+    check_arg_count(args.size(), 1, 2);
     // Second argument is the tag name.
     std::string tag;
     if (args.size() == 2)

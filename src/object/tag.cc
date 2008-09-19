@@ -45,7 +45,7 @@ namespace object
   void
   Tag::block(runner::Runner& r, objects_type& args)
   {
-    check_arg_count(r, args.size(), 0, 1);
+    check_arg_count(args.size(), 0, 1);
     rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
     value_->block(r.scheduler_get(), payload);
   }
@@ -65,14 +65,14 @@ namespace object
   }
 
   rTag
-  Tag::_new(runner::Runner& r, objects_type& args)
+  Tag::_new(objects_type& args)
   {
-    check_arg_count(r, args.size() - 1, 0, 1);
+    check_arg_count(args.size() - 1, 0, 1);
     libport::Symbol tag_short_name;
 
     if (args.size() > 1)
     {
-      type_check(args[1], String::proto, r, SYMBOL(new));
+      type_check(args[1], String::proto);
       tag_short_name =
 	libport::Symbol(args[1]->as<String>()->value_get());
     }
@@ -81,14 +81,14 @@ namespace object
 
     rTag res = new Tag(args[0] == proto ?
 		       new scheduler::Tag(tag_short_name) :
-		       extract_tag(args[0], r));
+		       extract_tag(args[0]));
     return res;
   }
 
   rTag
-  Tag::new_flow_control(runner::Runner& r, objects_type& args)
+  Tag::new_flow_control(objects_type& args)
   {
-    rTag res = _new(r, args);
+    rTag res = _new(args);
     res->value_get()->flow_control_set();
     return res;
   }
@@ -108,7 +108,7 @@ namespace object
   void
   Tag::stop(runner::Runner& r, objects_type& args)
   {
-    check_arg_count(r, args.size(), 0, 1);
+    check_arg_count(args.size(), 0, 1);
     rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
     value_->stop(r.scheduler_get(), payload);
   }
@@ -191,9 +191,8 @@ namespace object
 
 
   const scheduler::rTag&
-  extract_tag(const rObject& o, runner::Runner& r)
+  extract_tag(const rObject& o)
   {
-    type_check(o, Tag::proto, r, SYMBOL(extract_tag));
     return o->as<Tag>()->value_get();
   }
 

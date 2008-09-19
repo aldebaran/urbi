@@ -40,9 +40,9 @@ namespace object
     typedef libport::shared_ptr<Urbi, true> T;
 
     static T
-    to(const rObject& o, const libport::Symbol& name, runner::Runner& r, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
     {
-      type_check(o, Urbi::proto, r, name, idx);
+      type_check(o, Urbi::proto, idx);
       return o->as<Urbi>();
     }
 
@@ -58,9 +58,9 @@ namespace object
   struct CxxConvert<int>
   {
     static int
-    to(const rObject& o, const libport::Symbol& name, runner::Runner& r, unsigned idx)
+    to(const rObject& o, const libport::Symbol& name, runner::Runner&, unsigned idx)
     {
-      type_check(o, Float::proto, r, name, idx);
+      type_check(o, Float::proto, idx);
       return o->as<Float>()->to_int(name);
     }
 
@@ -76,9 +76,9 @@ namespace object
   struct CxxConvert<unsigned int>
   {
     static unsigned int
-    to(const rObject& o, const libport::Symbol& name, runner::Runner& r, unsigned idx)
+    to(const rObject& o, const libport::Symbol& name, runner::Runner&, unsigned idx)
     {
-      type_check(o, Float::proto, r, name, idx);
+      type_check(o, Float::proto, idx);
       return o->as<Float>()->to_unsigned_int(name);
     }
 
@@ -94,9 +94,9 @@ namespace object
   struct CxxConvert<Float::value_type>
   {
     static Float::value_type
-    to(const rObject& o, const libport::Symbol& name, runner::Runner& r, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
     {
-      type_check(o, Float::proto, r, name, idx);
+      type_check(o, Float::proto, idx);
       return o->as<Float>()->value_get();
     }
 
@@ -112,9 +112,9 @@ namespace object
   struct CxxConvert<std::string>
   {
     static std::string
-    to(const rObject& o, const libport::Symbol& name, runner::Runner& r, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
     {
-      type_check(o, String::proto, r, name, idx);
+      type_check(o, String::proto, idx);
       return o->as<String>()->value_get();
     }
 
@@ -130,9 +130,9 @@ namespace object
   struct CxxConvert<libport::Symbol>
   {
     static libport::Symbol
-    to(const rObject& o, const libport::Symbol& name, runner::Runner& r, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
     {
-      type_check(o, String::proto, r, name, idx);
+      type_check(o, String::proto, idx);
       return libport::Symbol(o->as<String>()->value_get());
     }
 

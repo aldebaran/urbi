@@ -62,8 +62,8 @@ namespace object
   };
 
   // Urbi functions
-  std::string as_string(runner::Runner& r, rObject from);
-  std::string as_printable(runner::Runner& r, rObject from);
+  std::string as_string(rObject from);
+  std::string as_printable(rObject from);
 
 }; // namespace object
 

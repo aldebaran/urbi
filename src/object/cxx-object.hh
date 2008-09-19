@@ -89,18 +89,15 @@ namespace object
   /// Raise an exception if \a o is not a \a exp. If \a idx is given,
   /// report the type error for argument \a idx.
   void type_check(const rObject& o, const rObject& exp,
-                  runner::Runner& r, const libport::Symbol fun,
                   boost::optional<unsigned> idx = boost::optional<unsigned>());
 
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
-  void check_arg_count (runner::Runner& r,
-                        unsigned effective, unsigned formal);
+  void check_arg_count (unsigned effective, unsigned formal);
 
   /// Same as above, with a minimum and maximum number of
   /// formal parameters.
-  void check_arg_count (runner::Runner& r,
-                        unsigned effective, unsigned minformal, unsigned maxformal);
+  void check_arg_count (unsigned effective, unsigned minformal, unsigned maxformal);
 
 }
 
