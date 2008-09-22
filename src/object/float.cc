@@ -101,15 +101,25 @@ namespace object
   {
     if (from == proto)
       return SYMBOL(LT_Float_GT);
+
+    type_check(from, proto, 1);
+    Float::value_type fl = from->as<Float>()->value_get();
+    // Do not rely on boost::format to print inf and nan since
+    // behavior differs under Win32.
+    if (std::isinf(fl))
+      return fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
+    if (std::isnan(fl))
+      return SYMBOL(nan);
+    // Print integers with a different format string to avoid
+    // the scientific notation with loss of precision.
+    if (::round(fl) == fl)
     {
-      type_check(from, proto, 1);
-      float fl = from->as<Float>()->value_get();
-      // Do not rely on boost::format to print inf and nan since
-      // behavior differs under Win32
-      if (std::isinf(fl))
-        return fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
-      if (std::isnan(fl))
-        return SYMBOL(nan);
+      // This format string is enough for a 64 bits integer.
+      static boost::format f("%.20g");
+      return str(f % fl);
+    }
+    else
+    {
       static boost::format f("%g");
       return str(f % fl);
     }
