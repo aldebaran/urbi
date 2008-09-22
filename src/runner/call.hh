@@ -1,7 +1,9 @@
 #ifndef OBJECT_CALL_HH
 # define OBJECT_CALL_HH
 
-# include <runner/runner.hh>
+# include <libport/symbol.hh>
+# include <object/fwd.hh>
+# include <runner/fwd.hh>
 
 namespace object
 {

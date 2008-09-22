@@ -4,6 +4,7 @@
 # include <scheduler/scheduler.hh>
 # include <kernel/userver.hh>
 # include <object/global.hh>
+# include <runner/runner.hh>
 
 namespace runner
 {
