@@ -19,13 +19,13 @@ namespace object
   {
   public:
     static rObject
-    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned)
+    to(const rObject& o, const libport::Symbol&, unsigned)
     {
       return o;
     }
 
     static rObject
-    from(rObject o,  const libport::Symbol&, runner::Runner&)
+    from(rObject o,  const libport::Symbol&)
     {
       if (!o)
         return void_class;
@@ -40,14 +40,14 @@ namespace object
     typedef libport::shared_ptr<Urbi, true> T;
 
     static T
-    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
     {
       type_check(o, Urbi::proto, idx);
       return o->as<Urbi>();
     }
 
     static rObject
-    from(const T& v, const libport::Symbol&, runner::Runner&)
+    from(const T& v, const libport::Symbol&)
     {
       return v;
     }
@@ -58,14 +58,14 @@ namespace object
   struct CxxConvert<int>
   {
     static int
-    to(const rObject& o, const libport::Symbol& name, runner::Runner&, unsigned idx)
+    to(const rObject& o, const libport::Symbol& name, unsigned idx)
     {
       type_check(o, Float::proto, idx);
       return o->as<Float>()->to_int(name);
     }
 
     static rObject
-    from(const int& v, const libport::Symbol&, runner::Runner&)
+    from(const int& v, const libport::Symbol&)
     {
       return new Float(v);
     }
@@ -76,14 +76,14 @@ namespace object
   struct CxxConvert<unsigned int>
   {
     static unsigned int
-    to(const rObject& o, const libport::Symbol& name, runner::Runner&, unsigned idx)
+    to(const rObject& o, const libport::Symbol& name, unsigned idx)
     {
       type_check(o, Float::proto, idx);
       return o->as<Float>()->to_unsigned_int(name);
     }
 
     static rObject
-    from(const unsigned int& v, const libport::Symbol&, runner::Runner&)
+    from(const unsigned int& v, const libport::Symbol&)
     {
       return new Float(v);
     }
@@ -94,14 +94,14 @@ namespace object
   struct CxxConvert<Float::value_type>
   {
     static Float::value_type
-    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
     {
       type_check(o, Float::proto, idx);
       return o->as<Float>()->value_get();
     }
 
     static rObject
-    from(const Float::value_type& v, const libport::Symbol&, runner::Runner&)
+    from(const Float::value_type& v, const libport::Symbol&)
     {
       return new Float(v);
     }
@@ -112,14 +112,14 @@ namespace object
   struct CxxConvert<std::string>
   {
     static std::string
-    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
     {
       type_check(o, String::proto, idx);
       return o->as<String>()->value_get();
     }
 
     static rObject
-    from(const std::string& v,  const libport::Symbol&, runner::Runner&)
+    from(const std::string& v,  const libport::Symbol&)
     {
       return new String(v);
     }
@@ -130,14 +130,14 @@ namespace object
   struct CxxConvert<libport::Symbol>
   {
     static libport::Symbol
-    to(const rObject& o, const libport::Symbol&, runner::Runner&, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
     {
       type_check(o, String::proto, idx);
       return libport::Symbol(o->as<String>()->value_get());
     }
 
     static rObject
-    from(const libport::Symbol& v,  const libport::Symbol&, runner::Runner&)
+    from(const libport::Symbol& v,  const libport::Symbol&)
     {
       return new String(v.name_get());
     }
@@ -148,13 +148,13 @@ namespace object
   struct CxxConvert<bool>
   {
     static bool
-    to(const rObject& o, const libport::Symbol& name, runner::Runner&, unsigned)
+    to(const rObject& o, const libport::Symbol&, unsigned)
     {
       return is_true(o, name);
     }
 
     static rObject
-    from(bool v,  const libport::Symbol&, runner::Runner&)
+    from(bool v,  const libport::Symbol&)
     {
       return v ? true_class : false_class;
     }
@@ -165,15 +165,14 @@ namespace object
   struct CxxConvert<scheduler::tags_type>
   {
     static scheduler::tags_type
-    to(const rObject&, const libport::Symbol& name, runner::Runner&, unsigned)
+    to(const rObject&, const libport::Symbol& name, unsigned)
     {
       (void)name;
       pabort(name);
     }
 
     static rObject
-    from(const scheduler::tags_type& v, const libport::Symbol&,
-         runner::Runner&)
+    from(const scheduler::tags_type& v, const libport::Symbol&)
     {
       List::value_type res;
       foreach (const scheduler::rTag& tag, v)

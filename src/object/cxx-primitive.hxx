@@ -49,32 +49,33 @@ namespace object
       BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
       const libport::Symbol& name)                                      \
     {                                                                   \
+      (void) r;                                                         \
       check_arg_count(args.size() - 1, ArgsC WHEN(Run, - 1) - 1);       \
       WHEN(Ret, R res =) f(                                             \
                                                                         \
         WHEN(Run, r) COMMA(Run)                                         \
                                                                         \
         CxxConvert<typename Flatten<S>::type>                           \
-        ::to(args[0], name, r, 0)                                       \
+        ::to(args[0], name, 0)                                          \
                                                                         \
         COMMA(Arg1)                                                     \
         WHEN(Arg1,                                                      \
              CxxConvert<typename Flatten<A1>::type>                     \
-             ::to(args[1], name, r, 1))                                 \
+             ::to(args[1], name, 1))                                    \
                                                                         \
         COMMA(Arg2)                                                     \
         WHEN(Arg2,                                                      \
              CxxConvert<typename Flatten<A2>::type>                     \
-             ::to(args[2], name, r, 2))                                 \
+             ::to(args[2], name, 2))                                    \
                                                                         \
         COMMA(Arg3)                                                     \
         WHEN(Arg3,                                                      \
              CxxConvert<typename Flatten<A3>::type>                     \
-             ::to(args[3], name, r, 3))                                 \
+             ::to(args[3], name, 3))                                    \
         );                                                              \
       IF(Ret,                                                           \
          return CxxConvert<typename Flatten<R>::type>                   \
-         ::from(res, name, r),                                          \
+         ::from(res, name),                                             \
          return object::void_class);                                    \
     }                                                                   \
   };                                                                    \
@@ -97,8 +98,9 @@ namespace object
       BOOST_LIST_TYPE_MET(Ret, ArgsC, Run) f,                   \
       const libport::Symbol& name)                              \
     {                                                           \
+      (void) r;                                                 \
       S tgt =                                                   \
-        CxxConvert<S>::to(args[0], name, r, 0);                 \
+        CxxConvert<S>::to(args[0], name, 0);                    \
       args.pop_front();                                         \
       WHEN(Ret, return) f(                                      \
         WHEN(Run, r) COMMA(Run)                                 \
