@@ -20,7 +20,9 @@
 #include <kernel/uconnection.hh>
 
 #include <object/global.hh>
+#include <object/lobby.hh>
 #include <object/tag.hh>
+#include <object/task.hh>
 
 #include <runner/call.hh>
 #include <runner/interpreter.hh>

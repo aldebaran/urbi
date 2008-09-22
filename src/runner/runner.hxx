@@ -6,12 +6,15 @@
 #ifndef RUNNER_RUNNER_HXX
 # define RUNNER_RUNNER_HXX
 
+# include <libport/compilation.hh>
+
 # include <object/lobby.hh>
+# include <object/task.hh>
 
 namespace runner
 {
 
-  inline
+  LIBPORT_SPEED_INLINE
   Runner::Runner(rLobby lobby, scheduler::Scheduler& sched,
 		 const libport::Symbol& name)
     : scheduler::Job(sched, name)
@@ -20,7 +23,7 @@ namespace runner
   {
   }
 
-  inline
+  LIBPORT_SPEED_INLINE
   Runner::Runner(const Runner& model, const libport::Symbol& name)
     : scheduler::Job(model, name)
     , lobby_(model.lobby_)
@@ -28,37 +31,42 @@ namespace runner
   {
   }
 
-  inline
+  LIBPORT_SPEED_INLINE
   Runner::~Runner()
   {
   }
 
-  inline const object::rLobby&
+  LIBPORT_SPEED_INLINE
+  const object::rLobby&
   Runner::lobby_get() const
   {
     return lobby_;
   }
 
-  inline object::rLobby
+  LIBPORT_SPEED_INLINE
+  object::rLobby
   Runner::lobby_get()
   {
     return lobby_;
   }
 
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   Runner::lobby_set(rLobby lobby)
   {
     lobby_ = lobby;
   }
 
 
-  inline scheduler::rTag
+  LIBPORT_SPEED_INLINE
+  scheduler::rTag
   Runner::fork_point_get() const
   {
     return fork_point_;
   }
 
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   Runner::fork_point_set(scheduler::rTag fork)
   {
     assert(fork);

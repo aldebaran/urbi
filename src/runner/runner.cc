@@ -4,6 +4,10 @@
  */
 
 #include <kernel/uconnection.hh>
+
+#include <object/lobby.hh>
+#include <object/task.hh>
+
 #include <runner/runner.hh>
 
 namespace runner
@@ -88,3 +92,8 @@ namespace runner
   }
 
 } // namespace runner
+
+
+#ifndef LIBPORT_SPEED
+# include <runner/runner.hxx>
+#endif

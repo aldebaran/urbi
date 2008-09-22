@@ -7,6 +7,8 @@
 #include <libport/containers.hh>
 #include <libport/finally.hh>
 
+#include <object/lobby.hh>
+
 #include <runner/at-handler.hh>
 #include <runner/call.hh>
 #include <runner/unscoper.hh>

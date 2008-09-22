@@ -18,6 +18,7 @@
 #include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/global.hh>
+#include <object/lobby.hh>
 #include <object/list.hh>
 #include <object/system.hh>
 #include <object/tag.hh>

@@ -10,8 +10,7 @@
 
 # include <boost/tuple/tuple.hpp>
 
-# include <object/object.hh>
-# include <object/task.hh>
+# include <object/fwd.hh>
 # include <scheduler/scheduler.hh>
 # include <scheduler/job.hh>
 
@@ -159,6 +158,8 @@ namespace runner
 
 } // namespace runner
 
-# include <runner/runner.hxx>
+# ifdef LIBPORT_SPEED
+#  include <runner/runner.hxx>
+# endif
 
 #endif // !RUNNER_RUNNER_HH

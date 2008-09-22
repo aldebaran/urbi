@@ -25,7 +25,9 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
+#include <object/lobby.hh>
 #include <object/object.hh>
+#include <object/state.hh>
 #include <object/tag.hh>
 #include <object/urbi-exception.hh>
 

@@ -2,6 +2,7 @@
 
 #include <ast/nary.hh>
 
+#include <object/lobby.hh>
 #include <object/object.hh>
 #include <object/tag.hh>
 

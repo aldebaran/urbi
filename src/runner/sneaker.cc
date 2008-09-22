@@ -4,6 +4,7 @@
 
 #include <ast/print.hh>
 
+#include <object/lobby.hh>
 #include <object/system.hh>
 #include <object/urbi-exception.hh>
 

@@ -12,9 +12,6 @@
 # include <libport/hash.hh>
 
 # include <ast/fwd.hh>
-# include <object/object.hh>
-# include <scheduler/scheduler.hh>
-# include <scheduler/job.hh>
 
 # include <runner/runner.hh>
 # include <runner/stacks.hh>
