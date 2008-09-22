@@ -10,6 +10,7 @@
 
 # include <boost/any.hpp>
 # include <boost/function.hpp>
+# include <libport/ufloat.hh>
 # include <libport/statistics.hh>
 # include <boost/utility.hpp>
 # include <libport/utime.hh>
@@ -25,7 +26,8 @@ namespace scheduler
     SCHED_IMMEDIATE = 0
   };
 
-  typedef libport::Statistics<libport::utime_t> scheduler_stats_type;
+  typedef libport::Statistics<libport::utime_t, libport::ufloat>
+    scheduler_stats_type;
 
   class Scheduler : boost::noncopyable
   {

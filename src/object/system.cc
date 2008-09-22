@@ -289,7 +289,7 @@ namespace object
     // symbol generation code
 #define ADDSTAT(Suffix, Function, Divisor)				\
     res[libport::Symbol( "cycles" # Suffix)] = new Float(stats.Function() / Divisor)
-    ADDSTAT(, samples, 1);
+    ADDSTAT(, size, 1);
     ADDSTAT(Max, max, 1000.0);
     ADDSTAT(Mean, mean, 1000.0);
     ADDSTAT(Min, min, 1000.0);
