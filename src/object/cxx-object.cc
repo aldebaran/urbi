@@ -1,3 +1,5 @@
+#include <kernel/userver.hh>
+
 #include <object/global.hh>
 #include <object/cxx-object.hh>
 

@@ -9,6 +9,7 @@ runner/interpreter-apply.cc			\
 runner/interpreter.hh				\
 runner/interpreter.hxx				\
 runner/interpreter-visit.hxx			\
+runner/raise.cc					\
 runner/raise.hh					\
 runner/raise.hxx				\
 runner/runner.cc				\

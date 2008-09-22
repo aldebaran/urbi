@@ -6,16 +6,20 @@
 # include <object/global.hh>
 # include <object/string.hh>
 # include <runner/runner.hh>
+# include <runner/call.hh>
 
 namespace runner
 {
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   raise(const object::rObject& exn)
   {
     ::urbiserver->getCurrentRunner().raise(exn);
+    pabort("Unreachable");
   }
 
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
     Runner& r = ::urbiserver->getCurrentRunner();
@@ -28,7 +32,8 @@ namespace runner
   }
 
 
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   raise_arity_error(unsigned effective,
                     unsigned expected)
   {
@@ -43,7 +48,8 @@ namespace runner
     pabort("Unreachable");
   }
 
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   raise_arity_error(unsigned effective,
                     unsigned minimum,
                     unsigned maximum)
@@ -60,7 +66,8 @@ namespace runner
     pabort("Unreachable");
   }
 
-  inline void
+  LIBPORT_SPEED_INLINE
+  void
   raise_argument_type_error(unsigned idx,
                             object::rObject effective,
                             object::rObject expected)
