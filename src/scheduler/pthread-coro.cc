@@ -53,9 +53,6 @@ coroutine_start(Coro* self, Coro* other,
     if (pthread_attr_init(&attr))
       errabort("pthread_attr_init");
 
-    size_t s;
-    if (pthread_attr_getstacksize(&attr, &s))
-      errabort("pthread_attr_getstacksize");
     if (pthread_attr_setstacksize(&attr, kernconf.default_stack_size))
       errabort("pthread_attr_setstacksize");
   }
