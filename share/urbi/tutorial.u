@@ -108,9 +108,9 @@ do Global.Tutorial
     {
       var this.name = call.argAt(0);
       var this.text = call.argAt(1);
-      var this.onEnter = call.args.nth(2);
-      var this.onLeave = call.args.nth(3);
-      var this.condition = call.args.nth(4);
+      var this.onEnter = call.args[2];
+      var this.onLeave = call.args[3];
+      var this.condition = call.args[4];
     };
 
     function start()

@@ -26,13 +26,13 @@
       for (var name: names.range(size))
       {
         var n = idx;
-        setSlot(name, function () { members.nth(n) });
+        setSlot(name, function () { members[n] });
         setProperty(name, "updateHook",
           function (name, val) {
             // Copy members if needed before altering it
             if (!ownsSlot("members"))
               members = members.clone;
-            members.setNth(n, val);
+            members[n] = val;
             void;
           });
         idx++;
@@ -48,9 +48,9 @@
         members < other.members
       };
 
-      function nth(n)
+      function '[]'(n)
       {
-        members.nth(n)
+        members[n]
       };
     };
 

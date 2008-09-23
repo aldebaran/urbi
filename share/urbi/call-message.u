@@ -6,17 +6,17 @@ class Global.CallMessage
 {
   function argString(i)
   {
-    args.nth(i).string
+    args[i].string
   };
 
   function evalArgAt(i)
   {
-    args.nth(i).eval
+    args[i].eval
   };
 
   function argAt(i)
   {
-    args.nth(i).value
+    args[i].value
   };
 
   function evalArgs()

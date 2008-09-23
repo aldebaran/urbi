@@ -69,7 +69,7 @@ namespace object
   List::index(const rFloat& idx, const libport::Symbol fun) const
     throw (BadInteger, PrimitiveError)
   {
-    size_t i = idx->to_unsigned_int(SYMBOL(nth), "invalid index: %1%");
+    size_t i = idx->to_unsigned_int(fun, "invalid index: %1%");
     if (content_.size() <= i)
       throw PrimitiveError(fun, "invalid index: " + string_cast(i));
     return i;
@@ -77,12 +77,12 @@ namespace object
 
   rObject List::operator[](const rFloat& idx)
   {
-    return content_[index(idx, SYMBOL(nth))];
+    return content_[index(idx, SYMBOL(SBL_SBR))];
   }
 
   rObject List::set(const rFloat& idx, const rObject& val)
   {
-    return content_[index(idx, SYMBOL(nth))] = val;
+    return content_[index(idx, SYMBOL(SBL_SBR_EQ))] = val;
   }
 
   rFloat List::size()
@@ -233,7 +233,8 @@ namespace object
     bind(SYMBOL(each),           &List::each        );
     bind(SYMBOL(each_AMPERSAND), &List::each_and    );
     bind(SYMBOL(front),          &List::front       );
-    bind(SYMBOL(nth),            &List::operator[]  );
+    bind(SYMBOL(SBL_SBR),        &List::operator[]  );
+    bind(SYMBOL(SBL_SBR_EQ),     &List::set         );
     bind(SYMBOL(PLUS),           &List::operator+   );
     bind(SYMBOL(PLUS_EQ),        &List::operator+=  );
     bind(SYMBOL(push_back),      &List::push_back   );
@@ -242,7 +243,6 @@ namespace object
     bind(SYMBOL(pop_front),      &List::pop_front   );
     bind(SYMBOL(removeById),     &List::remove_by_id);
     bind(SYMBOL(reverse),        &List::reverse     );
-    bind(SYMBOL(setNth),         &List::set         );
     bind(SYMBOL(size),           &List::size        );
     bind(SYMBOL(sort),           &List::sort        );
     bind(SYMBOL(STAR),           &List::operator*   );

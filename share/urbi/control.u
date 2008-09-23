@@ -30,7 +30,7 @@ class Global.Control
   // becomes true and a code to execute each time the test becomes false.
   function at_
   {
-    registerAtJob(call.args.nth(0), call.args.nth(1), call.args.nth(2))
+    registerAtJob(call.args[0], call.args[1], call.args[2])
   };
 
   // whenever_ takes three expressions, a test and a code to execute each time the
