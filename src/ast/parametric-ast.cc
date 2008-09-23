@@ -14,11 +14,11 @@
 namespace ast
 {
 
-  ParametricAst::ParametricAst(const std::string& s)
+  ParametricAst::ParametricAst(const std::string& s, const loc& l)
     : exp_map_type("exp")
     , id_map_type("id")
     , exps_map_type("exps")
-    , ast_(parser::parse(s)->ast_xget())
+    , ast_(parser::parse(s, l)->ast_xget())
     , effective_location_()
     , count_(0)
   {

@@ -6,6 +6,7 @@
 #ifndef AST_PARAMETRIC_AST_HH
 # define AST_PARAMETRIC_AST_HH
 
+# include <libport/symbol.hh>
 # include <libport/unique-pointer.hh>
 
 # include <ast/cloner.hh>
@@ -30,7 +31,7 @@ namespace ast
     typedef parser::MetavarMap<ast::exps_type*> exps_map_type;
 
     /// Build a ParametricAst whose textual part is \a s.
-    ParametricAst(const std::string& s);
+    ParametricAst(const std::string& s, const loc& l = loc());
     /// Destroy the ParametricAst.
     /// \precondition empty()
     virtual ~ParametricAst();
@@ -101,6 +102,14 @@ namespace ast
   std::ostream& operator<< (std::ostream& o, const ParametricAst& a);
 
 } // namespace ast
+
+
+/// Define a parametric ast, using the current file and line as location.
+# define PARAMETRIC_AST(Name, Content)                                  \
+  static ::ast::ParametricAst                                           \
+  Name(Content,                                                         \
+       ::ast::loc(new libport::Symbol(__FILE__), __LINE__))
+
 
 # include <ast/parametric-ast.hxx>
 
