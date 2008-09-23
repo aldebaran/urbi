@@ -708,7 +708,7 @@ used in composite expressions, nested, and so forth.
 Local variables are introduced with the \lstinline|var| keyword,
 followed by an identifier (see \autoref{sec:us-syn-id}) and an optional
 initialization value assignment. If the initial value is omitted, it
-defaults to \lstinline"void" (\autoref{sec:std-void}). Variable
+defaults to \refObject{void}. Variable
 declarations evaluate to
 the initialization value. They can later be referred to by their
 name. Their value can be changed with the assignment operator; such an
@@ -951,8 +951,7 @@ first({echo("Arg1"); 1},
 A function declared with formal argument is lazy, and one uses its
 call message to manipulate its \emph{unevaluated} arguments.
 \autoref{lst:function-lazy} gives an example.  More information about
-this can be found in the CallMessage class documentation
-(\autoref{sec:std-callmsg}).
+this can be found in the \refObject{CallMessage} class documentation.
 
 \begin{urbiscript}[caption=Lazy
   function,label=lst:function-lazy,float=\floatposh]
@@ -1096,7 +1095,7 @@ used to create a slot with a given value instead of
 \lstinline|void|. Finally, the
 \lstinline|slotNames| method can be used to get the list of the object
 slot's name. \autoref{lst:slots} shows how to manipulate slots. More
-documentation about these method can be found in \autoref{sec:std-object}.
+documentation about these methods can be found in \autorefObject{Object}.
 
 \begin{urbiscript}[caption=Manipulating slots, label=lst:slots,
   float=\floatpos]
@@ -1144,7 +1143,7 @@ In \us, an object can have several prototypes. The list of prototypes
 can be read with the \lstinline|protos| method. Prototypes can be add
 or removed with the \lstinline|addProto| and \lstinline|removeProto|
 methods respectively, as illustrated by \autoref{lst:prototypes}. More
-documentation about these methods can be found in \autoref{sec:std-object}.
+documentation about these methods can be found in \autorefObject{Object}.
 
 \begin{urbiscript}[caption=Manipulating prototypes, label=lst:prototypes,
   float=\floatpos]

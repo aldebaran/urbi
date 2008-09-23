@@ -149,3 +149,10 @@
 %% Point to the definition of an USL class.
 \newcommand{\refObject}[1]
   {\hyperref[sec:std-#1]{\lstinline|#1| (\autoref*{sec:std-#1})}}
+
+%% \autorefObject{ ObjectName }
+%% ----------------------------
+%% Same as above, but point to the section without spelling the class
+%% name.
+\newcommand{\autorefObject}[1]
+  {\autoref{sec:std-#1}}

@@ -9,7 +9,7 @@
 
 \section{Boolean}
 \section{CallMessage}
-\label{sec:std-callmsg}
+
 \subsection{Examples}
 \subsubsection{Evaluating an argument several times}
 \label{sec:std-callmsg-examples-several}
@@ -22,7 +22,7 @@
 \input{float.tex}
 
 \section{Group}
-\section{Integer}
+
 \section{Lazy}
 
 \subsection{Rationale}
@@ -31,7 +31,7 @@ Lazy are object that hold a lazy value; that is, a not-yet evaluated
 value. They provide facilities to evaluate their content only once
 (memoization) or several times. Lazy are essentially used in call
 messages, to represent lazy arguments, as described in
-\autoref{sec:std-callmsg}.
+\autorefObject{CallMessage}.
 
 \subsection{Construction}
 
@@ -123,7 +123,6 @@ and call messages. See example with call messages in
 
 \section{Lobby}
 \section{Object}
-\label{sec:std-object}
 
 \subsection{Methods}
 
@@ -145,8 +144,8 @@ and call messages. See example with call messages in
 \section{String}
 \section{Tag}
 \section{Tuple}
-\section{Void}
-\label{sec:std-void}
+\section{void}
+
 
 %% Restore the definition of \section.
 \let\section\sectionOrig
