@@ -109,8 +109,9 @@ namespace
       "  -h, --help             display this message and exit successfully\n"
       "  -v, --version          display version information\n"
       "  -P, --period PERIOD    ignored for backward compatibility\n"
-      "  -p, --port PORT        tcp port URBI will listen to.\n"
-      "  -n, --no-network       disable networking.\n"
+      "  -H, --host HOST        the address to listen on (default: all)\n"
+      "  -p, --port PORT        tcp port URBI will listen to\n"
+      "  -n, --no-network       disable networking\n"
       "  -f, --fast             ignore system time, go as fast as possible\n"
       "  -i, --interactive      read and parse stdin in a nonblocking way\n"
       "  -s, --stack-size=SIZE  set the job stack size in KB\n"
@@ -150,6 +151,8 @@ main (int argc, const char* argv[], bool block)
   // Input files.
   typedef std::vector<const char*> files_type;
   files_type files;
+  /// The IP to bind. "" means every interface.
+  std::string arg_host;
   /// The port to use.  0 means automatic selection.
   int arg_port = 0;
   /// Where to write the port we use.
@@ -172,6 +175,8 @@ main (int argc, const char* argv[], bool block)
       data.fast = true;
     else if (arg == "--help" || arg == "-h")
       usage();
+    else if (arg == "--host" || arg == "-H")
+      arg_host = argv[++i];
     else if (arg == "--interactive" || arg == "-i")
       data.interactive = true;
     else if (arg == "--no-network" || arg == "-n")
@@ -212,11 +217,15 @@ main (int argc, const char* argv[], bool block)
   data.s = new ConsoleServer(data.fast);
   ConsoleServer& s = *data.s;
   int port = 0;
-  if (data.network && !(port=Network::createTCPServer(arg_port, "localhost")))
+  if (data.network && !(port=Network::createTCPServer(arg_port, arg_host)))
+  {
     std::cerr << libport::program_name
-	      << ": cannot bind to port " << arg_port
-	      << " on localhost" << std::endl
+	      << ": cannot bind to port " << arg_port;
+    if (!arg_host.empty())
+      std::cerr << " on " << arg_host;
+    std::cerr << std::endl
 	      << libport::exit (EX_UNAVAILABLE);
+  }
 
   if (arg_port_filename)
     std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
