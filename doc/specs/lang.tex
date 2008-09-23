@@ -394,7 +394,7 @@ on numeric values. See \autoref{tab:arithmetic-operators} and
 \end{table}
 
 \begin{urbiscript}[caption=Arithmetic operators,
-  label=lst:arithmetic-operators,float=\floatposh]
+  label=lst:arithmetic-operators]
 1 + 1;
 [00000000] 2
 1 - 2;
@@ -440,7 +440,7 @@ affectation combined with another operator. See
 
 
 \begin{urbiscript}[caption=Assignment operators,
-  label=lst:assignment-operators,float=\floatposh]
+  label=lst:assignment-operators]
 var x = 0;
 [00000000] 0
 x = 10;
@@ -478,7 +478,7 @@ and \autoref{lst:bitwise-operators}.
 \end{table}
 
 \begin{urbiscript}[caption=Bitwise operators,
-  label=lst:bitwise-operators,float=\floatposh]
+  label=lst:bitwise-operators]
 4 << 2;
 [00000000] 16
 4 >> 2;
@@ -510,7 +510,7 @@ evaluated only if needed.
 \end{table}
 
 \begin{urbiscript}[caption=Boolean operators,
-  label=lst:bool-operators,float=\floatposh]
+  label=lst:bool-operators]
 true && true;
 [00000000] true
 true || false;
@@ -550,7 +550,7 @@ false && (1 / 0);
 \end{table}
 
 \begin{urbiscript}[caption=Comparison operators,
-  label=lst:comparison-operators,float=\floatposh]
+  label=lst:comparison-operators]
 0 < 0;
 [00000000] false
 0 <= 0;
@@ -593,7 +593,7 @@ method of the targeted object.\fixme{The examples are wrong}
 \end{table}
 
 \begin{urbiscript}[caption=Miscellaneous operators,
-  label=lst:miscellaneous-operators,float=\floatposh]
+  label=lst:miscellaneous-operators]
 0 < 0;
 [00000000] false
 0 <= 0;
@@ -954,7 +954,7 @@ call message to manipulate its \emph{unevaluated} arguments.
 this can be found in the \refObject{CallMessage} class documentation.
 
 \begin{urbiscript}[caption=Lazy
-  function,label=lst:function-lazy,float=\floatposh]
+  function,label=lst:function-lazy]
 function first
 {
   echo(call.evalArgAt(0));
@@ -979,7 +979,7 @@ arguments and storing them as local variables, see
 strict function.
 
 \begin{urbiscript}[caption=Lazy functions with strict semantics,
-  label=lst:lazy-2-strict,float=\floatposh]
+  label=lst:lazy-2-strict]
 function first
 {
   var a = call.evalArgAt(0);
