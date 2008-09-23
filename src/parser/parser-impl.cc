@@ -1,4 +1,4 @@
-/// \file uparser.cc
+/// \file parser/parser-impl.cc
 
 #include <kernel/config.h> // YYDEBUG.
 
@@ -40,7 +40,7 @@ namespace parser
   }
 
   void
-  ParserImpl::parse_(std::istream& source)
+  ParserImpl::parse_(std::istream& source, const location_type& l)
   {
     TIMER_PUSH("parse");
     // Set up result_.
@@ -62,23 +62,31 @@ namespace parser
     p.set_debug_level(debug_);
 #endif
 
+    // Save the current location so that we can restore it afterwards
+    // (when reading the input flow, we want to be able to restore the
+    // cursor after having handled a load command).
+    location_type loc = l;
+    std::swap(loc, loc_);
+
     // Parse.
     if (debug_)
-      LIBPORT_ECHO("====================== Parse begin");
+      LIBPORT_ECHO(loc << "====================== Parse begin");
+
     result_->status = p.parse();
     if (debug_)
       LIBPORT_ECHO("====================== Parse end:" << std::endl
                    << *result_);
+    std::swap(loc, loc_);
     TIMER_POP("parse");
   }
 
   parse_result_type
-  ParserImpl::parse(const std::string& s)
+  ParserImpl::parse(const std::string& s, const location_type& l)
   {
     if (debug_)
       LIBPORT_ECHO("Parsing: " << s);
     std::istringstream is(s);
-    parse_(is);
+    parse_(is, l);
     if (debug_)
       LIBPORT_ECHO("Result: " << *result_);
     return result_;
@@ -95,19 +103,7 @@ namespace parser
       result_->status = 1;
     }
     else
-    {
-      // A location pointing to it.
-      location_type loc;
-      loc.initialize(new libport::Symbol(fn));
-
-      // Exchange with the current location so that we can restore it
-      // afterwards (when reading the input flow, we want to be able to
-      // restore the cursor after having handled a load command).
-      std::swap(loc, loc_);
-      ECHO("Parsing file: " << fn);
-      parse_(f);
-      std::swap(loc, loc_);
-    }
+      parse_(f, location_type(new libport::Symbol(fn)));
     return result_;
   }
 

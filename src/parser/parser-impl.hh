@@ -26,7 +26,10 @@ namespace parser
     ParserImpl();
 
     /// Parse the command from a buffer.
-    parse_result_type parse(const std::string& code);
+    /// \param code  the source to parse.
+    /// \param loc   the location to use for this parsing.
+    parse_result_type parse(const std::string& code,
+                            const location_type& loc = location_type());
 
     /// Parse a file.
     parse_result_type parse_file(const std::string& fn);
@@ -43,11 +46,17 @@ namespace parser
     friend int parser_type::parse();
     friend YY_DECL;
 
-    /// Run the parse.
-    /// Store the result in \c result_.
-    void parse_(std::istream& source);
+    /// Parse and store the result in \c result_.
+    /// \param source  what's to parse.
+    /// \param loc     its location
+    /// \postcondition loc_ is restored.
+    void parse_(std::istream& source, const location_type& loc);
 
     /// The current location.
+    ///
+    /// The real parser (ugrammar.y) fetches its starting location
+    /// here, and saves the final location when the parsing
+    /// was successful.
     location_type loc_;
 
     /// A stack of locations to support //#push and //#pop.
