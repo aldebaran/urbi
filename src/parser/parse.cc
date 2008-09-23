@@ -17,10 +17,10 @@ namespace parser
 {
   // Ugly code duplication here, not sure how to address it.
   parse_result_type
-  parse(const std::string& cmd)
+  parse(const std::string& cmd, const yy::location& l)
   {
     UParser p;
-    parse_result_type res = p.parse(cmd);
+    parse_result_type res = p.parse(cmd, l);
     res->dump_errors();
     passert(*res, !res->status);
     return res;

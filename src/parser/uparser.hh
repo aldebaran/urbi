@@ -7,6 +7,7 @@
 # include <string>
 
 # include <parser/fwd.hh>
+# include <parser/location.hh>
 
 namespace parser
 {
@@ -26,7 +27,8 @@ namespace parser
 
     /// Parse the command from a buffer.
     /// \return yyparse's result (0 on success).
-    parse_result_type parse(const std::string& code);
+    parse_result_type parse(const std::string& code,
+                            const yy::location& loc = yy::location());
 
     /// Parse a file.
     /// \return yyparse's result (0 on success).

@@ -25,9 +25,10 @@ namespace parser
   }
 
   parse_result_type
-  UParser::parse(const std::string& command)
+  UParser::parse(const std::string& command,
+                 const yy::location& loc)
   {
-    return pimpl_->parse(command);
+    return pimpl_->parse(command, loc);
   }
 
   parse_result_type

@@ -6,6 +6,7 @@
 # include <memory>
 
 # include <parser/fwd.hh>
+# include <parser/location.hh>
 # include <parser/parse-result.hh>
 
 namespace parser
@@ -13,10 +14,8 @@ namespace parser
 
   /// Parse \a cmd, and return an object that holds the result and the
   /// errors.
-  parse_result_type parse(const std::string& cmd);
-
-  /// Parse a Tweast and return the (desugared) AST.
-  parse_result_type parse(Tweast& t);
+  parse_result_type parse(const std::string& cmd,
+                          const yy::location& loc = yy::location());
 
   /// Parse a file.
   /// \see parse().
