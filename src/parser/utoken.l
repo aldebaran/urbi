@@ -517,6 +517,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "--"            RETURN(MINUS_MINUS);
 "/"             RETURN_OP(SLASH);
 
+"%="            RETURN_ASSIGN_OP(PERCENT_EQ);
 "*="            RETURN_ASSIGN_OP(STAR_EQ);
 "+="            RETURN_ASSIGN_OP(PLUS_EQ);
 "-="            RETURN_ASSIGN_OP(MINUS_EQ);
@@ -532,7 +533,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "!=="           RETURN_OP(BANG_EQ_EQ);
 "=~="           RETURN_OP(EQ_TILDA_EQ);
 "~="            RETURN_OP(TILDA_EQ);
-"%="            RETURN_OP(PERCENT_EQ);
 ">"             RETURN_OP(GT);
 ">="            RETURN_OP(GT_EQ);
 ">>"            RETURN_OP(GT_GT);

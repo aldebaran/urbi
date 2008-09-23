@@ -26,11 +26,14 @@ do Float
   /// Absolute approximation.
   function '~='(x) { (this - x).abs <= epsilonTilde };
 
+/* %= is now a = a % b.
+
   /// Relative approximation parameter.
   var epsilonPercent = 0.0001;
 
   /// Relative approximation.
   function '%='(x) { (1.0 - this / x).abs <= epsilonPercent };
+*/
 
   // FIXME: =~= cannot be correctly implemented without properties.
   function '=~='(x) { (this - x).abs <= delta + x.delta };

@@ -333,7 +333,7 @@
 %left  CMDBLOCK ELSE_LESS
 %left  "else" "onleave"
 
-%left  "=" "+=" "-=" "*=" "/=" "^="
+%left  "=" "+=" "-=" "*=" "/=" "^=" "%="
 %nonassoc "~" // This is not the same as in C++, this is for "softest".
 %left  "||"
 %left  "&&"
@@ -341,7 +341,7 @@
 %left  "bitor"
 %left  "^"
 %left  "bitand"
-%nonassoc "==" "===" "~=" "%=" "=~=" "!=" "!=="
+%nonassoc "==" "===" "~=" "=~=" "!=" "!=="
 %nonassoc "<" "<=" ">" ">="
 %left  "<<" ">>"
 %left  "+" "-"
@@ -673,9 +673,10 @@ stmt:
 
 %token <libport::Symbol>
         CARET_EQ    "^="
-        SLASH_EQ    "/="
         MINUS_EQ    "-="
+        PERCENT_EQ  "%="
         PLUS_EQ     "+="
+        SLASH_EQ    "/="
         STAR_EQ     "*="
 ;
 
@@ -685,6 +686,7 @@ exp:
 | lvalue "*=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
 | lvalue "/=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
 | lvalue "^=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+| lvalue "%=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
 ;
 
 %token  MINUS_MINUS "--"
@@ -1289,7 +1291,6 @@ exp:
         LT            "<"
         BANG_EQ       "!="
         BANG_EQ_EQ    "!=="
-        PERCENT_EQ    "%="
         TILDA_EQ      "~="
 
         AMPERSAND_AMPERSAND  "&&"
@@ -1299,7 +1300,6 @@ exp:
 exp:
   exp "!="  exp { $$ = ast_call(@$, $1, $2, $3); }
 | exp "!==" exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "%="  exp { $$ = ast_call(@$, $1, $2, $3); }
 | exp "<"   exp { $$ = ast_call(@$, $1, $2, $3); }
 | exp "<="  exp { $$ = ast_call(@$, $1, $2, $3); }
 | exp "=="  exp { $$ = ast_call(@$, $1, $2, $3); }
