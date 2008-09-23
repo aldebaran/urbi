@@ -536,29 +536,29 @@ identifier_as_string:
 stmt:
   "external" "object" identifier_as_string
   {
-    static ast::ParametricAst a("'external'.'object'(%exp:1)");
+    PARAMETRIC_AST(a, "'external'.'object'(%exp:1)");
     $$ = exp(a % $3);
   }
 | "external" "var" identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
   {
-    static ast::ParametricAst a("'external'.'var'(%exp:1, %exp:2, %exp:3)");
+    PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
     $$ = exp(a % $3 % $5 % $7);
   }
 | "external" "function" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
   {
-    static ast::ParametricAst
-      a("'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+    PARAMETRIC_AST
+      (     a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
     $$ = exp(a % $4 % $6 % $8 % $10);
   }
 | "external" "event" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
 	     "from" identifier_as_string
   {
-    static ast::ParametricAst
-      a("'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
+    PARAMETRIC_AST
+      (     a, "'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
     $$ = exp(a % $4 % $6 % $8 % $10);
   }
 ;
@@ -772,7 +772,7 @@ stmt:
     }
 | "every" "(" exp ")" nstmt
     {
-      static ast::ParametricAst every("Control.every_(%exp:1, %exp:2)");
+      PARAMETRIC_AST(every, "Control.every_(%exp:1, %exp:2)");
       $$ = exp (every % $3 % $5);
     }
 | "if" "(" exp ")" nstmt %prec CMDBLOCK
@@ -789,21 +789,21 @@ stmt:
     }
 | "if" "(" "var" "identifier" "=" exp ")" nstmt %prec CMDBLOCK
    {
-     static ast::ParametricAst desugar(
+     PARAMETRIC_AST(desugar,
        "{var %id:1 = %exp:2 |"
        "if (%id:3) %exp:4}");
      $$ = exp(desugar % $4 % $6 % $4 % $8);
    }
 | "if" "(" "var" "identifier" "=" exp ")" nstmt "else" nstmt
    {
-     static ast::ParametricAst desugar(
+     PARAMETRIC_AST(desugar,
        "{var %id:1 = %exp:2 |"
        "if (%id:3) %exp:4 else %exp:5}");
      $$ = exp(desugar % $4 % $6 % $4 % $8 % $10);
    }
 | "freezeif" "(" softtest ")" stmt
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
         "var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
         "'$freezeif_ex' :"
@@ -824,7 +824,7 @@ stmt:
     }
 | "stopif" "(" softtest ")" stmt
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "{"
         "  var '$stopif' = Tag.new(\"$stopif\") |"
         "  '$stopif':"
@@ -846,7 +846,7 @@ stmt:
     }
 | "timeout" "(" exp ")" stmt
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "stopif ({sleep(%exp:1) | true}) %exp:2"
         );
       $$ = exp(desugar % $3 % $5);
@@ -865,12 +865,12 @@ stmt:
     }
 | "waituntil" "(" exp ")"
     {
-      static ast::ParametricAst a("Control.'waituntil'(%exp:1)");
+      PARAMETRIC_AST(a, "Control.'waituntil'(%exp:1)");
       $$ = exp(a % $3);
     }
 | "waituntil" "(" exp "~" exp ")"
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "{"
         "  var '$waituntil' = persist(%exp:1, %exp:2) |"
         "  waituntil('$waituntil'())"
@@ -880,7 +880,7 @@ stmt:
     }
 | "waituntil" "(" event_match ")"
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "%exp:2.'waituntil'(Pattern.new(%exp:1))"
         );
       $$ = exp(desugar % new ast::List(@3, $3.second) % $3.first);
@@ -892,7 +892,7 @@ stmt:
 else_stmt:
   /* nothing. */ %prec ELSE_LESS // ELSE_LESS < "else" to promote shift.
   {
-    static ast::ParametricAst a("nil");
+    PARAMETRIC_AST(a, "nil");
     $$ = exp(a);
   }
 | "else" nstmt
@@ -904,13 +904,13 @@ else_stmt:
 stmt:
   "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "Control.whenever_(%exp:1, %exp:2, %exp:3)");
       $$ = exp(desugar % $3 % $5 % $6);
     }
 | "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "var '$whenever' = persist(%exp:1, %exp:2) |"
         "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'"
         );
@@ -1018,7 +1018,7 @@ stmt_loop:
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "for (var '$for' = %exp:1;"
         "     0 < '$for';" // Use 0 < n, not n > 0, since < is quicker
         "     '$for'--)"
@@ -1046,7 +1046,7 @@ stmt_loop:
     }
 | "while" "(" "var" "identifier" "=" exp ")" stmt %prec CMDBLOCK
   {
-    static ast::ParametricAst desugar("while(true) {var %id:1 = %exp:2 |"
+    PARAMETRIC_AST(desugar, "while(true) {var %id:1 = %exp:2 |"
 				      "if (%id:3) %exp:4 else break }");
     $$ = exp(desugar % $4 % $6 % $4 % $8);
   }
@@ -1211,13 +1211,13 @@ event_match:
 exp:
   exp "[" exps "]"
   {
-    static ast::ParametricAst rewrite("%exp:1 .'[]'(%exps:2)");
+    PARAMETRIC_AST(rewrite, "%exp:1 .'[]'(%exps:2)");
     $$ = ast::exp(rewrite % $1 % $3);
     $$->location_set(@$);
   }
 | exp "[" exps "]" "=" exp
   {
-    static ast::ParametricAst rewrite("%exp:1 .'[]='(%exps:2)");
+    PARAMETRIC_AST(rewrite, "%exp:1 .'[]='(%exps:2)");
     $3->push_back($6);
     $$ = ast::exp(rewrite % $1 % $3);
     $$->location_set(@$);

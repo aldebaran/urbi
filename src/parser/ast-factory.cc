@@ -32,8 +32,6 @@ namespace std
 
 namespace parser
 {
-  using ast::ParametricAst;
-
   ast::rExp
   ast_at(const yy::location& loc,
          ast::rExp cond,
@@ -45,15 +43,15 @@ namespace parser
 
     if (duration)
     {
-      static ast::ParametricAst desugar(
-        "var '$at' = persist(%exp:1, %exp:2) |"
-        "at ('$at') %exp:3 onleave %exp:4");
+      PARAMETRIC_AST(desugar,
+                     "var '$at' = persist(%exp:1, %exp:2) |"
+                     "at ('$at') %exp:3 onleave %exp:4");
 
       return exp(desugar % cond % duration % at % onleave);
     }
     else
     {
-      static ast::ParametricAst desugar(
+      PARAMETRIC_AST(desugar,
         "Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
 
       return exp(desugar % cond % at % onleave);
@@ -68,7 +66,7 @@ namespace parser
     if (!onleave)
       onleave = new ast::Noop(loc, 0);
 
-    static ast::ParametricAst desugar(
+    PARAMETRIC_AST(desugar,
       "detach("
       "{"
       "  %exp:1.onEvent(closure ('$at')"
@@ -93,7 +91,7 @@ namespace parser
     if (!onleave)
       onleave = new ast::Noop(loc, 0);
 
-    static ast::ParametricAst desugar(
+    PARAMETRIC_AST(desugar,
       "detach("
       "{"
       "%exp:1.onEvent("
@@ -227,7 +225,7 @@ namespace parser
   ast::rExp
   ast_closure(ast::rExp value)
   {
-    static ast::ParametricAst a("closure () { %exp:1 }");
+    PARAMETRIC_AST(a, "closure () { %exp:1 }");
     return exp(a % value);
   }
 
@@ -241,7 +239,7 @@ namespace parser
            ast::rExp body)
   {
     // FIXME: for| is handled as a simple for
-    static ParametricAst desugar(
+    PARAMETRIC_AST(desugar,
 
       "{"
       "  %exp:1 |"
@@ -290,11 +288,11 @@ namespace parser
   {
     (void) l;
 
-    static ast::ParametricAst nil("nil");
+    PARAMETRIC_AST(nil, "nil");
     ast::rExp inner = def ? def : exp(nil);
     rforeach (const case_type& c, cases)
     {
-      static ast::ParametricAst a(
+      PARAMETRIC_AST(a,
         "if (Pattern.new(%exp:1).match('$switch')) %exp:2 else %exp:3");
       a % c.first
         % c.second
@@ -302,7 +300,7 @@ namespace parser
       inner = ast::exp(a);
     }
 
-    static ParametricAst sw("{ var '$switch' = %exp:1 | %exp:2 }");
+    PARAMETRIC_AST(sw, "{ var '$switch' = %exp:1 | %exp:2 }");
     return exp(sw % cond % inner);
   }
 
@@ -318,11 +316,11 @@ namespace parser
 
   ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e)
   {
-    static ParametricAst wrap(
-      "{"
-      "var '$tmp' = %exp:1;"
-      "%exp:2;"
-      "}"
+    PARAMETRIC_AST(wrap,
+                   "{"
+                   "var '$tmp' = %exp:1;"
+                   "%exp:2;"
+                   "}"
       );
 
     if (lvalue->call()->target_implicit())

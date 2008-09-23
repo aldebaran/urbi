@@ -12,7 +12,6 @@
 
 namespace flower
 {
-  using ast::ParametricAst;
   using libport::Finally;
   using libport::scoped_set;
 
@@ -29,7 +28,7 @@ namespace flower
 
     has_break_ = true;
 
-    static ParametricAst res("'$loopBreakTag'.stop");
+    PARAMETRIC_AST(res, "'$loopBreakTag'.stop");
     result_ = exp(res);
     result_->original_set(b);
   }
@@ -42,7 +41,7 @@ namespace flower
 
     has_continue_ = true;
 
-    static ParametricAst res("'$loopContinueTag'.stop");
+    PARAMETRIC_AST(res, "'$loopContinueTag'.stop");
     result_ = exp(res);
     result_->original_set(c);
   }
@@ -51,7 +50,7 @@ namespace flower
   ast::rExp
   brk(ast::rExp e)
   {
-    static ParametricAst brk(
+    PARAMETRIC_AST(brk,
       "{var '$loopBreakTag' = Tag.newFlowControl(\"loopBreakTag\") |"
       "'$loopBreakTag': %exp:1}");
 
@@ -62,7 +61,7 @@ namespace flower
   ast::rExp
   cont(ast::rExp e)
   {
-    static ParametricAst cont(
+    PARAMETRIC_AST(cont,
       "{var '$loopContinueTag' = Tag.newFlowControl(\"loopContinueTag\") |"
       "'$loopContinueTag': %exp:1}");
 
@@ -82,7 +81,7 @@ namespace flower
     if (has_continue_)
       res = cont(res.get());
 
-    static ParametricAst whle("while (%exp:1) %exp:2");
+    PARAMETRIC_AST(whle, "while (%exp:1) %exp:2");
     res = exp(whle % recurse(code->test_get()) % res);
     res.unchecked_cast<ast::While>()->flavor_set(code->flavor_get());
 
@@ -101,7 +100,7 @@ namespace flower
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
 
-    static ParametricAst each("%exp:1 . %id:2 (%exp:3)");
+    PARAMETRIC_AST(each, "%exp:1 . %id:2 (%exp:3)");
     each % recurse(code->list_get());
 
     switch (code->flavor_get())
@@ -126,7 +125,7 @@ namespace flower
 
     // 'fillme' is a placeholder filled later. Parametric ASTs can't
     // parametrize formal arguments for now.
-    static ParametricAst closure("closure (fillme) {%exp:1}");
+    PARAMETRIC_AST(closure, "closure (fillme) {%exp:1}");
     ast::rClosure c = (closure % body).result<ast::Closure>();
     // Rename the 'fillme' closure formal argument
     c->formals_get()->front()->what_set(code->index_get()->what_get());
@@ -149,7 +148,7 @@ namespace flower
     super_type::visit(code);
     if (has_return_)
     {
-      static ast::ParametricAst a("var '$returnTag' = "
+      PARAMETRIC_AST(a, "var '$returnTag' = "
 				  "Tag.newFlowControl(\"returnTag\") | "
                                   "'$returnTag': %exp:1");
       ast::rScope copy =
@@ -169,12 +168,12 @@ namespace flower
 
     if (ast::rExp e = ret->value_get())
     {
-      static ParametricAst a("'$returnTag'.stop(%exp:1)");
+      PARAMETRIC_AST(a, "'$returnTag'.stop(%exp:1)");
       result_ = exp(a % e);
     }
     else
     {
-      static ParametricAst a("'$returnTag'.stop");
+      PARAMETRIC_AST(a, "'$returnTag'.stop");
       result_ = exp(a);
     }
 

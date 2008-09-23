@@ -14,8 +14,8 @@ namespace rewrite
   void
   PatternRewriter::visit(const ast::Binding* binding)
   {
-    static ast::ParametricAst
-      rewrite("Pattern.Binding.new(%exp:1, closure (v) { %exp:2 })");
+    PARAMETRIC_AST(rewrite,
+                   "Pattern.Binding.new(%exp:1, closure (v) { %exp:2 })");
     ast::loc loc = binding->location_get();
     libport::Symbol name = binding->name_get();
     rewrite
@@ -30,7 +30,7 @@ namespace rewrite
   void
   PatternRewriter::visit(const ast::Nary* nary)
   {
-    static ast::ParametricAst nil("nil");
+    PARAMETRIC_AST(nil, "nil");
     decs_.push_back(declarations_type());
     super_type::visit(nary);
     ast::rNary res = result_.unsafe_cast<ast::Nary>();

@@ -27,7 +27,6 @@
 
 namespace binder
 {
-  using ast::ParametricAst;
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
 
@@ -88,7 +87,7 @@ namespace binder
                      const libport::Symbol& method,
                      ast::rConstExp value)
   {
-    static ast::ParametricAst call("%exp:1 . %id:2 (%exps:3)");
+    PARAMETRIC_AST(call, "%exp:1 . %id:2 (%exps:3)");
 
     ast::exps_type* args = new ast::exps_type;
     *args << new ast::String(l, name);
@@ -107,12 +106,12 @@ namespace binder
                      const std::string& doc,
                      ast::rConstExp value)
   {
-    static ast::ParametricAst document
-      ("{"
-       "  %exp:1 . createSlot(%exp:2) | "
-       "  %exp:3 . setProperty(%exp:4, %exp:5, %exp:6) |"
-       "  %exp:7"
-       "}");
+    PARAMETRIC_AST(document,
+                   "{"
+                   "  %exp:1 . createSlot(%exp:2) | "
+                   "  %exp:3 . setProperty(%exp:4, %exp:5, %exp:6) |"
+                   "  %exp:7"
+                   "}");
 
     ast::rExp res = changeSlot(l, target, name, SYMBOL(updateSlot), value);
     document
@@ -228,12 +227,12 @@ namespace binder
     ast::rExp modifiers = 0;
     if (const ast::modifiers_type* source = input->modifiers_get())
     {
-      static ast::ParametricAst dict("Dictionary.new");
+      PARAMETRIC_AST(dict, "Dictionary.new");
 
       modifiers = exp(dict);
       foreach (const ast::modifiers_type::value_type& elt, *source)
       {
-        static ast::ParametricAst add("%exp:1.set(%exp:2, %exp:3)");
+        PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
 
         add % modifiers
           % new ast::String(input->location_get(), elt.first)
@@ -249,13 +248,13 @@ namespace binder
     if (modifiers)
     {
       ast::rLValue tgt = ast_lvalue_once(call);
-      static ParametricAst trajectory(
-        "TrajectoryGenerator.new("
-        "  closure ( ) { %exp:1 }," // getter
-        "  closure (v) { %exp:2 }," // Setter
-        "  %exp:3," // Target value
-        "  %exp:4" // modifiers
-        ").run"
+      PARAMETRIC_AST(trajectory,
+                     "TrajectoryGenerator.new("
+                     "  closure ( ) { %exp:1 }," // getter
+                     "  closure (v) { %exp:2 }," // Setter
+                     "  %exp:3," // Target value
+                     "  %exp:4" // modifiers
+                     ").run"
         );
 
       ast::rExp read = new_clone(tgt);

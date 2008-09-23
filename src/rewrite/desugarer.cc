@@ -11,7 +11,6 @@
 
 namespace rewrite
 {
-  using ast::ParametricAst;
   using parser::ast_call;
   using parser::ast_string;
   using parser::ast_lvalue_once;
@@ -24,7 +23,7 @@ namespace rewrite
     libport::Symbol name = what->call()->name_get();
     ast::rNary content = recurse(c->content_get());
 
-    static ParametricAst desugar(
+    PARAMETRIC_AST(desugar,
       "var %lvalue:1 ="
       "{"
       "  var '$tmp' = Object.clone |"
@@ -43,7 +42,7 @@ namespace rewrite
     ast::rExp protos_set;
     if (protos)
     {
-      static ParametricAst setProtos("'$tmp'.setProtos(%exp:1)");
+      PARAMETRIC_AST(setProtos, "'$tmp'.setProtos(%exp:1)");
       protos_set = exp(setProtos % new ast::List(l, protos));
     }
     else
@@ -61,7 +60,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Decrementation* dec)
   {
-    static ast::ParametricAst decrement("(%lvalue:1 -= 1) + 1");
+    PARAMETRIC_AST(decrement, "(%lvalue:1 -= 1) + 1");
 
     ast::rExp res = recurse(exp(decrement % dec->exp_get()));
     res->original_set(dec);
@@ -70,7 +69,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Delete* d)
   {
-    static ParametricAst del("%exp:1.removeSlot(%exp:2)");
+    PARAMETRIC_AST(del, "%exp:1.removeSlot(%exp:2)");
 
     ast::rCall call = d->what_get()->call();
     del % call->target_get()
@@ -86,14 +85,15 @@ namespace rewrite
 
     if (ast::rExp duration = e->duration_get())
     {
-      static ast::ParametricAst emit("var '$emit' = %exp:1.trigger(%exps:2) |"
-                                     "detach({ sleep(%exp:3) | '$emit'.stop})");
+      PARAMETRIC_AST(emit,
+                     "var '$emit' = %exp:1.trigger(%exps:2) |"
+                     "detach({ sleep(%exp:3) | '$emit'.stop})");
 
       result_ = exp(emit %  event % args % duration);
     }
     else
     {
-      static ast::ParametricAst emit("%exp:1 . 'emit'(%exps:2)");
+      PARAMETRIC_AST(emit, "%exp:1 . 'emit'(%exps:2)");
       result_ = exp(emit % event % args);
     }
     result_->original_set(e);
@@ -101,7 +101,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Incrementation* inc)
   {
-    static ast::ParametricAst increment("(%lvalue:1 += 1) - 1");
+    PARAMETRIC_AST(increment, "(%lvalue:1 += 1) - 1");
 
     ast::rExp res = recurse(exp(increment % inc->exp_get()));
     res->original_set(inc);
@@ -110,7 +110,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::OpAssignment* a)
   {
-    static ParametricAst desugar("%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
+    PARAMETRIC_AST(desugar, "%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
 
     ast::rLValue what = recurse(a->what_get());
     ast::rLValue tgt = ast_lvalue_once(what);
@@ -126,7 +126,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::PropertyRead* p)
   {
-    static ParametricAst read("%exp:1.getProperty(%exp:2, %exp:3)");
+    PARAMETRIC_AST(read, "%exp:1.getProperty(%exp:2, %exp:3)");
 
     ast::rCall owner = p->owner_get();
     read % owner->target_get()
@@ -138,7 +138,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::PropertyWrite* p)
   {
-    static ParametricAst read("%exp:1.setProperty(%exp:2, %exp:3, %exp:4)");
+    PARAMETRIC_AST(read, "%exp:1.setProperty(%exp:2, %exp:3, %exp:4)");
 
     ast::rCall owner = p->owner_get();
     read % owner->target_get()
