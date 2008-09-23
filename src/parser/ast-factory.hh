@@ -77,12 +77,6 @@ namespace parser
   ast_closure(ast::rExp value);
 
 
-  /// To use to solve the ambiguities bw MetaVar::append_ and
-  /// Tweast::append_ when we don't use exactly ast::rExp.
-  inline
-  ast::rExp
-  ast_exp (ast::rExp e);
-
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
   // while:
