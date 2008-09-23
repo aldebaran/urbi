@@ -6,6 +6,7 @@
 /lib/network
 /sdk
 /sdk-remote
+/src/kernel/config.h.in
 /src/object/symbols.hh.old
 Makefile.in
 aclocal.m4
