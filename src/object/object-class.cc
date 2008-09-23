@@ -102,7 +102,7 @@ namespace object
 
   /// Structural equality
   static rObject
-  object_class_sameAs(runner::Runner& r, objects_type& args)
+  object_class_EQ_EQ(runner::Runner& r, objects_type& args)
   {
     // Unless overridden, structural equality is physical equality.
     check_arg_count(args.size() - 1, 1);
@@ -321,7 +321,7 @@ namespace object
     DECLARE(protos);
     DECLARE(removeProto);
     DECLARE(removeSlot);
-    DECLARE(sameAs);
+    DECLARE(EQ_EQ);
     DECLARE(setSlot);
     DECLARE(createSlot);
     DECLARE(slotNames);

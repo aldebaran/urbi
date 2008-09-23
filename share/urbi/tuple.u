@@ -38,7 +38,7 @@
         idx++;
       };
 
-      function sameAs(other)
+      function '=='(other)
       {
         return members == other.members
       };
