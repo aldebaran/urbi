@@ -362,9 +362,6 @@ class Global.Math
     setSlot (fn, bounce_named (fn))
   };
 
-  // Global variables
-  var epsilontilde = 0.0001;
-  var epsilonpercent = 0.0001;
 };
 Global.addProto(Global.Math);
 
