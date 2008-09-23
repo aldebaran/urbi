@@ -34,7 +34,8 @@ namespace ast
     // Remove useless nary and statement if there.s only one child
     if (nary->children_get().size() == 1)
     {
-      ast::rConstStmt stmt = nary->children_get().front().unsafe_cast<const ast::Stmt>();
+      ast::rConstStmt stmt =
+        nary->children_get().front().unsafe_cast<const ast::Stmt>();
       passert("ParametricAst's Nary child isn't a statement", stmt);
       ast_ = stmt->expression_get();
     }
