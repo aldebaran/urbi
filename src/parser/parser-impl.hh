@@ -18,8 +18,6 @@ namespace parser
   {
   public:
     typedef yy::parser parser_type;
-    typedef parser_type::token_type token_type;
-    typedef parser_type::semantic_type semantic_type;
     typedef parser_type::location_type location_type;
     typedef parser_type::symbol_type symbol_type;
 
