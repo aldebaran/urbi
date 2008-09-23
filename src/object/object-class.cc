@@ -106,12 +106,12 @@ namespace object
   {
     // Unless overridden, structural equality is physical equality.
     check_arg_count(args.size() - 1, 1);
-    return urbi_call(r, args[0], SYMBOL(memSameAs), args[1]);
+    return urbi_call(r, args[0], SYMBOL(EQ_EQ_EQ), args[1]);
   }
 
   /// Physical equality
   static rObject
-  object_class_memSameAs(runner::Runner&, objects_type& args)
+  object_class_EQ_EQ_EQ(runner::Runner&, objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
     return to_boolean(args[0] == args[1]);
@@ -317,7 +317,7 @@ namespace object
     DECLARE(init);
     DECLARE(isA);
     DECLARE(locateSlot);
-    DECLARE(memSameAs);
+    DECLARE(EQ_EQ_EQ);
     DECLARE(protos);
     DECLARE(removeProto);
     DECLARE(removeSlot);

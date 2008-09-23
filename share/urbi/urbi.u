@@ -66,11 +66,6 @@ do Object
   // Syntactic sugar for setProtos.
   protos->updateHook = function(slot, value) { setProtos(value); };
 
-  function '===' (other)
-  {
-    memSameAs(other)
-  };
-
   function '!==' (rhs)
   {
     !(this === rhs)
