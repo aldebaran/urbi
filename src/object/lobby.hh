@@ -6,13 +6,15 @@
 #ifndef OBJECT_LOBBY_CLASS_HH
 # define OBJECT_LOBBY_CLASS_HH
 
+# include <libport/instance-tracker.hh>
+
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
 # include <object/state.hh>
 
 namespace object
 {
-  class Lobby: public CxxObject
+  class Lobby: public CxxObject, public libport::InstanceTracker<Lobby>
   {
   public:
     typedef State value_type;
