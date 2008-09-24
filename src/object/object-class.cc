@@ -283,16 +283,6 @@ namespace object
   }
 
   static rObject
-  object_class_changeSlot (runner::Runner& r, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 2);
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2], false);
-    return args[2];
-  }
-
-  static rObject
   object_class_isA(runner::Runner&, objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
@@ -309,7 +299,6 @@ namespace object
     DECLARE(addProto);
     DECLARE(apply);
     DECLARE(callMessage);
-    DECLARE(changeSlot);
     DECLARE(clone);
     DECLARE(dump);
     DECLARE(getLazyLocalSlot);
