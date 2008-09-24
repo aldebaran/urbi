@@ -53,6 +53,24 @@ namespace object
     }
   };
 
+  // Convert between Urbi types pointers
+  template <typename Urbi>
+  struct CxxConvert<Urbi*>
+  {
+    static Urbi*
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
+    {
+      type_check(o, Urbi::proto, idx);
+      return o->as<Urbi>().get();
+    }
+
+    static rObject
+    from(Urbi* v, const libport::Symbol&)
+    {
+      return v;
+    }
+  };
+
   // Conversion with int
   template<>
   struct CxxConvert<int>
