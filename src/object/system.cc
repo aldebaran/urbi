@@ -374,6 +374,11 @@ namespace object
     return res;
   }
 
+  static libport::InstanceTracker<Lobby>::set_type system_lobbies()
+  {
+    return Lobby::instances_get();
+  }
+
   void
   system_class_initialize ()
   {
@@ -383,6 +388,7 @@ namespace object
        make_primitive(&system_##Name, SYMBOL(Name)))                    \
 
     DECLARE(getenv);
+    DECLARE(lobbies);
     DECLARE(setenv);
     DECLARE(unsetenv);
 
