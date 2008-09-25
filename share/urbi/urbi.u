@@ -429,6 +429,12 @@ load("urbi/pubsub.u");
 
 load("urbi/event.u");
 
+/*-------.
+| Tags.  |
+`-------*/
+
+load("urbi/tag.u");
+
 /*----------.
 | UObject.  |
 `----------*/

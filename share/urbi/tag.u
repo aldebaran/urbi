@@ -1,0 +1,25 @@
+do Global.Tag
+{
+  var begin = Tag.new("begin");
+  var end = Tag.new("end");
+
+  {
+    function report(msg)
+    {
+      var res = "";
+      for (var tag in Tag.tags)
+        res += tag.name + ": ";
+      echo(res + "enter");
+    };
+
+    at (?begin.enter)
+    {
+      report("enter");
+    };
+
+    at (?end.leave)
+    {
+      report("leave");
+    };
+  }
+}
