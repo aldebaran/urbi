@@ -161,7 +161,6 @@ AC_CONFIG_SUBDIRS([jpeg-6b])
 
 AC_CONFIG_FILES([Makefile
 	  src/Makefile
-	  src/examples/Makefile
 	  src/liburbi/Makefile
 		  src/liburbi/tests/Makefile
 		  src/liburbi/swig/Makefile
