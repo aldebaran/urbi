@@ -79,6 +79,7 @@ visitor_hh_prologue: |2
 
   # include <boost/preprocessor/array.hpp>
   # include <boost/preprocessor/repeat.hpp>
+  # include <boost/preprocessor/seq/for_each.hpp>
 
   # include <libport/select-const.hh>
 
