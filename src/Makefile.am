@@ -6,16 +6,22 @@ include kernel.mk
 AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
 
 
-## ----------- ##
+## ------------ ##
 ## libuobject.  ##
-## ----------- ##
+## ------------ ##
 
 env_LTLIBRARIES = libuobject.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
-libuobject_la_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
-libuobject_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) -no-undefined
-libuobject_la_LIBADD = $(PTHREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(LTDL_LIBS) $(top_builddir)/sdk-remote/lib/libport/libport.la
+libuobject_la_CPPFLAGS =				\
+  $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
+libuobject_la_LDFLAGS =							\
+   $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) -no-undefined
+libuobject_la_LIBADD =						\
+   $(PTHREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(LTDL_LIBS)	\
+   $(top_builddir)/sdk-remote/lib/libport/libport.la		\
+   $(top_builddir)/sdk-remote/src/liburbi/libuco/libuco.la
+
 
 ## ------------ ##
 ## version.hh.  ##
@@ -32,15 +38,6 @@ BUILT_SOURCES += $(nodist_libuobject_la_SOURCES)
 # before, so initialize it here).
 precompiled_symbols_hh_deps =
 
-## ---------- ##
-## uobject/.  ##
-## ---------- ##
-
-include $(top_srcdir)/build-aux/svn-externals.mk
-
-include uobject/uobject.mk
-dist_libuobject_la_SOURCES +=				\
-$(dist_uobject_sources)
 
 ## ----------------- ##
 ## Sub directories.  ##
