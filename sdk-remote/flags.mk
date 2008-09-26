@@ -7,9 +7,7 @@ AM_CPPFLAGS += -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
 # Find urbi/ headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include
 # Find urbi/uobject.hh.
-AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/uobject
-# Find auto-generated urbi/ucallback.hh.
-AM_CPPFLAGS += -I$(top_builddir)/src/liburbi/uobject
+AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/libuco
 # Find version.hh.
 AM_CPPFLAGS += -I$(top_builddir)/src
 # Find sdk/config.h

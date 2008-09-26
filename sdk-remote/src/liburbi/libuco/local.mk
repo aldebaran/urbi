@@ -6,10 +6,8 @@ ucallbacks_hh = libuco/urbi/ucallbacks.hh
 
 noinst_LTLIBRARIES = libuco/libuco.la
 
-nodist_urbiinclude_HEADERS =			\
-  $(ucallbacks_hh)
-
 dist_urbiinclude_HEADERS =			\
+  $(ucallbacks_hh)				\
   libuco/urbi/export.hh				\
   libuco/urbi/fwd.hh				\
   libuco/urbi/qt_umain.hh			\
@@ -39,13 +37,16 @@ dist_libuco_libuco_la_SOURCES =			\
 ## ucallbacks.hh.  ##
 ## --------------- ##
 
-EXTRA_DIST +=					\
+EXTRA_DIST +=				\
   libuco/template_autogen.pl		\
   $(ucallbacks_hh).template
 MAINTAINERCLEANFILES += $(ucallbacks_hh)
-BUILT_SOURCES += $(ucallbacks_hh)
 
-$(ucallbacks_hh): $(ucallbacks_hh).template libuco/template_autogen.pl
+# We used to generate this file in builddir and not ship it, but it
+# required to adjust -I paths to find it in builddir.  Since this was
+# the only such file, it is easier to put it in srcdir (and ship it to
+# comply with the Automake model).
+$(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template libuco/template_autogen.pl
 	rm -f $@.tmp $@
 	$(mkdir_p) $$(dirname "$@.tmp")
 	$(srcdir)/libuco/template_autogen.pl $(srcdir)/$(ucallbacks_hh).template >$@.tmp
