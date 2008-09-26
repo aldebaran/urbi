@@ -121,7 +121,7 @@ namespace binder
 
     /// Factored method to handle scopes.
     ast::rExp handleScope(ast::rConstScope scope, bool setOnSelf);
-    libport::Finally::Action scope_open(bool set_on_self);
+    libport::Finally::action_type scope_open(bool set_on_self);
     void scope_close();
 
     /// Factored method to create updateSlot/setSlot calls.

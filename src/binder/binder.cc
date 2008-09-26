@@ -471,7 +471,7 @@ namespace binder
     (*n)--;
   }
 
-  libport::Finally::Action
+  libport::Finally::action_type
   Binder::scope_open(bool set_on_self)
   {
     scope_depth_++;
