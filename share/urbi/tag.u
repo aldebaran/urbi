@@ -1,4 +1,4 @@
-do Global.Tag
+do (Global.Tag)
 {
   var begin = Tag.new("begin");
   var end = Tag.new("end");
