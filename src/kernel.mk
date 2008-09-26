@@ -6,16 +6,16 @@ include $(top_srcdir)/build-aux/init.mk
 ## Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += -I$(srcdir) -I.
 
-## Find the uobject headers
-AM_CPPFLAGS += -I$(srcdir)/uobject -Iuobject
-
 ## Find the kernel, libport, etc. headers.
-AM_CPPFLAGS += -I$(top_srcdir)/include -I$(top_builddir)/include
+AM_CPPFLAGS +=					\
+  -I$(top_srcdir)/include			\
+  -I$(top_builddir)/include
 
-## Find stuffs imported from sdk-remote.
-AM_CPPFLAGS += -I$(top_srcdir)/sdk-remote/include   \
-	       -I$(top_builddir)/sdk-remote/include \
-	       -I$(top_builddir)/sdk-remote
+## Headers exported by SDK-Remote.
+AM_CPPFLAGS +=					\
+  -I$(top_srcdir)/sdk-remote/include		\
+  -I$(top_builddir)/sdk-remote/include		\
+  -I$(top_builddir)/sdk-remote			\
 
 ## lib/network
 AM_CPPFLAGS += -I$(top_srcdir)/lib
