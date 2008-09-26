@@ -15,7 +15,7 @@ AM_CPPFLAGS +=					\
 AM_CPPFLAGS +=					\
   -I$(top_srcdir)/sdk-remote/include		\
   -I$(top_builddir)/sdk-remote/include		\
-  -I$(top_builddir)/sdk-remote			\
+  -I$(top_builddir)/sdk-remote
 
 ## lib/network
 AM_CPPFLAGS += -I$(top_srcdir)/lib
