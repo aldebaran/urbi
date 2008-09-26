@@ -8,9 +8,24 @@
 # include <object/string.hh>
 # include <object/object-class.hh>
 # include <object/primitives.hh>
+# include <runner/raise.hh>
 
 namespace object
 {
+  inline void
+  check_arg_count (unsigned effective, unsigned formal)
+  {
+    if (formal != effective)
+      runner::raise_arity_error(effective, formal);
+  }
+
+  inline void
+  check_arg_count (unsigned effective, unsigned min, unsigned max)
+  {
+    if (effective < min || effective > max)
+      runner::raise_arity_error(effective, min, max);
+  }
+
   template <typename T>
   bool CxxObject::add(const std::string& name, rObject& tgt)
   {

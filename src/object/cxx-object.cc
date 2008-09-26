@@ -4,7 +4,6 @@
 #include <object/cxx-object.hh>
 
 #include <runner/call.hh>
-#include <runner/raise.hh>
 
 namespace object
 {
@@ -63,18 +62,6 @@ namespace object
         r.raise(urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
                           SYMBOL(new), exp, o));
     }
-  }
-
-  void check_arg_count (unsigned effective, unsigned formal)
-  {
-    if (formal != effective)
-      runner::raise_arity_error(effective, formal);
-  }
-
-  void check_arg_count (unsigned effective, unsigned min, unsigned max)
-  {
-    if (effective < min || effective > max)
-      runner::raise_arity_error(effective, min, max);
   }
 
 }
