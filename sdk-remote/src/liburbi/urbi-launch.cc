@@ -7,6 +7,7 @@
 #include <sdk/config.h>
 
 #include <libport/foreach.hh>
+#include <libport/unistd.h>
 
 #include <urbi/uclient.hh>
 
@@ -59,7 +60,7 @@ int connect_plugin(int argc, const char* argv[],
     cl << "loadModule(\"" << m << "\");";
   cl << "output << 1;";
   while(true)
-    usleep(1000000);
+    sleep(1);
   return 0;
 }
 
