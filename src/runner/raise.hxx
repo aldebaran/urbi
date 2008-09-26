@@ -3,6 +3,7 @@
 
 # include <scheduler/scheduler.hh>
 # include <kernel/userver.hh>
+# include <object/float.hh>
 # include <object/global.hh>
 # include <object/string.hh>
 # include <runner/runner.hh>
