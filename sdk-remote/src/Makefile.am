@@ -12,12 +12,9 @@ AM_LDADD =					\
 
 bin_PROGRAMS =
 include examples/local.mk
+include utils/local.mk
 
 SUBDIRS = liburbi .
-
-if EXAMPLES
-SUBDIRS += utils
-endif
 
 ## ------------ ##
 ## version.hh.  ##
