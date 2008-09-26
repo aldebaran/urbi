@@ -6,6 +6,7 @@
 #ifndef OBJECT_CODE_CLASS_HH
 # define OBJECT_CODE_CLASS_HH
 
+# include <libport/compiler.hh>
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
 
@@ -17,7 +18,7 @@ namespace object
     typedef ast::rConstRoutine ast_type;
     typedef std::vector<rrObject> captures_type;
 
-    Code();
+    ATTRIBUTE_NORETURN Code();
     Code(ast_type a);
     Code(rCode model);
     ast_type ast_get() const;

@@ -1,6 +1,8 @@
 #ifndef KERNEL_EXCEPTION_HXX
 # define KERNEL_EXCEPTION_HXX
 
+# include <cstdlib>
+
 namespace kernel
 {
 
@@ -19,6 +21,9 @@ namespace kernel
   void rethrow (const exception_ptr& e)
   {
     e->rethrow ();
+    // GCC cannot guarantee that an overriden virtual method
+    // will not return, so help it here.
+    abort();
   }
 
 } // namespace kernel

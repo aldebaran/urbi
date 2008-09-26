@@ -6,6 +6,7 @@
 #include <boost/format.hpp>
 
 #include <libport/cmath>
+#include <libport/compiler.hh>
 
 #include <kernel/config.h>
 #ifndef HAVE_ROUND
@@ -80,7 +81,6 @@ namespace object
     catch (libport::bad_numeric_cast& ue)
     {
       throw BadInteger(value_, func, fmt);
-      return 0;  // Keep the compiler happy
     }
   }
 

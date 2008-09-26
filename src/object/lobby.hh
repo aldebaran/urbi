@@ -6,6 +6,7 @@
 #ifndef OBJECT_LOBBY_CLASS_HH
 # define OBJECT_LOBBY_CLASS_HH
 
+# include <libport/compiler.hh>
 # include <libport/instance-tracker.hh>
 
 # include <object/cxx-object.hh>
@@ -19,8 +20,8 @@ namespace object
   public:
     typedef State value_type;
 
-    Lobby();
-    Lobby(rLobby model);
+    ATTRIBUTE_NORETURN Lobby();
+    ATTRIBUTE_NORETURN Lobby(rLobby model);
     Lobby(value_type value);
 
     void send(objects_type& args);

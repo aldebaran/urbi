@@ -6,6 +6,7 @@
 #ifndef OBJECT_PRIMITIVE_CLASS_HH
 # define OBJECT_PRIMITIVE_CLASS_HH
 
+# include <libport/compiler.hh>
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
 
@@ -16,7 +17,7 @@ namespace object
   public:
     typedef boost::function2<rObject, runner::Runner&, objects_type&> value_type;
 
-    Primitive();
+    ATTRIBUTE_NORETURN Primitive();
     Primitive(rPrimitive model);
     Primitive(value_type value);
     value_type value_get() const;

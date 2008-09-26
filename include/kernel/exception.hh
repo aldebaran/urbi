@@ -5,6 +5,7 @@
 
 # include <boost/optional.hpp>
 
+# include <libport/compiler.hh>
 # include <libport/shared-ptr.hh>
 # include <urbi/export.hh>
 
@@ -16,12 +17,12 @@ namespace kernel
     virtual ~exception ();
     virtual std::string what () const throw ();
     virtual exception* clone () const = 0;
-    virtual void rethrow () const = 0;
+    ATTRIBUTE_NORETURN virtual void rethrow () const = 0;
   };
 
   typedef libport::shared_ptr<exception, false> exception_ptr;
 
-  void rethrow (const exception_ptr&);
+  ATTRIBUTE_NORETURN void rethrow (const exception_ptr&);
 
 /// \def ADD_FIELD(Type, Name)
 /// Define an optional field Name, and accessors.
@@ -33,14 +34,14 @@ namespace kernel
  private:								\
    boost::optional<Type> Name ## _;
 
-#define COMPLETE_EXCEPTION(Name)		\
-  virtual Name* clone () const                  \
-  {						\
-    return new Name (*this);			\
-  };						\
-  virtual void rethrow () const			\
-  {						\
-    throw *this;				\
+#define COMPLETE_EXCEPTION(Name)				\
+  virtual Name* clone () const					\
+  {								\
+    return new Name (*this);					\
+  };								\
+  ATTRIBUTE_NORETURN virtual void rethrow () const		\
+  {								\
+    throw *this;						\
   };
 
 } // namespace kernel

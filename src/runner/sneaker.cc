@@ -1,5 +1,6 @@
 #include <cstdlib>
 
+#include <libport/compiler.hh>
 #include <libport/symbol.hh>
 
 #include <ast/print.hh>
@@ -21,7 +22,7 @@ namespace dbg
   public:
     Sneaker(rLobby lobby,
 	      scheduler::Scheduler& scheduler);
-    virtual void work();
+    ATTRIBUTE_NORETURN virtual void work();
     virtual void send_message(const std::string& tag, const std::string& msg);
   private:
   };

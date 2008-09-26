@@ -2,6 +2,7 @@
 
 //#define ENABLE_DEBUG_TRACES
 #include <cassert>
+#include <libport/compiler.hh>
 #include <libport/csignal>
 #include <cstdlib>
 #include <cstdarg>
@@ -119,6 +120,8 @@ install_ice_catcher(void (*catcher)(int))
   signal(SIGBUS,  catcher);
   signal(SIGSEGV, catcher);
 }
+
+ATTRIBUTE_NORETURN static void hard_ice(int i);
 
 static void hard_ice(int i)
 {
