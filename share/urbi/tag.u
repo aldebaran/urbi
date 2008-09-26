@@ -7,9 +7,9 @@ do Global.Tag
     function report(msg)
     {
       var res = "";
-      for (var tag in Tag.tags)
+      for (var tag in currentRunner.tags)
         res += tag.name + ": ";
-      echo(res + "enter");
+      echo(res + msg);
     };
 
     at (?begin.enter)

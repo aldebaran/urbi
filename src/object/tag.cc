@@ -164,12 +164,6 @@ namespace object
       urbi_call(r, slot_get(SYMBOL(leaveEvent)), SYMBOL(syncEmit));
   }
 
-  scheduler::tags_type
-  Tag::tags(runner::Runner& r)
-  {
-    return r.tags_get();
-  }
-
   void
   Tag::initialize(CxxObject::Binder<Tag>& bind)
   {
@@ -183,7 +177,6 @@ namespace object
     bind(SYMBOL(prio), &Tag::prio);
     bind(SYMBOL(prio_set), &Tag::prio_set);
     bind(SYMBOL(stop), &Tag::stop);
-    bind(SYMBOL(tags), &Tag::tags);
     bind(SYMBOL(unblock), &Tag::unblock);
     bind(SYMBOL(unfreeze), &Tag::unfreeze);
   }

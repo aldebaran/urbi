@@ -30,7 +30,6 @@ namespace object
     scheduler::prio_type prio();
     scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
     void stop(runner::Runner&, objects_type&);
-    scheduler::tags_type tags(runner::Runner& r);
     void unblock();
     void unfreeze();
 
