@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 
+#include <libport/finally.hh>
 #include <libport/foreach.hh>
 
 #include <ast/nary.hh>
@@ -40,7 +41,7 @@ namespace parser
   }
 
   void
-  ParserImpl::parse_(std::istream& source, const location_type& l)
+  ParserImpl::parse_(std::istream& source, const location_type* l)
   {
     TIMER_PUSH("parse");
     // Set up result_.
@@ -65,23 +66,24 @@ namespace parser
     // Save the current location so that we can restore it afterwards
     // (when reading the input flow, we want to be able to restore the
     // cursor after having handled a load command).
-    location_type loc = l;
-    std::swap(loc, loc_);
+    libport::Finally finally;
+    if (l)
+      finally << libport::scoped_set(loc_, *l);
 
     // Parse.
     if (debug_)
-      LIBPORT_ECHO(loc << "====================== Parse begin");
+      LIBPORT_ECHO(loc_ << "====================== Parse begin");
 
     result_->status = p.parse();
     if (debug_)
       LIBPORT_ECHO("====================== Parse end:" << std::endl
                    << *result_);
-    std::swap(loc, loc_);
+
     TIMER_POP("parse");
   }
 
   parse_result_type
-  ParserImpl::parse(const std::string& s, const location_type& l)
+  ParserImpl::parse(const std::string& s, const location_type* l)
   {
     if (debug_)
       LIBPORT_ECHO("Parsing: " << s);
@@ -103,7 +105,11 @@ namespace parser
       result_->status = 1;
     }
     else
-      parse_(f, location_type(new libport::Symbol(fn)));
+    {
+      // FIXME: Leaks.
+      location_type loc(new libport::Symbol(fn));
+      parse_(f, &loc);
+    }
     return result_;
   }
 

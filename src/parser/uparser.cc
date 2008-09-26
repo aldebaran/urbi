@@ -26,7 +26,7 @@ namespace parser
 
   parse_result_type
   UParser::parse(const std::string& command,
-                 const yy::location& loc)
+                 const yy::location* loc)
   {
     return pimpl_->parse(command, loc);
   }

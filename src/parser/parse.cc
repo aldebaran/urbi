@@ -20,7 +20,7 @@ namespace parser
   parse(const std::string& cmd, const yy::location& l)
   {
     UParser p;
-    parse_result_type res = p.parse(cmd, l);
+    parse_result_type res = p.parse(cmd, &l);
     res->dump_errors();
     passert(*res, !res->status);
     return res;

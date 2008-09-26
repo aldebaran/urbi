@@ -27,8 +27,10 @@ namespace parser
 
     /// Parse the command from a buffer.
     /// \return yyparse's result (0 on success).
+    /// If \a loc is defined, use it to parse \a code, otherwise
+    /// use the current location and update it.
     parse_result_type parse(const std::string& code,
-                            const yy::location& loc = yy::location());
+                            const yy::location* loc = 0);
 
     /// Parse a file.
     /// \return yyparse's result (0 on success).
