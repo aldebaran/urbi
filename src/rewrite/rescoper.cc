@@ -20,7 +20,8 @@ namespace rewrite
   ast::rExp
   Rescoper::make_declaration(const ast::loc& l, ast::rConstLValue what)
   {
-    return new ast::Declaration(l, recurse(what), 0, 0);
+    static ast::ParametricAst a("nil");
+    return new ast::Declaration(l, recurse(what), exp(a), 0);
   }
 
   /// Build '<s> = <value>'
