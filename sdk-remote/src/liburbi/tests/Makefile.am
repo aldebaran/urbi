@@ -14,9 +14,6 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
            $(top_builddir)/jpeg-6b/libjpeg.la		\
            $(PTHREAD_LIBS)
 
-# This is a hack for Automake 1.9: 1.10 honors AM_LDADD.
-LDADD = $(AM_LDADD)
-
 # By default, instrument the code.
 INSTRUMENT = true
 URBI_SERVER = urbi-console

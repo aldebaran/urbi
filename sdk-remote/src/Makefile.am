@@ -3,8 +3,6 @@ AUTOMAKE_OPTIONS += subdir-objects
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-# There is no AM_LDADD currently, which is quite inconsistent...
-LDADD = $(AM_LDADD)
 AM_LDADD =					\
   $(top_builddir)/src/liburbi/liburbi.la	\
   $(top_builddir)/jpeg-6b/libjpeg.la		\
