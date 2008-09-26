@@ -118,7 +118,7 @@ namespace urbi
 
   };
 
-  std::ostream& operator<<(std::ostream& s, const UMessage& m);
+  USDK_API std::ostream& operator<<(std::ostream& s, const UMessage& m);
 
   /// Callback prototypes.
   typedef UCallbackAction (*UCallback)		   (const UMessage &msg);
