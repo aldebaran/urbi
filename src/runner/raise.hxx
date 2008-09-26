@@ -24,9 +24,9 @@ namespace runner
   {
     Runner& r = ::urbiserver->getCurrentRunner();
     object::rObject exn =
-      urbi_call(r,
-                object::global_class->slot_get(SYMBOL(LookupError)),
-                SYMBOL(new), new object::String(msg), obj);
+      object::urbi_call(r,
+                        object::global_class->slot_get(SYMBOL(LookupError)),
+                        SYMBOL(new), new object::String(msg), obj);
     r.raise(exn);
     pabort("Unreachable");
   }
@@ -39,11 +39,11 @@ namespace runner
   {
     Runner& r = ::urbiserver->getCurrentRunner();
     object::rObject exn =
-      urbi_call(r, object::global_class->slot_get(SYMBOL(ArityError)),
-                SYMBOL(new),
-                new object::String(r.innermost_call_get()),
-                new object::Float(effective),
-                new object::Float(expected));
+      object::urbi_call(r, object::global_class->slot_get(SYMBOL(ArityError)),
+                        SYMBOL(new),
+                        new object::String(r.innermost_call_get()),
+                        new object::Float(effective),
+                        new object::Float(expected));
     r.raise(exn, true);
     pabort("Unreachable");
   }
@@ -56,12 +56,12 @@ namespace runner
   {
     Runner& r = ::urbiserver->getCurrentRunner();
     object::rObject exn =
-      urbi_call(r, object::global_class->slot_get(SYMBOL(ArityError)),
-                SYMBOL(new),
-                new object::String(r.innermost_call_get()),
-                new object::Float(effective),
-                new object::Float(minimum),
-                new object::Float(maximum));
+      object::urbi_call(r, object::global_class->slot_get(SYMBOL(ArityError)),
+                        SYMBOL(new),
+                        new object::String(r.innermost_call_get()),
+                        new object::Float(effective),
+                        new object::Float(minimum),
+                        new object::Float(maximum));
     r.raise(exn, true);
     pabort("Unreachable");
   }
@@ -74,12 +74,12 @@ namespace runner
   {
     Runner& r = ::urbiserver->getCurrentRunner();
     r.raise(
-      urbi_call(r, object::global_class->slot_get(SYMBOL(ArgumentTypeError)),
-                SYMBOL(new),
-                new object::String(r.innermost_call_get()),
-                new object::Float(idx),
-                expected,
-                effective),
+      object::urbi_call(r, object::global_class->slot_get(SYMBOL(ArgumentTypeError)),
+                        SYMBOL(new),
+                        new object::String(r.innermost_call_get()),
+                        new object::Float(idx),
+                        expected,
+                        effective),
       true);
     pabort("Unreachable");
   }
