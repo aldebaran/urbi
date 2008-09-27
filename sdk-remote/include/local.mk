@@ -33,8 +33,8 @@ urbiinclude_HEADERS =				\
 ## ucallbacks.hh.  ##
 ## --------------- ##
 
-EXTRA_DIST +=					\
-  include/urbi/template_autogen.pl		\
+EXTRA_DIST +=				\
+  include/template_autogen.pl		\
   $(ucallbacks_hh).template
 MAINTAINERCLEANFILES += $(ucallbacks_hh)
 
