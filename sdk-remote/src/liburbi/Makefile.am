@@ -1,7 +1,7 @@
 include $(top_srcdir)/flags.mk
 
 # Path to envdir from top/install_prefix
-topenvdir=$(PACKAGE_BRAND)/core/$(URBI_HOST)/$(URBI_ENV)
+topenvdir = $(PACKAGE_BRAND)/core/$(URBI_HOST)/$(URBI_ENV)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
@@ -17,7 +17,7 @@ include libuco/local.mk
 ## liburbi.la.  ##
 ## ------------ ##
 
-umaindir=$(datadir)/umain
+umaindir = $(datadir)/umain
 umain_DATA = umain.cc
 
 env_LTLIBRARIES = libuobject.la
