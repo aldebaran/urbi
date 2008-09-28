@@ -31,11 +31,16 @@ URBI_COMPILATION_MODE
 
 # Bison.
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
-test -d bison || mkdir bison
-cd bison
-../$srcdir/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
-cd ..
-AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
+# If we have our own Bison, use it.
+if test -d $srcdir/bison; then
+  test -d bison || mkdir bison
+  cd bison
+  ../$srcdir/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
+  cd ..
+  AC_SUBST([BISON], [$ac_abs_top_builddir/bison/tests/bison])
+else
+  TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
+fi
 
 # Flex.
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
