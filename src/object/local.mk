@@ -47,6 +47,7 @@ dist_libuobject_la_SOURCES +=			\
   object/cxx-helper.hh				\
   object/cxx-object.cc				\
   object/cxx-object.hh				\
+  object/cxx-object.hxx				\
   object/cxx-primitive.hh			\
   object/cxx-primitive.hxx			\
   object/dictionary.cc				\
