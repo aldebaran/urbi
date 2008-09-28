@@ -3,18 +3,16 @@
 ## -------------------------- ##
 
 kernelincludekerneldir = $(kernelincludedir)/kernel
-kernelincludekernel_HEADERS =			\
-include/kernel/exception.hh			\
-include/kernel/exception.hxx			\
-include/kernel/fwd.hh				\
-include/kernel/kernconf.hh			\
-include/kernel/uconnection.hh			\
-include/kernel/uconnection.hxx			\
-include/kernel/userver.hh			\
-include/kernel/userver.hxx			\
-include/kernel/utypes.hh
-
-include share/urbi/local.mk
+dist_kernelincludekernel_HEADERS =		\
+  include/kernel/exception.hh			\
+  include/kernel/exception.hxx			\
+  include/kernel/fwd.hh				\
+  include/kernel/kernconf.hh			\
+  include/kernel/uconnection.hh			\
+  include/kernel/uconnection.hxx		\
+  include/kernel/userver.hh			\
+  include/kernel/userver.hxx			\
+  include/kernel/utypes.hh
 
 nodist_kernelincludekernel_HEADERS =		\
 include/kernel/version.hh
@@ -25,7 +23,7 @@ include/kernel/version.hh
 ## ------- ##
 
 kernel_headers = 				\
-  $(kernelincludekernel_HEADERS)		\
+  $(dist_kernelincludekernel_HEADERS)		\
   $(nodist_kernelincludekernel_HEADERS)
 
 SKIP_HEADERS_STD = \

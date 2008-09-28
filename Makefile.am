@@ -8,15 +8,18 @@ SUBDIRS = sdk-remote . src tests doc
 
 # build-aux.
 EXTRA_DIST +=					\
-build-aux/bison++.in				\
-build-aux/move-if-change			\
-build-aux/output-to-dot
+  build-aux/bison++.in				\
+  build-aux/flex++.in				\
+  build-aux/fuse-switch				\
+  build-aux/move-if-change			\
+  build-aux/output-to-dot
 
 # dev.
 devdir = dev/
 include dev/local.mk
 
 include include/local.mk
+include share/urbi/local.mk
 
 ## ------------------------------------- ##
 ## Generate the list of symbols we use.  ##

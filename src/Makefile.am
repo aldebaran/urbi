@@ -33,8 +33,8 @@ libuobject_la_LIBADD =						\
 
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
+dist_noinst_HEADERS = $(REVISION_FILE)
 
-kernelinclude_HEADERS =
 dist_libuobject_la_SOURCES =
 nodist_libuobject_la_SOURCES =
 BUILT_SOURCES += $(nodist_libuobject_la_SOURCES)
