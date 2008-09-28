@@ -18,7 +18,7 @@ include libuco/local.mk
 ## ------------ ##
 
 umaindir = $(datadir)/umain
-umain_DATA = umain.cc
+dist_umain_DATA = umain.cc
 
 env_LTLIBRARIES = libuobject.la
 lib_LTLIBRARIES = liburbi.la

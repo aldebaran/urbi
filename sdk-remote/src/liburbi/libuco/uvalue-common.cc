@@ -68,9 +68,8 @@ namespace urbi
   const char*
   uvalue_caster<const char*>::operator() (UValue& v)
   {
-    static const char* er = "invalid";
     if (v.type != DATA_STRING)
-      return er;
+      return "invalid";
     return v.stringValue->c_str();
   }
 
@@ -584,7 +583,7 @@ namespace
     }
   }
 
-  UValue::operator ufloat () const
+  UValue::operator ufloat() const
   {
     switch (type)
     {
@@ -626,24 +625,22 @@ namespace
 	return *stringValue;
 
       case DATA_BINARY:
-	// We cannot convert to UBinary because it is ambigous so we try until
-	// we found the good type.
-	{
-	  USound snd(*this);
-	  if (snd.soundFormat == SOUND_UNKNOWN)
-	    //FIXME: handle UImage;
-	    return std::string("invalid");
-	  else
-	    return std::string(snd);
-	}
+        // We cannot convert to UBinary because it is ambigous so we
+        // try until we found the right type.
+      {
+        USound snd(*this);
+        if (snd.soundFormat != SOUND_UNKNOWN)
+          return snd;
+        goto invalid;
+      }
 
+      invalid:
       default:
-	return std::string("invalid");
+        return "invalid";
     }
   }
 
-  UValue::operator
-  UBinary() const
+  UValue::operator UBinary() const
   {
     if (type != DATA_BINARY)
       return UBinary();
@@ -668,17 +665,15 @@ namespace
 
   UValue::operator USound() const
   {
-    if (type != DATA_BINARY || binary->type != BINARY_SOUND)
-    {
-      USound i;
-      i.data = 0;
-      i.size = i.sampleSize = i.channels = i.rate = 0;
-      i.soundFormat = SOUND_UNKNOWN;
-      i.sampleFormat = SAMPLE_UNSIGNED;
-      return i;
-    }
-    else
+    if (type == DATA_BINARY && binary->type == BINARY_SOUND)
       return binary->sound;
+
+    USound res;
+    res.data = 0;
+    res.size = res.sampleSize = res.channels = res.rate = 0;
+    res.soundFormat = SOUND_UNKNOWN;
+    res.sampleFormat = SAMPLE_UNSIGNED;
+    return res;
   }
 
   UValue::operator UList() const
