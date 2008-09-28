@@ -82,7 +82,10 @@ console-server.cc				\
 if !WIN32
 # ast-dump.
 bin_PROGRAMS += ast-dump
-dist_ast_dump_SOURCES = ast-dump.cc ast/dot-printer.cc
+dist_ast_dump_SOURCES =				\
+  ast-dump.cc					\
+  ast/dot-printer.hh				\
+  ast/dot-printer.cc
 ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
 ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la
 endif !WIN32
