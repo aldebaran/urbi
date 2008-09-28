@@ -7,3 +7,6 @@ doc: http://code.google.com/p/googletest/w/list ) et "gmock" (qui sera
 releasé sous le nom de Google C++ Mocking Library ou un truc du genre
 aka googlemock) sera releasé bientôt (je pensais que c'était déjà fait
 mais en fait c'est en cours de faisage).
+
+* Revision
+Copy what's done for bison to use Git information to stamp a version.
