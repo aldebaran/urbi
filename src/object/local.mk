@@ -23,7 +23,7 @@ $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_h
 	done
 	@touch $@.tmp
 	:> $(precompiled_symbols_hh)~
-	-cp -f $(precompiled_symbols_hh) $(precompiled_symbols_hh)~
+	-cp -f $(srcdir)/$(precompiled_symbols_hh) $(precompiled_symbols_hh)~
 	(cd $(srcdir) &&				\
 	 ./object/symbols-generate.pl			\
 		$(precompiled_symbols_hh_sources))	\
