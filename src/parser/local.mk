@@ -115,7 +115,7 @@ keywords: $(parser_dir)/utoken.l
 FROM_UTOKEN_L =			\
 parser/utoken.cc
 
-BUILT_SOURCES += $(FROM_UTOKEN_L)
+BUILT_SOURCES += $(FROM_UTOKEN_L) $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
 dist_libuobject_la_SOURCES += $(parser_dir)/flex-lexer.hh
 nodist_libuobject_la_SOURCES += $(FROM_UTOKEN_L)

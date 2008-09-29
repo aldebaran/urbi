@@ -37,7 +37,7 @@ if test -d $srcdir/bison; then
   cd bison
   ../$srcdir/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
   cd ..
-  AC_SUBST([BISON], [$ac_abs_top_builddir/bison/tests/bison])
+  AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 else
   TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 fi
