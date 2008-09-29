@@ -37,7 +37,7 @@ sub symbol ($)
 }
 
 # Check that no symbol::Symbol are called directly with literals.
-my $literals = `grep -E -n 'libport::Symbol *\\("[^"]*")' @ARGV`;
+my $literals = `grep -E -n 'libport::Symbol *\\("[^"]*"\\)' @ARGV`;
 die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
     if $literals;
 
