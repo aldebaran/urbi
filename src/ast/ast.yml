@@ -1269,17 +1269,14 @@ Try:
   super: Exp
   attributes:
     - body:
-        type: rNary
+        type: rScope
         desc: The code to protect against an exception
     - handlers:
         type: catches_type
         desc: The exception handlers
   printer:
-    - '"try {"'
-    - 'libport::incendl'
+    - '"try"'
     - ~body
-    - 'libport::decendl'
-    - '"}"'
     - '{
          foreach(const ast::rConstExp& e, n->handlers_get())
          {

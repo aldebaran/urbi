@@ -980,11 +980,11 @@ catch:
 stmt:
   "try" block catches
   {
-    $$ = new ast::Try(@$, $2, $3);
+    $$ = new ast::Try(@$, enclose_in_scope($2), $3);
   }
 | "throw" exp
   {
-    $$ = new ast::Throw(@$, $2);
+    $$ = new ast::Throw(@$, enclose_in_scope($2));
   }
 ;
 
