@@ -23,6 +23,7 @@ namespace runner
   void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
+    assert(object::global_class->slot_has(SYMBOL(LookupError)));
     Runner& r = ::urbiserver->getCurrentRunner();
     object::rObject exn =
       object::urbi_call(r,
