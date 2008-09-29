@@ -20,8 +20,7 @@ namespace rewrite
   ast::rExp
   Rescoper::make_declaration(const ast::loc& l, ast::rConstLValue what)
   {
-    static ast::ParametricAst a("nil");
-    return new ast::Declaration(l, recurse(what), exp(a), 0);
+    return new ast::Declaration(l, recurse(what), 0, 0);
   }
 
   /// Build '<s> = <value>'
@@ -29,6 +28,11 @@ namespace rewrite
   Rescoper::make_assignment(const ast::loc& l, ast::rConstLValue what,
                             ast::rConstExp value, const ast::modifiers_type* modifiers)
   {
+    if (!value)
+    {
+      static ast::ParametricAst ast("{}");
+      return exp(ast);
+    }
     return new ast::Assignment(l, recurse(what), recurse(value),
                                modifiers ? recurse_collection<ast::modifiers_type>(modifiers) : 0);
   }
