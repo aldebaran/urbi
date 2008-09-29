@@ -27,7 +27,7 @@ for node in arr:
 	  " " + basedir + node.fname ("hxx") + \
 	  " " + basedir + node.fname ("cc")
 
-  print >>mk, " \\\n\t  " + files,
+  print >>mk, " \\\n  " + files,
 print >>mk
 
 mk.close()
