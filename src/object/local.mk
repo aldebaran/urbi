@@ -32,6 +32,7 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
 
+BUILT_SOURCES += $(precompiled_symbols_hh)
 dist_libuobject_la_SOURCES +=			\
   object/any-to-boost-function.hh		\
   object/any-to-boost-function.hxx		\

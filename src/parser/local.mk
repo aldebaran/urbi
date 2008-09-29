@@ -53,15 +53,18 @@ SOURCES_FROM_UGRAMMAR_Y =			\
   parser/location.hh				\
   parser/ugrammar.hh				\
   parser/ugrammar.cc
+BUILT_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
+dist_libuobject_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
+
 DATA_FROM_UGRAMMAR_Y = 				\
   parser/ugrammar.html				\
   parser/ugrammar.output			\
   parser/ugrammar.stamp				\
   parser/ugrammar.xml
-
-MAINTAINERCLEANFILES += $(SOURCES_FROM_UGRAMMAR_Y) $(DATA_FROM_UGRAMMAR_Y)
-dist_libuobject_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
 dist_noinst_DATA += $(DATA_FROM_UGRAMMAR_Y)
+
+FROM_UGRAMMAR_Y = $(SOURCES_FROM_UGRAMMAR_Y) $(DATA_FROM_UGRAMMAR_Y)
+MAINTAINERCLEANFILES += $(FROM_UGRAMMAR_Y)
 
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
@@ -81,7 +84,8 @@ $(parser_dir)/ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(BISONXX) $(parser_dir)/ugrammar.y $(parser_dir)/ugrammar.cc -d -ra $(BISON_FLAGS)
+	$(BISONXX) $(parser_dir)/ugrammar.y $(parser_dir)/ugrammar.cc \
+	  -d -ra $(BISON_FLAGS)
 	@mv -f $@.tmp $@
 
 $(FROM_UGRAMMAR_Y): $(parser_dir)/ugrammar.stamp
@@ -113,10 +117,10 @@ keywords: $(parser_dir)/utoken.l
 ## -------------- ##
 
 FROM_UTOKEN_L =			\
-parser/utoken.cc
+  parser/utoken.cc
 
-BUILT_SOURCES += $(FROM_UTOKEN_L) $(FROM_UGRAMMAR_Y)
-CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
+BUILT_SOURCES += $(FROM_UTOKEN_L)
+CLEANFILES += $(FROM_UTOKEN_L) parser/utoken.stamp
 dist_libuobject_la_SOURCES += $(parser_dir)/flex-lexer.hh
 nodist_libuobject_la_SOURCES += $(FROM_UTOKEN_L)
 
