@@ -88,7 +88,7 @@ parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
 $(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
-	if test -f $@; then :; else				\
+	@if test -f $@; then :; else				\
 	  rm -f $(srcdir)/parser/ugrammar.stamp;		\
 	  $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;	\
 	fi
