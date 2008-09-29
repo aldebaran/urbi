@@ -44,7 +44,6 @@ $(FLEXXX): $(FLEXXX_IN)
 ## Bison parser.  ##
 ## -------------- ##
 
-parser_dir = $(srcdir)/parser
 
 # We do not use Automake features here.
 SOURCES_FROM_UGRAMMAR_Y =			\
@@ -69,29 +68,29 @@ MAINTAINERCLEANFILES += $(FROM_UGRAMMAR_Y)
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
-EXTRA_DIST += $(parser_dir)/ugrammar.y
-precompiled_symbols_hh_deps += $(parser_dir)/ugrammar.y
+EXTRA_DIST += parser/ugrammar.y
+precompiled_symbols_hh_deps += parser/ugrammar.y
 ugrammar_deps =					\
   $(BISONXX_IN)					\
   $(top_srcdir)/build-aux/fuse-switch		\
-  $(parser_dir)/local.mk			\
+  parser/local.mk				\
   $(wildcard $(top_builddir)/bison/data/*.c)	\
   $(wildcard $(top_builddir)/bison/data/*.cc)	\
   $(wildcard $(top_builddir)/bison/data/*.m4)
 
-$(parser_dir)/ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
+parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(BISONXX) $(parser_dir)/ugrammar.y $(parser_dir)/ugrammar.cc \
-	  -d -ra $(BISON_FLAGS)
+	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
 	@mv -f $@.tmp $@
 
-$(FROM_UGRAMMAR_Y): $(parser_dir)/ugrammar.stamp
-	@if test -f $@; then :; else \
-	  rm -f $(parser_dir)/ugrammar.stamp; \
-	  $(MAKE) $(AM_MAKEFLAGS) $(parser_dir)/ugrammar.stamp; \
+# Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
+$(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
+	@if test -f $@; then :; else		\
+	  rm -f $(srcdir)/$<;			\
+	  $(MAKE) $(AM_MAKEFLAGS) $<;		\
 	fi
 
 # We tried several times to run make from ast/ to build position.hh
@@ -107,7 +106,7 @@ generate-parser: $(FROM_UGRAMMAR_Y)
 ## --------------------------- ##
 
 .PHONY: keywords
-keywords: $(parser_dir)/utoken.l
+keywords: parser/utoken.l
 	perl -ne 'BEGIN { use Text::Wrap; }' \
 	     -e '/^"(\w+)"/ && push @k, $$1;' \
 	     -e 'END { print wrap ("    ", "    ", join (", ", map { s/_/\\_/g; $$_ } sort @k)), "\n" };' $<
@@ -121,20 +120,20 @@ FROM_UTOKEN_L =			\
 
 BUILT_SOURCES += $(FROM_UTOKEN_L)
 CLEANFILES += $(FROM_UTOKEN_L) parser/utoken.stamp
-dist_libuobject_la_SOURCES += $(parser_dir)/flex-lexer.hh
+dist_libuobject_la_SOURCES += parser/flex-lexer.hh
 nodist_libuobject_la_SOURCES += $(FROM_UTOKEN_L)
 
-EXTRA_DIST += $(parser_dir)/utoken.l
-utoken_deps = $(FLEXXX_IN) $(parser_dir)/local.mk
-parser/utoken.stamp: $(parser_dir)/utoken.l $(utoken_deps)
+EXTRA_DIST += parser/utoken.l
+utoken_deps = $(FLEXXX_IN) parser/local.mk
+parser/utoken.stamp: parser/utoken.l $(utoken_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(FLEXXX) $(parser_dir)/utoken.l parser/utoken.cc
+	$(FLEXXX) $< parser/utoken.cc
 	@mv -f $@.tmp $@
 
 $(FROM_UTOKEN_L): parser/utoken.stamp
-	@if test -f $@; then :; else \
-	  rm -f parser/utoken.stamp; \
-	  $(MAKE) $(AM_MAKEFLAGS) parser/utoken.stamp; \
+	@if test -f $@; then :; else		\
+	  rm -f $<;				\
+	  $(MAKE) $(AM_MAKEFLAGS) $<;		\
 	fi
