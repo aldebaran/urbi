@@ -79,18 +79,18 @@ ugrammar_deps =					\
   $(wildcard $(top_builddir)/bison/data/*.m4)
 
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
-	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
-	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	@rm -f $@.tmp
 	@touch $@.tmp
+	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
+	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
-	@mv -f $@.tmp $@
+	@mv -f $@.tmp $(srcdir)/$@
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
 $(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
-	@if test -f $@; then :; else		\
-	  rm -f $(srcdir)/$<;			\
-	  $(MAKE) $(AM_MAKEFLAGS) $<;		\
+	if test -f $@; then :; else				\
+	  rm -f $(srcdir)/parser/ugrammar.stamp;		\
+	  $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;	\
 	fi
 
 # We tried several times to run make from ast/ to build position.hh
