@@ -4,15 +4,17 @@
 
 precompiled_symbols_hh = object/precompiled-symbols.hh
 precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
-# filter-out to avoid circular dependencies.
-precompiled_symbols_hh_deps +=			\
+# filter-out generated files, and precompiled_symbols_hh itself to
+# avoid circular dependencies.
+precompiled_symbols_hh_sources =		\
+  parser/utoken.l				\
+  parser/ugrammar.y				\
   $(filter-out $(precompiled_symbols_hh)	\
-	       $(FROM_UGRAMMAR_Y)		\
+               $(FROM_UGRAMMAR_Y)		\
                $(FROM_UTOKEN_L),		\
-	$(dist_libuobject_la_SOURCES))		\
-  object/symbols-generate.pl
+        $(dist_libuobject_la_SOURCES))
 EXTRA_DIST += object/symbols-generate.pl $(precompiled_symbols_stamp)
-$(precompiled_symbols_stamp): $(precompiled_symbols_hh_deps)
+$(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
 	@rm -f $@.tmp
 	@echo "rebuilding $(precompiled_symbols_hh) because of:"
 	@for i in $?;				\
@@ -22,8 +24,10 @@ $(precompiled_symbols_stamp): $(precompiled_symbols_hh_deps)
 	@touch $@.tmp
 	:> $(precompiled_symbols_hh)~
 	-cp -f $(precompiled_symbols_hh) $(precompiled_symbols_hh)~
-	(cd $(top_srcdir) && \
-	  perl -w src/object/symbols-generate.pl) >$(precompiled_symbols_hh).tmp
+	(cd $(srcdir) &&				\
+	 ./object/symbols-generate.pl			\
+		$(precompiled_symbols_hh_sources))	\
+		>$(precompiled_symbols_hh).tmp
 	diff -u $(precompiled_symbols_hh)~ $(precompiled_symbols_hh).tmp || true
 	$(top_srcdir)/build-aux/move-if-change \
 	  $(precompiled_symbols_hh).tmp $(srcdir)/$(precompiled_symbols_hh)

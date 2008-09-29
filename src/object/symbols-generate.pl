@@ -8,6 +8,7 @@ my %char =
     'BANG'      => '!',
     'CARET'     => '^',
     'COLON'     => ':',
+    'DOLLAR'    => '$',
     'EQ'        => '=',
     'GT'        => '>',
     'LT'        => '<',
@@ -36,7 +37,7 @@ sub symbol ($)
 }
 
 # Check that no symbol::Symbol are called directly with literals.
-my $literals = `git grep -E -n 'libport::Symbol *\\("[^"]*")'`;
+my $literals = `grep -E -n 'libport::Symbol *\\("[^"]*")' @ARGV`;
 die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
     if $literals;
 
@@ -44,20 +45,23 @@ die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
 #
 # SYMBOL(EQ) is used when we want to denote it explicitly.
 #
-# DECLARE(EQ, ...) is used in the *-class.cc to bind C++ functions
-# into the Urbi world.
+# DECLARE(EQ, ...) is used in object/*.cc to bind C++ functions
+# into the Urbi world.  Similarly with BOUNCE.
 #
 # RETURN_OP(EQ) is used in the scanner to return tokens which
 # semantical value is the string itself.
-my $symbols = `git grep -E '(DECLARE|SYMBOL|RETURN_OP) *\\('`;
+my $symbol_tag = 'BOUNCE|DECLARE|SYMBOL|RETURN_OP';
 
-# If git failed, do not proceed.
-die "git grep failed"
+# The lines that declare a symbol.
+my $symbols = `grep -E '($symbol_tag) *\\(' @ARGV`;
+
+die "grep failed"
     unless $symbols;
 
+# The set of symbols used.
 my %symbol =
     map { $_ => symbol($_) }
-	($symbols =~ /\b(?:BOUNCE|DECLARE|RETURN_OP|SYMBOL) *\(([^,\)]*)/gm);
+	($symbols =~ /\b(?:$symbol_tag) *\(([^,\)]*)/gm);
 
 print <<'EOF';
 /**

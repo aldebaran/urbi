@@ -306,7 +306,7 @@ namespace parser
 
   ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue)
   {
-    ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL($tmp));
+    ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL(DOLLAR_tmp));
 
     if (lvalue->call()->target_implicit())
       return lvalue.get();
