@@ -4,6 +4,9 @@
  */
 
 //#define ENABLE_DEBUG_TRACES
+
+#include <boost/bind.hpp>
+
 #include <libport/compiler.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
@@ -174,6 +177,24 @@ namespace object
     return args[0]->urbi_protos_get ();
   }
 
+  /// Recursively get protos list
+
+  static bool
+  proto_add(List::value_type& protos, const rObject& proto)
+  {
+    protos.push_back(proto);
+    return false;
+  }
+
+  static rObject
+  object_class_allProtos(runner::Runner&, objects_type& args)
+  {
+    check_arg_count(args.size() - 1, 0);
+    List::value_type res;
+    for_all_protos(args[0], boost::bind(&proto_add, boost::ref(res), _1));
+    return new List(res);
+  }
+
 
   /*--------.
   | Slots.  |
@@ -299,6 +320,7 @@ namespace object
     DECLARE_PRIMITIVE(object, Name)
 
     DECLARE(addProto);
+    DECLARE(allProtos);
     DECLARE(apply);
     DECLARE(callMessage);
     DECLARE(clone);

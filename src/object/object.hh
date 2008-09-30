@@ -225,7 +225,7 @@ namespace object
   };
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
-  template<class F> bool for_all_protos(rObject& r, F& f);
+  template<class F> bool for_all_protos(const rObject& r, F f);
 
   /// Whether \b p is present in \b c's proto hierarchy.
   bool is_a(const rObject& c, const rObject& p);

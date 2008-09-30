@@ -137,21 +137,21 @@ namespace object
   | Free standing functions.  |
   `--------------------------*/
 
-  template<class P, class F> bool
-  for_all_protos(P& r, F& f, objects_type& objects)
+  template<class F> bool
+  for_all_protos(const rObject& r, F& f, objects_type& objects)
   {
     if (libport::has(objects, r))
       return false;
     if (f(r))
       return true;
     objects.push_back(r);
-    foreach(P& p, r->protos_get())
+    foreach(const rObject& p, r->protos_get())
       if (for_all_protos(p, f, objects))
 	return true;
     return false;
   }
-  template<class P,class F> bool
-  for_all_protos(P& r, F& f)
+  template<class F> bool
+  for_all_protos(const rObject& r, F f)
   {
     objects_type objects;
     return for_all_protos(r, f, objects);
