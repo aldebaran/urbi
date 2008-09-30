@@ -12,7 +12,7 @@ bin_PROGRAMS =
 include examples/local.mk
 include utils/local.mk
 
-SUBDIRS = liburbi .
+SUBDIRS = liburbi tests .
 
 ## ------------ ##
 ## version.hh.  ##

@@ -13,7 +13,7 @@ Each file corresponds to an 'atomic' test.
 Test file layout
 - #includes "tests.hh"
 - write callbacks, ensure global unique names
-- a call to BEGIN_TEST(testname, clientname, syncclientname),  
+- a call to BEGIN_TEST(testname, clientname, syncclientname),
    testname must be filename-without-extension
 - code of the test:
 - setup callbacks, the callback function dump is provided: it displays the

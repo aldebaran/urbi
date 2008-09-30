@@ -20,4 +20,4 @@
 /src/Makefile.in
 /src/liburbi/Makefile.in
 /src/liburbi/swig/Makefile.in
-/src/liburbi/tests/Makefile.in
+/src/tests/Makefile.in
