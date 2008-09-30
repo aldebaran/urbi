@@ -8,6 +8,7 @@
 #include <boost/bind.hpp>
 
 #include <libport/compiler.hh>
+#include <libport/containers.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
 #include <libport/tokenizer.hh>
@@ -200,6 +201,20 @@ namespace object
   | Slots.  |
   `--------*/
 
+  template <typename F>
+  static inline void for_all_slot_names(const rObject& o, F f)
+  {
+    for (Object::slots_implem::iterator slot = o->slots_get().begin(o.get());
+         slot != o->slots_get().end(o.get());
+         ++slot)
+      f(slot->first.second);
+  }
+
+  static void
+  add_as_rString(List::value_type& l, libport::Symbol slot_name)
+  {
+    l.push_back(new String(slot_name));
+  }
 
   /// List of slot names.
   static rObject
@@ -209,12 +224,38 @@ namespace object
     const rObject& obj = args[0];
 
     List::value_type l;
-    for (Object::slots_implem::iterator slot = obj->slots_get().begin(obj.get());
-         slot != obj->slots_get().end(obj.get());
-         ++slot)
-      l.push_back (new String(slot->first.second));
-
+    for_all_slot_names(obj, boost::bind(&add_as_rString, boost::ref(l), _1));
     return new List(l);
+  }
+
+  /// Recursive list of slot names.
+
+  static void
+  maybe_add(std::vector<libport::Symbol>& control, List::value_type& l,
+	    libport::Symbol slot_name)
+  {
+    if (!libport::has(control, slot_name))
+    {
+      control.push_back(slot_name);
+      l.push_back(new String(slot_name));
+    }
+  }
+
+  static rObject
+  object_class_allSlotNames(runner::Runner& r, objects_type& args)
+  {
+    check_arg_count(args.size() - 1, 0);
+    std::vector<libport::Symbol> slot_names;
+    List::value_type res;
+    objects_type protos = object_class_allProtos(r, args)->as<List>()->value_get();
+    foreach (const rObject& proto, protos)
+    {
+      for_all_slot_names(proto, boost::bind(&maybe_add,
+					    boost::ref(slot_names),
+					    boost::ref(res),
+					    _1));
+    }
+    return new List(res);
   }
 
   /// Get a slot content.
@@ -321,6 +362,7 @@ namespace object
 
     DECLARE(addProto);
     DECLARE(allProtos);
+    DECLARE(allSlotNames);
     DECLARE(apply);
     DECLARE(callMessage);
     DECLARE(clone);
