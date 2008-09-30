@@ -31,13 +31,13 @@ dist_libuobject_la_SOURCES +=			\
 BISONXX = $(top_builddir)/build-aux/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 $(BISONXX): $(BISONXX_IN)
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/bison++
+	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/bison++
 
 # A Flex wrapper for C++.
 FLEXXX = $(top_builddir)/build-aux/flex++
 FLEXXX_IN = $(top_srcdir)/build-aux/flex++.in
 $(FLEXXX): $(FLEXXX_IN)
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/flex++
+	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/flex++
 
 
 ## -------------- ##
@@ -71,7 +71,7 @@ MAINTAINERCLEANFILES += $(FROM_UGRAMMAR_Y)
 EXTRA_DIST += parser/ugrammar.y
 precompiled_symbols_hh_deps += parser/ugrammar.y
 ugrammar_deps =					\
-  $(BISONXX_IN)					\
+  $(BISONXX)					\
   $(top_srcdir)/build-aux/fuse-switch		\
   parser/local.mk				\
   $(wildcard $(top_builddir)/bison/data/*.c)	\
@@ -81,14 +81,13 @@ ugrammar_deps =					\
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
 	@mv -f $@.tmp $(srcdir)/$@
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
 $(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
-	@if test -f $@; then :; else				\
+	if test -f $(srcdir)/$@; then :; else			\
 	  rm -f $(srcdir)/parser/ugrammar.stamp;		\
 	  $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;	\
 	fi
