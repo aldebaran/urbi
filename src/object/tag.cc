@@ -33,7 +33,7 @@ namespace object
   Tag::Tag(rTag model)
     : value_(new scheduler::Tag(model->value_, model->value_->name_get()))
   {
-    proto_add(proto);
+    proto_add(model);
   }
 
   const Tag::value_type&
