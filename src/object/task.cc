@@ -51,10 +51,10 @@ namespace object
     return value_->name_get();
   }
 
-  const scheduler::tags_type&
+  const runner::Interpreter::tag_stack_type&
   Task::tags()
   {
-    return value_->tags_get();
+    return dynamic_cast<runner::Interpreter*>(value_.get())->tag_stack_get();
   }
 
   std::string

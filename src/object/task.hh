@@ -6,10 +6,10 @@
 #ifndef OBJECT_TASK_CLASS_HH
 # define OBJECT_TASK_CLASS_HH
 
-# include <scheduler/job.hh>
-
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
+# include <runner/interpreter.hh>
+# include <scheduler/job.hh>
 
 namespace object
 {
@@ -27,7 +27,7 @@ namespace object
     libport::Symbol name();
     void setSideEffectFree(rObject);
     std::string status(runner::Runner&);
-    const scheduler::tags_type& tags();
+    const runner::Interpreter::tag_stack_type& tags();
     void terminate();
     rFloat timeShift();
     void waitForChanges(runner::Runner&);
