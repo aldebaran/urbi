@@ -3,9 +3,8 @@
  ** \brief Creation of the URBI object string.
  */
 
-#include <vector>
-
 #include <boost/algorithm/string.hpp>
+#include <boost/multi_array.hpp>
 
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
@@ -58,8 +57,8 @@ namespace object
   static unsigned int
   damerau_levenshtein_distance(const std::string& s1, const std::string& s2)
   {
-    std::vector<unsigned int> model(s2.size() + 1, 0);
-    std::vector< std::vector<unsigned int> > d(s1.size() + 1, model);
+    boost::multi_array<unsigned int, 2> d(boost::extents[s1.size()+1]
+					                [s2.size()+1]);
 
     for (unsigned int i = 0; i <= s1.size(); ++i)
       d[i][0] = i;
