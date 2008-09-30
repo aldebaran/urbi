@@ -39,10 +39,6 @@ URBI_COMPILATION_MODE
 URBI_PTHREAD
 URBI_LIBPORT
 AC_CONFIG_FILES([lib/libport/Makefile])
-AC_CONFIG_FILES([build-aux/test.sh],
-		[chmod a=rx build-aux/test.sh])
-
-
 
 BOOST_REQUIRE([1.34])
 BOOST_FILESYSTEM
@@ -162,7 +158,7 @@ AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  src/Makefile
 	  src/liburbi/Makefile
-		  src/liburbi/swig/Makefile
+		  src/swig/Makefile
 		  src/tests/Makefile
 ])
 AC_OUTPUT
