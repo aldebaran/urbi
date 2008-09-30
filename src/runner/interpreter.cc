@@ -79,6 +79,7 @@ namespace runner
     , result_(0)
     , call_stack_(model.call_stack_)
     , stacks_(model.lobby_)
+    , tag_stack_(model.tag_stack_)
   {
     init();
   }
@@ -91,6 +92,7 @@ namespace runner
     , code_(0)
     , result_(0)
     , stacks_(model.lobby_)
+    , tag_stack_(model.tag_stack_)
   {
     init();
   }
@@ -299,6 +301,12 @@ namespace runner
     if (skip_last)
       bt.pop_back();
     throw object::UrbiException(exn, bt);
+  }
+
+  const Interpreter::tag_stack_type&
+  Interpreter::tag_stack_get() const
+  {
+    return tag_stack_;
   }
 
 } // namespace runner

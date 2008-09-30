@@ -32,6 +32,7 @@ namespace runner
     typedef object::rCode rCode;
     typedef object::rLobby rLobby;
     typedef object::objects_type objects_type;
+    typedef std::vector<object::rTag> tag_stack_type;
     /// \}
 
     /// \name Ctor & dtor.
@@ -126,6 +127,9 @@ namespace runner
     /// Make an urbi function from an ast chunk
     object::rCode make_routine(ast::rConstRoutine f) const;
 
+    /// Retreive the tags currently tagging the runned code
+    const tag_stack_type& tag_stack_get() const;
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -216,6 +220,12 @@ namespace runner
 
     /// The local variable stacks
     Stacks stacks_;
+
+    /// The stack of current tags. This is different from the
+    /// scheduler::Tag stack located in the runner, that also stores
+    /// C++ tags that are not visible in urbi. This stack is meant to
+    /// enable to list current tags from Urbi.
+    tag_stack_type tag_stack_;
 
     const ast::Ast* innermost_node_;
   };

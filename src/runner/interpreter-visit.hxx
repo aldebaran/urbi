@@ -518,8 +518,9 @@ namespace runner
     size_t result_depth = tags_get().size();
     try
     {
-      Finally finally;
+      Finally finally(2);
       apply_tag(tag, &finally);
+      finally << scoped_push(urbi_tag, tag_stack_);
       // If the latest tag causes us to be frozen, let the
       // scheduler handle this properly to avoid duplicating the
       // logic.
