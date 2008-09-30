@@ -1,25 +1,28 @@
 do (Global.Tag)
 {
-  var begin = Tag.new("begin");
-  var end = Tag.new("end");
+  var SystemTag = Tag.new("SystemTag");
+
+  var begin = SystemTag.new("begin");
+  var end = SystemTag.new("end");
 
   {
     function report(msg)
     {
       var res = "";
       for (var tag in currentRunner.tags)
-        res += tag.name + ": ";
+        if (!tag.isA(SystemTag))
+          res += tag.name + ": ";
       echo(res + msg);
     };
 
     at (?begin.enter)
     {
-      report("enter");
+      report("begin");
     };
 
     at (?end.leave)
     {
-      report("leave");
+      report("end");
     };
   }
-}
+};
