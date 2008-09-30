@@ -18,7 +18,6 @@
 #include <object/hash-slots.hh>
 #include <object/list.hh>
 #include <object/object.hh>
-#include <object/object.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
