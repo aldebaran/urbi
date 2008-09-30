@@ -11,6 +11,7 @@ AM_LDADD =					\
 include examples/local.mk
 include libuco/local.mk
 include liburbi/local.mk
+include libuobject/local.mk
 include utils/local.mk
 
 SUBDIRS = . tests

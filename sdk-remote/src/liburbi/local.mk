@@ -3,27 +3,12 @@ topenvdir = $(PACKAGE_BRAND)/core/$(URBI_HOST)/$(URBI_ENV)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-## ------------ ##
-## liburbi.la.  ##
-## ------------ ##
-
 umaindir = $(datadir)/umain
 dist_umain_DATA = liburbi/umain.cc
 
-env_LTLIBRARIES = liburbi/libuobject.la
-liburbi_libuobject_la_SOURCES =			\
-  liburbi/package-info.cc			\
-  liburbi/ucallbacks.cc				\
-  liburbi/uobject.cc				\
-  liburbi/usystem.cc				\
-  liburbi/utimer-callback.cc			\
-  liburbi/uvar.cc
-liburbi_libuobject_la_CPPFLAGS =		\
-  $(AM_CPPFLAGS)				\
-  -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
-liburbi_libuobject_la_LIBADD = $(LIBADD) libuco/libuco.la liburbi/liburbi.la
-liburbi_libuobject_la_LDFLAGS = -no-undefined
-
+## ------------ ##
+## liburbi.la.  ##
+## ------------ ##
 
 lib_LTLIBRARIES = liburbi/liburbi.la
 liburbi_liburbi_la_SOURCES =			\
