@@ -18,6 +18,5 @@
 /lib/libport
 /sdk
 /src/Makefile.in
-/src/liburbi/Makefile.in
-/src/liburbi/swig/Makefile.in
+/src/swig/Makefile.in
 /src/tests/Makefile.in
