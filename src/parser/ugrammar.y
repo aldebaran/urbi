@@ -142,10 +142,7 @@
     enclose_in_scope(const ast::rExp& exp)
   {
     ast::Scope* s = dynamic_cast<ast::Scope*>(exp.get());
-    if (s)
-      return s; // Already a scope
-    else
-      return new ast::Scope(exp->location_get(), exp);
+    return s ? s : new ast::Scope(exp->location_get(), exp);
   }
 
 } // %code requires.
