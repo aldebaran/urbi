@@ -199,29 +199,35 @@ namespace object
     }
   };
 
-  // Conversion with std::set
-  template <typename T>
-  struct CxxConvert<std::set<T> >
-  {
-    static std::set<T>
-    to(const rObject& o, const libport::Symbol& name, unsigned idx)
-    {
-      type_check(o, List::proto);
-      std::set<T> res;
-      foreach (const rObject& elt, o->as<List>()->value_get())
-        res.insert(CxxConvert<T>::to(elt, name, idx));
-      return res;
-    }
+  // Conversion with containers
+#define CONTAINER(Name)                                                 \
+  template <typename T>                                                 \
+  struct CxxConvert<Name<T> >                                           \
+  {                                                                     \
+    static Name<T>                                                      \
+      to(const rObject& o, const libport::Symbol& name, unsigned idx)   \
+    {                                                                   \
+      type_check(o, List::proto);                                       \
+      Name<T> res;                                                      \
+      foreach (const rObject& elt, o->as<List>()->value_get())          \
+        res.insert(CxxConvert<T>::to(elt, name, idx));                  \
+      return res;                                                       \
+    }                                                                   \
+                                                                        \
+    static rObject                                                      \
+      from(const Name<T>& v, const libport::Symbol& name)               \
+    {                                                                   \
+      objects_type res;                                                 \
+      foreach (const T& elt, v)                                         \
+        res.push_back(CxxConvert<T>::from(elt, name));                  \
+      return new List(res);                                             \
+    }                                                                   \
+  };                                                                    \
 
-    static rObject
-    from(const std::set<T>& v, const libport::Symbol& name)
-    {
-      objects_type res;
-      foreach (const T& elt, v)
-        res.push_back(CxxConvert<T>::from(elt, name));
-      return new List(res);
-    }
-  };
+  CONTAINER(std::set);
+  CONTAINER(std::vector);
+
+#undef CONTAINER
 
 }
 
