@@ -8,7 +8,7 @@
 
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
-# include <runner/interpreter.hh>
+# include <runner/runner.hh>
 # include <scheduler/job.hh>
 
 namespace object
@@ -27,7 +27,7 @@ namespace object
     libport::Symbol name();
     void setSideEffectFree(rObject);
     std::string status(runner::Runner&);
-    const runner::Interpreter::tag_stack_type& tags();
+    const runner::tag_stack_type& tags();
     void terminate();
     rFloat timeShift();
     void waitForChanges(runner::Runner&);

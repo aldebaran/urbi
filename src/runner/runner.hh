@@ -17,6 +17,9 @@
 namespace runner
 {
 
+  /// Stack of Urbi tags.
+  typedef std::vector<object::rTag> tag_stack_type;
+
   /// Ast executor.
   class Runner : public scheduler::Job
   {

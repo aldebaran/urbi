@@ -303,7 +303,7 @@ namespace runner
     throw object::UrbiException(exn, bt);
   }
 
-  const Interpreter::tag_stack_type&
+  const tag_stack_type&
   Interpreter::tag_stack_get() const
   {
     return tag_stack_;

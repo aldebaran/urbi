@@ -32,7 +32,6 @@ namespace runner
     typedef object::rCode rCode;
     typedef object::rLobby rLobby;
     typedef object::objects_type objects_type;
-    typedef std::vector<object::rTag> tag_stack_type;
     /// \}
 
     /// \name Ctor & dtor.
