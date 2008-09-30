@@ -58,13 +58,11 @@ namespace object
   static unsigned int
   damerau_levenshtein_distance(const std::string& s1, const std::string& s2)
   {
-    std::vector< std::vector<unsigned int> > d(s1.size() + 1);
+    std::vector<unsigned int> model(s2.size() + 1, 0);
+    std::vector< std::vector<unsigned int> > d(s1.size() + 1, model);
 
     for (unsigned int i = 0; i <= s1.size(); ++i)
-    {
-      d[i].reserve(s2.size() + 1);
       d[i][0] = i;
-    }
     for (unsigned int j = 1; j <= s2.size(); ++j)
       d[0][j] = j;
 
