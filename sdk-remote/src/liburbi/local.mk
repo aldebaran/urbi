@@ -22,17 +22,3 @@ liburbi_liburbi_la_CPPFLAGS =			\
   -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
 liburbi_liburbi_la_LIBADD = $(LIBADD)
 liburbi_liburbi_la_LDFLAGS = -no-undefined
-
-
-
-bin_PROGRAMS += liburbi/urbi-launch
-liburbi_urbi_launch_SOURCES = liburbi/urbi-launch.cc
-liburbi_urbi_launch_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
-liburbi_urbi_launch_LDADD =			\
-  $(AM_LDADD)					\
-  $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)	\
-  $(LTDL_LIBS)					\
-  liburbi/liburbi.la
-liburbi_urbi_launch_LDFLAGS =				\
-  $(AM_LDFLAGS)						\
-  $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)

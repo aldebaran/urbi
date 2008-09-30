@@ -66,8 +66,8 @@ int connect_plugin(int argc, const char* argv[],
 
 void usage(const char* name)
 {
-  std::cerr 
-  << "usage: " << name << " MODE MODULENAMES ... [OPTIONS]\n" 
+  std::cerr
+  << "usage: " << name << " MODE MODULENAMES ... [OPTIONS]\n"
   << "    Start an UObject in either remote or plugin mode\n"
   << "\n"
   << "Possible values for MODE:\n"
@@ -113,13 +113,13 @@ static void list_modules(path p, int recurse, std::list<std::string> &res)
   else
     throw std::runtime_error("File not found: " + p.string());
 }
-    
+
 typedef int (*umain_type)(int argc, const char* argv[], int block);
 int main(int argc, const char* argv[])
 {
   lt_dlinit();
   std::string prefix=URBI_PREFIX;
-  
+
   int argp = 1;
 
 
@@ -149,12 +149,12 @@ int main(int argc, const char* argv[])
     usage(argv[0]);
     break;
   }
-  
+
    /// Get the list of modules.
   std::list<std::string> modules;
   for (; argp < argc && argv[argp][0] != '-'; ++argp)
     list_modules(argv[argp], 1, modules);
-  
+
   /// Store args, intercepting host and port just in case
   const char** nargv = new const char*[argc];
   int nargp = 1;
@@ -164,7 +164,7 @@ int main(int argc, const char* argv[])
 
   if (connectMode == MODE_PLUGIN_LOAD)
     return connect_plugin(nargp, nargv, modules);
-  
+
   /* The two other modes are handled the same way:
    * -Dlopen the correct libuobject.
    * -Dlopen the uobjects to load.

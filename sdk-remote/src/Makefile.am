@@ -25,3 +25,16 @@ endif
 
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
+
+
+bin_PROGRAMS += urbi-launch
+urbi_launch_SOURCES = urbi-launch.cc
+urbi_launch_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
+urbi_launch_LDADD =				\
+  $(AM_LDADD)					\
+  $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)	\
+  $(LTDL_LIBS)					\
+  liburbi/liburbi.la
+urbi_launch_LDFLAGS =					\
+  $(AM_LDFLAGS)						\
+  $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
