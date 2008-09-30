@@ -282,16 +282,18 @@ namespace object
     return args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2]);
   }
 
-  static rObject
-  object_class_isA(runner::Runner&, objects_type& args)
+  static bool
+  object_class_isA(rObject self, rObject proto)
   {
-    check_arg_count(args.size() - 1, 1);
-    return new Float(is_a(args[0], args[1])? 1.0:0.0);
+    return is_a(self, proto);
   }
 
   void
   object_class_initialize ()
   {
+    object_class->slot_set(SYMBOL(isA),
+                           make_primitive(object_class_isA, SYMBOL(isA)));
+
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(object, Name)
@@ -304,7 +306,6 @@ namespace object
     DECLARE(getLazyLocalSlot);
     DECLARE(getSlot);
     DECLARE(init);
-    DECLARE(isA);
     DECLARE(locateSlot);
     DECLARE(EQ_EQ_EQ);
     DECLARE(protos);
