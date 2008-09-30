@@ -78,18 +78,30 @@ ugrammar_deps =					\
   $(wildcard $(top_builddir)/bison/data/*.cc)	\
   $(wildcard $(top_builddir)/bison/data/*.m4)
 
-parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
-	@rm -f $@.tmp
-	@touch $@.tmp
+$(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
+	rm -f $@ $@.tmp
+	echo '$?' >$@.tmp
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
-	@mv -f $@.tmp $(srcdir)/$@
+	mv -f $@.tmp $@
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
-$(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
-	if test -f $(srcdir)/$@; then :; else			\
-	  rm -f $(srcdir)/parser/ugrammar.stamp;		\
-	  $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;	\
+# See Automake's documentation for the whole story.
+$(SOURCES_FROM_UGRAMMAR_Y): $(srcdir)/parser/ugrammar.stamp
+	if test ! -f $@; then						  \
+	  trap 'rm -rf $(srcdir)/parser/ugrammar.{lock,stamp}' 1 2 13 15; \
+          if mkdir $(srcdir)/parser/ugrammar.lock 2>/dev/null; then	  \
+	    rm -f $(srcdir)/parser/ugrammar.stamp;			  \
+	    $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;		  \
+	    result=$$?;							  \
+	    rm -rf $(srcdir)/parser/ugrammar.lock;			  \
+	    exit $$result;						  \
+	  else								  \
+	    while test -d $(srcdir)/parser/ugrammar.lock; do		  \
+	      sleep 1;							  \
+	    done;							  \
+	    test -f $(srcdir)/parser/ugrammar.stamp;			  \
+	  fi;								  \
 	fi
 
 # We tried several times to run make from ast/ to build position.hh
@@ -132,7 +144,7 @@ parser/utoken.stamp: parser/utoken.l $(utoken_deps)
 	@mv -f $@.tmp $@
 
 $(FROM_UTOKEN_L): parser/utoken.stamp
-	@if test -f $@; then :; else		\
+	@if test ! -f $@; then			\
 	  rm -f $<;				\
 	  $(MAKE) $(AM_MAKEFLAGS) $<;		\
 	fi
