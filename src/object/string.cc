@@ -51,6 +51,36 @@ namespace object
     return content_;
   }
 
+  static unsigned int
+  damerau_levenshtein_distance(const std::string& s1, const std::string& s2)
+  {
+    unsigned int d[s1.size() + 1][s2.size() + 1];
+
+    for (unsigned int i = 0; i <= s1.size(); ++i)
+      d[i][0] = i;
+    for (unsigned int j = 0; j <= s2.size(); ++j)
+      d[0][j] = j;
+
+    for (unsigned int i = 1; i <= s1.size(); ++i)
+      for (unsigned int j = 1; j <= s2.size(); ++j)
+      {
+	unsigned int cost = s1[i-1] == s2[j-1] ? 0 : 1;
+	d[i][j] = std::min(std::min(d[i-1][j] + 1,        // Deletion
+				    d[i][j-1] + 1),       // Insertion
+			   d[i-1][j-1] + cost);           // Substitution
+	if (i > 1 && j > 1 && s1[i-1] == s2[j-2] && s1[i-2] == s2[j-1])
+	  d[i][j] = std::min(d[i][j],
+			     d[i-2][j-2] + cost);         // Transposition
+      }
+    return d[s1.size()][s2.size()];
+  }
+
+  unsigned int
+  String::distance(rString other)
+  {
+    return damerau_levenshtein_distance(value_get(), other->value_get());
+  }
+
   std::string String::plus (runner::Runner& r, rObject rhs)
   {
     rObject str = urbi_call(r, rhs, SYMBOL(asString));
@@ -230,6 +260,7 @@ namespace object
   {
     bind(SYMBOL(asPrintable), &as_printable);
     bind(SYMBOL(asString), &as_string);
+    bind(SYMBOL(distance), &String::distance);
     bind(SYMBOL(fresh), &String::fresh);
     bind(SYMBOL(LT), &String::lt);
     bind(SYMBOL(PERCENT), &String::format);
