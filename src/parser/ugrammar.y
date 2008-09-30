@@ -984,7 +984,7 @@ stmt:
   }
 | "throw" exp
   {
-    $$ = new ast::Throw(@$, enclose_in_scope($2));
+    $$ = new ast::Throw(@$, $2);
   }
 ;
 
