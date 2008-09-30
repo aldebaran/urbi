@@ -23,4 +23,4 @@ utils_urbiwalk_SOURCES =			\
 
 utils_urbiwalk_LDADD =				\
   $(top_builddir)/jpeg-6b/libjpeg.la		\
-  $(top_builddir)/src/liburbi/liburbi.la
+  liburbi/liburbi.la

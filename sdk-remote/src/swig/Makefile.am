@@ -3,7 +3,7 @@ include $(top_srcdir)/build-aux/init.mk
 AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/swig
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
 
-bin_SCRIPTS =					\
+dist_bin_SCRIPTS +=				\
   sample.cs					\
   sample.java					\
   sample.lua					\

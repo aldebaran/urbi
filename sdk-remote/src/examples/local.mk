@@ -9,15 +9,6 @@ bin_PROGRAMS +=					\
   examples/urbisendbin				\
   examples/urbisendsound
 
-if  SOUNDCARD
-bin_PROGRAMS += examples/urbisound
-endif
-
-if  !WIN32
-bin_PROGRAMS += examples/urbitalkie
-endif
-endif EXAMPLES
-
 examples_urbibandwidth_SOURCES	= examples/urbibandwidth.cc
 examples_urbimirror_SOURCES	= examples/urbimirror.cc
 examples_urbiping_SOURCES	= examples/urbiping.cc
@@ -26,8 +17,18 @@ examples_urbirecord_SOURCES	= examples/urbirecord.cc
 examples_urbisend_SOURCES	= examples/urbisend.cc
 examples_urbisendbin_SOURCES	= examples/urbisendbin.cc
 examples_urbisendsound_SOURCES	= examples/urbisendsound.cc
-examples_urbisound_SOURCES	= examples/urbisound.cc
-examples_urbitalkie_SOURCES	= examples/urbitalkie.cc
+
+if  SOUNDCARD
+bin_PROGRAMS += examples/urbisound
+examples_urbisound_SOURCES = examples/urbisound.cc
+endif
+
+if  !WIN32
+bin_PROGRAMS += examples/urbitalkie
+examples_urbitalkie_SOURCES = examples/urbitalkie.cc
+endif
+endif EXAMPLES
+
 
 
 ## -------------------------------------- ##
