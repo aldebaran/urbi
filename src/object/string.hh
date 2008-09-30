@@ -45,6 +45,8 @@ namespace object
                        const std::string& v);
     std::string sub_eq(unsigned int idx,
                        const std::string& v);
+    std::string to_lower();
+    std::string to_upper();
 
     static const std::string type_name;
     virtual std::string type_name_get() const;

@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object string.
  */
 
+#include <boost/algorithm/string.hpp>
+
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/tokenizer.hh>
@@ -232,6 +234,16 @@ namespace object
     return content_.substr(from, to - from);
   }
 
+  std::string String::to_lower()
+  {
+    return boost::to_lower_copy(value_get());
+  }
+
+  std::string String::to_upper()
+  {
+    return boost::to_upper_copy(value_get());
+  }
+
   std::string String::sub_eq(unsigned int from, unsigned int to,
                              const std::string& v)
   {
@@ -269,6 +281,8 @@ namespace object
     bind(SYMBOL(size), &String::size);
     bind(SYMBOL(split), &String::split);
     bind(SYMBOL(STAR), &String::star);
+    bind(SYMBOL(toLower), &String::to_lower);
+    bind(SYMBOL(toUpper), &String::to_upper);
 
     proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
     proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
