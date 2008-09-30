@@ -1,5 +1,7 @@
-AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi/swig
-AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
+include $(top_srcdir)/build-aux/init.mk
+
+AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/swig
+AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
 
 bin_SCRIPTS =					\
   sample.cs					\
@@ -10,7 +12,8 @@ bin_SCRIPTS =					\
   sample.py					\
   sample.rb
 
-EXTRA_DIST = liburbi.i
+EXTRA_DIST += liburbi.i
+lib_LTLIBRARIES =
 
 if BINDING_CSHARP
 lib_LTLIBRARIES += liburbiCSharp.la

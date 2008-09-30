@@ -5,12 +5,6 @@ topenvdir = $(PACKAGE_BRAND)/core/$(URBI_HOST)/$(URBI_ENV)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-SUBDIRS =
-if BINDINGS
- SUBDIRS += swig
-endif
-SUBDIRS += .
-
 include libuco/local.mk
 
 ## ------------ ##

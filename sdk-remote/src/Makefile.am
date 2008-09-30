@@ -13,6 +13,9 @@ include examples/local.mk
 include utils/local.mk
 
 SUBDIRS = liburbi tests .
+if BINDINGS
+ SUBDIRS += swig
+endif
 
 ## ------------ ##
 ## version.hh.  ##
