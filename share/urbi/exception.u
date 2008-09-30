@@ -99,10 +99,48 @@ class Global.LookupError: Exception
   var msg;
   var obj;
 
+  var fixSpellingErrors = true;
+
   function init(m, o)
   {
     msg = m |
     obj = o |
-    Exception.getSlot("init").apply([this, "Lookup failed: %s" % [m]])
+    var explanation = "Lookup failed: %s" % [m] |
+    var closest = nil |
+    if (fixSpellingErrors)
+      closest = mispelling(m, o) |
+    if (closest)
+      explanation += " (possible mispelling of %s)" % [closest] |
+    Exception.getSlot("init").apply([this, explanation])
   };
+
+  // Return the most probable slot in "o" (recursively) ressembling "m"
+  // or "nil" if we have no satisfying answer.
+  function mispelling(m, o)
+  {
+    // One character is too short.
+    if (m.size == 1)
+      return nil |
+
+    var lcm = m.toLower |
+    var allNames = o.allSlotNames |
+    var min = 999 |
+    var closest = nil |
+    for| (var n: allNames) {
+      var d = lcm.distance(n.toLower) |
+      if (d < min) {
+        min = d |
+        closest = n |
+	if (min == 0)      // Case mismatch only, that must be it.
+          return closest
+      }
+    } |
+    // Do not overcorrect. Two errors, not including case mismatches,
+    // ought to be enough for everybody. Also, do not try to correct
+    // words with less than three letters unless we got a case
+    // mismatch (caught above) or only one case-insensitive change.
+    if (min > 2 || (m.size < 3 && closest.size < 3 && m.distance(closest) > 1))
+      return nil |
+    closest
+  }
 };
