@@ -138,7 +138,7 @@ class Global.LookupError: Exception
     // Do not overcorrect. Two errors, not including case mismatches,
     // ought to be enough for everybody. Also, do not try to correct
     // words with less than three letters unless we got a case
-    // mismatch (caught above) or only one case-insensitive change.
+    // mismatch (caught above) or only one case-sensitive change.
     if (min > 2 || (m.size < 3 && closest.size < 3 && m.distance(closest) > 1))
       return nil |
     closest
