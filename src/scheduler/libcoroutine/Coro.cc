@@ -80,7 +80,7 @@ Coro *Coro_new(void)
 	return self;
 }
 
-void Coro_allocStackIfNeeded(Coro *self)
+static void Coro_allocStackIfNeeded(Coro *self)
 {
 	if (self->stack && self->requestedStackSize < self->allocatedStackSize)
 	{
@@ -200,6 +200,7 @@ void Coro_startCoro_(Coro *self, Coro *other, void *context, CoroStartCallback *
 }
 
 #if defined(USE_UCONTEXT) && defined(__x86_64__)
+void Coro_StartWithArg(unsigned int hiArg, unsigned int loArg);
 void Coro_StartWithArg(unsigned int hiArg, unsigned int loArg)
 {
 	CallbackBlock *block = (CallbackBlock*)(((long long)hiArg << 32) | (long long)loArg);
@@ -208,6 +209,7 @@ void Coro_StartWithArg(unsigned int hiArg, unsigned int loArg)
 	exit(-1);
 }
 
+void Coro_Start(void);
 void Coro_Start(void)
 {
 	CallbackBlock block = globalCallbackBlock;
@@ -216,6 +218,7 @@ void Coro_Start(void)
 	Coro_StartWithArg(hiArg, loArg);
 }
 #else
+void Coro_StartWithArg(CallbackBlock *block);
 void Coro_StartWithArg(CallbackBlock *block)
 {
 	(block->func)(block->context);
@@ -223,6 +226,7 @@ void Coro_StartWithArg(CallbackBlock *block)
 	exit(-1);
 }
 
+void Coro_Start(void);
 void Coro_Start(void)
 {
 	CallbackBlock block = globalCallbackBlock;
@@ -231,13 +235,6 @@ void Coro_Start(void)
 #endif
 
 // --------------------------------------------------------------------
-
-void Coro_UnsupportedPlatformError(void)
-{
-	printf("Io Scheduler error: no Coro_setupJmpbuf entry for this platform\n.");
-	exit(1);
-}
-
 
 void Coro_switchTo_(Coro *self, Coro *next)
 {
@@ -442,257 +439,3 @@ void Coro_setup(Coro *self, void *arg)
 #error "Coro.c Error: Coro_setup() function needs to be defined for this platform."
 
 #endif
-
-
-// old code
-
-/*
- // APPLE coros are handled by PortableUContext now
-#elif defined(_BSD_PPC_SETJMP_H_)
-
-#define buf (self->env)
-#define setjmp  _setjmp
-#define longjmp _longjmp
-
- void Coro_setup(Coro *self, void *arg)
- {
-	 size_t *sp = (size_t *)(((intptr_t)Coro_stack(self) + Coro_stackSize(self) - 64 + 15) & ~15);
-
-	 setjmp(buf);
-
-	 //printf("self = %p\n", self);
-	 //printf("sp = %p\n", sp);
-	 buf[0]  = (int)sp;
-	 buf[21] = (int)Coro_Start;
-	 //sp[-4] = (size_t)self; // for G5 10.3
-	 //sp[-6] = (size_t)self; // for G4 10.4
-
-	 //printf("self = %p\n", (void *)self);
-	 //printf("sp = %p\n", sp);
- }
-
-#elif defined(_BSD_I386_SETJMP_H)
-
-#define buf (self->env)
-
- void Coro_setup(Coro *self, void *arg)
- {
-	 size_t *sp = (size_t *)((intptr_t)Coro_stack(self) + Coro_stackSize(self));
-
-	 setjmp(buf);
-
-	 buf[9] = (int)(sp); // esp
-	 buf[12] = (int)Coro_Start; // eip
-						   //buf[8] = 0; // ebp
- }
- */
-
-/* Solaris supports ucontext - so we don't need this stuff anymore
-
-void Coro_setup(Coro *self, void *arg)
-{
-	// this bit goes before the setjmp call
-	// Solaris 9 Sparc with GCC
-#if defined(__SVR4) && defined (__sun)
-#if defined(_JBLEN) && (_JBLEN == 12) && defined(__sparc)
-#if defined(_LP64) || defined(_I32LPx)
-#define JBTYPE long
-	JBTYPE x;
-#else
-#define JBTYPE int
-	JBTYPE x;
-	asm("ta 3"); // flush register window
-#endif
-
-#define SUN_STACK_END_INDEX   1
-#define SUN_PROGRAM_COUNTER   2
-#define SUN_STACK_START_INDEX 3
-
-	// Solaris 9 i386 with GCC
-#elif defined(_JBLEN) && (_JBLEN == 10) && defined(__i386)
-#if defined(_LP64) || defined(_I32LPx)
-#define JBTYPE long
-					JBTYPE x;
-#else
-#define JBTYPE int
-					JBTYPE x;
-#endif
-#define SUN_PROGRAM_COUNTER 5
-#define SUN_STACK_START_INDEX 3
-#define SUN_STACK_END_INDEX 4
-#endif
-#endif
-					*/
-
-/* Irix supports ucontext - so we don't need this stuff anymore
-
-#elif defined(sgi) && defined(_IRIX4_SIGJBLEN) // Irix/SGI
-
-void Coro_setup(Coro *self, void *arg)
-{
-	setjmp(buf);
-	buf[JB_SP] = (__uint64_t)((char *)stack + stacksize - 8);
-	buf[JB_PC] = (__uint64_t)Coro_Start;
-}
-*/
-
-/* Linux supports ucontext - so we don't need this stuff anymore
-
-#elif defined(linux)
-// Various flavors of Linux.
-#if defined(JB_GPR1)
-// Linux/PPC
-buf->__jmpbuf[JB_GPR1] = ((int) stack + stacksize - 64 + 15) & ~15;
-buf->__jmpbuf[JB_LR]   = (int) Coro_Start;
-return;
-
-#elif defined(JB_RBX)
-// Linux/Opteron
-buf->__jmpbuf[JB_RSP] = (long int )stack + stacksize;
-buf->__jmpbuf[JB_PC]  = Coro_Start;
-return;
-
-#elif defined(JB_SP)
-
-// Linux/x86 with glibc2
-buf->__jmpbuf[JB_SP] = (int)stack + stacksize;
-buf->__jmpbuf[JB_PC] = (int)Coro_StartWithArg;
-// Push the argument on the stack (stack grows downwards)
-// note: stack is stacksize + 16 bytes long
-((int *)stack)[stacksize/sizeof(int) + 1] = (int)self;
-return;
-
-#elif defined(_I386_JMP_BUF_H)
-// x86-linux with libc5
-buf->__sp = (int)stack + stacksize;
-buf->__pc = Coro_Start;
-return;
-
-#elif defined(__JMP_BUF_SP)
-// arm-linux on the sharp zauras
-buf->__jmpbuf[__JMP_BUF_SP]   = (int)stack + stacksize;
-buf->__jmpbuf[__JMP_BUF_SP+1] = (int)Coro_Start;
-return;
-
-#else
-
-*/
-
-
-/* Windows supports fibers - so we don't need this stuff anymore
-
-#elif defined(__MINGW32__)
-
-void Coro_setup(Coro *self, void *arg)
-{
-	setjmp(buf);
-	buf[4] = (int)((unsigned char *)stack + stacksize - 16);   // esp
-	buf[5] = (int)Coro_Start; // eip
-}
-
-#elif defined(_MSC_VER)
-
-void Coro_setup(Coro *self, void *arg)
-{
-	setjmp(buf);
-	// win32 visual c
-	// should this be the same as __MINGW32__?
-	buf[4] = (int)((unsigned char *)stack + stacksize - 16);  // esp
-	buf[5] = (int)Coro_Start; // eip
-}
-*/
-
-
-/* FreeBSD supports ucontext - so we don't need this stuff anymore
-
-#elif defined(__FreeBSD__)
-// FreeBSD.
-#if defined(_JBLEN) && (_JBLEN == 81)
-// FreeBSD/Alpha
-buf->_jb[2] = (long)Coro_Start;     // sc_pc
-buf->_jb[26+4] = (long)Coro_Start;  // sc_regs[R_RA]
-buf->_jb[27+4] = (long)Coro_Start;  // sc_regs[R_T12]
-buf->_jb[30+4] = (long)(stack + stacksize); // sc_regs[R_SP]
-return;
-
-#elif defined(_JBLEN)
-// FreeBSD on IA32
-buf->_jb[2] = (long)(stack + stacksize);
-buf->_jb[0] = (long)Coro_Start;
-return;
-
-#else
-Coro_UnsupportedPlatformError();
-#endif
-*/
-
-/* NetBSD supports ucontext - so we don't need this stuff anymore
-
-#elif defined(__NetBSD__)
-
-void Coro_setup(Coro *self, void *arg)
-{
-	setjmp(buf);
-#if defined(_JB_ATTRIBUTES)
-	// NetBSD i386
-	buf[2] = (long)(stack + stacksize);
-	buf[0] = (long)Coro_Start;
-#else
-	Coro_UnsupportedPlatformError();
-#endif
-}
-*/
-
-/* Sun supports ucontext - so we don't need this stuff anymore
-
-// Solaris supports ucontext - so we don't need this stuff anymore
-
-void Coro_setup(Coro *self, void *arg)
-{
-	// this bit goes before the setjmp call
-	// Solaris 9 Sparc with GCC
-#if defined(__SVR4) && defined (__sun)
-#if defined(_JBLEN) && (_JBLEN == 12) && defined(__sparc)
-#if defined(_LP64) || defined(_I32LPx)
-#define JBTYPE long
-	JBTYPE x;
-#else
-#define JBTYPE int
-	JBTYPE x;
-	asm("ta 3"); // flush register window
-#endif
-
-#define SUN_STACK_END_INDEX   1
-#define SUN_PROGRAM_COUNTER   2
-#define SUN_STACK_START_INDEX 3
-
-	// Solaris 9 i386 with GCC
-#elif defined(_JBLEN) && (_JBLEN == 10) && defined(__i386)
-#if defined(_LP64) || defined(_I32LPx)
-#define JBTYPE long
-					JBTYPE x;
-#else
-#define JBTYPE int
-					JBTYPE x;
-#endif
-#define SUN_PROGRAM_COUNTER 5
-#define SUN_STACK_START_INDEX 3
-#define SUN_STACK_END_INDEX 4
-#endif
-#endif
-
-
-#elif defined(__SVR4) && defined(__sun)
-					// Solaris
-#if defined(SUN_PROGRAM_COUNTER)
-					// SunOS 9
-					buf[SUN_PROGRAM_COUNTER] = (JBTYPE)Coro_Start;
-
-					x = (JBTYPE)stack;
-					while ((x % 8) != 0) x --; // align on an even boundary
-					buf[SUN_STACK_START_INDEX] = (JBTYPE)x;
-					x = (JBTYPE)((JBTYPE)stack-stacksize / 2 + 15);
-					while ((x % 8) != 0) x ++; // align on an even boundary
-					buf[SUN_STACK_END_INDEX] = (JBTYPE)x;
-
-					*/
