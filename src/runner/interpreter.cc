@@ -233,7 +233,7 @@ namespace runner
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
-	  where = urbi_call
+	  where = object::urbi_call
             (*this, parent, SYMBOL(new), new object::String(elt));
 	  parent->slot_set(elt, where);
 	  parent = where;
