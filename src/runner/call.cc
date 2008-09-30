@@ -1,6 +1,6 @@
+#include <libport/contract.hh>
 #include <object/object.hh>
 #include <runner/call.hh>
-#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -59,11 +59,7 @@ namespace object
                      objects_type& args)
   {
     assert(self);
-    rObject message = owner->slot_get(msg);
-    if (!message)
-      runner::raise_lookup_error(msg, self);
-    rObject res = r.apply(self, message, msg, args);
-    assert(res);
-    return res;
+    rObject res = r.apply(self, owner->slot_get(msg), msg, args);
+    return iassertion(res);
   }
 }
