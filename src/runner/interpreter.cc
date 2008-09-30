@@ -228,15 +228,11 @@ namespace runner
         }
 	else
 	{
-          ECHO("Creating component " << elt << ".");
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tag).
-          object::objects_type args;
-          args.push_back(parent);
-          args.push_back(new object::String(elt));
-	  where =
-	    object::Tag::_new(args);
+	  where = urbi_call
+            (*this, parent, SYMBOL(new), new object::String(elt));
 	  parent->slot_set(elt, where);
 	  parent = where;
 	}

@@ -98,6 +98,7 @@ namespace scheduler
     void stop(Scheduler&, const boost::any&) const;
 
     const libport::Symbol& name_get() const;
+    void name_set(const libport::Symbol&);
 
   private:
     explicit Tag(const Tag&);

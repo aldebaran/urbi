@@ -19,7 +19,7 @@
 namespace object
 {
   Tag::Tag()
-    : value_(0)
+    : value_(new scheduler::Tag(SYMBOL()))
   {
     proto_add(proto);
   }
@@ -31,7 +31,7 @@ namespace object
   }
 
   Tag::Tag(rTag model)
-    : value_(model->value_)
+    : value_(new scheduler::Tag(model->value_, model->value_->name_get()))
   {
     proto_add(proto);
   }
@@ -64,31 +64,29 @@ namespace object
     return value_->name_get();
   }
 
-  rTag
-  Tag::_new(objects_type& args)
+  void
+  Tag::init(objects_type& args)
   {
-    check_arg_count(args.size() - 1, 0, 1);
+    check_arg_count(args.size(), 0, 1);
     libport::Symbol tag_short_name;
 
-    if (args.size() > 1)
+    if (args.size() > 0)
     {
-      type_check(args[1], String::proto);
+      type_check(args[0], String::proto);
       tag_short_name =
-	libport::Symbol(args[1]->as<String>()->value_get());
+	libport::Symbol(args[0]->as<String>()->value_get());
     }
     else
       tag_short_name = libport::Symbol::fresh("tag");
 
-    rTag res = new Tag(args[0] == proto ?
-		       new scheduler::Tag(tag_short_name) :
-		       extract_tag(args[0]));
-    return res;
+    value_->name_set(tag_short_name);
   }
 
   rTag
-  Tag::new_flow_control(objects_type& args)
+  Tag::new_flow_control(runner::Runner& r, objects_type& args)
   {
-    rTag res = _new(args);
+    args.pop_front();
+    rTag res = urbi_call(r, proto, SYMBOL(new), args)->as<Tag>();
     res->value_get()->flow_control_set();
     return res;
   }
@@ -172,7 +170,7 @@ namespace object
     bind(SYMBOL(freeze), &Tag::freeze);
     bind(SYMBOL(leave), &Tag::leave);
     bind(SYMBOL(name), &Tag::name);
-    bind(SYMBOL(new), &Tag::_new);
+    bind(SYMBOL(init), &Tag::init);
     bind(SYMBOL(newFlowControl), &Tag::new_flow_control);
     bind(SYMBOL(prio), &Tag::prio);
     bind(SYMBOL(prio_set), &Tag::prio_set);

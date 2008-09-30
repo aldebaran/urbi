@@ -75,6 +75,12 @@ namespace scheduler
     return name_;
   }
 
+  inline void
+  Tag::name_set(const libport::Symbol& name)
+  {
+    name_ = name;
+  }
+
   inline prio_type
   Tag::prio_get() const
   {
