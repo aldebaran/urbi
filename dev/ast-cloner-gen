@@ -116,10 +116,12 @@ def attribute_dup(a):
   "Return a clone (an expression) of a's value."
   accessor = "e->" + a.name + "_get ()"
   # Non visitable attributes.
-  if a.type in ast_params['non_visitable_types']:
+  if a.deref_type() in ast_params['non_visitable_types']:
     type = a.W_type ()
     get_deref = ""
-    if a.pointer_p () and a.mandatory:
+    if a.pointer_p() and not a.mandatory:
+      return "%s ? new %s(*%s) : 0" % (accessor, a.deref_type(), accessor)
+    if a.pointer_p ():
       get_deref = "&"
     return get_deref + accessor
 

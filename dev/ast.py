@@ -73,6 +73,13 @@ class Attribute:
     "Is this a pointer type?"
     return self.type[-1] == '*'
 
+  def deref_type(self):
+    "Dereference type if needed."
+    if self.pointer_p():
+      return self.type[:-1]
+    else:
+      return self.type
+
   def refcounted_p (self):
     "Is this a refcounted type?"
     return re.match("^r[A-Z]", self.type)
