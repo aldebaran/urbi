@@ -95,8 +95,10 @@ class Attribute:
     "Type of the input argument for the *_set method."
     if self.atomic_p () or self.pointer_p ():
       return self.type
-    else:
+    elif self.mandatory:
       return "const " + self.root_type () + "&"
+    else:
+      return self.root_type()
 
   def attr_decl (self):
     "Declaration as an attribute."
