@@ -10,6 +10,8 @@
 
 # include <boost/tuple/tuple.hpp>
 
+# include <libport/compiler.hh>
+
 # include <object/fwd.hh>
 # include <scheduler/scheduler.hh>
 # include <scheduler/job.hh>
@@ -109,8 +111,8 @@ namespace runner
     /// terminated.
     rObject as_task();
 
-    virtual void raise(rObject exn, bool skip_last = false)
-      __attribute__ ((noreturn)) = 0;
+    ATTRIBUTE_NORETURN
+    virtual void raise(rObject exn, bool skip_last = false) = 0;
     virtual libport::Symbol innermost_call_get() const = 0;
 
     scheduler::rTag fork_point_get() const;
