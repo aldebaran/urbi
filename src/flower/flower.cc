@@ -192,7 +192,8 @@ namespace flower
   Flower::visit(const ast::Throw* code)
   {
     if (!code->value_get() && !in_catch_)
-      errors_.error(code->location_get(), "throw: argumentless throw outside of a catch block");
+      errors_.error(code->location_get(),
+		    "throw: argumentless throw outside of a catch block");
     super_type::visit(code);
   }
 
