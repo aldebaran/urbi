@@ -1324,9 +1324,13 @@ Throw:
     - value:
         type: rExp
         desc: The value to throw
+        mandatory: False
   printer:
-    - '"throw "'
-    - ~value
+    - '"throw"'
+    - '{
+         if (rConstExp m = n->value_get())
+           ostr_ << " " << *m;
+       }'
 
 # Local Variables:
 # mode: yaml

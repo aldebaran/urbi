@@ -16,7 +16,8 @@ namespace flower
   using libport::scoped_set;
 
   Flower::Flower()
-    : in_function_(false)
+    : in_catch_(false)
+    , in_function_(false)
     , in_loop_(false)
   {}
 
@@ -178,6 +179,21 @@ namespace flower
     }
 
     result_->original_set(ret);
+  }
+
+  void
+  Flower::visit(const ast::Catch* code)
+  {
+    Finally finally(scoped_set(in_catch_, true));
+    super_type::visit(code);
+  }
+
+  void
+  Flower::visit(const ast::Throw* code)
+  {
+    if (!code->value_get() && !in_catch_)
+      errors_.error(code->location_get(), "throw: argumentless throw outside of a catch block");
+    super_type::visit(code);
   }
 
 } // namespace flower

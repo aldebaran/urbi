@@ -979,6 +979,10 @@ stmt:
   {
     $$ = new ast::Try(@$, enclose_in_scope($2), $3);
   }
+| "throw"
+  {
+    $$ = new ast::Throw(@$, 0);
+  }
 | "throw" exp
   {
     $$ = new ast::Throw(@$, $2);

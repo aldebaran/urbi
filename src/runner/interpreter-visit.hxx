@@ -553,7 +553,9 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Throw* e)
   {
-    raise(operator()(e->value_get().get()));
+    raise(e->value_get() ?
+	  operator()(e->value_get().get()) :
+	  current_exception_);
     pabort("Unreachable");
     return 0;
   }
@@ -576,7 +578,10 @@ namespace runner
           if (!is_a(value, operator()(match.get())))
             continue;
         stacks_.def(handler->declaration_get().get(), value);
-        return operator()(handler->body_get().get());
+	{
+	  libport::Finally finally(scoped_set(current_exception_, value));
+	  return operator()(handler->body_get().get());
+	}
       }
       // No handler matched, rethrow.
       throw;

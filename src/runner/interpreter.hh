@@ -227,6 +227,9 @@ namespace runner
     tag_stack_type tag_stack_;
 
     const ast::Ast* innermost_node_;
+
+    /// The current exception when executing a "catch" block.
+    rObject current_exception_;
   };
 
 } // namespace runner
