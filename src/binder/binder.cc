@@ -403,15 +403,9 @@ namespace binder
   void
   Binder::visit(const ast::Catch* input)
   {
+    // Create a scope to execute the "catch" action.
     libport::Finally finally(scope_open(false));
-
-    ast::rLocalDeclaration decl;
-    if (input->name_get())
-      decl = new ast::LocalDeclaration (input->location_get(),
-					*input->name_get(), 0);
-    ast::rLocalDeclaration clone = recurse(decl);
     super_type::visit(input);
-    result_.unchecked_cast<ast::Catch>()->declaration_set(clone);
   }
 
   ast::rExp

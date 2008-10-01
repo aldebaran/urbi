@@ -1288,34 +1288,30 @@ Try:
 Catch:
   super: Exp
   attributes:
-    - name:
-        type: libport::Symbol*
-        desc: The local name of the exception
-        mandatory: False
     - match:
         type: rExp
         desc: The prototype to match if present
         mandatory: False
+    - declaration:
+        type: rLocalDeclaration
+        desc: Local declaration with name
+        mandatory: False
+        access: rW
     - body:
         type: rNary
         desc: The handler to execute if we have a match
-    - declaration:
-        type: rLocalDeclaration
-        access: rW
-        init: '0'
-        mandatory: False
   printer:
     - '"catch"'
     - '{
-         if (n->match_get() || n->name_get())
+         if (n->match_get() || n->declaration_get())
          {
            ostr_ << " (";
            if (rConstExp m = n->match_get())
              operator()(m.get());
-           else if (n->name_get())
+           else if (n->declaration_get())
              ostr_ << "var";
-           if (const libport::Symbol* name = n->name_get())
-             ostr_ << " " << *name;
+           if (n->declaration_get())
+             ostr_ << " " << n->declaration_get()->what_get();
            ostr_ << ")";
          }
        }'

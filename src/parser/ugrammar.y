@@ -958,15 +958,15 @@ catches:
 catch:
   "catch" "(" exp "identifier" ")" block
   {
-    $$ = new ast::Catch(@$, new libport::Symbol($4), $3, $6);
+    $$ = new ast::Catch(@$, $3, new ast::LocalDeclaration(@$, $4, 0), $6);
   }
 | "catch" "(" "var" "identifier" ")" block
   {
-    $$ = new ast::Catch(@$, new libport::Symbol($4), 0, $6);
+    $$ = new ast::Catch(@$, 0, new ast::LocalDeclaration(@$, $4, 0), $6);
   }
 | "catch" "(" exp ")" block
   {
-    $$ = new ast::Catch(@$, 0, $3, $5);
+    $$ = new ast::Catch(@$, $3, 0, $5);
   }
 | "catch" block
   {
