@@ -405,8 +405,10 @@ namespace binder
   {
     libport::Finally finally(scope_open(false));
 
-    ast::rLocalDeclaration decl = new ast::LocalDeclaration
-      (input->location_get(), input->name_get(), 0);
+    ast::rLocalDeclaration decl;
+    if (input->name_get())
+      decl = new ast::LocalDeclaration (input->location_get(),
+					*input->name_get(), 0);
     ast::rLocalDeclaration clone = recurse(decl);
     super_type::visit(input);
     result_.unchecked_cast<ast::Catch>()->declaration_set(clone);

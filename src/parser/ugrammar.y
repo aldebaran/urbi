@@ -958,19 +958,19 @@ catches:
 catch:
   "catch" "(" exp "identifier" ")" block
   {
-    $$ = new ast::Catch(@$, $4, $3, $6);
+    $$ = new ast::Catch(@$, new libport::Symbol($4), $3, $6);
   }
 | "catch" "(" "var" "identifier" ")" block
   {
-    $$ = new ast::Catch(@$, $4, 0, $6);
+    $$ = new ast::Catch(@$, new libport::Symbol($4), 0, $6);
   }
 | "catch" "(" exp ")" block
   {
-    $$ = new ast::Catch(@$, SYMBOL(), $3, $5);
+    $$ = new ast::Catch(@$, 0, $3, $5);
   }
 | "catch" block
   {
-    $$ = new ast::Catch(@$, SYMBOL(), 0, $2);
+    $$ = new ast::Catch(@$, 0, 0, $2);
   }
 ;
 

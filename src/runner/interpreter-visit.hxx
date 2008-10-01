@@ -577,7 +577,8 @@ namespace runner
         if (ast::rExp match = handler->match_get())
           if (!is_a(value, operator()(match.get())))
             continue;
-        stacks_.def(handler->declaration_get().get(), value);
+	if (handler->declaration_get())
+	  stacks_.def(handler->declaration_get().get(), value);
 	{
 	  libport::Finally finally(scoped_set(current_exception_, value));
 	  return operator()(handler->body_get().get());

@@ -1275,7 +1275,7 @@ Try:
         type: catches_type
         desc: The exception handlers
   printer:
-    - '"try"'
+    - '"try "'
     - ~body
     - '{
          foreach(const ast::rConstExp& e, n->handlers_get())
@@ -1289,8 +1289,9 @@ Catch:
   super: Exp
   attributes:
     - name:
-        type: libport::Symbol
+        type: libport::Symbol*
         desc: The local name of the exception
+        mandatory: False
     - match:
         type: rExp
         desc: The prototype to match if present
@@ -1302,17 +1303,23 @@ Catch:
         type: rLocalDeclaration
         access: rW
         init: '0'
+        mandatory: False
   printer:
-    - '"catch ("'
+    - '"catch"'
     - '{
-         if (rConstExp m = n->match_get())
+         if (n->match_get() || n->name_get())
          {
-           operator()(m.get());
-           ostr_ << " ";
+           ostr_ << " (";
+           if (rConstExp m = n->match_get())
+             operator()(m.get());
+           else if (n->name_get())
+             ostr_ << "var";
+           if (const libport::Symbol* name = n->name_get())
+             ostr_ << " " << *name;
+           ostr_ << ")";
          }
        }'
-    - $name
-    - '") {"'
+    - '" {"'
     - 'libport::incendl'
     - ~body
     - 'libport::decendl'
