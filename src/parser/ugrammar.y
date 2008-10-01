@@ -138,13 +138,6 @@
     return res;
   }
 
-  static ast::rScope
-    enclose_in_scope(const ast::rExp& exp)
-  {
-    ast::Scope* s = dynamic_cast<ast::Scope*>(exp.get());
-    return s ? s : new ast::Scope(exp->location_get(), exp);
-  }
-
 } // %code requires.
 
 
@@ -775,14 +768,14 @@ stmt:
 | "if" "(" exp ")" nstmt %prec CMDBLOCK
     {
       $$ = new ast::If(@$, $3,
-		       enclose_in_scope($5),
-		       enclose_in_scope(new ast::Noop(@$, 0)));
+		       ast_scope(@$,$5),
+		       ast_scope(@$,new ast::Noop(@$, 0)));
     }
 | "if" "(" exp ")" nstmt "else" nstmt
     {
       $$ = new ast::If(@$, $3,
-		       enclose_in_scope($5),
-		       enclose_in_scope($7));
+		       ast_scope(@$,$5),
+		       ast_scope(@$,$7));
     }
 | "if" "(" "var" "identifier" "=" exp ")" nstmt %prec CMDBLOCK
    {
@@ -977,7 +970,7 @@ catch:
 stmt:
   "try" block catches
   {
-    $$ = new ast::Try(@$, enclose_in_scope($2), $3);
+    $$ = new ast::Try(@$, ast_scope(@$,$2), $3);
   }
 | "throw"
   {
@@ -1015,7 +1008,7 @@ stmt_loop:
   "loop" stmt %prec CMDBLOCK
     {
       $$ = new ast::While(@$, $1, new ast::Float(@$, 1),
-			  enclose_in_scope($2));
+			  ast_scope(@$,$2));
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
@@ -1037,13 +1030,13 @@ stmt_loop:
     {
       $$ = new ast::Foreach(@$, $1,
                             new ast::LocalDeclaration(@4, $4, new ast::Implicit(@4)),
-                            $6, enclose_in_scope($8));
+                            $6, ast_scope(@$,$8));
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "while", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
-      $$ = new ast::While(@$, $1, $3, enclose_in_scope($5));
+      $$ = new ast::While(@$, $1, $3, ast_scope(@$,$5));
     }
 | "while" "(" "var" "identifier" "=" exp ")" stmt %prec CMDBLOCK
   {
