@@ -182,8 +182,20 @@ namespace flower
   }
 
   void
+  Flower::visit(const ast::Try* code)
+  {
+    Finally finally(scoped_set(has_general_catch_, false));
+    super_type::visit(code);
+  }
+
+  void
   Flower::visit(const ast::Catch* code)
   {
+    if (has_general_catch_)
+      errors_.error(code->location_get(),
+		    "catch: exception already caught by a previous clause");
+    has_general_catch_ = !code->match_get();
+
     Finally finally(scoped_set(in_catch_, true));
     super_type::visit(code);
   }

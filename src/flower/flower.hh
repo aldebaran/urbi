@@ -27,11 +27,13 @@ namespace flower
 			      (Function)
 			      (Return)
 			      (Throw)
+			      (Try)
 			      (While));
 
   private:
     bool has_break_;
     bool has_continue_;
+    bool has_general_catch_;
     bool has_return_;
     bool in_catch_;
     bool in_function_;
