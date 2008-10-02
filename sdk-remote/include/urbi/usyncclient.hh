@@ -35,22 +35,24 @@ namespace urbi
 {
   /*! Format in which image requested with syncGetSound are transmitted*/
   enum UTransmitFormat
-    {
-      /// Transmit images compressed in JPEG.
-      URBI_TRANSMIT_JPEG,
-      /// Transmit raw YCbCr images.
-      URBI_TRANSMIT_YCbCr
-    };
+  {
+    /// Transmit images compressed in JPEG.
+    URBI_TRANSMIT_JPEG,
+    /// Transmit raw YCbCr images.
+    URBI_TRANSMIT_YCbCr
+  };
 
-  /// UClient linux implementation with support for synchronous extra functions.
-  /*! This class provides extra functions to synchronously request values. These
-  functions can safely be called frow within a callback function.
+  /// UClient linux implementation with support for synchronous extra
+  /// functions.
+  /*! This class provides extra functions to synchronously request
+     values. These functions can safely be called frow within a
+     callback function.
 
-  All callback will be called in a separate thread created in the constructor.
-  If you want to call these callbacks in a different thread, call
-  @stopCallbackThread, then regularly call @processEvents. Each call will call
-  callbacks for all pending messages in the current thread.
-  */
+     All callback will be called in a separate thread created in the
+     constructor.  If you want to call these callbacks in a different
+     thread, call @stopCallbackThread, then regularly call
+     @processEvents. Each call will call callbacks for all pending
+     messages in the current thread.  */
   class USDK_API USyncClient: public UClient
   {
   public:
@@ -61,18 +63,24 @@ namespace urbi
 
   protected:
     /** Synchronously ask the server for the value of an expression.
-     * \param expression the URBI expression to evaluate. It must be a single expression and must not start with a tag.
+     * \param expression the URBI expression to evaluate.
+     *         It must be a single expression and must not start with a tag.
      * \param mtag tag to use, or 0 to generate one.
      * \param mmod modifier to use on the tag, or 0 for none.
      * \return the resulting message, or 0 in case of error.
      */
-    UMessage * syncGet_ (const char * expression, const char* mtag, const char* mmod, va_list& arg);
+    UMessage*
+    syncGet_ (const char* expression, const char* mtag,
+              const char* mmod, va_list& arg);
 
   public:
-    /// Synchronously evaluate an Urbi expression. The expression must not start with a tag or channel.
-    UMessage * syncGet (const char * expression, ...);
-    /// Synchronously evaluate an Urbi expression, specifying the tag and modifiers to prepend to it.
-    UMessage * syncGetTag (const char * expression, const char* mtag, const char* mmod, ...);
+    /// Synchronously evaluate an Urbi expression. The expression must
+    /// not start with a tag or channel.
+    UMessage *syncGet (const char* expression, ...);
+    /// Synchronously evaluate an Urbi expression, specifying the tag
+    /// and modifiers to prepend to it.
+    UMessage *syncGetTag (const char* expression,
+                          const char* mtag, const char* mmod, ...);
 
 
 
@@ -83,26 +91,32 @@ namespace urbi
     int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
 		     int format, int transmitFormat, int &width, int &height);
 
-    /// Get the value of any device in a synchronous way. Returns 1 on success, 0 on failure.
+    /// Get the value of any device in a synchronous way. Returns 1 on
+    /// success, 0 on failure.
     int syncGetValue(const char* valName, UValue& val);
     int syncGetValue(const char* tag, const char* valName, UValue& val);
 
-    /// Get the value of device.val in a synchronous way. Returns 1 on success, 0 on failure.
+    /// Get the value of device.val in a synchronous way. Returns 1 on
+    /// success, 0 on failure.
     int syncGetDevice(const char* device, double &val);
 
-    /// Execute an URBI command, return the resulting double value. Returns 1 on success, 0 on failure.
+    /// Execute an URBI command, return the resulting double
+    /// value. Returns 1 on success, 0 on failure.
     int syncGetResult(const char* command, double &val);
 
-    /// Get the normalized value of a device in a synchronous way. Returns 1 on success, 0 on failure.
+    /// Get the normalized value of a device in a synchronous
+    /// way. Returns 1 on success, 0 on failure.
     int syncGetNormalizedDevice(const char* device, double &val);
 
-    /// Get a field of a device in a synchronous way. Returns 1 on success, 0 on failure.
+    /// Get a field of a device in a synchronous way. Returns 1 on
+    /// success, 0 on failure.
     int syncGetDevice(const char* device, const char * field, double &val);
 
     /// Get sound for duration milliseconds in buffer.
     int syncGetSound(const char * device, int duration, USound &sound);
 
-    /// Wait until a message with specified tag is received. Returned message must be deleted.
+    /// Wait until a message with specified tag is received. Returned
+    /// message must be deleted.
     UMessage * waitForTag(const char * tag);
     /// Overriding UAbstractclient implementation
     virtual void notifyCallbacks(const UMessage &msg);

@@ -1,48 +1,33 @@
-#ifndef _MSC_VER
-# include <unistd.h>
-#else
-# include <io.h>
-#endif
+#include <libport/unistd.h>
 #include <fcntl.h>
 
-#include <libport/thread.hh>
 #include <libport/assert.hh>
+#include <libport/compiler.hh>
+#include <libport/thread.hh>
 
 #include <urbi/usyncclient.hh>
 #include <urbi/uconversion.hh>
 
-/* "min" shouldn't be defined as a preprocessor macro. On windows, it is. So
- * using std::min leads to a parse error because CPP expands it as
- *   std::((a) < (b) ? (a) : (b))
- * However, this should only occur on windows with the STL of MS VC++.
- */
-#ifdef min
-# ifdef WIN32
-#  undef min
-# else
-#  error "min is defined as a CPP macro and we're not on WIN32. Report this!"
-# endif /* !WIN32 */
-#endif /* !min */
-
 namespace urbi
 {
-  USyncClient::USyncClient(const char *_host,
+  USyncClient::USyncClient(const char* _host,
 			   int _port,
 			   int _buflen,
 			   bool _server)
-    : UClient(_host, _port, _buflen, _server),
-      sem_(),
-      queueLock_(),
-      msg(0),
-      syncLock_(),
-      syncTag (""),
-      stopCallbackThread_(false)
+    : UClient(_host, _port, _buflen, _server)
+    , sem_()
+    , queueLock_()
+    , msg(0)
+    , syncLock_()
+    , syncTag()
+    , stopCallbackThread_(false)
   {
     if (error())
       return;
     libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
+//    LIBPORT_ECHO("USYNCCLIENT built");
   }
 
   void USyncClient::callbackThread()
