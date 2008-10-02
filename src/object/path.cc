@@ -386,7 +386,7 @@ namespace object
     return type_name;
   }
 
-  bool Path::path_added = CxxObject::add<Path>(Path::proto);
+  bool Path::path_added = CxxObject::add<Path>();
   const std::string Path::type_name = "Path";
   rObject Path::proto;
 

@@ -255,7 +255,7 @@ namespace object
   }
 
   bool List::list_added =
-    CxxObject::add<List>(List::proto);
+    CxxObject::add<List>();
   const std::string List::type_name = "List";
   rObject List::proto;
 

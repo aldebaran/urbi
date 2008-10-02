@@ -27,15 +27,15 @@ namespace object
   }
 
   template <typename T>
-  bool CxxObject::add(rObject& tgt)
+  bool CxxObject::add()
   {
-    initializers_get().push_back(new TypeInitializer<T>(tgt));
+    initializers_get().push_back(new TypeInitializer<T>());
     return true;
   }
 
   template <typename T>
-  CxxObject::TypeInitializer<T>::TypeInitializer(rObject& tgt)
-    : Initializer(tgt)
+  CxxObject::TypeInitializer<T>::TypeInitializer()
+    : Initializer(T::proto)
   {}
 
   namespace

@@ -122,7 +122,7 @@ namespace object
     return type_name;
   }
 
-  bool Directory::directory_added = CxxObject::add<Directory>(Directory::proto);
+  bool Directory::directory_added = CxxObject::add<Directory>();
   const std::string Directory::type_name = "Directory";
   rObject Directory::proto;
 

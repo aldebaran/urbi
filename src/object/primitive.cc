@@ -47,7 +47,7 @@ namespace object
   }
 
   bool Primitive::primitive_added =
-    CxxObject::add<Primitive>(Primitive::proto);
+    CxxObject::add<Primitive>();
   rObject Primitive::proto;
 
 

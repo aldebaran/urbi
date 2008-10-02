@@ -338,7 +338,7 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(trunc), &Float::trunc);
   }
 
-  bool Float::float_added = CxxObject::add<Float>(Float::proto);
+  bool Float::float_added = CxxObject::add<Float>();
   const std::string Float::type_name = "Float";
   rObject Float::proto;
   std::string

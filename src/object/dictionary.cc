@@ -108,7 +108,7 @@ namespace object
   }
 
   bool Dictionary::dictionary_added =
-    CxxObject::add<Dictionary>(Dictionary::proto);
+    CxxObject::add<Dictionary>();
   const std::string Dictionary::type_name = "Dictionary";
   rObject Dictionary::proto;
 }

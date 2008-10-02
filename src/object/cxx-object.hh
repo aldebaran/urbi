@@ -29,7 +29,7 @@ namespace object
      *  \param tgt    Where to store the result.
      */
     template<typename T>
-    static bool add(rObject& tgt);
+    static bool add();
 
     virtual std::string type_name_get() const = 0;
 
@@ -51,7 +51,7 @@ namespace object
     class TypeInitializer: public Initializer
     {
     public:
-      TypeInitializer(rObject& tgt);
+      TypeInitializer();
       virtual rObject make_class();
       virtual void create();
       virtual libport::Symbol name();

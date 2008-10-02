@@ -179,7 +179,7 @@ namespace object
     bind(SYMBOL(unfreeze), &Tag::unfreeze);
   }
 
-  bool Tag::tag_added = CxxObject::add<Tag>(Tag::proto);
+  bool Tag::tag_added = CxxObject::add<Tag>();
   const std::string Tag::type_name = "Tag";
   std::string Tag::type_name_get() const
   {

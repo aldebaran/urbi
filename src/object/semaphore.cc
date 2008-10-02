@@ -79,7 +79,7 @@ namespace object
   }
 
   bool Semaphore::semaphore_added =
-    CxxObject::add<Semaphore>(Semaphore::proto);
+    CxxObject::add<Semaphore>();
   rObject Semaphore::proto;
 
 

@@ -134,7 +134,7 @@ namespace object
     return type_name;
   }
 
-  bool File::file_added = CxxObject::add<File>(File::proto);
+  bool File::file_added = CxxObject::add<File>();
   const std::string File::type_name = "File";
   rObject File::proto;
 

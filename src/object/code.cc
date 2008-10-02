@@ -143,7 +143,7 @@ namespace object
     return type_name;
   }
 
-  bool Code::code_added = CxxObject::add<Code>(Code::proto);
+  bool Code::code_added = CxxObject::add<Code>();
   const std::string Code::type_name = "Code";
   rObject Code::proto;
 
