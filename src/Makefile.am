@@ -24,7 +24,7 @@ libuobject_la_LIBADD =						\
   $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)			\
   $(LTDL_LIBS)							\
   $(top_builddir)/sdk-remote/lib/libport/libport.la		\
-  $(top_builddir)/sdk-remote/src/liburbi/libuco/libuco.la
+  $(top_builddir)/sdk-remote/src/libuco/libuco.la
 
 
 ## ------------ ##
