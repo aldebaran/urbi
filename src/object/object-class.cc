@@ -127,7 +127,8 @@ namespace object
     check_arg_count(args.size() - 1, 1);
     type_check(args[1], List::proto);
     const rList& arg1 = args[1]->as<List>();
-    if (arg1->value_get ().size () != 1 || arg1->value_get().front() != args[0])
+    if (arg1->value_get ().size () != 1
+        || arg1->value_get().front() != args[0])
       throw PrimitiveError(SYMBOL(apply), "first argument must be [this]");
     return arg1->value_get().front();
   }
@@ -140,7 +141,7 @@ namespace object
     rObject call_message = args[1]->clone();
     const rObject& message = call_message->slot_get(SYMBOL(message));
     type_check(message, String::proto);
-    const libport::Symbol msg = libport::Symbol(message->as<String>()->value_get());
+    const libport::Symbol msg(message->as<String>()->value_get());
     const rObject& target = args[0];
     const rObject& code = target->slot_get(msg);
     call_message->slot_update(r, SYMBOL(code), code);
@@ -247,7 +248,8 @@ namespace object
     check_arg_count(args.size() - 1, 0);
     std::vector<libport::Symbol> slot_names;
     List::value_type res;
-    objects_type protos = object_class_allProtos(r, args)->as<List>()->value_get();
+    objects_type protos =
+      object_class_allProtos(r, args)->as<List>()->value_get();
     foreach (const rObject& proto, protos)
     {
       for_all_slot_names(proto, boost::bind(&maybe_add,
