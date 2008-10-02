@@ -86,8 +86,7 @@ namespace object
     return type_name;
   }
 
-  bool Lobby::lobby_added =
-    CxxObject::add<Lobby>("Lobby", Lobby::proto);
+  bool Lobby::lobby_added = CxxObject::add<Lobby>(Lobby::proto);
   const std::string Lobby::type_name = "Lobby";
   rObject Lobby::proto;
 

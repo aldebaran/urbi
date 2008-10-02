@@ -27,16 +27,15 @@ namespace object
   }
 
   template <typename T>
-  bool CxxObject::add(const std::string& name, rObject& tgt)
+  bool CxxObject::add(rObject& tgt)
   {
-    initializers_get().push_back(new TypeInitializer<T>(name, tgt));
+    initializers_get().push_back(new TypeInitializer<T>(tgt));
     return true;
   }
 
   template <typename T>
-  CxxObject::TypeInitializer<T>::TypeInitializer(const std::string& name,
-                                                 rObject& tgt)
-    : Initializer(tgt), name_(name)
+  CxxObject::TypeInitializer<T>::TypeInitializer(rObject& tgt)
+    : Initializer(tgt)
   {}
 
   namespace
@@ -69,7 +68,7 @@ namespace object
   CxxObject::TypeInitializer<T>::make_class()
   {
     res_->proto_add(object_class);
-    res_->slot_set(SYMBOL(protoName), new String(name_));
+    res_->slot_set(SYMBOL(protoName), new String(T::type_name));
     res_->slot_set(SYMBOL(clone),
                    rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>,
                                                         _1, _2))));
@@ -77,7 +76,7 @@ namespace object
     T::initialize(b);
 
     libport::Symbol conversion =
-      libport::Symbol(std::string("as") + name_.name_get());
+      libport::Symbol(std::string("as") + T::type_name);
     if (!res_->slot_locate(conversion, 0))
       res_->slot_set(conversion,
                      rPrimitive(new Primitive(boost::bind(cxx_object_id<T>,
@@ -89,7 +88,7 @@ namespace object
   libport::Symbol
   CxxObject::TypeInitializer<T>::name()
   {
-    return name_;
+    return libport::Symbol(T::type_name);
   }
 
   // BINDER

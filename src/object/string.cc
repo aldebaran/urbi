@@ -290,7 +290,7 @@ namespace object
     proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
   }
 
-  bool String::string_added = CxxObject::add<String>("String", String::proto);
+  bool String::string_added = CxxObject::add<String>(String::proto);
   const std::string String::type_name = "String";
   rObject String::proto;
 

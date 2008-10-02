@@ -159,7 +159,7 @@ namespace object
     bind(SYMBOL(waitForTermination), &Task::waitForTermination);
   }
 
-  bool Task::task_added = CxxObject::add<Task>("Task", Task::proto);
+  bool Task::task_added = CxxObject::add<Task>(Task::proto);
   const std::string Task::type_name = "Task";
   std::string Task::type_name_get() const
   {

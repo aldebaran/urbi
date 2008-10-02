@@ -115,7 +115,7 @@ namespace object
   }
 
   bool Barrier::barrier_added =
-    CxxObject::add<Barrier>("Barrier", Barrier::proto);
+    CxxObject::add<Barrier>(Barrier::proto);
   rObject Barrier::proto;
 
 } // namespace object
