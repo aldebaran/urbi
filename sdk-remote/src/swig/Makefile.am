@@ -17,12 +17,12 @@ lib_LTLIBRARIES =
 
 if BINDING_CSHARP
 lib_LTLIBRARIES += liburbiCSharp.la
-liburbiCSharp_la_SOURCES = liburbi_csharp.cc
+nodist_liburbiCSharp_la_SOURCES = liburbi_csharp.cc
 endif
 
 if BINDING_JAVA
 lib_LTLIBRARIES += liburbiJava.la
-liburbiJava_la_SOURCES = liburbi_java.cc
+nodist_liburbiJava_la_SOURCES = liburbi_java.cc
 liburbiJava_la_CXXFLAGS =			\
   -I/usr/local/jdk1.5.0_08/include		\
   -I/usr/local/jdk1.5.0_08/include/linux
@@ -30,19 +30,19 @@ endif
 
 if BINDING_LUA
 lib_LTLIBRARIES += liburbiLua.la
-liburbiLua_la_SOURCES = liburbi_lua.cc
+nodist_liburbiLua_la_SOURCES = liburbi_lua.cc
 liburbiLua_la_CXXFLAGS = -I/usr/include/lua5.1
 endif
 
 if BINDING_PERL
 lib_LTLIBRARIES += liburbiPerl.la
-liburbiPerl_la_SOURCES = liburbi_perl.cc
+nodist_liburbiPerl_la_SOURCES = liburbi_perl.cc
 liburbiPerl_la_CXXFLAGS = -I/usr/lib/perl/5.8.7/CORE
 endif
 
 if BINDING_PHP
 lib_LTLIBRARIES += liburbiPhp.la
-liburbiPhp_la_SOURCES = liburbi_php.cc
+nodist_liburbiPhp_la_SOURCES = liburbi_php.cc
 liburbiPhp_la_CXXFLAGS =			\
   -I/usr/include/php4				\
   -I/usr/include/php4/main			\
@@ -53,13 +53,13 @@ endif
 
 if BINDING_PYTHON
 lib_LTLIBRARIES += liburbiPython.la
-liburbiPython_la_SOURCES = liburbi_python.cc swig_python.hh
+nodist_liburbiPython_la_SOURCES = liburbi_python.cc swig_python.hh
 liburbiPython_la_CXXFLAGS = -I/usr/include/python2.4
 endif
 
 if BINDING_RUBY
 lib_LTLIBRARIES += liburbiRuby.la
-liburbiRuby_la_SOURCES = liburbi_ruby.cc swig_ruby.hh
+nodist_liburbiRuby_la_SOURCES = liburbi_ruby.cc swig_ruby.hh
 liburbiRuby_la_CXXFLAGS = -I/usr/lib/ruby/1.8/i486-linux
 endif
 
