@@ -34,8 +34,9 @@ AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 # If we have our own Bison, use it.
 if test -d $srcdir/bison; then
   test -d bison || mkdir bison
+  abs_srcdir=$(cd "$srcdir" && pwd)
   cd bison
-  ../$srcdir/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
+  "$abs_srcdir"/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
   cd ..
   AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 else
