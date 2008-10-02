@@ -2,14 +2,14 @@
 
 %module liburbi
 %{
-#include "uclient.h"
+#include "urbi/uclient.hh"
 
 #ifdef SWIGPYTHON
-# include "swig_python.h"
+# include "swig_python.hh"
 #endif /* !SWIGPYTHON */
 
 #ifdef SWIGRUBY
-# include "swig_ruby.h"
+# include "swig_ruby.hh"
 #endif /* !SWIGRUBY */
 
 %}
@@ -25,13 +25,15 @@ namespace urbi
   class UCallbackAction;
   class UCallbackWrapper;
 
-  enum UMessageType {
+  enum UMessageType
+  {
     MESSAGE_SYSTEM,
     MESSAGE_ERROR,
     MESSAGE_DATA
   };
 
-  class UMessage {
+  class UMessage
+  {
   public:
 
     /// Connection from which originated the message.
@@ -68,11 +70,11 @@ namespace urbi
 };
 
 #ifdef SWIGPYTHON
-%include "swig_python.h"
+%include "swig_python.hh"
 #endif /* !SWIGPYTHON */
 
 #ifdef SWIGRUBY
-%include "swig_ruby.h"
+%include "swig_ruby.hh"
 #endif /* !SWIGRUBY */
 
 namespace urbi
@@ -93,7 +95,8 @@ namespace urbi
 
     // Sending
 
-    /// Function for backward compatibility. Will be removed in future versions.
+    /// Function for backward compatibility. Will be removed in future
+    /// versions.
     int send() { endPack(); return 0;}
 
     /// Send an Urbi command. The syntax is similar to the printf() function.
@@ -108,13 +111,16 @@ namespace urbi
     /// Send an Urbi header followed by binary data.
     int sendBin(const void*, int len,const char * header,...);
 
-    /// Lock the send buffer (for backward compatibility, will be removed in future versions).
+    /// Lock the send buffer (for backward compatibility, will be
+    /// removed in future versions).
     int startPack();
 
-    /// Unlock the send buffer (for backward compatibility, will be removed in future versions).
+    /// Unlock the send buffer (for backward compatibility, will be
+    /// removed in future versions).
     int endPack();
 
-    /// Append Urbi commands to the send buffer (for backward compatibility, will be removed in future versions).
+    /// Append Urbi commands to the send buffer (for backward
+    /// compatibility, will be removed in future versions).
     int pack(const char*,...);
 
     /// va_list version of pack.
@@ -123,10 +129,12 @@ namespace urbi
     /// Send urbi commands contained in a file.
     int sendFile(const char * filename);
 
-    /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
+    /// Send a command, prefixing it with a tag, and associate the
+    /// given callback with this tag.
     UCallbackID sendCommand(UCallback ,const char*,...);
 
-    /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
+    /// Send a command, prefixing it with a tag, and associate the
+    /// given callback with this tag.
     UCallbackID sendCommand(UCustomCallback ,void *,const char*,...);
 
     /// Send sound data to the robot for immediate playback.
@@ -185,7 +193,8 @@ namespace urbi
     /// Notify of an error.
     virtual void printf(const char * format, ...)=0;
 
-    /// Get time in milliseconds since an unspecified but constant reference time.
+    /// Get time in milliseconds since an unspecified but constant
+    /// reference time.
     virtual unsigned int getCurrentTime()=0;
 
     /// Return the server name or IP address.

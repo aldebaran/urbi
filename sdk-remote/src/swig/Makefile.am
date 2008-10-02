@@ -79,8 +79,8 @@ liburbi_perl.cc: liburbi.i
 liburbi_php.cc: liburbi.i
 	$(SWIG) -php4 $(SWIG_ARGS) -o $@ $<
 
-liburbi_python.cc: liburbi.i swig_python.h
+liburbi_python.cc: liburbi.i swig_python.hh
 	$(SWIG) -python $(SWIG_ARGS) -o $@ $<
 
-liburbi_ruby.cc: liburbi.i swig_ruby.h
+liburbi_ruby.cc: liburbi.i swig_ruby.hh
 	$(SWIG) -ruby $(SWIG_ARGS) -o $@ $<
