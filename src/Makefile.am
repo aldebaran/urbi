@@ -64,7 +64,6 @@ urbiinclude_HEADERS = $(uobject_headers)
 ## programs.  ##
 ## ---------- ##
 
-bin_PROGRAMS =
 if !OPENR
 
 # urbi-console.
