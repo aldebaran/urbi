@@ -71,7 +71,7 @@ MAINTAINERCLEANFILES += $(FROM_UGRAMMAR_Y)
 EXTRA_DIST += parser/ugrammar.y
 precompiled_symbols_hh_deps += parser/ugrammar.y
 ugrammar_deps =					\
-  $(BISONXX)					\
+  $(BISONXX_IN)					\
   $(top_srcdir)/build-aux/fuse-switch		\
   parser/local.mk				\
   $(wildcard $(top_builddir)/bison/data/*.c)	\
@@ -81,6 +81,7 @@ ugrammar_deps =					\
 $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
 	echo '$?' >$@.tmp
+	$(MAKE) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
 	mv -f $@.tmp $@
@@ -112,15 +113,21 @@ $(SOURCES_FROM_UGRAMMAR_Y): $(srcdir)/parser/ugrammar.stamp
 generate-parser: $(FROM_UGRAMMAR_Y)
 
 
-## --------------------------- ##
-## Keyword list for listings.  ##
-## --------------------------- ##
+## ------------------------------------ ##
+## Keyword list for lstlistings/emacs.  ##
+## ------------------------------------ ##
 
-.PHONY: keywords
-keywords: parser/utoken.l
+.PHONY: listings emacs
+listings: parser/utoken.l
 	perl -ne 'BEGIN { use Text::Wrap; }' \
 	     -e '/^"(\w+)"/ && push @k, $$1;' \
 	     -e 'END { print wrap ("    ", "    ", join (", ", map { s/_/\\_/g; $$_ } sort @k)), "\n" };' $<
+
+emacs: parser/utoken.l
+	perl -ne 'BEGIN { use Text::Wrap; }' \
+	     -e '/^"(\w+)"/ && push @k, $$1;' \
+	     -e 'END { print wrap ("            ", "            ", join (" ", map { "\"$$_\"" } sort @k)), "\n" };' $<
+
 
 ## -------------- ##
 ## Flex Scanner.  ##
