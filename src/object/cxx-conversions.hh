@@ -20,6 +20,10 @@ namespace object
       return T::No_such_conversion;
     }
   };
+
+  // Helper function
+  template <typename T>
+  rObject to_urbi(const T&);
 }
 
 #include <object/cxx-conversions.hxx>

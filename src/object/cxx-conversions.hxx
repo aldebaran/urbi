@@ -229,6 +229,11 @@ namespace object
 
 #undef CONTAINER
 
+  template <typename T>
+  rObject to_urbi(const T& v)
+  {
+    return CxxConvert<T>::from(v, SYMBOL(to_urbi));
+  }
 }
 
 #endif
