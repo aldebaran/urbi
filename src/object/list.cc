@@ -7,6 +7,7 @@
 
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
+#include <libport/finally.hh>
 #include <libport/ufloat.hh>
 
 #include <kernel/userver.hh>
@@ -164,6 +165,13 @@ namespace object
   List::each_and(runner::Runner& r, const rObject& f)
   {
     scheduler::jobs_type jobs;
+    scheduler::rTag tag = new scheduler::Tag(SYMBOL(each_AMPERSAND));
+
+    size_t result_depth = r.tags_get().size();
+
+    libport::Finally finally;
+    r.apply_tag(tag, &finally);
+
     // Beware of iterations that modify the list in place: make a
     // copy.
     value_type l(content_);
@@ -171,15 +179,27 @@ namespace object
     {
       object::objects_type args;
       args.push_back(o);
-      scheduler::rJob job =
+      runner::Interpreter* job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                 f, SYMBOL(each), args);
+      job->fork_point_set(tag);
       r.link(job);
       job->start_job();
       jobs.push_back(job);
     }
 
-    r.yield_until_terminated(jobs);
+    try
+    {
+      r.yield_until_terminated(jobs);
+    }
+    catch (const scheduler::StopException& se)
+    {
+      // If the stop is not on tag, propagate it.
+      if (se.depth_get() < result_depth)
+	throw;
+      // Extract the exception from the payload and propagate it.
+      throw boost::any_cast<object::UrbiException>(se.payload_get());
+    }
   }
 
 #define BOUNCE(Name, Ret, Arg, Check)                           \
