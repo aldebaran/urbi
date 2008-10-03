@@ -17,7 +17,6 @@ namespace object
   public:
     typedef std::deque<scheduler::rJob> value_type;
 
-    Barrier();
     Barrier(rBarrier model);
     Barrier(const value_type& value);
 
@@ -42,6 +41,10 @@ namespace object
     static void initialize(CxxObject::Binder<Barrier>& binder);
     static bool barrier_added;
     static rObject proto;
+
+  protected:
+    friend class TypeInitializer<Barrier>;
+    static rObject proto_make();
   };
 
 }; // namespace object

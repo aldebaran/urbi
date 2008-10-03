@@ -42,8 +42,6 @@ namespace object
   public:
 
     // Construction
-
-    Float();
     Float(value_type value_);
     Float(const rFloat& model);
 
@@ -109,6 +107,10 @@ namespace object
     static bool float_added;
     virtual std::string type_name_get() const;
     static rObject proto;
+
+  private:
+    friend class TypeInitializer<Float>;
+    static rObject proto_make();
 
   };
 

@@ -43,10 +43,14 @@ namespace object
     /// Trigger \a this' leave event
     void triggerLeave(runner::Runner& r);
 
+  private:
+    value_type value_;
+
     /*---------------.
     | Binding system |
     `---------------*/
 
+  public:
     static void initialize(CxxObject::Binder<Tag>& bind);
     static const std::string type_name;
     static bool tag_added;
@@ -54,7 +58,8 @@ namespace object
     static rObject proto;
 
   private:
-    value_type value_;
+    friend class TypeInitializer<Tag>;
+    static rObject proto_make();
   };
 
   const scheduler::rTag&

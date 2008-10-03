@@ -7,21 +7,17 @@
 
 namespace object
 {
-  Barrier::Barrier()
-  {
-    proto_add(proto);
-  }
 
   Barrier::Barrier(rBarrier model)
     : value_(model->value_)
   {
-    proto_add(proto);
+    proto_add(model);
   }
 
   Barrier::Barrier(const value_type& value)
     : value_(value)
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   struct BarrierException : public scheduler::SchedulerException
@@ -112,6 +108,12 @@ namespace object
     bind(SYMBOL(signalAll), &Barrier::signalAll);
 //     blah(&Barrier::wait);
     bind(SYMBOL(wait),      &Barrier::wait);
+  }
+
+  rObject
+  Barrier::proto_make()
+  {
+    return new Barrier(Barrier::value_type());
   }
 
   bool Barrier::barrier_added =

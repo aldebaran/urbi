@@ -21,7 +21,7 @@ namespace object
   Tag::Tag()
     : value_(new scheduler::Tag(SYMBOL()))
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Tag::Tag(const value_type& value)
@@ -192,6 +192,12 @@ namespace object
   extract_tag(const rObject& o)
   {
     return o->as<Tag>()->value_get();
+  }
+
+  rObject
+  Tag::proto_make()
+  {
+    return new Tag();
   }
 
 }; // namespace object

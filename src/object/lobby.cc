@@ -3,12 +3,13 @@
  ** \brief Creation of the URBI object lobby.
  */
 
+#include <kernel/uconnection.hh>
+#include <kernel/userver.hh>
+
 #include <object/lobby.hh>
 #include <object/object.hh>
-
-#include <kernel/uconnection.hh>
-
 #include <object/string.hh>
+
 #include <runner/runner.hh>
 
 namespace object
@@ -16,16 +17,10 @@ namespace object
   Lobby::Lobby(value_type value)
     : state_(value)
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   static UConnection* dummy = 0;
-
-  Lobby::Lobby()
-    : state_(*dummy)
-  {
-    throw PrimitiveError(SYMBOL(clone), "cloning Lobby is invalid");
-  }
 
   Lobby::Lobby(rLobby)
     : state_(*dummy)
@@ -84,6 +79,12 @@ namespace object
   Lobby::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  Lobby::proto_make()
+  {
+    return new Lobby(State(::urbiserver->ghost_connection_get()));
   }
 
   bool Lobby::lobby_added = CxxObject::add<Lobby>();

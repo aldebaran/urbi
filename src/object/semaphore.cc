@@ -7,7 +7,7 @@ namespace object
 {
   Semaphore::Semaphore()
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Semaphore::Semaphore(rSemaphore model)
@@ -76,6 +76,12 @@ namespace object
     bind(SYMBOL(new), &Semaphore::_new);
     bind(SYMBOL(p),   &Semaphore::p   );
     bind(SYMBOL(v),   &Semaphore::v   );
+  }
+
+  rObject
+  Semaphore::proto_make()
+  {
+    return new Semaphore();
   }
 
   bool Semaphore::semaphore_added =

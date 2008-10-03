@@ -57,6 +57,10 @@ namespace object
     static const std::string type_name;
     virtual std::string type_name_get() const;
     static rObject proto;
+
+  private:
+    friend class TypeInitializer<File>;
+    static rObject proto_make();
   };
 }
 

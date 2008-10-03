@@ -139,7 +139,7 @@ class Object.uvar
     } |
     void
   };
-  var apply = Code.getSlot("apply");
+  var apply = getSlot("Code").getSlot("apply");
   var __clone = getSlot("clone");
   function clone()
   {

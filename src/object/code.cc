@@ -6,6 +6,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <ast/function.hh>
+#include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
 #include <object/code.hh>
@@ -18,20 +19,13 @@
 
 namespace object
 {
-  Code::Code()
-  {
-    throw PrimitiveError(SYMBOL(clone),
-			 "`Code' objects cannot be cloned");
-  }
-
   Code::Code(ast_type a)
     : ast_(a)
     , captures_()
     , self_()
     , call_()
   {
-    assert(proto);
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Code::Code(rCode model)
@@ -141,6 +135,13 @@ namespace object
   std::string Code::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  Code::proto_make()
+  {
+    PARAMETRIC_AST(ast, "function () {}");
+    return new Code(ast.result<const ast::Routine>());
   }
 
   bool Code::code_added = CxxObject::add<Code>();

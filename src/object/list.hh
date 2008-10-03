@@ -61,6 +61,10 @@ namespace object
     static void initialize(CxxObject::Binder<List>& binder);
     static bool list_added;
     static rObject proto;
+
+  private:
+    friend class TypeInitializer<List>;
+    static rObject proto_make();
   };
 
 }; // namespace object

@@ -51,7 +51,7 @@ namespace object
   Path::Path(const std::string& value)
     : path_(value)
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   void Path::init(const std::string& path)
@@ -384,6 +384,16 @@ namespace object
   std::string Path::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  Path::proto_make()
+  {
+#ifdef WIN32
+    return new Path("C:\\");
+#else
+    return new Path("/");
+#endif
   }
 
   bool Path::path_added = CxxObject::add<Path>();

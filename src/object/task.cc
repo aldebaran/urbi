@@ -23,7 +23,7 @@ namespace object
   Task::Task()
     : value_(0)
   {
-    proto_add(Task::proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Task::Task(const value_type& value)
@@ -164,6 +164,12 @@ namespace object
   std::string Task::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  Task::proto_make()
+  {
+    return new Task();
   }
 
   rObject Task::proto;

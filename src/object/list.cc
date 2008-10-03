@@ -24,7 +24,7 @@ namespace object
 {
   List::List()
   {
-    proto_add(List::proto);
+    proto_add(proto ? proto : object_class);
   }
 
   List::List(const value_type& value)
@@ -252,6 +252,12 @@ namespace object
   std::string List::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  List::proto_make()
+  {
+    return new List();
   }
 
   bool List::list_added =

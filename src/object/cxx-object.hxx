@@ -45,7 +45,8 @@ namespace object
     {
       check_arg_count(args.size() - 1, 0);
       rObject tgt = args[0];
-      return tgt->is_a<T>() ? new T(tgt->as<T>()) : new T();
+      assert(tgt->as<T>());
+      return new T(tgt->as<T>());
     }
 
     template <typename T>
@@ -60,7 +61,8 @@ namespace object
   void
   CxxObject::TypeInitializer<T>::create()
   {
-    res_ = new Object();
+    res_ = T::proto_make();
+    assert(res_);
   }
 
   template <typename T>

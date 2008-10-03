@@ -22,16 +22,10 @@
 
 namespace object
 {
-  Float::Float()
-    : value_(0)
-  {
-    proto_add(proto);
-  }
-
   Float::Float(value_type value)
     : value_(value)
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Float::Float(const rFloat& model)
@@ -338,13 +332,20 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(trunc), &Float::trunc);
   }
 
-  bool Float::float_added = CxxObject::add<Float>();
-  const std::string Float::type_name = "Float";
-  rObject Float::proto;
   std::string
   Float::type_name_get() const
   {
     return type_name;
   }
+
+  rObject
+  Float::proto_make()
+  {
+    return new Float(0);
+  }
+
+  bool Float::float_added = CxxObject::add<Float>();
+  const std::string Float::type_name = "Float";
+  rObject Float::proto;
 
 }; // namespace object

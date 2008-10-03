@@ -220,7 +220,8 @@ namespace object
   void
   dummy_references()
   {
-    Barrier     b;
+    Barrier     *b;
+    (void)b;
     Directory   d;
     File        f;
     Path        p;

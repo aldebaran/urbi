@@ -1,6 +1,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
+#include <libport/detect-win32.h>
+
 #include <object/directory.hh>
 #include <object/path.hh>
 
@@ -40,7 +42,7 @@ namespace object
   Directory::Directory(const std::string& value)
     : path_(new Path(value))
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   void Directory::init(rPath path)
@@ -108,7 +110,8 @@ namespace object
   | Binding system |
   `---------------*/
 
-  void Directory::initialize(CxxObject::Binder<Directory>& bind)
+  void
+  Directory::initialize(CxxObject::Binder<Directory>& bind)
   {
     bind(SYMBOL(asPrintable), &Directory::as_printable);
     bind(SYMBOL(asString), &Directory::as_string);
@@ -117,9 +120,20 @@ namespace object
     bind(SYMBOL(list), &Directory::list<&details::mk_string>);
   }
 
-  std::string Directory::type_name_get() const
+  std::string
+  Directory::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  Directory::proto_make()
+  {
+#ifdef WIN32
+    return new Directory("C:\\");
+#else
+    return new Directory("/");
+#endif
   }
 
   bool Directory::directory_added = CxxObject::add<Directory>();

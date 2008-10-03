@@ -43,7 +43,7 @@ namespace object
   File::File(const std::string& value)
     : path_(new Path(value))
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   void File::init(rPath path)
@@ -120,7 +120,8 @@ namespace object
   | Binding system |
   `---------------*/
 
-  void File::initialize(CxxObject::Binder<File>& bind)
+  void
+  File::initialize(CxxObject::Binder<File>& bind)
   {
     bind(SYMBOL(asList), &File::as_list);
     bind(SYMBOL(asPrintable), &File::as_printable);
@@ -129,9 +130,16 @@ namespace object
     proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
   }
 
-  std::string File::type_name_get() const
+  std::string
+  File::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  File::proto_make()
+  {
+    return new File("/");
   }
 
   bool File::file_added = CxxObject::add<File>();

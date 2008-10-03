@@ -27,7 +27,7 @@ namespace object
   Primitive::Primitive(value_type value)
     : content_(value)
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Primitive::value_type Primitive::value_get() const
@@ -68,6 +68,16 @@ namespace object
   rObject Primitive::operator() (runner::Runner& r, object::objects_type args)
   {
     return content_(r, args);
+  }
+
+  static void nil()
+  {}
+
+  rObject
+  Primitive::proto_make()
+  {
+    rObject res = make_primitive(nil, SYMBOL());
+    return res;
   }
 
 }; // namespace object

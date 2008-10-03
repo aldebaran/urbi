@@ -18,7 +18,6 @@ namespace object
     typedef ast::rConstRoutine ast_type;
     typedef std::vector<rrObject> captures_type;
 
-    ATTRIBUTE_NORETURN Code();
     Code(ast_type a);
     Code(rCode model);
     ast_type ast_get() const;
@@ -58,6 +57,10 @@ namespace object
     static void initialize(CxxObject::Binder<Code>& binder);
     static bool code_added;
     static rObject proto;
+
+  private:
+    friend class TypeInitializer<Code>;
+    static rObject proto_make();
   };
 }; // namespace object
 

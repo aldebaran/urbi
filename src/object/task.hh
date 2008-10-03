@@ -33,6 +33,14 @@ namespace object
     void waitForChanges(runner::Runner&);
     void waitForTermination(runner::Runner&);
 
+  private:
+    value_type value_;
+
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
+  public:
     static void initialize(CxxObject::Binder<Task>& bind);
     static const std::string type_name;
     static bool task_added;
@@ -40,7 +48,8 @@ namespace object
     static rObject proto;
 
   private:
-    value_type value_;
+    friend class TypeInitializer<Task>;
+    static rObject proto_make();
   };
 
 }; // namespace object

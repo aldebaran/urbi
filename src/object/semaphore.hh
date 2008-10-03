@@ -36,6 +36,10 @@ namespace object
     static void initialize(CxxObject::Binder<Semaphore>& binder);
     static bool semaphore_added;
     static rObject proto;
+
+  private:
+    friend class TypeInitializer<Semaphore>;
+    static rObject proto_make();
   };
 
 }; // namespace object

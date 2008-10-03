@@ -47,6 +47,9 @@ namespace object
     static bool dictionary_added;
     static rObject proto;
 
+  private:
+    friend class TypeInitializer<Dictionary>;
+    static rObject proto_make();
   };
 }; // namespace object
 

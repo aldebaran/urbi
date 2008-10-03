@@ -32,11 +32,18 @@ namespace object
   private:
     value_type content_;
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<Primitive>& binder);
     static bool primitive_added;
     static rObject proto;
 
+  private:
+    friend class TypeInitializer<Primitive>;
+    static rObject proto_make();
   };
 
 }; // namespace object

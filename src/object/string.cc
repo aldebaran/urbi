@@ -28,7 +28,7 @@ namespace object
   String::String()
     : content_()
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   String::String(rString model)
@@ -297,6 +297,12 @@ namespace object
   std::string String::type_name_get() const
   {
     return type_name;
+  }
+
+  rObject
+  String::proto_make()
+  {
+    return new String();
   }
 
 }; // namespace object

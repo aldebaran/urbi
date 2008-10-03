@@ -13,7 +13,7 @@ namespace object
 {
   Dictionary::Dictionary()
   {
-    proto_add(proto);
+    proto_add(proto ? proto : object_class);
   }
 
   Dictionary::Dictionary(const value_type& value)
@@ -107,8 +107,13 @@ namespace object
     bind(SYMBOL(set),   &Dictionary::set);
   }
 
-  bool Dictionary::dictionary_added =
-    CxxObject::add<Dictionary>();
+  rObject
+  Dictionary::proto_make()
+  {
+    return new Dictionary();
+  }
+
+  bool Dictionary::dictionary_added = CxxObject::add<Dictionary>();
   const std::string Dictionary::type_name = "Dictionary";
   rObject Dictionary::proto;
 }

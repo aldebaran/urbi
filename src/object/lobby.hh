@@ -20,7 +20,6 @@ namespace object
   public:
     typedef State value_type;
 
-    ATTRIBUTE_NORETURN Lobby();
     ATTRIBUTE_NORETURN Lobby(rLobby model);
     Lobby(value_type value);
 
@@ -43,6 +42,10 @@ namespace object
     static void initialize(CxxObject::Binder<Lobby>& binder);
     static bool lobby_added;
     static rObject proto;
+
+  private:
+    friend class TypeInitializer<Lobby>;
+    static rObject proto_make();
   };
 }; // namespace object
 

@@ -59,9 +59,17 @@ namespace object
     void check_bounds(unsigned int from, unsigned int to,
                       const libport::Symbol& msg);
 
+  /*---------------.
+  | Binding system |
+  `---------------*/
+
   public:
     static void initialize(CxxObject::Binder<String>& binder);
     static bool string_added;
+
+  private:
+    friend class TypeInitializer<String>;
+    static rObject proto_make();
   };
 
   // Urbi functions
