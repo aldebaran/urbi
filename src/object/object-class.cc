@@ -6,6 +6,7 @@
 //#define ENABLE_DEBUG_TRACES
 
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
