@@ -126,17 +126,6 @@ namespace object
     COMPLETE_EXCEPTION (WrongArgumentType)
   };
 
-  /** Exception used when a non-integer is provided to a primitive expecting
-   * an integer.
-   * \param effective  Effective floating point value that failed conversion.
-   */
-  struct BadInteger: public Exception
-  {
-    BadInteger (libport::ufloat effective, const libport::Symbol fun,
-		std::string fmt = "expected integer, got %1%");
-    COMPLETE_EXCEPTION (BadInteger)
-  };
-
   /** Exception used when building an implicit tag name (k1 style).
    */
   struct ImplicitTagComponentError: public Exception

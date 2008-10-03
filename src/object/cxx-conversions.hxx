@@ -76,10 +76,10 @@ namespace object
   struct CxxConvert<int>
   {
     static int
-    to(const rObject& o, const libport::Symbol& name, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
     {
       type_check(o, Float::proto, idx);
-      return o->as<Float>()->to_int(name);
+      return o->as<Float>()->to_int();
     }
 
     static rObject
@@ -94,10 +94,10 @@ namespace object
   struct CxxConvert<unsigned int>
   {
     static unsigned int
-    to(const rObject& o, const libport::Symbol& name, unsigned idx)
+    to(const rObject& o, const libport::Symbol&, unsigned idx)
     {
       type_check(o, Float::proto, idx);
-      return o->as<Float>()->to_unsigned_int(name);
+      return o->as<Float>()->to_unsigned_int();
     }
 
     static rObject

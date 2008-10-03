@@ -75,7 +75,16 @@ namespace runner
 	       to_urbi(idx),
 	       expected,
 	       effective);
-    pabort("Unreachable");
+  }
+
+  void
+  raise_bad_integer_error(libport::ufloat effective,
+			  const std::string fmt)
+  {
+    raise_urbi(SYMBOL(BadIntegerError),
+	       0,
+	       to_urbi(fmt),
+	       to_urbi(effective));
   }
 
 }

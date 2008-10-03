@@ -67,9 +67,8 @@ namespace object
 
   size_t
   List::index(const rFloat& idx, const libport::Symbol fun) const
-    throw (BadInteger, PrimitiveError)
   {
-    size_t i = idx->to_unsigned_int(fun, "invalid index: %1%");
+    size_t i = idx->to_unsigned_int("invalid index: %s");
     if (content_.size() <= i)
       throw PrimitiveError(fun, "invalid index: " + string_cast(i));
     return i;

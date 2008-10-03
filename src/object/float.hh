@@ -25,10 +25,9 @@ namespace object
     typedef libport::ufloat value_type;
     value_type& value_get();
     const value_type&  value_get() const;
-    int to_int(const libport::Symbol func) const;
+    int to_int() const;
     unsigned int to_unsigned_int
-     (const libport::Symbol func,
-      const std::string fmt = "expected non-negative integer, got %1%") const;
+     (const std::string fmt = "expected non-negative integer, got %s") const;
 
     virtual
     std::ostream& special_slots_dump(std::ostream& o,

@@ -49,15 +49,6 @@ namespace object
   }
 
   inline
-  BadInteger::BadInteger(libport::ufloat effective, const libport::Symbol fun,
-			 std::string fmt)
-    : Exception((boost::format(fmt)
-                     % effective).str(),
-                    fun)
-  {
-  }
-
-  inline
   ImplicitTagComponentError::ImplicitTagComponentError(const ast::loc& l)
     : Exception("illegal component for implicit tag", l)
   {

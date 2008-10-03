@@ -2,6 +2,7 @@
 # define RUNNER_RAISE_HH
 
 # include <libport/compiler.hh>
+# include <libport/ufloat.hh>
 
 # include <object/fwd.hh>
 
@@ -25,6 +26,10 @@ namespace runner
   void raise_arity_error(unsigned effective,
 			 unsigned minimum,
 			 unsigned maximum);
+
+  ATTRIBUTE_NORETURN
+  void raise_bad_integer_error(libport::ufloat effective,
+			       const std::string = "expected integer, got %s");
 
   ATTRIBUTE_NORETURN
   void raise_lookup_error(libport::Symbol msg, const object::rObject& obj);

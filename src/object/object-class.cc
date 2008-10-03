@@ -68,7 +68,7 @@ namespace object
       }
       catch (libport::bad_numeric_cast& ue)
       {
-	throw BadInteger(arg1->value_get(), SYMBOL(dump));
+	runner::raise_bad_integer_error(arg1->value_get());
       }
     }
 

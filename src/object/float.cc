@@ -19,6 +19,7 @@
 #include <object/object.hh>
 #include <object/string.hh>
 #include <object/urbi-exception.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -48,7 +49,7 @@ namespace object
   }
 
   int
-  Float::to_int(const libport::Symbol func) const
+  Float::to_int() const
   {
     try
     {
@@ -56,14 +57,12 @@ namespace object
     }
     catch (libport::bad_numeric_cast& ue)
     {
-      throw BadInteger(value_, func);
-      return 0;  // Keep the compiler happy
+      runner::raise_bad_integer_error(value_);
     }
   }
 
   unsigned int
-  Float::to_unsigned_int(const libport::Symbol func,
-			 const std::string fmt) const
+  Float::to_unsigned_int(const std::string fmt) const
   {
     try
     {
@@ -74,7 +73,7 @@ namespace object
     }
     catch (libport::bad_numeric_cast& ue)
     {
-      throw BadInteger(value_, func, fmt);
+      runner::raise_bad_integer_error(value_, fmt);
     }
   }
 
@@ -155,8 +154,7 @@ namespace object
   int						\
   Float::operator Op()				\
   {						\
-    static libport::Symbol op(#Op);		\
-    return Op to_int(op);			\
+    return Op to_int();				\
   }
 BOUNCE_INT_OP(~)
 #undef BOUNCE_INT_OP
@@ -169,8 +167,7 @@ BOUNCE_INT_OP(~)
   int						\
   Float::operator Op(int rhs)			\
   {						\
-    static libport::Symbol op(#Op);		\
-    return to_int(op) Op rhs;			\
+    return to_int() Op rhs;			\
 }
 
   BOUNCE_INT_OP(^)
@@ -183,7 +180,7 @@ BOUNCE_INT_OP(~)
   Float::operator Op(unsigned int rhs)		\
   {						\
     static libport::Symbol op(#Op);		\
-    return to_int(op) Op rhs;			\
+    return to_int() Op rhs;			\
 }
 
   BOUNCE_UNSIGNED_INT_OP(<<)
@@ -227,10 +224,10 @@ BOUNCE_INT_OP(~)
   int
   Float::random()
   {
-    static const std::string fmt = "expected positive integer, got %1%";
-    unsigned int upper_bound = to_unsigned_int(SYMBOL(random), fmt);
+    static const std::string fmt = "expected positive integer, got %s";
+    unsigned int upper_bound = to_unsigned_int(fmt);
     if (!upper_bound)
-      throw BadInteger(value_get(), SYMBOL(random), fmt);
+      runner::raise_bad_integer_error(value_get(), fmt);
     return rand() % upper_bound;
   }
 
@@ -263,7 +260,7 @@ BOUNCE_INT_OP(~)
   rList
   Float::seq()
   {
-    unsigned int n = to_unsigned_int(SYMBOL(seq));
+    unsigned int n = to_unsigned_int();
     List::value_type res;
     for (unsigned int i = 0; i < n; i++)
       res.push_back(new Float(i));

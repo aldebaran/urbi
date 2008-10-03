@@ -65,6 +65,19 @@ class Global.ArityError: Exception
   }
 };
 
+class Global.BadIntegerError: Exception
+{
+  var routine;
+  var effective;
+
+  function init(rout, fmt, eff)
+  {
+    routine = rout |
+    effective = eff |
+    Exception.getSlot("init").apply([this, "%s: %s" % [rout, fmt % [eff]]])
+  };
+};
+
 class Global.TypeError: Exception
 {
   var expected;

@@ -30,9 +30,7 @@ namespace object
   rSemaphore
   Semaphore::_new(rObject, rFloat c)
   {
-    int count = c->to_int(SYMBOL(new));
-    if (count < 0)
-      throw PrimitiveError(SYMBOL(new), "initial count must be non-negative");
+    int count = c->to_unsigned_int();
     return new Semaphore(make_pair(count, std::deque<scheduler::rJob>()));
   }
 
