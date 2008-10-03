@@ -11,7 +11,6 @@ dist_libuobject_la_SOURCES +=			\
   runner/interpreter-visit.hxx			\
   runner/raise.cc				\
   runner/raise.hh				\
-  runner/raise.hxx				\
   runner/runner.cc				\
   runner/runner.hh				\
   runner/runner.hxx				\
