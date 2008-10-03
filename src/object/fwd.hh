@@ -83,7 +83,6 @@ namespace object
   class RedefinitionError;
   class PrimitiveError;
   class WrongArgumentType;
-  class WrongArgumentCount;
 
   extern rObject false_class;
   extern rObject nil_class;

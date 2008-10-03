@@ -49,31 +49,6 @@ namespace object
   }
 
   inline
-  WrongArgumentCount::WrongArgumentCount(unsigned formal,
-                                         unsigned effective,
-                                         const libport::Symbol fun)
-    : Exception((boost::format ("expected %1% arguments, given %2%")
-		      % (formal)
-		      % (effective)).str (),
-		     fun)
-  {
-  }
-
-  inline
-  WrongArgumentCount::WrongArgumentCount(unsigned minformal,
-                                         unsigned maxformal,
-                                         unsigned effective,
-                                         const libport::Symbol fun)
-    : Exception((boost::format("expected between %1% and %2% arguments, "
-                                   "given %3%")
-                     % minformal
-                     % maxformal
-                     % effective).str(),
-                    fun)
-  {
-  }
-
-  inline
   BadInteger::BadInteger(libport::ufloat effective, const libport::Symbol fun,
 			 std::string fmt)
     : Exception((boost::format(fmt)

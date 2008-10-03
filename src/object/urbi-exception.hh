@@ -126,22 +126,6 @@ namespace object
     COMPLETE_EXCEPTION (WrongArgumentType)
   };
 
-  /** Exception used for calls with wrong argument count.
-   * \param effective  Number of arguments given.
-   * \param formal     Number of arguments expected.
-   * A version of the constructor also exists for functions taking a
-   * variable number of arguments, between \param minformal and
-   * \param maxformal.
-   */
-  struct WrongArgumentCount: public Exception
-  {
-    WrongArgumentCount (unsigned formal, unsigned effective,
-			const libport::Symbol fun);
-    WrongArgumentCount (unsigned minformal, unsigned maxformal,
-			unsigned effective, const libport::Symbol fun);
-    COMPLETE_EXCEPTION (WrongArgumentCount)
-  };
-
   /** Exception used when a non-integer is provided to a primitive expecting
    * an integer.
    * \param effective  Effective floating point value that failed conversion.
