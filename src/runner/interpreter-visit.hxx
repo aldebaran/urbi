@@ -343,38 +343,21 @@ namespace runner
                 && res.get() // FIXME: What's that for?
                 && res != object::void_class)
             {
-              try
-              {
-                assertion(res);
-                ECHO("toplevel: returning a result to the connection.");
+	      assertion(res);
+	      ECHO("toplevel: returning a result to the connection.");
 
-                // Display the value using the topLevel channel.
-                // If it is not (yet) defined, do nothing, unless the environment
-                // variable TOPLEVEL_DEBUG is set.
+	      // Display the value using the topLevel channel.
+	      // If it is not (yet) defined, do nothing, unless the environment
+	      // variable TOPLEVEL_DEBUG is set.
 
-                static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
-                if (rObject topLevel =
-                    object::global_class->slot_locate(SYMBOL(topLevel), false,
-                                                      true))
-                  object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
-                else if (toplevel_debug)
-                  lobby_->value_get().connection.new_result(res);
-              }
-              catch (std::exception &ke)
-              {
-                std::cerr << "Exception when printing result: "
-                          << ke.what() << std::endl;
-              }
-              catch (object::Exception& e)
-              {
-                throw;
-              }
-              catch (...)
-              {
-                std::cerr << "Unknown exception when printing result"
-                          << std::endl;
-              }
-            }
+	      static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
+	      if (rObject topLevel =
+		  object::global_class->slot_locate(SYMBOL(topLevel), false,
+						    true))
+		object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
+	      else if (toplevel_debug)
+		lobby_->value_get().connection.new_result(res);
+	    }
           }
           catch (object::Exception& ue)
           {
