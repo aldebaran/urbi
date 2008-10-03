@@ -26,9 +26,8 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <object/string.hh>
-#include <object/urbi-exception.hh>
-
 # include <runner/call.hh>
+# include <runner/raise.hh>
 # include <runner/runner.hh>
 
 #include <urbi/uobject.hh>
@@ -128,8 +127,8 @@ static void uobjects_load_module(rObject, const std::string& name)
   if (!handle)
   {
     const char* error = lt_dlerror();
-    throw object::PrimitiveError(SYMBOL(loadModule), "Failed to open " + name
-				 + " " + (error ? error : "unknown error"));
+    runner::raise_primitive_error("Failed to open `" + name + "': " +
+				  (error ? error : "unknown error"));
   };
   uobjects_reload(where);
 }

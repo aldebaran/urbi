@@ -40,7 +40,7 @@ namespace object
   rObject
   execute_parsed(runner::Runner& r,
                  parser::parse_result_type p,
-                 libport::Symbol fun, Exception e)
+                 libport::Symbol fun, std::string e)
   {
     runner::Interpreter& run = dynamic_cast<runner::Interpreter&>(r);
 
@@ -53,7 +53,7 @@ namespace object
 
     ast::rConstAst ast = parser::transform(p->ast_get());
     if (!ast)
-      throw e;
+      runner::raise_primitive_error(e);
 
     runner::Interpreter* sub = new runner::Interpreter(run, ast, fun);
     // So that it will resist to the call to yield_until_terminated,
@@ -142,9 +142,7 @@ namespace object
     return
       execute_parsed(r, parser::parse(arg1->value_get()),
                      SYMBOL(eval),
-                     PrimitiveError(SYMBOL(eval),
-                                    "error executing command: "
-                                    + arg1->value_get()));
+                     "error executing command: " + arg1->value_get());
   }
 
   static rObject
@@ -201,8 +199,7 @@ namespace object
     return
       execute_parsed(r, parser::parse_file(filename),
                      SYMBOL(loadFile),
-                     PrimitiveError(SYMBOL(loadFile),
-                                    "error loading file: " + filename));
+		     "error loading file: " + filename);
   }
 
   static rObject

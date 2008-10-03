@@ -101,16 +101,6 @@ namespace object
     COMPLETE_EXCEPTION (StackExhaustedError)
   };
 
-  /** Exception for errors related to primitives usage.
-   * \param primitive   primitive that has thrown the error.
-   * \param msg         error message which will be sent.  */
-  struct PrimitiveError: public Exception
-  {
-    PrimitiveError(const libport::Symbol primitive,
-                   const std::string& msg);
-    COMPLETE_EXCEPTION(PrimitiveError)
-  };
-
   /** Exception for type mismatch in a primitive usage.
    * \param formal      Expected type.
    * \param effective   Real type.

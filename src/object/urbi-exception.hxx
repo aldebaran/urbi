@@ -19,13 +19,6 @@ namespace object
   }
 
   inline
-  PrimitiveError::PrimitiveError (const libport::Symbol primitive,
-				  const std::string& msg)
-    : Exception(msg, primitive)
-  {
-  }
-
-  inline
   StackExhaustedError::StackExhaustedError(const std::string& msg)
     : Exception(msg)
   {

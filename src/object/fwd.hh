@@ -81,7 +81,6 @@ namespace object
   // urbi-exception.hh
   class Exception;
   class RedefinitionError;
-  class PrimitiveError;
   class WrongArgumentType;
 
   extern rObject false_class;

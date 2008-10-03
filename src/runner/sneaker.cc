@@ -83,7 +83,8 @@ namespace dbg
     return
       object::execute_parsed(*sneaker, parser::parse(command),
                              SYMBOL(eval),
-			     object::InternalError("error evaluating command"));
+			     std::string("error evaluating command `") +
+			     command + "'");
   }
 
   void

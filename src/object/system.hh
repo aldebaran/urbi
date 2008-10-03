@@ -7,7 +7,6 @@
 # define OBJECT_SYSTEM_CLASS_HH
 
 # include <object/fwd.hh>
-# include <object/urbi-exception.hh>
 # include <parser/parse.hh>
 # include <parser/parse-result.hh>
 
@@ -26,7 +25,7 @@ namespace object
   /// \returns the result of the evaluation.
   rObject
   execute_parsed (runner::Runner& r, parser::parse_result_type p,
-                  libport::Symbol fun, Exception e);
+                  libport::Symbol fun, std::string e);
 
   /// Initialize the System class.
   void system_class_initialize ();
