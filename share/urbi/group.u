@@ -27,10 +27,7 @@ class Global.Group
 
   function asString ()
   {
-    if (this === Group)
-      "<" + protoName + ">"
-    else
-      protoName + " " + members.asString
+    type + " " + members.asString
   };
 
   // FIXME: This implementation always evaluates the

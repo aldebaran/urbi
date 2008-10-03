@@ -5,7 +5,7 @@
 
     class Res
     {
-      protoName = name;
+      type = name;
       var members = List.new(size, nil);
       var size = size;
 

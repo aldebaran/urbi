@@ -30,7 +30,7 @@ urbi::UValue uvalue_cast(object::rObject o)
     if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
     {
       const object::rString& rs =
-        o->slot_get(SYMBOL(protoName))->as<object::String>();
+        o->slot_get(SYMBOL(type))->as<object::String>();
       const std::string& t = rs->value_get();
       throw object::WrongArgumentType("Binary", t, SYMBOL(cast));
     }

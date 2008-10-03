@@ -19,7 +19,7 @@ class Global.Exception
 
   function asPrintable()
   {
-    "%s `%s'" % [protoName, message]
+    "%s `%s'" % [type, message]
   };
 };
 
@@ -74,8 +74,8 @@ class Global.TypeError: Exception
   {
     expected = exp;
     effective = eff;
-    message = "unexpected `%s', expected `%s'" %
-    [eff.protoName, exp.protoName]
+    message = "unexpected %s, expected a %s" %
+    [eff.asPrintable, exp.type]
   }
 };
 
@@ -89,8 +89,8 @@ class Global.ArgumentTypeError: TypeError
     TypeError.getSlot("init").apply([this, exp, eff]);
     routine = routine;
     index = idx;
-    message = "%s: unexpected `%s' for argument %s, expected `%s'" %
-    [routine, eff.protoName, idx, exp.protoName]
+    message = "%s: unexpected %s for argument %s, expected a %s" %
+    [routine, eff.asPrintable, idx, exp.type]
   }
 };
 

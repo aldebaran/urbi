@@ -28,7 +28,7 @@ namespace rewrite
       "{"
       "  var '$tmp' = Object.clone |"
       "  %exp:2 |"
-      "  '$tmp'.setSlot(\"protoName\", %exp:3) |"
+      "  '$tmp'.setSlot(\"type\", %exp:3) |"
       "  '$tmp'.setSlot(%exp:4, function () { this }) |"
       "  do ('$tmp')"
       "  {"

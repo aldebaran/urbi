@@ -270,15 +270,7 @@ do (Object)
 {
   function isProto ()
   {
-    ownsSlot("protoName")
-  };
-
-  function type ()
-  {
-    if (isProto)
-      "<" + protoName + ">"
-    else
-      protoName
+    ownsSlot("type")
   };
 
   // Gives type, + uid if relevant
@@ -346,7 +338,7 @@ do (Object)
 {
   function as(type)
   {
-    getSlot("as" + type.protoName).apply([this])
+    getSlot("as" + type.type).apply([this])
   }
 };
 

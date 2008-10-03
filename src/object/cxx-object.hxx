@@ -70,7 +70,7 @@ namespace object
   CxxObject::TypeInitializer<T>::make_class()
   {
     res_->proto_add(object_class);
-    res_->slot_set(SYMBOL(protoName), new String(T::type_name));
+    res_->slot_set(SYMBOL(type), new String(T::type_name));
     res_->slot_set(SYMBOL(clone),
                    rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>,
                                                         _1, _2))));
