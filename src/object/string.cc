@@ -114,13 +114,8 @@ namespace object
   std::string
   as_string (rObject from)
   {
-    if (from == String::proto)
-      return SYMBOL(LT_String_GT);
-    else
-    {
-      type_check(from, String::proto);
-      return from->as<String>()->value_get();
-    }
+    type_check(from, String::proto);
+    return from->as<String>()->value_get();
   }
 
   bool

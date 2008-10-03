@@ -181,8 +181,6 @@ do (List)
 
   function asString ()
   {
-    if (this === List)
-      return "<List>" |
     var res = "" |
     if (size)
     {

@@ -93,9 +93,6 @@ namespace object
   std::string
   Float::as_string(const rObject& from)
   {
-    if (from == proto)
-      return SYMBOL(LT_Float_GT);
-
     type_check(from, proto, 1);
     Float::value_type fl = from->as<Float>()->value_get();
     // Do not rely on boost::format to print inf and nan since

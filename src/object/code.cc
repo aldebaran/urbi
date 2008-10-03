@@ -90,8 +90,6 @@ namespace object
 
   std::string Code::as_string(runner::Runner&, rObject what)
   {
-    if (what == proto)
-      return SYMBOL(LT_Code_GT);
     type_check(what, proto);
     return string_cast(*what->as<Code>()->ast_get());
 
