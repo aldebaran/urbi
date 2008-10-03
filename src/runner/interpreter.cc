@@ -298,7 +298,7 @@ namespace runner
                        as_task()->as<object::Task>()->backtrace());
     }
     call_stack_type bt = call_stack_get();
-    if (skip_last)
+    if (skip_last && !bt.empty())
       bt.pop_back();
     throw object::UrbiException(exn, bt);
   }
