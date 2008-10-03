@@ -50,12 +50,12 @@ namespace object
     {
       const rString& name = args[1].unsafe_cast<String>();
       if (!name)
-	throw WrongArgumentType("String", "Object", SYMBOL(send));
+	runner::raise_argument_type_error(1, args[1], String::proto);
       tag = name->value_get();
     }
     const rString& rdata = args[0].unsafe_cast<String>();
     if (!rdata)
-      throw WrongArgumentType("String", "Object", SYMBOL(send));
+      runner::raise_argument_type_error(0, args[0], String::proto);
     const std::string data = rdata->value_get() + "\n";
     state_.connection.send (data.c_str(), data.length(), tag.c_str());
   }
