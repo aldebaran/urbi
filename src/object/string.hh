@@ -56,8 +56,7 @@ namespace object
   private:
     value_type content_;
 
-    void check_bounds(unsigned int from, unsigned int to,
-                      const libport::Symbol& msg);
+    void check_bounds(unsigned int from, unsigned int to);
 
   /*---------------.
   | Binding system |

@@ -35,6 +35,9 @@ namespace runner
   void raise_lookup_error(libport::Symbol msg, const object::rObject& obj);
 
   ATTRIBUTE_NORETURN
+  void raise_primitive_error(const std::string message);
+
+  ATTRIBUTE_NORETURN
   void raise_argument_type_error(unsigned idx,
 				 object::rObject effective,
 				 object::rObject expected);

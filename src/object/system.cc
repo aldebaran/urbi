@@ -23,12 +23,11 @@
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
-
 #include <parser/transform.hh>
-
 #include <runner/at-handler.hh>
 #include <runner/call.hh>
 #include <runner/interpreter.hh>
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 #include <ast/nary.hh>
@@ -129,9 +128,8 @@ namespace object
     type_check(args[2], String::proto);
     rString arg2 = args[2]->as<String>();
     if (!is_true(args[1], SYMBOL(assert_UL)))
-      throw PrimitiveError
-	(SYMBOL(assert_UL),
-	 "assertion `" + arg2->value_get() + "' failed");
+      runner::raise_primitive_error("assertion `" + arg2->value_get() +
+				    "' failed");
     return void_class;
   }
 
@@ -181,10 +179,8 @@ namespace object
     }
     catch (libport::file_library::Not_found&)
     {
-      throw
-	PrimitiveError(SYMBOL(searchFile),
-		       "Unable to find file: "
-		       + arg1->value_get());
+      runner::raise_primitive_error("Unable to find file: " +
+				    arg1->value_get());
       // Never reached
       assertion(false);
       return 0;
@@ -201,8 +197,7 @@ namespace object
     const std::string& filename = arg1->value_get();
 
     if (!libport::path(filename).exists())
-      throw PrimitiveError(SYMBOL(loadFile),
-			   "No such file: " + filename);
+      runner::raise_primitive_error("No such file: " + filename);
     return
       execute_parsed(r, parser::parse_file(filename),
                      SYMBOL(loadFile),

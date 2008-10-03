@@ -87,4 +87,12 @@ namespace runner
 	       to_urbi(effective));
   }
 
+  void
+  raise_primitive_error(const std::string message)
+  {
+    raise_urbi(SYMBOL(PrimitiveError),
+	       0,
+	       to_urbi(message));
+  }
+
 }

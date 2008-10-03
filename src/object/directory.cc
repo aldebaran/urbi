@@ -5,6 +5,7 @@
 
 #include <object/directory.hh>
 #include <object/path.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -35,8 +36,7 @@ namespace object
   Directory::Directory(rDirectory)
     : path_(0)
   {
-    throw PrimitiveError(SYMBOL(clone),
-			 "`Directory' objects cannot be cloned");
+    runner::raise_primitive_error("`Directory' objects cannot be cloned");
   }
 
   Directory::Directory(const std::string& value)
@@ -48,9 +48,8 @@ namespace object
   void Directory::init(rPath path)
   {
     if (!path->is_dir())
-      throw PrimitiveError
-        (SYMBOL(init),
-         str(format("Not a directory: '%s'") % path->as_string()));
+      runner::raise_primitive_error(str(format("Not a directory: '%s'") %
+					path->as_string()));
     path_ = path;
   }
 

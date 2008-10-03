@@ -23,6 +23,16 @@ class Global.Exception
   };
 };
 
+class Global.PrimitiveError: Exception
+{
+  var routine;
+
+  function init(rout, msg)
+  {
+    Exception.getSlot("init").apply([this, "%s: %s" % [rout, msg]])
+  };
+};
+
 class Global.ArityError: Exception
 {
   var routine;

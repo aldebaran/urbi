@@ -18,6 +18,7 @@
 #include <object/primitives.hh>
 
 #include <runner/call.hh>
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 #include <runner/interpreter.hh>
 
@@ -50,11 +51,11 @@ namespace object
     return content_;
   }
 
-#define CHECK_NON_EMPTY(Name)                                           \
-  do {                                                                  \
-    if (content_.empty())                                               \
-      throw PrimitiveError(SYMBOL(Name),                                \
-                           "cannot be applied onto empty list");        \
+#define CHECK_NON_EMPTY(Name)			\
+  do {						\
+    if (content_.empty())			\
+      runner::raise_primitive_error		\
+	("cannot be applied onto empty list");	\
   } while (0)
 
   rList
@@ -67,22 +68,22 @@ namespace object
   }
 
   size_t
-  List::index(const rFloat& idx, const libport::Symbol fun) const
+  List::index(const rFloat& idx) const
   {
     size_t i = idx->to_unsigned_int("invalid index: %s");
     if (content_.size() <= i)
-      throw PrimitiveError(fun, "invalid index: " + string_cast(i));
+      runner::raise_primitive_error("invalid index: " + string_cast(i));
     return i;
   }
 
   rObject List::operator[](const rFloat& idx)
   {
-    return content_[index(idx, SYMBOL(SBL_SBR))];
+    return content_[index(idx)];
   }
 
   rObject List::set(const rFloat& idx, const rObject& val)
   {
-    return content_[index(idx, SYMBOL(SBL_SBR_EQ))] = val;
+    return content_[index(idx)] = val;
   }
 
   rFloat List::size()

@@ -15,8 +15,8 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <object/string.hh>
-
 #include <runner/call.hh>
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -170,7 +170,7 @@ namespace object
       str = next + 2;
       const char format = next[1];
       if (format == 0)
-        throw PrimitiveError(SYMBOL(PERCENT), "Trailing %");
+	runner::raise_primitive_error("Trailing `%'");
       switch (format)
       {
         case '%':
@@ -179,36 +179,36 @@ namespace object
         case 's':
         {
           if (it == end)
-            throw PrimitiveError(SYMBOL(PERCENT), "Too few arguments for format");
+	    runner::raise_primitive_error("Too few arguments for format");
           rObject as_string = urbi_call(r, *it, SYMBOL(asString));
           res += as_string->as<String>()->value_get();
           it++;
           break;
         }
         default:
-          throw PrimitiveError(SYMBOL(PERCENT),
-                               std::string("Unrecognized format: %") + format);
+	  runner::raise_primitive_error
+	    (std::string("Unrecognized format: `%") + format + "'");
           break;
       }
     }
     if (it != end)
-      throw PrimitiveError(SYMBOL(PERCENT), "Too many arguments for format");
+      runner::raise_primitive_error("Too many arguments for format");
     res += str;
     return res;
   }
 
-  void String::check_bounds(unsigned int from, unsigned int to,
-                            const libport::Symbol& msg)
+  void String::check_bounds(unsigned int from, unsigned int to)
   {
     if (from >= content_.length())
-      throw PrimitiveError(msg, "invalid index: " + string_cast(from));
+      runner::raise_primitive_error("invalid index: " + string_cast(from));
     if (to >  content_.length())
-      throw PrimitiveError(msg, "invalid index: " + string_cast(to));
+      runner::raise_primitive_error("invalid index: " + string_cast(to));
     if (from > to)
-      throw PrimitiveError(msg, "range starting after its end does not make sense: "
-                           + string_cast(from) + ", " + string_cast(to));
+      runner::raise_primitive_error("range starting after its end "
+				    "does not make sense: "
+				    + string_cast(from) + ", " +
+				    string_cast(to));
   }
-
 
   std::string String::sub(unsigned int idx)
   {
@@ -222,7 +222,7 @@ namespace object
 
   std::string String::sub(unsigned int from, unsigned int to)
   {
-    check_bounds(from, to, SYMBOL(SBL_SBR));
+    check_bounds(from, to);
     return content_.substr(from, to - from);
   }
 
@@ -239,7 +239,7 @@ namespace object
   std::string String::sub_eq(unsigned int from, unsigned int to,
                              const std::string& v)
   {
-    check_bounds(from, to, SYMBOL(SBL_SBR_EQ));
+    check_bounds(from, to);
     content_ = content_.substr(0, from)
       + v
       + content_.substr(to, std::string::npos);

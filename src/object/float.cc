@@ -18,7 +18,6 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
-#include <object/urbi-exception.hh>
 #include <runner/raise.hh>
 
 namespace object
@@ -122,7 +121,7 @@ namespace object
     static libport::Symbol op(#Op);                                     \
     WHEN(Check,                                                         \
          if (!rhs)							\
-           throw PrimitiveError(op, "division by 0"));                  \
+	   runner::raise_primitive_error("division by 0"));		\
     return value_get() Op rhs;						\
   }
 
@@ -136,7 +135,7 @@ namespace object
   Float::operator %(value_type rhs)
   {
     if (!rhs)
-      throw PrimitiveError(SYMBOL(PERCENT), "modulo by 0");
+      runner::raise_primitive_error("modulo by 0");
     return fmod(value_get(), rhs);
   }
 
@@ -189,11 +188,11 @@ BOUNCE_INT_OP(~)
 
 #define CHECK_POSITIVE(F)                                       \
   if (value_ < 0)                                               \
-    throw PrimitiveError(F, "argument has to be positive");
+    runner::raise_primitive_error("argument has to be positive");
 
 #define CHECK_TRIGO_RANGE(F)                                    \
   if (value_ < -1 || value_ > 1)                                \
-    throw PrimitiveError(F, "invalid range");
+    runner::raise_primitive_error("invalid range");
 
 #define BOUNCE(F, Pos, Range)                           \
   Float::value_type					\

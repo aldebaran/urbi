@@ -10,6 +10,7 @@
 #include <object/object.hh>
 #include <object/string.hh>
 
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -25,7 +26,7 @@ namespace object
   Lobby::Lobby(rLobby)
     : state_(*dummy)
   {
-    throw PrimitiveError(SYMBOL(clone), "cloning a lobby is invalid");
+    runner::raise_primitive_error("`Lobby' objects cannot be cloned");
   }
 
   Lobby::value_type&

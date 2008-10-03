@@ -6,6 +6,7 @@
 
 #include <object/file.hh>
 #include <object/path.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -36,8 +37,7 @@ namespace object
   File::File(rFile)
     : path_(0)
   {
-    throw PrimitiveError(SYMBOL(clone),
-			 "`File' objects cannot be cloned");
+    runner::raise_primitive_error("`File' objects cannot be cloned");
   }
 
   File::File(const std::string& value)
@@ -49,9 +49,8 @@ namespace object
   void File::init(rPath path)
   {
     if (!path->is_reg())
-      throw PrimitiveError
-        (SYMBOL(init),
-         str(format("Not a regular file: '%s'") % path->as_string()));
+      runner::raise_primitive_error(str(format("Not a regular file: '%s'") %
+					path->as_string()));
     path_ = path;
   }
 

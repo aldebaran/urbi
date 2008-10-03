@@ -1,6 +1,7 @@
 #ifndef OBJECT_PATH_HH
 # define OBJECT_PATH_HH
 
+# include <libport/compiler.hh>
 # include <libport/path.hh>
 
 # include <object/cxx-object.hh>
@@ -61,17 +62,10 @@ namespace object
   private:
     value_type path_;
 
-    void handle_any_error(const libport::Symbol& msg)  __attribute__ ((noreturn));
-    // Handle EBADF, EFAULT, ELOOP, ENAMETOOLONG, ENOMEM
-    void handle_hard_error(const libport::Symbol& msg);
-    // Handle EACCES, ENOENT, ENOTDIR
-    void handle_access_error(const libport::Symbol& msg);
-    // Handle EEXIST
-    void handle_perm_error(const libport::Symbol& msg);
-    // Signal an unhandled errno value
-    void unhandled_error(const libport::Symbol& msg) __attribute__ ((noreturn));
+    ATTRIBUTE_NORETURN
+    void handle_any_error();
     // Stat the file and handle all errors
-    struct stat stat(const libport::Symbol& msg);
+    struct stat stat();
 
   /*---------------.
   | Binding system |

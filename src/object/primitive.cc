@@ -6,16 +6,14 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitive.hh>
-#include <object/urbi-exception.hh>
-
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
 {
   Primitive::Primitive()
   {
-    throw PrimitiveError(SYMBOL(clone),
-			 "`Primitive' objects cannot be cloned");
+    runner::raise_primitive_error("`Primitive' objects cannot be cloned");
   }
 
   Primitive::Primitive(rPrimitive model)
@@ -57,8 +55,8 @@ namespace object
   Primitive::apply(runner::Runner& r, rList args)
   {
     if (args->value_get().empty())
-      throw PrimitiveError(SYMBOL(apply),
-                           "list of arguments must begin with this");
+      runner::raise_primitive_error("list of arguments "
+				    "must begin with `this'");
     objects_type a = args->value_get();
     rObject tgt = a.front();
     a.pop_front();

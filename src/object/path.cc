@@ -1,5 +1,6 @@
 // For stat, getcwd
 #include <cerrno>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <libport/unistd.h>
@@ -14,6 +15,7 @@
 #include <object/directory.hh>
 #include <object/file.hh>
 #include <object/path.hh>
+#include <runner/raise.hh>
 
 namespace object
 {
@@ -44,8 +46,7 @@ namespace object
   Path::Path(rPath)
     : path_("/")
   {
-    throw PrimitiveError(SYMBOL(clone),
-			 "`Path' objects cannot be cloned");
+    runner::raise_primitive_error("`Path' objects cannot be cloned");
   }
 
   Path::Path(const std::string& value)
@@ -80,44 +81,27 @@ namespace object
     if (!::stat(path_.to_string().c_str(), &dummy))
       return true;
 
-    handle_hard_error(SYMBOL(exists));
-    switch (errno)
-    {
-      case EACCES:
-        // Permission denied on one of the parent directory.
-      case ENOENT:
-        // No such file or directory.
-      case ENOTDIR:
-        // One component isn't a directory
-        return false;
-      default:
-        unhandled_error(SYMBOL(exists));
-    }
+    handle_any_error();
   }
 
-  struct stat Path::stat(const libport::Symbol& msg)
+  struct stat Path::stat()
   {
     struct stat res;
 
     if (::stat(path_.to_string().c_str(), &res))
-    {
-      handle_hard_error(msg);
-      handle_access_error(msg);
-      handle_perm_error(msg);
-      unhandled_error(msg);
-    }
+      handle_any_error();
 
     return res;
   }
 
   bool Path::is_dir()
   {
-    return stat(SYMBOL(isDir)).st_mode & S_IFDIR;
+    return stat().st_mode & S_IFDIR;
   }
 
   bool Path::is_reg()
   {
-    return stat(SYMBOL(isReg)).st_mode & S_IFREG;
+    return stat().st_mode & S_IFREG;
   }
 
   bool Path::readable()
@@ -132,18 +116,7 @@ namespace object
     else if (errno == EACCES)
       return false;
 
-    handle_hard_error(SYMBOL(readable));
-    handle_access_error(SYMBOL(readable));
-    unhandled_error(SYMBOL(readable));
-
-    // Not handled errors, because neither NOATIME or NONBLOCK is used:
-
-    // EPERM: The O_NOATIME flag was specified, but the effective user
-    // ID of the caller did not match the owner of the file and the
-    // caller was not privileged (CAP_FOWNER).
-
-    // EWOULDBLOCK: The O_NONBLOCK flag was specified, and an
-    // incompatible lease was held on the file (see fcntl(2)).
+    handle_any_error();
   }
 
   bool Path::writable()
@@ -160,12 +133,7 @@ namespace object
     else if (errno == EACCES || errno == EROFS)
       return false;
 
-    handle_hard_error(SYMBOL(readable));
-    handle_access_error(SYMBOL(readable));
-    handle_perm_error(SYMBOL(readable));
-    unhandled_error(SYMBOL(readable));
-
-    // EPERM and EWOULDBLOCK not handled, see readable().
+    handle_any_error();
   }
 
   // Operations
@@ -178,7 +146,7 @@ namespace object
   rPath Path::cd()
   {
     if (chdir(as_string().c_str()))
-      handle_any_error(SYMBOL(cd));
+      handle_any_error();
     return cwd();
   }
 
@@ -198,9 +166,8 @@ namespace object
       return new Directory(path_);
     if (is_reg())
       return new File(path_);
-    throw PrimitiveError
-      (SYMBOL(open),
-       str(format("Unsupported file type: %s.") % path_));
+    runner::raise_primitive_error(str(format("Unsupported file type: %s.") %
+				      path_));
   }
 
   // Conversions
@@ -228,134 +195,11 @@ namespace object
   | Details |
   `--------*/
 
-  void Path::handle_any_error(const libport::Symbol& msg)
+  void Path::handle_any_error()
   {
-    handle_hard_error(msg);
-    handle_access_error(msg);
-    handle_perm_error(msg);
-    unhandled_error(msg);
+    runner::raise_primitive_error(str(format("%1%: %2%") %
+				      strerror(errno) % path_));
   }
-
-  void Path::handle_hard_error(const libport::Symbol& msg)
-  {
-    switch (errno)
-    {
-      case EBADF:
-        // Theoretically impossible.
-        throw PrimitiveError
-          (msg,
-           "Unhandled error: bad file descriptor");
-      case EFAULT:
-        // Theoretically impossible.
-        throw PrimitiveError
-          (msg,
-           "Unhandled error: bad address");
-      case EFBIG:
-        // Theoretically impossible, since O_LARGEFILE is always used
-        throw PrimitiveError
-          (msg,
-           str(format("Unhandled error: file too big: %s.") % path_));
-      case EINTR:
-        // Theoretically impossible.
-        throw PrimitiveError
-          (msg,
-           "Unhandled error: file opening interrupted by a signal");
-      case ELOOP:
-        throw PrimitiveError
-          (msg,
-           str(format("Too many symbolic link: %s.") % path_));
-      case EMFILE:
-        throw PrimitiveError
-          (msg,
-           str(format("The kernel has reached"
-                             " its maximum opened file limit: %s.") % path_));
-      case ENAMETOOLONG:
-        throw PrimitiveError
-          (msg,
-           str(format("File name too long: %s.") % path_));
-
-      case ENFILE:
-        throw PrimitiveError
-          (msg,
-           str(format("The system has reached"
-                             " its maximum opened file limit: %s.") % path_));
-      case ENOMEM:
-        // Out of memory.
-        throw std::bad_alloc();
-      case ENOSPC:
-        throw PrimitiveError
-          (msg,
-           str(format("No space left on device: %s.") % path_));
-      default:
-        // Nothing
-        break;
-    }
-  }
-
-  void Path::handle_access_error(const libport::Symbol& msg)
-  {
-    switch (errno)
-    {
-      case EACCES:
-        throw PrimitiveError
-          (msg, str(format("Permission denied "
-                                  "for a parent directory: %s.")
-                    % path_));
-      case ENOENT:
-        throw PrimitiveError
-          (msg, str(format("No such file or directory: %s.")
-                    % path_));
-      case ENOTDIR:
-        throw PrimitiveError
-          (msg, str(format("One component is not a directory: %s.")
-                    % path_));
-      default:
-        // Nothing
-        break;
-    }
-  }
-
-  void Path::handle_perm_error(const libport::Symbol& msg)
-  {
-    switch (errno)
-    {
-      case EEXIST:
-        throw PrimitiveError
-          (msg, str(format("File already exists: %s.")
-                    % path_));
-      case EISDIR:
-        throw PrimitiveError
-          (msg, str(format("File is a directory: %s.")
-                    % path_));
-      case EROFS:
-        throw PrimitiveError
-          (msg, str(format("File is on a read only file-system: %s.")
-                    % path_));
-      case ETXTBSY:
-        throw PrimitiveError
-          (msg, str(format("File is currently being executed: %s.")
-                    % path_));
-      case ENODEV:
-      case ENXIO:
-        throw PrimitiveError
-          (msg, str(format("File is an unopened FIFO "
-                                  "or an orphaned device: %s.")
-                    % path_));
-      default:
-        // Nothing
-        break;
-    }
-  }
-
-  void Path::unhandled_error(const libport::Symbol& msg)
-  {
-    throw PrimitiveError
-      (msg,
-       str(format("Unhandled errno for stat(2): %i (%s).")
-           % errno
-           % strerror(errno)));
-  }
-
 
   /*---------------.
   | Binding system |

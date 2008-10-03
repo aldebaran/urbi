@@ -24,6 +24,7 @@
 #include <object/string.hh>
 
 #include <runner/call.hh>
+#include <runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -129,7 +130,7 @@ namespace object
     const rList& arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1
         || arg1->value_get().front() != args[0])
-      throw PrimitiveError(SYMBOL(apply), "first argument must be [this]");
+      runner::raise_primitive_error("first argument must be `[this]'");
     return arg1->value_get().front();
   }
 

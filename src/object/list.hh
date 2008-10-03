@@ -23,7 +23,7 @@ namespace object
     value_type& value_get();
 
     /// Check that the function fun is using a valid index, and return it.
-    size_t index(const rFloat& idx, const libport::Symbol fun) const;
+    size_t index(const rFloat& idx) const;
 
     // Urbi method
     rObject back      ();
