@@ -101,14 +101,9 @@ namespace object
   std::string
   as_printable (rObject from)
   {
-    if (from == String::proto)
-      return as_string(from);
-    else
-    {
-      type_check(from, String::proto);
-      const std::string& str = from->as<String>()->value_get();
-      return '"' + string_cast(libport::escape(str)) + '"';
-    }
+    type_check(from, String::proto);
+    const std::string& str = from->as<String>()->value_get();
+    return '"' + string_cast(libport::escape(str)) + '"';
   }
 
   std::string
