@@ -11,15 +11,20 @@ namespace runner
   using namespace object;
 
   void
-  raise_urbi(const rObject& exn,
+  raise_urbi(libport::Symbol exn_name,
 	     rObject arg1,
 	     rObject arg2,
 	     rObject arg3,
 	     rObject arg4)
   {
+    assert(global_class->slot_has(exn_name));
+    const rObject& exn = global_class->slot_get(exn_name);
     Runner& r = ::urbiserver->getCurrentRunner();
     objects_type args;
-    args.push_back(arg1);
+    if (arg1)
+      args.push_back(arg1);
+    else
+      args.push_back(to_urbi(r.innermost_call_get()));
     args.push_back(arg2);
     if (arg3)
       args.push_back(arg3);
@@ -32,10 +37,9 @@ namespace runner
   void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
-    raise_urbi(global_class->slot_get(SYMBOL(LookupError)),
+    raise_urbi(SYMBOL(LookupError),
 	       to_urbi(msg),
 	       obj);
-    pabort("Unreachable");
   }
 
 
@@ -43,12 +47,10 @@ namespace runner
   raise_arity_error(unsigned effective,
                     unsigned expected)
   {
-    Runner& r = ::urbiserver->getCurrentRunner();
-    raise_urbi(global_class->slot_get(SYMBOL(ArityError)),
-	       to_urbi(r.innermost_call_get()),
+    raise_urbi(SYMBOL(ArityError),
+	       0,
 	       to_urbi(effective),
 	       to_urbi(expected));
-    pabort("Unreachable");
   }
 
   void
@@ -56,13 +58,11 @@ namespace runner
                     unsigned minimum,
                     unsigned maximum)
   {
-    Runner& r = ::urbiserver->getCurrentRunner();
-    raise_urbi(global_class->slot_get(SYMBOL(ArityError)),
-	       to_urbi(r.innermost_call_get()),
+    raise_urbi(SYMBOL(ArityError),
+	       0,
 	       to_urbi(effective),
 	       to_urbi(minimum),
 	       to_urbi(maximum));
-    pabort("Unreachable");
   }
 
   void
@@ -70,9 +70,8 @@ namespace runner
                             rObject effective,
                             rObject expected)
   {
-    Runner& r = ::urbiserver->getCurrentRunner();
-    raise_urbi(global_class->slot_get(SYMBOL(ArgumentTypeError)),
-	       to_urbi(r.innermost_call_get()),
+    raise_urbi(SYMBOL(ArgumentTypeError),
+	       0,
 	       to_urbi(idx),
 	       expected,
 	       effective);

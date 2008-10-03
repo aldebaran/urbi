@@ -7,8 +7,12 @@
 
 namespace runner
 {
+  /// Raise an URBI exception designed by its name. A lookup will
+  /// be performed in the "Global" object.
+  /// If arg1 is 0, the innermost method will be looked up in the
+  /// current runner and used instead.
   ATTRIBUTE_NORETURN
-  void raise_urbi(const object::rObject& exn,
+  void raise_urbi(libport::Symbol exn_name,
 		  object::rObject arg1,
 		  object::rObject arg2,
 		  object::rObject arg3 = 0,
