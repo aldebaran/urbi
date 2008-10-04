@@ -183,16 +183,6 @@ namespace scheduler
     /// may be raised from here if the job has been blocked by a tag.
     void check_for_pending_exception();
 
-    /// Establish a permanent bi-directional link between two jobs.
-    ///
-    /// \param other The job to link to.
-    void link(rJob other);
-
-    /// Determine whether this job is linked to any other job
-    ///
-    /// \return Whether this job is linked to at least one job
-    bool linked();
-
     /// Get the job name
     ///
     /// \return The job name as set from the constructor.
@@ -315,13 +305,26 @@ namespace scheduler
     virtual void terminate_cleanup();
 
     /// Number of jobs created and not yet destroyed.
+    ///
+    /// \return The number of jobs.
     static unsigned int alive_jobs();
+
+    /// Set our parent.
+    ///
+    /// \param parent Our parent job, which will receive any exception
+    ///        we get.
+    void parent_set(const rJob& parent);
+
+    /// Do we have a parent?
+    ///
+    /// \return True if we have a parent.
+    bool child_job() const;
 
   protected:
 
     /// Must be implemented to do something useful. If an exception is
-    /// raised, it will be lost, but before that, it will be propagated
-    // into linked jobs.
+    /// raised, it will be propagated to our parent if we have one or
+    /// lost otherwise.
     virtual void work() = 0;
 
   private:
@@ -374,12 +377,6 @@ namespace scheduler
     /// Current priority.
     prio_type prio_;
 
-    /// List of jobs having a link to this one. If the current job
-    /// terminates with an exception, any linked job will throw the
-    /// exception as well when they resume. This must be a list, as
-    /// we may remove elements while we are iterating over it.
-    std::list<rJob> links_;
-
     /// Is the current job side-effect free?
     bool side_effect_free_;
 
@@ -388,6 +385,9 @@ namespace scheduler
 
     /// The exception being propagated if any.
     kernel::exception_ptr current_exception_;
+
+    /// Our parent if any.
+    rJob parent_;
 
     /// Number of jobs created and not yet destroyed.
     static unsigned int alive_jobs_;
@@ -414,8 +414,19 @@ namespace scheduler
     COMPLETE_EXCEPTION(StopException)
   };
 
+  /// This exception encapsulates another one, sent by a child job.
+  struct ChildException : public SchedulerException
+  {
+    ChildException(const kernel::exception&);
+    ADD_FIELD(kernel::exception_ptr, child_exception)
+    COMPLETE_EXCEPTION(ChildException)
+  };
+
   /// State names to string, for debugging purpose.
   const char* state_name(job_state);
+
+  /// Terminate all jobs present in container and empty it.
+  void terminate_jobs(jobs_type& jobs);
 
 } // namespace scheduler
 

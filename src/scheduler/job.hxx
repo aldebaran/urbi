@@ -123,19 +123,6 @@ namespace scheduler
     return side_effect_free_;
   }
 
-  inline void
-  Job::link(rJob other)
-  {
-    links_.push_back(other);
-    other->links_.push_back(this);
-  }
-
-  inline bool
-  Job::linked()
-  {
-    return !links_.empty();
-  }
-
   inline const libport::Symbol&
   Job::name_get() const
   {
@@ -265,6 +252,18 @@ namespace scheduler
     return prio_;
   }
 
+  inline void
+  Job::parent_set(const rJob& parent)
+  {
+    parent_ = parent;
+  }
+
+  inline bool
+  Job::child_job() const
+  {
+    return parent_;
+  }
+
   inline std::ostream&
   operator<< (std::ostream& o, const Job& j)
   {
@@ -286,6 +285,12 @@ namespace scheduler
     }
 #undef CASE
     return "<unknown state>";
+  }
+
+  inline
+  ChildException::ChildException(const kernel::exception& exc)
+  {
+    child_exception_ = exc.clone();
   }
 
 } // namespace scheduler

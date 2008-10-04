@@ -48,12 +48,9 @@ namespace scheduler
     }
     catch (const kernel::exception& e)
     {
-      // Signal the exception to each linked job in turn.
-      foreach (const rJob& job, links_)
-      {
-	job->links_.remove(this);
-	job->async_throw(e);
-      }
+      // Rethrow the exception into the parent job if it exists.
+      if (parent_)
+	parent_->async_throw(ChildException(e));
     }
     catch (...)
     {
@@ -77,10 +74,6 @@ namespace scheduler
   void
   Job::terminate_cleanup()
   {
-    // Remove pending links.
-    foreach (const rJob& job, links_)
-      job->links_.remove(this);
-    links_.clear();
     // Wake-up waiting jobs.
     foreach (const rJob& job, to_wake_up_)
       if (!job->terminated())
@@ -226,4 +219,12 @@ namespace scheduler
     return alive_jobs_;
   }
 
-}
+  void
+  terminate_jobs(jobs_type& jobs)
+  {
+    foreach (rJob& job, jobs)
+      job->terminate_now();
+    jobs.clear();
+  }
+
+} // namespace scheduler

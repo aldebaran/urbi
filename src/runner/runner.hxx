@@ -19,7 +19,6 @@ namespace runner
 		 const libport::Symbol& name)
     : scheduler::Job(sched, name)
     , lobby_(lobby)
-    , fork_point_()
   {
   }
 
@@ -27,7 +26,6 @@ namespace runner
   Runner::Runner(const Runner& model, const libport::Symbol& name)
     : scheduler::Job(model, name)
     , lobby_(model.lobby_)
-    , fork_point_()
   {
   }
 
@@ -55,22 +53,6 @@ namespace runner
   Runner::lobby_set(rLobby lobby)
   {
     lobby_ = lobby;
-  }
-
-
-  LIBPORT_SPEED_INLINE
-  scheduler::rTag
-  Runner::fork_point_get() const
-  {
-    return fork_point_;
-  }
-
-  LIBPORT_SPEED_INLINE
-  void
-  Runner::fork_point_set(scheduler::rTag fork)
-  {
-    assert(fork);
-    fork_point_ = fork;
   }
 
 } // namespace runner

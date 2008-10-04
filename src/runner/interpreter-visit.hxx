@@ -59,21 +59,13 @@ namespace runner
   {
     // Collect all subrunners
     scheduler::jobs_type jobs;
-    scheduler::rTag tag = new scheduler::Tag(SYMBOL(AMPERSAND));
-
-    size_t result_depth = tags_get().size();
-
-    Finally finally;
-    apply_tag(tag, &finally);
 
     // Create separate runners for every child but the first
     foreach (const ast::rConstExp& child,
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
       Interpreter* job = new Interpreter(*this, operator()(child.get()));
-      job->fork_point_set(tag);
-      // Propagate errors from subrunners.
-      link(job);
+      job->parent_set(this);
       jobs.push_back(job);
       job->start_job();
     }
@@ -88,23 +80,14 @@ namespace runner
       object::objects_type args;
       // FIXME: This is a closure, it won't use its 'this', but this is
       // gory.
-      try
-      {
-        apply_urbi(rObject(), code, SYMBOL(), args, 0);
-      }
-      catch (object::UrbiException& e)
-      {
-        tag->stop(scheduler_get(), e);
-      }
-
-      // Wait for all other jobs to terminate
+      apply_urbi(rObject(), code, SYMBOL(), args, 0);
+      // Wait for all other jobs to terminate.
       yield_until_terminated(jobs);
     }
-    catch (scheduler::StopException& e)
+    catch (const scheduler::ChildException& ce)
     {
-      REWIND_STOP(result_depth);
-      // Rethrow the linked exception
-      throw boost::any_cast<object::UrbiException>(e.payload_get());
+      // If a child caused us to die, then throw the encapsulated exception.
+      kernel::rethrow(ce.child_exception_get());
     }
 
     return object::void_class;
@@ -283,16 +266,15 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
-    Finally finally;
-
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
 
+    // We want to terminate the jobs in the list
+    // when leaving this scope.
+    Finally finally(bind(&scheduler::terminate_jobs, boost::ref(runners)));
+
     // In case we're empty, {} evaluates to void.
     rObject res = object::void_class;
-
-    size_t tag_depth = tags_get().size();
-    scheduler::rTag tag;
 
     bool tail = false;
     try
@@ -315,20 +297,15 @@ namespace runner
         if (stmt && stmt->flavor_get() == ast::flavor_comma)
         {
           // The new runners are attached to the same tags as we are.
-          Interpreter* subrunner = new Interpreter(*this, operator()(exp));
+	  scheduler::rJob subrunner = new Interpreter(*this, operator()(exp));
           // If the subrunner throws an exception, propagate it here ASAP, unless
-          // we are at the top level.
+          // we are at the top level. It we are at the toplevel, we do not even
+	  // have to register it as a subrunner.
           if (!e->toplevel_get())
-          {
-            if (!tag)
-            {
-              tag = new scheduler::Tag(SYMBOL(AMPERSAND));
-              apply_tag(tag, &finally);
-            }
-            link(subrunner);
-            subrunner->fork_point_set(tag);
-          }
-          runners.push_back(subrunner);
+	  {
+	    subrunner->parent_set(this);
+	    runners.push_back(subrunner);
+	  }
           subrunner->start_job ();
         }
         else
@@ -362,30 +339,11 @@ namespace runner
           catch (object::Exception& ue)
           {
             propagate_error_(ue, c->location_get());
-            // If the Nary is not the toplevel one, all subrunners must be finished when
-            // the runner exits the Nary node. However, it we have a scopeTag, we must
-            // issue a "stop" which may interrupt subrunners.
-#define CLEANUP                                                 \
-            if (!e->toplevel_get() && !runners.empty())         \
-            {                                                   \
-              const scheduler::rTag& tag = scope_tag_get();     \
-              if (tag)                                          \
-                tag->stop(scheduler_get(), object::void_class); \
-              yield_until_terminated(runners);                  \
-            }
 
-            // Kill subrunners if not at top-level
-            if (!e->toplevel_get())
-            {
-              foreach(scheduler::rJob& job, runners)
-                job->terminate_now();
-            }
-            CLEANUP
-
-              if (e->toplevel_get())
-                show_error_(ue);
-              else
-                throw;
+	    if (e->toplevel_get())
+	      show_error_(ue);
+	    else
+	      throw;
           }
           // Catch and print unhandled exceptions
           catch (object::UrbiException& exn)
@@ -397,18 +355,15 @@ namespace runner
           }
         }
       }
+      // If we get a scope tag, stop the runners tagged with it.
+      if (const scheduler::rTag& tag = scope_tag_get())
+	tag->stop(scheduler_get(), object::void_class);
+      yield_until_terminated(runners);
     }
-    catch (scheduler::StopException& e)
+    catch (const scheduler::ChildException& ce)
     {
-      if (!tag)
-        throw;
-      REWIND_STOP(tag_depth);
-      // Rethrow the linked exception
-      throw boost::any_cast<object::UrbiException>(e.payload_get());
+      kernel::rethrow(ce.child_exception_get());
     }
-
-    CLEANUP
-#undef CLEANUP
 
     return res;
   }

@@ -59,9 +59,18 @@ namespace object
     // So that it will resist to the call to yield_until_terminated,
     // and will be reclaimed at the end of the scope.
     scheduler::rJob job = sub;
-    run.link(job);
+    sub->parent_set(&r);
     sub->start_job();
-    run.yield_until_terminated(*job);
+    try
+    {
+      run.yield_until_terminated(*job);
+    }
+    catch (const scheduler::ChildException& ce)
+    {
+      // Kill the sub-job and propagate.
+      job->terminate_now();
+      kernel::rethrow(ce.child_exception_get());
+    }
     return sub->result_get();
   }
 
@@ -249,7 +258,7 @@ namespace object
   static rObject
   system_class_spawn(runner::Runner& r, objects_type args)
   {
-    check_arg_count(args.size() - 1, 1, 2);
+    check_arg_count(args.size() - 1, 1);
     rObject arg1 = args[1]->as<Code>();
     assert(arg1);
 
@@ -258,12 +267,6 @@ namespace object
 			       rObject(arg1));
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
-
-    if (args.size () == 3)
-    {
-      if (is_true (args[2], SYMBOL(spawn)))
-	r.link (new_runner);
-    }
 
     new_runner->start_job ();
 

@@ -166,12 +166,6 @@ namespace object
   List::each_and(runner::Runner& r, const rObject& f)
   {
     scheduler::jobs_type jobs;
-    scheduler::rTag tag = new scheduler::Tag(SYMBOL(each_AMPERSAND));
-
-    size_t result_depth = r.tags_get().size();
-
-    libport::Finally finally;
-    r.apply_tag(tag, &finally);
 
     // Beware of iterations that modify the list in place: make a
     // copy.
@@ -180,11 +174,10 @@ namespace object
     {
       object::objects_type args;
       args.push_back(o);
-      runner::Interpreter* job =
+      scheduler::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                 f, SYMBOL(each), args);
-      job->fork_point_set(tag);
-      r.link(job);
+      job->parent_set(&r);
       job->start_job();
       jobs.push_back(job);
     }
@@ -193,13 +186,11 @@ namespace object
     {
       r.yield_until_terminated(jobs);
     }
-    catch (const scheduler::StopException& se)
+    catch (const scheduler::ChildException& ce)
     {
-      // If the stop is not on tag, propagate it.
-      if (se.depth_get() < result_depth)
-	throw;
-      // Extract the exception from the payload and propagate it.
-      throw boost::any_cast<object::UrbiException>(se.payload_get());
+      // Stop the subrunners and repropagate the exception.
+      scheduler::terminate_jobs(jobs);
+      kernel::rethrow(ce.child_exception_get());
     }
   }
 

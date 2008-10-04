@@ -172,9 +172,10 @@ namespace runner
     }
     catch (object::UrbiException& exn)
     {
-      if (scheduler::rTag fork = fork_point_get())
-      // This runner has a parent, rethrow the exception at fork point
-        fork->stop(scheduler_get(), exn);
+      // If this runner has a parent, let the exception go through
+      // so that it will be handled by Job::run().
+      if (child_job())
+	throw;
       else
       // This is a detached runner, show the error.
       {
