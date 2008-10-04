@@ -12,13 +12,6 @@ namespace object
 {
 
   inline
-  RedefinitionError::RedefinitionError (libport::Symbol slot)
-    : Exception ((boost::format ("slot redefinition: %1%")
-		      % slot.name_get()).str())
-  {
-  }
-
-  inline
   StackExhaustedError::StackExhaustedError(const std::string& msg)
     : Exception(msg)
   {

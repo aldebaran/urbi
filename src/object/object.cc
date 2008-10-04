@@ -12,6 +12,7 @@
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 
+#include <object/cxx-conversions.hh>
 #include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/global.hh>
@@ -99,7 +100,7 @@ namespace object
   Object::slot_set(const key_type& k, const rObject& o)
   {
     if (!slots_.set(this, k, o))
-      throw RedefinitionError(k);
+      runner::raise_urbi(SYMBOL(RedefinitionError), to_urbi(k));
     return *this;
   }
 

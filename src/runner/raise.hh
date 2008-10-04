@@ -15,7 +15,7 @@ namespace runner
   ATTRIBUTE_NORETURN
   void raise_urbi(libport::Symbol exn_name,
 		  object::rObject arg1,
-		  object::rObject arg2,
+		  object::rObject arg2 = 0,
 		  object::rObject arg3 = 0,
 		  object::rObject arg4 = 0);
 

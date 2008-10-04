@@ -107,10 +107,10 @@ class Global.ArgumentTypeError: TypeError
   var index;
   var routine;
 
-  function init(routine, idx, exp, eff)
+  function init(rout, idx, exp, eff)
   {
     TypeError.getSlot("init").apply([this, exp, eff]) |
-    routine = routine |
+    routine = rout |
     index = idx |
     message = "%s: unexpected %s for argument %s, expected a %s" %
     [routine, eff.asPrintable, idx, exp.type]
@@ -165,5 +165,17 @@ class Global.LookupError: Exception
     if (min > 2 || (m.size < 3 && closest.size < 3 && m.distance(closest) > 1))
       return nil |
     closest
+  }
+};
+
+class Global.RedefinitionError: Exception
+{
+  var slot;
+
+  function init(s)
+  {
+    slot = s |
+    var explanation = "slot redefinition: %s" % [s] |
+    Exception.getSlot("init").apply([this, explanation])
   }
 };

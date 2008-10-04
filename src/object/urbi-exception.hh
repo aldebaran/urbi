@@ -87,13 +87,6 @@ namespace object
     COMPLETE_EXCEPTION(Exception)
   };
 
-  /// Explicit for slots redefined.
-  struct RedefinitionError: public Exception
-  {
-    explicit RedefinitionError (libport::Symbol slot);
-    COMPLETE_EXCEPTION (RedefinitionError)
-  };
-
   /// Exception raised when the stack space in a task is almost exhausted
   struct StackExhaustedError: public Exception
   {

@@ -25,7 +25,8 @@ namespace runner
       args.push_back(arg1);
     else
       args.push_back(to_urbi(r.innermost_call_get()));
-    args.push_back(arg2);
+    if (arg2)
+      args.push_back(arg2);
     if (arg3)
       args.push_back(arg3);
     if (arg4)
