@@ -46,12 +46,6 @@ namespace object
   {
   }
 
-  inline
-  InternalError::InternalError(const std::string& msg)
-    : Exception(msg)
-  {
-  }
-
   inline bool
   Exception::was_displayed() const
   {

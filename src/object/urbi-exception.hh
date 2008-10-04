@@ -126,15 +126,6 @@ namespace object
     COMPLETE_EXCEPTION (SchedulingError);
   };
 
-  /** Exception used for a path which should be impossible to take,
-   * for example when a template method doesn't make sense.
-   */
-  struct InternalError: public Exception
-  {
-    InternalError (const std::string& msg);
-    COMPLETE_EXCEPTION (InternalError);
-  };
-
 } // namespace object
 
 # include <object/urbi-exception.hxx>
