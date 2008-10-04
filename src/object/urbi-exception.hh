@@ -135,14 +135,6 @@ namespace object
     COMPLETE_EXCEPTION (InternalError);
   };
 
-  /** Exception used when there is a parser/binder/flower/... error.
-   */
-  struct ParserError: public Exception
-  {
-    ParserError(const ast::loc&, const std::string& msg);
-    COMPLETE_EXCEPTION(ParserError);
-  };
-
 } // namespace object
 
 # include <object/urbi-exception.hxx>

@@ -52,12 +52,6 @@ namespace object
   {
   }
 
-  inline
-  ParserError::ParserError(const ast::loc& loc, const std::string& msg)
-    : Exception(msg, loc)
-  {
-  }
-
   inline bool
   Exception::was_displayed() const
   {
