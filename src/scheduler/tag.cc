@@ -30,9 +30,8 @@ namespace scheduler
       return payload_;
     else if (parent_)
       return parent_->payload_get();
-    else
-      throw object::SchedulingError
-	("attempt to retrieve payload of an unblocked tag");
+    // This is an internal error and can never happen.
+    abort();
   }
 
   void
