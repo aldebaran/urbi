@@ -23,6 +23,15 @@ class Global.Exception
   };
 };
 
+class Global.ImplicitTagComponentError: Exception
+{
+  function init()
+  {
+    Exception.getSlot("init").apply([this,
+                                     "illegal component in implicit tag"])
+  }
+};
+
 class Global.PrimitiveError: Exception
 {
   var routine;

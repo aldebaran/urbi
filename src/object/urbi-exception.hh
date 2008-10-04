@@ -109,14 +109,6 @@ namespace object
     COMPLETE_EXCEPTION (WrongArgumentType)
   };
 
-  /** Exception used when building an implicit tag name (k1 style).
-   */
-  struct ImplicitTagComponentError: public Exception
-  {
-    ImplicitTagComponentError (const ast::loc&);
-    COMPLETE_EXCEPTION (ImplicitTagComponentError);
-  };
-
   /** Exception used when a non-interruptible block of code tries to
    * get interrupted or blocked.
    */

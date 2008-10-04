@@ -26,6 +26,7 @@
 
 #include <runner/call.hh>
 #include <runner/interpreter.hh>
+#include <runner/raise.hh>
 
 #include <parser/uparser.hh>
 
@@ -45,7 +46,7 @@ namespace runner
     {
       ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c || c->arguments_get())
-        throw object::ImplicitTagComponentError(e->location_get());
+	runner::raise_urbi(SYMBOL(ImplicitTagComponentError));
       res.push_front (c->name_get());
       e = c->target_get();
     }

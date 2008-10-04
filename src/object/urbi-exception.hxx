@@ -35,12 +35,6 @@ namespace object
   }
 
   inline
-  ImplicitTagComponentError::ImplicitTagComponentError(const ast::loc& l)
-    : Exception("illegal component for implicit tag", l)
-  {
-  }
-
-  inline
   SchedulingError::SchedulingError(const std::string& msg)
     : Exception(msg)
   {
