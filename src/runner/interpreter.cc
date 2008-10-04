@@ -19,6 +19,7 @@
 #include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
+#include <object/cxx-conversions.hh>
 #include <object/global.hh>
 #include <object/lobby.hh>
 #include <object/tag.hh>
@@ -187,6 +188,12 @@ namespace runner
         show_exception_(exn);
       }
     }
+  }
+
+  void
+  Interpreter::scheduling_error(std::string msg)
+  {
+    raise_urbi(SYMBOL(SchedulingError), object::to_urbi(msg));
   }
 
   object::rObject

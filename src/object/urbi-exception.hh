@@ -87,13 +87,6 @@ namespace object
     COMPLETE_EXCEPTION(Exception)
   };
 
-  /// Exception raised when the stack space in a task is almost exhausted
-  struct StackExhaustedError: public Exception
-  {
-    explicit StackExhaustedError (const std::string& msg);
-    COMPLETE_EXCEPTION (StackExhaustedError)
-  };
-
   /** Exception for type mismatch in a primitive usage.
    * \param formal      Expected type.
    * \param effective   Real type.
@@ -107,15 +100,6 @@ namespace object
     WrongArgumentType(const libport::Symbol fun);
 
     COMPLETE_EXCEPTION (WrongArgumentType)
-  };
-
-  /** Exception used when a non-interruptible block of code tries to
-   * get interrupted or blocked.
-   */
-  struct SchedulingError: public Exception
-  {
-    SchedulingError (const std::string& msg);
-    COMPLETE_EXCEPTION (SchedulingError);
   };
 
 } // namespace object

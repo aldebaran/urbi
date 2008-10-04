@@ -12,12 +12,6 @@ namespace object
 {
 
   inline
-  StackExhaustedError::StackExhaustedError(const std::string& msg)
-    : Exception(msg)
-  {
-  }
-
-  inline
   WrongArgumentType::WrongArgumentType(const std::string& formal,
                                        const std::string& effective,
                                        const libport::Symbol fun)
@@ -31,12 +25,6 @@ namespace object
   inline
   WrongArgumentType::WrongArgumentType (const libport::Symbol fun)
     : Exception("unexpected void", fun)
-  {
-  }
-
-  inline
-  SchedulingError::SchedulingError(const std::string& msg)
-    : Exception(msg)
   {
   }
 

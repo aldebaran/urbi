@@ -18,35 +18,37 @@ namespace scheduler
 
   inline
   Job::Job(Scheduler& scheduler, const libport::Symbol& name)
-    : RefCounted(),
-      state_(to_start),
-      frozen_since_(0),
-      time_shift_(0),
-      scheduler_(scheduler),
-      name_(name.empty() ? libport::Symbol::fresh("job") : name),
-      coro_(coroutine_new()),
-      non_interruptible_(false),
-      prio_(UPRIO_DEFAULT),
-      side_effect_free_(false),
-      pending_exception_(0)
+    : RefCounted()
+    , state_(to_start)
+    , frozen_since_(0)
+    , time_shift_(0)
+    , scheduler_(scheduler)
+    , name_(name.empty() ? libport::Symbol::fresh("job") : name)
+    , coro_(coroutine_new())
+    , non_interruptible_(false)
+    , prio_(UPRIO_DEFAULT)
+    , side_effect_free_(false)
+    , pending_exception_(0)
+    , check_stack_space_(true)
   {
     alive_jobs_++;
   }
 
   inline
   Job::Job(const Job& model, const libport::Symbol& name)
-  :   RefCounted(),
-      state_(to_start),
-      frozen_since_(0),
-      time_shift_(model.time_shift_),
-      scheduler_(model.scheduler_),
-      name_(name.empty() ? libport::Symbol::fresh(model.name_get()) : name),
-      coro_(coroutine_new()),
-      non_interruptible_(false),
-      tags_(model.tags_),
-      prio_(UPRIO_DEFAULT),
-      side_effect_free_(false),
-      pending_exception_(0)
+    : RefCounted()
+    , state_(to_start)
+    , frozen_since_(0)
+    , time_shift_(model.time_shift_)
+    , scheduler_(model.scheduler_)
+    , name_(name.empty() ? libport::Symbol::fresh(model.name_get()) : name)
+    , coro_(coroutine_new())
+    , non_interruptible_(false)
+    , tags_(model.tags_)
+    , prio_(UPRIO_DEFAULT)
+    , side_effect_free_(false)
+    , pending_exception_(0)
+    , check_stack_space_(true)
   {
     alive_jobs_++;
     recompute_prio();
@@ -89,8 +91,8 @@ namespace scheduler
   Job::yield_until(libport::utime_t deadline)
   {
     if (non_interruptible_)
-      throw object::SchedulingError("attempt to sleep in"
-                                    " non-interruptible code");
+      scheduling_error
+	("attempt to sleep in non-interruptible code");
 
     state_ = sleeping;
     deadline_ = deadline;
@@ -142,10 +144,14 @@ namespace scheduler
   }
 
   inline void
-  Job::check_stack_space() const
+  Job::check_stack_space()
   {
-    if (coroutine_stack_space_almost_gone(coro_))
-      throw object::StackExhaustedError("stack space exhausted");
+    if (check_stack_space_ &&
+	coroutine_stack_space_almost_gone(coro_))
+    {
+      libport::Finally finally(libport::scoped_set(check_stack_space_, false));
+      scheduling_error("stack space exhausted");
+    }
   }
 
   inline job_state

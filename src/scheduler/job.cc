@@ -108,7 +108,7 @@ namespace scheduler
   Job::yield_until_terminated(Job& other)
   {
     if (non_interruptible_ && this != &other)
-      throw object::SchedulingError
+      scheduling_error
 	("dependency on other task in non-interruptible code");
 
     if (!other.terminated())
@@ -143,7 +143,7 @@ namespace scheduler
   Job::yield_until_things_changed()
   {
     if (non_interruptible_ && !frozen())
-      throw object::SchedulingError
+      scheduling_error
 	("attempt to wait for condition changes in non-interruptible code");
 
     state_ = waiting;
@@ -238,6 +238,12 @@ namespace scheduler
   Job::alive_jobs()
   {
     return alive_jobs_;
+  }
+
+  void
+  Job::scheduling_error(std::string)
+  {
+    abort();
   }
 
   void

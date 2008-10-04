@@ -32,6 +32,8 @@ class Global.ImplicitTagComponentError: Exception
   }
 };
 
+class Global.SchedulingError: Exception {};
+
 class Global.PrimitiveError: Exception
 {
   var routine;

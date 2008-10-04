@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include <scheduler/scheduler.hh>
 #include <scheduler/tag.hh>
 

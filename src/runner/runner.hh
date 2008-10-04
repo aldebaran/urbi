@@ -129,9 +129,6 @@ namespace runner
 				       const libport::Symbol& msg,
 				       const object::objects_type& args) = 0;
 
-    /// Do the actual work.  Implementation of \c Job::run.
-    virtual void work() = 0;
-
     // Ensure proper cleanup.
     virtual void terminate_cleanup();
 

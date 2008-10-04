@@ -16,7 +16,6 @@
 # include <libport/utime.hh>
 
 # include <object/symbols.hh>
-# include <object/urbi-exception.hh>
 
 # include <scheduler/coroutine.hh>
 # include <scheduler/fwd.hh>
@@ -190,7 +189,7 @@ namespace scheduler
 
     /// Throw an exception if the stack space for this job is near
     /// exhaustion.
-    void check_stack_space() const;
+    void check_stack_space();
 
     /// Is the job frozen?
     ///
@@ -329,6 +328,13 @@ namespace scheduler
     /// lost otherwise.
     virtual void work() = 0;
 
+    /// May be overriden. Called if a scheduling error is detected
+    /// during the execution course of this job. The default
+    /// implementation calls abort().
+    ///
+    /// \param msg The explanation of the scheduling error.
+    virtual void scheduling_error(std::string msg = "");
+
   private:
     /// Current job state, to be manipulated only from the job and the
     /// scheduler.
@@ -396,6 +402,9 @@ namespace scheduler
 
     /// Terminate child and remove it from our children list.
     void terminate_child(const rJob& child);
+
+    /// Check stack space from time to time.
+    bool check_stack_space_;
 
     /// Number of jobs created and not yet destroyed.
     static unsigned int alive_jobs_;
