@@ -165,6 +165,7 @@ namespace object
   void
   List::each_and(runner::Runner& r, const rObject& f)
   {
+    libport::Finally finally;
     scheduler::jobs_type jobs;
 
     // Beware of iterations that modify the list in place: make a
@@ -177,7 +178,7 @@ namespace object
       scheduler::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                 f, SYMBOL(each), args);
-      job->parent_set(&r);
+      r.register_child(job, finally);
       job->start_job();
       jobs.push_back(job);
     }
@@ -188,8 +189,6 @@ namespace object
     }
     catch (const scheduler::ChildException& ce)
     {
-      // Stop the subrunners and repropagate the exception.
-      scheduler::terminate_jobs(jobs);
       kernel::rethrow(ce.child_exception_get());
     }
   }

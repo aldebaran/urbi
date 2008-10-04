@@ -59,7 +59,8 @@ namespace object
     // So that it will resist to the call to yield_until_terminated,
     // and will be reclaimed at the end of the scope.
     scheduler::rJob job = sub;
-    sub->parent_set(&r);
+    libport::Finally finally;
+    r.register_child(sub, finally);
     sub->start_job();
     try
     {
@@ -68,7 +69,6 @@ namespace object
     catch (const scheduler::ChildException& ce)
     {
       // Kill the sub-job and propagate.
-      job->terminate_now();
       kernel::rethrow(ce.child_exception_get());
     }
     return sub->result_get();

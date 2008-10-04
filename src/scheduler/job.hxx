@@ -252,12 +252,6 @@ namespace scheduler
     return prio_;
   }
 
-  inline void
-  Job::parent_set(const rJob& parent)
-  {
-    parent_ = parent;
-  }
-
   inline bool
   Job::child_job() const
   {

@@ -309,11 +309,13 @@ namespace scheduler
     /// \return The number of jobs.
     static unsigned int alive_jobs();
 
-    /// Set our parent.
+    /// Register a child.
     ///
-    /// \param parent Our parent job, which will receive any exception
-    ///        we get.
-    void parent_set(const rJob& parent);
+    /// \param child The child job.
+    ///
+    /// \param at_end Children will be automatically terminated
+    ///               when this object gets no longer referenced.
+    void register_child(const rJob& child, libport::Finally& at_end);
 
     /// Do we have a parent?
     ///
@@ -388,6 +390,12 @@ namespace scheduler
 
     /// Our parent if any.
     rJob parent_;
+
+    /// Our children.
+    jobs_type children_;
+
+    /// Terminate child and remove it from our children list.
+    void terminate_child(const rJob& child);
 
     /// Number of jobs created and not yet destroyed.
     static unsigned int alive_jobs_;

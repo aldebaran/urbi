@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/mem_fn.hpp>
 
@@ -67,8 +68,19 @@ namespace scheduler
   void
   Job::terminate_now()
   {
+    // We have to terminate our children as well.
+    foreach (const rJob& child, children_)
+      child->terminate_now();
+    children_.clear();
     if (!terminated())
       async_throw(TerminateException());
+  }
+
+  void
+  Job::terminate_child(const rJob& child)
+  {
+    child->terminate_now();
+    libport::erase_if(children_, boost::lambda::_1 == child);
   }
 
   void
@@ -81,6 +93,15 @@ namespace scheduler
     to_wake_up_.clear();
     state_ = zombie;
     scheduler_.resume_scheduler(this);
+  }
+
+  void
+  Job::register_child(const rJob& child, libport::Finally& at_end)
+  {
+    assert(!child->parent_);
+    child->parent_ = this;
+    at_end << boost::bind(&Job::terminate_child, this, child);
+    children_.push_back(child);
   }
 
   void

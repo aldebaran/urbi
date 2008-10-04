@@ -57,6 +57,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
+    libport::Finally finally;
     // Collect all subrunners
     scheduler::jobs_type jobs;
 
@@ -65,7 +66,7 @@ namespace runner
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
       Interpreter* job = new Interpreter(*this, operator()(child.get()));
-      job->parent_set(this);
+      register_child(job, finally);
       jobs.push_back(job);
       job->start_job();
     }
@@ -269,9 +270,7 @@ namespace runner
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
 
-    // We want to terminate the jobs in the list
-    // when leaving this scope.
-    Finally finally(bind(&scheduler::terminate_jobs, boost::ref(runners)));
+    Finally finally;
 
     // In case we're empty, {} evaluates to void.
     rObject res = object::void_class;
@@ -303,7 +302,7 @@ namespace runner
 	  // have to register it as a subrunner.
           if (!e->toplevel_get())
 	  {
-	    subrunner->parent_set(this);
+	    register_child(subrunner, finally);
 	    runners.push_back(subrunner);
 	  }
           subrunner->start_job ();
