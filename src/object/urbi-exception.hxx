@@ -6,6 +6,8 @@
 #ifndef OBJECT_URBI_EXCEPTION_HXX
 # define OBJECT_URBI_EXCEPTION_HXX
 
+# include <boost/format.hpp>
+
 namespace object
 {
 
