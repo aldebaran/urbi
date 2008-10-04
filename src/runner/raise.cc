@@ -10,6 +10,11 @@ namespace runner
 {
   using namespace object;
 
+  // We can use void as the current method because it cannot be used
+  // as a function call parameter.
+
+  const rObject& raise_current_method = void_class;
+
   void
   raise_urbi(libport::Symbol exn_name,
 	     rObject arg1,
@@ -21,16 +26,30 @@ namespace runner
     const rObject& exn = global_class->slot_get(exn_name);
     Runner& r = ::urbiserver->getCurrentRunner();
     objects_type args;
-    if (arg1)
-      args.push_back(arg1);
-    else
-      args.push_back(to_urbi(r.innermost_call_get()));
-    if (arg2)
-      args.push_back(arg2);
-    if (arg3)
-      args.push_back(arg3);
-    if (arg4)
-      args.push_back(arg4);
+    do
+    {
+      if (arg1)
+      {
+	if (arg1 == raise_current_method)
+	  args.push_back(to_urbi(r.innermost_call_get()));
+	else
+	  args.push_back(arg1);
+      }
+      else
+	break;
+      if (arg2)
+	args.push_back(arg2);
+      else
+	break;
+      if (arg3)
+	args.push_back(arg3);
+      else
+	break;
+      if (arg4)
+	args.push_back(arg4);
+      else
+	break;
+    } while (false);
     r.raise(urbi_call(r, exn, SYMBOL(new), args), true);
     pabort("Unreachable");
   }
@@ -49,7 +68,7 @@ namespace runner
                     unsigned expected)
   {
     raise_urbi(SYMBOL(ArityError),
-	       0,
+	       raise_current_method,
 	       to_urbi(effective),
 	       to_urbi(expected));
   }
@@ -60,7 +79,7 @@ namespace runner
                     unsigned maximum)
   {
     raise_urbi(SYMBOL(ArityError),
-	       0,
+	       raise_current_method,
 	       to_urbi(effective),
 	       to_urbi(minimum),
 	       to_urbi(maximum));
@@ -72,7 +91,7 @@ namespace runner
                             rObject expected)
   {
     raise_urbi(SYMBOL(ArgumentTypeError),
-	       0,
+	       raise_current_method,
 	       to_urbi(idx),
 	       expected,
 	       effective);
@@ -83,7 +102,7 @@ namespace runner
 			  const std::string fmt)
   {
     raise_urbi(SYMBOL(BadIntegerError),
-	       0,
+	       raise_current_method,
 	       to_urbi(fmt),
 	       to_urbi(effective));
   }
@@ -92,7 +111,7 @@ namespace runner
   raise_primitive_error(const std::string message)
   {
     raise_urbi(SYMBOL(PrimitiveError),
-	       0,
+	       raise_current_method,
 	       to_urbi(message));
   }
 
