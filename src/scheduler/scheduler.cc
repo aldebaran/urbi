@@ -14,8 +14,6 @@
 #include <libport/contract.hh>
 #include <libport/foreach.hh>
 
-#include <object/urbi-exception.hh>
-
 #include <scheduler/scheduler.hh>
 #include <scheduler/job.hh>
 
