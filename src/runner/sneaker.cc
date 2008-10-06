@@ -7,7 +7,6 @@
 
 #include <object/lobby.hh>
 #include <object/system.hh>
-#include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
 #include <runner/interpreter.hh>

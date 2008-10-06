@@ -104,7 +104,6 @@ dist_libuobject_la_SOURCES +=			\
   object/tag.hh					\
   object/task.cc				\
   object/task.hh				\
-  object/urbi-exception.cc			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
   object/vector-slots.hh			\

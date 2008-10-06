@@ -3,6 +3,8 @@
 
 # include <vector>
 
+# include <boost/optional.hpp>
+
 # include <object/object.hh>
 
 namespace object

@@ -6,6 +6,7 @@
 #endif
 
 #include <libport/compiler.hh>
+#include <libport/contract.hh>
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
 

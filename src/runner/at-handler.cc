@@ -116,9 +116,9 @@ namespace runner
 	  new_state = object::is_true(urbi_call(*this, job->condition_get(),
 						SYMBOL(eval)));
 	}
-	catch (object::Exception& ue)
+	catch (object::UrbiException& ue)
 	{
-	  show_error_(ue);
+	  show_exception_(ue);
 	  job = jobs_.erase(job);
 	  continue;
 	}

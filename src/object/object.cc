@@ -10,6 +10,7 @@
 #include <boost/lambda/lambda.hpp>
 
 #include <libport/containers.hh>
+#include <libport/contract.hh>
 #include <libport/foreach.hh>
 
 #include <object/cxx-conversions.hh>
@@ -19,6 +20,7 @@
 #include <object/hash-slots.hh>
 #include <object/list.hh>
 #include <object/object.hh>
+#include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
 #include <runner/raise.hh>

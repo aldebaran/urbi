@@ -31,18 +31,8 @@ namespace runner
   inline object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
-    /// Catch exceptions, set the location and backtrace if not
-    /// already done, and rethrow it.
-    try
-    {
-      libport::Finally finally(scoped_set(innermost_node_, e));
-      return e->eval(*this);
-    }
-    catch (object::Exception& x)
-    {
-      propagate_error_(x, e->location_get());
-      throw;
-    }
+    libport::Finally finally(scoped_set(innermost_node_, e));
+    return e->eval(*this);
   }
 
 } // namespace runner

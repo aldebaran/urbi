@@ -5,8 +5,6 @@
 
 #include <flower/flower.hh>
 
-#include <object/urbi-exception.hh>
-
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
 

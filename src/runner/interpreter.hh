@@ -13,6 +13,8 @@
 
 # include <ast/fwd.hh>
 
+# include <object/urbi-exception.hh>
+
 # include <runner/runner.hh>
 # include <runner/stacks.hh>
 
@@ -186,13 +188,11 @@ namespace runner
     virtual libport::Symbol innermost_call_get() const;
 
   protected:
-    void show_error_ (object::Exception& e);
     void show_exception_ (object::UrbiException& ue);
 
   private:
     void init();
     /// Reset result_, set the location and call stack of ue.
-    void propagate_error_(object::Exception& ue, const ast::loc& l);
     rObject apply_urbi (const rObject& target,
                         const rCode& function,
 			const libport::Symbol& msg,

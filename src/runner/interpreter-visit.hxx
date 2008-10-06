@@ -326,15 +326,6 @@ namespace runner
 		lobby_->value_get().connection.new_result(res);
 	    }
           }
-          catch (object::Exception& ue)
-          {
-            propagate_error_(ue, c->location_get());
-
-	    if (e->toplevel_get())
-	      show_error_(ue);
-	    else
-	      throw;
-          }
           // Catch and print unhandled exceptions
           catch (object::UrbiException& exn)
           {

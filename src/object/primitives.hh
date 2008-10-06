@@ -7,7 +7,6 @@
 # define OBJECT_PRIMITIVES_HH
 
 # include <object/object.hh>
-# include <object/urbi-exception.hh>
 # include <object/symbols.hh>
 
   /*-------------------.

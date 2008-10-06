@@ -7,6 +7,8 @@
 # define OBJECT_CODE_CLASS_HH
 
 # include <libport/compiler.hh>
+
+# include <ast/fwd.hh>
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
 

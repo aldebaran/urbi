@@ -122,18 +122,6 @@ namespace runner
   }
 
   void
-  Interpreter::show_error_ (object::Exception& ue)
-  {
-    if (ue.was_displayed())
-      return;
-    ue.set_displayed();
-    std::ostringstream o;
-    o << "!!! " << ue.location_get () << ": " << ue.what ();
-    send_message("error", o.str ());
-    show_backtrace(ue.backtrace_get(), "error");
-  }
-
-  void
   Interpreter::show_exception_ (object::UrbiException& ue)
   {
     rObject str = urbi_call(*this, ue.value_get(), SYMBOL(asString));
@@ -141,18 +129,6 @@ namespace runner
     o << "!!! " << str->as<object::String>()->value_get();
     send_message("error", o.str ());
     show_backtrace(ue.backtrace_get(), "error");
-  }
-
-  void
-  Interpreter::propagate_error_(object::Exception& ue, const ast::loc& l)
-  {
-    // Reset the current result: there was an error so whatever value
-    // it has, it must not be used.
-    result_.reset();
-    if (!ue.location_is_set())
-      ue.location_set(l);
-    if (!ue.backtrace_is_set())
-      ue.backtrace_set(call_stack_);
   }
 
   void
@@ -166,11 +142,6 @@ namespace runner
 	result_ = operator()(ast_.get());
       else
 	result_ = apply(lobby_, code_, SYMBOL(task), args_);
-    }
-    catch (object::Exception& ue)
-    {
-      show_error_(ue);
-      throw;
     }
     catch (object::UrbiException& exn)
     {

@@ -78,10 +78,6 @@ namespace object
   FWD_DECL(Tag);
   FWD_DECL(Task);
 
-  // urbi-exception.hh
-  class Exception;
-  class WrongArgumentType;
-
   extern rObject false_class;
   extern rObject nil_class;
   extern rObject true_class;

@@ -6,22 +6,31 @@
 #ifndef OBJECT_URBI_EXCEPTION_HXX
 # define OBJECT_URBI_EXCEPTION_HXX
 
-# include <boost/format.hpp>
-
 namespace object
 {
 
-  inline bool
-  Exception::was_displayed() const
+  /*--------------.
+  | UrbiException |
+  `--------------*/
+
+  inline
+  UrbiException::UrbiException(rObject value, const call_stack_type& bt)
+    : value_(value)
+    , bt_(bt)
+  {}
+
+  inline rObject
+  UrbiException::value_get()
   {
-    return displayed_;
+    return value_;
   }
 
-  inline void
-  Exception::set_displayed()
+  inline const call_stack_type&
+  UrbiException::backtrace_get()
   {
-    displayed_ = true;
+    return bt_;
   }
+
 } // namespace object
 
 #endif //! OBJECT_URBI_EXCEPTION_HXX
