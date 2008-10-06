@@ -40,9 +40,11 @@ namespace runner
   void raise_primitive_error(const std::string message);
 
   ATTRIBUTE_NORETURN
-  void raise_argument_type_error(unsigned idx,
-				 object::rObject effective,
-				 object::rObject expected);
+  void raise_argument_type_error
+    (unsigned idx,
+     object::rObject effective,
+     object::rObject expected,
+     object::rObject method_name = raise_current_method);
 }
 
 #endif

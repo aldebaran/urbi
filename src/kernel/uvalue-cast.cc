@@ -1,13 +1,12 @@
 #include <boost/lexical_cast.hpp>
 
 #include <kernel/uvalue-cast.hh>
-
+#include <object/cxx-conversions.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/list.hh>
 #include <object/string.hh>
-#include <object/urbi-exception.hh>
-
+#include <runner/raise.hh>
 #include <urbi/uvalue.hh>
 
 urbi::UValue uvalue_cast(object::rObject o)
@@ -27,12 +26,15 @@ urbi::UValue uvalue_cast(object::rObject o)
   }
   else
   {
-    if (!is_a(o, object::global_class->slot_get(SYMBOL(Binary))))
+    const object::rObject& binary =
+      object::global_class->slot_get(SYMBOL(Binary));
+    if (!is_a(o, binary))
     {
       const object::rString& rs =
         o->slot_get(SYMBOL(type))->as<object::String>();
       const std::string& t = rs->value_get();
-      throw object::WrongArgumentType("Binary", t, SYMBOL(cast));
+      runner::raise_argument_type_error
+	(0, object::to_urbi(t), binary, object::to_urbi(SYMBOL(cast)));
     }
     else
     {
@@ -98,11 +100,10 @@ object_cast(const urbi::UValue& v)
     break;
 
     default:
-      throw
-	object::WrongArgumentType("Object",
-				  "Not yet supported",
-                                  SYMBOL(backcast));
-      break;
+      runner::raise_argument_type_error
+	(0, object::to_urbi(SYMBOL(LT_external_SP_data_GT)),
+	 object::object_class,
+	 object::to_urbi(SYMBOL(backcast)));
   }
   return res;
 }

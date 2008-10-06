@@ -88,10 +88,11 @@ namespace runner
   void
   raise_argument_type_error(unsigned idx,
                             rObject effective,
-                            rObject expected)
+                            rObject expected,
+			    rObject method_name)
   {
     raise_urbi(SYMBOL(ArgumentTypeError),
-	       raise_current_method,
+	       method_name,
 	       to_urbi(idx),
 	       expected,
 	       effective);
