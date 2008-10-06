@@ -19,7 +19,6 @@
 #include <object/hash-slots.hh>
 #include <object/list.hh>
 #include <object/object.hh>
-#include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
 #include <runner/raise.hh>
@@ -373,7 +372,7 @@ namespace object
   }
 
   bool
-  is_true(const rObject& o, const libport::Symbol& fun)
+  is_true(const rObject& o)
   {
     if (o == nil_class)
       return false;
@@ -384,11 +383,10 @@ namespace object
     if (o == false_class)
       return false;
     if (o == void_class)
-      throw WrongArgumentType(fun);
+      runner::raise_unexpected_void_error();
     // FIXME: We will probably want to throw here.  This is related to
     // maybe calling asBool on every tested value.
     return true;
-    // throw WrongArgumentType("Boolean", "Object", fun.name_get());
   }
 
 

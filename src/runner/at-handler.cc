@@ -113,9 +113,8 @@ namespace runner
 	{
 	  non_interruptible_set(true);
 	  lobby_set(job->lobby_get());
-	  new_state =
-	    object::is_true(urbi_call(*this, job->condition_get(), SYMBOL(eval)),
-			    SYMBOL(LT_at_SP_jobs_SP_handler_GT));
+	  new_state = object::is_true(urbi_call(*this, job->condition_get(),
+						SYMBOL(eval)));
 	}
 	catch (object::Exception& ue)
 	{

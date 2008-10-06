@@ -22,6 +22,7 @@
 
 #include <runner/call.hh>
 #include <runner/interpreter.hh>
+#include <runner/raise.hh>
 
 namespace runner
 {
@@ -69,7 +70,7 @@ namespace runner
     // the method.
     if (target == object::void_class)
       if (!target->own_slot_get(message))
-        throw object::WrongArgumentType (message);
+	raise_unexpected_void_error();
 
     // Bounce on apply_ast overload
     return apply_ast(target,
@@ -142,7 +143,7 @@ namespace runner
     // Check if any argument is void
     foreach (const rObject& arg, args)
       if (arg == object::void_class)
-        throw object::WrongArgumentType (msg);
+	raise_unexpected_void_error();
 
     if (const rCode& code = function->as<object::Code>())
       return apply_urbi (target, code, msg, args, call_message);
@@ -304,11 +305,7 @@ namespace runner
       // better location (the argument and not the whole function
       // invocation).
       if (val == object::void_class)
-      {
-	object::WrongArgumentType e(SYMBOL());
-	e.location_set(arg->location_get());
-	throw e;
-      }
+	raise_unexpected_void_error();
       passert (*arg, val);
       args.push_back (val);
     }

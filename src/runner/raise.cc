@@ -116,4 +116,10 @@ namespace runner
 	       to_urbi(message));
   }
 
+  void
+  raise_unexpected_void_error()
+  {
+    raise_urbi(SYMBOL(UnexpectedVoidError));
+  }
+
 }

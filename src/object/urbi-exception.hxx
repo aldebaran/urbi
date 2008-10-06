@@ -11,23 +11,6 @@
 namespace object
 {
 
-  inline
-  WrongArgumentType::WrongArgumentType(const std::string& formal,
-                                       const std::string& effective,
-                                       const libport::Symbol fun)
-    : Exception (std::string("unexpected argument type `")
-		     + effective + "', expected `"
-		     + formal + '\'',
-		     fun)
-  {
-  }
-
-  inline
-  WrongArgumentType::WrongArgumentType (const libport::Symbol fun)
-    : Exception("unexpected void", fun)
-  {
-  }
-
   inline bool
   Exception::was_displayed() const
   {

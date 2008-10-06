@@ -136,7 +136,7 @@ namespace object
   void
   Task::setSideEffectFree(rObject b)
   {
-    value_->side_effect_free_set(is_true(b, SYMBOL(setSideEffectFree)));
+    value_->side_effect_free_set(is_true(b));
   }
 
   rFloat

@@ -288,7 +288,7 @@ namespace object
       return slot;
 
     // The slot doesn't exist. Should we create it?
-    if (is_true (args[3], SYMBOL(getLazyLocalSlot)))
+    if (is_true (args[3]))
       args[0]->slot_set (slot_name, args[2]);
 
     // Return the default value for this slot.

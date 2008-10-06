@@ -230,9 +230,9 @@ namespace object
   /// Whether \b p is present in \b c's proto hierarchy.
   bool is_a(const rObject& c, const rObject& p);
 
-  /// Whether \a o represents a true value. WrongArgumentType will be raised
-  /// with a reference to the \a fun if void is passed.
-  bool is_true(const rObject& o, const libport::Symbol& fun);
+  /// Whether \a o represents a true value. UnexpectedVoidError will be
+  /// signalled if void is passed.
+  bool is_true(const rObject& o);
 
   /// Return an Urbi boolean object corresponding to \a b.
   const rObject& to_boolean(bool b);

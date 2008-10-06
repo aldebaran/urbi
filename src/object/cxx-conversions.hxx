@@ -166,9 +166,9 @@ namespace object
   struct CxxConvert<bool>
   {
     static bool
-    to(const rObject& o, const libport::Symbol& name, unsigned)
+    to(const rObject& o, const libport::Symbol&, unsigned)
     {
-      return is_true(o, name);
+      return is_true(o);
     }
 
     static rObject

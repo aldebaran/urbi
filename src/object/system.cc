@@ -136,7 +136,7 @@ namespace object
     check_arg_count(args.size() - 1, 2);
     type_check(args[2], String::proto);
     rString arg2 = args[2]->as<String>();
-    if (!is_true(args[1], SYMBOL(assert_UL)))
+    if (!is_true(args[1]))
       runner::raise_primitive_error("assertion `" + arg2->value_get() +
 				    "' failed");
     return void_class;

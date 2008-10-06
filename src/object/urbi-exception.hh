@@ -87,21 +87,6 @@ namespace object
     COMPLETE_EXCEPTION(Exception)
   };
 
-  /** Exception for type mismatch in a primitive usage.
-   * \param formal      Expected type.
-   * \param effective   Real type.
-   * \param fun         Primitive's name.  */
-  struct WrongArgumentType: public Exception
-  {
-    WrongArgumentType (const std::string& formal,
-		       const std::string& effective,
-		       const libport::Symbol fun);
-    /// Invalid use of void.
-    WrongArgumentType(const libport::Symbol fun);
-
-    COMPLETE_EXCEPTION (WrongArgumentType)
-  };
-
 } // namespace object
 
 # include <object/urbi-exception.hxx>

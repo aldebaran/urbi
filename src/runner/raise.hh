@@ -45,6 +45,9 @@ namespace runner
      object::rObject effective,
      object::rObject expected,
      object::rObject method_name = raise_current_method);
+
+  ATTRIBUTE_NORETURN
+  void raise_unexpected_void_error();
 }
 
 #endif

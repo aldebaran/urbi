@@ -21,6 +21,7 @@
 
 # include <runner/call.hh>
 # include <runner/interpreter.hh>
+# include <runner/raise.hh>
 
 # include <libport/compilation.hh>
 
@@ -95,23 +96,17 @@ namespace runner
   }
 
 
-  static void check_void(libport::Symbol name,
-                         const ast::loc& loc,
-                         const object::rObject& v)
+  static void check_void(const object::rObject& v)
   {
     if (v == object::void_class)
-    {
-      object::WrongArgumentType exn(name);
-      exn.location_set(loc);
-      throw exn;
-    }
+      raise_unexpected_void_error();
   }
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::LocalAssignment* e)
   {
     rObject val = operator()(e->value_get().get());
-    check_void(e->what_get(), e->location_get(), val);
+    check_void(val);
     stacks_.set(e, val);
     return val;
   }
@@ -140,7 +135,7 @@ namespace runner
     ast::rExp v = d->value_get();
     rObject val = v ? operator()(v.get()) : object::void_class;
     if (v)
-      check_void(d->what_get(), d->location_get(), val);
+      check_void(val);
     stacks_.def(d, val);
     return val;
   }
@@ -198,7 +193,7 @@ namespace runner
     JAECHO ("test", e->test_get ());
     rObject cond = operator()(e->test_get().get());
 
-    if (object::is_true(cond, SYMBOL(if)))
+    if (object::is_true(cond))
     {
       JAECHO ("then", e->thenclause_get());
       return e->thenclause_get()->eval(*this);
@@ -221,11 +216,7 @@ namespace runner
       rObject v = operator()(c.get());
       // Refuse void in literal lists
       if (v == object::void_class)
-      {
-        object::WrongArgumentType e(SYMBOL(new));
-        e.location_set(c->location_get());
-        throw e;
-      }
+	raise_unexpected_void_error();
       res.push_back(v);
     }
     return new object::List(res);
@@ -539,7 +530,7 @@ namespace runner
 	YIELD();
       JAECHO ("while test", e->test_get());
       rObject cond = operator()(e->test_get().get());
-      if (!object::is_true(cond, SYMBOL(while)))
+      if (!object::is_true(cond))
 	break;
 
       JAECHO ("while body", e->body_get());

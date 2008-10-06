@@ -34,6 +34,14 @@ class Global.ImplicitTagComponentError: Exception
 
 class Global.SchedulingError: Exception {};
 
+class Global.UnexpectedVoidError: Exception
+{
+  function init()
+  {
+    Exception.getSlot("init").apply([this, "unexpected void"])
+  }
+};
+
 class Global.PrimitiveError: Exception
 {
   var routine;
