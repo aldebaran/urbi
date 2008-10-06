@@ -41,35 +41,26 @@ class Global.PubSub
 
   function init()
   {
-    var this.subscribers = Dictionary.new
+    var this.subscribers = []
   };
 
   function subscribe()
   {
-    var id = fresh |
-    subscribers.set(id, Subscriber.new) |
-    id
+    var sub = Subscriber.new |
+    subscribers.push_back(sub) |
+    sub
   };
 
-  function unsubscribe(id)
+  function unsubscribe(sub)
   {
-    subscribers.erase(id)
+    subscribers.removeById(sub)
   };
 
   function publish(ev)
   {
-    for| (var id: subscribers.keys)
-      subscribers.get(id).enqueue(ev) |
+    for| (var sub: subscribers)
+      sub.enqueue(ev) |
     ev
   };
 
-  function getOne(id)
-  {
-    subscribers.get(id).getOne
-  };
-
-  function getAll(id)
-  {
-    subscribers.get(id).getAll
-  };
 };
