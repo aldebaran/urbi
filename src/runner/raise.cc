@@ -57,6 +57,7 @@ namespace runner
   void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
+    assert(global_class->slot_has(SYMBOL(LookupError)));
     raise_urbi(SYMBOL(LookupError),
 	       to_urbi(msg),
 	       obj);
