@@ -94,23 +94,7 @@ namespace object
 
     value_type value_;
 
-
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-
-    static void initialize(CxxObject::Binder<Float>& binder);
-    static const std::string type_name;
-    static bool float_added;
-    virtual std::string type_name_get() const;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Float>;
-    static rObject proto_make();
-
+    URBI_CXX_OBJECT(Float);
   };
 
 } // namespace object

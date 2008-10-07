@@ -32,24 +32,10 @@ namespace object
     rList keys();
     rDictionary set(libport::Symbol key, rObject value);
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     value_type content_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Dictionary>& binder);
-    static bool dictionary_added;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Dictionary>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Dictionary);
   };
 }; // namespace object
 

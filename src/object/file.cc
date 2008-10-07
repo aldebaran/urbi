@@ -129,20 +129,11 @@ namespace object
     proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
   }
 
-  std::string
-  File::type_name_get() const
-  {
-    return type_name;
-  }
-
   rObject
   File::proto_make()
   {
     return new File("/");
   }
 
-  bool File::file_added = CxxObject::add<File>();
-  const std::string File::type_name = "File";
-  rObject File::proto;
-
+  URBI_CXX_OBJECT_REGISTER(File);
 }

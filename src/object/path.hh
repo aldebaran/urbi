@@ -67,20 +67,7 @@ namespace object
     // Stat the file and handle all errors
     struct stat stat();
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Path>& binder);
-    static bool path_added;
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Path>;
-    static rObject proto_make();
+    URBI_CXX_OBJECT(Path);
   };
 }
 

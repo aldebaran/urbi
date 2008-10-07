@@ -179,14 +179,7 @@ namespace object
     bind(SYMBOL(unfreeze), &Tag::unfreeze);
   }
 
-  bool Tag::tag_added = CxxObject::add<Tag>();
-  const std::string Tag::type_name = "Tag";
-  std::string Tag::type_name_get() const
-  {
-    return type_name;
-  }
-  rObject Tag::proto;
-
+  URBI_CXX_OBJECT_REGISTER(Tag);
 
   const scheduler::rTag&
   extract_tag(const rObject& o)

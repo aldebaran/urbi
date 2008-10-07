@@ -7,6 +7,30 @@
 
 # include <object/object.hh>
 
+
+#define URBI_CXX_OBJECT(Name)                                   \
+public:                                                         \
+  static void initialize(CxxObject::Binder<Name>& binder);      \
+  static const std::string type_name;                           \
+  virtual std::string type_name_get() const;                    \
+  static rObject proto;                                         \
+private:                                                        \
+  friend class TypeInitializer<Name>;                           \
+  static rObject proto_make();                                  \
+
+#define URBI_CXX_OBJECT_REGISTER(Name)                          \
+  static bool Name ## _added__  = CxxObject::add<Name>();       \
+  const std::string Name::type_name = #Name;                    \
+  rObject Name::proto;                                          \
+                                                                \
+  std::string                                                   \
+  Name::type_name_get() const                                   \
+  {                                                             \
+  return type_name;                                             \
+  }                                                             \
+
+
+
 namespace object
 {
   /// Base class for Urbi bound C++ classes.

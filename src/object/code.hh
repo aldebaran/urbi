@@ -40,9 +40,6 @@ namespace object
     virtual std::ostream& special_slots_dump (std::ostream& o,
 					      runner::Runner&) const;
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     /// Body of the function
     ast_type ast_;
@@ -51,18 +48,7 @@ namespace object
     /// Captured 'this' and 'call'. Only set for closures.
     rObject self_, call_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Code>& binder);
-    static bool code_added;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Code>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Code);
   };
 }; // namespace object
 

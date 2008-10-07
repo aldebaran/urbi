@@ -159,18 +159,11 @@ namespace object
     bind(SYMBOL(waitForTermination), &Task::waitForTermination);
   }
 
-  bool Task::task_added = CxxObject::add<Task>();
-  const std::string Task::type_name = "Task";
-  std::string Task::type_name_get() const
-  {
-    return type_name;
-  }
-
   rObject
   Task::proto_make()
   {
     return new Task();
   }
 
-  rObject Task::proto;
+  URBI_CXX_OBJECT_REGISTER(Task);
 }; // namespace object

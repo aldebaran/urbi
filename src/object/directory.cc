@@ -104,7 +104,6 @@ namespace object
     }
   }
 
-
   /*---------------.
   | Binding system |
   `---------------*/
@@ -119,12 +118,6 @@ namespace object
     bind(SYMBOL(list), &Directory::list<&details::mk_string>);
   }
 
-  std::string
-  Directory::type_name_get() const
-  {
-    return type_name;
-  }
-
   rObject
   Directory::proto_make()
   {
@@ -135,8 +128,5 @@ namespace object
 #endif
   }
 
-  bool Directory::directory_added = CxxObject::add<Directory>();
-  const std::string Directory::type_name = "Directory";
-  rObject Directory::proto;
-
+  URBI_CXX_OBJECT_REGISTER(Directory);
 }

@@ -26,24 +26,10 @@ namespace object
     // Urbi methods
     rObject apply(runner::Runner& r, rList args);
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     value_type content_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Primitive>& binder);
-    static bool primitive_added;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Primitive>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Primitive);
   };
 
 }; // namespace object

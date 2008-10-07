@@ -225,11 +225,6 @@ namespace object
     bind(SYMBOL(writable), &Path::writable);
   }
 
-  std::string Path::type_name_get() const
-  {
-    return type_name;
-  }
-
   rObject
   Path::proto_make()
   {
@@ -240,8 +235,5 @@ namespace object
 #endif
   }
 
-  bool Path::path_added = CxxObject::add<Path>();
-  const std::string Path::type_name = "Path";
-  rObject Path::proto;
-
+  URBI_CXX_OBJECT_REGISTER(Path);
 }

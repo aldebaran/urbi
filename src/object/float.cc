@@ -289,6 +289,8 @@ BOUNCE_INT_OP(~)
   | Binding system |
   `---------------*/
 
+  URBI_CXX_OBJECT_REGISTER(Float);
+
   void
   Float::initialize(CxxObject::Binder<Float>& bind)
   {
@@ -325,20 +327,10 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(trunc), &Float::trunc);
   }
 
-  std::string
-  Float::type_name_get() const
-  {
-    return type_name;
-  }
-
   rObject
   Float::proto_make()
   {
     return new Float(0);
   }
-
-  bool Float::float_added = CxxObject::add<Float>();
-  const std::string Float::type_name = "Float";
-  rObject Float::proto;
 
 }; // namespace object

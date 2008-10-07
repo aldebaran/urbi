@@ -108,30 +108,11 @@ namespace object
     return o << "value = " << *ast_get() << libport::iendl;
   }
 
-
-  template <typename T>
-  void blerg()
-  {
-    T::gnark;
-  }
-
-  template <typename M>
-  void blah(M)
-  {
-    blerg<typename AnyToBoostFunction<M>::type>();
-  }
-
   void Code::initialize(CxxObject::Binder<Code>& bind)
   {
     bind(SYMBOL(apply), &Code::apply);
-//     blah(&Code::as_string);
     bind(SYMBOL(asString), &Code::as_string);
     bind(SYMBOL(bodyString), &Code::body_string);
-  }
-
-  std::string Code::type_name_get() const
-  {
-    return type_name;
   }
 
   rObject
@@ -141,8 +122,5 @@ namespace object
     return new Code(ast.result<const ast::Routine>());
   }
 
-  bool Code::code_added = CxxObject::add<Code>();
-  const std::string Code::type_name = "Code";
-  rObject Code::proto;
-
+  URBI_CXX_OBJECT_REGISTER(Code);
 }; // namespace object

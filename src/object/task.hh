@@ -36,20 +36,7 @@ namespace object
   private:
     value_type value_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Task>& bind);
-    static const std::string type_name;
-    static bool task_added;
-    virtual std::string type_name_get() const;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Task>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Task);
   };
 
 }; // namespace object

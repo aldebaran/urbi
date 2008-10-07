@@ -54,20 +54,7 @@ namespace object
   private:
     value_type path_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Directory>& binder);
-    static bool directory_added;
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Directory>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Directory);
   };
 }
 

@@ -33,21 +33,12 @@ namespace object
     return content_;
   }
 
-  const std::string Primitive::type_name = "Primitive";
-  std::string Primitive::type_name_get() const
-  {
-    return type_name;
-  }
-
   void Primitive::initialize(CxxObject::Binder<Primitive>& bind)
   {
     bind(SYMBOL(apply), &Primitive::apply);
   }
 
-  bool Primitive::primitive_added =
-    CxxObject::add<Primitive>();
-  rObject Primitive::proto;
-
+  URBI_CXX_OBJECT_REGISTER(Primitive);
 
   // FIXME: Code duplication with Code::apply.  Maybe there are more
   // opportunity to factor.

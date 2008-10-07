@@ -26,20 +26,10 @@ namespace object
     void p(runner::Runner& r);
     void v();
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     value_type value_;
 
-  public:
-    static void initialize(CxxObject::Binder<Semaphore>& binder);
-    static bool semaphore_added;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Semaphore>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Semaphore);
   };
 
 }; // namespace object

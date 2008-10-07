@@ -61,14 +61,6 @@ namespace object
     }
   }
 
-  const std::string Semaphore::type_name = "Semaphore";
-
-  std::string
-  Semaphore::type_name_get() const
-  {
-    return type_name;
-  }
-
   void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)
   {
     bind(SYMBOL(new), &Semaphore::_new);
@@ -82,10 +74,5 @@ namespace object
     return new Semaphore();
   }
 
-  bool Semaphore::semaphore_added =
-    CxxObject::add<Semaphore>();
-  rObject Semaphore::proto;
-
-
-
+  URBI_CXX_OBJECT_REGISTER(Semaphore);
 } // namespace object

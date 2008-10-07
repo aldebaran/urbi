@@ -260,6 +260,8 @@ namespace object
              (&String::sub_eq)
     );
 
+  URBI_CXX_OBJECT_REGISTER(String);
+
   void String::initialize(CxxObject::Binder<String>& bind)
   {
     bind(SYMBOL(asPrintable), &as_printable);
@@ -278,15 +280,6 @@ namespace object
 
     proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
     proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
-  }
-
-  bool String::string_added = CxxObject::add<String>();
-  const std::string String::type_name = "String";
-  rObject String::proto;
-
-  std::string String::type_name_get() const
-  {
-    return type_name;
   }
 
   rObject

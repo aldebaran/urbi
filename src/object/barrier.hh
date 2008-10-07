@@ -27,24 +27,10 @@ namespace object
     unsigned int signal(rObject);
     unsigned int signalAll(rObject);
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     value_type value_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Barrier>& binder);
-    static bool barrier_added;
-    static rObject proto;
-
-  protected:
-    friend class TypeInitializer<Barrier>;
-    static rObject proto_make();
+  URBI_CXX_OBJECT(Barrier);
   };
 
 }; // namespace object

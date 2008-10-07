@@ -89,11 +89,7 @@ namespace object
     return libport::mhas(content_, key);
   }
 
-  std::string
-  Dictionary::type_name_get() const
-  {
-    return type_name;
-  }
+  URBI_CXX_OBJECT_REGISTER(Dictionary);
 
   void
   Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
@@ -112,8 +108,4 @@ namespace object
   {
     return new Dictionary();
   }
-
-  bool Dictionary::dictionary_added = CxxObject::add<Dictionary>();
-  const std::string Dictionary::type_name = "Dictionary";
-  rObject Dictionary::proto;
 }

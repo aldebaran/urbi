@@ -79,34 +79,11 @@ namespace object
     return res;
   }
 
-  const std::string Barrier::type_name = "Barrier";
-
-  std::string
-  Barrier::type_name_get() const
-  {
-    return type_name;
-  }
-
-
-
-  template <typename T>
-  void blerg()
-  {
-    T::gnark;
-  }
-
-  template <typename M>
-  void blah(M)
-  {
-    blerg<typename AnyToBoostFunction<M>::type>();
-  }
-
   void Barrier::initialize(CxxObject::Binder<Barrier>& bind)
   {
     bind(SYMBOL(new),       &Barrier::_new);
     bind(SYMBOL(signal),    &Barrier::signal);
     bind(SYMBOL(signalAll), &Barrier::signalAll);
-//     blah(&Barrier::wait);
     bind(SYMBOL(wait),      &Barrier::wait);
   }
 
@@ -116,8 +93,6 @@ namespace object
     return new Barrier(Barrier::value_type());
   }
 
-  bool Barrier::barrier_added =
-    CxxObject::add<Barrier>();
-  rObject Barrier::proto;
+  URBI_CXX_OBJECT_REGISTER(Barrier);
 
 } // namespace object
