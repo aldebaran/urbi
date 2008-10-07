@@ -32,7 +32,6 @@ namespace object
     : value_(model->value_get())
   {
     proto_add(model);
-    proto_remove(proto);
   }
 
   const Float::value_type&
