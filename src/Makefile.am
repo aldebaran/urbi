@@ -21,10 +21,10 @@ libuobject_la_LDFLAGS =					\
   -no-undefined
 libuobject_la_LIBADD =						\
   $(PTHREAD_LIBS)						\
-  $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)			\
   $(LTDL_LIBS)							\
   $(top_builddir)/sdk-remote/lib/libport/libport.la		\
-  $(top_builddir)/sdk-remote/src/libuco/libuco.la
+  $(top_builddir)/sdk-remote/src/libuco/libuco.la		\
+  $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 
 ## ------------ ##
@@ -70,7 +70,7 @@ if !OPENR
 bin_PROGRAMS += urbi-console
 
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libuobject.la
+urbi_console_LDADD = libuobject.la $(libuobject_la_LIBADD)
 dist_libuobject_la_SOURCES +=			\
 console-server.cc				\
 ../lib/network/bsdnet/connection.hh		\
@@ -86,7 +86,7 @@ dist_ast_dump_SOURCES =				\
   ast/dot-printer.hh				\
   ast/dot-printer.cc
 ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
-ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la
+ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la $(libuobject_la_LIBADD)
 endif !WIN32
 endif !OPENR
 
