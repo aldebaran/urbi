@@ -59,7 +59,7 @@ namespace object
 
     virtual std::string type_name_get() const = 0;
 
-  private:
+  protected:
 
     class Initializer
     {
