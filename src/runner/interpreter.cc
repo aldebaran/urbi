@@ -189,7 +189,7 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      const rObject& toplevel = object::Tag::proto;
+      const rObject& toplevel = object::global_class->slot_get(SYMBOL(Tags));
       rObject parent = toplevel;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
@@ -212,7 +212,7 @@ namespace runner
 	{
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
-	  // rooted by Tag).
+	  // rooted by Tags).
 	  where = object::urbi_call
             (*this, parent, SYMBOL(new), new object::String(elt));
 	  parent->slot_set(elt, where);

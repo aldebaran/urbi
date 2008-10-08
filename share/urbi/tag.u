@@ -26,3 +26,11 @@ do (Global.Tag)
     };
   }
 };
+
+class Global.Tags {
+  function 'new'(name)
+  {
+    return Tag.new(name)
+  };
+};
+Global.addProto(Global.Tags);
