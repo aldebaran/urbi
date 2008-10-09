@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
 
@@ -404,12 +405,20 @@ namespace object
     // the C++ object to give him the right primitive type. For now,
     // we forbid inheriting from atoms.
     if (!p->valid_proto(*this))
-      runner::raise_primitive_error("Cannot add a primitive prototype "
-                                    "to an uncompatible object.");
+    {
+      boost::format fmt("cannot inherit from a %1% without being a %1% too");
+      runner::raise_primitive_error((fmt % p->type_name_get()).str());
+    }
 
     if (!libport::has(*protos_, p))
       protos_->push_front (p);
     return *this;
+  }
+
+  std::string
+  Object::type_name_get() const
+  {
+    return "Object";
   }
 
 } // namespace object

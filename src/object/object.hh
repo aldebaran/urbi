@@ -208,6 +208,8 @@ namespace object
 
     virtual bool valid_proto(const Object& o) const;
 
+    virtual std::string type_name_get() const;
+
   private:
     rObject
     slot_locate(const key_type& k,
