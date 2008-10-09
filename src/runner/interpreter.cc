@@ -164,7 +164,39 @@ namespace runner
   void
   Interpreter::scheduling_error(std::string msg)
   {
-    raise_urbi(SYMBOL(SchedulingError), object::to_urbi(msg));
+    libport::Finally finally;
+    // We may have a situation here. If the stack space is running
+    // near exhaustion, we cannot reasonably hope that we will get
+    // enough stack space to build an exception, which potentially
+    // requires a non-negligible amount of calls. For this reason, we
+    // create another job whose task is to build the exception (in a
+    // freshly allocated stack) and propagate it to us as we are its
+    // parent.
+    const rObject& scheduling_error =
+      object::global_class->slot_get(SYMBOL(SchedulingError));
+    object::objects_type args;
+    args.push_back(object::to_urbi(msg));
+    scheduler::rJob child =
+      new Interpreter(*this,
+		      scheduling_error->slot_get(SYMBOL(throwNew)),
+		      SYMBOL(SchedulingError),
+		      args);
+    register_child(child, finally);
+    child->start_job();
+
+    try
+    {
+      // Clear the non-interruptible flag so that we do not
+      // run into an error while waiting for our child.
+      finally << boost::bind(&Job::non_interruptible_set, this,
+			     non_interruptible_get());
+      non_interruptible_set(false);
+      yield_until_terminated(*child);
+    }
+    catch (const scheduler::ChildException& ce)
+    {
+      kernel::rethrow(ce.child_exception_get());
+    }
   }
 
   object::rObject

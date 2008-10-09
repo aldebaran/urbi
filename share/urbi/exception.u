@@ -32,7 +32,14 @@ class Global.ImplicitTagComponentError: Exception
   }
 };
 
-class Global.SchedulingError: Exception {};
+class Global.SchedulingError: Exception {
+
+  function throwNew(msg)
+  {
+    throw SchedulingError.new(msg)
+  }
+
+};
 
 class Global.UnexpectedVoidError: Exception
 {
