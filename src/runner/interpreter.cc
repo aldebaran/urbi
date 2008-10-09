@@ -195,7 +195,14 @@ namespace runner
     }
     catch (const scheduler::ChildException& ce)
     {
-      kernel::rethrow(ce.child_exception_get());
+      try
+      {
+	kernel::rethrow(ce.child_exception_get());
+      }
+      catch (const object::UrbiException& ue)
+      {
+	raise(ue.value_get(), false);
+      }
     }
   }
 
