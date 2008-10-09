@@ -181,8 +181,7 @@ namespace object
     return args[0]->urbi_protos_get ();
   }
 
-  /// Recursively get protos list
-
+  /// Add a prototype
   static bool
   proto_add(List::value_type& protos, const rObject& proto)
   {
@@ -190,6 +189,7 @@ namespace object
     return false;
   }
 
+  /// Recursively get protos list
   static rObject
   object_class_allProtos(runner::Runner&, objects_type& args)
   {

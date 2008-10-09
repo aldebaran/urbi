@@ -391,6 +391,25 @@ namespace object
     return true;
   }
 
+  bool Object::valid_proto(const Object&) const
+  {
+    return true;
+  }
 
+  Object&
+  Object::proto_add (const rObject& p)
+  {
+    assert(p);
+    // Inheriting from atoms is a problem: we cannot morph in place
+    // the C++ object to give him the right primitive type. For now,
+    // we forbid inheriting from atoms.
+    if (!p->valid_proto(*this))
+      runner::raise_primitive_error("Cannot add a primitive prototype "
+                                    "to an uncompatible object.");
+
+    if (!libport::has(*protos_, p))
+      protos_->push_front (p);
+    return *this;
+  }
 
 } // namespace object

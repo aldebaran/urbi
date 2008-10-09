@@ -46,32 +46,6 @@ namespace object
 
   inline
   Object&
-  Object::proto_add (const rObject& p)
-  {
-    assert(p);
-    /*
-      Inheriting from atoms is a problem: when trying to fetch the
-      value of an atom, only the local object is inspected, not its
-      prototypes. Thus, calling an atom method on an object inheriting
-      from this atom systematically fails with a type checking error.
-
-      For now, we forbid inheriting from atoms. This problem could be
-      solved by performing a real lookup to find the atom value, but
-      we can't tell whether we really want this right now.
-
-      Note that an Object can still inherit from an atom if it is
-      itself an atom of the same kind (this pattern is used when
-      literals are evaluated, for instance).
-    */
-    // FIXME: Actually check it!
-
-    if (!libport::has(*protos_, p))
-      protos_->push_front (p);
-    return *this;
-  }
-
-  inline
-  Object&
   Object::proto_remove (const rObject& p)
   {
     assert(p);

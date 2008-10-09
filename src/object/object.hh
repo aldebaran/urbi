@@ -206,6 +206,8 @@ namespace object
     /// Comparison methods.
     virtual bool operator< (const Object& rhs) const;
 
+    virtual bool valid_proto(const Object& o) const;
+
   private:
     rObject
     slot_locate(const key_type& k,
