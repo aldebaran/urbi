@@ -216,7 +216,10 @@ namespace object
 		       const rObject& value)
   {
     // Forbid setting properties on nonexistent slots
-    safe_slot_locate(k);
+    rObject owner = safe_slot_locate(k);
+    // CoW
+    if (owner != this)
+      slot_set(k, slot_get(k));
 
     // Make sure the object has a properties dictionary.
     rDictionary props = properties_get();
