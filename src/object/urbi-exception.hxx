@@ -19,8 +19,8 @@ namespace object
     , bt_(bt)
   {}
 
-  inline rObject
-  UrbiException::value_get()
+  inline const rObject&
+  UrbiException::value_get() const
   {
     return value_;
   }

@@ -29,7 +29,7 @@ namespace object
   {
   public:
     UrbiException(rObject value, const call_stack_type& bt);
-    rObject value_get();
+    const rObject& value_get() const;
     const call_stack_type& backtrace_get();
 
   private:
