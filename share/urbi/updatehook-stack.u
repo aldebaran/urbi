@@ -28,6 +28,8 @@ do (getSlot("UpdateHookStack"))
 
 function Global.installUpdateHookStack(o, slot)
 {
+  if (o === Object)
+    throw Exception.new("Cannot install updateHookStack on Object!");
   var old;
   if (o.hasProperty(slot, "updateHook"))
   {
