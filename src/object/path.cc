@@ -43,10 +43,10 @@ namespace object
     proto_add(proto);
   }
 
-  Path::Path(rPath)
-    : path_("/")
+  Path::Path(rPath model)
+    : path_(model->value_get())
   {
-    runner::raise_primitive_error("`Path' objects cannot be cloned");
+    proto_add(model);
   }
 
   Path::Path(const std::string& value)
