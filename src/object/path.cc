@@ -77,7 +77,11 @@ namespace object
   bool Path::exists()
   {
     struct stat dummy;
-    return !::stat(path_.to_string().c_str(), &dummy);
+    if (!::stat(path_.to_string().c_str(), &dummy))
+      return true;
+    if (errno == ENOENT)
+      return false;
+    handle_any_error();
   }
 
   struct stat Path::stat()
