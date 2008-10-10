@@ -64,6 +64,10 @@ namespace object
   rList File::as_list()
   {
     std::ifstream s(path_->as_string().c_str());
+
+    if (!s.good())
+      runner::raise_primitive_error("File not readable: " + as_string());
+
     List::value_type res;
 
     char buf[BUFSIZ + 1];
