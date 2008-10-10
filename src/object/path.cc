@@ -76,8 +76,7 @@ namespace object
 
   bool Path::exists()
   {
-    struct stat dummy;
-    if (!::stat(path_.to_string().c_str(), &dummy))
+    if (!::access(path_.to_string().c_str(), F_OK))
       return true;
     if (errno == ENOENT)
       return false;
@@ -106,33 +105,19 @@ namespace object
 
   bool Path::readable()
   {
-    int fd = ::open(path_.to_string().c_str(), O_RDONLY | O_LARGEFILE);
-
-    if (fd != -1)
-    {
-      close(fd);
+    if (!::access(path_.to_string().c_str(), R_OK))
       return true;
-    }
-    else if (errno == EACCES)
+    if (errno == EACCES)
       return false;
-
     handle_any_error();
   }
 
   bool Path::writable()
   {
-    int fd = ::open(path_.to_string().c_str(),
-                    O_WRONLY | O_LARGEFILE | O_APPEND);
-
-    if (fd != -1)
-    {
-      close(fd);
+    if (!::access(path_.to_string().c_str(), W_OK))
       return true;
-    }
-    // EROFS = file is on a read only file system.
-    else if (errno == EACCES || errno == EROFS)
+    if (errno == EACCES || errno == EROFS)
       return false;
-
     handle_any_error();
   }
 
