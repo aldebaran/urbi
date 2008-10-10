@@ -33,10 +33,10 @@ namespace object
     proto_add(proto);
   }
 
-  Directory::Directory(rDirectory)
-    : path_(0)
+  Directory::Directory(rDirectory model)
+    : path_(model.get()->path_)
   {
-    runner::raise_primitive_error("`Directory' objects cannot be cloned");
+    proto_add(model);
   }
 
   Directory::Directory(const std::string& value)
