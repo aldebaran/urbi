@@ -81,7 +81,7 @@ namespace object
     for (directory_iterator it (path_->value_get().to_string());
          it != end;
          ++it)
-      res << F(*this, it->path().string());
+      res << F(*this, basename(it->path()));
 
     return new List(res);
   }
