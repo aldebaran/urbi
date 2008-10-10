@@ -53,6 +53,11 @@ namespace object
     path_ = path;
   }
 
+  void Directory::init(const std::string& path)
+  {
+    init(new Path(path));
+  }
+
   // Conversions
 
   std::string Directory::as_string()
@@ -104,6 +109,12 @@ namespace object
     }
   }
 
+  OVERLOAD_TYPE(init_bouncer, init,
+                Path,
+                (void (Directory::*)(rPath)) &Directory::init,
+                String,
+                (void (Directory::*)(const std::string&)) &Directory::init);
+
   /*---------------.
   | Binding system |
   `---------------*/
@@ -114,8 +125,9 @@ namespace object
     bind(SYMBOL(asPrintable), &Directory::as_printable);
     bind(SYMBOL(asString), &Directory::as_string);
     bind(SYMBOL(content), &Directory::list<&details::mk_path>);
-    bind(SYMBOL(init), &Directory::init);
     bind(SYMBOL(list), &Directory::list<&details::mk_string>);
+
+    proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
   }
 
   rObject

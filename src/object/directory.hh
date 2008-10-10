@@ -30,6 +30,7 @@ namespace object
     Directory(rDirectory model);
     Directory(const std::string& path);
     void init(rPath path);
+    void init(const std::string& path);
 
 //     // Global informations
 //     static rDirectory cwd();
