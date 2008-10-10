@@ -100,7 +100,7 @@ namespace object
 
   std::string File::as_printable()
   {
-    return "File " + path_->as_printable();
+    return (boost::format("File(\"%s\")") % path_->as_string()).str();
   }
 
 

@@ -175,7 +175,7 @@ namespace object
 
   std::string Path::as_printable()
   {
-    return str(format("\"%s\"") % as_string());
+    return str(format("Path(\"%s\")") % as_string());
   }
 
   rList Path::as_list()
