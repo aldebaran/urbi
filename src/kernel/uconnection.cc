@@ -153,9 +153,6 @@ UConnection::continue_send()
     error_ = UFAIL;
     return;
   }
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::mutex::scoped_lock lock(mutex_);
-# endif
   blocked_ = false;	    // continue_send unblocks the connection.
 
   // nb of bytes to send.
@@ -201,27 +198,7 @@ UConnection::received(const char* buffer, size_t length)
 {
   PING();
 
-#if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::recursive_mutex::scoped_lock serverLock(server_.mutex);
-#endif
-
-  {
-    // Lock the connection.
-#if ! defined LIBPORT_URBI_ENV_AIBO
-    boost::mutex::scoped_lock lock(mutex_);
-#endif
-    recv_queue_->push(buffer, length);
-  }
-
-#if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::try_mutex::scoped_try_lock tree_lock(tree_mutex_, boost::defer_lock);
-  if (!tree_lock.try_lock())
-#endif
-  {
-    new_data_added_ = true; //server will call us again right after work
-    error_ = USUCCESS;
-    return;
-  }
+  recv_queue_->push(buffer, length);
 
   parser::UParser& p = parser_get();
   // There should be no tree sitting in the parser.
@@ -259,10 +236,6 @@ UConnection::received(const char* buffer, size_t length)
   execute(active_command);
 
   receiving_ = false;
-  // p.ast_set(0);
-#if ! defined LIBPORT_URBI_ENV_AIBO
-  tree_lock.unlock();
-#endif
 
   error_ = USUCCESS;
 }

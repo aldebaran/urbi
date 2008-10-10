@@ -18,10 +18,6 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 
-# if ! defined LIBPORT_URBI_ENV_AIBO
-#  include <boost/thread.hpp>
-# endif
-
 # include <libport/fwd.hh>
 # include <libport/compiler.hh>
 # include <libport/file-library.hh>
@@ -285,11 +281,6 @@ private:
 public:
   /// Shows debug or not.
   bool debugOutput;
-
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  /// Used to synchronize message reception.
-  boost::recursive_mutex mutex;
-# endif
 
 private:
   /// Name of the main device.

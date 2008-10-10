@@ -4,6 +4,7 @@
 #ifndef KERNEL_UCONNECTION_HH
 # define KERNEL_UCONNECTION_HH
 
+# include <cstring>
 # include <cstdarg>
 # include <iomanip>
 
@@ -15,9 +16,6 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 
-# if ! defined LIBPORT_URBI_ENV_AIBO
-#  include <boost/thread.hpp>
-# endif
 # include <libport/shared-ptr.hh>
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
@@ -259,11 +257,6 @@ public:
   /// Used by addToQueue to notify new data.
   bool new_data_added_;
 
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  /// Lock access to command tree.
-  boost::try_mutex tree_mutex_;
-# endif
-
 protected:
   /// Reference to the underlying server.
   UServer& server_;
@@ -296,10 +289,6 @@ private:
 
   /// The current shell.
   runner::rShell shell_;
-
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::mutex mutex_;
-# endif
 
 };
 

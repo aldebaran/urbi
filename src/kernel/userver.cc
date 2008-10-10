@@ -16,9 +16,6 @@
 #include <boost/bind.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/format.hpp>
-#if ! defined LIBPORT_URBI_ENV_AIBO
-# include <boost/thread.hpp>
-#endif
 
 #include <libport/compiler.hh>
 #include <libport/config.h>
@@ -247,9 +244,6 @@ UServer::work()
   static libport::utime_t sumtime = 0, mintime = 10000000, maxtime = 0;
   static libport::utime_t rsumtime = 0, rmintime = 10000000, rmaxtime = 0;
   static unsigned int nzero = 0;
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::recursive_mutex::scoped_lock lock(mutex);
-# endif
 
   beforeWork ();
 
