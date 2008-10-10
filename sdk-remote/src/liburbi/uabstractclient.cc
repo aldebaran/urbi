@@ -346,22 +346,11 @@ namespace urbi
     //expand
     if (rc)
       return -1;
-#if 0  //disabled, crashes
-    int size = vsnprintf(NULL, 0, command, arg);
-    va_end(arg);
-    if (strlen(sendBuffer) + size + 1 > buflen)
-      return -1;
-    else
-    {
-#endif
       sendBufferLock.lock();
       vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
       sendBufferLock.unlock();
       va_end(arg);
       return 0;
-#if 0
-    }
-#endif
   }
 
 
