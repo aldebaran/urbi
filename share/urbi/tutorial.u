@@ -136,7 +136,7 @@ do (Global.Tutorial)
     {
       var args = call.evalArgs;
       this.name = args[0];
-      entries = args.pop_front;
+      entries = args.removeFront;
     };
 
     function setTutorial(tuto)

@@ -212,7 +212,7 @@ namespace object
 #undef BOUNCE
 
   rObject
-  List::pop_back()
+  List::removeBack()
   {
     CHECK_NON_EMPTY(pop_back);
     rObject res = content_.back();
@@ -221,7 +221,7 @@ namespace object
   }
 
   rObject
-  List::pop_front()
+  List::removeFront()
   {
     CHECK_NON_EMPTY(pop_front);
     rObject res = content_.front();
@@ -251,8 +251,8 @@ namespace object
     bind(SYMBOL(insert),         &List::insert          );
     bind(SYMBOL(insertBack),     &List::insertBack      );
     bind(SYMBOL(insertFront),    &List::insertFront     );
-    bind(SYMBOL(pop_back),       &List::pop_back        );
-    bind(SYMBOL(pop_front),      &List::pop_front       );
+    bind(SYMBOL(removeBack),     &List::removeBack      );
+    bind(SYMBOL(removeFront),    &List::removeFront     );
     bind(SYMBOL(removeById),     &List::remove_by_id    );
     bind(SYMBOL(reverse),        &List::reverse         );
     bind(SYMBOL(size),           &List::size            );

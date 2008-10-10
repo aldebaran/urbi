@@ -23,7 +23,7 @@ class Global.PubSub
       if (queue.empty)
         barrier.wait |
       var ev = queue.front |
-      queue.pop_front |
+      queue.removeFront |
       ev
     };
 
