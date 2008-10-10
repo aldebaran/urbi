@@ -18,7 +18,6 @@
 # if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
-# include <boost/shared_ptr.hpp>
 # include <libport/shared-ptr.hh>
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
