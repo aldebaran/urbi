@@ -193,20 +193,21 @@ namespace object
     }
   }
 
-#define BOUNCE(Name, Ret, Arg, Check)                           \
+#define BOUNCE(Name, Bounce, Ret, Arg, Check)                   \
   IF(Ret, rObject, rList)                                       \
   List::Name(WHEN(Arg, const rObject& arg))			\
   {                                                             \
     WHEN(Check, CHECK_NON_EMPTY(Name));                         \
-    WHEN(Ret, return) content_.Name(WHEN(Arg, arg));            \
+    WHEN(Ret, return) content_.Bounce(WHEN(Arg, arg));          \
     return this;                                                \
   }
 
-  BOUNCE(back,       true,  false, true );
-  BOUNCE(clear,      false, false, false);
-  BOUNCE(front,      true,  false, true );
-  BOUNCE(push_back,  false, true,  false);
-  BOUNCE(push_front, false, true,  false);
+  BOUNCE(back,          back,           true,  false, true );
+  BOUNCE(clear,         clear,          false, false, false);
+  BOUNCE(front,         front,          true,  false, true );
+  BOUNCE(insert,        push_back,      false, true,  false);
+  BOUNCE(insertFront,   push_front,     false, true,  false);
+  BOUNCE(insertBack,    push_back,      false, true,  false);
 
 #undef BOUNCE
 
@@ -238,25 +239,26 @@ namespace object
 
   void List::initialize(CxxObject::Binder<List>& bind)
   {
-    bind(SYMBOL(back),           &List::back        );
-    bind(SYMBOL(clear),          &List::clear       );
-    bind(SYMBOL(each),           &List::each        );
-    bind(SYMBOL(each_AMPERSAND), &List::each_and    );
-    bind(SYMBOL(front),          &List::front       );
-    bind(SYMBOL(SBL_SBR),        &List::operator[]  );
-    bind(SYMBOL(SBL_SBR_EQ),     &List::set         );
-    bind(SYMBOL(PLUS),           &List::operator+   );
-    bind(SYMBOL(PLUS_EQ),        &List::operator+=  );
-    bind(SYMBOL(push_back),      &List::push_back   );
-    bind(SYMBOL(push_front),     &List::push_front  );
-    bind(SYMBOL(pop_back),       &List::pop_back    );
-    bind(SYMBOL(pop_front),      &List::pop_front   );
-    bind(SYMBOL(removeById),     &List::remove_by_id);
-    bind(SYMBOL(reverse),        &List::reverse     );
-    bind(SYMBOL(size),           &List::size        );
-    bind(SYMBOL(sort),           &List::sort        );
-    bind(SYMBOL(STAR),           &List::operator*   );
-    bind(SYMBOL(tail),           &List::tail        );
+    bind(SYMBOL(back),           &List::back            );
+    bind(SYMBOL(clear),          &List::clear           );
+    bind(SYMBOL(each),           &List::each            );
+    bind(SYMBOL(each_AMPERSAND), &List::each_and        );
+    bind(SYMBOL(front),          &List::front           );
+    bind(SYMBOL(SBL_SBR),        &List::operator[]      );
+    bind(SYMBOL(SBL_SBR_EQ),     &List::set             );
+    bind(SYMBOL(PLUS),           &List::operator+       );
+    bind(SYMBOL(PLUS_EQ),        &List::operator+=      );
+    bind(SYMBOL(insert),         &List::insert          );
+    bind(SYMBOL(insertBack),     &List::insertBack      );
+    bind(SYMBOL(insertFront),    &List::insertFront     );
+    bind(SYMBOL(pop_back),       &List::pop_back        );
+    bind(SYMBOL(pop_front),      &List::pop_front       );
+    bind(SYMBOL(removeById),     &List::remove_by_id    );
+    bind(SYMBOL(reverse),        &List::reverse         );
+    bind(SYMBOL(size),           &List::size            );
+    bind(SYMBOL(sort),           &List::sort            );
+    bind(SYMBOL(STAR),           &List::operator*       );
+    bind(SYMBOL(tail),           &List::tail            );
   }
 
   std::string List::type_name_get() const

@@ -64,7 +64,7 @@ do (List)
     var res = this - [e] |
     clear |
     for| (var i: res)
-      push_back (i) |
+      insert (i) |
     res
   };
 
@@ -74,7 +74,7 @@ do (List)
     var res = [] |
     for| (var i: this)
       if (i not in rhs)
-	res.push_back(i) |
+	res.insert(i) |
     return res
   };
 
@@ -85,13 +85,7 @@ do (List)
 
   // Add head, symmetric of tail
   copySlot ("front", "head");
-  copySlot ("push_back", "<<");
-
-  function insert(e)
-  {
-    echo ("List.insert is deprecated, please use List.push_back") |
-    push_back(e)
-  };
+  copySlot ("insert", "<<");
 
   // Concatenate the string representation of the members, separated by \a sep
   function join(sep)
@@ -135,7 +129,8 @@ do (List)
   function map (f)
   {
     var res = [] |
-    for| (var i: this) res.push_back (f (i)) |
+    for| (var i: this)
+      res.insert (f (i)) |
     res
   };
 

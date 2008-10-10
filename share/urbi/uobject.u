@@ -302,7 +302,7 @@ class Global.'external'
       setSlot(lid, []);
     if (fullname in getSlot(lid))
       return;
-    getSlot(lid).push_back(fullname);
+    getSlot(lid).insert(fullname);
     var obj = uobjects.getSlot(objname);
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.ownsSlot(varname))

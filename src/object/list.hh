@@ -26,25 +26,26 @@ namespace object
     size_t index(const rFloat& idx) const;
 
     // Urbi method
-    rObject back      ();
-    rList   clear     ();
-    void    each      (runner::Runner&, const rObject&);
-    void    each_and  (runner::Runner&, const rObject&);
-    rObject front     ();
-    rObject pop_back  ();
-    rObject pop_front ();
-    rList   push_back (const rObject& elt);
-    rList   push_front(const rObject& elt);
+    rObject back        ();
+    rList   clear       ();
+    void    each        (runner::Runner&, const rObject&);
+    void    each_and    (runner::Runner&, const rObject&);
+    rObject front       ();
+    rObject pop_back    ();
+    rObject pop_front   ();
+    rList   insert      (const rObject& elt);
+    rList   insertBack  (const rObject& elt);
+    rList   insertFront (const rObject& elt);
     rList   remove_by_id(const rObject& elt);
-    rList   reverse   ();
-    rObject set       (const rFloat& nth, const rObject& value);
-    rFloat  size      ();
-    rList   sort      (runner::Runner& r);
-    rList   tail      ();
-    rList   operator+ (const rList& rhs);
-    rList   operator+=(const rList& rhs);
-    rList   operator* (unsigned int times);
-    rObject operator[](const rFloat& idx);
+    rList   reverse     ();
+    rObject set         (const rFloat& nth, const rObject& value);
+    rFloat  size        ();
+    rList   sort        (runner::Runner& r);
+    rList   tail        ();
+    rList   operator+   (const rList& rhs);
+    rList   operator+=  (const rList& rhs);
+    rList   operator*   (unsigned int times);
+    rObject operator[]  (const rFloat& idx);
 
     static const std::string type_name;
     virtual std::string type_name_get() const;

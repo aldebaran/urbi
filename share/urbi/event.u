@@ -39,7 +39,7 @@ class Global.Event
     var res = clone |
     var res.payload = call.evalArgs |
     var res.active = true |
-    alive.push_back(res) |
+    alive.insert(res) |
     on_pubsub.publish(res) |
     wu_pubsub.publish(res) |
     res
