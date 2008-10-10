@@ -34,10 +34,10 @@ namespace object
     proto_add(proto);
   }
 
-  File::File(rFile)
-    : path_(0)
+  File::File(rFile model)
+    : path_(model.get()->path_)
   {
-    runner::raise_primitive_error("`File' objects cannot be cloned");
+    proto_add(model);
   }
 
   File::File(const std::string& value)
