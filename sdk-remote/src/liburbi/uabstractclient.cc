@@ -117,10 +117,7 @@ namespace urbi
     int clen = strlen(client->sendBuffer);
     memcpy(client->sendBuffer+clen, s, n);
     client->sendBuffer[clen+n] = 0;
-    if (strchr(client->sendBuffer, '&')
-	|| strchr(client->sendBuffer, '|')
-	|| strchr(client->sendBuffer, ';')
-	|| strchr(client->sendBuffer, ','))
+    if (strpbrk(client->sendBuffer, "&|;,"))
     {
       client->effectiveSend(client->sendBuffer, strlen(client->sendBuffer));
       client->sendBuffer[0] = 0;
