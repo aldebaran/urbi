@@ -67,7 +67,7 @@ namespace object
 
   std::string Directory::as_printable()
   {
-    return "Directory " + path_->as_printable();
+    return (boost::format("Directory(\"%s\")") % path_->as_string()).str();
   }
 
   // Stat
