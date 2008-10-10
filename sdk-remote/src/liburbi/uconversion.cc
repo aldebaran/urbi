@@ -424,7 +424,7 @@ namespace urbi
 	memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
 	break;
       case IMAGE_JPEG:
-	if (targetformat == 0)
+	if (targetformat == 1)
 	{
 	  convertJPEGtoRGB((byte*) src.data, src.size,
 			   (byte*) uncompressedData, usz);
