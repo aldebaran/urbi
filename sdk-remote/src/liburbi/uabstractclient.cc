@@ -346,11 +346,10 @@ namespace urbi
     //expand
     if (rc)
       return -1;
-      sendBufferLock.lock();
-      vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
-      sendBufferLock.unlock();
-      va_end(arg);
-      return 0;
+    sendBufferLock.lock();
+    vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
+    sendBufferLock.unlock();
+    return 0;
   }
 
 
