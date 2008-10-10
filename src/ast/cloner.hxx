@@ -38,67 +38,57 @@ namespace ast
     return t ? recurse(other) : libport::shared_ptr<T>(0);
   }
 
-  // args_type can include 0 in its list of args to denote the default
-  // target.  So use an iteration that is OK with 0 in arguments.
-  // FIXME: Maybe by default we should reject 0, and overload for the
-  // specific case of args_type.
   template <typename CollectionType>
   CollectionType*
-  Cloner::recurse_collection (const CollectionType& c)
+  Cloner::maybe_recurse_collection(const CollectionType* c)
   {
-    CollectionType* res = new CollectionType;
-    foreach (typename CollectionType::const_reference e, c)
-      res->push_back(recurse(e));
-    return res;
+    return c ? new CollectionType(recurse_collection(*c)) : 0;
   }
 
   template <typename CollectionType>
-  CollectionType*
-  Cloner::recurse_collection (const CollectionType* c)
+  CollectionType
+  Cloner::recurse_collection (const CollectionType& c)
   {
-    if (c)
-      return recurse_collection(*c);
-    else
-      return 0;
+    CollectionType res;
+    foreach (typename CollectionType::const_reference e, c)
+      res.push_back(recurse(e));
+    return res;
   }
 
   // Specializations to workaround some limitations of ast-cloner-gen.
   template <>
   inline
-  symbols_type*
+  symbols_type
   Cloner::recurse_collection<symbols_type> (const symbols_type& c)
   {
-    return new symbols_type(c);
+    return c;
   }
 
   template <>
   inline
-  exps_type*
+  exps_type
   Cloner::recurse_collection<exps_type> (const exps_type& c)
   {
-    exps_type* res = new exps_type;
+    exps_type res;
     // We cannot use the container's clone feature, since it uses the
     // stock AST cloner and none of its specializations, such as the
     // very needed override from ParametricAst.  As a result, we clone
     // the meta-ast instead of substituting the meta-vars with their
     // actual values.
     foreach (rExp e, c)
-      res->push_back(recurse(e));
+      res.push_back(recurse(e));
     return res;
   }
 
   template <>
   inline
-  modifiers_type*
-  Cloner::recurse_collection<modifiers_type> (const modifiers_type* modifiers)
+  modifiers_type
+  Cloner::recurse_collection<modifiers_type> (const modifiers_type& modifiers)
   {
-    if (!modifiers)
-      return 0;
+    modifiers_type res;
 
-    modifiers_type* res = new modifiers_type();
-
-    foreach (const modifiers_type::value_type& m, *modifiers)
-      (*res)[m.first] = recurse(m.second);
+    foreach (const modifiers_type::value_type& m, modifiers)
+      res[m.first] = recurse(m.second);
 
     return res;
   }

@@ -60,7 +60,7 @@ namespace ast
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
 
     result_ = new ast::Call(e->location_get(),
-                            recurse_collection(e->arguments_get()),
+			    maybe_recurse_collection(e->arguments_get()),
                             recurse(e->target_get()), name);
   }
 

@@ -357,8 +357,8 @@ namespace binder
       {
         ast::rLocal res =
           new ast::Local(loc, name,
-                         recurse_collection(input->arguments_get()),
-                         routine_depth_ - depth);
+			 maybe_recurse_collection(input->arguments_get()),
+			 routine_depth_ - depth);
         link_to_declaration(input, res, name, depth);
         result_ = res;
       }
@@ -523,7 +523,7 @@ namespace binder
     finally << boost::bind(decrement, &scope_depth_);
 
     // Clone and bind arguments
-    res->formals_set(recurse_collection(input->formals_get()));
+    res->formals_set(maybe_recurse_collection(input->formals_get()));
 
     // Bind and clone the body
     res->body_set(recurse(input->body_get ()));

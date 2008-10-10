@@ -75,11 +75,15 @@ print """\
 	using different names.
      */
     template <typename CollectionType>
-    CollectionType* recurse_collection (const CollectionType& c);
+    CollectionType recurse_collection (const CollectionType& c);
 
-    /// Likewise, but \\a c can be 0.
+    /** \\brief Clone a collection object if not 0.
+
+        It also returns a newly allocated pointer onto the copied
+	collection.
+    */
     template <typename CollectionType>
-    CollectionType* recurse_collection (const CollectionType* c);"""
+    CollectionType* maybe_recurse_collection(const CollectionType* c); """
 
 if dec_subclasses:
   print """
@@ -127,10 +131,16 @@ def attribute_dup(a):
 
   # Collection attributes.
   elif a.root_type () in ast_params['collections']:
-    if a.pointer_p ():
-      return "recurse_collection (" + accessor + ")"
+    if a.pointer_p() and not a.mandatory:
+      acc = "*%s" % accessor
     else:
-      return "*recurse_collection (" + accessor + ")"
+      acc = accessor
+    rec = "recurse_collection(%s)" % acc
+    if a.W_type()[-1] == '*':
+      rec = "new %s(%s)" % (a.deref_type(), rec)
+    if not a.mandatory:
+      rec = "maybe_recurse_collection(%s)" % accessor
+    return rec
 
   # Visitable attributes.
   else:
@@ -139,7 +149,9 @@ def attribute_dup(a):
 
 def attribute_clone(a):
   "Build a copy of attribute a in a local variable."
-  print "    " + a.W_type () + " " + a.name + " = " + attribute_dup(a) + ";"
+  want_pointer = a.W_type()[-1] == '*'
+  print "    " + a.W_type () + " " + a.name + " = " + \
+	attribute_dup(a) + ";"
 
 def children_clone (node):
   """Print on stdout the definition of local variables that copy/clone
@@ -224,7 +236,7 @@ for node in concrete:
       if a.hide:
 	print "   //<<-"
       if a.hide or a.init != None:
-	print "    res->%s_set(%s);" % (a.name, str(attribute_dup(a)))
+	print "    res->%s_set(%s);" % (a.name, attribute_dup(a))
       if a.hide:
 	print "   //->>"
     print "    result_ = res;"

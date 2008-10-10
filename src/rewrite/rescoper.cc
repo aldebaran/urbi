@@ -36,9 +36,7 @@ namespace rewrite
     }
     return
       new ast::Assignment(l, recurse(what), recurse(value),
-                          (modifiers
-                           ? recurse_collection<ast::modifiers_type>(modifiers)
-                           : 0));
+                          maybe_recurse_collection(modifiers));
   }
 
   /**

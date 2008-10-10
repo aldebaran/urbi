@@ -38,7 +38,7 @@ namespace rewrite
       "}"
       );
 
-    ast::exps_type* protos = recurse_collection(c->protos_get());
+    ast::exps_type* protos = maybe_recurse_collection(c->protos_get());
     ast::rExp protos_set;
     if (protos)
     {
@@ -81,7 +81,8 @@ namespace rewrite
   void Desugarer::visit(const ast::Emit* e)
   {
     ast::rExp event = recurse(e->event_get());
-    ast::exps_type* args = recurse_collection(e->arguments_get());
+    ast::exps_type* args =
+      maybe_recurse_collection(e->arguments_get());
 
     if (ast::rExp duration = e->duration_get())
     {
