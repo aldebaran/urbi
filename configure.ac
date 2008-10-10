@@ -110,20 +110,6 @@ SDK_LIBS="$SDK_LIBS $BOOST_FILESYSTEM_LIBS"
 
 AC_CONFIG_SUBDIRS([sdk-remote])
 
-for ac_var in CPPFLAGS OPEN_R_CPPFLAGS BOOST_CPPFLAGS
-do
-  AC_MSG_CHECKING([for isystem use in $ac_var])
-  # If using GCC, prefer -isystem to -I for vendor supplied headers.
-  case $GCC in
-  yes)
-    eval ac_val=\$$ac_var
-    ac_val=$(echo "$ac_val" | perl -p -e 's/(?<!-)-I\s*/-isystem /g')
-    eval $ac_var=\$ac_val
-    ;;
-  esac
-  AC_MSG_RESULT([$ac_val])
-done
-
 ## -------- ##
 ## Output.  ##
 ## -------- ##
