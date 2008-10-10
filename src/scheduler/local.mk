@@ -1,6 +1,8 @@
 dist_libuobject_la_SOURCES +=			\
   scheduler/coroutine.hh			\
   scheduler/coroutine.hxx			\
+  scheduler/exception.hh			\
+  scheduler/exception.hxx			\
   scheduler/fwd.hh				\
   scheduler/job.cc				\
   scheduler/job.hh				\

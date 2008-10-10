@@ -1,6 +1,6 @@
 /**
  ** \file scheduler/job.hh
- ** \brief Definition of scheduler::Job.
+ ** \brief Definition of Job.
  */
 
 #ifndef SCHEDULER_JOB_HH
@@ -175,7 +175,7 @@ namespace scheduler
     ///
     /// \param e The exception to throw when the job will be scheduled
     ///        again.
-    void async_throw(const kernel::exception& e);
+    void async_throw(const exception& e);
 
     /// Maybe raise a deferred exception. Must be called from the scheduler
     /// while resuming the job execution. For example, StopException
@@ -389,10 +389,10 @@ namespace scheduler
     bool side_effect_free_;
 
     /// The next exception to be propagated if any.
-    kernel::exception_ptr pending_exception_;
+    exception_ptr pending_exception_;
 
     /// The exception being propagated if any.
-    kernel::exception_ptr current_exception_;
+    exception_ptr current_exception_;
 
     /// Our parent if any.
     rJob parent_;
@@ -434,8 +434,8 @@ namespace scheduler
   /// This exception encapsulates another one, sent by a child job.
   struct ChildException : public SchedulerException
   {
-    ChildException(const kernel::exception&);
-    ADD_FIELD(kernel::exception_ptr, child_exception)
+    ChildException(const exception&);
+    ADD_FIELD(exception_ptr, child_exception)
     COMPLETE_EXCEPTION(ChildException)
   };
 

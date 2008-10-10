@@ -4,8 +4,6 @@
 
 kernelincludekerneldir = $(kernelincludedir)/kernel
 dist_kernelincludekernel_HEADERS =		\
-  include/kernel/exception.hh			\
-  include/kernel/exception.hxx			\
   include/kernel/fwd.hh				\
   include/kernel/kernconf.hh			\
   include/kernel/uconnection.hh			\

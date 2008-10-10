@@ -122,7 +122,7 @@ namespace runner
 	  job = jobs_.erase(job);
 	  continue;
 	}
-	catch (const kernel::exception& ke)
+	catch (const scheduler::exception& ke)
 	{
 	  std::cerr << "at condition triggered an exception: " << ke.what()
 		    << std::endl;
@@ -185,7 +185,7 @@ namespace runner
 	// Regular termination.
 	break;
       }
-      catch (const kernel::exception& e)
+      catch (const scheduler::exception& e)
       {
 	std::cerr << "at job handler exited with exception " << e.what()
 		  << std::endl;

@@ -1,6 +1,6 @@
 /**
  ** \file scheduler/job.hxx
- ** \brief Inline implementation of scheduler::Job.
+ ** \brief Inline implementation of Job.
  */
 
 #ifndef SCHEDULER_JOB_HXX
@@ -288,7 +288,7 @@ namespace scheduler
   }
 
   inline
-  ChildException::ChildException(const kernel::exception& exc)
+  ChildException::ChildException(const exception& exc)
   {
     child_exception_ = exc.clone();
   }

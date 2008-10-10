@@ -16,7 +16,6 @@
 #include <libport/foreach.hh>
 #include <libport/symbol.hh>
 
-#include <kernel/exception.hh>
 #include <kernel/uconnection.hh>
 
 #include <object/cxx-conversions.hh>
@@ -30,6 +29,8 @@
 #include <runner/raise.hh>
 
 #include <parser/uparser.hh>
+
+#include <scheduler/exception.hh>
 
 namespace runner
 {
@@ -197,7 +198,7 @@ namespace runner
     {
       try
       {
-	kernel::rethrow(ce.child_exception_get());
+	scheduler::rethrow(ce.child_exception_get());
       }
       catch (const object::UrbiException& ue)
       {

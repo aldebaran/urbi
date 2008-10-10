@@ -47,7 +47,7 @@ namespace scheduler
       // Termination through "stop" or "block" on a top-level tag,
       // that is a tag inherited at the job creation time.
     }
-    catch (const kernel::exception& e)
+    catch (const exception& e)
     {
       // Rethrow the exception into the parent job if it exists.
       if (parent_)
@@ -153,11 +153,11 @@ namespace scheduler
   bool
   Job::frozen() const
   {
-    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::frozen));
+    return libport::has_if(tags_, boost::mem_fn(&Tag::frozen));
   }
 
   void
-  Job::async_throw(const kernel::exception& e)
+  Job::async_throw(const exception& e)
   {
     pending_exception_ = e.clone();
     // A job which has received an exception is no longer side effect
@@ -210,7 +210,7 @@ namespace scheduler
     {
       current_exception_ = pending_exception_;
       pending_exception_ = 0;
-      kernel::rethrow(current_exception_);
+      rethrow(current_exception_);
     }
   }
 

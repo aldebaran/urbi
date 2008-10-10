@@ -10,7 +10,7 @@
 
 # include <libport/shared-ptr.hh>
 
-# include <kernel/exception.hh>
+# include <scheduler/exception.hh>
 
 namespace scheduler
 {
@@ -26,7 +26,7 @@ namespace scheduler
   // as BlockedException. This allows catching more specific exceptions
   // first, then handling scheduler-related exceptions in a general
   // way.
-  struct SchedulerException : public kernel::exception
+  struct SchedulerException : public exception
   {
     COMPLETE_EXCEPTION(SchedulerException);
   };

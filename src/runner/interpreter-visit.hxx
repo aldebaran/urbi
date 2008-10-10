@@ -10,7 +10,6 @@
 # include <ast/all.hh>
 # include <ast/print.hh>
 
-# include <kernel/exception.hh>
 # include <kernel/uconnection.hh>
 
 # include <object/code.hh>
@@ -22,6 +21,8 @@
 # include <runner/call.hh>
 # include <runner/interpreter.hh>
 # include <runner/raise.hh>
+
+# include <scheduler/exception.hh>
 
 # include <libport/compilation.hh>
 
@@ -89,7 +90,7 @@ namespace runner
     catch (const scheduler::ChildException& ce)
     {
       // If a child caused us to die, then throw the encapsulated exception.
-      kernel::rethrow(ce.child_exception_get());
+      scheduler::rethrow(ce.child_exception_get());
     }
 
     return object::void_class;
@@ -343,7 +344,7 @@ namespace runner
     }
     catch (const scheduler::ChildException& ce)
     {
-      kernel::rethrow(ce.child_exception_get());
+      scheduler::rethrow(ce.child_exception_get());
     }
 
     return res;

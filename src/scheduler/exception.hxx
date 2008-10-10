@@ -1,9 +1,9 @@
-#ifndef KERNEL_EXCEPTION_HXX
-# define KERNEL_EXCEPTION_HXX
+#ifndef SCHEDULER_EXCEPTION_HXX
+# define SCHEDULER_EXCEPTION_HXX
 
 # include <cstdlib>
 
-namespace kernel
+namespace scheduler
 {
 
   inline
@@ -26,6 +26,6 @@ namespace kernel
     abort();
   }
 
-} // namespace kernel
+} // namespace scheduler
 
-#endif // KERNEL_EXCEPTION_HXX
+#endif // SCHEDULER_EXCEPTION_HXX

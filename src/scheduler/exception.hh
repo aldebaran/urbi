@@ -1,5 +1,5 @@
-#ifndef KERNEL_EXCEPTION_HH
-# define KERNEL_EXCEPTION_HH
+#ifndef SCHEDULER_EXCEPTION_HH
+# define SCHEDULER_EXCEPTION_HH
 
 # include <string>
 
@@ -9,9 +9,9 @@
 # include <libport/shared-ptr.hh>
 # include <urbi/export.hh>
 
-namespace kernel
+namespace scheduler
 {
-  class USDK_API exception
+  class exception
   {
   public:
     virtual ~exception ();
@@ -44,8 +44,8 @@ namespace kernel
     throw *this;						\
   };
 
-} // namespace kernel
+} // namespace scheduler
 
-# include <kernel/exception.hxx>
+# include <scheduler/exception.hxx>
 
-#endif // KERNEL_EXCEPTION_HH
+#endif // SCHEDULER_EXCEPTION_HH

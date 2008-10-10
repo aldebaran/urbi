@@ -14,8 +14,8 @@
 # include <ast/fwd.hh>
 # include <ast/call.hh>
 # include <ast/loc.hh>
-# include <kernel/exception.hh>
 # include <object/object.hh>
+# include <scheduler/exception.hh>
 
 namespace object
 {
@@ -25,7 +25,7 @@ namespace object
   typedef std::vector<call_type> call_stack_type;
 
   /// Urbi-visible exceptions
-  class UrbiException: public kernel::exception
+  class UrbiException: public scheduler::exception
   {
   public:
     UrbiException(rObject value, const call_stack_type& bt);
