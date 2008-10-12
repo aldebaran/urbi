@@ -64,6 +64,8 @@ typedef struct CallbackBlock
 	CoroStartCallback *func;
 } CallbackBlock;
 
+static CallbackBlock globalCallbackBlock;
+
 Coro *Coro_new(void)
 {
 	Coro *self = (Coro *)io_calloc(1, sizeof(Coro));
@@ -190,11 +192,10 @@ void Coro_initializeMainCoro(Coro *self)
 
 void Coro_startCoro_(Coro *self, Coro *other, void *context, CoroStartCallback *callback)
 {
-	CallbackBlock block;
-	block.context = context;
-	block.func    = callback;
+	globalCallbackBlock.context = context;
+	globalCallbackBlock.func    = callback;
 	Coro_allocStackIfNeeded(other);
-	Coro_setup(other, &block);
+	Coro_setup(other, &globalCallbackBlock);
 	Coro_switchTo_(self, other);
 }
 
@@ -211,7 +212,7 @@ void Coro_StartWithArg(unsigned int hiArg, unsigned int loArg)
 void Coro_Start(void);
 void Coro_Start(void)
 {
-	CallbackBlock block;
+	CallbackBlock block = globalCallbackBlock;
 	unsigned int hiArg = (unsigned int)(((long long)&block) >> 32);
 	unsigned int loArg = (unsigned int)(((long long)&block) & 0xFFFFFFFF);
 	Coro_StartWithArg(hiArg, loArg);
@@ -228,7 +229,7 @@ void Coro_StartWithArg(CallbackBlock *block)
 void Coro_Start(void);
 void Coro_Start(void)
 {
-	CallbackBlock block;
+	CallbackBlock block = globalCallbackBlock;
 	Coro_StartWithArg(&block);
 }
 #endif
