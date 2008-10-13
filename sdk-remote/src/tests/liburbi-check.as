@@ -1,4 +1,4 @@
-m4_pattern_allow([^URBI_SERVER$])		         -*- shell-script -*-
+m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
 
 AS_INIT()dnl
 URBI_PREPARE()
@@ -69,6 +69,8 @@ exec 3>&2
 check_dir abs_builddir liburbi-check
 : ${abs_top_builddir='@abs_top_builddir@'}
 check_dir abs_top_builddir config.status
+: ${abs_top_srcdir='@abs_top_srcdir@'}
+check_dir abs_top_srcdir configure.ac
 
 # Make it absolute.
 chk=$(absolute "$1")
@@ -99,8 +101,9 @@ set | rst_pre "$me variables"
 # If this SDK-Remote is part of the Kernel package, then we should not
 # use an installed urbi-console, but rather the one which is part of
 # this package.
-if test -x ${abs_top_builddir}/../src/urbi-console; then
-  URBI_SERVER=${abs_top_builddir}/../src/urbi-console
+if test -x $abs_top_builddir/../src/urbi-console; then
+  URBI_SERVER=$abs_top_builddir/../src/urbi-console
+  export URBI_PATH=$abs_top_srcdir/../share
 else
   # Leaves trailing files, so run it in subdir.
   find_urbi_server
