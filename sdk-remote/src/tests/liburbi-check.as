@@ -101,20 +101,22 @@ set | rst_pre "$me variables"
 # If this SDK-Remote is part of the Kernel package, then we should not
 # use an installed urbi-console, but rather the one which is part of
 # this package.
-if test -x $abs_top_builddir/../src/urbi-console; then
+if test -d $abs_top_srcdir/../../src/kernel; then
+  stderr "This SDK-Remote is part of a kernel package."
   URBI_SERVER=$abs_top_builddir/../src/urbi-console
   export URBI_PATH=$abs_top_srcdir/../share
 else
-  # Leaves trailing files, so run it in subdir.
-  find_urbi_server
+  stderr "This SDK-Remote is standalone."
 fi
+# Leaves trailing files, so run it in subdir.
+find_urbi_server
 
-# compute expected output
+# Compute expected output.
 sed -n -e 's@//= @@p' $chk.cc >output.exp
 touch error.exp
 echo 0 >status.exp
 
-#start it
+# Start it.
 valgrind=$(instrument "server.val")
 cmd="$valgrind $URBI_SERVER --port 0 -w server.port --period $period"
 echo "$cmd" >server.cmd
@@ -123,7 +125,7 @@ children_register server
 
 my_sleep 2
 
-#start the test
+# Start the test.
 valgrind=$(instrument "remote.val")
 cmd="$valgrind ../../tests localhost $(cat server.port) $meraw"
 echo "$cmd" >remote.cmd
