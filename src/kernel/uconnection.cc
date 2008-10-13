@@ -228,8 +228,8 @@ UConnection::received(const char* buffer, size_t length)
       ECHO("appended: " << *active_command << "}}}");
     }
     else
-      LIBPORT_ECHO("the parser returned NULL:" << std::endl
-                   << "{{{" << command << "}}}");
+      ECHO("the parser returned NULL:" << std::endl
+           << "{{{" << command << "}}}");
   }
 
   // Execute the new command.
