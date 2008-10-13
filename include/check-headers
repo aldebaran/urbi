@@ -37,7 +37,7 @@ for my $i (@ARGV)
     if (scalar @includes)
     {
 	push @failure, $i;
-	print STDERR "$i: $#includes: @includes\n";
+	print STDERR "$0: $i: @includes\n";
     }
 }
 
