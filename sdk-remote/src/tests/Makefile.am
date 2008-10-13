@@ -10,9 +10,10 @@ include $(top_srcdir)/build-aux/m4sh.mk
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
-           $(top_builddir)/jpeg-6b/libjpeg.la		\
-           $(PTHREAD_LIBS)
+AM_LDADD =					\
+  $(top_builddir)/src/liburbi/liburbi.la	\
+  $(top_builddir)/jpeg-6b/libjpeg.la		\
+  $(PTHREAD_LIBS)
 
 # By default, instrument the code.
 INSTRUMENT = true
