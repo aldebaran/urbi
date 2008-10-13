@@ -60,4 +60,4 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 #nodist_include_libport_sys__HEADERS = $(libportsys_HEADERS)
 
 include_libport = include/libport
-include include/libport/libport.mk
+include include/libport/local.mk

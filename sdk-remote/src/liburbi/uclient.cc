@@ -7,15 +7,17 @@
 
 #include <libport/unistd.h>
 
+#include <libport/sys/time.h>
 #if !defined WIN32
-# include <sys/time.h>
 # include <time.h>
 # include <signal.h>
 #endif
 
 #include <urbi/uclient.hh>
 #include <libport/cstdio>
-#include <libport/network.h>
+#include <libport/sys/select.h>
+#include <libport/arpa/inet.h>
+#include <libport/netdb.h>
 #include <libport/errors.hh>
 #include <libport/lockable.hh>
 #include <libport/thread.hh>
