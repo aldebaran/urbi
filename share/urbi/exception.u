@@ -154,7 +154,7 @@ class Global.LookupError: Exception
   {
     msg = m |
     obj = o |
-    var explanation = "Lookup failed: %s" % [m] |
+    var explanation = "lookup failed: %s" % [m] |
     var closest = nil |
     if (fixSpellingErrors)
       closest = mispelling(m, o) |
