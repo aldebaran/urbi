@@ -79,12 +79,12 @@ static char* urbi_path = getenv("URBI_PATH");
 
 UServer::UServer(const char* mainName)
   : search_path(urbi_path ? urbi_path : URBI_PATH,
-                ":"),
-    scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
-                                                    boost::ref(*this)))),
-    debugOutput (false),
-    mainName_ (mainName),
-    stopall (false)
+                ":")
+  , scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
+                                                    boost::ref(*this))))
+  , debugOutput (false)
+  , mainName_ (mainName)
+  , stopall (false)
 {
 #if ! defined NDEBUG
   server_timer.start ();
