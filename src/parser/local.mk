@@ -89,7 +89,7 @@ $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
 # See Automake's documentation for the whole story.
 $(SOURCES_FROM_UGRAMMAR_Y): $(srcdir)/parser/ugrammar.stamp
-	if test ! -f $@; then						  \
+	@if test ! -f $@; then						  \
 	  trap 'rm -rf $(srcdir)/parser/ugrammar.{lock,stamp}' 1 2 13 15; \
           if mkdir $(srcdir)/parser/ugrammar.lock 2>/dev/null; then	  \
 	    rm -f $(srcdir)/parser/ugrammar.stamp;			  \
