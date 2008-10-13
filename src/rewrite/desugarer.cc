@@ -16,6 +16,17 @@ namespace rewrite
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
 
+  void
+  Desugarer::visit(const ast::Binding* binding)
+  {
+    PARAMETRIC_AST(rewrite,
+                   "Pattern.Binding.new(%exp:1)");
+    rewrite % parser::ast_string(binding->location_get(),
+                                 binding->name_get());
+    result_ = exp(rewrite);
+    result_->original_set(binding);
+  }
+
   void Desugarer::visit(const ast::Class* c)
   {
     ast::loc l = c->location_get();

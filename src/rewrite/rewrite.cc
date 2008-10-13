@@ -1,6 +1,6 @@
 #include <rewrite/desugarer.hh>
+#include <rewrite/pattern-binder.hh>
 #include <rewrite/rewrite.hh>
-#include <rewrite/pattern-rewriter.hh>
 #include <rewrite/rescoper.hh>
 
 namespace rewrite
@@ -9,7 +9,6 @@ namespace rewrite
   rewrite(ast::rConstNary nary)
   {
     Desugarer desugar;
-    PatternRewriter rewrite_patterns;
     Rescoper rescope;
     ast::rAst res;
 
@@ -19,9 +18,21 @@ namespace rewrite
     rescope(res.get());
     res = rescope.result_get();
 
-    rewrite_patterns(res.get());
-    res = rewrite_patterns.result_get();
-
     return res.unsafe_cast<ast::Nary>();
   }
+
+  ast::rPipe pattern_bind(const ast::rConstAst& pattern,
+                          const ast::rExp& exp,
+                          bool before)
+  {
+    ast::rPipe res = new ast::Pipe(pattern->location_get(), ast::exps_type());
+    rewrite::PatternBinder bind(res);
+    bind(pattern.get());
+    if (before)
+      res->children_get().push_back(exp);
+    else
+      res->children_get().push_front(exp);
+    return res;
+  }
+
 }

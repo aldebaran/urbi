@@ -30,6 +30,12 @@ namespace parser
                      ast::rExp event, ast::rExp payload,
                      ast::rExp body, ast::rExp onleave = 0);
 
+  /// waituntil (?(%event)(%payload))
+  ast::rExp
+  ast_waituntil_event(const ast::loc& loc,
+                      ast::rExp event,
+                      ast::exps_type* payload);
+
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
   ast::rExp

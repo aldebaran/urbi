@@ -870,10 +870,7 @@ stmt:
     }
 | "waituntil" "(" event_match ")"
     {
-      PARAMETRIC_AST(desugar,
-        "%exp:2.'waituntil'(Pattern.new(%exp:1))"
-        );
-      $$ = exp(desugar % new ast::List(@3, $3.second) % $3.first);
+      $$ = ::parser::ast_waituntil_event(@$, $3.first, $3.second);
     }
 ;
 

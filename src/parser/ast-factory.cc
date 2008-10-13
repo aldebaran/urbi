@@ -5,6 +5,7 @@
 #include <parser/ast-factory.hh>
 #include <parser/parse.hh>
 #include <parser/parse-result.hh>
+#include <rewrite/rewrite.hh>
 
 namespace std
 {
@@ -71,16 +72,39 @@ namespace parser
       "{"
       "  %exp:1.onEvent(closure ('$at')"
       "  {"
-      "    if (Pattern.new(%exp:2).match('$at'.payload))"
+      "    var '$pattern' = Pattern.new(%exp:2) |"
+      "    if ('$pattern'.match('$at'.payload))"
       "    {"
-      "      %exp:3 |"
-      "      waituntil(!'$at'.active) |"
-      "      %exp:4"
+      "      %exp: 3"
       "    }"
       "  })"
       "})");
 
-    return exp(desugar % event % payload % at % onleave);
+    PARAMETRIC_AST(desugar_body,
+      "      %exp:1 |"
+      "      waituntil(!'$at'.active) |"
+      "      %exp:2");
+
+
+    ast::rExp body = exp(desugar_body % at % onleave);
+    return exp(desugar % event % payload % rewrite::pattern_bind(payload, body));
+  }
+
+  ast::rExp
+  ast_waituntil_event(const ast::loc& loc,
+                      ast::rExp event,
+                      ast::exps_type* payload)
+  {
+    PARAMETRIC_AST
+      (desugar,
+       "var '$pattern' = Pattern.new(%exp:1) |"
+       "%exp:2.'waituntil'('$pattern') |");
+
+    ast::rList d_payload = new ast::List(loc, payload);
+    return rewrite::pattern_bind(
+      d_payload,
+      exp(desugar % d_payload % event),
+      false);
   }
 
   ast::rExp
@@ -97,23 +121,28 @@ namespace parser
       "%exp:1.onEvent("
       "  closure ('$whenever')"
       "  {"
-      "    if (Pattern.new(%exp:2).match('$whenever'.payload))"
+      "    var '$pattern' = Pattern.new(%exp:2);"
+      "    if ('$pattern'.match('$whenever'.payload))"
       "      detach("
       "        {"
-      "          while (true)"
-      "          {"
-      "            %exp:3 |"
-      "            if(!'$whenever'.active)"
-      "              break"
-      "          } |"
-      "          %exp:4"
+      "          %exp:3"
       "        })"
       "  })"
       "})");
 
+    PARAMETRIC_AST(desugar_body,
+      "while (true)"
+      "{"
+      "  %exp:1 |"
+      "  if(!'$whenever'.active)"
+      "    break"
+      "} |"
+      "%exp:2");
+
+    body = exp(desugar_body % body % onleave);
+
     return exp(desugar % event
-               % payload
-               % body % onleave);
+               % payload % rewrite::pattern_bind(payload, body));
   }
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
@@ -293,9 +322,12 @@ namespace parser
     rforeach (const case_type& c, cases)
     {
       PARAMETRIC_AST(a,
-        "if (Pattern.new(%exp:1).match('$switch')) %exp:2 else %exp:3");
+                     "var '$pattern' = Pattern.new(%exp:1) |"
+                     "if ('$pattern'.match('$switch')) %exp:2 else %exp:3");
+      ast::rExp body = rewrite::pattern_bind(c.first,
+                                             c.second);
       a % c.first
-        % c.second
+        % body
         % inner;
       inner = ast::exp(a);
     }

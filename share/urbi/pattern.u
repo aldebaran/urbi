@@ -1,10 +1,12 @@
 class Global.Pattern
 {
   var pattern;
+  var bindings = Dictionary.new;
 
   function init(p)
   {
     pattern = p |
+    bindings = Dictionary.new |
   };
 
   function match(value)
@@ -24,13 +26,11 @@ class Global.Pattern
 
   class Binding
   {
-    var setter;
-    var name;
+    var name = "";
 
-    function init(n, s)
+    function init(n)
     {
       name = n |
-      setter = s |
     };
 
     function asString()
@@ -40,7 +40,7 @@ class Global.Pattern
 
     function match(pattern, value)
     {
-      setter(value) |
+      pattern.bindings[name] = value |
       return true |
     };
   };

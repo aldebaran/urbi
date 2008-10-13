@@ -4,12 +4,11 @@
  *
  *  3: parsing
  *  4: desugaring
- *  5: pattern rewriting
- *  6: rescoping
- *  7: flowing
- *  8: binding
+ *  5: rescoping
+ *  6: flowing
+ *  7: binding
  *
- *  For instanc, you might use it like this to see ast after
+ *  For instance, you might use it like this to see ast after
  *  desugaring:
  *
  *  _build/src/ast-dump 4> ast.dot && dot -Tpng ast.dot > ast.png
@@ -28,7 +27,6 @@
 #include <parser/parse.hh>
 
 #include <rewrite/desugarer.hh>
-#include <rewrite/pattern-rewriter.hh>
 #include <rewrite/rescoper.hh>
 
 using namespace ast;
@@ -66,11 +64,6 @@ main()
   rewrite::Desugarer desugar;
   desugar(res.get());
   res = desugar.result_get();
-  print(res);
-
-  rewrite::PatternRewriter rewrite_patterns;
-  rewrite_patterns(res.get());
-  res = rewrite_patterns.result_get();
   print(res);
 
   rewrite::Rescoper rescope;
