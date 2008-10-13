@@ -89,7 +89,6 @@ AC_DEFINE_UNQUOTED([URBI_PATH],
 # request, since the rest of the dev team might not have Boost 1.35.
 # So require it here.
 BOOST_REQUIRE([1.35])
-URBI_OPENR
 # done by liburbi URBI_LIBPORT
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 URBI_PTHREAD

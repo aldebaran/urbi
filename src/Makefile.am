@@ -64,8 +64,6 @@ urbiinclude_HEADERS = $(uobject_headers)
 ## programs.  ##
 ## ---------- ##
 
-if !OPENR
-
 # urbi-console.
 bin_PROGRAMS += urbi-console
 
@@ -88,8 +86,6 @@ dist_ast_dump_SOURCES =				\
 ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
 ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la $(libuobject_la_LIBADD)
 endif !WIN32
-endif !OPENR
-
 
 if ! INSTALL_KERNEL_HEADERS
 install-data-hook: remove_kheaders

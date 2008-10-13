@@ -44,7 +44,7 @@ namespace runner
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
-    here on the kind of underlying connection (TCP, IPC, OPENR, ...).
+    here on the kind of underlying connection (TCP, IPC, ...).
 
     The sending mechanism is asynchronous. Each time the send() function is
     called, it will pile the data in the internal buffer and try to send what is
