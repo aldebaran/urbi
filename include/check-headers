@@ -1,0 +1,45 @@
+#! /usr/bin/perl -w
+
+# Check that the headers given in argv do not leak Boost headers.
+die "srcdir is not defined"
+    unless defined $ENV{srcdir};
+my $srcdir = $ENV{srcdir};
+die "srcdir=`$srcdir' is not a directory"
+    unless -d $srcdir;
+
+# A regexp that matches the kernel headers.
+my @kernel_headers = map { m,^include/(.*),; } @ARGV;
+my $public_kernel_headers_re = '^(?:' . join('|', @kernel_headers) . ')$';
+
+# C++ standard headers.
+my $cxx_headers_re = '^(?:cstring|cstdarg|iomanip|iosfwd|sstream|string)$';
+
+# Invalid headers.
+my @failure;
+
+for my $i (@ARGV)
+{
+    use IO::File;
+    my $in = new IO::File("$srcdir/$i") or die "cannot open $srcdir/$i";
+    # Slurp contents.
+    local $/;
+    undef $/;
+    my $contents = $in->getline;
+    # Gather includes.
+    my @includes = ($contents =~ m/^#\s*include\s*<(.*)>/gm);
+    # Libport and urbi headers are ok.
+    @includes = grep { !/^libport|urbi\//; } @includes;
+    # Public kernel headers too.
+    @includes = grep { !/$public_kernel_headers_re/o; } @includes;
+    # C++ standard headers are cool.
+    @includes = grep { !/$cxx_headers_re/o; } @includes;
+
+    if (scalar @includes)
+    {
+	push @failure, $i;
+	print STDERR "$i: $#includes: @includes\n";
+    }
+}
+
+die "fix these files: " . join ("\n  ", ('', @failure)) . "\n"
+    if @failure;
