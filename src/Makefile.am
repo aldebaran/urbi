@@ -80,7 +80,7 @@ console-server.cc				\
 
 if !WIN32
 # ast-dump.
-bin_PROGRAMS += ast-dump
+noinst_PROGRAMS += ast-dump
 dist_ast_dump_SOURCES =				\
   ast-dump.cc					\
   ast/dot-printer.hh				\
