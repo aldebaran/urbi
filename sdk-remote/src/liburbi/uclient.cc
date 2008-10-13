@@ -23,8 +23,8 @@
 #include <libport/thread.hh>
 #include <libport/utime.hh>
 
-#include "urbi/uclient.hh"
-#include "urbi/utag.hh"
+#include <urbi/uclient.hh>
+#include <urbi/utag.hh>
 
 namespace urbi
 {
@@ -33,9 +33,9 @@ namespace urbi
    messages, and notify the appropriate callbacks.
    */
   UClient::UClient(const char *_host, int _port, int _buflen, bool _server)
-    : UAbstractClient(_host, _port, _buflen, _server),
-      thread(0),
-      pingInterval(0)
+    : UAbstractClient(_host, _port, _buflen, _server)
+    , thread(0)
+    , pingInterval(0)
   {
     int pos = 0;
 
@@ -59,8 +59,8 @@ namespace urbi
 #ifdef WIN32
     WSADATA wsaData;
     WORD wVersionRequested;
-    wVersionRequested = MAKEWORD( 1, 1 );
-    WSAStartup( wVersionRequested, &wsaData );
+    wVersionRequested = MAKEWORD(1, 1);
+    WSAStartup(wVersionRequested, &wsaData);
 #endif
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
@@ -109,9 +109,9 @@ namespace urbi
       }
 
       // Check that it really worked.
-      while (pos==0)
+      while (!pos)
 	pos = ::recv(sd, recvBuffer, buflen, 0);
-      if (pos<0)
+      if (pos < 0)
       {
 	rc = -1;
 	libport::perror("UClient::UClient recv");

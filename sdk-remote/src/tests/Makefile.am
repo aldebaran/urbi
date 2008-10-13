@@ -20,10 +20,10 @@ INSTRUMENT = true
 URBI_SERVER = urbi-console
 
 TESTS_ENVIRONMENT =				\
- srcdir='$(srcdir)'				\
- INSTRUMENT=$(INSTRUMENT)			\
- PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
- URBI_SERVER=$(URBI_SERVER)
+  srcdir='$(srcdir)'				\
+  INSTRUMENT=$(INSTRUMENT)			\
+  PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
+  URBI_SERVER=$(URBI_SERVER)
 
 # tests(*).
 check_PROGRAMS = tests
