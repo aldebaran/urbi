@@ -5,6 +5,7 @@
 # define KERNEL_USERVER_HH
 
 # include <cstdarg>
+# include <memory>
 # include <sstream>
 
 # include <libport/config.h>
