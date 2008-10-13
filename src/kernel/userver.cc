@@ -51,6 +51,7 @@
 
 #include <scheduler/scheduler.hh>
 
+#include <kernel/connection-set.hh>
 #include <kernel/server-timer.hh>
 #include <kernel/ubanner.hh>
 #include <kernel/ughostconnection.hh>
@@ -78,17 +79,17 @@ typedef char buffer_type[8192];
 static char* urbi_path = getenv("URBI_PATH");
 
 UServer::UServer(const char* mainName)
-  : search_path(urbi_path ? urbi_path : URBI_PATH,
-                ":")
+  : search_path(urbi_path ? urbi_path : URBI_PATH, ":")
   , scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
                                                     boost::ref(*this))))
-  , debugOutput (false)
-  , mainName_ (mainName)
-  , stopall (false)
+  , debugOutput(false)
+  , mainName_(mainName)
+  , stopall(false)
+  , connections_(new kernel::ConnectionSet)
 {
 #if ! defined NDEBUG
-  server_timer.start ();
-  server_timer.dump_on_destruction (std::cerr);
+  server_timer.start();
+  server_timer.dump_on_destruction(std::cerr);
   TIMER_PUSH("server");
 #endif
   ::urbiserver = this;
@@ -297,7 +298,7 @@ void
 UServer::work_handle_connections_ ()
 {
   // Scan currently opened connections for ongoing work
-  foreach (UConnection& c, connections_)
+  foreach (UConnection& c, *connections_)
     if (c.active_get())
     {
       if (!c.blocked_get())
@@ -319,13 +320,13 @@ UServer::work_handle_stopall_ ()
 {
   if (stopall)
   {
-    foreach (UConnection& c, connections_)
+    foreach (UConnection& c, *connections_)
       if (c.active_get() && c.has_pending_command ())
 	c.drop_pending_commands ();
   }
 
   // Delete all connections with closing=true
-  connections_.erase_if(boost::bind(&UConnection::closing_get, _1));
+  connections_->remove_closing();
 
   stopall = false;
 }
@@ -337,7 +338,7 @@ UServer::~UServer()
   // in order to stop its associated connection tag. Since we are going
   // to destroy the scheduler, we must ensure that those actions are
   // carried out first.
-  connections_.clear();
+  connections_->clear();
   delete scheduler_;
 
   object::cleanup_existing_objects();
@@ -514,13 +515,13 @@ UServer::connection_add(UConnection* c)
 	  __PRETTY_FUNCTION__,
 	  "UConnection constructor failed");
   else
-    connections_.push_front(c);
+    connections_->add(c);
 }
 
 void
 UServer::connection_remove(UConnection* c)
 {
-  connections_.erase_if(&boost::lambda::_1 == c);
+  connections_->remove(c);
 }
 
 UConnection&

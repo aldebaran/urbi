@@ -4,6 +4,22 @@
 #ifndef KERNEL_FWD_HH
 # define KERNEL_FWD_HH
 
+class UCommandQueue;
+class UConnection;
+class UGenericCallback;
+class UGhostConnection;
+class UImage;
+class UList;
+class UQueue;
+class UServer;
+class USound;
+class UTest;
+
+namespace kernel
+{
+  struct ConnectionSet;
+}
+
 namespace urbi
 {
   class UBinary;
@@ -16,21 +32,9 @@ namespace urbi
   class baseURBIStarter;
 }
 
-class UCommandQueue;
-class UConnection;
-
 namespace parser
 {
   class UParser;
 }
-
-class UGenericCallback;
-class UGhostConnection;
-class UImage;
-class UList;
-class UQueue;
-class UServer;
-class USound;
-class UTest;
 
 #endif // !KERNEL_FWD_HH

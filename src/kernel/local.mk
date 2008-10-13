@@ -1,4 +1,6 @@
 dist_libuobject_la_SOURCES +=			\
+  kernel/connection-set.cc			\
+  kernel/connection-set.hh			\
   kernel/debug.cc				\
   kernel/debug.hh				\
   kernel/kernconf.cc				\
@@ -18,4 +20,3 @@ dist_libuobject_la_SOURCES +=			\
   kernel/usystem.cc				\
   kernel/uvalue-cast.cc				\
   kernel/uvalue-cast.hh
-

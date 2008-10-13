@@ -7,10 +7,7 @@
 # include <cstdarg>
 # include <sstream>
 
-# include <boost/ptr_container/ptr_list.hpp>
-
 # include <libport/config.h>
-
 
 # if LIBPORT_HAVE_WINDOWS_H
 // Without this, windows.h may include winsock.h, which will conflict with
@@ -302,7 +299,8 @@ private:
 
   /// List of active connections: includes one UGhostConnection.
   // FIXME: This is meant to become a runner::Job and move out of this class.
-  boost::ptr_list<UConnection> connections_;
+  /// A pointer to stop dependencies.
+  std::auto_ptr<kernel::ConnectionSet> connections_;
 
   /// The ghost connection used for urbi.u, URBI.INI, etc.
   // Does not need to be an auto_ptr, as it is stored in connections_
