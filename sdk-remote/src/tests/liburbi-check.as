@@ -65,6 +65,11 @@ my_sleep ()
 
 exec 3>&2
 
+: ${abs_builddir='@abs_builddir@'}
+check_dir abs_builddir liburbi-check
+: ${abs_top_builddir='@abs_top_builddir@'}
+check_dir abs_top_builddir config.status
+
 # Make it absolute.
 chk=$(absolute "$1")
 if test ! -f "$chk.cc"; then
@@ -89,8 +94,17 @@ cd $me.dir
 # Help debugging
 set | rst_pre "$me variables"
 
-# $URBI_SERVER.  Leaves trailing files, so run it in subdir.
-find_urbi_server
+# $URBI_SERVER.
+#
+# If this SDK-Remote is part of the Kernel package, then we should not
+# use an installed urbi-console, but rather the one which is part of
+# this package.
+if test -x ${abs_top_builddir}/../src/urbi-console; then
+  URBI_SERVER=${abs_top_builddir}/../src/urbi-console
+else
+  # Leaves trailing files, so run it in subdir.
+  find_urbi_server
+fi
 
 # compute expected output
 sed -n -e 's@//= @@p' $chk.cc >output.exp
