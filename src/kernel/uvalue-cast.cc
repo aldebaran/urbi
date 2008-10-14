@@ -12,7 +12,7 @@
 
 urbi::UValue uvalue_cast(object::rObject o)
 {
-  static object::rObject binary =
+  static object::rObject Binary =
     object::global_class->slot_get(SYMBOL(Binary));
   urbi::UValue res;
   if (object::rFloat f = o->as<object::Float>())
@@ -27,7 +27,7 @@ urbi::UValue uvalue_cast(object::rObject o)
     foreach (const object::rObject& co, t)
       res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
   }
-  else if (is_a(o, binary))
+  else if (is_a(o, Binary))
   {
     const std::string& data =
       o->slot_get(SYMBOL(data))->as<object::String>()->value_get();
@@ -80,8 +80,10 @@ object_cast(const urbi::UValue& v)
 
     case urbi::DATA_BINARY:
     {
+      static object::rObject Binary =
+	object::global_class->slot_get(SYMBOL(Binary));
       res = new object::Object();
-      res->proto_add(object::global_class->slot_get(SYMBOL(Binary)));
+      res->proto_add(Binary);
       std::string msg = v.binary->getMessage();
       // Trim it.
       if (!msg.empty() && msg[0] == ' ')

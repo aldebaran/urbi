@@ -59,8 +59,10 @@ namespace object
       if (idx)
         runner::raise_argument_type_error(idx.get(), o, exp);
       else
-        r.raise(urbi_call(r, global_class->slot_get(SYMBOL(TypeError)),
-                          SYMBOL(new), exp, o));
+      {
+	static rObject TypeError = global_class->slot_get(SYMBOL(TypeError));
+        r.raise(urbi_call(r, TypeError, SYMBOL(new), exp, o));
+      }
     }
   }
 
