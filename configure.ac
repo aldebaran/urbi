@@ -45,7 +45,7 @@ fi
 
 # Flex.
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
-TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
+TC_PROG([flex],  [>= 2.5.33], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
 TC_CXX_WARNINGS([[-Wcast-align],
