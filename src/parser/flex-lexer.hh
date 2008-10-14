@@ -160,7 +160,7 @@ public:
   virtual yy::parser::symbol_type yylex(parser::ParserImpl* p = 0);
   virtual void switch_streams( FLEX_STD istream* new_in, FLEX_STD ostream* new_out );
 
-  virtual int yywrap();
+  virtual int yywrap() { return 1; }
 
 protected:
   virtual int LexerInput( char* buf, int max_size );
