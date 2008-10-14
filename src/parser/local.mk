@@ -80,7 +80,7 @@ ugrammar_deps =					\
 
 $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
-	echo '$?' >$@.tmp
+	echo '$@ rebuilt because of: $?' >$@.tmp
 	$(MAKE) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
@@ -88,8 +88,21 @@ $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
 # See Automake's documentation for the whole story.
+#
+# The GNU Make documentation seems clear about the fact that when the
+# target (say parser/stack.hh) exists but is outdated, then the "VPATH
+# is ignored" and "$@" denotes only "parser/stack.hh", not including
+# the VPATH prefix.  Yet GNU Make 3.81 on OSX and Linux does replace
+# this "$@" with "$(srcdir)/parser/stack.hh".  But for some reason we
+# have not understood yet, on Windows it does not.  That's why we have
+# to test twice, with and without $(srcdir).
+#
+# Alternatively we could use GPATH, but I, Akim, have no experience
+# with it, and I don't know if we wouldn't have troubles elsewhere
+# (other rules of this Makefile which expect VPATH behavior, not
+# GPATH).
 $(SOURCES_FROM_UGRAMMAR_Y): $(srcdir)/parser/ugrammar.stamp
-	@if test ! -f $@; then						  \
+	@if test ! -f $@ && test ! -f $(srcdir)/$@; then		  \
 	  trap 'rm -rf $(srcdir)/parser/ugrammar.{lock,stamp}' 1 2 13 15; \
           if mkdir $(srcdir)/parser/ugrammar.lock 2>/dev/null; then	  \
 	    rm -f $(srcdir)/parser/ugrammar.stamp;			  \
