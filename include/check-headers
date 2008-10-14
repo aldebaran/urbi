@@ -12,7 +12,7 @@ my @kernel_headers = map { m,^include/(.*),; } @ARGV;
 my $public_kernel_headers_re = '^(?:' . join('|', @kernel_headers) . ')$';
 
 # C++ standard headers.
-my $cxx_headers_re = '^(?:cstring|cstdarg|iomanip|iosfwd|sstream|string)$';
+my $cxx_headers_re = '^(?:cstring|cstdarg|iomanip|iosfwd|memory|sstream|string)$';
 
 # Invalid headers.
 my @failure;
