@@ -453,3 +453,10 @@ load("URBI.INI");
 |  Messages before, and including this one, are ignored.     |
 `-----------------------------------------------------------*/
 "Urbi is up and running.";
+
+var x = 0;
+
+at (x > 0)
+  ping();
+
+x = 1; x = 0;
