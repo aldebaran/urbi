@@ -1,3 +1,4 @@
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <kernel/uvalue-cast.hh>
@@ -100,8 +101,9 @@ object_cast(const urbi::UValue& v)
     break;
 
     default:
+      static boost::format m("<external data with type %1%>");
       runner::raise_argument_type_error
-	(0, object::to_urbi(SYMBOL(LT_external_SP_data_GT)),
+	(0, object::to_urbi((m % v.type).str()),
 	 object::object_class,
 	 object::to_urbi(SYMBOL(backcast)));
   }
