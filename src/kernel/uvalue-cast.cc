@@ -12,6 +12,8 @@
 
 urbi::UValue uvalue_cast(object::rObject o)
 {
+  static object::rObject binary =
+    object::global_class->slot_get(SYMBOL(Binary));
   urbi::UValue res;
   if (object::rFloat f = o->as<object::Float>())
     res = f->value_get();
@@ -25,37 +27,30 @@ urbi::UValue uvalue_cast(object::rObject o)
     foreach (const object::rObject& co, t)
       res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
   }
-  else
+  else if (is_a(o, binary))
   {
-    const object::rObject& binary =
-      object::global_class->slot_get(SYMBOL(Binary));
-    if (!is_a(o, binary))
-    {
-      const object::rString& rs =
-        o->slot_get(SYMBOL(type))->as<object::String>();
-      const std::string& t = rs->value_get();
-      runner::raise_argument_type_error
-	(0, object::to_urbi(t), binary, object::to_urbi(SYMBOL(cast)));
-    }
-    else
-    {
-      const std::string& data =
-        o->slot_get(SYMBOL(data))->
-        as<object::String>()->value_get();
-      const std::string& keywords =
-        o->slot_get(SYMBOL(keywords))->
-        as<object::String>()->value_get();
-      std::list<urbi::BinaryData> l;
-      l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
-                                   data.size()));
-      std::list<urbi::BinaryData>::iterator i = l.begin();
-      res.type = urbi::DATA_BINARY;
-      res.binary = new urbi::UBinary();
-      res.binary->parse(
-        (boost::lexical_cast<std::string>(data.size()) +
-         " " + keywords + '\n').c_str(), 0, l, i);
-      return res;
-    }
+    const std::string& data =
+      o->slot_get(SYMBOL(data))->as<object::String>()->value_get();
+    const std::string& keywords =
+      o->slot_get(SYMBOL(keywords))->
+      as<object::String>()->value_get();
+    std::list<urbi::BinaryData> l;
+    l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
+				 data.size()));
+    std::list<urbi::BinaryData>::iterator i = l.begin();
+    res.type = urbi::DATA_BINARY;
+    res.binary = new urbi::UBinary();
+    res.binary->parse(
+      (boost::lexical_cast<std::string>(data.size()) +
+       " " + keywords + '\n').c_str(), 0, l, i);
+  }
+  else // We could not find how to cast this value
+  {
+    const object::rString& rs =
+      o->slot_get(SYMBOL(type))->as<object::String>();
+    runner::raise_argument_type_error
+      (0, rs, object::to_urbi(SYMBOL(LT_exportable_SP_object_GT)),
+       object::to_urbi(SYMBOL(cast)));
   }
   return res;
 }
