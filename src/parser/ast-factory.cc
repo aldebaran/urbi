@@ -12,7 +12,7 @@ namespace std
   ostream&
   operator<< (ostream& o, const parser::case_type& c)
   {
-    return o << "/* " << (void*) &c << " */ "
+    return o << "/* " << (const void*) &c << " */ "
              << "case "
              << libport::deref << c.first
              << " => "
@@ -22,7 +22,7 @@ namespace std
   ostream&
   operator<< (ostream& o, const parser::cases_type& cs)
   {
-    o << "/* " << (void*) &cs << " */ "
+    o << "/* " << (const void*) &cs << " */ "
       << "{" << endl;
     foreach (const parser::case_type& c, cs)
       o << "  " << c << endl;
