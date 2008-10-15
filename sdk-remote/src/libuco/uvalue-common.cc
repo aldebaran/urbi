@@ -207,6 +207,22 @@ namespace urbi
       return p;
     }
 
+    // true and false used by k2
+    if (!strncmp(message + pos, "true", 4))
+    {
+      type = DATA_DOUBLE;
+      val = 1;
+      return pos+4;
+    }
+    if (!strncmp(message + pos, "false", 5))
+    {
+      type = DATA_DOUBLE;
+      val = 0;
+      return pos+5;
+    }
+
+
+
     //last attempt: double
     int p;
     int count = sscanf(message+pos, "%lf%n", &val, &p);
