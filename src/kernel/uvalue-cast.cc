@@ -97,6 +97,10 @@ object_cast(const urbi::UValue& v)
     }
     break;
 
+    case urbi::DATA_VOID:
+      res = object::void_class;
+    break;
+
     default:
       static boost::format m("<external data with type %1%>");
       runner::raise_argument_type_error
