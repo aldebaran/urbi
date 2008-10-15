@@ -18,6 +18,7 @@
 #include <libport/foreach.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
+#include <libport/sys/socket.h>
 #include <libport/thread.hh>
 #include <libport/tokenizer.hh>
 #include <libport/utime.hh>

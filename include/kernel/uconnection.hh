@@ -20,7 +20,10 @@
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
 # include <kernel/utypes.hh>
-
+# ifdef _MSC_VER
+#  include <object/lobby.hh>
+#  include <runner/shell.hh>
+# endif
 namespace ast
 {
   class Nary;

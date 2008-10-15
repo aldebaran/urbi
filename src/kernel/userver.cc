@@ -39,7 +39,6 @@
 #include <ast/nary.hh>
 
 #include <object/object.hh>
-#include <object/object.hh>
 #include <object/primitive.hh>
 #include <object/primitives.hh>
 #include <object/root-classes.hh>
@@ -47,6 +46,7 @@
 
 #include <runner/call.hh>
 #include <runner/runner.hh>
+#include <runner/shell.hh>
 #include <runner/sneaker.hh>
 
 #include <scheduler/scheduler.hh>
