@@ -227,11 +227,13 @@ main (int argc, const char* argv[], bool block)
 	      << libport::exit (EX_UNAVAILABLE);
   }
 
+  s.initialize ();
+
+  // Write the port file after initialize returned; that is, after
+  // urbi.u is loaded.
   if (arg_port_filename)
     std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
 
-
-  s.initialize ();
   UConnection& c = s.ghost_connection_get();
   std::cerr << libport::program_name
 	    << ": got ghost connection" << std::endl;
