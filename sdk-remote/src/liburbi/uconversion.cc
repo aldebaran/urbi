@@ -1,4 +1,5 @@
 #include <urbi/uconversion.hh>
+#include <cstdlib>
 
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
