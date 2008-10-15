@@ -358,7 +358,7 @@ namespace object
   object_class_initialize ()
   {
     object_class->slot_set(SYMBOL(isA),
-                           make_primitive(object_class_isA, SYMBOL(isA)));
+                           make_primitive(object_class_isA));
 
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)				\
@@ -388,7 +388,7 @@ namespace object
 #undef DECLARE
 
 #define DECLARE(Name, Code)                     \
-    object_class->slot_set(SYMBOL(Name), make_primitive(Code, SYMBOL(Name)))
+    object_class->slot_set(SYMBOL(Name), make_primitive(Code))
 
     DECLARE(getProperty, &Object::property_get);
     DECLARE(hasProperty, &Object::property_has);

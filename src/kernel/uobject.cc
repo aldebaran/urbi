@@ -49,7 +49,7 @@ using libport::Symbol;
 #define MAKE_VOIDCALL(ptr, cls, meth) \
     object::make_primitive( \
 		boost::function1<void, rObject>(\
-		boost::bind(&cls::meth, ptr)), SYMBOL(callback))
+		boost::bind(&cls::meth, ptr)))
 
 static inline runner::Runner& getCurrentRunner()
 {
@@ -143,9 +143,9 @@ rObject uobject_initialize(runner::Runner&, objects_type& args)
   where = args.front();
   uobjects_reload(where);
 #if WITH_LTDL
-  object::global_class->slot_set(SYMBOL(loadModule),
-		  object::make_primitive(&uobjects_load_module,
-                           SYMBOL(loadModule)));
+  object::global_class->slot_set
+    (SYMBOL(loadModule),
+     object::make_primitive(&uobjects_load_module));
 #endif
   return object::void_class;
 }
@@ -354,7 +354,7 @@ namespace urbi
       me->slot_set(libport::Symbol(method),
 		   object::make_primitive(
 	boost::function2<rObject, Runner&, objects_type&>
-	(boost::bind(&wrap_ucallback, _1 ,_2, this)), SYMBOL(callback)));
+	(boost::bind(&wrap_ucallback, _1 ,_2, this))));
     }
     if (s.type == "var" || s.type == "varaccess")
     {
@@ -373,7 +373,7 @@ namespace urbi
       object::objects_type args = list_of
 	(object::make_primitive(
 	boost::function2<rObject, Runner&, objects_type&>
-	(boost::bind(&wrap_ucallback_notify, _1 ,_2, this)), SYMBOL(callback)));
+	(boost::bind(&wrap_ucallback_notify, _1 ,_2, this))));
       getCurrentRunner().apply(var, f, sym, args);
     }
     delete &s;

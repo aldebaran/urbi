@@ -105,7 +105,7 @@ namespace object
   CxxObject::Binder<T>::operator()(const libport::Symbol& name,
                                    M method)
   {
-    tgt_->slot_set(name, make_primitive(method, name));
+    tgt_->slot_set(name, make_primitive(method));
   }
 
 }

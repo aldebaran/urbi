@@ -65,7 +65,7 @@ namespace object
   rObject
   Primitive::proto_make()
   {
-    rObject res = make_primitive(nil, SYMBOL());
+    rObject res = make_primitive(nil);
     return res;
   }
 

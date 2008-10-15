@@ -246,13 +246,13 @@ namespace object
     return content_;
   }
 
-  OVERLOAD_2(sub_bouncer, SBL_SBR,
+  OVERLOAD_2(sub_bouncer,
              2,
              (std::string (String::*) (unsigned)) (&String::sub),
              (std::string (String::*) (unsigned, unsigned)) (&String::sub)
     );
 
-  OVERLOAD_2(sub_eq_bouncer, SBL_SBR_EQ,
+  OVERLOAD_2(sub_eq_bouncer,
              3,
              (std::string (String::*) (unsigned, const std::string&))
              (&String::sub_eq),

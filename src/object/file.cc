@@ -112,7 +112,7 @@ namespace object
   | Details |
   `--------*/
 
-  OVERLOAD_TYPE(init_bouncer, init,
+  OVERLOAD_TYPE(init_bouncer,
                 Path,
                 (void (File::*)(rPath)) &File::init,
                 String,

@@ -9,13 +9,13 @@ namespace object
   struct CxxConvert
   {
     static rObject
-    to(const rObject&, const libport::Symbol&)
+    to(const rObject&)
     {
       return T::No_such_conversion;
     }
 
     static rObject
-    from(const T&, const libport::Symbol&)
+    from(const T&)
     {
       return T::No_such_conversion;
     }

@@ -380,7 +380,7 @@ namespace object
 #define DECLARE(Name)                                                   \
     system_class->slot_set                                              \
       (SYMBOL(Name),                                                    \
-       make_primitive(&system_##Name, SYMBOL(Name)))                    \
+       make_primitive(&system_##Name))                                  \
 
     DECLARE(getenv);
     DECLARE(lobbies);

@@ -46,8 +46,7 @@ namespace object
     static rObject primitive(                                           \
       runner::Runner& r,                                                \
       object::objects_type& args,                                       \
-      BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f,                  \
-      const libport::Symbol& name)                                      \
+      BOOST_TYPE(Ret, ArgsC, Run, Arg1, Arg2, Arg3) f)                  \
     {                                                                   \
       (void) r;                                                         \
       check_arg_count(args.size() - 1, ArgsC WHEN(Run, - 1) - 1);       \
@@ -56,26 +55,26 @@ namespace object
         WHEN(Run, r) COMMA(Run)                                         \
                                                                         \
         CxxConvert<typename Flatten<S>::type>                           \
-        ::to(args[0], name, 0)                                          \
+        ::to(args[0], 0)                                                \
                                                                         \
         COMMA(Arg1)                                                     \
         WHEN(Arg1,                                                      \
              CxxConvert<typename Flatten<A1>::type>                     \
-             ::to(args[1], name, 1))                                    \
+             ::to(args[1], 1))                                          \
                                                                         \
         COMMA(Arg2)                                                     \
         WHEN(Arg2,                                                      \
              CxxConvert<typename Flatten<A2>::type>                     \
-             ::to(args[2], name, 2))                                    \
+             ::to(args[2], 2))                                          \
                                                                         \
         COMMA(Arg3)                                                     \
         WHEN(Arg3,                                                      \
              CxxConvert<typename Flatten<A3>::type>                     \
-             ::to(args[3], name, 3))                                    \
+             ::to(args[3], 3))                                          \
         );                                                              \
       IF(Ret,                                                           \
          return CxxConvert<typename Flatten<R>::type>                   \
-         ::from(res, name),                                             \
+         ::from(res),                                                   \
          return object::void_class);                                    \
     }                                                                   \
   };                                                                    \
@@ -95,12 +94,11 @@ namespace object
     static rObject primitive(                                   \
       runner::Runner& r,                                        \
       object::objects_type& args,                               \
-      BOOST_LIST_TYPE_MET(Ret, ArgsC, Run) f,                   \
-      const libport::Symbol& name)                              \
+      BOOST_LIST_TYPE_MET(Ret, ArgsC, Run) f)                   \
     {                                                           \
       (void) r;                                                 \
       S tgt =                                                   \
-        CxxConvert<S>::to(args[0], name, 0);                    \
+        CxxConvert<S>::to(args[0], 0);                          \
       args.pop_front();                                         \
       WHEN(Ret, return) f(                                      \
         WHEN(Run, r) COMMA(Run)                                 \
@@ -125,8 +123,7 @@ namespace object
     static rObject primitive(                                   \
       runner::Runner& WHEN(Run, r),                             \
       object::objects_type& args,                               \
-      BOOST_LIST_TYPE(Ret, ArgsC, Run) f,                       \
-      const libport::Symbol&)                                   \
+      BOOST_LIST_TYPE(Ret, ArgsC, Run) f)                       \
     {                                                           \
       WHEN(Ret, return) f(                                      \
         WHEN(Run, r) COMMA(Run)                                 \
@@ -171,7 +168,7 @@ namespace object
 
   template<typename M>
   inline rPrimitive
-  make_primitive(M f, const libport::Symbol& name)
+  make_primitive(M f)
   {
     typedef AnyToBoostFunction<M> C;
     // If primitive is unfound in MakePrimitive here, you gave an
@@ -182,6 +179,6 @@ namespace object
     // * method pointers
     return new Primitive(
       boost::bind(MakePrimitive<typename C::type>::primitive,
-                  _1, _2, C::convert(f), name));
+                  _1, _2, C::convert(f)));
   }
 }

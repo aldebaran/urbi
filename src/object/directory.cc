@@ -109,7 +109,7 @@ namespace object
     }
   }
 
-  OVERLOAD_TYPE(init_bouncer, init,
+  OVERLOAD_TYPE(init_bouncer,
                 Path,
                 (void (Directory::*)(rPath)) &Directory::init,
                 String,
