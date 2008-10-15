@@ -1,0 +1,17 @@
+Here is the list of the current beta-testers.
+
+ENSTAR
+======
+Contact: Matthieu Nottale <nottale@gostai.com>
+Environment: Debian sarge
+
+ALDEBARAN
+=========
+Contact: Alexandre Mazel <mazel@aldebaran-robotics.com>
+Environment: Windows, Mac, Nao
+
+HAUTE-ÉCOLE ARC
+===============
+Contact: Alexandre Gabus <Alexandre.Gabus@he-arc.ch> (student)
+     and Matthieu Amiguet <matthieu.amiguet@he-arc.ch> (advisor)
+Environment: Linux or Windows, still undecided
