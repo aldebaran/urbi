@@ -1,0 +1,48 @@
+#! /bin/sh
+#
+
+set -x
+
+# Those would best be set through configure (except "updir"
+# which sets the destination).
+PROJECT="$1"
+srcdir="$2"
+builddir="$3"
+prefix="$4"
+updir="$5"
+ARCH="$6"
+OS="$7"
+COMP="$8"
+
+# If some of those need to be chosen by configure, add an entry
+# there and add the "@" form.
+CP="cp"
+FIND="find"
+GIT="git"
+MKDIR_P="@MKDIR_P@"
+RM="rm -f"
+SED="@SED@"
+TAR="tar"
+
+TMPDIR=${TMPDIR-/tmp}
+
+# Determine the version from the exact tag if there is any, or the
+# sha-1 otherwise
+version=$(cd "$srcdir" && $GIT describe --exact-match 2> /dev/null || $GIT describe --always)
+name="${PROJECT}-${ARCH}-${OS}-${COMP}-${version}"
+destdir="${updir}/${name}"
+
+# Create a fresh directory in which we put the subdirectories of the
+# $install directory.
+$RM -r "$destdir"
+$MKDIR_P "$destdir"
+(cd "$prefix" && $TAR cf - .) | (cd "$destdir" && $TAR xpBf -)
+
+# Build a MANIFEST with the list of files to install into the final
+# destination
+MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
+(cd "$destdir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
+mv "$MANIFEST" "$destdir/MANIFEST"
+
+# Copy the instructions on how to report bugs at the top-level
+cp "${srcdir}/doc/REPORTING-BUGS" "$destdir"

@@ -117,5 +117,6 @@ URBI_LIBTOOL
 
 URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([scripts/package], [chmod +x scripts/package])
 AC_CONFIG_HEADERS([src/kernel/config.h])
 AC_OUTPUT
