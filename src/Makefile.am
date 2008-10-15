@@ -87,8 +87,14 @@ ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
 ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la $(libuobject_la_LIBADD)
 endif !WIN32
 
+install-data-hook: install_param_mk
+
+install_param_mk:
+	sed -e 's/remote/engine/g' $(top_builddir)/sdk-remote/sdk/param.mk >$(envdir)/param.mk
+
 if ! INSTALL_KERNEL_HEADERS
 install-data-hook: remove_kheaders
+
 remove_kheaders:
 	$(RM) -r $(prefix)/gostai/kernel
 endif
