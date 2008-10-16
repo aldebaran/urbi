@@ -12,14 +12,14 @@ class Global.Lazy
   function eval()
   {
     val = code.acceptVoid|
-    getSlot("val").unAcceptVoid
+    getSlot("val").unacceptVoid
   };
 
   function value()
   {
     if (getSlot("val").isVoid)
       eval|
-    getSlot("val").unAcceptVoid
+    getSlot("val").unacceptVoid
   };
 
   function string ()

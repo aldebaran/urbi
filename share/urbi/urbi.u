@@ -147,13 +147,13 @@ do (Object)
   {
     this
   };
-  function unAcceptVoid()
+  function unacceptVoid()
   {
     this
   }
 };
 var void.acceptVoid.acceptVoid = function() { new };
-var void.acceptVoid.unAcceptVoid = function() { protos.front };
+var void.acceptVoid.unacceptVoid = function() { protos.front };
 
 /*-----------.
 | Booleans.  |
