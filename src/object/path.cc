@@ -140,9 +140,9 @@ namespace object
     return new Path(path_ / (*other).path_);
   }
 
-  std::string Path::dirname()
+  rPath Path::dirname()
   {
-    return path_.dirname();
+    return new Path(path_.dirname());
   }
 
   rObject Path::open()

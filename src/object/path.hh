@@ -39,7 +39,7 @@ namespace object
     std::string basename();
     rPath cd();
     rPath concat(rPath other);
-    std::string dirname();
+    rPath dirname();
     rObject open();
 
     // Stat
