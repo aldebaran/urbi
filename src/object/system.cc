@@ -294,6 +294,17 @@ namespace object
     return new Dictionary(res);
   }
 
+  static rObject
+  system_class_platform(runner::Runner&, objects_type args)
+  {
+    check_arg_count(args.size() - 1, 0);
+#ifdef WIN32
+    return to_urbi(SYMBOL(WIN32));
+#else
+    return to_urbi(SYMBOL(POSIX));
+#endif
+  }
+
   // This should give a backtrace as an urbi object.
   static rObject
   system_class_backtrace(runner::Runner& r, objects_type args)
@@ -418,6 +429,7 @@ namespace object
     DECLARE(sleep);
     DECLARE(spawn);
     DECLARE(stopall);
+    DECLARE(platform);
     DECLARE(time);
 #undef DECLARE
   }
