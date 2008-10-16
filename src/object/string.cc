@@ -266,10 +266,18 @@ namespace object
              (std::string (String::*) (unsigned, unsigned)) (&String::sub)
     );
 
+  OVERLOAD_TYPE(sub_eq_bouncer_2, 2, 1,
+                Float,
+                (std::string (String::*) (unsigned, const std::string&))
+                (&String::sub_eq),
+                String,
+                (std::string (String::*) (const std::string&, const std::string&))
+                (&String::sub_eq)
+    );
+
   OVERLOAD_2(sub_eq_bouncer,
              3,
-             (std::string (String::*) (unsigned, const std::string&))
-             (&String::sub_eq),
+             sub_eq_bouncer_2,
              (std::string (String::*) (unsigned, unsigned, const std::string&))
              (&String::sub_eq)
     );

@@ -13,20 +13,22 @@ namespace object
 /// Make a function that bounces depending on the type of its argument
 /**
  *  @param Name Name of the function to generate
+ *  @param N    Number of arguments expected by the function
+ *  @param Arg  Argument which type to test
  *  @param T1   First possible type for the argument
  *  @param V1   Primitive to bounce on when the argument is of type T1
  *  @param T2   Second possible type for the argument
  *  @param V2   Primitive to bounce on when the argument is of type T2
  */
-#define OVERLOAD_TYPE(Name, T1, V1, T2, V2)                             \
+#define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)                     \
                                                                         \
-  static rObject Name(runner::Runner& r, object::objects_type args)     \
+  static rObject Name(runner::Runner& r, object::objects_type& args)    \
   {                                                                     \
     static rPrimitive v1 = make_primitive(V1);                          \
     static rPrimitive v2 = make_primitive(V2);                          \
                                                                         \
-    object::check_arg_count (args.size() - 1, 1);                       \
-    if (args[1]->is_a<T2>())                                            \
+    object::check_arg_count (args.size() - 1, N);                       \
+    if (args[Arg]->is_a<T2>())                                          \
       return (*v2)(r, args);                                            \
     else                                                                \
       return (*v1)(r, args);                                            \
@@ -41,7 +43,7 @@ namespace object
  */
 #define OVERLOAD_2(Name, N, V1, V2)                                     \
                                                                         \
-  static rObject Name(runner::Runner& r, object::objects_type args)     \
+  static rObject Name(runner::Runner& r, object::objects_type& args)    \
   {                                                                     \
     static rPrimitive v1 = make_primitive(V1);                          \
     static rPrimitive v2 = make_primitive(V2);                          \
