@@ -311,7 +311,7 @@ class Global.'external'
         || !obj.getSlot(varname).hasSlot("isUVar"))
     {
       // The slot allready exists, but is not an uvar.
-      var v = obj.getSlot(varname);
+      var v = obj.getSlot(varname).acceptVoid;
       obj.removeSlot(varname);
       obj.setSlot(varname, getSlot("uvar").clone);
       if (!v.isVoid())
