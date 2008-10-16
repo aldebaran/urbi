@@ -167,6 +167,17 @@ namespace urbi
   /// Send buf to the connection hosting the UObject.
   USDK_API void send(void* buf, int size);
 
+  /// Possible UObject running modes.
+  enum UObjectMode {
+       MODE_PLUGIN=1,
+       MODE_REMOTE
+  };
+  /// Return the mode in which the code is running.
+  USDK_API UObjectMode getRunningMode();
+  /// Return true if the code is running in plugin mode.
+  inline bool isPluginMode() { return getRunningMode() == MODE_PLUGIN;}
+  /// Return true if the code is running in remote mode.
+  inline bool isRemoteMode() { return getRunningMode() == MODE_REMOTE;}
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object. It provides mechanisms to
       bind variables and functions between C++ and URBI.

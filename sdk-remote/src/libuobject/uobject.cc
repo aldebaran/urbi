@@ -63,6 +63,10 @@ namespace urbi
     s.rdbuf()->sputn(static_cast<char*> (buf), size);
   }
 
+  UObjectMode getRunningMode()
+  {
+    return MODE_REMOTE;
+  }
   // **************************************************************************
   //  Monitoring functions
 
