@@ -74,6 +74,7 @@ void usage(const char* name)
   << "  -r, --remote      Start as a remote uobject\n"
   << "  -p, --plugin      Start as a plugin uobject on a running server\n"
   << "  -s, --start       Start an urbi server and connect as plugin\n"
+  << "  -c, --custom FILE Start using the shared library FILE\n"
   << "\n"
   << "Options for plugin mode:\n"
   << "  -H, --host             Server host name\n"
@@ -132,6 +133,7 @@ int main(int argc, const char* argv[])
   /// Be leniant, remove all '-'.
   while (mode.length() && mode[0] == '-')
     mode = mode.substr(1, mode.npos);
+  std::string dll;
   /// Be extra-leniant, only check first letter.
   switch(mode[0])
   {
@@ -143,6 +145,10 @@ int main(int argc, const char* argv[])
     break;
   case 'p':
     connectMode = MODE_PLUGIN_LOAD;
+    break;
+  case 'c':
+    connectMode = MODE_REMOTE;
+    dll = argv[argp++];
     break;
   default:
     std::cerr << "Invalid mode '" << argv[1] << "'" << std::endl;
@@ -170,9 +176,10 @@ int main(int argc, const char* argv[])
    * -Dlopen the uobjects to load.
    * -Call urbi::main found by dlsym() in libuobject.
    */
-  std::string dll = prefix + "/gostai/core/" + host + '/'
-    + (connectMode == MODE_REMOTE?"remote":"engine") + "/libuobject.so";
-  std::cerr << "loading " << dll << std::endl;
+  if (dll.empty())
+    dll = prefix + "/gostai/core/" + host + '/'
+      + (connectMode == MODE_REMOTE?"remote":"engine") + "/libuobject.so";
+  std::cerr << "loading core: " << dll << std::endl;
   lt_dlhandle core = lt_dlopen(dll.c_str());
   if (!core)
   {
