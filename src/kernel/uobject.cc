@@ -311,6 +311,11 @@ uvar_uowned_set(const std::string& name, rObject val)
 namespace urbi
 {
 
+  UObjectMode getRunningMode()
+  {
+    return MODE_PLUGIN;
+  }
+
   struct CallbackStorage
   {
     std::string type;
