@@ -182,7 +182,8 @@ int main(int argc, const char* argv[])
 
   foreach(const std::string& s, modules)
   {
-    lt_dlhandle uobject = lt_dlopen(argv[2]);
+    std::cerr << "Loading uobjects: " << s << std::endl;
+    lt_dlhandle uobject = lt_dlopen(s.c_str());
     if (!uobject)
     {
       std::cerr << "Failed to load " << s << ": " << lt_dlerror() << std::endl;
