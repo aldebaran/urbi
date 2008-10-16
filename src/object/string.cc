@@ -220,6 +220,20 @@ namespace object
     return sub_eq(idx, idx + 1, v);
   }
 
+  std::string String::sub_eq(const std::string& needle, const std::string& v)
+  {
+    const char* haystack = content_.c_str();
+    const char* hay = haystack;
+    int size = needle.size();
+
+    while ((hay = strstr(hay, needle.c_str())))
+    {
+      sub_eq(hay - haystack, hay - haystack + size, v);
+      hay += size;
+    }
+    return content_;
+  }
+
   std::string String::sub(unsigned int from, unsigned int to)
   {
     check_bounds(from, to);
