@@ -1,4 +1,39 @@
-Here is the list of the current beta-testers.
+Current release manager
+#######################
+
+The release manager for k2 beta is Samuel Tardieu <tardieu@gostai.com>.
+
+Procedure
+#########
+
+To create an account for a beta-testers, you must be allowed to log into
+www.gostai.com using the downloads account, by way of your SSH key.
+
+Download area
+#############
+
+The download area is on www.gostai.com, ~downloads/urbi-sdk-2.0_beta, and
+beta-testers can access it at http://www.gostai.com/downloads/urbi-sdk-2.0_beta
+
+At this time, only the release manager is supposed to put new files online,
+if other accesses are needed, just ask, and we may change this procedure.
+
+Adding a beta-tester
+####################
+
+% ssh downloads@www.gostai.com ./allow_download urbi-sdk-2.0_beta <TESTER-EMAIL>
+
+If the tester already exists, this will remind you of his password.
+
+When creating a new beta-tester, please update the list below and the contact
+information. This list will be used to send announces about new versions.
+
+It is easiest for us to have one dedicated point of contact by
+organization, but in some situations (e.g., student/advisor), having
+several of them may be more appropriate.
+
+List of beta testers
+####################
 
 ENSTAR
 ======
