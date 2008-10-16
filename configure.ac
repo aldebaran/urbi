@@ -114,7 +114,8 @@ AC_CONFIG_SUBDIRS([sdk-remote])
 ## -------- ##
 
 URBI_LIBTOOL
-
+#The $shrext_cmds is set by libtool
+AC_SUBST([SHLIBEXT], [$shrext_cmds])
 URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([scripts/package], [chmod +x scripts/package])
