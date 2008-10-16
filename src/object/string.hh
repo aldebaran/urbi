@@ -43,8 +43,6 @@ namespace object
     std::string sub(unsigned int idx);
     std::string sub_eq(unsigned int from, unsigned int to,
                        const std::string& v);
-    std::string sub_eq(const std::string& match,
-                       const std::string& v);
     std::string sub_eq(unsigned int idx,
                        const std::string& v);
     std::string to_lower();
