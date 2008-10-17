@@ -76,6 +76,14 @@ console-server.cc				\
 ../lib/network/bsdnet/network.hh		\
 ../lib/network/bsdnet/network.cc
 
+all-local: libuobject.la.stamp
+
+libuobject.la.stamp: libuobject.la
+	$(top_srcdir)/build-aux/fix-libtool-la libuobject.la \
+	  libuobject.la.stamp
+
+CLEANFILES += libuobject.la.stamp
+
 if !WIN32
 # ast-dump.
 noinst_PROGRAMS = ast-dump
