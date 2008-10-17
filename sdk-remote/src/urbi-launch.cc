@@ -7,6 +7,7 @@
 #include <sdk/config.h>
 
 #include <libport/foreach.hh>
+#include <libport/path.hh>
 #include <libport/unistd.h>
 
 #include <urbi/uclient.hh>
@@ -120,11 +121,8 @@ int main(int argc, const char* argv[])
 {
   lt_dlinit();
 
-  std::string prefix;
-  {
-    const char* root = getenv("URBI_ROOT");
-    prefix = root ? root : URBI_PREFIX;
-  }
+  const char* urbi_root = getenv("URBI_ROOT");
+  libport::path prefix(urbi_root ? urbi_root : URBI_PREFIX);
 
   int argp = 1;
 
@@ -182,8 +180,14 @@ int main(int argc, const char* argv[])
    * -Call urbi::main found by dlsym() in libuobject.
    */
   if (dll.empty())
-    dll = prefix + "/gostai/core/" + host + '/'
-      + (connectMode == MODE_REMOTE?"remote":"engine") + "/libuobject.so";
+    dll = prefix / "gostai" / "core" / host /
+      (connectMode == MODE_REMOTE ? "remote" : "engine") /
+#ifdef WIN32
+      "libuobject.dll"
+#else
+      "libuobject.so"
+#endif
+      ;
   std::cerr << "loading core: " << dll << std::endl;
   lt_dlhandle core = lt_dlopen(dll.c_str());
   if (!core)
