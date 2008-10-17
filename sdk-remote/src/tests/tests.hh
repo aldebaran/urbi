@@ -72,10 +72,10 @@ void dispatch(const char * method, urbi::UClient & client,
   std::cerr << program_name << ": " << S << std::endl
 
 /// Send S to the client.
-#define SEND(S)					\
-  do {						\
-    VERBOSE("Sending: " << S);			\
-    client.send(S);				\
+#define SEND(S)						\
+  do {							\
+    VERBOSE("Sending: " << S);				\
+    client.send((std::string(S) + "\n").c_str());	\
   } while (0)
 
 #endif // SDK_REMOTE_TESTS_TESTS_HH

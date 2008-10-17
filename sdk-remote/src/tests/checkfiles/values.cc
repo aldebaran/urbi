@@ -9,7 +9,7 @@ SEND("output << 1;");
 SEND("output << \"coin\";");
 //= D output "coin"
 SEND("error << nonexistent;");
-//= E error 1.39-49: lookup failed: nonexistent
+//= E error 3.10-20: lookup failed: nonexistent
 SEND("var mybin = BIN 10 mybin header;1234567890;output << mybin;");
 //= D output BIN 10  mybin header;1234567890
 SEND("output << [\"coin\", 5, [3, mybin, 0]];");
