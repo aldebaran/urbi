@@ -63,6 +63,15 @@ namespace object
 
   rList File::as_list()
   {
+    static std::string delim =
+#ifndef WIN32
+      "\n"
+#else
+      "\r\n"
+#endif
+      ;
+    static int delim_size = delim.length();
+
     std::ifstream s(path_->as_string().c_str());
 
     if (!s.good())
@@ -79,12 +88,12 @@ namespace object
       s.read(buf, sizeof buf - 1);
       buf[s.gcount()] = 0;
       char* str = buf;
-      while (char* cut = strstr(str, "\n"))
+      while (char* cut = strstr(str, delim.c_str()))
       {
         *cut = 0;
         res << new String(line + str);
         line = "";
-        str = cut + 1;
+        str = cut + delim_size;
       }
       line += str;
     }
