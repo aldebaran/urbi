@@ -89,10 +89,8 @@ namespace urbi
   {
     objecthub = 0;
     autogroup = false;
-    std::stringstream ss;
-    ss << "class " << __name << "{};";
-    ss << "external object " << __name << ";";
-    URBI(()) << ss.str();
+    URBI_SEND_COMMAND("class " << __name << "{}");
+    URBI_SEND_COMMAND("external object " << __name);
     period = -1;
 
     // default
@@ -153,8 +151,7 @@ namespace urbi
     std::string cbFullName = cbName + "__0";
 
     // Stop any previous update
-    os << "stop " << tagName << ";";
-    URBI(()) << os.str ();
+    URBI_SEND_COMMAND("stop " << tagName);
 
     // Find previous update timer on this object
     std::list<UGenericCallback*>& cblist = (*eventmap) [cbFullName];
@@ -185,11 +182,8 @@ namespace urbi
 		    this, &UObject::update, cbName, eventmap, false);
 
     // Set update at given period
-    os.str ("");
-    os.clear ();
-    os << tagName << ": every(" << period << ") "
-      "{ emit " << cbName << ";},";
-    URBI(()) << os.str ();
+    URBI_SEND_COMMAND(tagName << ": every(" << period << ")"
+		      "              { emit " << cbName << ";},");
 
     return;
   }
@@ -269,15 +263,10 @@ namespace urbi
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-	std::stringstream os;
 	if (retval.type == DATA_VOID)
-	  os << "var " << (std::string) array[2];
+	  URBI_SEND_COMMAND("var " << (std::string) array[2]);
 	else
-	{
-	  os << "var " << (std::string) array[2] << "=" << retval;
-	}
-	os << ";";
-	URBI(()) << os.str();
+	  URBI_SEND_COMMAND("var " << (std::string) array[2] << "=" << retval);
       }
       break;
 
@@ -384,8 +373,6 @@ namespace urbi
     URBI(()) << s;
     return 0;
   }
-
-  // **************************************************************************
 
   UObjectHub::~UObjectHub()
   {

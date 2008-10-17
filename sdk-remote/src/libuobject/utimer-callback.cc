@@ -49,11 +49,8 @@ namespace urbi
     //				&UTimerCallback::call,
     //				objname + '.' + cbname, eventmap);
 
-    os.str("");
-    os.clear();
-    os << "timer_" << objname << ": every(" << period << ") { emit "
-       << (objname + '.' + cbname) << ";};";
-    URBI(()) << os.str();
+    URBI_SEND_COMMAND("timer_" << objname << ": every(" << period << ") { emit "
+		      << (objname + '.' + cbname) << ";}");
   }
 
   UTimerCallback::~UTimerCallback()

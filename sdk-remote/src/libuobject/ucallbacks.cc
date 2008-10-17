@@ -32,7 +32,6 @@
 namespace urbi
 {
 
-  // **************************************************************************
   //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
@@ -56,12 +55,12 @@ namespace urbi
 	      << std::endl;
 
     if (type == "var")
-      URBI(()) << "external " << type << " "
-	       << name << " from " << objname << ";";
+      URBI_SEND_COMMAND("external " << type << " "
+			<< name << " from " << objname);
 
     if (type == "event" || type == "function")
-      URBI(()) << "external " << type << "(" << size << ") "
-	       << name << " from " << objname << ";";
+      URBI_SEND_COMMAND("external " << type << "(" << size << ") "
+			<< name << " from " << objname);
 
     if (type == "varaccess")
       echo("Warning: NotifyAccess facility is not available for modules in "
@@ -74,7 +73,7 @@ namespace urbi
 				     const std::string& name, UTable&)
     : objname(objname), name(name)
   {
-    URBI(()) << "external " << type << " " << name << ";";
+    URBI_SEND_COMMAND("external " << type << " " << name);
   }
 
   UGenericCallback::~UGenericCallback()

@@ -27,7 +27,7 @@ namespace urbi
   UVar::__init()
   {
     (*varmap)[name].push_back(this);
-    URBI(()) << "if (!isdef(" << name << ")) var " << name << ";";
+    URBI_SEND_COMMAND("if (!isdef(" << name << ")) var " << name);
     vardata = 0; // unused. For internal softdevices only
     this->owned = false;
     assert (dummyUObject);
@@ -55,17 +55,13 @@ namespace urbi
   void
   UVar::setProp(UProperty p, const UValue& v)
   {
-    std::stringstream os;
-    os << name << "->" << urbi::name(p) << "=" << v << ";";
-    URBI(()) << os.str();
+    URBI_SEND_COMMAND(name << "->" << urbi::name(p) << "=" << v);
   }
 
   void
   UVar::setProp(UProperty p, const char* v)
   {
-    std::stringstream os;
-    os << name << "->" << urbi::name(p) << "=" << v << ";";
-    URBI(()) << os.str();
+    URBI_SEND_COMMAND(name << "->" << urbi::name(p) << "=" << v);
   }
 
   void
@@ -74,14 +70,11 @@ namespace urbi
     // FIXME: This is not the right way to do it.  Generalize
     // conversions between enums and strings.
     int i = static_cast<int>(v);
-    std::stringstream os;
     if (p == PROP_BLEND && is_blendtype(i))
-      os << name << "->"<< urbi::name(p) << "="
-	       << urbi::name(static_cast<UBlendType>(i)) << ";";
+      URBI_SEND_COMMAND(name << "->"<< urbi::name(p) << "="
+			<< urbi::name(static_cast<UBlendType>(i)));
     else
-      os << name << "->"<< urbi::name(p) << "="
-	       << v << ";";
-    URBI(()) << os.str();
+      URBI_SEND_COMMAND(name << "->"<< urbi::name(p) << "=" << v);
   }
 
   UValue
@@ -157,9 +150,7 @@ UVar::operator = (ufloat n)
   void
   UVar::operator= (const std::string& s)
   {
-    std::stringstream os;
-    os << name << "=\"" << libport::escape(s) << "\";";
-    URBI(()) << os.str();
+    URBI_SEND_COMMAND(name << "=\"" << libport::escape(s) << '"');
   }
 
   //! UVar binary assignment
@@ -197,13 +188,10 @@ UVar::operator = (ufloat n)
   void
   UVar::operator= (const UList& l)
   {
-    std::stringstream os;
-    os << name << "=";
     UValue v;
     v.type = DATA_LIST;
     v.list = &const_cast<UList&>(l);
-    os << v << ";";
-    URBI(()) << os.str();
+    URBI_SEND_COMMAND(name << "=" << v);
     v.type = DATA_VOID;
     v.list = 0;
   }
@@ -294,11 +282,9 @@ UVar::operator = (ufloat n)
   UVar::requestValue()
   {
     //build a getvalue message  that will be parsed and returned by the server
-    std::stringstream os;
-    os << externalModuleTag << "<<"
-       <<'[' << UEM_ASSIGNVALUE << ","
-       << '"' << name << '"' << ',' << name << "];";
-    URBI(()) << os.str();
+    URBI_SEND_COMMAND(externalModuleTag << "<<"
+		      <<'[' << UEM_ASSIGNVALUE << ","
+		      << '"' << name << '"' << ',' << name << ']');
   }
 
   void

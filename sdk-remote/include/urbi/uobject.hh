@@ -101,18 +101,31 @@
 
 //macro to send urbi commands
 # ifndef URBI
-/** Send unquoted URBI commands to the server. Add an extra layer of parenthesis
-    for safety.
-*/
+/// Send unquoted URBI commands to the server.
+/// Add an extra layer of parenthesis for safety.
 #   define URBI(A) \
   ::urbi::uobject_unarmorAndSend(# A)
 # endif
+
+/// Send \a Args (which is given to a stream and therefore can use <<)
+/// to the server.
+# define URBI_SEND(Args)			\
+  do {						\
+    std::ostringstream os;			\
+    os << Args;					\
+    URBI() << os.str();				\
+  } while (0)
+
+/// Send "\a Args ; \n".
+# define URBI_SEND_COMMAND(Args)		\
+  URBI_SEND(Args << ';' << std::endl)
 
 extern "C"
 {
   /** Bouncer to urbi::main() for easier access through dlsym()*/
   USDK_API int urbi_main(int argc, const char *argv[], int block);
 }
+
 namespace urbi
 {
 
