@@ -24,5 +24,6 @@ nodist_kernelincludekernel_HEADERS =		\
 check-local: check-headers
 check-headers:
 # It is forbidden for public headers to depend on non public headers.
-	srcdir=$(srcdir) \
+# But for 2.0b1, we don't care...
+	-srcdir=$(srcdir) \
 	  $(srcdir)/include/check-headers $(dist_kernelincludekernel_HEADERS)
