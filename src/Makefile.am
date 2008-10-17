@@ -16,7 +16,6 @@ env_LTLIBRARIES = libuobject.la
 libuobject_la_CPPFLAGS =				\
   $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
 libuobject_la_LDFLAGS =					\
-  $(BOOST_THREAD_LDFLAGS)				\
   $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)	\
   -no-undefined
 libuobject_la_LIBADD =						\

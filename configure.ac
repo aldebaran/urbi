@@ -95,7 +95,6 @@ URBI_PTHREAD
 
 BOOST_FILESYSTEM
 BOOST_REGEX
-BOOST_THREADS
 BOOST_TOKENIZER
 
 
@@ -117,7 +116,7 @@ URBI_LIBTOOL
 
 # shrext_cmds is set by libtool.
 case $shrext_cmds in
-  (.*) 
+  (.*)
      # A regular extensions.
      SHLIBEXT=$shrext_cmds;;
   (*test*module*so*dylib*)
