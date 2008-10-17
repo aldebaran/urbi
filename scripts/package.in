@@ -10,9 +10,10 @@ srcdir="$2"
 builddir="$3"
 prefix="$4"
 updir="$5"
-ARCH="$6"
-OS="$7"
-COMP="$8"
+ARCH="$6"       # ex. x86
+OS="$7"         # ex. linux
+COMP="$8"       # ex. gcc4
+MODE="$9"       # [release|debug]_[static|dynamic]
 
 # If some of those need to be chosen by configure, add an entry
 # there and add the "@" form.
@@ -30,7 +31,12 @@ TMPDIR=${TMPDIR-/tmp}
 # Determine the version from the exact tag if there is any, or the
 # sha-1 otherwise
 version=$(cd "$srcdir" && $GIT describe --exact-match 2> /dev/null || $GIT rev-parse --short HEAD)
-name="${PROJECT}-${ARCH}-${OS}-${COMP}-${version}"
+# If we are in release mode, do not tell it, the final users won't care
+if [ $MODE = release_dynamic ]; then
+  name="${PROJECT}-${ARCH}-${OS}-${COMP}-${version}"
+else
+  name="${PROJECT}-${ARCH}-${OS}-${COMP}-${MODE}-${version}"
+fi
 destdir="${updir}/${name}"
 
 # Create a fresh directory in which we put the subdirectories of the
