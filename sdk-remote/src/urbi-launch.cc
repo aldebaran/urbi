@@ -2,18 +2,17 @@
 #include <string>
 #include <cassert>
 #include <iostream>
-#include <boost/filesystem.hpp>
+#include <stdexcept>
 
 #include <sdk/config.h>
 
+#include <libport/file-system.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
-#include <libport/unistd.h>
 
 #include <urbi/uclient.hh>
 
 using namespace urbi;
-using namespace boost::filesystem;
 
 std::string host = URBI_HOST;
 std::string dynld = URBI_SHREXT;
@@ -88,32 +87,26 @@ void usage(const char* name)
   ::exit(1);
 }
 
-static void list_modules(path p, int recurse, std::list<std::string> &res)
+static void
+add_module(libport::path p, std::list<std::string> &res)
 {
-  if (is_regular(p))
+  if (p.exists())
   {
-    if (extension(p) != dynld)
-      throw std::runtime_error(
-         "File " + p.string() + " does not look like a shared library");
-    if (!p.is_complete())
-      p = current_path() / p;
-    res.push_back(p.string());
-  }
-  else if (is_directory(p))
-  {
-    if (recurse)
+    const libport::path::path_type& components = p.components();
+    const std::string& last = components.back();
+    if (last.size() <= dynld.size() ||
+	last.substr(last.size() - dynld.size()) != dynld)
+      throw std::runtime_error("File " + p.to_string() +
+			       " does not look like a shared library " +
+			       "(extension `" + dynld + "')");
+    if (!p.absolute_get())
     {
-      directory_iterator end_itr; // default construction yields past-the-end
-      for ( directory_iterator itr( p );
-           itr != end_itr;
-           ++itr )
-      {
-        list_modules(*itr, recurse-1, res);
-      }
+      p = libport::get_current_directory() / p;
     }
+    res.push_back(p.to_string());
   }
   else
-    throw std::runtime_error("File not found: " + p.string());
+    throw std::runtime_error("File not found: " + p.to_string());
 }
 
 typedef int (*umain_type)(int argc, const char* argv[], int block);
@@ -162,7 +155,7 @@ int main(int argc, const char* argv[])
    /// Get the list of modules.
   std::list<std::string> modules;
   for (; argp < argc && argv[argp][0] != '-'; ++argp)
-    list_modules(argv[argp], 1, modules);
+    add_module(argv[argp], modules);
 
   /// Store args, intercepting host and port just in case
   const char** nargv = new const char*[argc];
