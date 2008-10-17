@@ -51,5 +51,6 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 (cd "$destdir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
 $MV "$MANIFEST" "$destdir/MANIFEST"
 
-# Copy the instructions on how to report bugs at the top-level
+# Copy the instructions at the top-level
 $CP "${srcdir}/doc/REPORTING-BUGS" "$destdir"
+$CP "${srcdir}/doc/QUICK-START" "$destdir"
