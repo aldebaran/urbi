@@ -199,10 +199,7 @@ UConnection::received(const char* buffer, size_t length)
   PING();
 
   recv_queue_->push(buffer, length);
-
   parser::UParser& p = parser_get();
-  // There should be no tree sitting in the parser.
-  //  passert(*p.ast_get(), !p.ast_get());
 
   // Starts processing
   receiving_ = true;
