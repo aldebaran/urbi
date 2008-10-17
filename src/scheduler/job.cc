@@ -53,9 +53,16 @@ namespace scheduler
       if (parent_)
 	parent_->async_throw(ChildException(e));
     }
+    catch (const std::exception& se)
+    {
+      // Exception is lost and cannot be propagated properly but can be
+      // printed onto the console for diagnostic purpose.
+      std::cerr << "Exception `" << se.what() << "' caught in job "
+		<< this << ", loosing it\n";
+    }
     catch (...)
     {
-      // Exception is lost and cannot be propagated properly
+      // Exception is lost and cannot be propagated properly.
       std::cerr << "Exception caught in job " << this << ", loosing it\n";
     }
 
