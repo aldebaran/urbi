@@ -45,19 +45,19 @@
 #include <kernel/uqueue.hh>
 
 UConnection::UConnection(UServer& server, size_t packetSize)
-  : uerror_(USUCCESS),
-    closing_(false),
-    receiving_(false),
-    new_data_added_(false),
-    server_(server),
-    send_queue_(new UQueue()),
-    recv_queue_(new UQueue()),
-    packet_size_(packetSize),
-    blocked_(false),
+  : uerror_(USUCCESS)
+  , closing_(false)
+  , receiving_(false)
+  , new_data_added_(false)
+  , server_(server)
+  , send_queue_(new UQueue())
+  , recv_queue_(new UQueue())
+  , packet_size_(packetSize)
+  , blocked_(false)
     // Initial state of the connection: unblocked, not receiving binary.
-    active_(true),
-    lobby_(new object::Lobby(object::State(*this))),
-    parser_(new parser::UParser())
+  , active_(true)
+  , lobby_(new object::Lobby(object::State(*this)))
+  , parser_(new parser::UParser())
 {
   //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
   lobby_->slot_set(SYMBOL(lobby), lobby_);
