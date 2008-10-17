@@ -77,16 +77,23 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 typedef char buffer_type[8192];
 
 static char* urbi_path = getenv("URBI_PATH");
+static char* urbi_root = getenv("URBI_ROOT");
 
 UServer::UServer(const char* mainName)
-  : search_path(urbi_path ? urbi_path : URBI_PATH, ":")
-  , scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
+  : scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
                                                     boost::ref(*this))))
   , debugOutput(false)
   , mainName_(mainName)
   , stopall(false)
   , connections_(new kernel::ConnectionSet)
 {
+  // The search path order is the URBI_PATH:URBI_ROOT/share/gostai:HARDCODED
+  if (urbi_path)
+    search_path.push_back(urbi_path, ":");
+  if (urbi_root)
+    search_path.push_back(libport::path(urbi_root) / "share" / "gostai", ":");
+  else
+    search_path.push_back(URBI_PATH, ":");
 #if ! defined NDEBUG
   server_timer.start();
   server_timer.dump_on_destruction(std::cerr);
