@@ -1,0 +1,60 @@
+Installation
+############
+
+* Download and unpack kernel-2.0-arch-os-compiler.tar.bz2
+* Donwload and unpack boost 1.36 form FIXME: our download web page
+
+Running urbi-console
+####################
+
+Urbi console is the quickest way to test your urbi installation: it is
+a simple urbi server with which you can interact directly. It can also
+accept network connections.
+
+* Set your LD_LIBRARY_PATH to find:
+  - The kernel library: $kernel_unpack_dir/gostai/core/i686-pc-linux-gnu/engine
+  - The kernel auxiliary library: $kernel_unpack_dir/lib
+  - The boost libraries: $boost_unpack_dir/lib
+* Set URBI_ROOT to $kernel_unpack_dir/share, so as standard urbi files can be found
+* Launch urbi-console: $kernel_unpack_dir/bin/urbi-console -i
+
+Supposing you unpacked both archives in /tmp, the commands could be:
+
+export LD_LIBRARY_PATH
+LD_LIBRARY_PATH="/tmp/kernel-2.0-x86-linux-gcc4-xxxxxxx/core/i686-pc-linux-gnu/engine:$LD_LIBRARY_PATH"
+LD_LIBRARY_PATH="/tmp/kernel-2.0-x86-linux-gcc4-xxxxxxx/lib:$LD_LIBRARY_PATH"
+LD_LIBRARY_PATH="/tmp/boost-libraries-1.36.0-linux/lib:$LD_LIBRARY_PATH"
+export URBI_ROOT=/tmp/kernel-2.0-x86-linux-gcc4-xxxxxxx
+/tmp/kernel-2.0-x86-linux-gcc4-xxxxxxx/bin/urbi-console -i
+
+The -i option passed to urbi-console enables you to send urbi commands
+through the standard input and thus experiment very quickly with
+urbi. By specifying "-p port", you can also accept network
+connections. Many other options are available, try "urbi-console
+--help" to list them.
+
+Building an uobject
+###################
+
+UObjects are now nothing but dynamic libraries (.so under unix, .dll
+under windows). Under Unix simply compile your C++ source file a
+shared library; you only need specify where to find UObject headers:
+$kernel_unpack_dir/include.
+
+You can then use your uobject with the urbi-launch binary. You only
+need set the URBI_ROOT variable to point to $kernel_unpack_dir, so as
+urbi-launch can find your Urbi installation. urbi-launch can then use
+your shared library to:
+* Spawn a new Urbi server with the uobject plugged in.
+* Plug the uobject on a running server
+* Start as a remote and connect to a running server
+
+For instance, to build the sensor example uobject and start a fresh
+Urbi server with the sensor plugged in, the commands could be:
+
+g++  -shared -fPIC -I $kernel_unpack_dir/include $kernel_unpack_dir/share/gostai/examples/uobjects/sensor.cc -o sensor.so
+URBI_ROOT=$kernel_unpack_dir $kernel_unpack_dir/bin/urbi-launch --start ./sensor.so
+
+Note that any additional argument to urbi-launch is passed to the
+server. Thus, by adding -i, you can interact directly with the server,
+and find your sensor uobject in uobjects.sensor.
