@@ -15,7 +15,11 @@ ENABLE_HARD_ERRORS = false
 
 # pending features
 TFAIL_TESTS +=					\
-2.x/string/escape.chk
+2.x/string/escape.chk				\
+2.x/filesystem/directory.chk			\
+2.x/filesystem/file.chk				\
+2.x/filesystem/path.chk				\
+2.x/platform.chk
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\

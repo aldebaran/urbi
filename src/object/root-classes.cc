@@ -6,15 +6,11 @@
 #include <object/barrier.hh>
 #include <object/code.hh>
 #include <object/cxx-object.hh>
-#include <object/dictionary.hh>
-#include <object/directory.hh>
-#include <object/file.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/list.hh>
 #include <object/lobby.hh>
 #include <object/object.hh>
-#include <object/path.hh>
 #include <object/primitive.hh>
 #include <object/root-classes.hh>
 #include <object/semaphore.hh>
@@ -220,9 +216,9 @@ namespace object
   {
     Barrier     *b;
     (void)b;
-    Directory   d;
-    File        f;
-    Path        p;
+//    Directory   d;   // FIXME: restore those 3 after beta1
+//    File        f;
+//    Path        p;
     Semaphore   s;
   }
 
@@ -241,7 +237,7 @@ namespace object
   {
     cleanup_object(Barrier::proto);
     cleanup_object(Code::proto);
-    cleanup_object(Dictionary::proto);
+    // cleanup_object(Dictionary::proto); // FIXME: restore after beta1
     cleanup_object(false_class);
     cleanup_object(Float::proto);
     cleanup_object(global_class);

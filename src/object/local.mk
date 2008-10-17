@@ -60,10 +60,6 @@ dist_libuobject_la_SOURCES +=			\
   object/cxx-primitive.hxx			\
   object/dictionary.cc				\
   object/dictionary.hh				\
-  object/directory.cc				\
-  object/directory.hh				\
-  object/file.cc				\
-  object/file.hh				\
   object/float.cc				\
   object/float.hh				\
   object/fwd.hh					\
@@ -80,8 +76,6 @@ dist_libuobject_la_SOURCES +=			\
   object/object.cc				\
   object/object.hh				\
   object/object.hxx				\
-  object/path.cc				\
-  object/path.hh				\
   object/primitive.cc				\
   object/primitive.hh				\
   object/primitives.hh				\
@@ -109,3 +103,11 @@ dist_libuobject_la_SOURCES +=			\
   object/vector-slots.hh			\
   object/vector-slots.hxx			\
   $(precompiled_symbols_hh)
+
+# FIXME: Removed files, to be reintroduced after beta1
+#  object/directory.cc
+#  object/directory.hh
+#  object/file.cc
+#  object/file.hh
+#  object/path.cc
+#  object/path.hh
