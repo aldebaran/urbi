@@ -119,7 +119,12 @@ typedef int (*umain_type)(int argc, const char* argv[], int block);
 int main(int argc, const char* argv[])
 {
   lt_dlinit();
-  std::string prefix=URBI_PREFIX;
+
+  std::string prefix;
+  {
+    const char* root = getenv("URBI_ROOT");
+    prefix = root ? root : URBI_PREFIX;
+  }
 
   int argp = 1;
 
