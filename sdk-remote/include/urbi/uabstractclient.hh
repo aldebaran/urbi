@@ -640,7 +640,7 @@ namespace urbi
      }
 
      The following construct is also valid:
-     URBI() << "headPan.val="<<12<<";";
+     URBI(()) << "headPan.val="<<12<<";";
   */
 
 # ifdef URBI

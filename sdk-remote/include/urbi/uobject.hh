@@ -113,7 +113,7 @@
   do {						\
     std::ostringstream os;			\
     os << Args;					\
-    URBI() << os.str();				\
+    URBI(()) << os.str();			\
   } while (0)
 
 /// Send "\a Args ; \n".
