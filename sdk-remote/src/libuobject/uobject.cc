@@ -1,22 +1,4 @@
-/*! \file uobject.cc
- *******************************************************************************
-
- File: uobject.cc\n
- Implementation of the UObject class.
-
- This file is part of LIBURBI\n
- (c) Jean-Christophe Baillie, 2004-2006.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.com
-
- **************************************************************************** */
+/// \file libuobject/uobject.cc
 
 #include <iostream>
 #include <sstream>
@@ -30,8 +12,6 @@
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 #include <urbi/uexternal.hh>
-
-//#define LIBURBIDEBUG
 
 //! Global definition of the starterlist
 namespace urbi
