@@ -1,9 +1,10 @@
-#ifndef TESTS_HH
-#define TESTS_HH
-#include <libport/semaphore.hh>
-#include <libport/compiler.hh>
-#include <urbi/uclient.hh>
-#include <urbi/usyncclient.hh>
+#ifndef SDK_REMOTE_TESTS_TESTS_HH
+# define SDK_REMOTE_TESTS_TESTS_HH
+
+# include <libport/semaphore.hh>
+# include <libport/compiler.hh>
+# include <urbi/uclient.hh>
+# include <urbi/usyncclient.hh>
 
 /* Liburbi test suite
 = Architecture =
@@ -32,6 +33,10 @@ Test file layout
 
 
 extern libport::Semaphore dumpSem;
+
+/// argv[0].
+extern const char* program_name;
+
 /// display the value, increment dumpSem.
 urbi::UCallbackAction dump(const urbi::UMessage & msg);
 /// display the value, incremente dumpSem remove callback if 0
@@ -62,4 +67,15 @@ void dispatch(const char * method, urbi::UClient & client,
     }									\
   } while (0)
 
-#endif
+/// Display a debug message.
+#define VERBOSE(S)				\
+  std::cerr << program_name << ": " << S << std::endl
+
+/// Send S to the client.
+#define SEND(S)					\
+  do {						\
+    VERBOSE("Sending: " << S);			\
+    client.send(S);				\
+  } while (0)
+
+#endif // SDK_REMOTE_TESTS_TESTS_HH

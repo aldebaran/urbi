@@ -10,6 +10,9 @@
 // Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
 
+// argv[0].
+const char* program_name = "unknown program";
+
 static char
 char_of(urbi::UMessageType t)
 {
@@ -27,19 +30,20 @@ dump(const urbi::UMessage& msg)
 {
   if (msg.tag == "start" || msg.tag == "ident")
     return urbi::URBI_CONTINUE;
-  if (getenv("VERBOSE"))
-    LIBPORT_ECHO("got a message: " << msg);
 
-  std::cout << char_of(msg.type) << ' ';
+  VERBOSE("got a message: " << msg);
+  std::cout << char_of(msg.type)
+	    << ' ' << msg.tag
+	    << ' ';
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
-      std::cout << msg.tag << ' ' << *msg.value << std::endl;
+      std::cout << *msg.value << std::endl;
       break;
 
     case urbi::MESSAGE_ERROR:
     case urbi::MESSAGE_SYSTEM:
-      std::cout << msg.tag << ' ' << msg.message << std::endl;
+      std::cout << msg.message << std::endl;
       break;
   }
   dumpSem++;
@@ -50,8 +54,7 @@ dump(const urbi::UMessage& msg)
 urbi::UCallbackAction
 removeOnZero(const urbi::UMessage& msg)
 {
-  if (getenv("VERBOSE"))
-    LIBPORT_ECHO("removeOnZero");
+  VERBOSE("removeOnZero");
   dump(msg);
   if (msg.type == urbi::MESSAGE_DATA
       && msg.value->type == urbi::DATA_DOUBLE
@@ -63,8 +66,7 @@ removeOnZero(const urbi::UMessage& msg)
 urbi::UCallbackAction
 doExit(const urbi::UMessage& /* msg */)
 {
-  if (getenv("VERBOSE"))
-    LIBPORT_ECHO("Exiting");
+  VERBOSE("Exiting");
   exit(0);
 }
 
@@ -72,12 +74,13 @@ doExit(const urbi::UMessage& /* msg */)
 int
 main(int argc, const char* argv[])
 {
+  // Actually argv[0] is verbose and not interesting.
+  program_name = "tests";
   if (argc < 4)
-  {
-    std::cerr << "Usage: " << argv[0]
-	      << " HOST PORT TEST-NAMES..." << std::endl;
-    exit(EX_USAGE);
-  }
+    std::cerr << "Usage: " << program_name
+	      << " HOST PORT TEST-NAMES..." << std::endl
+	      << libport::exit(EX_USAGE);
+
   const char* host = argv[1];
   int port = boost::lexical_cast<int>(argv[2]);
 
@@ -94,9 +97,7 @@ main(int argc, const char* argv[])
 
   for (int i = 3; i < argc; ++i)
   {
-    if (getenv("VERBOSE"))
-      LIBPORT_ECHO(argv[0] << ": test " << argv[i]);
+    VERBOSE("test " << argv[i]);
     dispatch(argv[i], client, syncClient);
   }
-  return 0;
 }
