@@ -40,11 +40,11 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 	  echo;								 \
 	  echo 'void';							 \
 	  echo 'dispatch(const char* method, urbi::UClient& client,';	 \
-	  echo '	urbi::USyncClient& syncClient)';		 \
+	  echo '	 urbi::USyncClient& syncClient)';		 \
 	  echo '{';							 \
 	  for f in $(TESTS); do						 \
 	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		 \
-	    echo "  TESTS_RUN ($$name);";				 \
+	    echo "  TESTS_RUN($$name);";				 \
 	  done;								 \
 	  echo '  std::cerr << "Unknown test " << method << std::endl;'; \
 	  echo '  exit (1);';						 \
@@ -58,8 +58,9 @@ nodist_check_SCRIPTS = liburbi-check
 m4sh_scripts = liburbi-check
 
 # The test suite.
-TESTS = checkfiles/values.cc \
-	checkfiles/removecallbacks.cc
+TESTS =						\
+  checkfiles/values.cc				\
+  checkfiles/removecallbacks.cc
 TEST_LOGS = $(TESTS:.cc=.log)
 
 # Run some tests only.
