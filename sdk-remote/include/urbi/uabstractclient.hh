@@ -651,8 +651,11 @@ namespace urbi
 #  if !defined __GNUC__
 #   error "as far as we know, your compiler does not support the __VA_ARGS__ C preprocessor extension, feature unavailable"
 #  else
-#   define URBI(...)							\
-  (::urbi::getDefaultClient() ? *urbi::getDefaultClient() : std::cerr) << # __VA_ARGS__
+#   define URBI(...)				\
+  (::urbi::getDefaultClient()			\
+   ? *urbi::getDefaultClient()			\
+   : std::cerr)					\
+  << # __VA_ARGS__
 #  endif
 # else
 #  define URBI(A)				\

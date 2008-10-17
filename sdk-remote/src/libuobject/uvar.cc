@@ -117,35 +117,33 @@ namespace urbi
   }
 
   //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
-void
-UVar::setZombie ()
-{
-  // no effect in remote mode.
-}
-
-//! Return the internal variable.
-UVariable*
-UVar::variable()
-{
-  return 0;
-}
-
-//! UVar reset  (deep assignement)
-void
-UVar::reset (ufloat n)
-{
-  *this = n;
-}
-
-//! UVar float assignment
-void
-UVar::operator = (ufloat n)
-{
-  std::stringstream os;
-  os << name << "=" << n << ";";
-  URBI(()) << os.str();
-}
-
+  void
+  UVar::setZombie ()
+  {
+    // no effect in remote mode.
+  }
+  
+  //! Return the internal variable.
+  UVariable*
+  UVar::variable()
+  {
+    return 0;
+  }
+  
+  //! UVar reset  (deep assignement)
+  void
+  UVar::reset (ufloat n)
+  {
+    *this = n;
+  }
+  
+  //! UVar float assignment
+  void
+  UVar::operator = (ufloat n)
+  {
+    URBI_SEND_COMMAND(name << "=" << n);
+  }
+  
   //! UVar string assignment
   void
   UVar::operator= (const std::string& s)
