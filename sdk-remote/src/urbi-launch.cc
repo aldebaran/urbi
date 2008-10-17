@@ -9,6 +9,7 @@
 #include <libport/file-system.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
+#include <libport/windows.hh>
 
 #include <urbi/uclient.hh>
 
