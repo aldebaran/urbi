@@ -5,10 +5,6 @@ Download and unpack the kernel-2.0-<arch>-<os>-<compiler>.tar.gz.
 Unpack the file. Set the environment variable URBI_ROOT to the
 directory pointing to the directory it created.
 
-If you do not have boost 1.36 libraries installed, you can
-download them from http://www.gostai.com/downloads/urbi-sdk-2.0_beta
-and add them to your LD_LIBRARY_PATH.
-
 Running urbi-console
 ####################
 
@@ -19,8 +15,6 @@ accept network connections.
 * Set your LD_LIBRARY_PATH to find:
   - The kernel library: $URBI_ROOT/gostai/core/i686-pc-linux-gnu/engine
   - The kernel auxiliary library: $URBI_ROOT/lib
-  - The boost libraries: $URBI_ROOT/lib
-* Set URBI_ROOT to $URBI_ROOT/share, so as standard urbi files can be found
 * Launch urbi-console: $URBI_ROOT/bin/urbi-console -i
 
 The commands could be:
