@@ -308,14 +308,14 @@ namespace urbi
                                    const unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
-    const char * getServerName() const {return host;}
+    const char* getServerName() const {return host;}
 
     /// Return the server port.
     int getServerPort() const {return port;}
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
-    std::ostream & getStream() { return *stream;}
+    std::ostream& getStream() { return *stream;}
 
      /// dummy tag for client error callback
     static const char * CLIENTERROR_TAG;
@@ -685,6 +685,9 @@ namespace urbi
   USDK_API std::ostream& unarmorAndSend(const char * str);
 # endif
   USDK_API extern UClient* defaultClient;
+
+  /// Return a stream for error, preferrably the one the defaultClient.
+  USDK_API std::ostream& default_stream();
 
 } // namespace urbi
 

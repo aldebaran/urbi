@@ -22,6 +22,14 @@
 
 namespace urbi
 {
+  std::ostream&
+  default_stream()
+  {
+    return (getDefaultClient()
+	    ? ((UAbstractClient*)getDefaultClient())->getStream()
+	    : std::cerr);
+  }
+
   enum UCallbackType
   {
     UCB_,
@@ -1114,9 +1122,9 @@ namespace urbi
     return s;
   }
 
-  UClient * defaultClient=0;
+  UClient* defaultClient = 0;
 
-  UClient * getDefaultClient()
+  UClient* getDefaultClient()
   {
     return defaultClient;
   }
@@ -1126,12 +1134,10 @@ namespace urbi
     defaultClient = cl;
   }
 
-  std::ostream& unarmorAndSend(const char * a)
+  std::ostream&
+  unarmorAndSend(const char * a)
   {
-    std::ostream& s =
-      (getDefaultClient()==0
-       ? std::cerr
-       : ((UAbstractClient*)getDefaultClient())->getStream());
+    std::ostream& s = default_stream();
     if (strlen(a)>2)
     {
       if (a[0]=='(' && a[strlen(a)-1]==')')

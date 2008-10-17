@@ -21,7 +21,6 @@ namespace urbi
   UCallbackAction dispatcher(const UMessage& msg);
   UCallbackAction debug(const UMessage& msg);
 
-
   std::ostream& unarmorAndSend(const char* a);
 
   void uobject_unarmorAndSend(const char* a)
@@ -31,18 +30,12 @@ namespace urbi
 
   void send(const char* a)
   {
-    std::ostream& s =
-      (getDefaultClient()
-       ? ((UAbstractClient*)getDefaultClient())->getStream()
-       : std::cerr);
-    s << a;
+    default_stream() << a;
   }
 
   void send(void* buf, int size)
   {
-    std::ostream& s = getDefaultClient() == 0 ? std::cerr
-      : ((UAbstractClient*)getDefaultClient())->getStream();
-    s.rdbuf()->sputn(static_cast<char*> (buf), size);
+    default_stream().rdbuf()->sputn(static_cast<char*> (buf), size);
   }
 
   UObjectMode getRunningMode()
