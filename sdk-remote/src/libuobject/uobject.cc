@@ -31,8 +31,10 @@ namespace urbi
 
   void send(const char* a)
   {
-    std::ostream& s = getDefaultClient() == 0 ? std::cerr
-      : ((UAbstractClient*)getDefaultClient())->getStream();
+    std::ostream& s =
+      (getDefaultClient()
+       ? ((UAbstractClient*)getDefaultClient())->getStream()
+       : std::cerr);
     s << a;
   }
 
