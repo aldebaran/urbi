@@ -16,14 +16,12 @@ env_LTLIBRARIES = libuobject.la
 libuobject_la_CPPFLAGS =				\
   $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
 libuobject_la_LDFLAGS =					\
-  $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)	\
   -no-undefined
 libuobject_la_LIBADD =						\
   $(PTHREAD_LIBS)						\
   $(LTDL_LIBS)							\
   $(top_builddir)/sdk-remote/lib/libport/libport.la		\
-  $(top_builddir)/sdk-remote/src/libuco/libuco.la		\
-  $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+  $(top_builddir)/sdk-remote/src/libuco/libuco.la
 
 
 ## ------------ ##
