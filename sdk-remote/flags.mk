@@ -13,5 +13,6 @@ AM_CPPFLAGS += -I$(top_builddir)/src
 # Find sdk/config.h
 AM_CPPFLAGS += -I$(top_builddir)
 
-AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
-LIBADD       = $(top_builddir)/lib/libport/libport.la
+AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
+LIBADD       = $(PTHREAD_LIBS) $(SOCKETS_LIBS) \
+	       $(top_builddir)/lib/libport/libport.la
