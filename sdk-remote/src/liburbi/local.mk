@@ -20,7 +20,7 @@ liburbi_liburbi_la_SOURCES =			\
 liburbi_liburbi_la_CPPFLAGS =			\
   $(AM_CPPFLAGS)				\
   -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
-liburbi_liburbi_la_LIBADD = $(LIBADD)
+liburbi_liburbi_la_LIBADD = $(LIBADD) $(top_builddir)/jpeg-6b/libjpeg.la
 liburbi_liburbi_la_LDFLAGS = -no-undefined
 
 all-local: liburbi/liburbi.la.stamp
