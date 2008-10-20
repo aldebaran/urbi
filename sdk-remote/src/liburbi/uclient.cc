@@ -121,6 +121,17 @@ namespace urbi
     }
     else
     {
+      // Allow to rebind on the same port shortly after having used it.
+      {
+	int one = 1;
+	rc = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof one);
+	if (rc)
+	{
+	  rc = -1;
+	  libport::perror("UClient::UClient cannot use setsockopt");
+	  return;
+	}
+      }
       // Bind socket
       rc = bind (sd, (struct sockaddr *) &sa, sizeof sa);
       if (rc)
