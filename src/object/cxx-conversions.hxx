@@ -199,7 +199,7 @@ namespace object
   };
 
   // Conversion with containers
-#define CONTAINER(Name)                                                 \
+#define CONTAINER(Name, Method)                                         \
   template <typename T>                                                 \
   struct CxxConvert<Name<T> >                                           \
   {                                                                     \
@@ -209,7 +209,7 @@ namespace object
       type_check(o, List::proto);                                       \
       Name<T> res;                                                      \
       foreach (const rObject& elt, o->as<List>()->value_get())          \
-        res.insert(CxxConvert<T>::to(elt, idx));                        \
+        res.Method(CxxConvert<T>::to(elt, idx));                        \
       return res;                                                       \
     }                                                                   \
                                                                         \
@@ -223,8 +223,8 @@ namespace object
     }                                                                   \
   };                                                                    \
 
-  CONTAINER(std::set);
-  CONTAINER(std::vector);
+  CONTAINER(std::set, insert);
+  CONTAINER(std::vector, push_back);
 
 #undef CONTAINER
 
