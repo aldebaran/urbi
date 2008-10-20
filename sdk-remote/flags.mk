@@ -14,5 +14,4 @@ AM_CPPFLAGS += -I$(top_builddir)/src
 AM_CPPFLAGS += -I$(top_builddir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
-LIBADD       = $(PTHREAD_LIBS)
-LIBADD      += $(top_builddir)/lib/libport/libport.la
+LIBADD       = $(top_builddir)/lib/libport/libport.la
