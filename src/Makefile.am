@@ -18,6 +18,7 @@ libuobject_la_CPPFLAGS =				\
 libuobject_la_LDFLAGS =					\
   -no-undefined
 libuobject_la_LIBADD =						\
+  $(SOCKETS_LIBS)						\
   $(PTHREAD_LIBS)						\
   $(LTDL_LIBS)							\
   $(top_builddir)/sdk-remote/lib/libport/libport.la		\
