@@ -25,10 +25,6 @@
 # define URBI_UMAIN_HH
 
 # include <urbi/uobject.hh>
-# include <libport/windows.hh>
-# ifndef WIN32
-#  include <unistd.h>
-# endif
 
 #  define UMAIN()				\
   int						\
