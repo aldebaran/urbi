@@ -1070,6 +1070,10 @@ lvalue:
 
 id:
   "identifier"  { std::swap($$, $1); }
+// Allow object as an identifier
+| "object" { $$ = SYMBOL(object); }
+;
+
 ;
 
 call:
