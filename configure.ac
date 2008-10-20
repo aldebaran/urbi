@@ -92,6 +92,7 @@ BOOST_REQUIRE([1.35])
 # done by liburbi URBI_LIBPORT
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 URBI_PTHREAD
+URBI_SOCKETS
 
 BOOST_REGEX
 BOOST_TOKENIZER
