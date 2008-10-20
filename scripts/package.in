@@ -2,6 +2,7 @@
 #
 
 set -x
+set -e
 
 # Those would best be set through configure (except "updir"
 # which sets the destination).
