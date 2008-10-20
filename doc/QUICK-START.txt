@@ -47,6 +47,32 @@ connections. Many other options are available, try "urbi-console
 On Window, just start the "urbi-console.bat" script, it already includes
 the "-i -p 54000" command line arguments.
 
+Note that you will likely get a message such as:
+
+*** **********************************************************
+*** URBI Kernel version version 2.0-beta rev. 77b9ae2
+*** Copyright (C) 2005-2008 Gostai SAS
+***
+***      URBI Kernel Console version 2.0-beta rev. 77b9ae2
+***      Copyright (C) 2005-2008 Gostai SAS
+***
+*** URBI comes with ABSOLUTELY NO WARRANTY;
+*** This software can be used under certain conditions;
+*** see LICENSE file for details.
+***
+*** See http://www.urbiforge.com for news and updates.
+*** **********************************************************
+Ready.
+urbi-console: got ghost connection
+urbi-console: going to work...
+[00000516] "Loading URBI.INI"
+[00000516:error] !!! urbi/urbi.u:92.14-29: searchFile: Unable to find file: URBI.INI
+[00000516:error] !!!    called from: urbi/urbi.u:448.1-16: load
+[00000519] "Urbi is up and running."
+
+The "error" is benign and you can safely ignore it: Urbi tries to load a
+user-defined "urbi.ini" file which doesn't exist.
+
 Building an uobject
 ###################
 
