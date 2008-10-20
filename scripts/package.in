@@ -15,8 +15,7 @@ ARCH="$6"       # ex. x86
 OS="$7"         # ex. linux
 COMP="$8"       # ex. gcc4
 MODE="$9"       # [release|debug]_[static|dynamic]
-shift
-prefix="$9"
+prefix="${10}"
 
 # If some of those need to be chosen by configure, add an entry
 # there and add the "@" form.
