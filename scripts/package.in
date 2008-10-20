@@ -8,12 +8,13 @@ set -x
 PROJECT="$1"
 srcdir="$2"
 builddir="$3"
-prefix="$4"
+DESTDIR="$4"
 updir="$5"
 ARCH="$6"       # ex. x86
 OS="$7"         # ex. linux
 COMP="$8"       # ex. gcc4
 MODE="$9"       # [release|debug]_[static|dynamic]
+prefix="$10"
 
 # If some of those need to be chosen by configure, add an entry
 # there and add the "@" form.
@@ -37,20 +38,25 @@ if [ $MODE = release_dynamic ]; then
 else
   name="${PROJECT}-${ARCH}-${OS}-${COMP}-${MODE}-${version}"
 fi
-destdir="${updir}/${name}"
+packagedir="${updir}/${name}"
 
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
-$RM -r "$destdir"
-$MKDIR_P "$destdir"
-(cd "$prefix" && $TAR cf - .) | (cd "$destdir" && $TAR xpBf -)
+$RM -r "$packagedir"
+$MKDIR_P "$packagedir"
+(cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
 
 # Build a MANIFEST with the list of files to install into the final
 # destination
 MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
-(cd "$destdir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
-$MV "$MANIFEST" "$destdir/MANIFEST"
+(cd "$packagedir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
+$MV "$MANIFEST" "$packagedir/MANIFEST"
 
 # Copy the instructions at the top-level
-$CP "${srcdir}/doc/REPORTING-BUGS.txt" "$destdir"
-$CP "${srcdir}/doc/QUICK-START.txt" "$destdir"
+$CP "${srcdir}/doc/REPORTING-BUGS.txt" "$packagedir"
+$CP "${srcdir}/doc/QUICK-START.txt" "$packagedir"
+
+# On Windows, copy the .bat file
+if [ $platform = windows ]; then
+  $CP "${srcdir}/doc/urbi-console.bat" "$packagedir"
+fi
