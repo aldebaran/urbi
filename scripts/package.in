@@ -57,6 +57,6 @@ $CP "${srcdir}/doc/REPORTING-BUGS.txt" "$packagedir"
 $CP "${srcdir}/doc/QUICK-START.txt" "$packagedir"
 
 # On Windows, copy the .bat file
-if [ $platform = windows ]; then
+if [ $OS = windows ]; then
   $CP "${srcdir}/doc/urbi-console.bat" "$packagedir"
 fi
