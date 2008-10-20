@@ -8,7 +8,6 @@
 
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
-#include <libport/tokenizer.hh>
 
 #include <object/float.hh>
 #include <object/list.hh>
@@ -135,13 +134,30 @@ namespace object
   rList
   String::split(const std::string& sep)
   {
-    boost::tokenizer< boost::char_separator<char> > tok =
-      libport::make_tokenizer(value_get(),
-                              sep.c_str());
-    List::value_type ret;
-    foreach(const std::string& i, tok)
-      ret.push_back(new String(i));
-    return new List(ret);
+    rList res = new List;
+
+    // Special case: splitting on an empty string returns the individual
+    // characters.
+    if (sep.empty())
+    {
+      for (std::string::size_type pos = 0; pos != content_.size(); pos++)
+	res->insertBack(to_urbi(content_.substr(pos, 1)));
+      return res;
+    }
+
+    std::string::size_type prev_pos = 0;
+
+    for (std::string::size_type pos = content_.find(sep);
+	 pos != std::string::npos;
+	 prev_pos = pos + sep.size(), pos = content_.find(sep, prev_pos))
+    {
+      std::string sub = content_.substr(prev_pos, pos - prev_pos);
+      res->insertBack(to_urbi(sub));
+    }
+
+    std::string rest = content_.substr(prev_pos);
+    res->insertBack(to_urbi(rest));
+    return res;
   }
 
   std::string
