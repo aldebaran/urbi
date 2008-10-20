@@ -52,5 +52,5 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 $MV "$MANIFEST" "$destdir/MANIFEST"
 
 # Copy the instructions at the top-level
-$CP "${srcdir}/doc/REPORTING-BUGS" "$destdir"
-$CP "${srcdir}/doc/QUICK-START" "$destdir"
+$CP "${srcdir}/doc/REPORTING-BUGS.txt" "$destdir"
+$CP "${srcdir}/doc/QUICK-START.txt" "$destdir"
