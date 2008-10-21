@@ -64,7 +64,7 @@ UConnection::UConnection(UServer& server, size_t packetSize)
 
   // initialize the connection tag used to reference local variables
   std::ostringstream o;
-  o << 'U' << (long) this;
+  o << 'U' << (ptrdiff_t) this;
   connection_tag_ = o.str();
   lobby_->slot_set
     (SYMBOL(connectionTag),
