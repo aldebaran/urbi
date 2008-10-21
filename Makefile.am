@@ -21,6 +21,9 @@ include dev/local.mk
 include include/local.mk
 include share/urbi/local.mk
 
+# Make sure the packaging script is up-to-date.
+all-local: scripts/package
+
 ## ------------------------------------- ##
 ## Generate the list of symbols we use.  ##
 ## ------------------------------------- ##
