@@ -1,0 +1,37 @@
+This file summarizes the user-visible changes since the first beta1
+release.
+
+Grammar
+=======
+
+"object" as identifier
+----------------------
+
+"object" is now a regular identifier and can be used as other names.
+For example, it is now legal to declare:
+
+  var object = 1;
+
+Standard library
+================
+
+"String.asList" method
+----------------------
+
+"String" now has a "asList" method, which can be used transparently
+to iterate over the characters of a string:
+
+  for (var c: "foo") echo (c);
+  [00000001] *** f
+  [00000002] *** o
+  [00000003] *** o
+
+"String.split" method
+---------------------
+
+The "split" method of "String" has been enhanced. It will not aggregate
+components any more:
+
+  "foobar".split("o");
+  [00000001] ["f", "", "bar"]
+
