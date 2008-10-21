@@ -128,42 +128,81 @@ namespace object
     return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
   }
 
+  size_t
+  find_first(const std::vector<std::string>& seps,
+             const std::string& str,
+             size_t start,
+             std::string& delim)
+  {
+    size_t res = std::string::npos;
+    delim = "";
+
+    foreach (const std::string& sep, seps)
+    {
+      size_t pos = str.find(sep, start);
+      if (pos != std::string::npos && (pos < res || res == std::string::npos))
+      {
+        res = pos;
+        delim = sep;
+      }
+    }
+    return res;
+  }
+
   std::vector<std::string>
-  String::split(const std::string& sep, bool keep_delim, bool keep_empty)
+  String::split(const std::vector<std::string>& sep, bool keep_delim, bool keep_empty)
   {
     std::vector<std::string> res;
     size_t start = 0;
     size_t end;
-
+    std::string delim;
 
     // Special case: splitting on an empty string returns the individual
     // characters.
-    if (sep.empty())
+    if (libport::has(sep, ""))
     {
       for (std::string::size_type pos = 0; pos != content_.size(); pos++)
 	res.push_back(content_.substr(pos, 1));
       return res;
     }
 
-    for (end = content_.find(sep, start);
+    for (end = find_first(sep, content_, start, delim);
          end != std::string::npos;
-         end = content_.find(sep, start))
+         end = find_first(sep, content_, start, delim))
     {
       std::string sub = content_.substr(start, end - start);
       if (keep_empty || sub != "")
         res << sub;
       if (keep_delim)
-        res << sep;
-      start = end + sep.length();
+        res << delim;
+      start = end + delim.length();
     }
     res << content_.substr(start, std::string::npos);
 
     return res;
   }
 
+  std::vector<std::string>
+  String::split(const std::string& sep, bool keep_delim, bool keep_empty)
+  {
+    std::vector<std::string> seps;
+    seps << sep;
+    return split(seps, keep_delim, keep_empty);
+  }
+
+  typedef std::vector<std::string> (String::*foo)(const std::string&, bool, bool);
+  typedef std::vector<std::string> (String::*baz)(const std::vector<std::string>&, bool, bool);
+  static foo bar = &String::split;
+  static baz quux = &String::split;
+  OVERLOAD_TYPE(split_overload, 3, 1,
+                String,
+                bar,
+                List,
+                quux)
+
   static rObject split_bouncer(runner::Runner& r, objects_type& args)
   {
-    static rPrimitive actual = make_primitive(&String::split);
+    static rPrimitive actual = make_primitive(split_overload);
 
     check_arg_count(args.size() - 1, 1, 3);
     switch (args.size())

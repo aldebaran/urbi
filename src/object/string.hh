@@ -43,6 +43,9 @@ namespace object
     std::vector<std::string> split(const std::string& sep,
                                    bool keep_delim = false,
                                    bool keep_empty = true);
+    std::vector<std::string> split(const std::vector<std::string>& sep,
+                                   bool keep_delim = false,
+                                   bool keep_empty = true);
     std::string star(unsigned int times);
     std::string sub(unsigned int from, unsigned int to);
     std::string sub(unsigned int idx);

@@ -30,8 +30,23 @@ to iterate over the characters of a string:
 ---------------------
 
 The "split" method of "String" has been enhanced. It will not aggregate
-components any more:
+components anymore by default:
 
   "foobar".split("o");
   [00000001] ["f", "", "bar"]
 
+It moreover now supports a list of separators:
+
+   "a:b;c".split([":", ";"]);
+   [00000001] ["a", "b", "c"]
+
+The optional second argument indicates whether to keep delimiters in
+the resulting list (default: false):
+
+   "aaa:bbb;ccc".split([":", ";"], true);
+   [00000001] ["aaa", ":", "bbb", ";" "ccc"]
+
+The optional third argument indicates whether to keep empty elements:
+
+  "foobar".split("o", false, false);
+  [00000001] ["f", "bar"]
