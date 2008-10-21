@@ -122,33 +122,33 @@ namespace urbi
   {
     // no effect in remote mode.
   }
-  
+
   //! Return the internal variable.
   UVariable*
   UVar::variable()
   {
     return 0;
   }
-  
+
   //! UVar reset  (deep assignement)
   void
   UVar::reset (ufloat n)
   {
     *this = n;
   }
-  
+
   //! UVar float assignment
   void
   UVar::operator = (ufloat n)
   {
     URBI_SEND_COMMAND(name << "=" << n);
   }
-  
+
   //! UVar string assignment
   void
   UVar::operator= (const std::string& s)
   {
-    URBI_SEND_COMMAND(name << "=\"" << libport::escape(s) << '"');
+    URBI_SEND_COMMAND(name << "=\"" << libport::escape(s, '"') << '"');
   }
 
   //! UVar binary assignment

@@ -242,7 +242,7 @@ namespace urbi
 	s << (float) val;
 	break;
       case DATA_STRING:
-	s << '"' << libport::escape(*stringValue) << '"';
+	s << '"' << libport::escape(*stringValue, '"') << '"';
 	break;
       case DATA_BINARY:
 	if (binary->type != BINARY_NONE
