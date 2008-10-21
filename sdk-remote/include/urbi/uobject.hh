@@ -155,7 +155,7 @@ namespace urbi
    * \return 0 if no error occured.
    */
    int USDK_API initialize(const char* host, int port, int buflen,
-		  bool exitOnDisconnect);
+		  bool exitOnDisconnect, bool server = false);
 #endif
   /// an empty dummy UObject used by UVar to set a NotifyChange
   /// This avoid coupling a UVar to a particular object
