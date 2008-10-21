@@ -32,10 +32,9 @@ On Linux:
 
   The commands could be:
 
-  export LD_LIBRARY_PATH
   LD_LIBRARY_PATH="$URBI_ROOT/gostai/core/i686-pc-linux-gnu/engine:$LD_LIBRARY_PATH"
   LD_LIBRARY_PATH="$URBI_ROOT/lib:$LD_LIBRARY_PATH"
-  LD_LIBRARY_PATH="$URBI_ROOT/lib:$LD_LIBRARY_PATH"
+  export LD_LIBRARY_PATH
   $URBI_ROOT/bin/urbi-console -i
 
 The -i option passed to urbi-console enables you to send urbi commands
