@@ -128,7 +128,7 @@ namespace object
     return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
   }
 
-  size_t
+  static size_t
   find_first(const std::vector<std::string>& seps,
              const std::string& str,
              size_t start,
