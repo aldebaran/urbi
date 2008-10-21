@@ -490,7 +490,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "in"            RETURN(IN);
 "loopn"         DEPRECATED("for");
 "new"           RETURN_OP(NEW);
-"object"        RETURN(OBJECT);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
 "self"          DEPRECATED("this");

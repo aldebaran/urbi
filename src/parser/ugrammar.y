@@ -167,7 +167,6 @@
         LBRACE       "{"
         LBRACKET     "["
         LPAREN       "("
-        OBJECT       "object"
         ONLEAVE      "onleave"
         POINT        "."
         RBRACE       "}"
@@ -524,9 +523,13 @@ identifier_as_string:
 
 %token EXTERNAL "external";
 stmt:
-  "external" "object" identifier_as_string
+  "external" "identifier" identifier_as_string
   {
     PARAMETRIC_AST(a, "'external'.'object'(%exp:1)");
+
+    if ($2 != SYMBOL(object))
+      up.error (@2, "syntax error, external must be followed by "
+                "object, var, function or event");
     $$ = exp(a % $3);
   }
 | "external" "var" identifier_as_string "." identifier_as_string
@@ -1070,8 +1073,6 @@ lvalue:
 
 id:
   "identifier"  { std::swap($$, $1); }
-// Allow object as an identifier
-| "object" { $$ = SYMBOL(object); }
 ;
 
 ;
