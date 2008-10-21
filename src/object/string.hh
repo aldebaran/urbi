@@ -40,7 +40,9 @@ namespace object
     std::string fresh();
     std::string set(const std::string& rhs);
     size_type size();
-    rList split(const std::string& sep);
+    std::vector<std::string> split(const std::string& sep,
+                                   bool keep_delim = false,
+                                   bool keep_empty = true);
     std::string star(unsigned int times);
     std::string sub(unsigned int from, unsigned int to);
     std::string sub(unsigned int idx);

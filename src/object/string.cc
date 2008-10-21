@@ -128,33 +128,54 @@ namespace object
     return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
   }
 
-  rList
-  String::split(const std::string& sep)
+  std::vector<std::string>
+  String::split(const std::string& sep, bool keep_delim, bool keep_empty)
   {
-    rList res = new List;
+    std::vector<std::string> res;
+    size_t start = 0;
+    size_t end;
+
 
     // Special case: splitting on an empty string returns the individual
     // characters.
     if (sep.empty())
     {
       for (std::string::size_type pos = 0; pos != content_.size(); pos++)
-	res->insertBack(to_urbi(content_.substr(pos, 1)));
+	res.push_back(content_.substr(pos, 1));
       return res;
     }
 
-    std::string::size_type prev_pos = 0;
-
-    for (std::string::size_type pos = content_.find(sep);
-	 pos != std::string::npos;
-	 prev_pos = pos + sep.size(), pos = content_.find(sep, prev_pos))
+    for (end = content_.find(sep, start);
+         end != std::string::npos;
+         end = content_.find(sep, start))
     {
-      std::string sub = content_.substr(prev_pos, pos - prev_pos);
-      res->insertBack(to_urbi(sub));
+      std::string sub = content_.substr(start, end - start);
+      if (keep_empty || sub != "")
+        res << sub;
+      if (keep_delim)
+        res << sep;
+      start = end + sep.length();
     }
+    res << content_.substr(start, std::string::npos);
 
-    std::string rest = content_.substr(prev_pos);
-    res->insertBack(to_urbi(rest));
     return res;
+  }
+
+  static rObject split_bouncer(runner::Runner& r, objects_type& args)
+  {
+    static rPrimitive actual = make_primitive(&String::split);
+
+    check_arg_count(args.size() - 1, 1, 3);
+    switch (args.size())
+    {
+      case 2:
+        args.push_back(object::false_class);
+      case 3:
+        args.push_back(object::true_class);
+      default:
+        break;
+    }
+    return (*actual)(r, args);
   }
 
   std::string
@@ -286,7 +307,7 @@ namespace object
     bind(SYMBOL(PLUS), &String::plus);
     bind(SYMBOL(set), &String::set);
     bind(SYMBOL(size), &String::size);
-    bind(SYMBOL(split), &String::split);
+    bind(SYMBOL(split), split_bouncer);
     bind(SYMBOL(STAR), &String::star);
     bind(SYMBOL(toLower), &String::to_lower);
     bind(SYMBOL(toUpper), &String::to_upper);
