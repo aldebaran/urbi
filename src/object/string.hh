@@ -30,6 +30,9 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
+    std::string as_string();
+    std::string as_printable();
+
     unsigned int distance(rString other);
     std::string format(runner::Runner& r, rList values);
     std::string plus(runner::Runner& r, rObject rhs);
@@ -57,8 +60,6 @@ namespace object
   };
 
   // Urbi functions
-  std::string as_string(rObject from);
-  std::string as_printable(rObject from);
 
 }; // namespace object
 

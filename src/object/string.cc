@@ -98,18 +98,15 @@ namespace object
   }
 
   std::string
-  as_printable (rObject from)
+  String::as_printable ()
   {
-    type_check(from, String::proto);
-    const std::string& str = from->as<String>()->value_get();
-    return '"' + string_cast(libport::escape(str)) + '"';
+    return '"' + string_cast(libport::escape(content_)) + '"';
   }
 
   std::string
-  as_string (rObject from)
+  String::as_string ()
   {
-    type_check(from, String::proto);
-    return from->as<String>()->value_get();
+    return content_;
   }
 
   bool
@@ -280,8 +277,8 @@ namespace object
 
   void String::initialize(CxxObject::Binder<String>& bind)
   {
-    bind(SYMBOL(asPrintable), &as_printable);
-    bind(SYMBOL(asString), &as_string);
+    bind(SYMBOL(asPrintable), &String::as_printable);
+    bind(SYMBOL(asString), &String::as_string);
     bind(SYMBOL(distance), &String::distance);
     bind(SYMBOL(fresh), &String::fresh);
     bind(SYMBOL(LT), &String::lt);
