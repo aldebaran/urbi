@@ -100,7 +100,7 @@ namespace object
   std::string
   String::as_printable ()
   {
-    return '"' + string_cast(libport::escape(content_)) + '"';
+    return '"' + string_cast(libport::escape(content_, '"')) + '"';
   }
 
   std::string
