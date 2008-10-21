@@ -30,14 +30,14 @@ TAR=tar
 
 TMPDIR=${TMPDIR-/tmp}
 
-# Determine the version from the exact tag if there is any, or the
-# sha-1 otherwise
-version=$(cd "$srcdir" && $GIT describe --exact-match 2> /dev/null || $GIT rev-parse --short HEAD)
+# Determine the version from the latest component of the tag. This will
+# ease ordering.
+version=$(cd "$srcdir" && $GIT describe | sed -e "s,^.*/,,")
 # If we are in release mode, do not tell it, the final users won't care
 if [ $MODE = release_dynamic ]; then
-  name="${PROJECT}-${ARCH}-${OS}-${COMP}-${version}"
+  name="${PROJECT}-${version}-${OS}-${ARCH}"
 else
-  name="${PROJECT}-${ARCH}-${OS}-${COMP}-${MODE}-${version}"
+  name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}-${MODE}"
 fi
 packagedir="${updir}/${name}"
 
