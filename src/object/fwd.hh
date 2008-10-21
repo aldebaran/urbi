@@ -58,7 +58,7 @@ namespace object
 
   */
 
-#define FWD_DECL(Class)                                 \
+# define FWD_DECL(Class)                                \
   class Class;                                          \
   typedef libport::shared_ptr<Class> r ## Class         \
 

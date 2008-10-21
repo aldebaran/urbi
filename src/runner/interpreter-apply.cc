@@ -226,7 +226,7 @@ namespace runner
 
       foreach (const rObject& o, args)
       {
-	static rObject Lazy = object::global_class->slot_get(SYMBOL(Lazy));
+	CAPTURE_GLOBAL(Lazy);
         rObject lazy = Lazy->clone();
         lazy->slot_set(SYMBOL(code), o);
         lazy_args.push_back(lazy);
@@ -318,8 +318,7 @@ namespace runner
                                    const libport::Symbol& msg,
 				   const object::objects_type& args)
   {
-    static rObject CallMessage =
-      object::global_class->slot_get(SYMBOL(CallMessage));
+    CAPTURE_GLOBAL(CallMessage);
     rObject res = CallMessage->clone();
 
     // Set the sender to be the current self. self must always exist.

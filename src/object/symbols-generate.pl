@@ -45,12 +45,15 @@ die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
 #
 # SYMBOL(EQ) is used when we want to denote it explicitly.
 #
+# CAPTURE_GLOBAL(EQ) is used when we want to cache a global
+# symbol from C++ the first time we look it up.
+#
 # DECLARE(EQ, ...) is used in object/*.cc to bind C++ functions
 # into the Urbi world.  Similarly with BOUNCE.
 #
 # RETURN_OP(EQ) is used in the scanner to return tokens which
 # semantical value is the string itself.
-my $symbol_tag = 'BOUNCE|DECLARE|SYMBOL|RETURN_OP';
+my $symbol_tag = 'BOUNCE|CAPTURE_GLOBAL|DECLARE|SYMBOL|RETURN_OP';
 
 # The lines that declare a symbol.
 my $symbols = `grep -E '($symbol_tag) *\\(' @ARGV`;

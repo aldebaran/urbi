@@ -6,6 +6,7 @@
 #ifndef OBJECT_GLOBAL_CLASS_HH
 # define OBJECT_GLOBAL_CLASS_HH
 
+# include <libport/symbol.hh>
 # include <object/fwd.hh>
 
 namespace object
@@ -16,5 +17,9 @@ namespace object
   /// Initialize the Global class.
   void global_class_initialize ();
 }; // namespace object
+
+# define CAPTURE_GLOBAL(Name)					\
+  static ::object::rObject Name =				\
+    ::object::global_class->slot_get(::libport::Symbol(#Name))
 
 #endif // !OBJECT_GLOBAL_CLASS_HH

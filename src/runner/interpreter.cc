@@ -173,8 +173,7 @@ namespace runner
     // create another job whose task is to build the exception (in a
     // freshly allocated stack) and propagate it to us as we are its
     // parent.
-    static rObject SchedulingError =
-      object::global_class->slot_get(SYMBOL(SchedulingError));
+    CAPTURE_GLOBAL(SchedulingError);
     object::objects_type args;
     args.push_back(object::to_urbi(msg));
     scheduler::rJob child =
@@ -229,7 +228,7 @@ namespace runner
       //     the name
 
       // Tag represents the top level tag
-      static rObject Tags = object::global_class->slot_get(SYMBOL(Tags));
+      CAPTURE_GLOBAL(Tags);
       const rObject& toplevel = Tags;
       rObject parent = toplevel;
       rObject where = stacks_.self();
@@ -309,8 +308,7 @@ namespace runner
   void
   Interpreter::raise(rObject exn, bool skip_last)
   {
-    static object::rObject Exception =
-      object::global_class->slot_get(SYMBOL(Exception));
+    CAPTURE_GLOBAL(Exception);
     if (is_a(exn, Exception))
     {
       std::stringstream o;

@@ -128,7 +128,7 @@ namespace object
   {
     if (!owner->slot_has(field))
     {
-      static rObject Event = global_class->slot_get(SYMBOL(Event));
+      CAPTURE_GLOBAL(Event);
       rObject evt = urbi_call(r, Event, SYMBOL(new));
       owner->slot_set(field, evt);
       return evt;

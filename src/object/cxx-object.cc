@@ -60,7 +60,7 @@ namespace object
         runner::raise_argument_type_error(idx.get(), o, exp);
       else
       {
-	static rObject TypeError = global_class->slot_get(SYMBOL(TypeError));
+	CAPTURE_GLOBAL(TypeError);
         r.raise(urbi_call(r, TypeError, SYMBOL(new), exp, o));
       }
     }
