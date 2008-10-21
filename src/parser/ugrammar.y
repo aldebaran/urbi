@@ -8,7 +8,7 @@
 // Instead of "yytoken yylex(yylval, yylloc)", use "symbol_type yylex()".
 %define lex_symbol
 
- // Prefix all our external definition of token names with "TOK_"
+// Prefix all our external definition of token names with "TOK_".
 %define token.prefix "TOK_"
 
 // The leading :: are needed to avoid symbol clashes in the
@@ -1157,8 +1157,8 @@ exp_float:
 
 %type <float> duration;
 duration:
-  "duration"          { std::swap($$, $1);  }
-| duration "duration" { $$ += $2; }
+  "duration"          { $$ = $1;      }
+| duration "duration" { $$ = $1 + $2; }
 ;
 
 
