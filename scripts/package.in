@@ -54,7 +54,7 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 $MV "$MANIFEST" "$packagedir/MANIFEST"
 
 # Copy the instructions at the top-level
-$CP "${srcdir}/doc/NEWS.txt" "$packagedir"
+$CP "${srcdir}/doc/RELEASE-NOTES.txt" "$packagedir"
 $CP "${srcdir}/doc/REPORTING-BUGS.txt" "$packagedir"
 $CP "${srcdir}/doc/QUICK-START.txt" "$packagedir"
 
