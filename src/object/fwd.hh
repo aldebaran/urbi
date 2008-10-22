@@ -65,13 +65,13 @@ namespace object
   FWD_DECL(Barrier);
   FWD_DECL(Code);
   FWD_DECL(Dictionary);
-//  FWD_DECL(Directory); // FIXME: restore after beta1
+  FWD_DECL(Directory);
   FWD_DECL(Event);
-//  FWD_DECL(File);      // FIXME: restore after beta1
+  FWD_DECL(File);
   FWD_DECL(Float);
   FWD_DECL(List);
   FWD_DECL(Lobby);
-//  FWD_DECL(Path);      // FIXME: restore after beta1
+  FWD_DECL(Path);
   FWD_DECL(Primitive);
   FWD_DECL(Semaphore);
   FWD_DECL(String);

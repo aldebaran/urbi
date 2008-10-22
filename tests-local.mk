@@ -14,11 +14,7 @@ k2-check:
 ENABLE_HARD_ERRORS = false
 
 # pending features
-TFAIL_TESTS +=					\
-2.x/filesystem/directory.chk			\
-2.x/filesystem/file.chk				\
-2.x/filesystem/path.chk				\
-2.x/platform.chk
+TFAIL_TESTS +=
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
