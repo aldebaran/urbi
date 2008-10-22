@@ -67,7 +67,7 @@ bool withheader;
 bool waswithheader;
 int totallength;
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
   if (waswithheader)
@@ -92,7 +92,7 @@ endProgram(const urbi::UMessage&)
   return urbi::URBI_CONTINUE;
 }
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 getSound(const urbi::UMessage& msg)
 {
   static urbi::USound out;

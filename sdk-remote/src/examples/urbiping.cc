@@ -15,7 +15,8 @@ char * rname;
 bool received;
 unsigned count;
 bool flood = false;
-urbi::UCallbackAction
+
+static urbi::UCallbackAction
 pong(const urbi::UMessage& msg)
 {
   unsigned int ptime = msg.client.getCurrentTime() - sendtime;
@@ -38,7 +39,7 @@ pong(const urbi::UMessage& msg)
   return urbi::URBI_CONTINUE;
 }
 
-void showstats(int)
+static void showstats(int)
 {
   if (!pingCount)
     urbi::exit(0);

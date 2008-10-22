@@ -211,16 +211,16 @@ namespace urbi
     struct jpeg_destination_mgr pub;
   };
 
-  void init_destination(j_compress_ptr)
+  static void init_destination(j_compress_ptr)
   {
   }
 
-  boolean empty_output_buffer(j_compress_ptr)
+  static boolean empty_output_buffer(j_compress_ptr)
   {
     return FALSE;
   }
 
-  void term_destination(j_compress_ptr)
+  static void term_destination(j_compress_ptr)
   {
   }
 

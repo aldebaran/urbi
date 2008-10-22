@@ -385,7 +385,7 @@ namespace urbi
   }
 
   UCallbackAction
-  endProgram(const UMessage& msg)
+  static endProgram(const UMessage& msg)
   {
     std::stringstream mesg;
     mesg << msg;
@@ -424,7 +424,7 @@ namespace urbi
               << libport::exit (EX_OK);
   }
 
-  int
+  static int
   initialize(const char* addr, int port, int buflen,
 	     bool exitOnDisconnect, bool server)
   {

@@ -4,7 +4,7 @@
 
 urbi::USound snd;
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
   printf("done\n");
@@ -12,7 +12,7 @@ endProgram(const urbi::UMessage&)
   return urbi::URBI_REMOVE;
 }
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 soundFormat(const urbi::UMessage &msg)
 {
   urbi::UMessage smsg(msg.client, 0, "",

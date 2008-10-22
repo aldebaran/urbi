@@ -38,7 +38,7 @@ float scale;
 urbi::UImage im;
 
 /* Our callback function */
-urbi::UCallbackAction
+static urbi::UCallbackAction
 showImage(const urbi::UMessage &msg)
 {
   if (msg.type != urbi::MESSAGE_DATA
@@ -73,7 +73,7 @@ showImage(const urbi::UMessage &msg)
   return urbi::URBI_CONTINUE;
 }
 
-void
+static void
 closeandquit (int)
 {
   delete urbi::getDefaultClient();
@@ -81,7 +81,8 @@ closeandquit (int)
 }
 
 
-void usage(const char * n)
+static void
+usage(const char * n)
 {
    fprintf(stderr,
 	      "usage: %s [options] format robotname\n"

@@ -27,7 +27,7 @@ const char * devices[]=
 
 int devCount = sizeof (devices) / sizeof (*devices);
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 command(const urbi::UMessage &msg)
 {
   //get command id
@@ -38,7 +38,7 @@ command(const urbi::UMessage &msg)
   return urbi::URBI_CONTINUE;
 }
 
-void endRecord(int)
+static void endRecord(int)
 {
   urbi::exit(0);
 }

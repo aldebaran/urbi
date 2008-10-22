@@ -58,7 +58,8 @@ const char * devices[]=
 int devCount=18;
 FILE *f;
 int tilt=0;
-void buildHeader()
+static void
+buildHeader()
 {
   fwrite("URBI",4,1,f);
   fwrite(&devCount,4,1,f);
@@ -75,7 +76,7 @@ void buildHeader()
 
 
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 command(const urbi::UMessage &msg)
 {
   for (int i=0;i<devCount; ++i)
@@ -106,7 +107,8 @@ command(const urbi::UMessage &msg)
 
 }
 
-void endRecord(int)
+static void
+endRecord(int)
 {
   fclose(f);
   exit(0);

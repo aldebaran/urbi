@@ -27,7 +27,7 @@
 #include <libport/sysexits.hh>
 #include "urbi/uclient.hh"
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 dump(const urbi::UMessage & msg)
 {
   // FIXME: This is absolutely not completely migrated.
@@ -48,7 +48,7 @@ dump(const urbi::UMessage & msg)
   return urbi::URBI_CONTINUE;
 }
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 error(const urbi::UMessage& msg)
 {
   dump(msg);

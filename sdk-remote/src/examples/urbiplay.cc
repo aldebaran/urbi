@@ -32,7 +32,8 @@ UDev* devices;
 int devCount;
 char dumpMode;
 
-bool parseHeader(FILE *f)
+static bool
+parseHeader(FILE *f)
 {
   char buff[4];
   if (fread(buff,4,1,f)!=1) return false;
@@ -59,7 +60,8 @@ bool parseHeader(FILE *f)
   return true;
 }
 
-void play(urbi::UClient * robot, FILE *f)
+static void
+play(urbi::UClient * robot, FILE *f)
 {
   static int tick=0;
   static int ttime;

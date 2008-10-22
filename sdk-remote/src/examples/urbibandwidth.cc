@@ -9,7 +9,7 @@ bool over=false;
 static int totalsize=0;
 static int starttime=0;
 
-urbi::UCallbackAction
+static urbi::UCallbackAction
 bw(const urbi::UMessage &msg)
 {
   passert (msg.type,

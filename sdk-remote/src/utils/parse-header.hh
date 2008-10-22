@@ -45,7 +45,8 @@ namespace urbi
   UDev* devices;
   int devCount;
 
-  int parseHeader(FILE *f, FILE * of)
+  static int
+  parseHeader(FILE *f, FILE * of)
   {
     char buff[4];
     if (fread(buff, 4, 1, f) != 1)
@@ -89,7 +90,7 @@ namespace urbi
     return 0;
   }
 
-  void
+  static void
   reverse_cycle_scale_getopt (int argc, char * argv[], int min_argc,
 			      FILE** in, FILE** out)
   {

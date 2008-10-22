@@ -26,21 +26,23 @@ enum ConnectMode {
   /// Connect the module to a running engine (remote uobject)
   MODE_REMOTE
 };
-UCallbackAction
+
+static UCallbackAction
 onError(const UMessage& msg)
 {
   std::cerr <<"load module error: " << msg.message << std::endl;
   return URBI_CONTINUE;
 }
 
-UCallbackAction
+static UCallbackAction
 onDone(const UMessage&)
 {
   ::exit(0);
 }
 
-int connect_plugin(int argc, const char* argv[],
-                   std::list<std::string>& modules)
+static int
+connect_plugin(int argc, const char* argv[],
+               std::list<std::string>& modules)
 {
   std::string host = "localhost";
   int port = 54000;
@@ -65,7 +67,8 @@ int connect_plugin(int argc, const char* argv[],
   return 0;
 }
 
-void usage(const char* name)
+static void
+usage(const char* name)
 {
   std::cerr
   << "usage: " << name << " MODE MODULENAMES ... [OPTIONS]\n"
