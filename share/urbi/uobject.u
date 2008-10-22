@@ -11,7 +11,7 @@ function Global.isdef
   {
     if (base.hasSlot(c))
     {
-      var s = base.getSlot(c) |
+      var s = base.getSlot(c).acceptVoid |
       base = s.apply([s]) |
     }
       else
