@@ -76,5 +76,5 @@ Implement "UVar::syncValue()" in plugged uobjects
 
 Calling "syncValue()" on a "UVar" from a plugged uobject resulted in a
 link error.  This method is now implemented, but does nothing as there
-is nothing to do. However, this was necessary to be able the same
-uobject in remote and engine modes.
+is nothing to do. However, its presence is required to be able to use
+the same uobject in both remote and engine modes.
