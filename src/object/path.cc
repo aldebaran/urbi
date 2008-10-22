@@ -1,15 +1,16 @@
 // For stat, getcwd
 #include <cerrno>
 #include <cstring>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <libport/unistd.h>
-#include <fcntl.h>
+#include <libport/file-system.hh>
 
 // For bad_alloc
 #include <exception>
 
-#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include <object/directory.hh>
@@ -64,7 +65,7 @@ namespace object
 
   rPath Path::cwd()
   {
-    return new Path(boost::filesystem::current_path().string());
+    return new Path(libport::get_current_directory());
   }
 
   // Stats

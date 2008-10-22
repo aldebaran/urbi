@@ -1,4 +1,6 @@
-#include <boost/filesystem.hpp>
+#include <dirent.h>
+#include <sys/types.h>
+
 #include <boost/format.hpp>
 
 #include <libport/detect-win32.h>
@@ -74,18 +76,21 @@ namespace object
   template <rObject (*F) (Directory& d, const std::string& entry)>
   rList Directory::list()
   {
-    using boost::filesystem::directory_iterator;
     List::value_type res;
+    DIR* dir = opendir(path_->value_get().to_string().c_str());
+    dirent* entry;
 
-    directory_iterator end;
-    for (directory_iterator it (path_->value_get().to_string());
-         it != end;
-         ++it)
-      res << F(*this, basename(it->path()));
+    while ((entry = readdir(dir)))
+    {
+      std::string name = entry->d_name;
+      if (name == "." || name == "..")
+        continue;
+      res << F(*this, name);
+    }
 
+    closedir(dir);
     return new List(res);
   }
-
 
   /*--------.
   | Details |
