@@ -129,7 +129,6 @@ namespace urbi
     }
     if (!hasSep)
       strcat(sendBuffer, ",");
-    const char * separator = "<<";
     char tag[100];
     if (mtag && *mtag)
     {
@@ -139,12 +138,21 @@ namespace urbi
     }
     else
       makeUniqueTag(tag);
-    effectiveSend(tag, strlen(tag));
-    effectiveSend(separator, strlen(separator));
+    std::string cmd = std::string() +
+      "if (!hasSlot(\"" + tag + "\")) { "
+      "var lobby." +tag + " = Channel.new(\"" + tag + "\"); "
+      "var lobby.__created_chan__};"
+      + tag + " << ";
+    effectiveSend(cmd.c_str(), cmd.length());
     queueLock_.lock();
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
+    cmd = std::string() +
+      "if (hasSlot(\"__created_chan__\")) { "
+      "lobby.removeSlot(\"__created_chan__\"); "
+      "lobby.removeSlot(\"" + tag + "\") }; ";
+    effectiveSend(cmd.c_str(), cmd.length());
 
     if (mtag != 0)
       strcpy (tag, mtag);
