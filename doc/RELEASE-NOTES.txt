@@ -86,4 +86,4 @@ The support for k1 compatibility function "isdef" was broken in the
 case of composed names or variables whose content was "void". Note
 that we do not recommend using "isdef" at all. Slots related methods
 such as "getSlot", "hasSlot", "locateSlot", or "slotNames" have much
-cleaner semantics,
+cleaner semantics.
