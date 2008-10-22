@@ -265,13 +265,6 @@ BOUNCE_INT_OP(~)
     return new List(res);
   }
 
-  rFloat
-  Float::set(value_type rhs)
-  {
-    value_ = rhs;
-    return this;
-  }
-
   /*--------.
   | Details |
   `--------*/
@@ -319,7 +312,6 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(random), &Float::random);
     bind(SYMBOL(round), &Float::round);
     bind(SYMBOL(seq), &Float::seq);
-    bind(SYMBOL(set), &Float::set);
     bind(SYMBOL(sin), &Float::sin);
     bind(SYMBOL(sqrt), &Float::sqrt);
     bind(SYMBOL(tan), &Float::tan);

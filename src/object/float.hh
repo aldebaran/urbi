@@ -68,7 +68,6 @@ namespace object
     int random();
     value_type round();
     rList seq();
-    rFloat set(value_type rhs);
     value_type sin();
     value_type sqrt();
     value_type tan();
