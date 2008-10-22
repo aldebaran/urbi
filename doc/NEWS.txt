@@ -51,6 +51,16 @@ The optional third argument indicates whether to keep empty elements:
   "foobar".split("o", false, false);
   [00000001] ["f", "bar"]
 
+UObjects
+========
+
+"UVar::type()" method
+---------------------
+
+It is now possible to get the type of a "UVar" by calling its "type()"
+method, which returns a "UDataType" (see "urbi/uvalue.hh" for the
+types declarations).
+
 Bug fixes
 =========
 
@@ -60,3 +70,11 @@ Support for Windows shares
 Previous versions of the kernel could not be launched from a Windows
 remote directory, whose name is starting with two slashes such as
 "//share/some/dir".
+
+Implement "UVar::syncValue()" in plugged uobjects
+-------------------------------------------------
+
+Calling "syncValue()" on a "UVar" from a plugged uobject resulted in a
+link error.  This method is now implemented, but does nothing as there
+is nothing to do. However, this was necessary to be able the same
+uobject in remote and engine modes.
