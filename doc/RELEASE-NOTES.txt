@@ -69,7 +69,7 @@ Support for Windows shares
 
 Previous versions of the kernel could not be launched from a Windows
 remote directory, whose name is starting with two slashes such as
-"//share/some/dir".
+"\\share\some\dir".
 
 Implement "UVar::syncValue()" in plugged uobjects
 -------------------------------------------------
