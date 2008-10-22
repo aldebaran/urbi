@@ -179,6 +179,11 @@ namespace urbi
 
     virtual ~UAbstractClient();
 
+    bool init ()
+    {
+      return init_;
+    }
+
     /// Return current error status, or zero if no error occurred.
     int error()
     {
@@ -380,6 +385,10 @@ namespace urbi
     char currentTag[URBI_MAX_TAG_LENGTH];
 
     int	currentTimestamp;
+
+  protected:
+    /// Client fully created
+    bool init_;
 
   public:
     int getCurrentTimestamp () const;

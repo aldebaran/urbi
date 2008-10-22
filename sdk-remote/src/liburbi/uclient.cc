@@ -156,32 +156,20 @@ namespace urbi
 	return;
       }
 
-      // Accept one connection
-      struct sockaddr_in saClient;
-      socklen_t addrlenClient;
-      int acceptFD = 0;
-      acceptFD = accept (sd, (struct sockaddr *) &saClient, &addrlenClient);
-      if (acceptFD < 0)
-      {
-	libport::perror("UClient::UClient cannot accept");
-	rc = -1;
-	return;
-      }
-
-      // Store client connection info
-      delete host;
-      host = strdup (inet_ntoa (saClient.sin_addr));
-      port = saClient.sin_port;
-
-      // Do not listen anymore.
-      close (sd);
-      // Redirect send/receive on accepted connection.
-      sd = acceptFD;
+      // Create a thread waiting for incoming connection.
+      // This must not be blocking in case of a remote server.
+      // FIXME: block if normal remote ?
+      init_ = false;
+      thread = libport::startThread(this, &UClient::acceptThread);
     }
 
     recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
-    thread = libport::startThread(this, &UClient::listenThread);
+
+    // Do not create thread if one is already waiting for incoming connection
+    if (thread)
+      thread = libport::startThread(this, &UClient::listenThread);
+
     if (!defaultClient)
       defaultClient = this;
   }
@@ -244,6 +232,40 @@ namespace urbi
     return 0;
   }
 
+  void
+  UClient::acceptThread()
+  {
+    // Accept one connection
+    struct sockaddr_in saClient;
+    socklen_t addrlenClient;
+    int acceptFD = 0;
+
+    acceptFD = accept (sd, (struct sockaddr *) &saClient, &addrlenClient);
+    if (acceptFD < 0)
+    {
+      libport::perror("UClient::UClient cannot accept");
+      rc = -1;
+      return;
+    }
+
+    // Store client connection info
+    delete host;
+    host = strdup (inet_ntoa (saClient.sin_addr));
+    port = saClient.sin_port;
+
+    // Do not listen anymore.
+    close (sd);
+    // Redirect send/receive on accepted connection.
+    sd = acceptFD;
+
+    // FIXME: leaking ?
+    thread = libport::startThread(this, &UClient::listenThread);
+
+    init_ = true;
+
+    // Stop this thread, the listen one is the real thing.
+    return;
+  }
 
   void
   UClient::listenThread()

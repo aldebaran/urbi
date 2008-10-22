@@ -480,7 +480,7 @@ namespace urbi
 		  << libport::exit(1);
       getDefaultClient()->setClientErrorCallback(callback (&endProgram));
     }
-   if (!getDefaultClient() || getDefaultClient()->error())
+    if (!getDefaultClient() || getDefaultClient()->error())
       return 1;
 
 #ifdef LIBURBIDEBUG
@@ -491,6 +491,12 @@ namespace urbi
 
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
+
+    // Wait for client to be connected if in server mode
+    while (getDefaultClient () &&
+	   !getDefaultClient()->error () &&
+	   !getDefaultClient()->init ())
+      usleep(20000);
 
     dummyUObject = new UObject (0);
     for (UStartlist::iterator i = objectlist->begin();
