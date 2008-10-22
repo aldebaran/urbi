@@ -12,23 +12,6 @@ class Global.Kernel1Functions
     echo ("pong time=" + time.asString);
   };
 
-  /// Returns true if argument is defined. Argument can be of the form a.b.c.
-  function isdef
-  {
-    var base = call.sender |
-    for (var c: call.argString(0).split(". "))
-    {
-      if (base.hasSlot(c))
-        {
-          var s = base.getSlot(c) |
-          base = s.apply([s]) |
-        }
-      else
-        return false |
-    } |
-    return true
-  };
-
   function seq(n)
   {
     warn("`seq(number)' is deprecated, use `number.seq'") |
