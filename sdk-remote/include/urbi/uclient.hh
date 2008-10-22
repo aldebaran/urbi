@@ -47,6 +47,8 @@ namespace urbi
     virtual unsigned int getCurrentTime() const;
 
     //! For internal use.
+    void acceptThread();
+    //! For internal use.
     void listenThread();
     UCallbackAction pong(const UMessage& msg);
 

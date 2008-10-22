@@ -179,6 +179,7 @@ namespace urbi
     , nBracket(0)
     , binaryMode(false)
     , system(false)
+    , init_(true)
     , uid(0)
     , stream(this)
   {

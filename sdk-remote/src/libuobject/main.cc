@@ -283,6 +283,12 @@ namespace urbi
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
 
+    // Wait for client to be connected if in server mode
+    while (getDefaultClient () &&
+	!getDefaultClient()->error () &&
+	!getDefaultClient()->init ())
+      usleep(20000);
+
     dummyUObject = new UObject (0);
     for (UStartlist::iterator i = objectlist->begin();
 	 i != objectlist->end();
