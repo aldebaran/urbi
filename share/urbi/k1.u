@@ -29,7 +29,11 @@ class Global.Kernel1Functions
     s.length
   };
 
-  var Global.isvoid = function{ var x = call.evalArgAt(0).acceptVoid; return x.isVoid};
+  function isvoid
+  {
+    call.evalArgAt(0).acceptVoid.isVoid
+  };
+
   var system = System;
   var system.ghostID = "";
 };
