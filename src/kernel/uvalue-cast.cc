@@ -10,14 +10,14 @@
 #include <runner/raise.hh>
 #include <urbi/uvalue.hh>
 
-urbi::UDataType uvalue_type(object::rObject o)
+urbi::UDataType uvalue_type(const object::rObject& o)
 {
   CAPTURE_GLOBAL(Binary);
-  if (object::rFloat f = o->as<object::Float>())
+  if (o->as<object::Float>())
     return urbi::DATA_DOUBLE;
-  if (object::rString s = o->as<object::String>())
+  if (o->as<object::String>())
     return urbi::DATA_STRING;
-  if (object::rList s = o->as<object::List>())
+  if (o->as<object::List>())
     return urbi::DATA_LIST;
   if (is_a(o, Binary))
     return urbi::DATA_BINARY;
@@ -26,7 +26,7 @@ urbi::UDataType uvalue_type(object::rObject o)
   return urbi::DATA_OBJECT;
 }
 
-urbi::UValue uvalue_cast(object::rObject o)
+urbi::UValue uvalue_cast(const object::rObject& o)
 {
   CAPTURE_GLOBAL(Binary);
   urbi::UValue res;

@@ -479,20 +479,14 @@ namespace urbi
   //no corresponding operator= for this one...
   UVar::operator int()
   {
-    if (owned)
-      return ::uvalue_cast(uvar_uowned_get(name));
-    else
-      return ::uvalue_cast(uvar_get(name));
+    return ::uvalue_cast(owned ? uvar_uowned_get(name) : uvar_get(name));
   }
 
-UDataType
-UVar::type () const
-{
-  if (owned)
-    return ::uvalue_type(uvar_uowned_get(name));
-  else
-    return ::uvalue_type(uvar_get(name));
-}
+  UDataType
+  UVar::type() const
+  {
+    return ::uvalue_type(owned ? uvar_uowned_get(name) : uvar_get(name));
+  }
 
   void
   UVar::__init()
