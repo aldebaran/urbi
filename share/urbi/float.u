@@ -11,11 +11,12 @@ do (Float)
   // Comparable.!= that bounce endlessly one on the other.
   setProtos([Orderable, Comparable]);
 
-  function init
+  function 'new'
   {
     if (call.argsCount == 1)
-      set(call.argAt(0));
-    // Otherwise check there's 0 arguments
+      call.argAt(0)
+    else
+      Float.clone
   };
 
   function sqr() { this * this };
