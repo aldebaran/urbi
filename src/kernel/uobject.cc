@@ -447,6 +447,10 @@ namespace urbi
     return StringPair(oname, slot);
   }
 
+  void UVar::syncValue()
+  { // Nothing to do
+  }
+
 #define UVAR_OPERATORS(T, DT)                                   \
   void UVar::operator = (DT t)                                  \
   {                                                             \
