@@ -481,6 +481,15 @@ namespace urbi
       return ::uvalue_cast(uvar_get(name));
   }
 
+UDataType
+UVar::type () const
+{
+  if (owned)
+    return ::uvalue_type(uvar_uowned_get(name));
+  else
+    return ::uvalue_type(uvar_get(name));
+}
+
   void
   UVar::__init()
   {
