@@ -27,3 +27,6 @@ check-headers:
 # But for 2.0b1, we don't care...
 	-srcdir=$(srcdir) \
 	  $(srcdir)/include/check-headers $(dist_kernelincludekernel_HEADERS)
+
+EXTRA_DIST +=					\
+  include/check-headers
