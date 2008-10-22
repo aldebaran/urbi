@@ -78,3 +78,12 @@ Calling "syncValue()" on a "UVar" from a plugged uobject resulted in a
 link error.  This method is now implemented, but does nothing as there
 is nothing to do. However, its presence is required to be able to use
 the same uobject in both remote and engine modes.
+
+"isdef" works again
+-------------------
+
+The support for k1 compatibility function "isdef" was broken in the
+case of composed names or variables whose content was "void". Note
+that we do not recommend using "isdef" at all. Slots related methods
+such as "getSlot", "hasSlot", "locateSlot", or "slotNames" have much
+cleaner semantics,
