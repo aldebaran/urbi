@@ -19,8 +19,8 @@
 namespace object
 {
   Tag::Tag()
-    : value_(new scheduler::Tag(SYMBOL()))
   {
+    value_ = new scheduler::Tag(libport::Symbol::make_empty());
     proto_add(proto ? proto : object_class);
   }
 

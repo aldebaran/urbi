@@ -85,7 +85,7 @@ namespace runner
       object::objects_type args;
       // FIXME: This is a closure, it won't use its 'this', but this is
       // gory.
-      apply_urbi(rObject(), code, SYMBOL(), args, 0);
+      apply_urbi(rObject(), code, libport::Symbol::make_empty(), args, 0);
       // Wait for all other jobs to terminate.
       yield_until_terminated(jobs);
     }
