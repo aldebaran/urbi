@@ -61,41 +61,52 @@ namespace object
 
   // Conversions
 
+  static bool
+  split_point(const std::string& str, size_t& pos, size_t& size)
+  {
+    pos = str.find("\n");
+    size = 1;
+#ifdef WIN32
+    size_t rn = str.find("\r\n");
+    if (rn != std::string::npos && rn < pos)
+    {
+      pos = rn;
+      size = 2;
+    }
+#endif
+    return pos != std::string::npos;
+  }
+
+  static void
+  get_buf(std::istream& input, std::string& output)
+  {
+    char buf[BUFSIZ + 1];
+
+    input.read(buf, sizeof buf - 1);
+    buf[input.gcount()] = 0;
+    output += buf;
+  }
+
   rList File::as_list()
   {
-    static std::string delim =
-#ifndef WIN32
-      "\n"
-#else
-      "\r\n"
-#endif
-      ;
-    static int delim_size = delim.length();
-
     std::ifstream s(path_->as_string().c_str());
-
     if (!s.good())
       runner::raise_primitive_error("File not readable: " + as_string());
 
     List::value_type res;
-
-    char buf[BUFSIZ + 1];
     std::string line;
 
     // Split in lines, 'Back in the stone age' version.
     while (!s.eof())
     {
-      s.read(buf, sizeof buf - 1);
-      buf[s.gcount()] = 0;
-      char* str = buf;
-      while (char* cut = strstr(str, delim.c_str()))
+      get_buf(s, line);
+      size_t pos;
+      size_t size;
+      while (split_point(line, pos, size))
       {
-        *cut = 0;
-        res << new String(line + str);
-        line = "";
-        str = cut + delim_size;
+        res << new String(line.substr(0, pos));
+        line = line.substr(pos + size, std::string::npos);
       }
-      line += str;
     }
 
     // Bad bad bad user! The file does not finish with a \n! Handle it
