@@ -35,6 +35,7 @@ namespace scheduler
    boost::optional<Type> Name ## _;
 
 #define COMPLETE_EXCEPTION(Name)				\
+ public:							\
   virtual Name* clone () const					\
   {								\
     return new Name (*this);					\
