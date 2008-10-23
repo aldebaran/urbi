@@ -62,6 +62,9 @@ typedef struct CallbackBlock
 {
 	void *context;
 	CoroStartCallback *func;
+#ifdef USE_FIBERS
+	Coro* associatedCoro;
+#endif
 } CallbackBlock;
 
 static CallbackBlock globalCallbackBlock;
@@ -74,9 +77,8 @@ Coro *Coro_new(void)
 
 #ifdef USE_FIBERS
 	self->fiber = NULL;
-#else
-	self->stack = NULL;
 #endif
+	self->stack = NULL;
 	return self;
 }
 
@@ -161,14 +163,10 @@ size_t Coro_bytesLeftOnStack(Coro *self)
 	ptrdiff_t start = ((ptrdiff_t)self->stack);
 	ptrdiff_t end   = start + self->requestedStackSize;
 
-	if (stackMovesUp) // like x86
-	{
+	if (stackMovesUp) // like PPC
 		return end - p1;
-	}
-	else // like OSX on PPC
-	{
+	else // like x86
 		return p1 - start;
-	}
 }
 
 int Coro_stackSpaceAlmostGone(Coro *self)
@@ -196,7 +194,9 @@ void Coro_startCoro_(Coro *self, Coro *other, void *context, CoroStartCallback *
 {
 	globalCallbackBlock.context = context;
 	globalCallbackBlock.func    = callback;
-#ifndef USE_FIBERS
+#ifdef USE_FIBERS
+	globalCallbackBlock.associatedCoro = other;
+#else
 	Coro_allocStackIfNeeded(other);
 #endif
 	Coro_setup(other, &globalCallbackBlock);
@@ -225,6 +225,23 @@ void Coro_Start(void)
 void Coro_StartWithArg(CallbackBlock *block);
 void Coro_StartWithArg(CallbackBlock *block)
 {
+#ifdef USE_FIBERS
+	if (block->associatedCoro->fiber != GetCurrentFiber())
+		abort();
+	// Set the start of the stack for future comparaison. According to
+	// http://msdn.microsoft.com/en-us/library/ms686774(VS.85).aspx,
+	// some part of the stack is reserved for running an handler if
+	// the fiber exhaust its stack, but we have no way of retrieving
+	// this information (SetThreadStackGuarantee() is not supported
+	// on WindowsXP), so we have to assume that it is the default
+	// 64kB.
+	MEMORY_BASIC_INFORMATION meminfo;
+	// Look at the descriptors of the meminfo structure, which is
+	// conveniently located on the stack we are interested into.
+	VirtualQuery(&meminfo, &meminfo, sizeof meminfo);
+	block->associatedCoro->stack =
+		(char*)meminfo.AllocationBase + 64 * 1024;
+#endif
 	(block->func)(block->context);
 	printf("Scheduler error: returned from coro start function\n");
 	exit(-1);
