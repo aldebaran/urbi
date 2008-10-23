@@ -61,6 +61,16 @@ It is now possible to get the type of a "UVar" by calling its "type()"
 method, which returns a "UDataType" (see "urbi/uvalue.hh" for the
 types declarations).
 
+Runtime
+=======
+
+Stack exhaustion check on Windows
+---------------------------------
+
+As was done on Linux already, stack exhaustion condition is detected
+on Windows, for example in the case of an infinite recursion. In this
+case, SchedulingError will be raised and can be caught.
+
 Bug fixes
 =========
 
