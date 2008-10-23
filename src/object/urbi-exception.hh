@@ -29,13 +29,9 @@ namespace object
   {
   public:
     UrbiException(rObject value, const call_stack_type& bt);
-    const rObject& value_get() const;
-    const call_stack_type& backtrace_get();
-
-  private:
-    rObject value_;
-    call_stack_type bt_;
-    COMPLETE_EXCEPTION(UrbiException);
+    ADD_FIELD(rObject, value)
+    ADD_FIELD(call_stack_type, backtrace)
+    COMPLETE_EXCEPTION(UrbiException)
   };
 
 } // namespace object
