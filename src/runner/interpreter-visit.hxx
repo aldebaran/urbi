@@ -305,6 +305,16 @@ namespace runner
         }
         else
         {
+	  // Visual Studio on Windows does not rewind the stack before the
+	  // end of a "try/catch" block, "catch" included. It means that
+	  // we cannot display the exception in the "catch" block in case
+	  // this is a scheduling error due to stack exhaustion, as we
+	  // may need the stack. The following objects will be set if we
+	  // have an exception to show, and it will be printed after
+	  // the "catch" block, or if we have an exception to rethrow.
+	  libport::shared_ptr<object::UrbiException, false> exception_to_show;
+	  scheduler::exception_ptr exception_to_throw;
+
           // If at toplevel, print errors and continue, else rethrow them
           try
           {
@@ -335,10 +345,15 @@ namespace runner
           catch (object::UrbiException& exn)
           {
             if (e->toplevel_get())
-              show_exception_(exn);
+	      exception_to_show =
+	        new object::UrbiException(exn.value_get(), exn.backtrace_get());
             else
-              throw;
+	      exception_to_throw = exn.clone();
           }
+	  if (exception_to_throw)
+	    exception_to_throw->rethrow();
+	  else if (exception_to_show)
+	    show_exception_(*exception_to_show);
         }
       }
       // If we get a scope tag, stop the runners tagged with it.
