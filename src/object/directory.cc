@@ -1,4 +1,4 @@
-#include <dirent.h>
+#include <libport/dirent.h>
 #include <sys/types.h>
 
 #include <boost/format.hpp>
