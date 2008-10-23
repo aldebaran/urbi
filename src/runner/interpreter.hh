@@ -45,17 +45,17 @@ namespace runner
     Interpreter(rLobby lobby,
                 scheduler::Scheduler& scheduler,
                 ast::rConstAst ast,
-                const libport::Symbol& name = SYMBOL());
+                const libport::Symbol& name);
 
     Interpreter(const Interpreter&,
                 rObject code,
-                const libport::Symbol& name = SYMBOL(),
+                const libport::Symbol& name,
                 const objects_type& args = objects_type());
 
     /// Create a copy of a runner starting with another ast.
     Interpreter(const Interpreter&,
                 ast::rConstAst ast,
-                const libport::Symbol& name = SYMBOL());
+                const libport::Symbol& name);
 
     /// Destroy a Interpreter.
     virtual ~Interpreter();

@@ -44,9 +44,9 @@ namespace runner
     /// The new runner has no parent.
     Runner(rLobby lobby,
 	   scheduler::Scheduler& scheduler,
-	   const libport::Symbol& name = SYMBOL());
+	   const libport::Symbol& name);
 
-    explicit Runner(const Runner&, const libport::Symbol& name = SYMBOL());
+    explicit Runner(const Runner&, const libport::Symbol& name);
 
     /// Destroy a Runner.
     virtual ~Runner();

@@ -264,7 +264,8 @@ namespace object
 
     runner::Interpreter* new_runner =
       new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
-			       rObject(arg1));
+			       rObject(arg1),
+			       libport::Symbol::fresh(r.name_get()));
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
 

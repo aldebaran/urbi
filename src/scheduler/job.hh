@@ -82,7 +82,6 @@ namespace scheduler
     /// \param name The name of the new job, or a name derived from \a model
     ///        if none is provided.
     Job(const Job& model, const libport::Symbol& name);
-    Job(const Job& model);
 
     /// Create a new job.
     ///
@@ -91,7 +90,6 @@ namespace scheduler
     /// \param name The name of the new job, or an automatically created
     ///        one if none is provided.
     explicit Job(Scheduler& scheduler, const libport::Symbol& name);
-    explicit Job(Scheduler& scheduler);
 
     /// Job destructor.
     ///
@@ -380,7 +378,6 @@ namespace scheduler
 
     /// Helper functions for constructors.
     void init_common(const libport::Symbol& name);
-    void init_from_model(const Job& model, const libport::Symbol& name);
 
     /// Tags this job depends on.
     tags_type tags_;

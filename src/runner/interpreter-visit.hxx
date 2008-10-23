@@ -67,7 +67,9 @@ namespace runner
     foreach (const ast::rConstExp& child,
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
-      Interpreter* job = new Interpreter(*this, operator()(child.get()));
+      Interpreter* job =
+	new Interpreter(*this, operator()(child.get()),
+			libport::Symbol::fresh(name_get()));
       register_child(job, finally);
       jobs.push_back(job);
       job->start_job();
@@ -288,7 +290,9 @@ namespace runner
         if (stmt && stmt->flavor_get() == ast::flavor_comma)
         {
           // The new runners are attached to the same tags as we are.
-	  scheduler::rJob subrunner = new Interpreter(*this, operator()(exp));
+	  scheduler::rJob subrunner =
+	    new Interpreter(*this, operator()(exp),
+			    libport::Symbol::fresh(name_get()));
           // If the subrunner throws an exception, propagate it here ASAP, unless
           // we are at the top level. It we are at the toplevel, we do not even
 	  // have to register it as a subrunner.

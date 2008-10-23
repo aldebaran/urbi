@@ -32,13 +32,6 @@ namespace scheduler
     alive_jobs_++;
   }
 
-  inline void
-  Job::init_from_model(const Job& model, const libport::Symbol& name)
-  {
-    init_common(name);
-    time_shift_ = model.time_shift_;
-  }
-
   inline
   Job::Job(Scheduler& scheduler, const libport::Symbol& name)
     : RefCounted()
@@ -48,27 +41,12 @@ namespace scheduler
   }
 
   inline
-  Job::Job(Scheduler& scheduler)
-    : RefCounted()
-    , scheduler_(scheduler)
-  {
-    init_common(libport::Symbol::fresh("job"));
-  }
-
-  inline
   Job::Job(const Job& model, const libport::Symbol& name)
     : RefCounted()
     , scheduler_(model.scheduler_)
   {
-    init_from_model(model, name);
-  }
-
-  inline
-  Job::Job(const Job& model)
-    : RefCounted()
-    , scheduler_(model.scheduler_)
-  {
-    init_from_model(model, libport::Symbol::fresh(model.name_get()));
+    init_common(name);
+    time_shift_ = model.time_shift_;
   }
 
   inline
