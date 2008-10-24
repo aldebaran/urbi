@@ -17,7 +17,16 @@ namespace runner
 		  object::rObject arg1 = 0,
 		  object::rObject arg2 = 0,
 		  object::rObject arg3 = 0,
-		  object::rObject arg4 = 0);
+		  object::rObject arg4 = 0,
+                  bool skip = false);
+
+  /// Like raise_urbi, but skip the last callstack element
+  ATTRIBUTE_NORETURN
+  void raise_urbi_skip(libport::Symbol exn_name,
+                       object::rObject arg1 = 0,
+                       object::rObject arg2 = 0,
+                       object::rObject arg3 = 0,
+                       object::rObject arg4 = 0);
 
   extern const object::rObject& raise_current_method;
 

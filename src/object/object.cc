@@ -102,7 +102,7 @@ namespace object
   Object::slot_set(const key_type& k, const rObject& o)
   {
     if (!slots_.set(this, k, o))
-      runner::raise_urbi(SYMBOL(RedefinitionError), to_urbi(k));
+      runner::raise_urbi_skip(SYMBOL(RedefinitionError), to_urbi(k));
     return *this;
   }
 
