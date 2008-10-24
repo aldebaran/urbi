@@ -204,14 +204,16 @@ do (List)
 
   function min
   {
+    if (empty)
+      throw Exception.new("list cannot be empty") |
     var f |
     if (call.argsCount > 0)
       f = call.argAt(0)
     else
       f = function (a, b) {a < b} |
-    var res |
-    for (var elt in this)
-      if (res.isVoid || f(elt, res))
+    var res = head|
+    for (var elt in tail)
+      if (f(elt, res))
         res = elt |
     res
   };
