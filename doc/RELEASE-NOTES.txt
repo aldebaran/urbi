@@ -51,6 +51,27 @@ The optional third argument indicates whether to keep empty elements:
   "foobar".split("o", false, false);
   [00000001] ["f", "bar"]
 
+"min" and "max"
+---------------
+
+It is now possible to call "min" and "max" on a list. By default, the
+"<" comparaison operator is used, but one explicit `lower than'
+function can be provided as "min" or "max" argument should one be
+needed. Here is an example on how to compare strings in case-sensitive
+and case-insensitive modes:
+
+  ["the", "brown", "Fox"].min;
+  [00000001] "Fox"
+  ["the", "brown", "Fox"].min(function (l, r) { l.toLower < r.toLower });
+  [00000002] "brown"
+
+Global function "min" and "max" taking an arbitrary number of
+arguments have also been defined. In this case, the default "<" operator
+is used for comparaison:
+
+  min(3, 2, 17);
+  [00000001] 2
+
 UObjects
 ========
 
