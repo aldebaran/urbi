@@ -200,7 +200,30 @@ do (List)
       i++ |
     } |
     return true |
-  }
+  };
+
+  function min
+  {
+    var f = function (a, b) {a < b} |
+    if (call.argsCount > 0)
+      f = call.argAt(0) |
+    var res |
+    for (var elt in this)
+      if (res.isVoid || f(elt, res))
+        res = elt |
+    res
+  };
+
+  function max
+  {
+    var f = function (a, b) {a > b} |
+    if (call.argsCount > 0)
+    {
+      var arg = call.argAt(0) |
+      f = function (a, b) { !arg(a, b) } |
+    } |
+    min(f)
+  };
 };
 
 
