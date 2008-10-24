@@ -248,6 +248,15 @@ class Global.Orderable
   function '>=' (rhs) { this > rhs || this == rhs };
 };
 
+function min
+{
+  return call.evalArgs.min
+};
+
+function max
+{
+  return call.evalArgs.max
+};
 
 load("urbi/updatehook-stack.u");
 load("urbi/float.u");
