@@ -204,9 +204,11 @@ do (List)
 
   function min
   {
-    var f = function (a, b) {a < b} |
+    var f |
     if (call.argsCount > 0)
-      f = call.argAt(0) |
+      f = call.argAt(0)
+    else
+      f = function (a, b) {a < b} |
     var res |
     for (var elt in this)
       if (res.isVoid || f(elt, res))
@@ -216,12 +218,14 @@ do (List)
 
   function max
   {
-    var f = function (a, b) {a > b} |
+    var f;
     if (call.argsCount > 0)
     {
       var arg = call.argAt(0) |
       f = function (a, b) { !arg(a, b) } |
-    } |
+    }
+    else
+      f = function (a, b) {b < a} |
     min(f)
   };
 };
