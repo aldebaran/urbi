@@ -167,7 +167,7 @@ namespace urbi
     recvBuffer[recvBufferPosition] = 0;
 
     // Do not create thread if one is already waiting for incoming connection
-    if (thread)
+    if (!thread)
       thread = libport::startThread(this, &UClient::listenThread);
 
     if (!defaultClient)
