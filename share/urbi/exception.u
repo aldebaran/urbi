@@ -205,3 +205,15 @@ class Global.RedefinitionError: Exception
     Exception.getSlot("init").apply([this, explanation])
   }
 };
+
+class Global.FileNotFound: Exception
+{
+  var path = ".";
+
+  function init(p)
+  {
+    path = p;
+    var explanation = "file not found: %s" % [p] |
+    Exception.getSlot("init").apply([this, explanation])
+  }
+};

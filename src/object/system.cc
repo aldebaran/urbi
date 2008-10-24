@@ -186,8 +186,7 @@ namespace object
     }
     catch (libport::file_library::Not_found&)
     {
-      runner::raise_primitive_error("Unable to find file: " +
-				    arg1->value_get());
+      runner::raise_urbi(SYMBOL(FileNotFound), arg1);
       // Never reached
       assertion(false);
       return 0;

@@ -444,8 +444,14 @@ var Object.loaded = 1 |
 {};
 
 // Load URBI.INI outside initialization phase.
-"Loading URBI.INI";
-load("URBI.INI");
+try
+{
+  var path = searchFile("URBI.INI");
+  echo("Loading %s" % [path]);
+  loadFile(path);
+}
+catch (FileNotFound e)
+{ /* nothing */ };
 
 /*-----------------------------------------------------------.
 | Ready to go.  This string is special and expected by       |
