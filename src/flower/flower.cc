@@ -100,8 +100,20 @@ namespace flower
             << scoped_set(has_continue_, false);
 
     PARAMETRIC_AST(each, "%exp:1 . %id:2 (%exp:3)");
-    each % recurse(code->list_get());
+    ast::rExp target = recurse(code->list_get());
 
+    ast::rExp body = recurse(code->body_get());
+    if (has_continue_)
+      body = cont(body);
+
+    // 'fillme' is a placeholder filled later. Parametric ASTs can't
+    // parametrize formal arguments for now.
+    PARAMETRIC_AST(closure, "closure (fillme) {%exp:1}");
+    ast::rClosure c = (closure % body).result<ast::Closure>();
+    // Rename the 'fillme' closure formal argument
+    c->formals_get()->front()->what_set(code->index_get()->what_get());
+
+    each % target;
     switch (code->flavor_get())
     {
     case ast::flavor_none:
@@ -117,17 +129,6 @@ namespace flower
       errors_.error(code->location_get(), "invalid flavor: `for,'");
       return;
     }
-
-    ast::rExp body = recurse(code->body_get());
-    if (has_continue_)
-      body = cont(body);
-
-    // 'fillme' is a placeholder filled later. Parametric ASTs can't
-    // parametrize formal arguments for now.
-    PARAMETRIC_AST(closure, "closure (fillme) {%exp:1}");
-    ast::rClosure c = (closure % body).result<ast::Closure>();
-    // Rename the 'fillme' closure formal argument
-    c->formals_get()->front()->what_set(code->index_get()->what_get());
     each % c;
 
     if (has_break_)
