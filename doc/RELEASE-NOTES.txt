@@ -51,6 +51,12 @@ The optional third argument indicates whether to keep empty elements:
   "foobar".split("o", false, false);
   [00000001] ["f", "bar"]
 
+Calling "split" with no arguments will tokenize the string over " ",
+"\t", "\n" and "\r":
+
+  "  abc  def\tghi\n".split;
+  [00000001] ["abc", "def", "ghi"]
+
 "min" and "max"
 ---------------
 
