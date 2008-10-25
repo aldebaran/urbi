@@ -177,7 +177,9 @@ namespace object
         res << delim;
       start = end + delim.length();
     }
-    res << content_.substr(start, std::string::npos);
+
+    if (!rest.empty() || keep_empty)
+      res << content_.substr(start, std::string::npos);
 
     return res;
   }
