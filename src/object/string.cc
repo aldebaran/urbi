@@ -4,6 +4,7 @@
  */
 
 #include <boost/algorithm/string.hpp>
+#include <boost/assign.hpp>
 #include <boost/multi_array.hpp>
 
 #include <libport/escape.hh>
@@ -178,8 +179,8 @@ namespace object
       start = end + delim.length();
     }
 
-    if (!rest.empty() || keep_empty)
-      res << content_.substr(start, std::string::npos);
+    if (start < content_.size() || keep_empty)
+      res << content_.substr(start);
 
     return res;
   }
@@ -204,6 +205,13 @@ namespace object
 
   static rObject split_bouncer(runner::Runner& r, objects_type& args)
   {
+    if (args.size() == 1)
+    {
+      static std::vector<std::string> seps =
+	boost::assign::list_of(" ")("\t")("\r")("\n");
+      return to_urbi(args[0]->as<String>()->split(seps, false, false));
+    }
+
     static rPrimitive actual = make_primitive(split_overload);
 
     check_arg_count(args.size() - 1, 1, 3);
