@@ -47,6 +47,7 @@ namespace object
     value_type acos();
     value_type asin();
     value_type atan();
+    value_type atan2(value_type);
     value_type cos();
     value_type exp();
     value_type fabs();

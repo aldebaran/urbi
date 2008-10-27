@@ -356,7 +356,10 @@ class Global.Math
   {
     setSlot (fn, bounce_named (fn))
   };
-
+  function atan2(x, y)
+  {
+    x.atan2(y)
+  };
 };
 Global.addProto(Global.Math);
 

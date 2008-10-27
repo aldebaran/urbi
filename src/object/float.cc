@@ -113,6 +113,12 @@ namespace object
     }
   }
 
+  Float::value_type
+  Float::atan2(value_type y)
+  {
+    return ::atan2(value_, y);
+  }
+
 #define BOUNCE_OP(Op, ResType, Check)					\
   ResType								\
   Float::operator Op(value_type rhs)					\
@@ -301,6 +307,7 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(asString), &Float::as_string);
     bind(SYMBOL(asin), &Float::asin);
     bind(SYMBOL(atan), &Float::atan);
+    bind(SYMBOL(atan2), &Float::atan2);
     bind(SYMBOL(bitand), &Float::operator&);
     bind(SYMBOL(bitor), &Float::operator|);
     bind(SYMBOL(compl), &Float::operator~);
