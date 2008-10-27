@@ -485,7 +485,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "every"         RETURN(EVERY);
 "foreach"       DEPRECATED("for");
 "freezeif"      RETURN(FREEZEIF);
-"from"          RETURN(FROM);
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
 "in"            RETURN(IN);

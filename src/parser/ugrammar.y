@@ -160,7 +160,6 @@
         EVENT        "event"
         EVERY        "every"
         FREEZEIF     "freezeif"
-        FROM         "from"
         FUNCTION     "function"
         IF           "if"
         IN           "in"
@@ -533,25 +532,37 @@ stmt:
     $$ = exp(a % $3);
   }
 | "external" "var" identifier_as_string "." identifier_as_string
-	     "from" identifier_as_string
+	     "identifier" identifier_as_string
   {
     PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
+
+    if ($6 != SYMBOL(from))
+      up.error(@6, "unexpected `" + $6.name_get() +
+	       "', expecting `from'");
     $$ = exp(a % $3 % $5 % $7);
   }
 | "external" "function" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
-	     "from" identifier_as_string
+	     "identifier" identifier_as_string
   {
     PARAMETRIC_AST
       (     a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+
+    if ($9 != SYMBOL(from))
+      up.error(@9, "unexpected `" + $9.name_get() +
+	       "', expecting `from'");
     $$ = exp(a % $4 % $6 % $8 % $10);
   }
 | "external" "event" "(" exp_integer ")"
              identifier_as_string "." identifier_as_string
-	     "from" identifier_as_string
+	     "identifier" identifier_as_string
   {
     PARAMETRIC_AST
       (     a, "'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
+
+    if ($9 != SYMBOL(from))
+      up.error(@9, "unexpected `" + $9.name_get() +
+	       "', expecting `from'");
     $$ = exp(a % $4 % $6 % $8 % $10);
   }
 ;

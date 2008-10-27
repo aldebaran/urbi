@@ -4,13 +4,14 @@ release.
 Grammar
 =======
 
-"object" as identifier
-----------------------
+"object" and "from" as identifiers
+----------------------------------
 
-"object" is now a regular identifier and can be used as other names.
-For example, it is now legal to declare:
+"object" and "from" are now regular identifiers and can be used as
+other names.  For example, it is now legal to declare:
 
   var object = 1;
+  var from = 1;
 
 Standard library
 ================
