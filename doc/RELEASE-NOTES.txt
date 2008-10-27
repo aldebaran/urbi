@@ -99,6 +99,16 @@ As was done on Linux already, stack exhaustion condition is detected
 on Windows, for example in the case of an infinite recursion. In this
 case, SchedulingError will be raised and can be caught.
 
+Errors from the trajectory generator are propagated
+---------------------------------------------------
+
+If the trajectory generator throws an exception, for example because it
+cannot assign the result of its computation to a non-existent variable,
+the error is propagated and the generator is stopped:
+
+  y = 20 ampli:5 sin:10s,
+  [00002140:error] !!! urbi/trajectory-generator.u:106.7-15: lookup failed: y
+
 Bug fixes
 =========
 
