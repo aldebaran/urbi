@@ -206,13 +206,13 @@ namespace object
   static rObject split_bouncer(runner::Runner& r, objects_type& args)
   {
     static rPrimitive actual = make_primitive(split_overload);
-    static std::vector<std::string> seps =
-      boost::assign::list_of(" ")("\t")("\r")("\n");
     check_arg_count(args.size() - 1, 0, 3);
     switch (args.size())
     {
       case 1:
       {
+	static std::vector<std::string> seps =
+	  boost::assign::list_of(" ")("\t")("\r")("\n");
         args.push_back(to_urbi(seps));
         args.push_back(object::false_class);
         args.push_back(object::false_class);
