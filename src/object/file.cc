@@ -64,16 +64,19 @@ namespace object
   static bool
   split_point(const std::string& str, size_t& pos, size_t& size)
   {
-    pos = str.find("\n");
-    size = 1;
-#ifdef WIN32
-    size_t rn = str.find("\r\n");
-    if (rn != std::string::npos && rn < pos)
-    {
-      pos = rn;
-      size = 2;
+    pos = std::string::npos;
+    size_t where;
+
+#define SPLIT(Str)                                      \
+    where = str.find(Str);                              \
+    if (where != std::string::npos && where < pos)      \
+    {                                                   \
+      pos = where;                                      \
+      size = sizeof(Str) - 1;                           \
     }
-#endif
+    SPLIT("\n");
+    SPLIT("\r\n");
+#undef SPLIT
     return pos != std::string::npos;
   }
 
@@ -100,8 +103,10 @@ namespace object
     while (!s.eof())
     {
       get_buf(s, line);
-      size_t pos;
-      size_t size;
+      // Initialized because g++ warns that size may be used
+      // uninitialized otherwise
+      size_t pos = std::string::npos;
+      size_t size = 0;
       while (split_point(line, pos, size))
       {
         res << new String(line.substr(0, pos));
