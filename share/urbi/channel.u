@@ -56,21 +56,21 @@ class Global.Channel
 do (Global)
 {
   // Long names are k1 compatible.
-  var output  = new Channel("output");
-  var error   = new Channel("error");
+  var output  = Channel.new("output");
+  var error   = Channel.new("error");
   error.quote = false;
-  var warning = new Channel("warning");
+  var warning = Channel.new("warning");
   warning.quote = false;
-  var clog    = new Channel("clog");
+  var clog    = Channel.new("clog");
   // This one is used by urbiimage.
-  var uimg    = new Channel("uimg");
+  var uimg    = Channel.new("uimg");
 
   // Short names are user compatible.
   var cout    = output;
   var cerr    = error;
 
   // Top-levl channel
-  var topLevel = new Channel("");
+  var topLevel = Channel.new("");
   Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
 
   function warn(msg) { echo (msg, "warning") };

@@ -34,7 +34,7 @@ class Object.UObject
 
   function init()
   {
-    updateTask = new Tag;
+    updateTask = Tag.new;
   };
 
   /// Set a timer to call update at specified interval.
@@ -55,7 +55,7 @@ class Object.UObject
       interval = minimumInterval;
     if (!ownsSlot("timerTask"))
       timerTask = [];
-    var tag = new Tag;
+    var tag = Tag.new;
     tag: detach({loop{ func(); sleep(interval)}}) |
     timerTask += [tag]
   };
@@ -67,7 +67,7 @@ class Object.UObject
     // Ensure only one instance is running using a tag in slot hub<hubname>.
     var slotName = "hub"+hubname;
     if (!hasSlot(slotName))
-      setSlot(slotName, new Tag);
+      setSlot(slotName, Tag.new);
     getSlot(slotName).stop;
     if (0 < interval)
       getSlot(slotName):
@@ -128,7 +128,7 @@ class Object.uvar
 
   /// Global number of notifyaccess
   var nAccess = 0;
-  var nAccessTag = new Tag;
+  var nAccessTag = Tag.new;
   /// Hook write attempts to the UVar.
   function updateHook(slot, newval)
   {
@@ -175,7 +175,7 @@ class Object.uvar
       var val |
       var valsensor = 0 |
       var looping = false |
-      var loopTag = new Tag |
+      var loopTag = Tag.new |
       var isUVar = 1
     }
   };
@@ -282,7 +282,7 @@ class Global.'external'
     uobjects.setSlot(objname, lobby.getSlot(objname));
     lobby.removeSlot(objname);
     ("external object "+objname).print;
-    var chan = new Channel(MODULE_TAG);
+    var chan = Channel(MODULE_TAG).new;
     var chan.lobby = lobby;
     function cloner()
     {
@@ -323,7 +323,7 @@ class Global.'external'
     var obj = uobjects.getSlot(objname);
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.ownsSlot(varname))
-      new uvar(obj, varname)
+      uvar.new(obj, varname)
     else if (obj.getSlot(varname).isVoid
         || !obj.getSlot(varname).hasSlot("isUVar"))
     {
@@ -337,7 +337,7 @@ class Global.'external'
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
     var uob = uobjects.getSlot(objname);
-    var chan = new Channel(MODULE_TAG);
+    var chan = Channel(MODULE_TAG).new;
     var chan.lobby = lobby;
     function f()
     {
@@ -358,7 +358,7 @@ class Global.'external'
   {
     ("external function call "+fname).print;
     var functionName = objname + "." + fname;
-    var chan = new Channel(MODULE_TAG);
+    var chan = Channel(MODULE_TAG).new;
     var chan.lobby = lobby;
     function f
     {
