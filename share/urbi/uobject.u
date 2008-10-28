@@ -282,7 +282,7 @@ class Global.'external'
     uobjects.setSlot(objname, lobby.getSlot(objname));
     lobby.removeSlot(objname);
     ("external object "+objname).print;
-    var chan = Channel(MODULE_TAG).new;
+    var chan = Channel.new(MODULE_TAG);
     var chan.lobby = lobby;
     function cloner()
     {
@@ -337,7 +337,7 @@ class Global.'external'
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
     var uob = uobjects.getSlot(objname);
-    var chan = Channel(MODULE_TAG).new;
+    var chan = Channel.new(MODULE_TAG);
     var chan.lobby = lobby;
     function f()
     {
@@ -358,7 +358,7 @@ class Global.'external'
   {
     ("external function call "+fname).print;
     var functionName = objname + "." + fname;
-    var chan = Channel(MODULE_TAG).new;
+    var chan = Channel.new(MODULE_TAG);
     var chan.lobby = lobby;
     function f
     {
