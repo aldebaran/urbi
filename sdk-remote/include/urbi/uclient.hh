@@ -1,7 +1,5 @@
 /*! \file urbi/uclient.hh
 ****************************************************************************
- * $Id: uclient.h,v 1.7 2005/09/30 17:48:00 nottale Exp $
- *
  * Definition of the URBI interface class
  *
  * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
@@ -36,10 +34,9 @@ namespace urbi
   class USDK_API UClient: public UAbstractClient
   {
   public:
-    UClient(const char *_host,
-	    int _port = URBI_PORT,
-	    int _buflen = URBI_BUFLEN,
-	    bool _server = false);
+    UClient(const std::string& host, int port = URBI_PORT,
+	    int buflen = URBI_BUFLEN,
+	    bool server = false);
 
     virtual ~UClient();
 
@@ -59,7 +56,7 @@ namespace urbi
                                    const unsigned pongTimeout);
 
   protected:
-    virtual int  effectiveSend(const void * buffer, int size);
+    virtual int effectiveSend(const void* buffer, int size);
     virtual bool canSend(int size);
 
     int             sd;                  ///< Socket file descriptor.

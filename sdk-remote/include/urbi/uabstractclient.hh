@@ -172,10 +172,9 @@ namespace urbi
     enum { URBI_PORT = 54000 } ;
 
     /// Create a new instance and connect to the Urbi server.
-    UAbstractClient(const char *_host,
-		    int _port = URBI_PORT,
-		    int _buflen = URBI_BUFLEN,
-		    bool _server = false);
+    UAbstractClient(const std::string& host, int port = URBI_PORT,
+		    int buflen = URBI_BUFLEN,
+		    bool server = false);
 
     virtual ~UAbstractClient();
 
@@ -220,7 +219,7 @@ namespace urbi
     int vpack(const char*,va_list args);
 
     /// Send urbi commands contained in a file.
-    int sendFile(const char * filename);
+    int sendFile(const std::string& f);
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
@@ -308,10 +307,10 @@ namespace urbi
                                    const unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
-    const char* getServerName() const {return host;}
+    const std::string& getServerName() const {return host_;}
 
     /// Return the server port.
-    int getServerPort() const {return port;}
+    int getServerPort() const {return port_;}
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
@@ -337,9 +336,9 @@ namespace urbi
     void clientError(const char * msg=0, int code=0);
 
     /// Host name.
-    char	     *host;
+    std::string host_;
     /// Urbi Port.
-    int	     port;
+    int port_;
 
     /// Server mode
     bool server_;
@@ -672,7 +671,7 @@ namespace urbi
   /// Terminate your URBI program.
   USDK_API void exit(int code);
   /// Create a new UClient object
-  USDK_API UClient& connect(const char * host);
+  USDK_API UClient& connect(const std::string& host);
   /// Destroy an UClient object
   /// Be careful: don't use client after called this function
   USDK_API void disconnect(UClient &client);

@@ -32,8 +32,8 @@ namespace urbi
    Spawn a new thread that will listen to the socket, parse the incoming URBI
    messages, and notify the appropriate callbacks.
    */
-  UClient::UClient(const char *_host, int _port, int _buflen, bool _server)
-    : UAbstractClient(_host, _port, _buflen, _server)
+  UClient::UClient(const std::string& host, int port, int buflen, bool server)
+    : UAbstractClient(host, port, buflen, server)
     , thread(0)
     , pingInterval(0)
   {
@@ -66,11 +66,11 @@ namespace urbi
     sa.sin_port = htons(port);
 
     // host-to-IP translation
-    struct hostent* hen = gethostbyname(host);
+    struct hostent* hen = gethostbyname(host_.c_str());
     if (!hen)
     {
       // maybe it is an IP address
-      sa.sin_addr.s_addr = inet_addr(host);
+      sa.sin_addr.s_addr = inet_addr(host_.c_str());
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
         std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
@@ -162,9 +162,8 @@ namespace urbi
       }
 
       // Store client connection info
-      delete host;
-      host = strdup (inet_ntoa (saClient.sin_addr));
-      port = saClient.sin_port;
+      host_ = inet_ntoa (saClient.sin_addr);
+      port_ = saClient.sin_port;
 
       // Do not listen anymore.
       close (sd);
@@ -382,7 +381,7 @@ namespace urbi
   }
 
 
-  UClient& connect(const char* host)
+  UClient& connect(const std::string& host)
   {
     return *new UClient(host);
   }
@@ -392,8 +391,9 @@ namespace urbi
     delete &client;
   }
 
-  void UClient::setKeepAliveCheck(const unsigned    pingInterval,
-                                  const unsigned    pongTimeout)
+  void
+  UClient::setKeepAliveCheck(const unsigned pingInterval,
+                             const unsigned pongTimeout)
   {
     this->pingInterval = pingInterval;
     this->pongTimeout  = pongTimeout;

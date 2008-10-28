@@ -76,15 +76,15 @@ namespace urbi
     }
 
   protected:
-    virtual int overflow (int c = EOF);
+    virtual int overflow(int c = EOF);
     // Override std::basic_streambuf<_CharT, _Traits>::xsputn.
-    virtual std::streamsize xsputn (const char* s, std::streamsize n);
+    virtual std::streamsize xsputn(const char* s, std::streamsize n);
 
   private:
     UAbstractClient* client;
   };
 
-  int UClientStreambuf::overflow (int c )
+  int UClientStreambuf::overflow(int c )
   {
     if (c != EOF)
     {
@@ -94,7 +94,7 @@ namespace urbi
     return c;
   }
 
-  std::streamsize UClientStreambuf::xsputn (const char* s, std::streamsize n)
+  std::streamsize UClientStreambuf::xsputn(const char* s, std::streamsize n)
   {
     client->sendBufferLock.lock();
     if (strlen(client->sendBuffer)+1+n > static_cast<unsigned>(client->buflen))
@@ -145,47 +145,39 @@ namespace urbi
     listLock.unlock();
   }
 
-  /*! Initializes sendBuffer and recvBuffer, and copy _host and _port.
-   \param _host IP address or name of the robot to connect to.
-   \param _port TCP port to connect to.
-   \param _buflen size of send and receive buffers.
+  /*! Initializes sendBuffer and recvBuffer, and copy host and port.
+   \param host    IP address or name of the robot to connect to.
+   \param port    TCP port to connect to.
+   \param buflen  size of send and receive buffers.
    Implementations should establish the connection in their constructor.
    */
-  UAbstractClient::UAbstractClient(const char *_host,
-				   int _port,
-				   int _buflen,
-				   bool _server)
-    : std::ostream(new UClientStreambuf(this)),
+  UAbstractClient::UAbstractClient(const std::string& host,
+				   int port,
+				   int buflen,
+				   bool server)
+    : std::ostream(new UClientStreambuf(this))
       // Irk, *new...
-      sendBufferLock(*new libport::Lockable()),
-      listLock(*new libport::Lockable()),
-      host (NULL),
-      port (_port),
-      server_ (_server),
-      buflen (_buflen),
-      rc (0),
+    , sendBufferLock(*new libport::Lockable())
+    , listLock(*new libport::Lockable())
+    , host_(host)
+    , port_(port)
+    , server_(server)
+    , buflen(buflen)
+    , rc(0)
 
-      recvBuffer (NULL),
-      recvBufferPosition (0),
+    , recvBuffer(NULL)
+    , recvBufferPosition(0)
 
-      binaryBuffer (NULL),
-      parsePosition (0),
-      inString (false),
-      nBracket (0),
-      binaryMode(false),
-      system(false),
-      uid (0),
-      stream(this)
+    , binaryBuffer(NULL)
+    , parsePosition(0)
+    , inString(false)
+    , nBracket(0)
+    , binaryMode(false)
+    , system(false)
+    , uid(0)
+    , stream(this)
   {
     getStream().setf(std::ios::fixed);
-    host = new char[strlen(_host) + 1];
-    if (!host)
-    {
-      rc = -1;
-      return;
-    }
-    strcpy(host, _host);
-
     recvBuffer = new char[buflen];
     if (!recvBuffer)
     {
@@ -207,7 +199,6 @@ namespace urbi
 
   UAbstractClient::~UAbstractClient()
   {
-    delete [] host;
     delete [] recvBuffer;
     delete [] sendBuffer;
   }
@@ -340,20 +331,19 @@ namespace urbi
 
 
   int
-  UAbstractClient::sendFile(const char *name)
+  UAbstractClient::sendFile(const std::string& f)
   {
+    const char *name = f.c_str();
     if (rc)
       return -1;
     FILE *fd;
     fd = fopen(name, "r");
-    if (fd == NULL)
+    if (!fd)
       return -1;
-    int size;
     struct stat s;
     stat(name, &s);
-    size = s.st_size;
     sendBufferLock.lock();
-    if (!canSend(size))
+    if (!canSend(s.st_size))
     {
       sendBufferLock.unlock();
       return -1;
@@ -372,7 +362,7 @@ namespace urbi
 
 
   int
-  UAbstractClient::sendBin(const void *buffer, int len)
+  UAbstractClient::sendBin(const void* buffer, int len)
   {
     return sendBin(buffer, len, NULL, 0);
   }

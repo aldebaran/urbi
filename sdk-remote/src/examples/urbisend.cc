@@ -1,9 +1,8 @@
 /****************************************************************************
- * $Id: urbisend.cpp,v 1.6 2005/09/21 06:45:36 nottale Exp $
- *
  * Sample urbi client that sends commands contained in a file.
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
+ * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,14 +20,49 @@
 **********************************************************************/
 
 
-/* This is a trivial demonstration program that send commands contained in a file to an urbi server */
+/* This demonstration program sends commands contained in a file to an
+   urbi server */
+
+#include <list>
+#include <string>
 
 #include <libport/cstdio>
 #include <libport/sysexits.hh>
-#include "urbi/uclient.hh"
+#include <libport/cli.hh>
+#include <libport/program-name.hh>
+#include <urbi/uclient.hh>
+
+namespace
+{
+  static
+  void
+  usage ()
+  {
+    std::cout <<
+      "usage: " << libport::program_name << " [OPTION].. [FILE]...\n"
+      "\n"
+      "  FILE    to load\n"
+      "\n"
+      "Options:\n"
+      "  -h, --help        display this message and exit successfully\n"
+      "  -v, --version     display version information\n"
+      "  -H, --host HOST   the host running the Urbi server (default: localhost)\n"
+      "  -p, --port PORT   the Urbi server port\n"
+      ;
+    exit (EX_OK);
+  }
+
+  static
+  void
+  version ()
+  {
+    // FIXME: Find some relevant version info.
+    exit (EX_OK);
+  }
+}
 
 static urbi::UCallbackAction
-dump(const urbi::UMessage & msg)
+dump(const urbi::UMessage& msg)
 {
   // FIXME: This is absolutely not completely migrated.
   // To be finished -- Akim.
@@ -56,22 +90,53 @@ error(const urbi::UMessage& msg)
 }
 
 
-int main(int argc, char *argv[])
+int
+main(int argc, char* argv[])
 {
-  if (argc != 3)
-    {
-      std::cerr << "Missing file name\nUsage: urbisend robotname filename"
-		<< std::endl;
-      exit(EX_USAGE);
-    }
+  libport::program_name = argv[0];
+  typedef std::list<std::string> strings_type;
+  /// Files to send to the server.
+  strings_type files;
+  /// Server host name.
+  std::string host = "localhost";
+  /// Server port.
+  int port = urbi::UClient::URBI_PORT;
 
-  urbi::UClient client (argv[1]);
+  // Parse the command line.
+  for (int i = 1; i < argc; ++i)
+  {
+    std::string arg = argv[i];
+
+    if (arg == "--help" || arg == "-h")
+      usage();
+    else if (arg == "--host" || arg == "-H")
+      host = argv[++i];
+    else if (arg == "--port" || arg == "-p")
+      port = libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--version" || arg == "-v")
+      version();
+    else if (arg[0] == '-' && arg[1] != 0)
+      libport::invalid_option (arg);
+    else
+      // An argument: a file.
+      files.push_back(STREQ(argv[i], "-") ? "/dev/stdin" : argv[i]);
+  }
+
+
+  urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
   if (client.error())
-    exit(1);
+    std::cerr << "client failed to set up" << std::endl
+              << libport::exit(1);
+
   client.setWildcardCallback(callback(&dump));
   client.setClientErrorCallback(callback(&error));
-  client.sendFile(argv[2]);
+
+  for (strings_type::const_iterator i = files.begin(),
+         i_end = files.end();
+       i != i_end;
+       ++i)
+    client.sendFile(*i);
 
   std::cout << "File sent, hit Ctrl-C to terminate." << std::endl;
   urbi::execute();
