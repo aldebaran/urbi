@@ -102,7 +102,8 @@ set | rst_pre "$me variables"
 # use an installed urbi-console, but rather the one which is part of
 # this package.
 if test -d $abs_top_srcdir/../../src/kernel; then
-  stderr "This SDK-Remote is part of a kernel package."
+  stderr "This SDK-Remote is part of a kernel package" \
+         "  ($abs_top_srcdir/../../src/kernel exists)."
   URBI_SERVER=$abs_top_builddir/../src/urbi-console
   export URBI_PATH=$abs_top_srcdir/../share
 else
