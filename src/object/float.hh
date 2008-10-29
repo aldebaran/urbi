@@ -81,7 +81,7 @@ namespace object
 
   public:
 
-    static std::string as_string(const rObject& from);
+    static std::string as_string(const rObject& from, int base = 10);
     static value_type inf();
     static value_type nan();
 

@@ -88,8 +88,10 @@ namespace object
   }
 
   std::string
-  Float::as_string(const rObject& from)
+  Float::as_string(const rObject& from, int base)
   {
+    if (base != 10 && base != 16)
+      runner::raise_primitive_error("valid base is 10 or 16");
     type_check(from, proto, 1);
     Float::value_type fl = from->as<Float>()->value_get();
     // Do not rely on boost::format to print inf and nan since
@@ -98,16 +100,21 @@ namespace object
       return fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
     if (std::isnan(fl))
       return SYMBOL(nan);
-    // Print integers with a different format string to avoid
-    // the scientific notation with loss of precision.
+    // Print integers with a precision ("%.20") in the format string
+    // to avoid the scientific notation with loss of precision.
     if (::round(fl) == fl)
     {
       // This format string is enough for a 64 bits integer.
-      static boost::format f("%.20g");
-      return str(f % fl);
+      static boost::format dec("%.20g");
+      static boost::format hex("%.20x");
+      // Use an integer, otherwise boost::format ignores the
+      // hexadecimal flag.
+      return str((base == 10 ? dec : hex) % libport::ufloat_to_int(fl));
     }
     else
     {
+      if (base == 16)
+        runner::raise_primitive_error("only natural numbers can be printed in hexadecimal");
       static boost::format f("%g");
       return str(f % fl);
     }
@@ -287,6 +294,8 @@ BOUNCE_INT_OP(~)
   | Binding system |
   `---------------*/
 
+  OVERLOAD_DEFAULT(as_string_bouncer, 0, &Float::as_string, 10);
+
   URBI_CXX_OBJECT_REGISTER(Float);
 
   void
@@ -304,7 +313,7 @@ BOUNCE_INT_OP(~)
     bind(SYMBOL(STAR_STAR), &Float::pow);
     bind(SYMBOL(abs), &Float::fabs);
     bind(SYMBOL(acos), &Float::acos);
-    bind(SYMBOL(asString), &Float::as_string);
+    bind(SYMBOL(asString), &as_string_bouncer);
     bind(SYMBOL(asin), &Float::asin);
     bind(SYMBOL(atan), &Float::atan);
     bind(SYMBOL(atan2), &Float::atan2);
