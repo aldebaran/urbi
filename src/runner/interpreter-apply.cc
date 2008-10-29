@@ -136,10 +136,13 @@ namespace runner
   {
     precondition(function);
     precondition(target);
+    Finally finally;
 
     if (msg != SYMBOL())
+    {
       call_stack_.push_back(std::make_pair(msg, loc));
-    Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
+      finally << (bind(&call_stack_type::pop_back, &call_stack_));
+    }
 
     // Check if any argument is void
     foreach (const rObject& arg, args)
