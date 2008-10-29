@@ -46,6 +46,7 @@ namespace object
 
     value_type acos();
     value_type asin();
+    std::string as_string(int base = 10);
     value_type atan();
     value_type atan2(value_type);
     value_type cos();
@@ -81,7 +82,6 @@ namespace object
 
   public:
 
-    static std::string as_string(const rObject& from, int base = 10);
     static value_type inf();
     static value_type nan();
 

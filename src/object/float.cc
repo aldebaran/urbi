@@ -88,35 +88,34 @@ namespace object
   }
 
   std::string
-  Float::as_string(const rObject& from, int base)
+  Float::as_string(int base)
   {
     if (base != 10 && base != 16)
       runner::raise_primitive_error("valid base is 10 or 16");
-    type_check(from, proto, 1);
-    Float::value_type fl = from->as<Float>()->value_get();
+
     // Do not rely on boost::format to print inf and nan since
     // behavior differs under Win32.
-    if (std::isinf(fl))
-      return fl > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
-    if (std::isnan(fl))
+    if (std::isinf(value_))
+      return value_ > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
+    if (std::isnan(value_))
       return SYMBOL(nan);
     // Print integers with a precision ("%.20") in the format string
     // to avoid the scientific notation with loss of precision.
-    if (::round(fl) == fl)
+    if (::round(value_) == value_)
     {
       // This format string is enough for a 64 bits integer.
       static boost::format dec("%.20g");
       static boost::format hex("%.20x");
       // Use an integer, otherwise boost::format ignores the
       // hexadecimal flag.
-      return str((base == 10 ? dec : hex) % libport::ufloat_to_int(fl));
+      return str((base == 10 ? dec : hex) % libport::ufloat_to_int(value_));
     }
     else
     {
       if (base == 16)
         runner::raise_primitive_error("only natural numbers can be printed in hexadecimal");
       static boost::format f("%g");
-      return str(f % fl);
+      return str(f % value_);
     }
   }
 
