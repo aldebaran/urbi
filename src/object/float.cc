@@ -46,18 +46,24 @@ namespace object
     return value_;
   }
 
-  int
-  Float::to_int() const
-  {
-    try
-    {
-      return libport::ufloat_to_int(value_);
-    }
-    catch (libport::bad_numeric_cast& ue)
-    {
-      runner::raise_bad_integer_error(value_);
-    }
-  }
+#define CONVERSION(Name, Type)                  \
+  Type                                          \
+  Float::to_##Name() const                      \
+  {                                             \
+    try                                         \
+    {                                           \
+      return libport::ufloat_to_##Name(value_); \
+    }                                           \
+    catch (libport::bad_numeric_cast& ue)       \
+    {                                           \
+      runner::raise_bad_integer_error(value_);  \
+    }                                           \
+  }                                             \
+
+  CONVERSION(int, int);
+  CONVERSION(long_long, long long);
+
+#undef CONVERSION
 
   unsigned int
   Float::to_unsigned_int(const std::string fmt) const
@@ -108,7 +114,7 @@ namespace object
       static boost::format hex("%.20x");
       // Use an integer, otherwise boost::format ignores the
       // hexadecimal flag.
-      return str((base == 10 ? dec : hex) % libport::ufloat_to_int(value_));
+      return str((base == 10 ? dec : hex) % libport::ufloat_to_long_long(value_));
     }
     else
     {

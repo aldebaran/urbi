@@ -26,6 +26,7 @@ namespace object
     value_type& value_get();
     const value_type&  value_get() const;
     int to_int() const;
+    long long to_long_long() const;
     unsigned int to_unsigned_int
      (const std::string fmt = "expected non-negative integer, got %s") const;
 
