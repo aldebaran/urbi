@@ -62,6 +62,26 @@ namespace object
     }                                                                   \
   }                                                                     \
 
+/// Make a function that bounces depending on its number of arguments
+/**
+ *  @param Name Name of the function to generate
+ *  @param N    Base number of arguments (without the optional argument)
+ *  @param P    Primitive to bounce on
+ *  @param V    Default value for argument N + 1
+ */
+#define OVERLOAD_DEFAULT(Name, N, P, V)                                 \
+                                                                        \
+  static rObject Name(runner::Runner& r, object::objects_type& args)    \
+  {                                                                     \
+    static rPrimitive primitive = make_primitive(P);                    \
+    int arity = args.size() - 1;                                        \
+                                                                        \
+    object::check_arg_count(arity, N, N + 1);                           \
+    if (arity == N)                                                     \
+      args.push_back(to_urbi(V));                                       \
+    return (*primitive)(r, args);                                       \
+  }                                                                     \
+
 
 #include <object/cxx-primitive.hxx>
 
