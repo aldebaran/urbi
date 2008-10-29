@@ -24,6 +24,16 @@ It is now possible to enter hexadecimal numbers by prefixing them with
 
 Only integral numbers are supported.
 
+The hexadecimal representation of a number can be obtained by specifying the
+base to Float.asString:
+
+  42.asString(16);
+  [00000001] "2a"
+  // Float.hex is a shortcut:
+  42.hex;
+  [00000001] "2a"
+
+
 Standard library
 ================
 
