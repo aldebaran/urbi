@@ -297,6 +297,7 @@ SUFFIX   "'"(""|"'"|d|dd|e|n|in|out)
 
 
 NATURAL  [0-9]+
+HEXA     0x[0-9a-fA-F]+
 EXPONENT [eE][-+]?{NATURAL}
 FLOAT    {NATURAL}\.{NATURAL}{EXPONENT}?
 ENATURAL {NATURAL}{EXPONENT}
@@ -429,6 +430,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"ms"  RETURN_DURATION(2, 0.001);
 
 {NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<int>  (*up, loc, yytext));
+{HEXA}        RETURN_VALUE(INTEGER, strtol(yytext + 2, 0, 16));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<float>(*up, loc, yytext));
 {ENATURAL}    {
                 PRE_SKIP();
