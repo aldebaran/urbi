@@ -13,6 +13,17 @@ other names.  For example, it is now legal to declare:
   var object = 1;
   var from = 1;
 
+Hexadecimal numbers support
+---------------------------
+
+It is now possible to enter hexadecimal numbers by prefixing them with
+"0x", as in:
+
+  0x2a;
+  [00000001] 42
+
+Only integral numbers are supported.
+
 Standard library
 ================
 
