@@ -123,6 +123,11 @@ do (Float)
     for| (var i = 0; i < this; i++)
       action(i)
   };
+
+  function hex()
+  {
+    asString(16)
+  }
 };
 
 
