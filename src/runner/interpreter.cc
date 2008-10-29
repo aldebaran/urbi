@@ -142,7 +142,7 @@ namespace runner
       if (ast_)
 	result_ = operator()(ast_.get());
       else
-	result_ = apply(lobby_, code_, SYMBOL(task), args_);
+	result_ = apply(lobby_, code_, SYMBOL(), args_);
     }
     catch (object::UrbiException& exn)
     {

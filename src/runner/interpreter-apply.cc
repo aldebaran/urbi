@@ -137,7 +137,8 @@ namespace runner
     precondition(function);
     precondition(target);
 
-    call_stack_.push_back(std::make_pair(msg, loc));
+    if (msg != SYMBOL())
+      call_stack_.push_back(std::make_pair(msg, loc));
     Finally finally(bind(&call_stack_type::pop_back, &call_stack_));
 
     // Check if any argument is void
