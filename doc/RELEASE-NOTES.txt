@@ -33,7 +33,6 @@ base to Float.asString:
   42.hex;
   [00000001] "2a"
 
-
 Standard library
 ================
 
@@ -99,6 +98,15 @@ is used for comparaison:
 
   min(3, 2, 17);
   [00000001] 2
+
+Negative indices
+----------------
+
+It is now possible to use negative indices when taking list elements.
+For example, -1 designates the last element, and -2 the one before that.
+
+  ["a", "b", "c"][-1]
+  [00000001] "c"
 
 UObjects
 ========
