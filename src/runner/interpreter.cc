@@ -71,6 +71,8 @@ namespace runner
     , stacks_(lobby)
   {
     init();
+    tag_stack_.push_back
+      (lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>());
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
