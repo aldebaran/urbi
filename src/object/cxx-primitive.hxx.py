@@ -1,0 +1,224 @@
+#! /usr/bin/python
+
+## ----------- ##
+## Boost types ##
+## ----------- ##
+
+def boost_param(r, runner, nargs):
+
+    args = []
+    if r:
+        args += ['R']
+    else:
+        args += ['void']
+    if runner:
+        args += ['runner::Runner&']
+    args += 'S'
+    for i in range(nargs):
+        args += ['Arg%s' % i]
+    return args
+
+
+def boost_function(args):
+
+    # Leave trailing space to avoid outputting '>>'
+    return 'boost::function%s<%s> ' % (len(args) - 1, ', '.join(args))
+
+
+def boost_type(r, runner, nargs):
+
+    args = boost_param(r, runner, nargs)
+    return boost_function(args)
+
+
+def boost_list_type(r, runner, met):
+
+    args = boost_param(r, runner, 0)
+    if not met:
+        args = args[:-1]
+    args += ['object::objects_type&']
+    return boost_function(args)
+
+
+def primitive(r, runner, nargs):
+
+    ## HELPERS ##
+
+    # Convert argument n from Urbi to type
+    def to(n, type):
+        return 'CxxConvert<typename Flatten<%s>::type>::to(args[%s], %s)'\
+               % (type, n, n)
+
+    # Convert argument n from type to Urbi
+    def fr(n, type):
+        return 'CxxConvert<typename Flatten<%s>::type>::from(args[%s], %s)'\
+               % (type, n, n)
+
+    def make_arg(n):
+        return ', %s' % to(n + 1, 'Arg%s' % n)
+
+    # Generate template parameters list
+    def template_param(r, nargs):
+
+        def add_typename(arg):
+            return 'typename %s' % arg
+
+        args = []
+        if r:
+            args += ['R']
+        args += ['S']
+        for i in range(nargs):
+            args += ['Arg%s' % i]
+        args = map(add_typename, args)
+        return ', '.join(args)
+
+    if runner:
+        runner = 'r,'
+    else:
+        runner = ''
+
+    if r:
+        r = 'return CxxConvert<typename Flatten<R>::type>::from'
+        r_void = ''
+    else:
+        r = ''
+        r_void = 'return object::void_class;'
+
+    return '''\
+    template <%(param)s>
+    struct MakePrimitive<%(boost)s>
+    {
+      static rObject primitive(runner::Runner& r,
+                               object::objects_type& args,
+                               %(boost)s f)
+      {
+        (void) r;
+        check_arg_count(args.size() - 1, %(nargs)s);
+        %(return)s
+        (f(%(runner)s
+          %(self)s
+          %(args)s
+        ));
+        %(return_void)s
+      }
+    };
+    ''' % {
+        'args': '\n          '.join(map(make_arg, range(nargs))),
+        'boost': boost_type(r, runner, nargs),
+        'nargs': nargs,
+        'param': template_param(r, nargs),
+        'return': r,
+        'return_void': r_void,
+        'runner': runner,
+        'self': to(0, 'S'),
+        }
+
+
+def primitive_list(r, runner, met):
+
+    params = []
+    if r:
+        params += ['typename R']
+        r = 'return '
+        r_void = ''
+    else:
+        r = ''
+        r_void = 'return object::void_class;'
+    if met:
+        params += ['typename S']
+    params = ', '.join(params)
+    if runner:
+        runner = 'r, '
+    else:
+        runner = ''
+    if met:
+        target_get = 'S tgt = CxxConvert<S>::to(args[0], 0); args.pop_front();'
+        target = 'tgt, '
+    else:
+        target_get = ''
+        target = ''
+    return '''\
+    template <%(params)s>
+    struct MakePrimitive<%(boost)s>
+    {
+      static rObject primitive(
+        runner::Runner& r,
+        object::objects_type& args,
+        %(boost)s f)
+      {
+        (void) r;
+        %(target_get)s
+        %(return)sf(%(runner)s%(target)sargs);
+        %(return_void)s
+      }
+    };
+    ''' % {
+        'boost': boost_list_type(r, runner, met),
+        'params': params,
+        'return': r,
+        'return_void': r_void,
+        'runner': runner,
+        'target': target,
+        'target_get': target_get,
+        }
+
+
+# print primitive(True, True, 3)
+# print primitive_list(True, True, False)
+# print primitive_list(True, True, True)
+
+primitives = ''
+
+for ret in [True, False]:
+    for run in [True, False]:
+        for nargs in range(5):
+            primitives += '\n    // Return: %s, Runner: %s, Arguments: %s\n' % (ret, run, nargs)
+            primitives += primitive(ret, run, nargs)
+        for met in [True, False]:
+            primitives += '\n    // Return: %s, Runner: %s, Method: %s\n' % (ret, run, met)
+            primitives += primitive_list(ret, run, met)
+
+print '''\
+#include <boost/bind.hpp>
+#include <boost/tr1/type_traits.hpp>
+
+#include <object/any-to-boost-function.hh>
+#include <object/cxx-conversions.hh>
+#include <object/cxx-helper.hh>
+#include <object/cxx-primitive.hh>
+
+namespace object
+{
+    template <typename M>
+    struct MakePrimitive
+    {};
+
+    namespace
+    {
+      // Remove const and reference
+      template <typename T>
+      struct Flatten
+      {
+        typedef typename boost::remove_const
+        <typename boost::remove_reference<T>::type>::type type;
+      };
+    }
+
+%s;
+
+    template<typename M>
+    inline rPrimitive
+    make_primitive(M f)
+    {
+      typedef AnyToBoostFunction<M> C;
+      // If primitive is unfound in MakePrimitive here, you gave an
+      // unsupported type to make Primitive. AnyToBoostFunction must be
+      // able to convert the given values. It handles:
+      // * boost::functions
+      // * function pointers
+      // * method pointers
+      return new Primitive(
+        boost::bind(MakePrimitive<typename C::type>::primitive,
+                    _1, _2, C::convert(f)));
+    }
+}''' % primitives

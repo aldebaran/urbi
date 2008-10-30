@@ -39,7 +39,17 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
 
-BUILT_SOURCES += $(precompiled_symbols_hh)
+cxx_primitives_hxx = object/cxx-primitive.hxx
+cxx_primitives_hxx_py = $(srcdir)/$(cxx_primitives_hxx).py
+$(cxx_primitives_hxx): $(cxx_primitives_hxx_py)
+	$(cxx_primitives_hxx_py) > $(cxx_primitives_hxx).tmp
+	mv $(cxx_primitives_hxx).tmp $(cxx_primitives_hxx)
+	chmod a-w $(cxx_primitives_hxx)
+
+
+BUILT_SOURCES += $(precompiled_symbols_hh)	\
+		 $(cxx_primitives_hxx)
+
 dist_libuobject_la_SOURCES +=			\
   object/any-to-boost-function.hh		\
   object/any-to-boost-function.hxx		\
@@ -57,7 +67,6 @@ dist_libuobject_la_SOURCES +=			\
   object/cxx-object.hh				\
   object/cxx-object.hxx				\
   object/cxx-primitive.hh			\
-  object/cxx-primitive.hxx			\
   object/dictionary.cc				\
   object/dictionary.hh				\
   object/directory.cc				\
