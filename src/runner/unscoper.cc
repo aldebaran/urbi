@@ -30,4 +30,10 @@ namespace runner
     tags = remove_scope_tags(tags);
   }
 
+  bool
+  Unscoper::flow_control_get() const
+  {
+    return true;
+  }
+
 } // namespace runner

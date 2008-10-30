@@ -12,6 +12,7 @@ namespace runner
     explicit Unscoper(libport::Symbol name);
     virtual void apply_tag(scheduler::tags_type& tags,
 			   libport::Finally* finally);
+    virtual bool flow_control_get() const;
   };
 
   // Helper function
