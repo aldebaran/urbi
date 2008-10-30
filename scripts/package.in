@@ -72,8 +72,8 @@ if $release_mode && [ "$OS" != windows ]; then
   (cd "$packagedir"
    # Do not show errors -- we know that we have shell scripts there.
    find bin -type f -print | xargs strip 2> /dev/null || true
-   find lib -type f -name '*.so.*' -print | xargs strip || true
-   find lib -type f -name '*.a' -print | xargs strip || true)
+   find . -type f -name '*.so.*' -print | xargs strip || true
+   find . -type f -name '*.a' -print | xargs strip || true)
 fi
 
 # On Windows, copy the .bat file
