@@ -88,7 +88,7 @@ namespace scheduler
 
     // Set and get the flow_control property.
     void flow_control_set();
-    bool flow_control_get() const;
+    virtual bool flow_control_get() const;
 
     // Act on a tag and make the scheduler take it into account
     void freeze();
