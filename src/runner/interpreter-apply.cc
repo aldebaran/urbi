@@ -138,7 +138,7 @@ namespace runner
     precondition(target);
     Finally finally;
 
-    if (msg != SYMBOL())
+    if (msg != libport::Symbol::make_empty())
     {
       call_stack_.push_back(std::make_pair(msg, loc));
       finally << (bind(&call_stack_type::pop_back, &call_stack_));
