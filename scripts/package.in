@@ -30,11 +30,19 @@ TAR=tar
 
 TMPDIR=${TMPDIR-/tmp}
 
+# Set release_mode depending on whether we are building a release version
+# or a development version.
+if [ $MODE = release_dynamic ]; then
+  release_mode=true
+else
+  release_mode=false
+fi
+
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
 version=$(cd "$srcdir" && $GIT describe | sed -e "s,^.*/,,")
 # If we are in release mode, do not tell it, the final users won't care
-if [ $MODE = release_dynamic ]; then
+if $release_mode; then
   name="${PROJECT}-${version}-${OS}-${ARCH}"
 else
   name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}-${MODE}"
@@ -48,7 +56,7 @@ $MKDIR_P "$packagedir"
 (cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
 
 # Build a MANIFEST with the list of files to install into the final
-# destination
+# destination.
 MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 (cd "$packagedir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
 $MV "$MANIFEST" "$packagedir/MANIFEST"
@@ -58,7 +66,17 @@ $CP "${srcdir}/doc/RELEASE-NOTES.txt" "$packagedir"
 $CP "${srcdir}/doc/REPORTING-BUGS.txt" "$packagedir"
 $CP "${srcdir}/doc/QUICK-START.txt" "$packagedir"
 
+# When building a release for non-Windows platforms, strip the binaries
+# and the libraries.
+if $release_mode && [ "$OS" != windows ]; then
+  (cd "$packagedir"
+   # Do not show errors -- we know that we have shell scripts there.
+   find bin -type f -print | xargs strip 2> /dev/null
+   find lib -type f -name '*.so.*' -print | xargs strip
+   find lib -type f -name '*.a' -print | xargs strip)
+fi
+
 # On Windows, copy the .bat file
-if [ $OS = windows ]; then
+if [ "$OS" = windows ]; then
   $CP "${srcdir}/scripts/urbi-console.bat" "$packagedir"
 fi
