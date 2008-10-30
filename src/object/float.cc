@@ -46,19 +46,19 @@ namespace object
     return value_;
   }
 
-#define CONVERSION(Name, Type)                  \
-  Type                                          \
-  Float::to_##Name() const                      \
-  {                                             \
-    try                                         \
-    {                                           \
-      return libport::ufloat_to_##Name(value_); \
-    }                                           \
-    catch (libport::bad_numeric_cast& ue)       \
-    {                                           \
-      runner::raise_bad_integer_error(value_);  \
-    }                                           \
-  }                                             \
+#define CONVERSION(Name, Type)				\
+  Type							\
+  Float::to_##Name(const std::string fmt) const		\
+  {							\
+    try							\
+    {							\
+      return libport::ufloat_to_##Name(value_);		\
+    }							\
+    catch (libport::bad_numeric_cast& ue)		\
+    {							\
+      runner::raise_bad_integer_error(value_, fmt);	\
+    }							\
+  }							\
 
   CONVERSION(int, int);
   CONVERSION(long_long, long long);

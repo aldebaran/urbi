@@ -25,8 +25,9 @@ namespace object
     typedef libport::ufloat value_type;
     value_type& value_get();
     const value_type&  value_get() const;
-    int to_int() const;
-    long long to_long_long() const;
+    int to_int(const std::string fmt = "expected integer, got %s") const;
+    long long
+    to_long_long(const std::string fmt = "expected integer, got %s") const;
     unsigned int to_unsigned_int
      (const std::string fmt = "expected non-negative integer, got %s") const;
 
