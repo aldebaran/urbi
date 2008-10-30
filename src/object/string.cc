@@ -193,15 +193,15 @@ namespace object
     return split(seps, keep_delim, keep_empty);
   }
 
-  typedef std::vector<std::string> (String::*foo)(const std::string&, bool, bool);
-  typedef std::vector<std::string> (String::*baz)(const std::vector<std::string>&, bool, bool);
-  static foo bar = &String::split;
-  static baz quux = &String::split;
   OVERLOAD_TYPE(split_overload, 3, 1,
                 String,
-                bar,
+                (std::vector<std::string>
+                 (String::*)(const std::string&, bool, bool))
+                  &String::split,
                 List,
-                quux)
+                (std::vector<std::string>
+                 (String::*baz)(const std::vector<std::string>&, bool, bool))
+                 &String::split)
 
   static rObject split_bouncer(runner::Runner& r, objects_type& args)
   {
