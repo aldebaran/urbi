@@ -98,10 +98,29 @@ namespace urbi
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-	if (retval.type == DATA_VOID)
-	  URBI_SEND_COMMAND("var " << (std::string) array[2]);
-	else
-	  URBI_SEND_COMMAND("var " << (std::string) array[2] << "=" << retval);
+	if (retval.type == DATA_BINARY)
+	{
+	  // Send it
+	  if (urbi::getDefaultClient ())
+	    getDefaultClient()->sendBin(retval.binary->common.data,
+		retval.binary->common.size,
+		"var %s=BIN %d %s;",
+		((std::string) array[2]).c_str (),
+		retval.binary->common.size,
+		retval.binary->getMessage().c_str());
+
+	  // Send void if no client. Would block anyway
+	  else
+	  {
+	    os << "var " << (std::string) array[2] << ";";
+	    URBI (()) << os.str ();
+	  }
+       	}
+	else // Non-binary value.
+	  if (retval.type == DATA_VOID)
+	    URBI_SEND_COMMAND("var " << (std::string) array[2]);
+	  else
+	    URBI_SEND_COMMAND("var " << (std::string) array[2] << "=" << retval);
       }
       break;
 
