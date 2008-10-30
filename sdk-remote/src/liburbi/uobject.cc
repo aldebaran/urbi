@@ -263,14 +263,35 @@ namespace urbi
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
 	std::stringstream os;
-	if (retval.type == DATA_VOID)
-	  os << "var " << (std::string) array[2];
+	// Send binary return values through sendbin
+	if (retval.type == DATA_BINARY)
+	{
+	  // Send it
+	  if (urbi::getDefaultClient ())
+	    getDefaultClient()->sendBin(retval.binary->common.data,
+					retval.binary->common.size,
+					"var %s=BIN %d %s;",
+					((std::string) array[2]).c_str (),
+					retval.binary->common.size,
+					retval.binary->getMessage().c_str());
+
+	  // Send void if no client. Would block anyway
+	  else
+	  {
+	    os << "var " << (std::string) array[2] << ";";
+	    URBI (()) << os.str ();
+	  }
+	}
+	// Send non binary values
 	else
 	{
-	  os << "var " << (std::string) array[2] << "=" << retval;
+	  if (retval.type == DATA_VOID)
+	    os << "var " << (std::string) array[2];
+	  else
+	    os << "var " << (std::string) array[2] << "=" << retval;
+	  os << ";";
+	  URBI() << os.str();
 	}
-	os << ";";
-	URBI(()) << os.str();
       }
       else
 	msg.client.printf("Component Error: %s function unknown.\n",
