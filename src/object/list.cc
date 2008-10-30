@@ -70,10 +70,13 @@ namespace object
   size_t
   List::index(const rFloat& idx) const
   {
-    size_t i = idx->to_unsigned_int("invalid index: %s");
-    if (content_.size() <= i)
-      runner::raise_primitive_error("invalid index: " + string_cast(i));
-    return i;
+    int i = idx->to_int("invalid index: %s");
+    if (i < 0)
+      i += content_.size();
+    if (i < 0 || content_.size() <= static_cast<size_t>(i))
+      runner::raise_primitive_error("invalid index: " +
+				    string_cast(idx->value_get()));
+    return static_cast<size_t>(i);
   }
 
   rObject List::operator[](const rFloat& idx)
