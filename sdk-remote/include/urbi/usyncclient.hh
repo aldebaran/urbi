@@ -139,14 +139,20 @@ namespace urbi
      *                microseconds. This is useful if you don't want
      *                processEvents() to take to much time if there are many
      *                many pending messages.
+     * Callbacks functions are called synchronously in the caller thread.
      */
     void processEvents(const libport::utime_t timeout = -1);
 
-    /// Stop callback thread, in case you want to use your own.
+    /**
+     *  Stop the callback processing thread.
+     *  The user is responsible for calling processEvents() regularily
+     *  once this function has been called.
+     */
     void stopCallbackThread();
     void callbackThread();
 
   private:
+    //Incremented at each queue push, decremented on pop.
     libport::Semaphore sem_;
     std::list<UMessage*> queue;
     libport::Lockable queueLock_;
@@ -155,6 +161,8 @@ namespace urbi
     std::string syncTag;
 
     bool stopCallbackThread_;
+    // Used to block until the callback thread is realy stopped.
+    libport::Semaphore stopCallbackSem_;
   };
 
 } // namespace urbi

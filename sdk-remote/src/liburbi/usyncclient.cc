@@ -38,11 +38,17 @@ namespace urbi
     {
       sem_--;
       if (stopCallbackThread_)
+      {
+	/// The one who did set stopCallbackThread_ incremented sem_.
+	stopCallbackSem_++;
 	return;
+      }
       queueLock_.lock();
       if (queue.empty())
       {
-	//we got mysteriously interrupted
+	// Only explanation: processEvents from another thread stole our 
+	// message.
+	sem_++; // Give back the token we took without popping a message.
 	queueLock_.unlock();
 	continue;
       }
@@ -56,7 +62,13 @@ namespace urbi
 
   void USyncClient::stopCallbackThread()
   {
+    if (stopCallbackThread_)
+      return;
     stopCallbackThread_ = true;
+    sem_++;
+    // Wait until the callback thread is actually stopped to avoid both
+    // processEvents and the callbackThread running at the same time.
+    stopCallbackSem_--;
   }
 
   void USyncClient::processEvents(const libport::utime_t timeout)
