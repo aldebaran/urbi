@@ -1,6 +1,6 @@
 include $(top_srcdir)/build-aux/build-aux.mk
 
-ACLOCAL_AMFLAGS = -I build-aux
+ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 
 SUBDIRS = sdk-remote . src tests doc
 
