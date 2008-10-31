@@ -1,9 +1,7 @@
 include $(top_srcdir)/build-aux/build-aux.mk
 
-ACLOCAL_AMFLAGS = -I build-aux -I sdk
+ACLOCAL_AMFLAGS = -I build-aux
 
-# Process "." before the sub dirs to make sure sdk/config.h and
-# libport/config.h are propery built.
 SUBDIRS = sdk-remote . src tests doc
 
 # build-aux.

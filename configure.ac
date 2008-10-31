@@ -66,7 +66,7 @@ AC_PROG_LIBTOOL
 URBI_ARG_ENABLE([enable-headers-install],
                 [Install kernel headers], [yes|no], [no])
 AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
-               [ test x$enable_headers_install = xyes])
+               [test x$enable_headers_install = xyes])
 URBI_WITH_LTDL
 
 # Where we look for the installed files.
@@ -98,9 +98,9 @@ BOOST_REGEX
 BOOST_TOKENIZER
 
 
-## ------ ##
-## sdk/.  ##
-## ------ ##
+## -------------- ##
+## Sub packages.  ##
+## -------------- ##
 
 AC_CONFIG_SUBDIRS([sdk-remote])
 
