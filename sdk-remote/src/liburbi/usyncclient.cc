@@ -51,10 +51,12 @@ namespace urbi
       delete m;
     }
   }
+
   void USyncClient::stopCallbackThread()
   {
     stopCallbackThread_ = true;
   }
+
   void USyncClient::processEvents(const libport::utime_t timeout)
   {
     libport::utime_t startTime = libport::utime();
@@ -68,12 +70,11 @@ namespace urbi
       }
       UMessage *m = queue.front();
       queue.pop_front();
-      sem--; // Will not block since queue was not empty.
+      sem_--; // Will not block since queue was not empty.
       queueLock_.unlock();
       UAbstractClient::notifyCallbacks(*m);
       delete m;
     }
-
   }
 
   void USyncClient::notifyCallbacks(const UMessage &msg)
