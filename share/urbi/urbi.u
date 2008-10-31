@@ -248,16 +248,6 @@ class Global.Orderable
   function '>=' (rhs) { this > rhs || this == rhs };
 };
 
-function min
-{
-  return call.evalArgs.min
-};
-
-function max
-{
-  return call.evalArgs.max
-};
-
 load("urbi/updatehook-stack.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
@@ -359,6 +349,16 @@ class Global.Math
   function atan2(x, y)
   {
     x.atan2(y)
+  };
+
+  function min
+  {
+    return call.evalArgs.min
+  };
+
+  function Global.max
+  {
+    return call.evalArgs.max
   };
 };
 Global.addProto(Global.Math);
