@@ -7,7 +7,7 @@ var Object.getPeriod = 20ms;
 function Global.isdef
 {
   var base = call.sender |
-  for (var c: call.argString(0).split([".", " "], false, false))
+  for (var c: call.argString(0).split([".", " "], nil, false, false))
   {
     if (base.hasSlot(c))
     {

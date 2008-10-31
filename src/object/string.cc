@@ -151,7 +151,8 @@ namespace object
   }
 
   std::vector<std::string>
-  String::split(const std::vector<std::string>& sep, bool keep_delim, bool keep_empty)
+  String::split(const std::vector<std::string>& sep, int limit,
+                bool keep_delim, bool keep_empty)
   {
     std::vector<std::string> res;
     size_t start = 0;
@@ -168,8 +169,8 @@ namespace object
     }
 
     for (end = find_first(sep, content_, start, delim);
-         end != std::string::npos;
-         end = find_first(sep, content_, start, delim))
+         end != std::string::npos && limit;
+         end = find_first(sep, content_, start, delim), --limit)
     {
       std::string sub = content_.substr(start, end - start);
       if (keep_empty || sub != "")
@@ -186,27 +187,28 @@ namespace object
   }
 
   std::vector<std::string>
-  String::split(const std::string& sep, bool keep_delim, bool keep_empty)
+  String::split(const std::string& sep, int limit,
+                bool keep_delim, bool keep_empty)
   {
     std::vector<std::string> seps;
     seps << sep;
-    return split(seps, keep_delim, keep_empty);
+    return split(seps, limit, keep_delim, keep_empty);
   }
 
-  OVERLOAD_TYPE(split_overload, 3, 1,
+  OVERLOAD_TYPE(split_overload, 4, 1,
                 String,
                 (std::vector<std::string>
-                 (String::*)(const std::string&, bool, bool))
+                 (String::*)(const std::string&, int, bool, bool))
                   &String::split,
                 List,
                 (std::vector<std::string>
-                 (String::*baz)(const std::vector<std::string>&, bool, bool))
+                 (String::*)(const std::vector<std::string>&, int, bool, bool))
                  &String::split)
 
   static rObject split_bouncer(runner::Runner& r, objects_type& args)
   {
     static rPrimitive actual = make_primitive(split_overload);
-    check_arg_count(args.size() - 1, 0, 3);
+    check_arg_count(args.size() - 1, 0, 4);
     switch (args.size())
     {
       case 1:
@@ -214,17 +216,22 @@ namespace object
 	static std::vector<std::string> seps =
 	  boost::assign::list_of(" ")("\t")("\r")("\n");
         args.push_back(to_urbi(seps));
+        args.push_back(new Float(-1));
         args.push_back(object::false_class);
         args.push_back(object::false_class);
         break;
       }
       case 2:
-        args.push_back(object::false_class);
+        args.push_back(new Float(-1));
       case 3:
+        args.push_back(object::false_class);
+      case 4:
         args.push_back(object::true_class);
       default:
         break;
     }
+    if (args[2] == object::nil_class)
+      args[2] = new Float(-1);
     return (*actual)(r, args);
   }
 

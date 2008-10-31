@@ -41,9 +41,11 @@ namespace object
     std::string set(const std::string& rhs);
     size_type size();
     std::vector<std::string> split(const std::string& sep,
+                                   int limit = -1,
                                    bool keep_delim = false,
                                    bool keep_empty = true);
     std::vector<std::string> split(const std::vector<std::string>& sep,
+                                   int limit = -1,
                                    bool keep_delim = false,
                                    bool keep_empty = true);
     std::string star(unsigned int times);
