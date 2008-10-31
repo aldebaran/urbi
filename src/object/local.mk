@@ -39,16 +39,31 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
 
-cxx_primitives_hxx = object/cxx-primitive.hxx
-cxx_primitives_hxx_py = $(srcdir)/$(cxx_primitives_hxx).py
-$(cxx_primitives_hxx): $(cxx_primitives_hxx_py)
-	$(cxx_primitives_hxx_py) > $(cxx_primitives_hxx).tmp
-	mv $(cxx_primitives_hxx).tmp $(cxx_primitives_hxx)
-	chmod a-w $(cxx_primitives_hxx)
+%.hxx: %.hxx.py
+	rm -f $@ $@.tmp
+	$< > $@.tmp
+	chmod a-w $@.tmp
+	mv $@.tmp $@
+
+# cxx_primitives_hxx = object/cxx-primitive.hxx
+# cxx_primitives_hxx_py = $(srcdir)/$(cxx_primitives_hxx).py
+# $(cxx_primitives_hxx): $(cxx_primitives_hxx_py)
+# 	$(cxx_primitives_hxx_py) > $(cxx_primitives_hxx).tmp
+# 	mv -f $(cxx_primitives_hxx).tmp $(cxx_primitives_hxx)
+# 	chmod a-w $(cxx_primitives_hxx)
+
+# any_to_boost_hxx = object/any-to-boost-function.hxx
+# any_to_boost_hxx_py = $(srcdir)/$(any_to_boost_hxx).py
+# $(any_to_boost_hxx): $(any_to_boost_hxx_py)
+# 	$(any_to_boost_hxx_py) > $(any_to_boost_hxx).tmp
+# 	mv -f $(any_to_boost_hxx).tmp $(any_to_boost_hxx)
+# 	chmod a-w $(any_to_boost_hxx)
 
 
-BUILT_SOURCES += $(precompiled_symbols_hh)	\
-		 $(cxx_primitives_hxx)
+BUILT_SOURCES +=				\
+  $(precompiled_symbols_hh)			\
+  $(cxx_primitives_hxx)				\
+  $(any_to_boost_hxx)
 
 dist_libuobject_la_SOURCES +=			\
   object/any-to-boost-function.hh		\
