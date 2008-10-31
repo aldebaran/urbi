@@ -225,6 +225,7 @@ namespace object
 
   CONTAINER(std::set, insert);
   CONTAINER(std::vector, push_back);
+  CONTAINER(std::deque, push_back);
 
 #undef CONTAINER
 
