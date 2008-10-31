@@ -1,26 +1,26 @@
 if EXAMPLES
 bin_PROGRAMS +=					\
-  utils/urbicycle				\
-  utils/urbireverse				\
-  utils/urbiscale				\
-  utils/urbiwalk
+  utils/urbi-cycle				\
+  utils/urbi-reverse				\
+  utils/urbi-scale				\
+  utils/urbi-walk
 endif
 
-utils_urbicycle_SOURCES =			\
+utils_urbi_cycle_SOURCES =			\
   utils/parse-header.hh				\
-  utils/urbicycle.cc
-utils_urbireverse_SOURCES =			\
+  utils/urbi-cycle.cc
+utils_urbi_reverse_SOURCES =			\
   utils/parse-header.hh				\
-  utils/urbireverse.cc
-utils_urbiscale_SOURCES =			\
+  utils/urbi-reverse.cc
+utils_urbi_scale_SOURCES =			\
   utils/parse-header.hh				\
-  utils/urbiscale.cc
+  utils/urbi-scale.cc
 
-utils_urbiwalk_SOURCES =			\
-  utils/urbiwalk.cc				\
+utils_urbi_walk_SOURCES =			\
+  utils/urbi-walk.cc				\
   utils/move.cc					\
   utils/move.hh
 
-utils_urbiwalk_LDADD =				\
+utils_urbi_walk_LDADD =				\
   $(top_builddir)/jpeg-6b/libjpeg.la		\
   liburbi/liburbi.la
