@@ -119,7 +119,7 @@ namespace object
     else
     {
       if (base == 16)
-        runner::raise_primitive_error("only natural numbers can be printed in hexadecimal");
+        runner::raise_bad_integer_error(value_);
       static boost::format f("%g");
       return str(f % value_);
     }
