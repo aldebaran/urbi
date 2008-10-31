@@ -211,11 +211,7 @@ uobject_make_proto(const std::string& name)
 rObject
 uobject_new(rObject proto, bool forceName)
 {
-  rObject r = object::object_class->clone();
-
-  // Reparent r to proto base.
-  r->proto_remove(object::object_class);
-  r->proto_add(proto->slot_get(SYMBOL(__uobject_base)));
+  rObject r = proto->clone();
 
   // Get UObject name.
   rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
