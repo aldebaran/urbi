@@ -68,6 +68,7 @@ namespace urbi
       }
       UMessage *m = queue.front();
       queue.pop_front();
+      sem--; // Will not block since queue was not empty.
       queueLock_.unlock();
       UAbstractClient::notifyCallbacks(*m);
       delete m;
