@@ -185,3 +185,17 @@ uobjects, for example in the following expression:
 
 This has been fixed. "__name" contains a valid slot name of
 "uobjects".
+
+
+Auxiliary programs
+==================
+
+The sample programs demonstrating the SDK Remote, i.e., how to write a
+client for the Urbi server, have been renamed from "urbi*" to
+"urbi-*".  For instance "urbisend" is now spelled "urbi::send".
+
+Besides, their interfaces are being overhauled to be more consistent
+with the Urbi command-line tool-box.  For instance while "urbisend"
+used to require exactly two arguments (host-name, file to send), it
+now supports options (e.g., --help, --port to specify the port etc.),
+and as many files as provided on the command line.
