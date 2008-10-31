@@ -587,8 +587,7 @@ namespace urbi
     object::objects_type args = list_of
       (rObject(new object::String(name)))
       (new object::Float(t / 1000.0))
-      (
-       MAKE_VOIDCALL(this, urbi::UObjectHub, update));
+      (MAKE_VOIDCALL(this, urbi::UObjectHub, update));
     getCurrentRunner().apply(uob, f, SYMBOL(setHubUpdate), args);
   }
 
