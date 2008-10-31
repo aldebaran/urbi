@@ -229,8 +229,11 @@ uobject_new(rObject proto, bool forceName)
   {
     // boost::lexical_cast does not work on the way back, so dont use it here
     std::stringstream ss;
-    ss << r.get();
+    ss << "uob_" << r.get();
     name = ss.str();
+    /* We need to make this name accessible in urbi in case the UObject code
+    emits urbi code using this name.*/
+    where->slot_set(libport::Symbol(name), r);
   }
   uobject_map[name] = r;
   // Instanciate UObject.
