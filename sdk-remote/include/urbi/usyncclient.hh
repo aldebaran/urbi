@@ -56,10 +56,22 @@ namespace urbi
   class USDK_API USyncClient: public UClient
   {
   public:
+    /** Create a new connection to an Urbi Server.
+     *
+     *  \param _host The host to connect to.
+     *  \param _port the port number to connect to, defaults to URBI_PORT.
+     *  \param _buflen Size of reception buffer, defaults to URBI_BUFLEN.
+     *  \param _server If true, listen for an incoming connection from an
+     *    urbi server instead of connecting.
+     *  \param startCallbackThread Create a thread didacated to the processing
+     *    of incoming messages. If false, it is the responsibility of the user
+     *    to regularly call processEvents().
+     */
     USyncClient(const char *_host,
 		int _port = URBI_PORT,
 		int _buflen = URBI_BUFLEN,
-		bool _server = false);
+		bool _server = false,
+                bool startCallbackThread = true);
 
   protected:
     /** Synchronously ask the server for the value of an expression.

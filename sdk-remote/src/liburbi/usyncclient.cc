@@ -13,18 +13,20 @@ namespace urbi
   USyncClient::USyncClient(const char* _host,
 			   int _port,
 			   int _buflen,
-			   bool _server)
+			   bool _server,
+                           bool startCallbackThread)
     : UClient(_host, _port, _buflen, _server)
     , sem_()
     , queueLock_()
     , msg(0)
     , syncLock_()
     , syncTag()
-    , stopCallbackThread_(false)
+    , stopCallbackThread_(!startCallbackThread)
   {
     if (error())
       return;
-    libport::startThread(this, &USyncClient::callbackThread);
+    if (startCallbackThread)
+      libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
 //    LIBPORT_ECHO("USYNCCLIENT built");
