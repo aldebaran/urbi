@@ -8,8 +8,8 @@ namespace object
   template <typename T>
   struct CxxConvert
   {
-    static rObject
-    to(const rObject&)
+    static T
+    to(const rObject&, unsigned)
     {
       return T::No_such_conversion;
     }
