@@ -1,13 +1,5 @@
 m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
-
-AS_INIT()dnl
-URBI_PREPARE()
-
-set -e
-
-case $VERBOSE in
-  x) set -x;;
-esac
+URBI_INIT
 
 # Avoid zombies and preserve debugging information.
 cleanup ()
@@ -65,11 +57,8 @@ my_sleep ()
 
 exec 3>&2
 
-: ${abs_builddir='@abs_builddir@'}
 check_dir abs_builddir liburbi-check
-: ${abs_top_builddir='@abs_top_builddir@'}
 check_dir abs_top_builddir config.status
-: ${abs_top_srcdir='@abs_top_srcdir@'}
 check_dir abs_top_srcdir configure.ac
 
 # Make it absolute.
@@ -104,8 +93,7 @@ set | rst_pre "$me variables"
 if test -d $abs_top_srcdir/../../src/kernel; then
   stderr "This SDK-Remote is part of a kernel package" \
          "  ($abs_top_srcdir/../../src/kernel exists)."
-  URBI_SERVER=$abs_top_builddir/../src/urbi-console
-  export URBI_PATH=$abs_top_srcdir/../share
+  export PATH=$abs_top_builddir/../tests/bin:$PATH
 else
   stderr "This SDK-Remote is standalone."
 fi
@@ -113,7 +101,7 @@ fi
 find_urbi_server
 
 # Compute expected output.
-sed -n -e 's@//= @@p' $chk.cc >output.exp
+sed -n -e 's,//= ,,p' $chk.cc >output.exp
 touch error.exp
 echo 0 >status.exp
 
