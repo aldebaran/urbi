@@ -11,14 +11,6 @@ do (Float)
   // Comparable.!= that bounce endlessly one on the other.
   setProtos([Orderable, Comparable]);
 
-  function 'new'
-  {
-    if (call.argsCount == 1)
-      call.argAt(0)
-    else
-      Float.clone
-  };
-
   function sqr() { this * this };
 
   /// Absolute approximation parameter.
