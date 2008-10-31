@@ -39,7 +39,8 @@ namespace urbi
       sem_--;
       if (stopCallbackThread_)
       {
-	/// The one who did set stopCallbackThread_ incremented sem_.
+	// The call to stopCallbackThread is 
+	// waiting on stopCallbackSem_.
 	stopCallbackSem_++;
 	return;
       }

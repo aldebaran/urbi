@@ -111,10 +111,7 @@ namespace urbi
 
 	  // Send void if no client. Would block anyway
 	  else
-	  {
-	    os << "var " << (std::string) array[2] << ";";
-	    URBI (()) << os.str ();
-	  }
+	    URBI_SEND_COMMAND("var " << (std::string) array[2]);
        	}
 	else // Non-binary value.
 	  if (retval.type == DATA_VOID)
