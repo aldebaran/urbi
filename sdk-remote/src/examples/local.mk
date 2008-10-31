@@ -1,31 +1,31 @@
 if EXAMPLES
 bin_PROGRAMS +=					\
-  examples/urbibandwidth			\
-  examples/urbimirror				\
-  examples/urbiping				\
-  examples/urbiplay				\
-  examples/urbirecord				\
-  examples/urbisend				\
-  examples/urbisendbin				\
-  examples/urbisendsound
+  examples/urbi-bandwidth			\
+  examples/urbi-mirror				\
+  examples/urbi-ping				\
+  examples/urbi-play				\
+  examples/urbi-record				\
+  examples/urbi-send				\
+  examples/urbi-sendbin				\
+  examples/urbi-sendsound
 
-examples_urbibandwidth_SOURCES	= examples/urbibandwidth.cc
-examples_urbimirror_SOURCES	= examples/urbimirror.cc
-examples_urbiping_SOURCES	= examples/urbiping.cc
-examples_urbiplay_SOURCES	= examples/urbiplay.cc
-examples_urbirecord_SOURCES	= examples/urbirecord.cc
-examples_urbisend_SOURCES	= examples/urbisend.cc
-examples_urbisendbin_SOURCES	= examples/urbisendbin.cc
-examples_urbisendsound_SOURCES	= examples/urbisendsound.cc
+examples_urbi_bandwidth_SOURCES	= examples/urbi-bandwidth.cc
+examples_urbi_mirror_SOURCES	= examples/urbi-mirror.cc
+examples_urbi_ping_SOURCES	= examples/urbi-ping.cc
+examples_urbi_play_SOURCES	= examples/urbi-play.cc
+examples_urbi_record_SOURCES	= examples/urbi-record.cc
+examples_urbi_send_SOURCES	= examples/urbi-send.cc
+examples_urbi_sendbin_SOURCES	= examples/urbi-sendbin.cc
+examples_urbi_sendsound_SOURCES	= examples/urbi-sendsound.cc
 
 if  SOUNDCARD
-bin_PROGRAMS += examples/urbisound
-examples_urbisound_SOURCES = examples/urbisound.cc
+bin_PROGRAMS += examples/urbi-sound
+examples_urbi_sound_SOURCES = examples/urbi-sound.cc
 endif
 
 if  !WIN32
-bin_PROGRAMS += examples/urbitalkie
-examples_urbitalkie_SOURCES = examples/urbitalkie.cc
+bin_PROGRAMS += examples/urbi-talkie
+examples_urbi_talkie_SOURCES = examples/urbi-talkie.cc
 endif
 endif EXAMPLES
 
@@ -36,8 +36,8 @@ endif EXAMPLES
 ## -------------------------------------- ##
 
 monitor_programs =				\
- examples/urbiballtrackinghead			\
- examples/urbiimage
+ examples/urbi-balltrackinghead			\
+ examples/urbi-image
 
 if EXAMPLES
 if  WIN32
@@ -56,14 +56,14 @@ monitor_sources =				\
 endif
 endif EXAMPLES
 
-examples_urbiballtrackinghead_SOURCES =		\
-   examples/urbiballtrackinghead.cc		\
-   $(monitor_sources)
-examples_urbiballtrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
-examples_urbiballtrackinghead_LDADD = $(X11_LDADD) $(AM_LDADD)
-
-examples_urbiimage_SOURCES =			\
-  examples/urbiimage.cc				\
+examples_urbi_balltrackinghead_SOURCES =	\
+  examples/urbi-balltrackinghead.cc		\
   $(monitor_sources)
-examples_urbiimage_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
-examples_urbiimage_LDADD = $(X11_LDADD) $(AM_LDADD)
+examples_urbi_balltrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
+examples_urbi_balltrackinghead_LDADD = $(X11_LDADD) $(AM_LDADD)
+
+examples_urbi_image_SOURCES =			\
+  examples/urbi-image.cc				\
+  $(monitor_sources)
+examples_urbi_image_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
+examples_urbi_image_LDADD = $(X11_LDADD) $(AM_LDADD)
