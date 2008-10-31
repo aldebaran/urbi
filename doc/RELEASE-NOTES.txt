@@ -174,3 +174,14 @@ case of composed names or variables whose content was "void". Note
 that we do not recommend using "isdef" at all. Slots related methods
 such as "getSlot", "hasSlot", "locateSlot", or "slotNames" have much
 cleaner semantics.
+
+"__name" macro
+--------------
+
+In some cases, the "__name" macro could not be used with plugged
+uobjects, for example in the following expression:
+
+  send(__name + ".val = 1;");
+
+This has been fixed. "__name" contains a valid slot name of
+"uobjects".
