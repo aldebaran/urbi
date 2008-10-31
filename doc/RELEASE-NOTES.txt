@@ -88,6 +88,15 @@ Calling "split" with no arguments will tokenize the string over " ",
   "  abc  def\tghi\n".split;
   [00000001] ["abc", "def", "ghi"]
 
+"String.join" method
+--------------------
+
+It is now possible to easily join list elements by inserting an
+arbitrary string between them:
+
+  ", ".join(["abc", "def", "ghi"]);
+  [00000001] "abc, def, ghi"
+
 "min" and "max"
 ---------------
 
