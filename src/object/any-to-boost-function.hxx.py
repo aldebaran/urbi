@@ -100,7 +100,8 @@ namespace object
 
 '''
 
-for r in [True, False]:
+# For now, only the r case is needed, and !r fails with visual studio
+for r in [True]:
     for runner in [True, False]:
         for met in [True, False]:
             for n in range(5):
