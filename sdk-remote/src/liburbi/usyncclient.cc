@@ -29,18 +29,20 @@ namespace urbi
   USyncClient::USyncClient(const char *_host,
 			   int _port,
 			   int _buflen,
-			   bool _server)
-    : UClient(_host, _port, _buflen, _server),
-      sem_(),
-      queueLock_(),
-      msg(0),
-      syncLock_(),
-      syncTag (""),
-      stopCallbackThread_(false)
+			   bool _server,
+                           bool startCallbackThread)
+    : UClient(_host, _port, _buflen, _server)
+    , sem_()
+    , queueLock_()
+    , msg(0)
+    , syncLock_()
+    , syncTag()
+    , stopCallbackThread_(!startCallbackThread)
   {
     if (error())
       return;
-    libport::startThread(this, &USyncClient::callbackThread);
+    if (startCallbackThread)
+      libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
   }
@@ -51,11 +53,15 @@ namespace urbi
     {
       sem_--;
       if (stopCallbackThread_)
+      {
+        sem_++; //ooopsie
 	return;
+      }
       queueLock_.lock();
       if (queue.empty())
       {
-	//we got mysteriously interrupted
+	//processEvents from another thread stole our message
+        sem_++;
 	queueLock_.unlock();
 	continue;
       }
@@ -66,10 +72,12 @@ namespace urbi
       delete m;
     }
   }
+
   void USyncClient::stopCallbackThread()
   {
     stopCallbackThread_ = true;
   }
+
   void USyncClient::processEvents(const libport::utime_t timeout)
   {
     libport::utime_t startTime = libport::utime();
@@ -83,11 +91,11 @@ namespace urbi
       }
       UMessage *m = queue.front();
       queue.pop_front();
+      sem_--; // Will not block since queue was not empty.
       queueLock_.unlock();
       UAbstractClient::notifyCallbacks(*m);
       delete m;
     }
-
   }
 
   void USyncClient::notifyCallbacks(const UMessage &msg)
