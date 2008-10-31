@@ -61,15 +61,25 @@ It moreover now supports a list of separators:
    "a:b;c".split([":", ";"]);
    [00000001] ["a", "b", "c"]
 
-The optional second argument indicates whether to keep delimiters in
+The optional fourth argument indicates a maximum number of splits that
+can occur. A negative number, which is the default, corresponds to
+"no limit":
+
+   "a:b:c".split(":", 1);
+   [00000001] ["a", "b:c"]
+   "a:b:c".split(":", -1);
+   [00000002] ["a", "b", "c"]
+
+The optional third argument indicates whether to keep delimiters in
 the resulting list (default: false):
 
-   "aaa:bbb;ccc".split([":", ";"], true);
+   "aaa:bbb;ccc".split([":", ";"], -1, true);
    [00000001] ["aaa", ":", "bbb", ";" "ccc"]
 
-The optional third argument indicates whether to keep empty elements:
+The optional fourth argument indicates whether to keep empty elements
+(default: true):
 
-  "foobar".split("o", false, false);
+  "foobar".split("o", -1, false, false);
   [00000001] ["f", "bar"]
 
 Calling "split" with no arguments will tokenize the string over " ",
