@@ -293,6 +293,7 @@ class Global.'external'
       waituntil(Global.uobjects.hasSlot(u)
 		&& Global.uobjects.getSlot(u).ownsSlot("init"));
       var ret = Global.uobjects.getSlot(u);
+      ret.protos = [this];
       ret
     };
     uobjects.getSlot(objname).setSlot("clone", cloner);
