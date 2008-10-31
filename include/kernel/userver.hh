@@ -39,7 +39,7 @@ extern const char* DISPLAY_FORMAT2;
 extern class UServer* urbiserver;
 
 
-//! UServer class: handles all URBI system processing.
+//! Handle all URBI system processing.
 /*! There must be one UServer defined in the program and it must be overloaded
     to make it specific to the particular robot.
 
@@ -47,11 +47,11 @@ extern class UServer* urbiserver;
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class USDK_API  UServer
+class USDK_API UServer
 {
 public:
   UServer(const char* mainName);
-  virtual ~UServer ();
+  virtual ~UServer();
 
 public:
   //! Initialization of the server. Displays the header message & init stuff
@@ -60,18 +60,18 @@ public:
    the header at start, so this function *must* be called. Beside, it also
    do initalization work for the devices and system variables.
    */
-  void initialize ();
+  void initialize();
 
   /// Process the jobs.
   /// \return the time when should be called again.
-  libport::utime_t work ();
+  libport::utime_t work();
 
   /// Set the system.args list in URBI.
-  void main (int argc, const char* argv[]);
+  void main(int argc, const char* argv[]);
 
 
   /// Package information about this server.
-  static const libport::PackageInfo& package_info ();
+  static const libport::PackageInfo& package_info();
 
   //! Displays a formatted error message.
   /*! This function uses the virtual URobot::display() function to make the
@@ -80,8 +80,8 @@ public:
    It formats the output in a standard URBI way by adding an ERROR key
    between brackets at the end.
    */
-  void error (const char* s, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void error(const char* s, ...)
+    __attribute__((__format__(__printf__, 2, 3)));
 
   //! Displays a formatted message.
   /*! This function uses the virtual URobot::display() function to make the
@@ -93,8 +93,8 @@ public:
    \param s is the formatted string containing the message.
    \sa echoKey()
    */
-  void echo (const char* s, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echo(const char* s, ...)
+    __attribute__((__format__(__printf__, 2, 3)));
 
 
   //! Display a formatted message, with a key.
@@ -108,10 +108,10 @@ public:
    \param s   is the formatted string containing the message.
    \param args Arguments for the format string.
    */
-  void vecho_key (const char* key, const char* s, va_list args)
-    __attribute__ ((__format__ (__printf__, 3, 0)));
-  void echoKey (const char* key, const char* s, ...)
-    __attribute__ ((__format__ (__printf__, 3, 4)));
+  void vecho_key(const char* key, const char* s, va_list args)
+    __attribute__((__format__(__printf__, 3, 0)));
+  void echoKey(const char* key, const char* s, ...)
+    __attribute__((__format__(__printf__, 3, 4)));
 
   /// Send debugging data.
   /*! This function uses the virtual URobot::display() function to make the
@@ -120,21 +120,21 @@ public:
    \param s is the formatted string containing the message
    \param args Arguments for the format string.
    */
-  void vdebug (const char* s, va_list args)
-    __attribute__ ((__format__ (__printf__, 2, 0)));
-  void debug (const char* s, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void vdebug(const char* s, va_list args)
+    __attribute__((__format__(__printf__, 2, 0)));
+  void debug(const char* s, ...)
+    __attribute__((__format__(__printf__, 2, 3)));
 
   //! Overload this function to return the running time of the server.
   /*! The running time of the server must be in milliseconds.
    */
-  virtual libport::utime_t getTime () = 0;
+  virtual libport::utime_t getTime() = 0;
 
   //! Overload this function to return the remaining power of the robot
   /*! The remaining power is expressed as percentage. 0 for empty batteries
    and 1 for full power.
    */
-  virtual ufloat getPower () = 0;
+  virtual ufloat getPower() = 0;
 
   //! Overload this function to return a specific header for your URBI server
   /*! Used to give some information specific to your server in the standardized
@@ -157,15 +157,15 @@ public:
    has been malloc'ed for that size). Typical size is 1024 octets and
    should be enough for any reasonable header.
    */
-  virtual void      getCustomHeader (unsigned int line, char* header,
-				     size_t maxlength) = 0;
+  virtual void getCustomHeader(unsigned int line, char* header,
+                               size_t maxlength) = 0;
 
   /// Path to explore when looking for .u files.
   libport::file_library search_path;
 
   /// Return the full file name, handle paths.
   /// Return \a f on failure.
-  virtual std::string find_file (const libport::path& path);
+  virtual std::string find_file(const libport::path& path);
 
   /// Type of UCommandQueue
   enum QueueType {
@@ -191,30 +191,30 @@ public:
                                 const std::string& content) = 0;
 
   //! Overload this function to specify how your system will reboot
-  virtual void reboot () = 0;
+  virtual void reboot() = 0;
 
   //! Overload this function to specify how your system will shutdown
-  virtual void shutdown ();
+  virtual void shutdown();
 
   //! Function called before work
   /*! Redefine this virtual function if you need to do pre-processing before
     the work function starts.
   */
-  virtual void beforeWork ();
+  virtual void beforeWork();
 
   //! Function called after work
   /*! Redefine this virtual function if you need to do post-processing
     before the work function ends.
   */
-  virtual void afterWork ();
+  virtual void afterWork();
 
   /// Display a message on the robot console.
-  void display (const char*);
+  void display(const char*);
   /// Display a set of messages on the robot console.
-  void display (const char**);
+  void display(const char**);
 
   //! Accessor for lastTime_.
-  libport::utime_t lastTime ();
+  libport::utime_t lastTime();
 
   //! Update lastTime_ to current time.
   //! Update the server's time using the robot-specific implementation
@@ -224,7 +224,7 @@ public:
    processing of the command tree) as occuring AT the same time,
    from the server's point of view.
    */
-  void updateTime ();
+  void updateTime();
 
 
   /*--------------.
@@ -252,14 +252,14 @@ public:
   | Scheduler, runner.  |
   `--------------------*/
 public:
-  const scheduler::Scheduler& getScheduler () const;
-  scheduler::Scheduler& getScheduler ();
+  const scheduler::Scheduler& getScheduler() const;
+  scheduler::Scheduler& getScheduler();
 
-  runner::Runner& getCurrentRunner () const;
+  runner::Runner& getCurrentRunner() const;
 
 protected:
   //! Overload this function to specify how your robot is displaying messages.
-  virtual void effectiveDisplay (const char*) = 0;
+  virtual void effectiveDisplay(const char*) = 0;
 
 private:
   // Pointer to stop the header dependency.
@@ -269,11 +269,11 @@ private:
 private:
   /// \{ Various parts of @c UServer::work.
   /// Scan currently opened connections for ongoing work
-  void work_handle_connections_ ();
+  void work_handle_connections_();
   /// Scan currently opened connections for deleting marked commands or
   /// killall order
-  void work_handle_stopall_ ();
-  void work_test_cpuoverload_ ();
+  void work_handle_stopall_();
+  void work_test_cpuoverload_();
   /// \}
 
 public:
@@ -314,12 +314,12 @@ private:
 `-------------------------*/
 
 /// Send debugging messages via ::urbiserver.
-void vdebug (const char* fmt, va_list args)
-  __attribute__ ((__format__ (__printf__, 1, 0)));
+void vdebug(const char* fmt, va_list args)
+  __attribute__((__format__(__printf__, 1, 0)));
 
 /// Send debugging messages via ::urbiserver.
-void debug (const char* fmt, ...)
-  __attribute__ ((__format__ (__printf__, 1, 2)));
+void debug(const char* fmt, ...)
+  __attribute__((__format__(__printf__, 1, 2)));
 
 // Send debugging messages.
 # if URBI_DEBUG
