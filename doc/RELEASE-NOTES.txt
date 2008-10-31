@@ -118,6 +118,17 @@ For example, -1 designates the last element, and -2 the one before that.
   ["a", "b", "c"][-1]
   [00000001] "c"
 
+Tag names
+---------
+
+Tags were displayed as "Tag_0xADDR" which did not make their "name" slot
+apparent. They are now displayed as "Tag<name>":
+
+  Tag.new;
+  [00000001] Tag<tag1>
+  Tag.new("mytag");
+  [00000002] Tag<mytag>
+
 UObjects
 ========
 

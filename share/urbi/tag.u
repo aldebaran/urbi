@@ -2,6 +2,11 @@ do (Global.Tag)
 {
   var SystemTag = Tag.new("SystemTag");
 
+  function asString()
+  {
+    "Tag<" + name + ">"
+  };
+
   var begin = SystemTag.new("begin");
   var end = SystemTag.new("end");
 
