@@ -3,8 +3,11 @@ m4_pattern_forbid([^AX_])
 m4_pattern_forbid([^URBI_])
 
 AC_PREREQ([2.60])
-AC_INIT([Urbi Kernel], [2.0-beta], [kernel-bugs@lists.gostai.com], [kernel])
-URBI_KERNEL_VERSION
+AC_INIT([Urbi Kernel], m4_esyscmd([build-aux/git-version-gen]),
+        [kernel-bugs@lists.gostai.com], [kernel])
+# FIXME: Disable the generation of CPP symbols defining the current
+# version, as it is unclear what it should be.
+# URBI_KERNEL_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2008])
 
 # Libtoolize needs to see this invocation...
@@ -130,7 +133,7 @@ AC_SUBST([SHLIBEXT])
 
 URBI_TESTS
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile GNUmakefile src/Makefile])
 AC_CONFIG_FILES([scripts/package], [chmod +x scripts/package])
 AC_CONFIG_HEADERS([src/kernel/config.h])
 AC_OUTPUT

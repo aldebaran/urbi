@@ -12,8 +12,8 @@ dist_kernelincludekernel_HEADERS =		\
   include/kernel/userver.hxx			\
   include/kernel/utypes.hh
 
-nodist_kernelincludekernel_HEADERS =		\
-  include/kernel/version.hh
+#nodist_kernelincludekernel_HEADERS =		\
+#  include/kernel/version.hh
 
 
 ## ------- ##
