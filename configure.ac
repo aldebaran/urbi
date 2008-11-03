@@ -3,7 +3,9 @@ m4_pattern_forbid([^AX_])
 m4_pattern_forbid([^URBI_])
 
 AC_PREREQ([2.60])
-AC_INIT([Urbi Kernel], m4_esyscmd([build-aux/git-version-gen]),
+AC_INIT([Urbi Kernel],
+dnl m4_esyscmd([build-aux/git-version-gen --file --no-eol]),
+preview-2.0-beta-2,
         [kernel-bugs@lists.gostai.com], [kernel])
 # FIXME: Disable the generation of CPP symbols defining the current
 # version, as it is unclear what it should be.

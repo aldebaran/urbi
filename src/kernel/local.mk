@@ -20,3 +20,13 @@ dist_libuobject_la_SOURCES +=			\
   kernel/usystem.cc				\
   kernel/uvalue-cast.cc				\
   kernel/uvalue-cast.hh
+
+
+# Create the file git-config.hh with accurate revision information.
+# This is time consumming.  We will try to make it less costly later.
+BUILT_SOURCES += kernel/git-version.hh
+.PHONY: kernel/git-version.hh
+kernel/git-version.hh:
+	rm -f $@.tmp
+	(cd $(top_srcdir) && build-aux/git-version-gen --header) >$@.tmp
+	$(build_aux_dir)/move-if-change $@.tmp $@

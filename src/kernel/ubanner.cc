@@ -3,6 +3,7 @@
 // which is demanding.
 
 #include <kernel/userver.hh>
+#include <kernel/git-version.hh>
 
 #include <libport/package-info.hh>
 
@@ -16,7 +17,7 @@
 USDK_API const char* HEADER_BEFORE_CUSTOM[] =
   {
     "*** **********************************************************\n",
-    "*** URBI Kernel " PACKAGE_VERSION_REV "\n",
+    "*** URBI Kernel " PACKAGE_NAME " " GIT_VERSION "\n",
     "*** Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
     "***\n",
     0
@@ -36,7 +37,7 @@ USDK_API const char* HEADER_AFTER_CUSTOM[] =
 
 USDK_API const char* uconsole_banner[] =
 {
-  "*** URBI Kernel Console " PACKAGE_VERSION_REV "\n",
+  "*** URBI Kernel Console " PACKAGE_NAME " " GIT_VERSION "\n",
   "*** "
   "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
   ""
