@@ -73,6 +73,8 @@ namespace urbi
 		bool server = false,
                 bool startCallbackThread = true);
 
+    ~USyncClient ();
+
   protected:
     /** Synchronously ask the server for the value of an expression.
      * \param expression the URBI expression to evaluate.
@@ -161,6 +163,7 @@ namespace urbi
     std::string syncTag;
 
     bool stopCallbackThread_;
+    void* cbThread;
     // Used to block until the callback thread is realy stopped.
     libport::Semaphore stopCallbackSem_;
   };
