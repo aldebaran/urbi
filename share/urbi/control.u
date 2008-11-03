@@ -12,10 +12,14 @@ class Global.Control
     detach ({
       var delay = call.evalArgAt (0) |
       var deadline = shiftedTime |
-      loop {
-        detach (call.evalArgAt (1)) |
-	deadline += delay |
-        sleep (deadline - shiftedTime)
+      var controlTag = Tag.newFlowControl |
+      throw {
+	controlTag: loop
+          {
+            detach ({ try {call.evalArgAt (1)} catch (var e) { controlTag.stop(e)} }) |
+            deadline += delay |
+            sleep (deadline - shiftedTime)
+	  }
       }
     })
   };

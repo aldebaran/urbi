@@ -138,6 +138,12 @@ apparent. They are now displayed as "Tag<name>":
   Tag.new("mytag");
   [00000002] Tag<mytag>
 
+"every" and exceptions
+----------------------
+
+If an exception is thrown and not caught during the execution of an "every"
+block, the "every" expression is stopped and the exception displayed.
+
 UObjects
 ========
 
