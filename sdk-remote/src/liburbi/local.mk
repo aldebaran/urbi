@@ -13,6 +13,7 @@ dist_umain_DATA = liburbi/umain.cc
 lib_LTLIBRARIES = liburbi/liburbi.la
 liburbi_liburbi_la_SOURCES =			\
   libuco/uvalue-common.cc			\
+  liburbi/package-info.cc			\
   liburbi/uabstractclient.cc			\
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
@@ -26,7 +27,7 @@ liburbi_liburbi_la_LDFLAGS = -no-undefined
 all-local: liburbi/liburbi.la.stamp
 
 liburbi/liburbi.la.stamp: liburbi/liburbi.la
-	$(top_srcdir)/build-aux/fix-libtool-la liburbi/liburbi.la \
+	$(build_aux_dir)/fix-libtool-la liburbi/liburbi.la \
 	  liburbi/liburbi.la.stamp
 
 CLEANFILES += liburbi/liburbi.la.stamp

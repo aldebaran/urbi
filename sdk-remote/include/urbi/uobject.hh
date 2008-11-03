@@ -1,22 +1,4 @@
-/*! \file urbi/uobject.hh
- *******************************************************************************
-
- File: uobject.hh\n
- Definition of the UObject class and necessary related classes.
-
- This file is part of UObject Component Architecture\n
- (c) 2006 Gostai S.A.S.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.com
-
- **************************************************************************** */
+/// \file urbi/uobject.hh
 
 #ifndef URBI_UOBJECT_HH
 # define URBI_UOBJECT_HH
@@ -25,12 +7,12 @@
 
 # include <libport/fwd.hh>
 # include <libport/ufloat.h>
-# include <libport/package-info.hh>
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
 # include <urbi/ucallbacks.hh>
 # include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
+# include <urbi/package-info.hh>
 
 // Tell our users that it is fine to use void returning functions.
 #define USE_VOID 1
@@ -130,9 +112,6 @@ namespace urbi
 {
 
   typedef std::list<UObject*> UObjectList;
-
-  /// Package information about liburbi.
-  const libport::PackageInfo& package_info ();
 
   typedef int UReturn;
 

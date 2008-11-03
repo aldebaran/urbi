@@ -1,0 +1,10 @@
+# We want to add a dependency on distdir, which Automake does not
+# allow: it thinks we are *redefining* distdir!  As a result, distdir
+# is empty in Makefile.in.
+#
+# Since Automake will not read GNUmakefile, we use this GNUmakefile
+# file to wrap the Automake generated Makefile.
+
+include Makefile
+include $(build_aux_dir)/package-version.mk
+

@@ -63,7 +63,7 @@ examples_urbi_balltrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
 examples_urbi_balltrackinghead_LDADD = $(X11_LDADD) $(AM_LDADD)
 
 examples_urbi_image_SOURCES =			\
-  examples/urbi-image.cc				\
+  examples/urbi-image.cc			\
   $(monitor_sources)
 examples_urbi_image_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
 examples_urbi_image_LDADD = $(X11_LDADD) $(AM_LDADD)

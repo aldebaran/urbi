@@ -2,8 +2,9 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.61])
-AC_INIT([URBI SDK Remote], [1.6],
+AC_INIT([URBI SDK Remote], [UNDEFINED],
 	[sdk-remote-bugs@gostai.com], [sdk-remote])
+URBI_PACKAGE_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2008])
 
 # Auxiliary files.
@@ -156,6 +157,7 @@ AC_CONFIG_SUBDIRS([jpeg-6b])
 ## -------- ##
 
 AC_CONFIG_FILES([Makefile
+                GNUmakefile
                 src/Makefile
 	        src/swig/Makefile
                 src/tests/Makefile

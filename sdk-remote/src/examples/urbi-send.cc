@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-
 /* This demonstration program sends commands contained in a file to an
    urbi server */
 
@@ -56,8 +55,8 @@ namespace
   void
   version ()
   {
-    // FIXME: Find some relevant version info.
-    exit (EX_OK);
+    std::cout << urbi::package_info() << std::endl
+              << libport::exit(EX_OK);
   }
 }
 

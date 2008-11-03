@@ -8,6 +8,7 @@ urbiinclude_HEADERS =				\
   $(ucallbacks_hh)				\
   include/urbi/export.hh			\
   include/urbi/fwd.hh				\
+  include/urbi/package-info.hh			\
   include/urbi/qt_umain.hh			\
   include/urbi/uabstractclient.hh		\
   include/urbi/ubinary.hh			\
