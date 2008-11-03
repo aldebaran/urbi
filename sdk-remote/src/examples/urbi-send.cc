@@ -36,7 +36,7 @@ namespace
 {
   static
   void
-  usage ()
+  usage()
   {
     std::cout <<
       "usage: " << libport::program_name << " [OPTION].. [FILE]...\n"
@@ -44,8 +44,8 @@ namespace
       "  FILE    to load\n"
       "\n"
       "Options:\n"
-      "  -h, --help        display this message and exit successfully\n"
-      "  -v, --version     display version information\n"
+      "  -h, --help        display this message and exit\n"
+      "  -v, --version     display version information and exit\n"
       "  -H, --host HOST   the host running the Urbi server (default: localhost)\n"
       "  -p, --port PORT   the Urbi server port\n"
       ;
@@ -54,7 +54,7 @@ namespace
 
   static
   void
-  version ()
+  version()
   {
     std::cout << urbi::package_info() << std::endl
               << libport::exit(EX_OK);
