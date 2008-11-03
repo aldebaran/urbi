@@ -38,13 +38,22 @@ namespace urbi
     , syncLock_()
     , syncTag()
     , stopCallbackThread_(!startCallbackThread)
+    , cbThread (0)
   {
     if (error())
       return;
+
     if (startCallbackThread)
-      libport::startThread(this, &USyncClient::callbackThread);
+      cbThread = libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
+  }
+
+  USyncClient::~USyncClient ()
+  {
+    stopCallbackThread();
+    if (cbThread)
+      libport::joinThread(cbThread);
   }
 
   void USyncClient::callbackThread()

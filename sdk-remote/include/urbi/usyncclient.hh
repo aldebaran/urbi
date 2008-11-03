@@ -59,6 +59,8 @@ namespace urbi
 		bool _server = false,
                 bool startCallbackThread = true);
 
+    ~USyncClient ();
+
   protected:
     /** Synchronously ask the server for the value of an expression.
      * \param expression the URBI expression to evaluate. It must be a single expression and must not start with a tag.
@@ -129,6 +131,7 @@ namespace urbi
     std::string syncTag;
 
     bool stopCallbackThread_;
+    void* cbThread;
   };
 
 } // namespace urbi
