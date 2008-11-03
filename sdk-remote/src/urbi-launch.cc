@@ -6,26 +6,26 @@
 
 #include <sdk/config.h>
 
+#include <libport/cli.hh>
 #include <libport/file-system.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
+#include <libport/program-name.hh>
+#include <libport/sysexits.hh>
 #include <libport/windows.hh>
 
+#include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
 
 using namespace urbi;
 
-std::string host = URBI_HOST;
+// List of module names.
+typedef std::list<std::string> modules_type;
+
+// The kind of host (not the host name).
+std::string urbi_host = URBI_HOST;
 std::string dynld = URBI_SHREXT;
 const char* umain_sym = "urbi_main";
-enum ConnectMode {
-  /// Start a new engine and plug the module
-  MODE_PLUGIN_START,
-  /// Load the module in a running engine as a plugin
-  MODE_PLUGIN_LOAD,
-  /// Connect the module to a running engine (remote uobject)
-  MODE_REMOTE
-};
 
 static UCallbackAction
 onError(const UMessage& msg)
@@ -41,58 +41,62 @@ onDone(const UMessage&)
 }
 
 static int
-connect_plugin(int argc, const char* argv[],
-               std::list<std::string>& modules)
+connect_plugin(const std::string& host, int port, modules_type& modules)
 {
-  std::string host = "localhost";
-  int port = 54000;
-  for (int i=1; i< argc-1; i++)
-  {
-    std::string arg = argv[i];
-    if (arg == "-H" || arg == "--host")
-      host = argv[++i];
-    else if (arg == "-P" || arg == "--port")
-      port = strtol(argv[++i], 0, 0);
-  }
   UClient cl(host.c_str(), port);
   if (cl.error())
-    ::exit(1); // UClient allready displayde an error message
+    // UClient already displayed an error message.
+    ::exit(1);
   cl.setErrorCallback(callback(&onError));
   cl.setCallback(callback(&onDone), "output");
   foreach(const std::string& m, modules)
     cl << "loadModule(\"" << m << "\");";
   cl << "output << 1;";
-  while(true)
+  while (true)
     sleep(1);
   return 0;
 }
 
 static void
-usage(const char* name)
+usage()
 {
-  std::cerr
-  << "usage: " << name << " MODE MODULENAMES ... [OPTIONS]\n"
-  << "    Start an UObject in either remote or plugin mode\n"
-  << "\n"
-  << "Possible values for MODE:\n"
-  << "  -r, --remote      Start as a remote uobject\n"
-  << "  -p, --plugin      Start as a plugin uobject on a running server\n"
-  << "  -s, --start       Start an urbi server and connect as plugin\n"
-  << "  -c, --custom FILE Start using the shared library FILE\n"
-  << "\n"
-  << "Options for plugin mode:\n"
-  << "  -H, --host             Server host name\n"
-  << "  -p, --port             Server port\n"
-  << "Options for remote and start mode are passed to urbi::main\n"
-  << "\n"
-  << "MODULENAMES is a list of modules and directory which will be searched\n"
-  << "  for modules.\n"
-  << std::endl;
-  ::exit(1);
+  std::cout <<
+    "usage: " << libport::program_name << " [OPTIONS] MODULE_NAMES ...\n"
+    "    Start an UObject in either remote or plugin mode\n"
+    "\n"
+    "Options:\n"
+    "  -h, --help        display this message and exit\n"
+    "  -v, --version     display version information and exit\n"
+    "\n"
+    "Mode selection:\n"
+    "  -r, --remote       start as a remote uobject\n"
+    "  -p, --plugin       start as a plugin uobject on a running server\n"
+    "  -s, --start        start an urbi server and connect as plugin\n"
+    "  -c, --custom FILE  start using the shared library FILE\n"
+    "\n"
+    "Options for plugin mode:\n"
+    "  -H, --host   server host name\n"
+    "  -p, --port   server port\n"
+    "\n"
+    "Options for remote and start mode are passed to urbi::main.\n"
+    "\n"
+    "MODULE_NAMES is a list of modules and directory which will be searched\n"
+    "  for modules.\n"
+    ;
+  ::exit(EX_OK);
+}
+
+
+static
+void
+version()
+{
+  std::cout << urbi::package_info() << std::endl
+            << libport::exit(EX_OK);
 }
 
 static void
-add_module(libport::path p, std::list<std::string> &res)
+add_module(libport::path p, modules_type& res)
 {
   if (p.exists())
   {
@@ -104,9 +108,7 @@ add_module(libport::path p, std::list<std::string> &res)
 			       " does not look like a shared library " +
 			       "(extension `" + dynld + "')");
     if (!p.absolute_get())
-    {
       p = libport::get_current_directory() / p;
-    }
     res.push_back(p.to_string());
   }
   else
@@ -114,62 +116,64 @@ add_module(libport::path p, std::list<std::string> &res)
 }
 
 typedef int (*umain_type)(int argc, const char* argv[], int block);
-int main(int argc, const char* argv[])
+int
+main(int argc, const char* argv[])
 {
+  libport::program_name = argv[0];
   lt_dlinit();
 
   const char* urbi_root = getenv("URBI_ROOT");
   libport::path prefix(urbi_root ? urbi_root : URBI_PREFIX);
 
-  int argp = 1;
-
-
-  if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
-    usage(argv[0]);
-
-  /// Parse mode
-  ConnectMode connectMode = MODE_REMOTE;
-  std::string mode = argv[argp++];
-  /// Be leniant, remove all '-'.
-  while (mode.length() && mode[0] == '-')
-    mode = mode.substr(1, mode.npos);
-  std::string dll;
-  /// Be extra-leniant, only check first letter.
-  switch(mode[0])
+  enum ConnectMode
   {
-  case 'r':
-    connectMode = MODE_REMOTE;
-    break;
-  case 's':
-    connectMode = MODE_PLUGIN_START;
-    break;
-  case 'p':
-    connectMode = MODE_PLUGIN_LOAD;
-    break;
-  case 'c':
-    connectMode = MODE_REMOTE;
-    dll = argv[argp++];
-    break;
-  default:
-    std::cerr << "Invalid mode '" << argv[1] << "'" << std::endl;
-    usage(argv[0]);
-    break;
+    /// Start a new engine and plug the module
+    MODE_PLUGIN_START,
+    /// Load the module in a running engine as a plugin
+    MODE_PLUGIN_LOAD,
+    /// Connect the module to a running engine (remote uobject)
+    MODE_REMOTE
+  };
+  ConnectMode connectMode = MODE_REMOTE;
+  std::string dll;
+  /// Server host name.
+  std::string host = "localhost";
+  /// Server port.
+  int port = urbi::UClient::URBI_PORT;
+  // The list of modules.
+  modules_type modules;
+
+  // Parse the command line.
+  for (int i = 1; i < argc; ++i)
+  {
+    std::string arg = argv[i];
+
+    if (arg == "--custom" || arg == "-c")
+      connectMode = MODE_REMOTE;
+    else if (arg == "--help" || arg == "-h")
+      usage();
+    else if (arg == "--host" || arg == "-H")
+      host = argv[++i];
+    else if (arg == "--plugin" || arg == "-p")
+      connectMode = MODE_PLUGIN_LOAD;
+    else if (arg == "--remote" || arg == "-r")
+    {
+      connectMode = MODE_REMOTE;
+      dll = libport::convert_argument<std::string> (arg, argv[++i]);
+    }
+    else if (arg == "--start" || arg == "-s")
+      connectMode = MODE_PLUGIN_START;
+    else if (arg == "--version" || arg == "-v")
+      version();
+    else if (arg[0] == '-' && arg[1] != 0)
+      libport::invalid_option(arg);
+    else
+      // An argument: a module
+      add_module(argv[i], modules);
   }
 
-   /// Get the list of modules.
-  std::list<std::string> modules;
-  for (; argp < argc && argv[argp][0] != '-'; ++argp)
-    add_module(argv[argp], modules);
-
-  /// Store args, intercepting host and port just in case
-  const char** nargv = new const char*[argc];
-  int nargp = 1;
-  nargv[0] = argv[0];
-  while (argp < argc)
-    nargv[nargp++] = argv[argp++];
-
   if (connectMode == MODE_PLUGIN_LOAD)
-    return connect_plugin(nargp, nargv, modules);
+    return connect_plugin(host, port, modules);
 
   /* The two other modes are handled the same way:
    * -Dlopen the correct libuobject.
@@ -177,7 +181,7 @@ int main(int argc, const char* argv[])
    * -Call urbi::main found by dlsym() in libuobject.
    */
   if (dll.empty())
-    dll = prefix / "gostai" / "core" / host /
+    dll = prefix / "gostai" / "core" / urbi_host /
       (connectMode == MODE_REMOTE ? "remote" : "engine") /
 #ifdef WIN32
       "libuobject.dll"
@@ -193,21 +197,18 @@ int main(int argc, const char* argv[])
     ::exit(1);
   }
 
-  foreach(const std::string& s, modules)
+  foreach (const std::string& s, modules)
   {
     std::cerr << "Loading uobjects: " << s << std::endl;
     lt_dlhandle uobject = lt_dlopen(s.c_str());
     if (!uobject)
-    {
-      std::cerr << "Failed to load " << s << ": " << lt_dlerror() << std::endl;
-      ::exit(1);
-    }
+      std::cerr << "Failed to load " << s << ": " << lt_dlerror() << std::endl
+                << libport::exit(1);
   }
+
   umain_type umain = (umain_type) lt_dlsym(core, umain_sym);
   if (!umain)
-  {
-    std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl;
-    ::exit(1);
-  }
-  umain(nargp, nargv, true);
+    std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl
+              << libport::exit(1);
+  umain(argc, argv, true);
 }
