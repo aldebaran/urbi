@@ -16,7 +16,7 @@
 USDK_API const char* HEADER_BEFORE_CUSTOM[] =
   {
     "*** **********************************************************\n",
-    "*** URBI Kernel version " PACKAGE_VERSION_REV "\n",
+    "*** URBI Kernel " PACKAGE_VERSION_REV "\n",
     "*** Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
     "***\n",
     0
@@ -25,7 +25,7 @@ USDK_API const char* HEADER_BEFORE_CUSTOM[] =
 USDK_API const char* HEADER_AFTER_CUSTOM[] =
   {
     "***\n",
-    "*** URBI comes with ABSOLUTELY NO WARRANTY;\n",
+    "*** URBI comes with ABSOLUTELY NO WARRANTY.\n",
     "*** This software can be used under certain conditions;\n",
     "*** see LICENSE file for details.\n",
     "***\n",
@@ -36,8 +36,8 @@ USDK_API const char* HEADER_AFTER_CUSTOM[] =
 
 USDK_API const char* uconsole_banner[] =
 {
-  "***      URBI Kernel Console " PACKAGE_VERSION_REV "\n",
-  "***      "
+  "*** URBI Kernel Console " PACKAGE_VERSION_REV "\n",
+  "*** "
   "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
   ""
 };
