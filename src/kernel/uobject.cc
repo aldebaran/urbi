@@ -27,6 +27,7 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <object/string.hh>
+#include <object/urbi-exception.hh>
 # include <runner/call.hh>
 # include <runner/raise.hh>
 # include <runner/runner.hh>
@@ -462,10 +463,17 @@ namespace urbi
   UVar::operator T()                                            \
   {                                                             \
     ECHO("uvar cast operator for "<<name);                      \
-    if (owned)                                                  \
-      return ::uvalue_cast(uvar_uowned_get(name));              \
-    else                                                        \
-      return ::uvalue_cast(uvar_get(name));                     \
+    try {                                                       \
+      if (owned)                                                \
+        return ::uvalue_cast(uvar_uowned_get(name));            \
+      else                                                      \
+        return ::uvalue_cast(uvar_get(name));                   \
+    }                                                           \
+    catch (object::UrbiException& e)                            \
+    {                                                           \
+      runner::raise_primitive_error("Invalid read of void UVar '" + \
+                                    name +"'");                     \
+    }                                                              \
   }
 
   UVAR_OPERATORS(ufloat, ufloat);
@@ -478,7 +486,7 @@ namespace urbi
   //no corresponding operator= for this one...
   UVar::operator int()
   {
-    return ::uvalue_cast(owned ? uvar_uowned_get(name) : uvar_get(name));
+    return (ufloat)(*this);
   }
 
   UDataType
