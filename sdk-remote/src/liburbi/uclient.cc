@@ -168,7 +168,7 @@ namespace urbi
 
   UClient::~UClient()
   {
-    if (libport::closeSocket(sd) == -1)
+    if (sd >= 0 && libport::closeSocket(sd) == -1)
       libport::perror ("cannot close sd");
 
     sd = -1;
