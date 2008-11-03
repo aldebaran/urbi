@@ -163,6 +163,6 @@ AC_CONFIG_FILES([Makefile
                 src/tests/Makefile
 ])
 # Use something which is more useful for the Makefiles.
-VERSION='$(shell cat $(top_srcdir)/.version)'
+VERSION='$(shell $(top_srcdir)/build-aux/git-version-get)'
 PACKAGE_VERSION='$(VERSION)'
 AC_OUTPUT
