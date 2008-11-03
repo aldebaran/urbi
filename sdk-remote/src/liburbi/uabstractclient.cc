@@ -42,10 +42,11 @@ namespace urbi
   {
     UCallback cb;
   public:
-    UCallbackWrapperCB(UCallback cb): cb(cb)
+    UCallbackWrapperCB(UCallback cb)
+      : cb(cb)
     {
     }
-    virtual UCallbackAction operator ()(const UMessage& msg)
+    virtual UCallbackAction operator()(const UMessage& msg)
     {
       return cb(msg);
     }
@@ -57,10 +58,12 @@ namespace urbi
     UCustomCallback cb;
     void * data;
   public:
-    UCallbackWrapperCCB(UCustomCallback cb, void * data): cb(cb), data(data)
+    UCallbackWrapperCCB(UCustomCallback cb, void* data)
+      : cb(cb)
+      , data(data)
     {
     }
-    virtual UCallbackAction operator ()(const UMessage& msg)
+    virtual UCallbackAction operator()(const UMessage& msg)
     {
       return cb(data, msg);
     }
@@ -70,7 +73,7 @@ namespace urbi
   class UClientStreambuf: public std::streambuf
   {
   public:
-    UClientStreambuf(UAbstractClient * cl)
+    UClientStreambuf(UAbstractClient* cl)
       : client(cl)
     {
     }
@@ -84,7 +87,8 @@ namespace urbi
     UAbstractClient* client;
   };
 
-  int UClientStreambuf::overflow(int c )
+  int
+  UClientStreambuf::overflow(int c )
   {
     if (c != EOF)
     {
@@ -94,7 +98,8 @@ namespace urbi
     return c;
   }
 
-  std::streamsize UClientStreambuf::xsputn(const char* s, std::streamsize n)
+  std::streamsize
+  UClientStreambuf::xsputn(const char* s, std::streamsize n)
   {
     client->sendBufferLock.lock();
     if (strlen(client->sendBuffer)+1+n > static_cast<unsigned>(client->buflen))
@@ -116,7 +121,7 @@ namespace urbi
   }
 
 
-  const char * UAbstractClient::CLIENTERROR_TAG="client error";
+  const char* UAbstractClient::CLIENTERROR_TAG="client error";
 
   /*! Pass the given UMessage to all registered callbacks with the
    * corresponding tag, as if it were comming from the URBI server.
@@ -227,7 +232,7 @@ namespace urbi
   /*! Multiple commands can be sent in one call.
    */
   int
-  UAbstractClient::send(const char *command, ...)
+  UAbstractClient::send(const char* command, ...)
   {
     if (rc)
       return -1;
@@ -247,7 +252,8 @@ namespace urbi
     return rc;
   }
 
-  int UAbstractClient::send(UValue &v)
+  int
+  UAbstractClient::send(UValue &v)
   {
     switch (v.type)
     {
@@ -305,7 +311,7 @@ namespace urbi
    buffer, and sent when endPack() is called.
    */
   int
-  UAbstractClient::pack(const char *command, ...)
+  UAbstractClient::pack(const char* command, ...)
   {
     if (rc)
       return -1;
@@ -318,7 +324,7 @@ namespace urbi
 
 
   int
-  UAbstractClient::vpack(const char *command, va_list arg)
+  UAbstractClient::vpack(const char* command, va_list arg)
   {
     //expand
     if (rc)
@@ -333,7 +339,7 @@ namespace urbi
   int
   UAbstractClient::sendFile(const std::string& f)
   {
-    const char *name = f.c_str();
+    const char* name = f.c_str();
     if (rc)
       return -1;
     FILE *fd;
@@ -370,7 +376,7 @@ namespace urbi
 
   int
   UAbstractClient::sendBin(const void *buffer, int len,
-			   const char *header, ...)
+			   const char* header, ...)
   {
     if (rc)
       return -1;
@@ -398,12 +404,12 @@ namespace urbi
 
   struct sendSoundData
   {
-    char * buffer;
+    char* buffer;
     int bytespersec;
     int length;
     int pos;
-    char * device;
-    char * tag;
+    char* device;
+    char* tag;
     char formatString[50];
     USoundFormat format;
     UAbstractClient * uc;
@@ -577,7 +583,7 @@ namespace urbi
   }
 
   UCallbackID
-  UAbstractClient::setCallback(UCallback cb, const char *tag)
+  UAbstractClient::setCallback(UCallback cb, const char* tag)
   {
     return addCallback(tag, *new UCallbackWrapperCB(cb));
   }
@@ -593,7 +599,7 @@ namespace urbi
   /*! Returns 1 and fills tag on success, 0 on failure
    */
   int
-  UAbstractClient::getAssociatedTag(UCallbackID id, char * tag)
+  UAbstractClient::getAssociatedTag(UCallbackID id, char* tag)
   {
     listLock.lock();
     std::list<UCallbackInfo>:: iterator it =
@@ -629,11 +635,11 @@ namespace urbi
   }
 
   UCallbackID
-  UAbstractClient::sendCommand(UCallback cb, const char *cmd, ...)
+  UAbstractClient::sendCommand(UCallback cb, const char* cmd, ...)
   {
     char tag[16];
     makeUniqueTag(tag);
-    char *mcmd = new char[strlen(cmd) + strlen(tag) + 5];
+    char* mcmd = new char[strlen(cmd) + strlen(tag) + 5];
     sprintf(mcmd, "%s << %s", tag, cmd);
     UCallbackID cid = setCallback(cb, tag);
     sendBufferLock.lock();
@@ -655,11 +661,11 @@ namespace urbi
 
   UCallbackID
   UAbstractClient::sendCommand(UCustomCallback cb, void *cbData,
-			       const char *cmd, ...)
+			       const char* cmd, ...)
   {
     char tag[16];
     makeUniqueTag(tag);
-    char *mcmd = new char[strlen(cmd) + strlen(tag) + 10];
+    char* mcmd = new char[strlen(cmd) + strlen(tag) + 10];
     sprintf(mcmd, "%s << %s", tag, cmd);
     UCallbackID cid = setCallback(cb, cbData, tag);
     sendBufferLock.lock();
@@ -681,7 +687,7 @@ namespace urbi
   }
 
   int
-  UAbstractClient::putFile(const char * localName, const char * remoteName)
+  UAbstractClient::putFile(const char* localName, const char* remoteName)
   {
     int len;
     struct stat st;
@@ -706,7 +712,7 @@ namespace urbi
 
   int
   UAbstractClient::putFile(const void * buffer, int length,
-			   const char * remoteName)
+			   const char* remoteName)
   {
     if (!canSend(length+strlen(remoteName)+ 20))
     {
@@ -960,17 +966,20 @@ namespace urbi
     }
   }
 
-  UCallbackID UAbstractClient::setWildcardCallback(UCallbackWrapper& callback)
+  UCallbackID
+  UAbstractClient::setWildcardCallback(UCallbackWrapper& callback)
   {
     return addCallback(URBI_WILDCARD_TAG, callback);
   }
 
-  UCallbackID UAbstractClient::setErrorCallback(UCallbackWrapper& callback)
+  UCallbackID
+  UAbstractClient::setErrorCallback(UCallbackWrapper& callback)
   {
     return addCallback(URBI_ERROR_TAG, callback);
   }
 
-  UCallbackID UAbstractClient::setClientErrorCallback(UCallbackWrapper& callback)
+  UCallbackID
+  UAbstractClient::setClientErrorCallback(UCallbackWrapper& callback)
   {
     return addCallback(CLIENTERROR_TAG, callback);
   }
@@ -999,7 +1008,7 @@ namespace urbi
   \param erc an optional system error code on which strerror is called
   */
   void
-  UAbstractClient::clientError(const char * message, int erc)
+  UAbstractClient::clientError(const char* message, int erc)
   {
     UMessage m(*this);
     m.type = MESSAGE_ERROR;
@@ -1028,9 +1037,12 @@ namespace urbi
   }
 
   UMessage::UMessage(UAbstractClient& client, int timestamp,
-		     const char *tag, const char *message,
+		     const char* tag, const char* message,
 		     std::list<BinaryData> bins)
-    : client(client), timestamp(timestamp),  tag(tag), value(0)
+    : client(client)
+    , timestamp(timestamp)
+    , tag(tag)
+    , value(0)
   {
     rawMessage = std::string(message);
     while (message[0] ==' ')
@@ -1096,7 +1108,8 @@ namespace urbi
       delete value;
   }
 
-  std::ostream& operator <<(std::ostream &s, const UMessage &m)
+  std::ostream&
+  operator<<(std::ostream &s, const UMessage &m)
   {
     s<<"["<<m.timestamp<<":"<<m.tag<<"] ";
     switch (m.type)
@@ -1125,7 +1138,7 @@ namespace urbi
   }
 
   std::ostream&
-  unarmorAndSend(const char * a)
+  unarmorAndSend(const char* a)
   {
     std::ostream& s = default_stream();
     if (strlen(a)>2)
