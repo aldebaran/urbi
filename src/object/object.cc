@@ -424,4 +424,15 @@ namespace object
     return "Object";
   }
 
+  /*-------------.
+  | Urbi methods |
+  `-------------*/
+
+  rObject
+  Object::urbi_locateSlot(key_type name)
+  {
+    rObject o = slot_locate(name);
+    return o ? o : nil_class;
+  }
+
 } // namespace object

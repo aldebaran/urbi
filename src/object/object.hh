@@ -210,6 +210,13 @@ namespace object
 
     virtual std::string type_name_get() const;
 
+    /*-------------.
+    | Urbi methods |
+    `-------------*/
+
+    rObject
+    urbi_locateSlot(key_type k);
+
   private:
     rObject
     slot_locate(const key_type& k,

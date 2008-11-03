@@ -307,18 +307,6 @@ namespace object
     return obj;
   }
 
-   /// Locate a slot.
-  static rObject
-  object_class_locateSlot (runner::Runner&, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 1);
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-
-    rObject o = args[0]->slot_locate(libport::Symbol(arg1->value_get()));
-    return o ? o : nil_class;
-  }
-
   static rObject
   object_class_setSlot (runner::Runner&, objects_type& args)
   {
@@ -374,7 +362,6 @@ namespace object
     DECLARE(getLazyLocalSlot);
     DECLARE(getSlot);
     DECLARE(init);
-    DECLARE(locateSlot);
     DECLARE(EQ_EQ_EQ);
     DECLARE(protos);
     DECLARE(removeProto);
@@ -393,6 +380,7 @@ namespace object
     DECLARE(getProperty, &Object::property_get);
     DECLARE(hasProperty, &Object::property_has);
     DECLARE(hasSlot, &Object::slot_has);
+    DECLARE(locateSlot, &Object::urbi_locateSlot);
     DECLARE(setProperty, &Object::property_set);
     DECLARE(removeProperty, &Object::property_remove);
 #undef DECLARE
