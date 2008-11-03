@@ -49,10 +49,10 @@ the "-i -p 54000" command line arguments.
 Note that you will likely get a message such as:
 
 *** **********************************************************
-*** URBI Kernel version 2.0-beta rev. 77b9ae2
+*** URBI Kernel version preview/2.0/beta1-189-gd93751d
 *** Copyright (C) 2005-2008 Gostai SAS
 ***
-*** URBI Kernel Console version 2.0-beta rev. 77b9ae2
+*** URBI Kernel Console preview/2.0/beta1-189-gd93751d
 *** Copyright (C) 2005-2008 Gostai SAS
 ***
 *** URBI comes with ABSOLUTELY NO WARRANTY.
