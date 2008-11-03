@@ -205,6 +205,9 @@ namespace urbi
 
   UAbstractClient::~UAbstractClient()
   {
+    if ((void*)getDefaultClient () == (void*)this)
+      setDefaultClient (0);
+
     delete [] recvBuffer;
     delete [] sendBuffer;
   }
