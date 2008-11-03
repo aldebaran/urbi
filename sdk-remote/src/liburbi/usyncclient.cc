@@ -54,7 +54,7 @@ namespace urbi
       sem_--;
       if (stopCallbackThread_)
       {
-        sem_++; //ooopsie
+        sem_++;
 	return;
       }
       queueLock_.lock();
