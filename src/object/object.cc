@@ -428,11 +428,44 @@ namespace object
   | Urbi methods |
   `-------------*/
 
+  void
+  Object::urbi_createSlot(key_type name)
+  {
+    slot_set(name, void_class);
+  }
+
+  rObject
+  Object::urbi_getSlot(key_type name)
+  {
+    return slot_get(name);
+  }
+
   rObject
   Object::urbi_locateSlot(key_type name)
   {
     rObject o = slot_locate(name);
     return o ? o : nil_class;
+  }
+
+  rObject
+  Object::urbi_removeSlot(key_type name)
+  {
+    slot_remove(name);
+    return this;
+  }
+
+  rObject
+  Object::urbi_setSlot(key_type name, const rObject& value)
+  {
+    slot_set(name, value);
+    return value;
+  }
+
+  rObject
+  Object::urbi_updateSlot(runner::Runner& r,
+                          key_type name, const rObject& value)
+  {
+    return slot_update(r, name, value);
   }
 
 } // namespace object

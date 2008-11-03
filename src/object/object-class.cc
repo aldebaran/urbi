@@ -78,6 +78,7 @@ namespace object
     std::string tag;
     if (args.size() >= 3)
     {
+      type_check(args[2], String::proto);
       const rString& arg2 = args[2].unsafe_cast<String>();
       assert(arg2);
       tag = arg2->value_get();
@@ -262,78 +263,23 @@ namespace object
     return new List(res);
   }
 
-  /// Get a slot content.
-  static rObject
-  object_class_getSlot (runner::Runner&, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 1);
-    const rObject& obj = args[0];
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    return obj->slot_get(libport::Symbol(arg1->value_get()));
-  }
-
   // self.getLazyLocalSlot(SLOT-NAME, DEFAULT-VALUE, CREATE?).
   static rObject
-  object_class_getLazyLocalSlot (runner::Runner&, objects_type& args)
+  object_class_getLazyLocalSlot (rObject self,
+                                 libport::Symbol name,
+                                 rObject def,
+                                 bool create)
   {
-    check_arg_count(args.size() - 1, 3);
-
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    const Object::key_type& slot_name = libport::Symbol(arg1->value_get());
-
     // If the slot already exists, return its content.
-    if (rObject slot = args[0]->own_slot_get (slot_name))
+    if (rObject slot = self->own_slot_get(name))
       return slot;
 
     // The slot doesn't exist. Should we create it?
-    if (is_true (args[3]))
-      args[0]->slot_set (slot_name, args[2]);
+    if (create)
+      self->slot_set(name, def);
 
     // Return the default value for this slot.
-    return args[2];
-  }
-
-  /// Remove a slot.
-  static rObject
-  object_class_removeSlot (runner::Runner&, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 1);
-    const rObject& obj = args[0];
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    obj->slot_remove(libport::Symbol(arg1->value_get()));
-    return obj;
-  }
-
-  static rObject
-  object_class_setSlot (runner::Runner&, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 2);
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    args[0]->slot_set(libport::Symbol(arg1->value_get()), args[2]);
-    return args[2];
-  }
-
-  static rObject
-  object_class_createSlot (runner::Runner&, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 1);
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    args[0]->slot_set(libport::Symbol(arg1->value_get()), void_class);
-    return void_class;
-  }
-
-  static rObject
-  object_class_updateSlot (runner::Runner& r, objects_type& args)
-  {
-    check_arg_count(args.size() - 1, 2);
-    const rString& arg1 = args[1].unsafe_cast<String>();
-    assert(arg1);
-    return args[0]->slot_update(r, libport::Symbol(arg1->value_get()), args[2]);
+    return def;
   }
 
   static bool
@@ -359,30 +305,30 @@ namespace object
     DECLARE(callMessage);
     DECLARE(clone);
     DECLARE(dump);
-    DECLARE(getLazyLocalSlot);
-    DECLARE(getSlot);
     DECLARE(init);
     DECLARE(EQ_EQ_EQ);
     DECLARE(protos);
     DECLARE(removeProto);
-    DECLARE(removeSlot);
     DECLARE(EQ_EQ);
-    DECLARE(setSlot);
-    DECLARE(createSlot);
     DECLARE(slotNames);
     DECLARE(uid);
-    DECLARE(updateSlot);
 #undef DECLARE
 
 #define DECLARE(Name, Code)                     \
     object_class->slot_set(SYMBOL(Name), make_primitive(Code))
 
+    DECLARE(createSlot, &Object::urbi_createSlot);
+    DECLARE(getLazyLocalSlot, &object_class_getLazyLocalSlot);
     DECLARE(getProperty, &Object::property_get);
+    DECLARE(getSlot, &Object::urbi_getSlot);
     DECLARE(hasProperty, &Object::property_has);
     DECLARE(hasSlot, &Object::slot_has);
     DECLARE(locateSlot, &Object::urbi_locateSlot);
     DECLARE(setProperty, &Object::property_set);
+    DECLARE(setSlot, &Object::urbi_setSlot);
     DECLARE(removeProperty, &Object::property_remove);
+    DECLARE(removeSlot, &Object::urbi_removeSlot);
+    DECLARE(updateSlot, &Object::urbi_updateSlot);
 #undef DECLARE
   }
 

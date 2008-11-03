@@ -214,8 +214,19 @@ namespace object
     | Urbi methods |
     `-------------*/
 
+    void
+    urbi_createSlot(key_type k);
+    rObject
+    urbi_getSlot(key_type k);
     rObject
     urbi_locateSlot(key_type k);
+    rObject
+    urbi_removeSlot(key_type k);
+    rObject
+    urbi_setSlot(key_type k, const rObject& o);
+    rObject
+    urbi_updateSlot(runner::Runner& r, key_type k, const rObject& o);
+
 
   private:
     rObject
