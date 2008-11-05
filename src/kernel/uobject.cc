@@ -471,9 +471,9 @@ namespace urbi
     }                                                           \
     catch (object::UrbiException& e)                            \
     {                                                           \
-      runner::raise_primitive_error("Invalid read of void UVar '" + \
-                                    name +"'");                     \
-    }                                                              \
+      runner::raise_primitive_error				\
+	("Invalid read of void UVar '" + name + "'");		\
+    }								\
   }
 
   UVAR_OPERATORS(ufloat, ufloat);
