@@ -1,5 +1,5 @@
-#include <boost/bind.hpp>
 #include <boost/assign.hpp>
+#include <boost/bind.hpp>
 
 #ifdef ENABLE_DEBUG_TRACES_UOBJECT
 # define ENABLE_DEBUG_TRACES
@@ -486,7 +486,7 @@ namespace urbi
   //no corresponding operator= for this one...
   UVar::operator int()
   {
-    return (ufloat)(*this);
+    return libport::ufloat_to_int(::round((ufloat)(*this)));
   }
 
   UDataType
