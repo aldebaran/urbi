@@ -5,11 +5,18 @@ release.
 * New in kernel 2.0 beta 3 *
 ****************************
 
+Grammar
+=======
+
+The syntax "new myObject(myArgs)" has been deprecated and now gives a
+warning. The recommended "myObject.new(myArgs)" is suggested.
+
 Uobjects
 ========
 
 The error message given to the user trying to cast a void UVar has been
 specialized.
+
 
 ****************************
 * New in kernel 2.0 beta 2 *

@@ -1105,6 +1105,9 @@ new:
   {
     // Compiled as "id . new (args)".
     $$ = ast_call(@$, ast_call(@$, $2), SYMBOL(new), $3);
+    up.warn(@$,
+	    "deprecated construct, which may not do what you think "
+	    "it does. Use 'myObject.new(myArgs)' instead.");
   }
 ;
 
