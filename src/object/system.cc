@@ -205,7 +205,7 @@ namespace object
     const std::string& filename = arg1->value_get();
 
     if (!libport::path(filename).exists())
-      runner::raise_primitive_error("No such file: " + filename);
+      runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
     return
       execute_parsed(r, parser::parse_file(filename),
                      SYMBOL(loadFile),
