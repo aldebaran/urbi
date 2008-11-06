@@ -1,9 +1,12 @@
 do (Global.Dictionary)
 {
   /// Dictionary.init(KEY1, VAL1, ...).
-  // FIXME: throw on invalid arg number.
   function init
   {
+    if (call.argsCount % 2)
+      throw PrimitiveError.new("init",
+                               "Dictionary constructor must be given " +
+			       "an even number of arguments") |
     for| (var i = 0; i < call.argsCount; i += 2)
       set(call.evalArgAt(i), call.evalArgAt(i + 1)) |
     this
