@@ -1,7 +1,6 @@
 #include <sdk/config.h>
 #include <version.hh>
-#include <libport/package-info.hh>
-#include <urbi/uobject.hh>
+#include <urbi/package-info.hh>
 
 namespace urbi
 {
