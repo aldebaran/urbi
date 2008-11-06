@@ -157,12 +157,8 @@ AC_CONFIG_SUBDIRS([jpeg-6b])
 ## -------- ##
 
 AC_CONFIG_FILES([Makefile
-                GNUmakefile
                 src/Makefile
 	        src/swig/Makefile
                 src/tests/Makefile
 ])
-# Use something which is more useful for the Makefiles.
-VERSION='$(shell $(top_srcdir)/build-aux/git-version-get)'
-PACKAGE_VERSION='$(VERSION)'
 AC_OUTPUT
