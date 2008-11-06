@@ -18,6 +18,7 @@
 #include <urbi/uclient.hh>
 
 using namespace urbi;
+using libport::program_name;
 
 // List of module names.
 typedef std::list<std::string> modules_type;
@@ -26,6 +27,23 @@ typedef std::list<std::string> modules_type;
 std::string urbi_host = URBI_HOST;
 std::string dynld = URBI_SHREXT;
 const char* umain_sym = "urbi_main";
+
+namespace
+{
+  /// Wrapper around lt_dlopen that exits on failures.
+  static
+  lt_dlhandle
+  xlt_dlopen(const std::string& s)
+  {
+    std::cerr << program_name << ": loading " << s << std::endl;
+    lt_dlhandle res = lt_dlopen(s.c_str());
+    if (!res)
+      std::cerr << program_name
+                << ": failed to load " << s << ": " << lt_dlerror() << std::endl
+                << libport::exit(1);
+    return res;
+  }
+}
 
 static UCallbackAction
 onError(const UMessage& msg)
@@ -41,7 +59,7 @@ onDone(const UMessage&)
 }
 
 static int
-connect_plugin(const std::string& host, int port, modules_type& modules)
+connect_plugin(const std::string& host, int port, const modules_type& modules)
 {
   UClient cl(host.c_str(), port);
   if (cl.error())
@@ -61,7 +79,7 @@ static void
 usage()
 {
   std::cout <<
-    "usage: " << libport::program_name << " [OPTIONS] MODULE_NAMES ...\n"
+    "usage: " << program_name << " [OPTIONS] MODULE_NAMES ...\n"
     "    Start an UObject in either remote or plugin mode\n"
     "\n"
     "Options:\n"
@@ -119,7 +137,7 @@ typedef int (*umain_type)(int argc, const char* argv[], int block);
 int
 main(int argc, const char* argv[])
 {
-  libport::program_name = argv[0];
+  program_name = argv[0];
   lt_dlinit();
 
   const char* urbi_root = getenv("URBI_ROOT");
@@ -191,22 +209,10 @@ main(int argc, const char* argv[])
       "libuobject.so"
 #endif
       ;
-  std::cerr << "loading core: " << dll << std::endl;
-  lt_dlhandle core = lt_dlopen(dll.c_str());
-  if (!core)
-  {
-    std::cerr << "Failed to load core: " << lt_dlerror() << std::endl;
-    ::exit(1);
-  }
+  lt_dlhandle core = xlt_dlopen(dll);
 
   foreach (const std::string& s, modules)
-  {
-    std::cerr << "Loading uobjects: " << s << std::endl;
-    lt_dlhandle uobject = lt_dlopen(s.c_str());
-    if (!uobject)
-      std::cerr << "Failed to load " << s << ": " << lt_dlerror() << std::endl
-                << libport::exit(1);
-  }
+    xlt_dlopen(s);
 
   umain_type umain = (umain_type) lt_dlsym(core, umain_sym);
   if (!umain)
