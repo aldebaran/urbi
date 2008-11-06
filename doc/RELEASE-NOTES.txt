@@ -17,6 +17,11 @@ Uobjects
 The error message given to the user trying to cast a void UVar has been
 specialized.
 
+Urbi server
+===========
+
+If a file loaded from "URBI.INI" cannot be found, it is now properly
+reported.
 
 ****************************
 * New in kernel 2.0 beta 2 *
