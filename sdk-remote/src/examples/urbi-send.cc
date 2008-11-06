@@ -29,6 +29,7 @@
 #include <libport/sysexits.hh>
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
+#include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
 
 namespace

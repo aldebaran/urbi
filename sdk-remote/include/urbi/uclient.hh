@@ -23,7 +23,6 @@
 #ifndef URBI_UCLIENT_HH
 # define URBI_UCLIENT_HH
 
-# include <urbi/package-info.hh>
 # include <urbi/uabstractclient.hh>
 
 namespace urbi

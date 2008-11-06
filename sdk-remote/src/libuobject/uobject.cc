@@ -5,10 +5,10 @@
 #include <list>
 
 #include <libport/cli.hh>
-#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
+#include <urbi/package-info.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 #include <urbi/uexternal.hh>
