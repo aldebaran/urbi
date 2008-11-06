@@ -167,7 +167,10 @@ main(int argc, const char* argv[])
     std::string arg = argv[i];
 
     if (arg == "--custom" || arg == "-c")
+    {
       connectMode = MODE_REMOTE;
+      dll = libport::convert_argument<std::string> (arg, argv[++i]);
+    }
     else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--host" || arg == "-H")
@@ -177,10 +180,7 @@ main(int argc, const char* argv[])
     else if (arg == "--port" || arg == "-P")
       port = libport::convert_argument<int> (arg, argv[++i]);
     else if (arg == "--remote" || arg == "-r")
-    {
       connectMode = MODE_REMOTE;
-      dll = libport::convert_argument<std::string> (arg, argv[++i]);
-    }
     else if (arg == "--start" || arg == "-s")
       connectMode = MODE_PLUGIN_START;
     else if (arg == "--version" || arg == "-v")
