@@ -76,7 +76,7 @@ usage()
     "\n"
     "Options for plugin mode:\n"
     "  -H, --host   server host name\n"
-    "  -p, --port   server port\n"
+    "  -P, --port   server port\n"
     "\n"
     "Options for remote and start mode are passed to urbi::main.\n"
     "\n"
@@ -156,6 +156,8 @@ main(int argc, const char* argv[])
       host = argv[++i];
     else if (arg == "--plugin" || arg == "-p")
       connectMode = MODE_PLUGIN_LOAD;
+    else if (arg == "--port" || arg == "-P")
+      port = libport::convert_argument<int> (arg, argv[++i]);
     else if (arg == "--remote" || arg == "-r")
     {
       connectMode = MODE_REMOTE;
