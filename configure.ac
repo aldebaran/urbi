@@ -134,11 +134,8 @@ AC_SUBST([SHLIBEXT])
 
 URBI_TESTS
 
-AC_CONFIG_FILES([Makefile GNUmakefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([scripts/package], [chmod +x scripts/package])
 AC_CONFIG_HEADERS([src/kernel/config.h])
 
-# Use something which is more useful for the Makefiles.
-VERSION='$(shell $(top_srcdir)/build-aux/git-version-get)'
-PACKAGE_VERSION='$(VERSION)'
 AC_OUTPUT
