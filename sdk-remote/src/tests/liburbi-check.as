@@ -6,6 +6,10 @@ cleanup ()
 {
   exit_status=$?
 
+  # We can be killed even before children are spawned.
+  test -n "$children" ||
+    exit $exit_status
+
   # In case we were caught by set -e, kill the children.
   children_kill
   children_harvest
@@ -16,10 +20,10 @@ cleanup ()
   test x$VERBOSE != x || children_clean
 
   case $exit_status:$children_sta in
-    0:0) ;;
-    0:*) # Maybe a children exited for SKIP etc.
+    (0:0) ;;
+    (0:*) # Maybe a children exited for SKIP etc.
 	 exit $children_sta;;
-    *:*) # If liburbi-check failed, there is a big problem.
+    (*:*) # If liburbi-check failed, there is a big problem.
 	 error SOFTWARE "liburbi-check itself failed with $exit_status";;
   esac
   # rst_expect sets exit=false if it saw a failure.
