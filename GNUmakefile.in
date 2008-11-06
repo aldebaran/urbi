@@ -1,35 +1,10 @@
-# We want to add a dependency on distdir, but Auotmake does not allow
-# us to do so: it thinks we are *redefining* distdir!  As a result,
-# distdir is empty in Makefile.in.
+# We want to add a dependency on distdir, which Automake does not
+# allow: it thinks we are *redefining* distdir!  As a result, distdir
+# is empty in Makefile.in.
 #
 # Since Automake will not read GNUmakefile, we use this GNUmakefile
 # file to wrap the Automake generated Makefile.
 
 include Makefile
+include $(build_aux_dir)/package-version.mk
 
-## ----------------------------------------------------------- ##
-## When rolling a tarball, update the current version string.  ##
-## ----------------------------------------------------------- ##
-
-# Keep a version of the version used by configure up to date.  Files
-# that need to depend on the version string should rather depend on
-# this file, rather that on configure.
-BUILT_SOURCES += $(top_srcdir)/.version
-EXTRA_DIST += .version
-$(top_srcdir)/.version: configure
-	echo $(VERSION) >$@.tmp && mv $@.tmp $@
-
-# When making a tarball, no longer require git to get the version
-# string: save it in the tarball.
-dist-hook:
-	echo $(VERSION) > $(distdir)/.tarball-version
-
-# Force the updating of the version string passed to AC_INIT.  If the
-# version string has changed.
-distdir: update-version
-.PHONY: update-version
-update-version:
-	version=$$(cd $(srcdir) && build-aux/git-version-gen);	\
-	if test x"$$version" != x"$(VERSION)"; then		\
-	  cd $(top_srcdir) && $(AUTOCONF) --force;		\
-	fi

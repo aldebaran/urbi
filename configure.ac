@@ -3,10 +3,9 @@ m4_pattern_forbid([^AX_])
 m4_pattern_forbid([^URBI_])
 
 AC_PREREQ([2.60])
-AC_INIT([Urbi Kernel],
-dnl m4_esyscmd([build-aux/git-version-gen --file --no-eol]),
-preview-2.0-beta-2,
+AC_INIT([Urbi Kernel], [UNDEFINED],
         [kernel-bugs@lists.gostai.com], [kernel])
+URBI_PACKAGE_VERSION
 # FIXME: Disable the generation of CPP symbols defining the current
 # version, as it is unclear what it should be.
 # URBI_KERNEL_VERSION
@@ -138,4 +137,8 @@ URBI_TESTS
 AC_CONFIG_FILES([Makefile GNUmakefile src/Makefile])
 AC_CONFIG_FILES([scripts/package], [chmod +x scripts/package])
 AC_CONFIG_HEADERS([src/kernel/config.h])
+
+# Use something which is more useful for the Makefiles.
+VERSION='$(shell $(top_srcdir)/build-aux/git-version-get)'
+PACKAGE_VERSION='$(VERSION)'
 AC_OUTPUT
