@@ -246,9 +246,6 @@ namespace runner
     {
       self = function->self_get();
       assert(self);
-      // FIXME: The call message can be undefined at the creation
-      // site for now.
-      // assert(fn.call);
       call = function->call_get();
     }
     else
