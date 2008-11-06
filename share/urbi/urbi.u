@@ -464,8 +464,11 @@ catch (FileNotFound e)
 {
   var this.urbi_ini_path = nil;
 };
-echo("Loading %s" % [urbi_ini_path]);
-loadFile(urbi_ini_path);
+if (!urbi_ini_path.isNil)
+{
+  echo("Loading %s" % [urbi_ini_path]);
+  loadFile(urbi_ini_path);
+};
 removeSlot("urbi_ini_path") | {};
 
 /*-----------------------------------------------------------.
