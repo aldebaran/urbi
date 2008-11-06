@@ -469,7 +469,7 @@ namespace urbi
       else                                                      \
         return ::uvalue_cast(uvar_get(name));                   \
     }                                                           \
-    catch (object::UrbiException& e)                            \
+    catch (object::UrbiException&)				\
     {                                                           \
       runner::raise_primitive_error				\
 	("Invalid read of void UVar '" + name + "'");		\
@@ -628,6 +628,6 @@ namespace urbi
   {
     // Feed this to the ghostconnection.
     urbiserver->ghost_connection_get().received(static_cast<const char*>(buf),
-                                                size);
+                                                static_cast<size_t>(size));
   }
 }
