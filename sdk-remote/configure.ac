@@ -125,8 +125,6 @@ URBI_LIBTOOL
 
 AC_DEFINE_UNQUOTED([URBI_HOST], ["$host"], [Define as the host name.])
 AC_DEFINE_UNQUOTED([URBI_PREFIX], ["$prefix"], [Define as the install prefix.])
-AC_DEFINE_UNQUOTED([URBI_SHREXT], ["$shrext_cmds"],
-                   [Define as the shared library extension])
 
 
 ## --------- ##
@@ -159,6 +157,7 @@ AC_CONFIG_FILES([
     src/Makefile
       src/swig/Makefile
       src/tests/Makefile
-        src/tests/bin/urbi-launch
 ])
+AC_CONFIG_FILES([src/tests/bin/urbi-launch],
+                [chmod +x src/tests/bin/urbi-launch])
 AC_OUTPUT
