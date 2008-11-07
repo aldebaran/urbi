@@ -199,7 +199,7 @@ namespace runner
     {
       try
       {
-	scheduler::rethrow(ce.child_exception_get());
+	ce.rethrow_child_exception();
       }
       catch (const object::UrbiException& ue)
       {

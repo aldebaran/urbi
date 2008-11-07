@@ -27,7 +27,6 @@ namespace scheduler
     non_interruptible_ = false;
     prio_ = UPRIO_DEFAULT;
     side_effect_free_ = false;
-    pending_exception_ = 0;
     check_stack_space_ = true;
     alive_jobs_++;
   }
@@ -52,7 +51,6 @@ namespace scheduler
   inline
   Job::~Job()
   {
-    pending_exception_ = 0;
     coroutine_free(coro_);
     alive_jobs_--;
   }
@@ -244,7 +242,7 @@ namespace scheduler
   inline bool
   Job::has_pending_exception() const
   {
-    return pending_exception_;
+    return pending_exception_.get();
   }
 
   inline prio_type
@@ -283,9 +281,33 @@ namespace scheduler
   }
 
   inline
-  ChildException::ChildException(const exception& exc)
+  ChildException::ChildException(exception_ptr exc)
+    : child_exception_(exc)
   {
-    child_exception_ = exc.clone();
+  }
+
+  inline
+  ChildException::ChildException(const ChildException& exc)
+    : child_exception_(exc.child_exception_)
+  {
+  }
+
+  inline exception_ptr
+  ChildException::clone() const
+  {
+    return exception_ptr(new ChildException(child_exception_));
+  }
+
+  inline void
+  ChildException::rethrow_() const
+  {
+    throw *this;
+  }
+
+  inline void
+  ChildException::rethrow_child_exception() const
+  {
+    child_exception_->rethrow();
   }
 
 } // namespace scheduler

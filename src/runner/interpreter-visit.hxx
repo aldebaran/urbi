@@ -92,7 +92,7 @@ namespace runner
     catch (const scheduler::ChildException& ce)
     {
       // If a child caused us to die, then throw the encapsulated exception.
-      scheduler::rethrow(ce.child_exception_get());
+      ce.rethrow_child_exception();
     }
 
     return object::void_class;
@@ -342,7 +342,7 @@ namespace runner
 	    }
           }
           // Catch and print unhandled exceptions
-          catch (object::UrbiException& exn)
+          catch (const object::UrbiException& exn)
           {
             if (e->toplevel_get())
 	      exception_to_show =
@@ -350,7 +350,7 @@ namespace runner
             else
 	      exception_to_throw = exn.clone();
           }
-	  if (exception_to_throw)
+	  if (exception_to_throw.get())
 	    exception_to_throw->rethrow();
 	  else if (exception_to_show)
 	    show_exception_(*exception_to_show);
@@ -363,7 +363,7 @@ namespace runner
     }
     catch (const scheduler::ChildException& ce)
     {
-      scheduler::rethrow(ce.child_exception_get());
+      ce.rethrow_child_exception();
     }
 
     return res;

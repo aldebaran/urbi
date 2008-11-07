@@ -18,9 +18,9 @@ namespace scheduler
   }
 
   inline
-  void rethrow (const exception_ptr& e)
+  void exception::rethrow() const
   {
-    e->rethrow ();
+    rethrow_();
     // GCC cannot guarantee that an overriden virtual method
     // will not return, so help it here.
     abort();

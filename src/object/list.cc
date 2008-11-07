@@ -192,7 +192,7 @@ namespace object
     }
     catch (const scheduler::ChildException& ce)
     {
-      scheduler::rethrow(ce.child_exception_get());
+      ce.rethrow_child_exception();
     }
   }
 

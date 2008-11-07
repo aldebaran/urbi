@@ -391,9 +391,6 @@ namespace scheduler
     /// The next exception to be propagated if any.
     exception_ptr pending_exception_;
 
-    /// The exception being propagated if any.
-    exception_ptr current_exception_;
-
     /// Our parent if any.
     rJob parent_;
 
@@ -434,9 +431,14 @@ namespace scheduler
   /// This exception encapsulates another one, sent by a child job.
   struct ChildException : public SchedulerException
   {
-    ChildException(const exception&);
-    ADD_FIELD(exception_ptr, child_exception)
-    COMPLETE_EXCEPTION(ChildException)
+    ChildException(exception_ptr);
+    ChildException(const ChildException&);
+    virtual exception_ptr clone() const;
+    ATTRIBUTE_NORETURN void rethrow_child_exception() const;
+  protected:
+    ATTRIBUTE_NORETURN virtual void rethrow_() const;
+  private:
+    mutable exception_ptr child_exception_;
   };
 
   /// State names to string, for debugging purpose.

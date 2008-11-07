@@ -33,7 +33,7 @@ namespace scheduler
     // list.
     state_ = running;
     try {
-      if (pending_exception_ &&
+      if (has_pending_exception() &&
 	  dynamic_cast<SchedulerException*>(pending_exception_.get()))
 	check_for_pending_exception();
       work();
@@ -51,7 +51,7 @@ namespace scheduler
     {
       // Rethrow the exception into the parent job if it exists.
       if (parent_)
-	parent_->async_throw(ChildException(e));
+	parent_->async_throw(ChildException(e.clone()));
     }
     catch (const std::exception& se)
     {
@@ -166,7 +166,6 @@ namespace scheduler
   void
   Job::async_throw(const exception& e)
   {
-    pending_exception_ = e.clone();
     // A job which has received an exception is no longer side effect
     // free or non-interruptible.
     side_effect_free_ = false;
@@ -174,7 +173,11 @@ namespace scheduler
     // If this is the current job we are talking about, the exception
     // is synchronous.
     if (scheduler_.is_current_job(*this))
-      check_for_pending_exception();
+      e.rethrow();
+
+    // Store the exception for later use.
+    pending_exception_ = e.clone();
+
     // Now that we acquired an exception to raise, we are active again,
     // even if we were previously sleeping or waiting for something.
     if (state_ != to_start && state_ != zombie)
@@ -185,7 +188,7 @@ namespace scheduler
   Job::register_stopped_tag(const Tag& tag, const boost::any& payload)
   {
     size_t max_tag_check = tags_.size();
-    if (pending_exception_)
+    if (has_pending_exception())
     {
       // If we are going to terminate, do nothing
       if (dynamic_cast<TerminateException*>(pending_exception_.get()))
@@ -213,11 +216,13 @@ namespace scheduler
   {
     // If an exception has been stored for further rethrow, now is
     // a good time to do so.
-    if (pending_exception_)
+    if (has_pending_exception())
     {
-      current_exception_ = pending_exception_;
-      pending_exception_ = 0;
-      rethrow(current_exception_);
+      // Reset pending_exception_ by copying it into a local variable
+      // first. This ensures that the exception will be destroyed
+      // properly after having been rethrown.
+      exception_ptr e = pending_exception_;
+      e->rethrow();
     }
   }
 

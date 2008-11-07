@@ -69,7 +69,7 @@ namespace object
     catch (const scheduler::ChildException& ce)
     {
       // Kill the sub-job and propagate.
-      scheduler::rethrow(ce.child_exception_get());
+      ce.rethrow_child_exception();
     }
     return sub->result_get();
   }

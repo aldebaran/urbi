@@ -6,23 +6,23 @@
 # include <boost/optional.hpp>
 
 # include <libport/compiler.hh>
-# include <libport/shared-ptr.hh>
 # include <urbi/export.hh>
 
 namespace scheduler
 {
+  class exception;
+  typedef std::auto_ptr<exception> exception_ptr;
+
   class exception
   {
   public:
     virtual ~exception ();
     virtual std::string what () const throw ();
-    virtual exception* clone () const = 0;
-    ATTRIBUTE_NORETURN virtual void rethrow () const = 0;
+    virtual exception_ptr clone () const = 0;
+    ATTRIBUTE_NORETURN void rethrow() const;
+  protected:
+    ATTRIBUTE_NORETURN virtual void rethrow_() const = 0;
   };
-
-  typedef libport::shared_ptr<exception, false> exception_ptr;
-
-  ATTRIBUTE_NORETURN void rethrow (const exception_ptr&);
 
 /// \def ADD_FIELD(Type, Name)
 /// Define an optional field Name, and accessors.
@@ -36,11 +36,12 @@ namespace scheduler
 
 #define COMPLETE_EXCEPTION(Name)				\
  public:							\
-  virtual Name* clone () const					\
+ virtual ::scheduler::exception_ptr clone () const		\
   {								\
-    return new Name (*this);					\
+    return ::scheduler::exception_ptr(new Name (*this));	\
   };								\
-  ATTRIBUTE_NORETURN virtual void rethrow () const		\
+private:							\
+  ATTRIBUTE_NORETURN virtual void rethrow_() const		\
   {								\
     throw *this;						\
   };
