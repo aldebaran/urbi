@@ -13,6 +13,8 @@
 /sdk-remote
 /src/Makefile.in
 /src/kernel/config.h.in
+/src/object/any-to-boost-function.hxx
+/src/object/cxx-primitive.hxx
 /src/object/precompiled-symbols.hh
 /src/object/precompiled-symbols.stamp
 /src/object/symbols.hh.old
