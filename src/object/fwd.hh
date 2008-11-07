@@ -25,8 +25,6 @@ namespace object
   class Object;
 
   typedef libport::shared_ptr<Object> rObject;
-  // FIXME: we probably want libport::refcounted smart pointers here
-  typedef libport::shared_ptr<rObject, false> rrObject;
   typedef std::deque<rObject> objects_type;
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\

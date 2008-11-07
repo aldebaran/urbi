@@ -259,6 +259,9 @@ namespace object
   /// Return an Urbi boolean object corresponding to \a b.
   const rObject& to_boolean(bool b);
 
+  // FIXME: we probably want libport::refcounted smart pointers here
+  typedef libport::shared_ptr<rObject, false> rrObject;
+
 } // namespace object
 
 # include <object/object.hxx>
