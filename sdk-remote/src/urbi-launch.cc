@@ -79,27 +79,25 @@ static void
 usage()
 {
   std::cout <<
-    "usage: " << program_name << " [OPTIONS] MODULE_NAMES ...\n"
-    "    Start an UObject in either remote or plugin mode\n"
+    "usage: " << program_name << " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
+    "Start an UObject in either remote or plugin mode.\n"
     "\n"
-    "Options:\n"
+    "Urbi-Launch options:\n"
     "  -h, --help        display this message and exit\n"
     "  -v, --version     display version information and exit\n"
     "\n"
     "Mode selection:\n"
-    "  -r, --remote       start as a remote uobject\n"
-    "  -p, --plugin       start as a plugin uobject on a running server\n"
-    "  -s, --start        start an urbi server and connect as plugin\n"
     "  -c, --custom FILE  start using the shared library FILE\n"
+    "  -p, --plugin       start as a plugin uobject on a running server\n"
+    "  -r, --remote       start as a remote uobject\n"
+    "  -s, --start        start an urbi server and connect as plugin\n"
     "\n"
-    "Options for plugin mode:\n"
+    "Urbi-Launch options for plugin mode:\n"
     "  -H, --host   server host name\n"
     "  -P, --port   server port\n"
     "\n"
-    "Options for remote and start mode are passed to urbi::main.\n"
-    "\n"
-    "MODULE_NAMES is a list of modules and directory which will be searched\n"
-    "  for modules.\n"
+    "MODULE_NAMES is a list of modules.\n"
+    "UOPTIONS are passed to urbi::main in remote and start modes.\n"
     ;
   ::exit(EX_OK);
 }
@@ -161,6 +159,10 @@ main(int argc, const char* argv[])
   // The list of modules.
   modules_type modules;
 
+  // The options passed to urbi::main.
+  int uargc = 0;
+  const char** uargv = 0;
+
   // Parse the command line.
   for (int i = 1; i < argc; ++i)
   {
@@ -185,6 +187,16 @@ main(int argc, const char* argv[])
       connectMode = MODE_PLUGIN_START;
     else if (arg == "--version" || arg == "-v")
       version();
+    else if (arg == "--")
+    {
+      // We need to keep room for uargv[0] and uargv[argc] too.
+      uargc = argc - i;
+      uargv = new const char*[uargc + 1];
+      uargv[0] = argv[0];
+      // Also copy argv[argc] which is 0.
+      std::copy(uargv + 1, argv + i + 1, argv + argc + 1);
+      break;
+    }
     else if (arg[0] == '-' && arg[1] != 0)
       libport::invalid_option(arg);
     else
@@ -218,5 +230,5 @@ main(int argc, const char* argv[])
   if (!umain)
     std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl
               << libport::exit(1);
-  umain(argc, argv, true);
+  umain(uargc, uargv, true);
 }
