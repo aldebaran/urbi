@@ -340,7 +340,7 @@ namespace urbi
       else if (arg == "--port" || arg == "-p")
 	port = libport::convert_argument<unsigned>(arg, argv[++i]);
       else if (arg == "--port-file" || arg == "-r")
-	port = libport::file_contents_get<int>(arg);
+	port = libport::file_contents_get<int>(argv[++i]);
       else if (arg == "--server")
 	server = true;
       else if (arg == "--version" || arg == "-v")

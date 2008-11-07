@@ -180,7 +180,7 @@ main(int argc, const char* argv[])
     else if (arg == "--port" || arg == "-P")
       port = libport::convert_argument<int> (arg, argv[++i]);
     else if (arg == "--port-file")
-	port = libport::file_contents_get<int>(arg);
+	port = libport::file_contents_get<int>(argv[++i]);
     else if (arg == "--remote" || arg == "-r")
       connectMode = MODE_REMOTE;
     else if (arg == "--start" || arg == "-s")
