@@ -35,14 +35,14 @@ namespace object
   class Object;
   class Lobby;
   template<class T> class Atom;
-  typedef libport::shared_ptr<Object, true> rObject;
-  typedef libport::shared_ptr<Lobby, true > rLobby;
+  typedef libport::shared_ptr<Object> rObject;
+  typedef libport::shared_ptr<Lobby> rLobby;
 }
 
 namespace runner
 {
   class Shell;
-  typedef libport::shared_ptr<Shell, true> rShell;
+  typedef libport::shared_ptr<Shell> rShell;
 }
 
 /// Pure virtual class for a client connection.

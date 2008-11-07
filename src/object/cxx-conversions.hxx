@@ -15,7 +15,7 @@ namespace object
 {
   // Nothing to do for objects
   template <>
-  class CxxConvert<libport::shared_ptr<Object, true> >
+  class CxxConvert<libport::shared_ptr<Object> >
   {
   public:
     static rObject
@@ -35,9 +35,9 @@ namespace object
 
   // Convert between Urbi types
   template <typename Urbi>
-  struct CxxConvert<libport::shared_ptr<Urbi, true> >
+  struct CxxConvert<libport::shared_ptr<Urbi> >
   {
-    typedef libport::shared_ptr<Urbi, true> T;
+    typedef libport::shared_ptr<Urbi> T;
 
     static T
     to(const rObject& o, unsigned idx)

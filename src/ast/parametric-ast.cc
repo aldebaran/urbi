@@ -147,7 +147,7 @@ namespace ast
   }
 
   ParametricAst&
-  ParametricAst::operator% (libport::shared_ptr<ast::Exp, true> t)
+  ParametricAst::operator% (libport::shared_ptr<ast::Exp> t)
   {
 #ifndef NDEBUG
     // Implicit are shared.
