@@ -11,6 +11,7 @@
 # include <set>
 
 # include <boost/function.hpp>
+# include <boost/shared_ptr.hpp>
 
 # include <libport/shared-ptr.hh>
 
@@ -260,7 +261,7 @@ namespace object
   const rObject& to_boolean(bool b);
 
   // FIXME: we probably want libport::refcounted smart pointers here
-  typedef libport::shared_ptr<rObject, false> rrObject;
+  typedef boost::shared_ptr<rObject> rrObject;
 
 } // namespace object
 

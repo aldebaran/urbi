@@ -61,9 +61,9 @@ namespace runner
     // Grow stacks
     local_stack_.resize(local_pointer_ + local);
     unsigned size = captured_pointer_ + captured + closed;
-    rlocal_stack_.resize(size, 0);
+    rlocal_stack_.resize(size, rrObject());
     for (unsigned i = captured_pointer_; i < size; ++i)
-      rlocal_stack_[i] = new rObject();
+      rlocal_stack_[i].reset(new rObject());
 
     // Bind 'this' and 'call'
     self_set(self);
@@ -111,7 +111,7 @@ namespace runner
     STACK_NECHO(libport::decindent);
 
     local_stack_.resize(local_pointer_, 0);
-    rlocal_stack_.resize(captured_pointer_, 0);
+    rlocal_stack_.resize(captured_pointer_, rrObject());
 
     local_pointer_ = local;
     closed_pointer_ = closed;
@@ -172,7 +172,7 @@ namespace runner
         STACK_ECHO("Growing toplevel closed stack");
         for (unsigned i = rlocal_stack_.size();
              i <= e->local_index_get(); ++i)
-          rlocal_stack_.push_back(new rObject());
+          rlocal_stack_.push_back(rrObject(new rObject()));
       }
       else if (e->local_index_get() + 2 >= local_stack_.size())
       {
