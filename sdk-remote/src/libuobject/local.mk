@@ -4,6 +4,7 @@
 
 env_LTLIBRARIES = libuobject/libuobject.la
 libuobject_libuobject_la_SOURCES =		\
+  libuobject/main.cc				\
   libuobject/ucallbacks.cc			\
   libuobject/uobject.cc				\
   libuobject/usystem.cc				\

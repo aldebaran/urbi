@@ -1,6 +1,6 @@
 /// \file libuco/urbi-main.cc
 
-#include <urbi/uobject.hh>
+#include <urbi/umain.hh>
 
 extern "C"
 {
