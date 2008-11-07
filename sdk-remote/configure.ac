@@ -154,9 +154,11 @@ AC_CONFIG_SUBDIRS([jpeg-6b])
 ## Output.  ##
 ## -------- ##
 
-AC_CONFIG_FILES([Makefile
-                src/Makefile
-	        src/swig/Makefile
-                src/tests/Makefile
+AC_CONFIG_FILES([
+  Makefile
+    src/Makefile
+      src/swig/Makefile
+      src/tests/Makefile
+        src/tests/bin/urbi-launch
 ])
 AC_OUTPUT

@@ -1,0 +1,18 @@
+#! @SHELL@
+# @configure_input@
+
+case $VERBOSE in
+  (x) set -x;;
+esac
+
+abs_top_srcdir='@abs_top_srcdir@'
+abs_top_builddir='@abs_top_builddir@'
+SHLIBEXT='@SHLIBEXT@'
+program=$abs_top_builddir/src/urbi-launch
+exec "$program" \
+     -c $abs_top_builddir/src/libuobject/.libs/libuobject*$SHLIBEXT \
+     "$@"
+
+# Local Variables:
+# mode: shell-script
+# End:
