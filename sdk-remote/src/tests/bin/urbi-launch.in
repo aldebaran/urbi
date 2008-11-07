@@ -1,17 +1,21 @@
 #! @SHELL@
 # @configure_input@
 
+set -e
+
 case $VERBOSE in
   (x) set -x;;
 esac
 
 abs_top_srcdir='@abs_top_srcdir@'
 abs_top_builddir='@abs_top_builddir@'
-SHLIBEXT='@SHLIBEXT@'
+# Ask libtool for the name of the file to dlopen.  It saves us from
+# having to deal with the infamous SHLIBEXT.
+libuobject_dir=$abs_top_builddir/src/libuobject/.libs
+libuobject_la=$libuobject_dir/libuobject.la
+. $libuobject_la
 program=$abs_top_builddir/src/urbi-launch
-exec "$program" \
-     -c $abs_top_builddir/src/libuobject/.libs/libuobject*$SHLIBEXT \
-     "$@"
+exec "$program" -c "$libuobject_dir/$dlname" "$@"
 
 # Local Variables:
 # mode: shell-script
