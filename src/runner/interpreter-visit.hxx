@@ -1,6 +1,8 @@
 #ifndef RUNNER_INTERPRETER_VISIT_HXX
 # define RUNNER_INTERPRETER_VISIT_HXX
 
+# include <memory>
+
 # include <boost/bind.hpp>
 
 # include <libport/compiler.hh>
@@ -312,7 +314,7 @@ namespace runner
 	  // may need the stack. The following objects will be set if we
 	  // have an exception to show, and it will be printed after
 	  // the "catch" block, or if we have an exception to rethrow.
-	  libport::shared_ptr<object::UrbiException, false> exception_to_show;
+	  std::auto_ptr<object::UrbiException> exception_to_show;
 	  scheduler::exception_ptr exception_to_throw;
 
           // If at toplevel, print errors and continue, else rethrow them
@@ -345,14 +347,15 @@ namespace runner
           catch (const object::UrbiException& exn)
           {
             if (e->toplevel_get())
-	      exception_to_show =
-	        new object::UrbiException(exn.value_get(), exn.backtrace_get());
+	      exception_to_show.reset
+	        (new object::UrbiException(exn.value_get(),
+					   exn.backtrace_get()));
             else
 	      exception_to_throw = exn.clone();
           }
 	  if (exception_to_throw.get())
 	    exception_to_throw->rethrow();
-	  else if (exception_to_show)
+	  else if (exception_to_show.get())
 	    show_exception_(*exception_to_show);
         }
       }
