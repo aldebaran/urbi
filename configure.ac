@@ -113,25 +113,6 @@ AC_CONFIG_SUBDIRS([sdk-remote])
 ## -------- ##
 
 URBI_LIBTOOL
-
-# shrext_cmds is set by libtool.
-case $shrext_cmds in
-  (.*)
-     # A regular extensions.
-     SHLIBEXT=$shrext_cmds;;
-  (*test*module*so*dylib*)
-     # On Mac OSX, dlopened modules are *.so, and shlib are *.dylib,
-     # and libtools sets
-     #   shrext_cmds='`test .$module = .yes && echo .so || echo .dylib`'
-     # that depends on $module which is a runtime value.
-     # Currently, we use only *.dylib on OSX.
-     SHLIBEXT=.dylib;;
-  (*)
-     AC_MSG_WARN([unexpected \$shlibext_cmds: $shlibext_cmds])
-     SHLIBEXT=$shrext_cmds;;
-esac
-AC_SUBST([SHLIBEXT])
-
 URBI_TESTS
 
 AC_CONFIG_FILES([Makefile src/Makefile])
