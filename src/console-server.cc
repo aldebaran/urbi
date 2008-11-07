@@ -33,6 +33,7 @@
 
 #include <kernel/ubanner.hh>
 #include <urbi/export.hh>
+#include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
 class ConsoleServer
