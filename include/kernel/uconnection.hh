@@ -7,6 +7,7 @@
 # include <cstring>
 # include <cstdarg>
 # include <iomanip>
+# include <memory>
 
 # include <libport/config.h>
 
