@@ -1,9 +1,13 @@
 /// \file libuobject/main.cc
 
-#include <iostream>
-#include <sstream>
-#include <list>
+#include <libport/cstdio>
+#include <cerrno>
 
+#include <iostream>
+#include <list>
+#include <sstream>
+
+#include <libport/cli.hh>
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
@@ -12,6 +16,8 @@
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 #include <urbi/uexternal.hh>
+
+using libport::program_name;
 
 namespace urbi
 {
@@ -223,16 +229,17 @@ namespace urbi
       "usage:\n" << name << " [OPTION]...\n"
       "\n"
       "Options:\n"
-      "  -b, --buffer SIZE  input buffer size"
+      "  -b, --buffer SIZE     input buffer size"
 		 << " [" << UAbstractClient::URBI_BUFLEN << "]\n"
-      "  -h, --help         display this message and exit\n"
-      "  -H, --host ADDR    server host name   [localhost]\n"
-      "      --server       put remote in server mode\n"
-      "  -p, --port PORT    tcp port URBI will listen to"
+      "  -h, --help            display this message and exit\n"
+      "  -H, --host ADDR       server host name   [localhost]\n"
+      "      --server          put remote in server mode\n"
+      "  -p, --port PORT       tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
-      "  -v, --version      print version information and exit\n"
-      "  -d, --disconnect   exit program if disconnected(defaults)\n"
-      "  -s, --stay-alive   do not exit program if disconnected\n"
+      "  -r, --port-file FILE  file containing the port to listen to\n"
+      "  -v, --version         print version information and exit\n"
+      "  -d, --disconnect      exit program if disconnected(defaults)\n"
+      "  -s, --stay-alive      do not exit program if disconnected\n"
 		 << libport::exit (EX_OK);
   }
 
@@ -248,9 +255,9 @@ namespace urbi
   initialize(const char* addr, int port, int buflen,
 	     bool exitOnDisconnect, bool server)
   {
-    std::cerr << libport::program_name
+    std::cerr << program_name
 	      << ": " << urbi::package_info() << std::endl
-	      << libport::program_name
+	      << program_name
 	      << ": Remote Component Running on "
 	      << addr << " " << port << std::endl;
 
@@ -292,21 +299,22 @@ namespace urbi
                          const char* val)
     {
       std::cerr
-        << libport::program_name
+        << program_name
         << ": warning: arguments without options are deprecated"
         << std::endl
         << "use `-" << shortopt << ' ' << val << '\''
         << " or `--" << longopt << ' ' << val << "' instead"
         << std::endl
-        << "Try `" << libport::program_name << " --help' for more information."
+        << "Try `" << program_name << " --help' for more information."
         << std::endl;
     }
+
   }
 
   int
   main(int argc, const char* argv[], bool block)
   {
-    libport::program_name = argv[0];
+    program_name = argv[0];
 
     const char* addr = "localhost";
     bool exitOnDisconnect = true;
@@ -331,6 +339,8 @@ namespace urbi
 	addr = libport::convert_argument<const char*>(arg, argv[++i]);
       else if (arg == "--port" || arg == "-p")
 	port = libport::convert_argument<unsigned>(arg, argv[++i]);
+      else if (arg == "--port-file" || arg == "-r")
+	port = libport::file_contents_get<int>(arg);
       else if (arg == "--server")
 	server = true;
       else if (arg == "--version" || arg == "-v")

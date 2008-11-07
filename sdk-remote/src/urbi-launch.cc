@@ -25,7 +25,6 @@ typedef std::list<std::string> modules_type;
 
 // The kind of host (not the host name).
 std::string urbi_host = URBI_HOST;
-std::string dynld = URBI_SHREXT;
 const char* umain_sym = "urbi_main";
 
 namespace
@@ -93,8 +92,9 @@ usage()
     "  -s, --start        start an urbi server and connect as plugin\n"
     "\n"
     "Urbi-Launch options for plugin mode:\n"
-    "  -H, --host   server host name\n"
-    "  -P, --port   server port\n"
+    "  -H, --host            server host name\n"
+    "  -P, --port            server port\n"
+    "      --port-file FILE  file containing the port to listen to\n"
     "\n"
     "MODULE_NAMES is a list of modules.\n"
     "UOPTIONS are passed to urbi::main in remote and start modes.\n"
@@ -114,21 +114,19 @@ version()
 static void
 add_module(libport::path p, modules_type& res)
 {
-  if (p.exists())
-  {
-    const libport::path::path_type& components = p.components();
-    const std::string& last = components.back();
-    if (last.size() <= dynld.size() ||
-	last.substr(last.size() - dynld.size()) != dynld)
-      throw std::runtime_error("File " + p.to_string() +
-			       " does not look like a shared library " +
-			       "(extension `" + dynld + "')");
-    if (!p.absolute_get())
-      p = libport::get_current_directory() / p;
-    res.push_back(p.to_string());
-  }
-  else
+  if (!p.exists())
     throw std::runtime_error("File not found: " + p.to_string());
+
+  const std::string dynld = SHLIBEXT;
+  const std::string& base = p.components().back();
+  if (base.size() <= dynld.size() ||
+      base.substr(base.size() - dynld.size()) != dynld)
+    throw std::runtime_error("File " + p.to_string() +
+                             " does not look like a shared library " +
+                             "(expect extension `" + dynld + "')");
+  if (!p.absolute_get())
+    p = libport::get_current_directory() / p;
+  res.push_back(p.to_string());
 }
 
 typedef int (*umain_type)(int argc, const char* argv[], int block);
@@ -181,6 +179,8 @@ main(int argc, const char* argv[])
       connectMode = MODE_PLUGIN_LOAD;
     else if (arg == "--port" || arg == "-P")
       port = libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--port-file")
+	port = libport::file_contents_get<int>(arg);
     else if (arg == "--remote" || arg == "-r")
       connectMode = MODE_REMOTE;
     else if (arg == "--start" || arg == "-s")
