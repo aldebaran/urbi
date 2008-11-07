@@ -7,12 +7,12 @@ namespace scheduler
 {
 
   inline
-  exception::~exception ()
+  exception::~exception()
   {
   }
 
   inline std::string
-  exception::what () const throw()
+  exception::what() const throw()
   {
     return "unknown exception";
   }
