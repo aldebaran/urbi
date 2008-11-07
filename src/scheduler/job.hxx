@@ -288,7 +288,8 @@ namespace scheduler
 
   inline
   ChildException::ChildException(const ChildException& exc)
-    : child_exception_(exc.child_exception_)
+    : SchedulerException(exc)
+    , child_exception_(exc.child_exception_)
   {
   }
 
