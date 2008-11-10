@@ -8,15 +8,15 @@
 
 # define UMAIN()				\
   int						\
-  main(const libport::cli_args_type& args)      \
+  main_args(const libport::cli_args_type& args) \
   {						\
-    urbi::main(args, true);                     \
+    return urbi::main(args, true);              \
   }                                             \
                                                 \
   int						\
   main(int argc, const char* argv[])		\
   {						\
-    urbi::main(argc, argv, true);		\
+    return urbi::main(argc, argv, true);        \
   }
 
 extern "C"

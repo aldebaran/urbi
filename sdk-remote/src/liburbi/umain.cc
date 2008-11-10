@@ -2,4 +2,4 @@
 
 #include <urbi/umain.hh>
 
-UMAIN ();
+UMAIN();
