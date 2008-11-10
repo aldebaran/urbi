@@ -234,10 +234,10 @@ main(int argc, const char* argv[])
   // urbi::main expects valid argc/argv.
   if (!uargv)
   {
-    nargc = 0;
-    nargv = new const char*[2];
-    nargv[0] = argv[0];
-    nargv[1] = 0;
+    uargc = 0;
+    uargv = new const char*[2];
+    uargv[0] = argv[0];
+    uargv[1] = 0;
   }
   umain(uargc, uargv, true);
 }
