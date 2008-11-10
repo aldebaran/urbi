@@ -189,8 +189,8 @@ main(int argc, const char* argv[])
       version();
     else if (arg == "--")
     {
-      // We need to keep room for uargv[0] and uargv[argc] too.
       uargc = argc - i;
+      // We need to keep room for uargv[0] and uargv[uargc] too.
       uargv = new const char*[uargc + 1];
       uargv[0] = argv[0];
       // Also copy argv[argc] which is 0.
@@ -230,5 +230,14 @@ main(int argc, const char* argv[])
   if (!umain)
     std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl
               << libport::exit(1);
+
+  // urbi::main expects valid argc/argv.
+  if (!uargv)
+  {
+    nargc = 0;
+    nargv = new const char*[2];
+    nargv[0] = argv[0];
+    nargv[1] = 0;
+  }
   umain(uargc, uargv, true);
 }
