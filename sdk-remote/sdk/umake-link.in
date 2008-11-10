@@ -58,7 +58,7 @@ while test x"$1" != x"$arg_sep"
 do
   # Handle --option=value by splitting apart and putting back on argv.
   case "$1" in
-    --*=*)
+    (--*=*)
       opt=`echo "$1" | sed -e 's/=.*//'`
       val=`echo "$1" | sed -e 's/[^=]*=//'`
       shift
@@ -67,17 +67,17 @@ do
   esac
 
   case "$1" in
-    -D | --debug  ) debug=true;;
-    -V | --verbose) verb=true;;
-    -h | --help   ) usage;;
-    -q | --quiet  ) quiet=true;;
-    -v | --version) version;;
+    (-D | --debug  ) debug=true;;
+    (-V | --verbose) verb=true;;
+    (-h | --help   ) usage;;
+    (-q | --quiet  ) quiet=true;;
+    (-v | --version) version;;
 
-    -L | --libtool) shift; libtool=$1;;
-    -E | --env)     shift; urbi_env=$1;;
-    -H | --host)    shift; urbi_host=$1;;
+    (-L | --libtool) shift; libtool=$1;;
+    (-E | --env)     shift; urbi_env=$1;;
+    (-H | --host)    shift; urbi_host=$1;;
 
-    --) # What remains are not options.
+    (--) # What remains are not options.
       shift
       while test x"$1" != x"$arg_sep"
       do
@@ -86,11 +86,11 @@ do
       done
       break
       ;;
-    -*)
+    (-*)
       error 2 "Unknown or ambiguous option \`$1'." \
 	      "Try \`--help' for more information."
       ;;
-    *) set dummy ${1+"$@"} "$1"; shift;;
+    (*) set dummy ${1+"$@"} "$1"; shift;;
    esac
    shift
 done

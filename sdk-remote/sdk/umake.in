@@ -4,7 +4,7 @@ SHLIBEXT=@SHLIBEXT@
 
 usage ()
 {
-    cat <<EOF
+  cat <<EOF
 Usage: $me [OPTION]... [FILE]...
 
 General options:
@@ -130,7 +130,7 @@ get_options ()
   do
     # Handle --option=value by splitting apart and putting back on argv.
     case $1 in
-      --*=*)
+      (--*=*)
 	opt=`echo "$1" | sed -e 's/=.*//'`
 	val=`echo "$1" | sed -e 's/[^=]*=//'`
 	shift
@@ -163,8 +163,8 @@ get_options ()
 	shift
 	while test x"$1" != x"$arg_sep"
 	do
-	    set dummy ${1+"$@"} "$1"; shift
-	    shift
+	  set dummy ${1+"$@"} "$1"; shift
+	  shift
 	done
 	break
 	;;
@@ -287,7 +287,7 @@ if test -z "$UMAKE_LINK"; then
 fi
 : ${UMAKE_LINK=umake-link}
 ($UMAKE_LINK --version) >/dev/null 2>&1 ||
-  fatal "$me: cannot run umake-link: $UMAKE_LINK"
+  fatal "cannot run umake-link: $UMAKE_LINK"
 
 
 # Define lib to link against.
