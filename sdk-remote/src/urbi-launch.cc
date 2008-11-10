@@ -159,7 +159,7 @@ main(int argc, const char* argv[])
   modules_type modules;
 
   // The options passed to urbi::main.
-  std::vector<std::string> args;
+  libport::cli_args_type args;
   args << argv[0];
 
   // Parse the command line.
@@ -175,18 +175,24 @@ main(int argc, const char* argv[])
     else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--host" || arg == "-H")
-      host = argv[++i];
+    {
+      host = libport::convert_argument<std::string>(arg, argv[i+1]);
+      args << argv[i] << argv[i+1];
+      ++i;
+    }
     else if (arg == "--plugin" || arg == "-p")
       connectMode = MODE_PLUGIN_LOAD;
     else if (arg == "--port" || arg == "-P")
     {
+      port = libport::convert_argument<int> (arg, argv[i+1]);
       args << argv[i] << argv[i+1];
-      port = libport::convert_argument<int> (arg, argv[++i]);
+      ++i;
     }
     else if (arg == "--port-file")
     {
+      port = libport::file_contents_get<int>(argv[i+1]);
       args << argv[i] << argv[i+1];
-      port = libport::file_contents_get<int>(argv[++i]);
+      ++i;
     }
     else if (arg == "--remote" || arg == "-r")
       connectMode = MODE_REMOTE;

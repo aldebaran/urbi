@@ -313,7 +313,7 @@ namespace urbi
 
 
   int
-  main(const std::vector<std::string>& args, bool block)
+  main(const libport::cli_args_type& args, bool block)
   {
     program_name = args[0];
 
