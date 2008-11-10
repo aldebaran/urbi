@@ -1,0 +1,63 @@
+# This file tries to factor the common bits for URBI engines:
+# initializing Autotools, defining standard directory variables
+# (URBI_CORE_DIRS), generating the documentation, etc.  Some parts
+# cannot be factored because of limitation in the Autotools, otherwise
+# this would be named URBI_INIT for instance, and also include
+# AC_INIT.
+#
+# We also tried to make it a macro, but it does not work as expected
+# because of unexpected behavior from AC_REQUIRE.  I currently don't
+# understand everything that happens, and I no longer want to dive
+# into the AC_REQUIRE machinery...
+#
+# Try to use it in every URBI engine, and keep their copies in sync.
+
+AC_PREREQ([2.60])
+
+# Automake.
+AM_INIT_AUTOMAKE([foreign 1.9.6 -Wall dist-zip nostdinc])
+
+m4_ifndef([DEFAULT_URBI_ENV], [m4_fatal(DEFAULT_URBI_ENV is not defined.
+You must m4_define it before including this file.)])
+
+# build-aux etc.
+URBI_BUILD_AUX
+
+## ------------ ##
+## Parameters.  ##
+## ------------ ##
+
+# --with-urbi-kernel or --with-urbi-core
+#
+# If URBI_ENGINE_NOCORE is defined, it means that we want to link
+# the engine against ucore-pc. If it it not, it means that the engine
+# contains a specific core and doesn't use ucore-pc.
+m4_ifdef([URBI_ENGINE_NOCORE], [URBI_WITH_CORE], [URBI_WITH_KERNEL])
+
+# Libport
+URBI_LIBPORT_INSTALLED
+
+# Every engine comes with an SDK.
+URBI_SDK
+
+# doc/srcdoc.
+URBI_DOC
+
+# C++ Compiler.
+URBI_PROG_CXX
+
+# If, we don't need shared libraries, speed the compilation up.
+# Define URBI_ENABLE_SHARED if you want to enable shared libraries.
+m4_ifdef([URBI_ENABLE_SHARED], [], [AC_ENABLE_SHARED([no])])
+AC_PROG_LIBTOOL
+
+## -------- ##
+## Output.  ##
+## -------- ##
+
+AC_CONFIG_FILES([Makefile])
+
+## Local Variables:
+## mode: autoconf
+## End:
+## vim:ft=config

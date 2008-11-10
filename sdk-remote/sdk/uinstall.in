@@ -1,0 +1,149 @@
+@UMAKE_COMMON@
+
+usage ()
+{
+    cat <<EOF
+Usage: $me <install_dir>
+
+General options:
+  -h, --help           display this help and exit successfully
+  -v, --version        display version information and exit successfully
+
+EOF
+
+  exit 0
+}
+
+version ()
+{
+  cat <<\EOF
+URBI Make @PACKAGE_VERSION@
+$Id$
+EOF
+  exit 0
+}
+
+installdir=
+
+get_options ()
+{
+  # Push a token among the arguments that will be used to notice when we
+  # ended options/arguments parsing.
+  # Use "set dummy ...; shift" rather than 'set - ..." because on
+  # Solaris set - turns off set -x (but keeps set -e).
+  # Use ${1+"$@"} rather than "$@" because Digital Unix and Ultrix 4.3
+  # still expand "$@" to a single argument (the empty string) rather
+  # than nothing at all.
+  arg_sep="$$--$$"
+  set dummy ${1+"$@"} "$arg_sep"; shift
+
+  # Parse command line arguments.
+  while test x"$1" != x"$arg_sep"
+  do
+    # Handle --option=value by splitting apart and putting back on argv.
+    case $1 in
+      --*=*)
+	opt=`echo "$1" | sed -e 's/=.*//'`
+	val=`echo "$1" | sed -e 's/[^=]*=//'`
+	shift
+	set dummy "$opt" "$val" ${1+"$@"}; shift
+	;;
+    esac
+
+    case $1 in
+      -h | --help   ) usage;;
+      -v | --version) version;;
+
+      --) # What remains are not options.
+	shift
+	while test x"$1" != x"$arg_sep"
+	do
+	    set dummy ${1+"$@"} "$1"; shift
+	    shift
+	done
+	break
+	;;
+      -*)
+	error 2 "Unknown or ambiguous option \`$1'." \
+	      "Try \`--help' for more information."
+	;;
+      *) set dummy ${1+"$@"} "$1"; shift;;
+     esac
+     shift
+  done
+  # Pop the token
+  shift
+
+  # Interpret remaining command line args as filenames.
+  case $# in
+   0)
+    error 2 "Missing install directory on command line."
+    ;;
+   1)
+    installdir=$1
+    ;;
+   *)
+    installdir=$1
+    report "Extra unused arguments after install directory."
+    ;;
+  esac
+}
+
+get_options "$@"
+initialize
+
+dir=$medir
+
+# origin install dir
+prefix='@prefix@'
+prefixdir="${prefix}"
+
+# absolute current dir
+currentdir="$dir/"
+currentdir=$(cd $currentdir && pwd)
+currentdir="${currentdir%/bin*}"
+
+# Test install directory existency
+if test ! -d "$installdir"; then
+  mkdir -p "$installdir"
+fi
+installdir=$(cd $installdir && pwd)
+
+# Test if install in sub directory of ourself to prevent cp loops
+matchdir=$(echo "$installdir" | sed -ne "s#${currentdir}/##p")
+
+if test -n "$matchdir"; then
+  error 2 "Cannot install in a subdirectory of current directory."
+fi
+
+# Test for write permissions
+install_test_file=$installdir/.urbi_install_test_file
+touch -f $install_test_file 2>/dev/null || true
+if test ! -f $install_test_file; then
+  error 2 "Unable to create file in $installdir, you may need special permissions"
+fi
+rm -f $install_test_file 2>/dev/null
+
+# Don't copy on ourself.
+if test "$currentdir" != "$installdir"; then
+  cp -pPR $currentdir/* $installdir/
+  rm -f $installdir/bin/uinstall
+fi
+
+# Set paths to install directory
+find $installdir							\
+    -name \*.la -o -name umake\*					\
+    -o -name uinstall -o -name \*.mk |					\
+    xargs sed -i -e "/OPEN_R_SDK/! s#${prefixdir}#${installdir}#g"
+
+# Special case for kernel includes.
+find $installdir							\
+    -name param.mk |							\
+    xargs sed -i -e "s#^\(URBI_KERNEL_PATH = \).*#\1${installdir}#g"
+
+
+exit 0
+
+# Local variables:
+# mode: shell-script
+# End:
