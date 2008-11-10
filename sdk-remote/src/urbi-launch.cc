@@ -130,7 +130,7 @@ add_module(libport::path p, modules_type& res)
   res.push_back(p.to_string());
 }
 
-typedef int (*umain_type)(const libport::cli_args_type& args, int block);
+typedef int (*umain_type)(const libport::cli_args_type& args, bool block);
 int
 main(int argc, const char* argv[])
 {

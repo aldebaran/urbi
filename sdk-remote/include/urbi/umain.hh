@@ -22,9 +22,9 @@
 extern "C"
 {
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  USDK_API int urbi_main(int argc, const char* argv[], int block);
+  USDK_API int urbi_main(int argc, const char* argv[], bool block);
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  USDK_API int urbi_main_args(const libport::cli_args_type& args, int block);
+  USDK_API int urbi_main_args(const libport::cli_args_type& args, bool block);
 }
 
 namespace urbi
