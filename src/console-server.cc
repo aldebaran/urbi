@@ -36,6 +36,8 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
+using libport::program_name;
+
 class ConsoleServer
   : public UServer
 {
@@ -103,7 +105,7 @@ namespace
   usage()
   {
     std::cout <<
-      "usage: " << libport::program_name << " [OPTION].. [FILE]...\n"
+      "usage: " << program_name << " [OPTION].. [FILE]...\n"
       "\n"
       "  FILE    to load.  `-' stands for standard input\n"
       "\n"
@@ -146,19 +148,19 @@ namespace urbi
   int main_loop(LoopData& l);
 
   USDK_API int
-  main(int argc, const char* argv[], bool block)
+  main(const libport::cli_args_type& args, bool block)
   {
-    libport::program_name = argv[0];
+    program_name = args[0];
     LoopData data;
     // Input files.
-    typedef std::vector<const char*> files_type;
+    typedef std::vector<std::string> files_type;
     files_type files;
     /// The IP to bind. "" means every interface.
     std::string arg_host;
     /// The port to use.  0 means automatic selection.
     int arg_port = 0;
     /// Where to write the port we use.
-    const char* arg_port_filename = 0;
+    std::string arg_port_filename;
     /// The size of the stacks.
     size_t arg_stack_size = 0;
     /// fast mode
@@ -169,35 +171,36 @@ namespace urbi
     data.network = true;
 
     // Parse the command line.
-    for (int i = 1; i < argc; ++i)
+    for (unsigned i = 1; i < args.size(); ++i)
     {
-      std::string arg = argv[i];
+      const std::string& arg = args[i];
 
       if (arg == "--fast" || arg == "-f")
         data.fast = true;
       else if (arg == "--help" || arg == "-h")
         usage();
       else if (arg == "--host" || arg == "-H")
-        arg_host = argv[++i];
+        arg_host = libport::convert_argument<std::string>(args, i++);
       else if (arg == "--interactive" || arg == "-i")
         data.interactive = true;
       else if (arg == "--no-network" || arg == "-n")
         data.network = false;
       else if (arg == "--period" || arg == "-P")
-        (void) libport::convert_argument<int> (arg, argv[++i]);
+        (void) libport::convert_argument<int> (args, i++);
       else if (arg == "--port" || arg == "-p")
-        arg_port = libport::convert_argument<int> (arg, argv[++i]);
+        arg_port = libport::convert_argument<int> (args, i++);
       else if (arg == "--port-file" || arg == "-w")
-        arg_port_filename = argv[++i];
+        arg_port_filename =
+          libport::convert_argument<std::string>(args, i++);
       else if (arg == "--stack-size" || arg == "-s")
-        arg_stack_size = libport::convert_argument<size_t> (arg, argv[++i]);
+        arg_stack_size = libport::convert_argument<size_t> (args, i++);
       else if (arg == "--version" || arg == "-v")
         version();
       else if (arg[0] == '-' && arg[1] != 0)
-        libport::invalid_option (arg);
+        libport::invalid_option(arg);
       else
         // An argument: a file.
-        files.push_back(STREQ(argv[i], "-") ? "/dev/stdin" : argv[i]);
+        files.push_back((arg == "-") ? std::string("/dev/stdin") : arg);
     }
 
     // If not defined in line, use the envvar.
@@ -219,9 +222,10 @@ namespace urbi
     data.s = new ConsoleServer(data.fast);
     ConsoleServer& s = *data.s;
     int port = 0;
-    if (data.network && !(port=Network::createTCPServer(arg_port, arg_host)))
+    if (data.network
+        && !(port = Network::createTCPServer(arg_port, arg_host)))
     {
-      std::cerr << libport::program_name
+      std::cerr << program_name
                 << ": cannot bind to port " << arg_port;
       if (!arg_host.empty())
         std::cerr << " on " << arg_host;
@@ -233,22 +237,23 @@ namespace urbi
 
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
-    if (arg_port_filename)
-      std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
+    if (!arg_port_filename.empty())
+      std::ofstream(arg_port_filename.c_str(), std::ios::out)
+        << port << std::endl;
 
     UConnection& c = s.ghost_connection_get();
-    std::cerr << libport::program_name
+    std::cerr << program_name
               << ": got ghost connection" << std::endl;
 
-    foreach (const char* f, files)
+    foreach (const std::string& f, files)
       if (s.load_file(f, c.recv_queue_get ()) != USUCCESS)
-        std::cerr << libport::program_name
+        std::cerr << program_name
                   << ": failed to process " << f << std::endl
                   << libport::exit(EX_NOINPUT);
 
     c.new_data_added_get() = true;
 
-    std::cerr << libport::program_name << ": going to work..." << std::endl;
+    std::cerr << program_name << ": going to work..." << std::endl;
     if (block)
       return main_loop(data);
     else
