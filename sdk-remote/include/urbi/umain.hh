@@ -14,7 +14,7 @@
   }                                             \
                                                 \
   int						\
-  main(int argc, const char *argv[])		\
+  main(int argc, const char* argv[])		\
   {						\
     urbi::main(argc, argv, true);		\
   }

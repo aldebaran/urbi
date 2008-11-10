@@ -376,14 +376,4 @@ namespace urbi
     return 0;
   }
 
-  int
-  main(int argc, const char* argv[], bool block)
-  {
-    libport::cli_args_type args;
-    // For some reason, I failed to use std::copy here.
-    for (int i = 0; i < argc; ++i)
-      args << std::string(argv[i]);
-    return main(args, block);
-  }
-
 }

@@ -1,5 +1,7 @@
 /// \file libuco/urbi-main.cc
 
+#include <libport/cli.hh>
+#include <libport/containers.hh>
 #include <urbi/umain.hh>
 
 extern "C"
@@ -13,4 +15,19 @@ extern "C"
   {
     return urbi::main(args, block);
   }
+}
+
+namespace urbi
+{
+
+  int
+  main(int argc, const char* argv[], bool block)
+  {
+    libport::cli_args_type args;
+    // For some reason, I failed to use std::copy here.
+    for (int i = 0; i < argc; ++i)
+      args << std::string(argv[i]);
+    return main(args, block);
+  }
+
 }
