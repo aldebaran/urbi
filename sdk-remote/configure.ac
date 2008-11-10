@@ -2,6 +2,12 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.61])
+
+
+## --------- ##
+## AC_INIT.  ##
+## --------- ##
+
 AC_INIT([URBI SDK Remote], [UNDEFINED],
 	[sdk-remote-bugs@gostai.com], [sdk-remote])
 URBI_PACKAGE_VERSION
@@ -158,6 +164,24 @@ AC_CONFIG_FILES([
       src/swig/Makefile
       src/tests/Makefile
 ])
+
+# URBI_CONFIG_WRAPPER(COMPONENT-NAME)
+# -----------------------------------
+# Create a testing wrapper for the COMPONENT-NAME.
+m4_define([URBI_CONFIG_WRAPPER],
+[AC_CONFIG_FILES([src/tests/bin/$1:src/tests/bin/wrapper.in],
+                 [chmod a+x src/tests/bin/$1])
+])
+
+# Prepare the umake wrappers.
+URBI_CONFIG_WRAPPER([umake])
+URBI_CONFIG_WRAPPER([umake-engine])
+URBI_CONFIG_WRAPPER([umake-remote])
+URBI_CONFIG_WRAPPER([umake-shared])
+URBI_CONFIG_WRAPPER([umake-clean])
+URBI_CONFIG_WRAPPER([umake-link])
+URBI_CONFIG_WRAPPER([umake-lib])
 AC_CONFIG_FILES([src/tests/bin/urbi-launch],
                 [chmod +x src/tests/bin/urbi-launch])
+
 AC_OUTPUT
