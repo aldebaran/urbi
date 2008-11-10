@@ -28,9 +28,9 @@
 #include <object/primitives.hh>
 #include <object/string.hh>
 #include <object/urbi-exception.hh>
-# include <runner/call.hh>
-# include <runner/raise.hh>
-# include <runner/runner.hh>
+#include <runner/call.hh>
+#include <runner/raise.hh>
+#include <runner/runner.hh>
 
 #include <urbi/uobject.hh>
 
@@ -47,10 +47,10 @@ using object::urbi_call;
 using runner::Runner;
 using libport::Symbol;
 
-#define MAKE_VOIDCALL(ptr, cls, meth) \
-    object::make_primitive( \
-		boost::function1<void, rObject>(\
-		boost::bind(&cls::meth, ptr)))
+#define MAKE_VOIDCALL(ptr, cls, meth)                   \
+  object::make_primitive(                               \
+    boost::function1<void, rObject>(                    \
+      boost::bind(&cls::meth, ptr)))
 
 static inline runner::Runner& getCurrentRunner()
 {
@@ -305,7 +305,10 @@ uvar_uowned_set(const std::string& name, rObject val)
   rObject o = get_base(p.first);
   rObject v = o->slot_get(Symbol(p.second));
   object::objects_type args = list_of (val);
-  return getCurrentRunner().apply(v, v->slot_get(SYMBOL(writeOwned)), SYMBOL(writeOwned), args);
+  return getCurrentRunner().apply(v,
+                                  v->slot_get(SYMBOL(writeOwned)),
+                                  SYMBOL(writeOwned),
+                                  args);
 }
 
 namespace urbi
@@ -423,8 +426,8 @@ namespace urbi
   }
 
   UObject::UObject(const std::string& name)
-    : __name(name),
-      load(name, "load")
+    : __name(name)
+    , load(name, "load")
   {
     ECHO( "Uobject ctor for " << __name );
     load = 1;
