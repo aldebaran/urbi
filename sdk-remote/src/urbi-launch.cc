@@ -7,6 +7,7 @@
 #include <sdk/config.h>
 
 #include <libport/cli.hh>
+#include <libport/containers.hh>
 #include <libport/file-system.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
@@ -25,7 +26,7 @@ typedef std::list<std::string> modules_type;
 
 // The kind of host (not the host name).
 std::string urbi_host = URBI_HOST;
-const char* umain_sym = "urbi_main";
+const char* umain_sym = "urbi_main_args";
 
 namespace
 {
@@ -129,7 +130,7 @@ add_module(libport::path p, modules_type& res)
   res.push_back(p.to_string());
 }
 
-typedef int (*umain_type)(int argc, const char* argv[], int block);
+typedef int (*umain_type)(const libport::cli_args_type& args, int block);
 int
 main(int argc, const char* argv[])
 {
@@ -158,8 +159,8 @@ main(int argc, const char* argv[])
   modules_type modules;
 
   // The options passed to urbi::main.
-  int uargc = 0;
-  const char** uargv = 0;
+  std::vector<std::string> args;
+  args << argv[0];
 
   // Parse the command line.
   for (int i = 1; i < argc; ++i)
@@ -178,9 +179,15 @@ main(int argc, const char* argv[])
     else if (arg == "--plugin" || arg == "-p")
       connectMode = MODE_PLUGIN_LOAD;
     else if (arg == "--port" || arg == "-P")
+    {
+      args << argv[i] << argv[i+1];
       port = libport::convert_argument<int> (arg, argv[++i]);
+    }
     else if (arg == "--port-file")
-	port = libport::file_contents_get<int>(argv[++i]);
+    {
+      args << argv[i] << argv[i+1];
+      port = libport::file_contents_get<int>(argv[++i]);
+    }
     else if (arg == "--remote" || arg == "-r")
       connectMode = MODE_REMOTE;
     else if (arg == "--start" || arg == "-s")
@@ -189,12 +196,8 @@ main(int argc, const char* argv[])
       version();
     else if (arg == "--")
     {
-      uargc = argc - i;
-      // We need to keep room for uargv[0] and uargv[uargc] too.
-      uargv = new const char*[uargc + 1];
-      uargv[0] = argv[0];
-      // Also copy argv[argc] which is 0.
-      std::copy(uargv + 1, argv + i + 1, argv + argc + 1);
+      for (int j = i + 1; j < argc; ++j)
+        args << argv[j];
       break;
     }
     else if (arg[0] == '-' && arg[1] != 0)
@@ -231,13 +234,5 @@ main(int argc, const char* argv[])
     std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl
               << libport::exit(1);
 
-  // urbi::main expects valid argc/argv.
-  if (!uargv)
-  {
-    uargc = 0;
-    uargv = new const char*[2];
-    uargv[0] = argv[0];
-    uargv[1] = 0;
-  }
-  umain(uargc, uargv, true);
+  umain(args, true);
 }

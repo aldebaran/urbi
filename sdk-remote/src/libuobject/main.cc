@@ -8,7 +8,7 @@
 #include <sstream>
 
 #include <libport/cli.hh>
-#include <libport/cli.hh>
+#include <libport/containers.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
@@ -223,10 +223,10 @@ namespace urbi
 
   static
   void
-  usage(const char* name)
+  usage()
   {
     std::cout <<
-      "usage:\n" << name << " [OPTION]...\n"
+      "usage:\n" << libport::program_name << " [OPTION]...\n"
       "\n"
       "Options:\n"
       "  -b, --buffer SIZE     input buffer size"
@@ -252,16 +252,16 @@ namespace urbi
   }
 
   static int
-  initialize(const char* addr, int port, int buflen,
+  initialize(const std::string& host, int port, int buflen,
 	     bool exitOnDisconnect, bool server)
   {
     std::cerr << program_name
 	      << ": " << urbi::package_info() << std::endl
 	      << program_name
 	      << ": Remote Component Running on "
-	      << addr << " " << port << std::endl;
+	      << host << " " << port << std::endl;
 
-    new USyncClient(addr, port, buflen, server);
+    new USyncClient(host, port, buflen, server);
 
     if (exitOnDisconnect)
     {
@@ -296,7 +296,7 @@ namespace urbi
     void
     argument_with_option(const char* longopt,
                          char shortopt,
-                         const char* val)
+                         const std::string& val)
     {
       std::cerr
         << program_name
@@ -311,66 +311,79 @@ namespace urbi
 
   }
 
-  int
-  main(int argc, const char* argv[], bool block)
-  {
-    program_name = argv[0];
 
-    const char* addr = "localhost";
+  int
+  main(const std::vector<std::string>& args, bool block)
+  {
+    program_name = args[0];
+
+    std::string host = "localhost";
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
     bool server = false;
     int buflen = UAbstractClient::URBI_BUFLEN;
 
     // The number of the next (non-option) argument.
-    int argp = 1;
-    for (int i = 1; i < argc; ++i)
+    unsigned argp = 1;
+    for (unsigned i = 1; i < args.size(); ++i)
     {
-      std::string arg = argv[i];
+      const std::string& arg = args[i];
       if (arg == "--buffer" || arg == "-b")
-	buflen = libport::convert_argument<unsigned>(arg, argv[++i]);
+	buflen = libport::convert_argument<unsigned>(args, i++);
       else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
       else if (arg == "--stay-alive" || arg == "-s")
 	exitOnDisconnect = false;
       else if (arg == "--help" || arg == "-h")
-	usage (argv[0]);
+	usage();
       else if (arg == "--host" || arg == "-H")
-	addr = libport::convert_argument<const char*>(arg, argv[++i]);
+	host = libport::convert_argument<std::string>(args, i++);
       else if (arg == "--port" || arg == "-p")
-	port = libport::convert_argument<unsigned>(arg, argv[++i]);
+	port = libport::convert_argument<unsigned>(args, i++);
       else if (arg == "--port-file" || arg == "-r")
-	port = libport::file_contents_get<int>(argv[++i]);
+	port =
+          (libport::file_contents_get<int>
+           (libport::convert_argument<const char*>(args, i++)));
       else if (arg == "--server")
 	server = true;
       else if (arg == "--version" || arg == "-v")
-	version ();
+	version();
       else if (arg[0] == '-')
-	libport::invalid_option (arg);
+	libport::invalid_option(arg);
       else
 	// A genuine argument.
 	switch (argp++)
 	{
 	  case 1:
-	    addr = argv[i];
-            argument_with_option("host", 'H', addr);
+            argument_with_option("host", 'H', args[i]);
+	    host = args[i];
 	    break;
 	  case 2:
-	    port = libport::convert_argument<unsigned> ("port", argv[i]);
-            argument_with_option("port", 'p', addr);
+            argument_with_option("port", 'p', args[i]);
+	    port = libport::convert_argument<unsigned> ("port", args[i].c_str());
 	    break;
 	  default:
 	    std::cerr << "unexpected argument: " << arg << std::endl
-		      << libport::exit (EX_USAGE);
+		      << libport::exit(EX_USAGE);
 	}
     }
 
-   initialize(addr, port, buflen, exitOnDisconnect, server);
+   initialize(host, port, buflen, exitOnDisconnect, server);
 
    if (block)
      while (true)
        usleep(30000000);
     return 0;
+  }
+
+  int
+  main(int argc, const char* argv[], bool block)
+  {
+    libport::cli_args_type args;
+    // For some reason, I failed to use std::copy here.
+    for (int i = 0; i < argc; ++i)
+      args << std::string(argv[i]);
+    return main(args, block);
   }
 
 }

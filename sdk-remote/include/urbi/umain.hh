@@ -3,9 +3,16 @@
 #ifndef URBI_UMAIN_HH
 # define URBI_UMAIN_HH
 
+# include <libport/cli.hh>
 # include <urbi/uobject.hh>
 
-#  define UMAIN()				\
+# define UMAIN()				\
+  int						\
+  main(const cli_args_type& args)               \
+  {						\
+    urbi::main(args, true);                     \
+  }                                             \
+                                                \
   int						\
   main(int argc, const char *argv[])		\
   {						\
@@ -14,16 +21,14 @@
 
 extern "C"
 {
-  /** Bouncer to urbi::main() for easier access through dlsym()*/
-  USDK_API int urbi_main(int argc, const char *argv[], int block);
+  /** Bouncer to urbi::main() for easier access through dlsym(). */
+  USDK_API int urbi_main(int argc, const char* argv[], int block);
+  /** Bouncer to urbi::main() for easier access through dlsym(). */
+  USDK_API int urbi_main_args(const libport::cli_args_type& args, int block);
 }
 
 namespace urbi
 {
-
-  typedef std::list<UObject*> UObjectList;
-
-  typedef int UReturn;
 
   /** Initialisation method.
    * Both plugin and remote libraries include a main function whose only
@@ -31,7 +36,12 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
+  USDK_API int main(const libport::cli_args_type& args, bool block = true);
+
+  /** Initialisation method using C style arguments.
+   */
   USDK_API int main(int argc, const char *argv[], bool block = true);
+
 
 #ifdef URBI_ENV_REMOTE
   /** Initialisation method, for remote mode only, that returns.
@@ -43,8 +53,8 @@ namespace urbi
    * \param exitOnDisconnect call exit() if we get disconnected from server.
    * \return 0 if no error occured.
    */
-   int USDK_API initialize(const char* host, int port, int buflen,
-                           bool exitOnDisconnect, bool server = false);
+  int USDK_API initialize(const std::string& host, int port, int buflen,
+                          bool exitOnDisconnect, bool server = false);
 #endif
 }
 

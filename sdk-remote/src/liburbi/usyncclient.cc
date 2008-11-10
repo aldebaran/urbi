@@ -10,12 +10,12 @@
 
 namespace urbi
 {
-  USyncClient::USyncClient(const char* _host,
-			   int _port,
-			   int _buflen,
-			   bool _server,
+  USyncClient::USyncClient(const std::string& host,
+			   int port,
+			   int buflen,
+			   bool server,
                            bool startCallbackThread)
-    : UClient(_host, _port, _buflen, _server)
+    : UClient(host, port, buflen, server)
     , sem_()
     , queueLock_()
     , msg(0)
@@ -46,7 +46,7 @@ namespace urbi
       queueLock_.lock();
       if (queue.empty())
       {
-	// Only explanation: processEvents from another thread stole our 
+	// Only explanation: processEvents from another thread stole our
 	// message.
 	sem_++; // Give back the token we took without popping a message.
 	queueLock_.unlock();
