@@ -28,7 +28,7 @@ TESTS_ENVIRONMENT =				\
 # tests(*).
 check_PROGRAMS = tests
 
-tests_SOURCES = tests.hh tests.cc $(TESTS)
+tests_SOURCES = tests.hh tests.cc $(CHECKFILES)
 tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_tests_SOURCES = dispatcher.cc
@@ -42,7 +42,7 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 	  echo 'dispatch(const char* method, urbi::UClient& client,';	 \
 	  echo '	 urbi::USyncClient& syncClient)';		 \
 	  echo '{';							 \
-	  for f in $(TESTS); do						 \
+	  for f in $(CHECKFILES); do					 \
 	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		 \
 	    echo "  TESTS_RUN($$name);";				 \
 	  done;								 \
@@ -54,18 +54,17 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 
 # liburbi-check
 EXTRA_DIST += liburbi-check.as
-nodist_check_SCRIPTS = liburbi-check
-m4sh_scripts = liburbi-check
+nodist_check_SCRIPTS += liburbi-check
+m4sh_scripts += liburbi-check
 
 # The test suite.
-TESTS =						\
+CHECKFILES = 					\
   checkfiles/values.cc				\
   checkfiles/removecallbacks.cc
-TEST_LOGS = $(TESTS:.cc=.log)
-
+TEST_LOGS = $(CHECKFILES:.cc=.log)
 # Run some tests only.
 check-%:
         $(MAKE) $(AM_MAKEFLAGS) check-html TESTS_DIRS=$* VERBOSE=1
 
 check-clean-local:
-	rm -rf $(TESTS:.cc=.dir)
+	rm -rf $(CHECKFILES:.cc=.dir)
