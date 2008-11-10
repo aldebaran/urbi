@@ -190,7 +190,9 @@ main(int argc, const char* argv[])
     }
     else if (arg == "--port-file")
     {
-      port = libport::file_contents_get<int>(argv[i+1]);
+      port =
+        (libport::file_contents_get<int>
+         (libport::convert_argument<const char*>(arg, argv[i+1])));
       args << argv[i] << argv[i+1];
       ++i;
     }
