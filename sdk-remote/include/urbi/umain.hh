@@ -8,7 +8,7 @@
 
 # define UMAIN()				\
   int						\
-  main(const cli_args_type& args)               \
+  main(const libport::cli_args_type& args)      \
   {						\
     urbi::main(args, true);                     \
   }                                             \
