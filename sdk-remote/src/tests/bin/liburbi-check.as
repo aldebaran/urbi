@@ -71,7 +71,6 @@ if test ! -f "$chk.cc"; then
   fatal "no such file: $chk.cc"
 fi
 
-period=32
 # ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x
 medir=$(basename $(dirname "$chk"))
 # ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x/andexp-pipeexp
@@ -110,13 +109,7 @@ touch error.exp
 echo 0 >status.exp
 
 # Start it.
-valgrind=$(instrument "server.val")
-cmd="$valgrind $URBI_SERVER --port 0 -w server.port --period $period"
-echo "$cmd" >server.cmd
-$cmd >server.out 2>server.err &
-children_register server
-
-my_sleep 4
+spawn_urbi_server
 
 # Start the test.
 valgrind=$(instrument "remote.val")
