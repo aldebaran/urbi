@@ -1,17 +1,36 @@
 #include <boost/lexical_cast.hpp>
 
+#include <libport/cli.hh>
+#include <libport/foreach.hh>
+#include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
+#include <urbi/uabstractclient.hh>
 #include <urbi/uclient.hh>
 #include <urbi/usyncclient.hh>
 
 #include <tests.hh>
 
+using libport::program_name;
+
 // Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
 
-// argv[0].
-const char* program_name = "unknown program";
+static
+void
+usage()
+{
+  std::cout <<
+    "usage:\n" << libport::program_name << " [OPTION]... TEST...\n"
+    "\n"
+    "Options:\n"
+    "  -h, --help            display this message and exit\n"
+    "  -H, --host ADDR       server host name   [localhost]\n"
+    "  -p, --port PORT       tcp port URBI will listen to"
+               << " [" << urbi::UAbstractClient::URBI_PORT << "]\n"
+    "  -r, --port-file FILE  file containing the port to listen to\n"
+               << libport::exit (EX_OK);
+}
 
 static char
 char_of(urbi::UMessageType t)
@@ -32,9 +51,7 @@ dump(const urbi::UMessage& msg)
     return urbi::URBI_CONTINUE;
 
   VERBOSE("got a message: " << msg);
-  std::cout << char_of(msg.type)
-	    << ' ' << msg.tag
-	    << ' ';
+  std::cout << char_of(msg.type) << ' ' << msg.tag << ' ';
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
@@ -76,13 +93,30 @@ main(int argc, const char* argv[])
 {
   // Actually argv[0] is verbose and not interesting.
   program_name = "tests";
-  if (argc < 4)
-    std::cerr << "Usage: " << program_name
-	      << " HOST PORT TEST-NAMES..." << std::endl
-	      << libport::exit(EX_USAGE);
+  std::string host = "localhost";
+  int port = urbi::UAbstractClient::URBI_PORT;
 
-  const char* host = argv[1];
-  int port = boost::lexical_cast<int>(argv[2]);
+  /// The command line test requested.
+  std::vector<std::string> tests;
+
+  for (int i = 1; i < argc; ++i)
+  {
+    std::string arg = argv[i];
+    if (arg == "--help" || arg == "-h")
+      usage();
+    else if (arg == "--host" || arg == "-H")
+      host = libport::convert_argument<std::string>(arg, argv[++i]);
+    else if (arg == "--port" || arg == "-p")
+      port = libport::convert_argument<unsigned>(arg, argv[++i]);
+    else if (arg == "--port-file" || arg == "-r")
+      port =
+        (libport::file_contents_get<int>
+         (libport::convert_argument<const char*>(arg, argv[++i])));
+    else if (arg[0] == '-')
+      libport::invalid_option(arg);
+    else
+      tests.push_back(arg);
+  }
 
   urbi::UClient client(host, port);
   if (client.error())
@@ -95,9 +129,9 @@ main(int argc, const char* argv[])
     std::cerr << "Failed to set up properly the syncClient" << std::endl
               << libport::exit(EX_SOFTWARE);
 
-  for (int i = 3; i < argc; ++i)
+  foreach (const std::string& s, tests)
   {
-    VERBOSE("test " << argv[i]);
-    dispatch(argv[i], client, syncClient);
+    VERBOSE("test " << s);
+    dispatch(s, client, syncClient);
   }
 }

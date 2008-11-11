@@ -116,11 +116,11 @@ echo "$cmd" >server.cmd
 $cmd >server.out 2>server.err &
 children_register server
 
-my_sleep 2
+my_sleep 4
 
 # Start the test.
 valgrind=$(instrument "remote.val")
-cmd="$valgrind ../../tests localhost $(cat server.port) $meraw"
+cmd="$valgrind ../../tests --port-file server.port $meraw"
 echo "$cmd" >remote.cmd
 $cmd >remote.out.raw 2>remote.err &
 children_register remote

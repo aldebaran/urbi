@@ -2,6 +2,7 @@
 # define SDK_REMOTE_TESTS_TESTS_HH
 
 # include <libport/semaphore.hh>
+# include <libport/program-name.hh>
 # include <libport/compiler.hh>
 # include <urbi/uclient.hh>
 # include <urbi/usyncclient.hh>
@@ -32,50 +33,51 @@ Test file layout
 */
 
 
-extern libport::Semaphore dumpSem;
-
-/// argv[0].
-extern const char* program_name;
-
-/// display the value, increment dumpSem.
-urbi::UCallbackAction dump(const urbi::UMessage & msg);
-/// display the value, incremente dumpSem remove callback if 0
-urbi::UCallbackAction removeOnZero(const urbi::UMessage & msg);
-
-
-#define BEGIN_TEST(name, clientName, syncClientName)		\
-  void name(urbi::UClient & clientName, urbi::USyncClient & syncClientName) {\
-    if (getenv("VERBOSE")) LIBPORT_ECHO("starting test " << #name );
-
-#define END_TEST \
-  if (getenv("VERBOSE")) LIBPORT_ECHO("sending 'shutdown'");  \
-  client.send("shutdown;"); \
-  }
-
-void dispatch(const char * method, urbi::UClient & client,
-	      urbi::USyncClient & syncClient);
-
-/// \a Name is the base name of the C++ file containing the function
-/// \a Name.
-#define TESTS_RUN(Name)							\
-  do {									\
-    if (!strcmp(method, #Name))						\
-    {									\
-      void Name (urbi::UClient& , urbi::USyncClient&);			\
-      Name(client, syncClient);						\
-      return;								\
-    }									\
-  } while (0)
-
 /// Display a debug message.
 #define VERBOSE(S)				\
-  std::cerr << program_name << ": " << S << std::endl
+  std::cerr << libport::program_name << ": " << S << std::endl
 
 /// Send S to the client.
 #define SEND(S)						\
   do {							\
     VERBOSE("Sending: " << S);				\
     client.send((std::string(S) + "\n").c_str());	\
+  } while (0)
+
+
+extern libport::Semaphore dumpSem;
+
+/// display the value, increment dumpSem.
+urbi::UCallbackAction dump(const urbi::UMessage& msg);
+/// display the value, incremente dumpSem remove callback if 0
+urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
+
+
+#define BEGIN_TEST(Name, ClientName, SyncClientName)    \
+  void                                                  \
+  Name(urbi::UClient& ClientName,                       \
+       urbi::USyncClient& SyncClientName)               \
+  {                                                     \
+    if (getenv("VERBOSE"))                              \
+      LIBPORT_ECHO("starting test " << #Name);
+
+#define END_TEST                           \
+    SEND("shutdown;");                     \
+  }
+
+void dispatch(const std::string& method, urbi::UClient& client,
+	      urbi::USyncClient& syncClient);
+
+/// \a Name is the base name of the C++ file containing the function
+/// \a Name.
+#define TESTS_RUN(Name)							\
+  do {									\
+    if (method == #Name)						\
+    {									\
+      void Name(urbi::UClient& , urbi::USyncClient&);			\
+      Name(client, syncClient);						\
+      return;								\
+    }									\
   } while (0)
 
 #endif // SDK_REMOTE_TESTS_TESTS_HH

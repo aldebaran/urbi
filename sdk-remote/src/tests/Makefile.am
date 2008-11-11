@@ -95,20 +95,20 @@ nodist_tests_SOURCES = dispatcher.cc
 CLEANFILES += $(nodist_tests_SOURCES)
 
 dispatcher.cc: $(tests_SOURCES) Makefile
-	{								 \
-	  echo '#include "tests.hh"';					 \
-	  echo;								 \
-	  echo 'void';							 \
-	  echo 'dispatch(const char* method, urbi::UClient& client,';	 \
-	  echo '	 urbi::USyncClient& syncClient)';		 \
-	  echo '{';							 \
-	  for f in $(CHECKFILES); do					 \
-	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		 \
-	    echo "  TESTS_RUN($$name);";				 \
-	  done;								 \
-	  echo '  std::cerr << "Unknown test " << method << std::endl;'; \
-	  echo '  exit (1);';						 \
-	  echo '}';							 \
+	{								     \
+	  echo '#include "tests.hh"';					     \
+	  echo;								     \
+	  echo 'void';							     \
+	  echo 'dispatch(const std::string& method, urbi::UClient& client,'; \
+	  echo '	 urbi::USyncClient& syncClient)';		     \
+	  echo '{';							     \
+	  for f in $(CHECKFILES); do					     \
+	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		     \
+	    echo "  TESTS_RUN($$name);";				     \
+	  done;								     \
+	  echo '  std::cerr << "Unknown test " << method << std::endl;';     \
+	  echo '  exit(1);';						     \
+	  echo '}';							     \
 	} >dispatcher.cc.tmp
 	mv dispatcher.cc.tmp dispatcher.cc
 
