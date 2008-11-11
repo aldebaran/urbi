@@ -107,6 +107,11 @@ do
   fi
 done
 
+if $verb; then
+  echo >&2 "$libtool --config:"
+  $libtool --config | sed  >&2 's/^/> /'
+fi
+
 set -x
 
 case $($libtool --config) in
