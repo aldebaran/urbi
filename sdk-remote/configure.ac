@@ -27,6 +27,9 @@ URBI_DIRS([remote])
 AC_PROG_CC
 URBI_PROG_CXX
 
+# Disable static libraries. Loading modules as shared libraries
+# requires us to be one.
+AC_ENABLE_STATIC([no])
 AC_PROG_LIBTOOL
 
 URBI_SDK
