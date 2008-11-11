@@ -26,7 +26,7 @@ sensor2::newval (UVar& v)
 }
 
 void
-sensor2::setVal (int v)
+sensor2::setVal (int)
 {
 }
 
