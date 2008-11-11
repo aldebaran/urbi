@@ -61,7 +61,7 @@ my_sleep ()
 
 exec 3>&2
 
-check_dir abs_builddir liburbi-check
+check_dir abs_builddir bin/liburbi-check
 check_dir abs_top_builddir config.status
 check_dir abs_top_srcdir configure.ac
 
