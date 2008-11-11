@@ -1,0 +1,81 @@
+#! @SHELL@
+# @configure_input@
+# Wrapper around a non installed umake component to make it work as
+# an installed one.
+
+# No unnoticed problem.
+set -e
+
+case $VERBOSE in
+  (x) set -x;;
+esac
+
+me=$(basename "$0")
+
+stderr ()
+{
+  echo >&2 "$me: $@"
+}
+
+fatal ()
+{
+  stderr "$@"
+  exit 1
+}
+
+abs_top_builddir='@abs_top_builddir@'
+abs_top_srcdir='@abs_top_srcdir@'
+
+CPPFLAGS="$CPPFLAGS -I$abs_top_srcdir/include -I$abs_top_builddir/include"
+
+test -d "$abs_top_builddir" ||
+  fatal "cannot find top build directory: $abs_top_builddir"
+
+param_mk=$abs_top_builddir/sdk/param.mk
+test -f "$param_mk" ||
+  fatal "cannot find $param_mk"
+
+libtool=$abs_top_builddir/libtool
+test -f "$libtool" ||
+  fatal "cannot find $libtool"
+
+# umake-link does not support -P.
+case $me in
+  (umake-link)
+      ;;
+  (*)
+      set x -P "$param_mk" ${1+"$@"}
+      shift
+      ;;
+esac
+
+# special case for kernel and umake-remote
+case $me in
+   (umake-remote|umake-shared)
+     envdir="$abs_top_builddir/src/libuobject"
+     prefix="$abs_top_builddir"
+     ;;
+   (*)
+     envdir="$abs_top_builddir/src"
+     prefix="$abs_top_builddir"
+     ;;
+esac
+
+# FIXME: Instead of exporting, we should have a means to give
+# it to wrappee only, maybe via command line?
+export UMAKE=$abs_top_builddir/sdk/umake
+wrappee=$abs_top_builddir/sdk/$me
+# PREURBI can be valgrind for instance.  Admitedly useless here, since
+# these are scripts.
+exec $PREURBI "$wrappee"                        \
+    LIBTOOL="$abs_top_builddir/libtool"         \
+    envdir="$envdir"                            \
+    "$@"                                        \
+    "--kernel=$kernel_dir"                      \
+    "--prefix=$prefix"                          \
+    EXTRA_CPPFLAGS="$CPPFLAGS"                  \
+    VPATH="$abs_top_srcdir/src/liburbi"
+
+# Local Variables:
+# mode: shell-script
+# End:

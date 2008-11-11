@@ -6,7 +6,7 @@ include $(top_srcdir)/build-aux/m4sh.mk
 ## Wrappers for non-installed executables.  ##
 ## ---------------------------------------- ##
 
-nodist_check_SCRIPTS +=				\
+configured_scripts =				\
   bin/umake					\
   bin/umake-engine				\
   bin/umake-lib					\
@@ -14,11 +14,13 @@ nodist_check_SCRIPTS +=				\
   bin/umake-remote				\
   bin/umake-shared
 
+nodist_check_SCRIPTS += $(configured_scripts)
+
 # This is really painful: dependencies on config.status are handled
 # only in the top-level Makefile by Automake.  So enforce these
 # changes here.  Which basically amounts to duplicating what Automake
 # does in the top-level Makefile.
-bin/%: $(wildcard $(srcdir)/bin/*.in)
+$(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 	cd $(top_builddir) && $(SHELL) ./config.status src/tests/$@
 
 
@@ -39,17 +41,17 @@ ls_files =								    \
 
 # I couldn't get git-ls-files to list directories.  So ask for the CC
 # files in them, and keep only the *.uob part.
-#UOBJECTS = $(patsubst %/,%,$(sort $(dir $(call ls_files,uobjects/*.uob/*.cc))))
-UOBJECTS = uobjects/all.uob
+UOBJECTS = $(patsubst %/,%,$(sort $(dir $(call ls_files,uobjects/*.uob/*.cc))))
+#UOBJECTS = uobjects/all.uob
 
-# liburbi-check
-EXTRA_DIST += uobject-check.as
-nodist_check_SCRIPTS += uobject-check
-m4sh_scripts = uobject-check
+# uobject-check
+EXTRA_DIST += bin/uobject-check.as
+nodist_check_SCRIPTS += bin/uobject-check
+m4sh_scripts = bin/uobject-check
 
 
-%.log: %.uob $(check_programs)
-	@$(am__check_pre) ./uobject-check $(srcdir)/$* $(am__check_post)
+%.log: %.uob
+	@$(am__check_pre) bin/uobject-check $(srcdir)/$* $(am__check_post)
 
 debug:
 	echo $(UOBJECTS)
@@ -63,7 +65,7 @@ debug:
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
 %.log: %.cc $(check_programs)
-	@$(am__check_pre) ./liburbi-check $(srcdir)/$* $(am__check_post)
+	@$(am__check_pre) bin/liburbi-check $(srcdir)/$* $(am__check_post)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
@@ -111,16 +113,16 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 	mv dispatcher.cc.tmp dispatcher.cc
 
 # liburbi-check
-EXTRA_DIST += liburbi-check.as
-nodist_check_SCRIPTS += liburbi-check
-m4sh_scripts += liburbi-check
+EXTRA_DIST += bin/liburbi-check.as
+nodist_check_SCRIPTS += bin/liburbi-check
+m4sh_scripts += bin/liburbi-check
 
 # The test suite.
 CHECKFILES = 					\
   checkfiles/values.cc				\
   checkfiles/removecallbacks.cc
-TESTS = $(UOBJECTS)
-TEST_LOGS = $(CHECKFILES:.cc=.log) $(UOBJECTS:.uob=.log)
+TESTS = $(CHECKFILES) $(UOBJECTS)
+TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))
 
 # Run some tests only.
 check-%:
