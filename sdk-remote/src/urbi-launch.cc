@@ -24,10 +24,6 @@ using libport::program_name;
 // List of module names.
 typedef std::list<std::string> modules_type;
 
-// The kind of host (not the host name).
-std::string urbi_host = URBI_HOST;
-const char* umain_sym = "urbi_main_args";
-
 namespace
 {
   /// Wrapper around lt_dlopenext that exits on failures.
@@ -142,7 +138,7 @@ main(int argc, const char* argv[])
   };
   ConnectMode connectMode = MODE_REMOTE;
   std::string dll =
-    prefix / "gostai" / "core" / urbi_host /
+    prefix / "gostai" / "core" / URBI_HOST /
     (connectMode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
 
   /// Server host name.
@@ -221,7 +217,7 @@ main(int argc, const char* argv[])
   foreach (const std::string& s, modules)
     xlt_dlopenext(s);
 
-  umain_type umain = (umain_type) lt_dlsym(core, umain_sym);
+  umain_type umain = (umain_type) lt_dlsym(core, "urbi_main_args");
   if (!umain)
     std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl
               << libport::exit(1);
