@@ -12,9 +12,10 @@ configured_scripts =				\
   bin/umake-lib					\
   bin/umake-link				\
   bin/umake-remote				\
-  bin/umake-shared
+  bin/umake-shared				\
+  bin/urbi-launch
 
-nodist_check_SCRIPTS += $(configured_scripts)
+nodist_noinst_SCRIPTS += $(configured_scripts)
 
 # This is really painful: dependencies on config.status are handled
 # only in the top-level Makefile by Automake.  So enforce these
