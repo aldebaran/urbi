@@ -16,7 +16,7 @@ do (Global.Dictionary)
   {
     var res = []|
     for (var k: keys)
-      res.insert(Pair.new (k, get (k)))|
+      res.insertBack(Pair.new (k, get (k)))|
     res
   };
 

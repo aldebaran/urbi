@@ -64,7 +64,7 @@ do (List)
     var res = this - [e] |
     clear |
     for| (var i: res)
-      insert (i) |
+      insertBack (i) |
     res
   };
 
@@ -74,7 +74,7 @@ do (List)
     var res = [] |
     for| (var i: this)
       if (i not in rhs)
-	res.insert(i) |
+	res.insertBack(i) |
     return res
   };
 
@@ -85,7 +85,7 @@ do (List)
 
   // Add head, symmetric of tail
   copySlot ("front", "head");
-  copySlot ("insert", "<<");
+  copySlot ("insertBack", "<<");
 
   // Concatenate the string representation of the members, separated by \a sep
   function join(sep)
@@ -130,7 +130,7 @@ do (List)
   {
     var res = [] |
     for| (var i: this)
-      res.insert (f (i)) |
+      res.insertBack (f (i)) |
     res
   };
 

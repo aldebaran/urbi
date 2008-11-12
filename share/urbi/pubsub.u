@@ -13,7 +13,7 @@ class Global.PubSub
 
     function enqueue(ev)
     {
-       queue.insert(ev) |
+       queue.insertBack(ev) |
        barrier.signal(nil)
     };
 
@@ -47,7 +47,7 @@ class Global.PubSub
   function subscribe()
   {
     var sub = Subscriber.new |
-    subscribers.insert(sub) |
+    subscribers.insertBack(sub) |
     sub
   };
 
