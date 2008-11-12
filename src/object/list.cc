@@ -156,30 +156,20 @@ namespace object
     return is_true((*fun)(r, args));
   }
 
-  rList List::sort(runner::Runner& r)
+  List::value_type List::sort(runner::Runner& r)
   {
-    std::list<rObject> s;
-    foreach(const rObject& o, content_)
-      s.push_back(o);
-    s.sort(boost::bind(compareListItems, boost::ref(r), _1, _2));
-
-    List::value_type res;
-    foreach(const rObject& o, s)
-      res.push_back(o);
-    return new List(res);
+    value_type s(content_);
+    std::sort(s.begin(), s.end(),
+              boost::bind(compareListItems, boost::ref(r), _1, _2));
+    return s;
   }
 
-  rList List::sort(runner::Runner& r, rObject f)
+  List::value_type List::sort(runner::Runner& r, rObject f)
   {
-    std::list<rObject> s;
-    foreach(const rObject& o, content_)
-      s.push_back(o);
-    s.sort(boost::bind(compareListItemsLambda, boost::ref(r), f, this, _1, _2));
-
-    List::value_type res;
-    foreach(const rObject& o, s)
-      res.push_back(o);
-    return new List(res);
+    value_type s(content_);
+    std::sort(s.begin(), s.end(),
+              boost::bind(compareListItemsLambda, boost::ref(r), f, this, _1, _2));
+    return s;
   }
 
   void
@@ -278,8 +268,8 @@ namespace object
   }
 
   OVERLOAD_2(sort_bouncer, 1,
-             (rList (List::*) (runner::Runner&)) &List::sort,
-             (rList (List::*) (runner::Runner&, rObject f)) &List::sort)
+             (List::value_type (List::*) (runner::Runner&)) &List::sort,
+             (List::value_type (List::*) (runner::Runner&, rObject f)) &List::sort)
 
   void List::initialize(CxxObject::Binder<List>& bind)
   {
