@@ -8,13 +8,25 @@ release.
 Grammar
 =======
 
+"new" syntax revamped
+---------------------
+
 The syntax "new myObject(myArgs)" has been deprecated and now gives a
 warning. The recommended "myObject.new(myArgs)" is suggested.
+
+"__FILE__" and "__LINE__"
+-------------------------
+
+The new "__FILE__" and "__LINE__" pseudo-symbols give the current
+file and line.
 
 Standard library
 ================
 
-The "List.insert" function now uses an index as its first argument and
+"List.insert" method
+--------------------
+
+The "List.insert" method now uses an index as its first argument and
 inserts the given element before the index position:
 
   ["a", "b", "c"].insert(1, 42);
