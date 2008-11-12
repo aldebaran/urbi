@@ -15,6 +15,7 @@ namespace object
   {
   public:
     typedef objects_type value_type;
+    typedef value_type::size_type size_type;
 
     List();
     List(const value_type& value);
@@ -23,7 +24,7 @@ namespace object
     value_type& value_get();
 
     /// Check that the function fun is using a valid index, and return it.
-    size_t index(const rFloat& idx) const;
+    size_type index(const rFloat& idx) const;
 
     // Urbi method
     rObject back        ();
