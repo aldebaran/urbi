@@ -365,7 +365,7 @@ Nary:
         access: rW
         init: "false"
   default: |2
-    foreach (libport::shared_ptr<typename Const<ast::Ast>::type> c, n->children_get())
+    foreach (libport::intrusive_ptr<typename Const<ast::Ast>::type> c, n->children_get())
       operator()(c.get());
 
   printer:
@@ -411,11 +411,11 @@ Nary:
        private:
           /// Return the last child if there is one of the right type.
           template <typename T>
-          libport::shared_ptr<T> back ();
+          libport::intrusive_ptr<T> back ();
 
           /// Return the last child if there is one of the right type.
           template <typename T>
-          libport::shared_ptr<const T> back () const;
+          libport::intrusive_ptr<const T> back () const;
 
           /// Adjust the whole location.
           void location_adjust ();
@@ -488,20 +488,20 @@ Nary:
         }
 
         template <typename T>
-        libport::shared_ptr<T>
+        libport::intrusive_ptr<T>
         Nary::back ()
         {
           return (empty()
-                  ? libport::shared_ptr<T>()
+                  ? libport::intrusive_ptr<T>()
                   : libport::unsafe_cast<T>(children_->back()));
         }
 
         template <typename T>
-        libport::shared_ptr<const T>
+        libport::intrusive_ptr<const T>
         Nary::back () const
         {
           return (empty()
-                  ? libport::shared_ptr<const T>()
+                  ? libport::intrusive_ptr<const T>()
                   : libport::unsafe_cast<const T>(children_->back()));
         }
 
@@ -723,7 +723,7 @@ List:
     - 'libport::separate (n->value_get(), ", ")'
     - '"]"'
   default: |2
-    foreach (libport::shared_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
+    foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
       operator()(exp.get());
 
 LValue:
@@ -788,7 +788,7 @@ Call:
     operator()(n->target_get().get());
     if (n->arguments_get())
     {
-      foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
+      foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
         operator()(e.get());
     }
   printer:
@@ -1088,7 +1088,7 @@ Local:
     visit((typename Const<Exp>::type*) n);
     if (n->arguments_get())
     {
-      foreach (libport::shared_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
+      foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
         operator()(e.get());
     }
   printer:

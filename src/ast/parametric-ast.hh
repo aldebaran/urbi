@@ -46,7 +46,7 @@ namespace ast
     /// Fire the substitution, and return the result.
     /// Calls clear.
     template <typename T>
-    libport::shared_ptr<T> result();
+    libport::intrusive_ptr<T> result();
 
     /// Dump the master AST and the state of the tables.
     std::ostream& dump(std::ostream& o) const;

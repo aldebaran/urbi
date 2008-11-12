@@ -9,7 +9,7 @@
 # include <deque>
 
 # include <libport/fwd.hh>
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 
 namespace runner
 {
@@ -24,7 +24,7 @@ namespace object
   // rObject & objects_type.
   class Object;
 
-  typedef libport::shared_ptr<Object> rObject;
+  typedef libport::intrusive_ptr<Object> rObject;
   typedef std::deque<rObject> objects_type;
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
@@ -58,7 +58,7 @@ namespace object
 
 # define FWD_DECL(Class)                                \
   class Class;                                          \
-  typedef libport::shared_ptr<Class> r ## Class         \
+  typedef libport::intrusive_ptr<Class> r ## Class         \
 
   FWD_DECL(Barrier);
   FWD_DECL(Code);

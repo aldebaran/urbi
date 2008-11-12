@@ -13,7 +13,7 @@
 # include <boost/function.hpp>
 # include <boost/shared_ptr.hpp>
 
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 
 # include <object/fwd.hh>
 # include <object/centralized-slots.hh>
@@ -43,7 +43,7 @@ namespace object
     typedef Slots::key_type key_type;
 
     /// Ref-couting.
-    typedef libport::shared_ptr<Object> shared_type;
+    typedef libport::intrusive_ptr<Object> shared_type;
 
     /// Check whether this is of type \a T
     template<typename T>
@@ -53,9 +53,9 @@ namespace object
     /** \return This seen as a \a T, or 0 if it's not of type \a T
      */
     template<typename T>
-    libport::shared_ptr<T> as() const;
+    libport::intrusive_ptr<T> as() const;
     template<typename T>
-    libport::shared_ptr<T> as();
+    libport::intrusive_ptr<T> as();
 
     /// \name The protos.
     /// \{

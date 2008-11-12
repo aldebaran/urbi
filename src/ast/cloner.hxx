@@ -15,11 +15,11 @@ namespace ast
 {
 
   template <typename T>
-  libport::shared_ptr<T>
-  Cloner::recurse(libport::shared_ptr<const T> t)
+  libport::intrusive_ptr<T>
+  Cloner::recurse(libport::intrusive_ptr<const T> t)
   {
     operator()(t.get());
-    libport::shared_ptr<T> res = result_.unsafe_cast<T>();
+    libport::intrusive_ptr<T> res = result_.unsafe_cast<T>();
     // We do have situations where t is not null, but result_ is, for
     // instance when we process a ParametricAst which substitutes a
     // MetaVar for a target, and the effective target is 0.
@@ -31,11 +31,11 @@ namespace ast
   }
 
   template <typename T>
-  libport::shared_ptr<T>
-  Cloner::recurse (libport::shared_ptr<T> t)
+  libport::intrusive_ptr<T>
+  Cloner::recurse (libport::intrusive_ptr<T> t)
   {
-    libport::shared_ptr<const T> other = t;
-    return t ? recurse(other) : libport::shared_ptr<T>(0);
+    libport::intrusive_ptr<const T> other = t;
+    return t ? recurse(other) : libport::intrusive_ptr<T>(0);
   }
 
   template <typename CollectionType>

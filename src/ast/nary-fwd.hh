@@ -6,17 +6,17 @@
 #ifndef AST_NARY_FWD_HH
 # define AST_NARY_FWD_HH
 
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 
 namespace ast
 {
   class Ast;
-  typedef libport::shared_ptr<Ast> rAst;
-  typedef libport::shared_ptr<const Ast> rConstAst;
+  typedef libport::intrusive_ptr<Ast> rAst;
+  typedef libport::intrusive_ptr<const Ast> rConstAst;
 
   class Nary;
-  typedef libport::shared_ptr<Nary> rNary;
-  typedef libport::shared_ptr<const Nary> rConstNary;
+  typedef libport::intrusive_ptr<Nary> rNary;
+  typedef libport::intrusive_ptr<const Nary> rConstNary;
 }
 
 #endif // AST_NARY_FWD_HH

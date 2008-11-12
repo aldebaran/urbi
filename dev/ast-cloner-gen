@@ -59,11 +59,11 @@ print """\
 
   protected:
     template <typename T>
-    libport::shared_ptr<T> recurse (libport::shared_ptr<const T> t);
+    libport::intrusive_ptr<T> recurse (libport::intrusive_ptr<const T> t);
 
     template <typename T>
-    libport::shared_ptr<T>
-    recurse (libport::shared_ptr<T> t);
+    libport::intrusive_ptr<T>
+    recurse (libport::intrusive_ptr<T> t);
 
     /** \\brief Clone a collection object.
 

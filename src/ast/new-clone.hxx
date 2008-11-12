@@ -17,23 +17,23 @@ namespace ast
 
   template <typename T>
   inline
-  libport::shared_ptr<T>
-  new_clone (libport::shared_ptr<const T> ast)
+  libport::intrusive_ptr<T>
+  new_clone (libport::intrusive_ptr<const T> ast)
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     Cloner cloner;
     cloner(ast.get());
-    libport::shared_ptr<T> res = libport::unsafe_cast<T>(cloner.result_get());
+    libport::intrusive_ptr<T> res = libport::unsafe_cast<T>(cloner.result_get());
     assert (res);
     return res;
   }
 
   template <typename T>
   inline
-  libport::shared_ptr<T>
-  new_clone (libport::shared_ptr<T> ast)
+  libport::intrusive_ptr<T>
+  new_clone (libport::intrusive_ptr<T> ast)
   {
-    return new_clone(libport::shared_ptr<const T>(ast));
+    return new_clone(libport::intrusive_ptr<const T>(ast));
   }
 
 }

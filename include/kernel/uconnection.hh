@@ -17,7 +17,7 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
 # include <kernel/utypes.hh>
@@ -28,7 +28,7 @@
 namespace ast
 {
   class Nary;
-  typedef libport::shared_ptr<Nary> rNary;
+  typedef libport::intrusive_ptr<Nary> rNary;
 }
 
 namespace object
@@ -36,14 +36,14 @@ namespace object
   class Object;
   class Lobby;
   template<class T> class Atom;
-  typedef libport::shared_ptr<Object> rObject;
-  typedef libport::shared_ptr<Lobby> rLobby;
+  typedef libport::intrusive_ptr<Object> rObject;
+  typedef libport::intrusive_ptr<Lobby> rLobby;
 }
 
 namespace runner
 {
   class Shell;
-  typedef libport::shared_ptr<Shell> rShell;
+  typedef libport::intrusive_ptr<Shell> rShell;
 }
 
 /// Pure virtual class for a client connection.

@@ -503,7 +503,7 @@ namespace binder
     libport::Finally finally(5);
 
     // Clone and push the function, without filling its body and arguments
-    libport::shared_ptr<Code> res = new Code(input->location_get(), 0, 0);
+    libport::intrusive_ptr<Code> res = new Code(input->location_get(), 0, 0);
     res->local_variables_set(new ast::local_declarations_type());
     routine_push(res);
     finally << boost::bind(&Binder::routine_pop, this);

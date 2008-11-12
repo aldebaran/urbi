@@ -7,7 +7,7 @@
 # define AST_NEW_CLONE_HH
 
 # include <boost/type_traits/remove_const.hpp>
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 
 namespace ast
 {
@@ -15,9 +15,9 @@ namespace ast
   /// Clone the \a ast.
   /// \precondition AstNode derives from Ast.
   template <typename AstNode>
-  libport::shared_ptr<AstNode> new_clone(libport::shared_ptr<const AstNode> ast);
+  libport::intrusive_ptr<AstNode> new_clone(libport::intrusive_ptr<const AstNode> ast);
   template <typename AstNode>
-  libport::shared_ptr<AstNode> new_clone(libport::shared_ptr<AstNode> ast);
+  libport::intrusive_ptr<AstNode> new_clone(libport::intrusive_ptr<AstNode> ast);
 
 }
 

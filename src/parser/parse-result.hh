@@ -3,7 +3,7 @@
 #ifndef PARSER_PARSE_RESULT_HH
 # define PARSER_PARSE_RESULT_HH
 
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 # include <list>
 # include <string>
 

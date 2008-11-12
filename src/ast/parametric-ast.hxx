@@ -16,7 +16,7 @@ namespace ast
 {
 
   template <typename T>
-  libport::shared_ptr<T>
+  libport::intrusive_ptr<T>
   ParametricAst::result()
   {
     static bool desugar = getenv("DESUGAR");

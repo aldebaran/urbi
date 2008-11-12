@@ -33,7 +33,7 @@ def type_boost(r, runner, nargs, met):
         args += ['runner::Runner&']
     if met:
         # Keep trailing space to avoid '>>'
-        args += ['libport::shared_ptr<S> ']
+        args += ['libport::intrusive_ptr<S> ']
     else:
         args += ['S']
     for i in range(nargs):

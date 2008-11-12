@@ -14,7 +14,7 @@
 # include <libport/containers.hh>
 # include <libport/indent.hh>
 # include <libport/foreach.hh>
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 
 # include <object/object.hh>
 # include <object/root-classes.hh>
@@ -148,13 +148,13 @@ namespace object
   }
 
   template <typename T>
-  libport::shared_ptr<T> Object::as() const
+  libport::intrusive_ptr<T> Object::as() const
   {
     return dynamic_cast<const T*>(this);
   }
 
   template <typename T>
-  libport::shared_ptr<T> Object::as()
+  libport::intrusive_ptr<T> Object::as()
   {
     return dynamic_cast<T*>(this);
   }

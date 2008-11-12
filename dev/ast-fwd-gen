@@ -23,7 +23,7 @@ print >>fwd_hh, """
 # include <boost/preprocessor/repeat.hpp>
 # include <boost/preprocessor/seq/for_each.hpp>
 
-# include <libport/shared-ptr.hh>
+# include <libport/intrusive-ptr.hh>
 
 namespace ast
 {
@@ -33,8 +33,8 @@ arr = nodes.values ()
 arr.sort (lambda x, y: cmp (x.name, y.name))
 for node in arr:
   print >>fwd_hh, "  class " + node.name + ";"
-  print >>fwd_hh, "  typedef libport::shared_ptr<%s> r%s;" %(node.name, node.name)
-  print >>fwd_hh, "  typedef libport::shared_ptr<const %s> rConst%s;" %(node.name, node.name)
+  print >>fwd_hh, "  typedef libport::intrusive_ptr<%s> r%s;" %(node.name, node.name)
+  print >>fwd_hh, "  typedef libport::intrusive_ptr<const %s> rConst%s;" %(node.name, node.name)
 
 
 print >>fwd_hh, """
