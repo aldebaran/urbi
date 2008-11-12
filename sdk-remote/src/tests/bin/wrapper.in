@@ -56,7 +56,8 @@ case $me in
      prefix="$abs_top_builddir"
      ;;
    (*)
-     envdir="$abs_top_builddir/src"
+     # Use the libuobject from the kernel.
+     envdir="$abs_top_builddir/../src"
      prefix="$abs_top_builddir"
      ;;
 esac
