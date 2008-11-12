@@ -1197,17 +1197,17 @@ exp:
 
 exp:
   "__FILE__"
-    {
-      PARAMETRIC_AST(file, "Path.new(%exp:1)");
-      PARAMETRIC_AST(no_file, "nil");
-      const libport::Symbol* fn = @$.begin.filename;
-      $$ = fn ? exp(file % new ast::String(@$, fn->name_get()))
+  {
+    PARAMETRIC_AST(file, "Path.new(%exp:1)");
+    PARAMETRIC_AST(no_file, "nil");
+    const libport::Symbol* fn = @$.begin.filename;
+    $$ = fn ? exp(file % new ast::String(@$, fn->name_get()))
 	      : exp(no_file);
-    }
+  }
 | "__LINE__"
-    {
-      $$ = new ast::Float(@$, @$.begin.line);
-    }
+  {
+    $$ = new ast::Float(@$, @$.begin.line);
+  }
 
 
 /*---------.
