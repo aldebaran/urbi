@@ -20,6 +20,7 @@
 #include <object/global.hh>
 #include <object/lobby.hh>
 #include <object/list.hh>
+#include <object/path.hh>
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
@@ -36,6 +37,15 @@
 namespace object
 {
 
+  // Extract a filename from a String or a Path object
+  static std::string
+  filename_get(const rObject& o)
+  {
+    if (o.is_a<Path>())
+      return o->as<Path>()->as_string();
+    type_check(o, String::proto);
+    return o->as<String>()->value_get();
+  }
 
   rObject
   execute_parsed(runner::Runner& r,
@@ -178,17 +188,16 @@ namespace object
   system_class_searchFile (runner::Runner& r, objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
-    type_check(args[1], String::proto);
-    const rString& arg1 = args[1]->as<String>();
+    const std::string filename = filename_get(args[1]);
 
     UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
     {
-      return new String(s.find_file(arg1->value_get()));
+      return new Path(s.find_file(filename));
     }
     catch (libport::file_library::Not_found&)
     {
-      runner::raise_urbi(SYMBOL(FileNotFound), arg1);
+      runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
       // Never reached
       assertion(false);
       return 0;
@@ -199,10 +208,7 @@ namespace object
   system_class_loadFile(runner::Runner& r, objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
-    type_check(args[1], String::proto);
-    const rString& arg1 = args[1]->as<String>();
-
-    const std::string& filename = arg1->value_get();
+    const std::string filename = filename_get(args[1]);
 
     if (!libport::path(filename).exists())
       runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
