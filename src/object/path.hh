@@ -38,7 +38,8 @@ namespace object
     // Operations
     std::string basename();
     rPath cd();
-    rPath concat(rPath other);
+    rPath path_concat(rPath other);
+    rPath string_concat(rString other);
     rPath dirname();
     rObject open();
 

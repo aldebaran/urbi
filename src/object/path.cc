@@ -136,10 +136,19 @@ namespace object
     return cwd();
   }
 
-  rPath Path::concat(rPath other)
+  rPath Path::path_concat(rPath other)
   {
-    return new Path(path_ / (*other).path_);
+    return new Path(path_ / other->path_);
   }
+
+  rPath Path::string_concat(rString other)
+  {
+    return path_concat(new Path(other->value_get()));
+  }
+
+  OVERLOAD_TYPE(concat_bouncer, 1, 1,
+		Path, &Path::path_concat,
+		String, &Path::string_concat);
 
   rPath Path::dirname()
   {
@@ -207,7 +216,7 @@ namespace object
     bind(SYMBOL(isReg), &Path::is_reg);
     bind(SYMBOL(open), &Path::open);
     bind(SYMBOL(readable), &Path::readable);
-    bind(SYMBOL(SLASH), &Path::concat);
+    bind(SYMBOL(SLASH), concat_bouncer);
     bind(SYMBOL(writable), &Path::writable);
   }
 
