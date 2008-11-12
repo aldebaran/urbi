@@ -138,7 +138,14 @@ namespace object
 
   rPath Path::path_concat(rPath other)
   {
-    return new Path(path_ / other->path_);
+    try
+    {
+      return new Path(path_ / other->path_);
+    }
+    catch (const libport::path::invalid_path& e)
+    {
+      runner::raise_primitive_error(e.what());
+    }
   }
 
   rPath Path::string_concat(rString other)
