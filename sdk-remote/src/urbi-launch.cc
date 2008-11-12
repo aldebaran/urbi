@@ -30,13 +30,13 @@ const char* umain_sym = "urbi_main_args";
 
 namespace
 {
-  /// Wrapper around lt_dlopen that exits on failures.
+  /// Wrapper around lt_dlopenext that exits on failures.
   static
   lt_dlhandle
-  xlt_dlopen(const std::string& s)
+  xlt_dlopenext(const std::string& s)
   {
     std::cerr << program_name << ": loading " << s << std::endl;
-    lt_dlhandle res = lt_dlopen(s.c_str());
+    lt_dlhandle res = lt_dlopenext(s.c_str());
     if (!res)
       std::cerr << program_name
                 << ": failed to load " << s << ": " << lt_dlerror() << std::endl
@@ -88,6 +88,7 @@ usage()
     "\n"
     "Mode selection:\n"
     "  -c, --custom FILE  start using the shared library FILE\n"
+    "                     FILE should not have an extension\n"
     "  -p, --plugin       start as a plugin uobject on a running server\n"
     "  -r, --remote       start as a remote uobject\n"
     "  -s, --start        start an urbi server and connect as plugin\n"
@@ -115,16 +116,6 @@ version()
 static void
 add_module(libport::path p, modules_type& res)
 {
-  if (!p.exists())
-    throw std::runtime_error("File not found: " + p.to_string());
-
-  const std::string dynld = SHLIBEXT;
-  const std::string& base = p.components().back();
-  if (base.size() <= dynld.size() ||
-      base.substr(base.size() - dynld.size()) != dynld)
-    throw std::runtime_error("File " + p.to_string() +
-                             " does not look like a shared library " +
-                             "(expect extension `" + dynld + "')");
   if (!p.absolute_get())
     p = libport::get_current_directory() / p;
   res.push_back(p.to_string());
@@ -150,7 +141,10 @@ main(int argc, const char* argv[])
     MODE_REMOTE
   };
   ConnectMode connectMode = MODE_REMOTE;
-  std::string dll;
+  std::string dll =
+    prefix / "gostai" / "core" / urbi_host /
+    (connectMode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
+
   /// Server host name.
   std::string host = "localhost";
   /// Server port.
@@ -223,19 +217,9 @@ main(int argc, const char* argv[])
    * -Dlopen the uobjects to load.
    * -Call urbi::main found by dlsym() in libuobject.
    */
-  if (dll.empty())
-    dll = prefix / "gostai" / "core" / urbi_host /
-      (connectMode == MODE_REMOTE ? "remote" : "engine") /
-#ifdef WIN32
-      "libuobject.dll"
-#else
-      "libuobject.so"
-#endif
-      ;
-  lt_dlhandle core = xlt_dlopen(dll);
-
+  lt_dlhandle core = xlt_dlopenext(dll);
   foreach (const std::string& s, modules)
-    xlt_dlopen(s);
+    xlt_dlopenext(s);
 
   umain_type umain = (umain_type) lt_dlsym(core, umain_sym);
   if (!umain)

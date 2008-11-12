@@ -108,7 +108,7 @@ $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib) \
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) $(envdir)/libuobject.la -rpath $(hostdir)
 	cp $$(ls .libs/lib$(libbase)*$(SHLIBEXT) | head -n 1) $(OUTSHLIB)
-	rm -f $(lalib)
+#	rm -f $(lalib)
 
 # The command to generate the library.
 #
