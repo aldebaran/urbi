@@ -49,4 +49,9 @@ HAUTE-ÉCOLE ARC
 ===============
 Contact: Alexandre Gabus <Alexandre.Gabus@he-arc.ch> (student)
      and Matthieu Amiguet <matthieu.amiguet@he-arc.ch> (advisor)
-Environment: Linux or Windows, still undecided
+Environment: Linux
+
+PAL
+===
+Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
+Environment: Unknown yet
