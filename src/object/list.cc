@@ -208,11 +208,18 @@ namespace object
   BOUNCE(back,          back,           true,  false, true );
   BOUNCE(clear,         clear,          false, false, false);
   BOUNCE(front,         front,          true,  false, true );
-  BOUNCE(insert,        push_back,      false, true,  false);
   BOUNCE(insertFront,   push_front,     false, true,  false);
   BOUNCE(insertBack,    push_back,      false, true,  false);
 
 #undef BOUNCE
+
+  rList
+  List::insert(const rFloat& idx, const rObject& elt)
+  {
+    size_type i = index(idx);
+    content_.insert(content_.begin() + i, elt);
+    return this;
+  }
 
   rObject
   List::removeBack()

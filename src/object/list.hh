@@ -34,7 +34,7 @@ namespace object
     rObject front       ();
     rObject removeFront ();
     rObject removeBack  ();
-    rList   insert      (const rObject& elt);
+    rList   insert      (const rFloat& idx, const rObject& elt);
     rList   insertBack  (const rObject& elt);
     rList   insertFront (const rObject& elt);
     rList   remove_by_id(const rObject& elt);
