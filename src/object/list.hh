@@ -23,9 +23,6 @@ namespace object
     const value_type& value_get() const;
     value_type& value_get();
 
-    /// Check that the function fun is using a valid index, and return it.
-    size_type index(const rFloat& idx) const;
-
     // Urbi method
     rObject back        ();
     rList   clear       ();
@@ -53,6 +50,9 @@ namespace object
 
   private:
     value_type content_;
+
+    /// Check that the function fun is using a valid index, and return it.
+    size_type index(const rFloat& idx) const;
 
   /*---------------.
   | Binding system |
