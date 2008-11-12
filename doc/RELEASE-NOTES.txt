@@ -29,8 +29,21 @@ Standard library
 The "List.insert" method now uses an index as its first argument and
 inserts the given element before the index position:
 
-  ["a", "b", "c"].insert(1, 42);
-  ["a", 42, "b", "c"]
+  ["a", "b", "c"].insert(1, "xyzzy");
+  [00000001] ["a", "xyzzy", "b", "c"]
+
+"List.sort" method
+------------------
+
+The "List.sort" method now takes an optional argument, which is a
+function to call instead of the "<" operator. Here are two examples
+illustrating how to sort strings, depending on whether we want to
+be case-sensitive (the default) or not:
+
+  ["foo", "bar", "Baz"].sort;
+  [00000001] ["Baz", "bar", "foo"]
+  ["foo", "bar", "Baz"].sort(function(x, y) {x.toLower < y.toLower});
+  [00000002] ["bar", "Baz", "foo"]
 
 Uobjects
 ========
