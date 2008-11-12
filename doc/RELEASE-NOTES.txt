@@ -11,6 +11,15 @@ Grammar
 The syntax "new myObject(myArgs)" has been deprecated and now gives a
 warning. The recommended "myObject.new(myArgs)" is suggested.
 
+Standard library
+================
+
+The "List.insert" function now uses an index as its first argument and
+inserts the given element before the index position:
+
+  ["a", "b", "c"].insert(1, 42);
+  ["a", 42, "b", "c"]
+
 Uobjects
 ========
 
