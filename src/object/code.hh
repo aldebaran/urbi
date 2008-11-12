@@ -9,12 +9,12 @@
 # include <libport/compiler.hh>
 
 # include <ast/fwd.hh>
-# include <object/cxx-object.hh>
+# include <object/executable.hh>
 # include <object/fwd.hh>
 
 namespace object
 {
-  class Code: public CxxObject
+  class Code: public Executable
   {
   public:
     typedef ast::rConstRoutine ast_type;
@@ -26,6 +26,7 @@ namespace object
     rObject call_get() const;
     const captures_type& captures_get() const;
     rObject self_get() const;
+    virtual rObject operator() (runner::Runner& r, object::objects_type args);
 
     ast_type& ast_get();
     rObject& call_get();

@@ -7,12 +7,12 @@
 # define OBJECT_PRIMITIVE_CLASS_HH
 
 # include <libport/compiler.hh>
-# include <object/cxx-object.hh>
+# include <object/executable.hh>
 # include <object/fwd.hh>
 
 namespace object
 {
-  class Primitive: public CxxObject
+  class Primitive: public Executable
   {
   public:
     typedef boost::function2<rObject, runner::Runner&, objects_type&> value_type;
@@ -21,7 +21,7 @@ namespace object
     Primitive(rPrimitive model);
     Primitive(value_type value);
     value_type value_get() const;
-    rObject operator() (runner::Runner& r, object::objects_type args);
+    virtual rObject operator() (runner::Runner& r, object::objects_type args);
 
     // Urbi methods
     rObject apply(runner::Runner& r, rList args);

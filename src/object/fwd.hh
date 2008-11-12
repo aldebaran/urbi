@@ -65,6 +65,7 @@ namespace object
   FWD_DECL(Dictionary);
   FWD_DECL(Directory);
   FWD_DECL(Event);
+  FWD_DECL(Executable);
   FWD_DECL(File);
   FWD_DECL(Float);
   FWD_DECL(List);

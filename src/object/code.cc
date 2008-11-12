@@ -122,5 +122,15 @@ namespace object
     return new Code(ast.result<const ast::Routine>());
   }
 
+  rObject
+  Code::operator() (runner::Runner& r, object::objects_type args)
+  {
+    assert(!args.empty());
+    rObject self = args[0];
+    args.pop_front();
+    return r.apply(self, this, libport::Symbol::make_empty(), args);
+  }
+
+
   URBI_CXX_OBJECT_REGISTER(Code);
 }; // namespace object
