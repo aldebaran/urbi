@@ -584,6 +584,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "throw"         RETURN(THROW);
 "try"           RETURN(TRY);
 
+"__FILE__"      RETURN(__FILE);
+"__LINE__"      RETURN(__LINE);
+
 "asm"              |
 "auto"             |
 "bool"             |

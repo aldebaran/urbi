@@ -146,6 +146,8 @@
 `---------*/
 
 %token
+        __FILE       "__FILE__"
+        __LINE       "__LINE__"
         EQ           "="
         BREAK        "break"
         CASE         "case"
@@ -1187,6 +1189,24 @@ exp:
 | "string"       { $$ = new ast::String(@$, $1); }
 | "[" exps "]"   { $$ = new ast::List(@$, $2); }
 ;
+
+
+/*------------------.
+| Location support. |
+`------------------*/
+
+exp:
+  "__FILE__"
+    {
+      PARAMETRIC_AST(file, "Path.new(%exp:1)");
+      const libport::Symbol* fn = @$.begin.filename;
+      $$ = fn ? exp(file % new ast::String(@$, fn->name_get()))
+	      : new ast::String(@$, "");
+    }
+| "__LINE__"
+    {
+      $$ = new ast::Float(@$, @$.begin.line);
+    }
 
 
 /*---------.
