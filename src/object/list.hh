@@ -39,6 +39,7 @@ namespace object
     rObject set         (const rFloat& nth, const rObject& value);
     rFloat  size        ();
     rList   sort        (runner::Runner& r);
+    rList   sort        (runner::Runner& r, rObject f);
     rList   tail        ();
     rList   operator+   (const rList& rhs);
     rList   operator+=  (const rList& rhs);

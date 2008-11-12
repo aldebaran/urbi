@@ -132,11 +132,28 @@ namespace object
     return new List(res);
   }
 
-  /// Binary predicate used to sort lists.
+  /// Binary predicates used to sort lists.
   static bool
-  compareListItems (runner::Runner& r, const rObject& a, const rObject& b)
+  compareListItems (runner::Runner& r,
+                    const rObject& a, const rObject& b)
   {
     return is_true(urbi_call(r, a, SYMBOL(LT), b));
+  }
+  static bool
+  compareListItemsLambda (runner::Runner& r, const rObject& f, const rObject& l,
+                          const rObject& a, const rObject& b)
+  {
+    rExecutable fun = f.unsafe_cast<Executable>();
+    if (!fun)
+    {
+      type_check(f, Code::proto);
+      unreached();
+    }
+    objects_type args;
+    args << l;
+    args << a;
+    args << b;
+    return is_true((*fun)(r, args));
   }
 
   rList List::sort(runner::Runner& r)
@@ -145,6 +162,19 @@ namespace object
     foreach(const rObject& o, content_)
       s.push_back(o);
     s.sort(boost::bind(compareListItems, boost::ref(r), _1, _2));
+
+    List::value_type res;
+    foreach(const rObject& o, s)
+      res.push_back(o);
+    return new List(res);
+  }
+
+  rList List::sort(runner::Runner& r, rObject f)
+  {
+    std::list<rObject> s;
+    foreach(const rObject& o, content_)
+      s.push_back(o);
+    s.sort(boost::bind(compareListItemsLambda, boost::ref(r), f, this, _1, _2));
 
     List::value_type res;
     foreach(const rObject& o, s)
@@ -247,6 +277,10 @@ namespace object
     return new List(res);
   }
 
+  OVERLOAD_2(sort_bouncer, 1,
+             (rList (List::*) (runner::Runner&)) &List::sort,
+             (rList (List::*) (runner::Runner&, rObject f)) &List::sort)
+
   void List::initialize(CxxObject::Binder<List>& bind)
   {
     bind(SYMBOL(back),           &List::back            );
@@ -266,7 +300,7 @@ namespace object
     bind(SYMBOL(removeById),     &List::remove_by_id    );
     bind(SYMBOL(reverse),        &List::reverse         );
     bind(SYMBOL(size),           &List::size            );
-    bind(SYMBOL(sort),           &List::sort            );
+    bind(SYMBOL(sort),           &sort_bouncer          );
     bind(SYMBOL(STAR),           &List::operator*       );
     bind(SYMBOL(tail),           &List::tail            );
   }
