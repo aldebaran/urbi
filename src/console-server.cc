@@ -242,8 +242,10 @@ namespace urbi
         << port << std::endl;
 
     UConnection& c = s.ghost_connection_get();
+#ifdef ENABLE_DEBUG_TRACES
     std::cerr << program_name
               << ": got ghost connection" << std::endl;
+#endif
 
     foreach (const std::string& f, files)
       if (s.load_file(f, c.recv_queue_get ()) != USUCCESS)
@@ -253,7 +255,9 @@ namespace urbi
 
     c.new_data_added_get() = true;
 
+#ifdef ENABLE_DEBUG_TRACES
     std::cerr << program_name << ": going to work..." << std::endl;
+#endif
     if (block)
       return main_loop(data);
     else
