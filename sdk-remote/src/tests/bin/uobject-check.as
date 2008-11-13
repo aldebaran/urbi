@@ -19,12 +19,16 @@ rm -rf $builddir
 mkdir -p $builddir
 cd $builddir
 
-# The remote component name.
-remote=urbi-$me
+# The remote component: an executable.
+umake_remote=$(xfind_prog "umake-remote")
+xrun "umake-remote" $umake_remote --output=$me $uob
+test -x "$me" ||
+  fatal "$me is not executable"
+xrun "run \"$me --version\"" "./$me" --version
 
-umake_remote=$(find_prog "umake-remote" "$PATH")
-test -n "$umake_remote" ||
-  error OSFILE "cannot find umake-remote in $PATH"
+# The shared component: a dlopen module.
+umake_shared=$(xfind_prog "umake-shared")
+xrun "umake-shared" $umake_shared --output=$me $uob
+test -f "$me.la" ||
+  fatal "$me.la does not exist"
 
-run "compile \"$remote\"" $umake_remote --output=$remote $uob ||
-  fatal "$umake_remote failed"
