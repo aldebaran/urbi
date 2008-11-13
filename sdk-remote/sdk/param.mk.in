@@ -68,7 +68,7 @@ LTCOMPILE = $(LIBTOOL) --tag=C --mode=compile $(COMPILE)
 CXXCOMPILE = $(CXX) $(ALL_CPPFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXXCOMPILE)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link \
-  $(CXX) $(CXXFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS)
+  $(CXX) -module $(CXXFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS)
 
 # We use GNU Make pattern rules so that we can provide extra
 # dependencies.  Before changing something, read the doc.
@@ -101,13 +101,13 @@ $(builddir)/%.$(URBI_HOST).lo: %.cpp $(HEADERS)
 $(OUTLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) -o $@
 
-# I know no way to build shared libraries through libtool without a .la...
-lalib = lib$(OUTSHLIB:$(SHLIBEXT)=.la)
+lalib = $(OUTSHLIB:$(SHLIBEXT)=.la)
 libbase = $(OUTSHLIB:$(SHLIBEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib) \
-	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) $(envdir)/libuobject.la -rpath $(hostdir)
-	cp $$(ls .libs/lib$(libbase)*$(SHLIBEXT) | head -n 1) $(OUTSHLIB)
+	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) $(envdir)/libuobject.la \
+	  -rpath $(hostdir)
+	cp $$(ls .libs/$(libbase)*$(SHLIBEXT) | head -n 1) $(OUTSHLIB)
 #	rm -f $(lalib)
 
 # The command to generate the library.
