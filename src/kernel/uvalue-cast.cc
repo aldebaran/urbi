@@ -52,7 +52,7 @@ urbi::UValue uvalue_cast(const object::rObject& o)
     std::list<urbi::BinaryData> l;
     l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
 				 data.size()));
-    std::list<urbi::BinaryData>::iterator i = l.begin();
+    std::list<urbi::BinaryData>::const_iterator i = l.begin();
     res.type = urbi::DATA_BINARY;
     res.binary = new urbi::UBinary();
     res.binary->parse(
