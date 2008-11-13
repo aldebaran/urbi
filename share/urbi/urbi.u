@@ -463,7 +463,7 @@ try
 catch (FileNotFound e)
 {
   var this.urbi_ini_path = nil;
-};
+} | {};
 if (!urbi_ini_path.isNil)
 {
   echo("Loading %s" % [urbi_ini_path]);
