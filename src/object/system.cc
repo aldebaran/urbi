@@ -205,6 +205,17 @@ namespace object
   }
 
   static rObject
+  system_class_searchPath(runner::Runner&, objects_type args)
+  {
+    check_arg_count(args.size() - 1, 0);
+    List::value_type res;
+    foreach (const libport::path& p,
+	     ::urbiserver->search_path.search_path_get())
+      res.push_back(new Path(p));
+    return to_urbi(res);
+  }
+
+  static rObject
   system_class_loadFile(runner::Runner& r, objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
@@ -431,6 +442,7 @@ namespace object
     DECLARE(registerAtJob);
     DECLARE(scopeTag);
     DECLARE(searchFile);
+    DECLARE(searchPath);
     DECLARE(shiftedTime);
     DECLARE(stats);
     DECLARE(shutdown);
