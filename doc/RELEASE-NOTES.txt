@@ -51,6 +51,19 @@ be case-sensitive (the default) or not:
 It is now possible to get the search path for files such as "urbi.u"
 or "URBI.INI" by using "System.searchPath".
 
+"System.getenv" method
+----------------------
+
+"System.getenv" now returns "nil" if a variable cannot be found in
+the environment instead of "void". This allows you do to things such
+as :
+
+  var ne = System.getenv("nonexistent");
+  if (!ne.isNil) do_something(ne);
+
+while previously you had to retrieve the environment variable twice,
+once to check for its existence and once to get its content.
+
 Uobjects
 ========
 
