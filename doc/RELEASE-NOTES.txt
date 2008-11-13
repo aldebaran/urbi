@@ -57,6 +57,16 @@ Urbi server
 If a file loaded from "URBI.INI" cannot be found, it is now properly
 reported.
 
+Auxiliary programs
+==================
+
+"urbi-launch" options cleaned up
+--------------------------------
+
+Now, options for "urbi-launch" are separated from options to give to the
+underlying program (in remote and start modes) by using "--". Use
+"urbi-launch --help" to get the full usage information.
+
 ****************************
 * New in kernel 2.0 beta 2 *
 ****************************
