@@ -1169,15 +1169,6 @@ PropertyWrite:
 PropertyRead:
   super: PropertyAction
 
-Delete:
-  super: Exp
-  attributes:
-    - what:
-        type: rLValue
-  printer:
-    - '"delete "'
-    - ~what
-
 MetaCall:
   super: LValueArgs
   attributes:

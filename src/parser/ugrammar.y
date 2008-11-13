@@ -156,7 +156,6 @@
         CONTINUE     "continue"
         COLON        ":"
         DEFAULT       "default"
-        DELETE       "delete"
         ELSE         "else"
         EMIT         "emit"
         EVENT        "event"
@@ -670,10 +669,6 @@ stmt:
 | "var" lvalue
     {
       $$ = new ast::Declaration(@$, $2, 0, 0);
-    }
-| "delete" lvalue
-    {
-      $$ = new ast::Delete(@$, $2);
     }
 ;
 

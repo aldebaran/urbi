@@ -479,7 +479,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "closure"       RETURN(CLOSURE);
 "continue"      RETURN(CONTINUE);
 "default"       RETURN(DEFAULT);
-"delete"        RETURN(DELETE);
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);

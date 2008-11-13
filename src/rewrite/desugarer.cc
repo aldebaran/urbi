@@ -78,17 +78,6 @@ namespace rewrite
     result_ = res;
   }
 
-  void Desugarer::visit(const ast::Delete* d)
-  {
-    PARAMETRIC_AST(del, "%exp:1.removeSlot(%exp:2)");
-
-    ast::rCall call = d->what_get()->call();
-    del % call->target_get()
-      % ast_string(call->location_get(), call->name_get());
-    result_ = exp(del);
-    result_->original_set(d);
-  }
-
   void Desugarer::visit(const ast::Emit* e)
   {
     ast::rExp event = recurse(e->event_get());

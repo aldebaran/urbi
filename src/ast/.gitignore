@@ -54,9 +54,6 @@ decrementation.hxx
 default-visitor.hh
 default-visitor.hxx
 default-visitor.stamp
-delete.cc
-delete.hh
-delete.hxx
 do.cc
 do.hh
 do.hxx
