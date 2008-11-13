@@ -381,7 +381,7 @@ namespace object
   static rObject system_getenv(rObject, const std::string& name)
   {
     char* res = getenv(name.c_str());
-    return res ? new String(res) : 0;
+    return res ? new String(res) : nil_class;
   }
 
   static rObject system_setenv(runner::Runner& r, rObject,
