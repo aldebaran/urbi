@@ -34,6 +34,8 @@ ls_files =								    \
     $(shell $(build_aux_dir)/ls-files -s $(srcdir) $(patsubst %,'%',$(1))), \
     $(error ls-files returned nothing for: $(1)))
 
+EXTRA_DIST = $(build_aux_dir)/ls-files
+
 ## -------------------- ##
 ## uobject test suite.  ##
 ## -------------------- ##
