@@ -45,6 +45,12 @@ be case-sensitive (the default) or not:
   ["foo", "bar", "Baz"].sort(function(x, y) {x.toLower < y.toLower});
   [00000002] ["bar", "Baz", "foo"]
 
+"System.searchPath" method
+--------------------------
+
+It is now possible to get the search path for files such as "urbi.u"
+or "URBI.INI" by using "System.searchPath".
+
 Uobjects
 ========
 
