@@ -137,10 +137,8 @@ main(int argc, const char* argv[])
     MODE_REMOTE
   };
   ConnectMode connectMode = MODE_REMOTE;
-  std::string dll =
-    prefix / "gostai" / "core" / URBI_HOST /
-    (connectMode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
-
+  /// Core dll to use.
+  std::string dll;
   /// Server host name.
   std::string host = "localhost";
   /// Server port.
@@ -207,6 +205,10 @@ main(int argc, const char* argv[])
 
   if (connectMode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
+
+  if (dll.empty())
+    dll = prefix / "gostai" / "core" / URBI_HOST /
+      (connectMode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
 
   /* The two other modes are handled the same way:
    * -Dlopen the correct libuobject.
