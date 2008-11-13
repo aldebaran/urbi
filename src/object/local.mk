@@ -14,6 +14,7 @@ precompiled_symbols_hh_sources =		\
                $(FROM_UTOKEN_L),		\
         $(dist_libuobject_la_SOURCES))
 EXTRA_DIST += object/symbols-generate.pl $(precompiled_symbols_stamp)
+
 $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
 	@rm -f $@.tmp
 	@echo "rebuilding $(precompiled_symbols_hh) because of:"
@@ -38,6 +39,10 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	  rm -f $(precompiled_symbols_stamp);			\
 	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
+
+EXTRA_DIST = 					\
+  object/any-to-boost-function.hxx.py		\
+  object/cxx-primitive.hxx.py
 
 %.hxx: %.hxx.py
 	rm -f $@ $@.tmp
