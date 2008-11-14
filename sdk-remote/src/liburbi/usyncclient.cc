@@ -30,8 +30,9 @@ namespace urbi
 			   int _port,
 			   int _buflen,
 			   bool _server,
-                           bool startCallbackThread)
-    : UClient(_host, _port, _buflen, _server)
+                           bool startCallbackThread,
+			   int semListenInc)
+    : UClient(_host, _port, _buflen, _server, semListenInc)
     , sem_()
     , queueLock_()
     , msg(0)
@@ -47,17 +48,24 @@ namespace urbi
       cbThread = libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
+
+    listenSem_++;
+    callbackSem_++;
   }
 
   USyncClient::~USyncClient ()
   {
-    stopCallbackThread();
+    closeUClient ();
+
     if (cbThread)
-      libport::joinThread(cbThread);
+      joinCallbackThread_ ();
+
   }
 
   void USyncClient::callbackThread()
   {
+    callbackSem_--;
+
     while (true)
     {
       sem_--;
@@ -69,8 +77,8 @@ namespace urbi
       queueLock_.lock();
       if (queue.empty())
       {
-	//processEvents from another thread stole our message
-        sem_++;
+	// processEvents from another thread stole our message
+	sem_++;
 	queueLock_.unlock();
 	continue;
       }
@@ -84,6 +92,8 @@ namespace urbi
 
   void USyncClient::stopCallbackThread()
   {
+    // Prevent lock when no message remain
+    sem_++;
     stopCallbackThread_ = true;
   }
 
@@ -105,6 +115,17 @@ namespace urbi
       UAbstractClient::notifyCallbacks(*m);
       delete m;
     }
+  }
+
+  int USyncClient::joinCallbackThread_ ()
+  {
+    stopCallbackThread ();
+    if (cbThread)
+    {
+      libport::joinThread(cbThread);
+      cbThread = 0;
+    }
+    return 0;
   }
 
   void USyncClient::notifyCallbacks(const UMessage &msg)

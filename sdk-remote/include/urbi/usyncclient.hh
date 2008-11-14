@@ -57,7 +57,8 @@ namespace urbi
 		int _port = URBI_PORT,
 		int _buflen = URBI_BUFLEN,
 		bool _server = false,
-                bool startCallbackThread = true);
+                bool startCallbackThread = true,
+		int semListenInc = 2);
 
     ~USyncClient ();
 
@@ -122,8 +123,12 @@ namespace urbi
     void stopCallbackThread();
     void callbackThread();
 
-  private:
+  protected:
+    int joinCallbackThread_ ();
+
+  protected:
     libport::Semaphore sem_;
+    libport::Semaphore callbackSem_;
     std::list<UMessage*> queue;
     libport::Lockable queueLock_;
     UMessage* msg;

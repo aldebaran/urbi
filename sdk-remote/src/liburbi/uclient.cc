@@ -42,6 +42,7 @@
 #include "libport/cstring"
 
 #include "urbi/uclient.hh"
+
 #include "urbi/utag.hh"
 
 namespace urbi
@@ -50,11 +51,13 @@ namespace urbi
    Spawn a new thread that will listen to the socket, parse the incoming URBI
    messages, and notify the appropriate callbacks.
    */
-  UClient::UClient(const char *_host, int _port, int _buflen, bool _server)
+  UClient::UClient(const char *_host, int _port, int _buflen, bool _server, int semListenInc)
     : UAbstractClient(_host, _port, _buflen, _server),
       thread(0),
-      pingInterval(0)
+      pingInterval(0),
+      semListenInc_ (semListenInc)
   {
+    sd = -1;
     int pos = 0;
 
     setlocale(LC_NUMERIC, "C");
@@ -172,9 +175,19 @@ namespace urbi
 
     if (!defaultClient)
       defaultClient = this;
+
+    listenSem_++;
+    acceptSem_++;
   }
 
   UClient::~UClient()
+  {
+    if (sd >= 0)
+      closeUClient ();
+  }
+
+  int
+  UClient::closeUClient ()
   {
     if (sd >= 0 && libport::closeSocket(sd) == -1)
       libport::perror ("cannot close sd");
@@ -196,8 +209,9 @@ namespace urbi
     if (control_fd[0] != -1
         && close(control_fd[0]) == -1)
       libport::perror ("cannot close controlfd[0]");
-  }
 
+    return 0;
+  }
 
   bool
   UClient::canSend(int)
@@ -235,6 +249,9 @@ namespace urbi
   void
   UClient::acceptThread()
   {
+    // Wait for it...
+    acceptSem_--;
+
     // Accept one connection
     struct sockaddr_in saClient;
     socklen_t addrlenClient;
@@ -270,6 +287,10 @@ namespace urbi
   void
   UClient::listenThread()
   {
+    // Wait for it...
+    for (int i = semListenInc_; i > 0; --i)
+      listenSem_--;
+
     int maxfd;
 
     maxfd = 1 + std::max(sd, control_fd[0]);
@@ -302,6 +323,9 @@ namespace urbi
       {
         selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, NULL);
       }
+
+      if (sd < 0)
+	return;
 
       // Treat error
       if (selectReturn < 0 && errno != EINTR)

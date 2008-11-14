@@ -222,12 +222,16 @@ namespace urbi
 
   UAbstractClient::~UAbstractClient()
   {
+    // No more default client if delete
     if ((void*)getDefaultClient () == (void*)this)
       setDefaultClient (0);
 
-    delete [] host;
-    delete [] recvBuffer;
-    delete [] sendBuffer;
+    if (host)
+      delete [] host;
+    if (recvBuffer)
+      delete [] recvBuffer;
+    if (sendBuffer)
+      delete [] sendBuffer;
   }
 
   /*! In threaded environnments, this function lock()s the send buffer so that
@@ -1081,7 +1085,7 @@ namespace urbi
 		     std::list<BinaryData> bins)
     : client(client), timestamp(timestamp),  tag(tag), value(0)
   {
-    rawMessage = std::string(message);
+    rawMessage = message ? std::string(message) : "";
     while (message[0] ==' ')
       ++message;
     //parse non-value messages

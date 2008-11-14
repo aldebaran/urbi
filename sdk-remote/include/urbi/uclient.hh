@@ -24,6 +24,8 @@
 #ifndef URBI_UCLIENT_HH
 # define URBI_UCLIENT_HH
 
+# include "libport/semaphore.hh"
+
 # include "urbi/uabstractclient.hh"
 
 namespace urbi
@@ -38,9 +40,12 @@ namespace urbi
     UClient(const char *_host,
 	    int _port = URBI_PORT,
 	    int _buflen = URBI_BUFLEN,
-	    bool _server = false);
+	    bool _server = false,
+	    int semListenInc = 1);
 
     virtual ~UClient();
+
+    int closeUClient ();
 
     //! For compatibility with older versions of the library
     void start() {}
@@ -63,7 +68,7 @@ namespace urbi
 
     int             sd;                  ///< Socket file descriptor.
 
-  private:
+  protected:
     /// Pipe for termination notification
     int             control_fd[2];       ///< Pipe for termination notification.
     void*           thread;
@@ -74,6 +79,11 @@ namespace urbi
     unsigned int    pongTimeout;
     /// True if waiting 'PONG'
     bool            waitingPong;
+
+  protected:
+    libport::Semaphore listenSem_;
+    libport::Semaphore acceptSem_;
+    int semListenInc_;
   };
 
 } // namespace urbi
