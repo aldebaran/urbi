@@ -49,8 +49,9 @@ namespace urbi
     value = new UValue();
     std::list<BinaryData>::const_iterator iter = bins.begin();
     int p = value->parse(message, 0, bins, iter);
-    while (message[p] == ' ')
-      ++p;
+    if (p >= 0)
+      while (message[p] == ' ')
+	++p;
     /* no assertion can be made on message[p] because there is no terminator
      * for binaries */
     if (p < 0 || /*message[p] ||*/ iter != bins.end())
