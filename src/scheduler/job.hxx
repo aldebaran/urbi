@@ -25,7 +25,6 @@ namespace scheduler
     name_ = name;
     coro_ = coroutine_new();
     non_interruptible_ = false;
-    prio_ = UPRIO_DEFAULT;
     side_effect_free_ = false;
     check_stack_space_ = true;
     alive_jobs_++;
@@ -203,61 +202,16 @@ namespace scheduler
     time_shift_ = ts;
   }
 
-  inline void
-  Job::apply_tag(const rTag& tag, libport::Finally* finally)
-  {
-    tags_.push_back(tag);
-    if (finally)
-      *finally << boost::bind(&tags_type::pop_back, boost::ref(tags_))
-	       << boost::bind(&Job::recompute_prio, this, boost::ref(*tag));
-    recompute_prio(*tag);
-  }
-
-  inline const tags_type&
-  Job::tags_get() const
-  {
-    return tags_;
-  }
-
-  inline void
-  Job::tags_set(const tags_type& tags)
-  {
-    tags_ = tags;
-    recompute_prio();
-  }
-
-  inline void
-  Job::tags_clear()
-  {
-    tags_.clear();
-    recompute_prio();
-  }
-
   inline bool
   Job::has_pending_exception() const
   {
     return pending_exception_.get();
   }
 
-  inline prio_type
-  Job::prio_get() const
-  {
-    return prio_;
-  }
-
   inline bool
   Job::child_job() const
   {
     return parent_;
-  }
-
-  inline bool
-  Job::has_tag(const Tag& tag) const
-  {
-    foreach (const rTag& t, tags_)
-      if (t->derives_from(tag))
-	return true;
-    return false;
   }
 
   inline std::ostream&

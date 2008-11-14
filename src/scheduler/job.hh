@@ -191,19 +191,15 @@ namespace scheduler
     /// Is the job frozen?
     ///
     /// \return This depends from the job tags state.
-    virtual bool frozen() const;
-
-    /// Apply a tag to the current job tag stack.
-    ///
-    /// \param tag The tag to apply.
-    ///
-    /// \param finally The action executed when the
-    ///                tag is removed. No action is
-    ///                inserted if 0 is given.
-    void apply_tag(const rTag& tag, libport::Finally* finally);
+    virtual bool frozen() const = 0;
 
     /// Check if the job holds a tag.
-    bool has_tag(const Tag&) const;
+    ///
+    /// \return 0 if the job does not hold the tag,
+    ///         the position of the tag in the tag stack
+    ///         (starting from 1) otherwise.
+    virtual size_t has_tag(const Tag& tag, size_t max_depth = (size_t)-1)
+      const = 0;
 
     /// Get the current job state.
     ///
@@ -280,7 +276,7 @@ namespace scheduler
     /// Get the current job priority.
     ///
     /// \return The job priority, as previously computed.
-    prio_type prio_get() const;
+    virtual prio_type prio_get() const = 0;
 
     /// Ensure proper cleanup.
     virtual void terminate_cleanup();
@@ -317,19 +313,6 @@ namespace scheduler
     /// \param msg The explanation of the scheduling error.
     virtual void scheduling_error(std::string msg = "");
 
-    /// Get the current tags.
-    ///
-    /// \return The tags attached to the current job.
-    const tags_type& tags_get() const;
-
-    /// Set the current tags.
-    ///
-    /// \param tags Set the tags attached to the current job.
-    void tags_set(const tags_type& tags);
-
-    /// Clear the current tags.
-    void tags_clear();
-
   private:
     /// Current job state, to be manipulated only from the job and the
     /// scheduler.
@@ -346,13 +329,6 @@ namespace scheduler
     /// The value we have to deduce from system time because we have
     /// been frozen.
     libport::utime_t time_shift_;
-
-    /// Recompute the current priority after a tag operation.
-    void recompute_prio();
-
-    /// Recompute the current priority if a particular tag could have
-    /// affected it (addition or removal).
-    void recompute_prio(const Tag&);
 
     /// Scheduler in charge of this job. Do not delete.
     Scheduler& scheduler_;
@@ -376,12 +352,6 @@ namespace scheduler
 
     /// Helper functions for constructors.
     void init_common(const libport::Symbol& name);
-
-    /// Tags this job depends on.
-    tags_type tags_;
-
-    /// Current priority.
-    prio_type prio_;
 
     /// Is the current job side-effect free?
     bool side_effect_free_;

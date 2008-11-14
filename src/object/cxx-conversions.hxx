@@ -9,7 +9,7 @@
 # include <object/list.hh>
 # include <object/string.hh>
 # include <object/tag.hh>
-# include <scheduler/tag.hh>
+# include <runner/runner.hh>
 
 namespace object
 {
@@ -180,16 +180,16 @@ namespace object
 
   // Conversion with tags_type
   template <>
-  struct CxxConvert<scheduler::tags_type>
+  struct CxxConvert<runner::tags_type>
   {
-    static scheduler::tags_type
+    static runner::tags_type
     to(const rObject&, unsigned)
     {
       pabort("Invalid conversion");
     }
 
     static rObject
-    from(const scheduler::tags_type& v)
+    from(const runner::tags_type& v)
     {
       List::value_type res;
       foreach (const scheduler::rTag& tag, v)

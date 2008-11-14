@@ -32,7 +32,7 @@ namespace runner
     bool triggered_get() const;
     void triggered_set(bool);
     const tag_stack_type& tag_stack_get() const;
-    const scheduler::tags_type& tags_get() const;
+    const tags_type& tags_get() const;
     bool tag_held(const scheduler::Tag& tag) const;
     const object::rLobby& lobby_get() const;
   private:
@@ -41,7 +41,7 @@ namespace runner
     rObject on_leave_;
     bool triggered_;
     tag_stack_type tag_stack_;
-    scheduler::tags_type tags_;
+    tags_type tags_;
     object::rLobby lobby_;
   };
 
@@ -289,7 +289,7 @@ namespace runner
     return tag_stack_;
   }
 
-  const scheduler::tags_type&
+  const tags_type&
   AtJob::tags_get() const
   {
     return tags_;

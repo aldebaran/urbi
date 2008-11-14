@@ -19,6 +19,7 @@ namespace runner
 		 const libport::Symbol& name)
     : scheduler::Job(sched, name)
     , lobby_(lobby)
+    , prio_(scheduler::UPRIO_DEFAULT)
   {
   }
 
@@ -26,6 +27,7 @@ namespace runner
   Runner::Runner(const Runner& model, const libport::Symbol& name)
     : scheduler::Job(model, name)
     , lobby_(model.lobby_)
+    , prio_(scheduler::UPRIO_DEFAULT)
   {
   }
 
@@ -53,6 +55,42 @@ namespace runner
   Runner::lobby_set(rLobby lobby)
   {
     lobby_ = lobby;
+  }
+
+  LIBPORT_SPEED_INLINE const tags_type&
+  Runner::tags_get() const
+  {
+    return tags_;
+  }
+
+  LIBPORT_SPEED_INLINE void
+  Runner::tags_set(const tags_type& tags)
+  {
+    tags_ = tags;
+    recompute_prio();
+  }
+
+  LIBPORT_SPEED_INLINE void
+  Runner::tags_clear()
+  {
+    tags_.clear();
+    recompute_prio();
+  }
+
+  LIBPORT_SPEED_INLINE scheduler::prio_type
+  Runner::prio_get() const
+  {
+    return prio_;
+  }
+
+  LIBPORT_SPEED_INLINE void
+  Runner::apply_tag(const scheduler::rTag& tag, libport::Finally* finally)
+  {
+    tags_.push_back(tag);
+    if (finally)
+      *finally << boost::bind(&tags_type::pop_back, boost::ref(tags_))
+	       << boost::bind(&Runner::recompute_prio, this, boost::ref(*tag));
+    recompute_prio(*tag);
   }
 
 } // namespace runner

@@ -157,12 +157,6 @@ namespace scheduler
     scheduler_.resume_scheduler(this);
   }
 
-  bool
-  Job::frozen() const
-  {
-    return libport::has_if(tags_, boost::mem_fn(&Tag::frozen));
-  }
-
   void
   Job::async_throw(const exception& e)
   {
@@ -187,7 +181,7 @@ namespace scheduler
   void
   Job::register_stopped_tag(const Tag& tag, const boost::any& payload)
   {
-    size_t max_tag_check = tags_.size();
+    size_t max_tag_check = (size_t)-1;
     if (has_pending_exception())
     {
       // If we are going to terminate, do nothing
@@ -203,12 +197,9 @@ namespace scheduler
 
     // Check if we are affected by this tag, up-to max_tag_check from
     // the beginning of the tag list.
-    for (unsigned int i = 0; i < max_tag_check; i++)
-      if (tags_[i]->derives_from(tag))
-      {
-	async_throw(StopException(i, payload));
-	return;
-      }
+    size_t pos = has_tag(tag, max_tag_check);
+    if (pos)
+      async_throw(StopException(pos - 1, payload));
   }
 
   void
@@ -224,26 +215,6 @@ namespace scheduler
       exception_ptr e = pending_exception_;
       e->rethrow();
     }
-  }
-
-  void
-  Job::recompute_prio()
-  {
-    if (tags_.empty())
-    {
-      prio_ = UPRIO_DEFAULT;
-      return;
-    }
-    prio_ = UPRIO_MIN;
-    foreach(const rTag& tag, tags_)
-      prio_ = std::max(prio_, tag->prio_get());
-  }
-
-  void
-  Job::recompute_prio(const Tag& tag)
-  {
-    if (tag.prio_get() >= prio_ || tags_.empty())
-      recompute_prio();
   }
 
   unsigned int

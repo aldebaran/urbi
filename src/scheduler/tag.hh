@@ -1,8 +1,6 @@
 #ifndef SCHEDULER_TAG_HH
 # define SCHEDULER_TAG_HH
 
-# include <vector>
-
 # include <boost/any.hpp>
 
 # include <libport/finally.hh>
@@ -33,8 +31,6 @@ namespace scheduler
     /// Highest priority.
     UPRIO_MAX = UPRIO_RT_MAX
   };
-
-  typedef std::vector<rTag> tags_type;
 
   // A Tag is an entity attached to zero or more scheduler jobs. Each job
   // can have zero or more tags. When a new job is created, it usually

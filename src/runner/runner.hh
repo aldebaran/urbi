@@ -22,6 +22,9 @@ namespace runner
   /// Stack of Urbi tags.
   typedef std::vector<object::rTag> tag_stack_type;
 
+  /// Scheduler tags
+  typedef std::vector<scheduler::rTag> tags_type;
+
   /// Ast executor.
   class Runner : public scheduler::Job
   {
@@ -115,6 +118,36 @@ namespace runner
     virtual void raise(rObject exn, bool skip_last = false) = 0;
     virtual libport::Symbol innermost_call_get() const = 0;
 
+    virtual bool frozen() const;
+    virtual size_t has_tag(const scheduler::Tag& tag,
+			   size_t max_depth = (size_t)-1) const;
+
+    virtual scheduler::prio_type prio_get() const;
+
+    /// Apply a tag to the current job tag stack.
+    ///
+    /// \param tag The tag to apply.
+    ///
+    /// \param finally The action executed when the
+    ///                tag is removed. No action is
+    ///                inserted if 0 is given.
+    void apply_tag(const scheduler::rTag& tag, libport::Finally* finally);
+
+  protected:
+
+    /// Get the current tags.
+    ///
+    /// \return The tags attached to the current job.
+    const tags_type& tags_get() const;
+
+    /// Set the current tags.
+    ///
+    /// \param tags Set the tags attached to the current job.
+    void tags_set(const tags_type& tags);
+
+    /// Clear the current tags.
+    void tags_clear();
+
   protected:
     /// \name Evaluation.
     /// \{
@@ -146,11 +179,24 @@ namespace runner
     rLobby lobby_;
 
   private:
+    /// Recompute the current priority after a tag operation.
+    void recompute_prio();
+
+    /// Recompute the current priority if a particular tag could have
+    /// affected it (addition or removal).
+    void recompute_prio(const scheduler::Tag&);
+
     /// The scope tags stack.
     std::vector<scheduler::rTag> scope_tags_;
 
     /// The runner seen as an Urbi Task.
     object::rTask task_;
+
+    /// Tags this job depends on.
+    tags_type tags_;
+
+    /// Current priority.
+    scheduler::prio_type prio_;
   };
 
 } // namespace runner
