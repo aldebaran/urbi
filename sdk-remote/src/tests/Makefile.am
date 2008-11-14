@@ -45,7 +45,6 @@ EXTRA_DIST = $(build_aux_dir)/ls-files
 # I couldn't get git-ls-files to list directories.  So ask for the CC
 # files in them, and keep only the *.uob part.
 UOBJECTS = $(patsubst %/,%,$(sort $(dir $(call ls_files,uobjects/*.uob/*.cc))))
-#UOBJECTS = uobjects/all.uob
 
 # uobject-check
 EXTRA_DIST += bin/uobject-check.as
