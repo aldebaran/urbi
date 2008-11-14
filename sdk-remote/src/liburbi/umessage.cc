@@ -1,5 +1,6 @@
 /// \file liburbi/umessage.cc
 
+#include <cstdlib>
 #include <iostream>
 
 #include <urbi/umessage.hh>
