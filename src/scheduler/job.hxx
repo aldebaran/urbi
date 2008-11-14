@@ -213,13 +213,6 @@ namespace scheduler
     recompute_prio(*tag);
   }
 
-  inline void
-  Job::copy_tags(const Job& other)
-  {
-    tags_set(other.tags_get());
-    recompute_prio();
-  }
-
   inline const tags_type&
   Job::tags_get() const
   {

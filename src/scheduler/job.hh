@@ -202,11 +202,6 @@ namespace scheduler
     ///                inserted if 0 is given.
     void apply_tag(const rTag& tag, libport::Finally* finally);
 
-    /// Copy the tags from another job.
-    ///
-    /// \param other The other job to copy tags from.
-    void copy_tags(const Job& other);
-
     /// Check if the job holds a tag.
     bool has_tag(const Tag&) const;
 
