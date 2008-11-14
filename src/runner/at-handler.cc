@@ -4,7 +4,6 @@
 #include <boost/bind.hpp>
 #include <boost/ptr_container/ptr_list.hpp>
 
-#include <libport/containers.hh>
 #include <libport/finally.hh>
 
 #include <object/lobby.hh>
