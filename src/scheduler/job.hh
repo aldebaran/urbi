@@ -205,19 +205,6 @@ namespace scheduler
     /// Check if the job holds a tag.
     bool has_tag(const Tag&) const;
 
-    /// Get the current tags.
-    ///
-    /// \return The tags attached to the current job.
-    const tags_type& tags_get() const;
-
-    /// Set the current tags.
-    ///
-    /// \param tags Set the tags attached to the current job.
-    void tags_set(const tags_type& tags);
-
-    /// Clear the current tags.
-    void tags_clear();
-
     /// Get the current job state.
     ///
     /// \return The current job state.
@@ -329,6 +316,19 @@ namespace scheduler
     ///
     /// \param msg The explanation of the scheduling error.
     virtual void scheduling_error(std::string msg = "");
+
+    /// Get the current tags.
+    ///
+    /// \return The tags attached to the current job.
+    const tags_type& tags_get() const;
+
+    /// Set the current tags.
+    ///
+    /// \param tags Set the tags attached to the current job.
+    void tags_set(const tags_type& tags);
+
+    /// Clear the current tags.
+    void tags_clear();
 
   private:
     /// Current job state, to be manipulated only from the job and the
