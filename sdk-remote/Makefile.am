@@ -23,12 +23,12 @@ EXTRA_DIST +=					\
 
 # check-html, check-clean, check-uob etc.
 check-%:
-	$(MAKE) $(AM_MAKEFLAGS) -C src/liburbi/tests $@
+	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
 
 # The target run by the buildfarm.
 CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) -C src/liburbi/tests \
+	$(MAKE) $(AM_MAKEFLAGS) -C src/tests \
 	  $(CHECK_BUILDFARM_FLAGS) check-html
 
 ## ----- ##
