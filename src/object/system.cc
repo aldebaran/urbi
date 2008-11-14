@@ -273,23 +273,16 @@ namespace object
     return void_class;
   }
 
-  static rObject
-  system_class_spawn(runner::Runner& r, objects_type args)
+  static void
+  system_spawn(runner::Runner& r, const rObject&, const rCode& code)
   {
-    check_arg_count(args.size() - 1, 1);
-    rObject arg1 = args[1]->as<Code>();
-    assert(arg1);
-
     runner::Interpreter* new_runner =
       new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
-			       rObject(arg1),
+			       rObject(code),
 			       libport::Symbol::fresh(r.name_get()));
     new_runner->copy_tags (r);
     new_runner->time_shift_set (r.time_shift_get ());
-
     new_runner->start_job ();
-
-    return object::void_class;
   }
 
   static rObject
@@ -415,6 +408,7 @@ namespace object
     DECLARE(getenv);
     DECLARE(lobbies);
     DECLARE(setenv);
+    DECLARE(spawn);
     DECLARE(unsetenv);
 
 #undef DECLARE
@@ -447,7 +441,6 @@ namespace object
     DECLARE(stats);
     DECLARE(shutdown);
     DECLARE(sleep);
-    DECLARE(spawn);
     DECLARE(stopall);
     DECLARE(platform);
     DECLARE(time);
