@@ -175,8 +175,8 @@ namespace urbi
     /// Frees binary buffer.
     ~UBinary();
     int parse(const char* message, int pos,
-	      std::list<BinaryData> &bins,
-	      std::list<BinaryData>::iterator &binpos);
+	      const std::list<BinaryData>& bins,
+	      std::list<BinaryData>::const_iterator& binpos);
   };
 
 } // end namespace urbi

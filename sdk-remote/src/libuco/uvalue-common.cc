@@ -84,8 +84,8 @@ namespace urbi
 
   int
   UValue::parse(const char* message, int pos,
-		std::list<BinaryData>& bins,
-		std::list<BinaryData>::iterator& binpos)
+		const std::list<BinaryData>& bins,
+		std::list<BinaryData>::const_iterator& binpos)
   {
     SKIP_SPACES();
     if (message[pos] == '"')
@@ -363,8 +363,8 @@ namespace urbi
 
   int
   UBinary::parse(const char* message, int pos,
-		 std::list<BinaryData>& bins,
-		 std::list<BinaryData>::iterator& binpos)
+		 const std::list<BinaryData>& bins,
+		 std::list<BinaryData>::const_iterator& binpos)
   {
     SKIP_SPACES();
     //find end of header

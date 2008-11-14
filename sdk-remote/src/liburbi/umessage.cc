@@ -16,7 +16,7 @@ namespace urbi
 
   UMessage::UMessage(UAbstractClient& client, int timestamp,
 		     const char* tag, const char* message,
-		     std::list<BinaryData> bins)
+		     const std::list<BinaryData>& bins)
     : client(client)
     , timestamp(timestamp)
     , tag(tag)
@@ -47,7 +47,7 @@ namespace urbi
     //value
     type = MESSAGE_DATA;
     value = new UValue();
-    std::list<BinaryData>::iterator iter = bins.begin();
+    std::list<BinaryData>::const_iterator iter = bins.begin();
     int p = value->parse(message, 0, bins, iter);
     while (message[p] == ' ')
       ++p;

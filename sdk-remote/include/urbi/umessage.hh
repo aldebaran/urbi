@@ -46,7 +46,7 @@ namespace urbi
     /// Parser constructor
     UMessage(UAbstractClient& client, int timestamp,
 	     const char* tag, const char* message,
-	     std::list<urbi::BinaryData> bins);
+	     const std::list<urbi::BinaryData>& bins);
     /// If alocate is true, everything is copied, eles pointers are stolen
     UMessage(const UMessage& source);
 
