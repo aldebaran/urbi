@@ -79,12 +79,11 @@ usage()
     "Start an UObject in either remote or plugin mode.\n"
     "\n"
     "Urbi-Launch options:\n"
-    "  -h, --help        display this message and exit\n"
-    "  -v, --version     display version information and exit\n"
+    "  -h, --help         display this message and exit\n"
+    "  -v, --version      display version information and exit\n"
+    "  -c, --custom FILE  start using the shared library FILE\n"
     "\n"
     "Mode selection:\n"
-    "  -c, --custom FILE  start using the shared library FILE\n"
-    "                     FILE should not have an extension\n"
     "  -p, --plugin       start as a plugin uobject on a running server\n"
     "  -r, --remote       start as a remote uobject\n"
     "  -s, --start        start an urbi server and connect as plugin\n"
@@ -138,7 +137,7 @@ main(int argc, const char* argv[])
     /// Connect the module to a running engine (remote uobject)
     MODE_REMOTE
   };
-  ConnectMode connectMode = MODE_REMOTE;
+  ConnectMode connect_mode = MODE_REMOTE;
   /// Core dll to use.
   std::string dll;
   /// Server host name.
@@ -158,10 +157,7 @@ main(int argc, const char* argv[])
     std::string arg = argv[i];
 
     if (arg == "--custom" || arg == "-c")
-    {
-      connectMode = MODE_REMOTE;
       dll = libport::convert_argument<std::string> (arg, argv[++i]);
-    }
     else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--host" || arg == "-H")
@@ -171,7 +167,7 @@ main(int argc, const char* argv[])
       ++i;
     }
     else if (arg == "--plugin" || arg == "-p")
-      connectMode = MODE_PLUGIN_LOAD;
+      connect_mode = MODE_PLUGIN_LOAD;
     else if (arg == "--port" || arg == "-P")
     {
       port = libport::convert_argument<int> (arg, argv[i+1]);
@@ -187,9 +183,9 @@ main(int argc, const char* argv[])
       ++i;
     }
     else if (arg == "--remote" || arg == "-r")
-      connectMode = MODE_REMOTE;
+      connect_mode = MODE_REMOTE;
     else if (arg == "--start" || arg == "-s")
-      connectMode = MODE_PLUGIN_START;
+      connect_mode = MODE_PLUGIN_START;
     else if (arg == "--version" || arg == "-v")
       version();
     else if (arg == "--")
@@ -205,12 +201,12 @@ main(int argc, const char* argv[])
       modules << absolute(arg);
   }
 
-  if (connectMode == MODE_PLUGIN_LOAD)
+  if (connect_mode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
 
   if (dll.empty())
     dll = prefix / "gostai" / "core" / URBI_HOST /
-      (connectMode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
+      (connect_mode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
 
   /* The two other modes are handled the same way:
    * -Dlopen the correct libuobject.

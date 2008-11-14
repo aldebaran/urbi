@@ -10,8 +10,15 @@ esac
 abs_top_srcdir='@abs_top_srcdir@'
 abs_top_builddir='@abs_top_builddir@'
 program=$abs_top_builddir/src/urbi-launch
-uobject=$abs_top_builddir/src/libuobject/libuobject
-exec "$program" -c "$uobject" "$@"
+
+# The libubbject we load depends on the usage.
+echo >&2 "$0: $*"
+case " $* " in
+  (*' --start '*) libuobjectdir=$abs_top_builddir/../src;;
+  (*)             libuobjectdir=$abs_top_builddir/src/libuobject;;
+esac
+
+exec "$program" -c "$libuobjectdir/libuobject" "$@"
 
 # Local Variables:
 # mode: shell-script
