@@ -63,7 +63,7 @@ connect_plugin(const std::string& host, int port, const modules_type& modules)
     ::exit(1);
   cl.setErrorCallback(callback(&onError));
   cl.setCallback(callback(&onDone), "output");
-  foreach(const std::string& m, modules)
+  foreach (const std::string& m, modules)
     cl << "loadModule(\"" << m << "\");";
   cl << "output << 1;";
   while (true)
