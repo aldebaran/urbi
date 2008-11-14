@@ -6,6 +6,8 @@
 #ifndef RUNNER_INTERPRETER_HXX
 # define RUNNER_INTERPRETER_HXX
 
+#include <object/tag.hh>
+
 namespace runner
 {
 
@@ -22,6 +24,18 @@ namespace runner
   {
     assert(!call_stack_.empty());
     return call_stack_.back().first;
+  }
+
+  inline void
+  Interpreter::tag_stack_clear()
+  {
+    tag_stack_.clear();
+  }
+
+  inline const tag_stack_type&
+  Interpreter::tag_stack_get() const
+  {
+    return tag_stack_;
   }
 
   /*----------------.

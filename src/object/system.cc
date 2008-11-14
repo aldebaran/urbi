@@ -274,13 +274,22 @@ namespace object
   }
 
   static void
-  system_spawn(runner::Runner& r, const rObject&, const rCode& code)
+  system_spawn(runner::Runner& r, const rObject&,
+	       const rCode& code, const rObject& clear_tags)
   {
     runner::Interpreter* new_runner =
       new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
 			       rObject(code),
 			       libport::Symbol::fresh(r.name_get()));
-    new_runner->copy_tags (r);
+
+    // FIXME: The Urbi tag stack is inherited by default, while the
+    // scheduler tags are not. This leads to those kinds of bizarre
+    // constructions.
+    if (is_true(clear_tags))
+      new_runner->tag_stack_clear();
+    else
+      new_runner->copy_tags(r);
+
     new_runner->time_shift_set (r.time_shift_get ());
     new_runner->start_job ();
   }

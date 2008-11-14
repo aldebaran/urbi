@@ -125,11 +125,14 @@ namespace runner
     /// if needed.
     rObject eval_tag(ast::rConstExp);
 
-    /// Make an urbi function from an ast chunk
+    /// Make an urbi function from an ast chunk.
     object::rCode make_routine(ast::rConstRoutine f) const;
 
-    /// Retreive the tags currently tagging the runned code
+    /// Retrieve the tags currently tagging the runned code.
     const tag_stack_type& tag_stack_get() const;
+
+    /// Clear the tag stack.
+    void tag_stack_clear();
 
   protected:
     /// \name Evaluation.

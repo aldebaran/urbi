@@ -21,7 +21,6 @@
 #include <object/cxx-conversions.hh>
 #include <object/global.hh>
 #include <object/lobby.hh>
-#include <object/tag.hh>
 #include <object/task.hh>
 
 #include <runner/call.hh>
@@ -324,12 +323,6 @@ namespace runner
     if (skip_last && !bt.empty())
       bt.pop_back();
     throw object::UrbiException(exn, bt);
-  }
-
-  const tag_stack_type&
-  Interpreter::tag_stack_get() const
-  {
-    return tag_stack_;
   }
 
 } // namespace runner

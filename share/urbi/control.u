@@ -2,8 +2,12 @@ class Global.Control
 {
   function detach
   {
-    var outer_call = call |
-    unscope: spawn (function () { outer_call.evalArgAt (0) })
+    unscope: spawn(closure() { call.evalArgAt(0) }, false)
+  };
+
+  function disown
+  {
+    spawn(closure() { call.evalArgAt(0) }, true)
   };
 
   // every_ takes two arguments, a delay and an expression.
@@ -86,3 +90,4 @@ class Global.Control
 // Import those at the global level
 var Global.persist = Control.getSlot("persist");
 var Global.detach = Control.getSlot("detach");
+var Global.disown = Control.getSlot("disown");
