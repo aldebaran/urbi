@@ -20,6 +20,4 @@ dist_libuobject_la_SOURCES +=			\
   runner/sneaker.hh				\
   runner/stack-debug.hh				\
   runner/stacks.cc				\
-  runner/stacks.hh				\
-  runner/unscoper.cc				\
-  runner/unscoper.hh
+  runner/stacks.hh
