@@ -74,8 +74,10 @@ def primitive(r, runner, nargs):
 
     if runner:
         runner = 'r,'
+	runner_name = ' r'
     else:
         runner = ''
+	runner_name = ''
 
     if r:
         r = 'return CxxConvert<typename Flatten<R>::type>::from'
@@ -88,11 +90,10 @@ def primitive(r, runner, nargs):
     template <%(param)s>
     struct MakePrimitive<%(boost)s>
     {
-      static rObject primitive(runner::Runner& r,
+      static rObject primitive(runner::Runner&%(runner_name)s,
                                object::objects_type& args,
                                %(boost)s f)
       {
-        (void) r;
         check_arg_count(args.size() - 1, %(nargs)s);
         %(return)s
         (f(%(runner)s
@@ -110,6 +111,7 @@ def primitive(r, runner, nargs):
         'return': r,
         'return_void': r_void,
         'runner': runner,
+	'runner_name': runner_name,
         'self': to(0, 'S'),
         }
 
@@ -129,8 +131,10 @@ def primitive_list(r, runner, met):
     params = ', '.join(params)
     if runner:
         runner = 'r, '
+	runner_name = ' r'
     else:
         runner = ''
+	runner_name = ''
     if met:
         target_get = 'S tgt = CxxConvert<S>::to(args[0], 0); args.pop_front();'
         target = 'tgt, '
@@ -142,11 +146,10 @@ def primitive_list(r, runner, met):
     struct MakePrimitive<%(boost)s>
     {
       static rObject primitive(
-        runner::Runner& r,
+        runner::Runner&%(runner_name)s,
         object::objects_type& args,
         %(boost)s f)
       {
-        (void) r;
         %(target_get)s
         %(return)sf(%(runner)s%(target)sargs);
         %(return_void)s
@@ -158,6 +161,7 @@ def primitive_list(r, runner, met):
         'return': r,
         'return_void': r_void,
         'runner': runner,
+	'runner_name': runner_name,
         'target': target,
         'target_get': target_get,
         }
