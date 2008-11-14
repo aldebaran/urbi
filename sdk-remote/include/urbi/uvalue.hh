@@ -116,11 +116,11 @@ namespace urbi
     ufloat          val;  ///< value if of type DATA_DOUBLE
     union
     {
-      std::string	*stringValue;	///< value if of type DATA_STRING
-      UBinary		*binary;	///< value if of type DATA_BINARY
-      UList		*list;		///< value if of type DATA_LIST
-      UObjectStruct	*object;	///< value if of type DATA_OBJ
-      void           *storage;		///< internal
+      std::string* stringValue; ///< value if of type DATA_STRING
+      UBinary* binary;          ///< value if of type DATA_BINARY
+      UList* list;              ///< value if of type DATA_LIST
+      UObjectStruct* object;    ///< value if of type DATA_OBJ
+      void* storage;            ///< internal
     };
 
     UValue();
