@@ -1,40 +1,42 @@
+#include <iostream>
+
 #include "sensor.hh"
 
-UStart (sensor);
+UStart(sensor);
 
-sensor::sensor (std::string s)
-  : UObject (s)
+sensor::sensor(std::string s)
+  : UObject(s)
 {
-  UBindVar (sensor, val);
-  USensor (val);
+  UBindVar(sensor, val);
+  USensor(val);
   val = 4;
-  UBindFunction (sensor, init);
-  UBindFunction (sensor, setVal);
-  UNotifyChange (val, &sensor::newval);
-  UNotifyAccess (val, &sensor::getval);
+  UBindFunction(sensor, init);
+  UBindFunction(sensor, setVal);
+  UNotifyChange(val, &sensor::newval);
+  UNotifyAccess(val, &sensor::getval);
 }
 
 int
-sensor::init ()
+sensor::init()
 {
   return 0;
 }
 
 UReturn
-sensor::newval (UVar& v)
+sensor::newval(UVar& v)
 {
-  std::cout <<  (int)v << std::endl;
+  std::cout << (int)v << std::endl;
   return 0;
 }
 
 void
-sensor::setVal (int v)
+sensor::setVal(int v)
 {
   val = v;
 }
 
 UReturn
-sensor::getval (UVar& v)
+sensor::getval(UVar& v)
 {
   v = 666;
   std::cout << "set value to 666" << std::endl;
