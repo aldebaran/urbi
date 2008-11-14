@@ -97,37 +97,50 @@ namespace runner
   bool
   Runner::frozen() const
   {
-    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::frozen));
+    foreach (const object::rTag& tag, tag_stack_)
+      if (tag->value_get()->frozen())
+	return true;
+    return false;
   }
 
   void
   Runner::recompute_prio()
   {
-    if (tags_.empty())
+    if (tag_stack_.empty())
     {
       prio_ = scheduler::UPRIO_DEFAULT;
       return;
     }
     prio_ = scheduler::UPRIO_MIN;
-    foreach(const scheduler::rTag& tag, tags_)
-      prio_ = std::max(prio_, tag->prio_get());
+    foreach(const object::rTag& tag, tag_stack_)
+      prio_ = std::max(prio_, tag->value_get()->prio_get());
   }
 
   void
-  Runner::recompute_prio(const scheduler::Tag& tag)
+  Runner::recompute_prio(const object::rTag& tag)
   {
-    if (tag.prio_get() >= prio_ || tags_.empty())
+    if (tag->value_get()->prio_get() >= prio_ || tag_stack_.empty())
       recompute_prio();
   }
 
   size_t
   Runner::has_tag(const scheduler::Tag& tag, size_t max_depth) const
   {
-    max_depth = std::min(max_depth, tags_.size());
+    max_depth = std::min(max_depth, tag_stack_.size());
     for (size_t i = 0; i < max_depth; i++)
-      if (tags_[i]->derives_from(tag))
+      if (tag_stack_[i]->value_get()->derives_from(tag))
 	return i+1;
     return 0;
+  }
+
+  tag_stack_type
+  Runner::tag_stack_get() const
+  {
+    tag_stack_type res;
+    foreach (const object::rTag& tag, tag_stack_)
+      if (!tag->value_get()->flow_control_get())
+	res.push_back(tag);
+    return res;
   }
 
 } // namespace runner

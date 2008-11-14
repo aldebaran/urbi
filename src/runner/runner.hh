@@ -13,6 +13,7 @@
 # include <libport/compiler.hh>
 
 # include <object/fwd.hh>
+# include <object/list.hh>
 # include <scheduler/scheduler.hh>
 # include <scheduler/job.hh>
 
@@ -21,9 +22,6 @@ namespace runner
 
   /// Stack of Urbi tags.
   typedef std::vector<object::rTag> tag_stack_type;
-
-  /// Scheduler tags
-  typedef std::vector<scheduler::rTag> tags_type;
 
   /// Ast executor.
   class Runner : public scheduler::Job
@@ -132,22 +130,23 @@ namespace runner
     /// \param finally The action executed when the
     ///                tag is removed. No action is
     ///                inserted if 0 is given.
-    void apply_tag(const scheduler::rTag& tag, libport::Finally* finally);
+    void apply_tag(const object::rTag& tag, libport::Finally* finally);
+
+    /// Retrieve the tags currently tagging the runned code.
+    /// This does not include the flow control tags and is only
+    /// intended for user consumption.
+    tag_stack_type tag_stack_get() const;
+
+    /// Clear the tag stack.
+    void tag_stack_clear();
 
   protected:
 
-    /// Get the current tags.
-    ///
-    /// \return The tags attached to the current job.
-    const tags_type& tags_get() const;
+    /// Set the tag stack.
+    void tag_stack_set(const tag_stack_type&);
 
-    /// Set the current tags.
-    ///
-    /// \param tags Set the tags attached to the current job.
-    void tags_set(const tags_type& tags);
-
-    /// Clear the current tags.
-    void tags_clear();
+    /// Return the size of the tag stack.
+    size_t tag_stack_size() const;
 
   protected:
     /// \name Evaluation.
@@ -185,16 +184,19 @@ namespace runner
 
     /// Recompute the current priority if a particular tag could have
     /// affected it (addition or removal).
-    void recompute_prio(const scheduler::Tag&);
+    void recompute_prio(const object::rTag&);
 
     /// The scope tags stack.
     std::vector<scheduler::rTag> scope_tags_;
 
+    /// The stack of current tags. This is different from the
+    /// scheduler::Tag stack located in the runner, that also stores
+    /// C++ tags that are not visible in urbi. This stack is meant to
+    /// enable to list current tags from Urbi.
+    tag_stack_type tag_stack_;
+
     /// The runner seen as an Urbi Task.
     object::rTask task_;
-
-    /// Tags this job depends on.
-    tags_type tags_;
 
     /// Current priority.
     scheduler::prio_type prio_;

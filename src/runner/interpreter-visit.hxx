@@ -456,13 +456,11 @@ namespace runner
     if (tag->blocked())
       return boost::any_cast<rObject>(tag->payload_get());
 
-    size_t result_depth = tags_get().size();
+    size_t result_depth = tag_stack_size();
     try
     {
       Finally finally(2);
-      apply_tag(tag, &finally);
-      if (!tag->flow_control_get())
-	finally << scoped_push(urbi_tag, tag_stack_);
+      apply_tag(urbi_tag, &finally);
       // If the latest tag causes us to be frozen, let the
       // scheduler handle this properly to avoid duplicating the
       // logic.

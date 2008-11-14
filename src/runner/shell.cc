@@ -21,11 +21,6 @@ namespace runner
 		  name)
     , executing_(false)
   {
-    rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
-    if (connection_tag)
-      apply_tag(connection_tag->slot_get(SYMBOL(connectionTag))->
-		  as<object::Tag>()->value_get(),
-		0);
   }
 
   void

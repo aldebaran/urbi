@@ -178,26 +178,6 @@ namespace object
     }
   };
 
-  // Conversion with tags_type
-  template <>
-  struct CxxConvert<runner::tags_type>
-  {
-    static runner::tags_type
-    to(const rObject&, unsigned)
-    {
-      pabort("Invalid conversion");
-    }
-
-    static rObject
-    from(const runner::tags_type& v)
-    {
-      List::value_type res;
-      foreach (const scheduler::rTag& tag, v)
-	res.push_back(new Tag(tag));
-      return new List(res);
-    }
-  };
-
   // Conversion with containers
 #define CONTAINER(Name, Method)                                         \
   template <typename T>                                                 \

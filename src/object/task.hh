@@ -27,7 +27,7 @@ namespace object
     libport::Symbol name();
     void setSideEffectFree(rObject);
     std::string status(runner::Runner&);
-    const runner::tag_stack_type& tags();
+    const runner::tag_stack_type tags();
     void terminate();
     rFloat timeShift();
     void waitForChanges(runner::Runner&);

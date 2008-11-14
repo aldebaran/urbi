@@ -57,26 +57,6 @@ namespace runner
     lobby_ = lobby;
   }
 
-  LIBPORT_SPEED_INLINE const tags_type&
-  Runner::tags_get() const
-  {
-    return tags_;
-  }
-
-  LIBPORT_SPEED_INLINE void
-  Runner::tags_set(const tags_type& tags)
-  {
-    tags_ = tags;
-    recompute_prio();
-  }
-
-  LIBPORT_SPEED_INLINE void
-  Runner::tags_clear()
-  {
-    tags_.clear();
-    recompute_prio();
-  }
-
   LIBPORT_SPEED_INLINE scheduler::prio_type
   Runner::prio_get() const
   {
@@ -84,19 +64,37 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE void
-  Runner::apply_tag(const scheduler::rTag& tag, libport::Finally* finally)
+  Runner::apply_tag(const object::rTag& tag, libport::Finally* finally)
   {
-    tags_.push_back(tag);
+    tag_stack_.push_back(tag);
     if (finally)
-      *finally << boost::bind(&tags_type::pop_back, boost::ref(tags_))
-	       << boost::bind(&Runner::recompute_prio, this, boost::ref(*tag));
-    recompute_prio(*tag);
+      *finally << boost::bind(&tag_stack_type::pop_back, boost::ref(tag_stack_))
+	       << boost::bind(&Runner::recompute_prio, this, boost::ref(tag));
+    recompute_prio(tag);
   }
 
   LIBPORT_SPEED_INLINE bool
   Runner::has_tag(const object::rTag& tag) const
   {
     return has_tag(*(tag->value_get()));
+  }
+
+  LIBPORT_SPEED_INLINE void
+  Runner::tag_stack_clear()
+  {
+    tag_stack_.clear();
+  }
+
+  LIBPORT_SPEED_INLINE void
+  Runner::tag_stack_set(const tag_stack_type& tag_stack)
+  {
+    tag_stack_ = tag_stack;
+  }
+
+  LIBPORT_SPEED_INLINE size_t
+  Runner::tag_stack_size() const
+  {
+    return tag_stack_.size();
   }
 
 } // namespace runner

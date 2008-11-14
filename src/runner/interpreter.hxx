@@ -26,24 +26,6 @@ namespace runner
     return call_stack_.back().first;
   }
 
-  inline void
-  Interpreter::tag_stack_clear()
-  {
-    tag_stack_.clear();
-  }
-
-  inline const tag_stack_type&
-  Interpreter::tag_stack_get() const
-  {
-    return tag_stack_;
-  }
-
-  inline void
-  Interpreter::tag_stack_set(const tag_stack_type& tag_stack)
-  {
-    tag_stack_ = tag_stack;
-  }
-
   /*----------------.
   | Regular visit.  |
   `----------------*/

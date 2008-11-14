@@ -70,8 +70,7 @@ namespace runner
     , stacks_(lobby)
   {
     init();
-    tag_stack_.push_back
-      (lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>());
+    apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
@@ -83,8 +82,8 @@ namespace runner
     , result_(0)
     , call_stack_(model.call_stack_)
     , stacks_(model.lobby_)
-    , tag_stack_(model.tag_stack_)
   {
+    tag_stack_set(model.tag_stack_get());
     init();
   }
 
@@ -96,8 +95,8 @@ namespace runner
     , code_(0)
     , result_(0)
     , stacks_(model.lobby_)
-    , tag_stack_(model.tag_stack_)
   {
+    tag_stack_set(model.tag_stack_get());
     init();
   }
 
@@ -108,16 +107,6 @@ namespace runner
   void
   Interpreter::init()
   {
-    // If the lobby has a slot connectionTag, push it unless it is already
-    // present directly or indirectly.
-    rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
-    if (connection_tag)
-    {
-      const object::rTag& tag =
-	connection_tag->slot_get(SYMBOL(connectionTag))->as<object::Tag>();
-      if (!has_tag(tag))
-	apply_tag(tag->value_get(), 0);
-    }
     // Push a dummy scope tag, in case we do have an "at" at the
     // toplevel.
     create_scope_tag();

@@ -284,15 +284,8 @@ namespace object
 			       rObject(code),
 			       libport::Symbol::fresh(r.name_get()));
 
-    // FIXME: The Urbi tag stack is inherited by default, while the
-    // scheduler tags are not. This leads to those kinds of bizarre
-    // constructions.
     if (is_true(clear_tags))
       new_runner->tag_stack_clear();
-    else
-      // Copy the Urbi tags into the Job structure.
-      foreach (const rTag& t, current_runner.tag_stack_get())
-	new_runner->apply_tag(t->value_get(), 0);
 
     new_runner->time_shift_set (r.time_shift_get ());
     new_runner->start_job ();

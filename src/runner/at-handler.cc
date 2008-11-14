@@ -17,6 +17,7 @@
 namespace runner
 {
 
+  /// Scheduler tags
   class AtJob
   {
   public:
@@ -32,7 +33,6 @@ namespace runner
     bool triggered_get() const;
     void triggered_set(bool);
     const tag_stack_type& tag_stack_get() const;
-    const tags_type& tags_get() const;
     bool tag_held(const scheduler::Tag& tag) const;
     const object::rLobby& lobby_get() const;
   private:
@@ -41,7 +41,6 @@ namespace runner
     rObject on_leave_;
     bool triggered_;
     tag_stack_type tag_stack_;
-    tags_type tags_;
     object::rLobby lobby_;
   };
 
@@ -72,7 +71,7 @@ namespace runner
   {
     // There are no reason to inherit tags from our creator, as this service
     // is not tied to any particular connection.
-    tags_clear();
+    tag_stack_clear();
   }
 
   AtHandler::~AtHandler()
@@ -156,10 +155,6 @@ namespace runner
 	  new_state ? job->clause_get() : job->on_leave_get();
 	if (to_launch != object::nil_class)
 	{
-	  // We need to install the scheduler tags as well before executing
-	  // the command.
-	  finally << boost::bind(&AtHandler::tags_set, this, tags_get());
-	  tags_set(job->tags_get());
 	  // We do not need to check for an exception here as "detach",
 	  // which is the function being called, will not throw and any
 	  // exception thrown in the detached runner will not be caught
@@ -228,29 +223,33 @@ namespace runner
       tag_stack_(tag_stack),
       lobby_(lobby)
   {
-    // Build the scheduler tags from the Urbi tag stack.
-    foreach (const object::rTag& tag, tag_stack)
-      tags_.push_back(tag->value_get());
   }
 
   bool
   AtJob::tag_held(const scheduler::Tag& tag) const
   {
-    return libport::has_if(tags_, boost::bind(&scheduler::Tag::derives_from,
-					      _1,
-					      boost::cref(tag)));
+    foreach (const object::rTag& t, tag_stack_)
+      if (t->value_get()->derives_from(tag))
+	return true;
+    return false;
   }
 
   bool
   AtJob::blocked() const
   {
-    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::blocked));
+    foreach (const object::rTag& tag, tag_stack_)
+      if (tag->value_get()->blocked())
+	return true;
+    return false;
   }
 
   bool
   AtJob::frozen() const
   {
-    return libport::has_if(tags_, boost::mem_fn(&scheduler::Tag::blocked));
+    foreach (const object::rTag& tag, tag_stack_)
+      if (tag->value_get()->frozen())
+	return true;
+    return false;
   }
 
   const rObject&
@@ -287,12 +286,6 @@ namespace runner
   AtJob::tag_stack_get() const
   {
     return tag_stack_;
-  }
-
-  const tags_type&
-  AtJob::tags_get() const
-  {
-    return tags_;
   }
 
   const object::rLobby&
