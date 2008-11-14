@@ -109,12 +109,14 @@ version()
             << libport::exit(EX_OK);
 }
 
-static void
-add_module(libport::path p, modules_type& res)
+static
+std::string
+absolute(const std::string& s)
 {
+  libport::path p = s;
   if (!p.absolute_get())
     p = libport::get_current_directory() / p;
-  res.push_back(p.to_string());
+  return p.to_string();
 }
 
 typedef int (*umain_type)(const libport::cli_args_type& args, bool block);
@@ -200,7 +202,7 @@ main(int argc, const char* argv[])
       libport::invalid_option(arg);
     else
       // An argument: a module
-      add_module(argv[i], modules);
+      modules << absolute(arg);
   }
 
   if (connectMode == MODE_PLUGIN_LOAD)
