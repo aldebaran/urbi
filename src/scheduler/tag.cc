@@ -36,12 +36,4 @@ namespace scheduler
     abort();
   }
 
-  void
-  Tag::apply_tag(tags_type& tags, libport::Finally* finally)
-  {
-    tags.push_back(this);
-    if (finally)
-      *finally << boost::bind(&tags_type::pop_back, boost::ref(tags));
-  }
-
 } // namespace scheduler

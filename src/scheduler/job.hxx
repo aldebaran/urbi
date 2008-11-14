@@ -206,9 +206,10 @@ namespace scheduler
   inline void
   Job::apply_tag(const rTag& tag, libport::Finally* finally)
   {
-    tag->apply_tag(tags_, finally);
+    tags_.push_back(tag);
     if (finally)
-      *finally << boost::bind(&Job::recompute_prio, this, boost::ref(*tag));
+      *finally << boost::bind(&tags_type::pop_back, boost::ref(tags_))
+	       << boost::bind(&Job::recompute_prio, this, boost::ref(*tag));
     recompute_prio(*tag);
   }
 

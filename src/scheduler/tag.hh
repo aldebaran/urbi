@@ -81,11 +81,6 @@ namespace scheduler
     prio_type prio_set(Scheduler&, prio_type);
     prio_type prio_get() const;
 
-    // Apply a tag by changing the \a tags list and register the action
-    // to be taken when the tag is removed into the \a finally object if
-    // given.
-    void apply_tag(tags_type& tags, libport::Finally* finally);
-
     // Set and get the flow_control property.
     void flow_control_set();
     virtual bool flow_control_get() const;
