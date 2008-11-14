@@ -277,8 +277,10 @@ namespace object
   system_spawn(runner::Runner& r, const rObject&,
 	       const rCode& code, const rObject& clear_tags)
   {
+    const runner::Interpreter& current_runner =
+      dynamic_cast<runner::Interpreter&>(r);
     runner::Interpreter* new_runner =
-      new runner::Interpreter (dynamic_cast<runner::Interpreter&>(r),
+      new runner::Interpreter (current_runner,
 			       rObject(code),
 			       libport::Symbol::fresh(r.name_get()));
 
@@ -288,7 +290,9 @@ namespace object
     if (is_true(clear_tags))
       new_runner->tag_stack_clear();
     else
-      new_runner->copy_tags(r);
+      // Copy the Urbi tags into the Job structure.
+      foreach (const rTag& t, current_runner.tag_stack_get())
+	new_runner->apply_tag(t->value_get(), 0);
 
     new_runner->time_shift_set (r.time_shift_get ());
     new_runner->start_job ();

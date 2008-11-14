@@ -2,7 +2,7 @@ class Global.Control
 {
   function detach
   {
-    unscope: spawn(closure() { call.evalArgAt(0) }, false)
+    spawn(closure() { call.evalArgAt(0) }, false)
   };
 
   function disown
