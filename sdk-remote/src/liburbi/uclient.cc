@@ -211,7 +211,7 @@ namespace urbi
 
 
   int
-  UClient::effectiveSend(const void  * buffer, int size)
+  UClient::effectiveSend(const void* buffer, int size)
   {
 #if DEBUG
     char output[size+1];

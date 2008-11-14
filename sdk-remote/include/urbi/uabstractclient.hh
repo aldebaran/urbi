@@ -344,23 +344,23 @@ namespace urbi
     bool server_;
 
     /// Urbi Buffer length.
-    int	     buflen;
+    int buflen;
     /// System calls return value storage.
-    int	     rc;
+    int rc;
 
     /// Reception buffer.
-    char	     *recvBuffer;
+    char* recvBuffer;
     /// Current position in reception buffer.
-    int	     recvBufferPosition;
+    int recvBufferPosition;
     /// Temporary buffer for send data.
-    char	     *sendBuffer;
+    char* sendBuffer;
 
 
   private:
     /// Bin object for this command.
     std::list<urbi::BinaryData> bins;
     /// Temporary storage of binary data.
-    void *binaryBuffer;
+    void* binaryBuffer;
     /// Current position in binaryBuffer.
     int binaryBufferPosition;
     /// Size of binaryBuffer.
@@ -373,7 +373,7 @@ namespace urbi
     /// Current depth of bracket.
     int	nBracket;
     /// Start of command, after [ts:tag] header.
-    char *currentCommand;
+    char* currentCommand;
 
     /// Currently parsing binary
     bool binaryMode;
@@ -395,7 +395,7 @@ namespace urbi
     /// Unique tag base.
     int uid;
 
-    std::ostream     *stream;
+    std::ostream* stream;
 
     friend class UClientStreambuf;
 
