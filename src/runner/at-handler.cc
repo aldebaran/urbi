@@ -11,7 +11,6 @@
 
 #include <runner/at-handler.hh>
 #include <runner/call.hh>
-#include <runner/unscoper.hh>
 
 #include <scheduler/tag.hh>
 
@@ -23,7 +22,7 @@ namespace runner
   public:
     AtJob(const rObject& condition, const rObject& clause,
 	  const rObject& on_leave,
-	  const scheduler::tags_type& tags,
+	  const tag_stack_type& tag_stack,
 	  const object::rLobby& lobby);
     bool blocked() const;
     bool frozen() const;
@@ -32,6 +31,7 @@ namespace runner
     const rObject& on_leave_get() const;
     bool triggered_get() const;
     void triggered_set(bool);
+    const tag_stack_type& tag_stack_get() const;
     const scheduler::tags_type& tags_get() const;
     bool tag_held(const scheduler::Tag& tag) const;
     const object::rLobby& lobby_get() const;
@@ -40,6 +40,7 @@ namespace runner
     rObject clause_;
     rObject on_leave_;
     bool triggered_;
+    tag_stack_type tag_stack_;
     scheduler::tags_type tags_;
     object::rLobby lobby_;
   };
@@ -107,6 +108,13 @@ namespace runner
 	  continue;
 	}
 
+	// Temporarily install the Urbi tag stack as the current one. This
+	// must be done if for any reason the condition works with tags.
+	libport::Finally finally(boost::bind(&AtHandler::tag_stack_set,
+					     this,
+					     tag_stack_get()));
+	tag_stack_set(job->tag_stack_get());
+
 	// Check the job condition and continue if it has not changed.
 	bool new_state;
 	try
@@ -148,12 +156,10 @@ namespace runner
 	  new_state ? job->clause_get() : job->on_leave_get();
 	if (to_launch != object::nil_class)
 	{
-	  // Temporarily install the needed tags as the current tags.
-	  libport::Finally finally(boost::bind(&AtHandler::tags_set,
-					       this,
-					       tags_get()));
+	  // We need to install the scheduler tags as well before executing
+	  // the command.
+	  finally << boost::bind(&AtHandler::tags_set, this, tags_get());
 	  tags_set(job->tags_get());
-
 	  // We do not need to check for an exception here as "detach",
 	  // which is the function being called, will not throw and any
 	  // exception thrown in the detached runner will not be caught
@@ -213,15 +219,18 @@ namespace runner
 
   AtJob::AtJob(const rObject& condition, const rObject& clause,
 	       const rObject& on_leave,
-	       const scheduler::tags_type& tags,
+	       const tag_stack_type& tag_stack,
 	       const object::rLobby& lobby)
     : condition_(condition),
       clause_(clause),
       on_leave_(on_leave),
       triggered_(false),
-      tags_(tags),
+      tag_stack_(tag_stack),
       lobby_(lobby)
   {
+    // Build the scheduler tags from the Urbi tag stack.
+    foreach (const object::rTag& tag, tag_stack)
+      tags_.push_back(tag->value_get());
   }
 
   bool
@@ -274,6 +283,12 @@ namespace runner
     triggered_ = t;
   }
 
+  const tag_stack_type&
+  AtJob::tag_stack_get() const
+  {
+    return tag_stack_;
+  }
+
   const scheduler::tags_type&
   AtJob::tags_get() const
   {
@@ -302,7 +317,7 @@ namespace runner
     AtJob* job = new AtJob(condition,
 			   clause,
 			   on_leave,
-			   runner::remove_scope_tags(starter.tags_get()),
+			   starter.tag_stack_get(),
 			   starter.lobby_get());
     at_job_handler->add_job(job);
   }
