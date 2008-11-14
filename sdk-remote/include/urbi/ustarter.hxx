@@ -18,6 +18,8 @@
 # include <algorithm>
 # include <string>
 
+# include <libport/containers.hh>
+
 # include <urbi/fwd.hh>
 # include <urbi/ustarter.hh>
 
@@ -43,11 +45,11 @@ namespace urbi
   `--------------*/
   template <class T>
   inline
-  URBIStarter<T>::URBIStarter(const std::string& name, UStartlist& _slist)
+  URBIStarter<T>::URBIStarter(const std::string& name, UStartlist& slist)
     : baseURBIStarter(name)
+    , slist_(slist)
   {
-    slist = &_slist;
-    slist->push_back(this);
+    slist_.push_back(this);
   }
 
   template <class T>
@@ -63,10 +65,9 @@ namespace urbi
   URBIStarter<T>::clean()
   {
     delete getUObject();
-    UStartlist::iterator toerase =
-      std::find(slist->begin(), slist->end(), this);
-    if (toerase != slist->end())
-      slist->erase(toerase);
+    UStartlist::iterator i = libport::find(slist_, this);
+    if (i != slist_.end())
+      slist_.erase(i);
   }
 
   template <class T>
@@ -74,7 +75,7 @@ namespace urbi
   void
   URBIStarter<T>::copy(const std::string& objname)
   {
-    URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
+    URBIStarter<T>* ustarter = new URBIStarter<T>(objname, slist_);
     ustarter->init(objname);
     UObject* uso = ustarter->object;
     getUObject()->members.push_back(uso);
@@ -121,11 +122,11 @@ namespace urbi
   template <class T>
   inline
   URBIStarterHub<T>::URBIStarterHub(const std::string& name,
-                                 UStartlistHub& _slist)
+                                    UStartlistHub& slist)
     : baseURBIStarterHub(name)
+    , slist_(slist)
   {
-    slist = &_slist;
-    slist->push_back(this);
+    slist_.push_back(this);
   }
 
   template <class T>

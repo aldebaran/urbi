@@ -74,7 +74,7 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& _slist);
+    URBIStarter(const std::string& name, UStartlist& slist);
 
     virtual ~URBIStarter();
 
@@ -89,7 +89,7 @@ namespace urbi
     /// Called when the object is ready to be initialized.
     virtual void init(const std::string& objname);
 
-    UStartlist* slist;
+    UStartlist& slist_;
     T* object;
   };
 
@@ -144,7 +144,7 @@ SETBACKCASTCTOR(const UImage)
     : public baseURBIStarterHub
   {
   public:
-    URBIStarterHub(const std::string& name, UStartlistHub& _slist);
+    URBIStarterHub(const std::string& name, UStartlistHub& slist);
     virtual ~URBIStarterHub();
 
   protected:
@@ -154,7 +154,7 @@ SETBACKCASTCTOR(const UImage)
     /// Access to the object from the outside.
     virtual UObjectHub* getUObjectHub();
 
-    UStartlistHub* slist;
+    UStartlistHub& slist_;
     T* object;
   };
 
