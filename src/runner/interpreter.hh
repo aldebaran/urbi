@@ -156,6 +156,8 @@ namespace runner
 			       const libport::Symbol& msg,
                                const ast::exps_type& args);
 
+    void tag_stack_set(const tag_stack_type&);
+
   public:
 
 #define VISIT(Macro, Data, Node)                                        \

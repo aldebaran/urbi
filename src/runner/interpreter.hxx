@@ -38,6 +38,12 @@ namespace runner
     return tag_stack_;
   }
 
+  inline void
+  Interpreter::tag_stack_set(const tag_stack_type& tag_stack)
+  {
+    tag_stack_ = tag_stack;
+  }
+
   /*----------------.
   | Regular visit.  |
   `----------------*/
