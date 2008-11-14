@@ -368,12 +368,11 @@ namespace scheduler
       if (job->state_get() == to_start)
       {
 	// Check if this job deserves to be removed.
-	foreach (const rTag& t, job->tags_get())
-	  if (t->derives_from(tag))
-	  {
-	    pending_.remove(job);
-	    continue;
-	  }
+	if (job->has_tag(tag))
+	{
+	  pending_.remove(job);
+	  continue;
+	}
       }
       // Any other job.
       else

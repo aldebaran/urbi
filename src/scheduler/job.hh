@@ -207,6 +207,9 @@ namespace scheduler
     /// \param other The other job to copy tags from.
     void copy_tags(const Job& other);
 
+    /// Check if the job holds a tag.
+    bool has_tag(const Tag&) const;
+
     /// Get the current tags.
     ///
     /// \return The tags attached to the current job.

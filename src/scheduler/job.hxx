@@ -258,6 +258,15 @@ namespace scheduler
     return parent_;
   }
 
+  inline bool
+  Job::has_tag(const Tag& tag) const
+  {
+    foreach (const rTag& t, tags_)
+      if (t->derives_from(tag))
+	return true;
+    return false;
+  }
+
   inline std::ostream&
   operator<< (std::ostream& o, const Job& j)
   {

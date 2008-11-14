@@ -109,13 +109,13 @@ namespace runner
   Interpreter::init()
   {
     // If the lobby has a slot connectionTag, push it unless it is already
-    // present.
+    // present directly or indirectly.
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
     {
       scheduler::rTag tag =
 	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
-      if (!libport::has(tags_get(), tag))
+      if (!has_tag(*tag))
 	apply_tag(tag, 0);
     }
     // Push a dummy scope tag, in case we do have an "at" at the
