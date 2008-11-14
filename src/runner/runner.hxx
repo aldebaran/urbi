@@ -9,6 +9,7 @@
 # include <libport/compilation.hh>
 
 # include <object/lobby.hh>
+# include <object/tag.hh>
 # include <object/task.hh>
 
 namespace runner
