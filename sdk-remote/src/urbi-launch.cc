@@ -57,7 +57,7 @@ onDone(const UMessage&)
 static int
 connect_plugin(const std::string& host, int port, const modules_type& modules)
 {
-  UClient cl(host.c_str(), port);
+  UClient cl(host, port);
   if (cl.error())
     // UClient already displayed an error message.
     ::exit(1);
