@@ -181,12 +181,6 @@ namespace object
 
   URBI_CXX_OBJECT_REGISTER(Tag);
 
-  const scheduler::rTag&
-  extract_tag(const rObject& o)
-  {
-    return o->as<Tag>()->value_get();
-  }
-
   rObject
   Tag::proto_make()
   {

@@ -113,10 +113,10 @@ namespace runner
     rObject connection_tag = lobby_->slot_locate(SYMBOL(connectionTag));
     if (connection_tag)
     {
-      scheduler::rTag tag =
-	extract_tag(connection_tag->slot_get(SYMBOL(connectionTag)));
-      if (!has_tag(*tag))
-	apply_tag(tag, 0);
+      const object::rTag& tag =
+	connection_tag->slot_get(SYMBOL(connectionTag))->as<object::Tag>();
+      if (!has_tag(tag))
+	apply_tag(tag->value_get(), 0);
     }
     // Push a dummy scope tag, in case we do have an "at" at the
     // toplevel.

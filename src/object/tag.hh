@@ -49,9 +49,6 @@ namespace object
   URBI_CXX_OBJECT(Tag);
   };
 
-  const scheduler::rTag&
-  extract_tag(const rObject& o);
-
 } // namespace object
 
 # include <object/cxx-object.hxx>

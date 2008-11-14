@@ -121,6 +121,7 @@ namespace runner
     virtual bool frozen() const;
     virtual size_t has_tag(const scheduler::Tag& tag,
 			   size_t max_depth = (size_t)-1) const;
+    bool has_tag(const object::rTag& tag) const;
 
     virtual scheduler::prio_type prio_get() const;
 

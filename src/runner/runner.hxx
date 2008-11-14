@@ -93,6 +93,12 @@ namespace runner
     recompute_prio(*tag);
   }
 
+  LIBPORT_SPEED_INLINE bool
+  Runner::has_tag(const object::rTag& tag) const
+  {
+    return has_tag(*(tag->value_get()));
+  }
+
 } // namespace runner
 
 #endif // RUNNER_RUNNER_HXX
