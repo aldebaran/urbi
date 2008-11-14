@@ -21,7 +21,7 @@ void
 usage()
 {
   std::cout <<
-    "usage:\n" << libport::program_name << " [OPTION]... TEST...\n"
+    "Usage: " << program_name << " [OPTION]... TEST...\n"
     "\n"
     "Options:\n"
     "  -h, --help            display this message and exit\n"
