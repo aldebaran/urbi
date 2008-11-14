@@ -205,11 +205,14 @@ namespace urbi
 
   UAbstractClient::~UAbstractClient()
   {
+    // No more default client if delete
     if ((void*)getDefaultClient () == (void*)this)
       setDefaultClient (0);
 
-    delete [] recvBuffer;
-    delete [] sendBuffer;
+    if (recvBuffer)
+      delete [] recvBuffer;
+    if (sendBuffer)
+      delete [] sendBuffer;
   }
 
   /*! In threaded environnments, this function lock()s the send buffer so that

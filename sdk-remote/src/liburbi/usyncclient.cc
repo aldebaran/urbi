@@ -14,8 +14,9 @@ namespace urbi
 			   int port,
 			   int buflen,
 			   bool server,
-                           bool startCallbackThread)
-    : UClient(host, port, buflen, server)
+                           bool startCallbackThread,
+			   int semListenInc)
+    : UClient(host, port, buflen, server, semListenInc)
     , sem_()
     , queueLock_()
     , msg(0)
@@ -31,18 +32,24 @@ namespace urbi
       cbThread = libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
-//    LIBPORT_ECHO("USYNCCLIENT built");
+
+    listenSem_++;
+    callbackSem_++;
   }
 
   USyncClient::~USyncClient ()
   {
-    stopCallbackThread();
+    closeUClient ();
+
     if (cbThread)
-      libport::joinThread(cbThread);
+      joinCallbackThread_ ();
+
   }
 
   void USyncClient::callbackThread()
   {
+    callbackSem_--;
+
     while (true)
     {
       sem_--;
@@ -99,6 +106,17 @@ namespace urbi
       UAbstractClient::notifyCallbacks(*m);
       delete m;
     }
+  }
+
+  int USyncClient::joinCallbackThread_ ()
+  {
+    stopCallbackThread ();
+    if (cbThread)
+    {
+      libport::joinThread(cbThread);
+      cbThread = 0;
+    }
+    return 0;
   }
 
   void USyncClient::notifyCallbacks(const UMessage &msg)

@@ -71,7 +71,8 @@ namespace urbi
 		int port = URBI_PORT,
 		int buflen = URBI_BUFLEN,
 		bool server = false,
-                bool startCallbackThread = true);
+		bool startCallbackThread = true,
+		int semListenInc = 2);
 
     ~USyncClient ();
 
@@ -153,9 +154,13 @@ namespace urbi
     void stopCallbackThread();
     void callbackThread();
 
-  private:
-    //Incremented at each queue push, decremented on pop.
+  protected:
+    int joinCallbackThread_ ();
+
+    // Incremented at each queue push, decremented on pop.
     libport::Semaphore sem_;
+    // Semaphore to delay execution of callback thread until ctor finishes.
+    libport::Semaphore callbackSem_;
     std::list<UMessage*> queue;
     libport::Lockable queueLock_;
     UMessage* msg;

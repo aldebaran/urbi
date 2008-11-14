@@ -1,10 +1,31 @@
-/// \file liburbi/uclient.cc
+/*! \file uclient.cc
+****************************************************************************
+ *
+ * Implementation of the URBI interface class
+ *
+ * Copyright (C) 2004, 2006, 2007, 2008 Gostai S.A.S.  All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+**********************************************************************/
 
 #include <cstdlib>
 #include <cerrno>
 
 #include <locale.h>
 
+#include <libport/windows.hh>
 #include <libport/unistd.h>
 
 #include <libport/sys/time.h>
@@ -31,11 +52,14 @@ namespace urbi
    Spawn a new thread that will listen to the socket, parse the incoming URBI
    messages, and notify the appropriate callbacks.
    */
-  UClient::UClient(const std::string& host, int port, int buflen, bool server)
+  UClient::UClient(const std::string& host, int port, int buflen, bool server,
+  	int semListenInc)
     : UAbstractClient(host, port, buflen, server)
     , thread(0)
     , pingInterval(0)
+    , semListenInc_ (semListenInc)
   {
+    sd = -1;
     int pos = 0;
 
     setlocale(LC_NUMERIC, "C");
@@ -164,9 +188,19 @@ namespace urbi
 
     if (!defaultClient)
       defaultClient = this;
+
+    listenSem_++;
+    acceptSem_++;
   }
 
   UClient::~UClient()
+  {
+    if (sd >= 0)
+      closeUClient ();
+  }
+
+  int
+  UClient::closeUClient ()
   {
     if (sd >= 0 && libport::closeSocket(sd) == -1)
       libport::perror ("cannot close sd");
@@ -188,8 +222,9 @@ namespace urbi
     if (control_fd[0] != -1
         && close(control_fd[0]) == -1)
       libport::perror ("cannot close controlfd[0]");
-  }
 
+    return 0;
+  }
 
   bool
   UClient::canSend(int)
@@ -227,6 +262,9 @@ namespace urbi
   void
   UClient::acceptThread()
   {
+    // Wait for it...
+    acceptSem_--;
+
     // Accept one connection
     struct sockaddr_in saClient;
     socklen_t addrlenClient;
@@ -261,7 +299,13 @@ namespace urbi
   void
   UClient::listenThread()
   {
-    int maxfd = 1 + std::max(sd, control_fd[0]);
+    // Wait for it...
+    for (int i = semListenInc_; i > 0; --i)
+      listenSem_--;
+
+    int maxfd;
+
+    maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
     // Declare ping channel for kernel that requires it.
     send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\");",
@@ -293,6 +337,9 @@ namespace urbi
       {
         selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, NULL);
       }
+
+      if (sd < 0)
+	return;
 
       // Treat error
       if (selectReturn < 0 && errno != EINTR)
