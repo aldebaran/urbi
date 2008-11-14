@@ -72,6 +72,14 @@ as :
 while previously you had to retrieve the environment variable twice,
 once to check for its existence and once to get its content.
 
+"disown"
+--------
+
+It is now possible to start executing code in background while
+dropping all the tags beforehand, including the connection tag. The
+code will still continue to execute after the connection that created
+it has died.
+
 Uobjects
 ========
 
