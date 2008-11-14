@@ -11,11 +11,6 @@
 # include <libport/fwd.hh>
 # include <libport/intrusive-ptr.hh>
 
-namespace runner
-{
-  class Runner;
-}
-
 namespace object
 {
   // state.hh
