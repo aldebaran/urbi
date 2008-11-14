@@ -17,6 +17,7 @@ urbiinclude_HEADERS =				\
   include/urbi/uconversion.hh			\
   include/urbi/uexternal.hh			\
   include/urbi/umain.hh				\
+  include/urbi/umessage.hh			\
   include/urbi/uobject.hh			\
   include/urbi/uproperty.hh			\
   include/urbi/ustarter.hh			\

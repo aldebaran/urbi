@@ -1,13 +1,14 @@
 #include <libport/assert.hh>
-#include "urbi/uclient.hh"
 #include <sys/types.h>
 #include <libport/sys/stat.h>
 #include <signal.h>
 #include <libport/windows.hh>
 
-bool over=false;
-static int totalsize=0;
-static int starttime=0;
+#include <urbi/uclient.hh>
+
+bool over = false;
+static int totalsize = 0;
+static int starttime = 0;
 
 static urbi::UCallbackAction
 bw(const urbi::UMessage &msg)

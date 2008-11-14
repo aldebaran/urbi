@@ -1,9 +1,7 @@
 /****************************************************************************
- * $Id: urbiimage.cpp,v 1.13 2005/09/30 17:48:00 nottale Exp $
- *
  * Sample image acqusition urbi client.
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +25,8 @@
 #include <libport/cstdio>
 #include <csignal>
 
-#include "urbi/usyncclient.hh"
+#include <urbi/usyncclient.hh>
+
 #include "monitor.h"
 
 int imcount;

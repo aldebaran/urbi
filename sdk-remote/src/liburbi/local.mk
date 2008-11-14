@@ -17,6 +17,7 @@ liburbi_liburbi_la_SOURCES =			\
   liburbi/uabstractclient.cc			\
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
+  liburbi/umessage.cc				\
   liburbi/usyncclient.cc
 liburbi_liburbi_la_CPPFLAGS =			\
   $(AM_CPPFLAGS)				\

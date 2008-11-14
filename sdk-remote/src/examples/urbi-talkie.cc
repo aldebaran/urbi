@@ -1,7 +1,8 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include <libport/windows.hh>
-#include "urbi/uclient.hh"
+
+#include <urbi/uclient.hh>
 
 class SoundPipe
 {

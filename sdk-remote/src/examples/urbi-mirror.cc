@@ -1,9 +1,10 @@
-#include "urbi/uclient.hh"
-#include <signal.h>
+#include <csignal>
 
-urbi::UClient *d;
+#include <urbi/uclient.hh>
 
-const char * devices[]=
+urbi::UClient* d;
+
+const char* devices[]=
 {
   "legLF1",
   "legLF2",

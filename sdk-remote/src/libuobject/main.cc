@@ -13,10 +13,10 @@
 #include <libport/sysexits.hh>
 
 #include <urbi/package-info.hh>
+#include <urbi/uexternal.hh>
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
-#include <urbi/uexternal.hh>
 
 using libport::program_name;
 

@@ -1,8 +1,9 @@
-#include "urbi/uclient.hh"
 #include <sys/types.h>
 #include <libport/sys/stat.h>
-#include <signal.h>
+#include <csignal>
 #include <libport/windows.hh>
+
+#include <urbi/uclient.hh>
 
 urbi::UClient* c;
 unsigned sendtime;
@@ -20,10 +21,10 @@ static urbi::UCallbackAction
 pong(const urbi::UMessage& msg)
 {
   unsigned int ptime = msg.client.getCurrentTime() - sendtime;
-  if ((!pingCount) || mintime>ptime)
-    mintime=ptime;
-  if ((!pingCount) || maxtime<ptime)
-    maxtime=ptime;
+  if (!pingCount || mintime>ptime)
+    mintime = ptime;
+  if (!pingCount || maxtime<ptime)
+    maxtime = ptime;
 
   avgtime+=ptime;
   printf("ping reply from %s: seq=%d time=%d ms\n", rname, pingCount+1, ptime);

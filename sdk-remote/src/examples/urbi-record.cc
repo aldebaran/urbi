@@ -1,8 +1,8 @@
 #include <libport/assert.hh>
-#include "urbi/uclient.hh"
 
-#include <signal.h>
+#include <csignal>
 
+#include <urbi/uclient.hh>
 
 /*
   file format

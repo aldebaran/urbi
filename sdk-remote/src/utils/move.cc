@@ -7,6 +7,7 @@
 #include <vector>
 #include <locale.h>
 
+
 #include "move.hh"
 
 #ifdef MAX_PATH

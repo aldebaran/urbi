@@ -1,9 +1,7 @@
 /****************************************************************************
- * $Id: urbiballtrackinghead.cpp,v 1.7 2005/10/03 12:46:38 nottale Exp $
- *
  * Sample demonstration of URBI capabilities.
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +26,7 @@
 
 #include <vector>
 
-#include "urbi/uclient.hh"
+#include <urbi/uclient.hh>
 
 #ifndef LIBURBI_OPENR
 # include "monitor.h"

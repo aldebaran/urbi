@@ -5,8 +5,8 @@
 #include <libport/compiler.hh>
 #include <libport/thread.hh>
 
-#include <urbi/usyncclient.hh>
 #include <urbi/uconversion.hh>
+#include <urbi/usyncclient.hh>
 
 namespace urbi
 {

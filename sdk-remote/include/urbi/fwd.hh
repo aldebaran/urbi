@@ -14,6 +14,7 @@ namespace urbi
   class UGenericCallback;
   class UImage;
   class UList;
+  class UMessage;
   class UObject;
   class UObjectData;
   class UObjectHub;

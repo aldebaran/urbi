@@ -13,7 +13,6 @@
 # include <signal.h>
 #endif
 
-#include <urbi/uclient.hh>
 #include <libport/cstdio>
 #include <libport/sys/select.h>
 #include <libport/arpa/inet.h>
