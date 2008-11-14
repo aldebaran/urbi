@@ -239,12 +239,10 @@ namespace urbi
   void
   UClient::listenThread()
   {
-    int maxfd;
-
-    maxfd = 1 + std::max(sd, control_fd[0]);
+    int maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
     // Declare ping channel for kernel that requires it.
-    send("if (isdef(Channel)) var lobby.%s = new Channel(\"%s\");",
+    send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\");",
 	internalPongTag.c_str(), internalPongTag.c_str());
     while (true)
     {
