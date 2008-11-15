@@ -44,7 +44,7 @@ CXX = @CXX@
 # Ld.
 LD = @CC@
 LIBS = $(SDK_LIBS)
-LDFLAGS = @LDFLAGS@ @BOOST_THREAD_LDFLAGS@ $(SDK_LDFLAGS) -no-undefined
+LDFLAGS = @LDFLAGS@ @BOOST_THREAD_LDFLAGS@ $(SDK_LDFLAGS)
 
 if URBI_ENV_AIBO
 # Aibo.
@@ -105,7 +105,7 @@ lalib = $(OUTSHLIB:$(SHLIBEXT)=.la)
 libbase = $(OUTSHLIB:$(SHLIBEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib) \
-	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) $(envdir)/libuobject.la \
+	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)  \
 	  -rpath $(hostdir)
 	cp $$(ls .libs/$(libbase)*$(SHLIBEXT) | head -n 1) $(OUTSHLIB)
 #	rm -f $(lalib)

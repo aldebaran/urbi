@@ -19,16 +19,19 @@ rm -rf $builddir
 mkdir -p $builddir
 cd $builddir
 
+# Find urbi-launch.
+urbi_launch=$(xfind_prog urbi-launch)
+
 # The remote component: an executable.
 umake_remote=$(xfind_prog "umake-remote")
 xrun "umake-remote" $umake_remote --output=$me $uob
 test -x "$me" ||
   fatal "$me is not executable"
-xrun "run \"$me --version\"" "./$me" --version
+xrun "$me --version" "./$me" --version
 
 # The shared component: a dlopen module.
 umake_shared=$(xfind_prog "umake-shared")
 xrun "umake-shared" $umake_shared --output=$me $uob
 test -f "$me.la" ||
   fatal "$me.la does not exist"
-
+xrun "urbi-launch $me --version" "$urbi_launch" --start $me -- --version
