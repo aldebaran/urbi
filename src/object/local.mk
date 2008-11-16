@@ -40,7 +40,7 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
 
-EXTRA_DIST = 					\
+EXTRA_DIST += 					\
   object/any-to-boost-function.hxx.py		\
   object/cxx-primitive.hxx.py
 
