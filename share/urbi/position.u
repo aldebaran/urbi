@@ -1,0 +1,18 @@
+class Global.Position
+{
+  var file = nil;
+  var line = 0;
+  var column = 0;
+
+  function init(f, l, c)
+  {
+    this.file = { if (f) Path.new(f) else f; };
+    this.line = l;
+    this.column = c;
+  };
+
+  function asString()
+  {
+    file.asString + ":" + line + "." + column;
+  }
+};

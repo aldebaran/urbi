@@ -373,6 +373,7 @@ load("urbi/binary.u");
 
 load("urbi/profiling.u");
 
+load("urbi/position.u");
 
 /*-------------.
 | Executable.  |

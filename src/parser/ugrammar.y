@@ -82,6 +82,7 @@
   using parser::ast_call;
   using parser::ast_class;
   using parser::ast_for;
+  using parser::ast_nil;
   using parser::ast_scope;
   using parser::ast_string;
   using parser::ast_switch;
@@ -146,8 +147,7 @@
 `---------*/
 
 %token
-        __FILE       "__FILE__"
-        __LINE       "__LINE__"
+        __HERE__     "__HERE__"
         EQ           "="
         BREAK        "break"
         CASE         "case"
@@ -890,8 +890,7 @@ stmt:
 else_stmt:
   /* nothing. */ %prec ELSE_LESS // ELSE_LESS < "else" to promote shift.
   {
-    PARAMETRIC_AST(a, "nil");
-    $$ = exp(a);
+    $$ = ast_nil();
   }
 | "else" nstmt
   {
@@ -1191,19 +1190,17 @@ exp:
 `------------------*/
 
 exp:
-  "__FILE__"
+  "__HERE__"
   {
-    PARAMETRIC_AST(file, "Path.new(%exp:1)");
+    PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
     PARAMETRIC_AST(no_file, "nil");
     const libport::Symbol* fn = @$.begin.filename;
-    $$ = fn ? exp(file % new ast::String(@$, fn->name_get()))
-	      : exp(no_file);
+    $$ = exp(pos
+             % (fn ? new ast::String(@$, fn->name_get()) : ast_nil())
+             % new ast::Float(@$, @$.begin.line)
+             % new ast::Float(@$, @$.begin.column));
   }
-| "__LINE__"
-  {
-    $$ = new ast::Float(@$, @$.begin.line);
-  }
-
+;
 
 /*---------.
 | Events.  |

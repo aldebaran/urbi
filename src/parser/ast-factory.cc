@@ -287,6 +287,13 @@ namespace parser
     return exp(desugar);
   }
 
+  ast::rExp
+  ast_nil()
+  {
+    PARAMETRIC_AST(nil, "nil");
+    return exp(nil);
+  }
+
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope
   ast_scope(const yy::location& l, ast::rExp target, ast::rExp e)
@@ -312,13 +319,10 @@ namespace parser
   }
 
   ast::rExp
-  ast_switch(const yy::location& l, ast::rExp cond,
+  ast_switch(const yy::location&, ast::rExp cond,
              const cases_type& cases, ast::rExp def)
   {
-    (void) l;
-
-    PARAMETRIC_AST(nil, "nil");
-    ast::rExp inner = def ? def : exp(nil);
+    ast::rExp inner = def ? def : ast_nil();
     rforeach (const case_type& c, cases)
     {
       PARAMETRIC_AST(a,

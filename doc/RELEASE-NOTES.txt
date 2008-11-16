@@ -22,11 +22,11 @@ not be deleted, and a slot can be removed using "removeSlot".
 The construction "delete object" has been removed from the
 language.
 
-"__FILE__" and "__LINE__"
--------------------------
+"__HERE__"
+----------
 
-The new "__FILE__" and "__LINE__" pseudo-symbols give the current
-file and line.
+The new "__HERE__" pseudo-symbol gives the current position.  It
+features three self explanatory slots: "file", "line", and "column".
 
 Standard library
 ================
@@ -80,7 +80,7 @@ dropping all the tags beforehand, including the connection tag. The
 code will still continue to execute after the connection that created
 it has died.
 
-Uobjects
+UObjects
 ========
 
 The error message given to the user trying to cast a void UVar has been

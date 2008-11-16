@@ -117,7 +117,8 @@ namespace parser
   ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue);
   ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e);
 
-
+  /// Return the ast for "nil".
+  ast::rExp ast_nil();
 
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope
