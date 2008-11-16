@@ -25,16 +25,6 @@ $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 	cd $(top_builddir) && $(SHELL) ./config.status src/tests/$@
 
 
-# ls_files GLOBBING-PATTERNS
-# --------------------------
-# The GLOBBING-PATTERNS are put in single quotes to avoid being
-# caught by the shell.
-ls_files =								    \
-  $(or									    \
-    $(shell $(build_aux_dir)/ls-files -s $(srcdir) $(patsubst %,'%',$(1))), \
-    $(error ls-files returned nothing for: $(1)))
-
-EXTRA_DIST = $(build_aux_dir)/ls-files
 
 ## -------------------- ##
 ## uobject test suite.  ##
