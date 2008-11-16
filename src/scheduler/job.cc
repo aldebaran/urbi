@@ -197,8 +197,7 @@ namespace scheduler
 
     // Check if we are affected by this tag, up-to max_tag_check from
     // the beginning of the tag list.
-    size_t pos = has_tag(tag, max_tag_check);
-    if (pos)
+    if (size_t pos = has_tag(tag, max_tag_check))
       async_throw(StopException(pos - 1, payload));
   }
 
