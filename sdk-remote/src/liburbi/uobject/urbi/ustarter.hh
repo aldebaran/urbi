@@ -25,6 +25,12 @@
   ::urbi::URBIStarter<X> X ##  ____URBI_object(std::string(#X),		\
 					       ::urbi::objectlist)
 
+/// Append connectionID to object name
+# define UStartWithID(X)						\
+  ::urbi::URBIStarter<X> X ##  ____URBI_object(std::string(#X),		\
+					       ::urbi::objectlist,	\
+					       true)
+
 /// This macro must be called once for every UObject class.
 # define UStartRename(X,Name)						\
   ::urbi::URBIStarter<X> Name ##  ____URBI_object(std::string(#Name),	\
@@ -50,8 +56,8 @@ namespace urbi
   class baseURBIStarter
   {
   public:
-    baseURBIStarter(const std::string& name)
-      : name(name)
+    baseURBIStarter(const std::string& name, bool local)
+      : name(name), local (local)
     {}
     virtual ~baseURBIStarter() {}
 
@@ -64,6 +70,7 @@ namespace urbi
     /// Used to provide a copy of a C++ object based on its name.
     virtual void copy(const std::string&) = 0;
     std::string name;
+    bool local;
   };
 
   //! This is the class containing URBI starters
@@ -76,8 +83,8 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& _slist)
-      : baseURBIStarter(name)
+    URBIStarter(const std::string& name, UStartlist& _slist, bool local)
+      : baseURBIStarter(name, local)
     {
       slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarter*>(this));
@@ -101,7 +108,7 @@ namespace urbi
     virtual void
     copy(const std::string& objname)
     {
-      URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
+      URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist, local);
       ustarter->init(objname);
       UObject *uso = dynamic_cast<UObject*>(ustarter->object);
       getUObject()->members.push_back(uso);
@@ -121,7 +128,14 @@ namespace urbi
     /// Called when the object is ready to be initialized.
     virtual void init(const std::string& objname)
     {
-      object = new T(objname);
+      std::string fullname = objname;
+      urbi::UAbstractClient* cli = (UAbstractClient*)getDefaultClient ();
+      if (local && cli)
+      {
+	fullname += "_" + getClientConnectionID (cli);
+	name = fullname;
+      }
+      object = new T(fullname);
     }
 
     UStartlist  *slist;
