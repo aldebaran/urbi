@@ -56,7 +56,7 @@ namespace urbi
   class URBI_SDK_API baseURBIStarter
   {
   public:
-    baseURBIStarter(const std::string& name, bool local);
+    baseURBIStarter(const std::string& name, bool local = false);
     virtual ~baseURBIStarter();
 
     virtual UObject* getUObject() = 0;
@@ -81,7 +81,7 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& _slist, bool local);
+    URBIStarter(const std::string& name, UStartlist& _slist, bool local = false);
 
     virtual ~URBIStarter();
 
