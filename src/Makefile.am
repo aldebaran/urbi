@@ -3,8 +3,6 @@
 ## ---------------- ##
 
 include kernel.mk
-AUTOMAKE_OPTIONS += -Wno-portability subdir-objects
-
 
 ## ------------ ##
 ## libuobject.  ##

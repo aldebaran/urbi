@@ -16,7 +16,8 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.10 foreign tar-ustar -Wall nostdinc])
+AM_INIT_AUTOMAKE([1.10 foreign tar-ustar nostdinc subdir-objects
+                  -Wall -Wno-portability])
 
 ## ------------ ##
 ## Parameters.  ##
