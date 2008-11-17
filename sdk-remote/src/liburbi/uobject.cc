@@ -519,6 +519,12 @@ namespace urbi
 	   !getDefaultClient()->init ())
       usleep(20000);
 
+    // Waiting for connectionID
+    while (getDefaultClient () &&
+	   getDefaultClient ()->connectionID () == "")
+      usleep (5000);
+
+
     dummyUObject = new UObject (0);
     for (UStartlist::iterator i = objectlist->begin();
 	 i != objectlist->end();

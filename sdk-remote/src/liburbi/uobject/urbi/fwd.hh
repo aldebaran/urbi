@@ -4,6 +4,8 @@
 #ifndef URBI_FWD_HH
 # define URBI_FWD_HH
 
+# include <string>
+
 namespace urbi
 {
   class UAbstractClient;
@@ -24,6 +26,10 @@ namespace urbi
   class UVardata;
   class baseURBIStarter;
   class baseURBIStarterHub;
+
+  std::string getClientConnectionID (const UAbstractClient* cli);
+  UClient* getDefaultClient();
+
 };
 
 class UVariable;
