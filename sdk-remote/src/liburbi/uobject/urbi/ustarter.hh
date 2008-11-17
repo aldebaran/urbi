@@ -56,7 +56,7 @@ namespace urbi
   class baseURBIStarter
   {
   public:
-    baseURBIStarter(const std::string& name, bool local)
+    baseURBIStarter(const std::string& name, bool local = false)
       : name(name), local (local)
     {}
     virtual ~baseURBIStarter() {}
@@ -83,7 +83,7 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& _slist, bool local)
+    URBIStarter(const std::string& name, UStartlist& _slist, bool local = false)
       : baseURBIStarter(name, local)
     {
       slist = &_slist;
