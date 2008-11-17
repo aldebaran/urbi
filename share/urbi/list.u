@@ -115,10 +115,15 @@ do (List)
   };
 
   // Build a list containing \a size times \a value
-  function init(size, value)
+  function init
   {
-    // if (size < 0) throw;
-    size.each(closure (i) { this << value })
+    var args = call.evalArgs;
+
+    if (args.size == 0)
+      return;
+    if (args.size == 2)
+      // if (args[0] < 0) throw;
+      args[0].each(closure (i) { this << args[1] });
   };
 
   //# ------------------------ ##
