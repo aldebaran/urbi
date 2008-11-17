@@ -201,6 +201,8 @@ namespace urbi
       return;
     }
     sendBuffer[0] = 0;
+
+    setCallback(*this, &UAbstractClient::setConnectionID, "ident");
   }
 
   UAbstractClient::~UAbstractClient()
@@ -1036,6 +1038,27 @@ namespace urbi
   UAbstractClient::getCurrentTimestamp () const
   {
     return currentTimestamp;
+  }
+
+  const std::string&
+  UAbstractClient::connectionID () const
+  {
+    return connectionID_;
+  }
+
+  UCallbackAction
+  UAbstractClient::setConnectionID (const UMessage& msg)
+  {
+    if (msg.type == MESSAGE_SYSTEM)
+    {
+      std::string::size_type pos = msg.message.find ("ID: ");
+      if (pos != std::string::npos)
+      {
+	connectionID_ = std::string (msg.message, pos + 4, std::string::npos);
+	return URBI_REMOVE;
+      }
+    }
+    return URBI_CONTINUE;
   }
 
 

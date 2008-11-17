@@ -315,6 +315,12 @@ namespace urbi
     /// Temporary buffer for send data.
     char* sendBuffer;
 
+  protected:
+    std::string connectionID_;
+
+  public:
+    const std::string& connectionID () const;
+    UCallbackAction setConnectionID (const UMessage& msg);
 
   private:
     /// Bin object for this command.
