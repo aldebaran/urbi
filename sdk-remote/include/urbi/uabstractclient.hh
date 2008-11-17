@@ -320,7 +320,6 @@ namespace urbi
 
   public:
     const std::string& connectionID () const;
-    UCallbackAction setConnectionID (const UMessage& msg);
 
   private:
     /// Bin object for this command.
@@ -370,6 +369,8 @@ namespace urbi
     friend class UClientStreambuf;
 
   };
+
+  std::string getClientConnectionID (const UAbstractClient* cli);
 
   /// Wrapper around a callback function. Use callback() to create them.
   class UCallbackWrapper

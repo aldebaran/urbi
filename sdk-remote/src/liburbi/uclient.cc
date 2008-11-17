@@ -191,6 +191,9 @@ namespace urbi
 
     listenSem_++;
     acceptSem_++;
+
+    setCallback(*this, &UClient::setConnectionID, "ident");
+    send ("ident << local.connectionID;");
   }
 
   UClient::~UClient()
@@ -224,6 +227,21 @@ namespace urbi
       libport::perror ("cannot close controlfd[0]");
 
     return 0;
+  }
+
+  UCallbackAction
+  UClient::setConnectionID (const UMessage& msg)
+  {
+    if (msg.type == MESSAGE_DATA && msg.value)
+    {
+      std::string id = (std::string)*msg.value;
+      if (id != "")
+      {
+	connectionID_ = id;
+	return URBI_REMOVE;
+      }
+    }
+    return URBI_CONTINUE;
   }
 
   bool
