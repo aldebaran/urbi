@@ -354,6 +354,7 @@ namespace urbi
     virtual ~UObjectHub();
 
     void addMember(UObject* obj);
+    void delMember(UObject* obj);
 
     /// Set a timer that will call update() every 'period' milliseconds.
     void USetUpdate(ufloat period);

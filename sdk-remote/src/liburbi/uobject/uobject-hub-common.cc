@@ -48,6 +48,12 @@ namespace urbi
     members.push_back(obj);
   }
 
+  void
+  UObjectHub::delMember(UObject* obj)
+  {
+    members.remove (obj);
+  }
+
   UObjectList*
   UObjectHub::getSubClass(const std::string& subclass)
   {
