@@ -31,8 +31,9 @@ namespace urbi
   `------------------*/
 
   inline
-  baseURBIStarter::baseURBIStarter(const std::string& name)
+  baseURBIStarter::baseURBIStarter(const std::string& name, bool local)
     : name(name)
+    , local(local)
   {}
 
   inline
@@ -45,8 +46,8 @@ namespace urbi
   `--------------*/
   template <class T>
   inline
-  URBIStarter<T>::URBIStarter(const std::string& name, UStartlist& slist)
-    : baseURBIStarter(name)
+  URBIStarter<T>::URBIStarter(const std::string& name, UStartlist& slist, bool local)
+    : baseURBIStarter(name, local)
     , slist_(slist)
   {
     slist_.push_back(this);
@@ -75,7 +76,7 @@ namespace urbi
   void
   URBIStarter<T>::copy(const std::string& objname)
   {
-    URBIStarter<T>* ustarter = new URBIStarter<T>(objname, slist_);
+    URBIStarter<T>* ustarter = new URBIStarter<T>(objname, slist_, local);
     ustarter->init(objname);
     UObject* uso = ustarter->object;
     getUObject()->members.push_back(uso);
@@ -99,7 +100,14 @@ namespace urbi
   void
   URBIStarter<T>::init(const std::string& objname)
   {
-    object = new T(objname);
+    std::string fullname = objname;
+    urbi::UAbstractClient* cli = (UAbstractClient*)getDefaultClient ();
+    if (local && cli)
+    {
+      fullname += "_" + getClientConnectionID (cli);
+      name = fullname;
+    }
+    object = new T(fullname);
   }
 
     /*---------------------.

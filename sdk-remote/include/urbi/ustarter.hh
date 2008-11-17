@@ -26,6 +26,12 @@
   ::urbi::URBIStarter<Type>                                             \
   Name ##  ____URBI_object(std::string(#Name), ::urbi::objectlist)
 
+/// Append connectionID to object name
+# define UStartWithID(X)						\
+  ::urbi::URBIStarter<X> X ##  ____URBI_object(std::string(#X),		\
+					       ::urbi::objectlist,	\
+					       true)
+
 /// This macro must be called once for every UObject class.
 # define UStart(Type)							\
   UStartRename(Type, Type)
@@ -50,7 +56,7 @@ namespace urbi
   class URBI_SDK_API baseURBIStarter
   {
   public:
-    baseURBIStarter(const std::string& name);
+    baseURBIStarter(const std::string& name, bool local);
     virtual ~baseURBIStarter();
 
     virtual UObject* getUObject() = 0;
@@ -62,6 +68,7 @@ namespace urbi
     /// Used to provide a copy of a C++ object based on its name.
     virtual void copy(const std::string&) = 0;
     std::string name;
+    bool local;
   };
 
   //! This is the class containing URBI starters
@@ -74,7 +81,7 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& slist);
+    URBIStarter(const std::string& name, UStartlist& _slist, bool local);
 
     virtual ~URBIStarter();
 
