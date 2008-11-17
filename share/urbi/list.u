@@ -114,18 +114,6 @@ do (List)
     res;
   };
 
-  // Build a list containing \a size times \a value
-  function init
-  {
-    var args = call.evalArgs;
-
-    if (args.size == 0)
-      return;
-    if (args.size == 2)
-      // if (args[0] < 0) throw;
-      args[0].each(closure (i) { this << args[1] });
-  };
-
   //# ------------------------ ##
   //# Functional programming.  ##
   //# ------------------------ ##

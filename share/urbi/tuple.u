@@ -6,7 +6,7 @@
     class Res
     {
       type = name;
-      var members = List.new(size, nil);
+      var members = [nil] * size;
       var size = size;
 
       function asString ()
