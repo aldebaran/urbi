@@ -20,7 +20,7 @@ namespace object
   {
   public:
     typedef std::pair<Object*, libport::Symbol> location_type;
-    typedef std::pair<location_type, rObject> q_slot_type;
+    typedef std::pair<location_type, value_type> q_slot_type;
 
     static Object* get_owner(const q_slot_type& slot);
 
