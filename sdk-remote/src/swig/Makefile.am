@@ -13,7 +13,6 @@ dist_bin_SCRIPTS +=				\
   sample.rb
 
 EXTRA_DIST += liburbi.i
-lib_LTLIBRARIES =
 
 if BINDING_CSHARP
 lib_LTLIBRARIES += liburbiCSharp.la

@@ -1,5 +1,5 @@
 # Backward compatibility.
-include_HEADERS =				\
+include_HEADERS +=				\
   include/uobject.h
 
 ucallbacks_hh = include/urbi/ucallbacks.hh

@@ -10,7 +10,7 @@ dist_umain_DATA = liburbi/umain.cc
 ## liburbi.la.  ##
 ## ------------ ##
 
-lib_LTLIBRARIES = liburbi/liburbi.la
+lib_LTLIBRARIES += liburbi/liburbi.la
 liburbi_liburbi_la_SOURCES =			\
   libuco/uvalue-common.cc			\
   liburbi/package-info.cc			\

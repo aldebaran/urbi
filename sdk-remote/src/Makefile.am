@@ -32,7 +32,7 @@ urbi_launch_SOURCES = urbi-launch.cc
 urbi_launch_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
-  $(LTDL_LIBS)					\
+  $(top_builddir)/libltdl/libltdlc.la		\
   liburbi/liburbi.la
 urbi_launch_LDFLAGS =				\
   $(AM_LDFLAGS)

@@ -15,6 +15,7 @@ URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2008])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
@@ -27,10 +28,14 @@ URBI_DIRS([remote])
 AC_PROG_CC
 URBI_PROG_CXX
 
-# Disable static libraries. Loading modules as shared libraries
-# requires us to be one.
-AC_ENABLE_STATIC([no])
-AC_PROG_LIBTOOL
+LT_PREREQ([2.2.6])
+LT_CONFIG_LTDL_DIR([libltdl])
+LT_INIT([pic-only shared disable-static dlopen win32-dll])
+# I don't know why I need this with Libtool 2.2.6
+# mkdir -p .deps/libltdl
+LTDL_INIT([nonrecursive])
+# Name the subdirectory that contains libltdl sources
+AC_SUBST([LIBTOOL_DEPS])
 
 URBI_SDK
 
@@ -50,8 +55,6 @@ URBI_LIBPORT
 AC_CONFIG_FILES([lib/libport/Makefile])
 
 BOOST_REQUIRE([1.35])
-
-URBI_WITH_LTDL
 
 # X11.
 # AC_PATH_XTRA will find us X11 headers even if we are cross-compiling for windows

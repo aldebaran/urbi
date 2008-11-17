@@ -1,7 +1,9 @@
 include $(top_srcdir)/build-aux/build-aux.mk
 
-# That's where aclocal extensions are.
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
+libtool: $(LIBTOOL_DEPS)
+	$(SHELL) ./config.status --recheck
+include libltdl/Makefile.inc
 
 SUBDIRS =					\
   .						\
