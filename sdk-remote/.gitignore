@@ -17,6 +17,7 @@
 /include/urbi/ucallbacks.hh
 /jpeg-6b
 /lib/libport
+/libltdl
 /sdk/config.h.in
 /src/Makefile.in
 /src/swig/Makefile.in
