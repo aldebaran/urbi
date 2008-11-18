@@ -39,6 +39,22 @@ namespace
                 << libport::exit(1);
     return res;
   }
+
+  /// Wrapper around lt_dlopenext that exits on failures.
+  template <typename T>
+  static
+  T
+  xlt_dlsym(lt_dlhandle h, const std::string& s)
+  {
+    void* res = lt_dlsym(h, s.c_str());
+    if (!res)
+      std::cerr << program_name
+                << ": failed to dlsym " << s << ": " << lt_dlerror()
+                << std::endl
+                << libport::exit(1);
+    return reinterpret_cast<T>(res);
+  }
+
 }
 
 static UCallbackAction
@@ -217,10 +233,6 @@ main(int argc, const char* argv[])
   foreach (const std::string& s, modules)
     xlt_dlopenext(s);
 
-  umain_type umain = (umain_type) lt_dlsym(core, "urbi_main_args");
-  if (!umain)
-    std::cerr << "Failed to dlsym urbi::main: " << lt_dlerror() << std::endl
-              << libport::exit(1);
-
+  umain_type umain = xlt_dlsym<umain_type>(core, "urbi_main_args");
   umain(args, true);
 }
