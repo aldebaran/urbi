@@ -847,10 +847,7 @@ stmt:
     }
 | "timeout" "(" exp ")" stmt
     {
-      PARAMETRIC_AST(desugar,
-        "stopif ({sleep(%exp:1) | true}) %exp:2"
-        );
-      $$ = exp(desugar % $3 % $5);
+      $$ = ::parser::ast_timeout($3, $5);
     }
 | "return" exp.opt
     {

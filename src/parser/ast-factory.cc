@@ -368,4 +368,21 @@ namespace parser
     }
   }
 
+  ast::rExp
+  ast_timeout(const ast::rExp& duration, const ast::rExp& body)
+  {
+    PARAMETRIC_AST(desugar,
+		   "{"
+		   " var '$tag' = Tag.new |"
+		   " '$tag':"
+		   "   {"
+		   "      {"
+		   "        sleep(%exp:1) | '$tag'.stop"
+		   "      },"
+		   "     %exp:2 | '$tag'.stop"
+		   "   }"
+		   "}");
+    return exp(desugar % duration % body);
+  }
+
 }
