@@ -34,4 +34,4 @@ umake_shared=$(xfind_prog "umake-shared")
 xrun "umake-shared" $umake_shared --output=$me $uob
 test -f "$me.la" ||
   fatal "$me.la does not exist"
-xrun "urbi-launch $me --version" "$urbi_launch" --start $me -- --version
+xrun "urbi-launch $me --version" "$urbi_launch" --start $me.la -- --version
