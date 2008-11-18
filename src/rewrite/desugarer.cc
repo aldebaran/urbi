@@ -87,8 +87,12 @@ namespace rewrite
     if (ast::rExp duration = e->duration_get())
     {
       PARAMETRIC_AST(emit,
-                     "var '$emit' = %exp:1.trigger(%exps:2) |"
-                     "detach({ sleep(%exp:3) | '$emit'.stop})");
+                     "{"
+		     " var '$emit' = %exp:1.trigger(%exps:2) |"
+		     " var '$duration' = %exp:3 |"
+                     " if ('$duration' != inf) "
+		     "  detach({ sleep('$duration') | '$emit'.stop})"
+		     "}");
 
       result_ = exp(emit %  event % args % duration);
     }
