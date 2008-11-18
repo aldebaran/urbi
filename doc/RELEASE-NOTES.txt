@@ -80,6 +80,12 @@ dropping all the tags beforehand, including the connection tag. The
 code will still continue to execute after the connection that created
 it has died.
 
+"Object.removeSlot"
+-------------------
+
+The "removeSlot" method now silently accepts non-existing slot
+names instead of signalling an error.
+
 UObjects
 ========
 

@@ -56,7 +56,8 @@ namespace object
   CentralizedSlots::erase(Object* owner, const key_type& key)
   {
     loc_index_type::iterator it = where(owner, key);
-    loc_index_.erase(it);
+    if (it != content_->end())
+      loc_index_.erase(it);
   }
 
   inline bool
