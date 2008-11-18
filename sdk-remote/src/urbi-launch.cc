@@ -40,7 +40,7 @@ namespace
     return res;
   }
 
-  /// Wrapper around lt_dlopenext that exits on failures.
+  /// Wrapper around lt_dlsym that exits on failures.
   template <typename T>
   static
   T
