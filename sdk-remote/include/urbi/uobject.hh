@@ -52,8 +52,9 @@
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
 # define UBindFunction(Obj, X)						\
-  ::urbi::createUCallback(__name, "function", this,			\
-			  (&Obj::X), __name + "." #X,			\
+  ::urbi::createUCallback(__name, "function",				\
+			  dynamic_cast<Obj*> (this),			\
+                          (&Obj::X), __name + "." #X,                   \
                           ::urbi::functionmap(), false)
 
 /** Registers a function x in current object that will be called each
