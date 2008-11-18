@@ -33,7 +33,7 @@ LT_PREREQ([2.2.6])
 LT_CONFIG_LTDL_DIR([libltdl])
 LT_INIT([pic-only shared disable-static dlopen win32-dll])
 # I don't know why I need this with Libtool 2.2.6
-mkdir -p .deps/libltdl
+$MKDIR_P libltdl/.deps
 LTDL_INIT([nonrecursive])
 AC_SUBST([LIBTOOL_DEPS])
 
