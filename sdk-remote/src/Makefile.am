@@ -30,6 +30,8 @@ include $(top_srcdir)/build-aux/revision.mk
 bin_PROGRAMS += urbi-launch
 urbi_launch_SOURCES = urbi-launch.cc
 urbi_launch_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
+# Find our own ltdl.h.
+urbi_launch_CPPFLAGS += -I$(top_srcdir)/libltdl
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
   $(top_builddir)/libltdl/libltdlc.la		\
