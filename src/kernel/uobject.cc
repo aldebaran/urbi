@@ -12,9 +12,7 @@
 
 #include <kernel/config.h>
 
-#if WITH_LTDL
 #include <ltdl.h>
-#endif
 
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
@@ -121,20 +119,15 @@ static void uobjects_reload(rObject where)
     }
 }
 
-#if WITH_LTDL
 static void uobjects_load_module(rObject, const std::string& name)
 {
   lt_dlinit();
-  lt_dlhandle handle = lt_dlopen(name.c_str());
+  lt_dlhandle handle = lt_dlopenext(name.c_str());
   if (!handle)
-  {
-    const char* error = lt_dlerror();
-    runner::raise_primitive_error("Failed to open `" + name + "': " +
-				  (error ? error : "unknown error"));
-  };
+    runner::raise_primitive_error
+      ("Failed to open `" + name + "': " + lt_dlerror());
   uobjects_reload(where);
 }
-#endif
 
 /*! Initialize plugin UObjects.
  \param args object in which the instances will be stored.
@@ -143,11 +136,9 @@ rObject uobject_initialize(runner::Runner&, objects_type& args)
 {
   where = args.front();
   uobjects_reload(where);
-#if WITH_LTDL
   object::global_class->slot_set
     (SYMBOL(loadModule),
      object::make_primitive(&uobjects_load_module));
-#endif
   return object::void_class;
 }
 

@@ -72,7 +72,6 @@ URBI_ARG_ENABLE([enable-headers-install],
                 [Install kernel headers], [yes|no], [no])
 AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
                [test x$enable_headers_install = xyes])
-URBI_WITH_LTDL
 
 # Where we look for the installed files.
 # Do not use $package here, kernel is a too generic name.
