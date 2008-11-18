@@ -1,4 +1,3 @@
 #! /bin/sh
 
-libtool_prereq=2.2.6
-. externals/libport/build-aux/bootstrap --install-libtool=build-aux "$@"
+exec externals/libport/build-aux/bootstrap "$@"
