@@ -35,6 +35,8 @@ urbi_launch_CPPFLAGS += -I$(top_srcdir)/libltdl
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
   $(top_builddir)/libltdl/libltdlc.la		\
-  liburbi/liburbi.la
+  liburbi/liburbi.la                            \
+  $(top_builddir)/lib/libport/libport.la
+
 urbi_launch_LDFLAGS =				\
   $(AM_LDFLAGS)
