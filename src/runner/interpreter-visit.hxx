@@ -594,14 +594,14 @@ namespace runner
 #endif
 
   // Invalid nodes
-#define INVALID(Node)                                      \
-  LIBPORT_SPEED_INLINE object::rObject                     \
-  Interpreter::visit(const ast::Node* n)                   \
-  {                                                        \
-    static_cast<void>(n);                                  \
-    pabort("Invalid node in the Interpreter: " << *n);     \
-    INVALID_RET                                            \
-  }                                                        \
+#define INVALID(Node)                                                   \
+  LIBPORT_SPEED_INLINE object::rObject                                  \
+  Interpreter::visit(const ast::Node* n)                                \
+  {                                                                     \
+    static_cast<void>(n);                                               \
+    pabort("Invalid " #Node " node in the Interpreter: " << *n);        \
+    INVALID_RET;                                                        \
+  }                                                                     \
 
   INVALID(Assignment);
   INVALID(Binding);
