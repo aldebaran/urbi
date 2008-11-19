@@ -29,14 +29,21 @@ namespace
   /// Wrapper around lt_dlopenext that exits on failures.
   static
   lt_dlhandle
-  xlt_dlopenext(const std::string& s)
+  xlt_dlopenext(const std::string& s, bool global)
   {
-    std::cerr << program_name << ": loading " << s << std::endl;
-    lt_dlhandle res = lt_dlopenext(s.c_str());
+    std::cerr << "loading " << s << std::endl;
+    lt_dlhandle res = 0;
+    lt_dladvise advise;
+    if (!lt_dladvise_init (&advise)
+      && (!global || !lt_dladvise_global (&advise))
+      && !lt_dladvise_ext(&advise))
+      res = lt_dlopenadvise (s.c_str(), advise);
     if (!res)
-      std::cerr << program_name
-                << ": failed to load " << s << ": " << lt_dlerror() << std::endl
-                << libport::exit(1);
+    {
+      std::cerr << "failed to load " << s
+      << ": " << lt_dlerror() << std::endl;
+      libport::exit(1);
+    }
     return res;
   }
 
@@ -229,9 +236,9 @@ main(int argc, const char* argv[])
    * -Dlopen the uobjects to load.
    * -Call urbi::main found by dlsym() in libuobject.
    */
-  lt_dlhandle core = xlt_dlopenext(dll);
+  lt_dlhandle core = xlt_dlopenext(dll, true);
   foreach (const std::string& s, modules)
-    xlt_dlopenext(s);
+    xlt_dlopenext(s, false);
 
   umain_type umain = xlt_dlsym<umain_type>(core, "urbi_main_args");
   umain(args, true);
