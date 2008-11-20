@@ -1,10 +1,11 @@
-#include <ltdl.h>
 #include <string>
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 
 #include <sdk/config.h>
+
+#include <libltdl/ltdl.h>
 
 #include <libport/cli.hh>
 #include <libport/containers.hh>
