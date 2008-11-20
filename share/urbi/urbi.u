@@ -385,10 +385,6 @@ class Global.Executable {};
 // Executable derives from Object.
 for (var c: [getSlot("Code"), getSlot("Primitive")])
   c.setProtos([Executable]);
-var Object.'()' = function()
-{
-  this.apply([this]);
-};
 
 load("urbi/loadable.u");
 

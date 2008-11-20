@@ -103,7 +103,7 @@ class Object.uvar
       {
         var min = parent.getSlot(name).getProperty("val", "rangemin")|
         var max = parent.getSlot(name).getProperty("val", "rangemax")|
-        return (parent.getSlot(name).'()' - min) / (max - min)
+	{var r = parent.getSlot(name) | return (r() - min) / (max-min)}
       });
     parent.setProperty(slotName, "updateHook", function(slot, value)
 	{

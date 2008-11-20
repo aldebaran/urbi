@@ -158,6 +158,12 @@ namespace runner
     }
     else
     {
+      if (!args.empty())
+      {
+	rObject call = function->slot_locate(SYMBOL(LPAREN_RPAREN), false, true);
+	if (call)
+	  return apply(function, call, SYMBOL(LPAREN_RPAREN), args, call_message, loc);
+      }
       object::check_arg_count(args.size(), 0);
       return function;
     }
