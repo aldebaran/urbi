@@ -1,17 +1,1 @@
-include $(top_srcdir)/build-aux/init.mk
-
-# Find libport's sources and config.h.
-AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
-# Find libjpeg's source and build (jconfig.h) headers.
-AM_CPPFLAGS += -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
-# Find urbi/ headers.
-AM_CPPFLAGS += -I$(top_srcdir)/include
-# Find version.hh.
-AM_CPPFLAGS += -I$(top_builddir)/src
-# Find sdk/config.h
-AM_CPPFLAGS += -I$(top_builddir)
-
-AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
-LIBADD       =					\
-  $(PTHREAD_LIBS) $(SOCKETS_LIBS)		\
-  $(top_builddir)/lib/libport/libport.la
+# Remove me, I'm useless.
