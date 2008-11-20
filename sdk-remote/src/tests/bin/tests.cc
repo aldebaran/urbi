@@ -9,7 +9,7 @@
 #include <urbi/uclient.hh>
 #include <urbi/usyncclient.hh>
 
-#include <tests.hh>
+#include <bin/tests.hh>
 
 using libport::program_name;
 

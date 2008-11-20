@@ -1,4 +1,5 @@
 include $(top_srcdir)/build-aux/init.mk
+AUTOMAKE_OPTIONS += subdir-objects
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
 
@@ -80,17 +81,17 @@ TESTS_ENVIRONMENT =				\
   PATH=$(abs_builddir)/bin:$$PATH
 
 # tests(*).
-check_PROGRAMS = tests
+check_PROGRAMS = bin/tests
 
-tests_SOURCES = tests.hh tests.cc $(CHECKFILES)
-tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
-tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
-nodist_tests_SOURCES = dispatcher.cc
+bin_tests_SOURCES = bin/tests.hh bin/tests.cc $(CHECKFILES)
+bin_tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
+bin_tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
+nodist_bin_tests_SOURCES = bin/dispatcher.cc
 CLEANFILES += $(nodist_tests_SOURCES)
 
-dispatcher.cc: $(tests_SOURCES) Makefile
+bin/dispatcher.cc: $(tests_SOURCES) Makefile
 	{								     \
-	  echo '#include "tests.hh"';					     \
+	  echo '#include "bin/tests.hh"';				     \
 	  echo;								     \
 	  echo 'void';							     \
 	  echo 'dispatch(const std::string& method, urbi::UClient& client,'; \
@@ -103,8 +104,8 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 	  echo '  std::cerr << "Unknown test " << method << std::endl;';     \
 	  echo '  exit(1);';						     \
 	  echo '}';							     \
-	} >dispatcher.cc.tmp
-	mv dispatcher.cc.tmp dispatcher.cc
+	} >$@.tmp
+	mv $@.tmp $@
 
 # liburbi-check
 EXTRA_DIST += bin/liburbi-check.as
