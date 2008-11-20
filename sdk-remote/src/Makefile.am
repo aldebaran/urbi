@@ -3,10 +3,12 @@ AUTOMAKE_OPTIONS += subdir-objects
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
+# To be linked in all the executables (urbi-launch, examples/ etc.).
 AM_LDADD =					\
   liburbi/liburbi.la				\
   $(top_builddir)/jpeg-6b/libjpeg.la		\
-  $(PTHREAD_LIBS)
+  $(PTHREAD_LIBS)				\
+  $(top_builddir)/lib/libport/libport.la
 
 include examples/local.mk
 include libuco/local.mk
@@ -27,6 +29,10 @@ REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
 
 
+## ------------- ##
+## Urbi-launch.  ##
+## ------------- ##
+
 bin_PROGRAMS += urbi-launch
 urbi_launch_SOURCES = urbi-launch.cc
 # Find our own ltdl.h.  Push "system" headers last so that our headers
@@ -35,8 +41,7 @@ urbi_launch_CPPFLAGS = -I$(top_srcdir)/libltdl $(AM_CPPFLAGS)
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
   $(top_builddir)/libltdl/libltdlc.la		\
-  liburbi/liburbi.la                            \
-  $(top_builddir)/lib/libport/libport.la
+  liburbi/liburbi.la
 
 urbi_launch_LDFLAGS =				\
   $(AM_LDFLAGS)
