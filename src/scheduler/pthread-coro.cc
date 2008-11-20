@@ -57,8 +57,9 @@ coroutine_start(Coro* self, Coro* other,
       errabort("pthread_attr_setstacksize");
   }
 
-  pthread_create(&other->thread_, &attr,
-                 reinterpret_cast<void* (*)(void*)>(callback), context);
+  if (pthread_create(&other->thread_, &attr,
+		     reinterpret_cast<void* (*)(void*)>(callback), context))
+    errabort("pthread_create");
 #endif
   self->sem_--;
 }
