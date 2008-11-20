@@ -1,4 +1,4 @@
-include $(top_srcdir)/flags.mk
+include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
 
@@ -59,6 +59,8 @@ debug:
 %.log: %.cc $(check_programs)
 	@$(am__check_pre) bin/liburbi-check $(srcdir)/$* $(am__check_post)
 
+# Find libport's sources and config.h.
+AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 AM_LDADD =					\
