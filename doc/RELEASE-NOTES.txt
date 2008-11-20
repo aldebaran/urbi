@@ -28,6 +28,22 @@ language.
 The new "__HERE__" pseudo-symbol gives the current position.  It
 features three self explanatory slots: "file", "line", and "column".
 
+Operator "()"
+-------------
+
+It is now possible to define the "()" operator on objects and have
+it called as soon as at least one parameter is given:
+
+  class A {
+    function '()' (x) { echo("A called with " + x) };
+  };
+  A;
+  [00000001] A
+  A();
+  [00000002] A
+  A(42);
+  [00000003] *** A called with 42
+
 Standard library
 ================
 
