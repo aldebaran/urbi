@@ -38,10 +38,11 @@ namespace
     std::cerr << "loading " << s << std::endl;
     lt_dlhandle res = 0;
     lt_dladvise advise;
-    if (!lt_dladvise_init (&advise)
-      && (!global || !lt_dladvise_global (&advise))
+    if (!lt_dladvise_init(&advise)
+      && (global ? !lt_dladvise_global(&advise)
+	         : !lt_dladvise_local(&advise))
       && !lt_dladvise_ext(&advise))
-      res = lt_dlopenadvise (s.c_str(), advise);
+      res = lt_dlopenadvise(s.c_str(), advise);
     if (!res)
     {
       std::cerr << "failed to load " << s
