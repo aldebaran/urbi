@@ -55,3 +55,9 @@ PAL
 ===
 Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
 Environment: Unknown yet
+
+LORIA
+=====
+Contact: Alain Dutech <Alain.Dutech@loria.fr>
+         Olivier Rochel <olivier.rochel@loria.fr>
+Environment: Unknown yet
