@@ -53,10 +53,10 @@ bin_PROGRAMS += urbi-launch
 urbi_launch_SOURCES = urbi-launch.cc
 # Find our own ltdl.h.  Push "system" headers last so that our headers
 # have priority.
-urbi_launch_CPPFLAGS = -I$(top_srcdir)/libltdl $(AM_CPPFLAGS)
+urbi_launch_CPPFLAGS = $(LTDL_CPPFLAGS) $(AM_CPPFLAGS)
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
-  $(top_builddir)/libltdl/libltdlc.la		\
+  $(LTDL_LIBS)					\
   liburbi/liburbi.la
 
 urbi_launch_LDFLAGS =				\

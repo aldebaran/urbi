@@ -28,15 +28,7 @@ URBI_DIRS([remote])
 AC_PROG_CC
 URBI_PROG_CXX
 
-LT_PREREQ([2.2.6])
-# Name the subdirectory that contains libltdl sources
-LT_CONFIG_LTDL_DIR([libltdl])
-LT_INIT([pic-only shared disable-static dlopen win32-dll])
-# I don't know why I need this with Libtool 2.2.6
-$MKDIR_P .deps/libltdl
-LTDL_INIT([nonrecursive])
-AC_SUBST([LIBTOOL_DEPS])
-
+URBI_LTDL
 URBI_SDK
 
 # Doc generation.
