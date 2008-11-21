@@ -19,6 +19,9 @@
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
 
+#include <boost/static_assert.hpp>
+BOOST_STATIC_ASSERT(sizeof(unsigned long) == sizeof(void*));
+
 using namespace urbi;
 using libport::program_name;
 
@@ -60,7 +63,13 @@ namespace
                 << ": failed to dlsym " << s << ": " << lt_dlerror()
                 << std::endl
                 << libport::exit(1);
-    return reinterpret_cast<T>(res);
+    // GCC 3.4.6 on x86_64 at least requires that we go through a
+    // scalar type. It doesn't support casting a void* into a
+    // function pointer directly. Later GCC versions do not have
+    // this problem. We use a BOOST_STATIC_ASSERT at the top of
+    // the file to ensure that "void*" and "unsigned long" have
+    // the same size.
+    return reinterpret_cast<T>(reinterpret_cast<unsigned long>(res));
   }
 
 }
