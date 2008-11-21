@@ -42,12 +42,12 @@ namespace urbi
   typedef std::list<baseURBIStarterHub*> UStartlistHub;
 
   // Two singleton lists to handle the object and hubobject registration.
-  EXTERN_STATIC_INSTANCE_EX(UStartlist, objectlist, USDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UStartlistHub, objecthublist, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UStartlist, objectlist, URBI_SDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UStartlistHub, objecthublist, URBI_SDK_API);
 
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist.
-  class USDK_API baseURBIStarter
+  class URBI_SDK_API baseURBIStarter
   {
   public:
     baseURBIStarter(const std::string& name);
@@ -122,7 +122,7 @@ SETBACKCASTCTOR(const UImage)
 
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist
-  class USDK_API baseURBIStarterHub
+  class URBI_SDK_API baseURBIStarterHub
   {
   public:
     baseURBIStarterHub(const std::string& name);

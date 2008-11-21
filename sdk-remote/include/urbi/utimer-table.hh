@@ -14,8 +14,8 @@ namespace urbi
   typedef std::list<UTimerCallback*> UTimerTable;
 
   // Timer and update maps.
-  EXTERN_STATIC_INSTANCE_EX(UTimerTable, timermap, USDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTimerTable, updatemap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTimerTable, timermap, URBI_SDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTimerTable, updatemap, URBI_SDK_API);
 
 } // end namespace urbi
 

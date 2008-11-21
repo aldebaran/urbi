@@ -47,7 +47,7 @@ namespace urbi
 {
 
   //! Provides easy access to variable properties
-  class USDK_API UProp
+  class URBI_SDK_API UProp
   {
   public:
     void operator =(const UValue& v);
@@ -78,7 +78,7 @@ namespace urbi
      Each UVar instance corresponds to one URBI variable. The class
      provides access to the variable properties, and reading/writting
      the value to/from all known types.  */
-  class USDK_API UVar
+  class URBI_SDK_API UVar
   {
   public:
     UVar();

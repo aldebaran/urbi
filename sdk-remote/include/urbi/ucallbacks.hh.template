@@ -34,7 +34,7 @@ namespace urbi
     the interface user point's of view.
   */
 
-  class USDK_API UGenericCallback
+  class URBI_SDK_API UGenericCallback
   {
   public:
     UGenericCallback(const std::string& objname,

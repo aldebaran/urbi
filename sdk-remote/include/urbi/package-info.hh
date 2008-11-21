@@ -8,7 +8,7 @@ namespace urbi
 {
 
   /// Package information about liburbi and UObjects.
-  USDK_API const libport::PackageInfo& package_info();
+  URBI_SDK_API const libport::PackageInfo& package_info();
 
 }
 

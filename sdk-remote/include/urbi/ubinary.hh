@@ -66,7 +66,7 @@ namespace urbi
 
    This class does not handle its memory: the data field msut be
    freed manualy.  */
-  class USDK_API USound
+  class URBI_SDK_API USound
   {
   public:
     char                  *data;            ///< pointer to sound data
@@ -102,7 +102,7 @@ namespace urbi
 
    This class does not handle its memory: the data field msut be
    freed manualy.  */
-  class USDK_API UImage
+  class URBI_SDK_API UImage
   {
   public:
     unsigned char         *data;            ///< pointer to image data
@@ -121,7 +121,7 @@ namespace urbi
   `--------------*/
 
   //internal use: unparsed binary data
-  class USDK_API BinaryData
+  class URBI_SDK_API BinaryData
   {
   public:
     BinaryData()
@@ -143,7 +143,7 @@ namespace urbi
   /** Class containing binary data of known or unknown type.
    Handles its memory: the data field will be freed when the destructor is called.
    */
-  class USDK_API UBinary
+  class URBI_SDK_API UBinary
   {
   public:
 

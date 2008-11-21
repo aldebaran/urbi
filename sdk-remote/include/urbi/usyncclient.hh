@@ -53,7 +53,7 @@ namespace urbi
      thread, call @stopCallbackThread, then regularly call
      @processEvents. Each call will call callbacks for all pending
      messages in the current thread.  */
-  class USDK_API USyncClient: public UClient
+  class URBI_SDK_API USyncClient: public UClient
   {
   public:
     /** Create a new connection to an Urbi Server.

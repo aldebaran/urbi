@@ -41,7 +41,7 @@ namespace urbi
   };
 
   /// Class storing URBI List type
-  class USDK_API UList
+  class URBI_SDK_API UList
   {
   public:
     std::vector<UValue *> array;
@@ -71,7 +71,7 @@ namespace urbi
     int offset;
   };
 
-  class USDK_API UNamedValue
+  class URBI_SDK_API UNamedValue
   {
   public:
     UNamedValue(const std::string& n, UValue* v)
@@ -84,7 +84,7 @@ namespace urbi
     std::string name;
   };
 
-  class USDK_API UObjectStruct
+  class URBI_SDK_API UObjectStruct
   {
   public:
     UObjectStruct();
@@ -109,7 +109,7 @@ namespace urbi
 
   /** Container for a value that handles all types known to URBI.
    */
-  class USDK_API UValue
+  class URBI_SDK_API UValue
   {
   public:
     UDataType       type;
@@ -310,7 +310,7 @@ namespace urbi
   // The following ones are defined in uvalue-common.cc.
 
   template <>
-  struct USDK_API uvalue_caster<UVar>
+  struct URBI_SDK_API uvalue_caster<UVar>
   {
     UVar& operator () (UValue& v);
   };
@@ -318,7 +318,7 @@ namespace urbi
 
 # define UVALUE_CASTER_DECLARE(Type)		\
   template <>					\
-  struct USDK_API uvalue_caster<Type> {		\
+  struct URBI_SDK_API uvalue_caster<Type> {		\
     Type operator () (UValue& v);		\
   };
 

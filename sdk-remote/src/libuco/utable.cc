@@ -21,16 +21,16 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 #include <urbi/utable.hh>
 #include <urbi/ucallbacks.hh>
 
-  STATIC_INSTANCE_NS_EX(UStartlist, objectlist, urbi, USDK_API);
-  STATIC_INSTANCE_NS_EX(UStartlistHub, objecthublist, urbi, USDK_API);
+  STATIC_INSTANCE_NS_EX(UStartlist, objectlist, urbi, URBI_SDK_API);
+  STATIC_INSTANCE_NS_EX(UStartlistHub, objecthublist, urbi, URBI_SDK_API);
 
   // Lists and hashtables used.
-  STATIC_INSTANCE_NS_EX(UTable, accessmap, urbi, USDK_API);
-  STATIC_INSTANCE_NS_EX(UTable, eventendmap, urbi, USDK_API);
-  STATIC_INSTANCE_NS_EX(UTable, eventmap, urbi, USDK_API);
-  STATIC_INSTANCE_NS_EX(UTable, functionmap, urbi, USDK_API);
-  STATIC_INSTANCE_NS_EX(UTable, monitormap, urbi, USDK_API);
-  STATIC_INSTANCE_NS_EX(UVarTable, varmap, urbi, USDK_API);
+  STATIC_INSTANCE_NS_EX(UTable, accessmap, urbi, URBI_SDK_API);
+  STATIC_INSTANCE_NS_EX(UTable, eventendmap, urbi, URBI_SDK_API);
+  STATIC_INSTANCE_NS_EX(UTable, eventmap, urbi, URBI_SDK_API);
+  STATIC_INSTANCE_NS_EX(UTable, functionmap, urbi, URBI_SDK_API);
+  STATIC_INSTANCE_NS_EX(UTable, monitormap, urbi, URBI_SDK_API);
+  STATIC_INSTANCE_NS_EX(UVarTable, varmap, urbi, URBI_SDK_API);
 
 namespace urbi
 {

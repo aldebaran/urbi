@@ -5,12 +5,12 @@
 
 # if defined WIN32
 #  if defined BUILDING_URBI_SDK
-#   define USDK_API __declspec(dllexport)
+#   define URBI_SDK_API __declspec(dllexport)
 #  else
-#   define USDK_API __declspec(dllimport)
+#   define URBI_SDK_API __declspec(dllimport)
 #  endif
 # else
-# define USDK_API
+# define URBI_SDK_API
 # endif
 
 #endif

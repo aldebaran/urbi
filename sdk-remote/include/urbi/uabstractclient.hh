@@ -118,7 +118,7 @@ namespace urbi
    See the liburbi-cpp documentation for more informations on
    how to use this class.
   */
-  class USDK_API UAbstractClient : public std::ostream
+  class URBI_SDK_API UAbstractClient : public std::ostream
   {
   public:
     /// Connection Buffer size.
@@ -622,26 +622,26 @@ namespace urbi
   static const char comma = ',';
 
   /// Must be called at the last line of your main() function.
-  USDK_API void execute(void);
+  URBI_SDK_API void execute(void);
   /// Terminate your URBI program.
-  USDK_API void exit(int code);
+  URBI_SDK_API void exit(int code);
   /// Create a new UClient object
-  USDK_API UClient& connect(const std::string& host);
+  URBI_SDK_API UClient& connect(const std::string& host);
   /// Destroy an UClient object
   /// Be careful: don't use client after called this function
-  USDK_API void disconnect(UClient &client);
+  URBI_SDK_API void disconnect(UClient &client);
   /// Return the first UClient created by the program. Used by the URBI macro
-  USDK_API UClient* getDefaultClient();
+  URBI_SDK_API UClient* getDefaultClient();
   /// Redefine the default client
-  USDK_API void setDefaultClient(UClient * cl);
+  URBI_SDK_API void setDefaultClient(UClient * cl);
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
-  USDK_API std::ostream& unarmorAndSend(const char * str);
+  URBI_SDK_API std::ostream& unarmorAndSend(const char * str);
 # endif
-  USDK_API extern UClient* defaultClient;
+  URBI_SDK_API extern UClient* defaultClient;
 
   /// Return a stream for error, preferrably the one the defaultClient.
-  USDK_API std::ostream& default_stream();
+  URBI_SDK_API std::ostream& default_stream();
 
 } // namespace urbi
 

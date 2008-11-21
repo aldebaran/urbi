@@ -41,14 +41,14 @@ namespace urbi
   void cleanTable(UTable &t, const std::string& name);
 
   // Lists and hashtables used.
-  EXTERN_STATIC_INSTANCE_EX(UTable, accessmap, USDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, eventendmap, USDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, eventmap, USDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, functionmap, USDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, monitormap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, accessmap, URBI_SDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, eventendmap, URBI_SDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, eventmap, URBI_SDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, functionmap, URBI_SDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UTable, monitormap, URBI_SDK_API);
 
   typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
-  EXTERN_STATIC_INSTANCE_EX(UVarTable, varmap, USDK_API);
+  EXTERN_STATIC_INSTANCE_EX(UVarTable, varmap, URBI_SDK_API);
 
 } // end namespace urbi
 

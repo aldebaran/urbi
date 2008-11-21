@@ -22,9 +22,9 @@
 extern "C"
 {
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  USDK_API int urbi_main(int argc, const char* argv[], bool block);
+  URBI_SDK_API int urbi_main(int argc, const char* argv[], bool block);
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  USDK_API int urbi_main_args(const libport::cli_args_type& args, bool block);
+  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args, bool block);
 }
 
 namespace urbi
@@ -36,11 +36,11 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
-  USDK_API int main(const libport::cli_args_type& args, bool block = true);
+  URBI_SDK_API int main(const libport::cli_args_type& args, bool block = true);
 
   /** Initialisation method using C style arguments.
    */
-  USDK_API int main(int argc, const char *argv[], bool block = true);
+  URBI_SDK_API int main(int argc, const char *argv[], bool block = true);
 
 
 #ifdef URBI_ENV_REMOTE
@@ -53,7 +53,7 @@ namespace urbi
    * \param exitOnDisconnect call exit() if we get disconnected from server.
    * \return 0 if no error occured.
    */
-  int USDK_API initialize(const std::string& host, int port, int buflen,
+  int URBI_SDK_API initialize(const std::string& host, int port, int buflen,
                           bool exitOnDisconnect, bool server = false);
 #endif
 }

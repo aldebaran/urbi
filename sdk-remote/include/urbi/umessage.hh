@@ -21,7 +21,7 @@ namespace urbi
     };
 
   /// Class containing all informations related to an URBI message.
-  class USDK_API UMessage
+  class URBI_SDK_API UMessage
   {
   public:
     /// Connection from which originated the message.
@@ -57,7 +57,7 @@ namespace urbi
 
   };
 
-  USDK_API std::ostream& operator<<(std::ostream& s, const UMessage& m);
+  URBI_SDK_API std::ostream& operator<<(std::ostream& s, const UMessage& m);
 
 } // namespace urbi
 

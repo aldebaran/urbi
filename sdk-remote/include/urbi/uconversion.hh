@@ -31,20 +31,20 @@ namespace urbi
   typedef unsigned char byte;
 
   /// Image format conversion functions.
-  USDK_API int convertYCrCbtoYCbCr(const byte* source, int sourcelen,
+  URBI_SDK_API int convertYCrCbtoYCbCr(const byte* source, int sourcelen,
                                    byte* dest);
-  USDK_API int convertRGBtoYCrCb  (const byte* source, int sourcelen,
+  URBI_SDK_API int convertRGBtoYCrCb  (const byte* source, int sourcelen,
                                    byte* dest);
-  USDK_API int convertYCrCbtoRGB  (const byte* source, int sourcelen,
+  URBI_SDK_API int convertYCrCbtoRGB  (const byte* source, int sourcelen,
                                    byte* dest);
-  USDK_API int convertJPEGtoYCrCb (const byte* source, int sourcelen,
+  URBI_SDK_API int convertJPEGtoYCrCb (const byte* source, int sourcelen,
                                    byte* dest, int &size);
-  USDK_API int convertJPEGtoRGB   (const byte* source, int sourcelen,
+  URBI_SDK_API int convertJPEGtoRGB   (const byte* source, int sourcelen,
                                    byte* dest, int &size);
 
-  USDK_API int convertRGBtoJPEG(const byte* source, int w, int h, byte* dest,
+  URBI_SDK_API int convertRGBtoJPEG(const byte* source, int w, int h, byte* dest,
 		       int &size, int quality);
-  USDK_API int convertYCrCbtoJPEG(const byte* source, int w, int h, byte* dest,
+  URBI_SDK_API int convertYCrCbtoJPEG(const byte* source, int w, int h, byte* dest,
 			 int &size, int quality);
 
   struct wavheader
@@ -65,11 +65,11 @@ namespace urbi
   };
 
   //sound format conversion functions.
-  USDK_API int convert(const USound &source, USound &destination);
+  URBI_SDK_API int convert(const USound &source, USound &destination);
 
 
   //image format conversion. JPEG compression not impletmented.
-  USDK_API int convert(const UImage &source, UImage & destination);
+  URBI_SDK_API int convert(const UImage &source, UImage & destination);
 
 } // namespace urbi
 #endif

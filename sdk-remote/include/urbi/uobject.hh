@@ -110,26 +110,26 @@ namespace urbi
 
   /// an empty dummy UObject used by UVar to set a NotifyChange
   /// This avoid coupling a UVar to a particular object
-  extern USDK_API UObject* dummyUObject;
+  extern URBI_SDK_API UObject* dummyUObject;
 
   // Global function of the urbi:: namespace to access kernel features
 
   /// Write a message to the server debug output. Printf syntax.
-  USDK_API void echo(const char* format, ... );
+  URBI_SDK_API void echo(const char* format, ... );
   /// Retrieve a UObjectHub based on its name or return 0 if not found.
-  USDK_API UObjectHub* getUObjectHub(const std::string& n);
+  URBI_SDK_API UObjectHub* getUObjectHub(const std::string& n);
   /// Retrieve a UObject based on its name or return 0 if not found.
-  USDK_API UObject* getUObject(const std::string& n);
+  URBI_SDK_API UObject* getUObject(const std::string& n);
 
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
-  USDK_API void uobject_unarmorAndSend(const char* str);
+  URBI_SDK_API void uobject_unarmorAndSend(const char* str);
 
   /// Send the string to the connection hosting the UObject.
-  USDK_API void send(const char* str);
+  URBI_SDK_API void send(const char* str);
 
   /// Send buf to the connection hosting the UObject.
-  USDK_API void send(void* buf, int size);
+  URBI_SDK_API void send(void* buf, int size);
 
   /// Possible UObject running modes.
   enum UObjectMode {
@@ -137,7 +137,7 @@ namespace urbi
        MODE_REMOTE
   };
   /// Return the mode in which the code is running.
-  USDK_API UObjectMode getRunningMode();
+  URBI_SDK_API UObjectMode getRunningMode();
   /// Return true if the code is running in plugin mode.
   inline bool isPluginMode() { return getRunningMode() == MODE_PLUGIN;}
   /// Return true if the code is running in remote mode.
@@ -146,7 +146,7 @@ namespace urbi
       Each UObject instance corresponds to an URBI object. It provides mechanisms to
       bind variables and functions between C++ and URBI.
   */
-  class USDK_API UObject
+  class URBI_SDK_API UObject
   {
   public:
 
@@ -327,7 +327,7 @@ namespace urbi
 
 
   //! Main UObjectHub class definition
-  class USDK_API UObjectHub
+  class URBI_SDK_API UObjectHub
   {
   public:
 

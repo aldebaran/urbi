@@ -31,7 +31,7 @@ namespace urbi
   /*! This class stores a callback as a class method
    */
 
-  class USDK_API UTimerCallback
+  class URBI_SDK_API UTimerCallback
   {
   public:
     UTimerCallback(const std::string& objname, ufloat period, UTimerTable& tt);
