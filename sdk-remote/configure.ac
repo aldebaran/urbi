@@ -125,8 +125,6 @@ if test x"$enable_bindings" != xno; then
  fi
 fi
 
-URBI_LIBTOOL
-
 AC_DEFINE_UNQUOTED([URBI_HOST], ["$host"], [Define as the host name.])
 AC_DEFINE_UNQUOTED([URBI_PREFIX], ["$prefix"], [Define as the install prefix.])
 
