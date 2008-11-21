@@ -21,7 +21,7 @@ liburbi_liburbi_la_SOURCES =			\
   liburbi/usyncclient.cc
 liburbi_liburbi_la_CPPFLAGS =			\
   $(AM_CPPFLAGS)				\
-  -DBUILDING_URBI_SDK -DBUILDING_LIBPORT
+  -DBUILDING_URBI_SDK
 liburbi_liburbi_la_LIBADD = $(LIBADD) $(top_builddir)/jpeg-6b/libjpeg.la
 liburbi_liburbi_la_LDFLAGS = -no-undefined
 
