@@ -73,7 +73,7 @@ namespace runner
     system is actually sending data through the real connection.
  */
 
-class USDK_API UConnection
+class URBI_SDK_API UConnection
 {
   friend class UServer;
 

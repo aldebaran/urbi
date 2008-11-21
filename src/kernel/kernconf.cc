@@ -1,7 +1,7 @@
 #include <kernel/config.h>
 #include <kernel/kernconf.hh>
 
-USDK_API kernconf_type kernconf = {
+URBI_SDK_API kernconf_type kernconf = {
   // Default is large enough until we enable a mechanism to dynamically
   // reallocate task space on demand.
   /* .default_stack_size = */         URBI_KERNEL_STACK_SIZE * 1024,

@@ -47,7 +47,7 @@ extern class UServer* urbiserver;
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class USDK_API UServer
+class URBI_SDK_API UServer
 {
 public:
   UServer(const char* mainName);

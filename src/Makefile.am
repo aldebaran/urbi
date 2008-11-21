@@ -12,8 +12,8 @@ env_LTLIBRARIES = libuobject.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
 libuobject_la_CPPFLAGS =				\
-  $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DBUILDING_LIBPORT \
-  -I$(top_srcdir)/sdk-remote/libltdl
+  -I$(top_srcdir)/sdk-remote/libltdl			\
+  $(AM_CPPFLAGS) -DBUILDING_URBI_SDK
 libuobject_la_LDFLAGS =					\
   -no-undefined
 libuobject_la_LIBADD =						\

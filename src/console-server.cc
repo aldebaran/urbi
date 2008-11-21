@@ -147,7 +147,7 @@ namespace urbi
 
   int main_loop(LoopData& l);
 
-  USDK_API int
+  URBI_SDK_API int
   main(const libport::cli_args_type& args, bool block)
   {
     program_name = args[0];
