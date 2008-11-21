@@ -29,8 +29,11 @@ coroutine_new(size_t)
 void
 coroutine_free(Coro* c)
 {
+  void *status;
   c->die_ = true;
   c->sem_++;
+  if (pthread_join(c->thread_, &status))
+    errabort("pthread_join");
 }
 
 void
