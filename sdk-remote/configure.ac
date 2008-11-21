@@ -59,8 +59,8 @@ BOOST_REQUIRE([1.35])
 # X11.
 # AC_PATH_XTRA will find us X11 headers even if we are cross-compiling for windows
 case $ac_cv_host in
-(*pw32*|*win32*) no_x=yes;;
-(*)  AC_PATH_XTRA ;;
+  (*pw32*|*win32*) no_x=yes;;
+  (*)  AC_PATH_XTRA ;;
 esac
 
 AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
@@ -100,9 +100,9 @@ for i in $enable_bindings
 do
   IFS=$save_IFS
   case $i in
-    yes ) enable_bindings="csharp,java,lua,perl,php,python,ruby";;
-    no | csharp | java | perl | php | python | ruby ) ;;
-    *) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
+    (yes) enable_bindings="csharp,java,lua,perl,php,python,ruby";;
+    (no | csharp | java | perl | php | python | ruby) ;;
+    (*) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
   esac
 done
 AC_MSG_RESULT([$enable_bindings])
@@ -149,12 +149,12 @@ AC_DEFINE_UNQUOTED([URBI_PREFIX], ["$prefix"], [Define as the install prefix.])
 URBI_ARG_ENABLE([enable-programs],
 		[Build extra programs], [yes|no], [no])
 case $enable_programs in
-  yes) # No need to pass --enable-programs, because (i) it's the
+ (yes) # No need to pass --enable-programs, because (i) it's the
        # default for libjpeg, and (ii) if --enable-programs is
        # passed to this configure, it gives it to its subconfigures,
        # so we would just duplicate the request.
        ;;
-  *)   ac_configure_args="$ac_configure_args --disable-programs";;
+  (*)   ac_configure_args="$ac_configure_args --disable-programs";;
 esac
 
 AC_CONFIG_SUBDIRS([jpeg-6b])
