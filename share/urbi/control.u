@@ -75,16 +75,6 @@ class Global.Control
     function () { res }
   };
 
-  // waituntil takes an expression and waits until it becomes true.
-  function 'waituntil' {
-    var t = currentRunner |
-    t.setSideEffectFree (true) |
-    while (!call.evalArgAt (0)) {
-      t.waitForChanges
-    } |
-    t.setSideEffectFree (false)
-  };
-
 };
 
 // Import those at the global level

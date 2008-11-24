@@ -25,8 +25,10 @@ namespace parser
                ast::rExp body, ast::rExp onleave = 0);
 
   /// timeout(duration) body
-  ast::rExp
-  ast_timeout(const ast::rExp& duration, const ast::rExp& body);
+  ast::rExp ast_timeout(const ast::rExp& duration, const ast::rExp& body);
+
+  /// waituntil (something);
+  ast::rExp ast_waituntil(const ast::rExp& cond);
 
   /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
   ast::rExp

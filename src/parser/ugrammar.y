@@ -863,8 +863,7 @@ stmt:
     }
 | "waituntil" "(" exp ")"
     {
-      PARAMETRIC_AST(a, "Control.'waituntil'(%exp:1)");
-      $$ = exp(a % $3);
+      $$ = ::parser::ast_waituntil($3);
     }
 | "waituntil" "(" exp "~" exp ")"
     {

@@ -91,6 +91,15 @@ namespace parser
   }
 
   ast::rExp
+  ast_waituntil(const ast::rExp& cond)
+  {
+    PARAMETRIC_AST(desugar,
+		   "{var '$tag' = Tag.new |"
+		   "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
+    return exp(desugar % cond);
+  }
+
+  ast::rExp
   ast_waituntil_event(const ast::loc& loc,
                       ast::rExp event,
                       ast::exps_type* payload)
