@@ -64,7 +64,6 @@ namespace urbi
 
   protected:
     virtual int effectiveSend(const void* buffer, int size);
-    virtual UCallbackAction setConnectionID (const UMessage& msg);
     virtual bool canSend(int size);
 
     int             sd;                  ///< Socket file descriptor.

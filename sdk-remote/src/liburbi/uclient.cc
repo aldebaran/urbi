@@ -184,7 +184,11 @@ namespace urbi
 
     // Do not create thread if one is already waiting for incoming connection
     if (!thread)
+    {
       thread = libport::startThread(this, &UClient::listenThread);
+      // Notify the base class that connection is established.
+      onConnection();
+    }
 
     if (!defaultClient)
       defaultClient = this;
@@ -192,8 +196,6 @@ namespace urbi
     listenSem_++;
     acceptSem_++;
 
-    setCallback(*this, &UClient::setConnectionID, "ident");
-    send ("ident << local.connectionID;");
   }
 
   UClient::~UClient()
@@ -227,21 +229,6 @@ namespace urbi
       libport::perror ("cannot close controlfd[0]");
 
     return 0;
-  }
-
-  UCallbackAction
-  UClient::setConnectionID (const UMessage& msg)
-  {
-    if (msg.type == MESSAGE_DATA && msg.value)
-    {
-      std::string id = (std::string)*msg.value;
-      if (id != "")
-      {
-	connectionID_ = id;
-	return URBI_REMOVE;
-      }
-    }
-    return URBI_CONTINUE;
   }
 
   bool
@@ -309,6 +296,7 @@ namespace urbi
     thread = libport::startThread(this, &UClient::listenThread);
 
     init_ = true;
+    onConnection();
 
     // Stop this thread, the listen one is the real thing.
     return;

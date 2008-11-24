@@ -114,6 +114,7 @@ namespace urbi
     when new data is available.
     - Provide an execute() function in the namespace urbi, that never returns,
     and that will be called after initialization.
+    - Call onConnection when the connection is established.
 
    See the liburbi-cpp documentation for more informations on
    how to use this class.
@@ -279,6 +280,9 @@ namespace urbi
      /// dummy tag for client error callback
     static const char * CLIENTERROR_TAG;
   protected:
+    /// Must be called by subclasses when the connection is established.
+    void onConnection();
+
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual int effectiveSend(const void * buffer, int size)=0;
 
@@ -315,12 +319,19 @@ namespace urbi
     /// Temporary buffer for send data.
     char* sendBuffer;
 
+    int kernelMajor_;
+    int kernelMinor_;
+    std::string kernelVersion_;
   protected:
     std::string connectionID_;
 
+    virtual UCallbackAction setVersion (const UMessage& msg);
+    virtual UCallbackAction setConnectionID (const UMessage& msg);
   public:
     const std::string& connectionID () const;
-
+    int kernelMajor() const {return kernelMajor_;}
+    int kernelMinor() const {return kernelMinor_;}
+    const std::string& kernelVersion() const { return kernelVersion_;}
   private:
     /// Bin object for this command.
     std::list<urbi::BinaryData> bins;

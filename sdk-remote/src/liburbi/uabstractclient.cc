@@ -7,10 +7,14 @@
 #include <cstdlib>
 #include <cerrno>
 #include <cmath>
+#include <cassert>
+
 #include <libport/sys/stat.h>
 
 #include <algorithm>
 #include <iostream>
+
+#include <boost/lexical_cast.hpp>
 
 #include <libport/lockable.hh>
 
@@ -1030,6 +1034,53 @@ namespace urbi
     m.timestamp = 0;
     m.tag = CLIENTERROR_TAG;
     notifyCallbacks(m);
+  }
+
+  void
+  UAbstractClient::onConnection()
+  {
+    setCallback(*this, &UAbstractClient::setVersion, "__version");
+    // We don't know our kernel version yet.
+    send("__version << system.version;"
+         "Channel.new(\"__version\") << system.version;");
+  }
+
+  UCallbackAction
+  UAbstractClient::setConnectionID (const UMessage& msg)
+  {
+    if (msg.type == MESSAGE_DATA && msg.value)
+    {
+      std::string id = (std::string)*msg.value;
+      if (id != "")
+      {
+	connectionID_ = id;
+	return URBI_REMOVE;
+      }
+    }
+    return URBI_CONTINUE;
+  }
+
+  UCallbackAction
+  UAbstractClient::setVersion (const UMessage& msg)
+  {
+    if (msg.type != MESSAGE_DATA)
+      return URBI_CONTINUE;
+    assert(msg.value->type == DATA_STRING);
+    kernelVersion_ = *msg.value->stringValue;
+    size_t sep = kernelVersion_.find_first_of('.');
+    kernelMajor_ = boost::lexical_cast<int>(kernelVersion_.substr(0, sep));
+    size_t sep2 = kernelVersion_.find_first_of('.', sep+1);
+    if (sep2 != kernelVersion_.npos)
+      kernelMinor_ = boost::lexical_cast<int>(kernelVersion_.substr(sep+1,
+        sep2));
+    else
+      kernelMinor_ = 0;
+    setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
+    if (kernelMajor_ <= 1)
+      send("__ident << local.connectionID;");
+    else
+      send("Channel.new(\"__ident\") << connectionTag.name;");
+    return URBI_REMOVE;
   }
 
   int
