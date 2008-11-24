@@ -393,7 +393,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Pipe* e)
   {
-    object::rObject res;
+    object::rObject res = object::void_class;
 
     // Run all child without yielding
     foreach (const ast::rConstExp& child, e->children_get())
