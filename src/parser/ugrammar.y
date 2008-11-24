@@ -417,7 +417,10 @@ tag:
 ;
 
 stmt:
-  tag flags.0 ":" stmt  { $$ = new ast::TaggedStmt (@$, $1, $4); }
+  tag flags.0 ":" stmt
+  {
+    $$ = new ast::TaggedStmt (@$, $1, ast_scope(@$, $4));
+  }
 |     flags.1 ":" stmt  { NOT_IMPLEMENTED(@$); }
 ;
 
