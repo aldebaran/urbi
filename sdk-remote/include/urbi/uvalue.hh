@@ -47,13 +47,13 @@ namespace urbi
     std::vector<UValue *> array;
     UList();
     UList(const UList &b);
-    UList & operator = (const UList &b);
+    UList& operator = (const UList &b);
     ~UList();
-    UValue & operator [](int i)
+    UValue& operator [](size_t i)
     {
       return *array[i+offset];
     }
-    const UValue & operator [](int i) const
+    const UValue& operator [](size_t i) const
     {
       return *array[i+offset];
     }
@@ -93,7 +93,7 @@ namespace urbi
     ~UObjectStruct();
 
     UValue& operator [](const std::string& s);
-    UNamedValue& operator [](int i)
+    UNamedValue& operator [](size_t i)
     {
       return array[i];
     }

@@ -127,7 +127,7 @@ namespace urbi
     BinaryData()
       : data (0), size (0)
     {}
-    BinaryData(void *d, int s)
+    BinaryData(void *d, size_t s)
       : data(d), size(s)
     {}
     void* data;
@@ -146,8 +146,7 @@ namespace urbi
   class URBI_SDK_API UBinary
   {
   public:
-
-    UBinaryType             type;
+    UBinaryType type;
     union
     {
       struct
