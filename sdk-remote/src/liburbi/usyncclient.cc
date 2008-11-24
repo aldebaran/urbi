@@ -182,22 +182,28 @@ namespace urbi
     }
     else
       makeUniqueTag(tag);
-    std::string cmd = std::string() +
+    std::string cmd;
+    if (kernelMajor_ > 1)
+      cmd = std::string() +
       "if (!hasSlot(\"" + tag + "\")) { "
       "var lobby." +tag + " = Channel.new(\"" + tag + "\"); "
       "var lobby.__created_chan__};"
       + tag + " << ";
+    else
+      cmd = std::string() + tag + " << ";
     effectiveSend(cmd.c_str(), cmd.length());
     queueLock_.lock();
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    cmd = std::string() +
-      "if (hasSlot(\"__created_chan__\")) { "
-      "lobby.removeSlot(\"__created_chan__\"); "
-      "lobby.removeSlot(\"" + tag + "\") }; ";
-    effectiveSend(cmd.c_str(), cmd.length());
-
+    if (kernelMajor_ > 1)
+    {
+      cmd = std::string() +
+        "if (hasSlot(\"__created_chan__\")) { "
+        "lobby.removeSlot(\"__created_chan__\"); "
+        "lobby.removeSlot(\"" + tag + "\") }; ";
+      effectiveSend(cmd.c_str(), cmd.length());
+    }
     if (mtag != 0)
       strcpy (tag, mtag);
 
