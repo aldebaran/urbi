@@ -4,7 +4,10 @@ do (Global.Tag)
 
   function asString()
   {
-    "Tag<" + name + ">"
+    if (this === Tag)
+      "Tag"
+    else
+      "Tag<" + name + ">"
   };
 
   var begin = SystemTag.new("begin");

@@ -27,7 +27,10 @@ class Global.Group
 
   function asString ()
   {
-    type + " " + members.asString
+    if (this === Group)
+      "Group"
+    else
+      type + " " + members.asString
   };
 
   // FIXME: This implementation always evaluates the

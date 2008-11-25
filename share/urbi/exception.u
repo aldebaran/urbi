@@ -1,8 +1,8 @@
 class Global.Exception
 {
-  var message;
+  var message = "<no message>";
   var backtrace;
-  var location;
+  var location = "";
 
   function init(msg)
   {
