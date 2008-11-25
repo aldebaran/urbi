@@ -282,7 +282,7 @@ namespace urbi
   | USound.  |
   `---------*/
 
-  const char* USound::format_string () const
+  const char* USound::format_string() const
   {
     switch (soundFormat)
     {
@@ -400,8 +400,12 @@ namespace urbi
     //trying to parse header to find type
     char type[64];
     memset(type, 0, 64);
-    int p2, p3, p4, p5;
-    count = sscanf(message + pos, "%63s %d %d %d %d",
+    // width, height, sample size.
+    size_t p2, p3, p4;
+    // sample format.
+    int p5;
+    count = sscanf(message + pos,
+                   "%63s %zu %zu %zu %d",
 		   type, &p2, &p3, &p4, &p5);
 
     if (STREQ(type, "jpeg"))

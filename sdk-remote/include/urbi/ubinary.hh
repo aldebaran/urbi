@@ -73,7 +73,7 @@ namespace urbi
     size_t size;             ///< total size in byte
     int                   channels;         ///< number of audio channels
     int                   rate;             ///< rate in Hertz
-    int                   sampleSize;       ///< sample size in bit
+    size_t sampleSize;       ///< sample size in bit
 
     USoundFormat          soundFormat;      ///< format of the sound data
     /// Return a legible definition of imageFormat.
