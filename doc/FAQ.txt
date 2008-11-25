@@ -1,0 +1,231 @@
+FREQUENTLY ASKED QUESTIONS ABOUT URBI KERNEL 2.0 BETA
+*****************************************************
+
+Objects, slots and variables
+============================
+
+How do I create a new Object derivative?
+----------------------------------------
+
+Urbi is based on prototypes. To create a new Object derivative (which will
+inherit all the Object methods), you can do:
+
+  var myObject = Object.new;
+
+How do I add a new slot in an object?
+-------------------------------------
+
+To add a slot to an object "O", you have to use the "var" keyword:
+
+  var O.mySlot = 42;
+
+or you can use the "setSlot" method:
+
+  O.setSlot("mySlot", 42);
+
+Note that in a method, "this" designates the current object. For example,
+
+  var this.mySlot = 42;
+
+will create a new slot in the current object while
+
+  var mySlot = 42;
+
+will create a local variable, which will not be known anymore after we exist
+the current scope.
+
+How do I modify a slot of my object?
+------------------------------------
+
+  O.mySlot = 51;
+
+or
+
+  O.updateSlot("mySlot", 51);
+
+How do I create or modify a local variable?
+-------------------------------------------
+
+  var myLocalVariable;
+  myLocalVariable = "foo";
+
+or
+
+  var myLocalVariable = "foo";
+
+How do I make a constructor?
+----------------------------
+
+You can define a method called "init" which will be called automatically
+by "new". For example:
+
+  class myObject {
+    function init(x, y) {
+      var this.x = x;
+      var this.y = y;
+    };
+  };
+  myInstance = myObject.new(10, 20);
+
+How can I manipulate the list of prototypes of my objects?
+----------------------------------------------------------
+
+The "protos" method returns a list (which can be manipulated) containing
+the list of your object prototype.
+
+  var myObject = Object.new;
+  myObject.protos;
+  [00000001] [Object]
+
+How can I know the slots available for a given object?
+------------------------------------------------------
+
+The "slotNames" and "allSlotNames" methods return respectively the local
+slot names and the local+inherited slot names.
+
+How do I create a new function?
+-------------------------------
+
+Functions are first class objects. That means that you can add them as
+any other slot in an object:
+
+  var myObject = Object.new;
+  var myFunction = function (x, y) { echo ("myFunction called with " +
+                                           x + " and " + y) };
+
+You can also use the following notation to add a function to your
+object:
+
+  var myObject = Object.new;
+  function myObject.myFunction (x, y) { ... };
+
+or even group definitions within a "do" scope, which will automatically
+define new slots instead of local variables and functions:
+
+  var myObject = Object.new;
+  do (myObject) {
+    function myFunction (x, y) { ... };
+  };
+
+or group those two statements by using a convenient "class" scope:
+
+  class myObject {
+    function myFunction (x, y) { ... };
+  };
+
+Tags
+====
+
+How do I create a tag?
+----------------------
+
+Tags are objects, and must be created as any object by using "new" to create
+derivatives of the "Tag" object.
+
+  var myTag = Tag.new;
+
+or
+
+  var myTag = Tag.new("cool name");
+
+The name is not mandatory but makes it easier to display a tag and remember
+what it is.
+
+How do I stop a tag?
+--------------------
+
+  myTag.stop;
+
+Can tagged statements return a value?
+-------------------------------------
+
+By default, tagged statements will return the latest evaluated expression if
+they have not been stopped:
+
+  var myTag = Tag.new;
+  var res;
+  res = { myTag: { do_something; 42 } };
+
+After the execution, "res" will contain 42.
+
+However, when a tag is stopped, all the statements tagged with that tag may
+be forced to return a value, by giving it as a parameter to "stop":
+
+  var myTag = Tag.new;
+  var res;
+  { res = { myTag: sleep(inf) } }, // Sleep forever (infinite amount of time),
+                                   // note the "," to put the tagged statement in
+                                   // the background
+  myTag.stop(42);
+  res;
+  [00000001] 42
+
+Events
+======
+
+How do I create an event?
+-------------------------
+
+Events are objects, and must be created as any object by using "new" to create
+derivatives of the "Event" object.
+
+  var ev = Event.new;
+
+How do I emit an event?
+-----------------------
+
+  emit ev(1, "foo");
+
+How do I catch an event?
+------------------------
+
+  at(?ev(1, (var msg))) {
+    echo ("Received event with 1 and message " + msg);
+  };
+
+The "?" marker indicates that we are looking for an event instead of a
+boolean condition. The construction "(var msg)" indicates that the "msg"
+variable will be bound (as a local variable) in the body part of the "at"
+construct, with whatever value is present in the event that triggered the
+"at".
+
+Lists
+=====
+
+How can I iterate over a list?
+------------------------------
+
+You can use the "for" construct to iterate over the elements of a list:
+
+  for (var i: [10, 11, 12]) echo (i);
+  [00000001] *** 10
+  [00000002] *** 11
+  [00000003] *** 12
+
+Various
+=======
+
+How can I know what has changed since the latest beta release I got?
+--------------------------------------------------------------------
+
+The file "RELEASE-NOTES.txt" at the top of the distribution contains
+the list of user-visible changes between consecutive releases.
+
+How do I report a bug?
+----------------------
+
+See the file "REPORTING-BUGS.txt" at the top of the distribution. We
+insist on keeping "k2-beta@lists.gostai.com" in copy at all times,
+because it helps us to track conversations with our users.
+
+What are the fancy symbols in the package names?
+------------------------------------------------
+
+A package name such as "kernel-2.0-beta2-195-g1b1bb93-linux-x86.tar.gz" means:
+
+  - "kernel-2.0" : the 2.0 version of the Urbi kernel;
+  - "beta2"      : this is the second batch of previews;
+  - "195"        : we have done 195 incremental changes since the "beta2" base
+                   (not counting internal changes to sub-packages);
+  - "g1b1bb93"   : version control identifier, used internally to track the
+                   exact version that is being tested by our users.

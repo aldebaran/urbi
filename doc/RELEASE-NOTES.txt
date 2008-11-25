@@ -5,6 +5,15 @@ release.
 * New since kernel 2.0 beta 2 *
 *******************************
 
+Meta
+====
+
+Frequently asked questions
+--------------------------
+
+A new document "FAQ.txt" addresses the questions most frequently asked by our
+users during the beta-test period.
+
 Grammar
 =======
 
