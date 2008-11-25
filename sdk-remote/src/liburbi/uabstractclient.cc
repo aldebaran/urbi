@@ -571,7 +571,7 @@ namespace urbi
       s->pos = 0;
       s->format = sound.soundFormat;
       if (sound.soundFormat == SOUND_RAW)
-	sprintf(s->formatString, "%d %d %zu %d",
+	sprintf(s->formatString, "%zd %zd %zd %d",
 		sound.channels, sound.rate, sound.sampleSize,
 		sound.sampleFormat);
       else

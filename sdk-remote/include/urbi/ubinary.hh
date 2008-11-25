@@ -69,10 +69,10 @@ namespace urbi
   class URBI_SDK_API USound
   {
   public:
-    char                  *data;            ///< pointer to sound data
+    char* data;              ///< pointer to sound data
     size_t size;             ///< total size in byte
-    int                   channels;         ///< number of audio channels
-    int                   rate;             ///< rate in Hertz
+    size_t channels;         ///< number of audio channels
+    size_t rate;             ///< rate in Hertz
     size_t sampleSize;       ///< sample size in bit
 
     USoundFormat          soundFormat;      ///< format of the sound data
