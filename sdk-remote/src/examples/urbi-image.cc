@@ -176,8 +176,8 @@ main (int argc, char *argv[])
   {
     /* Use syncGetImage to save one image to a file. */
     char buff[1000000];
-    int sz = 1000000;
-    int w, h;
+    size_t sz = 1000000;
+    size_t w, h;
     switch (argv[argp][0])
     {
       case 'r':

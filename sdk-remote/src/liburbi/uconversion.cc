@@ -11,11 +11,11 @@ namespace urbi
 
   namespace
   {
-    void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size,
-		    bool RGB, int &output_size);
+    void *read_jpeg(const char *jpgbuffer, size_t jpgbuffer_size,
+		    bool RGB, size_t& output_size);
 
-    int write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
-		   unsigned char* dst, int &sz, int quality);
+    int write_jpeg(const unsigned char* src, size_t w, size_t h, bool ycrcb,
+		   unsigned char* dst, size_t& sz, int quality);
 
 
     inline unsigned char clamp(float v)
@@ -30,12 +30,12 @@ namespace urbi
 
   int
   convertRGBtoYCrCb(const byte * sourceImage,
-		    int bufferSize,
-		    byte * destinationImage)
+		    size_t bufferSize,
+		    byte* destinationImage)
   {
     unsigned char *in = (unsigned char *) sourceImage;
     unsigned char *out = (unsigned char *) destinationImage;
-    for (int i = 0; i < bufferSize - 2; i += 3)
+    for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       float r = in[i];
       float g = in[i + 1];
@@ -54,12 +54,12 @@ namespace urbi
 
   int
   convertYCrCbtoYCbCr(const byte * sourceImage,
-		      int bufferSize,
+		      size_t bufferSize,
 		      byte * destinationImage)
   {
     unsigned char *in = (unsigned char *) sourceImage;
     unsigned char *out = (unsigned char *) destinationImage;
-    for (int i = 0; i < bufferSize - 2; i += 3)
+    for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       out[i]     = in[i];
       out[i + 1] = in[i + 2];
@@ -70,13 +70,13 @@ namespace urbi
 
 
   int
-  convertYCrCbtoRGB(const byte * sourceImage,
-		    int bufferSize,
-		    byte * destinationImage)
+  convertYCrCbtoRGB(const byte* sourceImage,
+		    size_t bufferSize,
+		    byte* destinationImage)
   {
     unsigned char *in = (unsigned char *) sourceImage;
     unsigned char *out = (unsigned char *) destinationImage;
-    for (int i = 0; i < bufferSize - 2; i += 3)
+    for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       float y = in[i];
       float cb = in[i + 1];
@@ -96,17 +96,17 @@ namespace urbi
 
 
   int
-  convertJPEGtoYCrCb(const byte * source, int sourcelen, byte * dest,
-		     int &size)
+  convertJPEGtoYCrCb(const byte* source, size_t sourcelen, byte* dest,
+		     size_t& size)
   {
-    int sz;
+    size_t sz;
     void *destination = read_jpeg((const char *) source, sourcelen, false, sz);
     if (!destination)
     {
       size = 0;
       return 0;
     }
-    int cplen = sz > size ? size : sz;
+    size_t cplen = sz > size ? size : sz;
     memcpy(dest, destination, cplen);
     free(destination);
     size = sz;
@@ -114,16 +114,17 @@ namespace urbi
   }
 
   int
-  convertJPEGtoRGB(const byte * source, int sourcelen, byte * dest, int &size)
+  convertJPEGtoRGB(const byte* source, size_t sourcelen,
+                   byte* dest, size_t& size)
   {
-    int sz;
+    size_t sz;
     void *destination = read_jpeg((const char *) source, sourcelen, true, sz);
     if (!destination)
     {
       size = 0;
       return 0;
     }
-    int cplen = sz > size ? size : sz;
+    size_t cplen = sz > size ? size : sz;
     memcpy(dest, destination, cplen);
     free(destination);
     size = sz;
@@ -131,14 +132,16 @@ namespace urbi
   }
 
   int convertRGBtoJPEG(const byte* source,
-		       int w, int h, byte* dest, int &size, int quality)
+		       size_t w, size_t h, byte* dest,
+                       size_t& size, int quality)
   {
     return write_jpeg(source, w, h, false, dest, size, quality);
   }
 
 
   int convertYCrCbtoJPEG(const byte* source,
-			 int w, int h, byte* dest, int &size, int quality)
+			 size_t w, size_t h, byte* dest,
+                         size_t& size, int quality)
   {
     return write_jpeg(source, w, h, true, dest, size, quality);
   }
@@ -227,8 +230,8 @@ namespace urbi
   namespace
   {
     int
-    write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
-	       unsigned char* dst, int &sz, int quality)
+    write_jpeg(const unsigned char* src, size_t w, size_t h, bool ycrcb,
+	       unsigned char* dst, size_t& sz, int quality)
     {
       struct jpeg_compress_struct cinfo;
       struct jpeg_error_mgr jerr;
@@ -278,8 +281,8 @@ namespace urbi
 
     /*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
      */
-    void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
-		    int &output_size)
+    void *read_jpeg(const char *jpgbuffer, size_t jpgbuffer_size, bool RGB,
+		    size_t& output_size)
     {
       struct jpeg_decompress_struct cinfo;
       struct urbi_jpeg_error_mgr jerr;
@@ -383,7 +386,7 @@ namespace urbi
       dest.height = src.height;
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
     void* uncompressedData = malloc(src.width * src.height * 3);
-    int usz = src.width * src.height * 3;
+    size_t usz = src.width * src.height * 3;
     int format = 42; //0 rgb 1 ycbcr
     int targetformat = 42; //0 rgb 1 ycbcr 2 compressed
 
@@ -458,7 +461,7 @@ namespace urbi
     //then convert to destination format
     dest.size = dest.width * dest.height * 3 + 20;
     dest.data = static_cast<unsigned char*> (realloc(dest.data, dest.size));
-    int dsz = dest.size;
+    size_t dsz = dest.size;
     switch (dest.imageFormat)
     {
       case IMAGE_RGB:

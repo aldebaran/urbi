@@ -129,7 +129,7 @@ namespace urbi
 
     /// Create a new instance and connect to the Urbi server.
     UAbstractClient(const std::string& host, int port = URBI_PORT,
-		    int buflen = URBI_BUFLEN,
+		    size_t buflen = URBI_BUFLEN,
 		    bool server = false);
 
     virtual ~UAbstractClient();
@@ -284,11 +284,11 @@ namespace urbi
     void onConnection();
 
     /// Queue data for sending, returns zero on success, nonzero on failure.
-    virtual int effectiveSend(const void * buffer, int size)=0;
+    virtual int effectiveSend(const void * buffer, size_t size) = 0;
 
     /// Whether successive effectiveSend() of cumulated size 'size'
     /// will succeed.
-    virtual bool canSend(int size)=0;
+    virtual bool canSend(size_t size) = 0;
 
     libport::Lockable& sendBufferLock;
     libport::Lockable& listLock;
@@ -308,14 +308,14 @@ namespace urbi
     bool server_;
 
     /// Urbi Buffer length.
-    int buflen;
+    size_t buflen;
     /// System calls return value storage.
     int rc;
 
     /// Reception buffer.
     char* recvBuffer;
     /// Current position in reception buffer.
-    int recvBufferPosition;
+    size_t recvBufferPosition;
     /// Temporary buffer for send data.
     char* sendBuffer;
 
@@ -338,16 +338,16 @@ namespace urbi
     /// Temporary storage of binary data.
     void* binaryBuffer;
     /// Current position in binaryBuffer.
-    int binaryBufferPosition;
+    size_t binaryBufferPosition;
     /// Size of binaryBuffer.
-    int binaryBufferLength;
+    size_t binaryBufferLength;
 
     /// Position of parse in recvBuffer.
-    int	parsePosition;
+    size_t parsePosition;
     /// True if preparsing is in a string.
     bool inString;
     /// Current depth of bracket.
-    int	nBracket;
+    size_t nBracket;
     /// Start of command, after [ts:tag] header.
     char* currentCommand;
 
@@ -358,7 +358,7 @@ namespace urbi
     bool system;
 
     /// Position of end of header.
-    int	endOfHeaderPosition;
+    size_t endOfHeaderPosition;
     char currentTag[URBI_MAX_TAG_LENGTH];
 
     int	currentTimestamp;

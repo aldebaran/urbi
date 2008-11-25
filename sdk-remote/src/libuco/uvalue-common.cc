@@ -104,7 +104,7 @@ namespace urbi
 	return -p; //parse error
 
       stringValue = new std::string(
-          libport::unescape(std::string(message + pos + 1, p - pos - 1)));
+        libport::unescape(std::string(message + pos + 1, p - pos - 1)));
       return p + 1;
     }
 

@@ -52,8 +52,9 @@ namespace urbi
    Spawn a new thread that will listen to the socket, parse the incoming URBI
    messages, and notify the appropriate callbacks.
    */
-  UClient::UClient(const std::string& host, int port, int buflen, bool server,
-  	int semListenInc)
+  UClient::UClient(const std::string& host, int port,
+                   size_t buflen, bool server,
+                   int semListenInc)
     : UAbstractClient(host, port, buflen, server)
     , thread(0)
     , pingInterval(0)
@@ -232,14 +233,14 @@ namespace urbi
   }
 
   bool
-  UClient::canSend(int)
+  UClient::canSend(size_t)
   {
     return true;
   }
 
 
   int
-  UClient::effectiveSend(const void* buffer, int size)
+  UClient::effectiveSend(const void* buffer, size_t size)
   {
 #if DEBUG
     char output[size+1];
@@ -249,7 +250,7 @@ namespace urbi
 #endif
     if (rc)
       return -1;
-    int pos = 0;
+    size_t pos = 0;
     while (pos != size)
     {
       int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);

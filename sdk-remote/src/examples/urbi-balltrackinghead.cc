@@ -214,7 +214,7 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
 	}
     }
   ++framenum;
-  int imgsize = 500000;
+  size_t imgsize = 500000;
   if (img.imageFormat == urbi::IMAGE_JPEG)
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data,
 			     img.size, image, imgsize);

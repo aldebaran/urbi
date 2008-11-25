@@ -69,7 +69,7 @@ namespace urbi
      */
     USyncClient(const std::string& host,
 		int port = URBI_PORT,
-		int buflen = URBI_BUFLEN,
+		size_t buflen = URBI_BUFLEN,
 		bool server = false,
 		bool startCallbackThread = true,
 		int semListenInc = 2);
@@ -103,8 +103,9 @@ namespace urbi
     int syncSend(const void * buffer, int length);
 
     /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
-    int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
-		     int format, int transmitFormat, int &width, int &height);
+    int syncGetImage(const char* cameraDevice, void* buffer, size_t& buffersize,
+		     int format, int transmitFormat,
+                     size_t& width, size_t& height);
 
     /// Get the value of any device in a synchronous way. Returns 1 on
     /// success, 0 on failure.

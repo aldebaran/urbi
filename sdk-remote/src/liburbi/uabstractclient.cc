@@ -162,7 +162,7 @@ namespace urbi
    */
   UAbstractClient::UAbstractClient(const std::string& host,
 				   int port,
-				   int buflen,
+				   size_t buflen,
 				   bool server)
     : std::ostream(new UClientStreambuf(this))
       // Irk, *new...
@@ -757,8 +757,9 @@ namespace urbi
       if (binaryMode)
       {
 	//Receiving binary. Append to binaryBuffer;
-	int len = std::min(recvBufferPosition - endOfHeaderPosition,
-			   binaryBufferLength - binaryBufferPosition);
+	size_t len =
+          std::min(recvBufferPosition - endOfHeaderPosition,
+                   binaryBufferLength - binaryBufferPosition);
 	if (binaryBuffer)
 	  memcpy (static_cast<char*> (binaryBuffer) + binaryBufferPosition,
 		  recvBuffer + endOfHeaderPosition, len);
@@ -860,7 +861,8 @@ namespace urbi
 	  }
 
 	  currentCommand = strstr(recvBuffer, "]");
-	  if (!currentCommand) {
+	  if (!currentCommand)
+          {
 	    //reset all
 	    nBracket = 0;
 	    inString = false;

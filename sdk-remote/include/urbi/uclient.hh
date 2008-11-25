@@ -37,7 +37,7 @@ namespace urbi
   {
   public:
     UClient(const std::string& host, int port = URBI_PORT,
-	    int buflen = URBI_BUFLEN,
+	    size_t buflen = URBI_BUFLEN,
 	    bool server = false,
 	    int semListenInc = 1);
 
@@ -63,8 +63,8 @@ namespace urbi
                                    const unsigned pongTimeout);
 
   protected:
-    virtual int effectiveSend(const void* buffer, int size);
-    virtual bool canSend(int size);
+    virtual int effectiveSend(const void* buffer, size_t size);
+    virtual bool canSend(size_t size);
 
     int             sd;                  ///< Socket file descriptor.
 

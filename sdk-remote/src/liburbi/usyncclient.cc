@@ -12,7 +12,7 @@ namespace urbi
 {
   USyncClient::USyncClient(const std::string& host,
 			   int port,
-			   int buflen,
+			   size_t buflen,
 			   bool server,
                            bool startCallbackThread,
 			   int semListenInc)
@@ -55,7 +55,7 @@ namespace urbi
       sem_--;
       if (stopCallbackThread_)
       {
-	// The call to stopCallbackThread is 
+	// The call to stopCallbackThread is
 	// waiting on stopCallbackSem_.
 	stopCallbackSem_++;
 	return;
@@ -237,9 +237,9 @@ namespace urbi
 
   int
   USyncClient::syncGetImage(const char* camera,
-			    void* buffer, int& buffersize,
+			    void* buffer, size_t& buffersize,
 			    int format, int transmitFormat,
-			    int& width, int& height)
+			    size_t& width, size_t& height)
   {
     int f;
     if (format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG)
@@ -257,7 +257,7 @@ namespace urbi
     width = m->value->binary->image.width;
     height = m->value->binary->image.height;
 
-    int osize = buffersize;
+    size_t osize = buffersize;
     if (f == 1  &&  format != IMAGE_JPEG)
     {
       //uncompress jpeg
@@ -291,9 +291,9 @@ namespace urbi
     if (format == IMAGE_PPM)
     {
       char p6h[20];
-      sprintf(p6h, "P6\n%d %d\n255\n", width, height);
-      int p6len = strlen(p6h);
-      int mlen = osize > buffersize + p6len ? buffersize : osize - p6len;
+      sprintf(p6h, "P6\n%zu %zu\n255\n", width, height);
+      size_t p6len = strlen(p6h);
+      size_t mlen = osize > buffersize + p6len ? buffersize : osize - p6len;
       memmove((void *) (((long) buffer) + p6len), buffer, mlen);
       memcpy(buffer, p6h, p6len);
       buffersize += p6len;
