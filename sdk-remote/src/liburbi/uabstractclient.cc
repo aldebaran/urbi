@@ -285,8 +285,8 @@ namespace urbi
       case DATA_LIST:
       {
 	send("[");
-	int sz = v.list->size();
-	for (int i = 0; i < sz; ++i)
+	size_t sz = v.list->size();
+	for (size_t i = 0; i < sz; ++i)
 	{
 	  send((*v.list)[i]);
 	  if (i != sz-1)
@@ -298,8 +298,8 @@ namespace urbi
       case DATA_OBJECT:
       {
 	send("OBJ %s [", v.object->refName.c_str());
-	int sz = v.object->size();
-	for (int i = 0; i < sz; ++i)
+	size_t sz = v.object->size();
+	for (size_t i = 0; i < sz; ++i)
 	{
 	  send("%s :", (*v.object)[i].name.c_str());
 	  send(*((*v.object)[i].val) );
@@ -379,14 +379,14 @@ namespace urbi
 
 
   int
-  UAbstractClient::sendBin(const void* buffer, int len)
+  UAbstractClient::sendBin(const void* buffer, size_t len)
   {
     return sendBin(buffer, len, NULL, 0);
   }
 
 
   int
-  UAbstractClient::sendBin(const void *buffer, int len,
+  UAbstractClient::sendBin(const void *buffer, size_t len,
 			   const char* header, ...)
   {
     if (rc)
@@ -462,13 +462,14 @@ namespace urbi
     //handle next chunk
     if (s->format == SOUND_WAV && s->pos==0)
       s->pos = sizeof (wavheader);
-    int tosend = (s->length-s->pos > CHUNK_SIZE) ? CHUNK_SIZE:s->length-s->pos;
+    size_t tosend =
+      (s->length - s->pos > CHUNK_SIZE) ? CHUNK_SIZE:s->length-s->pos;
 
     //printf("%d start chunk of size %d at offset %d\n", 0, tosend, s->pos);
     int playlength = tosend *1000 / s->bytespersec;
     s->uc->send("%s.val = BIN %d %s %s;",
 		s->device,
-		(int)(tosend+ ((s->format == SOUND_WAV)?sizeof (wavheader):0)),
+		tosend+ ((s->format == SOUND_WAV)?sizeof (wavheader):0),
 		(s->format == SOUND_WAV)?"wav":"raw",
 		s->formatString
       );

@@ -159,10 +159,10 @@ namespace urbi
     int send(urbi::UValue& v);
 
     /// Send binary data.
-    int sendBin(const void*, int len);
+    int sendBin(const void*, size_t len);
 
     /// Send an Urbi header followed by binary data.
-    int sendBin(const void*, int len,const char * header,...);
+    int sendBin(const void*, size_t len,const char * header,...);
 
     /// Lock the send buffer (for backward compatibility, will be
     /// removed in future versions).
