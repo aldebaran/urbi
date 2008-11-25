@@ -92,12 +92,10 @@ ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
 ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la $(libuobject_la_LIBADD)
 endif !WIN32
 
-# FIXME: find something else, if "remote" is in some PATH substituted in param.mk
-# then we are doomed.
-install-data-local:
-	$(MKDIR_P) $(DESTDIR)$(envdir)
-	$(SED) -e 's/remote/engine/g' $(top_builddir)/sdk-remote/sdk/param.mk > \
-	  $(DESTDIR)$(envdir)/param.mk
+# We used to install a different version (with s/remote/engine/g), but
+# there is no occurrence of remote in param.mk.  Yet MN insists on
+# installing this guy.
+nodist_env_DATA = $(top_builddir)/sdk-remote/sdk/param.mk
 
 if ! INSTALL_KERNEL_HEADERS
 install-data-hook: remove_kheaders
