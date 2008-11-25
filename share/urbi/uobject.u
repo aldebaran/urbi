@@ -20,7 +20,7 @@ function Global.isdef
   return true
 };
 
-class Object.UObject
+class Global.UObject
 {
   var minimumInterval = Object.getPeriod;
   var updateTask = 0;
