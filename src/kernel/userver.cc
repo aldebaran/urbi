@@ -297,6 +297,7 @@ UServer::work()
       nzero = 0;
     }
   }
+  work_handle_stopall_();
   afterWork ();
   return next_time;
 }
@@ -526,9 +527,10 @@ UServer::connection_add(UConnection* c)
 }
 
 void
-UServer::connection_remove(UConnection* c)
+UServer::connection_remove(UConnection*)
 {
-  connections_->remove(c);
+  // Do not remove synchronously as it will destroy the object.
+  // remove_closing will handle this.
 }
 
 UConnection&
