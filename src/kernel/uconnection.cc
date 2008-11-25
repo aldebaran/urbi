@@ -1,6 +1,5 @@
 /// \file kernel/uconnection.cc
 /// \brief Implementation of UConnection.
-
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
@@ -80,6 +79,7 @@ UConnection::UConnection(UServer& server, size_t packetSize)
 
 UConnection::~UConnection()
 {
+  lobby_->slot_remove(SYMBOL(lobby));
   lobby_->slot_get(SYMBOL(connectionTag))->as<object::Tag>()->value_get()
     ->stop(server_.getScheduler(), object::void_class);
   shell_->terminate_now();
