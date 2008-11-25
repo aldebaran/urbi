@@ -1044,8 +1044,12 @@ namespace urbi
   {
     setCallback(*this, &UAbstractClient::setVersion, "__version");
     // We don't know our kernel version yet.
-    send("__version << system.version;"
-         "Channel.new(\"__version\") << system.version;");
+    send("{ var __ver__ = 2; {var __ver__ = 1};"
+         "  var __version;"
+         "  if (__ver__ == 2) "
+         "    __version = Channel.new(\"__version\");"
+         "  __version << system.version;"
+         "};");
   }
 
   UCallbackAction
