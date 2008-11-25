@@ -381,8 +381,6 @@ namespace urbi
 
   };
 
-  std::string getClientConnectionID (const UAbstractClient* cli);
-
   /// Wrapper around a callback function. Use callback() to create them.
   class UCallbackWrapper
   {
@@ -661,6 +659,8 @@ namespace urbi
   URBI_SDK_API UClient* getDefaultClient();
   /// Redefine the default client
   URBI_SDK_API void setDefaultClient(UClient * cl);
+
+  URBI_SDK_API std::string getClientConnectionID (const UAbstractClient* cli);
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
   URBI_SDK_API std::ostream& unarmorAndSend(const char * str);

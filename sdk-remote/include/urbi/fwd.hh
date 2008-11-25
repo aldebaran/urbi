@@ -6,6 +6,8 @@
 
 # include <string>
 
+# include <urbi/export.hh>
+
 namespace urbi
 {
   class UAbstractClient;
@@ -28,8 +30,8 @@ namespace urbi
   class baseURBIStarter;
   class baseURBIStarterHub;
 
-  std::string getClientConnectionID (const UAbstractClient* cli);
-  UClient* getDefaultClient();
+  URBI_SDK_API std::string getClientConnectionID (const UAbstractClient* cli);
+  URBI_SDK_API UClient* getDefaultClient();
 
 };
 
