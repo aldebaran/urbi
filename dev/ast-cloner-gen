@@ -26,6 +26,7 @@ sys.stdout = cloner_hh
 print tools.banner(clonerlib + "/cloner.hh",
 		   "Declaration of " + clonerlib + "::Cloner.") + """
 # include <boost/type_traits/remove_const.hpp>
+# include <boost/optional.hpp>
 
 # include "%(ast_basedir)sdefault-visitor.hh"
 
@@ -46,6 +47,9 @@ namespace %(clonerlib)s
 
     /// Visit entry point
     virtual void operator() (const Ast* e);
+
+    /// Force the location of the cloned ast
+    void location_set(const ast::loc& loc);
 
     // Visit methods.
   public:
@@ -103,6 +107,9 @@ if dec_subclasses:
 print """
     /// The cloned Ast.
     ast::rAst result_;
+
+    /// The potential forced location
+    boost::optional<ast::loc> loc_;
   };
 
 } // namespace ast
@@ -197,6 +204,11 @@ namespace %(clonerlib)s
     return result_;
   }
 
+  void Cloner::location_set(const ast::loc& loc)
+  {
+    loc_ = loc;
+  }
+
   void Cloner::operator() (const Ast* e)
   {
     // We must check e and result_, because cloners may return NULL
@@ -207,6 +219,8 @@ namespace %(clonerlib)s
       if (result_ && !result_->original_get())
         result_->original_set(e->original_get());
       result_->doc_set(e->doc_get());
+      if (loc_)
+        result_->location_set(loc_.get());
     }
   }
 
