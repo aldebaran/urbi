@@ -223,9 +223,9 @@ namespace scheduler
   }
 
   void
-  Job::scheduling_error(std::string)
+  Job::scheduling_error(const std::string& s)
   {
-    abort();
+    pabort(s);
   }
 
   void

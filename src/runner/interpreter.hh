@@ -168,7 +168,7 @@ namespace runner
     /// Signal a scheduling error exception.
     ///
     /// \param msg The explanation of the scheduling error.
-    virtual void scheduling_error(std::string msg);
+    virtual void scheduling_error(const std::string& msg);
 
     virtual void show_backtrace(const std::string& chan);
     virtual backtrace_type backtrace_get() const;

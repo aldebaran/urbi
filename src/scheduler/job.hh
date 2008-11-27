@@ -311,7 +311,7 @@ namespace scheduler
     /// implementation calls abort().
     ///
     /// \param msg The explanation of the scheduling error.
-    virtual void scheduling_error(std::string msg = "");
+    virtual void scheduling_error(const std::string& msg = "");
 
   private:
     /// Current job state, to be manipulated only from the job and the

@@ -153,7 +153,7 @@ namespace runner
   }
 
   void
-  Interpreter::scheduling_error(std::string msg)
+  Interpreter::scheduling_error(const std::string& msg)
   {
     libport::Finally finally;
     // We may have a situation here. If the stack space is running
