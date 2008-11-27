@@ -61,8 +61,9 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
     if (getenv("VERBOSE"))                              \
       LIBPORT_ECHO("starting test " << #Name);
 
-#define END_TEST                           \
-    SEND("shutdown;");                     \
+#define END_TEST                                \
+    sleep(3);                                   \
+    SEND("shutdown;");                          \
   }
 
 void dispatch(const std::string& method, urbi::UClient& client,

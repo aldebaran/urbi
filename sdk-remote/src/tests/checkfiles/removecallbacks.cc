@@ -32,5 +32,4 @@ SEND("output << 0;");
 SEND("output << 9;");
 SEND("error << 10;");   //ping
 //= D error 10
-sleep(5);
 END_TEST

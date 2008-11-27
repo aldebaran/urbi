@@ -14,5 +14,4 @@ SEND("var mybin = BIN 10 mybin header;1234567890;output << mybin;");
 //= D output BIN 10  mybin header;1234567890
 SEND("output << [\"coin\", 5, [3, mybin, 0]];");
 //= D output ["coin", 5, [3, BIN 10  mybin header;1234567890, 0]]
-sleep(5);
 END_TEST
