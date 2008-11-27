@@ -33,7 +33,7 @@ namespace scheduler
     else if (parent_)
       return parent_->payload_get();
     // This is an internal error and can never happen.
-    abort();
+    pabort("!blocked && !parent_");
   }
 
 } // namespace scheduler

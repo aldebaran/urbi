@@ -2,6 +2,7 @@
 # define SCHEDULER_EXCEPTION_HXX
 
 # include <cstdlib>
+# include <libport/assert.hh>
 
 namespace scheduler
 {
@@ -23,7 +24,7 @@ namespace scheduler
     rethrow_();
     // GCC cannot guarantee that an overriden virtual method
     // will not return, so help it here.
-    abort();
+    pabort("rethrow_ returned");
   }
 
 } // namespace scheduler

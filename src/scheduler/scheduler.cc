@@ -177,7 +177,7 @@ namespace scheduler
 	continue;
       }
       case zombie:
-	abort();
+	pabort("zombie");
 	break;
       case running:
 	start = true;

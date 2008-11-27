@@ -38,9 +38,8 @@ namespace dbg
   void
   Sneaker::work()
   {
-    // This will never be called as the sneaker is not supposed to be
-    // registered with the scheduler.
-    abort();
+    // This will never be called as...
+    pabort("the sneaker is not supposed to be registered with the scheduler");
   }
 
   void

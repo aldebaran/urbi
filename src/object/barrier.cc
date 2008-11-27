@@ -41,7 +41,7 @@ namespace object
     {
       r.yield_until_terminated(r);
       // We cannot return from here.
-      abort();
+      pabort("yield_until_terminated returned");
     }
     catch (const BarrierException& be)
     {

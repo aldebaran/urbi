@@ -69,7 +69,7 @@ namespace scheduler
     terminate_cleanup();
 
     // We should never go there as the scheduler will have terminated us.
-    abort();
+    pabort("scheduler did not terminate us");
   }
 
   void
