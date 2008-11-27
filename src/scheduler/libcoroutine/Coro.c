@@ -227,7 +227,12 @@ void Coro_StartWithArg(CallbackBlock *block)
 {
 #ifdef USE_FIBERS
 	if (block->associatedCoro->fiber != GetCurrentFiber())
-		abort();
+          {
+            fprintf(stderr,
+                    "Coro_StartWithArg: "
+                    "block->associatedCoro->fiber != GetCurrentFiber()\n");
+            abort();
+          }
 	// Set the start of the stack for future comparaison. According to
 	// http://msdn.microsoft.com/en-us/library/ms686774(VS.85).aspx,
 	// some part of the stack is reserved for running an handler if
