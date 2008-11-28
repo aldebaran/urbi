@@ -40,7 +40,7 @@ UOBJECTS = $(patsubst %/,%,$(sort $(dir $(call ls_files,uobjects/*.uob/*.cc))))
 # uobject-check
 EXTRA_DIST += bin/uobject-check.as
 nodist_check_SCRIPTS += bin/uobject-check
-m4sh_scripts = bin/uobject-check
+m4sh_scripts += bin/uobject-check
 
 
 %.log: %.uob bin/uobject-check
