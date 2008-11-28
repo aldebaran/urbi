@@ -605,6 +605,8 @@ stmt:
     }
 | "closure" k1_id formals doc block
     {
+      if (!$3)
+	error(@$, "closure cannot be lazy");
       // Compiled as "var name = closure args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Closure(@$, symbols_to_decs($3, @3),
@@ -1130,6 +1132,8 @@ exp:
     }
 | "closure" formals block
     {
+      if (!$2)
+	error(@$, "closure cannot be lazy");
       $$ = new ast::Closure(@$, symbols_to_decs($2, @2),
                             ast_scope(@$, $3));
     }
