@@ -306,12 +306,11 @@ namespace scheduler
     /// lost otherwise.
     virtual void work() = 0;
 
-    /// May be overriden. Called if a scheduling error is detected
-    /// during the execution course of this job. The default
-    /// implementation calls abort().
+    /// Must be overriden. Called if a scheduling error is detected
+    /// during the execution course of this job.
     ///
     /// \param msg The explanation of the scheduling error.
-    virtual void scheduling_error(const std::string& msg = "");
+    virtual void scheduling_error(const std::string& msg = "") = 0;
 
   private:
     /// Current job state, to be manipulated only from the job and the

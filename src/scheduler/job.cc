@@ -223,12 +223,6 @@ namespace scheduler
   }
 
   void
-  Job::scheduling_error(const std::string& s)
-  {
-    pabort(s);
-  }
-
-  void
   terminate_jobs(jobs_type& jobs)
   {
     foreach (rJob& job, jobs)
