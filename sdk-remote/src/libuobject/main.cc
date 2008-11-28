@@ -269,7 +269,7 @@ namespace urbi
   }
 
   static int
-  initialize(const std::string& host, int port, int buflen,
+  initialize(const std::string& host, int port, size_t buflen,
 	     bool exitOnDisconnect, bool server)
   {
     std::cerr << program_name
@@ -349,7 +349,7 @@ namespace urbi
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
     bool server = false;
-    int buflen = UAbstractClient::URBI_BUFLEN;
+    size_t buflen = UAbstractClient::URBI_BUFLEN;
 
     // The number of the next (non-option) argument.
     unsigned argp = 1;
@@ -357,7 +357,7 @@ namespace urbi
     {
       const std::string& arg = args[i];
       if (arg == "--buffer" || arg == "-b")
-	buflen = libport::convert_argument<unsigned>(args, i++);
+	buflen = libport::convert_argument<size_t>(args, i++);
       else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
       else if (arg == "--stay-alive" || arg == "-s")

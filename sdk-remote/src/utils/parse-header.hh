@@ -1,14 +1,18 @@
 #include <libport/cstdio>
 #include <cstdlib>
 
+#include <libport/cli.hh>
+#include <libport/program-name.hh>
+
 void usage(const char* name, int status);
 
 namespace urbi
 {
-  inline float
-  fabs (float f )
+  inline
+  float
+  fabs (float f)
   {
-    if (f>0)
+    if (f > 0)
       return f;
     else
       return f*(-1.0);
@@ -37,13 +41,13 @@ namespace urbi
 
   struct UDev
   {
-    char * name;
+    char* name;
     short id;
     UType type;
   };
 
   UDev* devices;
-  int devCount;
+  size_t devCount;
 
   static int
   parseHeader(FILE *f, FILE * of)
@@ -60,7 +64,7 @@ namespace urbi
     if (fwrite(&devCount, 4, 1, of) != 1)
       return 5;
 
-    for (int i = 0; i < devCount; ++i)
+    for (size_t i = 0; i < devCount; ++i)
     {
       char device[256];
       int pos = 0;
@@ -98,32 +102,23 @@ namespace urbi
     if (argc < min_argc)
       usage(argv[0], 1);
 
-    FILE* inf;
-    if (STREQ(argv[1],"-"))
-      inf=stdin;
-    else
-      inf=fopen(argv[1],"r");
+    FILE* inf = STREQ(argv[1],"-") ? stdin : fopen (argv[1],"r");
     if (!inf)
-    {
-      printf("error opening file\n");
-      std::exit(2);
-    }
+      std::cerr << libport::program_name
+                << ": error opening file " << argv[1] << std::endl
+                << libport::exit(EX_NOINPUT);
 
-    FILE* ouf;
-    if (STREQ(argv[2],"-"))
-      ouf=stdout;
-    else
-      ouf=fopen(argv[2],"w");
+    FILE* ouf = STREQ(argv[2],"-") ? stdout : fopen (argv[2],"w");
     if (!ouf)
-    {
-      printf("error opening file\n");
-      std::exit(2);
-    }
+      std::cerr << libport::program_name
+                << ": error opening file " << argv[2] << std::endl
+                << libport::exit(EX_NOINPUT);
+
     if (int a = parseHeader(inf,ouf))
-    {
-      printf("error parsing header: %d\n",a);
-      std::exit(3);
-    }
+      std::cerr << libport::program_name
+                << ": error parsing header: " << a << std::endl
+                << libport::exit(3);
+
     *in = inf;
     *out = ouf;
   }

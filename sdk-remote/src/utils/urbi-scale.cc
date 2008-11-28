@@ -31,12 +31,11 @@ main(int argc, char * argv[])
   sscanf(argv[3], "%f", &scale);
   urbi::UCommand uc;
   int starttime = -1;
+
   std::vector<urbi::UCommand> lastuc (urbi::devCount);
   std::vector<urbi::UCommand> nextuc (urbi::devCount);
-  for (int i = 0; i < urbi::devCount; ++i)
-    lastuc[i].timestamp = -1;
-  for (int i = 0; i < urbi::devCount; ++i)
-    nextuc[i].timestamp =- 1;
+  for (size_t i = 0; i < urbi::devCount; ++i)
+    lastuc[i].timestamp = nextuc[i].timestamp =- 1;
 
 
   int inittime = 0;
@@ -83,7 +82,7 @@ main(int argc, char * argv[])
 	for (int step = 1; step < (int)scale; ++step)
 	{
 	  //step 0 already sent, last step will be sent after
-	  for (int dev = 0; dev < urbi::devCount; ++dev)
+	  for (size_t dev = 0; dev < urbi::devCount; ++dev)
 	  {
 	    if (nextuc[dev].timestamp == -1)
 	      continue;
@@ -94,7 +93,7 @@ main(int argc, char * argv[])
 	  }
 	}
 	//send the last
-	for (int dev = 0; dev < urbi::devCount; ++dev)
+	for (size_t dev = 0; dev < urbi::devCount; ++dev)
 	{
 	  if (nextuc[dev].timestamp == -1)
 	    continue;
@@ -112,7 +111,7 @@ main(int argc, char * argv[])
   }
   //send the last chunk
   if (interpolate)
-    for (int dev = 0; dev < urbi::devCount; ++dev)
+    for (size_t dev = 0; dev < urbi::devCount; ++dev)
     {
       if (nextuc[dev].timestamp == -1)
 	continue;

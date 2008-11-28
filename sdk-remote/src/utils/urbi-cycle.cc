@@ -64,7 +64,7 @@ int main(int argc, char * argv[])
   int buffTime = 0;
 
   int basetime = 0;
-  for (int i = 0; i < urbi::devCount; ++i)
+  for (size_t i = 0; i < urbi::devCount; ++i)
     buff[i].timestamp = 0;
   //read and handle by block of commands with same timestamp.
   //init:
@@ -92,7 +92,7 @@ int main(int argc, char * argv[])
       if (buff[joint].timestamp == 0)
       {
 	//cant do anything
-	for (int i = 0; i < urbi::devCount; ++i)
+	for (size_t i = 0; i < urbi::devCount; ++i)
 	  buff[i].timestamp = 0;
 	buff[uc.id] = uc;
 	buffTime = 0;
@@ -126,7 +126,7 @@ int main(int argc, char * argv[])
       gotLastVal = true;
     }
     if (cycle == wantedcycle)
-      for (int i = 0; i < urbi::devCount; ++i)
+      for (size_t i = 0; i < urbi::devCount; ++i)
 	if (buff[i].timestamp!=0)
 	{
 	  buff[i].timestamp -= basetime;
@@ -134,7 +134,7 @@ int main(int argc, char * argv[])
 	}
 
     //flush buffer
-    for (int i = 0; i < urbi::devCount; ++i)
+    for (size_t i = 0; i < urbi::devCount; ++i)
       buff[i].timestamp = 0;
     buff[uc.id] = uc;
     buffTime = 0;
