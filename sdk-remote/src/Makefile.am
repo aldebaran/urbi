@@ -51,7 +51,6 @@ nodist_env_DATA = version.hh
 ## ------------- ##
 
 bin_PROGRAMS += urbi-launch
-urbi_launch_DEPENDENCIES = $(LTDL_DEPS) liburbi/liburbi.la
 # Find our own ltdl.h.  Push "system" headers last so that our headers
 # have priority.
 urbi_launch_CPPFLAGS = $(LTDL_CPPFLAGS) $(AM_CPPFLAGS)
