@@ -144,7 +144,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
  } while (0)
 
 // Report an error.
-#define ERROR(Msg)                              \
+#define SCAN_ERROR(Msg)                         \
 do {                                            \
   if (up)                                       \
     up->error(loc, std::string () + Msg);       \
@@ -156,12 +156,12 @@ do {                                            \
   do {                                                  \
     if (!up)                                            \
       return yy::parser::make_PRE_EOF(loc);             \
-    ERROR("unexpected end of file in " + Where);        \
+    SCAN_ERROR("unexpected end of file in " + Where);   \
   } while(0)
 
 // Report the use of a reserved word.
 #define RESERVED_ERROR                          \
-  ERROR("reserved symbol `" + yytext + "'")
+  SCAN_ERROR("reserved symbol `" + yytext + "'")
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()                                   \
@@ -387,7 +387,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   PRE_SKIP();
   if (up->synclines_.empty())
   {
-    ERROR("too many //#pop");
+    SCAN_ERROR("too many //#pop");
     LINES(1);
     STEP();
   }
@@ -702,7 +702,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\[0-7]{3}         {
        long c = strtol (yytext + 1, 0, 8);
        if (c > 255)
-         ERROR("invalid escape: `" + yytext + '\'');
+         SCAN_ERROR("invalid escape: `" + yytext + '\'');
        else
          GROW_VAL(c);
      }
@@ -717,7 +717,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\t        GROW_VAL('\t');
      \\v        GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
-     \\.        ERROR("invalid escape: `" + yytext + '\'');
+     \\.        SCAN_ERROR("invalid escape: `" + yytext + '\'');
 
      [^\"\'\n\r\\]+      APPEND_VAL(yytext, yyleng);
 
@@ -776,7 +776,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 <*>{
    .      {
-             ERROR("invalid character: " + yytext);
+             SCAN_ERROR("invalid character: " + yytext);
              STEP();
           }
 }
