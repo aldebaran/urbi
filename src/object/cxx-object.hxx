@@ -108,6 +108,19 @@ namespace object
     tgt_->slot_set(name, make_primitive(method));
   }
 
+  template<typename T>
+  inline void
+  type_check(const rObject& o,
+	     boost::optional<unsigned> idx)
+  {
+    // If we do not have the right type, bounce onto the slower version
+    // which will take care of throwing the appropriate exception. The
+    // check will be done again, but this is harmless and only happens
+    // when there is actually a mismatch.
+    if (!is_a<T>(o))
+      type_check(o, T::proto, idx);
+  }
+
 }
 
 #endif

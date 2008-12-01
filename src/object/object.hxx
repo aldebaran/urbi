@@ -137,6 +137,17 @@ namespace object
     return b ? true_class : false_class;
   }
 
+  template<typename T>
+  inline bool
+  is_a(const rObject& c)
+  {
+    // Atom case.
+    if (dynamic_cast<T*>(c.get()))
+      return true;
+    // Through protos case.
+    return is_a(c, T::proto);
+  }
+
   /*-------------------.
   | Type conversions.  |
   `-------------------*/

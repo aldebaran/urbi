@@ -253,6 +253,11 @@ namespace object
   /// Whether \b p is present in \b c's proto hierarchy.
   bool is_a(const rObject& c, const rObject& p);
 
+  /// Same as above, but check first with a dynamic_cast in order to handle
+  /// atoms more efficiently.
+  template<typename T>
+  bool is_a(const rObject& c);
+
   /// Whether \a o represents a true value. UnexpectedVoidError will be
   /// signalled if void is passed.
   bool is_true(const rObject& o);
