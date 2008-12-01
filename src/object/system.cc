@@ -43,7 +43,7 @@ namespace object
   {
     if (o.is_a<Path>())
       return o->as<Path>()->as_string();
-    type_check(o, String::proto);
+    type_check<String>(o);
     return o->as<String>()->value_get();
   }
 
@@ -112,7 +112,7 @@ namespace object
   {
     check_arg_count(args.size() - 1, 1);
 
-    type_check(args[1], Float::proto);
+    type_check<Float>(args[1]);
 
     rFloat arg1 = args[1]->as<Float>();
     libport::utime_t deadline;
@@ -146,7 +146,7 @@ namespace object
   system_class_assert_(runner::Runner&, objects_type args)
   {
     check_arg_count(args.size() - 1, 2);
-    type_check(args[2], String::proto);
+    type_check<String>(args[2]);
     rString arg2 = args[2]->as<String>();
     if (!is_true(args[1]))
       runner::raise_primitive_error("assertion `" + arg2->value_get() +
@@ -158,7 +158,7 @@ namespace object
   system_class_eval(runner::Runner& r, objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
-    type_check(args[1], String::proto);
+    type_check<String>(args[1]);
     rString arg1 = args[1]->as<String>();
     return
       execute_parsed(r, parser::parse(arg1->value_get()),

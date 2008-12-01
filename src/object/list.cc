@@ -146,7 +146,7 @@ namespace object
     rExecutable fun = f.unsafe_cast<Executable>();
     if (!fun)
     {
-      type_check(f, Code::proto);
+      type_check<Code>(f);
       unreached();
     }
     objects_type args;

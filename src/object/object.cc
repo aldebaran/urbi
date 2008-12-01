@@ -294,7 +294,7 @@ namespace object
   Object::id_dump(std::ostream& o, runner::Runner& r) const
   {
     rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
-    type_check(data, String::proto);
+    type_check<String>(data);
     return o << data->as<String>()->value_get();
   }
 
@@ -355,7 +355,7 @@ namespace object
     try
     {
       rObject s = urbi_call(runner, const_cast<Object*>(this), SYMBOL(asString));
-      type_check(s, String::proto);
+      type_check<String>(s);
       o << s->as<String>()->value_get();
       return o;
     }

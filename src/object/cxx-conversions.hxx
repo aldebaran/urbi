@@ -42,7 +42,7 @@ namespace object
     static T
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, Urbi::proto, idx);
+      type_check<Urbi>(o, idx);
       return o->as<Urbi>();
     }
 
@@ -60,7 +60,7 @@ namespace object
     static Urbi*
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, Urbi::proto, idx);
+      type_check<Urbi>(o, idx);
       return o->as<Urbi>().get();
     }
 
@@ -78,7 +78,7 @@ namespace object
     static int
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, Float::proto, idx);
+      type_check<Float>(o, idx);
       return o->as<Float>()->to_int();
     }
 
@@ -96,7 +96,7 @@ namespace object
     static unsigned int
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, Float::proto, idx);
+      type_check<Float>(o, idx);
       return o->as<Float>()->to_unsigned_int();
     }
 
@@ -114,7 +114,7 @@ namespace object
     static Float::value_type
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, Float::proto, idx);
+      type_check<Float>(o, idx);
       return o->as<Float>()->value_get();
     }
 
@@ -132,7 +132,7 @@ namespace object
     static std::string
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, String::proto, idx);
+      type_check<String>(o, idx);
       return o->as<String>()->value_get();
     }
 
@@ -150,7 +150,7 @@ namespace object
     static libport::Symbol
     to(const rObject& o, unsigned idx)
     {
-      type_check(o, String::proto, idx);
+      type_check<String>(o, idx);
       return libport::Symbol(o->as<String>()->value_get());
     }
 
@@ -186,7 +186,7 @@ namespace object
     static Name<T>                                                      \
       to(const rObject& o, unsigned idx)                                \
     {                                                                   \
-      type_check(o, List::proto);                                       \
+      type_check<List>(o);						\
       Name<T> res;                                                      \
       foreach (const rObject& elt, o->as<List>()->value_get())          \
         res.Method(CxxConvert<T>::to(elt, idx));                        \

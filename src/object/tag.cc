@@ -72,7 +72,7 @@ namespace object
 
     if (args.size() > 0)
     {
-      type_check(args[0], String::proto);
+      type_check<String>(args[0]);
       tag_short_name =
 	libport::Symbol(args[0]->as<String>()->value_get());
     }

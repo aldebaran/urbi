@@ -255,7 +255,7 @@ BOUNCE_INT_OP(~)
       return this;
     else
     {
-      type_check(args[0], proto, 1);
+      type_check<Float>(args[0], 1);
       return new Float(value_get() + args[0]->as<Float>()->value_get());
     }
   }
@@ -268,7 +268,7 @@ BOUNCE_INT_OP(~)
       return new Float(-value_get());
     else
     {
-      type_check(args[0], proto, 1);
+      type_check<Float>(args[0], 1);
       return new Float(value_get() - args[0]->as<Float>()->value_get());
     }
   }

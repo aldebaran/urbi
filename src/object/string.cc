@@ -88,7 +88,7 @@ namespace object
   std::string String::plus (runner::Runner& r, rObject rhs)
   {
     rObject str = urbi_call(r, rhs, SYMBOL(asString));
-    type_check(str, String::proto);
+    type_check<String>(str);
     return content_ + str->as<String>()->value_get();
   }
 

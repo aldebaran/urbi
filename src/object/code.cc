@@ -89,7 +89,7 @@ namespace object
 
   std::string Code::as_string(runner::Runner&, rObject what)
   {
-    type_check(what, proto);
+    type_check<Code>(what);
     return string_cast(*what->as<Code>()->ast_get());
 
   }

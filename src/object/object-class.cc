@@ -62,7 +62,7 @@ namespace object
     int depth_max = 0;
     if (args.size() >= 2)
     {
-      type_check(args[1], Float::proto);
+      type_check<Float>(args[1]);
       const rFloat& arg1 = args[1]->as<Float>();
       try
       {
@@ -78,7 +78,7 @@ namespace object
     std::string tag;
     if (args.size() >= 3)
     {
-      type_check(args[2], String::proto);
+      type_check<String>(args[2]);
       const rString& arg2 = args[2].unsafe_cast<String>();
       assert(arg2);
       tag = arg2->value_get();
@@ -128,7 +128,7 @@ namespace object
   object_class_apply(runner::Runner&, objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
-    type_check(args[1], List::proto);
+    type_check<List>(args[1]);
     const rList& arg1 = args[1]->as<List>();
     if (arg1->value_get ().size () != 1
         || arg1->value_get().front() != args[0])
@@ -143,7 +143,7 @@ namespace object
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
     const rObject& message = call_message->slot_get(SYMBOL(message));
-    type_check(message, String::proto);
+    type_check<String>(message);
     const libport::Symbol msg(message->as<String>()->value_get());
     const rObject& target = args[0];
     const rObject& code = target->slot_get(msg);

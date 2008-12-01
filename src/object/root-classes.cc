@@ -92,12 +92,12 @@ namespace object
   compare(runner::Runner&, objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
-    type_check(args[0], T::proto);
+    type_check<T>(args[0]);
     libport::intrusive_ptr<T> arg0 = args[0].unsafe_cast<T>();
 
     // Comparing two atoms with different types isn't an error, it
     // just return false
-    if (!is_a(args[1], T::proto))
+    if (!is_a<T>(args[1]))
       return to_boolean(false);
 
     libport::intrusive_ptr<T> arg1 = args[1]->as<T>();
