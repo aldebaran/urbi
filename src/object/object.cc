@@ -5,9 +5,7 @@
 
 #include <algorithm>
 
-#include <boost/bind.hpp>
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
 
 #include <libport/containers.hh>
