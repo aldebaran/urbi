@@ -61,3 +61,8 @@ LORIA
 Contact: Alain Dutech <Alain.Dutech@loria.fr>
          Olivier Rochel <olivier.rochel@loria.fr>
 Environment: Unknown yet
+
+ENSTA
+=====
+Contact: David Filliat <david.filliat@ensta.fr>
+Environment: Mac Intel Leopard
