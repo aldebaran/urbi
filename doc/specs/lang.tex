@@ -1151,11 +1151,11 @@ var o = Object.new;
 [00000000:hide] Object_0xADDR
 
 o.protos;
-[00000000] [<Object>]
+[00000000] [Object]
 o.addProto(Pair);
 [00000000:hide] (nil, nil)
 o.protos;
-[00000000] [(nil, nil), <Object>]
+[00000000] [(nil, nil), Object]
 o.removeProto(Object);
 [00000000:hide] (nil, nil)
 o.protos;
@@ -1200,7 +1200,7 @@ b.setSlot("x", "slot in b");
 [00000000:hide] "slot in b"
 // c has no "x" slot
 c.getSlot("x");
-[00000000:error] !!! Lookup failed: x
+[00000000:error] !!! lookup failed: x
 // c can inherit the "x" slot from a
 c.addProto(a);
 [00000000:hide] Object_0xADDR
@@ -1371,7 +1371,7 @@ The \lstinline|do| construct enables do evaluate an expression with a
 different ``\lstinline|this|''.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-do target
+do (target)
 {
   body
 };
@@ -1388,7 +1388,7 @@ evaluates to \lstinline|body|.
 var x = 1024;
 [00000000:hide] 1024
 
-do x
+do (x)
 {
   echo(this);
   echo(sqrt);
@@ -1557,13 +1557,13 @@ function sw(v)
 };
 [00000000:hide] function (v) {
 ..  {
-..    var '$switch' = v | if (Pattern . new("") . match('$switch'))
+..    var '$switch' = v | var '$pattern' = Pattern . new("") | if ('$pattern' . match('$switch'))
 ..    {
 ..      echo("Empty string");
 ..    }
 ..    else
 ..    {
-..      if (Pattern . new("foo") . match('$switch'))
+..      var '$pattern' = Pattern . new("foo") | if ('$pattern' . match('$switch'))
 ..      {
 ..        "bar";
 ..      }
