@@ -37,6 +37,11 @@ On Linux:
   export LD_LIBRARY_PATH
   $URBI_ROOT/bin/urbi-console -i
 
+On MacOS:
+
+  * Follow the same instructions as for Linux, but substitute
+    "DYLD_LIBRARY_PATH" for "LD_LIBRARY_PATH".
+
 The -i option passed to urbi-console enables you to send urbi commands
 through the standard input and thus experiment very quickly with
 urbi. By specifying "-p port", you can also accept network
