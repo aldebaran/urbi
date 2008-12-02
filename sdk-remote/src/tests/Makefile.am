@@ -33,13 +33,24 @@ $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 INSTRUMENT = true
 URBI_SERVER = urbi-console
 
-TESTS_ENVIRONMENT +=				\
+INSTALLCHECK_ENVIRONMENT +=			\
   srcdir='$(srcdir)'				\
   INSTRUMENT=$(INSTRUMENT)			\
   PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
-  URBI_SERVER=$(URBI_SERVER)			\
+  URBI_SERVER=$(URBI_SERVER)
+
+# Use the wrappers to run the non-installed executables.
+BUILDCHECK_ENVIRONMENT +=						\
+  $(INSTALLCHECK_ENVIRONMENT)						\
   PATH=$(abs_builddir)/bin:$(abs_top_builddir)/src/examples:$$PATH
 
+# By default, tests are buildcheck.
+TESTS_ENVIRONMENT += $(BUILDCHECK_ENVIRONMENT)
+
+# Run the tests with the install-environment.
+installcheck-local:
+	$(MAKE) $(AM_MAKEFLAGS)					\
+	  TESTS_ENVIRONMENT=$(INSTALLCHECK_ENVIRONMENT) check
 
 TESTS += $(CHECKFILES) $(UOBJECTS)
 TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))

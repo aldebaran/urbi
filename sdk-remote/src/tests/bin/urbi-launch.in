@@ -15,13 +15,24 @@ program=$abs_top_builddir/src/urbi-launch
 echo >&2 "$0: $*"
 case " $* " in
   (*' --start '*)
-     # Spawning a new server, which requires a server.
-     libuobjectdir=$abs_top_builddir/../src;;
+     # Spawning a new server, which requires a server.  Two cases:
+     # this package is part of a kernel package, in which case we
+     # should find libuobject.la in it.  Otherwise we hope a kernel
+     # was installed, and the real urbi-launch will look for it at the
+     # right place.
+     if test -f $abs_top_builddir/../src/Makefile; then
+       libuobjectdir=$abs_top_builddir/../src
+     fi;;
   (*)
      libuobjectdir=$abs_top_builddir/src/libuobject;;
 esac
 
-exec "$program" -c "$libuobjectdir/libuobject" "$@"
+if test -n "$libuobjectdir"; then
+  set x -c "$libuobjectdir/libuobject" "$@"
+  shift
+fi
+
+exec "$program" "$@"
 
 # Local Variables:
 # mode: shell-script
