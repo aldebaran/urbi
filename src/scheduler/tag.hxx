@@ -10,8 +10,7 @@ namespace scheduler
 
   inline
   Tag::Tag(libport::Symbol name)
-    : parent_(0)
-    , blocked_(false)
+    : blocked_(false)
     , frozen_(false)
     , name_(name)
     , prio_(UPRIO_DEFAULT)
@@ -27,19 +26,13 @@ namespace scheduler
   inline bool
   Tag::frozen() const
   {
-    return frozen_ || (parent_ && parent_->frozen());
+    return frozen_;
   }
 
   inline bool
   Tag::blocked() const
   {
-    return blocked_ || (parent_ && parent_->blocked());
-  }
-
-  inline bool
-  Tag::derives_from(const Tag& other) const
-  {
-    return this == &other || (parent_ && parent_->derives_from(other));
+    return blocked_;
   }
 
   inline void

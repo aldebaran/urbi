@@ -44,9 +44,6 @@ namespace scheduler
   //     stack until they die or until they are no longer affected by
   //     the tag.
   //
-  // A tag is frozen when it has been explicitly frozen or when its parent
-  // is frozen. Ditto for blocked.
-  //
   // Stopping a tag is an immediate operation: all the jobs holding this
   // tag must act as if they were blocked, but only once. For example, they
   // must rewind their call stack in order not to be blocked anymore, but
@@ -56,9 +53,8 @@ namespace scheduler
   class Tag: public libport::RefCounted
   {
   public:
-    // Create a new tag, with or without a parent
+    // Create a new tag.
     explicit Tag(libport::Symbol name);
-    Tag(const rTag& parent, libport::Symbol name);
     virtual ~Tag();
 
     // Is this tag directly or indirectly frozen or blocked?
@@ -68,9 +64,6 @@ namespace scheduler
     // If the tag is blocked, what is its payload? It is a fatal error
     // to call this method if the tag is not blocked.
     const boost::any& payload_get() const;
-
-    // Is this tag identical to \a other, or does it derive from it?
-    bool derives_from(const Tag& other) const;
 
     // Set and get the priority. When setting the priority, cap it with
     // the minimum and maximum values and return the chosen one.
@@ -94,7 +87,6 @@ namespace scheduler
   private:
     explicit Tag(const Tag&);
 
-    rTag parent_;
     bool blocked_;
     bool frozen_;
     libport::Symbol name_;
