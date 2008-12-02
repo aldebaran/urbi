@@ -44,11 +44,6 @@
     yield ();                                   \
   } while (0)
 
-// Rewind up to the appropriate depth when catching a StopException
-#define REWIND_STOP(Lvl)                        \
-  if (e.depth_get() < Lvl)             \
-    throw;                                      \
-
 
 namespace runner
 {
@@ -500,7 +495,10 @@ namespace runner
     }
     catch (scheduler::StopException& e)
     {
-      REWIND_STOP(result_depth);
+      // Rewind up to the appropriate depth.
+      if (e.depth_get() < result_depth)
+	throw;
+
       // If we are frozen, reenter the scheduler for a while.
       if (frozen())
 	yield();
