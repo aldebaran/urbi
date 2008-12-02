@@ -2,6 +2,7 @@
 # define RUNNER_INTERPRETER_VISIT_HXX
 
 # include <boost/bind.hpp>
+# include <boost/format.hpp>
 # include <boost/scoped_ptr.hpp>
 
 # include <libport/compiler.hh>
@@ -308,56 +309,54 @@ namespace runner
 	  // may need the stack. The following objects will be set if we
 	  // have an exception to show, and it will be printed after
 	  // the "catch" block, or if we have an exception to rethrow.
-	  boost::scoped_ptr<object::UrbiException> exception_to_show;
 	  scheduler::exception_ptr exception_to_throw;
 
           // If at toplevel, print errors and continue, else rethrow them
-          try
-          {
-            res = operator()(exp);
-            // We need to keep checking for void here because it can not be passed
-            // to the << function
-            if (e->toplevel_get()
-                && res != object::void_class)
+          if (e->toplevel_get())
+            try
             {
-	      assertion(res);
-	      ECHO("toplevel: returning a result to the connection.");
+              res = operator()(exp);
+              // We need to keep checking for void here because it can not be passed
+              // to the << function
+              if (res != object::void_class)
+              {
+                static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
 
-	      // Display the value using the topLevel channel.
-	      // If it is not (yet) defined, do nothing, unless the environment
-	      // variable TOPLEVEL_DEBUG is set.
+                ECHO("toplevel: returning a result to the connection.");
 
-	      static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
-	      if (rObject topLevel =
-		  object::global_class->slot_locate(SYMBOL(topLevel), false,
-						    true))
-		object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
-	      else if (toplevel_debug)
-		lobby_->value_get().connection.new_result(res);
-	    }
-	    // Because of the Visual Studio way of not unwinding the stack
-	    // (see comment above), we have to rethrow or display the
-            // exception from outside the handler. Since we know that we
-	    // will have no exception to display or rethrow here, we
-	    // get past this special code.
-	    goto no_exception;
-          }
-          // Catch and print unhandled exceptions
-          catch (const object::UrbiException& exn)
-          {
-            if (e->toplevel_get())
-	      exception_to_show.reset
-	        (new object::UrbiException(exn.value_get(),
-					   exn.backtrace_get()));
-            else
-	      exception_to_throw = exn.clone();
-          }
-	  if (exception_to_throw.get())
-	    exception_to_throw->rethrow();
-	  else if (exception_to_show.get())
-	    show_exception_(*exception_to_show);
-	no_exception:
-	  ;
+                // Display the value using the topLevel channel.
+                // If it is not (yet) defined, do nothing, unless the environment
+                // variable TOPLEVEL_DEBUG is set.
+                if (rObject topLevel =
+                    object::global_class->slot_locate(SYMBOL(topLevel), false,
+                                                      true))
+                  object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
+                else if (toplevel_debug)
+                  lobby_->value_get().connection.new_result(res);
+              }
+            }
+            // Catch and print unhandled exceptions
+            catch (object::UrbiException& exn)
+            {
+              show_exception_(exn);
+            }
+            // Forward scheduler exception
+            catch (const scheduler::exception&)
+            {
+              throw;
+            }
+            // Stop invalid exceptions thrown by primitives
+            catch (const std::exception& e)
+            {
+              static boost::format format("Invalid exception `%s' caught");
+              send_message("error", str(format % e.what()));
+            }
+            catch (...)
+            {
+              send_message("error", "Invalid unknown exception caught");
+            }
+          else
+            res = operator()(exp);
         }
       }
       // If we get a scope tag, stop the runners tagged with it.
