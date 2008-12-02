@@ -18,8 +18,6 @@
 # include <algorithm>
 # include <string>
 
-# include <libport/containers.hh>
-
 # include <urbi/fwd.hh>
 # include <urbi/ustarter.hh>
 
@@ -66,9 +64,14 @@ namespace urbi
   URBIStarter<T>::clean()
   {
     delete getUObject();
-    UStartlist::iterator i = libport::find(slist_, this);
-    if (i != slist_.end())
-      slist_.erase(i);
+    for (UStartlist::iterator i = slist_.begin();
+	 i != slist_.end();
+	 ++i)
+      if (*i == this)
+      {
+	slist_.erase(i);
+	break;
+      }
   }
 
   template <class T>
