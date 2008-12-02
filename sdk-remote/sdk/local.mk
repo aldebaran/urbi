@@ -4,19 +4,19 @@ host_SCRIPTS += $(top_builddir)/libtool
 # This file tells umake how to build things.
 nodist_env_DATA = sdk/param.mk
 
-UMAKE_WRAPPERS =				\
-sdk/umake-aibo					\
-sdk/umake-deepclean				\
-sdk/umake-engine				\
-sdk/umake-fullengine				\
-sdk/umake-lib					\
-sdk/umake-shared				\
-sdk/umake-remote
+UMAKE_WRAPPERS =                                \
+  sdk/umake-aibo                                \
+  sdk/umake-deepclean                           \
+  sdk/umake-engine                              \
+  sdk/umake-fullengine                          \
+  sdk/umake-lib                                 \
+  sdk/umake-shared                              \
+  sdk/umake-remote
 
-UMAKE_CONFIGURED =				\
-sdk/uinstall					\
-sdk/umake					\
-sdk/umake-link
+UMAKE_CONFIGURED =                              \
+  sdk/uinstall                                  \
+  sdk/umake                                     \
+  sdk/umake-link
 
 nodist_bin_SCRIPTS += $(UMAKE_WRAPPERS)
 dist_bin_SCRIPTS   += $(UMAKE_CONFIGURED)

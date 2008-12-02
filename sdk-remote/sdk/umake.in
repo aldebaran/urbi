@@ -15,15 +15,16 @@ General options:
   -V, --verbose     report on what is done
 
 Compilation options:
-      --deep-clean       remove all building directories
-  -c, --clean            clean building directory before compilation
-  -j, --jobs=JOBS        specify the numbers of commands to run simultaneously
-  -l, --library          produce a library, don't link to a particular core
-  -s, --shared-library   produce a shared library loadable by any core
-  -o, --output=output    output file name
-  -C, --core=CORE        build type [$core]
-  -H, --host=HOST        destination host [$host]
-  -m, --disable-automain prevent umake from adding the main function
+      --deep-clean        remove all building directories
+  -c, --clean             clean building directory before compilation
+  -j, --jobs=JOBS         specify the numbers of commands to run simultaneously
+  -l, --library           produce a library, don't link to a particular core
+  -s, --shared-library    produce a shared library loadable by any core
+  -o, --output=output     output file name
+  -C, --core=CORE         build type [$core]
+  -H, --host=HOST         destination host [$host]
+  -m, --disable-automain  do not add the main function
+
 Developper options:
   -p, --prefix=DIR     library file location [$prefix]
   -P, --param-mk=FILE  param.mk location [$(param_mk)]
@@ -230,7 +231,7 @@ if test x$core = xdefault; then
   core=$defaultenv
 fi
 
-# Use default main
+# Use default main.
 if $automain; then
   sources="$sources $prefix/share/umain/umain.cc"
 fi
