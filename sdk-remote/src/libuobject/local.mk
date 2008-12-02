@@ -14,7 +14,7 @@ libuobject_libuobject_la_CPPFLAGS =		\
   $(AM_CPPFLAGS)				\
   -DBUILDING_URBI_SDK
 libuobject_libuobject_la_LIBADD = $(LIBADD) libuco/libuco.la liburbi/liburbi.la
-libuobject_libuobject_la_LDFLAGS = -no-undefined
+libuobject_libuobject_la_LDFLAGS = -avoid-version -no-undefined
 
 # We might need to have two versions of libuobject: one to link
 # against, and the other one to dlopen.  It seems that we can live
