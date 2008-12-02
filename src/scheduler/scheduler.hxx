@@ -48,6 +48,12 @@ namespace scheduler
     real_time_behaviour_ = true;
   }
 
+  inline bool
+  Scheduler::real_time_behaviour_get() const
+  {
+    return real_time_behaviour_;
+  }
+
 } // namespace scheduler
 
 #endif // !SCHEDULER_SCHEDULER_HXX

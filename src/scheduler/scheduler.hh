@@ -130,6 +130,9 @@ namespace scheduler
     /// on).
     void real_time_behaviour_set();
 
+    /// Check whether we want real-time behaviour or not.
+    bool real_time_behaviour_get() const;
+
   private:
     /// Execute one round in the scheduler.
     ///
