@@ -90,14 +90,16 @@ deep_clean=
 builddir=
 builddir_pref="_ubuild"
 
-: ${prefix='@prefix@'}
-: ${PACKAGE_BRAND='@PACKAGE_BRAND@'}
-: ${branddir='@branddir@'}
+: ${prefix="@prefix@"}
+: ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
+: ${branddir="@branddir@"}
 #prefix="$dir/"
 #prefix="${prefix%/bin*}"
-target=         # target name
 
-urbilibdir=${prefix}/lib
+# Target name.
+target=
+
+libdir=${prefix}/lib
 
 libs=
 sources=

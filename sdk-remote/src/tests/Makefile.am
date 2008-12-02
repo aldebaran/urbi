@@ -62,4 +62,4 @@ check-%:
         $(MAKE) $(AM_MAKEFLAGS) check-html TESTS_DIRS=$* VERBOSE=1
 
 check-clean-local:
-	rm -rf $(CHECKFILES:.cc=.dir)
+	rm -rf $(TEST_LOGS:.log=.dir)

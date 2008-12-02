@@ -20,15 +20,8 @@ case " $* " in
      # should find libuobject.la in it.  Otherwise we hope a kernel
      # was installed, and the real urbi-launch will look for it at the
      # right place.
-     if test -f $abs_top_builddir/../src/Makefile; then
-       libuobjectdir=$abs_top_builddir/../src
-     else
-       # If we can't find the installed libuobject, skip the test.
-       $program ||
-         case $? in
-           (72) exit 77;;
-         esac
-     fi;;
+     test ! -f $abs_top_builddir/../src/Makefile ||
+       libuobjectdir=$abs_top_builddir/../src;;
   (*)
      libuobjectdir=$abs_top_builddir/src/libuobject;;
 esac

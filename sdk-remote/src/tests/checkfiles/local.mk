@@ -24,7 +24,7 @@ bin_tests_SOURCES = bin/tests.hh bin/tests.cc $(CHECKFILES)
 bin_tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 bin_tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_bin_tests_SOURCES = bin/dispatcher.cc
-CLEANFILES += $(nodist_tests_SOURCES)
+CLEANFILES += $(nodist_bin_tests_SOURCES)
 
 bin/dispatcher.cc: $(tests_SOURCES) Makefile
 	{								     \

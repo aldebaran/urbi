@@ -36,8 +36,8 @@ urbi_launch=$(xfind_prog urbi-launch)
 
 # If urbi-launch cannot work because there is no kernel libuobject,
 # skip the test.
-$urbi_launch --start ||
+run "urbi-launch --start" $urbi_launch --start ||
   case $? in
-    (77) error 77 "urbi-launch cannot find libuobject";;
+    (72) error 77 "urbi-launch cannot find libuobject";;
   esac
 xrun "urbi-launch $me --version" "$urbi_launch" --start $me.la -- --version

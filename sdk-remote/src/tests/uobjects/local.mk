@@ -22,4 +22,3 @@ m4sh_scripts += bin/uobject-check
 debug:
 	echo $(UOBJECTS)
 	echo $(TEST_LOGS)
-
