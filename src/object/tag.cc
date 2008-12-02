@@ -35,7 +35,7 @@ namespace object
   {
     proto_add(model);
     if (model.get() != proto.get())
-      parent_set(model);
+      parent_ = model;
   }
 
   const Tag::value_type&
@@ -164,12 +164,6 @@ namespace object
       urbi_call(r, slot_get(SYMBOL(leaveEvent)), SYMBOL(syncEmit));
   }
 
-  void
-  Tag::parent_set(const rTag& parent)
-  {
-    parent_ = parent;
-  }
-
   rTag
   Tag::parent_get()
   {
@@ -189,7 +183,6 @@ namespace object
     bind(SYMBOL(newFlowControl), &Tag::new_flow_control);
     bind(SYMBOL(prio), &Tag::prio);
     bind(SYMBOL(prio_set), &Tag::prio_set);
-    bind(SYMBOL(setParent), &Tag::parent_set);
     bind(SYMBOL(stop), &Tag::stop);
     bind(SYMBOL(unblock), &Tag::unblock);
     bind(SYMBOL(unfreeze), &Tag::unfreeze);

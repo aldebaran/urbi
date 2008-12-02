@@ -44,7 +44,6 @@ namespace object
     void triggerLeave(runner::Runner& r);
 
     /// Manipulate parent tag.
-    void parent_set(const rTag& parent);
     rTag parent_get();
 
   private:
