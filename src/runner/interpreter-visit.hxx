@@ -323,7 +323,6 @@ namespace runner
             // We need to keep checking for void here because it can not be passed
             // to the << function
             if (e->toplevel_get()
-                && res.get() // FIXME: What's that for?
                 && res != object::void_class)
             {
 	      assertion(res);
