@@ -1,6 +1,3 @@
-# Path to envdir from top/install_prefix
-topenvdir = $(PACKAGE_BRAND)/core/$(URBI_HOST)/$(URBI_ENV)
-
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 umaindir = $(datadir)/umain
