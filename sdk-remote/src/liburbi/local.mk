@@ -1,6 +1,5 @@
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-umaindir = $(datadir)/umain
 dist_umain_DATA = liburbi/umain.cc
 
 ## ------------ ##

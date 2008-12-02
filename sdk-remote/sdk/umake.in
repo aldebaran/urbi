@@ -65,7 +65,7 @@ param_mk ()
   if test -n "$param_mk"; then
     echo "$param_mk"
   else
-    echo "$prefix/gostai/core/$host/$lcore/param.mk"
+    echo "$branddir/core/$host/$lcore/param.mk"
   fi
 }
 
@@ -90,7 +90,9 @@ deep_clean=
 builddir=
 builddir_pref="_ubuild"
 
-prefix='@prefix@'
+: ${prefix='@prefix@'}
+: ${PACKAGE_BRAND='@PACKAGE_BRAND@'}
+: ${branddir='@branddir@'}
 #prefix="$dir/"
 #prefix="${prefix%/bin*}"
 target=         # target name
@@ -233,7 +235,8 @@ fi
 
 # Use default main.
 if $automain; then
-  sources="$sources $prefix/share/umain/umain.cc"
+  : ${umaindir='@umaindir@'}
+  sources="$sources $umaindir/umain.cc"
 fi
 
 for s in $(eval echo "$sources")
@@ -355,8 +358,8 @@ report "" "$line" "running to build $bintype, for '$host' host." "$line" ""
 exist_error 4 d "$prefix" prefix
 
 # Check if given base directory has gostai and core subdirs
-#exist_error 4 d "$prefix/gostai" prefix
-#exist_error 4 d "$prefix/gostai/core" prefix
+#exist_error 4 d "$branddir" prefix
+#exist_error 4 d "$branddir/core" prefix
 
 # Check param.mk file
 exist_error 4 f $(param_mk) param-mk
@@ -368,10 +371,10 @@ exist_error 4 f $(param_mk) param-mk
 #test "$core" == "engine" && exist_error 4 d $(kernel) kernel
 
 # Check if host exists
-#dirlist_error 5 host "$prefix/gostai/core/" "$host"
+#dirlist_error 5 host "$branddir/core/" "$host"
 
 # Check if target is valid for host
-#dirlist_error 6 core "$prefix/gostai/core/$host" "$core"
+#dirlist_error 6 core "$branddir/core/$host" "$core"
 
 # Extra test for aibo engine
 #if test $core = aibo -a $host != mipsel-linux; then
