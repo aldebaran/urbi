@@ -33,16 +33,18 @@ $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 INSTRUMENT = true
 URBI_SERVER = urbi-console
 
-INSTALLCHECK_ENVIRONMENT +=			\
+CHECK_ENVIRONMENT +=				\
   srcdir='$(srcdir)'				\
   INSTRUMENT=$(INSTRUMENT)			\
   PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
   URBI_SERVER=$(URBI_SERVER)
 
 # Use the wrappers to run the non-installed executables.
-BUILDCHECK_ENVIRONMENT +=						\
-  $(INSTALLCHECK_ENVIRONMENT)						\
+BUILDCHECK_ENVIRONMENT +=					\
   PATH=$(abs_builddir)/bin:$(abs_top_builddir)/src/examples:$$PATH
+
+INSTALLCHECK_ENVIRONMENT +=			\
+  PATH=$(bindir):$$PATH
 
 # By default, tests are buildcheck.
 TESTS_ENVIRONMENT += $(BUILDCHECK_ENVIRONMENT)
