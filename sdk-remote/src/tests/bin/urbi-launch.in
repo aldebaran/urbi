@@ -22,6 +22,12 @@ case " $* " in
      # right place.
      if test -f $abs_top_builddir/../src/Makefile; then
        libuobjectdir=$abs_top_builddir/../src
+     else
+       # If we can't find the installed libuobject, skip the test.
+       $program ||
+         case $? in
+           (72) exit 77;;
+         esac
      fi;;
   (*)
      libuobjectdir=$abs_top_builddir/src/libuobject;;
