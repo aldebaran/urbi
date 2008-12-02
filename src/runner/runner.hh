@@ -184,7 +184,7 @@ namespace runner
 
     /// Recompute the current priority if a particular tag could have
     /// affected it (addition or removal).
-    void recompute_prio(const object::rTag&);
+    void recompute_prio(scheduler::prio_type prio);
 
     /// The scope tags stack.
     std::vector<scheduler::rTag> scope_tags_;

@@ -43,8 +43,13 @@ namespace object
     /// Trigger \a this' leave event
     void triggerLeave(runner::Runner& r);
 
+    /// Manipulate parent tag.
+    void parent_set(const rTag& parent);
+    rTag parent_get();
+
   private:
     value_type value_;
+    rTag parent_;
 
   URBI_CXX_OBJECT(Tag);
   };

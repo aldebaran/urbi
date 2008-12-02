@@ -448,27 +448,47 @@ namespace runner
     // to Object
     object::rObject unchecked_tag = operator()(t->tag_get().get());
     object::type_check<object::Tag>(unchecked_tag);
-    const object::rTag& urbi_tag = unchecked_tag->as<object::Tag>();
-    const scheduler::rTag& tag = urbi_tag->value_get();
+    object::rTag urbi_tag = unchecked_tag->as<object::Tag>();
 
-    // If tag is blocked, do not start and ignore the
-    // statement completely but use the provided payload.
-    if (tag->blocked())
-      return boost::any_cast<rObject>(tag->payload_get());
 
     size_t result_depth = tag_stack_size();
     try
     {
-      Finally finally(2);
-      apply_tag(urbi_tag, &finally);
-      // If the latest tag causes us to be frozen, let the
+      Finally finally;
+      bool some_frozen = false;
+      std::vector<object::rTag> applied;
+      // Apply tag as well as its ancestors to the current runner.
+      do
+      {
+	// If tag is blocked, do not start and ignore the
+	// statement completely but use the provided payload.
+	// Since the list of parents starts from the specific tag
+	// and goes up to the root tag, the most specific payload
+	// will be retrieved.
+	if (urbi_tag->value_get()->blocked())
+	  return boost::any_cast<rObject>(urbi_tag->value_get()->payload_get());
+	// If tag is frozen, remember it.
+	some_frozen = some_frozen || urbi_tag->value_get()->frozen();
+	applied.push_back(urbi_tag);
+	urbi_tag = urbi_tag->parent_get();
+      } while (urbi_tag);
+      // Apply the tags, starting with the uppermost one in the ancestry
+      // chain so that a "stop" on a parent removes the corresponding
+      // children.
+      foreach (const rTag& tag, applied)
+	apply_tag(tag, &finally);
+      // If one of the tags caused us to be frozen, let the
       // scheduler handle this properly to avoid duplicating the
       // logic.
-      if (tag->frozen())
+      if (some_frozen)
 	yield();
-      urbi_tag->triggerEnter(*this);
+      // Start with the uppermost tag in the derivation chain.
+      rforeach (const object::rTag& tag, applied)
+	tag->triggerEnter(*this);
       rObject res = operator()(t->exp_get().get());
-      urbi_tag->triggerLeave(*this);
+      // Start with the most specific tag in the derivation chain.
+      foreach (const object::rTag& tag, applied)
+	tag->triggerLeave(*this);
       return res;
     }
     catch (scheduler::StopException& e)

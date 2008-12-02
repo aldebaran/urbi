@@ -228,7 +228,7 @@ namespace runner
   AtJob::tag_held(const scheduler::Tag& tag) const
   {
     foreach (const object::rTag& t, tag_stack_)
-      if (t->value_get()->derives_from(tag))
+      if (t->value_get() == &tag)
 	return true;
     return false;
   }

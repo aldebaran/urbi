@@ -70,7 +70,8 @@ namespace runner
     tag_stack_.push_back(tag);
     if (finally)
       *finally << boost::bind(&tag_stack_type::pop_back, boost::ref(tag_stack_))
-	       << boost::bind(&Runner::recompute_prio, this, boost::ref(tag));
+	       << boost::bind(&Runner::recompute_prio, this,
+			      tag->value_get()->prio_get());
     recompute_prio(tag);
   }
 

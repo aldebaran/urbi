@@ -117,9 +117,11 @@ namespace runner
   }
 
   void
-  Runner::recompute_prio(const object::rTag& tag)
+  Runner::recompute_prio(scheduler::prio_type prio)
   {
-    if (tag->value_get()->prio_get() >= prio_ || tag_stack_.empty())
+    if (!scheduler_get().real_time_behaviour_get())
+      return;
+    if (prio >= prio_ || tag_stack_.empty())
       recompute_prio();
   }
 
@@ -128,7 +130,7 @@ namespace runner
   {
     max_depth = std::min(max_depth, tag_stack_.size());
     for (size_t i = 0; i < max_depth; i++)
-      if (tag_stack_[i]->value_get()->derives_from(tag))
+      if (tag_stack_[i]->value_get() == &tag)
 	return i+1;
     return 0;
   }

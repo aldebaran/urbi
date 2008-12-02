@@ -19,8 +19,8 @@
 namespace object
 {
   Tag::Tag()
+    : value_(new scheduler::Tag(libport::Symbol::make_empty()))
   {
-    value_ = new scheduler::Tag(libport::Symbol::make_empty());
     proto_add(proto ? proto : object_class);
   }
 
@@ -31,9 +31,11 @@ namespace object
   }
 
   Tag::Tag(rTag model)
-    : value_(new scheduler::Tag(model->value_, model->value_->name_get()))
+    : value_(new scheduler::Tag(model->value_->name_get()))
   {
     proto_add(model);
+    if (model.get() != proto.get())
+      parent_set(model);
   }
 
   const Tag::value_type&
@@ -163,17 +165,31 @@ namespace object
   }
 
   void
+  Tag::parent_set(const rTag& parent)
+  {
+    parent_ = parent;
+  }
+
+  rTag
+  Tag::parent_get()
+  {
+    return parent_;
+  }
+
+  void
   Tag::initialize(CxxObject::Binder<Tag>& bind)
   {
     bind(SYMBOL(block), &Tag::block);
     bind(SYMBOL(enter), &Tag::enter);
     bind(SYMBOL(freeze), &Tag::freeze);
+    bind(SYMBOL(getParent), &Tag::parent_get);
     bind(SYMBOL(leave), &Tag::leave);
     bind(SYMBOL(name), &Tag::name);
     bind(SYMBOL(init), &Tag::init);
     bind(SYMBOL(newFlowControl), &Tag::new_flow_control);
     bind(SYMBOL(prio), &Tag::prio);
     bind(SYMBOL(prio_set), &Tag::prio_set);
+    bind(SYMBOL(setParent), &Tag::parent_set);
     bind(SYMBOL(stop), &Tag::stop);
     bind(SYMBOL(unblock), &Tag::unblock);
     bind(SYMBOL(unfreeze), &Tag::unfreeze);
