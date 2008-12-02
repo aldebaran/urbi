@@ -2,6 +2,7 @@ include $(top_srcdir)/build-aux/init.mk
 AUTOMAKE_OPTIONS += subdir-objects
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
+include examples/local.mk
 
 ## ---------------------------------------- ##
 ## Wrappers for non-installed executables.  ##
@@ -73,12 +74,12 @@ AM_LDADD =					\
 INSTRUMENT = true
 URBI_SERVER = urbi-console
 
-TESTS_ENVIRONMENT =				\
+TESTS_ENVIRONMENT +=				\
   srcdir='$(srcdir)'				\
   INSTRUMENT=$(INSTRUMENT)			\
   PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
   URBI_SERVER=$(URBI_SERVER)			\
-  PATH=$(abs_builddir)/bin:$$PATH
+  PATH=$(abs_builddir)/bin:$(abs_top_builddir)/src/examples:$$PATH
 
 # tests(*).
 check_PROGRAMS = bin/tests
@@ -116,7 +117,7 @@ m4sh_scripts += bin/liburbi-check
 CHECKFILES = 					\
   checkfiles/values.cc				\
   checkfiles/removecallbacks.cc
-TESTS = $(CHECKFILES) $(UOBJECTS)
+TESTS += $(CHECKFILES) $(UOBJECTS)
 TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))
 
 # Run some tests only.

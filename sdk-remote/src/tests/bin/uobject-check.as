@@ -1,11 +1,10 @@
-m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
+                                                     -*- shell-script -*-
 URBI_INIT
 
 # The full path to the *.uob dir:
 # ../../../../../sdk-remote/src/tests/uobjects/access-and-change/uaccess.uob
 uob=$(absolute $1.uob)
-test -d "$uob" ||
-  error OSFILE "argument is not a directory: $uob"
+require_dir "$uob"
 
 # The ending part, for our builddir: access-and-change/uaccess.dir.
 builddir=$(echo "$uob" |
