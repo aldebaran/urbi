@@ -37,9 +37,13 @@ namespace scheduler
 #define COMPLETE_EXCEPTION(Name)				\
  public:							\
  virtual ::scheduler::exception_ptr clone() const		\
-  {								\
-    return ::scheduler::exception_ptr(new Name (*this));	\
-  };								\
+ {								\
+   return ::scheduler::exception_ptr(new Name(*this));		\
+ };								\
+ virtual std::string what() const throw()			\
+ {								\
+   return #Name;						\
+ }								\
 private:							\
   ATTRIBUTE_NORETURN virtual void rethrow_() const		\
   {								\
