@@ -14,8 +14,11 @@ program=$abs_top_builddir/src/urbi-launch
 # The libubbject we load depends on the usage.
 echo >&2 "$0: $*"
 case " $* " in
-  (*' --start '*) libuobjectdir=$abs_top_builddir/../src;;
-  (*)             libuobjectdir=$abs_top_builddir/src/libuobject;;
+  (*' --start '*)
+     # Spawning a new server, which requires a server.
+     libuobjectdir=$abs_top_builddir/../src;;
+  (*)
+     libuobjectdir=$abs_top_builddir/src/libuobject;;
 esac
 
 exec "$program" -c "$libuobjectdir/libuobject" "$@"
