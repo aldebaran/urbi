@@ -310,9 +310,11 @@ namespace runner
 	  // have an exception to show, and it will be printed after
 	  // the "catch" block, or if we have an exception to rethrow.
 	  scheduler::exception_ptr exception_to_throw;
+	  boost::scoped_ptr<object::UrbiException> exception_to_show;
 
           // If at toplevel, print errors and continue, else rethrow them
           if (e->toplevel_get())
+          {
             try
             {
               res = operator()(exp);
@@ -334,16 +336,23 @@ namespace runner
                 else if (toplevel_debug)
                   lobby_->value_get().connection.new_result(res);
               }
+
+              // Because of the Visual Studio way of not unwinding the stack
+              // (see comment above), we have to rethrow or display the
+              // exception from outside the handler.
+              goto no_exception;
             }
             // Catch and print unhandled exceptions
             catch (object::UrbiException& exn)
             {
-              show_exception_(exn);
+	      exception_to_show.reset
+	        (new object::UrbiException(exn.value_get(),
+					   exn.backtrace_get()));
             }
             // Forward scheduler exception
-            catch (const scheduler::exception&)
+            catch (const scheduler::exception& e)
             {
-              throw;
+              exception_to_throw = e.clone();
             }
             // Stop invalid exceptions thrown by primitives
             catch (const std::exception& e)
@@ -355,6 +364,15 @@ namespace runner
             {
               send_message("error", "Invalid unknown exception caught");
             }
+
+            if (exception_to_throw.get())
+              exception_to_throw->rethrow();
+            else if (exception_to_show.get())
+              show_exception_(*exception_to_show);
+
+            no_exception:
+            ;
+          }
           else
             res = operator()(exp);
         }
