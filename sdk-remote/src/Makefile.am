@@ -32,11 +32,15 @@ AM_LDADD =					\
   $(PTHREAD_LIBS)				\
   $(top_builddir)/lib/libport/libport.la
 
-include examples/local.mk
 include libuco/local.mk
 include liburbi/local.mk
 include libuobject/local.mk
+
+if EXAMPLES
+include examples/local.mk
 include utils/local.mk
+endif EXAMPLES
+
 ## ------------ ##
 ## version.hh.  ##
 ## ------------ ##

@@ -1,4 +1,3 @@
-if EXAMPLES
 bin_PROGRAMS +=					\
   examples/urbi-bandwidth			\
   examples/urbi-mirror				\
@@ -27,7 +26,6 @@ if  !WIN32
 bin_PROGRAMS += examples/urbi-talkie
 examples_urbi_talkie_SOURCES = examples/urbi-talkie.cc
 endif
-endif EXAMPLES
 
 
 
@@ -39,7 +37,6 @@ monitor_programs =				\
  examples/urbi-balltrackinghead			\
  examples/urbi-image
 
-if EXAMPLES
 if  WIN32
 #bin_PROGRAMS += $(monitor_programs)
 monitor_sources =				\
@@ -54,7 +51,6 @@ monitor_sources =				\
   examples/monitor.h				\
   examples/monitor.cc
 endif
-endif EXAMPLES
 
 examples_urbi_balltrackinghead_SOURCES =	\
   examples/urbi-balltrackinghead.cc		\

@@ -1,10 +1,8 @@
-if EXAMPLES
 bin_PROGRAMS +=					\
   utils/urbi-cycle				\
   utils/urbi-reverse				\
   utils/urbi-scale				\
   utils/urbi-walk
-endif
 
 utils_urbi_cycle_SOURCES =			\
   utils/parse-header.hh				\
@@ -20,7 +18,6 @@ utils_urbi_walk_SOURCES =			\
   utils/urbi-walk.cc				\
   utils/move.cc					\
   utils/move.hh
-
 utils_urbi_walk_LDADD =				\
   $(top_builddir)/jpeg-6b/libjpeg.la		\
   liburbi/liburbi.la
