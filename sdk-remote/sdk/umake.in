@@ -1,6 +1,4 @@
 @UMAKE_COMMON@
-EXEEXT=@EXEEXT@
-SHLIBEXT=@SHLIBEXT@
 
 usage ()
 {
@@ -78,41 +76,6 @@ kernel ()
     echo "$prefix"
   fi
 }
-
-defaultenv='@URBI_ENV@'
-havearg=false   # we have at least one path or file arg
-host='@URBI_HOST@'
-core=$defaultenv
-
-clean=
-deep_clean=
-
-builddir=
-builddir_pref="_ubuild"
-
-: ${prefix="@prefix@"}
-: ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
-: ${branddir="@branddir@"}
-#prefix="$dir/"
-#prefix="${prefix%/bin*}"
-
-# Target name.
-target=
-
-libdir=${prefix}/lib
-
-libs=
-sources=
-headers=
-makeargs=
-njobs=1
-
-automain=true
-
-
-# Produce objects in the current directory, not in the source tree.
-objects=
-vpath=.
 
 ## ---------------------- ##
 ## Command line parsing.  ##
@@ -227,6 +190,48 @@ get_options ()
     shift
   done
 }
+
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+EXEEXT=@EXEEXT@
+SHLIBEXT=@SHLIBEXT@
+defaultenv='@URBI_ENV@'
+havearg=false   # we have at least one path or file arg
+host='@URBI_HOST@'
+core=$defaultenv
+
+clean=
+deep_clean=
+
+builddir=
+builddir_pref="_ubuild"
+
+: ${prefix="@prefix@"}
+: ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
+: ${branddir="@branddir@"}
+#prefix="$dir/"
+#prefix="${prefix%/bin*}"
+
+# Target name.
+target=
+
+libdir=${prefix}/lib
+
+libs=
+sources=
+headers=
+makeargs=
+njobs=1
+
+automain=true
+
+
+# Produce objects in the current directory, not in the source tree.
+objects=
+vpath=.
 
 get_options "$@"
 initialize
