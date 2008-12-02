@@ -33,9 +33,9 @@ symbols:
 
 # check-html, check-clean, check-uob etc.
 check-%:
-	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
+	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
 
 # The target run by the buildfarm.
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
-	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
+	$(MAKE) $(AM_MAKEFLAGS) -C tests check-html $(CHECK_BUILDFARM_FLAGS)
