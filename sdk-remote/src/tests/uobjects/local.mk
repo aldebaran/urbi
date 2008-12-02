@@ -18,7 +18,3 @@ m4sh_scripts += bin/uobject-check
 
 %.log: %.uob bin/uobject-check
 	@$(am__check_pre) bin/uobject-check $(srcdir)/$* $(am__check_post)
-
-debug:
-	echo $(UOBJECTS)
-	echo $(TEST_LOGS)

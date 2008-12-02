@@ -63,3 +63,8 @@ check-%:
 
 check-clean-local:
 	rm -rf $(TEST_LOGS:.log=.dir)
+
+
+debug:
+	echo $(UOBJECTS)
+	echo $(TEST_LOGS)
