@@ -340,6 +340,12 @@ namespace runner
 	      else if (toplevel_debug)
 		lobby_->value_get().connection.new_result(res);
 	    }
+	    // Because of the Visual Studio way of not unwinding the stack
+	    // (see comment above), we have to rethrow or display the
+            // exception from outside the handler. Since we know that we
+	    // will have no exception to display or rethrow here, we
+	    // get past this special code.
+	    goto no_exception;
           }
           // Catch and print unhandled exceptions
           catch (const object::UrbiException& exn)
@@ -355,6 +361,8 @@ namespace runner
 	    exception_to_throw->rethrow();
 	  else if (exception_to_show.get())
 	    show_exception_(*exception_to_show);
+	no_exception:
+	  ;
         }
       }
       // If we get a scope tag, stop the runners tagged with it.
