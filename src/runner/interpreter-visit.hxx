@@ -258,15 +258,22 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
+    const ast::exps_type& exps = e->children_get();
+
+    // An empty Nary does nothing and returns void. We do not need
+    // to setup everything below or create intermediate objects.
+    if (exps.empty())
+      return object::void_class;
+
     // Optimize a common case where an inner (non-toplevel) Nary
     // contains only one statement not ending with a comma. This is
     // for example the case of Nary created by a "if" branch without
     // braces. In this case, we will make a tail-call to avoid
     // cluttering the stack.
-    if (!e->toplevel_get() && e->children_get().size() == 1)
+    if (!e->toplevel_get() && exps.size() == 1)
     {
       const ast::Stmt* stmt =
-	dynamic_cast<const ast::Stmt*>(e->children_get().front().get());
+	dynamic_cast<const ast::Stmt*>(exps.front().get());
       if (stmt && stmt->flavor_get() != ast::flavor_comma)
 	return visit(stmt);
     }
