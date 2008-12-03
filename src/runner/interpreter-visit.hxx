@@ -258,6 +258,19 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
+    // Optimize a common case where an inner (non-toplevel) Nary
+    // contains only one statement not ending with a comma. This is
+    // for example the case of Nary created by a "if" branch without
+    // braces. In this case, we will make a tail-call to avoid
+    // cluttering the stack.
+    if (!e->toplevel_get() && e->children_get().size() == 1)
+    {
+      const ast::Stmt* stmt =
+	dynamic_cast<const ast::Stmt*>(e->children_get().front().get());
+      if (stmt && stmt->flavor_get() != ast::flavor_comma)
+	return visit(stmt);
+    }
+
     // List of runners for Stmt flavored by a comma.
     scheduler::jobs_type runners;
 
