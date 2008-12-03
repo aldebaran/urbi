@@ -283,7 +283,9 @@ namespace runner
 
     Finally finally;
 
-    rObject res;
+    // Initialize the result to void to account for a Nary which would
+    // contain only comma-terminated statements.
+    rObject res = object::void_class;
 
     bool tail = false;
     try
