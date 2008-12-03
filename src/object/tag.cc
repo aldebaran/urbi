@@ -3,8 +3,6 @@
  ** \brief Creation of the URBI object tag.
  */
 
-#include <boost/any.hpp>
-
 #include <object/tag.hh>
 
 #include <object/global.hh>
@@ -48,7 +46,7 @@ namespace object
   Tag::block(runner::Runner& r, objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
-    rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
+    rObject payload = args.empty() ? void_class : args[0];
     value_->block(r.scheduler_get(), payload);
   }
 
@@ -109,7 +107,7 @@ namespace object
   Tag::stop(runner::Runner& r, objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
-    rObject payload = boost::any_cast<rObject>(args.empty() ? void_class : args[0]);
+    rObject payload = args.empty() ? void_class : args[0];
     value_->stop(r.scheduler_get(), payload);
   }
 
