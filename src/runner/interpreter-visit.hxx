@@ -283,8 +283,7 @@ namespace runner
 
     Finally finally;
 
-    // In case we're empty, {} evaluates to void.
-    rObject res = object::void_class;
+    rObject res;
 
     bool tail = false;
     try
@@ -383,7 +382,15 @@ namespace runner
             if (exception_to_throw.get())
               exception_to_throw->rethrow();
             else if (exception_to_show.get())
+	    {
               show_exception_(*exception_to_show);
+
+	      // In the case of a Nary with multiple elements at the toplevel,
+	      // we want to reset the result to void to make sure that we
+	      // do not return a reference onto the previously evaluated
+	      // expression.
+	      res = object::void_class;
+	    }
           }
           else
             res = operator()(exp);
