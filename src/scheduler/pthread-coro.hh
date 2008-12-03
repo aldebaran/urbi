@@ -12,6 +12,7 @@ class Coro
 public:
   Coro();
   libport::Semaphore sem_;
+  bool started_;
   bool die_;
   pthread_t thread_;
 };

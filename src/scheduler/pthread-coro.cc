@@ -17,7 +17,8 @@
    that only one coroutine is running at the same time.  */
 
 Coro::Coro()
-  : die_(false)
+  : started_(false)
+  , die_(false)
 {}
 
 Coro*
@@ -29,11 +30,14 @@ coroutine_new(size_t)
 void
 coroutine_free(Coro* c)
 {
-  void *status;
-  c->die_ = true;
-  c->sem_++;
-  if (pthread_join(c->thread_, &status))
-    errabort("pthread_join");
+  // If the thread has not been created, do nothing, otherwise free it.
+  if (c->started_)
+  {
+    c->die_ = true;
+    c->sem_++;
+    if (pthread_join(c->thread_, 0))
+      errabort("pthread_join");
+  }
 }
 
 void
@@ -64,6 +68,7 @@ coroutine_start(Coro* self, Coro* other,
 		     reinterpret_cast<void* (*)(void*)>(callback), context))
     errabort("pthread_create");
 #endif
+  other->started_ = true;
   self->sem_--;
 }
 
