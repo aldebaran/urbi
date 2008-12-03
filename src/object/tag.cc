@@ -46,7 +46,7 @@ namespace object
   Tag::block(runner::Runner& r, objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
-    rObject payload = args.empty() ? void_class : args[0];
+    const rObject& payload = args.empty() ? void_class : args.front();
     value_->block(r.scheduler_get(), payload);
   }
 
@@ -107,7 +107,7 @@ namespace object
   Tag::stop(runner::Runner& r, objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
-    rObject payload = args.empty() ? void_class : args[0];
+    const rObject& payload = args.empty() ? void_class : args.front();
     value_->stop(r.scheduler_get(), payload);
   }
 
