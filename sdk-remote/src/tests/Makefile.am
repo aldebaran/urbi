@@ -4,8 +4,8 @@ TESTS =
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
 include examples/local.mk
+include liburbi/local.mk
 include uobjects/local.mk
-include checkfiles/local.mk
 
 ## ---------------------------------------- ##
 ## Wrappers for non-installed executables.  ##
