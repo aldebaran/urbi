@@ -73,12 +73,13 @@ namespace
   lt_dlhandle
   xlt_dlopenext(const std::string& s, bool global, int exit_failure = 1)
   {
-    std::cerr << "loading " << s << std::endl;
+    std::cerr << program_name
+              << ": loading " << s << std::endl;
     lt_dlhandle res =
       lt_dlopenadvise(s.c_str(),
                       xlt_dladvise().global(global).ext().advise);
     if (!res)
-      std::cerr << "failed to load " << s
+      std::cerr << program_name << ": failed to load " << s
                 << ": " << lt_dlerror() << std::endl
                 << libport::exit(exit_failure);
     return res;
@@ -110,7 +111,8 @@ namespace
 static UCallbackAction
 onError(const UMessage& msg)
 {
-  std::cerr <<"load module error: " << msg.message << std::endl;
+  std::cerr << program_name
+            << ": load module error: " << msg.message << std::endl;
   return URBI_CONTINUE;
 }
 
