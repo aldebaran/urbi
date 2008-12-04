@@ -20,11 +20,3 @@ liburbi_liburbi_la_CPPFLAGS =			\
   -DBUILDING_URBI_SDK
 liburbi_liburbi_la_LIBADD = $(LIBADD) $(top_builddir)/jpeg-6b/libjpeg.la
 liburbi_liburbi_la_LDFLAGS = -avoid-version -no-undefined
-
-all-local: liburbi/liburbi.la.stamp
-
-liburbi/liburbi.la.stamp: liburbi/liburbi.la
-	$(build_aux_dir)/fix-libtool-la liburbi/liburbi.la \
-	  liburbi/liburbi.la.stamp
-
-CLEANFILES += liburbi/liburbi.la.stamp

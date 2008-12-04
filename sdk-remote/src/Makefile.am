@@ -1,5 +1,5 @@
 include $(top_srcdir)/build-aux/init.mk
-
+include $(top_srcdir)/build-aux/fix-libtool-la.mk
 SUBDIRS = . tests
 if BINDINGS
  SUBDIRS += swig

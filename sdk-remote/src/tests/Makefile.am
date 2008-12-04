@@ -57,13 +57,8 @@ installcheck-local:
 TESTS += $(CHECKFILES) $(UOBJECTS)
 TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))
 
-# Run some tests only.
-check-%:
-        $(MAKE) $(AM_MAKEFLAGS) check-html TESTS_DIRS=$* VERBOSE=1
-
 check-clean-local:
 	rm -rf $(TEST_LOGS:.log=.dir)
-
 
 debug:
 	echo $(UOBJECTS)

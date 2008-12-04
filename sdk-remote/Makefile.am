@@ -16,8 +16,6 @@ nodist_host_DATA =
 include sdk/local.mk
 include include/local.mk
 
-EXTRA_DIST +=					\
-  build-aux/fix-libtool-la
 
 ## ------- ##
 ## Check.  ##

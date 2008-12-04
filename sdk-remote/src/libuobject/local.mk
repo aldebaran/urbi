@@ -25,11 +25,3 @@ libuobject_libuobject_la_LDFLAGS = -avoid-version -no-undefined
 # libuobject_uobject_la_CPPFLAGS = $(libuobject_libuobject_la_CPPFLAGS)
 # libuobject_uobject_la_LIBADD   = $(libuobject_libuobject_la_LIBADD)
 # libuobject_uobject_la_LDFLAGS  = $(libuobject_libuobject_la_LDFLAGS) -module
-
-all-local: libuobject/libuobject.la.stamp
-
-libuobject/libuobject.la.stamp: libuobject/libuobject.la
-	$(build_aux_dir)/fix-libtool-la libuobject/libuobject.la \
-	  libuobject/libuobject.la.stamp
-
-CLEANFILES += libuobject/libuobject.la.stamp
