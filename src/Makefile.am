@@ -81,6 +81,7 @@ libuobject.la.stamp: libuobject.la
 
 CLEANFILES += libuobject.la.stamp
 
+if BUILD_PROGRAMS
 if !WIN32
 # ast-dump.
 noinst_PROGRAMS = ast-dump
@@ -91,6 +92,7 @@ dist_ast_dump_SOURCES =				\
 ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
 ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la $(libuobject_la_LIBADD)
 endif !WIN32
+endif BUILD_PROGRAMS
 
 # We used to install a different version (with s/remote/engine/g), but
 # there is no occurrence of remote in param.mk.  Yet MN insists on
