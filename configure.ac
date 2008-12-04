@@ -99,7 +99,7 @@ URBI_PTHREAD
 URBI_SOCKETS
 
 URBI_ARG_ENABLE([enable-programs],
-                [Build extra programs], [yes|no], [yes])
+                [Build extra programs], [yes|no], [no])
 case $enable_programs in
  (no)  # No need to pass --disable-programs, because (i) it's the
        # default for sdk-remote, and (ii) if --disable-programs is
