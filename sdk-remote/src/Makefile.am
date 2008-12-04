@@ -1,5 +1,6 @@
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/fix-libtool-la.mk
+LTDL_LIBS = $(top_builddir)/libltdl/libltdlc.la
 SUBDIRS = . tests
 if BINDINGS
  SUBDIRS += swig
