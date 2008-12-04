@@ -2,7 +2,7 @@ include $(top_srcdir)/build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 libtool: $(LIBTOOL_DEPS)
-	$(SHELL) ./config.status --recheck
+	$(SHELL) ./config.status $@
 include libltdl/Makefile.inc
 
 SUBDIRS =					\
