@@ -114,8 +114,13 @@ names instead of signalling an error.
 UObjects
 ========
 
+void
+----
+
 The error message given to the user trying to cast a void UVar has been
 specialized.
+
+Remote bound methods can now return void.
 
 Urbi server
 ===========
@@ -133,9 +138,10 @@ Now, options for "urbi-launch" are separated from options to give to the
 underlying program (in remote and start modes) by using "--". Use
 "urbi-launch --help" to get the full usage information.
 
-****************************
-* New in kernel 2.0 beta 2 *
-****************************
+
+*******************************
+* New since kernel 2.0 beta 1 *
+*******************************
 
 Grammar
 =======
