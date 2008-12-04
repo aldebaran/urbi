@@ -18,8 +18,10 @@
 # include <algorithm>
 # include <string>
 
-# include <urbi/fwd.hh>
+# include <libport/singleton-ptr.hh>
+
 # include <urbi/export.hh>
+# include <urbi/uobject.hh>
 
 /// This macro must be called once for every UObject class.
 # define UStartRename(Type, Name)                                       \

@@ -21,9 +21,6 @@ Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 #include <urbi/utable.hh>
 #include <urbi/ucallbacks.hh>
 
-  STATIC_INSTANCE_NS(UStartlist, objectlist, urbi);
-  STATIC_INSTANCE_NS(UStartlistHub, objecthublist, urbi);
-
   // Lists and hashtables used.
   STATIC_INSTANCE_NS(UTable, accessmap, urbi);
   STATIC_INSTANCE_NS(UTable, eventendmap, urbi);

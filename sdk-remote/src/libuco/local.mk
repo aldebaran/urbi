@@ -9,6 +9,7 @@ libuco_libuco_la_CPPFLAGS =			\
 
 dist_libuco_libuco_la_SOURCES =			\
   libuco/uobject-hub-common.cc			\
+  libuco/ustarter.cc				\
   libuco/utable.cc				\
   libuco/utimer-table.cc			\
   libuco/uvalue-common.cc			\
