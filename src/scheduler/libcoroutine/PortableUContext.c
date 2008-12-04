@@ -42,6 +42,24 @@ void makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
 }
 #endif
 
+#ifdef NEEDARMMAKECONTEXT
+#include <stdarg.h>
+void makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
+{
+  ucp->uc_mcontext.arm_ip = (unsigned long)func;
+  ucp->uc_mcontext.arm_sp = (unsigned long)((unsigned long*)ucp->uc_stack.ss_sp
+    + ucp->uc_stack.ss_size /   sizeof(unsigned long));
+  va_list args;
+  va_start(args, argc);
+  #define arg(i) if (argc > i) ucp->uc_mcontext.arm_r##i = va_arg(args,long)
+  arg(0);arg(1);arg(2);arg(3);arg(4);arg(5);arg(6);arg(7);arg(8);arg(9);
+  #undef arg
+  // Return address: Jumped to by the setmcontext code.
+  ucp->uc_mcontext.arm_lr = (unsigned long)func;
+  va_end(args);
+}
+#endif
+
 #ifdef NEEDX86MAKECONTEXT
 void makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
 {

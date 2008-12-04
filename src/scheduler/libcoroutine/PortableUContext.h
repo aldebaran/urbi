@@ -86,8 +86,8 @@ extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 #if defined(__arm__)
 int getmcontext(mcontext_t*);
 void setmcontext(const mcontext_t*);
-#define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
-#define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
+#define        setcontext(u)   setmcontext(&(u)->uc_mcontext)
+#define        getcontext(u)   getmcontext(&(u)->uc_mcontext)
 #endif
 
 // --------------------------
@@ -109,4 +109,34 @@ void setmcontext(const mcontext_t*);
 
 
 #endif
+
+
+#if defined(HAS_UCONTEXT) &&  defined(__arm__)
+#include <features.h>
+#if defined(__UCLIBC__)
+/* UClibc does not have ucontext. Use our implementation. */
+#include <sys/ucontext.h>
+# ifdef __cplusplus
+extern "C" {
+# endif
+int getmcontext(mcontext_t*);
+void setmcontext(const mcontext_t*);
+int		swapcontext(ucontext_t*, ucontext_t*);
+void		makecontext(ucontext_t*, void(*)(), int, ...);
+# ifdef __cplusplus
+}
+# endif
+/* The sigcontext structure (asm/sigcontext.h) in uc_mcontext starts with three
+ * unsigned long fields before the registers, but setmcontext and getmcontext
+ * do not expect them.
+ */
+#define	setcontext(u) \
+   setmcontext((mcontext_t*)( (char*)(&(u)->uc_mcontext) + 12))
+#define	getcontext(u)  \
+   getmcontext((mcontext_t*)((char*)(&(u)->uc_mcontext) + 12))
+#define NEEDSWAPCONTEXT
+#define NEEDARMMAKECONTEXT
+#endif
+#endif
+
 #endif
