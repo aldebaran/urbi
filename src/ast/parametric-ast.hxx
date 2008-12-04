@@ -24,7 +24,8 @@ namespace ast
     if (desugar)
       LIBPORT_ECHO(*this);
     operator()(ast_.get());
-    result_->location_set(effective_location_);
+    if (!loc_)
+      result_->location_set(effective_location_);
     if (desugar)
       LIBPORT_ECHO(result_->location_get() << ": " << *result_);
     reset();
