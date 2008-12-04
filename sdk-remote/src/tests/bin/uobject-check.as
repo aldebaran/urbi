@@ -35,8 +35,9 @@ test -f "$me.la" ||
 urbi_launch=$(xfind_prog urbi-launch)
 
 # If urbi-launch cannot work because there is no kernel libuobject,
-# skip the test.
-run "urbi-launch --start" $urbi_launch --start ||
+# skip the test.  Do pass something that will fail to be loaded,
+# otherwise if it works, a server is launched, and will run endlessly.
+run "urbi-launch --start" $urbi_launch --start /dev/null ||
   case $? in
     (72) error 77 "urbi-launch cannot find libuobject";;
   esac
