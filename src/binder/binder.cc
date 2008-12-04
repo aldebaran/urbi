@@ -27,6 +27,7 @@
 
 namespace binder
 {
+  using libport::Finally;
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
 
@@ -42,7 +43,7 @@ namespace binder
     , toplevel_index_(0)
     , report_errors_(true)
   {
-    unbind_.push_back(libport::Finally());
+    unbind_.push_back(Finally());
     setOnSelf_.push_back(true);
   }
 
@@ -376,7 +377,7 @@ namespace binder
     {
       // Do not report errors while lazifying arguments, to avoid
       // reporting them twice.
-      libport::Finally finally(libport::scoped_set(report_errors_, false));
+      Finally finally(libport::scoped_set(report_errors_, false));
       assert(args->size() == input->arguments_get()->size());
       for (unsigned i = 0; i < args->size(); ++i)
       {
@@ -404,7 +405,7 @@ namespace binder
   Binder::visit(const ast::Catch* input)
   {
     // Create a scope to execute the "catch" action.
-    libport::Finally finally(scope_open(false));
+    Finally finally(scope_open(false));
     super_type::visit(input);
   }
 
@@ -432,9 +433,9 @@ namespace binder
   void
   Binder::visit (const ast::Foreach* input)
   {
-    libport::Finally finally;
+    Finally finally;
 
-    unbind_.push_back(libport::Finally());
+    unbind_.push_back(Finally());
     finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
     setOnSelf_.push_back(false);
@@ -467,14 +468,14 @@ namespace binder
     (*n)--;
   }
 
-  libport::Finally::action_type
+  Finally::action_type
   Binder::scope_open(bool set_on_self)
   {
     scope_depth_++;
     // Push a finally on unbind_, and destroy it at the scope
     // exit. Since bound variables register themselves for unbinding
     // in unbind_'s top element, they will be unbound at scope exit.
-    unbind_.push_back(libport::Finally());
+    unbind_.push_back(Finally());
     setOnSelf_.push_back(set_on_self);
     return boost::bind(&Binder::scope_close, this);
   }
@@ -500,7 +501,7 @@ namespace binder
   Binder::handleRoutine(const Code* input)
   {
     BIND_ECHO("Push" << libport::incindent);
-    libport::Finally finally(5);
+    Finally finally(5);
 
     // Clone and push the function, without filling its body and arguments
     libport::intrusive_ptr<Code> res = new Code(input->location_get(), 0, 0);
@@ -509,7 +510,7 @@ namespace binder
     finally << boost::bind(&Binder::routine_pop, this);
 
     // Open a new scope
-    unbind_.push_back(libport::Finally());
+    unbind_.push_back(Finally());
     finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
     // Do not setOnSelf in this scope
