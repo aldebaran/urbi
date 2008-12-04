@@ -370,9 +370,9 @@ class Global.'external'
                   "Global.uobjects." + u ] + args;
       chan << msg;
       waituntil(Global.uobjects.hasSlot(u));
-      var res = Global.uobjects.getSlot(u);
+      var res = Global.uobjects.getSlot(u).acceptVoid;
       Global.uobjects.removeSlot(u);
-      res
+      res.unacceptVoid
     };
     Global.uobjects.getSlot(objname).setSlot(fname, f);
     void
