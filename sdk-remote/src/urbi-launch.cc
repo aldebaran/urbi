@@ -161,6 +161,12 @@ usage()
     "\n"
     "MODULE_NAMES is a list of modules.\n"
     "UOPTIONS are passed to urbi::main in remote and start modes.\n"
+    "\n"
+    "Exit values:\n"
+    "  0  success\n"
+    " " << EX_NOINPUT << "  some of the MODULES are missing\n"
+    " " << EX_OSFILE << "  libuobject is missing\n"
+    "  *  other kinds of errors\n"
     ;
   ::exit(EX_OK);
 }
