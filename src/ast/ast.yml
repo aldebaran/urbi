@@ -214,6 +214,20 @@ Ast:
     header prologue: |2
       # include <ast/fwd.hh>
       namespace runner { class Interpreter; }
+    header inside: |2
+        public:
+          /// Store a reference onto the original node.
+          /// If the original node also has an original reference,
+          /// reuse it.
+          void original_set(const rConstAst&);
+    impl inside: |2
+          void Ast::original_set(const rConstAst& original)
+          {
+            // Try to keep the very first original node if it exists.
+            original_ =
+             (original && original->original_) ?
+             original->original_ : original;
+          }
   attributes:
     - doc:
         type: 'std::string'
@@ -225,7 +239,7 @@ Ast:
         desc: Scanner position information
     - original:
         type: rConstAst
-        access: rW
+        access: r
         desc: Original node, if this is a rewrite
         init: "0"
 
