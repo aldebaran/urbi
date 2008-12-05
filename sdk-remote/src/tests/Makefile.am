@@ -33,6 +33,10 @@ $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 INSTRUMENT = true
 URBI_SERVER = urbi-console
 
+## ------------------- ##
+## Tests environment.  ##
+## ------------------- ##
+
 CHECK_ENVIRONMENT +=				\
   srcdir='$(srcdir)'				\
   INSTRUMENT=$(INSTRUMENT)			\
