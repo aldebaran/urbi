@@ -15,7 +15,7 @@ libuobject_la_CPPFLAGS =				\
   -I$(top_srcdir)/sdk-remote/libltdl			\
   $(AM_CPPFLAGS) -DBUILDING_URBI_SDK
 libuobject_la_LDFLAGS =					\
-  -no-undefined
+  -avoid-version -no-undefined
 libuobject_la_LIBADD =						\
   $(SOCKETS_LIBS)						\
   $(PTHREAD_LIBS)						\
