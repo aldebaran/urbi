@@ -3,6 +3,8 @@ AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
+include $(top_srcdir)/build-aux/wine-ld-library-path.mk
+
 include examples/local.mk
 include liburbi/local.mk
 include uobjects/local.mk
@@ -44,7 +46,9 @@ CHECK_ENVIRONMENT +=				\
   URBI_SERVER=$(URBI_SERVER)
 
 # Use the wrappers to run the non-installed executables.
-BUILDCHECK_ENVIRONMENT +=					\
+BUILDCHECK_ENVIRONMENT +=						\
+  WINE_LD_LIBRARY_PATH_ARGS='--wrapper=../urbi-launch'			\
+  $(RUN_WINE_LD_LIBRARY_PATH)						\
   PATH=$(abs_builddir)/bin:$(abs_top_builddir)/src/examples:$$PATH
 
 INSTALLCHECK_ENVIRONMENT +=			\
