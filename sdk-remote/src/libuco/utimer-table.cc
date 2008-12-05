@@ -2,6 +2,19 @@
 
 #include <urbi/utimer-table.hh>
 
-// Timer and update maps.
-  STATIC_INSTANCE_NS_EX(UTimerTable, timermap, urbi, URBI_SDK_API);
-  STATIC_INSTANCE_NS_EX(UTimerTable, updatemap, urbi, URBI_SDK_API);
+namespace urbi
+{
+  // Timer and update maps.
+  UTimerTable& timermap ()
+  {
+    static UTimerTable instance;
+    return instance;
+  }
+
+  UTimerTable& updatemap ()
+  {
+    static UTimerTable instance;
+    return instance;
+  }
+
+} // end namespace urbi

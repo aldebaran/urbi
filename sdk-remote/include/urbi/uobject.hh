@@ -257,12 +257,12 @@ namespace urbi
 # undef MakeMEtaNotify
 
     /// \internal
-# define MKUSetTimer(Const, Useless)						\
+# define MKUSetTimer(Const, Useless)                                    \
     template <class T>							\
     void USetTimer(ufloat t, int (T::*fun) () Const)			\
     {									\
       new UTimerCallbackobj<T> (__name, t,				\
-				dynamic_cast<T*>(this), fun, timermap);	\
+				dynamic_cast<T*>(this), fun, timermap()); \
     }
 
     MKUSetTimer (/**/, /**/);
