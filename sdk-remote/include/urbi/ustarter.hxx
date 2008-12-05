@@ -44,7 +44,8 @@ namespace urbi
   `--------------*/
   template <class T>
   inline
-  URBIStarter<T>::URBIStarter(const std::string& name, UStartlist& slist, bool local)
+  URBIStarter<T>::URBIStarter(const std::string& name,
+                              UStartlist& slist, bool local)
     : baseURBIStarter(name, local)
     , slist_(slist)
   {
