@@ -1,6 +1,6 @@
-## ------------------------------------- ##
-## Generate the list of symbols we use.  ##
-## ------------------------------------- ##
+## ---------------------- ##
+## List of used symbols.  ##
+## ---------------------- ##
 
 precompiled_symbols_hh = object/precompiled-symbols.hh
 precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
@@ -39,10 +39,19 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	  rm -f $(precompiled_symbols_stamp);			\
 	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
 	fi
+BUILT_SOURCES += $(precompiled_symbols_hh)
 
-EXTRA_DIST += 					\
-  object/any-to-boost-function.hxx.py		\
-  object/cxx-primitive.hxx.py
+## ------------------------ ##
+## Generated source files.  ##
+## ------------------------ ##
+
+FROM_PY =					\
+  object/any-to-boost-function.hxx		\
+  object/cxx-primitive.hxx
+BUILT_SOURCES += $(FROM_PY)
+CLEANFILES += $(FROM_PY)
+nodist_libuobject_la_SOURCES += $(FROM_PY)
+EXTRA_DIST += $(FROM_PY:=.py)
 
 %.hxx: %.hxx.py
 	rm -f $@ $@.tmp
@@ -50,17 +59,12 @@ EXTRA_DIST += 					\
 	chmod a-w $@.tmp
 	mv $@.tmp $@
 
-cxx_primitives_hxx = object/cxx-primitive.hxx
-any_to_boost_hxx = object/any-to-boost-function.hxx
-
-BUILT_SOURCES +=				\
-  $(precompiled_symbols_hh)			\
-  $(cxx_primitives_hxx)				\
-  $(any_to_boost_hxx)
+## ----------------- ##
+## Regular sources.  ##
+## ----------------- ##
 
 dist_libuobject_la_SOURCES +=			\
   object/any-to-boost-function.hh		\
-  object/any-to-boost-function.hxx		\
   object/barrier.cc				\
   object/barrier.hh				\
   object/centralized-slots.hh			\

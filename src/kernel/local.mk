@@ -48,3 +48,4 @@ kernel/git-version.hh: $(top_srcdir)/.version
 		--srcdir=$(top_srcdir)		\
 		--header --output=$@
 
+CLEANFILES += kernel/git-version.hh
