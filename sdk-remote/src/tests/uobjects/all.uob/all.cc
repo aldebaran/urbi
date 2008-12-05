@@ -364,6 +364,6 @@ public:
 
 
 ::urbi::URBIStarter<all>
- starter1(urbi::isPluginMode()?"all":"remall", ::urbi::objectlist);
+ starter1(urbi::isPluginMode()?"all":"remall");
 ::urbi::URBIStarter<all>
- starter2(urbi::isPluginMode()?"all2":"remall2", ::urbi::objectlist);
+ starter2(urbi::isPluginMode()?"all2":"remall2");

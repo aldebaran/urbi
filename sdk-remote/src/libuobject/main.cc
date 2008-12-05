@@ -156,20 +156,20 @@ namespace urbi
 
       case UEM_NEW:
       {
-        std::list<baseURBIStarter*>::iterator found = objectlist->end();
-        for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
-             i != objectlist->end();
-             ++i)
+        typedef baseURBIStarter::list_type::iterator iterator;
+        iterator i_end = object_list().end();
+        iterator found = i_end;
+        for (iterator i = object_list().begin(); i != i_end; ++i)
           if ((*i)->name == (std::string)array[2])
           {
-            if (found != objectlist->end())
+            if (found != i_end)
               msg.client.printf("Double object definition %s\n",
                                 (*i)->name.c_str());
             else
               found = i;
           }
 
-        if (found == objectlist->end())
+        if (found == i_end)
           msg.client.printf("Unknown object definition %s\n",
                             ((std::string) array[2]).c_str());
         else
@@ -180,27 +180,27 @@ namespace urbi
 
       case UEM_DELETE:
       {
-        std::list<baseURBIStarter*>::iterator found = objectlist->end();
-        for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
-             i != objectlist->end();
+        std::list<baseURBIStarter*>::iterator found = object_list().end();
+        for (std::list<baseURBIStarter*>::iterator i = object_list().begin();
+             i != object_list().end();
              ++i)
           if ((*i)->name == (std::string)array[1])
           {
-            if (found != objectlist->end())
+            if (found != object_list().end())
               msg.client.printf("Double object definition %s\n",
                                 (*i)->name.c_str());
             else
               found = i;
           }
 
-        if (found == objectlist->end())
+        if (found == object_list().end())
           msg.client.printf("Unknown object definition %s\n",
                             ((std::string) array[1]).c_str());
         else
         {
           // remove the object from objectlist or terminate
           // the component if there is nothing left
-          if (objectlist->size() == 1)
+          if (object_list().size() == 1)
             exit(0);
           else
             // delete the object
@@ -300,19 +300,19 @@ namespace urbi
 				    externalModuleTag.c_str());
 
     // Wait for client to be connected if in server mode
-    while (getDefaultClient () &&
-	!getDefaultClient()->error () &&
-	!getDefaultClient()->init ())
+    while (getDefaultClient ()
+           && !getDefaultClient()->error ()
+           && !getDefaultClient()->init ())
       usleep(20000);
 
     // Waiting for connectionID
-    while (getDefaultClient () &&
-	getDefaultClient ()->connectionID () == "")
+    while (getDefaultClient ()
+           && getDefaultClient ()->connectionID () == "")
       usleep (5000);
 
     dummyUObject = new UObject (0);
-    for (UStartlist::iterator i = objectlist->begin();
-	 i != objectlist->end();
+    for (baseURBIStarter::list_type::iterator i = object_list().begin();
+	 i != object_list().end();
 	 ++i)
       (*i)->init((*i)->name);
     return 0;

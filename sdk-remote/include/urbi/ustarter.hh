@@ -24,33 +24,30 @@
 # include <urbi/uobject.hh>
 
 /// This macro must be called once for every UObject class.
-# define UStartRename(Type, Name)                                       \
-  ::urbi::URBIStarter<Type>                                             \
-  Name ##  ____URBI_object(#Name, ::urbi::objectlist)
+# define UStartRename(Type, Name)               \
+  ::urbi::URBIStarter<Type>                     \
+  Name ##  ____URBI_object(#Name)
 
 /// Append connectionID to object name
 # define UStartWithID(Type)                     \
   ::urbi::URBIStarter<Type>                     \
-  Type ##  ____URBI_object(#Type, ::urbi::objectlist, true)
+  Type ##  ____URBI_object(#Type, true)
 
 /// This macro must be called once for every UObject class.
 # define UStart(Type)                           \
   UStartRename(Type, Type)
 
 /// This macro must be called once for each UObjectHub class.
-# define UStartHub(Type)                                                \
-  ::urbi::URBIStarterHub<Type>                                          \
-  Type ##  ____URBI_object(#Type, ::urbi::objecthublist)
+# define UStartHub(Type)                        \
+  ::urbi::URBIStarterHub<Type>                  \
+  Type ##  ____URBI_object(#Type)
 
 namespace urbi
 {
 
-  typedef std::list<baseURBIStarter*> UStartlist;
-  typedef std::list<baseURBIStarterHub*> UStartlistHub;
-
-  // Two singleton lists to handle the object and hubobject registration.
-  EXTERN_STATIC_INSTANCE_EX(UStartlist, objectlist, URBI_SDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UStartlistHub, objecthublist, URBI_SDK_API);
+  /*-----------.
+  | UStarter.  |
+  `-----------*/
 
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist.
@@ -70,7 +67,13 @@ namespace urbi
     virtual void copy(const std::string&) = 0;
     std::string name;
     bool local;
+
+    typedef std::list<baseURBIStarter*> list_type;
+    static list_type list;
   };
+
+  /// Give access to baseURBIStarter::list.
+  baseURBIStarter::list_type& object_list();
 
   //! This is the class containing URBI starters
   /** A starter is a class whose job is to start an instance of a particular
@@ -82,7 +85,7 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& list, bool local = false);
+    URBIStarter(const std::string& name, bool local = false);
 
     virtual ~URBIStarter();
 
@@ -97,10 +100,14 @@ namespace urbi
     /// Called when the object is ready to be initialized.
     virtual void init(const std::string& objname);
 
-    UStartlist& slist_;
     T* object;
   };
 
+
+
+  /*--------------.
+  | UStarterHub.  |
+  `--------------*/
 
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist
@@ -114,7 +121,14 @@ namespace urbi
     virtual void init(const std::string&) = 0;
     virtual UObjectHub* getUObjectHub() = 0;
     std::string name;
+
+    typedef std::list<baseURBIStarterHub*> list_type;
+    static list_type list;
   };
+
+  /// Give access to baseURBIStarter::list.
+  baseURBIStarterHub::list_type& objecthub_list();
+
 
   //! This is the class containing URBI starters
   /** A starter is a class whose job is to start an instance of a particular
@@ -126,7 +140,7 @@ namespace urbi
     : public baseURBIStarterHub
   {
   public:
-    URBIStarterHub(const std::string& name, UStartlistHub& slist);
+    URBIStarterHub(const std::string& name);
     virtual ~URBIStarterHub();
 
   protected:
@@ -136,7 +150,6 @@ namespace urbi
     /// Access to the object from the outside.
     virtual UObjectHub* getUObjectHub();
 
-    UStartlistHub& slist_;
     T* object;
   };
 

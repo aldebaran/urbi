@@ -56,12 +56,12 @@ namespace urbi
   UObjectHub*
   getUObjectHub(const std::string& name)
   {
-    for (UStartlistHub::iterator i = objecthublist->begin();
-	 i != objecthublist->end();
-	 ++i)
+    for (baseURBIStarterHub::list_type::iterator
+           i = baseURBIStarterHub::list.begin(),
+           i_end = baseURBIStarterHub::list.end();
+	 i != i_end; ++i)
       if ((*i)->name == name)
 	return (*i)->getUObjectHub();
-
     return 0;
   }
 
@@ -69,12 +69,12 @@ namespace urbi
   UObject*
   getUObject(const std::string& name)
   {
-    for (UStartlist::iterator i = objectlist->begin();
-	 i != objectlist->end();
-	 ++i)
+    for (baseURBIStarter::list_type::iterator
+           i = baseURBIStarter::list.begin(),
+           i_end = baseURBIStarter::list.end();
+	 i != i_end; ++i)
       if ((*i)->name == name)
 	return (*i)->getUObject();
-
     return 0;
   }
 
