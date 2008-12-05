@@ -68,15 +68,15 @@ namespace urbi
                             array.size());
           return URBI_CONTINUE;
         }
-        UVarTable::iterator varmapfind = varmap->find(array[1]);
-        if (varmapfind != varmap->end())
+        UVarTable::iterator varmapfind = varmap().find(array[1]);
+        if (varmapfind != varmap().end())
           for (std::list<UVar*>::iterator it = varmapfind->second.begin();
                it != varmapfind->second.end();
                ++it)
             (*it)->__update(array[2]);
 
-        UTable::iterator monitormapfind = monitormap->find(array[1]);
-        if (monitormapfind != monitormap->end())
+        UTable::iterator monitormapfind = monitormap().find(array[1]);
+        if (monitormapfind != monitormap().end())
           for (std::list<UGenericCallback*>::iterator
                  cbit = monitormapfind->second.begin();
                cbit != monitormapfind->second.end();
@@ -93,7 +93,7 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
       {
-	std::list<UGenericCallback*> tmpfun = (*functionmap)[array[1]];
+	std::list<UGenericCallback*> tmpfun = functionmap()[array[1]];
 	std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
@@ -123,9 +123,9 @@ namespace urbi
 
       case UEM_EMITEVENT:
       {
-        if (eventmap->find(array[1]) != eventmap->end())
+        if (eventmap().find(array[1]) != eventmap().end())
         {
-          std::list<UGenericCallback*> tmpfun = (*eventmap)[array[1]];
+          std::list<UGenericCallback*> tmpfun = eventmap()[array[1]];
           for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
                i != tmpfun.end();
                ++i)
@@ -140,9 +140,9 @@ namespace urbi
 
       case UEM_ENDEVENT:
       {
-        if (eventendmap->find(array[1]) != eventendmap->end())
+        if (eventendmap().find(array[1]) != eventendmap().end())
         {
-          std::list<UGenericCallback*> tmpfun = (*eventendmap)[array[1]];
+          std::list<UGenericCallback*> tmpfun = eventendmap()[array[1]];
           for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
                i != tmpfun.end();
                ++i)

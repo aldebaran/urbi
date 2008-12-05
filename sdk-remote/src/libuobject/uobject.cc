@@ -83,16 +83,15 @@ namespace urbi
   void
   UObject::clean()
   {
-    cleanTable(monitormap, __name);
-    cleanTable(accessmap, __name);
-    cleanTable(functionmap, __name);
-    cleanTable(eventmap, __name);
-    cleanTable(eventendmap, __name);
+    cleanTable(monitormap(), __name);
+    cleanTable(accessmap(), __name);
+    cleanTable(functionmap(), __name);
+    cleanTable(eventmap(), __name);
+    cleanTable(eventendmap(), __name);
 
     if (objecthub)
       objecthub->members.remove(this);
   }
-
 
   //! UObject destructor.
   UObject::~UObject()
@@ -120,7 +119,7 @@ namespace urbi
     URBI_SEND_COMMAND("stop " << tagName);
 
     // Find previous update timer on this object
-    std::list<UGenericCallback*>& cblist = (*eventmap) [cbFullName];
+    std::list<UGenericCallback*>& cblist = eventmap()[cbFullName];
     std::list<UGenericCallback*>::iterator it = cblist.begin ();
     for (; it != cblist.end () && (*it)->getName () != cbFullName ; ++it)
       ;
@@ -145,7 +144,7 @@ namespace urbi
 
     // Create callback
     createUCallback(__name, "event",
-		    this, &UObject::update, cbName, eventmap, false);
+		    this, &UObject::update, cbName, eventmap(), false);
 
     // Set update at given period
     URBI_SEND_COMMAND(tagName << ": every(" << period << ")"

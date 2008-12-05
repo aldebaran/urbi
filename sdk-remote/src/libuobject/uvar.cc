@@ -26,7 +26,7 @@ namespace urbi
   void
   UVar::__init()
   {
-    (*varmap)[name].push_back(this);
+    varmap()[name].push_back(this);
     URBI_SEND_COMMAND("if (!isdef(" << name << ")) var " << name);
     vardata = 0; // unused. For internal softdevices only
     this->owned = false;
@@ -34,7 +34,7 @@ namespace urbi
 
     createUCallback(dummyUObject->__name,
 		    "var",
-		    dummyUObject, &UObject::voidfun, name, monitormap, false);
+		    dummyUObject, &UObject::voidfun, name, monitormap(), false);
   }
 
   //! UVar out value (read mode)
@@ -100,9 +100,9 @@ namespace urbi
   //! UVar destructor.
   UVar::~UVar()
   {
-    UVarTable::iterator varmapfind = varmap->find(name);
+    UVarTable::iterator varmapfind = varmap().find(name);
 
-    if (varmapfind != varmap->end())
+    if (varmapfind != varmap().end())
       {
 	for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	     it != varmapfind->second.end();)
@@ -112,7 +112,7 @@ namespace urbi
 	    ++it;
 
 	if (varmapfind->second.empty())
-	  varmap->erase(varmapfind);
+	  varmap().erase(varmapfind);
       }
   }
 

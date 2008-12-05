@@ -46,7 +46,7 @@
 # define UBindFunction(Obj, X)						\
   ::urbi::createUCallback(__name, "function", this,			\
 			  (&Obj::X), __name + "." #X,			\
-			  ::urbi::functionmap, false)
+                          ::urbi::functionmap(), false)
 
 /** Registers a function x in current object that will be called each
  time the event of same name is triggered. The function will be
@@ -56,7 +56,7 @@
 # define UBindEvent(Obj, X)						\
   ::urbi::createUCallback(__name, "event", this,			\
 			  (&Obj::X), __name + "." #X,			\
-			  ::urbi::eventmap, false)
+                          ::urbi::eventmap(), false)
 
 /** Registers a function x in current object that will be called each
  * time the event of same name is triggered, and a function fun called
@@ -67,7 +67,7 @@
 # define UBindEventEnd(Obj, X, Fun)					\
   ::urbi::createUCallback(__name, "eventend", this,			\
 			  (&Obj::X),(&Obj::Fun), __name + "." #X,	\
-			  ::urbi::eventendmap)
+                          ::urbi::eventendmap())
 
 /// Register current object to the UObjectHub named 'hub'.
 # define URegister(Hub)						\
@@ -142,9 +142,11 @@ namespace urbi
   inline bool isPluginMode() { return getRunningMode() == MODE_PLUGIN;}
   /// Return true if the code is running in remote mode.
   inline bool isRemoteMode() { return getRunningMode() == MODE_REMOTE;}
+
   /** Main UObject class definition
-      Each UObject instance corresponds to an URBI object. It provides mechanisms to
-      bind variables and functions between C++ and URBI.
+      Each UObject instance corresponds to an URBI object.
+      It provides mechanisms to bind variables and functions between
+      C++ and URBI.
   */
   class URBI_SDK_API UObject
   {
@@ -244,13 +246,13 @@ namespace urbi
 		       Map, false, name, new UVar(name));
 
     /// \internal
-    MakeMetaNotify (Access, "varaccess", accessmap);
+    MakeMetaNotify (Access, "varaccess", accessmap());
 
     /// \internal
-    MakeMetaNotify (Change, "var", monitormap);
+    MakeMetaNotify (Change, "var", monitormap());
 
     /// \internal
-    MakeMetaNotify (OnRequest, "var_onrequest", monitormap);
+    MakeMetaNotify (OnRequest, "var_onrequest", monitormap());
 
 # undef MakeNotify
 # undef MakeMetaNotifyArg
@@ -296,7 +298,7 @@ namespace urbi
     /// milliseconds
     void USetUpdate(ufloat period);
     virtual int update() {return 0;};
-    /// Set autogrouping facility for each new subclass created..
+    /// Set autogrouping facility for each new subclass created.
     void UAutoGroup() { autogroup = true; };
     /// Called when a subclass is created if autogroup is true.
     virtual void addAutoGroup() { UJoinGroup(classname+"s"); };

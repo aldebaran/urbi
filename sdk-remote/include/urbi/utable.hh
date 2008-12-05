@@ -23,7 +23,6 @@
 # include <list>
 # include <string>
 
-# include <libport/singleton-ptr.hh>
 # include <libport/hash.hh>
 
 # include <urbi/export.hh>
@@ -34,21 +33,23 @@ namespace urbi
 
   // A few list and hashtable types
   typedef libport::hash_map_type<std::string,
-				 std::list<UGenericCallback*> >::type UTable;
+				 std::list<UGenericCallback*> >::type
+    UTable;
 
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'.
   void cleanTable(UTable &t, const std::string& name);
 
   // Lists and hashtables used.
-  EXTERN_STATIC_INSTANCE_EX(UTable, accessmap, URBI_SDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, eventendmap, URBI_SDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, eventmap, URBI_SDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, functionmap, URBI_SDK_API);
-  EXTERN_STATIC_INSTANCE_EX(UTable, monitormap, URBI_SDK_API);
+  URBI_SDK_API UTable& accessmap();
+  URBI_SDK_API UTable& eventendmap();
+  URBI_SDK_API UTable& eventmap();
+  URBI_SDK_API UTable& functionmap();
+  URBI_SDK_API UTable& monitormap();
 
-  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
-  EXTERN_STATIC_INSTANCE_EX(UVarTable, varmap, URBI_SDK_API);
+  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type
+    UVarTable;
+  URBI_SDK_API UVarTable& varmap();
 
 } // end namespace urbi
 

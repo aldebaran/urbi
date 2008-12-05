@@ -5,13 +5,13 @@
 namespace urbi
 {
   // Timer and update maps.
-  UTimerTable& timermap ()
+  UTimerTable& timermap()
   {
     static UTimerTable instance;
     return instance;
   }
 
-  UTimerTable& updatemap ()
+  UTimerTable& updatemap()
   {
     static UTimerTable instance;
     return instance;

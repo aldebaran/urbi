@@ -26,7 +26,7 @@ namespace urbi
     std::string cbname = os.str();
 
     createUCallback(objname, "event", this, &UTimerCallback::call,
-		    objname + "." + cbname, eventmap, false);
+		    objname + "." + cbname, eventmap(), false);
     //new UCallbackvoid0<UTimerCallback> (objname, "event", this,
     //				&UTimerCallback::call,
     //				objname + '.' + cbname, eventmap);
