@@ -26,22 +26,21 @@
 /// This macro must be called once for every UObject class.
 # define UStartRename(Type, Name)                                       \
   ::urbi::URBIStarter<Type>                                             \
-  Name ##  ____URBI_object(std::string(#Name), ::urbi::objectlist)
+  Name ##  ____URBI_object(#Name, ::urbi::objectlist)
 
 /// Append connectionID to object name
-# define UStartWithID(X)						\
-  ::urbi::URBIStarter<X> X ##  ____URBI_object(std::string(#X),		\
-					       ::urbi::objectlist,	\
-					       true)
+# define UStartWithID(Type)                     \
+  ::urbi::URBIStarter<Type>                     \
+  Type ##  ____URBI_object(#Type, ::urbi::objectlist, true)
 
 /// This macro must be called once for every UObject class.
-# define UStart(Type)							\
+# define UStart(Type)                           \
   UStartRename(Type, Type)
 
 /// This macro must be called once for each UObjectHub class.
 # define UStartHub(Type)                                                \
   ::urbi::URBIStarterHub<Type>                                          \
-  Type ##  ____URBI_object(std::string(#Type), ::urbi::objecthublist)
+  Type ##  ____URBI_object(#Type, ::urbi::objecthublist)
 
 namespace urbi
 {
@@ -83,7 +82,7 @@ namespace urbi
     : public baseURBIStarter
   {
   public:
-    URBIStarter(const std::string& name, UStartlist& _slist, bool local = false);
+    URBIStarter(const std::string& name, UStartlist& list, bool local = false);
 
     virtual ~URBIStarter();
 
