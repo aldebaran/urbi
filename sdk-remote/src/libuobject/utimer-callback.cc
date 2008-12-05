@@ -15,8 +15,8 @@ namespace urbi
 {
   UTimerCallback::UTimerCallback(const std::string& objname,
 				 ufloat period, UTimerTable& tt)
-    : period(period),
-      objname(objname)
+    : period(period)
+    , objname(objname)
   {
     tt.push_back(this);
     lastTimeCalled = -9999999;

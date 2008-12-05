@@ -21,6 +21,9 @@
 # define URBI_UTIMER_CALLBACK_HH
 
 # include <string>
+
+# include <libport/ufloat.h>
+
 # include <urbi/export.hh>
 # include <urbi/utimer-table.hh>
 
@@ -50,13 +53,15 @@ namespace urbi
   class UTimerCallbackobj : public UTimerCallback
   {
   public:
-# define MKUTimerCallBackObj(Const, IsConst)				\
-    UTimerCallbackobj(const std::string& objname,			\
-		      ufloat period, T* obj,				\
-		      int (T::*fun) () Const, UTimerTable &tt)		\
-      : UTimerCallback(objname, period,tt), obj(obj),			\
-	fun##Const(fun), is_const_ (IsConst)				\
-    {}
+# define MKUTimerCallBackObj(Const, IsConst)                    \
+    UTimerCallbackobj(const std::string& objname,               \
+		      ufloat period, T* obj,                    \
+		      int (T::*fun) () Const, UTimerTable &tt)  \
+      : UTimerCallback(objname, period, tt)                     \
+      , obj(obj)                                                \
+      , fun##Const(fun)                                         \
+      , is_const_ (IsConst)                                     \
+      {}
 
     MKUTimerCallBackObj (/**/, false);
     MKUTimerCallBackObj (const, true);
@@ -65,7 +70,7 @@ namespace urbi
 
     virtual void call()
     {
-      (is_const_) ? ((*obj).*funconst)() : ((*obj).*fun)();
+      is_const_ ? ((*obj).*funconst)() : ((*obj).*fun)();
     }
   private:
     T* obj;
