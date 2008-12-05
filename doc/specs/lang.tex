@@ -1615,6 +1615,88 @@ while (i > 0)
 \end{urbiscript}
 
 \FloatBarrier
+\section{Exceptions}
+
+\subsection{Throwing exceptions}
+
+The \lstinline|throw| keyword enable to throw exceptions, as shown in
+\autoref{lst:throw}. Thrown exception will break the execution upward
+until they are caught, or until they reach the toplevel - just as in
+\Cxx. A difference is that exceptions reaching the toplevel are
+printed, and won't abort the kernel - other and new connections will
+continue to execute normally.
+
+\begin{urbiscript}[caption=Throwing exceptions, label=lst:throw,
+  float=\floatpos]
+throw 42;
+[00000000:error] !!! 42
+function inner() { throw "exn" };
+[00000000:hide] function () {
+..  throw "exn"
+..}
+function outer() { inner() };
+[00000000:hide] function () {
+..  inner()
+..}
+// Exceptions propagate to parent call up to the toplevel
+outer();
+[00000000:error] !!! exn
+[00000000:error] !!!    called from: 3.20-26: inner
+[00000000:error] !!!    called from: 4.1-7: outer
+\end{urbiscript}
+
+\subsection{Catching exceptions}
+
+Exceptions are caught with the \lstinline|try|/\lstinline|catch|
+construct. It consist of a first block, from which we want to catch
+exceptions, and one or more catch clause to stop exceptions. Each
+catch clause defines a pattern against witch the thrown exception is
+matched. If no pattern is specified, the catch clause matches
+systematically (equivalent to \texttt{catch (...)} in \Cxx.
+
+Exception thrown from the \texttt{try} block are matched sequentially
+against all catch clauses. The first matching clause is executed, and
+control jumps after the whole try/catch block. If no catch clause
+matches, the exceptions isn't stopped and continues
+upward. \autoref{lst:catch} illustrates this.
+
+\begin{urbiscript}[caption=Catching exceptions, label=lst:catch,
+  float=\floatpos]
+function test(e)
+{
+  try
+  { throw e;  }
+  catch (0)
+  { echo("zero") }
+  catch ([var x, var y])
+  { echo(x + y) }
+};
+[00000000:hide] function test(e)
+..{
+..  try
+..  {
+..    throw e;
+..  }
+..  catch (0) { echo("zero") }
+..  catch ([var x, var y]) { echo(x + y) }
+..};
+test(0);
+[00002126] *** zero
+test([22, 20]);
+[00002131] *** 42
+test(51);
+[00002143:error] !!! 51
+[00002143:error] !!!    called from: 12.1-8: test
+
+\end{urbiscript}
+
+\subsection{Inspecting exceptions}
+
+\subsection{Exceptions and parallelism}
+
+
+
+\FloatBarrier
 \section{Parallel and event-based flow control}
 
 \subsection{at}
