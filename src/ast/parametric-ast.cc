@@ -15,9 +15,12 @@ namespace ast
 {
 
   ParametricAst::ParametricAst(const std::string& s, const loc& l)
-    : exp_map_type("exp")
-    , id_map_type("id")
-    , exps_map_type("exps")
+    : Cloner()
+# define CONSTRUCT(Iter, None, Type)                                    \
+      , BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type)        \
+        (BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(2, 1, Type)))
+      URBI_PARAMETRIC_AST_FOREACH(CONSTRUCT)
+#undef CONTSTRUCT
     , ast_(parser::parse(s, l)->ast_xget())
     , effective_location_()
     , count_(0)
@@ -90,9 +93,13 @@ namespace ast
   bool
   ParametricAst::empty() const
   {
-    return exp_map_type::empty_()
-      && id_map_type::empty_()
-      && exps_map_type::empty_();
+    return true
+# define TEST(Iter, None, Type)                                         \
+      && BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type),                  \
+                      _map_type)::empty_()
+      URBI_PARAMETRIC_AST_FOREACH(TEST)
+# undef TEST
+      ;
   }
 
   void
@@ -109,9 +116,10 @@ namespace ast
   void
   ParametricAst::clear()
   {
-    exp_map_type::clear_();
-    id_map_type::clear_();
-    exps_map_type::empty_();
+# define CLEAR(Iter, None, Type)                                        \
+    BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type)::clear_();
+      URBI_PARAMETRIC_AST_FOREACH(CLEAR)
+# undef CLEAR
     reset();
   }
 
@@ -123,9 +131,11 @@ namespace ast
       << libport::incendl
       << "Ast:"
       << libport::incendl << *ast_ << libport::decendl
-      << static_cast<const exp_map_type&>(*this)
-      << static_cast<const id_map_type&>(*this)
-      << static_cast<const exps_map_type&>(*this)
+# define PRINT(Iter, None, Type)                                        \
+      << static_cast<const BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), \
+                                        _map_type)&>(*this)
+      URBI_PARAMETRIC_AST_FOREACH(PRINT)
+# undef PRINT
       << libport::decendl;
   }
 

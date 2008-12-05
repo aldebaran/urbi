@@ -6,6 +6,10 @@
 #ifndef AST_PARAMETRIC_AST_HH
 # define AST_PARAMETRIC_AST_HH
 
+# include <boost/preprocessor/array.hpp>
+# include <boost/preprocessor/repeat.hpp>
+# include <boost/preprocessor/seq/for_each.hpp>
+
 # include <libport/symbol.hh>
 # include <libport/unique-pointer.hh>
 
@@ -15,20 +19,36 @@
 
 # include <parser/metavar-map.hh>
 
+# define URBI_PARAMETRIC_AST_TYPES              \
+  ((ast::rExp, exp))                            \
+  ((libport::Symbol, id))                       \
+  ((ast::exps_type*, exps))
+
+# define URBI_PARAMETRIC_AST_FOREACH(Macro)                     \
+  BOOST_PP_SEQ_FOR_EACH(Macro, , URBI_PARAMETRIC_AST_TYPES)
+
 namespace ast
 {
 
   class ParametricAst
     : public Cloner
-    , public parser::MetavarMap<ast::rExp>
-    , public parser::MetavarMap<libport::Symbol>
-    , public parser::MetavarMap<ast::exps_type*>
+
+  // Inherit from MetavarMap of all types
+# define INHERIT(Iter, None, Type)                                      \
+  , public parser::MetavarMap<BOOST_PP_TUPLE_ELEM(2, 0, Type)>
+  URBI_PARAMETRIC_AST_FOREACH(INHERIT)
+# undef INHERIT
+
   {
   public:
     typedef Cloner super_type;
-    typedef parser::MetavarMap<ast::rExp> exp_map_type;
-    typedef parser::MetavarMap<libport::Symbol> id_map_type;
-    typedef parser::MetavarMap<ast::exps_type*> exps_map_type;
+
+    // Typedef MetavarMap of all types
+#define TYPEDEF(Iter, None, Type)                               \
+    typedef parser::MetavarMap<BOOST_PP_TUPLE_ELEM(2, 0, Type)> \
+      BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type);
+    URBI_PARAMETRIC_AST_FOREACH(TYPEDEF)
+#undef TYPEDEF
 
     /// Build a ParametricAst whose textual part is \a s.
     ParametricAst(const std::string& s, const loc& l = loc());
@@ -39,9 +59,10 @@ namespace ast
     /// Pass the n-th argument.
     // The template version of the operator fails with an
     // incomprehensible ambiguity. It's duplicated for now.
-    ParametricAst& operator% (ast::rExp t);
-    ParametricAst& operator% (libport::Symbol id);
-    ParametricAst& operator% (ast::exps_type* exps);
+# define PERCENT(Iter, None, Type)              \
+    ParametricAst& operator% (BOOST_PP_TUPLE_ELEM(2, 0, Type));
+  URBI_PARAMETRIC_AST_FOREACH(PERCENT)
+# undef PERCENT
 
     /// Fire the substitution, and return the result.
     /// Calls clear.
