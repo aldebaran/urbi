@@ -15,10 +15,7 @@
 #ifndef URBI_STARTER_HH
 # define URBI_STARTER_HH
 
-# include <algorithm>
 # include <string>
-
-# include <libport/singleton-ptr.hh>
 
 # include <urbi/export.hh>
 # include <urbi/uobject.hh>
