@@ -102,32 +102,6 @@ namespace urbi
   };
 
 
-
-#define SETBACKCASTCTOR(T)			\
-  inline					\
-  UValue					\
-  back_cast(T& t)				\
-  {						\
-    return UValue(t);				\
-  }
-
-SETBACKCASTCTOR(bool)
-SETBACKCASTCTOR(int)
-SETBACKCASTCTOR(long)
-SETBACKCASTCTOR(ufloat)
-SETBACKCASTCTOR(UValue)
-SETBACKCASTCTOR(char*)
-SETBACKCASTCTOR(void*)
-SETBACKCASTCTOR(const std::string)
-SETBACKCASTCTOR(std::string)
-SETBACKCASTCTOR(const UBinary)
-SETBACKCASTCTOR(const UList)
-SETBACKCASTCTOR(const UObjectStruct)
-SETBACKCASTCTOR(const USound)
-SETBACKCASTCTOR(const UImage)
-
-
-
   /// URBIStarter base class used to store heterogeneous template
   /// class objects in starterlist
   class URBI_SDK_API baseURBIStarterHub
