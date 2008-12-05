@@ -22,12 +22,6 @@
 # define URBI_USYSTEM_HH
 
 # include <string>
-# include <list>
-# include <algorithm>
-
-# include <libport/singleton-ptr.hh>
-# include <libport/ufloat.h>
-# include <libport/hash.hh>
 
 # include <urbi/export.hh>
 
@@ -45,7 +39,6 @@ namespace urbi
   class URBI_SDK_API USystemMessage
   {
   public:
-
     USystemMessage();
     virtual ~USystemMessage();
   };
@@ -56,8 +49,7 @@ namespace urbi
   class URBI_SDK_API UStringSystemMessage : public USystemMessage
   {
   public:
-
-    UStringSystemMessage(const std::string &s);
+    UStringSystemMessage(const std::string& s);
     virtual ~UStringSystemMessage();
 
     /// get the system message as a string
@@ -80,12 +72,11 @@ namespace urbi
   class URBI_SDK_API USystem
   {
   public:
-
     USystem();
     virtual ~USystem();
 
     /// Register to be notified of kernel messages on a specific channel
-    void register_channel(const USystemChannel &channel);
+    void register_channel(const USystemChannel& channel);
 
     /** Kernel message callback.
      * receive_message must return immediately, returning a timeout limit in
@@ -107,14 +98,10 @@ namespace urbi
      *
      *  @return the number of milliseconds before timeout.
      */
-    virtual int receive_message (const USystemChannel &channel,
-				 const USystemMessage &message);
+    virtual int receive_message (const USystemChannel& channel,
+				 const USystemMessage& message);
   };
 
 } // end namespace urbi
 
 #endif // ! URBI_UOBJECT_HH
-
-/// Local Variables:
-/// mode: c++
-/// End:
