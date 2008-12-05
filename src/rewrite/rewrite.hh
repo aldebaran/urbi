@@ -6,9 +6,7 @@
 namespace rewrite
 {
   ast::rNary rewrite(ast::rConstNary a);
-  ast::rPipe pattern_bind(const ast::rConstAst& pattern,
-                          const ast::rExp& exp,
-                          bool before = true);
+  ast::rExp rewrite(ast::rConstExp a);
 }
 
 #endif

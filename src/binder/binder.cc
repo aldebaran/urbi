@@ -217,6 +217,18 @@ namespace binder
   }
 
   void
+  Binder::visit(const ast::Match* match)
+  {
+    const ast::loc& location = match->location_get();
+    ast::rExp pattern = recurse(match->pattern_get());
+    ast::rExp bindings = recurse(match->bindings_get());
+    ast::rExp guard = recurse(match->guard_get());
+    ast::Match* res = new ast::Match (location, pattern, guard);
+    res->bindings_set(bindings);
+    result_ = res;
+  }
+
+  void
   Binder::visit(const ast::Assignment* input)
   {
     ast::loc loc = input->location_get();
@@ -448,17 +460,15 @@ namespace binder
   void
   Binder::visit (const ast::Scope* input)
   {
-    result_ = new ast::Scope(input->location_get(), handleScope(input, false));
+    Finally f(scope_open(false));
+    super_type::visit(input);
   }
 
   void
   Binder::visit (const ast::Do* input)
   {
-    operator() (input->target_get().get());
-    ast::rExp target = result_.unsafe_cast<ast::Exp>();
-    result_ = new ast::Do(input->location_get(),
-                          handleScope(input, true),
-                          target);
+    Finally f(scope_open(true));
+    super_type::visit(input);
   }
 
   static
@@ -486,14 +496,6 @@ namespace binder
     scope_depth_--;
     unbind_.pop_back();
     setOnSelf_.pop_back();
-  }
-
-  ast::rExp
-  Binder::handleScope(ast::rConstScope scope, bool setOnSelf)
-  {
-    libport::Finally finally(scope_open(setOnSelf));
-    operator() (scope->body_get().get());
-    return result_.unsafe_cast<ast::Exp>();
   }
 
   template <typename Code>
@@ -564,6 +566,20 @@ namespace binder
     handleRoutine(input);
   }
 
+  // Scope variables declared in conditions
+#define SCOPE(Node)                             \
+  void                                          \
+  Binder::visit(const ast::Node* input)         \
+  {                                             \
+    Finally f(scope_open(false));               \
+    super_type::visit(input);                   \
+  }                                             \
+
+  SCOPE(If);
+  SCOPE(While);
+
+#undef SCOPE
+
   void
   Binder::bind(ast::rLocalDeclaration decl)
   {
@@ -585,5 +601,7 @@ namespace binder
     unbind_.back() <<
       boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
+
+
 
 } // namespace binder

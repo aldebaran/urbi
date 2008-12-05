@@ -8,6 +8,8 @@
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
 
+#include <rewrite/rewrite.hh>
+
 namespace flower
 {
   using libport::Finally;
@@ -53,7 +55,8 @@ namespace flower
       "{var '$loopBreakTag' = Tag.newFlowControl(\"loopBreakTag\") |"
       "'$loopBreakTag': %exp:1}");
 
-    return exp(brk % e);
+    // FIXME: e is visited twice
+    return rewrite::rewrite(ast::rConstExp(exp(brk % e)));
   }
 
   static inline
@@ -64,7 +67,9 @@ namespace flower
       "{var '$loopContinueTag' = Tag.newFlowControl(\"loopContinueTag\") |"
       "'$loopContinueTag': %exp:1}");
 
-    return exp(cont % e);
+
+    // FIXME: e is visited twice
+    return rewrite::rewrite(ast::rConstExp(exp(cont % e)));
   }
 
   void
@@ -153,7 +158,9 @@ namespace flower
                                   "'$returnTag': %exp:1");
       ast::rScope copy =
         result_.unsafe_cast<ast::Function>()->body_get();
-      copy->body_set(exp(a % copy->body_get()));
+      // FIXME: children are rewritten twice
+      copy->body_set(
+        rewrite::rewrite(ast::rConstExp(exp(a % copy->body_get()))));
     }
     result_->original_set(code);
   }

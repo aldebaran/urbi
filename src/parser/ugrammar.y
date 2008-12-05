@@ -107,6 +107,16 @@
     YYERROR;                                                            \
   } while (0)
 
+
+#define ERROR(Loc, Msg, Type)                   \
+    do {                                        \
+      std::stringstream s;                      \
+      s << Msg;                                 \
+      up.error(Loc, s.str());                   \
+      yylhs.value.destroy<Type>();              \
+      YYERROR;                                  \
+    } while (false)                             \
+
     /// Whether the \a e was the empty command.
     static bool
     implicit (const ast::rExp e)
@@ -314,6 +324,13 @@
 %left "new";
 %left "identifier";
 
+// ":" > "indentifier, so as we get the iteration:
+//   for (var i : [1, 2, 3]) ;
+//
+// not the tagged statement:
+//   for ((var i) : 42) ;
+%nonassoc ":";
+
 
 // Precedences are increasing)
 %left  "," ";"
@@ -323,6 +340,10 @@
 %left  "else" "onleave"
 
 %left  "=" "+=" "-=" "*=" "/=" "^=" "%="
+
+%left VAR
+%left LVALUE_TO_EXP
+
 %nonassoc "~" // This is not the same as in C++, this is for "softest".
 %left  "||"
 %left  "&&"
@@ -577,7 +598,15 @@ stmt:
 `---------*/
 
 stmt:
-  "emit" k1_id args %prec CMDBLOCK
+  "emit" k1_id %prec CMDBLOCK
+  {
+    $$ = new ast::Emit(@$, $2, 0, 0);
+  }
+| "emit" k1_id "~" exp %prec CMDBLOCK
+  {
+    $$ = new ast::Emit(@$, $2, 0, $4);
+  }
+| "emit" k1_id args %prec CMDBLOCK
   {
     $$ = new ast::Emit(@$, $2, $3, 0);
   }
@@ -651,31 +680,47 @@ k1_id:
 ;
 
 
+/*----------.
+| Modifiers |
+`----------*/
+
+%type <modifier_type> modifier;
+%type <ast::modifiers_type*> modifiers;
+
+modifier:
+  "identifier" ":" exp
+  {
+    $$.first = $1;
+    $$.second = $3;
+  }
+;
+
+modifiers:
+  modifier
+    {
+      $$ = new ast::modifiers_type();
+      (*$$)[$1.first] = $1.second;
+    }
+| modifiers modifier
+    {
+      $$ = $1;
+      (*$$)[$2.first] = $2.second;
+    }
+;
+
 /*-------------------.
 | Stmt: Assignment.  |
 `-------------------*/
 
 exp:
-  "(" "var" "identifier" ")"
+  exp "=" exp
     {
-      $$ = new ast::Binding(@$, $3);
+      $$ = new ast::Assign(@$, $1, $3, 0);
     }
-
-stmt:
-  lvalue "=" exp modifiers
+| exp "=" "(" exp modifiers ")"
     {
-      $$ = new ast::Assignment(@$, $1, $3, $4);
+      $$ = new ast::Assign(@$, $1, $4, $5);
     }
-| "var" lvalue doc "=" exp modifiers
-    {
-      $$ = new ast::Declaration(@$, $2, $5, $6);
-      $$->doc_set($3);
-    }
-| "var" lvalue
-    {
-      $$ = new ast::Declaration(@$, $2, 0, 0);
-    }
-;
 
 %token <libport::Symbol>
         CARET_EQ    "^="
@@ -709,17 +754,10 @@ exp:
 `-------------*/
 
 %token MINUS_GT     "->";
-stmt:
-  lvalue "->" id "=" exp
-    {
-      $$ = new ast::PropertyWrite(@$, $1->call(), $3, $5);
-    }
-;
-
 exp:
   lvalue "->" id
     {
-      $$ = new ast::PropertyRead(@$, $1->call(), $3);
+      $$ = new ast::Property(@$, $1->call(), $3);
     }
 ;
 
@@ -793,20 +831,6 @@ stmt:
 		       ast_scope(@$,$5),
 		       ast_scope(@$,$7));
     }
-| "if" "(" "var" "identifier" "=" exp ")" nstmt %prec CMDBLOCK
-   {
-     PARAMETRIC_AST(desugar,
-       "{var %id:1 = %exp:2 |"
-       "if (%id:3) %exp:4}");
-     $$ = exp(desugar % $4 % $6 % $4 % $8);
-   }
-| "if" "(" "var" "identifier" "=" exp ")" nstmt "else" nstmt
-   {
-     PARAMETRIC_AST(desugar,
-       "{var %id:1 = %exp:2 |"
-       "if (%id:3) %exp:4 else %exp:5}");
-     $$ = exp(desugar % $4 % $6 % $4 % $8 % $10);
-   }
 | "freezeif" "(" softtest ")" stmt
     {
       PARAMETRIC_AST(desugar,
@@ -955,23 +979,21 @@ catches:
 | catches catch { std::swap($$, $1); $$.push_back($2); }
 ;
 
+%type <ast::rMatch> match;
+match:
+  exp           { $$ = new ast::Match(@$, $1, 0);  }
+| exp "if" exp  { $$ = new ast::Match(@$, $1, $3); }
+
+
 %type <ast::rCatch> catch;
 catch:
-  "catch" "(" exp "identifier" ")" block
+  "catch" "(" match ")" block
   {
-    $$ = new ast::Catch(@$, $3, new ast::LocalDeclaration(@$, $4, 0), $6);
-  }
-| "catch" "(" "var" "identifier" ")" block
-  {
-    $$ = new ast::Catch(@$, 0, new ast::LocalDeclaration(@$, $4, 0), $6);
-  }
-| "catch" "(" exp ")" block
-  {
-    $$ = new ast::Catch(@$, $3, 0, $5);
+    $$ = new ast::Catch(@$, $3, $5);
   }
 | "catch" block
   {
-    $$ = new ast::Catch(@$, 0, 0, $2);
+    $$ = new ast::Catch(@$, 0, $2);
   }
 ;
 
@@ -1044,14 +1066,9 @@ stmt_loop:
     {
       FLAVOR_CHECK(@$, "while", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
+
       $$ = new ast::While(@$, $1, $3, ast_scope(@$,$5));
     }
-| "while" "(" "var" "identifier" "=" exp ")" stmt %prec CMDBLOCK
-  {
-    PARAMETRIC_AST(desugar, "while(true) {var %id:1 = %exp:2 |"
-				      "if (%id:3) %exp:4 else break }");
-    $$ = exp(desugar % $4 % $6 % $4 % $8);
-  }
 ;
 
 in_or_colon: "in" | ":";
@@ -1072,7 +1089,7 @@ exp:
 | Function calls, messages.  |
 `---------------------------*/
 
-%type <ast::rLValue> lvalue call;
+%type <ast::rLValue> lvalue;
 %printer { debug_stream() << *$$; } <ast::rLValue>;
 lvalue:
 	  id	{ $$ = ast_call(@$, $1); }
@@ -1083,12 +1100,23 @@ id:
   "identifier"  { std::swap($$, $1); }
 ;
 
-;
-
-call:
-  lvalue args
+exp:
+  "var" exp %prec VAR
+  {
+    if (!$2.unsafe_cast<ast::LValue>()
+        || ($2.unsafe_cast<ast::Call>()
+            && $2.unsafe_cast<ast::Call>()->arguments_get()))
+      ERROR(@2, "syntax error, " << *$2 << " is not a valid lvalue",
+            ast::rExp);
+    $$ = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
+  }
+| lvalue %prec LVALUE_TO_EXP
+  {
+    $$ = $1;
+  }
+| lvalue args
     {
-      std::swap($$, $1);
+      $$ = $1;
       $$.unchecked_cast<ast::LValueArgs>()->arguments_set($2);
       $$->location_set(@$);
     }
@@ -1115,7 +1143,6 @@ id:
 
 exp:
   new   { std::swap($$, $1); }
-| call  { $$ = $1; }  // They don't have the same type, this is not a swap.
 ;
 
 
@@ -1237,16 +1264,7 @@ event_match:
 exp:
   exp "[" exps "]"
   {
-    PARAMETRIC_AST(rewrite, "%exp:1 .'[]'(%exps:2)");
-    $$ = ast::exp(rewrite % $1 % $3);
-    $$->location_set(@$);
-  }
-| exp "[" exps "]" "=" exp
-  {
-    PARAMETRIC_AST(rewrite, "%exp:1 .'[]='(%exps:2)");
-    $3->push_back($6);
-    $$ = ast::exp(rewrite % $1 % $3);
-    $$->location_set(@$);
+    $$ = new ast::Subscript(@$, $3, $1);
   }
 ;
 
@@ -1358,40 +1376,6 @@ exp.opt:
 ;
 
 
-/*------------.
-| Modifiers.  |
-`------------*/
-
-%type <modifier_type> modifier;
-%type <ast::modifiers_type*> modifiers modifiers.1;
-
-modifier:
-  "identifier" ":" exp
-  {
-    $$.first = $1;
-    $$.second = $3;
-  }
-;
-
-modifiers:
-  /* empty */    { $$ = 0; }
-| modifiers.1    { $$ = $1; }
-;
-
-modifiers.1:
-  modifier
-    {
-      $$ = new ast::modifiers_type();
-      (*$$)[$1.first] = $1.second;
-    }
-| modifiers.1 modifier
-    {
-      $$ = $1;
-      (*$$)[$2.first] = $2.second;
-    }
-;
-
-
 /*----------------.
 | Metavariables.  |
 `----------------*/
@@ -1425,7 +1409,7 @@ lvalue:
 ;
 
 %token PERCENT_EXPS_COLON "%exps:";
-call:
+exp:
   lvalue "(" "%exps:" "integer" ")"
   {
     assert($1.unsafe_cast<ast::LValueArgs>());
@@ -1453,8 +1437,7 @@ exps.1:
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
 args:
-  /* empty */   { $$ = 0; }
-| "(" exps ")"  { std::swap($$, $2); }
+  "(" exps ")"  { std::swap($$, $2); }
 ;
 
 

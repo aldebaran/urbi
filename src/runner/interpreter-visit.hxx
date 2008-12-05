@@ -431,7 +431,6 @@ namespace runner
     return res;
   }
 
-
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
@@ -574,18 +573,24 @@ namespace runner
     }
     catch (object::UrbiException& exn)
     {
-      rObject value = exn.value_get();
+      rObject value = current_exception_ = exn.value_get();
       foreach (ast::rCatch handler, e->handlers_get())
       {
-        if (ast::rExp match = handler->match_get())
-          if (!is_a(value, operator()(match.get())))
+        if (handler->match_get())
+        {
+          rObject pattern = operator()(handler->match_get()->pattern_get().get());
+          if (!is_true(object::urbi_call(*this, pattern, SYMBOL(match), value)))
             continue;
-	if (handler->declaration_get())
-	  stacks_.def(handler->declaration_get().get(), value);
-	{
-	  libport::Finally finally(scoped_set(current_exception_, value));
-	  return operator()(handler->body_get().get());
-	}
+          operator()(handler->match_get()->bindings_get().get());
+          if (handler->match_get()->guard_get()
+              && !is_true(operator()(handler->match_get()->guard_get().get())))
+          {
+            // Clear pattern
+            pattern = operator()(handler->match_get()->pattern_get().get());
+            continue;
+          }
+        }
+        return operator()(handler->body_get().get());
       }
       // No handler matched, rethrow.
       throw;
@@ -632,6 +637,7 @@ namespace runner
     INVALID_RET;                                                        \
   }                                                                     \
 
+  INVALID(Assign);
   INVALID(Assignment);
   INVALID(Binding);
   INVALID(Break);
@@ -644,15 +650,16 @@ namespace runner
   INVALID(Foreach);
   INVALID(Implicit);
   INVALID(Incrementation);
+  INVALID(Match);
   INVALID(MetaArgs);
   INVALID(MetaCall);
   INVALID(MetaExp);
   INVALID(MetaId);
   INVALID(MetaLValue);
   INVALID(OpAssignment);
-  INVALID(PropertyRead);
-  INVALID(PropertyWrite);
+  INVALID(Property);
   INVALID(Return);
+  INVALID(Subscript);
 
 #undef INVALID
 #undef INVALID_RET

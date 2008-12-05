@@ -217,3 +217,12 @@ class Global.FileNotFound: Exception
     Exception.getSlot("init").apply([this, explanation])
   }
 };
+
+class Global.MatchFailure: Exception
+{
+  function init()
+  {
+    var explanation = "pattern didn't match";
+    Exception.getSlot("init").apply([this, explanation]);
+  }
+};

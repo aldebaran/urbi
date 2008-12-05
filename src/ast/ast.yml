@@ -1128,14 +1128,14 @@ CallMsg:
     - '"call"'
 
 Binding:
-  super: Exp
+  super: LValue
   attributes:
-    - name:
-        type: 'libport::Symbol'
+    - what:
+        type: rLValue
         access: r
   printer:
     - '"var "'
-    - $name
+    - ~what
 
 Unary:
   super: Exp
@@ -1158,8 +1158,8 @@ Decrementation:
     - ~exp
     - '"--"'
 
-PropertyAction:
-  super: Exp
+Property:
+  super: LValue
   attributes:
     - owner:
         type: rCall
@@ -1169,19 +1169,6 @@ PropertyAction:
     - ~owner
     - '"->"'
     - $name
-
-PropertyWrite:
-  super: PropertyAction
-  attributes:
-    - value:
-        type: rExp
-  printer:
-    - '{ visit(static_cast<const PropertyAction*>(n)); }'
-    - '" = "'
-    - ~value
-
-PropertyRead:
-  super: PropertyAction
 
 MetaCall:
   super: LValueArgs
@@ -1294,29 +1281,23 @@ Catch:
   super: Exp
   attributes:
     - match:
-        type: rExp
-        desc: The prototype to match if present
+        type: rMatch
         mandatory: False
-    - declaration:
-        type: rLocalDeclaration
-        desc: Local declaration with name
-        mandatory: False
-        access: rW
     - body:
         type: rNary
         desc: The handler to execute if we have a match
   printer:
     - '"catch"'
     - '{
-         if (n->match_get() || n->declaration_get())
+         if (n->match_get())
          {
            ostr_ << " (";
-           if (rConstExp m = n->match_get())
-             operator()(m.get());
-           else if (n->declaration_get())
-             ostr_ << "var";
-           if (n->declaration_get())
-             ostr_ << " " << n->declaration_get()->what_get();
+           operator()(n->match_get()->pattern_get().get());
+           if (n->match_get()->guard_get())
+           {
+             ostr_ << " if ";
+             operator()(n->match_get()->guard_get().get());
+           }
            ostr_ << ")";
          }
        }'
@@ -1339,6 +1320,46 @@ Throw:
          if (rConstExp m = n->value_get())
            ostr_ << " " << *m;
        }'
+
+Assign:
+  super: Exp
+  attributes:
+    - what:
+        type: rExp
+    - value:
+        type: rExp
+    - modifiers:
+        type: 'modifiers_type*'
+        mandatory: false
+  printer:
+    - ~what
+    - '" = "'
+    - ~value
+
+Subscript:
+  super: LValueArgs
+  attributes:
+    - target:
+        type: rExp
+  printer:
+    - ~target
+    - '"["'
+    - $arguments
+    - '"]"'
+
+Match:
+  super: Ast
+  attributes:
+    - pattern:
+        type: rExp
+        access: rW
+    - guard:
+        type: rExp
+        access: rW
+    - bindings:
+        type: rExp
+        access: rW
+        init: '0'
 
 # Local Variables:
 # mode: yaml

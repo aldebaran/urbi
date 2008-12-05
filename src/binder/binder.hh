@@ -54,8 +54,11 @@ namespace binder
                               (Do)
                               (Foreach)
                               (Function)
+                              (If)
                               (LocalDeclaration)
-                              (Scope));
+                              (Match)
+                              (Scope)
+                              (While));
 
     template <typename Code>
     void handleRoutine(const Code* code);
@@ -120,7 +123,6 @@ namespace binder
     ast::rLocalDeclaration decl_get(const libport::Symbol& name);
 
     /// Factored method to handle scopes.
-    ast::rExp handleScope(ast::rConstScope scope, bool setOnSelf);
     libport::Finally::action_type scope_open(bool set_on_self);
     void scope_close();
 

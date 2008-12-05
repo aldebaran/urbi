@@ -1,3 +1,5 @@
+#include <libport/finally.hh>
+
 #include <ast/cloner.hxx>
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
@@ -8,6 +10,7 @@
 #include <parser/parse.hh>
 
 #include <rewrite/desugarer.hh>
+#include <rewrite/pattern-binder.hh>
 
 namespace rewrite
 {
@@ -16,15 +19,114 @@ namespace rewrite
   using parser::ast_lvalue_once;
   using parser::ast_lvalue_wrap;
 
+  Desugarer::Desugarer()
+    : pattern_(false)
+  {}
+
+  void
+  Desugarer::visit(const ast::Assign* assign)
+  {
+//     std::cerr << "ASSIGN: " << *assign << std::endl;
+    ast::loc loc = assign->location_get();
+
+    // Simple declaration: var x = value
+    if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())
+    {
+      result_ = new ast::Declaration(loc,
+                                     what->what_get(),
+                                     assign->value_get(),
+                                     0);
+      result_ = recurse(result_);
+      return;
+    }
+
+    // Simple assignment: x = value
+    if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
+    {
+      ast::modifiers_type* modifiers = 0;
+      if (const ast::modifiers_type* originals = assign->modifiers_get())
+      {
+        modifiers = new ast::modifiers_type();
+        foreach (ast::modifiers_type::value_type original, *originals)
+          (*modifiers)[original.first] =  recurse(original.second);
+      }
+      result_ = new ast::Assignment(loc, call, assign->value_get(), modifiers);
+
+      result_ = recurse(result_);
+      return;
+    }
+
+    // Property assignment: x->prop = value
+    if (ast::rProperty prop =
+        assign->what_get().unsafe_cast<ast::Property>())
+    {
+      PARAMETRIC_AST(rewrite, "%exp:1 . setProperty(%exp:2, %exp:3, %exp:4)");
+
+      rewrite
+        % recurse(prop->owner_get()->target_get())
+        % ast_string(loc, prop->owner_get()->name_get())
+        % ast_string(loc, prop->name_get())
+        % recurse(assign->value_get());
+
+      result_ = recurse(exp(rewrite));
+      return;
+    }
+
+    // Subscript assignment: x[y] = value
+    if (ast::rSubscript sub =
+        assign->what_get().unsafe_cast<ast::Subscript>())
+    {
+      PARAMETRIC_AST(rewrite, "%exp:1 .'[]='(%exps:2)");
+      // FIXME: arguments desugared twice
+      ast::exps_type* args = maybe_recurse_collection(sub->arguments_get());
+      args->push_back(assign->value_get());
+      result_ = ast::exp(rewrite
+                         % sub->target_get()
+                         % args);
+      result_ = recurse(result_);
+      return;
+    }
+
+    PARAMETRIC_AST(rewrite,
+                   "waituntil(!Pattern.hasSlot(\"$value\")) |"
+                   "Pattern.setSlot(\"$value\", %exp:2) |"
+                   "Pattern.setSlot(\"$pattern\", Pattern.new(%exp:1)) |"
+                   "if (!Pattern.getSlot(\"$pattern\").match(Pattern.getSlot(\"$value\")))"
+                   "{"
+                   "  Pattern.removeSlot(\"$pattern\") |"
+                   "  Pattern.removeSlot(\"$value\") |"
+                   "  throw MatchFailure.new() |"
+                   "} |"
+                   "%exp:3 |"
+                   "Pattern.removeSlot(\"$pattern\") |"
+                   "{"
+                   "  var res = Pattern.getSlot(\"$value\") |"
+                   "  Pattern.removeSlot(\"$value\") |"
+                   "  res"
+                   "}"
+      );
+
+    ast::rExp pattern = assign->what_get();
+    rewrite::PatternBinder bind
+      (ast_call(loc, ast_call(loc, SYMBOL(Pattern)), SYMBOL(DOLLAR_pattern)), loc);
+    bind(pattern.get());
+
+    rewrite.location_set(assign->location_get());
+    ast::rExp res = exp(rewrite
+                        % bind.result_get().unchecked_cast<ast::Exp>()
+                        % assign->value_get()
+                        % bind.bindings_get());
+    res->location_set(assign->location_get());
+    result_ = recurse(res);
+  }
+
   void
   Desugarer::visit(const ast::Binding* binding)
   {
-    PARAMETRIC_AST(rewrite,
-                   "Pattern.Binding.new(%exp:1)");
-    rewrite % parser::ast_string(binding->location_get(),
-                                 binding->name_get());
-    result_ = exp(rewrite);
-    result_->original_set(binding);
+    ast::loc loc = binding->location_get();
+
+    result_ = new ast::Declaration(loc, binding->what_get(), 0, 0);
+    result_ = recurse(result_);
   }
 
   void Desugarer::visit(const ast::Class* c)
@@ -32,7 +134,6 @@ namespace rewrite
     ast::loc l = c->location_get();
     ast::rLValue what = recurse(c->what_get());
     libport::Symbol name = what->call()->name_get();
-    ast::rNary content = recurse(c->content_get());
 
     PARAMETRIC_AST(desugar,
       "var %lvalue:1 ="
@@ -63,9 +164,9 @@ namespace rewrite
       % protos_set
       % ast_string(l, name)
       % ast_string(l, libport::Symbol("as" + name.name_get()))
-      % content;
+      % c->content_get();
 
-    result_ = exp(desugar);
+    result_ = recurse(exp(desugar));
     result_->original_set(c);
   }
 
@@ -94,7 +195,8 @@ namespace rewrite
 		     "  detach({ sleep('$duration') | '$emit'.stop})"
 		     "}");
 
-      result_ = exp(emit %  event % args % duration);
+      // FIXME: children desugared twice
+      result_ =  recurse(exp(emit %  event % args % duration));
     }
     else
     {
@@ -123,13 +225,14 @@ namespace rewrite
     desugar % tgt
       % new_clone(tgt)
       % a->op_get()
-      % recurse(a->value_get());
+      % a->value_get();
 
     result_ = ast_lvalue_wrap(what, exp(desugar));
+    result_ = recurse(result_);
     result_->original_set(a);
   }
 
-  void Desugarer::visit(const ast::PropertyRead* p)
+  void Desugarer::visit(const ast::Property* p)
   {
     PARAMETRIC_AST(read, "%exp:1.getProperty(%exp:2, %exp:3)");
 
@@ -141,16 +244,47 @@ namespace rewrite
     result_->original_set(p);
   }
 
-  void Desugarer::visit(const ast::PropertyWrite* p)
+  void Desugarer::visit(const ast::Subscript* s)
   {
-    PARAMETRIC_AST(read, "%exp:1.setProperty(%exp:2, %exp:3, %exp:4)");
+    PARAMETRIC_AST(rewrite, "%exp:1 .'[]'(%exps:2)");
+    // FIXME: arguments desugared twice
+    rewrite.location_set(s->location_get());
+    result_ = ast::exp(rewrite
+                       % s->target_get()
+                       % maybe_recurse_collection(s->arguments_get()));
+    result_ = recurse(result_);
+  }
 
-    ast::rCall owner = p->owner_get();
-    read % owner->target_get()
-      % ast_string(owner->location_get(), owner->name_get())
-      % ast_string(p->location_get(), p->name_get())
-      % p->value_get();
-    result_ = exp(read);
-    result_->original_set(p);
+  void Desugarer::visit(const ast::Try* t)
+  {
+    ast::loc loc = t->location_get();
+    ast::rTry res = new ast::Try(loc, recurse(t->body_get()), ast::catches_type());
+
+    foreach (const ast::rCatch& c, t->handlers_get())
+    {
+      const ast::loc& loc = c->location_get();
+      ast::rCatch desugared;
+
+      PARAMETRIC_AST(pattern, "var '$pattern' = Pattern.new(%exp:1)");
+
+      if (c->match_get())
+      {
+        rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+        bind(c->match_get()->pattern_get().get());
+        ast::rExp p = exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
+        ast::rMatch match =
+          new ast::Match(loc, recurse(p), recurse(c->match_get()->guard_get()));
+        match->bindings_set(recurse(bind.bindings_get()));
+        match->original_set(c->match_get());
+        desugared = new ast::Catch(loc, match, recurse(c->body_get()));
+      }
+      else
+      {
+        super_type::visit(c.get());
+        desugared = c.unchecked_cast<ast::Catch>();
+      }
+      res->handlers_get().push_back(desugared);
+    }
+    result_ = res;
   }
 }

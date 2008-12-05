@@ -57,9 +57,6 @@ do (Object)
       add.apply([this, p]) |
   };
 
-  // Syntactic sugar for setProtos.
-  protos->updateHook = function(slot, value) { setProtos(value); };
-
   function '!==' (rhs)
   {
     !(this === rhs)
@@ -412,6 +409,13 @@ load("urbi/debug.u");
 
 load("urbi/pattern.u");
 
+// Properties require patterns
+do (Object)
+{
+  // Syntactic sugar for setProtos.
+  protos->updateHook = function(slot, value) { setProtos(value); };
+};
+
 /*--------------------.
 | Publish-subscribe.  |
 `--------------------*/
@@ -457,7 +461,7 @@ try
 {
   var this.urbi_ini_path = searchFile("URBI.INI");
 }
-catch (FileNotFound e)
+catch (var e if e.isA(FileNotFound))
 {
   var this.urbi_ini_path = nil;
 } | {};

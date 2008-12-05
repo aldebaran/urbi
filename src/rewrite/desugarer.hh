@@ -15,21 +15,27 @@ namespace rewrite
     typedef ast::Cloner super_type;
     /// \}
 
+    Desugarer();
+
   protected:
     /// Import visit from DefaultVisitor.
     using super_type::visit;
     /// Nodes to desugar
     CONST_VISITOR_VISIT_NODES(
+      (Assign)
       (Binding)
       (Class)
       (Decrementation)
       (Emit)
       (Incrementation)
       (OpAssignment)
-      (PropertyRead)
-      (PropertyWrite)
+      (Property)
+      (Subscript)
+      (Try)
       );
 
+  private:
+    bool pattern_;
   };
 }
 
