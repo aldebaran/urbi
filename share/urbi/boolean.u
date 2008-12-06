@@ -28,6 +28,6 @@ do (Object)
 
   function '!'()
   {
-    this == false
+    if (this) false else true
   };
 };
