@@ -22,8 +22,6 @@ print >> dot_printer_hh, """\
 # include <list>
 # include <sstream>
 
-# include <boost/regex.hpp>
-
 # include <libport/foreach.hh>
 
 # include <ast/visitor.hh>
@@ -153,8 +151,10 @@ namespace %(ns)s
     std::stringstream s;
     s << e;
     std::string res = s.str();
-    res = boost::regex_replace(res, boost::regex("<"), "&lt;");
-    res = boost::regex_replace(res, boost::regex(">"), "&gt;");
+    for (std::string::size_type i = res.find_first_of("<>");
+         i != std::string::npos;
+	 i = res.find_first_of("<>", i+4))
+      res.replace(i, 1, res[i] == '<' ? "&lt;" : "&gt;");
     return res;
   }
 

@@ -111,9 +111,6 @@ esac
 
 AM_CONDITIONAL([BUILD_PROGRAMS],
                [test x$enable_programs = xyes])
-if test x$enable_programs = xyes; then
-  BOOST_REGEX
-fi
 BOOST_TOKENIZER
 
 
