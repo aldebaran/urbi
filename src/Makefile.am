@@ -116,8 +116,11 @@ noinst_PROGRAMS = ast-dump
 dist_ast_dump_SOURCES =				\
   ast-dump.cc					\
   ast/dot-printer.hh				\
-  ast/dot-printer.cc
-ast_dump_LDADD   = libuobject.la $(libuobject_la_LIBADD)
+  ast/dot-printer.cc				\
+  $(nodist_libuobject_la_SOURCES)		\
+  $(dist_libuobject_la_SOURCES)
+ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
+ast_dump_LDADD   = $(libuobject_la_LIBADD)
 endif !WIN32
 endif BUILD_PROGRAMS
 
