@@ -233,7 +233,6 @@ namespace binder
   {
     ast::loc loc = input->location_get();
     ast::rCall call = input->what_get()->call();
-    ast::rExp target_value = recurse(input->value_get());
     libport::Symbol name = call->name_get();
 
     // Build dictionary for the (potential) modifiers
@@ -260,6 +259,7 @@ namespace binder
 
     if (modifiers)
     {
+      ast::rExp target_value = recurse(input->value_get());
       ast::rLValue tgt = ast_lvalue_once(call);
       PARAMETRIC_AST(trajectory,
                      "TrajectoryGenerator.new("
