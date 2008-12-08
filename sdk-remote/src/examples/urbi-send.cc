@@ -127,7 +127,7 @@ main(int argc, char* argv[])
   urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
   if (client.error())
-    std::cerr << "client failed to set up" << std::endl
+    std::cerr << program_name << ": client failed to set up" << std::endl
               << libport::exit(1);
 
   client.setWildcardCallback(callback(&dump));
@@ -139,7 +139,8 @@ main(int argc, char* argv[])
        ++i)
     client.sendFile(*i);
 
-  std::cout << "File sent, hit Ctrl-C to terminate." << std::endl;
+  std::cout << program_name << ": file sent, hit Ctrl-C to terminate."
+            << std::endl;
   urbi::execute();
 
   return 0;
