@@ -117,8 +117,7 @@ dist_ast_dump_SOURCES =				\
   ast-dump.cc					\
   ast/dot-printer.hh				\
   ast/dot-printer.cc
-ast_dump_LDFLAGS = $(BOOST_REGEX_LDFLAGS)
-ast_dump_LDADD   = $(BOOST_REGEX_LIBS) libuobject.la $(libuobject_la_LIBADD)
+ast_dump_LDADD   = libuobject.la $(libuobject_la_LIBADD)
 endif !WIN32
 endif BUILD_PROGRAMS
 
