@@ -129,6 +129,8 @@ for node in concrete:
     }
 
 print >> dot_printer_cc, """\
+%(banner)s
+
 #include <ast/dot-printer.hh>
 #include <ast/all.hh>
 
@@ -205,6 +207,8 @@ namespace %(ns)s
   %(visit)s
 }
 """ % {
+  'banner': tools.banner("ast/dot-generator.cc",
+			 "Implementation of %s::Cloner." % namespace),
   'ns': namespace,
   'visit': visit
   }
