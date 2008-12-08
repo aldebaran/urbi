@@ -159,12 +159,6 @@ namespace ast
   ParametricAst&
   ParametricAst::operator% (libport::intrusive_ptr<ast::Exp> t)
   {
-#ifndef NDEBUG
-    // Implicit are shared.
-    passert(libport::deref << t,
-            t.unsafe_cast<ast::Implicit>() || unique_(t.get()));
-#endif
-
     // Strangely, the exp_map_type qualification is required
     // here. Factoring the two % operator in a template method is thus
     // impossible.
