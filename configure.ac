@@ -100,15 +100,6 @@ URBI_SOCKETS
 
 URBI_ARG_ENABLE([enable-programs],
                 [Build extra programs], [yes|no], [no])
-case $enable_programs in
- (no)  # No need to pass --disable-programs, because (i) it's the
-       # default for sdk-remote, and (ii) if --disable-programs is
-       # passed to this configure, it gives it to its subconfigures,
-       # so we would just duplicate the request.
-       ;;
-  (*)   ac_configure_args="$ac_configure_args --enable-programs";;
-esac
-
 AM_CONDITIONAL([BUILD_PROGRAMS],
                [test x$enable_programs = xyes])
 BOOST_TOKENIZER
