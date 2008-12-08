@@ -33,6 +33,8 @@
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
 
+using libport::program_name;
+
 namespace
 {
   static
@@ -40,7 +42,7 @@ namespace
   usage()
   {
     std::cout <<
-      "usage: " << libport::program_name << " [OPTION].. [FILE]...\n"
+      "usage: " << program_name << " [OPTION].. [FILE]...\n"
       "\n"
       "  FILE    to load\n"
       "\n"
@@ -94,7 +96,7 @@ error(const urbi::UMessage& msg)
 int
 main(int argc, char* argv[])
 {
-  libport::program_name = argv[0];
+  program_name = argv[0];
   typedef std::list<std::string> strings_type;
   /// Files to send to the server.
   strings_type files;
