@@ -358,24 +358,41 @@ namespace parser
     ast::rExp inner = def ? def : ast_nil();
     rforeach (const case_type& c, cases)
     {
-      PARAMETRIC_AST(a,
+      PARAMETRIC_AST(desugar,
                      "var '$pattern' = Pattern.new(%exp:1) |"
-                     "if ('$pattern'.match('$switch'))"
+                     "if (if ('$pattern'.match('$switch'))"
+                     "    {"
+                     "      %exp:2 |"
+                     "      %exp:3"
+                     "    }"
+                     "    else"
+                     "      false)"
                      "{"
-                     "  %exp:2 |"
-                     "  %exp:3"
+                     "  %exp:4 |"
+                     "  %exp:5"
                      "}"
                      "else"
-                     "  %exp:4");
+                     "  %exp:6"
+        );
+
+      PARAMETRIC_AST(cond,
+                     "true");
+
+      ast::rExp condition = c.first->guard_get();
+      if (!condition)
+        condition = exp(cond);
 
       rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-      bind(c.first.get());
+      bind(c.first->pattern_get().get());
 
-      a % bind.result_get().unchecked_cast<ast::Exp>()
+      desugar
+        % bind.result_get().unchecked_cast<ast::Exp>()
+        % bind.bindings_get()
+        % condition
         % bind.bindings_get()
         % c.second
         % inner;
-      inner = ast::exp(a);
+      inner = ast::exp(desugar);
     }
 
     PARAMETRIC_AST(sw, "{ var '$switch' = %exp:1 | %exp:2 }");

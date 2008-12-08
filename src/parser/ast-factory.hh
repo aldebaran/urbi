@@ -141,7 +141,7 @@ namespace parser
   | Switch  |
   `--------*/
 
-  typedef std::pair<ast::rExp, ast::rNary> case_type;
+  typedef std::pair<ast::rMatch, ast::rNary> case_type;
   typedef std::list<case_type> cases_type;
 
   ast::rExp

@@ -966,7 +966,7 @@ cases:
 %printer { debug_stream() << $$; } < ::parser::case_type >;
 
 case:
-  "case" exp ":" stmts  {  $$ = ::parser::case_type($2, $4); }
+  "case" match ":" stmts  {  $$ = ::parser::case_type($2, $4); }
 ;
 
 /*-------------.
