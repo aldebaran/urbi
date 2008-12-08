@@ -45,11 +45,16 @@ CHECK_ENVIRONMENT +=				\
   PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
   URBI_SERVER=$(URBI_SERVER)
 
+# Find (i) our wrappers, (ii) the non-installed kernel if there is one
+# (in the case of an SDK-Remote inside a Kernel pacakge), (iii) the
+# examples programs.
+BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/../tests/bin:$(abs_top_builddir)/src/examples
+
 # Use the wrappers to run the non-installed executables.
-BUILDCHECK_ENVIRONMENT +=						\
-  WINE_LD_LIBRARY_PATH_ARGS='--wrapper=../urbi-launch'			\
-  $(RUN_WINE_LD_LIBRARY_PATH)						\
-  PATH=$(abs_builddir)/bin:$(abs_top_builddir)/src/examples:$$PATH
+BUILDCHECK_ENVIRONMENT +=				\
+  WINE_LD_LIBRARY_PATH_ARGS='--wrapper=../urbi-launch'	\
+  $(RUN_WINE_LD_LIBRARY_PATH)				\
+  PATH=$(BUILDCHECK_PATH):$$PATH
 
 INSTALLCHECK_ENVIRONMENT +=			\
   PATH=$(bindir):$$PATH

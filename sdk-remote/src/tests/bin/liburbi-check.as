@@ -23,16 +23,12 @@ cleanup ()
     (0:0) ;;
     (0:*) # Maybe a children exited for SKIP etc.
 	 exit $children_sta;;
-    (*:*) # If liburbi-check failed, there is a big problem.
-	 error SOFTWARE "liburbi-check itself failed with $exit_status";;
+    (*:*) # If the checker failed, there is a big problem.
+	 error SOFTWARE "$0 itself failed with $exit_status";;
   esac
   # rst_expect sets exit=false if it saw a failure.
   $exit
 }
-for signal in 1 2 13 15; do
-  trap 'error $((128 + $signal)) \
-	      "received signal $signal ($(kill -l $signal))"' $signal
-done
 trap cleanup 0
 
 
@@ -62,8 +58,6 @@ my_sleep ()
 exec 3>&2
 
 check_dir abs_builddir bin/liburbi-check
-check_dir abs_top_builddir config.status
-check_dir abs_top_srcdir configure.ac
 
 # Make it absolute.
 chk=$(absolute "$1")
@@ -81,25 +75,11 @@ meraw=$(basename $me)    # MERAW!
 srcdir=$(absolute $srcdir)
 export srcdir
 # Move to a private dir.
-rm -rf $me.dir
-mkdir -p $me.dir
-cd $me.dir
+mkcd $me.dir
 
 # Help debugging
 set | rst_pre "$me variables"
 
-# $URBI_SERVER.
-#
-# If this SDK-Remote is part of the Kernel package, then we should not
-# use an installed urbi-console, but rather the one which is part of
-# this package.
-if test -d $abs_top_srcdir/../../src/kernel; then
-  stderr "This SDK-Remote is part of a kernel package" \
-         "  ($abs_top_srcdir/../../src/kernel exists)."
-  export PATH=$abs_top_builddir/../tests/bin:$PATH
-else
-  stderr "This SDK-Remote is standalone."
-fi
 # Leaves trailing files, so run it in subdir.
 find_urbi_server
 
