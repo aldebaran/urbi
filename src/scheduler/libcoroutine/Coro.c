@@ -413,7 +413,7 @@ void Coro_setup(Coro *self, void *arg)
 #define setjmp  _setjmp
 #define longjmp _longjmp
 
-void Coro_setup(Coro *self, void *arg)
+void Coro_setup(Coro *self, void *)
 {
 	size_t *sp = (size_t *)(((intptr_t)Coro_stack(self)
 						+ Coro_stackSize(self) - 64 + 15) & ~15);
