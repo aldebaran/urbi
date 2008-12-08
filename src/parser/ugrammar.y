@@ -819,13 +819,13 @@ stmt:
       PARAMETRIC_AST(every, "Control.every_(%exp:1, %exp:2)");
       $$ = exp (every % $3 % $5);
     }
-| "if" "(" exp ")" nstmt %prec CMDBLOCK
+| "if" "(" stmts ")" nstmt %prec CMDBLOCK
     {
       $$ = new ast::If(@$, $3,
 		       ast_scope(@$,$5),
 		       ast_scope(@$,new ast::Noop(@$, 0)));
     }
-| "if" "(" exp ")" nstmt "else" nstmt
+| "if" "(" stmts ")" nstmt "else" nstmt
     {
       $$ = new ast::If(@$, $3,
 		       ast_scope(@$,$5),
