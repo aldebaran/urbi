@@ -51,9 +51,9 @@ CHECK_ENVIRONMENT +=				\
 BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/../tests/bin:$(abs_top_builddir)/src/examples
 
 # Use the wrappers to run the non-installed executables.
-BUILDCHECK_ENVIRONMENT +=				\
-  WINE_LD_LIBRARY_PATH_ARGS='--wrapper=../urbi-launch'	\
-  $(RUN_WINE_LD_LIBRARY_PATH)				\
+BUILDCHECK_ENVIRONMENT +=						    \
+  WINE_LD_LIBRARY_PATH_ARGS='--wrapper=$(abs_top_builddir)/src/urbi-launch' \
+  $(RUN_WINE_LD_LIBRARY_PATH)						    \
   PATH=$(BUILDCHECK_PATH):$$PATH
 
 INSTALLCHECK_ENVIRONMENT +=			\
