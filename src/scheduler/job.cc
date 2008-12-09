@@ -13,7 +13,7 @@
 
 namespace scheduler
 {
-  unsigned int Job::alive_jobs_;
+  unsigned int Job::alive_jobs_ = 0;
 
   StopException::StopException(unsigned depth, boost::any payload)
     : depth_(depth)
