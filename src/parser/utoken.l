@@ -430,8 +430,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"s"   RETURN_DURATION(1, 1);
 {NUMBER}"ms"  RETURN_DURATION(2, 0.001);
 
-{NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<int>  (*up, loc, yytext));
-{HEXA}        RETURN_VALUE(INTEGER, strtol(yytext + 2, 0, 16));
+{NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<long long>(*up, loc, yytext));
+{HEXA}        RETURN_VALUE(INTEGER, strtoll(yytext + 2, 0, 16));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<float>(*up, loc, yytext));
 {ENATURAL}    {
                 PRE_SKIP();
@@ -440,7 +440,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
                 if (res < 1)
                   RETURN_VALUE(FLOAT, res)
                 else
-                  RETURN_VALUE(INTEGER, numeric_cast<int>(*up, loc, res))
+                  RETURN_VALUE(INTEGER, numeric_cast<long long>(*up, loc, res))
               }
 
 [\"\']        {

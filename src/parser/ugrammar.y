@@ -1172,7 +1172,7 @@ exp:
 `----------*/
 
 %printer { debug_stream() << $$; } <int>;
-%token <int>
+%token <long long>
         INTEGER    "integer"
         FLAG       "flag";
 %type <ast::rExp> exp_integer;
