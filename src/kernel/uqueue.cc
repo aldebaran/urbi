@@ -12,6 +12,7 @@
 
 UQueue::UQueue(super_type::size_type chunk_size)
   : super_type(chunk_size)
+  , preparse_hint(0)
 {
 }
 
@@ -21,9 +22,19 @@ UQueue::pop_command()
   // The buffer is null-terminated when used in full, so we can use it
   // without computing its length.
   ECHO("Size: " << size());
+  if (size() < preparse_hint)
+    return std::string();
   ECHO("buf: {{{" << std::string(peek()) << "}}}");
-  size_t len = parser::prescan(peek());
+  long len = parser::prescan(peek(), size());
   ECHO("Len: " << len);
+  if (len <= 0)
+  {
+    preparse_hint = len * -1;
+    // Avoid multiple buffer resize.
+    reserve(preparse_hint);
+    return std::string();
+  }
+  preparse_hint = 0;
   const std::string res(pop(len), len);
   ECHO("Res: " << res);
   return res;

@@ -43,7 +43,9 @@ namespace parser
   /// On a "parse-error" (braces do not match), return the length up to
   /// (including) the invalid brace, so that the parser will raise a
   /// parser error on it.
-  size_t prescan(const char* buf);
+  /// If a hint on the minimum size required to hit a terminator is available,
+  /// return it multiplied by -1.
+  long prescan(const char* buf, size_t length);
 }
 
 #endif // !PARSER_PRESCAN_HH

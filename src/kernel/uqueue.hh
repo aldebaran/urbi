@@ -48,18 +48,17 @@ public:
    - # and \\n
    - ( and )
 
-   This function is interruptible which means that is does not rescan the
-   entire buffer from the start each time it is called, but it stores it's
-   internal state before quitting and starts again where it left. This
-   is important when the buffer comes from a TCP/IP entry connection where
-   instructions typically arrive in several shots.
-
    The final ',' or ';' is the last character of the popped data.
 
    \return the command popped or an empty string if there was an error or
 	   nothing to pop.
    */
   std::string pop_command();
+
+  private:
+  /// Do not try to pop a command if less than preparse_hint bytes are
+  /// available.
+  size_t preparse_hint;
 };
 
 #endif // !KERNEL_UQUEUE_HH
