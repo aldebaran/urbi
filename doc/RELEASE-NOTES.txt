@@ -53,6 +53,13 @@ it called as soon as at least one parameter is given:
   A(42);
   [00000003] *** A called with 42
 
+Parsing of integer literals
+---------------------------
+
+The parser could not read integer literals greater than 2**31-1.  This
+constraint has been alleviated, and Urbi now accepts integer literals
+up to 2**63-1.
+
 Standard library
 ================
 
