@@ -102,13 +102,15 @@ namespace urbi
 	{
 	  // Send it
 	  if (urbi::getDefaultClient ())
-	    getDefaultClient()->sendBin(retval.binary->common.data,
-                                        retval.binary->common.size,
-                                        "var %s=BIN %d %s;",
-                                        ((std::string) array[2]).c_str (),
-                                        retval.binary->common.size,
-                                        retval.binary->getMessage().c_str());
-
+          {
+             // URBI_SEND_COMMAND does not now how to send binary since it
+            // depends on the kernel version.
+            getDefaultClient()->startPack();
+            (*getDefaultClient()) << " var  " << (std::string) array[2] << "=";
+            getDefaultClient()->send(retval);
+            (*getDefaultClient()) << ";";
+            getDefaultClient()->endPack();
+          }
 	  // Send void if no client. Would block anyway
 	  else
 	    URBI_SEND_COMMAND("var " << (std::string) array[2]);

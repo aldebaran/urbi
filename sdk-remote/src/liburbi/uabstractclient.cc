@@ -4,6 +4,8 @@
 
 #include <libport/cstdio>
 #include <libport/cstring>
+#include <libport/escape.hh>
+
 #include <cstdlib>
 #include <cerrno>
 #include <cmath>
@@ -281,9 +283,8 @@ namespace urbi
 	if (v.binary->type != BINARY_NONE
 	    && v.binary->type != BINARY_UNKNOWN)
 	  v.binary->buildMessage();
-	sendBin(v.binary->common.data, v.binary->common.size,
-		"BIN %d %s;", v.binary->common.size,
-		v.binary->message.c_str());
+        sendBinary(v.binary->common.data, v.binary->common.size,
+                   v.binary->message);
 	break;
       case DATA_LIST:
       {
@@ -414,6 +415,27 @@ namespace urbi
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     return res;
+  }
+
+  int
+  UAbstractClient::sendBinary(const void* data, size_t len,
+                              const std::string& header)
+  {
+    if (kernelMajor() < 2)
+      return sendBin(data, len, "BIN %d %s;", len, header.c_str());
+    else
+    {
+      sendBufferLock.lock();
+      (*this) << "Global.Binary.new(\""
+              << libport::escape(header)
+              << "\", \"\\B(" << len << ")(";
+      send();
+      effectiveSend(data, len);
+      (*this) << ")\")";
+      send();
+      sendBufferLock.unlock();
+      return rc;
+    }
   }
 
   struct sendSoundData

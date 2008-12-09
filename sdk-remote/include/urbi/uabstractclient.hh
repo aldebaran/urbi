@@ -158,6 +158,9 @@ namespace urbi
     ///send the value without any prefix or terminator
     int send(urbi::UValue& v);
 
+    /// Send an urbi Binary value.
+    int sendBinary(const void* data, size_t len, const std::string& header);
+
     /// Send binary data.
     int sendBin(const void*, size_t len);
 

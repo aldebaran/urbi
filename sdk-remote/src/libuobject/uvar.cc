@@ -155,10 +155,12 @@ namespace urbi
   void
   UVar::operator = (const UBinary& b)
   {
-    getDefaultClient()->sendBin(b.common.data, b.common.size,
-				"%s=BIN %d %s;",
-				name.c_str(), b.common.size,
-				b.getMessage().c_str());
+    getDefaultClient()->startPack();
+    (*getDefaultClient()) << name << "=";
+    getDefaultClient()->sendBinary(b.common.data, b.common.size,
+                                   b.getMessage());
+    (*getDefaultClient()) << ";";
+    getDefaultClient()->endPack();
   }
 
   void
