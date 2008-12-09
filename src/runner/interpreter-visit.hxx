@@ -5,7 +5,9 @@
 # include <boost/format.hpp>
 # include <boost/scoped_ptr.hpp>
 
+# include <libport/compilation.hh>
 # include <libport/compiler.hh>
+# include <libport/contract.hh>
 # include <libport/finally.hh>
 # include <libport/foreach.hh>
 
@@ -25,8 +27,6 @@
 # include <runner/raise.hh>
 
 # include <scheduler/exception.hh>
-
-# include <libport/compilation.hh>
 
 /// Job echo.
 #define JECHO(Title, Content)                           \
@@ -567,34 +567,41 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Try* e)
   {
+    scheduler::exception_ptr exception;
     try
     {
       return operator()(e->body_get().get());
     }
     catch (object::UrbiException& exn)
     {
-      rObject value = current_exception_ = exn.value_get();
-      foreach (ast::rCatch handler, e->handlers_get())
-      {
-        if (handler->match_get())
-        {
-          rObject pattern = operator()(handler->match_get()->pattern_get().get());
-          if (!is_true(object::urbi_call(*this, pattern, SYMBOL(match), value)))
-            continue;
-          operator()(handler->match_get()->bindings_get().get());
-          if (handler->match_get()->guard_get()
-              && !is_true(operator()(handler->match_get()->guard_get().get())))
-          {
-            // Clear pattern
-            pattern = operator()(handler->match_get()->pattern_get().get());
-            continue;
-          }
-        }
-        return operator()(handler->body_get().get());
-      }
-      // No handler matched, rethrow.
-      throw;
+      exception = exn.clone();
     }
+
+
+    rObject value =
+      static_cast<object::UrbiException*>(exception.get())->value_get();
+    foreach (ast::rCatch handler, e->handlers_get())
+    {
+      if (handler->match_get())
+      {
+        rObject pattern = operator()(handler->match_get()->pattern_get().get());
+        if (!is_true(object::urbi_call(*this, pattern, SYMBOL(match), value)))
+          continue;
+        operator()(handler->match_get()->bindings_get().get());
+        if (handler->match_get()->guard_get()
+            && !is_true(operator()(handler->match_get()->guard_get().get())))
+        {
+          // Clear pattern
+          pattern = operator()(handler->match_get()->pattern_get().get());
+          continue;
+        }
+      }
+      libport::Finally f(libport::scoped_set(current_exception_, value));
+      return operator()(handler->body_get().get());
+    }
+    // No handler matched, rethrow.
+    exception->rethrow();
+    unreached();
   }
 
 
