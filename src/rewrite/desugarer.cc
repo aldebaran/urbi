@@ -88,27 +88,22 @@ namespace rewrite
     }
 
     PARAMETRIC_AST(rewrite,
-                   "waituntil(!Pattern.hasSlot(\"$value\")) |"
-                   "Pattern.setSlot(\"$value\", %exp:2) |"
-                   "Pattern.setSlot(\"$pattern\", Pattern.new(%exp:1)) |"
-                   "if (!Pattern.getSlot(\"$pattern\").match(Pattern.getSlot(\"$value\")))"
                    "{"
-                   "  Pattern.removeSlot(\"$pattern\") |"
-                   "  Pattern.removeSlot(\"$value\") |"
-                   "  throw MatchFailure.new() |"
-                   "} |"
-                   "%exp:3 |"
-                   "Pattern.removeSlot(\"$pattern\") |"
-                   "{"
-                   "  var res = Pattern.getSlot(\"$value\") |"
-                   "  Pattern.removeSlot(\"$value\") |"
-                   "  res"
+                   "  var '$value' = %exp:2 |"
+                   "  var '$pattern' = Pattern.new(%exp:1) |"
+                   "  if (!'$pattern'.match('$value'))"
+                   "    throw MatchFailure.new() |"
+                   "  {"
+                   "    %unscope:2 |"
+                   "    %exp:3"
+                   "  } |"
+                   "  '$value'"
                    "}"
       );
 
     ast::rExp pattern = assign->what_get();
     rewrite::PatternBinder bind
-      (ast_call(loc, ast_call(loc, SYMBOL(Pattern)), SYMBOL(DOLLAR_pattern)), loc);
+      (ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
     bind(pattern.get());
 
     rewrite.location_set(assign->location_get());
