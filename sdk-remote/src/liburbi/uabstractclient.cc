@@ -233,7 +233,10 @@ namespace urbi
   int
   UAbstractClient::endPack()
   {
-    int retval = effectiveSend(sendBuffer, strlen(sendBuffer));
+    int retval = 0;
+    int buflen = strlen(sendBuffer);
+    if (buflen)
+      retval = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     return retval;
