@@ -109,6 +109,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   if (!up)                                                              \
   {                                                                     \
     pre_length = 0;                                                     \
+    length_hint = 0;                                                    \
     pre_closers.clear();                                                \
   }
 
@@ -718,6 +719,67 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\v        GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
      \\.        SCAN_ERROR("invalid escape: `" + yytext + '\'');
+
+     \\B\([0-9]+\)\(    {
+       // Binary escape.
+       size_t len = strtol(yytext+3, 0, 0);
+       size_t remain = yy_n_chars
+          - (yy_c_buf_p - YY_CURRENT_BUFFER_LVALUE->yy_ch_buf);
+       size_t eat = std::min(remain, len);
+       if (len > eat)
+       {
+         // Check available length in stream.
+         size_t pos = yyin->tellg();
+         yyin->seekg(0, std::ios_base::end);
+         size_t streamlen = yyin->tellg();
+         // Check that we can read it all
+         if (pos + len + 1 - eat > streamlen)
+         { // No, eat it all to reach EOF.
+           passert(up, !up);
+           yyin->seekg( streamlen, std::ios_base::beg);
+           // Read one more to reach EOF state.
+           yyinput();
+           yy_c_buf_p += eat;
+           length_hint = pre_length + len + 1;
+           COLUMNS(eat + streamlen - pos);
+           EOF_ERROR("\\B");
+         }
+         COLUMNS(len);
+         // Yes, go on.
+         if (!up)
+           yyin->seekg(pos + len - eat,
+                        std::ios_base::beg);
+         else
+         {
+           // eat 'eaten' from buffer
+           grown_string += std::string(yy_c_buf_p, eat);
+           size_t current_size = grown_string.length();
+           grown_string.resize(current_size + len - eat);
+           yyin->seekg(pos, std::ios_base::beg);
+           yyin->read(const_cast<char*>(grown_string.c_str()) + current_size, len-eat);
+         }
+       }
+       else
+       {
+         if (up)
+           grown_string += std::string(yy_c_buf_p, eat);
+         COLUMNS(eat);
+       }
+       yy_c_buf_p += eat;
+
+       switch (int c = yyinput())
+       {
+          case EOF:
+             EOF_ERROR("\\B");
+             break;
+          case ')':
+             COLUMNS(1);
+             break;
+          default:
+             SCAN_ERROR("Expected closing ')' for \\B, got '" + (char)c + "'");
+             break;
+       }
+     }
 
      [^\"\'\n\r\\]+      APPEND_VAL(yytext, yyleng);
 

@@ -240,6 +240,10 @@ public:
   // first terminator.
   size_t pre_length;
 
+  // In prescanner mode, hint on the minimum number of bytes required to
+  // hit a terminator.
+  size_t length_hint;
+
   // The default start condition: the one replacing INITIAL.
   int sc_default;
 
