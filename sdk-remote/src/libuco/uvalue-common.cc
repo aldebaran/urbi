@@ -388,7 +388,8 @@ namespace urbi
     common.data = malloc(psize);
     memcpy(common.data, binpos->data, common.size);
     ++binpos;
-
+    while (message[pos] == ' ')
+      ++pos;
     int p = pos;
     while (message[p] && message[p] != '\n')
       ++p;
