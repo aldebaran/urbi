@@ -42,6 +42,7 @@ namespace binder
     , scope_depth_(1)
     , toplevel_index_(0)
     , report_errors_(true)
+    , unscope_(0)
   {
     unbind_.push_back(Finally());
     setOnSelf_.push_back(true);
@@ -158,6 +159,13 @@ namespace binder
     return 0;
   }
 
+  bool
+  Binder::set_on_self(unsigned up)
+  {
+    assert(setOnSelf_.size() > up);
+    return *(setOnSelf_.end() - up - 1);
+  }
+
   void
   Binder::visit(const ast::Declaration* input)
   {
@@ -167,7 +175,7 @@ namespace binder
 
     libport::Symbol name = call->name_get();
 
-    if (!call->target_implicit() || setOnSelf_.back())
+    if (!call->target_implicit() || set_on_self(unscope_))
       if (value)
       {
         std::string doc = input->doc_get();
@@ -184,7 +192,7 @@ namespace binder
     else
     {
       // Check this is not a redefinition
-      if (scope_depth_ == scope_depth_get(name))
+      if (scope_depth_ - unscope_ == scope_depth_get(name))
         if (report_errors_)
           errors_.error(loc, "variable redefinition: " + name.name_get());
 
@@ -597,11 +605,17 @@ namespace binder
       routine()->local_variables_get()->push_back(decl);
 
     env_[decl->what_get()].push_back(
-      std::make_pair(decl, std::make_pair(routine_depth_, scope_depth_)));
-    unbind_.back() <<
-      boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
+      std::make_pair(decl, std::make_pair(routine_depth_, scope_depth_ - unscope_)));
+    unbind_type::iterator it = unbind_.end();
+    for (unsigned i = 0; i <= unscope_; ++i)
+      it--;
+    *it << boost::bind(&Bindings::pop_back, &env_[decl->what_get()]);
   }
 
-
+  void
+  Binder::visit(const ast::Unscope* unscope)
+  {
+    unbind_.back() << libport::scoped_set(unscope_, unscope->count_get());
+  }
 
 } // namespace binder

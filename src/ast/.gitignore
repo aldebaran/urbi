@@ -196,6 +196,9 @@ try.hxx
 unary.cc
 unary.hh
 unary.hxx
+unscope.cc
+unscope.hh
+unscope.hxx
 visitor.hh
 visitor.stamp
 while.cc

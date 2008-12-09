@@ -58,6 +58,7 @@ namespace binder
                               (LocalDeclaration)
                               (Match)
                               (Scope)
+                              (Unscope)
                               (While));
 
     template <typename Code>
@@ -83,8 +84,9 @@ namespace binder
     Environment env_;
 
     /// Whether to apply setSlot on self
-    typedef std::list<bool> set_on_self_type;
+    typedef std::vector<bool> set_on_self_type;
     set_on_self_type setOnSelf_;
+    bool set_on_self(unsigned up = 0);
 
     /// \name Routine stack.
     /// \{
@@ -143,6 +145,8 @@ namespace binder
 
     /// Wether to report errors
     bool report_errors_;
+    /// How many scope to bypass when declaring variables
+    unsigned unscope_;
   };
 
 } // namespace binder

@@ -1375,6 +1375,17 @@ exp.opt:
 | exp           { std::swap($$, $1); }
 ;
 
+/*---------------------.
+| Desugaring internals |
+`---------------------*/
+
+%token PERCENT_UNSCOPE_COLON "%unscope:";
+exp:
+  "%unscope:" "integer"
+  {
+    $$ = new ast::Unscope(@$, $2);
+  }
+;
 
 /*----------------.
 | Metavariables.  |

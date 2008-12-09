@@ -1361,6 +1361,17 @@ Match:
         access: rW
         init: '0'
 
+Unscope:
+  super: Exp
+  attributes:
+    - count:
+        type: unsigned
+        access: r
+        desc: number of scope level to bypass
+  printer:
+    - '"%unscope:"'
+    - $count
+
 # Local Variables:
 # mode: yaml
 # End:

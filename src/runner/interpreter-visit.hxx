@@ -660,6 +660,7 @@ namespace runner
   INVALID(Property);
   INVALID(Return);
   INVALID(Subscript);
+  INVALID(Unscope);
 
 #undef INVALID
 #undef INVALID_RET
