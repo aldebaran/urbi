@@ -17,6 +17,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <libport/escape.hh>
+#include <libport/ufloat.hh>
 
 #include <parser/prescan.hh>
 #include <parser/parser-impl.hh>
@@ -24,6 +25,9 @@
 
 // Shorter access to the tokens.
 typedef yy::parser::token token;
+
+// We need this type everywhere.
+using libport::ufloat;
 
 /// Split yytext which matches
 /// "BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}";"
@@ -230,7 +234,7 @@ do {                                            \
   {                                                                     \
     PRE_SKIP();                                                         \
     yytext[yyleng - UnitLength] = 0;                                    \
-    RETURN_VALUE(DURATION, boost::lexical_cast<float>(yytext) * (Scale)); \
+    RETURN_VALUE(DURATION, boost::lexical_cast<ufloat>(yytext) * (Scale)); \
   }
 
 #define RETURN_FLAVORED_KEYWORD(Token)                  \
@@ -422,10 +426,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<long long>(*up, loc, yytext));
 {HEXA}        RETURN_VALUE(INTEGER, strtoll(yytext + 2, 0, 16));
-{FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<float>(*up, loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
 {ENATURAL}    {
                 PRE_SKIP();
-                float res = lexical_cast<float>(*up, loc, yytext);
+                ufloat res = lexical_cast<ufloat>(*up, loc, yytext);
                 // Do not put semicolons here: RETURN_?VAL expands into {}.
                 if (res < 1)
                   RETURN_VALUE(FLOAT, res)

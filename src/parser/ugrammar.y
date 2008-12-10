@@ -24,6 +24,7 @@
 
 #include <libport/hash.hh>
 #include <libport/pod-cast.hh>
+#include <libport/ufloat.hh>
 #include <list>
 #include <kernel/fwd.hh>
 #include <ast/catches-type.hh>
@@ -44,6 +45,9 @@
   typedef ast::exps_type* exps_pointer;
   typedef ast::symbols_type* symbols_pointer;
   typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
+
+  // We need this type everywhere.
+  using libport::ufloat;
 }
 
 // Locations.
@@ -1155,8 +1159,8 @@ exp_integer:
 ;
 
 
-%printer { debug_stream() << $$; } <float>;
-%token <float>
+%printer { debug_stream() << $$; } <ufloat>;
+%token <ufloat>
         FLOAT      "float"
         DURATION   "duration";
 %type <ast::rExp> exp_float;
@@ -1169,7 +1173,7 @@ exp_float:
 | Duration.  |
 `-----------*/
 
-%type <float> duration;
+%type <ufloat> duration;
 duration:
   "duration"          { $$ = $1;      }
 | duration "duration" { $$ = $1 + $2; }
