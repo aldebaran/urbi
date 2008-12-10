@@ -8,7 +8,7 @@
   // #define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include <cstdlib>
+#include <libport/cstdlib>
 #include <libport/cstring>
 #include <sstream>
 
