@@ -1151,7 +1151,7 @@ exp:
 `----------*/
 
 %printer { debug_stream() << $$; } <int>;
-%token <long long>
+%token <ufloat>
         INTEGER    "integer";
 %type <ast::rExp> exp_integer;
 exp_integer:

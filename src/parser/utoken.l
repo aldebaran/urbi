@@ -424,7 +424,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"s"   RETURN_DURATION(1, 1);
 {NUMBER}"ms"  RETURN_DURATION(2, 0.001);
 
-{NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<long long>(*up, loc, yytext));
+{NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<ufloat>(*up, loc, yytext));
 {HEXA}        RETURN_VALUE(INTEGER, strtoll(yytext + 2, 0, 16));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
 {ENATURAL}    RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
