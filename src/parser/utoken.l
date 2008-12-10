@@ -413,16 +413,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   | The rules.  |
   `------------*/
 
-  /*  FIXME: This is really sick. */
-"+report"     RETURN_VALUE(FLAG, 1);
-"+error"      RETURN_VALUE(FLAG, 2);
-"+end"        RETURN_VALUE(FLAG, 3);
-"+begin"      RETURN_VALUE(FLAG, 4);
-"+top"        RETURN_VALUE(FLAG, 7);
-"+bg"         RETURN_VALUE(FLAG, 10);
-"+freeze"     RETURN_VALUE(FLAG, 11);
-"+stop"       RETURN_VALUE(FLAG, 12);
-
 {NUMBER}"d"   RETURN_DURATION(1, 60*60*24);
 {NUMBER}"h"   RETURN_DURATION(1, 60*60);
 {NUMBER}"m"   DEPRECATED(std::string(yytext) + "n");

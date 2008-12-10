@@ -272,7 +272,7 @@
 `--------------*/
 
 %printer { debug_stream() << libport::deref << $$; } <ast::rExp>;
-%type <ast::rExp> exp exp.opt flag flags.0 flags.1 softtest stmt stmt_loop;
+%type <ast::rExp> exp exp.opt softtest stmt stmt_loop;
 
 
 /*----------------------.
@@ -424,9 +424,9 @@ cstmt:
 ;
 
 
-/*--------------------------.
-| tagged and flagged stmt.  |
-`--------------------------*/
+/*--------------.
+| tagged stmt.  |
+`--------------*/
 
 %type <ast::rTag> tag;
 %printer { debug_stream() << libport::deref << $$; } <ast::rTag>;
@@ -438,36 +438,11 @@ tag:
 ;
 
 stmt:
-  tag flags.0 ":" stmt
+  tag ":" stmt
   {
-    $$ = new ast::TaggedStmt (@$, $1, ast_scope(@$, $4));
+    $$ = new ast::TaggedStmt (@$, $1, ast_scope(@$, $3));
   }
-|     flags.1 ":" stmt  { NOT_IMPLEMENTED(@$); }
 ;
-
-/*--------.
-| flags.  |
-`--------*/
-
-flag:
-  FLAG         { NOT_IMPLEMENTED(@$); }
-;
-
-// One or more "flag"s.
-flags.1:
-  flag             { NOT_IMPLEMENTED(@$); }
-| flags.1 flag     { NOT_IMPLEMENTED(@$); }
-;
-
-// Zero or more "flag"s.
-flags.0:
-  /* When use tags, we use the following rule, but ignore the result.
-     So don't abort here.  FIXME: Once flags handled, do something else
-     than $$ = 0.  */
-  /* empty. */   { $$ = 0;  }
-| flags.1        { NOT_IMPLEMENTED(@$); }
-;
-
 
 /*-------.
 | Stmt.  |
@@ -1173,8 +1148,7 @@ exp:
 
 %printer { debug_stream() << $$; } <int>;
 %token <long long>
-        INTEGER    "integer"
-        FLAG       "flag";
+        INTEGER    "integer";
 %type <ast::rExp> exp_integer;
 exp_integer:
   "integer"  { $$ = new ast::Float(@$, $1); }
