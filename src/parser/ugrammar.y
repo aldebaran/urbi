@@ -1361,7 +1361,7 @@ exp.opt:
 exp:
   "%unscope:" "integer"
   {
-    $$ = new ast::Unscope(@$, $2);
+    $$ = new ast::Unscope(@$, static_cast<unsigned int>($2));
   }
 ;
 
@@ -1373,7 +1373,7 @@ exp:
 exp:
   "%exp:" "integer"
   {
-    $$ = new ast::MetaExp(@$, $2);
+    $$ = new ast::MetaExp(@$, static_cast<unsigned int>($2));
   }
 ;
 
@@ -1381,7 +1381,8 @@ exp:
 lvalue:
   "%lvalue:" "integer"
   {
-    $$ = new ast::MetaLValue(@$, new ast::exps_type(), $2);
+    $$ = new ast::MetaLValue(@$, new ast::exps_type(),
+			     static_cast<unsigned int>($2));
   }
 ;
 
@@ -1389,11 +1390,11 @@ lvalue:
 lvalue:
   "%id:" "integer"
   {
-    $$ = new ast::MetaId(@$, 0, $2);
+    $$ = new ast::MetaId(@$, 0, static_cast<unsigned int>($2));
   }
 | exp "." "%id:" "integer"
   {
-    $$ = new ast::MetaCall(@$, 0, $1, $4);
+    $$ = new ast::MetaCall(@$, 0, $1, static_cast<unsigned int>($4));
   }
 ;
 
@@ -1403,7 +1404,7 @@ exp:
   {
     assert($1.unsafe_cast<ast::LValueArgs>());
     assert(!$1.unsafe_cast<ast::LValueArgs>()->arguments_get());
-    $$ = new ast::MetaArgs(@$, $1, $4);
+    $$ = new ast::MetaArgs(@$, $1, static_cast<unsigned int>($4));
   }
 ;
 
