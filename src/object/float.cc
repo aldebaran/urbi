@@ -113,16 +113,23 @@ namespace object
       static boost::format dec("%.20g");
       static boost::format hex("%.20x");
       // Use an integer, otherwise boost::format ignores the
-      // hexadecimal flag.
-      return str((base == 10 ? dec : hex) % libport::ufloat_to_long_long(value_));
+      // hexadecimal flag. Protect the conversion as it may just not fit
+      // in a long long. In this case, we will resort to the default
+      // display.
+      try
+      {
+	return str((base == 10 ? dec : hex) % libport::ufloat_to_long_long(value_));
+      }
+      catch (const libport::bad_numeric_cast&)
+      {
+	// Do nothing.
+      }
     }
-    else
-    {
-      if (base == 16)
-        runner::raise_bad_integer_error(value_);
-      static boost::format f("%g");
-      return str(f % value_);
-    }
+
+    if (base == 16)
+      runner::raise_bad_integer_error(value_);
+    static boost::format f("%g");
+    return str(f % value_);
   }
 
   Float::value_type
