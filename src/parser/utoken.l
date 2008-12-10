@@ -427,15 +427,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<long long>(*up, loc, yytext));
 {HEXA}        RETURN_VALUE(INTEGER, strtoll(yytext + 2, 0, 16));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
-{ENATURAL}    {
-                PRE_SKIP();
-                ufloat res = lexical_cast<ufloat>(*up, loc, yytext);
-                // Do not put semicolons here: RETURN_?VAL expands into {}.
-                if (res < 1)
-                  RETURN_VALUE(FLOAT, res)
-                else
-                  RETURN_VALUE(INTEGER, numeric_cast<long long>(*up, loc, res))
-              }
+{ENATURAL}    RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
 
 [\"\']        {
                 grown_string.clear();
