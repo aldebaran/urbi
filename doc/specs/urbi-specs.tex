@@ -1,5 +1,9 @@
 \documentclass[openright,twoside,12pt]{report}
  \usepackage{urbi-specs}
+% Index.  Must be before loading hyperref.
+\usepackage{index}
+\makeindex
+% \usepackage{indexing}
 
 
 % CONFIGURATION
@@ -75,6 +79,10 @@ This document is divided in four chapters:
 % I just don't know
 % what to do
 % with myself
+\clearpage
+\phantomsection % sinon hyperliens vers chapitre précédent.
+\addcontentsline{toc}{chapter}{\indexname}
+\printindex
 
 \end{document}
 

@@ -4,7 +4,7 @@
 \section{Syntax}
 \subsection{Comments}
 
-Comments are used to document the code, they are ignored by the
+\dfn[comment]{Comments} are used to document the code, they are ignored by the
 \us interpreter. \Cxx-style and \C-style comments are supported.
 
 \begin{itemize}
@@ -27,17 +27,18 @@ Comments are used to document the code, they are ignored by the
 \subsection{Identifiers}
 \label{sec:us-syn-id}
 
-Identifiers in \us are composed of one or more alphanumeric or
-underscore (\lstinline|_|) characters, given that they must not start
-with a digit. That is, identifiers must match the
+% FIXME: New is no longer special.
+\dfn[identifier]{Identifiers} in \us are composed of one or more alphanumeric or
+underscore (\lstinline|_|) characters, not starting
+by a digit, i.e., identifiers match the
 \lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular expression (see
 \autoref{lst:identifiers}).  Additionally, identifiers must not match any of
-the \us reserved word which are documented in \autoref{sec:syn-key}. The only
+the \us reserved words documented in \autoref{sec:syn-key}. The only
 exception to this rule is \lstinline|new|, which can be used as the
 method identifier in a method call, as shown in
-\autoref{lst:identifiers-keywords}.  Finally, identifiers can also be written
+\autoref{lst:identifiers-keywords}.  Identifiers can also be written
 between simple quotes (\lstinline|'|), in which case they may contain
-any characters, as in \autoref{lst:escape-identifiers}.
+any character, as in \autoref{lst:escape-identifiers}.
 
 \begin{urbiscript}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
 var x;
@@ -1619,11 +1620,11 @@ while (i > 0)
 
 \subsection{Throwing exceptions}
 
-The \lstinline|throw| keyword enable to throw exceptions, as shown in
-\autoref{lst:throw}. Thrown exception will break the execution upward
-until they are caught, or until they reach the toplevel - just as in
-\Cxx. A difference is that exceptions reaching the toplevel are
-printed, and won't abort the kernel - other and new connections will
+The \lstinline|throw| keyword enables to throw exceptions, as shown in
+\autoref{lst:throw}. Thrown exceptions will break the execution upward
+until they are caught, or until they reach the toplevel --- as in
+\Cxx.  Contrary to \Cxx, exceptions reaching the toplevel are
+printed, and won't abort the kernel --- other and new connections will
 continue to execute normally.
 
 \begin{urbiscript}[caption=Throwing exceptions, label=lst:throw,
@@ -1648,13 +1649,15 @@ outer();
 \subsection{Catching exceptions}
 
 Exceptions are caught with the \lstinline|try|/\lstinline|catch|
-construct. It consist of a first block, from which we want to catch
-exceptions, and one or more catch clause to stop exceptions. Each
-catch clause defines a pattern against witch the thrown exception is
+construct. It consists of a first block (the \dfn[block!try-block]{try-block}),
+from which we want to catch
+exceptions, and one or more catch clauses to stop the exception
+(\dfn[block!catch-block]{catch-blocks}). Each
+catch clause defines a pattern against which the thrown exception is
 matched. If no pattern is specified, the catch clause matches
-systematically (equivalent to \texttt{catch (...)} in \Cxx.
+systematically (equivalent to \lstinline|catch (...)| in \Cxx).
 
-Exception thrown from the \texttt{try} block are matched sequentially
+Exceptions thrown from the \texttt{try} block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
 control jumps after the whole try/catch block. If no catch clause
 matches, the exceptions isn't stopped and continues
