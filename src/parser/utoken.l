@@ -858,7 +858,7 @@ lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t)
   catch (boost::bad_lexical_cast)
   {
     up.error(loc,
-             (boost::format ("invalid numerical litteral: %1%") % t).str());
+             (boost::format ("invalid numerical literal: %1%") % t).str());
     return 0;
   }
 }
@@ -874,7 +874,7 @@ numeric_cast (parser::ParserImpl& up, const yy::location& loc, In t)
   catch (boost::bad_numeric_cast)
   {
     up.error(loc,
-             (boost::format ("invalid numerical litteral: %1%") % t).str());
+             (boost::format ("invalid numerical literal: %1%") % t).str());
     return 0;
   }
 }
