@@ -39,6 +39,8 @@ TO_CHECK_TESTS =				\
 1.-/every-emit.chk				\
 # []-access to list and hash                    \
 1.-/hash-and-list.chk				\
+# what should we do with very large literals?	\
+1.-/invalid-number.chk				\
 # events                                        \
 1.-/lazy-test-eval.chk				\
 1.-/loadwav.chk					\
