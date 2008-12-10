@@ -179,12 +179,12 @@ How do I emit an event?
 How do I catch an event?
 ------------------------
 
-  at(?ev(1, (var msg))) {
+  at(?ev(1, var msg)) {
     echo ("Received event with 1 and message " + msg);
   };
 
 The "?" marker indicates that we are looking for an event instead of a
-boolean condition. The construction "(var msg)" indicates that the "msg"
+boolean condition. The construction "var msg" indicates that the "msg"
 variable will be bound (as a local variable) in the body part of the "at"
 construct, with whatever value is present in the event that triggered the
 "at".
