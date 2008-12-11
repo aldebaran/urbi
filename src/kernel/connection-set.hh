@@ -7,8 +7,9 @@
 
 namespace kernel
 {
-  struct ConnectionSet
+  class ConnectionSet
   {
+  public:
     void add(UConnection* c);
     void remove(UConnection* c);
     void remove_closing();
@@ -22,6 +23,7 @@ namespace kernel
     iterator begin();
     iterator end();
 
+  private:
     connections_type connections_;
   };
 }
