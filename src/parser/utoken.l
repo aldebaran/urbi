@@ -304,10 +304,9 @@ SUFFIX   "'"(""|"'"|d|dd|e|n|in|out)
 NATURAL  [0-9]+
 HEXA     0x[0-9a-fA-F]+
 EXPONENT [eE][-+]?{NATURAL}
-FLOAT    {NATURAL}\.{NATURAL}{EXPONENT}?
-ENATURAL {NATURAL}{EXPONENT}
+FLOAT    {NATURAL}\.{NATURAL}{EXPONENT}?|{NATURAL}{EXPONENT}
 
-NUMBER   {NATURAL}|{ENATURAL}|{FLOAT}
+NUMBER   {NATURAL}|{FLOAT}
 
 FLAVOR   [;|,&]?
 
@@ -427,7 +426,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NATURAL}     RETURN_VALUE(INTEGER, lexical_cast<ufloat>(*up, loc, yytext));
 {HEXA}        RETURN_VALUE(INTEGER, strtoll(yytext + 2, 0, 16));
 {FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
-{ENATURAL}    RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
 
 [\"\']        {
                 grown_string.clear();
