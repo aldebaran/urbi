@@ -545,7 +545,7 @@ stmt:
 	       "', expecting `from'");
     $$ = exp(a % $3 % $5 % $7);
   }
-| "external" "function" "(" exp_integer ")"
+| "external" "function" "(" exp_float ")"
              identifier_as_string "." identifier_as_string
 	     "identifier" identifier_as_string
   {
@@ -557,7 +557,7 @@ stmt:
 	       "', expecting `from'");
     $$ = exp(a % $4 % $6 % $8 % $10);
   }
-| "external" "event" "(" exp_integer ")"
+| "external" "event" "(" exp_float ")"
              identifier_as_string "." identifier_as_string
 	     "identifier" identifier_as_string
   {
@@ -1150,15 +1150,6 @@ exp:
 | Numbers.  |
 `----------*/
 
-%printer { debug_stream() << $$; } <int>;
-%token <ufloat>
-        INTEGER    "integer";
-%type <ast::rExp> exp_integer;
-exp_integer:
-  "integer"  { $$ = new ast::Float(@$, $1); }
-;
-
-
 %printer { debug_stream() << $$; } <ufloat>;
 %token <ufloat>
         FLOAT      "float"
@@ -1185,8 +1176,7 @@ duration:
 `-----------*/
 
 exp:
-  exp_integer    { std::swap($$, $1);  }
-| exp_float      { std::swap($$, $1);  }
+  exp_float      { std::swap($$, $1);  }
 | duration       { $$ = new ast::Float(@$, $1);  }
 | "string"       { $$ = new ast::String(@$, $1); }
 | "[" exps "]"   { $$ = new ast::List(@$, $2); }
@@ -1359,7 +1349,7 @@ exp.opt:
 
 %token PERCENT_UNSCOPE_COLON "%unscope:";
 exp:
-  "%unscope:" "integer"
+  "%unscope:" "float"
   {
     $$ = new ast::Unscope(@$, static_cast<unsigned int>($2));
   }
@@ -1371,7 +1361,7 @@ exp:
 
 %token PERCENT_EXP_COLON "%exp:";
 exp:
-  "%exp:" "integer"
+  "%exp:" "float"
   {
     $$ = new ast::MetaExp(@$, static_cast<unsigned int>($2));
   }
@@ -1379,7 +1369,7 @@ exp:
 
 %token PERCENT_LVALUE_COLON "%lvalue:";
 lvalue:
-  "%lvalue:" "integer"
+  "%lvalue:" "float"
   {
     $$ = new ast::MetaLValue(@$, new ast::exps_type(),
 			     static_cast<unsigned int>($2));
@@ -1388,11 +1378,11 @@ lvalue:
 
 %token PERCENT_ID_COLON "%id:";
 lvalue:
-  "%id:" "integer"
+  "%id:" "float"
   {
     $$ = new ast::MetaId(@$, 0, static_cast<unsigned int>($2));
   }
-| exp "." "%id:" "integer"
+| exp "." "%id:" "float"
   {
     $$ = new ast::MetaCall(@$, 0, $1, static_cast<unsigned int>($4));
   }
@@ -1400,7 +1390,7 @@ lvalue:
 
 %token PERCENT_EXPS_COLON "%exps:";
 exp:
-  lvalue "(" "%exps:" "integer" ")"
+  lvalue "(" "%exps:" "float" ")"
   {
     assert($1.unsafe_cast<ast::LValueArgs>());
     assert(!$1.unsafe_cast<ast::LValueArgs>()->arguments_get());
