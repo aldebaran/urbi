@@ -9,7 +9,7 @@
 #include <libport/finally.hh>
 
 #include <algorithm>
-#include <deque>
+#include <vector>
 
 #include <boost/range/iterator_range.hpp>
 
@@ -36,8 +36,9 @@ namespace runner
   using libport::Finally;
 
   // This function takes an expression and attempts to decompose it
-  // into a list of identifiers.
-  typedef std::deque<libport::Symbol> tag_chain_type;
+  // into a list of identifiers. The resulting chain is stored in
+  // reverse order, that is the most specific tag first.
+  typedef std::vector<libport::Symbol> tag_chain_type;
   static
   tag_chain_type
   decompose_tag_chain (ast::rConstExp e)
@@ -48,7 +49,7 @@ namespace runner
       ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c || c->arguments_get())
 	runner::raise_urbi(SYMBOL(ImplicitTagComponentError));
-      res.push_front (c->name_get());
+      res.push_back (c->name_get());
       e = c->target_get();
     }
     return res;
@@ -223,7 +224,7 @@ namespace runner
       rObject parent = toplevel;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
-      foreach (const libport::Symbol& elt, chain)
+      rforeach (const libport::Symbol& elt, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.
