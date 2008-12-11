@@ -27,7 +27,6 @@ urbiinclude_HEADERS =				\
   include/urbi/utable.hh			\
   include/urbi/utag.hh				\
   include/urbi/utimer-callback.hh		\
-  include/urbi/utimer-table.hh			\
   include/urbi/uvalue.hh			\
   include/urbi/uvar.hh
 

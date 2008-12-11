@@ -74,4 +74,14 @@ namespace urbi
       t.erase(*i);
   }
 
+
+  /*------------.
+  | Timer map.  |
+  `------------*/
+  UTimerTable& timermap()
+  {
+    static UTimerTable instance;
+    return instance;
+  }
+
 } // namespace urbi

@@ -51,6 +51,14 @@ namespace urbi
     UVarTable;
   URBI_SDK_API UVarTable& varmap();
 
+
+  /*--------------.
+  | Timer table.  |
+  `--------------*/
+
+  typedef std::list<UTimerCallback*> UTimerTable;
+  URBI_SDK_API UTimerTable& timermap();
+
 } // end namespace urbi
 
 #endif // ! URBI_UTABLE_HH

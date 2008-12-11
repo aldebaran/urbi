@@ -1,4 +1,4 @@
-/*! \file urbi/ucallbacks.hh
+/*! \file urbi/utimer-callbacks.hh
  *******************************************************************************
 
  Definition of the callback classes.
@@ -25,13 +25,13 @@
 # include <libport/ufloat.h>
 
 # include <urbi/export.hh>
-# include <urbi/utimer-table.hh>
+# include <urbi/utable.hh>
 
 namespace urbi
 {
 
   //! Timer mechanism
-  /*! This class stores a callback as a class method
+  /*! This class stores a callback as a class method.
    */
 
   class URBI_SDK_API UTimerCallback
