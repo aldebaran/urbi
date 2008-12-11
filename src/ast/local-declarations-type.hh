@@ -1,8 +1,8 @@
 #ifndef AST_DECLARATIONS_TYPE_HH
 # define AST_DECLARATIONS_TYPE_HH
 
-# include <deque>
 # include <iosfwd>
+# include <vector>
 
 # include <ast/local-declaration.hh>
 
@@ -10,7 +10,7 @@ namespace ast
 {
 
   /// List of declarations
-  typedef std::deque<rLocalDeclaration> local_declarations_type;
+  typedef std::vector<rLocalDeclaration> local_declarations_type;
 
   /// Separated by commas.
   std::ostream&

@@ -401,9 +401,6 @@ Nary:
           /// Push a new expression, creating a Statement node.
           void push_back(rExp e, flavor_type f = flavor_none);
 
-          /// Idem, at the front.
-          void push_front(rExp e, flavor_type f = flavor_none);
-
           /// Push a message.
           void message_push(const std::string& text, const std::string& tag);
 
@@ -485,13 +482,6 @@ Nary:
         Nary::push_back(rExp e, flavor_type f)
         {
           children_->push_back(stmt(e.get(), f));
-          location_adjust();
-        }
-
-        void
-        Nary::push_front(rExp e, flavor_type f)
-        {
-          children_->push_front(stmt(e.get(), f));
           location_adjust();
         }
 
