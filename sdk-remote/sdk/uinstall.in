@@ -84,7 +84,7 @@ get_options ()
     ;;
    *)
     installdir=$1
-    report "Extra unused arguments after install directory."
+    stderr "Extra unused arguments after install directory."
     ;;
   esac
 }

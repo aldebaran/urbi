@@ -7,13 +7,13 @@ target=$1
 
 stderr ()
 {
-    echo >&2 "$me: $@"
+  echo >&2 "$me: $@"
 }
 
 fatal ()
 {
-    stderr "$@"
-    exit 1
+  stderr "$@"
+  exit 1
 }
 
 builddir='@builddir@'

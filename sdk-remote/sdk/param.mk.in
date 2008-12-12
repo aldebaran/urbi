@@ -106,7 +106,7 @@ libbase = $(OUTSHLIB:$(SHLIBEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib) \
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)  \
-	  -rpath $(hostdir)
+	  -rpath $(hostdir) $(LIBADD)
 	cp $$(ls .libs/$(libbase)*$(SHLIBEXT) | head -n 1) $(OUTSHLIB)
 #	rm -f $(lalib)
 

@@ -51,13 +51,16 @@ CHECK_ENVIRONMENT +=				\
 BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/../tests/bin:$(abs_top_builddir)/src/examples
 
 # Adjust LD_LIBRARY_PATH on Windows.  Make a single wine directory for
-# all the tests.
+# all the tests.  We look for the dependencies of urbi-console to find
+# libuobjects etc.
 WINEPREFIX_ENVIRONMENT :=				\
   $(shell						\
      $(wine_ld_library_path)				\
      --force						\
      --to=$(abs_builddir)				\
-     --wrapper=$(abs_top_builddir)/src/urbi-launch)
+     $(abs_top_builddir)/src/libuobject/.libs		\
+     --wrapper=$(abs_top_builddir)/src/urbi-launch	\
+     --wrapper=$(abs_top_builddir)/../src/urbi-console)
 
 # Use the wrappers to run the non-installed executables.
 BUILDCHECK_ENVIRONMENT +=			\

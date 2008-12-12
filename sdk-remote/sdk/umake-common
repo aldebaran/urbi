@@ -53,10 +53,10 @@ verb=false      # true for verbose mode
 }
 
 
-# report LINE1 LINE2...
+# stderr LINE1 LINE2...
 # ---------------------
 # Report some information on stderr.
-report ()
+stderr ()
 {
   for i
   do
@@ -70,7 +70,7 @@ report ()
 verbose ()
 {
   if $verb; then
-    report "$@"
+    stderr "$@"
   fi
 }
 
@@ -84,10 +84,10 @@ run ()
     for i
     do
       if $first; then
-	report "Running: $i"
+	stderr "Running: $i"
 	first=false
       else
-	report "       : $i"
+	stderr "       : $i"
       fi
     done
   fi
@@ -103,7 +103,7 @@ error ()
 {
   local s=$1
   shift
-  report "$@"
+  stderr "$@"
   if test "$s" != 0; then
     exit $s
   fi
@@ -123,10 +123,10 @@ dirlist_error ()
   local dirlist=$base/*
 
   if test ! -d $base/$val; then
-    report "no such $type $val, possible choices are :"
+    stderr "no such $type $val, possible choices are :"
     for d in $dirlist; do
       if test -d $d; then
-	report "  - $(basename $d)"
+	stderr "  - $(basename $d)"
       fi
     done
     exit $err
@@ -156,9 +156,9 @@ exist_error ()
     base=$(dirname $base/.)
 
   if test ! -$type "$base"; then
-    report "no such $longtype $base"
+    stderr "no such $longtype $base"
     if test -n "$option"; then
-      report "  use option --$option to set to an alternative value."
+      stderr "  use option --$option to set to an alternative value."
     fi
     exit $err
   fi

@@ -14,7 +14,7 @@ me=$(basename "$0")
 
 stderr ()
 {
-  echo >&2 "$me: $@"
+  echo >&2 "$0: $@"
 }
 
 fatal ()
@@ -68,7 +68,8 @@ export UMAKE=$abs_top_builddir/sdk/umake
 wrappee=$abs_top_builddir/sdk/$me
 # PREURBI can be valgrind for instance.  Admitedly useless here, since
 # these are scripts.
-exec $PREURBI "$wrappee"                        \
+set x                                           \
+    $PREURBI "$wrappee"                         \
     LIBTOOL="$abs_top_builddir/libtool"         \
     envdir="$envdir"                            \
     "$@"                                        \
@@ -76,6 +77,10 @@ exec $PREURBI "$wrappee"                        \
     "--prefix=$prefix"                          \
     EXTRA_CPPFLAGS="$CPPFLAGS"                  \
     VPATH="$abs_top_srcdir/src/liburbi"
+shift
+
+verbose "running: $*"
+exec "$@"
 
 # Local Variables:
 # mode: shell-script

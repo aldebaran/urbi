@@ -198,13 +198,16 @@ get_options ()
 
 EXEEXT=@EXEEXT@
 SHLIBEXT=@SHLIBEXT@
+clean=
+core=$defaultenv
+deep_clean=
 defaultenv='@URBI_ENV@'
 havearg=false   # we have at least one path or file arg
 host='@URBI_HOST@'
-core=$defaultenv
-
-clean=
-deep_clean=
+# Libraries (and flags) to use when linking a module.
+LIBADD=
+# Whether building a shared lib/module.
+shared=false
 
 builddir=
 builddir_pref="_ubuild"
@@ -283,6 +286,22 @@ case $core in
     ;;
 esac
 
+# When building an UObject as a shared lib, we have to pass
+# -no-undefined to libtool, otherwise it refuses to build a DLL.  But
+# then we have missing symbols: those in libuobject, so we link
+# against libuobject.
+#
+# We don't do that in general (Linux etc.) to avoid keeping an
+# explicit rpath dependency on libuobject.  It will be found and
+# dlopened later by urbi-launch.
+if $shared; then
+  case $host in
+      (*pw32*|*mingw32*)
+      LIBADD+=' -no-undefined ${envdir}/libuobject.la'
+      ;;
+  esac
+fi
+
 # The tool to link.
 # Always honor UMAKE_LINK if defined.
 # Then try to find umake-link where it was installed, otherwise in the
@@ -319,12 +338,14 @@ fi
 
 # Then pass env.
 makeargs="$makeargs prefix=$prefix"
-verbose "libs='$libs'"
-verbose "sources='$sources'"
-verbose "headers='$headers'"
-verbose "vpath='$vpath'"
-verbose "objects='$objects'"
-verbose "make options='$makeargs'"
+verbose                                         \
+        "LIBADD='$LIBADD'"                      \
+        "headers='$headers'"                    \
+        "libs='$libs'"                          \
+        "makeargs='$makeargs'"                  \
+        "objects='$objects'"                    \
+        "sources='$sources'"                    \
+        "vpath='$vpath'"
 
 # Set and create build dir for temporary files
 builddir="$(dirname $target)/_ubuild-$(basename $target)"
@@ -358,7 +379,7 @@ bintype="'$core' binary"
 if test -z "$core"; then
   bintype="library"
 fi
-report "" "$line" "running to build $bintype, for '$host' host." "$line" ""
+stderr "" "$line" "running to build $bintype, for '$host' host." "$line" ""
 
 
 # Check if base directory exists
@@ -403,10 +424,11 @@ run eval make -j $njobs -f "$(param_mk)"	\
     UMAKE_LIBNAME="$UMAKE_LIBNAME"		\
     UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""	\
     UMAKE_LINK="$UMAKE_LINK"			\
-    HEADERS="'$headers'"			\
     ARGUMENT_LIBS="'$libs'"			\
-    VPATH="'$vpath'"				\
+    LIBADD="'$LIBADD'"				\
+    HEADERS="'$headers'"			\
     OBJECTS="'$objects'"			\
+    VPATH="'$vpath'"				\
     "$makeargs"
 
 verbose "done."
