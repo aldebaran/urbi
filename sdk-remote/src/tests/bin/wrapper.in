@@ -79,7 +79,7 @@ set x                                           \
     VPATH="$abs_top_srcdir/src/liburbi"
 shift
 
-verbose "running: $*"
+stderr "running: $*"
 exec "$@"
 
 # Local Variables:
