@@ -11,9 +11,9 @@ namespace binder
   {
     TIMER_PUSH("bind");
     Binder bind;
-    ast::rNary res = ast::analyze(bind, a);
+    ast::rExp res = ast::analyze(bind, a);
     TIMER_POP("bind");
-    return res;
+    return res ? res.unchecked_cast<ast::Nary>() : ast::rNary();
   }
 
 } // namespace binder

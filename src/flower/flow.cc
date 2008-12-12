@@ -10,9 +10,9 @@ namespace flower
   {
     TIMER_PUSH("flow");
     Flower flow;
-    ast::rNary res = ast::analyze(flow, a);
+    ast::rExp res = ast::analyze(flow, a);
     TIMER_POP("flow");
-    return res;
+    return res ? res.unchecked_cast<ast::Nary>() : ast::rNary();
   }
 
 

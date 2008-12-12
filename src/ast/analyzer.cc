@@ -12,20 +12,22 @@ namespace ast
   }
 
 
-  ast::rNary
-  analyze(Analyzer& analyze, ast::rConstNary a)
+  ast::rExp
+  analyze(Analyzer& analyze, ast::rConstExp a)
   {
+    if (!a)
+      return 0;
+
     analyze(a.get());
 
-    ast::rNary res;
     if (analyze.errors_get().empty())
-      res = analyze.result_get().unsafe_cast<ast::Nary>();
+      return analyze.result_get().unsafe_cast<ast::Exp>();
     else
     {
-      res = new ast::Nary();
+      ast::rNary res = new ast::Nary();
       analyze.errors_get().process_errors(*res);
+      return res;
     }
-    return res;
   }
 
 } // namespace binder

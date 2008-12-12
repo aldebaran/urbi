@@ -28,7 +28,7 @@ namespace ast
 
   /// Apply a visitor on a.
   /// Handle errors.
-  rNary analyze(Analyzer& v, rConstNary a);
+  rExp analyze(Analyzer& v, rConstExp a);
 
 } // namespace ast
 
