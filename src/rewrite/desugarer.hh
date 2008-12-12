@@ -1,27 +1,31 @@
 #ifndef REWRITE_DESUGAR_HH
 # define REWRITE_DESUGAR_HH
 
-# include <ast/cloner.hh>
+# include <libport/finally.hh>
+
+# include <ast/analyzer.hh>
 
 namespace rewrite
 {
   /// Desugar complex constructs to the core language
-  class Desugarer: public ast::Cloner
+  class Desugarer: public ast::Analyzer
   {
   public:
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
-    typedef ast::Cloner super_type;
+    typedef ast::Analyzer super_type;
     /// \}
 
     Desugarer();
+    virtual void operator()(const ast::Ast* node);
 
   protected:
     /// Import visit from DefaultVisitor.
     using super_type::visit;
     /// Nodes to desugar
     CONST_VISITOR_VISIT_NODES(
+      (And)
       (Assign)
       (Binding)
       (Class)
@@ -29,13 +33,18 @@ namespace rewrite
       (Emit)
       (Incrementation)
       (OpAssignment)
+      (Pipe)
       (Property)
+      (Scope)
+      (Stmt)
       (Subscript)
       (Try)
       );
 
   private:
     bool pattern_;
+    bool allow_decl_;
+    bool allow_subdecl_;
   };
 }
 

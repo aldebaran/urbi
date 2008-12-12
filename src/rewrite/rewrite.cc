@@ -18,8 +18,7 @@ namespace rewrite
     Rescoper rescope;
     ast::rAst res;
 
-    desugar(nary.get());
-    res = desugar.result_get();
+    res = ast::analyze(desugar, nary);
 
     rescope(res.get());
     res = rescope.result_get();

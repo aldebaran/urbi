@@ -21,7 +21,15 @@ namespace rewrite
 
   Desugarer::Desugarer()
     : pattern_(false)
+    , allow_decl_(false)
+    , allow_subdecl_(false)
   {}
+
+  void Desugarer::visit(const ast::And* s)
+  {
+    allow_subdecl_ = true;
+    super_type::visit(s);
+  }
 
   void
   Desugarer::visit(const ast::Assign* assign)
@@ -115,9 +123,19 @@ namespace rewrite
     result_ = recurse(res);
   }
 
+  void Desugarer::operator()(const ast::Ast* node)
+  {
+    libport::Finally finally;
+    finally << libport::scoped_set(allow_decl_, allow_subdecl_);
+    finally << libport::scoped_set(allow_subdecl_, false);
+    super_type::operator()(node);
+  }
+
   void
   Desugarer::visit(const ast::Binding* binding)
   {
+    if (!allow_decl_)
+      errors_.error(binding->location_get(), "declaration not allowed here");
     ast::loc loc = binding->location_get();
 
     result_ = new ast::Declaration(loc, binding->what_get(), 0, 0);
@@ -227,6 +245,12 @@ namespace rewrite
     result_->original_set(a);
   }
 
+  void Desugarer::visit(const ast::Pipe* s)
+  {
+    allow_subdecl_ = true;
+    super_type::visit(s);
+  }
+
   void Desugarer::visit(const ast::Property* p)
   {
     PARAMETRIC_AST(read, "%exp:1.getProperty(%exp:2, %exp:3)");
@@ -237,6 +261,18 @@ namespace rewrite
       % ast_string(p->location_get(), p->name_get());
     result_ = exp(read);
     result_->original_set(p);
+  }
+
+  void Desugarer::visit(const ast::Scope* s)
+  {
+    allow_subdecl_ = true;
+    super_type::visit(s);
+  }
+
+  void Desugarer::visit(const ast::Stmt* s)
+  {
+    allow_subdecl_ = true;
+    super_type::visit(s);
   }
 
   void Desugarer::visit(const ast::Subscript* s)
