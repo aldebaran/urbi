@@ -63,7 +63,7 @@ WINEPREFIX_ENVIRONMENT :=					\
 # Use the wrappers to run the non-installed executables.
 BUILDCHECK_ENVIRONMENT +=			\
   PATH=$(BUILDCHECK_PATH):$$PATH		\
-  $(RUN_WINE_LD_LIBRARY_PATH)
+  $(WINEPREFIX_ENVIRONMENT)
 
 INSTALLCHECK_ENVIRONMENT +=			\
   PATH=$(bindir):$$PATH
