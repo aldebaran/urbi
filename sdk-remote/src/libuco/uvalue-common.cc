@@ -341,7 +341,7 @@ namespace urbi
   std::istream&
   operator>> (std::istream& is, USoundSampleFormat& f)
   {
-    int v;
+    int v = 0;
     is >> v;
     f = USoundSampleFormat(v);
     return is;
