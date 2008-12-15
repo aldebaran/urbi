@@ -143,7 +143,10 @@ static void ice(int i)
 {
   install_ice_catcher(hard_ice);
 
-  runner::Runner& r = ::urbiserver->getCurrentRunner();
+  // If we have a job currently running, use it to signal the error,
+  // otherwise try to use the sneaker which must have been created
+  // (or we have an error very early on and we are in deep trouble).
+  runner::Runner& r = dbg::runner_or_sneaker_get();
   static const std::string tag = "";
 
   r.send_message(tag, "");

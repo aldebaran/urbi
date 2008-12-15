@@ -3,13 +3,14 @@
 #include <libport/compiler.hh>
 #include <libport/symbol.hh>
 
+#include <kernel/userver.hh>
+
 #include <ast/print.hh>
 
 #include <object/lobby.hh>
 #include <object/system.hh>
 
 #include <runner/call.hh>
-#include <runner/interpreter.hh>
 #include <runner/sneaker.hh>
 
 namespace dbg
@@ -27,6 +28,17 @@ namespace dbg
   };
 
   static Sneaker* sneaker;                        // The sole sneaker instance
+
+  runner::Runner&
+  runner_or_sneaker_get()
+  {
+    if (::urbiserver->getScheduler().is_current_job(0))
+    {
+      passert(sneaker, sneaker);
+      return *sneaker;
+    }
+    return ::urbiserver->getCurrentRunner();
+  }
 
   Sneaker::Sneaker(object::rLobby lobby,
 		       scheduler::Scheduler& scheduler)
@@ -47,7 +59,7 @@ namespace dbg
   {
     if (!tag.empty())
       std::cerr << tag << ": ";
-    std::cerr << msg;
+    std::cerr << msg << std::endl;
   }
 
   void
@@ -97,7 +109,13 @@ namespace dbg
   {
     assert(sneaker);
     std::cerr << "system_class: " << object::system_class.get() << std::endl;
-    urbi_call(*sneaker, object::system_class, SYMBOL(ps));
+    try
+    {
+      urbi_call(*sneaker, object::system_class, SYMBOL(ps));
+    }
+    catch (...)
+    {
+    }
   }
 
 } // namespace dbg

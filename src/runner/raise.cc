@@ -4,6 +4,7 @@
 #include <runner/runner.hh>
 #include <runner/call.hh>
 #include <runner/raise.hh>
+#include <runner/sneaker.hh>
 #include <scheduler/scheduler.hh>
 
 namespace runner
@@ -35,7 +36,7 @@ namespace runner
   {
     assert(global_class->slot_has(exn_name));
     const rObject& exn = global_class->slot_get(exn_name);
-    Runner& r = ::urbiserver->getCurrentRunner();
+    Runner& r = dbg::runner_or_sneaker_get();
     objects_type args;
     do
     {

@@ -3,6 +3,7 @@
 
 # include <ast/ast.hh>
 # include <object/primitives.hh>
+# include <runner/interpreter.hh>
 # include <scheduler/scheduler.hh>
 
 namespace dbg
@@ -15,6 +16,13 @@ namespace dbg
   /// \param scheduler The current scheduler.
   void create_sneaker_if_needed
     (object::rLobby lobby, scheduler::Scheduler& scheduler);
+
+  /// Retrieve the current runner or the sneaker. This should be used
+  /// only when debugging, when we really need a runner of some kind
+  /// to execute code.
+  ///
+  /// \return A runner.
+  runner::Runner& runner_or_sneaker_get();
 
   /// The following functions will be called from the debugger. Here
   /// are some example uses:
