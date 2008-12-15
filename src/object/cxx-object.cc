@@ -46,6 +46,7 @@ namespace object
   {
     foreach (Initializer* init, initializers_get())
       delete init;
+    initializers_get().clear();
   }
 
   void

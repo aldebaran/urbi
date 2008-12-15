@@ -12,8 +12,6 @@
 
 #include <kernel/config.h>
 
-#include <ltdl.h>
-
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
 #include <kernel/uvalue-cast.hh>
@@ -97,7 +95,7 @@ static StringPair split_name(const std::string& name)
   return StringPair(oname, slot);
 }
 
-static void uobjects_reload(rObject where)
+void uobjects_reload()
 {
   static std::set<void*> initialized;
   foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
@@ -117,28 +115,13 @@ static void uobjects_reload(rObject where)
     }
 }
 
-static rObject where;
-
-static void uobjects_load_module(rObject, const std::string& name)
-{
-  lt_dlinit();
-  lt_dlhandle handle = lt_dlopenext(name.c_str());
-  if (!handle)
-    runner::raise_primitive_error
-      ("Failed to open `" + name + "': " + lt_dlerror());
-  uobjects_reload(where);
-}
-
 /*! Initialize plugin UObjects.
  \param args object in which the instances will be stored.
 */
 rObject uobject_initialize(objects_type& args)
 {
   where = args.front();
-  uobjects_reload(where);
-  object::global_class->slot_set
-    (SYMBOL(loadModule),
-     object::make_primitive(&uobjects_load_module));
+  uobjects_reload();
   return object::void_class;
 }
 

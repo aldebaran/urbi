@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object system.
  */
 
+#include <ltdl.h>
+
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 #include <libport/cstdlib>
@@ -10,8 +12,9 @@
 #include <memory>
 #include <sstream>
 
-#include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
+#include <kernel/uobject.hh>
+#include <kernel/userver.hh>
 
 #include <object/code.hh>
 #include <object/cxx-primitive.hh>
@@ -438,6 +441,30 @@ namespace object
     return Lobby::instances_get();
   }
 
+
+  static void system_loadModule(rObject, const std::string& name)
+  {
+    static bool initialized = false;
+
+    if (!initialized)
+    {
+      initialized = true;
+      lt_dlinit();
+    }
+    lt_dlhandle handle = lt_dlopenext(name.c_str());
+    if (!handle)
+      runner::raise_primitive_error
+        ("Failed to open `" + name + "': " + lt_dlerror());
+
+    // Reload uobjects
+    uobjects_reload();
+
+    // Reload CxxObjects
+    CxxObject::create();
+    CxxObject::initialize(global_class);
+    CxxObject::cleanup();
+  }
+
   void
   system_class_initialize ()
   {
@@ -451,6 +478,7 @@ namespace object
     DECLARE(setenv);
     DECLARE(spawn);
     DECLARE(unsetenv);
+    DECLARE(loadModule);
 
 #undef DECLARE
 
