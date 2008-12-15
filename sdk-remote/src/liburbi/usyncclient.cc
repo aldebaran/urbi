@@ -88,8 +88,9 @@ namespace urbi
     stopCallbackSem_--;
   }
 
-  void USyncClient::processEvents(const libport::utime_t timeout)
+  bool USyncClient::processEvents(const libport::utime_t timeout)
   {
+    bool res = false;
     libport::utime_t startTime = libport::utime();
     while (timeout < 0 || libport::utime() - startTime <= timeout)
     {
@@ -97,8 +98,9 @@ namespace urbi
       if (queue.empty())
       {
 	queueLock_.unlock();
-	return;
+	return res;
       }
+      res = true;
       UMessage *m = queue.front();
       queue.pop_front();
       sem_--; // Will not block since queue was not empty.
@@ -106,6 +108,7 @@ namespace urbi
       UAbstractClient::notifyCallbacks(*m);
       delete m;
     }
+    return res;
   }
 
   int USyncClient::joinCallbackThread_ ()

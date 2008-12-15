@@ -143,9 +143,10 @@ namespace urbi
      *                microseconds. This is useful if you don't want
      *                processEvents() to take to much time if there are many
      *                many pending messages.
+     * @return true if at least one message was processed, false otherwise.
      * Callbacks functions are called synchronously in the caller thread.
      */
-    void processEvents(const libport::utime_t timeout = -1);
+    bool processEvents(const libport::utime_t timeout = -1);
 
     /**
      *  Stop the callback processing thread.
