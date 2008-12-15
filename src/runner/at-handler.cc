@@ -84,7 +84,7 @@ namespace runner
   {
     // If we are the current job, since we have no side effect, it must be
     // a flow control tag. Otherwise, remove all jobs holding this tag.
-    if (scheduler_get().is_current_job(*this))
+    if (scheduler_get().is_current_job(this))
       super_type::register_stopped_tag(tag, payload);
     else
       jobs_.erase_if(boost::bind(&AtJob::tag_held, _1, boost::cref(tag)));

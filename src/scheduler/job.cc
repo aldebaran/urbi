@@ -166,7 +166,7 @@ namespace scheduler
     non_interruptible_ = false;
     // If this is the current job we are talking about, the exception
     // is synchronous.
-    if (scheduler_.is_current_job(*this))
+    if (scheduler_.is_current_job(this))
       e.rethrow();
 
     // Store the exception for later use.

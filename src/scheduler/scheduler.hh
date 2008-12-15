@@ -86,9 +86,10 @@ namespace scheduler
     /// Check whether a job is the current job.
     ///
     /// \param job Job to be checked against the current job.
+    ///        0 can be used to check if no job is executing.
     ///
     /// \return \a true if \a job is the current job.
-    bool is_current_job(const Job& job) const;
+    bool is_current_job(const Job* job) const;
 
     /// Signal that a \c stop or a \c block has been issued on a tag.
     ///

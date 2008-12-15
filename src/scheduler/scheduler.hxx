@@ -19,9 +19,9 @@ namespace scheduler
   }
 
   inline bool
-  Scheduler::is_current_job(const Job& job) const
+  Scheduler::is_current_job(const Job* job) const
   {
-    return current_job_ == &job;
+    return current_job_ == job;
   }
 
   inline unsigned int
