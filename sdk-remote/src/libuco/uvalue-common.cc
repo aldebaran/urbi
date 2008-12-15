@@ -1,4 +1,4 @@
-/*! \file uvalue-common.cc
+/*! \file libuco/uvalue-common.cc
  *******************************************************************************
 
  File: uvalue-common.cc\n
@@ -140,7 +140,7 @@ namespace urbi
     }
 
     //OBJ a [x:12, y:4]
-    if (!strncmp(message + pos, "OBJ ", 4))
+    if (STRNEQ(message + pos, "OBJ ", 4))
     {
       //obj message
       pos += 4;
@@ -188,7 +188,7 @@ namespace urbi
       return pos + 1;
     }
 
-    if (!strncmp(message+pos, "void", 4))
+    if (STRNEQ(message+pos, "void", 4))
     {
       //void
       type = DATA_VOID;
@@ -196,7 +196,7 @@ namespace urbi
       return pos;
     }
 
-    if (!strncmp(message + pos, "BIN ", 4))
+    if (STRNEQ(message + pos, "BIN ", 4))
     {
       //binary message: delegate
       type = DATA_BINARY;
@@ -208,20 +208,18 @@ namespace urbi
     }
 
     // true and false used by k2
-    if (!strncmp(message + pos, "true", 4))
+    if (STRNEQ(message + pos, "true", 4))
     {
       type = DATA_DOUBLE;
       val = 1;
       return pos+4;
     }
-    if (!strncmp(message + pos, "false", 5))
+    if (STRNEQ(message + pos, "false", 5))
     {
       type = DATA_DOUBLE;
       val = 0;
       return pos+5;
     }
-
-
 
     //last attempt: double
     int p;
