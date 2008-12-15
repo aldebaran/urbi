@@ -7,6 +7,7 @@
 
 # include <libport/fwd.hh>
 # include <libport/ufloat.h>
+# include <libport/utime.hh>
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
 # include <urbi/ucallbacks.hh>
@@ -142,6 +143,21 @@ namespace urbi
   inline bool isPluginMode() { return getRunningMode() == MODE_PLUGIN;}
   /// Return true if the code is running in remote mode.
   inline bool isRemoteMode() { return getRunningMode() == MODE_REMOTE;}
+
+  /// Yield execution until next cycle. Process pending messages in remote mode.
+  URBI_SDK_API void yield();
+  /// Yield execution until \b deadline is met (see libport::utime()).
+  URBI_SDK_API void yield_until(libport::utime_t deadline);
+  /** Yield execution until something else is scheduled, or until a message is
+    * received in remote mode.
+    */
+  URBI_SDK_API void yield_until_things_changed();
+  /** If \b s is true, mark the current task as having no side effect.
+    * This call has no effect in remote mode.
+    */
+  URBI_SDK_API void side_effect_free_set(bool s);
+  /// Get the current side_effect_free state.
+  URBI_SDK_API bool side_effect_free_get();
 
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object.

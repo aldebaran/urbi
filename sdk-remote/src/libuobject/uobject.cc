@@ -181,4 +181,32 @@ namespace urbi
     va_end(arg);
   }
 
+  void yield()
+  {
+    yield_until(libport::utime());
+  }
+  void yield_until(libport::utime_t deadline)
+  {
+    // Ensure processEvents is called at least once.
+    while (true)
+    {
+      bool processed = dynamic_cast<USyncClient*>(getDefaultClient())
+        ->processEvents(0);
+      if (deadline < libport::utime())
+        return;
+      if (!processed)
+        usleep(0);
+    }
+  }
+  void yield_until_things_changed()
+  {
+    while (true)
+    {
+      if (dynamic_cast<USyncClient*>(getDefaultClient())->processEvents(0))
+        return;
+      usleep(0);
+    }
+  }
+  void side_effect_free_set(bool) {}
+  bool side_effect_free_get() {return false;}
 } // namespace urbi

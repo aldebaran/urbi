@@ -57,6 +57,12 @@ public:
     UBindFunction(all, transmitI);
     UBindFunction(all, transmitSnd);
 
+    UBindFunction(all, yield);
+    UBindFunction(all, loop_yield);
+    UBindFunction(all, yield_for);
+    UBindFunction(all, yield_until_things_changed);
+    UBindFunction(all, side_effect_free_set);
+    UBindFunction(all, side_effect_free_get);
 
     vars[0] = &a;
     vars[1] = &b;
@@ -345,6 +351,36 @@ public:
   {
     URBI((Object.a = 123,));
     return 0;
+  }
+
+  void yield()
+  {
+    urbi::yield();
+  }
+  void loop_yield(long duration)
+  {
+    libport::utime_t end = libport::utime() + duration;
+    while (libport::utime() < end)
+    {
+      urbi::yield();
+      usleep(1000);
+    }
+  }
+  void yield_for(long duration)
+  {
+    urbi::yield_until(libport::utime() + duration);
+  }
+  void yield_until_things_changed()
+  {
+    urbi::yield_until_things_changed();
+  }
+  void side_effect_free_set(bool sef)
+  {
+    urbi::side_effect_free_set(sef);
+  }
+  bool side_effect_free_get()
+  {
+    return urbi::side_effect_free_get();
   }
 
   urbi::UVar a,b,c;
