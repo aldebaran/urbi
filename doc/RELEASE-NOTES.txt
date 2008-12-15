@@ -66,6 +66,18 @@ Display of integer literals
 Some large floating point values could not be displayed correctly at
 the top level of the interpreter. This limitation has been removed.
 
+Variables binding in event matching
+-----------------------------------
+
+Parentheses around variables bindings ("var x") are no longer required
+in event matching:
+
+at (?myEvent(var x, var y, 1))
+
+instead of:
+
+at (?myEvent((var x), (var y), 1))
+
 Standard library
 ================
 
