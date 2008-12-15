@@ -382,7 +382,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
     *strchr(file, '"') = 0;
   }
 
-  loc.initialize(!file || STREQ(file, "-") ? 0 : new libport::Symbol(file));
+  loc.initialize(!file || libport::streq(file, "-") ?
+		 0 :
+		 new libport::Symbol(file));
   loc.lines (lexical_cast<int>(*up, loc, line) - 1);
   loc.step();
 }
