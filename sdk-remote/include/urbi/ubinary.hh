@@ -107,14 +107,17 @@ namespace urbi
   class URBI_SDK_API UImage
   {
   public:
-    unsigned char         *data;            ///< pointer to image data
-    size_t size;             ///< image size in byte
-    size_t width, height;    ///< size of the image
+    /// Pointer to image data.
+    unsigned char* data;
+    /// Image size in byte.
+    size_t size;
+    /// Dimensions of the image.
+    size_t width, height;
 
-    UImageFormat          imageFormat;
+    UImageFormat imageFormat;
 
     /// Return a legible definition of imageFormat.
-    const char* format_string () const;
+    const char* format_string() const;
   };
 
 
@@ -127,7 +130,7 @@ namespace urbi
   {
   public:
     BinaryData()
-      : data (0), size (0)
+      : data(0), size(0)
     {}
     BinaryData(void *d, size_t s)
       : data(d), size(s)

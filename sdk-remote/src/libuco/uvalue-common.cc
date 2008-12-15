@@ -203,8 +203,7 @@ namespace urbi
       binary = new UBinary();
       pos += 4;
       //parsing type
-      int p = binary->parse(message, pos, bins, binpos);
-      return p;
+      return binary->parse(message, pos, bins, binpos);
     }
 
     // true and false used by k2
