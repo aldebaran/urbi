@@ -123,10 +123,9 @@ ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
 ast_dump_LDADD   = $(libuobject_la_LIBADD)
 dist_testcoro_SOURCES =				\
   scheduler/testcoro.cc				\
-  $(nodist_libuobject_la_SOURCES)		\
-  $(dist_libuobject_la_SOURCES)
+  $(coroutines_sources)				\
+  kernel/kernconf.cc
 testcoro_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-testcoro_LDADD = $(libuobject_la_LIBADD)
 endif !WIN32
 endif BUILD_PROGRAMS
 

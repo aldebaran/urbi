@@ -1,6 +1,5 @@
 dist_libuobject_la_SOURCES +=			\
-  scheduler/coroutine.hh			\
-  scheduler/coroutine.hxx			\
+  $(coroutines_sources)				\
   scheduler/exception.hh			\
   scheduler/exception.hxx			\
   scheduler/fwd.hh				\
@@ -16,3 +15,7 @@ dist_libuobject_la_SOURCES +=			\
   scheduler/tag.cc				\
   scheduler/tag.hh				\
   scheduler/tag.hxx
+
+coroutines_sources = 				\
+  scheduler/coroutine.hh			\
+  scheduler/coroutine.hxx
