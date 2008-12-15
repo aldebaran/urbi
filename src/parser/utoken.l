@@ -717,11 +717,12 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          size_t pos = yyin->tellg();
          yyin->seekg(0, std::ios_base::end);
          size_t streamlen = yyin->tellg();
-         // Check that we can read it all
+         // Check that we can read it all.
          if (pos + len + 1 - eat > streamlen)
-         { // No, eat it all to reach EOF.
+         {
+           // No, eat it all to reach EOF.
            passert(up, !up);
-           yyin->seekg( streamlen, std::ios_base::beg);
+           yyin->seekg(streamlen, std::ios_base::beg);
            // Read one more to reach EOF state.
            yyinput();
            yy_c_buf_p += eat;
@@ -732,16 +733,16 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          COLUMNS(len);
          // Yes, go on.
          if (!up)
-           yyin->seekg(pos + len - eat,
-                        std::ios_base::beg);
+           yyin->seekg(pos + len - eat, std::ios_base::beg);
          else
          {
-           // eat 'eaten' from buffer
+           // Eat 'eaten' from buffer.
            grown_string += std::string(yy_c_buf_p, eat);
            size_t current_size = grown_string.length();
            grown_string.resize(current_size + len - eat);
            yyin->seekg(pos, std::ios_base::beg);
-           yyin->read(const_cast<char*>(grown_string.c_str()) + current_size, len-eat);
+           yyin->read(const_cast<char*>(grown_string.c_str()) + current_size,
+                      len-eat);
          }
        }
        else
@@ -754,15 +755,15 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
        switch (int c = yyinput())
        {
-          case EOF:
-             EOF_ERROR("\\B");
-             break;
-          case ')':
-             COLUMNS(1);
-             break;
-          default:
-             SCAN_ERROR("Expected closing ')' for \\B, got '" + (char)c + "'");
-             break;
+       case EOF:
+         EOF_ERROR("\\B");
+         break;
+       case ')':
+         COLUMNS(1);
+         break;
+       default:
+         SCAN_ERROR("Expected closing ')' for \\B, got '" + (char)c + "'");
+         break;
        }
      }
 
