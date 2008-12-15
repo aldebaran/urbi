@@ -80,7 +80,9 @@ namespace flower
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
 
-    ast::rExp res = recurse(code->body_get()->body_get());
+
+    ast::rExp res = code->body_get()->body_get();
+    res = res ? recurse(res) : new ast::Noop(code->location_get(), 0);
 
     if (has_continue_)
       res = cont(res.get());
