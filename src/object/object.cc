@@ -19,6 +19,7 @@
 #include <object/hash-slots.hh>
 #include <object/list.hh>
 #include <object/object.hh>
+#include <object/root-classes.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
@@ -27,6 +28,13 @@
 
 namespace object
 {
+
+  Object::Object ()
+    : protos_(new protos_type)
+    , slots_()
+  {
+    root_classes_initialize();
+  }
 
   /*--------.
   | Slots.  |

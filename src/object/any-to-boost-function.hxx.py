@@ -86,7 +86,7 @@ print '''\
 
 # include <boost/function.hpp>
 # include <object/cxx-helper.hh>
-# include <runner/runner.hh>
+# include <runner/fwd.hh>
 
 namespace object
 {
