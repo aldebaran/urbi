@@ -87,6 +87,24 @@ namespace object
     }
   };
 
+  // Conversion with float
+  template<>
+  struct CxxConvert<float>
+  {
+    static float
+    to(const rObject& o, unsigned idx)
+    {
+      type_check(o, Float::proto, idx);
+      return o->as<Float>()->value_get();
+    }
+
+    static rObject
+    from(const float& v)
+    {
+      return new Float(v);
+    }
+  };
+
   // Conversion with unsigned int
   template<>
   struct CxxConvert<unsigned int>
