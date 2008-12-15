@@ -624,4 +624,24 @@ namespace urbi
     urbiserver->ghost_connection_get().received(static_cast<const char*>(buf),
                                                 static_cast<size_t>(size));
   }
+  void yield()
+  {
+    getCurrentRunner().yield();
+  }
+  void yield_until(libport::utime_t deadline)
+  {
+    getCurrentRunner().yield_until(deadline);
+  }
+  void yield_until_things_changed()
+  {
+    getCurrentRunner().yield_until_things_changed();
+  }
+  void side_effect_free_set(bool s)
+  {
+    getCurrentRunner().side_effect_free_set(s);
+  }
+  bool side_effect_free_get()
+  {
+    return getCurrentRunner().side_effect_free_get();
+  }
 }
