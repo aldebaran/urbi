@@ -31,6 +31,22 @@ all-local: scripts/package
 symbols:
 	$(MAKE) $(AM_MAKEFLAGS) -C src $@
 
+
+
+## ---------------------- ##
+## Convenient shortcuts.  ##
+## ---------------------- ##
+
+libs:
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/lib/libport
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
+	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la
+
+
+## ------- ##
+## Check.  ##
+## ------- ##
+
 # check-html, check-clean, check-uob etc.
 check-%:
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
