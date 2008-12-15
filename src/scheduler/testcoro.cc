@@ -1,13 +1,13 @@
+#include <cassert>
 #include <iostream>
 #include <scheduler/coroutine.hh>
 
 Coro* mc;
 Coro* c1, *c2;
 
-void start2(void*)
+static void start2(void*)
 {
   int x=1;
-  int y = 12;
   std::cerr <<"c2 start " << std::endl;
   std::cerr <<"c2->c1 " << std::endl;
   x++;
@@ -19,7 +19,7 @@ void start2(void*)
   coroutine_switch_to(c2, mc);
   std::cerr <<"END!!" << std::endl;
 }
-void start(void*)
+static void start(void*)
 {
   int x=0;
   std::cerr <<"c1 start" << std::endl;
@@ -36,7 +36,7 @@ void start(void*)
   assert(x==3);x++;
   std::cerr <<"END!!" << std::endl;
 }
-int main(int argc, const char* argv[])
+int main()
 {
   mc = coroutine_new();
   coroutine_initialize_main(mc);
