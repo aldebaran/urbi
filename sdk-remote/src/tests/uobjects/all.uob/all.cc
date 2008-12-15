@@ -309,11 +309,11 @@ public:
 
   urbi::UBinary transmitB(urbi::UBinary b)
   {
-    urbi::UBinary r(b);
-    unsigned char * data = static_cast<unsigned char*>(r.common.data);
-    for (unsigned int i=0; i<r.common.size; i++)
+    urbi::UBinary res(b);
+    unsigned char* data = static_cast<unsigned char*>(res.common.data);
+    for (size_t i = 0; i < res.common.size; ++i)
       data[i] -= 1;
-    data[r.common.size - 1] = '\n';
+    data[res.common.size - 1] = '\n';
     return r;
   }
 
