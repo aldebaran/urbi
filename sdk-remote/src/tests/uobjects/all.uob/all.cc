@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <libport/unistd.h>
+
 #include <urbi/uobject.hh>
 
 class all: public urbi::UObject
