@@ -702,23 +702,7 @@ namespace
     // TODO: optimize
     if (this == &v)
       return *this;
-    switch (type)
-    {
-      case DATA_STRING:
-	delete stringValue;
-	break;
-      case DATA_BINARY:
-	delete binary;
-	break;
-      case DATA_LIST:
-	delete list;
-	break;
-      case DATA_OBJECT:
-	delete object;
-      case DATA_DOUBLE:
-      case DATA_VOID:
-	break;
-    }
+    this->~UValue();
 
     type = v.type;
     switch (type)
