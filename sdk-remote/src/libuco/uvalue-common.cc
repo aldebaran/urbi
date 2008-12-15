@@ -386,8 +386,7 @@ namespace urbi
     common.data = malloc(psize);
     memcpy(common.data, binpos->data, common.size);
     ++binpos;
-    while (message[pos] == ' ')
-      ++pos;
+    SKIP_SPACES();
     int p = pos;
     while (message[p] && message[p] != '\n')
       ++p;
@@ -445,7 +444,7 @@ namespace urbi
       sound.channels = p2;
       sound.rate = p3;
       sound.sampleSize = p4;
-      sound.sampleFormat = (USoundSampleFormat) p5;
+      sound.sampleFormat = USoundSampleFormat(p5);
       return p;
     }
 
@@ -457,7 +456,7 @@ namespace urbi
       sound.channels = p2;
       sound.rate = p3;
       sound.sampleSize = p4;
-      sound.sampleFormat = (USoundSampleFormat) p5;
+      sound.sampleFormat = USoundSampleFormat(p5);
       return p;
     }
 
