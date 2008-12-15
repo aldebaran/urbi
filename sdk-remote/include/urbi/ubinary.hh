@@ -178,6 +178,10 @@ namespace urbi
     std::string getMessage() const;
     /// Frees binary buffer.
     ~UBinary();
+    /// Return true on success.
+    bool parse(std::istringstream& is,
+               const std::list<BinaryData>& bins,
+               std::list<BinaryData>::const_iterator& binpos);
     int parse(const char* message, int pos,
 	      const std::list<BinaryData>& bins,
 	      std::list<BinaryData>::const_iterator& binpos);

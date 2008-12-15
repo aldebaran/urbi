@@ -25,6 +25,7 @@
 #include <libport/assert.hh>
 #include <libport/cstring>
 #include <libport/escape.hh>
+#include <libport/lexical-cast.hh>
 
 #include <urbi/uvalue.hh>
 
@@ -372,102 +373,82 @@ namespace urbi
 		 const std::list<BinaryData>& bins,
 		 std::list<BinaryData>::const_iterator& binpos)
   {
-    SKIP_SPACES();
-    //find end of header
+    std::istringstream is(message + pos);
+    if (parse(is, bins, binpos))
+      return is.tellg();
+    else
+      return -is.tellg();
+  }
 
+  bool
+  UBinary::parse(std::istringstream& is,
+		 const std::list<BinaryData>& bins,
+		 std::list<BinaryData>::const_iterator& binpos)
+
+  {
     if (binpos == bins.end()) //no binary data available
-      return -1;
+      return false;
 
-    //validate size
-    int ps;
-    unsigned psize;
-    int count = sscanf(message+pos, "%u%n", &psize, &ps);
-    if (count != 1)
-      return -pos;
+    // Validate size.
+    size_t psize;
+    is >> psize;
+    if (is.fail())
+      return false;
     if (psize != binpos->size)
     {
-      std::cerr << "bin size inconsistency\n";
-      return -pos;
+      std::cerr << "bin size inconsistency" << std::endl;
+      return false;
     }
-    pos += ps;
     common.size = psize;
     common.data = malloc(psize);
     memcpy(common.data, binpos->data, common.size);
     ++binpos;
-    SKIP_SPACES();
-    int p = pos;
-    while (message[p] && message[p] != '\n')
-      ++p;
-    if (!message[p])
-      return -p; //parse error
-    this->message = std::string(message + pos, p - pos);
-    ++p;
 
-    // Trying to parse header to find type.
-    char type[64];
-    memset(type, 0, 64);
-    // width, height, sample size.
-    size_t p2, p3, p4;
-    // sample format.
-    int p5;
-    // FIXME: All this should be rewritten with operator>>.
-    // And better error detection.
-    count = sscanf(message + pos,
-                   "%63s %u %u %u %d",
-		   type, &p2, &p3, &p4, &p5);
-    if (STREQ(type, "jpeg") && count == 3)
-    {
-      this->type = BINARY_IMAGE;
-      image.size = common.size;
-      image.width = p2;
-      image.height = p3;
-      image.imageFormat = IMAGE_JPEG;
-      return p;
-    }
-    else if (STREQ(type, "YCbCr") && count == 3)
-    {
-      this->type = BINARY_IMAGE;
-      image.size = common.size;
-      image.width = p2;
-      image.height = p3;
-      image.imageFormat = IMAGE_YCbCr;
-      return p;
-    }
-    else if (STREQ(type, "rgb") && count == 3)
-    {
-      this->type = BINARY_IMAGE;
-      image.size = common.size;
-      image.width = p2;
-      image.height = p3;
-      image.imageFormat = IMAGE_RGB;
-      return p;
-    }
-    else if (STREQ(type, "raw") && count == 5)
-    {
-      this->type = BINARY_SOUND;
-      sound.soundFormat = SOUND_RAW;
-      sound.size = common.size;
-      sound.channels = p2;
-      sound.rate = p3;
-      sound.sampleSize = p4;
-      sound.sampleFormat = USoundSampleFormat(p5);
-      return p;
-    }
-    else if (STREQ(type, "wav") && count == 5)
-    {
-      this->type = BINARY_SOUND;
-      sound.soundFormat = SOUND_WAV;
-      sound.size = common.size;
-      sound.channels = p2;
-      sound.rate = p3;
-      sound.sampleSize = p4;
-      sound.sampleFormat = USoundSampleFormat(p5);
-      return p;
-    }
+    // Skip spaces.
+    while (is.peek() == ' ')
+      is.ignore();
 
-    //unknown binary
-    this->type = BINARY_UNKNOWN;
-    return p;
+    // Get the headers.
+    std::streampos pos = is.tellg();
+    std::stringbuf sb;
+    is.get(sb);
+    message = sb.str();
+
+    // Rewind to the beginning of the header, and parse.
+    is.seekg(pos, std::ios::beg);
+    std::string t;
+    is >> t;
+    if (is.fail())
+      return false;
+
+    if (t == "jpeg" || t == "YCbCr" || t == "rgb")
+    {
+      type = BINARY_IMAGE;
+      image.size = common.size;
+      is >> image.width >> image.height;
+      image.imageFormat =
+        t == "jpeg" ? IMAGE_JPEG
+        : t == "YCbCr" ? IMAGE_YCbCr
+        : t == "rgb" ? IMAGE_RGB
+        : IMAGE_UNKNOWN;
+    }
+    else if (t == "raw" || t == "wav")
+    {
+      type = BINARY_SOUND;
+      sound.soundFormat =
+        t == "raw" ? SOUND_RAW
+        : t == "wav" ? SOUND_WAV
+        : SOUND_UNKNOWN;
+      sound.size = common.size;
+      is >> sound.channels
+         >> sound.rate
+         >> sound.sampleSize >> sound.sampleFormat;
+    }
+    else
+      // Unknown binary.
+      type = BINARY_UNKNOWN;
+
+    return true;
   }
 
   void UBinary::buildMessage()
