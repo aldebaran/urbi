@@ -156,7 +156,7 @@ int main(int argc, char * argv[])
 
   urbi::UClient * robot;
 
-  if ( (STREQ(argv[1],"-")) || (STREQ(argv[1],"+")))
+  if ( (libport::streq(argv[1],"-")) || (libport::streq(argv[1],"+")))
     {
       robot=NULL;
       dumpMode=argv[1][0];
@@ -173,7 +173,7 @@ int main(int argc, char * argv[])
 
   FILE * f;
   do {
-    if (STREQ(argv[2],"-"))
+    if (libport::streq(argv[2],"-"))
       f=stdin;
     else
       f=fopen(argv[2],"r");

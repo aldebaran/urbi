@@ -40,7 +40,7 @@ main(int argc, char * argv[])
     if (argp+2<argc)
       headers=argv[argp+2];
     FILE *f;
-    if (STREQ(argv[argp+1],"-"))
+    if (libport::streq(argv[argp+1],"-"))
       f = stdin;
     else
       f = fopen(argv[argp+1],"r");

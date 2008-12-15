@@ -37,7 +37,7 @@ main(int argc, char * argv [])
     exit(2);
 
   FILE *f;
-  if (STREQ(argv[2],"-"))
+  if (libport::streq(argv[2],"-"))
     f = stdin;
   else
     f = fopen(argv[2],"r");

@@ -125,7 +125,7 @@ int main(int argc, char * argv[])
   urbi::UClient c(argv[1]);
   c.start();
   if (c.error()) exit(2);
-  if (STREQ(argv[2],"-")) f=stdout;
+  if (libport::streq(argv[2],"-")) f=stdout;
   else
     f=fopen(argv[2],"w");
   if (!f)

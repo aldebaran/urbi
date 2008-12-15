@@ -69,7 +69,7 @@ namespace urbi
   ublendtype (const char* cp)
   {
     for (int i = 0; is_blendtype (i); ++i)
-      if (STREQ (UBlendNames[i], cp))
+      if (libport::streq (UBlendNames[i], cp))
 	return static_cast<UBlendType> (i);
     pabort ("unknown blendtype: " << cp);
 

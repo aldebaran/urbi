@@ -67,7 +67,7 @@ namespace urbi
   uproperty (const char* cp)
   {
     for (int i = 0; is_propertytype (i); ++i)
-      if (STREQ (UPropertyNames[i], cp))
+      if (libport::streq (UPropertyNames[i], cp))
 	return static_cast<UProperty> (i);
     pabort ("unknown uproperty: " << cp);
   }

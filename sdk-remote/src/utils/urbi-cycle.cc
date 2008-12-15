@@ -39,7 +39,7 @@ int main(int argc, char * argv[])
     sscanf(argv[3], "%d", &joint);
   if (argc > 4)
   {
-    if (STREQ(argv[4], "-"))
+    if (libport::streq(argv[4], "-"))
       init = true;
     else
       sscanf(argv[4], "%f", &startval);

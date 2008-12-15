@@ -122,7 +122,7 @@ main(int argc, char* argv[])
       libport::invalid_option (arg);
     else
       // An argument: a file.
-      files.push_back(STREQ(argv[i], "-") ? "/dev/stdin" : argv[i]);
+      files.push_back(libport::streq(argv[i], "-") ? "/dev/stdin" : argv[i]);
   }
 
 

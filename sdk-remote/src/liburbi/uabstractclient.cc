@@ -140,9 +140,9 @@ namespace urbi
     for (std::list<UCallbackInfo>::iterator it = callbackList.begin();
 	 it!=callbackList.end(); inc?it:it++, inc=false)
     {
-      if (STREQ(msg.tag.c_str(), it->tag)
-	  || (STREQ(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR)
-	  || STREQ(it->tag, URBI_WILDCARD_TAG))
+      if (libport::streq(msg.tag.c_str(), it->tag)
+	  || (libport::streq(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR)
+	  || libport::streq(it->tag, URBI_WILDCARD_TAG))
       {
 	UCallbackAction ua = it->callback(msg);
 	if (ua == URBI_REMOVE)

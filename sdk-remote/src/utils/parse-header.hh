@@ -102,13 +102,13 @@ namespace urbi
     if (argc < min_argc)
       usage(argv[0], 1);
 
-    FILE* inf = STREQ(argv[1],"-") ? stdin : fopen (argv[1],"r");
+    FILE* inf = libport::streq(argv[1],"-") ? stdin : fopen (argv[1],"r");
     if (!inf)
       std::cerr << libport::program_name
                 << ": error opening file " << argv[1] << std::endl
                 << libport::exit(EX_NOINPUT);
 
-    FILE* ouf = STREQ(argv[2],"-") ? stdout : fopen (argv[2],"w");
+    FILE* ouf = libport::streq(argv[2],"-") ? stdout : fopen (argv[2],"w");
     if (!ouf)
       std::cerr << libport::program_name
                 << ": error opening file " << argv[2] << std::endl

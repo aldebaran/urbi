@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
   if (argc >= 4)
   {
     outtodsp = false;
-    if (STREQ(argv[3],"-"))
+    if (libport::streq(argv[3],"-"))
       file=stdout;
     else
       file = fopen(argv[3], "wb+");
