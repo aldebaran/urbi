@@ -4,16 +4,11 @@
 #ifndef KERNEL_FWD_HH
 # define KERNEL_FWD_HH
 
-class UCommandQueue;
 class UConnection;
 class UGenericCallback;
 class UGhostConnection;
-class UImage;
-class UList;
 class UQueue;
 class UServer;
-class USound;
-class UTest;
 
 namespace kernel
 {
