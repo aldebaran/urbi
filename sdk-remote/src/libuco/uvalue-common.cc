@@ -83,6 +83,16 @@ namespace urbi
     while (message[pos] == ' ')			\
       ++pos
 
+  namespace
+  {
+    static
+    bool
+    strprefix(const char* prefix, const char* string)
+    {
+      return !strncmp(prefix, string, strlen(prefix));
+    }
+  }
+
   int
   UValue::parse(const char* message, int pos,
 		const std::list<BinaryData>& bins,
@@ -141,7 +151,7 @@ namespace urbi
     }
 
     //OBJ a [x:12, y:4]
-    if (STRNEQ(message + pos, "OBJ ", 4))
+    if (strprefix("OBJ ", message + pos))
     {
       //obj message
       pos += 4;
@@ -189,7 +199,7 @@ namespace urbi
       return pos + 1;
     }
 
-    if (STRNEQ(message+pos, "void", 4))
+    if (strprefix("void", message+pos))
     {
       //void
       type = DATA_VOID;
@@ -197,7 +207,7 @@ namespace urbi
       return pos;
     }
 
-    if (STRNEQ(message + pos, "BIN ", 4))
+    if (strprefix("BIN ", message + pos))
     {
       //binary message: delegate
       type = DATA_BINARY;
@@ -208,13 +218,13 @@ namespace urbi
     }
 
     // true and false used by k2
-    if (STRNEQ(message + pos, "true", 4))
+    if (strprefix("true", message + pos))
     {
       type = DATA_DOUBLE;
       val = 1;
       return pos+4;
     }
-    if (STRNEQ(message + pos, "false", 5))
+    if (strprefix("false", message + pos))
     {
       type = DATA_DOUBLE;
       val = 0;
