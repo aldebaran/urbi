@@ -328,6 +328,15 @@ namespace urbi
     return tstr.str();
   }
 
+  std::istream&
+  operator>> (std::istream& is, USoundSampleFormat& f)
+  {
+    int v;
+    is >> v;
+    f = USoundSampleFormat(v);
+    return is;
+  }
+
   /*---------.
   | UImage.  |
   `---------*/

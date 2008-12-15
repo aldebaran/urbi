@@ -40,6 +40,8 @@ namespace urbi
     SAMPLE_UNSIGNED=2
   };
 
+  std::istream& operator>> (std::istream& is, USoundSampleFormat& f);
+
   enum UImageFormat
   {
     IMAGE_RGB=1,     ///< RGB 24 bit/pixel
