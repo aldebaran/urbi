@@ -395,18 +395,19 @@ namespace urbi
     this->message = std::string(message + pos, p - pos);
     ++p;
 
-    //trying to parse header to find type
+    // Trying to parse header to find type.
     char type[64];
     memset(type, 0, 64);
     // width, height, sample size.
     size_t p2, p3, p4;
     // sample format.
     int p5;
+    // FIXME: All this should be rewritten with operator>>.
+    // And better error detection.
     count = sscanf(message + pos,
-                   "%63s %zu %zu %zu %d",
+                   "%63s %u %u %u %d",
 		   type, &p2, &p3, &p4, &p5);
-
-    if (STREQ(type, "jpeg"))
+    if (STREQ(type, "jpeg") && count == 3)
     {
       this->type = BINARY_IMAGE;
       image.size = common.size;
@@ -415,8 +416,7 @@ namespace urbi
       image.imageFormat = IMAGE_JPEG;
       return p;
     }
-
-    if (STREQ(type, "YCbCr"))
+    else if (STREQ(type, "YCbCr") && count == 3)
     {
       this->type = BINARY_IMAGE;
       image.size = common.size;
@@ -425,8 +425,7 @@ namespace urbi
       image.imageFormat = IMAGE_YCbCr;
       return p;
     }
-
-    if (STREQ(type, "rgb"))
+    else if (STREQ(type, "rgb") && count == 3)
     {
       this->type = BINARY_IMAGE;
       image.size = common.size;
@@ -435,8 +434,7 @@ namespace urbi
       image.imageFormat = IMAGE_RGB;
       return p;
     }
-
-    if (STREQ(type, "raw"))
+    else if (STREQ(type, "raw") && count = 5)
     {
       this->type = BINARY_SOUND;
       sound.soundFormat = SOUND_RAW;
@@ -447,8 +445,7 @@ namespace urbi
       sound.sampleFormat = USoundSampleFormat(p5);
       return p;
     }
-
-    if (STREQ(type, "wav"))
+    else if (STREQ(type, "wav") && count == 5)
     {
       this->type = BINARY_SOUND;
       sound.soundFormat = SOUND_WAV;
