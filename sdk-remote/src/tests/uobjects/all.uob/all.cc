@@ -320,7 +320,7 @@ public:
     for (size_t i = 0; i < res.common.size; ++i)
       data[i] -= 1;
     data[res.common.size - 1] = '\n';
-    return r;
+    return res;
   }
 
   urbi::UImage transmitI(urbi::UImage im)
