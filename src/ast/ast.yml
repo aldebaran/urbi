@@ -1346,10 +1346,12 @@ Match:
     - guard:
         type: rExp
         access: rW
+        mandatory: false
     - bindings:
         type: rExp
         access: rW
         init: '0'
+        mandatory: false
 
 Unscope:
   super: Exp
