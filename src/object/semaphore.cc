@@ -1,3 +1,4 @@
+#include <kernel/userver.hh>
 #include <object/code.hh>
 #include <object/float.hh>
 #include <object/semaphore.hh>

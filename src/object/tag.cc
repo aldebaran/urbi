@@ -3,8 +3,9 @@
  ** \brief Creation of the URBI object tag.
  */
 
-#include <object/tag.hh>
+#include <kernel/userver.hh>
 
+#include <object/tag.hh>
 #include <object/global.hh>
 #include <object/object.hh>
 #include <object/string.hh>

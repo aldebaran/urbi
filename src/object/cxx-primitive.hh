@@ -1,7 +1,6 @@
 #ifndef CXX_PRIMITIVE_HH
 # define CXX_PRIMITIVE_HH
 
-# include <kernel/userver.hh>
 # include <object/fwd.hh>
 # include <object/object.hh>
 

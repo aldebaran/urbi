@@ -6,7 +6,7 @@
 # include <object/cxx-primitive.hh>
 # include <object/object-class.hh>
 # include <object/primitive.hh>
-# include <object/primitives.hh>
+# include <object/symbols.hh>
 # include <object/string.hh>
 # include <runner/raise.hh>
 

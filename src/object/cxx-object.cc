@@ -4,6 +4,7 @@
 #include <object/cxx-object.hh>
 
 #include <runner/call.hh>
+#include <runner/runner.hh>
 
 namespace object
 {

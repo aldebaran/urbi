@@ -3,6 +3,7 @@
  ** \brief Creation of the URBI object primitive.
  */
 
+#include <kernel/userver.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitive.hh>

@@ -21,6 +21,7 @@
 #include <object/lobby.hh>
 #include <object/list.hh>
 #include <object/path.hh>
+#include <object/primitives.hh>
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
