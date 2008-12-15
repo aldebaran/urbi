@@ -14,17 +14,16 @@
 # include <boost/shared_ptr.hpp>
 
 # include <libport/intrusive-ptr.hh>
-
 # include <object/fwd.hh>
 # include <object/centralized-slots.hh>
-
 # include <runner/fwd.hh>
+# include <urbi/export.hh>
 
 namespace object
 {
 
   /// Run time values for Urbi.
-  class Object: public libport::RefCounted
+  class URBI_SDK_API Object: public libport::RefCounted
   {
     /// \name Ctor & dtor.
     /// \{
@@ -244,19 +243,19 @@ namespace object
   template<class F> bool for_all_protos(const rObject& r, F f);
 
   /// Whether \b p is present in \b c's proto hierarchy.
-  bool is_a(const rObject& c, const rObject& p);
+  URBI_SDK_API bool is_a(const rObject& c, const rObject& p);
 
   /// Same as above, but check first with a dynamic_cast in order to handle
   /// atoms more efficiently.
   template<typename T>
-  bool is_a(const rObject& c);
+  URBI_SDK_API bool is_a(const rObject& c);
 
   /// Whether \a o represents a true value. UnexpectedVoidError will be
   /// signalled if void is passed.
-  bool is_true(const rObject& o);
+  URBI_SDK_API bool is_true(const rObject& o);
 
   /// Return an Urbi boolean object corresponding to \a b.
-  const rObject& to_boolean(bool b);
+  URBI_SDK_API const rObject& to_boolean(bool b);
 
   // FIXME: we probably want libport::refcounted smart pointers here
   typedef boost::shared_ptr<rObject> rrObject;

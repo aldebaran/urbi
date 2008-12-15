@@ -12,7 +12,7 @@
 
 namespace object
 {
-  class Primitive: public Executable
+  class URBI_SDK_API Primitive: public Executable
   {
   public:
     typedef boost::function1<rObject, objects_type&> value_type;

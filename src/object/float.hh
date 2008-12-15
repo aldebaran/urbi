@@ -13,7 +13,7 @@
 namespace object
 {
 
-  class Float: public CxxObject
+  class URBI_SDK_API Float: public CxxObject
   {
 
   /*------------.

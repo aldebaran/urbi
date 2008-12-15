@@ -10,7 +10,7 @@
 
 namespace object
 {
-  class String: public CxxObject
+  class URBI_SDK_API String: public CxxObject
   {
   public:
     typedef std::string value_type;

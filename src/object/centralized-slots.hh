@@ -16,7 +16,7 @@ namespace object
 
   using namespace boost::multi_index;
 
-  class CentralizedSlots: public Slots
+  class URBI_SDK_API CentralizedSlots: public Slots
   {
   public:
     typedef std::pair<Object*, libport::Symbol> location_type;

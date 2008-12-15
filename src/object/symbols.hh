@@ -9,7 +9,7 @@
 # include <libport/symbol.hh>
 
 # include <kernel/config.h>
-
+# include <urbi/export.hh>
 
 # if defined SYMBOLS_PRECOMPILED
 
@@ -50,7 +50,7 @@ namespace object
 
 namespace object
 {
-  libport::Symbol symbol_get(const std::string& s = "");
+  URBI_SDK_API libport::Symbol symbol_get(const std::string& s = "");
 }
 
 #  define SYMBOL(Sym) ::object::symbol_get(#Sym)
