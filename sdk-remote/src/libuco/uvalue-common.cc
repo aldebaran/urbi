@@ -434,7 +434,7 @@ namespace urbi
       image.imageFormat = IMAGE_RGB;
       return p;
     }
-    else if (STREQ(type, "raw") && count = 5)
+    else if (STREQ(type, "raw") && count == 5)
     {
       this->type = BINARY_SOUND;
       sound.soundFormat = SOUND_RAW;
