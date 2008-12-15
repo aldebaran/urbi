@@ -42,6 +42,15 @@ include examples/local.mk
 include utils/local.mk
 endif EXAMPLES
 
+
+## ---------------------- ##
+## Convenient shortcuts.  ##
+## ---------------------- ##
+
+.PHONY: libs
+libs: $(LTLIBRARIES)
+
+
 ## ------------ ##
 ## version.hh.  ##
 ## ------------ ##

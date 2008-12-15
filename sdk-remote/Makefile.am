@@ -18,6 +18,16 @@ include sdk/local.mk
 include include/local.mk
 
 
+## ---------------------- ##
+## Convenient shortcuts.  ##
+## ---------------------- ##
+
+.PHONY: libs
+libs:
+	$(MAKE) $(AM_MAKEFLAGS) -C lib/libport
+	$(MAKE) -C src libs
+
+
 ## ------- ##
 ## Check.  ##
 ## ------- ##
