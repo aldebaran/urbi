@@ -53,6 +53,35 @@ it called as soon as at least one parameter is given:
   A(42);
   [00000003] *** A called with 42
 
+"catch(<type> <name>)" syntax removed
+-------------------------------------
+
+The "catch(<type> <name>)", which was used to catch exceptions if and
+only if they inherited <type>, has been removed. This behavior can be
+obtained with the more general guard system:
+
+catch (var e if e.isA(<type>)
+{
+  ...
+}
+
+Pattern matching and guards in catch blocks
+-------------------------------------------
+
+Exception can now be filtered thanks to pattern matching, just like
+events. Moreover, the pattern can be followed by the "if" keyword and
+an arbitrary guard. The block will catch the exception only if the
+guard is true.
+
+try
+{ ... }
+catch ("foo") // Catch only the "foo" string
+{ ... }
+catch (var x if x.isA(Float) && x > 10) // Catch all floats greater than 10
+{ ... }
+catch (var e)  // Catch any other exception
+{ ... }
+
 Parsing of integer literals
 ---------------------------
 
