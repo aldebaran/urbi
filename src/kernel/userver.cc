@@ -178,7 +178,11 @@ void
 UServer::initialize()
 {
 #if !defined WIN32 && !defined _MSC_VER
-  install_ice_catcher(ice);
+#if !defined NDEBUG
+  static bool catch_ices = !getenv("URBI_NO_ICE_CATCHER");
+  if (catch_ices)
+#endif
+    install_ice_catcher(ice);
 #endif
   // Set the initial time to a valid value.
   updateTime();
