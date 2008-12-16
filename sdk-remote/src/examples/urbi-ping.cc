@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <libport/sys/stat.h>
 #include <csignal>
+#include <libport/unistd.h>
 #include <libport/windows.hh>
 
 #include <urbi/uclient.hh>

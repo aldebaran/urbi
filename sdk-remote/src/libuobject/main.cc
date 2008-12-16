@@ -1,6 +1,7 @@
 /// \file libuobject/main.cc
 
 #include <libport/cstdio>
+#include <libport/unistd.h>
 #include <cerrno>
 
 #include <iostream>

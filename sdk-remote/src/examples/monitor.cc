@@ -1,14 +1,5 @@
-/*******************************************************************************
-
-	   filename             : monitor.cpp
-	   description          : Class implementation
-
-	   copyright            : (C) 2004, 2006 by Jean-Christophe Baillie
-	   email                : jean-christophe.baillie@m4x.org
-
-********************************************************************************/
-
 #include <libport/cstdio>
+#include <libport/unistd.h>
 #include <cstdlib>
 #include <pthread.h>
 #include <libport/windows.hh>

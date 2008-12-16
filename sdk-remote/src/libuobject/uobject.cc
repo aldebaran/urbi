@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <list>
+#include <libport/unistd.h>
 
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>

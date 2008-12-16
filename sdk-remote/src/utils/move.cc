@@ -5,7 +5,8 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <locale.h>
+#include <libport/unistd.h>
+#include <clocale>
 
 
 #include "move.hh"
