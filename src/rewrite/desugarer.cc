@@ -40,6 +40,8 @@ namespace rewrite
     // Simple declaration: var x = value
     if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())
     {
+      if (!allow_decl_)
+        errors_.error(what->location_get(), "declaration not allowed here");
       result_ = new ast::Declaration(loc,
                                      what->what_get(),
                                      assign->value_get(),
@@ -179,6 +181,7 @@ namespace rewrite
       % ast_string(l, libport::Symbol("as" + name.name_get()))
       % c->content_get();
 
+    allow_subdecl_ = true;
     result_ = recurse(exp(desugar));
     result_->original_set(c);
   }
@@ -303,8 +306,13 @@ namespace rewrite
         rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
         bind(c->match_get()->pattern_get().get());
         ast::rExp p = exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
+        {
+          allow_subdecl_ = true;
+          p = recurse(p);
+          allow_subdecl_ = false;
+        }
         ast::rMatch match =
-          new ast::Match(loc, recurse(p), recurse(c->match_get()->guard_get()));
+          new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
         match->bindings_set(recurse(bind.bindings_get()));
         match->original_set(c->match_get());
         desugared = new ast::Catch(loc, match, recurse(c->body_get()));
