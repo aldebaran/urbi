@@ -39,6 +39,7 @@ namespace rewrite
       (Stmt)
       (Subscript)
       (Try)
+      (While)
       );
 
   private:

@@ -326,4 +326,11 @@ namespace rewrite
     }
     result_ = res;
   }
+
+  void Desugarer::visit(const ast::While* s)
+  {
+    allow_subdecl_ = true;
+    super_type::visit(s);
+  }
+
 }
