@@ -37,6 +37,12 @@ symbols:
 ## Convenient shortcuts.  ##
 ## ---------------------- ##
 
+# Don't bounce to libs: sort of loop unrolling.
+core:
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/lib/libport
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs urbi-launch
+	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la urbi-console
+
 libs:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/lib/libport
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
