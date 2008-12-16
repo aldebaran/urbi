@@ -129,7 +129,7 @@ namespace urbi
       //get terminating '"'
       int p = pos + 1;
       while (message[p] && message[p] != '"')
-        p += 1 + message[p] == '\\';
+        p += 1 + (message[p] == '\\');
       CHECK_NEOF();
 
       stringValue = new std::string(
