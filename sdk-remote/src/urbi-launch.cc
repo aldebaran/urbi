@@ -14,6 +14,7 @@
 #include <libport/path.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
+#include <libport/unistd.h>
 #include <libport/windows.hh>
 
 #include <urbi/package-info.hh>
