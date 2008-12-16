@@ -1347,11 +1347,16 @@ exp.opt:
 | Desugaring internals |
 `---------------------*/
 
+%type <unsigned> unsigned;
+unsigned:
+  "float" { $$ = static_cast<unsigned int>($1); }
+;
+
 %token PERCENT_UNSCOPE_COLON "%unscope:";
 exp:
-  "%unscope:" "float"
+  "%unscope:" unsigned
   {
-    $$ = new ast::Unscope(@$, static_cast<unsigned int>($2));
+    $$ = new ast::Unscope(@$, $2);
   }
 ;
 
@@ -1361,40 +1366,40 @@ exp:
 
 %token PERCENT_EXP_COLON "%exp:";
 exp:
-  "%exp:" "float"
+  "%exp:" unsigned
   {
-    $$ = new ast::MetaExp(@$, static_cast<unsigned int>($2));
+    $$ = new ast::MetaExp(@$, $2);
   }
 ;
 
 %token PERCENT_LVALUE_COLON "%lvalue:";
 lvalue:
-  "%lvalue:" "float"
+  "%lvalue:" unsigned
   {
     $$ = new ast::MetaLValue(@$, new ast::exps_type(),
-			     static_cast<unsigned int>($2));
+			     $2);
   }
 ;
 
 %token PERCENT_ID_COLON "%id:";
 lvalue:
-  "%id:" "float"
+  "%id:" unsigned
   {
-    $$ = new ast::MetaId(@$, 0, static_cast<unsigned int>($2));
+    $$ = new ast::MetaId(@$, 0, $2);
   }
-| exp "." "%id:" "float"
+| exp "." "%id:" unsigned
   {
-    $$ = new ast::MetaCall(@$, 0, $1, static_cast<unsigned int>($4));
+    $$ = new ast::MetaCall(@$, 0, $1, $4);
   }
 ;
 
 %token PERCENT_EXPS_COLON "%exps:";
 exp:
-  lvalue "(" "%exps:" "float" ")"
+  lvalue "(" "%exps:" unsigned ")"
   {
     assert($1.unsafe_cast<ast::LValueArgs>());
     assert(!$1.unsafe_cast<ast::LValueArgs>()->arguments_get());
-    $$ = new ast::MetaArgs(@$, $1, static_cast<unsigned int>($4));
+    $$ = new ast::MetaArgs(@$, $1, $4);
   }
 ;
 
