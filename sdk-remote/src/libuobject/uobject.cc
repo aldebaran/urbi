@@ -34,6 +34,7 @@ namespace urbi
   {
     return MODE_REMOTE;
   }
+
   // **************************************************************************
   //  Monitoring functions
 
@@ -57,9 +58,13 @@ namespace urbi
     autogroup = false;
     URBI_SEND_PIPED_COMMAND("class " << __name << "{}");
     URBI_SEND_PIPED_COMMAND("external object " << __name);
-    load.init(__name, "load");
-    period = -1;
 
+    // Do not replace this call to init by a `, load(s, "load")' as
+    // both result in "var <__name>.load = 1", which is not valid
+    // until the two above lines actually create <__name>.
+    load.init(__name, "load");
+
+    period = -1;
     // default
     load = 1;
   }
