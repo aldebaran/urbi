@@ -18,6 +18,7 @@
 
  **************************************************************************** */
 
+#include <libport/compiler.hh>
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
@@ -401,6 +402,7 @@ namespace urbi
 		 std::list<BinaryData>::const_iterator& binpos)
 
   {
+//    LIBPORT_ECHO("Parsing: {" << is.str() << "}");
     if (binpos == bins.end())
     {
       std::cerr << "no binary data available" << std::endl;
@@ -412,7 +414,7 @@ namespace urbi
     is >> psize;
     if (is.fail())
     {
-      std::cerr << "cannot read bin size: " << is.str() << std::endl;
+      std::cerr << "cannot read bin size: " << is.str() << " (" << psize << ")" << std::endl;
       return false;
     }
     if (psize != binpos->size)
@@ -438,15 +440,11 @@ namespace urbi
 
     // Rewind to the beginning of the header, and parse.
     is.seekg(pos, std::ios::beg);
+
+    // Parse the optional type.  Don't check is.fail, since the type
+    // is optional, in which case t remains empty.
     std::string t;
     is >> t;
-    if (is.fail())
-    {
-      std::cerr << "cannot read bin type: " << is.str().substr(is.tellg())
-                << std::endl;
-      return false;
-    }
-
     if (t == "jpeg" || t == "YCbCr" || t == "rgb")
     {
       type = BINARY_IMAGE;
@@ -472,7 +470,7 @@ namespace urbi
     }
     else
     {
-      std::cerr << "unknown binary type: " << t << std::endl;
+      // std::cerr << "unknown binary type: " << t << std::endl;
       type = BINARY_UNKNOWN;
     }
 
