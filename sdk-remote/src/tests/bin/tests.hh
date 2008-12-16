@@ -4,6 +4,7 @@
 # include <libport/semaphore.hh>
 # include <libport/program-name.hh>
 # include <libport/compiler.hh>
+# include <libport/unistd.h>
 # include <urbi/uclient.hh>
 # include <urbi/usyncclient.hh>
 

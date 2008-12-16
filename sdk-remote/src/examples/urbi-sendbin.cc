@@ -8,6 +8,7 @@
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
 #include <libport/sys/stat.h>
+#include <libport/unistd.h>
 #include <libport/windows.hh>
 
 #include <urbi/uclient.hh>

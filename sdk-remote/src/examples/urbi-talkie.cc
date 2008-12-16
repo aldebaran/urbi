@@ -1,6 +1,7 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include <libport/windows.hh>
+#include <libport/unistd.h>
 
 #include <urbi/uclient.hh>
 
