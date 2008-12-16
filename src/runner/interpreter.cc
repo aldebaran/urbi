@@ -303,6 +303,7 @@ namespace runner
     if (is_a(exn, Exception))
     {
       std::stringstream o;
+      assert(innermost_node_);
       o << innermost_node_->location_get();
       exn->slot_update(*this, SYMBOL(location),
                        new object::String(o.str()));
