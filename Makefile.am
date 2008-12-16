@@ -50,6 +50,11 @@ libs:
 # check-html, check-clean, check-uob etc.
 check-%:
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
+recheck recheck-html:
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src/tests $@
+	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
+
+
 
 # The target run by the buildfarm.
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
