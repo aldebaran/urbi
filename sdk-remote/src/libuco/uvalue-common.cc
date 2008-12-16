@@ -437,9 +437,11 @@ namespace urbi
     std::stringbuf sb;
     is.get(sb);
     message = sb.str();
-    // The contents is after the header (and the end of line).
-    is.ignore();
 
+    // The contents is after the header (and the end of line:\r\n or \n).
+    if (is.peek() == '\r')
+      is.ignore();
+    is.ignore();
 
     // Analyse the header to decode know UBinary types.
     // Header stream.
