@@ -311,17 +311,15 @@ def declare_visitor(node, header, abstract):
     /// \\{ */
   public:
     /// Accept a const visitor \\a v.
-    virtual void accept (ConstVisitor& v) const%s;
+    virtual void accept (ConstVisitor& v) const%(impl)s;
     /// Accept a non-const visitor \\a v.
-    virtual void accept (Visitor& v)%s;
+    virtual void accept (Visitor& v)%(impl)s;
     /// Evaluate the node in interpreter \\a r
-    virtual object::rObject eval(runner::Interpreter& r) const""" % (impl, impl),
+    virtual object::rObject eval(runner::Interpreter& r) const %(impl)s;
+    /// Return the node type
+    virtual std::string node_type() const%(impl)s;
+    /// \\}""" % {'impl': impl}
 
-  if not node.concrete:
-    print " = 0"
-
-  print """;
-    /// \\}"""
 
 def print_visitor(node, header, inline, impl):
   """Output the Visitor support routine declaration, and implementation
@@ -341,6 +339,11 @@ def print_visitor(node, header, inline, impl):
   object::rObject %(name)s::eval(runner::Interpreter& r) const
   {
     return assert_exp(r.visit(this));
+  }
+
+  std::string %(name)s::node_type() const
+  {
+    return "%(name)s";
   }
 
   void
