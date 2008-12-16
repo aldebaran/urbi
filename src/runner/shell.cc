@@ -51,6 +51,11 @@ namespace runner
       ast::rConstNary nary = commands_.front();
       commands_.pop_front();
       operator()(nary.get());
+      if (non_interruptible_get())
+      {
+        send_message("error", "the toplevel can not be non-interruptible");
+        non_interruptible_set(false);
+      }
     }
   }
 
