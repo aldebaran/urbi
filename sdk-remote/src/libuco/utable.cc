@@ -39,6 +39,7 @@ namespace urbi
   SINGLETON_FUNCTION(UTable, functionmap);
   SINGLETON_FUNCTION(UTable, monitormap);
   SINGLETON_FUNCTION(UVarTable, varmap);
+  SINGLETON_FUNCTION(UTimerTable, timermap);
 
 #undef SINGLETON_FUNCTION
 
@@ -74,14 +75,5 @@ namespace urbi
       t.erase(*i);
   }
 
-
-  /*------------.
-  | Timer map.  |
-  `------------*/
-  UTimerTable& timermap()
-  {
-    static UTimerTable instance;
-    return instance;
-  }
 
 } // namespace urbi
