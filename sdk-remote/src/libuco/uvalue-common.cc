@@ -377,10 +377,7 @@ namespace urbi
 		 std::list<BinaryData>::const_iterator& binpos)
   {
     std::istringstream is(message + pos);
-    if (parse(is, bins, binpos))
-      return is.tellg();
-    else
-      return -is.tellg();
+    return (parse(is, bins, binpos) ? 1 : -1) * (pos + is.tellg());
   }
 
   bool
