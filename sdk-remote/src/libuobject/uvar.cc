@@ -27,7 +27,7 @@ namespace urbi
   UVar::__init()
   {
     varmap()[name].push_back(this);
-    URBI_SEND_COMMAND("if (!isdef(" << name << ")) var " << name);
+    URBI_SEND_PIPED_COMMAND("if (!isdef(" << name << ")) var " << name);
     vardata = 0; // unused. For internal softdevices only
     this->owned = false;
     assert (dummyUObject);
@@ -55,13 +55,13 @@ namespace urbi
   void
   UVar::setProp(UProperty p, const UValue& v)
   {
-    URBI_SEND_COMMAND(name << "->" << urbi::name(p) << "=" << v);
+    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "=" << v);
   }
 
   void
   UVar::setProp(UProperty p, const char* v)
   {
-    URBI_SEND_COMMAND(name << "->" << urbi::name(p) << "=" << v);
+    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "=" << v);
   }
 
   void
@@ -71,10 +71,10 @@ namespace urbi
     // conversions between enums and strings.
     int i = static_cast<int>(v);
     if (p == PROP_BLEND && is_blendtype(i))
-      URBI_SEND_COMMAND(name << "->"<< urbi::name(p) << "="
+      URBI_SEND_PIPED_COMMAND(name << "->"<< urbi::name(p) << "="
 			<< urbi::name(static_cast<UBlendType>(i)));
     else
-      URBI_SEND_COMMAND(name << "->"<< urbi::name(p) << "=" << v);
+      URBI_SEND_PIPED_COMMAND(name << "->"<< urbi::name(p) << "=" << v);
   }
 
   UValue
@@ -141,14 +141,14 @@ namespace urbi
   void
   UVar::operator = (ufloat n)
   {
-    URBI_SEND_COMMAND(name << "=" << n);
+    URBI_SEND_PIPED_COMMAND(name << "=" << n);
   }
 
   //! UVar string assignment
   void
   UVar::operator= (const std::string& s)
   {
-    URBI_SEND_COMMAND(name << "=\"" << libport::escape(s, '"') << '"');
+    URBI_SEND_PIPED_COMMAND(name << "=\"" << libport::escape(s, '"') << '"');
   }
 
   //! UVar binary assignment
@@ -156,6 +156,9 @@ namespace urbi
   UVar::operator = (const UBinary& b)
   {
     getDefaultClient()->startPack();
+    // K1 only supports a binary at top level within ';' and no other separator.
+    if (getDefaultClient()->kernelMajor() < 2)
+      URBI_SEND_COMMAND("");
     (*getDefaultClient()) << name << "=";
     getDefaultClient()->sendBinary(b.common.data, b.common.size,
                                    b.getMessage());
@@ -191,7 +194,7 @@ namespace urbi
     UValue v;
     v.type = DATA_LIST;
     v.list = &const_cast<UList&>(l);
-    URBI_SEND_COMMAND(name << "=" << v);
+    URBI_SEND_PIPED_COMMAND(name << "=" << v);
     v.type = DATA_VOID;
     v.list = 0;
   }
@@ -282,7 +285,7 @@ namespace urbi
   UVar::requestValue()
   {
     //build a getvalue message  that will be parsed and returned by the server
-    URBI_SEND_COMMAND(externalModuleTag << "<<"
+    URBI_SEND_PIPED_COMMAND(externalModuleTag << "<<"
 		      <<'[' << UEM_ASSIGNVALUE << ","
 		      << '"' << name << '"' << ',' << name << ']');
   }

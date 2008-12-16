@@ -52,12 +52,12 @@ namespace urbi
     , derived(false)
     , gc(0)
     , remote(true)
-    , load(s, "load")
   {
     objecthub = 0;
     autogroup = false;
-    URBI_SEND_COMMAND("class " << __name << "{}");
-    URBI_SEND_COMMAND("external object " << __name);
+    URBI_SEND_PIPED_COMMAND("class " << __name << "{}");
+    URBI_SEND_PIPED_COMMAND("external object " << __name);
+    load.init(__name, "load");
     period = -1;
 
     // default

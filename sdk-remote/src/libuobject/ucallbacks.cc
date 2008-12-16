@@ -37,11 +37,11 @@ namespace urbi
 	      << std::endl;
 
     if (type == "var")
-      URBI_SEND_COMMAND("external " << type << " "
+      URBI_SEND_PIPED_COMMAND("external " << type << " "
 			<< name << " from " << objname);
 
     if (type == "event" || type == "function")
-      URBI_SEND_COMMAND("external " << type << "(" << size << ") "
+      URBI_SEND_PIPED_COMMAND("external " << type << "(" << size << ") "
 			<< name << " from " << objname);
 
     if (type == "varaccess")
@@ -55,7 +55,7 @@ namespace urbi
 				     const std::string& name, UTable&)
     : objname(objname), name(name)
   {
-    URBI_SEND_COMMAND("external " << type << " " << name);
+    URBI_SEND_PIPED_COMMAND("external " << type << " " << name);
   }
 
   UGenericCallback::~UGenericCallback()

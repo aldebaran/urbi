@@ -216,7 +216,10 @@ namespace urbi
         msg.client.printf("Component Error: "
                           "unknown server message type number %d\n",
                           (int)array[0]);
+        return URBI_CONTINUE;
     }
+    // Send a terminating ';' since code send by the UObject API uses '|'.
+    URBI_SEND_COMMAND("");
     return URBI_CONTINUE;
   }
 
@@ -318,6 +321,8 @@ namespace urbi
 	 i != object_list().end();
 	 ++i)
       (*i)->init((*i)->name);
+    // Send a ';' since UObject likely sent a serie of piped commands.
+    URBI_SEND_COMMAND("");
     return 0;
   }
 

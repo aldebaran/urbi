@@ -102,6 +102,11 @@
 # define URBI_SEND_COMMAND(Args)		\
   URBI_SEND(Args << ';' << std::endl)
 
+/** Send "\a Args | \n".
+  * \b Warning: nothing is executed until a ';' or ',' is sent.
+  */
+# define URBI_SEND_PIPED_COMMAND(Args)          \
+  URBI_SEND(Args << '|' << std::endl)
 namespace urbi
 {
 
