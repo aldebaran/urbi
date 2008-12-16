@@ -177,6 +177,19 @@ it has died.
 The "removeSlot" method now silently accepts non-existing slot
 names instead of signalling an error.
 
+"Semaphore.criticalSection"
+---------------------------
+
+It is now possible to define a critical section associated with
+a semaphore. The "p" method will be called at the beginning,
+and if after that the operation is interrupted by any means the
+"v" operation will be called before going on. If there are no
+interruption, the "v" operation will also be called at the end
+of the callback :
+
+  var s = Semaphore.new(1);
+  s.criticalSection(function () { echo ("In the critical section") });
+
 UObjects
 ========
 
