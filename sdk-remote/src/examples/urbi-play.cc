@@ -1,7 +1,8 @@
 #include <csignal>
 #include <libport/windows.hh>
+#include <libport/unistd.h>
 
-#include "urbi/uclient.hh"
+#include <urbi/uclient.hh>
 
 enum UType
 {
@@ -36,9 +37,12 @@ static bool
 parseHeader(FILE *f)
 {
   char buff[4];
-  if (fread(buff,4,1,f)!=1) return false;
-  if (strncmp(buff,"URBI",4)) return false;
-  if (fread(&devCount,4,1,f)!=1) return false;
+  if (fread(buff,4,1,f)!=1)
+    return false;
+  if (strncmp(buff,"URBI",4))
+    return false;
+  if (fread(&devCount,4,1,f)!=1)
+    return false;
   devices=static_cast<UDev*> (malloc (devCount*sizeof (UDev)));
   for (int i=0;i<devCount; ++i)
     {
@@ -171,13 +175,8 @@ int main(int argc, char * argv[])
   if (robot)
     robot->send("motoron;");
 
-  FILE * f;
   do {
-    if (libport::streq(argv[2],"-"))
-      f=stdin;
-    else
-      f=fopen(argv[2],"r");
-
+    FILE* f = libport::streq(argv[2],"-") ? stdin : fopen(argv[2],"r");
     if (!f)
       {
 	fprintf(stderr, "error opening file\n");
@@ -191,7 +190,5 @@ int main(int argc, char * argv[])
 
     play(robot,f);
     fclose(f);
-  }
-  while (loop)
-    ;
+  } while (loop);
 }
