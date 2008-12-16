@@ -8,7 +8,7 @@
 
 # include <libport/compiler.hh>
 
-# include <ast/fwd.hh>
+# include <ast/routine.hh>
 # include <object/executable.hh>
 # include <object/fwd.hh>
 
