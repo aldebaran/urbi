@@ -100,7 +100,7 @@ namespace urbi
     if (message[pos] != Char)                           \
     {                                                   \
       std::cerr << "unexpected `" << message[pos]       \
-                << ", expected `" << Char << "'"        \
+                << "', expected `" << Char << "'"       \
                 << std::endl;                           \
       return -pos;                                      \
     }                                                   \
@@ -402,7 +402,7 @@ namespace urbi
 		 std::list<BinaryData>::const_iterator& binpos)
 
   {
-//    LIBPORT_ECHO("Parsing: {" << is.str() << "}");
+    // LIBPORT_ECHO("Parsing: {" << is.str() << "}");
     if (binpos == bins.end())
     {
       std::cerr << "no binary data available" << std::endl;
@@ -414,7 +414,8 @@ namespace urbi
     is >> psize;
     if (is.fail())
     {
-      std::cerr << "cannot read bin size: " << is.str() << " (" << psize << ")" << std::endl;
+      std::cerr << "cannot read bin size: "
+                << is.str() << " (" << psize << ")" << std::endl;
       return false;
     }
     if (psize != binpos->size)
@@ -433,23 +434,26 @@ namespace urbi
       is.ignore();
 
     // Get the headers.
-    std::streampos pos = is.tellg();
     std::stringbuf sb;
     is.get(sb);
     message = sb.str();
+    // The contents is after the header (and the end of line).
+    is.ignore();
 
-    // Rewind to the beginning of the header, and parse.
-    is.seekg(pos, std::ios::beg);
 
-    // Parse the optional type.  Don't check is.fail, since the type
-    // is optional, in which case t remains empty.
+    // Analyse the header to decode know UBinary types.
+    // Header stream.
+    std::istringstream hs(message);
+
+    // Parse the optional type.  Don't check hs.fail, since the type
+    // hs optional, in which case t remains empty.
     std::string t;
-    is >> t;
+    hs >> t;
     if (t == "jpeg" || t == "YCbCr" || t == "rgb")
     {
       type = BINARY_IMAGE;
       image.size = common.size;
-      is >> image.width >> image.height;
+      hs >> image.width >> image.height;
       image.imageFormat =
         t == "jpeg" ? IMAGE_JPEG
         : t == "YCbCr" ? IMAGE_YCbCr
@@ -464,7 +468,7 @@ namespace urbi
         : t == "wav" ? SOUND_WAV
         : SOUND_UNKNOWN;
       sound.size = common.size;
-      is >> sound.channels
+      hs >> sound.channels
          >> sound.rate
          >> sound.sampleSize >> sound.sampleFormat;
     }
