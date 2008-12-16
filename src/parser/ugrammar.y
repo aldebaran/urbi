@@ -343,7 +343,7 @@
 %left  CMDBLOCK ELSE_LESS
 %left  "else" "onleave"
 
-%left  "=" "+=" "-=" "*=" "/=" "^=" "%="
+%right  "=" "+=" "-=" "*=" "/=" "^=" "%="
 
 %left VAR
 
