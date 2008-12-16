@@ -93,6 +93,28 @@ namespace urbi
     }
   }
 
+// Works on message[pos].
+#define EXPECT(Char)                                    \
+  do {                                                  \
+    if (message[pos] != Char)                           \
+    {                                                   \
+      std::cerr << "unexpected `" << message[pos]       \
+                << ", expected `" << Char << "'"        \
+                << std::endl;                           \
+      return -pos;                                      \
+    }                                                   \
+  } while(0)
+
+// Works on message[p] (not pos).
+#define CHECK_NEOF()                                            \
+  do {                                                          \
+    if (!message[p])                                            \
+    {                                                           \
+      std::cerr << "unexpected end of file" << std::endl;       \
+      return -p;                                                \
+    }                                                           \
+  } while (0)
+
   int
   UValue::parse(const char* message, int pos,
 		const std::list<BinaryData>& bins,
@@ -106,13 +128,8 @@ namespace urbi
       //get terminating '"'
       int p = pos + 1;
       while (message[p] && message[p] != '"')
-      {
-	if (message[p] == '\\')
-	  ++p;
-	++p;
-      }
-      if (!message[p])
-	return -p; //parse error
+        p += 1 + message[p] == '\\';
+      CHECK_NEOF();
 
       stringValue = new std::string(
         libport::unescape(std::string(message + pos + 1, p - pos - 1)));
@@ -140,13 +157,11 @@ namespace urbi
 	//expect , or rbracket
 	if (message[pos] == ']')
 	  break;
-	if (message[pos] != ',')
-	  return -pos;
+        EXPECT(',');
 	++pos;
       }
 
-      if (message[pos] != ']')
-	return -pos;
+      EXPECT(']');
       return pos + 1;
     }
 
@@ -158,8 +173,7 @@ namespace urbi
       type = DATA_OBJECT;
       object = new UObjectStruct();
       SKIP_SPACES();
-      if (message[pos] != '[')
-	return -pos;
+      EXPECT('[');
       ++pos;
 
       while (message[pos])
@@ -171,8 +185,7 @@ namespace urbi
 	int p = pos;
 	while (message[p] && message[p] != ':')
 	  ++p;
-	if (!message[p])
-	  return -p; //parse error
+	CHECK_NEOF();
 	++p;
 	UNamedValue nv;
 	nv.name = std::string(message + pos, p - pos - 1);
@@ -189,13 +202,11 @@ namespace urbi
 	//expect , or rbracket
 	if (message[pos] == ']')
 	  break;
-	if (message[pos] != ',')
-	  return -pos;
+	EXPECT(',');
 	++pos;
       }
 
-      if (message[pos] != ']')
-	return -pos;
+      EXPECT(']');
       return pos + 1;
     }
 
@@ -235,7 +246,11 @@ namespace urbi
     int p;
     int count = sscanf(message+pos, "%lf%n", &val, &p);
     if (!count)
+    {
+      std::cerr << "failed to read a float: " << message + pos
+                << std::endl;
       return -pos;
+    }
     type = DATA_DOUBLE;
     pos += p;
     return pos;
@@ -386,17 +401,24 @@ namespace urbi
 		 std::list<BinaryData>::const_iterator& binpos)
 
   {
-    if (binpos == bins.end()) //no binary data available
+    if (binpos == bins.end())
+    {
+      std::cerr << "no binary data available" << std::endl;
       return false;
+    }
 
     // Validate size.
     size_t psize;
     is >> psize;
     if (is.fail())
+    {
+      std::cerr << "cannot read bin size: " << is.str() << std::endl;
       return false;
+    }
     if (psize != binpos->size)
     {
-      std::cerr << "bin size inconsistency" << std::endl;
+      std::cerr << "bin size inconsistency: "
+                << psize << " != " << binpos->size << std::endl;
       return false;
     }
     common.size = psize;
@@ -419,7 +441,11 @@ namespace urbi
     std::string t;
     is >> t;
     if (is.fail())
+    {
+      std::cerr << "cannot read bin type: " << is.str().substr(is.tellg())
+                << std::endl;
       return false;
+    }
 
     if (t == "jpeg" || t == "YCbCr" || t == "rgb")
     {
@@ -445,8 +471,10 @@ namespace urbi
          >> sound.sampleSize >> sound.sampleFormat;
     }
     else
-      // Unknown binary.
+    {
+      std::cerr << "unknown binary type: " << t << std::endl;
       type = BINARY_UNKNOWN;
+    }
 
     return true;
   }
