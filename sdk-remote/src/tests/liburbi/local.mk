@@ -20,7 +20,7 @@ AM_LDADD =					\
 # tests(*).
 check_PROGRAMS = bin/tests
 
-bin_tests_SOURCES = bin/tests.hh bin/tests.cc $(LIBURBI)
+bin_tests_SOURCES = bin/tests.hh bin/tests.cc $(LIBURBI_TESTS)
 bin_tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 bin_tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_bin_tests_SOURCES = bin/dispatcher.cc
@@ -34,7 +34,7 @@ bin/dispatcher.cc: $(tests_SOURCES) Makefile
 	  echo 'dispatch(const std::string& method, urbi::UClient& client,'; \
 	  echo '	 urbi::USyncClient& syncClient)';		     \
 	  echo '{';							     \
-	  for f in $(LIBURBI); do					     \
+	  for f in $(LIBURBI_TESTS); do					     \
 	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		     \
 	    echo "  TESTS_RUN($$name);";				     \
 	  done;								     \
@@ -50,6 +50,9 @@ nodist_check_SCRIPTS += bin/liburbi-check
 m4sh_scripts += bin/liburbi-check
 
 # The test suite.
-LIBURBI = 					\
+LIBURBI_TESTS =					\
   liburbi/values.cc				\
   liburbi/removecallbacks.cc
+
+
+TESTS += $(LIBURBI_TESTS)

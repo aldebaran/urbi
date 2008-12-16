@@ -78,7 +78,6 @@ installcheck-local:
 	$(MAKE) $(AM_MAKEFLAGS)					\
 	  TESTS_ENVIRONMENT=$(INSTALLCHECK_ENVIRONMENT) check
 
-TESTS += $(CHECKFILES) $(UOBJECTS)
 TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))
 
 check-clean-local:
