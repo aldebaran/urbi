@@ -1,3 +1,4 @@
+#include <object/code.hh>
 #include <object/float.hh>
 #include <object/semaphore.hh>
 #include <runner/runner.hh>
@@ -61,11 +62,23 @@ namespace object
     }
   }
 
+  rObject
+  Semaphore::criticalSection(runner::Runner& r, rCode f)
+  {
+    objects_type args;
+    args.push_back(this);
+
+    p(r);
+    libport::Finally finally(boost::bind(&Semaphore::v, this));
+    return (*f)(r, args);
+  }
+
   void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)
   {
-    bind(SYMBOL(new), &Semaphore::_new);
-    bind(SYMBOL(p),   &Semaphore::p   );
-    bind(SYMBOL(v),   &Semaphore::v   );
+    bind(SYMBOL(new),             &Semaphore::_new);
+    bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
+    bind(SYMBOL(p),               &Semaphore::p);
+    bind(SYMBOL(v),               &Semaphore::v);
   }
 
   rObject

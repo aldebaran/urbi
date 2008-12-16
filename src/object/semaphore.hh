@@ -25,6 +25,7 @@ namespace object
     static rSemaphore _new(rObject sem, rFloat count);
     void p(runner::Runner& r);
     void v();
+    rObject criticalSection(runner::Runner&, rCode);
 
   private:
     value_type value_;
