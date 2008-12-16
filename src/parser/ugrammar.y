@@ -346,7 +346,6 @@
 %left  "=" "+=" "-=" "*=" "/=" "^=" "%="
 
 %left VAR
-%left LVALUE_TO_EXP
 
 %nonassoc "~" // This is not the same as in C++, this is for "softest".
 %left  "||"
@@ -1089,7 +1088,7 @@ exp:
             ast::rExp);
     $$ = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
   }
-| lvalue %prec LVALUE_TO_EXP
+| lvalue
   {
     $$ = $1;
   }
