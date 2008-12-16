@@ -314,28 +314,21 @@ namespace urbi
 
   USound::operator std::string() const
   {
-    std::ostringstream tstr;
-    tstr << "sound(format: " << format_string() << ", "
-	 << "size: " << size << ", "
-	 << "channels: " << channels << ", "
-	 << "rate: " << rate << ", "
-	 << "sample size: " << sampleSize << ", "
-	 << "sample format: ";
+    std::ostringstream o;
+    o << "sound(format: " << format_string() << ", "
+      << "size: " << size << ", "
+      << "channels: " << channels << ", "
+      << "rate: " << rate << ", "
+      << "sample size: " << sampleSize << ", "
+      << "sample format: ";
     switch (sampleFormat)
     {
-      case SAMPLE_SIGNED:
-	tstr << "signed";
-	break;
-
-      case SAMPLE_UNSIGNED:
-	tstr << "unsigned";
-	break;
-
-      default:
-	tstr << "unknown[" << (int)sampleFormat << "]";
+    case SAMPLE_SIGNED:   o << "signed";  break;
+    case SAMPLE_UNSIGNED: o << "unsigned"; break;
+    default:              o << "unknown[" << (int)sampleFormat << "]";
     }
-    tstr << ")";
-    return tstr.str();
+    o << ")";
+    return o.str();
   }
 
   std::istream&
@@ -628,29 +621,29 @@ namespace
   {
     switch (type)
     {
-      case DATA_DOUBLE:
-	{
-	  std::ostringstream tstr;
-	  tstr << val;
-	  return tstr.str();
-	}
+    case DATA_DOUBLE:
+    {
+      std::ostringstream o;
+      o << val;
+      return o.str();
+    }
 
-      case DATA_STRING:
-	return *stringValue;
+    case DATA_STRING:
+      return *stringValue;
 
-      case DATA_BINARY:
-        // We cannot convert to UBinary because it is ambigous so we
-        // try until we found the right type.
-      {
-        USound snd(*this);
-        if (snd.soundFormat != SOUND_UNKNOWN)
-          return snd;
-        goto invalid;
-      }
+    case DATA_BINARY:
+      // We cannot convert to UBinary because it is ambigous so we
+      // try until we found the right type.
+    {
+      USound snd(*this);
+      if (snd.soundFormat != SOUND_UNKNOWN)
+        return snd;
+      goto invalid;
+    }
 
-      invalid:
-      default:
-        return "invalid";
+    invalid:
+    default:
+      return "invalid";
     }
   }
 
