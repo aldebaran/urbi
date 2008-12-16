@@ -188,6 +188,28 @@ specialized.
 
 Remote bound methods can now return void.
 
+Coroutine interface
+-------------------
+
+The functions yield(), yield_until(), and yield_until_things_changed() have
+been added to the UObject API. They allow the user to write plugin UObject code
+that behaves like any other coroutine in the kernel: if yield() is called regularly,
+the kernel can continue to work while the user code runs.
+Meaningful implementation for these functions is provided also in remote mode:
+calling yield() will allow the uobject remote library to process pending messages
+from within the user callback.
+
+Remote UObject initialization
+-----------------------------
+
+Remote UObject instanciation is now atomic: the API now ensures that all variables
+and functions bound from the UObject constructor and init are visible as soon as
+the uobject itself is visible. Code like:
+
+waituntil(uobjects.hasSlot("MyRemote")) | var m = MyRemote.new();
+
+is now safe.
+
 Urbi server
 ===========
 
