@@ -163,16 +163,6 @@ namespace object
     slots_.update(this, k, v);
   }
 
-  void
-  Object::all_slots_copy(const rObject& other)
-  {
-    for (slots_implem::iterator slot = slots_.begin(other.get());
-         slot != slots_.end(other.get());
-         ++slot)
-      if (!own_slot_get(slot->first.second))
-        slot_set(slot->first.second, slot->second);
-  }
-
 
   /*-------------.
   | Properties.  |

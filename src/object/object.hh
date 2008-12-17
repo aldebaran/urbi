@@ -145,9 +145,6 @@ namespace object
     /// Read only access to slots.
     const slots_implem& slots_get () const;
 
-    /// Copy another object local slots, if not already present.
-    void all_slots_copy(const rObject& other);
-
     /// \}
 
     /// \name Properties.
