@@ -200,6 +200,21 @@ namespace object
 
     virtual std::string type_name_get() const;
 
+    rObject call(libport::Symbol name,
+                 rObject arg1 = 0,
+                 rObject arg2 = 0,
+                 rObject arg3 = 0,
+                 rObject arg4 = 0,
+                 rObject arg5 = 0);
+
+    rObject call(const std::string& name,
+                 rObject arg1 = 0,
+                 rObject arg2 = 0,
+                 rObject arg3 = 0,
+                 rObject arg4 = 0,
+                 rObject arg5 = 0);
+
+
     /*-------------.
     | Urbi methods |
     `-------------*/

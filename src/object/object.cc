@@ -475,4 +475,27 @@ namespace object
     return slot_update(name, value);
   }
 
+  rObject
+  Object::call(libport::Symbol name,
+               rObject arg1,
+               rObject arg2,
+               rObject arg3,
+               rObject arg4,
+               rObject arg5)
+  {
+    return urbi_call(this, name, arg1, arg2, arg3, arg4, arg5);
+  }
+
+  rObject
+  Object::call(const std::string& name,
+               rObject arg1,
+               rObject arg2,
+               rObject arg3,
+               rObject arg4,
+               rObject arg5)
+  {
+    return urbi_call(this, libport::Symbol(name),
+                     arg1, arg2, arg3, arg4, arg5);
+  }
+
 } // namespace object
