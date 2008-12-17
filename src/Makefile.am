@@ -82,6 +82,7 @@ include rewrite/local.mk
 include runner/local.mk
 include kernel/local.mk
 include lib/sched/local.mk
+include urbi/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
