@@ -3,7 +3,6 @@
 
 # include <libport/symbol.hh>
 # include <object/fwd.hh>
-# include <runner/fwd.hh>
 
 namespace object
 {
