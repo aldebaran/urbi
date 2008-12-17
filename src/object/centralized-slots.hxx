@@ -10,6 +10,36 @@
 namespace object
 {
 
+  inline CentralizedSlots::iterator
+  CentralizedSlots::begin(Object* owner)
+  {
+    return obj_index_.equal_range(owner).first;
+  }
+
+  inline CentralizedSlots::const_iterator
+  CentralizedSlots::begin(const Object* owner)
+  {
+    return obj_index_.equal_range(const_cast<Object*>(owner)).first;
+  }
+
+  inline void
+  CentralizedSlots::finalize(Object* owner)
+  {
+    obj_index_.erase(owner);
+  }
+
+  inline CentralizedSlots::iterator
+  CentralizedSlots::end(Object* owner)
+  {
+    return obj_index_.equal_range(owner).second;
+  }
+
+  inline CentralizedSlots::const_iterator
+  CentralizedSlots::end(const Object* owner)
+  {
+    return obj_index_.equal_range(const_cast<Object*>(owner)).second;
+  }
+
   inline Object*
   CentralizedSlots::get_owner(const q_slot_type& slot)
   {
@@ -17,7 +47,8 @@ namespace object
   }
 
   static inline CentralizedSlots::q_slot_type
-    content(Object* owner, libport::Symbol key, rObject& value)
+  content(Object* owner, libport::Symbol key,
+          CentralizedSlots::value_type& value)
   {
     return CentralizedSlots::q_slot_type(
       CentralizedSlots::location_type(owner, key),
@@ -48,7 +79,7 @@ namespace object
   {
     loc_index_type::iterator it = where(owner, key);
     if (it == content_->end())
-      return 0;
+      return Slot(reinterpret_cast<Object*>(0));
     return it->second;
   }
 
@@ -71,36 +102,6 @@ namespace object
   CentralizedSlots::where(const Object* owner, const key_type& key)
   {
     return loc_index_.find(location_type(const_cast<Object*>(owner), key));
-  }
-
-  inline void
-  CentralizedSlots::finalize(Object* owner)
-  {
-    obj_index_.erase(owner);
-  }
-
-  inline CentralizedSlots::iterator
-  CentralizedSlots::begin(Object* owner)
-  {
-    return obj_index_.equal_range(owner).first;
-  }
-
-  inline CentralizedSlots::iterator
-  CentralizedSlots::end(Object* owner)
-  {
-    return obj_index_.equal_range(owner).second;
-  }
-
-  inline CentralizedSlots::const_iterator
-  CentralizedSlots::begin(const Object* owner)
-  {
-    return obj_index_.equal_range(const_cast<Object*>(owner)).first;
-  }
-
-  inline CentralizedSlots::const_iterator
-  CentralizedSlots::end(const Object* owner)
-  {
-    return obj_index_.equal_range(const_cast<Object*>(owner)).second;
   }
 
 }

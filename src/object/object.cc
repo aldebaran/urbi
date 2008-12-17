@@ -18,7 +18,6 @@
 #include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/global.hh>
-#include <object/hash-slots.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/root-classes.hh>
@@ -172,7 +171,8 @@ namespace object
   Object::properties_get()
   {
     if (slots_.has(this, SYMBOL(properties)))
-      return slots_.get(this, SYMBOL(properties)).unsafe_cast<Dictionary>();
+      return slots_.get(this, SYMBOL(properties))
+        .get<rObject>().unsafe_cast<Dictionary>();
     return 0;
   }
 

@@ -34,8 +34,11 @@ namespace object
     virtual ~Object ();
     /// \}
 
+    /// The slots implementation
+    typedef CentralizedSlots slots_implem;
+
     /// Type of the keys.
-    typedef Slots::key_type key_type;
+    typedef slots_implem::key_type key_type;
 
     /// Ref-couting.
     typedef libport::intrusive_ptr<Object> shared_type;
@@ -71,8 +74,6 @@ namespace object
 
     /// \name The slots.
     /// \{
-    /// The slots implementation
-    typedef CentralizedSlots slots_implem;
     /// One slot.
     typedef std::set<const Object*> objects_set_type;
 
@@ -272,5 +273,9 @@ namespace object
 } // namespace object
 
 # include <object/object.hxx>
+
+# ifndef OBJECT_FLOAT_CLASS_HH
+#  include <object/slot.hh>
+# endif
 
 #endif // !OBJECT_OBJECT_HH
