@@ -21,3 +21,7 @@ m4sh_scripts += bin/uobject-check
 	@$(am__check_pre) bin/uobject-check $(srcdir)/$* $(am__check_post)
 
 TESTS += $(UOBJECTS_TESTS)
+
+.PHONY: check-uobjects
+check-uobjects:
+	$(MAKE) $(AM_MAKEFLAGS) check TESTS="$(UOBJECTS_TESTS)"
