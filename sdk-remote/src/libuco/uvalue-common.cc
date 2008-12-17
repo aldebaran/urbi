@@ -394,7 +394,11 @@ namespace urbi
   {
     std::istringstream is(message + pos);
     bool ok = parse(is, bins, binpos);
-    return (ok ? 1:-1) * (pos + is.tellg());
+    // tellg() might be -1 if we encountered an error.
+    int endpos = is.tellg();
+    if (endpos == -1)
+      endpos = strlen(message) - pos;
+    return (ok ? 1:-1) * (pos + endpos);
   }
 
   bool
