@@ -305,9 +305,8 @@ namespace runner
       std::stringstream o;
       assert(innermost_node_);
       o << innermost_node_->location_get();
-      exn->slot_update(*this, SYMBOL(location),
-                       new object::String(o.str()));
-      exn->slot_update(*this, SYMBOL(backtrace),
+      exn->slot_update(SYMBOL(location), new object::String(o.str()));
+      exn->slot_update(SYMBOL(backtrace),
                        as_task()->as<object::Task>()->backtrace());
     }
     call_stack_type bt = call_stack_get();

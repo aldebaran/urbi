@@ -389,8 +389,7 @@ namespace urbi
   {
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
-    me->slot_update(getCurrentRunner(), SYMBOL(update),
-		    MAKE_VOIDCALL(this, urbi::UObject, update));
+    me->slot_update(SYMBOL(update), MAKE_VOIDCALL(this, urbi::UObject, update));
     object::objects_type args = list_of(new object::Float(t / 1000.0));
     getCurrentRunner().apply(me, f, SYMBOL(setUpdate), args);
   }
@@ -499,8 +498,7 @@ namespace urbi
 			     o, new object::String(varName));
     // If the variable existed but was not an uvar, copy its old value.
     if (initVal)
-      o->slot_get(varName)->slot_update(getCurrentRunner(),
-					SYMBOL(val), initVal);
+      o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
   }
 
   void
@@ -511,7 +509,7 @@ namespace urbi
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
     o->slot_get(Symbol(p.second))
-      ->slot_update(getCurrentRunner(), SYMBOL(owned), object::true_class);
+      ->slot_update(SYMBOL(owned), object::true_class);
     ECHO("call to setowned on "<<name);
   }
 

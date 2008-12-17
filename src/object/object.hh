@@ -16,7 +16,6 @@
 # include <libport/intrusive-ptr.hh>
 # include <object/fwd.hh>
 # include <object/centralized-slots.hh>
-# include <runner/fwd.hh>
 # include <urbi/export.hh>
 
 namespace object
@@ -112,9 +111,7 @@ namespace object
     /// \param o	The new value
     /// \param hook	Whether to trigger the potential updateHook
     rObject
-    slot_update(runner::Runner& r,
-                const key_type& k, const rObject& o,
-                bool hook = true);
+    slot_update(const key_type& k, const rObject& o, bool hook = true);
 
     /// Update slot \c k to \a o.
     void

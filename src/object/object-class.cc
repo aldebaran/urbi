@@ -151,8 +151,8 @@ namespace object
     const libport::Symbol msg(message->as<String>()->value_get());
     const rObject& target = args[0];
     const rObject& code = target->slot_get(msg);
-    call_message->slot_update(r, SYMBOL(code), code);
-    call_message->slot_update(r, SYMBOL(target), target);
+    call_message->slot_update(SYMBOL(code), code);
+    call_message->slot_update(SYMBOL(target), target);
     // FIXME: Sanity checks on the call message are probably required
     return r.apply_call_message(code, msg, call_message);
   }

@@ -128,10 +128,11 @@ namespace object
   }
 
   rObject
-  Object::slot_update(runner::Runner& r,
-                      const key_type& k, const rObject& o,
+  Object::slot_update(const key_type& k, const rObject& o,
                       bool hook)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     // The owner of the updated slot
     rObject owner = safe_slot_locate(k);
     rObject v = o;
@@ -471,8 +472,7 @@ namespace object
   rObject
   Object::urbi_updateSlot(key_type name, const rObject& value)
   {
-    runner::Runner& r = ::urbiserver->getCurrentRunner();
-    return slot_update(r, name, value);
+    return slot_update(name, value);
   }
 
 } // namespace object
