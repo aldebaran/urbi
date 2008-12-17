@@ -147,10 +147,6 @@ namespace urbi
 
     // Sending
 
-    /// Function for backward compatibility. Will be removed in future
-    /// versions.
-    int send() { endPack(); return 0;}
-
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
     int send(const char* format,...);

@@ -429,10 +429,10 @@ namespace urbi
       (*this) << "Global.Binary.new(\""
               << libport::escape(header)
               << "\", \"\\B(" << len << ")(";
-      send();
+      send("");
       effectiveSend(data, len);
       (*this) << ")\")";
-      send();
+      send("");
       sendBufferLock.unlock();
       return rc;
     }
