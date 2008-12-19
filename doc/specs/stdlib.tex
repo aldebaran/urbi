@@ -27,15 +27,15 @@
 
 \subsection{Rationale}
 
-Lazy are object that hold a lazy value; that is, a not-yet evaluated
+\dfn{Lazies} are objects that hold a lazy value, that is, a not yet evaluated
 value. They provide facilities to evaluate their content only once
-(memoization) or several times. Lazy are essentially used in call
+(\dfn{memoization}) or several times. Lazy are essentially used in call
 messages, to represent lazy arguments, as described in
 \autorefObject{CallMessage}.
 
 \subsection{Construction}
 
-Lazy are seldom instantiated manually. They are mainly created
+Lazies are seldom instantiated manually. They are mainly created
 automatically when a lazy function call is made (see
 \autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
 standard \lstinline|new| method of \lstinline|Lazy|, giving it an
@@ -71,7 +71,7 @@ evaluating the expression several times uselessly.
 
 One usage of lazy values is to avoid evaluating an expression unless
 it's actually needed, because it's expensive or has undesired side
-effects. \autoref{lst:lazy-once} present a situation where an
+effects. \autoref{lst:lazy-once} presents a situation where an
 expensive-to-compute value (\lstinline|heavy_computation|) might be
 needed zero, one or two times. The objective is to save time by:
 
@@ -113,9 +113,9 @@ v.value;
 [00000000] 2
 \end{urbiscript}
 
-\subsubsection{Evaluating several time}
+\subsubsection{Evaluating several times}
 
-Evaluating a lazy several time only makes sense with lazy arguments
+Evaluating a lazy several times only makes sense with lazy arguments
 and call messages. See example with call messages in
 \autoref{sec:std-callmsg-examples-several}.
 
