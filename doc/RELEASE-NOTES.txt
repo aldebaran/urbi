@@ -28,7 +28,7 @@ warning. The recommended "myObject.new(myArgs)" is suggested.
 
 "delete" was never the right thing to do. A local variable should
 not be deleted, and a slot can be removed using "removeSlot".
-The construction "delete object" has been removed from the
+The construct "delete object" has been removed from the
 language.
 
 "__HERE__"
@@ -85,7 +85,7 @@ catch (var e)  // Catch any other exception
 Modifiers syntax
 ----------------
 
-Because of generalisations in the grammar, modifiers now require
+Because of generalizations in the grammar, modifiers now require
 additional parentheses:
 
 x = value modifier1: v1 modifier2: v2;
@@ -175,7 +175,7 @@ it has died.
 -------------------
 
 The "removeSlot" method now silently accepts non-existing slot
-names instead of signalling an error.
+names instead of signaling an error.
 
 "Semaphore.criticalSection"
 ---------------------------
@@ -204,20 +204,21 @@ Remote bound methods can now return void.
 Coroutine interface
 -------------------
 
-The functions yield(), yield_until(), and yield_until_things_changed() have
-been added to the UObject API. They allow the user to write plugin UObject code
-that behaves like any other coroutine in the kernel: if yield() is called regularly,
-the kernel can continue to work while the user code runs.
-Meaningful implementation for these functions is provided also in remote mode:
-calling yield() will allow the uobject remote library to process pending messages
-from within the user callback.
+The functions yield(), yield_until(), and yield_until_things_changed()
+have been added to the UObject API. They allow the user to write
+plugin UObject code that behaves like any other coroutine in the
+kernel: if yield() is called regularly, the kernel can continue to
+work while the user code runs.  Meaningful implementation for these
+functions is provided also in remote mode: calling yield() will allow
+the UObject remote library to process pending messages from within the
+user callback.
 
 Remote UObject initialization
 -----------------------------
 
-Remote UObject instanciation is now atomic: the API now ensures that all variables
-and functions bound from the UObject constructor and init are visible as soon as
-the uobject itself is visible. Code like:
+Remote UObject instantiation is now atomic: the API now ensures that
+all variables and functions bound from the UObject constructor and
+init are visible as soon as the UObject itself is visible. Code like:
 
 waituntil(uobjects.hasSlot("MyRemote")) | var m = MyRemote.new();
 
@@ -344,7 +345,7 @@ arbitrary string between them:
 ---------------
 
 It is now possible to call "min" and "max" on a list. By default, the
-"<" comparaison operator is used, but one explicit `lower than'
+"<" comparison operator is used, but one explicit `lower than'
 function can be provided as "min" or "max" argument should one be
 needed. Here is an example on how to compare strings in case-sensitive
 and case-insensitive modes:
@@ -356,7 +357,7 @@ and case-insensitive modes:
 
 Global function "min" and "max" taking an arbitrary number of
 arguments have also been defined. In this case, the default "<" operator
-is used for comparaison:
+is used for comparison:
 
   min(3, 2, 17);
   [00000001] 2
@@ -430,10 +431,10 @@ remote directory, whose name is starting with two slashes such as
 Implement "UVar::syncValue()" in plugged uobjects
 -------------------------------------------------
 
-Calling "syncValue()" on a "UVar" from a plugged uobject resulted in a
+Calling "syncValue()" on a "UVar" from a plugged UObject resulted in a
 link error.  This method is now implemented, but does nothing as there
 is nothing to do. However, its presence is required to be able to use
-the same uobject in both remote and engine modes.
+the same UObject in both remote and engine modes.
 
 "isdef" works again
 -------------------
@@ -460,10 +461,18 @@ Auxiliary programs
 
 The sample programs demonstrating the SDK Remote, i.e., how to write a
 client for the Urbi server, have been renamed from "urbi*" to
-"urbi-*".  For instance "urbisend" is now spelled "urbi::send".
+"urbi-*".  For instance "urbisend" is now spelled "urbi-send".
 
 Besides, their interfaces are being overhauled to be more consistent
 with the Urbi command-line tool-box.  For instance while "urbisend"
 used to require exactly two arguments (host-name, file to send), it
 now supports options (e.g., --help, --port to specify the port etc.),
 and as many files as provided on the command line.
+
+
+ LocalWords:  txt myObject myArgs removeSlot isA Urbi myEvent xyzzy Baz toLower
+ LocalWords:  searchPath urbi INI getenv ne isNil criticalSection UObjects UVar
+ LocalWords:  Coroutine UObject API coroutine init waituntil uobjects hasSlot
+ LocalWords:  MyRemote asString asList aaa bbb ccc abc tghi ghi indices xADDR
+ LocalWords:  mytag UDataType Runtime SchedulingError ampli lookup dir isdef
+ LocalWords:  syncValue getSlot locateSlot slotNames SDK urbisend
