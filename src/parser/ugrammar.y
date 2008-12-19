@@ -932,16 +932,16 @@ stmt:
 | Cases.  |
 `--------*/
 
-%type < ::parser::cases_type > cases;
-%printer { debug_stream() << $$; } < ::parser::cases_type >;
+%type <::parser::cases_type> cases;
+%printer { debug_stream() << $$; } <::parser::cases_type>;
 
 cases:
   /* empty */  { $$ = ::parser::cases_type();   }
 | cases case   { std::swap($$, $1); $$.push_back($2); }
 ;
 
-%type < ::parser::case_type > case;
-%printer { debug_stream() << $$; } < ::parser::case_type >;
+%type <::parser::case_type> case;
+%printer { debug_stream() << $$; } <::parser::case_type>;
 
 case:
   "case" match ":" stmts  {  $$ = ::parser::case_type($2, $4); }
