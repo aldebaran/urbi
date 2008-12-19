@@ -1,4 +1,4 @@
-share_dir=document-aux
+share_dir = document-aux
 include document-aux/make/share.mk
 include document-aux/make/tex.mk
 
@@ -25,7 +25,7 @@ share-ci:
 	cd $(share_dir) && git push origin master
 	git commit -m "Update $(share_dir)." $(share_dir)
 
-urbi-specs.pdf: urbi-specs.sty $(wildcard *.tex)
+urbi-specs.pdf: urbi-specs.sty indexing.sty $(wildcard *.tex)
 
 URBI_CONSOLE = urbi-console
 

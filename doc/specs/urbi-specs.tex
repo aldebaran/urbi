@@ -1,9 +1,10 @@
 \documentclass[openright,twoside,12pt]{report}
- \usepackage{urbi-specs}
-% Index.  Must be before loading hyperref.
-\usepackage{index}
-\makeindex
-% \usepackage{indexing}
+  % Index.  Must be before loading hyperref.
+  \usepackage{myindex}
+  \usepackage{index}
+  \makeindex
+  \usepackage{urbi-specs}
+  \usepackage{indexing}
 
 
 % CONFIGURATION
@@ -22,31 +23,30 @@
 
 This document defines the specifications of the \us language version
 2.0. It defines the expected behavior from the \us interpreter, the
-standard library, and the \sdk. It can be used to check that some code
-is valid, or browse \us or \Cxx \api for a desired feature. Reading
-some parts with no particular reason can also provide you with
+standard library, and the \sdk. It can be used to check whether some code
+is valid, or browse \us or \Cxx \api for a desired feature. Random reading
+can also provide you with
 advanced knowledge or subtleties about some \us aspects.
 
-This document is however not fit to be used as a start guide to learn
-\us, since it is not structured in a progressive manner and too
-detailed. You can think of this document as a dictionary: one does not
-% FIXME: give directions to the tutorials
+This document is not an \us tutorial; it is not structured in a
+progressive manner and is too
+detailed. Think of this document as a dictionary: one does not
 learn a foreign language by reading a dictionary. The \us Tutorial, or
-the live \us tutorial built in the interpreter are good introduction
+the live \us tutorial built in the interpreter are good introductions
 to \us.
 
-This document doesn't either aim at giving advanced programming
-techniques. Its only goal is to define how the language and its
-libraries behave.
+This document does not aim at giving advanced programming
+techniques. Its only goal is to define the language and its
+libraries.
 
 \section*{\us}
 
-\us is an interpreted language designed for highly interactive and
-parallel behavior programming. %FILLME
+\dfn[urbiscript@\us]{\us} is an interpreted language designed for highly
+interactive and parallel behavior programming. %FILLME
 
 \section*{Structure of this document}
 
-This document is divided in four chapters:
+This document structured as follows:
 
 \begin{description}
   \newcommand{\xitem}[2]{\item[\autoref{#1} --- #2]~\\}

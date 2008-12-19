@@ -4,14 +4,14 @@
 \section{Syntax}
 \subsection{Comments}
 
-\dfn[comment]{Comments} are used to document the code, they are ignored by the
-\us interpreter. \Cxx-style and \C-style comments are supported.
+\dfn{Comments} are used to document the code, they are ignored by the
+\us interpreter. Both \Cxx comment types are supported.
 
 \begin{itemize}
 \item A \lstinline|//| introduces a comment that lasts until the end
   of the line.
 \item A \lstinline|/*| introduces a comment that lasts until
-  \lstinline|*/| is encountered. Comments nest, contrary to \C:
+  \lstinline|*/| is encountered. Comments nest, contrary to \C/\Cxx:
   if two \lstinline|/*| are encountered, the
   comment will end after two \lstinline|*/|, not one.
 \end{itemize}
@@ -27,8 +27,8 @@
 \subsection{Identifiers}
 \label{sec:us-syn-id}
 
-% FIXME: New is no longer special.
-\dfn[identifier]{Identifiers} in \us are composed of one or more alphanumeric or
+% FIXME: New is  still special, but will be removed.
+\dfn{Identifiers} in \us are composed of one or more alphanumeric or
 underscore (\lstinline|_|) characters, not starting
 by a digit, i.e., identifiers match the
 \lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular expression (see
@@ -44,14 +44,14 @@ any character, as in \autoref{lst:escape-identifiers}.
 var x;
 var foobar51;
 obj.met_hod();
-// Those are invalid.
+// Invalid.
 // var 3x;
 // obj.3x();
 \end{urbiscript}
 
 \begin{urbiscript}[caption=Identifiers cannot be keywords,
   label=lst:identifiers-keywords,float=\floatpos]
-// Those are invalid because "if" is a keyword.
+// Invalid because "if" is a keyword.
 // var if;
 // obj.if();
 // However, keywords can be escaped with simple quotes
@@ -70,10 +70,11 @@ obj.'[]';
 \subsection{Keywords}
 \label{sec:syn-key}
 
-Keywords are reserved words that cannot be used as identifiers, for
-instance.  They are listed in \autoref{tab:keywords}.  Keywords can be
-escaped, and thus used as identifier by surrounding them with simple
-quotes (\lstinline|'|), as shown in \autoref{lst:escape-keyword}.
+\dfn{Keywords} are reserved words that cannot be used as identifiers,
+for instance.  They are listed in \autoref{tab:keywords}.  Keywords
+can be escaped, and thus used as identifier by surrounding them with
+simple quotes (\lstinline|'|), as shown in
+\autoref{lst:escape-keyword}.
 
 \renewcommand{\baselinestretch}{.85}
 \begin{table}[\floatpos]
@@ -194,10 +195,11 @@ var 'if' = 21;
 \subsection{Literals}
 \subsubsection{Durations}
 
-Durations are floats (see \autoref{sec:us-syn-lit-float}) followed by a
+\dfn{Durations} (see \autoref{sec:us-syn-lit-float}) are floats
+followed by a
 % FIXME: formulation
 time unit. They are simply equivalent to the same float, expressed in
-millisecond. For instance, \lstinline|1s 1ms|, which stands for ``one
+seconds. For instance, \lstinline|1s 1ms|, which stands for ``one
 second and 1 millisecond'', is strictly equivalent to
 \lstinline|1.0001|. Available units
 and their equivalent are shown in \autoref{tab:durations}.
@@ -222,12 +224,13 @@ and their equivalent are shown in \autoref{tab:durations}.
 \subsubsection{Floats}
 \label{sec:us-syn-lit-float}
 
-Literal floats consist in a succession of digit, representing the
-integral part of the number in decimal base, possibly followed by a
-dot (\lstinline|.|) and another succession of digit representing the
-decimal part. Briefly, float literals must match the
-\lstinline|[0-9]+(\.[0-9]+)?| regular expression. \autoref{lst:literal-floats}
-is an example of literal floats.
+Literal \dfn{floats} consist in a succession of digit, representing
+the integral part of the number in decimal base, possibly followed by
+a dot (\lstinline|.|) and another succession of digits representing
+the decimal part. Briefly, float literals match the
+\lstinline|[0-9]+(\.[0-9]+)?| regular
+expression. \autoref{lst:literal-floats} is an example of literal
+floats.
 
 \begin{urbiscript}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
 1;
@@ -239,7 +242,7 @@ is an example of literal floats.
 \subsubsection{Lists}
 \label{sec:us-syn-lit-list}
 
-Literal lists are represented with a comma-separated, potentially
+Literal \dfn{lists} are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
 (\lstinline|[]|), as shown in \autoref{lst:literal-lists}.
 
@@ -252,23 +255,24 @@ empty list of arbitrary expressions enclosed in square brackets
 
 \subsubsection{Strings}
 
-String literals are enclosed in double quotes (\lstinline|"|) and can contain
-arbitrary characters, which stand for themselves, with the exception
-of the escapement character, backslash (\lstinline|\|), see
-\autoref{lst:literal-strings}. Backslash introduces the following escapements:
+\dfn{String} literals are enclosed in double quotes (\lstinline|"|)
+and can contain arbitrary characters, which stand for themselves, with
+the exception of the escape character, backslash (\lstinline|\|), see
+\autoref{lst:literal-strings}. Backslash introduces the following
+escapes:
 
 \begin{itemize}
-  \item \lstinline |\\|: an actual backslash
-  \item \lstinline|\a|: a bell ring
-  \item \lstinline|\b|: a backspace
-  \item \lstinline|\f|: a form feed
-  \item \lstinline|\n|: a line feed
-  \item \lstinline|\r|: a carriage return
-  \item \lstinline|\t|: a tabulation
-  \item \lstinline|\v|: a vertical tabulation
+  \item \lstinline |\\|: backslash
+  \item \lstinline|\a|: bell ring
+  \item \lstinline|\b|: backspace
+  \item \lstinline|\f|: form feed
+  \item \lstinline|\n|: line feed
+  \item \lstinline|\r|: carriage return
+  \item \lstinline|\t|: tabulation
+  \item \lstinline|\v|: vertical tabulation
 \end{itemize}
 
-Note that the interpreter print escaped strings. That is, line feed
+The interpreter prints escaped strings; for instance, line feed
 will be printed out as \lstinline|\n| when a string result is
 dumped. An actual line feed will of course be output if a string
 content is printed with echo for instance.
@@ -289,13 +293,13 @@ echo("a\\nb");
 
 \subsection{Operators}
 
-\us supports many operators, most of which are inspired from
+\us supports many \dfn{operators}, most of which are inspired from
 \Cxx. Their syntax is presented here, and they are sorted and
-described with their original semantic --- that is, \lstinline|+| is an
-arithmetic operator that sums two numeric values. However, as in \Cxx,
-these operators might be use for any other purpose - that is,
+described with their original semantics --- that is, \lstinline|+| is
+an arithmetic operator that sums two numeric values. However, as in
+\Cxx, these operators might be use for any other purpose --- that is,
 \lstinline|+| can also be used as the concatenation operator on lists
-and strings. Their semantic is thus not limited to what is presented
+and strings. Their semantics is thus not limited to what is presented
 here.
 
 Tables in this section sort operators top-down, by precedence order.
@@ -306,11 +310,9 @@ is shown in the ``Equivalence'' column. This can help you determine
 what method to override to define an operator for an object (see
 \fixme{autoref{sec:fixme}}).
 
-Although code examples are present, this section does not intend do
-define those operators behaviors; it only present their syntax and
-grammatical rules, such as precedence and associativity. The behavior
-of those operators is described in the documentation of the classes on
-which they are applicable, in \autoref{sec:stdlib}.
+This section defines the syntax, precedence and associativity of the
+operators. Their semantics is described in \autoref{sec:stdlib} in the
+documentation of the classes that provide them.
 
 % Operator generators
 \newcommand{\operatorhead}{Operator & Use & Associativity & Original semantic
@@ -367,9 +369,9 @@ which they are applicable, in \autoref{sec:stdlib}.
 
 \subsubsection{Arithmetic operators}
 
-\us supports classic arithmetic operators, with the classic semantics
-on numeric values. See \autoref{tab:arithmetic-operators} and
-\autoref{lst:arithmetic-operators}.
+\us supports classic \dfn{arithmetic operators}, with the classic
+semantics on numeric values. See \autoref{tab:arithmetic-operators}
+and \autoref{lst:arithmetic-operators}.
 
 \begin{table}[\floatposh]
   \centering
@@ -412,11 +414,11 @@ on numeric values. See \autoref{tab:arithmetic-operators} and
 
 \subsubsection{Assignment operators}
 
-Assignment in \us can be performed with the \lstinline|=| operator. A
-large variety of shorthands such as \lstinline|+=| exist. Those are
-not directly redefinable since they are equivalent to a normal
-affectation combined with another operator. See
-\autoref{tab:assignment-operators} and \autoref{lst:assignment-operators}.
+\dfn{Assignment} in \us can be performed with the \lstinline|=|
+operator.  Shorthands such as \lstinline|+=| exist; they are not
+redefinable since they are equivalent to a regular assignment combined
+with another operator. See \autoref{tab:assignment-operators} and
+\autoref{lst:assignment-operators}.
 
 
 \begin{table}[\floatposh]
@@ -458,9 +460,9 @@ x;
 
 \subsubsection{Bitwise operators}
 
-\us features bitwise operators.  They are also used for
-other purpose than bit-related operations. See \autoref{tab:bitwise-operators}
-and \autoref{lst:bitwise-operators}.
+\us features \dfn{bitwise operators}.  They are also used for other
+purpose than bit-related operations. See
+\autoref{tab:bitwise-operators} and \autoref{lst:bitwise-operators}.
 
 \begin{table}[\floatposh]
   \centering
@@ -488,10 +490,10 @@ and \autoref{lst:bitwise-operators}.
 
 \subsubsection{Boolean operators}
 
-\us supports the usual Boolean operators. See \autoref{tab:bool-operators} and
-\autoref{lst:bool-operators}.  The operators \lstinline|&&| and
-\lstinline-||- are short-circuiting: their right-hand side is
-evaluated only if needed.
+\us supports the usual \dfn{Boolean operators}. See
+\autoref{tab:bool-operators} and \autoref{lst:bool-operators}.  The
+operators \lstinline|&&| and \lstinline-||- are short-circuiting:
+their right-hand side is evaluated only if needed.
 
 \begin{table}[\floatposh]
   \centering
@@ -525,7 +527,7 @@ false && (1 / 0);
 
 \subsubsection{Comparison operators}
 
-\us supports classical comparison operators. See
+\us supports classical \dfn{comparison operators}. See
 \autoref{tab:comparison-operators} and
 \autoref{lst:comparison-operators}.
 
@@ -570,11 +572,13 @@ x !== x;
 
 \subsubsection{Miscellaneous operators}
 
-Those operators cannot be classified in other categories. See
-\autoref{tab:miscellaneous-operators} and \autoref{lst:miscellaneous-operators}. Note
-that the subscript (square bracket) operator is variadic: it can take
-any number of arguments, that will be passed to the \lstinline|'[]'|
-method of the targeted object.\fixme{The examples are wrong}
+These operators do not fit the previous categories. See
+\autoref{tab:miscellaneous-operators} and
+\autoref{lst:miscellaneous-operators}. Note that the
+\dfn[operator!subsubsection]{subscript} (square bracket) operator is
+variadic: it takes any number of arguments that will be passed to the
+\lstinline|'[]'| method of the targeted object.\fixme{The examples are
+  wrong.}
 
 \begin{table}[\floatposh]
   \caption{Miscellaneous operators}
@@ -685,7 +689,7 @@ precedence.
 
 % FIXME: This is wrong: the last separator isn't ignored; a pipe voids
 % the result, for instance.
-Scopes in \us are sequences of expressions, enclosed in curly brackets
+\dfn{Scopes} in \us are sequences of expressions, enclosed in curly brackets
 (\lstinline|{}|). Expressions are separated with the four expression
 separators (see \fixme{autoref{sec:fixme}}). The last separator is optional and
 ignored if present. Scopes are themselves expressions, and can thus be
@@ -706,7 +710,7 @@ used in composite expressions, nested, and so forth.
 
 \subsection{Local variables}
 
-Local variables are introduced with the \lstinline|var| keyword,
+\dfn{Local variables} are introduced with the \lstinline|var| keyword,
 followed by an identifier (see \autoref{sec:us-syn-id}) and an optional
 initialization value assignment. If the initial value is omitted, it
 defaults to \refObject{void}. Variable
@@ -735,12 +739,12 @@ y.isVoid;
 [00000000] true
 \end{urbiscript}
 
-Local variables lifespan is the same as their enclosing scope. They
+The lifespan of local variables is the same as their enclosing scope. They
 are thus only accessible from their scope and its
 subscopes\footnote{Local variables can actually escape their scope
   with lexical closures, see \autoref{sec:us-fun-closures}.}. Two
 variables with the same name cannot be defined in the same scope. A
-variable with the same name can be redefined in an inner scope, in which
+variable with the same name can be defined in an inner scope, in which
 case references refer to the innermost variable, as shown in
 \autoref{lst:local-variables-scoping}.
 
@@ -776,15 +780,13 @@ case references refer to the innermost variable, as shown in
 
 \subsection{Function Definition}
 
-Functions in \us are first class citizens:  a function is a
-value, just like an integer
-or a string is, and can be handled as such.
-This is different from most \C-like languages.
-One can create a functional value thanks to the
-\lstinline|function| keyword, followed by the list of formal arguments
-and a compound statement representing the body of the function. Formal arguments
-are a comma separated list of identifiers. \autoref{lst:function} illustrates
-this.
+\dfn{Functions} in \us are first class citizens: a function is a
+value, like floats and strings, and can be handled as such.  This is
+different from most \C-like languages.  One can create a functional
+value thanks to the \lstinline|function| keyword, followed by the list
+of formal arguments and a compound statement representing the body of
+the function. Formal arguments are a comma separated list of
+identifiers. \autoref{lst:function} illustrates this.
 
 \begin{urbiscript}[caption=Functional value,label=lst:function,float=\floatpos]
 function (arg1, arg2) { echo(0) };
@@ -827,10 +829,10 @@ f2();
 
 The list of formal arguments defines the number of argument the
 function requires. They are accessible by their name from within the
-body, as shown in \autoref{lst:function-args}. The list of formal arguments
-can be omitted, in which case the number of given arguments isn't
-check, and arguments themselves are not evaluated. Arguments can then
-be manipulated with the call message, explained in
+body, as shown in \autoref{lst:function-args}.  If the list of formal
+arguments is omitted, the number of effective arguments is not
+checked, and arguments themselves are not evaluated. Arguments can
+then be manipulated with the call message, explained in
 \autoref{sec:us-fun-callmsg}.
 
 \begin{urbiscript}[caption=Storing and calling
@@ -856,12 +858,13 @@ f(0, 1, 2);
 
 \subsection{Return value}
 
-The return value of the function is the evaluation of its body --- that
-is, since the body is a scope, the last evaluated expression in the
-scope. However, value can be returned manually with the
-\lstinline|return| keyword followed by the value, in which case the
-evaluation of the function is stopped. If \lstinline|return| is used
-with no value, the function returns void. See \autoref{lst:function-return}.
+The \dfn[function!return value]{return value} of the function is the
+evaluation of its body --- that is, since the body is a scope, the
+last evaluated expression in the scope.  Values can be returned
+manually with the \lstinline|return| keyword followed by the value, in
+which case the evaluation of the function is stopped. If
+\lstinline|return| is used with no value, the function returns
+\lstinline|void|. See \autoref{lst:function-return}.
 
 \begin{urbiscript}[caption=Returning values from functions,
   label=lst:function-return,float=\floatpos]
@@ -913,20 +916,21 @@ h(); // Returns void, so nothing is printed.
 \label{sec:us-fun-callmsg}
 
 Functions can access meta-information about how they were called,
-through a \lstinline|CallMessage| object. The call message associated
-with a function can be accessed with the \lstinline|call| keyword. It
-contains several information such as not-yet evaluated arguments, the
-name of the function, the target \ldots
+through a \lstinline|CallMessage| object. The \dfn{call message}
+associated with a function can be accessed with the \lstinline|call|
+keyword. It contains several information such as not-yet evaluated
+arguments, the name of the function, the target \ldots
 
 \subsection{Strictness}
 
-\us features two different function calls: \dfn{strict} function
-calls, effective arguments are evaluated before invoking the function,
-and \dfn{lazy} function calls, arguments are passed as-is to the
-function.  As a matter of fact, the difference is rather that there
-are strict functions and lazy function.
+\us features two different function calls:
+\dfn[function!strict]{strict} function calls, effective arguments are
+evaluated before invoking the function, and \dfn[function!lazy]{lazy}
+function calls, arguments are passed as-is to the function.  As a
+matter of fact, the difference is rather that there are strict
+functions and lazy function.
 
-Functions defined with a possibly empty list of formal arguments in
+Functions defined with a (possibly empty) list of formal arguments in
 parentheses are strict: the effective arguments are first evaluated,
 and then their value is given to the called function.  See
 \autoref{lst:us-fun-strict}.
@@ -949,13 +953,12 @@ first({echo("Arg1"); 1},
 [00000000] *** 2
 \end{urbiscript}
 
-A function declared with formal argument is lazy, and one uses its
+A function declared with no formal argument list is lazy.  Use its
 call message to manipulate its \emph{unevaluated} arguments.
 \autoref{lst:function-lazy} gives an example.  More information about
 this can be found in the \refObject{CallMessage} class documentation.
 
-\begin{urbiscript}[caption=Lazy
-  function,label=lst:function-lazy]
+\begin{urbiscript}[caption=Lazy function,label=lst:function-lazy]
 function first
 {
   echo(call.evalArgAt(0));
@@ -1005,14 +1008,14 @@ first({echo("Arg1"); 1},
 \subsection{Lexical closures}
 \label{sec:us-fun-closures}
 
-Lexical closures are an additional scoping rule, with which a function
+\dfn{Lexical closures} are an additional scoping rule, with which a function
 can refer to a local variable located outside the function --- but still
 in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
 environment, as shown in \autoref{lst:function-closure}.
 
-\begin{urbiscript}[caption=Lexical
-  closure,label=lst:function-closure,float=\floatpos]
+\begin{urbiscript}[caption=Lexical closure,
+  label=lst:function-closure,float=\floatpos]
 var x = 0;
 [00000000:hide] 0
 
@@ -1084,19 +1087,18 @@ Any value in \us is an object. Objects contain:
 
 \subsubsection{Manipulation}
 
-Objects can contain any number of \dfn[slot]{slots}, every slot has a name and a
-value. They are often call ``fields'' or ``members'' in other object
-oriented language.
+\dfn{Objects} can contain any number of \dfn{slots}, every slot has a
+name and a value. They are often called ``fields'', ``attributes'' or
+``members'' in other object-oriented languages.
 
-The \lstinline|createSlot| is used to add a slot to an object with the
-void (\autoref{sec:std-void}) value. The \lstinline|updateSlot| can be later
-used to change the value of the slot, while the \lstinline|getSlot|
-method can be used to read it. The \lstinline|setSlot| method can be
-used to create a slot with a given value instead of
-\lstinline|void|. Finally, the
-\lstinline|slotNames| method can be used to get the list of the object
-slot's name. \autoref{lst:slots} shows how to manipulate slots. More
-documentation about these methods can be found in \autorefObject{Object}.
+The \lstinline|createSlot| function adds a slot to an object with the
+void (\autoref{sec:std-void}) value. The \lstinline|updateSlot|
+function changes the value of a slot; \lstinline|getSlot| reads
+it. The \lstinline|setSlot| method creates a slot with a given
+value. Finally, the \lstinline|slotNames| method returns the list of
+the object slot's name. \autoref{lst:slots} shows how to manipulate
+slots. More documentation about these methods can be found in
+\autorefObject{Object}.
 
 \begin{urbiscript}[caption=Manipulating slots, label=lst:slots,
   float=\floatpos]
@@ -1115,9 +1117,9 @@ o.getSlot("test");
 [00000000] 42
 \end{urbiscript}
 
-\subsubsection{Sugars}
+\subsubsection{Syntactic Sugar}
 
-Several sugars exist to ease the use of slot methods:
+Syntactic sugar eases the use of slot methods:
 
 \begin{itemize}
 \item \lstinline|var o.name| is equivalent to
@@ -1126,8 +1128,6 @@ Several sugars exist to ease the use of slot methods:
   \lstinline|o.setSlot("name", value)|.
 \item \lstinline|o.name = value| is equivalent to
   \lstinline|o.updateSlot("name", value)|.
-\item \lstinline|delete o.name| is equivalent to
-  \lstinline|o.removeSlot("name")|.
 \end{itemize}
 
 
@@ -1137,14 +1137,14 @@ Several sugars exist to ease the use of slot methods:
 
 \us is a prototype-based language, unlike most classical object
 oriented language, which are class-based. In prototype-based
-languages, objects have no type, only prototypes, from which they
-inherits behavior.
+languages, objects have no type, only \dfn{prototypes}, from which they
+inherit behavior.
 
-In \us, an object can have several prototypes. The list of prototypes
-can be read with the \lstinline|protos| method. Prototypes can be add
-or removed with the \lstinline|addProto| and \lstinline|removeProto|
-methods respectively, as illustrated by \autoref{lst:prototypes}. More
-documentation about these methods can be found in \autorefObject{Object}.
+\us objects can have several prototypes. The list of prototypes is
+given by the \lstinline|protos| method; they can be added or removed
+with \lstinline|addProto| and \lstinline|removeProto| (see
+\autoref{lst:prototypes}).  See \autorefObject{Object} for more
+documentation.
 
 \begin{urbiscript}[caption=Manipulating prototypes, label=lst:prototypes,
   float=\floatpos]
@@ -1226,7 +1226,7 @@ respect to prototypes. Although performing an \lstinline|updateSlot|
 on a non existent slot is an error, it is valid if the slot is
 inherited from a prototype. In this case, the slot is however not
 updated in the prototype, but rather created in the object itself,
-with the new value. This process is called \emph{copy on write}; thanks
+with the new value. This process is called \dfn{copy on write}; thanks
 to it, prototypes are not altered when the slot is overridden in a
 child object (see \autoref{lst:copy-on-write}).
 
@@ -1258,21 +1258,21 @@ c.slot;
 
 \subsection{Sending messages}
 
-A message in \us consists in a message name and arguments. One can
+A \dfn{message} in \us consists in a message name and arguments. One can
 send a message to an object with the dot (\lstinline|.|) operator,
 followed by the message name (which can be any valid identifier) and
 the arguments, as shown in \autoref{lst:messages}. When there are no
-arguments, the empty parentheses can be omitted. As you might see,
+arguments, the parentheses can be omitted. As you might see,
 sending messages is very similar to calling methods in classical
 languages.
 
 \begin{urbiscript}[caption=Sending messages, label=lst:messages,
   float=\floatpos]
-// Send the message msg to object obj, with arguments arg1 and arg2
+// Send the message msg to object obj, with arguments arg1 and arg2.
 obj.msg(arg1, arg2);
-// Send the message msg to object obj, with no arguments
+// Send the message msg to object obj, with no arguments.
 obj.msg();
-// This is strictly equivalent
+// This is strictly equivalent.
 obj.msg;
 \end{urbiscript}
 
@@ -1282,7 +1282,8 @@ When a message ``msg'' is sent to object \lstinline|obj|:
 \item The ``msg'' slot of \lstinline|obj| is retrieved (i.e.,
   \lstinline|obj.getSlot("msg")|). If the slot is not found, the
   classic lookup error is raised.
-\item If the object is not a \lstinline|Routine| (\fixme{autoref{sec:fixme}}), it's
+\item If the object is not a \lstinline|Routine|
+  (\fixme{autoref{sec:fixme}}), it's
   the result of the message sending. In this case, there must be no
   argument, otherwise an error is raised.
 \item If the object is a \lstinline|Routine|, it is invoked with the
@@ -1326,7 +1327,7 @@ o.b(50);
 \subsection{break}
 
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
-\lstinline|break| makes execution jump after the loop. See
+\lstinline|break| makes the execution jump after the loop. See
 \autoref{lst:break}.
 
 \begin{urbiscript}[caption=Using break, label=lst:break,
@@ -1349,7 +1350,8 @@ for (; true; echo(i))
 \subsection{continue}
 
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
-\lstinline|break| makes execution jump at the loop's body end. See
+\lstinline|continue| short-circuits the rest of the loop-body, and
+runs the next iteration (if there remains one). See
 \autoref{lst:continue}.
 
 \begin{urbiscript}[caption=Using continue, label=lst:continue,
@@ -1414,7 +1416,7 @@ It has the exact same behavior as \C's \lstinline|for|:
 \begin{enumerate}
 \item The \lstinline|initialization| is evaluated.
 \item The \lstinline|condition| is evaluated. If the result is false,
-  executions jumps after the \lstinline|for|.
+  executions jump after the \lstinline|for|.
 \item The \lstinline|body| is evaluated. If \lstinline|continue| is
   encountered, execution jumps to point 4. If \lstinline|break| is
   encountered, executions jumps after the \lstinline|for|.
@@ -1424,18 +1426,18 @@ It has the exact same behavior as \C's \lstinline|for|:
 
 \subsection{for in}
 
-\us support iteration over a collection with another form of the
+\us supports iteration over a collection with another form of the
 \lstinline|for| loop.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
 for (var name in collection)
-  action;
+   body;
 \end{urbiscript}
 
-It evaluates \lstinline|action| for each element in
-\lstinline|collection|. Inside \lstinline|action|, the current element
-is accessible via the \lstinline|name| local variable. \autoref{lst:foreach}
-illustrates this.
+It evaluates \lstinline|body| for each element in
+\lstinline|collection|. Inside \lstinline|body|, the current element
+is accessible via the \lstinline|name| local
+variable. \autoref{lst:foreach} illustrates this.
 
 
 \begin{urbiscript}[caption=Iterating over a collection with for, label=lst:foreach,
@@ -1488,7 +1490,7 @@ Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
 
 \subsection{if}
 
-\us support classical \lstinline|if| construct.
+\us supports the usual \lstinline|if| construct.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
 if (condition)
@@ -1503,7 +1505,9 @@ else
 
 If the \lstinline|condition| evaluation is true, \lstinline|action| is
 evaluated. Otherwise, in the latter version, \lstinline|otherwise| is
-executed.
+executed.  Contrary to \C/\Cxx, there \emph{must not} be a semicolon
+after the \lstinline|action|; it would end the
+\lstinline|if|/\lstinline|else| construct prematurely.
 
 \subsection{switch}
 
@@ -1536,11 +1540,10 @@ switch. The switch itself evaluates to case that was evaluated, or to
 void if no match was found and there's no default case. \autoref{lst:switch}
 illustrates \lstinline|switch| usage.
 
-Note that, unlike in \C, no \lstinline|break| are required inside the
-\lstinline|switch|: execution will never span over several cases. Also
-note that, since the comparison is done with the generic '=='
-operator, switch can be performed on any comparable data type, unlike
-in \C where it need be integral.
+Unlike \C, there are no \lstinline|break| to end \lstinline|case|
+clauses: execution will never span over several cases.  Since the
+comparisons are performed with the generic \lstinline|==| operator,
+\lstinline|switch| can be performed on any comparable data type.
 
 \begin{urbiscript}[caption=The \lstinline|switch| construct,
   label=lst:switch, float=\floatpos]
@@ -1595,8 +1598,8 @@ while (condition)
 \end{urbiscript}
 
 If \lstinline|condition| evaluation, is true, \lstinline|body| is
-evaluated and execution jumps before the \lstinline|while|, otherwise execution
-jumps after the \lstinline|while|. See \autoref{lst:while}.
+evaluated and execution jumps before the \lstinline|while|, otherwise
+execution jumps after the \lstinline|while|. See \autoref{lst:while}.
 
 \begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
@@ -1620,12 +1623,12 @@ while (i > 0)
 
 \subsection{Throwing exceptions}
 
-The \lstinline|throw| keyword enables to throw exceptions, as shown in
-\autoref{lst:throw}. Thrown exceptions will break the execution upward
-until they are caught, or until they reach the toplevel --- as in
-\Cxx.  Contrary to \Cxx, exceptions reaching the toplevel are
-printed, and won't abort the kernel --- other and new connections will
-continue to execute normally.
+Use the \lstinline|throw| keyword to \dfn[exception!throwing]{throw
+  exceptions}, as shown in \autoref{lst:throw}. Thrown exceptions will
+break the execution upward until they are caught, or until they reach
+the toplevel --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
+the toplevel are printed, and won't abort the kernel --- other and new
+connections will continue to execute normally.
 
 \begin{urbiscript}[caption=Throwing exceptions, label=lst:throw,
   float=\floatpos]
@@ -1648,14 +1651,14 @@ outer();
 
 \subsection{Catching exceptions}
 
-Exceptions are caught with the \lstinline|try|/\lstinline|catch|
-construct. It consists of a first block (the \dfn[block!try-block]{try-block}),
-from which we want to catch
-exceptions, and one or more catch clauses to stop the exception
-(\dfn[block!catch-block]{catch-blocks}). Each
-catch clause defines a pattern against which the thrown exception is
-matched. If no pattern is specified, the catch clause matches
-systematically (equivalent to \lstinline|catch (...)| in \Cxx).
+Exceptions are \dfn[exception!catching]{caught} with the
+\lstinline|try|/\lstinline|catch| construct. It consists of a first
+block (the \dfn{try-block}), from which we want to catch exceptions,
+and one or more catch clauses to stop the exception
+(\dfn{catch-blocks}). Each catch clause defines a pattern against
+which the thrown exception is matched. If no pattern is specified, the
+catch clause matches systematically (equivalent to
+\lstinline|catch (...)| in \Cxx).
 
 Exceptions thrown from the \texttt{try} block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
