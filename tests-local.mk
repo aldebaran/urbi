@@ -4,7 +4,7 @@ UCONSOLE_CHECK_FLAGS = -k2
 
 TESTS_DIRS = 0.x 1.x 2.x demo uob
 
-URBI_SERVER = urbi-console
+URBI_SERVER = urbi-console$(EXEEXT)
 # Run k2 tests only.
 k2-check:
 	$(MAKE) check TESTS_DIRS=2.x
