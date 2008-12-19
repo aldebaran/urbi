@@ -32,8 +32,8 @@ $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 	cd $(top_builddir) && $(SHELL) ./config.status src/tests/$@
 
 bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
-       cd $(top_builddir) && $(SHELL) ./config.status --file src/tests/$@:src/tests/$<
-       chmod +x $@
+	cd $(top_builddir) && $(SHELL) ./config.status --file src/tests/$@:src/tests/$<
+	chmod +x $@
 
 # By default, instrument the code.
 INSTRUMENT = true
