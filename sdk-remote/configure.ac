@@ -177,7 +177,7 @@ URBI_CONFIG_WRAPPER([umake-shared])
 URBI_CONFIG_WRAPPER([umake-clean])
 URBI_CONFIG_WRAPPER([umake-link])
 URBI_CONFIG_WRAPPER([umake-lib])
-AC_CONFIG_FILES([src/tests/bin/urbi-launch],
-                [chmod +x src/tests/bin/urbi-launch])
+AC_CONFIG_FILES([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in],
+                [chmod +x src/tests/bin/urbi-launch$EXEEXT])
 
 AC_OUTPUT

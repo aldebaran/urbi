@@ -6,5 +6,5 @@ medir=$(absolute "$0").dir
 rm -rf $medir
 mkdir -p $medir
 cd $medir
-xrun "--help"    urbi-send --help
-xrun "--version" urbi-send --version
+xrun "--help"    urbi-send$EXEEXT --help
+xrun "--version" urbi-send$EXEEXT --version

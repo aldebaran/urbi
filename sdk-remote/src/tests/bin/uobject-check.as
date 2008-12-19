@@ -20,10 +20,10 @@ cd $builddir
 
 # The remote component: an executable.
 umake_remote=$(xfind_prog "umake-remote")
-xrun "umake-remote" $umake_remote --output=$me $uob
-test -x "$me" ||
+xrun "umake-remote" $umake_remote --output=$me$EXEEXT $uob
+test -x "$me$EXEEXT" ||
   fatal "$me is not executable"
-xrun "$me --version" "./$me" --version
+xrun "$me --version" "./$me$EXEEXT" --version
 
 # The shared component: a dlopen module.
 umake_shared=$(xfind_prog "umake-shared")
@@ -32,7 +32,7 @@ test -f "$me.la" ||
   fatal "$me.la does not exist"
 
 # Find urbi-launch.
-urbi_launch=$(xfind_prog urbi-launch)
+urbi_launch=$(xfind_prog urbi-launch$EXEEXT)
 
 # If urbi-launch cannot work because there is no kernel libuobject,
 # skip the test.  Do pass something that will fail to be loaded,

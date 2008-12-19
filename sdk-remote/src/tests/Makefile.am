@@ -18,10 +18,11 @@ configured_scripts =				\
   bin/umake-lib					\
   bin/umake-link				\
   bin/umake-remote				\
-  bin/umake-shared				\
-  bin/urbi-launch
+  bin/umake-shared
 
-nodist_noinst_SCRIPTS += $(configured_scripts)
+nodist_noinst_SCRIPTS +=                       \
+  $(configured_scripts)                        \
+  bin/urbi-launch$(EXEEXT)
 
 # This is really painful: dependencies on config.status are handled
 # only in the top-level Makefile by Automake.  So enforce these
@@ -29,6 +30,10 @@ nodist_noinst_SCRIPTS += $(configured_scripts)
 # does in the top-level Makefile.
 $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 	cd $(top_builddir) && $(SHELL) ./config.status src/tests/$@
+
+bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
+       cd $(top_builddir) && $(SHELL) ./config.status --file src/tests/$@:src/tests/$<
+       chmod +x $@
 
 # By default, instrument the code.
 INSTRUMENT = true
