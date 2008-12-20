@@ -37,7 +37,7 @@ bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
 
 # By default, instrument the code.
 INSTRUMENT = true
-URBI_SERVER = urbi-console
+URBI_SERVER = urbi-console$(EXEEXT)
 
 ## ------------------- ##
 ## Tests environment.  ##

@@ -93,7 +93,7 @@ spawn_urbi_server
 
 # Start the test.
 valgrind=$(instrument "remote.val")
-cmd="$valgrind ../../bin/tests --port-file server.port $meraw"
+cmd="$valgrind ../../bin/tests$EXEEXT) --port-file server.port $meraw"
 echo "$cmd" >remote.cmd
 $cmd >remote.out.raw 2>remote.err &
 children_register remote
