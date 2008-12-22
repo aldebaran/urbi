@@ -4,7 +4,6 @@
 
 using namespace urbi;
 
-
 class liburbi : public UObject
 {
 public:
@@ -27,7 +26,7 @@ public:
       UBindFunction(liburbi, setCallback);
       return 0;
     }
-  int connect(const char* host, int port)
+  int connect(const std::string& host, int port)
     {
       delete cl;
       cl = new USyncClient(host, port);
@@ -35,7 +34,7 @@ public:
     }
   int connectSame()
     {
-      return connect(getDefaultClient()->getServerName().c_str(),
+      return connect(getDefaultClient()->getServerName(),
                      getDefaultClient()->getServerPort());
     }
   int disconnect()
