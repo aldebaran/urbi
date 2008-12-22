@@ -349,11 +349,10 @@ namespace urbi
   int
   UAbstractClient::sendFile(const std::string& f)
   {
-    const char* name = f.c_str();
     if (rc)
       return -1;
-    FILE *fd;
-    fd = fopen(name, "r");
+    const char* name = f.c_str();
+    FILE *fd = fopen(name, "r");
     if (!fd)
       return -1;
     struct stat s;
@@ -385,7 +384,7 @@ namespace urbi
 
 
   int
-  UAbstractClient::sendBin(const void *buffer, size_t len,
+  UAbstractClient::sendBin(const void* buffer, size_t len,
 			   const char* header, ...)
   {
     if (rc)
@@ -457,7 +456,7 @@ namespace urbi
     // static const int SUBCHUNK_SIZE = CHUNK_SIZE; //1024;
 
 
-    sendSoundData *s=(sendSoundData *)cb;
+    sendSoundData* s = (sendSoundData*)cb;
     /*
      if (msg.type != MESSAGE_SYSTEM)
      return URBI_CONTINUE;
@@ -555,29 +554,25 @@ namespace urbi
   UAbstractClient::sendSound(const char* device, const USound& sound,
 			     const char* tag)
   {
-    if (sound.soundFormat == SOUND_MP3)
+    switch (sound.soundFormat)
     {
-      //we don't handle chunkuing for this format
+    case SOUND_MP3:
+    case SOUND_OGG:
+      // We don't handle chunking for these formats.
       return sendBin(sound.data, sound.size,
-		     "%s +report:  %s.val = BIN %d mp3;",
-		     tag, device, sound.size);
-    }
-    if (sound.soundFormat == SOUND_OGG)
-    {
-      //we don't handle chunkuing for this format
-      return sendBin(sound.data, sound.size,
-		     "%s +report:  %s.val = BIN %d ogg;",
-		     tag, device, sound.size);
-    }
+		     "%s +report:  %s.val = BIN %d %s;",
+		     tag, device, sound.size,
+                     sound.soundFormat == SOUND_MP3 ? "mp3" : "ogg");
+      break;
 
-    if (sound.soundFormat == SOUND_WAV
-	|| sound.soundFormat == SOUND_RAW)
+    case SOUND_WAV:
+    case SOUND_RAW:
     {
-      std::string rDevice = (device) ? device : "speaker";
+      std::string rDevice = device ? device : "speaker";
       std::string message = "var " + rDevice + ".sendsoundsaveblend = " +
 	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
-      send(message.c_str ());
-      sendSoundData *s = new sendSoundData();
+      send(message.c_str());
+      sendSoundData* s = new sendSoundData();
       char utag[16];
       makeUniqueTag(utag);
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
@@ -596,8 +591,8 @@ namespace urbi
       else
 	s->formatString[0] = 0;
       s->startNotify = false;
-      UCallbackID cid=setCallback(sendSound_, s, utag);
-      //invoke it 2 times to queue sound
+      UCallbackID cid = setCallback(sendSound_, s, utag);
+      // Invoke it 2 times to queue sound.
       if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
 				 std::list<BinaryData>()))==URBI_CONTINUE)
       {
@@ -609,8 +604,11 @@ namespace urbi
 	deleteCallback(cid);
       return 0;
     }
-    //unrecognized format
-    return 1;
+
+    default:
+      // Unrecognized format.
+      return 1;
+    }
   }
 
   UCallbackID
