@@ -235,13 +235,12 @@ namespace urbi
   int
   UAbstractClient::endPack()
   {
-    int retval = 0;
-    size_t buflen = strlen(sendBuffer);
-    if (buflen)
-      retval = effectiveSend(sendBuffer, strlen(sendBuffer));
+    int res = 0;
+    if (size_t len = strlen(sendBuffer))
+      res = effectiveSend(sendBuffer, len);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    return retval;
+    return res;
   }
 
 
@@ -262,14 +261,11 @@ namespace urbi
       sendBufferLock.unlock();
       return rc;
     }
-    rc = effectiveSend(sendBuffer, strlen(sendBuffer));
-    sendBuffer[0] = 0;
-    sendBufferLock.unlock();
-    return rc;
+    return rc = endPack();
   }
 
   int
-  UAbstractClient::send(UValue &v)
+  UAbstractClient::send(UValue& v)
   {
     switch (v.type)
     {
@@ -332,7 +328,7 @@ namespace urbi
       return -1;
     va_list arg;
     va_start(arg, command);
-    rc=vpack(command, arg);
+    rc = vpack(command, arg);
     va_end(arg);
     return rc;
   }
@@ -341,7 +337,6 @@ namespace urbi
   int
   UAbstractClient::vpack(const char* command, va_list arg)
   {
-    //expand
     if (rc)
       return -1;
     sendBufferLock.lock();
