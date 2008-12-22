@@ -163,7 +163,7 @@ namespace urbi
    Implementations should establish the connection in their constructor.
    */
   UAbstractClient::UAbstractClient(const std::string& host,
-				   int port,
+				   unsigned port,
 				   size_t buflen,
 				   bool server)
     : std::ostream(new UClientStreambuf(this))
@@ -236,7 +236,7 @@ namespace urbi
   UAbstractClient::endPack()
   {
     int retval = 0;
-    int buflen = strlen(sendBuffer);
+    size_t buflen = strlen(sendBuffer);
     if (buflen)
       retval = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
@@ -442,23 +442,23 @@ namespace urbi
   {
     char* buffer;
     int bytespersec;
-    int length;
-    int pos;
+    size_t length;
+    size_t pos;
     char* device;
     char* tag;
     char formatString[50];
     USoundFormat format;
-    UAbstractClient * uc;
+    UAbstractClient* uc;
     bool startNotify;
   };
 
-  static UCallbackAction sendSound_(void * cb, const UMessage &msg)
+  static UCallbackAction sendSound_(void* cb, const UMessage &msg)
   {
     //the idea is to cut the sound into small chunks,
     //add a header and send each chunk separately
     //create the header.
     // printf("sound message: %s %d\n", msg.systemValue, msg.type);
-    static const int CHUNK_SIZE = 32 * 8*60;
+    static const size_t CHUNK_SIZE = 32 * 8*60;
     // static const int SUBCHUNK_SIZE = CHUNK_SIZE; //1024;
 
 
@@ -487,8 +487,7 @@ namespace urbi
     //handle next chunk
     if (s->format == SOUND_WAV && s->pos==0)
       s->pos = sizeof (wavheader);
-    size_t tosend =
-      (s->length - s->pos > CHUNK_SIZE) ? CHUNK_SIZE:s->length-s->pos;
+    size_t tosend = std::min(CHUNK_SIZE, s->length - s->pos);
 
     //printf("%d start chunk of size %d at offset %d\n", 0, tosend, s->pos);
     int playlength = tosend *1000 / s->bytespersec;
@@ -530,7 +529,7 @@ namespace urbi
 		" %s << ping;", s->device, playlength / 2, msg.tag.c_str());
     // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
-    if (s->pos >= s->length )
+    if (s->pos >= s->length)
     {
       //printf("over: %d %d\n", URBI_REMOVE, URBI_CONTINUE);
       //if (s->tag && s->tag[0])
@@ -726,7 +725,7 @@ namespace urbi
   int
   UAbstractClient::putFile(const char* localName, const char* remoteName)
   {
-    int len;
+    size_t len;
     struct stat st;
     if (stat(localName, &st) == -1)
       return 1;
@@ -748,7 +747,7 @@ namespace urbi
   }
 
   int
-  UAbstractClient::putFile(const void * buffer, int length,
+  UAbstractClient::putFile(const void* buffer, size_t length,
 			   const char* remoteName)
   {
     if (!canSend(length+strlen(remoteName)+ 20))

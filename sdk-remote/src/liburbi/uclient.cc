@@ -52,7 +52,7 @@ namespace urbi
    Spawn a new thread that will listen to the socket, parse the incoming URBI
    messages, and notify the appropriate callbacks.
    */
-  UClient::UClient(const std::string& host, int port,
+  UClient::UClient(const std::string& host, unsigned port,
                    size_t buflen, bool server,
                    int semListenInc)
     : UAbstractClient(host, port, buflen, server)

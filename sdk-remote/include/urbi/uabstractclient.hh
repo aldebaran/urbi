@@ -128,7 +128,7 @@ namespace urbi
     enum { URBI_PORT = 54000 } ;
 
     /// Create a new instance and connect to the Urbi server.
-    UAbstractClient(const std::string& host, int port = URBI_PORT,
+    UAbstractClient(const std::string& host, unsigned port = URBI_PORT,
 		    size_t buflen = URBI_BUFLEN,
 		    bool server = false);
 
@@ -197,7 +197,7 @@ namespace urbi
     int putFile(const char* localName, const char* remoteName = 0);
 
     /// Save a buffer to a file on the robot.
-    int putFile(const void* buffer, int length, const char* remoteName);
+    int putFile(const void* buffer, size_t length, const char* remoteName);
 
 
     // Receiving
@@ -270,7 +270,7 @@ namespace urbi
     const std::string& getServerName() const { return host_; }
 
     /// Return the server port.
-    int getServerPort() const { return port_; }
+    unsigned getServerPort() const { return port_; }
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
@@ -301,7 +301,7 @@ namespace urbi
     /// Host name.
     std::string host_;
     /// Urbi Port.
-    int port_;
+    unsigned port_;
 
     /// Server mode
     bool server_;

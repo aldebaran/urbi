@@ -36,7 +36,7 @@ namespace urbi
   class URBI_SDK_API UClient: public UAbstractClient
   {
   public:
-    UClient(const std::string& host, int port = URBI_PORT,
+    UClient(const std::string& host, unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
 	    bool server = false,
 	    int semListenInc = 1);

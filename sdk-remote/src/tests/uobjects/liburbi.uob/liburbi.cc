@@ -26,7 +26,7 @@ public:
       UBindFunction(liburbi, setCallback);
       return 0;
     }
-  int connect(const std::string& host, int port)
+  int connect(const std::string& host, unsigned port)
     {
       delete cl;
       cl = new USyncClient(host, port);
