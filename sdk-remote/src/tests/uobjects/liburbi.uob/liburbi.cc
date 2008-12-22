@@ -5,20 +5,20 @@
 using namespace urbi;
 
 
-class liburbi:public UObject
+class liburbi : public UObject
 {
-  public:
-    liburbi(const std::string& n)
-      :UObject(n),
-      cl(0)
+public:
+  liburbi(const std::string& n)
+    : UObject(n)
+    , cl(0)
     {
       UBindFunction(liburbi, init);
     }
-    ~liburbi()
+  ~liburbi()
     {
       delete cl;
     }
-    int init()
+  int init()
     {
       UBindFunction(liburbi, connect);
       UBindFunction(liburbi, disconnect);
@@ -27,51 +27,51 @@ class liburbi:public UObject
       UBindFunction(liburbi, setCallback);
       return 0;
     }
-    int connect(const char* host, int port)
+  int connect(const char* host, int port)
     {
       delete cl;
       cl = new USyncClient(host, port);
       return cl->error();
     }
-    int connectSame()
+  int connectSame()
     {
       return connect(getDefaultClient()->getServerName().c_str(),
-	  getDefaultClient()->getServerPort());
+                     getDefaultClient()->getServerPort());
     }
-    int disconnect()
+  int disconnect()
     {
       delete cl;
       cl = 0;
       return 0;
     }
-    int send(const std::string& msg)
+  int send(const std::string& msg)
     {
       cl->send(msg.c_str());
       return cl->error();
     }
-    int setCallback(const std::string& tag)
+  int setCallback(const std::string& tag)
     {
       cl->setCallback(urbi::callback(*this, &liburbi::callback), tag.c_str());
       return 1;
     }
-    UCallbackAction callback(const UMessage& msg)
+  UCallbackAction callback(const UMessage& msg)
     {
       std::stringstream ss;
       switch(msg.type)
       {
-	case MESSAGE_DATA:
-	  ss << __name << ".onValue(" << *msg.value << "),";
-	  break;
-	case MESSAGE_SYSTEM:
-	case MESSAGE_ERROR:
-	  ss << __name << ".onError(\"" << msg.message << "\"),";
-	  break;
+      case MESSAGE_DATA:
+        ss << __name << ".onValue(" << *msg.value << "),";
+        break;
+      case MESSAGE_SYSTEM:
+      case MESSAGE_ERROR:
+        ss << __name << ".onError(\"" << msg.message << "\"),";
+        break;
       }
       send(ss.str());
       return URBI_CONTINUE;
     }
-    private:
-    USyncClient* cl;
+private:
+  USyncClient* cl;
 };
 
 UStart(liburbi);
