@@ -679,10 +679,10 @@ modifiers:
       $$ = new ast::modifiers_type();
       (*$$)[$1.first] = $1.second;
     }
-| modifiers "," modifier
+| modifiers modifier
     {
       $$ = $1;
-      (*$$)[$3.first] = $3.second;
+      (*$$)[$2.first] = $2.second;
     }
 ;
 
@@ -695,9 +695,9 @@ exp:
     {
       $$ = new ast::Assign(@$, $1, $3, 0);
     }
-| exp "=" "(" exp "," modifiers ")"
+| exp "=" "(" exp modifiers ")"
     {
-      $$ = new ast::Assign(@$, $1, $4, $6);
+      $$ = new ast::Assign(@$, $1, $4, $5);
     }
 
 %token <libport::Symbol>

@@ -92,7 +92,7 @@ x = value modifier1: v1 modifier2: v2;
 
 becomes:
 
-x = (value, modifier1: v1, modifier2: v2);
+x = (value modifier1: v1 modifier2: v2);
 
 Parsing of integer literals
 ---------------------------
