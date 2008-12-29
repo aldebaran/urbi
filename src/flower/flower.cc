@@ -125,8 +125,10 @@ namespace flower
     {
     case ast::flavor_none:
     case ast::flavor_semicolon:
-    case ast::flavor_pipe:
       each % SYMBOL(each);
+      break;
+    case ast::flavor_pipe:
+      each % SYMBOL(each_PIPE);
       break;
     case ast::flavor_and:
       each % SYMBOL(each_AMPERSAND);
