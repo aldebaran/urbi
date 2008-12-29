@@ -1069,6 +1069,18 @@ namespace urbi
          "};");
   }
 
+  int
+  UAbstractClient::effective_send(const std::string& s)
+  {
+    return effectiveSend(s.c_str(), s.size());
+  }
+
+  int
+  UAbstractClient::effective_send(const char* cp)
+  {
+    return effectiveSend(cp, strlen(cp));
+  }
+
   UCallbackAction
   UAbstractClient::setConnectionID (const UMessage& msg)
   {

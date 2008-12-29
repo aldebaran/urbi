@@ -285,6 +285,12 @@ namespace urbi
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual int effectiveSend(const void* buffer, size_t size) = 0;
 
+    /// Bounce to effectiveSend() using strlen.
+    int effective_send(const char* buffer);
+
+    /// Bounce to effectiveSend() using c_str().
+    int effective_send(const std::string& buffer);
+
     /// Whether successive effectiveSend() of cumulated size 'size'
     /// will succeed.
     virtual bool canSend(size_t size) = 0;
