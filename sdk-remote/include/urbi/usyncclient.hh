@@ -100,7 +100,7 @@ namespace urbi
 
 
     /// Send given buffer without copying it.
-    int syncSend(const void * buffer, int length);
+    int syncSend(const void * buffer, size_t length);
 
     /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
     int syncGetImage(const char* cameraDevice, void* buffer, size_t& buffersize,

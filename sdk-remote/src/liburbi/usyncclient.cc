@@ -451,12 +451,12 @@ namespace urbi
   }
 
   int
-  USyncClient::syncSend(const void* buffer, int length)
+  USyncClient::syncSend(const void* buffer, size_t length)
   {
     if (rc != 0)
       return -1;
     sendBufferLock.lock();
-    int sent = 0;
+    size_t sent = 0;
     while (sent < length)
     {
       int res = ::write(sd, (char*) buffer + sent, length - sent);
