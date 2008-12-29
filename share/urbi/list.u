@@ -230,3 +230,8 @@ function Object.each(f)
 {
   asList.each(f)
 };
+
+function Object.'each|'(f)
+{
+  asList.'each|'(f)
+}
