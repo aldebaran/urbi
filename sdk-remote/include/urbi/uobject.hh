@@ -5,6 +5,8 @@
 
 # include <string>
 
+# include <boost/function.hpp>
+
 # include <libport/fwd.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
@@ -228,7 +230,20 @@ namespace urbi
     template <class T>
     void USetTimer(ufloat t, int (T::*fun) ());
 # else
-
+    void UNotifyChange(UVar& v, boost::function0<int> f)
+    {
+      UGenericCallback* cb = new
+        UBoostFunctionCallback(__name, "var", f, v.get_name (),
+	  monitormap(), v.owned);
+      cb->storage = &v;
+    }
+    void UNotifyAccss(UVar& v, boost::function0<int> f)
+    {
+      UGenericCallback* cb = new
+        UBoostFunctionCallback(__name, "varaccess", f, v.get_name (),
+	  accessmap(), v.owned);
+      cb->storage = &v;
+    }
     /// \internal
 # define MakeNotify(Type, Notified, Arg, Const,				\
 		    TypeString, Name, Map, Owned,			\
