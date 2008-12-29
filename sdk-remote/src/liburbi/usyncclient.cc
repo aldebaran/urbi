@@ -148,25 +148,65 @@ namespace urbi
     return msg;
   }
 
-  UMessage* USyncClient::syncGet_(const char* format,
-				  const char* mtag, const char* mmod,
-				  va_list& arg)
+  namespace
   {
-    //check there is no tag
-    int p = 0;
-    while (format[p] ==' ')
-      ++p;
-    while (isalpha(format[p]))
-      ++p;
-    while (format[p] == ' ')
-      ++p;
-    if (format[p]== ':' || format[p] == '<')
+    /// Check that \a cp looks like "foo <" or "foo :".
+    /// I venture this is an attempt to see if there is a "tag" or a
+    /// channel.
+    static
+    bool
+    has_tag(const char* cp)
+    {
+      while (*cp == ' ')
+        ++cp;
+      while (isalpha(*cp))
+        ++cp;
+      while (*cp == ' ')
+        ++cp;
+      return *cp == ':' || *cp == '<';
+    }
+
+    /// Whether \a cp ends with , or ; (skipping trailing spaces).
+    static
+    bool
+    has_terminator(const char* cp)
+    {
+      int p = strlen(cp) - 1;
+      while (cp[p] == ' ')
+        --p;
+      return cp[p] == ';' || cp[p] == ',';
+    }
+
+    /// Return the concatenation of t1 and t2, make it unique
+    /// if they are empty.
+    static
+    std::string
+    make_tag(UAbstractClient&cl, const char*t1, const char* t2)
+    {
+      std::string res;
+      if (t1)
+      {
+        res += t1;
+        if (t2)
+          res += t2;
+      }
+      else
+      {
+        char buf[100];
+        cl.makeUniqueTag(buf);
+        res += buf;
+      }
+      return res;
+    }
+  }
+
+  UMessage*
+  USyncClient::syncGet_(const char* format,
+                        const char* mtag, const char* mmod,
+                        va_list& arg)
+  {
+    if (has_tag(format))
       return 0;
-    //check if there is a command separator
-    p = strlen(format) - 1;
-    while (format[p] == ' ')
-      --p;
-    bool hasSep = (format[p] == ';' || format[p] == ',');
     sendBufferLock.lock();
     rc = vpack(format, arg);
     if (rc < 0)
@@ -174,24 +214,18 @@ namespace urbi
       sendBufferLock.unlock();
       return 0;
     }
-    if (!hasSep)
+    if (!has_terminator(format))
       strcat(sendBuffer, ",");
-    char tag[100];
-    if (mtag && *mtag)
-    {
-      strcpy (tag, mtag);
-      if (mmod != 0)
-        strcat (tag, mmod);
-    }
-    else
-      makeUniqueTag(tag);
+    std::string tag = make_tag(*this, mtag, mmod);
     std::string cmd;
     if (kernelMajor_ > 1)
       cmd = std::string() +
-      "if (!hasSlot(\"" + tag + "\")) { "
-      "var lobby." +tag + " = Channel.new(\"" + tag + "\"); "
-      "var lobby.__created_chan__};"
-      + tag + " << ";
+        "if (!hasSlot(\"" + tag + "\"))"
+        "{"
+        "  var lobby." + tag + " = Channel.new(\"" + tag + "\");"
+        "  var lobby.__created_chan__;"
+        "};"
+        + tag + " << ";
     else
       cmd = std::string() + tag + " << ";
     effectiveSend(cmd.c_str(), cmd.length());
@@ -202,28 +236,29 @@ namespace urbi
     if (kernelMajor_ > 1)
     {
       cmd = std::string() +
-        "if (hasSlot(\"__created_chan__\")) { "
-        "lobby.removeSlot(\"__created_chan__\"); "
-        "lobby.removeSlot(\"" + tag + "\") }; ";
+        "if (hasSlot(\"__created_chan__\"))"
+        "{"
+        "  lobby.removeSlot(\"__created_chan__\"); "
+        "  lobby.removeSlot(\"" + tag + "\");"
+        "};";
       effectiveSend(cmd.c_str(), cmd.length());
     }
-    if (mtag != 0)
-      strcpy (tag, mtag);
 
-    UMessage* m = waitForTag(tag);
-    return m;
+    if (mtag)
+      tag = mtag;
+    return waitForTag(tag.c_str());
   }
 
   UMessage* USyncClient::syncGet(const char* format, ...)
   {
-    UMessage* ret = 0;
+    UMessage* res = 0;
 
     va_list arg;
     va_start(arg, format);
-    ret =  syncGet_ (format, 0, 0, arg);
-    va_end (arg);
+    res = syncGet_(format, 0, 0, arg);
+    va_end(arg);
 
-    return ret;
+    return res;
   }
 
   UMessage* USyncClient::syncGetTag(const char* format, const char* mtag, const char* mmod, ...)
