@@ -173,16 +173,32 @@ namespace object
   }
 
   void
-  List::each(runner::Runner& r, const rObject& f)
+  List::each_common(runner::Runner& r, const rObject& f, bool yielding)
   {
     // Beware of iterations that modify the list in place: make a
     // copy.
+    bool must_yield = false;
     foreach (const rObject& o, value_type(content_))
     {
+      if (must_yield)
+	r.yield();
+      must_yield = yielding;
       objects_type args;
       args.push_back(o);
       r.apply(f, f, SYMBOL(each), args);
     }
+  }
+
+  void
+  List::each(runner::Runner& r, const rObject& f)
+  {
+    each_common(r, f, true);
+  }
+
+  void
+  List::each_pipe(runner::Runner& r, const rObject& f)
+  {
+    each_common(r, f, false);
   }
 
   void
@@ -277,6 +293,7 @@ namespace object
     bind(SYMBOL(clear),          &List::clear           );
     bind(SYMBOL(each),           &List::each            );
     bind(SYMBOL(each_AMPERSAND), &List::each_and        );
+    bind(SYMBOL(each_PIPE),      &List::each_pipe       );
     bind(SYMBOL(front),          &List::front           );
     bind(SYMBOL(SBL_SBR),        &List::operator[]      );
     bind(SYMBOL(SBL_SBR_EQ),     &List::set             );

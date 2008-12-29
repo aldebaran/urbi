@@ -27,6 +27,8 @@ namespace object
     rObject back        ();
     rList   clear       ();
     void    each        (runner::Runner&, const rObject&);
+    void    each_pipe   (runner::Runner&, const rObject&);
+    void    each_common (runner::Runner&, const rObject&, bool);
     void    each_and    (runner::Runner&, const rObject&);
     rObject front       ();
     rObject removeFront ();
