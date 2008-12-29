@@ -261,13 +261,14 @@ namespace urbi
     return res;
   }
 
-  UMessage* USyncClient::syncGetTag(const char* format, const char* mtag, const char* mmod, ...)
+  UMessage* USyncClient::syncGetTag(const char* format,
+                                    const char* mtag, const char* mmod, ...)
   {
     UMessage* ret = 0;
 
     va_list arg;
     va_start(arg, mmod);
-    ret =  syncGet_ (format, mtag, mmod, arg);
+    ret = syncGet_(format, mtag, mmod, arg);
     va_end (arg);
 
     return ret;
