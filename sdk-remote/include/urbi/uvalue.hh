@@ -57,10 +57,12 @@ namespace urbi
     {
       return *array[i+offset];
     }
-    int size() const
+
+    size_t size() const
     {
-      return static_cast<int>(array.size());
+      return array.size();
     }
+
     void setOffset(int n)
     {
       offset = n;

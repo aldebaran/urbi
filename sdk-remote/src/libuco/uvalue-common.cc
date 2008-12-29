@@ -865,7 +865,7 @@ namespace
   void UList::clear()
   {
     offset = 0;
-    for (int i = 0; i < size(); ++i) //relax, its a vector
+    for (size_t i = 0; i < size(); ++i) //relax, its a vector
       delete array[i];
     array.clear();
   }
