@@ -38,7 +38,8 @@ namespace urbi
   enum USoundSampleFormat
   {
     SAMPLE_SIGNED=1,
-    SAMPLE_UNSIGNED=2
+    SAMPLE_UNSIGNED=2,
+    SAMPLE_FLOAT=3
   };
 
   std::istream& operator>> (std::istream& is, USoundSampleFormat& f);
