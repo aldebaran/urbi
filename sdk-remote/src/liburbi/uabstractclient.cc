@@ -1128,6 +1128,9 @@ namespace urbi
   }
 
 
+  /*-----------------.
+  | Default client.  |
+  `-----------------*/
 
   UClient* defaultClient = 0;
 
@@ -1136,10 +1139,16 @@ namespace urbi
     return defaultClient;
   }
 
+  UClient& get_default_client()
+  {
+    return *getDefaultClient();
+  }
+
   void setDefaultClient(UClient * cl)
   {
     defaultClient = cl;
   }
+
 
   std::ostream&
   unarmorAndSend(const char* a)

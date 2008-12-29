@@ -642,9 +642,16 @@ namespace urbi
   /// Destroy an UClient object
   /// Be careful: don't use client after called this function
   URBI_SDK_API void disconnect(UClient &client);
-  /// Return the first UClient created by the program. Used by the URBI macro
+
+  /*-----------------.
+  | Default client.  |
+  `-----------------*/
+
+  /// Return the first UClient created by the program.
   URBI_SDK_API UClient* getDefaultClient();
-  /// Redefine the default client
+  /// Same as getDefaultClient(), but as a reference.
+  URBI_SDK_API UClient& get_default_client();
+  /// Redefine the default client.
   URBI_SDK_API void setDefaultClient(UClient* cl);
 
   URBI_SDK_API std::string getClientConnectionID (const UAbstractClient* cli);
