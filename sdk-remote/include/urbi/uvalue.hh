@@ -44,11 +44,12 @@ namespace urbi
   class URBI_SDK_API UList
   {
   public:
-    std::vector<UValue *> array;
     UList();
     UList(const UList &b);
-    UList& operator = (const UList &b);
     ~UList();
+
+    UList& operator = (const UList &b);
+
     UValue& operator [](size_t i)
     {
       return *array[i+offset];
@@ -67,6 +68,9 @@ namespace urbi
     {
       offset = n;
     }
+
+    // The actual contents.
+    std::vector<UValue *> array;
 
   private:
     void clear();
@@ -320,14 +324,15 @@ namespace urbi
 
 # define UVALUE_CASTER_DECLARE(Type)		\
   template <>					\
-  struct URBI_SDK_API uvalue_caster<Type> {		\
+  struct URBI_SDK_API uvalue_caster<Type>       \
+  {                                             \
     Type operator () (UValue& v);		\
-  };
+  }
 
-  UVALUE_CASTER_DECLARE(UBinary)
-  UVALUE_CASTER_DECLARE(UList)
-  UVALUE_CASTER_DECLARE(UObjectStruct)
-  UVALUE_CASTER_DECLARE(const char*)
+  UVALUE_CASTER_DECLARE(UBinary);
+  UVALUE_CASTER_DECLARE(UList);
+  UVALUE_CASTER_DECLARE(UObjectStruct);
+  UVALUE_CASTER_DECLARE(const char*);
 
 # undef UVALUE_CASTER_DECLARE
 
@@ -340,7 +345,7 @@ namespace urbi
     {
       std::list<I> res;
       if (v.type != DATA_LIST)
-	//cast just the element
+	// Cast just the element.
 	res.push_back(uvalue_cast<I*>(v));
       else
 	for (int i = 0; i < v.list->size(); ++i)

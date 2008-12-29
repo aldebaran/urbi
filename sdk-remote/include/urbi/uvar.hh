@@ -25,25 +25,6 @@
 # include <urbi/uprop.hh>
 # include <urbi/uproperty.hh>
 
-/// Define an attribute and its accessors.
-# define PRIVATE(Type, Name)			\
-  private:					\
-    Type Name;					\
-  public:					\
-    Type get_ ##  Name ()			\
-    {						\
-      return Name;				\
-    }						\
-    const Type get_ ##  Name () const		\
-    {						\
-      return Name;				\
-    }						\
-    void set_ ##  Name (Type& v)		\
-    {						\
-      Name = v;					\
-    }						\
-  private:
-
 namespace urbi
 {
 
@@ -152,10 +133,31 @@ namespace urbi
     UVardata  *vardata;
     void __init();
 
+/// Define an attribute and its accessors.
+# define PRIVATE(Type, Name)			\
+  public:					\
+    Type get_ ##  Name ()			\
+    {						\
+      return Name;				\
+    }						\
+    const Type get_ ##  Name () const		\
+    {						\
+      return Name;				\
+    }						\
+    void set_ ##  Name (Type& v)		\
+    {						\
+      Name = v;					\
+    }						\
+  private:					\
+    Type Name;
+
+
     /// Full name of the variable as seen in URBI.
     PRIVATE(std::string, name)
     /// The variable value on the softdevice's side.
     PRIVATE(UValue, value)
+
+# undef PRIVATE
 
     // Check that the invariant of this class are verified.
     bool invariant () const;
@@ -177,16 +179,18 @@ namespace urbi
 
   inline
   UVar::UVar()
-    : owned (false),
-      VAR_PROP_INIT,
-      vardata (0), name ("noname")
+    : owned(false)
+    , VAR_PROP_INIT
+    , vardata(0)
+    , name("noname")
   {}
 
   inline
   UVar::UVar(UVar&)
-    : owned (false),
-      VAR_PROP_INIT,
-      vardata (0), name ("")
+    : owned(false)
+    , VAR_PROP_INIT
+    , vardata(0)
+    , name()
   {
     /// FIXME: This is really weird: a copy-ctor that does not use
     /// the lhs?
@@ -196,7 +200,5 @@ namespace urbi
 
 /// Report \a u on \a o for debugging.
 std::ostream& operator<< (std::ostream& o, const urbi::UVar& u);
-
-# undef PRIVATE
 
 #endif // ! URBI_UVAR_HH
