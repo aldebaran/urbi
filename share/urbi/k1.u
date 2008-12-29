@@ -46,7 +46,7 @@ Global.addProto(Global.Kernel1Functions);
 // FIXME: Some commands should be rewritten once it becomes possible.
 class Global.DeprecatedCommands
 {
-  for (var name: [
+  for| (var name: [
                   "commands",
                   "connections",
                   "devices",

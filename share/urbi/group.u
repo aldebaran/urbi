@@ -51,6 +51,6 @@ class Global.Group
       Group.getSlot("new").apply([Group] + results)
   };
 
-  for (var s : ["getProperty", "hasProperty", "setProperty", "updateSlot"])
+  for| (var s : ["getProperty", "hasProperty", "setProperty", "updateSlot"])
     copySlot("fallback", s);
 };

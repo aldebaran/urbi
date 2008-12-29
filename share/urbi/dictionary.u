@@ -15,7 +15,7 @@ do (Global.Dictionary)
   function asList ()
   {
     var res = []|
-    for (var k: keys)
+    for| (var k: keys)
       res.insertBack(Pair.new (k, get (k)))|
     res
   };

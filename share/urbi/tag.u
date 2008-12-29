@@ -17,7 +17,7 @@ do (Global.Tag)
     function report(msg)
     {
       var res = "";
-      for (var tag in currentRunner.tags)
+      for| (var tag: currentRunner.tags)
         if (!tag.isA(SystemTag))
           res += tag.name + ": ";
       echo(res + msg);

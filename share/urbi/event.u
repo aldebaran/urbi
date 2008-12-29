@@ -59,10 +59,10 @@ class Global.Event
     // We cannot replace these for loops of detached code with a for&,
     // since it would delay subsequent onEvent execution if code
     // doesn't return immediately.
-    for (var evt : alive)
+    for| (var evt : alive)
       detach(code(evt)) |
     while| (true)
-      for (var evt : sub.getAll)
+      for| (var evt : sub.getAll)
         detach(code(evt)) |
   };
 

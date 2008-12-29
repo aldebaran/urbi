@@ -27,7 +27,7 @@ do (String)
     if (l.empty)
       return "" |
     var res = "" |
-    for (var e: l)
+    for| (var e: l)
       res += this + e |
     res[size, res.size]
   };
