@@ -170,15 +170,23 @@ public:
   urbi::UList readProps(const std::string &name)
   {
     urbi::UVar v(name);
-    urbi::UList l;
-    l.array.push_back(new urbi::UValue((double)v.rangemin));
-    l.array.push_back(new urbi::UValue((double)v.rangemax));
-    l.array.push_back(new urbi::UValue((double)v.speedmin));
-    l.array.push_back(new urbi::UValue((double)v.speedmax));
-    l.array.push_back(new urbi::UValue((double)v.delta));
+    urbi::UList res;
+#define APPEND(Value)                                   \
+    res.array.push_back(new urbi::UValue(Value))
+#define APPEND_UFLOAT(Prop)                     \
+    APPEND(static_cast<ufloat>(v.Prop))
+
+    APPEND_UFLOAT(rangemin);
+    APPEND_UFLOAT(rangemax);
+    APPEND_UFLOAT(speedmin);
+    APPEND_UFLOAT(speedmax);
+    APPEND_UFLOAT(delta);
     urbi::UValue bl = v.blend;
-    l.array.push_back(new urbi::UValue(bl));
-    return l;
+    APPEND(bl);
+
+#undef APPEND_UFLOAT
+#undef APPEND
+    return res;
   }
 
   int writeProps(const std::string &name, double val)
