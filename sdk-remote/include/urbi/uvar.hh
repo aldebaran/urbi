@@ -22,6 +22,7 @@
 # include <libport/ufloat.hh>
 
 # include <urbi/uvalue.hh>
+# include <urbi/uprop.hh>
 # include <urbi/uproperty.hh>
 
 /// Define an attribute and its accessors.
@@ -45,33 +46,6 @@
 
 namespace urbi
 {
-
-  //! Provides easy access to variable properties
-  class URBI_SDK_API UProp
-  {
-  public:
-    void operator =(const UValue& v);
-    void operator =(const ufloat v);
-    void operator =(const std::string& v);
-
-    operator ufloat();
-    operator std::string();
-    operator UValue();
-
-    UProp(UVar& owner, UProperty name)
-      : owner(owner), name(name)
-    {}
-
-  private:
-    UVar& owner;
-    UProperty name;
-
-    //disable copy ctor and equal operator
-    UProp & operator =(const UProp &b);
-    UProp(const UProp &b);
-  };
-
-
 
   /** UVar class definition
 
@@ -217,13 +191,6 @@ namespace urbi
     /// FIXME: This is really weird: a copy-ctor that does not use
     /// the lhs?
   }
-
-  inline void UProp::operator =(const UValue& v)  {owner.setProp(name, v);}
-  inline void UProp::operator =(const ufloat v)  {owner.setProp(name, v);}
-  inline void UProp::operator =(const std::string& v){owner.setProp(name, v);}
-  inline UProp::operator ufloat()  {return (ufloat)owner.getProp(name);}
-  inline UProp::operator std::string()  {return owner.getProp(name);}
-  inline UProp::operator UValue()  {return owner.getProp(name);}
 
 } // end namespace urbi
 

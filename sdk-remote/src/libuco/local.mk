@@ -9,6 +9,7 @@ libuco_libuco_la_CPPFLAGS =			\
 
 dist_libuco_libuco_la_SOURCES =			\
   libuco/uobject-hub-common.cc			\
+  libuco/uprop.cc				\
   libuco/ustarter.cc				\
   libuco/utable.cc				\
   libuco/uvalue-common.cc			\

@@ -19,6 +19,7 @@ urbiinclude_HEADERS =				\
   include/urbi/umain.hh				\
   include/urbi/umessage.hh			\
   include/urbi/uobject.hh			\
+  include/urbi/uprop.hh				\
   include/urbi/uproperty.hh			\
   include/urbi/ustarter.hh			\
   include/urbi/ustarter.hxx			\
