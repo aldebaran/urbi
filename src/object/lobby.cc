@@ -44,6 +44,9 @@ namespace object
   void
   Lobby::send(objects_type& args)
   {
+    if (proto == this)
+      runner::raise_primitive_error("must be called on Lobby derivative");
+
     check_arg_count(args.size(), 1, 2);
     // Second argument is the tag name.
     std::string tag;
@@ -64,6 +67,9 @@ namespace object
   void
   Lobby::write(const std::string& data)
   {
+    if (proto == this)
+      runner::raise_primitive_error("must be called on Lobby derivative");
+
     state_.connection.send_queue(data.c_str(),
 				 data.size());
     state_.connection.flush();
