@@ -28,6 +28,7 @@
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
 
+#include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh>
 
 namespace urbi
@@ -258,7 +259,7 @@ namespace urbi
   }
 
   std::ostream&
-  UValue::print (std::ostream& s) const
+  UValue::print(std::ostream& s) const
   {
     switch (type)
     {
@@ -269,31 +270,14 @@ namespace urbi
 	s << '"' << libport::escape(*stringValue, '"') << '"';
 	break;
       case DATA_BINARY:
-	if (binary->type != BINARY_NONE
-	    && binary->type != BINARY_UNKNOWN)
-	  binary->buildMessage();
-	s << "BIN "<< binary->common.size << ' ' << binary->message << ';';
-	s.write((char*) binary->common.data, binary->common.size);
+        s << *binary;
 	break;
       case DATA_LIST:
-      {
-	s << '[';
-	unsigned sz = list->size();
-	for (unsigned i = 0; i < sz; ++i)
-	  s << (*list)[i]
-	    << (i != sz - 1 ? ", " : "");
-	s << ']';
-      }
-      break;
+	s << *list;
+        break;
       case DATA_OBJECT:
-      {
-	s << "OBJ "<<object->refName<<" [";
-	unsigned sz = object->size();
-	for (unsigned i = 0; i < sz; ++i)
-	  s << (*object)[i].name << ':' << (*object)[i].val
-	    << (i != sz - 1 ? ", " : "");
-	s << ']';
-      }
+	s << *object;
+        break;
       break;
       default:
 	s << "<<void>>";
@@ -519,6 +503,20 @@ namespace urbi
 	break;
     }
     return o.str();
+  }
+
+  std::ostream&
+  UBinary::print(std::ostream& o) const
+  {
+    o << "BIN "<< common.size << ' ' << getMessage() << ';';
+    o.write((char*) common.data, common.size);
+    return o;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const UBinary& t)
+  {
+    return t.print(o);
   }
 
 
@@ -870,6 +868,24 @@ namespace
     array.clear();
   }
 
+  std::ostream&
+  UList::print(std::ostream& o) const
+  {
+    o << '[';
+    size_t sz = size();
+    for (unsigned i = 0; i < sz; ++i)
+      o << (*this)[i]
+        << (i != sz - 1 ? ", " : "");
+    o << ']';
+    return o;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const UList& t)
+  {
+    return t.print(o);
+  }
+
   /*----------------.
   | UObjectStruct.  |
   `----------------*/
@@ -884,7 +900,8 @@ namespace
 
   UObjectStruct::~UObjectStruct()
   {
-    for (int i = 0; i < size(); ++i) //relax, it's a vector
+    // Relax, it's a vector.
+    for (size_t i = 0; i < size(); ++i)
       delete array[i].val;
     array.clear();
   }
@@ -895,9 +912,8 @@ namespace
     if (this == &b)
       return *this;
 
-    for (int i = 0; i < size(); ++i) // Relax, it's a vector.
-      delete array[i].val;
-    array.clear();
+    // Relax, it's a vector.
+    this->~UObjectStruct();
 
     for (std::vector<UNamedValue>::const_iterator it = b.array.begin();
 	 it != b.array.end();
@@ -910,11 +926,29 @@ namespace
   UValue&
   UObjectStruct::operator[] (const std::string& s)
   {
-    for (int i = 0; i < size(); ++i)
+    for (size_t i = 0; i < size(); ++i)
       if (array[i].name == s)
 	return *array[i].val;
     static UValue n;
     return n; // Gni?
+  }
+
+
+  std::ostream&
+  UObjectStruct::print(std::ostream& o) const
+  {
+    o << "OBJ " << refName << " [";
+    size_t sz = size();
+    for (size_t i = 0; i < sz; ++i)
+      o << (*this)[i].name << ':' << (*this)[i].val
+        << (i != sz - 1 ? ", " : "");
+    return o << ']';
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const UObjectStruct& t)
+  {
+    return t.print(o);
   }
 
 } // namespace urbi

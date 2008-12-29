@@ -16,6 +16,7 @@
 # define URBI_UBINARY_HH
 
 # include <cstring>
+# include <iosfwd>
 # include <list>
 # include <string>
 
@@ -93,8 +94,8 @@ namespace urbi
       return !memcmp(this, &b, sizeof(USound));
     }
     operator std::string() const;
-  };
 
+  };
 
   /*---------.
   | UImage.  |
@@ -185,7 +186,13 @@ namespace urbi
     int parse(const char* message, int pos,
 	      const std::list<BinaryData>& bins,
 	      std::list<BinaryData>::const_iterator& binpos);
+
+    /// Used by UValue::print for serialization.
+    std::ostream& print(std::ostream& o) const;
   };
+
+  URBI_SDK_API
+  std::ostream& operator<< (std::ostream& o, const UBinary& t);
 
 } // end namespace urbi
 

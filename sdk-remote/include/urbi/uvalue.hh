@@ -69,13 +69,18 @@ namespace urbi
       offset = n;
     }
 
+    std::ostream& print(std::ostream& o) const;
+
     // The actual contents.
-    std::vector<UValue *> array;
+    std::vector<UValue*> array;
 
   private:
     void clear();
     int offset;
   };
+
+  URBI_SDK_API
+  std::ostream& operator<< (std::ostream& o, const UList& t);
 
   class URBI_SDK_API UNamedValue
   {
@@ -99,19 +104,30 @@ namespace urbi
     ~UObjectStruct();
 
     UValue& operator [](const std::string& s);
+    const UNamedValue& operator [](size_t i) const
+    {
+      return array[i];
+    }
+
     UNamedValue& operator [](size_t i)
     {
       return array[i];
     }
 
-    int size() const
+    size_t size() const
     {
-      return static_cast<int>(array.size());
+      return array.size();
     }
+
+    std::ostream& print(std::ostream& o) const;
 
     std::string refName;
     std::vector<UNamedValue> array;
   };
+
+  URBI_SDK_API
+  std::ostream& operator<< (std::ostream& o, const UObjectStruct& t);
+
 
   /** Container for a value that handles all types known to URBI.
    */
@@ -209,14 +225,14 @@ namespace urbi
 	      std::list<BinaryData>::const_iterator& binpos);
 
     /// Print itself on \c s, and return it.
-    std::ostream& print (std::ostream& s) const;
+    std::ostream& print(std::ostream& s) const;
   };
 
   inline
   std::ostream&
-  operator<<(std::ostream &s, const UValue &v)
+  operator<<(std::ostream& s, const UValue& v)
   {
-    return v.print (s);
+    return v.print(s);
   }
 
 
