@@ -36,6 +36,9 @@ class Global.Channel
   /// Use asTopLevelPrintable if set (display the string 'foo' as '"foo"')
   var quote = true;
 
+  /// By default, the Channel prototype has no tag.
+  var name = "";
+
   function init(x)
   {
     var this.name = x
