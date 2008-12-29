@@ -103,14 +103,14 @@ class Object.uvar
       {
         var min = parent.getSlot(name).getProperty("val", "rangemin")|
         var max = parent.getSlot(name).getProperty("val", "rangemax")|
-	{var r = parent.getSlot(name) | return (r() - min) / (max-min)}
+        {var r = parent.getSlot(name) | return (r() - min) / (max-min)}
       })|
     parent.setProperty(slotName, "updateHook", function(slot, value)
-	{
-          var min = parent.getSlot(name).getProperty("val", "rangemin")|
-          var max = parent.getSlot(name).getProperty("val", "rangemax")|
-          parent.updateSlot(name, min + (max - min) * value)
-        })|
+      {
+        var min = parent.getSlot(name).getProperty("val", "rangemin")|
+        var max = parent.getSlot(name).getProperty("val", "rangemax")|
+        parent.updateSlot(name, min + (max - min) * value)
+      })|
     if (!parent.hasSlot("__has_uvar"))
     {
       var parent_getprop = parent.getSlot("getProperty")|
@@ -118,8 +118,8 @@ class Object.uvar
       {
         if (parent.getSlot(varname).isA(uvar))
           parent.getSlot(varname).getProperty("val", propname)
-      else
-        parent_getprop.apply([parent, varname, propname])
+        else
+          parent_getprop.apply([parent, varname, propname])
       }|
       var parent.__has_uvar = 1
     }|
@@ -149,9 +149,9 @@ class Object.uvar
     {
       if (!inChange)
       {
-	inChange = true    |
-	callNotify(change) |
-	inChange = false
+        inChange = true    |
+        callNotify(change) |
+        inChange = false
       }
     } |
     void
@@ -291,7 +291,7 @@ class Global.'external'
       chan << msg;
       // Wait until the remote defines u.init.
       waituntil(Global.uobjects.hasSlot(u)
-		&& Global.uobjects.getSlot(u).ownsSlot("init"));
+                && Global.uobjects.getSlot(u).ownsSlot("init"));
       var ret = Global.uobjects.getSlot(u);
       ret.protos = [this];
       ret
@@ -311,7 +311,7 @@ class Global.'external'
     if (!uobjects.hasSlot(objname))
     {
       if (varname == "load")
-	return|
+        return|
       ("Error: external var called for "+objname+"."+varname).print
     }|
     // Ignore duplicate binds of same var.
@@ -344,7 +344,7 @@ class Global.'external'
     {
       var v = uob.getSlot(varname).val.acceptVoid |
       if (!v.isNil && !v.isVoid)
-	chan << ['external'.UEM_ASSIGNVALUE,
+        chan << ['external'.UEM_ASSIGNVALUE,
                  fullname,
                  v]
     }|
