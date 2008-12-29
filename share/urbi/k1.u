@@ -9,7 +9,7 @@ class Global.Kernel1Functions
 
   function ping()
   {
-    echo ("pong time=" + time.asString);
+    echo ("pong time=" + (time / 1s).asString + "s");
   };
 
   function seq(n)
