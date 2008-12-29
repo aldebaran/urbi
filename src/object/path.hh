@@ -5,6 +5,7 @@
 # include <libport/path.hh>
 
 # include <object/cxx-object.hh>
+# include <object/directory.hh>
 
 namespace object
 {
@@ -65,6 +66,9 @@ namespace object
 
     ATTRIBUTE_NORETURN
     void handle_any_error();
+
+    friend class Directory;
+
     // Stat the file and handle all errors
     struct stat stat();
 

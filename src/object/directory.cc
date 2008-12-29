@@ -78,10 +78,16 @@ namespace object
   {
     List::value_type res;
     DIR* dir = opendir(path_->value_get().to_string().c_str());
-    dirent* entry;
 
-    while ((entry = readdir(dir)))
+    // There is already an appropriate error handling done for Path.
+    // We can use it if we need it.
+    if (!dir)
+      path_->handle_any_error();
+
+    while (dirent* entry = readdir(dir))
     {
+      if (!entry)
+	path_->handle_any_error();
       std::string name = entry->d_name;
       if (name == "." || name == "..")
         continue;
