@@ -287,8 +287,27 @@ namespace binder
         % write
         % target_value
         % modifiers;
-
-      operator()(ast_lvalue_wrap(call, exp(trajectory)).get());
+      //Do the lvalue_wrap by hand
+      ast::rExp res;
+      if (call->target_implicit())
+        res = exp(trajectory);
+      else
+      {
+        ast::loc loc = input->location_get();
+        ast::rNary n(new ast::Nary(loc));
+        n->push_back(new ast::Declaration(loc,
+                        ast::rCall(new ast::Call(loc,
+                                                 0,
+                                                 new ast::Implicit(loc),
+                                                 SYMBOL(DOLLAR_tmp))),
+                        call->target_get(),
+                        0),
+                   ast::flavor_semicolon);
+        n->push_back(exp(trajectory));
+        ast::rScope s(new ast::Scope(loc, n));
+        res = ast::rExp(s);
+      }
+      operator()(res.get());
     }
     // Assignment to a local variables
     else if (local)
