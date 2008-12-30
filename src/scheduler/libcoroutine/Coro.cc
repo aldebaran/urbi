@@ -1,5 +1,5 @@
-#include <sdk/config.h>
+#include <libport/config.h>
 
-#ifndef SCHEDULER_CORO_OSTHREAD
+#ifndef LIBPORT_SCHEDULER_CORO_OSTHREAD
 # include <scheduler/libcoroutine/Coro.c>
 #endif

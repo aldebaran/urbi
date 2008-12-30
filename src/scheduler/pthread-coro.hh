@@ -1,10 +1,11 @@
 #ifndef SCHEDULER_PTHREAD_CORO_HH
 # define SCHEDULER_PTHREAD_CORO_HH
 
-# include <kernel/config.h>
+# include <libport/config.h>
 
-// Define SCHEDULER_CORO_OSTHREAD to use the os-thread implementation of coros.
-# ifdef SCHEDULER_CORO_OSTHREAD
+// Define LIBPORT_SCHEDULER_CORO_OSTHREAD to use the os-thread implementation
+// of coros.
+# ifdef LIBPORT_SCHEDULER_CORO_OSTHREAD
 #  include <libport/semaphore.hh>
 
 class Coro
@@ -19,6 +20,6 @@ public:
 
 #  include <scheduler/pthread-coro.hxx>
 
-# endif // SCHEDULER_CORO_OSTHREAD
+# endif // LIBPORT_SCHEDULER_CORO_OSTHREAD
 
 #endif // !SCHEDULER_PTHREAD_CORO_HH

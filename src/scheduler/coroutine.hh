@@ -1,10 +1,11 @@
 #ifndef SCHEDULER_COROUTINE_HH
 # define SCHEDULER_COROUTINE_HH
 
-# include <kernel/config.h>
+# include <libport/config.h>
 
-// Define SCHEDULER_CORO_OSTHREAD to use the os-thread implementation of coros.
-# ifdef SCHEDULER_CORO_OSTHREAD
+// Define LIBPORT_SCHEDULER_CORO_OSTHREAD to use the os-thread implementation
+//  of coros.
+# ifdef LIBPORT_SCHEDULER_CORO_OSTHREAD
 #  include <scheduler/pthread-coro.hh>
 # else
 #  include <scheduler/libcoroutine/Coro.h>
@@ -48,7 +49,7 @@ bool coroutine_stack_space_almost_gone(Coro* coro);
 ///        task. This coroutine must never be destroyed.
 void coroutine_initialize_main(Coro* coro);
 
-# if !defined SCHEDULER_CORO_OSTHREAD
+# if !defined LIBPORT_SCHEDULER_CORO_OSTHREAD
 #  include <scheduler/coroutine.hxx>
 # endif
 #endif // SCHEDULER_COROUTINE_HH
