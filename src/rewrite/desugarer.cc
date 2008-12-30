@@ -31,6 +31,19 @@ namespace rewrite
     super_type::visit(s);
   }
 
+  ast::modifiers_type*
+  Desugarer::handle(const ast::modifiers_type* originals)
+  {
+    ast::modifiers_type* res = 0;
+    if (originals)
+    {
+      res = new ast::modifiers_type();
+      foreach (ast::modifiers_type::value_type original, *originals)
+        (*res)[original.first] =  recurse(original.second);
+    }
+    return res;
+  }
+
   void
   Desugarer::visit(const ast::Assign* assign)
   {
@@ -42,10 +55,11 @@ namespace rewrite
     {
       if (!allow_decl_)
         errors_.error(what->location_get(), "declaration not allowed here");
+      ast::modifiers_type* modifiers = handle(assign->modifiers_get());
       result_ = new ast::Declaration(loc,
                                      what->what_get(),
                                      assign->value_get(),
-                                     0);
+                                     modifiers);
       result_ = recurse(result_);
       return;
     }
@@ -53,18 +67,29 @@ namespace rewrite
     // Simple assignment: x = value
     if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
     {
-      ast::modifiers_type* modifiers = 0;
-      if (const ast::modifiers_type* originals = assign->modifiers_get())
-      {
-        modifiers = new ast::modifiers_type();
-        foreach (ast::modifiers_type::value_type original, *originals)
-          (*modifiers)[original.first] =  recurse(original.second);
-      }
+      ast::modifiers_type* modifiers = handle(assign->modifiers_get());
       result_ = new ast::Assignment(loc, call, assign->value_get(), modifiers);
 
       result_ = recurse(result_);
       return;
     }
+
+    // Subscript assignment: x[y] = value
+    if (ast::rSubscript sub =
+        assign->what_get().unsafe_cast<ast::Subscript>())
+    {
+      ast::Assignment* res = new ast::Assignment(loc,
+	ast::rLValue(reinterpret_cast<ast::LValue*>(sub->target_get().get())),
+	assign->value_get(), handle(assign->modifiers_get()));
+      res->method_set(new libport::Symbol(SYMBOL(SBL_SBR_EQ)));
+      res->extra_args_set(maybe_recurse_collection(sub->arguments_get()));
+      result_ = recurse(ast::rExp(res));
+      return;
+    }
+
+ // No modifiers allowed below this point.
+    if (assign->modifiers_get())
+      errors_.error(assign->location_get(), "Modifiers not allowed here");
 
     // Property assignment: x->prop = value
     if (ast::rProperty prop =
@@ -79,21 +104,6 @@ namespace rewrite
         % recurse(assign->value_get());
 
       result_ = recurse(exp(rewrite));
-      return;
-    }
-
-    // Subscript assignment: x[y] = value
-    if (ast::rSubscript sub =
-        assign->what_get().unsafe_cast<ast::Subscript>())
-    {
-      PARAMETRIC_AST(rewrite, "%exp:1 .'[]='(%exps:2)");
-      // FIXME: arguments desugared twice
-      ast::exps_type* args = maybe_recurse_collection(sub->arguments_get());
-      args->push_back(assign->value_get());
-      result_ = ast::exp(rewrite
-                         % sub->target_get()
-                         % args);
-      result_ = recurse(result_);
       return;
     }
 

@@ -279,8 +279,14 @@ namespace binder
         );
 
       ast::rExp read = new_clone(tgt);
-      ast::rExp write = new ast::Assignment(loc, new_clone(tgt),
-                                            parser::ast_call(loc, SYMBOL(v)), 0);
+      ast::Assignment* assign = new ast::Assignment(loc, new_clone(tgt),
+                                            parser::ast_call(loc, SYMBOL(v)),
+					    0);
+      if (input->method_get())
+	assign->method_set(new libport::Symbol(*input->method_get()));
+      if (assign->extra_args_get())
+	assign->extra_args_set(new ast::exps_type(*input->extra_args_get()));
+      ast::rExp write = assign;
 
       trajectory
         % read
@@ -321,8 +327,22 @@ namespace binder
     }
     // Assignment to a slot
     else
-        result_ = changeSlot(loc, call->target_get(), name,
-                             SYMBOL(updateSlot), input->value_get());
+    {
+      if (!input->method_get() && !input->extra_args_get())
+        result_ = changeSlot(loc, call->target_get(), name, SYMBOL(updateSlot),
+	  input->value_get());
+      else
+      {
+	PARAMETRIC_AST(call, "%exp:1 . %id:2 (%exps:3)");
+	ast::exps_type* args = new ast::exps_type(*input->extra_args_get());
+	*args << input->value_get();
+	call % input->what_get()
+	     % (input->method_get()?
+	       libport::Symbol(*input->method_get()): SYMBOL(updateSlot))
+	     % args;
+	result_ = recurse(ast::rCall(call.result<ast::Call>()));
+      }
+    }
     result_->original_set(input);
   }
 
@@ -637,4 +657,11 @@ namespace binder
     unbind_.back() << libport::scoped_set(unscope_, unscope->count_get());
   }
 
+  void
+  Binder::visit(const ast::Dictionary* dict)
+  {
+    if (dict->base_get())
+      errors_.error(dict->location_get(), "Modifier without an assignment.");
+    super_type::visit(dict);
+  }
 } // namespace binder

@@ -57,6 +57,9 @@ decrementation.hxx
 default-visitor.hh
 default-visitor.hxx
 default-visitor.stamp
+dictionary.cc
+dictionary.hh
+dictionary.hxx
 do.cc
 do.hh
 do.hxx

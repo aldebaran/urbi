@@ -42,6 +42,7 @@ namespace rewrite
       (While)
       );
 
+    ast::modifiers_type* handle(const ast::modifiers_type* originals);
   private:
     bool pattern_;
     bool allow_decl_;

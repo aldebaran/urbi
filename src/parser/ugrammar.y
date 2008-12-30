@@ -662,8 +662,9 @@ k1_id:
 | Modifiers |
 `----------*/
 
+
 %type <modifier_type> modifier;
-%type <ast::modifiers_type*> modifiers;
+%type <ast::rDictionary> dictionary;
 
 modifier:
   "identifier" ":" exp
@@ -673,18 +674,18 @@ modifier:
   }
 ;
 
-modifiers:
-  modifier
-    {
-      $$ = new ast::modifiers_type();
-      (*$$)[$1.first] = $1.second;
-    }
-| modifiers modifier
-    {
-      $$ = $1;
-      (*$$)[$2.first] = $2.second;
-    }
-;
+dictionary:
+  dictionary modifier
+  {
+    $1->value_get()[$2.first] = $2.second;
+    $$ = $1;
+  }
+| modifier
+  {
+    ast::rDictionary d(new ast::Dictionary(@$, 0, ast::modifiers_type()));
+    d->value_get()[$1.first] = $1.second;
+    $$ = d;
+  }
 
 /*-------------------.
 | Stmt: Assignment.  |
@@ -693,12 +694,58 @@ modifiers:
 exp:
   exp "=" exp
     {
-      $$ = new ast::Assign(@$, $1, $3, 0);
+      ast::rDictionary d = $3.unsafe_cast<ast::Dictionary>();
+      if (d && d->base_get())
+      {
+        $$ = new ast::Assign(@$, $1, d->base_get(),
+                             new ast::modifiers_type(d->value_get()));
+      }
+      else
+        $$ = new ast::Assign(@$, $1, $3, 0);
     }
-| exp "=" "(" exp modifiers ")"
+| "(" dictionary ")"
     {
-      $$ = new ast::Assign(@$, $1, $4, $5);
+      $$ = $2;
     }
+| exp modifier
+    {
+      if (ast::rDictionary d = $1.unsafe_cast<ast::Dictionary>())
+      {
+        d->value_get()[$2.first] = $2.second;
+        $$ = $1;
+      }
+      else if (ast::rAssign a = $1.unsafe_cast<ast::Assign>())
+      {
+        ast::modifiers_type* m = a->modifiers_get();
+        if (!m)
+        {
+          m = new ast::modifiers_type();
+          a->modifiers_set(m);
+        }
+        (*m)[$2.first] = $2.second;
+        $$ = $1;
+      }
+      else
+      {
+        ast::rDictionary d(new ast::Dictionary(@$, 0, ast::modifiers_type()));
+        d->value_get()[$2.first] = $2.second;
+        d->base_get() = $1;
+        $$ = d;
+      }
+    }
+
+    /*
+  | exp modifier
+    {
+      ast::rDictionary d = $1.unsafe_cast<ast::Dictionary>();
+      if (!d)
+      {
+        d = new ast::Dictionary(@$, ast::modifiers_type(), $1);
+      }
+      d->value_get()[$2.first] = $2.second;
+      $$ = d;
+
+    }*/
 
 %token <libport::Symbol>
         CARET_EQ    "^="

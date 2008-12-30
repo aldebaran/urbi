@@ -51,6 +51,7 @@ namespace binder
                               (Catch)
                               (Closure)
                               (Declaration)
+                              (Dictionary)
                               (Do)
                               (Foreach)
                               (Function)

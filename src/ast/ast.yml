@@ -715,6 +715,29 @@ String:
     - libport::escape(n->value_get(), '"')
     - "'\"'"
 
+Dictionary:
+  super: Exp
+  attributes:
+    - base:
+        type: 'rExp'
+        access: rw
+        desc: Base value. This is a Generator if set.
+    - value:
+       type: 'modifiers_type'
+       access: rw
+       desc: Stored dictionary
+  printer:
+    - '{
+         ostr_ << "(";
+         foreach (ast::modifiers_type::value_type exp, n->value_get())
+           ostr_ << exp.first <<":" << (*exp.second.get())<< " ";
+         ostr_ << ")";
+       }'
+  default: |2
+    /* Kind of dump to iterate on vals without the keys */
+    foreach (ast::modifiers_type::value_type exp, n->value_get())
+      ; //operator()(exp.second.get());
+
 List:
   super: Exp
   attributes:
@@ -1012,6 +1035,19 @@ Write:
         desc: Time and trajectory modifiers
         access: rW
         mandatory: false
+    - method:
+        type: libport::Symbol*
+        desc: Method to call to perform the affectation.
+        access: rWw
+        init: '0'
+        mandatory: false
+    - extra_args:
+        type: exps_type*
+        desc: Extra arguments to pass to the method.
+        access: rWw
+        init: '0'
+        mandatory: false
+
   printer:
     - ~what
     - '{
@@ -1320,6 +1356,7 @@ Assign:
         type: rExp
     - modifiers:
         type: 'modifiers_type*'
+        access: rwW
         mandatory: false
   printer:
     - ~what

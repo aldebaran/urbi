@@ -19,6 +19,7 @@
 # include <object/code.hh>
 # include <object/global.hh>
 # include <object/list.hh>
+# include <object/dictionary.hh>
 # include <object/tag.hh>
 # include <object/symbols.hh>
 
@@ -472,6 +473,23 @@ namespace runner
     return new object::String(e->value_get());
   }
 
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Dictionary* e)
+  {
+    object::rDictionary d = new object::Dictionary();
+    /// Dictonary with a base was caught at parse time.
+    assert(!e->base_get());
+    foreach (ast::modifiers_type::value_type exp, e->value_get())
+    {
+      rObject v = operator()(exp.second.get());
+      // Refuse void in literal lists
+      if (v == object::void_class)
+	raise_unexpected_void_error();
+      passert(v,v);
+      d->set(exp.first, v);
+    }
+    return d;
+  }
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Tag* t)
