@@ -1087,7 +1087,7 @@ namespace urbi
     if (msg.type == MESSAGE_DATA && msg.value)
     {
       std::string id = (std::string)*msg.value;
-      if (id != "")
+      if (!id.empty())
       {
 	connectionID_ = id;
 	return URBI_REMOVE;

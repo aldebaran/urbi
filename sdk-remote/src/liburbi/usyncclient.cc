@@ -43,7 +43,6 @@ namespace urbi
 
     if (cbThread)
       joinCallbackThread_ ();
-
   }
 
   void USyncClient::callbackThread()
@@ -140,12 +139,13 @@ namespace urbi
     queueLock_.unlock();
   }
 
-  UMessage* USyncClient::waitForTag(const char* tag)
+  UMessage*
+  USyncClient::waitForTag(const std::string& tag)
   {
     syncTag = tag;
     queueLock_.unlock();
     syncLock_--;
-    //syncTag is reset by the other thread
+    // syncTag is reset by the other thread.
     return msg;
   }
 

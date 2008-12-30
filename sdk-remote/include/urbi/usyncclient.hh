@@ -124,14 +124,14 @@ namespace urbi
 
     /// Get a field of a device in a synchronous way. Returns 1 on
     /// success, 0 on failure.
-    int syncGetDevice(const char* device, const char * field, double &val);
+    int syncGetDevice(const char* device, const char* field, double &val);
 
     /// Get sound for duration milliseconds in buffer.
-    int syncGetSound(const char * device, int duration, USound &sound);
+    int syncGetSound(const char* device, int duration, USound &sound);
 
     /// Wait until a message with specified tag is received. Returned
     /// message must be deleted.
-    UMessage * waitForTag(const char * tag);
+    UMessage* waitForTag(const std::string& tag);
     /// Overriding UAbstractclient implementation
     virtual void notifyCallbacks(const UMessage &msg);
 
