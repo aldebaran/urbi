@@ -67,8 +67,51 @@ namespace rewrite
     // Simple assignment: x = value
     if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
     {
-      ast::modifiers_type* modifiers = handle(assign->modifiers_get());
-      result_ = new ast::Assignment(loc, call, assign->value_get(), modifiers);
+      // Build dictionary for the (potential) modifiers
+      ast::rExp modifiers = 0;
+      if (const ast::modifiers_type* source = assign->modifiers_get())
+      {
+        PARAMETRIC_AST(dict, "Dictionary.new");
+
+        modifiers = exp(dict);
+        foreach (const ast::modifiers_type::value_type& elt, *source)
+        {
+          PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
+
+          add % modifiers
+            % new ast::String(loc, elt.first)
+            % recurse(elt.second);
+          modifiers = exp(add);
+        }
+      }
+
+      if (modifiers)
+      {
+        ast::rExp target_value = recurse(assign->value_get());
+        ast::rLValue tgt = ast_lvalue_once(call);
+        PARAMETRIC_AST(trajectory,
+                       "TrajectoryGenerator.new("
+                       "  closure ( ) { %exp:1 }," // getter
+                       "  closure (v) { %exp:2 }," // Setter
+                       "  %exp:3," // Target value
+                       "  %exp:4" // modifiers
+                       ").run"
+          );
+
+        ast::rExp read = new_clone(tgt);
+        ast::rExp write = new ast::Assignment(loc, new_clone(tgt),
+                                              parser::ast_call(loc, SYMBOL(v)), 0);
+
+        trajectory
+          % read
+          % write
+          % target_value
+          % modifiers;
+
+        result_ = ast_lvalue_wrap(call, exp(trajectory)).get();
+      }
+      else
+        result_ = new ast::Assignment(loc, call, assign->value_get(), 0);
 
       result_ = recurse(result_);
       return;

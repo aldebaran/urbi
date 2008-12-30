@@ -242,62 +242,12 @@ namespace binder
     ast::loc loc = input->location_get();
     ast::rCall call = input->what_get()->call();
     libport::Symbol name = call->name_get();
-
-    // Build dictionary for the (potential) modifiers
-    ast::rExp modifiers = 0;
-    if (const ast::modifiers_type* source = input->modifiers_get())
-    {
-      PARAMETRIC_AST(dict, "Dictionary.new");
-
-      modifiers = exp(dict);
-      foreach (const ast::modifiers_type::value_type& elt, *source)
-      {
-        PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
-
-        add % modifiers
-          % new ast::String(input->location_get(), elt.first)
-          % recurse(elt.second);
-        modifiers = exp(add);
-      }
-    }
-
     unsigned depth = routine_depth_get(name);
     // Whether this is an assignment to a local variable
     bool local = depth && call->target_implicit();
 
-    if (modifiers)
-    {
-      ast::rExp target_value = recurse(input->value_get());
-      ast::rLValue tgt = ast_lvalue_once(call);
-      PARAMETRIC_AST(trajectory,
-                     "TrajectoryGenerator.new("
-                     "  closure ( ) { %exp:1 }," // getter
-                     "  closure (v) { %exp:2 }," // Setter
-                     "  %exp:3," // Target value
-                     "  %exp:4" // modifiers
-                     ").run"
-        );
-
-      ast::rExp read = new_clone(tgt);
-      ast::Assignment* assign = new ast::Assignment(loc, new_clone(tgt),
-                                            parser::ast_call(loc, SYMBOL(v)),
-					    0);
-      if (input->method_get())
-	assign->method_set(new libport::Symbol(*input->method_get()));
-      if (assign->extra_args_get())
-	assign->extra_args_set(new ast::exps_type(*input->extra_args_get()));
-      ast::rExp write = assign;
-
-      trajectory
-        % read
-        % write
-        % target_value
-        % modifiers;
-
-      operator()(ast_lvalue_wrap(call, exp(trajectory)).get());
-    }
     // Assignment to a local variables
-    else if (local)
+    if (local)
     {
       operator()(input->value_get().get());
       ast::rExp value = result_.unchecked_cast<ast::Exp>();
