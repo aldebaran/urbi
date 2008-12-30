@@ -2,6 +2,7 @@
 
 #include <libport/escape.hh>
 
+#include <urbi/uabstractclient.hh>
 #include <urbi/ublend-type.hh>
 #include <urbi/uexternal.hh>
 #include <urbi/uobject.hh>
@@ -71,18 +72,17 @@ namespace urbi
     // conversions between enums and strings.
     int i = static_cast<int>(v);
     if (p == PROP_BLEND && is_blendtype(i))
-      URBI_SEND_PIPED_COMMAND(name << "->"<< urbi::name(p) << "="
-			<< urbi::name(static_cast<UBlendType>(i)));
+      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "="
+                              << urbi::name(static_cast<UBlendType>(i)));
     else
-      URBI_SEND_PIPED_COMMAND(name << "->"<< urbi::name(p) << "=" << v);
+      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "=" << v);
   }
 
   UValue
   UVar::getProp(UProperty p)
   {
-    UMessage* m=
-      ((USyncClient&)URBI(())).syncGet("%s->%s",
-				       name.c_str(), urbi::name (p));
+    USyncClient& uc = dynamic_cast<USyncClient&>(get_default_client());
+    UMessage* m = uc.syncGet("%s->%s", name.c_str(), urbi::name(p));
     UValue v = *m->value;
     delete m;
     return v;
