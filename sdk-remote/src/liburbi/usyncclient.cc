@@ -122,7 +122,8 @@ namespace urbi
     return 0;
   }
 
-  void USyncClient::notifyCallbacks(const UMessage &msg)
+  void
+  USyncClient::notifyCallbacks(const UMessage& msg)
   {
     queueLock_.lock();
     if (!syncTag.empty() && syncTag == msg.tag)
@@ -251,27 +252,21 @@ namespace urbi
 
   UMessage* USyncClient::syncGet(const char* format, ...)
   {
-    UMessage* res = 0;
-
     va_list arg;
     va_start(arg, format);
-    res = syncGet_(format, 0, 0, arg);
+    UMessage* res = syncGet_(format, 0, 0, arg);
     va_end(arg);
-
     return res;
   }
 
   UMessage* USyncClient::syncGetTag(const char* format,
                                     const char* mtag, const char* mmod, ...)
   {
-    UMessage* ret = 0;
-
     va_list arg;
     va_start(arg, mmod);
-    ret = syncGet_(format, mtag, mmod, arg);
+    UMessage* res = syncGet_(format, mtag, mmod, arg);
     va_end (arg);
-
-    return ret;
+    return res;
   }
 
   int
@@ -280,11 +275,7 @@ namespace urbi
 			    int format, int transmitFormat,
 			    size_t& width, size_t& height)
   {
-    int f;
-    if (format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG)
-      f = 1;
-    else
-      f = 0;
+    int f = format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG;
     //XXX required to ensure format change is applied
     send("%s.format = %d; noop; noop;", camera, f);
     UMessage *m = syncGet("%s.val;", camera);
@@ -297,7 +288,7 @@ namespace urbi
     height = m->value->binary->image.height;
 
     size_t osize = buffersize;
-    if (f == 1  &&  format != IMAGE_JPEG)
+    if (f == 1  && format != IMAGE_JPEG)
     {
       //uncompress jpeg
       if (format == IMAGE_YCbCr)
@@ -352,7 +343,7 @@ namespace urbi
       delete m;
       return 0;
     }
-    val = (double)(*(m->value));
+    val = (double)*m->value;
     delete m;
     return 1;
   }
@@ -373,7 +364,7 @@ namespace urbi
       delete m;
       return 0;
     }
-    val = (*(m->value));
+    val = *m->value;
     delete m;
     return 1;
   }
@@ -388,7 +379,7 @@ namespace urbi
       delete m;
       return 0;
     }
-    val = (double)(*(m->value));
+    val = (double)*m->value;
     delete m;
     return 1;
   }
@@ -403,7 +394,7 @@ namespace urbi
       delete m;
       return 0;
     }
-    val = (double)(*(m->value));
+    val = (double)*m->value;
     delete m;
     return 1;
   }
@@ -420,7 +411,7 @@ namespace urbi
       delete m;
       return 0;
     }
-    val = (double)(*(m->value));
+    val = (double)*m->value;
     delete m;
     return 1;
   }

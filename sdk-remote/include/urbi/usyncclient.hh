@@ -97,8 +97,6 @@ namespace urbi
     UMessage *syncGetTag (const char* expression,
                           const char* mtag, const char* mmod, ...);
 
-
-
     /// Send given buffer without copying it.
     int syncSend(const void * buffer, size_t length);
 
