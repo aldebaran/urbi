@@ -165,12 +165,22 @@ def children_clone (node):
   the attributes of node."""
   # Clone recursively the children of E.
   for a in (node.all_attributes()):
-    # Attributes with a default value are cloned with the default value.
-    if a.init:
+    # Attributes with a default value are NOT cloned with the default value.
+    # if a.init:
+    #   continue
+    if (a.name == "original"):
       continue
     attribute_clone(a)
 
-
+def children_copy (node):
+  """Copy the variables which have 'init' set."""
+  for a in (node.all_attributes()):
+    if not a.init or a.name == "original":
+      continue
+    if a.access.find('W') != -1:
+      print "    res->" + a.name + "_set(" + a.name + ");"
+    else:
+      print "    res->" + a.name + "_get() = " + a.name + ";"
 cloner_cc = file("cloner.cc.tmp", "w")
 sys.stdout = cloner_cc
 
@@ -244,14 +254,13 @@ for node in concrete:
     # Result.
     args = node.ctor_args (False, False)
     print "    %s* res = new %s (%s);" % (node.name, node.name, str(args))
+    children_copy(node)
     # Copy the fields that are not passed as ctor arguments: the hidden
     # one, and those with an "init" field.
     for a in node.attributes:
       if a.hide:
 	print "   //<<-"
-      if a.hide or a.init != None:
 	print "    res->%s_set(%s);" % (a.name, attribute_dup(a))
-      if a.hide:
 	print "   //->>"
     print "    result_ = res;"
   if node.hide:
