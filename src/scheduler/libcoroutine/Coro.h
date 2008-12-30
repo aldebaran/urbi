@@ -4,8 +4,8 @@
 #ifndef CORO_DEFINED
 #define CORO_DEFINED 1
 
-#include "Common.h"
-#include "PortableUContext.h"
+#include <scheduler/libcoroutine/Common.h>
+#include <scheduler/libcoroutine/PortableUContext.h>
 
 #if defined(__SYMBIAN32__)
 	#define CORO_STACK_SIZE     8192

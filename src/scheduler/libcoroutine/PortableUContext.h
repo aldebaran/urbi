@@ -56,9 +56,9 @@ extern	void		makecontext(ucontext_t*, void(*)(), int, ...);
 #	define ucontext libthread_ucontext
 #	define ucontext_t libthread_ucontext_t
 #	if defined(__i386__)
-#		include "PortableUContext386.h"
+#		include <scheduler/libcoroutine/PortableUContext386.h>
 #	else
-#		include "PortableUContextPPC.h"
+#		include <scheduler/libcoroutine/PortableUContextPPC.h>
 #	endif
 #endif
 
@@ -68,9 +68,9 @@ extern	void		makecontext(ucontext_t*, void(*)(), int, ...);
 #	define ucontext libthread_ucontext
 #	define ucontext_t libthread_ucontext_t
 #	if defined __i386__
-#		include "PortableUContext386.h"
+#		include <scheduler/libcoroutine/PortableUContext386.h>
 #	else
-#		include "PortableUContextPPC.h"
+#		include <scheduler/libcoroutine/PortableUContextPPC.h>
 #	endif
 extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 #endif
@@ -80,7 +80,7 @@ extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 #	define mcontext_t libthread_mcontext_t
 #	define ucontext libthread_ucontext
 #	define ucontext_t libthread_ucontext_t
-#	include "sparc-ucontext.h"
+#	include <scheduler/libcoroutine/sparc-ucontext.h>
 #endif
 
 #if defined(__arm__)
