@@ -56,13 +56,13 @@ namespace urbi
   void
   UVar::setProp(UProperty p, const UValue& v)
   {
-    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "=" << v);
+    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = " << v);
   }
 
   void
   UVar::setProp(UProperty p, const char* v)
   {
-    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "=" << v);
+    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = " << v);
   }
 
   void
@@ -72,10 +72,12 @@ namespace urbi
     // conversions between enums and strings.
     int i = static_cast<int>(v);
     if (p == PROP_BLEND && is_blendtype(i))
-      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "="
-                              << urbi::name(static_cast<UBlendType>(i)));
+      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = "
+                              << '"'
+                              << urbi::name(static_cast<UBlendType>(i))
+                              << '"');
     else
-      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << "=" << v);
+      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = " << v);
   }
 
   UValue
