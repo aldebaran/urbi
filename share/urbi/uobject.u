@@ -99,6 +99,10 @@ class Object.uvar
     parent.setProperty(name, "updateHook", getSlot("updateHook"))|
     var this.newPropertyHook = getSlot("newPropertyHook_")|
     var slotName = name + "_quote_n"|
+    // If the slot was containing a float, it already has a *_quote_n
+    // slot, which is not the right one.
+    if (parent.hasSlot(slotName))
+      parent.removeSlot(slotName) |
     parent.setSlot(slotName, function ()
       {
         var min = parent.getSlot(name).getProperty("val", "rangemin")|
@@ -117,11 +121,11 @@ class Object.uvar
       parent.getProperty = function(varname, propname)
       {
         if (parent.getSlot(varname).isA(uvar))
-          parent.getSlot(varname).getProperty("val", propname)
+          parent.getSlot(varname).getProperty("val", propname).acceptVoid
         else
           parent_getprop.apply([parent, varname, propname])
       }|
-      var parent.__has_uvar = 1
+      var parent.__has_uvar = true
     }|
     {}
   };
