@@ -1,3 +1,4 @@
+#include <libport/compiler.hh>
 #include <iostream>
 #include <sstream>
 
@@ -39,9 +40,10 @@ public:
     lastChangeVal = -1;
     UBindVar(all, lastAccessVal);
 
-
+    // Properties.
     UBindFunction(all, readProps);
     UBindFunction(all, writeProps);
+
     UBindFunction(all, writeD);
     UBindFunction(all, writeS);
     UBindFunction(all, writeL);
@@ -166,11 +168,13 @@ public:
     return 0;
   }
 
-
-  urbi::UList readProps(const std::string &name)
+  /// Return the value of the properties of the variable \a name.
+  urbi::UList
+  readProps(const std::string& name)
   {
     urbi::UVar v(name);
     urbi::UList res;
+
 #define APPEND(Value)                                   \
     res.array.push_back(new urbi::UValue(Value))
 #define APPEND_UFLOAT(Prop)                     \
@@ -183,9 +187,9 @@ public:
     APPEND_UFLOAT(delta);
     urbi::UValue bl = v.blend;
     APPEND(bl);
-
 #undef APPEND_UFLOAT
 #undef APPEND
+
     return res;
   }
 

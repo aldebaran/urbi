@@ -216,38 +216,36 @@ namespace urbi
       return 0;
     }
     if (!has_terminator(format))
-      strcat(sendBuffer, ",");
+      strcat(sendBuffer, ",\n");
     std::string tag = make_tag(*this, mtag, mmod);
     std::string cmd;
     if (kernelMajor_ > 1)
-      cmd = std::string() +
-        "if (!hasSlot(\"" + tag + "\"))"
-        "{"
-        "  var lobby." + tag + " = Channel.new(\"" + tag + "\");"
-        "  var lobby.__created_chan__;"
-        "};"
-        + tag + " << ";
-    else
-      cmd = std::string() + tag + " << ";
-    effectiveSend(cmd.c_str(), cmd.length());
+      // Really create the channel for this tag, as the user is
+      // probably using this tag in the code.
+      cmd += ("if (!hasSlot(\"" + tag + "\"))\n"
+              "{\n"
+              "  var this." + tag + " = Channel.new(\"" + tag + "\")|\n"
+              "  var this.__created_chan__ = true |\n"
+              "}|\n");
+    cmd += tag + " << ";
+    effective_send(cmd);
     queueLock_.lock();
-    rc = effectiveSend(sendBuffer, strlen(sendBuffer));
+    rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     if (kernelMajor_ > 1)
     {
-      cmd = std::string() +
-        "if (hasSlot(\"__created_chan__\"))"
-        "{"
-        "  lobby.removeSlot(\"__created_chan__\"); "
-        "  lobby.removeSlot(\"" + tag + "\");"
-        "};";
-      effectiveSend(cmd.c_str(), cmd.length());
+      cmd = ("if (hasSlot(\"__created_chan__\"))\n"
+             "{\n"
+             "  removeSlot(\"__created_chan__\")|\n"
+             "  removeSlot(\"" + tag + "\")|\n"
+             "};\n");
+      effective_send(cmd);
     }
 
     if (mtag)
       tag = mtag;
-    return waitForTag(tag.c_str());
+    return waitForTag(tag);
   }
 
   UMessage* USyncClient::syncGet(const char* format, ...)
