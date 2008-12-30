@@ -52,5 +52,5 @@ XFAIL_TESTS +=					\
 1.x/modifiers/sinus.chk				\
 1.x/modifiers/speed-zero.chk			\
 1.x/new-init.chk				\
-2.x/uob/group.chk				\
-uob/remote/all/write-prop.chk
+2.x/uob/group.chk
+
