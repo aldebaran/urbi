@@ -47,9 +47,9 @@ endif EXAMPLES
 ## Convenient shortcuts.  ##
 ## ---------------------- ##
 
-.PHONY: libs
+.PHONY: core libs
 libs: $(LTLIBRARIES)
-
+core: libs urbi-launch$(EXEEXT)
 
 ## ------------ ##
 ## version.hh.  ##

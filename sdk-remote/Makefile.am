@@ -22,10 +22,10 @@ include include/local.mk
 ## Convenient shortcuts.  ##
 ## ---------------------- ##
 
-.PHONY: libs
-libs:
+.PHONY: core libs
+core libs:
 	$(MAKE) $(AM_MAKEFLAGS) -C lib/libport
-	$(MAKE) -C src libs
+	$(MAKE) -C src $@
 
 
 ## ------- ##
