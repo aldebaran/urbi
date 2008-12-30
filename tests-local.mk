@@ -48,9 +48,6 @@ TO_CHECK_TESTS =				\
 
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
-1.x/modifiers/init-in-pipe-with-time.chk	\
-1.x/modifiers/sinus.chk				\
-1.x/modifiers/speed-zero.chk			\
 1.x/new-init.chk				\
 2.x/uob/group.chk
 
