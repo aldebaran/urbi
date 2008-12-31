@@ -127,6 +127,9 @@ namespace scheduler
     /// \return Some scheduler statistics.
     const scheduler_stats_type& stats_get() const;
 
+    /// Reset statistics.
+    void stats_reset();
+
     /// Indicate that we now want real-time behaviour (which may be already
     /// on).
     void real_time_behaviour_set();

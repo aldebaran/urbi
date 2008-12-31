@@ -398,4 +398,10 @@ namespace scheduler
     return stats_;
   }
 
+  void
+  Scheduler::stats_reset()
+  {
+    stats_.resize(0);
+  }
+
 } // namespace scheduler
