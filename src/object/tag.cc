@@ -168,12 +168,26 @@ namespace object
     return parent_;
   }
 
+  bool
+  Tag::frozen()
+  {
+    return value_->frozen();
+  }
+
+  bool
+  Tag::blocked()
+  {
+    return value_->blocked();
+  }
+
   void
   Tag::initialize(CxxObject::Binder<Tag>& bind)
   {
     bind(SYMBOL(block), &Tag::block);
+    bind(SYMBOL(blocked), &Tag::blocked);
     bind(SYMBOL(enter), &Tag::enter);
     bind(SYMBOL(freeze), &Tag::freeze);
+    bind(SYMBOL(frozen), &Tag::frozen);
     bind(SYMBOL(getParent), &Tag::parent_get);
     bind(SYMBOL(leave), &Tag::leave);
     bind(SYMBOL(name), &Tag::name);

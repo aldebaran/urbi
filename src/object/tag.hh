@@ -32,6 +32,8 @@ namespace object
     void stop(runner::Runner&, objects_type&);
     void unblock();
     void unfreeze();
+    bool frozen();
+    bool blocked();
 
     /// Return, potentially creating first, the enter event for \a this
     rObject enter(runner::Runner& r);
