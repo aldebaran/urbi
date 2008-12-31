@@ -298,6 +298,12 @@ namespace object
     Dictionary::value_type res;
     const scheduler::scheduler_stats_type& stats =
       r.scheduler_get().stats_get();
+
+    // If statistics have just been reset, return "nil" since we cannot
+    // return anything significant.
+    if (stats.empty())
+      return nil_class;
+
     // The space after "Symbol(" is mandatory to avoid triggering an error in
     // symbol generation code
 #define ADDSTAT(Suffix, Function, Divisor)				\
@@ -310,6 +316,14 @@ namespace object
     ADDSTAT(Variance, variance, 1e3);
 #undef ADDSTAT
     return new Dictionary(res);
+  }
+
+  static rObject
+  system_class_resetStats(runner::Runner& r, objects_type args)
+  {
+    check_arg_count(args.size() - 1, 0);
+    r.scheduler_get().stats_reset();
+    return void_class;
   }
 
   static rObject
@@ -440,6 +454,7 @@ namespace object
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(registerAtJob);
+    DECLARE(resetStats);
     DECLARE(scopeTag);
     DECLARE(searchFile);
     DECLARE(searchPath);
