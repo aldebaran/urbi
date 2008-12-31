@@ -303,11 +303,11 @@ namespace object
 #define ADDSTAT(Suffix, Function, Divisor)				\
     res[libport::Symbol( "cycles" # Suffix)] = new Float(stats.Function() / Divisor)
     ADDSTAT(, size, 1);
-    ADDSTAT(Max, max, 1000.0);
-    ADDSTAT(Mean, mean, 1000.0);
-    ADDSTAT(Min, min, 1000.0);
-    ADDSTAT(StdDev, standard_deviation, 1000.0);
-    ADDSTAT(Variance, variance, 1000.0);
+    ADDSTAT(Max, max, 1e6);
+    ADDSTAT(Mean, mean, 1e6);
+    ADDSTAT(Min, min, 1e6);
+    ADDSTAT(StdDev, standard_deviation, 1e6);
+    ADDSTAT(Variance, variance, 1e3);
 #undef ADDSTAT
     return new Dictionary(res);
   }

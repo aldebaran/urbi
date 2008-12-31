@@ -190,6 +190,12 @@ of the callback :
   var s = Semaphore.new(1);
   s.criticalSection(function () { echo ("In the critical section") });
 
+"System.stats"
+--------------
+
+The output of "System.stats" is now expressed in seconds rather than
+milliseconds, for consistency with the rest of the kernel.
+
 UObjects
 ========
 
