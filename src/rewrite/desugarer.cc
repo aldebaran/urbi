@@ -37,9 +37,14 @@ namespace rewrite
     const ast::loc& loc = assign->location_get();
     const ast::modifiers_type* source = assign->modifiers_get();
     ast::rLValue what = assign->what_get().unsafe_cast<ast::LValue>();
+    ast::rConstBinding binding = what.unsafe_cast<const ast::Binding>();
+
     if (!what)
       errors_.error(what->location_get(),
                     "cannot use modifiers on pattern assignments");
+
+    if (binding)
+      what = binding->what_get();
 
     PARAMETRIC_AST(dict, "Dictionary.new");
 
@@ -76,8 +81,16 @@ namespace rewrite
       % target_value
       % modifiers;
 
-    result_ = recurse(ast::rExp(ast_lvalue_wrap(what, exp(trajectory)).get()));
-    result_->original_set(assign);
+    ast::rExp res = ast::rExp(ast_lvalue_wrap(what, exp(trajectory)).get());
+
+    if (binding)
+    {
+      PARAMETRIC_AST(declare, "var %lvalue:1 | %exp:2");
+      res = exp(declare % what % res);
+    }
+
+    res->original_set(assign);
+    result_ = recurse(res);
   }
 
   void

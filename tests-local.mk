@@ -52,5 +52,4 @@ XFAIL_TESTS +=					\
 2.x/uob/group.chk
 
 XFAIL_TESTS +=					\
-1.x/modifiers/sinus.chk				\
-2.x/reg/modifiers-segv.chk
+1.x/modifiers/sinus.chk
