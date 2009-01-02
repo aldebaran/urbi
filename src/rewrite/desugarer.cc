@@ -41,7 +41,6 @@ namespace rewrite
       errors_.error(what->location_get(),
                     "cannot use modifiers on pattern assignments");
 
-
     PARAMETRIC_AST(dict, "Dictionary.new");
 
     ast::rExp modifiers = exp(dict);
@@ -77,7 +76,7 @@ namespace rewrite
       % target_value
       % modifiers;
 
-    result_ = ast_lvalue_wrap(what, exp(trajectory)).get();
+    result_ = recurse(ast::rExp(ast_lvalue_wrap(what, exp(trajectory)).get()));
     result_->original_set(assign);
   }
 
