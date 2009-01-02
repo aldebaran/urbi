@@ -107,6 +107,19 @@ instead of:
 
 at (?myEvent((var x), (var y), 1))
 
+Execution
+=========
+
+Waituntil and bindings
+----------------------
+
+Bindings performed in "waituntil" constructs are now available in its
+context:
+
+waituntil(?event(var x));
+// x is available
+echo (x);
+
 Standard library
 ================
 
