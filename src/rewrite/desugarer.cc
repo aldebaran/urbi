@@ -31,35 +31,73 @@ namespace rewrite
     super_type::visit(s);
   }
 
-  ast::modifiers_type*
-  Desugarer::handle(const ast::modifiers_type* originals)
+  void
+  Desugarer::desugar_modifiers(const ast::Assign* assign)
   {
-    ast::modifiers_type* res = 0;
-    if (originals)
+    const ast::loc& loc = assign->location_get();
+    const ast::modifiers_type* source = assign->modifiers_get();
+    ast::rLValue what = assign->what_get().unsafe_cast<ast::LValue>();
+    if (!what)
+      errors_.error(what->location_get(),
+                    "cannot use modifiers on pattern assignments");
+
+
+    PARAMETRIC_AST(dict, "Dictionary.new");
+
+    ast::rExp modifiers = exp(dict);
+    foreach (const ast::modifiers_type::value_type& elt, *source)
     {
-      res = new ast::modifiers_type();
-      foreach (ast::modifiers_type::value_type original, *originals)
-        (*res)[original.first] =  recurse(original.second);
+      PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
+
+      add % modifiers
+        % new ast::String(loc, elt.first)
+        % recurse(elt.second);
+      modifiers = exp(add);
     }
-    return res;
+
+    ast::rExp target_value = recurse(assign->value_get());
+
+    ast::rLValue tgt = ast_lvalue_once(what);
+    PARAMETRIC_AST(trajectory,
+                   "TrajectoryGenerator.new("
+                   "  closure ( ) { %exp:1 }," // getter
+                   "  closure (v) { %exp:2 }," // Setter
+                   "  %exp:3," // Target value
+                   "  %exp:4" // modifiers
+                   ").run"
+      );
+
+    ast::rExp read = new_clone(tgt);
+    ast::rExp write = new ast::Assignment(loc, new_clone(tgt),
+                                          parser::ast_call(loc, SYMBOL(v)));
+
+    trajectory
+      % read
+      % write
+      % target_value
+      % modifiers;
+
+    result_ = ast_lvalue_wrap(what, exp(trajectory)).get();
+    result_->original_set(assign);
   }
 
   void
   Desugarer::visit(const ast::Assign* assign)
   {
-//     std::cerr << "ASSIGN: " << *assign << std::endl;
     ast::loc loc = assign->location_get();
+
+    // Handle modifiers
+    if (assign->modifiers_get())
+      return desugar_modifiers(assign);
+    assert(!assign->modifiers_get());
 
     // Simple declaration: var x = value
     if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())
     {
       if (!allow_decl_)
         errors_.error(what->location_get(), "declaration not allowed here");
-      ast::modifiers_type* modifiers = handle(assign->modifiers_get());
-      result_ = new ast::Declaration(loc,
-                                     what->what_get(),
-                                     assign->value_get(),
-                                     modifiers);
+      result_ = new ast::Declaration(loc, what->what_get(),
+                                     assign->value_get());
       result_ = recurse(result_);
       return;
     }
@@ -67,52 +105,7 @@ namespace rewrite
     // Simple assignment: x = value
     if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
     {
-      // Build dictionary for the (potential) modifiers
-      ast::rExp modifiers = 0;
-      if (const ast::modifiers_type* source = assign->modifiers_get())
-      {
-        PARAMETRIC_AST(dict, "Dictionary.new");
-
-        modifiers = exp(dict);
-        foreach (const ast::modifiers_type::value_type& elt, *source)
-        {
-          PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
-
-          add % modifiers
-            % new ast::String(loc, elt.first)
-            % recurse(elt.second);
-          modifiers = exp(add);
-        }
-      }
-
-      if (modifiers)
-      {
-        ast::rExp target_value = recurse(assign->value_get());
-        ast::rLValue tgt = ast_lvalue_once(call);
-        PARAMETRIC_AST(trajectory,
-                       "TrajectoryGenerator.new("
-                       "  closure ( ) { %exp:1 }," // getter
-                       "  closure (v) { %exp:2 }," // Setter
-                       "  %exp:3," // Target value
-                       "  %exp:4" // modifiers
-                       ").run"
-          );
-
-        ast::rExp read = new_clone(tgt);
-        ast::rExp write = new ast::Assignment(loc, new_clone(tgt),
-                                              parser::ast_call(loc, SYMBOL(v)), 0);
-
-        trajectory
-          % read
-          % write
-          % target_value
-          % modifiers;
-
-        result_ = ast_lvalue_wrap(call, exp(trajectory)).get();
-      }
-      else
-        result_ = new ast::Assignment(loc, call, assign->value_get(), 0);
-
+      result_ = new ast::Assignment(loc, call, assign->value_get());
       result_ = recurse(result_);
       return;
     }
@@ -121,18 +114,12 @@ namespace rewrite
     if (ast::rSubscript sub =
         assign->what_get().unsafe_cast<ast::Subscript>())
     {
-      ast::Assignment* res = new ast::Assignment(loc,
-	ast::rLValue(reinterpret_cast<ast::LValue*>(sub->target_get().get())),
-	assign->value_get(), handle(assign->modifiers_get()));
-      res->method_set(new libport::Symbol(SYMBOL(SBL_SBR_EQ)));
-      res->extra_args_set(maybe_recurse_collection(sub->arguments_get()));
-      result_ = recurse(ast::rExp(res));
+      ast::exps_type* args = maybe_recurse_collection(sub->arguments_get());
+      args->push_back(recurse(assign->value_get()));
+      result_ = ast_call(loc, recurse(sub->target_get()),
+                         SYMBOL(SBL_SBR_EQ), args);
       return;
     }
-
- // No modifiers allowed below this point.
-    if (assign->modifiers_get())
-      errors_.error(assign->location_get(), "Modifiers not allowed here");
 
     // Property assignment: x->prop = value
     if (ast::rProperty prop =
@@ -193,7 +180,7 @@ namespace rewrite
       errors_.error(binding->location_get(), "declaration not allowed here");
     ast::loc loc = binding->location_get();
 
-    result_ = new ast::Declaration(loc, binding->what_get(), 0, 0);
+    result_ = new ast::Declaration(loc, binding->what_get(), 0);
     result_ = recurse(result_);
   }
 

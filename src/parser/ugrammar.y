@@ -607,7 +607,7 @@ stmt:
       // Compiled as "var name = function args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Function(@$, symbols_to_decs($3, @3),
-                                                  ast_scope (@$, $5)), 0);
+                                                  ast_scope (@$, $5)));
       $$->doc_set($4);
     }
 | "closure" k1_id formals doc block
@@ -617,7 +617,7 @@ stmt:
       // Compiled as "var name = closure args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Closure(@$, symbols_to_decs($3, @3),
-                                                 ast_scope (@$, $5)), 0);
+                                                 ast_scope (@$, $5)));
       $$->doc_set($4);
     }
 ;
@@ -757,12 +757,12 @@ exp:
 ;
 
 exp:
-  lvalue "+=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
-| lvalue "-=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
-| lvalue "*=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
-| lvalue "/=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
-| lvalue "^=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
-| lvalue "%=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, 0, $2); }
+  lvalue "+=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, $2); }
+| lvalue "-=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, $2); }
+| lvalue "*=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, $2); }
+| lvalue "/=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, $2); }
+| lvalue "^=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, $2); }
+| lvalue "%=" exp    { $$ = new ast::OpAssignment(@2, $1, $3, $2); }
 ;
 
 %token  MINUS_MINUS "--"

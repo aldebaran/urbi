@@ -1030,40 +1030,12 @@ Write:
         type: rExp
         desc: Initialization value.
         access: r
-    - modifiers:
-        type: modifiers_type*
-        desc: Time and trajectory modifiers
-        access: rW
-        mandatory: false
-    - method:
-        type: libport::Symbol*
-        desc: Method to call to perform the affectation.
-        access: rWw
-        init: '0'
-        mandatory: false
-    - extra_args:
-        type: exps_type*
-        desc: Extra arguments to pass to the method.
-        access: rWw
-        init: '0'
-        mandatory: false
 
   printer:
     - ~what
     - '{
          if (const rExp& value = n->value_get())
            ostr_ << " = " << *value;
-       }'
-    - '{
-         if (const modifiers_type* modifiers = n->modifiers_get())
-         {
-           foreach (const modifiers_type::value_type& modifier, *modifiers)
-           {
-             ostr_ << " ";
-             ostr_ << modifier.first << ": ";
-             operator()(modifier.second.get());
-           }
-         }
        }'
 
 Declaration:
@@ -1362,6 +1334,17 @@ Assign:
     - ~what
     - '" = "'
     - ~value
+    - '{
+         if (const modifiers_type* modifiers = n->modifiers_get())
+         {
+          foreach (const modifiers_type::value_type& modifier, *modifiers)
+           {
+             ostr_ << " ";
+             ostr_ << modifier.first << ": ";
+             operator()(modifier.second.get());
+           }
+         }
+       }'
 
 Subscript:
   super: LValueArgs

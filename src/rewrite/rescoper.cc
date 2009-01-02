@@ -20,14 +20,13 @@ namespace rewrite
   ast::rExp
   Rescoper::make_declaration(const ast::loc& l, ast::rConstLValue what)
   {
-    return new ast::Declaration(l, recurse(what), 0, 0);
+    return new ast::Declaration(l, recurse(what), 0);
   }
 
   /// Build '<s> = <value>'
   ast::rExp
   Rescoper::make_assignment(const ast::loc& l, ast::rConstLValue what,
-                            ast::rConstExp value,
-                            const ast::modifiers_type* modifiers)
+                            ast::rConstExp value)
   {
     if (!value)
     {
@@ -35,8 +34,7 @@ namespace rewrite
       return exp(ast);
     }
     return
-      new ast::Assignment(l, recurse(what), recurse(value),
-                          maybe_recurse_collection(modifiers));
+      new ast::Assignment(l, recurse(what), recurse(value));
   }
 
   /**
@@ -56,7 +54,7 @@ namespace rewrite
       ast::rConstLValue call = dec->what_get();
       nary->push_back(make_declaration(l, call),
                       ast::flavor_pipe);
-      return make_assignment(l, call, dec->value_get(), dec->modifiers_get());
+      return make_assignment(l, call, dec->value_get());
     }
     else
       return subject;

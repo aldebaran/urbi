@@ -258,22 +258,8 @@ namespace binder
     }
     // Assignment to a slot
     else
-    {
-      if (!input->method_get() && !input->extra_args_get())
-        result_ = changeSlot(loc, call->target_get(), name, SYMBOL(updateSlot),
-	  input->value_get());
-      else
-      {
-	PARAMETRIC_AST(call, "%exp:1 . %id:2 (%exps:3)");
-	ast::exps_type* args = new ast::exps_type(*input->extra_args_get());
-	*args << input->value_get();
-	call % input->what_get()
-	     % (input->method_get()?
-	       libport::Symbol(*input->method_get()): SYMBOL(updateSlot))
-	     % args;
-	result_ = recurse(ast::rCall(call.result<ast::Call>()));
-      }
-    }
+      result_ = changeSlot(loc, call->target_get(), name, SYMBOL(updateSlot),
+                           input->value_get());
     result_->original_set(input);
   }
 

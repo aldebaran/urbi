@@ -42,8 +42,9 @@ namespace rewrite
       (While)
       );
 
-    ast::modifiers_type* handle(const ast::modifiers_type* originals);
   private:
+    void desugar_modifiers(const ast::Assign* assign);
+
     bool pattern_;
     bool allow_decl_;
     bool allow_subdecl_;
