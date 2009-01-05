@@ -217,7 +217,11 @@ Run it with 'ltrace -C -s 1024 urbi-launch ...' , and look for
 lines containing "dlerror" in the output. One will contain the exact
 message that occurred while trying to load your shared library.
 
-Note that this problem is MacOS and Linux specific.
+Under Mac OS X, the DYLD_PRINT_APIS environment variable can be set
+to 1 to make the shared library loader more verbose and display
+all its attempts to load a file to stderr.
+
+Note that this problem is Mac OS X and Linux specific.
 
 Various
 =======
