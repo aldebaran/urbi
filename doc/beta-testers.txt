@@ -9,6 +9,7 @@ Making a beta
 Do not forget to tag the release.  Something like:
 
 git tag -a -m "Linux/x86 and Windows beta version." preview/2.0/beta2
+git push --tags origin
 
 Procedure
 #########
