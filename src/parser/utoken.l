@@ -201,28 +201,6 @@ do {                                            \
   }
 
 
-#define RETURN_VALUE(Token, Value)                      \
-  {                                                     \
-    PRE_SKIP();                                         \
-    return yy::parser::make_ ## Token(Value, loc);      \
-  }
-
-// For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
-#define RETURN_FLAVOR(Symbol, Flavor)                                   \
-  RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
-
-// Return a std::string of kind Token with yytext as value.
-#define RETURN_STR(Token)                       \
-  RETURN_VALUE(Token, yytext)
-
-// Return a Symbol of kind Token with yytext as Value.
-#define RETURN_SYMBOL(Token)                    \
-  RETURN_VALUE(Token, libport::Symbol(yytext))
-
-// Return an operator whose string representation is kept as a Symbol.
-#define RETURN_OP(Token)                        \
-  RETURN_SYMBOL(Token)
-
 // Return an assignment operator: its value is the base operator.
 #define RETURN_ASSIGN_OP(Token)                 \
   PRE_SKIP();                                   \
@@ -237,6 +215,10 @@ do {                                            \
     RETURN_VALUE(DURATION, boost::lexical_cast<ufloat>(yytext) * (Scale)); \
   }
 
+// For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
+#define RETURN_FLAVOR(Symbol, Flavor)                                   \
+  RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
+
 #define RETURN_FLAVORED_KEYWORD(Token)                  \
   {                                                     \
     PRE_SKIP();                                         \
@@ -248,6 +230,25 @@ do {                                            \
       default:  RETURN_FLAVOR(Token, semicolon);        \
     }                                                   \
   }
+
+// Return an operator whose string representation is kept as a Symbol.
+#define RETURN_OP(Token)                        \
+  RETURN_SYMBOL(Token)
+
+// Return a std::string of kind Token with yytext as value.
+#define RETURN_STR(Token)                       \
+  RETURN_VALUE(Token, yytext)
+
+// Return a Symbol of kind Token with yytext as Value.
+#define RETURN_SYMBOL(Token)                    \
+  RETURN_VALUE(Token, libport::Symbol(yytext))
+
+#define RETURN_VALUE(Token, Value)                      \
+  {                                                     \
+    PRE_SKIP();                                         \
+    return yy::parser::make_ ## Token(Value, loc);      \
+  }
+
 
 
 /// Unput a large string.
