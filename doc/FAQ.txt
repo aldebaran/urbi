@@ -202,6 +202,23 @@ You can use the "for" construct to iterate over the elements of a list:
   [00000002] *** 11
   [00000003] *** 12
 
+UObjects loading
+================
+
+urbi-launch fails with 'myuobject: file not found'. What can I do?
+------------------------------------------------------------------
+
+If you are sure the file is there, the most probable cause is an
+undefined symbol in your shared library. A libltdl quirk prevents
+us from displaying a more accurate error message.
+You can use a tool named "ltrace" to obtain the exact error message.
+Ltrace is a standard package on most Linux distributions.
+Run it with 'ltrace -C -s 1024 urbi-launch ...' , and look for
+lines containing "dlerror" in the output. One will contain the exact
+message that occurred while trying to load your shared library.
+
+Note that this problem is MacOS and Linux specific.
+
 Various
 =======
 
