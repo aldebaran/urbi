@@ -1,0 +1,44 @@
+#! /bin/sh -e
+
+# Call this script when a release is to be publish to the download
+# site.  Don't forget to tag it if it is a release.
+
+oses="windows linux macos"
+
+# Get the content of the directory containing the latest successful builds:
+# kernel-2.0-beta3-linux-x86.tar.gz
+# kernel-2.0-beta3-macos-x86.tar.gz
+# kernel-2.0-beta3-linux-x86-gcc4-debug_dynamic.tar.gz
+# kernel-2.0-beta2-498-g4f7f361-windows-x86.zip
+# kernel-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.gz
+# kernel-2.0-beta2-498-g4f7f361-linux-x86.tar.gz
+# kernel-2.0-beta2-498-g4f7f361-macos-x86.tar.gz
+all=$(ssh build@gate 'cd built/kernel-2.0 && ls -1t *windows*.zip *linux*.gz *macos-*.gz')
+
+# Make sure that we have the same version for the three architectures.
+latest=$(echo "$all" |
+    perl -n -e 'if (m/(kernel-2.0-beta\d(?:-[\d0-f]+)?)
+                      -(?:linux|macos|windows)
+                      -(x86)
+                      (?:-gcc4-debug_dynamic)?/x)
+                { print "$1\n"; exit 0; }')
+
+test -n "$latest"
+
+for os in $oses
+do
+  pack=$(echo "$all" | grep -e "$latest-$os")
+  if test -z "$pack"; then
+    echo >&2 "$0: $latest does not exist for $os"
+    exit 1
+  fi
+done
+
+for os in $oses
+do
+  pack=$(echo "$all" | grep -e "$latest-$os")
+  cmd="scp \"build@gate:built/kernel-2.0/$pack\" /tmp/$pack &&
+   scp /tmp/$pack downloads@www.gostai.com:urbi-sdk-2.0_beta/$os"
+  echo "$cmd"
+  eval "$cmd"
+done
