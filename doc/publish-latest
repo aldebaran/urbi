@@ -38,7 +38,8 @@ for os in $oses
 do
   pack=$(echo "$all" | grep -e "$latest-$os")
   cmd="scp \"build@gate:built/kernel-2.0/$pack\" /tmp/$pack &&
-   scp /tmp/$pack downloads@www.gostai.com:urbi-sdk-2.0_beta/$os"
+   scp /tmp/$pack downloads@www.gostai.com:urbi-sdk-2.0_beta/$os/$pack &&
+   ssh downloads@www.gostai.com 'chmod 640 urbi-sdk-2.0_beta/$os/$pack'"
   echo "$cmd"
   eval "$cmd"
 done
