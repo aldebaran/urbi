@@ -115,9 +115,14 @@ namespace parser
   {
     PARAMETRIC_AST
       (desugar,
-       "var '$pattern' = Pattern.new(%exp:1) |"
-       "%exp:2.'waituntil'('$pattern') |"
-       "%exp:3 |");
+       "{"
+       "  var '$pattern' = Pattern.new(%exp:1) |"
+       "  %exp:2.'waituntil'('$pattern') |"
+       "  {"
+       "    %unscope: 2 |"
+       "    %exp:3 |"
+       "  }"
+       "}");
 
     ast::rList d_payload = new ast::List
       (loc, payload);
