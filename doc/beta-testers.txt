@@ -1,7 +1,7 @@
 Current release manager
 #######################
 
-The release manager for k2 beta is Samuel Tardieu <tardieu@gostai.com>.
+The release manager for k2 beta is Akim Demaille <demaille@gostai.com>.
 
 Procedure
 #########
@@ -35,15 +35,25 @@ several of them may be more appropriate.
 List of beta testers
 ####################
 
-ENSTAR
-======
-Contact: Matthieu Nottale <nottale@gostai.com>
-Environment: Debian sarge
-
 ALDEBARAN
 =========
 Contact: Alexandre Mazel <mazel@aldebaran-robotics.com>
 Environment: Windows, Mac, Nao
+
+ENST
+====
+Contact: Samuel Tardieu <sam@rfc1149.net>
+Environment: Linux x86 et x86_64.
+
+ENSTA
+=====
+Contact: David Filliat <david.filliat@ensta.fr>
+Environment: Mac Intel Leopard
+
+ENSTAR
+======
+Contact: Matthieu Nottale <nottale@gostai.com>
+Environment: Debian sarge
 
 HAUTE-ÉCOLE ARC
 ===============
@@ -51,18 +61,13 @@ Contact: Alexandre Gabus <Alexandre.Gabus@he-arc.ch> (student)
      and Matthieu Amiguet <matthieu.amiguet@he-arc.ch> (advisor)
 Environment: Linux
 
-PAL
-===
-Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
-Environment: Unknown yet
-
 LORIA
 =====
 Contact: Alain Dutech <Alain.Dutech@loria.fr>
          Olivier Rochel <olivier.rochel@loria.fr>
 Environment: Unknown yet
 
-ENSTA
-=====
-Contact: David Filliat <david.filliat@ensta.fr>
-Environment: Mac Intel Leopard
+PAL
+===
+Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
+Environment: Unknown yet

@@ -30,7 +30,7 @@
    [11712000] 42
    feature(42);
    [11776000:error] !!! input.u:8.1-11: expected 0 arguments, given 1
-   
+
    feature = function () { 42 };
    [11872000] function () {
      42
@@ -41,7 +41,7 @@
    [12128000] 42
    feature(42);
    [12192000:error] !!! input.u:10.1-11: expected 0 arguments, given 1
-   
+
    feature = function (x) { x };
    [12256000] function (x) {
      x
@@ -87,7 +87,7 @@
    [10784000] 5
    counter;
    [10912000] 6
-   }}}   
+   }}}
 
  * Arbitrary identifiers.[[br]]
    Identifiers can be composed of any sequence of characters enclosed
@@ -223,7 +223,7 @@ To prevent interference with high-priority code, use {{{seal}}}.
 Once activated:
   * no {{{+connection}}} can be used to connections with higher priority.
   * no {{{setpriority}}} can be called with a positive value.
- 
+
 
 == New in 1.5 ==
 
@@ -308,7 +308,7 @@ To list existing declared events.
 
 === Multiple inheritance ===
 The inherit/disinherit keywords are now available to manage inheritance and
-multiple inheritance at runtime. Syntax:  
+multiple inheritance at runtime. Syntax:
 {{{
   class1 inherit class2;
   class1 disinherit class2;
@@ -316,7 +316,7 @@ multiple inheritance at runtime. Syntax:
 
 === {{{::}}} ===
 
-The :: construct allows you to call a parent method inside a redefined 
+The :: construct allows you to call a parent method inside a redefined
 {{{
   subclass method:
 
@@ -339,7 +339,7 @@ The :: construct allows you to call a parent method inside a redefined
  * derivative extension fixed for autoupdate variables
 
 === New features ===
- * add delete operator 
+ * add delete operator
  * group objects, hardware, software added
 
 === Changes ===
@@ -356,8 +356,8 @@ The :: construct allows you to call a parent method inside a redefined
 
 === Changes ===
 
- * register with {{{external var <name>}}} or 
-   {{{external function(<nbparam>) <name>}}} or 
+ * register with {{{external var <name>}}} or
+   {{{external function(<nbparam>) <name>}}} or
    {{{external event(<nbparam>) <name>}}}.
  * syntax change def=>var, function or event, defcheckon=>strict, group=>alias
  * class implementation (see detail in doc)
@@ -415,7 +415,7 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
  * the {{{reset}}} command now virtually reboot your robot, so that you can reload scripts and test modifications easily
  * the {{{undefall}}} command clear all user defined variables and functions
  * list type is now available: {{{[1,2,"bla",14]}}}. You can iterate a list L with the {{{foreach}}} command: {{{foreach i in L {...}}}};
- * {{{+bg}}} flag added 
+ * {{{+bg}}} flag added
  * echo can now have a connection modifier to specify a connection where the message is displayed: echo "..." connection:ID. ID can be {{{all}}} or {{{other}}} or a specific connection ID.
  * partial test evaluation occurs now when (false && b) or (true || b) is calculated (b is not evaluated)
  * prefixing variables with {{{local}}} make then explicitely local to the connection, which is useful inside functions to access local variables.
@@ -448,7 +448,7 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 
 
 === New features ===
- * a new {{{=~=}}} comparison operator is available: it takes into accound the delta property of variables to perform a ~= comparison. Very useful to put tests on motor values. It is also better than the {{{global.epsilontilde + ~=}}} approach because it is device specific. Delta composition for complex expressions will be added soon. 
+ * a new {{{=~=}}} comparison operator is available: it takes into accound the delta property of variables to perform a ~= comparison. Very useful to put tests on motor values. It is also better than the {{{global.epsilontilde + ~=}}} approach because it is device specific. Delta composition for complex expressions will be added soon.
  * the ghost connection now outputs its messages to the debug port (59000)
  * stopall command clears all commands in every connection. It is very powerful and should be used carefuly.
 
@@ -488,24 +488,24 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
   * the {{{+condout}}} flag is changed into {{{+stopif}}}, for consistancy with the new {{{+blockif}}} flag
 
 === Bug fixes ===
- * +report now works fine with function calls 
- * load and exec now work as expected, they actually insert the code where the command is called (and not at the end of the execution buffer) 
- * tags for grouped commands that include background commands now work (like tag:{at ...}) 
- * {{{loop {noop}}}} and {{{loop noop}}} now run the same, without having a double execution time difference 
- * the FOR command morphing policy has been changed to a more semantically valid version 
+ * +report now works fine with function calls
+ * load and exec now work as expected, they actually insert the code where the command is called (and not at the end of the execution buffer)
+ * tags for grouped commands that include background commands now work (like tag:{at ...})
+ * {{{loop {noop}}}} and {{{loop noop}}} now run the same, without having a double execution time difference
+ * the FOR command morphing policy has been changed to a more semantically valid version
 
 === New features ===
- * the +blockif(test) flag is now available and the command is blocked when the test is true, unblocked when it is false. 
- * def is now working with variables. {{{def my.var}}} defines my.var, without a type. {{{def {x;y;z}}}} defines x,y and z in one shot. {{{def mydevice {a;b}}}} defines mydevice.a and mydevice.b in one shot. The interest of this feature is to use the {{{defchekon}}} command to make the interpreter strict about undefined assignments (reject it). {{{defcheckoff}}} returns to the default permissive policy. 
- * the 'e extension is available: it gives the difference between estimated value and measured value for a device, which is a crude measure of the force/torque for a motor device. 
- * for any variable the ' and '' extensions are now available to return the derivative and the second derivative. The value used is the theoretical motion profile as expressed by the currently running assignments. For the real derivative and second derivative, measured from the sensor output, the 'd and 'dd extensions are available. 
+ * the +blockif(test) flag is now available and the command is blocked when the test is true, unblocked when it is false.
+ * def is now working with variables. {{{def my.var}}} defines my.var, without a type. {{{def {x;y;z}}}} defines x,y and z in one shot. {{{def mydevice {a;b}}}} defines mydevice.a and mydevice.b in one shot. The interest of this feature is to use the {{{defchekon}}} command to make the interpreter strict about undefined assignments (reject it). {{{defcheckoff}}} returns to the default permissive policy.
+ * the 'e extension is available: it gives the difference between estimated value and measured value for a device, which is a crude measure of the force/torque for a motor device.
+ * for any variable the ' and '' extensions are now available to return the derivative and the second derivative. The value used is the theoretical motion profile as expressed by the currently running assignments. For the real derivative and second derivative, measured from the sensor output, the 'd and 'dd extensions are available.
 
 
 === Changes ===
- * {{{def f(x) instruction;}}} is now valid if instruction is alone (no brackets needed). Otherwise, brackets must be used to enclose several commands, like: {{{def f(x) {x;x+1};}}}  
+ * {{{def f(x) instruction;}}} is now valid if instruction is alone (no brackets needed). Otherwise, brackets must be used to enclose several commands, like: {{{def f(x) {x;x+1};}}}
  * array indexes are now "auto-static". There is no need to use the tab[:i] construct in a loop. tab[i] has the same effect. This is to simplify the syntax, considering that array indexes would probably never need to be non-static. ===
- * {{{delayed}}} motor messages no longer exist. They can be emulated trivially with: whenever (device.val'e > device.val->delta) echo {{{****** delayed}}}; 
- * speedmax enforcement is now very strict and works. You can restrict any motor device {{{d}}} with: d.val->speedmax = ... (units/s) 
+ * {{{delayed}}} motor messages no longer exist. They can be emulated trivially with: whenever (device.val'e > device.val->delta) echo {{{****** delayed}}};
+ * speedmax enforcement is now very strict and works. You can restrict any motor device {{{d}}} with: d.val->speedmax = ... (units/s)
 
 == Version 0.9.5                         released on 24.07.2005 ==
 
@@ -513,80 +513,80 @@ Major kernel code revision for variable storage and access. Caching
 mechanism implemented. Various perfomance optimization.
 
 === Bug fixes ===
- * fixed some bug for the propagation of {{{stop}}} commands in the command tree (now: only !UONQUEUE commands affected). 
- * prefixes are now ignored for system functions like {{{sin}}}, {{{string}}}, {{{cos}}},... This make toto.sin(2); a valid evaluation (it's very permissive) but solve a known bug with cross client function definitions. 
- * no more spasm-like shake after a motoron when the joints have moved. 
+ * fixed some bug for the propagation of {{{stop}}} commands in the command tree (now: only !UONQUEUE commands affected).
+ * prefixes are now ignored for system functions like {{{sin}}}, {{{string}}}, {{{cos}}},... This make toto.sin(2); a valid evaluation (it's very permissive) but solve a known bug with cross client function definitions.
+ * no more spasm-like shake after a motoron when the joints have moved.
 
 === New features ===
 
- * function 'abs' added 
- * global.ghostID variable added: it returns the ID of the ghost connection 
- * function cpuload() added and a warning is issued when cpuload > 120% for more than 10 iterations of the work loop 
+ * function 'abs' added
+ * global.ghostID variable added: it returns the ID of the ghost connection
+ * function cpuload() added and a warning is issued when cpuload > 120% for more than 10 iterations of the work loop
 
 === Changes ===
 
- * Aliases are now traced once when a command is executed, so dynamic modification of aliases chains will not affect already running code. This is done for optimization purposes.  
- * variable access caching system is functional 
- * the way the group hiearchy is passed has changed: group a {b,c};a.x=0 time:10; will not generate errors on a.x anymore. Only leaves are taken into account for error report (this is a subtle problem, but you will be happy it is solved). 
+ * Aliases are now traced once when a command is executed, so dynamic modification of aliases chains will not affect already running code. This is done for optimization purposes.
+ * variable access caching system is functional
+ * the way the group hiearchy is passed has changed: group a {b,c};a.x=0 time:10; will not generate errors on a.x anymore. Only leaves are taken into account for error report (this is a subtle problem, but you will be happy it is solved).
 
 
 
 == Version 0.9.4                         released on 05.05.2005 ==
 === Bug fixes ===
- * grouped commands without tag are not labelled {{{notag}}} anymore, but __UGrouped_set_of_commands__ 
+ * grouped commands without tag are not labelled {{{notag}}} anymore, but __UGrouped_set_of_commands__
 
 === New features ===
- * atan function added 
+ * atan function added
 
 === Changes ===
 
- * the target value of a sin-modified assignment is constantly reevaluated during execution, not only at start. 
- * Error messages are now prefixed by !!! and simple system messages by ****** 
- * sin assignments don't require the variable to be already defined anymore. It's just a {{{normal}}} assignment. 
+ * the target value of a sin-modified assignment is constantly reevaluated during execution, not only at start.
+ * Error messages are now prefixed by !!! and simple system messages by ******
+ * sin assignments don't require the variable to be already defined anymore. It's just a {{{normal}}} assignment.
 
 
 == Version 0.9.3                         released on 23.02.2005 ==
 
 === Bug fixes ===
 
- * {{{valn}}} evaluation doesn't change the {{{val}}} value anymore 
- * type mismatch with binary variables is correctly handled 
- * tags on grouped commands (between { }) are now working 
- * +report flag now works fine with grouped commands (between { }) 
+ * {{{valn}}} evaluation doesn't change the {{{val}}} value anymore
+ * type mismatch with binary variables is correctly handled
+ * tags on grouped commands (between { }) are now working
+ * +report flag now works fine with grouped commands (between { })
 
 === New features ===
 
- * functions are now implemented (in a limited extend, see doc) 
- * the keyword {{{def}}} alone lists the existing function definitions 
- * {{{undef <functionname>}}} can be used to undefine a function 
- * {{{isdef(variable)}}} returns 1 or 0, if the variable is defined or not 
- * arrays can now be indexed with strings and not only numbers 
- * +timeout and +condout flags added 
- * added the 'getphase' modificator 
+ * functions are now implemented (in a limited extend, see doc)
+ * the keyword {{{def}}} alone lists the existing function definitions
+ * {{{undef <functionname>}}} can be used to undefine a function
+ * {{{isdef(variable)}}} returns 1 or 0, if the variable is defined or not
+ * arrays can now be indexed with strings and not only numbers
+ * +timeout and +condout flags added
+ * added the 'getphase' modificator
 
 === Changes ===
 
- * the $() operator will now add a connectionID when no prefix is given for the variable, making it local to the connection. 
+ * the $() operator will now add a connectionID when no prefix is given for the variable, making it local to the connection.
 
 == Version 0.9.2                         released on 14.02.2005 ==
 
 === Bug fixes ===
- * fixed problem with assignment result just after a blend[mix] 
+ * fixed problem with assignment result just after a blend[mix]
 
 === New features ===
- * added a new {{{add}}} blending mode 
+ * added a new {{{add}}} blending mode
 
 == Version 0.9.1                         released on 22.01.2005 ==
 
 === Bug fixes ===
- * The behavior of {{{for &}}} is now as expected in the specification. 
+ * The behavior of {{{for &}}} is now as expected in the specification.
 
 === New features ===
 
  * added static variables usage with the {{{:}}} prefix, to freeze
-   variable evaluation 
+   variable evaluation
 
- * added 'alias' command 
+ * added 'alias' command
 
 
 

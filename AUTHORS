@@ -1,14 +1,14 @@
-// URBI - Universal Robotic Body Interface.
-// URBI Server Kernel version __kernelversion__
-// Copyright (C) 2004-2008 Jean-Christophe Baillie
-//
-// Contact: Jean-Christophe Baillie
-// URL:     http://www.gostai.com
+URBI - Universal Robotic Body Interface.
+Copyright (C) 2004-2009 Jean-Christophe Baillie
 
-Jean-Christophe Baillie  <baillie@gostai.com>
-Akim Demaille            <demaille@gostai.com>
-Guillaume Deslandes      <deslandes@gostai.com>
-Quentin Hocquet          <hocquet@gostai.com>
-Thomas Moulard           <moulard@gostai.com>
-Matthieu Nottale         <nottale@gostai.com>
-Benoît Sigoure           <sigoure@gostai.com>
+Contact: k2-beta@lists.gostai.com
+URL:     http://www.gostai.com
+
+ - Jean-Christophe Baillie
+ - Akim Demaille
+ - Guillaume Deslandes
+ - Quentin Hocquet
+ - Thomas Moulard
+ - Matthieu Nottale
+ - Benoît Sigoure
+ - Samuel Tardieu
