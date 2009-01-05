@@ -178,6 +178,7 @@ URBI_CONFIG_WRAPPER([umake-clean])
 URBI_CONFIG_WRAPPER([umake-link])
 URBI_CONFIG_WRAPPER([umake-lib])
 AC_CONFIG_FILES([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in],
-                [chmod +x src/tests/bin/urbi-launch$EXEEXT])
+                [chmod +x src/tests/bin/urbi-launch$EXEEXT],
+                [EXEEXT=$EXEEXT])
 
 AC_OUTPUT
