@@ -3,6 +3,13 @@ Current release manager
 
 The release manager for k2 beta is Akim Demaille <demaille@gostai.com>.
 
+Making a beta
+#############
+
+Do not forget to tag the release.  Something like:
+
+git tag -a -m "Linux/x86 and Windows beta version." preview/2.0/beta2
+
 Procedure
 #########
 
@@ -34,6 +41,8 @@ several of them may be more appropriate.
 
 List of beta testers
 ####################
+
+There are no scripts to send the message.  Upgrade older messages.
 
 ALDEBARAN
 =========
