@@ -39,6 +39,6 @@ urbi_launch=$(xfind_prog urbi-launch$EXEEXT)
 # otherwise if it works, a server is launched, and will run endlessly.
 run "urbi-launch --start" $urbi_launch --start /dev/null ||
   case $? in
-    (72) error 77 "urbi-launch cannot find libuobject";;
+    (72) error SKIP "urbi-launch cannot find libuobject";;
   esac
 xrun "urbi-launch $me --version" "$urbi_launch" --start $me.la -- --version
