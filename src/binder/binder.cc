@@ -572,6 +572,7 @@ namespace binder
   Binder::visit(const ast::Unscope* unscope)
   {
     unbind_.back() << libport::scoped_set(unscope_, unscope->count_get());
+    result_ = new ast::Noop(unscope->location_get(), 0);
   }
 
   void
