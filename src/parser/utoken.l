@@ -207,7 +207,6 @@ do {                                            \
     return yy::parser::make_ ## Symbol(loc);    \
   }
 
-
 // Return an assignment operator: its value is the base operator.
 #define RETURN_ASSIGN_OP(Token)                 \
   PRE_SKIP();                                   \
@@ -272,15 +271,19 @@ do {                                            \
 
 /// Unput a large string.
 //
-// Do not forget to remove from the pre-length the length of Str when
-// in prescanner mode, otherwise the prescanner will count too many
-// characters: those of the original string, and those of the unput
-// string.
+// In prescanner mode, remove from the pre-length the length of Str,
+// otherwise the prescanner will count too many characters: those of
+// the original string, and those of the unput string.
+//
+// As this will be rescanned, and its length will be added.  It must
+// not, otherwise we introduce an offset in the locations, so subtract
+// it first.
 #define UNPUT(Str)                                      \
   do {                                                  \
     std::string _rewritten = Str;                       \
     for (int i = _rewritten.length() - 1; 0 <= i; --i)  \
       unput(_rewritten[i]);                             \
+    COLUMNS(-_rewritten.length());                      \
     if (!up)                                            \
       pre_length -= _rewritten.length();                \
   } while (0)
