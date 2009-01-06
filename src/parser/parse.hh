@@ -14,11 +14,11 @@ namespace parser
 
   /// Parse \a cmd, and return an object that holds the result and the
   /// errors.
+  parse_result_type parse(const std::string& cmd, const yy::location& loc);
+
   /// Parse \a cmd, and return an object that holds the result and the
   /// errors.  Meta variables are activated.
   parse_result_type parse_meta(const std::string& cmd, const yy::location& loc);
-  parse_result_type parse(const std::string& cmd,
-                          const yy::location& loc = yy::location());
 
   /// Parse a file.
   /// \see parse().

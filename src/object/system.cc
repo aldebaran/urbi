@@ -161,7 +161,7 @@ namespace object
     type_check<String>(args[1]);
     rString arg1 = args[1]->as<String>();
     return
-      execute_parsed(r, parser::parse(arg1->value_get()),
+      execute_parsed(r, parser::parse(arg1->value_get(), ast::loc()),
                      SYMBOL(eval),
                      "error executing command: " + arg1->value_get());
   }
