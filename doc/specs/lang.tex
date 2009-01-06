@@ -1526,7 +1526,6 @@ switch (value)
     default_action;
 };
 [00000000:hide] 3
-
 \end{urbiscript}
 
 It might contain an arbitrary number of cases, and optionally a
@@ -1558,27 +1557,7 @@ function sw(v)
     default:
       v[0];
   }
-};
-[00000000:hide] function (v) {
-..  {
-..    var '$switch' = v | var '$pattern' = Pattern . new("") | if ('$pattern' . match('$switch'))
-..    {
-..      echo("Empty string");
-..    }
-..    else
-..    {
-..      var '$pattern' = Pattern . new("foo") | if ('$pattern' . match('$switch'))
-..      {
-..        "bar";
-..      }
-..      else
-..      {
-..        v . '[]'(0);
-..      }
-..    }
-..  }
-..}
-
+} | {};
 sw("");
 [00000000] *** Empty string
 sw("foo");
@@ -1634,10 +1613,7 @@ connections will continue to execute normally.
   float=\floatpos]
 throw 42;
 [00000000:error] !!! 42
-function inner() { throw "exn" };
-[00000000:hide] function () {
-..  throw "exn"
-..}
+function inner() { throw "exn" } | {};
 function outer() { inner() };
 [00000000:hide] function () {
 ..  inner()
@@ -1676,16 +1652,7 @@ function test(e)
   { echo("zero") }
   catch ([var x, var y])
   { echo(x + y) }
-};
-[00000000:hide] function test(e)
-..{
-..  try
-..  {
-..    throw e;
-..  }
-..  catch (0) { echo("zero") }
-..  catch ([var x, var y]) { echo(x + y) }
-..};
+} | {};
 test(0);
 [00002126] *** zero
 test([22, 20]);
