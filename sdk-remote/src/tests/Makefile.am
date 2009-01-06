@@ -14,6 +14,7 @@ include uobjects/local.mk
 
 configured_scripts =				\
   bin/umake					\
+  bin/umake-clean				\
   bin/umake-engine				\
   bin/umake-lib					\
   bin/umake-link				\
