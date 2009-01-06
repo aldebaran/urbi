@@ -36,6 +36,7 @@ AM_LDADD =					\
 include libuco/local.mk
 include liburbi/local.mk
 include libuobject/local.mk
+include uobjects/local.mk
 
 if EXAMPLES
 include examples/local.mk
