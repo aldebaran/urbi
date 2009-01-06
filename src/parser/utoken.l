@@ -86,7 +86,8 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     }                                                                   \
   }
 
-# define PRE_RETURN();                                  \
+// Return from the prescanner if everything is closed.
+# define PRE_RETURN()                                   \
   if (!up)                                              \
   {                                                     \
     if (pre_closers.empty())                            \
@@ -126,6 +127,12 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   do {                                          \
     if (up)                                     \
       loc.step();                               \
+  } while (0)
+
+// Move the end cursor to the head cursor.  To be used when REJECTing.
+#define STEP_BACK()                             \
+  do {                                          \
+    loc.end = loc.begin;                        \
   } while (0)
 
 // To avoid differences between versions of Bison, set by hand the
@@ -234,6 +241,18 @@ do {                                            \
 // Return an operator whose string representation is kept as a Symbol.
 #define RETURN_OP(Token)                        \
   RETURN_SYMBOL(Token)
+
+// Return a meta-variable type.  Only if desugaring is enabled.
+#define RETURN_PERCENT(Token)                   \
+  do {                                          \
+    PRE_SKIP();                                 \
+    if (!up->meta())                            \
+    {                                           \
+      STEP_BACK();                              \
+      REJECT;                                   \
+    }                                           \
+    RETURN(PERCENT_ ## Token ## _COLON);        \
+  } while (0)
 
 // Return a std::string of kind Token with yytext as value.
 #define RETURN_STR(Token)                       \
@@ -439,11 +458,11 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
 
-"%exp:"         RETURN(PERCENT_EXP_COLON);
-"%exps:"        RETURN(PERCENT_EXPS_COLON);
-"%id:"          RETURN(PERCENT_ID_COLON);
-"%lvalue:"      RETURN(PERCENT_LVALUE_COLON);
-"%unscope:"     RETURN(PERCENT_UNSCOPE_COLON);
+"%exp:"         RETURN_PERCENT(EXP);
+"%exps:"        RETURN_PERCENT(EXPS);
+"%id:"          RETURN_PERCENT(ID);
+"%lvalue:"      RETURN_PERCENT(LVALUE);
+"%unscope:"     RETURN_PERCENT(UNSCOPE);
 
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);

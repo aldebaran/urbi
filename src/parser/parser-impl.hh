@@ -32,7 +32,13 @@ namespace parser
     /// Parse a file.
     parse_result_type parse_file(const std::string& fn);
 
-  public:
+    /// Whether meta-variables are enabled.
+    bool meta() const;
+
+    /// Enable/disable meta variables support.
+    /// Disabled by default.
+    void meta(bool b);
+
     /// Declare an error at \a l about \a msg.
     void error(const location_type& l, const std::string& msg);
 
@@ -75,6 +81,9 @@ namespace parser
     /// Whether in debug mode.
     /// Enabled when the envvar YYDEBUG is defined (whatever the value).
     bool debug_;
+
+    /// Whether meta-variables are enabled.
+    bool meta_;
   };
 
 }

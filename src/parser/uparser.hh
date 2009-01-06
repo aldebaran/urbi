@@ -25,6 +25,10 @@ namespace parser
     UParser(const UParser&);
     ~UParser();
 
+    /// Enable/disable meta variables support.
+    /// Disabled by default.
+    void meta(bool b);
+
     /// Parse the command from a buffer.
     /// \return yyparse's result (0 on success).
     /// If \a loc is defined, use it to parse \a code, otherwise

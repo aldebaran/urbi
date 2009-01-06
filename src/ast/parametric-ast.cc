@@ -21,7 +21,7 @@ namespace ast
         (BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(2, 1, Type)))
       URBI_PARAMETRIC_AST_FOREACH(CONSTRUCT)
 #undef CONTSTRUCT
-    , ast_(parser::parse(s, l)->ast_xget())
+    , ast_(parser::parse_meta(s, l)->ast_xget())
     , effective_location_()
     , count_(0)
   {

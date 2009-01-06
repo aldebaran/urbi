@@ -37,7 +37,20 @@ namespace parser
     , synclines_()
     , result_(0)
     , debug_(yydebug)
+    , meta_(false)
   {
+  }
+
+  bool
+  ParserImpl::meta() const
+  {
+    return meta_;
+  }
+
+  void
+  ParserImpl::meta(bool b)
+  {
+    meta_ = b;
   }
 
   void

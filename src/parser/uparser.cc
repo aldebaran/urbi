@@ -24,6 +24,12 @@ namespace parser
   {
   }
 
+  void
+  UParser::meta(bool b)
+  {
+    pimpl_->meta(b);
+  }
+
   parse_result_type
   UParser::parse(const std::string& command,
                  const yy::location* loc)
