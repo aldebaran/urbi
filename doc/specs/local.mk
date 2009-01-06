@@ -1,14 +1,15 @@
 # specs/local.mk
 share_dir = $(srcdir)/document-aux
-include document-aux/make/share-am.mk
+share_bin_dir = $(share_dir)/bin
+share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
 
-PDFS = specs/urbi-specs.pdf
-CLEANFILES += $(PDFS)
+pdf_DATA = specs/urbi-specs.pdf
+urbi_specs_sources = $(call ls_files,*.tex)
+urbi_specs_deps = $(urbi_specs_sources) $(call ls_files,*.sty)
+CLEANFILES += $(pdf_DATA)
 
-all: $(PDFS)
-
-view: $(PDFS)
+view: $(pdf_DATA)
 	xpdf $<
 
 # Convert some old LaTeX 2.09 idioms into 2e.
@@ -31,15 +32,31 @@ share-ci:
 # texi2pdf does not like directories that do not exists.  Don't depend
 # on the directory, as only its existence matters, not its time
 # stamps.
-specs/urbi-specs.pdf: specs/.stamp $(srcdir)/specs/urbi-specs.sty $(srcdir)/specs/indexing.sty $(wildcard $(srcdir)/specs/*.tex)
+specs/urbi-specs.pdf: specs/.stamp $(urbi_specs_deps)
 
 specs/.stamp:
 	-mkdir specs
 	test -f $@ || touch $@
 
+## ------- ##
+## Check.  ##
+## ------- ##
+
+include $(top_srcdir)/build-aux/check.mk
+
+TESTS = $(urbi_specs_sources)
+# This is not exact, but otherwise it is too long.
+LAZY_TEST_SUITE = 1
+TEST_LOGS = $(TESTS:.tex=.log)
+
 URBI_CONSOLE = $(top_builddir)/tests/bin/urbi-console
 
-check:
-	for f in $(wildcard *.tex); do				\
-	  URBI_CONSOLE=$(URBI_CONSOLE) $(srcdir)/check.py $$f;	\
-	done
+# Set URBI_PATH to find URBI.INI.
+TESTS_ENVIRONMENT +=				\
+  URBI_CONSOLE=$(URBI_CONSOLE)			\
+  URBI_PATH=$(abs_srcdir)/specs:$$URBI_PATH
+
+TEST_LOGS: $(srcdir)/specs/URBI.INI $(srcdir)/check.py
+
+%.log: %.tex
+	@$(am__check_pre) $(srcdir)/check.py $${dir}$< $(am__check_post)
