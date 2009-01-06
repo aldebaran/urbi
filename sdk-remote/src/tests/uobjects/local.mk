@@ -6,8 +6,6 @@
 include $(top_srcdir)/src/uobjects/uobjects.mk
 UOBJECTS_TESTS = $(addprefix uobjects/, $(UOBJECTS:=.uob))
 
-EXTRA_DIST += $(UOBJECTS_TESTS)
-
 # uobject-check
 EXTRA_DIST += bin/uobject-check.as
 nodist_check_SCRIPTS += bin/uobject-check
