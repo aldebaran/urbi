@@ -128,8 +128,7 @@ namespace ast
 /// Define a parametric ast, using the current file and line as location.
 # define PARAMETRIC_AST(Name, Content)                                  \
   static ::ast::ParametricAst                                           \
-  Name(Content,                                                         \
-       ::ast::loc(new libport::Symbol(__FILE__), __LINE__))
+  Name(Content, __HERE__)
 
 
 # include <ast/parametric-ast.hxx>
