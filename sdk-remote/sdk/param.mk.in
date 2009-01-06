@@ -104,11 +104,11 @@ $(OUTLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 lalib = $(OUTSHLIB:$(SHLIBEXT)=.la)
 libbase = $(OUTSHLIB:$(SHLIBEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
-	$(CXXLINK) -export-dynamic -o $(lalib) \
-	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)  \
-	  -rpath $(hostdir) $(LIBADD)
-	cp $$(ls .libs/$(libbase)*$(SHLIBEXT) | head -n 1) $(OUTSHLIB)
-#	rm -f $(lalib)
+	$(CXXLINK) -export-dynamic -o $(lalib)	\
+	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	-rpath $(hostdir) $(LIBADD)
+	cp $$(ls $(dir $(libbase))/.libs/$(notdir $(libbase))*$(SHLIBEXT) \
+	  | head -n 1) $(OUTSHLIB)
+
 
 # The command to generate the library.
 #

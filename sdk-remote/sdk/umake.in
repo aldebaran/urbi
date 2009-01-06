@@ -274,7 +274,13 @@ esac
 # option otherwise.
 case $core in
   ('')
-    libs=$(echo "$libs" | sed -e "s/$target//")
+    res=
+    for i in $libs
+    do
+      test "$i" = "$target" ||
+        res+="$res $i"
+    done
+    libs=$res
     if $shared; then
       makeargs="$makeargs OUTSHLIB=$target"
     else
