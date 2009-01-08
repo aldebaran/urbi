@@ -1253,21 +1253,18 @@ exp:
 %token QUEST_MARK "?";
 %type <event_match_type> event_match;
 event_match:
-  "?" "(" exp ")" "(" exps ")"
+  "?" exp
   {
-    $$ = event_match_type($3, $6);
-  }
-| "?" "(" exp ")"
-  {
-    $$ = event_match_type($3, new ast::exps_type);
-  }
-| "?" k1_id "(" exps ")"
-  {
-    $$ = event_match_type($2, $4);
-  }
-| "?" k1_id
-  {
-    $$ = event_match_type($2, new ast::exps_type);
+    ast::rCall call = $2.unsafe_cast<ast::Call>();
+    if (call && call->arguments_get())
+    {
+      ast::exps_type* args = new ast::exps_type(*call->arguments_get());
+      call->arguments_set(0);
+      assert(args);
+      $$ = event_match_type(call, args);
+    }
+    else
+      $$ = event_match_type($2, new ast::exps_type);
   }
 ;
 
