@@ -236,8 +236,8 @@ namespace runner
 
       foreach (const rObject& o, args)
       {
-	CAPTURE_GLOBAL(Lazy);
-        rObject lazy = Lazy->clone();
+	CAPTURE_GLOBAL(PseudoLazy);
+        rObject lazy = PseudoLazy->clone();
         lazy->slot_set(SYMBOL(code), o);
         lazy_args.push_back(lazy);
       }

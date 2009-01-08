@@ -78,7 +78,7 @@ namespace rewrite
   {
     if (!assign_)
     {
-      super_type::visit(call);
+      super_type::visit(prop);
       return;
     }
 
@@ -92,7 +92,7 @@ namespace rewrite
   {
     if (!assign_)
     {
-      super_type::visit(call);
+      super_type::visit(sub);
       return;
     }
 

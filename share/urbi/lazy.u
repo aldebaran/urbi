@@ -27,3 +27,14 @@ class Global.Lazy
     getSlot("code").bodyString
   };
 };
+
+class Global.PseudoLazy: Lazy
+{
+
+  function eval()
+  {
+    val = getSlot("code").acceptVoid|
+    getSlot("val").unacceptVoid
+  };
+
+};
