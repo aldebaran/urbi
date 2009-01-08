@@ -20,7 +20,6 @@ TFAIL_TESTS +=
 TFAIL_TESTS +=					\
 2.x/derive.chk					\
 2.x/doc.chk					\
-2.x/pattern-matching/switch.chk			\
 2.x/profiling.chk
 
 # k1 tests that currently don't pass, but we should.

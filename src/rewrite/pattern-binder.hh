@@ -10,7 +10,9 @@ namespace rewrite
   {
   public:
     typedef ast::Cloner super_type;
-    PatternBinder(ast::rLValue pattern, const ast::loc& loc);
+    PatternBinder(ast::rLValue pattern,
+                  const ast::loc& loc,
+                  bool assign = false);
     ast::rPipe bindings_get() const;
     ast::rExp value_get();
 
@@ -31,6 +33,7 @@ namespace rewrite
     ast::rPipe declarations_;
     ast::rLValue pattern_;
     int i_;
+    bool assign_;
   };
 }
 

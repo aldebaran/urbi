@@ -37,10 +37,13 @@ namespace rewrite
     return exp(get % pattern_ % ast_string(ast::loc(), next_name()));
   }
 
-  PatternBinder::PatternBinder(ast::rLValue pattern, const ast::loc& loc)
+  PatternBinder::PatternBinder(ast::rLValue pattern,
+                               const ast::loc& loc,
+                               bool assign)
     : bindings_(new ast::Pipe(loc, ast::exps_type()))
     , pattern_(pattern)
     , i_(0)
+    , assign_(assign)
   {}
 
   libport::Symbol
@@ -60,7 +63,7 @@ namespace rewrite
   void
   PatternBinder::visit(const ast::Call* call)
   {
-    if (call->arguments_get())
+    if (call->arguments_get() || !assign_)
     {
       super_type::visit(call);
       return;

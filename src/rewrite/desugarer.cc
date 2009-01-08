@@ -165,7 +165,7 @@ namespace rewrite
 
     ast::rExp pattern = assign->what_get();
     rewrite::PatternBinder bind
-      (ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+      (ast_call(loc, SYMBOL(DOLLAR_pattern)), loc, true);
     bind(pattern.get());
 
     rewrite.location_set(assign->location_get());
