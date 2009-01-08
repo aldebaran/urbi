@@ -76,7 +76,11 @@ namespace rewrite
   void
   PatternBinder::visit(const ast::Property* prop)
   {
-    ast::loc loc = prop->location_get();
+    if (!assign_)
+    {
+      super_type::visit(call);
+      return;
+    }
 
     i_++;
     result_ = to_binding(prop);
@@ -86,6 +90,12 @@ namespace rewrite
   void
   PatternBinder::visit(const ast::Subscript* sub)
   {
+    if (!assign_)
+    {
+      super_type::visit(call);
+      return;
+    }
+
     i_++;
     result_ = to_binding(sub);
     bind(sub, false);
