@@ -135,17 +135,9 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     loc.end = loc.begin;                        \
   } while (0)
 
-// To avoid differences between versions of Bison, set by hand the
-// initial columns when advancing lines.
-#define LINES(Num)                              \
-  do {                                          \
-    if (up)                                     \
-    {                                           \
-      loc.lines(Num);                           \
-      loc.end.column = 1;                       \
-    }                                           \
-  } while (0)
-
+// Called via YY_USER_ACION each time we *advance* the cursor, in
+// which case Num is actually the number of bytes read.  In prescanner
+// mode, this advances the whole length.
 #define COLUMNS(Num)                                    \
   do {                                                  \
     if (up)                                             \
@@ -154,6 +146,19 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     else                                                \
       pre_length += Num;                                \
  } while (0)
+
+// To avoid differences between versions of Bison, set by hand the
+// initial columns when advancing lines.  Does not touch pre_length,
+// since LINES is always called after COLUMNS was, which did update
+// pre_length.
+#define LINES(Num)                              \
+  do {                                          \
+    if (up)                                     \
+    {                                           \
+      loc.lines(Num);                           \
+      loc.end.column = 1;                       \
+    }                                           \
+  } while (0)
 
 // Report an error.
 #define SCAN_ERROR(Msg)                         \
@@ -284,8 +289,6 @@ do {                                            \
     for (int i = _rewritten.length() - 1; 0 <= i; --i)  \
       unput(_rewritten[i]);                             \
     COLUMNS(-_rewritten.length());                      \
-    if (!up)                                            \
-      pre_length -= _rewritten.length();                \
   } while (0)
 
 // We matched an alternative token, rescan with Str instead.
