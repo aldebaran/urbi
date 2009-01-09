@@ -263,7 +263,6 @@ namespace runner
     // Push new frames on the stacks
     finally << stacks_.push_frame(msg,
                                   ast->local_size_get(),
-                                  ast->closed_size_get(),
                                   ast->captured_variables_get()->size(),
                                   self, call);
 
@@ -371,3 +370,4 @@ namespace runner
     return new object::Code(e);
   }
 }
+

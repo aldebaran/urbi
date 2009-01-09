@@ -280,7 +280,6 @@ namespace binder
       // The variable is captured
       BIND_NECHO(libport::incindent);
       BIND_ECHO("It's captured");
-      decl->closed_set(true);
 
       routine_stack_type::reverse_iterator f_it = routine_stack_.rbegin();
       const ast::loc loc = input->location_get();
@@ -297,7 +296,6 @@ namespace binder
           }
 
         decl = new ast::LocalDeclaration(loc, name, 0);
-        decl->closed_set(true);
 
         if (current)
           current->declaration_set(decl);
@@ -498,15 +496,9 @@ namespace binder
 
     // Index local and closed variables
     unsigned int local = 0;
-    unsigned int closed = 0;
     foreach (ast::rLocalDeclaration dec, *res->local_variables_get())
-      if (dec->closed_get())
-        dec->local_index_set(closed++);
-      else
-        dec->local_index_set(local++);
-
+      dec->local_index_set(local++);
     res->local_size_set(local);
-    res->closed_size_set(closed);
 
     // Index captured variables
     unsigned int captured = 0;

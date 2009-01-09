@@ -8,7 +8,7 @@
 
 # ifdef ENABLE_STACK_DEBUG_TRACES
 
-#  include <debug.hh>
+#  include <kernel/debug.hh>
 
 #  define STACK_ECHO(X) DEBUG("STACK", X)
 #  define STACK_NECHO(X) DEBUGN("STACK", X)

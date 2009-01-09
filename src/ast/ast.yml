@@ -902,7 +902,7 @@ Routine:
         type: unsigned
         init: '0'
         access: rW
-    - closed_size:
+    - captured_size:
         type: unsigned
         init: '0'
         access: rW
@@ -968,12 +968,6 @@ LocalWrite:
 
 LocalDeclaration:
   super: LocalWrite
-  attributes:
-    - closed:
-        type: 'bool'
-        desc: Whether this variable is closed-over by a subcontext
-        access: rW
-        init: 'false'
   printer:
     - '"var "'
     - $what
@@ -999,14 +993,8 @@ LocalAssignment:
   inline:
     header inside: |2
       public:
-        bool closed_get() const;
         unsigned local_index_get() const;
     impl inside: |2
-      bool LocalAssignment::closed_get() const
-      {
-        assert(declaration_);
-        return declaration_->closed_get();
-      }
       unsigned LocalAssignment::local_index_get() const
       {
         assert(declaration_);
@@ -1083,14 +1071,8 @@ Local:
   inline:
     header inside: |2
       public:
-        bool closed_get() const;
         unsigned local_index_get() const;
     impl inside: |2
-      bool Local::closed_get() const
-      {
-        assert(declaration_);
-        return declaration_->closed_get();
-      }
       unsigned Local::local_index_get() const
       {
         assert(declaration_);

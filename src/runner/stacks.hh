@@ -69,35 +69,30 @@ namespace runner
        */
       action_type
       push_frame(const libport::Symbol& msg,
-                 unsigned local, unsigned closed, unsigned captured,
+                 unsigned local, unsigned captured,
                  rObject self, rObject call);
 
     private:
 
       /// Factored setter
-      void set(unsigned local, bool closed, bool captured, rObject v);
+      void set(unsigned local, bool captured, rObject v);
       /// Factored definer
       void def(unsigned local, rObject v);
       void def(unsigned local, bool captured, rrObject v);
 
       /// Helper to restore a previous frame state
       void pop_frame(const libport::Symbol& msg,
-                     unsigned local, unsigned closed, unsigned captured);
+                     unsigned local, unsigned captured);
       /// Helper to restore switched 'this'
       void switch_self_back(rObject v);
 
-      /// The local stack
-      typedef std::vector<rObject> local_stack_type;
-      local_stack_type local_stack_;
-      /// The related frame pointer
-      unsigned local_pointer_;
-
       /// The double-indirection local stack, for captured and
       /// closed-over variables
-      typedef std::vector<rrObject> rlocal_stack_type;
-      rlocal_stack_type rlocal_stack_;
+      typedef std::vector<rrObject> local_stack_type;
+      local_stack_type local_stack_;
+      local_stack_type captured_stack_;
       /// The closed variables frame pointer
-      unsigned closed_pointer_;
+      unsigned local_pointer_;
       /// The captured variables frame pointer
       unsigned captured_pointer_;
   };

@@ -16,19 +16,18 @@ namespace runner
 
   Stacks::Stacks(rObject lobby)
     : local_pointer_(0)
-    , closed_pointer_(0)
     , captured_pointer_(0)
   {
     // push toplevel's 'this' and 'call'
-    local_stack_.push_back(lobby);
-    local_stack_.push_back(0);
+    local_stack_.push_back(rrObject(new rObject(lobby)));
+    local_stack_.push_back(rrObject(new rObject()));
 
     STACK_ECHO("STACKS SPAWNED");
   }
 
   action_type
   Stacks::push_frame(const libport::Symbol& msg,
-                     unsigned local, unsigned closed, unsigned captured,
+                     unsigned local, unsigned captured,
                      rObject self, rObject call)
   {
     STACK_ECHO("Call " << msg << libport::incindent);
@@ -39,31 +38,28 @@ namespace runner
 
     STACK_ECHO("Frame sizes: " << libport::incindent);
     STACK_ECHO("Local    : " << local);
-    STACK_ECHO("Closed   : " << closed);
     STACK_ECHO("Captured : " << captured);
     STACK_NECHO(libport::decindent);
 
     action_type res =
-      boost::bind(&Stacks::pop_frame, this, msg, local_pointer_,
-                  closed_pointer_, captured_pointer_);
+      boost::bind(&Stacks::pop_frame, this, msg,
+                  local_pointer_, captured_pointer_);
 
     // Adjust frame pointers
     local_pointer_ = local_stack_.size();
-    captured_pointer_ = rlocal_stack_.size();
-    closed_pointer_ = captured_pointer_ + captured;
+    captured_pointer_ = captured_stack_.size();
 
     STACK_ECHO("New frame pointers: " << libport::incindent);
     STACK_ECHO("Local    : " << local_pointer_);
-    STACK_ECHO("Closed   : " << closed_pointer_);
     STACK_ECHO("Captured : " << captured_pointer_);
     STACK_NECHO(libport::decindent);
 
     // Grow stacks
     local_stack_.resize(local_pointer_ + local);
-    unsigned size = captured_pointer_ + captured + closed;
-    rlocal_stack_.resize(size, rrObject());
+    unsigned size = captured_pointer_ + captured;
+    captured_stack_.resize(size, rrObject());
     for (unsigned i = captured_pointer_; i < size; ++i)
-      rlocal_stack_[i].reset(new rObject());
+      captured_stack_[i].reset(new rObject());
 
     // Bind 'this' and 'call'
     self_set(self);
@@ -76,14 +72,14 @@ namespace runner
   Stacks::self_set(rObject v)
   {
     STACK_ECHO("Set 'this' @[" << local_pointer_ << "] = " << v.get());
-    local_stack_[local_pointer_] = v;
+    local_stack_[local_pointer_] = rrObject(new rObject(v));
   }
 
   void
   Stacks::call_set(rObject v)
   {
     STACK_ECHO("Set 'call' @[" << local_pointer_ + 1 << "] = " << v.get());
-    local_stack_[local_pointer_ + 1] = v;
+    local_stack_[local_pointer_ + 1] = rrObject(new rObject(v));
   }
 
   Stacks::rObject
@@ -91,7 +87,7 @@ namespace runner
   {
     STACK_ECHO("Read 'this' @[" << local_pointer_ << "] = "
                << local_stack_[local_pointer_].get());
-    return local_stack_[local_pointer_];
+    return *local_stack_[local_pointer_];
   }
 
   Stacks::rObject
@@ -99,22 +95,21 @@ namespace runner
   {
     STACK_ECHO("Read 'call' @[" << local_pointer_ + 1 << "] = "
                << local_stack_[local_pointer_ + 1].get());
-    return local_stack_[local_pointer_ + 1];
+    return *local_stack_[local_pointer_ + 1];
   }
 
   void
   Stacks::pop_frame(const libport::Symbol& STACK_IF_DEBUG(msg),
-                    unsigned local, unsigned closed, unsigned captured)
+                    unsigned local, unsigned captured)
   {
     STACK_NECHO(libport::decindent);
     STACK_ECHO("Return from " << msg);
     STACK_NECHO(libport::decindent);
 
-    local_stack_.resize(local_pointer_, 0);
-    rlocal_stack_.resize(captured_pointer_, rrObject());
+    local_stack_.resize(local_pointer_, rrObject());
+    captured_stack_.resize(captured_pointer_, rrObject());
 
     local_pointer_ = local;
-    closed_pointer_ = closed;
     captured_pointer_ = captured;
   }
 
@@ -124,36 +119,28 @@ namespace runner
     STACK_OPEN();
     STACK_NECHO("Setting " << e->what_get()
                 << " (#" << e->local_index_get() << " ");
-    set(e->local_index_get(), e->closed_get(), e->depth_get(), v);
+    set(e->local_index_get(), e->depth_get(), v);
   }
 
   void
-  Stacks::set(unsigned local, bool closed, bool captured, rObject v)
+  Stacks::set(unsigned local, bool captured, rObject v)
   {
 
 #define DBG                                   \
     STACK_NECHO(") @[" << idx << "] = " << v.get() << std::endl)
-    if (closed)
-      if (captured)
-      {
-        STACK_NECHO("captured");
-        unsigned idx = captured_pointer_ + local;
-        DBG;
-        *rlocal_stack_[idx] = v;
-      }
-      else
-      {
-        STACK_NECHO("closed");
-        unsigned idx = closed_pointer_ + local;
-        DBG;
-        *rlocal_stack_[idx] = v;
-      }
+    if (captured)
+    {
+      STACK_NECHO("captured");
+      unsigned idx = captured_pointer_ + local;
+      DBG;
+      *captured_stack_[idx] = v;
+    }
     else
     {
       STACK_NECHO("local");
       unsigned idx = local_pointer_ + local + 2;
       DBG;
-      local_stack_[idx] = v;
+      *local_stack_[idx] = v;
     }
 #undef DBG
 
@@ -167,29 +154,21 @@ namespace runner
     {
       // FIXME: We may have to grow the stacks by more than one
       // because of a binder limitation. See FIXME in Binder::bind.
-      if (e->closed_get() && e->local_index_get() >= rlocal_stack_.size())
+      if (e->local_index_get() + 2 >= local_stack_.size())
       {
-        STACK_ECHO("Growing toplevel closed stack");
-        for (unsigned i = rlocal_stack_.size();
-             i <= e->local_index_get(); ++i)
-          rlocal_stack_.push_back(rrObject(new rObject()));
-      }
-      else if (e->local_index_get() + 2 >= local_stack_.size())
-      {
-        STACK_ECHO("Growing toplevel local stack");
         for (unsigned i = local_stack_.size();
              i <= e->local_index_get() + 2; ++i)
-          local_stack_.push_back(rObject());
+        {
+          STACK_ECHO("Growing toplevel local stack");
+          local_stack_.push_back(rrObject(new rObject()));
+        }
       }
     }
 
     STACK_OPEN();
     STACK_NECHO("Defining " << e->what_get()
                 << " (#" << e->local_index_get() << " ");
-    if (e->closed_get())
-      def(e->local_index_get(), false, rrObject(new rObject(v)));
-    else
-      def(e->local_index_get(), v);
+    def(e->local_index_get() + 2, false, rrObject(new rObject(v)));
   }
 
   void
@@ -198,10 +177,7 @@ namespace runner
     STACK_OPEN();
     STACK_NECHO("Bind argument " << e->what_get()
                 << " (#" << e->local_index_get() << " ");
-    if (e->closed_get())
-      def(e->local_index_get(), false, rrObject(new rObject(v)));
-    else
-      def(e->local_index_get(), v);
+    def(e->local_index_get(), v);
   }
 
   void
@@ -216,21 +192,21 @@ namespace runner
   void
   Stacks::def(unsigned local, bool captured, rrObject v)
   {
-#define DBG                                   \
+#define DBG                                                     \
     STACK_NECHO(") @[" << idx << "] = " << v.get() << std::endl)
     if (captured)
     {
       STACK_NECHO("captured");
       unsigned idx = captured_pointer_ + local;
       DBG;
-      rlocal_stack_[idx] = v;
+      captured_stack_[idx] = v;
     }
     else
     {
-      STACK_NECHO("closed");
-      unsigned idx = closed_pointer_ + local;
+      STACK_NECHO("local");
+      unsigned idx = local_pointer_ + local;
       DBG;
-      rlocal_stack_[idx] = v;
+      local_stack_[idx] = v;
     }
 #undef DBG
   }
@@ -240,16 +216,15 @@ namespace runner
   {
     unsigned idx = local_pointer_ + local + 2;
     STACK_NECHO("local) @[" << idx << "] = " << v.get() << std::endl);
-    local_stack_[idx] = v;
+    local_stack_[idx] = rrObject(new rObject(v));
   }
 
   Stacks::rrObject Stacks::rget(ast::rConstLocal e)
   {
     rrObject res;
 
-    assert(e->closed_get());
     STACK_OPEN();
-    STACK_NECHO("Capture variable " << e->name_get()
+    STACK_NECHO("Get variable " << e->name_get()
                 << " (#" << e->local_index_get() << " ");
 #define DBG                                     \
     STACK_NECHO(") @[" << idx << "] = ")
@@ -258,14 +233,14 @@ namespace runner
       STACK_NECHO("captured");
       unsigned idx = captured_pointer_ + e->local_index_get();
       DBG;
-      res = rlocal_stack_[idx];
+      res = captured_stack_[idx];
     }
     else
     {
-      STACK_NECHO("closed");
-      unsigned idx = closed_pointer_ + e->local_index_get();
+      STACK_NECHO("local");
+      unsigned idx = local_pointer_ + 2 + e->local_index_get();
       DBG;
-      res = rlocal_stack_[idx];
+      res = local_stack_[idx];
     }
     STACK_NECHO(res->get() << " @" << res.get() << std::endl);
     return res;
@@ -274,42 +249,7 @@ namespace runner
 
   Stacks::rObject Stacks::get(ast::rConstLocal e)
   {
-    rObject value;
-    STACK_OPEN();
-    STACK_NECHO("Read variable " << e->name_get()
-                << " (#" << e->local_index_get() << " ");
-
-#define DBG                                                             \
-    STACK_NECHO(") @[" << idx << "] = ")
-
-    if (e->closed_get())
-      if (e->depth_get())
-      {
-        unsigned idx = captured_pointer_ + e->local_index_get();
-        STACK_NECHO("captured");
-        DBG;
-        value = *rlocal_stack_[idx];
-      }
-      else
-      {
-        unsigned idx = closed_pointer_ + e->local_index_get();
-        STACK_NECHO("closed");
-        DBG;
-        value = *rlocal_stack_[idx];
-      }
-    else
-    {
-      assert(!e->depth_get());
-      unsigned idx = local_pointer_ + e->local_index_get() + 2;
-      STACK_NECHO("local");
-      DBG;
-      value = local_stack_[idx];
-    }
-
-#undef DBG
-
-    STACK_NECHO(value.get() << std::endl);
-    return value;
+    return *rget(e);
   }
 
   action_type
@@ -318,7 +258,7 @@ namespace runner
     STACK_ECHO("Switching 'this':" << libport::incindent);
     action_type res =
       boost::bind(&Stacks::switch_self_back, this,
-                  local_stack_[local_pointer_]);
+                  *local_stack_[local_pointer_]);
     self_set(v);
     STACK_NECHO(libport::decindent);
     return res;
