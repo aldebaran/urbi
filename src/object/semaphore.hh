@@ -7,7 +7,7 @@
 # define OBJECT_SEMAPHORE_CLASS_HH
 
 # include <object/fwd.hh>
-# include <scheduler/fwd.hh>
+# include <sched/fwd.hh>
 
 namespace object
 {

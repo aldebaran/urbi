@@ -4,7 +4,7 @@
 # include <ast/ast.hh>
 # include <object/primitives.hh>
 # include <runner/interpreter.hh>
-# include <scheduler/scheduler.hh>
+# include <sched/scheduler.hh>
 
 namespace dbg
 {

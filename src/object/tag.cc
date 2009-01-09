@@ -12,7 +12,7 @@
 #include <runner/call.hh>
 #include <runner/runner.hh>
 
-#include <scheduler/tag.hh>
+#include <sched/tag.hh>
 
 namespace object
 {

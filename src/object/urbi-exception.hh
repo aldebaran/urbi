@@ -15,7 +15,7 @@
 # include <ast/call.hh>
 # include <ast/loc.hh>
 # include <object/object.hh>
-# include <scheduler/exception.hh>
+# include <sched/exception.hh>
 
 namespace object
 {

@@ -8,7 +8,7 @@
 
 #include <runner/shell.hh>
 
-#include <scheduler/scheduler.hh>
+#include <sched/scheduler.hh>
 
 namespace runner
 {

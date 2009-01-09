@@ -2,7 +2,7 @@
 #include <object/float.hh>
 #include <object/semaphore.hh>
 #include <runner/runner.hh>
-#include <scheduler/fwd.hh>
+#include <sched/fwd.hh>
 
 namespace object
 {

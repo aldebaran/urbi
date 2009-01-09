@@ -11,7 +11,7 @@
 #include <runner/at-handler.hh>
 #include <runner/call.hh>
 
-#include <scheduler/tag.hh>
+#include <sched/tag.hh>
 
 namespace runner
 {

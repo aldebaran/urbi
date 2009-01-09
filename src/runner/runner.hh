@@ -14,8 +14,8 @@
 
 # include <object/fwd.hh>
 # include <object/list.hh>
-# include <scheduler/scheduler.hh>
-# include <scheduler/job.hh>
+# include <sched/scheduler.hh>
+# include <sched/job.hh>
 
 namespace runner
 {

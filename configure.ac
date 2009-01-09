@@ -9,7 +9,7 @@ URBI_PACKAGE_VERSION
 # FIXME: Disable the generation of CPP symbols defining the current
 # version, as it is unclear what it should be.
 # URBI_KERNEL_VERSION
-URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2008])
+URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2009])
 
 # Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
@@ -61,6 +61,7 @@ TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wbad-function-cast],
 		 [-Wmissing-declarations]])
 
+# We compile libsched.
 AM_PROG_AS
 
 # Disable static libraries. Loading modules as shared libraries

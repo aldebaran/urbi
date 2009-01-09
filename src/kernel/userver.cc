@@ -49,7 +49,7 @@
 #include <runner/shell.hh>
 #include <runner/sneaker.hh>
 
-#include <scheduler/scheduler.hh>
+#include <sched/scheduler.hh>
 
 #include <kernel/connection-set.hh>
 #include <kernel/server-timer.hh>

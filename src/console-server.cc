@@ -29,7 +29,7 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <scheduler/scheduler.hh>
+#include <sched/scheduler.hh>
 
 #include <kernel/ubanner.hh>
 #include <urbi/export.hh>

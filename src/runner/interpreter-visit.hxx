@@ -27,7 +27,7 @@
 # include <runner/interpreter.hh>
 # include <runner/raise.hh>
 
-# include <scheduler/exception.hh>
+# include <sched/exception.hh>
 
 /// Job echo.
 #define JECHO(Title, Content)                           \

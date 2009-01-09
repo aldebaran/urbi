@@ -21,6 +21,9 @@ AM_CPPFLAGS +=					\
   -I$(top_builddir)/sdk-remote/include		\
   -I$(top_builddir)/sdk-remote
 
+## src/include/sched etc.
+AM_CPPFLAGS += -I$(srcdir)/include
+
 ## lib/network
 AM_CPPFLAGS += -I$(top_srcdir)/lib
 
@@ -49,7 +52,8 @@ libuobject_la_LIBADD =						\
   $(PTHREAD_LIBS)						\
   $(top_builddir)/sdk-remote/libltdl/libltdlc.la		\
   $(top_builddir)/sdk-remote/lib/libport/libport.la		\
-  $(top_builddir)/sdk-remote/src/libuco/libuco.la
+  $(top_builddir)/sdk-remote/src/libuco/libuco.la		\
+  lib/sched/libsched.la
 
 
 ## ------------ ##
@@ -79,9 +83,8 @@ include parser/local.mk
 include object/local.mk
 include rewrite/local.mk
 include runner/local.mk
-include scheduler/local.mk
-include scheduler/libcoroutine/local.mk
 include kernel/local.mk
+include lib/sched/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
@@ -93,13 +96,15 @@ urbiinclude_HEADERS = $(uobject_headers)
 bin_PROGRAMS += urbi-console
 
 urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD = libuobject.la $(libuobject_la_LIBADD)
+urbi_console_LDADD =				\
+  libuobject.la					\
+  $(libuobject_la_LIBADD)
 dist_libuobject_la_SOURCES +=			\
-console-server.cc				\
-../lib/network/bsdnet/connection.hh		\
-../lib/network/bsdnet/connection.cc		\
-../lib/network/bsdnet/network.hh		\
-../lib/network/bsdnet/network.cc
+  console-server.cc				\
+  ../lib/network/bsdnet/connection.hh		\
+  ../lib/network/bsdnet/connection.cc		\
+  ../lib/network/bsdnet/network.hh		\
+  ../lib/network/bsdnet/network.cc
 
 all-local: libuobject.la.stamp
 

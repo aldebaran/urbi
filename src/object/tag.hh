@@ -8,7 +8,7 @@
 
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
-# include <scheduler/tag.hh>
+# include <sched/tag.hh>
 
 namespace object
 {

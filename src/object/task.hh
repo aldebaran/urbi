@@ -9,7 +9,7 @@
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
 # include <runner/runner.hh>
-# include <scheduler/job.hh>
+# include <sched/job.hh>
 
 namespace object
 {

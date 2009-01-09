@@ -5,7 +5,7 @@
 #include <runner/call.hh>
 #include <runner/raise.hh>
 #include <runner/sneaker.hh>
-#include <scheduler/scheduler.hh>
+#include <sched/scheduler.hh>
 
 namespace runner
 {

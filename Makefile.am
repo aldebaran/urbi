@@ -1,4 +1,5 @@
-include $(top_srcdir)/build-aux/build-aux.mk
+include build-aux/init.mk
+include build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 
