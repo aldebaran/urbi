@@ -75,13 +75,18 @@ Environment: Debian sarge
 HAUTE-ÉCOLE ARC
 ===============
 Contact: Alexandre Gabus <Alexandre.Gabus@he-arc.ch> (student)
-     and Matthieu Amiguet <matthieu.amiguet@he-arc.ch> (advisor)
+Contact: Matthieu Amiguet <matthieu.amiguet@he-arc.ch> (advisor)
 Environment: Linux
+
+HOBBYISTES
+==========
+Contact: Marko Mänd <xinematic@gmail.com>
+Environment: ?
 
 LORIA
 =====
 Contact: Alain Dutech <Alain.Dutech@loria.fr>
-         Olivier Rochel <olivier.rochel@loria.fr>
+Contact: Olivier Rochel <olivier.rochel@loria.fr>
 Environment: Unknown yet
 
 PAL
