@@ -151,6 +151,7 @@ usage()
     "  -h, --help         display this message and exit\n"
     "  -v, --version      display version information and exit\n"
     "  -c, --custom FILE  start using the shared library FILE\n"
+    "      --debug        report various debugging information\n"
     "\n"
     "Mode selection:\n"
     "  -p, --plugin       start as a plugin uobject on a running server\n"
@@ -197,7 +198,7 @@ typedef int (*umain_type)(const libport::cli_args_type& args, bool block);
 int
 main(int argc, const char* argv[])
 {
-  program_name = argv[0];
+  program_name = lt_program_name = argv[0];
   lt_dlinit();
 
   const char* urbi_root = getenv("URBI_ROOT");
@@ -233,6 +234,8 @@ main(int argc, const char* argv[])
 
     if (arg == "--custom" || arg == "-c")
       dll = libport::convert_argument<std::string> (arg, argv[++i]);
+    else if (arg == "--debug")
+      lt_debug_level = 1;
     else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--host" || arg == "-H")

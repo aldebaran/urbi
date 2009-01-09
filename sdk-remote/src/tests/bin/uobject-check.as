@@ -21,12 +21,12 @@ urbi_launch=$(xfind_prog urbi-launch$EXEEXT)
 # If urbi-launch cannot work because there is no kernel libuobject,
 # skip the test.  Do pass something that will fail to be loaded,
 # otherwise if it works, a server is launched, and will run endlessly.
-run "urbi-launch --start" $urbi_launch --start /dev/null ||
+run "urbi-launch --start" $urbi_launch --debug --start /dev/null ||
   case $? in
     (72) error SKIP "urbi-launch cannot find libuobject";;
   esac
 
 for ext in '' .la $SHLIBEXT
 do
-  xrun "urbi-launch $me$ext --version" "$urbi_launch" --start $uob$ext -- --version
+  xrun "urbi-launch $me$ext --version" "$urbi_launch" --debug --start $uob$ext -- --version
 done

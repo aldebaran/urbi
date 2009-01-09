@@ -22,7 +22,17 @@ case " $* " in
      # was installed, and the real urbi-launch will look for it at the
      # right place.
      test ! -f $abs_top_builddir/../src/Makefile ||
-       libuobjectdir=$abs_top_builddir/../src;;
+       libuobjectdir=$abs_top_builddir/../src
+     # Unfortunately, ltdl does not seem to look into the *.la
+     # file to find the dependencies, so load them first.
+     for v in LD_LIBRARY_PATH DYLD_LIBRARY_PATH
+     do
+       val=$abs_top_builddir/../src/lib/sched/.libs
+       eval "$v=\$val:\$v"
+       export $v
+     done
+     echo >&2 "wrapper: $DYLD_LIBRARY_PATH"
+     ;;
   (*)
      libuobjectdir=$abs_top_builddir/src/libuobject;;
 esac
@@ -32,6 +42,7 @@ if test -n "$libuobjectdir"; then
   shift
 fi
 
+echo >&2 "wrapper: $program $*"
 exec "$program" "$@"
 
 # Local Variables:
