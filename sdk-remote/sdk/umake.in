@@ -117,7 +117,7 @@ get_options ()
       (-s | --shared-library) core= ; shared=true ;;
       (     --deep-clean)    deep_clean="true"; havearg="noneed" ;;
       (-c | --clean)         clean="true" ;;
-      (-j | --jobs)  shift; njobs=$1;;
+      (-j | --jobs)  shift; makeargs+=" -j $1";;
       (-C | --core  ) shift; core=$1;;
       (-H | --host  ) shift; host=$1;;
       (-o | --output) shift; target=$1;;
@@ -163,7 +163,7 @@ get_options ()
     # If this is a directory, append a slash.
     case $1$(test -d "$1" && echo '/') in
       (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
-      (*=*)     makeargs="$makeargs '$1'" ;;
+      (*=*)     makeargs+=" '$1'" ;;
 
       (*.h |*.hh|*.hxx|*.hpp) headers="$headers '$1'";   havearg=true ;;
       (*.cc|*.cpp|*.c|*.C)    sources="$sources '$1'";   havearg=true ;;
@@ -200,10 +200,11 @@ get_options ()
 : ${SHLIBEXT=@SHLIBEXT@}
 clean=
 deep_clean=
-defaultenv='@URBI_ENV@'
-core=$defaultenv
+: ${URBI_ENV='@URBI_ENV@'}
+core=$URBI_ENV
 havearg=false   # we have at least one path or file arg
-: ${host='@URBI_HOST@'}
+: ${URBI_HOST='@URBI_HOST@'}
+host=$URBI_HOST
 # Libraries (and flags) to use when linking a module.
 LIBADD=
 # Whether building a shared lib/module.
@@ -227,7 +228,6 @@ libs=
 sources=
 headers=
 makeargs=
-njobs=1
 
 automain=true
 
@@ -240,7 +240,7 @@ get_options "$@"
 initialize
 
 if test x$core = xdefault; then
-  core=$defaultenv
+  core=$URBI_ENV
 fi
 
 # Use default main.
@@ -282,13 +282,13 @@ case $core in
     done
     libs=$res
     if $shared; then
-      makeargs="$makeargs OUTSHLIB=$target"
+      makeargs+=" OUTSHLIB=$target"
     else
-      makeargs="$makeargs OUTLIB=$target"
+      makeargs+=" OUTLIB=$target"
     fi
     ;;
   (*)
-    makeargs="$makeargs OUTBIN=$target"
+    makeargs+=" OUTBIN=$target"
     ;;
 esac
 
@@ -343,7 +343,7 @@ else
 fi
 
 # Then pass env.
-makeargs="$makeargs prefix=$prefix"
+makeargs+=" prefix=$prefix"
 verbose                                         \
         "LIBADD='$LIBADD'"                      \
         "headers='$headers'"                    \
@@ -422,19 +422,19 @@ if $verb; then
 fi
 
 verbose "invoking make -f $(param_mk) $target"
-run eval make -j $njobs -f "$(param_mk)"	\
-    "$target"					\
-    UMAKE_BUILD_DIR="$builddir"			\
-    UMAKE_URBI_ENV="$core"			\
-    URBI_KERNEL_PATH="$(kernel)"		\
-    UMAKE_LIBNAME="$UMAKE_LIBNAME"		\
-    UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""	\
-    UMAKE_LINK="$UMAKE_LINK"			\
-    ARGUMENT_LIBS="'$libs'"			\
-    LIBADD="'$LIBADD'"				\
-    HEADERS="'$headers'"			\
-    OBJECTS="'$objects'"			\
-    VPATH="'$vpath'"				\
+run eval make -f "$(param_mk)"                  \
+    "$target"                                   \
+    UMAKE_BUILD_DIR="$builddir"                 \
+    UMAKE_URBI_ENV="$core"                      \
+    URBI_KERNEL_PATH="$(kernel)"                \
+    UMAKE_LIBNAME="$UMAKE_LIBNAME"              \
+    UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""        \
+    UMAKE_LINK="$UMAKE_LINK"                    \
+    ARGUMENT_LIBS="'$libs'"                     \
+    LIBADD="'$LIBADD'"                          \
+    HEADERS="'$headers'"                        \
+    OBJECTS="'$objects'"                        \
+    VPATH="'$vpath'"                            \
     "$makeargs"
 
 verbose "done."
