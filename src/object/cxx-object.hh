@@ -55,6 +55,10 @@ namespace object
     static void create();
     static void cleanup();
 
+    /// Push initializer for class T to the back of the initialization list.
+    template<typename T>
+    static void push_initializer_to_back();
+
     /// Register a C++ class to be bound on the urbi side.
     /** \param T      The class to bind.
      *  \param name   Name of the class on the Urbi side.
@@ -89,7 +93,7 @@ namespace object
       virtual libport::Symbol name();
     };
 
-    typedef std::vector<Initializer*> initializers_type;
+    typedef std::list<Initializer*> initializers_type;
     static initializers_type& initializers_get();
 
   public:

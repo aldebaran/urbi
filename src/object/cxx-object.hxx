@@ -121,6 +121,22 @@ namespace object
       type_check(o, T::proto, idx);
   }
 
+  template<typename T>
+  void
+  CxxObject::push_initializer_to_back()
+  {
+    CxxObject::initializers_type &l = CxxObject::initializers_get();
+    for (CxxObject::initializers_type::iterator i = l.begin(); i!=l.end(); i++)
+    {
+      if (CxxObject::TypeInitializer<T>* v =
+          dynamic_cast<CxxObject::TypeInitializer<T> *>(*i))
+      {
+        l.erase(i);
+        l.push_back(v);
+        break;
+      }
+    }
+  }
 }
 
 #endif
