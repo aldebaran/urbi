@@ -3,16 +3,16 @@
 namespace urbi
 {
   baseURBIStarter::list_type&
-  object_list()
+  baseURBIStarter::list()
   {
-    static baseURBIStarter::list_type list;
+    static list_type list;
     return list;
   }
 
   baseURBIStarterHub::list_type&
-  objecthub_list()
+  baseURBIStarterHub::list()
   {
-    static baseURBIStarterHub::list_type list;
+    static list_type list;
     return list;
   }
 }

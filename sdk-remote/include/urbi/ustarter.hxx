@@ -1,7 +1,7 @@
 /// \file urbi/ustarter.hxx
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007, 2008 Gostai S.A.S.
+// Copyright (c) 2007, 2008, 2009 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -46,7 +46,7 @@ namespace urbi
   URBIStarter<T>::URBIStarter(const std::string& name, bool local)
     : baseURBIStarter(name, local)
   {
-    object_list().push_back(this);
+    list().push_back(this);
   }
 
   template <class T>
@@ -62,12 +62,11 @@ namespace urbi
   URBIStarter<T>::clean()
   {
     delete getUObject();
-    for (list_type::iterator i = object_list().begin();
-	 i != object_list().end();
+    for (list_type::iterator i = list().begin(); i != list().end();
 	 ++i)
       if (*i == this)
       {
-	object_list().erase(i);
+	list().erase(i);
 	break;
       }
   }
@@ -133,7 +132,7 @@ namespace urbi
   URBIStarterHub<T>::URBIStarterHub(const std::string& name)
     : baseURBIStarterHub(name)
   {
-    objecthub_list().push_back(this);
+    list().push_back(this);
   }
 
   template <class T>

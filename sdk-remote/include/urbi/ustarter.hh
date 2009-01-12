@@ -1,7 +1,7 @@
 /// \file urbi/ustarter.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007, 2008 Gostai S.A.S.
+// Copyright (c) 2007, 2008, 2009 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -66,10 +66,9 @@ namespace urbi
     bool local;
 
     typedef std::list<baseURBIStarter*> list_type;
+    static list_type& list();
   };
 
-  /// Give access to baseURBIStarter::list.
-  URBI_SDK_API baseURBIStarter::list_type& object_list();
 
   //! This is the class containing URBI starters
   /** A starter is a class whose job is to start an instance of a particular
@@ -119,10 +118,10 @@ namespace urbi
     std::string name;
 
     typedef std::list<baseURBIStarterHub*> list_type;
+
+    static list_type& list();
   };
 
-  /// Give access to baseURBIStarter::list.
-  URBI_SDK_API baseURBIStarterHub::list_type& objecthub_list();
 
 
   //! This is the class containing URBI starters

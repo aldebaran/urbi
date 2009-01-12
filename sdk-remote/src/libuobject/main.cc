@@ -160,9 +160,9 @@ namespace urbi
       case UEM_NEW:
       {
         typedef baseURBIStarter::list_type::iterator iterator;
-        iterator i_end = object_list().end();
+        iterator i_end = baseURBIStarter::list().end();
         iterator found = i_end;
-        for (iterator i = object_list().begin(); i != i_end; ++i)
+        for (iterator i = baseURBIStarter::list().begin(); i != i_end; ++i)
           if ((*i)->name == (std::string)array[2])
           {
             if (found != i_end)
@@ -183,27 +183,29 @@ namespace urbi
 
       case UEM_DELETE:
       {
-        std::list<baseURBIStarter*>::iterator found = object_list().end();
-        for (std::list<baseURBIStarter*>::iterator i = object_list().begin();
-             i != object_list().end();
+        typedef baseURBIStarter::list_type::iterator iterator;
+        iterator i_end = baseURBIStarter::list().end();
+        iterator found = i_end;
+        for (iterator i = baseURBIStarter::list().begin();
+             i != i_end;
              ++i)
           if ((*i)->name == (std::string)array[1])
           {
-            if (found != object_list().end())
+            if (found != i_end)
               msg.client.printf("Double object definition %s\n",
                                 (*i)->name.c_str());
             else
               found = i;
           }
 
-        if (found == object_list().end())
+        if (found == i_end)
           msg.client.printf("Unknown object definition %s\n",
                             ((std::string) array[1]).c_str());
         else
         {
           // remove the object from objectlist or terminate
           // the component if there is nothing left
-          if (object_list().size() == 1)
+          if (baseURBIStarter::list().size() == 1)
             exit(0);
           else
             // delete the object
@@ -317,8 +319,10 @@ namespace urbi
       usleep (5000);
 
     dummyUObject = new UObject (0);
-    for (baseURBIStarter::list_type::iterator i = object_list().begin();
-	 i != object_list().end();
+    for (baseURBIStarter::list_type::iterator
+           i = baseURBIStarter::list().begin(),
+           i_end = baseURBIStarter::list().end();
+	 i != i_end;
 	 ++i)
       (*i)->init((*i)->name);
     // Send a ';' since UObject likely sent a serie of piped commands.
