@@ -354,7 +354,7 @@ namespace runner
                 if (rObject topLevel =
                     object::global_class->slot_locate(SYMBOL(topLevel), false,
                                                       true))
-                  object::urbi_call(*this, topLevel, SYMBOL(LT_LT), res);
+                  object::urbi_call(topLevel, SYMBOL(LT_LT), res);
                 else if (toplevel_debug)
                   lobby_->value_get().connection.new_result(res);
               }
@@ -541,11 +541,11 @@ namespace runner
 	yield();
       // Start with the uppermost tag in the derivation chain.
       rforeach (const object::rTag& tag, applied)
-	tag->triggerEnter(*this);
+	tag->triggerEnter();
       rObject res = operator()(t->exp_get().get());
       // Start with the most specific tag in the derivation chain.
       foreach (const object::rTag& tag, applied)
-	tag->triggerLeave(*this);
+	tag->triggerLeave();
       return res;
     }
     catch (sched::StopException& e)
@@ -603,7 +603,7 @@ namespace runner
       if (handler->match_get())
       {
         rObject pattern = operator()(handler->match_get()->pattern_get().get());
-        if (!is_true(object::urbi_call(*this, pattern, SYMBOL(match), value)))
+        if (!is_true(object::urbi_call(pattern, SYMBOL(match), value)))
           continue;
         operator()(handler->match_get()->bindings_get().get());
         if (handler->match_get()->guard_get()

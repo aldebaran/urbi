@@ -62,7 +62,7 @@ namespace object
       else
       {
 	CAPTURE_GLOBAL(TypeError);
-        r.raise(urbi_call(r, TypeError, SYMBOL(new), exp, o));
+        r.raise(urbi_call(TypeError, SYMBOL(new), exp, o));
       }
     }
   }

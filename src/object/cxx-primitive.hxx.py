@@ -90,7 +90,7 @@ def primitive(r, runner, nargs):
     template <%(param)s>
     struct MakePrimitive<%(boost)s>
     {
-      static rObject primitive(runner::Runner&%(runner_name)s,
+      static rObject primitive(/*runner::Runner&%(runner_name)s,*/
                                object::objects_type& args,
                                %(boost)s f)
       {
@@ -146,7 +146,7 @@ def primitive_list(r, runner, met):
     struct MakePrimitive<%(boost)s>
     {
       static rObject primitive(
-        runner::Runner&%(runner_name)s,
+        /*runner::Runner&%(runner_name)s,*/
         object::objects_type& args,
         %(boost)s f)
       {
@@ -174,7 +174,7 @@ def primitive_list(r, runner, met):
 primitives = ''
 
 for ret in [True, False]:
-    for run in [True, False]:
+    for run in [False]:
         for nargs in range(5):
             primitives += '\n    // Return: %s, Runner: %s, Arguments: %s\n' % (ret, run, nargs)
             primitives += primitive(ret, run, nargs)
@@ -226,6 +226,6 @@ namespace object
       // * method pointers
       return new Primitive(
         boost::bind(MakePrimitive<typename C::type>::primitive,
-                    _1, _2, C::convert(f)));
+                    _1, /*_2,*/ C::convert(f)));
     }
 }''' % primitives

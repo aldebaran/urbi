@@ -26,7 +26,7 @@ namespace object
     rObject call_get() const;
     const captures_type& captures_get() const;
     rObject self_get() const;
-    virtual rObject operator() (runner::Runner& r, object::objects_type args);
+    virtual rObject operator() (object::objects_type args);
 
     ast_type& ast_get();
     rObject& call_get();
@@ -34,12 +34,11 @@ namespace object
     rObject& self_get();
 
     /// Urbi methods
-    rObject apply(runner::Runner& r, rList args);
-    static std::string as_string(runner::Runner& r, rObject what);
+    rObject apply(rList args);
+    static std::string as_string(rObject what);
     std::string body_string();
 
-    virtual std::ostream& special_slots_dump (std::ostream& o,
-					      runner::Runner&) const;
+    virtual std::ostream& special_slots_dump (std::ostream& o) const;
 
   private:
     /// Body of the function

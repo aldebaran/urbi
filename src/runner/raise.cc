@@ -62,7 +62,7 @@ namespace runner
       else
 	break;
     } while (false);
-    r.raise(urbi_call(r, exn, SYMBOL(new), args), skip);
+    r.raise(urbi_call(exn, SYMBOL(new), args), skip);
     pabort("Unreachable");
   }
 

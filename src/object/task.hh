@@ -26,12 +26,12 @@ namespace object
     rList backtrace();
     libport::Symbol name();
     void setSideEffectFree(rObject);
-    std::string status(runner::Runner&);
+    std::string status();
     const runner::tag_stack_type tags();
     void terminate();
     rFloat timeShift();
-    void waitForChanges(runner::Runner&);
-    void waitForTermination(runner::Runner&);
+    void waitForChanges();
+    void waitForTermination();
 
   private:
     value_type value_;

@@ -85,9 +85,9 @@ namespace object
     return damerau_levenshtein_distance(value_get(), other->value_get());
   }
 
-  std::string String::plus (runner::Runner& r, rObject rhs)
+  std::string String::plus (rObject rhs)
   {
-    rObject str = urbi_call(r, rhs, SYMBOL(asString));
+    rObject str = urbi_call(rhs, SYMBOL(asString));
     type_check<String>(str);
     return content_ + str->as<String>()->value_get();
   }
@@ -205,7 +205,7 @@ namespace object
                  (String::*)(const std::vector<std::string>&, int, bool, bool))
                  &String::split)
 
-  static rObject split_bouncer(runner::Runner& r, objects_type& args)
+  static rObject split_bouncer(objects_type& args)
   {
     static rPrimitive actual = make_primitive(split_overload);
     check_arg_count(args.size() - 1, 0, 4);
@@ -232,7 +232,7 @@ namespace object
     }
     if (args[2] == object::nil_class)
       args[2] = new Float(-1);
-    return (*actual)(r, args);
+    return (*actual)(args);
   }
 
   std::string
@@ -245,7 +245,7 @@ namespace object
     return res;
   }
 
-  std::string String::format(runner::Runner& r, rList _values)
+  std::string String::format(rList _values)
   {
     const char* str = content_.c_str();
     const char* next;
@@ -271,7 +271,7 @@ namespace object
         {
           if (it == end)
 	    runner::raise_primitive_error("Too few arguments for format");
-          rObject as_string = urbi_call(r, *it, SYMBOL(asString));
+          rObject as_string = urbi_call(*it, SYMBOL(asString));
           res += as_string->as<String>()->value_get();
           it++;
           break;

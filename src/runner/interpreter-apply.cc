@@ -154,7 +154,7 @@ namespace runner
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
     {
       args.push_front(target);
-      return p->value_get()(*this, args);
+      return p->value_get()(args);
     }
     else
     {
@@ -199,7 +199,7 @@ namespace runner
     if (!function->is_a<object::Code>()
         || function->as<object::Code>()->ast_get()->strict())
     {
-      rObject urbi_args = urbi_call(*this, call_message, SYMBOL(evalArgs));
+      rObject urbi_args = urbi_call(call_message, SYMBOL(evalArgs));
       foreach (const rObject& arg,
 	       urbi_args->as<object::List>()->value_get())
 	args.push_back(arg);

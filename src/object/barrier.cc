@@ -2,6 +2,8 @@
 
 #include <libport/containers.hh>
 
+#include <kernel/userver.hh>
+
 #include <object/barrier.hh>
 #include <object/float.hh>
 
@@ -34,8 +36,9 @@ namespace object
   }
 
   rObject
-  Barrier::wait(runner::Runner& r)
+  Barrier::wait()
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     value_.push_back(&r);
     try
     {

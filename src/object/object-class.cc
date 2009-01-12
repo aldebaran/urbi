@@ -37,7 +37,7 @@ namespace object
   `--------------------*/
 
   static rObject
-  object_class_clone (runner::Runner&, objects_type& args)
+  object_class_clone (objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
 
@@ -45,7 +45,7 @@ namespace object
   }
 
   static rObject
-  object_class_init (runner::Runner&, objects_type& args)
+  object_class_init (objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     return args[0];
@@ -54,8 +54,10 @@ namespace object
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_dump (runner::Runner& r, objects_type& args)
+  object_class_dump (objects_type& args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     check_arg_count(args.size() - 1, 1, 2);
 
     // Second argument is max depth.
@@ -85,7 +87,7 @@ namespace object
     }
 
     std::ostringstream os;
-    args[0]->dump(os, r, depth_max);
+    args[0]->dump(os, depth_max);
     //for now our best choice is to dump line by line in "system" messages.
     const std::string stream = os.str();
     boost::tokenizer< boost::char_separator<char> > tok =
@@ -99,7 +101,7 @@ namespace object
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
-  object_class_uid (runner::Runner&, objects_type& args)
+  object_class_uid (objects_type& args)
   {
     static boost::format uid("0x%x");
     check_arg_count(args.size() - 1, 0);
@@ -109,23 +111,23 @@ namespace object
 
   /// Structural equality
   static rObject
-  object_class_EQ_EQ(runner::Runner& r, objects_type& args)
+  object_class_EQ_EQ(objects_type& args)
   {
     // Unless overridden, structural equality is physical equality.
     check_arg_count(args.size() - 1, 1);
-    return urbi_call(r, args[0], SYMBOL(EQ_EQ_EQ), args[1]);
+    return urbi_call(args[0], SYMBOL(EQ_EQ_EQ), args[1]);
   }
 
   /// Physical equality
   static rObject
-  object_class_EQ_EQ_EQ(runner::Runner&, objects_type& args)
+  object_class_EQ_EQ_EQ(objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
     return to_boolean(args[0] == args[1]);
   }
 
   static rObject
-  object_class_apply(runner::Runner&, objects_type& args)
+  object_class_apply(objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
     type_check<List>(args[1]);
@@ -137,8 +139,10 @@ namespace object
   }
 
   static rObject
-  object_class_callMessage (runner::Runner& r, objects_type& args)
+  object_class_callMessage (objects_type& args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     check_arg_count(args.size() - 1, 1);
     // We need to set the 'code' slot: make a copy of the call message.
     rObject call_message = args[1]->clone();
@@ -160,7 +164,7 @@ namespace object
   /// Adding or removing protos. \a Verb is "add" or "remove".
 #define CHANGE_PARENTS(Verb)                                            \
   static rObject                                                        \
-  object_class_ ## Verb ## Proto (runner::Runner&,                      \
+  object_class_ ## Verb ## Proto (                     \
                                   objects_type& args)                   \
   {									\
     check_arg_count(args.size() - 1, 1);                                \
@@ -176,7 +180,7 @@ namespace object
 
   /// Get protos' list.
   static rObject
-  object_class_protos (runner::Runner&, objects_type& args)
+  object_class_protos (objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     return args[0]->urbi_protos_get ();
@@ -192,7 +196,7 @@ namespace object
 
   /// Recursively get protos list
   static rObject
-  object_class_allProtos(runner::Runner&, objects_type& args)
+  object_class_allProtos(objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     List::value_type res;
@@ -222,7 +226,7 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (runner::Runner&, objects_type& args)
+  object_class_slotNames (objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     const rObject& obj = args[0];
@@ -246,13 +250,13 @@ namespace object
   }
 
   static rObject
-  object_class_allSlotNames(runner::Runner& r, objects_type& args)
+  object_class_allSlotNames(objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     std::vector<libport::Symbol> slot_names;
     List::value_type res;
     objects_type protos =
-      object_class_allProtos(r, args)->as<List>()->value_get();
+      object_class_allProtos(args)->as<List>()->value_get();
     foreach (const rObject& proto, protos)
     {
       for_all_slot_names(proto, boost::bind(&maybe_add,

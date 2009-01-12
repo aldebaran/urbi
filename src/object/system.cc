@@ -50,10 +50,10 @@ namespace object
   }
 
   rObject
-  execute_parsed(runner::Runner& r,
-                 parser::parse_result_type p,
+  execute_parsed(parser::parse_result_type p,
                  libport::Symbol fun, std::string e)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     runner::Interpreter& run = dynamic_cast<runner::Interpreter&>(r);
 
     // Report potential errors
@@ -96,7 +96,7 @@ namespace object
 
 #define SERVER_FUNCTION(Function)					\
   static rObject							\
-  system_class_ ## Function (runner::Runner&, objects_type args)	\
+  system_class_ ## Function (objects_type args)                         \
   {									\
     check_arg_count(args.size() - 1, 0);                                \
     urbiserver->Function();						\
@@ -110,8 +110,9 @@ namespace object
 
 
   static rObject
-  system_class_sleep (runner::Runner& r, objects_type args)
+  system_class_sleep (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 1);
 
     type_check<Float>(args[1]);
@@ -130,22 +131,24 @@ namespace object
   }
 
   static rObject
-  system_class_time(runner::Runner& r, objects_type args)
+  system_class_time(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     return new Float(r.scheduler_get().get_time() / 1000000.0);
   }
 
   static rObject
-  system_class_shiftedTime(runner::Runner& r, objects_type args)
+  system_class_shiftedTime(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     return new Float((r.scheduler_get().get_time() -
 			  r.time_shift_get()) / 1000000.0);
   }
 
   static rObject
-  system_class_assert_(runner::Runner&, objects_type args)
+  system_class_assert_(objects_type args)
   {
     check_arg_count(args.size() - 1, 2);
     type_check<String>(args[2]);
@@ -157,20 +160,21 @@ namespace object
   }
 
   static rObject
-  system_class_eval(runner::Runner& r, objects_type args)
+  system_class_eval(objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
     type_check<String>(args[1]);
     rString arg1 = args[1]->as<String>();
     return
-      execute_parsed(r, parser::parse(arg1->value_get(), ast::loc()),
+      execute_parsed(parser::parse(arg1->value_get(), ast::loc()),
                      SYMBOL(eval),
                      "error executing command: " + arg1->value_get());
   }
 
   static rObject
-  system_class_registerAtJob (runner::Runner& r, objects_type args)
+  system_class_registerAtJob (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 3);
     runner::register_at_job(dynamic_cast<runner::Interpreter&>(r),
 			    args[1], args[2], args[3]);
@@ -178,8 +182,9 @@ namespace object
   }
 
   static rObject
-  system_class_scopeTag(runner::Runner& r, objects_type args)
+  system_class_scopeTag(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     const sched::rTag& scope_tag =
       dynamic_cast<runner::Interpreter&>(r).scope_tag();
@@ -187,8 +192,10 @@ namespace object
   }
 
   static rObject
-  system_class_searchFile (runner::Runner& r, objects_type args)
+  system_class_searchFile (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     check_arg_count(args.size() - 1, 1);
     const std::string filename = filename_get(args[1]);
 
@@ -207,7 +214,7 @@ namespace object
   }
 
   static rObject
-  system_class_searchPath(runner::Runner&, objects_type args)
+  system_class_searchPath(objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
     List::value_type res;
@@ -218,7 +225,7 @@ namespace object
   }
 
   static rObject
-  system_class_loadFile(runner::Runner& r, objects_type args)
+  system_class_loadFile(objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
     const std::string filename = filename_get(args[1]);
@@ -226,59 +233,67 @@ namespace object
     if (!libport::path(filename).exists())
       runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
     return
-      execute_parsed(r, parser::parse_file(filename),
+      execute_parsed(parser::parse_file(filename),
                      SYMBOL(loadFile),
 		     "error loading file: " + filename);
   }
 
   static rObject
-  system_class_currentRunner (runner::Runner& r, objects_type args)
+  system_class_currentRunner (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     return r.as_task();
   }
 
   static rObject
-  system_class_cycle (runner::Runner& r, objects_type args)
+  system_class_cycle (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     return new Float(r.scheduler_get ().cycle_get ());
   }
 
   static rObject
-  system_class_fresh (runner::Runner&, objects_type args)
+  system_class_fresh (objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
     return new String(libport::Symbol::fresh());
   }
 
   static rObject
-  system_class_lobby (runner::Runner& r, objects_type args)
+  system_class_lobby (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     return r.lobby_get();
   }
 
   static rObject
-  system_class_nonInterruptible (runner::Runner& r, objects_type args)
+  system_class_nonInterruptible (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     r.non_interruptible_set (true);
     return void_class;
   }
 
   static rObject
-  system_class_quit (runner::Runner& r, objects_type args)
+  system_class_quit (objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     r.lobby_get()->value_get().connection.close();
     return void_class;
   }
 
   static void
-  system_spawn(runner::Runner& r, const rObject&,
-	       const rCode& code, const rObject& clear_tags)
+  system_spawn(const rObject&,
+	       const rCode& code,
+               const rObject& clear_tags)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     const runner::Interpreter& current_runner =
       dynamic_cast<runner::Interpreter&>(r);
     runner::Interpreter* new_runner =
@@ -294,8 +309,9 @@ namespace object
   }
 
   static rObject
-  system_class_stats(runner::Runner& r, objects_type args)
+  system_class_stats(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     Dictionary::value_type res;
     const sched::scheduler_stats_type& stats =
@@ -321,15 +337,16 @@ namespace object
   }
 
   static rObject
-  system_class_resetStats(runner::Runner& r, objects_type args)
+  system_class_resetStats(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     r.scheduler_get().stats_reset();
     return void_class;
   }
 
   static rObject
-  system_class_platform(runner::Runner&, objects_type args)
+  system_class_platform(objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
 #ifdef WIN32
@@ -341,8 +358,9 @@ namespace object
 
   // This should give a backtrace as an urbi object.
   static rObject
-  system_class_backtrace(runner::Runner& r, objects_type args)
+  system_class_backtrace(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
     check_arg_count(args.size() - 1, 0);
@@ -356,8 +374,9 @@ namespace object
   }
 
   static rObject
-  system_class_jobs(runner::Runner& r, objects_type args)
+  system_class_jobs(objects_type args)
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     List::value_type res;
     foreach(sched::rJob job, r.scheduler_get().jobs_get())
@@ -366,21 +385,21 @@ namespace object
   }
 
   static rObject
-  system_class_aliveJobs(runner::Runner&, objects_type args)
+  system_class_aliveJobs(objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
     return new Float(sched::Job::alive_jobs());
   }
 
   static rObject
-  system_class_breakpoint(runner::Runner&, objects_type)
+  system_class_breakpoint(objects_type)
   {
     return void_class;
   }
 
 #define SERVER_SET_VAR(Function, Variable, Value)			\
   static rObject							\
-  system_class_ ## Function (runner::Runner&, objects_type args)	\
+  system_class_ ## Function (objects_type args)                         \
   {									\
     check_arg_count(args.size() - 1, 0);                                \
     urbiserver->Variable = Value;					\
@@ -399,10 +418,9 @@ namespace object
     return res ? new String(res) : nil_class;
   }
 
-  static rObject system_setenv(runner::Runner& r, rObject,
-                               const std::string& name, rObject value)
+  static rObject system_setenv(rObject, const std::string& name, rObject value)
   {
-    rString v = urbi_call(r, value, SYMBOL(asString))->as<String>();
+    rString v = urbi_call(value, SYMBOL(asString))->as<String>();
     setenv(name.c_str(), v->value_get().c_str(), 1);
     return v;
   }

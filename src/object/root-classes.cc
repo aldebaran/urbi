@@ -82,7 +82,7 @@ namespace object
   bool root_classes_initialized = false;
 
   static rObject
-  id(runner::Runner&, objects_type args)
+  id(objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
     return args.front();
@@ -90,7 +90,7 @@ namespace object
 
   template <typename T>
   static rObject
-  compare(runner::Runner&, objects_type args)
+  compare(objects_type args)
   {
     check_arg_count(args.size() - 1, 1);
     type_check<T>(args[0]);
@@ -264,7 +264,7 @@ namespace object
   namespace
   {
     static rObject
-    void_class_acceptVoid(runner::Runner&, objects_type args)
+    void_class_acceptVoid(objects_type args)
     {
       check_arg_count(args.size() - 1, 0);
 

@@ -23,9 +23,9 @@ namespace object
     value_type& value_get();
 
     static rSemaphore _new(rObject sem, rFloat count);
-    void p(runner::Runner& r);
+    void p();
     void v();
-    rObject criticalSection(runner::Runner&, rCode);
+    rObject criticalSection(rCode);
 
   private:
     value_type value_;

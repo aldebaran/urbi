@@ -76,7 +76,7 @@ namespace dbg
   dump(const object::rObject& o, int depth)
   {
     assert(sneaker);
-    o->dump(std::cerr, *sneaker, depth);
+    o->dump(std::cerr, depth);
   }
 
   void
@@ -91,8 +91,7 @@ namespace dbg
   {
     assert(sneaker);
     return
-      object::execute_parsed(*sneaker,
-                             parser::parse(command, __HERE__),
+      object::execute_parsed(parser::parse(command, __HERE__),
                              SYMBOL(eval),
 			     std::string("error evaluating command `") +
 			     command + "'");
@@ -102,7 +101,7 @@ namespace dbg
   evalp(const char* command)
   {
     object::rObject o = eval(command);
-    urbi_call(*sneaker, o, SYMBOL(print));
+    urbi_call(o, SYMBOL(print));
   }
 
   void
@@ -112,7 +111,7 @@ namespace dbg
     std::cerr << "system_class: " << object::system_class.get() << std::endl;
     try
     {
-      urbi_call(*sneaker, object::system_class, SYMBOL(ps));
+      urbi_call(object::system_class, SYMBOL(ps));
     }
     catch (...)
     {

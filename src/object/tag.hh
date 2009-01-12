@@ -22,28 +22,28 @@ namespace object
     Tag(rTag model);
     const value_type& value_get() const;
 
-    void block(runner::Runner&, objects_type&);
+    void block(objects_type&);
     void init(objects_type& args);
-    void freeze(runner::Runner&);
+    void freeze();
     libport::Symbol name();
-    static rTag new_flow_control(runner::Runner& r, objects_type&);
+    static rTag new_flow_control(objects_type&);
     sched::prio_type prio();
-    sched::prio_type prio_set(runner::Runner&, sched::prio_type);
-    void stop(runner::Runner&, objects_type&);
+    sched::prio_type prio_set(sched::prio_type);
+    void stop(objects_type&);
     void unblock();
     void unfreeze();
     bool frozen();
     bool blocked();
 
     /// Return, potentially creating first, the enter event for \a this
-    rObject enter(runner::Runner& r);
+    rObject enter();
     /// Return, potentially creating first, the leave event for \a this
-    rObject leave(runner::Runner& r);
+    rObject leave();
 
     /// Trigger \a this' enter event
-    void triggerEnter(runner::Runner& r);
+    void triggerEnter();
     /// Trigger \a this' leave event
-    void triggerLeave(runner::Runner& r);
+    void triggerLeave();
 
     /// Manipulate parent tag.
     rTag parent_get();

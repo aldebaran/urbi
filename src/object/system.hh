@@ -24,7 +24,7 @@ namespace object
   /// \param e   exception to raise on error.
   /// \returns the result of the evaluation.
   rObject
-  execute_parsed (runner::Runner& r, parser::parse_result_type p,
+  execute_parsed (parser::parse_result_type p,
                   libport::Symbol fun, std::string e);
 
   /// Initialize the System class.

@@ -8,7 +8,7 @@ namespace object
   class Executable: public CxxObject
   {
   public:
-    virtual rObject operator() (runner::Runner& r, object::objects_type args) = 0;
+    virtual rObject operator() (object::objects_type args) = 0;
   };
 }
 

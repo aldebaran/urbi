@@ -34,8 +34,8 @@ namespace object
     std::string as_printable();
 
     unsigned int distance(rString other);
-    std::string format(runner::Runner& r, rList values);
-    std::string plus(runner::Runner& r, rObject rhs);
+    std::string format(rList values);
+    std::string plus(rObject rhs);
     bool lt(const std::string& rhs);
     std::string fresh();
     std::string set(const std::string& rhs);

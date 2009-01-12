@@ -58,8 +58,10 @@ namespace object
   }
 
   std::string
-  Task::status(runner::Runner& r)
+  Task::status()
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
+
     std::stringstream status;
     switch(value_->state_get())
     {
@@ -116,14 +118,16 @@ namespace object
   }
 
   void
-  Task::waitForTermination(runner::Runner& r)
+  Task::waitForTermination()
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     r.yield_until_terminated(*value_);
   }
 
   void
-  Task::waitForChanges(runner::Runner& r)
+  Task::waitForChanges()
   {
+    runner::Runner& r = ::urbiserver->getCurrentRunner();
     r.yield_until_things_changed();
   }
 

@@ -116,7 +116,7 @@ namespace runner
   void
   Interpreter::show_exception_ (object::UrbiException& ue)
   {
-    rObject str = urbi_call(*this, ue.value_get(), SYMBOL(asString));
+    rObject str = urbi_call(ue.value_get(), SYMBOL(asString));
     std::ostringstream o;
     o << "!!! " << str->as<object::String>()->value_get();
     send_message("error", o.str ());
@@ -245,7 +245,7 @@ namespace runner
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tags).
 	  where = object::urbi_call
-            (*this, parent, SYMBOL(new), new object::String(elt));
+            (parent, SYMBOL(new), new object::String(elt));
 	  parent->slot_set(elt, where);
 	  parent = where;
 	}

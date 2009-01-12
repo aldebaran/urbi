@@ -26,10 +26,10 @@ namespace object
     // Urbi method
     rObject back        ();
     rList   clear       ();
-    void    each        (runner::Runner&, const rObject&);
-    void    each_pipe   (runner::Runner&, const rObject&);
-    void    each_common (runner::Runner&, const rObject&, bool);
-    void    each_and    (runner::Runner&, const rObject&);
+    void    each        (const rObject&);
+    void    each_pipe   (const rObject&);
+    void    each_common (const rObject&, bool);
+    void    each_and    (const rObject&);
     rObject front       ();
     rObject removeFront ();
     rObject removeBack  ();
@@ -41,9 +41,9 @@ namespace object
     rObject set         (const rFloat& nth, const rObject& value);
     rFloat  size        ();
     value_type
-            sort        (runner::Runner& r);
+            sort        ();
     value_type
-            sort        (runner::Runner& r, rObject f);
+            sort        (rObject f);
     rList   tail        ();
     rList   operator+   (const rList& rhs);
     rList   operator+=  (const rList& rhs);
