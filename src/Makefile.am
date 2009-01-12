@@ -117,7 +117,7 @@ CLEANFILES += libuobject.la.stamp
 if BUILD_PROGRAMS
 if !WIN32
 # ast-dump.
-noinst_PROGRAMS = ast-dump testcoro
+noinst_PROGRAMS = ast-dump
 dist_ast_dump_SOURCES =				\
   ast-dump.cc					\
   ast/dot-printer.hh				\
@@ -126,11 +126,6 @@ dist_ast_dump_SOURCES =				\
   $(dist_libuobject_la_SOURCES)
 ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
 ast_dump_LDADD   = $(libuobject_la_LIBADD)
-dist_testcoro_SOURCES =				\
-  scheduler/testcoro.cc				\
-  $(coroutines_sources)				\
-  kernel/kernconf.cc
-testcoro_CPPFLAGS = $(libuobject_la_CPPFLAGS)
 endif !WIN32
 endif BUILD_PROGRAMS
 
