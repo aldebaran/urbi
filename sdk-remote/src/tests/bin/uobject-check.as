@@ -1,18 +1,20 @@
                                                      -*- shell-script -*-
 URBI_INIT
 
-# The full path to the *.uob dir:
-# ../../../../../sdk-remote/src/tests/uobjects/access-and-change/uaccess.uob
-uob=$(absolute $1)
-require_file "$uob"
+# The full path to the *.la.
+la=$(absolute $1)
+require_file "$la"
+
+# Without extension.
+uob=${la/.la}
 
 # For error messages.
-me=$(basename "$uob" .uob)
+me=$(basename "$uob")
 
 # The directory we work in.
 # The ending part, for our builddir: access-and-change/uaccess.dir.
 builddir=$(echo "$uob" |
-           sed -e 's,.*/src/uobjects/,uobjects/,').dir
+           sed -e 's,.*/src/uobjects/,uobjects/,;s/\.la$/.dir/;')
 mkcd $builddir
 
 # Find urbi-launch.
