@@ -139,10 +139,17 @@ namespace urbi
   /// Command line options needed in the main loop.
   struct LoopData
   {
+    LoopData()
+      : interactive(false)
+      , fast(false)
+      , network(true)
+      , server(0)
+      {}
+
     bool interactive;
     bool fast;
     bool network;
-    ConsoleServer* s;
+    ConsoleServer* server;
   };
 
   int main_loop(LoopData& l);
@@ -151,7 +158,6 @@ namespace urbi
   main(const libport::cli_args_type& args, bool block)
   {
     program_name = args[0];
-    LoopData data;
     // Input files.
     typedef std::vector<std::string> files_type;
     files_type files;
@@ -163,14 +169,9 @@ namespace urbi
     std::string arg_port_filename;
     /// The size of the stacks.
     size_t arg_stack_size = 0;
-    /// fast mode
-    data.fast = false;
-    /// interactive mode
-    data.interactive = false;
-    /// enable network
-    data.network = true;
 
     // Parse the command line.
+    LoopData data;
     for (unsigned i = 1; i < args.size(); ++i)
     {
       const std::string& arg = args[i];
@@ -219,8 +220,8 @@ namespace urbi
       kernconf.default_stack_size = arg_stack_size;
     }
 
-    data.s = new ConsoleServer(data.fast);
-    ConsoleServer& s = *data.s;
+    data.server = new ConsoleServer(data.fast);
+    ConsoleServer& s = *data.server;
     int port = 0;
     if (data.network
         && !(port = Network::createTCPServer(arg_port, arg_host)))
@@ -269,7 +270,7 @@ namespace urbi
   int
   main_loop(LoopData& data)
   {
-    ConsoleServer& s = *data.s;
+    ConsoleServer& s = *data.server;
     libport::utime_t next_time = 0;
     while (true)
     {
