@@ -5,10 +5,24 @@ include uobjects/uobjects.mk
 EXTRA_DIST += $(addprefix uobjects/,$(UOBJECTS:=.uob))
 
 uobjects_DATA = $(addprefix uobjects/,$(UOBJECTS:=$(SHLIBEXT)))
+CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
+
+UMAKE_SHARED = tests/bin/umake-shared
 
 # uobjects_all_SOURCES = uobjects/all.uob
-%$(SHLIBEXT): %.uob
-	$(top_builddir)/src/tests/bin/umake-shared --output=$@ $<
+%$(SHLIBEXT): %.uob $(UMAKE_SHARED)
+	$(UMAKE_SHARED) --output=$@ $<
+
+clean-local: clean-uobjects
+clean-uobjects:
+# If we are unlucky, umake-shared will be cleaned before we call it.
+	$(UMAKE_SHARED) --deep-clean ||			\
+	  find . -name "_ubuild-*" -a -type d | xargs rm -rf
+
+# Help to restart broken builds.
+$(UMAKE_SHARED):
+	make -C tests bin/umake-shared
+	make -C $(top_builddir) sdk/umake-shared sdk/umake
 
 # We need to factor this.  .SECONDEXPANSION seems to do what we want,
 # but I need to investigate further.
