@@ -48,9 +48,10 @@ else
   TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 fi
 
-# Flex.
+# Flex.  2.3.33 has a problem with REJECT and produces a scanner that
+# does not compile.
 AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
-TC_PROG([flex],  [>= 2.5.33], [FLEX],  [fast lexical analyzer generator])
+TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
 TC_CXX_WARNINGS([[-Wcast-align],
