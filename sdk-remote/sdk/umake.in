@@ -165,9 +165,9 @@ get_options ()
       (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
       (*=*)     makeargs+=" '$1'" ;;
 
-      (*.h |*.hh|*.hxx|*.hpp) headers="$headers '$1'";   havearg=true ;;
-      (*.cc|*.cpp|*.c|*.C)    sources="$sources '$1'";   havearg=true ;;
-      (*.a|*.o)               libs="$libs '$1'";         havearg=true ;;
+      (*.h |*.hh|*.hxx|*.hpp) headers+=" '$1'";  havearg=true ;;
+      (*.cc|*.cpp|*.c|*.C)    sources+=" '$1'";  havearg=true ;;
+      (*.a|*.o)               libs+=" '$1'";     havearg=true ;;
       (*/)
 	# It is a directory.
 	files=$(find "$1"				\
@@ -246,13 +246,13 @@ fi
 # Use default main.
 if $automain; then
   : ${umaindir='@umaindir@'}
-  sources="$sources $umaindir/umain.cc"
+  sources+=" $umaindir/umain.cc"
 fi
 
 for s in $(eval echo "$sources")
 do
-  objects="$objects '"$(basename "$s" | sed 's/\.[^.]*$/.o/g')"'"
-  vpath="$vpath:"$(dirname "$s")
+  objects+=" '"$(basename "$s" | sed 's/\.[^.]*$/.o/g')"'"
+  vpath+=:$(dirname "$s")
 done
 
 # The library extension.
@@ -278,7 +278,7 @@ case $core in
     for i in $libs
     do
       test "$i" = "$target" ||
-        res+="$res $i"
+        res+=" $i"
     done
     libs=$res
     if $shared; then
