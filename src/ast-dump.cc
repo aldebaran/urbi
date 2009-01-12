@@ -57,7 +57,7 @@ main()
     source += buf;
   }
 
-  rAst res = parse(source)->ast_get();;
+  rAst res = parse(source, __HERE__)->ast_get();;
 
   print(res);
 
