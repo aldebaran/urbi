@@ -31,7 +31,6 @@ case " $* " in
        eval "$v=\$val:\$v"
        export $v
      done
-     echo >&2 "wrapper: $DYLD_LIBRARY_PATH"
      ;;
   (*)
      libuobjectdir=$abs_top_builddir/src/libuobject;;
