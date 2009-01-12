@@ -196,14 +196,14 @@ get_options ()
 ## Main.  ##
 ## ------ ##
 
-EXEEXT=@EXEEXT@
-SHLIBEXT=@SHLIBEXT@
+: ${EXEEXT=@EXEEXT@}
+: ${SHLIBEXT=@SHLIBEXT@}
 clean=
-core=$defaultenv
 deep_clean=
 defaultenv='@URBI_ENV@'
+core=$defaultenv
 havearg=false   # we have at least one path or file arg
-host='@URBI_HOST@'
+: ${host='@URBI_HOST@'}
 # Libraries (and flags) to use when linking a module.
 LIBADD=
 # Whether building a shared lib/module.
