@@ -46,22 +46,22 @@ namespace runner
     scope_tags_.push_back(0);
   }
 
-  const scheduler::rTag&
+  const sched::rTag&
   Runner::scope_tag_get() const
   {
     return scope_tags_.back();
   }
 
-  const scheduler::rTag&
+  const sched::rTag&
   Runner::scope_tag()
   {
-    scheduler::rTag& tag = scope_tags_.back();
+    sched::rTag& tag = scope_tags_.back();
     if (!tag)
     {
       // Create the tag on demand. It must have the lowest possible priority to
       // avoid influencing the scheduling algorithm.
-      tag = new scheduler::Tag(SYMBOL(scopeTag));
-      tag->prio_set(scheduler_get(), scheduler::UPRIO_NONE);
+      tag = new sched::Tag(SYMBOL(scopeTag));
+      tag->prio_set(scheduler_get(), sched::UPRIO_NONE);
     }
     return tag;
   }
@@ -69,7 +69,7 @@ namespace runner
   void
   Runner::cleanup_scope_tag()
   {
-    const scheduler::rTag& tag = scope_tags_.back();
+    const sched::rTag& tag = scope_tags_.back();
     if (tag)
       tag->stop(scheduler_get(), object::void_class);
     scope_tags_.pop_back();
@@ -108,16 +108,16 @@ namespace runner
   {
     if (tag_stack_.empty())
     {
-      prio_ = scheduler::UPRIO_DEFAULT;
+      prio_ = sched::UPRIO_DEFAULT;
       return;
     }
-    prio_ = scheduler::UPRIO_MIN;
+    prio_ = sched::UPRIO_MIN;
     foreach(const object::rTag& tag, tag_stack_)
       prio_ = std::max(prio_, tag->value_get()->prio_get());
   }
 
   void
-  Runner::recompute_prio(scheduler::prio_type prio)
+  Runner::recompute_prio(sched::prio_type prio)
   {
     if (!scheduler_get().real_time_behaviour_get())
       return;
@@ -126,7 +126,7 @@ namespace runner
   }
 
   size_t
-  Runner::has_tag(const scheduler::Tag& tag, size_t max_depth) const
+  Runner::has_tag(const sched::Tag& tag, size_t max_depth) const
   {
     max_depth = std::min(max_depth, tag_stack_.size());
     for (size_t i = 0; i < max_depth; i++)

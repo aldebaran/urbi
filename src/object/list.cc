@@ -205,7 +205,7 @@ namespace object
   List::each_and(runner::Runner& r, const rObject& f)
   {
     libport::Finally finally;
-    scheduler::jobs_type jobs;
+    sched::jobs_type jobs;
 
     // Beware of iterations that modify the list in place: make a
     // copy.
@@ -214,7 +214,7 @@ namespace object
     {
       object::objects_type args;
       args.push_back(o);
-      scheduler::rJob job =
+      sched::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                 f, SYMBOL(each), args);
       r.register_child(job, finally);
@@ -226,7 +226,7 @@ namespace object
     {
       r.yield_until_terminated(jobs);
     }
-    catch (const scheduler::ChildException& ce)
+    catch (const sched::ChildException& ce)
     {
       ce.rethrow_child_exception();
     }

@@ -13,7 +13,7 @@
 namespace runner
 {
   Shell::Shell(const rLobby& lobby,
-	       scheduler::Scheduler& scheduler,
+	       sched::Scheduler& scheduler,
 	       const libport::Symbol& name)
     : Interpreter(lobby,
 		  scheduler,

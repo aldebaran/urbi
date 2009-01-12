@@ -61,7 +61,7 @@ namespace runner
   `--------------*/
 
   Interpreter::Interpreter (rLobby lobby,
-			    scheduler::Scheduler& sched,
+			    sched::Scheduler& sched,
 			    ast::rConstAst ast,
 			    const libport::Symbol& name)
     : Runner(lobby, sched, name)
@@ -167,7 +167,7 @@ namespace runner
     CAPTURE_GLOBAL(SchedulingError);
     object::objects_type args;
     args.push_back(object::to_urbi(msg));
-    scheduler::rJob child =
+    sched::rJob child =
       new Interpreter(*this,
 		      SchedulingError->slot_get(SYMBOL(throwNew)),
 		      SYMBOL(SchedulingError),
@@ -184,7 +184,7 @@ namespace runner
       non_interruptible_set(false);
       yield_until_terminated(*child);
     }
-    catch (const scheduler::ChildException& ce)
+    catch (const sched::ChildException& ce)
     {
       try
       {

@@ -67,21 +67,21 @@ UConnection::UConnection(UServer& server, size_t packetSize)
   connection_tag_ = o.str();
   lobby_->slot_set
     (SYMBOL(connectionTag),
-     new object::Tag(new scheduler::Tag(libport::Symbol(connection_tag_))));
+     new object::Tag(new sched::Tag(libport::Symbol(connection_tag_))));
 
   // Create the shell.
-  shell_ = new runner::Shell(lobby_, server_.getScheduler(), SYMBOL(shell));
+  shell_ = new runner::Shell(lobby_, server_.scheduler_get(), SYMBOL(shell));
   shell_->start_job();
 
   // Create the sneaker if it needs to be.
-  dbg::create_sneaker_if_needed(lobby_, server_.getScheduler());
+  dbg::create_sneaker_if_needed(lobby_, server_.scheduler_get());
 }
 
 UConnection::~UConnection()
 {
   lobby_->slot_remove(SYMBOL(lobby));
   lobby_->slot_get(SYMBOL(connectionTag))->as<object::Tag>()->value_get()
-    ->stop(server_.getScheduler(), object::void_class);
+    ->stop(server_.scheduler_get(), object::void_class);
   shell_->terminate_now();
 }
 

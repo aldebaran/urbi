@@ -24,13 +24,13 @@ namespace runner
   typedef std::vector<object::rTag> tag_stack_type;
 
   /// Ast executor.
-  class Runner : public scheduler::Job
+  class Runner : public sched::Job
   {
   public:
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
-    typedef scheduler::Job super_type;
+    typedef sched::Job super_type;
 
     /// Shorthands used everywhere.
     typedef object::rObject rObject;
@@ -44,7 +44,7 @@ namespace runner
     /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
     /// The new runner has no parent.
     Runner(rLobby lobby,
-	   scheduler::Scheduler& scheduler,
+	   sched::Scheduler& scheduler,
 	   const libport::Symbol& name);
 
     explicit Runner(const Runner&, const libport::Symbol& name);
@@ -106,7 +106,7 @@ namespace runner
                                        const rObject& call_message) = 0;
 
     /// Return the current scope_tag, after creating it if needed.
-    const scheduler::rTag& scope_tag();
+    const sched::rTag& scope_tag();
 
     /// Get the current runner as an Urbi Task or nil if the task is
     /// terminated.
@@ -117,11 +117,11 @@ namespace runner
     virtual libport::Symbol innermost_call_get() const = 0;
 
     virtual bool frozen() const;
-    virtual size_t has_tag(const scheduler::Tag& tag,
+    virtual size_t has_tag(const sched::Tag& tag,
 			   size_t max_depth = (size_t)-1) const;
     bool has_tag(const object::rTag& tag) const;
 
-    virtual scheduler::prio_type prio_get() const;
+    virtual sched::prio_type prio_get() const;
 
     /// Apply a tag to the current job tag stack.
     ///
@@ -172,7 +172,7 @@ namespace runner
     void cleanup_scope_tag();
 
     /// Ditto, but may return 0 if there are no scope tag.
-    const scheduler::rTag& scope_tag_get() const;
+    const sched::rTag& scope_tag_get() const;
 
     /// The URBI Lobby used to evaluate.
     /// Wraps an UConnection (ATM).
@@ -184,13 +184,13 @@ namespace runner
 
     /// Recompute the current priority if a particular tag could have
     /// affected it (addition or removal).
-    void recompute_prio(scheduler::prio_type prio);
+    void recompute_prio(sched::prio_type prio);
 
     /// The scope tags stack.
-    std::vector<scheduler::rTag> scope_tags_;
+    std::vector<sched::rTag> scope_tags_;
 
     /// The stack of current tags. This is different from the
-    /// scheduler::Tag stack located in the runner, that also stores
+    /// sched::Tag stack located in the runner, that also stores
     /// C++ tags that are not visible in urbi. This stack is meant to
     /// enable to list current tags from Urbi.
     tag_stack_type tag_stack_;
@@ -199,7 +199,7 @@ namespace runner
     object::rTask task_;
 
     /// Current priority.
-    scheduler::prio_type prio_;
+    sched::prio_type prio_;
   };
 
 } // namespace runner

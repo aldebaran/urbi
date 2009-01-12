@@ -14,7 +14,7 @@ namespace object
   class Semaphore: public CxxObject
   {
   public:
-    typedef std::pair< int, std::deque<scheduler::rJob> > value_type;
+    typedef std::pair< int, std::deque<sched::rJob> > value_type;
 
     Semaphore();
     Semaphore(rSemaphore model);

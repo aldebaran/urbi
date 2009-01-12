@@ -32,7 +32,7 @@ namespace runner
     bool triggered_get() const;
     void triggered_set(bool);
     const tag_stack_type& tag_stack_get() const;
-    bool tag_held(const scheduler::Tag& tag) const;
+    bool tag_held(const sched::Tag& tag) const;
     const object::rLobby& lobby_get() const;
   private:
     rObject condition_;
@@ -52,7 +52,7 @@ namespace runner
     virtual void work();
     virtual bool frozen() const;
     void add_job(AtJob*);
-    virtual void register_stopped_tag(const scheduler::Tag& tag,
+    virtual void register_stopped_tag(const sched::Tag& tag,
 				      const boost::any&);
   private:
     typedef boost::ptr_list<AtJob> at_jobs_type;
@@ -80,7 +80,7 @@ namespace runner
 
   void
   AtHandler::register_stopped_tag
-    (const scheduler::Tag& tag, const boost::any& payload)
+    (const sched::Tag& tag, const boost::any& payload)
   {
     // If we are the current job, since we have no side effect, it must be
     // a flow control tag. Otherwise, remove all jobs holding this tag.
@@ -128,7 +128,7 @@ namespace runner
 	  job = jobs_.erase(job);
 	  continue;
 	}
-	catch (const scheduler::exception& ke)
+	catch (const sched::exception& ke)
 	{
 	  std::cerr << "at condition triggered an exception: " << ke.what()
 		    << std::endl;
@@ -185,7 +185,7 @@ namespace runner
 	// Regular termination.
 	break;
       }
-      catch (const scheduler::exception& e)
+      catch (const sched::exception& e)
       {
 	std::cerr << "at job handler exited with exception " << e.what()
 		  << std::endl;
@@ -225,7 +225,7 @@ namespace runner
   }
 
   bool
-  AtJob::tag_held(const scheduler::Tag& tag) const
+  AtJob::tag_held(const sched::Tag& tag) const
   {
     foreach (const object::rTag& t, tag_stack_)
       if (t->value_get() == &tag)

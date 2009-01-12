@@ -17,7 +17,7 @@
 namespace object
 {
   Tag::Tag()
-    : value_(new scheduler::Tag(libport::Symbol::make_empty()))
+    : value_(new sched::Tag(libport::Symbol::make_empty()))
   {
     proto_add(proto ? proto : object_class);
   }
@@ -29,7 +29,7 @@ namespace object
   }
 
   Tag::Tag(rTag model)
-    : value_(new scheduler::Tag(model->value_->name_get()))
+    : value_(new sched::Tag(model->value_->name_get()))
   {
     proto_add(model);
     if (model.get() != proto.get())
@@ -91,14 +91,14 @@ namespace object
     return res;
   }
 
-  scheduler::prio_type
+  sched::prio_type
   Tag::prio()
   {
     return value_->prio_get();
   }
 
-  scheduler::prio_type
-  Tag::prio_set(runner::Runner& r, scheduler::prio_type prio)
+  sched::prio_type
+  Tag::prio_set(runner::Runner& r, sched::prio_type prio)
   {
     return value_->prio_set(r.scheduler_get(), prio);
   }

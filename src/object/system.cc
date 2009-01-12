@@ -68,7 +68,7 @@ namespace object
     runner::Interpreter* sub = new runner::Interpreter(run, ast, fun);
     // So that it will resist to the call to yield_until_terminated,
     // and will be reclaimed at the end of the scope.
-    scheduler::rJob job = sub;
+    sched::rJob job = sub;
     libport::Finally finally;
     r.register_child(sub, finally);
     sub->start_job();
@@ -76,7 +76,7 @@ namespace object
     {
       run.yield_until_terminated(*job);
     }
-    catch (const scheduler::ChildException& ce)
+    catch (const sched::ChildException& ce)
     {
       // Kill the sub-job and propagate.
       ce.rethrow_child_exception();
@@ -179,7 +179,7 @@ namespace object
   system_class_scopeTag(runner::Runner& r, objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
-    const scheduler::rTag& scope_tag =
+    const sched::rTag& scope_tag =
       dynamic_cast<runner::Interpreter&>(r).scope_tag();
     return new Tag(scope_tag);
   }
@@ -296,7 +296,7 @@ namespace object
   {
     check_arg_count(args.size() - 1, 0);
     Dictionary::value_type res;
-    const scheduler::scheduler_stats_type& stats =
+    const sched::scheduler_stats_type& stats =
       r.scheduler_get().stats_get();
 
     // If statistics have just been reset, return "nil" since we cannot
@@ -358,7 +358,7 @@ namespace object
   {
     check_arg_count(args.size() - 1, 0);
     List::value_type res;
-    foreach(scheduler::rJob job, r.scheduler_get().jobs_get())
+    foreach(sched::rJob job, r.scheduler_get().jobs_get())
       res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
     return new List(res);
   }
@@ -367,7 +367,7 @@ namespace object
   system_class_aliveJobs(runner::Runner&, objects_type args)
   {
     check_arg_count(args.size() - 1, 0);
-    return new Float(scheduler::Job::alive_jobs());
+    return new Float(sched::Job::alive_jobs());
   }
 
   static rObject

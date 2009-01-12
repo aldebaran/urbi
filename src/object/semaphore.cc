@@ -23,7 +23,7 @@ namespace object
     proto_add(proto);
   }
 
-  struct SemaphoreException : public scheduler::SchedulerException
+  struct SemaphoreException : public sched::SchedulerException
   {
     COMPLETE_EXCEPTION(SemaphoreException);
   };
@@ -32,7 +32,7 @@ namespace object
   Semaphore::_new(rObject, rFloat c)
   {
     int count = c->to_unsigned_int();
-    return new Semaphore(make_pair(count, std::deque<scheduler::rJob>()));
+    return new Semaphore(make_pair(count, std::deque<sched::rJob>()));
   }
 
   void

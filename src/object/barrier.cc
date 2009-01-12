@@ -20,7 +20,7 @@ namespace object
     proto_add(proto ? proto : object_class);
   }
 
-  struct BarrierException : public scheduler::SchedulerException
+  struct BarrierException : public sched::SchedulerException
   {
     BarrierException(rObject payload) : payload_(payload) {};
     ADD_FIELD(rObject, payload)
@@ -30,7 +30,7 @@ namespace object
   rBarrier
   Barrier::_new(rObject)
   {
-    return new Barrier(std::deque<scheduler::rJob>());
+    return new Barrier(std::deque<sched::rJob>());
   }
 
   rObject
@@ -72,7 +72,7 @@ namespace object
   {
     const unsigned int res = value_.size();
 
-    foreach (scheduler::rJob job, value_)
+    foreach (sched::rJob job, value_)
       job->async_throw(BarrierException(payload));
     value_.clear();
 

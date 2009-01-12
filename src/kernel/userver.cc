@@ -80,7 +80,7 @@ static char* urbi_path = getenv("URBI_PATH");
 static char* urbi_root = getenv("URBI_ROOT");
 
 UServer::UServer(const char* mainName)
-  : scheduler_(new scheduler::Scheduler(boost::bind(&UServer::getTime,
+  : scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                     boost::ref(*this))))
   , debugOutput(false)
   , mainName_(mainName)

@@ -16,19 +16,19 @@ namespace runner
 {
 
   LIBPORT_SPEED_INLINE
-  Runner::Runner(rLobby lobby, scheduler::Scheduler& sched,
+  Runner::Runner(rLobby lobby, sched::Scheduler& sched,
 		 const libport::Symbol& name)
-    : scheduler::Job(sched, name)
+    : sched::Job(sched, name)
     , lobby_(lobby)
-    , prio_(scheduler::UPRIO_DEFAULT)
+    , prio_(sched::UPRIO_DEFAULT)
   {
   }
 
   LIBPORT_SPEED_INLINE
   Runner::Runner(const Runner& model, const libport::Symbol& name)
-    : scheduler::Job(model, name)
+    : sched::Job(model, name)
     , lobby_(model.lobby_)
-    , prio_(scheduler::UPRIO_DEFAULT)
+    , prio_(sched::UPRIO_DEFAULT)
   {
   }
 
@@ -58,7 +58,7 @@ namespace runner
     lobby_ = lobby;
   }
 
-  LIBPORT_SPEED_INLINE scheduler::prio_type
+  LIBPORT_SPEED_INLINE sched::prio_type
   Runner::prio_get() const
   {
     return prio_;

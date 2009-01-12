@@ -15,7 +15,7 @@ namespace object
   class Tag : public object::CxxObject
   {
   public:
-    typedef scheduler::rTag value_type;
+    typedef sched::rTag value_type;
 
     Tag();
     Tag(const value_type& value);
@@ -27,8 +27,8 @@ namespace object
     void freeze(runner::Runner&);
     libport::Symbol name();
     static rTag new_flow_control(runner::Runner& r, objects_type&);
-    scheduler::prio_type prio();
-    scheduler::prio_type prio_set(runner::Runner&, scheduler::prio_type);
+    sched::prio_type prio();
+    sched::prio_type prio_set(runner::Runner&, sched::prio_type);
     void stop(runner::Runner&, objects_type&);
     void unblock();
     void unfreeze();

@@ -63,22 +63,22 @@ namespace object
     std::stringstream status;
     switch(value_->state_get())
     {
-    case scheduler::to_start:
+    case sched::to_start:
       status << "starting";
       break;
-    case scheduler::running:
+    case sched::running:
       status << "running";
       break;
-    case scheduler::sleeping:
+    case sched::sleeping:
       status << "sleeping";
       break;
-    case scheduler::waiting:
+    case sched::waiting:
       status << "idle";
       break;
-    case scheduler::joining:
+    case sched::joining:
       status << "waiting";
       break;
-    case scheduler::zombie:
+    case sched::zombie:
       status << "terminated";
       break;
     }

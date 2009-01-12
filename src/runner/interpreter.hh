@@ -43,7 +43,7 @@ namespace runner
     /// ownership of \a ast is transferred to the Interpreter.  The
     /// new runner has no parent.
     Interpreter(rLobby lobby,
-                scheduler::Scheduler& scheduler,
+                sched::Scheduler& scheduler,
                 ast::rConstAst ast,
                 const libport::Symbol& name);
 

@@ -12,14 +12,14 @@ UServer::lastTime()
   return lastTime_;
 }
 
-inline const scheduler::Scheduler&
-UServer::getScheduler () const
+inline const sched::Scheduler&
+UServer::scheduler_get () const
 {
   return *scheduler_;
 }
 
-inline scheduler::Scheduler&
-UServer::getScheduler ()
+inline sched::Scheduler&
+UServer::scheduler_get ()
 {
   return *scheduler_;
 }

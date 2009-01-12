@@ -27,8 +27,8 @@
 # include <kernel/utypes.hh>
 
 // Do not include runner/fwd.hh etc. which are not public.
-namespace runner    { class Runner; }
-namespace scheduler { class Scheduler; }
+namespace runner { class Runner; }
+namespace sched  { class Scheduler; }
 
 extern const char* DISPLAY_FORMAT;
 extern const char* DISPLAY_FORMAT1;
@@ -252,8 +252,8 @@ public:
   | Scheduler, runner.  |
   `--------------------*/
 public:
-  const scheduler::Scheduler& getScheduler() const;
-  scheduler::Scheduler& getScheduler();
+  const sched::Scheduler& scheduler_get() const;
+  sched::Scheduler& scheduler_get();
 
   runner::Runner& getCurrentRunner() const;
 
@@ -263,7 +263,7 @@ protected:
 
 private:
   // Pointer to stop the header dependency.
-  scheduler::Scheduler* scheduler_;
+  sched::Scheduler* scheduler_;
 
 
 private:

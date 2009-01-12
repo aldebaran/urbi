@@ -59,7 +59,7 @@ namespace runner
   {
     libport::Finally finally;
     // Collect all subrunners
-    scheduler::jobs_type jobs;
+    sched::jobs_type jobs;
 
     // Create separate runners for every child but the first
     foreach (const ast::rConstExp& child,
@@ -87,7 +87,7 @@ namespace runner
       // Wait for all other jobs to terminate.
       yield_until_terminated(jobs);
     }
-    catch (const scheduler::ChildException& ce)
+    catch (const sched::ChildException& ce)
     {
       // If a child caused us to die, then throw the encapsulated exception.
       ce.rethrow_child_exception();
@@ -280,7 +280,7 @@ namespace runner
     }
 
     // List of runners for Stmt flavored by a comma.
-    scheduler::jobs_type runners;
+    sched::jobs_type runners;
 
     Finally finally;
 
@@ -309,7 +309,7 @@ namespace runner
         if (stmt && stmt->flavor_get() == ast::flavor_comma)
         {
           // The new runners are attached to the same tags as we are.
-	  scheduler::rJob subrunner =
+	  sched::rJob subrunner =
 	    new Interpreter(*this, operator()(exp),
 			    libport::Symbol::fresh(name_get()));
           // If the subrunner throws an exception, propagate it here ASAP, unless
@@ -331,7 +331,7 @@ namespace runner
 	  // may need the stack. The following objects will be set if we
 	  // have an exception to show, and it will be printed after
 	  // the "catch" block, or if we have an exception to rethrow.
-	  scheduler::exception_ptr exception_to_throw;
+	  sched::exception_ptr exception_to_throw;
 	  boost::scoped_ptr<object::UrbiException> exception_to_show;
 
           // If at toplevel, print errors and continue, else rethrow them
@@ -367,7 +367,7 @@ namespace runner
 					   exn.backtrace_get()));
             }
             // Forward scheduler exception
-            catch (const scheduler::exception& e)
+            catch (const sched::exception& e)
             {
               exception_to_throw = e.clone();
             }
@@ -400,11 +400,11 @@ namespace runner
         }
       }
       // If we get a scope tag, stop the runners tagged with it.
-      if (const scheduler::rTag& tag = scope_tag_get())
+      if (const sched::rTag& tag = scope_tag_get())
 	tag->stop(scheduler_get(), object::void_class);
       yield_until_terminated(runners);
     }
-    catch (const scheduler::ChildException& ce)
+    catch (const sched::ChildException& ce)
     {
       ce.rethrow_child_exception();
     }
@@ -548,7 +548,7 @@ namespace runner
 	tag->triggerLeave(*this);
       return res;
     }
-    catch (scheduler::StopException& e)
+    catch (sched::StopException& e)
     {
       // Rewind up to the appropriate depth.
       if (e.depth_get() < result_depth)
@@ -585,7 +585,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Try* e)
   {
-    scheduler::exception_ptr exception;
+    sched::exception_ptr exception;
     try
     {
       return operator()(e->body_get().get());

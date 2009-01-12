@@ -21,7 +21,7 @@ namespace dbg
   {
   public:
     Sneaker(rLobby lobby,
-	      scheduler::Scheduler& scheduler);
+	      sched::Scheduler& scheduler);
     ATTRIBUTE_NORETURN virtual void work();
     virtual void send_message(const std::string& tag, const std::string& msg);
   private:
@@ -32,7 +32,7 @@ namespace dbg
   runner::Runner&
   runner_or_sneaker_get()
   {
-    if (::urbiserver->getScheduler().is_current_job(0))
+    if (::urbiserver->scheduler_get().is_current_job(0))
     {
       passert(sneaker, sneaker);
       return *sneaker;
@@ -41,7 +41,7 @@ namespace dbg
   }
 
   Sneaker::Sneaker(object::rLobby lobby,
-		       scheduler::Scheduler& scheduler)
+		       sched::Scheduler& scheduler)
     : Interpreter(lobby, scheduler, 0, SYMBOL(LT_sneaker_GT))
   {
     non_interruptible_set(true);
@@ -64,7 +64,7 @@ namespace dbg
 
   void
   create_sneaker_if_needed
-    (object::rLobby lobby, scheduler::Scheduler& scheduler)
+    (object::rLobby lobby, sched::Scheduler& scheduler)
   {
     if (!sneaker)
       sneaker = new Sneaker(lobby, scheduler);

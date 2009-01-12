@@ -25,7 +25,7 @@ namespace object
   typedef std::vector<call_type> call_stack_type;
 
   /// Urbi-visible exceptions
-  class UrbiException: public scheduler::exception
+  class UrbiException: public sched::exception
   {
   public:
     UrbiException(rObject value, const call_stack_type& bt);

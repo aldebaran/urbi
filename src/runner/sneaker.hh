@@ -15,7 +15,7 @@ namespace dbg
   ///
   /// \param scheduler The current scheduler.
   void create_sneaker_if_needed
-    (object::rLobby lobby, scheduler::Scheduler& scheduler);
+    (object::rLobby lobby, sched::Scheduler& scheduler);
 
   /// Retrieve the current runner or the sneaker. This should be used
   /// only when debugging, when we really need a runner of some kind

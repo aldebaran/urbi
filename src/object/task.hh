@@ -16,7 +16,7 @@ namespace object
   class Task : public object::CxxObject
   {
   public:
-    typedef scheduler::rJob value_type;
+    typedef sched::rJob value_type;
 
     Task();
     Task(const value_type& value);
