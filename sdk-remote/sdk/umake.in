@@ -77,6 +77,15 @@ kernel ()
   fi
 }
 
+
+# Clean all build directories.
+deep_clean ()
+{
+  find . -name "${builddir_pref}*" -a -type d | xargs rm -rf
+  error 0 "all build directories cleaned."
+}
+
+
 ## ---------------------- ##
 ## Command line parsing.  ##
 ## ---------------------- ##
@@ -115,7 +124,7 @@ get_options ()
 
       (-l | --library)       core= ; shared=false ;;
       (-s | --shared-library) core= ; shared=true ;;
-      (     --deep-clean)    deep_clean="true"; havearg="noneed" ;;
+      (     --deep-clean)    deep_clean ;;
       (-c | --clean)         clean="true" ;;
       (-j | --jobs)  shift; makeargs+=" -j $1";;
       (-C | --core  ) shift; core=$1;;
@@ -199,7 +208,6 @@ get_options ()
 : ${EXEEXT=@EXEEXT@}
 : ${SHLIBEXT=@SHLIBEXT@}
 clean=
-deep_clean=
 : ${URBI_ENV='@URBI_ENV@'}
 core=$URBI_ENV
 havearg=false   # we have at least one path or file arg
@@ -362,13 +370,7 @@ if test -n "$clean"; then
   error 0 "build directory cleaned."
 #  exit 0
 fi
-# Clean all build directories
-if test -n "$deep_clean"; then
-  find . \( -name "${builddir_pref}*" -o -name ".libs" \) -a -type d | \
-      xargs rm -rf
-  error 0 "all build directories cleaned."
-  exit 0
-fi
+
 # Create target build directory
 mkdir -p "$builddir" 2>/dev/null
 
