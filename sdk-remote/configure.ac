@@ -171,7 +171,6 @@ m4_define([URBI_CONFIG_WRAPPER],
 
 # Prepare the umake wrappers.
 URBI_CONFIG_WRAPPER([umake])
-URBI_CONFIG_WRAPPER([umake-clean])
 URBI_CONFIG_WRAPPER([umake-engine])
 URBI_CONFIG_WRAPPER([umake-lib])
 URBI_CONFIG_WRAPPER([umake-link])
