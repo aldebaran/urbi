@@ -7,12 +7,16 @@ var Object.getPeriod = 20ms;
 function Global.isdef
 {
   var base = call.sender |
+  var first = true |
   for| (var c: call.argString(0).split([".", " "], nil, false, false))
   {
     if (base.hasSlot(c))
     {
+      if (!first && !base.slotNames.has(c))
+        return false |
       var s = base.getSlot(c).acceptVoid |
       base = s.apply([s]).acceptVoid |
+      first = false
     }
       else
       return false |
@@ -75,28 +79,21 @@ class Global.UObject
   };
 };
 
-class Object.uvar
+/*
+ * UVar provides access and change notification on a slot.
+ * instanciate with 'UVar.new(containerObject, slotName);
+ * call notifyChange(someFunc) to have someFunc called (with no argument)
+ * right after a new value is written, call notifyAccess(someFunc) to have
+ * someFunc called just before a value is read. The contained value is stored
+ * in the 'val' slot of the UVar.
+ */
+do (getSlot("UVar"))
 {
-  function accessor()
-  {
-    // Call registered callbacks. Ensure no looping happens.
-    if (!inAccess)
-    {
-      inAccess = true |
-      callNotify(access) |
-      inAccess = false
-    } |
-    // Return the target or the sensor value.
-    if (owned)
-      valsensor
-    else
-      val
-  };
 
   function init(parent, name)
   {
     parent.setSlot(name, this)|
-    parent.setProperty(name, "updateHook", getSlot("updateHook"))|
+    parent.setProperty(name, "updateHook", getSlot("update_bounce"))|
     var this.newPropertyHook = getSlot("newPropertyHook_")|
     var slotName = name + "_quote_n"|
     // If the slot was containing a float, it already has a *_quote_n
@@ -120,7 +117,7 @@ class Object.uvar
       var parent_getprop = parent.getSlot("getProperty")|
       parent.getProperty = function(varname, propname)
       {
-        if (parent.getSlot(varname).isA(uvar))
+        if (parent.getSlot(varname).isA(UVar))
           parent.getSlot(varname).getProperty("val", propname).acceptVoid
         else
           parent_getprop.apply([parent, varname, propname])
@@ -133,80 +130,32 @@ class Object.uvar
   /// Global number of notifyaccess
   var nAccess = 0;
   var nAccessTag = Tag.new;
-  /// Hook write attempts to the UVar.
-  function updateHook(slot, newval)
-  {
-    this.getSlot(slot).update_(slot, newval)
-  };
   function newPropertyHook_(parent, name, prop, value)
   {
    parent.getSlot(name).setProperty("val", prop, value)|
    parent.removeProperty(name, prop)
   };
-  function update_(slot, newval)
-  {
-    // Urbi or C++ not-owned set: write to val.
-    val = newval |
-    if (owned)
-      callNotify(changeOwned)
-    else
-    {
-      if (!inChange)
-      {
-        inChange = true    |
-        callNotify(change) |
-        inChange = false
-      }
-    } |
-    void
-  };
-  var apply = getSlot("Code").getSlot("apply");
   var __clone = getSlot("clone");
-  function clone()
+  clone = function()
   {
-    var ret = function {
-      call.getSlot("code").accessor
-    } |
-    ret.addProto(this) |
-    do (ret)
+    var uv = __clone;
+    do (uv)
     {
       var change = [] |
       var changeOwned = [] |
       var access = [] |
-      var inAccess = false |
-      var inChange = false |
       var owned = false |
       var val |
       var valsensor = 0 |
-      var looping = false |
-      var loopTag = Tag.new |
       var isUVar = 1
     }
   };
 
-  // If both notifyChange and notifyAccess are present, call the notifyAccess
-  // periodically.
-  function loopCheck()
-  {
-    if (!looping && change.size !=0 && access.size != 0)
-    {
-      looping = 1 |
-      loopTag: detach({loop { callNotify(access); sleep(getPeriod)}})
-    }
-  };
-  /// Write from a C++ owned UVar.
-  function writeOwned(newval)
-  {
-    // C++ owned set
-    valsensor = newval |
-    callNotify(change) |
-    newval
-  };
   function notifyChange(f)
   {
     change += [f] |
     if (change.size == 1)
-      loopCheck |
+      detach(loopCheck) |
     void
   };
   function notifyChangeOwned(f)
@@ -217,26 +166,22 @@ class Object.uvar
   function notifyAccess(f)
   {
     //beware of the CoW
-    getSlot("uvar").nAccess++ |
+    getSlot("UVar").nAccess++ |
     access += [f] |
     if (access.size == 1)
-      loopCheck |
+      detach(loopCheck) |
     void
-  };
-  function callNotify(l)
-  {
-    for| (var f: l)
-      f()
   };
   void
 };
 
 // Can't be in a class or do block.
-// Force reevaluation of all at exprs when at least on notifyaccess is present.
-at (getSlot("uvar").nAccess > 0)
-  getSlot("uvar").nAccessTag: every(getPeriod) {}
+// Force reevaluation of all at exprs when at least one notifyaccess is present.
+// FIXME: find a way to stop when callbacks are removed.
+at (getSlot("UVar").nAccess > 0)
+  getSlot("UVar").nAccessTag: every(getPeriod) {}
 onleave
-  getSlot("uvar").nAccessTag.stop;
+  getSlot("UVar").nAccessTag.stop;
 
 var Global.uobjects = Object.clone;
 Global.uobjects.uobject_init();
@@ -328,14 +273,14 @@ class Global.'external'
     var obj = uobjects.getSlot(objname)|
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.ownsSlot(varname))
-      uvar.new(obj, varname)
+      UVar.new(obj, varname)
     else if (obj.getSlot(varname).isVoid
         || !obj.getSlot(varname).hasSlot("isUVar"))
     {
       // The slot allready exists, but is not an uvar.
       var v = obj.getSlot(varname).acceptVoid|
       obj.removeSlot(varname)|
-      uvar.new(obj, varname) |
+      UVar.new(obj, varname) |
       if (!v.isVoid())
         obj.updateSlot(varname, v)
     }|

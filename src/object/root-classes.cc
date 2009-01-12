@@ -22,6 +22,7 @@
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
+#include <object/uvar.hh>
 
 namespace object
 {
@@ -166,6 +167,8 @@ namespace object
     // Object is a special case: it is not built as a clone of itself.
     object_class = new Object();
 
+    CxxObject::push_initializer_to_back<UVar>();
+
     CxxObject::create();
 
     // The other primitives.  Because primitive initialization depend
@@ -219,6 +222,7 @@ namespace object
     File        f;
     Path        p;
     Semaphore   s;
+    UVar        v;
   }
 
   namespace

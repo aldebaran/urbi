@@ -128,6 +128,8 @@ dist_libuobject_la_SOURCES +=			\
   object/task.hh				\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
+  object/uvar.hh                                \
+  object/uvar.cc                                \
   object/vector-slots.hh			\
   object/vector-slots.hxx			\
   $(precompiled_symbols_hh)

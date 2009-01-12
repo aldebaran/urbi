@@ -511,7 +511,7 @@ namespace urbi
     }
     //clone uvar
     ECHO("creating uvar "<<name);
-    rObject protouvar = object::object_class->slot_get(SYMBOL(uvar));
+    rObject protouvar = object::object_class->slot_get(SYMBOL(UVar));
     rObject uvar = urbi_call(getCurrentRunner(), protouvar, SYMBOL(new),
 			     o, new object::String(varName));
     // If the variable existed but was not an uvar, copy its old value.
@@ -528,7 +528,7 @@ namespace urbi
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
     o->slot_get(Symbol(p.second))
-      ->slot_update(getCurrentRunner(), SYMBOL(owned), new object::Float(1));
+      ->slot_update(getCurrentRunner(), SYMBOL(owned), object::true_class);
     ECHO("call to setowned on "<<name);
   }
 
