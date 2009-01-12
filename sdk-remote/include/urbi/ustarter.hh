@@ -66,11 +66,10 @@ namespace urbi
     bool local;
 
     typedef std::list<baseURBIStarter*> list_type;
-    static list_type list;
   };
 
   /// Give access to baseURBIStarter::list.
-  baseURBIStarter::list_type& object_list();
+  URBI_SDK_API baseURBIStarter::list_type& object_list();
 
   //! This is the class containing URBI starters
   /** A starter is a class whose job is to start an instance of a particular
@@ -120,11 +119,10 @@ namespace urbi
     std::string name;
 
     typedef std::list<baseURBIStarterHub*> list_type;
-    static list_type list;
   };
 
   /// Give access to baseURBIStarter::list.
-  baseURBIStarterHub::list_type& objecthub_list();
+  URBI_SDK_API baseURBIStarterHub::list_type& objecthub_list();
 
 
   //! This is the class containing URBI starters

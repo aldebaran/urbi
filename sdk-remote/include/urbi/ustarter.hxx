@@ -38,14 +38,6 @@ namespace urbi
   baseURBIStarter::~baseURBIStarter()
   {}
 
-  inline
-  baseURBIStarter::list_type&
-  object_list()
-  {
-    return baseURBIStarter::list;
-  }
-
-
   /*--------------.
   | URBIStarter.  |
   `--------------*/
@@ -54,7 +46,7 @@ namespace urbi
   URBIStarter<T>::URBIStarter(const std::string& name, bool local)
     : baseURBIStarter(name, local)
   {
-    list.push_back(this);
+    object_list().push_back(this);
   }
 
   template <class T>
@@ -70,12 +62,12 @@ namespace urbi
   URBIStarter<T>::clean()
   {
     delete getUObject();
-    for (list_type::iterator i = list.begin();
-	 i != list.end();
+    for (list_type::iterator i = object_list().begin();
+	 i != object_list().end();
 	 ++i)
       if (*i == this)
       {
-	list.erase(i);
+	object_list().erase(i);
 	break;
       }
   }
@@ -132,14 +124,6 @@ namespace urbi
   baseURBIStarterHub::~baseURBIStarterHub()
   {}
 
-  inline
-  baseURBIStarterHub::list_type&
-  objecthub_list()
-  {
-    return baseURBIStarterHub::list;
-  }
-
-
     /*-----------------.
     | URBIStarterHub.  |
     `-----------------*/
@@ -149,7 +133,7 @@ namespace urbi
   URBIStarterHub<T>::URBIStarterHub(const std::string& name)
     : baseURBIStarterHub(name)
   {
-    list.push_back(this);
+    objecthub_list().push_back(this);
   }
 
   template <class T>
