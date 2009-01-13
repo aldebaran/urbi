@@ -102,13 +102,13 @@ static rObject where;
 
 static void uobjects_reload(rObject where)
 {
-  foreach (urbi::baseURBIStarterHub* i, urbi::objecthub_list())
+  foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
     if (!libport::has(initialized, i))
     {
       i->init(i->name);
       initialized.push_back(i);
     }
-  foreach (urbi::baseURBIStarter* i, urbi::object_list())
+  foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
     if (!libport::has(initialized, i))
     {
       object::rObject proto = uobject_make_proto(i->name);
@@ -225,7 +225,7 @@ uobject_new(rObject proto, bool forceName)
   }
   uobject_map[name] = r;
   // Instanciate UObject.
-  foreach (urbi::baseURBIStarter* i, urbi::object_list())
+  foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
   {
     if (i->name == cname)
     {
