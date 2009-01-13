@@ -10,8 +10,8 @@ CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
 UMAKE_SHARED = tests/bin/umake-shared
 
 # uobjects_all_SOURCES = uobjects/all.uob
-%$(SHLIBEXT): %.uob $(UMAKE_SHARED)
-	$(UMAKE_SHARED) --output=$@ $<
+%$(SHLIBEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject.la
+	$(UMAKE_SHARED) --clean --output=$@ $<
 ## umake has dependencies support, so it might not recompile here, in
 ## which case, if this was triggered because of $(UMAKE_SHARED) we
 ## will keep on cycling.

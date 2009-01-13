@@ -125,7 +125,7 @@ get_options ()
       (-l | --library)       core= ; shared=false ;;
       (-s | --shared-library) core= ; shared=true ;;
       (     --deep-clean)    deep_clean ;;
-      (-c | --clean)         clean="true" ;;
+      (-c | --clean)         clean=true ;;
       (-j | --jobs)  shift; makeargs+=" -j $1";;
       (-C | --core  ) shift; core=$1;;
       (-H | --host  ) shift; host=$1;;
@@ -207,7 +207,7 @@ get_options ()
 
 : ${EXEEXT=@EXEEXT@}
 : ${SHLIBEXT=@SHLIBEXT@}
-clean=
+clean=false
 : ${URBI_ENV='@URBI_ENV@'}
 core=$URBI_ENV
 havearg=false   # we have at least one path or file arg
@@ -365,8 +365,8 @@ verbose                                         \
 builddir="$(dirname $target)/_ubuild-$(basename $target)"
 libsdir="$(dirname $target)/.libs"
 # Clean target build directory
-if test -n "$clean"; then
-  rm -rf "$builddir/" "$libsdir" 2>/dev/null
+if $clean; then
+  rm -rf "$builddir/" 2>/dev/null
   stderr "build directory cleaned."
 fi
 
