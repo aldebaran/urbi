@@ -22,6 +22,7 @@ clean-uobjects:
 # If we are unlucky, umake-shared will be cleaned before we call it.
 	$(UMAKE_SHARED) --deep-clean ||			\
 	  find . -name "_ubuild-*" -a -type d | xargs rm -rf
+	rm -f $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
 
 # Help to restart broken builds.
 $(UMAKE_SHARED):
