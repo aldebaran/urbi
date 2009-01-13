@@ -237,6 +237,7 @@ namespace urbi
       val = 1;
       return pos+4;
     }
+
     if (strprefix("false", message + pos))
     {
       type = DATA_DOUBLE;
@@ -244,18 +245,21 @@ namespace urbi
       return pos+5;
     }
 
-    //last attempt: double
-    int p;
-    int count = sscanf(message+pos, "%lf%n", &val, &p);
-    if (!count)
+    // Last attempt: it should be a double.
     {
-      std::cerr << "failed to read a float: " << message + pos
-                << std::endl;
-      return -pos;
+      int p;
+      if (sscanf(message+pos, "%lf%n", &val, &p))
+      {
+        type = DATA_DOUBLE;
+        pos += p;
+        return pos;
+      }
     }
-    type = DATA_DOUBLE;
-    pos += p;
-    return pos;
+
+    // Anything else is an error, but be resilient and ignore it.
+    std::cerr << "syntax error: " << message + pos << " (ignored)"
+              << std::endl;
+    return -pos;
   }
 
   std::ostream&
