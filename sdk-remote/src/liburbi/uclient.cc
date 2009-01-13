@@ -3,7 +3,7 @@
  *
  * Implementation of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Gostai S.A.S.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Gostai S.A.S.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -285,11 +285,11 @@ namespace urbi
     }
 
     // Store client connection info
-    host_ = inet_ntoa (saClient.sin_addr);
+    host_ = inet_ntoa(saClient.sin_addr);
     port_ = saClient.sin_port;
 
     // Do not listen anymore.
-    close (sd);
+    close(sd);
     // Redirect send/receive on accepted connection.
     sd = acceptFD;
 
@@ -310,9 +310,7 @@ namespace urbi
     for (int i = semListenInc_; i > 0; --i)
       listenSem_--;
 
-    int maxfd;
-
-    maxfd = 1 + std::max(sd, control_fd[0]);
+    int maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
     // Declare ping channel for kernel that requires it.
     send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\");",
@@ -323,18 +321,19 @@ namespace urbi
         return;
 
       fd_set rfds;
-      fd_set efds;
-
       FD_ZERO(&rfds);
-      FD_ZERO(&efds);
       LIBPORT_FD_SET(sd, &rfds);
+
+      fd_set efds;
+      FD_ZERO(&efds);
       LIBPORT_FD_SET(sd, &efds);
+
 #ifndef WIN32
       LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
 
       int selectReturn;
-      if (pingInterval != 0)
+      if (pingInterval)
       {
         const unsigned delay = waitingPong ? pongTimeout : pingInterval;
         struct timeval timeout = { delay / 1000, (delay % 1000) * 1000};
@@ -357,11 +356,11 @@ namespace urbi
                                  "!!! Connection error", std::list<BinaryData>() ));
         return;
       }
+
       if (selectReturn < 0)  // ::select catch a signal (errno == EINTR)
         continue;
-
       // timeout
-      if (selectReturn == 0)
+      else if (selectReturn == 0)
       {
         if (waitingPong) // Timeout while waiting PONG
         {
@@ -379,8 +378,7 @@ namespace urbi
           waitingPong = true;
         }
       }
-
-      if (selectReturn > 0)
+      else
       {
         // We receive data, at least the "1" value sent through the pong tag
         // channel so we are no longer waiting for a pong.
