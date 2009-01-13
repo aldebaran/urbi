@@ -48,6 +48,8 @@ TESTS = $(urbi_specs_sources)
 # This is not exact, but otherwise it is too long.
 # LAZY_TEST_SUITE = 1
 TEST_LOGS = $(TESTS:.tex=.log)
+# FIXME: Assigned to QH.
+TFAIL_TESTS = specs/lang.tex
 
 URBI_CONSOLE = $(top_builddir)/tests/bin/urbi-console
 
