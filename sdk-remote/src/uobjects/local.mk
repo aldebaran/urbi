@@ -12,6 +12,10 @@ UMAKE_SHARED = tests/bin/umake-shared
 # uobjects_all_SOURCES = uobjects/all.uob
 %$(SHLIBEXT): %.uob $(UMAKE_SHARED)
 	$(UMAKE_SHARED) --output=$@ $<
+## umake has dependencies support, so it might not recompile here, in
+## which case, if this was triggered because of $(UMAKE_SHARED) we
+## will keep on cycling.
+	touch $@
 
 clean-local: clean-uobjects
 clean-uobjects:
