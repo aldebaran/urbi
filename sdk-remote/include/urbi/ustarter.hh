@@ -63,8 +63,10 @@ namespace urbi
     /// Used to provide a copy of a C++ object based on its name.
     virtual void copy(const std::string&) = 0;
     std::string name;
+    /// Set to true to have the UObjects use a random unique name.
     bool local;
-
+    /// Return the full name to pass to the UObject constructor.
+    std::string getFullName(const std::string& name);
     /// List of starters.
     typedef std::list<baseURBIStarter*> list_type;
     static list_type& list();

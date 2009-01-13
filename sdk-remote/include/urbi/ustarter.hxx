@@ -100,13 +100,7 @@ namespace urbi
   void
   URBIStarter<T>::init(const std::string& objname)
   {
-    std::string fullname = objname;
-    urbi::UAbstractClient* cli = (UAbstractClient*)getDefaultClient ();
-    if (local && cli)
-    {
-      fullname += "_" + getClientConnectionID (cli);
-      name = fullname;
-    }
+    std::string fullname = getFullName(objname);
     object = new T(fullname);
   }
 

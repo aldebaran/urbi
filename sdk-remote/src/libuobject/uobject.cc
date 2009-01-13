@@ -6,6 +6,7 @@
 #include <libport/unistd.h>
 
 #include <urbi/uobject.hh>
+#include <urbi/ustarter.hh>
 #include <urbi/usyncclient.hh>
 
 //! Global definition of the starterlist
@@ -215,4 +216,14 @@ namespace urbi
   }
   void side_effect_free_set(bool) {}
   bool side_effect_free_get() {return false;}
+
+  std::string
+  baseURBIStarter::getFullName(const std::string& name)
+  {
+    urbi::UAbstractClient* cli = (UAbstractClient*)getDefaultClient ();
+    if (local && cli)
+      return name + "_" + getClientConnectionID (cli);
+    else
+      return name;
+  }
 } // namespace urbi
