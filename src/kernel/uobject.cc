@@ -644,4 +644,10 @@ namespace urbi
   {
     return getCurrentRunner().side_effect_free_get();
   }
+
+  std::string
+  baseURBIStarter::getFullName(const std::string& name)
+  {
+    return name;
+  }
 }
