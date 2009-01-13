@@ -98,15 +98,13 @@ run ()
 
 # error EXIT_STATUS LINE1 LINE2...
 # --------------------------------
-# Report an error and exit with failure if EXIT_STATUS is non null.
+# Report an error and exit with EXIT_STATUS.
 error ()
 {
   local s=$1
   shift
   stderr "$@"
-  if test "$s" != 0; then
-    exit $s
-  fi
+  exit $s
 }
 
 # dirlist_error EXIT_STATUS WHAT WHERE WHICH

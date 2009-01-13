@@ -367,8 +367,7 @@ libsdir="$(dirname $target)/.libs"
 # Clean target build directory
 if test -n "$clean"; then
   rm -rf "$builddir/" "$libsdir" 2>/dev/null
-  error 0 "build directory cleaned."
-#  exit 0
+  stderr "build directory cleaned."
 fi
 
 # Create target build directory
