@@ -97,27 +97,27 @@ static StringPair split_name(const std::string& name)
   return StringPair(oname, slot);
 }
 
-static std::list<void*> initialized;
-static rObject where;
-
 static void uobjects_reload(rObject where)
 {
+  static std::set<void*> initialized;
   foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
-    if (!libport::has(initialized, i))
+    if (!libport::mhas(initialized, i))
     {
       i->init(i->name);
-      initialized.push_back(i);
+      initialized.insert(i);
     }
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
-    if (!libport::has(initialized, i))
+    if (!libport::mhas(initialized, i))
     {
       object::rObject proto = uobject_make_proto(i->name);
       where->slot_set(libport::Symbol(i->name + "_class"), proto);
       // Make our first instance.
       where->slot_set(libport::Symbol(i->name), uobject_new(proto, true));
-      initialized.push_back(i);
+      initialized.insert(i);
     }
 }
+
+static rObject where;
 
 static void uobjects_load_module(rObject, const std::string& name)
 {
