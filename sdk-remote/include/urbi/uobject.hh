@@ -73,7 +73,7 @@
 /// Register current object to the UObjectHub named 'hub'.
 # define URegister(Hub)						\
   do {								\
-    objecthub = ::urbi::getUObjectHub(#Hub);			\
+    objecthub = ::urbi::baseURBIStarterHub::find(#Hub);         \
     if (objecthub)						\
       objecthub->addMember(this);				\
     else							\
@@ -122,10 +122,6 @@ namespace urbi
 
   /// Write a message to the server debug output. Printf syntax.
   URBI_SDK_API void echo(const char* format, ... );
-  /// Retrieve a UObjectHub based on its name or return 0 if not found.
-  URBI_SDK_API UObjectHub* getUObjectHub(const std::string& n);
-  /// Retrieve a UObject based on its name or return 0 if not found.
-  URBI_SDK_API UObject* getUObject(const std::string& n);
 
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
@@ -138,10 +134,12 @@ namespace urbi
   URBI_SDK_API void send(void* buf, int size);
 
   /// Possible UObject running modes.
-  enum UObjectMode {
-       MODE_PLUGIN=1,
-       MODE_REMOTE
+  enum UObjectMode
+  {
+    MODE_PLUGIN=1,
+    MODE_REMOTE
   };
+
   /// Return the mode in which the code is running.
   URBI_SDK_API UObjectMode getRunningMode();
   /// Return true if the code is running in plugin mode.

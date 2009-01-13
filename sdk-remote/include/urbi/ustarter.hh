@@ -65,8 +65,11 @@ namespace urbi
     std::string name;
     bool local;
 
+    /// List of starters.
     typedef std::list<baseURBIStarter*> list_type;
     static list_type& list();
+    /// Retrieve an UObject, otherwise 0.
+    static UObject* find(const std::string& name);
   };
 
 
@@ -117,9 +120,11 @@ namespace urbi
     virtual UObjectHub* getUObjectHub() = 0;
     std::string name;
 
+    /// UObjectHub list.
     typedef std::list<baseURBIStarterHub*> list_type;
-
     static list_type& list();
+    /// Retrieve an UObjectHub, otherwise 0.
+    static UObjectHub* find(const std::string& name);
   };
 
 
