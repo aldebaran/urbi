@@ -57,6 +57,12 @@ ALDEBARAN
 Contact: Alexandre Mazel <mazel@aldebaran-robotics.com>
 Environment: Windows, Mac, Nao
 
+Christophe BOURRIER
+===================
+Hobbyiste, actionnaire de Gostai.
+Contact: Christophe BOURRIER <christophe@booprod.com>
+Environment: Windows, C#.
+
 ENST
 ====
 Contact: Samuel Tardieu <sam@rfc1149.net>
