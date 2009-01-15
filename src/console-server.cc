@@ -306,10 +306,10 @@ namespace urbi
       if (data.network)
         Network::selectAndProcess(select_time);
 
-      next_time = s.work ();
+      next_time = s.work();
       if (next_time == sched::SCHED_EXIT)
         break;
-      s.ctime = std::max (next_time, s.ctime + 1000L);
+      s.ctime = std::max(next_time, s.ctime + 1000L);
     }
 
     return EX_OK;
