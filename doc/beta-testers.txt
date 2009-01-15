@@ -92,7 +92,7 @@ Environment: ?
 INRIA
 =====
 
-Contact: Jérôme Béchu <jerome.bechu@inria.fr>
+Contact: JÃ©rÃ´me BÃ©chu <jerome.bechu@inria.fr>
 	Engineer working for P-Y Oudeyer.
 Environment: windows mostly
 
