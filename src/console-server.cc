@@ -25,7 +25,6 @@
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
-#include <kernel/kernconf.hh>
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -217,7 +216,7 @@ namespace urbi
       arg_stack_size *= 1024;
       size_t pagesize = getpagesize();
       arg_stack_size = ((arg_stack_size + pagesize - 1) / pagesize) * pagesize;
-      kernconf.default_stack_size = arg_stack_size;
+      sched::configuration.default_stack_size = arg_stack_size;
     }
 
     data.server = new ConsoleServer(data.fast);

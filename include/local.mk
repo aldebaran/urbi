@@ -5,7 +5,6 @@
 kernelincludekerneldir = $(kernelincludedir)/kernel
 dist_kernelincludekernel_HEADERS =		\
   include/kernel/fwd.hh				\
-  include/kernel/kernconf.hh			\
   include/kernel/uconnection.hh			\
   include/kernel/uconnection.hxx		\
   include/kernel/userver.hh			\

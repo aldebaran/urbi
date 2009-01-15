@@ -3,7 +3,6 @@ dist_libuobject_la_SOURCES +=			\
   kernel/connection-set.hh			\
   kernel/debug.cc				\
   kernel/debug.hh				\
-  kernel/kernconf.cc				\
   kernel/server-timer.hh			\
   kernel/server-timer.cc			\
   kernel/ubanner.hh				\
