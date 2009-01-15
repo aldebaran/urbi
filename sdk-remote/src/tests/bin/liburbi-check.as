@@ -35,7 +35,11 @@ trap cleanup 0
 # Overriden to include the test name.
 stderr ()
 {
-  echo >&2 "$(basename $0): $me: $@"
+  local i
+  for i
+  do
+    echo >&2 "$(basename $0): $me: $i"
+  done
   echo >&2
 }
 
