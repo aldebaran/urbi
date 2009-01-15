@@ -215,10 +215,8 @@ namespace urbi
     if ((void*)getDefaultClient () == (void*)this)
       setDefaultClient (0);
 
-    if (recvBuffer)
-      delete [] recvBuffer;
-    if (sendBuffer)
-      delete [] sendBuffer;
+    delete [] recvBuffer;
+    delete [] sendBuffer;
   }
 
   /*! In threaded environnments, this function lock()s the send buffer so that
