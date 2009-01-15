@@ -13,6 +13,7 @@
 # include <urbi/ucallbacks.hh>
 # include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
+# include <urbi/uobject-hub.hh>
 
 // Tell our users that it is fine to use void returning functions.
 #define USE_VOID 1
@@ -109,8 +110,6 @@
   URBI_SEND(Args << '|' << std::endl)
 namespace urbi
 {
-
-  typedef std::list<UObject*> UObjectList;
 
   typedef int UReturn;
 
@@ -347,34 +346,6 @@ namespace urbi
     /// remote/plugin architectures who defines it.
     UObjectData*  objectData;
     ufloat period;
-  };
-
-
-  //! Main UObjectHub class definition
-  class URBI_SDK_API UObjectHub
-  {
-  public:
-
-    UObjectHub(const std::string&);
-    virtual ~UObjectHub();
-
-    void addMember(UObject* obj);
-    void delMember(UObject* obj);
-
-    /// Set a timer that will call update() every 'period' milliseconds.
-    void USetUpdate(ufloat period);
-    virtual int update() {return 0;}
-
-    UObjectList  members;
-    UObjectList* getSubClass(const std::string&);
-    //   UObjectList* getAllSubClass(const std::string&); //TODO
-
-  protected:
-    /// This function calls update and the subclass update.
-    int updateGlobal();
-
-    ufloat period;
-    std::string name;
   };
 
 } // end namespace urbi

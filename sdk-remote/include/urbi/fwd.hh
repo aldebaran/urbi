@@ -4,6 +4,7 @@
 #ifndef URBI_FWD_HH
 # define URBI_FWD_HH
 
+# include <list>
 # include <string>
 
 # include <urbi/export.hh>
@@ -29,6 +30,8 @@ namespace urbi
   class UVardata;
   class baseURBIStarter;
   class baseURBIStarterHub;
+
+  typedef std::list<UObject*> UObjectList;
 
   URBI_SDK_API std::string getClientConnectionID (const UAbstractClient* cli);
   URBI_SDK_API UClient* getDefaultClient();
