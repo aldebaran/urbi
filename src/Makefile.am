@@ -24,8 +24,8 @@ AM_CPPFLAGS +=					\
 ## src/include/sched etc.
 AM_CPPFLAGS += -I$(srcdir)/include
 
-## lib/network
-AM_CPPFLAGS += -I$(top_srcdir)/lib
+## network has its includes in the same dir as its source files.
+AM_CPPFLAGS += -I$(srcdir)/lib
 
 ## Find uobject headers.
 AM_CPPFLAGS += -I$(srcdir)/uobject
@@ -101,10 +101,10 @@ urbi_console_LDADD =				\
   $(libuobject_la_LIBADD)
 dist_libuobject_la_SOURCES +=			\
   console-server.cc				\
-  ../lib/network/bsdnet/connection.hh		\
-  ../lib/network/bsdnet/connection.cc		\
-  ../lib/network/bsdnet/network.hh		\
-  ../lib/network/bsdnet/network.cc
+  lib/network/bsdnet/connection.hh		\
+  lib/network/bsdnet/connection.cc		\
+  lib/network/bsdnet/network.hh			\
+  lib/network/bsdnet/network.cc
 
 all-local: libuobject.la.stamp
 
