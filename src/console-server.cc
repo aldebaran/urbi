@@ -294,17 +294,18 @@ namespace urbi
         if (!input.empty())
           s.ghost_connection_get().received(input.c_str(), input.length());
       }
-      libport::utime_t select_time = 0;
-      if (!data.fast)
-      {
-        libport::utime_t ctime = libport::utime();
-        if (ctime < next_time)
-          select_time = next_time - ctime;
-        if (data.interactive)
-          select_time = std::min(100000LL, select_time);
-      }
+
       if (data.network)
+      {
+        libport::utime_t select_time = 0;
+        if (!data.fast)
+        {
+          select_time = std::max(next_time - libport::utime(), select_time);
+          if (data.interactive)
+            select_time = std::min(100000LL, select_time);
+        }
         Network::selectAndProcess(select_time);
+      }
 
       next_time = s.work();
       if (next_time == sched::SCHED_EXIT)
