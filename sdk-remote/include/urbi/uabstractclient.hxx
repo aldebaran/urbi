@@ -43,13 +43,6 @@ namespace urbi
   }
 
   inline
-  std::ostream&
-  UAbstractClient::getStream()
-  {
-    return *stream_;
-  }
-
-  inline
   int
   UAbstractClient::kernelMajor() const
   {
