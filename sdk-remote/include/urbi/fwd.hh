@@ -28,16 +28,14 @@ namespace urbi
   class UValue;
   class UVar;
   class UVardata;
-  class baseURBIStarter;
-  class baseURBIStarterHub;
 
   typedef std::list<UObject*> UObjectList;
 
-  URBI_SDK_API std::string getClientConnectionID (const UAbstractClient* cli);
+  URBI_SDK_API std::string getClientConnectionID(const UAbstractClient* cli);
   URBI_SDK_API UClient* getDefaultClient();
 
-};
+  class UVariable;
 
-class UVariable;
+};
 
 #endif //! URBI_FWD_HH

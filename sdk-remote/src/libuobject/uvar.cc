@@ -8,8 +8,6 @@
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 
-class UVariable {};
-
 namespace urbi
 {
   class UVardata
@@ -117,6 +115,11 @@ namespace urbi
 	  varmap().erase(varmapfind);
       }
   }
+
+  // This is a stub for something that might be existing in k1.  k2 no
+  // longer uses it, but SDK-Remote tries to stay compatible with it.
+  class UVariable
+  {};
 
   //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
   void
