@@ -133,7 +133,7 @@ namespace urbi
   URBI_SDK_API void send(const char* str);
 
   /// Send buf to the connection hosting the UObject.
-  URBI_SDK_API void send(void* buf, int size);
+  URBI_SDK_API void send(void* buf, size_t size);
 
   /// Possible UObject running modes.
   enum UObjectMode

@@ -26,7 +26,7 @@ namespace urbi
     default_stream() << a;
   }
 
-  void send(void* buf, int size)
+  void send(void* buf, size_t size)
   {
     default_stream().rdbuf()->sputn(static_cast<char*> (buf), size);
   }
