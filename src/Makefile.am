@@ -27,9 +27,6 @@ AM_CPPFLAGS += -I$(srcdir)/include
 ## network has its includes in the same dir as its source files.
 AM_CPPFLAGS += -I$(srcdir)/lib
 
-## Find uobject headers.
-AM_CPPFLAGS += -I$(srcdir)/uobject
-
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 ## Add boost libraries.
