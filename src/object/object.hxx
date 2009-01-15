@@ -17,19 +17,9 @@
 # include <libport/intrusive-ptr.hh>
 
 # include <object/object.hh>
-# include <object/root-classes.hh>
-# include <object/primitives.hh>
 
 namespace object
 {
-
-  inline
-  Object::Object ()
-    : protos_(new protos_type)
-    , slots_()
-  {
-    root_classes_initialize();
-  }
 
   inline
   Object::~Object ()

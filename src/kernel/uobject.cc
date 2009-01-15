@@ -12,8 +12,6 @@
 
 #include <kernel/config.h>
 
-#include <ltdl.h>
-
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
 #include <kernel/uvalue-cast.hh>
@@ -45,6 +43,8 @@ using object::urbi_call;
 using runner::Runner;
 using libport::Symbol;
 
+static rObject where;
+
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \
   object::make_primitive(                               \
     boost::function1<void, rObject>(                    \
@@ -52,7 +52,7 @@ using libport::Symbol;
 
 static inline runner::Runner& getCurrentRunner()
 {
-  return kernel::urbiserver->getCurrentRunner();
+  return ::kernel::urbiserver->getCurrentRunner();
 }
 
 /// UObject read to an urbi variable.
@@ -97,7 +97,7 @@ static StringPair split_name(const std::string& name)
   return StringPair(oname, slot);
 }
 
-static void uobjects_reload(rObject where)
+void uobjects_reload()
 {
   static std::set<void*> initialized;
   foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
@@ -117,35 +117,20 @@ static void uobjects_reload(rObject where)
     }
 }
 
-static rObject where;
-
-static void uobjects_load_module(rObject, const std::string& name)
-{
-  lt_dlinit();
-  lt_dlhandle handle = lt_dlopenext(name.c_str());
-  if (!handle)
-    runner::raise_primitive_error
-      ("Failed to open `" + name + "': " + lt_dlerror());
-  uobjects_reload(where);
-}
-
 /*! Initialize plugin UObjects.
  \param args object in which the instances will be stored.
 */
-rObject uobject_initialize(runner::Runner&, objects_type& args)
+rObject uobject_initialize(objects_type& args)
 {
   where = args.front();
-  uobjects_reload(where);
-  object::global_class->slot_set
-    (SYMBOL(loadModule),
-     object::make_primitive(&uobjects_load_module));
+  uobjects_reload();
   return object::void_class;
 }
 
 static libport::hash_map<std::string, rObject> uobject_map;
 
-static rObject wrap_ucallback_notify(runner::Runner&, object::objects_type&,
-			      urbi::UGenericCallback* ugc)
+static rObject wrap_ucallback_notify(object::objects_type&,
+                                     urbi::UGenericCallback* ugc)
 {
   ECHO("uvwrapnotify");
   urbi::UList l;
@@ -155,8 +140,8 @@ static rObject wrap_ucallback_notify(runner::Runner&, object::objects_type&,
   return object::void_class;
 }
 
-static rObject wrap_ucallback(runner::Runner&, object::objects_type& ol,
-		       urbi::UGenericCallback* ugc)
+static rObject wrap_ucallback(object::objects_type& ol,
+                              urbi::UGenericCallback* ugc)
 {
   urbi::UList l;
   bool tail = false;
@@ -174,7 +159,7 @@ static rObject wrap_ucallback(runner::Runner&, object::objects_type& ol,
 
 
 static rObject
-uobject_clone(runner::Runner&, object::objects_type& l)
+uobject_clone(object::objects_type& l)
 {
   rObject proto = l.front();
   return uobject_new(proto);
@@ -352,8 +337,8 @@ namespace urbi
       ECHO( "binding " << p.first << "." << method );
       me->slot_set(libport::Symbol(method),
 		   object::make_primitive(
-	boost::function2<rObject, Runner&, objects_type&>
-	(boost::bind(&wrap_ucallback, _1 ,_2, this))));
+	boost::function1<rObject, objects_type&>
+	(boost::bind(&wrap_ucallback, _1, this))));
     }
     if (s.type == "var" || s.type == "varaccess")
     {
@@ -371,8 +356,8 @@ namespace urbi
       assertion(f);
       object::objects_type args = list_of
 	(object::make_primitive(
-	boost::function2<rObject, Runner&, objects_type&>
-	(boost::bind(&wrap_ucallback_notify, _1 ,_2, this))));
+	boost::function1<rObject, objects_type&>
+	(boost::bind(&wrap_ucallback_notify, _1, this))));
       getCurrentRunner().apply(var, f, sym, args);
     }
     delete &s;
@@ -406,8 +391,7 @@ namespace urbi
   {
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
-    me->slot_update(getCurrentRunner(), SYMBOL(update),
-		    MAKE_VOIDCALL(this, urbi::UObject, update));
+    me->slot_update(SYMBOL(update), MAKE_VOIDCALL(this, urbi::UObject, update));
     object::objects_type args = list_of(new object::Float(t / 1000.0));
     getCurrentRunner().apply(me, f, SYMBOL(setUpdate), args);
   }
@@ -512,12 +496,11 @@ namespace urbi
     //clone uvar
     ECHO("creating uvar "<<name);
     rObject protouvar = object::object_class->slot_get(SYMBOL(UVar));
-    rObject uvar = urbi_call(getCurrentRunner(), protouvar, SYMBOL(new),
+    rObject uvar = urbi_call(protouvar, SYMBOL(new),
 			     o, new object::String(varName));
     // If the variable existed but was not an uvar, copy its old value.
     if (initVal)
-      o->slot_get(varName)->slot_update(getCurrentRunner(),
-					SYMBOL(val), initVal);
+      o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
   }
 
   void
@@ -528,7 +511,7 @@ namespace urbi
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
     o->slot_get(Symbol(p.second))
-      ->slot_update(getCurrentRunner(), SYMBOL(owned), object::true_class);
+      ->slot_update(SYMBOL(owned), object::true_class);
     ECHO("call to setowned on "<<name);
   }
 
@@ -538,7 +521,7 @@ namespace urbi
   {                                                              \
     StringPair p = split_name(name);                             \
     rObject o = get_base(p.first);                               \
-    urbi_call(getCurrentRunner(), o, SYMBOL(setProperty),        \
+    urbi_call(o, SYMBOL(setProperty),                            \
 	      new object::String(p.second),			 \
 	      new object::String(UPropertyNames[prop]),		 \
 	      out);                                              \
@@ -556,7 +539,7 @@ namespace urbi
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
     return ::uvalue_cast(
-      urbi_call(getCurrentRunner(), o, SYMBOL(getProperty),
+      urbi_call(o, SYMBOL(getProperty),
 		new object::String(p.second),
 		new object::String(UPropertyNames[prop])));
   }

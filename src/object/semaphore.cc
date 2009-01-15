@@ -1,3 +1,4 @@
+#include <kernel/userver.hh>
 #include <object/code.hh>
 #include <object/float.hh>
 #include <object/semaphore.hh>
@@ -36,8 +37,10 @@ namespace object
   }
 
   void
-  Semaphore::p(runner::Runner& r)
+  Semaphore::p()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     if (--value_.first < 0)
     {
       value_.second.push_back(&r);
@@ -63,14 +66,14 @@ namespace object
   }
 
   rObject
-  Semaphore::criticalSection(runner::Runner& r, rCode f)
+  Semaphore::criticalSection(rCode f)
   {
     objects_type args;
     args.push_back(this);
 
-    p(r);
+    p();
     libport::Finally finally(boost::bind(&Semaphore::v, this));
-    return (*f)(r, args);
+    return (*f)(args);
   }
 
   void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)

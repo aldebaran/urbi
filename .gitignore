@@ -12,7 +12,9 @@
 /sdk
 /sdk-remote
 /src/Makefile.in
+/src/include
 /src/kernel/config.h.in
+/src/lib
 /src/object/any-to-boost-function.hxx
 /src/object/cxx-primitive.hxx
 /src/object/precompiled-symbols.hh

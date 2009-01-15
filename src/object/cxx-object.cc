@@ -4,6 +4,7 @@
 #include <object/cxx-object.hh>
 
 #include <runner/call.hh>
+#include <runner/runner.hh>
 
 namespace object
 {
@@ -45,13 +46,14 @@ namespace object
   {
     foreach (Initializer* init, initializers_get())
       delete init;
+    initializers_get().clear();
   }
 
   void
   type_check(const rObject& o, const rObject& exp,
              boost::optional<unsigned> idx)
   {
-    runner::Runner& r = kernel::urbiserver->getCurrentRunner();
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
     assert(o);
     assert(exp);
@@ -62,7 +64,7 @@ namespace object
       else
       {
 	CAPTURE_GLOBAL(TypeError);
-        r.raise(urbi_call(r, TypeError, SYMBOL(new), exp, o));
+        r.raise(urbi_call(TypeError, SYMBOL(new), exp, o));
       }
     }
   }

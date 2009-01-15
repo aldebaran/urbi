@@ -23,7 +23,7 @@ namespace object
     value_type& value_get();
 
     static rBarrier _new(rObject);
-    rObject wait(runner::Runner&);
+    rObject wait();
     unsigned int signal(rObject);
     unsigned int signalAll(rObject);
 

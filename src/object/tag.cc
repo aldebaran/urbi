@@ -3,8 +3,9 @@
  ** \brief Creation of the URBI object tag.
  */
 
-#include <object/tag.hh>
+#include <kernel/userver.hh>
 
+#include <object/tag.hh>
 #include <object/global.hh>
 #include <object/object.hh>
 #include <object/string.hh>
@@ -43,16 +44,19 @@ namespace object
   }
 
   void
-  Tag::block(runner::Runner& r, objects_type& args)
+  Tag::block(objects_type& args)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size(), 0, 1);
     const rObject& payload = args.empty() ? void_class : args.front();
     value_->block(r.scheduler_get(), payload);
   }
 
   void
-  Tag::freeze(runner::Runner& r)
+  Tag::freeze()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     value_->freeze();
     if (r.frozen())
       r.yield();
@@ -83,10 +87,10 @@ namespace object
   }
 
   rTag
-  Tag::new_flow_control(runner::Runner& r, objects_type& args)
+  Tag::new_flow_control(objects_type& args)
   {
     args.pop_front();
-    rTag res = urbi_call(r, proto, SYMBOL(new), args)->as<Tag>();
+    rTag res = urbi_call(proto, SYMBOL(new), args)->as<Tag>();
     res->value_get()->flow_control_set();
     return res;
   }
@@ -98,14 +102,16 @@ namespace object
   }
 
   sched::prio_type
-  Tag::prio_set(runner::Runner& r, sched::prio_type prio)
+  Tag::prio_set(sched::prio_type prio)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     return value_->prio_set(r.scheduler_get(), prio);
   }
 
   void
-  Tag::stop(runner::Runner& r, objects_type& args)
+  Tag::stop(objects_type& args)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size(), 0, 1);
     const rObject& payload = args.empty() ? void_class : args.front();
     value_->stop(r.scheduler_get(), payload);
@@ -124,12 +130,12 @@ namespace object
   }
 
   static inline rObject
-  tag_event(Tag* owner, runner::Runner& r, const libport::Symbol& field)
+  tag_event(Tag* owner, const libport::Symbol& field)
   {
     if (!owner->slot_has(field))
     {
       CAPTURE_GLOBAL(Event);
-      rObject evt = urbi_call(r, Event, SYMBOL(new));
+      rObject evt = urbi_call(Event, SYMBOL(new));
       owner->slot_set(field, evt);
       return evt;
     }
@@ -137,29 +143,29 @@ namespace object
   }
 
   rObject
-  Tag::enter(runner::Runner& r)
+  Tag::enter()
   {
-    return tag_event(this, r, SYMBOL(enterEvent));
+    return tag_event(this, SYMBOL(enterEvent));
   }
 
   rObject
-  Tag::leave(runner::Runner& r)
+  Tag::leave()
   {
-    return tag_event(this, r, SYMBOL(leaveEvent));
+    return tag_event(this, SYMBOL(leaveEvent));
   }
 
   void
-  Tag::triggerEnter(runner::Runner& r)
+  Tag::triggerEnter()
   {
     if (slot_has(SYMBOL(enterEvent)))
-      urbi_call(r, slot_get(SYMBOL(enterEvent)), SYMBOL(syncEmit));
+      urbi_call(slot_get(SYMBOL(enterEvent)), SYMBOL(syncEmit));
   }
 
   void
-  Tag::triggerLeave(runner::Runner& r)
+  Tag::triggerLeave()
   {
     if (slot_has(SYMBOL(leaveEvent)))
-      urbi_call(r, slot_get(SYMBOL(leaveEvent)), SYMBOL(syncEmit));
+      urbi_call(slot_get(SYMBOL(leaveEvent)), SYMBOL(syncEmit));
   }
 
   rTag

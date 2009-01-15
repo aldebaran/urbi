@@ -22,16 +22,16 @@ namespace object
  */
 #define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)                     \
                                                                         \
-  static rObject Name(runner::Runner& r, object::objects_type& args)    \
+  static rObject Name(object::objects_type& args)                       \
   {                                                                     \
     static rPrimitive v1 = make_primitive(V1);                          \
     static rPrimitive v2 = make_primitive(V2);                          \
                                                                         \
     object::check_arg_count (args.size() - 1, N);                       \
     if (args[Arg]->is_a<T2>())                                          \
-      return (*v2)(r, args);                                            \
+      return (*v2)(args);                                               \
     else                                                                \
-      return (*v1)(r, args);                                            \
+      return (*v1)(args);                                               \
   }                                                                     \
 
 /// Make a function that bounces depending on its number of arguments
@@ -43,7 +43,7 @@ namespace object
  */
 #define OVERLOAD_2(Name, N, V1, V2)                                     \
                                                                         \
-  static rObject Name(runner::Runner& r, object::objects_type& args)    \
+  static rObject Name(object::objects_type& args)                       \
   {                                                                     \
     static rPrimitive v1 = make_primitive(V1);                          \
     static rPrimitive v2 = make_primitive(V2);                          \
@@ -52,10 +52,10 @@ namespace object
     switch (args.size())                                                \
     {                                                                   \
       case N:                                                           \
-        return (*v1)(r, args);                                          \
+        return (*v1)(args);                                             \
         break;                                                          \
       case N + 1:                                                       \
-        return (*v2)(r, args);                                          \
+        return (*v2)(args);                                             \
         break;                                                          \
       default:                                                          \
         pabort("Unreachable");                                          \
@@ -71,7 +71,7 @@ namespace object
  */
 #define OVERLOAD_DEFAULT(Name, N, P, V)                                 \
                                                                         \
-  static rObject Name(runner::Runner& r, object::objects_type& args)    \
+  static rObject Name(object::objects_type& args)                       \
   {                                                                     \
     static rPrimitive primitive = make_primitive(P);                    \
     int arity = args.size() - 1;                                        \
@@ -79,7 +79,7 @@ namespace object
     object::check_arg_count(arity, N, N + 1);                           \
     if (arity == N)                                                     \
       args.push_back(to_urbi(V));                                       \
-    return (*primitive)(r, args);                                       \
+    return (*primitive)(args);                                          \
   }                                                                     \
 
 

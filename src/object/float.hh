@@ -13,7 +13,7 @@
 namespace object
 {
 
-  class Float: public CxxObject
+  class URBI_SDK_API Float: public CxxObject
   {
 
   /*------------.
@@ -32,8 +32,7 @@ namespace object
      (const std::string fmt = "expected non-negative integer, got %s") const;
 
     virtual
-    std::ostream& special_slots_dump(std::ostream& o,
-                                     runner::Runner&) const;
+    std::ostream& special_slots_dump(std::ostream& o) const;
 
 
   /*-------------.

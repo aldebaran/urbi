@@ -12,6 +12,8 @@
 #include <libport/contract.hh>
 #include <libport/foreach.hh>
 
+#include <kernel/userver.hh>
+
 #include <object/cxx-conversions.hh>
 #include <object/dictionary.hh>
 #include <object/float.hh>
@@ -19,6 +21,7 @@
 #include <object/hash-slots.hh>
 #include <object/list.hh>
 #include <object/object.hh>
+#include <object/root-classes.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>
@@ -27,6 +30,13 @@
 
 namespace object
 {
+
+  Object::Object ()
+    : protos_(new protos_type)
+    , slots_()
+  {
+    root_classes_initialize();
+  }
 
   /*--------.
   | Slots.  |
@@ -118,10 +128,11 @@ namespace object
   }
 
   rObject
-  Object::slot_update(runner::Runner& r,
-                      const key_type& k, const rObject& o,
+  Object::slot_update(const key_type& k, const rObject& o,
                       bool hook)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     // The owner of the updated slot
     rObject owner = safe_slot_locate(k);
     rObject v = o;
@@ -150,16 +161,6 @@ namespace object
   Object::own_slot_update (const key_type& k, const rObject& v)
   {
     slots_.update(this, k, v);
-  }
-
-  void
-  Object::all_slots_copy(const rObject& other)
-  {
-    for (slots_implem::iterator slot = slots_.begin(other.get());
-         slot != slots_.end(other.get());
-         ++slot)
-      if (!own_slot_get(slot->first.second))
-        slot_set(slot->first.second, slot->second);
   }
 
 
@@ -208,8 +209,7 @@ namespace object
   }
 
   rObject
-  Object::property_set(runner::Runner& r,
-                       const key_type& k,
+  Object::property_set(const key_type& k,
 		       const key_type& p,
 		       const rObject& value)
   {
@@ -246,7 +246,7 @@ namespace object
     {
       rObject target = slot_get(k);
       if (target->slot_locate(SYMBOL(newPropertyHook)))
-        urbi_call(r, target, SYMBOL(newPropertyHook),
+        urbi_call(target, SYMBOL(newPropertyHook),
                   this, new String(k), new String(p), value);
     }
 
@@ -279,7 +279,7 @@ namespace object
   `-----------*/
 
   std::ostream&
-  Object::special_slots_dump (std::ostream& o, runner::Runner&) const
+  Object::special_slots_dump (std::ostream& o) const
   {
     return o;
   }
@@ -291,16 +291,16 @@ namespace object
   }
 
   std::ostream&
-  Object::id_dump(std::ostream& o, runner::Runner& r) const
+  Object::id_dump(std::ostream& o) const
   {
-    rObject data = urbi_call(r, const_cast<Object*>(this), SYMBOL(id));
+    rObject data = urbi_call(const_cast<Object*>(this), SYMBOL(id));
     type_check<String>(data);
     return o << data->as<String>()->value_get();
   }
 
 
   std::ostream&
-  Object::protos_dump(std::ostream& o, runner::Runner& runner) const
+  Object::protos_dump(std::ostream& o) const
   {
     if (!protos_->empty())
     {
@@ -310,7 +310,7 @@ namespace object
       {
 	if (tail++)
 	  o << ", ";
-	p->id_dump (o, runner);
+	p->id_dump (o);
       }
       o << libport::iendl;
     }
@@ -318,9 +318,9 @@ namespace object
   }
 
   std::ostream&
-  Object::dump (std::ostream& o, runner::Runner& runner, int depth_max) const
+  Object::dump (std::ostream& o, int depth_max) const
   {
-    id_dump(o, runner);
+    id_dump(o);
     /// Use xalloc/iword to store our current depth within the stream object.
     static const long idx = o.xalloc();
     long& current_depth = o.iword(idx);
@@ -331,8 +331,8 @@ namespace object
     ++current_depth;
     o << " {" << libport::incendl;
     o << "/* Special slots */" << libport::iendl;
-    protos_dump(o, runner);
-    special_slots_dump (o, runner);
+    protos_dump(o);
+    special_slots_dump (o);
 
     o << "/* Slots */" << libport::iendl;
     for (slots_implem::const_iterator slot = slots_.begin(this);
@@ -340,7 +340,7 @@ namespace object
          ++slot)
     {
       o << slot->first.second << " = ";
-      slot->second->dump(o, runner, depth_max) << libport::iendl;
+      slot->second->dump(o, depth_max) << libport::iendl;
     }
 
     o << libport::decindent << '}';
@@ -350,11 +350,11 @@ namespace object
   }
 
   std::ostream&
-  Object::print(std::ostream& o, runner::Runner& runner) const
+  Object::print(std::ostream& o) const
   {
     try
     {
-      rObject s = urbi_call(runner, const_cast<Object*>(this), SYMBOL(asString));
+      rObject s = urbi_call(const_cast<Object*>(this), SYMBOL(asString));
       type_check<String>(s);
       o << s->as<String>()->value_get();
       return o;
@@ -460,10 +460,32 @@ namespace object
   }
 
   rObject
-  Object::urbi_updateSlot(runner::Runner& r,
-                          key_type name, const rObject& value)
+  Object::urbi_updateSlot(key_type name, const rObject& value)
   {
-    return slot_update(r, name, value);
+    return slot_update(name, value);
+  }
+
+  rObject
+  Object::call(libport::Symbol name,
+               rObject arg1,
+               rObject arg2,
+               rObject arg3,
+               rObject arg4,
+               rObject arg5)
+  {
+    return urbi_call(this, name, arg1, arg2, arg3, arg4, arg5);
+  }
+
+  rObject
+  Object::call(const std::string& name,
+               rObject arg1,
+               rObject arg2,
+               rObject arg3,
+               rObject arg4,
+               rObject arg5)
+  {
+    return urbi_call(this, libport::Symbol(name),
+                     arg1, arg2, arg3, arg4, arg5);
   }
 
 } // namespace object

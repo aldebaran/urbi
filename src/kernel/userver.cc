@@ -169,7 +169,7 @@ namespace kernel
     r.show_backtrace(tag);
     r.send_message(tag, "");
     r.send_message(tag, "---------- PS ----------");
-    urbi_call(r, object::system_class, SYMBOL(ps));
+    urbi_call(object::system_class, SYMBOL(ps));
     r.send_message(tag, "");
     exit(EX_SOFTWARE);
   }

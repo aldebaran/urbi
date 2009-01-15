@@ -2,6 +2,7 @@
 # define OBJECT_STRING_UVAR_HH
 
 # include <object/cxx-object.hh>
+# include <runner/runner.hh>
 
 namespace object
 {
@@ -14,10 +15,10 @@ namespace object
   public:
     UVar();
     UVar(libport::intrusive_ptr<UVar> model);
-    rObject update_(runner::Runner&, rObject arg);
-    rObject accessor(runner::Runner&);
-    void loopCheck(runner::Runner&);
-    rObject writeOwned(runner::Runner&, rObject newval);
+    rObject update_(rObject arg);
+    rObject accessor();
+    void loopCheck();
+    rObject writeOwned(rObject newval);
   private:
     bool looping_;
     bool inChange_;

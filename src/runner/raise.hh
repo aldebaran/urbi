@@ -13,6 +13,7 @@ namespace runner
   /// "raise_current_method", the innermost method name will be looked
   /// up in the current runner and used instead.
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_urbi(libport::Symbol exn_name,
 		  object::rObject arg1 = 0,
 		  object::rObject arg2 = 0,
@@ -22,6 +23,7 @@ namespace runner
 
   /// Like raise_urbi, but skip the last callstack element
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_urbi_skip(libport::Symbol exn_name,
                        object::rObject arg1 = 0,
                        object::rObject arg2 = 0,
@@ -31,24 +33,30 @@ namespace runner
   extern const object::rObject& raise_current_method;
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_arity_error(unsigned effective, unsigned expected);
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_arity_error(unsigned effective,
 			 unsigned minimum,
 			 unsigned maximum);
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_bad_integer_error(libport::ufloat effective,
 			       const std::string = "expected integer, got %s");
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_lookup_error(libport::Symbol msg, const object::rObject& obj);
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_primitive_error(const std::string message);
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_argument_type_error
     (unsigned idx,
      object::rObject effective,
@@ -56,6 +64,7 @@ namespace runner
      object::rObject method_name = raise_current_method);
 
   ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_unexpected_void_error();
 }
 

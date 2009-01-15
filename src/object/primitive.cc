@@ -3,6 +3,7 @@
  ** \brief Creation of the URBI object primitive.
  */
 
+#include <kernel/userver.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitive.hh>
@@ -43,7 +44,7 @@ namespace object
   // FIXME: Code duplication with Code::apply.  Maybe there are more
   // opportunity to factor.
   rObject
-  Primitive::apply(runner::Runner& r, rList args)
+  Primitive::apply(rList args)
   {
     if (args->value_get().empty())
       runner::raise_primitive_error("list of arguments "
@@ -51,12 +52,12 @@ namespace object
     objects_type a = args->value_get();
     rObject tgt = a.front();
     a.pop_front();
-    return r.apply(tgt, this, SYMBOL(apply), a);
+    return ::kernel::urbiserver->getCurrentRunner().apply(tgt, this, SYMBOL(apply), a);
   }
 
-  rObject Primitive::operator() (runner::Runner& r, object::objects_type args)
+  rObject Primitive::operator() (object::objects_type args)
   {
-    return content_(r, args);
+    return content_(args);
   }
 
   static void nil()

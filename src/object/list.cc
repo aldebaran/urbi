@@ -134,13 +134,12 @@ namespace object
 
   /// Binary predicates used to sort lists.
   static bool
-  compareListItems (runner::Runner& r,
-                    const rObject& a, const rObject& b)
+  compareListItems (const rObject& a, const rObject& b)
   {
-    return is_true(urbi_call(r, a, SYMBOL(LT), b));
+    return is_true(urbi_call(a, SYMBOL(LT), b));
   }
   static bool
-  compareListItemsLambda (runner::Runner& r, const rObject& f, const rObject& l,
+  compareListItemsLambda (const rObject& f, const rObject& l,
                           const rObject& a, const rObject& b)
   {
     rExecutable fun = f.unsafe_cast<Executable>();
@@ -153,28 +152,30 @@ namespace object
     args << l;
     args << a;
     args << b;
-    return is_true((*fun)(r, args));
+    return is_true((*fun)(args));
   }
 
-  List::value_type List::sort(runner::Runner& r)
+  List::value_type List::sort()
   {
     value_type s(content_);
     std::sort(s.begin(), s.end(),
-              boost::bind(compareListItems, boost::ref(r), _1, _2));
+              boost::bind(compareListItems, _1, _2));
     return s;
   }
 
-  List::value_type List::sort(runner::Runner& r, rObject f)
+  List::value_type List::sort(rObject f)
   {
     value_type s(content_);
     std::sort(s.begin(), s.end(),
-              boost::bind(compareListItemsLambda, boost::ref(r), f, this, _1, _2));
+              boost::bind(compareListItemsLambda, f, this, _1, _2));
     return s;
   }
 
   void
-  List::each_common(runner::Runner& r, const rObject& f, bool yielding)
+  List::each_common(const rObject& f, bool yielding)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     // Beware of iterations that modify the list in place: make a
     // copy.
     bool must_yield = false;
@@ -190,20 +191,22 @@ namespace object
   }
 
   void
-  List::each(runner::Runner& r, const rObject& f)
+  List::each(const rObject& f)
   {
-    each_common(r, f, true);
+    each_common(f, true);
   }
 
   void
-  List::each_pipe(runner::Runner& r, const rObject& f)
+  List::each_pipe(const rObject& f)
   {
-    each_common(r, f, false);
+    each_common(f, false);
   }
 
   void
-  List::each_and(runner::Runner& r, const rObject& f)
+  List::each_and(const rObject& f)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     libport::Finally finally;
     sched::jobs_type jobs;
 
@@ -284,8 +287,8 @@ namespace object
   }
 
   OVERLOAD_2(sort_bouncer, 1,
-             (List::value_type (List::*) (runner::Runner&)) &List::sort,
-             (List::value_type (List::*) (runner::Runner&, rObject f)) &List::sort)
+             (List::value_type (List::*) ()) &List::sort,
+             (List::value_type (List::*) (rObject f)) &List::sort)
 
   void List::initialize(CxxObject::Binder<List>& bind)
   {

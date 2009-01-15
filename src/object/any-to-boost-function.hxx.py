@@ -86,7 +86,6 @@ print '''\
 
 # include <boost/function.hpp>
 # include <object/cxx-helper.hh>
-# include <runner/runner.hh>
 
 namespace object
 {
@@ -102,7 +101,7 @@ namespace object
 
 # For now, only the r case is needed, and !r fails with visual studio
 for r in [True]:
-    for runner in [True, False]:
+    for runner in [False]:
         for met in [True, False]:
             for n in range(5):
                 print '    // Return: %s, Runner: %s, Method: %s, Arguments: %s'\

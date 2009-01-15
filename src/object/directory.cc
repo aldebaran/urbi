@@ -5,6 +5,7 @@
 
 #include <libport/detect-win32.h>
 
+#include <kernel/userver.hh>
 #include <object/directory.hh>
 #include <object/path.hh>
 #include <runner/raise.hh>
@@ -138,7 +139,8 @@ namespace object
     bind(SYMBOL(content), &Directory::list<&details::mk_path>);
     bind(SYMBOL(list), &Directory::list<&details::mk_string>);
 
-    proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
+    rPrimitive p = new Primitive(&init_bouncer);
+    proto->slot_set(SYMBOL(init), p);
   }
 
   rObject

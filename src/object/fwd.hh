@@ -11,6 +11,8 @@
 # include <libport/fwd.hh>
 # include <libport/intrusive-ptr.hh>
 
+# include <urbi/export.hh>
+
 namespace object
 {
   // state.hh
@@ -72,10 +74,10 @@ namespace object
   FWD_DECL(Tag);
   FWD_DECL(Task);
 
-  extern rObject false_class;
-  extern rObject nil_class;
-  extern rObject true_class;
-  extern rObject void_class;
+  extern URBI_SDK_API rObject false_class;
+  extern URBI_SDK_API rObject nil_class;
+  extern URBI_SDK_API rObject true_class;
+  extern URBI_SDK_API rObject void_class;
 } // namespace object
 
 #endif // !OBJECT_FWD_HH

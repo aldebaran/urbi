@@ -14,7 +14,7 @@
 # include <ast/fwd.hh>
 # include <ast/call.hh>
 # include <ast/loc.hh>
-# include <object/object.hh>
+# include <object/fwd.hh>
 # include <sched/exception.hh>
 
 namespace object

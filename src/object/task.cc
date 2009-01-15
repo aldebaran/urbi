@@ -7,14 +7,13 @@
 
 #include <boost/any.hpp>
 
-#include <object/task.hh>
-
+#include <kernel/userver.hh>
 #include <object/float.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
 #include <object/tag.hh>
-
+#include <object/task.hh>
 #include <runner/interpreter.hh>
 #include <runner/runner.hh>
 
@@ -58,8 +57,10 @@ namespace object
   }
 
   std::string
-  Task::status(runner::Runner& r)
+  Task::status()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     std::stringstream status;
     switch(value_->state_get())
     {
@@ -116,14 +117,16 @@ namespace object
   }
 
   void
-  Task::waitForTermination(runner::Runner& r)
+  Task::waitForTermination()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     r.yield_until_terminated(*value_);
   }
 
   void
-  Task::waitForChanges(runner::Runner& r)
+  Task::waitForChanges()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     r.yield_until_things_changed();
   }
 

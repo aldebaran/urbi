@@ -240,16 +240,15 @@ namespace kernel
     std::ostringstream os;
     if (p)
       os << p;
-    runner::Runner& r = server_.getCurrentRunner();
     try
     {
-      result = urbi_call(r, result, SYMBOL(asToplevelPrintable));
+      result = urbi_call(result, SYMBOL(asToplevelPrintable));
     }
     catch (object::UrbiException&)
     {
       // nothing
     }
-    result->print(os, r);
+    result->print(os);
 
     if (!os.str().empty())
     {

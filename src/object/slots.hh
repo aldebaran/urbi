@@ -6,10 +6,11 @@
 # include <libport/symbol.hh>
 
 # include <object/fwd.hh>
+# include <urbi/export.hh>
 
 namespace object
 {
-  class Slots
+  class URBI_SDK_API Slots
   {
     public:
       /// The keys

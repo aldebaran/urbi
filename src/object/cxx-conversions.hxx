@@ -8,8 +8,6 @@
 # include <object/float.hh>
 # include <object/list.hh>
 # include <object/string.hh>
-# include <object/tag.hh>
-# include <runner/runner.hh>
 
 namespace object
 {
@@ -84,6 +82,24 @@ namespace object
 
     static rObject
     from(const int& v)
+    {
+      return new Float(v);
+    }
+  };
+
+  // Conversion with float
+  template<>
+  struct CxxConvert<float>
+  {
+    static float
+    to(const rObject& o, unsigned idx)
+    {
+      type_check(o, Float::proto, idx);
+      return o->as<Float>()->value_get();
+    }
+
+    static rObject
+    from(const float& v)
     {
       return new Float(v);
     }

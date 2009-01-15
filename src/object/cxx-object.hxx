@@ -6,7 +6,7 @@
 # include <object/cxx-primitive.hh>
 # include <object/object-class.hh>
 # include <object/primitive.hh>
-# include <object/primitives.hh>
+# include <object/symbols.hh>
 # include <object/string.hh>
 # include <runner/raise.hh>
 
@@ -41,7 +41,7 @@ namespace object
   namespace
   {
     template <typename T>
-    rObject cxx_object_clone(runner::Runner&, objects_type args)
+    rObject cxx_object_clone(objects_type args)
     {
       check_arg_count(args.size() - 1, 0);
       rObject tgt = args[0];
@@ -50,7 +50,7 @@ namespace object
     }
 
     template <typename T>
-    rObject cxx_object_id(runner::Runner&, objects_type args)
+    rObject cxx_object_id(objects_type args)
     {
       check_arg_count(args.size() - 1, 0);
       return args[0];
@@ -71,8 +71,7 @@ namespace object
   {
     res_->slot_set(SYMBOL(type), new String(T::type_name));
     res_->slot_set(SYMBOL(clone),
-                   rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>,
-                                                        _1, _2))));
+                   rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>, _1))));
     Binder<T> b(res_);
     T::initialize(b);
 
@@ -80,8 +79,7 @@ namespace object
       libport::Symbol(std::string("as") + T::type_name);
     if (!res_->slot_locate(conversion, 0))
       res_->slot_set(conversion,
-                     rPrimitive(new Primitive(boost::bind(cxx_object_id<T>,
-                                                          _1, _2))));
+                     rPrimitive(new Primitive(boost::bind(cxx_object_id<T>, _1))));
     return res_;
   }
 

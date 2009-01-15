@@ -9,6 +9,7 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
+#include <kernel/userver.hh>
 #include <object/code.hh>
 #include <object/list.hh>
 #include <object/string.hh>
@@ -76,8 +77,10 @@ namespace object
     return self_;
   }
 
-  rObject Code::apply(runner::Runner& r, rList args)
+  rObject Code::apply(rList args)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     if (args->value_get().empty())
       runner::raise_primitive_error("list of arguments "
 				    "must begin with `this'");
@@ -87,7 +90,7 @@ namespace object
     return r.apply(tgt, this, SYMBOL(apply), a);
   }
 
-  std::string Code::as_string(runner::Runner&, rObject what)
+  std::string Code::as_string(rObject what)
   {
     type_check<Code>(what);
     return string_cast(*what->as<Code>()->ast_get());
@@ -103,7 +106,7 @@ namespace object
   }
 
   std::ostream&
-  Code::special_slots_dump(std::ostream& o, runner::Runner&) const
+  Code::special_slots_dump(std::ostream& o) const
   {
     return o << "value = " << *ast_get() << libport::iendl;
   }
@@ -123,8 +126,9 @@ namespace object
   }
 
   rObject
-  Code::operator() (runner::Runner& r, object::objects_type args)
+  Code::operator() (object::objects_type args)
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     assert(!args.empty());
     rObject self = args[0];
     args.pop_front();

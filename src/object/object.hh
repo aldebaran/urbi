@@ -14,20 +14,15 @@
 # include <boost/shared_ptr.hpp>
 
 # include <libport/intrusive-ptr.hh>
-
 # include <object/fwd.hh>
 # include <object/centralized-slots.hh>
-# include <object/hash-slots.hh>
-# include <object/sorted-vector-slots.hh>
-# include <object/vector-slots.hh>
-
-# include <runner/fwd.hh>
+# include <urbi/export.hh>
 
 namespace object
 {
 
   /// Run time values for Urbi.
-  class Object: public libport::RefCounted
+  class URBI_SDK_API Object: public libport::RefCounted
   {
     /// \name Ctor & dtor.
     /// \{
@@ -116,9 +111,7 @@ namespace object
     /// \param o	The new value
     /// \param hook	Whether to trigger the potential updateHook
     rObject
-    slot_update(runner::Runner& r,
-                const key_type& k, const rObject& o,
-                bool hook = true);
+    slot_update(const key_type& k, const rObject& o, bool hook = true);
 
     /// Update slot \c k to \a o.
     void
@@ -152,9 +145,6 @@ namespace object
     /// Read only access to slots.
     const slots_implem& slots_get () const;
 
-    /// Copy another object local slots, if not already present.
-    void all_slots_copy(const rObject& other);
-
     /// \}
 
     /// \name Properties.
@@ -171,8 +161,7 @@ namespace object
     bool property_has(const key_type& k, const key_type& p);
     /// self.k->p = val.
     /// Ensures that self.property exists.
-    rObject property_set(runner::Runner& r,
-                         const key_type& k, const key_type& p,
+    rObject property_set(const key_type& k, const key_type& p,
 			 const rObject& val);
     /// Remove property \a p from slot \a k. Returns what was removed.
     rObject property_remove(const key_type& k, const key_type& p);
@@ -182,21 +171,18 @@ namespace object
     /// \{
     /// Dump the list of protos.
     /// FIXME: Should become useless when protos become Urbi lists.
-    std::ostream& protos_dump(std::ostream& o,
-                              runner::Runner& r) const;
+    std::ostream& protos_dump(std::ostream& o) const;
     /// Report a short string describing the identity.
-    std::ostream& id_dump(std::ostream& o,
-                          runner::Runner& r) const;
+    std::ostream& id_dump(std::ostream& o) const;
 
     /// Dump the special slots if there are.
-    virtual std::ostream& special_slots_dump(std::ostream& o,
-                                             runner::Runner&) const;
+    virtual std::ostream& special_slots_dump(std::ostream& o) const;
 
     // Print out the value. Suitable for user interaction.
-    std::ostream& print(std::ostream&, runner::Runner&) const;
+    std::ostream& print(std::ostream&) const;
 
     /// Report the content on \p o.  For debugging purpose.
-    std::ostream& dump(std::ostream&, runner::Runner&, int depth_max) const;
+    std::ostream& dump(std::ostream&, int depth_max) const;
     /// \}
 
     /// Clone, i.e., create a fresh object with this class as sole proto.
@@ -210,6 +196,21 @@ namespace object
     virtual bool valid_proto(const Object& o) const;
 
     virtual std::string type_name_get() const;
+
+    rObject call(libport::Symbol name,
+                 rObject arg1 = 0,
+                 rObject arg2 = 0,
+                 rObject arg3 = 0,
+                 rObject arg4 = 0,
+                 rObject arg5 = 0);
+
+    rObject call(const std::string& name,
+                 rObject arg1 = 0,
+                 rObject arg2 = 0,
+                 rObject arg3 = 0,
+                 rObject arg4 = 0,
+                 rObject arg5 = 0);
+
 
     /*-------------.
     | Urbi methods |
@@ -226,7 +227,7 @@ namespace object
     rObject
     urbi_setSlot(key_type k, const rObject& o);
     rObject
-    urbi_updateSlot(runner::Runner& r, key_type k, const rObject& o);
+    urbi_updateSlot(key_type k, const rObject& o);
 
 
   private:
@@ -251,19 +252,19 @@ namespace object
   template<class F> bool for_all_protos(const rObject& r, F f);
 
   /// Whether \b p is present in \b c's proto hierarchy.
-  bool is_a(const rObject& c, const rObject& p);
+  URBI_SDK_API bool is_a(const rObject& c, const rObject& p);
 
   /// Same as above, but check first with a dynamic_cast in order to handle
   /// atoms more efficiently.
   template<typename T>
-  bool is_a(const rObject& c);
+  URBI_SDK_API bool is_a(const rObject& c);
 
   /// Whether \a o represents a true value. UnexpectedVoidError will be
   /// signalled if void is passed.
-  bool is_true(const rObject& o);
+  URBI_SDK_API bool is_true(const rObject& o);
 
   /// Return an Urbi boolean object corresponding to \a b.
-  const rObject& to_boolean(bool b);
+  URBI_SDK_API const rObject& to_boolean(bool b);
 
   // FIXME: we probably want libport::refcounted smart pointers here
   typedef boost::shared_ptr<rObject> rrObject;

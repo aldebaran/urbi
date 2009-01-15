@@ -119,7 +119,7 @@ namespace runner
 	{
 	  non_interruptible_set(true);
 	  lobby_set(job->lobby_get());
-	  new_state = object::is_true(urbi_call(*this, job->condition_get(),
+	  new_state = object::is_true(urbi_call(job->condition_get(),
 						SYMBOL(eval)));
 	}
 	catch (object::UrbiException& ue)
@@ -160,7 +160,7 @@ namespace runner
 	  // here anyway.
 	  non_interruptible_set(false);
 	  side_effect_free_set(false);
-	  urbi_call(*this, to_launch, SYMBOL(eval));
+	  urbi_call(to_launch, SYMBOL(eval));
 	}
 	job->triggered_set(new_state);
 	++job;

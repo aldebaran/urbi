@@ -8,31 +8,31 @@
 # include <object/object.hh>
 
 
-#define URBI_CXX_OBJECT(Name)                                   \
-public:                                                         \
-  static void initialize(CxxObject::Binder<Name>& binder);      \
-  static const std::string type_name;                           \
-  virtual std::string type_name_get() const;                    \
-  static rObject proto;                                         \
-  virtual bool valid_proto(const Object& o) const;              \
-private:                                                        \
-  friend class TypeInitializer<Name>;                           \
-  static rObject proto_make();
+#define URBI_CXX_OBJECT(Name)                                           \
+public:                                                                 \
+  static void initialize(object::CxxObject::Binder<Name>& binder);      \
+  static const std::string type_name;                                   \
+  virtual std::string type_name_get() const;                            \
+  static object::rObject proto;                                         \
+  virtual bool valid_proto(const Object& o) const;                      \
+private:                                                                \
+  friend class TypeInitializer<Name>;                                   \
+  static object::rObject proto_make();                                  \
 
-#define URBI_CXX_OBJECT_REGISTER(Name)                          \
-  static bool Name ## _added__  = CxxObject::add<Name>();       \
-  const std::string Name::type_name = #Name;                    \
-  rObject Name::proto;                                          \
-                                                                \
-  std::string                                                   \
-  Name::type_name_get() const                                   \
-  {                                                             \
-    return type_name;                                           \
-  }                                                             \
-                                                                \
-  bool Name::valid_proto(const Object& o) const                 \
-  {                                                             \
-    return dynamic_cast<const Name*>(&o);                       \
+#define URBI_CXX_OBJECT_REGISTER(Name)                                  \
+  static bool Name ## _added__  = object::CxxObject::add<Name>();       \
+  const std::string Name::type_name = #Name;                            \
+  object::rObject Name::proto;                                          \
+                                                                        \
+  std::string                                                           \
+  Name::type_name_get() const                                           \
+  {                                                                     \
+    return type_name;                                                   \
+  }                                                                     \
+                                                                        \
+  bool Name::valid_proto(const Object& o) const                         \
+  {                                                                     \
+    return dynamic_cast<const Name*>(&o);                               \
   }
 
 
@@ -40,7 +40,7 @@ private:                                                        \
 namespace object
 {
   /// Base class for Urbi bound C++ classes.
-  class CxxObject: public Object
+  class URBI_SDK_API CxxObject: public Object
   {
   public:
 
@@ -122,21 +122,25 @@ namespace object
 
   /// Raise an exception if \a o is not a \a exp. If \a idx is given,
   /// report the type error for argument \a idx.
+  URBI_SDK_API
   void type_check(const rObject& o, const rObject& exp,
                   boost::optional<unsigned> idx = boost::optional<unsigned>());
 
   /// Same as above, but check first with a dynamic_cast in order to handle
   /// atoms more efficiently.
   template<typename T>
+  URBI_SDK_API
   void type_check(const rObject& o,
 		  boost::optional<unsigned> idx = boost::optional<unsigned>());
 
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
+  URBI_SDK_API
   void check_arg_count (unsigned effective, unsigned formal);
 
   /// Same as above, with a minimum and maximum number of
   /// formal parameters.
+  URBI_SDK_API
   void check_arg_count (unsigned effective, unsigned minformal, unsigned maxformal);
 
 }

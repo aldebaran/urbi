@@ -294,8 +294,7 @@ BOUNCE_INT_OP(~)
   | Details |
   `--------*/
 
-  std::ostream& Float::special_slots_dump(std::ostream& o,
-                                          runner::Runner&) const
+  std::ostream& Float::special_slots_dump(std::ostream& o) const
   {
     o << "value = " << value_ << libport::iendl;
     return o;

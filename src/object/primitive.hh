@@ -12,19 +12,19 @@
 
 namespace object
 {
-  class Primitive: public Executable
+  class URBI_SDK_API Primitive: public Executable
   {
   public:
-    typedef boost::function2<rObject, runner::Runner&, objects_type&> value_type;
+    typedef boost::function1<rObject, objects_type&> value_type;
 
     ATTRIBUTE_NORETURN Primitive();
     Primitive(rPrimitive model);
     Primitive(value_type value);
     value_type value_get() const;
-    virtual rObject operator() (runner::Runner& r, object::objects_type args);
+    virtual rObject operator() (object::objects_type args);
 
     // Urbi methods
-    rObject apply(runner::Runner& r, rList args);
+    rObject apply(rList args);
 
   private:
     value_type content_;

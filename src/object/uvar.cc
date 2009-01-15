@@ -3,10 +3,13 @@
  ** \brief Creation of the URBI object UVar.
  */
 
+# include <kernel/userver.hh>
+
 # include <object/uvar.hh>
 # include <object/global.hh>
 # include <object/list.hh>
 # include <runner/call.hh>
+
 # include <runner/runner.hh>
 
 
@@ -22,7 +25,7 @@ namespace object
   }
 
   static rObject
-  update_bounce(runner::Runner& r, objects_type args)
+  update_bounce(objects_type args)
   {
     //called with self slotname slotval
     check_arg_count(args.size() - 1, 2);
@@ -30,12 +33,12 @@ namespace object
       args.front()
       ->slot_get(libport::Symbol(args[1]->as<String>()->value_get()))
       .unsafe_cast<UVar>();
-    rvar->update_(r, args[2]);
+    rvar->update_(args[2]);
     return void_class;
   }
 
   UVar::UVar()
-    : Primitive( boost::bind(&UVar::accessor, this, _1))
+    : Primitive( boost::bind(&UVar::accessor, this))
     , looping_(false)
     , inChange_(false)
     , inAccess_(false)
@@ -45,7 +48,7 @@ namespace object
   }
 
   UVar::UVar(libport::intrusive_ptr<UVar>)
-    : Primitive( boost::bind(&UVar::accessor, this, _1))
+    : Primitive( boost::bind(&UVar::accessor, this))
     , looping_(false)
     , inChange_(false)
     , inAccess_(false)
@@ -55,8 +58,10 @@ namespace object
   }
 
   void
-  UVar::loopCheck(runner::Runner& r)
+  UVar::loopCheck()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     if (!looping_
         && !slot_get(SYMBOL(change))->as<List>()->value_get().empty()
         && !slot_get(SYMBOL(access))->as<List>()->value_get().empty())
@@ -64,9 +69,9 @@ namespace object
       looping_ = true;
       while (true)
       {
-        accessor(r);
+        accessor();
         objects_type args;
-        rObject period = urbi_call(r, global_class, SYMBOL(getPeriod), args);
+        rObject period = urbi_call(global_class, SYMBOL(getPeriod), args);
         r.yield_until(libport::utime() +
           static_cast<libport::utime_t>(period->as<Float>()->value_get()
                                        * 1000000.0));
@@ -75,9 +80,11 @@ namespace object
   }
 
   rObject
-  UVar::update_(runner::Runner& r, rObject val)
+  UVar::update_(rObject val)
   {
-    slot_update(r, SYMBOL(val), val);
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
+    slot_update(SYMBOL(val), val);
     if (is_true(slot_get(SYMBOL(owned))))
       callNotify(r, rObject(this), SYMBOL(changeOwned));
      else if (!inChange_)
@@ -90,8 +97,10 @@ namespace object
   }
 
   rObject
-  UVar::accessor(runner::Runner& r)
+  UVar::accessor()
   {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
     if (this == proto.get())
       return this;
     if (!inAccess_)
@@ -107,9 +116,11 @@ namespace object
   }
 
   rObject
-  UVar::writeOwned(runner::Runner& r, rObject newval)
+  UVar::writeOwned(rObject newval)
   {
-    slot_update(r, SYMBOL(valsensor), newval);
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
+    slot_update(SYMBOL(valsensor), newval);
     callNotify(r, rObject(this), SYMBOL(change));
     return newval;
   }
