@@ -36,6 +36,5 @@ namespace urbi
 };
 
 class UVariable;
-class UGhostConnection;
 
 #endif //! URBI_FWD_HH

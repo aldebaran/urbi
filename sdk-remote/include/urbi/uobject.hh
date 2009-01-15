@@ -313,8 +313,6 @@ namespace urbi
     /// The hub, if it exists.
     UObjectHub  *objecthub;
 
-    /// The connection used by send().
-    UGhostConnection* gc;
     /// Send a command to URBI.
     int send(const std::string& s);
 
