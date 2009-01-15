@@ -615,16 +615,15 @@ namespace urbi
   void
   send(const char* str)
   {
-    // Feed this to the ghostconnection.
     kernel::urbiserver->ghost_connection_get().received(str);
   }
 
   void
-  send(void* buf, int size)
+  send(void* buf, size_t size)
   {
     // Feed this to the ghostconnection.
     kernel::urbiserver->ghost_connection_get()
-      .received(static_cast<const char*>(buf), static_cast<size_t>(size));
+      .received(static_cast<const char*>(buf), size);
   }
   void yield()
   {
