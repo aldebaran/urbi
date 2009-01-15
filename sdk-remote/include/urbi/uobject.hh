@@ -125,6 +125,11 @@ namespace urbi
   /// Write a message to the server debug output. Printf syntax.
   URBI_SDK_API void echo(const char* format, ... );
 
+  /// Retrieve a UObjectHub based on its name or return 0 if not found.
+  UObjectHub* getUObjectHub(const std::string& n);
+  /// Retrieve a UObject based on its name or return 0 if not found.
+  UObject* getUObject(const std::string& n);
+
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
   URBI_SDK_API void uobject_unarmorAndSend(const char* str);
