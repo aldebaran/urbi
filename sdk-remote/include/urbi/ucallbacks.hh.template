@@ -21,7 +21,7 @@
 # define URBI_UCALLBACKS_HH
 
 # include <string>
-# include <boost/function.hpp>
+
 # include <urbi/export.hh>
 # include <urbi/utable.hh>
 # include <urbi/uvalue.hh>
@@ -65,24 +65,6 @@ namespace urbi
   };
 
 
-  class UBoostFunctionCallback: public UGenericCallback
-  {
-  public:
-  UBoostFunctionCallback(const std::string& objname,
-                  const std::string& type,
-		  boost::function0<int> f,
-		   const std::string& funname, UTable &t, bool owned)
-	: UGenericCallback(objname, type, funname, 0, t, owned),
-	f(f)
-	{
-	registerCallback(t);
-	}
-    virtual UValue __evalcall(UList&)
-    {
-      return UValue(f());
-    }
-    boost::function0<int> f;
-  };
   /*------------------------------------------------.
   | This section is generated. Not for human eyes.  |
   `------------------------------------------------*/
