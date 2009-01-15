@@ -89,6 +89,13 @@ HOBBYISTES
 Contact: Marko MÃ¤nd <xinematic@gmail.com>
 Environment: ?
 
+INRIA
+=====
+
+Contact: Jérôme Béchu <jerome.bechu@inria.fr>
+	Engineer working for P-Y Oudeyer.
+Environment: windows mostly
+
 LORIA
 =====
 Contact: Alain Dutech <Alain.Dutech@loria.fr>
