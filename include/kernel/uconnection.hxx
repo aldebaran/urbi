@@ -94,6 +94,14 @@ namespace kernel
       continue_send();
   }
 
+  inline
+  void
+  UConnection::received(const std::string& s)
+  {
+    received(s.c_str(), s.length());
+  }
+
+
   template <typename T>
   UConnection&
   UConnection::operator<<(const T& t)

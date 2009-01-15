@@ -608,8 +608,7 @@ namespace urbi
   int
   UObject::send(const std::string& str)
   {
-    kernel::urbiserver->ghost_connection_get().received(str.c_str(),
-                                                        str.length());
+    kernel::urbiserver->ghost_connection_get().received(str);
     return 0;
   }
 

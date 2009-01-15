@@ -190,12 +190,6 @@ namespace kernel
   }
 
   void
-  UConnection::received(const char* s)
-  {
-    received(s, strlen(s));
-  }
-
-  void
   UConnection::received(const char* buffer, size_t length)
   {
     PING();

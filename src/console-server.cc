@@ -292,7 +292,7 @@ namespace urbi
           data.interactive = false;
         }
         if (!input.empty())
-          s.ghost_connection_get().received(input.c_str(), input.length());
+          s.ghost_connection_get().received(input);
       }
 
       if (data.network)

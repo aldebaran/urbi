@@ -138,15 +138,6 @@ namespace kernel
     /// network.
     void new_result(object::rObject result);
 
-    /// Handle an incoming string.
-    /*! Must be called each time a string is received by the connection.
-     \param s the incoming string
-     \return UFAIL buffer overflow
-     \return UMEMORYFAIL critical memory overflow
-     \return USUCCESS otherwise
-     */
-    void received(const char* s);
-
     /// \brief Handle an incoming buffer of data.
     ///
     /// Must be called each time a buffer of data is received by the connection.
@@ -156,6 +147,15 @@ namespace kernel
     /// \return UMEMORYFAIL critical memory overflow
     /// \return USUCCESS    otherwise
     void received(const char* buffer, size_t length);
+
+    /// Handle an incoming string.
+    /*! Must be called each time a string is received by the connection.
+     \param s the incoming string
+     \return UFAIL buffer overflow
+     \return UMEMORYFAIL critical memory overflow
+     \return USUCCESS otherwise
+     */
+    void received(const std::string& s);
 
     /// A generic << operator, to easily send every kind of data through the
     ///connection.
