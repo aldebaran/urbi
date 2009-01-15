@@ -11,6 +11,7 @@ urbiinclude_HEADERS =				\
   include/urbi/package-info.hh			\
   include/urbi/qt_umain.hh			\
   include/urbi/uabstractclient.hh		\
+  include/urbi/uabstractclient.hxx		\
   include/urbi/ubinary.hh			\
   include/urbi/ublend-type.hh			\
   include/urbi/uclient.hh			\

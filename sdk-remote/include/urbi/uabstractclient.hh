@@ -268,14 +268,14 @@ namespace urbi
                                    const unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
-    const std::string& getServerName() const { return host_; }
+    const std::string& getServerName() const;
 
     /// Return the server port.
-    unsigned getServerPort() const { return port_; }
+    unsigned getServerPort() const;
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
-    std::ostream& getStream() { return *stream; }
+    std::ostream& getStream();
 
      /// dummy tag for client error callback
     static const char* CLIENTERROR_TAG;
@@ -335,9 +335,9 @@ namespace urbi
     virtual UCallbackAction setConnectionID (const UMessage& msg);
   public:
     const std::string& connectionID () const;
-    int kernelMajor() const {return kernelMajor_;}
-    int kernelMinor() const {return kernelMinor_;}
-    const std::string& kernelVersion() const { return kernelVersion_;}
+    int kernelMajor() const;
+    int kernelMinor() const;
+    const std::string& kernelVersion() const;
   private:
     /// Bin object for this command.
     std::list<urbi::BinaryData> bins;
@@ -377,14 +377,14 @@ namespace urbi
     int getCurrentTimestamp () const;
   private:
 
-    std::list<UCallbackInfo>callbackList;
+    typedef std::list<UCallbackInfo> callbacks_type;
+    callbacks_type callbacks_;
     /// Unique tag base.
-    int uid;
+    int uid_;
 
-    std::ostream* stream;
+    std::ostream* stream_;
 
     friend class UClientStreambuf;
-
   };
 
   /// Wrapper around a callback function. Use callback() to create them.
@@ -653,5 +653,7 @@ namespace urbi
   URBI_SDK_API std::ostream& default_stream();
 
 } // namespace urbi
+
+# include <urbi/uabstractclient.hxx>
 
 #endif // URBI_UABSTRACTCLIENT_HH

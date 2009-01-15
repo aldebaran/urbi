@@ -137,8 +137,8 @@ namespace urbi
   {
     listLock.lock();
     bool inc=false;
-    for (std::list<UCallbackInfo>::iterator it = callbackList.begin();
-	 it!=callbackList.end(); inc?it:it++, inc=false)
+    for (callbacks_type::iterator it = callbacks_.begin();
+	 it!=callbacks_.end(); inc?it:it++, inc=false)
     {
       if (libport::streq(msg.tag.c_str(), it->tag)
 	  || (libport::streq(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR)
@@ -148,7 +148,7 @@ namespace urbi
 	if (ua == URBI_REMOVE)
 	{
 	  delete &(it->callback);
-	  it=callbackList.erase(it);
+	  it=callbacks_.erase(it);
 	  inc = true;
 	}
       }
@@ -186,8 +186,8 @@ namespace urbi
     , binaryMode(false)
     , system(false)
     , init_(true)
-    , uid(0)
-    , stream(this)
+    , uid_(0)
+    , stream_(this)
   {
     getStream().setf(std::ios::fixed);
     recvBuffer = new char[buflen];
@@ -629,9 +629,9 @@ namespace urbi
   UAbstractClient::getAssociatedTag(UCallbackID id, char* tag)
   {
     listLock.lock();
-    std::list<UCallbackInfo>::iterator it =
-      std::find(callbackList.begin(), callbackList.end(), id);
-    if (it == callbackList.end())
+    callbacks_type::iterator it =
+      std::find(callbacks_.begin(), callbacks_.end(), id);
+    if (it == callbacks_.end())
     {
       listLock.unlock();
       return 0;
@@ -648,15 +648,15 @@ namespace urbi
   UAbstractClient::deleteCallback(UCallbackID id)
   {
     listLock.lock();
-    std::list<UCallbackInfo>::iterator it =
-      std::find(callbackList.begin(), callbackList.end(), id);
-    if (it == callbackList.end())
+    callbacks_type::iterator it =
+      std::find(callbacks_.begin(), callbacks_.end(), id);
+    if (it == callbacks_.end())
     {
       listLock.unlock();
       return 0;
     }
     delete &(it->callback);
-    callbackList.erase(it);
+    callbacks_.erase(it);
     listLock.unlock();
     return 1;
   }
@@ -756,7 +756,7 @@ namespace urbi
   void
   UAbstractClient::makeUniqueTag(char* tag)
   {
-    sprintf(tag, "URBI_%d", ++uid);
+    sprintf(tag, "URBI_%d", ++uid_);
     return;
   }
 
@@ -1027,7 +1027,7 @@ namespace urbi
     strncpy(ci.tag, tag, URBI_MAX_TAG_LENGTH-1);
     ci.tag[URBI_MAX_TAG_LENGTH-1]=0;
     ci.id = ++nextId;
-    callbackList.push_front(ci);
+    callbacks_.push_front(ci);
     listLock.unlock();
     return ci.id;
   }
