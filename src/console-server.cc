@@ -40,11 +40,11 @@
 using libport::program_name;
 
 class ConsoleServer
-  : public UServer
+  : public kernel::UServer
 {
 public:
   ConsoleServer(bool fast)
-    : UServer("console"), fast(fast), ctime(0)
+    : kernel::UServer("console"), fast(fast), ctime(0)
   {
   }
 
@@ -75,7 +75,7 @@ public:
   getCustomHeader(unsigned int line, char* header, size_t maxlength)
   {
     // FIXME: This interface is really really ridiculous and fragile.
-    strncpy(header, uconsole_banner[line], maxlength);
+    strncpy(header, kernel::uconsole_banner[line], maxlength);
   }
 
   virtual
@@ -130,8 +130,8 @@ namespace
   void
   version()
   {
-    userver_package_info_dump(std::cout) << std::endl;
-    exit (EX_OK);
+    kernel::userver_package_info_dump(std::cout) << std::endl;
+    exit(EX_OK);
   }
 }
 
@@ -247,7 +247,7 @@ namespace urbi
       std::ofstream(arg_port_filename.c_str(), std::ios::out)
         << port << std::endl;
 
-    UConnection& c = s.ghost_connection_get();
+    kernel::UConnection& c = s.ghost_connection_get();
 #ifdef ENABLE_DEBUG_TRACES
     std::cerr << program_name
               << ": got ghost connection" << std::endl;

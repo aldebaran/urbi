@@ -11,47 +11,51 @@
 #include <version.hh>
 #include <kernel/ubanner.hh>
 
-// Standard header used by the server. Divided into "before" and
-// "after" the custom header defined by the real server.
+namespace kernel
+{
 
-URBI_SDK_API const char* HEADER_BEFORE_CUSTOM[] =
+  // Standard header used by the server. Divided into "before" and
+  // "after" the custom header defined by the real server.
+
+  URBI_SDK_API const char* HEADER_BEFORE_CUSTOM[] =
+    {
+      "*** **********************************************************\n",
+      "*** URBI Kernel " PACKAGE_NAME " " GIT_VERSION "\n",
+      "*** Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
+      "***\n",
+      0
+    };
+
+  URBI_SDK_API const char* HEADER_AFTER_CUSTOM[] =
+    {
+      "***\n",
+      "*** URBI comes with ABSOLUTELY NO WARRANTY.\n",
+      "*** This software can be used under certain conditions;\n",
+      "*** see LICENSE file for details.\n",
+      "***\n",
+      "*** See http://www.urbiforge.com for news and updates.\n",
+      "*** **********************************************************\n",
+      0
+    };
+
+  URBI_SDK_API const char* uconsole_banner[] =
   {
-    "*** **********************************************************\n",
-    "*** URBI Kernel " PACKAGE_NAME " " GIT_VERSION "\n",
-    "*** Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
-    "***\n",
-    0
+    "*** URBI Kernel Console " PACKAGE_NAME " " GIT_VERSION "\n",
+    "*** "
+    "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
+    ""
   };
 
-URBI_SDK_API const char* HEADER_AFTER_CUSTOM[] =
+  const libport::PackageInfo&
+  UServer::package_info()
   {
-    "***\n",
-    "*** URBI comes with ABSOLUTELY NO WARRANTY.\n",
-    "*** This software can be used under certain conditions;\n",
-    "*** see LICENSE file for details.\n",
-    "***\n",
-    "*** See http://www.urbiforge.com for news and updates.\n",
-    "*** **********************************************************\n",
-    0
-  };
+    LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
+    return pi;
+  }
 
-URBI_SDK_API const char* uconsole_banner[] =
-{
-  "*** URBI Kernel Console " PACKAGE_NAME " " GIT_VERSION "\n",
-  "*** "
-  "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
-  ""
-};
-
-const libport::PackageInfo&
-UServer::package_info ()
-{
-  LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
-  return pi;
-}
-
-std::ostream&
-userver_package_info_dump (std::ostream& o)
-{
-  return o << UServer::package_info();
+  std::ostream&
+  userver_package_info_dump(std::ostream& o)
+  {
+    return o << UServer::package_info();
+  }
 }

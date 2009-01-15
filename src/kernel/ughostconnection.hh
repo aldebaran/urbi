@@ -6,21 +6,25 @@
 # include <kernel/fwd.hh>
 # include <kernel/uconnection.hh>
 
-/// UGhostConnection is a invisible connection used to read URBI.INI
-/*! This implentation of UConnection is trivial and does nothing.
- */
-
-class UGhostConnection : public UConnection
+namespace kernel
 {
-public:
-  UGhostConnection(UServer& s);
-  virtual ~UGhostConnection();
-  virtual void close();
+  /// UGhostConnection is a invisible connection used to read URBI.INI
+  /*! This implentation of UConnection is trivial and does nothing.
+   */
 
-protected:
-  virtual size_t effective_send(const char* buffer, size_t length);
-public:
-  virtual void endline();
-};
+  class UGhostConnection : public UConnection
+  {
+  public:
+    UGhostConnection(UServer& s);
+    virtual ~UGhostConnection();
+    virtual void close();
+
+  protected:
+    virtual size_t effective_send(const char* buffer, size_t length);
+  public:
+    virtual void endline();
+  };
+
+}
 
 #endif // !KERNEL_UGHOSTCONNECTION_HH

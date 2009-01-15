@@ -52,7 +52,7 @@ using libport::Symbol;
 
 static inline runner::Runner& getCurrentRunner()
 {
-  return ::urbiserver->getCurrentRunner();
+  return kernel::urbiserver->getCurrentRunner();
 }
 
 /// UObject read to an urbi variable.
@@ -597,9 +597,10 @@ namespace urbi
   uobject_unarmorAndSend(const char* str)
   {
     // Feed this to the ghostconnection.
-    UConnection& ghost = urbiserver->ghost_connection_get();
-    if (strlen(str)>=2 && str[0]=='(')
-      ghost.received(static_cast<const char *>(str+1), strlen(str)-2);
+    kernel::UConnection& ghost = kernel::urbiserver->ghost_connection_get();
+    size_t len = strlen(str);
+    if (2 <= len && str[0] == '(')
+      ghost.received(str + 1, len - 2);
     else
       ghost.received(str);
   }
@@ -607,22 +608,24 @@ namespace urbi
   int
   UObject::send(const std::string& str)
   {
-    urbiserver->ghost_connection_get().received(str.c_str(), str.length());
+    kernel::urbiserver->ghost_connection_get().received(str.c_str(),
+                                                        str.length());
     return 0;
   }
+
   void
   send(const char* str)
   {
     // Feed this to the ghostconnection.
-    urbiserver->ghost_connection_get().received(str);
+    kernel::urbiserver->ghost_connection_get().received(str);
   }
 
   void
   send(void* buf, int size)
   {
     // Feed this to the ghostconnection.
-    urbiserver->ghost_connection_get().received(static_cast<const char*>(buf),
-                                                static_cast<size_t>(size));
+    kernel::urbiserver->ghost_connection_get()
+      .received(static_cast<const char*>(buf), static_cast<size_t>(size));
   }
   void yield()
   {

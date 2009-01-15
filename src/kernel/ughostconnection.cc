@@ -1,7 +1,7 @@
-/*! \file ughostconnection.cc
+/*! \file kernel/ughostconnection.cc
  *******************************************************************************
 
- File: ughostconnection.cc\n
+ File: kernel/ughostconnection.cc\n
  Implementation of the UGhostConnection class.
 
  This file is part of
@@ -26,65 +26,67 @@
 #include <kernel/userver.hh>
 #include <kernel/ughostconnection.hh>
 
-
-// Parameters used by the constructor, and other constants.
-
-enum
+namespace kernel
 {
-  MINSENDBUFFERSIZE = 4096,
-  MAXSENDBUFFERSIZE = 1048576,
-  PACKETSIZE        = 32768,
-  MINRECVBUFFERSIZE = 4096,
-  MAXRECVBUFFERSIZE = 1048576,
+  // Parameters used by the constructor, and other constants.
 
-  EFFECTIVESENDSIZE = 1024,
-};
-
-//! UGhostConnection constructor.
-UGhostConnection::UGhostConnection (UServer& s)
-  : UConnection(s, PACKETSIZE)
-{
-  server_.connection_add(this);
-}
-
-//! UGhostConnection destructor.
-UGhostConnection::~UGhostConnection()
-{
-}
-
-//! Close the connection
-/*! This function does nothing. The ghost connection cannot be closed.
-*/
-void
-UGhostConnection::close()
-{
-  closing_ = true;
-  error_ = USUCCESS;
-}
-
-//! Does nothing. No output for the ghosts...
-size_t
-UGhostConnection::effective_send(const char* buffer, size_t length)
-{
-  char buf[EFFECTIVESENDSIZE];
-
-  for (size_t i = 0; i < length; i += EFFECTIVESENDSIZE - 1)
+  enum
   {
-    size_t len = std::min (length - i, size_t(EFFECTIVESENDSIZE - 1));
-    memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer + i),
-	    len);
-    buf[len] = 0;
-    ::urbiserver->debug("%s", buf);
+    MINSENDBUFFERSIZE = 4096,
+    MAXSENDBUFFERSIZE = 1048576,
+    PACKETSIZE        = 32768,
+    MINRECVBUFFERSIZE = 4096,
+    MAXRECVBUFFERSIZE = 1048576,
+
+    EFFECTIVESENDSIZE = 1024,
+  };
+
+  //! UGhostConnection constructor.
+  UGhostConnection::UGhostConnection (UServer& s)
+    : UConnection(s, PACKETSIZE)
+  {
+    server_.connection_add(this);
   }
 
-  return length;
-}
+  //! UGhostConnection destructor.
+  UGhostConnection::~UGhostConnection()
+  {
+  }
 
-//! Send a "\n" through the connection
-void
-UGhostConnection::endline ()
-{
-  //FIXME: test send error
-  send("\n");
-  error_ = USUCCESS;
+  //! Close the connection
+  /*! This function does nothing. The ghost connection cannot be closed.
+  */
+  void
+  UGhostConnection::close()
+  {
+    closing_ = true;
+    error_ = USUCCESS;
+  }
+
+  //! Does nothing. No output for the ghosts...
+  size_t
+  UGhostConnection::effective_send(const char* buffer, size_t length)
+  {
+    char buf[EFFECTIVESENDSIZE];
+
+    for (size_t i = 0; i < length; i += EFFECTIVESENDSIZE - 1)
+    {
+      size_t len = std::min (length - i, size_t(EFFECTIVESENDSIZE - 1));
+      memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer + i),
+	    len);
+      buf[len] = 0;
+      urbiserver->debug("%s", buf);
+    }
+
+    return length;
+  }
+
+  //! Send a "\n" through the connection
+  void
+  UGhostConnection::endline ()
+  {
+    //FIXME: test send error
+    send("\n");
+    error_ = USUCCESS;
+  }
 }

@@ -6,22 +6,25 @@
 
 # include <kernel/userver.hh>
 
-inline libport::utime_t
-UServer::lastTime()
+namespace kernel
 {
-  return lastTime_;
-}
+  inline libport::utime_t
+  UServer::lastTime()
+  {
+    return lastTime_;
+  }
 
-inline const sched::Scheduler&
-UServer::scheduler_get () const
-{
-  return *scheduler_;
-}
+  inline const sched::Scheduler&
+  UServer::scheduler_get () const
+  {
+    return *scheduler_;
+  }
 
-inline sched::Scheduler&
-UServer::scheduler_get ()
-{
-  return *scheduler_;
+  inline sched::Scheduler&
+  UServer::scheduler_get ()
+  {
+    return *scheduler_;
+  }
 }
 
 #endif // !KERNEL_USERVER_HXX

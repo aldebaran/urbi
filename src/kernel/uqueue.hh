@@ -25,40 +25,43 @@
 # include <libport/fifo.hh>
 # include <string>
 
-class UQueue : public libport::Fifo<char, '\0'>
+namespace kernel
 {
-public:
-  typedef libport::Fifo<char, '\0'> super_type;
+  class UQueue : public libport::Fifo<char, '\0'>
+  {
+  public:
+    typedef libport::Fifo<char, '\0'> super_type;
 
-  //! UQueue constructor.
-  //
-  // \param chunk_size The size of allocated chunks. The buffer will start
-  //                   at that size and increment by the same amount when
-  //                   needed.
-  UQueue(super_type::size_type chunk_size = 1024);
+    //! UQueue constructor.
+    //
+    // \param chunk_size The size of allocated chunks. The buffer will start
+    //                   at that size and increment by the same amount when
+    //                   needed.
+    UQueue(super_type::size_type chunk_size = 1024);
 
-  //! Pops the next command in the queue.
-  /*! Scan the buffer to a terminating ',' or ';' symbol by removing
-   any text between:
+    //! Pops the next command in the queue.
+    /*! Scan the buffer to a terminating ',' or ';' symbol by removing
+     any text between:
 
-   - { and }
-   - [ and ]
-   - / * and * /
-   - // and \\n
-   - # and \\n
-   - ( and )
+     - { and }
+     - [ and ]
+     - / * and * /
+     - // and \\n
+     - # and \\n
+     - ( and )
 
-   The final ',' or ';' is the last character of the popped data.
+     The final ',' or ';' is the last character of the popped data.
 
-   \return the command popped or an empty string if there was an error or
+     \return the command popped or an empty string if there was an error or
 	   nothing to pop.
-   */
-  std::string pop_command();
+     */
+    std::string pop_command();
 
-  private:
-  /// Do not try to pop a command if less than preparse_hint bytes are
-  /// available.
-  size_t preparse_hint;
-};
+    private:
+    /// Do not try to pop a command if less than preparse_hint bytes are
+    /// available.
+    size_t preparse_hint;
+  };
+}
 
 #endif // !KERNEL_UQUEUE_HH

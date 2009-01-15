@@ -17,9 +17,9 @@ namespace object
   /// There is one per Context/UConnection.
   struct State
   {
-    explicit State (UConnection& c);
+    explicit State(kernel::UConnection& c);
     /// The connection.
-    UConnection& connection;
+    kernel::UConnection& connection;
   };
 
   /// For debugging.

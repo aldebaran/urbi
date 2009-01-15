@@ -36,6 +36,8 @@
 
 namespace object
 {
+  using kernel::urbiserver;
+
 
   // Extract a filename from a String or a Path object
   static std::string
@@ -97,7 +99,7 @@ namespace object
   system_class_ ## Function (runner::Runner&, objects_type args)	\
   {									\
     check_arg_count(args.size() - 1, 0);                                \
-    ::urbiserver->Function();						\
+    urbiserver->Function();						\
     return void_class;							\
   }
 
@@ -190,7 +192,7 @@ namespace object
     check_arg_count(args.size() - 1, 1);
     const std::string filename = filename_get(args[1]);
 
-    UServer& s = r.lobby_get()->value_get().connection.server_get();
+    kernel::UServer& s = r.lobby_get()->value_get().connection.server_get();
     try
     {
       return new Path(s.find_file(filename));
@@ -210,7 +212,7 @@ namespace object
     check_arg_count(args.size() - 1, 0);
     List::value_type res;
     foreach (const libport::path& p,
-	     ::urbiserver->search_path.search_path_get())
+	     urbiserver->search_path.search_path_get())
       res.push_back(new Path(p));
     return to_urbi(res);
   }
@@ -381,7 +383,7 @@ namespace object
   system_class_ ## Function (runner::Runner&, objects_type args)	\
   {									\
     check_arg_count(args.size() - 1, 0);                                \
-    ::urbiserver->Variable = Value;					\
+    urbiserver->Variable = Value;					\
     return void_class;							\
   }
 

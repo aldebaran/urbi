@@ -11,9 +11,9 @@
 
 namespace object
 {
-  
-  State::State (UConnection& c)
-    : connection (c)
+
+  State::State(kernel::UConnection& c)
+    : connection(c)
   {}
 
   std::ostream&
@@ -28,4 +28,3 @@ namespace object
 
 
 }; // namespace object
-

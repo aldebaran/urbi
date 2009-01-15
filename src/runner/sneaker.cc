@@ -32,12 +32,12 @@ namespace dbg
   runner::Runner&
   runner_or_sneaker_get()
   {
-    if (::urbiserver->scheduler_get().is_current_job(0))
+    if (kernel::urbiserver->scheduler_get().is_current_job(0))
     {
       passert(sneaker, sneaker);
       return *sneaker;
     }
-    return ::urbiserver->getCurrentRunner();
+    return kernel::urbiserver->getCurrentRunner();
   }
 
   Sneaker::Sneaker(object::rLobby lobby,

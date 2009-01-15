@@ -21,7 +21,7 @@ namespace object
     proto_add(proto ? proto : object_class);
   }
 
-  static UConnection* dummy = 0;
+  static kernel::UConnection* dummy = 0;
 
   Lobby::Lobby(rLobby)
     : state_(*dummy)
@@ -91,7 +91,7 @@ namespace object
   rObject
   Lobby::proto_make()
   {
-    return new Lobby(State(::urbiserver->ghost_connection_get()));
+    return new Lobby(State(kernel::urbiserver->ghost_connection_get()));
   }
 
   bool Lobby::lobby_added = CxxObject::add<Lobby>();

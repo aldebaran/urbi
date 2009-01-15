@@ -6,116 +6,120 @@
 # include <sstream>
 # include <kernel/uconnection.hh>
 
-  /*----------.
-  | Accessors |
-  `----------*/
-
-inline
-UQueue&
-UConnection::recv_queue_get()
+namespace kernel
 {
-  return *recv_queue_;
-}
+    /*----------.
+    | Accessors |
+    `----------*/
 
-inline
-UQueue&
-UConnection::send_queue_get()
-{
-  return *send_queue_;
-}
+  inline
+  UQueue&
+  UConnection::recv_queue_get()
+  {
+    return *recv_queue_;
+  }
 
-inline
-parser::UParser&
-UConnection::parser_get()
-{
-  return *parser_;
-}
+  inline
+  UQueue&
+  UConnection::send_queue_get()
+  {
+    return *send_queue_;
+  }
 
-inline
-UErrorValue
-UConnection::error_get() const
-{
-  return error_;
-}
+  inline
+  parser::UParser&
+  UConnection::parser_get()
+  {
+    return *parser_;
+  }
 
-inline
-UServer&
-UConnection::server_get() const
-{
-  return server_;
-}
+  inline
+  UErrorValue
+  UConnection::error_get() const
+  {
+    return error_;
+  }
 
-inline
-bool&
-UConnection::active_get()
-{
-  return active_;
-}
+  inline
+  UServer&
+  UConnection::server_get() const
+  {
+    return server_;
+  }
 
-inline
-bool&
-UConnection::blocked_get()
-{
-  return blocked_ ;
-}
+  inline
+  bool&
+  UConnection::active_get()
+  {
+    return active_;
+  }
 
-inline
-object::rLobby&
-UConnection::lobby_get()
-{
-  return lobby_;
-}
+  inline
+  bool&
+  UConnection::blocked_get()
+  {
+    return blocked_ ;
+  }
 
-inline
-bool&
-UConnection::new_data_added_get()
-{
-  return new_data_added_;
-}
+  inline
+  object::rLobby&
+  UConnection::lobby_get()
+  {
+    return lobby_;
+  }
 
-inline
-bool&
-UConnection::closing_get()
-{
-  return closing_;
-}
+  inline
+  bool&
+  UConnection::new_data_added_get()
+  {
+    return new_data_added_;
+  }
 
-  /*------------------.
-  | Utility fonctions |
-  `------------------*/
+  inline
+  bool&
+  UConnection::closing_get()
+  {
+    return closing_;
+  }
 
-inline
-void
-UConnection::flush()
-{
-  if (!blocked_)
-    continue_send();
-}
+    /*------------------.
+    | Utility fonctions |
+    `------------------*/
 
-template <typename T>
-UConnection&
-UConnection::operator<<(const T& t)
-{
-  std::ostringstream os;
-  os << t;
-  send_queue(os.str().c_str(), os.str().length());
-  return *this;
-}
+  inline
+  void
+  UConnection::flush()
+  {
+    if (!blocked_)
+      continue_send();
+  }
 
-inline
-UConnection&
-UConnection::operator<<(std::ostream& (*pf)(std::ostream&))
-{
-  if (pf == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
-    endline();
-  return *this;
-}
+  template <typename T>
+  UConnection&
+  UConnection::operator<<(const T& t)
+  {
+    std::ostringstream os;
+    os << t;
+    send_queue(os.str().c_str(), os.str().length());
+    return *this;
+  }
 
-inline
-void
-UConnection::send(const char* buf, const char* tag, bool flush)
-{
-  send(buf, strlen(buf), tag, flush);
+  inline
+  UConnection&
+  UConnection::operator<<(std::ostream& (*pf)(std::ostream&))
+  {
+    if (pf == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
+      endline();
+    return *this;
+  }
+
+  inline
+  void
+  UConnection::send(const char* buf, const char* tag, bool flush)
+  {
+    send(buf, strlen(buf), tag, flush);
+  }
+
 }
 
 #endif // !KERNEL_UCONNECTION_HXX

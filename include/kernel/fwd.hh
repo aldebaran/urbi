@@ -4,14 +4,14 @@
 #ifndef KERNEL_FWD_HH
 # define KERNEL_FWD_HH
 
-class UConnection;
 class UGenericCallback;
-class UGhostConnection;
-class UQueue;
-class UServer;
 
 namespace kernel
 {
+  class UConnection;
+  class UGhostConnection;
+  class UQueue;
+  class UServer;
   struct ConnectionSet;
 }
 

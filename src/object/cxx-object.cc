@@ -48,9 +48,10 @@ namespace object
   }
 
   void
-  type_check(const rObject& o, const rObject& exp, boost::optional<unsigned> idx)
+  type_check(const rObject& o, const rObject& exp,
+             boost::optional<unsigned> idx)
   {
-    runner::Runner& r = ::urbiserver->getCurrentRunner();
+    runner::Runner& r = kernel::urbiserver->getCurrentRunner();
 
     assert(o);
     assert(exp);
