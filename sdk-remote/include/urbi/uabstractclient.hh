@@ -3,7 +3,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
 # include <string>
 
 # include <libport/fwd.hh>
+# include <libport/traits.hh>
 
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
@@ -395,25 +396,6 @@ namespace urbi
   };
 
 
-  template<class elementT>
-  class ElementTraits
-  {
-  public:
-    typedef elementT	Element;
-    typedef elementT& ElementReference;
-    typedef const elementT& ConstElementReference;
-  };
-
-  template<class elementT>
-  class ElementTraits<elementT&>
-  {
-  public:
-    typedef elementT	Element;
-    typedef elementT& ElementReference;
-    typedef const elementT& ConstElementReference;
-  };
-
-
   //@{
     /// \internal
   class UCallbackWrapperF
@@ -468,7 +450,7 @@ namespace urbi
   {
     C& instance;
     UCallbackAction (C::*funcPtr)(P1, const UMessage &);
-    typename ElementTraits<P1>::Element  p1;
+    typename libport::traits::remove_reference<P1>::type p1;
   public:
     UCallbackWrapper1(C& instance, UCallbackAction (C::*func)(P1, const UMessage &), P1 p1)
       : instance(instance), funcPtr(func), p1(p1) {}
@@ -480,8 +462,8 @@ namespace urbi
   {
     C& instance;
     UCallbackAction (C::*func)(P1, P2, const UMessage &);
-    typename ElementTraits<P1>::Element  p1;
-    typename ElementTraits<P2>::Element  p2;
+    typename libport::traits::remove_reference<P1>::type p1;
+    typename libport::traits::remove_reference<P2>::type p2;
   public:
     UCallbackWrapper2(C& instance, UCallbackAction (C::*func)(P1, P2, const UMessage &), P1 p1, P2 p2)
       : instance(instance), func(func), p1(p1), p2(p2) {}
@@ -494,9 +476,9 @@ namespace urbi
   {
     C& instance;
     UCallbackAction (C::*func)(P1, P2, P3, const UMessage &);
-    typename ElementTraits<P1>::Element  p1;
-    typename ElementTraits<P2>::Element  p2;
-    typename ElementTraits<P3>::Element  p3;
+    typename libport::traits::remove_reference<P1>::type p1;
+    typename libport::traits::remove_reference<P2>::type p2;
+    typename libport::traits::remove_reference<P3>::type p3;
   public:
     UCallbackWrapper3(C& instance, UCallbackAction (C::*func)(P1, P2, P3, const UMessage &), P1 p1, P2 p2, P3 p3)
       : instance(instance), func(func), p1(p1), p2(p2), p3(p3) {}
@@ -509,10 +491,10 @@ namespace urbi
   {
     C& instance;
     UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &);
-    typename ElementTraits<P1>::Element  p1;
-    typename ElementTraits<P2>::Element  p2;
-    typename ElementTraits<P3>::Element  p3;
-    typename ElementTraits<P4>::Element  p4;
+    typename libport::traits::remove_reference<P1>::type p1;
+    typename libport::traits::remove_reference<P2>::type p2;
+    typename libport::traits::remove_reference<P3>::type p3;
+    typename libport::traits::remove_reference<P4>::type p4;
   public:
     UCallbackWrapper4(C& instance, UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4)
       : instance(instance), func(func), p1(p1), p2(p2), p3(p3), p4(p4) {}
