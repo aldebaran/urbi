@@ -8,9 +8,6 @@
 #include <fstream>
 #include <algorithm>
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
 #include <libport/cstring>
 
 #include <libport/cli.hh>
@@ -22,6 +19,11 @@
 #include <libport/thread.hh>
 #include <libport/tokenizer.hh>
 #include <libport/utime.hh>
+
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
+#include <libltdl/ltdl.h>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
@@ -111,6 +113,7 @@ namespace
       "Options:\n"
       "  -h, --help             display this message and exit successfully\n"
       "  -v, --version          display version information\n"
+      "      --debug            enable debug traces\n"
       "  -P, --period PERIOD    ignored for backward compatibility\n"
       "  -H, --host HOST        the address to listen on (default: all)\n"
       "  -p, --port PORT        tcp port URBI will listen to\n"
@@ -157,6 +160,7 @@ namespace urbi
   main(const libport::cli_args_type& args, bool block)
   {
     program_name = args[0];
+    lt_program_name = program_name.c_str();
     // Input files.
     typedef std::vector<std::string> files_type;
     files_type files;
@@ -175,7 +179,9 @@ namespace urbi
     {
       const std::string& arg = args[i];
 
-      if (arg == "--fast" || arg == "-f")
+      if (arg == "--debug")
+        lt_debug_level = 1;
+      else if (arg == "--fast" || arg == "-f")
         data.fast = true;
       else if (arg == "--help" || arg == "-h")
         usage();
