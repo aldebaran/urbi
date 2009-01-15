@@ -94,7 +94,7 @@ namespace urbi
   };
 
   int
-  UClientStreambuf::overflow(int c )
+  UClientStreambuf::overflow(int c)
   {
     if (c != EOF)
     {
@@ -629,7 +629,7 @@ namespace urbi
   UAbstractClient::getAssociatedTag(UCallbackID id, char* tag)
   {
     listLock.lock();
-    std::list<UCallbackInfo>:: iterator it =
+    std::list<UCallbackInfo>::iterator it =
       std::find(callbackList.begin(), callbackList.end(), id);
     if (it == callbackList.end())
     {
@@ -645,11 +645,11 @@ namespace urbi
   /*! Returns 0 if no callback with this id was found, 1 otherwise.
    */
   int
-  UAbstractClient::deleteCallback(UCallbackID callbackID)
+  UAbstractClient::deleteCallback(UCallbackID id)
   {
     listLock.lock();
-    std::list<UCallbackInfo>:: iterator it =
-      std::find(callbackList.begin(), callbackList.end(), callbackID);
+    std::list<UCallbackInfo>::iterator it =
+      std::find(callbackList.begin(), callbackList.end(), id);
     if (it == callbackList.end())
     {
       listLock.unlock();
