@@ -1,5 +1,6 @@
 #include <object/global.hh>
 #include <object/slot.hh>
+#include <object/slot.hxx>
 #include <object/symbols.hh>
 
 namespace object
