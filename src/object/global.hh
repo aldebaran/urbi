@@ -9,6 +9,7 @@
 # include <libport/symbol.hh>
 
 # include <object/fwd.hh>
+# include <object/object.hh>
 # include <urbi/export.hh>
 
 namespace object

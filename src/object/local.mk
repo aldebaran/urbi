@@ -111,6 +111,9 @@ dist_libuobject_la_SOURCES +=			\
   object/root-classes.hh			\
   object/semaphore.cc				\
   object/semaphore.hh				\
+  object/slot.cc				\
+  object/slot.hh				\
+  object/slot.hxx				\
   object/sorted-vector-slots.hh			\
   object/sorted-vector-slots.hxx		\
   object/state.cc				\
