@@ -104,6 +104,8 @@ namespace object
     /// \throw LookupError if the slot isn't found.
     rObject
     slot_get(const key_type& k) const;
+    Slot&
+    slot_get(const key_type& k);
 
     /// Implement copy-on-write if the owner of the scope is not this.
     /// Otherwise, falls-thru to own_slot_update().
@@ -139,7 +141,7 @@ namespace object
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
     /// protos).
-    rObject own_slot_get(const key_type& k) const;
+    Slot& own_slot_get(const key_type& k) const;
 
     /// Remove slot.
     Object& slot_remove(const key_type& k);

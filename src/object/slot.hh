@@ -2,15 +2,20 @@
 # define OBJECT_SLOT_HH
 
 # include <libport/assert.hh>
+# include <libport/hash.hh>
+# include <libport/intrusive-ptr.hh>
+# include <libport/ref-counted.hh>
 # include <libport/symbol.hh>
 
 # include <object/fwd.hh>
 
 namespace object
 {
-  class Slot
+  class Slot: public libport::RefCounted
   {
   public:
+    typedef libport::hash_map<libport::Symbol, rObject> properties_type;
+
     Slot();
     template <typename T>
     Slot(const T& value);
@@ -21,14 +26,32 @@ namespace object
     template <typename T>
     const T& operator=(const T& value);
     operator rObject ();
+    operator bool ();
     Object* operator->();
     const Object* operator->() const;
+    rObject value() const;
+
+    /*-----------.
+    | Properties |
+    `-----------*/
+
+    rObject
+    property_get(libport::Symbol k);
+    bool
+    property_has(libport::Symbol k);
+    bool
+    property_set(libport::Symbol k, rObject value);
+    void
+    property_remove(libport::Symbol k);
+    properties_type&
+    properties_get();
 
   private:
-    rObject where_;
-    libport::Symbol name_;
     rObject value_;
+    properties_type properties_;
   };
+
+  typedef libport::intrusive_ptr<Slot> rSlot;
 }
 
 #endif

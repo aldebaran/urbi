@@ -24,7 +24,7 @@ namespace object
 
   public:
     /// The slot type
-    typedef Slot value_type;
+    typedef rSlot value_type;
     /// The key type
     typedef libport::Symbol key_type;
     /// The location of a slot

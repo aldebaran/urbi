@@ -8,6 +8,7 @@
 # include <object/uvar.hh>
 # include <object/global.hh>
 # include <object/list.hh>
+
 # include <runner/call.hh>
 
 # include <runner/runner.hh>
@@ -18,7 +19,7 @@ namespace object
   static inline void callNotify(runner::Runner& r, rObject self,
                                 libport::Symbol notifyList)
   {
-    rList l = self->slot_get(notifyList).unsafe_cast<List>();
+    rList l = self->slot_get(notifyList).value().unsafe_cast<List>();
     objects_type args;
     foreach(rObject& co, l->value_get())
       r.apply(self, co, SYMBOL(NOTIFY), args);
@@ -31,7 +32,7 @@ namespace object
     check_arg_count(args.size() - 1, 2);
     libport::intrusive_ptr<UVar> rvar =
       args.front()
-      ->slot_get(libport::Symbol(args[1]->as<String>()->value_get()))
+      ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
       .unsafe_cast<UVar>();
     rvar->update_(args[2]);
     return void_class;

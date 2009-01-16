@@ -47,6 +47,12 @@ namespace object
   }
 
   inline
+  Slot::operator bool ()
+  {
+    return value_.operator bool();
+  }
+
+  inline
   Object*
   Slot::operator->()
   {
@@ -59,6 +65,55 @@ namespace object
   {
     return assert_exp(value_.get());
   }
+
+  inline
+  rObject
+  Slot::value() const
+  {
+    return value_;
+  }
+
+  inline
+  rObject
+  Slot::property_get(libport::Symbol k)
+  {
+    properties_type::iterator it = properties_.find(k);
+    if (it == properties_.end())
+      return 0;
+    else
+      return it->second;
+  }
+
+  inline
+  bool
+  Slot::property_has(libport::Symbol k)
+  {
+    return properties_.find(k) != properties_.end();
+  }
+
+  inline
+  bool
+  Slot::property_set(libport::Symbol k, rObject value)
+  {
+    bool res = !property_has(k);
+    properties_[k] = value;
+    return res;
+  }
+
+  inline
+  void
+  Slot::property_remove(libport::Symbol k)
+  {
+    properties_.erase(k);
+  }
+
+  inline
+  Slot::properties_type&
+  Slot::properties_get()
+  {
+    return properties_;
+  }
+
 }
 
 #endif
