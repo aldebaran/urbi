@@ -63,6 +63,7 @@ namespace parser
   ast::rExp
   ast_at_event(const ast::loc& loc,
                ast::rExp event, ast::rExp payload,
+               ast::rExp guard,
                ast::rExp at, ast::rExp onleave)
   {
     if (!onleave)
@@ -76,8 +77,8 @@ namespace parser
                    "    var '$pattern' = Pattern.new(%exp:2) |"
                    "    if ('$pattern'.match('$at'.payload))"
                    "    {"
-                   "      %exp: 4 |"
                    "      %exp: 3 |"
+                   "      %exp: 4 |"
                    "    }"
                    "  })"
                    "})");
@@ -87,15 +88,21 @@ namespace parser
                    "      waituntil(!'$at'.active) |"
                    "      %exp:2");
 
+    PARAMETRIC_AST(desugar_guard,
+                   "if (%exp:1) %exp:2;");
+
     rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
     bind(payload.get());
 
     ast::rExp body = exp(desugar_body % at % onleave);
+    if (guard)
+      body = exp(desugar_guard % guard % body);
+
     return exp(desugar
                % event
                % bind.result_get().unchecked_cast<ast::Exp>()
-               % body
                % bind.bindings_get()
+               % body
       );
   }
 

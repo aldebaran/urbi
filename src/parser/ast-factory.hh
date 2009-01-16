@@ -22,6 +22,7 @@ namespace parser
   ast::rExp
   ast_at_event(const yy::location& loc,
                ast::rExp event, ast::rExp payload,
+               ast::rExp guard,
                ast::rExp body, ast::rExp onleave = 0);
 
   /// timeout(duration) body

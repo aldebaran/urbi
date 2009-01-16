@@ -38,9 +38,28 @@
 #include <ast/nary.hh>
 #include <ast/tag.hh>
 
-  // Typedef shorthands
-  typedef std::pair<ast::rExp, ast::exps_type*> event_match_type;
+  struct event_match_type
+  {
+    ast::rExp event;
+    ast::exps_type* pattern;
+    ast::rExp guard;
 
+    event_match_type(ast::rExp event_,
+                     ast::exps_type* pattern_,
+                     ast::rExp guard_)
+      : event(event_)
+      , pattern(pattern_)
+      , guard(guard_)
+    {}
+
+    event_match_type()
+      : event(0)
+      , pattern(0)
+      , guard(0)
+    {}
+  };
+
+  // Typedef shorthands
   // It is inconvenient to use the pointer notation with the variants.
   typedef ast::exps_type* exps_pointer;
   typedef ast::symbols_type* symbols_pointer;
@@ -833,11 +852,13 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_at_event(@$, $3.first, new ast::List(@3, $3.second), $5);
+      $$ = ast_at_event(@$, $3.event, new ast::List(@3, $3.pattern),
+                        $3.guard, $5);
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
-      $$ = ast_at_event(@$, $3.first, new ast::List(@3, $3.second), $5, $7);
+      $$ = ast_at_event(@$, $3.event, new ast::List(@3, $3.pattern),
+                        $3.guard, $5, $7);
     }
 | "every" "(" exp ")" nstmt
     {
@@ -931,7 +952,7 @@ stmt:
     }
 | "waituntil" "(" event_match ")"
     {
-      $$ = ::parser::ast_waituntil_event(@$, $3.first, $3.second);
+      $$ = ::parser::ast_waituntil_event(@$, $3.event, $3.pattern);
     }
 ;
 
@@ -965,13 +986,13 @@ stmt:
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.first,
-                              ast::rExp(new ast::List(@3, $3.second)), $5);
+      $$ = ast_whenever_event(@$, $3.event,
+                              ast::rExp(new ast::List(@3, $3.pattern)), $5);
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.first,
-                              ast::rExp(new ast::List(@3, $3.second)), $5, $7);
+      $$ = ast_whenever_event(@$, $3.event,
+                              ast::rExp(new ast::List(@3, $3.pattern)), $5, $7);
     }
 ;
 
@@ -1253,7 +1274,7 @@ exp:
 %token QUEST_MARK "?";
 %type <event_match_type> event_match;
 event_match:
-  "?" exp
+  "?" exp guard.opt
   {
     ast::rCall call = $2.unsafe_cast<ast::Call>();
     if (call && call->arguments_get())
@@ -1261,12 +1282,23 @@ event_match:
       ast::exps_type* args = new ast::exps_type(*call->arguments_get());
       call->arguments_set(0);
       assert(args);
-      $$ = event_match_type(call, args);
+      $$ = event_match_type(call, args, $3);
     }
     else
-      $$ = event_match_type($2, new ast::exps_type);
+      $$ = event_match_type($2, new ast::exps_type, $3);
   }
 ;
+
+%type <ast::rExp> guard.opt guard;
+guard.opt:
+  /* nothing */
+  { $$ = 0; }
+| guard
+  { $$ = $1; }
+
+guard:
+  "if" exp
+  { $$ = $2; }
 
 /*---------------------------.
 | Square brackets operator.  |
