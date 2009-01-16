@@ -30,10 +30,11 @@ namespace runner
     /// Super class type.
     typedef runner::Runner super_type;
     typedef object::rObject rObject;
-    typedef object::rrObject rrObject;
+    typedef object::rSlot rSlot;
     typedef object::rCode rCode;
     typedef object::rLobby rLobby;
     typedef object::objects_type objects_type;
+    typedef object::Slot Slot;
     /// \}
 
     /// \name Ctor & dtor.

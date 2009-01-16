@@ -21,6 +21,8 @@
 # include <object/list.hh>
 # include <object/dictionary.hh>
 # include <object/tag.hh>
+# include <object/slot.hh>
+# include <object/string.hh>
 # include <object/symbols.hh>
 
 # include <runner/call.hh>
@@ -51,7 +53,9 @@ namespace runner
 {
   using boost::bind;
   using libport::Finally;
+  using object::rSlot;
   using object::rTag;
+  using object::Slot;
   using object::Tag;
 
   LIBPORT_SPEED_INLINE object::rObject
@@ -165,7 +169,7 @@ namespace runner
     // Capture 'this' and 'call' in closures
     if (closure)
     {
-      res->self_get() = stacks_.self();
+      res->self_set(stacks_.self());
       res->call_get() = stacks_.call();
     }
 

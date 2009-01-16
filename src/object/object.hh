@@ -122,7 +122,8 @@ namespace object
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
     /// \return    *this.
-    Object& slot_set(const key_type& k, const Slot& o);
+    Object& slot_set(const key_type& k, rObject o);
+    Object& slot_set(const key_type& k, Slot* o);
 
     /// \brief Copy another object's slot.
     ///

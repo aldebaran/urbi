@@ -119,9 +119,15 @@ namespace object
 
 
   Object&
-  Object::slot_set(const key_type& k, const Slot& o)
+  Object::slot_set(const key_type& k, rObject o)
   {
-    if (!slots_.set(this, k, const_cast<Slot*>(&o)))
+    return slot_set(k, new Slot(o));
+  }
+
+  Object&
+  Object::slot_set(const key_type& k, Slot* o)
+  {
+    if (!slots_.set(this, k, o))
       runner::raise_urbi_skip(SYMBOL(RedefinitionError), to_urbi(k));
     return *this;
   }
@@ -173,9 +179,9 @@ namespace object
     else
     {
       // Here comes the cow
-      rSlot slot = new Slot(s);
+      Slot* slot = new Slot(s);
       *slot = v;
-      slot_set(k, v);
+      slot_set(k, slot);
     }
     return v;
   };

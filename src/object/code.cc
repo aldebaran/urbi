@@ -72,9 +72,9 @@ namespace object
     return captures_;
   }
 
-  rObject& Code::self_get()
+  void Code::self_set(rObject v)
   {
-    return self_;
+    self_ = v;
   }
 
   rObject Code::apply(rList args)
