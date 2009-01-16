@@ -49,6 +49,7 @@ namespace object
 
   private:
     rObject value_;
+    rObject changed_;
     properties_type properties_;
   };
 

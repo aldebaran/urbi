@@ -2,6 +2,8 @@
 # define OBJECT_SLOT_HXX
 
 # include <object/cxx-conversions.hh>
+# include <object/global.hh>
+# include <object/symbols.hh>
 
 namespace object
 {
@@ -37,6 +39,8 @@ namespace object
   Slot::set(const T& value)
   {
     value_ = object::CxxConvert<T>::from(value);
+    if (changed_)
+      changed_->call(SYMBOL(emit));
   }
 
   template <typename T>
@@ -84,6 +88,15 @@ namespace object
   rObject
   Slot::property_get(libport::Symbol k)
   {
+    if (k == SYMBOL(changed))
+    {
+      if (!changed_)
+      {
+        CAPTURE_GLOBAL(Event);
+        changed_ = Event->call(SYMBOL(new));
+      }
+      return changed_;
+    }
     properties_type::iterator it = properties_.find(k);
     if (it == properties_.end())
       return 0;
