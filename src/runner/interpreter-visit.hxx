@@ -122,7 +122,7 @@ namespace runner
   {
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
-    rObject tgt = ast_tgt->implicit() ? stacks_.self() : operator()(ast_tgt.get());
+    rObject tgt = operator()(ast_tgt.get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
@@ -131,6 +131,13 @@ namespace runner
   Interpreter::visit(const ast::CallMsg*)
   {
     return stacks_.call();
+  }
+
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Implicit*)
+  {
+    return stacks_.self();
   }
 
 
@@ -677,7 +684,6 @@ namespace runner
   INVALID(Decrementation);
   INVALID(Emit);
   INVALID(Foreach);
-  INVALID(Implicit);
   INVALID(Incrementation);
   INVALID(Match);
   INVALID(MetaArgs);
