@@ -4,7 +4,7 @@ URBI_INIT
 # Avoid zombies and preserve debugging information.
 cleanup ()
 {
-  exit_status=$?
+  local exit_status=$?
 
   # We can be killed even before children are spawned.
   test -n "$children" ||
@@ -15,7 +15,7 @@ cleanup ()
   children_harvest
   children_report
 
-  children_sta=$(children_status remote)
+  local children_sta=$(children_status remote)
   # Don't clean before calling children_status...
   test x$VERBOSE != x || children_clean
 
