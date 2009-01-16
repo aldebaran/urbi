@@ -18,6 +18,7 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitive.hh>
+#include <object/slot.hh>
 #include <object/symbols.hh>
 
 #include <runner/call.hh>
@@ -27,6 +28,8 @@
 namespace runner
 {
   using libport::Finally;
+  using object::Slot;
+  using object::rSlot;
 
   // Apply methods summary:
   //
@@ -283,7 +286,7 @@ namespace runner
     foreach (const ast::rConstLocalDeclaration& dec,
              *ast->captured_variables_get())
     {
-      const rrObject& value = function->captures_get()[dec->local_index_get()];
+      const rSlot& value = function->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
     }
 
@@ -328,7 +331,7 @@ namespace runner
     rObject res = CallMessage->clone();
 
     // Set the sender to be the current self. self must always exist.
-    res->slot_set (SYMBOL(sender), stacks_.self());
+    res->slot_set (SYMBOL(sender), stacks_.self().get());
 
     // Set the target to be the object on which the function is applied.
     res->slot_set (SYMBOL(target), tgt);

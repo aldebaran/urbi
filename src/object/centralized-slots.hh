@@ -8,66 +8,106 @@
 # include <boost/multi_index/hashed_index.hpp>
 # include <boost/multi_index/member.hpp>
 
-# include <object/slots.hh>
-
+# include <object/slot.hh>
 
 namespace object
 {
 
   using namespace boost::multi_index;
 
-  class URBI_SDK_API CentralizedSlots: public Slots
+  class URBI_SDK_API CentralizedSlots
   {
+
+  /*-------------.
+  | Type aliases |
+  `-------------*/
+
   public:
+    /// The slot type
+    typedef rSlot value_type;
+    /// The key type
+    typedef libport::Symbol key_type;
+    /// The location of a slot
     typedef std::pair<Object*, libport::Symbol> location_type;
+    /// A slot and its location
     typedef std::pair<location_type, value_type> q_slot_type;
 
+  private:
+    /// Boost multi index helper
     static Object* get_owner(const q_slot_type& slot);
-
+    /// The boost multi index
     typedef multi_index_container<
       q_slot_type,
       indexed_by<
-
         hashed_unique<member<q_slot_type,
                              location_type,
-                             &q_slot_type::first>
-                      >,
+                             &q_slot_type::first> >,
+        hashed_non_unique<global_fun<const q_slot_type&,
+                                     Object*,
+                                     get_owner> > > >
+      content_type;
 
-                      hashed_non_unique<global_fun<const q_slot_type&,
-                                                   Object*,
-                                                   get_owner>
-                      >
+    /// The location-wise index type
+    typedef content_type::nth_index<0>::type loc_index_type;
+    /// The owner-wise index type
+    typedef content_type::nth_index<1>::type obj_index_type;
 
-      >
-    > content_type;
+  public:
+    /// The iterator type
+    typedef obj_index_type::iterator iterator;
+    /// The const iterator type
+    typedef obj_index_type::const_iterator const_iterator;
 
-  typedef content_type::nth_index<0>::type loc_index_type;
-  typedef content_type::nth_index<1>::type obj_index_type;
 
-  typedef obj_index_type::iterator iterator;
-  typedef obj_index_type::const_iterator const_iterator;
+  /*----.
+  | API |
+  `----*/
 
-  static loc_index_type::iterator
-  where(const Object* owner, const key_type& key);
-  static void finalize(Object* owner);
-  static bool set(Object* owner, const key_type& key, value_type v);
-  static void update(Object* owner, const key_type& key, value_type v);
-  static value_type get(const Object* owner, const key_type& key);
-  static void erase(Object* owner, const key_type& key);
-  static bool has(Object* owner, const key_type& key);
-  static iterator begin(Object* owner);
-  static iterator end(Object* owner);
-  static const_iterator begin(const Object* owner);
-  static const_iterator end(const Object* owner);
+  public:
+    /// Get a begin iterator.
+    static iterator begin(Object* owner);
+    /// Get a begin const iterator.
+    static const_iterator begin(const Object* owner);
+    /// Dispose of the slots of \a owner.
+    static void finalize(Object* owner);
+    /// Get a past-the-end iterator.
+    static iterator end(Object* owner);
+    /// Get a past-the-end cosnt iterator.
+    static const_iterator end(const Object* owner);
+    /// Erase \a owner's \a key slot.
+    static void erase(Object* owner, const key_type& key);
+    /// Get \a owner's \a key slot's value.
+    static value_type get(const Object* owner, const key_type& key);
+    /// Return whether \a owner has a \a key slot.
+    static bool has(Object* owner, const key_type& key);
+    /// Set \a owner's \a key slot's value to \a v.
+    /// @return Whether the slot was already defined (entailing failure).
+    static bool set(Object* owner, const key_type& key, value_type v);
+    /// Update \a owner's \a key slot's value to \a v.
+    static void update(Object* owner, const key_type& key, value_type v);
 
-private:
 
-  static content_type* content_;
+  /*--------.
+  | Helpers |
+  `--------*/
 
-  static loc_index_type& loc_index_;
+  private:
+    static loc_index_type::iterator
+      where(const Object* owner, const key_type& key);
 
-  static obj_index_type& obj_index_;
-};
+
+  /*--------.
+  | Members |
+  `--------*/
+
+  private:
+    /// The boost multi index
+    static content_type* content_;
+    /// The location-wise index
+    static loc_index_type& loc_index_;
+    /// The owner-wise index
+    static obj_index_type& obj_index_;
+  };
 }
 
 # include <object/centralized-slots.hxx>

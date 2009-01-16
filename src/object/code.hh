@@ -11,6 +11,7 @@
 # include <ast/routine.hh>
 # include <object/executable.hh>
 # include <object/fwd.hh>
+# include <object/slot.hh>
 
 namespace object
 {
@@ -18,7 +19,7 @@ namespace object
   {
   public:
     typedef ast::rConstRoutine ast_type;
-    typedef std::vector<rrObject> captures_type;
+    typedef std::vector<rSlot> captures_type;
 
     Code(ast_type a);
     Code(rCode model);
@@ -26,12 +27,12 @@ namespace object
     rObject call_get() const;
     const captures_type& captures_get() const;
     rObject self_get() const;
+    void self_set(rObject v);
     virtual rObject operator() (object::objects_type args);
 
     ast_type& ast_get();
     rObject& call_get();
     captures_type& captures_get();
-    rObject& self_get();
 
     /// Urbi methods
     rObject apply(rList args);

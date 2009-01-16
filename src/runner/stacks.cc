@@ -6,6 +6,8 @@
 #include <ast/local-assignment.hh>
 #include <ast/local-declaration.hh>
 #include <ast/local.hh>
+#include <object/slot.hh>
+#include <object/slot.hxx>
 #include <runner/stacks.hh>
 #include <runner/stack-debug.hh>
 
@@ -13,14 +15,16 @@
 namespace runner
 {
   typedef Stacks::action_type action_type;
+  using object::Slot;
+  using object::rSlot;
 
   Stacks::Stacks(rObject lobby)
     : local_pointer_(0)
     , captured_pointer_(0)
   {
     // push toplevel's 'this' and 'call'
-    local_stack_.push_back(rrObject(new rObject(lobby)));
-    local_stack_.push_back(rrObject(new rObject()));
+    local_stack_.push_back(new Slot(lobby));
+    local_stack_.push_back(new Slot());
 
     STACK_ECHO("STACKS SPAWNED");
   }
@@ -57,9 +61,9 @@ namespace runner
     // Grow stacks
     local_stack_.resize(local_pointer_ + local);
     unsigned size = captured_pointer_ + captured;
-    captured_stack_.resize(size, rrObject());
+    captured_stack_.resize(size, rSlot());
     for (unsigned i = captured_pointer_; i < size; ++i)
-      captured_stack_[i].reset(new rObject());
+      captured_stack_[i] = new Slot();
 
     // Bind 'this' and 'call'
     self_set(self);
@@ -69,17 +73,17 @@ namespace runner
   }
 
   void
-  Stacks::self_set(rObject v)
+  Stacks::self_set(rObject s)
   {
-    STACK_ECHO("Set 'this' @[" << local_pointer_ << "] = " << v.get());
-    local_stack_[local_pointer_] = rrObject(new rObject(v));
+    STACK_ECHO("Set 'this' @[" << local_pointer_ << "] = " << v->value().get());
+    local_stack_[local_pointer_] = new Slot(s);
   }
 
   void
   Stacks::call_set(rObject v)
   {
     STACK_ECHO("Set 'call' @[" << local_pointer_ + 1 << "] = " << v.get());
-    local_stack_[local_pointer_ + 1] = rrObject(new rObject(v));
+    local_stack_[local_pointer_ + 1] = new Slot(v);
   }
 
   Stacks::rObject
@@ -106,8 +110,8 @@ namespace runner
     STACK_ECHO("Return from " << msg);
     STACK_NECHO(libport::decindent);
 
-    local_stack_.resize(local_pointer_, rrObject());
-    captured_stack_.resize(captured_pointer_, rrObject());
+    local_stack_.resize(local_pointer_, rSlot());
+    captured_stack_.resize(captured_pointer_, rSlot());
 
     local_pointer_ = local;
     captured_pointer_ = captured;
@@ -160,7 +164,7 @@ namespace runner
              i <= e->local_index_get() + 2; ++i)
         {
           STACK_ECHO("Growing toplevel local stack");
-          local_stack_.push_back(rrObject(new rObject()));
+          local_stack_.push_back(new Slot());
         }
       }
     }
@@ -168,7 +172,7 @@ namespace runner
     STACK_OPEN();
     STACK_NECHO("Defining " << e->what_get()
                 << " (#" << e->local_index_get() << " ");
-    def(e->local_index_get() + 2, false, rrObject(new rObject(v)));
+    def(e->local_index_get() + 2, false, new Slot(v));
   }
 
   void
@@ -181,7 +185,7 @@ namespace runner
   }
 
   void
-  Stacks::def_captured(ast::rConstLocalDeclaration e, rrObject v)
+  Stacks::def_captured(ast::rConstLocalDeclaration e, rSlot v)
   {
     STACK_OPEN();
     STACK_NECHO("Bind capture " << e->what_get()
@@ -190,7 +194,7 @@ namespace runner
   }
 
   void
-  Stacks::def(unsigned local, bool captured, rrObject v)
+  Stacks::def(unsigned local, bool captured, rSlot v)
   {
 #define DBG                                                     \
     STACK_NECHO(") @[" << idx << "] = " << v.get() << std::endl)
@@ -216,12 +220,12 @@ namespace runner
   {
     unsigned idx = local_pointer_ + local + 2;
     STACK_NECHO("local) @[" << idx << "] = " << v.get() << std::endl);
-    local_stack_[idx] = rrObject(new rObject(v));
+    local_stack_[idx] = new Slot(v);
   }
 
-  Stacks::rrObject Stacks::rget(ast::rConstLocal e)
+  Stacks::rSlot Stacks::rget(ast::rConstLocal e)
   {
-    rrObject res;
+    rSlot res;
 
     STACK_OPEN();
     STACK_NECHO("Get variable " << e->name_get()

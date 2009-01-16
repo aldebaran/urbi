@@ -43,6 +43,7 @@ using object::urbi_call;
 using runner::Runner;
 using libport::Symbol;
 
+// Where to store uobjects
 static rObject where;
 
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \

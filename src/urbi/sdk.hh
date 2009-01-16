@@ -1,7 +1,10 @@
 #ifndef URBI_SDK_HH
 # define URBI_SDK_HH
 
+# include <object/cxx-conversions.hh>
 # include <object/cxx-object.hh>
+# include <object/object.hh>
+# include <object/slot.hh>
 # include <runner/call.hh>
 # include <urbi/export.hh>
 
@@ -14,7 +17,7 @@ namespace urbi
   using object::Object;
   using object::CxxObject;
   using object::rObject;
-
+  using object::Slot;
 
   /*----------------------.
   | Import call functions |
@@ -30,6 +33,7 @@ namespace urbi
                rObject arg4 = 0,
                rObject arg5 = 0);
 
+  // FIXME: function isn't ideal
   URBI_SDK_API
   inline
   rObject global();

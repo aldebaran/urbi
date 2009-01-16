@@ -101,5 +101,6 @@ namespace object
 } // namespace object
 
 # include <object/cxx-object.hxx>
+# include <object/slot.hxx>
 
 #endif // !OBJECT_FLOAT_CLASS_HH

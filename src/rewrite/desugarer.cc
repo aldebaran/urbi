@@ -137,15 +137,10 @@ namespace rewrite
     if (ast::rProperty prop =
         assign->what_get().unsafe_cast<ast::Property>())
     {
-      PARAMETRIC_AST(rewrite, "%exp:1 . setProperty(%exp:2, %exp:3, %exp:4)");
-
-      rewrite
-        % recurse(prop->owner_get()->target_get())
-        % ast_string(loc, prop->owner_get()->name_get())
-        % ast_string(loc, prop->name_get())
-        % recurse(assign->value_get());
-
-      result_ = recurse(exp(rewrite));
+      result_ = new ast::PropertyWrite(prop->location_get(),
+                                       prop->owner_get(),
+                                       prop->name_get(),
+                                       assign->value_get());
       return;
     }
 
@@ -304,18 +299,6 @@ namespace rewrite
   {
     allow_subdecl_ = true;
     super_type::visit(s);
-  }
-
-  void Desugarer::visit(const ast::Property* p)
-  {
-    PARAMETRIC_AST(read, "%exp:1.getProperty(%exp:2, %exp:3)");
-
-    ast::rCall owner = p->owner_get();
-    read % owner->target_get()
-      % ast_string(owner->location_get(), owner->name_get())
-      % ast_string(p->location_get(), p->name_get());
-    result_ = exp(read);
-    result_->original_set(p);
   }
 
   void Desugarer::visit(const ast::Scope* s)

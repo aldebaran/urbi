@@ -21,6 +21,8 @@
 # include <object/list.hh>
 # include <object/dictionary.hh>
 # include <object/tag.hh>
+# include <object/slot.hh>
+# include <object/string.hh>
 # include <object/symbols.hh>
 
 # include <runner/call.hh>
@@ -51,7 +53,9 @@ namespace runner
 {
   using boost::bind;
   using libport::Finally;
+  using object::rSlot;
   using object::rTag;
+  using object::Slot;
   using object::Tag;
 
   LIBPORT_SPEED_INLINE object::rObject
@@ -118,7 +122,7 @@ namespace runner
   {
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
-    rObject tgt = ast_tgt->implicit() ? stacks_.self() : operator()(ast_tgt.get());
+    rObject tgt = operator()(ast_tgt.get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
@@ -127,6 +131,13 @@ namespace runner
   Interpreter::visit(const ast::CallMsg*)
   {
     return stacks_.call();
+  }
+
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Implicit*)
+  {
+    return stacks_.self();
   }
 
 
@@ -165,7 +176,7 @@ namespace runner
     // Capture 'this' and 'call' in closures
     if (closure)
     {
-      res->self_get() = stacks_.self();
+      res->self_set(stacks_.self());
       res->call_get() = stacks_.call();
     }
 
@@ -432,6 +443,51 @@ namespace runner
     return res;
   }
 
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Property* p)
+  {
+    ast::rExp owner = p->owner_get();
+    if (ast::rCall call = owner.unsafe_cast<ast::Call>())
+    {
+      rObject owner = operator()(call->target_get().get());
+      return owner->call(SYMBOL(getProperty),
+                         new object::String(call->name_get()),
+                         new object::String(p->name_get()));
+    }
+    else if (ast::rLocal local = owner.unsafe_cast<ast::Local>())
+    {
+      rObject res = stacks_.rget(local)->property_get(p->name_get());
+      return res ? res : object::void_class;
+    }
+    else
+      pabort("Unrecognized property owner");
+  }
+
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::PropertyWrite* p)
+  {
+    rObject value = operator()(p->value_get().get());
+    ast::rExp owner = p->owner_get();
+    if (ast::rCall call = owner.unsafe_cast<ast::Call>())
+    {
+      rObject owner = operator()(call->target_get().get());
+      return owner->call(SYMBOL(setProperty),
+                         new object::String(call->name_get()),
+                         new object::String(p->name_get()),
+                         value);
+    }
+    else if (ast::rLocal local = owner.unsafe_cast<ast::Local>())
+    {
+      stacks_.rget(local)->property_set(p->name_get(), value);
+      return value;
+    }
+    else
+      pabort("Unrecognized property owner");
+  }
+
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
@@ -673,7 +729,6 @@ namespace runner
   INVALID(Decrementation);
   INVALID(Emit);
   INVALID(Foreach);
-  INVALID(Implicit);
   INVALID(Incrementation);
   INVALID(Match);
   INVALID(MetaArgs);
@@ -682,7 +737,6 @@ namespace runner
   INVALID(MetaId);
   INVALID(MetaLValue);
   INVALID(OpAssignment);
-  INVALID(Property);
   INVALID(Return);
   INVALID(Subscript);
   INVALID(Unscope);

@@ -34,8 +34,11 @@ namespace object
     virtual ~Object ();
     /// \}
 
+    /// The slots implementation
+    typedef CentralizedSlots slots_implem;
+
     /// Type of the keys.
-    typedef Slots::key_type key_type;
+    typedef slots_implem::key_type key_type;
 
     /// Ref-couting.
     typedef libport::intrusive_ptr<Object> shared_type;
@@ -71,8 +74,6 @@ namespace object
 
     /// \name The slots.
     /// \{
-    /// The slots implementation
-    typedef CentralizedSlots slots_implem;
     /// One slot.
     typedef std::set<const Object*> objects_set_type;
 
@@ -103,6 +104,8 @@ namespace object
     /// \throw LookupError if the slot isn't found.
     rObject
     slot_get(const key_type& k) const;
+    Slot&
+    slot_get(const key_type& k);
 
     /// Implement copy-on-write if the owner of the scope is not this.
     /// Otherwise, falls-thru to own_slot_update().
@@ -113,17 +116,14 @@ namespace object
     rObject
     slot_update(const key_type& k, const rObject& o, bool hook = true);
 
-    /// Update slot \c k to \a o.
-    void
-    own_slot_update(const key_type& k, const rObject& v);
-
 
     /// \brief Update value in slot.
     ///
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
     /// \return    *this.
-    Object& slot_set(const key_type& k, const rObject& o);
+    Object& slot_set(const key_type& k, rObject o);
+    Object& slot_set(const key_type& k, Slot* o);
 
     /// \brief Copy another object's slot.
     ///
@@ -138,7 +138,7 @@ namespace object
     /// Get the object pointed to by the *local* slot.
     /// An error if the slot does not exist in this object (not its
     /// protos).
-    rObject own_slot_get(const key_type& k) const;
+    Slot& own_slot_get(const key_type& k) const;
 
     /// Remove slot.
     Object& slot_remove(const key_type& k);
@@ -272,5 +272,9 @@ namespace object
 } // namespace object
 
 # include <object/object.hxx>
+
+# ifndef OBJECT_FLOAT_CLASS_HH
+#  include <object/slot.hh>
+# endif
 
 #endif // !OBJECT_OBJECT_HH

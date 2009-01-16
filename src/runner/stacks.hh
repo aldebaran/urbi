@@ -18,8 +18,8 @@ namespace runner
   {
     public:
       // Import types
-      typedef object:: rObject  rObject;
-      typedef object::rrObject rrObject;
+      typedef object::rObject rObject;
+      typedef object::rSlot   rSlot;
 
       /// Type of callable entities
       typedef boost::function0<void> action_type;
@@ -34,15 +34,15 @@ namespace runner
       /// Bind given argument
       void def_arg(ast::rConstLocalDeclaration e, rObject v);
       /// Bind given captured variable
-      void def_captured(ast::rConstLocalDeclaration e, rrObject v);
+      void def_captured(ast::rConstLocalDeclaration e, rSlot v);
 
       /// Get value from the stack
       rObject get(ast::rConstLocal e);
       /// Get value by double pointer (e must be closed or captured)
-      rrObject rget(ast::rConstLocal e);
+      rSlot rget(ast::rConstLocal e);
 
       /// Set 'this'
-      void self_set(rObject v);
+      void self_set(rObject s);
       /// Set 'call'
       void call_set(rObject v);
       /// Get 'this'
@@ -53,7 +53,7 @@ namespace runner
       /// Switch the current 'this'
       /** \return the action to switch back to the previous 'this'
        */
-      action_type switch_self(rObject v);
+      action_type switch_self(rObject s);
 
       /// Signal the stacks a new execution is starting
       void execution_starts(const libport::Symbol& msg);
@@ -78,7 +78,7 @@ namespace runner
       void set(unsigned local, bool captured, rObject v);
       /// Factored definer
       void def(unsigned local, rObject v);
-      void def(unsigned local, bool captured, rrObject v);
+      void def(unsigned local, bool captured, rSlot v);
 
       /// Helper to restore a previous frame state
       void pop_frame(const libport::Symbol& msg,
@@ -88,7 +88,7 @@ namespace runner
 
       /// The double-indirection local stack, for captured and
       /// closed-over variables
-      typedef std::vector<rrObject> local_stack_type;
+      typedef std::vector<rSlot> local_stack_type;
       local_stack_type local_stack_;
       local_stack_type captured_stack_;
       /// The closed variables frame pointer
