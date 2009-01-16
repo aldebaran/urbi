@@ -160,6 +160,12 @@ pipe.hxx
 pretty-printer.cc
 pretty-printer.hh
 pretty-printer.stamp
+property-action.cc
+property-action.hh
+property-action.hxx
+property-write.cc
+property-write.hh
+property-write.hxx
 property.cc
 property.hh
 property.hxx

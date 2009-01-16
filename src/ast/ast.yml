@@ -1138,17 +1138,26 @@ Decrementation:
     - ~exp
     - '"--"'
 
-Property:
+PropertyAction:
   super: LValue
   attributes:
     - owner:
-        type: rCall
+        type: rExp
     - name:
         type: libport::Symbol
   printer:
     - ~owner
     - '"->"'
     - $name
+
+Property:
+  super: PropertyAction
+
+PropertyWrite:
+  super: PropertyAction
+  attributes:
+    - value:
+        type: rExp
 
 MetaCall:
   super: LValueArgs

@@ -443,6 +443,51 @@ namespace runner
     return res;
   }
 
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Property* p)
+  {
+    ast::rExp owner = p->owner_get();
+    if (ast::rCall call = owner.unsafe_cast<ast::Call>())
+    {
+      rObject owner = operator()(call->target_get().get());
+      return owner->call(SYMBOL(getProperty),
+                         new object::String(call->name_get()),
+                         new object::String(p->name_get()));
+    }
+    else if (ast::rLocal local = owner.unsafe_cast<ast::Local>())
+    {
+      rObject res = stacks_.rget(local)->property_get(p->name_get());
+      return res ? res : object::void_class;
+    }
+    else
+      pabort("Unrecognized property owner");
+  }
+
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::PropertyWrite* p)
+  {
+    rObject value = operator()(p->value_get().get());
+    ast::rExp owner = p->owner_get();
+    if (ast::rCall call = owner.unsafe_cast<ast::Call>())
+    {
+      rObject owner = operator()(call->target_get().get());
+      return owner->call(SYMBOL(setProperty),
+                         new object::String(call->name_get()),
+                         new object::String(p->name_get()),
+                         value);
+    }
+    else if (ast::rLocal local = owner.unsafe_cast<ast::Local>())
+    {
+      stacks_.rget(local)->property_set(p->name_get(), value);
+      return value;
+    }
+    else
+      pabort("Unrecognized property owner");
+  }
+
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
@@ -692,7 +737,6 @@ namespace runner
   INVALID(MetaId);
   INVALID(MetaLValue);
   INVALID(OpAssignment);
-  INVALID(Property);
   INVALID(Return);
   INVALID(Subscript);
   INVALID(Unscope);

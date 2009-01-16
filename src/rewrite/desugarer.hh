@@ -34,7 +34,6 @@ namespace rewrite
       (Incrementation)
       (OpAssignment)
       (Pipe)
-      (Property)
       (Scope)
       (Stmt)
       (Subscript)
