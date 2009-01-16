@@ -10,6 +10,13 @@ namespace object
     : value_(object::void_class)
   {}
 
+  inline
+  Slot::Slot(const Slot& model)
+    : libport::RefCounted()
+    , value_(model.value_)
+    , properties_(model.properties_)
+  {}
+
   template <typename T>
   inline
   Slot::Slot(const T& value)

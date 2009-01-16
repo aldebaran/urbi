@@ -17,6 +17,7 @@ namespace object
     typedef libport::hash_map<libport::Symbol, rObject> properties_type;
 
     Slot();
+    Slot(const Slot& model);
     template <typename T>
     Slot(const T& value);
     template <typename T>

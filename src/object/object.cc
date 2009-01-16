@@ -119,9 +119,9 @@ namespace object
 
 
   Object&
-  Object::slot_set(const key_type& k, const rObject& o)
+  Object::slot_set(const key_type& k, const Slot& o)
   {
-    if (!slots_.set(this, k, new Slot(o)))
+    if (!slots_.set(this, k, const_cast<Slot*>(&o)))
       runner::raise_urbi_skip(SYMBOL(RedefinitionError), to_urbi(k));
     return *this;
   }
@@ -145,15 +145,18 @@ namespace object
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
-    // The owner of the updated slot
-    rObject owner = safe_slot_locate(k);
+    // The updated slot
+    Slot& s = slot_get(k);
+    // Its owner
+    rObject owner = slot_locate(k);
+    // Value to write to the slot
     rObject v = o;
 
     // If the current value in the slot to be written in has a slot
     // named 'updateHook', call it, passing the object owning the
     // slot, the slot name and the target.
     if (hook)
-      if (rObject hook = owner->property_get(k, SYMBOL(updateHook)))
+      if (rObject hook = s.property_get(SYMBOL(updateHook)))
       {
         objects_type args;
         args.push_back(new String(k));
@@ -165,15 +168,17 @@ namespace object
           return o;
       }
     // If return-value of hook is not void, write it to slot.
-    own_slot_update(k, v);
+    if (owner == this)
+      s = v;
+    else
+    {
+      // Here comes the cow
+      rSlot slot = new Slot(s);
+      *slot = v;
+      slot_set(k, v);
+    }
     return v;
   };
-
-  void
-  Object::own_slot_update (const key_type& k, const rObject& v)
-  {
-    slots_.update(this, k, new Slot(v));
-  }
 
 
   /*-------------.

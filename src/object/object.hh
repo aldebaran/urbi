@@ -116,17 +116,13 @@ namespace object
     rObject
     slot_update(const key_type& k, const rObject& o, bool hook = true);
 
-    /// Update slot \c k to \a o.
-    void
-    own_slot_update(const key_type& k, const rObject& v);
-
 
     /// \brief Update value in slot.
     ///
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
     /// \return    *this.
-    Object& slot_set(const key_type& k, const rObject& o);
+    Object& slot_set(const key_type& k, const Slot& o);
 
     /// \brief Copy another object's slot.
     ///
