@@ -40,6 +40,10 @@ namespace urbi
     DATA_VOID
   };
 
+  /*--------.
+  | UList.  |
+  `--------*/
+
   /// Class storing URBI List type
   class URBI_SDK_API UList
   {
@@ -69,6 +73,11 @@ namespace urbi
   URBI_SDK_API
   std::ostream& operator<< (std::ostream& o, const UList& t);
 
+
+  /*--------------.
+  | UNamedValue.  |
+  `--------------*/
+
   class URBI_SDK_API UNamedValue
   {
   public:
@@ -77,6 +86,11 @@ namespace urbi
     UValue *val;
     std::string name;
   };
+
+
+  /*----------------.
+  | UObjectStruct.  |
+  `----------------*/
 
   class URBI_SDK_API UObjectStruct
   {
@@ -102,6 +116,10 @@ namespace urbi
   URBI_SDK_API
   std::ostream& operator<< (std::ostream& o, const UObjectStruct& t);
 
+
+  /*---------.
+  | UValue.  |
+  `---------*/
 
   /** Container for a value that handles all types known to URBI.
    */
