@@ -1,5 +1,6 @@
 #include <string>
 #include <cassert>
+#include <cstdarg>
 #include <iostream>
 #include <stdexcept>
 
@@ -151,7 +152,6 @@ usage()
     "  -h, --help         display this message and exit\n"
     "  -v, --version      display version information and exit\n"
     "  -c, --custom FILE  start using the shared library FILE\n"
-    "      --debug        report various debugging information\n"
     "\n"
     "Mode selection:\n"
     "  -p, --plugin       start as a plugin uobject on a running server\n"
@@ -194,13 +194,25 @@ absolute(const std::string& s)
   return p.to_string();
 }
 
+static
+int
+ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
+{
+  int errors = 0;
+  if (level <= verbosity)
+  {
+    errors += fprintf(stderr, "%s: ", program_name.c_str()) < 0;
+    errors += vfprintf(stderr, format, args) < 0;
+  }
+  return errors;
+}
+
 typedef int (*umain_type)(const libport::cli_args_type& args, bool block);
 int
 main(int argc, const char* argv[])
 {
-  program_name = lt_program_name = argv[0];
-  lt_dlinit();
-
+  program_name = argv[0];
+  unsigned verbosity = 0;
   const char* urbi_root = getenv("URBI_ROOT");
   libport::path prefix(urbi_root ? urbi_root : URBI_PREFIX);
 
@@ -235,7 +247,7 @@ main(int argc, const char* argv[])
     if (arg == "--custom" || arg == "-c")
       dll = libport::convert_argument<std::string> (arg, argv[++i]);
     else if (arg == "--debug")
-      lt_debug_level = 1;
+      verbosity = libport::convert_argument<unsigned> (arg, argv[++i]);
     else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--host" || arg == "-H")
@@ -291,6 +303,8 @@ main(int argc, const char* argv[])
    * -Dlopen the uobjects to load.
    * -Call urbi::main found by dlsym() in libuobject.
    */
+  lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) verbosity);
+  lt_dlinit();
   lt_dlhandle core = xlt_dlopenext(dll, true, EX_OSFILE);
   foreach (const std::string& s, modules)
     xlt_dlopenext(s, false, EX_NOINPUT);
