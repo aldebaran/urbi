@@ -113,7 +113,6 @@ namespace
       "Options:\n"
       "  -h, --help             display this message and exit successfully\n"
       "  -v, --version          display version information\n"
-      "      --debug            enable debug traces\n"
       "  -P, --period PERIOD    ignored for backward compatibility\n"
       "  -H, --host HOST        the address to listen on (default: all)\n"
       "  -p, --port PORT        tcp port URBI will listen to\n"
@@ -156,11 +155,24 @@ namespace urbi
 
   int main_loop(LoopData& l);
 
+
+  static
+  int
+  ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
+  {
+    int errors = 0;
+    if (level <= verbosity)
+    {
+      errors += fprintf(stderr, "%s: ", program_name.c_str()) < 0;
+      errors += vfprintf(stderr, format, args) < 0;
+    }
+    return errors;
+  }
+
   URBI_SDK_API int
   main(const libport::cli_args_type& args, bool block)
   {
     program_name = args[0];
-    lt_program_name = program_name.c_str();
     // Input files.
     typedef std::vector<std::string> files_type;
     files_type files;
@@ -172,6 +184,8 @@ namespace urbi
     std::string arg_port_filename;
     /// The size of the stacks.
     size_t arg_stack_size = 0;
+    /// The log verbosity level.
+    unsigned arg_verbosity = 0;
 
     // Parse the command line.
     LoopData data;
@@ -180,7 +194,7 @@ namespace urbi
       const std::string& arg = args[i];
 
       if (arg == "--debug")
-        lt_debug_level = 1;
+        arg_verbosity = libport::convert_argument<unsigned> (args, i++);
       else if (arg == "--fast" || arg == "-f")
         data.fast = true;
       else if (arg == "--help" || arg == "-h")
@@ -209,7 +223,10 @@ namespace urbi
         files.push_back((arg == "-") ? std::string("/dev/stdin") : arg);
     }
 
-    // If not defined in line, use the envvar.
+    // Libtool traces.
+    lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) arg_verbosity);
+
+    // If not defined in command line, use the envvar.
     if (!arg_stack_size
         && getenv("URBI_STACK_SIZE"))
       arg_stack_size = libport::convert_envvar<size_t> ("URBI_STACK_SIZE");
