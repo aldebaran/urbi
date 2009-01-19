@@ -96,11 +96,11 @@ namespace kernel
       search_path.push_back(libport::path(urbi_root) / "share" / "gostai", ":");
     else
       search_path.push_back(URBI_PATH, ":");
-  #if ! defined NDEBUG
+#if ! defined NDEBUG
     server_timer.start();
     server_timer.dump_on_destruction(std::cerr);
     TIMER_PUSH("server");
-  #endif
+#endif
     urbiserver = this;
   }
 
@@ -119,7 +119,7 @@ namespace kernel
     return res;
   }
 
-  #if !defined WIN32 && !defined _MSC_VER
+#if !defined WIN32 && !defined _MSC_VER
   static void
   install_ice_catcher(void (*catcher)(int))
   {
@@ -174,18 +174,18 @@ namespace kernel
     exit(EX_SOFTWARE);
   }
 
-  #endif
+#endif
 
   void
   UServer::initialize()
   {
-  #if !defined WIN32 && !defined _MSC_VER
-  #if !defined NDEBUG
+#if !defined WIN32 && !defined _MSC_VER
+# if !defined NDEBUG
     static bool catch_ices = !getenv("URBI_NO_ICE_CATCHER");
     if (catch_ices)
-  #endif
+# endif
       install_ice_catcher(ice);
-  #endif
+#endif
     // Set the initial time to a valid value.
     updateTime();
 
