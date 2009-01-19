@@ -1,0 +1,40 @@
+dlopening the pandora box
+=========================
+
+The Urbi platform feature UObjects, an easy means to extend the
+UrbiScript with new native objects.  This is typically used to provide
+computation intensive structures or algorithms, such as
+computer-vision, Simultaneous localization and mapping (SLAM) etc.
+
+In Urbi 1, such additional components can be "plugged" or "remote".
+In the former case, their code is actually merged into the kernel
+itself, thus becoming one single executable.  In the latter case, the
+UObject is compiles into an executable, running in a different
+process, and communicating with the kernel via messages.  Such a
+"remote" component can run on the same microprocessor as the kernel,
+another processor of the same machine, or even remotely on another
+computer.
+
+Urbi 2 is now unifying both models: plugged and remote UObjects are
+now longer compiled differently, they are shared objects.  Shared
+objects are libraries that can be used dynamically: they can be loaded
+and loaded on demand.
+
+Today your UrbiScript programs may simply run
+
+    loadModule("myComponent")
+
+at any time to plug new components in.  Alternatively, this UObject
+can be launched as a remote component.  The new helping tool
+urbi-launch makes it seamless:
+
+    urbi-launch --remote myComponent
+
+To simulate the old behavior of pluggins, run
+
+    urbi-launch --start myComponent
+
+It launches a server and plugs the component in.  Finally, you may
+hot-plug an UObject to a running server via
+
+    urbi-launch --plugin myComponent
