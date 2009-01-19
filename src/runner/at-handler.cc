@@ -215,12 +215,12 @@ namespace runner
 	       const rObject& on_leave,
 	       const tag_stack_type& tag_stack,
 	       const object::rLobby& lobby)
-    : condition_(condition),
-      clause_(clause),
-      on_leave_(on_leave),
-      triggered_(false),
-      tag_stack_(tag_stack),
-      lobby_(lobby)
+    : condition_(condition)
+    , clause_(clause)
+    , on_leave_(on_leave)
+    , triggered_(false)
+    , tag_stack_(tag_stack)
+    , lobby_(lobby)
   {
   }
 
