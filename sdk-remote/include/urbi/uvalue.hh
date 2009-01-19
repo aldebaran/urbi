@@ -81,10 +81,11 @@ namespace urbi
   class URBI_SDK_API UNamedValue
   {
   public:
-    UNamedValue(const std::string& n, UValue* v);
-    UNamedValue();
-    UValue *val;
+    UNamedValue(const std::string& n = "", UValue* v = 0);
+    // Used on errors.
+    static UNamedValue& error();
     std::string name;
+    UValue* val;
   };
 
 
@@ -97,12 +98,14 @@ namespace urbi
   public:
     UObjectStruct();
     UObjectStruct(const UObjectStruct &b);
-    UObjectStruct& operator = (const UObjectStruct &b);
+    UObjectStruct& operator=(const UObjectStruct &b);
     ~UObjectStruct();
 
-    UValue& operator [](const std::string& s);
-    const UNamedValue& operator [](size_t i) const;
+    /// Return UValue::error() on errors.
+    UValue& operator[](const std::string& s);
 
+    /// Return UNamedValue::error() on errors.
+    const UNamedValue& operator[](size_t i) const;
     UNamedValue& operator [](size_t i);
 
     size_t size() const;

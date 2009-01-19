@@ -62,13 +62,17 @@ namespace urbi
 
   inline
   UNamedValue::UNamedValue(const std::string& n, UValue* v)
-    : val(v), name(n)
+    : name(n)
+    , val(v)
   {}
 
   inline
-  UNamedValue::UNamedValue()
-    : val(0), name()
-  {}
+  UNamedValue&
+  UNamedValue::error()
+  {
+    static UNamedValue instance;
+    return instance;
+  }
 
 
 
@@ -76,19 +80,21 @@ namespace urbi
   | UObjectStruct.  |
   `----------------*/
 
-  inline
-  const UNamedValue&
-  UObjectStruct::operator [](size_t i) const
-  {
-    return array[i];
+# define UOBJECTSTRUCT_NTH(Const)               \
+  inline                                        \
+  Const UNamedValue&                            \
+  UObjectStruct::operator[](size_t i) Const     \
+  {                                             \
+    if (i < size())                             \
+      return array[i];                          \
+    else                                        \
+      return UNamedValue::error();              \
   }
 
-  inline
-  UNamedValue&
-  UObjectStruct::operator [](size_t i)
-  {
-    return array[i];
-  }
+  UOBJECTSTRUCT_NTH(const)
+  UOBJECTSTRUCT_NTH(/* const */)
+
+# undef UOBJECTSTRUCT_NTH
 
   inline
   size_t
