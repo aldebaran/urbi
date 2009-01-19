@@ -50,7 +50,7 @@ namespace urbi
 
   inline
   void
-  UList::setOffset(int n)
+  UList::setOffset(size_t n)
   {
     offset = n;
   }

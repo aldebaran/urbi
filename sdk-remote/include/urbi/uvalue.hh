@@ -58,7 +58,7 @@ namespace urbi
     const UValue& operator[](size_t i) const;
 
     size_t size() const;
-    void setOffset(int n);
+    void setOffset(size_t n);
 
     std::ostream& print(std::ostream& o) const;
 
@@ -67,7 +67,7 @@ namespace urbi
 
   private:
     void clear();
-    int offset;
+    size_t offset;
   };
 
   URBI_SDK_API
