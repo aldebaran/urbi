@@ -140,17 +140,22 @@ namespace urbi
     UValue();
     UValue(const UValue&);
 
+    ~UValue();
+
+    UValue& operator=(const UValue&);
+
     /// We use an operator , that behaves like an assignment.  The
     /// only difference is when the rhs is void, in which case it is
     /// the regular comma which is used.  This allows to write "uval,
     /// expr" to mean "compute expr and assign its result to uval,
     /// unless expr is void".
+    UValue& operator, (const UValue &b);
+
 #define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
     explicit UValue(Type);			\
     UValue& operator=(Type);			\
-    UValue& operator, (Type rhs)
+    UValue& operator,(Type rhs)
 
-    UValue & operator, (const UValue &b);
     // UFloats.
     CTOR_AND_ASSIGN_AND_COMMA(ufloat);
     CTOR_AND_ASSIGN_AND_COMMA(int);
@@ -192,16 +197,11 @@ namespace urbi
     /// Shallow copy.
     operator USound() const;
 
-    UValue& operator=(const UValue&);
-
-
     /// This operator does nothing, but helps with the previous operator,.
     /// Indeed, when writing "uval, void_expr", the compiler complains
     /// about uval being evaluated for nothing.  Let's have it believe
     /// we're doing something...
     UValue& operator()();
-
-    ~UValue();
 
     /// Parse an uvalue in current message+pos, returns pos of end of
     /// match -pos of error if error.
