@@ -81,6 +81,13 @@ namespace urbi
   | UValue.  |
   `---------*/
 
+  UValue&
+  UValue::error()
+  {
+    static UValue instance;
+    return instance;
+  }
+
 #define SKIP_SPACES()				\
     while (message[pos] == ' ')			\
       ++pos
@@ -933,8 +940,7 @@ namespace
     for (size_t i = 0; i < size(); ++i)
       if (array[i].name == s)
 	return *array[i].val;
-    static UValue n;
-    return n; // Gni?
+    return UValue::error();
   }
 
 

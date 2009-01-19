@@ -24,19 +24,22 @@ namespace urbi
   | UList.  |
   `--------*/
 
-  inline
-  UValue&
-  UList::operator [](size_t i)
-  {
-    return *array[i+offset];
+# define ULIST_NTH(Const)                       \
+  inline                                        \
+  Const UValue&                                 \
+  UList::operator[](size_t i) Const             \
+  {                                             \
+    i += offset;                                \
+    if (i < size())                             \
+      return *array[i];                         \
+    else                                        \
+      return UValue::error();                   \
   }
 
-  inline
-  const UValue&
-  UList::operator [](size_t i) const
-  {
-    return *array[i+offset];
-  }
+  ULIST_NTH(const)
+  ULIST_NTH(/* const */)
+
+# undef ULIST_NTH
 
   inline
   size_t

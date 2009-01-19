@@ -52,10 +52,10 @@ namespace urbi
     UList(const UList &b);
     ~UList();
 
-    UList& operator = (const UList &b);
+    UList& operator=(const UList &b);
 
-    UValue& operator [](size_t i);
-    const UValue& operator [](size_t i) const;
+    UValue& operator[](size_t i);
+    const UValue& operator[](size_t i) const;
 
     size_t size() const;
     void setOffset(int n);
@@ -143,6 +143,10 @@ namespace urbi
     ~UValue();
 
     UValue& operator=(const UValue&);
+
+    /// A specific UValue used when we want to return an error.
+    /// For instance, out-of-bound access returns this object.
+    static UValue& error();
 
     /// We use an operator , that behaves like an assignment.  The
     /// only difference is when the rhs is void, in which case it is
