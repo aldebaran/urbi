@@ -1,4 +1,4 @@
-dlopening the pandora box
+dlopening the cooking jar
 =========================
 
 The Urbi platform feature UObjects, an easy means to extend the
