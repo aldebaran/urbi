@@ -11,7 +11,7 @@
 namespace urbi
 {
   USyncClient::USyncClient(const std::string& host,
-			   int port,
+			   unsigned port,
 			   size_t buflen,
 			   bool server,
                            bool startCallbackThread,
@@ -23,7 +23,7 @@ namespace urbi
     , syncLock_()
     , syncTag()
     , stopCallbackThread_(!startCallbackThread)
-    , cbThread (0)
+    , cbThread(0)
   {
     if (error())
       return;
@@ -172,10 +172,10 @@ namespace urbi
     bool
     has_terminator(const char* cp)
     {
-      int p = strlen(cp) - 1;
-      while (cp[p] == ' ')
+      int p = static_cast<int>(strlen(cp)) - 1;
+      while (0 <= p && cp[p] == ' ')
         --p;
-      return cp[p] == ';' || cp[p] == ',';
+      return 0 <= p && (cp[p] == ';' || cp[p] == ',');
     }
 
     /// Return the concatenation of t1 and t2, make it unique

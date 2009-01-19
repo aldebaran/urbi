@@ -98,7 +98,7 @@ namespace urbi
   {
     if (c != EOF)
     {
-      char ch = c;
+      char ch = static_cast<char>(c);
       xsputn(&ch, 1);
     }
     return c;
@@ -114,7 +114,7 @@ namespace urbi
       client->sendBufferLock.unlock();
       return 0;
     }
-    int clen = strlen(client->sendBuffer);
+    size_t clen = strlen(client->sendBuffer);
     memcpy(client->sendBuffer+clen, s, n);
     client->sendBuffer[clen+n] = 0;
     if (strpbrk(client->sendBuffer, "&|;,"))
