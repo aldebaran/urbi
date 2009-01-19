@@ -275,9 +275,10 @@ namespace urbi
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
-    std::ostream& getStream();
+    /// This, as a stream.
+    std::ostream& stream_get();
 
-     /// dummy tag for client error callback
+    /// dummy tag for client error callback
     static const char* CLIENTERROR_TAG;
   protected:
     /// Must be called by subclasses when the connection is established.
@@ -379,9 +380,12 @@ namespace urbi
 
     typedef std::list<UCallbackInfo> callbacks_type;
     callbacks_type callbacks_;
+
     /// Unique tag base.
     int uid_;
 
+    /// Ourself as a stream.
+    /// It looks useless, accorded, but VC++ wants it.
     std::ostream* stream_;
 
     friend class UClientStreambuf;

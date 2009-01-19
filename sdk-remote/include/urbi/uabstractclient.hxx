@@ -44,7 +44,7 @@ namespace urbi
 
   inline
   std::ostream&
-  UAbstractClient::getStream()
+  UAbstractClient::stream_get()
   {
     return *stream_;
   }
