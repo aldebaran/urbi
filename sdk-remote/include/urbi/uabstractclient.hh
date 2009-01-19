@@ -275,6 +275,8 @@ namespace urbi
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
+    std::ostream& getStream();
+
      /// dummy tag for client error callback
     static const char* CLIENTERROR_TAG;
   protected:
@@ -379,6 +381,9 @@ namespace urbi
     callbacks_type callbacks_;
     /// Unique tag base.
     int uid_;
+
+    std::ostream* stream_;
+
     friend class UClientStreambuf;
   };
 

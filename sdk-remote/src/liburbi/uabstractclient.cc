@@ -32,7 +32,7 @@ namespace urbi
   default_stream()
   {
     return (getDefaultClient()
-	    ? *(UAbstractClient*)getDefaultClient()
+	    ? ((UAbstractClient*)getDefaultClient())->getStream()
 	    : std::cerr);
   }
 
@@ -187,8 +187,9 @@ namespace urbi
     , system(false)
     , init_(true)
     , uid_(0)
+    , stream_(this)
   {
-    setf(std::ios::fixed);
+    getStream().setf(std::ios::fixed);
     recvBuffer = new char[buflen];
     if (!recvBuffer)
     {
