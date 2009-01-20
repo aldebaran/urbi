@@ -1,5 +1,6 @@
 #include <boost/assign.hpp>
 #include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
 
 #ifdef ENABLE_DEBUG_TRACES_UOBJECT
 # define ENABLE_DEBUG_TRACES
@@ -23,6 +24,7 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <object/string.hh>
+#include <object/system.hh>
 #include <object/urbi-exception.hh>
 #include <runner/call.hh>
 #include <runner/raise.hh>
@@ -634,5 +636,22 @@ namespace urbi
   baseURBIStarter::getFullName(const std::string& name)
   {
     return name;
+  }
+
+  int kernelMajor()
+  {
+    const std::string& kv = kernelVersion();
+    return boost::lexical_cast<int>(kv.substr(0, kv.find_first_of('.')));
+  }
+  int kernelMinor()
+  {
+    const std::string& kv = kernelVersion();
+    return boost::lexical_cast<int>(kv.substr(kv.find_first_of('.')+1,
+                                              kv.npos));
+  }
+  const std::string& kernelVersion()
+  {
+    return object::system_class->slot_get(SYMBOL(version))->as<object::String>()
+      ->value_get();
   }
 }
