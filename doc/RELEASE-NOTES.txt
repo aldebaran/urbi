@@ -11,7 +11,8 @@ Meta
 Documentation
 -------------
 
-An initial sketch of documentation is included.
+An initial sketch of documentation (a tutorial, and the language and
+library specifications) is included.
 
 
 
