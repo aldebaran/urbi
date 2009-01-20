@@ -18,6 +18,8 @@
 // Tell our users that it is fine to use void returning functions.
 #define USE_VOID 1
 
+#define URBI_UOBJECT_VERSION 2
+
 /** Bind a variable to an object.
 
  This macro can only be called from within a class inheriting from
