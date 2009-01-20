@@ -121,6 +121,10 @@ namespace urbi
 
   // Global function of the urbi:: namespace to access kernel features
 
+  URBI_SDK_API int kernelMajor();
+  URBI_SDK_API int kernelMinor();
+  URBI_SDK_API const std::string& kernelVersion();
+
   /// Write a message to the server debug output. Printf syntax.
   URBI_SDK_API void echo(const char* format, ... );
 

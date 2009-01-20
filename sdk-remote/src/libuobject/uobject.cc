@@ -224,4 +224,17 @@ namespace urbi
     else
       return name;
   }
+
+  URBI_SDK_API int kernelMajor()
+  {
+    return getDefaultClient()->kernelMajor();
+  }
+  URBI_SDK_API int kernelMinor()
+  {
+    return getDefaultClient()->kernelMinor();
+  }
+  URBI_SDK_API const std::string& kernelVersion()
+  {
+    return getDefaultClient()->kernelVersion();
+  }
 } // namespace urbi
