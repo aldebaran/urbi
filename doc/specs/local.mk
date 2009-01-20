@@ -1,33 +1,11 @@
-# specs/local.mk
-share_dir = $(srcdir)/document-aux
-share_bin_dir = $(share_dir)/bin
-share_make_dir = $(share_dir)/make
-include document-aux/make/tex.mk
-
-pdf_DATA = specs/urbi-specs.pdf
-urbi_specs_sources = $(call ls_files,*.tex)
-urbi_specs_deps = $(urbi_specs_sources) $(call ls_files,*.sty)
-CLEANFILES += $(pdf_DATA)
-
-view: $(pdf_DATA)
-	xpdf $<
+pdf_DATA += specs/urbi-specs.pdf
+urbi_specs_sources = $(call ls_files,specs/*.tex)
+urbi_specs_deps = $(urbi_specs_sources) $(call ls_files,specs/*.sty)
 
 # Convert some old LaTeX 2.09 idioms into 2e.
 latex2e:
 	perl -pi.bak -0777 -e 's/\{\\em (.*?)}/\\emph{$$1}/gs' \
 	  $(srcdir)/specs/*.tex
-
-# Once these works properly, will be moved into share/ to complete the
-# svn-only version.
-share-up:
-	cd $(share_dir) && git pull --rebase
-	git commit -m "Update $(share_dir)." $(share_dir)
-
-share-ci:
-	cd $(share_dir) && git commit -v -a
-	cd $(share_dir) && git pull --rebase
-	cd $(share_dir) && git push origin master
-	git commit -m "Update $(share_dir)." $(share_dir)
 
 # texi2pdf does not like directories that do not exists.  Don't depend
 # on the directory, as only its existence matters, not its time
