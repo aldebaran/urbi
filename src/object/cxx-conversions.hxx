@@ -2,11 +2,13 @@
 # define CXX_CONVERSIONS_HXX
 
 # include <libport/assert.hh>
+# include <libport/path.hh>
 # include <libport/symbol.hh>
 
 # include <object/cxx-object.hh>
 # include <object/float.hh>
 # include <object/list.hh>
+# include <object/path.hh>
 # include <object/string.hh>
 
 namespace object
@@ -191,6 +193,27 @@ namespace object
     from(bool v)
     {
       return v ? true_class : false_class;
+    }
+  };
+
+  // Conversion with libport::path
+  template <>
+  struct CxxConvert<libport::path>
+  {
+    static libport::path
+    to(const rObject& o, unsigned idx)
+    {
+      rString str = o->as<String>();
+      if (str)
+        return str->value_get();
+      type_check<Path>(o, idx);
+      return o->as<String>()->value_get();
+    }
+
+    static rObject
+    from(const libport::path& v)
+    {
+      return new Path(v);
     }
   };
 
