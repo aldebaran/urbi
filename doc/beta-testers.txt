@@ -106,3 +106,8 @@ PAL
 ===
 Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
 Environment: Unknown yet
+
+Université de Cergy
+===================
+Contact: Philippe Laroque <laroque@u-cergy.fr>
+Environment: ?

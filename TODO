@@ -1,5 +1,3 @@
-* Factor ast::Decrement and Increment
-
 * Test (from Tsuna)
 Pour k2: http://code.google.com/p/googletest/ (announcement:
 http://googletesting.blogspot.com/2008/07/announcing-new-google-c-testing.html
