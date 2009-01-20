@@ -9,12 +9,13 @@ include libltdl/Makefile.inc
 
 SUBDIRS =					\
   .						\
-  jpeg-6b lib/libport				\
+  jpeg-6b					\
   src						\
   doc
 
 host_SCRIPTS =
 nodist_host_DATA =
+include lib/libport/local.mk
 include sdk/local.mk
 include include/local.mk
 
@@ -36,12 +37,9 @@ core libs:
 # check-html, check-clean, check-uob etc.
 check-%:
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
-recheck recheck-html:
+check-buildfarm recheck recheck-html:
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
 
-# The target run by the buildfarm.
-check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
 
 ## ----- ##
 ## Doc.  ##
