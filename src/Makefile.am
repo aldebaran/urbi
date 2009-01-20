@@ -81,6 +81,7 @@ include object/local.mk
 include rewrite/local.mk
 include runner/local.mk
 include kernel/local.mk
+libport_la = $(top_builddir)/sdk-remote/lib/libport/libport.la
 include lib/sched/local.mk
 include urbi/local.mk
 
