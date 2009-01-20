@@ -148,7 +148,8 @@ namespace urbi
       // Allow to rebind on the same port shortly after having used it.
       {
 	int one = 1;
-	rc = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof one);
+	rc = libport::setsockopt(sd, SOL_SOCKET, SO_REUSEADDR,
+                                 &one, sizeof one);
 	if (rc)
 	{
 	  rc = -1;
