@@ -10,6 +10,7 @@
 # include <object/list.hh>
 # include <object/path.hh>
 # include <object/string.hh>
+# include <runner/raise.hh>
 
 namespace object
 {
@@ -80,6 +81,27 @@ namespace object
     {
       type_check<Float>(o, idx);
       return o->as<Float>()->to_int();
+    }
+
+    static rObject
+    from(const int& v)
+    {
+      return new Float(v);
+    }
+  };
+
+  // Conversion with unsigned chars
+  template<>
+  struct CxxConvert<unsigned char>
+  {
+    static unsigned char
+    to(const rObject& o, unsigned idx)
+    {
+      type_check<Float>(o, idx);
+      int res = o->as<Float>()->to_int();
+      if (res < 0 || res > 255)
+        runner::raise_bad_integer_error(res, "expected a number between 0 and 255, got %s");
+      return res;
     }
 
     static rObject
