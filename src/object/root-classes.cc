@@ -168,6 +168,8 @@ namespace object
     object_class = new Object();
 
     CxxObject::push_initializer_to_back<UVar>();
+    CxxObject::push_initializer_to_back<OutputStream>();
+    CxxObject::push_initializer_to_back<TextOutputStream>();
 
     CxxObject::create();
 

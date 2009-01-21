@@ -67,12 +67,14 @@ namespace object
   FWD_DECL(Float);
   FWD_DECL(List);
   FWD_DECL(Lobby);
+  FWD_DECL(OutputStream);
   FWD_DECL(Path);
   FWD_DECL(Primitive);
   FWD_DECL(Semaphore);
   FWD_DECL(String);
   FWD_DECL(Tag);
   FWD_DECL(Task);
+  FWD_DECL(TextOutputStream);
 
   extern URBI_SDK_API rObject false_class;
   extern URBI_SDK_API rObject nil_class;

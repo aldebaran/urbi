@@ -102,6 +102,8 @@ dist_libuobject_la_SOURCES +=			\
   object/object.cc				\
   object/object.hh				\
   object/object.hxx				\
+  object/output-stream.cc			\
+  object/output-stream.hh			\
   object/path.cc				\
   object/path.hh				\
   object/primitive.cc				\
@@ -128,6 +130,8 @@ dist_libuobject_la_SOURCES +=			\
   object/tag.hh					\
   object/task.cc				\
   object/task.hh				\
+  object/text-output-stream.cc			\
+  object/text-output-stream.hh			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
   object/uvar.hh                                \
