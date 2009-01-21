@@ -14,6 +14,7 @@
 #include <object/list.hh>
 #include <object/lobby.hh>
 #include <object/object.hh>
+#include <object/output-stream.hh>
 #include <object/path.hh>
 #include <object/primitive.hh>
 #include <object/root-classes.hh>
@@ -22,6 +23,7 @@
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
+#include <object/text-output-stream.hh>
 #include <object/uvar.hh>
 
 namespace object
