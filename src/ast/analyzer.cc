@@ -13,7 +13,7 @@ namespace ast
 
 
   ast::rExp
-  analyze(Analyzer& analyze, ast::rConstExp a)
+  analyze(Analyzer& analyze, ast::rConstAst a)
   {
     if (!a)
       return 0;

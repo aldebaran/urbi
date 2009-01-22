@@ -13,6 +13,10 @@ BUILT_SOURCES_ast_libuobject =			\
   ast/all.hh					\
   ast/analyzer.hh				\
   ast/analyzer.cc				\
+  ast/dot-print.cc                              \
+  ast/dot-print.hh                              \
+  ast/dot-printer.cc                            \
+  ast/dot-printer.hh                            \
   ast/error.hh					\
   ast/error.hxx					\
   ast/error.cc					\

@@ -7,12 +7,14 @@
 # define BINDER_BIND_HH
 
 # include <ast/nary-fwd.hh>
+# include <urbi/export.hh>
 
 namespace binder
 {
 
   /// Bind names in \a a.
-  ast::rNary bind(ast::rConstNary a);
+  template <typename T>
+  libport::intrusive_ptr<T> URBI_SDK_API bind(libport::intrusive_ptr<T> a);
 
 } // namespace binder
 

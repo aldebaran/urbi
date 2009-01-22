@@ -5,10 +5,20 @@
 
 namespace rewrite
 {
-  ast::rNary
-  rewrite(ast::rConstNary nary)
+  ast::rAst
+  desugar(ast::rConstAst Ast)
   {
-    return rewrite(ast::rConstExp(nary)).unsafe_cast<ast::Nary>();
+    Desugarer desugar;
+    ast::rAst res = ast::analyze(desugar, Ast);
+    return res;
+  }
+
+  ast::rAst
+  rescope(ast::rConstAst Ast)
+  {
+    Rescoper rescope;
+    rescope(Ast.get());
+    return rescope.result_get();
   }
 
   ast::rExp
@@ -24,5 +34,11 @@ namespace rewrite
     res = rescope.result_get();
 
     return res.unsafe_cast<ast::Exp>();
+  }
+
+  ast::rNary
+  rewrite(ast::rConstNary nary)
+  {
+    return rewrite(ast::rConstExp(nary)).unsafe_cast<ast::Nary>();
   }
 }

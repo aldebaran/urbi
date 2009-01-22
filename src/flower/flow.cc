@@ -4,9 +4,8 @@
 
 namespace flower
 {
-
   ast::rNary
-  flow(ast::rConstNary a)
+  flow(ast::rConstAst a)
   {
     TIMER_PUSH("flow");
     Flower flow;
@@ -14,6 +13,5 @@ namespace flower
     TIMER_POP("flow");
     return res ? res.unchecked_cast<ast::Nary>() : ast::rNary();
   }
-
 
 } // namespace flower

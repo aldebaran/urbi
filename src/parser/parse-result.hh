@@ -9,6 +9,7 @@
 
 # include <ast/error.hh>
 # include <ast/nary-fwd.hh>
+# include <urbi/export.hh>
 
 namespace parser
 {
@@ -29,7 +30,7 @@ namespace parser
   /// when such a UParser could be used again for another parsing
   /// session.  Now it's easy: when parsing is done, it's ready for
   /// another one.
-  class ParseResult
+  class URBI_SDK_API ParseResult
   {
   public:
     ParseResult();

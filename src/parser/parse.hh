@@ -8,21 +8,25 @@
 # include <parser/fwd.hh>
 # include <parser/location.hh>
 # include <parser/parse-result.hh>
+# include <urbi/export.hh>
 
 namespace parser
 {
 
   /// Parse \a cmd, and return an object that holds the result and the
   /// errors.
-  parse_result_type parse(const std::string& cmd, const yy::location& loc);
+  parse_result_type URBI_SDK_API
+  parse(const std::string& cmd, const yy::location& loc);
 
   /// Parse \a cmd, and return an object that holds the result and the
   /// errors.  Meta variables are activated.
-  parse_result_type parse_meta(const std::string& cmd, const yy::location& loc);
+  parse_result_type URBI_SDK_API
+  parse_meta(const std::string& cmd, const yy::location& loc);
 
   /// Parse a file.
   /// \see parse().
-  parse_result_type parse_file(const std::string& file);
+  parse_result_type URBI_SDK_API
+  parse_file(const std::string& file);
 
 }
 

@@ -17,17 +17,12 @@
 
 #include <iostream>
 
-#include <ast/dot-printer.hh>
+#include <ast/dot-print.hh>
 #include <ast/nary.hh>
-
-#include <binder/binder.hh>
-
-#include <flower/flower.hh>
-
+#include <binder/bind.hh>
+#include <flower/flow.hh>
 #include <parser/parse.hh>
-
-#include <rewrite/desugarer.hh>
-#include <rewrite/rescoper.hh>
+#include <rewrite/rewrite.hh>
 
 using namespace ast;
 using namespace parser;
@@ -40,8 +35,7 @@ print(rAst ast)
   static int fd = 2;
   ++fd;
   std::stringstream output;
-  DotPrinter p(output);
-  p(ast.get());
+  ast::dot_print(ast, output);
   write(fd, output.str().c_str(), output.str().length());
 }
 
@@ -57,25 +51,19 @@ main()
     source += buf;
   }
 
-  rAst res = parse(source, __HERE__)->ast_get();;
+  rAst res = parse(source, __HERE__)->ast_get();
 
   print(res);
 
-  rewrite::Desugarer desugar;
-  desugar(res.get());
-  res = desugar.result_get();
+  res = rewrite::desugar(res);
   print(res);
 
-  rewrite::Rescoper rescope;
-  rescope(res.get());
-  res = rescope.result_get();
+  res = rewrite::rescope(res);
   print(res);
 
-  flower::Flower flow;
-  res = ast::analyze(flow, res.unsafe_cast<ast::Nary>().get());
+  res = flower::flow(res);
   print(res);
 
-  binder::Binder bind;
-  res = ast::analyze(bind, res.unsafe_cast<ast::Nary>().get());
+  res = binder::bind(res);
   print(res);
 }
