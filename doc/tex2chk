@@ -1,0 +1,156 @@
+#! /usr/bin/perl -w
+
+use strict;
+use English;
+use IO::File;
+use File::Path qw(mkpath rmtree);
+
+# All the tests.
+my %chk;
+
+sub process_listing ($$$)
+{
+  my ($file, $line, $lst) = @_;
+#  print STDERR "[[[$lst]]]\n";
+
+  my $loc = "$file:$line";
+  my %res;
+  $res{'_file'} = $file;
+  $res{'_line'} = $line;
+  $res{'_location'} = $loc;
+
+  $lst =~
+     /
+       \\begin{urbiscript}
+       (?:\[((?:[^\[\]]|\[[^\]]*\])*)\])?  # $1 optional options.
+                    # Optional argument may include `[...]'.
+       \n
+       (.*)\n                 # $2 contents
+       \\end{urbiscript}
+     /xs;
+
+  $res{'_contents'} = $2;
+
+  # Decode and normalize the options.
+  my $options = $1;
+  if ($options)
+  {
+    foreach my $opt (split (/\s*,\s*/, $options))
+    {
+      $opt =~ /(\w+)\s*=\s*(.*)/;
+      $res{$1} = $2;
+    }
+  }
+
+  # If there is no label defined, use the location.
+  if (defined $res{label})
+  {
+    # Get rid of the "lst:" prefix from the labels.
+    $res{label} =~ s/^lst://;
+    # float-new -> new, since we're in float/ anyway.
+    (my $base = $file) =~ s,.*/,,;
+    $base =~ s,\..*,,;
+    $res{label} =~ s/^$base-//;
+  }
+  else
+  {
+    $res{label} = $res{_location};
+    # Remove the directory part of the file.
+    $res{label} =~ s,^.*/,,;
+    $res{label} =~ s/\.tex//;
+    # Make dislikes colon in file names.
+    $res{label} =~ s/:/-/g;
+  }
+
+  # Clean up the contents.
+  $res{_contents} =~ s/:hide\]/\]/g;
+
+  return %res;
+}
+
+sub process_file ($)
+{
+  my ($file) = @_;
+  my $in = new IO::File $file
+      or die "cannot open $file";
+  local $_;
+  my $test;
+  my $line;
+  while ($_ = $in->getline)
+  {
+    if (/^\\begin{urbiscript}/ .. /^\\end{urbiscript}/)
+    {
+      if (/^\\begin{urbiscript}/)
+      {
+          $line = $in->input_line_number;
+          $test = $_;
+      }
+      elsif (!/^\\end{urbiscript}/)
+      {
+          $test .= $_;
+      }
+      else # \end{urbiscript}
+      {
+          $test .= $_;
+          my %res = process_listing $file, $line, $test;
+          print STDERR
+              "warning: label `$res{label}' defined twice\n",
+              "  ${%{$chk{$res{label}}}}{_location}: first definition\n",
+              "  $file:$line: second definition\n"
+            if defined $chk{$res{label}};
+          $chk{$res{label}} = \%res;
+      }
+    }
+  }
+}
+
+sub dump_chk ($)
+{
+  my ($dir) = @_;
+  my @file;
+  for my $k (keys %chk)
+  {
+    my %c = %{$chk{$k}};
+    my $file = "$dir/$c{label}.chk";
+    push @file, $file;
+    my $out = new IO::File ">$file"
+        or die "cannot create $file: $!";
+    print $out "// $c{_location}.\n";
+    print $out "$c{_contents}\n";
+  }
+  my $local_mk = "$dir/local.mk";
+  my $mk = new IO::File ">$local_mk"
+      or die "cannot create $local_mk: $!";
+  # Do not include the ../.. stuff in the Makefile.
+  @file = map { s,^$ENV{srcdir}/,,; $_ } @file;
+  print $mk join ("\t\\\n  ", "TESTS += ", @file), "\n";
+}
+
+process_file $ARGV[0];
+# The directory we will output the tests in.
+my $dir = $ARGV[0];
+$dir =~ s,^$ENV{srcdir},$&/tests,;
+$dir =~ s/\.tex$//;
+
+rmtree $dir
+  if -d $dir;
+mkpath $dir
+  or die "cannot mkpath $dir: $!";
+dump_chk $dir;
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

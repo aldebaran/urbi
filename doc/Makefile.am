@@ -11,12 +11,12 @@ pdf_DATA =
 
 include specs/local.mk
 include tutorial/local.mk
+include tests/local.mk
 
 CLEANFILES += $(pdf_DATA)
 
 view: $(pdf_DATA)
 	xpdf $<
-
 
 # Once these works properly, will be moved into share/ to complete the
 # svn-only version.
