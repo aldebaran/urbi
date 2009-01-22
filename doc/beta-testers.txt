@@ -107,6 +107,11 @@ PAL
 Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
 Environment: Unknown yet
 
+Ugobe
+=====
+Contact: Tyler Wilson <TWilson@ugobe.com>
+Environment: Unknown
+
 Université de Cergy
 ===================
 Contact: Philippe Laroque <laroque@u-cergy.fr>
