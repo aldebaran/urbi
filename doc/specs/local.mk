@@ -1,13 +1,13 @@
 pdf_DATA += specs/urbi-specs.pdf
 urbi_specs_sources = $(call ls_files,specs/*.tex)
-urbi_specs_deps = $(urbi_specs_sources) $(call ls_files,specs/*.sty)
+urbi_specs_deps = $(urbi_specs_sources) $(call ls_files,*.sty)
 
 # Convert some old LaTeX 2.09 idioms into 2e.
 latex2e:
 	perl -pi.bak -0777 -e 's/\{\\em (.*?)}/\\emph{$$1}/gs' \
 	  $(srcdir)/specs/*.tex
 
-# texi2pdf does not like directories that do not exists.  Don't depend
+# texi2pdf does not like directories that do not exist.  Don't depend
 # on the directory, as only its existence matters, not its time
 # stamps.
 specs/urbi-specs.pdf: specs/.stamp $(urbi_specs_deps)

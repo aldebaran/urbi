@@ -6,7 +6,8 @@ share_dir = $(srcdir)/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
-
+# Find urbi-report.sty.
+TEXI2DVI_FLAGS += -I $(srcdir)
 pdf_DATA =
 
 include specs/local.mk
