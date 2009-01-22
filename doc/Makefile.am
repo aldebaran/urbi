@@ -19,6 +19,16 @@ CLEANFILES += $(pdf_DATA)
 view: $(pdf_DATA)
 	xpdf $<
 
+# Convert some old LaTeX 2.09 idioms into 2e.
+latex2e:
+	perl -pi.bak -0777 -e 's/\{\\em (.*?)}/\\emph{$$1}/gs' \
+	  $(srcdir)/specs/*.tex
+
+
+## -------------- ##
+## document-aux.  ##
+## -------------- ##
+
 # Once these works properly, will be moved into share/ to complete the
 # svn-only version.
 share-up:
