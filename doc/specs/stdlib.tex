@@ -91,9 +91,9 @@ function heavy_computation()
   return 1 + 1;
 };
 [00000000:hide] function () {
-..  echo("Heavy computation");
-..  return 1 . '+'(1);
-..}
+[:]  echo("Heavy computation");
+[:]  return 1 . '+'(1);
+[:]}
 
 // We want to do the heavy computations only if needed,
 // and make it a lazy value to be able to evaluate it "on demand".

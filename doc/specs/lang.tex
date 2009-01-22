@@ -286,7 +286,7 @@ content is printed with echo for instance.
 [00000000] "a\nb"
 echo("a\nb"); // We can see there is an actual line feed
 [00000000] *** a
-..b
+[:]b
 echo("a\\nb");
 [00000000] *** a\nb
 \end{urbiscript}
@@ -791,8 +791,8 @@ identifiers. \autoref{lst:function} illustrates this.
 \begin{urbiscript}[caption=Functional value,label=lst:function,float=\floatpos]
 function (arg1, arg2) { echo(0) };
 [00000000] function (arg1, arg2) {
-..  echo(0)
-..}
+[:]  echo(0)
+[:]}
 \end{urbiscript}
 
 Usually functions are bound to an identifier to be invoked later.
@@ -806,8 +806,8 @@ var f1 = function () {
   echo("hello")
 };
 [00000000:hide] function () {
-..  echo("hello")
-..}
+[:]  echo("hello")
+[:]}
 
 f1();
 [00000000] *** hello
@@ -817,8 +817,8 @@ function f2()
   echo("hello")
 };
 [00000000:hide] function () {
-..  echo("hello")
-..}
+[:]  echo("hello")
+[:]}
 
 f2();
 [00000000] *** hello
@@ -842,9 +842,9 @@ var f = function(a, b) {
   echo(a);
 };
 [00000000:hide] function (a, b) {
-..  echo(b);
-..  echo(a);
-..}
+[:]  echo(b);
+[:]  echo(a);
+[:]}
 
 f(1, 0);
 [00000000] *** 0
@@ -875,10 +875,10 @@ function f(a, b)
   a // Return value is a
 };
 [00000000:hide] function (a, b) {
-..  echo(a);
-..  echo(b);
-..  a
-..}
+[:]  echo(a);
+[:]  echo(b);
+[:]  a
+[:]}
 
 f(1, 2);
 [00000000] *** 1
@@ -891,10 +891,10 @@ function g(a, b)
   echo(b); // This is not executed
 };
 [00000000:hide] function (a, b) {
-..  echo(a);
-..  return a;
-..  echo(b);
-..}
+[:]  echo(a);
+[:]  return a;
+[:]  echo(b);
+[:]}
 
 g(1, 2);
 [00000000] *** 1
@@ -905,9 +905,9 @@ function h()
   echo(0); // This is not executed
 };
 [00000000:hide] function () {
-..  return;
-..  echo(0);
-..}
+[:]  return;
+[:]  echo(0);
+[:]}
 
 h(); // Returns void, so nothing is printed.
 \end{urbiscript}
@@ -941,9 +941,9 @@ function first(a, b) {
   echo(a); echo(b)
 };
 [00000000:hide] function (a, b) {
-..  echo(a);
-..  echo(b)
-..}
+[:]  echo(a);
+[:]  echo(b)
+[:]}
 
 first({echo("Arg1"); 1},
       {echo("Arg2"); 2});
@@ -965,9 +965,9 @@ function first
   echo(call.evalArgAt(1));
 };
 [00000000:hide] function {
-..  echo(call . evalArgAt(0));
-..  echo(call . evalArgAt(1));
-..}
+[:]  echo(call . evalArgAt(0));
+[:]  echo(call . evalArgAt(1));
+[:]}
 
 first({echo("Arg1"); 1},
       {echo("Arg2"); 2});
@@ -991,11 +991,11 @@ function first
   echo(a); echo(b);
 };
 [00000000:hide] function {
-..  var a = call . evalArgAt(0);
-..  var b = call . evalArgAt(1);
-..  echo(a);
-..  echo(b);
-..}
+[:]  var a = call . evalArgAt(0);
+[:]  var b = call . evalArgAt(1);
+[:]  echo(a);
+[:]  echo(b);
+[:]}
 
 first({echo("Arg1"); 1},
       {echo("Arg2"); 2});
@@ -1026,9 +1026,9 @@ function cl()
   echo(x);
 };
 [00000000] function () {
-..  x++;
-..  echo(x);
-..}
+[:]  x++;
+[:]  echo(x);
+[:]}
 
 cl();
 [00000000] *** 1
@@ -1055,17 +1055,17 @@ function wrapper()
   return function() { x++ };
 };
 [00000000:hide] function () {
-..  var x = 0;
-..  Control . at_(x . '>'(1), detach(echo("ping")), detach({}));
-..  return function () {
-..    x++
-..  };
-..}
+[:]  var x = 0;
+[:]  Control . at_(x . '>'(1), detach(echo("ping")), detach({}));
+[:]  return function () {
+[:]    x++
+[:]  };
+[:]}
 
 var f = wrapper();
 [00000000:hide] function () {
-..  x++
-..}
+[:]  x++
+[:]}
 f();
 [00000000] 0
 f();
@@ -1304,8 +1304,8 @@ var o.a = 42;
 
 var o.b = function (x) { x + 1 };
 [00000000:hide] function (x) {
-..  x . '+'(1)
-..}
+[:]  x . '+'(1)
+[:]}
 
 o.a;
 [00000000] 42
@@ -1468,11 +1468,11 @@ function Hobbits.each (action)
   action("Sam");
 };
 [00000000:hide] function (action) {
-..  action("Frodo");
-..  action("Merry");
-..  action("Pippin");
-..  action("Sam");
-..}
+[:]  action("Frodo");
+[:]  action("Merry");
+[:]  action("Pippin");
+[:]  action("Sam");
+[:]}
 
 for (var name in Hobbits)
   echo("%s is a hobbit." % [name]);
@@ -1616,8 +1616,8 @@ throw 42;
 function inner() { throw "exn" } | {};
 function outer() { inner() };
 [00000000:hide] function () {
-..  inner()
-..}
+[:]  inner()
+[:]}
 // Exceptions propagate to parent call up to the toplevel
 outer();
 [00000000:error] !!! exn
