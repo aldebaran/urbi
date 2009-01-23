@@ -8,7 +8,7 @@
 # include <string>
 
 # include <ast/error.hh>
-# include <ast/nary-fwd.hh>
+# include <ast/nary.hh>
 # include <urbi/export.hh>
 
 namespace parser
