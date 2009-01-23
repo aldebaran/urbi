@@ -114,9 +114,10 @@ do (List)
     res;
   };
 
-  //# ------------------------ ##
-  //# Functional programming.  ##
-  //# ------------------------ ##
+
+  /*-------------------------.
+  | Functional programming.  |
+  `-------------------------*/
 
   // Build a new list containing the result of \a f applied to all elements
   function map (f)
