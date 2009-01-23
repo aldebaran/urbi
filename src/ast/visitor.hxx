@@ -6,6 +6,7 @@
 #ifndef AST_VISITOR_HXX
 # define AST_VISITOR_HXX
 
+# include <ast/ast.hh>
 # include <ast/visitor.hh>
 
 namespace ast
