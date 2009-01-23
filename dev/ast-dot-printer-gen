@@ -24,6 +24,7 @@ print >> dot_printer_hh, """\
 
 # include <libport/foreach.hh>
 
+# include <ast/ast.hh>
 # include <ast/visitor.hh>
 
 namespace %(ns)s
