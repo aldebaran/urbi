@@ -96,28 +96,23 @@ to study more in-depth examples after.
 \section{Comments}
 
 Commenting your code is crucial, so let's start by learning how to do
-this in \urbi. Comments are completely ignored by the interpreter, and
-can be left as documentation, reminder, \ldots \urbi support \C style,
-\Cxx style and shell-script style comments (\autoref{lst:comments}):
+this in \urbi. Comments are ignored by the interpreter, and
+can be left as documentation, reminder, \ldots \urbi supports \C and
+\Cxx style style comments (\autoref{lst:comments}):
 
 \begin{itemize}
 \item \C style comments start with \texttt{/*} and end with \texttt{*/}.
 \item \Cxx style comments start with \texttt{//} and last until the
-  end of the line
-\item Shell-script style comments start with \texttt{\#} and last
-  until the end of the line
+  end of the line.
 \end{itemize}
 
 
 \begin{urbiscript}[caption=Comments in \urbi, label=lst:comments]
-0 + /* This is a C-style comment */ 0;
-[00000000] 0
 1; // This is a C++ style comment
 [00000000] 1
-2; # This is a shell-script style comment
-[00000000] 2
-/* One difference with C/C++: this type of
-   comment /* does nest */ */
+2 + /* This is a C-style comment */ 2;
+[00000000] 4
+/* Contrary to C/C++, this type of comment /* does nest */ */
 3;
 [00000000] 3
 \end{urbiscript}
@@ -210,19 +205,19 @@ identifiers is also the same as in \Cxx: they may contain alphanumeric
 characters and underscores, but they may not start with a digit.
 
 You may ommit the initialization value, in which case it defaults to
-nil (\autoref{lst:local-uninit}).
+\lstinline|void| (\autoref{lst:local-uninit}).
 
 \begin{urbiscript}[caption=Variables initialization defaults to
-nil,label=lst:local-uninit]
+  nil,label=lst:local-uninit]
 var x;
 x;
 // Remember, the interpreter remains silent
-// because nil is printed out as nothing.
+// because void is printed out as nothing.
 // You can convince yourself that x is actually
-// nil with the following methods.
+// void with the following methods.
 x.asString;
-[00000000] "nil"
-x.isNil;
+[00000000] "void"
+x.isVoid;
 [00000000] true
 \end{urbiscript}
 
@@ -391,7 +386,7 @@ to point out its structure.
 // Create a fresh object with two slots.
 class o { var a = 42; var b = "foo"; } | {};
 // Inspect it.
-o.slotNames;
+o.slotNames.sort;
 [00000000] ["a", "b"]
 // We now know the name of its slots.
 // Let's see their value.
@@ -436,7 +431,8 @@ slots, \texttt{a} and \texttt{b}, with values \lstinline|42| and
 \texttt{setSlot} method (\autoref{lst:setslot}), which takes the slot name and
 its value.
 
-\begin{urbiscript}[caption=Defining slots, label=lst:setslot, name=object-slots]
+\begin{urbiscript}[caption=Defining slots, label=lst:setslot,
+  name=object-slots]
 o.setSlot("a", 42);
 [00000000] 42
 o.slotNames;
@@ -450,7 +446,7 @@ setting slot is using the \texttt{var} keyword (\autoref{lst:setslot-var}).
 
 \begin{urbiscript}[caption=Defining slots with var,
   label=lst:setslot-var, name=object-slots]
-// This is equivalent to o.setSlot("b", "foo")
+// This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
 o.slotNames;
@@ -490,8 +486,8 @@ set(x, "foo", 0);
 [00000000] 0
 set(x, "bar", 1);
 [00000000] 1
-x.slotNames;
-[00000000] ["x_foo", "x_bar"]
+x.slotNames.sort;
+[00000000] ["x_bar", "x_foo"]
 get(x, "foo");
 [00000000] 0
 get(x, "bar");
@@ -585,30 +581,30 @@ a little simplification earlier by saying that \lstinline|obj.slot| is
 equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
 executable code such as a function, the dot form evaluates it, as
 illustrated by \autoref{lst:auto-eval}. Inside a method, you can get the
-target with the \lstinline|self| keyword - the equivalent of \Cxx's
-\texttt{this}. \lstinline|self| can be omitted if there is no
+target with the \lstinline|this| keyword - the equivalent of \Cxx's
+\texttt{this}. \lstinline|this| can be omitted if there is no
 ambiguity with local variables.
 
 \begin{urbiscript}[caption=Function in object are automatically evaluated,
 label=lst:auto-eval]
-var obj = Object.clone;
+var o = Object.clone;
 [00000000] Object_0x0
 // This syntax stores the function
 // in the 'f' slot of obj.
-function obj.f ()
+function o.f ()
 {
-  echo("This is f with target " + self);
+  echo("This is f with target " + this);
   return 42;
 } | {};
 // The slot value is the function
-obj.getSlot("f");
+o.getSlot("f");
 [00000000] function () { ... }
 // Huho, the function is invoked!
-obj.f;
+o.f;
 [00000000] *** This is f with target Object_0x0
 [00000000] 42
 // The parentheses are in fact optional
-obj.f();
+o.f();
 [00000000] *** This is f with target Object_0x0
 [00000000] 42
 \end{urbiscript}
@@ -633,7 +629,7 @@ label=lst:getslot-function]
 // without calling it
 "".getSlot("empty");
 [00000000] function () {
-[:]  self == ""
+[:]  this . '=='("")
 [:]}
 \end{urbiscript}
 
@@ -742,7 +738,7 @@ existing value (as you would in \ruby or \java). See \autoref{lst:ref-to-same}
 for an illustration.
 
 \begin{urbiscript}[caption=Two references to the same object,
-label=lst:ref-to-same]
+  label=lst:ref-to-same, name=same]
 var a = 42;
 [00000000] 42
 var b = 42;
@@ -761,12 +757,13 @@ a === c;
 [00000000] true
 \end{urbiscript}
 
-So here we see that a and c point to the same integer, while b points
-to a second one. This a non-trivial fact: any modification on a will
-affect c as well, as shown by \autoref{lst:same-ref-mod}.
+So here we see that \lstinline|a| and \lstinline|c| point to the same
+integer, while \lstinline|b| points to a second one. This a
+non-trivial fact: any modification on \lstinline|a| will affect
+\lstinline|c| as well, as shown by \autoref{lst:same-ref-mod}.
 
 \begin{urbiscript}[caption=Shared modification,
-label=lst:same-ref-mod]
+  label=lst:same-ref-mod, name=same]
 a.slotNames;
 [00000000] []
 b.slotNames;
@@ -787,7 +784,7 @@ value. It simply change the variable to refer to the new given value,
 as illustrated by \autoref{lst:change-ref}.
 
 \begin{urbiscript}[caption=Updates just change the referee,
-label=lst:change-ref]
+  label=lst:change-ref]
 var a = 42;
 [00000000] 42
 var b = a;
@@ -878,14 +875,15 @@ present (\autoref{lst:if}).
 if (true)
   echo("ok");
 [00000000] *** ok
-if (true)
+if (false)
   echo("ko")
 else
   echo("ok");
 [00000000] *** ok
 \end{urbiscript}
 
-Note that \lstinline|if| themselves are values (\autoref{lst:if-value}).
+Note that \lstinline|if| statements themselves are values
+(\autoref{lst:if-value}).
 
 \begin{urbiscript}[caption=\texttt{if} are values, label=lst:if-value]
 echo({ if (false) "a" else "b" });
@@ -924,10 +922,10 @@ The \texttt{for} construct is still the same as \C/\Cxx one.
 \begin{urbiscript}[caption=Nihil novi sub sole, label=lst:for]
 for (var x = 2; x < 40; x += 10)
   echo(x);
+[00000000] *** 2
 [00000000] *** 12
 [00000000] *** 22
 [00000000] *** 32
-[00000000] *** 42
 \end{urbiscript}
 
 \section{for \ldots in}
@@ -997,17 +995,18 @@ to the \pascal ``\texttt{with}'' construct.
 
 
 \begin{urbiscript}[caption=Shorter with a do block,label=lst:do]
-var obj = Object.clone;
-[00000000] Object-0x0
+var o = Object.clone;
+[00000000] Object_0x0
 // All the message in this scope
 // are destined to obj.
-do obj
+do (o)
 {
  var one = 1; // var is a shortcut for the setSlot
- var two = 1; // message, so it applies on obj too
- echo(uid);
+ var two = 2; // message, so it applies on obj too
 };
-[00000000] *** 0x0
+[00000000] 2
+o.one
+[00000002] 1
 \end{urbiscript}
 
 
@@ -1086,7 +1085,7 @@ function max3(a, b, c) // Max of three values
       return b
   };
   max2(a, max2(b, c));
-};
+} | {};
 \end{urbiscript}
 
 \section{Lexical closures}
@@ -1189,7 +1188,7 @@ var p = Pair.clone;
 [00000000] (nil, nil)
 p.first = "101010";
 [00000000] "101010"
-p.second = true
+p.second = true;
 [00000000] true
 p;
 [00000000] ("101010", true)
@@ -1218,7 +1217,8 @@ some type) and inheritance relations (extending another type) are
 simplified in a single relation: prototyping. You can inspect an
 object prototypes with the \texttt{protos} method (\autoref{lst:protos}).
 
-\begin{urbiscript}[caption=Inspecting prototypes, label=lst:protos]
+\begin{urbiscript}[caption=Inspecting prototypes, label=lst:protos,
+  name=protos]
 var p = Pair.clone;
 [00000000] (nil, nil)
 p.protos;
@@ -1228,7 +1228,8 @@ p.protos;
 As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
 which is Pair. We can check this as presented in \autoref{lst:proto-check}.
 
-\begin{urbiscript}[caption=Checking the prototype, label=lst:proto-check]
+\begin{urbiscript}[caption=Checking the prototype,
+  label=lst:proto-check, name=protos]
 // Lists 'head' method returns the first element
 p.protos.head;
 [00000000] (nil, nil)
@@ -1260,8 +1261,8 @@ p.first;
 // and Pair has a 'first' slot.
 p.protos.head === Pair;
 [00000000] true
-Pair.slotNames;
-[00000000] [..., "first", "second", ...]
+"first" in Pair.slotNames && "second" in Pair.slotNames;
+[00000000] true
 \end{urbiscript}
 
 As shown here, the \texttt{clone} method simply creates an empty
@@ -1350,7 +1351,7 @@ p.locateSlot("first") === Pair;
 [00000000] true
 // Where does locateSlot itself come from? Object itself!
 p.locateSlot("locateSlot");
-[00000000] <Object>
+[00000000] Object
 \end{urbiscript}
 
 You can see here that the prototype model is rather simple. Obtaining
@@ -1373,7 +1374,7 @@ prototype and the other clone as well?
 The answer is, of course, no, as illustrated by \autoref{lst:copy-on-write}.
 
 \begin{urbiscript}[caption=Copy on write in action,
-label=lst:copy-on-write]
+  label=lst:copy-on-write, name=cow]
 var proto = Object.clone;
 [00000000] Object_0x1
 var proto.x = 0;
@@ -1399,8 +1400,8 @@ local object when they're updated, as we can check in
 \autoref{lst:check-copy-on-write}.
 
 \begin{urbiscript}[caption=Inspecting copy on write,
-label=lst:check-copy-on-write]
-// This is the continuation of previous example
+  label=lst:check-copy-on-write, name=cow]
+// This is the continuation of previous example.
 
 // As expected, o2 finds "x" in proto
 o2.locateSlot("x") === proto;
@@ -1429,13 +1430,13 @@ second slots. For this we use the \texttt{do} scope described in
 customize pairs printing - don't give it too much attention for now.
 
 \begin{urbiscript}[caption=Defining our own \texttt{MyPair} class,
-label=lst:do-class]
+  label=lst:do-class]
 var MyPair = Object.clone;
 [00000000] Object_0x1
-do MyPair
+do (MyPair)
 {
-  var first;
-  var second;
+  var first = nil;
+  var second = nil;
   function asString ()
   {
     "MyPair: " + first + ", " + second
@@ -1460,17 +1461,17 @@ provides a shorthand to define classes as we did above: the
 \texttt{class} keyword (\autoref{lst:class}).
 
 \begin{urbiscript}[caption=Using the \texttt{class} construct,
-  label=lst:class]
+  label=lst:class, name=my-pair]
 class MyPair
 {
   var first;
   var second;
-  function asString() { /* ... */ };
+  function asString() { "(" + first + ", " + second + ")"; };
 };
 \end{urbiscript}
 
 The \texttt{class} keyword simply creates MyPair with Object.clone,
-and provides you with a ``do MyPair'' scope. It actually also
+and provides you with a \lstinline|do (MyPair)| scope. It actually also
 predefines a few slots, but this is not the point here.
 
 \section{Constructors}
@@ -1496,8 +1497,9 @@ To define such constructors, prototypes only need to provide an
 new. For instance, we can improve our previous \texttt{Pair} class
 with a constructor (\autoref{lst:define-ctor}).
 
-\begin{urbiscript}[caption=Defining constructors, label=lst:define-ctor]
-do MyPair
+\begin{urbiscript}[caption=Defining constructors,
+  label=lst:define-ctor, name=my-pair]
+do (MyPair)
 {
   function init(f, s)
   {
@@ -1531,20 +1533,16 @@ object, you can simply use \texttt{setSlot}, as illustrated by
 
 % FIXME: doesn't work, toplevel, puke, etc
 \begin{urbiscript}[caption=First class functions,
-label=lst:first-class-functions]
-function f ()
-{
-  echo("hello");
-} | {};
+  label=lst:first-class-functions]
 var o = Object.clone | {};
 // Here we can use f as any regular value
-o.setSlot("m1", f) | {};
+o.setSlot("m1", function () { echo("Hello") }) | {};
 // This is strictly equivalent
-var o.m2 = f | {};
+var o.m2 = function () { echo("Hello") } | {};
 o.m1;
-[00000000] *** hello
+[00000000] *** Hello
 o.m2;
-[00000000] *** hello
+[00000000] *** Hello
 \end{urbiscript}
 
 This enables to write powerful pieces of code, like functions that
@@ -1555,7 +1553,7 @@ enables to check very simply if all elements in a list verify a
 predicate (\autoref{lst:all}).
 
 \begin{urbiscript}[caption=Functional programming: the \texttt{all}
-  function, label=lst:all]
+  function, label=lst:all, name=all]
 function all(list, predicate)
 {
   for (var elt : list)
@@ -1566,9 +1564,9 @@ function all(list, predicate)
 // now we can easily check if
 // all elements in a list are positive
 function positive(x) { x >= 0 } | {};
-all([1, 2, 3], positive);
+all([1, 2, 3], getSlot("positive"));
 [00000000] true
-all([1, 2, -3], positive);
+all([1, 2, -3], getSlot("positive"));
 [00000000] false
 \end{urbiscript}
 
@@ -1578,9 +1576,9 @@ Another nice feature is the ability to write lambda functions, which
 are anonymous functions. You can create a functional value as an
 expression, without naming it, with the syntax shown in \autoref{lst:lambda}.
 
-\begin{urbiscript}[caption=Lambda function, label=lst:lambda]
+\begin{urbiscript}[caption=Lambda function, label=lst:lambda, name=all]
 // Create an anonymous function
-function (x) {x + 1} | {}
+function (x) {x + 1} | {};
 // This enable to easily pass function
 // to our "all" function:
 all([1, 2, 3], function (x) { x > 0});
@@ -1616,14 +1614,14 @@ by not specifying formal arguments. The function is provided with a
 // Note the lack of formal arguments specification
 function first
 {
-  // Evaluate only the first argument
-  call.evalArgAt(1);
+  // Evaluate only the first argument.
+  call.evalArgAt(0);
 } | {};
 first(echo("first"), echo("second"));
 [00000000] *** first
 function twice
 {
-  // Evaluate all arguments twice
+  // Evaluate all the arguments twice.
   call.evalArgs;
   call.evalArgs;
 } | {};
@@ -1644,11 +1642,11 @@ how one can implement such a behavior.
 
 \begin{urbiscript}[caption=Implementing logic short circuits,
 label=lst:short-circuits]
-function and
+function myand
 {
-  var lhs = call.evalArgAt(1);
+  var lhs = call.evalArgAt(0);
   if (lhs)
-    return call.evalArgAt(2)
+    return call.evalArgAt(1)
   else
     return false;
 } | {};
@@ -1657,9 +1655,9 @@ function f()
   echo("f executed");
   return true;
 } | {};
-and(false, f());
+myand(false, f());
 [00000000] false
-and(true, f());
+myand(true, f());
 [00000000] *** f executed
 [00000000] true
 \end{urbiscript}
@@ -1698,7 +1696,7 @@ For now, we've separated our different commands with a semicolon
 functions in parallel.
 
 \begin{urbiscript}[caption=Parallelism operator,
-label=lst:parallelism-operators]
+  label=lst:parallelism-operators, name=parallel]
 function test(name)
 {
   echo(name + ": 1");
@@ -1744,7 +1742,7 @@ subtle:
 \end{itemize}
 
 \begin{urbiscript}[caption=Difference between ``\texttt{\&}'' and
-``\texttt{,}'', label=lst:and-comma]
+``\texttt{,}'', label=lst:and-comma, name=parallel]
 // This runs test and echo("right") in parallel,
 // and wait until both are done before continuing
 test("left") & echo("right"); echo("done");
@@ -1777,11 +1775,13 @@ end of the scope (\autoref{lst:detach}).
 \begin{urbiscript}[caption=Detach, label=lst:detach]
 function test()
 {
-  // wait 5 seconds, and echo "foo"
-  detach({sleep(5s); echo("foo")});
+  // wait 1 second, and echo "foo"
+  detach({sleep(1s); echo("foo")});
 } | {};
-test(); echo("Not blocked");
+test();
+echo("Not blocked");
 [00000000] *** Not blocked
+sleep(1s);
 [00005000] *** foo
 \end{urbiscript}
 
@@ -1797,15 +1797,16 @@ features. \autoref{lst:tagging} illustrates how to tag chunks of code.
 \begin{urbiscript}[caption=Tagging a block of code, label=lst:tagging]
 // Create a new tag
 var mytag = Tag.new("name");
-[00000000] Tag_0x0
+[00000000] Tag<name>
 // Tag the evaluation of 42
 mytag: 42;
 [00000000] 42
-// Tag the evaluation of a block
+// Tag the evaluation of a block.
 mytag: { "foo"; 51 };
 [00000000] 51
-// Tag the execution of a function
-mytag: f();
+// Tag a function call.
+mytag: echo("tagged");
+[00000000] *** tagged
 \end{urbiscript}
 
 You can use tag that wasn't declared previously, they will be created
@@ -1855,21 +1856,21 @@ mytag:
   while (true)
   {
     echo("ping");
-    sleep(1s)
+    sleep(.5s)
   }
 },
+sleep(1.6s);
 [00000000] *** ping
 [00001000] *** ping
 [00002000] *** ping
 // Suspend execution
 mytag.freeze;
 // No printing anymore
-sleep(5s);
+sleep(1.6s);
 // Resume execution
 mytag.unfreeze;
+sleep(.5s);
 [00007000] *** ping
-[00008000] *** ping
-[00009000] *** ping
 \end{urbiscript}
 
 \begin{urbiscript}[caption=Stopping code execution, label=lst:stop]
@@ -1948,24 +1949,24 @@ takes longer than the given timeout, it aborts it, print
 \item Parallelism operators, to launch a timeout job in background.
 \end{itemize}
 
-% FIXME: doesn't word (inner return)
+% FIXME: doesn't work (inner return)
 \begin{urbiscript}[caption=Implementing a timeout method, label=lst:timeout]
 function timeOut
 {
-  // In background, we launch a timeout job, that waits
+  // In background, launch a timeout job that waits
   // for the given duration before aborting the function.
-  // call.evalArgAt is the second argument, the delay
+  // call.evalArgAt(1) is the second argument, the delay.
   {
-    sleep (call.evalArgAt(2));
+    sleep (call.evalArgAt(1));
     echo("Timeout!");
     return;
   },
-  return call.evalArgAt(1);
+  return call.evalArgAt(0);
 } | {};
-timeOut({sleep(3s); echo("On time"); 42}, 5s);
+timeOut({sleep(1s); echo("On time"); 42}, 2s);
 [00000000] *** On time
 [00000000] 42
-timeOut({sleep(6s); echo("On time"); 42}, 5s);
+timeOut({sleep(2s); echo("On time"); 42}, 1s);
 [00000000] *** Timeout!
 \end{urbiscript}
 
@@ -2046,6 +2047,7 @@ whenever (x)
 };
 x = true;
 [00000000] true
+sleep(3s);
 // Whenever keeps triggering
 [00000000] *** ping
 [00001000] *** ping
@@ -2072,16 +2074,19 @@ else
   echo("pong");
   sleep(1s);
 };
+sleep (3s);
 [00000000] *** pong
 [00001000] *** pong
 [00002000] *** pong
 x = true;
 [00003000] true
+sleep (3s);
 [00003000] *** ping
 [00004000] *** ping
 [00005000] *** ping
 x = false;
 [00006000] false
+sleep (2s);
 [00006000] *** pong
 [00007000] *** pong
 \end{urbiscript}
@@ -2096,7 +2101,7 @@ then be emitted with the \lstinline|emit| keyword (\autoref{lst:event}).
 \begin{urbiscript}[caption=Using events, label=lst:event]
 var myEvent = Event.new;
 [00000000] Event_0x0
-at (event)
+at (myEvent)
   echo("ping");
 emit myEvent;
 [00000000] *** ping
@@ -2115,7 +2120,7 @@ duration (\autoref{lst:emit-duration}).
 label=lst:emit-duration]
 var myEvent = Event.new;
 [00000000] Event_0x0
-whenever (event)
+whenever (myEvent)
 {
   echo("ping");
   sleep(250ms);

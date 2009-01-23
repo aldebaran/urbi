@@ -1,5 +1,15 @@
 #! /usr/bin/perl -w
 
+# Read a LaTeX file, and extract chk files for each urbiscript
+# environment listing.  The label is used to name the create chk file.
+# If there is no label, FILE:LINE is used to name the file.
+#
+# lstlisting has a notion of split listing, using the attribute "name"
+# to decide how pieces must be glued together (this is used when
+# numbering).  Listings with the same "name" are glued togeter.  This
+# is especially needed when a listing uses objects defined in earlier
+# listings.
+
 use strict;
 use English;
 use IO::File;
@@ -28,6 +38,7 @@ sub register ($$\%)
             "\n\n"
             . "//#line ${%$lst}{_line} \"${%$lst}{_file}\"\n"
             . ${%$lst}{_contents};
+          return;
         }
       else
         {

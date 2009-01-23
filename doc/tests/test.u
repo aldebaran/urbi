@@ -1,4 +1,8 @@
 //                                      -*- urbi -*-
+
+// Too many unpredictable changes in the error messages.
+LookupError.fixSpellingErrors = false |
+
 var obj = Object.new |
 do (obj)
 {
