@@ -285,9 +285,9 @@ function myFunction()
   echo("from my function!");
 };
 [00000000] function () {
-..  echo("Hello world");
-..  echo("from my function!");
-..}
+[:]  echo("Hello world");
+[:]  echo("from my function!");
+[:]}
 
 // Invoke it
 myFunction();
@@ -314,14 +314,14 @@ function f()
   echo("f");
 };
 [00000000] function () {
-..  echo("f");
-..}
+[:]  echo("f");
+[:]}
 // This does not invoke f
 // We are just evaluating it as a function
 f;
 [00000000] function () {
-..  echo("f");
-..}
+[:]  echo("f");
+[:]}
 // This actually calls f
 f();
 [00000000]
@@ -345,8 +345,7 @@ arguments,label=lst:function-arg]
 function sum(a, b, c)
 {
   return a + b + c;
-};
-[00000000] ...
+} | {};
 sum(20, 2, 20);
 [00000000] 42
 \end{urbiscript}
@@ -358,8 +357,7 @@ executed, the evaluation of the last expression is returned
 
 \begin{urbiscript}[caption=Return value is the last evaluated value,
   label=lst:no-return]
-function succ(i) { i + 1 };
-[00000000] ...
+function succ(i) { i + 1 } | {};
 succ(50);
 [00000000] 51
 \end{urbiscript}
@@ -389,14 +387,14 @@ names of the slots of an object with the \texttt{slotNames}
 method. \autoref{lst:object-slots} makes this very clear: we dissect an object
 to point out its structure.
 
-\begin{urbiscript}[caption=Inspecting an \urbi
-object,label=lst:object-slots]
-// Say we are given an simple object, o.
-// Let's inspect it.
+\begin{urbiscript}[caption=Inspecting an \urbi object,label=lst:object-slots]
+// Create a fresh object with two slots.
+class o { var a = 42; var b = "foo"; } | {};
+// Inspect it.
 o.slotNames;
 [00000000] ["a", "b"]
 // We now know the name of its slots.
-// Let's see what their value is.
+// Let's see their value.
 o.a;
 [00000000] 42
 o.b;
@@ -412,8 +410,8 @@ neutral object, so let's start by instanciating one with the
 \texttt{clone} method of \texttt{Object} (\autoref{lst:object-new}).
 
 \begin{urbiscript}[caption=Instanciating a new object,
-label=lst:object-new]
-// Create the o varbiable as a fresh object
+  label=lst:object-new, name=object-slots]
+// Create the o variable as a fresh object.
 var o = Object.clone;
 [00000000] Object_0x00000000
 // Check its content
@@ -438,7 +436,7 @@ slots, \texttt{a} and \texttt{b}, with values \lstinline|42| and
 \texttt{setSlot} method (\autoref{lst:setslot}), which takes the slot name and
 its value.
 
-\begin{urbiscript}[caption=Defining slots, label=lst:setslot]
+\begin{urbiscript}[caption=Defining slots, label=lst:setslot, name=object-slots]
 o.setSlot("a", 42);
 [00000000] 42
 o.slotNames;
@@ -450,7 +448,8 @@ o.a;
 Here we successfully created our first slot, a. A good shorthand for
 setting slot is using the \texttt{var} keyword (\autoref{lst:setslot-var}).
 
-\begin{urbiscript}[caption=Defining slots with var, label=lst:setslot-var]
+\begin{urbiscript}[caption=Defining slots with var,
+  label=lst:setslot-var, name=object-slots]
 // This is equivalent to o.setSlot("b", "foo")
 var o.b = "foo";
 [00000000] "foo"
@@ -472,21 +471,19 @@ names are unknown at code-writing time.
 % mefyl: FIXME: I never introduced that '+' concatenates strings.
 
 \begin{urbiscript}[caption=Dynamic slots with getSlot and setSlot,
-label=lst:getslot-setslot]
+  label=lst:getslot-setslot]
 function set(object, name, value)
 {
   // We have to use setSlot here, since we don't
   // know the actual name of the slot.
   return object.setSlot("x_" + name, value);
-};
-[00000000] ...
+} | {};
 function get(object, name)
 {
   // We have to use getSlot here, since we don't
   // know the actual name of the slot.
   return object.getSlot("x_" + name);
-};
-[00000000] ...
+} | {};
 var x = Object.clone;
 [00000000] Object_0x00000000
 set(x, "foo", 0);
@@ -509,7 +506,8 @@ one, and it's named\ldots \texttt{updateSlot} (originality
 award). Getting back to our \texttt{o} object, let's try to update one
 of its slot (\autoref{lst:updateslot}).
 
-\begin{urbiscript}[caption=Updating a slot, label=lst:updateslot]
+\begin{urbiscript}[caption=Updating a slot, label=lst:updateslot,
+  name=object-slots]
 o.a;
 [00000000] 42;
 o.updateSlot("a", 51);
@@ -522,7 +520,7 @@ Again, there's a shorthand for \texttt{updateSlot}: operator
 \texttt{=} (\autoref{lst:updateslot-eq}).
 
 \begin{urbiscript}[caption=Updating a slot with '\texttt{=}',
-label=lst:updateslot-eq]
+  label=lst:updateslot-eq, name=object-slots]
 o.b;
 [00000000] "foo"
 // Equivalent to o.updateSlot("b", "bar")
@@ -542,7 +540,7 @@ and subsequent writes must be done with \texttt{updateSlot}
 (\autoref{lst:redefinition}).
 
 \begin{urbiscript}[caption=Defining a slot twice is an error,
-label=lst:redefinition]
+  label=lst:redefinition, name=object-slots]
 var o.c = 0;
 [00000000] 0
 // Can't redefine a slot like this
@@ -556,7 +554,8 @@ o.c = 1;
 Finally, we may want to remove a slot from an object. This can be done
 with a method whose name I let you guess (\autoref{lst:removeslot}).
 
-\begin{urbiscript}[caption=Removing a slot, label=lst:removeslot]
+\begin{urbiscript}[caption=Removing a slot, label=lst:removeslot,
+  name=object-slots]
 o.slotNames;
 [00000000] ["a", "b", "c"]
 o.removeSlot("c");
@@ -571,8 +570,8 @@ documentation like this. Last point: reading, updating or removing a
 slot which does not exist is, of course an error
 (\autoref{lst:lookup-failed}).
 
-\begin{urbiscript}[caption=Manipulating existent slot is an error,
-label=lst:lookup-failed]
+\begin{urbiscript}[caption=Manipulating nonexistent slot is an error,
+  label=lst:lookup-failed, name=object-slots]
 o.d;
 [00000000:error] !!! lookup failed: d
 o.d = 0;
@@ -600,8 +599,7 @@ function obj.f ()
 {
   echo("This is f with target " + self);
   return 42;
-};
-[00000000] ...
+} | {};
 // The slot value is the function
 obj.getSlot("f");
 [00000000] function () { ... }
@@ -635,8 +633,8 @@ label=lst:getslot-function]
 // without calling it
 "".getSlot("empty");
 [00000000] function () {
-..  self == ""
-..}
+[:]  self == ""
+[:]}
 \end{urbiscript}
 
 So the empty function simply checks whether the target string is empty
@@ -820,8 +818,7 @@ function test(arg)
 {
   var arg.flag;  // add a slot in arg
   echo(arg.uid); // print its uid
-};
-[00000000] ...
+} | {};
 var x = Object.clone;
 [00000000] Object_0x1
 x.uid;
@@ -844,8 +841,7 @@ function test(arg)
   // This does not affect the referred value,
   // nor the actual external argument.
   arg = 1;
-};
-[00000000] ...
+} | {};
 var x = 0;
 [00000000] 0
 test(x);
@@ -1114,8 +1110,7 @@ function printSalaries(rate)
 
   echo("Alice's salary is " + computeSalary(35));
   echo("Bob's salary is " + computeSalary(30));
-};
-[00000000] ...
+} | {};
 printSalaries(15);
 [00000000] *** Alice's salary is 425
 [00000000] *** Bob's salary is 350
@@ -1137,8 +1132,7 @@ function add(n)
   x += n;
   y += n;
   void
-};
-[00000000] ...
+} | {};
 add(25);
 add(25);
 add(1);
@@ -1317,10 +1311,15 @@ prototype's slots (\autoref{lst:proto-prec}).
 
 \begin{urbiscript}[caption=Prototype precedence, label=lst:proto-prec]
 var proto1 = Object.clone;
+[00000000] Object_0x00000000
 var proto2 = Object.clone;
+[00000000] Object_0x00000000
 var o = Object.clone;
+[00000000] Object_0x00000000
 o.addProto(proto1);
+[00000000] Object_0x00000000
 o.addProto(proto1);
+[00000000] Object_0x00000000
 // We give o an x slot through proto1
 var proto1.x = 0;
 [00000000] 0
@@ -1441,8 +1440,7 @@ do MyPair
   {
     "MyPair: " + first + ", " + second
   };
-};
-[00000000] ...
+} | {};
 // We just defined a pair
 MyPair;
 [00000000] MyPair: nil, nil
@@ -1462,7 +1460,7 @@ provides a shorthand to define classes as we did above: the
 \texttt{class} keyword (\autoref{lst:class}).
 
 \begin{urbiscript}[caption=Using the \texttt{class} construct,
-label=lst:class]
+  label=lst:class]
 class MyPair
 {
   var first;
@@ -1537,16 +1535,12 @@ label=lst:first-class-functions]
 function f ()
 {
   echo("hello");
-};
-[00000000] ...
-var o = Object.clone;
-[00000000] ...
+} | {};
+var o = Object.clone | {};
 // Here we can use f as any regular value
-o.setSlot("m1", f);
-[00000000] ...
+o.setSlot("m1", f) | {};
 // This is strictly equivalent
-var o.m2 = f;
-[00000000] ...
+var o.m2 = f | {};
 o.m1;
 [00000000] *** hello
 o.m2;
@@ -1561,19 +1555,17 @@ enables to check very simply if all elements in a list verify a
 predicate (\autoref{lst:all}).
 
 \begin{urbiscript}[caption=Functional programming: the \texttt{all}
-function, label=lst:all]
+  function, label=lst:all]
 function all(list, predicate)
 {
   for (var elt : list)
     if (!predicate(elt))
       return false;
   return true;
-};
-[00000000] ...
+} | {};
 // now we can easily check if
 // all elements in a list are positive
-function positive(x) { x >= 0 };
-[00000000] ...
+function positive(x) { x >= 0 } | {};
 all([1, 2, 3], positive);
 [00000000] true
 all([1, 2, -3], positive);
@@ -1588,8 +1580,7 @@ expression, without naming it, with the syntax shown in \autoref{lst:lambda}.
 
 \begin{urbiscript}[caption=Lambda function, label=lst:lambda]
 // Create an anonymous function
-function (x) {x + 1};
-[00000000] ...
+function (x) {x + 1} | {}
 // This enable to easily pass function
 // to our "all" function:
 all([1, 2, 3], function (x) { x > 0});
@@ -1621,14 +1612,13 @@ by not specifying formal arguments. The function is provided with a
 (\autoref{lst:lazy}).
 
 \begin{urbiscript}[caption=Tweaking arguments evaluation,
-label=lst:lazy]
+  label=lst:lazy]
 // Note the lack of formal arguments specification
 function first
 {
   // Evaluate only the first argument
   call.evalArgAt(1);
-};
-[00000000] ...
+} | {};
 first(echo("first"), echo("second"));
 [00000000] *** first
 function twice
@@ -1636,8 +1626,7 @@ function twice
   // Evaluate all arguments twice
   call.evalArgs;
   call.evalArgs;
-};
-[00000000] ...
+} | {};
 twice(echo("first"), echo("second"));
 [00000000] *** first
 [00000000] *** second
@@ -1662,14 +1651,12 @@ function and
     return call.evalArgAt(2)
   else
     return false;
-};
-[00000000] ...
+} | {};
 function f()
 {
   echo("f executed");
   return true;
-};
-[00000000] ...
+} | {};
 and(false, f());
 [00000000] false
 and(true, f());
@@ -1717,8 +1704,7 @@ function test(name)
   echo(name + ": 1");
   echo(name + ": 2");
   echo(name + ": 3");
-};
-[00000000] ...
+} | {};
 // Serialized executions
 test("left") ; test ("middle"); test ("right");
 [00000000] *** left: 1
@@ -1793,11 +1779,10 @@ function test()
 {
   // wait 5 seconds, and echo "foo"
   detach({sleep(5s); echo("foo")});
-};
-[00000000] ...
+} | {};
 test(); echo("Not blocked");
 [00000000] *** Not blocked
-..[00005000] *** foo
+[00005000] *** foo
 \end{urbiscript}
 
 \section{Tags for parallel control flows}
@@ -1833,7 +1818,7 @@ practice in regular code.
 \begin{urbiscript}[caption=Tag created implicitly,
 label=lst:implicit-tag]
 // Since mytag is not declared, this will first do:
-// var Tag.mytag = new Tag("mytag");
+// var Tag.mytag = Tag.new("mytag");
 mytag : 42;
 [00000000] 42
 \end{urbiscript}
@@ -1874,17 +1859,17 @@ mytag:
   }
 },
 [00000000] *** ping
-..[00001000] *** ping
-..[00002000] *** ping
+[00001000] *** ping
+[00002000] *** ping
 // Suspend execution
 mytag.freeze;
 // No printing anymore
 sleep(5s);
 // Resume execution
 mytag.unfreeze;
-..[00007000] *** ping
-..[00008000] *** ping
-..[00009000] *** ping
+[00007000] *** ping
+[00008000] *** ping
+[00009000] *** ping
 \end{urbiscript}
 
 \begin{urbiscript}[caption=Stopping code execution, label=lst:stop]
@@ -1903,11 +1888,11 @@ mytag.unfreeze;
   echo("Background job stopped")|
 },
 [00000000] *** ping
-..[00001000] *** ping
-..[00002000] *** ping
+[00001000] *** ping
+[00002000] *** ping
 // Stop the tag
 mytag.stop;
-..[00002500] *** Background job stopped
+[00002500] *** Background job stopped
 // Our background job finished.
 // Unfreezing the tag has no effect.
 mytag.unfreeze;
@@ -1928,22 +1913,22 @@ while (true)
   echo("Background job stopped")|
 },
 [00000000] *** ping
-..[00001000] *** pong
-..[00002000] *** ping
-..[00003000] *** pong
+[00001000] *** pong
+[00002000] *** ping
+[00003000] *** pong
 // Block printing of pong
 mytag.block;
 // The second half of the while
 // isn't executed anymore.
-..[00004000] *** ping
-..[00005000] *** ping
-..[00006000] *** ping
+[00004000] *** ping
+[00005000] *** ping
+[00006000] *** ping
 // Reactivate pong
 mytag.unblock;
-..[00007000] *** ping
-..[00008000] *** pong
-..[00009000] *** ping
-..[00010000] *** pong
+[00007000] *** ping
+[00008000] *** pong
+[00009000] *** ping
+[00010000] *** pong
 \end{urbiscript}
 
 \section{Advanced example with parallelism and tags}
@@ -1976,8 +1961,7 @@ function timeOut
     return;
   },
   return call.evalArgAt(1);
-};
-[00000000] ...
+} | {};
 timeOut({sleep(3s); echo("On time"); 42}, 5s);
 [00000000] *** On time
 [00000000] 42
@@ -2064,10 +2048,10 @@ x = true;
 [00000000] true
 // Whenever keeps triggering
 [00000000] *** ping
-..[00001000] *** ping
-..[00002000] *** ping
+[00001000] *** ping
+[00002000] *** ping
 x = false;
-..[00002000] false
+[00002000] false
 // Whenever stops triggering
 \end{urbiscript}
 
@@ -2089,17 +2073,17 @@ else
   sleep(1s);
 };
 [00000000] *** pong
-..[00001000] *** pong
-..[00002000] *** pong
+[00001000] *** pong
+[00002000] *** pong
 x = true;
-..[00003000] true
-..[00003000] *** ping
-..[00004000] *** ping
-..[00005000] *** ping
+[00003000] true
+[00003000] *** ping
+[00004000] *** ping
+[00005000] *** ping
 x = false;
-..[00006000] false
-..[00006000] *** pong
-..[00007000] *** pong
+[00006000] false
+[00006000] *** pong
+[00007000] *** pong
 \end{urbiscript}
 
 \section{Events}
@@ -2139,10 +2123,10 @@ whenever (event)
 // Emit myEvent for one second
 emit (1s) myEvent;
 [00000000] *** ping
-..[00000250] *** ping
-..[00000500] *** ping
-..[00000750] *** ping
-..[00001000] *** ping
+[00000250] *** ping
+[00000500] *** ping
+[00000750] *** ping
+[00001000] *** ping
 \end{urbiscript}
 
 %\section{Valued events}

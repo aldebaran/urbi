@@ -8,6 +8,46 @@ use File::Path qw(mkpath rmtree);
 # All the tests.
 my %chk;
 
+# Those with a name.
+my %by_name;
+
+# register ($FILE, $LINE, \%LST)
+# ------------------------------
+# Register a listing.
+sub register ($$\%)
+{
+  my ($file, $line, $lst) = @_;
+  # If this listing has a name which is already used, append to
+  # this existing listing.
+  my $name = ${%$lst}{name};
+  if ($name)
+    {
+      if ($by_name{$name})
+        {
+          ${%{$by_name{$name}}}{_contents} .=
+            "\n\n"
+            . "//#line ${%$lst}{_line} \"${%$lst}{_file}\"\n"
+            . ${%$lst}{_contents};
+        }
+      else
+        {
+          $by_name{$name} = $lst;
+        }
+    }
+  my $label = ${%$lst}{label};
+  if ($chk{$label})
+    {
+      print STDERR
+        "warning: label `$label' defined twice\n",
+        "  ${%{$chk{$label}}}{_location}: first definition\n",
+        "  $file:$line: second definition\n";
+    }
+  else
+    {
+      $chk{$label} = $lst;
+    }
+}
+
 sub process_listing ($$$)
 {
   my ($file, $line, $lst) = @_;
@@ -82,23 +122,18 @@ sub process_file ($)
     {
       if (/^\\begin{urbiscript}/)
       {
-          $line = $in->input_line_number;
-          $test = $_;
+        $line = $in->input_line_number;
+        $test = $_;
       }
       elsif (!/^\\end{urbiscript}/)
       {
-          $test .= $_;
+        $test .= $_;
       }
       else # \end{urbiscript}
       {
-          $test .= $_;
-          my %res = process_listing $file, $line, $test;
-          print STDERR
-              "warning: label `$res{label}' defined twice\n",
-              "  ${%{$chk{$res{label}}}}{_location}: first definition\n",
-              "  $file:$line: second definition\n"
-            if defined $chk{$res{label}};
-          $chk{$res{label}} = \%res;
+        $test .= $_;
+        my %res = process_listing $file, $line, $test;
+        register ($file, $line, %res);
       }
     }
   }
@@ -115,7 +150,7 @@ sub dump_chk ($)
     push @file, $file;
     my $out = new IO::File ">$file"
         or die "cannot create $file: $!";
-    print $out "// $c{_location}.\n";
+    print $out "//#line $c{_line} \"$c{_file}\"\n";
     print $out "$c{_contents}\n";
   }
   my $local_mk = "$dir/local.mk";
