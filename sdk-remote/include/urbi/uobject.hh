@@ -5,6 +5,8 @@
 
 # include <string>
 
+# include <libport/warning-push.hh>
+
 # include <libport/fwd.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
@@ -359,5 +361,7 @@ namespace urbi
 // This file needs the definition of UObject, so included last.
 // To be cleaned later.
 # include <urbi/ustarter.hh>
+
+# include <libport/warning-pop.hh>
 
 #endif // ! URBI_UOBJECT_HH
