@@ -1,5 +1,3 @@
-# Compile each UObject using umake.
-
 include uobjects/uobjects.mk
 
 EXTRA_DIST += $(addprefix uobjects/,$(UOBJECTS:=.uob))
@@ -9,7 +7,6 @@ CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
 
 UMAKE_SHARED = tests/bin/umake-shared
 
-# uobjects_all_SOURCES = uobjects/all.uob
 %$(SHLIBEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject.la
 	$(UMAKE_SHARED) --clean --output=$@ $<
 ## umake has dependencies support, so it might not recompile here, in
@@ -22,12 +19,21 @@ clean-uobjects:
 # If we are unlucky, umake-shared will be cleaned before we call it.
 	$(UMAKE_SHARED) --deep-clean ||			\
 	  find . -name "_ubuild-*" -a -type d | xargs rm -rf
+# This is a bug in deep-clean: we don't clean the .libs files.  But it
+# is not so simple, as several builds may share a common .libs, so one
+# build cannot remove this directory.
+	find . -name ".libs" -a -type d | xargs rm -rf
 	rm -f $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
 
 # Help to restart broken builds.
 $(UMAKE_SHARED):
 	make -C tests bin/umake-shared
 	make -C $(top_builddir) sdk/umake-shared sdk/umake
+
+
+## -------------- ##
+## Dependencies.  ##
+## -------------- ##
 
 # We need to factor this.  .SECONDEXPANSION seems to do what we want,
 # but I need to investigate further.

@@ -2,6 +2,8 @@ include $(top_srcdir)/build-aux/init.mk
 AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
 include $(top_srcdir)/build-aux/check.mk
+# We use exit 176 to denote a test to skip.
+SKIP_STATUS = 176
 include $(top_srcdir)/build-aux/m4sh.mk
 
 include examples/local.mk

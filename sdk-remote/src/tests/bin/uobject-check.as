@@ -13,8 +13,7 @@ me=$(basename "$uob")
 
 # The directory we work in.
 # The ending part, for our builddir: access-and-change/uaccess.dir.
-builddir=$(echo "$uob" |
-           sed -e 's,.*/src/uobjects/,uobjects/,;s/\.la$/.dir/;')
+builddir=$(echo "$uob" | sed -e 's,.*/src/uobjects/,uobjects/,').dir
 mkcd $builddir
 
 # Find urbi-launch.
