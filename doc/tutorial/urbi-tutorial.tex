@@ -303,23 +303,30 @@ might help you understanding this.
 
 
 \begin{urbiscript}[caption=Function as values,label=lst:function-values]
-// Define f
-function f()
+// Work in a scope.
 {
-  echo("f");
+  // Define f
+  function f()
+  {
+    echo("f");
+  };
+  // This does not invoke f
+  // We are just evaluating it as a function
+  f;
 };
 [00000000] function () {
 [:]  echo("f");
 [:]}
-// This does not invoke f
-// We are just evaluating it as a function
-f;
-[00000000] function () {
-[:]  echo("f");
-[:]}
-// This actually calls f
-f();
-[00000000]
+{
+  // Define f
+  function f()
+  {
+    echo("Hello World");
+  };
+  // This actually calls f
+  f();
+};
+[00000000] *** Hello World
 \end{urbiscript}
 
 Here you can see that f is actually a simple value. You can just
@@ -384,15 +391,16 @@ to point out its structure.
 
 \begin{urbiscript}[caption=Inspecting an \urbi object,label=lst:object-slots]
 // Create a fresh object with two slots.
-class o { var a = 42; var b = "foo"; } | {};
+class Foo { var a = 42; var b = "foo"; };
+[00000000] Foo
 // Inspect it.
-o.slotNames.sort;
-[00000000] ["a", "b"]
+Foo.slotNames.sort;
+[00000000] ["a", "asFoo", "b", "type"]
 // We now know the name of its slots.
 // Let's see their value.
-o.a;
+Foo.a;
 [00000000] 42
-o.b;
+Foo.b;
 [00000000] "foo"
 \end{urbiscript}
 
@@ -449,7 +457,7 @@ setting slot is using the \texttt{var} keyword (\autoref{lst:setslot-var}).
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
-o.slotNames;
+o.slotNames.sort;
 [00000000] ["a", "b"]
 o.b;
 [00000000] "foo"
@@ -505,7 +513,7 @@ of its slot (\autoref{lst:updateslot}).
 \begin{urbiscript}[caption=Updating a slot, label=lst:updateslot,
   name=object-slots]
 o.a;
-[00000000] 42;
+[00000000] 42
 o.updateSlot("a", 51);
 [00000000] 51
 o.a;
@@ -552,11 +560,11 @@ with a method whose name I let you guess (\autoref{lst:removeslot}).
 
 \begin{urbiscript}[caption=Removing a slot, label=lst:removeslot,
   name=object-slots]
-o.slotNames;
+o.slotNames.sort;
 [00000000] ["a", "b", "c"]
 o.removeSlot("c");
 [00000000] Object_0x00000000
-o.slotNames;
+o.slotNames.sort;
 [00000000] ["a", "b"]
 \end{urbiscript}
 
@@ -590,7 +598,7 @@ label=lst:auto-eval]
 var o = Object.clone;
 [00000000] Object_0x0
 // This syntax stores the function
-// in the 'f' slot of obj.
+// in the 'f' slot of 'o'.
 function o.f ()
 {
   echo("This is f with target " + this);
@@ -598,7 +606,10 @@ function o.f ()
 } | {};
 // The slot value is the function
 o.getSlot("f");
-[00000000] function () { ... }
+[00000001] function () {
+[:]  echo("This is f with target " . '+'(this));
+[:]  return 42;
+[:]}
 // Huho, the function is invoked!
 o.f;
 [00000000] *** This is f with target Object_0x0
@@ -979,13 +990,13 @@ A do scope is a shorthand to perform several actions on an
 object. Consider \autoref{lst:no-do}.
 
 \begin{urbiscript}[caption=Lot of code bloat,label=lst:no-do]
-var obj = Object.clone;
+var o = Object.clone;
 [00000000] Object_0x0
-var obj.one = 1;
+var o.one = 1;
 [00000000] 1
-var obj.two = 2;
+var o.two = 2;
 [00000000] 2
-echo(obj.uid);
+echo(o.uid);
 [00000000] *** 0x0
 \end{urbiscript}
 
@@ -998,14 +1009,14 @@ to the \pascal ``\texttt{with}'' construct.
 var o = Object.clone;
 [00000000] Object_0x0
 // All the message in this scope
-// are destined to obj.
+// are destined to o.
 do (o)
 {
  var one = 1; // var is a shortcut for the setSlot
  var two = 2; // message, so it applies on obj too
 };
-[00000000] 2
-o.one
+[00000000] Object_0x0
+o.one;
 [00000002] 1
 \end{urbiscript}
 
@@ -1241,7 +1252,8 @@ p.protos.head === Pair;
 Prototypes are the base of the slot lookup mechanism. Slot lookup is
 the action of finding an object slot when \texttt{getSlot} or the dot
 notation is used. So far, when we typed \lstinline|obj.slot|, ``slot''
-was always a slot of obj. Yet, this call can be valid even if obj has
+was always a slot of \lstinline|obj|.
+Yet, this call can be valid even if obj has
 no ``slot'' slot, because slots are also looked up in prototypes. For
 instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
 ``first'' or ``second'' slots. Yet, \lstinline|p.first| and
@@ -1464,10 +1476,11 @@ provides a shorthand to define classes as we did above: the
   label=lst:class, name=my-pair]
 class MyPair
 {
-  var first;
-  var second;
+  var first = nil;
+  var second = nil;
   function asString() { "(" + first + ", " + second + ")"; };
 };
+[00000000] (nil, nil)
 \end{urbiscript}
 
 The \texttt{class} keyword simply creates MyPair with Object.clone,
@@ -1507,9 +1520,9 @@ do (MyPair)
     second = s;
   }
 };
-[00000000] Pair: nil, nil
+[00000000] (nil, nil)
 MyPair.new(0, 1);
-[00000000] Pair: 0, 1
+[00000000] (0, 1)
 \end{urbiscript}
 
 %\section{Conclusion}
@@ -1588,13 +1601,13 @@ all([1, 2, 3], function (x) { x > 0});
 In fact, the \texttt{function} construct we saw earlier is only a
 shorthand for a variable assignment (\autoref{lst:function-sugar}).
 
-\begin{urbiscript}[caption=The function sugar,
-label=lst:function-sugar]
+\begin{lstlisting}[caption=The function sugar,
+  label=lst:function-sugar]
 // This ...
 function obj.f (/*...*/) {/*...*/};
 // ... is actually a shorthand for this
 var obj.f = function (/*...*/) {/* ... */};
-\end{urbiscript}
+\end{lstlisting}
 
 % This should maybe be outside the functional section. It is also
 % incomplete.
@@ -1619,17 +1632,14 @@ function first
 } | {};
 first(echo("first"), echo("second"));
 [00000000] *** first
-function twice
+function reverse
 {
-  // Evaluate all the arguments twice.
-  call.evalArgs;
-  call.evalArgs;
+  call.evalArgAt(1);
+  call.evalArgAt(0);
 } | {};
-twice(echo("first"), echo("second"));
-[00000000] *** first
+reverse(echo("first"), echo("second"));
 [00000000] *** second
 [00000000] *** first
-[00000000] *** second
 \end{urbiscript}
 
 A good example are logic operators. Although \Cxx is a strict
@@ -1888,6 +1898,7 @@ sleep(.5s);
   // if mytag is stopped
   echo("Background job stopped")|
 },
+sleep(3s);
 [00000000] *** ping
 [00001000] *** ping
 [00002000] *** ping
@@ -2062,8 +2073,9 @@ has \lstinline|else|: the given expression is evaluated as long as the
 condition is false (\autoref{lst:whenever-else}).
 
 \begin{urbiscript}[caption=Using \texttt{whenever ... else},
-label=lst:whenever-else]
+  label=lst:whenever-else]
 var x = false;
+[00002000] false
 whenever (x)
 {
   echo("ping");
@@ -2117,7 +2129,7 @@ duration, and \lstinline|whenever| will keep triggering for this
 duration (\autoref{lst:emit-duration}).
 
 \begin{urbiscript}[caption=Emitting events with a duration,
-label=lst:emit-duration]
+  label=lst:emit-duration]
 var myEvent = Event.new;
 [00000000] Event_0x0
 whenever (myEvent)
@@ -2125,8 +2137,8 @@ whenever (myEvent)
   echo("ping");
   sleep(250ms);
 };
-// Emit myEvent for one second
-emit (1s) myEvent;
+// Emit myEvent for one second.
+emit myEvent ~ 1s;
 [00000000] *** ping
 [00000250] *** ping
 [00000500] *** ping
