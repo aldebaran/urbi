@@ -1,5 +1,6 @@
 include build-aux/init.mk
 include build-aux/build-aux.mk
+include build-aux/fix-libtool-la.mk
 AUTOMAKE_OPTIONS += subdir-objects
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
