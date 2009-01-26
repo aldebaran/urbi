@@ -1,5 +1,5 @@
 # urbi-send
-EXTRA_DIST += examples/urbi-send.as
+EXTRA_DIST += examples/urbi-send.m4sh
 nodist_check_SCRIPTS += examples/urbi-send
 m4sh_scripts += examples/urbi-send
 

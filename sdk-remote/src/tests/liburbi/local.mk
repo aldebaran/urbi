@@ -45,7 +45,7 @@ bin/dispatcher.cc: $(tests_SOURCES) Makefile
 	mv $@.tmp $@
 
 # liburbi-check
-EXTRA_DIST += bin/liburbi-check.as
+EXTRA_DIST += bin/liburbi-check.m4sh
 nodist_check_SCRIPTS += bin/liburbi-check
 m4sh_scripts += bin/liburbi-check
 
