@@ -107,6 +107,11 @@ PAL
 Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
 Environment: Unknown yet
 
+SRI
+===
+Contact: Régis Vincent <vincent@ai.sri.com>
+Environment: Linux, GCC 4.2, x86
+
 Ugobe
 =====
 Contact: Tyler Wilson <TWilson@ugobe.com>
@@ -115,4 +120,5 @@ Environment: Unknown
 Université de Cergy
 ===================
 Contact: Philippe Laroque <laroque@u-cergy.fr>
-Environment: ?
+Environment: K1 on Aibo, K1 on Nao.
+Wants on Nao.
