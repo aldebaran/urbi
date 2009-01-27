@@ -15,6 +15,16 @@ An initial sketch of documentation (a tutorial, and the language and
 library specifications) is included.
 
 
+Bug fixes
+=========
+
+Bitwise operations
+------------------
+
+The native "long unsigned int" type is now used for all the bitwise
+operations (&, |, ^, compl, <<, >>).  As a consequence it is now an
+error to pass negative operands to these operations.
+
 
 *******************************
 * New since kernel 2.0 beta 2 *
