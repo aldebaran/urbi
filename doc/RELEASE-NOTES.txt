@@ -25,6 +25,14 @@ The native "long unsigned int" type is now used for all the bitwise
 operations (&, |, ^, compl, <<, >>).  As a consequence it is now an
 error to pass negative operands to these operations.
 
+Precedence of operator **
+-------------------------
+
+In conformance with the usage in mathematics, the operator ** now has
+a stronger precedence than the unary operators.  Therefore, as in
+Perl, Python and others, '-2 ** 2 == -4' whereas it used to be equal
+to '4' before (as with GNU bc).
+
 
 *******************************
 * New since kernel 2.0 beta 2 *

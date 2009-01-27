@@ -378,8 +378,8 @@
 %left  "<<" ">>"
 %left  "+" "-"
 %left  "*" "/" "%"
-%right "**"
 %right "!" "compl" "++" "--" UNARY     /* Negation--unary minus */
+%right "**"
 %left  "("
 %nonassoc "["
 %left  "."
