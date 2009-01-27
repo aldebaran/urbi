@@ -191,7 +191,7 @@ BOUNCE_INT_OP(~)
   Float::operator Op(int rhs)			\
   {						\
     return to_int() Op rhs;			\
-}
+  }
 
   BOUNCE_INT_OP(^)
   BOUNCE_INT_OP(|)
@@ -204,7 +204,7 @@ BOUNCE_INT_OP(~)
   {						\
     static libport::Symbol op(#Op);		\
     return to_int() Op rhs;			\
-}
+  }
 
   BOUNCE_UNSIGNED_INT_OP(<<)
   BOUNCE_UNSIGNED_INT_OP(>>)
