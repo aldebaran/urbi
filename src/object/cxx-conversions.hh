@@ -5,19 +5,22 @@
 
 namespace object
 {
+
   template <typename T>
   struct CxxConvert
   {
-    static T
+    typedef T target_type;
+
+    static target_type
     to(const rObject&, unsigned)
     {
-      return T::No_such_conversion;
+      return target_type::No_such_conversion;
     }
 
     static rObject
-    from(const T&)
+    from(const target_type&)
     {
-      return T::No_such_conversion;
+      return target_type::No_such_conversion;
     }
   };
 

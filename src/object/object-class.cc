@@ -68,7 +68,7 @@ namespace object
       const rFloat& arg1 = args[1]->as<Float>();
       try
       {
-	depth_max = libport::ufloat_to_int(arg1->value_get());
+	depth_max = libport::numeric_cast<int>(arg1->value_get());
       }
       catch (libport::bad_numeric_cast& ue)
       {

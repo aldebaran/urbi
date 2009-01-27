@@ -16,9 +16,10 @@ namespace object
 {
   // Nothing to do for objects
   template <>
-  class CxxConvert<libport::intrusive_ptr<Object> >
+  struct CxxConvert<libport::intrusive_ptr<Object> >
   {
-  public:
+    typedef libport::intrusive_ptr<Object> target_type;
+
     static rObject
     to(const rObject& o, unsigned)
     {
@@ -38,9 +39,8 @@ namespace object
   template <typename Urbi>
   struct CxxConvert<libport::intrusive_ptr<Urbi> >
   {
-    typedef libport::intrusive_ptr<Urbi> T;
-
-    static T
+    typedef libport::intrusive_ptr<Urbi> target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<Urbi>(o, idx);
@@ -48,7 +48,7 @@ namespace object
     }
 
     static rObject
-    from(const T& v)
+    from(const target_type& v)
     {
       return v;
     }
@@ -58,7 +58,8 @@ namespace object
   template <typename Urbi>
   struct CxxConvert<Urbi*>
   {
-    static Urbi*
+    typedef Urbi* target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<Urbi>(o, idx);
@@ -66,7 +67,7 @@ namespace object
     }
 
     static rObject
-    from(Urbi* v)
+    from(target_type v)
     {
       return v;
     }
@@ -76,7 +77,8 @@ namespace object
   template<>
   struct CxxConvert<int>
   {
-    static int
+    typedef int target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<Float>(o, idx);
@@ -84,7 +86,7 @@ namespace object
     }
 
     static rObject
-    from(const int& v)
+    from(target_type v)
     {
       return new Float(v);
     }
@@ -94,7 +96,8 @@ namespace object
   template<>
   struct CxxConvert<unsigned char>
   {
-    static unsigned char
+    typedef unsigned char target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<Float>(o, idx);
@@ -105,7 +108,7 @@ namespace object
     }
 
     static rObject
-    from(const int& v)
+    from(target_type v)
     {
       return new Float(v);
     }
@@ -115,7 +118,8 @@ namespace object
   template<>
   struct CxxConvert<float>
   {
-    static float
+    typedef float target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check(o, Float::proto, idx);
@@ -123,7 +127,7 @@ namespace object
     }
 
     static rObject
-    from(const float& v)
+    from(target_type v)
     {
       return new Float(v);
     }
@@ -133,7 +137,8 @@ namespace object
   template<>
   struct CxxConvert<unsigned int>
   {
-    static unsigned int
+    typedef unsigned int target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<Float>(o, idx);
@@ -141,7 +146,26 @@ namespace object
     }
 
     static rObject
-    from(const unsigned int& v)
+    from(target_type v)
+    {
+      return new Float(v);
+    }
+  };
+
+  // Conversion with unsigned_type
+  template<>
+  struct CxxConvert<Float::unsigned_type>
+  {
+    typedef Float::unsigned_type target_type;
+    static target_type
+    to(const rObject& o, unsigned idx)
+    {
+      type_check<Float>(o, idx);
+      return o->as<Float>()->to_unsigned_type();
+    }
+
+    static rObject
+    from(target_type v)
     {
       return new Float(v);
     }
@@ -151,7 +175,8 @@ namespace object
   template<>
   struct CxxConvert<Float::value_type>
   {
-    static Float::value_type
+    typedef Float::value_type target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<Float>(o, idx);
@@ -159,7 +184,7 @@ namespace object
     }
 
     static rObject
-    from(const Float::value_type& v)
+    from(target_type v)
     {
       return new Float(v);
     }
@@ -169,7 +194,8 @@ namespace object
   template <>
   struct CxxConvert<std::string>
   {
-    static std::string
+    typedef std::string target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<String>(o, idx);
@@ -177,7 +203,7 @@ namespace object
     }
 
     static rObject
-    from(const std::string& v)
+    from(const target_type& v)
     {
       return new String(v);
     }
@@ -187,7 +213,8 @@ namespace object
   template <>
   struct CxxConvert<libport::Symbol>
   {
-    static libport::Symbol
+    typedef libport::Symbol target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
       type_check<String>(o, idx);
@@ -195,7 +222,7 @@ namespace object
     }
 
     static rObject
-    from(const libport::Symbol& v)
+    from(target_type v)
     {
       return new String(v.name_get());
     }
@@ -205,14 +232,15 @@ namespace object
   template <>
   struct CxxConvert<bool>
   {
-    static bool
+    typedef bool target_type;
+    static target_type
     to(const rObject& o, unsigned)
     {
       return is_true(o);
     }
 
     static rObject
-    from(bool v)
+    from(target_type v)
     {
       return v ? true_class : false_class;
     }
@@ -222,18 +250,18 @@ namespace object
   template <>
   struct CxxConvert<libport::path>
   {
-    static libport::path
+    typedef libport::path target_type;
+    static target_type
     to(const rObject& o, unsigned idx)
     {
-      rString str = o->as<String>();
-      if (str)
+      if (rString str = o->as<String>())
         return str->value_get();
       type_check<Path>(o, idx);
       return o->as<String>()->value_get();
     }
 
     static rObject
-    from(const libport::path& v)
+    from(const target_type& v)
     {
       return new Path(v);
     }
@@ -244,7 +272,9 @@ namespace object
   template <typename T>                                                 \
   struct CxxConvert<Name<T> >                                           \
   {                                                                     \
-    static Name<T>                                                      \
+    typedef Name<T> target_type;                                        \
+                                                                        \
+    static target_type                                                  \
       to(const rObject& o, unsigned idx)                                \
     {                                                                   \
       type_check<List>(o);						\
@@ -255,7 +285,7 @@ namespace object
     }                                                                   \
                                                                         \
     static rObject                                                      \
-      from(const Name<T>& v)                                            \
+      from(const target_type& v)                                        \
     {                                                                   \
       objects_type res;                                                 \
       foreach (const T& elt, v)                                         \

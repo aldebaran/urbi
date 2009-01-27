@@ -23,21 +23,37 @@ namespace object
   public:
 
     typedef libport::ufloat value_type;
+
+    /// The preferred target for unsigned casts.
+    typedef unsigned long unsigned_type;
+
     value_type& value_get();
-    const value_type&  value_get() const;
-    int to_int(const std::string fmt = "expected integer, got %s") const;
+    const value_type& value_get() const;
+
+    /// \name Conversions.
+    /// \{
+    int
+      to_int(const std::string& fmt =
+             "expected integer, got %s") const;
     long long
-    to_long_long(const std::string fmt = "expected integer, got %s") const;
-    unsigned int to_unsigned_int
-     (const std::string fmt = "expected non-negative integer, got %s") const;
+      to_long_long(const std::string& fmt =
+                   "expected integer, got %s") const;
+    unsigned int
+      to_unsigned_int(const std::string& fmt =
+                      "expected non-negative integer, got %s") const;
+    /// The prefered conversion.
+    unsigned_type
+      to_unsigned_type(const std::string& fmt =
+                       "expected non-negative integer, got %s") const;
+    /// \}
 
     virtual
-    std::ostream& special_slots_dump(std::ostream& o) const;
+      std::ostream& special_slots_dump(std::ostream& o) const;
 
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
 
   public:
 
@@ -58,16 +74,20 @@ namespace object
     rFloat plus(objects_type& args);
     using Object::operator<;
     bool operator <(value_type rhs);
-    int operator ~();
-    int operator |(int rhs);
-    int operator &(int rhs);
-    int operator ^(int rhs);
+
+    // Operations on unsigned.
+    unsigned_type operator ~();
+    unsigned_type operator |(unsigned_type rhs);
+    unsigned_type operator &(unsigned_type rhs);
+    unsigned_type operator ^(unsigned_type rhs);
+    unsigned_type operator <<(unsigned_type rhs);
+    unsigned_type operator >>(unsigned_type rhs);
+
+    value_type pow(value_type rhs);
     value_type operator *(value_type rhs);
     value_type operator /(value_type rhs);
     value_type operator %(value_type rhs);
-    int operator <<(unsigned int rhs);
-    int operator >>(unsigned int rhs);
-    value_type pow(value_type rhs);
+
     int random();
     value_type round();
     rList seq();

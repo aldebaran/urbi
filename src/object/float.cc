@@ -48,11 +48,11 @@ namespace object
 
 #define CONVERSION(Name, Type)				\
   Type							\
-  Float::to_##Name(const std::string fmt) const		\
+  Float::to_##Name(const std::string& fmt) const        \
   {							\
     try							\
     {							\
-      return libport::ufloat_to_##Name(value_);		\
+      return libport::numeric_cast<Type>(value_);       \
     }							\
     catch (libport::bad_numeric_cast& ue)		\
     {							\
@@ -61,25 +61,11 @@ namespace object
   }							\
 
   CONVERSION(int, int);
+  CONVERSION(unsigned_int, unsigned int);
+  CONVERSION(unsigned_type, Float::unsigned_type);
   CONVERSION(long_long, long long);
 
 #undef CONVERSION
-
-  unsigned int
-  Float::to_unsigned_int(const std::string fmt) const
-  {
-    try
-    {
-      int res = libport::ufloat_to_int(value_);
-      if (res < 0)
-	throw libport::bad_numeric_cast();
-      return res;
-    }
-    catch (libport::bad_numeric_cast& ue)
-    {
-      runner::raise_bad_integer_error(value_, fmt);
-    }
-  }
 
   Float::value_type
   Float::inf()
@@ -118,7 +104,8 @@ namespace object
       // display.
       try
       {
-	return str((base == 10 ? dec : hex) % libport::ufloat_to_long_long(value_));
+	return str((base == 10 ? dec : hex)
+                   % libport::numeric_cast<long long>(value_));
       }
       catch (const libport::bad_numeric_cast&)
       {
@@ -173,42 +160,33 @@ namespace object
   /*------------------.
   | Unary operators.  |
   `------------------*/
-#define BOUNCE_INT_OP(Op)			\
-  int						\
+#define BOUNCE_UNSIGNED_OP(Op)                  \
+  Float::unsigned_type                          \
   Float::operator Op()				\
   {						\
-    return Op to_int();				\
+    return Op to_unsigned_type();               \
   }
-BOUNCE_INT_OP(~)
-#undef BOUNCE_INT_OP
+
+  BOUNCE_UNSIGNED_OP(~)
+#undef BOUNCE_UNSIGNED_OP
 
 
   /*-------------------.
   | Binary operators.  |
   `-------------------*/
-#define BOUNCE_INT_OP(Op)			\
-  int						\
-  Float::operator Op(int rhs)			\
+#define BOUNCE_UNSIGNED_OP(Op)			\
+  Float::unsigned_type                          \
+  Float::operator Op(unsigned_type rhs)         \
   {						\
-    return to_int() Op rhs;			\
+    return to_unsigned_type() Op rhs;           \
   }
 
-  BOUNCE_INT_OP(^)
-  BOUNCE_INT_OP(|)
-  BOUNCE_INT_OP(&)
-#undef BOUNCE_INT_OP
-
-#define BOUNCE_UNSIGNED_INT_OP(Op)		\
-  int						\
-  Float::operator Op(unsigned int rhs)		\
-  {						\
-    static libport::Symbol op(#Op);		\
-    return to_int() Op rhs;			\
-  }
-
-  BOUNCE_UNSIGNED_INT_OP(<<)
-  BOUNCE_UNSIGNED_INT_OP(>>)
-#undef BOUNCE_UNSIGNED_INT_OP
+  BOUNCE_UNSIGNED_OP(^)
+  BOUNCE_UNSIGNED_OP(|)
+  BOUNCE_UNSIGNED_OP(&)
+  BOUNCE_UNSIGNED_OP(<<)
+  BOUNCE_UNSIGNED_OP(>>)
+#undef BOUNCE_UNSIGNED_OP
 
 #define CHECK_POSITIVE(F)                                       \
   if (value_ < 0)                                               \

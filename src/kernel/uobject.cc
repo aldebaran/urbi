@@ -467,7 +467,7 @@ namespace urbi
   //no corresponding operator= for this one...
   UVar::operator int()
   {
-    return libport::ufloat_to_int(::round((ufloat)(*this)));
+    return libport::numeric_cast<int>(static_cast<ufloat>(*this));
   }
 
   UDataType
