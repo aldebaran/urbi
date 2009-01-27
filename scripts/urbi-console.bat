@@ -1,3 +1,3 @@
 set URBI_ROOT=%cd%
-set PATH=gostai\core\pw32\engine;%PATH%                                           
-bin\urbi-console.exe -i -p 54000
+set PATH=gostai\core\mingw32\engine;lib;%PATH%
+bin\urbi-console.exe --interactive --port 54000
