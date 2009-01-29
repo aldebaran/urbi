@@ -1863,10 +1863,10 @@ features.
 // We tag it to keep control over it.
 mytag:
 {
-  while (true)
+  loop
   {
     echo("ping");
-    sleep(.5s)
+    sleep(0.5s)
   }
 },
 sleep(1.6s);
@@ -1879,17 +1879,16 @@ mytag.freeze;
 sleep(1.6s);
 // Resume execution
 mytag.unfreeze;
-sleep(.5s);
+sleep(0.5s);
 [00007000] *** ping
 \end{urbiscript}
 
 \begin{urbiscript}[caption=Stopping code execution, label=lst:stop]
-// Now, we print out a message when
-// we get out of the tag.
+// Now, we print out a message when we get out of the tag.
 {
   mytag:
   {
-    while (true)
+    loop
     {
       echo("ping"); sleep(1s)
     }
@@ -1911,17 +1910,15 @@ mytag.unfreeze;
 \end{urbiscript}
 
 \begin{urbiscript}[caption=Blocking chunks of code, label=lst:block]
-// Now, we print out a message when
-// we get out of the tag.
-
-while (true)
+// Now, print out a message when we get out of the tag.
 {
-  echo("ping"); sleep(1s);
-  mytag: { echo("pong"); sleep(1s); };
-};
+  loop
+  {
+    echo("ping"); sleep(1s);
+    mytag: { echo("pong"); sleep(1s); };
+  };
 
-// Execution flow will jump here
-  // if mytag is stopped
+  // Execution flow will jump here if mytag is stopped
   echo("Background job stopped")|
 },
 [00000000] *** ping
@@ -1948,10 +1945,10 @@ mytag.unblock;
 In this section, we implement a more advanced example with
 parallelism.
 
-\autoref{lst:timeout} presents how to implement a \texttt{timeOut} function,
-that takes code to execute and a timeout as arguments. It executes the
-code, and returns its return value. However, if the code execution
-takes longer than the given timeout, it aborts it, print
+\autoref{lst:timeout} presents how to implement a \texttt{timeOut}
+function, that takes code to execute and a timeout as arguments. It
+executes the code, and returns its value. However, if the code
+execution takes longer than the given timeout, it aborts it, print
 \lstinline|"Timeout!"| and returns void. In this example, we use:
 
 \begin{itemize}
