@@ -364,7 +364,7 @@ namespace urbi
 
     while (!feof(fd))
     {
-      int res = fread(sendBuffer, 1, buflen, fd);
+      size_t res = fread(sendBuffer, 1, buflen, fd);
       effectiveSend(sendBuffer, res);
     }
     fclose(fd);
