@@ -9,10 +9,7 @@
 /externals/libjpeg-6b/Makefile.in
 /externals/libport/Makefile.in
 /externals/libport/doc/Makefile.in
-/externals/libport/gui/Makefile.in
-/externals/libport/lib/libport/Makefile.in
 /externals/libport/tests/Makefile.in
-/externals/libport/tests/libport/Makefile.in
 /include/libport
 /include/urbi/ucallbacks.hh
 /jpeg-6b
@@ -22,4 +19,3 @@
 /src/Makefile.in
 /src/swig/Makefile.in
 /src/tests/Makefile.in
-
