@@ -54,7 +54,7 @@ namespace object
     {							\
       return libport::numeric_cast<Type>(value_);       \
     }							\
-    catch (libport::bad_numeric_cast& ue)		\
+    catch (libport::bad_numeric_cast&)                  \
     {							\
       runner::raise_bad_integer_error(value_, fmt);	\
     }							\
