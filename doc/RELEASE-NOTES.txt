@@ -33,6 +33,12 @@ a stronger precedence than the unary operators.  Therefore, as in
 Perl, Python and others, '-2 ** 2 == -4' whereas it used to be equal
 to '4' before (as with GNU bc).
 
+Whenever
+--------
+
+Whenever now properly executes the else branch when the condition is
+false.  It used to wait for the condition to be verified at least once
+before.
 
 *******************************
 * New since kernel 2.0 beta 2 *

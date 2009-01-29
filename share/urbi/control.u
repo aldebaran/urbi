@@ -28,27 +28,25 @@ class Global.Control
     })
   };
 
-  // at_ takes three expressions, a test and a code to execute each time the test
-  // becomes true and a code to execute each time the test becomes false.
+  // at_(test, on_true, on_false)
+  //
+  // Takes three expressions, a test and some code to execute each
+  // time the test becomes true and some code to execute each time the
+  // test becomes false.
   function at_
   {
     registerAtJob(call.args[0], call.args[1], call.args[2])
   };
 
-  // whenever_ takes three expressions, a test and a code to execute each time the
-  // test is true and a code to execute each time the test then becomes false.
+  // whenever_(test, on_true, on_false)
+  //
+  // Takes three expressions, a test and some code to execute each
+  // time the test is true and some code to execute each time the test
+  // is false.
   function whenever_
   {
     detach ({
-      loop {
-        waituntil (call.evalArgAt (0)) |
-        loop {
-          call.evalArgAt (1) |
-          if (!call.evalArgAt (0))
-            break
-        };
-        call.evalArgAt (2)
-      }
+      loop call.evalArgAt ({ if (call.evalArgAt (0)) 1 else 2 })
     })
   };
 
