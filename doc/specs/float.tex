@@ -109,8 +109,10 @@ x === y;
 Return the 1-complement of the target (\autoref{lst:float-compl}).
 
 \begin{urbiscript}[caption=Float.compl, label=lst:float-compl]
-compl 1;
-[00000000] -2
+compl 0;
+[00000000] 4294967295
+compl 4294967295;
+[00000000] 0
 \end{urbiscript}
 
 \subsubsection{cos}
