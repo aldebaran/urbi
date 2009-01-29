@@ -338,8 +338,8 @@ namespace kernel
     if (stopall)
     {
       foreach (UConnection& c, *connections_)
-        if (c.active_get() && c.has_pending_command ())
-	c.drop_pending_commands ();
+        if (c.active_get() && c.has_pending_command())
+          c.drop_pending_commands ();
     }
 
     // Delete all connections with closing=true

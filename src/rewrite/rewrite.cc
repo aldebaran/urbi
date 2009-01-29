@@ -9,16 +9,14 @@ namespace rewrite
   desugar(ast::rConstAst Ast)
   {
     Desugarer desugar;
-    ast::rAst res = ast::analyze(desugar, Ast);
-    return res;
+    return ast::analyze(desugar, Ast);
   }
 
   ast::rAst
   rescope(ast::rConstAst Ast)
   {
     Rescoper rescope;
-    rescope(Ast.get());
-    return rescope.result_get();
+    return ast::analyze(rescope, Ast);
   }
 
   ast::rExp
@@ -26,13 +24,9 @@ namespace rewrite
   {
     Desugarer desugar;
     Rescoper rescope;
-    ast::rAst res;
-
-    res = ast::analyze(desugar, nary);
-
+    ast::rAst res = ast::analyze(desugar, nary);
     rescope(res.get());
     res = rescope.result_get();
-
     return res.unsafe_cast<ast::Exp>();
   }
 
