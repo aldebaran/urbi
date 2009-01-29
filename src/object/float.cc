@@ -48,7 +48,7 @@ namespace object
 
 #define CONVERSION(Name, Type)				\
   Type							\
-  Float::to_##Name(const std::string& fmt) const        \
+  Float::to_##Name(const std::string fmt) const         \
   {							\
     try							\
     {							\

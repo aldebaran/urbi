@@ -32,18 +32,20 @@ namespace object
 
     /// \name Conversions.
     /// \{
+    // FIXME: For some reason I don't understand, MSVC fails to
+    // link when we pass const ref strings here...
     int
-      to_int(const std::string& fmt =
+      to_int(const std::string fmt =
              "expected integer, got %s") const;
     long long
-      to_long_long(const std::string& fmt =
+      to_long_long(const std::string fmt =
                    "expected integer, got %s") const;
     unsigned int
-      to_unsigned_int(const std::string& fmt =
+      to_unsigned_int(const std::string fmt =
                       "expected non-negative integer, got %s") const;
     /// The prefered conversion.
     unsigned_type
-      to_unsigned_type(const std::string& fmt =
+      to_unsigned_type(const std::string fmt =
                        "expected non-negative integer, got %s") const;
     /// \}
 
