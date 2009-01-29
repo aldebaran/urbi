@@ -38,11 +38,15 @@ URBI_COMPILATION_MODE
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 # If we have our own Bison, use it.
 if test -d $srcdir/bison; then
-  test -d bison || mkdir bison
-  abs_srcdir=$(cd "$srcdir" && pwd)
-  cd bison
-  "$abs_srcdir"/bison/configure CC= CXX= LD= AR= CPPFLAGS= CXXFLAGS= CFLAGS=
-  cd ..
+  (
+    test -d bison || mkdir bison
+    abs_srcdir=$(cd "$srcdir" && pwd)
+    cd bison
+    # Unset everything that puts us in cross-compilation mode,
+    # as Bison is a build tool.
+    unset CPPFLAGS CC CFLAGS CXX CXXFLAGS LD AR host host_alias
+    "$abs_srcdir"/bison/configure
+  )
   AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 else
   TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
