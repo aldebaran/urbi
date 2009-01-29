@@ -8,7 +8,6 @@ SUBDIRS = sdk-remote . src tests doc
 # build-aux.
 EXTRA_DIST +=					\
   build-aux/bison++.in				\
-  build-aux/fix-libtool-la			\
   build-aux/flex++.in				\
   build-aux/fuse-switch				\
   build-aux/move-if-change			\

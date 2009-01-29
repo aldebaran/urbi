@@ -3,6 +3,7 @@
 ## ---------------- ##
 
 include $(top_srcdir)/build-aux/init.mk
+include $(top_srcdir)/build-aux/fix-libtool-la.mk
 ## Get $(libport_la).
 ## lib_libport = ../lib/libport
 ## include $(top_srcdir)/lib/libport/libport-sources.mk
@@ -104,14 +105,6 @@ dist_libuobject_la_SOURCES +=			\
   lib/network/bsdnet/connection.cc		\
   lib/network/bsdnet/network.hh			\
   lib/network/bsdnet/network.cc
-
-all-local: libuobject.la.stamp
-
-libuobject.la.stamp: libuobject.la
-	$(top_srcdir)/build-aux/fix-libtool-la libuobject.la \
-	  libuobject.la.stamp
-
-CLEANFILES += libuobject.la.stamp
 
 if BUILD_PROGRAMS
 if !WIN32
