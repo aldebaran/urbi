@@ -30,6 +30,7 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
+#include <sched/configuration.hh>
 #include <sched/scheduler.hh>
 
 #include <kernel/ubanner.hh>
