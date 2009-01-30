@@ -592,10 +592,12 @@ namespace urbi
       UCallbackID cid = setCallback(sendSound_, s, utag);
       // Invoke it 2 times to queue sound.
       if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
-				 std::list<BinaryData>()))==URBI_CONTINUE)
+				 binaries_type()))
+          == URBI_CONTINUE)
       {
 	if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
-				   std::list<BinaryData>()))==URBI_REMOVE)
+				   binaries_type()))
+            == URBI_REMOVE)
 	  deleteCallback(cid);
       }
       else
@@ -869,7 +871,7 @@ namespace urbi
 	      //listLock.lock();
 	      UMessage msg(*this, 0, URBI_ERROR_TAG,
 			   "!!! UAbstractClient::read, fatal error parsing header",
-			   std::list<BinaryData>());
+			   binaries_type());
 	      notifyCallbacks(msg);
 	      //unlistLock.lock();
 	    }

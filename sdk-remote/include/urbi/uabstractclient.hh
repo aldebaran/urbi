@@ -341,7 +341,8 @@ namespace urbi
     const std::string& kernelVersion() const;
   private:
     /// Bin object for this command.
-    std::list<urbi::BinaryData> bins;
+    typedef std::list<urbi::BinaryData> binaries_type;
+    binaries_type bins;
     /// Temporary storage of binary data.
     void* binaryBuffer;
     /// Current position in binaryBuffer.
