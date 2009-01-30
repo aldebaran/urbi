@@ -80,8 +80,10 @@ Environment: Debian sarge
 
 HAUTE-ÉCOLE ARC
 ===============
-Contact: Alexandre Gabus <Alexandre.Gabus@he-arc.ch> (student)
-Contact: Matthieu Amiguet <matthieu.amiguet@he-arc.ch> (advisor)
+Contact: Alexandre Gabus <Alexandre.Gabus@he-arc.ch>
+         (student)
+Contact: Matthieu Amiguet <matthieu.amiguet@he-arc.ch>
+         (advisor)
 Environment: Linux
 
 HOBBYISTES
@@ -95,6 +97,11 @@ INRIA
 Contact: Jérôme Béchu <jerome.bechu@inria.fr>
 	Engineer working for P-Y Oudeyer.
 Environment: windows mostly
+
+IT+R
+====
+Contact: Emanuele Menegatti <emanuele.menegatti@it-robotics.it>
+Environment: "arm-linux-gnu" as compiler toolchain for our board IT+R-core
 
 LORIA
 =====
