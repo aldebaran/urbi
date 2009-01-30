@@ -17,22 +17,22 @@ namespace urbi
 
   UMessage::UMessage(UAbstractClient& client, int timestamp,
 		     const char* tag, const char* message,
-		     const std::list<BinaryData>& bins)
+		     const binaries_type& bins)
     : client(client)
     , timestamp(timestamp)
     , tag(tag)
     , value(0)
   {
     rawMessage = std::string(message);
-    while (message[0] ==' ')
+    while (message[0] == ' ')
       ++message;
     //parse non-value messages
     if (message[0] == '*')
     {
       //system message
       type = MESSAGE_SYSTEM;
-      if (strlen(message) >= 4)
-	this->message = (std::string)(message+4);
+      if (4 <= strlen(message))
+	this->message = message+4;
       return;
     }
 
@@ -48,7 +48,7 @@ namespace urbi
     //value
     type = MESSAGE_DATA;
     value = new UValue();
-    std::list<BinaryData>::const_iterator iter = bins.begin();
+    binaries_type::const_iterator iter = bins.begin();
     int p = value->parse(message, 0, bins, iter);
     if (p >= 0)
       while (message[p] == ' ')
@@ -87,20 +87,20 @@ namespace urbi
   }
 
   std::ostream&
-  operator<<(std::ostream &s, const UMessage &m)
+  UMessage::print (std::ostream &o) const
   {
-    s<<"["<<m.timestamp<<":"<<m.tag<<"] ";
-    switch (m.type)
+    o << "[" << timestamp << ":" << tag << "] ";
+    switch (type)
     {
+      case MESSAGE_DATA:
+	o << *value;
+	break;
       case MESSAGE_SYSTEM:
       case MESSAGE_ERROR:
-	s<<m.message;
-	break;
-      default:
-	s<<*m.value;
+	o << message;
 	break;
     }
-    return s;
+    return o;
   }
 
 

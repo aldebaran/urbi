@@ -3,6 +3,7 @@
 #ifndef URBI_UMESSAGE_HH
 # define URBI_UMESSAGE_HH
 
+# include <iosfwd>
 # include <list>
 # include <string>
 
@@ -24,6 +25,28 @@ namespace urbi
   class URBI_SDK_API UMessage
   {
   public:
+    /// Default ctor
+    UMessage(UAbstractClient& client);
+
+    /// List of the binaries.
+    typedef std::list<urbi::BinaryData> binaries_type;
+
+    /// Parser constructor
+    UMessage(UAbstractClient& client, int timestamp,
+	     const char* tag, const char* message,
+	     const binaries_type& bins);
+    /// If alocate is true, everything is copied, eles pointers are stolen
+    UMessage(const UMessage& source);
+
+    /// Free everything if data was copied, doesn't free anything otherwise
+    ~UMessage();
+
+    /// Return the message.
+    operator urbi::UValue& ();
+
+    /// Format as "[TIMESTAMP:TAG] CONTENTS".
+    std::ostream& print (std::ostream& o) const;
+
     /// Connection from which originated the message.
     UAbstractClient& client;
     /// Server-side timestamp.
@@ -31,6 +54,7 @@ namespace urbi
     /// Associated tag.
     std::string	tag;
 
+    /// The type of this message.
     UMessageType type;
 
     /// Set only if the message type is MESSAGE_DATA.
@@ -39,26 +63,12 @@ namespace urbi
     std::string	message;
     /// Raw message without the binary data.
     std::string	rawMessage;
-
-    /// Default ctor
-    UMessage(UAbstractClient& client);
-
-    /// Parser constructor
-    UMessage(UAbstractClient& client, int timestamp,
-	     const char* tag, const char* message,
-	     const std::list<urbi::BinaryData>& bins);
-    /// If alocate is true, everything is copied, eles pointers are stolen
-    UMessage(const UMessage& source);
-
-    /// Free everything if data was copied, doesn't free anything otherwise
-    ~UMessage();
-
-    operator urbi::UValue& () {return *value;}
-
   };
 
-  URBI_SDK_API std::ostream& operator<<(std::ostream& s, const UMessage& m);
+  std::ostream& operator<<(std::ostream& s, const UMessage& m);
 
 } // namespace urbi
+
+# include <urbi/umessage.hxx>
 
 #endif // URBI_UMESSAGE_HH
