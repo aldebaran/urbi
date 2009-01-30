@@ -52,6 +52,7 @@ class Global.UObject
     if (0 < interval)
       updateTask: detach({loop{ update; sleep(updateInterval)}})
   };
+
   /// Set a timer to call \b func every \b interval milliseconds.
   function setTimer(interval, func)
   {
@@ -63,6 +64,7 @@ class Global.UObject
     tag: detach({loop{ func(); sleep(interval)}}) |
     timerTask += [tag]
   };
+
   /// Call hub update function \b for hub \b hubname
   function setHubUpdate(hubname, interval, func)
   {
@@ -236,8 +238,7 @@ class Global.'external'
     function cloner()
     {
       var u = fresh;
-      var msg = ['external'.UEM_NEW, u, objname];
-      chan << msg;
+      chan << ['external'.UEM_NEW, u, objname];
       // Wait until the remote defines u.init.
       waituntil(Global.uobjects.hasSlot(u)
                 && Global.uobjects.getSlot(u).ownsSlot("init"));
@@ -314,10 +315,9 @@ class Global.'external'
     {
       var args = call.evalArgs;
       var u = fresh;
-      var msg = [ 'external'.UEM_EVALFUNCTION,
-                  functionName + "__" + args.size.asString,
-                  "Global.uobjects." + u ] + args;
-      chan << msg;
+      chan << [ 'external'.UEM_EVALFUNCTION,
+                functionName + "__" + args.size.asString,
+                "Global.uobjects." + u ] + args;
       waituntil(Global.uobjects.hasSlot(u));
       var res = Global.uobjects.getSlot(u).acceptVoid;
       Global.uobjects.removeSlot(u);
