@@ -7,7 +7,6 @@
 #include <libport/cstdio>
 
 #include <libport/cli.hh>
-#include <libport/foreach.hh>
 #include <libport/program-name.hh>
 #include <libport/sys/stat.h>
 #include <libport/sysexits.hh>
@@ -34,7 +33,7 @@ namespace
       "\n"
       "For instance:\n"
       "  " << program_name << " sounds.hello hello.wav WAV\n"
-      "  " << program_name << " \"var Global.hello hello.wav WAV\n"
+      "  " << program_name << " \"var Global.hello\" hello.wav WAV\n"
       "\n"
       "Options:\n"
       "  -h, --help        display this message and exit\n"
@@ -94,6 +93,61 @@ struct data_type
   const char* headers;
 };
 
+static
+void
+send_data(urbi::UClient& client, const data_type& data)
+{
+  FILE *f = libport::streq(data.file, "-") ? stdin : fopen(data.file, "r");
+  if (!f)
+    std::cerr << program_name << ": cannot open " << data.file
+              << ": " << strerror(errno)
+              << libport::exit(EX_NOINPUT);
+
+  char* buffer = 0;
+  int pos = 0;
+  // Read the whole file in memory
+  if (f != stdin)
+  {
+    struct stat st;
+    stat(data.file, &st);
+    buffer = static_cast<char *> (malloc (st.st_size));
+    if (!buffer)
+      std::cerr << program_name << ": memory exhausted" << std::endl
+                << libport::exit(EX_OSERR);
+    while (true)
+    {
+      size_t r = fread(buffer + pos, 1, st.st_size-pos, f);
+      if (!r)
+        break;
+      pos +=r;
+    }
+    //std::cerr <<"read "<<pos<<" bytes from "<<argv[argp+1]<<std::endl;
+  }
+  else
+  {
+    size_t sz = 10000;
+    buffer = static_cast<char *> (malloc (sz));
+    while (true)
+    {
+      if (sz-pos < 500)
+      {
+        sz += 10000;
+        buffer = static_cast<char *> (realloc (buffer,sz));
+        if (!buffer)
+          std::cerr << program_name << ": memory exhausted" << std::endl
+                    << libport::exit(EX_OSERR);
+        size_t r = fread(buffer + pos, 1, sz-pos, f);
+        if (!r)
+          break;
+        pos += r;
+      }
+    }
+  }
+  client.sendBin(buffer, pos,
+                 "%s = BIN %d %s;", data.variable, pos, data.headers);
+}
+
+
 int
 main(int argc, char * argv[])
 {
@@ -102,6 +156,8 @@ main(int argc, char * argv[])
   std::string host = "localhost";
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
+  /// Whether we send "quit" at the end.
+  bool quit = false;
 
   std::vector<data_type> data;
 
@@ -116,6 +172,8 @@ main(int argc, char * argv[])
       host = argv[++i];
     else if (arg == "--port" || arg == "-p")
       port = libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--quit" || arg == "-q")
+      quit = true;
     else if (arg == "--version" || arg == "-v")
       version();
     else if (arg[0] == '-' && arg[1] != 0)
@@ -130,63 +188,24 @@ main(int argc, char * argv[])
   }
 
   urbi::UClient client(host, port);
-  client.setWildcardCallback(callback(&dump));
-  client.setClientErrorCallback(callback(&error));
-
+  client.setKeepAliveCheck(3000, 1000);
   if (client.error())
     std::cerr << libport::program_name << ": client failed to set up"
 	      << std::endl
               << libport::exit(1);
 
-  foreach (data_type d, data)
-  {
-    FILE *f = libport::streq(d.file, "-") ? stdin : fopen(d.file, "r");
-    if (!f)
-      std::cerr << program_name << ": cannot open " << d.file
-                << ": " << strerror(errno)
-                << libport::exit(EX_NOINPUT);
+  client.setWildcardCallback(callback(&dump));
+  client.setClientErrorCallback(callback(&error));
 
-    char* buffer = 0;
-    int pos = 0;
-    // Read the whole file in memory
-    if (f != stdin)
-    {
-      struct stat st;
-      stat(d.file, &st);
-      buffer = static_cast<char *> (malloc (st.st_size));
-      if (!buffer)
-        std::cerr << program_name << ": memory exhausted" << std::endl
-                  << libport::exit(EX_OSERR);
-      while (true)
-      {
-	size_t r = fread(buffer + pos, 1, st.st_size-pos, f);
-	if (!r)
-	  break;
-	pos +=r;
-      }
-      //std::cerr <<"read "<<pos<<" bytes from "<<argv[argp+1]<<std::endl;
-    }
-    else
-    {
-      size_t sz = 10000;
-      buffer = static_cast<char *> (malloc (sz));
-      while (true)
-      {
-	if (sz-pos < 500)
-	{
-	  sz += 10000;
-	  buffer = static_cast<char *> (realloc (buffer,sz));
-          if (!buffer)
-            std::cerr << program_name << ": memory exhausted" << std::endl
-                      << libport::exit(EX_OSERR);
-	  size_t r = fread(buffer + pos, 1, sz-pos, f);
-	  if (!r)
-	    break;
-	  pos += r;
-	}
-      }
-    }
-    client.sendBin(buffer, pos, "%s = BIN %d %s;", d.variable, pos, d.headers);
-  }
-  sleep(1);
+  /*----------------.
+  | Send contents.  |
+  `----------------*/
+  for (std::vector<data_type>::const_iterator i = data.begin(),
+         i_end = data.end();
+       i != i_end;
+       ++i)
+    send_data(client, *i);
+  if (quit)
+    client.send("shutdown;");
+  urbi::execute();
 }

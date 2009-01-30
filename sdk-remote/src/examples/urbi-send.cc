@@ -27,6 +27,7 @@
 
 #include <libport/cstdio>
 #include <libport/sysexits.hh>
+
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
 
@@ -133,6 +134,9 @@ main(int argc, char* argv[])
   client.setWildcardCallback(callback(&dump));
   client.setClientErrorCallback(callback(&error));
 
+  /*----------------.
+  | Send contents.  |
+  `----------------*/
   for (strings_type::const_iterator i = files.begin(),
          i_end = files.end();
        i != i_end;
@@ -143,6 +147,4 @@ main(int argc, char* argv[])
 	    << ": file sent, hit Ctrl-C to terminate."
             << std::endl;
   urbi::execute();
-
-  return 0;
 }

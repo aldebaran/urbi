@@ -40,8 +40,8 @@ me=$as_me
 medir=$(absolute "$0").dir
 mkcd $medir
 
-xrun "--help"    urbi-send$EXEEXT --help
-xrun "--version" urbi-send$EXEEXT --version
+xrun "--help"    urbi-sendbin$EXEEXT --help
+xrun "--version" urbi-sendbin$EXEEXT --version
 
 # Send a file and check the output.
 
@@ -52,14 +52,15 @@ find_urbi_server
 spawn_urbi_server
 
 cat >send-me.u <<EOF
-"PASS";
-shutdown;
+0123456789
 EOF
 
-cmd="$valgrind urbi-send$EXEEXT --port $(cat server.port) send-me.u"
+cmd="$valgrind urbi-sendbin$EXEEXT --port $(cat server.port)"
+cmd+=" 'var Global.Pass' send-me.u 'my headers'"
+cmd+=" --quit"
 echo "$cmd" >client.cmd
-$cmd >client.out 2>client.err &
+eval "$cmd" >client.out 2>client.err &
 children_register client
 
 children_wait 10
-xrun "check" grep "PASS" client.out
+
