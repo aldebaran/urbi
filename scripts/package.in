@@ -21,6 +21,19 @@ error ()
   exit $status
 }
 
+# If some of those need to be chosen by configure, add an entry
+# there and add the "@" form.
+: ${CP=cp}
+: ${FIND=find}
+: ${GIT=git}
+: ${MKDIR_P="mkdir -p"}
+: ${MV=mv}
+: ${RM="rm -f"}
+: ${SED="sed"}
+: ${TAR=tar}
+
+: ${TMPDIR=/tmp}
+
 case $# in
   (10);;
   (*) error 1 "not enough arguments: $#, expecting 10";;
@@ -39,19 +52,6 @@ COMP="$8"       # ex. gcc4
 MODE="$9"       # [release|debug]_[static|dynamic]
 prefix="${10}"
 
-# If some of those need to be chosen by configure, add an entry
-# there and add the "@" form.
-: ${CP=cp}
-: ${FIND=find}
-: ${GIT=git}
-: ${MKDIR_P="@MKDIR_P@"}
-: ${MV=mv}
-: ${RM="rm -f"}
-: ${SED="@SED@"}
-: ${TAR=tar}
-
-: ${TMPDIR=/tmp}
-
 # Set release_mode depending on whether we are building a release version
 # or a development version.
 if [ $MODE = release_dynamic ]; then
@@ -62,7 +62,7 @@ fi
 
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
-version=$(cd "$srcdir" && $GIT describe | sed -e "s,^.*/,,")
+version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^.*/,,")
 # If we are in release mode, do not tell it, the final users won't care
 if $release_mode; then
   name="${PROJECT}-${version}-${OS}-${ARCH}"
