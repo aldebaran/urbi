@@ -40,6 +40,12 @@ Whenever now properly executes the else branch when the condition is
 false.  It used to wait for the condition to be verified at least once
 before.
 
+Auxiliary programs
+==================
+
+The command line interface of "urbi-sendbin" has been updated.
+
+
 *******************************
 * New since kernel 2.0 beta 2 *
 *******************************
