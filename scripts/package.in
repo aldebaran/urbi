@@ -4,6 +4,28 @@
 set -x
 set -e
 
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+}
+
+error ()
+{
+  local status=$1
+  shift
+  stderr "$@"
+  exit $status
+}
+
+case $# in
+  (10);;
+  (*) error 1 "not enough arguments: $#, expecting 10";;
+esac
+
 # Those would best be set through configure (except "updir"
 # which sets the destination).
 PROJECT="$1"
@@ -19,16 +41,16 @@ prefix="${10}"
 
 # If some of those need to be chosen by configure, add an entry
 # there and add the "@" form.
-CP=cp
-FIND=find
-GIT=git
-MKDIR_P="@MKDIR_P@"
-MV=mv
-RM="rm -f"
-SED="@SED@"
-TAR=tar
+: ${CP=cp}
+: ${FIND=find}
+: ${GIT=git}
+: ${MKDIR_P="@MKDIR_P@"}
+: ${MV=mv}
+: ${RM="rm -f"}
+: ${SED="@SED@"}
+: ${TAR=tar}
 
-TMPDIR=${TMPDIR-/tmp}
+: ${TMPDIR=/tmp}
 
 # Set release_mode depending on whether we are building a release version
 # or a development version.
