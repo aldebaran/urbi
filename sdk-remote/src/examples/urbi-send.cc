@@ -1,7 +1,7 @@
 /****************************************************************************
  * Sample urbi client that sends commands contained in a file.
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ namespace
     std::cout <<
       "usage: " << program_name << " [OPTION].. [FILE]...\n"
       "\n"
-      "  FILE    to load\n"
+      "  FILE    to upload onto the server\n"
       "\n"
       "Options:\n"
       "  -h, --help        display this message and exit\n"
@@ -72,14 +72,12 @@ dump(const urbi::UMessage& msg)
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
-      std::cerr << *msg.value << std::endl;
+      std::cout << msg << std::endl;
       break;
 
     case urbi::MESSAGE_ERROR:
     case urbi::MESSAGE_SYSTEM:
-      std::cerr << msg.timestamp << " "
-		<< msg.tag << " "
-		<< msg.message << std::endl;
+      std::cerr << msg << std::endl;
       break;
   }
   return urbi::URBI_CONTINUE;
@@ -125,12 +123,12 @@ main(int argc, char* argv[])
       files.push_back(libport::streq(argv[i], "-") ? "/dev/stdin" : argv[i]);
   }
 
-
   urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
   if (client.error())
     std::cerr << libport::program_name << ": client failed to set up"
-	      << std::endl             << libport::exit(1);
+	      << std::endl
+              << libport::exit(1);
 
   client.setWildcardCallback(callback(&dump));
   client.setClientErrorCallback(callback(&error));
