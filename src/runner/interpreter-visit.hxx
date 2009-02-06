@@ -566,11 +566,11 @@ namespace runner
 
 
     size_t result_depth = tag_stack_size();
+    std::vector<object::rTag> applied;
     try
     {
       Finally finally;
       bool some_frozen = false;
-      std::vector<object::rTag> applied;
       // Apply tag as well as its ancestors to the current runner.
       do
       {
@@ -607,6 +607,9 @@ namespace runner
     }
     catch (sched::StopException& e)
     {
+      // Start with the most specific tag in the derivation chain.
+      foreach (const object::rTag& tag, applied)
+	tag->triggerLeave();
       // Rewind up to the appropriate depth.
       if (e.depth_get() < result_depth)
 	throw;
