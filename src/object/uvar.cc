@@ -21,8 +21,9 @@ namespace object
   {
     rList l = self->slot_get(notifyList).value().unsafe_cast<List>();
     objects_type args;
+    args.push_back(self);
     foreach(rObject& co, l->value_get())
-      r.apply(self, co, SYMBOL(NOTIFY), args);
+      r.apply(co, SYMBOL(NOTIFY), args);
   }
 
   static rObject
@@ -72,7 +73,8 @@ namespace object
       {
         accessor();
         objects_type args;
-        rObject period = urbi_call(global_class, SYMBOL(getPeriod), args);
+        args.push_back(global_class);
+        rObject period = urbi_call(SYMBOL(getPeriod), args);
         r.yield_until(libport::utime() +
           static_cast<libport::utime_t>(period->as<Float>()->value_get()
                                        * 1000000.0));

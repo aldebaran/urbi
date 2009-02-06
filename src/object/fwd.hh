@@ -6,10 +6,9 @@
 #ifndef OBJECT_FWD_HH
 # define OBJECT_FWD_HH
 
-# include <deque>
-
 # include <libport/fwd.hh>
 # include <libport/intrusive-ptr.hh>
+# include <libport/reserved-vector.hh>
 
 # include <urbi/export.hh>
 
@@ -22,7 +21,7 @@ namespace object
   class Object;
 
   typedef libport::intrusive_ptr<Object> rObject;
-  typedef std::deque<rObject> objects_type;
+  typedef libport::ReservedVector<rObject, 8> objects_type;
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\

@@ -95,8 +95,7 @@ namespace runner
     ///             being Code.
     ///
     /// One cannot have both a call message and args.
-    virtual rObject apply(const rObject& target,
-                          const rObject& function,
+    virtual rObject apply(const rObject& function,
 			  const libport::Symbol msg,
 			  object::objects_type& args,
 			  const rObject& call_message = 0) = 0;
@@ -157,8 +156,7 @@ namespace runner
      *  \a args is taken by reference for performance sake, and might
      *  be arbitrarily modified by apply!
      */
-    virtual rObject build_call_message(const rObject& tgt,
-				       const rObject& code,
+    virtual rObject build_call_message(const rObject& code,
 				       const libport::Symbol& msg,
 				       const object::objects_type& args) = 0;
 

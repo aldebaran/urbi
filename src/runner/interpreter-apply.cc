@@ -4,6 +4,7 @@
  ** the interpreter.
  */
 
+#include <libport/range.hh>
 #include <libport/finally.hh>
 
 #include <ast/closure.hh>
@@ -95,7 +96,7 @@ namespace runner
     // Evaluated arguments. Even if the function is lazy, it holds the
     // target.
     object::objects_type args;
-
+    args.push_back(target);
     ast::exps_type ast_args =
       input_ast_args ? *input_ast_args : ast::exps_type();
 
@@ -111,7 +112,7 @@ namespace runner
     if (!c || c->ast_get()->strict())
       push_evaluated_arguments(args, ast_args);
 
-    return apply(target, routine, message, args, call_message, loc);
+    return apply(routine, message, args, call_message, loc);
   }
 
   /*-----------------------------------------------------------------.
@@ -119,26 +120,25 @@ namespace runner
   `-----------------------------------------------------------------*/
 
   object::rObject
-  Interpreter::apply(const rObject& target,
-                     const rObject& function,
+  Interpreter::apply(const rObject& function,
                      const libport::Symbol msg,
                      object::objects_type& args,
                      const rObject& call_message)
   {
-    return apply(target,function, msg, args, call_message,
+    return apply(function, msg, args, call_message,
                  boost::optional<ast::loc>());
   }
 
   object::rObject
-  Interpreter::apply(const rObject& target,
-                     const rObject& function,
+  Interpreter::apply(const rObject& function,
                      const libport::Symbol msg,
                      object::objects_type& args,
                      const rObject& call_message,
                      boost::optional<ast::loc> loc)
   {
     precondition(function);
-    precondition(target);
+    precondition(!args.empty());
+    precondition(args.front());
     Finally finally;
 
     if (msg != libport::Symbol::make_empty())
@@ -148,26 +148,27 @@ namespace runner
     }
 
     // Check if any argument is void
-    foreach (const rObject& arg, args)
+    foreach (const rObject& arg, libport::skip_first(args))
       if (arg == object::void_class)
 	raise_unexpected_void_error();
 
     if (const rCode& code = function->as<object::Code>())
-      return apply_urbi (target, code, msg, args, call_message);
+      return apply_urbi (code, msg, args, call_message);
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
-    {
-      args.push_front(target);
       return p->value_get()(args);
-    }
     else
     {
-      if (!args.empty())
+      if (args.size() != 1)
       {
 	rObject call = function->slot_locate(SYMBOL(LPAREN_RPAREN), false, true);
+        // FIXME: args is modified.
 	if (call)
-	  return apply(function, call, SYMBOL(LPAREN_RPAREN), args, call_message, loc);
+        {
+          args.front() = function;
+	  return apply(call, SYMBOL(LPAREN_RPAREN), args, call_message, loc);
+        }
       }
-      object::check_arg_count(args.size(), 0);
+      object::check_arg_count(args.size()-1, 0);
       return function;
     }
   }
@@ -194,7 +195,7 @@ namespace runner
   {
     rObject target = call_message->slot_get(SYMBOL(target));
     object::objects_type args;
-
+    args.push_back(target);
     // This function is called when arguments haven't been evaluated:
     // only a call message is provided.  If the called function is
     // strict, we need to extract arguments values for it.  This can
@@ -208,7 +209,7 @@ namespace runner
 	args.push_back(arg);
     }
 
-    return apply(target, function, msg, args, call_message, loc);
+    return apply(function, msg, args, call_message, loc);
   }
 
   /*-----------------------------------------------.
@@ -216,8 +217,7 @@ namespace runner
   `-----------------------------------------------*/
 
   object::rObject
-  Interpreter::apply_urbi(const rObject& target,
-                          const rCode& function,
+  Interpreter::apply_urbi(const rCode& function,
                           const libport::Symbol& msg,
                           const object::objects_type& args,
                           const rObject& call_message)
@@ -236,8 +236,8 @@ namespace runner
     if (ast->uses_call_get() && !call_message)
     {
       object::objects_type lazy_args;
-
-      foreach (const rObject& o, args)
+      lazy_args.push_back(args.front());
+      foreach (const rObject& o, libport::skip_first(args))
       {
 	CAPTURE_GLOBAL(PseudoLazy);
         rObject lazy = PseudoLazy->clone();
@@ -245,7 +245,7 @@ namespace runner
         lazy_args.push_back(lazy);
       }
       const_cast<rObject&>(call_message) =
-        build_call_message(target, function, msg, lazy_args);
+        build_call_message(function, msg, lazy_args);
     }
 
     // Determine the function's 'this' and 'call'
@@ -259,7 +259,7 @@ namespace runner
     }
     else
     {
-      self = target;
+      self = args.front();
       call = call_message;
     }
 
@@ -275,8 +275,10 @@ namespace runner
       const ast::local_declarations_type& formals =
         *ast->formals_get();
       // Check arity
-      object::check_arg_count (args.size(), formals.size());
+      object::check_arg_count (args.size()-1, formals.size());
       object::objects_type::const_iterator it = args.begin();
+      // skip target
+      ++it;
       // Bind
       foreach (const ast::rConstLocalDeclaration& s, formals)
         stacks_.def_arg(s, *(it++));
@@ -322,8 +324,7 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::build_call_message (const rObject& tgt,
-				   const rObject& code,
+  Interpreter::build_call_message (const rObject& code,
                                    const libport::Symbol& msg,
 				   const object::objects_type& args)
   {
@@ -334,7 +335,7 @@ namespace runner
     res->slot_set (SYMBOL(sender), stacks_.self().get());
 
     // Set the target to be the object on which the function is applied.
-    res->slot_set (SYMBOL(target), tgt);
+    res->slot_set (SYMBOL(target), args.front());
 
     // Set the code slot.
     res->slot_set (SYMBOL(code), code);
@@ -342,7 +343,10 @@ namespace runner
     // Set the name of the message call.
     res->slot_set (SYMBOL(message), new object::String(msg));
 
-    res->slot_set (SYMBOL(args), new object::List(args));
+    res->slot_set (SYMBOL(args), new object::List(
+                objects_type(
+                   boost::begin(libport::skip_first(args)),
+                   boost::end(libport::skip_first(args)))));
 
     return res;
   }
@@ -355,6 +359,7 @@ namespace runner
   {
     // Build the list of lazy arguments
     object::objects_type lazy_args;
+    lazy_args.push_back(tgt);
     foreach (const ast::rConstExp& e, args)
     {
       /// Retreive and evaluate the lazy version of arguments.
@@ -364,7 +369,7 @@ namespace runner
       lazy_args.push_back(v);
     }
 
-    return build_call_message(tgt, code, msg, lazy_args);
+    return build_call_message(code, msg, lazy_args);
   }
 
   object::rCode

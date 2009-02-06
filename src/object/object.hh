@@ -58,7 +58,7 @@ namespace object
     /// \name The protos.
     /// \{
     /// The protos.
-    typedef std::deque<rObject> protos_type;
+    typedef objects_type protos_type;
 
     /// Add proto.
     Object& proto_add (const rObject& p);

@@ -133,7 +133,10 @@ namespace runner
       if (ast_)
 	result_ = operator()(ast_.get());
       else
-	result_ = apply(lobby_, code_, libport::Symbol::make_empty(), args_);
+      {
+        libport::push_front(args_, lobby_);
+	result_ = apply(code_, libport::Symbol::make_empty(), args_);
+      }
     }
     catch (object::UrbiException& exn)
     {

@@ -89,8 +89,8 @@ namespace object
   rTag
   Tag::new_flow_control(objects_type& args)
   {
-    args.pop_front();
-    rTag res = urbi_call(proto, SYMBOL(new), args)->as<Tag>();
+    // FIXME: new is now called on self instead of on proto.
+    rTag res = urbi_call(SYMBOL(new), args)->as<Tag>();
     res->value_get()->flow_control_set();
     return res;
   }

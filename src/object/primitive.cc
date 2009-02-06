@@ -50,9 +50,8 @@ namespace object
       runner::raise_primitive_error("list of arguments "
 				    "must begin with `this'");
     objects_type a = args->value_get();
-    rObject tgt = a.front();
-    a.pop_front();
-    return ::kernel::urbiserver->getCurrentRunner().apply(tgt, this, SYMBOL(apply), a);
+    return ::kernel::urbiserver->getCurrentRunner().apply(this, SYMBOL(apply),
+                                                          a);
   }
 
   rObject Primitive::operator() (object::objects_type args)

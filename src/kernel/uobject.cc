@@ -62,8 +62,9 @@ static inline runner::Runner& getCurrentRunner()
 static rObject urbi_get(rObject r, const std::string& slot)
 {
   object::objects_type args;
+  args.push_back(r);
   ECHO("applying get for " << slot << "...");
-  rObject ret =  getCurrentRunner().apply(r, r->slot_get(Symbol(slot)),
+  rObject ret =  getCurrentRunner().apply(r->slot_get(Symbol(slot)),
                                           Symbol(slot), args);
   ECHO("done");
   return ret;
@@ -73,9 +74,9 @@ static rObject urbi_get(rObject r, const std::string& slot)
 static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
   rObject name = new object::String(slot);
-  object::objects_type args = list_of (name) (v);
+  object::objects_type args = list_of (r)(name) (v);
   ECHO("applying set...");
-  rObject ret = getCurrentRunner().apply(r, r->slot_get(SYMBOL(updateSlot)),
+  rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
 					 SYMBOL(updateSlot), args);
   ECHO("done");
   return ret;
@@ -175,7 +176,8 @@ uobject_make_proto(const std::string& name)
 {
   rObject oc = object_class->slot_get(SYMBOL(UObject))->clone();
   object::objects_type args;
-  getCurrentRunner().apply(oc, oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
+  args.push_back(oc);
+  getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
   oc->slot_set(SYMBOL(__uobject_cname),
 	       new object::String(name));
   oc->slot_set(SYMBOL(__uobject_base), oc);
@@ -283,9 +285,8 @@ uvar_uowned_set(const std::string& name, rObject val)
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
   rObject v = o->slot_get(Symbol(p.second));
-  object::objects_type args = list_of (val);
-  return getCurrentRunner().apply(v,
-                                  v->slot_get(SYMBOL(writeOwned)),
+  object::objects_type args = list_of (v) (val);
+  return getCurrentRunner().apply(v->slot_get(SYMBOL(writeOwned)),
                                   SYMBOL(writeOwned),
                                   args);
 }
@@ -358,10 +359,11 @@ namespace urbi
       rObject f = var->slot_get(sym);
       assertion(f);
       object::objects_type args = list_of
+        (var)
 	(object::make_primitive(
 	boost::function1<rObject, objects_type&>
 	(boost::bind(&wrap_ucallback_notify, _1, this))));
-      getCurrentRunner().apply(var, f, sym, args);
+      getCurrentRunner().apply(f, sym, args);
     }
     delete &s;
   }
@@ -382,8 +384,8 @@ namespace urbi
     rObject f = me->slot_get(SYMBOL(setTimer));
     rObject p = new object::Float(period / 1000.0);
     rObject call = MAKE_VOIDCALL(this, urbi::UTimerCallback, call);
-    object::objects_type args = list_of (p) (call);
-    getCurrentRunner().apply(me, f, SYMBOL(setTimer), args);
+    object::objects_type args = list_of (me)(p) (call);
+    getCurrentRunner().apply(f, SYMBOL(setTimer), args);
   }
 
   UTimerCallback::~UTimerCallback()
@@ -395,8 +397,10 @@ namespace urbi
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
     me->slot_update(SYMBOL(update), MAKE_VOIDCALL(this, urbi::UObject, update));
-    object::objects_type args = list_of(new object::Float(t / 1000.0));
-    getCurrentRunner().apply(me, f, SYMBOL(setUpdate), args);
+    object::objects_type args;// = list_of(new object::Float(t / 1000.0));
+    args.push_back(me);
+    args.push_back(new object::Float(t / 1000.0));
+    getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
   }
 
   UObject::~UObject()
@@ -573,10 +577,11 @@ namespace urbi
     rObject uob = object_class->slot_get(SYMBOL(UObject));
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args = list_of
+      (uob)
       (rObject(new object::String(name)))
       (new object::Float(t / 1000.0))
       (MAKE_VOIDCALL(this, urbi::UObjectHub, update));
-    getCurrentRunner().apply(uob, f, SYMBOL(setHubUpdate), args);
+    getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
   }
 
   void

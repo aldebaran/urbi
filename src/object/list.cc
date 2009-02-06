@@ -63,7 +63,7 @@ namespace object
   {
     CHECK_NON_EMPTY(tail);
     value_type res = content_;
-    res.pop_front();
+    libport::pop_front(res);
     return new List(res);
   }
 
@@ -185,8 +185,9 @@ namespace object
 	r.yield();
       must_yield = yielding;
       objects_type args;
+      args.push_back(f);
       args.push_back(o);
-      r.apply(f, f, SYMBOL(each), args);
+      r.apply(f, SYMBOL(each), args);
     }
   }
 
@@ -234,6 +235,12 @@ namespace object
       ce.rethrow_child_exception();
     }
   }
+  rList
+  List::insertFront(const rObject& o)
+  {
+    libport::push_front(content_, o);
+    return this;
+  }
 
 #define BOUNCE(Name, Bounce, Ret, Arg, Check)                   \
   IF(Ret, rObject, rList)                                       \
@@ -247,7 +254,6 @@ namespace object
   BOUNCE(back,          back,           true,  false, true );
   BOUNCE(clear,         clear,          false, false, false);
   BOUNCE(front,         front,          true,  false, true );
-  BOUNCE(insertFront,   push_front,     false, true,  false);
   BOUNCE(insertBack,    push_back,      false, true,  false);
 
 #undef BOUNCE
@@ -256,7 +262,10 @@ namespace object
   List::insert(const rFloat& idx, const rObject& elt)
   {
     size_type i = index(idx);
-    content_.insert(content_.begin() + i, elt);
+    value_type::iterator b = content_.begin();
+    while(i--)
+      ++b;
+    content_.insert(b, elt);
     return this;
   }
 
@@ -274,7 +283,7 @@ namespace object
   {
     CHECK_NON_EMPTY(pop_front);
     rObject res = content_.front();
-    content_.pop_front();
+    libport::pop_front(content_);
     return res;
   }
 

@@ -24,18 +24,18 @@ namespace runner
     object::objects_type args;
     if (chan && is_a(chan, lobby_->slot_get(SYMBOL(Channel))))
     {
+      args.push_back(chan);
       args.push_back(new object::String(msg));
-      apply(chan,
-            chan->slot_get(SYMBOL(LT_LT_)),
+      apply(chan->slot_get(SYMBOL(LT_LT_)),
 	    SYMBOL(LT_LT_),
 	    args);
     }
     else
     {
+      args.push_back(lobby_);
       args.push_back(new object::String(msg));
       args.push_back(new object::String(tag));
-      apply(lobby_,
-            lobby_->slot_get(SYMBOL(send)),
+      apply(lobby_->slot_get(SYMBOL(send)),
 	    SYMBOL(send),
             args);
     }

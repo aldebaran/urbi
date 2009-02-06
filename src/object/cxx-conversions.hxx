@@ -268,17 +268,17 @@ namespace object
   };
 
   // Conversion with containers
-#define CONTAINER(Name, Method)                                         \
-  template <typename T>                                                 \
-  struct CxxConvert<Name<T> >                                           \
+#define CONTAINER(Name, Method, ExtraT, ExtraTDecl)                     \
+  template <typename T ExtraTDecl>                                      \
+  struct CxxConvert<Name<T ExtraT> >                                           \
   {                                                                     \
-    typedef Name<T> target_type;                                        \
+    typedef Name<T ExtraT> target_type;                                        \
                                                                         \
     static target_type                                                  \
       to(const rObject& o, unsigned idx)                                \
     {                                                                   \
       type_check<List>(o);						\
-      Name<T> res;                                                      \
+      Name<T ExtraT> res;                                                      \
       foreach (const rObject& elt, o->as<List>()->value_get())          \
         res.Method(CxxConvert<T>::to(elt, idx));                        \
       return res;                                                       \
@@ -292,12 +292,13 @@ namespace object
         res.push_back(CxxConvert<T>::from(elt));                        \
       return new List(res);                                             \
     }                                                                   \
-  };                                                                    \
-
-  CONTAINER(std::set, insert);
-  CONTAINER(std::vector, push_back);
-  CONTAINER(std::deque, push_back);
-
+  };
+#define comma ,
+  CONTAINER(std::set, insert, /**/, /**/);
+  CONTAINER(std::vector, push_back, /**/, /**/);
+  CONTAINER(std::deque, push_back, /**/, /**/);
+  CONTAINER(libport::ReservedVector, push_back, comma R, comma int R);
+#undef comma
 #undef CONTAINER
 
   template <typename T>

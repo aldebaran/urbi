@@ -8,11 +8,10 @@
 namespace object
 {
   rObject
-  urbi_call(rObject self,
-            libport::Symbol msg,
+  urbi_call(libport::Symbol msg,
             objects_type& args)
   {
-    return urbi_call_function(self, self, msg, args);
+    return urbi_call_function(args.front(), msg, args);
   }
 
 #define CHECK_ARG(N)				\
@@ -30,13 +29,14 @@ namespace object
             rObject arg5)
   {
     objects_type args;
+    args.push_back(self);
     CHECK_ARG(1);
     CHECK_ARG(2);
     CHECK_ARG(3);
     CHECK_ARG(4);
     CHECK_ARG(5);
   done:
-    return urbi_call_function(self, self, msg, args);
+    return urbi_call_function(self, msg, args);
   }
 
 #undef CHECK_ARG
@@ -47,19 +47,19 @@ namespace object
                      libport::Symbol msg)
   {
     objects_type args; // Call with no args.
-    return urbi_call_function(self, owner, msg, args);
+    args.push_back(self);
+    return urbi_call_function(owner, msg, args);
   }
 
   rObject
-  urbi_call_function(rObject self,
-                     rObject owner,
+  urbi_call_function(rObject owner,
                      libport::Symbol msg,
                      objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
-    assert(self);
-    rObject res = r.apply(self, owner->slot_get(msg), msg, args);
+    assert(!args.empty());
+    rObject res = r.apply(owner->slot_get(msg), msg, args);
     return iassertion(res);
   }
 }

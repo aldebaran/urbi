@@ -86,14 +86,12 @@ namespace runner
     /// \param call_message  the callMessage.  Valid only for \a func
     ///             being Code.
     ///
-    virtual rObject apply(const rObject& target,
-                          const rObject& function,
+    virtual rObject apply(const rObject& function,
                           const libport::Symbol msg,
                           object::objects_type& args,
                           const rObject& call_message = 0);
 
-    rObject apply(const rObject& target,
-                  const rObject& function,
+    rObject apply(const rObject& function,
                   const libport::Symbol msg,
                   object::objects_type& args,
                   const rObject& call_message,
@@ -140,8 +138,7 @@ namespace runner
 
     /// Build a call message
     virtual rObject
-    build_call_message(const rObject& tgt,
-		       const rObject& code,
+    build_call_message(const rObject& code,
 		       const libport::Symbol& msg,
                        const object::objects_type& args);
 
@@ -191,8 +188,7 @@ namespace runner
   private:
     void init();
     /// Reset result_, set the location and call stack of ue.
-    rObject apply_urbi (const rObject& target,
-                        const rCode& function,
+    rObject apply_urbi (const rCode& function,
 			const libport::Symbol& msg,
 			const object::objects_type& args,
 			const rObject& call_message);

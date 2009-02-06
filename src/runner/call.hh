@@ -10,8 +10,7 @@ namespace object
 
   // self.'msg'(args)
   URBI_SDK_API
-  rObject urbi_call(rObject self,
-                    libport::Symbol msg,
+  rObject urbi_call(libport::Symbol msg,
                     objects_type& args);
 
   // self.'msg'(args) for up to five arguments
@@ -32,8 +31,7 @@ namespace object
 
   // owner.getSlot(msg).apply([self, args])
   URBI_SDK_API
-  rObject urbi_call_function(rObject self,
-                             rObject function_owner,
+  rObject urbi_call_function(rObject function_owner,
                              libport::Symbol msg,
                              objects_type& args);
 }

@@ -136,7 +136,7 @@ def primitive_list(r, runner, met):
         runner = ''
 	runner_name = ''
     if met:
-        target_get = 'S tgt = CxxConvert<S>::to(args[0], 0); args.pop_front();'
+        target_get = 'S tgt = CxxConvert<S>::to(args[0], 0); libport::pop_front(args);'
         target = 'tgt, '
     else:
         target_get = ''

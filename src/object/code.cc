@@ -85,9 +85,8 @@ namespace object
       runner::raise_primitive_error("list of arguments "
 				    "must begin with `this'");
     List::value_type a = args->value_get();
-    rObject tgt = a.front();
-    a.pop_front();
-    return r.apply(tgt, this, SYMBOL(apply), a);
+
+    return r.apply(this, SYMBOL(apply), a);
   }
 
   std::string Code::as_string(rObject what)
@@ -130,9 +129,7 @@ namespace object
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     assert(!args.empty());
-    rObject self = args[0];
-    args.pop_front();
-    return r.apply(self, this, libport::Symbol::make_empty(), args);
+    return r.apply(this, libport::Symbol::make_empty(), args);
   }
 
 

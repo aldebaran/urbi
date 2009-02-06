@@ -111,7 +111,7 @@ namespace object
       List::value_type frame;
       frame.push_back(new String(line.first));
       frame.push_back(new String(line.second));
-      res.push_front(new List(frame));
+      libport::push_front(res, new List(frame));
     }
     return new List(res);
   }

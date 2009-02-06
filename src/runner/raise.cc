@@ -38,6 +38,7 @@ namespace runner
     const rObject& exn = global_class->slot_get(exn_name);
     Runner& r = dbg::runner_or_sneaker_get();
     objects_type args;
+    args.push_back(exn);
     do
     {
       if (arg1)
@@ -62,7 +63,7 @@ namespace runner
       else
 	break;
     } while (false);
-    r.raise(urbi_call(exn, SYMBOL(new), args), skip);
+    r.raise(urbi_call(SYMBOL(new), args), skip);
     pabort("Unreachable");
   }
 
