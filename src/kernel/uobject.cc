@@ -148,6 +148,7 @@ static rObject wrap_ucallback(object::objects_type& ol,
                               urbi::UGenericCallback* ugc)
 {
   urbi::UList l;
+  object::check_arg_count(ol.size() - 1, ugc->nbparam);
   bool tail = false;
   foreach (const rObject& co, ol)
   {
