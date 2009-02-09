@@ -86,6 +86,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname, %N%, t, owned),	\
 	obj(obj), fun##Const(fun), is_const_ (IsConst)			\
     {									\
+      nbparam = %N%;                                                    \
       registerCallback(t);						\
     }
 
@@ -160,6 +161,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname,%N%, t, false),		\
 	obj(obj), fun(end), is_const_(IsConst)				\
     {									\
+      nbparam = %N%;                                                    \
       registerCallback(t);						\
     }
 
@@ -222,6 +224,7 @@ namespace urbi
 		const std::string& funname, UTable &t, bool owned)
       : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
     {
+      nbparam = %N%;
       registerCallback(t);
     }
 
