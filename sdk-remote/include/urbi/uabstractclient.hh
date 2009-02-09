@@ -146,7 +146,9 @@ namespace urbi
       return rc;
     }
 
-    // Sending
+    /*----------.
+    | Sending.  |
+    `----------*/
 
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
