@@ -48,19 +48,24 @@ namespace
       "  FILE    to upload onto the server\n"
       "\n"
       "Options:\n"
-      "  -h, --help        display this message and exit\n"
-      "  -v, --version     display version information and exit\n"
-      "  -H, --host HOST   the host running the Urbi server (default: localhost)\n"
-      "  -p, --port PORT   the Urbi server port\n"
-      ;
-    exit (EX_OK);
+      "  -e, --expression SCRIPT  send SCRIPT to the server\n"
+      "  -f, --file FILE          send the contents of FILE to the server\n"
+      "  -h, --help               display this message and exit\n"
+      "  -H, --host HOST          Urbi server host [localhost]\n"
+      "  -p, --port PORT          Urbi server port\n"
+      "  -v, --version            display version information and exit\n"
+      "\n"
+                << urbi::package_info().report_bugs()
+                << std::endl
+                << libport::exit(EX_OK);
   }
 
   static
   void
   version()
   {
-    std::cout << urbi::package_info() << std::endl
+    std::cout << "urbi-send" << std::endl
+              << urbi::package_info() << std::endl
               << libport::exit(EX_OK);
   }
 }
@@ -91,14 +96,61 @@ error(const urbi::UMessage& msg)
   exit(0);
 }
 
+/*-----------------.
+| Things to send.  |
+`-----------------*/
+
+struct Data
+{
+  virtual ~Data() {};
+  virtual void send(urbi::UClient& u) const = 0;
+};
+
+struct TextData: Data
+{
+  TextData(const std::string& s)
+    : command_(s)
+  {}
+
+  virtual
+  void
+  send(urbi::UClient& u) const
+  {
+    u.send("%s", command_.c_str());
+  }
+
+  std::string command_;
+};
+
+
+struct FileData: Data
+{
+  FileData(const std::string& s)
+    : filename_(s)
+  {}
+
+  virtual
+  void
+  send(urbi::UClient& u) const
+  {
+    u.sendFile(filename_ == "-" ? "/dev/stdin" : filename_);
+  }
+
+  std::string filename_;
+};
+
+
+/*-------.
+| Main.  |
+`-------*/
 
 int
 main(int argc, char* argv[])
 {
   program_name = argv[0];
-  typedef std::list<std::string> strings_type;
-  /// Files to send to the server.
-  strings_type files;
+  /// Things to send to the server.
+  typedef std::list<Data*> data_list;
+  data_list data;
   /// Server host name.
   std::string host = "localhost";
   /// Server port.
@@ -109,7 +161,13 @@ main(int argc, char* argv[])
   {
     std::string arg = argv[i];
 
-    if (arg == "--help" || arg == "-h")
+    if (arg == "--expression" || arg == "-e")
+      data.push_back(
+        new TextData(libport::convert_argument<std::string>(arg, argv[++i])));
+    else if (arg == "--file" || arg == "-f")
+      data.push_back(
+        new FileData(libport::convert_argument<std::string>(arg, argv[++i])));
+    else if (arg == "--help" || arg == "-h")
       usage();
     else if (arg == "--host" || arg == "-H")
       host = argv[++i];
@@ -121,7 +179,7 @@ main(int argc, char* argv[])
       libport::invalid_option (arg);
     else
       // An argument: a file.
-      files.push_back(libport::streq(argv[i], "-") ? "/dev/stdin" : argv[i]);
+      data.push_back(new FileData(argv[i]));
   }
 
   urbi::UClient client(host, port);
@@ -137,11 +195,14 @@ main(int argc, char* argv[])
   /*----------------.
   | Send contents.  |
   `----------------*/
-  for (strings_type::const_iterator i = files.begin(),
-         i_end = files.end();
+  for (data_list::const_iterator i = data.begin(),
+         i_end = data.end();
        i != i_end;
        ++i)
-    client.sendFile(*i);
+  {
+    (*i)->send(client);
+    delete *i;
+  }
 
   std::cout << libport::program_name
 	    << ": file sent, hit Ctrl-C to terminate."

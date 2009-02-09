@@ -56,10 +56,13 @@ cat >send-me.u <<EOF
 shutdown;
 EOF
 
-cmd="$valgrind urbi-send$EXEEXT --port $(cat server.port) send-me.u"
+cmd="$valgrind urbi-send$EXEEXT --port $(cat server.port)"
+cmd+=" -e '100+100;' -e '400*400;' -f send-me.u"
 echo "$cmd" >client.cmd
-$cmd >client.out 2>client.err &
+eval "$cmd" >client.out 2>client.err &
 children_register client
 
 children_wait 10
+xrun "check" grep "200" client.out
+xrun "check" grep "160000" client.out
 xrun "check" grep "PASS" client.out
