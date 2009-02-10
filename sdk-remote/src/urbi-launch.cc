@@ -13,6 +13,7 @@
 #include <libport/file-system.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>
+#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>

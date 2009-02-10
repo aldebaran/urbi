@@ -1,8 +1,10 @@
+#include <libport/package-info.hh>
+#include <libport/version.hh>
+
 #include <sdk/config.h>
-#include <liburbi/version.hh>
 #include <urbi/package-info.hh>
 
-#include <libport/version.hh>
+#include <libuco/version.hh>
 
 namespace urbi
 {

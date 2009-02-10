@@ -7,6 +7,7 @@
 #include <libport/cstdio>
 
 #include <libport/cli.hh>
+#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sys/stat.h>
 #include <libport/sysexits.hh>

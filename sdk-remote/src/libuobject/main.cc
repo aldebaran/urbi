@@ -10,6 +10,7 @@
 
 #include <libport/cli.hh>
 #include <libport/containers.hh>
+#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 

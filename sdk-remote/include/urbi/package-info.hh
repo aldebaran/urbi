@@ -1,7 +1,7 @@
 #ifndef URBI_PACKAGE_INFO_HH
 # define URBI_PACKAGE_INFO_HH
 
-# include <libport/package-info.hh>
+# include <libport/fwd.hh>
 # include <urbi/export.hh>
 
 namespace urbi
