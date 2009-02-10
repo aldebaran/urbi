@@ -25,6 +25,14 @@ The native "long unsigned int" type is now used for all the bitwise
 operations (&, |, ^, compl, <<, >>).  As a consequence it is now an
 error to pass negative operands to these operations.
 
+System.PackageInfo
+------------------
+
+This new object provides version information about the Urbi package.
+It is also used to ensure that the initialization process uses
+matching Urbi and C++ files.  This should prevent accidental
+mismatches due to incomplete installation processes.
+
 Precedence of operator **
 -------------------------
 

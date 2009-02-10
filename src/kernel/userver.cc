@@ -24,6 +24,7 @@
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/path.hh>
+#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
@@ -57,6 +58,8 @@
 #include <kernel/ughostconnection.hh>
 #include <kernel/uobject.hh>
 #include <kernel/uqueue.hh>
+
+using libport::program_name;
 
 namespace kernel
 {
@@ -117,6 +120,55 @@ namespace kernel
     else
       DEBUG (("not found\n"));
     return res;
+  }
+
+  static
+  void
+  init_error()
+  {
+    static bool ignore = getenv("IGNORE_URBI_U");
+    if (!ignore)
+      std::cerr
+        << program_name << ": set IGNORE_URBI_U to ignore." << std::endl
+        << libport::exit(EX_OSFILE);
+  }
+
+  void
+  UServer::xload_init_file(const char* fn)
+  {
+    if (load_init_file(fn) != USUCCESS)
+    {
+      std::cerr
+        << program_name << ": cannot load " << fn << "." << std::endl
+        << program_name << ": path: " << search_path << std::endl;
+      init_error();
+    }
+  }
+
+  void
+  UServer::revision_check()
+  {
+    // Check that revision bw C++ and Urbi match.
+    xload_init_file("urbi/package-info.u");
+
+    // Force the processing until PackageInfo is defined.
+    while (!object::system_class->slot_has(SYMBOL(PackageInfo)))
+      work();
+    object::rObject PackageInfo =
+      object::system_class->slot_get(SYMBOL(PackageInfo));
+    std::string urbi_rev =
+      PackageInfo->slot_get(SYMBOL(revision)).get<std::string>();
+
+    // C++ revision.
+    std::string cxx_rev = package_info().get("revision");
+    if (urbi_rev != cxx_rev)
+    {
+      std::cerr
+        << program_name << ": revison mismatch between C++ and Urbi." << std::endl
+        << program_name << ":   kernel revision: " << cxx_rev << std::endl
+        << program_name << ":   urbi.u revision: " << urbi_rev << std::endl;
+      init_error();
+    }
   }
 
 #if !defined WIN32 && !defined _MSC_VER
@@ -217,13 +269,8 @@ namespace kernel
     ghost_ = new UGhostConnection(*this);
     DEBUG (("done\n"));
 
-    if (load_init_file("urbi/urbi.u") != USUCCESS
-        && !getenv("IGNORE_URBI_U"))
-      std::cerr
-        << libport::program_name << ": cannot load urbi/urbi.u." << std::endl
-        << libport::program_name << ": path: " << search_path << std::endl
-        << libport::program_name << ": set IGNORE_URBI_U to ignore." << std::endl
-        << libport::exit(EX_OSFILE);
+    revision_check();
+    xload_init_file("urbi/urbi.u");
 
     // Handle pluged UOBjects.
     // Create "uobject" in lobby where UObjects will be put.
