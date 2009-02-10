@@ -16,7 +16,10 @@ SUBDIRS =					\
 
 host_SCRIPTS =
 nodist_host_DATA =
-AM_CPPFLAGS += $(LIBPORT_CPPFLAGS) -I$(srcdir)/lib $(BOOST_CPPFLAGS)
+AM_CPPFLAGS +=					\
+  $(LIBPORT_CPPFLAGS)				\
+  -I$(srcdir)/lib				\
+  $(BOOST_CPPFLAGS)
 include lib/libport/local.mk
 include sdk/local.mk
 include include/local.mk

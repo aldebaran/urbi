@@ -12,14 +12,12 @@ AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 AM_CPPFLAGS += -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
 # Find urbi/ headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include
-# Find version.hh.
-AM_CPPFLAGS += -I$(top_builddir)/src
 # Find sdk/config.h
 AM_CPPFLAGS += -I$(top_builddir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
 
-LIBADD       =					\
+LIBADD =					\
   $(PTHREAD_LIBS) $(SOCKETS_LIBS)		\
   $(top_builddir)/lib/libport/libport.la
 AUTOMAKE_OPTIONS += subdir-objects
@@ -51,15 +49,6 @@ endif EXAMPLES
 .PHONY: core libs
 libs: $(LTLIBRARIES)
 core: libs urbi-launch$(EXEEXT)
-
-## ------------ ##
-## version.hh.  ##
-## ------------ ##
-
-REVISION_FILE = version.hh
-include $(top_srcdir)/build-aux/revision.mk
-
-nodist_env_DATA = version.hh
 
 ## ------------- ##
 ## Urbi-launch.  ##
