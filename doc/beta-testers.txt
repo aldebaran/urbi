@@ -102,6 +102,7 @@ IT+R
 ====
 Contact: Emanuele Menegatti <emanuele.menegatti@it-robotics.it>
 Environment: "arm-linux-gnu" as compiler toolchain for our board IT+R-core
+Intel Xscale PXA270
 
 LORIA
 =====
@@ -129,3 +130,9 @@ Université de Cergy
 Contact: Philippe Laroque <laroque@u-cergy.fr>
 Environment: K1 on Aibo, K1 on Nao.
 Wants on Nao.
+
+University of Wales, Newport
+============================
+Robotic Intelligence Lab Coordinator
+Contact: Torbjorn Dahl <Torbjorn.Dahl@newport.ac.uk>
+Environment: Linux, but want Nao.
