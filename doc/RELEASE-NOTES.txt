@@ -44,7 +44,9 @@ Auxiliary programs
 ==================
 
 The command line interface of "urbi-sendbin" has been updated.
+"urbi-send" now supports -e/--expression and -f/--file.  For instance
 
+       urbi-send -e 'var x;' -e "x = $value;" -e 'shutdown;'
 
 *******************************
 * New since kernel 2.0 beta 2 *
