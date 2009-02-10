@@ -11,7 +11,7 @@ include $(top_srcdir)/build-aux/check.mk
 # LAZY_TEST_SUITE = 1
 TEST_LOGS = $(TESTS:.chk=.log)
 # FIXME: Assigned to QH.
-TFAIL_TESTS = specs/lang.tex
+TFAIL_TESTS += specs/lang.tex
 
 # Generating the test files.
 noinst_DATA = $(patsubst %.tex,$(srcdir)/tests/%/local.mk,$(call ls_files,*.tex))

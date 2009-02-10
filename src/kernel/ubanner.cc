@@ -2,10 +2,11 @@
 // frequently, so include it in a small file instead of userver.cc
 // which is demanding.
 
+#include <libport/package-info.hh>
+#include <urbi/package-info.hh>
+
 #include <kernel/userver.hh>
 #include <kernel/git-version.hh>
-
-#include <libport/package-info.hh>
 
 #include <kernel/config.h>
 #include <version.hh>
@@ -20,7 +21,7 @@ namespace kernel
   URBI_SDK_API const char* HEADER_BEFORE_CUSTOM[] =
     {
       "*** **********************************************************\n",
-      "*** URBI Kernel " PACKAGE_NAME " " GIT_VERSION "\n",
+      "*** URBI Kernel " PACKAGE_NAME " " PACKAGE_VERSION "\n",
       "*** Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
       "***\n",
       0
@@ -40,7 +41,7 @@ namespace kernel
 
   URBI_SDK_API const char* uconsole_banner[] =
   {
-    "*** URBI Kernel Console " PACKAGE_NAME " " GIT_VERSION "\n",
+    "*** URBI Kernel Console " PACKAGE_NAME " " PACKAGE_VERSION "\n",
     "*** "
     "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
     ""
@@ -50,6 +51,9 @@ namespace kernel
   UServer::package_info()
   {
     LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
+    static bool tail = false;
+    if (!tail++)
+      pi.dependency_add(urbi::package_info());
     return pi;
   }
 
