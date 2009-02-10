@@ -100,34 +100,11 @@ do (Global)
   function noop () {};
 };
 
-/*------------.
-| Exception.  |
-`------------*/
 
 load("urbi/exception.u");
-
-/*---------------.
-| Call message.  |
-`---------------*/
-
 load("urbi/call-message.u");
-
-/*-------.
-| Lazy.  |
-`-------*/
-
 load("urbi/lazy.u");
-
-/*-------.
-| List.  |
-`-------*/
-
 load("urbi/list.u");
-
-/*------------.
-| Singleton.  |
-`------------*/
-
 load("urbi/singleton.u");
 
 /*-------.
@@ -205,22 +182,14 @@ do (Global)
 };
 
 
-/*----------.
-| Control.  |
-`----------*/
-
 load("urbi/control.u");
-
-
-/*----------.
-| Channel.  |
-`----------*/
-
 load("urbi/channel.u");
 
 
 // Disable top-level display
 topLevel.enabled = false;
+
+
 /*-------------.
 | Comparable.  |
 `-------------*/
