@@ -1,4 +1,137 @@
-Notifications in pure Urbi
-==========================
+Dataflow programming: Creating UVars in UrbiScript
+==================================================
 
-by MN.
+One of the things we learned after years of dealing with Urbi is that if a
+feature is cool in the C++ UObject API, then it's also cool to have it in
+UrbiScript. One of those features is the UVar class, which is the central class
+in the UObject notification system. In urbi 2.0, this class is now available
+in UrbiScript too. Let us look at an usage example that we will analyse
+step by step.
+
+<code>
+// Compute the running average of a variable.
+class averager
+{
+  // Our contructor takes the data source UVar as its argument.
+  function init(source)
+  {
+    /* First we create our output variable. We make it an UVar so that
+     * others can use it as input for further processing.
+     *
+     * The UVar constructor takes the container object and its name
+     * as arguments since it needs to perform some operations on the
+     * container to register itself. There is no need to assign the
+     * resulting value to anything, the constructor will take care
+     * of that.
+     */
+     UVar.new(this, "val");
+
+    /* UVars have a notifyChange slot that takes a function and call it
+     * (without argument) each time the UVar is modified.
+     * Here we pass it a wrapper that calls our onData function,
+     * passing it the current value of the source UVar.
+     *
+     * Notice that:
+     * - We use 'closure' and not 'function' so that our wrapper
+     * will call onData on the correct object (this, i.e. the one on
+     * which init is called).
+     * - We add a pair of () after source to pass the value of the
+     * uvar, and not the uvar itself.
+     */
+    source.notifyChange(closure() { onData(source())});
+  };
+  /* This function will be called with the new source value each time it
+   * changes.
+   */
+  function onData(v)
+  {
+    sum += v|
+    count++|
+    val = sum / count
+  };
+  function reset()
+  {
+    sum = 0 | count = 0
+  };
+  /* Create the 'sum' and 'count' slots in the base class, and let copy-on-write
+   * handle the rest.
+   */
+  var sum = 0;
+  var count = 0;
+};
+</code>
+
+Many elements of this pure Urbi class will look familiar to the UObject
+API user.
+
+A simple usage of this class would be:
+<code>
+// Let us pretend we have some kind of sensor...
+class Global.sensor{};
+// with an UVar named 'val'.
+UVar.new(sensor, "val");
+/* Now instanciate our averager.
+ * Notice that since sensor.val is an UVar which is callable,
+ * we must use 'sensor.getSlot("val")' to get the UVar itself,
+ * as 'sensor.val' will evaluate to the value contained in the
+ * UVar.
+ */
+var Global.avgSensor = averager.new(sensor.getSlot("val"));
+// Let us test it and pretend the value of the sonsor changes.
+sensor.val = 0;
+sensor.val = 10;
+// Check that average value is up to date
+avgSensor.val;
+[00000001] 5
+</code>
+
+
+If this 'val' versus 'getSlot("val")' looks confusing to you, keep in mind
+those simple rules:
+ - Callable types (functions, UVars...) are automatically called when they
+ are slots of an object, but not when they are local variables or function
+ arguments.
+ - To access a callable without calling it, use 'getSlot("slotName")'
+ instead of 'slotname'.
+ - To call a callable which is a local variable, append '()' to its name.
+The reason why UVar is a callable type is that it makes its use transparent to
+the user. There is no difference between a value directly available in a slot,
+and the same value encapsulated in an UVar stored in the same slot.
+
+Similar to the notifyChange, the UVar also has a notifyAccess function
+that will call its argument each time the value contained in the UVar is
+accessed.
+To illustrate it, the following code implements the averager class slightly
+differently, by computing the average value only when it is accessed:
+
+<code>
+class averager
+{
+  function init(source)
+  {
+    UVar.new(this, "val");
+    // Call updateVal each time val is accessed.
+    getSlot("val").notifyAccess(closure() {updateVal});
+    source.notifyChange(closure() { onData(source())});
+  };
+  function onData(v)
+  {
+    sum += v | count++
+  };
+  function updateVal()
+  {
+    val = sum / count
+  };
+  function reset()
+  {
+    sum = 0 | count = 0
+  };
+  var sum = 0;
+  var count = 0;
+};
+</code>
+
+As in C++, the choice of wether to update the output in a notifyAccess, a
+timer, or the input processing notifyChange callback depends on
+performance considerations. One must weight how often the value will be
+accessed, versus how costly the computation is.
