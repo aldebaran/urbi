@@ -14,38 +14,6 @@
 namespace kernel
 {
 
-  // Standard header used by the server. Divided into "before" and
-  // "after" the custom header defined by the real server.
-
-  URBI_SDK_API const char* HEADER_BEFORE_CUSTOM[] =
-    {
-      "*** **********************************************************\n",
-      "*** URBI Kernel " PACKAGE_NAME " " PACKAGE_VERSION "\n",
-      "*** Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
-      "***\n",
-      0
-    };
-
-  URBI_SDK_API const char* HEADER_AFTER_CUSTOM[] =
-    {
-      "***\n",
-      "*** URBI comes with ABSOLUTELY NO WARRANTY.\n",
-      "*** This software can be used under certain conditions;\n",
-      "*** see LICENSE file for details.\n",
-      "***\n",
-      "*** See http://www.urbiforge.com for news and updates.\n",
-      "*** **********************************************************\n",
-      0
-    };
-
-  URBI_SDK_API const char* uconsole_banner[] =
-  {
-    "*** URBI Kernel Console " PACKAGE_NAME " " PACKAGE_VERSION "\n",
-    "*** "
-    "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
-    ""
-  };
-
   const libport::PackageInfo&
   UServer::package_info()
   {

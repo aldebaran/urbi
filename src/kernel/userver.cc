@@ -16,6 +16,7 @@
 #include <boost/bind.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <libport/compiler.hh>
 #include <libport/config.h>
@@ -228,6 +229,32 @@ namespace kernel
 
 #endif
 
+  std::string
+  UServer::banner_get() const
+  {
+    const std::string marker =
+      "**********************************************************";
+    std::string res =
+      marker + "\n"
+      + package_info().signature() + "\n"
+      + "\n";
+
+    const std::string& custom = custom_banner_get();
+    if (!custom.empty())
+      res +=
+        custom_banner_get() + "\n"
+        + "\n";
+
+    res +=
+      "URBI comes with ABSOLUTELY NO WARRANTY.\n"
+      "This software can be used under certain conditions;\n"
+      "see LICENSE file for details.\n"
+      "\n"
+      "See http://www.urbiforge.com for news and updates.\n"
+      + marker + "\n";
+    return res;
+  }
+
   void
   UServer::initialize()
   {
@@ -241,28 +268,23 @@ namespace kernel
     // Set the initial time to a valid value.
     updateTime();
 
-    // Display the banner.
-    {
-      bool old_debugOutput = debugOutput;
-      debugOutput = true;
-      display(HEADER_BEFORE_CUSTOM);
 
-      unsigned int i = 0;
-      static char customHeader[1024];
-      do {
-        getCustomHeader(i, customHeader, 1024);
-        if (customHeader[0])
-	display(customHeader);
-        ++i;
-      } while (customHeader[0] != 0);
+    /*---------.
+    | Banner.  |
+    `---------*/
+    const std::string& banner = banner_get();
+    std::vector<std::string> lines;
+    boost::split(lines, banner, boost::is_any_of("\n"));
+    foreach (const std::string& l, lines)
+      effectiveDisplay(("*** " + l + "\n").c_str());
+    effectiveDisplay("Ready.\n");
 
-      display(HEADER_AFTER_CUSTOM);
-      display("Ready.\n");
 
-      debugOutput = old_debugOutput;
-    }
+    /*--------.
+    | Setup.  |
+    `--------*/
 
-    //The order is important: ghost connection, plugins, urbi.ini
+    // The order is important: ghost connection, plugins, urbi.ini
 
     // Ghost connection
     DEBUG (("Setting up ghost connection..."));
@@ -272,7 +294,7 @@ namespace kernel
     revision_check();
     xload_init_file("urbi/urbi.u");
 
-    // Handle pluged UOBjects.
+    // Handle plugged UObjects.
     // Create "uobject" in lobby where UObjects will be put.
     object::object_class->slot_set(SYMBOL(uobject_init),
                                    new object::Primitive(&uobject_initialize));
@@ -508,10 +530,10 @@ namespace kernel
     lastTime_ = getTime();
   }
 
-  void
-  UServer::getCustomHeader (unsigned int, char* header, size_t)
+  std::string
+  UServer::custom_banner_get() const
   {
-    header[0] = 0; // empty string
+    return "";
   }
 
   namespace

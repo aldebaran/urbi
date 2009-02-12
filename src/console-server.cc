@@ -70,14 +70,6 @@ public:
     return ufloat(1);
   }
 
-  //! Called to display the header at each coonection start
-  virtual void
-  getCustomHeader(unsigned int line, char* header, size_t maxlength)
-  {
-    // FIXME: This interface is really really ridiculous and fragile.
-    strncpy(header, kernel::uconsole_banner[line], maxlength);
-  }
-
   virtual
   UErrorValue
   save_file(const std::string& filename, const std::string& content)

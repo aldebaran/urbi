@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iomanip>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/version.hpp>
 
@@ -40,7 +41,6 @@
 #include <runner/sneaker.hh>
 #include <runner/shell.hh>
 
-#include <kernel/ubanner.hh>
 #include <kernel/uqueue.hh>
 
 namespace kernel
@@ -90,30 +90,13 @@ namespace kernel
   void
   UConnection::initialize()
   {
-    for (int i = 0; HEADER_BEFORE_CUSTOM[i]; ++i)
-      send(HEADER_BEFORE_CUSTOM[i], "start");
+    const std::string& banner = server_.banner_get();
+    std::vector<std::string> lines;
+    boost::split(lines, banner, boost::is_any_of("\n"));
+    foreach (const std::string& l, lines)
+      send(("*** " + l + "\n").c_str(), "start");
 
-    for (unsigned int i = 0; ; ++i)
-    {
-      char buf[1024];
-      server_.getCustomHeader(i, buf, sizeof buf);
-      if (!buf[0])
-        break;
-      send(buf, "start");
-    }
-
-    for (int i = 0; HEADER_AFTER_CUSTOM[i]; ++i)
-      send(HEADER_AFTER_CUSTOM[i], "start");
-
-    {
-      char buf[1024];
-      snprintf(buf, sizeof buf, "*** ID: %s\n", connection_tag_.c_str());
-      send(buf, "ident");
-
-      snprintf(buf, sizeof buf, "%s created", connection_tag_.c_str());
-      server_.echo(DISPLAY_FORMAT, (long)this,
-		 "UConnection::initialize", buf);
-    }
+    send(("*** ID: " + connection_tag_ + "\n").c_str(), "ident");
 
     server_.load_file("CLIENT.INI", *recv_queue_);
     new_data_added_ = true;
