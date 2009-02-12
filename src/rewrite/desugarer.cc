@@ -252,10 +252,11 @@ namespace rewrite
     {
       PARAMETRIC_AST(emit,
                      "{"
-		     " var '$emit' = %exp:1.trigger(%exps:2) |"
-		     " var '$duration' = %exp:3 |"
-                     " if ('$duration' != inf) "
-		     "  detach({ sleep('$duration') | '$emit'.stop})"
+		     "  var '$emit' = %exp:1.trigger(%exps:2) |"
+		     "  var '$duration' = %exp:3 |"
+                     "  if ('$duration' != inf)"
+                     "    Control.finally(closure () { sleep('$duration') },"
+                     "                    closure () { '$emit'.stop })"
 		     "}");
 
       // FIXME: children desugared twice

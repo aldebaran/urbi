@@ -73,6 +73,13 @@ class Global.Control
     function () { res }
   };
 
+  function finally(action, reaction)
+  {
+    var t = Tag.new;
+    at (?t.leave)
+      reaction();
+    t: action();
+  };
 };
 
 // Import those at the global level
