@@ -27,6 +27,10 @@ namespace object
   // Helper function
   template <typename T>
   rObject to_urbi(const T&);
+
+  // Helper function
+  template <typename T>
+  T from_urbi(rObject);
 }
 
 #include <object/cxx-conversions.hxx>

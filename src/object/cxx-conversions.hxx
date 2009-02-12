@@ -306,6 +306,12 @@ namespace object
   {
     return CxxConvert<T>::from(v);
   }
+
+  template <typename T>
+  T from_urbi(rObject v)
+  {
+    return CxxConvert<T>::to(v, 0);
+  }
 }
 
 #endif
