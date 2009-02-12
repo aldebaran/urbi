@@ -6,7 +6,6 @@
 #include <urbi/package-info.hh>
 
 #include <kernel/userver.hh>
-#include <kernel/git-version.hh>
 
 #include <kernel/config.h>
 #include <version.hh>

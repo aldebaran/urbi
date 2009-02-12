@@ -13,6 +13,7 @@
 /lib/network
 /sdk
 /sdk-remote
+/share/urbi/package-info.u
 /src/Makefile.in
 /src/include
 /src/kernel/config.h.in
