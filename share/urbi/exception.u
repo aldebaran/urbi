@@ -23,6 +23,15 @@ class Global.Exception
   };
 };
 
+class Global.ConstError: Exception
+{
+  function init()
+  {
+    Exception.getSlot("init").apply([this,
+                                     "cannot modify const slot"])
+  }
+};
+
 class Global.ImplicitTagComponentError: Exception
 {
   function init()

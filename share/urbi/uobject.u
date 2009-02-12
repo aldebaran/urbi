@@ -138,7 +138,9 @@ do (getSlot("UVar"))
    parent.removeProperty(name, prop)
   };
   var __clone = getSlot("clone");
-  clone = function()
+
+  removeSlot("clone");
+  const var clone = function()
   {
     var uv = __clone;
     do (uv)

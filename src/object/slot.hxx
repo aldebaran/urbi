@@ -3,18 +3,21 @@
 
 # include <object/cxx-conversions.hh>
 # include <object/symbols.hh>
+# include <runner/raise.hh>
 
 namespace object
 {
   inline
   Slot::Slot()
     : value_(object::void_class)
+    , constant_(false)
   {}
 
   inline
   Slot::Slot(const Slot& model)
     : libport::RefCounted()
     , value_(model.value_)
+    , constant_(false)
     , properties_(model.properties_)
   {}
 
@@ -22,6 +25,7 @@ namespace object
   inline
   Slot::Slot(const T& value)
     : value_(0)
+    , constant_(false)
   {
     set(value);
   }
@@ -37,6 +41,8 @@ namespace object
   inline void
   Slot::set(const T& value)
   {
+    if (constant_)
+      runner::raise_const_error();
     value_ = object::CxxConvert<T>::from(value);
     if (changed_)
       changed_->call(SYMBOL(emit));

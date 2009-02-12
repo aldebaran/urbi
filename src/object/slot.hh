@@ -31,6 +31,8 @@ namespace object
     Object* operator->();
     const Object* operator->() const;
     rObject value() const;
+    void constant_set(bool c);
+    bool constant_get() const;
 
     /*-----------.
     | Properties |
@@ -50,6 +52,7 @@ namespace object
   private:
     rObject value_;
     rObject changed_;
+    bool constant_;
     properties_type properties_;
   };
 

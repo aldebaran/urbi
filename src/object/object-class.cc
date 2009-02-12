@@ -330,6 +330,7 @@ namespace object
     DECLARE(locateSlot, &Object::urbi_locateSlot);
     DECLARE(setProperty, &Object::property_set);
     DECLARE(setSlot, &Object::urbi_setSlot);
+    DECLARE(setConstSlot, &Object::urbi_setConstSlot);
     DECLARE(removeProperty, &Object::property_remove);
     DECLARE(removeSlot, &Object::urbi_removeSlot);
     DECLARE(updateSlot, &Object::urbi_updateSlot);

@@ -186,6 +186,7 @@
         CASE         "case"
         CATCH        "catch"
         CLOSURE      "closure"
+        CONST        "const"
         CONTINUE     "continue"
         COLON        ":"
         DEFAULT       "default"
@@ -1154,7 +1155,19 @@ exp:
             && $2.unsafe_cast<ast::Call>()->arguments_get()))
       ERROR(@2, "syntax error, " << *$2 << " is not a valid lvalue",
             ast::rExp);
-    $$ = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
+    ast::rBinding res = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
+    $$ = res;
+  }
+| "const" "var" exp %prec VAR
+  {
+    if (!$3.unsafe_cast<ast::LValue>()
+        || ($3.unsafe_cast<ast::Call>()
+            && $3.unsafe_cast<ast::Call>()->arguments_get()))
+      ERROR(@2, "syntax error, " << *$3 << " is not a valid lvalue",
+            ast::rExp);
+    ast::rBinding res = new ast::Binding(@$, $3.unchecked_cast<ast::LValue>());
+    res->constant_set(true);
+    $$ = res;
   }
 | lvalue
   {

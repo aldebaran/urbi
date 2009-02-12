@@ -76,6 +76,13 @@ namespace runner
 	       obj);
   }
 
+  void
+  raise_const_error()
+  {
+    assert(global_class->slot_has(SYMBOL(ConstError)));
+    raise_urbi_skip(SYMBOL(ConstError));
+  }
+
 
   void
   raise_arity_error(unsigned effective,

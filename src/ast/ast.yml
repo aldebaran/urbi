@@ -968,6 +968,12 @@ LocalWrite:
 
 LocalDeclaration:
   super: LocalWrite
+  attributes:
+    - constant:
+        desc: /// Whether this slot should be constant
+        type: bool
+        access: rW
+        init: "false"
   printer:
     - '"var "'
     - $what
@@ -1028,6 +1034,12 @@ Write:
 
 Declaration:
   super: Write
+  attributes:
+    - constant:
+        desc: /// Whether this slot should be constant
+        type: bool
+        access: rW
+        init: "false"
   printer:
     - '"var "'
     - '{ visit(static_cast<const ast::Write*>(n)); }'
@@ -1113,6 +1125,11 @@ Binding:
     - what:
         type: rLValue
         access: r
+    - constant:
+        desc: /// Whether this slot should be constant
+        type: bool
+        access: rW
+        init: "false"
   printer:
     - '"var "'
     - ~what

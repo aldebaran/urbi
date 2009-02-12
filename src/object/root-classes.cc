@@ -150,7 +150,7 @@ namespace object
 
 #define CLASS_REGISTER(What, Name)				\
     What ## _class_initialize ();				\
-    global_class->slot_set(SYMBOL(Name), What ## _class);
+    global_class->slot_set(SYMBOL(Name), What ## _class, true);
 
 
 #define CLASS_SETUP(What, Name)                                 \

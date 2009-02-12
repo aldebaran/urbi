@@ -184,7 +184,9 @@ namespace binder
                                doc, value);
         else
           result_ = changeSlot(loc, call->target_get(), name,
-                               SYMBOL(setSlot), value);
+                               input->constant_get()
+                               ? SYMBOL(setConstSlot)
+                               : SYMBOL(setSlot), value);
       }
       else
         result_ = changeSlot(loc, call->target_get(), name,
@@ -205,6 +207,7 @@ namespace binder
       }
       ast::rLocalDeclaration res =
         new ast::LocalDeclaration(loc, name, value);
+      res->constant_set(input->constant_get());
       bind(res);
       result_ = res;
     }

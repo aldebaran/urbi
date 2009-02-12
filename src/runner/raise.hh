@@ -53,6 +53,10 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
+  void raise_const_error();
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_primitive_error(const std::string message);
 
   ATTRIBUTE_NORETURN

@@ -31,7 +31,7 @@ namespace object
   CxxObject::initialize(rObject global)
   {
     foreach (Initializer* init, initializers_get())
-      global->slot_set(init->name(), init->make_class());
+      global->slot_set(init->name(), init->make_class(), true);
   }
 
   CxxObject::initializers_type&

@@ -49,5 +49,17 @@ namespace object
   {
     return properties_;
   }
+
+  void
+  Slot::constant_set(bool c)
+  {
+    constant_ = c;
+  }
+
+  bool
+  Slot::constant_get() const
+  {
+    return constant_;
+  }
 }
 

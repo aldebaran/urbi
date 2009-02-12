@@ -30,7 +30,8 @@ namespace runner
       /// Update the given value
       void set(ast::rConstLocalAssignment e, rObject v);
       /// Define the given value
-      void def(ast::rConstLocalDeclaration e, rObject v);
+      void def(ast::rConstLocalDeclaration e, rObject v,
+               bool constant = false);
       /// Bind given argument
       void def_arg(ast::rConstLocalDeclaration e, rObject v);
       /// Bind given captured variable

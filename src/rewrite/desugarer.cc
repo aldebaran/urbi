@@ -108,9 +108,10 @@ namespace rewrite
     {
       if (!allow_decl_)
         errors_.error(what->location_get(), "declaration not allowed here");
-      result_ = new ast::Declaration(loc, what->what_get(),
-                                     assign->value_get());
-      result_ = recurse(result_);
+      ast::rDeclaration res =
+        new ast::Declaration(loc, what->what_get(), assign->value_get());
+      res->constant_set(what->constant_get());
+      result_ = recurse(res);
       return;
     }
 
@@ -198,7 +199,7 @@ namespace rewrite
     libport::Symbol name = what->call()->name_get();
 
     PARAMETRIC_AST(desugar,
-      "var %lvalue:1 ="
+      "const var %lvalue:1 ="
       "{"
       "  var '$tmp' = Object.clone |"
       "  %exp:2 |"

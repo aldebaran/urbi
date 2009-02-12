@@ -133,6 +133,7 @@
  */
 #define DECLARE_PRIMITIVE(Class, Name)					\
   Class ## _class->slot_set (SYMBOL(Name),                              \
-			     new Primitive(Class ## _class_ ## Name))
+                             new Primitive(Class ## _class_ ## Name),   \
+                             true)
 
 #endif // !OBJECT_PRIMITIVES_HH

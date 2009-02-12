@@ -149,7 +149,7 @@ namespace runner
     rObject val = v ? operator()(v.get()) : object::void_class;
     if (v)
       check_void(val);
-    stacks_.def(d, val);
+    stacks_.def(d, val, d->constant_get());
     return val;
   }
 

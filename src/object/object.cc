@@ -119,9 +119,11 @@ namespace object
 
 
   Object&
-  Object::slot_set(const key_type& k, rObject o)
+  Object::slot_set(const key_type& k, rObject o, bool constant)
   {
-    return slot_set(k, new Slot(o));
+    Slot* slot = new Slot(o);
+    slot->constant_set(constant);
+    return slot_set(k, slot);
   }
 
   Object&
@@ -428,6 +430,13 @@ namespace object
   Object::urbi_setSlot(key_type name, const rObject& value)
   {
     slot_set(name, value);
+    return value;
+  }
+
+  rObject
+  Object::urbi_setConstSlot(key_type name, const rObject& value)
+  {
+    slot_set(name, value, true);
     return value;
   }
 

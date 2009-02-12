@@ -151,7 +151,7 @@ namespace runner
   }
 
   void
-  Stacks::def(ast::rConstLocalDeclaration e, rObject v)
+  Stacks::def(ast::rConstLocalDeclaration e, rObject v, bool constant)
   {
     // The toplevel's stack grows on demand.
     if (local_pointer_ == 0)
@@ -164,7 +164,9 @@ namespace runner
              i <= e->local_index_get() + 2; ++i)
         {
           STACK_ECHO("Growing toplevel local stack");
-          local_stack_.push_back(new Slot());
+          rSlot slot = new Slot();
+          slot->constant_set(constant);
+          local_stack_.push_back(slot);
         }
       }
     }
@@ -172,7 +174,9 @@ namespace runner
     STACK_OPEN();
     STACK_NECHO("Defining " << e->what_get()
                 << " (#" << e->local_index_get() << " ");
-    def(e->local_index_get() + 2, false, new Slot(v));
+    rSlot slot = new Slot(v);
+    slot->constant_set(constant);
+    def(e->local_index_get() + 2, false, slot);
   }
 
   void

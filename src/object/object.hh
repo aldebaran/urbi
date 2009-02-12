@@ -122,7 +122,7 @@ namespace object
     /// Set slot value in local slot.
     /// \precondition the slot does not exist in this.
     /// \return    *this.
-    Object& slot_set(const key_type& k, rObject o);
+    Object& slot_set(const key_type& k, rObject o, bool constant = false);
     Object& slot_set(const key_type& k, Slot* o);
 
     /// \brief Copy another object's slot.
@@ -226,6 +226,8 @@ namespace object
     urbi_removeSlot(key_type k);
     rObject
     urbi_setSlot(key_type k, const rObject& o);
+    rObject
+    urbi_setConstSlot(key_type k, const rObject& o);
     rObject
     urbi_updateSlot(key_type k, const rObject& o);
 

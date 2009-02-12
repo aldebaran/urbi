@@ -69,9 +69,10 @@ namespace object
   rObject
   CxxObject::TypeInitializer<T>::make_class()
   {
-    res_->slot_set(SYMBOL(type), new String(T::type_name));
+    res_->slot_set(SYMBOL(type), new String(T::type_name), true);
     res_->slot_set(SYMBOL(clone),
-                   rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>, _1))));
+                   rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>, _1))),
+                   true);
     Binder<T> b(res_);
     T::initialize(b);
 
@@ -79,7 +80,8 @@ namespace object
       libport::Symbol(std::string("as") + T::type_name);
     if (!res_->slot_locate(conversion, 0))
       res_->slot_set(conversion,
-                     rPrimitive(new Primitive(boost::bind(cxx_object_id<T>, _1))));
+                     rPrimitive(new Primitive(boost::bind(cxx_object_id<T>, _1))),
+                     true);
     return res_;
   }
 
@@ -102,7 +104,7 @@ namespace object
   CxxObject::Binder<T>::operator()(const libport::Symbol& name,
                                    M method)
   {
-    tgt_->slot_set(name, make_primitive(method));
+    tgt_->slot_set(name, make_primitive(method), true);
   }
 
   template<typename T>

@@ -475,6 +475,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "case"          RETURN(CASE);
 "class"         RETURN(CLASS);
 "closure"       RETURN(CLOSURE);
+"const"         RETURN(CONST);
 "continue"      RETURN(CONTINUE);
 "default"       RETURN(DEFAULT);
 "do"            RETURN(DO);
@@ -587,7 +588,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "auto"             |
 "bool"             |
 "char"             |
-"const"            |
 "const_cast"       |
 "double"           |
 "dynamic_cast"     |
