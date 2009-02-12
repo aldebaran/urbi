@@ -554,6 +554,14 @@ namespace runner
     return eval_tag(t->exp_get());
   }
 
+  /// Trigger leave event of all \a tags
+  static void
+  trigger_leave(const std::vector<object::rTag>& tags)
+  {
+    // Start with the most specific tag in the derivation chain.
+    foreach (const object::rTag& tag, tags)
+      tag->triggerLeave();
+  }
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::TaggedStmt* t)
@@ -598,18 +606,14 @@ namespace runner
 	yield();
       // Start with the uppermost tag in the derivation chain.
       rforeach (const object::rTag& tag, applied)
-	tag->triggerEnter();
+        tag->triggerEnter();
       rObject res = operator()(t->exp_get().get());
-      // Start with the most specific tag in the derivation chain.
-      foreach (const object::rTag& tag, applied)
-	tag->triggerLeave();
+      trigger_leave(applied);
       return res;
     }
     catch (sched::StopException& e)
     {
-      // Start with the most specific tag in the derivation chain.
-      foreach (const object::rTag& tag, applied)
-	tag->triggerLeave();
+      trigger_leave(applied);
       // Rewind up to the appropriate depth.
       if (e.depth_get() < result_depth)
 	throw;
