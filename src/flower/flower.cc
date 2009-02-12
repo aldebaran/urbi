@@ -157,14 +157,13 @@ namespace flower
     super_type::visit(code);
     if (has_return_)
     {
-      PARAMETRIC_AST(a, "var '$returnTag' = "
-				  "Tag.newFlowControl(\"returnTag\") | "
-                                  "'$returnTag': %exp:1");
+      PARAMETRIC_AST_DESUGAR(a,
+                             "var '$returnTag' ="
+                             "  Tag.newFlowControl(\"returnTag\") | "
+                             "'$returnTag': %exp:1");
       ast::rScope copy =
         result_.unsafe_cast<ast::Function>()->body_get();
-      // FIXME: children are rewritten twice
-      copy->body_set(
-        rewrite::rewrite(ast::rConstExp(exp(a % copy->body_get()))));
+      copy->body_set(exp(a % copy->body_get()));
     }
     result_->original_set(code);
   }
