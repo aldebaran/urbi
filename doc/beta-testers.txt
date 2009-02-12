@@ -98,6 +98,11 @@ Contact: Jérôme Béchu <jerome.bechu@inria.fr>
 	Engineer working for P-Y Oudeyer.
 Environment: windows mostly
 
+INSERM
+======
+Contact: Peter Ford Dominey <peter.dominey@inserm.fr>
+Environment: Wants Nao.
+
 IT+R
 ====
 Contact: Emanuele Menegatti <emanuele.menegatti@it-robotics.it>
@@ -114,6 +119,11 @@ PAL
 ===
 Contact: Francesco Ferro <francesco.ferro@pal-robotics.com>
 Environment: Unknown yet
+
+Penn State Robotics
+===================
+Contact: Daniel J Lesutis <djl5053@psu.edu>
+Environment: small maze solving robots. Arduino micro controller.
 
 SRI
 ===
