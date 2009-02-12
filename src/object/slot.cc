@@ -17,6 +17,8 @@ namespace object
       }
       return changed_;
     }
+    if (k == SYMBOL(constant))
+      return to_urbi(constant_);
     properties_type::iterator it = properties_.find(k);
     if (it == properties_.end())
       return 0;
@@ -34,6 +36,8 @@ namespace object
   Slot::property_set(libport::Symbol k, rObject value)
   {
     bool res = !property_has(k);
+    if (k == SYMBOL(constant))
+      constant_ = from_urbi<bool>(value);
     properties_[k] = value;
     return res;
   }
