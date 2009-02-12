@@ -3,7 +3,7 @@ dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 
 package_info_u = share/urbi/package-info.u
 nodist_urbi_DATA = $(package_info_u)
-REVISION_FLAGS = --urbi
+REVISIONFLAGS = --urbi
 REVISION_FILE = $(package_info_u)
 include $(top_srcdir)/build-aux/revision.mk
 
