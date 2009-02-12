@@ -17,7 +17,6 @@
 #include <libport/read-stdin.hh>
 #include <libport/sys/socket.h>
 #include <libport/thread.hh>
-#include <libport/tokenizer.hh>
 #include <libport/utime.hh>
 
 #include <boost/function.hpp>
