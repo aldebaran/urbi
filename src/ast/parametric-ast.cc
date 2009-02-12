@@ -11,10 +11,12 @@
 #include <parser/parse.hh>
 #include <parser/parse-result.hh>
 
+#include <rewrite/rewrite.hh>
+
 namespace ast
 {
 
-  ParametricAst::ParametricAst(const std::string& s, const loc& l)
+  ParametricAst::ParametricAst(const std::string& s, const loc& l, bool desugar)
     : Cloner()
 # define CONSTRUCT(Iter, None, Type)                                    \
       , BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type)        \
@@ -32,6 +34,8 @@ namespace ast
      */
 
     ast::rConstNary nary = ast_.unchecked_cast<const ast::Nary>();
+    if (desugar)
+      nary = rewrite::rewrite(nary);
     passert("ParametricAst result is not a Nary", nary);
 
     // Remove useless nary and statement if there.s only one child

@@ -51,7 +51,7 @@ namespace ast
 #undef TYPEDEF
 
     /// Build a ParametricAst whose textual part is \a s.
-    ParametricAst(const std::string& s, const loc& l = loc());
+    ParametricAst(const std::string& s, const loc& l = loc(), bool desugar = false);
     /// Destroy the ParametricAst.
     /// \precondition empty()
     virtual ~ParametricAst();
@@ -126,10 +126,15 @@ namespace ast
 
 
 /// Define a parametric ast, using the current file and line as location.
-# define PARAMETRIC_AST(Name, Content)                                  \
+# define PARAMETRIC_AST_HELPER(Name, Content, Desugar)                  \
   static ::ast::ParametricAst                                           \
-  Name(Content, __HERE__)
+  Name(Content, __HERE__, Desugar)
 
+# define PARAMETRIC_AST(Name, Content)                                  \
+  PARAMETRIC_AST_HELPER(Name, Content, false)
+
+# define PARAMETRIC_AST_DESUGAR(Name, Content)                          \
+  PARAMETRIC_AST_HELPER(Name, Content, true)
 
 # include <ast/parametric-ast.hxx>
 
