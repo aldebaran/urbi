@@ -624,6 +624,11 @@ namespace runner
       // Extract the value from the exception.
       return boost::any_cast<rObject>(e.payload_get());
     }
+    catch (sched::exception&)
+    {
+      trigger_leave(applied);
+      throw;
+    }
   }
 
 
