@@ -1,7 +1,7 @@
 /****************************************************************************
  * Sample image acqusition urbi client.
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,19 +25,25 @@
 #include <libport/cstdio>
 #include <csignal>
 
+#include <libport/cli.hh>
+#include <libport/program-name.hh>
+
 #include <urbi/usyncclient.hh>
 
 #include "monitor.h"
 
+using libport::program_name;
+
 int imcount;
 int format;
-Monitor *mon=0;
-unsigned char * buffer=NULL;
+Monitor* mon = 0;
+unsigned char* buffer=NULL;
 float scale;
 urbi::UImage im;
 
 /* Our callback function */
-static urbi::UCallbackAction
+static
+urbi::UCallbackAction
 showImage(const urbi::UMessage &msg)
 {
   if (msg.type != urbi::MESSAGE_DATA
@@ -50,7 +56,7 @@ showImage(const urbi::UMessage &msg)
   im.height = static_cast<int>(static_cast<float>(img.height) * scale);
   convert(img, im);
 
-  int sz = 3*im.width*im.height;
+  size_t sz = 3*im.width*im.height;
   static int tme = 0;
   /* Calculate framerate. */
   if (!(imcount % 20))
@@ -81,75 +87,77 @@ closeandquit (int)
 
 
 static void
-usage(const char * n)
+usage()
 {
-   fprintf(stderr,
-	      "usage: %s [options] format robotname\n"
-	      "  Displays images from an urbi server, or save one image if\n"
-	      "    -o is given\n"
-	      "  Options:\n"
-	      "    -p port   : use port instead of default urbi server port\n"
-	      "    -f period : query images at given period (in milliseconds)\n"
-	      "    -r        : use reconstruct mode (for aibo)\n"
-	      "    -j factor : jpeg compression factor (from 0 to 100, def 70\n"
-	      "    -d device : query image on device.val (default: camera.val\n"
-	      "    -o file   : query and save one image to file\n"
-	      "    -s scale  : rescale image with given factor (display only)\n"
-	      "  transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
-	      "  save     Format : rgb , ycrcb, jpeg, ppm\n", n
-	      );
+  std::cout <<
+    "usage: " << program_name << " [options]\n"
+    "Display images from an urbi server, or save one image if\n"
+    "-o is given\n"
+    "\n"
+    "Options:\n"
+    "  -H, --host HOST      server (robot) host name\n"
+    "  -P, --port PORT      server port\n"
+    "  -P, --period PERIOD  query images at given period (in milliseconds)\n"
+    "  -r                   use reconstruct mode (for aibo)\n"
+    "  -j factor            jpeg compression factor (from 0 to 100, def 70)\n"
+    "  -d device            query image on device.val (default: camera.val)\n"
+    "  -o file              query and save one image to file\n"
+    "  -s scale             rescale image with given factor (display only)\n"
+    "transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
+    "save     Format : rgb , ycrcb, jpeg, ppm"
+              << std::endl;
 }
 
 int
 main (int argc, char *argv[])
 {
+  program_name = argv[0];
   signal(SIGINT, closeandquit);
-  int frequency = 0;
-  const char * device = "camera";
-  char * fileName = 0;
+  int period = 0;
+  const char* device = "camera";
+  std::string arg_format;
+  char* fileName = 0;
   bool reconstruct = false;
-  int port = 54000;
+  /// Server host name.
+  std::string host = "localhost";
+  /// Server port.
+  int port = urbi::UClient::URBI_PORT;
   scale = 1.0;
   int jpegfactor = 70;
   mon = NULL;
   im.width = im.height = 0;
-  im.size = 0; im.data = 0; im.imageFormat = urbi::IMAGE_RGB;
+  im.size = 0;
+  im.data = 0;
+  im.imageFormat = urbi::IMAGE_RGB;
 
-  int argp = 1;
-  while (argp < argc)
+  for (int i = 1; i < argc; ++i)
   {
-    const std::string arg(argv[argp]);
-    if (arg == "-p")
-      port = strtol(argv[++argp],0,0);
-    else if (arg == "-j")
-      jpegfactor = strtol(argv[++argp],0,0);
+    std::string arg = argv[i];
+    if (arg == "-j")
+      jpegfactor = strtol(argv[++i],0,0);
     else if (arg == "-d")
-      device = argv[++argp];
-    else if (arg == "-f")
-      frequency = strtol(argv[++argp],0,0);
+      device = argv[++i];
+    else if (arg == "--period" || arg == "-p")
+      period = strtol(argv[++i],0,0);
+    else if (arg == "--format" || arg == "-f")
+      arg_format = argv[++i];
+    else if (arg == "--help" || arg == "-h")
+      usage();
+    else if (arg == "--host" || arg == "-H")
+      host = argv[++i];
+    else if (arg == "--port" || arg == "-P")
+      port = libport::convert_argument<int> (arg, argv[++i]);
     else if (arg == "-s")
-      sscanf(argv[++argp],"%f",&scale);
+      sscanf(argv[++i], "%f", &scale);
     else if (arg == "-r")
       reconstruct = true;
     else if (arg == "-o")
-      fileName = argv[++argp];
-    else if (arg == "-h")
-    {
-      usage(argv[0]);
-      exit(0);
-    }
-    else break;
-    ++argp;
-  }
-  if (argc-argp != 2)
-  {
-    std::cerr << argc << " " << argp << std::endl;
-    usage(argv[0]);
-    urbi::exit(1);
+      fileName = argv[++i];
+    else
+      libport::invalid_option(arg);
   }
 
-
-  urbi::USyncClient client (argv[argp+1], port);
+  urbi::USyncClient client(host, port);
   if (client.error())
     urbi::exit(1);
 
@@ -164,21 +172,21 @@ main (int argc, char *argv[])
   if (!fileName)
   {
     imcount = 0;
-    format = (argv[argp][0]=='r')?0:1;
+    format = (arg_format[0] == 'r') ? 0 : 1;
     client.send("%s.format = %d;", device, format);
-    if (!frequency)
-      client.send("loop {uimg << %s.val; noop},",device);
+    if (!period)
+      client.send("loop {uimg << %s.val; noop},", device);
     else
-      client.send("every (%d) uimg << %s.val,",frequency, device);
+      client.send("every (%d) uimg << %s.val,", period, device);
     urbi::execute();
   }
   else
   {
     /* Use syncGetImage to save one image to a file. */
     char buff[1000000];
-    size_t sz = 1000000;
+    size_t sz = sizeof buff;
     size_t w, h;
-    switch (argv[argp][0])
+    switch (arg_format[0])
     {
       case 'r':
 	format = urbi::IMAGE_RGB;
@@ -193,9 +201,9 @@ main (int argc, char *argv[])
 	format = urbi::IMAGE_JPEG;
 	break;
       default:
-	std::cerr << "invalid format "<<argv[argp]<<std::endl;
-	usage(argv[0]);
-	exit(1);
+	std::cerr << program_name << ": invalid format :"
+                  << arg_format << std::endl
+                  << libport::exit(EX_USAGE);
     };
 
     client.syncGetImage(device, buff, sz,
@@ -205,14 +213,15 @@ main (int argc, char *argv[])
 			 : urbi::URBI_TRANSMIT_YCbCr),
 			w, h);
 
-    FILE *f = fopen(fileName, "w");
-
-    if (!f)
-      urbi::exit(2);
-
-    fwrite(buff, 1, sz, f);
-    fclose(f);
-    exit(0);
+    if (FILE *f = fopen(fileName, "w"))
+    {
+      fwrite(buff, 1, sz, f);
+      fclose(f);
+    }
+    else
+      std::cerr << program_name << ": cannot create file " << fileName
+                << ": " << strerror(errno)
+                << libport::exit(EX_OSERR);
   }
 
   return 0;
