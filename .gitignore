@@ -1,5 +1,6 @@
 .deps
 /.version
+/.version.stamp
 /Makefile.in
 /aclocal.m4
 /autom4te.cache
@@ -13,7 +14,6 @@
 /lib/network
 /sdk
 /sdk-remote
-/share/urbi/package-info.u
 /src/Makefile.in
 /src/include
 /src/kernel/config.h.in
@@ -36,4 +36,3 @@
 /src/parser/ugrammar.output
 /src/parser/ugrammar.stamp
 /src/parser/ugrammar.xml
-/tests/Makefile.in
