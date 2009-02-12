@@ -26,13 +26,17 @@ var action_one = 1 |
 var value_two = 2 |
 var action_two = 2 |
 var default_action = 3 |
+var Global.mytag = Tag.new |
 
 // We want random to become deterministic.
 do (Float)
 {
   var this.random_counter = 0;
+  // chosen by fair dice roll.
+  // guaranteed to be random.
   var this.random_values = [3, 1, 2];
-  random =
+  removeSlot("random");
+  var random =
     function ()
     {
       var res = random_values[random_counter];

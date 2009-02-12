@@ -1331,7 +1331,7 @@ var o = Object.clone;
 [00000000] Object_0x00000000
 o.addProto(proto1);
 [00000000] Object_0x00000000
-o.addProto(proto1);
+o.addProto(proto2);
 [00000000] Object_0x00000000
 // We give o an x slot through proto1
 var proto1.x = 0;
@@ -1921,12 +1921,14 @@ mytag.unfreeze;
   // Execution flow will jump here if mytag is stopped
   echo("Background job stopped")|
 },
+sleep(4s);
 [00000000] *** ping
 [00001000] *** pong
 [00002000] *** ping
 [00003000] *** pong
 // Block printing of pong
 mytag.block;
+sleep(3s);
 // The second half of the while
 // isn't executed anymore.
 [00004000] *** ping
@@ -1934,6 +1936,7 @@ mytag.block;
 [00006000] *** ping
 // Reactivate pong
 mytag.unblock;
+sleep(4s);
 [00007000] *** ping
 [00008000] *** pong
 [00009000] *** ping
@@ -2110,7 +2113,7 @@ then be emitted with the \lstinline|emit| keyword (\autoref{lst:event}).
 \begin{urbiscript}[caption=Using events, label=lst:event]
 var myEvent = Event.new;
 [00000000] Event_0x0
-at (myEvent)
+at (?myEvent)
   echo("ping");
 emit myEvent;
 [00000000] *** ping
@@ -2129,10 +2132,10 @@ duration (\autoref{lst:emit-duration}).
   label=lst:emit-duration]
 var myEvent = Event.new;
 [00000000] Event_0x0
-whenever (myEvent)
+whenever (?myEvent)
 {
-  echo("ping");
-  sleep(250ms);
+  echo("ping")|
+  sleep(250ms)
 };
 // Emit myEvent for one second.
 emit myEvent ~ 1s;
