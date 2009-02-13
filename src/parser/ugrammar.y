@@ -88,6 +88,7 @@
 #include <iostream>
 
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <libport/assert.hh>
@@ -117,6 +118,17 @@
 
   namespace
   {
+
+    static void
+    check_modifiers_accumulation(ast::loc loc,
+                                 const ast::modifiers_type& modifiers,
+                                 libport::Symbol name,
+                                 parser::ParserImpl& up)
+    {
+      if (libport::mhas(modifiers, name))
+        up.warn(loc,
+                str(boost::format("accumulated modifier: %s.") % name));
+    }
 
     /*---------------.
     | Warnings etc.  |
@@ -697,6 +709,7 @@ modifier:
 dictionary:
   dictionary modifier
   {
+    check_modifiers_accumulation(@2, $1->value_get(), $2.first, up);
     $1->value_get()[$2.first] = $2.second;
     $$ = $1;
   }
@@ -731,6 +744,7 @@ exp:
     {
       if (ast::rDictionary d = $1.unsafe_cast<ast::Dictionary>())
       {
+        check_modifiers_accumulation(@2, d->value_get(), $2.first, up);
         d->value_get()[$2.first] = $2.second;
         $$ = $1;
       }
@@ -742,6 +756,8 @@ exp:
           m = new ast::modifiers_type();
           a->modifiers_set(m);
         }
+        else
+          check_modifiers_accumulation(@2, *a->modifiers_get(), $2.first, up);
         (*m)[$2.first] = $2.second;
         $$ = $1;
       }
