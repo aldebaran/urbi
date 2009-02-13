@@ -63,7 +63,7 @@ if test -z "\$UMAKE"; then
   do
     if test -f \$dir/umake; then
       UMAKE=\$dir/umake
-      break;
+      break
     fi
   done
 fi
@@ -72,7 +72,7 @@ fi
 
 (\$UMAKE --version) >/dev/null 2>&1 ||
   {
-    echo >&2 "\$me: cannot run umake: $UMAKE"
+    echo >&2 "\$me: cannot run umake: \$UMAKE"
     exit 1
   }
 EOF
@@ -83,7 +83,7 @@ EOF
 
 # Remove remaining files from
 rm -f *.BIN.*
-echo >&2 "$(basename $0): Removed Aibo build files."
+echo >&2 "\$me: Removed Aibo build files."
 
 EOF
         ;;
