@@ -26,7 +26,11 @@ fatal ()
 abs_top_builddir='@abs_top_builddir@'
 abs_top_srcdir='@abs_top_srcdir@'
 
-CPPFLAGS="$CPPFLAGS -I$abs_top_srcdir/include -I$abs_top_builddir/include"
+# Find urbi headers.
+CPPFLAGS+=" -I$abs_top_srcdir/include -I$abs_top_builddir/include"
+
+# Find libport headers.
+CPPFLAGS+=" -I$abs_top_srcdir/libport/include -I$abs_top_builddir/libport/include"
 
 test -d "$abs_top_builddir" ||
   fatal "cannot find top build directory: $abs_top_builddir"

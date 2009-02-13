@@ -1,4 +1,4 @@
 #! /bin/sh
 
 export LIBTOOLIZE_FLAGS="--ltdl --nonrecursive"
-exec externals/libport/build-aux/bootstrap "$@"
+exec libport/build-aux/bootstrap "$@"

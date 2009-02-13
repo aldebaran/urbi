@@ -1,5 +1,7 @@
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/fix-libtool-la.mk
+AUTOMAKE_OPTIONS += subdir-objects
+
 LTDL_LIBS = $(top_builddir)/libltdl/libltdlc.la
 SUBDIRS = . tests
 if BINDINGS
@@ -7,7 +9,7 @@ if BINDINGS
 endif
 
 # Find libport's sources and config.h.
-AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
+AM_CPPFLAGS += -I$(top_srcdir)/libport/include -I$(top_builddir)/libport/include
 # Find libjpeg's source and build (jconfig.h) headers.
 AM_CPPFLAGS += -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
 # Find urbi/ headers.
@@ -19,8 +21,7 @@ AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
 
 LIBADD =					\
   $(PTHREAD_LIBS) $(SOCKETS_LIBS)		\
-  $(top_builddir)/lib/libport/libport.la
-AUTOMAKE_OPTIONS += subdir-objects
+  $(top_builddir)/libport/lib/libport/libport.la
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
@@ -29,7 +30,7 @@ AM_LDADD =					\
   liburbi/liburbi.la				\
   $(top_builddir)/jpeg-6b/libjpeg.la		\
   $(PTHREAD_LIBS)				\
-  $(top_builddir)/lib/libport/libport.la
+  $(top_builddir)/libport/lib/libport/libport.la
 
 include libuco/local.mk
 include liburbi/local.mk

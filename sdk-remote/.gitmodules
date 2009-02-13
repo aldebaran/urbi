@@ -1,5 +1,5 @@
-[submodule "externals/libport"]
-	path = externals/libport
+[submodule "libport"]
+	path = libport
 	url = git@core.gostai.com:libport.git
 [submodule "externals/libjpeg-6b"]
 	path = externals/libjpeg-6b

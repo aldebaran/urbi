@@ -153,6 +153,8 @@ AC_CONFIG_SUBDIRS([jpeg-6b])
 ## Output.  ##
 ## -------- ##
 
+AC_CONFIG_SUBDIRS([libport])
+
 AC_CONFIG_FILES([
   Makefile
     src/Makefile

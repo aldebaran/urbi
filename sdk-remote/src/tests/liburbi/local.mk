@@ -9,7 +9,9 @@
 	@$(am__check_pre) bin/liburbi-check $(srcdir)/$* $(am__check_post)
 
 # Find libport's sources and config.h.
-AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
+AM_CPPFLAGS += -I$(top_srcdir)/libport/include -I$(top_builddir)/libport/include
+# Find urbi/ headers.
+AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 AM_LDADD =					\

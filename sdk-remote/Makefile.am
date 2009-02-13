@@ -10,8 +10,9 @@ libtool: $(LIBTOOL_DEPS)
 include libltdl/Makefile.inc
 
 SUBDIRS =					\
-  .						\
   jpeg-6b					\
+  libport					\
+  .						\
   src						\
   doc
 
@@ -21,7 +22,7 @@ AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\
   -I$(srcdir)/lib				\
   $(BOOST_CPPFLAGS)
-include lib/libport/local.mk
+
 include sdk/local.mk
 include include/local.mk
 

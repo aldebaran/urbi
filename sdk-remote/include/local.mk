@@ -57,4 +57,3 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 	chmod a-w $@.tmp
 	mv $@.tmp $@
 
-include include/libport/local.mk
