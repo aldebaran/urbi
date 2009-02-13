@@ -21,7 +21,8 @@ namespace parser
   /// at (?(%event)(%payload) {%body} onleave {%onleave}
   ast::rExp
   ast_at_event(const yy::location& loc,
-               ast::rExp event, ast::rExp payload,
+               ast::rExp event,
+               ast::exps_type* payload,
                ast::rExp guard,
                ast::rExp body, ast::rExp onleave = 0);
 

@@ -62,10 +62,13 @@ namespace parser
 
   ast::rExp
   ast_at_event(const ast::loc& loc,
-               ast::rExp event, ast::rExp payload,
+               ast::rExp event,
+               ast::exps_type* _payload,
                ast::rExp guard,
                ast::rExp at, ast::rExp onleave)
   {
+    ast::rExp payload = _payload
+      ? new ast::List(loc, _payload) : 0;
     if (!onleave)
       onleave = new ast::Noop(loc, 0);
 
@@ -83,6 +86,15 @@ namespace parser
                    "  })"
                    "})");
 
+    PARAMETRIC_AST(desugar_no_payload,
+                   "detach("
+                   "{"
+                   "  %exp:1.onEvent(closure ('$at')"
+                   "  {"
+                   "    %exp: 2 |"
+                   "  })"
+                   "})");
+
     PARAMETRIC_AST(desugar_body,
                    "      %exp:1 |"
                    "      waituntil(!'$at'.active) |"
@@ -91,19 +103,24 @@ namespace parser
     PARAMETRIC_AST(desugar_guard,
                    "if (%exp:1) %exp:2;");
 
-    rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-    bind(payload.get());
-
     ast::rExp body = exp(desugar_body % at % onleave);
     if (guard)
       body = exp(desugar_guard % guard % body);
 
-    return exp(desugar
-               % event
-               % bind.result_get().unchecked_cast<ast::Exp>()
-               % bind.bindings_get()
-               % body
-      );
+    if (payload)
+    {
+      rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+      std::cerr << *payload << std::endl;
+      bind(payload.get());
+      return exp(desugar
+                 % event
+                 % bind.result_get().unchecked_cast<ast::Exp>()
+                 % bind.bindings_get()
+                 % body
+        );
+    }
+    else
+      return exp(desugar_no_payload % event % body);
   }
 
   ast::rExp

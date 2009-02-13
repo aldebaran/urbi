@@ -853,12 +853,12 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_at_event(@$, $3.event, new ast::List(@3, $3.pattern),
+      $$ = ast_at_event(@$, $3.event, $3.pattern,
                         $3.guard, $5);
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
-      $$ = ast_at_event(@$, $3.event, new ast::List(@3, $3.pattern),
+      $$ = ast_at_event(@$, $3.event, $3.pattern,
                         $3.guard, $5, $7);
     }
 | "every" "(" exp ")" nstmt
@@ -1298,7 +1298,7 @@ event_match:
       $$ = event_match_type(call, args, $3);
     }
     else
-      $$ = event_match_type($2, new ast::exps_type, $3);
+      $$ = event_match_type($2, 0, $3);
   }
 ;
 
