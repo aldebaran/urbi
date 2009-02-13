@@ -30,8 +30,9 @@ AM_CPPFLAGS +=					\
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
 
 LIBADD =					\
-  $(PTHREAD_LIBS) $(SOCKETS_LIBS)		\
-  $(top_builddir)/libport/lib/libport/libport.la
+  $(PTHREAD_LIBS)				\
+  $(SOCKETS_LIBS)				\
+  $(LIBPORT_LIBS)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 

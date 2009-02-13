@@ -16,7 +16,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 AM_LDADD =					\
   $(top_builddir)/src/liburbi/liburbi.la	\
-  $(top_builddir)/jpeg-6b/libjpeg.la		\
+  $(top_builddir)/jpeg/libjpeg.la		\
   $(PTHREAD_LIBS)
 
 # tests(*).

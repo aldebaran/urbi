@@ -19,5 +19,5 @@ utils_urbi_walk_SOURCES =			\
   utils/move.cc					\
   utils/move.hh
 utils_urbi_walk_LDADD =				\
-  $(top_builddir)/jpeg-6b/libjpeg.la		\
+  $(JPEG_LIBS)					\
   liburbi/liburbi.la
