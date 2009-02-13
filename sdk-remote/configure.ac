@@ -146,7 +146,7 @@ case $enable_programs in
   (*)   ac_configure_args="$ac_configure_args --disable-programs";;
 esac
 
-AC_CONFIG_SUBDIRS([jpeg-6b])
+AC_CONFIG_SUBDIRS([jpeg])
 
 
 ## -------- ##

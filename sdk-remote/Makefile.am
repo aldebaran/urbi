@@ -9,7 +9,7 @@ libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status $@
 
 SUBDIRS =					\
-  jpeg-6b					\
+  jpeg						\
   libport					\
   .						\
   src						\

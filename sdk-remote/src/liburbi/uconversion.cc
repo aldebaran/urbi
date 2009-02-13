@@ -4,7 +4,7 @@
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
 
-# include <jpeg-6b/jpeglib.h>
+# include <jpeglib.h>
 
 namespace urbi
 {
