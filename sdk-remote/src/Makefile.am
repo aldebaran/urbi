@@ -2,20 +2,24 @@ include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/fix-libtool-la.mk
 AUTOMAKE_OPTIONS += subdir-objects
 
-LTDL_LIBS = $(top_builddir)/libltdl/libltdlc.la
 SUBDIRS = . tests
 if BINDINGS
  SUBDIRS += swig
 endif
 
-# Find libport's sources and config.h.
-AM_CPPFLAGS += -I$(top_srcdir)/libport/include -I$(top_builddir)/libport/include
-# Find libjpeg's source and build (jconfig.h) headers.
-AM_CPPFLAGS += -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
-# Find urbi/ headers.
-AM_CPPFLAGS += -I$(top_srcdir)/include
-# Find sdk/config.h
-AM_CPPFLAGS += -I$(top_builddir)
+LTDL_LIBS = $(top_builddir)/libport/libltdl/libltdlc.la
+LTDL_CPPFLAGS = -I$(top_srcdir)/libport -I$(top_builddir)/libport
+
+LIBPORT_CPPFLAGS =				\
+  -I$(top_srcdir)/libport/include		\
+  -I$(top_builddir)/libport/include
+
+JPEG6B_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
+
+AM_CPPFLAGS +=					\
+  $(LIBPORT_CPPFLAGS)				\
+  $(JPEG6B_CPPFLAGS)				\
+  -I$(top_srcdir)/include -I$(top_builddir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
 

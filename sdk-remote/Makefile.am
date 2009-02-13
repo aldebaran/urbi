@@ -7,7 +7,6 @@ ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status $@
-include libltdl/Makefile.inc
 
 SUBDIRS =					\
   jpeg-6b					\
