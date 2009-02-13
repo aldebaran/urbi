@@ -1,4 +1,251 @@
 Variables, visibility, and the lobby
 ====================================
 
-by QH.
+<title>Introduction</title>
+
+One frequently asked question is what visibility do variables have in
+Urbi, especially when they are declared at the toplevel. For instance,
+this code might seem confusing at first:
+
+<code>
+var mind = 42;
+function get()
+{
+  echo(mind);
+};
+get();
+[00000000] *** 42
+function Object.get()
+{
+  echo(mind)
+};
+// Where is my mind?
+Object.get;
+[00000000:error] !!! 2.30: lookup failed: mind
+</code>
+
+In this session, we will see the mechanisms behind slots, local
+variables and scoping to fully explain this behavior and determine
+how to proceed to give the right visibility to variables.
+
+<title>Local variables, slots and targets</title>
+
+The first point is to understand the difference between local
+variables and slots. Slots are simply object fields: a name in an
+object referring to another object, like attributes in C++. They can
+be defined with the `setSlot' method, or with the `var' keyword.
+
+<code>
+// Add an `x' slot in Object, with value 21
+Object.setSlot("x", 51);
+// This is an equivalent version, for the `y' slot
+var Object.y = 21;
+
+// We can now access these slots with the dot operator
+Object.x + Object.y;
+</code>
+
+On the other hand, local variables are not stored in Object, but in
+the execution stack: their lifetime spans from their declaration point
+to the end of the current scope. They are declared with the `var'
+keyword.
+
+<code>
+function foo()
+{
+  // This declare an `x' local variable, with value 51
+  var x = 51;
+  // `x' isn't stored in any object.
+  // It's simply available until the end of the scope.
+  echo(x);
+};
+</code>
+
+You probably noticed that in the last two code snippets, we used the
+`var' keyword to declare both a slot in Object and a local
+variable. The rule is simple: `var' declares a slot if an owning
+object is specified with the dot notation, as in `var owner.slot', and
+a local variable if only an unqualified name is given, as in `var
+name'.
+
+<code>
+{
+  // Store a `kyle' slot in Object
+  var Object.kyle = 42;
+  // Declare a local variable, limited to this scope
+  var kenny = 42;
+}; // End of scope.
+// Kyle survived.
+echo(Object.kyle);
+[00000000] *** 42
+// Oh my god, they killed Kenny.
+echo(kenny);
+[00000000] !!! lookup failed: kenny
+</code>
+
+There is however an exception to this rule: `do' and `class' scopes
+are designed define a target where to store slots. This, in `do' and
+`class' scopes, even unqualified `var' usage declare slot in the
+target.
+
+<code>
+// Classical scope.
+{
+  var arm = 69; // Local to the scope
+};
+// Do scope, with target Object
+do (Object)
+{
+  var chocolate = 69; // Stored as a slot in Object
+};
+// No arm ...
+echo(arm);
+[00000000] !!! lookup failed: arm
+// ... but still chocolate!
+echo(chocolate);
+[00000000] *** 69
+</code>
+
+Last tricky rule you must keep in mind: the toplevel of your connexion
+is a `do (lobby)' scope. That is, when you type `var x' directly in
+your connexion, it stores an `x' slot in the `lobby' object. So,
+what's this lobby? It's precisely the object designed to store your
+toplevel variables. Every Urbi server has an unique `Lobby' (note the
+capital), and every connexion has its `lobby' that inherits the
+`Lobby'. Thus, variables stored in `Lobby' are accessible from any
+connexion, while variables stored in a connexion's `lobby' are local
+to this connexion.
+
+To fully understand how lobbies and toplevel work, we must understand
+how calls - message passing - work in Urbi. Every call has a target in
+Urbi. For instance, in `Object.x', Object is the target of the `x'
+call. If no target is specified, as in `x' alone, the target defaults
+to `this', yielding `this.x'. Knowing this rules, plus the fact that
+at the toplevel `this' is `lobby', we can understand better what
+happens when defining and accessing variables at the toplevel:
+
+<code>
+// Since we are at the toplevel, this stores x in the lobby:
+// `var lobby.x;' would be equivalent.
+var x = "hello";
+
+// This is an unqualified call, and this thus equivalent to this.x,
+// i.e. lobby.x would be equivalent
+x;
+[00000000] *** "hello"
+</code>
+
+<title>Solving the tricky example</title>
+
+We now know all the scoping rule required to explain the behavior from
+the very first code snippet. First, let's determine why the first
+access to `mind' works:
+
+<code>
+// This is equivalent to `var lobby.mind = 42'
+var mind = 42;
+// This is equivalent to `function lobby.get ...'
+function get()
+{
+  // This is equivalent to `echo(this.mind)'
+  echo(mind);
+};
+// This is equivalent to `this.get()', i.e. `lobby.get()'
+get();
+[00000000] *** 42
+</code>
+
+Step by step:
+- We create a `mind' slot in `lobby', with value 42
+- We create a `get' function in `lobby'
+- We call the lobby's `get' method
+- We access `this.mind' from within the method. Since the method was
+  called with `lobby' as target, `this' is `lobby', and `lobby.x'
+  resolves to the previously defined 42.
+
+We can also explain why the second test fails:
+
+<code>
+// We create the `mind' slot in the lobby
+var mind = 42;
+// We define a `get' method in `Object'
+function Object.get()
+{
+  // Equivalent to echo(this.mind)
+  echo(mind)
+};
+// We call Object's get method
+Object.get;
+[00000000:error] !!! 2.30: lookup failed: mind
+</code>
+
+Step by step:
+- We create a `mind' slot in `lobby', with value 42, like before
+- We create a `get' function in `Object'
+- We call Object's `get' method
+- In the method, `this' is `Object'. Thus `mind', which is
+  `this.mind', fails because Object has no such slot.
+
+The key to understanding this problem is that any unqualified call -
+unless it refers to a local variable - is destined to "this". Thus,
+variables stored in the lobby are only accessible from the toplevel,
+or from function that are targeted on the lobby.
+
+<title>So, where to store global variables?</title>
+
+From these rules, we can deduce a simple statement: since unqualified
+slots are searched in `this', for a slot to be global, it must always
+be accessible through `this'. One way to achieve this is to store the
+slot in `Object', the ancestor of any object:
+
+<code>
+var Object.global = 1664;
+function any_object()
+{
+  // This is equivalent to echo(this.global)
+  echo(global);
+};
+</code>
+
+In the previous example, typing `global' will look for the `global'
+slot in `this'. Since `this' necessarily inherits `Object', it will
+necessarily be found.
+
+This solution would work; however, storing all global variables in
+`Object' wouldn't be very clean. Object is rather designed to hold
+methods shared by all objects. Instead, a `Global' object exists. This
+object is a prototype of Object, so all his slots are accessible from
+Object, and thus from anywhere. So, creating a genuine global variable
+is as simple as storing it in `Global':
+
+<code>
+var Global.g = "I'm global!";
+</code>
+
+Note that you might want to reproduce the `Global' system and create
+your own object to store your related variables in a more tidy
+fashion. This is for instance what is done for mathematical constants:
+
+<code>
+// Store all constants here
+class Constants
+{
+  var pi = 3.14;
+  var euler = 2.17;
+  var one = 1;
+  ...
+};
+// Make them global by making them accessible from Global
+Global.addProto(Constants);
+
+// Test it
+Global.pi;
+[00000000] 3.14
+pi;
+[00000000] 3.14
+function Object.test_pi() { echo(pi) };
+42.test_pi;
+[00000000] 3.14
+</code>
+
+LocalWords:  LocalWords Urbi lookup toplevel setSlot kenny
