@@ -72,7 +72,7 @@ AM_PROG_AS
 # Disable static libraries. Loading modules as shared libraries
 # requires us to be one.
 AC_ENABLE_STATIC([no])
-AC_PROG_LIBTOOL
+URBI_LIBTOOL
 
 URBI_ARG_ENABLE([enable-headers-install],
                 [Install kernel headers], [yes|no], [no])
@@ -129,7 +129,6 @@ AC_CONFIG_SUBDIRS([sdk-remote])
 ## Output.  ##
 ## -------- ##
 
-URBI_LIBTOOL
 URBI_TESTS
 
 AC_CONFIG_FILES([Makefile src/Makefile])
