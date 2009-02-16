@@ -36,7 +36,7 @@ namespace urbi
     {
       msg.client.printf("Component Error: "
 			"unknown message content, type %d\n",
-			(int) msg.type);
+			msg.type);
       return URBI_CONTINUE;
     }
 
@@ -46,7 +46,7 @@ namespace urbi
     {
       msg.client.printf("Component Error: Invalid number "
 			"of arguments in the server message: %lu\n",
-			array.size());
+			static_cast<unsigned long>(array.size()));
       return URBI_CONTINUE;
     }
 
@@ -67,7 +67,7 @@ namespace urbi
           msg.client.printf("Component Error: Invalid number "
                             "of arguments in the server message: %lu"
                             " (expected 3)\n",
-                            array.size());
+                            static_cast<unsigned long>(array.size()));
           return URBI_CONTINUE;
         }
         UVarTable::iterator varmapfind = varmap().find(array[1]);

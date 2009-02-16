@@ -105,7 +105,7 @@ send_data(urbi::UClient& client, const data_type& data)
     std::string input = libport::read_stdin();
     client.sendBin(input.c_str(), input.size(),
                    "%s = BIN %lu %s;",
-                   data.variable, input.size(), data.headers);
+                   data.variable, (unsigned long)input.size(), data.headers);
   }
   else
   {
@@ -127,7 +127,8 @@ send_data(urbi::UClient& client, const data_type& data)
       len +=r;
     }
     client.sendBin(buffer, len,
-                   "%s = BIN %lu %s;", data.variable, len, data.headers);
+                   "%s = BIN %lu %s;",
+                   data.variable, (unsigned long)len, data.headers);
   }
 }
 
