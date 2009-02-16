@@ -100,7 +100,7 @@ void
 send_data(urbi::UClient& client, const data_type& data)
 {
   // Read the whole file in memory
-  if (data.file == "/dev/stdin")
+  if (!strcmp(data.file, "/dev/stdin"))
   {
     std::string input = libport::read_stdin();
     client.sendBin(input.c_str(), input.size(),
