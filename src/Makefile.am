@@ -8,13 +8,6 @@ include $(top_srcdir)/build-aux/fix-libtool-la.mk
 ## lib_libport = ../lib/libport
 ## include $(top_srcdir)/lib/libport/libport-sources.mk
 
-LIBPORT_CPPFLAGS =				\
-  -I$(top_srcdir)/sdk-remote/libport/include	\
-  -I$(top_builddir)/sdk-remote/libport/include
-LIBPORT_LIBS = $(top_builddir)/sdk-remote/libport/lib/libport/libport.la
-LIBSCHED_LIBS = $(top_builddir)/sdk-remote/libport/lib/sched/libsched.la
-
-
 ## Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += -I$(srcdir) -I.
 
@@ -23,7 +16,7 @@ AM_CPPFLAGS +=					\
   -I$(top_srcdir)/include			\
   -I$(top_builddir)/include			\
   $(LIBPORT_CPPFLAGS)				\
-  $(LIBLTDL_CPPFLAGS)
+  $(LTDL_CPPFLAGS)
 
 ## Headers exported by SDK-Remote.
 AM_CPPFLAGS +=					\
@@ -46,11 +39,6 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 ## libuobject.  ##
 ## ------------ ##
 
-LIBLTDL_CPPFLAGS =				\
-  -I$(top_srcdir)/sdk-remote/libport
-LIBLTDL_LIBS = 							\
-  $(top_builddir)/sdk-remote/libport/libltdl/libltdlc.la
-
 env_LTLIBRARIES = libuobject.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
@@ -61,10 +49,10 @@ libuobject_la_LDFLAGS =				\
 libuobject_la_LIBADD =					\
   $(SOCKETS_LIBS)					\
   $(PTHREAD_LIBS)					\
-  $(LIBLTDL_LIBS)					\
+  $(LTDL_LIBS)						\
   $(LIBPORT_LIBS)					\
   $(top_builddir)/sdk-remote/src/libuco/libuco.la	\
-  $(LIBSCHED_LIBS)
+  $(SCHED_LIBS)
 
 
 ## ------------ ##
