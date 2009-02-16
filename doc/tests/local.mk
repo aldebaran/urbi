@@ -4,7 +4,7 @@
 
 TESTS =
 # We don't ship them: they are generated when the doc test suite is.
--include $(call ls_files,tests/*/*/local.mk)
+-include $(wildcard $(srcdir)/tests/*/*/local.mk)
 include $(top_srcdir)/build-aux/check.mk
 
 TEST_LOGS = $(TESTS:.chk=.log)
