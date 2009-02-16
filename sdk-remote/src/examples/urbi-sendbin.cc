@@ -5,11 +5,12 @@
 #include <vector>
 #include <sys/types.h>
 #include <libport/cstdio>
+#include <libport/sys/stat.h>
 
 #include <libport/cli.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
-#include <libport/sys/stat.h>
+#include <libport/read-stdin.hh>
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>
 #include <libport/windows.hh>
@@ -98,54 +99,36 @@ static
 void
 send_data(urbi::UClient& client, const data_type& data)
 {
-  FILE *f = libport::streq(data.file, "-") ? stdin : fopen(data.file, "r");
-  if (!f)
-    std::cerr << program_name << ": cannot open " << data.file
-              << ": " << strerror(errno)
-              << libport::exit(EX_NOINPUT);
-
-  char* buffer = 0;
-  int pos = 0;
   // Read the whole file in memory
-  if (f != stdin)
+  if (data.file == "/dev/stdin")
   {
-    struct stat st;
-    stat(data.file, &st);
-    buffer = static_cast<char *> (malloc (st.st_size));
-    if (!buffer)
-      std::cerr << program_name << ": memory exhausted" << std::endl
-                << libport::exit(EX_OSERR);
-    while (true)
-    {
-      size_t r = fread(buffer + pos, 1, st.st_size-pos, f);
-      if (!r)
-        break;
-      pos +=r;
-    }
-    //std::cerr <<"read "<<pos<<" bytes from "<<argv[argp+1]<<std::endl;
+    std::string input = libport::read_stdin();
+    client.sendBin(input.c_str(), input.size(),
+                   "%s = BIN %lu %s;",
+                   data.variable, input.size(), data.headers);
   }
   else
   {
-    size_t sz = 10000;
-    buffer = static_cast<char *> (malloc (sz));
+    FILE *f = fopen(data.file, "r");
+    if (!f)
+      std::cerr << program_name << ": cannot open " << data.file
+                << ": " << strerror(errno)
+                << libport::exit(EX_NOINPUT);
+
+    struct stat st;
+    stat(data.file, &st);
+    char* buffer = new char[st.st_size];
+    size_t len = 0;
     while (true)
     {
-      if (sz-pos < 500)
-      {
-        sz += 10000;
-        buffer = static_cast<char *> (realloc (buffer,sz));
-        if (!buffer)
-          std::cerr << program_name << ": memory exhausted" << std::endl
-                    << libport::exit(EX_OSERR);
-        size_t r = fread(buffer + pos, 1, sz-pos, f);
-        if (!r)
-          break;
-        pos += r;
-      }
+      size_t r = fread(buffer + len, 1, st.st_size - len, f);
+      if (!r)
+        break;
+      len +=r;
     }
+    client.sendBin(buffer, len,
+                   "%s = BIN %lu %s;", data.variable, len, data.headers);
   }
-  client.sendBin(buffer, pos,
-                 "%s = BIN %d %s;", data.variable, pos, data.headers);
 }
 
 
