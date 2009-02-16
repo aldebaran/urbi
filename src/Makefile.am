@@ -8,13 +8,22 @@ include $(top_srcdir)/build-aux/fix-libtool-la.mk
 ## lib_libport = ../lib/libport
 ## include $(top_srcdir)/lib/libport/libport-sources.mk
 
+LIBPORT_CPPFLAGS =				\
+  -I$(top_srcdir)/sdk-remote/libport/include	\
+  -I$(top_builddir)/sdk-remote/libport/include
+LIBPORT_LIBS = $(top_builddir)/sdk-remote/libport/lib/libport/libport.la
+LIBSCHED_LIBS = $(top_builddir)/sdk-remote/libport/lib/sched/libsched.la
+
+
 ## Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += -I$(srcdir) -I.
 
 ## Find the kernel, libport, etc. headers.
 AM_CPPFLAGS +=					\
   -I$(top_srcdir)/include			\
-  -I$(top_builddir)/include
+  -I$(top_builddir)/include			\
+  $(LIBPORT_CPPFLAGS)				\
+  $(LIBLTDL_CPPFLAGS)
 
 ## Headers exported by SDK-Remote.
 AM_CPPFLAGS +=					\
@@ -37,21 +46,25 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 ## libuobject.  ##
 ## ------------ ##
 
+LIBLTDL_CPPFLAGS =				\
+  -I$(top_srcdir)/sdk-remote/libport
+LIBLTDL_LIBS = 							\
+  $(top_builddir)/sdk-remote/libport/libltdl/libltdlc.la
+
 env_LTLIBRARIES = libuobject.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
-libuobject_la_CPPFLAGS =				\
-  -I$(top_srcdir)/sdk-remote/libltdl			\
+libuobject_la_CPPFLAGS =			\
   $(AM_CPPFLAGS) -DBUILDING_URBI_SDK
-libuobject_la_LDFLAGS =					\
+libuobject_la_LDFLAGS =				\
   -avoid-version -no-undefined
-libuobject_la_LIBADD =						\
-  $(SOCKETS_LIBS)						\
-  $(PTHREAD_LIBS)						\
-  $(top_builddir)/sdk-remote/libltdl/libltdlc.la		\
-  $(top_builddir)/sdk-remote/lib/libport/libport.la		\
-  $(top_builddir)/sdk-remote/src/libuco/libuco.la		\
-  lib/sched/libsched.la
+libuobject_la_LIBADD =					\
+  $(SOCKETS_LIBS)					\
+  $(PTHREAD_LIBS)					\
+  $(LIBLTDL_LIBS)					\
+  $(LIBPORT_LIBS)					\
+  $(top_builddir)/sdk-remote/src/libuco/libuco.la	\
+  $(LIBSCHED_LIBS)
 
 
 ## ------------ ##
@@ -82,7 +95,6 @@ include object/local.mk
 include rewrite/local.mk
 include runner/local.mk
 include kernel/local.mk
-libport_la = $(top_builddir)/sdk-remote/lib/libport/libport.la
 include lib/sched/local.mk
 include urbi/local.mk
 

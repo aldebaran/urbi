@@ -13,7 +13,6 @@
 /lib
 /lib/network
 /sdk
-/sdk-remote
 /src/Makefile.in
 /src/include
 /src/kernel/config.h.in
