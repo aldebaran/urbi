@@ -36,6 +36,7 @@ cleanup ()
 }
 trap cleanup 0
 
+exec 3>&2
 me=$as_me
 medir=$(absolute "$0").dir
 mkcd $medir
