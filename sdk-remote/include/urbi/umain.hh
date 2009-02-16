@@ -4,27 +4,30 @@
 # define URBI_UMAIN_HH
 
 # include <libport/cli.hh>
+# include <urbi/exit.hh>
 # include <urbi/uobject.hh>
 
 # define UMAIN()				\
   int						\
   main_args(const libport::cli_args_type& args) \
   {						\
-    return urbi::main(args, true);              \
+    return urbi::main(args, true, true);        \
   }                                             \
                                                 \
   int						\
   main(int argc, const char* argv[])		\
   {						\
-    return urbi::main(argc, argv, true);        \
+    return urbi::main(argc, argv, true, true);  \
   }
 
 extern "C"
 {
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  URBI_SDK_API int urbi_main(int argc, const char* argv[], bool block);
+  URBI_SDK_API int urbi_main(int argc, const char* argv[],
+                             bool block, bool errors);
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args, bool block);
+  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args,
+                                  bool block, bool errors);
 }
 
 namespace urbi
@@ -36,11 +39,13 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
-  URBI_SDK_API int main(const libport::cli_args_type& args, bool block = true);
+  URBI_SDK_API int main(const libport::cli_args_type& args,
+                        bool block = true, bool errors = false);
 
   /** Initialisation method using C style arguments.
    */
-  URBI_SDK_API int main(int argc, const char *argv[], bool block = true);
+  URBI_SDK_API int main(int argc, const char *argv[],
+                        bool block = true, bool errors = false);
 
 
 #ifdef URBI_ENV_REMOTE

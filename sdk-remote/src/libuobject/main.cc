@@ -354,7 +354,7 @@ namespace urbi
 
 
   int
-  main(const libport::cli_args_type& args, bool block)
+  main(const libport::cli_args_type& args, bool block, bool)
   {
     program_name = args[0];
 

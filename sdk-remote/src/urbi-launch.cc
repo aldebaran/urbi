@@ -19,6 +19,7 @@
 #include <libport/unistd.h>
 #include <libport/windows.hh>
 
+#include <urbi/exit.hh>
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
 
@@ -208,7 +209,8 @@ ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
   return errors;
 }
 
-typedef int (*umain_type)(const libport::cli_args_type& args, bool block);
+typedef int (*umain_type)(const libport::cli_args_type& args,
+                          bool block, bool errors);
 int
 main(int argc, const char* argv[])
 {
@@ -311,5 +313,5 @@ main(int argc, const char* argv[])
     xlt_dlopenext(s, false, EX_NOINPUT);
 
   umain_type umain = xlt_dlsym<umain_type>(core, "urbi_main_args");
-  umain(args, true);
+  umain(args, true, true);
 }

@@ -6,6 +6,7 @@ ucallbacks_hh = include/urbi/ucallbacks.hh
 
 urbiinclude_HEADERS =				\
   $(ucallbacks_hh)				\
+  include/urbi/exit.hh				\
   include/urbi/export.hh			\
   include/urbi/fwd.hh				\
   include/urbi/package-info.hh			\
