@@ -64,5 +64,5 @@ urbi_launch_LDFLAGS =				\
   $(AM_LDFLAGS)
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
-  $(LIBLTDL_LIBS)				\
+  $(LTDL_LIBS)					\
   liburbi/liburbi.la

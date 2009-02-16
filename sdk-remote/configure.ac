@@ -28,7 +28,7 @@ URBI_DIRS([remote])
 AC_PROG_CC
 URBI_PROG_CXX
 
-URBI_LTDL
+URBI_LIBTOOL
 URBI_SDK
 
 # Doc generation.
