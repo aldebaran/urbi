@@ -6,7 +6,6 @@
 # include <object/object.hh>
 # include <object/slot.hh>
 # include <runner/call.hh>
-# include <urbi/export.hh>
 
 namespace urbi
 {
@@ -23,7 +22,6 @@ namespace urbi
   | Import call functions |
   `----------------------*/
 
-  URBI_SDK_API
   inline
   rObject call(rObject self,
                libport::Symbol msg,
@@ -34,7 +32,6 @@ namespace urbi
                rObject arg5 = 0);
 
   // FIXME: function isn't ideal
-  URBI_SDK_API
   inline
   rObject global();
 }
