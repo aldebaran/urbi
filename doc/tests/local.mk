@@ -3,12 +3,10 @@
 ## ------- ##
 
 TESTS =
--include $(wildcard $(srcdir)/tests/*/*/local.mk)
+# We don't ship them: they are generated when the doc test suite is.
+-include $(call ls_files,tests/*/*/local.mk)
 include $(top_srcdir)/build-aux/check.mk
 
-
-# This is not exact, but otherwise it is too long.
-# LAZY_TEST_SUITE = 1
 TEST_LOGS = $(TESTS:.chk=.log)
 # FIXME: Assigned to QH.
 TFAIL_TESTS += specs/lang.tex
@@ -28,7 +26,7 @@ TESTS_ENVIRONMENT +=				\
   srcdir=$(srcdir)/tests\
   PATH=$(abs_top_builddir)/tests/bin:$$PATH
 
-UCONSOLE_CHECK = $(top_builddir)/tests/bin/uconsole-check $(UCONSOLE_CHECK_FLAGS)
+UCONSOLE_CHECK = $(top_builddir)/tests/bin/uconsole-check
 UCONSOLE_CHECKFLAGS = -k2 --no-locations
 
 %.log: %.chk
