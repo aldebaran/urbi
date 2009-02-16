@@ -109,14 +109,14 @@ namespace urbi
   UClientStreambuf::xsputn(const char* s, std::streamsize n)
   {
     client->sendBufferLock.lock();
-    if (strlen(client->sendBuffer)+1+n > static_cast<unsigned>(client->buflen))
+    size_t clen = strlen(client->sendBuffer);
+    if (client->buflen < clen + 1 + n)
     {
       //error
       client->sendBufferLock.unlock();
       return 0;
     }
-    size_t clen = strlen(client->sendBuffer);
-    memcpy(client->sendBuffer+clen, s, n);
+    memcpy(client->sendBuffer + clen, s, n);
     client->sendBuffer[clen+n] = 0;
     if (strpbrk(client->sendBuffer, "&|;,"))
     {
@@ -149,7 +149,7 @@ namespace urbi
 	UCallbackAction ua = it->callback(msg);
 	if (ua == URBI_REMOVE)
 	{
-	  delete &(it->callback);
+	  delete &it->callback;
 	  it=callbacks_.erase(it);
 	  inc = true;
 	}
