@@ -356,12 +356,6 @@ namespace urbi
     struct stat s;
     stat(name, &s);
     sendBufferLock.lock();
-    if (!canSend(s.st_size))
-    {
-      sendBufferLock.unlock();
-      return -1;
-    }
-
     while (!feof(fd))
     {
       size_t res = fread(sendBuffer, 1, buflen, fd);
@@ -394,12 +388,6 @@ namespace urbi
       va_start(arg, header);
       vpack(header, arg);
       va_end(arg);
-      if (!canSend(strlen(sendBuffer) + len))
-      {
-	sendBufferLock.unlock();
-	return -1;
-      }
-
       effectiveSend(sendBuffer, strlen(sendBuffer));
     }
 
@@ -724,12 +712,6 @@ namespace urbi
       return 1;
     len = st.st_size;
     sendBufferLock.lock();
-    if (!canSend(len + strlen(remoteName) + 20))
-    {
-      sendBufferLock.unlock();
-      return -1;
-    }
-
     if (!remoteName)
       remoteName = localName;
     send("save(\"%s\", \"", remoteName);
@@ -743,11 +725,6 @@ namespace urbi
   UAbstractClient::putFile(const void* buffer, size_t length,
 			   const char* remoteName)
   {
-    if (!canSend(length+strlen(remoteName)+ 20))
-    {
-      sendBufferLock.unlock();
-      return -1;
-    }
     send("save(\"%s\", \"", remoteName);
     sendBin(buffer, length);
     send("\");");

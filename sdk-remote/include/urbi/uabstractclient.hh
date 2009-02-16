@@ -303,10 +303,6 @@ namespace urbi
     /// Bounce to effectiveSend() using c_str().
     int effective_send(const std::string& buffer);
 
-    /// Whether successive effectiveSend() of cumulated size 'size'
-    /// will succeed.
-    virtual bool canSend(size_t size) = 0;
-
     libport::Lockable& sendBufferLock;
     libport::Lockable& listLock;
 

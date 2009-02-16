@@ -2,7 +2,7 @@
 ****************************************************************************
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -64,9 +64,9 @@ namespace urbi
 
   protected:
     virtual int effectiveSend(const void* buffer, size_t size);
-    virtual bool canSend(size_t size);
 
-    int             sd;                  ///< Socket file descriptor.
+    /// Socket file descriptor.
+    int sd;
 
   protected:
     /// Pipe for termination notification

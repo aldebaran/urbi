@@ -233,13 +233,6 @@ namespace urbi
     return 0;
   }
 
-  bool
-  UClient::canSend(size_t)
-  {
-    return true;
-  }
-
-
   int
   UClient::effectiveSend(const void* buffer, size_t size)
   {
