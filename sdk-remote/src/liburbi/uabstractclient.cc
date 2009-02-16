@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 #include <boost/lexical_cast.hpp>
 
@@ -141,7 +142,8 @@ namespace urbi
 	 it!=callbacks_.end(); inc?it:it++, inc=false)
     {
       if (libport::streq(msg.tag.c_str(), it->tag)
-	  || (libport::streq(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR)
+	  || (libport::streq(it->tag, URBI_ERROR_TAG)
+              && msg.type == MESSAGE_ERROR)
 	  || libport::streq(it->tag, URBI_WILDCARD_TAG))
       {
 	UCallbackAction ua = it->callback(msg);
@@ -313,6 +315,22 @@ namespace urbi
     return 0;
   }
 
+  int
+  UAbstractClient::send(std::istream& is)
+  {
+    if (rc)
+      return -1;
+    sendBufferLock.lock();
+    while (is.good() && !rc)
+    {
+      is.read(sendBuffer, buflen);
+      rc = effectiveSend(sendBuffer, is.gcount());
+    }
+    sendBuffer[0] = 0;
+    sendBufferLock.unlock();
+    return rc;
+  }
+
 
 
   /*! This function must only be called between a startPack()
@@ -347,24 +365,16 @@ namespace urbi
   int
   UAbstractClient::sendFile(const std::string& f)
   {
-    if (rc)
-      return -1;
-    const char* name = f.c_str();
-    FILE *fd = fopen(name, "r");
-    if (!fd)
-      return -1;
-    struct stat s;
-    stat(name, &s);
-    sendBufferLock.lock();
-    while (!feof(fd))
+    if (f == "/dev/stdin")
+      return send(std::cin);
+    else
     {
-      size_t res = fread(sendBuffer, 1, buflen, fd);
-      effectiveSend(sendBuffer, res);
+      std::ifstream is(f.c_str(), std::ios::binary);
+      if (is.bad())
+        return -1;
+      else
+        return send(is);
     }
-    fclose(fd);
-    sendBuffer[0] = 0;
-    sendBufferLock.unlock();
-    return 0;
   }
 
 

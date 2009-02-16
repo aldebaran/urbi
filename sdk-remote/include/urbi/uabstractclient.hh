@@ -156,8 +156,11 @@ namespace urbi
     int send(const char* format, ...)
       __attribute__((__format__(printf, 2, 3)));
 
-    ///send the value without any prefix or terminator
+    /// Send the value without any prefix or terminator
     int send(urbi::UValue& v);
+
+    /// Send the remainder of the stream.
+    int send(std::istream& is);
 
     /// Send an urbi Binary value.
     int sendBinary(const void* data, size_t len, const std::string& header);
@@ -186,6 +189,7 @@ namespace urbi
     int vpack(const char*, va_list args);
 
     /// Send urbi commands contained in a file.
+    /// The file "/dev/stdin" is recognized as referring to std::cin.
     int sendFile(const std::string& f);
 
     /// Send a command, prefixing it with a tag, and associate the
