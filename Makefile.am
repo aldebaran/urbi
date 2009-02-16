@@ -40,12 +40,12 @@ symbols:
 
 # Don't bounce to libs: sort of loop unrolling.
 core:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/lib/libport
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src core
 	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la urbi-console$(EXEEXT)
 
 libs:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/lib/libport
+	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
 	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la
 

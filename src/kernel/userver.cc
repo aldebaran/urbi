@@ -132,7 +132,7 @@ namespace kernel
     if (!ignore)
     {
       boost::format fmt("%s: set IGNORE_URBI_U to ignore.");
-      throw urbi::Exit(EX_OSFILE, str(fmt % program_name));
+      throw urbi::Exit(EX_OSFILE, str(fmt % program_name()));
     }
   }
 
@@ -581,13 +581,13 @@ namespace kernel
     }
     if (type == QUEUE_URBI)
     {
-      q.push ((boost::format ("//#push 1 \"%1%\"\n") % base).str().c_str());
+      q.push((boost::format("//#push 1 \"%1%\"\n") % base).str().c_str());
       finally << boost::bind(&UQueue::push, &q, "//#pop\n");
     }
     while (is->good ())
     {
       static char buf[BUFSIZ];
-      is->read (buf, sizeof buf);
+      is->read(buf, sizeof buf);
       q.push(buf, is->gcount());
     }
     return USUCCESS;
