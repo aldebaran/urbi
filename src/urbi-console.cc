@@ -10,6 +10,6 @@
 int
 main(int argc, const char* argv[])
 {
-  return urbi::main(argc, argv);
+  return urbi::main(argc, argv, true, true);
 }
 

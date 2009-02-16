@@ -31,6 +31,7 @@
 
 #include <kernel/config.h>
 
+#include <urbi/exit.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usystem.hh>
 
@@ -129,9 +130,10 @@ namespace kernel
   {
     static bool ignore = getenv("IGNORE_URBI_U");
     if (!ignore)
-      std::cerr
-        << program_name << ": set IGNORE_URBI_U to ignore." << std::endl
-        << libport::exit(EX_OSFILE);
+    {
+      boost::format fmt("%s: set IGNORE_URBI_U to ignore.");
+      throw urbi::Exit(EX_OSFILE, str(fmt % program_name));
+    }
   }
 
   void
@@ -642,5 +644,4 @@ namespace kernel
     vdebug(fmt, args);
     va_end(args);
   }
-
 }

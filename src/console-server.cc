@@ -19,6 +19,7 @@
 #include <libport/thread.hh>
 #include <libport/utime.hh>
 
+#include <boost/format.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
@@ -97,8 +98,8 @@ namespace
   void
   usage()
   {
-    std::cout <<
-      "usage: " << program_name << " [OPTION].. [FILE]...\n"
+    boost::format fmt(
+      "usage: %s [OPTION].. [FILE]...\n"
       "\n"
       "  FILE    to load.  `-' stands for standard input\n"
       "\n"
@@ -112,17 +113,18 @@ namespace
       "  -f, --fast             ignore system time, go as fast as possible\n"
       "  -i, --interactive      read and parse stdin in a nonblocking way\n"
       "  -s, --stack-size=SIZE  set the job stack size in KB\n"
-      "  -w, --port-file FILE   write port number to specified file.\n"
-      ;
-    exit (EX_OK);
+      "  -w, --port-file FILE   write port number to specified file.\n");
+
+    throw urbi::Exit(EX_OK, str(fmt % program_name));
   }
 
   static
   void
   version()
   {
-    kernel::userver_package_info_dump(std::cout) << std::endl;
-    exit(EX_OK);
+    std::stringstream dump;
+    kernel::userver_package_info_dump(dump) << std::endl;
+    throw urbi::Exit(EX_OK, dump.str());
   }
 }
 
@@ -162,8 +164,21 @@ namespace urbi
   }
 
   URBI_SDK_API int
-  main(const libport::cli_args_type& args, bool block)
+  main(const libport::cli_args_type& args, bool block, bool errors)
   {
+    if (errors)
+    {
+      try
+      {
+        return main(args, block);
+      }
+      catch (const urbi::Exit& e)
+      {
+        std::cerr << e.what() << std::endl;
+        return e.error_get();
+      }
+    }
+
     program_name = args[0];
     // Input files.
     typedef std::vector<std::string> files_type;
@@ -240,12 +255,14 @@ namespace urbi
     if (data.network
         && !(port = Network::createTCPServer(arg_port, arg_host)))
     {
-      std::cerr << program_name
-                << ": cannot bind to port " << arg_port;
+      boost::format fmt("%s: cannot bind to port %s");
+      std::string message = str(fmt % program_name % arg_port);
       if (!arg_host.empty())
-        std::cerr << " on " << arg_host;
-      std::cerr << std::endl
-                << libport::exit (EX_UNAVAILABLE);
+      {
+        boost::format fmt(" on %s");
+        message += str(fmt % arg_host);
+      }
+      throw urbi::Exit(EX_UNAVAILABLE, message);
     }
 
     s.initialize();
@@ -264,9 +281,10 @@ namespace urbi
 
     foreach (const std::string& f, files)
       if (s.load_file(f, c.recv_queue_get ()) != USUCCESS)
-        std::cerr << program_name
-                  << ": failed to process " << f << std::endl
-                  << libport::exit(EX_NOINPUT);
+      {
+        boost::format fmt("%s: failed to process %s");
+        throw urbi::Exit(EX_NOINPUT, str(fmt % program_name % f));
+      }
 
     c.new_data_added_get() = true;
 
