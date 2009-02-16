@@ -136,16 +136,9 @@ namespace urbi
 
     virtual ~UAbstractClient();
 
-    bool init ()
-    {
-      return init_;
-    }
-
+    bool init () const;
     /// Return current error status, or zero if no error occurred.
-    int error()
-    {
-      return rc;
-    }
+    int error() const;
 
     /*----------.
     | Sending.  |

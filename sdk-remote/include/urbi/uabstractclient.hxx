@@ -28,6 +28,20 @@ namespace urbi
 {
 
   inline
+  bool
+  UAbstractClient::init() const
+  {
+    return init_;
+  }
+
+  inline
+  int
+  UAbstractClient::error() const
+  {
+    return rc;
+  }
+
+  inline
   const std::string&
   UAbstractClient::getServerName() const
   {
