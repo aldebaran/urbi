@@ -26,7 +26,7 @@ class Global.Profiling
     for (niters)
       call.evalArgAt (0) |
 
-    var this.ncycles = cycle - start_cycle - 1;
+    var this.ncycles = cycle - start_cycle;
     var this.expired = time - start_time;
   };
 
