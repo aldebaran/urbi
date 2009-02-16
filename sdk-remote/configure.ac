@@ -43,9 +43,8 @@ URBI_COMPILATION_MODE
 BOOST_REQUIRE([1.35])
 
 # URBI_LIBPORT AC_REQUIREs URBI_PTHREAD, so run the latter first.
-#URBI_PTHREAD
 URBI_SOCKETS
-URBI_LIBPORT
+URBI_LIBPORT([libport])
 
 # X11.
 # AC_PATH_XTRA will find us X11 headers even if we are cross-compiling for windows

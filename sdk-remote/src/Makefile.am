@@ -7,17 +7,6 @@ if BINDINGS
  SUBDIRS += swig
 endif
 
-# libltdl.
-LTDL_LIBS = $(top_builddir)/libport/libltdl/libltdlc.la
-LTDL_CPPFLAGS = -I$(top_srcdir)/libport -I$(top_builddir)/libport
-
-# libport.
-LIBPORT_CPPFLAGS =				\
-  -I$(top_srcdir)/libport/include		\
-  -I$(top_builddir)/libport/include
-LIBPORT_LIBS =						\
-  $(top_builddir)/libport/lib/libport/libport.la
-
 # libjpeg.
 JPEG_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg
 JPEG_LIBS = $(top_builddir)/jpeg/libjpeg.la
@@ -75,5 +64,5 @@ urbi_launch_LDFLAGS =				\
   $(AM_LDFLAGS)
 urbi_launch_LDADD =				\
   $(AM_LDADD)					\
-  $(LTDL_LIBS)					\
+  $(LIBLTDL_LIBS)				\
   liburbi/liburbi.la
