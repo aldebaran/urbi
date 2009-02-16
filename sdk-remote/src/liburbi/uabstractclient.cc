@@ -412,7 +412,8 @@ namespace urbi
                               const std::string& header)
   {
     if (kernelMajor() < 2)
-      return sendBin(data, len, "BIN %lu %s;", len, header.c_str());
+      return sendBin(data, len, "BIN %lu %s;",
+                     static_cast<unsigned long>(len), header.c_str());
     else
     {
       sendBufferLock.lock();
@@ -483,7 +484,8 @@ namespace urbi
     int playlength = tosend *1000 / s->bytespersec;
     s->uc->send("%s.val = BIN %lu %s %s;",
 		s->device,
-		tosend+ ((s->format == SOUND_WAV)?sizeof (wavheader):0),
+		static_cast<unsigned long>
+                (tosend + ((s->format == SOUND_WAV)?sizeof (wavheader):0)),
 		(s->format == SOUND_WAV)?"wav":"raw",
 		s->formatString
       );
@@ -557,7 +559,7 @@ namespace urbi
       // We don't handle chunking for these formats.
       return sendBin(sound.data, sound.size,
 		     "%s +report:  %s.val = BIN %lu %s;",
-		     tag, device, sound.size,
+		     tag, device, static_cast<unsigned long>(sound.size),
                      sound.soundFormat == SOUND_MP3 ? "mp3" : "ogg");
       break;
 
