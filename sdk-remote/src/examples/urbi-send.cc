@@ -19,8 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-/* This demonstration program sends commands contained in a file to an
-   urbi server */
+/* This demonstration program sends commands to an Urbi server. */
 
 #include <list>
 #include <string>
