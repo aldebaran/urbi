@@ -45,8 +45,8 @@ gen_wrapper ()
 	(link | common) return;; # ignore
 	(*) fatal "unknown target: $target";;
     esac
-    #help it find umain.cc
-    args="$args VPATH=$top_srcdir/externals/sdk-remote/src/liburbi"
+    # Help it find umain.cc.
+    args="$args VPATH=$top_srcdir/sdk-remote/src/liburbi"
     wrapper=$builddir/$dir/umake-$target
 
     cat >$wrapper <<EOF
