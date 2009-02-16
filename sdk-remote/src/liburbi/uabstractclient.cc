@@ -377,7 +377,7 @@ namespace urbi
   int
   UAbstractClient::sendBin(const void* buffer, size_t len)
   {
-    return sendBin(buffer, len, NULL, 0);
+    return sendBin(buffer, len, 0);
   }
 
 
@@ -414,17 +414,17 @@ namespace urbi
                               const std::string& header)
   {
     if (kernelMajor() < 2)
-      return sendBin(data, len, "BIN %d %s;", len, header.c_str());
+      return sendBin(data, len, "BIN %lu %s;", len, header.c_str());
     else
     {
       sendBufferLock.lock();
       (*this) << "Global.Binary.new(\""
               << libport::escape(header)
               << "\", \"\\B(" << len << ")(";
-      send("");
+      send(0);
       effectiveSend(data, len);
       (*this) << ")\")";
-      send("");
+      send(0);
       sendBufferLock.unlock();
       return rc;
     }
@@ -483,7 +483,7 @@ namespace urbi
 
     //printf("%d start chunk of size %d at offset %d\n", 0, tosend, s->pos);
     int playlength = tosend *1000 / s->bytespersec;
-    s->uc->send("%s.val = BIN %d %s %s;",
+    s->uc->send("%s.val = BIN %lu %s %s;",
 		s->device,
 		tosend+ ((s->format == SOUND_WAV)?sizeof (wavheader):0),
 		(s->format == SOUND_WAV)?"wav":"raw",
@@ -558,7 +558,7 @@ namespace urbi
     case SOUND_OGG:
       // We don't handle chunking for these formats.
       return sendBin(sound.data, sound.size,
-		     "%s +report:  %s.val = BIN %d %s;",
+		     "%s +report:  %s.val = BIN %lu %s;",
 		     tag, device, sound.size,
                      sound.soundFormat == SOUND_MP3 ? "mp3" : "ogg");
       break;

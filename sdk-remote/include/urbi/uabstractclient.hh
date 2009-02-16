@@ -35,6 +35,7 @@
 # include <iostream>
 # include <string>
 
+# include <libport/compiler.hh>
 # include <libport/fwd.hh>
 # include <libport/traits.hh>
 
@@ -152,7 +153,8 @@ namespace urbi
 
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
-    int send(const char* format,...);
+    int send(const char* format, ...)
+      __attribute__((__format__(printf, 2, 3)));
 
     ///send the value without any prefix or terminator
     int send(urbi::UValue& v);
@@ -164,7 +166,8 @@ namespace urbi
     int sendBin(const void*, size_t len);
 
     /// Send an Urbi header followed by binary data.
-    int sendBin(const void*, size_t len,const char * header,...);
+    int sendBin(const void*, size_t len, const char* header,...)
+      __attribute__((__format__(printf, 4, 5)));
 
     /// Lock the send buffer (for backward compatibility, will be
     /// removed in future versions).
@@ -176,7 +179,8 @@ namespace urbi
 
     /// Append Urbi commands to the send buffer (for backward
     /// compatibility, will be removed in future versions).
-    int pack(const char*,...);
+    int pack(const char*, ...)
+      __attribute__((__format__(printf, 2, 3)));
 
     /// va_list version of pack.
     int vpack(const char*, va_list args);
@@ -186,11 +190,13 @@ namespace urbi
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
-    UCallbackID sendCommand(UCallback, const char*,...);
+    UCallbackID sendCommand(UCallback, const char*,...)
+      __attribute__((__format__(printf, 3, 4)));
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
-    UCallbackID sendCommand(UCustomCallback, void *, const char*,...);
+    UCallbackID sendCommand(UCustomCallback, void *, const char*,...)
+      __attribute__((__format__(printf, 4, 5)));
 
     /// Send sound data to the robot for immediate playback.
     int sendSound(const char* device,
@@ -254,7 +260,9 @@ namespace urbi
     virtual void notifyCallbacks(const UMessage& msg);
 
     /// Notify of an error.
-    virtual void printf(const char* format, ...) = 0;
+    virtual void printf(const char* format, ...)
+      __attribute__((__format__(printf, 2, 3)))
+      = 0;
 
     /// Get time in milliseconds since an unspecified but constant
     /// reference time.

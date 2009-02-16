@@ -45,7 +45,7 @@ namespace urbi
     if (array.size()<2)
     {
       msg.client.printf("Component Error: Invalid number "
-			"of arguments in the server message: %d\n",
+			"of arguments in the server message: %lu\n",
 			array.size());
       return URBI_CONTINUE;
     }
@@ -54,7 +54,7 @@ namespace urbi
     {
       msg.client.printf("Component Error: "
 			"unknown server message type %d\n",
-			(int) array[0].type);
+			array[0].type);
       return URBI_CONTINUE;
     }
 
@@ -65,7 +65,7 @@ namespace urbi
         if (array.size() != 3)
         {
           msg.client.printf("Component Error: Invalid number "
-                            "of arguments in the server message: %d"
+                            "of arguments in the server message: %lu"
                             " (expected 3)\n",
                             array.size());
           return URBI_CONTINUE;
