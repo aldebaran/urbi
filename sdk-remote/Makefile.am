@@ -32,7 +32,7 @@ include include/local.mk
 
 .PHONY: core libs
 core libs:
-	$(MAKE) $(AM_MAKEFLAGS) -C lib/libport
+	$(MAKE) $(AM_MAKEFLAGS) -C libport
 	$(MAKE) -C src $@
 
 
