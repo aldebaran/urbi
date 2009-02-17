@@ -48,8 +48,32 @@ Whenever now properly executes the else branch when the condition is
 false.  It used to wait for the condition to be verified at least once
 before.
 
+
+Programs
+========
+
+Scripting
+---------
+
+To enable writing (batch) scripts seamlessly in Urbi, urbi-console
+-f/--fast is now renamed as -F/--fast.  Please, never use short
+options in batch programs, as they are likely to change.
+
+Two new option pairs, -e/--expression and -f/--file, plus the ability
+to reach the command line arguments from Urbi make it possible to
+write simple batch Urbi programs.  For instance:
+
+	$ cat demo
+	#! /usr/bin/env uconsole
+	cout << System.arguments;
+	shutdown;
+
+        $ ./demo 1 2 3 | grep output
+        [00000004:output] ["1", "2", "3"]
+
+
 Auxiliary programs
-==================
+------------------
 
 The command line interface of "urbi-sendbin" has been updated.
 "urbi-send" now supports -e/--expression and -f/--file.  For instance

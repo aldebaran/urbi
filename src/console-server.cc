@@ -27,6 +27,7 @@
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <network/bsdnet/network.hh>
+#include <kernel/uqueue.hh>
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
@@ -100,21 +101,24 @@ namespace
   usage()
   {
     boost::format fmt(
-      "usage: %s [OPTION].. [FILE]...\n"
+      "usage: %s [OPTION].. PROGRAM_FILE ARGS...\n"
       "\n"
-      "  FILE    to load.  `-' stands for standard input\n"
+      "  PROGRAM_FILE   Urbi script to load.  `-' stands for standard input\n"
+      "  ARGS           user arguments passed to PROGRAM_FILE\n"
       "\n"
       "Options:\n"
-      "  -h, --help             display this message and exit successfully\n"
-      "  -v, --version          display version information\n"
-      "  -P, --period PERIOD    ignored for backward compatibility\n"
-      "  -H, --host HOST        the address to listen on (default: all)\n"
-      "  -p, --port PORT        tcp port URBI will listen to\n"
-      "  -n, --no-network       disable networking\n"
-      "  -f, --fast             ignore system time, go as fast as possible\n"
-      "  -i, --interactive      read and parse stdin in a nonblocking way\n"
-      "  -s, --stack-size=SIZE  set the job stack size in KB\n"
-      "  -w, --port-file FILE   write port number to specified file.\n");
+      "  -h, --help               display this message and exit successfully\n"
+      "  -v, --version            display version information\n"
+      "  -P, --period PERIOD      ignored for backward compatibility\n"
+      "  -H, --host HOST          the address to listen on (default: all)\n"
+      "  -p, --port PORT          TCP port to listen to\n"
+      "  -n, --no-network         disable networking\n"
+      "  -e, --expression SCRIPT  run SCRIPT\n"
+      "  -F, --fast               ignore system time, go as fast as possible\n"
+      "  -f, --file=FILE          load FILE\n"
+      "  -i, --interactive        read and parse stdin in a nonblocking way\n"
+      "  -s, --stack-size=SIZE    set the job stack size in KB\n"
+      "  -w, --port-file FILE     write port number to specified file.\n");
 
     throw urbi::Exit(EX_OK, str(fmt % program_name()));
   }
@@ -169,6 +173,17 @@ namespace urbi
     return (arg == "-") ? "/dev/stdin" : arg;
   }
 
+  /// Data to send to the server.
+  struct Input
+  {
+    Input(bool f, const std::string& v)
+      : file_p(f), value(v)
+    {}
+    /// Whether its a file (or a litteral).
+    bool file_p;
+    std::string value;
+  };
+
   URBI_SDK_API int
   main(const libport::cli_args_type& args, bool block, bool errors)
   {
@@ -186,8 +201,8 @@ namespace urbi
     }
 
     // Input files.
-    typedef std::vector<std::string> files_type;
-    files_type files;
+    typedef std::vector<Input> input_type;
+    input_type input;
     /// The IP to bind. "" means every interface.
     std::string arg_host;
     /// The port to use.  0 means automatic selection.
@@ -208,8 +223,17 @@ namespace urbi
 
       if (arg == "--debug")
         arg_verbosity = libport::convert_argument<unsigned> (args, i++);
-      else if (arg == "--fast" || arg == "-f")
+      else if (arg == "--fast" || arg == "-F")
         data.fast = true;
+      else if (arg == "--expression" || arg == "-e")
+        input.push_back(
+          Input(false,
+                libport::convert_argument<std::string>(args, i++)));
+      else if (arg == "--file" || arg == "-f")
+        input.push_back(
+          Input(true,
+                convert_input_file(
+                  libport::convert_argument<std::string>(args, i++))));
       else if (arg == "--help" || arg == "-h")
         usage();
       else if (arg == "--host" || arg == "-H")
@@ -231,21 +255,17 @@ namespace urbi
         version();
       else if (arg[0] == '-' && arg[1] != 0)
         libport::invalid_option(arg);
-      else if (arg == "--file" || arg == "-f")
-        files.push_back(convert_input_file(arg));
       else
       {
         // Unrecognized option. This is a script file, followed by user args.
         object::system_set_program_name(arg);
-        files.push_back(convert_input_file(arg));
-        ++i;
+        input.push_back(Input(true, convert_input_file(arg)));
+        // Anything left is user argument
+        for (++i; i < args.size(); ++i)
+          object::system_push_argument(args[i]);
         break;
       }
     }
-
-    // Anything left is user argument
-    for (; i < args.size(); ++i)
-      object::system_push_argument(args[i]);
 
     // Libtool traces.
     lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) arg_verbosity);
@@ -296,12 +316,19 @@ namespace urbi
               << ": got ghost connection" << std::endl;
 #endif
 
-    foreach (const std::string& f, files)
-      if (s.load_file(f, c.recv_queue_get ()) != USUCCESS)
+    foreach (const Input& i, input)
+    {
+      int res = USUCCESS;
+      if (i.file_p)
+        res = s.load_file(i.value, c.recv_queue_get());
+      else
+        c.recv_queue_get().push(i.value.c_str());
+      if (res != USUCCESS)
       {
         boost::format fmt("%s: failed to process %s");
-        throw urbi::Exit(EX_NOINPUT, str(fmt % program_name() % f));
+        throw urbi::Exit(EX_NOINPUT, str(fmt % program_name() % i.value));
       }
+    }
 
     c.new_data_added_get() = true;
 
