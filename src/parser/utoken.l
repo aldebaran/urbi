@@ -463,7 +463,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
                 BEGIN SC_STRING_OR_SYMBOL;
               }
 
-{SHEBANG}     /*nothing*/
+{SHEBANG}     LINES(1);
 
 "internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
