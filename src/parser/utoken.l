@@ -336,6 +336,8 @@ NUMBER   {NATURAL}|{FLOAT}
 
 FLAVOR   [;|,&]?
 
+SHEBANG  ^"#!"[^\n]*\n
+
   /* See [over.oper] in the C++ standard. */
 OPERATORS   "new"|"delete"|"new[]"|"delete[]"|"+"|"-"|"*"|"/"|"%"|"^"|"&"|"|"|"~"|"!"|"="|"<"|">"|"+="|"-="|"*="|"/="|"%="|"^="|"&="|"|="|"<<"|">>"|">>="|"<<="|"=="|"!="|"<="|">="|"&&"|"||"|"++"|"--"|","|"->*"|"->"|"()"|"[]"
 OPERATOR "operator"{BLANKS}?{OPERATORS}
@@ -460,6 +462,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
                 delimiter = *yytext;
                 BEGIN SC_STRING_OR_SYMBOL;
               }
+
+{SHEBANG}     /*nothing*/
 
 "internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
