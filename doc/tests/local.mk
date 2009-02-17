@@ -43,3 +43,10 @@ UCONSOLE_CHECKFLAGS = -k2 --no-locations
 debug:
 	echo $(TESTS)
 	echo $(TEST_LOGS)
+
+
+# The target run by the buildfarm.
+.PHONY: check-buildfarm
+CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
+check-buildfarm:
+	$(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
