@@ -90,7 +90,7 @@ static void
 usage()
 {
   std::cout <<
-    "usage: " << program_name << " [options]\n"
+    "usage: " << program_name() << " [options]\n"
     "Display images from an urbi server, or save one image if\n"
     "-o is given\n"
     "\n"
@@ -111,7 +111,7 @@ usage()
 int
 main (int argc, char *argv[])
 {
-  program_name = argv[0];
+  libport::program_initialize(argc, argv);
   signal(SIGINT, closeandquit);
   int period = 0;
   const char* device = "camera";
@@ -201,7 +201,7 @@ main (int argc, char *argv[])
 	format = urbi::IMAGE_JPEG;
 	break;
       default:
-	std::cerr << program_name << ": invalid format :"
+	std::cerr << program_name() << ": invalid format :"
                   << arg_format << std::endl
                   << libport::exit(EX_USAGE);
     };
@@ -219,7 +219,7 @@ main (int argc, char *argv[])
       fclose(f);
     }
     else
-      std::cerr << program_name << ": cannot create file " << fileName
+      std::cerr << program_name() << ": cannot create file " << fileName
                 << ": " << strerror(errno)
                 << libport::exit(EX_OSERR);
   }

@@ -252,7 +252,7 @@ namespace urbi
   usage()
   {
     std::cout <<
-      "usage:\n" << libport::program_name << " [OPTION]...\n"
+      "usage:\n" << libport::program_name() << " [OPTION]...\n"
       "\n"
       "Options:\n"
       "  -b, --buffer SIZE     input buffer size"
@@ -281,9 +281,9 @@ namespace urbi
   initialize(const std::string& host, int port, size_t buflen,
 	     bool exitOnDisconnect, bool server)
   {
-    std::cerr << program_name
+    std::cerr << program_name()
 	      << ": " << urbi::package_info() << std::endl
-	      << program_name
+	      << program_name()
 	      << ": Remote Component Running on "
 	      << host << " " << port << std::endl;
 
@@ -340,13 +340,13 @@ namespace urbi
                          const std::string& val)
     {
       std::cerr
-        << program_name
+        << program_name()
         << ": warning: arguments without options are deprecated"
         << std::endl
         << "use `-" << shortopt << ' ' << val << '\''
         << " or `--" << longopt << ' ' << val << "' instead"
         << std::endl
-        << "Try `" << program_name << " --help' for more information."
+        << "Try `" << program_name() << " --help' for more information."
         << std::endl;
     }
 
@@ -356,8 +356,6 @@ namespace urbi
   int
   main(const libport::cli_args_type& args, bool block, bool)
   {
-    program_name = args[0];
-
     std::string host = "localhost";
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;

@@ -89,10 +89,10 @@ doExit(const urbi::UMessage& /* msg */)
 
 
 int
-main(int argc, const char* argv[])
+main(int argc, char* argv[])
 {
   // Actually argv[0] is verbose and not interesting.
-  program_name = "tests";
+  libport::program_initialize(argc, argv);
   std::string host = "localhost";
   int port = urbi::UAbstractClient::URBI_PORT;
 

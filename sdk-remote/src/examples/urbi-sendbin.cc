@@ -27,15 +27,15 @@ namespace
   usage()
   {
     std::cout <<
-      "usage: " << program_name << " [OPTION].. [VAR FILE HEADERS]...\n"
+      "usage: " << program_name() << " [OPTION].. [VAR FILE HEADERS]...\n"
       "\n"
       "  VAR      variable name into which the value is stored\n"
       "  FILE     contents to store\n"
       "  HEADERS  associated headers\n"
       "\n"
       "For instance:\n"
-      "  " << program_name << " sounds.hello hello.wav WAV\n"
-      "  " << program_name << " \"var Global.hello\" hello.wav WAV\n"
+      "  " << program_name() << " sounds.hello hello.wav WAV\n"
+      "  " << program_name() << " \"var Global.hello\" hello.wav WAV\n"
       "\n"
       "Options:\n"
       "  -h, --help        display this message and exit\n"
@@ -111,7 +111,7 @@ send_data(urbi::UClient& client, const data_type& data)
   {
     FILE *f = fopen(data.file, "r");
     if (!f)
-      std::cerr << program_name << ": cannot open " << data.file
+      std::cerr << program_name() << ": cannot open " << data.file
                 << ": " << strerror(errno)
                 << libport::exit(EX_NOINPUT);
 
@@ -136,7 +136,7 @@ send_data(urbi::UClient& client, const data_type& data)
 int
 main(int argc, char * argv[])
 {
-  program_name = argv[0];
+  libport::program_initialize(argc, argv);
   /// Server host name.
   std::string host = "localhost";
   /// Server port.
@@ -175,7 +175,7 @@ main(int argc, char * argv[])
   urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
   if (client.error())
-    std::cerr << libport::program_name << ": client failed to set up"
+    std::cerr << libport::program_name() << ": client failed to set up"
 	      << std::endl
               << libport::exit(1);
 

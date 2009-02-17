@@ -30,7 +30,7 @@ namespace urbi
       this->name += "__" + oss.str();
     }
 
-    std::cerr << libport::program_name
+    std::cerr << libport::program_name()
 	      << ": Registering " << type << " " << name << " " << size
 	      << " into " << this->name
 	      << " from " << objname

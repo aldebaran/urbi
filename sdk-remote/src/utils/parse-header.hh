@@ -104,18 +104,18 @@ namespace urbi
 
     FILE* inf = libport::streq(argv[1],"-") ? stdin : fopen (argv[1],"r");
     if (!inf)
-      std::cerr << libport::program_name
+      std::cerr << libport::program_name()
                 << ": error opening file " << argv[1] << std::endl
                 << libport::exit(EX_NOINPUT);
 
     FILE* ouf = libport::streq(argv[2],"-") ? stdout : fopen (argv[2],"w");
     if (!ouf)
-      std::cerr << libport::program_name
+      std::cerr << libport::program_name()
                 << ": error opening file " << argv[2] << std::endl
                 << libport::exit(EX_NOINPUT);
 
     if (int a = parseHeader(inf,ouf))
-      std::cerr << libport::program_name
+      std::cerr << libport::program_name()
                 << ": error parsing header: " << a << std::endl
                 << libport::exit(3);
 

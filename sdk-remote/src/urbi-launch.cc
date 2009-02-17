@@ -42,7 +42,7 @@ namespace
     xlt_dladvise()
     {
       if (lt_dladvise_init(&advise))
-        std::cerr << program_name
+        std::cerr << program_name()
                   << ": failed to initialize dladvise: "
                   << lt_dlerror() << std::endl
                   << libport::exit(1);
@@ -52,7 +52,7 @@ namespace
     global(bool global)
     {
       if (global ? lt_dladvise_global(&advise) : lt_dladvise_local(&advise))
-        std::cerr << program_name << ": failed to set dladvise to "
+        std::cerr << program_name() << ": failed to set dladvise to "
                   << (global ? "global" : "local")
                   << ": "
                   << lt_dlerror() << std::endl
@@ -64,7 +64,7 @@ namespace
     ext()
     {
       if (lt_dladvise_ext(&advise))
-        std::cerr << program_name << ": failed to set dladvise to ext: "
+        std::cerr << program_name() << ": failed to set dladvise to ext: "
                   << lt_dlerror() << std::endl
                   << libport::exit(1);
       return *this;
@@ -77,13 +77,13 @@ namespace
   lt_dlhandle
   xlt_dlopenext(const std::string& s, bool global, int exit_failure = 1)
   {
-    std::cerr << program_name
+    std::cerr << program_name()
               << ": loading " << s << std::endl;
     lt_dlhandle res =
       lt_dlopenadvise(s.c_str(),
                       xlt_dladvise().global(global).ext().advise);
     if (!res)
-      std::cerr << program_name << ": failed to load " << s
+      std::cerr << program_name() << ": failed to load " << s
                 << ": " << lt_dlerror() << std::endl
                 << libport::exit(exit_failure);
     return res;
@@ -97,7 +97,7 @@ namespace
   {
     void* res = lt_dlsym(h, s.c_str());
     if (!res)
-      std::cerr << program_name
+      std::cerr << program_name()
                 << ": failed to dlsym " << s << ": " << lt_dlerror()
                 << std::endl
                 << libport::exit(1);
@@ -115,7 +115,7 @@ namespace
 static UCallbackAction
 onError(const UMessage& msg)
 {
-  std::cerr << program_name
+  std::cerr << program_name()
             << ": load module error: " << msg.message << std::endl;
   return URBI_CONTINUE;
 }
@@ -147,7 +147,7 @@ static void
 usage()
 {
   std::cout <<
-    "usage: " << program_name << " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
+    "usage: " << program_name() << " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
     "Start an UObject in either remote or plugin mode.\n"
     "\n"
     "Urbi-Launch options:\n"
@@ -203,7 +203,7 @@ ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
   int errors = 0;
   if (level <= verbosity)
   {
-    errors += fprintf(stderr, "%s: ", program_name.c_str()) < 0;
+    errors += fprintf(stderr, "%s: ", program_name().c_str()) < 0;
     errors += vfprintf(stderr, format, args) < 0;
   }
   return errors;
@@ -212,9 +212,9 @@ ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
 typedef int (*umain_type)(const libport::cli_args_type& args,
                           bool block, bool errors);
 int
-main(int argc, const char* argv[])
+main(int argc, char* argv[])
 {
-  program_name = argv[0];
+  libport::program_initialize(argc, argv);
   unsigned verbosity = 0;
   const char* urbi_root = getenv("URBI_ROOT");
   libport::path prefix(urbi_root ? urbi_root : URBI_PREFIX);

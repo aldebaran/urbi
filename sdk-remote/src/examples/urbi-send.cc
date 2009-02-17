@@ -43,7 +43,7 @@ namespace
   usage()
   {
     std::cout <<
-      "usage: " << program_name << " [OPTION].. [FILE]...\n"
+      "usage: " << program_name() << " [OPTION].. [FILE]...\n"
       "\n"
       "  FILE    to upload onto the server\n"
       "\n"
@@ -147,7 +147,7 @@ struct FileData: Data
 int
 main(int argc, char* argv[])
 {
-  program_name = argv[0];
+  libport::program_initialize(argc, argv);
   /// Things to send to the server.
   typedef std::list<Data*> data_list;
   data_list data;
@@ -185,7 +185,7 @@ main(int argc, char* argv[])
   urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
   if (client.error())
-    std::cerr << libport::program_name << ": client failed to set up"
+    std::cerr << libport::program_name() << ": client failed to set up"
 	      << std::endl
               << libport::exit(1);
 
@@ -204,7 +204,7 @@ main(int argc, char* argv[])
     delete *i;
   }
 
-  std::cout << libport::program_name
+  std::cout << libport::program_name()
 	    << ": file sent, hit Ctrl-C to terminate."
             << std::endl;
   urbi::execute();
