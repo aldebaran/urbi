@@ -179,7 +179,6 @@ namespace urbi
       }
     }
 
-    libport::program_initialize(args);
     // Input files.
     typedef std::vector<std::string> files_type;
     files_type files;
