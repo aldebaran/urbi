@@ -210,8 +210,6 @@ namespace kernel
 
     /// Display a message on the robot console.
     void display(const char*);
-    /// Display a set of messages on the robot console.
-    void display(const char**);
 
     //! Accessor for lastTime_.
     libport::utime_t lastTime();

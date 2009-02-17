@@ -512,14 +512,6 @@ namespace kernel
 
 
   void
-  UServer::display(const char** b)
-  {
-    for (int i = 0; b[i]; ++i)
-      display(b[i]);
-  }
-
-
-  void
   UServer::shutdown()
   {
     scheduler_->killall_jobs();
