@@ -112,11 +112,11 @@ namespace kernel
   UErrorValue
   UServer::load_init_file(const char* fn)
   {
-    DEBUG (("Loading %s...", fn));
+    DEBUG(("Loading %s...", fn));
     UErrorValue res = load_file(fn, ghost_->recv_queue_get());
     if (res == USUCCESS)
     {
-      DEBUG (("done\n"));
+      DEBUG(("done\n"));
       ghost_->new_data_added_get() = true;
     }
     else
@@ -289,9 +289,9 @@ namespace kernel
     // The order is important: ghost connection, plugins, urbi.ini
 
     // Ghost connection
-    DEBUG (("Setting up ghost connection..."));
+    DEBUG(("Setting up ghost connection..."));
     ghost_ = new UGhostConnection(*this);
-    DEBUG (("done\n"));
+    DEBUG(("done\n"));
 
     revision_check();
     xload_init_file("urbi/urbi.u");
@@ -309,18 +309,18 @@ namespace kernel
 
 
   void
-  UServer::main (int, const char*[])
+  UServer::main(int, const char*[])
   {
     // FIXME: Save argv into Urbi world.
   }
 
   void
-  UServer::beforeWork ()
+  UServer::beforeWork()
   {
   }
 
   void
-  UServer::afterWork ()
+  UServer::afterWork()
   {
   }
 
@@ -333,19 +333,19 @@ namespace kernel
     static libport::utime_t rsumtime = 0, rmintime = 10000000, rmaxtime = 0;
     static unsigned int nzero = 0;
 
-    beforeWork ();
+    beforeWork();
 
-    work_handle_connections_ ();
+    work_handle_connections_();
 
     // To make sure that we get different times before and after every work
     // phase if we use a monotonic clock, update the time before and after
     // working.
-    updateTime ();
+    updateTime();
     libport::utime_t ctime = libport::utime();
     libport::utime_t next_time = scheduler_->work ();
     libport::utime_t rtime = next_time? std::max(0LL, next_time - ctime):0;
     ctime = libport::utime() - ctime;
-    updateTime ();
+    updateTime();
     if (report)
     {
       if (!rtime)
@@ -378,12 +378,12 @@ namespace kernel
       }
     }
     work_handle_stopall_();
-    afterWork ();
+    afterWork();
     return next_time;
   }
 
   void
-  UServer::work_handle_connections_ ()
+  UServer::work_handle_connections_()
   {
     // Scan currently opened connections for ongoing work
     foreach (UConnection& c, *connections_)
@@ -404,13 +404,13 @@ namespace kernel
   }
 
   void
-  UServer::work_handle_stopall_ ()
+  UServer::work_handle_stopall_()
   {
     if (stopall)
     {
       foreach (UConnection& c, *connections_)
         if (c.active_get() && c.has_pending_command())
-          c.drop_pending_commands ();
+          c.drop_pending_commands();
     }
 
     // Delete all connections with closing=true
@@ -485,7 +485,7 @@ namespace kernel
 
 
   void
-  UServer::vdebug (const char* s, va_list args)
+  UServer::vdebug(const char* s, va_list args)
   {
     static buffer_type buf;
     vsnprintf(buf, sizeof buf, s, args);
@@ -498,7 +498,7 @@ namespace kernel
   {
     va_list args;
     va_start(args, s);
-    vdebug (s, args);
+    vdebug(s, args);
     va_end(args);
   }
 
@@ -515,14 +515,14 @@ namespace kernel
   UServer::display(const char** b)
   {
     for (int i = 0; b[i]; ++i)
-      display (b[i]);
+      display(b[i]);
   }
 
 
   void
   UServer::shutdown()
   {
-    scheduler_->killall_jobs ();
+    scheduler_->killall_jobs();
   }
 
 
@@ -541,9 +541,9 @@ namespace kernel
   namespace
   {
     bool
-    file_readable (const std::string& s)
+    file_readable(const std::string& s)
     {
-      std::ifstream is (s.c_str(), std::ios::binary);
+      std::ifstream is(s.c_str(), std::ios::binary);
       bool res = is;
       is.close();
       return res;
@@ -551,7 +551,7 @@ namespace kernel
   }
 
   std::string
-  UServer::find_file (const libport::path& path)
+  UServer::find_file(const libport::path& path)
   {
     return search_path.find_file(path) / path.basename();
   }
@@ -584,7 +584,7 @@ namespace kernel
       q.push((boost::format("//#push 1 \"%1%\"\n") % base).str().c_str());
       finally << boost::bind(&UQueue::push, &q, "//#pop\n");
     }
-    while (is->good ())
+    while (is->good())
     {
       static char buf[BUFSIZ];
       is->read(buf, sizeof buf);
@@ -631,13 +631,13 @@ namespace kernel
   `--------------------------*/
 
   void
-  vdebug (const char* fmt, va_list args)
+  vdebug(const char* fmt, va_list args)
   {
     urbiserver->vdebug(fmt, args);
   }
 
   void
-  debug (const char* fmt, ...)
+  debug(const char* fmt, ...)
   {
     va_list args;
     va_start(args, fmt);
