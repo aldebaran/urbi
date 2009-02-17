@@ -3,13 +3,15 @@
 
 #include <urbi/umain.hh>
 #include <libport/detect-win32.h>
+#include <libport/program-name.hh>
 
 #ifndef WIN32
  __attribute__((visibility("default")))
 #endif
 int
-main(int argc, const char* argv[])
+main(int argc, char* argv[])
 {
-  return urbi::main(argc, argv, true, true);
+  libport::program_initialize(argc, argv);
+  return urbi::main(argc, const_cast<const char**>(argv), true, true);
 }
 

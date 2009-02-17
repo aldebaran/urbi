@@ -142,8 +142,8 @@ namespace kernel
     if (load_init_file(fn) != USUCCESS)
     {
       std::cerr
-        << program_name << ": cannot load " << fn << "." << std::endl
-        << program_name << ": path: " << search_path << std::endl;
+        << program_name() << ": cannot load " << fn << "." << std::endl
+        << program_name() << ": path: " << search_path << std::endl;
       init_error();
     }
   }
@@ -167,9 +167,9 @@ namespace kernel
     if (urbi_rev != cxx_rev)
     {
       std::cerr
-        << program_name << ": revison mismatch between C++ and Urbi." << std::endl
-        << program_name << ":   kernel revision: " << cxx_rev << std::endl
-        << program_name << ":   urbi.u revision: " << urbi_rev << std::endl;
+        << program_name() << ": revison mismatch between C++ and Urbi." << std::endl
+        << program_name() << ":   kernel revision: " << cxx_rev << std::endl
+        << program_name() << ":   urbi.u revision: " << urbi_rev << std::endl;
       init_error();
     }
   }

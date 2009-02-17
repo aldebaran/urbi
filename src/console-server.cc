@@ -115,7 +115,7 @@ namespace
       "  -s, --stack-size=SIZE  set the job stack size in KB\n"
       "  -w, --port-file FILE   write port number to specified file.\n");
 
-    throw urbi::Exit(EX_OK, str(fmt % program_name));
+    throw urbi::Exit(EX_OK, str(fmt % program_name()));
   }
 
   static
@@ -157,7 +157,7 @@ namespace urbi
     int errors = 0;
     if (level <= verbosity)
     {
-      errors += fprintf(stderr, "%s: ", program_name.c_str()) < 0;
+      errors += fprintf(stderr, "%s: ", program_name().c_str()) < 0;
       errors += vfprintf(stderr, format, args) < 0;
     }
     return errors;
@@ -179,7 +179,6 @@ namespace urbi
       }
     }
 
-    program_name = args[0];
     // Input files.
     typedef std::vector<std::string> files_type;
     files_type files;
@@ -256,7 +255,7 @@ namespace urbi
         && !(port = Network::createTCPServer(arg_port, arg_host)))
     {
       boost::format fmt("%s: cannot bind to port %s");
-      std::string message = str(fmt % program_name % arg_port);
+      std::string message = str(fmt % program_name() % arg_port);
       if (!arg_host.empty())
       {
         boost::format fmt(" on %s");
@@ -275,7 +274,7 @@ namespace urbi
 
     kernel::UConnection& c = s.ghost_connection_get();
 #ifdef ENABLE_DEBUG_TRACES
-    std::cerr << program_name
+    std::cerr << program_name()
               << ": got ghost connection" << std::endl;
 #endif
 
@@ -283,13 +282,13 @@ namespace urbi
       if (s.load_file(f, c.recv_queue_get ()) != USUCCESS)
       {
         boost::format fmt("%s: failed to process %s");
-        throw urbi::Exit(EX_NOINPUT, str(fmt % program_name % f));
+        throw urbi::Exit(EX_NOINPUT, str(fmt % program_name() % f));
       }
 
     c.new_data_added_get() = true;
 
 #ifdef ENABLE_DEBUG_TRACES
-    std::cerr << program_name << ": going to work..." << std::endl;
+    std::cerr << program_name() << ": going to work..." << std::endl;
 #endif
     if (block)
       return main_loop(data);
