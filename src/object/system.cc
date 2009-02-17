@@ -8,6 +8,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 #include <libport/cstdlib>
+#include <libport/program-name.hh>
 
 #include <memory>
 #include <sstream>
@@ -465,6 +466,29 @@ namespace object
     CxxObject::cleanup();
   }
 
+  static libport::cli_args_type urbi_arguments_;
+  static boost::optional<std::string> urbi_program_name_;
+
+  void system_push_argument(const std::string& arg)
+  {
+    urbi_arguments_.push_back(arg);
+  }
+
+  void system_set_program_name(const std::string& name)
+  {
+    urbi_program_name_ = name;
+  }
+
+  static const libport::cli_args_type& system_arguments()
+  {
+    return urbi_arguments_;
+  }
+
+  static boost::optional<std::string> system_programName()
+  {
+    return urbi_program_name_;
+  }
+
   void
   system_class_initialize ()
   {
@@ -475,6 +499,8 @@ namespace object
 
     DECLARE(getenv);
     DECLARE(lobbies);
+    DECLARE(arguments);
+    DECLARE(programName);
     DECLARE(setenv);
     DECLARE(spawn);
     DECLARE(unsetenv);

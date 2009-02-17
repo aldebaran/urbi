@@ -34,6 +34,7 @@
 #include <sched/scheduler.hh>
 
 #include <kernel/ubanner.hh>
+#include <object/system.hh>
 #include <urbi/export.hh>
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
@@ -163,6 +164,11 @@ namespace urbi
     return errors;
   }
 
+  static std::string convert_input_file(const std::string& arg)
+  {
+    return (arg == "-") ? "/dev/stdin" : arg;
+  }
+
   URBI_SDK_API int
   main(const libport::cli_args_type& args, bool block, bool errors)
   {
@@ -195,7 +201,8 @@ namespace urbi
 
     // Parse the command line.
     LoopData data;
-    for (unsigned i = 1; i < args.size(); ++i)
+    unsigned i;
+    for (i = 1; i < args.size(); ++i)
     {
       const std::string& arg = args[i];
 
@@ -224,10 +231,21 @@ namespace urbi
         version();
       else if (arg[0] == '-' && arg[1] != 0)
         libport::invalid_option(arg);
+      else if (arg == "--file" || arg == "-f")
+        files.push_back(convert_input_file(arg));
       else
-        // An argument: a file.
-        files.push_back((arg == "-") ? std::string("/dev/stdin") : arg);
+      {
+        // Unrecognized option. This is a script file, followed by user args.
+        object::system_set_program_name(arg);
+        files.push_back(convert_input_file(arg));
+        ++i;
+        break;
+      }
     }
+
+    // Anything left is user argument
+    for (; i < args.size(); ++i)
+      object::system_push_argument(args[i]);
 
     // Libtool traces.
     lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) arg_verbosity);
