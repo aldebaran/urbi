@@ -4,7 +4,7 @@
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
 
-# include <jpeglib.h>
+# include <jpeg/jpeglib.h>
 
 namespace urbi
 {
@@ -22,7 +22,7 @@ namespace urbi
     {
       if (v < 0)
 	return 0;
-      if (v > 255)
+      if (255 < v)
 	return 255;
       return (unsigned char) v;
     }
