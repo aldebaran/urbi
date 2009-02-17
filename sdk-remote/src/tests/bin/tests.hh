@@ -36,7 +36,7 @@ Test file layout
 
 /// Display a debug message.
 #define VERBOSE(S)				\
-  std::cerr << libport::program_name << ": " << S << std::endl
+  std::cerr << libport::program_name() << ": " << S << std::endl
 
 /// Send S to the client.
 #define SEND(S)						\
