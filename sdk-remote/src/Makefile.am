@@ -8,7 +8,7 @@ if BINDINGS
 endif
 
 # libjpeg.
-JPEG_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)
+JPEG_CPPFLAGS = -I$(top_srcdir)/jpeg -I$(top_builddir)/jpeg
 JPEG_LIBS = $(top_builddir)/jpeg/libjpeg.la
 
 AM_CPPFLAGS +=					\

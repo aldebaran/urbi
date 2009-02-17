@@ -4,7 +4,10 @@
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
 
-# include <jpeg/jpeglib.h>
+// It would be nice to use jpeg/jpeglib.h, but this file includes
+// jconfig.h, unqualified, which we might pick-up on the host.  So
+// don't take gratuitous chances.
+# include <jpeglib.h>
 
 namespace urbi
 {
