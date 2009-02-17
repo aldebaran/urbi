@@ -21,8 +21,12 @@ case " $* " in
      # should find libuobject.la in it.  Otherwise we hope a kernel
      # was installed, and the real urbi-launch will look for it at the
      # right place.
-     test ! -f $abs_top_builddir/../src/Makefile ||
+     if test -f $abs_top_builddir/../src/Makefile; then
        libuobjectdir=$abs_top_builddir/../src
+       # Be sure to find the shipped Urbi files.
+       URBI_PATH="$abs_top_srcdir/../share:$abs_top_builddir/../share:$URBI_PATH"
+       export URBI_PATH
+     fi
      # Unfortunately, ltdl does not seem to look into the *.la
      # file to find the dependencies, so load them first.
      for v in LD_LIBRARY_PATH DYLD_LIBRARY_PATH
