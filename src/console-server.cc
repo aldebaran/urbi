@@ -54,9 +54,6 @@ public:
   virtual ~ConsoleServer()
   {}
 
-  virtual void beforeWork()
-  {
-  }
   virtual void reset()
   {}
 
