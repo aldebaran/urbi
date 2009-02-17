@@ -132,12 +132,6 @@ namespace kernel
      */
     virtual libport::utime_t getTime() = 0;
 
-    //! Overload this function to return the remaining power of the robot
-    /*! The remaining power is expressed as percentage. 0 for empty batteries
-     and 1 for full power.
-     */
-    virtual ufloat getPower() = 0;
-
     //! Overload this function to return a specific header for your URBI server
     /*! Used to give some information specific to your server in the standardized
      header which is displayed on the server output at start and in the

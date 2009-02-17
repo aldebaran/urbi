@@ -68,20 +68,15 @@ public:
     return fast ? ctime : libport::utime();
   }
 
-  virtual ufloat getPower()
-  {
-    return ufloat(1);
-  }
-
   virtual
   UErrorValue
   save_file(const std::string& filename, const std::string& content)
   {
     //! \todo check this code
-    std::ofstream os (filename.c_str ());
+    std::ofstream os(filename.c_str());
     os << content;
-    os.close ();
-    return os.good () ? USUCCESS : UFAIL;
+    os.close();
+    return os.good() ? USUCCESS : UFAIL;
   }
 
   virtual
