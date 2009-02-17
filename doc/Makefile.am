@@ -1,11 +1,14 @@
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/doxygen.mk
 
-# specs/local.mk
+# Document aux.
 share_dir = $(srcdir)/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
+EXTRA_DIST +=								   \
+  $(addprefix document-aux/,$(call ls_files_in_dir,$(srcdir)/document-aux))
+
 # Find urbi-report.sty.
 TEXI2DVI_FLAGS += -I $(srcdir)
 pdf_DATA =
@@ -40,4 +43,3 @@ share-ci:
 	cd $(share_dir) && git pull --rebase
 	cd $(share_dir) && git push origin master
 	git commit -m "Update $(share_dir)." $(share_dir)
-
