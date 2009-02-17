@@ -1,6 +1,8 @@
 #ifndef CXX_CONVERSIONS_HXX
 # define CXX_CONVERSIONS_HXX
 
+# include <boost/optional.hpp>
+
 # include <libport/assert.hh>
 # include <libport/path.hh>
 # include <libport/symbol.hh>
@@ -300,6 +302,30 @@ namespace object
   CONTAINER(libport::ReservedVector, push_back, comma R, comma int R);
 #undef comma
 #undef CONTAINER
+
+
+  // Conversion with boost::optional
+  template <typename T>
+  struct CxxConvert<boost::optional<T> >
+  {
+    typedef boost::optional<T> target_type;
+    static target_type
+    to(const rObject& o, unsigned idx)
+    {
+      if (o == void_class)
+        return target_type();
+      return CxxConvert<T>::to(o, idx);
+    }
+
+    static rObject
+    from(const target_type& v)
+    {
+      if (!v)
+        return void_class;
+      return CxxConvert<T>::from(v.get());
+    }
+  };
+
 
   template <typename T>
   rObject to_urbi(const T& v)
