@@ -1,4 +1,5 @@
 #include <object/text-output-stream.hh>
+#include <object/symbols.hh>
 #include <runner/raise.hh>
 
 namespace object

@@ -5,9 +5,10 @@
 
 # include <kernel/userver.hh>
 
-# include <object/uvar.hh>
 # include <object/global.hh>
 # include <object/list.hh>
+# include <object/symbols.hh>
+# include <object/uvar.hh>
 
 # include <runner/call.hh>
 

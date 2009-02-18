@@ -16,6 +16,7 @@
 #include <object/directory.hh>
 #include <object/file.hh>
 #include <object/path.hh>
+#include <object/symbols.hh>
 #include <runner/raise.hh>
 
 namespace object

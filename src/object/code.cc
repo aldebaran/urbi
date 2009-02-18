@@ -10,10 +10,13 @@
 #include <ast/print.hh>
 
 #include <kernel/userver.hh>
+
 #include <object/code.hh>
 #include <object/list.hh>
 #include <object/string.hh>
 #include <object/object.hh>
+#include <object/symbols.hh>
+
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 

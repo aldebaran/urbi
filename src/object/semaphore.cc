@@ -2,6 +2,7 @@
 #include <object/code.hh>
 #include <object/float.hh>
 #include <object/semaphore.hh>
+#include <object/symbols.hh>
 #include <runner/runner.hh>
 #include <sched/fwd.hh>
 

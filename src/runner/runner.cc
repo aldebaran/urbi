@@ -9,6 +9,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/lobby.hh>
+#include <object/symbols.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
 

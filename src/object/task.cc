@@ -12,6 +12,7 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
 #include <runner/interpreter.hh>

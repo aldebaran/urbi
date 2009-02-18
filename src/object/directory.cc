@@ -6,8 +6,11 @@
 #include <libport/detect-win32.h>
 
 #include <kernel/userver.hh>
+
 #include <object/directory.hh>
 #include <object/path.hh>
+#include <object/symbols.hh>
+
 #include <runner/raise.hh>
 
 namespace object

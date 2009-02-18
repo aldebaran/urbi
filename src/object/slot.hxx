@@ -2,7 +2,6 @@
 # define OBJECT_SLOT_HXX
 
 # include <object/cxx-conversions.hh>
-# include <object/symbols.hh>
 # include <runner/raise.hh>
 
 namespace object
@@ -44,8 +43,9 @@ namespace object
     if (constant_)
       runner::raise_const_error();
     value_ = object::CxxConvert<T>::from(value);
+    static libport::Symbol emit("emit");
     if (changed_)
-      changed_->call(SYMBOL(emit));
+      changed_->call(emit);
   }
 
   template <typename T>

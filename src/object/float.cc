@@ -18,6 +18,8 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
+
 #include <runner/raise.hh>
 
 namespace object

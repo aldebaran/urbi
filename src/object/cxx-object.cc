@@ -1,7 +1,8 @@
 #include <kernel/userver.hh>
 
-#include <object/global.hh>
 #include <object/cxx-object.hh>
+#include <object/global.hh>
+#include <object/symbols.hh>
 
 #include <runner/call.hh>
 #include <runner/runner.hh>

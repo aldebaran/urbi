@@ -6,6 +6,7 @@
 
 #include <object/barrier.hh>
 #include <object/float.hh>
+#include <object/symbols.hh>
 
 namespace object
 {

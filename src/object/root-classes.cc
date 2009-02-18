@@ -20,6 +20,7 @@
 #include <object/root-classes.hh>
 #include <object/semaphore.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>

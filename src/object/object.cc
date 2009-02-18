@@ -21,6 +21,7 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/root-classes.hh>
+#include <object/symbols.hh>
 #include <object/urbi-exception.hh>
 
 #include <runner/call.hh>

@@ -6,7 +6,6 @@
 # include <object/cxx-primitive.hh>
 # include <object/object-class.hh>
 # include <object/primitive.hh>
-# include <object/symbols.hh>
 # include <object/string.hh>
 # include <runner/raise.hh>
 
@@ -69,8 +68,10 @@ namespace object
   rObject
   CxxObject::TypeInitializer<T>::make_class()
   {
-    res_->slot_set(SYMBOL(type), new String(T::type_name), true);
-    res_->slot_set(SYMBOL(clone),
+    static libport::Symbol type("type");
+    static libport::Symbol clone("clone");
+    res_->slot_set(type, new String(T::type_name()), true);
+    res_->slot_set(clone,
                    rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>, _1))),
                    true);
     Binder<T> b(res_);

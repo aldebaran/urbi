@@ -4,6 +4,8 @@
 
 #include <object/file.hh>
 #include <object/output-stream.hh>
+#include <object/symbols.hh>
+
 #include <runner/raise.hh>
 
 namespace object

@@ -7,6 +7,7 @@
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/primitive.hh>
+#include <object/symbols.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 

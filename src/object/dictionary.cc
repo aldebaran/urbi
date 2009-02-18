@@ -8,6 +8,7 @@
 #include <object/dictionary.hh>
 #include <object/list.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
 
 namespace object
 {

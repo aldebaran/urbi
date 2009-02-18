@@ -21,6 +21,7 @@
 #include <object/cxx-conversions.hh>
 #include <object/global.hh>
 #include <object/lobby.hh>
+#include <object/symbols.hh>
 #include <object/task.hh>
 
 #include <runner/call.hh>

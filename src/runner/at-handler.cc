@@ -7,6 +7,7 @@
 #include <libport/finally.hh>
 
 #include <object/lobby.hh>
+#include <object/symbols.hh>
 
 #include <runner/at-handler.hh>
 #include <runner/call.hh>

@@ -9,6 +9,7 @@
 #include <object/global.hh>
 #include <object/object.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
 
 #include <runner/call.hh>
 #include <runner/runner.hh>

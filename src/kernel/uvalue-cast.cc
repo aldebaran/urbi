@@ -7,6 +7,7 @@
 #include <object/global.hh>
 #include <object/list.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
 #include <runner/raise.hh>
 #include <urbi/uvalue.hh>
 
