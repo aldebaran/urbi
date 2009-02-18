@@ -211,6 +211,30 @@ namespace object
     }
   };
 
+  // Conversion with char*
+#define CHAR(Type)                              \
+  template <>                                                           \
+  struct CxxConvert<Type>                                               \
+  {                                                                     \
+    typedef Type target_type;                                           \
+    static target_type                                                  \
+    to(const rObject& o, unsigned idx)                                  \
+    {                                                                   \
+      return strdup(CxxConvert<std::string>::to(o, idx).c_str());       \
+    }                                                                   \
+                                                                        \
+    static rObject                                                      \
+    from(target_type v)                                                 \
+    {                                                                   \
+      return CxxConvert<std::string>::from(std::string(v));             \
+    }                                                                   \
+  };
+
+  CHAR(char*);
+  CHAR(const char*);
+
+#undef CHAR
+
   // Conversion with libport::Symbols
   template <>
   struct CxxConvert<libport::Symbol>
