@@ -78,7 +78,7 @@ namespace object
     T::initialize(b);
 
     libport::Symbol conversion =
-      libport::Symbol(std::string("as") + T::type_name);
+      libport::Symbol(std::string("as") + T::type_name());
     if (!res_->slot_locate(conversion, 0))
       res_->slot_set(conversion,
                      rPrimitive(new Primitive(boost::bind(cxx_object_id<T>, _1))),
@@ -90,7 +90,7 @@ namespace object
   libport::Symbol
   CxxObject::TypeInitializer<T>::name()
   {
-    return libport::Symbol(T::type_name);
+    return libport::Symbol(T::type_name());
   }
 
   // BINDER
