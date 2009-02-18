@@ -8,10 +8,11 @@
 
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
+# include <urbi/export.hh>
 
 namespace object
 {
-  class List: public object::CxxObject
+  class URBI_SDK_API List: public object::CxxObject
   {
   public:
     typedef objects_type value_type;

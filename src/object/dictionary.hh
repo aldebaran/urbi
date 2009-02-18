@@ -12,7 +12,7 @@
 
 namespace object
 {
-  class Dictionary: public CxxObject
+  class URBI_SDK_API Dictionary: public CxxObject
   {
   public:
     typedef libport::hash_map<libport::Symbol, rObject> value_type;
