@@ -47,13 +47,21 @@ BUILT_SOURCES += $(precompiled_symbols_hh)
 
 FROM_PY =					\
   object/any-to-boost-function.hxx		\
-  object/cxx-primitive.hxx
+  object/cxx-primitive.hxx			\
+  object/executable.hh
+
 BUILT_SOURCES += $(FROM_PY)
 CLEANFILES += $(FROM_PY)
 nodist_libuobject_la_SOURCES += $(FROM_PY)
 EXTRA_DIST += $(FROM_PY:=.py)
 
 %.hxx: %.hxx.py
+	rm -f $@ $@.tmp
+	$< > $@.tmp
+	chmod a-w $@.tmp
+	mv $@.tmp $@
+
+%.hh: %.hh.py
 	rm -f $@ $@.tmp
 	$< > $@.tmp
 	chmod a-w $@.tmp
