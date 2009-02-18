@@ -324,20 +324,12 @@ namespace object
     bind(SYMBOL(tail),           &List::tail            );
   }
 
-  std::string List::type_name_get() const
-  {
-    return type_name;
-  }
+  URBI_CXX_OBJECT_REGISTER(List);
 
   rObject
   List::proto_make()
   {
     return new List();
   }
-
-  bool List::list_added =
-    CxxObject::add<List>();
-  const std::string List::type_name = "List";
-  rObject List::proto;
 
 } // namespace object

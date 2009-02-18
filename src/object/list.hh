@@ -50,27 +50,16 @@ namespace object
     rList   operator*   (unsigned int times);
     rObject operator[]  (const rFloat& idx);
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     value_type content_;
-
     /// Check that the function fun is using a valid index, and return it.
     size_type index(const rFloat& idx) const;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
+    URBI_CXX_OBJECT(List);
 
   public:
-    static void initialize(CxxObject::Binder<List>& binder);
     static bool list_added;
-    static rObject proto;
 
-  private:
-    friend class TypeInitializer<List>;
-    static rObject proto_make();
   };
 
 }; // namespace object

@@ -28,24 +28,10 @@ namespace object
     value_type& value_get();
     const value_type& value_get() const;
 
-    static const std::string type_name;
-    virtual std::string type_name_get() const;
-
   private:
     value_type state_;
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
-
-  public:
-    static void initialize(CxxObject::Binder<Lobby>& binder);
-    static bool lobby_added;
-    static rObject proto;
-
-  private:
-    friend class TypeInitializer<Lobby>;
-    static rObject proto_make();
+    URBI_CXX_OBJECT(Lobby);
   };
 }; // namespace object
 

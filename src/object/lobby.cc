@@ -82,21 +82,12 @@ namespace object
     bind(SYMBOL(write), &Lobby::write);
   }
 
-  std::string
-  Lobby::type_name_get() const
-  {
-    return type_name;
-  }
-
   rObject
   Lobby::proto_make()
   {
     return new Lobby(State(kernel::urbiserver->ghost_connection_get()));
   }
 
-  bool Lobby::lobby_added = CxxObject::add<Lobby>();
-  const std::string Lobby::type_name = "Lobby";
-  rObject Lobby::proto;
-
+  URBI_CXX_OBJECT_REGISTER(Lobby);
 
 }; // namespace object
