@@ -154,6 +154,12 @@ namespace urbi
     void stopCallbackThread();
     void callbackThread();
 
+    /**
+     * Block until kernel version is available, or an error occurrs.
+     * @param hasProcessingThread true if a processing thread is running, false
+     * if processEvents must be called while waiting.
+     */
+    void waitForKernelVersion(bool hasProcessingThread);
   protected:
     int joinCallbackThread_ ();
 

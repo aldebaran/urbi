@@ -339,9 +339,16 @@ namespace urbi
     virtual UCallbackAction setConnectionID (const UMessage& msg);
   public:
     const std::string& connectionID () const;
+    /// Return major kernel version or -1 if unknown yet.
     int kernelMajor() const;
+    /// Return minor kernel version or -1 if unknown yet.
     int kernelMinor() const;
+    /// Return kernel version string.
     const std::string& kernelVersion() const;
+    /** Block until kernel version is available or an error occurrs.
+     * Message processing must not depend on this thread.
+     */
+    void waitForKernelVersion() const;
   private:
     /// Bin object for this command.
     typedef std::list<urbi::BinaryData> binaries_type;

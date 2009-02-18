@@ -4,6 +4,7 @@
 #include <libport/assert.hh>
 #include <libport/compiler.hh>
 #include <libport/thread.hh>
+#include <libport/unistd.h>
 
 #include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
@@ -459,5 +460,16 @@ namespace urbi
     }
     sendBufferLock.unlock();
     return 0;
+  }
+
+  void
+  USyncClient::waitForKernelVersion(bool hasProcessingThread)
+  {
+    while (kernelMajor() < 0 && !error())
+    {
+      if (!hasProcessingThread)
+        processEvents();
+      usleep(100000);
+    }
   }
 } // namespace urbi

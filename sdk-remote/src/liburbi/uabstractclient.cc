@@ -5,6 +5,7 @@
 #include <libport/cstdio>
 #include <libport/cstring>
 #include <libport/escape.hh>
+#include <libport/unistd.h>
 
 #include <cstdlib>
 #include <cerrno>
@@ -181,6 +182,8 @@ namespace urbi
     , recvBuffer(NULL)
     , recvBufferPosition(0)
 
+    , kernelMajor_(-1)
+    , kernelMinor_(-1)
     , binaryBuffer(NULL)
     , parsePosition(0)
     , inString(false)
@@ -1093,11 +1096,12 @@ namespace urbi
     assert(msg.value->type == DATA_STRING);
     kernelVersion_ = *msg.value->stringValue;
     size_t sep = kernelVersion_.find_first_of('.');
+    try {
     kernelMajor_ = boost::lexical_cast<int>(kernelVersion_.substr(0, sep));
     size_t sep2 = kernelVersion_.find_first_of('.', sep+1);
     if (sep2 != kernelVersion_.npos)
       kernelMinor_ = boost::lexical_cast<int>(kernelVersion_.substr(sep+1,
-        sep2));
+        sep2-sep-1));
     else
       kernelMinor_ = 0;
     setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
@@ -1105,7 +1109,23 @@ namespace urbi
       send("__ident << local.connectionID;");
     else
       send("Channel.new(\"__ident\") << connectionTag.name;");
+    }
+    catch(boost::bad_lexical_cast&)
+    {
+      std::cerr << "Failed to parse kernel version string: '"
+	<< kernelVersion_ << "', assuming 2.0." << std::endl;
+      kernelMajor_ = 2;
+      kernelMinor_ = 2;
+    }
     return URBI_REMOVE;
+  }
+
+  void
+  UAbstractClient::waitForKernelVersion () const
+  {
+    /// FIXME: use a condition.
+    while (kernelMajor_ < 0 && !error())
+      usleep(100000);
   }
 
   int
