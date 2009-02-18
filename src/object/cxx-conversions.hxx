@@ -326,6 +326,31 @@ namespace object
     }
   };
 
+  // Conversion with std::pair
+  template <typename T1, typename T2>
+  struct CxxConvert<std::pair<T1, T2> >
+  {
+    typedef std::pair<T1, T2> target_type;
+    static target_type
+    to(const rObject& o, unsigned idx)
+    {
+      type_check<List>(o, idx);
+      const List::value_type& list = o->as<List>()->value_get();
+      if (list.size() != 2)
+        runner::raise_primitive_error("Expected a list of size 2");
+      return std::make_pair(CxxConvert<T1>::to(list[0]),
+                            CxxConvert<T2>::to(list[1]));
+    }
+
+    static rObject
+    from(const target_type& v)
+    {
+      List::value_type content;
+      content.push_back(CxxConvert<T1>::from(v.first ));
+      content.push_back(CxxConvert<T2>::from(v.second));
+      return new List(content);
+    }
+  };
 
   template <typename T>
   rObject to_urbi(const T& v)
