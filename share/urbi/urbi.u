@@ -341,16 +341,9 @@ load("urbi/profiling.u");
 
 load("urbi/position.u");
 
-/*-------------.
-| Executable.  |
-`-------------*/
-
-// This class is used as a flag to recognize all kind of executable code
-class Global.Executable {};
-
-// Executable derives from Object.
-for (var c: [getSlot("Code"), getSlot("Primitive")])
-  c.setProtos([Executable]);
+/*-----------.
+| Loadable.  |
+`-----------*/
 
 load("urbi/loadable.u");
 

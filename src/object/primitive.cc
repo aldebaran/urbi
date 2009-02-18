@@ -27,7 +27,7 @@ namespace object
   Primitive::Primitive(value_type value)
     : content_(value)
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Executable::proto);
   }
 
   Primitive::value_type Primitive::value_get() const

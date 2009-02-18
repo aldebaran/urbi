@@ -10,7 +10,7 @@ for narg in range(9):
     args = range(1, narg + 1)
     types = collapse(args, lambda n: ', typename T%s' % n)
     formals = collapse(args, lambda n: ', T%s arg%s' % (n, n))
-    push = collapse(args, lambda n: '\n      args.push_back(CxxConvert<T%s>::from(arg%s));' % (n, n))
+    push = collapse(args, lambda n: '\n    args.push_back(CxxConvert<T%s>::from(arg%s));' % (n, n))
     prototypes += \
     '''
     template <typename S%s>
@@ -31,14 +31,19 @@ print '''#ifndef OBJECT_EXECUTABLE_HH
 # define OBJECT_EXECUTABLE_HH
 
 # include <object/cxx-object.hh>
+# include <urbi/export.hh>
 
 namespace object
 {
-  class Executable: public CxxObject
+  class URBI_SDK_API Executable: public CxxObject
   {
   public:
-    virtual rObject operator() (object::objects_type args) = 0;
+    Executable();
+    Executable(rExecutable model);
+    virtual rObject operator() (object::objects_type args);
     %s
+
+    URBI_CXX_OBJECT(Executable);
   };
 }
 

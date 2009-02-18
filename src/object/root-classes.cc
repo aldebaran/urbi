@@ -170,6 +170,8 @@ namespace object
     // Object is a special case: it is not built as a clone of itself.
     object_class = new Object();
 
+    CxxObject::push_initializer_to_back<Code>();
+    CxxObject::push_initializer_to_back<Primitive>();
     CxxObject::push_initializer_to_back<UVar>();
     CxxObject::push_initializer_to_back<OutputStream>();
     CxxObject::push_initializer_to_back<TextOutputStream>();

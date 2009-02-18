@@ -28,7 +28,7 @@ namespace object
     , self_()
     , call_()
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Executable::proto);
   }
 
   Code::Code(rCode model)
