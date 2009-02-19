@@ -92,20 +92,23 @@ recheck recheck-html:
 # files that make it easier to depend on changes of some components.
 
 # urbi.stamp is defined and built in share/urbi/local.mk.
-noinst_DATA = urbi.stamp
+STAMPS = urbi.stamp
 
 # All the libraries.
-noinst_DATA += libraries.stamp
+STAMPS += libraries.stamp
 libraries.stamp: src/libuobject.la sdk-remote/src/libuobject/libuobject.la sdk-remote/src/liburbi/liburbi.la
 	echo "$$(date): $?" >>$@
 
 # All the executables.
-noinst_DATA += executables.stamp
+STAMPS += executables.stamp
 executables.stamp: src/urbi-console sdk-remote/src/urbi-launch
 	echo "$$(date): $?" >>$@
 
 # Everything.
-noinst_DATA += all.stamp
+STAMPS += all.stamp
 all.stamp: urbi.stamp libraries.stamp executables.stamp
 	echo "$$(date): $?" >>$@
 
+.PHONY: stamps
+stamps: $(STAMPS)
+noinst_DATA = $(STAMPS)
