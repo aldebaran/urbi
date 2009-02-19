@@ -97,17 +97,17 @@ STAMPS = urbi.stamp
 # All the libraries.
 STAMPS += libraries.stamp
 libraries.stamp: src/libuobject.la sdk-remote/src/libuobject/libuobject.la sdk-remote/src/liburbi/liburbi.la
-	echo "$$(date): $?" >>$@
+	@echo "$$(date): $?" >>$@
 
 # All the executables.
 STAMPS += executables.stamp
 executables.stamp: src/urbi-console sdk-remote/src/urbi-launch
-	echo "$$(date): $?" >>$@
+	@echo "$$(date): $?" >>$@
 
 # Everything.
 STAMPS += all.stamp
 all.stamp: urbi.stamp libraries.stamp executables.stamp
-	echo "$$(date): $?" >>$@
+	@echo "$$(date): $?" >>$@
 
 .PHONY: stamps
 stamps: $(STAMPS)
