@@ -4,7 +4,11 @@ include build-aux/build-aux.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 
-SUBDIRS = sdk-remote . src tests doc
+# To keep the time stamps up to date, we need to compile our
+# dependencies first, so process sdk-remote and src before "." (where
+# timestamps are).  It it tests and doc that depend on these time
+# stamps, so handle them after ".".
+SUBDIRS = sdk-remote src . tests doc
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -73,3 +77,35 @@ check-%:
 recheck recheck-html:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src/tests $@
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
+
+
+## -------- ##
+## Stamps.  ##
+## -------- ##
+
+# Running continuously the test suite is costly, especially for the
+# buildfarm.  Some changes have no impact whatsoever on the kernel,
+# uconsole etc, for instance changes in the documentation.  In that
+# case we would like not to rerun the test suite.  But spelling out
+# the exact dependencies (on the libraries, the binaries, the
+# wrappers, but also the urbi/*.u files) is hard.  So we create stamp
+# files that make it easier to depend on changes of some components.
+
+# urbi.stamp is defined and built in share/urbi/local.mk.
+noinst_DATA = urbi.stamp
+
+# All the libraries.
+noinst_DATA += libraries.stamp
+libraries.stamp: src/libuobject.la sdk-remote/src/libuobject/libuobject.la sdk-remote/src/liburbi/liburbi.la
+	echo "$$(date): $?" >>$@
+
+# All the executables.
+noinst_DATA += executables.stamp
+executables.stamp: src/urbi-console sdk-remote/src/urbi-launch
+	echo "$$(date): $?" >>$@
+
+# Everything.
+noinst_DATA += all.stamp
+all.stamp: urbi.stamp libraries.stamp executables.stamp
+	echo "$$(date): $?" >>$@
+

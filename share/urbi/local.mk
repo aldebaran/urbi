@@ -11,3 +11,7 @@ $(srcdir)/share/urbi/tutorial-content.u: share/urbi/tutorial/tutorial.xml share/
 	rm -f $@ $@.tmp
 	$(srcdir)/share/urbi/tutorial/tutorial.py $< > $@.tmp
 	mv $@.tmp $@
+
+urbi.stamp: $(dist_urbi_DATA) $(package_info_u)
+	echo "$$(date)"': $? changed' >>$@
+
