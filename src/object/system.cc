@@ -411,8 +411,6 @@ namespace object
     return void_class;							\
   }
 
-  SERVER_SET_VAR(debugoff, debugOutput, false)
-  SERVER_SET_VAR(debugon, debugOutput, true)
   SERVER_SET_VAR(stopall, stopall, true)
 
 #undef SERVER_SET_VAR
@@ -518,8 +516,6 @@ namespace object
     DECLARE(breakpoint);
     DECLARE(currentRunner);
     DECLARE(cycle);
-    DECLARE(debugoff);
-    DECLARE(debugon);
     DECLARE(eval);
     DECLARE(fresh);
     DECLARE(jobs);

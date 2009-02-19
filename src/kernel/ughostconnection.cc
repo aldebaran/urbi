@@ -75,7 +75,7 @@ namespace kernel
       memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer + i),
 	    len);
       buf[len] = 0;
-      urbiserver->debug("%s", buf);
+      urbiserver->display(buf);
     }
 
     return length;

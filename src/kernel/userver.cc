@@ -5,7 +5,6 @@
 #include <libport/compiler.hh>
 #include <libport/csignal>
 #include <cstdlib>
-#include <cstdarg>
 
 #include <fstream>
 #include <string>
@@ -89,7 +88,6 @@ namespace kernel
   UServer::UServer(const char* mainName)
     : scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                       boost::ref(*this))))
-    , debugOutput(false)
     , mainName_(mainName)
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
@@ -432,82 +430,11 @@ namespace kernel
     object::cleanup_existing_objects();
   }
 
-  void
-  UServer::vecho_key(const char* key, const char* s, va_list args)
-  {
-    // This local declaration is rather unefficient but is necessary
-    // to insure that the server could be made semi-reentrant.
-    char key_[6];
-
-    if (key == NULL)
-      key_[0] = 0;
-    else
-    {
-      strncpy(key_, key, 5);
-      key_[5] = 0;
-    }
-
-    static buffer_type buf1;
-    vsnprintf(buf1, sizeof buf1, s, args);
-    static buffer_type buf2;
-    snprintf(buf2, sizeof buf2, "%-90s [%5s]\n", buf1, key_);
-    display(buf2);
-  }
-
-  void
-  UServer::echoKey(const char* key, const char* s, ...)
-  {
-    va_list args;
-    va_start(args, s);
-    vecho_key(key, s, args);
-    va_end(args);
-  }
-
-
-  void
-  UServer::error(const char* s, ...)
-  {
-    va_list args;
-    va_start(args, s);
-    vecho_key("ERROR", s, args);
-    va_end(args);
-  }
-
-
-  void
-  UServer::echo(const char* s, ...)
-  {
-    va_list args;
-    va_start(args, s);
-    vecho_key("     ", s, args);
-    va_end(args);
-  }
-
-
-  void
-  UServer::vdebug(const char* s, va_list args)
-  {
-    static buffer_type buf;
-    vsnprintf(buf, sizeof buf, s, args);
-    effectiveDisplay(buf);
-  }
-
-
-  void
-  UServer::debug(const char* s, ...)
-  {
-    va_list args;
-    va_start(args, s);
-    vdebug(s, args);
-    va_end(args);
-  }
-
 
   void
   UServer::display(const char* s)
   {
-    if (debugOutput)
-      effectiveDisplay(s);
+    effectiveDisplay(s);
   }
 
 
@@ -591,9 +518,7 @@ namespace kernel
   {
     assert(c);
     if (c->uerror_ != USUCCESS)
-      error(DISPLAY_FORMAT1, (long)this,
-	  __PRETTY_FUNCTION__,
-	  "UConnection constructor failed");
+      DEBUG(("UConnection constructor failed"));
     else
       connections_->add(c);
   }
@@ -615,25 +540,5 @@ namespace kernel
   UServer::getCurrentRunner() const
   {
     return dynamic_cast<runner::Runner&> (scheduler_->current_job());
-  }
-
-
-  /*--------------------------.
-  | Free standing functions.  |
-  `--------------------------*/
-
-  void
-  vdebug(const char* fmt, va_list args)
-  {
-    urbiserver->vdebug(fmt, args);
-  }
-
-  void
-  debug(const char* fmt, ...)
-  {
-    va_list args;
-    va_start(args, fmt);
-    vdebug(fmt, args);
-    va_end(args);
   }
 }

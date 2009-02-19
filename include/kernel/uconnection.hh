@@ -5,7 +5,6 @@
 # define KERNEL_UCONNECTION_HH
 
 # include <cstring>
-# include <cstdarg>
 # include <iomanip>
 # include <memory>
 
@@ -277,7 +276,7 @@ namespace kernel
     /// A pointer to stop dependencies.
     std::auto_ptr<UQueue> recv_queue_;
 
-    /// Each call to effective_send() will send packetSize byte (or less)..
+    /// Each call to effective_send() will send packetSize byte (or less).
     size_t packet_size_;
 
     /// The state of the connection.

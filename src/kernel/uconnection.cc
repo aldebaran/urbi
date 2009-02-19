@@ -7,7 +7,6 @@
 #include <libport/cstring>
 #include <libport/cstdio>
 #include <cassert>
-#include <cstdarg>
 #include <sstream>
 #include <iomanip>
 

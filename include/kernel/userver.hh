@@ -4,7 +4,6 @@
 #ifndef KERNEL_USERVER_HH
 # define KERNEL_USERVER_HH
 
-# include <cstdarg>
 # include <memory>
 # include <sstream>
 
@@ -32,11 +31,6 @@ namespace sched  { class Scheduler; }
 
 namespace kernel
 {
-  extern const char* DISPLAY_FORMAT;
-  extern const char* DISPLAY_FORMAT1;
-  extern const char* DISPLAY_FORMAT2;
-
-
   /// Global variable for the server
   extern class UServer* urbiserver;
 
@@ -74,58 +68,6 @@ namespace kernel
 
     /// Package information about this server.
     static const libport::PackageInfo& package_info();
-
-    //! Displays a formatted error message.
-    /*! This function uses the virtual URobot::display() function to make the
-     message printing robot-specific.
-
-     It formats the output in a standard URBI way by adding an ERROR key
-     between brackets at the end.
-     */
-    void error(const char* s, ...)
-      __attribute__((__format__(__printf__, 2, 3)));
-
-    //! Displays a formatted message.
-    /*! This function uses the virtual URobot::display() function to make the
-     message printing robot-specific.
-
-     It formats the output in a standard URBI way by adding an empty key
-     between brackets at the end. If you want to specify a key, use the
-     echoKey() function.
-     \param s is the formatted string containing the message.
-     \sa echoKey()
-     */
-    void echo(const char* s, ...)
-      __attribute__((__format__(__printf__, 2, 3)));
-
-
-    //! Display a formatted message, with a key.
-    /*! This function uses the virtual URobot::display() function to make the
-     message printing robot-specific.
-     It formats the output in a standard URBI way by adding a key between
-     brackets at the end. This key can be "" or NULL.It can be used to
-     visually extract information from the flux of messages printed by
-     the server.
-     \param key is the message key. Maxlength = 5 chars.
-     \param s   is the formatted string containing the message.
-     \param args Arguments for the format string.
-     */
-    void vecho_key(const char* key, const char* s, va_list args)
-      __attribute__((__format__(__printf__, 3, 0)));
-    void echoKey(const char* key, const char* s, ...)
-      __attribute__((__format__(__printf__, 3, 4)));
-
-    /// Send debugging data.
-    /*! This function uses the virtual URobot::display() function to make the
-     message printing robot-specific.
-
-     \param s is the formatted string containing the message
-     \param args Arguments for the format string.
-     */
-    void vdebug(const char* s, va_list args)
-      __attribute__((__format__(__printf__, 2, 0)));
-    void debug(const char* s, ...)
-      __attribute__((__format__(__printf__, 2, 3)));
 
     //! Overload this function to return the running time of the server.
     /*! The running time of the server must be in milliseconds.
@@ -268,10 +210,6 @@ namespace kernel
     void work_test_cpuoverload_();
     /// \}
 
-  public:
-    /// Shows debug or not.
-    bool debugOutput;
-
   private:
     /// Name of the main device.
     std::string mainName_;
@@ -301,27 +239,10 @@ namespace kernel
     UGhostConnection* ghost_;
   };
 
-  /*-------------------------.
-  | Freestanding functions.  |
-  `-------------------------*/
-
-  /// Send debugging messages via ::urbiserver.
-  void vdebug(const char* fmt, va_list args)
-    __attribute__((__format__(__printf__, 1, 0)));
-
-  /// Send debugging messages via ::urbiserver.
-  void debug(const char* fmt, ...)
-    __attribute__((__format__(__printf__, 1, 2)));
-
 }
 
-// Send debugging messages.
-# if URBI_DEBUG
-// Must be invoked with two pairs of parens.
-#  define DEBUG(Msg)  kernel::debug Msg
-# else
-#  define DEBUG(Msg) ((void) 0)
-# endif
+// Disable debug traces until we find a better means to do it.
+# define DEBUG(Msg) ((void) 0)
 
 # include <kernel/userver.hxx>
 
