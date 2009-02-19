@@ -122,8 +122,8 @@
     YYERROR;                                                            \
   } while (0)
 
-
-#define ERROR(Loc, Msg, Type)                   \
+# undef ERROR
+# define ERROR(Loc, Msg, Type)                  \
     do {                                        \
       std::stringstream s;                      \
       s << Msg;                                 \
