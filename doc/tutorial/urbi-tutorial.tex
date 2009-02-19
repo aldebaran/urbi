@@ -1793,6 +1793,7 @@ echo("Not blocked");
 [00000000] *** Not blocked
 sleep(1s);
 [00005000] *** foo
+/*HIDE*/sleep(200ms);
 \end{urbiscript}
 
 \section{Tags for parallel control flows}
@@ -1922,6 +1923,7 @@ mytag.unfreeze;
   echo("Background job stopped")|
 },
 sleep(4s);
+/*HIDE*/sleep(100ms);
 [00000000] *** ping
 [00001000] *** pong
 [00002000] *** ping
@@ -1941,6 +1943,7 @@ sleep(4s);
 [00008000] *** pong
 [00009000] *** ping
 [00010000] *** pong
+[00011000] *** ping
 \end{urbiscript}
 
 \section{Advanced example with parallelism and tags}
@@ -2143,7 +2146,7 @@ emit myEvent ~ 1s;
 [00000250] *** ping
 [00000500] *** ping
 [00000750] *** ping
-[00001000] *** ping
+/*HIDE*/sleep(125ms);
 \end{urbiscript}
 
 %\section{Valued events}
