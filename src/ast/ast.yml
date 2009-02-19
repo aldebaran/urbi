@@ -1006,7 +1006,6 @@ LocalAssignment:
         assert(declaration_);
         return declaration_->local_index_get();
       }
-
   cloner_prologue: 'assert(!e->declaration_get());'
   printer:
     - $what
