@@ -646,7 +646,6 @@ namespace runner
 	  operator()(e->value_get().get()) :
 	  current_exception_);
     pabort("Unreachable");
-    return 0;
   }
 
 
@@ -714,13 +713,6 @@ namespace runner
     return object::void_class;
   }
 
-// MSVC seems to disregard the noreturn attribute of what pabort expands to.
-#ifdef _MSC_VER
-# define INVALID_RET return object::void_class;
-#else
-# define INVALID_RET
-#endif
-
   // Invalid nodes
 #define INVALID(Node)                                                   \
   LIBPORT_SPEED_INLINE object::rObject                                  \
@@ -728,7 +720,6 @@ namespace runner
   {                                                                     \
     static_cast<void>(n);                                               \
     pabort("Invalid " #Node " node in the Interpreter: " << *n);        \
-    INVALID_RET;                                                        \
   }                                                                     \
 
   INVALID(Assign);
@@ -755,7 +746,6 @@ namespace runner
   INVALID(Unscope);
 
 #undef INVALID
-#undef INVALID_RET
 }
 
 
