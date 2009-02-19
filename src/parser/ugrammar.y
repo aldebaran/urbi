@@ -1320,14 +1320,13 @@ event_match:
 
 %type <ast::rExp> guard.opt guard;
 guard.opt:
-  /* nothing */
-  { $$ = 0; }
-| guard
-  { $$ = $1; }
+  /* nothing */  { $$ = 0; }
+| guard          { $$ = $1; }
+;
 
 guard:
-  "if" exp
-  { $$ = $2; }
+  "if" exp { $$ = $2; }
+;
 
 /*---------------------------.
 | Square brackets operator.  |

@@ -63,64 +63,64 @@ namespace parser
   ast::rExp
   ast_at_event(const ast::loc& loc,
                ast::rExp event,
-               ast::exps_type* _payload,
+               ast::exps_type* payload,
                ast::rExp guard,
                ast::rExp at, ast::rExp onleave)
   {
-    ast::rExp payload = _payload
-      ? new ast::List(loc, _payload) : 0;
-    if (!onleave)
-      onleave = new ast::Noop(loc, 0);
-
-    PARAMETRIC_AST(desugar,
-                   "detach("
-                   "{"
-                   "  %exp:1.onEvent(closure ('$at')"
-                   "  {"
-                   "    var '$pattern' = Pattern.new(%exp:2) |"
-                   "    if ('$pattern'.match('$at'.payload))"
-                   "    {"
-                   "      %exp: 3 |"
-                   "      %exp: 4 |"
-                   "    }"
-                   "  })"
-                   "})");
-
-    PARAMETRIC_AST(desugar_no_payload,
-                   "detach("
-                   "{"
-                   "  %exp:1.onEvent(closure ('$at')"
-                   "  {"
-                   "    %exp: 2 |"
-                   "  })"
-                   "})");
-
     PARAMETRIC_AST(desugar_body,
-                   "      %exp:1 |"
-                   "      waituntil(!'$at'.active) |"
-                   "      %exp:2");
+                   "%exp:1 |"
+                   "waituntil(!'$at'.active)");
+    ast::rExp body = exp(desugar_body % at);
 
-    PARAMETRIC_AST(desugar_guard,
-                   "if (%exp:1) %exp:2;");
+    if (onleave)
+    {
+      PARAMETRIC_AST(a, "%exp:1 | %exp:2");
+      body = exp(a % body % onleave);
+    }
 
-    ast::rExp body = exp(desugar_body % at % onleave);
     if (guard)
+    {
+      PARAMETRIC_AST(desugar_guard,
+                     "if (%exp:1) %exp:2;");
       body = exp(desugar_guard % guard % body);
+    }
 
     if (payload)
     {
+      ast::rExp d_payload = new ast::List(loc, payload);
       rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-      std::cerr << *payload << std::endl;
-      bind(payload.get());
+      bind(d_payload.get());
+      PARAMETRIC_AST(desugar,
+                     "detach("
+                     "{"
+                     "  %exp:1.onEvent(closure ('$at')"
+                     "  {"
+                     "    var '$pattern' = Pattern.new(%exp:2) |"
+                     "    if ('$pattern'.match('$at'.payload))"
+                     "    {"
+                     "      %exp: 3 |"
+                     "      %exp: 4 |"
+                     "    }"
+                     "  })"
+                     "})");
       return exp(desugar
                  % event
                  % bind.result_get().unchecked_cast<ast::Exp>()
                  % bind.bindings_get()
-                 % body
-        );
+                 % body);
     }
     else
+    {
+      PARAMETRIC_AST(desugar_no_payload,
+                     "detach("
+                     "{"
+                     "  %exp:1.onEvent(closure ('$at')"
+                     "  {"
+                     "    %exp: 2 |"
+                     "  })"
+                     "})");
       return exp(desugar_no_payload % event % body);
+    }
   }
 
   ast::rExp
@@ -148,8 +148,7 @@ namespace parser
        "  }"
        "}");
 
-    ast::rList d_payload = new ast::List
-      (loc, payload);
+    ast::rList d_payload = new ast::List(loc, payload);
 
     rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
     bind(d_payload.get());
@@ -165,8 +164,23 @@ namespace parser
                      ast::rExp event, ast::rExp payload,
                      ast::rExp body, ast::rExp onleave)
   {
-    if (!onleave)
-      onleave = new ast::Noop(loc, 0);
+    rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+    bind(payload.get());
+
+    PARAMETRIC_AST(desugar_body,
+                   "while (true)"
+                   "{"
+                   "  %exp:1 |"
+                   "  if(!'$whenever'.active)"
+                   "    break"
+                   "}");
+    body = exp(desugar_body % body);
+
+    if (onleave)
+    {
+      PARAMETRIC_AST(a, "%exp:1 | %exp:2");
+      body = exp(a % body % onleave);
+    }
 
     PARAMETRIC_AST(desugar,
                    "detach("
@@ -178,32 +192,16 @@ namespace parser
                    "    if ('$pattern'.match('$whenever'.payload))"
                    "      detach("
                    "        {"
-                   "          %exp:4 |"
                    "          %exp:3 |"
+                   "          %exp:4 |"
                    "        })"
                    "  })"
                    "})");
-
-    PARAMETRIC_AST(desugar_body,
-                   "while (true)"
-                   "{"
-                   "  %exp:1 |"
-                   "  if(!'$whenever'.active)"
-                   "    break"
-                   "} |"
-                   "%exp:2");
-
-
-    rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-    bind(payload.get());
-
-    body = exp(desugar_body % body % onleave);
-
     return exp(desugar
                % event
                % bind.result_get().unchecked_cast<ast::Exp>()
-               % body
-               % bind.bindings_get());
+               % bind.bindings_get()
+               % body);
   }
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
