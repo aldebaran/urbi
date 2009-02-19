@@ -62,10 +62,22 @@ namespace parser
 
   ast::rExp
   ast_event_catcher(const ast::loc& loc,
-                    ast::rExp event,
-                    ast::exps_type* payload,
-                    ast::rExp body)
+                    ast::rExp event, ast::exps_type* payload, ast::rExp guard,
+                    ast::rExp body, ast::rExp onleave)
   {
+    if (onleave)
+    {
+      PARAMETRIC_AST(a, "%exp:1 | %exp:2");
+      body = exp(a % body % onleave);
+    }
+
+    if (guard)
+    {
+      PARAMETRIC_AST(desugar_guard,
+                     "if (%exp:1) %exp:2;");
+      body = exp(desugar_guard % guard % body);
+    }
+
     if (payload)
     {
       ast::rExp d_payload = new ast::List(loc, payload);
@@ -108,9 +120,7 @@ namespace parser
 
   ast::rExp
   ast_at_event(const ast::loc& loc,
-               ast::rExp event,
-               ast::exps_type* payload,
-               ast::rExp guard,
+               ast::rExp event, ast::exps_type* payload, ast::rExp guard,
                ast::rExp at, ast::rExp onleave)
   {
     PARAMETRIC_AST(desugar_body,
@@ -118,20 +128,7 @@ namespace parser
                    "waituntil(!'$evt'.active)");
     ast::rExp body = exp(desugar_body % at);
 
-    if (onleave)
-    {
-      PARAMETRIC_AST(a, "%exp:1 | %exp:2");
-      body = exp(a % body % onleave);
-    }
-
-    if (guard)
-    {
-      PARAMETRIC_AST(desugar_guard,
-                     "if (%exp:1) %exp:2;");
-      body = exp(desugar_guard % guard % body);
-    }
-
-    return ast_event_catcher(loc, event, payload, body);
+    return ast_event_catcher(loc, event, payload, guard, body, onleave);
   }
 
   ast::rExp
@@ -172,8 +169,7 @@ namespace parser
 
   ast::rExp
   ast_whenever_event(const ast::loc& loc,
-                     ast::rExp event,
-                     ast::exps_type* payload,
+                     ast::rExp event, ast::exps_type* payload, ast::rExp guard,
                      ast::rExp body, ast::rExp onleave)
   {
     PARAMETRIC_AST(desugar_body,
@@ -185,13 +181,7 @@ namespace parser
                    "}");
     body = exp(desugar_body % body);
 
-    if (onleave)
-    {
-      PARAMETRIC_AST(a, "%exp:1 | %exp:2");
-      body = exp(a % body % onleave);
-    }
-
-    return ast_event_catcher(loc, event, payload, body);
+    return ast_event_catcher(loc, event, payload, guard, body, onleave);
   }
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.

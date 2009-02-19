@@ -869,13 +869,11 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_at_event(@$, $3.event, $3.pattern,
-                        $3.guard, $5);
+      $$ = ast_at_event(@$, $3.event, $3.pattern, $3.guard, $5);
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
-      $$ = ast_at_event(@$, $3.event, $3.pattern,
-                        $3.guard, $5, $7);
+      $$ = ast_at_event(@$, $3.event, $3.pattern, $3.guard, $5, $7);
     }
 | "every" "(" exp ")" nstmt
     {
@@ -1003,11 +1001,11 @@ stmt:
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $5);
+      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $3.guard, $5);
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $5, $7);
+      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $3.guard, $5, $7);
     }
 ;
 

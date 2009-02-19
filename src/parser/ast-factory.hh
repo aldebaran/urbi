@@ -20,30 +20,9 @@ namespace parser
 
   /// at (?(%event)(%payload) {%body} onleave {%onleave}
   ast::rExp
-  ast_at_event(const yy::location& loc,
-               ast::rExp event,
-               ast::exps_type* payload,
-               ast::rExp guard,
-               ast::rExp body, ast::rExp onleave = 0);
-
-  /// timeout(duration) body
-  ast::rExp ast_timeout(const ast::rExp& duration, const ast::rExp& body);
-
-  /// waituntil (something);
-  ast::rExp ast_waituntil(const ast::rExp& cond);
-
-  /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
-  ast::rExp
-  ast_whenever_event(const yy::location& loc,
-                     ast::rExp event,
-                     ast::exps_type* payload,
-                     ast::rExp body, ast::rExp onleave = 0);
-
-  /// waituntil (?(%event)(%payload))
-  ast::rExp
-  ast_waituntil_event(const ast::loc& loc,
-                      ast::rExp event,
-                      ast::exps_type* payload);
+  ast_at_event(const ast::loc& loc,
+               ast::rExp event, ast::exps_type* payload, ast::rExp guard,
+               ast::rExp at, ast::rExp onleave = 0);
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
@@ -91,6 +70,11 @@ namespace parser
   ast::rExp
   ast_closure(ast::rExp value);
 
+
+  ast::rExp
+  ast_event_catcher(const ast::loc& loc,
+                    ast::rExp event, ast::exps_type* payload, ast::rExp guard,
+                    ast::rExp body, ast::rExp onleave);
 
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
@@ -150,6 +134,25 @@ namespace parser
   ast::rExp
   ast_switch(const yy::location& l, ast::rExp cond,
              const cases_type& cases, ast::rExp def);
+
+
+  /// timeout(duration) body
+  ast::rExp ast_timeout(const ast::rExp& duration, const ast::rExp& body);
+
+  /// waituntil (something);
+  ast::rExp ast_waituntil(const ast::rExp& cond);
+
+  /// waituntil (?(%event)(%payload))
+  ast::rExp
+  ast_waituntil_event(const ast::loc& loc,
+                      ast::rExp event,
+                      ast::exps_type* payload);
+
+  /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
+  ast::rExp
+  ast_whenever_event(const ast::loc& loc,
+                     ast::rExp event, ast::exps_type* payload, ast::rExp guard,
+                     ast::rExp body, ast::rExp onleave = 0);
 }
 
 namespace std
