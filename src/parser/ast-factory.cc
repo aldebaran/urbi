@@ -69,7 +69,7 @@ namespace parser
   {
     PARAMETRIC_AST(desugar_body,
                    "%exp:1 |"
-                   "waituntil(!'$at'.active)");
+                   "waituntil(!'$evt'.active)");
     ast::rExp body = exp(desugar_body % at);
 
     if (onleave)
@@ -93,10 +93,11 @@ namespace parser
       PARAMETRIC_AST(desugar,
                      "detach("
                      "{"
-                     "  %exp:1.onEvent(closure ('$at')"
+                     "  %exp:1.onEvent("
+                     "  closure ('$evt')"
                      "  {"
                      "    var '$pattern' = Pattern.new(%exp:2) |"
-                     "    if ('$pattern'.match('$at'.payload))"
+                     "    if ('$pattern'.match('$evt'.payload))"
                      "    {"
                      "      %exp: 3 |"
                      "      %exp: 4 |"
@@ -114,7 +115,7 @@ namespace parser
       PARAMETRIC_AST(desugar_no_payload,
                      "detach("
                      "{"
-                     "  %exp:1.onEvent(closure ('$at')"
+                     "  %exp:1.onEvent(closure ('$evt')"
                      "  {"
                      "    %exp: 2 |"
                      "  })"
@@ -171,7 +172,7 @@ namespace parser
                    "while (true)"
                    "{"
                    "  %exp:1 |"
-                   "  if(!'$whenever'.active)"
+                   "  if(!'$evt'.active)"
                    "    break"
                    "}");
     body = exp(desugar_body % body);
@@ -185,11 +186,11 @@ namespace parser
     PARAMETRIC_AST(desugar,
                    "detach("
                    "{"
-                   "%exp:1.onEvent("
-                   "  closure ('$whenever')"
+                   "  %exp:1.onEvent("
+                   "  closure ('$evt')"
                    "  {"
                    "    var '$pattern' = Pattern.new(%exp:2);"
-                   "    if ('$pattern'.match('$whenever'.payload))"
+                   "    if ('$pattern'.match('$evt'.payload))"
                    "      detach("
                    "        {"
                    "          %exp:3 |"
