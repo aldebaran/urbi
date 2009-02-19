@@ -1003,11 +1003,13 @@ stmt:
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $5);
+      $$ = ast_whenever_event(@$, $3.event,
+                              ast::rExp(new ast::List(@3, $3.pattern)), $5);
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $5, $7);
+      $$ = ast_whenever_event(@$, $3.event,
+                              ast::rExp(new ast::List(@3, $3.pattern)), $5, $7);
     }
 ;
 
