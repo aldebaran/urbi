@@ -1074,7 +1074,7 @@ namespace urbi
   }
 
   UCallbackAction
-  UAbstractClient::setConnectionID (const UMessage& msg)
+  UAbstractClient::setConnectionID(const UMessage& msg)
   {
     if (msg.type == MESSAGE_DATA && msg.value)
     {
@@ -1089,33 +1089,37 @@ namespace urbi
   }
 
   UCallbackAction
-  UAbstractClient::setVersion (const UMessage& msg)
+  UAbstractClient::setVersion(const UMessage& msg)
   {
     if (msg.type != MESSAGE_DATA)
       return URBI_CONTINUE;
     assert(msg.value->type == DATA_STRING);
     kernelVersion_ = *msg.value->stringValue;
     size_t sep = kernelVersion_.find_first_of('.');
-    try {
-    kernelMajor_ = boost::lexical_cast<int>(kernelVersion_.substr(0, sep));
-    size_t sep2 = kernelVersion_.find_first_of('.', sep+1);
-    if (sep2 != kernelVersion_.npos)
-      kernelMinor_ = boost::lexical_cast<int>(kernelVersion_.substr(sep+1,
-        sep2-sep-1));
-    else
-      kernelMinor_ = 0;
-    setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
-    if (kernelMajor_ <= 1)
-      send("__ident << local.connectionID;");
-    else
-      send("Channel.new(\"__ident\") << connectionTag.name;");
+    try
+    {
+      kernelMajor_ = boost::lexical_cast<int>(kernelVersion_.substr(0, sep));
+      size_t sep2 = kernelVersion_.find_first_of('.', sep+1);
+      if (sep2 != kernelVersion_.npos)
+        kernelMinor_ =
+          boost::lexical_cast<int>(kernelVersion_.substr(sep+1,
+                                                         sep2-sep-1));
+      else
+        kernelMinor_ = 0;
+      setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
+      if (kernelMajor_ <= 1)
+        send("__ident << local.connectionID;");
+      else
+        send("Channel.new(\"__ident\") << connectionTag.name;");
     }
     catch(boost::bad_lexical_cast&)
     {
-      std::cerr << "Failed to parse kernel version string: '"
-	<< kernelVersion_ << "', assuming 2.0." << std::endl;
       kernelMajor_ = 2;
-      kernelMinor_ = 2;
+      kernelMinor_ = 0;
+      std::cerr << "failed to parse kernel version string: '"
+                << kernelVersion_ << "', assuming "
+                << kernelMajor_ << '.' << kernelMinor_ << '.'
+                << std::endl;
     }
     return URBI_REMOVE;
   }
