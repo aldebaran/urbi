@@ -15,14 +15,14 @@ namespace parser
   ast::rExp
   ast_at(const yy::location& loc,
          ast::rExp cond,
-         ast::rExp at, ast::rExp onleave = 0,
+         ast::rExp body, ast::rExp onleave = 0,
          ast::rExp duration = 0);
 
   /// at (?(%event)(%payload) {%body} onleave {%onleave}
   ast::rExp
   ast_at_event(const ast::loc& loc,
-               ast::rExp event, ast::exps_type* payload, ast::rExp guard,
-               ast::rExp at, ast::rExp onleave = 0);
+               EventMatch& event,
+               ast::rExp body, ast::rExp onleave = 0);
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op can be any of the four cases.
@@ -73,7 +73,7 @@ namespace parser
 
   ast::rExp
   ast_event_catcher(const ast::loc& loc,
-                    ast::rExp event, ast::exps_type* payload, ast::rExp guard,
+                    EventMatch& event,
                     ast::rExp body, ast::rExp onleave);
 
   /// Build a for loop.
@@ -151,7 +151,7 @@ namespace parser
   /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
   ast::rExp
   ast_whenever_event(const ast::loc& loc,
-                     ast::rExp event, ast::exps_type* payload, ast::rExp guard,
+                     EventMatch& event,
                      ast::rExp body, ast::rExp onleave = 0);
 }
 

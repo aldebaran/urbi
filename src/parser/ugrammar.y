@@ -37,27 +37,7 @@
 #include <ast/call.hh>
 #include <ast/nary.hh>
 #include <ast/tag.hh>
-
-  struct event_match_type
-  {
-    ast::rExp event;
-    ast::exps_type* pattern;
-    ast::rExp guard;
-
-    event_match_type(ast::rExp event_,
-                     ast::exps_type* pattern_,
-                     ast::rExp guard_)
-      : event(event_)
-      , pattern(pattern_)
-      , guard(guard_)
-    {}
-
-    event_match_type()
-      : event(0)
-      , pattern(0)
-      , guard(0)
-    {}
-  };
+#include <parser/event-match.hh>
 
   // Typedef shorthands
   // It is inconvenient to use the pointer notation with the variants.
@@ -869,11 +849,11 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_at_event(@$, $3.event, $3.pattern, $3.guard, $5);
+      $$ = ast_at_event(@$, $3, $5);
     }
 | "at" "(" event_match ")" nstmt "onleave" nstmt
     {
-      $$ = ast_at_event(@$, $3.event, $3.pattern, $3.guard, $5, $7);
+      $$ = ast_at_event(@$, $3, $5, $7);
     }
 | "every" "(" exp ")" nstmt
     {
@@ -1001,11 +981,11 @@ stmt:
     }
 | "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $3.guard, $5);
+      $$ = ast_whenever_event(@$, $3, $5);
     }
 | "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
     {
-      $$ = ast_whenever_event(@$, $3.event, $3.pattern, $3.guard, $5, $7);
+      $$ = ast_whenever_event(@$, $3, $5, $7);
     }
 ;
 
@@ -1297,7 +1277,7 @@ exp:
 `---------*/
 
 %token QUEST_MARK "?";
-%type <event_match_type> event_match;
+%type <::parser::EventMatch> event_match;
 event_match:
   "?" exp guard.opt
   {
@@ -1307,10 +1287,10 @@ event_match:
       ast::exps_type* args = new ast::exps_type(*call->arguments_get());
       call->arguments_set(0);
       assert(args);
-      $$ = event_match_type(call, args, $3);
+      $$ = ::parser::EventMatch(call, args, $3);
     }
     else
-      $$ = event_match_type($2, 0, $3);
+      $$ = ::parser::EventMatch($2, 0, $3);
   }
 ;
 
