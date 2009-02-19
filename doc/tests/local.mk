@@ -17,8 +17,8 @@ EXTRA_DIST +=					\
 include $(top_srcdir)/build-aux/check.mk
 
 TEST_LOGS = $(TESTS:.chk=.log)
-# FIXME: Assigned to QH.
-TFAIL_TESTS += specs/lang.tex
+LAZY_TEST_SUITE = 1
+$(TEST_LOGS): $(top_builddir)/all.stamp
 
 # Generating the test files.
 $(srcdir)/tests/%/local.mk: %.tex $(srcdir)/tex2chk

@@ -150,6 +150,9 @@ sub process_file ($)
   }
 }
 
+# dump_chk $DIR
+# -------------
+# Generate all the *chk files and there associated local.mk.
 sub dump_chk ($)
 {
   my ($dir) = @_;
