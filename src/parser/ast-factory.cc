@@ -91,7 +91,7 @@ namespace parser
                      "  closure ('$evt')"
                      "  {"
                      "    var '$pattern' = Pattern.new(%exp:2) |"
-                     "    if ('$pattern'.match('$evt'.pattern))"
+                     "    if ('$pattern'.match('$evt'.payload))"
                      "    {"
                      "      %exp: 3 |"
                      "      %exp: 4 |"
