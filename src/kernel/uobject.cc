@@ -306,6 +306,12 @@ namespace urbi
     std::string name;
     bool owned;
   };
+
+
+  /*-------------------.
+  | UGenericCallback.  |
+  `-------------------*/
+
   /* We cannot make any call that might trigger the callback, as this is
    * the base class constructor.
    * So just store the constructor arguments, and perform the real work in
@@ -393,6 +399,11 @@ namespace urbi
   {
   }
 
+
+  /*----------.
+  | UObject.  |
+  `----------*/
+
   void UObject::USetUpdate(ufloat t)
   {
     rObject me = get_base(__name);
@@ -432,6 +443,11 @@ namespace urbi
     std::string slot = name.substr(p + 1, name.npos);
     return StringPair(oname, slot);
   }
+
+
+  /*-------.
+  | UVar.  |
+  `-------*/
 
   void UVar::syncValue()
   { // Nothing to do
@@ -564,6 +580,10 @@ namespace urbi
     vfprintf(stderr, format, arg);
     va_end(arg);
   }
+
+  /*-------------.
+  | UObjectHub.  |
+  `-------------*/
 
   UObjectHub::~UObjectHub()
   {
