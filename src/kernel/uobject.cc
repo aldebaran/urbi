@@ -1,3 +1,5 @@
+#include <cstdarg>
+
 #include <boost/assign.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
@@ -572,15 +574,6 @@ namespace urbi
   {
   }
 
-  void
-  echo(const char * format, ...)
-  {
-    va_list arg;
-    va_start(arg, format);
-    vfprintf(stderr, format, arg);
-    va_end(arg);
-  }
-
   /*-------------.
   | UObjectHub.  |
   `-------------*/
@@ -622,6 +615,20 @@ namespace urbi
   {
     kernel::urbiserver->ghost_connection_get().received(str);
     return 0;
+  }
+
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  void
+  echo(const char * format, ...)
+  {
+    va_list arg;
+    va_start(arg, format);
+    vfprintf(stderr, format, arg);
+    va_end(arg);
   }
 
   void
