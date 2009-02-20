@@ -272,48 +272,50 @@ namespace urbi
   {
     switch (v.type)
     {
-      case DATA_DOUBLE:
-	send("%lf", v.val);
-	break;
-      case DATA_STRING:
-	send("\"%s\"", v.stringValue->c_str());
-	break;
-      case DATA_BINARY:
-	if (v.binary->type != BINARY_NONE
-	    && v.binary->type != BINARY_UNKNOWN)
-	  v.binary->buildMessage();
-        sendBinary(v.binary->common.data, v.binary->common.size,
-                   v.binary->message);
-	break;
-      case DATA_LIST:
-      {
-	send("[");
-	size_t sz = v.list->size();
-	for (size_t i = 0; i < sz; ++i)
-	{
-	  send((*v.list)[i]);
-	  if (i != sz-1)
-	    send(" , ");
-	}
-	send("]");
-      }
+    case DATA_DOUBLE:
+    case DATA_STRING:
+    {
+      std::stringstream s;
+      s << v;
+      send("%s", s.str().c_str());
+    }
+    break;
+    case DATA_BINARY:
+      if (v.binary->type != BINARY_NONE
+          && v.binary->type != BINARY_UNKNOWN)
+        v.binary->buildMessage();
+      sendBinary(v.binary->common.data, v.binary->common.size,
+                 v.binary->message);
       break;
-      case DATA_OBJECT:
+    case DATA_LIST:
+    {
+      send("[");
+      size_t sz = v.list->size();
+      for (size_t i = 0; i < sz; ++i)
       {
-	send("OBJ %s [", v.object->refName.c_str());
-	size_t sz = v.object->size();
-	for (size_t i = 0; i < sz; ++i)
-	{
-	  send("%s :", (*v.object)[i].name.c_str());
-	  send(*((*v.object)[i].val) );
-	  if (i != sz-1)
-	    send(" , ");
-	}
-	send("]");
+        send((*v.list)[i]);
+        if (i != sz-1)
+          send(" , ");
       }
+      send("]");
+    }
+    break;
+    case DATA_OBJECT:
+    {
+      send("OBJ %s [", v.object->refName.c_str());
+      size_t sz = v.object->size();
+      for (size_t i = 0; i < sz; ++i)
+      {
+        send("%s :", (*v.object)[i].name.c_str());
+        send(*((*v.object)[i].val) );
+        if (i != sz-1)
+          send(" , ");
+      }
+      send("]");
+    }
+    break;
+    case DATA_VOID:
       break;
-      case DATA_VOID:
-	break;
     };
     return 0;
   }
