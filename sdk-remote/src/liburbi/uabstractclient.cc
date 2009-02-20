@@ -359,7 +359,10 @@ namespace urbi
     if (rc)
       return -1;
     sendBufferLock.lock();
-    vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
+    if (command)
+      vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
+    else
+      sendBuffer[strlen(sendBuffer)] = 0;
     sendBufferLock.unlock();
     return 0;
   }

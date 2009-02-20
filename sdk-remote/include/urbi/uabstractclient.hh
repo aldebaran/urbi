@@ -146,6 +146,7 @@ namespace urbi
 
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
+    /// Passing `0' is supported as means `""', but with no warning.
     int send(const char* format, ...)
       __attribute__((__format__(printf, 2, 3)));
 
@@ -175,11 +176,13 @@ namespace urbi
 
     /// Append Urbi commands to the send buffer (for backward
     /// compatibility, will be removed in future versions).
-    int pack(const char*, ...)
+    /// Passing `0' is supported as means `""', but with no warning.
+    int pack(const char* format, ...)
       __attribute__((__format__(printf, 2, 3)));
 
     /// va_list version of pack.
-    int vpack(const char*, va_list args);
+    /// Passing `0' is supported as means `""', but with no warning.
+    int vpack(const char* format, va_list args);
 
     /// Send urbi commands contained in a file.
     /// The file "/dev/stdin" is recognized as referring to std::cin.
