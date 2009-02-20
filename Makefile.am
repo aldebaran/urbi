@@ -113,3 +113,4 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 .PHONY: stamps
 stamps: $(STAMPS)
 noinst_DATA = $(STAMPS)
+CLEANFILES += $(STAMPS)
