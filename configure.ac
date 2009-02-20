@@ -105,13 +105,6 @@ URBI_LIBPORT([sdk-remote/libport])
 URBI_PTHREAD
 URBI_SOCKETS
 
-# For some reason, coroutine don't work properly on OSX PPC.  The test
-# suite seems ok though, so maybe we could make it work.  Meanwhile,
-# let's work with threads.
-case $host in
-  (powerpc-apple-darwin*) AC_DEFINE([SCHEDULER_CORO_OSTHREAD], [1]);;
-esac
-
 URBI_ARG_ENABLE([enable-programs],
                 [Build extra programs], [yes|no], [no])
 AM_CONDITIONAL([BUILD_PROGRAMS],
