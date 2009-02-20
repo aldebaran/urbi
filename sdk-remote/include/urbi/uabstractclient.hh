@@ -136,7 +136,7 @@ namespace urbi
 
     virtual ~UAbstractClient();
 
-    bool init () const;
+    bool init() const;
     /// Return current error status, or zero if no error occurred.
     int error() const;
 
@@ -151,7 +151,7 @@ namespace urbi
       __attribute__((__format__(printf, 2, 3)));
 
     /// Send the value without any prefix or terminator
-    int send(urbi::UValue& v);
+    int send(const urbi::UValue& v);
 
     /// Send the remainder of the stream.
     int send(std::istream& is);
@@ -163,7 +163,7 @@ namespace urbi
     int sendBin(const void*, size_t len);
 
     /// Send an Urbi header followed by binary data.
-    int sendBin(const void*, size_t len, const char* header,...)
+    int sendBin(const void*, size_t len, const char* header, ...)
       __attribute__((__format__(printf, 4, 5)));
 
     /// Lock the send buffer (for backward compatibility, will be
@@ -190,12 +190,12 @@ namespace urbi
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
-    UCallbackID sendCommand(UCallback, const char*,...)
+    UCallbackID sendCommand(UCallback, const char*, ...)
       __attribute__((__format__(printf, 3, 4)));
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
-    UCallbackID sendCommand(UCustomCallback, void *, const char*,...)
+    UCallbackID sendCommand(UCustomCallback, void *, const char*, ...)
       __attribute__((__format__(printf, 4, 5)));
 
     /// Send sound data to the robot for immediate playback.
@@ -290,6 +290,7 @@ namespace urbi
 
     /// dummy tag for client error callback
     static const char* CLIENTERROR_TAG;
+
   protected:
     /// Must be called by subclasses when the connection is established.
     void onConnection();
@@ -389,9 +390,9 @@ namespace urbi
     bool init_;
 
   public:
-    int getCurrentTimestamp () const;
-  private:
+    int getCurrentTimestamp() const;
 
+  private:
     typedef std::list<UCallbackInfo> callbacks_type;
     callbacks_type callbacks_;
 
@@ -414,8 +415,8 @@ namespace urbi
   };
 
 
-  //@{
-    /// \internal
+  ///@{
+  /// \internal
   class UCallbackWrapperF
     : public UCallbackWrapper
   {

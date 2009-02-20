@@ -268,7 +268,7 @@ namespace urbi
   }
 
   int
-  UAbstractClient::send(UValue& v)
+  UAbstractClient::send(const UValue& v)
   {
     switch (v.type)
     {
@@ -277,15 +277,15 @@ namespace urbi
     {
       std::stringstream s;
       s << v;
-      send("%s", s.str().c_str());
+      return send("%s", s.str().c_str());
     }
     break;
     case DATA_BINARY:
       if (v.binary->type != BINARY_NONE
           && v.binary->type != BINARY_UNKNOWN)
         v.binary->buildMessage();
-      sendBinary(v.binary->common.data, v.binary->common.size,
-                 v.binary->message);
+      return sendBinary(v.binary->common.data, v.binary->common.size,
+                        v.binary->message);
       break;
     case DATA_LIST:
     {
@@ -297,7 +297,7 @@ namespace urbi
         if (i != sz-1)
           send(" , ");
       }
-      send("]");
+      return send("]");
     }
     break;
     case DATA_OBJECT:
@@ -311,7 +311,7 @@ namespace urbi
         if (i != sz-1)
           send(" , ");
       }
-      send("]");
+      return send("]");
     }
     break;
     case DATA_VOID:
