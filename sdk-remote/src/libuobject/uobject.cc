@@ -180,10 +180,13 @@ namespace urbi
   void
   echo(const char* format, ...)
   {
-    va_list arg;
-    va_start(arg, format);
-    vfprintf(stderr, format, arg);
-    va_end(arg);
+    if (format)
+    {
+      va_list arg;
+      va_start(arg, format);
+      vfprintf(stderr, format, arg);
+      va_end(arg);
+    }
   }
 
   void yield()

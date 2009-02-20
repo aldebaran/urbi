@@ -7,9 +7,11 @@
 
 # include <libport/warning-push.hh>
 
+# include <libport/compiler.hh>
 # include <libport/fwd.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
+
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
 # include <urbi/ucallbacks.hh>
@@ -128,7 +130,8 @@ namespace urbi
   URBI_SDK_API const std::string& kernelVersion();
 
   /// Write a message to the server debug output. Printf syntax.
-  URBI_SDK_API void echo(const char* format, ... );
+  URBI_SDK_API void echo(const char* format, ... )
+    __attribute__((__format__(printf, 1, 2)));
 
   /// Retrieve a UObjectHub based on its name or return 0 if not found.
   UObjectHub* getUObjectHub(const std::string& n);
