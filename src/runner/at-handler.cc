@@ -10,7 +10,6 @@
 #include <object/symbols.hh>
 
 #include <runner/at-handler.hh>
-#include <runner/call.hh>
 
 #include <sched/tag.hh>
 
@@ -120,8 +119,7 @@ namespace runner
 	{
 	  non_interruptible_set(true);
 	  lobby_set(job->lobby_get());
-	  new_state = object::is_true(urbi_call(job->condition_get(),
-						SYMBOL(eval)));
+	  new_state = object::is_true(job->condition_get()->call(SYMBOL(eval)));
 	}
 	catch (object::UrbiException& ue)
 	{
@@ -161,7 +159,7 @@ namespace runner
 	  // here anyway.
 	  non_interruptible_set(false);
 	  side_effect_free_set(false);
-	  urbi_call(to_launch, SYMBOL(eval));
+	  to_launch->call(SYMBOL(eval));
 	}
 	job->triggered_set(new_state);
 	++job;

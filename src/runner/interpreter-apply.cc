@@ -22,7 +22,6 @@
 #include <object/slot.hh>
 #include <object/symbols.hh>
 
-#include <runner/call.hh>
 #include <runner/interpreter.hh>
 #include <runner/raise.hh>
 
@@ -122,7 +121,7 @@ namespace runner
   object::rObject
   Interpreter::apply(const rObject& function,
                      const libport::Symbol msg,
-                     object::objects_type& args,
+                     const object::objects_type& args,
                      const rObject& call_message)
   {
     return apply(function, msg, args, call_message,
@@ -132,7 +131,7 @@ namespace runner
   object::rObject
   Interpreter::apply(const rObject& function,
                      const libport::Symbol msg,
-                     object::objects_type& args,
+                     const object::objects_type& args,
                      const rObject& call_message,
                      boost::optional<ast::loc> loc)
   {
@@ -164,7 +163,7 @@ namespace runner
         // FIXME: args is modified.
 	if (call)
         {
-          args.front() = function;
+//          args.front() = function;
 	  return apply(call, SYMBOL(LPAREN_RPAREN), args, call_message, loc);
         }
       }
@@ -203,7 +202,7 @@ namespace runner
     if (!function->is_a<object::Code>()
         || function->as<object::Code>()->ast_get()->strict())
     {
-      rObject urbi_args = urbi_call(call_message, SYMBOL(evalArgs));
+      rObject urbi_args = call_message->call(SYMBOL(evalArgs));
       foreach (const rObject& arg,
 	       urbi_args->as<object::List>()->value_get())
 	args.push_back(arg);

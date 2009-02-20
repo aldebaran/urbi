@@ -36,7 +36,6 @@
 
 #include <binder/binder.hh>
 
-#include <runner/call.hh>
 #include <runner/sneaker.hh>
 #include <runner/shell.hh>
 
@@ -224,7 +223,7 @@ namespace kernel
       os << p;
     try
     {
-      result = urbi_call(result, SYMBOL(asToplevelPrintable));
+      result = result->call(SYMBOL(asToplevelPrintable));
     }
     catch (object::UrbiException&)
     {

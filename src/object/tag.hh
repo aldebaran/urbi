@@ -22,14 +22,14 @@ namespace object
     Tag(rTag model);
     const value_type& value_get() const;
 
-    void block(objects_type&);
-    void init(objects_type& args);
+    void block(const objects_type&);
+    void init(const objects_type& args);
     void freeze();
     libport::Symbol name();
-    static rTag new_flow_control(objects_type&);
+    static rTag new_flow_control(const objects_type&);
     sched::prio_type prio();
     sched::prio_type prio_set(sched::prio_type);
-    void stop(objects_type&);
+    void stop(const objects_type&);
     void unblock();
     void unfreeze();
     bool frozen();

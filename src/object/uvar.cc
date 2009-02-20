@@ -10,8 +10,6 @@
 # include <object/symbols.hh>
 # include <object/uvar.hh>
 
-# include <runner/call.hh>
-
 # include <runner/runner.hh>
 
 
@@ -75,7 +73,7 @@ namespace object
         accessor();
         objects_type args;
         args.push_back(global_class);
-        rObject period = urbi_call(SYMBOL(getPeriod), args);
+        rObject period = args[0]->call(SYMBOL(getPeriod), args);
         r.yield_until(libport::utime() +
           static_cast<libport::utime_t>(period->as<Float>()->value_get()
                                        * 1000000.0));

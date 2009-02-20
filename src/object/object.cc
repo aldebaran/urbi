@@ -24,7 +24,6 @@
 #include <object/symbols.hh>
 #include <object/urbi-exception.hh>
 
-#include <runner/call.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
@@ -235,8 +234,8 @@ namespace object
     Slot& slot = slot_get(k);
     if (slot.property_set(p, value))
       if (slot->slot_locate(SYMBOL(newPropertyHook)))
-        urbi_call(slot, SYMBOL(newPropertyHook),
-                  this, new String(k), new String(p), value);
+        slot->call(SYMBOL(newPropertyHook),
+                   this, new String(k), new String(p), value);
     return value;
   }
 
@@ -268,7 +267,7 @@ namespace object
   std::ostream&
   Object::id_dump(std::ostream& o) const
   {
-    rObject data = urbi_call(const_cast<Object*>(this), SYMBOL(id));
+    rObject data = const_cast<Object*>(this)->call(SYMBOL(id));
     type_check<String>(data);
     return o << data->as<String>()->value_get();
   }
@@ -329,7 +328,7 @@ namespace object
   {
     try
     {
-      rObject s = urbi_call(const_cast<Object*>(this), SYMBOL(asString));
+      rObject s = const_cast<Object*>(this)->call(SYMBOL(asString));
       type_check<String>(s);
       o << s->as<String>()->value_get();
       return o;
@@ -447,6 +446,12 @@ namespace object
     return slot_update(name, value);
   }
 
+
+#define CHECK_ARG(N)				\
+  if (!arg ## N)				\
+    goto done;					\
+  args.push_back(arg ## N)
+
   rObject
   Object::call(libport::Symbol name,
                rObject arg1,
@@ -455,7 +460,28 @@ namespace object
                rObject arg4,
                rObject arg5)
   {
-    return urbi_call(this, name, arg1, arg2, arg3, arg4, arg5);
+    objects_type args;
+    args.push_back(this);
+    CHECK_ARG(1);
+    CHECK_ARG(2);
+    CHECK_ARG(3);
+    CHECK_ARG(4);
+    CHECK_ARG(5);
+    done:
+
+    return call(name, args);
+  }
+
+#undef CHECK_ARG
+
+  rObject
+  Object::call(libport::Symbol name,
+               const objects_type& args)
+  {
+    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
+    rObject self = slot_get(name);
+    return r.apply(self, name, args);
   }
 
   rObject
@@ -466,8 +492,7 @@ namespace object
                rObject arg4,
                rObject arg5)
   {
-    return urbi_call(this, libport::Symbol(name),
-                     arg1, arg2, arg3, arg4, arg5);
+    return call(libport::Symbol(name), arg1, arg2, arg3, arg4, arg5);
   }
 
 } // namespace object

@@ -25,7 +25,6 @@
 # include <object/string.hh>
 # include <object/symbols.hh>
 
-# include <runner/call.hh>
 # include <runner/interpreter.hh>
 # include <runner/raise.hh>
 
@@ -366,7 +365,7 @@ namespace runner
                 if (rObject topLevel =
                     object::global_class->slot_locate(SYMBOL(topLevel), false,
                                                       true))
-                  object::urbi_call(topLevel, SYMBOL(LT_LT), res);
+                  topLevel->call(SYMBOL(LT_LT), res);
                 else if (toplevel_debug)
                   lobby_->value_get().connection.new_result(res);
               }
@@ -671,7 +670,7 @@ namespace runner
       if (handler->match_get())
       {
         rObject pattern = operator()(handler->match_get()->pattern_get().get());
-        if (!is_true(object::urbi_call(pattern, SYMBOL(match), value)))
+        if (!is_true(pattern->call(SYMBOL(match), value)))
           continue;
         operator()(handler->match_get()->bindings_get().get());
         if (handler->match_get()->guard_get()

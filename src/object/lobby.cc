@@ -43,7 +43,7 @@ namespace object
   }
 
   void
-  Lobby::send(objects_type& args)
+  Lobby::send(const objects_type& args)
   {
     if (proto == this)
       runner::raise_primitive_error("must be called on Lobby derivative");

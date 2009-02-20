@@ -22,7 +22,7 @@ namespace object
  */
 #define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)                     \
                                                                         \
-  static rObject Name(object::objects_type& args)                       \
+  static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
     static rPrimitive v1 = make_primitive(V1);                          \
     static rPrimitive v2 = make_primitive(V2);                          \
@@ -43,7 +43,7 @@ namespace object
  */
 #define OVERLOAD_2(Name, N, V1, V2)                                     \
                                                                         \
-  static rObject Name(object::objects_type& args)                       \
+  static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
     static rPrimitive v1 = make_primitive(V1);                          \
     static rPrimitive v2 = make_primitive(V2);                          \
@@ -71,8 +71,9 @@ namespace object
  */
 #define OVERLOAD_DEFAULT(Name, N, P, V)                                 \
                                                                         \
-  static rObject Name(object::objects_type& args)                       \
+  static rObject Name(const object::objects_type& args_)                \
   {                                                                     \
+    object::objects_type args = args_;                                  \
     static rPrimitive primitive = make_primitive(P);                    \
     int arity = args.size() - 1;                                        \
                                                                         \

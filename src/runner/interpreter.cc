@@ -24,7 +24,6 @@
 #include <object/symbols.hh>
 #include <object/task.hh>
 
-#include <runner/call.hh>
 #include <runner/interpreter.hh>
 #include <runner/raise.hh>
 
@@ -117,7 +116,7 @@ namespace runner
   void
   Interpreter::show_exception_ (object::UrbiException& ue)
   {
-    rObject str = urbi_call(ue.value_get(), SYMBOL(asString));
+    rObject str = ue.value_get()->call(SYMBOL(asString));
     std::ostringstream o;
     o << "!!! " << str->as<object::String>()->value_get();
     send_message("error", o.str ());
@@ -248,8 +247,7 @@ namespace runner
 	  // We have to create a new tag, which will be attached
 	  // to the upper level (hierarchical tags, implicitly
 	  // rooted by Tags).
-	  where = object::urbi_call
-            (parent, SYMBOL(new), new object::String(elt));
+	  where = parent->call(SYMBOL(new), new object::String(elt));
 	  parent->slot_set(elt, where);
 	  parent = where;
 	}

@@ -88,12 +88,12 @@ namespace runner
     ///
     virtual rObject apply(const rObject& function,
                           const libport::Symbol msg,
-                          object::objects_type& args,
+                          const object::objects_type& args,
                           const rObject& call_message = 0);
 
     rObject apply(const rObject& function,
                   const libport::Symbol msg,
-                  object::objects_type& args,
+                  const object::objects_type& args,
                   const rObject& call_message,
                   boost::optional<ast::loc> loc);
 

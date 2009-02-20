@@ -17,7 +17,6 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 
-#include <runner/call.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 #include <runner/interpreter.hh>
@@ -136,7 +135,7 @@ namespace object
   static bool
   compareListItems (const rObject& a, const rObject& b)
   {
-    return is_true(urbi_call(a, SYMBOL(LT), b));
+    return is_true(a->call(SYMBOL(LT), b));
   }
   static bool
   compareListItemsLambda (const rObject& f, const rObject& l,

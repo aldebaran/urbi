@@ -15,7 +15,6 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <object/string.hh>
-#include <runner/call.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
@@ -87,7 +86,7 @@ namespace object
 
   std::string String::plus (rObject rhs)
   {
-    rObject str = urbi_call(rhs, SYMBOL(asString));
+    rObject str = rhs->call(SYMBOL(asString));
     type_check<String>(str);
     return content_ + str->as<String>()->value_get();
   }
@@ -205,8 +204,9 @@ namespace object
                  (String::*)(const std::vector<std::string>&, int, bool, bool))
                  &String::split)
 
-  static rObject split_bouncer(objects_type& args)
+  static rObject split_bouncer(const objects_type& _args)
   {
+    objects_type args = _args;
     static rPrimitive actual = make_primitive(split_overload);
     check_arg_count(args.size() - 1, 0, 4);
     switch (args.size())
@@ -271,7 +271,7 @@ namespace object
         {
           if (it == end)
 	    runner::raise_primitive_error("Too few arguments for format");
-          rObject as_string = urbi_call(*it, SYMBOL(asString));
+          rObject as_string = (*it)->call(SYMBOL(asString));
           res += as_string->as<String>()->value_get();
           it++;
           break;

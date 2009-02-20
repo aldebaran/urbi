@@ -1,8 +1,6 @@
 dist_libuobject_la_SOURCES +=			\
   runner/at-handler.cc				\
   runner/at-handler.hh				\
-  runner/call.cc				\
-  runner/call.hh				\
   runner/fwd.hh					\
   runner/interpreter.cc				\
   runner/interpreter-apply.cc			\
@@ -21,3 +19,8 @@ dist_libuobject_la_SOURCES +=			\
   runner/stack-debug.hh				\
   runner/stacks.cc				\
   runner/stacks.hh
+
+
+sdk2_runnerdir = $(includedir)/runner
+sdk2_runner_HEADERS =  				\
+  runner/raise.hh

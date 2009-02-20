@@ -46,7 +46,6 @@
 #include <object/root-classes.hh>
 #include <object/system.hh>
 
-#include <runner/call.hh>
 #include <runner/runner.hh>
 #include <runner/shell.hh>
 #include <runner/sneaker.hh>
@@ -222,7 +221,7 @@ namespace kernel
     r.show_backtrace(tag);
     r.send_message(tag, "");
     r.send_message(tag, "---------- PS ----------");
-    urbi_call(object::system_class, SYMBOL(ps));
+    object::system_class->call(SYMBOL(ps));
     r.send_message(tag, "");
     exit(EX_SOFTWARE);
   }

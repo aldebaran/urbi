@@ -4,7 +4,6 @@
 #include <object/global.hh>
 #include <object/symbols.hh>
 
-#include <runner/call.hh>
 #include <runner/runner.hh>
 
 namespace object
@@ -65,7 +64,7 @@ namespace object
       else
       {
 	CAPTURE_GLOBAL(TypeError);
-        r.raise(urbi_call(TypeError, SYMBOL(new), exp, o));
+        r.raise(TypeError->call(SYMBOL(new), exp, o));
       }
     }
   }

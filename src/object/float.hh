@@ -72,8 +72,8 @@ namespace object
     value_type exp();
     value_type fabs();
     value_type log();
-    rFloat minus(objects_type& args);
-    rFloat plus(objects_type& args);
+    rFloat minus(const objects_type& args);
+    rFloat plus(const objects_type& args);
     using Object::operator<;
     bool operator <(value_type rhs);
 

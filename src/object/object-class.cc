@@ -24,7 +24,6 @@
 #include <object/object.hh>
 #include <object/primitives.hh>
 #include <object/string.hh>
-#include <runner/call.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
@@ -37,7 +36,7 @@ namespace object
   `--------------------*/
 
   static rObject
-  object_class_clone (objects_type& args)
+  object_class_clone (const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
 
@@ -45,7 +44,7 @@ namespace object
   }
 
   static rObject
-  object_class_init (objects_type& args)
+  object_class_init (const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     return args[0];
@@ -54,7 +53,7 @@ namespace object
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_dump (objects_type& args)
+  object_class_dump (const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
@@ -101,7 +100,7 @@ namespace object
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
-  object_class_uid (objects_type& args)
+  object_class_uid (const objects_type& args)
   {
     static boost::format uid("0x%x");
     check_arg_count(args.size() - 1, 0);
@@ -111,23 +110,23 @@ namespace object
 
   /// Structural equality
   static rObject
-  object_class_EQ_EQ(objects_type& args)
+  object_class_EQ_EQ(const objects_type& args)
   {
     // Unless overridden, structural equality is physical equality.
     check_arg_count(args.size() - 1, 1);
-    return urbi_call(args[0], SYMBOL(EQ_EQ_EQ), args[1]);
+    return args[0]->call(SYMBOL(EQ_EQ_EQ), args[1]);
   }
 
   /// Physical equality
   static rObject
-  object_class_EQ_EQ_EQ(objects_type& args)
+  object_class_EQ_EQ_EQ(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
     return to_boolean(args[0] == args[1]);
   }
 
   static rObject
-  object_class_apply(objects_type& args)
+  object_class_apply(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 1);
     type_check<List>(args[1]);
@@ -139,7 +138,7 @@ namespace object
   }
 
   static rObject
-  object_class_callMessage (objects_type& args)
+  object_class_callMessage (const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
@@ -165,7 +164,7 @@ namespace object
 #define CHANGE_PARENTS(Verb)                                            \
   static rObject                                                        \
   object_class_ ## Verb ## Proto (                     \
-                                  objects_type& args)                   \
+                                  const objects_type& args)                   \
   {									\
     check_arg_count(args.size() - 1, 1);                                \
     args[0]->proto_ ## Verb (args[1]);					\
@@ -180,7 +179,7 @@ namespace object
 
   /// Get protos' list.
   static rObject
-  object_class_protos (objects_type& args)
+  object_class_protos (const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     return args[0]->urbi_protos_get ();
@@ -196,7 +195,7 @@ namespace object
 
   /// Recursively get protos list
   static rObject
-  object_class_allProtos(objects_type& args)
+  object_class_allProtos(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     List::value_type res;
@@ -226,7 +225,7 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (objects_type& args)
+  object_class_slotNames (const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     const rObject& obj = args[0];
@@ -250,7 +249,7 @@ namespace object
   }
 
   static rObject
-  object_class_allSlotNames(objects_type& args)
+  object_class_allSlotNames(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     std::vector<libport::Symbol> slot_names;

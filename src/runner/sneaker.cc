@@ -10,7 +10,6 @@
 #include <object/lobby.hh>
 #include <object/system.hh>
 
-#include <runner/call.hh>
 #include <runner/sneaker.hh>
 
 namespace dbg
@@ -101,7 +100,7 @@ namespace dbg
   evalp(const char* command)
   {
     object::rObject o = eval(command);
-    urbi_call(o, SYMBOL(print));
+    o->call(SYMBOL(print));
   }
 
   void
@@ -111,7 +110,7 @@ namespace dbg
     std::cerr << "system_class: " << object::system_class.get() << std::endl;
     try
     {
-      urbi_call(object::system_class, SYMBOL(ps));
+      object::system_class->call(SYMBOL(ps));
     }
     catch (...)
     {

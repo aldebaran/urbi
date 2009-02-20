@@ -36,7 +36,7 @@ def boost_list_type(r, runner, met):
     args = boost_param(r, runner, 0)
     if not met:
         args = args[:-1]
-    args += ['object::objects_type&']
+    args += ['const object::objects_type&']
     return boost_function(args)
 
 
@@ -91,7 +91,7 @@ def primitive(r, runner, nargs):
     struct MakePrimitive<%(boost)s>
     {
       static rObject primitive(/*runner::Runner&%(runner_name)s,*/
-                               object::objects_type& args,
+                               const object::objects_type& args,
                                %(boost)s f)
       {
         check_arg_count(args.size() - 1, %(nargs)s);
@@ -136,26 +136,31 @@ def primitive_list(r, runner, met):
         runner = ''
 	runner_name = ''
     if met:
-        target_get = 'S tgt = CxxConvert<S>::to(args[0], 0); libport::pop_front(args);'
+        target_get =  'S tgt = CxxConvert<S>::to(args[0], 0);\n'
+        target_get += '        object::objects_type new_args = args;\n'
+        target_get += '        libport::pop_front(new_args);'
         target = 'tgt, '
+        args_name = 'new_args'
     else:
         target_get = ''
         target = ''
+        args_name = 'args'
     return '''\
     template <%(params)s>
     struct MakePrimitive<%(boost)s>
     {
       static rObject primitive(
         /*runner::Runner&%(runner_name)s,*/
-        object::objects_type& args,
+        const object::objects_type& args,
         %(boost)s f)
       {
         %(target_get)s
-        %(return)sf(%(runner)s%(target)sargs);
+        %(return)sf(%(runner)s%(target)s%(args)s);
         %(return_void)s
       }
     };
     ''' % {
+        'args': args_name,
         'boost': boost_list_type(r, runner, met),
         'params': params,
         'return': r,

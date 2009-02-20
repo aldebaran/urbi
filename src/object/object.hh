@@ -211,6 +211,9 @@ namespace object
                  rObject arg4 = 0,
                  rObject arg5 = 0);
 
+    rObject call(libport::Symbol name,
+                 const objects_type& args);
+
 
     /*-------------.
     | Urbi methods |

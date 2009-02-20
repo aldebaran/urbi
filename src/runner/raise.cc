@@ -2,7 +2,6 @@
 #include <object/cxx-conversions.hh>
 #include <object/global.hh>
 #include <runner/runner.hh>
-#include <runner/call.hh>
 #include <runner/raise.hh>
 #include <runner/sneaker.hh>
 #include <sched/scheduler.hh>
@@ -63,7 +62,7 @@ namespace runner
       else
 	break;
     } while (false);
-    r.raise(urbi_call(SYMBOL(new), args), skip);
+    r.raise(args[0]->call(SYMBOL(new), args), skip);
     pabort("Unreachable");
   }
 

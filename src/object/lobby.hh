@@ -23,7 +23,7 @@ namespace object
     ATTRIBUTE_NORETURN Lobby(rLobby model);
     Lobby(value_type value);
 
-    void send(objects_type& args);
+    void send(const objects_type& args);
     void write(const std::string& data);
     value_type& value_get();
     const value_type& value_get() const;

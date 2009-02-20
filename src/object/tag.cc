@@ -11,7 +11,6 @@
 #include <object/string.hh>
 #include <object/symbols.hh>
 
-#include <runner/call.hh>
 #include <runner/runner.hh>
 
 #include <sched/tag.hh>
@@ -45,7 +44,7 @@ namespace object
   }
 
   void
-  Tag::block(objects_type& args)
+  Tag::block(const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size(), 0, 1);
@@ -70,7 +69,7 @@ namespace object
   }
 
   void
-  Tag::init(objects_type& args)
+  Tag::init(const objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
     libport::Symbol tag_short_name;
@@ -88,10 +87,10 @@ namespace object
   }
 
   rTag
-  Tag::new_flow_control(objects_type& args)
+  Tag::new_flow_control(const objects_type& args)
   {
     // FIXME: new is now called on self instead of on proto.
-    rTag res = urbi_call(SYMBOL(new), args)->as<Tag>();
+    rTag res = args[0]->call(SYMBOL(new), args)->as<Tag>();
     res->value_get()->flow_control_set();
     return res;
   }
@@ -110,7 +109,7 @@ namespace object
   }
 
   void
-  Tag::stop(objects_type& args)
+  Tag::stop(const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size(), 0, 1);
@@ -136,7 +135,7 @@ namespace object
     if (!owner->slot_has(field))
     {
       CAPTURE_GLOBAL(Event);
-      rObject evt = urbi_call(Event, SYMBOL(new));
+      rObject evt = Event->call(SYMBOL(new));
       owner->slot_set(field, evt);
       return evt;
     }
@@ -159,14 +158,14 @@ namespace object
   Tag::triggerEnter()
   {
     if (slot_has(SYMBOL(enterEvent)))
-      urbi_call(slot_get(SYMBOL(enterEvent)), SYMBOL(syncEmit));
+      slot_get(SYMBOL(enterEvent))->call(SYMBOL(syncEmit));
   }
 
   void
   Tag::triggerLeave()
   {
     if (slot_has(SYMBOL(leaveEvent)))
-      urbi_call(slot_get(SYMBOL(leaveEvent)), SYMBOL(syncEmit));
+      slot_get(SYMBOL(leaveEvent))->call(SYMBOL(syncEmit));
   }
 
   rTag

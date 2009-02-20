@@ -31,7 +31,6 @@
 #include <object/task.hh>
 #include <parser/transform.hh>
 #include <runner/at-handler.hh>
-#include <runner/call.hh>
 #include <runner/interpreter.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
@@ -423,7 +422,7 @@ namespace object
 
   static rObject system_setenv(rObject, const std::string& name, rObject value)
   {
-    rString v = urbi_call(value, SYMBOL(asString))->as<String>();
+    rString v = value->call(SYMBOL(asString))->as<String>();
     setenv(name.c_str(), v->value_get().c_str(), 1);
     return v;
   }

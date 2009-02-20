@@ -235,7 +235,7 @@ namespace object
   }
 
   rFloat
-  Float::plus(objects_type& args)
+  Float::plus(const objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
     if (args.empty())
@@ -248,7 +248,7 @@ namespace object
   }
 
   rFloat
-  Float::minus(objects_type& args)
+  Float::minus(const objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
     if (args.empty())
