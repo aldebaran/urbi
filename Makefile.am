@@ -9,6 +9,7 @@ ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 # timestamps are).  It it tests and doc that depend on these time
 # stamps, so handle them after ".".
 SUBDIRS = sdk-remote src . tests doc
+DIST_SUBDIRS = bison
 
 # build-aux.
 EXTRA_DIST +=					\
