@@ -66,11 +66,6 @@ namespace kernel
   // Global server reference
   UServer *urbiserver = 0;
 
-  // Formatting for the echo and error outputs.
-  const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
-  const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
-  const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
-
   // Buffers used to output data.
   /// Used by echo() & error().
   // FIXME: Because of this stupid hard limit, we can't produce
