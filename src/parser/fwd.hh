@@ -14,6 +14,7 @@ class yyFlexLexer;
 
 namespace parser
 {
+  // event-match.hh.
   struct EventMatch;
 
   // parser-impl.hh.

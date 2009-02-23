@@ -88,14 +88,17 @@ namespace kernel
   void
   UConnection::initialize()
   {
+    /// Send the banner.
     const std::string& banner = server_.banner_get();
     std::vector<std::string> lines;
     boost::split(lines, banner, boost::is_any_of("\n"));
     foreach (const std::string& l, lines)
       send(("*** " + l + "\n").c_str(), "start");
 
+    /// Send connection id.
     send(("*** ID: " + connection_tag_ + "\n").c_str(), "ident");
 
+    /// Load CLIENT.INI.
     server_.load_file("CLIENT.INI", *recv_queue_);
     new_data_added_ = true;
   }
