@@ -52,11 +52,15 @@ namespace kernel
   public:
     //! Initialization of the server. Displays the header message & init stuff
     /*! This function must be called once the server is operational and
-     able to print messages. It is a requirement for URBI compliance to print
-     the header at start, so this function *must* be called. Beside, it also
-     do initalization work for the devices and system variables.
+     * able to print messages. It is a requirement for URBI compliance to print
+     * the header at start, so this function *must* be called. Beside, it also
+     * do initalization work for the devices and system variables.
+     *
+     * \param interactive  whether the ghostconnection is interactive.
+     *                     FIXME: this interface is unpleasant, something
+     *                     nicer is needed.
      */
-    void initialize();
+    void initialize(bool interactive = false);
 
     /// Process the jobs.
     /// \return the time when should be called again.

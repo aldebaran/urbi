@@ -226,8 +226,11 @@ namespace kernel
     */
     virtual void send_queue(const char* buffer, size_t length);
 
-  protected:
+    /// Whether an interactive session.
+    bool interactive_p() const;
+    void interactive_p(bool b);
 
+  protected:
     //! Sends a buffer through the real connection (redefined in the sub class)
     /*! Must be defined to implement the effective code that sends a
       buffer through the connection.
@@ -295,6 +298,8 @@ namespace kernel
     /// The current shell.
     runner::rShell shell_;
 
+    /// Whether this connection is interactive.
+    bool interactive_p_;
   };
 
 }

@@ -106,6 +106,12 @@ namespace kernel
   void
   UConnection::send(const char* buf, size_t len, const char* tag, bool flush_p)
   {
+    // Don't display the "start" and "ident" channel in batch mode.
+    if (!interactive_p()
+        && tag
+        && (libport::streq(tag, "start") || libport::streq(tag, "ident")))
+      return;
+
     if (tag)
     {
       std::string pref = make_prefix(tag);
@@ -115,10 +121,8 @@ namespace kernel
     {
       send_queue(buf, len);
       UErrorValue res = error_;
-
       if (flush_p && res != UFAIL)
         flush();
-
       error_ = res;
     }
   }
@@ -304,4 +308,15 @@ namespace kernel
     return send_queue_->empty();
   }
 
+  bool
+  UConnection::interactive_p() const
+  {
+    return interactive_p_;
+  }
+
+  void
+  UConnection::interactive_p(bool b)
+  {
+    interactive_p_ = b;
+  }
 }

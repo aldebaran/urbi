@@ -48,8 +48,7 @@ class ConsoleServer
 public:
   ConsoleServer(bool fast)
     : kernel::UServer("console"), fast(fast), ctime(0)
-  {
-  }
+  {}
 
   virtual ~ConsoleServer()
   {}
@@ -294,7 +293,7 @@ namespace urbi
       throw urbi::Exit(EX_UNAVAILABLE, message);
     }
 
-    s.initialize();
+    s.initialize(data.interactive);
 
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.

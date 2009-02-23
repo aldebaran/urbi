@@ -16,7 +16,7 @@ namespace kernel
   {
   public:
     //! UGhostConnection constructor.
-    UGhostConnection(UServer& s);
+    UGhostConnection(UServer& s, bool interactive = false);
     //! UGhostConnection destructor.
     virtual ~UGhostConnection();
 

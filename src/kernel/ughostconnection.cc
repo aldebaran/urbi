@@ -35,9 +35,10 @@ namespace kernel
     EFFECTIVESENDSIZE = 1024,
   };
 
-  UGhostConnection::UGhostConnection(UServer& s)
+  UGhostConnection::UGhostConnection(UServer& s, bool interactive)
     : UConnection(s, PACKETSIZE)
   {
+    interactive_p(interactive);
     initialize();
     server_.connection_add(this);
   }

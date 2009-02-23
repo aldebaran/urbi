@@ -249,7 +249,7 @@ namespace kernel
   }
 
   void
-  UServer::initialize()
+  UServer::initialize(bool interactive)
   {
 #if !defined WIN32 && !defined _MSC_VER
 # if !defined NDEBUG
@@ -276,7 +276,7 @@ namespace kernel
 
     // Ghost connection
     DEBUG(("Setting up ghost connection..."));
-    ghost_ = new UGhostConnection(*this);
+    ghost_ = new UGhostConnection(*this, interactive);
     DEBUG(("done\n"));
 
     revision_check();
