@@ -82,10 +82,6 @@ namespace kernel
     return closing_;
   }
 
-    /*------------------.
-    | Utility fonctions |
-    `------------------*/
-
   inline
   void
   UConnection::flush()
@@ -101,25 +97,6 @@ namespace kernel
     received(s.c_str(), s.length());
   }
 
-
-  template <typename T>
-  UConnection&
-  UConnection::operator<<(const T& t)
-  {
-    std::ostringstream os;
-    os << t;
-    send_queue(os.str().c_str(), os.str().length());
-    return *this;
-  }
-
-  inline
-  UConnection&
-  UConnection::operator<<(std::ostream& (*pf)(std::ostream&))
-  {
-    if (pf == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
-      endline();
-    return *this;
-  }
 
   inline
   void
