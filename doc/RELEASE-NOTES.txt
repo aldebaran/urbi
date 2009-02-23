@@ -80,6 +80,22 @@ The command line interface of "urbi-sendbin" has been updated.
 
        urbi-send -e 'var x;' -e "x = $value;" -e 'shutdown;'
 
+
+Standard library
+================
+
+String.asFloat
+--------------
+
+This new method has been introduced to transform a string to a float.
+It raises a PrimitiveError exception if the conversion fails:
+
+   "2.1".asFloat;
+   [00000002] 2.1
+   "2.0a".asFloat;
+   [00000003:error] !!! asFloat: unable to convert to float: "2.0a"
+
+
 *******************************
 * New since kernel 2.0 beta 2 *
 *******************************
