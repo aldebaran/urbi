@@ -30,6 +30,7 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
+    float as_float();
     std::string as_string();
     std::string as_printable();
 

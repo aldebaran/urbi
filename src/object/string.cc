@@ -5,6 +5,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
+#include <boost/format.hpp>
 #include <boost/multi_array.hpp>
 
 #include <libport/escape.hh>
@@ -95,6 +96,20 @@ namespace object
   String::size()
   {
     return content_.size();
+  }
+
+  float
+  String::as_float ()
+  {
+    try
+    {
+      return boost::lexical_cast<float>(content_);
+    }
+    catch (const boost::bad_lexical_cast&)
+    {
+      boost::format fmt("unable to convert to float: %s");
+      runner::raise_primitive_error(str(fmt % as_printable()));
+    }
   }
 
   std::string
@@ -355,6 +370,7 @@ namespace object
 
   void String::initialize(CxxObject::Binder<String>& bind)
   {
+    bind(SYMBOL(asFloat), &String::as_float);
     bind(SYMBOL(asPrintable), &String::as_printable);
     bind(SYMBOL(asString), &String::as_string);
     bind(SYMBOL(distance), &String::distance);
