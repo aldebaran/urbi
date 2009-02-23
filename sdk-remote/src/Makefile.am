@@ -1,5 +1,7 @@
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/fix-libtool-la.mk
+include $(top_srcdir)/build-aux/libport.mk
+
 AUTOMAKE_OPTIONS += subdir-objects
 
 SUBDIRS = . tests
