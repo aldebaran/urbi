@@ -3,16 +3,22 @@
 ## ------- ##
 
 TESTS =
+TEST_SUITE_LOG = tests/test-suite.log
 
 # The tests are generated in the src tree, but since it changes often,
 # we don't put them in the repository.  That's no reason to forget to
 # ship it.
-local_mks = $(patsubst %.tex,$(srcdir)/tests/%/local.mk,$(call ls_files,*.tex))
+#
+# We don't use '*.tex' blindly, as there are some in document-aux.
+local_mks =							\
+  $(patsubst %.tex,$(srcdir)/tests/%/local.mk,			\
+             $(call ls_files,specs/*.tex tutorial/*.tex))
 -include $(local_mks)
 
 EXTRA_DIST +=					\
   $(local_mks)					\
-  $(TESTS)
+  $(TESTS)					\
+  tests/test.u
 
 include $(top_srcdir)/build-aux/check.mk
 
@@ -31,7 +37,7 @@ URBI_CONSOLE = $(top_builddir)/tests/bin/urbi-console
 TESTS_ENVIRONMENT +=				\
   URBI_CONSOLE=$(URBI_CONSOLE)			\
   URBI_PATH=$(abs_srcdir)/specs:$$URBI_PATH	\
-  srcdir=$(srcdir)/tests\
+  srcdir=$(srcdir)/tests			\
   PATH=$(abs_top_builddir)/tests/bin:$$PATH
 
 UCONSOLE_CHECK = $(top_builddir)/tests/bin/uconsole-check

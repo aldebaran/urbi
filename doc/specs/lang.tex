@@ -575,10 +575,9 @@ x !== x;
 These operators do not fit the previous categories. See
 \autoref{tab:miscellaneous-operators} and
 \autoref{lst:miscellaneous-operators}. Note that the
-\dfn[operator!subsubsection]{subscript} (square bracket) operator is
-variadic: it takes any number of arguments that will be passed to the
-\lstinline|'[]'| method of the targeted object.\fixme{The examples are
-  wrong.}
+\dfn[operator!subscript]{subscript} (square bracket) operator is
+\dfn{variadic}: it takes any number of arguments that will be passed
+to the \lstinline|'[]'| method of the targeted object.
 
 \begin{table}[\floatposh]
   \caption{Miscellaneous operators}
@@ -599,20 +598,29 @@ variadic: it takes any number of arguments that will be passed to the
 
 \begin{urbiscript}[caption=Miscellaneous operators,
   label=lst:miscellaneous-operators]
-0 < 0;
-[00000000] false
-0 <= 0;
-[00000000] true
-0 == 0;
-[00000000] true
-0 === 0;
-[00000000] false
-var x = 0;
-[00000000] 0
-x === x;
-[00000000] true
-x !== x;
-[00000000] false
+// On lists.
+var l = [1, 2, 3, 4, 5];
+[00000000] [1, 2, 3, 4, 5]
+l[0];
+[00000001] 1
+l[-1];
+[00000002] 5
+l[0] = 10;
+[00000003] 10
+l;
+[00000004] [10, 2, 3, 4, 5]
+
+// On strings.
+var s = "abcdef";
+[00000005] "abcdef"
+s[0];
+[00000006] "a"
+s[1,3];
+[00000007] "bc"
+s[1,3] = "foo";
+[00000008] "foo"
+s;
+[00000009] "afoodef"
 \end{urbiscript}
 
 \clearpage

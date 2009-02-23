@@ -9,6 +9,9 @@ include document-aux/make/tex.mk
 EXTRA_DIST +=								   \
   $(addprefix document-aux/,$(call ls_files_in_dir,$(srcdir)/document-aux))
 
+# img/.
+EXTRA_DIST += $(call ls_files,img/*.pdf)
+
 # Find urbi-report.sty.
 TEXI2DVI_FLAGS += -I $(srcdir)
 pdf_DATA =
