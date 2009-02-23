@@ -15,13 +15,21 @@ namespace kernel
   class UGhostConnection : public UConnection
   {
   public:
+    //! UGhostConnection constructor.
     UGhostConnection(UServer& s);
+    //! UGhostConnection destructor.
     virtual ~UGhostConnection();
+
+    //! Close the connection
+    /*! This function does nothing. The ghost connection cannot be closed.
+     */
     virtual void close();
 
   protected:
+    // Bounce to UServer::display.
     virtual size_t effective_send(const char* buffer, size_t length);
   public:
+    //! Send a "\n" through the connection
     virtual void endline();
   };
 

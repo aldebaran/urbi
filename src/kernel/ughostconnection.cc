@@ -6,7 +6,7 @@
 
  This file is part of
  %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2005.
+ Copyright (c) 2004-2009, Jean-Christophe Baillie.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -29,33 +29,22 @@
 namespace kernel
 {
   // Parameters used by the constructor, and other constants.
-
   enum
   {
-    MINSENDBUFFERSIZE = 4096,
-    MAXSENDBUFFERSIZE = 1048576,
     PACKETSIZE        = 32768,
-    MINRECVBUFFERSIZE = 4096,
-    MAXRECVBUFFERSIZE = 1048576,
-
     EFFECTIVESENDSIZE = 1024,
   };
 
-  //! UGhostConnection constructor.
-  UGhostConnection::UGhostConnection (UServer& s)
+  UGhostConnection::UGhostConnection(UServer& s)
     : UConnection(s, PACKETSIZE)
   {
     server_.connection_add(this);
   }
 
-  //! UGhostConnection destructor.
   UGhostConnection::~UGhostConnection()
   {
   }
 
-  //! Close the connection
-  /*! This function does nothing. The ghost connection cannot be closed.
-  */
   void
   UGhostConnection::close()
   {
@@ -63,7 +52,6 @@ namespace kernel
     error_ = USUCCESS;
   }
 
-  //! Does nothing. No output for the ghosts...
   size_t
   UGhostConnection::effective_send(const char* buffer, size_t length)
   {
@@ -71,9 +59,9 @@ namespace kernel
 
     for (size_t i = 0; i < length; i += EFFECTIVESENDSIZE - 1)
     {
-      size_t len = std::min (length - i, size_t(EFFECTIVESENDSIZE - 1));
-      memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer + i),
-	    len);
+      size_t len = std::min(length - i, size_t(EFFECTIVESENDSIZE - 1));
+      memcpy(static_cast<void*>(buf), static_cast<const void*>(buffer + i),
+             len);
       buf[len] = 0;
       urbiserver->display(buf);
     }
@@ -81,9 +69,8 @@ namespace kernel
     return length;
   }
 
-  //! Send a "\n" through the connection
   void
-  UGhostConnection::endline ()
+  UGhostConnection::endline()
   {
     //FIXME: test send error
     send("\n");
