@@ -429,7 +429,7 @@ catch (var e if e.isA(FileNotFound))
 } | {};
 if (!urbi_ini_path.isNil)
 {
-  echo("Loading %s" % [urbi_ini_path]);
+  echo("Loading %s" % [urbi_ini_path], "start");
   loadFile(urbi_ini_path);
 };
 removeSlot("urbi_ini_path") | {};
@@ -439,4 +439,5 @@ removeSlot("urbi_ini_path") | {};
 |  uconsole-check as the signal that we have loaded urbi.u.  |
 |  Messages before, and including this one, are ignored.     |
 `-----------------------------------------------------------*/
-"Urbi is up and running.";
+echo("Urbi is up and running.", "start");
+

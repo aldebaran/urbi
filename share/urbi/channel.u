@@ -23,7 +23,7 @@ function lobby.send
 function Global.echo
 {
   var tag = ""|
-  if (call.argsCount > 1)
+  if (1 < call.argsCount)
     tag = call.evalArgAt(1)|
   lobby.send("*** " + call.evalArgAt(0).asString, tag)
 };

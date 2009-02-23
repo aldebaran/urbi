@@ -271,13 +271,8 @@ namespace kernel
     /*---------.
     | Banner.  |
     `---------*/
-    const std::string& banner = banner_get();
-    std::vector<std::string> lines;
-    boost::split(lines, banner, boost::is_any_of("\n"));
-    foreach (const std::string& l, lines)
-      effectiveDisplay(("*** " + l + "\n").c_str());
-    effectiveDisplay("Ready.\n");
-
+    DEBUG((banner_get()));
+    DEBUG(("Ready.\n"));
 
     /*--------.
     | Setup.  |

@@ -38,6 +38,7 @@ namespace kernel
   UGhostConnection::UGhostConnection(UServer& s)
     : UConnection(s, PACKETSIZE)
   {
+    initialize();
     server_.connection_add(this);
   }
 
