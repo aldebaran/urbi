@@ -348,11 +348,16 @@ namespace kernel
       niter++;
       if (niter == 1000)
       {
-        std::cerr <<"## work time(us)  min: " << mintime <<"   max: " << maxtime
-          << "   avg: " << sumtime/niter << std::endl;
-        std::cerr <<"  sched interval(us)  zero-ratio: "
-          << (float)nzero / (float)niter << "   min: " << rmintime <<"   max: "
-          << rmaxtime << "   avg: " << rsumtime/(0.01 + niter-nzero) << std::endl;
+        std::cerr << "## work time(us)  min: " << mintime
+                  << "   max: " << maxtime
+                  << "   avg: " << sumtime/niter
+                  << std::endl
+                  << "  sched interval(us)  zero-ratio: "
+                  << float(nzero) / float(niter)
+                  << "   min: " << rmintime
+                  << "   max: " << rmaxtime
+                  << "   avg: " << rsumtime/(0.01 + niter-nzero)
+                  << std::endl;
         niter = 0;
         sumtime = 0;
         maxtime = 0;
@@ -376,15 +381,15 @@ namespace kernel
       if (c.active_get())
       {
         if (!c.blocked_get())
-	c.continue_send();
+          c.continue_send();
 
         if (c.new_data_added_get())
         {
-	// used by load_file and eval to
-	// delay the parsing after the completion
-	// of execute().
-	c.new_data_added_get() = false;
-	c.received("");
+          // used by load_file and eval to
+          // delay the parsing after the completion
+          // of execute().
+          c.new_data_added_get() = false;
+          c.received("");
         }
       }
   }
