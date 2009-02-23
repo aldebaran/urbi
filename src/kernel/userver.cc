@@ -76,9 +76,6 @@ namespace kernel
   // them will not be reentrant. You have been warned.
   typedef char buffer_type[8192];
 
-  static char* urbi_path = getenv("URBI_PATH");
-  static char* urbi_root = getenv("URBI_ROOT");
-
   UServer::UServer(const char* mainName)
     : scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                       boost::ref(*this))))
@@ -87,8 +84,10 @@ namespace kernel
     , connections_(new kernel::ConnectionSet)
   {
     // The search path order is the URBI_PATH:URBI_ROOT/share/gostai:HARDCODED.
+    static char* urbi_path = getenv("URBI_PATH");
     if (urbi_path)
       search_path.push_back(urbi_path, ":");
+    static char* urbi_root = getenv("URBI_ROOT");
     if (urbi_root)
       search_path.push_back(libport::path(urbi_root) / "share" / "gostai", ":");
     else
