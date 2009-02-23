@@ -91,7 +91,7 @@ namespace kernel
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
   {
-    // The search path order is the URBI_PATH:URBI_ROOT/share/gostai:HARDCODED
+    // The search path order is the URBI_PATH:URBI_ROOT/share/gostai:HARDCODED.
     if (urbi_path)
       search_path.push_back(urbi_path, ":");
     if (urbi_root)
