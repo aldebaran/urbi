@@ -89,7 +89,7 @@ namespace kernel
       search_path.push_back(urbi_path, ":");
     static char* urbi_root = getenv("URBI_ROOT");
     if (urbi_root)
-      search_path.push_back(libport::path(urbi_root) / "share" / "gostai", ":");
+      search_path.push_back(libport::path(urbi_root) / "share" / "gostai");
     else
       search_path.push_back(URBI_PATH, ":");
 #if ! defined NDEBUG
