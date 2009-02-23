@@ -49,10 +49,16 @@ namespace object
                                    bool keep_delim = false,
                                    bool keep_empty = true);
     std::string star(unsigned int times);
+
+    /// [from, to].
     std::string sub(unsigned int from, unsigned int to);
+    /// [idx].
     std::string sub(unsigned int idx);
+
+    /// [from, to] = v.
     std::string sub_eq(unsigned int from, unsigned int to,
                        const std::string& v);
+    /// [idx] = v.
     std::string sub_eq(unsigned int idx,
                        const std::string& v);
     std::string to_lower();

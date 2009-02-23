@@ -334,7 +334,7 @@ namespace object
     content_ = content_.substr(0, from)
       + v
       + content_.substr(to, std::string::npos);
-    return content_;
+    return v;
   }
 
   OVERLOAD_2(sub_bouncer,
