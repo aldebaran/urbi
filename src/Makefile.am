@@ -4,9 +4,7 @@
 
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/fix-libtool-la.mk
-## Get $(libport_la).
-## lib_libport = ../lib/libport
-## include $(top_srcdir)/lib/libport/libport-sources.mk
+include $(top_srcdir)/build-aux/libport.mk
 
 ## Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += -I$(srcdir) -I.
