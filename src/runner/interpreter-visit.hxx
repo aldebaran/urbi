@@ -374,9 +374,8 @@ namespace runner
                     std::ostringstream os;
                     result->print(os);
                     std::string r = os.str();
-                    kernel::UConnection& c = lobby_->value_get().connection;
-                    c.send(r.c_str(), r.size());
-                    c.endline();
+                    lobby_->connection_get().send(r.c_str(), r.size());
+                    lobby_->connection_get().endline();
                   }
                   catch (object::UrbiException&)
                   {

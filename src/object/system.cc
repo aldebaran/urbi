@@ -203,7 +203,7 @@ namespace object
     check_arg_count(args.size() - 1, 1);
     const std::string filename = filename_get(args[1]);
 
-    kernel::UServer& s = r.lobby_get()->value_get().connection.server_get();
+    kernel::UServer& s = r.lobby_get()->connection_get().server_get();
     try
     {
       return new Path(s.find_file(filename));
@@ -283,11 +283,11 @@ namespace object
   }
 
   static rObject
-  system_class_quit (objects_type args)
+  system_class_quit(objects_type args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
-    r.lobby_get()->value_get().connection.close();
+    r.lobby_get()->connection_get().close();
     return void_class;
   }
 

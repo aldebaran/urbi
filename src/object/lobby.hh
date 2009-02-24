@@ -9,27 +9,34 @@
 # include <libport/compiler.hh>
 # include <libport/instance-tracker.hh>
 
+# include <kernel/fwd.hh>
+
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
-# include <object/state.hh>
 
 namespace object
 {
   class Lobby: public CxxObject, public libport::InstanceTracker<Lobby>
   {
   public:
-    typedef State value_type;
+    typedef kernel::UConnection connection_type;
 
+    /// Convenience constructor.
+    /// UConnection::send requires a non-const connection.
+    Lobby(connection_type* v);
+
+    /// Must not be called, lobbies cannot be cloned.
     ATTRIBUTE_NORETURN Lobby(rLobby model);
-    Lobby(value_type value);
 
     void send(const objects_type& args);
     void write(const std::string& data);
-    value_type& value_get();
-    const value_type& value_get() const;
+    connection_type& connection_get();
+    const connection_type& connection_get() const;
 
   private:
-    value_type state_;
+    /// The Lobby prototype uses an empty connection_.
+    /// The actual lobbies must have a non-empty one.
+    connection_type* connection_;
 
     URBI_CXX_OBJECT(Lobby);
   };

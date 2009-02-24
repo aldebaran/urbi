@@ -26,7 +26,6 @@
 
 #include <object/lobby.hh>
 #include <object/object.hh>
-#include <object/state.hh>
 #include <object/tag.hh>
 #include <object/urbi-exception.hh>
 
@@ -67,18 +66,10 @@ namespace kernel
     , blocked_(false)
       // Initial state of the connection: unblocked, not receiving binary.
     , active_(true)
-    , lobby_(new object::Lobby(object::State(*this)))
+    , lobby_(new object::Lobby(this))
     , parser_(new parser::UParser())
     , interactive_p_(true)
   {
-    //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
-    lobby_->slot_set(SYMBOL(lobby), lobby_);
-
-    // initialize the connection tag used to reference local variables
-    lobby_->slot_set
-      (SYMBOL(connectionTag),
-       new object::Tag(new sched::Tag(libport::Symbol(connection_tag_))));
-
     // Create the shell.
     shell_ = new runner::Shell(lobby_, server_.scheduler_get(), SYMBOL(shell));
     shell_->start_job();
@@ -89,8 +80,9 @@ namespace kernel
 
   UConnection::~UConnection()
   {
-    lobby_->slot_remove(SYMBOL(lobby));
-    lobby_->slot_get(SYMBOL(connectionTag))->as<object::Tag>()->value_get()
+    lobby_
+      ->slot_get(SYMBOL(connectionTag))
+      ->as<object::Tag>()->value_get()
       ->stop(server_.scheduler_get(), object::void_class);
     shell_->terminate_now();
   }

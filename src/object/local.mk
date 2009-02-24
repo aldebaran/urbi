@@ -127,8 +127,6 @@ dist_libuobject_la_SOURCES +=			\
   object/slot.hxx				\
   object/sorted-vector-slots.hh			\
   object/sorted-vector-slots.hxx		\
-  object/state.cc				\
-  object/state.hh				\
   object/string.cc				\
   object/string.hh				\
   object/symbols.cc				\
