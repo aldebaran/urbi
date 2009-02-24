@@ -20,7 +20,7 @@ namespace object
   Barrier::Barrier(const value_type& value)
     : value_(value)
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   struct BarrierException : public sched::SchedulerException

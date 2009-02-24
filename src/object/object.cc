@@ -495,4 +495,6 @@ namespace object
     return call(libport::Symbol(name), arg1, arg2, arg3, arg4, arg5);
   }
 
+  rObject Object::proto;
+
 } // namespace object

@@ -27,7 +27,7 @@ namespace object
   Float::Float(value_type value)
     : value_(value)
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   Float::Float(const rFloat& model)

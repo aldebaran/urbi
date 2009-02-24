@@ -70,6 +70,9 @@ namespace object
     void protos_set (const rList&);
     // Urbi access to protos.
     rList urbi_protos_get ();
+
+    // Urbi's `Object'
+    static rObject proto;
     /// \}
 
     /// \name The slots.

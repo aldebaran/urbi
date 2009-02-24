@@ -25,7 +25,7 @@ namespace object
 {
   List::List()
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   List::List(const value_type& value)

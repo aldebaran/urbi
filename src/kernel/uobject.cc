@@ -41,7 +41,6 @@ using object::rLobby;
 using object::objects_type;
 using object::void_class;
 using object::nil_class;
-using object::object_class;
 using runner::Runner;
 using libport::Symbol;
 
@@ -175,7 +174,7 @@ uobject_clone(const object::objects_type& l)
 rObject
 uobject_make_proto(const std::string& name)
 {
-  rObject oc = object_class->slot_get(SYMBOL(UObject))->clone();
+  rObject oc = object::Object::proto->slot_get(SYMBOL(UObject))->clone();
   object::objects_type args;
   args.push_back(oc);
   getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
@@ -519,7 +518,7 @@ namespace urbi
     }
     //clone uvar
     ECHO("creating uvar "<<name);
-    rObject protouvar = object::object_class->slot_get(SYMBOL(UVar));
+    rObject protouvar = object::Object::proto->slot_get(SYMBOL(UVar));
     rObject uvar = protouvar->call(SYMBOL(new),
                                    o, new object::String(varName));
     // If the variable existed but was not an uvar, copy its old value.
@@ -586,7 +585,7 @@ namespace urbi
     /* Call Urbi-side setHubUpdate, passing an rPrimitive wrapping the 'update'
      * call.
      */
-    rObject uob = object_class->slot_get(SYMBOL(UObject));
+    rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args = list_of
       (uob)

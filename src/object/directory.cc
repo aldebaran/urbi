@@ -48,7 +48,7 @@ namespace object
   Directory::Directory(const std::string& value)
     : path_(new Path(value))
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   void Directory::init(rPath path)

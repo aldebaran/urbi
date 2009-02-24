@@ -20,7 +20,7 @@ namespace object
   Tag::Tag()
     : value_(new sched::Tag(libport::Symbol::make_empty()))
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   Tag::Tag(const value_type& value)

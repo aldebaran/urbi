@@ -14,7 +14,7 @@ namespace object
 {
   Dictionary::Dictionary()
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   Dictionary::Dictionary(const value_type& value)

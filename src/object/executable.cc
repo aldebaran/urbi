@@ -11,7 +11,7 @@ namespace object
 
   Executable::Executable()
   {
-    proto_add(object_class);
+    proto_add(Object::proto);
   }
 
   Executable::Executable(rExecutable model)

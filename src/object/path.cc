@@ -54,7 +54,7 @@ namespace object
   Path::Path(const std::string& value)
     : path_(value)
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   void Path::init(const std::string& path)

@@ -120,7 +120,7 @@ object_cast(const urbi::UValue& v)
       static boost::format m("<external data with type %1%>");
       runner::raise_argument_type_error
 	(0, object::to_urbi((m % v.type).str()),
-	 object::object_class,
+	 object::Object::proto,
 	 object::to_urbi(SYMBOL(backcast)));
   }
   return res;

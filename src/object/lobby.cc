@@ -24,7 +24,7 @@ namespace object
   {
     // Only the Lobby prototype is expected to have a null connection.
     assert(!proto || c);
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
 
     if (c)
     {

@@ -29,8 +29,6 @@
 
 namespace object
 {
-  rObject object_class;
-
   /*--------------------.
   | Object primitives.  |
   `--------------------*/
@@ -294,12 +292,12 @@ namespace object
   void
   object_class_initialize ()
   {
-    object_class->slot_set(SYMBOL(isA),
+    Object::proto->slot_set(SYMBOL(isA),
                            make_primitive(object_class_isA));
 
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(object, Name)
+#define DECLARE(Name)                                                   \
+    Object::proto->slot_set(SYMBOL(Name), new Primitive(object_class_##Name), true)
 
     DECLARE(addProto);
     DECLARE(allProtos);
@@ -317,8 +315,8 @@ namespace object
     DECLARE(uid);
 #undef DECLARE
 
-#define DECLARE(Name, Code)                     \
-    object_class->slot_set(SYMBOL(Name), make_primitive(Code))
+#define DECLARE(Name, Code)                                     \
+    Object::proto->slot_set(SYMBOL(Name), make_primitive(Code))
 
     DECLARE(createSlot, &Object::urbi_createSlot);
     DECLARE(getLazyLocalSlot, &object_class_getLazyLocalSlot);

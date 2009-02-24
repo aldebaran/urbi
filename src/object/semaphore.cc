@@ -10,7 +10,7 @@ namespace object
 {
   Semaphore::Semaphore()
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   Semaphore::Semaphore(rSemaphore model)

@@ -10,8 +10,6 @@
 
 namespace object
 {
-  extern URBI_SDK_API rObject object_class;
-
   /// Initialize the Object class.
   void object_class_initialize ();
 }; // namespace object

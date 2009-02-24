@@ -23,7 +23,7 @@ namespace object
   Task::Task()
     : value_(0)
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   Task::Task(const value_type& value)

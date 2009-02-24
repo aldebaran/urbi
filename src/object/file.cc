@@ -45,7 +45,7 @@ namespace object
   File::File(const std::string& value)
     : path_(new Path(value))
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   void File::init(rPath path)

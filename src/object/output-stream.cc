@@ -14,7 +14,7 @@ namespace object
     : stream_(&stream)
     , own_(own)
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   OutputStream::OutputStream(rOutputStream)

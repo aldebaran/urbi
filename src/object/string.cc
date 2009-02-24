@@ -28,7 +28,7 @@ namespace object
   String::String()
     : content_()
   {
-    proto_add(proto ? proto : object_class);
+    proto_add(proto ? proto : Object::proto);
   }
 
   String::String(rString model)

@@ -137,21 +137,21 @@ namespace object
     // CLASS_CREATE does 1, CLASS_INIT does 2, CLASS_REGISTER does 3
     // and 4.  CLASS_SETUP runs 1 to 4.
 
-#define CLASS_CREATE(What, Name)		                \
-    What ## _class = object_class->clone();
+#define CLASS_CREATE(What, Name)                \
+    What = Object::proto->clone();
 
 // Alias unmatched by symbols-generate.pl
 #define SYMBOL_ SYMBOL
 
 #define CLASS_INIT(What, Name)					\
-    What ## _class->slot_set(SYMBOL(type),			\
-			     new String(SYMBOL(Name)));         \
-    What ## _class->slot_set(SYMBOL_(as ## Name),		\
-			     new Primitive(id));
+    What->slot_set(SYMBOL(type),                                \
+                   new String(SYMBOL(Name)));                   \
+    What->slot_set(SYMBOL_(as ## Name),                         \
+                   new Primitive(id));
 
 #define CLASS_REGISTER(What, Name)				\
-    What ## _class_initialize ();				\
-    global_class->slot_set(SYMBOL(Name), What ## _class, true);
+    What ## _initialize();                                      \
+    global_class->slot_set(SYMBOL(Name), What, true);
 
 
 #define CLASS_SETUP(What, Name)                                 \
@@ -168,7 +168,7 @@ namespace object
     CLASS_REGISTER(What, Name)
 
     // Object is a special case: it is not built as a clone of itself.
-    object_class = new Object();
+    Object::proto = new Object();
 
     CxxObject::push_initializer_to_back<Code>();
     CxxObject::push_initializer_to_back<Primitive>();
@@ -184,23 +184,27 @@ namespace object
     // in the primitive classes), first create them all, then bind
     // them all.
     // Setup boolean entities.
-    APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(CLASS_CREATE);
-    APPLY_ON_ALL_ROOT_CLASSES(EXISTING_CLASS_SETUP);
-
+    global_class = Object::proto->clone();
+    CLASS_INIT(global_class, Global);
+    CLASS_INIT(Object::proto, Object);
+    global_class_initialize();
+    global_class->slot_set(SYMBOL(Global), global_class, true);
+    object_class_initialize();
+    global_class->slot_set(SYMBOL(Object), Object::proto, true);
     CxxObject::initialize(global_class);
 
     true_class = new Object();
     false_class = new Object();
-    true_class->proto_add(object_class);
-    false_class->proto_add(object_class);
-    EXISTING_CLASS_SETUP(false, false);
-    EXISTING_CLASS_SETUP(true, true);
+    true_class->proto_add(Object::proto);
+    false_class->proto_add(Object::proto);
+    EXISTING_CLASS_SETUP(false_class, false);
+    EXISTING_CLASS_SETUP(true_class, true);
 
-    CLASS_SETUP(nil, nil);
-    CLASS_SETUP(system, System);
-    CLASS_SETUP(void, void);
+    CLASS_SETUP(nil_class, nil);
+    CLASS_SETUP(system_class, System);
+    CLASS_SETUP(void_class, void);
 
-    ANONYMOUS_CLASS_SETUP(accepted_void, acceptedVoid);
+    ANONYMOUS_CLASS_SETUP(accepted_void_class, acceptedVoid);
 
 #undef SYMBOL_
 
@@ -213,7 +217,7 @@ namespace object
     COMPARABLE(string,    String);
 
     // Object.addProto(Global)
-    object_class->proto_add(global_class);
+    Object::proto->proto_add(global_class);
 
     CxxObject::cleanup();
   }
@@ -252,7 +256,7 @@ namespace object
     cleanup_object(Float::proto);
     cleanup_object(global_class);
     cleanup_object(Lobby::proto);
-    cleanup_object(object_class); // FIXME
+    cleanup_object(Object::proto); // FIXME
     cleanup_object(Primitive::proto);
     cleanup_object(Semaphore::proto);
     cleanup_object(String::proto);
@@ -294,7 +298,7 @@ namespace object
     static void
     accepted_void_class_initialize()
     {
-      accepted_void_class->proto_remove(object_class);
+      accepted_void_class->proto_remove(Object::proto);
       passert("void must be initialized before acceptedVoid", void_class);
       accepted_void_class->proto_add(void_class);
     }
