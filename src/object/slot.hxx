@@ -43,9 +43,9 @@ namespace object
     if (constant_)
       runner::raise_const_error();
     value_ = object::CxxConvert<T>::from(value);
-    static libport::Symbol emit("emit");
+    static libport::Symbol _emit("emit");
     if (changed_)
-      changed_->call(emit);
+      changed_->call(_emit);
   }
 
   template <typename T>
