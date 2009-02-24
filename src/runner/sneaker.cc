@@ -26,7 +26,8 @@ namespace dbg
   private:
   };
 
-  static Sneaker* sneaker;                        // The sole sneaker instance
+  // The sole sneaker instance.
+  static Sneaker* sneaker;
 
   runner::Runner&
   runner_or_sneaker_get()
