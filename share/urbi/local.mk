@@ -13,5 +13,5 @@ $(srcdir)/share/urbi/tutorial-content.u: share/urbi/tutorial/tutorial.xml share/
 	mv $@.tmp $@
 
 urbi.stamp: $(dist_urbi_DATA) $(package_info_u)
-	echo "$$(date)"': $? changed' >>$@
+	@echo "$$(date)"': $?' >>$@
 
