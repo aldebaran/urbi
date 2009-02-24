@@ -48,6 +48,13 @@ namespace object
     proto_add(proto ? proto : Object::proto);
   }
 
+  rFile File::create(rObject, const std::string& p)
+  {
+    libport::path path(p);
+    path.create();
+    return new File(p);
+  }
+
   void File::init(rPath path)
   {
     if (!path->is_reg())
@@ -156,6 +163,7 @@ namespace object
     bind(SYMBOL(asList), &File::as_list);
     bind(SYMBOL(asPrintable), &File::as_printable);
     bind(SYMBOL(asString), &File::as_string);
+    bind(SYMBOL(create), &File::create);
 
     proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
   }

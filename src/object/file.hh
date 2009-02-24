@@ -30,6 +30,7 @@ namespace object
     File();
     File(rFile model);
     File(const std::string& path);
+    static rFile create(rObject, const std::string& path);
     void init(rPath path);
     void init(const std::string& path);
 
