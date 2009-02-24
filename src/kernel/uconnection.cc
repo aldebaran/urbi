@@ -57,6 +57,7 @@ namespace kernel
     , active_(true)
     , lobby_(new object::Lobby(object::State(*this)))
     , parser_(new parser::UParser())
+    , interactive_p_(true)
   {
     //FIXME: This would be better done in Lobby ctor, in Urbi maybe.
     lobby_->slot_set(SYMBOL(lobby), lobby_);
