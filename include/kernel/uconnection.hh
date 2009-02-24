@@ -32,10 +32,8 @@ namespace ast
 
 namespace object
 {
-  class Object;
   class Lobby;
   template<class T> class Atom;
-  typedef libport::intrusive_ptr<Object> rObject;
   typedef libport::intrusive_ptr<Lobby> rLobby;
 }
 
@@ -116,10 +114,6 @@ namespace kernel
     void
     send(const char* buf, const char* tag = 0, bool flush = true);
 
-    /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
-    void
-    send(object::rObject result, const char* tag = 0, const char* p = 0);
-
     //! Send at most packetSize bytes in the connection, calling effective_send()
     /*! Must be called when the system tells that the connection is ready to
       accept new data for sending, in order to carry on the processing of the
@@ -131,11 +125,6 @@ namespace kernel
       - UFAIL   : effective_send() failed or not enough memory
      */
     void continue_send();
-
-    /// Notify the connection that a new result is available.  This will
-    /// typically print the result on the console or send it through the
-    /// network.
-    void new_result(object::rObject result);
 
     /// \brief Handle an incoming buffer of data.
     ///

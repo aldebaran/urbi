@@ -367,7 +367,22 @@ namespace runner
                                                       true))
                   topLevel->call(SYMBOL(LT_LT), res);
                 else if (toplevel_debug)
-                  lobby_->value_get().connection.new_result(res);
+                {
+                  try
+                  {
+                    rObject result = res->call(SYMBOL(asToplevelPrintable));
+                    std::ostringstream os;
+                    result->print(os);
+                    std::string r = os.str();
+                    kernel::UConnection& c = lobby_->value_get().connection;
+                    c.send(r.c_str(), r.size());
+                    c.endline();
+                  }
+                  catch (object::UrbiException&)
+                  {
+                    // nothing
+                  }
+                }
               }
             }
             // Catch and print unhandled exceptions

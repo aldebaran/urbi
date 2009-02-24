@@ -223,41 +223,6 @@ namespace kernel
   }
 
   void
-  UConnection::send(object::rObject result, const char* tag, const char* p)
-  {
-    // "Display" the result.
-    std::ostringstream os;
-    if (p)
-      os << p;
-    try
-    {
-      result = result->call(SYMBOL(asToplevelPrintable));
-    }
-    catch (object::UrbiException&)
-    {
-      // nothing
-    }
-    result->print(os);
-
-    if (!os.str().empty())
-    {
-      std::string prefix = make_prefix(tag);
-      send(prefix.c_str(), (const char*)0, false);
-      send_queue(os.str().c_str(), os.str().length());
-      endline();
-    }
-  }
-
-  void
-  UConnection::new_result(object::rObject result)
-  {
-    // The prefix should be(getTag().c_str()) instead of 0.
-    // FIXME: the prefix should not be built manually.
-    send(result, 0, 0);
-  }
-
-
-  void
   UConnection::execute(ast::rNary active_command)
   {
     PING();
