@@ -12,6 +12,7 @@ AC_INIT([URBI SDK Remote], [UNDEFINED],
 	[sdk-remote-bugs@gostai.com], [sdk-remote])
 URBI_PACKAGE_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2009])
+URBI_DISTCHECK_CONFIGURE_FLAGS
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
