@@ -10,6 +10,7 @@ URBI_PACKAGE_VERSION
 # version, as it is unclear what it should be.
 # URBI_KERNEL_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2009])
+URBI_DISTCHECK_CONFIGURE_FLAGS
 
 # Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
