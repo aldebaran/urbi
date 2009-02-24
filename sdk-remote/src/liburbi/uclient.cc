@@ -197,7 +197,6 @@ namespace urbi
 
     listenSem_++;
     acceptSem_++;
-
   }
 
   UClient::~UClient()
