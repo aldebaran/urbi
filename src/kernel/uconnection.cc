@@ -43,8 +43,20 @@
 
 namespace kernel
 {
+
+  static
+  inline
+  std::string
+  uid(const void* p)
+  {
+    std::ostringstream o;
+    o << 'U' << (ptrdiff_t) p;
+    return o.str();
+  }
+
   UConnection::UConnection(UServer& server, size_t packetSize)
     : uerror_(USUCCESS)
+    , connection_tag_(uid(this))
     , closing_(false)
     , receiving_(false)
     , new_data_added_(false)
@@ -63,9 +75,6 @@ namespace kernel
     lobby_->slot_set(SYMBOL(lobby), lobby_);
 
     // initialize the connection tag used to reference local variables
-    std::ostringstream o;
-    o << 'U' << (ptrdiff_t) this;
-    connection_tag_ = o.str();
     lobby_->slot_set
       (SYMBOL(connectionTag),
        new object::Tag(new sched::Tag(libport::Symbol(connection_tag_))));
