@@ -123,10 +123,3 @@ endif BUILD_PROGRAMS
 # there is no occurrence of remote in param.mk.  Yet MN insists on
 # installing this guy.
 nodist_env_DATA = $(top_builddir)/sdk-remote/sdk/param.mk
-
-if ! INSTALL_KERNEL_HEADERS
-install-data-hook: remove_kheaders
-
-remove_kheaders:
-	$(RM) -r $(prefix)/gostai/kernel
-endif

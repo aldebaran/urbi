@@ -3,6 +3,7 @@
 ## -------------------------- ##
 
 kernelincludekerneldir = $(kernelincludedir)/kernel
+if INSTALL_KERNEL_HEADERS
 dist_kernelincludekernel_HEADERS =		\
   include/kernel/fwd.hh				\
   include/kernel/uconnection.hh			\
@@ -10,9 +11,7 @@ dist_kernelincludekernel_HEADERS =		\
   include/kernel/userver.hh			\
   include/kernel/userver.hxx			\
   include/kernel/utypes.hh
-
-#nodist_kernelincludekernel_HEADERS =		\
-#  include/kernel/version.hh
+endif
 
 
 ## ------- ##
