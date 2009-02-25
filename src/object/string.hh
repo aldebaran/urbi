@@ -35,7 +35,7 @@ namespace object
     std::string as_printable();
 
     unsigned int distance(rString other);
-    std::string format(rList values);
+    std::string format(rObject values);
     std::string plus(rObject rhs);
     bool lt(const std::string& rhs);
     std::string fresh();

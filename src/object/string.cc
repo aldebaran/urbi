@@ -260,15 +260,13 @@ namespace object
     return res;
   }
 
-  std::string String::format(rList _values)
+  template <typename It>
+  static std::string
+  str_format(const std::string& fmt, It begin, It end)
   {
-    const char* str = content_.c_str();
-    const char* next;
     std::string res;
-
-    const objects_type& values = _values->value_get();
-    objects_type::const_iterator it  = values.begin();
-    objects_type::const_iterator end = values.end();
+    const char* next;
+    const char* str = fmt.c_str();
 
     while ((next = strchr(str, '%')))
     {
@@ -284,11 +282,10 @@ namespace object
           break;
         case 's':
         {
-          if (it == end)
+          if (begin == end)
 	    runner::raise_primitive_error("Too few arguments for format");
-          rObject as_string = (*it)->call(SYMBOL(asString));
-          res += as_string->as<String>()->value_get();
-          it++;
+          res += from_urbi<std::string>((*begin)->call(SYMBOL(asString)));
+          begin++;
           break;
         }
         default:
@@ -297,10 +294,19 @@ namespace object
           break;
       }
     }
-    if (it != end)
+    if (begin != end)
       runner::raise_primitive_error("Too many arguments for format");
     res += str;
     return res;
+  }
+
+  std::string String::format(rObject value)
+  {
+    rList l = value->as<List>();
+    if (l)
+      return str_format(content_, l->value_get().begin(), l->value_get().end());
+    else
+      return str_format(content_, &value, &value + 1);
   }
 
   void String::check_bounds(unsigned int from, unsigned int to)
