@@ -21,8 +21,11 @@ namespace object
   inline void
   check_arg_count (unsigned effective, unsigned min, unsigned max)
   {
-    if (effective < min || effective > max)
-      runner::raise_arity_error(effective, min, max);
+    if (min == max)
+      check_arg_count(effective, min);
+    else
+      if (effective < min || effective > max)
+        runner::raise_arity_error(effective, min, max);
   }
 
   template <typename T>
