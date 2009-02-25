@@ -37,7 +37,7 @@ URBI_CONSOLE = $(top_builddir)/tests/bin/urbi-console
 TESTS_ENVIRONMENT +=				\
   URBI_CONSOLE=$(URBI_CONSOLE)			\
   URBI_PATH=$(abs_srcdir)/specs:$$URBI_PATH	\
-  srcdir=$(srcdir)/tests			\
+  srcdir=$(srcdir)				\
   PATH=$(abs_top_builddir)/tests/bin:$$PATH
 
 UCONSOLE_CHECK = $(top_builddir)/tests/bin/uconsole-check
