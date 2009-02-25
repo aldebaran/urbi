@@ -268,27 +268,38 @@ namespace runner
                                   ast->captured_variables_get()->size(),
                                   self, call);
 
-    // Bind arguments if the function is strict.
-    if (ast->strict())
-    {
-      const ast::local_declarations_type& formals =
-        *ast->formals_get();
-      // Check arity
-      object::check_arg_count (args.size() - 1, formals.size());
-      object::objects_type::const_iterator it = args.begin();
-      // skip target
-      ++it;
-      // Bind
-      foreach (const ast::rConstLocalDeclaration& s, formals)
-        stacks_.def_arg(s, *(it++));
-    }
-
     // Push captured variables
     foreach (const ast::rConstLocalDeclaration& dec,
              *ast->captured_variables_get())
     {
       const rSlot& value = function->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
+    }
+
+    // Bind arguments if the function is strict.
+    if (ast->strict())
+    {
+      const ast::local_declarations_type& formals =
+        *ast->formals_get();
+      size_t max = formals.size();
+      size_t min = max;
+      rforeach (const ast::rLocalDeclaration& dec, formals)
+      {
+        if (!dec->value_get())
+          break;
+        --min;
+      }
+      // Check arity
+      object::check_arg_count (args.size() - 1, min, max);
+      object::objects_type::const_iterator it = args.begin();
+      // skip target
+      ++it;
+      // Bind
+      foreach (const ast::rConstLocalDeclaration& s, formals)
+        if (it != args.end())
+          stacks_.def_arg(s, *(it++));
+        else
+          stacks_.def_arg(s, operator()(s->value_get().get()));
     }
 
     // Before calling, check that we are not exhausting the stack

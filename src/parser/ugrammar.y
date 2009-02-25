@@ -44,6 +44,8 @@
   typedef ast::exps_type* exps_pointer;
   typedef ast::symbols_type* symbols_pointer;
   typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
+  typedef modifier_type formal_type;
+  typedef std::vector<formal_type> formals_type;
 
   // We need this type everywhere.
   using libport::ufloat;
@@ -151,16 +153,15 @@
   }
 
   static ast::local_declarations_type*
-    symbols_to_decs(ast::symbols_type* symbols,
+    symbols_to_decs(formals_type* formals,
                     const ast::loc& loc)
   {
-    if (!symbols)
+    if (!formals)
       return 0;
-    ast::local_declarations_type* res =
-      new ast::local_declarations_type();
-    foreach (const libport::Symbol& var, *symbols)
-      res->push_back(new ast::LocalDeclaration(loc, var, new ast::Implicit(loc)));
-    delete symbols;
+    ast::local_declarations_type* res = new ast::local_declarations_type();
+    foreach (const formal_type& var, *formals)
+      res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
+    delete formals;
     return res;
   }
 
@@ -1524,33 +1525,44 @@ var.opt:
 | "var"
 ;
 
-%printer { debug_stream() << libport::deref << $$; } <symbols_pointer>;
-%type <symbols_pointer> identifiers identifiers.1 formals;
-
-// One or several comma-separated identifiers.
-identifiers.1:
+%type <formal_type> formal_identifier;
+formal_identifier:
   var.opt "identifier"
   {
-    $$ = new ast::symbols_type;
-    $$->push_back($2);
+    $$ = formal_type($2, 0);
   }
-| identifiers.1 "," var.opt "identifier"
+| var.opt "identifier" "=" exp
+  {
+    $$ = formal_type($2, $4);
+  }
+;
+
+// One or several comma-separated identifiers.
+%printer { debug_stream() << libport::deref << $$; } <symbols_pointer>;
+%type <formals_type*> formal_identifiers formal_identifiers.1 formals;
+formal_identifiers.1:
+  formal_identifier
+  {
+    $$ = new formals_type;
+    $$->push_back($1);
+  }
+| formal_identifiers.1 "," formal_identifier
   {
     std::swap($$, $1);
-    $$->push_back($4);
+    $$->push_back($3);
   }
 ;
 
 // Zero or several comma-separated identifiers.
-identifiers:
-  /* empty */     { $$ = new ast::symbols_type; }
-| identifiers.1   { std::swap($$, $1); }
+formal_identifiers:
+  /* empty */            { $$ = new formals_type; }
+| formal_identifiers.1   { std::swap($$, $1); }
 ;
 
 // Function formal arguments.
 formals:
-  /* empty */         { $$ = 0; }
-| "(" identifiers ")" { std::swap($$, $2); }
+  /* empty */                { $$ = 0; }
+| "(" formal_identifiers ")" { std::swap($$, $2); }
 ;
 
 /*--------------.
