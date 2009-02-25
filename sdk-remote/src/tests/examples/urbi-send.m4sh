@@ -57,7 +57,7 @@ cat >send-me.u <<EOF
 shutdown;
 EOF
 
-cmd="$valgrind urbi-send$EXEEXT --port $(cat server.port)"
+cmd="$valgrind urbi-send$EXEEXT --port-file server.port"
 cmd+=" -e '100+100;' -e '400*400;' -f send-me.u"
 echo "$cmd" >client.cmd
 eval "$cmd" >client.out 2>client.err &

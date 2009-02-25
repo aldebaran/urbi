@@ -53,6 +53,7 @@ namespace
       "  -h, --help               display this message and exit\n"
       "  -H, --host HOST          Urbi server host [localhost]\n"
       "  -p, --port PORT          Urbi server port\n"
+      "      --port-file FILE     file containing the port to listen to\n"
       "  -v, --version            display version information and exit\n"
       "\n"
                 << urbi::package_info().report_bugs()
@@ -173,6 +174,10 @@ main(int argc, char* argv[])
       host = argv[++i];
     else if (arg == "--port" || arg == "-p")
       port = libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--port-file")
+      port =
+        (libport::file_contents_get<int>
+         (libport::convert_argument<const char*>(arg, argv[++i])));
     else if (arg == "--version" || arg == "-v")
       version();
     else if (arg[0] == '-' && arg[1] != 0)
