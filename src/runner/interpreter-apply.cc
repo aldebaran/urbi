@@ -65,9 +65,9 @@ namespace runner
 
   Interpreter::rObject
   Interpreter::apply_ast (const rObject& target,
-                      const libport::Symbol& message,
-                      const ast::exps_type* arguments,
-                      boost::optional<ast::loc> location)
+                          const libport::Symbol& message,
+                          const ast::exps_type* arguments,
+                          boost::optional<ast::loc> location)
   {
     // Accept to call methods on void only if void itself is holding
     // the method.
@@ -188,9 +188,9 @@ namespace runner
 
   object::rObject
   Interpreter::apply_call_message(const rObject& function,
-                     const libport::Symbol msg,
-                     const rObject& call_message,
-                     boost::optional<ast::loc> loc)
+                                  const libport::Symbol msg,
+                                  const rObject& call_message,
+                                  boost::optional<ast::loc> loc)
   {
     rObject target = call_message->slot_get(SYMBOL(target));
     object::objects_type args;
@@ -274,7 +274,7 @@ namespace runner
       const ast::local_declarations_type& formals =
         *ast->formals_get();
       // Check arity
-      object::check_arg_count (args.size()-1, formals.size());
+      object::check_arg_count (args.size() - 1, formals.size());
       object::objects_type::const_iterator it = args.begin();
       // skip target
       ++it;
@@ -343,9 +343,9 @@ namespace runner
     res->slot_set (SYMBOL(message), new object::String(msg));
 
     res->slot_set (SYMBOL(args), new object::List(
-                objects_type(
-                   boost::begin(libport::skip_first(args)),
-                   boost::end(libport::skip_first(args)))));
+                     objects_type(
+                       boost::begin(libport::skip_first(args)),
+                       boost::end(libport::skip_first(args)))));
 
     return res;
   }
