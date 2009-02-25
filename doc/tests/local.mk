@@ -20,15 +20,16 @@ EXTRA_DIST +=					\
   $(TESTS)					\
   tests/test.u
 
+# Generating the test files.
+$(srcdir)/tests/%/local.mk: %.tex $(srcdir)/tex2chk
+	srcdir=$(srcdir) $(srcdir)/tex2chk $<
+
+
 include $(top_srcdir)/build-aux/check.mk
 
 TEST_LOGS = $(TESTS:.chk=.log)
 LAZY_TEST_SUITE = 1
 $(TEST_LOGS): $(top_builddir)/all.stamp
-
-# Generating the test files.
-$(srcdir)/tests/%/local.mk: %.tex $(srcdir)/tex2chk
-	srcdir=$(srcdir) $(srcdir)/tex2chk $<
 
 
 URBI_CONSOLE = $(top_builddir)/tests/bin/urbi-console
@@ -45,13 +46,14 @@ UCONSOLE_CHECKFLAGS = -k2 --no-locations
 
 %.log: %.chk
 	@$(am__check_pre) $(UCONSOLE_CHECK) $(UCONSOLE_CHECKFLAGS) $${dir}$< $(am__check_post)
+check-clean-local:
+	-chmod -R 700 $(TEST_LOGS:.log=.dir) 2>/dev/null
+	rm -rf $(TEST_LOGS:.log=.dir)
 
-debug:
-	echo $(TESTS)
-	echo $(TEST_LOGS)
+## ----------- ##
+## Buildfarm.  ##
+## ----------- ##
 
-
-# The target run by the buildfarm.
 .PHONY: check-buildfarm
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:

@@ -12,3 +12,4 @@ specs/urbi-specs.pdf: specs/.stamp $(urbi_specs_deps)
 specs/.stamp:
 	-mkdir specs
 	test -f $@ || touch $@
+CLEANFILES += specs/.stamp

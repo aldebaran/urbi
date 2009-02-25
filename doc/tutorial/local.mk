@@ -12,3 +12,4 @@ tutorial/urbi-tutorial.pdf: tutorial/.stamp $(urbi_tutorial_deps)
 tutorial/.stamp:
 	-mkdir tutorial
 	test -f $@ || touch $@
+CLEANFILES += tutorial/.stamp
