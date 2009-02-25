@@ -125,6 +125,11 @@ Penn State Robotics
 Contact: Daniel J Lesutis <djl5053@psu.edu>
 Environment: small maze solving robots. Arduino micro controller.
 
+Philips
+=======
+Contact: Anand RAMACHANDRAN POTTI <anand.r@philips.com>
+Environment: ?
+
 SRI
 ===
 Contact: Régis Vincent <vincent@ai.sri.com>
