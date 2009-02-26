@@ -128,6 +128,9 @@ Environment: small maze solving robots. Arduino micro controller.
 Philips
 =======
 Contact: Anand RAMACHANDRAN POTTI <anand.r@philips.com>
+         Manager
+Contact: Ganapathy Subramanian <ganapathy.sn@philips.com>
+         Technician
 Environment: ?
 
 SRI
