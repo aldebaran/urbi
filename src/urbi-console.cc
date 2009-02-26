@@ -14,4 +14,3 @@ main(int argc, char* argv[])
   libport::program_initialize(argc, argv);
   return urbi::main(argc, const_cast<const char**>(argv), true, true);
 }
-
