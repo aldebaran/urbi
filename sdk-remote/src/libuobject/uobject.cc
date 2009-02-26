@@ -121,7 +121,12 @@ namespace urbi
     std::string cbFullName = cbName + "__0";
 
     // Stop any previous update
-    URBI_SEND_COMMAND("stop " << tagName);
+    if (kernelMajor() >= 2)
+      URBI_SEND_COMMAND("if (\"" << tagName << "\" not in " << __name
+        << ".slotNames) var " << __name <<"." << tagName<<" = Tag.new(\"" <<
+        tagName <<"\")|" << __name <<"." << tagName<<".stop");
+    else
+      URBI_SEND_COMMAND("stop " << tagName);
 
     // Find previous update timer on this object
     std::list<UGenericCallback*>& cblist = eventmap()[cbFullName];
@@ -152,7 +157,10 @@ namespace urbi
 		    this, &UObject::update, cbName, eventmap(), false);
 
     // Set update at given period
-    URBI_SEND_COMMAND(tagName << ": every(" << period << ")"
+    std::string base;
+    if (kernelMajor() > 1)
+      base = __name + ".";
+    URBI_SEND_COMMAND( base << tagName << ": every(" << period << "ms)"
 		      "              { emit " << cbName << ";},");
 
     return;

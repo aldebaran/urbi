@@ -30,9 +30,8 @@ namespace urbi
     //new UCallbackvoid0<UTimerCallback> (objname, "event", this,
     //				&UTimerCallback::call,
     //				objname + '.' + cbname, eventmap);
-
-    URBI_SEND_COMMAND("timer_" << objname << ": every(" << period << ") { emit "
-		      << (objname + '.' + cbname) << ";}");
+    URBI_SEND_COMMAND("timer_" << objname << ": every(" << period << "ms)"
+                      "{ emit " << (objname + '.' + cbname) << ";}");
   }
 
   UTimerCallback::~UTimerCallback()
