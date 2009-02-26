@@ -116,10 +116,23 @@ do (Float)
       action(i)
   };
 
+  function asList()
+  {
+    var res = [];
+    for (var i in this)
+      res << i;
+    return res
+  };
+
+  function map(f)
+  {
+    asList.map(f)
+  };
+
   function hex()
   {
     asString(16)
-  }
+  };
 };
 
 
