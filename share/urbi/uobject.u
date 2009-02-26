@@ -328,9 +328,25 @@ class Global.'external'
     Global.uobjects.getSlot(objname).setSlot(fname, f)|
     void
   };
-
+  function eventBounce(starting, evname, args)
+  {
+    Channel.new(MODULE_TAG) << [
+       {if (starting) UEM_EMITEVENT else UEM_ENDEVENT},
+       evname] + args
+  };
   function 'event'(nargs, objname, ename, fr)
   {
-    // FIXME: implement when k2 will support events.
+    // FIXME: No way to catch an event with payload without generating the 'at'
+    // code.
+    var fullname = objname+"."+ename+"__" + nargs.asString |
+    if (ename not in uobjects.getSlot(objname).slotNames)
+      uobjects.getSlot(objname).setSlot(ename, Event.new) |
+    var args = nargs.seq.map(function(x) { "p%s" %[x]}).join(", ") |
+    var varargs = nargs.seq.map(function(x) { "var p%s" %[x]}).join(", ")|
+    var code =
+      ("at (?uobjects.%s.%s(%s)) 'external'.eventBounce(true, \"%s\",[%s])"
+      + "onleave 'external'.eventBounce(false, \"%s\",[%s])")
+    % [objname, ename, varargs, fullname, args, fullname, args]|
+    eval(code)
   };
 };
