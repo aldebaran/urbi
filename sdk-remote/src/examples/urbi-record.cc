@@ -1,7 +1,5 @@
 #include <libport/assert.hh>
-
 #include <csignal>
-
 #include <urbi/uclient.hh>
 
 /*
@@ -64,13 +62,13 @@ buildHeader()
   fwrite("URBI",4,1,f);
   fwrite(&devCount,4,1,f);
   for (int i=0;i<devCount; ++i)
-	{
-	  fwrite(devices[i],strlen(devices[i])+1,1,f);
-	  short s=i;
-	  fwrite(&s,2,1,f);
-	  char c=(char)TYPE_ANGLE;
-	  fwrite(&c,1,1,f);
-	}
+  {
+    fwrite(devices[i],strlen(devices[i])+1,1,f);
+    short s=i;
+    fwrite(&s,2,1,f);
+    char c=(char)TYPE_ANGLE;
+    fwrite(&c,1,1,f);
+  }
 }
 
 
