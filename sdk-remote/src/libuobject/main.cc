@@ -157,6 +157,7 @@ namespace urbi
           }
         }
       }
+      break;
 
       case UEM_NEW:
       {
