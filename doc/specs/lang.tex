@@ -338,7 +338,7 @@ documentation of the classes that provide them.
     \operatoriass{/}
     \operatoriass{\%}
     \operatoriass{\^}
-    \operatoriass{\~}
+%    \operatoriass{\~}
 }
 \newcommand{\operatorinc}    {\operator  {++}   {a++}              {-}     {Incrementation}           {(a = a + 1) - 1}       }
 \newcommand{\operatordec}    {\operator  {--}   {a--}              {-}     {Incrementation}           {(a = a - 1) + 1}       }
@@ -357,7 +357,8 @@ documentation of the classes that provide them.
 \newcommand{\operatorneq}    {\boperator {!=}   {Non Associative}  {Inequality}             }
 \newcommand{\operatorpeq}    {\boperator {===}  {Non Associative}  {Physical equality}      }
 \newcommand{\operatorpneq}   {\boperator {!==}  {Non Associative}  {Physical Inequality}    }
-\newcommand{\operatoraeq}    {\boperator {=~=}  {Non Associative}  {Approximative equality} }
+\newcommand{\operatoraeq}    {\boperator {\~=}  {Non Associative}  {Relative Approximative equality} }
+\newcommand{\operatoreqaeq}  {\boperator {=~=}  {Non Associative}  {Absolute Approximative equality} }
 \newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Less than}              }
 \newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Less than or equal to}  }
 \newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Greater than}           }
@@ -542,6 +543,7 @@ false && (1 / 0);
     \operatorpeq
     \operatorpneq
     \operatoraeq
+    \operatoreqaeq
     \operatorinf
     \operatorinfeq
     \operatorsup
@@ -665,6 +667,7 @@ precedence.
     \operatorneq
     \operatorpeq
     \operatorpneq
+    \operatoreqaeq
     \operatoraeq
     \operatorinf
     \operatorinfeq
