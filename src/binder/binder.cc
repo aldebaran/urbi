@@ -293,7 +293,7 @@ namespace binder
         foreach (ast::rLocalDeclaration dec, *f->captured_variables_get())
           if (dec->what_get() == name)
           {
-            outer_decl = dec;
+            decl = outer_decl = dec;
             // Break foreach and for
             goto stop;
           }
@@ -310,7 +310,7 @@ namespace binder
 
         f->captured_variables_get()->push_back(decl);
       }
-    stop:
+      stop:
       BIND_NECHO(libport::decindent);
     }
 
