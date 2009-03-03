@@ -467,6 +467,20 @@ namespace binder
   void
   Binder::handleRoutine(const Code* input)
   {
+    // Check whether default arguments are followed by non-default arguments
+    if (input->formals_get())
+    {
+      bool found = false;
+      foreach (ast::rLocalDeclaration decl, *input->formals_get())
+      {
+        if (decl->value_get())
+          found = true;
+        else if (found)
+          errors_.error(decl->location_get(),
+                        "argument with no default value after arguments with default value");
+      }
+    }
+
     BIND_ECHO("Push" << libport::incindent);
     Finally finally(5);
 
