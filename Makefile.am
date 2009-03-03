@@ -38,6 +38,12 @@ symbols:
 	$(MAKE) $(AM_MAKEFLAGS) -C src $@
 
 
+# Make sure config.h.in is up to date.  This looks like an Automake
+# bug to me.
+BUILT_SOURCES +=				\
+  $(top_srcdir)/src/kernel/config.h.in		\
+  src/kernel/config.h
+
 
 ## ---------------------- ##
 ## Convenient shortcuts.  ##
