@@ -18,6 +18,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <libport/backtrace.hh>
 #include <libport/compiler.hh>
 #include <libport/config.h>
 #include <libport/cstdio>
@@ -218,7 +219,11 @@ namespace kernel
     r.send_message(tag, "Trying to give more information.");
     r.send_message(tag, "Please include it in the report.");
     r.send_message(tag, "");
-    r.send_message(tag, "---------- CURRENT BACKTRACE ----------");
+    r.send_message(tag, "---------- CURRENT C++ BACKTRACE ----------");
+    foreach (const char* cp, libport::backtrace())
+      r.send_message(tag, cp);
+    r.send_message(tag, "");
+    r.send_message(tag, "---------- CURRENT URBI BACKTRACE ----------");
     r.show_backtrace(tag);
     r.send_message(tag, "");
     r.send_message(tag, "---------- PS ----------");
