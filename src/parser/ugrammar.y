@@ -1525,8 +1525,8 @@ var.opt:
 | "var"
 ;
 
-%type <formal_type> formal_identifier;
-formal_identifier:
+%type <formal_type> formal_argument;
+formal_argument:
   var.opt "identifier"
   {
     $$ = formal_type($2, 0);
@@ -1539,14 +1539,14 @@ formal_identifier:
 
 // One or several comma-separated identifiers.
 %printer { debug_stream() << libport::deref << $$; } <symbols_pointer>;
-%type <formals_type*> formal_identifiers formal_identifiers.1 formals;
-formal_identifiers.1:
-  formal_identifier
+%type <formals_type*> formal_arguments formal_arguments.1 formals;
+formal_arguments.1:
+  formal_argument
   {
     $$ = new formals_type;
     $$->push_back($1);
   }
-| formal_identifiers.1 "," formal_identifier
+| formal_arguments.1 "," formal_argument
   {
     std::swap($$, $1);
     $$->push_back($3);
@@ -1554,15 +1554,15 @@ formal_identifiers.1:
 ;
 
 // Zero or several comma-separated identifiers.
-formal_identifiers:
+formal_arguments:
   /* empty */            { $$ = new formals_type; }
-| formal_identifiers.1   { std::swap($$, $1); }
+| formal_arguments.1   { std::swap($$, $1); }
 ;
 
 // Function formal arguments.
 formals:
   /* empty */                { $$ = 0; }
-| "(" formal_identifiers ")" { std::swap($$, $2); }
+| "(" formal_arguments ")" { std::swap($$, $2); }
 ;
 
 /*--------------.
