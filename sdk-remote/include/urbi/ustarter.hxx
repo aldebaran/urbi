@@ -18,7 +18,7 @@
 # include <algorithm>
 # include <string>
 
-# include <urbi/fwd.hh>
+# include <urbi/uobject.hh>
 # include <urbi/ustarter.hh>
 
 namespace urbi

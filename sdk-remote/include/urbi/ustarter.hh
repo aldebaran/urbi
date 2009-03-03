@@ -18,7 +18,7 @@
 # include <string>
 
 # include <urbi/export.hh>
-# include <urbi/uobject.hh>
+# include <urbi/fwd.hh>
 
 /// This macro must be called once for every UObject class.
 # define UStartRename(Type, Name)               \

@@ -6,12 +6,14 @@
 namespace urbi
 {
 
+  inline
   UObjectHub*
   getUObjectHub(const std::string& n)
   {
     return baseURBIStarterHub::find(n);
   }
 
+  inline
   UObject*
   getUObject(const std::string& n)
   {

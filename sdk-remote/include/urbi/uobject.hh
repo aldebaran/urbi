@@ -365,6 +365,8 @@ namespace urbi
 // To be cleaned later.
 # include <urbi/ustarter.hh>
 
+# include <urbi/uobject.hxx>
+
 # include <libport/warning-pop.hh>
 
 #endif // ! URBI_UOBJECT_HH
