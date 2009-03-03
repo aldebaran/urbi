@@ -15,6 +15,12 @@ SUBDIRS =					\
   src						\
   doc
 
+# Work around a problem in Automake that needs to the be tracked.
+BUILT_SOURCES +=				\
+  $(top_srcdir)/sdk/config.h.in			\
+  sdk/config.h
+
+
 host_SCRIPTS =
 nodist_host_DATA =
 AM_CPPFLAGS +=					\
