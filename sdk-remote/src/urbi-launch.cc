@@ -217,7 +217,7 @@ main(int argc, char* argv[])
   libport::program_initialize(argc, argv);
   unsigned verbosity = 0;
   const char* urbi_root = getenv("URBI_ROOT");
-  libport::path prefix(urbi_root ? urbi_root : URBI_PREFIX);
+  libport::path prefix(urbi_root ? urbi_root : URBI_ROOT);
 
   enum ConnectMode
   {
