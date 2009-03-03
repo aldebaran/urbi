@@ -12,6 +12,7 @@
 // Include our header first to avoid duplicating some of its tricks.
 #include <kernel/userver.hh>
 
+#include <boost/assign/list_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/checked_delete.hpp>
 #include <boost/format.hpp>
@@ -66,6 +67,17 @@ namespace kernel
   // Global server reference
   UServer *urbiserver = 0;
 
+  namespace
+  {
+    static
+    std::string
+    xgetenv(const char* c, const char* deflt = "")
+    {
+      const char* res = getenv(c);
+      return res ? res : deflt;
+    }
+  }
+
   // Buffers used to output data.
   /// Used by echo() & error().
   // FIXME: Because of this stupid hard limit, we can't produce
@@ -77,21 +89,16 @@ namespace kernel
   typedef char buffer_type[8192];
 
   UServer::UServer(const char* mainName)
-    : scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
-                                                      boost::ref(*this))))
+    : search_path(boost::assign::list_of
+                  (xgetenv("URBI_PATH"))
+                  (xgetenv("URBI_ROOT", URBI_ROOT) + "/share/gostai"),
+                  ":")
+    , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
+                                                  boost::ref(*this))))
     , mainName_(mainName)
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
   {
-    // The search path order is the URBI_PATH:URBI_ROOT/share/gostai:HARDCODED.
-    static char* urbi_path = getenv("URBI_PATH");
-    if (urbi_path)
-      search_path.push_back(urbi_path, ":");
-    static char* urbi_root = getenv("URBI_ROOT");
-    if (urbi_root)
-      search_path.push_back(libport::path(urbi_root) / "share" / "gostai");
-    else
-      search_path.push_back(URBI_PATH, ":");
 #if ! defined NDEBUG
     server_timer.start();
     server_timer.dump_on_destruction(std::cerr);

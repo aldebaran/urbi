@@ -88,9 +88,9 @@ AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 # Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
 # sole use of URBI_RESOLVE_DIR_PREPARE.
 URBI_RESOLVE_DIR_PREPARE
-AC_DEFINE_UNQUOTED([URBI_PATH],
-                   ["`URBI_RESOLVE_DIR([${datadir}/gostai])`"],
-		   [Define to the path where library files are installed.])
+AC_DEFINE_UNQUOTED([URBI_ROOT],
+                   ["`URBI_RESOLVE_DIR([${prefix}])`"],
+		   [Define to the path where files are installed (prefix).])
 
 
 ## -------- ##
