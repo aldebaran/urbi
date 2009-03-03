@@ -85,13 +85,6 @@ AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
 pkgdatadir=${datadir}/gostai
 AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 
-# Can't use AC_REQUIRE outside an AC_DEFUN.  This appears to be the
-# sole use of URBI_RESOLVE_DIR_PREPARE.
-URBI_RESOLVE_DIR_PREPARE
-AC_DEFINE_UNQUOTED([URBI_ROOT],
-                   ["`URBI_RESOLVE_DIR([${prefix}])`"],
-		   [Define to the path where files are installed (prefix).])
-
 
 ## -------- ##
 ## Target.  ##
