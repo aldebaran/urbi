@@ -135,8 +135,8 @@ namespace urbi
       for (iterator i = cs.begin(); i != cs.end(); ++i)
         if ((*i)->getName() == cbFullName)
         {
-          cs.erase(i);
           delete *i;
+          cs.erase(i);
           break;
         }
     }
