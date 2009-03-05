@@ -184,6 +184,12 @@ namespace urbi
     // nothing happend in remote mode...
   }
 
+
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
   //! echo method
   void
   echo(const char* format, ...)
@@ -201,6 +207,7 @@ namespace urbi
   {
     yield_until(libport::utime());
   }
+
   void yield_until(libport::utime_t deadline)
   {
     // Ensure processEvents is called at least once.
@@ -223,6 +230,7 @@ namespace urbi
       usleep(0);
     }
   }
+
   void side_effect_free_set(bool) {}
   bool side_effect_free_get() {return false;}
 
@@ -236,15 +244,23 @@ namespace urbi
       return name;
   }
 
-  URBI_SDK_API int kernelMajor()
+
+
+  /*-----------------.
+  | Kernel version.  |
+  `-----------------*/
+
+  int kernelMajor()
   {
     return getDefaultClient()->kernelMajor();
   }
-  URBI_SDK_API int kernelMinor()
+
+  int kernelMinor()
   {
     return getDefaultClient()->kernelMinor();
   }
-  URBI_SDK_API const std::string& kernelVersion()
+
+  const std::string& kernelVersion()
   {
     return getDefaultClient()->kernelVersion();
   }
