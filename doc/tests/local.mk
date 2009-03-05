@@ -29,8 +29,7 @@ include $(top_srcdir)/build-aux/check.mk
 
 TEST_LOGS = $(TESTS:.chk=.log)
 LAZY_TEST_SUITE = 1
-STRICT_TEST_LOGS =							   \
-  $(shell $(AWK) '(FNR == 1 && $$1 == "FAIL:" ) { print $$2 }' $(TEST_LOGS))
+STRICT_TEST_LOGS = $(shell $(LIST_FAILED_TEST_LOGS))
 $(TEST_LOGS): $(top_builddir)/all.stamp
 
 
