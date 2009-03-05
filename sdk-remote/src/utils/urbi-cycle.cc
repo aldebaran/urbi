@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
   buff[uc.id] = uc;
   while (true)
   {
-    int ok = fread(&uc, sizeof (urbi::UCommand), 1, inf);
+    size_t ok = fread(&uc, sizeof (urbi::UCommand), 1, inf);
     if (ok && !basetime)
       basetime = uc.timestamp;
     if (ok && buffTime == 0)
