@@ -100,20 +100,7 @@ namespace urbi
   //! UVar destructor.
   UVar::~UVar()
   {
-    UVarTable::iterator varmapfind = varmap().find(name);
-
-    if (varmapfind != varmap().end())
-      {
-	for (std::list<UVar*>::iterator it = varmapfind->second.begin();
-	     it != varmapfind->second.end();)
-	  if (*it == this)
-	    it=varmapfind->second.erase(it);
-	  else
-	    ++it;
-
-	if (varmapfind->second.empty())
-	  varmap().erase(varmapfind);
-      }
+    varmap().clean(*this);
   }
 
   // This is a stub for something that might be existing in k1.  k2 no

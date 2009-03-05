@@ -30,6 +30,12 @@
 
 namespace urbi
 {
+  // FIXME: There are probably more opportunities for factoring here,
+  // fusing these two (three?) classes.
+
+  /*---------.
+  | UTable.  |
+  `---------*/
 
   // A few list and hashtable types
   struct URBI_SDK_API UTable
@@ -47,11 +53,15 @@ namespace urbi
     typedef libport::hash_map_type<key_type, mapped_type>::type
       super_type;
 
+    /// Iterator types.
+    typedef super_type::const_iterator const_iterator;
+    typedef super_type::iterator iterator;
+
     /// Contructor.
     UTable();
 
     /// Return the list of callbacks, otherwise 0.
-    callbacks_type* find0(const key_type& name);
+    mapped_type* find0(const key_type& name);
 
     /// Clean a callback UTable from all callbacks linked to the
     /// object whose name is \a name.
@@ -65,8 +75,35 @@ namespace urbi
   URBI_SDK_API UTable& functionmap();
   URBI_SDK_API UTable& monitormap();
 
-  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type
-    UVarTable;
+
+  /*------------.
+  | UVarTable.  |
+  `------------*/
+
+  struct URBI_SDK_API UVarTable
+    : libport::hash_map_type<std::string, std::list<UVar*> >::type
+  {
+    /// The keys.
+    typedef std::string key_type;
+
+    /// The list call backs.
+    typedef std::list<UVar*> callbacks_type;
+    typedef callbacks_type mapped_type;
+
+    /// Type of the super class.
+    typedef libport::hash_map_type<key_type, mapped_type>::type
+      super_type;
+
+    /// Iterator types.
+    typedef super_type::const_iterator const_iterator;
+    typedef super_type::iterator iterator;
+
+
+    /// Return the list of callbacks, otherwise 0.
+    mapped_type* find0(const key_type& name);
+
+    void clean(const UVar& uvar);
+  };
   URBI_SDK_API UVarTable& varmap();
 
 
