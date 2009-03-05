@@ -118,7 +118,6 @@ namespace urbi
     // Forge names for callback and tag
     std::string tagName = "maintimer_" + __name;
     std::string cbName = __name + ".maintimer";
-    std::string cbFullName = cbName + "__0";
 
     // Stop any previous update
     if (kernelMajor() >= 2)
@@ -128,17 +127,18 @@ namespace urbi
     else
       URBI_SEND_COMMAND("stop " << tagName);
 
-    // Find previous update timer on this object
-    std::list<UGenericCallback*>& cblist = eventmap()[cbFullName];
-    std::list<UGenericCallback*>::iterator it = cblist.begin ();
-    for (; it != cblist.end () && (*it)->getName () != cbFullName ; ++it)
-      ;
-
-    // Delete if found
-    if (it != cblist.end ())
+    // Find previous update timer on this object and delete.
     {
-      cblist.erase (it);
-      delete *it;
+      std::string cbFullName = cbName + "__0";
+      std::list<UGenericCallback*>& cs = eventmap()[cbFullName];
+      typedef std::list<UGenericCallback*>::iterator iterator;
+      for (iterator i = cs.begin(); i != cs.end(); ++i)
+        if ((*i)->getName() == cbFullName)
+        {
+          cs.erase(i);
+          delete *i;
+          break;
+        }
     }
 
     // Set period value
