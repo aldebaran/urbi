@@ -133,7 +133,8 @@ sub process_file ($)
     {
       if (/^\\begin{urbiscript}/)
       {
-        $line = $in->input_line_number;
+        # Issue a #line for the first line of Urbi, not the LaTeX line.
+        $line = $in->input_line_number + 1;
         $test = $_;
       }
       elsif (!/^\\end{urbiscript}/)
@@ -162,10 +163,12 @@ sub dump_chk ($)
     my %c = %{$chk{$k}};
     my $file = "$dir/$c{label}.chk";
     push @file, $file;
-    my $out = new IO::File ">$file"
-        or die "cannot create $file: $!";
+    my $out = new IO::File ">$file.tmp"
+        or die "cannot create $file.tmp: $!";
     print $out "//#line $c{_line} \"$c{_file}\"\n";
     print $out "$c{_contents}\n";
+    system ("$ENV{move_if_change} -I '^//' $file.tmp $file") == 0
+      or die "$ENV{move_if_change} failed: $?";
   }
   my $local_mk = "$dir/local.mk";
   my $mk = new IO::File ">$local_mk"
@@ -181,10 +184,14 @@ my $dir = $ARGV[0];
 $dir =~ s,^$ENV{srcdir},$&/tests,;
 $dir =~ s/\.tex$//;
 
-rmtree $dir
-  if -d $dir;
-mkpath $dir
-  or die "cannot mkpath $dir: $!";
+# FIXME: Find a means to remove the old ones.
+# rmtree $dir
+#  if -d $dir;
+if (! -d $dir)
+{
+  mkpath $dir
+    or die "cannot mkpath $dir: $!";
+}
 dump_chk $dir;
 
 ### Setup "GNU" style for perl-mode and cperl-mode.

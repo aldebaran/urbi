@@ -22,7 +22,7 @@ EXTRA_DIST +=					\
 
 # Generating the test files.
 $(srcdir)/tests/%/local.mk: %.tex $(srcdir)/tex2chk
-	srcdir=$(srcdir) $(srcdir)/tex2chk $<
+	srcdir=$(srcdir) move_if_change=$(move_if_change) $(srcdir)/tex2chk $<
 
 
 include $(top_srcdir)/build-aux/check.mk
