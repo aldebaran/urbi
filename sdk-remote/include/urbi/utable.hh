@@ -36,17 +36,26 @@ namespace urbi
     : libport::hash_map_type<std::string,
                              std::list<UGenericCallback*> >::type
   {
+    /// The keys.
+    typedef std::string key_type;
+
+    /// The list call backs.
+    typedef std::list<UGenericCallback*> callbacks_type;
+    typedef callbacks_type mapped_type;
+
     /// Type of the super class.
-    typedef libport::hash_map_type<std::string,
-                                   std::list<UGenericCallback*> >::type
+    typedef libport::hash_map_type<key_type, mapped_type>::type
       super_type;
 
     /// Contructor.
     UTable();
 
-    //! Clean a callback UTable from all callbacks linked to the
-    //! object whose name is 'name'.
-    void clean(const std::string& name);
+    /// Return the list of callbacks, otherwise 0.
+    callbacks_type* find0(const key_type& name);
+
+    /// Clean a callback UTable from all callbacks linked to the
+    /// object whose name is \a name.
+    void clean(const key_type& name);
   };
 
   // Lists and hashtables used.

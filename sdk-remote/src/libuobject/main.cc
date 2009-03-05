@@ -31,6 +31,7 @@ namespace urbi
   UCallbackAction
   dispatcher(const UMessage& msg)
   {
+    typedef UTable::callbacks_type callbacks_type;
     //check message type
     if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST)
     {
@@ -77,26 +78,23 @@ namespace urbi
                ++it)
             (*it)->__update(array[2]);
 
-        UTable::iterator monitormapfind = monitormap().find(array[1]);
-        if (monitormapfind != monitormap().end())
-          for (std::list<UGenericCallback*>::iterator
-                 cbit = monitormapfind->second.begin();
-               cbit != monitormapfind->second.end();
-               ++cbit)
+        if (callbacks_type* cs = monitormap().find0(array[1]))
+          for (callbacks_type::iterator i = cs->begin();
+               i != cs->end(); ++i)
           {
             // test of return value here
             UList u;
             u.array.push_back(new UValue());
-            u[0].storage = (*cbit)->storage;
-            (*cbit)->__evalcall(u);
+            u[0].storage = (*i)->storage;
+            (*i)->__evalcall(u);
           }
       }
       break;
 
       case UEM_EVALFUNCTION:
       {
-	std::list<UGenericCallback*> tmpfun = functionmap()[array[1]];
-	std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+	callbacks_type tmpfun = functionmap()[array[1]];
+	callbacks_type::iterator tmpfunit = tmpfun.begin();
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
@@ -126,37 +124,27 @@ namespace urbi
       break;
 
       case UEM_EMITEVENT:
-      {
-        if (eventmap().find(array[1]) != eventmap().end())
-        {
-          std::list<UGenericCallback*> tmpfun = eventmap()[array[1]];
-          for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
-               i != tmpfun.end();
+        if (callbacks_type* cs = eventmap().find0(array[1]))
+          for (callbacks_type::iterator i = cs->begin();
+               i != cs->end();
                ++i)
           {
             array.setOffset(2);
             (*i)->__evalcall(array);
             array.setOffset(0);
           }
-        }
-      }
       break;
 
       case UEM_ENDEVENT:
-      {
-        if (eventendmap().find(array[1]) != eventendmap().end())
-        {
-          std::list<UGenericCallback*> tmpfun = eventendmap()[array[1]];
-          for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
-               i != tmpfun.end();
+        if (callbacks_type* cs = eventendmap().find0(array[1]))
+          for (callbacks_type::iterator i = cs->begin();
+               i != cs->end();
                ++i)
           {
             array.setOffset(2);
             (*i)->__evalcall(array);
             array.setOffset(0);
           }
-        }
-      }
       break;
 
       case UEM_NEW:

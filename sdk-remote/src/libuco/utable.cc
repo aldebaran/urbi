@@ -1,7 +1,6 @@
-/*! \file urbi/utable.cc
+/*! \file libuco/utable.cc
  *******************************************************************************
 
- File: urbi/utable.cc\n
  Implementation of the UObject class.
 
  This file is part of LIBURBI\n
@@ -46,6 +45,18 @@ namespace urbi
 
   UTable::UTable()
   {
+  }
+
+  UTable::callbacks_type*
+  UTable::find0(const std::string& name)
+  {
+    // FIXME: Use libport::find0 which first needs to be educated to
+    // support the case where the mapped_type is not a pointer type.
+    super_type::iterator i = find(name);
+    if (i != end())
+      return &i->second;
+    else
+      return 0;
   }
 
   //! Clean a callback UTable from all callbacks linked to the
