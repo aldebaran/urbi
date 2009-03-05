@@ -88,11 +88,11 @@ namespace urbi
   void
   UObject::clean()
   {
-    cleanTable(monitormap(), __name);
-    cleanTable(accessmap(), __name);
-    cleanTable(functionmap(), __name);
-    cleanTable(eventmap(), __name);
-    cleanTable(eventendmap(), __name);
+    monitormap().clean(__name);
+    accessmap().clean(__name);
+    functionmap().clean(__name);
+    eventmap().clean(__name);
+    eventendmap().clean(__name);
 
     if (objecthub)
       objecthub->members.remove(this);

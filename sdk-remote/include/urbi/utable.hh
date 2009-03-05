@@ -4,7 +4,7 @@
  Definition of the callback tables.
 
  This file is part of UObject Component Architecture\n
- Copyright (c) 2006, 2007, 2008 Gostai S.A.S.
+ Copyright (c) 2006-2009 Gostai S.A.S.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -32,13 +32,22 @@ namespace urbi
 {
 
   // A few list and hashtable types
-  typedef libport::hash_map_type<std::string,
-				 std::list<UGenericCallback*> >::type
-    UTable;
+  struct URBI_SDK_API UTable
+    : libport::hash_map_type<std::string,
+                             std::list<UGenericCallback*> >::type
+  {
+    /// Type of the super class.
+    typedef libport::hash_map_type<std::string,
+                                   std::list<UGenericCallback*> >::type
+      super_type;
 
-  //! Clean a callback UTable from all callbacks linked to the
-  //! object whose name is 'name'.
-  void cleanTable(UTable &t, const std::string& name);
+    /// Contructor.
+    UTable();
+
+    //! Clean a callback UTable from all callbacks linked to the
+    //! object whose name is 'name'.
+    void clean(const std::string& name);
+  };
 
   // Lists and hashtables used.
   URBI_SDK_API UTable& accessmap();

@@ -5,7 +5,7 @@
  Implementation of the UObject class.
 
  This file is part of LIBURBI\n
-Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
+ Copyright (c) 2004-2009 Jean-Christophe Baillie.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -43,13 +43,18 @@ namespace urbi
 
 #undef SINGLETON_FUNCTION
 
+
+  UTable::UTable()
+  {
+  }
+
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
   void
-  cleanTable(UTable &t, const std::string& name)
+  UTable::clean(const std::string& name)
   {
     std::list<UTable::iterator> todelete;
-    for (UTable::iterator i = t.begin(); i != t.end(); ++i)
+    for (UTable::iterator i = begin(); i != end(); ++i)
     {
       std::list<UGenericCallback*>& tocheck = i->second;
       for (std::list<UGenericCallback*>::iterator j = tocheck.begin();
@@ -72,7 +77,7 @@ namespace urbi
     for (std::list<UTable::iterator>::iterator i = todelete.begin();
 	 i != todelete.end();
 	 ++i)
-      t.erase(*i);
+      erase(*i);
   }
 
 
