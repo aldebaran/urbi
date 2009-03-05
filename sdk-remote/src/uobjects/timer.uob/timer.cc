@@ -4,21 +4,21 @@
 urbi::UObjectHub* thub;
 class timer: public urbi::UObject
 {
-  public:
-    timer(const std::string& name)
-      : urbi::UObject(name)
-      {
-	UBindVar(timer, updated);
-	UBindVar(timer, timerup);
-	UBindVar(timer, hupdated);
-	hupdated = 0;
-	timerup = 0;
-	updated = 0;
-	UBindFunction(timer, setupUpdate);
-	UBindFunction(timer, setupTimer);
-	UBindFunction(timer, setupHubUpdate);
-	UBindFunction(timer, init);
-      }
+public:
+  timer(const std::string& name)
+    : urbi::UObject(name)
+    {
+      UBindVar(timer, updated);
+      UBindVar(timer, timerup);
+      UBindVar(timer, hupdated);
+      hupdated = 0;
+      timerup = 0;
+      updated = 0;
+      UBindFunction(timer, setupUpdate);
+      UBindFunction(timer, setupTimer);
+      UBindFunction(timer, setupHubUpdate);
+      UBindFunction(timer, init);
+    }
     int init()
     {
       return 0;
@@ -58,7 +58,7 @@ class timerHub: public urbi::UObjectHub
   public:
     timerHub(const std::string& name)
 	: urbi::UObjectHub(name)
-      	{
+	{
 	  std::cerr <<"timerhub started"<<std::endl;
 	  thub = this;
 	}
