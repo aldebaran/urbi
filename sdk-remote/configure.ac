@@ -140,9 +140,11 @@ case $enable_programs in
        # passed to this configure, it gives it to its subconfigures,
        # so we would just duplicate the request.
        ;;
-  (*)   ac_configure_args="$ac_configure_args --disable-programs";;
+  (*)  ac_configure_args+=" --disable-programs";;
 esac
 
+# Let libjpeg use the same libdir as us.
+ac_configure_args+=" libdir='${bindir}'"
 AC_CONFIG_SUBDIRS([jpeg])
 
 
