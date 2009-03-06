@@ -10,16 +10,12 @@
 
 namespace urbi
 {
+  /// This class is useless in SDK-Remote, and it is not used by Urbi
+  /// 2 either.  But Urbi 1 uses this field to store private data, and
+  /// since SDK-Remote is to be compatible with both Urbi, keep it,
+  /// although useless.
   class UVardata
-  {
-  public:
-    UVardata()
-    {
-    }
-    ~UVardata()
-    {
-    }
-  };
+  {};
 
   //! UVar initialization
   void
