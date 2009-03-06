@@ -15,19 +15,29 @@
 namespace urbi
 {
 
+  namespace
+  {
+    static
+    std::string
+    callback_name(const std::string& name, const std::string& type,
+                  int size)
+    {
+      std::string res = name;
+      if (type == "function" || type == "event" || type == "eventend")
+        res += "__" + string_cast(size);
+      return res;
+    }
+  }
+
   //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
 				     int size, UTable &, bool)
-    : objname(objname)
-    , name(name)
+    : nbparam(size)
+    , objname(objname)
+    , name(callback_name(name, type, size))
   {
-    nbparam = size;
-
-    if (type == "function" || type== "event" || type == "eventend")
-      this->name += "__" + string_cast(size);
-
     std::cerr << libport::program_name()
 	      << ": Registering " << type << " " << name << " " << size
 	      << " into " << this->name
@@ -37,12 +47,10 @@ namespace urbi
     if (type == "var")
       URBI_SEND_PIPED_COMMAND("external " << type << " "
                               << name << " from " << objname);
-
-    if (type == "event" || type == "function")
+    else if (type == "event" || type == "function")
       URBI_SEND_PIPED_COMMAND("external " << type << "(" << size << ") "
                               << name << " from " << objname);
-
-    if (type == "varaccess")
+    else if (type == "varaccess")
       echo("Warning: NotifyAccess facility is not available for modules in "
 	   "remote mode.\n");
   }
@@ -63,7 +71,8 @@ namespace urbi
   void
   UGenericCallback::registerCallback(UTable& t)
   {
-     t[this->name].push_back(this);
+    std::cerr << "Pushing " << name << "in " << &t << std::endl;
+    t[name].push_back(this);
   }
 
 
