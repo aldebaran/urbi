@@ -17,12 +17,12 @@ examples_urbi_send_SOURCES	= examples/urbi-send.cc
 examples_urbi_sendbin_SOURCES	= examples/urbi-sendbin.cc
 examples_urbi_sendsound_SOURCES	= examples/urbi-sendsound.cc
 
-if  SOUNDCARD
+if SOUNDCARD
 bin_PROGRAMS += examples/urbi-sound
 examples_urbi_sound_SOURCES = examples/urbi-sound.cc
 endif
 
-if  !WIN32
+if !WIN32
 bin_PROGRAMS += examples/urbi-talkie
 examples_urbi_talkie_SOURCES = examples/urbi-talkie.cc
 endif
@@ -37,7 +37,7 @@ monitor_programs =				\
  examples/urbi-balltrackinghead			\
  examples/urbi-image
 
-if  WIN32
+if WIN32
 #bin_PROGRAMS += $(monitor_programs)
 monitor_sources =				\
   examples/monitor-win.h			\
@@ -45,7 +45,7 @@ monitor_sources =				\
 X11_LDADD += -lgdi32 -luser32
 endif
 
-if  X11
+if X11
 bin_PROGRAMS += $(monitor_programs)
 monitor_sources =				\
   examples/monitor.h				\
