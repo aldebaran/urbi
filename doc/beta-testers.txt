@@ -63,6 +63,11 @@ Hobbyiste, actionnaire de Gostai.
 Contact: Christophe BOURRIER <christophe@booprod.com>
 Environment: Windows, C#.
 
+Club Vaudois De Robotique Autonome
+==================================
+Contact: Albertelli Antoine <antoinea101@gmail.com>
+Environment: ?
+
 ENST
 ====
 Contact: Samuel Tardieu <sam@rfc1149.net>
