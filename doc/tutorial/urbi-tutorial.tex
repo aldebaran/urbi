@@ -1928,17 +1928,18 @@ sleep(4s);
 [00001000] *** pong
 [00002000] *** ping
 [00003000] *** pong
-// Block printing of pong
+// Block printing of pong.
 mytag.block;
 sleep(3s);
-// The second half of the while
-// isn't executed anymore.
+/*HIDE*/sleep(100ms);
+// The second half of the while isn't executed anymore.
 [00004000] *** ping
 [00005000] *** ping
 [00006000] *** ping
 // Reactivate pong
 mytag.unblock;
 sleep(4s);
+/*HIDE*/sleep(100ms);
 [00007000] *** ping
 [00008000] *** pong
 [00009000] *** ping
