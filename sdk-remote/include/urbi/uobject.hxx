@@ -7,6 +7,20 @@ namespace urbi
 {
 
   inline
+  bool
+  isPluginMode()
+  {
+    return getRunningMode() == MODE_PLUGIN;
+  }
+
+  inline
+  bool
+  isRemoteMode()
+  {
+    return getRunningMode() == MODE_REMOTE;
+  }
+
+  inline
   UObjectHub*
   getUObjectHub(const std::string& n)
   {

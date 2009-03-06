@@ -158,10 +158,11 @@ namespace urbi
 
   /// Return the mode in which the code is running.
   URBI_SDK_API UObjectMode getRunningMode();
+
   /// Return true if the code is running in plugin mode.
-  inline bool isPluginMode() { return getRunningMode() == MODE_PLUGIN;}
+  bool isPluginMode();
   /// Return true if the code is running in remote mode.
-  inline bool isRemoteMode() { return getRunningMode() == MODE_REMOTE;}
+  bool isRemoteMode();
 
   /// Yield execution until next cycle. Process pending messages in remote mode.
   URBI_SDK_API void yield();
@@ -322,7 +323,7 @@ namespace urbi
     UObjectList members;
 
     /// The hub, if it exists.
-    UObjectHub  *objecthub;
+    UObjectHub *objecthub;
 
     /// Send a command to URBI.
     int send(const std::string& s);
