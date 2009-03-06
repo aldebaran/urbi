@@ -461,7 +461,7 @@ namespace urbi
     else                                                        \
       uvar_set(name, ::object_cast(urbi::UValue(t)));           \
   }                                                             \
-  UVar::operator T()                                            \
+  UVar::operator T() const                                      \
   {                                                             \
     ECHO("uvar cast operator for "<<name);                      \
     try {                                                       \
@@ -485,7 +485,7 @@ namespace urbi
   UVAR_OPERATORS(UImage, const UImage&);
 
   //no corresponding operator= for this one...
-  UVar::operator int()
+  UVar::operator int() const
   {
     return libport::numeric_cast<int>(static_cast<ufloat>(*this));
   }
