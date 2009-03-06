@@ -1,7 +1,7 @@
 /// \file urbi/uvar.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007, 2008 Gostai S.A.S.
+// Copyright (c) 2007, 2008, 2009 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -46,9 +46,9 @@ namespace urbi
     void init(const std::string&, const std::string&);
     void setOwned();
 
-    UDataType type () const;
+    UDataType type() const;
 
-    void syncValue ();
+    void syncValue();
 
     void reset (ufloat);
     void operator = (ufloat);
@@ -64,31 +64,31 @@ namespace urbi
 
     void operator = (const UValue &v);
 
-    operator int ();
-    operator bool ()  {return static_cast<int>(*this) != 0;}
+    operator int() const;
+    operator bool() const;
 
     /// Deep copy.
-    operator UBinary ();
+    operator UBinary() const;
 
     /// Deep copy, binary will have to be deleted by the user.
-    operator UBinary *();
+    operator UBinary*() const;
 
     /// In plugin mode, gives direct access to the buffer, which may
     /// not be valid after the calling function returns. Changes to
     /// the other fields of the structure have no effect..
-    operator UImage ();
+    operator UImage() const;
 
     /// In plugin mode, gives direct access to the buffer, which may
     /// not be valid after the calling function returns. Changes to
     /// the other fields of the structure have no effect..
-    operator USound();
+    operator USound() const;
 
-    operator ufloat ();
-    operator std::string ();
-    operator UList();
+    operator ufloat() const;
+    operator std::string() const;
+    operator UList() const;
 
     /// No effect in plugin mode. In remote mode, updates the value
-    /// once asynchronously..
+    /// once asynchronously.
     void requestValue();
 
     /// Kernel operators.
@@ -130,7 +130,7 @@ namespace urbi
     }
 
     /// Pointer to internal data specifics.
-    UVardata  *vardata;
+    UVardata* vardata;
     void __init();
 
 /// Define an attribute and its accessors.
@@ -159,8 +159,8 @@ namespace urbi
 
 # undef PRIVATE
 
-    // Check that the invariant of this class are verified.
-    bool invariant () const;
+    // Check that the invariants of this class are verified.
+    bool invariant() const;
   };
 
   /*-------------------------.
@@ -176,29 +176,11 @@ namespace urbi
   delta(*this, PROP_DELTA),			\
   blend(*this, PROP_BLEND)
 
-
-  inline
-  UVar::UVar()
-    : owned(false)
-    , VAR_PROP_INIT
-    , vardata(0)
-    , name("noname")
-  {}
-
-  inline
-  UVar::UVar(UVar&)
-    : owned(false)
-    , VAR_PROP_INIT
-    , vardata(0)
-    , name()
-  {
-    /// FIXME: This is really weird: a copy-ctor that does not use
-    /// the lhs?
-  }
-
 } // end namespace urbi
 
 /// Report \a u on \a o for debugging.
 std::ostream& operator<< (std::ostream& o, const urbi::UVar& u);
+
+# include <urbi/uvar.hxx>
 
 #endif // ! URBI_UVAR_HH

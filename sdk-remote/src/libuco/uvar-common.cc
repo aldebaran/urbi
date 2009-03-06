@@ -59,7 +59,7 @@ namespace urbi
   }
 
   bool
-  UVar::invariant () const
+  UVar::invariant() const
   {
     if (!vardata)
     {

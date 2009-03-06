@@ -110,7 +110,7 @@ namespace urbi
 
   //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
   void
-  UVar::setZombie ()
+  UVar::setZombie()
   {
     // no effect in remote mode.
   }
@@ -124,7 +124,7 @@ namespace urbi
 
   //! UVar reset  (deep assignement)
   void
-  UVar::reset (ufloat n)
+  UVar::reset(ufloat n)
   {
     *this = n;
   }
@@ -192,44 +192,44 @@ namespace urbi
   }
 
 
-  UVar::operator int ()
+  UVar::operator int() const
   {
     return (int) value;
   };
 
-  UVar::operator ufloat ()
+  UVar::operator ufloat() const
   {
     return (ufloat) value;
   };
 
 
-  UVar::operator std::string ()
+  UVar::operator std::string() const
   {
     return (std::string) value;
   };
 
 
-  UVar::operator UBinary()
+  UVar::operator UBinary() const
   {
     return value;
   };
 
-  UVar::operator UBinary*()
+  UVar::operator UBinary*() const
   {
     return new UBinary(value.operator UBinary());
   };
 
-  UVar::operator UImage()
+  UVar::operator UImage() const
   {
     return (UImage) value;
   };
 
-  UVar::operator USound()
+  UVar::operator USound() const
   {
     return (USound) value;
   };
 
-  UVar::operator UList()
+  UVar::operator UList() const
   {
     return (UList) value;
   };
@@ -268,7 +268,7 @@ namespace urbi
 
   //! Get Uvalue type
   UDataType
-  UVar::type () const
+  UVar::type() const
   {
     return value.type;
   }
@@ -278,22 +278,31 @@ namespace urbi
   {
     //build a getvalue message  that will be parsed and returned by the server
     URBI_SEND_PIPED_COMMAND(externalModuleTag << "<<"
-		      <<'[' << UEM_ASSIGNVALUE << ","
-		      << '"' << name << '"' << ',' << name << ']');
+                            <<'[' << UEM_ASSIGNVALUE << ","
+                            << '"' << name << '"' << ',' << name << ']');
   }
 
   void
-  UVar::syncValue ()
+  UVar::syncValue()
   {
-    USyncClient&	client = dynamic_cast<USyncClient&> (URBI(()));
-    UMessage*		m;
-    char		tag[32];
-
+    USyncClient& client = dynamic_cast<USyncClient&> (URBI(()));
+    char tag[32];
     client.makeUniqueTag(tag);
-    m = client.syncGetTag("{if (isdef (%s) && !isvoid (%s)) { %s<<%s } else { %s<<1/0 }};",
-                     tag, 0, name.c_str (), name.c_str (), tag, name.c_str (), tag);
+    UMessage* m =
+      client.syncGetTag("{"
+                        "  if (isdef (%s) && !isvoid (%s))"
+                        "  {"
+                        "    %s<<%s"
+                        "  }"
+                        "  else"
+                        "  {"
+                        "     %s<<1/0"
+                        "  }"
+                        "};",
+                        tag, 0, name.c_str(), name.c_str(),
+                        tag, name.c_str(), tag);
     if (m->type == MESSAGE_DATA)
-      __update (*m->value);
+      __update(*m->value);
   }
 
 } //namespace urbi
