@@ -4,6 +4,7 @@
 #include <sstream>
 #include <list>
 
+#include <libport/lexical-cast.hh>
 #include <libport/program-name.hh>
 
 #include <urbi/utimer-callback.hh>
@@ -14,24 +15,21 @@
 namespace urbi
 {
   UTimerCallback::UTimerCallback(const std::string& objname,
-				 ufloat period, UTimerTable& tt)
+				 ufloat period,
+                                 UTimerTable& tt)
     : period(period)
     , objname(objname)
   {
     tt.push_back(this);
     lastTimeCalled = -9999999;
-    std::ostringstream os;
-    os << "timer"<< tt.size();
-    //register oursselves as an event
-    std::string cbname = os.str();
 
+    // Register ourself as an event.
+    std::string cbname = "timer" + string_cast(tt.size());
+    std::string event = objname + "." + cbname;
     createUCallback(objname, "event", this, &UTimerCallback::call,
-		    objname + "." + cbname, eventmap(), false);
-    //new UCallbackvoid0<UTimerCallback> (objname, "event", this,
-    //				&UTimerCallback::call,
-    //				objname + '.' + cbname, eventmap);
+		    event, eventmap(), false);
     URBI_SEND_COMMAND("timer_" << objname << ": every(" << period << "ms)"
-                      "{ emit " << (objname + '.' + cbname) << ";}");
+                      "{ emit " << event << ";}");
   }
 
   UTimerCallback::~UTimerCallback()
