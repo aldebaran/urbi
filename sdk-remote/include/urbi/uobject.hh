@@ -114,6 +114,7 @@
   */
 # define URBI_SEND_PIPED_COMMAND(Args)          \
   URBI_SEND(Args << '|' << std::endl)
+
 namespace urbi
 {
 
@@ -249,7 +250,7 @@ namespace urbi
 		    TypeString, Name, Map, Owned,			\
 		    WithArg, StoreArg)					\
     template <class T>							\
-    void UNotify##Type (Notified, int (T::*fun) (Arg) Const)		\
+    void UNotify##Type(Notified, int (T::*fun) (Arg) Const)		\
     {									\
       UGenericCallback* cb =						\
 	createUCallback (__name, TypeString,				\
@@ -263,30 +264,30 @@ namespace urbi
     /// \internal
 # define MakeMetaNotifyArg(Type, Notified, TypeString, Map, Owned,	\
 			   Name, StoreArg)				\
-    MakeNotify (Type, Notified, /**/, /**/,   TypeString, Name,		\
-		Map, Owned, false, StoreArg);				\
-    MakeNotify (Type, Notified, /**/, const,  TypeString, Name,		\
-		Map, Owned, false, StoreArg);				\
-    MakeNotify (Type, Notified, UVar&, /**/,  TypeString, Name,		\
-		Map, Owned, true, StoreArg);				\
-    MakeNotify (Type, Notified, UVar&, const, TypeString, Name,		\
-		Map, Owned, true, StoreArg);
+    MakeNotify(Type, Notified, /**/, /**/,   TypeString, Name,		\
+               Map, Owned, false, StoreArg);				\
+    MakeNotify(Type, Notified, /**/, const,  TypeString, Name,		\
+               Map, Owned, false, StoreArg);				\
+    MakeNotify(Type, Notified, UVar&, /**/,  TypeString, Name,		\
+               Map, Owned, true, StoreArg);				\
+    MakeNotify(Type, Notified, UVar&, const, TypeString, Name,		\
+               Map, Owned, true, StoreArg);
 
     /// \internal
 # define MakeMetaNotify(Type, TypeString, Map)				\
-    MakeMetaNotifyArg (Type, UVar& v, TypeString,			\
-		       Map, v.owned, v.get_name (), &v);		\
-    MakeMetaNotifyArg (Type, const std::string& name, TypeString,	\
-		       Map, false, name, new UVar(name));
+    MakeMetaNotifyArg(Type, UVar& v, TypeString,			\
+                      Map, v.owned, v.get_name (), &v);                 \
+    MakeMetaNotifyArg(Type, const std::string& name, TypeString,	\
+                      Map, false, name, new UVar(name));
 
     /// \internal
-    MakeMetaNotify (Access, "varaccess", accessmap());
+    MakeMetaNotify(Access, "varaccess", accessmap());
 
     /// \internal
-    MakeMetaNotify (Change, "var", monitormap());
+    MakeMetaNotify(Change, "var", monitormap());
 
     /// \internal
-    MakeMetaNotify (OnRequest, "var_onrequest", monitormap());
+    MakeMetaNotify(OnRequest, "var_onrequest", monitormap());
 
 # undef MakeNotify
 # undef MakeMetaNotifyArg

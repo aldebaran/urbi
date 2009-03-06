@@ -5,6 +5,7 @@
 #include <list>
 
 #include <libport/program-name.hh>
+#include <libport/lexical-cast.hh>
 
 #include <urbi/ucallbacks.hh>
 #include <urbi/usyncclient.hh>
@@ -19,16 +20,13 @@ namespace urbi
 				     const std::string& type,
 				     const std::string& name,
 				     int size, UTable &, bool)
-    : objname (objname), name (name)
+    : objname(objname)
+    , name(name)
   {
     nbparam = size;
 
     if (type == "function" || type== "event" || type == "eventend")
-    {
-      std::ostringstream oss;
-      oss << size;
-      this->name += "__" + oss.str();
-    }
+      this->name += "__" + string_cast(size);
 
     std::cerr << libport::program_name()
 	      << ": Registering " << type << " " << name << " " << size
@@ -38,11 +36,11 @@ namespace urbi
 
     if (type == "var")
       URBI_SEND_PIPED_COMMAND("external " << type << " "
-			<< name << " from " << objname);
+                              << name << " from " << objname);
 
     if (type == "event" || type == "function")
       URBI_SEND_PIPED_COMMAND("external " << type << "(" << size << ") "
-			<< name << " from " << objname);
+                              << name << " from " << objname);
 
     if (type == "varaccess")
       echo("Warning: NotifyAccess facility is not available for modules in "

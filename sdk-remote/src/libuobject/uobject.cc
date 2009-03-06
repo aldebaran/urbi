@@ -167,11 +167,16 @@ namespace urbi
   }
 
   int
-  UObject::send (const std::string& s)
+  UObject::send(const std::string& s)
   {
     URBI(()) << s;
     return 0;
   }
+
+
+  /*-------------.
+  | UObjectHub.  |
+  `-------------*/
 
   UObjectHub::~UObjectHub()
   {
