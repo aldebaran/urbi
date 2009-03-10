@@ -4,7 +4,14 @@ UCONSOLE_CHECK_FLAGS = -k2
 
 TESTS_DIRS = 0.x 1.x 2.x demo uob
 
-URBI_SERVER = urbi-console$(EXEEXT)
+# Currently with Wine, we found no (simple) means to execute a Unix
+# process from a Windows process.  As a result, the urbi-console
+# native process fails to launch properly the urbi-launch wrapper.
+# Therefore, we now stop trying to use urbi-console in the test-suite
+# (at least in build, during installcheck we should use the binary)
+# and directly invoke urbi-launch.
+URBI_SERVER = urbi-launch$(EXEEXT) --start --
+
 # Run k2 tests only.
 k2-check:
 	$(MAKE) check TESTS_DIRS=2.x
