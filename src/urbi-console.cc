@@ -19,7 +19,7 @@
 #include <libport/unistd.h>
 
 ATTRIBUTE_NORETURN
-void
+static void
 exec(std::vector<const char*> args)
 {
   args.push_back(0);
