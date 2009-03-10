@@ -95,8 +95,8 @@ bin_PROGRAMS += urbi-console
 
 urbi_console_SOURCES = urbi-console.cc
 urbi_console_LDADD =				\
-  libuobject.la					\
-  $(libuobject_la_LIBADD)
+  $(LIBPORT_LIBS)
+
 dist_libuobject_la_SOURCES +=			\
   console-server.cc				\
   lib/network/bsdnet/connection.hh		\
