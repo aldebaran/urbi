@@ -1,6 +1,7 @@
 #include <string>
 #include <cassert>
 #include <cstdarg>
+#include <libport/cstdlib>
 #include <iostream>
 #include <stdexcept>
 
@@ -216,8 +217,7 @@ main(int argc, char* argv[])
 {
   libport::program_initialize(argc, argv);
   unsigned verbosity = 0;
-  const char* urbi_root = getenv("URBI_ROOT");
-  libport::path prefix(urbi_root ? urbi_root : URBI_ROOT);
+  libport::path urbi_root = libport::xgetenv("URBI_ROOT", URBI_ROOT);
 
   enum ConnectMode
   {
@@ -298,7 +298,7 @@ main(int argc, char* argv[])
     return connect_plugin(host, port, modules);
 
   if (dll.empty())
-    dll = prefix / "gostai" / "core" / URBI_HOST /
+    dll = urbi_root / "gostai" / "core" / URBI_HOST /
       (connect_mode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
 
   /* The two other modes are handled the same way:
