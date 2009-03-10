@@ -12,8 +12,13 @@ esac
 : ${abs_top_builddir='@abs_top_builddir@'}
 : ${program=$abs_top_builddir/src/urbi-launch$EXEEXT}
 
+debug ()
+{
+    test -n "$VERBOSE" && echo "$@" 1>&2 || true
+}
+
 # The libubbject we load depends on the usage.
-echo >&2 "$0: $*"
+debug "$0: $*"
 case " $* " in
   (*' --start '*)
      # Spawning a new server, which requires a server.  Two cases:
@@ -45,7 +50,7 @@ if test -n "$libuobjectdir"; then
   shift
 fi
 
-echo >&2 "wrapper: $program $*"
+debug "wrapper: $program $*"
 exec "$program" "$@"
 
 # Local Variables:
