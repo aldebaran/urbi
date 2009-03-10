@@ -1,6 +1,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
+#include <libport/option-parser.hh>
 #include <libport/unistd.h>
 #include <libport/sysexits.hh>
 #include <libport/windows.hh>
@@ -89,29 +90,19 @@ namespace
 {
   static
   void
-  usage()
+  help(libport::OptionParser& parser)
   {
-    boost::format fmt(
-      "usage: %s [OPTION].. PROGRAM_FILE ARGS...\n"
-      "\n"
-      "  PROGRAM_FILE   Urbi script to load.  `-' stands for standard input\n"
-      "  ARGS           user arguments passed to PROGRAM_FILE\n"
-      "\n"
-      "Options:\n"
-      "  -h, --help               display this message and exit successfully\n"
-      "  -v, --version            display version information\n"
-      "  -P, --period PERIOD      ignored for backward compatibility\n"
-      "  -H, --host HOST          the address to listen on (default: all)\n"
-      "  -p, --port PORT          TCP port to listen to\n"
-      "  -n, --no-network         disable networking\n"
-      "  -e, --expression SCRIPT  run SCRIPT\n"
-      "  -F, --fast               ignore system time, go as fast as possible\n"
-      "  -f, --file=FILE          load FILE\n"
-      "  -i, --interactive        read and parse stdin in a nonblocking way\n"
-      "  -s, --stack-size=SIZE    set the job stack size in KB\n"
-      "  -w, --port-file FILE     write port number to specified file.\n");
-
-    throw urbi::Exit(EX_OK, str(fmt % program_name()));
+    std::stringstream output;
+    output << "usage: " << libport::program_name()
+           << " [OPTIONS] [PROGRAM_FILE] [ARGS...]" << std::endl
+           << std::endl
+           << "  PROGRAM_FILE   Urbi script to load."
+           << "  `-' stands for standard input" << std::endl
+           << "  ARGS           user arguments passed to PROGRAM_FILE"  << std::endl
+           << std::endl
+           << "OPTIONS:" << std::endl;
+    parser.options_doc(output);
+    throw urbi::Exit(EX_OK, output.str());
   }
 
   static
@@ -121,6 +112,17 @@ namespace
     std::stringstream dump;
     kernel::userver_package_info_dump(dump) << std::endl;
     throw urbi::Exit(EX_OK, dump.str());
+  }
+
+  static
+  void
+  forbid_option(const std::string& arg)
+  {
+    if (arg.size() > 1 && arg[0] == '-')
+    {
+      boost::format fmt("%s: unrecognized command line option: %s");
+      throw urbi::Exit(EX_USAGE, str(fmt % libport::program_name() % arg));
+    }
   }
 }
 
@@ -176,13 +178,13 @@ namespace urbi
   };
 
   URBI_SDK_API int
-  main(const libport::cli_args_type& args, bool block, bool errors)
+  main(const libport::cli_args_type& _args, bool block, bool errors)
   {
     if (errors)
     {
       try
       {
-        return main(args, block);
+        return main(_args, block);
       }
       catch (const urbi::Exit& e)
       {
@@ -191,79 +193,83 @@ namespace urbi
       }
     }
 
+    libport::cli_args_type args = _args;
+
+    object::system_set_program_name(args[0]);
+    args.erase(args.begin());
+
     // Input files.
     typedef std::vector<Input> input_type;
     input_type input;
-    /// The IP to bind. "" means every interface.
-    std::string arg_host;
-    /// The port to use.  0 means automatic selection.
-    int arg_port = 0;
-    /// Where to write the port we use.
-    std::string arg_port_filename;
     /// The size of the stacks.
     size_t arg_stack_size = 0;
-    /// The log verbosity level.
-    unsigned arg_verbosity = 0;
 
     // Parse the command line.
     LoopData data;
-    unsigned i;
-    for (i = 1; i < args.size(); ++i)
-    {
-      const std::string& arg = args[i];
 
-      if (arg == "--debug")
-        arg_verbosity = libport::convert_argument<unsigned> (args, i++);
-      else if (arg == "--fast" || arg == "-F")
-        data.fast = true;
-      else if (arg == "--expression" || arg == "-e")
-        input.push_back(
-          Input(false,
-                libport::convert_argument<std::string>(args, i++)));
-      else if (arg == "--file" || arg == "-f")
-        input.push_back(
-          Input(true,
-                convert_input_file(
-                  libport::convert_argument<std::string>(args, i++))));
-      else if (arg == "--help" || arg == "-h")
-        usage();
-      else if (arg == "--host" || arg == "-H")
-        arg_host = libport::convert_argument<std::string>(args, i++);
-      else if (arg == "--interactive" || arg == "-i")
-        data.interactive = true;
-      else if (arg == "--no-network" || arg == "-n")
-        data.network = false;
-      else if (arg == "--period" || arg == "-P")
-        (void) libport::convert_argument<int> (args, i++);
-      else if (arg == "--port" || arg == "-p")
-        arg_port = libport::convert_argument<int> (args, i++);
-      else if (arg == "--port-file" || arg == "-w")
-        arg_port_filename =
-          libport::convert_argument<std::string>(args, i++);
-      else if (arg == "--stack-size" || arg == "-s")
-        arg_stack_size = libport::convert_argument<size_t> (args, i++);
-      else if (arg == "--version" || arg == "-v")
-        version();
-      else if (arg[0] == '-' && arg[1] != 0)
-        libport::invalid_option(arg);
-      else
+    libport::OptionValue  arg_dbg        ("", "debug");
+    libport::OptionValues arg_exps       ("run expression", "expression", 'e');
+    libport::OptionFlag   arg_fast       ("ignore system time, go as fast as possible", "fast", 'F');
+    libport::OptionValues arg_files      ("load file", "file", 'f');
+    libport::OptionFlag   arg_help       ("display this message and exit successfully", "help", 'h');
+    libport::OptionValue  arg_host       ("the address to listen on (default: all)", "host", 'H');
+    libport::OptionFlag   arg_interactive("read and parse stdin in a nonblocking way", "interactive", 'i');
+    libport::OptionFlag   arg_no_net     ("disable networking", "no-network", 'n');
+    libport::OptionValue  arg_period     ("ignored for backward compatibility", "period", 'P');
+    libport::OptionValue  arg_port       ("TCP port to listen to", "port", 'p');
+    libport::OptionValue  arg_port_file  ("write port number to the specified file.", "port-file", 'w');
+    libport::OptionValue  arg_stack      ("set the job stack size in KB", "stack-size", 's');
+    libport::OptionFlag   arg_ver        ("display version information", "version", 'v');
+
+    {
+      libport::OptionParser parser;
+      parser << arg_dbg << arg_exps << arg_fast << arg_files << arg_help
+             << arg_host << arg_interactive << arg_no_net << arg_period
+             << arg_port << arg_port_file << arg_stack << arg_ver;
+
+      try
       {
-        // Unrecognized option. This is a script file, followed by user args.
-        object::system_set_program_name(arg);
-        input.push_back(Input(true, convert_input_file(arg)));
+        args = parser(args);
+      }
+      catch (libport::Error& e)
+      {
+        boost::format fmt("%s: command line error: %s");
+        throw Exit(EX_USAGE, str(fmt % libport::program_name() % e.what()));
+      }
+
+      if (arg_help.get())
+        help(parser);
+      if (arg_ver.get())
+        version();
+      data.interactive = arg_interactive.get();
+      data.fast = arg_fast.get();
+      data.network = !arg_no_net.get();
+      foreach (const std::string& exp, arg_exps.get())
+        input.push_back(Input(false, exp));
+      foreach (const std::string& file, arg_files.get())
+        input.push_back(Input(true, convert_input_file(file)));
+      arg_stack_size = arg_stack.get<size_t>(static_cast<size_t>(0));
+
+      // Unrecognized options. These are a script file, followed by user args.
+      if (!args.empty())
+      {
+        forbid_option(args[0]);
+        input.push_back(Input(true, convert_input_file(args[0])));
         // Anything left is user argument
-        for (++i; i < args.size(); ++i)
-          object::system_push_argument(args[i]);
-        break;
+        for (unsigned i = 1; i < args.size(); ++i)
+        {
+          std::string arg = args[i];
+          forbid_option(arg);
+          object::system_push_argument(arg);
+        }
       }
     }
 
     // Libtool traces.
-    lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) arg_verbosity);
+    lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) arg_dbg.get<int>(0));
 
     // If not defined in command line, use the envvar.
-    if (!arg_stack_size
-        && getenv("URBI_STACK_SIZE"))
+    if (!arg_stack.filled() && getenv("URBI_STACK_SIZE"))
       arg_stack_size = libport::convert_envvar<size_t> ("URBI_STACK_SIZE");
 
     if (arg_stack_size)
@@ -280,25 +286,29 @@ namespace urbi
     data.server = new ConsoleServer(data.fast);
     ConsoleServer& s = *data.server;
     int port = 0;
-    if (data.network
-        && !(port = Network::createTCPServer(arg_port, arg_host)))
+    if (data.network)
     {
-      boost::format fmt("%s: cannot bind to port %s");
-      std::string message = str(fmt % program_name() % arg_port);
-      if (!arg_host.empty())
+      int desired_port = arg_port.get<int>(0);
+      std::string host = arg_host.value("");
+      port = Network::createTCPServer(desired_port, host);
+      if (!port)
       {
-        boost::format fmt(" on %s");
-        message += str(fmt % arg_host);
+        boost::format fmt("%s: cannot bind to port %s");
+        std::string message = str(fmt % program_name() % desired_port);
+        if (arg_host.filled())
+        {
+          boost::format fmt(" on %s");
+          message += str(fmt % arg_host.value());
+        }
+        throw urbi::Exit(EX_UNAVAILABLE, message);
       }
-      throw urbi::Exit(EX_UNAVAILABLE, message);
     }
-
     s.initialize(data.interactive);
 
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
-    if (!arg_port_filename.empty())
-      std::ofstream(arg_port_filename.c_str(), std::ios::out)
+    if (arg_port_file.filled())
+      std::ofstream(arg_port_file.value().c_str(), std::ios::out)
         << port << std::endl;
 
     kernel::UConnection& c = s.ghost_connection_get();
