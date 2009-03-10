@@ -48,6 +48,3 @@ TO_CHECK_TESTS =				\
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
 2.x/uob/group.chk
-
-XFAIL_TESTS +=					\
-1.x/modifiers/sinus.chk
