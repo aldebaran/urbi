@@ -47,7 +47,6 @@ TO_CHECK_TESTS =				\
 
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
-1.x/new-init.chk				\
 2.x/uob/group.chk
 
 XFAIL_TESTS +=					\

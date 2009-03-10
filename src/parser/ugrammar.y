@@ -1178,7 +1178,7 @@ exp:
 %token <libport::Symbol> NEW "new";
 %type <ast::rExp> new;
 new:
-  "new" "identifier" args
+  "new" "identifier" args.opt
   {
     // Compiled as "id . new (args)".
     $$ = ast_call(@$, ast_call(@$, $2), SYMBOL(new), $3);
@@ -1488,7 +1488,7 @@ exp:
 | Expressions.  |
 `--------------*/
 
-%type <exps_pointer> exps exps.1 args;
+%type <exps_pointer> exps exps.1 args args.opt;
 
 exps:
   /* empty */ { $$ = new ast::exps_type; }
@@ -1505,6 +1505,10 @@ args:
   "(" exps ")"  { std::swap($$, $2); }
 ;
 
+args.opt:
+  /* empty */  { $$ = new ast::exps_type; }
+| args         { std::swap($$, $1); }
+;
 
 /*------------.
 | Soft test.  |
