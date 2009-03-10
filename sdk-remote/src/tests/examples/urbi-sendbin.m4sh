@@ -55,7 +55,7 @@ cat >send-me.u <<EOF
 0123456789
 EOF
 
-cmd="$valgrind urbi-sendbin$EXEEXT --port $(cat server.port)"
+cmd="$valgrind urbi-sendbin$EXEEXT --port-file server.port"
 cmd+=" 'var Global.Pass' send-me.u 'my headers'"
 cmd+=" --quit"
 echo "$cmd" >client.cmd
@@ -63,4 +63,3 @@ eval "$cmd" >client.out 2>client.err &
 children_register client
 
 children_wait 10
-

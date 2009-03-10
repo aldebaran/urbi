@@ -17,7 +17,7 @@ m4sh_scripts += examples/urbi-sendbin
 
 examples/urbi-sendbin.log: examples/urbi-sendbin
 	@$(am__check_pre) $${dir}$< $(am__check_post)
-EXAMPLES_TESTS += examples/urbi-sendbin
+#EXAMPLES_TESTS += examples/urbi-sendbin
 
 # Does not work, I don't know why :(
-TFAIL_TESTS +=  examples/urbi-sendbin
+#TFAIL_TESTS +=  examples/urbi-sendbin

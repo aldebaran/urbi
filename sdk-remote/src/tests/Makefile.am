@@ -37,7 +37,7 @@ bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
 
 # By default, instrument the code.
 INSTRUMENT = true
-URBI_SERVER = urbi-console$(EXEEXT)
+URBI_SERVER = urbi-launch$(EXEEXT) --start --
 
 ## ------------------- ##
 ## Tests environment.  ##
@@ -47,12 +47,10 @@ CHECK_ENVIRONMENT +=				\
   srcdir='$(srcdir)'				\
   INSTRUMENT=$(INSTRUMENT)			\
   PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
-  URBI_SERVER=$(URBI_SERVER)
+  URBI_SERVER='$(URBI_SERVER)'
 
-# Find (i) our wrappers, (ii) the non-installed kernel if there is one
-# (in the case of an SDK-Remote inside a Kernel pacakge), (iii) the
-# examples programs.
-BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/../tests/bin:$(abs_top_builddir)/src/examples
+# Find (i) our wrappers, (ii) the examples programs.
+BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/src/examples
 
 # Use the wrappers to run the non-installed executables.
 BUILDCHECK_ENVIRONMENT +=			\
