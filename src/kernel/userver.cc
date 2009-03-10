@@ -4,7 +4,7 @@
 #include <cassert>
 #include <libport/compiler.hh>
 #include <libport/csignal>
-#include <cstdlib>
+#include <libport/cstdlib>
 
 #include <fstream>
 #include <string>
@@ -68,17 +68,6 @@ namespace kernel
   // Global server reference
   UServer *urbiserver = 0;
 
-  namespace
-  {
-    static
-    std::string
-    xgetenv(const char* c, const char* deflt = "")
-    {
-      const char* res = getenv(c);
-      return res ? res : deflt;
-    }
-  }
-
   // Buffers used to output data.
   /// Used by echo() & error().
   // FIXME: Because of this stupid hard limit, we can't produce
@@ -91,8 +80,9 @@ namespace kernel
 
   UServer::UServer(const char* mainName)
     : search_path(boost::assign::list_of
-                  (xgetenv("URBI_PATH"))
-                  (xgetenv("URBI_ROOT", URBI_ROOT) + "/share/gostai"),
+                  (std::string(libport::xgetenv("URBI_PATH")))
+                  (std::string(libport::xgetenv("URBI_ROOT", URBI_ROOT))
+                   + "/share/gostai"),
                   ":")
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                   boost::ref(*this))))
