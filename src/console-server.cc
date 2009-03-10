@@ -210,22 +210,17 @@ namespace urbi
     libport::OptionValue  arg_dbg        ("", "debug");
     libport::OptionValues arg_exps       ("run expression", "expression", 'e');
     libport::OptionFlag   arg_fast       ("ignore system time, go as fast as possible", "fast", 'F');
-    libport::OptionValues arg_files      ("load file", "file", 'f');
-    libport::OptionFlag   arg_help       ("display this message and exit successfully", "help", 'h');
-    libport::OptionValue  arg_host       ("the address to listen on (default: all)", "host", 'H');
     libport::OptionFlag   arg_interactive("read and parse stdin in a nonblocking way", "interactive", 'i');
     libport::OptionFlag   arg_no_net     ("disable networking", "no-network", 'n');
     libport::OptionValue  arg_period     ("ignored for backward compatibility", "period", 'P');
-    libport::OptionValue  arg_port       ("TCP port to listen to", "port", 'p');
     libport::OptionValue  arg_port_file  ("write port number to the specified file.", "port-file", 'w');
     libport::OptionValue  arg_stack      ("set the job stack size in KB", "stack-size", 's');
-    libport::OptionFlag   arg_ver        ("display version information", "version", 'v');
 
     {
       libport::OptionParser parser;
-      parser << arg_dbg << arg_exps << arg_fast << arg_files << arg_help
-             << arg_host << arg_interactive << arg_no_net << arg_period
-             << arg_port << arg_port_file << arg_stack << arg_ver;
+      parser << arg_dbg << arg_exps << arg_fast << libport::opts::files << libport::opts::help
+             << libport::opts::host_l << arg_interactive << arg_no_net << arg_period
+             << libport::opts::port_l << arg_port_file << arg_stack << libport::opts::version;
 
       try
       {
@@ -237,16 +232,16 @@ namespace urbi
         throw Exit(EX_USAGE, str(fmt % libport::program_name() % e.what()));
       }
 
-      if (arg_help.get())
+      if (libport::opts::help.get())
         help(parser);
-      if (arg_ver.get())
+      if (libport::opts::version.get())
         version();
       data.interactive = arg_interactive.get();
       data.fast = arg_fast.get();
       data.network = !arg_no_net.get();
       foreach (const std::string& exp, arg_exps.get())
         input.push_back(Input(false, exp));
-      foreach (const std::string& file, arg_files.get())
+      foreach (const std::string& file, libport::opts::files.get())
         input.push_back(Input(true, convert_input_file(file)));
       arg_stack_size = arg_stack.get<size_t>(static_cast<size_t>(0));
 
@@ -288,17 +283,17 @@ namespace urbi
     int port = 0;
     if (data.network)
     {
-      int desired_port = arg_port.get<int>(0);
-      std::string host = arg_host.value("");
+      int desired_port = libport::opts::port_l.get<int>(0);
+      std::string host = libport::opts::host_l.value("");
       port = Network::createTCPServer(desired_port, host);
       if (!port)
       {
         boost::format fmt("%s: cannot bind to port %s");
         std::string message = str(fmt % program_name() % desired_port);
-        if (arg_host.filled())
+        if (libport::opts::host_l.filled())
         {
           boost::format fmt(" on %s");
-          message += str(fmt % arg_host.value());
+          message += str(fmt % libport::opts::host_l.value());
         }
         throw urbi::Exit(EX_UNAVAILABLE, message);
       }
