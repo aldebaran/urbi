@@ -134,16 +134,17 @@ CLEANFILES += $(STAMPS)
 # # The name that we can dlopen(3).
 # dlname='../bin/libuobject.dll'
 #
-# and dlopen fails.  Note that "../bin" is useless, we just got out
-# of bin, and enter again.  If we remove this indirection, everything
-# works.  If we remove the la file, ltdl find the *.dll file and again,
-# it works.  It seems that fixing the *.la file will be trick, and it
-# has been reported several times that installing *.la files makes no
-# sense.  Yet, I (Akim), am a bit worried of getting rid of the *.la
-# files, they can be useful later.
-#
-# In which case it will be simple to resurect them.
-#
-# First try simple things.  Get rid of *.la files.
+# and dlopen fails.  Note that "../bin" is useless, we just got out of
+# bin, and enter again.  If we remove this indirection, everything
+# works.  If we remove the la file, ltdl finds the *.dll file and
+# again, it works.  It has been reported several times that installing
+# *.la files makes no sense.  Yet, I (Akim), am a bit worried of
+# getting rid of the *.la files, they can be useful later.  Besides,
+# if we remove them, libtool is unable to uninstall the libraries,
+# which results in distcheck failures.
 install-exec-hook:
-	-find $(DESTDIR)$(libdir) -name '*.la' | xargs rm -rf
+	-case $(URBI_HOST) in					\
+	  (*mingw*)						\
+	    find $(DESTDIR)$(libdir) -name '*.la' | xargs	\
+	      perl -pi -e "s{^dlname='.*/}{dlname='}g";;	\
+	esac
