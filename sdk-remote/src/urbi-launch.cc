@@ -55,8 +55,7 @@ namespace
       if (global ? lt_dladvise_global(&advise) : lt_dladvise_local(&advise))
         std::cerr << program_name() << ": failed to set dladvise to "
                   << (global ? "global" : "local")
-                  << ": "
-                  << lt_dlerror() << std::endl
+                  << ": " << lt_dlerror() << std::endl
                   << libport::exit(1);
       return *this;
     }
