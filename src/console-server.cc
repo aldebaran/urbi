@@ -261,7 +261,8 @@ namespace urbi
     }
 
     // Libtool traces.
-    lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) arg_dbg.get<int>(0));
+    lt_dladd_log_function((lt_dllog_function*) &ltdebug,
+                          (void*) arg_dbg.get<int>(0));
 
     // If not defined in command line, use the envvar.
     if (!arg_stack.filled() && getenv("URBI_STACK_SIZE"))
