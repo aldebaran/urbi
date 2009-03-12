@@ -124,11 +124,11 @@ namespace runner
   }
 
   void
-  Interpreter::work ()
+  Interpreter::work()
   {
     try
     {
-      assert (ast_ || code_);
+      assert(ast_ || code_);
       check_for_pending_exception();
       if (ast_)
 	result_ = operator()(ast_.get());
@@ -147,9 +147,9 @@ namespace runner
       else
       // This is a detached runner, show the error.
       {
-        // Yielding inside a catch is forbidden
-        Finally finally (boost::bind(&Runner::non_interruptible_set,
-                                     this, non_interruptible_get()));
+        // Yielding inside a catch is forbidden.
+        Finally finally(boost::bind(&Runner::non_interruptible_set,
+                                    this, non_interruptible_get()));
         non_interruptible_set(true);
         show_exception_(exn);
       }
@@ -219,24 +219,22 @@ namespace runner
       //     clean syntax for tags
       //   - we have no way to know whether the lookup error arrived
       //     in a function call or during the direct resolution of
-      //     the name
+      //     the name.
 
-      // Tag represents the top level tag
+      // `Tags' represents the top level tag.
       CAPTURE_GLOBAL(Tags);
-      const rObject& toplevel = Tags;
-      rObject parent = toplevel;
+      rObject parent = Tags;
       rObject where = stacks_.self();
       tag_chain_type chain = decompose_tag_chain(e);
       rforeach (const libport::Symbol& elt, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-	if (const rObject& owner = where->slot_locate (elt))
+	if (const rObject& owner = where->slot_locate(elt))
         {
           ECHO("Component " << elt << " exists.");
-	  where = owner->own_slot_get (elt);
-	  object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get());
-	  if (parent_)
+	  where = owner->own_slot_get(elt);
+	  if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
 	  {
             ECHO("It is a tag, so use it as the new parent.");
 	    parent = parent_;
