@@ -68,7 +68,7 @@ libs:
 
 # The target run by the buildfarm.
 .PHONY: check-buildfarm check-sdk-uobjects-buildfarm
-CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
+CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENT=1
 check-buildfarm:
 	-$(build_aux_dir)/semaphore-clean.sh
 	$(MAKE) $(AM_MAKEFLAGS) -C tests check-html $(CHECK_BUILDFARM_FLAGS)
