@@ -121,30 +121,3 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 stamps: $(STAMPS)
 noinst_DATA = $(STAMPS)
 CLEANFILES += $(STAMPS)
-
-
-## ---------------------------------- ##
-## Workaround libtool under windows.  ##
-## ---------------------------------- ##
-
-# Our trick, defining libdir = ${bindir} so that under Windows the
-# dlls are found where expected, does not work perfectly.  In
-# particular libtool might issue an *.la containing:
-#
-# # The name that we can dlopen(3).
-# dlname='../bin/libuobject.dll'
-#
-# and dlopen fails.  Note that "../bin" is useless, we just got out of
-# bin, and enter again.  If we remove this indirection, everything
-# works.  If we remove the la file, ltdl finds the *.dll file and
-# again, it works.  It has been reported several times that installing
-# *.la files makes no sense.  Yet, I (Akim), am a bit worried of
-# getting rid of the *.la files, they can be useful later.  Besides,
-# if we remove them, libtool is unable to uninstall the libraries,
-# which results in distcheck failures.
-install-exec-hook:
-	-case $(URBI_HOST) in					\
-	  (*mingw*)						\
-	    find $(DESTDIR)$(libdir) -name '*.la' | xargs	\
-	      perl -pi -e "s{^dlname='.*/}{dlname='}g";;	\
-	esac
