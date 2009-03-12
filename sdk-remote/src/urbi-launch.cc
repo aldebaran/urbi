@@ -19,6 +19,7 @@
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>
 #include <libport/windows.hh>
+#include <libport/option-parser.hh>
 
 #include <urbi/exit.hh>
 #include <urbi/package-info.hh>
@@ -145,26 +146,15 @@ connect_plugin(const std::string& host, int port, const modules_type& modules)
 }
 
 static void
-usage()
+usage(libport::OptionParser& parser)
 {
   std::cout <<
-    "usage: " << program_name() << " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
+    "usage: " << program_name() <<
+    " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
     "Start an UObject in either remote or plugin mode.\n"
-    "\n"
-    "Urbi-Launch options:\n"
-    "  -h, --help         display this message and exit\n"
-    "  -v, --version      display version information and exit\n"
-    "  -c, --custom FILE  start using the shared library FILE\n"
-    "\n"
-    "Mode selection:\n"
-    "  -p, --plugin       start as a plugin uobject on a running server\n"
-    "  -r, --remote       start as a remote uobject\n"
-    "  -s, --start        start an urbi server and connect as plugin\n"
-    "\n"
-    "Urbi-Launch options for plugin mode:\n"
-    "  -H, --host HOST       server host name\n"
-    "  -P, --port PORT       server port\n"
-    "      --port-file FILE  file containing the port to listen to\n"
+    "\n";
+  parser.options_doc(std::cout);
+  std::cout <<
     "\n"
     "MODULE_NAMES is a list of modules.\n"
     "UOPTIONS are passed to urbi::main in remote and start modes.\n"
@@ -240,59 +230,68 @@ main(int argc, char* argv[])
 
   // The options passed to urbi::main.
   libport::cli_args_type args;
+  libport::cli_args_type args4modules;
   args << argv[0];
 
-  // Parse the command line.
-  for (int i = 1; i < argc; ++i)
-  {
-    std::string arg = argv[i];
+  libport::OptionValue
+    arg_custom("start using the shared library FILE", "custom", 'c'),
+    arg_debug("increase verbosity for debug", "debug"),
+    arg_pfile("file containing the port to listen to", "port-file");
+  libport::OptionFlag
+    arg_plugin("start as a plugin uobject on a running server", "plugin", 'p'),
+    arg_remote("start as a remote uobject", "remote", 'r'),
+    arg_start("start an urbi server and connect as plugin", "start", 's');
+  libport::OptionsEnd arg_end;
 
-    if (arg == "--custom" || arg == "-c")
-      dll = libport::convert_argument<std::string> (arg, argv[++i]);
-    else if (arg == "--debug")
-      verbosity = libport::convert_argument<unsigned> (arg, argv[++i]);
-    else if (arg == "--help" || arg == "-h")
-      usage();
-    else if (arg == "--host" || arg == "-H")
-    {
-      host = libport::convert_argument<std::string>(arg, argv[i+1]);
-      args << argv[i] << argv[i+1];
-      ++i;
-    }
-    else if (arg == "--plugin" || arg == "-p")
-      connect_mode = MODE_PLUGIN_LOAD;
-    else if (arg == "--port" || arg == "-P")
-    {
-      port = libport::convert_argument<int> (arg, argv[i+1]);
-      args << argv[i] << argv[i+1];
-      ++i;
-    }
-    else if (arg == "--port-file")
-    {
-      port =
-        (libport::file_contents_get<int>
-         (libport::convert_argument<const char*>(arg, argv[i+1])));
-      args << argv[i] << argv[i+1];
-      ++i;
-    }
-    else if (arg == "--remote" || arg == "-r")
-      connect_mode = MODE_REMOTE;
-    else if (arg == "--start" || arg == "-s")
-      connect_mode = MODE_PLUGIN_START;
-    else if (arg == "--version" || arg == "-v")
-      version();
-    else if (arg == "--")
-    {
-      for (int j = i + 1; j < argc; ++j)
-        args << argv[j];
-      break;
-    }
-    else if (arg[0] == '-' && arg[1] != 0)
-      libport::invalid_option(arg);
-    else
-      // An argument: a module
-      modules << absolute(arg);
+  libport::OptionParser opt_parser;
+  opt_parser << arg_custom << arg_debug << libport::opts::help << arg_end
+	     << libport::opts::host << arg_plugin << libport::opts::port
+	     << arg_pfile << arg_remote << arg_start << libport::opts::version;
+
+  try
+  {
+    args4modules = opt_parser(libport::program_arguments());
   }
+  catch (libport::Error& e)
+  {
+    const libport::Error::errors_type& err = e.errors();
+    foreach (std::string wrong_arg, err)
+      libport::invalid_option(wrong_arg);
+  }
+  foreach (std::string& mod_arg, args4modules)
+    modules << absolute(mod_arg);
+
+  if (libport::opts::version.get())
+    version();
+  if (libport::opts::help.get())
+    usage(opt_parser);
+  if (arg_custom.filled())
+    dll = arg_custom.value();
+  if (arg_debug.filled())
+    verbosity = arg_debug.get<unsigned>(1);
+  if (libport::opts::host.filled())
+  {
+    host = libport::opts::host.value();
+    args << "--host" << host;
+  }
+  if (arg_plugin.get())
+    connect_mode = MODE_PLUGIN_LOAD;
+  if (libport::opts::port.filled())
+  {
+    port = libport::opts::port.get<int>();
+    args << "--port" << libport::opts::port.value();
+  }
+  if (arg_pfile.filled())
+  {
+    std::string my_arg = arg_pfile.value();
+    port = libport::file_contents_get<int>(my_arg);
+    args << "--port-file" << my_arg;
+  }
+  if (arg_remote.get())
+    connect_mode = MODE_REMOTE;
+  if (arg_start.get())
+    connect_mode = MODE_PLUGIN_START;
+  args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
   if (connect_mode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
