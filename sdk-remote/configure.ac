@@ -144,7 +144,7 @@ case $enable_programs in
 esac
 
 # Let libjpeg use the same libdir as us.
-ac_configure_args+=" libdir='${bindir}'"
+ac_configure_args+=" libdir='${libdir}'"
 AC_CONFIG_SUBDIRS([jpeg])
 
 
