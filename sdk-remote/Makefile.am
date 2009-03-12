@@ -17,6 +17,9 @@ SUBDIRS =					\
   src						\
   doc
 
+# Also fix libjpeg.la.
+LTLIBRARIES_TO_FIX += jpeg/libjpeg.la
+
 # Work around a problem in Automake that needs to the be tracked.
 BUILT_SOURCES +=				\
   $(top_srcdir)/sdk/config.h.in			\
