@@ -222,12 +222,6 @@ namespace kernel
     /// Stops all commands in all connections.
     bool stopall;
 
-    enum
-    {
-      /// Urbi TCP Port.
-      TCP_PORT = 54000,
-    };
-
   private:
     /// Store the time on the last call to updateTime().
     libport::utime_t lastTime_;
