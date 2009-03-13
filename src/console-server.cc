@@ -217,9 +217,19 @@ namespace urbi
 
     {
       libport::OptionParser parser;
-      parser << arg_dbg << arg_exps << arg_fast << libport::opts::files << libport::opts::help
-             << libport::opts::host_l << arg_interactive << arg_no_net << arg_period
-             << libport::opts::port_l << arg_port_file << arg_stack << libport::opts::version;
+      parser << arg_dbg
+             << arg_exps
+             << arg_fast
+             << libport::opts::files
+             << libport::opts::help
+             << libport::opts::host_l
+             << arg_interactive
+             << arg_no_net
+             << arg_period
+             << libport::opts::port_l
+             << arg_port_file
+             << arg_stack
+             << libport::opts::version;
 
       try
       {
@@ -308,8 +318,7 @@ namespace urbi
 
     kernel::UConnection& c = s.ghost_connection_get();
 #ifdef ENABLE_DEBUG_TRACES
-    std::cerr << program_name()
-              << ": got ghost connection" << std::endl;
+    std::cerr << program_name() << ": got ghost connection" << std::endl;
 #endif
 
     foreach (const Input& i, input)
