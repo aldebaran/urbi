@@ -50,6 +50,126 @@ Its main features are:
 
 \chapter{Getting started}
 
+\us comes with a set of tools, two of which being of particular
+importance:
+\begin{description}
+\item[urbi-console] launches an \urbi server.  There are several means
+  to interact with this server, which will see later.
+\item[urbi-launch] runs \urbi components, the UObjects, and connects
+  them to an \urbi server.
+\end{description}
+
+Please, first make sure that these tools are properly installed.
+
+\begin{shell}
+# Make sure urbi-console is properly installed.
+$ urbi-console --version
+Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+Copyright (C) 2005-2009 Gostai SAS.
+
+URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+Copyright (C) 2004-2009 Gostai SAS.
+
+Libport version preview/1.0/beta1-1048 rev. f1c5170
+Copyright (C) 2005-2009 Gostai SAS.
+\end{shell}%$
+
+
+There are several means to interact with a server spawned by
+\command{urbi-console}.  First of all, you may use the options
+\option{-e}/\option{--expression \var{code}} and
+\option{-f}/\option{--file \var{file}} to send some \var{code} or the
+contents of some \var{file} to the newly run server.  You may combine
+any number of these options, but beware that being event-driven, the
+server does not ``know'' when a program ends.  Therefore, batch
+programs should end by calling \code{shutdown}:
+
+\begin{shell}
+# A classical program.
+$ urbi-console -e 'echo("Hello, World!");' -e 'shutdown;'
+[00000004] *** Hello, World!
+\end{shell}%$
+
+To run an interactive session, use option
+\option{-i}/\option{--interactive}:
+
+\begin{shell}
+$ urbi-console -i
+[00000000:start] *** **********************************************************
+[00000000:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+[00000000:start] *** Copyright (C) 2004-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** Libport version preview/1.0/beta1-1048 rev. f1c5170
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000000:start] *** This software can be used under certain conditions;
+[00000000:start] *** see LICENSE file for details.
+[00000000:start] ***
+[00000000:start] *** See http://www.urbiforge.com for news and updates.
+[00000000:start] *** **********************************************************
+[00000000:start] ***
+[00000000:ident] *** ID: U3154688
+[00000004:start] *** Urbi is up and running.
+1+2;
+[747860400006] 3
+shutdown;
+\end{shell}%$
+
+The program \command{rlwrap} provides additional services (history of
+commands, advanced command line edition etc.); run \samp{rlwrap
+  urbi-console -i}.
+
+In either case the server can also be made available for network-based
+interactions using option \option{--port \var{port}}.  Note that while
+\code{shutdown} terminates the server, \code{quit} only terminates one
+interactive session.  In the following example the server is still
+available for other, possibly concurrent, sessions.
+
+\begin{shell}
+$ urbi-console --port 54000 &
+[1] 77024
+$ telnet localhost 54000
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+[00000758:start] *** **********************************************************
+[00000758:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+[00000758:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+[00000758:start] *** Copyright (C) 2004-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** Libport version preview/1.0/beta1-1048 rev. f1c5170
+[00000758:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000758:start] *** This software can be used under certain conditions;
+[00000758:start] *** see LICENSE file for details.
+[00000758:start] ***
+[00000758:start] *** See http://www.urbiforge.com for news and updates.
+[00000758:start] *** **********************************************************
+[00000758:start] ***
+[00000758:ident] *** ID: U348160
+12345679*8;
+[00018032] 98765432
+quit;
+\end{shell}%$
+
+The program \command{urbi-send} provides a nice interface to interact
+with a running server.
+
+\begin{shell}
+$ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
+[00018032:] 7
+# Have the server shutdown;
+$ urbi-send -p 54000 -e 'shutdown;'
+\end{shell}
+
+
 Once you've got an \urbi server running, you can connect to it with a
 text client such as telnet or netcat on port 54000. You can then start
 inputting commands, terminated by semicolons. Like most interactive
@@ -341,9 +461,7 @@ Since this output is often irrelevant, we will sometimes hide the
 printed result, replacing it with an ellipse (\ldots), as in
 \autoref{lst:function-arg}, which presents a function with arguments.
 
-\begin{urbiscript}[caption=Function with
-arguments,label=lst:function-arg]
-
+\begin{urbiscript}[caption=Function with arguments,label=lst:function-arg]
 function sum(a, b, c)
 {
   return a + b + c;
