@@ -56,3 +56,7 @@ check-clean-local:
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
 check-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
+
+.PHONY check-TESTS: check-clean-semaphores
+check-clean-semaphores:
+	-$(build_aux_dir)/semaphore-clean.sh
