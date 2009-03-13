@@ -61,12 +61,12 @@ namespace urbi
 
   UMessage::UMessage(const UMessage& b)
     : client(b.client)
+    , timestamp(b.timestamp)
+    , tag(b.tag)
+    , type(b.type)
+    , value(0)
+    , rawMessage(b.rawMessage)
   {
-    rawMessage = b.rawMessage;
-    timestamp = b.timestamp;
-    tag = b.tag;
-    type = b.type;
-    value = 0;
     switch (type)
     {
       case MESSAGE_SYSTEM:
@@ -87,9 +87,12 @@ namespace urbi
   }
 
   std::ostream&
-  UMessage::print (std::ostream &o) const
+  UMessage::print(std::ostream &o) const
   {
-    o << "[" << timestamp << ":" << tag << "] ";
+    o << "[" << timestamp;
+    if (!tag.empty())
+      o << ":" << tag;
+    o << "] ";
     switch (type)
     {
       case MESSAGE_DATA:
