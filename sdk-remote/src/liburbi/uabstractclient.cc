@@ -143,7 +143,7 @@ namespace urbi
 	 it != callbacks_.end();
          inc ? it : it++, inc = false)
     {
-      if (libport::streq(msg.tag.c_str(), it->tag)
+      if (msg.tag == it->tag
 	  || (libport::streq(it->tag, tag_error) && msg.type == MESSAGE_ERROR)
 	  || libport::streq(it->tag, tag_wildcard))
       {
