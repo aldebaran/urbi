@@ -7,6 +7,6 @@
 namespace kernel
 {
   URBI_SDK_API std::ostream&
-  userver_package_info_dump (std::ostream& o);
+  userver_package_info_dump(std::ostream& o);
 }
 #endif // !KERNEL_UBANNER_HH

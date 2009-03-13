@@ -66,4 +66,3 @@ namespace object
     return constant_;
   }
 }
-

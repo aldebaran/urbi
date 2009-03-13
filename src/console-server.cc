@@ -14,6 +14,7 @@
 #include <libport/cli.hh>
 #include <libport/exception.hh>
 #include <libport/foreach.hh>
+#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
 #include <libport/sys/socket.h>
@@ -109,9 +110,7 @@ namespace
   void
   version()
   {
-    std::stringstream dump;
-    kernel::userver_package_info_dump(dump) << std::endl;
-    throw urbi::Exit(EX_OK, dump.str());
+    throw urbi::Exit(EX_OK, kernel::UServer::package_info().signature());
   }
 
   static
