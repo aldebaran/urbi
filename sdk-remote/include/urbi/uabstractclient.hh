@@ -256,7 +256,8 @@ namespace urbi
     /// Fill tag with a unique tag for this client.
     void makeUniqueTag(char* tag);
 
-    /// Simulate an Urbi message.
+    /// Pass the given UMessage to all registered callbacks with the
+    /// corresponding tag, as if it were comming from the URBI server.
     virtual void notifyCallbacks(const UMessage& msg);
 
     /// Notify of an error.

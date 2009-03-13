@@ -25,11 +25,14 @@
 #include <urbi/uabstractclient.hh>
 
 
-#define URBI_ERROR_TAG "[error]"
-#define URBI_WILDCARD_TAG "[wildcard]"
-
 namespace urbi
 {
+
+  /// Fake tag to treat error message with tags.
+  const char* tag_error = "[error]";
+  /// Fake tag to catch all the messages.
+  const char* tag_wildcard = "[wildcard]";
+
   std::ostream&
   default_stream()
   {
@@ -129,29 +132,26 @@ namespace urbi
   }
 
 
-  const char* UAbstractClient::CLIENTERROR_TAG="client error";
+  const char* UAbstractClient::CLIENTERROR_TAG = "client error";
 
-  /*! Pass the given UMessage to all registered callbacks with the
-   * corresponding tag, as if it were comming from the URBI server.
-   */
   void
   UAbstractClient::notifyCallbacks(const UMessage &msg)
   {
     listLock.lock();
-    bool inc=false;
+    bool inc = false;
     for (callbacks_type::iterator it = callbacks_.begin();
-	 it!=callbacks_.end(); inc?it:it++, inc=false)
+	 it != callbacks_.end();
+         inc ? it : it++, inc = false)
     {
       if (libport::streq(msg.tag.c_str(), it->tag)
-	  || (libport::streq(it->tag, URBI_ERROR_TAG)
-              && msg.type == MESSAGE_ERROR)
-	  || libport::streq(it->tag, URBI_WILDCARD_TAG))
+	  || (libport::streq(it->tag, tag_error) && msg.type == MESSAGE_ERROR)
+	  || libport::streq(it->tag, tag_wildcard))
       {
 	UCallbackAction ua = it->callback(msg);
 	if (ua == URBI_REMOVE)
 	{
 	  delete &it->callback;
-	  it=callbacks_.erase(it);
+	  it = callbacks_.erase(it);
 	  inc = true;
 	}
       }
@@ -866,7 +866,7 @@ namespace urbi
 	      currentTimestamp = 0;
 	      strcpy(currentTag, "UNKNWN");
 	      //listLock.lock();
-	      UMessage msg(*this, 0, URBI_ERROR_TAG,
+	      UMessage msg(*this, 0, tag_error,
 			   "!!! UAbstractClient::read, fatal error parsing header",
 			   binaries_type());
 	      notifyCallbacks(msg);
@@ -997,13 +997,13 @@ namespace urbi
   UCallbackID
   UAbstractClient::setWildcardCallback(UCallbackWrapper& callback)
   {
-    return addCallback(URBI_WILDCARD_TAG, callback);
+    return addCallback(tag_wildcard, callback);
   }
 
   UCallbackID
   UAbstractClient::setErrorCallback(UCallbackWrapper& callback)
   {
-    return addCallback(URBI_ERROR_TAG, callback);
+    return addCallback(tag_error, callback);
   }
 
   UCallbackID
