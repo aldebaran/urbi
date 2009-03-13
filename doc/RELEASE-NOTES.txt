@@ -64,7 +64,7 @@ Unix.  UrbiScript library files are expected to be in
 The environment variable URBI_PATH, which allows to specify a
 colon-separated list of directories into which UrbiScript files are
 looked-up, may extend or override URBI_ROOT.  Any superfluous colon
-denotes the place where the URBI_ROOT path is taked into account.
+denotes the place where the URBI_ROOT path is taken into account.
 
 Scripting
 ---------
@@ -78,7 +78,7 @@ to reach the command line arguments from Urbi make it possible to
 write simple batch Urbi programs.  For instance:
 
 	$ cat demo
-	#! /usr/bin/env uconsole
+	#! /usr/bin/env urbi-console
 	cout << System.arguments;
 	shutdown;
 
