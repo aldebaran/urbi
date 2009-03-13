@@ -33,6 +33,11 @@ namespace urbi
   /// Fake tag to catch all the messages.
   const char* tag_wildcard = "[wildcard]";
 
+
+  /// A prefix for tags with which internal messages are exchanged.
+  /// Callbacks with tag_wildcard do not see these messages.
+# define TAG_PRIVATE_PREFIX "__gostai_private__"
+
   std::ostream&
   default_stream()
   {
@@ -145,7 +150,12 @@ namespace urbi
     {
       if (msg.tag == it->tag
 	  || (libport::streq(it->tag, tag_error) && msg.type == MESSAGE_ERROR)
-	  || libport::streq(it->tag, tag_wildcard))
+          // The wild card does not match tags starting with
+          // TAG_PRIVATE_PREFIX.
+	  || (libport::streq(it->tag, tag_wildcard)
+              && msg.tag.compare(0,
+                                 sizeof TAG_PRIVATE_PREFIX - 1,
+                                 TAG_PRIVATE_PREFIX)))
       {
 	UCallbackAction ua = it->callback(msg);
 	if (ua == URBI_REMOVE)
@@ -1056,14 +1066,16 @@ namespace urbi
   void
   UAbstractClient::onConnection()
   {
-    setCallback(*this, &UAbstractClient::setVersion, "__version");
+# define VERSION_TAG TAG_PRIVATE_PREFIX "__version"
+    setCallback(*this, &UAbstractClient::setVersion, VERSION_TAG);
     // We don't know our kernel version yet.
     send("{ var __ver__ = 2; {var __ver__ = 1};"
-         "  var __version;"
+         "  var " VERSION_TAG ";"
          "  if (__ver__ == 2) "
-         "    __version = Channel.new(\"__version\");"
-         "  __version << system.version;"
+         "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");"
+         "  " VERSION_TAG " << system.version;"
          "};");
+# undef VERSION_TAG
   }
 
   int
