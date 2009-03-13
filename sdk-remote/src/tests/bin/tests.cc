@@ -29,7 +29,7 @@ usage()
     "  -p, --port PORT       tcp port URBI will listen to"
                << " [" << urbi::UAbstractClient::URBI_PORT << "]\n"
     "  -r, --port-file FILE  file containing the port to listen to\n"
-               << libport::exit (EX_OK);
+               << libport::exit(EX_OK);
 }
 
 static char

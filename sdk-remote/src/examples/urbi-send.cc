@@ -48,6 +48,7 @@ namespace
       "  FILE    to upload onto the server\n"
       "\n"
       "Options:\n"
+      "  -b, --banner             do not hide the server-sent banner\n"
       "  -e, --expression SCRIPT  send SCRIPT to the server\n"
       "  -f, --file FILE          send the contents of FILE to the server\n"
       "  -h, --help               display this message and exit\n"
@@ -72,10 +73,12 @@ namespace
 }
 
 static urbi::UCallbackAction
-dump(const urbi::UMessage& msg)
+dump(void* banner, const urbi::UMessage& msg)
 {
-  // FIXME: This is absolutely not completely migrated.
-  // To be finished -- Akim.
+  if ((msg.tag == "start" || msg.tag == "ident")
+      && !*static_cast<bool*>(banner))
+    return urbi::URBI_CONTINUE;
+
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
@@ -91,9 +94,9 @@ dump(const urbi::UMessage& msg)
 }
 
 static urbi::UCallbackAction
-error(const urbi::UMessage& msg)
+error(void* banner, const urbi::UMessage& msg)
 {
-  dump(msg);
+  dump(banner, msg);
   exit(0);
 }
 
@@ -152,6 +155,8 @@ main(int argc, char* argv[])
   /// Things to send to the server.
   typedef std::list<Data*> data_list;
   data_list data;
+  /// Display the server's banner.
+  bool banner = false;
   /// Server host name.
   std::string host = "localhost";
   /// Server port.
@@ -162,7 +167,9 @@ main(int argc, char* argv[])
   {
     std::string arg = argv[i];
 
-    if (arg == "--expression" || arg == "-e")
+    if (arg == "--banner" || arg == "-b")
+      banner = true;
+    else if (arg == "--expression" || arg == "-e")
       data.push_back(
         new TextData(libport::convert_argument<std::string>(arg, argv[++i])));
     else if (arg == "--file" || arg == "-f")
@@ -194,8 +201,8 @@ main(int argc, char* argv[])
 	      << std::endl
               << libport::exit(1);
 
-  client.setWildcardCallback(callback(&dump));
-  client.setClientErrorCallback(callback(&error));
+  client.setWildcardCallback(callback(&dump, &banner));
+  client.setClientErrorCallback(callback(&error, &banner));
 
   /*----------------.
   | Send contents.  |
