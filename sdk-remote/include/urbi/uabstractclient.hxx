@@ -27,6 +27,26 @@
 namespace urbi
 {
 
+  /*----------------.
+  | UCallbackInfo.  |
+  `----------------*/
+
+  inline
+  UCallbackInfo::UCallbackInfo(UCallbackWrapper &w)
+    : callback(w)
+  {}
+
+  inline
+  bool
+  UCallbackInfo::operator==(int id) const
+  {
+    return id==this->id;
+  }
+
+  /*------------------.
+  | UAbstractClient.  |
+  `------------------*/
+
   inline
   bool
   UAbstractClient::init() const

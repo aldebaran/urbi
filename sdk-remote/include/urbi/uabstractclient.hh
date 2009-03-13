@@ -88,17 +88,14 @@ namespace urbi
   class UCallbackInfo
   {
   public:
+    UCallbackInfo(UCallbackWrapper &w);
+    bool operator==(int id) const;
+
     char tag[URBI_MAX_TAG_LENGTH];
-    UCallbackWrapper & callback;
+    UCallbackWrapper& callback;
     int id;
-    bool operator ==(int id) const
-    {
-      return id==this->id;
-    }
-    UCallbackInfo(UCallbackWrapper &w)
-      : callback(w)
-    {}
   };
+
   //used internaly
   class UClientStreambuf;
 
