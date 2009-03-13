@@ -1,5 +1,8 @@
 #! /bin/sh -e
 
+# The directory on built that contains the packages.
+dir=built/kernel-2.0/archives
+
 # Call this script when a release is to be publish to the download
 # site.  Don't forget to tag it if it is a release.
 
@@ -13,7 +16,7 @@ oses="windows linux macos"
 # kernel-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.gz
 # kernel-2.0-beta2-498-g4f7f361-linux-x86.tar.gz
 # kernel-2.0-beta2-498-g4f7f361-macos-x86.tar.gz
-all=$(ssh build@gate 'cd built/kernel-2.0 && ls -1t *windows*.zip *linux*.gz *macos-*.gz')
+all=$(ssh build@gate "cd $dir && ls -1t *windows*.zip *linux*.gz *macos-*.gz")
 
 # Make sure that we have the same version for the three architectures.
 latest=$(echo "$all" |
@@ -41,7 +44,7 @@ do
     echo " --------------- $pack ---------------- "
     # For some reason, "scp A B" does not work, so
     # "scp A localhost && scp localhost B".
-    cmd="scp \"build@gate:built/kernel-2.0/$pack\" /tmp/$pack &&
+    cmd="scp \"build@gate:$dir/$pack\" /tmp/$pack &&
      scp /tmp/$pack downloads@www.gostai.com:urbi-sdk-2.0_beta/$os/$pack &&
      ssh downloads@www.gostai.com 'chmod 640 urbi-sdk-2.0_beta/$os/$pack'"
     echo >&2 "$cmd"
