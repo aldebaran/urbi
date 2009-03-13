@@ -120,7 +120,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 
 
 #define YY_USER_ACTION                          \
-  COLUMNS(yyleng);
+  COLUMNS(static_cast<unsigned>(yyleng));
 
 // Move the front cursor to the end cursor.
 #define STEP()                                  \
@@ -413,7 +413,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   loc.initialize(!file || libport::streq(file, "-") ?
 		 0 :
 		 new libport::Symbol(file));
-  loc.lines (lexical_cast<int>(*up, loc, line) - 1);
+  loc.lines(lexical_cast<unsigned>(*up, loc, line) - 1);
   loc.step();
 }
 
