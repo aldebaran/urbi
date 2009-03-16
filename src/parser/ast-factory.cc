@@ -145,6 +145,14 @@ namespace parser
                       ast::rExp event,
                       ast::exps_type* payload)
   {
+    if (!payload)
+    {
+      PARAMETRIC_AST
+        (desugar,
+         "  %exp:1.'waituntil'(nil)");
+      return exp(desugar % event);
+    }
+
     PARAMETRIC_AST
       (desugar,
        "{"

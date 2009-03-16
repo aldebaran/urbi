@@ -70,14 +70,14 @@ class Global.Event
   {
     var sub = wu_pubsub.subscribe |
     for| (var e: alive)
-      if (pattern.match(e.payload))
+      if (pattern.isNil || pattern.match(e.payload))
       {
         wu_pubsub.unsubscribe(sub) |
         return
       } |
     while| (true)
       for| (var e: sub.getAll)
-        if (pattern.match(e.payload))
+        if (pattern.isNil || pattern.match(e.payload))
         {
           wu_pubsub.unsubscribe(sub) |
           return
