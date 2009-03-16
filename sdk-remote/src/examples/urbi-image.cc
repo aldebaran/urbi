@@ -27,6 +27,7 @@
 
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
+#include <libport/option-parser.hh>
 
 #include <urbi/usyncclient.hh>
 
@@ -87,25 +88,19 @@ closeandquit (int)
 
 
 static void
-usage()
+usage(libport::OptionParser& parser)
 {
   std::cout <<
     "usage: " << program_name() << " [options]\n"
     "Display images from an urbi server, or save one image if\n"
     "-o is given\n"
-    "\n"
-    "Options:\n"
-    "  -H, --host HOST      server (robot) host name\n"
-    "  -P, --port PORT      server port\n"
-    "  -P, --period PERIOD  query images at given period (in milliseconds)\n"
-    "  -r                   use reconstruct mode (for aibo)\n"
-    "  -j factor            jpeg compression factor (from 0 to 100, def 70)\n"
-    "  -d device            query image on device.val (default: camera.val)\n"
-    "  -o file              query and save one image to file\n"
-    "  -s scale             rescale image with given factor (display only)\n"
+    "\n";
+  parser.options_doc(std::cout);
+  std::cout << std::endl <<
     "transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
     "save     Format : rgb , ycrcb, jpeg, ppm"
               << std::endl;
+  ::exit(EX_OK);
 }
 
 int
@@ -113,64 +108,55 @@ main (int argc, char *argv[])
 {
   libport::program_initialize(argc, argv);
   signal(SIGINT, closeandquit);
-  int period = 0;
-  const char* device = "camera";
+  const char* device;
   std::string arg_format;
-  char* fileName = 0;
-  bool reconstruct = false;
-  /// Server host name.
-  std::string host = "localhost";
-  /// Server port.
-  int port = urbi::UClient::URBI_PORT;
-  scale = 1.0;
-  int jpegfactor = 70;
+  const char* fileName = 0;
   mon = NULL;
   im.width = im.height = 0;
   im.size = 0;
   im.data = 0;
   im.imageFormat = urbi::IMAGE_RGB;
 
-  for (int i = 1; i < argc; ++i)
-  {
-    std::string arg = argv[i];
-    if (arg == "-j")
-      jpegfactor = strtol(argv[++i],0,0);
-    else if (arg == "-d")
-      device = argv[++i];
-    else if (arg == "--period" || arg == "-p")
-      period = strtol(argv[++i],0,0);
-    else if (arg == "--format" || arg == "-f")
-      arg_format = argv[++i];
-    else if (arg == "--help" || arg == "-h")
-      usage();
-    else if (arg == "--host" || arg == "-H")
-      host = argv[++i];
-    else if (arg == "--port" || arg == "-P")
-      port = libport::convert_argument<int> (arg, argv[++i]);
-    else if (arg == "-s")
-      sscanf(argv[++i], "%f", &scale);
-    else if (arg == "-r")
-      reconstruct = true;
-    else if (arg == "-o")
-      fileName = argv[++i];
-    else
-      libport::invalid_option(arg);
-  }
+  libport::OptionValue arg_period("query images at given period (in milliseconds)", "period", 'p');
+  libport::OptionFlag arg_rec("use reconstruct mode (for aibo)", "reconstruct", 'r');
+  libport::OptionValue arg_jpeg("jpeg compression factor (from 0 to 100, def 70)", "jpeg", 'j');
+  libport::OptionValue arg_dev("query image on device.val (default: camera.val)", "device", 'd');
+  libport::OptionValue arg_out("query and save one image to file", "output", 'o');
+  libport::OptionValue arg_scale("rescale image with given factor (display only)", "scale", 's');
+  libport::OptionValue arg_form("select format of the image (rgb, ycrcb, jpeg, ppm)", "format", 'F');
 
-  urbi::USyncClient client(host, port);
+  libport::OptionParser opt_parser;
+  opt_parser << libport::opts::help << arg_form
+	     << libport::opts::host << libport::opts::port << arg_period
+	     << arg_rec << arg_jpeg << arg_dev << arg_out << arg_scale;
+
+  opt_parser(libport::program_arguments());
+
+  if (libport::opts::help.get())
+    usage(opt_parser);
+  device = arg_dev.value("camera").c_str();
+  if (arg_form.filled())
+    arg_format = arg_form.value();
+  scale = arg_scale.get<float>(1.0);
+  if (arg_out.filled())
+    fileName = arg_out.value().c_str();
+
+  urbi::USyncClient client(libport::opts::host.value("localhost"),
+			   libport::opts::port.get<int>(urbi::UClient::URBI_PORT));
   if (client.error())
     urbi::exit(1);
 
   client.setCallback(showImage, "uimg");
 
   client.send("%s.resolution  = 0;", device);
-  client.send("%s.jpegfactor = %d;", device, jpegfactor);
+  client.send("%s.jpegfactor = %d;", device, arg_jpeg.get<int>(70));
 
-  client << device << ".reconstruct = " << (reconstruct ? 1 : 0)
+  client << device << ".reconstruct = " << (arg_rec.get() ? 1 : 0)
 	 << urbi::semicolon;
 
   if (!fileName)
   {
+    int period = arg_period.get<int>(0);
     imcount = 0;
     format = (arg_format[0] == 'r') ? 0 : 1;
     client.send("%s.format = %d;", device, format);
