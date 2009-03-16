@@ -1,6 +1,10 @@
-\documentclass[openright,twoside,12pt]{report}
-
+\documentclass[openright,twoside,11pt]{book}
+  % Index.  Must be before loading hyperref.
+  \usepackage{myindex}
+  \usepackage{index}
+  \makeindex
   \usepackage{urbi-report}
+  \usepackage{indexing}
 
 % COMMANDS
 \newcommand{\lst}[1]{\autoref{lst:#1}}
@@ -48,18 +52,23 @@ Its main features are:
   network.
 \end{itemize}
 
+\part{Tutorial}
+
 \chapter{Getting started}
 
 \us comes with a set of tools, two of which being of particular
 importance:
 \begin{description}
-\item[urbi-console] launches an \urbi server.  There are several means
+\item[\dfn{urbi-console}] launches an \urbi server.  There are several means
   to interact with this server, which will see later.
-\item[urbi-launch] runs \urbi components, the UObjects, and connects
+\item[\dfn{urbi-launch}] runs \urbi components, the UObjects, and connects
   them to an \urbi server.
 \end{description}
 
-Please, first make sure that these tools are properly installed.
+Please, first make sure that these tools are properly installed.  If
+you encounter problems, please see \autoref{sec:installation}, which
+is more detailed, and possibly \autoref{sec:faq} for frequently asked
+questions.
 
 \begin{shell}
 # Make sure urbi-console is properly installed.
@@ -91,7 +100,9 @@ $ urbi-console -e 'echo("Hello, World!");' -e 'shutdown;'
 \end{shell}%$
 
 To run an interactive session, use option
-\option{-i}/\option{--interactive}:
+\option{-i}/\option{--interactive}.  Like most interactive
+interpreters, \urbi will evaluate the given commands and print out the
+results.
 
 \begin{shell}
 $ urbi-console -i
@@ -115,9 +126,16 @@ $ urbi-console -i
 [00000000:ident] *** ID: U3154688
 [00000004:start] *** Urbi is up and running.
 1+2;
-[747860400006] 3
+[00000006] 3
 shutdown;
 \end{shell}%$
+
+The output from the server is prefixed by a number surrounded by
+square brackets: this is the date (in milliseconds since the server
+was launched) at which that line was sent by the server. This is
+useful at occasions, since \urbi is meant to run many parallel
+commands.  But since these timestamps are irrelevant in most examples,
+they will often be filled with zeroes through this documentation.
 
 The program \command{rlwrap} provides additional services (history of
 commands, advanced command line edition etc.); run \samp{rlwrap
@@ -159,8 +177,8 @@ Escape character is '^]'.
 quit;
 \end{shell}%$
 
-The program \command{urbi-send} provides a nice interface to interact
-with a running server.
+The program \command{urbi-send} provides a nice interface to
+interact with a running server.
 
 \begin{shell}
 $ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
@@ -169,40 +187,13 @@ $ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
 $ urbi-send -p 54000 -e 'shutdown;'
 \end{shell}
 
-
-Once you've got an \urbi server running, you can connect to it with a
-text client such as telnet or netcat on port 54000. You can then start
-inputting commands, terminated by semicolons. Like most interactive
-interpreters, \urbi will evaluate the given commands and print out the
-results (\autoref{lst:interaction}).
-
-\begin{urbiscript}[caption=Evaluating literal values,label=lst:interaction]
-42;
-[00000000] 42
-\end{urbiscript}
-
-Here we see that 42, as an integer literal, evaluates to itself. Note
-that any output from the server is prefixed by a number surrounded by
-square brackets: this is the timestamps of the date at which that line
-was sent by the server. This happens to be really useful in many
-occasions, since \urbi is meant to run many parallel commands. Anyway,
-since those timestamp can be irrelevant to some examples, they will
-often be filled with zeroes through this documentation.
-
-Let's now try to perform some real computation, e.g. some basic
-mathematical expressions, as in \autoref{lst:expr}. Again, the server prints
-out the result of the evaluation of every line.
-
-\begin{urbiscript}[caption=Evaluating composite expressions,label=lst:expr]
-25 * 2 + 1;
-[00000000] 51
-1 - 2;
-[00000000] -1
-\end{urbiscript}
+\medskip
 
 You can now send commands to your \urbi server. If at any point you
 get lost, or want a fresh start, you can simply close and reopen your
-connection to the server to get a clean environment.
+connection to the server to get a clean environment.  In some cases,
+particularly if you made global changes in the environment, it is
+simpler start anew: shutdown your current server, and spawn a new one.
 
 \chapter{First steps}
 
@@ -211,7 +202,7 @@ connection to the server to get a clean environment.
 This section intends to provide the most basic notions to write \urbi
 code. Some aspects are presented only superficially. The point of this
 section is to bootstrap yourself with the \urbi language, to be able
-to study more in-depth examples after.
+to study more in-depth examples afterwards.
 
 \section{Comments}
 
@@ -228,11 +219,11 @@ can be left as documentation, reminder, \ldots \urbi supports \C and
 
 
 \begin{urbiscript}[caption=Comments in \urbi, label=lst:comments]
-1; // This is a C++ style comment
+1; // This is a C++ style comment.
 [00000000] 1
-2 + /* This is a C-style comment */ 2;
+2 + /* This is a C-style comment. */ 2;
 [00000000] 4
-/* Contrary to C/C++, this type of comment /* does nest */ */
+/* Contrary to C/C++, this type of comment /* does nest */. */
 3;
 [00000000] 3
 \end{urbiscript}
@@ -243,25 +234,25 @@ can be left as documentation, reminder, \ldots \urbi supports \C and
 As already seen, we can evaluate literal integers. \urbi supports
 several other literals, such as:
 
-\begin{itemize}
-\item floats: floating point numbers.
-\item strings: character strings.
-\item lists: ordered collection of values.
-\item nil: neutral value. Think of it as the value that fits anywhere.
-\item void: absence of value. Think of it as the value that fits nowhere.
-\end{itemize}
+\begin{description}
+\item[floats] floating point numbers.
+\item[strings] character strings.
+\item[lists] ordered collection of values.
+\item[nil] neutral value. Think of it as the value that fits anywhere.
+\item[void] absence of value. Think of it as the value that fits nowhere.
+\end{description}
 
 These literal values can be obtained with the syntax presented in
 \autoref{lst:literals}.
 
 \begin{urbiscript}[caption=Literals,label=lst:literals]
-42; // Integer literal
+42; // Integer literal.
 [00000000] 42
-3.14; // Floating point number literal
+3.14; // Floating point number literal.
 [00000000] 3.14
-"string"; // Character string literal
+"string"; // Character string literal.
 [00000000] "string"
-[1, 2, "a", "b"]; // List literal
+[1, 2, "a", "b"]; // List literal.
 [00000000] [1, 2, "a", "b"]
 nil;
 void;
@@ -2279,14 +2270,21 @@ emit myEvent ~ 350ms;
 
 %\chapter{Binding with \Cxx - UObjects}
 
+\chapter{Frequently Asked Questions}
+\label{sec:faq}
 
-\chapter{Conclusion}
+\part{Installation}
 
-% FIXME: un peu bidon
-You've now been introduced to the \urbi programming language. Apart
-from its classical script language aptitudes, its advanced support for
-parallelism and event-based programming should help you deal easily
-with robotic or interactive agent programming.
+\chapter{Installation}
+\label{sec:installation}
+
+
+\part{References and Index}
+
+\phantomsection % sinon hyperliens vers chapitre précédent.
+\addcontentsline{toc}{chapter}{\indexname}
+\printindex
+
 
 \end{document}
 
