@@ -17,6 +17,9 @@ Various bug fixes
 Under some circumstances successful runs could report "at job handler
 exited with exception TerminateException".  This is fixed.
 
+Using waituntil on an event with no payload (ie: waituntil(?e) ...;)
+will not cause an internal error anymore.
+
 *******************************
 * New since kernel 2.0 beta 3 *
 *******************************
