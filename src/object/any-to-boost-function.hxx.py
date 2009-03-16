@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-def type_fun(r, runner, nargs, name, met):
+def type_fun(r, nargs, name, met):
 
     args = []
 
@@ -8,8 +8,6 @@ def type_fun(r, runner, nargs, name, met):
         r = 'R'
     else:
         r = 'void'
-    if runner:
-        args += ['runner::Runner&']
     if met == 0:
         args += ['S']
     for i in range(nargs):
@@ -24,7 +22,7 @@ def type_fun(r, runner, nargs, name, met):
     return '%s (%s*%s)(%s)%s' % (r, met, name, ', '.join(args), const)
 
 
-def type_boost(r, runner, nargs, met):
+def type_boost(r, nargs, met):
 
     args = []
 
@@ -32,8 +30,6 @@ def type_boost(r, runner, nargs, met):
         args += ['R']
     else:
         args += ['void']
-    if runner:
-        args += ['runner::Runner&']
     # Keep trailing space to avoid '>>'
     if met == 1:
         args += ['libport::intrusive_ptr<S> ']
@@ -47,7 +43,7 @@ def type_boost(r, runner, nargs, met):
     return 'boost::function%s<%s>' % (len(args) - 1, ', '.join(args))
 
 
-def any_to_boost_function(r, runner, nargs, met):
+def any_to_boost_function(r, nargs, met):
 
     params = []
     if r:
@@ -56,14 +52,7 @@ def any_to_boost_function(r, runner, nargs, met):
     for i in range(nargs):
         params += ['typename Arg%s' % i]
 
-    if met > 0 and runner:
-        args = ''
-        for i in range(nargs):
-            args += ', _%s' % (i + 3)
-        body = 'return boost::bind((%s)(v), _2, _1%s);'\
-          % (type_fun(r, runner, nargs, '', met), args)
-    else:
-        body = 'return type(v);';
+    body = 'return type(v);';
 
 
     return '''\
@@ -79,9 +68,9 @@ def any_to_boost_function(r, runner, nargs, met):
     };
 ''' % {
         'body': body,
-        'boost': type_boost(r, runner, nargs, met),
-        'fun': type_fun(r, runner, nargs, '', met),
-        'named_fun': type_fun(r, runner, nargs, 'v', met),
+        'boost': type_boost(r, nargs, met),
+        'fun': type_fun(r, nargs, '', met),
+        'named_fun': type_fun(r, nargs, 'v', met),
         'params': ', '.join(params),
         }
 
@@ -106,12 +95,11 @@ namespace object
 
 # For now, only the r case is needed, and !r fails with visual studio
 for r in [True]:
-    for runner in [False]:
-        for met in [0, 1, 2]:
-            for n in range(5):
-                print '    // Return: %s, Runner: %s, Method: %s, Arguments: %s'\
-                      % (r, runner, met, n)
-                print any_to_boost_function(r, runner, n, met)
+    for met in [0, 1, 2]:
+        for n in range(5):
+            print '    // Return: %s, Method: %s, Arguments: %s'\
+                  % (r, met, n)
+            print any_to_boost_function(r, n, met)
 
 print '''\
 
