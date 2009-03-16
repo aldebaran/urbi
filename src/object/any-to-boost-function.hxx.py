@@ -10,15 +10,18 @@ def type_fun(r, runner, nargs, name, met):
         r = 'void'
     if runner:
         args += ['runner::Runner&']
-    if not met:
+    if met == 0:
         args += ['S']
     for i in range(nargs):
         args += ['Arg%s' % i]
-    if met:
+    const = ''
+    if met == 2:
+        const = ' const'
+    if met > 0:
         met = 'S::'
     else:
         met = ''
-    return '%s (%s*%s)(%s)' % (r, met, name, ', '.join(args))
+    return '%s (%s*%s)(%s)%s' % (r, met, name, ', '.join(args), const)
 
 
 def type_boost(r, runner, nargs, met):
@@ -31,9 +34,11 @@ def type_boost(r, runner, nargs, met):
         args += ['void']
     if runner:
         args += ['runner::Runner&']
-    if met:
-        # Keep trailing space to avoid '>>'
+    # Keep trailing space to avoid '>>'
+    if met == 1:
         args += ['libport::intrusive_ptr<S> ']
+    elif met == 2:
+        args += ['libport::intrusive_ptr<const S> ']
     else:
         args += ['S']
     for i in range(nargs):
@@ -51,7 +56,7 @@ def any_to_boost_function(r, runner, nargs, met):
     for i in range(nargs):
         params += ['typename Arg%s' % i]
 
-    if met and runner:
+    if met > 0 and runner:
         args = ''
         for i in range(nargs):
             args += ', _%s' % (i + 3)
@@ -102,7 +107,7 @@ namespace object
 # For now, only the r case is needed, and !r fails with visual studio
 for r in [True]:
     for runner in [False]:
-        for met in [True, False]:
+        for met in [0, 1, 2]:
             for n in range(5):
                 print '    // Return: %s, Runner: %s, Method: %s, Arguments: %s'\
                       % (r, runner, met, n)
