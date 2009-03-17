@@ -105,6 +105,14 @@
       #1}}
   {}
 
+% Same as above, but the content is not checked.  Should be avoided.
+\lstnewenvironment{urbifixme}[1][]
+  {\lstset{language=[interactive]urbi,
+      basicstyle=\ttfamily\footnotesize,
+      float=\floatposh,
+      #1}}
+  {}
+
 \lstdefinelanguage[]{Shell}%
 {%
   morekeywords={%

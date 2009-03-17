@@ -2273,6 +2273,271 @@ emit myEvent ~ 350ms;
 \chapter{Frequently Asked Questions}
 \label{sec:faq}
 
+\section{Objects, slots and variables}
+
+\paragraph{How do I create a new Object derivative?}
+Urbi is based on prototypes. To create a new Object derivative (which
+will inherit all the Object methods), you can do:
+
+\begin{urbifixme}
+var myObject = Object.new;
+\end{urbifixme}
+
+\paragraph{How do I add a new slot in an object?}
+To add a slot to an object \code{O}, you have to use the \code{var} keyword:
+
+\begin{urbifixme}
+var O.mySlot = 42;
+\end{urbifixme}
+
+\noindent
+or you can use the "setSlot" method:
+
+\begin{urbifixme}
+O.setSlot("mySlot", 42);
+\end{urbifixme}
+
+Note that in a method, \code{this} designates the current object. For example,
+
+\begin{urbifixme}
+var this.mySlot = 42;
+\end{urbifixme}
+
+\noindent
+will create a new slot in the current object while
+
+\begin{urbifixme}
+var mySlot = 42;
+\end{urbifixme}
+
+\noindent
+will create a local variable, which will not be known anymore after we
+exist the current scope.
+
+\paragraph{How do I modify a slot of my object?}
+\begin{urbifixme}
+O.mySlot = 51;
+\end{urbifixme}
+
+\noindent
+or
+
+\begin{urbifixme}
+O.updateSlot("mySlot", 51);
+\end{urbifixme}
+
+\paragraph{How do I create or modify a local variable?}
+\begin{urbifixme}
+var myLocalVariable;
+myLocalVariable = "foo";
+\end{urbifixme}
+
+\noindent
+or
+
+\begin{urbifixme}
+var myLocalVariable = "foo";
+\end{urbifixme}
+
+
+\paragraph{How do I make a constructor?}
+You can define a method called \code{init} which will be called
+automatically by \code{new}. For example:
+
+\begin{urbifixme}
+class myObject {
+  function init(x, y) {
+    var this.x = x;
+    var this.y = y;
+  };
+};
+myInstance = myObject.new(10, 20);
+\end{urbifixme}
+
+
+\paragraph{How can I manipulate the list of prototypes of my objects?}
+The \code{protos} method returns a list (which can be manipulated)
+containing the list of your object prototype.
+
+\begin{urbifixme}
+var myObject = Object.new;
+myObject.protos;
+[00000001] [Object]
+\end{urbifixme}
+
+\paragraph{How can I know the slots available for a given object?}
+The \code{slotNames} and \code{allSlotNames} methods return
+respectively the local slot names and the local+inherited slot names.
+
+\paragraph{How do I create a new function?}
+Functions are first class objects. That means that you can add them as
+any other slot in an object:
+
+\begin{urbifixme}
+var myObject = Object.new;
+var myFunction = function (x, y)
+  { echo ("myFunction called with " + x + " and " + y) };
+\end{urbifixme}
+
+You can also use the following notation to add a function to your
+object:
+
+\begin{urbifixme}
+var myObject = Object.new;
+function myObject.myFunction (x, y) { /* ... */ };
+\end{urbifixme}
+
+or even group definitions within a "do" scope, which will automatically
+define new slots instead of local variables and functions:
+
+\begin{urbifixme}
+var myObject = Object.new;
+do (myObject) {
+  function myFunction (x, y) { /* ... */ };
+};
+\end{urbifixme}
+
+or group those two statements by using a convenient "class" scope:
+
+\begin{urbifixme}
+class myObject {
+  function myFunction (x, y) { /* ... */ };
+};
+\end{urbifixme}
+
+\section{Tags}
+
+\paragraph{How do I create a tag?}
+
+
+Tags are objects, and must be created as any object by using "new" to create
+derivatives of the "Tag" object.
+
+\begin{urbifixme}
+var myTag = Tag.new;
+\end{urbifixme}
+
+or
+
+\begin{urbifixme}
+var myTag = Tag.new("cool name");
+\end{urbifixme}
+
+The name is not mandatory but makes it easier to display a tag and remember
+what it is.
+
+\paragraph{How do I stop a tag?}
+
+
+\begin{urbifixme}
+myTag.stop;
+\end{urbifixme}
+
+\paragraph{Can tagged statements return a value?}
+
+
+By default, tagged statements will return the latest evaluated expression if
+they have not been stopped:
+
+\begin{urbifixme}
+var myTag = Tag.new;
+var res;
+res = { myTag: { do_something; 42 } };
+\end{urbifixme}
+
+After the execution, "res" will contain 42.
+
+However, when a tag is stopped, all the statements tagged with that tag may
+be forced to return a value, by giving it as a parameter to "stop":
+
+\begin{urbifixme}
+var myTag = Tag.new;
+var res;
+{ res = { myTag: sleep(inf) } }, // Sleep forever (infinite amount of time),
+                                 // note the "," to put the tagged statement in
+                                 // the background
+myTag.stop(42);
+res;
+[00000001] 42
+\end{urbifixme}
+
+\section{Events}
+
+\paragraph{How do I create an event?}
+Events are objects, and must be created as any object by using "new" to create
+derivatives of the "Event" object.
+
+\begin{urbifixme}
+var ev = Event.new;
+\end{urbifixme}
+
+\paragraph{How do I emit an event?}
+
+\begin{urbifixme}
+emit ev(1, "foo");
+\end{urbifixme}
+
+\paragraph{How do I catch an event?}
+
+
+\begin{urbifixme}
+at(?ev(1, var msg)) {
+  echo ("Received event with 1 and message " + msg);
+};
+\end{urbifixme}
+
+The "?" marker indicates that we are looking for an event instead of a
+boolean condition. The construction "var msg" indicates that the "msg"
+variable will be bound (as a local variable) in the body part of the "at"
+construct, with whatever value is present in the event that triggered the
+"at".
+
+\section{Lists}
+
+\paragraph{How can I iterate over a list?}
+
+You can use the "for" construct to iterate over the elements of a list:
+
+\begin{urbiscript}
+for (var i: [10, 11, 12]) echo (i);
+[00000001] *** 10
+[00000002] *** 11
+[00000003] *** 12
+\end{urbiscript}
+
+\section{UObjects loading}
+
+\paragraph{urbi-launch fails with 'myuobject: file not found'. What can I do?}
+If you are sure the file is there, the most probable cause is an
+undefined symbol in your shared library. A libltdl quirk prevents us
+from displaying a more accurate error message.  You can use a tool
+named \command{ltrace} to obtain the exact error message.  Ltrace is a
+standard package on most Linux distributions.  Run it with
+\samp{ltrace -C -s 1024 urbi-launch ...}, and look for lines
+containing \samp{dlerror} in the output. One will contain the exact
+message that occurred while trying to load your shared library.
+
+Under Mac OS X, the \code{DYLD\_PRINT\_APIS} environment variable can
+be set to 1 to make the shared library loader more verbose and display
+all its attempts to load a file to stderr.
+
+Note that this problem is Mac OS X and Linux specific.
+
+\section{MiscStatus}
+
+\paragraph{How can I know what has changed since the latest beta release I got?}
+
+The file \file{RELEASE-NOTES.txt} at the top of the distribution
+contains the list of user-visible changes between consecutive
+releases.
+
+\paragraph{How do I report a bug?}
+
+See the file \file{REPORTING-BUGS.txt} at the top of the
+distribution. We insist on keeping \email{k2-beta@lists.gostai.com} in
+copy at all times, because it helps us to track conversations with our
+users.
+
 \part{Installation}
 
 \chapter{Installation}
@@ -2285,7 +2550,15 @@ Various precompiled packages are provided.  They are named
 \begin{description}
 \item[\var{version}] specifies the exact revision of Urbi that you are
   using.  It can be simple, \code{2.0}, or more complex,
-  \code{2.0-beta3-137-g28f8880}.
+  \code{2.0-beta3-137-g28f8880}.  In that case,
+  \begin{description}
+  \item[2.0] is the version of the UrbiScript Kernel,
+  \item[beta3] designates the third prerelease,
+  \item[137] is the number of changes since beta3 (not counting
+    changes in sub-packages),
+  \item[g28f8880] is a version control identifier, used internally to
+    track the exact version that is being tested by our users.
+  \end{description}
 \item[\var{arch}] describes the architecture, the \acronym{cpu}:
   \code{ARM}, \code{ppc}, or \code{x86}.
 \item[\var{os}] is the operating system: \code{linux} for GNU/Linux,
@@ -2343,7 +2616,7 @@ $ urbi-launch -- --version
 
 \part{References and Index}
 
-\phantomsection % sinon hyperliens vers chapitre précédent.
+\phantomsection % otherwise hyperlinks to previous chapter.
 \addcontentsline{toc}{chapter}{\indexname}
 \printindex
 
