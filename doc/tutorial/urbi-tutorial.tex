@@ -2278,6 +2278,68 @@ emit myEvent ~ 350ms;
 \chapter{Installation}
 \label{sec:installation}
 
+\section{Download}
+
+Various precompiled packages are provided.  They are named
+\file{kernel-\var{version}-\var{arch}-\var{os}-\var{compiler}.\var{ext}} where
+\begin{description}
+\item[\var{version}] specifies the exact revision of Urbi that you are
+  using.  It can be simple, \code{2.0}, or more complex,
+  \code{2.0-beta3-137-g28f8880}.
+\item[\var{arch}] describes the architecture, the \acronym{cpu}:
+  \code{ARM}, \code{ppc}, or \code{x86}.
+\item[\var{os}] is the operating system: \code{linux} for GNU/Linux,
+  \code{osx} for Mac OS X, or \code{windows} for Microsoft Windows.
+%% FIXME: We do not display the compiler name in the packages.
+\item[\var{compiler}] is the tool chain used to compile the
+  executables: \code{gcc} for the GNU Compiler Collection, \code{vcxx}
+  for Microsoft Visual \Cxx.
+\item[\var{ext}] is the package format extension: \code{tar.gz} for
+  Unix style tar balls (uncompressed with \command{tar zxf
+    \var{tarfile}}), and \code{zip} for Windows style zip files.
+\end{description}
+
+\section{Install}
+
+Uncompress the package where you want to install it.  The package is
+built to be installed as \file{/usr/local/gostai}, but this can be
+changed --- see below.  It might be interesting to keep several
+versions of our packages, in which case using symbolic links (aka
+\emph{aliases}) proves to be handy.  Under Unix, the installation
+sequence should look like:
+
+\begin{shell}
+$ tar zxf kernel-2.0-beta3-linux-x86.tar.gz
+$ sudo mv kernel-2.0-beta3-linux-x86 /usr/local
+$ cd /usr/local
+$ ln -sf kernel-2.0-beta3-linux-x86 gostai
+\end{shell}
+
+If you do not install this package in \file{/usr/local/gostai}, you
+will need some adjustments.  Let \var{urbi\_root} denote the directory
+which contains the contents of the package (i.e., \var{urbi\_root}
+should contain \file{bin}, \file{FAQ.txt} and so forth):
+
+\begin{shell}
+$ export URBI_ROOT=\var{urbi\_root}
+# On Mac OS X, use DYLD_LIBRARY_PATH instead of LD_LIBRARY_PATH.
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$URBI_ROOT/lib
+$ export PATH=$PATH:$URBI_ROOT/bin
+\end{shell}%$
+
+\section{Checks}
+
+Running the various programs is the quickest way to test your urbi
+installation.
+
+\begin{shell}
+# Check that urbi-console is properly set up.
+$ urbi-console --version
+# Check that urbi-launch is properly installed.
+$ urbi-launch --version
+# Check that urbi-launch can find its dependencies.
+$ urbi-launch -- --version
+\end{shell}%$
 
 \part{References and Index}
 
