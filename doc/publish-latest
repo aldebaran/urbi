@@ -30,7 +30,7 @@ test -n "$latest"
 
 for os in $oses
 do
-  pack=$(echo "$all" | grep -e "$latest-$os" | grep -v 'debug')
+  pack=$(echo "$all" | grep -e "$latest-$os" | grep -v 'debug' || true)
   if test -z "$pack"; then
     echo >&2 "$0: $latest does not exist for $os"
     exit 1
