@@ -82,11 +82,11 @@ dump(void* banner, const urbi::UMessage& msg)
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
+    case urbi::MESSAGE_SYSTEM:
       std::cout << msg << std::endl;
       break;
 
     case urbi::MESSAGE_ERROR:
-    case urbi::MESSAGE_SYSTEM:
       std::cerr << msg << std::endl;
       break;
   }
