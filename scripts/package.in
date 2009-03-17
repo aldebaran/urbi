@@ -65,7 +65,7 @@ fi
 version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^.*/,,")
 # If we are in release mode, do not tell it, the final users won't care
 if $release_mode; then
-  name="${PROJECT}-${version}-${OS}-${ARCH}"
+  name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}"
 else
   name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}-${MODE}"
 fi
