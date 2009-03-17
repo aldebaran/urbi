@@ -11,6 +11,8 @@ Auxiliary programs
 urbi-send no longer displays the server version banner, unless given
 -b/--banner.
 
+urbi-console.bat should now work out of the box under windows.
+
 Various bug fixes
 =================
 
