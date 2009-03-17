@@ -52,18 +52,35 @@ find_urbi_server
 # Start it.
 spawn_urbi_server
 
-cat >send-me.u <<EOF
+cat >quit.u <<EOF
 "PASS";
+quit;
+EOF
+
+cat >shutdown.u <<EOF
+"LAST";
 shutdown;
 EOF
 
 cmd="$valgrind urbi-send$EXEEXT --port-file server.port"
-cmd+=" -e '100+100;' -e '400*400;' -f send-me.u"
-echo "$cmd" >client.cmd
-eval "$cmd" >client.out 2>client.err &
-children_register client
+cmd+=" -e '100+100;' -e '400*400;' -f quit.u"
+echo "$cmd" >client1.cmd
+eval "$cmd" >client1.out 2>client1.err &
+children_register client1
 
-children_wait 10
-xrun "check" grep "200" client.out
-xrun "check" grep "160000" client.out
-xrun "check" grep "PASS" client.out
+children_wait 10 client1
+
+cmd="$valgrind urbi-send$EXEEXT --port-file server.port"
+cmd+=" -e 'var x = 0;at (x>5) echo(\"coucou\"); x = 7;' -f shutdown.u"
+echo "$cmd" >client2.cmd
+eval "$cmd" >client2.out 2>client2.err &
+children_register client2
+
+children_wait 10 client2
+
+xrun "check" grep "200" client1.out
+xrun "check" grep "160000" client1.out
+xrun "check" grep "PASS" client1.out
+
+xrun "check" grep "coucou" client2.out
+xrun "check" grep "LAST" client2.out
