@@ -84,10 +84,10 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 $MV "$MANIFEST" "$packagedir/MANIFEST"
 
 # Copy the instructions at the top-level
-$CP "${srcdir}/doc/FAQ.txt" "$packagedir"
-$CP "${srcdir}/doc/RELEASE-NOTES.txt" "$packagedir"
-$CP "${srcdir}/doc/REPORTING-BUGS.txt" "$packagedir"
-$CP "${srcdir}/doc/QUICK-START.txt" "$packagedir"
+for i in doc/{QUICK-START,README,RELEASE-NOTES,REPORTING-BUGS}.txt
+do
+  $CP "${srcdir}/$i" "$packagedir"
+done
 
 # When building a release for non-Windows platforms, strip the binaries
 # and the libraries.
