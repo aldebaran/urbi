@@ -8,7 +8,7 @@ AC_PREREQ([2.61])
 ## AC_INIT.  ##
 ## --------- ##
 
-AC_INIT([URBI SDK Remote], [UNDEFINED],
+AC_INIT([Urbi SDK Remote], [UNDEFINED],
 	[sdk-remote-bugs@gostai.com], [sdk-remote])
 URBI_PACKAGE_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2009])
