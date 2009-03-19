@@ -144,8 +144,10 @@ namespace parser
   /// timeout(duration) body
   ast::rExp ast_timeout(const ast::rExp& duration, const ast::rExp& body);
 
-  /// waituntil (something);
-  ast::rExp ast_waituntil(const ast::rExp& cond);
+  /// waituntil (cond ~ duration);
+  /// \param duration can be 0.
+  ast::rExp ast_waituntil(const yy::location& loc,
+                          const ast::rExp& cond, ast::rExp duration);
 
   /// waituntil (?(%event)(%payload))
   ast::rExp

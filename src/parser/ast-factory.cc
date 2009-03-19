@@ -406,12 +406,26 @@ namespace parser
 
 
   ast::rExp
-  ast_waituntil(const ast::rExp& cond)
+  ast_waituntil(const yy::location&,
+                const ast::rExp& cond, ast::rExp duration)
   {
-    PARAMETRIC_AST(desugar,
-		   "{var '$tag' = Tag.new |"
-		   "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
-    return exp(desugar % cond);
+    if (duration)
+    {
+      PARAMETRIC_AST(desugar,
+        "{"
+        "  var '$waituntil' = persist(%exp:1, %exp:2) |"
+        "  waituntil('$waituntil'())"
+        "}"
+        );
+      return exp(desugar % cond % duration);
+    }
+    else
+    {
+      PARAMETRIC_AST(desugar,
+                     "{var '$tag' = Tag.new |"
+                     "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
+      return exp(desugar % cond);
+    }
   }
 
 

@@ -892,19 +892,9 @@ stmt:
     {
       $$ = new ast::Continue(@$);
     }
-| "waituntil" "(" exp ")"
+| "waituntil" "(" exp tilda.opt ")"
     {
-      $$ = ::parser::ast_waituntil($3);
-    }
-| "waituntil" "(" exp "~" exp ")"
-    {
-      PARAMETRIC_AST(desugar,
-        "{"
-        "  var '$waituntil' = persist(%exp:1, %exp:2) |"
-        "  waituntil('$waituntil'())"
-        "}"
-        );
-      $$ = exp(desugar % $3 % $5);
+      $$ = ::parser::ast_waituntil(@$, $3, $4);
     }
 | "waituntil" "(" event_match ")"
     {
