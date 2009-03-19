@@ -44,17 +44,6 @@ stderr ()
 }
 
 
-# Sleep some time, but taking into account the fact that
-# instrumentation slows down a lot.
-my_sleep ()
-{
-  if $INSTRUMENT; then
-    sleep $(($1 * 5))
-  else
-    sleep $1
-  fi
-}
-
 ## -------------- ##
 ## Main program.  ##
 ## -------------- ##
