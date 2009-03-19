@@ -589,19 +589,11 @@ stmt:
 `---------*/
 
 stmt:
-  "emit" k1_id %prec CMDBLOCK
-  {
-    $$ = new ast::Emit(@$, $2, 0, 0);
-  }
-| "emit" k1_id "~" exp %prec CMDBLOCK
-  {
-    $$ = new ast::Emit(@$, $2, 0, $4);
-  }
-| "emit" k1_id args %prec CMDBLOCK
+  "emit" k1_id args.opt %prec CMDBLOCK
   {
     $$ = new ast::Emit(@$, $2, $3, 0);
   }
-| "emit" k1_id args "~" exp
+| "emit" k1_id args.opt "~" exp
   {
     $$ = new ast::Emit(@$, $2, $3, $5);
   }
