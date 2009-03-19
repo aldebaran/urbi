@@ -1506,7 +1506,7 @@ args:
 ;
 
 args.opt:
-  /* empty */  { $$ = new ast::exps_type; }
+  /* empty */  { $$ = 0; }
 | args         { std::swap($$, $1); }
 ;
 
