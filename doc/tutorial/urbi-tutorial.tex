@@ -2221,17 +2221,17 @@ sleep (2s);
 \urbi enables you to define events, that can be caught with the
 \lstinline|at| and \lstinline|whenever| constructs we saw earlier. You
 can create events by cloning the \lstinline|Event| prototype. They can
-then be emitted with the \lstinline|emit| keyword (\autoref{lst:event}).
+then be emitted with the \lstinline|!| keyword (\autoref{lst:event}).
 
 \begin{urbiscript}[caption=Using events, label=lst:event]
 var myEvent = Event.new;
 [00000000] Event_0x0
 at (?myEvent)
   echo("ping");
-emit myEvent;
+myEvent!;
 [00000000] *** ping
 // events work well with parallelism
-emit myEvent & emit myEvent;
+myEvent! & myEvent!;
 [00000000] *** ping
 [00000000] *** ping
 \end{urbiscript}
@@ -2251,7 +2251,7 @@ whenever (?myEvent)
   sleep(100ms)
 };
 // Emit myEvent for one second.
-emit myEvent ~ 350ms;
+myEvent! ~ 350ms;
 [00000000] *** ping
 [00000100] *** ping
 [00000200] *** ping
@@ -2474,7 +2474,7 @@ var ev = Event.new;
 \paragraph{How do I emit an event?}
 
 \begin{urbifixme}
-emit ev(1, "foo");
+ev!(1, "foo");
 \end{urbifixme}
 
 \paragraph{How do I catch an event?}

@@ -14,6 +14,18 @@ urbi-send no longer displays the server version banner, unless given
 urbi-console.bat should now work out of the box under windows.
 
 
+Syntax of events
+================
+
+The keyword "emit" is deprecated in favor of "!".
+
+     // deprecated.       // recommended.
+     emit e;              e!;
+     emit e(a);           e!(a);
+     emit e ~ 1s;         e! ~ 1s;
+     emit e(a) ~ 1s;      e!(a) ~ 1s;
+
+
 System.Platform
 ===============
 
