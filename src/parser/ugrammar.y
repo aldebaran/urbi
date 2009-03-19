@@ -986,11 +986,7 @@ stmt:
   {
     $$ = new ast::Try(@$, ast_scope(@$,$2), $3);
   }
-| "throw"
-  {
-    $$ = new ast::Throw(@$, 0);
-  }
-| "throw" exp
+| "throw" exp.opt
   {
     $$ = new ast::Throw(@$, $2);
   }
