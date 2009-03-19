@@ -148,6 +148,13 @@ namespace parser
                       ast::rExp event,
                       ast::exps_type* payload);
 
+  /// whenever (%cond ~ %duration) {%body} onleave {%else_stmt}
+  ast::rExp
+  ast_whenever(const yy::location& loc,
+               ast::rExp cond,
+               ast::rExp body, ast::rExp else_stmt = 0,
+               ast::rExp duration = 0);
+
   /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
   ast::rExp
   ast_whenever_event(const ast::loc& loc,

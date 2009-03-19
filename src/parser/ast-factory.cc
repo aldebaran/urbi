@@ -38,7 +38,7 @@ namespace parser
   ast::rExp
   ast_at(const yy::location& loc,
          ast::rExp cond,
-         ast::rExp at, ast::rExp onleave,
+         ast::rExp body, ast::rExp onleave,
          ast::rExp duration)
   {
     if (!onleave)
@@ -50,14 +50,14 @@ namespace parser
                      "var '$at' = persist(%exp:1, %exp:2) |"
                      "at ('$at') %exp:3 onleave %exp:4");
 
-      return exp(desugar % cond % duration % at % onleave);
+      return exp(desugar % cond % duration % body % onleave);
     }
     else
     {
       PARAMETRIC_AST(desugar,
         "Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
 
-      return exp(desugar % cond % at % onleave);
+      return exp(desugar % cond % body % onleave);
     }
   }
 
@@ -456,6 +456,28 @@ namespace parser
 		   "   }"
 		   "}");
     return exp(desugar % duration % body);
+  }
+
+  ast::rExp
+  ast_whenever(const yy::location&,
+               ast::rExp cond,
+               ast::rExp body, ast::rExp else_stmt,
+               ast::rExp duration)
+  {
+    if (duration)
+    {
+      PARAMETRIC_AST(desugar,
+        "var '$whenever' = persist(%exp:1, %exp:2) |"
+        "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'"
+        );
+      return exp(desugar % cond % duration % body % else_stmt);
+    }
+    else
+    {
+      PARAMETRIC_AST(desugar,
+        "Control.whenever_(%exp:1, %exp:2, %exp:3)");
+      return exp(desugar % cond % body % else_stmt);
+    }
   }
 
 }

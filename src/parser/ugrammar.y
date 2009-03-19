@@ -92,6 +92,7 @@
   using parser::ast_scope;
   using parser::ast_string;
   using parser::ast_switch;
+  using parser::ast_whenever;
   using parser::ast_whenever_event;
 
 #include <parser/parse.hh>
@@ -934,19 +935,9 @@ onleave.opt:
 
 
 stmt:
-  "whenever" "(" exp ")" nstmt else.opt         %prec CMDBLOCK
+  "whenever" "(" exp tilda.opt ")" nstmt else.opt
     {
-      PARAMETRIC_AST(desugar,
-        "Control.whenever_(%exp:1, %exp:2, %exp:3)");
-      $$ = exp(desugar % $3 % $5 % $6);
-    }
-| "whenever" "(" exp "~" exp ")" nstmt else.opt %prec CMDBLOCK
-    {
-      PARAMETRIC_AST(desugar,
-        "var '$whenever' = persist(%exp:1, %exp:2) |"
-        "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'"
-        );
-      $$ = exp(desugar % $3 % $5 % $7 % $8);
+      $$ = ast_whenever(@$, $3, $6, $7, $4);
     }
 | "whenever" "(" event_match ")" nstmt else.opt
     {
