@@ -564,7 +564,7 @@ stmt:
 	     "identifier" identifier_as_string
   {
     PARAMETRIC_AST
-      (     a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+      (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
 
     if ($9 != SYMBOL(from))
       up.error(@9, "unexpected `" + $9.name_get() +
@@ -576,7 +576,7 @@ stmt:
 	     "identifier" identifier_as_string
   {
     PARAMETRIC_AST
-      (     a, "'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
+      (a, "'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
 
     if ($9 != SYMBOL(from))
       up.error(@9, "unexpected `" + $9.name_get() +
@@ -868,13 +868,9 @@ stmt:
         );
       $$ = exp(desugar % $5 % $3);
     }
-| "switch" "(" exp ")" "{" cases "}"
+| "switch" "(" exp ")" "{" cases default.opt "}"
     {
-      $$ = ast_switch(@3, $3, $6, 0);
-    }
-| "switch" "(" exp ")" "{" cases "default" ":" stmts "}"
-    {
-      $$ = ast_switch(@3, $3, $6, $9);
+      $$ = ast_switch(@3, $3, $6, $7);
     }
 | "timeout" "(" exp ")" stmt
     {
@@ -903,12 +899,19 @@ stmt:
 ;
 
 
-/*--------------------------------.
-| Optional else/onleave clauses.  |
-`--------------------------------*/
+/*----------------------------------------.
+| Optional default/else/onleave clauses.  |
+`----------------------------------------*/
 
 // CMDBLOCK < "else" and "onleave" to promote shift in else.opt and
 // onleave.opt.
+
+%type <ast::rNary> default.opt;
+default.opt:
+  /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
+|  "default" ":" stmts            { std::swap($$, $3); }
+;
+
 %type <ast::rExp> else.opt;
 else.opt:
   /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
