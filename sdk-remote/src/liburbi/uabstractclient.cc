@@ -373,10 +373,11 @@ namespace urbi
     sendBufferLock.lock();
     if (command)
     {
-      int slen = strlen(sendBuffer);
-      int msize = buflen - slen;
-      if (msize >= vsnprintf(NULL, msize, command, arg))
-	rc = (0 > vsnprintf(sendBuffer + slen, msize, command, arg));
+      // Don't print if we overflow the buffer.
+      size_t slen = strlen(sendBuffer);
+      size_t msize = buflen - slen;
+      if (vsnprintf(0, msize, command, arg) <= static_cast<int>(msize))
+	rc = vsnprintf(sendBuffer + slen, msize, command, arg) < 0;
       else
 	rc = -1;
     }
