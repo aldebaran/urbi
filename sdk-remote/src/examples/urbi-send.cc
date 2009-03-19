@@ -26,12 +26,10 @@
 
 #include <libport/cstdio>
 #include <libport/sysexits.hh>
-#include <libport/foreach.hh>
 
 #include <libport/cli.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
-#include <libport/option-parser.hh>
 
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
@@ -42,19 +40,26 @@ namespace
 {
   static
   void
-  usage(libport::OptionParser& parser)
+  usage()
   {
     std::cout <<
       "usage: " << program_name() << " [OPTION].. [FILE]...\n"
       "\n"
       "  FILE    to upload onto the server\n"
       "\n"
-      "Options:\n";
-    parser.options_doc(std::cout);
-    std::cout << "\n"
-	      << urbi::package_info().report_bugs()
-	      << std::endl
-	      << libport::exit(EX_OK);
+      "Options:\n"
+      "  -b, --banner             do not hide the server-sent banner\n"
+      "  -e, --expression SCRIPT  send SCRIPT to the server\n"
+      "  -f, --file FILE          send the contents of FILE to the server\n"
+      "  -h, --help               display this message and exit\n"
+      "  -H, --host HOST          Urbi server host [localhost]\n"
+      "  -p, --port PORT          Urbi server port\n"
+      "      --port-file FILE     file containing the port to listen to\n"
+      "  -v, --version            display version information and exit\n"
+      "\n"
+                << urbi::package_info().report_bugs()
+                << std::endl
+                << libport::exit(EX_OK);
   }
 
   static
@@ -153,39 +158,41 @@ main(int argc, char* argv[])
   /// Display the server's banner.
   bool banner = false;
   /// Server host name.
-  std::string host;
+  std::string host = "localhost";
   /// Server port.
-  int port;
+  int port = urbi::UClient::URBI_PORT;
 
   // Parse the command line.
-  libport::OptionValue arg_exp("send SCRIPT to the server", "expression", 'e');
-  libport::OptionValue arg_file("send the contents of FILE to the server", "file", 'f');
-  libport::OptionValue arg_pfile("file containing the port to listen to", "port-file");
+  for (int i = 1; i < argc; ++i)
+  {
+    std::string arg = argv[i];
 
-  libport::OptionParser opt_parser;
-  opt_parser << arg_exp << arg_file << libport::opts::help
-	     << libport::opts::host_l << libport::opts::port_l
-	     << libport::opts::version;
-  libport::cli_args_type remainings_args = opt_parser(libport::program_arguments());
-
-  if (libport::opts::help.get())
-    usage(opt_parser);
-  if (arg_exp.filled())
-    data.push_back(new TextData(arg_exp.value()));
-  if (arg_file.filled())
-    data.push_back(new FileData(arg_file.value()));
-  host = libport::opts::host_l.value("localhost");
-  port = libport::opts::port_l.get<int>(urbi::UClient::URBI_PORT);
-  if (arg_pfile.filled())
-    port = libport::file_contents_get<int>(arg_pfile.value());
-  if (libport::opts::version.get())
-    version();
-
-  foreach(std::string arg, remainings_args)
-    if (arg[0] == '-' && arg[1] != 0)
+    if (arg == "--banner" || arg == "-b")
+      banner = true;
+    else if (arg == "--expression" || arg == "-e")
+      data.push_back(
+        new TextData(libport::convert_argument<std::string>(arg, argv[++i])));
+    else if (arg == "--file" || arg == "-f")
+      data.push_back(
+        new FileData(libport::convert_argument<std::string>(arg, argv[++i])));
+    else if (arg == "--help" || arg == "-h")
+      usage();
+    else if (arg == "--host" || arg == "-H")
+      host = argv[++i];
+    else if (arg == "--port" || arg == "-p")
+      port = libport::convert_argument<int> (arg, argv[++i]);
+    else if (arg == "--port-file")
+      port =
+        (libport::file_contents_get<int>
+         (libport::convert_argument<const char*>(arg, argv[++i])));
+    else if (arg == "--version" || arg == "-v")
+      version();
+    else if (arg[0] == '-' && arg[1] != 0)
       libport::invalid_option (arg);
     else
-      data.push_back(new FileData(arg));
+      // An argument: a file.
+      data.push_back(new FileData(argv[i]));
+  }
 
   urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
