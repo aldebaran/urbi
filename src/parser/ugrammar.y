@@ -353,7 +353,7 @@
 %left  "," ";"
 %left  "|"
 %left  "&"
-%left  CMDBLOCK ELSE_LESS
+%left  CMDBLOCK
 %left  "else" "onleave"
 
 %right  "=" "+=" "-=" "*=" "/=" "^=" "%="
@@ -812,42 +812,26 @@ stmt:
     {
       std::swap($$, $1);
     }
-| "at" "(" exp tilda.opt ")" nstmt %prec CMDBLOCK
+| "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      $$ = ast_at(@$, $3, $6, 0, $4);
+      $$ = ast_at(@$, $3, $6, $7, $4);
     }
-| "at" "(" exp tilda.opt ")" nstmt "onleave" nstmt
+| "at" "(" event_match ")" nstmt onleave.opt
     {
-      FLAVOR_CHECK(@$, "at", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      $$ = ast_at(@$, $3, $6, $8, $4);
-    }
-| "at" "(" event_match ")" nstmt %prec CMDBLOCK
-    {
-      $$ = ast_at_event(@$, $3, $5);
-    }
-| "at" "(" event_match ")" nstmt "onleave" nstmt
-    {
-      $$ = ast_at_event(@$, $3, $5, $7);
+      $$ = ast_at_event(@$, $3, $5, $6);
     }
 | "every" "(" exp ")" nstmt
     {
       PARAMETRIC_AST(every, "Control.every_(%exp:1, %exp:2)");
       $$ = exp (every % $3 % $5);
     }
-| "if" "(" stmts ")" nstmt %prec CMDBLOCK
+| "if" "(" stmts ")" nstmt else.opt
     {
       $$ = new ast::If(@$, $3,
 		       ast_scope(@$,$5),
-		       ast_scope(@$,new ast::Noop(@$, 0)));
-    }
-| "if" "(" stmts ")" nstmt "else" nstmt
-    {
-      $$ = new ast::If(@$, $3,
-		       ast_scope(@$,$5),
-		       ast_scope(@$,$7));
+		       ast_scope(@$,$6));
     }
 | "freezeif" "(" softtest ")" stmt
     {
@@ -928,27 +912,35 @@ stmt:
     }
 ;
 
-// An optional else branch for a whenever.
-%type <ast::rExp> else_stmt;
-else_stmt:
-  /* nothing. */ %prec ELSE_LESS // ELSE_LESS < "else" to promote shift.
-  {
-    $$ = ast_nil();
-  }
-| "else" nstmt
-  {
-    std::swap($$, $2);
-  }
+
+/*--------------------------------.
+| Optional else/onleave clauses.  |
+`--------------------------------*/
+
+// CMDBLOCK < "else" and "onleave" to promote shift in else.opt and
+// onleave.opt.
+%type <ast::rExp> else.opt;
+else.opt:
+  /* nothing. */ %prec CMDBLOCK   { $$ = ast_nil();    }
+| "else" nstmt                    { std::swap($$, $2); }
 ;
 
+// An optional onleave clause.
+%type <ast::rExp> onleave.opt;
+onleave.opt:
+  /* nothing. */ %prec CMDBLOCK   { $$ = ast_nil();    }
+| "onleave" nstmt                 { std::swap($$, $2); }
+;
+
+
 stmt:
-  "whenever" "(" exp ")" nstmt else_stmt %prec CMDBLOCK
+  "whenever" "(" exp ")" nstmt else.opt         %prec CMDBLOCK
     {
       PARAMETRIC_AST(desugar,
         "Control.whenever_(%exp:1, %exp:2, %exp:3)");
       $$ = exp(desugar % $3 % $5 % $6);
     }
-| "whenever" "(" exp "~" exp ")" nstmt else_stmt  %prec CMDBLOCK
+| "whenever" "(" exp "~" exp ")" nstmt else.opt %prec CMDBLOCK
     {
       PARAMETRIC_AST(desugar,
         "var '$whenever' = persist(%exp:1, %exp:2) |"
@@ -956,13 +948,9 @@ stmt:
         );
       $$ = exp(desugar % $3 % $5 % $7 % $8);
     }
-| "whenever" "(" event_match ")" nstmt %prec CMDBLOCK
+| "whenever" "(" event_match ")" nstmt else.opt
     {
-      $$ = ast_whenever_event(@$, $3, $5);
-    }
-| "whenever" "(" event_match ")" nstmt "else" nstmt %prec CMDBLOCK
-    {
-      $$ = ast_whenever_event(@$, $3, $5, $7);
+      $$ = ast_whenever_event(@$, $3, $5, $6);
     }
 ;
 
