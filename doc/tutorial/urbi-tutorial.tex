@@ -2226,7 +2226,7 @@ then be emitted with the \lstinline|!| keyword (\autoref{lst:event}).
 \begin{urbiscript}[caption=Using events, label=lst:event]
 var myEvent = Event.new;
 [00000000] Event_0x0
-at (?myEvent)
+at (myEvent?)
   echo("ping");
 myEvent!;
 [00000000] *** ping
@@ -2245,7 +2245,7 @@ duration (\autoref{lst:emit-duration}).
   label=lst:emit-duration]
 var myEvent = Event.new;
 [00000000] Event_0x0
-whenever (?myEvent)
+whenever (myEvent?)
 {
   echo("ping")|
   sleep(100ms)
@@ -2479,14 +2479,13 @@ ev!(1, "foo");
 
 \paragraph{How do I catch an event?}
 
-
 \begin{urbifixme}
-at(?ev(1, var msg)) {
+at(ev?(1, var msg)) {
   echo ("Received event with 1 and message " + msg);
 };
 \end{urbifixme}
 
-The "?" marker indicates that we are looking for an event instead of a
+The \code{?} marker indicates that we are looking for an event instead of a
 boolean condition. The construction "var msg" indicates that the "msg"
 variable will be bound (as a local variable) in the body part of the "at"
 construct, with whatever value is present in the event that triggered the

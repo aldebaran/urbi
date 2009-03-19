@@ -23,12 +23,12 @@ do (Global.Tag)
       echo(res + msg);
     };
 
-    at (?begin.enter)
+    at (begin.enter?)
     {
       report("begin");
     };
 
-    at (?end.leave)
+    at (end.leave?)
     {
       report("end");
     };

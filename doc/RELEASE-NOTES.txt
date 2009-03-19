@@ -19,11 +19,21 @@ Syntax of events
 
 The keyword "emit" is deprecated in favor of "!".
 
-     // deprecated.       // recommended.
-     emit e;              e!;
-     emit e(a);           e!(a);
-     emit e ~ 1s;         e! ~ 1s;
-     emit e(a) ~ 1s;      e!(a) ~ 1s;
+   // deprecated.       // updated.
+   emit e;              e!;
+   emit e(a);           e!(a);
+   emit e ~ 1s;         e! ~ 1s;
+   emit e(a) ~ 1s;      e!(a) ~ 1s;
+
+The "?" construct is changed for symmetry.
+
+   // deprecated.              // updated.
+   at (?e)                     at (e?)
+   at (?e(var a))              at (e?(var a))
+   at (?e(var a) if a == 2)    at (e?(var a) if a == 2)
+
+This syntax for sending and receiving is traditional and can be found
+in various programming languages.
 
 
 System.Platform

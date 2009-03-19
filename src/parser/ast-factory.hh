@@ -85,7 +85,8 @@ namespace parser
   // Since we don't have "continue", for is really a sugared
   // while:
   //
-  // "for OP ( INIT; TEST; INC ) BODY";::rExp
+  // "for OP ( INIT; TEST; INC ) BODY";
+  // FIXME: We do have "continue".
   ast::rExp
   ast_for(const yy::location& l, ast::flavor_type op,
           ast::rExp init, ast::rExp test, ast::rExp inc,

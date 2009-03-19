@@ -121,7 +121,7 @@ do (Global.Tutorial)
       var cond = Tag.new;
       cond: at (condition.eval)
         tutorial.next.'emit';
-      waituntil(?tutorial.next);
+      waituntil(tutorial.next?);
       cond.stop;
       onLeave.eval;
     };

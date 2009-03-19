@@ -591,16 +591,16 @@ stmt:
 `---------*/
 
 stmt:
-  "emit" k1_id args.opt tilda.opt
+  exp "!" args.opt tilda.opt
+  {
+    $$ = new ast::Emit(@$, $1, $3, $4);
+  }
+| "emit" k1_id args.opt tilda.opt
   {
     up.warn(@$,
             "`emit myEvent(Args...)' is deprecated.  "
             "Use `myEvent!(Args...)' instead.");
     $$ = new ast::Emit(@$, $2, $3, $4);
-  }
-| exp "!" args.opt tilda.opt
-  {
-    $$ = new ast::Emit(@$, $1, $3, $4);
   }
 ;
 
@@ -1230,8 +1230,15 @@ exp:
 %token QUEST_MARK "?";
 %type <::parser::EventMatch> event_match;
 event_match:
-  "?" exp guard.opt
+  exp "?" args.opt guard.opt
   {
+    $$ = ::parser::EventMatch($1, $3, $4);
+  }
+| "?" exp guard.opt
+  {
+    up.warn(@$,
+            "`?myEvent(Args...)' is deprecated.  "
+            "Use `myEvent?(Args...)' instead.");
     ast::rCall call = $2.unsafe_cast<ast::Call>();
     if (call && call->arguments_get())
     {

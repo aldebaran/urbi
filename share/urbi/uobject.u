@@ -344,7 +344,7 @@ class Global.'external'
     var args = nargs.seq.map(function(x) { "p%s" %[x]}).join(", ") |
     var varargs = nargs.seq.map(function(x) { "var p%s" %[x]}).join(", ")|
     var code =
-      ("at (?uobjects.%s.%s(%s)) 'external'.eventBounce(true, \"%s\",[%s])"
+      ("at (uobjects.%s.%s?(%s)) 'external'.eventBounce(true, \"%s\",[%s])"
       + "onleave 'external'.eventBounce(false, \"%s\",[%s])")
     % [objname, ename, varargs, fullname, args, fullname, args]|
     eval(code)

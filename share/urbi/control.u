@@ -76,7 +76,7 @@ class Global.Control
   function finally(action, reaction)
   {
     var t = Tag.new;
-    at (?t.leave)
+    at (t.leave?)
       reaction();
     t: action();
   };
