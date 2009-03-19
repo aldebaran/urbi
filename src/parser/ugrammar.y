@@ -589,13 +589,9 @@ stmt:
 `---------*/
 
 stmt:
-  "emit" k1_id args.opt %prec CMDBLOCK
+  "emit" k1_id args.opt tilda.opt
   {
-    $$ = new ast::Emit(@$, $2, $3, 0);
-  }
-| "emit" k1_id args.opt "~" exp
-  {
-    $$ = new ast::Emit(@$, $2, $3, $5);
+    $$ = new ast::Emit(@$, $2, $3, $4);
   }
 ;
 
@@ -816,29 +812,17 @@ stmt:
     {
       std::swap($$, $1);
     }
-| "at" "(" exp ")" nstmt %prec CMDBLOCK
+| "at" "(" exp tilda.opt ")" nstmt %prec CMDBLOCK
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      $$ = ast_at(@$, $3, $5);
+      $$ = ast_at(@$, $3, $6, 0, $4);
     }
-| "at" "(" exp ")" nstmt "onleave" nstmt
+| "at" "(" exp tilda.opt ")" nstmt "onleave" nstmt
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      $$ = ast_at(@$, $3, $5, $7);
-    }
-| "at" "(" exp "~" exp ")" nstmt %prec CMDBLOCK
-    {
-      FLAVOR_CHECK(@$, "at", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      $$ = ast_at(@$, $3, $7, 0, $5);
-    }
-| "at" "(" exp "~" exp ")" nstmt "onleave" nstmt
-    {
-      FLAVOR_CHECK(@$, "at", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
-      $$ = ast_at(@$, $3, $7, $9, $5);
+      $$ = ast_at(@$, $3, $6, $8, $4);
     }
 | "at" "(" event_match ")" nstmt %prec CMDBLOCK
     {
@@ -1296,6 +1280,14 @@ guard.opt:
 guard:
   "if" exp { $$ = $2; }
 ;
+
+
+%type<ast::rExp> tilda.opt;
+tilda.opt:
+  /* nothing */ { $$ = 0; }
+| "~" exp       { std::swap($$, $2); }
+;
+
 
 /*---------------------------.
 | Square brackets operator.  |
