@@ -198,8 +198,8 @@ namespace parser
 
   /// "<target> . <method> (args)".
   ast::rCall
-  ast_call (const yy::location& l,
-            ast::rExp target, libport::Symbol method, ast::exps_type* args)
+  ast_call(const yy::location& l,
+           ast::rExp target, libport::Symbol method, ast::exps_type* args)
   {
     return new ast::Call(l, args, target, method);
   }
@@ -264,6 +264,16 @@ namespace parser
       "}"
       );
     return exp(desugar % init % inc % test % body);
+  }
+
+
+  ast::rExp
+  ast_if(const yy::location& l,
+         ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse)
+  {
+    return new ast::If(l, cond,
+                       ast_scope(l, iftrue),
+		       iffalse ? ast_scope(l, iffalse) : new ast::Noop(l, 0));
   }
 
 

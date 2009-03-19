@@ -76,15 +76,20 @@ namespace parser
                     EventMatch& event,
                     ast::rExp body, ast::rExp onleave);
 
+  /// \param iffalse can be 0.
+  ast::rExp
+  ast_if(const yy::location& l,
+         ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse);
+
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
   // while:
   //
   // "for OP ( INIT; TEST; INC ) BODY";::rExp
   ast::rExp
-  ast_for (const yy::location& l, ast::flavor_type op,
-           ast::rExp init, ast::rExp test, ast::rExp inc,
-           ast::rExp body);
+  ast_for(const yy::location& l, ast::flavor_type op,
+          ast::rExp init, ast::rExp test, ast::rExp inc,
+          ast::rExp body);
 
   /** Use these functions to avoid CPP-like problem when referring
    *  several times to an lvalue.  For instance, do not desugar

@@ -88,6 +88,7 @@
   using parser::ast_call;
   using parser::ast_class;
   using parser::ast_for;
+  using parser::ast_if;
   using parser::ast_nil;
   using parser::ast_scope;
   using parser::ast_string;
@@ -830,9 +831,7 @@ stmt:
     }
 | "if" "(" stmts ")" nstmt else.opt
     {
-      $$ = new ast::If(@$, $3,
-		       ast_scope(@$,$5),
-		       ast_scope(@$,$6));
+      $$ = ast_if(@$, $3, $5, $6);
     }
 | "freezeif" "(" softtest ")" stmt
     {
@@ -922,14 +921,14 @@ stmt:
 // onleave.opt.
 %type <ast::rExp> else.opt;
 else.opt:
-  /* nothing. */ %prec CMDBLOCK   { $$ = ast_nil();    }
+  /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
 | "else" nstmt                    { std::swap($$, $2); }
 ;
 
 // An optional onleave clause.
 %type <ast::rExp> onleave.opt;
 onleave.opt:
-  /* nothing. */ %prec CMDBLOCK   { $$ = ast_nil();    }
+  /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
 | "onleave" nstmt                 { std::swap($$, $2); }
 ;
 
