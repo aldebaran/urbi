@@ -131,65 +131,6 @@ namespace parser
     return ast_event_catcher(loc, event, body, onleave);
   }
 
-  ast::rExp
-  ast_waituntil(const ast::rExp& cond)
-  {
-    PARAMETRIC_AST(desugar,
-		   "{var '$tag' = Tag.new |"
-		   "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
-    return exp(desugar % cond);
-  }
-
-  ast::rExp
-  ast_waituntil_event(const ast::loc& loc,
-                      ast::rExp event,
-                      ast::exps_type* payload)
-  {
-    if (!payload)
-    {
-      PARAMETRIC_AST
-        (desugar,
-         "  %exp:1.'waituntil'(nil)");
-      return exp(desugar % event);
-    }
-
-    PARAMETRIC_AST
-      (desugar,
-       "{"
-       "  var '$pattern' = Pattern.new(%exp:1) |"
-       "  %exp:2.'waituntil'('$pattern') |"
-       "  {"
-       "    %unscope: 2 |"
-       "    %exp:3 |"
-       "  }"
-       "}");
-
-    ast::rList d_payload = new ast::List(loc, payload);
-
-    rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-    bind(d_payload.get());
-
-    return exp(desugar
-               % bind.result_get().unchecked_cast<ast::Exp>()
-               % event
-               % bind.bindings_get());
-  }
-
-  ast::rExp
-  ast_whenever_event(const ast::loc& loc,
-                     EventMatch& event,
-                     ast::rExp body, ast::rExp onleave)
-  {
-    PARAMETRIC_AST(desugar_body,
-                   "while (true)"
-                   "{"
-                   "  %exp:1 |"
-                   "  if(!'$evt'.active)"
-                   "    break"
-                   "}");
-    body = exp(desugar_body % body);
-    return ast_event_catcher(loc, event, body, onleave);
-  }
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
   /// \param op must be & or |.
@@ -309,13 +250,12 @@ namespace parser
   // The increment is included directly in the condition to make sure
   // it is executed on `continue'.
   ast::rExp
-  ast_for (const yy::location&, ast::flavor_type,
-           ast::rExp init, ast::rExp test, ast::rExp inc,
-           ast::rExp body)
+  ast_for(const yy::location&, ast::flavor_type,
+          ast::rExp init, ast::rExp test, ast::rExp inc,
+          ast::rExp body)
   {
     // FIXME: for| is handled as a simple for
     PARAMETRIC_AST(desugar,
-
       "{"
       "  %exp:1 |"
       "  var '$tmp-for-first' = true |"
@@ -323,14 +263,38 @@ namespace parser
       "    %exp:4 |"
       "}"
       );
+    return exp(desugar % init % inc % test % body);
+  }
 
-    desugar
-      % init
-      % inc
-      % test
-      % body;
 
-    return exp(desugar);
+  ast::rLValue
+  ast_lvalue_once(const ast::rLValue& lvalue)
+  {
+    ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL(DOLLAR_tmp));
+
+    if (lvalue->call()->target_implicit())
+      return lvalue.get();
+    else
+      return ast_call(lvalue->location_get(), tmp, lvalue->call()->name_get());
+  }
+
+  ast::rExp
+  ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e)
+  {
+    PARAMETRIC_AST(wrap,
+                   "{"
+                   "var '$tmp' = %exp:1;"
+                   "%exp:2;"
+                   "}"
+      );
+
+    if (lvalue->call()->target_implicit())
+      return e;
+    else
+    {
+      wrap % lvalue->call()->target_get() % e;
+      return exp(wrap);
+    }
   }
 
   ast::rExp
@@ -413,34 +377,6 @@ namespace parser
     return exp(sw % cond % inner);
   }
 
-  ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue)
-  {
-    ast::rCall tmp = ast_call(lvalue->location_get(), SYMBOL(DOLLAR_tmp));
-
-    if (lvalue->call()->target_implicit())
-      return lvalue.get();
-    else
-      return ast_call(lvalue->location_get(), tmp, lvalue->call()->name_get());
-  }
-
-  ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e)
-  {
-    PARAMETRIC_AST(wrap,
-                   "{"
-                   "var '$tmp' = %exp:1;"
-                   "%exp:2;"
-                   "}"
-      );
-
-    if (lvalue->call()->target_implicit())
-      return e;
-    else
-    {
-      wrap % lvalue->call()->target_get() % e;
-      return exp(wrap);
-    }
-  }
-
   ast::rExp
   ast_timeout(const ast::rExp& duration, const ast::rExp& body)
   {
@@ -456,6 +392,68 @@ namespace parser
 		   "   }"
 		   "}");
     return exp(desugar % duration % body);
+  }
+
+
+  ast::rExp
+  ast_waituntil(const ast::rExp& cond)
+  {
+    PARAMETRIC_AST(desugar,
+		   "{var '$tag' = Tag.new |"
+		   "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
+    return exp(desugar % cond);
+  }
+
+
+  ast::rExp
+  ast_waituntil_event(const ast::loc& loc,
+                      ast::rExp event,
+                      ast::exps_type* payload)
+  {
+    if (!payload)
+    {
+      PARAMETRIC_AST
+        (desugar,
+         "  %exp:1.'waituntil'(nil)");
+      return exp(desugar % event);
+    }
+
+    PARAMETRIC_AST
+      (desugar,
+       "{"
+       "  var '$pattern' = Pattern.new(%exp:1) |"
+       "  %exp:2.'waituntil'('$pattern') |"
+       "  {"
+       "    %unscope: 2 |"
+       "    %exp:3 |"
+       "  }"
+       "}");
+
+    ast::rList d_payload = new ast::List(loc, payload);
+
+    rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+    bind(d_payload.get());
+
+    return exp(desugar
+               % bind.result_get().unchecked_cast<ast::Exp>()
+               % event
+               % bind.bindings_get());
+  }
+
+  ast::rExp
+  ast_whenever_event(const ast::loc& loc,
+                     EventMatch& event,
+                     ast::rExp body, ast::rExp onleave)
+  {
+    PARAMETRIC_AST(desugar_body,
+                   "while (true)"
+                   "{"
+                   "  %exp:1 |"
+                   "  if(!'$evt'.active)"
+                   "    break"
+                   "}");
+    body = exp(desugar_body % body);
+    return ast_event_catcher(loc, event, body, onleave);
   }
 
   ast::rExp
