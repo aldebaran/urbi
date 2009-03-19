@@ -1244,8 +1244,8 @@ Emit:
         desc: Duration of the emission
         mandatory: false
   printer:
-    - '"emit "'
     - ~event
+    - '"!"'
     -  '{
           if (const exps_type* args = n->arguments_get())
           {

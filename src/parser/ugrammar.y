@@ -593,7 +593,14 @@ stmt:
 stmt:
   "emit" k1_id args.opt tilda.opt
   {
+    up.warn(@$,
+            "`emit myEvent(Args...)' is deprecated.  "
+            "Use `myEvent!(Args...)' instead.");
     $$ = new ast::Emit(@$, $2, $3, $4);
+  }
+| exp "!" args.opt tilda.opt
+  {
+    $$ = new ast::Emit(@$, $1, $3, $4);
   }
 ;
 
