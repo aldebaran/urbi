@@ -486,6 +486,9 @@ namespace parser
                ast::rExp body, ast::rExp else_stmt,
                ast::rExp duration)
   {
+    // FIXME: Be smarter on empty else_stmt.
+    if (!else_stmt)
+      else_stmt = ast_nil();
     if (duration)
     {
       PARAMETRIC_AST(desugar,
