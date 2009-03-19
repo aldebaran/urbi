@@ -2,7 +2,7 @@
 dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 
 package_info_u = share/urbi/package-info.u
-nodist_urbi_DATA = $(package_info_u)
+nodist_urbi_DATA = $(package_info_u) share/urbi/platform.u
 REVISIONFLAGS = --urbi
 REVISION_FILE = $(package_info_u)
 include $(top_srcdir)/build-aux/revision.mk
@@ -12,6 +12,5 @@ $(srcdir)/share/urbi/tutorial-content.u: share/urbi/tutorial/tutorial.xml share/
 	$(srcdir)/share/urbi/tutorial/tutorial.py $< > $@.tmp
 	mv $@.tmp $@
 
-urbi.stamp: $(dist_urbi_DATA) $(package_info_u)
+urbi.stamp: $(dist_urbi_DATA) $(nodist_urbi_DATA)
 	@echo "$$(date)"': $?' >>$@
-

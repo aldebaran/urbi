@@ -107,6 +107,8 @@ load("urbi/lazy.u");
 load("urbi/list.u");
 load("urbi/singleton.u");
 
+// FIXME: If we "load" here, we are stuck.
+
 /*-------.
 | void.  |
 `-------*/
@@ -218,6 +220,7 @@ load("urbi/updatehook-stack.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
 load("urbi/string.u");
+load("urbi/system.u");
 
 
 

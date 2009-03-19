@@ -13,6 +13,14 @@ urbi-send no longer displays the server version banner, unless given
 
 urbi-console.bat should now work out of the box under windows.
 
+
+System.Platform
+===============
+
+System.Platform enhances System.platform.  Use System.Platform.kind
+instead of System.platform.
+
+
 Various bug fixes
 =================
 
@@ -21,6 +29,7 @@ exited with exception TerminateException".  This is fixed.
 
 Using waituntil on an event with no payload (ie: waituntil(?e) ...;)
 will not cause an internal error anymore.
+
 
 *******************************
 * New since kernel 2.0 beta 3 *

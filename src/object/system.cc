@@ -328,8 +328,9 @@ namespace object
 
     // The space after "Symbol(" is mandatory to avoid triggering an error in
     // symbol generation code
-#define ADDSTAT(Suffix, Function, Divisor)				\
-    res[libport::Symbol( "cycles" # Suffix)] = new Float(stats.Function() / Divisor)
+#define ADDSTAT(Suffix, Function, Divisor)      \
+    res[libport::Symbol("cycles" # Suffix)] =   \
+      new Float(stats.Function() / Divisor)
     ADDSTAT(, size, 1);
     ADDSTAT(Max, max, 1e6);
     ADDSTAT(Mean, mean, 1e6);
@@ -347,17 +348,6 @@ namespace object
     check_arg_count(args.size() - 1, 0);
     r.scheduler_get().stats_reset();
     return void_class;
-  }
-
-  static rObject
-  system_class_platform(objects_type args)
-  {
-    check_arg_count(args.size() - 1, 0);
-#ifdef WIN32
-    return to_urbi(SYMBOL(WIN32));
-#else
-    return to_urbi(SYMBOL(POSIX));
-#endif
   }
 
   // This should give a backtrace as an urbi object.
@@ -533,7 +523,6 @@ namespace object
     DECLARE(shutdown);
     DECLARE(sleep);
     DECLARE(stopall);
-    DECLARE(platform);
     DECLARE(time);
 #undef DECLARE
   }
