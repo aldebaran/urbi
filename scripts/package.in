@@ -41,16 +41,19 @@ esac
 
 # Those would best be set through configure (except "updir"
 # which sets the destination).
-PROJECT="$1"
-srcdir="$2"
-builddir="$3"
-DESTDIR="$4"
-updir="$5"
-ARCH="$6"       # ex. x86
-OS="$7"         # ex. linux
-COMP="$8"       # ex. gcc4
-MODE="$9"       # [release|debug]_[static|dynamic]
-prefix="${10}"
+
+# Baby does not want to change the $1 passed to this script.  Let him
+# play with the poo poo in his diapers while we work :)
+PROJECT='@PACKAGE_TARNAME@'
+srcdir=$2
+builddir=$3
+DESTDIR=$4
+updir=$5
+ARCH=$6       # ex. x86
+OS=$7         # ex. linux
+COMP=$8       # ex. gcc4
+MODE=$9       # [release|debug]_[static|dynamic]
+prefix=${10}
 
 # Set release_mode depending on whether we are building a release version
 # or a development version.
