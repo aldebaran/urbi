@@ -372,9 +372,9 @@ require the parentheses (\autoref{lst:method-call}).
 [00000000] 1
 \end{urbiscript}
 
-In \lstinline|obj.method|, we say that \texttt{obj} is the {\em
-  target}, and that we are sending him the \texttt{method} {\em
-  message}.
+In \lstinline|obj.method|, we say that \texttt{obj} is the
+\dfn{target}, and that we are sending him the \texttt{method}
+\dfn{message}.
 
 \section{Function definition}
 
@@ -2098,14 +2098,14 @@ timeOut({sleep(2s); echo("On time"); 42}, 1s);
 
 % Add chronograms
 \chapter{Event-based programming}
+\label{sec:event-prog}
 
 \section{Introduction}
 
 When dealing with highly interactive agent programming, sequential
-programming isn't sufficient. We want to react to external, random
+programming is inconvenient. We want to react to external, random
 events, not execute code linearly with a predefined flow. \urbi has a
-strong support for event-based programming, as we'll see in this
-section.
+strong support for event-based programming.
 
 \section{Event related constructs}
 
@@ -2138,11 +2138,11 @@ x = 10;
 [00000000] *** ping
 \end{urbiscript}
 
-A \lstinline|onleave| block can be appended to execute an expression
-when the expression becomes false --- that is, on falling edges (\autoref{lst:onleave}).
+An \lstinline|onleave| block can be appended to execute an expression
+when the expression \emph{becomes} false --- that is, on falling edges
+(\autoref{lst:onleave}).
 
-\begin{urbiscript}[caption=Using \texttt{at ... onleave},
-label=lst:onleave]
+\begin{urbiscript}[caption=Using \texttt{at ... onleave}, label=lst:onleave]
 var x = false;
 [00000000] false
 at (x)
@@ -2587,14 +2587,23 @@ $ cd /usr/local
 $ ln -sf kernel-2.0-beta3-linux-x86 gostai
 \end{shell}
 
-If you do not install this package in \file{/usr/local/gostai}, you
-will need some adjustments.  Let \var{urbi\_root} denote the directory
-which contains the contents of the package (i.e., \var{urbi\_root}
-should contain \file{bin}, \file{FAQ.txt} and so forth):
+The \dfn{root} of the package, denoted by \var{urbi-root} hereafter,
+is the absolute name of the directory which contains the package.  The
+default root is \file{/usr/local/gostai}.  The directory
+\var{urbi-root} should contain \file{bin}, \file{FAQ.txt} and so forth.
+
+If your \var{urbi-root} is not \file{/usr/local/gostai}, you will need
+some adjustments.  Define the environment variable \index{urbi
+  root@\code{URBI\_ROOT}}\emphdfn{\code{URBI\_ROOT}} to point to
+\var{urbi-root}, and adjust the library\footnote{%
+%%
+  Mac OS X users need to extend \code{DYLD\_LIBRARY\_PATH}, not
+  \code{LD\_LIBRARY\_PATH}.
+%%
+} and executable paths.
 
 \begin{shell}
 $ export URBI_ROOT=\var{urbi\_root}
-# On Mac OS X, use DYLD_LIBRARY_PATH instead of LD_LIBRARY_PATH.
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$URBI_ROOT/lib
 $ export PATH=$PATH:$URBI_ROOT/bin
 \end{shell}%$
@@ -2612,6 +2621,39 @@ $ urbi-launch --version
 # Check that urbi-launch can find its dependencies.
 $ urbi-launch -- --version
 \end{shell}%$
+
+\section{\code{URBI\_PATH}}
+
+The environment variable \code{URBI\_ROOT} is used to locate the \us
+standard files.  You may extend the search path so that your own Urbi
+files can be found easily.  This is the role of the environment
+variable \index{urbi path@\code{URBI\_PATH}}\emphdfn{\code{URBI\_PATH}},
+which contains a list of directory
+names separated by colons.
+
+Note \code{URBI\_PATH} is also designed to be able to \emph{override}
+the default standard files.  Use a lone colon to specify where the
+standard, \code{URBI\_ROOT}-based, search path must be inserted.  See
+the following examples
+
+\begin{shell}
+# Completely override the system path.  First look for files in
+# /home/jessie/urbi, then in /usr/local/urbi.
+export URBI_PATH=/home/jessie/urbi:/usr/local/urbi
+
+# Prepend the previous path to the default path.  This is dangerous as
+# it may result in some standard files being hidden.
+export URBI_PATH=/home/jessie/urbi:/usr/local/urbi:
+
+# First look in Jessie's directory, then the default location, and
+# finally in /usr/local/urbi.
+export URBI_PATH=/home/jessie/urbi::/usr/local/urbi
+
+# Extend the default path, i.e., files that are not found in the
+# default path will be looked for in Jessie's place, and then in
+# /usr/local/urbi
+export URBI_PATH=:/home/jessie/urbi:/usr/local/urbi
+\end{shell}
 
 \part{References and Index}
 
