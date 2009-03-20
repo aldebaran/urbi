@@ -85,7 +85,7 @@ echo 0 >status.exp
 spawn_urbi_server
 
 # Start the test.
-valgrind=$(instrument -o "remote.val" -- \
+cmd=$(instrument -o "remote.val" -- \
            ../../bin/tests$EXEEXT --port-file server.port $meraw)
 echo "$cmd" >remote.cmd
 $cmd >remote.out.raw 2>remote.err &

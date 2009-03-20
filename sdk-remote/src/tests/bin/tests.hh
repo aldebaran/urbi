@@ -3,7 +3,6 @@
 
 # include <libport/semaphore.hh>
 # include <libport/program-name.hh>
-# include <libport/compiler.hh>
 # include <libport/unistd.h>
 # include <urbi/uclient.hh>
 # include <urbi/usyncclient.hh>
@@ -59,8 +58,7 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
   Name(urbi::UClient& ClientName,                       \
        urbi::USyncClient& SyncClientName)               \
   {                                                     \
-    if (getenv("VERBOSE"))                              \
-      LIBPORT_ECHO("starting test " << #Name);
+    VERBOSE("starting test " << #Name);
 
 #define END_TEST                                \
     sleep(3);                                   \

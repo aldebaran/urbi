@@ -47,10 +47,10 @@ char_of(urbi::UMessageType t)
 urbi::UCallbackAction
 dump(const urbi::UMessage& msg)
 {
+  VERBOSE("got a message: " << msg);
   if (msg.tag == "start" || msg.tag == "ident")
     return urbi::URBI_CONTINUE;
 
-  VERBOSE("got a message: " << msg);
   std::cout << char_of(msg.type) << ' ' << msg.tag << ' ';
   switch (msg.type)
   {
@@ -99,6 +99,7 @@ main(int argc, char* argv[])
   /// The command line test requested.
   std::vector<std::string> tests;
 
+  VERBOSE("Processing option");
   for (int i = 1; i < argc; ++i)
   {
     std::string arg = argv[i];
@@ -118,13 +119,15 @@ main(int argc, char* argv[])
       tests.push_back(arg);
   }
 
+  VERBOSE("client(" << host << ", " << port << ")");
   urbi::UClient client(host, port);
+  client.setClientErrorCallback(callback(&doExit));
   if (client.error())
     std::cerr << "Failed to set up properly the client" << std::endl
               << libport::exit(EX_SOFTWARE);
 
+  VERBOSE("syncClient(" << host << ", " << port << ")");
   urbi::USyncClient syncClient(host, port);
-  client.setClientErrorCallback(callback(&doExit));
   if (syncClient.error())
     std::cerr << "Failed to set up properly the syncClient" << std::endl
               << libport::exit(EX_SOFTWARE);
