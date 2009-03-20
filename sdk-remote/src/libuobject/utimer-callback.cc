@@ -7,6 +7,8 @@
 #include <libport/lexical-cast.hh>
 #include <libport/program-name.hh>
 
+#include "compatibility.hh"
+
 #include <urbi/utimer-callback.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
@@ -29,7 +31,7 @@ namespace urbi
     createUCallback(objname, "event", this, &UTimerCallback::call,
 		    event, eventmap(), false);
     URBI_SEND_COMMAND("timer_" << objname << ": every(" << period << "ms)"
-                      "{ emit " << event << ";}");
+                      "{ " << emit(event) << ";}");
   }
 
   UTimerCallback::~UTimerCallback()

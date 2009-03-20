@@ -5,6 +5,8 @@
 #include <list>
 #include <libport/unistd.h>
 
+#include "compatibility.hh"
+
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
 #include <urbi/usyncclient.hh>
@@ -157,11 +159,10 @@ namespace urbi
 		    this, &UObject::update, cbName, eventmap(), false);
 
     // Set update at given period
-    std::string base;
-    if (2 <= kernelMajor())
-      base = __name + ".";
-    URBI_SEND_COMMAND( base << tagName << ": every(" << period << "ms)"
-		      "              { emit " << cbName << ";},");
+    std::string base = 2 <= kernelMajor() ? __name + "." : "";
+    URBI_SEND_COMMAND(
+      base << tagName << ": every(" << period << "ms)"
+      "                     { " << emit(cbName) << ";},");
 
     return;
   }
