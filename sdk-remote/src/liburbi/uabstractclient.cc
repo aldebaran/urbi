@@ -373,13 +373,20 @@ namespace urbi
     sendBufferLock.lock();
     if (command)
     {
-      // Don't print if we overflow the buffer.
+      // Don't print if we overflow the buffer.  It would be nice to
+      // rely on the behavior of the GNU LibC which accepts 0 as
+      // destination buffer to query the space needed.  But it is not
+      // portable (e.g., segv on OSX).  So rather, try to vsnprintf,
+      // and upon failure, revert the buffer in its previous state.
       size_t slen = strlen(sendBuffer);
       size_t msize = buflen - slen;
-      if (vsnprintf(0, msize, command, arg) <= static_cast<int>(msize))
-	rc = vsnprintf(sendBuffer + slen, msize, command, arg) < 0;
-      else
-	rc = -1;
+      int r = vsnprintf(sendBuffer + slen, msize, command, arg);
+      if (r < 0 || static_cast<int>(msize) <= r)
+      {
+        // Don't produce partial input.
+        sendBuffer[slen] = 0;
+        rc = -1;
+      }
     }
     sendBufferLock.unlock();
     return rc;
