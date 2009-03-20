@@ -85,10 +85,10 @@ echo 0 >status.exp
 spawn_urbi_server
 
 # Start the test.
-cmd=$(instrument -o "remote.val" -- \
-           ../../bin/tests$EXEEXT --port-file server.port $meraw)
-echo "$cmd" >remote.cmd
-$cmd >remote.out.raw 2>remote.err &
+instrument -o "remote.val" -- \
+  ../../bin/tests$EXEEXT --port-file server.port $meraw
+echo "$instrument_result" >remote.cmd
+$instrument_result >remote.out.raw 2>remote.err &
 children_register remote
 
 # Let some time to run the tests.
