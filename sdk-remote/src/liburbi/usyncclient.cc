@@ -220,7 +220,7 @@ namespace urbi
       strcat(sendBuffer, ",\n");
     std::string tag = make_tag(*this, mtag, mmod);
     std::string cmd;
-    if (kernelMajor_ > 1)
+    if (2 <= kernelMajor_)
       // Really create the channel for this tag, as the user is
       // probably using this tag in the code.
       cmd += ("if (!hasSlot(\"" + tag + "\"))\n"
@@ -234,7 +234,7 @@ namespace urbi
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    if (kernelMajor_ > 1)
+    if (2 <= kernelMajor_)
     {
       cmd = ("if (hasSlot(\"__created_chan__\"))\n"
              "{\n"

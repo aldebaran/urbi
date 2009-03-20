@@ -120,7 +120,7 @@ namespace urbi
     std::string cbName = __name + ".maintimer";
 
     // Stop any previous update
-    if (kernelMajor() >= 2)
+    if (2 <= kernelMajor())
       URBI_SEND_COMMAND("if (\"" << tagName << "\" not in " << __name
         << ".slotNames) var " << __name <<"." << tagName<<" = Tag.new(\"" <<
         tagName <<"\")|" << __name <<"." << tagName<<".stop");
@@ -158,7 +158,7 @@ namespace urbi
 
     // Set update at given period
     std::string base;
-    if (kernelMajor() > 1)
+    if (2 <= kernelMajor())
       base = __name + ".";
     URBI_SEND_COMMAND( base << tagName << ": every(" << period << "ms)"
 		      "              { emit " << cbName << ";},");

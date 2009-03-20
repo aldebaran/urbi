@@ -1137,7 +1137,7 @@ namespace urbi
       else
         kernelMinor_ = 0;
       setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
-      if (kernelMajor_ <= 1)
+      if (kernelMajor_ < 2)
         send("__ident << local.connectionID;");
       else
         send("Channel.new(\"__ident\") << connectionTag.name;");
