@@ -57,30 +57,35 @@ cat >quit.u <<EOF
 quit;
 EOF
 
-cat >shutdown.u <<EOF
-"LAST";
-shutdown;
-EOF
-
-cmd="$valgrind urbi-send$EXEEXT --port-file server.port"
-cmd+=" -e '100+100;' -e '400*400;' -f quit.u"
-echo "$cmd" >client1.cmd
-eval "$cmd" >client1.out 2>client1.err &
+instrument -o client1.val --\
+   urbi-send$EXEEXT --port-file server.port \
+                    -e '100+100;' -e '400*400;' -f quit.u
+echo "$instrument_result" >client1.cmd
+eval "$instrument_result" >client1.out 2>client1.err &
 children_register client1
 
 children_wait 10 client1
-
-cmd="$valgrind urbi-send$EXEEXT --port-file server.port"
-cmd+=" -e 'var x = 0;at (x>5) echo(\"coucou\"); x = 7;' -f shutdown.u"
-echo "$cmd" >client2.cmd
-eval "$cmd" >client2.out 2>client2.err &
-children_register client2
-
-children_wait 10 client2
 
 xrun "check" grep "200" client1.out
 xrun "check" grep "160000" client1.out
 xrun "check" grep "PASS" client1.out
 
+
+
+cat >shutdown.u <<EOF
+"LAST";
+shutdown;
+EOF
+
+instrument -o client2.val --\
+   urbi-send$EXEEXT --port-file server.port \
+                    -e 'var x = 0;at (x>5) echo("coucou"); x = 7;' \
+                    -f shutdown.u
+echo "$instrument_result" >client2.cmd
+eval "$instrument_result" >client2.out 2>client2.err &
+children_register client2
+
+children_wait 10 client2
+
 xrun "check" grep "coucou" client2.out
-xrun "check" grep "LAST" client2.out
+xrun "check" grep '"LAST"' client2.out
