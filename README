@@ -1,20 +1,125 @@
-							-*- outline -*-
+        					-*- outline -*-
+
+* requirements
+To bootstrap and compile this package, the following tools are needed.
+
+** autoconf 2.63 or later
+** automake 1.10.2 or later
+Note that if you have to install automake by hand (as opposed by "with
+your distro's system), you have to tell its aclocal that it should
+also look at the files from the system's aclocal.  If
+/usr/local/bin/aclocal is the one you just installed, and
+/usr/bin/aclocal is the system's one, them run something like this:
+
+  dirlist=$(/usr/local/bin/aclocal --print-ac-dir)/dirlist
+  sudo mkdir -p $(dirname $dirlist)
+  sudo /usr/bin/aclocal --print-ac-dir >>$dirlist
+
+** Boost 1.37 or later
+Don't try to build it yourself, ask your distro's management to
+install it.
+
+** ccache
+Not a requirement, but it's better to have it.
+
+** flex 2.5.35 or later
+Beware that 2.5.33 has bugs than prevents this package from building
+correctly.
+
+** G++ 4.0 or later
+
+** Git 1.6 or later
+Beware that older version behave poorly with submodules.  The newer,
+the better.  Actually, it is quite nice to checkout git's own
+repository and to use this version.
+
+  git clone git://git.kernel.org/pub/scm/git/git.git
+  cd git
+  ./configure
+  make -j4
+  sudo make install
+
+and the following times
+
+  git pull
+  make -j4
+  sudo make install
+
+** Gettext
+Required to bootstrap Bison.  In particular it provides autopoint.
+
+** help2man
+
+** libtool 2.2 or later
+
+** pdflatex
+TeX Live is the most common distro nowadays.
+
+** py-docutils
+This is not a requirement, but it's better to have it.  Used by the
+test suite.  Unfortunately the name of the package varies between
+distros.  It provides "rst2html".
+
+** py-syck
+Unfortunately it is common for distros not to ship it.  In which case
+see run
+
+  common/install/install-pysyck --sudo-command=sudo
+
+Pay attention that you will probably need to adjust your PYTHONPATH.
+
+** socat
+Needed by the test suite.
+
+** xsltproc
+This is not a requirement, but it's better to have it.
+
+* checkout
+We heavily use Git submodules, i.e., we subscribe to other Git
+repositories, which themselves may depend on other submodules.
+Unfortunately Git's support for recursive submodules is not nice.  We
+have scripts in common (named git-my-*, also available as git my-*)
+that make this easier.  Since they call each other, set your PATH to
+go into common/git.
+
+  git clone git@core.gostai.com:kernel.git
+  cd kernel
+  git checkout -b 2.0 --track origin/2.0
+  git my-update
+
+* bootstrap
+Run
+
+  ./bootstrap
+
 * configuration
---enable-host=URBI-HOST
---enable-env=URBI-ENV
---with-openr[=sdk-path]
---with-boost=path
+You should really compile in another directory than the one containing
+the sources.
 
-This package builds a single kernel (libkernel).  If you pass
---with-openr, this library will use the openr communication parts,
-otherwise the bsdnet bits are used.
+  mkdir _build
+  cd _build
+  ../configure OPTIONS...
 
-Note that pass --with-openr does not change the URBI-ENV name, so to
-compile (and install) for Aibo, you should probably run
+** configuration options
+See ../configure --help for detailed information.  Unless you want to
+do funky stuff, you probably need no option.
 
-    ./configure --with-openr --host=mipsel-openr --enable-env=aibo
+  --enable-host=URBI-HOST
+  --enable-env=URBI-ENV
+  --with-boost=path
+
+To use ccache, pass
+
+  CC='ccache gcc' CXX='ccache g++'
+
+as options to configure.
+
+* compilation
+Should be straightforward.
+
+  make -j3
 
 * test suite
-To run the test suite, run make check (-j2 works).  In the build
-directory of the test suite (e.g., _build/linux/tests) there is a
-test-suite.log file which contains all the details.
+To run the test suite, run make check (-j4 works on most machines).
+In the build directory of the test suite (e.g., _build/tests) there is
+a test-suite.log file which contains all the details.
