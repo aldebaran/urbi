@@ -3,8 +3,8 @@
 * requirements
 To bootstrap and compile this package, the following tools are needed.
 
-** autoconf 2.63 or later
-** automake 1.10.2 or later
+** Autoconf 2.63 or later
+** Automake 1.10.2 or later
 Note that if you have to install automake by hand (as opposed by "with
 your distro's system), you have to tell its aclocal that it should
 also look at the files from the system's aclocal.  If
@@ -19,10 +19,10 @@ also look at the files from the system's aclocal.  If
 Don't try to build it yourself, ask your distro's management to
 install it.
 
-** ccache
+** Ccache
 Not a requirement, but it's better to have it.
 
-** flex 2.5.35 or later
+** Flex 2.5.35 or later
 Beware that 2.5.33 has bugs than prevents this package from building
 correctly.
 
@@ -48,11 +48,11 @@ and the following times
 ** Gettext
 Required to bootstrap Bison.  In particular it provides autopoint.
 
-** help2man
+** Help2man
 
-** libtool 2.2 or later
+** Libtool 2.2 or later
 
-** pdflatex
+** PDFLaTeX
 TeX Live is the most common distro nowadays.
 
 ** py-docutils
@@ -123,3 +123,17 @@ Should be straightforward.
 To run the test suite, run make check (-j4 works on most machines).
 In the build directory of the test suite (e.g., _build/tests) there is
 a test-suite.log file which contains all the details.
+
+* FAQ
+** AM_LANGINFO_CODESET
+
+If at bootstrap you have something like:
+
+  configure:12176: error: possibly undefined macro: AM_LANGINFO_CODESET
+   If this token and others are legitimate, please use m4_pattern_allow.
+   See the Autoconf documentation.
+  configure:12246: error: possibly undefined macro: gl_GLIBC21
+
+it probably means your Automake installation is incomplete.  See the
+Automake item in the bootstrap section above.
+
