@@ -1,6 +1,7 @@
 /// \file liburbi/umessage.cc
 
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 
 #include <urbi/umessage.hh>
@@ -89,7 +90,9 @@ namespace urbi
   std::ostream&
   UMessage::print(std::ostream &o) const
   {
-    o << "[" << timestamp;
+    char fill = o.fill('0');
+    o << '[' << std::setw(8) << timestamp;
+    o.fill(fill);
     if (!tag.empty())
       o << ":" << tag;
     o << "] ";
