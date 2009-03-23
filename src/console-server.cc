@@ -171,8 +171,9 @@ namespace urbi
     Input(bool f, const std::string& v)
       : file_p(f), value(v)
     {}
-    /// Whether its a file (or a litteral).
+    /// Whether it's a file (or a litteral).
     bool file_p;
+    /// File name or litteral value.
     std::string value;
   };
 
@@ -187,7 +188,7 @@ namespace urbi
       }
       catch (const urbi::Exit& e)
       {
-        std::cerr << e.what() << std::endl;
+        std::cerr << program_name() << ": " << e.what() << std::endl;
         return e.error_get();
       }
     }
@@ -364,7 +365,7 @@ namespace urbi
         }
         catch (libport::exception::Exception e)
         {
-          std::cerr << e.what() << std::endl;
+          std::cerr << program_name() << ": "  << e.what() << std::endl;
           data.interactive = false;
         }
         if (!input.empty())
