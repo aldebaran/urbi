@@ -474,9 +474,8 @@ namespace kernel
   UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   {
     std::istream *is;
-    bool isStdin = (base == std::string("/dev/stdin"));
     libport::Finally finally;
-    if (isStdin)
+    if (base == "/dev/stdin")
       is = &std::cin;
     else
     {
