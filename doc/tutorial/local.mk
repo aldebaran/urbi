@@ -1,4 +1,4 @@
-pdf_DATA += tutorial/urbi-tutorial.pdf
+EXTRA_DATA += tutorial/urbi-tutorial.pdf
 urbi_tutorial_sources = $(call ls_files,tutorial/*.tex)
 urbi_tutorial_deps = $(urbi_tutorial_sources) $(call ls_files,*.sty)
 

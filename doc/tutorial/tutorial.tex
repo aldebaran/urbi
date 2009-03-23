@@ -1,0 +1,2636 @@
+\chapter{Introduction}
+
+Urbi is a programming language primarily designed for robotics. It's a
+dynamic, prototype-based, object-oriented scripting language. It
+supports and emphasizes parallel and event-based programming, which
+are very popular paradigms in robotics, by providing core primitives
+and language constructs.
+
+Its main features are:
+\begin{itemize}
+\item \urbi is designed to be syntactically close to \Cxx. If you know
+  \C or \Cxx, you can easily write \urbi programs.
+\item \urbi is fully integrated with \Cxx. You can bind \Cxx classes
+  in \urbi seamlessly. \urbi is also integrated with many other
+  languages such as \java, \matlab or \python.
+\item \urbi is object oriented. It supports encapsulation, inheritance
+  and inclusion polymorphism. Dynamic dispatching is available through
+  monomethods --- just as \Cxx, \Cs or \java.
+\item \urbi includes parallelism at the core of its semantics. It
+  provides you with natural constructs to run and control high numbers
+  of interacting concurrent tasks.
+\item \urbi supports event-based programming. Triggering events and
+  reacting to them is absolutely straightforward.
+\item \urbi supports functional programming, inspired from languages
+  such as \lisp or \caml. This includes first class functions and
+  pattern matching.
+\item \urbi uses a client/server architecture: the interpreter accepts
+  multiple connections from different sources (human users, robots,
+  other servers \ldots) and enables them to interact.
+\item \urbi supports distributed architectures: you can run objects in
+  different processes, potentially on another computer across the
+  network.
+\end{itemize}
+
+\part{Tutorial}
+
+\chapter{Getting started}
+
+\us comes with a set of tools, two of which being of particular
+importance:
+\begin{description}
+\item[\dfn{urbi-console}] launches an \urbi server.  There are several means
+  to interact with this server, which will see later.
+\item[\dfn{urbi-launch}] runs \urbi components, the UObjects, and connects
+  them to an \urbi server.
+\end{description}
+
+Please, first make sure that these tools are properly installed.  If
+you encounter problems, please see \autoref{sec:installation}, which
+is more detailed, and possibly \autoref{sec:faq} for frequently asked
+questions.
+
+\begin{shell}
+# Make sure urbi-console is properly installed.
+$ urbi-console --version
+Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+Copyright (C) 2005-2009 Gostai SAS.
+
+URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+Copyright (C) 2004-2009 Gostai SAS.
+
+Libport version preview/1.0/beta1-1048 rev. f1c5170
+Copyright (C) 2005-2009 Gostai SAS.
+\end{shell}%$
+
+
+There are several means to interact with a server spawned by
+\command{urbi-console}.  First of all, you may use the options
+\option{-e}/\option{--expression \var{code}} and
+\option{-f}/\option{--file \var{file}} to send some \var{code} or the
+contents of some \var{file} to the newly run server.  You may combine
+any number of these options, but beware that being event-driven, the
+server does not ``know'' when a program ends.  Therefore, batch
+programs should end by calling \code{shutdown}:
+
+\begin{shell}
+# A classical program.
+$ urbi-console -e 'echo("Hello, World!");' -e 'shutdown;'
+[00000004] *** Hello, World!
+\end{shell}%$
+
+To run an interactive session, use option
+\option{-i}/\option{--interactive}.  Like most interactive
+interpreters, \urbi will evaluate the given commands and print out the
+results.
+
+\begin{shell}
+$ urbi-console -i
+[00000000:start] *** **********************************************************
+[00000000:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+[00000000:start] *** Copyright (C) 2004-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** Libport version preview/1.0/beta1-1048 rev. f1c5170
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000000:start] *** This software can be used under certain conditions;
+[00000000:start] *** see LICENSE file for details.
+[00000000:start] ***
+[00000000:start] *** See http://www.urbiforge.com for news and updates.
+[00000000:start] *** **********************************************************
+[00000000:start] ***
+[00000000:ident] *** ID: U3154688
+[00000004:start] *** Urbi is up and running.
+1+2;
+[00000006] 3
+shutdown;
+\end{shell}%$
+
+The output from the server is prefixed by a number surrounded by
+square brackets: this is the date (in milliseconds since the server
+was launched) at which that line was sent by the server. This is
+useful at occasions, since \urbi is meant to run many parallel
+commands.  But since these timestamps are irrelevant in most examples,
+they will often be filled with zeroes through this documentation.
+
+The program \command{rlwrap} provides additional services (history of
+commands, advanced command line edition etc.); run \samp{rlwrap
+  urbi-console -i}.
+
+In either case the server can also be made available for network-based
+interactions using option \option{--port \var{port}}.  Note that while
+\code{shutdown} terminates the server, \code{quit} only terminates one
+interactive session.  In the following example the server is still
+available for other, possibly concurrent, sessions.
+
+\begin{shell}
+$ urbi-console --port 54000 &
+[1] 77024
+$ telnet localhost 54000
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+[00000758:start] *** **********************************************************
+[00000758:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+[00000758:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+[00000758:start] *** Copyright (C) 2004-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** Libport version preview/1.0/beta1-1048 rev. f1c5170
+[00000758:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000758:start] *** This software can be used under certain conditions;
+[00000758:start] *** see LICENSE file for details.
+[00000758:start] ***
+[00000758:start] *** See http://www.urbiforge.com for news and updates.
+[00000758:start] *** **********************************************************
+[00000758:start] ***
+[00000758:ident] *** ID: U348160
+12345679*8;
+[00018032] 98765432
+quit;
+\end{shell}%$
+
+The program \command{urbi-send} provides a nice interface to
+interact with a running server.
+
+\begin{shell}
+$ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
+[00018032:] 7
+# Have the server shutdown;
+$ urbi-send -p 54000 -e 'shutdown;'
+\end{shell}
+
+\medskip
+
+You can now send commands to your \urbi server. If at any point you
+get lost, or want a fresh start, you can simply close and reopen your
+connection to the server to get a clean environment.  In some cases,
+particularly if you made global changes in the environment, it is
+simpler start anew: shutdown your current server, and spawn a new one.
+
+\chapter{First steps}
+
+\section{Introduction}
+
+This section intends to provide the most basic notions to write \urbi
+code. Some aspects are presented only superficially. The point of this
+section is to bootstrap yourself with the \urbi language, to be able
+to study more in-depth examples afterwards.
+
+\section{Comments}
+
+Commenting your code is crucial, so let's start by learning how to do
+this in \urbi. Comments are ignored by the interpreter, and
+can be left as documentation, reminder, \ldots \urbi supports \C and
+\Cxx style style comments (\autoref{lst:comments}):
+
+\begin{itemize}
+\item \C style comments start with \texttt{/*} and end with \texttt{*/}.
+\item \Cxx style comments start with \texttt{//} and last until the
+  end of the line.
+\end{itemize}
+
+
+\begin{urbiscript}[caption=Comments in \urbi, label=lst:comments]
+1; // This is a C++ style comment.
+[00000000] 1
+2 + /* This is a C-style comment. */ 2;
+[00000000] 4
+/* Contrary to C/C++, this type of comment /* does nest */. */
+3;
+[00000000] 3
+\end{urbiscript}
+
+
+\section{Literal values}
+
+As already seen, we can evaluate literal integers. \urbi supports
+several other literals, such as:
+
+\begin{description}
+\item[floats] floating point numbers.
+\item[strings] character strings.
+\item[lists] ordered collection of values.
+\item[nil] neutral value. Think of it as the value that fits anywhere.
+\item[void] absence of value. Think of it as the value that fits nowhere.
+\end{description}
+
+These literal values can be obtained with the syntax presented in
+\autoref{lst:literals}.
+
+\begin{urbiscript}[caption=Literals,label=lst:literals]
+42; // Integer literal.
+[00000000] 42
+3.14; // Floating point number literal.
+[00000000] 3.14
+"string"; // Character string literal.
+[00000000] "string"
+[1, 2, "a", "b"]; // List literal.
+[00000000] [1, 2, "a", "b"]
+nil;
+void;
+\end{urbiscript}
+
+Listing \ref{lst:literals} highlights some point:
+\begin{itemize}
+\item Lists in \urbi are polymorphic. That is, one list can hold
+  values of different types.
+\item The printing of nil and void is empty.
+\end{itemize}
+
+\section{Function calls}
+
+You can call functions with the classical, mathematical notation
+(\autoref{lst:calling-functions}).
+
+\begin{urbiscript}[caption=Calling functions,label=lst:calling-functions]
+cos(0); // Compute cosinus
+[00000000] 1
+max(1, 3); // Get the maximum of the arguments.
+[00000000] 3
+max(1, 3, 4, 2);
+[00000000] 4
+\end{urbiscript}
+
+Again, the result of the evaluation are printed out. You can see here
+that function in \urbi can be variadic, that is, take different number
+of arguments, such as the \texttt{max} function. Let's now try the
+\texttt{echo} function, that prints out its argument (\autoref{lst:printing}).
+
+\begin{urbiscript}[caption=Printing out,label=lst:printing]
+echo("Hello world!");
+[00000000] *** Hello world!
+\end{urbiscript}
+
+The server prints out \texttt{Hello world!}, as expected. Note that
+this output is still prepended with the timestamp. Since echo returns
+void, no evaluation result is printed.
+
+\section{Variables}
+
+Variables can be introduced with the \texttt{var} keyword, given a
+name and an initial value. They can be assigned new values with the
+\texttt{=} operator (\autoref{lst:variables}).
+
+\begin{urbiscript}[caption=Using variables,label=lst:variables]
+var x = 42;
+[00000000] 42
+echo(x);
+[00000000] *** 42
+x = 51;
+[00000000] 51
+x;
+[00000000] 51
+\end{urbiscript}
+
+Note that, just as in \Cxx, affectation returns the affected value, so
+you can write code like ``\lstinline|x = y = 0|''. The rule for valid
+identifiers is also the same as in \Cxx: they may contain alphanumeric
+characters and underscores, but they may not start with a digit.
+
+You may ommit the initialization value, in which case it defaults to
+\lstinline|void| (\autoref{lst:local-uninit}).
+
+\begin{urbiscript}[caption=Variables initialization defaults to
+  nil,label=lst:local-uninit]
+var x;
+x;
+// Remember, the interpreter remains silent
+// because void is printed out as nothing.
+// You can convince yourself that x is actually
+// void with the following methods.
+x.asString;
+[00000000] "void"
+x.isVoid;
+[00000000] true
+\end{urbiscript}
+
+\section{Scopes}
+
+Scopes can be introduced with curly brackets (\texttt{\{\}}), and can
+contain any number of expressions. Variables declared in a scope only
+exist within this scope (\autoref{lst:scope}).
+
+\begin{urbiscript}[caption=Scoping a variable,label=lst:scope]
+{
+  var x = "test";
+  echo(x);
+};
+[00000000] *** test
+// x is no longer defined here
+\end{urbiscript}
+
+Note that the interpreter waits for the whole scope to be inputted to
+evaluate it. Also note the mandatory terminating semicolon after the
+closing curly bracket.
+
+\section{Method calls}
+
+Methods are called on objects with the dot (\texttt{.}) notation as in
+\Cxx. Method calls can be chained. Methods with no arguments don't
+require the parentheses (\autoref{lst:method-call}).
+
+\begin{urbiscript}[caption=Calling methods,label=lst:method-call]
+0.cos();
+[00000000] 1
+"a-b-c".split("-");
+[00000000] ["a", "b", "c"]
+// Empty parentheses are optional
+"foo".length();
+[00000000] 3
+"foo".length;
+[00000000] 3
+// Method call can be chained
+"".length.cos;
+[00000000] 1
+\end{urbiscript}
+
+In \lstinline|obj.method|, we say that \texttt{obj} is the
+\dfn{target}, and that we are sending him the \texttt{method}
+\dfn{message}.
+
+\section{Function definition}
+
+You know how to call routines, let's learn how to write
+some. Functions can be declared thanks to the \texttt{function}
+keyword, followed by the comma separated, parentheses surrounded list
+of formal arguments, and the body between curly brackets (\autoref{lst:function-def}).
+
+\begin{urbiscript}[caption=Defining a function,label=lst:function-def]
+// Define myFunction
+function myFunction()
+{
+  echo("Hello world");
+  echo("from my function!");
+};
+[00000000] function () {
+[:]  echo("Hello world");
+[:]  echo("from my function!");
+[:]}
+
+// Invoke it
+myFunction();
+[00000000] *** Hello world
+[00000000] *** from my function!
+\end{urbiscript}
+
+Note the strange output after you defined the function. \urbi seems to
+be printing the function you just typed in again. This is because
+function definitions evaluates to the freshly created function.
+
+Since \urbi supports functional programming, function are first class
+citizen. Which means they are values, just as \texttt{0} or
+\texttt{"foobar"}. So your function definition evaluation yields the
+new function, and as always, the interpreter prints out the evaluation
+result, thus showing you the function again. \autoref{lst:function-values}
+might help you understanding this.
+
+
+\begin{urbiscript}[caption=Function as values,label=lst:function-values]
+// Work in a scope.
+{
+  // Define f
+  function f()
+  {
+    echo("f");
+  };
+  // This does not invoke f
+  // We are just evaluating it as a function
+  f;
+};
+[00000000] function () {
+[:]  echo("f");
+[:]}
+{
+  // Define f
+  function f()
+  {
+    echo("Hello World");
+  };
+  // This actually calls f
+  f();
+};
+[00000000] *** Hello World
+\end{urbiscript}
+
+Here you can see that f is actually a simple value. You can just
+evaluate it to see its value, that is, its body. By adding the
+parentheses, you can actually call the function. This is a difference
+with methods calling, where empty parentheses are optional: method are
+always evaluated, you cannot retrieve their functional value --- of
+course, you can with a different construct, but that's not the point
+here.
+
+Since this output is often irrelevant, we will sometimes hide the
+printed result, replacing it with an ellipse (\ldots), as in
+\autoref{lst:function-arg}, which presents a function with arguments.
+
+\begin{urbiscript}[caption=Function with arguments,label=lst:function-arg]
+function sum(a, b, c)
+{
+  return a + b + c;
+} | {};
+sum(20, 2, 20);
+[00000000] 42
+\end{urbiscript}
+
+As you probably guessed, the \texttt{return} keyword enables you to
+return a value from the function. If no \texttt{return} statement is
+executed, the evaluation of the last expression is returned
+(\autoref{lst:no-return}).
+
+\begin{urbiscript}[caption=Return value is the last evaluated value,
+  label=lst:no-return]
+function succ(i) { i + 1 } | {};
+succ(50);
+[00000000] 51
+\end{urbiscript}
+
+\section{Conclusion}
+
+You're now up and running with basic \urbi code, and we can dive in
+details into advanced \urbi code.
+
+\chapter{Basic objects, \urbi values model} % FIXME: values model
+
+\section{Introduction}
+
+In this section, we focus on urbi values as objects, and study \urbi
+by-reference values model. We won't study classes and actual objective
+programming yet, these points will be presented in
+\autoref{section:objective}.
+
+\section{Objects in \urbi}
+
+An object in \urbi is a rather simple concept: a list of slots. Slots
+are a value associated to a name. So an object is a list of slot
+names, each of which indexes a value --- just like a dictionary. You
+can get an object's slot value by using the dot (\texttt{.}) operator
+on this object, followed by the name of the slot. You can list the
+names of the slots of an object with the \texttt{slotNames}
+method. \autoref{lst:object-slots} makes this very clear: we dissect an object
+to point out its structure.
+
+\begin{urbiscript}[caption=Inspecting an \urbi object,label=lst:object-slots]
+// Create a fresh object with two slots.
+class Foo { var a = 42; var b = "foo"; };
+[00000000] Foo
+// Inspect it.
+Foo.slotNames.sort;
+[00000000] ["a", "asFoo", "b", "type"]
+// We now know the name of its slots.
+// Let's see their value.
+Foo.a;
+[00000000] 42
+Foo.b;
+[00000000] "foo"
+\end{urbiscript}
+
+It's as simple as this. Let's now try to build such an object. First,
+we want a fresh object to work on. In \urbi, \texttt{Object} is the
+parent type of every object (in fact, since \urbi is prototype-based,
+\texttt{Object} is the uppermost prototype of every object, but we'll
+talk about prototypes later). An instance of object, is an empty,
+neutral object, so let's start by instanciating one with the
+\texttt{clone} method of \texttt{Object} (\autoref{lst:object-new}).
+
+\begin{urbiscript}[caption=Instanciating a new object,
+  label=lst:object-new, name=object-slots]
+// Create the o variable as a fresh object.
+var o = Object.clone;
+[00000000] Object_0x00000000
+// Check its content
+o.slotNames;
+[00000000] []
+\end{urbiscript}
+
+As you can see, we obtain an empty fresh object. Note that it still
+inherits from \texttt{Object} features that all objects share, such as
+the \texttt{slotNames} method.
+
+Also note how o is printed out: \texttt{Object\_}, followed by an
+hexadecimal number. Since this object is empty, its printing is quite
+generic: its type (\texttt{Object}), and its unique identifier (every
+\urbi object has one). Since these identifiers are often irrelevant
+and might differ between two executions, they are often filled with
+zeroes in this document.
+
+We're now getting back to our empty object. We want to give it two
+slots, \texttt{a} and \texttt{b}, with values \lstinline|42| and
+\lstinline|"foo"| respectively. We can do this with the
+\texttt{setSlot} method (\autoref{lst:setslot}), which takes the slot name and
+its value.
+
+\begin{urbiscript}[caption=Defining slots, label=lst:setslot,
+  name=object-slots]
+o.setSlot("a", 42);
+[00000000] 42
+o.slotNames;
+[00000000] ["a"]
+o.a;
+[00000000] 42
+\end{urbiscript}
+
+Here we successfully created our first slot, a. A good shorthand for
+setting slot is using the \texttt{var} keyword (\autoref{lst:setslot-var}).
+
+\begin{urbiscript}[caption=Defining slots with var,
+  label=lst:setslot-var, name=object-slots]
+// This is equivalent to o.setSlot("b", "foo").
+var o.b = "foo";
+[00000000] "foo"
+o.slotNames.sort;
+[00000000] ["a", "b"]
+o.b;
+[00000000] "foo"
+\end{urbiscript}
+
+The latter form with \texttt{var} is preferred, but you need to know
+the name of the slot at the time of writing the code. With the former
+one, you can compute the slot name at execution time. Likewise, you
+can read a slot with a run-time determined name with the
+\texttt{getSlot} method, which takes the slot name as
+argument. \autoref{lst:getslot-setslot} illustrates the use of
+\texttt{getSlot} and \texttt{setSlot} to read and write slots whose
+names are unknown at code-writing time.
+
+% mefyl: FIXME: I never introduced that '+' concatenates strings.
+
+\begin{urbiscript}[caption=Dynamic slots with getSlot and setSlot,
+  label=lst:getslot-setslot]
+function set(object, name, value)
+{
+  // We have to use setSlot here, since we don't
+  // know the actual name of the slot.
+  return object.setSlot("x_" + name, value);
+} | {};
+function get(object, name)
+{
+  // We have to use getSlot here, since we don't
+  // know the actual name of the slot.
+  return object.getSlot("x_" + name);
+} | {};
+var x = Object.clone;
+[00000000] Object_0x00000000
+set(x, "foo", 0);
+[00000000] 0
+set(x, "bar", 1);
+[00000000] 1
+x.slotNames.sort;
+[00000000] ["x_bar", "x_foo"]
+get(x, "foo");
+[00000000] 0
+get(x, "bar");
+[00000000] 1
+\end{urbiscript}
+
+Right, now we can create fresh objects, create slots in them and read
+them afterwards, even if their name is dynamically computed, with
+\texttt{getSlot} and \texttt{setSlot}. Now, you might wonder if
+there's a method to update the value of the slot. Guess what, there's
+one, and it's named\ldots \texttt{updateSlot} (originality
+award). Getting back to our \texttt{o} object, let's try to update one
+of its slot (\autoref{lst:updateslot}).
+
+\begin{urbiscript}[caption=Updating a slot, label=lst:updateslot,
+  name=object-slots]
+o.a;
+[00000000] 42
+o.updateSlot("a", 51);
+[00000000] 51
+o.a;
+[00000000] 51
+\end{urbiscript}
+
+Again, there's a shorthand for \texttt{updateSlot}: operator
+\texttt{=} (\autoref{lst:updateslot-eq}).
+
+\begin{urbiscript}[caption=Updating a slot with '\texttt{=}',
+  label=lst:updateslot-eq, name=object-slots]
+o.b;
+[00000000] "foo"
+// Equivalent to o.updateSlot("b", "bar")
+o.b = "bar";
+[00000000] "bar"
+o.b;
+[00000000] "bar"
+\end{urbiscript}
+
+Likewise, you should prefer the '\texttt{=}' notation whenever
+possible, but you'll need \texttt{updateSlot} to update a slot whose
+name you don't know at code-writing time.
+
+Note that defining the same slot twice, be it with \texttt{setSlot} or
+\texttt{var}, is an error. The slot must be defined once with setSlot,
+and subsequent writes must be done with \texttt{updateSlot}
+(\autoref{lst:redefinition}).
+
+\begin{urbiscript}[caption=Defining a slot twice is an error,
+  label=lst:redefinition, name=object-slots]
+var o.c = 0;
+[00000000] 0
+// Can't redefine a slot like this
+var o.c = 1;
+[00000000:error] !!! slot redefinition: c
+// Okay.
+o.c = 1;
+[00000000] 1
+\end{urbiscript}
+
+Finally, we may want to remove a slot from an object. This can be done
+with a method whose name I let you guess (\autoref{lst:removeslot}).
+
+\begin{urbiscript}[caption=Removing a slot, label=lst:removeslot,
+  name=object-slots]
+o.slotNames.sort;
+[00000000] ["a", "b", "c"]
+o.removeSlot("c");
+[00000000] Object_0x00000000
+o.slotNames.sort;
+[00000000] ["a", "b"]
+\end{urbiscript}
+
+Here we are, now you can inspect and modify objects at will. Don't
+hesitate to explore \urbi objects you'll encounter through this
+documentation like this. Last point: reading, updating or removing a
+slot which does not exist is, of course an error
+(\autoref{lst:lookup-failed}).
+
+\begin{urbiscript}[caption=Manipulating nonexistent slot is an error,
+  label=lst:lookup-failed, name=object-slots]
+o.d;
+[00000000:error] !!! lookup failed: d
+o.d = 0;
+[00000000:error] !!! lookup failed: d
+\end{urbiscript}
+
+\section{Methods}
+
+Methods in \urbi are simply object slots containing functions. We made
+a little simplification earlier by saying that \lstinline|obj.slot| is
+equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
+executable code such as a function, the dot form evaluates it, as
+illustrated by \autoref{lst:auto-eval}. Inside a method, you can get the
+target with the \lstinline|this| keyword - the equivalent of \Cxx's
+\texttt{this}. \lstinline|this| can be omitted if there is no
+ambiguity with local variables.
+
+\begin{urbiscript}[caption=Function in object are automatically evaluated,
+label=lst:auto-eval]
+var o = Object.clone;
+[00000000] Object_0x0
+// This syntax stores the function
+// in the 'f' slot of 'o'.
+function o.f ()
+{
+  echo("This is f with target " + this);
+  return 42;
+} | {};
+// The slot value is the function
+o.getSlot("f");
+[00000001] function () {
+[:]  echo("This is f with target " . '+'(this));
+[:]  return 42;
+[:]}
+// Huho, the function is invoked!
+o.f;
+[00000000] *** This is f with target Object_0x0
+[00000000] 42
+// The parentheses are in fact optional
+o.f();
+[00000000] *** This is f with target Object_0x0
+[00000000] 42
+\end{urbiscript}
+
+This was designed this way so as one can replace an attribute, such as
+an integer, with a function that computes the value. This enables to
+replace an attribute with a method without changing the object
+interface, since the parentheses are optional.
+
+This implies that getSlot can be a better tool for object inspection
+to avoid invoking slots, as shown by \autoref{lst:getslot-function}.
+
+\begin{urbiscript}[caption=Inspecting executable slots with \texttt{getSlot},
+label=lst:getslot-function]
+// The 'empty' method of strings return
+// whether they're the empty string.
+"foo".empty;
+[00000000] false
+"".empty;
+[00000000] true
+// Using getSlot, we can fetch the function
+// without calling it
+"".getSlot("empty");
+[00000000] function () {
+[:]  this . '=='("")
+[:]}
+\end{urbiscript}
+
+So the empty function simply checks whether the target string is empty
+with the equality operator! Let's try getSloting another method in
+\autoref{lst:getslot-primitive}.
+
+\begin{urbiscript}[caption=Primitives, label=lst:getslot-primitive]
+"foo".size;
+[00000000] 3
+"foo".getSlot("size");
+[00000000] Primitive_0x0
+\end{urbiscript}
+
+So strings' \texttt{size} method is another type of object, a
+\texttt{Primitive}. These object are executable, just like function,
+but they are actually primitives implemented in \Cxx, not \urbi. You
+have thus no means to see their inner code.
+
+\section{Everything is an object}
+
+If you're wondering what is an object and what isn't, the answer is
+simple: every single bit of value you manipulate in \urbi is an
+object, including primitive types, types themselves, functions, \ldots
+\autoref{lst:everything-object} illustrates this.
+
+% FIXME: This does actually not work like this because the toplevel
+% isn't a local scope! puke puke puke!
+\begin{urbiscript}[caption=Everything is an object,
+label=lst:everything-object]
+var x = 0;
+[00000000] 0
+x.slotNames;
+[00000000] []
+var x.slot = 1;
+[00000000] 1
+x.slotNames;
+[00000000] ["slot"]
+x.slot;
+[00000000] 1
+x;
+[00000000] 0
+\end{urbiscript}
+
+% FIXME: I'm saying integer through this whole documentation, even
+% though 42 is a float for now. But it will eventually be an integer
+% (right? right?).
+As you can see, integers are objects just like any other value.
+
+\section{The \urbi values model}
+
+We are now going to focus on the \urbi value model. That is, how
+values are stored and passed around. The whole point is to understand
+when variables are the same. For this, we are going to introduce a new
+method, \texttt{uid}. This method returns the target's unique
+identifier - the same one that was printed when we evaluated
+\lstinline|Object.clone|. See \autoref{lst:uid}. Of course, uids might vary
+from an execution to another, so their value here are dummy, yet not
+null to be able to differentiate them.
+
+\begin{urbiscript}[caption=Uids, label=lst:uid]
+var o = Object.clone;
+[00000000] Object_0x1
+o.uid;
+[00000000] "0x1"
+42.uid;
+[00000000] "0x2"
+42.uid;
+[00000000] "0x3"
+\end{urbiscript}
+
+% FIXME: maybe should I introduce == and other basic operator before.
+We can see here that our objects have different uids, meaning they are
+different objects. Note that inputting the same integer twice
+(\texttt{42} here) yields different objects. Let's introduce new
+operators before diving in this concept. First the equality operator:
+\texttt{==}. This operator is the exact same as \C or \Cxx's one, it
+simply returns whether its two operands are semantically equal. The
+second operator is \texttt{===}, which is the physical equality
+operator. It returns whether its two operands are the same object,
+which is equivalent to having the same uid. This can seem a bit
+confusing; let's take a look at \autoref{lst:phy-eq} to have a first example.
+
+\begin{urbiscript}[caption=Physical equality operator,
+label=lst:phy-eq]
+var a = 42;
+[00000000] 42
+var b = 42;
+[00000000] 42
+a == b;
+[00000000] true
+a === b;
+[00000000] false
+\end{urbiscript}
+
+Here, the \texttt{==} operator shows us that a and b are equal ---
+indeed, they both evaluate to 42. Yet, the \texttt{===} operator show
+us that they are not the same object, that they are two different
+instances of integers, even if they both equal 42.
+
+Thanks to this operator, we can point out the fact that slots and
+local variables in \urbi have a reference semantic. That is, when you
+defining a local variable or a slot, you're not copying any value (as
+you would be in \C or \Cxx), you're only making it refer to an already
+existing value (as you would in \ruby or \java). See \autoref{lst:ref-to-same}
+for an illustration.
+
+\begin{urbiscript}[caption=Two references to the same object,
+  label=lst:ref-to-same, name=same]
+var a = 42;
+[00000000] 42
+var b = 42;
+[00000000] 42
+var c = a; // b refers to the same object as a
+[00000000] 42
+// a, b and c are equal
+a == b;
+[00000000] true
+a == c;
+// Yet only a and c are the same object
+[00000000] true
+a === b;
+[00000000] false
+a === c;
+[00000000] true
+\end{urbiscript}
+
+So here we see that \lstinline|a| and \lstinline|c| point to the same
+integer, while \lstinline|b| points to a second one. This a
+non-trivial fact: any modification on \lstinline|a| will affect
+\lstinline|c| as well, as shown by \autoref{lst:same-ref-mod}.
+
+\begin{urbiscript}[caption=Shared modification,
+  label=lst:same-ref-mod, name=same]
+a.slotNames;
+[00000000] []
+b.slotNames;
+[00000000] []
+c.slotNames;
+[00000000] []
+var a.flag; // Create a slot in a.
+a.slotNames;
+[00000000] ["flag"]
+b.slotNames;
+[00000000] []
+c.slotNames;
+[00000000] ["flag"]
+\end{urbiscript}
+
+Updating slots or local variable doesn't update the referenced
+value. It simply change the variable to refer to the new given value,
+as illustrated by \autoref{lst:change-ref}.
+
+\begin{urbiscript}[caption=Updates just change the referee,
+  label=lst:change-ref]
+var a = 42;
+[00000000] 42
+var b = a;
+[00000000] 42
+// b and a point to the same integer.
+a === b;
+[00000000] true
+// Updating b won't change the referred value, 42.
+// We're simply making it reference
+// a fresh integer with value 51.
+b = 51;
+[00000000] 51
+// Thus, a is left unchanged:
+a;
+[00000000] 42
+\end{urbiscript}
+
+Understanding the two latter examples is really important, to be aware
+of what your variable are referring to.
+
+Finally, function and method arguments are also passed by
+reference. Which means they can be modified by the function
+(\autoref{lst:arg-mod}).
+
+\begin{urbiscript}[caption=Function modifying its argument,
+label=lst:arg-mod]
+function test(arg)
+{
+  var arg.flag;  // add a slot in arg
+  echo(arg.uid); // print its uid
+} | {};
+var x = Object.clone;
+[00000000] Object_0x1
+x.uid;
+[00000000] "0x1"
+test(x);
+[00000000] *** 0x1
+x.slotNames;
+[00000000] ["flag"]
+\end{urbiscript}
+
+Beware however of \autoref{lst:arg-no-mod}, where the given function doesn't
+have the behavior you may have expected.
+
+\begin{urbiscript}[caption=Function failing to modify its argument,
+label=lst:arg-no-mod]
+function test(arg)
+{
+  // This updates the local variable arg
+  // to refer 1.
+  // This does not affect the referred value,
+  // nor the actual external argument.
+  arg = 1;
+} | {};
+var x = 0;
+[00000000] 0
+test(x);
+[00000000] 1
+// x wasn't modified
+x;
+[00000000] 0
+\end{urbiscript}
+
+\section{Conclusion}
+
+You should now understand the reference semantic of local variables,
+slots and arguments. It's very important to keep them in mind,
+otherwise you will end up modifying variables you didn't want, or
+change a copy of reference, failing to update the desired one.
+
+\chapter{Flow control constructs}
+
+\section{Introduction}
+
+In this section, we'll introduce some flow control structures that
+will prove handy later. Most of them are inspired by \C/\Cxx.
+
+\section{if}
+
+The \texttt{if} construct is the same has \C/\Cxx's one. The
+\texttt{if} keyword is followed by a condition between parentheses and
+an expression, and optionally the \texttt{else} keyword and another
+expression. If the condition evaluates to true, the first expression
+is evaluated. Otherwise, the second expression is evaluated if
+present (\autoref{lst:if}).
+
+\begin{urbiscript}[caption=The \texttt{if} construct, label=lst:if]
+if (true)
+  echo("ok");
+[00000000] *** ok
+if (false)
+  echo("ko")
+else
+  echo("ok");
+[00000000] *** ok
+\end{urbiscript}
+
+Note that \lstinline|if| statements themselves are values
+(\autoref{lst:if-value}).
+
+\begin{urbiscript}[caption=\texttt{if} are values, label=lst:if-value]
+echo({ if (false) "a" else "b" });
+[00000000] *** b
+\end{urbiscript}
+
+\section{while}
+
+The \texttt{while} construct is, again, the same as in \C/\Cxx. The
+\texttt{while} keyword is followed by a condition between parentheses
+and an expression. If the expression evaluation is false, the
+execution jumps after the while block; otherwise, the expression is
+evaluated and control jumps before the while block (\autoref{lst:while}).
+
+% FIXME: += wasn't introduced
+\begin{urbiscript}[caption=The \texttt{while} construct,
+label=lst:while]
+var x = 2;
+[00000000] 2
+while (x < 40)
+{
+  x += 10;
+  echo(x);
+};
+[00000000] *** 12
+[00000000] *** 22
+[00000000] *** 32
+[00000000] *** 42
+\end{urbiscript}
+
+\section{for}
+
+The \texttt{for} construct is still the same as \C/\Cxx one.
+% FIXME: I don't have the faith to explain for. wanna kill myself.
+
+\begin{urbiscript}[caption=Nihil novi sub sole, label=lst:for]
+for (var x = 2; x < 40; x += 10)
+  echo(x);
+[00000000] *** 2
+[00000000] *** 12
+[00000000] *** 22
+[00000000] *** 32
+\end{urbiscript}
+
+\section{for \ldots in}
+
+The \texttt{for ... in} construct enables you to iterate over a
+collection such as a list. The \texttt{for} keyword, followed by
+\lstinline|var|, an identifier, a semicolon, an expression and a
+scope, executes the scope for every element in the collection
+resulting of the evaluation of the expression, with the variable named
+with the identifier referring to the list element. If you didn't get
+the sentence, don't worry, \autoref{lst:for-in} is self explanatory.
+
+\begin{urbiscript}[caption=Collection iteration with \texttt{for},
+label=lst:for-in]
+for (var elt : [1, 2, 3]) { echo(elt) };
+[00000000] *** 1
+[00000000] *** 2
+[00000000] *** 3
+\end{urbiscript}
+
+\section{switch}
+
+% FIXME: This is not supported for now it 2.0, but is implemented in
+% candidates/pattern-matching.
+% Likewise, no faith left for switch
+The switch construct is similar to \C/\Cxx's one, except it works on
+any kind of object, not only integral ones. Comparison is done by
+semantic equality (operator \texttt{==}). Execution will jump out of
+the switch after a case has been executed (no need to \texttt{break}).
+
+\begin{urbiscript}[caption=The \texttt{switch} construct,
+label=switch]
+switch ("bar")
+{
+  case "foo":
+    echo(0);
+  case "bar":
+    echo(1);
+  case "baz":
+    echo(2);
+  case "quux":
+    echo(3);
+};
+[00000000] *** 1
+\end{urbiscript}
+
+\section{do}
+\label{section:constructs/do}
+
+A do scope is a shorthand to perform several actions on an
+object. Consider \autoref{lst:no-do}.
+
+\begin{urbiscript}[caption=Lot of code bloat,label=lst:no-do]
+var o = Object.clone;
+[00000000] Object_0x0
+var o.one = 1;
+[00000000] 1
+var o.two = 2;
+[00000000] 2
+echo(o.uid);
+[00000000] *** 0x0
+\end{urbiscript}
+
+The exact same result can be obtained with a short do scope, that
+redirect method calls to their target, as in \autoref{lst:do}. This is similar
+to the \pascal ``\texttt{with}'' construct.
+
+
+\begin{urbiscript}[caption=Shorter with a do block,label=lst:do]
+var o = Object.clone;
+[00000000] Object_0x0
+// All the message in this scope
+// are destined to o.
+do (o)
+{
+ var one = 1; // var is a shortcut for the setSlot
+ var two = 2; // message, so it applies on obj too
+};
+[00000000] Object_0x0
+o.one;
+[00000002] 1
+\end{urbiscript}
+
+
+%\section{Conclusion} FIXME?
+
+\chapter{Advanced functions and scoping}
+
+\section{Introduction}
+
+This section presents advanced use of functions and scoping, as well
+as their combo: lexical closures, which prov to be a very powerful
+tool.
+
+\section{Scopes as expressions}
+
+Scope are expressions, just as \lstinline|1 + 1| or \lstinline|"foo"|.
+They evaluate to the last expression they contain, or void if they're
+empty. \autoref{lst:scope-exp} illustrate the use of scopes as
+expressions. Note that the last semicolon inside a scope is optional.
+
+\begin{urbiscript}[caption=Using scope as expressions,label=lst:scope-exp]
+// scope evaluate to the
+// last expression they contain
+{ 1; 2; 3};
+[00000000] 3
+// They are expression
+echo({1; 2; 3});
+[00000000] *** 3
+\end{urbiscript}
+
+\section{Advanced scoping}
+
+Scopes can be nested. Variables can be redefined in subscope. In this
+case, the new variables hide the old one in this scope (that is, the
+innermost variable takes precedence), as illustrated in
+\autoref{lst:scope-hiding}.
+
+\begin{urbiscript}[caption=Redefining variables in
+  subscopes,label=lst:scope-hiding]
+var x = 0; // Declare the outer x
+[00000000] 0
+{
+  var x = 1; // Declare an inner x
+
+  x = 2;    // These refer to
+  echo(x);  // the inner x
+};
+[00000000] *** 2
+// This is the outer x again
+x;
+[00000000] 0
+{
+  x = 3; // This is still the outer x
+  echo(x);
+};
+[00000000] *** 3
+x;
+[00000000] 3
+\end{urbiscript}
+
+\section{Local functions}
+
+Functions can be defined anywhere local variables can --- that is,
+about anywhere. These functions' visibility are limited to the scope
+they're defined in, like variables. This enables for instance to write
+local helper functions (\autoref{lst:helper}).
+
+\begin{urbiscript}[caption=Local helper function, label=lst:helper]
+function max3(a, b, c) // Max of three values
+{
+  function max2(a, b)
+  {
+    if (a > b)
+      return a
+    else
+      return b
+  };
+  max2(a, max2(b, c));
+} | {};
+\end{urbiscript}
+
+\section{Lexical closures}
+
+A closure are the capture by a function of a variable external to this
+function. \urbi supports lexical closure: functions can refer to outer
+local variables, as long as they are visible from the point of
+declaration of the function \autoref{lst:read-closure}.
+
+\begin{urbiscript}[caption=Capturing variables with lexical closures,
+label=lst:read-closure]
+function printSalaries(rate)
+{
+  var charges = 100;
+  function computeSalary(hours)
+  {
+    // Here rate and charges are captured
+    // from the environment by closure
+    rate * hours - charges
+  };
+
+  echo("Alice's salary is " + computeSalary(35));
+  echo("Bob's salary is " + computeSalary(30));
+} | {};
+printSalaries(15);
+[00000000] *** Alice's salary is 425
+[00000000] *** Bob's salary is 350
+\end{urbiscript}
+
+Closures can also write to captured variables, as shown in
+\autoref{lst:write-closure}.
+
+% Fixme: these are not actually closures because of the toplevel ...
+\begin{urbiscript}[caption=Updating captured variables,
+label=lst:write-closure]
+var x = 0;
+[00000000] 0
+var y = 0;
+[00000000] 0
+function add(n)
+{
+  // x and y are updated by closure
+  x += n;
+  y += n;
+  void
+} | {};
+add(25);
+add(25);
+add(1);
+x;
+[00000000] 51
+y;
+[00000000] 51
+\end{urbiscript}
+
+Closure can be really powerful tools in some situation, and they are
+even more useful when combined with functional programing, as
+described in \autoref{section:functional}.
+
+%\section{Conclusion}
+
+\chapter{Objective programming, \urbi object model}
+\label{section:objective}
+
+% FIXME: this section content will soon become mostly crap
+
+\section{Introduction}
+
+We are now at the point you waited for: object programing. We will
+here study the prototype-based object model of \urbi, and how to
+define and use classes.
+
+\section{Prototype-based programing in \urbi}
+
+You're probably already familiar with class-based object programing,
+since this is the \Cxx model. Prototype-based object programing is
+slightly different: it has no actual types. Instead, you have an
+object, that is already an instance, and that you might clone to
+obtain a new one that you can modify afterwards. Prototype-based
+programming was introduced by the Self language, and is used in
+several popular script languages such as \io or \js.
+
+Consider pairs for instance. Pairs are objects that hold two values,
+first and second, like an \texttt{std$::$pair} in \Cxx. Since \urbi is
+prototype-based, there is no pair class. Instead, \lstinline|Pair| is
+really a pair (\autoref{lst:proto}).
+
+\begin{urbiscript}[caption=Prototypes in \urbi, label=lst:proto]
+Pair;
+[00000000] (nil, nil)
+\end{urbiscript}
+
+We can see here that Pair is a pair whose two values are equal to nil
+--- which is a reasonable neutral value. To get a pair of our own, we
+simply clone \lstinline|Pair| (\autoref{lst:clone}). We can then use it as a
+regular pair.
+
+\begin{urbiscript}[caption=Cloning, label=lst:clone]
+var p = Pair.clone;
+[00000000] (nil, nil)
+p.first = "101010";
+[00000000] "101010"
+p.second = true;
+[00000000] true
+p;
+[00000000] ("101010", true)
+Pair;
+[00000000] (nil, nil)
+\end{urbiscript}
+
+Since \lstinline|Pair| is a regular pair object, you can modify and
+use it at will. Yet this is not necessarily a good idea, since you
+will alter your base prototype, and subsequent cloning will inherit
+these modification (\autoref{lst:alter-proto}).
+
+\begin{urbiscript}[caption=Altering a prototype, label=lst:alter-proto]
+var before = Pair.clone;
+[00000000] (nil, nil)
+Pair.first = false;
+[00000000] false
+var after = Pair.clone;
+[00000000] (false, nil)
+\end{urbiscript}
+
+\section{Prototypes and slot lookup}
+
+In prototype-based language, 'is-a' relations (being an instance of
+some type) and inheritance relations (extending another type) are
+simplified in a single relation: prototyping. You can inspect an
+object prototypes with the \texttt{protos} method (\autoref{lst:protos}).
+
+\begin{urbiscript}[caption=Inspecting prototypes, label=lst:protos,
+  name=protos]
+var p = Pair.clone;
+[00000000] (nil, nil)
+p.protos;
+[00000000] [(nil, nil)]
+\end{urbiscript}
+
+As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
+which is Pair. We can check this as presented in \autoref{lst:proto-check}.
+
+\begin{urbiscript}[caption=Checking the prototype,
+  label=lst:proto-check, name=protos]
+// Lists 'head' method returns the first element
+p.protos.head;
+[00000000] (nil, nil)
+// We can make sure the prototype is really Pair
+p.protos.head === Pair;
+[00000000] true
+\end{urbiscript}
+
+Prototypes are the base of the slot lookup mechanism. Slot lookup is
+the action of finding an object slot when \texttt{getSlot} or the dot
+notation is used. So far, when we typed \lstinline|obj.slot|, ``slot''
+was always a slot of \lstinline|obj|.
+Yet, this call can be valid even if obj has
+no ``slot'' slot, because slots are also looked up in prototypes. For
+instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
+``first'' or ``second'' slots. Yet, \lstinline|p.first| and
+\lstinline|p.second| succeed because these slots are present in
+\lstinline|Pair|, which is \lstinline|p|'s prototype. This is
+illustrated by \autoref{lst:simple-lookup}.
+
+\begin{urbiscript}[caption=Slot found by lookup, label=lst:simple-lookup]
+var p = Pair.clone;
+[00000000] (nil, nil)
+// p has absolutely no slots.
+p.slotNames;
+[00000000] []
+// Yet this works
+p.first;
+// This is because p has Pair for prototype,
+// and Pair has a 'first' slot.
+p.protos.head === Pair;
+[00000000] true
+"first" in Pair.slotNames && "second" in Pair.slotNames;
+[00000000] true
+\end{urbiscript}
+
+As shown here, the \texttt{clone} method simply creates an empty
+object, with its target as prototype. The new object has the exact
+same behavior as the cloned on thanks to slot lookup.
+
+Let's experience slot lookup by ourselves. In \urbi, you can add and
+remove prototypes from an object thanks to \texttt{addProto} and
+\texttt{removeProto}.
+
+\begin{urbiscript}[caption=Manipulating prototypes, label=lst:proto-change]
+// We create a fresh object
+var c = Object.clone;
+[00000000] Object_0x1
+// As expected, it has no 'slot' slot
+c.slot;
+[00000000:error] !!! lookup failed: slot
+var p = Object.clone;
+[00000000] Object_0x2
+var p.slot = 0;
+[00000000] 0
+c.addProto(p);
+[00000000] Object_0x1
+// Now, slot is found in c,
+// because it is inherited from p.
+c.slot;
+[00000000] 0
+c.removeProto(p);
+[00000000] Object_0x1
+// Back to our good old lookup error
+c.slot;
+[00000000:error] !!! lookup failed: slot
+\end{urbiscript}
+
+The slot lookup algorithm in \urbi in a depth-first traversal of the
+object prototypes tree. Formally, when the "s" slot is requested from
+x:
+
+\begin{itemize}
+\item If x itself has the slot, the requested value is found.
+\item Otherwise, the same lookup algorithm is applied on all
+  prototypes, most recent first.
+\end{itemize}
+
+Thus, slots from the last prototype added take precedence over other
+prototype's slots (\autoref{lst:proto-prec}).
+
+\begin{urbiscript}[caption=Prototype precedence, label=lst:proto-prec]
+var proto1 = Object.clone;
+[00000000] Object_0x00000000
+var proto2 = Object.clone;
+[00000000] Object_0x00000000
+var o = Object.clone;
+[00000000] Object_0x00000000
+o.addProto(proto1);
+[00000000] Object_0x00000000
+o.addProto(proto2);
+[00000000] Object_0x00000000
+// We give o an x slot through proto1
+var proto1.x = 0;
+[00000000] 0
+o.x;
+[00000000] 0
+// proto2 is visited first during lookup.
+// Thus its "x" slot take precedence over proto1's
+var proto2.x = 1;
+[00000000] 1
+o.x;
+[00000000] 1
+// o's own slots still have the higher precedence
+var o.x = 2;
+[00000000] 2
+o.x;
+[00000000] 2
+\end{urbiscript}
+
+You can check where in the prototype hierarchy a slot is found with
+the \texttt{locateSlot} method (\autoref{lst:locateslot}). This is a very
+handful tool when inspecting an object.
+
+\begin{urbiscript}[caption=Using locateSlot, label=lst:locateslot]
+var p = Pair.clone;
+[00000000] (nil, nil)
+// Check that the 'first' slot is found in Pair
+p.locateSlot("first") === Pair;
+[00000000] true
+// Where does locateSlot itself come from? Object itself!
+p.locateSlot("locateSlot");
+[00000000] Object
+\end{urbiscript}
+
+You can see here that the prototype model is rather simple. Obtaining
+a fresh object simply consist in cloning a model object, a prototype,
+that was provided to you. Moreover, you can add behavior to an object
+at any time with a simple \texttt{addProto}: you can make any object a
+fully functional Pair with a simple \lstinline|myObj.addProto(Pair)|.
+
+\section{Copy on write}
+
+One point might be bothering you though: what if you want to update a
+slot value in a clone of your prototype?
+
+Say we implement a simple prototype, with an "x" slot equal to
+\lstinline|0|, and clone it twice. We have three object with an "x"
+slot, yet only one actual \lstinline|0| integer. Will modifying x in
+one of the clone change the prototype's "x", thus altering the
+prototype and the other clone as well?
+
+The answer is, of course, no, as illustrated by \autoref{lst:copy-on-write}.
+
+\begin{urbiscript}[caption=Copy on write in action,
+  label=lst:copy-on-write, name=cow]
+var proto = Object.clone;
+[00000000] Object_0x1
+var proto.x = 0;
+[00000000] 0
+var o1 = proto.clone;
+[00000000] Object_0x2
+var o2 = proto.clone;
+[00000000] Object_0x3
+// Are we modifying proto's x slot here?
+o1.x = 1;
+[00000000] 1
+// Obviously not
+o2.x;
+[00000000] 0
+proto.x;
+[00000000] 0
+o1.x;
+[00000000] 1
+\end{urbiscript}
+
+This work thanks to copy-on-write: slots are first duplicated to the
+local object when they're updated, as we can check in
+\autoref{lst:check-copy-on-write}.
+
+\begin{urbiscript}[caption=Inspecting copy on write,
+  label=lst:check-copy-on-write, name=cow]
+// This is the continuation of previous example.
+
+// As expected, o2 finds "x" in proto
+o2.locateSlot("x") === proto;
+[00000000] true
+// Yet o1 doesn't anymore
+o1.locateSlot("x") === proto;
+[00000000] false
+// Because the slot was duplicated locally
+o1.locateSlot("x") === o1;
+[00000000] true
+\end{urbiscript}
+
+This is why, when we cloned Pair earlier, and modified the ``first''
+slot of our fresh Pair, we didn't alter Pair one all its other clones.
+
+% BIG FIXME: classes, classes ... c'mon, these are not classes but
+% prototypes ...
+\section{Defining classes}
+
+Now that we know the internals of \urbi's object model, we can start
+defining our own classes. For instance, we can define our own
+\texttt{Pair} class. We just have to create a pair, with its first and
+second slots. For this we use the \texttt{do} scope described in
+\autoref{section:constructs/do}. \autoref{lst:do-class}) defines a new
+\texttt{Pair} class. The \texttt{asString} function is simply used to
+customize pairs printing - don't give it too much attention for now.
+
+\begin{urbiscript}[caption=Defining our own \texttt{MyPair} class,
+  label=lst:do-class]
+var MyPair = Object.clone;
+[00000000] Object_0x1
+do (MyPair)
+{
+  var first = nil;
+  var second = nil;
+  function asString ()
+  {
+    "MyPair: " + first + ", " + second
+  };
+} | {};
+// We just defined a pair
+MyPair;
+[00000000] MyPair: nil, nil
+// Let's try it out
+var p = MyPair.clone;
+[00000000] MyPair: nil, nil
+p.first = 0;
+[00000000] 0
+p;
+[00000000] MyPair: 0, nil
+MyPair;
+[00000000] MyPair: nil, nil
+\end{urbiscript}
+
+That's it, we defined a pair that can be cloned at will! \urbi
+provides a shorthand to define classes as we did above: the
+\texttt{class} keyword (\autoref{lst:class}).
+
+\begin{urbiscript}[caption=Using the \texttt{class} construct,
+  label=lst:class, name=my-pair]
+class MyPair
+{
+  var first = nil;
+  var second = nil;
+  function asString() { "(" + first + ", " + second + ")"; };
+};
+[00000000] (nil, nil)
+\end{urbiscript}
+
+The \texttt{class} keyword simply creates MyPair with Object.clone,
+and provides you with a \lstinline|do (MyPair)| scope. It actually also
+predefines a few slots, but this is not the point here.
+
+\section{Constructors}
+
+As we've seen, we can use the clone method on any object to obtain an
+identical object. Yet, some class provide more elaborated
+constructors, accessible by calling \texttt{new} instead of
+\texttt{clone}, potentially passing it arguments (\autoref{lst:pair-ctor}).
+
+\begin{urbiscript}[caption=Calling constructors with \texttt{new},
+label=lst:pair-ctor]
+var p = Pair.new("foo", false);
+[00000000] ("foo", false)
+\end{urbiscript}
+
+While \texttt{clone} guarantees you obtain a empty fresh object
+inheriting from the prototype, \texttt{new} behavior is left to the
+discretion of the cloned prototype --- although its behavior is the
+same as \texttt{clone} by default.
+
+To define such constructors, prototypes only need to provide an
+\texttt{init} method, that will be called with the arguments given to
+new. For instance, we can improve our previous \texttt{Pair} class
+with a constructor (\autoref{lst:define-ctor}).
+
+\begin{urbiscript}[caption=Defining constructors,
+  label=lst:define-ctor, name=my-pair]
+do (MyPair)
+{
+  function init(f, s)
+  {
+    first = f;
+    second = s;
+  }
+};
+[00000000] (nil, nil)
+MyPair.new(0, 1);
+[00000000] (0, 1)
+\end{urbiscript}
+
+%\section{Conclusion}
+
+\chapter{Functional programming}
+\label{section:functional}
+
+\section{Introduction}
+
+\urbi support functional programming through first class functions and
+lambda expressions.
+
+\section{First class functions}
+
+\urbi has first class functions. That is, function are regular values,
+just like an integer or a string, enabling you to store them or pass
+them as arguments. For instance, you don't need to write
+\lstinline|function object.f(){/* ... */}| to insert a function in an
+object, you can simply use \texttt{setSlot}, as illustrated by
+\autoref{lst:first-class-functions}.
+
+% FIXME: doesn't work, toplevel, puke, etc
+\begin{urbiscript}[caption=First class functions,
+  label=lst:first-class-functions]
+var o = Object.clone | {};
+// Here we can use f as any regular value
+o.setSlot("m1", function () { echo("Hello") }) | {};
+// This is strictly equivalent
+var o.m2 = function () { echo("Hello") } | {};
+o.m1;
+[00000000] *** Hello
+o.m2;
+[00000000] *** Hello
+\end{urbiscript}
+
+This enables to write powerful pieces of code, like functions that
+take function as argument. For instance, consider the \texttt{all}
+function: given a list and a function, it applies the function to each
+element of the list, and returns whether all calls returned true. This
+enables to check very simply if all elements in a list verify a
+predicate (\autoref{lst:all}).
+
+\begin{urbiscript}[caption=Functional programming: the \texttt{all}
+  function, label=lst:all, name=all]
+function all(list, predicate)
+{
+  for (var elt : list)
+    if (!predicate(elt))
+      return false;
+  return true;
+} | {};
+// now we can easily check if
+// all elements in a list are positive
+function positive(x) { x >= 0 } | {};
+all([1, 2, 3], getSlot("positive"));
+[00000000] true
+all([1, 2, -3], getSlot("positive"));
+[00000000] false
+\end{urbiscript}
+
+\section{Lambda functions}
+
+Another nice feature is the ability to write lambda functions, which
+are anonymous functions. You can create a functional value as an
+expression, without naming it, with the syntax shown in \autoref{lst:lambda}.
+
+\begin{urbiscript}[caption=Lambda function, label=lst:lambda, name=all]
+// Create an anonymous function
+function (x) {x + 1} | {};
+// This enable to easily pass function
+// to our "all" function:
+all([1, 2, 3], function (x) { x > 0});
+[00000000] true
+\end{urbiscript}
+
+In fact, the \texttt{function} construct we saw earlier is only a
+shorthand for a variable assignment (\autoref{lst:function-sugar}).
+
+\begin{lstlisting}[caption=The function sugar,
+  label=lst:function-sugar]
+// This ...
+function obj.f (/*...*/) {/*...*/};
+// ... is actually a shorthand for this
+var obj.f = function (/*...*/) {/* ... */};
+\end{lstlisting}
+
+% This should maybe be outside the functional section. It is also
+% incomplete.
+\section{Lazy arguments}
+
+Most popular programming languages use strict arguments evaluation:
+arguments are evaluated before functions are called. Other languages
+use lazy evaluation: argument are evaluated by the function only when
+needed. In \urbi, evaluation is strict by default, but you can ask a
+function not to evaluate its arguments, and do it by hand. This works
+by not specifying formal arguments. The function is provided with a
+\texttt{call} object that enables you to evaluate arguments
+(\autoref{lst:lazy}).
+
+\begin{urbiscript}[caption=Tweaking arguments evaluation,
+  label=lst:lazy]
+// Note the lack of formal arguments specification
+function first
+{
+  // Evaluate only the first argument.
+  call.evalArgAt(0);
+} | {};
+first(echo("first"), echo("second"));
+[00000000] *** first
+function reverse
+{
+  call.evalArgAt(1);
+  call.evalArgAt(0);
+} | {};
+reverse(echo("first"), echo("second"));
+[00000000] *** second
+[00000000] *** first
+\end{urbiscript}
+
+A good example are logic operators. Although \Cxx is a strict
+language, it uses a few logic operators. For instance, the logical and
+(\texttt{\&\&}) does not evaluate its right operand if the left
+operand is false (the result will be false anyway).
+
+\urbi logic operator mimic this behavior. \autoref{lst:short-circuits} shows
+how one can implement such a behavior.
+
+\begin{urbiscript}[caption=Implementing logic short circuits,
+label=lst:short-circuits]
+function myand
+{
+  var lhs = call.evalArgAt(0);
+  if (lhs)
+    return call.evalArgAt(1)
+  else
+    return false;
+} | {};
+function f()
+{
+  echo("f executed");
+  return true;
+} | {};
+myand(false, f());
+[00000000] false
+myand(true, f());
+[00000000] *** f executed
+[00000000] true
+\end{urbiscript}
+
+%\section{Pattern matching}
+
+\chapter{Parallelism, concurrent flows control}
+
+\section{Introduction}
+
+Parallelism is one of the major features of \urbi. So far, all we've
+seen already existed in other language - although we tried to pick,
+mix and adapt features and paradigm to create a nice scripting
+language. Parallelism is one of the corner stone of its paradigm, and
+what makes it so adapted to high level scripting of interactive
+agents, such as robotics or \ai.
+
+\section{Parralelism operators}
+
+For now, we've separated our different commands with a semicolon
+(\texttt{;}). There are actually other separators in \urbi:
+
+\begin{itemize}
+\item ``\texttt{;}'': Serialization operator. Wait for the left
+  operand to finish before continuing.
+\item ``\texttt{\&}'': Parallelism n-ary operator. All operands are
+  started simultaneously, and executed in parallel. The \texttt{\&}
+  block itself finishes when both operands finish. \texttt{\&} has
+  higher precedence than other separators.
+\item ``\texttt{,}'': Background operator. Left operand is started,
+  and evaluation continues immediately. End of execution of the left
+  operand is waited at the exit of the scope.
+\end{itemize}
+
+\autoref{lst:parallelism-operators} show usage of \texttt{\&} to launch two
+functions in parallel.
+
+\begin{urbiscript}[caption=Parallelism operator,
+  label=lst:parallelism-operators, name=parallel]
+function test(name)
+{
+  echo(name + ": 1");
+  echo(name + ": 2");
+  echo(name + ": 3");
+} | {};
+// Serialized executions
+test("left") ; test ("middle"); test ("right");
+[00000000] *** left: 1
+[00000000] *** left: 2
+[00000000] *** left: 3
+[00000000] *** middle: 1
+[00000000] *** middle: 2
+[00000000] *** middle: 3
+[00000000] *** right: 1
+[00000000] *** right: 2
+[00000000] *** right: 3
+// Parallel execution
+test("left") & test("middle") & test ("right");
+[00000000] *** left: 1
+[00000000] *** middle: 1
+[00000000] *** right: 1
+[00000000] *** left: 2
+[00000000] *** middle: 2
+[00000000] *** right: 2
+[00000000] *** left: 3
+[00000000] *** middle: 3
+[00000000] *** right: 3
+\end{urbiscript}
+
+In this test, we see that the \texttt{\&} runs its operands
+simultaneously.
+
+The difference between ``\texttt{\&}'' and ``\texttt{,}'' is rather
+subtle:
+
+\begin{itemize}
+\item In the toplevel, will wait for you to terminate your
+  ``\texttt{\&}'' block to start executing anything, while it will run
+  the code terminated by ``\texttt{,}'' immediately.
+\item Execution is blocked after a ``\texttt{\&}'' group until all its
+  children have finished (\autoref{lst:and-comma}).
+\end{itemize}
+
+\begin{urbiscript}[caption=Difference between ``\texttt{\&}'' and
+``\texttt{,}'', label=lst:and-comma, name=parallel]
+// This runs test and echo("right") in parallel,
+// and wait until both are done before continuing
+test("left") & echo("right"); echo("done");
+[00000000] *** left: 1
+[00000000] *** right
+[00000000] *** left: 2
+[00000000] *** left: 3
+[00000000] *** done
+// This runs test in background,
+// then both echos without waiting.
+test("left") , echo("right"); echo("done");
+[00000000] *** left: 1
+[00000000] *** right
+[00000000] *** left: 2
+[00000000] *** done
+[00000000] *** left: 3
+\end{urbiscript}
+
+That's about all there is to say about these operators. Although
+they're rather simple, they are really powerful and enables you to
+include parallelism anywhere at no syntactical cost.
+
+\section{Detach}
+
+The \texttt{detach} function backgrounds the execution of its
+argument. Its behavior is the same as the comma (\texttt{,}) operator,
+except the execution is completely detached, and not waited for at the
+end of the scope (\autoref{lst:detach}).
+
+\begin{urbiscript}[caption=Detach, label=lst:detach]
+function test()
+{
+  // wait 1 second, and echo "foo"
+  detach({sleep(1s); echo("foo")});
+} | {};
+test();
+echo("Not blocked");
+[00000000] *** Not blocked
+sleep(1s);
+[00005000] *** foo
+/*HIDE*/sleep(200ms);
+\end{urbiscript}
+
+\section{Tags for parallel control flows}
+
+Tags are a multipurpose code execution control and instrumentation
+feature. Any chunk of code can be tagged, by preceding it with a tag
+and a colon (\texttt{$:$}). Tag can be created with
+\lstinline|Tag.new("name")|. Giving tags a name is optional, yet it's
+probably a better idea since it will be used for many
+features. \autoref{lst:tagging} illustrates how to tag chunks of code.
+
+\begin{urbiscript}[caption=Tagging a block of code, label=lst:tagging]
+// Create a new tag
+var mytag = Tag.new("name");
+[00000000] Tag<name>
+// Tag the evaluation of 42
+mytag: 42;
+[00000000] 42
+// Tag the evaluation of a block.
+mytag: { "foo"; 51 };
+[00000000] 51
+// Tag a function call.
+mytag: echo("tagged");
+[00000000] *** tagged
+\end{urbiscript}
+
+You can use tag that wasn't declared previously, they will be created
+implicitly (\autoref{lst:implicit-tag}). However, this is fragile code since
+tags will be created in a global scope, the \texttt{Tag} object. This
+feature can be used when inputting test code in the toplevel to avoid
+bothering to declare each tag, yet it should be considered very bad
+practice in regular code.
+
+\begin{urbiscript}[caption=Tag created implicitly,
+label=lst:implicit-tag]
+// Since mytag is not declared, this will first do:
+// var Tag.mytag = Tag.new("mytag");
+mytag : 42;
+[00000000] 42
+\end{urbiscript}
+
+So you can tag code, yet what's the use? One of the primary purpose of
+tags is to be able to control the execution of code running in
+parallel. Tags have a few control methods:
+
+\begin{itemize}
+\item \texttt{freeze}: Suspend execution of all tagged code.
+\item \texttt{unfreeze}: Resume execution of previously frozen code.
+\item \texttt{stop}: Stop the execution of the tagged code. The flows
+  of execution that where stopped jump immediately at the end of the
+  tagged block.
+\item \texttt{block}: Block the execution of the tagged code, that is:
+  \begin{itemize}
+  \item Stop it.
+  \item When an execution flow encounters the tagged block, it simply
+    skips it.
+  \end{itemize}
+  You can think of block like a permanent stop.
+\item \texttt{unblock}: Stop blocking the tagged code.
+\end{itemize}
+
+\autoref{lst:freeze}, \autoref{lst:stop} and \autoref{lst:block}
+illustrate usage of these tag features.
+
+\begin{urbiscript}[caption=Freezing/unfreezing code execution, label=lst:freeze]
+// Here we launch in background - thanks to the
+// comma - code that prints "foo" every second.
+// We tag it to keep control over it.
+mytag:
+{
+  loop
+  {
+    echo("ping");
+    sleep(0.5s)
+  }
+},
+sleep(1.6s);
+[00000000] *** ping
+[00001000] *** ping
+[00002000] *** ping
+// Suspend execution
+mytag.freeze;
+// No printing anymore
+sleep(1.6s);
+// Resume execution
+mytag.unfreeze;
+sleep(0.1s);
+[00007000] *** ping
+\end{urbiscript}
+
+\begin{urbiscript}[caption=Stopping code execution, label=lst:stop]
+// Now, we print out a message when we get out of the tag.
+{
+  mytag:
+  {
+    loop
+    {
+      echo("ping"); sleep(1s)
+    }
+  };
+  // Execution flow will jump here
+  // if mytag is stopped
+  echo("Background job stopped")|
+},
+sleep(3s);
+[00000000] *** ping
+[00001000] *** ping
+[00002000] *** ping
+// Stop the tag
+mytag.stop;
+[00002500] *** Background job stopped
+// Our background job finished.
+// Unfreezing the tag has no effect.
+mytag.unfreeze;
+\end{urbiscript}
+
+\begin{urbiscript}[caption=Blocking chunks of code, label=lst:block]
+// Now, print out a message when we get out of the tag.
+{
+  loop
+  {
+    echo("ping"); sleep(1s);
+    mytag: { echo("pong"); sleep(1s); };
+  };
+
+  // Execution flow will jump here if mytag is stopped
+  echo("Background job stopped")|
+},
+sleep(4s);
+/*HIDE*/sleep(100ms);
+[00000000] *** ping
+[00001000] *** pong
+[00002000] *** ping
+[00003000] *** pong
+// Block printing of pong.
+mytag.block;
+sleep(3s);
+/*HIDE*/sleep(100ms);
+// The second half of the while isn't executed anymore.
+[00004000] *** ping
+[00005000] *** ping
+[00006000] *** ping
+// Reactivate pong
+mytag.unblock;
+sleep(4s);
+/*HIDE*/sleep(100ms);
+[00007000] *** ping
+[00008000] *** pong
+[00009000] *** ping
+[00010000] *** pong
+[00011000] *** ping
+\end{urbiscript}
+
+\section{Advanced example with parallelism and tags}
+
+In this section, we implement a more advanced example with
+parallelism.
+
+\autoref{lst:timeout} presents how to implement a \texttt{timeOut}
+function, that takes code to execute and a timeout as arguments. It
+executes the code, and returns its value. However, if the code
+execution takes longer than the given timeout, it aborts it, print
+\lstinline|"Timeout!"| and returns void. In this example, we use:
+
+\begin{itemize}
+\item Lazy arguments, since we want to delay the execution of the
+  given code, to keep control on it.
+\item Parallelism operators, to launch a timeout job in background.
+\end{itemize}
+
+% FIXME: doesn't work (inner return)
+\begin{urbiscript}[caption=Implementing a timeout method, label=lst:timeout]
+function timeOut
+{
+  // In background, launch a timeout job that waits
+  // for the given duration before aborting the function.
+  // call.evalArgAt(1) is the second argument, the delay.
+  {
+    sleep (call.evalArgAt(1));
+    echo("Timeout!");
+    return;
+  },
+  return call.evalArgAt(0);
+} | {};
+timeOut({sleep(1s); echo("On time"); 42}, 2s);
+[00000000] *** On time
+[00000000] 42
+timeOut({sleep(2s); echo("On time"); 42}, 1s);
+[00000000] *** Timeout!
+\end{urbiscript}
+
+% FIXME: add example with tags
+
+% Add chronograms
+\chapter{Event-based programming}
+\label{sec:event-prog}
+
+\section{Introduction}
+
+When dealing with highly interactive agent programming, sequential
+programming is inconvenient. We want to react to external, random
+events, not execute code linearly with a predefined flow. \urbi has a
+strong support for event-based programming.
+
+\section{Event related constructs}
+
+The first construct we will study is the \lstinline|at| keyword. Given
+a condition, and an expression, \lstinline|at| will evaluate the
+expression every time the condition becomes true (\autoref{lst:at}). That is,
+when a rising edge occurs on the condition.
+
+\begin{urbiscript}[caption=Using \texttt{at}, label=lst:at]
+var x = 0;
+[00000000] 0
+at (x > 5)
+  echo("ping");
+x = 5;
+[00000000] 5
+// This triggers the event
+x = 6;
+[00000000] 6
+[00000000] *** ping
+// This does not trigger, since
+// the condition is already true
+x = 7;
+[00000000] 7
+// The condition becomes false here
+x = 3;
+[00000000] 3
+
+x = 10;
+[00000000] 10
+[00000000] *** ping
+\end{urbiscript}
+
+An \lstinline|onleave| block can be appended to execute an expression
+when the expression \emph{becomes} false --- that is, on falling edges
+(\autoref{lst:onleave}).
+
+\begin{urbiscript}[caption=Using \texttt{at ... onleave}, label=lst:onleave]
+var x = false;
+[00000000] false
+at (x)
+  echo("x")
+onleave
+  echo("!x");
+x = true;
+[00000000] true
+[00000000] *** x
+x = false;
+[00000000] false
+[00000000] *** !x
+\end{urbiscript}
+
+The \lstinline|whenever| construct is similar to \lstinline|at|,
+except the expression evaluation is systematically restarted when it
+finishes as long as the condition stands true (\autoref{lst:whenever}).
+
+\begin{urbiscript}[caption=Using \texttt{whenever}, label=lst:whenever]
+var x = false;
+[00000000] false
+whenever (x)
+{
+  echo("ping");
+  sleep(1s);
+};
+x = true;
+[00000000] true
+sleep(3s);
+// Whenever keeps triggering
+[00000000] *** ping
+[00001000] *** ping
+[00002000] *** ping
+x = false;
+[00002000] false
+// Whenever stops triggering
+\end{urbiscript}
+
+Just like \lstinline|at| has \lstinline|onleave|, \lstinline|whenever|
+has \lstinline|else|: the given expression is evaluated as long as the
+condition is false (\autoref{lst:whenever-else}).
+
+\begin{urbiscript}[caption=Using \texttt{whenever ... else},
+  label=lst:whenever-else]
+var x = false;
+[00002000] false
+whenever (x)
+{
+  echo("ping");
+  sleep(1s);
+}
+else
+{
+  echo("pong");
+  sleep(1s);
+};
+sleep (3s);
+[00000000] *** pong
+[00001000] *** pong
+[00002000] *** pong
+x = true;
+[00003000] true
+sleep (3s);
+[00003000] *** ping
+[00004000] *** ping
+[00005000] *** ping
+x = false;
+[00006000] false
+sleep (2s);
+[00006000] *** pong
+[00007000] *** pong
+\end{urbiscript}
+
+\section{Events}
+
+\urbi enables you to define events, that can be caught with the
+\lstinline|at| and \lstinline|whenever| constructs we saw earlier. You
+can create events by cloning the \lstinline|Event| prototype. They can
+then be emitted with the \lstinline|!| keyword (\autoref{lst:event}).
+
+\begin{urbiscript}[caption=Using events, label=lst:event]
+var myEvent = Event.new;
+[00000000] Event_0x0
+at (myEvent?)
+  echo("ping");
+myEvent!;
+[00000000] *** ping
+// events work well with parallelism
+myEvent! & myEvent!;
+[00000000] *** ping
+[00000000] *** ping
+\end{urbiscript}
+
+Both \lstinline|at| and \lstinline|whenever| have the same behavior on
+punctual events. However, you can emit an event for a certain
+duration, and \lstinline|whenever| will keep triggering for this
+duration (\autoref{lst:emit-duration}).
+
+\begin{urbiscript}[caption=Emitting events with a duration,
+  label=lst:emit-duration]
+var myEvent = Event.new;
+[00000000] Event_0x0
+whenever (myEvent?)
+{
+  echo("ping")|
+  sleep(100ms)
+};
+// Emit myEvent for one second.
+myEvent! ~ 350ms;
+[00000000] *** ping
+[00000100] *** ping
+[00000200] *** ping
+[00000300] *** ping
+/*HIDE*/sleep(125ms);
+\end{urbiscript}
+
+%\section{Valued events}
+
+
+%\chapter{Standard \urbi library}
+
+%\section{Introduction}
+
+%\section{Printing}
+
+%\chapter{Binding with \Cxx - UObjects}
+
+\chapter{Frequently Asked Questions}
+\label{sec:faq}
+
+\section{Objects, slots and variables}
+
+\paragraph{How do I create a new Object derivative?}
+Urbi is based on prototypes. To create a new Object derivative (which
+will inherit all the Object methods), you can do:
+
+\begin{urbifixme}
+var myObject = Object.new;
+\end{urbifixme}
+
+\paragraph{How do I add a new slot in an object?}
+To add a slot to an object \code{O}, you have to use the \code{var} keyword:
+
+\begin{urbifixme}
+var O.mySlot = 42;
+\end{urbifixme}
+
+\noindent
+or you can use the "setSlot" method:
+
+\begin{urbifixme}
+O.setSlot("mySlot", 42);
+\end{urbifixme}
+
+Note that in a method, \code{this} designates the current object. For example,
+
+\begin{urbifixme}
+var this.mySlot = 42;
+\end{urbifixme}
+
+\noindent
+will create a new slot in the current object while
+
+\begin{urbifixme}
+var mySlot = 42;
+\end{urbifixme}
+
+\noindent
+will create a local variable, which will not be known anymore after we
+exist the current scope.
+
+\paragraph{How do I modify a slot of my object?}
+\begin{urbifixme}
+O.mySlot = 51;
+\end{urbifixme}
+
+\noindent
+or
+
+\begin{urbifixme}
+O.updateSlot("mySlot", 51);
+\end{urbifixme}
+
+\paragraph{How do I create or modify a local variable?}
+\begin{urbifixme}
+var myLocalVariable;
+myLocalVariable = "foo";
+\end{urbifixme}
+
+\noindent
+or
+
+\begin{urbifixme}
+var myLocalVariable = "foo";
+\end{urbifixme}
+
+
+\paragraph{How do I make a constructor?}
+You can define a method called \code{init} which will be called
+automatically by \code{new}. For example:
+
+\begin{urbifixme}
+class myObject {
+  function init(x, y) {
+    var this.x = x;
+    var this.y = y;
+  };
+};
+myInstance = myObject.new(10, 20);
+\end{urbifixme}
+
+
+\paragraph{How can I manipulate the list of prototypes of my objects?}
+The \code{protos} method returns a list (which can be manipulated)
+containing the list of your object prototype.
+
+\begin{urbifixme}
+var myObject = Object.new;
+myObject.protos;
+[00000001] [Object]
+\end{urbifixme}
+
+\paragraph{How can I know the slots available for a given object?}
+The \code{slotNames} and \code{allSlotNames} methods return
+respectively the local slot names and the local+inherited slot names.
+
+\paragraph{How do I create a new function?}
+Functions are first class objects. That means that you can add them as
+any other slot in an object:
+
+\begin{urbifixme}
+var myObject = Object.new;
+var myFunction = function (x, y)
+  { echo ("myFunction called with " + x + " and " + y) };
+\end{urbifixme}
+
+You can also use the following notation to add a function to your
+object:
+
+\begin{urbifixme}
+var myObject = Object.new;
+function myObject.myFunction (x, y) { /* ... */ };
+\end{urbifixme}
+
+or even group definitions within a "do" scope, which will automatically
+define new slots instead of local variables and functions:
+
+\begin{urbifixme}
+var myObject = Object.new;
+do (myObject) {
+  function myFunction (x, y) { /* ... */ };
+};
+\end{urbifixme}
+
+or group those two statements by using a convenient "class" scope:
+
+\begin{urbifixme}
+class myObject {
+  function myFunction (x, y) { /* ... */ };
+};
+\end{urbifixme}
+
+\section{Tags}
+
+\paragraph{How do I create a tag?}
+
+
+Tags are objects, and must be created as any object by using "new" to create
+derivatives of the "Tag" object.
+
+\begin{urbifixme}
+var myTag = Tag.new;
+\end{urbifixme}
+
+or
+
+\begin{urbifixme}
+var myTag = Tag.new("cool name");
+\end{urbifixme}
+
+The name is not mandatory but makes it easier to display a tag and remember
+what it is.
+
+\paragraph{How do I stop a tag?}
+
+
+\begin{urbifixme}
+myTag.stop;
+\end{urbifixme}
+
+\paragraph{Can tagged statements return a value?}
+
+
+By default, tagged statements will return the latest evaluated expression if
+they have not been stopped:
+
+\begin{urbifixme}
+var myTag = Tag.new;
+var res;
+res = { myTag: { do_something; 42 } };
+\end{urbifixme}
+
+After the execution, "res" will contain 42.
+
+However, when a tag is stopped, all the statements tagged with that tag may
+be forced to return a value, by giving it as a parameter to "stop":
+
+\begin{urbifixme}
+var myTag = Tag.new;
+var res;
+{ res = { myTag: sleep(inf) } }, // Sleep forever (infinite amount of time),
+                                 // note the "," to put the tagged statement in
+                                 // the background
+myTag.stop(42);
+res;
+[00000001] 42
+\end{urbifixme}
+
+\section{Events}
+
+\paragraph{How do I create an event?}
+Events are objects, and must be created as any object by using "new" to create
+derivatives of the "Event" object.
+
+\begin{urbifixme}
+var ev = Event.new;
+\end{urbifixme}
+
+\paragraph{How do I emit an event?}
+
+\begin{urbifixme}
+ev!(1, "foo");
+\end{urbifixme}
+
+\paragraph{How do I catch an event?}
+
+\begin{urbifixme}
+at(ev?(1, var msg)) {
+  echo ("Received event with 1 and message " + msg);
+};
+\end{urbifixme}
+
+The \code{?} marker indicates that we are looking for an event instead of a
+boolean condition. The construction "var msg" indicates that the "msg"
+variable will be bound (as a local variable) in the body part of the "at"
+construct, with whatever value is present in the event that triggered the
+"at".
+
+\section{Lists}
+
+\paragraph{How can I iterate over a list?}
+
+You can use the "for" construct to iterate over the elements of a list:
+
+\begin{urbiscript}
+for (var i: [10, 11, 12]) echo (i);
+[00000001] *** 10
+[00000002] *** 11
+[00000003] *** 12
+\end{urbiscript}
+
+\section{UObjects loading}
+
+\paragraph{urbi-launch fails with 'myuobject: file not found'. What can I do?}
+If you are sure the file is there, the most probable cause is an
+undefined symbol in your shared library. A libltdl quirk prevents us
+from displaying a more accurate error message.  You can use a tool
+named \command{ltrace} to obtain the exact error message.  Ltrace is a
+standard package on most Linux distributions.  Run it with
+\samp{ltrace -C -s 1024 urbi-launch ...}, and look for lines
+containing \samp{dlerror} in the output. One will contain the exact
+message that occurred while trying to load your shared library.
+
+Under Mac OS X, the \code{DYLD\_PRINT\_APIS} environment variable can
+be set to 1 to make the shared library loader more verbose and display
+all its attempts to load a file to stderr.
+
+Note that this problem is Mac OS X and Linux specific.
+
+\section{MiscStatus}
+
+\paragraph{How can I know what has changed since the latest beta release I got?}
+
+The file \file{RELEASE-NOTES.txt} at the top of the distribution
+contains the list of user-visible changes between consecutive
+releases.
+
+\paragraph{How do I report a bug?}
+
+See the file \file{REPORTING-BUGS.txt} at the top of the
+distribution. We insist on keeping \email{k2-beta@lists.gostai.com} in
+copy at all times, because it helps us to track conversations with our
+users.
+
+\part{Installation}
+
+\chapter{Installation}
+\label{sec:installation}
+
+\section{Download}
+
+Various precompiled packages are provided.  They are named
+\file{kernel-\var{version}-\var{arch}-\var{os}-\var{compiler}.\var{ext}} where
+\begin{description}
+\item[\var{version}] specifies the exact revision of Urbi that you are
+  using.  It can be simple, \code{2.0}, or more complex,
+  \code{2.0-beta3-137-g28f8880}.  In that case,
+  \begin{description}
+  \item[2.0] is the version of the UrbiScript Kernel,
+  \item[beta3] designates the third prerelease,
+  \item[137] is the number of changes since beta3 (not counting
+    changes in sub-packages),
+  \item[g28f8880] is a version control identifier, used internally to
+    track the exact version that is being tested by our users.
+  \end{description}
+\item[\var{arch}] describes the architecture, the \acronym{cpu}:
+  \code{ARM}, \code{ppc}, or \code{x86}.
+\item[\var{os}] is the operating system: \code{linux} for GNU/Linux,
+  \code{osx} for Mac OS X, or \code{windows} for Microsoft Windows.
+%% FIXME: We do not display the compiler name in the packages.
+\item[\var{compiler}] is the tool chain used to compile the
+  executables: \code{gcc} for the GNU Compiler Collection, \code{vcxx}
+  for Microsoft Visual \Cxx.
+\item[\var{ext}] is the package format extension: \code{tar.gz} for
+  Unix style tar balls (uncompressed with \command{tar zxf
+    \var{tarfile}}), and \code{zip} for Windows style zip files.
+\end{description}
+
+\section{Install}
+
+Uncompress the package where you want to install it.  The package is
+built to be installed as \file{/usr/local/gostai}, but this can be
+changed --- see below.  It might be interesting to keep several
+versions of our packages, in which case using symbolic links (aka
+\emph{aliases}) proves to be handy.  Under Unix, the installation
+sequence should look like:
+
+\begin{shell}
+$ tar zxf kernel-2.0-beta3-linux-x86.tar.gz
+$ sudo mv kernel-2.0-beta3-linux-x86 /usr/local
+$ cd /usr/local
+$ ln -sf kernel-2.0-beta3-linux-x86 gostai
+\end{shell}
+
+The \dfn{root} of the package, denoted by \var{urbi-root} hereafter,
+is the absolute name of the directory which contains the package.  The
+default root is \file{/usr/local/gostai}.  The directory
+\var{urbi-root} should contain \file{bin}, \file{FAQ.txt} and so forth.
+
+If your \var{urbi-root} is not \file{/usr/local/gostai}, you will need
+some adjustments.  Define the environment variable \index{urbi
+  root@\code{URBI\_ROOT}}\emphdfn{\code{URBI\_ROOT}} to point to
+\var{urbi-root}, and adjust the library\footnote{%
+%%
+  Mac OS X users need to extend \code{DYLD\_LIBRARY\_PATH}, not
+  \code{LD\_LIBRARY\_PATH}.
+%%
+} and executable paths.
+
+\begin{shell}[escapeinside=`']
+$ export URBI_ROOT=`\var{urbi\_root}'
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$URBI_ROOT/lib
+$ export PATH=$PATH:$URBI_ROOT/bin
+\end{shell}%$
+
+\section{Checks}
+
+Running the various programs is the quickest way to test your urbi
+installation.
+
+\begin{shell}
+# Check that urbi-console is properly set up.
+$ urbi-console --version
+# Check that urbi-launch is properly installed.
+$ urbi-launch --version
+# Check that urbi-launch can find its dependencies.
+$ urbi-launch -- --version
+\end{shell}%$
+
+\section{\code{URBI\_PATH}}
+
+The environment variable \code{URBI\_ROOT} is used to locate the \us
+standard files.  You may extend the search path so that your own Urbi
+files can be found easily.  This is the role of the environment
+variable \index{urbi path@\code{URBI\_PATH}}\emphdfn{\code{URBI\_PATH}},
+which contains a list of directory
+names separated by colons.
+
+Note \code{URBI\_PATH} is also designed to be able to \emph{override}
+the default standard files.  Use a lone colon to specify where the
+standard, \code{URBI\_ROOT}-based, search path must be inserted.  See
+the following examples
+
+\begin{shell}
+# Completely override the system path.  First look for files in
+# /home/jessie/urbi, then in /usr/local/urbi.
+export URBI_PATH=/home/jessie/urbi:/usr/local/urbi
+
+# Prepend the previous path to the default path.  This is dangerous as
+# it may result in some standard files being hidden.
+export URBI_PATH=/home/jessie/urbi:/usr/local/urbi:
+
+# First look in Jessie's directory, then the default location, and
+# finally in /usr/local/urbi.
+export URBI_PATH=/home/jessie/urbi::/usr/local/urbi
+
+# Extend the default path, i.e., files that are not found in the
+# default path will be looked for in Jessie's place, and then in
+# /usr/local/urbi
+export URBI_PATH=:/home/jessie/urbi:/usr/local/urbi
+\end{shell}

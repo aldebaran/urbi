@@ -1,4 +1,4 @@
-pdf_DATA += specs/urbi-specs.pdf
+EXTRA_DATA += specs/urbi-specs.pdf
 urbi_specs_sources = $(call ls_files,specs/*.tex)
 urbi_specs_deps = $(urbi_specs_sources) $(call ls_files,*.sty)
 

@@ -20,6 +20,19 @@ include specs/local.mk
 include tutorial/local.mk
 include tests/local.mk
 
+
+## ------------ ##
+## urbi-sdk.pdf ##
+## ------------ ##
+
+pdf_DATA += urbi-sdk.pdf
+urbi_sdk_sources = $(call ls_files,*.tex)
+urbi_sdk_deps = $(urbi_sdk_sources) $(call ls_files,*.sty)
+EXTRA_DIST += $(urbi_sdk_deps) $(urbi_sdk_deps)
+urbi-sdk.pdf: $(urbi_sdk_deps)
+debug:
+	echo $(urbi_sdk_deps)
+
 CLEANFILES += $(pdf_DATA)
 
 view: $(pdf_DATA)
