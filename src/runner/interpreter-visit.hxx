@@ -160,7 +160,8 @@ namespace runner
   }
 
 
-  LIBPORT_SPEED_INLINE object::rObject Interpreter::visit(const ast::Routine* e, bool closure)
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Routine* e, bool closure)
   {
     rCode res = make_routine(e);
 
@@ -323,9 +324,10 @@ namespace runner
 	  sched::rJob subrunner =
 	    new Interpreter(*this, operator()(exp),
 			    libport::Symbol::fresh(name_get()));
-          // If the subrunner throws an exception, propagate it here ASAP, unless
-          // we are at the top level. It we are at the toplevel, we do not even
-	  // have to register it as a subrunner.
+          // If the subrunner throws an exception, propagate it here
+          // ASAP, unless we are at the top level. It we are at the
+          // toplevel, we do not even have to register it as a
+          // subrunner.
           if (!e->toplevel_get())
 	  {
 	    register_child(subrunner, finally);
@@ -351,17 +353,17 @@ namespace runner
             try
             {
               res = operator()(exp);
-              // We need to keep checking for void here because it can not be passed
-              // to the << function
+              // We need to keep checking for void here because it
+              // cannot be passed to the << function.
               if (res != object::void_class)
               {
                 static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
 
                 ECHO("toplevel: returning a result to the connection.");
 
-                // Display the value using the topLevel channel.
-                // If it is not (yet) defined, do nothing, unless the environment
-                // variable TOPLEVEL_DEBUG is set.
+                // Display the value using the topLevel channel.  If
+                // it is not (yet) defined, do nothing, unless the
+                // environment variable TOPLEVEL_DEBUG is set.
                 if (rObject topLevel =
                     object::global_class->slot_locate(SYMBOL(topLevel), false,
                                                       true))
