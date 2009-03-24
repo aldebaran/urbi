@@ -1,10 +1,8 @@
-/*! \file utag.hh
+/*! \file urbi/utag.hh
 ****************************************************************************
- * $Id: utag.h,v 1.5 2008/02/19 17:48:00 fh Exp $
- *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2008 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2008, 2009 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,12 +22,13 @@
 #ifndef URBI_UTAG_HH
 # define URBI_UTAG_HH
 
+
+// FIXME: The need to make these tags public is not clear.
 namespace urbi
 {
-
-   static const std::string connectionTimeoutTag = "__URBI_TAG_CONNECTION_TIMEOUT";
-   static const std::string internalPongTag = "__URBI_TAG_INTERNAL_PONG";
+  extern const char* connectionTimeoutTag;
+  extern const char* internalPongTag;
 
 } // namespace urbi
 
-#endif
+#endif // URBI_UTAG_HH

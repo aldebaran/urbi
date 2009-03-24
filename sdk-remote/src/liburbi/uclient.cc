@@ -3,7 +3,7 @@
  *
  * Implementation of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Gostai S.A.S.  All rights reserved.
+ * Copyright (C) 2004-2009 Gostai S.A.S.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -307,7 +307,7 @@ namespace urbi
     // Declare ping channel for kernel that requires it.
     if (2 <= kernelMajor())
       send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
-           internalPongTag.c_str(), internalPongTag.c_str());
+           internalPongTag, internalPongTag);
     while (true)
     {
       if (sd == -1)
@@ -345,7 +345,7 @@ namespace urbi
       {
         rc = -1;
         clientError("Connection error : ", errno);
-        notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+        notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
                                  "!!! Connection error", std::list<BinaryData>() ));
         return;
       }
@@ -360,14 +360,14 @@ namespace urbi
           rc = -1;
           // FIXME: Choose between two differents way to alert user program
           clientError("Lost connection with server");
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
                                    "!!! Lost connection with server",
                                    std::list<BinaryData>()));
           return;
         }
         else // Timeout : Ping_interval
         {
-          send("%s << 1,", internalPongTag.c_str());
+          send("%s << 1,", internalPongTag);
           waitingPong = true;
         }
       }
@@ -400,7 +400,7 @@ namespace urbi
 
           rc = -1;
           clientError(errorMsg.c_str(), errorCode);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
                                    errorMsg.c_str(), std::list<BinaryData>() ));
           return;
         }
