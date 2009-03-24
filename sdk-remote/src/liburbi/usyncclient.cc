@@ -16,7 +16,7 @@ namespace urbi
 			   size_t buflen,
 			   bool server,
                            bool startCallbackThread,
-			   int semListenInc)
+			   unsigned semListenInc)
     : UClient(host, port, buflen, server, semListenInc)
     , sem_()
     , queueLock_()

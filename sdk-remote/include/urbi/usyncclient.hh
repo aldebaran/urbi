@@ -72,9 +72,9 @@ namespace urbi
 		size_t buflen = URBI_BUFLEN,
 		bool server = false,
 		bool startCallbackThread = true,
-		int semListenInc = 2);
+		unsigned semListenInc = 2u);
 
-    ~USyncClient ();
+    ~USyncClient();
 
   protected:
     /** Synchronously ask the server for the value of an expression.
@@ -85,17 +85,17 @@ namespace urbi
      * \return the resulting message, or 0 in case of error.
      */
     UMessage*
-    syncGet_ (const char* expression, const char* mtag,
-              const char* mmod, va_list& arg);
+    syncGet_(const char* expression, const char* mtag,
+             const char* mmod, va_list& arg);
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
     /// not start with a tag or channel.
-    UMessage *syncGet (const char* expression, ...);
+    UMessage *syncGet(const char* expression, ...);
     /// Synchronously evaluate an Urbi expression, specifying the tag
     /// and modifiers to prepend to it.
-    UMessage *syncGetTag (const char* expression,
-                          const char* mtag, const char* mmod, ...);
+    UMessage *syncGetTag(const char* expression,
+                         const char* mtag, const char* mmod, ...);
 
     /// Send given buffer without copying it.
     int syncSend(const void * buffer, size_t length);
@@ -161,7 +161,7 @@ namespace urbi
      */
     void waitForKernelVersion(bool hasProcessingThread);
   protected:
-    int joinCallbackThread_ ();
+    int joinCallbackThread_();
 
     // Incremented at each queue push, decremented on pop.
     libport::Semaphore sem_;

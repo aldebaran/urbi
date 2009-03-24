@@ -39,7 +39,7 @@ namespace urbi
     UClient(const std::string& host, unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
 	    bool server = false,
-	    int semListenInc = 1);
+	    unsigned semListenInc = 1u);
 
     virtual ~UClient();
 
@@ -83,7 +83,7 @@ namespace urbi
   protected:
     libport::Semaphore listenSem_;
     libport::Semaphore acceptSem_;
-    int semListenInc_;
+    unsigned semListenInc_;
   };
 
 } // namespace urbi

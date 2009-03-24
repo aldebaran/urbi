@@ -54,11 +54,11 @@ namespace urbi
    */
   UClient::UClient(const std::string& host, unsigned port,
                    size_t buflen, bool server,
-                   int semListenInc)
+                   unsigned semListenInc)
     : UAbstractClient(host, port, buflen, server)
     , thread(0)
     , pingInterval(0)
-    , semListenInc_ (semListenInc)
+    , semListenInc_(semListenInc)
   {
     sd = -1;
     int pos = 0;
@@ -300,8 +300,7 @@ namespace urbi
   UClient::listenThread()
   {
     // Wait for it...
-    for (int i = semListenInc_; i > 0; --i)
-      listenSem_--;
+    listenSem_ -= semListenInc_;
 
     int maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
