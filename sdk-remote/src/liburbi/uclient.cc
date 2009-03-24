@@ -385,8 +385,8 @@ namespace urbi
 
         if (count <= 0)
         {
-          std::string errorMsg;
-          int         errorCode = 0;
+          const char* errorMsg;
+          int errorCode = 0;
 
           if (count < 0)
           {
@@ -403,9 +403,9 @@ namespace urbi
           }
 
           rc = -1;
-          clientError(errorMsg.c_str(), errorCode);
+          clientError(errorMsg, errorCode);
           notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                   errorMsg.c_str(), std::list<BinaryData>()));
+                                   errorMsg, std::list<BinaryData>()));
           return;
         }
 
