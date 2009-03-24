@@ -1,4 +1,4 @@
-/*! \file uclient.cc
+/*! \file liburbi/uclient.cc
 ****************************************************************************
  *
  * Implementation of the URBI interface class
@@ -311,6 +311,7 @@ namespace urbi
     // need to write something that both k1 and k2 will like.
     send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
          internalPongTag, internalPongTag);
+
     while (true)
     {
       if (sd == -1)
