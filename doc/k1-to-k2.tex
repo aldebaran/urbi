@@ -27,20 +27,65 @@ reasons:
 \item \lstinline{delete} is an unsafe feature that makes only sense in
   pointer-based languages such as \C and \Cxx.  It enables nice bugs
   such as:
-\begin{urbiscript}
+\begin{urbifixme}
 var this.a := A.new;
 // ...
 delete this.a;
 // ...
 cout << this.a;
-\end{urbiscript}
+\end{urbifixme}
 \end{itemize}
 
 For these reasons, and others, \lstinline{delete Foo} was removed.  If
 your goal is to remove the \emph{name} Foo, run
 {\lstinline{removeSlot("Foo")}} (\autoref{sec:tut:objects}) --- the
 garbage collector will reclaim memory if there are no other use of
-\lstinline{Foo}.
+\lstinline{Foo}.  If your goal is to remove the contents of
+\lstinline{Foo}, then you remove all its slots one by one:
+
+\begin{urbiscript}
+class Foo
+{
+  var a = 12;
+  var b = 23;
+} | {};
+function Object.removeAllSlots()
+{
+  for (var s: slotNames)
+    removeSlot(s);
+} | {};
+Foo.removeAllSlots;
+Foo.slotNames;
+[00000000] []
+\end{urbiscript}
+
+\subsection{emit Foo}
+
+The keyword \lstinline{emit} is deprecated in favor of \lstinline{!}.
+
+\begin{tabular}{|l|l|}
+  \hline
+  \textbf{Deprecated} & \textbf{Updated}  \\
+  \hline
+  \lstinline|emit e;|         & \lstinline|e!;|          \\
+  \lstinline|emit e(a);|      & \lstinline|e!(a);|       \\
+  \lstinline|emit e ~ 1s;|    & \lstinline|e! ~ 1s;|     \\
+  \lstinline|emit e(a) ~ 1s;| & \lstinline|e!(a) ~ 1s;|  \\
+  \hline
+\end{tabular}
+
+The \lstinline{?} construct is changed for symmetry.
+
+\begin{tabular}{|l|l|}
+  \hline
+  \textbf{Deprecated} & \textbf{Updated}  \\
+  \hline
+  \lstinline|at (?e)|                  & \lstinline|at (e?)|\\
+  \lstinline|at (?e(var a))|           & \lstinline|at (e?(var a))|\\
+  \lstinline|at (?e(var a) if a == 2)| & \lstinline|at (e?(var a) if a == 2)|\\
+  \hline
+\end{tabular}
+
 
 \subsection{new Foo}
 
