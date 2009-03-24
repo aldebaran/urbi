@@ -38,6 +38,7 @@ namespace object
     rList as_list();
     std::string as_string();
     std::string as_printable();
+    rObject content();
 
 
   /*--------.

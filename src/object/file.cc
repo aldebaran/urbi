@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include <object/file.hh>
+#include <object/global.hh>
 #include <object/path.hh>
 #include <object/symbols.hh>
 
@@ -95,8 +96,7 @@ namespace object
     char buf[BUFSIZ + 1];
 
     input.read(buf, sizeof buf - 1);
-    buf[input.gcount()] = 0;
-    output += buf;
+    output += std::string(buf, input.gcount());
   }
 
   rList File::as_list()
@@ -141,6 +141,20 @@ namespace object
     return (boost::format("File(\"%s\")") % path_->as_string()).str();
   }
 
+  rObject File::content()
+  {
+    std::ifstream s(path_->as_string().c_str());
+    if (!s.good())
+      runner::raise_primitive_error("File not readable: " + as_string());
+
+
+    std::string res;
+
+    get_buf(s, res);
+
+    CAPTURE_GLOBAL(Binary);
+    return Binary->call(SYMBOL(new), to_urbi(std::string()), to_urbi(res));
+  }
 
   /*--------.
   | Details |
@@ -163,6 +177,7 @@ namespace object
     bind(SYMBOL(asList), &File::as_list);
     bind(SYMBOL(asPrintable), &File::as_printable);
     bind(SYMBOL(asString), &File::as_string);
+    bind(SYMBOL(content), &File::content);
     bind(SYMBOL(create), &File::create);
 
     proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
