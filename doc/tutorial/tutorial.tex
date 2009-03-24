@@ -189,7 +189,7 @@ to study more in-depth examples afterwards.
 Commenting your code is crucial, so let's start by learning how to do
 this in \urbi. Comments are ignored by the interpreter, and
 can be left as documentation, reminder, \ldots \urbi supports \C and
-\Cxx style style comments (\autoref{lst:comments}):
+\Cxx style style comments (\autoref{lst:tut:comments}):
 
 \begin{itemize}
 \item \C style comments start with \texttt{/*} and end with \texttt{*/}.
@@ -198,7 +198,7 @@ can be left as documentation, reminder, \ldots \urbi supports \C and
 \end{itemize}
 
 
-\begin{urbiscript}[caption=Comments in \urbi, label=lst:comments]
+\begin{urbiscript}[caption=Comments in \urbi, label=lst:tut:comments]
 1; // This is a C++ style comment.
 [00000000] 1
 2 + /* This is a C-style comment. */ 2;
@@ -223,9 +223,9 @@ several other literals, such as:
 \end{description}
 
 These literal values can be obtained with the syntax presented in
-\autoref{lst:literals}.
+\autoref{lst:tut:literals}.
 
-\begin{urbiscript}[caption=Literals,label=lst:literals]
+\begin{urbiscript}[caption=Literals,label=lst:tut:literals]
 42; // Integer literal.
 [00000000] 42
 3.14; // Floating point number literal.
@@ -238,7 +238,7 @@ nil;
 void;
 \end{urbiscript}
 
-Listing \ref{lst:literals} highlights some point:
+Listing \ref{lst:tut:literals} highlights some point:
 \begin{itemize}
 \item Lists in \urbi are polymorphic. That is, one list can hold
   values of different types.
@@ -248,9 +248,9 @@ Listing \ref{lst:literals} highlights some point:
 \section{Function calls}
 
 You can call functions with the classical, mathematical notation
-(\autoref{lst:calling-functions}).
+(\autoref{lst:tut:calling-functions}).
 
-\begin{urbiscript}[caption=Calling functions,label=lst:calling-functions]
+\begin{urbiscript}[caption=Calling functions,label=lst:tut:calling-functions]
 cos(0); // Compute cosinus
 [00000000] 1
 max(1, 3); // Get the maximum of the arguments.
@@ -262,9 +262,9 @@ max(1, 3, 4, 2);
 Again, the result of the evaluation are printed out. You can see here
 that function in \urbi can be variadic, that is, take different number
 of arguments, such as the \lstinline{max} function. Let's now try the
-\lstinline{echo} function, that prints out its argument (\autoref{lst:printing}).
+\lstinline{echo} function, that prints out its argument (\autoref{lst:tut:printing}).
 
-\begin{urbiscript}[caption=Printing out,label=lst:printing]
+\begin{urbiscript}[caption=Printing out,label=lst:tut:printing]
 echo("Hello world!");
 [00000000] *** Hello world!
 \end{urbiscript}
@@ -277,9 +277,9 @@ void, no evaluation result is printed.
 
 Variables can be introduced with the \lstinline{var} keyword, given a
 name and an initial value. They can be assigned new values with the
-\lstinline{=} operator (\autoref{lst:variables}).
+\lstinline{=} operator (\autoref{lst:tut:variables}).
 
-\begin{urbiscript}[caption=Using variables,label=lst:variables]
+\begin{urbiscript}[caption=Using variables,label=lst:tut:variables]
 var x = 42;
 [00000000] 42
 echo(x);
@@ -296,10 +296,10 @@ identifiers is also the same as in \Cxx: they may contain alphanumeric
 characters and underscores, but they may not start with a digit.
 
 You may ommit the initialization value, in which case it defaults to
-\lstinline|void| (\autoref{lst:local-uninit}).
+\lstinline|void| (\autoref{lst:tut:local-uninit}).
 
 \begin{urbiscript}[caption=Variables initialization defaults to
-  nil,label=lst:local-uninit]
+  nil,label=lst:tut:local-uninit]
 var x;
 x;
 // Remember, the interpreter remains silent
@@ -316,9 +316,9 @@ x.isVoid;
 
 Scopes can be introduced with curly brackets (\lstinline|\{\}|), and can
 contain any number of expressions. Variables declared in a scope only
-exist within this scope (\autoref{lst:scope}).
+exist within this scope (\autoref{lst:tut:scope}).
 
-\begin{urbiscript}[caption=Scoping a variable,label=lst:scope]
+\begin{urbiscript}[caption=Scoping a variable,label=lst:tut:scope]
 {
   var x = "test";
   echo(x);
@@ -335,9 +335,9 @@ closing curly bracket.
 
 Methods are called on objects with the dot (\lstinline{.}) notation as in
 \Cxx. Method calls can be chained. Methods with no arguments don't
-require the parentheses (\autoref{lst:method-call}).
+require the parentheses (\autoref{lst:tut:method-call}).
 
-\begin{urbiscript}[caption=Calling methods,label=lst:method-call]
+\begin{urbiscript}[caption=Calling methods,label=lst:tut:method-call]
 0.cos();
 [00000000] 1
 "a-b-c".split("-");
@@ -361,9 +361,9 @@ In \lstinline|obj.method|, we say that \lstinline{obj} is the
 You know how to call routines, let's learn how to write
 some. Functions can be declared thanks to the \lstinline{function}
 keyword, followed by the comma separated, parentheses surrounded list
-of formal arguments, and the body between curly brackets (\autoref{lst:function-def}).
+of formal arguments, and the body between curly brackets (\autoref{lst:tut:function-def}).
 
-\begin{urbiscript}[caption=Defining a function,label=lst:function-def]
+\begin{urbiscript}[caption=Defining a function,label=lst:tut:function-def]
 // Define myFunction
 function myFunction()
 {
@@ -389,11 +389,11 @@ Since \urbi supports functional programming, function are first class
 citizen. Which means they are values, just as \lstinline{0} or
 \lstinline{"foobar"}. So your function definition evaluation yields the
 new function, and as always, the interpreter prints out the evaluation
-result, thus showing you the function again. \autoref{lst:function-values}
+result, thus showing you the function again. \autoref{lst:tut:function-values}
 might help you understanding this.
 
 
-\begin{urbiscript}[caption=Function as values,label=lst:function-values]
+\begin{urbiscript}[caption=Function as values,label=lst:tut:function-values]
 // Work in a scope.
 {
   // Define f
@@ -430,9 +430,9 @@ here.
 
 Since this output is often irrelevant, we will sometimes hide the
 printed result, replacing it with an ellipse (\ldots), as in
-\autoref{lst:function-arg}, which presents a function with arguments.
+\autoref{lst:tut:function-arg}, which presents a function with arguments.
 
-\begin{urbiscript}[caption=Function with arguments,label=lst:function-arg]
+\begin{urbiscript}[caption=Function with arguments,label=lst:tut:function-arg]
 function sum(a, b, c)
 {
   return a + b + c;
@@ -444,10 +444,10 @@ sum(20, 2, 20);
 As you probably guessed, the \lstinline{return} keyword enables you to
 return a value from the function. If no \lstinline{return} statement is
 executed, the evaluation of the last expression is returned
-(\autoref{lst:no-return}).
+(\autoref{lst:tut:no-return}).
 
 \begin{urbiscript}[caption=Return value is the last evaluated value,
-  label=lst:no-return]
+  label=lst:tut:no-return]
 function succ(i) { i + 1 } | {};
 succ(50);
 [00000000] 51
@@ -475,10 +475,10 @@ names, each of which indexes a value --- just like a dictionary. You
 can get an object's slot value by using the dot (\lstinline{.}) operator
 on this object, followed by the name of the slot. You can list the
 names of the slots of an object with the \lstinline{slotNames}
-method. \autoref{lst:object-slots} makes this very clear: we dissect an object
+method. \autoref{lst:tut:object-slots} makes this very clear: we dissect an object
 to point out its structure.
 
-\begin{urbiscript}[caption=Inspecting an \urbi object,label=lst:object-slots]
+\begin{urbiscript}[caption=Inspecting an \urbi object,label=lst:tut:object-slots]
 // Create a fresh object with two slots.
 class Foo { var a = 42; var b = "foo"; };
 [00000000] Foo
@@ -499,10 +499,10 @@ parent type of every object (in fact, since \urbi is prototype-based,
 \lstinline{Object} is the uppermost prototype of every object, but we'll
 talk about prototypes later). An instance of object, is an empty,
 neutral object, so let's start by instanciating one with the
-\lstinline{clone} method of \lstinline{Object} (\autoref{lst:object-new}).
+\lstinline{clone} method of \lstinline{Object} (\autoref{lst:tut:object-new}).
 
 \begin{urbiscript}[caption=Instanciating a new object,
-  label=lst:object-new, name=object-slots]
+  label=lst:tut:object-new, name=object-slots]
 // Create the o variable as a fresh object.
 var o = Object.clone;
 [00000000] Object_0x00000000
@@ -525,10 +525,10 @@ zeroes in this document.
 We're now getting back to our empty object. We want to give it two
 slots, \lstinline{a} and \lstinline{b}, with values \lstinline|42| and
 \lstinline|"foo"| respectively. We can do this with the
-\lstinline{setSlot} method (\autoref{lst:setslot}), which takes the slot name and
+\lstinline{setSlot} method (\autoref{lst:tut:setslot}), which takes the slot name and
 its value.
 
-\begin{urbiscript}[caption=Defining slots, label=lst:setslot,
+\begin{urbiscript}[caption=Defining slots, label=lst:tut:setslot,
   name=object-slots]
 o.setSlot("a", 42);
 [00000000] 42
@@ -539,10 +539,10 @@ o.a;
 \end{urbiscript}
 
 Here we successfully created our first slot, a. A good shorthand for
-setting slot is using the \lstinline{var} keyword (\autoref{lst:setslot-var}).
+setting slot is using the \lstinline{var} keyword (\autoref{lst:tut:setslot-var}).
 
 \begin{urbiscript}[caption=Defining slots with var,
-  label=lst:setslot-var, name=object-slots]
+  label=lst:tut:setslot-var, name=object-slots]
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
@@ -557,14 +557,14 @@ the name of the slot at the time of writing the code. With the former
 one, you can compute the slot name at execution time. Likewise, you
 can read a slot with a run-time determined name with the
 \lstinline{getSlot} method, which takes the slot name as
-argument. \autoref{lst:getslot-setslot} illustrates the use of
+argument. \autoref{lst:tut:getslot-setslot} illustrates the use of
 \lstinline{getSlot} and \lstinline{setSlot} to read and write slots whose
 names are unknown at code-writing time.
 
 % mefyl: FIXME: I never introduced that '+' concatenates strings.
 
 \begin{urbiscript}[caption=Dynamic slots with getSlot and setSlot,
-  label=lst:getslot-setslot]
+  label=lst:tut:getslot-setslot]
 function set(object, name, value)
 {
   // We have to use setSlot here, since we don't
@@ -597,9 +597,9 @@ them afterwards, even if their name is dynamically computed, with
 there's a method to update the value of the slot. Guess what, there's
 one, and it's named\ldots \lstinline{updateSlot} (originality
 award). Getting back to our \lstinline{o} object, let's try to update one
-of its slot (\autoref{lst:updateslot}).
+of its slot (\autoref{lst:tut:updateslot}).
 
-\begin{urbiscript}[caption=Updating a slot, label=lst:updateslot,
+\begin{urbiscript}[caption=Updating a slot, label=lst:tut:updateslot,
   name=object-slots]
 o.a;
 [00000000] 42
@@ -610,10 +610,10 @@ o.a;
 \end{urbiscript}
 
 Again, there's a shorthand for \lstinline{updateSlot}: operator
-\lstinline{=} (\autoref{lst:updateslot-eq}).
+\lstinline{=} (\autoref{lst:tut:updateslot-eq}).
 
 \begin{urbiscript}[caption=Updating a slot with '\lstinline{=}',
-  label=lst:updateslot-eq, name=object-slots]
+  label=lst:tut:updateslot-eq, name=object-slots]
 o.b;
 [00000000] "foo"
 // Equivalent to o.updateSlot("b", "bar")
@@ -630,10 +630,10 @@ name you don't know at code-writing time.
 Note that defining the same slot twice, be it with \lstinline{setSlot} or
 \lstinline{var}, is an error. The slot must be defined once with setSlot,
 and subsequent writes must be done with \lstinline{updateSlot}
-(\autoref{lst:redefinition}).
+(\autoref{lst:tut:redefinition}).
 
 \begin{urbiscript}[caption=Defining a slot twice is an error,
-  label=lst:redefinition, name=object-slots]
+  label=lst:tut:redefinition, name=object-slots]
 var o.c = 0;
 [00000000] 0
 // Can't redefine a slot like this
@@ -645,9 +645,9 @@ o.c = 1;
 \end{urbiscript}
 
 Finally, use \lstinline{removeslot} to delete a slot from an object
-(\autoref{lst:removeslot}).
+(\autoref{lst:tut:removeslot}).
 
-\begin{urbiscript}[caption=Removing a slot, label=lst:removeslot,
+\begin{urbiscript}[caption=Removing a slot, label=lst:tut:removeslot,
   name=object-slots]
 o.slotNames.sort;
 [00000000] ["a", "b", "c"]
@@ -661,10 +661,10 @@ Here we are, now you can inspect and modify objects at will. Don't
 hesitate to explore \urbi objects you'll encounter through this
 documentation like this. Last point: reading, updating or removing a
 slot which does not exist is, of course an error
-(\autoref{lst:lookup-failed}).
+(\autoref{lst:tut:lookup-failed}).
 
 \begin{urbiscript}[caption=Manipulating nonexistent slot is an error,
-  label=lst:lookup-failed, name=object-slots]
+  label=lst:tut:lookup-failed, name=object-slots]
 o.d;
 [00000000:error] !!! lookup failed: d
 o.d = 0;
@@ -677,13 +677,13 @@ Methods in \urbi are simply object slots containing functions. We made
 a little simplification earlier by saying that \lstinline|obj.slot| is
 equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
 executable code such as a function, the dot form evaluates it, as
-illustrated by \autoref{lst:auto-eval}. Inside a method, you can get the
+illustrated by \autoref{lst:tut:auto-eval}. Inside a method, you can get the
 target with the \lstinline|this| keyword - the equivalent of \Cxx's
 \lstinline{this}. \lstinline|this| can be omitted if there is no
 ambiguity with local variables.
 
 \begin{urbiscript}[caption=Function in object are automatically evaluated,
-label=lst:auto-eval]
+label=lst:tut:auto-eval]
 var o = Object.clone;
 [00000000] Object_0x0
 // This syntax stores the function
@@ -715,10 +715,10 @@ replace an attribute with a method without changing the object
 interface, since the parentheses are optional.
 
 This implies that getSlot can be a better tool for object inspection
-to avoid invoking slots, as shown by \autoref{lst:getslot-function}.
+to avoid invoking slots, as shown by \autoref{lst:tut:getslot-function}.
 
 \begin{urbiscript}[caption=Inspecting executable slots with \lstinline{getSlot},
-label=lst:getslot-function]
+label=lst:tut:getslot-function]
 // The 'empty' method of strings return
 // whether they're the empty string.
 "foo".empty;
@@ -735,9 +735,9 @@ label=lst:getslot-function]
 
 So the empty function simply checks whether the target string is empty
 with the equality operator! Let's try getSloting another method in
-\autoref{lst:getslot-primitive}.
+\autoref{lst:tut:getslot-primitive}.
 
-\begin{urbiscript}[caption=Primitives, label=lst:getslot-primitive]
+\begin{urbiscript}[caption=Primitives, label=lst:tut:getslot-primitive]
 "foo".size;
 [00000000] 3
 "foo".getSlot("size");
@@ -754,12 +754,12 @@ have thus no means to see their inner code.
 If you're wondering what is an object and what isn't, the answer is
 simple: every single bit of value you manipulate in \urbi is an
 object, including primitive types, types themselves, functions, \ldots
-\autoref{lst:everything-object} illustrates this.
+\autoref{lst:tut:everything-object} illustrates this.
 
 % FIXME: This does actually not work like this because the toplevel
 % isn't a local scope! puke puke puke!
 \begin{urbiscript}[caption=Everything is an object,
-label=lst:everything-object]
+label=lst:tut:everything-object]
 var x = 0;
 [00000000] 0
 x.slotNames;
@@ -786,11 +786,11 @@ values are stored and passed around. The whole point is to understand
 when variables are the same. For this, we are going to introduce a new
 method, \lstinline{uid}. This method returns the target's unique
 identifier - the same one that was printed when we evaluated
-\lstinline|Object.clone|. See \autoref{lst:uid}. Of course, uids might vary
+\lstinline|Object.clone|. See \autoref{lst:tut:uid}. Of course, uids might vary
 from an execution to another, so their value here are dummy, yet not
 null to be able to differentiate them.
 
-\begin{urbiscript}[caption=Uids, label=lst:uid]
+\begin{urbiscript}[caption=Uids, label=lst:tut:uid]
 var o = Object.clone;
 [00000000] Object_0x1
 o.uid;
@@ -811,10 +811,10 @@ simply returns whether its two operands are semantically equal. The
 second operator is \lstinline{===}, which is the physical equality
 operator. It returns whether its two operands are the same object,
 which is equivalent to having the same uid. This can seem a bit
-confusing; let's take a look at \autoref{lst:phy-eq} to have a first example.
+confusing; let's take a look at \autoref{lst:tut:phy-eq} to have a first example.
 
 \begin{urbiscript}[caption=Physical equality operator,
-label=lst:phy-eq]
+label=lst:tut:phy-eq]
 var a = 42;
 [00000000] 42
 var b = 42;
@@ -834,11 +834,11 @@ Thanks to this operator, we can point out the fact that slots and
 local variables in \urbi have a reference semantic. That is, when you
 defining a local variable or a slot, you're not copying any value (as
 you would be in \C or \Cxx), you're only making it refer to an already
-existing value (as you would in \ruby or \java). See \autoref{lst:ref-to-same}
+existing value (as you would in \ruby or \java). See \autoref{lst:tut:ref-to-same}
 for an illustration.
 
 \begin{urbiscript}[caption=Two references to the same object,
-  label=lst:ref-to-same, name=same]
+  label=lst:tut:ref-to-same, name=same]
 var a = 42;
 [00000000] 42
 var b = 42;
@@ -860,10 +860,10 @@ a === c;
 So here we see that \lstinline|a| and \lstinline|c| point to the same
 integer, while \lstinline|b| points to a second one. This a
 non-trivial fact: any modification on \lstinline|a| will affect
-\lstinline|c| as well, as shown by \autoref{lst:same-ref-mod}.
+\lstinline|c| as well, as shown by \autoref{lst:tut:same-ref-mod}.
 
 \begin{urbiscript}[caption=Shared modification,
-  label=lst:same-ref-mod, name=same]
+  label=lst:tut:same-ref-mod, name=same]
 a.slotNames;
 [00000000] []
 b.slotNames;
@@ -881,10 +881,10 @@ c.slotNames;
 
 Updating slots or local variable doesn't update the referenced
 value. It simply change the variable to refer to the new given value,
-as illustrated by \autoref{lst:change-ref}.
+as illustrated by \autoref{lst:tut:change-ref}.
 
 \begin{urbiscript}[caption=Updates just change the referee,
-  label=lst:change-ref]
+  label=lst:tut:change-ref]
 var a = 42;
 [00000000] 42
 var b = a;
@@ -907,10 +907,10 @@ of what your variable are referring to.
 
 Finally, function and method arguments are also passed by
 reference. Which means they can be modified by the function
-(\autoref{lst:arg-mod}).
+(\autoref{lst:tut:arg-mod}).
 
 \begin{urbiscript}[caption=Function modifying its argument,
-label=lst:arg-mod]
+label=lst:tut:arg-mod]
 function test(arg)
 {
   var arg.flag;  // add a slot in arg
@@ -926,11 +926,11 @@ x.slotNames;
 [00000000] ["flag"]
 \end{urbiscript}
 
-Beware however of \autoref{lst:arg-no-mod}, where the given function doesn't
+Beware however of \autoref{lst:tut:arg-no-mod}, where the given function doesn't
 have the behavior you may have expected.
 
 \begin{urbiscript}[caption=Function failing to modify its argument,
-label=lst:arg-no-mod]
+label=lst:tut:arg-no-mod]
 function test(arg)
 {
   // This updates the local variable arg
@@ -969,9 +969,9 @@ The \lstinline{if} construct is the same has \C/\Cxx's one. The
 an expression, and optionally the \lstinline{else} keyword and another
 expression. If the condition evaluates to true, the first expression
 is evaluated. Otherwise, the second expression is evaluated if
-present (\autoref{lst:if}).
+present (\autoref{lst:tut:if}).
 
-\begin{urbiscript}[caption=The \lstinline{if} construct, label=lst:if]
+\begin{urbiscript}[caption=The \lstinline{if} construct, label=lst:tut:if]
 if (true)
   echo("ok");
 [00000000] *** ok
@@ -983,9 +983,9 @@ else
 \end{urbiscript}
 
 Note that \lstinline|if| statements themselves are values
-(\autoref{lst:if-value}).
+(\autoref{lst:tut:if-value}).
 
-\begin{urbiscript}[caption=\lstinline{if} are values, label=lst:if-value]
+\begin{urbiscript}[caption=\lstinline{if} are values, label=lst:tut:if-value]
 echo({ if (false) "a" else "b" });
 [00000000] *** b
 \end{urbiscript}
@@ -996,11 +996,11 @@ The \lstinline{while} construct is, again, the same as in \C/\Cxx. The
 \lstinline{while} keyword is followed by a condition between parentheses
 and an expression. If the expression evaluation is false, the
 execution jumps after the while block; otherwise, the expression is
-evaluated and control jumps before the while block (\autoref{lst:while}).
+evaluated and control jumps before the while block (\autoref{lst:tut:while}).
 
 % FIXME: += wasn't introduced
 \begin{urbiscript}[caption=The \lstinline{while} construct,
-label=lst:while]
+label=lst:tut:while]
 var x = 2;
 [00000000] 2
 while (x < 40)
@@ -1019,7 +1019,7 @@ while (x < 40)
 The \lstinline{for} construct is still the same as \C/\Cxx one.
 % FIXME: I don't have the faith to explain for. wanna kill myself.
 
-\begin{urbiscript}[caption=Nihil novi sub sole, label=lst:for]
+\begin{urbiscript}[caption=Nihil novi sub sole, label=lst:tut:for]
 for (var x = 2; x < 40; x += 10)
   echo(x);
 [00000000] *** 2
@@ -1036,10 +1036,10 @@ collection such as a list. The \lstinline{for} keyword, followed by
 scope, executes the scope for every element in the collection
 resulting of the evaluation of the expression, with the variable named
 with the identifier referring to the list element. If you didn't get
-the sentence, don't worry, \autoref{lst:for-in} is self explanatory.
+the sentence, don't worry, \autoref{lst:tut:for-in} is self explanatory.
 
 \begin{urbiscript}[caption=Collection iteration with \lstinline{for},
-label=lst:for-in]
+label=lst:tut:for-in]
 for (var elt : [1, 2, 3]) { echo(elt) };
 [00000000] *** 1
 [00000000] *** 2
@@ -1076,9 +1076,9 @@ switch ("bar")
 \label{section:constructs/do}
 
 A do scope is a shorthand to perform several actions on an
-object. Consider \autoref{lst:no-do}.
+object. Consider \autoref{lst:tut:no-do}.
 
-\begin{urbiscript}[caption=Lot of code bloat,label=lst:no-do]
+\begin{urbiscript}[caption=Lot of code bloat,label=lst:tut:no-do]
 var o = Object.clone;
 [00000000] Object_0x0
 var o.one = 1;
@@ -1090,11 +1090,11 @@ echo(o.uid);
 \end{urbiscript}
 
 The exact same result can be obtained with a short do scope, that
-redirect method calls to their target, as in \autoref{lst:do}. This is similar
+redirect method calls to their target, as in \autoref{lst:tut:do}. This is similar
 to the \pascal ``\lstinline{with}'' construct.
 
 
-\begin{urbiscript}[caption=Shorter with a do block,label=lst:do]
+\begin{urbiscript}[caption=Shorter with a do block,label=lst:tut:do]
 var o = Object.clone;
 [00000000] Object_0x0
 // All the message in this scope
@@ -1124,10 +1124,10 @@ tool.
 
 Scope are expressions, just as \lstinline|1 + 1| or \lstinline|"foo"|.
 They evaluate to the last expression they contain, or void if they're
-empty. \autoref{lst:scope-exp} illustrate the use of scopes as
+empty. \autoref{lst:tut:scope-exp} illustrate the use of scopes as
 expressions. Note that the last semicolon inside a scope is optional.
 
-\begin{urbiscript}[caption=Using scope as expressions,label=lst:scope-exp]
+\begin{urbiscript}[caption=Using scope as expressions,label=lst:tut:scope-exp]
 // scope evaluate to the
 // last expression they contain
 { 1; 2; 3};
@@ -1142,10 +1142,10 @@ echo({1; 2; 3});
 Scopes can be nested. Variables can be redefined in subscope. In this
 case, the new variables hide the old one in this scope (that is, the
 innermost variable takes precedence), as illustrated in
-\autoref{lst:scope-hiding}.
+\autoref{lst:tut:scope-hiding}.
 
 \begin{urbiscript}[caption=Redefining variables in
-  subscopes,label=lst:scope-hiding]
+  subscopes,label=lst:tut:scope-hiding]
 var x = 0; // Declare the outer x
 [00000000] 0
 {
@@ -1172,9 +1172,9 @@ x;
 Functions can be defined anywhere local variables can --- that is,
 about anywhere. These functions' visibility are limited to the scope
 they're defined in, like variables. This enables for instance to write
-local helper functions (\autoref{lst:helper}).
+local helper functions (\autoref{lst:tut:helper}).
 
-\begin{urbiscript}[caption=Local helper function, label=lst:helper]
+\begin{urbiscript}[caption=Local helper function, label=lst:tut:helper]
 function max3(a, b, c) // Max of three values
 {
   function max2(a, b)
@@ -1193,10 +1193,10 @@ function max3(a, b, c) // Max of three values
 A closure are the capture by a function of a variable external to this
 function. \urbi supports lexical closure: functions can refer to outer
 local variables, as long as they are visible from the point of
-declaration of the function \autoref{lst:read-closure}.
+declaration of the function \autoref{lst:tut:read-closure}.
 
 \begin{urbiscript}[caption=Capturing variables with lexical closures,
-label=lst:read-closure]
+label=lst:tut:read-closure]
 function printSalaries(rate)
 {
   var charges = 100;
@@ -1216,11 +1216,11 @@ printSalaries(15);
 \end{urbiscript}
 
 Closures can also write to captured variables, as shown in
-\autoref{lst:write-closure}.
+\autoref{lst:tut:write-closure}.
 
 % Fixme: these are not actually closures because of the toplevel ...
 \begin{urbiscript}[caption=Updating captured variables,
-label=lst:write-closure]
+label=lst:tut:write-closure]
 var x = 0;
 [00000000] 0
 var y = 0;
@@ -1271,19 +1271,19 @@ several popular script languages such as \io or \js.
 Consider pairs for instance. Pairs are objects that hold two values,
 first and second, like an \lstinline{std$::$pair} in \Cxx. Since \urbi is
 prototype-based, there is no pair class. Instead, \lstinline|Pair| is
-really a pair (\autoref{lst:proto}).
+really a pair (\autoref{lst:tut:proto}).
 
-\begin{urbiscript}[caption=Prototypes in \urbi, label=lst:proto]
+\begin{urbiscript}[caption=Prototypes in \urbi, label=lst:tut:proto]
 Pair;
 [00000000] (nil, nil)
 \end{urbiscript}
 
 We can see here that Pair is a pair whose two values are equal to nil
 --- which is a reasonable neutral value. To get a pair of our own, we
-simply clone \lstinline|Pair| (\autoref{lst:clone}). We can then use it as a
+simply clone \lstinline|Pair| (\autoref{lst:tut:clone}). We can then use it as a
 regular pair.
 
-\begin{urbiscript}[caption=Cloning, label=lst:clone]
+\begin{urbiscript}[caption=Cloning, label=lst:tut:clone]
 var p = Pair.clone;
 [00000000] (nil, nil)
 p.first = "101010";
@@ -1299,9 +1299,9 @@ Pair;
 Since \lstinline|Pair| is a regular pair object, you can modify and
 use it at will. Yet this is not necessarily a good idea, since you
 will alter your base prototype, and subsequent cloning will inherit
-these modification (\autoref{lst:alter-proto}).
+these modification (\autoref{lst:tut:alter-proto}).
 
-\begin{urbiscript}[caption=Altering a prototype, label=lst:alter-proto]
+\begin{urbiscript}[caption=Altering a prototype, label=lst:tut:alter-proto]
 var before = Pair.clone;
 [00000000] (nil, nil)
 Pair.first = false;
@@ -1315,9 +1315,9 @@ var after = Pair.clone;
 In prototype-based language, 'is-a' relations (being an instance of
 some type) and inheritance relations (extending another type) are
 simplified in a single relation: prototyping. You can inspect an
-object prototypes with the \lstinline{protos} method (\autoref{lst:protos}).
+object prototypes with the \lstinline{protos} method (\autoref{lst:tut:protos}).
 
-\begin{urbiscript}[caption=Inspecting prototypes, label=lst:protos,
+\begin{urbiscript}[caption=Inspecting prototypes, label=lst:tut:protos,
   name=protos]
 var p = Pair.clone;
 [00000000] (nil, nil)
@@ -1326,10 +1326,10 @@ p.protos;
 \end{urbiscript}
 
 As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
-which is Pair. We can check this as presented in \autoref{lst:proto-check}.
+which is Pair. We can check this as presented in \autoref{lst:tut:proto-check}.
 
 \begin{urbiscript}[caption=Checking the prototype,
-  label=lst:proto-check, name=protos]
+  label=lst:tut:proto-check, name=protos]
 // Lists 'head' method returns the first element
 p.protos.head;
 [00000000] (nil, nil)
@@ -1348,9 +1348,9 @@ instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
 ``first'' or ``second'' slots. Yet, \lstinline|p.first| and
 \lstinline|p.second| succeed because these slots are present in
 \lstinline|Pair|, which is \lstinline|p|'s prototype. This is
-illustrated by \autoref{lst:simple-lookup}.
+illustrated by \autoref{lst:tut:simple-lookup}.
 
-\begin{urbiscript}[caption=Slot found by lookup, label=lst:simple-lookup]
+\begin{urbiscript}[caption=Slot found by lookup, label=lst:tut:simple-lookup]
 var p = Pair.clone;
 [00000000] (nil, nil)
 // p has absolutely no slots.
@@ -1374,7 +1374,7 @@ Let's experience slot lookup by ourselves. In \urbi, you can add and
 remove prototypes from an object thanks to \lstinline{addProto} and
 \lstinline{removeProto}.
 
-\begin{urbiscript}[caption=Manipulating prototypes, label=lst:proto-change]
+\begin{urbiscript}[caption=Manipulating prototypes, label=lst:tut:proto-change]
 // We create a fresh object
 var c = Object.clone;
 [00000000] Object_0x1
@@ -1409,9 +1409,9 @@ x:
 \end{itemize}
 
 Thus, slots from the last prototype added take precedence over other
-prototype's slots (\autoref{lst:proto-prec}).
+prototype's slots (\autoref{lst:tut:proto-prec}).
 
-\begin{urbiscript}[caption=Prototype precedence, label=lst:proto-prec]
+\begin{urbiscript}[caption=Prototype precedence, label=lst:tut:proto-prec]
 var proto1 = Object.clone;
 [00000000] Object_0x00000000
 var proto2 = Object.clone;
@@ -1441,10 +1441,10 @@ o.x;
 \end{urbiscript}
 
 You can check where in the prototype hierarchy a slot is found with
-the \lstinline{locateSlot} method (\autoref{lst:locateslot}). This is a very
+the \lstinline{locateSlot} method (\autoref{lst:tut:locateslot}). This is a very
 handful tool when inspecting an object.
 
-\begin{urbiscript}[caption=Using locateSlot, label=lst:locateslot]
+\begin{urbiscript}[caption=Using locateSlot, label=lst:tut:locateslot]
 var p = Pair.clone;
 [00000000] (nil, nil)
 // Check that the 'first' slot is found in Pair
@@ -1472,10 +1472,10 @@ slot, yet only one actual \lstinline|0| integer. Will modifying x in
 one of the clone change the prototype's "x", thus altering the
 prototype and the other clone as well?
 
-The answer is, of course, no, as illustrated by \autoref{lst:copy-on-write}.
+The answer is, of course, no, as illustrated by \autoref{lst:tut:copy-on-write}.
 
 \begin{urbiscript}[caption=Copy on write in action,
-  label=lst:copy-on-write, name=cow]
+  label=lst:tut:copy-on-write, name=cow]
 var proto = Object.clone;
 [00000000] Object_0x1
 var proto.x = 0;
@@ -1498,10 +1498,10 @@ o1.x;
 
 This work thanks to copy-on-write: slots are first duplicated to the
 local object when they're updated, as we can check in
-\autoref{lst:check-copy-on-write}.
+\autoref{lst:tut:check-copy-on-write}.
 
 \begin{urbiscript}[caption=Inspecting copy on write,
-  label=lst:check-copy-on-write, name=cow]
+  label=lst:tut:check-copy-on-write, name=cow]
 // This is the continuation of previous example.
 
 // As expected, o2 finds "x" in proto
@@ -1526,12 +1526,12 @@ Now that we know the internals of \urbi's object model, we can start
 defining our own classes. For instance, we can define our own
 \lstinline{Pair} class. We just have to create a pair, with its first and
 second slots. For this we use the \lstinline{do} scope described in
-\autoref{section:constructs/do}. \autoref{lst:do-class}) defines a new
+\autoref{section:constructs/do}. \autoref{lst:tut:do-class}) defines a new
 \lstinline{Pair} class. The \lstinline{asString} function is simply used to
 customize pairs printing - don't give it too much attention for now.
 
 \begin{urbiscript}[caption=Defining our own \lstinline{MyPair} class,
-  label=lst:do-class]
+  label=lst:tut:do-class]
 var MyPair = Object.clone;
 [00000000] Object_0x1
 do (MyPair)
@@ -1559,10 +1559,10 @@ MyPair;
 
 That's it, we defined a pair that can be cloned at will! \urbi
 provides a shorthand to define classes as we did above: the
-\lstinline{class} keyword (\autoref{lst:class}).
+\lstinline{class} keyword (\autoref{lst:tut:class}).
 
 \begin{urbiscript}[caption=Using the \lstinline{class} construct,
-  label=lst:class, name=my-pair]
+  label=lst:tut:class, name=my-pair]
 class MyPair
 {
   var first = nil;
@@ -1581,10 +1581,10 @@ predefines a few slots, but this is not the point here.
 As we've seen, we can use the clone method on any object to obtain an
 identical object. Yet, some class provide more elaborated
 constructors, accessible by calling \lstinline{new} instead of
-\lstinline{clone}, potentially passing it arguments (\autoref{lst:pair-ctor}).
+\lstinline{clone}, potentially passing it arguments (\autoref{lst:tut:pair-ctor}).
 
 \begin{urbiscript}[caption=Calling constructors with \lstinline{new},
-label=lst:pair-ctor]
+label=lst:tut:pair-ctor]
 var p = Pair.new("foo", false);
 [00000000] ("foo", false)
 \end{urbiscript}
@@ -1597,10 +1597,10 @@ same as \lstinline{clone} by default.
 To define such constructors, prototypes only need to provide an
 \lstinline{init} method, that will be called with the arguments given to
 new. For instance, we can improve our previous \lstinline{Pair} class
-with a constructor (\autoref{lst:define-ctor}).
+with a constructor (\autoref{lst:tut:define-ctor}).
 
 \begin{urbiscript}[caption=Defining constructors,
-  label=lst:define-ctor, name=my-pair]
+  label=lst:tut:define-ctor, name=my-pair]
 do (MyPair)
 {
   function init(f, s)
@@ -1631,11 +1631,11 @@ just like an integer or a string, enabling you to store them or pass
 them as arguments. For instance, you don't need to write
 \lstinline|function object.f(){/* ... */}| to insert a function in an
 object, you can simply use \lstinline{setSlot}, as illustrated by
-\autoref{lst:first-class-functions}.
+\autoref{lst:tut:first-class-functions}.
 
 % FIXME: doesn't work, toplevel, puke, etc
 \begin{urbiscript}[caption=First class functions,
-  label=lst:first-class-functions]
+  label=lst:tut:first-class-functions]
 var o = Object.clone | {};
 // Here we can use f as any regular value
 o.setSlot("m1", function () { echo("Hello") }) | {};
@@ -1652,10 +1652,10 @@ take function as argument. For instance, consider the \lstinline{all}
 function: given a list and a function, it applies the function to each
 element of the list, and returns whether all calls returned true. This
 enables to check very simply if all elements in a list verify a
-predicate (\autoref{lst:all}).
+predicate (\autoref{lst:tut:all}).
 
 \begin{urbiscript}[caption=Functional programming: the \lstinline{all}
-  function, label=lst:all, name=all]
+  function, label=lst:tut:all, name=all]
 function all(list, predicate)
 {
   for (var elt : list)
@@ -1676,9 +1676,9 @@ all([1, 2, -3], getSlot("positive"));
 
 Another nice feature is the ability to write lambda functions, which
 are anonymous functions. You can create a functional value as an
-expression, without naming it, with the syntax shown in \autoref{lst:lambda}.
+expression, without naming it, with the syntax shown in \autoref{lst:tut:lambda}.
 
-\begin{urbiscript}[caption=Lambda function, label=lst:lambda, name=all]
+\begin{urbiscript}[caption=Lambda function, label=lst:tut:lambda, name=all]
 // Create an anonymous function
 function (x) {x + 1} | {};
 // This enable to easily pass function
@@ -1688,10 +1688,10 @@ all([1, 2, 3], function (x) { x > 0});
 \end{urbiscript}
 
 In fact, the \lstinline{function} construct we saw earlier is only a
-shorthand for a variable assignment (\autoref{lst:function-sugar}).
+shorthand for a variable assignment (\autoref{lst:tut:function-sugar}).
 
 \begin{lstlisting}[caption=The function sugar,
-  label=lst:function-sugar]
+  label=lst:tut:function-sugar]
 // This ...
 function obj.f (/*...*/) {/*...*/};
 // ... is actually a shorthand for this
@@ -1709,10 +1709,10 @@ needed. In \urbi, evaluation is strict by default, but you can ask a
 function not to evaluate its arguments, and do it by hand. This works
 by not specifying formal arguments. The function is provided with a
 \lstinline{call} object that enables you to evaluate arguments
-(\autoref{lst:lazy}).
+(\autoref{lst:tut:lazy}).
 
 \begin{urbiscript}[caption=Tweaking arguments evaluation,
-  label=lst:lazy]
+  label=lst:tut:lazy]
 // Note the lack of formal arguments specification
 function first
 {
@@ -1736,11 +1736,11 @@ language, it uses a few logic operators. For instance, the logical and
 (\lstinline{\&\&}) does not evaluate its right operand if the left
 operand is false (the result will be false anyway).
 
-\urbi logic operator mimic this behavior. \autoref{lst:short-circuits} shows
+\urbi logic operator mimic this behavior. \autoref{lst:tut:short-circuits} shows
 how one can implement such a behavior.
 
 \begin{urbiscript}[caption=Implementing logic short circuits,
-label=lst:short-circuits]
+label=lst:tut:short-circuits]
 function myand
 {
   var lhs = call.evalArgAt(0);
@@ -1791,11 +1791,11 @@ For now, we've separated our different commands with a semicolon
   operand is waited at the exit of the scope.
 \end{itemize}
 
-\autoref{lst:parallelism-operators} show usage of \lstinline{\&} to launch two
+\autoref{lst:tut:parallelism-operators} show usage of \lstinline{\&} to launch two
 functions in parallel.
 
 \begin{urbiscript}[caption=Parallelism operator,
-  label=lst:parallelism-operators, name=parallel]
+  label=lst:tut:parallelism-operators, name=parallel]
 function test(name)
 {
   echo(name + ": 1");
@@ -1837,11 +1837,11 @@ subtle:
   ``\lstinline{\&}'' block to start executing anything, while it will run
   the code terminated by ``\lstinline{,}'' immediately.
 \item Execution is blocked after a ``\lstinline{\&}'' group until all its
-  children have finished (\autoref{lst:and-comma}).
+  children have finished (\autoref{lst:tut:and-comma}).
 \end{itemize}
 
 \begin{urbiscript}[caption=Difference between ``\lstinline{\&}'' and
-``\lstinline{,}'', label=lst:and-comma, name=parallel]
+``\lstinline{,}'', label=lst:tut:and-comma, name=parallel]
 // This runs test and echo("right") in parallel,
 // and wait until both are done before continuing
 test("left") & echo("right"); echo("done");
@@ -1869,9 +1869,9 @@ include parallelism anywhere at no syntactical cost.
 The \lstinline{detach} function backgrounds the execution of its
 argument. Its behavior is the same as the comma (\lstinline{,}) operator,
 except the execution is completely detached, and not waited for at the
-end of the scope (\autoref{lst:detach}).
+end of the scope (\autoref{lst:tut:detach}).
 
-\begin{urbiscript}[caption=Detach, label=lst:detach]
+\begin{urbiscript}[caption=Detach, label=lst:tut:detach]
 function test()
 {
   // wait 1 second, and echo "foo"
@@ -1892,9 +1892,9 @@ feature. Any chunk of code can be tagged, by preceding it with a tag
 and a colon (\lstinline{$:$}). Tag can be created with
 \lstinline|Tag.new("name")|. Giving tags a name is optional, yet it's
 probably a better idea since it will be used for many
-features. \autoref{lst:tagging} illustrates how to tag chunks of code.
+features. \autoref{lst:tut:tagging} illustrates how to tag chunks of code.
 
-\begin{urbiscript}[caption=Tagging a block of code, label=lst:tagging]
+\begin{urbiscript}[caption=Tagging a block of code, label=lst:tut:tagging]
 // Create a new tag
 var mytag = Tag.new("name");
 [00000000] Tag<name>
@@ -1910,14 +1910,14 @@ mytag: echo("tagged");
 \end{urbiscript}
 
 You can use tag that wasn't declared previously, they will be created
-implicitly (\autoref{lst:implicit-tag}). However, this is fragile code since
+implicitly (\autoref{lst:tut:implicit-tag}). However, this is fragile code since
 tags will be created in a global scope, the \lstinline{Tag} object. This
 feature can be used when inputting test code in the toplevel to avoid
 bothering to declare each tag, yet it should be considered very bad
 practice in regular code.
 
 \begin{urbiscript}[caption=Tag created implicitly,
-label=lst:implicit-tag]
+label=lst:tut:implicit-tag]
 // Since mytag is not declared, this will first do:
 // var Tag.mytag = Tag.new("mytag");
 mytag : 42;
@@ -1944,10 +1944,10 @@ parallel. Tags have a few control methods:
 \item \lstinline{unblock}: Stop blocking the tagged code.
 \end{itemize}
 
-\autoref{lst:freeze}, \autoref{lst:stop} and \autoref{lst:block}
+\autoref{lst:tut:freeze}, \autoref{lst:tut:stop} and \autoref{lst:tut:block}
 illustrate usage of these tag features.
 
-\begin{urbiscript}[caption=Freezing/unfreezing code execution, label=lst:freeze]
+\begin{urbiscript}[caption=Freezing/unfreezing code execution, label=lst:tut:freeze]
 // Here we launch in background - thanks to the
 // comma - code that prints "foo" every second.
 // We tag it to keep control over it.
@@ -1973,7 +1973,7 @@ sleep(0.1s);
 [00007000] *** ping
 \end{urbiscript}
 
-\begin{urbiscript}[caption=Stopping code execution, label=lst:stop]
+\begin{urbiscript}[caption=Stopping code execution, label=lst:tut:stop]
 // Now, we print out a message when we get out of the tag.
 {
   mytag:
@@ -1999,7 +1999,7 @@ mytag.stop;
 mytag.unfreeze;
 \end{urbiscript}
 
-\begin{urbiscript}[caption=Blocking chunks of code, label=lst:block]
+\begin{urbiscript}[caption=Blocking chunks of code, label=lst:tut:block]
 // Now, print out a message when we get out of the tag.
 {
   loop
@@ -2041,7 +2041,7 @@ sleep(4s);
 In this section, we implement a more advanced example with
 parallelism.
 
-\autoref{lst:timeout} presents how to implement a \lstinline{timeOut}
+\autoref{lst:tut:timeout} presents how to implement a \lstinline{timeOut}
 function, that takes code to execute and a timeout as arguments. It
 executes the code, and returns its value. However, if the code
 execution takes longer than the given timeout, it aborts it, print
@@ -2054,7 +2054,7 @@ execution takes longer than the given timeout, it aborts it, print
 \end{itemize}
 
 % FIXME: doesn't work (inner return)
-\begin{urbiscript}[caption=Implementing a timeout method, label=lst:timeout]
+\begin{urbiscript}[caption=Implementing a timeout method, label=lst:tut:timeout]
 function timeOut
 {
   // In background, launch a timeout job that waits
@@ -2078,7 +2078,7 @@ timeOut({sleep(2s); echo("On time"); 42}, 1s);
 
 % Add chronograms
 \chapter{Event-based programming}
-\label{sec:event-prog}
+\label{sec:tut:event-prog}
 
 \section{Introduction}
 
@@ -2091,10 +2091,10 @@ strong support for event-based programming.
 
 The first construct we will study is the \lstinline|at| keyword. Given
 a condition, and an expression, \lstinline|at| will evaluate the
-expression every time the condition becomes true (\autoref{lst:at}). That is,
+expression every time the condition becomes true (\autoref{lst:tut:at}). That is,
 when a rising edge occurs on the condition.
 
-\begin{urbiscript}[caption=Using \lstinline{at}, label=lst:at]
+\begin{urbiscript}[caption=Using \lstinline{at}, label=lst:tut:at]
 var x = 0;
 [00000000] 0
 at (x > 5)
@@ -2120,9 +2120,9 @@ x = 10;
 
 An \lstinline|onleave| block can be appended to execute an expression
 when the expression \emph{becomes} false --- that is, on falling edges
-(\autoref{lst:onleave}).
+(\autoref{lst:tut:onleave}).
 
-\begin{urbiscript}[caption=Using \lstinline{at ... onleave}, label=lst:onleave]
+\begin{urbiscript}[caption=Using \lstinline{at ... onleave}, label=lst:tut:onleave]
 var x = false;
 [00000000] false
 at (x)
@@ -2139,9 +2139,9 @@ x = false;
 
 The \lstinline|whenever| construct is similar to \lstinline|at|,
 except the expression evaluation is systematically restarted when it
-finishes as long as the condition stands true (\autoref{lst:whenever}).
+finishes as long as the condition stands true (\autoref{lst:tut:whenever}).
 
-\begin{urbiscript}[caption=Using \lstinline{whenever}, label=lst:whenever]
+\begin{urbiscript}[caption=Using \lstinline{whenever}, label=lst:tut:whenever]
 var x = false;
 [00000000] false
 whenever (x)
@@ -2163,10 +2163,10 @@ x = false;
 
 Just like \lstinline|at| has \lstinline|onleave|, \lstinline|whenever|
 has \lstinline|else|: the given expression is evaluated as long as the
-condition is false (\autoref{lst:whenever-else}).
+condition is false (\autoref{lst:tut:whenever-else}).
 
 \begin{urbiscript}[caption=Using \lstinline{whenever ... else},
-  label=lst:whenever-else]
+  label=lst:tut:whenever-else]
 var x = false;
 [00002000] false
 whenever (x)
@@ -2201,9 +2201,9 @@ sleep (2s);
 \urbi enables you to define events, that can be caught with the
 \lstinline|at| and \lstinline|whenever| constructs we saw earlier. You
 can create events by cloning the \lstinline|Event| prototype. They can
-then be emitted with the \lstinline|!| keyword (\autoref{lst:event}).
+then be emitted with the \lstinline|!| keyword (\autoref{lst:tut:event}).
 
-\begin{urbiscript}[caption=Using events, label=lst:event]
+\begin{urbiscript}[caption=Using events, label=lst:tut:event]
 var myEvent = Event.new;
 [00000000] Event_0x0
 at (myEvent?)
@@ -2219,10 +2219,10 @@ myEvent! & myEvent!;
 Both \lstinline|at| and \lstinline|whenever| have the same behavior on
 punctual events. However, you can emit an event for a certain
 duration, and \lstinline|whenever| will keep triggering for this
-duration (\autoref{lst:emit-duration}).
+duration (\autoref{lst:tut:emit-duration}).
 
 \begin{urbiscript}[caption=Emitting events with a duration,
-  label=lst:emit-duration]
+  label=lst:tut:emit-duration]
 var myEvent = Event.new;
 [00000000] Event_0x0
 whenever (myEvent?)

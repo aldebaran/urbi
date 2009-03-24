@@ -98,6 +98,8 @@ sub process_listing ($$$)
   {
     # Get rid of the "lst:" prefix from the labels.
     $res{label} =~ s/^lst://;
+    # Colons are a nuisance with Make.
+    $res{label} =~ s/:/-/g;
     # float-new -> new, since we're in float/ anyway.
     (my $base = $file) =~ s,.*/,,;
     $base =~ s,\..*,,;
