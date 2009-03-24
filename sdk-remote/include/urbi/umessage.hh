@@ -34,7 +34,7 @@ namespace urbi
     /// Parser constructor
     UMessage(UAbstractClient& client, int timestamp,
 	     const char* tag, const char* message,
-	     const binaries_type& bins);
+	     const binaries_type& bins = binaries_type());
 
     UMessage(const UMessage& source);
 
@@ -42,10 +42,10 @@ namespace urbi
     ~UMessage();
 
     /// Return the message.
-    operator urbi::UValue& ();
+    operator urbi::UValue&();
 
     /// Format as "[TIMESTAMP:TAG] CONTENTS".
-    std::ostream& print (std::ostream& o) const;
+    std::ostream& print(std::ostream& o) const;
 
     /// Connection from which originated the message.
     UAbstractClient& client;

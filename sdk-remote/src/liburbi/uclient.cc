@@ -350,7 +350,7 @@ namespace urbi
         rc = -1;
         clientError("Connection error : ", errno);
         notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                 "!!! Connection error", std::list<BinaryData>()));
+                                 "!!! Connection error"));
         return;
       }
 
@@ -365,8 +365,7 @@ namespace urbi
           // FIXME: Choose between two differents way to alert user program
           clientError("Lost connection with server");
           notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                   "!!! Lost connection with server",
-                                   std::list<BinaryData>()));
+                                   "!!! Lost connection with server"));
           return;
         }
         else // Timeout : Ping_interval
@@ -398,8 +397,7 @@ namespace urbi
 
           rc = -1;
           clientError(errorMsg, errorCode);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                   errorMsg, std::list<BinaryData>()));
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, errorMsg));
           return;
         }
 
