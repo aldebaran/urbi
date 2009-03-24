@@ -117,12 +117,81 @@ as options to configure.
 * compilation
 Should be straightforward.
 
-  make -j3
+  make -j3  (or more, distcc is your friend).
 
-* test suite
-To run the test suite, run make check (-j4 works on most machines).
-In the build directory of the test suite (e.g., _build/tests) there is
-a test-suite.log file which contains all the details.
+* test suites
+There are several test suites that will be run if you run "make check"
+(-j4 works on most machines).  To rerun only the tests that failed,
+use "make recheck".
+
+** Lazy test suites
+The test suites are declared as "lazy", i.e., unless its dependencies
+changed, a successful test will be run only once --- failing tests do
+not "cache" their results.  Because spelling out the dependencies is
+painful, we rely on a few timestamps:
+
+- libraries.stamp
+  updated when any of our libraries is updated (libport, libuobject
+  etc.)
+
+- executables.stamp
+  updated when an executable is updated (urbi-launch etc.).
+  depends on libraries.stamp.
+
+- urbi.stamp
+  when Urbi sources (share/urbi/*.u) are updated.
+
+- all.stamp
+  updated when any of the three aforementioned time stamps is.
+
+These time stamps are updated *only* when "make" is run in the
+top-level.  Therefore, the following sequence is *wrong*:
+
+    make check -C tests     # All passes.
+    emacs share/urbi/foo.u
+    make check -C tests     # All passes again.
+
+because the timestamps were not given a chance to notice that some
+Urbi source changed, so Make did not notice the tests really needed to
+be rerun and *the tests were not run*.
+
+You may either just update the time stamps:
+
+    make check -C tests     # All passes.
+    emacs share/urbi/foo.u
+    make stamps             # Update the timestamps.
+    make check -C tests     # All passes again.
+
+or completely disable the test suite lazyness:
+
+   make check -C tests LAZY_TEST_SUITE=
+
+** Partial test suite runs
+You can run each test suite individually by hand as follows:
+
+*** sdk-remote/libport/test-suite.log: make check -C sdk-remote/libport
+Tests libport.
+
+*** sdk-remote/src/tests/test-suite.log: make check -C sdk-remote/src/tests
+Checks liburbi, and some of the executables we ship.  Requires the
+kernel to be compiled in order to be able to test some of the uobjects.
+
+*** tests/test-suite.log: make check -C tests
+Tests the kernel and uobectfs.  Partial runs can be invoked:
+
+      make check -C tests TESTS='2.x/echo.chk'
+
+wildcards are supported:
+
+      make check -C tests TESTS='2.x/*'
+
+To check remote uobjects tests:
+
+      make check -C tests TESTS='uob/remote/*'
+
+*** doc/tests/test-suite.log: make check -C doc
+The snippets of code displayed in the documentation are transformed
+into test files.
 
 * FAQ
 ** AM_LANGINFO_CODESET
@@ -137,3 +206,19 @@ If at bootstrap you have something like:
 it probably means your Automake installation is incomplete.  See the
 Automake item in the bootstrap section above.
 
+** git: fatal: Needed a single revision
+You may experience something like this:
+
+  $ git submodule update --init
+  fatal: Needed a single revision
+  Unable to find current revision in submodule path 'gnulib'
+
+this is the sign that the initial checkout of `gnulib' went completely
+wrong (I don't know what makes this happen).  Chances are that the
+directory exists, but is empty.  Git does not seem to be able to
+overcome this situation, so:
+
+  $ rm -rf gnulib
+  $ git submodule update --init
+
+et voila.
