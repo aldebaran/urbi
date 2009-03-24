@@ -306,8 +306,9 @@ namespace urbi
     int maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
     // Declare ping channel for kernel that requires it.
-    send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
-	internalPongTag.c_str(), internalPongTag.c_str());
+    if (2 <= kernelMajor())
+      send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
+           internalPongTag.c_str(), internalPongTag.c_str());
     while (true)
     {
       if (sd == -1)
@@ -362,7 +363,7 @@ namespace urbi
           clientError("Lost connection with server");
           notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag.c_str(),
                                    "!!! Lost connection with server",
-                                   std::list<BinaryData>() ));
+                                   std::list<BinaryData>()));
           return;
         }
         else // Timeout : Ping_interval
