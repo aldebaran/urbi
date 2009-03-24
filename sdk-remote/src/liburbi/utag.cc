@@ -3,7 +3,7 @@
 namespace urbi
 {
 
-  const char* connectionTimeoutTag = "__URBI_TAG_CONNECTION_TIMEOUT";
-  const char* internalPongTag = "__URBI_TAG_INTERNAL_PONG";
+  const char* connectionTimeoutTag = TAG_PRIVATE_PREFIX "connection_timeout";
+  const char* internalPongTag      = TAG_PRIVATE_PREFIX "internal_pong";
 
 } // namespace urbi

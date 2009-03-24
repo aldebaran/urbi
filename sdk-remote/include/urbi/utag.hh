@@ -22,6 +22,10 @@
 #ifndef URBI_UTAG_HH
 # define URBI_UTAG_HH
 
+/// A prefix for tags with which internal messages are exchanged.
+/// Callbacks with tag_wildcard do not see these messages.  A macro so
+/// that we can easily concatenate strings at compile time.
+# define TAG_PRIVATE_PREFIX "__gostai_private__"
 
 // FIXME: The need to make these tags public is not clear.
 namespace urbi

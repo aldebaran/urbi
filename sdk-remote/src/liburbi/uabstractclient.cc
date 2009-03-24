@@ -33,11 +33,6 @@ namespace urbi
   /// Fake tag to catch all the messages.
   const char* tag_wildcard = "[wildcard]";
 
-
-  /// A prefix for tags with which internal messages are exchanged.
-  /// Callbacks with tag_wildcard do not see these messages.
-# define TAG_PRIVATE_PREFIX "__gostai_private__"
-
   std::ostream&
   default_stream()
   {
