@@ -390,17 +390,11 @@ namespace urbi
 
           if (count < 0)
           {
-#ifdef WIN32
-            errorCode = WSAGetLastError();
-#else
-            errorCode = errno;
-#endif
+            errorCode = WIN32_IF(WSAGetLastError(), errno);
             errorMsg = "!!! Connection error";
           }
           else // count == 0  => Connection close
-          {
             errorMsg = "!!! Connection closed";
-          }
 
           rc = -1;
           clientError(errorMsg, errorCode);
