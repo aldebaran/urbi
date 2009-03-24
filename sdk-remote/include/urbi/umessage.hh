@@ -35,7 +35,7 @@ namespace urbi
     UMessage(UAbstractClient& client, int timestamp,
 	     const char* tag, const char* message,
 	     const binaries_type& bins);
-    /// If alocate is true, everything is copied, eles pointers are stolen
+
     UMessage(const UMessage& source);
 
     /// Free everything if data was copied, doesn't free anything otherwise

@@ -27,31 +27,22 @@ namespace urbi
     rawMessage = std::string(message);
     while (message[0] == ' ')
       ++message;
-    //parse non-value messages
-    if (message[0] == '*')
+
+    // System and error messages.
+    if (message[0] == '*' || message[0] == '!')
     {
-      //system message
-      type = MESSAGE_SYSTEM;
+      type = message[0] == '*' ? MESSAGE_SYSTEM : MESSAGE_ERROR;
       if (4 <= strlen(message))
-	this->message = message+4;
+	this->message = message + 4;
       return;
     }
 
-    if (message[0] == '!')
-    {
-      //error message
-      type = MESSAGE_ERROR;
-      if (strlen(message) >= 4)
-	this->message = (std::string)(message+4);
-      return;
-    }
-
-    //value
+    // value.
     type = MESSAGE_DATA;
     value = new UValue();
     binaries_type::const_iterator iter = bins.begin();
     int p = value->parse(message, 0, bins, iter);
-    if (p >= 0)
+    if (0 <= p)
       while (message[p] == ' ')
 	++p;
     /* no assertion can be made on message[p] because there is no terminator
