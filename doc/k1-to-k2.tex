@@ -1,0 +1,74 @@
+\chapter{Migration from \us 1 to \us 2}
+
+This chapter is intended to people who want to migrate programs in \us
+1 into program \us 2.  Backward compatibility is \emph{mostly}
+ensured, but there are a number of constructs in \us 1 that were
+removed because they prevented the introduction of a cleaner construct
+in \us 2.  When possible, \us 2 supports the remaining \us 1
+constructs.
+
+\section{One to one translation}
+
+\subsection{delete Foo}
+
+In order to maintain an analogy with the \Cxx language, \us used to
+support \lstinline{delete Foo}, but this was removed for a number of
+reasons:
+\begin{itemize}
+\item \us 2 features genuine local variables for which
+  \lstinline{delete} makes no sense.
+\item in \Cxx \lstinline{delete} really targets the object: destroy
+  yourself, then the system will reclaim the memory.  In \us one
+  cannot destroy an object and reclaim the memory, it is the task of
+  the system to notice objects that are no longer used, and to reclaim
+  the memory.  This is called \dfn{garbage collection}.  Therefore in
+  \us \lstinline{delete} is actually bounced to \lstinline{removeSlot}
+  sent to the owner of the object.
+\item \lstinline{delete} is an unsafe feature that makes only sense in
+  pointer-based languages such as \C and \Cxx.  It enables nice bugs
+  such as:
+\begin{urbiscript}
+var this.a := A.new;
+// ...
+delete this.a;
+// ...
+cout << this.a;
+\end{urbiscript}
+\end{itemize}
+
+For these reasons, and others, \lstinline{delete Foo} was removed.  If
+your goal is to remove the \emph{name} Foo, run
+{\lstinline{removeSlot("Foo")}} (\autoref{sec:tut:objects}) --- the
+garbage collector will reclaim memory if there are no other use of
+\lstinline{Foo}.
+
+\subsection{new Foo}
+
+See \autoref{sec:tut:ctor} for details on \code{new}.  The construct
+\lstinline{new Foo} is no longer supported because it is ambiguous:
+what does \lstinline{new a(1,2).b(3,4)} mean?  Is
+\lstinline{a(1,2).b} the object to clone and \lstinline{(3,4)} are the
+arguments of the constructor?  Or is it the result of
+\lstinline{a(1,2).b(3,4)} that must be cloned?
+
+In temporary version \us 2 used to support this \code{new} construct,
+but too many users got it wrong, and we decided to keep only the
+simpler, safer, and more consistent method-call-style construct:
+\lstinline{Foo.new}.  Every single possible interpretation of
+\lstinline{new a(1,2).b(3,4)} is reported below, unambiguously.
+\begin{itemize}
+\item \lstinline{a(1,2).b(3,4).new}
+\item \lstinline{a(1,2).b.new(3,4)}
+\item \lstinline{a(1,2).new.b(3,4)}
+\item \lstinline{a.new(1,2).b(3,4)}
+\item \lstinline{new.a(1,2).b(3,4)}
+\end{itemize}
+
+
+\section{Cookbook}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "urbi-sdk"
+%%% End:
