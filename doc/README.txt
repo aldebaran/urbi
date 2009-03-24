@@ -13,15 +13,17 @@ A list of changes since the previous releases.
 A description in a few words of how to install and run Urbi.  The
 Tutorial contains more extensive documentation.
 
-* share/doc/urbi-sdk/urbi-tutorial.pdf
-A tutorial about UrbiScript.  Includes a chapter on the installation,
-and Frequently Asked Questions.  This is the main document newcomers
-should read.
+* share/doc/urbi-sdk.pdf
+The Urbi 2 documentation.  Includes:
 
-* share/doc/urbi-sdk/urbi-specs.pdf
-The reference manual for UrbiScript (the language, the standard
-libraries, and the tools).  In the near future, it should be
-merged with the tutorial into a complete Urbi documentation.
+** A tutorial about UrbiScript
+
+** A chapter on the installation
+
+** Frequently Asked Questions.
+
+** The UrbiScript reference manual
+the language, the standard libraries, and the tools.
 
 * REPORTING-BUGS.txt
 How to report bugs about UrbiScript.
