@@ -48,7 +48,6 @@ namespace urbi
                         bool block = true, bool errors = false);
 
 
-#ifdef URBI_ENV_REMOTE
   /** Initialisation method, for remote mode only, that returns.
    * \param host the host to connect to.
    * \param port the port number to connect to (you can use the constant
@@ -58,9 +57,8 @@ namespace urbi
    * \param exitOnDisconnect call exit() if we get disconnected from server.
    * \return 0 if no error occured.
    */
-  int URBI_SDK_API initialize(const std::string& host, int port, int buflen,
-                          bool exitOnDisconnect, bool server = false);
-#endif
+  int URBI_SDK_API initialize(const std::string& host, int port, size_t buflen,
+                              bool exitOnDisconnect, bool server = false);
 }
 
 #endif /* !URBI_UMAIN_HH */
