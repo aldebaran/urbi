@@ -345,18 +345,20 @@ namespace urbi
 	return;
 
       // Treat error
-      if (selectReturn < 0 && errno != EINTR)
+      if (selectReturn < 0)
       {
-        rc = -1;
-        clientError("Connection error : ", errno);
-        notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                 "!!! Connection error"));
-        return;
+        if (errno == EINTR)
+          // ::select caughr a signal.
+          continue;
+        else
+        {
+          rc = -1;
+          clientError("Connection error : ", errno);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
+                                   "!!! Connection error"));
+          return;
+        }
       }
-
-      if (selectReturn < 0)  // ::select catch a signal (errno == EINTR)
-        continue;
-      // timeout
       else if (selectReturn == 0)
       {
         if (waitingPong) // Timeout while waiting PONG
@@ -374,7 +376,7 @@ namespace urbi
           waitingPong = true;
         }
       }
-      else
+      else // 0 < selectReturn
       {
         // We receive data, at least the "1" value sent through the pong tag
         // channel so we are no longer waiting for a pong.
