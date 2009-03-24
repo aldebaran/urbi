@@ -304,10 +304,13 @@ namespace urbi
 
     int maxfd = 1 + std::max(sd, control_fd[0]);
     waitingPong = false;
-    // Declare ping channel for kernel that requires it.
-    if (2 <= kernelMajor())
-      send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
-           internalPongTag, internalPongTag);
+
+    // Declare ping channel for kernel that requires it.  Do not try
+    // to depend on kernelMajor, because it has not been computed yet.
+    // And computing kernelMajor requires this code to be run.  So we
+    // need to write something that both k1 and k2 will like.
+    send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
+         internalPongTag, internalPongTag);
     while (true)
     {
       if (sd == -1)
@@ -346,7 +349,7 @@ namespace urbi
         rc = -1;
         clientError("Connection error : ", errno);
         notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                 "!!! Connection error", std::list<BinaryData>() ));
+                                 "!!! Connection error", std::list<BinaryData>()));
         return;
       }
 
@@ -401,7 +404,7 @@ namespace urbi
           rc = -1;
           clientError(errorMsg.c_str(), errorCode);
           notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                   errorMsg.c_str(), std::list<BinaryData>() ));
+                                   errorMsg.c_str(), std::list<BinaryData>()));
           return;
         }
 
