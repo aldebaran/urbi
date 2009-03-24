@@ -31,7 +31,7 @@ namespace urbi
     createUCallback(objname, "event", this, &UTimerCallback::call,
 		    event, eventmap(), false);
     URBI_SEND_COMMAND("timer_" << objname << ": every(" << period << "ms)"
-                      "{ " << emit(event) << ";}");
+                      "{ " << compatibility::emit(event) << ";}");
   }
 
   UTimerCallback::~UTimerCallback()

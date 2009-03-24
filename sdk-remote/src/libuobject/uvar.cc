@@ -8,6 +8,8 @@
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 
+#include "compatibility.hh"
+
 namespace urbi
 {
   /// This class is useless in SDK-Remote, and it is not used by Urbi
@@ -286,17 +288,18 @@ namespace urbi
     client.makeUniqueTag(tag);
     UMessage* m =
       client.syncGetTag("{"
-                        "  if (isdef (%s) && !isvoid (%s))"
+                        "  if (isdef (%s) && !(%s))"
                         "  {"
-                        "    %s<<%s"
+                        "    %s"
                         "  }"
                         "  else"
                         "  {"
-                        "     %s<<1/0"
+                        "     1/0"
                         "  }"
                         "};",
-                        tag, 0, name.c_str(), name.c_str(),
-                        tag, name.c_str(), tag);
+                        tag, 0, name.c_str(),
+                        compatibility::isvoid(name.c_str()).c_str(),
+                        name.c_str());
     if (m->type == MESSAGE_DATA)
       __update(*m->value);
   }

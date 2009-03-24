@@ -163,7 +163,7 @@ namespace urbi
     std::string base = 2 <= kernelMajor() ? __name + "." : "";
     URBI_SEND_COMMAND(
       base << tagName << ": every(" << period << "ms)"
-      "                     { " << emit(cbName) << ";},");
+      "                     { " << compatibility::emit(cbName) << ";},");
 
     return;
   }
