@@ -259,12 +259,16 @@ namespace urbi
 
   int kernelMajor()
   {
-    return getDefaultClient()->kernelMajor();
+    int res = getDefaultClient()->kernelMajor();
+    passert(res, res != -1);
+    return res;
   }
 
   int kernelMinor()
   {
-    return getDefaultClient()->kernelMinor();
+    int res = getDefaultClient()->kernelMinor();
+    passert(res, res != -1);
+    return res;
   }
 
   const std::string& kernelVersion()
