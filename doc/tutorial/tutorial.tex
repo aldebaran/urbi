@@ -2176,13 +2176,11 @@ whenever (myEvent?)
   echo("ping")|
   sleep(100ms)
 };
-// Emit myEvent for one second.
+// Emit myEvent for .35 second.
 myEvent! ~ 350ms;
 [00000000] *** ping
 [00000100] *** ping
 [00000200] *** ping
-[00000300] *** ping
-/*HIDE*/sleep(125ms);
 \end{urbiscript}
 
 %\section{Valued events}
