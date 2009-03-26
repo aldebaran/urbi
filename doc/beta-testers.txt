@@ -143,6 +143,12 @@ SRI
 Contact: Régis Vincent <vincent@ai.sri.com>
 Environment: Linux, GCC 4.2, x86
 
+Tyler
+=====
+He used to be the guy in charge of K2 on Pleo, but Ugobe is being sold.
+Contact: Tyler Wilson <urbi@tylerlabs.com>
+Environment: Unknown
+
 Ugobe
 =====
 Contact: Tyler Wilson <TWilson@ugobe.com>
