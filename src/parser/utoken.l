@@ -101,15 +101,16 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   yy_flex_debug = flex_debug;                                           \
                                                                         \
   static bool uconsole_mode = getenv ("UCONSOLE_MODE");                 \
-  if (uconsole_mode)                                                    \
-  {                                                                     \
-    std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."     \
-              << std::endl;                                             \
-    sc_default = SC_UCONSOLE;                                           \
-  }                                                                     \
-  else                                                                  \
-    sc_default = INITIAL;                                               \
+  sc_default = uconsole_mode ? SC_UCONSOLE : INITIAL;                   \
   BEGIN sc_default;                                                     \
+  static bool init = false;                                             \
+  if (!init)                                                            \
+  {                                                                     \
+    init = true;                                                        \
+    if (uconsole_mode)                                                  \
+      std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."   \
+                << std::endl;                                           \
+  }                                                                     \
                                                                         \
   if (!up)                                                              \
   {                                                                     \
@@ -118,7 +119,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     pre_closers.clear();                                                \
   }
 
-
+// Each time a rule is matched.
 #define YY_USER_ACTION                          \
   COLUMNS(static_cast<unsigned>(yyleng));
 
