@@ -1,5 +1,5 @@
-#ifndef EXIT_HH
-# define EXIT_HH
+#ifndef URBI_EXIT_HH
+# define URBI_EXIT_HH
 
 # include <exception>
 # include <string>
@@ -22,4 +22,4 @@ namespace urbi
   };
 }
 
-#endif
+#endif // !URBI_EXIT_HH

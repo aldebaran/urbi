@@ -21,6 +21,7 @@ libuco_libuco_la_CPPFLAGS += -I.
 dist_libuco_libuco_la_SOURCES =			\
   libuco/exit.cc				\
   libuco/package-info.cc			\
+  libuco/uimage.cc				\
   libuco/uobject-hub-common.cc			\
   libuco/uprop.cc				\
   libuco/ustarter.cc				\

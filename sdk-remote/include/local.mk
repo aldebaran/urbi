@@ -18,6 +18,7 @@ urbiinclude_HEADERS =				\
   include/urbi/uclient.hh			\
   include/urbi/uconversion.hh			\
   include/urbi/uexternal.hh			\
+  include/urbi/uimage.hh			\
   include/urbi/umain.hh				\
   include/urbi/umessage.hh			\
   include/urbi/umessage.hxx			\

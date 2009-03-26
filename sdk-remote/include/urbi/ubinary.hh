@@ -1,7 +1,7 @@
 /// \file urbi/ubinary.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007, 2008 Gostai S.A.S.
+// Copyright (c) 2007-2009 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -21,6 +21,7 @@
 # include <string>
 
 # include <urbi/export.hh>
+# include <urbi/uimage.hh>
 
 namespace urbi
 {
@@ -43,15 +44,6 @@ namespace urbi
   };
 
   std::istream& operator>> (std::istream& is, USoundSampleFormat& f);
-
-  enum UImageFormat
-  {
-    IMAGE_RGB=1,     ///< RGB 24 bit/pixel
-    IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
-    IMAGE_JPEG=3,    ///< JPEG
-    IMAGE_PPM=4,     ///< RGB with a PPM header
-    IMAGE_UNKNOWN
-  };
 
   enum UBinaryType
   {
@@ -96,30 +88,6 @@ namespace urbi
     }
     operator std::string() const;
 
-  };
-
-  /*---------.
-  | UImage.  |
-  `---------*/
-
-  /** Class encapsulating an image.
-
-   This class does not handle its memory: the data field msut be
-   freed manualy.  */
-  class URBI_SDK_API UImage
-  {
-  public:
-    /// Pointer to image data.
-    unsigned char* data;
-    /// Image size in byte.
-    size_t size;
-    /// Dimensions of the image.
-    size_t width, height;
-
-    UImageFormat imageFormat;
-
-    /// Return a legible definition of imageFormat.
-    const char* format_string() const;
   };
 
 

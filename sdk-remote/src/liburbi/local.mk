@@ -3,7 +3,10 @@
 ## ------------ ##
 
 lib_LTLIBRARIES += liburbi/liburbi.la
+# FIXME: Something is fishy here: why do we duplicate libuco code in
+# both liburbi and libuobject?  Libuobject includes liburbi.
 liburbi_liburbi_la_SOURCES =			\
+  libuco/uimage.cc				\
   libuco/uvalue-common.cc			\
   libuco/package-info.cc			\
   liburbi/uabstractclient.cc			\
