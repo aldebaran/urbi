@@ -2174,13 +2174,12 @@ var myEvent = Event.new;
 whenever (myEvent?)
 {
   echo("ping")|
-  sleep(100ms)
+  sleep(200ms)
 };
-// Emit myEvent for .35 second.
-myEvent! ~ 350ms;
+// Emit myEvent for .3 second.
+myEvent! ~ 300ms;
 [00000000] *** ping
 [00000100] *** ping
-[00000200] *** ping
 \end{urbiscript}
 
 %\section{Valued events}
