@@ -9,6 +9,34 @@ constructs.
 
 \section{One to one translation}
 
+\subsection{\$(Foo)}
+\label{sec:k122:dollar}
+
+This construct was designed to build identifiers at runtime.  This
+used to be a common idiom to work around some limitations of \us 1
+which are typically \emph{no longer needed in \us 2}.  For instance,
+genuine local variables are simpler and safer to use than identifiers
+forged by hand for unicity.  In order to associate information to a
+string, use a \refObject{Dictionary}.
+
+If you really need to forge identifiers at runtime, use
+\lstinline{setSlot}, \lstinline{updateSlot}, and \lstinline{getSlot},
+which all work with strings, and possibly \lstinline{asString}, which
+is a method used to convert arbitrary expressions into strings.  The
+following table lists common patterns.
+
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Deprecated} & \textbf{Updated}  \\
+    \hline
+    \lstinline|var $(Foo) = ...;| & \lstinline|setSlot(Foo.asString, ...);|   \\
+    \lstinline|$(Foo) = ...;|     & \lstinline|updateSlot(Foo.asString, ...);|\\
+    \lstinline|$(Foo)|            & \lstinline|getSlot(Foo.asString);|\\
+    \hline
+  \end{tabular}%$
+\end{center}
+
 \subsection{delete Foo}
 
 In order to maintain an analogy with the \Cxx language, \us used to
@@ -63,29 +91,39 @@ Foo.slotNames;
 
 The keyword \lstinline{emit} is deprecated in favor of \lstinline{!}.
 
-\begin{tabular}{|l|l|}
-  \hline
-  \textbf{Deprecated} & \textbf{Updated}  \\
-  \hline
-  \lstinline|emit e;|         & \lstinline|e!;|          \\
-  \lstinline|emit e(a);|      & \lstinline|e!(a);|       \\
-  \lstinline|emit e ~ 1s;|    & \lstinline|e! ~ 1s;|     \\
-  \lstinline|emit e(a) ~ 1s;| & \lstinline|e!(a) ~ 1s;|  \\
-  \hline
-\end{tabular}
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Deprecated} & \textbf{Updated}  \\
+    \hline
+    \lstinline|emit e;|         & \lstinline|e!;|          \\
+    \lstinline|emit e(a);|      & \lstinline|e!(a);|       \\
+    \lstinline|emit e ~ 1s;|    & \lstinline|e! ~ 1s;|     \\
+    \lstinline|emit e(a) ~ 1s;| & \lstinline|e!(a) ~ 1s;|  \\
+    \hline
+  \end{tabular}
+\end{center}
 
 The \lstinline{?} construct is changed for symmetry.
 
-\begin{tabular}{|l|l|}
-  \hline
-  \textbf{Deprecated} & \textbf{Updated}  \\
-  \hline
-  \lstinline|at (?e)|                  & \lstinline|at (e?)|\\
-  \lstinline|at (?e(var a))|           & \lstinline|at (e?(var a))|\\
-  \lstinline|at (?e(var a) if a == 2)| & \lstinline|at (e?(var a) if a == 2)|\\
-  \hline
-\end{tabular}
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Deprecated} & \textbf{Updated}  \\
+    \hline
+    \lstinline|at (?e)|                  & \lstinline|at (e?)|\\
+    \lstinline|at (?e(var a))|           & \lstinline|at (e?(var a))|\\
+    \lstinline|at (?e(var a) if a == 2)| & \lstinline|at (e?(var a) if a == 2)|\\
+    \hline
+  \end{tabular}
+\end{center}
 
+
+\subsection{eval(Foo)}
+\lstinline{eval} is still supported, but its use is discouraged: one
+can often easily do without.  For instance, \lstinline{eval} was often
+used to manipulate forged identifiers; see \autoref{sec:k122:dollar}
+for means of getting rid of them.
 
 \subsection{new Foo}
 
