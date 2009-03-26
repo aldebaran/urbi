@@ -22,6 +22,7 @@
 #include <libport/compiler.hh>
 #include <libport/config.h>
 #include <libport/cstdio>
+#include <libport/detect-win32.h>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
@@ -96,6 +97,10 @@ namespace kernel
     TIMER_PUSH("server");
 #endif
     urbiserver = this;
+#ifndef WIN32
+    // Use line buffering even when stdout is not a TTY.
+    setlinebuf(stdout);
+#endif
   }
 
   UErrorValue
