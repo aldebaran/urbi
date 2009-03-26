@@ -2,7 +2,7 @@
 %% call \labelObject each time.  See the bottom of this file for the
 %% restoring of \section.
 \let\sectionOrig\section
-\renewcommand{\section}[1]{\sectionOrig{\labelObject{#1}#1}}
+\renewcommand{\section}[1]{\sectionOrig{\labelObject{#1}\index{#1@\lstinline{#1}}#1}}
 
 \chapter{\us Standard Library}
 \label{sec:stdlib}

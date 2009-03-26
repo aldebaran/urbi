@@ -148,7 +148,7 @@ code. Some aspects are presented only superficially. The point of this
 section is to bootstrap yourself with the \urbi language, to be able
 to study more in-depth examples afterwards.
 
-\section{Comments}
+\section{Comments\index{comment}}
 
 Commenting your code is crucial, so let's start by learning how to do
 this in \urbi. Comments are ignored by the interpreter, and
@@ -204,7 +204,7 @@ void;
 
 Listing \ref{lst:tut:literals} highlights some point:
 \begin{itemize}
-\item Lists in \urbi are polymorphic. That is, one list can hold
+\item Lists in \urbi are heterogeneous. That is, one list can hold
   values of different types.
 \item The printing of nil and void is empty.
 \end{itemize}
@@ -226,7 +226,8 @@ max(1, 3, 4, 2);
 Again, the result of the evaluation are printed out. You can see here
 that function in \urbi can be variadic, that is, take different number
 of arguments, such as the \lstinline{max} function. Let's now try the
-\lstinline{echo} function, that prints out its argument (\autoref{lst:tut:printing}).
+\lstinline{echo} function, that prints out its argument
+(\autoref{lst:tut:printing}).
 
 \begin{urbiscript}[caption=Printing out,label=lst:tut:printing]
 echo("Hello world!");
@@ -237,8 +238,7 @@ The server prints out \lstinline{Hello world!}, as expected. Note that
 this output is still prepended with the timestamp. Since echo returns
 void, no evaluation result is printed.
 
-\section{Variables}
-
+\section{Variables\index{variable}}
 Variables can be introduced with the \lstinline{var} keyword, given a
 name and an initial value. They can be assigned new values with the
 \lstinline{=} operator (\autoref{lst:tut:variables}).
@@ -276,8 +276,7 @@ x.isVoid;
 [00000000] true
 \end{urbiscript}
 
-\section{Scopes}
-
+\section{Scopes\index{scope}}
 Scopes can be introduced with curly brackets (\lstinline|\{\}|), and can
 contain any number of expressions. Variables declared in a scope only
 exist within this scope (\autoref{lst:tut:scope}).
@@ -347,7 +346,7 @@ myFunction();
 
 Note the strange output after you defined the function. \urbi seems to
 be printing the function you just typed in again. This is because
-function definitions evaluates to the freshly created function.
+a function definition evaluates to the freshly created function.
 
 Since \urbi supports functional programming, function are first class
 citizen. Which means they are values, just as \lstinline{0} or
@@ -355,7 +354,6 @@ citizen. Which means they are values, just as \lstinline{0} or
 new function, and as always, the interpreter prints out the evaluation
 result, thus showing you the function again. \autoref{lst:tut:function-values}
 might help you understanding this.
-
 
 \begin{urbiscript}[caption=Function as values,label=lst:tut:function-values]
 // Work in a scope.
@@ -1892,24 +1890,24 @@ So you can tag code, yet what's the use? One of the primary purpose of
 tags is to be able to control the execution of code running in
 parallel. Tags have a few control methods:
 
-\begin{itemize}
-\item \lstinline{freeze}: Suspend execution of all tagged code.
-\item \lstinline{unfreeze}: Resume execution of previously frozen code.
-\item \lstinline{stop}: Stop the execution of the tagged code. The flows
-  of execution that where stopped jump immediately at the end of the
+\begin{description}
+\item[freeze] Suspend execution of all tagged code.
+\item[unfreeze] Resume execution of previously frozen code.
+\item[stop] Stop the execution of the tagged code. The flows of
+  execution that where stopped jump immediately at the end of the
   tagged block.
-\item \lstinline{block}: Block the execution of the tagged code, that is:
+\item[block] Block the execution of the tagged code, that is:
   \begin{itemize}
   \item Stop it.
   \item When an execution flow encounters the tagged block, it simply
     skips it.
   \end{itemize}
   You can think of \lstinline{block} like a permanent \lstinline{stop}.
-\item \lstinline{unblock}: Stop blocking the tagged code.
-\end{itemize}
+\item[unblock] Stop blocking the tagged code.
+\end{description}
 
-\autoref{lst:tut:freeze}, \autoref{lst:tut:stop} and \autoref{lst:tut:block}
-illustrate usage of these tag features.
+\autoref{lst:tut:freeze}, \autoref{lst:tut:stop} and
+\autoref{lst:tut:block} illustrate usage of these tag features.
 
 \begin{urbiscript}[caption=Freezing/unfreezing code execution, label=lst:tut:freeze]
 // Here we launch in background - thanks to the
