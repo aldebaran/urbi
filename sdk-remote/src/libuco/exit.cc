@@ -20,4 +20,3 @@ namespace urbi
     return error_;
   }
 }
-
