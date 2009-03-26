@@ -1,7 +1,7 @@
 \chapter{Frequently Asked Questions}
 \label{sec:faq}
 
-\section{Objects, slots and variables}
+\section{Objects lifetime}
 
 \paragraph{How do I create a new Object derivative?}
 Urbi is based on prototypes. To create a new Object derivative (which
@@ -10,6 +10,22 @@ will inherit all the Object methods), you can do:
 \begin{urbifixme}
 var myObject = Object.new;
 \end{urbifixme}
+
+\paragraph{How do I destroy an Object}
+There is no \lstinline{delete} in Urbi, for a number of reasons (see
+\autoref{sec:k122:delete}).  Objects are deleted when they are no
+longer used/referenced to.
+
+In practice, users who want to ``delete an object'' actually want to
+remove a slot --- see \autoref{sec:tut:objects}.  Users who want to
+clear an object can empty it --- see \autoref{sec:k122:delete}.
+
+Note that \lstinline{myObject = nil} does not explicitly destroys the
+object that was bound to the name \lstinline{myObject}, yet it may did
+so provided that \lstinline{myObject} was the last and only reference
+to this object.
+
+\section{Slots and variables}
 
 \paragraph{How do I add a new slot in an object?}
 To add a slot to an object \code{O}, you have to use the \code{var} keyword:
@@ -155,15 +171,11 @@ The name is not mandatory but makes it easier to display a tag and remember
 what it is.
 
 \paragraph{How do I stop a tag?}
-
-
 \begin{urbifixme}
 myTag.stop;
 \end{urbifixme}
 
 \paragraph{Can tagged statements return a value?}
-
-
 By default, tagged statements will return the latest evaluated expression if
 they have not been stopped:
 
@@ -190,7 +202,6 @@ res;
 \end{urbifixme}
 
 \section{Events}
-
 \paragraph{How do I create an event?}
 Events are objects, and must be created as any object by using "new" to create
 derivatives of the "Event" object.
@@ -200,13 +211,11 @@ var ev = Event.new;
 \end{urbifixme}
 
 \paragraph{How do I emit an event?}
-
 \begin{urbifixme}
 ev!(1, "foo");
 \end{urbifixme}
 
 \paragraph{How do I catch an event?}
-
 \begin{urbifixme}
 at(ev?(1, var msg)) {
   echo ("Received event with 1 and message " + msg);
@@ -220,7 +229,6 @@ construct, with whatever value is present in the event that triggered the
 "at".
 
 \section{Lists}
-
 \paragraph{How can I iterate over a list?}
 
 You can use the "for" construct to iterate over the elements of a list:
@@ -251,15 +259,12 @@ all its attempts to load a file to stderr.
 Note that this problem is Mac OS X and Linux specific.
 
 \section{MiscStatus}
-
 \paragraph{How can I know what has changed since the latest beta release I got?}
-
 The file \file{RELEASE-NOTES.txt} at the top of the distribution
 contains the list of user-visible changes between consecutive
 releases.
 
 \paragraph{How do I report a bug?}
-
 See the file \file{REPORTING-BUGS.txt} at the top of the
 distribution. We insist on keeping \email{k2-beta@lists.gostai.com} in
 copy at all times, because it helps us to track conversations with our
