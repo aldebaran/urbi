@@ -27,18 +27,18 @@
 \subsection{Identifiers}
 \label{sec:us-syn-id}
 
-% FIXME: New is  still special, but will be removed.
 \dfn{Identifiers} in \us are composed of one or more alphanumeric or
-underscore (\lstinline|_|) characters, not starting
-by a digit, i.e., identifiers match the
-\lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular expression (see
-\autoref{lst:identifiers}).  Additionally, identifiers must not match any of
-the \us reserved words documented in \autoref{sec:syn-key}. The only
-exception to this rule is \lstinline|new|, which can be used as the
-method identifier in a method call, as shown in
-\autoref{lst:identifiers-keywords}.  Identifiers can also be written
+underscore (\lstinline|_|) characters, not starting by a digit, i.e.,
+identifiers match the \lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular
+expression (see \autoref{lst:identifiers}).  Additionally, identifiers
+must not match any of the \us reserved words\footnote{
+%%
+  The only exception to this rule is \lstinline|new|, which can be
+  used as the method identifier in a method call.
+%%
+} documented in \autoref{sec:syn-key}. Identifiers can also be written
 between simple quotes (\lstinline|'|), in which case they may contain
-any character, as in \autoref{lst:escape-identifiers}.
+any character.
 
 \begin{urbiscript}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
 var x;
@@ -47,20 +47,14 @@ obj.met_hod();
 // Invalid.
 // var 3x;
 // obj.3x();
-\end{urbiscript}
 
-\begin{urbiscript}[caption=Identifiers cannot be keywords,
-  label=lst:identifiers-keywords,float=\floatpos]
 // Invalid because "if" is a keyword.
 // var if;
 // obj.if();
-// However, keywords can be escaped with simple quotes
+// However, keywords can be escaped with simple quotes.
 var 'if';
 obj.'if'();
-\end{urbiscript}
 
-\begin{urbiscript}[caption=Escaping identifiers with simple quotes,
-  label=lst:escape-identifiers,float=\floatpos]
 // Identifiers can be escaped with simple quotes
 var '%x';
 var '1 2 3';
@@ -71,10 +65,7 @@ obj.'[]';
 \label{sec:syn-key}
 
 \dfn{Keywords} are reserved words that cannot be used as identifiers,
-for instance.  They are listed in \autoref{tab:keywords}.  Keywords
-can be escaped, and thus used as identifier by surrounding them with
-simple quotes (\lstinline|'|), as shown in
-\autoref{lst:escape-keyword}.
+for instance.  They are listed in \autoref{tab:keywords}.
 
 \renewcommand{\baselinestretch}{.85}
 \begin{table}[\floatpos]
@@ -85,21 +76,21 @@ simple quotes (\lstinline|'|), as shown in
     Keyword                       & Remark                                  \\
     \hline
     \lstinline"and"               & Synonym for  operator                   &
-    \lstinline"long"              & Unused                                  \\
+    \lstinline"long"              & Reserved                                \\
     \lstinline"and_eq"            & Synonym for  operator                   &
     \lstinline"loop"              & \lstinline|loop&| and
                                     \lstinline-loop|- flavors               \\
-    \lstinline"asm"               & Unused                                  &
+    \lstinline"asm"               & Reserved                                &
     \lstinline"loopn"             & Deprecated, use \lstinline|for|         \\
     \lstinline"at"                &                                         &
-    \lstinline"mutable"           & Unused                                  \\
-    \lstinline"auto"              & Unused                                  &
-    \lstinline"namespace"         & Unused                                  \\
+    \lstinline"mutable"           & Reserved                                \\
+    \lstinline"auto"              & Reserved                                &
+    \lstinline"namespace"         & Reserved                                \\
     \lstinline"bitand"            & Synonym for \lstinline|&| operator      &
     \lstinline"new"               &                                         \\
     \lstinline"bitor"             & Synonym for \lstinline-|- operator      &
     \lstinline"not"               & Synonym for \lstinline|!| operator      \\
-    \lstinline"bool"              & Unused                                  &
+    \lstinline"bool"              & Reserved                                &
     \lstinline"not_eq"            & Synonym for \lstinline|!=| operator     \\
     \lstinline"break"             &                                         &
     \lstinline"object"            &                                         \\
@@ -107,74 +98,74 @@ simple quotes (\lstinline|'|), as shown in
     \lstinline"onleave"           &                                         \\
     \lstinline"case"              &                                         &
     \lstinline"or"                & Synonym for \lstinline-||- operator     \\
-    \lstinline"catch"             & Unused                                  &
+    \lstinline"catch"             & Reserved                                &
     \lstinline"or_eq"             & Synonym for \lstinline-|=- operator     \\
-    \lstinline"char"              & Unused                                  &
+    \lstinline"char"              & Reserved                                &
     \lstinline"private"           & Ignored                                 \\
     \lstinline"class"             &                                         &
     \lstinline"protected"         & Ignored                                 \\
     \lstinline"closure"           &                                         &
     \lstinline"public"            & Ignored                                 \\
     \lstinline"compl"             & Synonym for \lstinline|~|               &
-    \lstinline"register"          & Unused                                  \\
-    \lstinline"const"             & Unused                                  &
-    \lstinline"reinterpret_cast"  & Unused                                 \\
-    \lstinline"const_cast"        & Unused                                  &
+    \lstinline"register"          & Reserved                                \\
+    \lstinline"const"             & Reserved                                &
+    \lstinline"reinterpret_cast"  & Reserved                               \\
+    \lstinline"const_cast"        & Reserved                                &
     \lstinline"return"            &                                         \\
     \lstinline"continue"          &                                         &
-    \lstinline"short"             & Unused                                  \\
-    \lstinline"default"           & Unused                                  &
-    \lstinline"signed"            & Unused                                  \\
+    \lstinline"short"             & Reserved                                \\
+    \lstinline"default"           & Reserved                                &
+    \lstinline"signed"            & Reserved                                \\
     \lstinline"delete"            &                                         &
-    \lstinline"sizeof"            & Unused                                  \\
+    \lstinline"sizeof"            & Reserved                                \\
     \lstinline"do"                &                                         &
     \lstinline"static"            & Deprecated                              \\
-    \lstinline"double"            & Unused                                  &
-    \lstinline"static_cast"       & Unused                                  \\
-    \lstinline"dynamic_cast"      & Unused                                  &
+    \lstinline"double"            & Reserved                                &
+    \lstinline"static_cast"       & Reserved                                \\
+    \lstinline"dynamic_cast"      & Reserved                                &
     \lstinline"stopif"            &                                         \\
     \lstinline"else"              &                                         &
-    \lstinline"struct"            & Unused                                  \\
+    \lstinline"struct"            & Reserved                                \\
     \lstinline"emit"              & Deprecated                              &
     \lstinline"switch"            &                                         \\
-    \lstinline"enum"              & Unused                                  &
-    \lstinline"template"          & Unused                                  \\
+    \lstinline"enum"              & Reserved                                &
+    \lstinline"template"          & Reserved                                \\
     \lstinline"event"             &                                         &
     \lstinline"this"              &                                         \\
     \lstinline"every"             &                                         &
-    \lstinline"throw"             & Unused                                  \\
-    \lstinline"explicit"          & Unused                                  &
+    \lstinline"throw"             & Reserved                                \\
+    \lstinline"explicit"          & Reserved                                &
     \lstinline"timeout"           &                                         \\
-    \lstinline"export"            & Unused                                  &
-    \lstinline"try"               & Unused                                  \\
-    \lstinline"extern"            & Unused                                  &
-    \lstinline"typedef"           & Unused                                  \\
+    \lstinline"export"            & Reserved                                &
+    \lstinline"try"               & Reserved                                \\
+    \lstinline"extern"            & Reserved                                &
+    \lstinline"typedef"           & Reserved                                \\
     \lstinline"external"          &                                         &
-    \lstinline"typeid"            & Unused                                  \\
-    \lstinline"float"             & Unused                                  &
-    \lstinline"typename"          & Unused                                  \\
+    \lstinline"typeid"            & Reserved                                \\
+    \lstinline"float"             & Reserved                                &
+    \lstinline"typename"          & Reserved                                \\
     \lstinline"for"               & \lstinline|for&| and \lstinline-for|- flavors&
-    \lstinline"union"             & Unused                                  \\
+    \lstinline"union"             & Reserved                                \\
     \lstinline"foreach"           & Deprecated, use \lstinline|for|    &
-    \lstinline"unsigned"          & Unused                                  \\
+    \lstinline"unsigned"          & Reserved                                \\
     \lstinline"freezeif"          &                                         &
-    \lstinline"using"             & Unused                                  \\
-    \lstinline"friend"            & Unused                                  &
+    \lstinline"using"             & Reserved                                \\
+    \lstinline"friend"            & Reserved                                &
     \lstinline"var"               &                                         \\
     \lstinline"from"              &                                         &
-    \lstinline"virtual"           & Unused                                  \\
+    \lstinline"virtual"           & Reserved                                \\
     \lstinline"function"          &                                         &
-    \lstinline"volatile"          & Unused                                  \\
-    \lstinline"goto"              & Unused                                  &
+    \lstinline"volatile"          & Reserved                                \\
+    \lstinline"goto"              & Reserved                                &
     \lstinline"waituntil"         &                                         \\
     \lstinline"if"                &                                         &
-    \lstinline"wchar_t"           & Unused                                  \\
+    \lstinline"wchar_t"           & Reserved                                \\
     \lstinline"in"                &                                         &
     \lstinline"whenever"          &                                         \\
-    \lstinline"inline"            & Unused                                  &
+    \lstinline"inline"            & Reserved                                &
     \lstinline"while"             & \lstinline|while&| and
                                     \lstinline-while|- flavors              \\
-    \lstinline"int"               & Unused                                  &
+    \lstinline"int"               & Reserved                                &
     \lstinline"xor"               & Synonym for \lstinline|^| operator      \\
     \lstinline"internal"          & Deprecated                              &
     \lstinline"xor_eq"            & Synonym \lstinline|^=| operator         \\
@@ -185,24 +176,15 @@ simple quotes (\lstinline|'|), as shown in
 \end{table}
 \renewcommand{\baselinestretch}{1}
 
-\begin{urbiscript}[caption=Escaping keywords,label=lst:escape-keyword,float=\floatpos]
-var 'if' = 21;
-[00000000] 21
-'if' * 2;
-[00000000] 42
-\end{urbiscript}
-
 \subsection{Literals}
 \subsubsection{Durations}
 
 \dfn{Durations} (see \autoref{sec:us-syn-lit-float}) are floats
-followed by a
-% FIXME: formulation
-time unit. They are simply equivalent to the same float, expressed in
-seconds. For instance, \lstinline|1s 1ms|, which stands for ``one
-second and 1 millisecond'', is strictly equivalent to
-\lstinline|1.0001|. Available units
-and their equivalent are shown in \autoref{tab:durations}.
+followed by a time unit. They are simply equivalent to the same float,
+expressed in seconds. For instance, \lstinline|1s 1ms|, which stands
+for ``one second and 1 millisecond'', is strictly equivalent to
+\lstinline|1.0001|. Available units and their equivalent are shown in
+\autoref{tab:durations}.
 
 \begin{table}[\floatpos]
   \centering
@@ -230,7 +212,7 @@ a dot (\lstinline|.|) and another succession of digits representing
 the decimal part. Briefly, float literals match the
 \lstinline|[0-9]+(\.[0-9]+)?| regular
 expression. \autoref{lst:literal-floats} is an example of literal
-floats.
+floats.  See \refObject{Float} for more details.
 
 \begin{urbiscript}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
 1;
@@ -244,7 +226,8 @@ floats.
 
 Literal \dfn{lists} are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
-(\lstinline|[]|), as shown in \autoref{lst:literal-lists}.
+(\lstinline|[]|), as shown in \autoref{lst:literal-lists}.  See
+\refObject{List} for more details.
 
 \begin{urbiscript}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
 []; // The empty list
@@ -290,6 +273,8 @@ echo("a\nb"); // We can see there is an actual line feed
 echo("a\\nb");
 [00000000] *** a\nb
 \end{urbiscript}
+
+See \refObject{String} for more details.
 
 \subsection{Operators}
 
@@ -443,8 +428,7 @@ with another operator. See \autoref{tab:assignment-operators} and
 %  x %= 3;
 
 
-\begin{urbiscript}[caption=Assignment operators,
-  label=lst:assignment-operators]
+\begin{urbiscript}[caption=Assignment operators, label=lst:assignment-operators]
 var x = 0;
 [00000000] 0
 x = 10;
@@ -481,15 +465,14 @@ purpose than bit-related operations. See
   \label{tab:bitwise-operators}
 \end{table}
 
-\begin{urbiscript}[caption=Bitwise operators,
-  label=lst:bitwise-operators]
+\begin{urbiscript}[caption=Bitwise operators, label=lst:bitwise-operators]
 4 << 2;
 [00000000] 16
 4 >> 2;
 [00000000] 1
 \end{urbiscript}
 
-\subsubsection{Boolean operators}
+\subsubsection{Logical operators}
 
 \us supports the usual \dfn{Boolean operators}. See
 \autoref{tab:bool-operators} and \autoref{lst:bool-operators}.  The
@@ -554,8 +537,7 @@ false && (1 / 0);
   \label{tab:comparison-operators}
 \end{table}
 
-\begin{urbiscript}[caption=Comparison operators,
-  label=lst:comparison-operators]
+\begin{urbiscript}[caption=Comparison operators, label=lst:comparison-operators]
 0 < 0;
 [00000000] false
 0 <= 0;
@@ -628,8 +610,8 @@ s;
 \clearpage
 \subsubsection{All operators summary}
 
-\autoref{tab:operators-summary} is a summary of all operators, to highlight
-the overall precedences. Operators are sorted by decreasing
+\autoref{tab:operators-summary} is a summary of all operators, to
+highlight the overall precedences. Operators are sorted by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
 
@@ -700,18 +682,18 @@ precedence.
 
 % FIXME: This is wrong: the last separator isn't ignored; a pipe voids
 % the result, for instance.
-\dfn{Scopes} in \us are sequences of expressions, enclosed in curly brackets
-(\lstinline|{}|). Expressions are separated with the four expression
-separators (see \fixme{autoref{sec:fixme}}). The last separator is optional and
-ignored if present. Scopes are themselves expressions, and can thus be
-used in composite expressions, nested, and so forth.
+\dfn{Scopes} are sequences of statements, enclosed in curly brackets
+(\lstinline|{}|). Statements are separated with the four statements
+separators (see \fixme{autoref{sec:fixme}}). The last separator is
+optional and ignored if present. Scopes are themselves expressions,
+and can thus be used in composite expressions, nested, and so forth.
 
 \begin{urbiscript}[caption=Scopes,label=lst:scopes,float=\floatpos]
 // Scopes evaluate to their last expression
 {
   1;
   2;
-  3;
+  3; // This last separator is optional.
 };
 [00000000] 3
 // Scopes can be used as expressions
