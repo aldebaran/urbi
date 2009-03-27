@@ -252,7 +252,6 @@ namespace urbi
   }
 
 
-
   /*-----------------.
   | Kernel version.  |
   `-----------------*/
@@ -275,4 +274,23 @@ namespace urbi
   {
     return getDefaultClient()->kernelVersion();
   }
+
+
+  /*---------------------.
+  | UObjects accessors.  |
+  `---------------------*/
+
+  UObjectHub*
+  getUObjectHub(const std::string& n)
+  {
+    return baseURBIStarterHub::find(n);
+  }
+
+  UObject*
+  getUObject(const std::string& n)
+  {
+    return baseURBIStarter::find(n);
+  }
+
+
 } // namespace urbi

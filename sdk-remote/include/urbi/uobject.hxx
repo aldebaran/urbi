@@ -20,20 +20,6 @@ namespace urbi
     return getRunningMode() == MODE_REMOTE;
   }
 
-  inline
-  UObjectHub*
-  getUObjectHub(const std::string& n)
-  {
-    return baseURBIStarterHub::find(n);
-  }
-
-  inline
-  UObject*
-  getUObject(const std::string& n)
-  {
-    return baseURBIStarter::find(n);
-  }
-
 }
 
 #endif // !URBI_UOBJECT_HXX

@@ -136,9 +136,9 @@ namespace urbi
     __attribute__((__format__(printf, 1, 2)));
 
   /// Retrieve a UObjectHub based on its name or return 0 if not found.
-  UObjectHub* getUObjectHub(const std::string& n);
+  URBI_SDK_API UObjectHub* getUObjectHub(const std::string& n);
   /// Retrieve a UObject based on its name or return 0 if not found.
-  UObject* getUObject(const std::string& n);
+  URBI_SDK_API UObject* getUObject(const std::string& n);
 
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
