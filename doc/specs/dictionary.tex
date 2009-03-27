@@ -4,7 +4,15 @@ A \dfn{dictionary} is an \dfn{associative array}, also known as a
 \dfn{hash} in some programming languages.  They are arrays whose
 indexes are strings.
 
+In a way objects are dictionaries: one can use \lstinline|setSlot|,
+\lstinline|updateSlot|, and \lstinline|getSlot|.  This is unsafe since
+slots also contains value and methods that object depend upon to run
+properly.
+
 \begin{itemize}
+\item \lstinline|clear|\\
+  Empty the dictionary.
+
 \item \lstinline|init(\var{key1}, \var{value1}, ...)|~\\
   Instantiate a new \lstinline|Dictionary|.  Insert the mapping from
   \lstinline|\var{key1}| to \lstinline|\var{value1}| and so forth.
@@ -19,6 +27,9 @@ indexes are strings.
 
 \item \lstinline|keys|\\
   The list of all the keys.  No particular order is ensured.
+
+\item \lstinline|empty|\\
+  Whether the dictionary is empty.
 
 \item \lstinline|erase(\var{key})|\\
   Remove the mapping for \lstinline|\var{key}|.
@@ -48,17 +59,26 @@ See \autoref{lst:specs:dictionary} for an example.
 \begin{urbiscript}[caption=Dictionaries, label=lst:specs:dictionary]
 var d = Dictionary.new("one", 1, "two", 2);
 [00000001] Dictionary {"one" => 1, "two" => 2}
+/*HIDE*/ //Make the order deterministic.
+/*HIDE*/ Dictionary.asList =
+/*HIDE*/ function ()
+/*HIDE*/ {
+/*HIDE*/   var res = []|
+/*HIDE*/   for| (var k: keys.sort)
+/*HIDE*/     res.insertBack(Pair.new (k, get (k)))|
+/*HIDE*/   res
+/*HIDE*/ } | {};
 for (var p in d)
   echo (p.first + " -> " + p.second);
+[00000003] *** one -> 1
 [00000002] *** two -> 2
-[00000001] *** one -> 1
 "three" in d;
-[00000002] false
+[00000004] false
 d["three"] = d["one"] + d["two"] | {};
 "three" in d;
-[00000002] true
+[00000005] true
 d.getWithDefault("four", 4);
-[00000002] 4
+[00000006] 4
 \end{urbiscript}
 
 %%% Local Variables:
