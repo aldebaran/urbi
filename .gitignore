@@ -8,8 +8,12 @@
 /configure
 /dev/*.pyc
 /doc/Makefile.in
+/doc/tests/faq/
+/doc/tests/installation/
+/doc/tests/k1-to-k2/
 /doc/tests/specs/
 /doc/tests/tutorial/
+/doc/tests/urbi-sdk/
 /lib
 /lib/network
 /sdk
