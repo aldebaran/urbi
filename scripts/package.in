@@ -87,7 +87,7 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 $MV "$MANIFEST" "$packagedir/MANIFEST"
 
 # Copy the instructions at the top-level
-for i in doc/{QUICK-START,README,RELEASE-NOTES,REPORTING-BUGS}.txt
+for i in doc/{QUICK-START,LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
 do
   $CP "${srcdir}/$i" "$packagedir"
 done

@@ -20,6 +20,16 @@ include specs/local.mk
 include tutorial/local.mk
 include tests/local.mk
 
+## ------------------------------- ##
+## Additional text documentation.  ##
+## ------------------------------- ##
+
+doc_DATA = 					\
+  doc/LICENSE.txt				\
+  doc/QUICK-START.txt				\
+  doc/README.txt				\
+  doc/RELEASE-NOTES.txt				\
+  doc/REPORTING-BUGS.txt
 
 ## ------------ ##
 ## urbi-sdk.pdf ##
