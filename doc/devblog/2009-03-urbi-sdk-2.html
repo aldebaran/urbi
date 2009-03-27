@@ -1,0 +1,121 @@
+With Urbi 1 Gostai introduced a revolutionary means to program robots:
+a domain specific scripting language that brings together the
+efficiency of C++, and the flexibility of a dynamic language.  Urbi 1
+was designed pragmatically, based on user requests and
+feedback. That's how Urbi 1 was made useful, and how it met its users
+expectations. Yet, because of this iterative design process, it
+suffers a number of limitations.
+
+We are happy to announce the first release candidate of Urbi 2, which
+addresses these issues.  It is the result of an effort initiated by
+Gostai last year.  Technical previews have been made available for
+technical preview for months to our partners, therefore Urbi 2 already
+runs on a large range of architectures which include the major PC
+architectures (GNU/Linux x86 and ARM, Windows, Mac OS X x86 and PPC),
+and robots (Aldebaran's Nao, Mechano's Skypee, Wowee's Rovio,
+ActivMedia's Pioneer, etc.).
+
+<!--more-->
+<h2>Some features of Urbi SDK 2</h2>
+<ul>
+  <li><strong>Everything is an object.</strong>
+
+    In the 1.x series there were several kinds of entities: numbers,
+    lists, strings, images, etc. and objects.  In the 2.x series,
+    everything is an object, including the atomic values.</li>
+
+  <li><strong>Functions are first-class citizens.</strong>
+
+    In other words, functions are objects and can be manipulated like
+    any other type of object.  For instance you may copy a function
+    from an object to another.</li>
+
+  <li><strong>The distinction between value and function is blurred.</strong>
+
+    From a software engineering point of view, the client (i.e., the
+    "caller") should not know how the provider (i.e., the "callee") is
+    implemented.  In particular, it is an implementation detail
+    whether <tt>object.feature</tt> is an attribute, or a function
+    taking no argument.  Therefore, parentheses are not needed to
+    invoke functions that do not have argument (other
+    that <tt>this</tt>)</li>
+
+  <li><strong>Fewer primitives, more expressive power.</strong>
+
+    The basic connectives, such
+    as <tt>+</tt>, <tt>*</tt>, <tt>&lt;=</tt> and so forth, are
+    regular functions that the user can freely define.  For
+    instance <tt>Person.'&lt;' = function (rhs) { name &lt;
+    rhs.name </tt>} defines the <tt>&lt;</tt>
+    between <tt>Person</tt>.</li>
+
+  <li><strong>Objects can be arbitrarily nested.</strong>
+
+    Previous limitations of the language are alleviated, and
+    the <tt>.</tt> (dot) connective can now be freely used.  For
+    instance:[source language='c++']
+    robot.leg("rear-left").joint("knee").value [/source]</li>
+
+  <li><strong>Name spaces.</strong>
+
+    There is no global name space in the Urbi language: there are no
+    global variables or functions in the traditional sense.  Rather,
+    the Urbi world is a network of objects that use each other (either
+    via inheritance, or via aggregation).</li>
+
+  <li><strong>Lobbies.</strong>
+
+    Sessions with the Urbi server, via files or via network
+    connections, are handled via "lobbies".  Lobbies implement the
+    local scope: variables introduced during the interaction are only
+    visible from this lobby.  Nevertheless, because lobbies are
+    connected to the rest of the Urbi network of objects, the user can
+    introduce new features in the common space, for instance by
+    extending <tt>Object</tt>.  The user may also provide access to
+    his/her own lobby by giving it a name in an object that is
+    reachable from the other lobbies.</li>
+
+  <li><strong>An object can have any number of prototypes.</strong>
+
+    Multiple inheritance is fully supported.  This allows to factor
+    common code.  For instance the object <tt>Orderable</tt> provides
+    implementations of ordered comparators in terms of each other
+    (e.g., <tt>function '&gt;=' (rhs) { rhs &lt; self </tt>}),
+    and <tt>Comparable</tt> relates <tt>==</tt> and <tt>!=</tt>.  If
+    your <tt>object</tt> provides <tt>==</tt> and <tt>&lt;</tt>, then
+    running <tt>object.addProto(Comparable);object.addProto(Orderable);</tt>
+    provides the others.</li>
+
+  <li><strong>A richer, every growing, standard library</strong>
+
+    Primitive values (Boolean, Float, String and so forth), Containers
+    (Dictionary, List and others), programmatic entities (Pattern,
+    Primitive, ...) and system objects (Channel, Event, Lobby, etc.)
+    are provided.  It's a matter of minutes to extend the library!
+
+  </li>
+
+  <li><strong>A unified framework for UObjects</strong>
+
+    Urbi can easily be extended with native entities written in some
+    system language, say C++, thanks to the UObject technology.  While
+    UObjects used to come in two flavors depending on their intended
+    use (remote component, or code embedded in the server), they are
+    today simple modules that can be launched in two different ways
+    via a new tool, <tt>urbi-launch</tt>.
+
+  </li>
+
+  <li><strong>A rich set of convenient syntactic constructs</strong>
+
+    Iterating a container is straightforward (<tt>for (var elt in
+    list) echo (elt);</tt>), sending and receiving events is a matter
+    of a few keystrokes (<tt>var release = Event.new; at
+    (release?(version)) echo ("Urbi SDK " + version + " is
+    released!"); release!("2.0");</tt>), <tt>try</tt>/<tt>catch</tt>
+    provide support for exceptions, pattern matching is builtin,
+    etc. etc.
+
+  </li>
+
+</ul>
