@@ -164,10 +164,14 @@
 
     \begin{center}
       {\Huge\bf\@title\\}
+      \ifx\empty\@subtitle\else%
+        \vspace{.5cm}
+        \noindent\textbf{\LARGE \@subtitle}\par\nobreak%
+      \fi%
       \vspace{1cm}
-      {\Large \@author\\}
+      {\LARGE \@author\\}
       \vspace{1cm}
-      {\large \@date\\}
+      {\Large \@date\\}
     \end{center}
 
     \vfill
@@ -176,11 +180,13 @@
       \centering
       \includegraphics[width=12cm]{img/gostai}
     \end{figure}
-
-    \vfill
-    \global\let\title\relax
+%
+%    \vfill
+%    \global\let\title\relax
   \end{titlepage}
 }
+\newcommand{\subtitle}[1]{\def\@subtitle{#1}}
+\subtitle{}
 
 %% ---------- %%
 %% Hyperref.  %%

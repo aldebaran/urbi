@@ -1,5 +1,6 @@
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/doxygen.mk
+include $(top_srcdir)/build-aux/revision.mk
 
 # Document aux.
 share_dir = $(srcdir)/document-aux
@@ -37,11 +38,11 @@ dist_doc_DATA =					\
 
 pdf_DATA += urbi-sdk.pdf
 urbi_sdk_sources = $(call ls_files,*.tex)
-urbi_sdk_deps = $(urbi_sdk_sources) $(call ls_files,*.sty)
+REVISION_FILE = revision.sty
+REVISIONFLAGS = --latex
+urbi_sdk_deps = $(urbi_sdk_sources) $(call ls_files,*.sty) $(REVISION_FILE)
 EXTRA_DIST += $(urbi_sdk_deps) $(urbi_sdk_deps)
 urbi-sdk.pdf: $(urbi_sdk_deps)
-debug:
-	echo $(urbi_sdk_deps)
 
 CLEANFILES += $(pdf_DATA)
 
