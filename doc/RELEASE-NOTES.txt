@@ -1,9 +1,9 @@
 This file summarizes the user-visible changes since the first beta 1
 release.
 
-*******************************
-* New since kernel 2.0 beta 4 *
-*******************************
+****************************
+* New in kernel 2.0 beta 5 *
+****************************
 
 Auxiliary programs
 ==================
@@ -53,9 +53,9 @@ Using waituntil on an event with no payload (ie: waituntil(?e) ...;)
 will not cause an internal error anymore.
 
 
-*******************************
-* New since kernel 2.0 beta 3 *
-*******************************
+****************************
+* New in kernel 2.0 beta 4 *
+****************************
 
 Meta
 ====
@@ -174,9 +174,9 @@ It raises a PrimitiveError exception if the conversion fails:
    [00000003:error] !!! asFloat: unable to convert to float: "2.0a"
 
 
-*******************************
-* New since kernel 2.0 beta 2 *
-*******************************
+****************************
+* New in kernel 2.0 beta 3 *
+****************************
 
 Meta
 ====
@@ -421,9 +421,9 @@ underlying program (in remote and start modes) by using "--". Use
 "urbi-launch --help" to get the full usage information.
 
 
-*******************************
-* New since kernel 2.0 beta 1 *
-*******************************
+****************************
+* New in kernel 2.0 beta 2 *
+****************************
 
 Grammar
 =======
