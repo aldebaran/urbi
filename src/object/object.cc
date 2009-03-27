@@ -30,7 +30,7 @@
 namespace object
 {
 
-  Object::Object ()
+  Object::Object()
     : protos_(new protos_type)
     , slots_()
   {
@@ -99,13 +99,13 @@ namespace object
   }
 
   rObject
-  Object::slot_get (const key_type& k) const
+  Object::slot_get(const key_type& k) const
   {
     return const_cast<Object*>(this)->slot_get(k);
   }
 
   Slot&
-  Object::slot_get (const key_type& k)
+  Object::slot_get(const key_type& k)
   {
     rObject owner = safe_slot_locate(k);
     Slot& value = owner->own_slot_get(k);

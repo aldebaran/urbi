@@ -28,10 +28,10 @@ namespace object
     /// \{
   public:
     /// Create a new Object.
-    Object ();
+    Object();
 
     /// Destroy a Object.
-    virtual ~Object ();
+    virtual ~Object();
     /// \}
 
     /// The slots implementation
@@ -61,15 +61,15 @@ namespace object
     typedef objects_type protos_type;
 
     /// Add proto.
-    Object& proto_add (const rObject& p);
+    Object& proto_add(const rObject& p);
     /// Remove proto.
-    Object& proto_remove (const rObject& p);
+    Object& proto_remove(const rObject& p);
     /// Read only access to protos.
-    const protos_type& protos_get () const;
+    const protos_type& protos_get() const;
     /// Change the whole set of protos.
-    void protos_set (const rList&);
+    void protos_set(const rList&);
     // Urbi access to protos.
-    rList urbi_protos_get ();
+    rList urbi_protos_get();
 
     // Urbi's `Object'
     static rObject proto;
@@ -146,7 +146,7 @@ namespace object
     /// Remove slot.
     Object& slot_remove(const key_type& k);
     /// Read only access to slots.
-    const slots_implem& slots_get () const;
+    const slots_implem& slots_get() const;
 
     /// \}
 
@@ -194,7 +194,7 @@ namespace object
     virtual rObject clone() const;
 
     /// Comparison methods.
-    virtual bool operator< (const Object& rhs) const;
+    virtual bool operator<(const Object& rhs) const;
 
     virtual bool valid_proto(const Object& o) const;
 

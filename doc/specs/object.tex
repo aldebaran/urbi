@@ -1,0 +1,28 @@
+\section{Object}
+
+\subsection{Methods}
+
+\subsubsection{Slot Management}
+
+\begin{itemize}
+\item \lstinline|createSlot(\var{name})|\\
+  Create an empty slot (which actually means it is bound to
+  \lstinline|void|) named \var{name}.  Raise an error if \var{name}
+  was already defined.
+
+\item \lstinline|getSlot(\var{name})|\\
+  Return the value associated to \var{name}.
+
+\item \lstinline|setSlot(\var{name}, \var{value})|\\
+  Create a slot \var{name} mapping to \var{value}. Raise an error if
+  \var{name} was already defined.
+
+\item \lstinline|updateSlot(\var{name}, \var{value})|\\
+  Map the existing slot named \ \var{name} to \var{value}. Raise an
+  error if \var{name} was not defined.
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
