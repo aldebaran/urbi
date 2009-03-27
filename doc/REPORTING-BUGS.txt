@@ -5,21 +5,20 @@ How to report bugs for Urbi 2.0 beta ?
 Bug reports should be sent to "k2-beta@lists.gostai.com". This address
 reaches the kernel team and will be addressed as fast as possible.
 
-Each bug report should contain a self-contained example, which can
-be tested by our team. Using self-contained code, that is code which
-does not depend on other code, helps ensuring that we will be able
-to duplicate the problem and analyze it promptly. It will also helps
-us integrating the code snippet into our non-regression test suite
-so that the bug does not reappear in the future.
+Each bug report should contain a self-contained example, which can be
+tested by our team. Using self-contained code, that is code which does
+not depend on other code, helps ensuring that we will be able to
+duplicate the problem and analyze it promptly. It will also helps us
+integrating the code snippet into our non-regression test suite so
+that the bug does not reappear in the future.
 
-If it appears that your report identifies a bug in the Urbi kernel
-or its dependencies, we will prepare a fix to be integrated in a
-later release. If the bug takes some time to fix, we may provide you
-with a workaround so that your developments are not delayed.
+If it appears that your report identifies a bug in the Urbi kernel or
+its dependencies, we will prepare a fix to be integrated in a later
+release. If the bug takes some time to fix, we may provide you with a
+workaround so that your developments are not delayed.
 
 In your bug report, make sure that you indicate the Urbi version you
-are using (use "urbi-console --version" to check it out) and whether
-this bug is blocking you or not. Also, please keep "k2-beta@lists.gostai.com"
-in copy of all your correspondance, and do not reply individually
-to a member of our team as this may slow down the handling of the
-report.
+are using (use "urbi --version" to check it out) and whether this bug
+is blocking you or not. Also, please keep "k2-beta@lists.gostai.com"
+in copy of all your correspondance, and do not reply individually to a
+member of our team as this may slow down the handling of the report.

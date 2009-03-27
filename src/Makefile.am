@@ -74,6 +74,7 @@ precompiled_symbols_hh_deps =
 ## ----------------- ##
 
 include ast/local.mk
+include bin/local.mk
 include binder/local.mk
 include flower/local.mk
 include parser/local.mk
@@ -86,38 +87,12 @@ include urbi/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
-## ---------- ##
-## programs.  ##
-## ---------- ##
-
-# urbi-console.
-bin_PROGRAMS += urbi-console
-
-urbi_console_SOURCES = urbi-console.cc
-urbi_console_LDADD =				\
-  $(LIBPORT_LIBS)
-
 dist_libuobject_la_SOURCES +=			\
   console-server.cc				\
   lib/network/bsdnet/connection.hh		\
   lib/network/bsdnet/connection.cc		\
   lib/network/bsdnet/network.hh			\
   lib/network/bsdnet/network.cc
-
-if BUILD_PROGRAMS
-if !WIN32
-
-# ast-dump.
-noinst_PROGRAMS = ast-dump
-dist_ast_dump_SOURCES =				\
-  ast-dump.cc
-ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-ast_dump_LDADD    =		\
-  libuobject.la
-#  $(libuobject_la_LIBADD)
-
-endif !WIN32
-endif BUILD_PROGRAMS
 
 # We used to install a different version (with s/remote/engine/g), but
 # there is no occurrence of remote in param.mk.  Yet MN insists on

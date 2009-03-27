@@ -15,12 +15,12 @@ Installation on Windows
 
 Uncompress the kernel-2.0-<arch>-<os>-<compiler>.zip file.
 
-Running urbi-console
-####################
+Running urbi
+############
 
-Urbi console is the quickest way to test your urbi installation: it is
-a simple urbi server with which you can interact directly. It can also
-accept network connections.
+The Urbi console is the quickest way to test your Urbi installation:
+it is a simple Urbi server with which you can interact directly. It
+can also accept network connections.
 
 On Linux:
 
@@ -28,27 +28,27 @@ On Linux:
   * Set your LD_LIBRARY_PATH to find:
     - The kernel library: $URBI_ROOT/gostai/core/i686-pc-linux-gnu/engine
     - The kernel auxiliary library: $URBI_ROOT/lib
-  * Launch urbi-console: $URBI_ROOT/bin/urbi-console --interactive
+  * Launch urbi: $URBI_ROOT/bin/urbi --interactive
 
   The commands could be:
 
   LD_LIBRARY_PATH="$URBI_ROOT/gostai/core/i686-pc-linux-gnu/engine:$LD_LIBRARY_PATH"
   LD_LIBRARY_PATH="$URBI_ROOT/lib:$LD_LIBRARY_PATH"
   export LD_LIBRARY_PATH
-  $URBI_ROOT/bin/urbi-console --interactive
+  $URBI_ROOT/bin/urbi --interactive
 
 On MacOS:
 
   * Follow the same instructions as for Linux, but substitute
     "DYLD_LIBRARY_PATH" for "LD_LIBRARY_PATH".
 
-The --interactive option passed to urbi-console enables you to send
-urbi commands through the standard input and thus experiment very
-quickly with urbi. By specifying "--port <port>", you can also accept
+The --interactive option passed to "urbi" enables you to send
+Urbi commands through the standard input and thus experiment very
+quickly with Urbi. By specifying "--port <port>", you can also accept
 network connections. Many other options are available, try
-"urbi-console --help" to list them.
+"urbi --help" to list them.
 
-On Window, just start the "urbi-console.bat" script, it already includes
+On Window, just start the "urbi.bat" script, it already includes
 the "--interactive --port 54000" command line arguments.
 
 Note that you will likely get a message such as:
@@ -67,15 +67,15 @@ Note that you will likely get a message such as:
 *** See http://www.urbiforge.com for news and updates.
 *** **********************************************************
 Ready.
-urbi-console: got ghost connection
-urbi-console: going to work...
+urbi: got ghost connection
+urbi: going to work...
 [00000516] "Loading URBI.INI"
 [00000516:error] !!! urbi/urbi.u:92.14-29: searchFile: Unable to find file: URBI.INI
 [00000516:error] !!!    called from: urbi/urbi.u:448.1-16: load
 [00000519] "Urbi is up and running."
 
-The "error" is benign and you can safely ignore it: Urbi tries to load a
-user-defined "urbi.ini" file which doesn't exist.
+The "error" is benign and you can safely ignore it: "urbi" tries to
+load a user-defined "urbi.ini" file which doesn't exist.
 
 Building an uobject
 ###################
@@ -99,6 +99,6 @@ Urbi server with the sensor plugged in, the commands could be:
   g++ -shared -fPIC -I $URBI_ROOT/include sensor.cc -o sensor.so
   $URBI_ROOT/bin/urbi-launch --start ./sensor.so
 
-Note that any additional argument to urbi-launch is passed to the
-server. Thus, by adding --interactive, you can interact directly with
-the server, and find your sensor uobject in uobjects.sensor.
+Additional arguments are passed to the Urbi server. Thus, by adding
+--interactive, you can interact directly with the server, and find
+your sensor uobject in uobjects.sensor.

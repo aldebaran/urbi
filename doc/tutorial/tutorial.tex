@@ -3,7 +3,7 @@
 \us comes with a set of tools, two of which being of particular
 importance:
 \begin{description}
-\item[\dfn{urbi-console}] launches an \urbi server.  There are several means
+\item[\dfn{urbi}] launches an \urbi server.  There are several means
   to interact with this server, which will see later.
 \item[\dfn{urbi-launch}] runs \urbi components, the UObjects, and connects
   them to an \urbi server.
@@ -15,8 +15,8 @@ is more detailed, and possibly \autoref{sec:faq} for frequently asked
 questions.
 
 \begin{shell}
-# Make sure urbi-console is properly installed.
-$ urbi-console --version
+# Make sure urbi is properly installed.
+$ urbi --version
 Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
 Copyright (C) 2005-2009 Gostai SAS.
 
@@ -29,7 +29,7 @@ Copyright (C) 2005-2009 Gostai SAS.
 
 
 There are several means to interact with a server spawned by
-\command{urbi-console}.  First of all, you may use the options
+\command{urbi}.  First of all, you may use the options
 \option{-e}/\option{--expression \var{code}} and
 \option{-f}/\option{--file \var{file}} to send some \var{code} or the
 contents of some \var{file} to the newly run server.  You may combine
@@ -39,7 +39,7 @@ programs should end by calling \code{shutdown}:
 
 \begin{shell}
 # A classical program.
-$ urbi-console -e 'echo("Hello, World!");' -e 'shutdown;'
+$ urbi -e 'echo("Hello, World!");' -e 'shutdown;'
 [00000004] *** Hello, World!
 \end{shell}%$
 
@@ -49,7 +49,7 @@ interpreters, \urbi will evaluate the given commands and print out the
 results.
 
 \begin{shell}
-$ urbi-console -i
+$ urbi -i
 [00000000:start] *** **********************************************************
 [00000000:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
 [00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
@@ -83,7 +83,7 @@ they will often be filled with zeroes through this documentation.
 
 The program \command{rlwrap} provides additional services (history of
 commands, advanced command line edition etc.); run \samp{rlwrap
-  urbi-console -i}.
+  urbi -i}.
 
 In either case the server can also be made available for network-based
 interactions using option \option{--port \var{port}}.  Note that while
@@ -92,7 +92,7 @@ interactive session.  In the following example the server is still
 available for other, possibly concurrent, sessions.
 
 \begin{shell}
-$ urbi-console --port 54000 &
+$ urbi --port 54000 &
 [1] 77024
 $ telnet localhost 54000
 Trying 127.0.0.1...

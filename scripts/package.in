@@ -104,5 +104,5 @@ fi
 
 # On Windows, copy the .bat file
 if [ "$OS" = windows ]; then
-  $CP "$builddir/scripts/urbi-console.bat" "$packagedir"
+  $CP "$builddir/scripts/urbi.bat" "$packagedir"
 fi

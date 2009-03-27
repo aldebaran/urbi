@@ -54,7 +54,7 @@ BUILT_SOURCES +=				\
 core:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src core
-	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la urbi-console$(EXEEXT)
+	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la bin/urbi$(EXEEXT)
 
 libs:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
@@ -110,7 +110,7 @@ libraries.stamp: src/libuobject.la sdk-remote/src/libuobject/libuobject.la sdk-r
 
 # All the executables.
 STAMPS += executables.stamp
-executables.stamp: src/urbi-console$(EXEEXT) sdk-remote/src/urbi-launch$(EXEEXT)
+executables.stamp: src/bin/urbi$(EXEEXT) sdk-remote/src/urbi-launch$(EXEEXT)
 	@echo "$$(date): $?" >>$@
 
 # Everything.

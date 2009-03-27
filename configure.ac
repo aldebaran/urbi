@@ -119,9 +119,8 @@ AC_CONFIG_SUBDIRS([sdk-remote])
 URBI_TESTS
 
 AC_CONFIG_FILES([Makefile src/Makefile])
-AC_CONFIG_FILES([scripts/package], [chmod +x scripts/package])
-AC_CONFIG_FILES([scripts/urbi-console.bat],
-                [chmod +x scripts/urbi-console.bat])
+AC_CONFIG_FILES([scripts/package],  [chmod +x scripts/package])
+AC_CONFIG_FILES([scripts/urbi.bat], [chmod +x scripts/urbi.bat])
 AC_CONFIG_HEADERS([src/kernel/config.h])
 AC_CONFIG_FILES([share/urbi/platform.u])
 AC_OUTPUT
