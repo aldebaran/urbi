@@ -24,7 +24,7 @@ include tests/local.mk
 ## Additional text documentation.  ##
 ## ------------------------------- ##
 
-doc_DATA =					\
+dist_doc_DATA =					\
   LICENSE.txt					\
   QUICK-START.txt				\
   README.txt					\
