@@ -24,12 +24,12 @@ include tests/local.mk
 ## Additional text documentation.  ##
 ## ------------------------------- ##
 
-doc_DATA = 					\
-  doc/LICENSE.txt				\
-  doc/QUICK-START.txt				\
-  doc/README.txt				\
-  doc/RELEASE-NOTES.txt				\
-  doc/REPORTING-BUGS.txt
+doc_DATA =					\
+  LICENSE.txt					\
+  QUICK-START.txt				\
+  README.txt					\
+  RELEASE-NOTES.txt				\
+  REPORTING-BUGS.txt
 
 ## ------------ ##
 ## urbi-sdk.pdf ##
