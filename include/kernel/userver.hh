@@ -32,7 +32,7 @@ namespace sched  { class Scheduler; }
 namespace kernel
 {
   /// Global variable for the server
-  extern class UServer* urbiserver;
+  extern URBI_SDK_API class UServer* urbiserver;
 
 
   //! Handle all URBI system processing.
