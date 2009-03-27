@@ -1,7 +1,5 @@
 \section{Float}
 
-\subsection{Rationale}
-
 Float is an \us primitive to represent floating point number.
 
 \subsection{Prototypes}
@@ -39,7 +37,7 @@ Return the absolute value of the target (\autoref{lst:float-abs}).
 
 \subsubsection{acos}
 
-Return the arcosinus of the target.
+Return the arccosine of the target.
 
 \begin{urbiscript}[caption=Float.acos, label=lst:float-acos]
 1.acos;
@@ -48,7 +46,7 @@ Return the arcosinus of the target.
 
 \subsubsection{asin}
 
-Return the arcsinus of the target.
+Return the arcsine of the target.
 
 \begin{urbiscript}[caption=Float.asin, label=lst:float-asin]
 0.asin;
@@ -84,7 +82,8 @@ Return the bitwise and between the target and the argument (\autoref{lst:float-b
 
 \subsubsection{bitor}
 
-Return the bitwise or between the target and the argument (\autoref{lst:float-bitor}).
+Return the bitwise or between the target and the argument
+(\autoref{lst:float-bitor}).
 
 \begin{urbiscript}[caption=Float.bitor, label=lst:float-bitor]
 3 bitor 6;
@@ -93,7 +92,8 @@ Return the bitwise or between the target and the argument (\autoref{lst:float-bi
 
 \subsubsection{clone}
 
-Return a fresh Float with the same value as the target (\autoref{lst:float-clone}).
+Return a fresh Float with the same value as the target
+(\autoref{lst:float-clone}).
 
 \begin{urbiscript}[caption=Float.clone, label=lst:float-clone]
 var x = 0;
@@ -117,7 +117,7 @@ compl 4294967295;
 
 \subsubsection{cos}
 
-Return the cosinus of the target (\autoref{lst:float-cos}).
+Return the cosine of the target (\autoref{lst:float-cos}).
 
 \begin{urbiscript}[caption=Float.cos, label=lst:float-cos]
 0.cos;
@@ -400,3 +400,12 @@ returns \lstinline|a| modulo \lstinline|b| (\autoref{lst:float-mod}).
 1 == 2;
 [00000000] false
 \end{urbiscript}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
+
+% LocalWords:  Orderable lst acos arccosine asin arcsine asString atan bitand
+% LocalWords:  arctangent bitwise bitor compl sqrt trunc asFloat sqr sgn rshift
+% LocalWords:  lshift eq

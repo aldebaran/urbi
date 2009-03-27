@@ -1,8 +1,7 @@
 \section{List}
-\subsection{Rationale}
 
-\lstinline|List|s in \us represent potentially empty ordered
-collections of elements.
+\lstinline|List|s implement potentially empty ordered collections of
+elements.
 
 \subsection{Prototypes}
 
@@ -301,7 +300,7 @@ x;
 
 \subsubsection{range}
 
-Return a subrange of the string, from the first index included to the
+Return a sub-range of the string, from the first index included to the
 second index excluded. An error if out of bounds (\autoref{lst:list-range}).
 
 \begin{urbiscript}[caption=List.range, label=lst:list-range]
@@ -464,3 +463,12 @@ other, and the first differing element is inferior to the other
 [0, 1, 2] < [0, 2, 2];
 [00000000] true
 \end{urbiscript}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
+
+% LocalWords:  lst asList asString foldl hasSame removeBack popback removeFront
+% LocalWords:  popfront insertBack pushback insertFront pushfront urbi sameAs
+% LocalWords:  removeById setNth
