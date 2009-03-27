@@ -46,6 +46,8 @@ using libport::Symbol;
 
 // Where to store uobjects
 static rObject where;
+typedef libport::hash_map<std::string, urbi::UObject*> uobject_to_robject_type;
+static uobject_to_robject_type uobject_to_robject;
 
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \
   object::make_primitive(                               \
@@ -214,6 +216,7 @@ uobject_new(rObject proto, bool forceName)
     where->slot_set(libport::Symbol(name), r);
   }
   uobject_map[name] = r;
+  r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
   // Instanciate UObject.
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
   {
@@ -246,7 +249,35 @@ get_base(const std::string& objname)
   // The user may be using the Urbi variable name.
   if (!res)
     res = object::global_class->slot_get(libport::Symbol(objname));
+  if (!res)
+    res = where->slot_get(libport::Symbol(objname));
   return res;
+}
+
+namespace urbi
+{
+  UObjectHub*
+  getUObjectHub(const std::string& n)
+  {
+    return baseURBIStarterHub::find(n);
+  }
+
+  UObject*
+  getUObject(const std::string& n)
+  {
+    UObject* res = baseURBIStarter::find(n);
+    if (res)
+      return res;
+    uobject_to_robject_type::iterator it = uobject_to_robject.find(n);
+    if (it != uobject_to_robject.end())
+      return it->second;
+    rObject r = get_base(n);
+    if (!r)
+      return 0;
+    std::string name =
+      object::from_urbi<std::string>(r->slot_get(SYMBOL(__uobjectName)));
+    return getUObject(name);
+  }
 }
 
 /// Get an rObject from its uvar name
@@ -416,6 +447,7 @@ namespace urbi
 
   UObject::~UObject()
   {
+    uobject_to_robject.erase(__name);
   }
 
   UObject::UObject(const std::string& name)
@@ -424,6 +456,7 @@ namespace urbi
   {
     ECHO( "Uobject ctor for " << __name );
     load = 1;
+    uobject_to_robject[name] = this;
   }
 
   void
