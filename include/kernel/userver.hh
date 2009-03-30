@@ -223,6 +223,9 @@ namespace kernel
     /// Stops all commands in all connections.
     bool stopall;
 
+    /// Returns 1 if current thread is different from server thread Id.
+    bool isAnotherThread() const;
+
   private:
     /// Store the time on the last call to updateTime().
     libport::utime_t lastTime_;

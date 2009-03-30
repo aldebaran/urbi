@@ -544,4 +544,10 @@ namespace kernel
              "Do the last call within main thread.");
     return dynamic_cast<runner::Runner&> (scheduler_->current_job());
   }
+
+  bool
+  UServer::isAnotherThread() const
+  {
+    return libport::checkMainThread(server_tid_);
+  }
 }

@@ -54,6 +54,11 @@ static uobject_to_robject_type uobject_to_robject;
     boost::function1<void, rObject>(                    \
       boost::bind(&cls::meth, ptr)))
 
+#define CHECK_MAINTHREAD()				\
+  if (::kernel::urbiserver->isAnotherThread())		\
+    pabort("UObject API isn't thread safe. "		\
+	   "Do the last call within main thread.")
+
 static inline runner::Runner& getCurrentRunner()
 {
   return ::kernel::urbiserver->getCurrentRunner();
@@ -436,6 +441,7 @@ namespace urbi
 
   void UObject::USetUpdate(ufloat t)
   {
+    CHECK_MAINTHREAD();
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
     me->slot_update(SYMBOL(update), MAKE_VOIDCALL(this, urbi::UObject, update));
@@ -618,6 +624,7 @@ namespace urbi
     /* Call Urbi-side setHubUpdate, passing an rPrimitive wrapping the 'update'
      * call.
      */
+    CHECK_MAINTHREAD();
     rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
     rObject f = uob->slot_get(SYMBOL(setHubUpdate));
     object::objects_type args = list_of
