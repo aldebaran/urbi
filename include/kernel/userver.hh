@@ -20,6 +20,7 @@
 # include <libport/file-library.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
+# include <libport/thread.hh>
 
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
@@ -235,6 +236,9 @@ namespace kernel
     // Does not need to be an auto_ptr, as it is stored in connections_
     // which handles memory management.
     UGhostConnection* ghost_;
+
+    /// Store the server thread Id.
+    libport::pthread_t thread_id_;
   };
 
 }
