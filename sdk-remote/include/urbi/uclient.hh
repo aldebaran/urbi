@@ -24,6 +24,8 @@
 # define URBI_UCLIENT_HH
 
 # include <libport/semaphore.hh>
+# include <libport/pthread.h>
+
 # include <urbi/uabstractclient.hh>
 
 
@@ -71,7 +73,7 @@ namespace urbi
   protected:
     /// Pipe for termination notification
     int             control_fd[2];       ///< Pipe for termination notification.
-    void*           thread;
+    pthread_t       thread;
 
     /// Delay (in s) without activity to check if the connection is yet available
     unsigned int    pingInterval;

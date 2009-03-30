@@ -116,7 +116,7 @@ namespace urbi
     stopCallbackThread ();
     if (cbThread)
     {
-      libport::joinThread(cbThread);
+      pthread_join(cbThread, 0);
       cbThread = 0;
     }
     return 0;

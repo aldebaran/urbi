@@ -220,7 +220,7 @@ namespace urbi
     // thread is not created.
     if (thread)
       // Must wait for listen thread to terminate.
-      libport::joinThread(thread);
+      pthread_join(thread, 0);
 
     if (control_fd[1] != -1
         && close(control_fd[1]) == -1)

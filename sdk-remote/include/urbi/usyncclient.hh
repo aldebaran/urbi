@@ -28,6 +28,7 @@
 # include <libport/lockable.hh>
 # include <libport/semaphore.hh>
 # include <libport/utime.hh>
+# include <libport/pthread.h>
 
 # include <urbi/uclient.hh>
 
@@ -174,7 +175,7 @@ namespace urbi
     std::string syncTag;
 
     bool stopCallbackThread_;
-    void* cbThread;
+    pthread_t cbThread;
     // Used to block until the callback thread is realy stopped.
     libport::Semaphore stopCallbackSem_;
   };
