@@ -1,5 +1,15 @@
 #! /bin/sh -e
 
+error ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+  exit 1
+}
+
 # The directory on built that contains the packages.
 dir=built/kernel-2.0/archives
 
@@ -20,21 +30,22 @@ all=$(ssh build@gate "cd $dir && ls -1t *windows*.zip *linux*.gz *macos-*.gz")
 
 # Make sure that we have the same version for the three architectures.
 latest=$(echo "$all" |
-    perl -n -e 'if (m/(kernel-2.0-beta\d(?:-\d+-g[\da-f]{7})?)
+    perl -n -e 'if (m/((:?kernel-2.0|urbi-sdk)
+                      -(?:beta|rc-)\d
+                      (?:-\d+-g[\da-f]{7})?)
                       -(?:linux|macos|windows)
-                      -(x86)
+                      -(ARM|ppc|x86)
                       (?:-gcc4-debug_dynamic)?/x)
                 { print "$1\n"; exit 0; }')
 
-test -n "$latest"
+test -n "$latest" ||
+  error "cannot find latest version from:" $all
 
 for os in $oses
 do
   pack=$(echo "$all" | grep -e "$latest-$os" | grep -v 'debug' || true)
-  if test -z "$pack"; then
-    echo >&2 "$0: $latest does not exist for $os"
-    exit 1
-  fi
+  test -n "$pack"||
+    error "$latest does not exist for $os"
 done
 
 for os in $oses
