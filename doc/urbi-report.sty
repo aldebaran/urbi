@@ -2,9 +2,9 @@
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
-%% -------- %%
-%% PACKAGES %%
-%% -------- %%
+%% ---------- %%
+%% Packages.  %%
+%% ---------- %%
 
 % Margin width chosen so that 80 columns are displayed in listings.
 % This is needed to display nicely the banner of UrbiScript
@@ -21,9 +21,9 @@
 \RequirePackage{xspace}
 \RequirePackage[draft,margin]{fixme}
 
-%% ---------- %%
-%% SHORTHANDS %%
-%% ---------- %%
+%% ------------ %%
+%% Shorthands.  %%
+%% ------------ %%
 
 \newcommand{\ai}{AI\xspace}
 \newcommand{\api}{API\xspace}
@@ -42,9 +42,9 @@
 \newcommand{\urbi}{Urbi\xspace}
 \newcommand{\us}{UrbiScript\xspace}
 
-%% ------ %%
-%% FLOATS %%
-%% ------ %%
+%% -------- %%
+%% Floats.  %%
+%% -------- %%
 
 %% This version tries to either put floats HERE, or regroup them on pages
 
@@ -68,29 +68,41 @@
 \renewcommand {\floatpagefraction} {0.8}
 
 
-%% -------- %%
-%% LISTINGS %%
-%% -------- %%
+%% ---------- %%
+%% Listings.  %%
+%% ---------- %%
 
 \RequirePackage{mylistings}
 
-\definecolor{keywords}{rgb}{0.2,0.2,0.8}
-\definecolor{comments}{rgb}{0.8,0.5,0}
+\definecolor{keyword}{rgb}{0.2,0.2,0.8}
+\definecolor{comment}{rgb}{0.8,0.5,0}
 \definecolor{string}{rgb}{0.0,0.5,0.0}
 \definecolor{bg}{rgb}{0.9,0.9,1}
 
+% For some reason "\color{Foo}" does not work as expected with tex4ht,
+% so use \textcolor.
+\@ifpackageloaded{tex4ht}{
+  \newcommand{\keywordstyle}[1]{\bfseries\textcolor{blue}{#1}}
+  \newcommand{\commentstyle}[1]{\bfseries\textcolor{red}{#1}}
+  \newcommand{\stringstyle}[1]{\bfseries\textcolor{green}{#1}}
+}{
+  \newcommand{\keywordstyle}[1]{\bfseries\textcolor{keyword}{#1}}
+  \newcommand{\commentstyle}[1]{\bfseries\textcolor{comment}{#1}}
+  \newcommand{\stringstyle}[1]{\bfseries\textcolor{string}{#1}}
+  \lstset{
+    basicstyle=\ttfamily,
+    backgroundcolor=\color{bg},
+  }
+}
+
 \lstset{
-  keywordstyle=\color{keywords}\bfseries,
-  commentstyle=\color{comments},
-  stringstyle=\color{string},
-  backgroundcolor=\color{bg},
+  keywordstyle=\keywordstyle,
+  commentstyle=\commentstyle,
+  stringstyle=\stringstyle,
   aboveskip=.6cm,
   captionpos=b,
   frame=single,
-  basicstyle=\ttfamily,
   showstringspaces=false,
-%  moredelim=[is][]{`}{`},
-%  breaklines,
 }
 
 % This is so that \lstinline corresponds to urbiScript code in normal
