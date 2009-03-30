@@ -32,17 +32,17 @@ dist_doc_DATA =					\
   RELEASE-NOTES.txt				\
   REPORTING-BUGS.txt
 
-## ------------ ##
-## urbi-sdk.pdf ##
-## ------------ ##
+## -------------- ##
+## urbi-sdk.pdf.  ##
+## -------------- ##
 
 pdf_DATA += urbi-sdk.pdf
 urbi_sdk_sources = $(call ls_files,*.tex)
 REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
 urbi_sdk_deps = $(urbi_sdk_sources) $(call ls_files,*.sty) $(REVISION_FILE)
-EXTRA_DIST += $(urbi_sdk_deps) $(urbi_sdk_deps)
-urbi-sdk.pdf: $(urbi_sdk_deps)
+EXTRA_DIST += $(urbi_sdk_sources)
+urbi-sdk.dvi urbi-sdk.pdf: $(urbi_sdk_deps)
 
 CLEANFILES += $(pdf_DATA)
 
