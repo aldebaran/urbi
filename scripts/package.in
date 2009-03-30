@@ -57,11 +57,10 @@ prefix=${10}
 
 # Set release_mode depending on whether we are building a release version
 # or a development version.
-if [ $MODE = release_dynamic ]; then
-  release_mode=true
-else
-  release_mode=false
-fi
+case $MODE in
+  (release_dynamic) release_mode=true;;
+  (*)               release_mode=false;;
+esac
 
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
@@ -103,6 +102,6 @@ if $release_mode && [ "$OS" != windows ]; then
 fi
 
 # On Windows, copy the .bat file
-if [ "$OS" = windows ]; then
-  $CP "$builddir/scripts/urbi.bat" "$packagedir"
-fi
+case $OS in
+  (windows) $CP "$builddir/scripts/urbi.bat" "$packagedir";;
+esac
