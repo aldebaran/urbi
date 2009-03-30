@@ -64,7 +64,7 @@ esac
 
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
-version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^.*/,,")
+version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^preview/,,;s,/,-,g")
 # If we are in release mode, do not tell it, the final users won't care
 if $release_mode; then
   name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}"
