@@ -20,7 +20,7 @@
 # include <libport/file-library.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
-# include <libport/thread.hh>
+# include <libport/pthread.h>
 
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
@@ -241,7 +241,7 @@ namespace kernel
     UGhostConnection* ghost_;
 
     /// Store the server thread Id.
-    libport::pthread_t thread_id_;
+    pthread_t thread_id_;
   };
 
 }

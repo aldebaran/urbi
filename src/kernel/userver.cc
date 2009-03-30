@@ -90,7 +90,7 @@ namespace kernel
     , mainName_(mainName)
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
-    , server_tid_(libport::pthread_self())
+    , thread_id_(pthread_self())
   {
 #if ! defined NDEBUG
     server_timer.start();
@@ -539,7 +539,7 @@ namespace kernel
   runner::Runner&
   UServer::getCurrentRunner() const
   {
-    if (libport::checkMainThread(server_tid_))
+    if (thread_id_ != pthread_self())
       pabort("UObject API isn't thread safe. "
              "Do the last call within main thread.");
     return dynamic_cast<runner::Runner&> (scheduler_->current_job());
@@ -548,6 +548,6 @@ namespace kernel
   bool
   UServer::isAnotherThread() const
   {
-    return libport::checkMainThread(server_tid_);
+    return thread_id_ != pthread_self();
   }
 }
