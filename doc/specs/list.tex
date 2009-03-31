@@ -228,7 +228,9 @@ of results (\autoref{lst:list-map}).
 Return the nth member of the target (indexing is zero-based). An error
 if out of bounds (\autoref{lst:list-nth}).
 
-\begin{urbiscript}[caption={\lstinline|List.'\[\]'|}, label=lst:list-nth]
+%\begin{urbiscript}[caption={\lstinline|List.'\[\]'|},
+%label=lst:list-nth]
+\begin{urbiscript}[caption={List}, label=lst:list-nth]
 var l = [0, 1, 2];
 [00000000:hide] [0, 1, 2]
 l[1];
@@ -356,7 +358,8 @@ Return the target with the order of elements inverted
 Check whether all elements in the target and the first argument, are
 equal two by two (\autoref{lst:list-sameAs}).
 
-\begin{urbiscript}[caption={\lstinline|List.==|}, label=lst:list-sameAs]
+%\begin{urbiscript}[caption={\lstinline|List.==|}, label=lst:list-sameAs]
+\begin{urbiscript}[caption={List}, label=lst:list-sameAs]
 [0, 1, 2] == [0, 1, 2];
 [00000000] true
 [0, 1, 2] == [0, 0, 2];
@@ -369,7 +372,8 @@ equal two by two (\autoref{lst:list-sameAs}).
 Assign a value to the element of the target at the given index
 (\autoref{lst:list-setNth}).
 
-\begin{urbiscript}[caption={\lstinline|List.'\[\]='|}, label=lst:list-setNth]
+%\begin{urbiscript}[caption={\lstinline|List.'\[\]='|}, label=lst:list-setNth]
+\begin{urbiscript}[caption={List}, label=lst:list-setNth]
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
 x[1] = 42;
@@ -416,7 +420,8 @@ empty (\autoref{lst:list-tail}).
 Return the target, concatenated n times to itself, n being the
 argument (\autoref{lst:list-times}).
 
-\begin{urbiscript}[caption={\lstinline|List.'*'|}, label=lst:list-times]
+%\begin{urbiscript}[caption={\lstinline|List.'*'|}, label=lst:list-times]
+\begin{urbiscript}[caption={List.'*'}, label=lst:list-times]
 [0, 1] * 3;
 [00000000] [0, 1, 0, 1, 0, 1]
 \end{urbiscript}
@@ -426,7 +431,8 @@ argument (\autoref{lst:list-times}).
 Return the concatenation of the target and the given list
 (\autoref{lst:list-plus}).
 
-\begin{urbiscript}[caption={\lstinline|List.'+'|}, label=lst:list-plus,
+%\begin{urbiscript}[caption={\lstinline|List.'+'|}, label=lst:list-plus,
+\begin{urbiscript}[caption={List.'+'}, label=lst:list-plus,
   float=\floatpos]
 [0, 1] + [2, 3];
 [00000000] [0, 1, 2, 3]
@@ -437,7 +443,8 @@ Return the concatenation of the target and the given list
 Return the target without all element that equals any element in the
 given list(\autoref{lst:list-minus}).
 
-\begin{urbiscript}[caption={\lstinline|List.'-'|}, label=lst:list-minus,
+%\begin{urbiscript}[caption={\lstinline|List.'-'|}, label=lst:list-minus,
+\begin{urbiscript}[caption={List.'-'}, label=lst:list-minus,
   float=\floatpos]
 [0, 1, 0, 2, 3] - [1, 2];
 [00000000] [0, 0, 3]
@@ -454,7 +461,8 @@ inferior to another if at least one of its element differs from the
 other, and the first differing element is inferior to the other
 (\autoref{lst:list-inf}).
 
-\begin{urbiscript}[caption={\lstinline|List.'<'|}, label=lst:list-inf,
+%\begin{urbiscript}[caption={\lstinline|List.'<'|}, label=lst:list-inf,
+\begin{urbiscript}[caption={List.'<'}, label=lst:list-inf,
   float=\floatpos]
 [0, 1, 2] < [0, 1, 2];
 [00000000] false
