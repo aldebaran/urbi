@@ -613,23 +613,14 @@ namespace
     {
       case DATA_DOUBLE:
 	return val;
-
       case DATA_STRING:
-      {
-	std::istringstream is(*stringValue);
-	ufloat v;
-	is >> v;
-	return v;
-      }
-      break;
-
+        return lexical_cast<ufloat>(*stringValue);
       case DATA_BINARY:
       case DATA_LIST:
       case DATA_OBJECT:
       case DATA_VOID:
-	break;
+        break;
     }
-
     return ufloat(0);
   }
 
@@ -638,30 +629,23 @@ namespace
   {
     switch (type)
     {
-    case DATA_DOUBLE:
-    {
-      std::ostringstream o;
-      o << val;
-      return o.str();
-    }
-
-    case DATA_STRING:
-      return *stringValue;
-
-    case DATA_BINARY:
+      case DATA_DOUBLE:
+        return lexical_cast<std::string>(val);
+      case DATA_STRING:
+        return *stringValue;
       // We cannot convert to UBinary because it is ambigous so we
       // try until we found the right type.
-    {
-      USound snd(*this);
-      if (snd.soundFormat != SOUND_UNKNOWN)
-        return snd;
-      goto invalid;
+      case DATA_BINARY:
+      {
+        USound snd(*this);
+        if (snd.soundFormat != SOUND_UNKNOWN)
+          return snd;
+        break;
+      }
+      default:
+        break;
     }
-
-    invalid:
-    default:
-      return "invalid";
-    }
+    return "invalid";
   }
 
   UValue::operator UBinary() const
