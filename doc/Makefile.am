@@ -17,6 +17,9 @@ EXTRA_DIST += $(call ls_files,img/*.pdf)
 TEXI2DVI_FLAGS += -I $(srcdir)
 pdf_DATA =
 
+# Use tex4ht
+TEXI2HTML_FLAGS += --tex4ht --verbose --debug
+
 include specs/local.mk
 include tutorial/local.mk
 include tests/local.mk
@@ -42,7 +45,7 @@ REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
 urbi_sdk_deps = $(urbi_sdk_sources) $(call ls_files,*.sty) $(REVISION_FILE)
 EXTRA_DIST += $(urbi_sdk_sources)
-urbi-sdk.dvi urbi-sdk.pdf: $(urbi_sdk_deps)
+urbi-sdk.dvi urbi-sdk.html urbi-sdk.pdf: $(urbi_sdk_deps)
 
 CLEANFILES += $(pdf_DATA)
 
