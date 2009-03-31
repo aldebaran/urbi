@@ -50,7 +50,7 @@ REVISIONFLAGS = --latex
 urbi_sdk_deps = $(urbi_sdk_sources) $(call ls_files,*.sty) $(REVISION_FILE)
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi-sdk.dvi urbi-sdk.html urbi-sdk.pdf: $(urbi_sdk_deps)
-urbi-sdk.dvi urbi-sdk.html: $(EPS_FIGS)
+urbi-sdk.dvi urbi-sdk.html: $(EPS_IMAGES)
 
 view: $(pdf_DATA)
 	xpdf $<
