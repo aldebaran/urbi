@@ -59,11 +59,13 @@ view: $(pdf_DATA)
 	-mkdir -p $(dir $@)
 	convert $< $@
 
-# Convert some old LaTeX 2.09 idioms into 2e.
-latex2e:
-	perl -pi.bak -0777 -e 's/\{\\em (.*?)}/\\emph{$$1}/gs' \
-	  $(srcdir)/specs/*.tex
 
+## -------------- ##
+## document-aux.  ##
+## -------------- ##
+.PHONY: install-doc
+install-doc: $(pdf_DATA)
+	scp $(pdf_DATA) downloads@www.gostai.com:urbi-sdk-2.0/doc
 
 ## -------------- ##
 ## document-aux.  ##

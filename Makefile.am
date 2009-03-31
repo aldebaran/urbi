@@ -61,6 +61,9 @@ libs:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
 	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject.la
 
+install-doc:
+	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
+
 
 ## ------- ##
 ## Check.  ##
