@@ -1,4 +1,4 @@
-END USER LICENSE AGREEMENT (1.0)
+END USER LICENSE AGREEMENT (1.1)
 
 PLEASE READ THIS AGREEMENT CAREFULLY.  BY USING ALL OR ANY PORTION OF
 THE SOFTWARE YOU (“YOU” AND “LICENSEE”) ACCEPT THE FOLLOWING TERMS
@@ -57,8 +57,10 @@ modifications of the Urbi SDK provided to Licensee.
 and subject to all the terms and conditions of this License Agreement,
 Gostai hereby grants Licensee a nonterminable, nonexclusive,
 nontransferable license for the Term to use the Urbi SDK for its own
-internal use for non-commercial applications. This license is in
-respect of use of the Urbi SDK by the Licensee only and no
+internal use for non-commercial applications, non-commercial
+activities, non-commercial evaluation. By non-commercial, we mean:
+academics use, personal hobbyist use or non-profit use. This license
+is in respect of use of the Urbi SDK by the Licensee only and no
 subsidiaries or holding company of the Licensee may use the Urbi SDK.
 
 2.2 Licensee shall not, and shall not permit any third parties to:
@@ -209,3 +211,4 @@ Agreement.
 Gostai S.A.S.
 15, rue Vergniaud
 75013 Paris
+France
