@@ -2143,7 +2143,7 @@ sleep (2s);
 \end{urbiscript}
 
 \section{Events}
-
+\label{sec:tut:events}
 \us enables you to define events, that can be caught with the
 \lstinline|at| and \lstinline|whenever| constructs we saw earlier. You
 can create events by cloning the \lstinline|Event| prototype. They can
@@ -2163,9 +2163,9 @@ myEvent! & myEvent!;
 \end{urbiscript}
 
 Both \lstinline|at| and \lstinline|whenever| have the same behavior on
-punctual events. However, you can emit an event for a certain
-duration, and \lstinline|whenever| will keep triggering for this
-duration (\autoref{lst:tut:emit-duration}).
+punctual events. However, if you emit an event for a given duration,
+and \lstinline|whenever| will keep triggering for this duration
+(\autoref{lst:tut:emit-duration}), contrary to \lstinline|at|.
 
 \begin{urbiscript}[caption=Emitting events with a duration,
   label=lst:tut:emit-duration]
@@ -2173,13 +2173,19 @@ var myEvent = Event.new;
 [00000000] Event_0x0
 whenever (myEvent?)
 {
-  echo("ping")|
+  echo("ping (whenever)")|
+  sleep(200ms)
+};
+at (myEvent?)
+{
+  echo("ping (at)")|
   sleep(200ms)
 };
 // Emit myEvent for .3 second.
 myEvent! ~ 300ms;
-[00000000] *** ping
-[00000100] *** ping
+[00000000] *** ping (at)
+[00000000] *** ping (whenever)
+[00000100] *** ping (whenever)
 \end{urbiscript}
 
 %\section{Valued events}
