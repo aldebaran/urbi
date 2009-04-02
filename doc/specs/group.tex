@@ -2,6 +2,67 @@
 A transparent means to send messages to several objects as if they
 were one.
 
+\begin{itemize}
+\item \lstinline|asString|\\
+  Report the members.
+\item \lstinline|add(\var{member}, ...)|\\
+  Add members to \lstinline|this| group, and return \lstinline|this|.
+\item \lstinline|fallback|\\
+  This function is called when a method call on \lstinline|this|
+  failed.  It bounces the call to the members of the group, collects
+  the results returned as a group.  This allows to chain grouped
+  operation in a row.  If the dispatched calls return
+  \lstinline|void|, returns a single \lstinline|void|, not a ``group
+  of \lstinline|void|''.
+\item \lstinline|getProperty(\var{slot}, \var{prop})|\\
+  Bounced to the members so that
+  \lstinline|this.var{slot}->\var{prop}| actually collects the values
+  of the property \var{prop} of the slots \var{slot} of the group
+  members.
+\item \lstinline|hasProperty(\var{name})|\\
+  Bounced to the members.
+\item \lstinline|remove(\var{member}, ...)|\\
+  Remove members from \lstinline|this| group, and return
+  \lstinline|this|.
+\item \lstinline|setProperty(\var{slot}, \var{prop}, \var{value})|\\
+  Bounced to the members so that
+  \lstinline|this.var{slot}->\var{prop} = \var{value}|
+  actually updates the value of the property \var{prop}
+  in the slots \var{slot} of the group members.
+\item \lstinline|updateSlot(\var{name}, \var{value})|\\
+  Bounced to the members so that
+  \lstinline|this.\var{name} = \var{value}|
+  actually updates the value of the slot \var{name} in
+  the group members.
+\item \lstinline|<< \var{member}|\\
+  Syntactic sugar for \lstinline|add|.
+\end{itemize}
+
+\begin{urbiscript}
+class Sample
+{
+  var value = 0;
+  function init(v) { value = v; };
+  function asString() { "<" + value.asString + ">"; };
+  function timesTen() { new(value * 10); };
+  function plusTwo()  { new(value + 2); };
+};
+[00000000] <0>
+
+var group = Group.new(Sample.new(1), Sample.new(2));
+[00000000] Group [<1>, <2>]
+group << Sample.new(3);
+[00000000] Group [<1>, <2>, <3>]
+group.timesTen.plusTwo;
+[00000000] Group [<12>, <22>, <32>]
+
+// Bouncing getSlot and updateSlot.
+group.value;
+[00000000] Group [1, 2, 3]
+group.value = 10;
+[00000000] Group [10, 10, 10]
+\end{urbiscript}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"

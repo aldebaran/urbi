@@ -1,5 +1,25 @@
 \section{Comparable}
-Objects that can be compared for equality and inequality.
+Objects that can be compared for equality and inequality.  See also
+\refObject{Comparable}.
+
+This object, made to serve as prototype, provides a definition of
+\lstinline{==} based on \lstinline{!=}, and vice versa.  You
+\strong{must} define one of these, otherwise invoking either method
+will result in endless recursions.
+
+\begin{urbiscript}
+class Foo : Comparable
+{
+  var value = 0;
+  function init (v) { value = v; };
+  function '!=' (lhs) { value != lhs.value; };
+};
+[00000000] Foo
+Foo.new(1) == Foo.new(1);
+[00000000] true
+Foo.new(1) == Foo.new(2);
+[00000000] false
+\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex

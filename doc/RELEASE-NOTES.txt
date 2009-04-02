@@ -56,6 +56,12 @@ Using waituntil on an event with no payload (ie: waituntil(?e) ...;)
 will not cause an internal error anymore.
 
 
+Documentation
+=============
+
+Extended documentation on: Comparable, Orderable.
+
+
 ****************************
 * New in kernel 2.0 beta 4 *
 ****************************

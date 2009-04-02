@@ -1,5 +1,32 @@
 \section{Orderable}
-Objects that have a concept of ``smaller than''.
+Objects that have a concept of ``smaller than''.  See also
+\refObject{Comparable}.
+
+This object, made to serve as prototype, provides a definition of
+\lstinline{<} based on \lstinline{>}, and vice versa; and definition
+of \lstinline{<=}/\lstinline{>=} based on
+\lstinline{<}/\lstinline{>}\lstinline{==}.  You \strong{must} define
+either \lstinline{<} or \lstinline{>}, otherwise invoking either
+method will result in endless recursions.
+
+\begin{urbiscript}
+class Foo : Orderable
+{
+  var value = 0;
+  function init (v) { value = v; };
+  function '<' (lhs)  { value < lhs.value; };
+  function asString() { "<" + value.asString + ">"; };
+};
+[00000000] <0>
+var one = Foo.new(1);
+[00000001] <1>
+var two = Foo.new(2);
+[00000002] <2>
+
+assert(  one <= one  &&   one <= two  && !(two <= one));
+assert(!(one >  one) && !(one >  two) &&   two >  one);
+assert(  one >= one  && !(one >= two) &&   two >= one);
+\end{urbiscript}
 
 
 %%% Local Variables:
