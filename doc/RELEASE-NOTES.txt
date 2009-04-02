@@ -39,6 +39,18 @@ This syntax for sending and receiving is traditional and can be found
 in various programming languages.
 
 
+URBI Remote SDK
+===============
+
+The API for pliugged-in UObjects is not thread safe, and never was:
+calls to the API must be done only in the very same thread that runs
+the Urbi code.  Assertions (runtime failures) are now triggered for
+invalid calls.
+
+Be sure to read the article from the Developpers' Blog.
+http://devblog.gostai.com/index.php/2008/12/02/uobjects-and-thread-safeness/
+
+
 System.Platform
 ===============
 
@@ -52,7 +64,7 @@ Various bug fixes
 Under some circumstances successful runs could report "at job handler
 exited with exception TerminateException".  This is fixed.
 
-Using waituntil on an event with no payload (ie: waituntil(?e) ...;)
+Using waituntil on an event with no payload (ie: waituntil(e?) ...;)
 will not cause an internal error anymore.
 
 
