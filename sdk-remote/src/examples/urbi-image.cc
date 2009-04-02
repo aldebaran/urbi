@@ -92,9 +92,7 @@ usage(libport::OptionParser& parser)
 {
   std::cout <<
     "usage: " << program_name() << " [options]\n"
-    "Display images from an urbi server, or save one image if\n"
-    "-o is given\n"
-    "\n";
+    "Display images from an urbi server, or save one image if -o is given\n";
   parser.options_doc(std::cout);
   std::cout << std::endl <<
     "transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
@@ -119,25 +117,33 @@ main (int argc, char *argv[])
 
   libport::OptionValue
     arg_period("query images at given period (in milliseconds)",
-               "period", 'p'),
+               "period", 'p', "PERIOD"),
     arg_jpeg("jpeg compression factor (from 0 to 100, def 70)",
-             "jpeg", 'j'),
-    arg_dev("query image on device.val (default: camera.val)",
-            "device", 'd'),
-    arg_out("query and save one image to file",
-            "output", 'o'),
-    arg_scale("rescale image with given factor (display only)",
-              "scale", 's'),
+             "jpeg", 'j', "FACTOR"),
+    arg_dev("query image on DEVICE.val (default: camera.val)",
+            "device", 'd', "DEVICE"),
+    arg_out("query and save one image to FILE",
+            "output", 'o', "FILE"),
+    arg_scale("rescale image with given FACTOR (display only)",
+              "scale", 's', "FACTOR"),
     arg_form("select format of the image (rgb, ycrcb, jpeg, ppm)",
-             "format", 'F');
+             "format", 'F', "FORMAT");
   libport::OptionFlag
     arg_rec("use reconstruct mode (for aibo)",
             "reconstruct", 'r');
 
   libport::OptionParser opt_parser;
-  opt_parser << libport::opts::help << arg_form
-	     << libport::opts::host << libport::opts::port << arg_period
-	     << arg_rec << arg_jpeg << arg_dev << arg_out << arg_scale;
+  opt_parser << "Options:"
+	     << libport::opts::help
+	     << libport::opts::host
+	     << libport::opts::port
+	     << arg_period
+	     << arg_form
+	     << arg_rec
+	     << arg_jpeg
+	     << arg_dev
+	     << arg_out
+	     << arg_scale;
 
   opt_parser(libport::program_arguments());
 

@@ -49,9 +49,7 @@ namespace
     std::cout <<
       "usage: " << program_name() << " [OPTION].. [FILE]...\n"
       "\n"
-      "  FILE    to upload onto the server\n"
-      "\n"
-      "Options:\n";
+      "  FILE    to upload onto the server\n";
     parser.options_doc(std::cout);
     std::cout << "\n"
 	      << urbi::package_info().report_bugs()
@@ -176,10 +174,10 @@ main(int argc, char* argv[])
 
   // Parse the command line.
   libport::OptionValues
-    arg_exp("send SCRIPT to the server", "expression", 'e'),
-    arg_file("send the contents of FILE to the server", "file", 'f');
+    arg_exp("send SCRIPT to the server", "expression", 'e', "SCRIPT"),
+    arg_file("send the contents of FILE to the server", "file", 'f', "FILE");
   libport::OptionValue
-    arg_pfile("file containing the port to listen to", "port-file");
+    arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
     arg_banner("do not hide the server-sent banner", "banner", 'b');
 
@@ -191,9 +189,16 @@ main(int argc, char* argv[])
   arg_file.set_callback(&cb_file);
 
   libport::OptionParser opt_parser;
-  opt_parser << arg_exp << arg_file << arg_pfile << libport::opts::help
-	     << libport::opts::host_l << libport::opts::port_l
-	     << libport::opts::version << arg_banner;
+  opt_parser << "Options:"
+	     << arg_banner
+	     << arg_exp
+	     << arg_file
+	     << libport::opts::help
+	     << libport::opts::host_l
+	     << libport::opts::port_l
+	     << arg_pfile
+	     << libport::opts::version;
+
   libport::cli_args_type
     remainings_args = opt_parser(libport::program_arguments());
 

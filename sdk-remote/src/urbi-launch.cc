@@ -151,8 +151,7 @@ usage(libport::OptionParser& parser)
   std::cout <<
     "usage: " << program_name() <<
     " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
-    "Start an UObject in either remote or plugin mode.\n"
-    "\n";
+    "Start an UObject in either remote or plugin mode.\n";
   parser.options_doc(std::cout);
   std::cout <<
     "\n"
@@ -234,9 +233,9 @@ main(int argc, char* argv[])
   args << argv[0];
 
   libport::OptionValue
-    arg_custom("start using the shared library FILE", "custom", 'c'),
-    arg_debug("increase verbosity for debug", "debug"),
-    arg_pfile("file containing the port to listen to", "port-file");
+    arg_custom("start using the shared library FILE", "custom", 'c', "FILE"),
+    arg_debug("increase verbosity for debug", "debug", 0, "N"),
+    arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
     arg_plugin("start as a plugin uobject on a running server", "plugin", 'p'),
     arg_remote("start as a remote uobject", "remote", 'r'),
@@ -244,9 +243,20 @@ main(int argc, char* argv[])
   libport::OptionsEnd arg_end;
 
   libport::OptionParser opt_parser;
-  opt_parser << arg_custom << arg_debug << libport::opts::help << arg_end
-	     << libport::opts::host << arg_plugin << libport::opts::port
-	     << arg_pfile << arg_remote << arg_start << libport::opts::version;
+  opt_parser << "Urbi-Launch options:"
+	     << libport::opts::help
+	     << libport::opts::version
+	     << arg_custom
+	     << arg_debug
+	     << "Mode selection:"
+	     << arg_plugin
+	     << arg_remote
+	     << arg_start
+	     << "Urbi-Launch options for plugin mode:"
+	     << libport::opts::host
+	     << libport::opts::port
+	     << arg_pfile
+	     << arg_end;
 
   try
   {
