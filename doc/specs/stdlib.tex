@@ -7,56 +7,35 @@
 \chapter{\us Standard Library}
 \label{sec:stdlib}
 
-\section{Boolean}
-\section{CallMessage}
-
-\subsection{Examples}
-\subsubsection{Evaluating an argument several times}
-\label{sec:std-callmsg-examples-several}
-\section{Channel}
-\section{Code}
-\section{Comparable}
-
+\input{specs/boolean}
+\input{specs/callmessage}
+\input{specs/channel}
+\input{specs/code}
+\input{specs/comparable}
 \input{specs/dictionary}
-
-\section{Event}
-
+\input{specs/event}
 \input{specs/float}
-
-\section{Group}
-
+\input{specs/group}
 \input{specs/lazy}
 \input{specs/list}
-
-\section{Lobby}
+\input{specs/lobby}
 \input{specs/object}
-\section{Orderable}
-\section{Pair}
-\section{Pattern}
-\section{Primitive}
-\section{String}
-
-\section{System}
-
-\section{System.Platform}
-
-A description of the platform (the computer) the server is running on.
-\subsection{Slots}
-
-\subsubsection{kind}
-Either \code{"POSIX"} or \code{"WIN32"}.
-
-\section{Tag}
-\section{Tuple}
-\section{void}
-
+\input{specs/orderable}
+\input{specs/pair}
+\input{specs/pattern}
+\input{specs/primitive}
+\input{specs/string}
+\input{specs/system}
+\input{specs/system/platform}
+\input{specs/tag}
+\input{specs/void}
 
 %% Restore the definition of \section.
 \let\section\sectionOrig
 
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "urbi-specs"
+%%% TeX-master: "../urbi-sdk"
 %%% End:
 
 % LocalWords:  CallMessage memoization callmsg lst eval xADDR createSlot POSIX
