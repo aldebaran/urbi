@@ -48,7 +48,7 @@ URBI_SOCKETS
 URBI_LIBPORT([libport])
 
 # X11.
-# AC_PATH_XTRA will find us X11 headers even if we are cross-compiling for windows
+# AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.
 case $ac_cv_host in
   (*pw32*|*win32*|*mingw*) no_x=yes;;
   (*)  AC_PATH_XTRA ;;
