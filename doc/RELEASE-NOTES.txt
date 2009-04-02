@@ -1,9 +1,9 @@
 This file summarizes the user-visible changes since the first beta 1
 release.
 
-****************************
-* New in kernel 2.0 beta 5 *
-****************************
+***************************
+* New in kernel 2.0 RC 1. *
+***************************
 
 Auxiliary programs
 ==================
@@ -32,7 +32,8 @@ The "?" construct is changed for symmetry.
    // deprecated.              // updated.
    at (?e)                     at (e?)
    at (?e(var a))              at (e?(var a))
-   at (?e(var a) if a == 2)    at (e?(var a) if a == 2)
+   at (?e(var a) if 0 <= a)    at (e?(var a) if 0 <= a)
+   at (?e(2))                  at (e?(2))
 
 This syntax for sending and receiving is traditional and can be found
 in various programming languages.
