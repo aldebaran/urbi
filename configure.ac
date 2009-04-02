@@ -33,7 +33,6 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-URBI_COMPILATION_MODE
 
 # Bison.
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
@@ -59,6 +58,7 @@ AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
 TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
+URBI_COMPILATION_MODE
 TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wcast-qual],
 		 [-Wmissing-prototypes],
