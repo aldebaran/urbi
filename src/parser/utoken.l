@@ -314,7 +314,7 @@ do {                                            \
   }
 
 %}
-%option debug
+%option nodefault
 
 %x SC_C_COMMENT SC_DOC_COMMENT SC_STRING_OR_SYMBOL
 %s SC_UCONSOLE

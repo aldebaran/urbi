@@ -79,12 +79,14 @@ ugrammar_deps =					\
   $(wildcard $(top_builddir)/bison/data/*.cc)	\
   $(wildcard $(top_builddir)/bison/data/*.m4)
 
+AM_BISONFLAGS = -d -ra -Derror_verbose=$(ERROR_VERBOSE)
 $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
 	echo '$@ rebuilt because of: $?' >$@.tmp
 	$(MAKE) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
-	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc -d -ra $(BISON_FLAGS)
+	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc \
+	  $(AM_BISONFLAGS) $(BISONFLAGS)
 	mv -f $@.tmp $@
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
@@ -161,7 +163,7 @@ parser/utoken.stamp: parser/utoken.l $(utoken_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(FLEXXX) $< parser/utoken.cc
+	$(FLEXXX) $< parser/utoken.cc $(FLEXXXFLAGS)
 	@mv -f $@.tmp $@
 
 $(FROM_UTOKEN_L): parser/utoken.stamp
