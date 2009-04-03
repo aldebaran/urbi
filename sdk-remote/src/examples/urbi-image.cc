@@ -117,13 +117,22 @@ main (int argc, char *argv[])
   im.data = 0;
   im.imageFormat = urbi::IMAGE_RGB;
 
-  libport::OptionValue arg_period("query images at given period (in milliseconds)", "period", 'p');
-  libport::OptionFlag arg_rec("use reconstruct mode (for aibo)", "reconstruct", 'r');
-  libport::OptionValue arg_jpeg("jpeg compression factor (from 0 to 100, def 70)", "jpeg", 'j');
-  libport::OptionValue arg_dev("query image on device.val (default: camera.val)", "device", 'd');
-  libport::OptionValue arg_out("query and save one image to file", "output", 'o');
-  libport::OptionValue arg_scale("rescale image with given factor (display only)", "scale", 's');
-  libport::OptionValue arg_form("select format of the image (rgb, ycrcb, jpeg, ppm)", "format", 'F');
+  libport::OptionValue
+    arg_period("query images at given period (in milliseconds)",
+               "period", 'p'),
+    arg_jpeg("jpeg compression factor (from 0 to 100, def 70)",
+             "jpeg", 'j'),
+    arg_dev("query image on device.val (default: camera.val)",
+            "device", 'd'),
+    arg_out("query and save one image to file",
+            "output", 'o'),
+    arg_scale("rescale image with given factor (display only)",
+              "scale", 's'),
+    arg_form("select format of the image (rgb, ycrcb, jpeg, ppm)",
+             "format", 'F');
+  libport::OptionFlag
+    arg_rec("use reconstruct mode (for aibo)",
+            "reconstruct", 'r');
 
   libport::OptionParser opt_parser;
   opt_parser << libport::opts::help << arg_form
@@ -144,7 +153,9 @@ main (int argc, char *argv[])
   urbi::USyncClient client(libport::opts::host.value("localhost"),
 			   libport::opts::port.get<int>(urbi::UClient::URBI_PORT));
   if (client.error())
-    urbi::exit(1);
+    std::cerr << libport::program_name() << ": client failed to set up"
+	      << std::endl
+              << libport::exit(1);
 
   client.setCallback(showImage, "uimg");
 
@@ -168,30 +179,21 @@ main (int argc, char *argv[])
   }
   else
   {
-    /* Use syncGetImage to save one image to a file. */
-    char buff[1000000];
-    size_t sz = sizeof buff;
-    size_t w, h;
     switch (arg_format[0])
     {
-      case 'r':
-	format = urbi::IMAGE_RGB;
-	break;
-      case 'y':
-	format = urbi::IMAGE_YCbCr;
-	break;
-      case 'p':
-	format = urbi::IMAGE_PPM;
-	break;
-      case 'j':
-	format = urbi::IMAGE_JPEG;
-	break;
+      case 'r':	format = urbi::IMAGE_RGB;	break;
+      case 'y':	format = urbi::IMAGE_YCbCr;	break;
+      case 'p':	format = urbi::IMAGE_PPM;	break;
+      case 'j':	format = urbi::IMAGE_JPEG;	break;
       default:
 	std::cerr << program_name() << ": invalid format :"
                   << arg_format << std::endl
                   << libport::exit(EX_USAGE);
     };
-
+    /* Use syncGetImage to save one image to a file. */
+    char buff[1000000];
+    size_t sz = sizeof buff;
+    size_t w, h;
     client.syncGetImage(device, buff, sz,
 			format,
 			(format == urbi::IMAGE_JPEG
