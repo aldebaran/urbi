@@ -14,7 +14,7 @@ Making a release
 
 Do not forget to tag the release.  Something like:
 
-   tag=preview/2.0/beta3                                            &&
+   tag=preview/2.0/rc-1                                             &&
    git tag -a -m "Linux/x86, OS X, and Windows beta version." $tag  &&
    git push --tags origin $tag
 
@@ -76,6 +76,8 @@ Environment: Linux x86 et x86_64.
 ENSTA
 =====
 Contact: David Filliat <david.filliat@ensta.fr>
+Contact: Stéphane Bazeille <stephane.bazeille@ensta.fr>
+Contact: Toby Low <daniel.low@ensta.fr>
 Environment: Mac Intel Leopard
 
 ENSTAR
