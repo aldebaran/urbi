@@ -167,14 +167,13 @@ main (int argc, char *argv[])
 
   if (!fileName)
   {
-    int period = arg_period.get<int>(0);
     imcount = 0;
     format = (arg_format[0] == 'r') ? 0 : 1;
     client.send("%s.format = %d;", device, format);
-    if (!period)
-      client.send("loop {uimg << %s.val; noop},", device);
+    if (int period = arg_period.get<int>(0))
+      client.send("every (%dms) uimg << %s.val,", period, device);
     else
-      client.send("every (%d) uimg << %s.val,", period, device);
+      client.send("loop { uimg << %s.val; noop },", device);
     urbi::execute();
   }
   else
