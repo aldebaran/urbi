@@ -5,7 +5,7 @@
 #include <list>
 #include <libport/unistd.h>
 
-#include "compatibility.hh"
+#include <liburbi/compatibility.hh>
 
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
@@ -249,30 +249,6 @@ namespace urbi
       return name + "_" + getClientConnectionID (cli);
     else
       return name;
-  }
-
-
-  /*-----------------.
-  | Kernel version.  |
-  `-----------------*/
-
-  int kernelMajor()
-  {
-    int res = getDefaultClient()->kernelMajor();
-    passert(res, res != -1);
-    return res;
-  }
-
-  int kernelMinor()
-  {
-    int res = getDefaultClient()->kernelMinor();
-    passert(res, res != -1);
-    return res;
-  }
-
-  const std::string& kernelVersion()
-  {
-    return getDefaultClient()->kernelVersion();
   }
 
 

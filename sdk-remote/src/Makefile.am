@@ -16,7 +16,8 @@ JPEG_LIBS = $(top_builddir)/jpeg/libjpeg.la
 AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\
   $(JPEG_CPPFLAGS)				\
-  -I$(top_srcdir)/include -I$(top_builddir)
+  -I$(top_srcdir)/include -I$(top_builddir)	\
+  -I$(srcdir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
 

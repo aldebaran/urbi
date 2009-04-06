@@ -8,7 +8,7 @@
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 
-#include "compatibility.hh"
+#include <liburbi/compatibility.hh>
 
 namespace urbi
 {

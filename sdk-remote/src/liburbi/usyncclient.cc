@@ -6,6 +6,7 @@
 #include <libport/thread.hh>
 #include <libport/unistd.h>
 
+#include <liburbi/compatibility.hh>
 #include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
 
@@ -219,31 +220,13 @@ namespace urbi
     if (!has_terminator(format))
       strcat(sendBuffer, ",\n");
     std::string tag = make_tag(*this, mtag, mmod);
-    std::string cmd;
-    if (2 <= kernelMajor_)
-      // Really create the channel for this tag, as the user is
-      // probably using this tag in the code.
-      cmd += ("if (!hasSlot(\"" + tag + "\"))\n"
-              "{\n"
-              "  var this." + tag + " = Channel.new(\"" + tag + "\")|\n"
-              "  var this.__created_chan__ = true |\n"
-              "}|\n");
-    cmd += tag + " << ";
-    effective_send(cmd);
+    effective_send(compatibility::channel_construct(tag)
+                   + tag + " << ");
     queueLock_.lock();
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    if (2 <= kernelMajor_)
-    {
-      cmd = ("if (hasSlot(\"__created_chan__\"))\n"
-             "{\n"
-             "  removeSlot(\"__created_chan__\")|\n"
-             "  removeSlot(\"" + tag + "\")|\n"
-             "};\n");
-      effective_send(cmd);
-    }
-
+    effective_send(compatibility::channel_destroy(tag));
     if (mtag)
       tag = mtag;
     return waitForTag(tag);

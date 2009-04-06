@@ -12,8 +12,9 @@
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 
-# include <urbi/fwd.hh>
 # include <urbi/export.hh>
+# include <urbi/fwd.hh>
+# include <urbi/kernel-version.hh>
 # include <urbi/ucallbacks.hh>
 # include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
@@ -126,10 +127,6 @@ namespace urbi
   extern URBI_SDK_API UObject* dummyUObject;
 
   // Global function of the urbi:: namespace to access kernel features
-
-  URBI_SDK_API int kernelMajor();
-  URBI_SDK_API int kernelMinor();
-  URBI_SDK_API const std::string& kernelVersion();
 
   /// Write a message to the server debug output. Printf syntax.
   URBI_SDK_API void echo(const char* format, ... )

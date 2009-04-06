@@ -7,7 +7,7 @@
 #include <libport/lexical-cast.hh>
 #include <libport/program-name.hh>
 
-#include "compatibility.hh"
+#include <liburbi/compatibility.hh>
 
 #include <urbi/utimer-callback.hh>
 #include <urbi/uobject.hh>

@@ -9,6 +9,9 @@ liburbi_liburbi_la_SOURCES =			\
   libuco/uimage.cc				\
   libuco/uvalue-common.cc			\
   libuco/package-info.cc			\
+  liburbi/compatibility.hh			\
+  liburbi/compatibility.hxx			\
+  liburbi/kernel-version.cc			\
   liburbi/uabstractclient.cc			\
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
