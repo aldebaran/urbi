@@ -124,7 +124,7 @@ namespace urbi
     client->sendBuffer[clen+n] = 0;
     if (strpbrk(client->sendBuffer, "&|;,"))
     {
-      client->effectiveSend(client->sendBuffer, strlen(client->sendBuffer));
+      client->effective_send(client->sendBuffer);
       client->sendBuffer[0] = 0;
     }
     client->sendBufferLock.unlock();
@@ -243,9 +243,7 @@ namespace urbi
   int
   UAbstractClient::endPack()
   {
-    int res = 0;
-    if (size_t len = strlen(sendBuffer))
-      res = effectiveSend(sendBuffer, len);
+    int res = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     return res;
@@ -424,7 +422,7 @@ namespace urbi
       va_start(arg, header);
       vpack(header, arg);
       va_end(arg);
-      effectiveSend(sendBuffer, strlen(sendBuffer));
+      effective_send(sendBuffer);
     }
 
     int res = effectiveSend(buffer, len);
@@ -702,7 +700,7 @@ namespace urbi
     va_start(arg, cmd);
     vpack(mcmd, arg);
     va_end(arg);
-    int retval = effectiveSend(sendBuffer, strlen(sendBuffer));
+    int retval = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     delete []  mcmd;
@@ -728,7 +726,7 @@ namespace urbi
     va_start(arg, cmd);
     vpack(mcmd, arg);
     va_end(arg);
-    int retval = effectiveSend(sendBuffer, strlen(sendBuffer));
+    int retval = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     delete []mcmd;
