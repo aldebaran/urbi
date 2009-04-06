@@ -112,7 +112,7 @@ namespace urbi
     return res;
   }
 
-  int USyncClient::joinCallbackThread_ ()
+  int USyncClient::joinCallbackThread_()
   {
     stopCallbackThread ();
     if (cbThread)
