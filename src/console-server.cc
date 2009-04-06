@@ -12,6 +12,7 @@
 #include <libport/cstring>
 
 #include <libport/cli.hh>
+#include <libport/debug.hh>
 #include <libport/exception.hh>
 #include <libport/foreach.hh>
 #include <libport/package-info.hh>
@@ -41,6 +42,9 @@
 #include <urbi/export.hh>
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
+
+GD_INIT();
+GD_ADD_CATEGORY(URBI);
 
 using libport::program_name;
 
@@ -192,6 +196,8 @@ namespace urbi
         return e.error_get();
       }
     }
+
+    GD_CATEGORY(URBI);
 
     libport::cli_args_type args = _args;
 
