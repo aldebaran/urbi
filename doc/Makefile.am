@@ -72,7 +72,7 @@ html_files = 					\
   urbi-sdk3.html				\
   urbi-sdk4.html				\
   urbi-sdk5.html
-install-doc: $(pdf_DATA) $(html_files)
+install-doc: $(pdf_DATA) urbi-sdk.html
 	scp $(pdf_DATA) $(html_files) downloads@www.gostai.com:urbi-sdk-2.0/doc
 
 ## -------------- ##

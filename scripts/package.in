@@ -88,9 +88,12 @@ $MV "$MANIFEST" "$packagedir/MANIFEST"
 # Copy the instructions at the top-level
 for i in doc/{LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
 do
-  $CP "$srcdir/$i" "$packagedir/$i"
   case $OS in
-    (windows) unix2dos "$packagedir/$i";;
+    (windows)
+      $CP "$srcdir/$i" "$packagedir/$i"
+      unix2dos "$packagedir/$i";;
+    (*)
+      (cd "$packagedir" && ln -s "$i");;
   esac
 done
 
