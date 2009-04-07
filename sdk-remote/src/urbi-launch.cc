@@ -75,10 +75,11 @@ namespace
   /// Wrapper around lt_dlopenext that exits on failures.
   static
   lt_dlhandle
-  xlt_dlopenext(const std::string& s, bool global, int exit_failure = 1)
+  xlt_dlopenext(const std::string& s, bool global, int exit_failure = 1,
+                bool verbose = false)
   {
-    std::cerr << program_name()
-              << ": loading " << s << std::endl;
+    if (verbose)
+      std::cerr << program_name() << ": loading " << s << std::endl;
     lt_dlhandle res =
       lt_dlopenadvise(s.c_str(),
                       xlt_dladvise().global(global).ext().advise);
@@ -307,7 +308,7 @@ main(int argc, char* argv[])
    */
   lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) verbosity);
   lt_dlinit();
-  lt_dlhandle core = xlt_dlopenext(dll, true, EX_OSFILE);
+  lt_dlhandle core = xlt_dlopenext(dll, true, EX_OSFILE, verbosity);
   foreach (const std::string& s, modules)
     xlt_dlopenext(s, false, EX_NOINPUT);
 
