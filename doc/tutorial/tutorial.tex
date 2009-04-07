@@ -37,7 +37,7 @@ any number of these options, but beware that being event-driven, the
 server does not ``know'' when a program ends.  Therefore, batch
 programs should end by calling \lstinline{shutdown}:
 
-\begin{shell}
+\begin{shell}[alsolanguage={[interactive]Urbi}]
 # A classical program.
 $ urbi -e 'echo("Hello, World!");' -e 'shutdown;'
 [00000004] *** Hello, World!
@@ -48,7 +48,8 @@ To run an interactive session, use option
 interpreters, \urbi will evaluate the given commands and print out the
 results.
 
-\begin{shell}
+%\lstset{moredelim=[l][\urbiAnswerStyle]{[00000000:start]}}
+\begin{shell}[alsolanguage={[interactive]Urbi}]
 $ urbi -i
 [00000000:start] *** **********************************************************
 [00000000:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
@@ -68,9 +69,9 @@ $ urbi -i
 [00000000:start] *** **********************************************************
 [00000000:start] ***
 [00000000:ident] *** ID: U3154688
-[00000004:start] *** Urbi is up and running.
+[00000000:start] *** Urbi is up and running.
 1+2;
-[00000006] 3
+[00000000] 3
 shutdown;
 \end{shell}%$
 
@@ -91,7 +92,7 @@ interactions using option \option{--port \var{port}}.  Note that while
 interactive session.  In the following example the server is still
 available for other, possibly concurrent, sessions.
 
-\begin{shell}
+\begin{shell}[alsolanguage={[interactive]Urbi}]
 $ urbi --port 54000 &
 [1] 77024
 $ telnet localhost 54000
@@ -124,7 +125,7 @@ quit;
 The program \command{urbi-send} provides a nice interface to
 interact with a running server.
 
-\begin{shell}
+\begin{shell}[alsolanguage={[interactive]Urbi}]
 $ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
 [00018032:] 7
 # Have the server shutdown;
