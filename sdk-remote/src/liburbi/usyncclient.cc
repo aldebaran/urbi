@@ -39,12 +39,12 @@ namespace urbi
     callbackSem_++;
   }
 
-  USyncClient::~USyncClient ()
+  USyncClient::~USyncClient()
   {
-    closeUClient ();
+    closeUClient();
 
     if (cbThread)
-      joinCallbackThread_ ();
+      joinCallbackThread_();
   }
 
   void USyncClient::callbackThread()
@@ -114,7 +114,7 @@ namespace urbi
 
   int USyncClient::joinCallbackThread_()
   {
-    stopCallbackThread ();
+    stopCallbackThread();
     if (cbThread)
     {
       pthread_join(cbThread, 0);
@@ -247,7 +247,7 @@ namespace urbi
     va_list arg;
     va_start(arg, mmod);
     UMessage* res = syncGet_(format, mtag, mmod, arg);
-    va_end (arg);
+    va_end(arg);
     return res;
   }
 
@@ -297,7 +297,7 @@ namespace urbi
     {
       //jpeg jpeg, or ycrcb ycrcb
       buffersize = std::min(m->value->binary->image.size,
-			    static_cast<size_t> (buffersize));
+			    static_cast<size_t>(buffersize));
       memcpy(buffer, m->value->binary->image.data, buffersize);
     }
     if (format == IMAGE_PPM)
