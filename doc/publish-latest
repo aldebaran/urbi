@@ -10,13 +10,39 @@ error ()
   exit 1
 }
 
+usage ()
+{
+  cat <<EOF
+usage: $0 [OPTIONS...] [RELEASE...]
+
+Call this script when a release is to be publish to the download
+site.  Don't forget to tag it if it is a release.
+
+RELEASE can be specified (e.g., \`2.0-rc-1'), otherwise it is computed
+automatically from the latest time stamp.
+
+Options:
+  --help    display this message and exit successfully
+EOF
+}
+
+getargs ()
+{
+  for i
+  do
+    case $i in
+      (--help) usage;;
+      (*) latest=$i;;
+    esac
+  done
+}
+
 # The directory on built that contains the packages.
 dir=built/kernel-2.0/archives
 
-# Call this script when a release is to be publish to the download
-# site.  Don't forget to tag it if it is a release.
-
 oses="windows linux macos"
+
+getargs "$@"
 
 # Get the content of the directory containing the latest successful builds:
 # kernel-2.0-beta3-linux-x86.tar.gz
@@ -29,14 +55,15 @@ oses="windows linux macos"
 all=$(ssh build@gate "cd $dir && ls -1t *windows*.zip *linux*.gz *macos-*.gz")
 
 # Make sure that we have the same version for the three architectures.
-latest=$(echo "$all" |
-    perl -n -e 'if (m/((:?kernel-2.0|urbi-sdk)
-                      -(?:beta|rc-)\d
-                      (?:-\d+-g[\da-f]{7})?)
-                      -(?:linux|macos|windows)
-                      -(ARM|ppc|x86)
-                      (?:-gcc4-debug_dynamic)?/x)
-                { print "$1\n"; exit 0; }')
+test -n "$latest" ||
+  latest=$(echo "$all" |
+      perl -n -e 'if (m/((:?kernel-2.0|urbi-sdk)
+                        -(?:beta|rc-)\d
+                        (?:-\d+-g[\da-f]{7})?)
+                        -(?:linux|macos|windows)
+                        -(ARM|ppc|x86)
+                        (?:-gcc4-debug_dynamic)?/x)
+                  { print "$1\n"; exit 0; }')
 
 test -n "$latest" ||
   error "cannot find latest version from:" $all
