@@ -101,7 +101,7 @@ namespace
            << "  `-' stands for standard input" << std::endl
            << "  ARGS           user arguments passed to PROGRAM_FILE"  << std::endl
            << std::endl
-           << "OPTIONS:" << std::endl;
+           << "Options:" << std::endl;
     parser.options_doc(output);
     throw urbi::Exit(EX_OK, output.str());
   }
