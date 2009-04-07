@@ -35,7 +35,7 @@ There are several means to interact with a server spawned by
 contents of some \var{file} to the newly run server.  You may combine
 any number of these options, but beware that being event-driven, the
 server does not ``know'' when a program ends.  Therefore, batch
-programs should end by calling \code{shutdown}:
+programs should end by calling \lstinline{shutdown}:
 
 \begin{shell}
 # A classical program.
@@ -87,7 +87,7 @@ commands, advanced command line edition etc.); run \samp{rlwrap
 
 In either case the server can also be made available for network-based
 interactions using option \option{--port \var{port}}.  Note that while
-\code{shutdown} terminates the server, \code{quit} only terminates one
+\lstinline{shutdown} terminates the server, \lstinline{quit} only terminates one
 interactive session.  In the following example the server is still
 available for other, possibly concurrent, sessions.
 
@@ -380,7 +380,7 @@ might help you understanding this.
 [00000000] *** Hello World
 \end{urbiscript}
 
-Here you can see that f is actually a simple value. You can just
+Here you can see that \lstinline{f} is actually a simple value. You can just
 evaluate it to see its value, that is, its body. By adding the
 parentheses, you can actually call the function. This is a difference
 with methods calling, where empty parentheses are optional: method are
@@ -388,9 +388,11 @@ always evaluated, you cannot retrieve their functional value --- of
 course, you can with a different construct, but that's not the point
 here.
 
-Since this output is often irrelevant, we will sometimes hide the
-printed result, replacing it with an ellipse (\ldots), as in
-\autoref{lst:tut:function-arg}, which presents a function with arguments.
+Since this output is often irrelevant, it is often hidden in this
+documentation it using the \lstinline'|{};' trick (or even
+\lstinline'|;'): when evaluating \lstinline'\var{code} | {};', the
+server first evaluates \var{code}, then evaluates \lstinline'{}' and
+return its value, \lstinline'void', which prints to nothing.
 
 \begin{urbiscript}[caption=Function with arguments,label=lst:tut:function-arg]
 function sum(a, b, c)
@@ -401,9 +403,9 @@ sum(20, 2, 20);
 [00000000] 42
 \end{urbiscript}
 
-As you probably guessed, the \lstinline{return} keyword enables you to
-return a value from the function. If no \lstinline{return} statement is
-executed, the evaluation of the last expression is returned
+The \lstinline{return} keyword enables to return a value from the
+function. If no \lstinline{return} statement is executed, the
+evaluation of the last expression is returned
 (\autoref{lst:tut:no-return}).
 
 \begin{urbiscript}[caption=Return value is the last evaluated value,
@@ -427,14 +429,14 @@ programming yet, these points will be presented in
 
 \section{Objects in \us}
 \label{sec:tut:objects}
-An object in \us is a rather simple concept: a list of slots. A \dfn{slot}
-is a value associated to a name. So an \dfn{object} is a list of slot
-names, each of which indexes a value --- just like a dictionary. You
-can get an object's slot value by using the dot (\lstinline{.}) operator
-on this object, followed by the name of the slot. You can list the
-names of the slots of an object with the \lstinline{slotNames}
-method. \autoref{lst:tut:object-slots} makes this very clear: we dissect an object
-to point out its structure.
+An object in \us is a rather simple concept: a list of slots. A
+\dfn{slot} is a value associated to a name. So an \dfn{object} is a
+list of slot names, each of which indexes a value --- just like a
+dictionary. You can get an object's slot value by using the dot
+(\lstinline{.}) operator on this object, followed by the name of the
+slot. You can list the names of the slots of an object with the
+\lstinline{slotNames} method. \autoref{lst:tut:object-slots} makes
+this very clear: we dissect an object to point out its structure.
 
 \begin{urbiscript}[caption=Inspecting an \us object,label=lst:tut:object-slots]
 // Create a fresh object with two slots.
@@ -454,10 +456,11 @@ Foo.b;
 It's as simple as this. Let's now try to build such an object. First,
 we want a fresh object to work on. In \us, \lstinline{Object} is the
 parent type of every object (in fact, since \us is prototype-based,
-\lstinline{Object} is the uppermost prototype of every object, but we'll
-talk about prototypes later). An instance of object, is an empty,
-neutral object, so let's start by instantiating one with the
-\lstinline{clone} method of \lstinline{Object} (\autoref{lst:tut:object-new}).
+\lstinline{Object} is the uppermost prototype of every object, but
+we'll talk about prototypes later). An instance of object, is an
+empty, neutral object, so let's start by instantiating one with the
+\lstinline{clone} method of \lstinline{Object}
+(\autoref{lst:tut:object-new}).
 
 \begin{urbiscript}[caption=Instanciating a new object,
   label=lst:tut:object-new, name=object-slots]
@@ -2003,6 +2006,7 @@ execution takes longer than the given timeout, it aborts it, print
 
 % FIXME: doesn't work (inner return)
 \begin{urbiscript}[caption=Implementing a timeout method, label=lst:tut:timeout]
+// timeout (Code, Duration).
 function timeOut
 {
   // In background, launch a timeout job that waits
@@ -2051,11 +2055,10 @@ x = 5;
 x = 6;
 [00000000] 6
 [00000000] *** ping
-// This does not trigger, since
-// the condition is already true
+// Does not trigger, since the condition is already true.
 x = 7;
 [00000000] 7
-// The condition becomes false here
+// The condition becomes false here.
 x = 3;
 [00000000] 3
 

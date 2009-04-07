@@ -1,6 +1,18 @@
 \section{System}
 Details on the architecture the \urbi server runs on.
 
+\begin{itemize}
+\item \lstinline'Platform'\\
+  See \refObject{System.Platform}
+
+\item \lstinline'reboot'\\
+  Restart the \urbi server.  Architecture dependent.
+
+\item \lstinline'shutdown'\\
+  Have the \urbi server shut down.  All the connections are closed,
+  the resources are released.  Architecture dependent.
+\end{itemize}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
