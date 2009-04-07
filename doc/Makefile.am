@@ -33,7 +33,6 @@ include tests/local.mk
 
 dist_doc_DATA =					\
   LICENSE.txt					\
-  QUICK-START.txt				\
   README.txt					\
   RELEASE-NOTES.txt				\
   REPORTING-BUGS.txt
