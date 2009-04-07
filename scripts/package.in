@@ -67,11 +67,11 @@ esac
 version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^preview/,,;s,/,-,g")
 # If we are in release mode, do not tell it, the final users won't care
 if $release_mode; then
-  name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}"
+  name="$PROJECT-$version-$OS-$ARCH-$COMP"
 else
-  name="${PROJECT}-${version}-${OS}-${ARCH}-${COMP}-${MODE}"
+  name="$PROJECT-$version-$OS-$ARCH-$COMP-$MODE"
 fi
-packagedir="${updir}/${name}"
+packagedir="$updir/$name"
 
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
@@ -88,7 +88,10 @@ $MV "$MANIFEST" "$packagedir/MANIFEST"
 # Copy the instructions at the top-level
 for i in doc/{QUICK-START,LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
 do
-  $CP "${srcdir}/$i" "$packagedir"
+  $CP "$srcdir/$i" "$packagedir/$i"
+  case $OS in
+    (windows) unix2dos "$packagedir/$i";;
+  esac
 done
 
 # When building a release for non-Windows platforms, strip the binaries
