@@ -117,6 +117,7 @@ AC_CONFIG_SUBDIRS([sdk-remote])
 ## -------- ##
 
 URBI_TESTS
+AC_SUBST([UOBJECT_PATH], ['$(abs_top_builddir)/sdk-remote/src/uobjects'])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([scripts/package],  [chmod +x scripts/package])
