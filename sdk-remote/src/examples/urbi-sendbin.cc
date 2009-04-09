@@ -126,9 +126,10 @@ send_data(urbi::UClient& client, const data_type& data)
         break;
       len +=r;
     }
-    client.sendBin(buffer, len,
-                   "%s = BIN %lu %s;",
-                   data.variable, (unsigned long)len, data.headers);
+    client.send(data.variable);
+    client.send(" = ");
+    client.sendBinary(buffer, len, data.headers);
+    client.send(";");
   }
 }
 
