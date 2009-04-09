@@ -87,16 +87,21 @@ namespace urbi
      */
     UMessage*
     syncGet_(const char* expression, const char* mtag,
-             const char* mmod, va_list& arg);
+             const char* mmod, va_list& arg, libport::utime_t useconds = 0);
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
     /// not start with a tag or channel.
     UMessage *syncGet(const char* expression, ...);
+    /// Same function but with timeout.
+    UMessage *syncGetTimeout(libport::utime_t useconds, const char* expression, ...);
     /// Synchronously evaluate an Urbi expression, specifying the tag
     /// and modifiers to prepend to it.
     UMessage *syncGetTag(const char* expression,
                          const char* mtag, const char* mmod, ...);
+    /// Same function but with timeout.
+    UMessage *syncGetTagTimeout(libport::utime_t useconds, const char* expression,
+				const char* mtag, const char* mmod, ...);
 
     /// Send given buffer without copying it.
     int syncSend(const void * buffer, size_t length);
@@ -105,37 +110,44 @@ namespace urbi
     /// \return 1 on success, 0 on failure.
     int syncGetImage(const char* cameraDevice, void* buffer, size_t& buffersize,
 		     int format, int transmitFormat,
-                     size_t& width, size_t& height);
+                     size_t& width, size_t& height, libport::utime_t useconds = 0);
 
     /// Get the value of any device in a synchronous way.
     /// \return 1 on success, 0 on failure.
-    int syncGetValue(const char* valName, UValue& val);
-    int syncGetValue(const char* tag, const char* valName, UValue& val);
+    int syncGetValue(const char* valName, UValue& val,
+		     libport::utime_t useconds = 0);
+    int syncGetValue(const char* tag, const char* valName, UValue& val,
+		     libport::utime_t useconds = 0);
 
     /// Get the value of device.val in a synchronous way.
     /// \return 1 on success, 0 on failure.
-    int syncGetDevice(const char* device, double &val);
+    int syncGetDevice(const char* device, double &val,
+		      libport::utime_t useconds = 0);
 
     /// Execute an URBI command, return the resulting double
     /// value.
     /// \return 1 on success, 0 on failure.
-    int syncGetResult(const char* command, double &val);
+    int syncGetResult(const char* command, double &val,
+		      libport::utime_t useconds = 0);
 
     /// Get the normalized value of a device in a synchronous
     /// way.
     /// \return 1 on success, 0 on failure.
-    int syncGetNormalizedDevice(const char* device, double &val);
+    int syncGetNormalizedDevice(const char* device, double &val,
+				libport::utime_t useconds = 0);
 
     /// Get a field of a device in a synchronous way.
     /// \return 1 on success, 0 on failure.
-    int syncGetDevice(const char* device, const char* field, double &val);
+    int syncGetDevice(const char* device, const char* field, double &val,
+		      libport::utime_t useconds = 0);
 
     /// Get sound for duration milliseconds in buffer.
-    int syncGetSound(const char* device, int duration, USound &sound);
+    int syncGetSound(const char* device, int duration, USound &sound,
+		     libport::utime_t useconds = 0);
 
     /// Wait until a message with specified tag is received. Returned
     /// message must be deleted.
-    UMessage* waitForTag(const std::string& tag);
+    UMessage* waitForTag(const std::string& tag, libport::utime_t useconds = 0);
     /// Overriding UAbstractclient implementation
     virtual void notifyCallbacks(const UMessage &msg);
 
