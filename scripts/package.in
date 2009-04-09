@@ -93,7 +93,7 @@ do
       $CP "$srcdir/$i" "$packagedir/$i"
       unix2dos "$packagedir/$i";;
     (*)
-      (cd "$packagedir" && ln -s "$i");;
+      (cd "$packagedir" && ln -s "share/$i");;
   esac
 done
 
