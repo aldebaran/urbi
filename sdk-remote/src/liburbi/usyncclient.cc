@@ -21,7 +21,7 @@ namespace urbi
     : UClient(host, port, buflen, server, semListenInc)
     , sem_()
     , queueLock_()
-    , msg(0)
+    , message_(0)
     , syncLock_()
     , syncTag()
     , stopCallbackThread_(!startCallbackThread)
@@ -129,7 +129,7 @@ namespace urbi
     queueLock_.lock();
     if (!syncTag.empty() && syncTag == msg.tag)
     {
-      this->msg = new UMessage(msg);
+      message_ = new UMessage(msg);
       syncTag.clear();
       syncLock_++;
     }
@@ -148,7 +148,9 @@ namespace urbi
     queueLock_.unlock();
     syncLock_--;
     // syncTag is reset by the other thread.
-    return msg;
+    UMessage *res = message_;
+    message_ = 0;
+    return res;
   }
 
   namespace

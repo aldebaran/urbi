@@ -177,7 +177,7 @@ namespace urbi
     /// When locked waiting for a specific tag, notifyCallbacks will
     /// store the received message here, and waitForTag will get it
     /// there.
-    UMessage* msg;
+    UMessage* message_;
     libport::Semaphore syncLock_;
     std::string syncTag;
 
