@@ -235,12 +235,6 @@ namespace urbi
   int
   UClient::effectiveSend(const void* buffer, size_t size)
   {
-#if DEBUG
-    char output[size+1];
-    memcpy (static_cast<void*> (output), buffer, size);
-    output[size]=0;
-    std::cerr << ">>>> SENT : [" << output << "]" << std::endl;
-#endif
     if (rc)
       return -1;
     size_t pos = 0;
