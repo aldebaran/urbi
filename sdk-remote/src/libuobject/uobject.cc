@@ -11,7 +11,6 @@
 #include <urbi/ustarter.hh>
 #include <urbi/usyncclient.hh>
 
-//! Global definition of the starterlist
 namespace urbi
 {
   UObject* dummyUObject;

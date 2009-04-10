@@ -21,11 +21,12 @@ libuco_libuco_la_CPPFLAGS += -I.
 dist_libuco_libuco_la_SOURCES =			\
   libuco/exit.cc				\
   libuco/package-info.cc			\
+  libuco/shared-library-checker.cc		\
   libuco/uimage.cc				\
   libuco/uobject-hub-common.cc			\
   libuco/uprop.cc				\
+  libuco/urbi-main.cc				\
   libuco/ustarter.cc				\
   libuco/utable.cc				\
   libuco/uvalue-common.cc			\
-  libuco/urbi-main.cc				\
   libuco/uvar-common.cc
