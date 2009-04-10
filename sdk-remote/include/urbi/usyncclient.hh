@@ -101,30 +101,33 @@ namespace urbi
     /// Send given buffer without copying it.
     int syncSend(const void * buffer, size_t length);
 
-    /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
+    /// Get an image in a synchronous way.
+    /// \return 1 on success, 0 on failure.
     int syncGetImage(const char* cameraDevice, void* buffer, size_t& buffersize,
 		     int format, int transmitFormat,
                      size_t& width, size_t& height);
 
-    /// Get the value of any device in a synchronous way. Returns 1 on
-    /// success, 0 on failure.
+    /// Get the value of any device in a synchronous way.
+    /// \return 1 on success, 0 on failure.
     int syncGetValue(const char* valName, UValue& val);
     int syncGetValue(const char* tag, const char* valName, UValue& val);
 
-    /// Get the value of device.val in a synchronous way. Returns 1 on
-    /// success, 0 on failure.
+    /// Get the value of device.val in a synchronous way.
+    /// \return 1 on success, 0 on failure.
     int syncGetDevice(const char* device, double &val);
 
     /// Execute an URBI command, return the resulting double
-    /// value. Returns 1 on success, 0 on failure.
+    /// value.
+    /// \return 1 on success, 0 on failure.
     int syncGetResult(const char* command, double &val);
 
     /// Get the normalized value of a device in a synchronous
-    /// way. Returns 1 on success, 0 on failure.
+    /// way.
+    /// \return 1 on success, 0 on failure.
     int syncGetNormalizedDevice(const char* device, double &val);
 
-    /// Get a field of a device in a synchronous way. Returns 1 on
-    /// success, 0 on failure.
+    /// Get a field of a device in a synchronous way.
+    /// \return 1 on success, 0 on failure.
     int syncGetDevice(const char* device, const char* field, double &val);
 
     /// Get sound for duration milliseconds in buffer.
@@ -170,6 +173,10 @@ namespace urbi
     libport::Semaphore callbackSem_;
     std::list<UMessage*> queue;
     libport::Lockable queueLock_;
+
+    /// When locked waiting for a specific tag, notifyCallbacks will
+    /// store the received message here, and waitForTag will get it
+    /// there.
     UMessage* msg;
     libport::Semaphore syncLock_;
     std::string syncTag;
