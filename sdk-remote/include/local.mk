@@ -9,6 +9,7 @@ urbiinclude_HEADERS =				\
   include/urbi/exit.hh				\
   include/urbi/export.hh			\
   include/urbi/fwd.hh				\
+  include/urbi/kernel-version.hh		\
   include/urbi/package-info.hh			\
   include/urbi/qt_umain.hh			\
   include/urbi/uabstractclient.hh		\
@@ -22,9 +23,9 @@ urbiinclude_HEADERS =				\
   include/urbi/umain.hh				\
   include/urbi/umessage.hh			\
   include/urbi/umessage.hxx			\
+  include/urbi/uobject-hub.hh			\
   include/urbi/uobject.hh			\
   include/urbi/uobject.hxx			\
-  include/urbi/uobject-hub.hh			\
   include/urbi/uprop.hh				\
   include/urbi/uproperty.hh			\
   include/urbi/ustarter.hh			\
