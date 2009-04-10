@@ -140,7 +140,7 @@ namespace urbi
       , fast(false)
       , network(true)
       , server(0)
-      {}
+    {}
 
     bool interactive;
     bool fast;
@@ -213,14 +213,22 @@ namespace urbi
     // Parse the command line.
     LoopData data;
 
-    libport::OptionValue  arg_dbg        ("", "debug");
-    libport::OptionValues arg_exps       ("run expression", "expression", 'e');
-    libport::OptionFlag   arg_fast       ("ignore system time, go as fast as possible", "fast", 'F');
-    libport::OptionFlag   arg_interactive("read and parse stdin in a nonblocking way", "interactive", 'i');
-    libport::OptionFlag   arg_no_net     ("disable networking", "no-network", 'n');
-    libport::OptionValue  arg_period     ("ignored for backward compatibility", "period", 'P');
-    libport::OptionValue  arg_port_file  ("write port number to the specified file.", "port-file", 'w');
-    libport::OptionValue  arg_stack      ("set the job stack size in KB", "stack-size", 's');
+    libport::OptionFlag
+      arg_fast ("ignore system time, go as fast as possible",
+                "fast", 'F'),
+      arg_interactive("read and parse stdin in a nonblocking way",
+                      "interactive", 'i'),
+      arg_no_net ("disable networking", "no-network", 'n');
+
+    libport::OptionValue
+      arg_dbg      ("", "debug"),
+      arg_period   ("ignored for backward compatibility", "period", 'P'),
+      arg_port_file("write port number to the specified file.",
+                    "port-file", 'w'),
+      arg_stack    ("set the job stack size in KB", "stack-size", 's');
+
+    libport::OptionValues
+      arg_exps("run expression", "expression", 'e');
 
     {
       libport::OptionParser parser;
