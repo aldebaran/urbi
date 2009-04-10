@@ -181,7 +181,7 @@ namespace urbi
     std::string value;
   };
 
-  URBI_SDK_API int
+  int
   main(const libport::cli_args_type& _args, bool block, bool errors)
   {
     if (errors)
