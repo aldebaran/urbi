@@ -247,10 +247,10 @@ namespace urbi
     while (pos != size)
     {
       int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-      if (retval< 0)
+      if (retval < 0)
       {
         rc = retval;
-        clientError("send error", rc);
+        clientError("send error", errno);
         return rc;
       }
       pos += retval;
