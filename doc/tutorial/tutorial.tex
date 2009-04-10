@@ -976,10 +976,13 @@ while (x < 40)
 
 \section{for}
 
-The \lstinline{for} construct is still the same as \C/\Cxx one.
-% FIXME: I don't have the faith to explain for. wanna kill myself.
+The \lstinline{for} keyword supports two different constructs, as in
+languages such as Java, \Cs, or even the forthcoming \Cxx revision.
 
-\begin{urbiscript}[caption=Nihil novi sub sole, label=lst:tut:for]
+The first constructs is hardly more than syntactic suggar for a
+\lstinline{while} loop.
+
+\begin{urbiscript}[caption=Iterations with increments, label=lst:tut:for]
 for (var x = 2; x < 40; x += 10)
   echo(x);
 [00000000] *** 2
@@ -988,19 +991,18 @@ for (var x = 2; x < 40; x += 10)
 [00000000] *** 32
 \end{urbiscript}
 
-\section{for \ldots in}
-
-The \lstinline{for ... in} construct enables you to iterate over a
-collection such as a list. The \lstinline{for} keyword, followed by
-\lstinline|var|, an identifier, a semicolon, an expression and a
+The second construct allows to iterate over members of a collection,
+such as a list. The \lstinline{for} keyword, followed by
+\lstinline|var|, an identifier, a semicolon (or \lstinline|in|), an
+expression and a
 scope, executes the scope for every element in the collection
 resulting of the evaluation of the expression, with the variable named
-with the identifier referring to the list element. If you didn't get
-the sentence, don't worry, \autoref{lst:tut:for-in} is self explanatory.
+with the identifier referring to the list
+elements. \autoref{lst:tut:for-in} is self explanatory.
 
 \begin{urbiscript}[caption=Collection iteration with \lstinline{for},
 label=lst:tut:for-in]
-for (var elt : [1, 2, 3]) { echo(elt) };
+for (var e : [1, 2, 3]) { echo(e) };
 [00000000] *** 1
 [00000000] *** 2
 [00000000] *** 3
@@ -1008,28 +1010,23 @@ for (var elt : [1, 2, 3]) { echo(elt) };
 
 \section{switch}
 
-% FIXME: This is not supported for now it 2.0, but is implemented in
-% candidates/pattern-matching.
-% Likewise, no faith left for switch
-The switch construct is similar to \C/\Cxx's one, except it works on
-any kind of object, not only integral ones. Comparison is done by
-semantic equality (operator \lstinline{==}). Execution will jump out of
-the switch after a case has been executed (no need to \lstinline{break}).
+The syntax of the \lstinline|switch| construct is similar to \C/\Cxx's
+one, except it works on any kind of object, not only integral
+ones. Comparison is done by semantic equality (operator
+\lstinline{==}). Execution will jump out of the
+\lstinline|switch|-block after a case has been executed (no need to
+\lstinline{break}).  Also, contrary to \Cxx, the whole construct has a
+value: that of the matching \lstinline{case}.
 
-\begin{urbiscript}[caption=The \lstinline{switch} construct,
-label=switch]
+\begin{urbiscript}[caption=The \lstinline{switch} construct, label=switch]
 switch ("bar")
 {
-  case "foo":
-    echo(0);
-  case "bar":
-    echo(1);
-  case "baz":
-    echo(2);
-  case "quux":
-    echo(3);
+  case "foo":  0;
+  case "bar":  1;
+  case "baz":  2;
+  case "qux":  3;
 };
-[00000000] *** 1
+[00000000] 1
 \end{urbiscript}
 
 \section{do}
@@ -1049,24 +1046,23 @@ echo(o.uid);
 [00000000] *** 0x0
 \end{urbiscript}
 
-The exact same result can be obtained with a short do scope, that
-redirect method calls to their target, as in \autoref{lst:tut:do}. This is similar
-to the \pascal ``\lstinline{with}'' construct.
-
+The same result can be obtained with a short do scope, that redirect
+method calls to their target, as in \autoref{lst:tut:do}. This is
+similar to the \pascal ``\lstinline{with}'' construct.  The value of
+the \lstinline{do}-block is the target itself.
 
 \begin{urbiscript}[caption=Shorter with a do block,label=lst:tut:do]
 var o = Object.clone;
 [00000000] Object_0x0
-// All the message in this scope
-// are destined to o.
+// All the message in this scope are destined to o.
 do (o)
 {
  var one = 1; // var is a shortcut for the setSlot
- var two = 2; // message, so it applies on obj too
+ var two = 2; // message, so it applies on obj too.
+ echo(uid);
 };
+[00000000] *** 0x0
 [00000000] Object_0x0
-o.one;
-[00000002] 1
 \end{urbiscript}
 
 
@@ -1074,8 +1070,8 @@ o.one;
 
 \chapter{Advanced functions and scoping}
 
-This section presents advanced use of functions and scoping, as well
-as their combo: lexical closures, which prov to be a very powerful
+This section presents advanced uses of functions and scoping, as well
+as their combo: lexical closures, which prove to be a very powerful
 tool.
 
 \section{Scopes as expressions}
@@ -1104,20 +1100,19 @@ innermost variable takes precedence), as illustrated in
 
 \begin{urbiscript}[caption=Redefining variables in
   subscopes,label=lst:tut:scope-hiding]
-var x = 0; // Declare the outer x
+var x = 0; // Define the outer x.
 [00000000] 0
 {
-  var x = 1; // Declare an inner x
-
-  x = 2;    // These refer to
-  echo(x);  // the inner x
+  var x = 1; // Define an inner x.
+  x = 2;     // These refer to
+  echo(x);   // the inner x
 };
 [00000000] *** 2
-// This is the outer x again
+// This is the outer x again.
 x;
 [00000000] 0
 {
-  x = 3; // This is still the outer x
+  x = 3; // This is still the outer x.
   echo(x);
 };
 [00000000] *** 3
@@ -1148,10 +1143,10 @@ function max3(a, b, c) // Max of three values
 
 \section{Lexical closures}
 
-A closure are the capture by a function of a variable external to this
+A \dfn{closure} is the capture by a function of a variable external to this
 function. \us supports lexical closure: functions can refer to outer
-local variables, as long as they are visible from the point of
-declaration of the function \autoref{lst:tut:read-closure}.
+local variables, as long as they are visible (in scope) from where
+the function is defined (see \autoref{lst:tut:read-closure}).
 
 \begin{urbiscript}[caption=Capturing variables with lexical closures,
 label=lst:tut:read-closure]
