@@ -1,6 +1,6 @@
 -*- text -*-
 
-How to report bugs for Urbi 2.0 beta ?
+How to report bugs for Urbi 2.0 beta?
 
 Bug reports should be sent to "k2-beta@lists.gostai.com". This address
 reaches the kernel team and will be addressed as fast as possible.

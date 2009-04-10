@@ -86,14 +86,14 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 $MV "$MANIFEST" "$packagedir/MANIFEST"
 
 # Copy the instructions at the top-level
-for i in doc/{LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
+for i in {LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
 do
   case $OS in
     (windows)
-      $CP "$srcdir/$i" "$packagedir/$i"
-      unix2dos "$packagedir/$i";;
+      $CP "$srcdir/doc/$i" "$packagedir/doc/$i"
+      unix2dos "$packagedir/doc/$i";;
     (*)
-      (cd "$packagedir" && ln -s "share/$i");;
+      (cd "$packagedir" && ln -s "share/doc/urbi-sdk/$i");;
   esac
 done
 
