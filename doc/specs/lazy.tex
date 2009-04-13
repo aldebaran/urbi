@@ -92,6 +92,57 @@ Evaluating a lazy several times only makes sense with lazy arguments
 and call messages. See example with call messages in
 \autoref{sec:std-callmsg-examples-several}.
 
+
+\subsection{Caching}
+
+\refObject{Lazy} is meant for functions without argument.  If you need
+\dfn{caching} for functions that depend on arguments, it is
+straightforward to implement using a \refObject{Dictionary}.  In the
+future \us might support dictionaries whose indices are not only
+strings, but in the meanwhile, you have to convert the arguments into
+strings, as the following sample object demonstrates.
+
+\begin{urbiscript}
+class UnaryLazy
+{
+  function init(f)
+  {
+    results = Dictionary.new;
+    func = f;
+  };
+  function value(p)
+  {
+    var sp = p.asString;
+    if (results.has(sp))
+      return results[sp];
+    var res = func(p);
+    results[sp] = res |
+    res
+  };
+  var results;
+  var func;
+} |
+// The function to cache.
+var inc = function(x) { echo("incing " + x) | x+1 } |
+// The function with cache.
+// Use "getSlot" to get the unevaluated function.
+var p = UnaryLazy.new(getSlot("inc"));
+[00062847] UnaryLazy_0x78b750
+p.value(1);
+[00066758] *** incing 1
+[00066759] 2
+p.value(1);
+[00069058] 2
+p.value(2);
+[00071558] *** incing 2
+[00071559] 3
+p.value(2);
+[00072762] 3
+p.value(1);
+[00074562] 2
+\end{urbiscript}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
