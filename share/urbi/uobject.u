@@ -46,12 +46,10 @@ class Global.UObject
   /// Set a timer to call update at specified interval.
   function setUpdate(interval)
   {
-    echo("setUpdate to " + interval);
     if (0 < interval && interval < minimumInterval)
       interval = minimumInterval;
     // Stop current update task.
     updateTask.stop;
-    echo("stopped previous");
     updateInterval = interval;
     if (0 < interval)
       updateTask: detach({loop{ update; sleep(updateInterval)}})
