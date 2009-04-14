@@ -30,7 +30,8 @@ class Global.UObject
   var updateTask = 0;
   var timerTask = 0;
   var updateInterval = 0;
-
+  // map lobby.uid+ event_name=>1 to know if event is allready registered
+  var remoteEventMap;
   function update()
   {
     "update not defined".print
@@ -39,15 +40,18 @@ class Global.UObject
   function init()
   {
     updateTask = Tag.new;
+    remoteEventMap = Dictionary.new;
   };
 
   /// Set a timer to call update at specified interval.
   function setUpdate(interval)
   {
+    echo("setUpdate to " + interval);
     if (0 < interval && interval < minimumInterval)
       interval = minimumInterval;
     // Stop current update task.
     updateTask.stop;
+    echo("stopped previous");
     updateInterval = interval;
     if (0 < interval)
       updateTask: detach({loop{ update; sleep(updateInterval)}})
@@ -114,7 +118,7 @@ do (getSlot("UVar"))
         var max = parent.getSlot(name).getProperty("val", "rangemax")|
         parent.updateSlot(name, min + (max - min) * value)
       })|
-    if (!parent.hasSlot("__has_uvar"))
+    if ("__has_uvar" not in parent.slotNames)
     {
       var parent_getprop = parent.getSlot("getProperty")|
       parent.getProperty = function(varname, propname)
@@ -338,7 +342,12 @@ class Global.'external'
   {
     // FIXME: No way to catch an event with payload without generating the 'at'
     // code.
+    var obj = uobjects.getSlot(objname)|
     var fullname = objname+"."+ename+"__" + nargs.asString |
+    var key = lobby.uid + fullname |
+    if (obj.remoteEventMap.has(key))
+      return |
+    obj.remoteEventMap[key] = 1 |
     if (ename not in uobjects.getSlot(objname).slotNames)
       uobjects.getSlot(objname).setSlot(ename, Event.new) |
     var args = nargs.seq.map(function(x) { "p%s" %[x]}).join(", ") |
