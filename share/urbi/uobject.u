@@ -238,6 +238,8 @@ class Global.'external'
       Global.addProto(uobjects)|
     uobjects.setSlot(objname, lobby.getSlot(objname));
     lobby.removeSlot(objname)|
+    uobjects.getSlot(objname).addProto(UObject) |
+    uobjects.getSlot(objname).init() |
     ("external object "+objname).print|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
