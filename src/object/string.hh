@@ -65,6 +65,8 @@ namespace object
     std::string to_lower();
     std::string to_upper();
 
+    static std::string fromAscii(rObject, int code);
+
   private:
     value_type content_;
 

@@ -358,6 +358,13 @@ namespace object
     return v;
   }
 
+  std::string String::fromAscii(rObject, int code)
+  {
+    std::string res;
+    res += code;
+    return res;
+  }
+
   OVERLOAD_2(sub_bouncer,
              2,
              (std::string (String::*) (unsigned)) (&String::sub),
@@ -381,6 +388,7 @@ namespace object
     bind(SYMBOL(asString), &String::as_string);
     bind(SYMBOL(distance), &String::distance);
     bind(SYMBOL(fresh), &String::fresh);
+    bind(SYMBOL(fromAscii), &String::fromAscii);
     bind(SYMBOL(LT), &String::lt);
     bind(SYMBOL(PERCENT), &String::format);
     bind(SYMBOL(PLUS), &String::plus);
