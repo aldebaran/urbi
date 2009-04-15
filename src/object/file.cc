@@ -147,10 +147,9 @@ namespace object
     if (!s.good())
       runner::raise_primitive_error("File not readable: " + as_string());
 
-
     std::string res;
-
-    get_buf(s, res);
+    while (!s.eof())
+      get_buf(s, res);
 
     CAPTURE_GLOBAL(Binary);
     return Binary->call(SYMBOL(new), to_urbi(std::string()), to_urbi(res));
