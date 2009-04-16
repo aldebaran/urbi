@@ -42,6 +42,7 @@ namespace object
 {
   using kernel::urbiserver;
 
+
   static inline
   runner::Runner&
   runner()
@@ -65,6 +66,7 @@ namespace object
     type_check<String>(o);
     return o->as<String>()->value_get();
   }
+
 
   rObject
   execute_parsed(parser::parse_result_type p,
@@ -123,25 +125,15 @@ namespace object
 #undef SERVER_FUNCTION
 
 
-  static rObject
-  system_class_sleep(objects_type args)
+  static void
+  system_sleep(const rObject&, libport::ufloat seconds)
   {
     runner::Runner& r = runner();
-    check_arg_count(args.size() - 1, 1);
-
-    type_check<Float>(args[1]);
-
-    rFloat arg1 = args[1]->as<Float>();
-    libport::utime_t deadline;
-    if (arg1->value_get() == std::numeric_limits<ufloat>::infinity())
+    if (seconds == std::numeric_limits<ufloat>::infinity())
       r.yield_until_terminated(r);
     else
-    {
-      deadline = r.scheduler_get().get_time() +
-	static_cast<libport::utime_t>(arg1->value_get() * 1000000.0);
-      r.yield_until (deadline);
-    }
-    return void_class;
+      r.yield_until(r.scheduler_get().get_time()
+                    + static_cast<libport::utime_t>(seconds * 1000000.0));
   }
 
   static float
@@ -241,9 +233,8 @@ namespace object
   }
 
   static rObject
-  system_class_currentRunner (objects_type args)
+  system_currentRunner()
   {
-    check_arg_count(args.size() - 1, 0);
     return runner().as_task();
   }
 
@@ -260,9 +251,8 @@ namespace object
   }
 
   static rObject
-  system_class_lobby (objects_type args)
+  system_lobby()
   {
-    check_arg_count(args.size() - 1, 0);
     return runner().lobby_get();
   }
 
@@ -297,9 +287,8 @@ namespace object
   }
 
   static rObject
-  system_class_stats(objects_type args)
+  system_stats()
   {
-    check_arg_count(args.size() - 1, 0);
     Dictionary::value_type res;
     const sched::scheduler_stats_type& stats =
       runner().scheduler_get().stats_get();
@@ -465,12 +454,14 @@ namespace object
     DECLARE(arguments);
     DECLARE(backtrace);
     DECLARE(breakpoint);
+    DECLARE(currentRunner);
     DECLARE(cycle);
     DECLARE(fresh);
     DECLARE(getenv);
     DECLARE(jobs);
     DECLARE(loadModule);
     DECLARE(lobbies);
+    DECLARE(lobby);
     DECLARE(nonInterruptible);
     DECLARE(programName);
     DECLARE(quit);
@@ -480,7 +471,9 @@ namespace object
     DECLARE(setenv);
     DECLARE(shiftedTime);
     DECLARE(shutdown);
+    DECLARE(sleep);
     DECLARE(spawn);
+    DECLARE(stats);
     DECLARE(stopall);
     DECLARE(time);
     DECLARE(unsetenv);
@@ -492,15 +485,11 @@ namespace object
     DECLARE_PRIMITIVE(system, Name)
 
     DECLARE(assert_);
-    DECLARE(currentRunner);
     DECLARE(eval);
     DECLARE(loadFile);
-    DECLARE(lobby);
     DECLARE(registerAtJob);
     DECLARE(scopeTag);
     DECLARE(searchFile);
-    DECLARE(stats);
-    DECLARE(sleep);
 #undef DECLARE
   }
 
