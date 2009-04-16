@@ -65,7 +65,7 @@ TESTS_ENVIRONMENT += $(BUILDCHECK_ENVIRONMENT)
 # Run the tests with the install-environment.
 installcheck-local:
 	$(MAKE) $(AM_MAKEFLAGS)					\
-	  TESTS_ENVIRONMENT=$(INSTALLCHECK_ENVIRONMENT) check
+	  TESTS_ENVIRONMENT='$$(INSTALLCHECK_ENVIRONMENT)' check
 
 TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))
 
