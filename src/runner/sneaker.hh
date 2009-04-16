@@ -2,7 +2,6 @@
 # define RUNNER_SNEAKER_HH
 
 # include <ast/ast.hh>
-# include <object/primitives.hh>
 # include <runner/interpreter.hh>
 # include <sched/scheduler.hh>
 

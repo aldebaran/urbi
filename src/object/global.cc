@@ -5,7 +5,6 @@
 
 #include <object/global.hh>
 #include <object/object.hh>
-#include <object/object.hh>
 
 namespace object
 {
@@ -16,12 +15,8 @@ namespace object
   `--------------------*/
 
   void
-  global_class_initialize ()
+  global_class_initialize()
   {
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(global, Name)
-
-#undef DECLARE
   }
 
 }; // namespace object

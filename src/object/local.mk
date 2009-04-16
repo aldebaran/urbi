@@ -117,7 +117,6 @@ dist_libuobject_la_SOURCES +=			\
   object/path.hh				\
   object/primitive.cc				\
   object/primitive.hh				\
-  object/primitives.hh				\
   object/root-classes.cc			\
   object/root-classes.hh			\
   object/semaphore.cc				\

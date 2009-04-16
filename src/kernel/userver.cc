@@ -45,8 +45,8 @@
 
 #include <object/object.hh>
 #include <object/primitive.hh>
-#include <object/primitives.hh>
 #include <object/root-classes.hh>
+#include <object/symbols.hh>
 #include <object/system.hh>
 
 #include <runner/runner.hh>

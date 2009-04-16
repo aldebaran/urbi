@@ -24,8 +24,8 @@
 #include <object/global.hh>
 #include <object/object.hh>
 #include <object/object.hh>
-#include <object/primitives.hh>
 #include <object/string.hh>
+#include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/urbi-exception.hh>
 #include <runner/raise.hh>

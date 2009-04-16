@@ -26,6 +26,7 @@
 
 #include <object/lobby.hh>
 #include <object/object.hh>
+#include <object/symbols.hh>
 #include <object/tag.hh>
 #include <object/urbi-exception.hh>
 

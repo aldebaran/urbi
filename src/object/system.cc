@@ -22,10 +22,10 @@
 #include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/global.hh>
-#include <object/lobby.hh>
 #include <object/list.hh>
+#include <object/lobby.hh>
 #include <object/path.hh>
-#include <object/primitives.hh>
+#include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>

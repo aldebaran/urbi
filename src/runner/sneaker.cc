@@ -8,6 +8,7 @@
 #include <ast/print.hh>
 
 #include <object/lobby.hh>
+#include <object/symbols.hh>
 #include <object/system.hh>
 
 #include <runner/sneaker.hh>

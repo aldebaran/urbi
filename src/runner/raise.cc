@@ -1,8 +1,9 @@
 #include <kernel/userver.hh>
 #include <object/cxx-conversions.hh>
 #include <object/global.hh>
-#include <runner/runner.hh>
+#include <object/symbols.hh>
 #include <runner/raise.hh>
+#include <runner/runner.hh>
 #include <runner/sneaker.hh>
 #include <sched/scheduler.hh>
 

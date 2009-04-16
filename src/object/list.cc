@@ -15,7 +15,7 @@
 #include <object/float.hh>
 #include <object/list.hh>
 #include <object/object.hh>
-#include <object/primitives.hh>
+#include <object/symbols.hh>
 
 #include <runner/raise.hh>
 #include <runner/runner.hh>
