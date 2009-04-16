@@ -42,6 +42,19 @@ namespace object
 {
   using kernel::urbiserver;
 
+  static inline
+  runner::Runner&
+  runner()
+  {
+    return ::kernel::urbiserver->getCurrentRunner();
+  }
+
+  static inline
+  runner::Interpreter&
+  interpreter()
+  {
+    return dynamic_cast<runner::Interpreter&>(runner());
+  }
 
   // Extract a filename from a String or a Path object
   static std::string
@@ -57,8 +70,7 @@ namespace object
   execute_parsed(parser::parse_result_type p,
                  libport::Symbol fun, std::string e)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    runner::Interpreter& run = dynamic_cast<runner::Interpreter&>(r);
+    runner::Interpreter& run = interpreter();
 
     // Report potential errors
     {
@@ -76,7 +88,7 @@ namespace object
     // and will be reclaimed at the end of the scope.
     sched::rJob job = sub;
     libport::Finally finally;
-    r.register_child(sub, finally);
+    runner().register_child(sub, finally);
     sub->start_job();
     try
     {
@@ -114,7 +126,7 @@ namespace object
   static rObject
   system_class_sleep(objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+    runner::Runner& r = runner();
     check_arg_count(args.size() - 1, 1);
 
     type_check<Float>(args[1]);
@@ -135,14 +147,13 @@ namespace object
   static float
   system_time()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    return r.scheduler_get().get_time() / 1000000.0;
+    return runner().scheduler_get().get_time() / 1000000.0;
   }
 
   static float
   system_shiftedTime()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+    runner::Runner& r = runner();
     return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
   }
 
@@ -173,9 +184,8 @@ namespace object
   static rObject
   system_class_registerAtJob (objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 3);
-    runner::register_at_job(dynamic_cast<runner::Interpreter&>(r),
+    runner::register_at_job(interpreter(),
 			    args[1], args[2], args[3]);
     return object::void_class;
   }
@@ -183,25 +193,20 @@ namespace object
   static rObject
   system_class_scopeTag(objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
-    const sched::rTag& scope_tag =
-      dynamic_cast<runner::Interpreter&>(r).scope_tag();
+    const sched::rTag& scope_tag = interpreter().scope_tag();
     return new Tag(scope_tag);
   }
 
   static rObject
   system_class_searchFile(objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
     check_arg_count(args.size() - 1, 1);
     const std::string filename = filename_get(args[1]);
 
-    kernel::UServer& s = r.lobby_get()->connection_get().server_get();
     try
     {
-      return new Path(s.find_file(filename));
+      return new Path(urbiserver->find_file(filename));
     }
     catch (libport::file_library::Not_found&)
     {
@@ -238,16 +243,14 @@ namespace object
   static rObject
   system_class_currentRunner (objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
-    return r.as_task();
+    return runner().as_task();
   }
 
   static float
   system_cycle()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    return r.scheduler_get ().cycle_get ();
+    return runner().scheduler_get().cycle_get();
   }
 
   static libport::Symbol
@@ -259,23 +262,20 @@ namespace object
   static rObject
   system_class_lobby (objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
-    return r.lobby_get();
+    return runner().lobby_get();
   }
 
   static void
   system_nonInterruptible()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    r.non_interruptible_set(true);
+    runner().non_interruptible_set(true);
   }
 
   static void
   system_quit()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    r.lobby_get()->connection_get().close();
+    runner().lobby_get()->connection_get().close();
   }
 
   static void
@@ -283,30 +283,26 @@ namespace object
 	       const rCode& code,
                const rObject& clear_tags)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
-    const runner::Interpreter& current_runner =
-      dynamic_cast<runner::Interpreter&>(r);
+    runner::Runner& r = runner();
     runner::Interpreter* new_runner =
-      new runner::Interpreter (current_runner,
-			       rObject(code),
-			       libport::Symbol::fresh(r.name_get()));
+      new runner::Interpreter(interpreter(),
+                              rObject(code),
+                              libport::Symbol::fresh(r.name_get()));
 
     if (is_true(clear_tags))
       new_runner->tag_stack_clear();
 
-    new_runner->time_shift_set (r.time_shift_get ());
-    new_runner->start_job ();
+    new_runner->time_shift_set(r.time_shift_get());
+    new_runner->start_job();
   }
 
   static rObject
   system_class_stats(objects_type args)
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 0);
     Dictionary::value_type res;
     const sched::scheduler_stats_type& stats =
-      r.scheduler_get().stats_get();
+      runner().scheduler_get().stats_get();
 
     // If statistics have just been reset, return "nil" since we cannot
     // return anything significant.
@@ -331,31 +327,28 @@ namespace object
   static void
   system_resetStats()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    r.scheduler_get().stats_reset();
+    runner().scheduler_get().stats_reset();
   }
 
   // This should give a backtrace as an urbi object.
   static void
   system_backtrace()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
-    runner::Runner::backtrace_type bt = r.backtrace_get();
+    runner::Runner::backtrace_type bt = runner().backtrace_get();
     bt.pop_back();
     foreach (const runner::Runner::frame_type& elt,
 	     boost::make_iterator_range(boost::rbegin(bt),
 					boost::rend(bt)))
-      r.send_message("backtrace", elt.first + " (" + elt.second + ")");
+      runner().send_message("backtrace", elt.first + " (" + elt.second + ")");
   }
 
   static List::value_type
   system_jobs()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     List::value_type res;
-    foreach(sched::rJob job, r.scheduler_get().jobs_get())
+    foreach(sched::rJob job, runner().scheduler_get().jobs_get())
       res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
     return res;
   }
