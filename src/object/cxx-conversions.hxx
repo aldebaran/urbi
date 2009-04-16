@@ -16,7 +16,9 @@
 
 namespace object
 {
-  // Nothing to do for objects
+  /*----------.
+  | Objects.  |
+  `----------*/
   template <>
   struct CxxConvert<libport::intrusive_ptr<Object> >
   {
@@ -37,7 +39,9 @@ namespace object
     }
   };
 
-  // Convert between Urbi types
+  /*-------------.
+  | Urbi types.  |
+  `-------------*/
   template <typename Urbi>
   struct CxxConvert<libport::intrusive_ptr<Urbi> >
   {
@@ -56,7 +60,9 @@ namespace object
     }
   };
 
-  // Convert between Urbi types pointers
+  /*----------------------.
+  | Urbi types pointers.  |
+  `----------------------*/
   template <typename Urbi>
   struct CxxConvert<Urbi*>
   {
@@ -75,7 +81,9 @@ namespace object
     }
   };
 
-  // Conversion with int
+  /*------.
+  | int.  |
+  `------*/
   template<>
   struct CxxConvert<int>
   {
@@ -94,7 +102,9 @@ namespace object
     }
   };
 
-  // Conversion with unsigned chars
+  /*-----------------.
+  | unsigned chars.  |
+  `-----------------*/
   template<>
   struct CxxConvert<unsigned char>
   {
@@ -116,7 +126,9 @@ namespace object
     }
   };
 
-  // Conversion with float
+  /*--------.
+  | float.  |
+  `--------*/
   template<>
   struct CxxConvert<float>
   {
@@ -154,7 +166,9 @@ namespace object
     }
   };
 
-  // Conversion with unsigned_type
+  /*----------------.
+  | unsigned_type.  |
+  `----------------*/
   template<>
   struct CxxConvert<Float::unsigned_type>
   {
@@ -173,7 +187,9 @@ namespace object
     }
   };
 
-  // Conversion with floating point
+  /*-----------------.
+  | floating point.  |
+  `-----------------*/
   template<>
   struct CxxConvert<Float::value_type>
   {
@@ -192,7 +208,9 @@ namespace object
     }
   };
 
-  // Conversion with std::strings
+  /*--------------.
+  | std::string.  |
+  `--------------*/
   template <>
   struct CxxConvert<std::string>
   {
@@ -211,8 +229,11 @@ namespace object
     }
   };
 
-  // Conversion with char*
-#define CHAR(Type)                              \
+  /*------------------------.
+  | char* and const char*.  |
+  `------------------------*/
+
+#define CHAR(Type)                                                      \
   template <>                                                           \
   struct CxxConvert<Type>                                               \
   {                                                                     \
@@ -235,7 +256,9 @@ namespace object
 
 #undef CHAR
 
-  // Conversion with libport::Symbols
+  /*------------------.
+  | libport::Symbol.  |
+  `------------------*/
   template <>
   struct CxxConvert<libport::Symbol>
   {
@@ -254,7 +277,9 @@ namespace object
     }
   };
 
-  // Conversion with bools
+  /*-------.
+  | bool.  |
+  `-------*/
   template <>
   struct CxxConvert<bool>
   {
@@ -272,7 +297,9 @@ namespace object
     }
   };
 
-  // Conversion with libport::path
+  /*----------------.
+  | libport::path.  |
+  `----------------*/
   template <>
   struct CxxConvert<libport::path>
   {
@@ -293,32 +320,35 @@ namespace object
     }
   };
 
-  // Conversion with containers
-#define CONTAINER(Name, Method, ExtraT, ExtraTDecl)                     \
-  template <typename T ExtraTDecl>                                      \
-  struct CxxConvert<Name<T ExtraT> >                                           \
-  {                                                                     \
-    typedef Name<T ExtraT> target_type;                                        \
-                                                                        \
-    static target_type                                                  \
-      to(const rObject& o, unsigned idx)                                \
-    {                                                                   \
-      type_check<List>(o);						\
-      Name<T ExtraT> res;                                                      \
-      foreach (const rObject& elt, o->as<List>()->value_get())          \
-        res.Method(CxxConvert<T>::to(elt, idx));                        \
-      return res;                                                       \
-    }                                                                   \
-                                                                        \
-    static rObject                                                      \
-      from(const target_type& v)                                        \
-    {                                                                   \
-      objects_type res;                                                 \
-      foreach (const T& elt, v)                                         \
-        res.push_back(CxxConvert<T>::from(elt));                        \
-      return new List(res);                                             \
-    }                                                                   \
+  /*-------------------------------------------------------------.
+  | std::set, std::vector, std::deque, libport::ReservedVector.  |
+  `-------------------------------------------------------------*/
+#define CONTAINER(Name, Method, ExtraT, ExtraTDecl)             \
+  template <typename T ExtraTDecl>                              \
+  struct CxxConvert<Name<T ExtraT> >                            \
+  {                                                             \
+    typedef Name<T ExtraT> target_type;                         \
+                                                                \
+    static target_type                                          \
+      to(const rObject& o, unsigned idx)                        \
+    {                                                           \
+      type_check<List>(o);                                      \
+      Name<T ExtraT> res;                                       \
+      foreach (const rObject& elt, o->as<List>()->value_get())  \
+        res.Method(CxxConvert<T>::to(elt, idx));                \
+      return res;                                               \
+    }                                                           \
+                                                                \
+    static rObject                                              \
+      from(const target_type& v)                                \
+    {                                                           \
+      objects_type res;                                         \
+      foreach (const T& elt, v)                                 \
+        res.push_back(CxxConvert<T>::from(elt));                \
+      return new List(res);                                     \
+    }                                                           \
   };
+
 #define comma ,
   CONTAINER(std::set, insert, /**/, /**/);
   CONTAINER(std::vector, push_back, /**/, /**/);
@@ -328,7 +358,9 @@ namespace object
 #undef CONTAINER
 
 
-  // Conversion with boost::optional
+  /*------------------.
+  | boost::optional.  |
+  `------------------*/
   template <typename T>
   struct CxxConvert<boost::optional<T> >
   {
@@ -350,7 +382,9 @@ namespace object
     }
   };
 
-  // Conversion with std::pair
+  /*------------.
+  | std::pair.  |
+  `------------*/
   template <typename T1, typename T2>
   struct CxxConvert<std::pair<T1, T2> >
   {
@@ -375,6 +409,12 @@ namespace object
       return new List(content);
     }
   };
+
+
+
+  /*--------------------.
+  | to_urbi/from_urbi.  |
+  `--------------------*/
 
   template <typename T>
   rObject to_urbi(const T& v)
