@@ -376,20 +376,20 @@ namespace object
 
 #undef SERVER_SET_VAR
 
-  static rObject system_getenv(rObject, const std::string& name)
+  static rObject system_getenv(const rObject&, const std::string& name)
   {
     char* res = getenv(name.c_str());
     return res ? new String(res) : nil_class;
   }
 
-  static rObject system_setenv(rObject, const std::string& name, rObject value)
+  static rObject system_setenv(const rObject&, const std::string& name, rObject value)
   {
     rString v = value->call(SYMBOL(asString))->as<String>();
     setenv(name.c_str(), v->value_get().c_str(), 1);
     return v;
   }
 
-  static rObject system_unsetenv(rObject, const std::string& name)
+  static rObject system_unsetenv(const rObject&, const std::string& name)
   {
     rObject res = system_getenv(0, name);
     unsetenv(name.c_str());
@@ -402,7 +402,7 @@ namespace object
   }
 
 
-  static void system_loadModule(rObject, const std::string& name)
+  static void system_loadModule(const rObject&, const std::string& name)
   {
     static bool initialized = false;
 
@@ -448,7 +448,7 @@ namespace object
     return urbi_program_name_;
   }
 
-  static void system__exit(rObject, int status)
+  static void system__exit(const rObject&, int status)
   {
     exit(status);
   }
