@@ -2,7 +2,18 @@
 # are specific to a given project or even Svn branch.
 UCONSOLE_CHECKFLAGS = --kernel 2
 
+# The test directories we are interested in.
 TESTS_DIRS = 0.x 1.x 2.x demo uob
+
+# Run server in fast mode
+FAST_MODE = true
+# Whether we use Valgrind etc. Activated in 'check-buildfarm'.
+INSTRUMENT = false
+
+# Environment used both in check and installcheck.
+CHECK_ENVIRONMENT +=				\
+  FAST_MODE=$(FAST_MODE)			\
+  INSTRUMENT=$(INSTRUMENT)
 
 # Currently with Wine, we found no (simple) means to execute a Unix
 # process from a Windows process.  As a result, the "urbi" native
