@@ -165,13 +165,14 @@ namespace object
                           "error executing command: " + code);
   }
 
-  static rObject
-  system_class_registerAtJob (objects_type args)
+  static void
+  system_registerAtJob(const rObject&,
+                       const rObject& condition,
+                       const rObject& clause,
+                       const rObject& on_leave)
   {
-    check_arg_count(args.size() - 1, 3);
     runner::register_at_job(interpreter(),
-			    args[1], args[2], args[3]);
-    return object::void_class;
+			    condition, clause, on_leave);
   }
 
   static rObject
@@ -181,11 +182,9 @@ namespace object
   }
 
   static rObject
-  system_class_searchFile(objects_type args)
+  system_searchFile(const rObject&, const rObject& f)
   {
-    check_arg_count(args.size() - 1, 1);
-    const std::string filename = filename_get(args[1]);
-
+    const std::string& filename = filename_get(f);
     try
     {
       return new Path(urbiserver->find_file(filename));
@@ -209,11 +208,9 @@ namespace object
   }
 
   static rObject
-  system_class_loadFile(objects_type args)
+  system_loadFile(const rObject&, const rObject& f)
   {
-    check_arg_count(args.size() - 1, 1);
-    const std::string filename = filename_get(args[1]);
-
+    const std::string& filename = filename_get(f);
     if (!libport::path(filename).exists())
       runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
     return
@@ -451,6 +448,7 @@ namespace object
     DECLARE(fresh);
     DECLARE(getenv);
     DECLARE(jobs);
+    DECLARE(loadFile);
     DECLARE(loadModule);
     DECLARE(lobbies);
     DECLARE(lobby);
@@ -458,8 +456,10 @@ namespace object
     DECLARE(programName);
     DECLARE(quit);
     DECLARE(reboot);
+    DECLARE(registerAtJob);
     DECLARE(resetStats);
     DECLARE(scopeTag);
+    DECLARE(searchFile);
     DECLARE(searchPath);
     DECLARE(setenv);
     DECLARE(shiftedTime);
@@ -472,15 +472,6 @@ namespace object
     DECLARE(unsetenv);
 
 #undef DECLARE
-
-    /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Name)				\
-    DECLARE_PRIMITIVE(system, Name)
-
-    DECLARE(loadFile);
-    DECLARE(registerAtJob);
-    DECLARE(searchFile);
-#undef DECLARE
   }
 
-}; // namespace object
+} // namespace object
