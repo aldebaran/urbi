@@ -267,5 +267,4 @@ namespace urbi
     return baseURBIStarter::find(n);
   }
 
-
 } // namespace urbi
