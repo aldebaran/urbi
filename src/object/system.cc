@@ -149,28 +149,20 @@ namespace object
     return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
   }
 
-  static rObject
-  system_class_assert_(objects_type args)
+  static void
+  system_assert_(const rObject&,
+                 const rObject& value, const std::string& assertion)
   {
-    check_arg_count(args.size() - 1, 2);
-    type_check<String>(args[2]);
-    rString arg2 = args[2]->as<String>();
-    if (!is_true(args[1]))
-      runner::raise_primitive_error("assertion `" + arg2->value_get() +
-				    "' failed");
-    return void_class;
+    if (!is_true(value))
+      runner::raise_primitive_error("failed assertion: " + assertion);
   }
 
   static rObject
-  system_class_eval(objects_type args)
+  system_eval(const rObject&, const std::string& code)
   {
-    check_arg_count(args.size() - 1, 1);
-    type_check<String>(args[1]);
-    rString arg1 = args[1]->as<String>();
-    return
-      execute_parsed(parser::parse(arg1->value_get(), ast::loc()),
-                     SYMBOL(eval),
-                     "error executing command: " + arg1->value_get());
+    return execute_parsed(parser::parse(code, ast::loc()),
+                          SYMBOL(eval),
+                          "error executing command: " + code);
   }
 
   static rObject
@@ -450,10 +442,12 @@ namespace object
     DECLARE(_exit);
     DECLARE(aliveJobs);
     DECLARE(arguments);
+    DECLARE(assert_);
     DECLARE(backtrace);
     DECLARE(breakpoint);
     DECLARE(currentRunner);
     DECLARE(cycle);
+    DECLARE(eval);
     DECLARE(fresh);
     DECLARE(getenv);
     DECLARE(jobs);
@@ -465,8 +459,8 @@ namespace object
     DECLARE(quit);
     DECLARE(reboot);
     DECLARE(resetStats);
-    DECLARE(searchPath);
     DECLARE(scopeTag);
+    DECLARE(searchPath);
     DECLARE(setenv);
     DECLARE(shiftedTime);
     DECLARE(shutdown);
@@ -483,8 +477,6 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(system, Name)
 
-    DECLARE(assert_);
-    DECLARE(eval);
     DECLARE(loadFile);
     DECLARE(registerAtJob);
     DECLARE(searchFile);
