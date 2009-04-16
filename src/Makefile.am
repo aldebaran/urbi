@@ -40,8 +40,8 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 env_LTLIBRARIES = libuobject.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
-libuobject_la_CPPFLAGS =			\
-  $(AM_CPPFLAGS) -DBUILDING_URBI_SDK
+libuobject_la_CPPFLAGS =				\
+  $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DLIBPORT_NO_SSL
 libuobject_la_LDFLAGS =				\
   -avoid-version -no-undefined
 libuobject_la_LIBADD =					\
@@ -50,6 +50,7 @@ libuobject_la_LIBADD =					\
   $(LTDL_LIBS)						\
   $(LIBPORT_LIBS)					\
   $(top_builddir)/sdk-remote/src/libuco/libuco.la	\
+  $(BOOST_SYSTEM_LIBS)					\
   $(SCHED_LIBS)
 
 

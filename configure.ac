@@ -104,6 +104,7 @@ URBI_ARG_ENABLE([enable-programs],
 AM_CONDITIONAL([BUILD_PROGRAMS],
                [test x$enable_programs = xyes])
 BOOST_TOKENIZER
+BOOST_SYSTEM
 
 
 ## -------------- ##

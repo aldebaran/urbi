@@ -122,6 +122,10 @@ dist_libuobject_la_SOURCES +=			\
   object/root-classes.hh			\
   object/semaphore.cc				\
   object/semaphore.hh				\
+  object/server.cc				\
+  object/server.hh				\
+  object/socket.cc				\
+  object/socket.hh				\
   object/slot.cc				\
   object/slot.hh				\
   object/slot.hxx				\

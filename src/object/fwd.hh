@@ -67,6 +67,8 @@ namespace object
   FWD_DECL(Path);
   FWD_DECL(Primitive);
   FWD_DECL(Semaphore);
+  FWD_DECL(Server);
+  FWD_DECL(Socket);
   FWD_DECL(String);
   FWD_DECL(Tag);
   FWD_DECL(Task);
