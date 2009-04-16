@@ -183,11 +183,9 @@ namespace object
   }
 
   static rObject
-  system_class_scopeTag(objects_type args)
+  system_scopeTag()
   {
-    check_arg_count(args.size() - 1, 0);
-    const sched::rTag& scope_tag = interpreter().scope_tag();
-    return new Tag(scope_tag);
+    return new Tag(interpreter().scope_tag());
   }
 
   static rObject
@@ -468,6 +466,7 @@ namespace object
     DECLARE(reboot);
     DECLARE(resetStats);
     DECLARE(searchPath);
+    DECLARE(scopeTag);
     DECLARE(setenv);
     DECLARE(shiftedTime);
     DECLARE(shutdown);
@@ -488,7 +487,6 @@ namespace object
     DECLARE(eval);
     DECLARE(loadFile);
     DECLARE(registerAtJob);
-    DECLARE(scopeTag);
     DECLARE(searchFile);
 #undef DECLARE
   }
