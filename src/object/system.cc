@@ -98,13 +98,11 @@ namespace object
   `--------------------*/
 
 
-#define SERVER_FUNCTION(Function)					\
-  static rObject							\
-  system_class_ ## Function (objects_type args)                         \
-  {									\
-    check_arg_count(args.size() - 1, 0);                                \
-    urbiserver->Function();						\
-    return void_class;							\
+#define SERVER_FUNCTION(Function)               \
+  static void                                   \
+  system_ ## Function ()                        \
+  {                                             \
+    urbiserver->Function();                     \
   }
 
   SERVER_FUNCTION(reboot)
@@ -114,7 +112,7 @@ namespace object
 
 
   static rObject
-  system_class_sleep (objects_type args)
+  system_class_sleep(objects_type args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     check_arg_count(args.size() - 1, 1);
@@ -134,21 +132,18 @@ namespace object
     return void_class;
   }
 
-  static rObject
-  system_class_time(objects_type args)
+  static float
+  system_time()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
-    return new Float(r.scheduler_get().get_time() / 1000000.0);
+    return r.scheduler_get().get_time() / 1000000.0;
   }
 
-  static rObject
-  system_class_shiftedTime(objects_type args)
+  static float
+  system_shiftedTime()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
-    return new Float((r.scheduler_get().get_time() -
-			  r.time_shift_get()) / 1000000.0);
+    return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
   }
 
   static rObject
@@ -196,7 +191,7 @@ namespace object
   }
 
   static rObject
-  system_class_searchFile (objects_type args)
+  system_class_searchFile(objects_type args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
@@ -217,15 +212,13 @@ namespace object
     }
   }
 
-  static rObject
-  system_class_searchPath(objects_type args)
+  static List::value_type
+  system_searchPath()
   {
-    check_arg_count(args.size() - 1, 0);
     List::value_type res;
-    foreach (const libport::path& p,
-	     urbiserver->search_path.search_path_get())
+    foreach (const libport::path& p, urbiserver->search_path.search_path_get())
       res.push_back(new Path(p));
-    return to_urbi(res);
+    return res;
   }
 
   static rObject
@@ -250,19 +243,17 @@ namespace object
     return r.as_task();
   }
 
-  static rObject
-  system_class_cycle (objects_type args)
+  static float
+  system_cycle()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
-    return new Float(r.scheduler_get ().cycle_get ());
+    return r.scheduler_get ().cycle_get ();
   }
 
-  static rObject
-  system_class_fresh (objects_type args)
+  static libport::Symbol
+  system_fresh()
   {
-    check_arg_count(args.size() - 1, 0);
-    return new String(libport::Symbol::fresh());
+    return libport::Symbol::fresh();
   }
 
   static rObject
@@ -273,22 +264,18 @@ namespace object
     return r.lobby_get();
   }
 
-  static rObject
-  system_class_nonInterruptible (objects_type args)
+  static void
+  system_nonInterruptible()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
-    r.non_interruptible_set (true);
-    return void_class;
+    r.non_interruptible_set(true);
   }
 
-  static rObject
-  system_class_quit(objects_type args)
+  static void
+  system_quit()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
     r.lobby_get()->connection_get().close();
-    return void_class;
   }
 
   static void
@@ -341,63 +328,55 @@ namespace object
     return new Dictionary(res);
   }
 
-  static rObject
-  system_class_resetStats(objects_type args)
+  static void
+  system_resetStats()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
     r.scheduler_get().stats_reset();
-    return void_class;
   }
 
   // This should give a backtrace as an urbi object.
-  static rObject
-  system_class_backtrace(objects_type args)
+  static void
+  system_backtrace()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     // FIXME: This method sucks a bit, because show_backtrace sucks a
     // bit, because our channeling/message-sending system sucks a lot.
-    check_arg_count(args.size() - 1, 0);
     runner::Runner::backtrace_type bt = r.backtrace_get();
     bt.pop_back();
     foreach (const runner::Runner::frame_type& elt,
 	     boost::make_iterator_range(boost::rbegin(bt),
 					boost::rend(bt)))
       r.send_message("backtrace", elt.first + " (" + elt.second + ")");
-    return void_class;
   }
 
-  static rObject
-  system_class_jobs(objects_type args)
+  static List::value_type
+  system_jobs()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    check_arg_count(args.size() - 1, 0);
     List::value_type res;
     foreach(sched::rJob job, r.scheduler_get().jobs_get())
       res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
-    return new List(res);
+    return res;
   }
 
-  static rObject
-  system_class_aliveJobs(objects_type args)
+  static int
+  system_aliveJobs()
   {
-    check_arg_count(args.size() - 1, 0);
-    return new Float(sched::Job::alive_jobs());
+    return sched::Job::alive_jobs();
   }
 
-  static rObject
-  system_class_breakpoint(objects_type)
+  static void
+  system_breakpoint()
   {
-    return void_class;
+    return;
   }
 
-#define SERVER_SET_VAR(Function, Variable, Value)			\
-  static rObject							\
-  system_class_ ## Function (objects_type args)                         \
-  {									\
-    check_arg_count(args.size() - 1, 0);                                \
-    urbiserver->Variable = Value;					\
-    return void_class;							\
+#define SERVER_SET_VAR(Function, Variable, Value)       \
+  static void                                           \
+  system_ ## Function ()                                \
+  {                                                     \
+    urbiserver->Variable = Value;                       \
   }
 
   SERVER_SET_VAR(stopall, stopall, true)
@@ -485,18 +464,32 @@ namespace object
   system_class_initialize ()
   {
 #define DECLARE(Name)                                                   \
-    system_class->slot_set                                              \
-      (SYMBOL(Name),                                                    \
-       make_primitive(&system_##Name))                                  \
+    system_class->slot_set(SYMBOL(Name),                                \
+                           make_primitive(&system_##Name))              \
 
     DECLARE(_exit);
+    DECLARE(aliveJobs);
     DECLARE(arguments);
+    DECLARE(backtrace);
+    DECLARE(breakpoint);
+    DECLARE(cycle);
+    DECLARE(fresh);
     DECLARE(getenv);
+    DECLARE(jobs);
     DECLARE(loadModule);
     DECLARE(lobbies);
+    DECLARE(nonInterruptible);
     DECLARE(programName);
+    DECLARE(quit);
+    DECLARE(reboot);
+    DECLARE(resetStats);
+    DECLARE(searchPath);
     DECLARE(setenv);
+    DECLARE(shiftedTime);
+    DECLARE(shutdown);
     DECLARE(spawn);
+    DECLARE(stopall);
+    DECLARE(time);
     DECLARE(unsetenv);
 
 #undef DECLARE
@@ -505,31 +498,16 @@ namespace object
 #define DECLARE(Name)				\
     DECLARE_PRIMITIVE(system, Name)
 
-    DECLARE(aliveJobs);
     DECLARE(assert_);
-    DECLARE(backtrace);
-    DECLARE(breakpoint);
     DECLARE(currentRunner);
-    DECLARE(cycle);
     DECLARE(eval);
-    DECLARE(fresh);
-    DECLARE(jobs);
     DECLARE(loadFile);
     DECLARE(lobby);
-    DECLARE(nonInterruptible);
-    DECLARE(quit);
-    DECLARE(reboot);
     DECLARE(registerAtJob);
-    DECLARE(resetStats);
     DECLARE(scopeTag);
     DECLARE(searchFile);
-    DECLARE(searchPath);
-    DECLARE(shiftedTime);
     DECLARE(stats);
-    DECLARE(shutdown);
     DECLARE(sleep);
-    DECLARE(stopall);
-    DECLARE(time);
 #undef DECLARE
   }
 
