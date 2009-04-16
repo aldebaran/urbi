@@ -12,13 +12,15 @@ esac
 : ${abs_top_builddir='@abs_top_builddir@'}
 : ${program=$abs_top_builddir/src/urbi-launch$EXEEXT}
 
-debug ()
+verbose ()
 {
-    test -n "$VERBOSE" && echo "$@" 1>&2 || true
+  if test -n "$VERBOSE"; then
+    echo >&2 "$0: $@"
+  fi
 }
 
 # The libubbject we load depends on the usage.
-debug "$0: $*"
+verbose "$*"
 case " $* " in
   (*' --start '*)
      # Spawning a new server, which requires a server.  Two cases:
@@ -34,11 +36,13 @@ case " $* " in
      fi
      # Unfortunately, ltdl does not seem to look into the *.la
      # file to find the dependencies, so load them first.
-     for v in LD_LIBRARY_PATH DYLD_LIBRARY_PATH
+     for var in LD_LIBRARY_PATH DYLD_LIBRARY_PATH
      do
-       val=$abs_top_builddir/../src/lib/sched/.libs
-       eval "$v=\$val:\$v"
-       export $v
+       eval "val=\$$var"
+       val=$abs_top_builddir/../src/lib/sched/.libs:$val
+       eval "$var=\$val"
+       verbose "$var=$val"
+       export $var
      done
      ;;
   (*)
@@ -50,7 +54,7 @@ if test -n "$libuobjectdir"; then
   shift
 fi
 
-debug "wrapper: $program $*"
+verbose "running $program $*"
 exec "$program" "$@"
 
 # Local Variables:
