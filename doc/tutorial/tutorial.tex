@@ -88,9 +88,9 @@ commands, advanced command line edition etc.); run \samp{rlwrap
 
 In either case the server can also be made available for network-based
 interactions using option \option{--port \var{port}}.  Note that while
-\lstinline{shutdown} terminates the server, \lstinline{quit} only terminates one
-interactive session.  In the following example the server is still
-available for other, possibly concurrent, sessions.
+\lstinline{shutdown} asks the server to quit, \lstinline{quit} only
+quits one interactive session.  In the following example the server is
+still available for other, possibly concurrent, sessions.
 
 \begin{shell}[alsolanguage={[interactive]Urbi}]
 $ urbi --port 54000 &
@@ -138,7 +138,8 @@ You can now send commands to your \urbi server. If at any point you
 get lost, or want a fresh start, you can simply close and reopen your
 connection to the server to get a clean environment.  In some cases,
 particularly if you made global changes in the environment, it is
-simpler start anew: shutdown your current server, and spawn a new one.
+simpler start anew: shut your current server down, and spawn a new
+one.
 
 \chapter{First steps}
 

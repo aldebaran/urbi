@@ -476,9 +476,9 @@ namespace object
     return urbi_program_name_;
   }
 
-  static void system_terminate()
+  static void system__exit(rObject, int status)
   {
-    exit(0);
+    exit(status);
   }
 
   void
@@ -489,6 +489,7 @@ namespace object
       (SYMBOL(Name),                                                    \
        make_primitive(&system_##Name))                                  \
 
+    DECLARE(_exit);
     DECLARE(arguments);
     DECLARE(getenv);
     DECLARE(loadModule);
@@ -496,7 +497,6 @@ namespace object
     DECLARE(programName);
     DECLARE(setenv);
     DECLARE(spawn);
-    DECLARE(terminate);
     DECLARE(unsetenv);
 
 #undef DECLARE

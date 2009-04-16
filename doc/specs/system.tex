@@ -2,6 +2,12 @@
 Details on the architecture the \urbi server runs on.
 
 \begin{itemize}
+\item \lstinline'_exit(\var{status})'\\
+  Shut the server down brutally: the connections are not closed, and
+  the resources are not explicitly released (the operating system
+  reclaims most of them: memory, file descriptors and so forth).
+  Architecture dependent.
+
 \item \lstinline'Platform'\\
   See \refObject{System.Platform}
 
