@@ -75,6 +75,12 @@ namespace object
       runner::raise_primitive_error(error.message());
   }
 
+  void
+  Socket::disconnect()
+  {
+    close();
+  }
+
 #define EMIT(Name)                              \
   slot_get(SYMBOL(Name))->call(SYMBOL(emit));
 #define EMIT1(Name, Arg)                                        \
@@ -130,12 +136,13 @@ namespace object
 
   void Socket::initialize(CxxObject::Binder<Socket>& bind)
   {
-    bind(SYMBOL(connect), &Socket::connect);
-    bind(SYMBOL(host),    &Socket::host);
-    bind(SYMBOL(init),    &Socket::init);
+    bind(SYMBOL(connect),     &Socket::connect);
+    bind(SYMBOL(disconnect),  &Socket::disconnect);
+    bind(SYMBOL(host),        &Socket::host);
+    bind(SYMBOL(init),        &Socket::init);
     bind(SYMBOL(isConnected), &Socket::isConnected);
-    bind(SYMBOL(poll),    &Socket::poll);
-    bind(SYMBOL(write),   &Socket::write);
+    bind(SYMBOL(poll),        &Socket::poll);
+    bind(SYMBOL(write),       &Socket::write);
   }
 
   rObject

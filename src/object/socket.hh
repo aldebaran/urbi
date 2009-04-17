@@ -14,6 +14,7 @@ namespace object
     Socket(rServer server);
     Socket(rSocket model);
     void connect(const std::string& host, const std::string& port);
+    void disconnect();
     void init();
     virtual void onConnect();
     virtual void onError(boost::system::error_code);
