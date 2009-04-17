@@ -98,6 +98,7 @@ namespace object
   Socket::onError(boost::system::error_code err)
   {
     EMIT1(error, err.message());
+    EMIT(disconnected);
 //     if (!isConnected())
     assert(disconnect_);
     disconnect_->call(SYMBOL(stop));
