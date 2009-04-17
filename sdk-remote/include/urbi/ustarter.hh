@@ -56,12 +56,14 @@ namespace urbi
 
     virtual UObject* getUObject() = 0;
 
-    /// Called before deletion.
+    /// Delete the UObject and remove ourselve from the list.
     virtual void clean() = 0;
-    /// Used to provide a wrapper to initialize objects in starterlist.
-    virtual void init(const std::string&) = 0;
-    /// Used to provide a copy of a C++ object based on its name.
-    virtual void copy(const std::string&) = 0;
+    /// Create the instance.
+    virtual void init(const std::string& name) = 0;
+    /** Create a new UObject cloning the one in this baseURBIstarter.
+     *  Also create a baseURBIStarter for this new UObject.
+     */
+    virtual void copy(const std::string& name) = 0;
     std::string name;
     /// Set to true to have the UObjects use a random unique name.
     bool local;
