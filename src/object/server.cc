@@ -41,7 +41,7 @@ namespace object
   void
   Server::socket_ready(rSocket socket)
   {
-    connection_->call(SYMBOL(emit), socket);
+    connection_->call(SYMBOL(syncEmit), socket);
   }
 
   const Server::sockets_type&
