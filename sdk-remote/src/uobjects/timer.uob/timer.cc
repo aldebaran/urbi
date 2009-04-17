@@ -40,12 +40,12 @@ public:
     }
     virtual int update()
     {
-      updated = 1;
+      updated = (int)updated + 1;
       return 0;
     }
     virtual int onTimer()
     {
-      timerup = 1;
+      timerup = (int)timerup + 1;
       return 0;
     }
     urbi::UVar updated;
