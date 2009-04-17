@@ -1,9 +1,51 @@
-\chapter{Tools specifications}
+\chapter{Programs}
 \label{sec:tools}
 
-\section{\urbi kernel}
-\section{Console server}
-\section{\umake}
+\section{\command{urbi}}
+\label{sec:tools:urbi}
+
+The \command{urbi} program launches an \urbi server, for either batch,
+interactive, or network-based executions.
+
+\subsection{Options}
+
+\paragraph{Tuning}
+
+\begin{options}
+\item[-s, --stack-size=\var{size}] set the coroutine \dfn{stack size}.
+  The unit of \var{size} is KB; it defaults to 128.
+
+  This option should not be needed unless you have ``stack exhausted''
+  messages from \command{urbi} in which case you should try
+  \option{--stack-size=512} or more.
+
+  Alternatively you can define the environment variable
+  \code{URBI\_STACK\_SIZE}.  The option \option{--stack-size} has
+  precedence over the \code{URBI\_STACK\_SIZE}.
+\end{options}
+
+\paragraph{Execution}
+\begin{options}
+\item[-e, --expression=\var{exp}] send the \us expression \var{exp}.
+  No separator is added, you have to pass yours.
+\item[-f, --file=\var{file}] send the contents of the file \var{file}.
+  No separator is added, you have to pass yours.
+\item[-i, --interactive] start an interactive session.
+\end{options}
+
+The options \option{-e}, \option{-f} accumulate, and are run in the
+same \refObject{Lobby} as \option{-i} if used.  In other words, the
+following session is valid:
+
+\begin{shell}
+# Create a file "two.u".
+$ echo "var two = 2;" >two.u
+# urbi -e 'var one = 1;' -f two.u -i
+[00000000] 1
+[00000000] 2
+one + two;
+[00000000] 3
+\end{shell}%$
 
 %%% Local Variables:
 %%% mode: latex

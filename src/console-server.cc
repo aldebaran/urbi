@@ -98,14 +98,15 @@ namespace
   help(libport::OptionParser& parser)
   {
     std::stringstream output;
-    output << "usage: " << libport::program_name()
-           << " [OPTIONS] [PROGRAM_FILE] [ARGS...]" << std::endl
-           << std::endl
-           << "  PROGRAM_FILE   Urbi script to load."
-           << "  `-' stands for standard input" << std::endl
-           << "  ARGS           user arguments passed to PROGRAM_FILE"  << std::endl
-           << std::endl
-           << "Options:" << std::endl;
+    output
+      << "usage: " << libport::program_name()
+      << " [OPTIONS] [PROGRAM_FILE] [ARGS...]" << std::endl
+      << std::endl
+      << "  PROGRAM_FILE   Urbi script to load."
+      << "  `-' stands for standard input" << std::endl
+      << "  ARGS           user arguments passed to PROGRAM_FILE" << std::endl
+      << std::endl
+      << "Options:";
     parser.options_doc(output);
     throw urbi::Exit(EX_OK, output.str());
   }
@@ -224,11 +225,11 @@ namespace urbi
       arg_dbg      ("", "debug"),
       arg_period   ("ignored for backward compatibility", "period", 'P'),
       arg_port_file("write port number to the specified file.",
-                    "port-file", 'w'),
-      arg_stack    ("set the job stack size in KB", "stack-size", 's');
+                    "port-file", 'w', "FILE"),
+      arg_stack    ("set the job stack size in KB", "stack-size", 's', "SIZE");
 
     libport::OptionValues
-      arg_exps("run expression", "expression", 'e');
+      arg_exps("run expression", "expression", 'e', "EXP");
 
     {
       libport::OptionParser parser;

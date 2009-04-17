@@ -221,3 +221,9 @@
 %% name.
 \newcommand{\autorefObject}[1]
   {\autoref{sec:std-#1}}
+
+%% FIXME: I don't know how to return to \newline here :(
+\newenvironment{options}%
+  {\begin{list}{}{%
+        \renewcommand{\makelabel}[1]{\option{##1}\hfill\break}}}%
+  {\end{list}}

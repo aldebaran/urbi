@@ -1,7 +1,14 @@
 \chapter{Frequently Asked Questions}
 \label{sec:faq}
 
-\section{Objects lifetime}
+\section{Tools}
+\paragraph{The server dies with ``stack exhaustion''}
+Your program might be deeply recursive, or use large temporary
+objects.  USe \option{--stack-size} to augment the stack size, see
+\autoref{sec:tools:urbi}.
+
+\section{\us}
+\subsection{Objects lifetime}
 
 \paragraph{How do I create a new Object derivative?}
 Urbi is based on prototypes. To create a new Object derivative (which
@@ -25,7 +32,7 @@ object that was bound to the name \lstinline{myObject}, yet it may did
 so provided that \lstinline{myObject} was the last and only reference
 to this object.
 
-\section{Slots and variables}
+\subsection{Slots and variables}
 
 \paragraph{How do I add a new slot in an object?}
 To add a slot to an object \code{O}, you have to use the \code{var} keyword:
@@ -149,7 +156,7 @@ class myObject {
 };
 \end{urbifixme}
 
-\section{Tags}
+\subsection{Tags}
 
 \paragraph{How do I create a tag?}
 
@@ -201,7 +208,7 @@ res;
 [00000001] 42
 \end{urbifixme}
 
-\section{Events}
+\subsection{Events}
 \paragraph{How do I create an event?}
 Events are objects, and must be created as any object by using "new" to create
 derivatives of the "Event" object.
@@ -228,7 +235,7 @@ variable will be bound (as a local variable) in the body part of the "at"
 construct, with whatever value is present in the event that triggered the
 "at".
 
-\section{Lists}
+\subsection{Lists}
 \paragraph{How can I iterate over a list?}
 
 You can use the "for" construct to iterate over the elements of a list:
@@ -240,7 +247,8 @@ for (var i: [10, 11, 12]) echo (i);
 [00000003] *** 12
 \end{urbiscript}
 
-\section{UObjects loading}
+
+\section{UObjects}
 
 \paragraph{urbi-launch fails with 'myuobject: file not found'. What can I do?}
 If you are sure the file is there, the most probable cause is an
@@ -258,7 +266,7 @@ all its attempts to load a file to stderr.
 
 Note that this problem is Mac OS X and Linux specific.
 
-\section{MiscStatus}
+\section{Miscellaneous}
 \paragraph{How can I know what has changed since the latest beta release I got?}
 The file \file{RELEASE-NOTES.txt} at the top of the distribution
 contains the list of user-visible changes between consecutive
