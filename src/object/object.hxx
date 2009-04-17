@@ -21,15 +21,6 @@
 namespace object
 {
 
-  inline
-  Object::~Object ()
-  {
-    slots_.finalize(this);
-    if (!protos_cache_)
-      delete protos_;
-  }
-
-
   /*---------.
   | Protos.  |
   `---------*/

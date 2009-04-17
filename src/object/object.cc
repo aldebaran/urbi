@@ -11,6 +11,7 @@
 #include <libport/containers.hh>
 #include <libport/contract.hh>
 #include <libport/foreach.hh>
+#include <libport/lexical-cast.hh>
 
 #include <kernel/userver.hh>
 
@@ -35,6 +36,29 @@ namespace object
     , slots_()
   {
     root_classes_initialize();
+  }
+
+  Object::~Object ()
+  {
+    // Prevent further destruction of this object.
+    counter_inc();
+    if (rObject finalize = slot_locate(SYMBOL(finalize), false, true))
+    {
+      objects_type args;
+      args.push_back(this);
+      ::kernel::urbiserver->getCurrentRunner().apply(finalize, SYMBOL(finalize),
+                                                     args);
+    }
+    // We are allready in the destructor, we cannot allow a reference to be
+    // kept. This check must be outside the above block.
+    if (counter_get() != 1)
+    {
+      pabort("Object finalizer kept " + string_cast(counter_get()-1)
+             + " reference(s) to this");
+    }
+    slots_.finalize(this);
+    if (!protos_cache_)
+      delete protos_;
   }
 
   /*--------.
