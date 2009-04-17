@@ -68,9 +68,16 @@ public:
     UBindFunction(all, side_effect_free_set);
     UBindFunction(all, side_effect_free_get);
 
+    UBindFunction(all, getDestructionCount);
+
     vars[0] = &a;
     vars[1] = &b;
     vars[2] = &c;
+  }
+
+  ~all()
+  {
+    ++destructionCount;
   }
 
   int writeOwnByName(const std::string& name, int val)
@@ -396,7 +403,10 @@ public:
   {
     return urbi::side_effect_free_get();
   }
-
+  int getDestructionCount()
+  {
+    return destructionCount;
+  }
   urbi::UVar a,b,c;
   urbi::UVar* vars[3];
 
@@ -410,8 +420,10 @@ public:
   urbi::UVar lastAccessVal;
   //Set to 0 in ctor, 1 in init
   urbi::UVar initCalled;
+  static int destructionCount;
 };
 
+int all::destructionCount = 0;
 
 ::urbi::URBIStarter<all>
  starter1(urbi::isPluginMode()?"all":"remall");
