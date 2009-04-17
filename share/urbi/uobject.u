@@ -43,6 +43,13 @@ class Global.UObject
     remoteEventMap = Dictionary.new;
   };
 
+  function destroy()
+  {
+    uobjects.removeSlot(__uobjectName);
+    for (var f: slotNames.remove("__uobjectName"))
+      removeSlot(f)
+  };
+
   /// Set a timer to call update at specified interval.
   function setUpdate(interval)
   {

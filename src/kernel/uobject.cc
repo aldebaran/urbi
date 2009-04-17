@@ -137,7 +137,8 @@ rObject uobject_initialize(const objects_type& args)
   return object::void_class;
 }
 
-static libport::hash_map<std::string, rObject> uobject_map;
+// No rObject here as we do not want to prevent object destruction.
+static libport::hash_map<std::string, object::Object*> uobject_map;
 
 static rObject wrap_ucallback_notify(const object::objects_type&,
                                      urbi::UGenericCallback* ugc)
@@ -176,6 +177,27 @@ uobject_clone(const object::objects_type& l)
   return uobject_new(proto);
 }
 
+static rObject
+uobject_finalize(const object::objects_type& args)
+{
+  rObject o = args.front();
+  std::string objName = o->slot_get(SYMBOL(__uobjectName)).get<std::string>();
+  // FIXME: uobject_to_robject[objName] should be enough
+  urbi::UObject* uob = urbi::getUObject(objName);
+  if (!uob)
+    runner::raise_primitive_error("uobject_finalize: No uobject by the name of "
+                                  +objName+" found");
+  foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
+  {
+    if (i->name == objName)
+    {
+      i->clean();
+      break;
+    }
+  }
+  return object::void_class;
+}
+
 /*! Create the prototype for an UObject class.
 */
 rObject
@@ -185,6 +207,7 @@ uobject_make_proto(const std::string& name)
   object::objects_type args;
   args.push_back(oc);
   getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
+  oc->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
   oc->slot_set(SYMBOL(__uobject_cname),
 	       new object::String(name));
   oc->slot_set(SYMBOL(__uobject_base), oc);
@@ -220,7 +243,7 @@ uobject_new(rObject proto, bool forceName)
     emits urbi code using this name.*/
     where->slot_set(libport::Symbol(name), r);
   }
-  uobject_map[name] = r;
+  uobject_map[name] = r.get();
   r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
   // Instanciate UObject.
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
@@ -228,7 +251,10 @@ uobject_new(rObject proto, bool forceName)
     if (i->name == cname)
     {
       ECHO( "Instanciating a new " << cname << "named "<<name);
-      i->init(name);
+      if (i->getUObject())
+        i->copy(name);
+      else
+        i->init(name);
       return r;
     }
   }
