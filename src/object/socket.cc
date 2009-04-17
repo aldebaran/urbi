@@ -56,13 +56,14 @@ namespace object
 #define EVENT(Name)                                                     \
     {                                                                   \
       rObject val = Event->call(SYMBOL(new));                           \
-      slot_set(SYMBOL(Name), val);                                      \
+      slot_set(Name, val);                                              \
     }                                                                   \
+/**/
 
-    EVENT(connected);
-    EVENT(disconnected);
-    EVENT(error);
-    EVENT(received);
+    EVENT(SYMBOL(connected));
+    EVENT(SYMBOL(disconnected));
+    EVENT(SYMBOL(error));
+    EVENT(SYMBOL(received));
 #undef event
 
   }
