@@ -337,10 +337,14 @@ namespace urbi
   protected:
     std::string connectionID_;
 
-    virtual UCallbackAction setVersion (const UMessage& msg);
-    virtual UCallbackAction setConnectionID (const UMessage& msg);
+    /// A callback, installed by onConnection(), that reads an answer
+    /// from the server to know if it's k1 or k2.
+    virtual UCallbackAction setVersion(const UMessage& msg);
+    /// A callback, installed by setVersion, that computes
+    /// connectionID_.
+    virtual UCallbackAction setConnectionID(const UMessage& msg);
   public:
-    const std::string& connectionID () const;
+    const std::string& connectionID() const;
     /// Return major kernel version or -1 if unknown yet.
     int kernelMajor() const;
     /// Return minor kernel version or -1 if unknown yet.

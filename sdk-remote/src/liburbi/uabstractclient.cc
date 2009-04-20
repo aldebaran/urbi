@@ -1028,14 +1028,16 @@ namespace urbi
     return addCallback(CLIENTERROR_TAG, callback);
   }
 
-  UCallbackID UAbstractClient::setCallback(UCallbackWrapper& callback,
-					   const char* tag)
+  UCallbackID
+  UAbstractClient::setCallback(UCallbackWrapper& callback,
+                               const char* tag)
   {
     return addCallback(tag, callback);
   }
 
-  UCallbackID UAbstractClient::addCallback(const char* tag,
-					   UCallbackWrapper& w)
+  UCallbackID
+  UAbstractClient::addCallback(const char* tag,
+                               UCallbackWrapper& w)
   {
     listLock.lock();
     UCallbackInfo ci(w);
@@ -1101,7 +1103,7 @@ namespace urbi
   {
     if (msg.type == MESSAGE_DATA && msg.value)
     {
-      std::string id = (std::string)*msg.value;
+      std::string id(*msg.value);
       if (!id.empty())
       {
 	connectionID_ = id;
@@ -1148,7 +1150,7 @@ namespace urbi
   }
 
   void
-  UAbstractClient::waitForKernelVersion () const
+  UAbstractClient::waitForKernelVersion() const
   {
     /// FIXME: use a condition.
     while (kernelMajor_ < 0 && !error())
@@ -1156,23 +1158,23 @@ namespace urbi
   }
 
   int
-  UAbstractClient::getCurrentTimestamp () const
+  UAbstractClient::getCurrentTimestamp() const
   {
     return currentTimestamp;
   }
 
   const std::string&
-  UAbstractClient::connectionID () const
+  UAbstractClient::connectionID() const
   {
     return connectionID_;
   }
 
   std::string
-  getClientConnectionID (const UAbstractClient* cli)
+  getClientConnectionID(const UAbstractClient* cli)
   {
     if (!cli)
       return "";
-    return cli->connectionID ();
+    return cli->connectionID();
   }
 
 
