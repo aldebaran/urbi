@@ -331,30 +331,46 @@ namespace urbi
     /// Temporary buffer for send data.
     char* sendBuffer;
 
-    int kernelMajor_;
-    int kernelMinor_;
-    std::string kernelVersion_;
-  protected:
-    std::string connectionID_;
-
-    /// A callback, installed by onConnection(), that reads an answer
-    /// from the server to know if it's k1 or k2.
-    virtual UCallbackAction setVersion(const UMessage& msg);
-    /// A callback, installed by setVersion, that computes
-    /// connectionID_.
-    virtual UCallbackAction setConnectionID(const UMessage& msg);
+    /// \name Kernel Version.
+    /// \{
   public:
-    const std::string& connectionID() const;
-    /// Return major kernel version or -1 if unknown yet.
-    int kernelMajor() const;
-    /// Return minor kernel version or -1 if unknown yet.
-    int kernelMinor() const;
-    /// Return kernel version string.
+    /// Kernel version string.
+    /// Call waitForKernelVersion to make sure it is defined (beware
+    /// that there are two signatures, one for UAbstractClient,
+    /// another for USyncClient).
     const std::string& kernelVersion() const;
+    /// Major kernel version.  Dies if unknown yet.
+    int kernelMajor() const;
+    /// Minor kernel version.  Dies if unknown yet.
+    int kernelMinor() const;
     /** Block until kernel version is available or an error occurrs.
      * Message processing must not depend on this thread.
      */
     void waitForKernelVersion() const;
+
+  protected:
+    /// The full kernel version as answered by the server.
+    /// Empty if not available yet.
+    std::string kernelVersion_;
+    /// The major version.  -1 if not yet available.
+    int kernelMajor_;
+    /// The minor version.  -1 if not yet available.
+    int kernelMinor_;
+
+    /// A callback, installed by onConnection(), that reads an answer
+    /// from the server to know if it's k1 or k2.
+    virtual UCallbackAction setVersion(const UMessage& msg);
+    /// \}
+
+  public:
+    const std::string& connectionID() const;
+
+  protected:
+    std::string connectionID_;
+    /// A callback, installed by setVersion, that computes
+    /// connectionID_.
+    virtual UCallbackAction setConnectionID(const UMessage& msg);
+
   private:
     /// Bin object for this command.
     typedef std::list<urbi::BinaryData> binaries_type;
