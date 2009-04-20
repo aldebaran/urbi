@@ -233,7 +233,8 @@ namespace urbi
     return waitForTag(tag, useconds);
   }
 
-  UMessage* USyncClient::syncGet(const char* format, ...)
+  UMessage*
+  USyncClient::syncGet(const char* format, ...)
   {
     va_list arg;
     va_start(arg, format);
@@ -242,8 +243,10 @@ namespace urbi
     return res;
   }
 
-  UMessage* USyncClient::syncGetTimeout(libport::utime_t useconds,
-					const char* format, ...)
+
+  UMessage*
+  USyncClient::syncGetTimeout(libport::utime_t useconds,
+                              const char* format, ...)
   {
     va_list arg;
     va_start(arg, format);
@@ -252,8 +255,9 @@ namespace urbi
     return res;
   }
 
-  UMessage* USyncClient::syncGetTag(const char* format,
-                                    const char* mtag, const char* mmod, ...)
+  UMessage*
+  USyncClient::syncGetTag(const char* format,
+                          const char* mtag, const char* mmod, ...)
   {
     va_list arg;
     va_start(arg, mmod);
@@ -262,10 +266,11 @@ namespace urbi
     return res;
   }
 
-  UMessage* USyncClient::syncGetTagTimeout(libport::utime_t useconds,
-					   const char* format,
-					   const char* mtag,
-					   const char* mmod, ...)
+  UMessage*
+  USyncClient::syncGetTagTimeout(libport::utime_t useconds,
+                                 const char* format,
+                                 const char* mtag,
+                                 const char* mmod, ...)
   {
     va_list arg;
     va_start(arg, mmod);

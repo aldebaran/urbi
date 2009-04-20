@@ -703,7 +703,7 @@ namespace urbi
     int retval = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    delete []  mcmd;
+    delete [] mcmd;
     if (retval)
     {
       deleteCallback(cid);
@@ -729,7 +729,7 @@ namespace urbi
     int retval = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    delete []mcmd;
+    delete [] mcmd;
     if (retval)
     {
       deleteCallback(cid);

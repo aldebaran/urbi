@@ -59,8 +59,7 @@ namespace urbi
     void listenThread();
     UCallbackAction pong(const UMessage& msg);
 
-
-    /// Active KeepAlive functionality
+    /// Active KeepAlive functionality.
     virtual void setKeepAliveCheck(const unsigned pingInterval,
                                    const unsigned pongTimeout);
 
@@ -72,15 +71,19 @@ namespace urbi
 
   protected:
     /// Pipe for termination notification
-    int             control_fd[2];       ///< Pipe for termination notification.
-    pthread_t       thread;
+    int control_fd[2];
 
-    /// Delay (in s) without activity to check if the connection is yet available
-    unsigned int    pingInterval;
+    pthread_t thread;
+
+    /// Delay (in s) without activity to check if the connection is
+    /// yet available
+    unsigned int pingInterval;
+
     /// Delay (in s) of timeout to wait 'PONG'
-    unsigned int    pongTimeout;
+    unsigned int pongTimeout;
+
     /// True if waiting 'PONG'
-    bool            waitingPong;
+    bool waitingPong;
 
   protected:
     libport::Semaphore listenSem_;

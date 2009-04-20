@@ -92,15 +92,18 @@ namespace urbi
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
     /// not start with a tag or channel.
-    UMessage *syncGet(const char* expression, ...);
+    UMessage* syncGet(const char* expression, ...);
+
     /// Same function but with timeout.
-    UMessage *syncGetTimeout(libport::utime_t useconds, const char* expression, ...);
+    UMessage* syncGetTimeout(libport::utime_t useconds,
+                             const char* expression, ...);
     /// Synchronously evaluate an Urbi expression, specifying the tag
     /// and modifiers to prepend to it.
-    UMessage *syncGetTag(const char* expression,
+    UMessage* syncGetTag(const char* expression,
                          const char* mtag, const char* mmod, ...);
     /// Same function but with timeout.
-    UMessage *syncGetTagTimeout(libport::utime_t useconds, const char* expression,
+    UMessage* syncGetTagTimeout(libport::utime_t useconds,
+                                const char* expression,
 				const char* mtag, const char* mmod, ...);
 
     /// Send given buffer without copying it.
@@ -108,9 +111,11 @@ namespace urbi
 
     /// Get an image in a synchronous way.
     /// \return 1 on success, 0 on failure.
-    int syncGetImage(const char* cameraDevice, void* buffer, size_t& buffersize,
+    int syncGetImage(const char* cameraDevice, void* buffer,
+                     size_t& buffersize,
 		     int format, int transmitFormat,
-                     size_t& width, size_t& height, libport::utime_t useconds = 0);
+                     size_t& width, size_t& height,
+                     libport::utime_t useconds = 0);
 
     /// Get the value of any device in a synchronous way.
     /// \return 1 on success, 0 on failure.
