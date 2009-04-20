@@ -202,7 +202,7 @@ namespace runner
 
 } // namespace runner
 
-# ifdef LIBPORT_SPEED
+# ifdef LIBPORT_OPTIMIZE_SPEED
 #  include <runner/runner.hxx>
 # endif
 
