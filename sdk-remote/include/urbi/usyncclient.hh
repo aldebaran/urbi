@@ -104,7 +104,7 @@ namespace urbi
 				const char* mtag, const char* mmod, ...);
 
     /// Send given buffer without copying it.
-    int syncSend(const void * buffer, size_t length);
+    int syncSend(const void* buffer, size_t length);
 
     /// Get an image in a synchronous way.
     /// \return 1 on success, 0 on failure.
