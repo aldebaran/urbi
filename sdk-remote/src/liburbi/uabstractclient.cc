@@ -1077,12 +1077,14 @@ namespace urbi
 # define VERSION_TAG TAG_PRIVATE_PREFIX "__version"
     setCallback(*this, &UAbstractClient::setVersion, VERSION_TAG);
     // We don't know our kernel version yet.
-    send("{ var __ver__ = 2; {var __ver__ = 1};"
-         "  var " VERSION_TAG ";"
-         "  if (__ver__ == 2) "
-         "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");"
-         "  " VERSION_TAG " << system.version;"
-         "};");
+    send("{\n"
+         "  var __ver__ = 2;\n"
+         "  {var __ver__ = 1};\n"
+         "  var " VERSION_TAG ";\n"
+         "  if (__ver__ == 2)\n"
+         "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");\n"
+         "  " VERSION_TAG " << system.version;\n"
+         "};\n");
 # undef VERSION_TAG
   }
 
@@ -1143,12 +1145,13 @@ namespace urbi
     }
 
     // Have the connectionId sent on __ident.
-    setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
-    if (kernelMajor_ < 2)
-      send("__ident << local.connectionID;");
-    else
-      send("Channel.new(\"__ident\") << connectionTag.name;");
+# define IDENT_TAG TAG_PRIVATE_PREFIX "__ident"
+    setCallback(*this, &UAbstractClient::setConnectionID, IDENT_TAG);
+    send(kernelMajor_ < 2
+         ? IDENT_TAG " << local.connectionID;\n"
+         : "Channel.new(\"" IDENT_TAG "\") << connectionTag.name;\n");
     return URBI_REMOVE;
+# undef IDENT_TAG
   }
 
   void
