@@ -492,7 +492,9 @@ namespace urbi
   void
   USyncClient::waitForKernelVersion(bool hasProcessingThread)
   {
-    while (kernelMajor() < 0 && !error())
+    // Do not call kernelMajor() which precisely requires kernelMajor_
+    // to be defined.
+    while (kernelMajor_ < 0 && !error())
     {
       if (!hasProcessingThread)
         processEvents();
