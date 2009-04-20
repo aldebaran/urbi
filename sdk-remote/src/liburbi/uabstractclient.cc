@@ -506,7 +506,7 @@ namespace urbi
 
     //printf("%d start chunk of size %d at offset %d\n", 0, tosend, s->pos);
     int playlength = tosend *1000 / s->bytespersec;
-    s->uc->send("%s.val = BIN %lu %s %s;",
+    s->uc->send("%s.val = BIN %lu %s %s;\n",
 		s->device,
 		static_cast<unsigned long>
                 (tosend + ((s->format == SOUND_WAV)?sizeof (wavheader):0)),
@@ -541,8 +541,8 @@ namespace urbi
 #endif
 
     s->uc->sendBin(s->buffer+s->pos, tosend);
-    s->uc->send("sleep(%s.remain < %d);"
-		" %s << ping;", s->device, playlength / 2, msg.tag.c_str());
+    s->uc->send("sleep(%s.remain < %d);\n"
+		" %s << ping;\n", s->device, playlength / 2, msg.tag.c_str());
     // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
     if (s->pos >= s->length)
@@ -556,7 +556,7 @@ namespace urbi
 	rDevice + ".sendsoundsaveblend;";
       s->uc->send(message.c_str ());
       if (s->tag && s->tag[0])
-	s->uc->send("%s << 1;", s->tag);
+	s->uc->send("%s << 1;\n", s->tag);
       free(s->buffer);
       free(s->tag);
       free(s->device);
