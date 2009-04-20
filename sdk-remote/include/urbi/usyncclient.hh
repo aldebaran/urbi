@@ -94,6 +94,10 @@ namespace urbi
     /// not start with a tag or channel.
     UMessage* syncGet(const char* expression, ...);
 
+    /// Synchronously evaluate an Urbi expression. The expression must
+    /// not start with a tag or channel.
+    UMessage* syncGet(const std::string& exp);
+
     /// Same function but with timeout.
     UMessage* syncGetTimeout(libport::utime_t useconds,
                              const char* expression, ...);

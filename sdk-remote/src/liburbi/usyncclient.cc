@@ -243,6 +243,14 @@ namespace urbi
     return res;
   }
 
+  UMessage*
+  USyncClient::syncGet(const std::string& msg)
+  {
+    // Yes, this is studid, as it will copy uselessly.  But that's the
+    // only safe way to do it.  The interface should be redesigned,
+    // without buffers actually.
+    return syncGet("%s", msg.c_str());
+  }
 
   UMessage*
   USyncClient::syncGetTimeout(libport::utime_t useconds,
