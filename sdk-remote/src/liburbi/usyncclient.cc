@@ -89,7 +89,7 @@ namespace urbi
     stopCallbackSem_--;
   }
 
-  bool USyncClient::processEvents(const libport::utime_t timeout)
+  bool USyncClient::processEvents(libport::utime_t timeout)
   {
     bool res = false;
     libport::utime_t startTime = libport::utime();

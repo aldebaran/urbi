@@ -160,7 +160,7 @@ namespace urbi
      * @return true if at least one message was processed, false otherwise.
      * Callbacks functions are called synchronously in the caller thread.
      */
-    bool processEvents(const libport::utime_t timeout = -1);
+    bool processEvents(libport::utime_t timeout = -1);
 
     /**
      *  Stop the callback processing thread.
@@ -176,6 +176,7 @@ namespace urbi
      * if processEvents must be called while waiting.
      */
     void waitForKernelVersion(bool hasProcessingThread);
+
   protected:
     int joinCallbackThread_();
 
