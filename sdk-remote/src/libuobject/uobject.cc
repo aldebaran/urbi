@@ -227,6 +227,7 @@ namespace urbi
         usleep(0);
     }
   }
+
   void yield_until_things_changed()
   {
     while (true)
@@ -237,15 +238,20 @@ namespace urbi
     }
   }
 
-  void side_effect_free_set(bool) {}
-  bool side_effect_free_get() {return false;}
+  void side_effect_free_set(bool)
+  {}
+
+  bool side_effect_free_get()
+  {
+    return false;
+  }
 
   std::string
   baseURBIStarter::getFullName(const std::string& name)
   {
     urbi::UAbstractClient* cli = (UAbstractClient*)getDefaultClient ();
     if (local && cli)
-      return name + "_" + getClientConnectionID (cli);
+      return name + "_" + getClientConnectionID(cli);
     else
       return name;
   }
