@@ -4,6 +4,8 @@ dist_libuobject_la_SOURCES +=			\
   parser/ast-factory.cc				\
   parser/event-match.hh				\
   parser/fwd.hh					\
+  parser/is-keyword.hh				\
+  parser/is-keyword.cc				\
   parser/metavar-map.hh				\
   parser/metavar-map.hxx			\
   parser/parse.hh				\
@@ -133,17 +135,20 @@ generate-parser: $(FROM_UGRAMMAR_Y)
 ## Keyword list for lstlistings/emacs.  ##
 ## ------------------------------------ ##
 
+EXTRA_DIST += parser/keywords
+
 .PHONY: listings emacs
 listings: parser/utoken.l
-	perl -ne 'BEGIN { use Text::Wrap; }' \
-	     -e '/^"(\w+)"/ && push @k, $$1;' \
-	     -e 'END { print wrap ("    ", "    ", join (", ", map { s/_/\\_/g; $$_ } sort @k)), "\n" };' $<
+	KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
 emacs: parser/utoken.l
-	perl -ne 'BEGIN { use Text::Wrap; }' \
-	     -e '/^"(\w+)"/ && push @k, $$1;' \
-	     -e 'END { print wrap ("            ", "            ", join (" ", map { "\"$$_\"" } sort @k)), "\n" };' $<
+	KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
+nodist_libuobject_la_SOURCES += parser/keywords.hh
+parser/keywords.hh: parser/utoken.l
+	rm -f $@
+	KEYWORDS_MODE=c++ $(srcdir)/parser/keywords $< >$@.tmp
+	mv $@.tmp $@
 
 ## -------------- ##
 ## Flex Scanner.  ##
