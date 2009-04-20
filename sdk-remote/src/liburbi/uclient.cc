@@ -282,7 +282,8 @@ namespace urbi
     // to depend on kernelMajor, because it has not been computed yet.
     // And computing kernelMajor requires this code to be run.  So we
     // need to write something that both k1 and k2 will like.
-    send("if (isdef(Channel)) var lobby.%s = Channel.new(\"%s\") | {};",
+    send("if (isdef(Channel))\n"
+         "  var lobby.%s = Channel.new(\"%s\") | {};",
          internalPongTag, internalPongTag);
 
     while (true)
