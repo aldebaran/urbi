@@ -1118,7 +1118,7 @@ namespace urbi
   {
     if (msg.type != MESSAGE_DATA)
       return URBI_CONTINUE;
-    assert(msg.value->type == DATA_STRING);
+    passert(msg.value->type, msg.value->type == DATA_STRING);
     kernelVersion_ = *msg.value->stringValue;
     size_t sep = kernelVersion_.find_first_of('.');
     try
@@ -1131,11 +1131,6 @@ namespace urbi
                                                          sep2-sep-1));
       else
         kernelMinor_ = 0;
-      setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
-      if (kernelMajor_ < 2)
-        send("__ident << local.connectionID;");
-      else
-        send("Channel.new(\"__ident\") << connectionTag.name;");
     }
     catch(boost::bad_lexical_cast&)
     {
@@ -1146,6 +1141,13 @@ namespace urbi
                 << kernelMajor_ << '.' << kernelMinor_ << '.'
                 << std::endl;
     }
+
+    // Have the connectionId sent on __ident.
+    setCallback(*this, &UAbstractClient::setConnectionID, "__ident");
+    if (kernelMajor_ < 2)
+      send("__ident << local.connectionID;");
+    else
+      send("Channel.new(\"__ident\") << connectionTag.name;");
     return URBI_REMOVE;
   }
 
