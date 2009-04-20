@@ -70,10 +70,11 @@ namespace urbi
     sa.sin_port = htons(port);
 
     // host-to-IP translation
-    struct hostent* hen = gethostbyname(host_.c_str());
-    if (!hen)
+    if (struct hostent* hen = gethostbyname(host_.c_str()))
+      memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
+    else
     {
-      // maybe it is an IP address
+      // Maybe it is an IP address.
       sa.sin_addr.s_addr = inet_addr(host_.c_str());
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
@@ -82,8 +83,6 @@ namespace urbi
         return;
       }
     }
-    else
-      memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
 
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0)
