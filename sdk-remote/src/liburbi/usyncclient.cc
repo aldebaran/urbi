@@ -218,13 +218,12 @@ namespace urbi
     if (!has_terminator(format))
       strcat(sendBuffer, ",\n");
     std::string tag = make_tag(*this, mtag, mmod);
-    effective_send(compatibility::channel_construct(tag)
-                   + tag + " << ");
+    effective_send(compatibility::evaluate_in_channel_open(tag));
     queueLock_.lock();
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    effective_send(compatibility::channel_destroy(tag));
+    effective_send(compatibility::evaluate_in_channel_close(tag));
     return waitForTag(mtag ? mtag : tag, useconds);
   }
 

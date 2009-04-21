@@ -11,6 +11,41 @@ namespace urbi
     /// Destroy a channel set up by channel_construct().
     std::string channel_destroy(const std::string& name);
 
+    /// Evaluate an expression Exp in such a way that the result *and
+    /// the errors* are sent to the tag/channel \a tag.
+    ///
+    /// Urbi 2 sends errors to the "error" tag, which is a problem
+    /// here.  If for instance you send an incorrect message on tag
+    /// "Foo", it will return an error on the channel "error", and as
+    /// a result, the user, still waiting for "Foo", will never be
+    /// told there is an error there.
+    ///
+    /// The open/close combination around Exp gives the following:
+    ///
+    /// For Urbi 1:
+    ///
+    ///    tag << Exp
+    ///
+    /// For Urbi 2:
+    ///
+    ///      {
+    ///        try
+    ///        {
+    ///          channel << Exp
+    ///        }
+    ///        catch (var e)
+    ///        {
+    ///          lobby.send("!!! " + e.asString, tag);
+    ///        }
+    ///      };
+    ///
+    /// where the "channel" was set up and cleaned by
+    /// channel_construct/channel_destroy.
+    ///
+    /// \param tag the name of the channel
+    std::string evaluate_in_channel_open(const std::string& name);
+    std::string evaluate_in_channel_close(const std::string& name);
+
     /// Return the string to emit \a event in k1 or k2.
     std::string emit(const std::string& event);
 
