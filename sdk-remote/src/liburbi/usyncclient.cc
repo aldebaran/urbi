@@ -127,6 +127,7 @@ namespace urbi
   USyncClient::notifyCallbacks(const UMessage& msg)
   {
     queueLock_.lock();
+    // If waiting for a tag, pass it to the user.
     if (!syncTag.empty() && syncTag == msg.tag)
     {
       message_ = new UMessage(msg);
@@ -185,21 +186,17 @@ namespace urbi
     /// if they are empty.
     static
     std::string
-    make_tag(UAbstractClient&cl, const char*t1, const char* t2)
+    make_tag(UAbstractClient& cl, const char* t1, const char* t2)
     {
       std::string res;
       if (t1)
       {
-        res += t1;
+        res = t1;
         if (t2)
           res += t2;
       }
       else
-      {
-        char buf[100];
-        cl.makeUniqueTag(buf);
-        res += buf;
-      }
+        res = cl.fresh();
       return res;
     }
   }

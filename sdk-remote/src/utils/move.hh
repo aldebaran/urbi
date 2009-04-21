@@ -66,10 +66,12 @@ namespace urbi
     MovementProperties pwalk, pturn;
     std::list<LoadedFile> walks;
     std::list<LoadedFile> turns;
-    char tag[64]; //our unique tag to mark end.
+
+    /// Our unique tag to mark end.
+    std::string tag;
     int moving; //curently moving
-    char usertag[URBI_MAX_TAG_LENGTH]; //user tag
-    char execTag[URBI_MAX_TAG_LENGTH];
+    std::string usertag;
+    std::string execTag;
     std::list<std::string> sequence; //move/walk commands not yet sent to server
   };
 

@@ -1,5 +1,7 @@
 /// \file libuobject/uvar.cc
 
+#include <boost/format.hpp>
+
 #include <libport/escape.hh>
 
 #include <urbi/uabstractclient.hh>
@@ -283,23 +285,24 @@ namespace urbi
   void
   UVar::syncValue()
   {
-    USyncClient& client = dynamic_cast<USyncClient&> (URBI(()));
-    char tag[32];
-    client.makeUniqueTag(tag);
-    UMessage* m =
-      client.syncGetTag("{"
-                        "  if (isdef (%s) && !(%s))"
-                        "  {"
-                        "    %s"
-                        "  }"
-                        "  else"
-                        "  {"
-                        "     1/0"
-                        "  }"
-                        "};",
-                        tag, 0, name.c_str(),
-                        compatibility::isvoid(name.c_str()).c_str(),
-                        name.c_str());
+    USyncClient& client = dynamic_cast<USyncClient&>(URBI(()));
+    std::string tag(client.fresh());
+    static boost::format
+      fmt("{\n"
+          "  if (isdef (%s) && !(%s))\n"
+          "  {\n"
+          "    %s\n"
+          "  }\n"
+          "  else\n"
+          "  {\n"
+          "     1/0\n"
+          "  }\n"
+          "};\n");
+    std::string cmd = str(fmt
+                          % name
+                          % compatibility::isvoid(name.c_str())
+                          % name);
+    UMessage* m = client.syncGetTag("%s", tag.c_str(), 0, cmd.c_str());
     if (m->type == MESSAGE_DATA)
       __update(*m->value);
   }

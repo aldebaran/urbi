@@ -1,5 +1,7 @@
 /// \file liburbi/uabstractclient.cc
 
+#include <boost/format.hpp>
+
 #include <libport/windows.hh>
 
 #include <libport/cstdio>
@@ -196,7 +198,7 @@ namespace urbi
     , binaryMode(false)
     , system(false)
     , init_(true)
-    , uid_(0)
+    , counter_(0)
     , stream_(this)
   {
     stream_get().setf(std::ios::fixed);
@@ -595,8 +597,6 @@ namespace urbi
 	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
       send(message.c_str());
       sendSoundData* s = new sendSoundData();
-      char utag[16];
-      makeUniqueTag(utag);
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
       s->uc = this;
       s->buffer = static_cast<char*> (malloc (sound.size));
@@ -613,13 +613,14 @@ namespace urbi
       else
 	s->formatString[0] = 0;
       s->startNotify = false;
-      UCallbackID cid = setCallback(sendSound_, s, utag);
+      std::string utag = fresh();
+      UCallbackID cid = setCallback(sendSound_, s, utag.c_str());
       // Invoke it 2 times to queue sound.
-      if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
+      if (sendSound_(s, UMessage(*this, 0, utag.c_str(), "*** stop",
 				 binaries_type()))
           == URBI_CONTINUE)
       {
-	if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
+	if (sendSound_(s, UMessage(*this, 0, utag.c_str(), "*** stop",
 				   binaries_type()))
             == URBI_REMOVE)
 	  deleteCallback(cid);
@@ -690,53 +691,46 @@ namespace urbi
   UCallbackID
   UAbstractClient::sendCommand(UCallback cb, const char* cmd, ...)
   {
-    char tag[16];
-    makeUniqueTag(tag);
-    char* mcmd = new char[strlen(cmd) + strlen(tag) + 5];
-    sprintf(mcmd, "%s << %s", tag, cmd);
-    UCallbackID cid = setCallback(cb, tag);
+    std::string tag = fresh();
+    std::string mcmd = tag + " << " + cmd;
+    UCallbackID res = setCallback(cb, tag.c_str());
     sendBufferLock.lock();
     va_list arg;
     va_start(arg, cmd);
-    vpack(mcmd, arg);
+    vpack(mcmd.c_str(), arg);
     va_end(arg);
     int retval = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    delete [] mcmd;
     if (retval)
     {
-      deleteCallback(cid);
+      deleteCallback(res);
       return UINVALIDCALLBACKID;
     }
-    return cid;
+    return res;
   }
 
   UCallbackID
   UAbstractClient::sendCommand(UCustomCallback cb, void *cbData,
 			       const char* cmd, ...)
   {
-    char tag[16];
-    makeUniqueTag(tag);
-    char* mcmd = new char[strlen(cmd) + strlen(tag) + 10];
-    sprintf(mcmd, "%s << %s", tag, cmd);
-    UCallbackID cid = setCallback(cb, cbData, tag);
+    std::string tag = fresh();
+    std::string mcmd = tag + " << " + cmd;
+    UCallbackID res = setCallback(cb, cbData, tag.c_str());
     sendBufferLock.lock();
     va_list arg;
     va_start(arg, cmd);
-    vpack(mcmd, arg);
+    vpack(mcmd.c_str(), arg);
     va_end(arg);
     int retval = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    delete [] mcmd;
     if (retval)
     {
-      deleteCallback(cid);
+      deleteCallback(res);
       return UINVALIDCALLBACKID;
     }
-    return cid;
-
+    return res;
   }
 
   int
@@ -768,11 +762,17 @@ namespace urbi
     return 0;
   }
 
+  std::string
+  UAbstractClient::fresh()
+  {
+    static boost::format fmt("URBI_%s");
+    return str(fmt % ++counter_);
+  }
+
   void
   UAbstractClient::makeUniqueTag(char* tag)
   {
-    sprintf(tag, "URBI_%d", ++uid_);
-    return;
+    strcpy(tag, fresh().c_str());
   }
 
   /*!

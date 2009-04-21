@@ -250,7 +250,12 @@ namespace urbi
     /// Delete a callback.
     int deleteCallback(UCallbackID callBackID);
 
+    /// Return a identifier, for tags for instance.
+    std::string fresh();
+
     /// Fill tag with a unique tag for this client.
+    /// Obsolete, use fresh() instead.
+    ATTRIBUTE_DEPRECATED
     void makeUniqueTag(char* tag);
 
     /// Pass the given UMessage to all registered callbacks with the
@@ -414,8 +419,8 @@ namespace urbi
     typedef std::list<UCallbackInfo> callbacks_type;
     callbacks_type callbacks_;
 
-    /// Unique tag base.
-    int uid_;
+    /// A counter, used to generate unique (tag) identifiers.
+    unsigned int counter_;
 
     /// Ourself as a stream.
     /// It looks useless, accorded, but VC++ wants it.
