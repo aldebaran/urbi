@@ -1830,7 +1830,7 @@ echo("Not blocked");
 [00000000] *** Not blocked
 sleep(1s);
 [00005000] *** foo
-/*HIDE*/sleep(200ms);
+/*(*/sleep(200ms);/*)*/
 \end{urbiscript}
 
 \section{Tags for parallel control flows}
@@ -1896,9 +1896,8 @@ parallel. Tags have a few control methods:
 \autoref{lst:tut:block} illustrate usage of these tag features.
 
 \begin{urbiscript}[caption=Freezing/unfreezing code execution, label=lst:tut:freeze]
-// Here we launch in background - thanks to the
-// comma - code that prints "foo" every second.
-// We tag it to keep control over it.
+// Launch in background (using the comma) code that prints "ping"
+// every second.  Tag it to keep control over it.
 mytag:
 {
   loop
@@ -1931,8 +1930,7 @@ sleep(0.1s);
       echo("ping"); sleep(1s)
     }
   };
-  // Execution flow will jump here
-  // if mytag is stopped
+  // Execution flow jumps here if mytag is stopped.
   echo("Background job stopped")|
 },
 sleep(3s);
@@ -1960,7 +1958,7 @@ mytag.unfreeze;
   echo("Background job stopped")|
 },
 sleep(4s);
-/*HIDE*/sleep(100ms);
+/*(*/sleep(100ms);/*)*/
 [00000000] *** ping
 [00001000] *** pong
 [00002000] *** ping
@@ -1968,7 +1966,7 @@ sleep(4s);
 // Block printing of pong.
 mytag.block;
 sleep(3s);
-/*HIDE*/sleep(100ms);
+/*(*/sleep(100ms);/*)*/
 // The second half of the while isn't executed anymore.
 [00004000] *** ping
 [00005000] *** ping
@@ -1976,7 +1974,7 @@ sleep(3s);
 // Reactivate pong
 mytag.unblock;
 sleep(4s);
-/*HIDE*/sleep(100ms);
+/*(*/sleep(100ms);/*)*/
 [00007000] *** ping
 [00008000] *** pong
 [00009000] *** ping

@@ -59,15 +59,17 @@ See \autoref{lst:specs:dictionary} for an example.
 \begin{urbiscript}[caption=Dictionaries, label=lst:specs:dictionary]
 var d = Dictionary.new("one", 1, "two", 2);
 [00000001] Dictionary {"one" => 1, "two" => 2}
-/*HIDE*/ //Make the order deterministic.
-/*HIDE*/ Dictionary.asList =
-/*HIDE*/ function ()
-/*HIDE*/ {
-/*HIDE*/   var res = []|
-/*HIDE*/   for| (var k: keys.sort)
-/*HIDE*/     res.insertBack(Pair.new (k, get (k)))|
-/*HIDE*/   res
-/*HIDE*/ } | {};
+/*(*/
+  // Make the order deterministic.
+  Dictionary.asList =
+  function ()
+  {
+    var res = []|
+    for| (var k: keys.sort)
+      res.insertBack(Pair.new (k, get (k)))|
+    res
+  } | {};
+/*)*/
 for (var p in d)
   echo (p.first + " -> " + p.second);
 [00000003] *** one -> 1
