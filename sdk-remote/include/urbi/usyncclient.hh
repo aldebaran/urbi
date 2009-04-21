@@ -83,7 +83,7 @@ namespace urbi
      *         It must be a single expression and must not start with a tag.
      * \param mtag    tag to use, or 0 to generate one.
      * \param mmod    modifier to use on the tag, or 0 for none.
-     * \return the    resulting message, or 0 in case of error.
+     * \return the resulting message, or 0 in case of error.
      */
     UMessage*
     syncGet_(const char* expression, const char* mtag,
