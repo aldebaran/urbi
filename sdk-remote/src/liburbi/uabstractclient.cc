@@ -186,8 +186,9 @@ namespace urbi
     , buflen(buflen)
     , rc(0)
 
-    , recvBuffer(NULL)
+    , recvBuffer(new char[buflen])
     , recvBufferPosition(0)
+    , sendBuffer(new char[buflen])
 
     , kernelMajor_(-1)
     , kernelMinor_(-1)
@@ -202,22 +203,7 @@ namespace urbi
     , stream_(this)
   {
     stream_get().setf(std::ios::fixed);
-    recvBuffer = new char[buflen];
-    if (!recvBuffer)
-    {
-      rc = -1;
-      //printf("UAbstractClient::UAbstractClient out of memory\n");
-      return;
-    }
     recvBuffer[0] = 0;
-
-    sendBuffer = new char[buflen];
-    if (!sendBuffer)
-    {
-      rc = -1;
-      //printf("UAbstractClient::UAbstractClient out of memory\n");
-      return;
-    }
     sendBuffer[0] = 0;
   }
 
