@@ -225,9 +225,7 @@ namespace urbi
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     effective_send(compatibility::channel_destroy(tag));
-    if (mtag)
-      tag = mtag;
-    return waitForTag(tag, useconds);
+    return waitForTag(mtag ? mtag : tag, useconds);
   }
 
   UMessage*
