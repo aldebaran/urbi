@@ -28,6 +28,13 @@ function Global.echo
   lobby.send("*** " + call.evalArgAt(0).asString, tag)
 };
 
+function Global.wall
+{
+  call.message = "echo";
+  for (var lobby in lobbies - [Lobby])
+    lobby.callMessage(call);
+};
+
 // Does not have anything special.  Yet.
 class Global.Channel
 {
