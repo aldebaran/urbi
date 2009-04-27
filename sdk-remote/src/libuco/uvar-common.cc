@@ -57,7 +57,7 @@ namespace urbi
   | UVar.  |
   `-------*/
 
-  void
+  UVar&
   UVar::operator= (const UValue& v)
   {
     switch (v.type)
@@ -83,6 +83,7 @@ namespace urbi
 	pabort (v);
 	break;
     }
+    return *this;
   }
 
 } // namespace urbi

@@ -130,22 +130,24 @@ namespace urbi
   }
 
   //! UVar float assignment
-  void
-  UVar::operator = (ufloat n)
+  UVar&
+  UVar::operator= (ufloat n)
   {
     URBI_SEND_PIPED_COMMAND(name << "=" << n);
+    return *this;
   }
 
   //! UVar string assignment
-  void
+  UVar&
   UVar::operator= (const std::string& s)
   {
     URBI_SEND_PIPED_COMMAND(name << "=\"" << libport::escape(s, '"') << '"');
+    return *this;
   }
 
   //! UVar binary assignment
-  void
-  UVar::operator = (const UBinary& b)
+  UVar&
+  UVar::operator= (const UBinary& b)
   {
     getDefaultClient()->startPack();
     // K1 only supports a binary at top level within ';' and no other separator.
@@ -156,31 +158,34 @@ namespace urbi
                                    b.getMessage());
     (*getDefaultClient()) << ";";
     getDefaultClient()->endPack();
+    return *this;
   }
 
-  void
+  UVar&
   UVar::operator= (const UImage& i)
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
     b.type = BINARY_IMAGE;
     b.image = i;
-    (*this) = b;
+    *this = b;
     b.common.data = 0; //required, dtor frees data
+    return *this;
   }
 
-  void
+  UVar&
   UVar::operator= (const USound& i)
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
     b.type = BINARY_SOUND;
     b.sound = i;
-    (*this) = b;
+    *this = b;
     b.common.data = 0; //required, dtor frees data
+    return *this;
   }
 
-  void
+  UVar&
   UVar::operator= (const UList& l)
   {
     UValue v;
@@ -189,6 +194,7 @@ namespace urbi
     URBI_SEND_PIPED_COMMAND(name << "=" << v);
     v.type = DATA_VOID;
     v.list = 0;
+    return *this;
   }
 
 

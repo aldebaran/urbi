@@ -51,18 +51,19 @@ namespace urbi
     void syncValue();
 
     void reset (ufloat);
-    void operator = (ufloat);
-    void operator = (const std::string&);
-    /// Deep copy.
-    void operator = (const UBinary &);
-    /// Deep copy.
-    void operator = (const UImage &i);
-    /// Deep copy.
-    void operator = (const USound &s);
 
-    void operator = (const UList &l);
+    UVar& operator=(ufloat);
+    UVar& operator=(const std::string&);
+    /// Deep copy.
+    UVar& operator=(const UBinary &);
+    /// Deep copy.
+    UVar& operator=(const UImage &i);
+    /// Deep copy.
+    UVar& operator=(const USound &s);
 
-    void operator = (const UValue &v);
+    UVar& operator=(const UList &l);
+
+    UVar& operator=(const UValue &v);
 
     operator int() const;
     operator bool() const;
