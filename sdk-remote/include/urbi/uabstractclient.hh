@@ -37,6 +37,7 @@
 
 # include <libport/compiler.hh>
 # include <libport/fwd.hh>
+# include <libport/lockable.hh>
 # include <libport/traits.hh>
 
 # include <urbi/fwd.hh>
@@ -310,8 +311,8 @@ namespace urbi
     /// Bounce to effectiveSend() using c_str().
     int effective_send(const std::string& buffer);
 
-    libport::Lockable& sendBufferLock;
-    libport::Lockable& listLock;
+    libport::Lockable sendBufferLock;
+    libport::Lockable listLock;
 
     /// Add a callback to the list.
     UCallbackID addCallback(const char* tag, UCallbackWrapper& w);

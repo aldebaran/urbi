@@ -177,9 +177,8 @@ namespace urbi
 				   size_t buflen,
 				   bool server)
     : std::ostream(new UClientStreambuf(this))
-      // Irk, *new...
-    , sendBufferLock(*new libport::Lockable())
-    , listLock(*new libport::Lockable())
+    , sendBufferLock()
+    , listLock()
     , host_(host)
     , port_(port)
     , server_(server)
