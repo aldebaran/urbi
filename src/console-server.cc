@@ -38,6 +38,9 @@
 #include <sched/scheduler.hh>
 
 #include <kernel/ubanner.hh>
+#include <object/symbols.hh>
+#include <object/object.hh>
+#include <object/float.hh>
 #include <object/system.hh>
 #include <urbi/export.hh>
 #include <urbi/umain.hh>
@@ -325,6 +328,7 @@ namespace urbi
       }
     }
     s.initialize(data.interactive);
+    object::system_class->slot_set(SYMBOL(listenPort), object::rFloat(new object::Float(port)), true);
 
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
