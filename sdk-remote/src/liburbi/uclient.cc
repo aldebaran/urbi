@@ -324,14 +324,14 @@ namespace urbi
       if (selectReturn < 0)
       {
         if (errno == EINTR)
-          // ::select caughr a signal.
+          // ::select caught a signal.
           continue;
         else
         {
           rc = -1;
-          clientError("Connection error : ", errno);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                   "!!! Connection error"));
+          const char* err = "!!! Connection error: select failed";
+          clientError(err, errno);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
           return;
         }
       }
@@ -341,12 +341,12 @@ namespace urbi
         {
           rc = -1;
           // FIXME: Choose between two differents way to alert user program
-          clientError("Lost connection with server");
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
-                                   "!!! Lost connection with server"));
+          const char* err = "!!! Lost connection with server: ping timeout";
+          clientError(err);
+          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
           return;
         }
-        else // Timeout : Ping_interval
+        else // Timeout: Ping_interval
         {
           send("%s << 1,", internalPongTag);
           waitingPong = true;
@@ -368,9 +368,9 @@ namespace urbi
           if (count < 0)
           {
             errorCode = WIN32_IF(WSAGetLastError(), errno);
-            errorMsg = "!!! Connection error";
+            errorMsg = "!!! Connection error: recv failed";
           }
-          else // count == 0  => Connection close
+          else // count == 0  => Connection closed.
             errorMsg = "!!! Connection closed";
 
           rc = -1;
