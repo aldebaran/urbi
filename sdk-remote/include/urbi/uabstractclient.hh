@@ -74,8 +74,6 @@ namespace urbi
 
   typedef unsigned int UCallbackID;
 
-# define DEBUG 0
-
 # define UINVALIDCALLBACKID 0
 
   /// Callback prototypes.
