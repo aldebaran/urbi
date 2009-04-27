@@ -273,12 +273,13 @@ namespace urbi
 
     /// Active KeepAlive functionality
     /// Sends an URBI message at specified interval, if no anwser is received
-    /// close the connection and notify 'URBI_ERROR_CONNECTION_TIMEOUT'
+    /// close the connection and notify 'URBI_ERROR_CONNECTION_TIMEOUT'.
     ///
-    /// pingInterval: Set interval between ping messages in milliseconds, 0 to disable.
-    /// pongTimeout:  Set timeout in milliseconds to wait answer.
-    virtual void setKeepAliveCheck(const unsigned pingInterval,
-                                   const unsigned pongTimeout) = 0;
+    /// \param pingInterval  interval between ping messages
+    ///                      in milliseconds, 0 to disable.
+    /// \param pongTimeout   timeout in milliseconds to wait answer.
+    virtual void setKeepAliveCheck(unsigned pingInterval,
+                                   unsigned pongTimeout) = 0;
 
     /// Return the server name or IP address.
     const std::string& getServerName() const;

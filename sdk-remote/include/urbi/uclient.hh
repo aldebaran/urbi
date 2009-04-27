@@ -23,8 +23,9 @@
 #ifndef URBI_UCLIENT_HH
 # define URBI_UCLIENT_HH
 
-# include <libport/semaphore.hh>
 # include <libport/pthread.h>
+# include <libport/semaphore.hh>
+# include <libport/utime.hh>
 
 # include <urbi/uabstractclient.hh>
 
@@ -57,11 +58,14 @@ namespace urbi
     void acceptThread();
     //! For internal use.
     void listenThread();
+
     UCallbackAction pong(const UMessage& msg);
 
-    /// Active KeepAlive functionality.
-    virtual void setKeepAliveCheck(const unsigned pingInterval,
-                                   const unsigned pongTimeout);
+    /// Activate KeepAlive functionality.
+    /// \param pingInterval  is in milliseconds.
+    /// \param pongTimeout   is in milliseconds.
+    virtual void setKeepAliveCheck(unsigned pingInterval,
+                                   unsigned pongTimeout);
 
   protected:
     virtual int effectiveSend(const void* buffer, size_t size);
@@ -75,14 +79,14 @@ namespace urbi
 
     pthread_t thread;
 
-    /// Delay (in s) without activity to check if the connection is
-    /// yet available
-    unsigned int pingInterval;
+    /// Delay (in microseconds) without activity to check if the
+    /// connection is yet available.
+    libport::utime_t ping_interval_;
 
-    /// Delay (in s) of timeout to wait 'PONG'
-    unsigned int pongTimeout;
+    /// Delay (in microseconds) of timeout to wait 'PONG'.
+    libport::utime_t pong_timeout_;
 
-    /// True if waiting 'PONG'
+    /// True if waiting 'PONG'.
     bool waitingPong;
 
   protected:

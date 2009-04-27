@@ -37,7 +37,8 @@ namespace urbi
                    unsigned semListenInc)
     : UAbstractClient(host, port, buflen, server)
     , thread(0)
-    , pingInterval(0)
+    , ping_interval_(0)
+    , pong_timeout_(0)
     , semListenInc_(semListenInc)
   {
     sd = -1;
@@ -304,10 +305,11 @@ namespace urbi
 #endif
 
       int selectReturn;
-      if (pingInterval)
+      if (ping_interval_)
       {
-        const unsigned delay = waitingPong ? pongTimeout : pingInterval;
-        struct timeval timeout = { delay / 1000, (delay % 1000) * 1000};
+        struct timeval timeout =
+          libport::utime_to_timeval(waitingPong
+                                    ? pong_timeout_ : ping_interval_);
         selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, &timeout);
       }
       else
@@ -405,6 +407,20 @@ namespace urbi
 #endif
   }
 
+  void
+  UClient::setKeepAliveCheck(unsigned pingInterval,
+                             unsigned pongTimeout)
+  {
+    // From milliseconds to microseconds.
+    ping_interval_ = pingInterval * 1000;
+    pong_timeout_  = pongTimeout * 1000;
+  }
+
+
+/*-----------------------.
+| Standalone functions.  |
+`-----------------------*/
+
   void execute()
   {
     while (true)
@@ -416,8 +432,8 @@ namespace urbi
     ::exit(code);
   }
 
-
-  UClient& connect(const std::string& host)
+  UClient&
+  connect(const std::string& host)
   {
     return *new UClient(host);
   }
@@ -425,14 +441,6 @@ namespace urbi
   void disconnect(UClient &client)
   {
     delete &client;
-  }
-
-  void
-  UClient::setKeepAliveCheck(const unsigned pingInterval,
-                             const unsigned pongTimeout)
-  {
-    this->pingInterval = pingInterval;
-    this->pongTimeout  = pongTimeout;
   }
 
 } // namespace urbi
