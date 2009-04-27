@@ -25,13 +25,12 @@ namespace urbi
   class URBI_SDK_API UMessage
   {
   public:
-    /// Default ctor
-    UMessage(UAbstractClient& client);
-
     /// List of the binaries.
     typedef std::list<urbi::BinaryData> binaries_type;
 
-    /// Parser constructor
+    UMessage(UAbstractClient& client);
+
+    /// Parser constructor.
     UMessage(UAbstractClient& client, int timestamp,
 	     const char* tag, const char* message,
 	     const binaries_type& bins = binaries_type());

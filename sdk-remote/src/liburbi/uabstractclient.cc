@@ -636,8 +636,7 @@ namespace urbi
     return addCallback(tag, *new UCallbackWrapperCCB(cb, cbData));
   }
 
-  /*! Returns 1 and fills tag on success, 0 on failure
-   */
+
   int
   UAbstractClient::getAssociatedTag(UCallbackID id, char* tag)
   {
@@ -655,8 +654,6 @@ namespace urbi
   }
 
 
-  /*! Returns 0 if no callback with this id was found, 1 otherwise.
-   */
   int
   UAbstractClient::deleteCallback(UCallbackID id)
   {
@@ -1035,10 +1032,6 @@ namespace urbi
     return ci.id;
   }
 
-  /*! Generates a client error message and send it to listeners
-  \param message an optional string describing the error
-  \param erc an optional system error code on which strerror is called
-  */
   void
   UAbstractClient::clientError(const char* message, int erc)
   {

@@ -245,10 +245,12 @@ namespace urbi
     //@}
 
     /// Get the tag associated with a registered callback.
+    /// \return 1 and fill tag on success, 0 on failure.
     int getAssociatedTag(UCallbackID id, char* tag);
 
     /// Delete a callback.
-    int deleteCallback(UCallbackID callBackID);
+    /// \return 0 if no callback with this id was found, 1 otherwise.
+    int deleteCallback(UCallbackID id);
 
     /// Return a identifier, for tags for instance.
     std::string fresh();
@@ -314,7 +316,9 @@ namespace urbi
     /// Add a callback to the list.
     UCallbackID addCallback(const char* tag, UCallbackWrapper& w);
 
-    /// Generate a client error message and notify callbacks
+    /// Generate a client error message and notify callbacks.
+    /// \param message an optional string describing the error
+    /// \param code    an optional system error code on which strerror is called
     void clientError(const char* msg = 0, int code = 0);
 
     /// Host name.
