@@ -25,13 +25,16 @@ namespace urbi
     ///      {
     ///        try
     ///        {
-    ///          Channel.new(name) << Exp
+    ///          Channel.new(name) << { Exp }
     ///        }
     ///        catch (var e)
     ///        {
     ///          lobby.send("!!! " + e.asString, name);
     ///        }
     ///      };
+    ///
+    /// We add bracess to allow statements and neutralize precedence
+    /// issues.
     ///
     /// \param name  the name of the channel
     std::string evaluate_in_channel_open(const std::string& name);

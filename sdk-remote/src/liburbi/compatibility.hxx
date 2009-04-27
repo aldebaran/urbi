@@ -17,7 +17,7 @@ namespace urbi
       if (kernelMajor() < 2)
         return name + " << ";
       else
-        return "try { Channel.new(\"" + name + "\") << ";
+        return "try { Channel.new(\"" + name + "\") << { ";
     }
 
     inline
@@ -27,7 +27,7 @@ namespace urbi
       if (kernelMajor() < 2)
         return "";
       else
-        return ("}\n"
+        return ("} }\n"
                 "catch (var e)\n"
                 "{\n"
                 "  lobby.send(\"!!! \" + e, \"" + name + "\");\n"
