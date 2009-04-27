@@ -137,7 +137,7 @@ namespace urbi
   const char* UAbstractClient::CLIENTERROR_TAG = "client error";
 
   void
-  UAbstractClient::notifyCallbacks(const UMessage &msg)
+  UAbstractClient::notifyCallbacks(const UMessage& msg)
   {
     listLock.lock();
     bool inc = false;
