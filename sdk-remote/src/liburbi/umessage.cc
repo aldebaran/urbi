@@ -17,23 +17,23 @@ namespace urbi
   }
 
   UMessage::UMessage(UAbstractClient& client, int timestamp,
-		     const char* tag, const char* message,
+		     const char* tag, const char* msg,
 		     const binaries_type& bins)
     : client(client)
     , timestamp(timestamp)
     , tag(tag)
     , value(0)
+    , rawMessage(msg)
   {
-    rawMessage = std::string(message);
-    while (message[0] == ' ')
-      ++message;
+    while (msg[0] == ' ')
+      ++msg;
 
     // System and error messages.
-    if (message[0] == '*' || message[0] == '!')
+    if (msg[0] == '*' || msg[0] == '!')
     {
-      type = message[0] == '*' ? MESSAGE_SYSTEM : MESSAGE_ERROR;
-      if (4 <= strlen(message))
-	this->message = message + 4;
+      type = msg[0] == '*' ? MESSAGE_SYSTEM : MESSAGE_ERROR;
+      if (4 <= strlen(msg))
+	message = msg + 4;
       return;
     }
 
@@ -41,14 +41,14 @@ namespace urbi
     type = MESSAGE_DATA;
     value = new UValue();
     binaries_type::const_iterator iter = bins.begin();
-    int p = value->parse(message, 0, bins, iter);
+    int p = value->parse(msg, 0, bins, iter);
     if (0 <= p)
-      while (message[p] == ' ')
+      while (msg[p] == ' ')
 	++p;
     /* no assertion can be made on message[p] because there is no terminator
      * for binaries */
     if (p < 0 || /*message[p] ||*/ iter != bins.end())
-      std::cerr << "PARSE ERROR in " << message << "at " << abs(p) << std::endl;
+      std::cerr << "PARSE ERROR in `" << msg << "' at " << abs(p) << std::endl;
   }
 
   UMessage::UMessage(const UMessage& b)
