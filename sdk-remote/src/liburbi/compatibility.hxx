@@ -5,35 +5,6 @@ namespace urbi
   namespace compatibility
   {
 
-    /*----------.
-    | channel.  |
-    `----------*/
-
-    inline
-    std::string
-    channel_construct(const std::string& name)
-    {
-      if (kernelMajor() < 2)
-        return "";
-      else
-        // Really create the channel for this tag, as the user is
-        // probably using this tag in the code.
-        return ("if (!hasSlot(\"" + name + "\"))\n"
-                "  var this." + name + " = Channel.new(\"" + name + "\")|\n");
-    }
-
-    inline
-    std::string
-    channel_destroy(const std::string& name)
-    {
-      if (kernelMajor() < 2)
-        return "";
-      else
-        return ("if (hasSlot(\"" + name + "\"))\n"
-                "  removeSlot(\"" + name + "\")|\n");
-    }
-
-
 
     /*----------------------.
     | evaluate_in_channel.  |
@@ -41,14 +12,12 @@ namespace urbi
 
     inline
     std::string
-    evaluate_in_channel_open(const std::string& tag)
+    evaluate_in_channel_open(const std::string& name)
     {
       if (kernelMajor() < 2)
-        return tag + " << ";
+        return name + " << ";
       else
-        return
-          channel_construct(tag) +
-          "try {" + tag + " << ";
+        return "try { Channel.new(\"" + name + "\") << ";
     }
 
     inline

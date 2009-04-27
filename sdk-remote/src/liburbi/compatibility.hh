@@ -5,12 +5,6 @@ namespace urbi
 {
   namespace compatibility
   {
-    /// Set up the channel \a name.  Must be followed by channel_destroy().
-    std::string channel_construct(const std::string& name);
-
-    /// Destroy a channel set up by channel_construct().
-    std::string channel_destroy(const std::string& name);
-
     /// Evaluate an expression Exp in such a way that the result *and
     /// the errors* are sent to the tag/channel \a tag.
     ///
@@ -24,25 +18,22 @@ namespace urbi
     ///
     /// For Urbi 1:
     ///
-    ///    tag << Exp
+    ///    name << Exp
     ///
     /// For Urbi 2:
     ///
     ///      {
     ///        try
     ///        {
-    ///          channel << Exp
+    ///          Channel.new(name) << Exp
     ///        }
     ///        catch (var e)
     ///        {
-    ///          lobby.send("!!! " + e.asString, tag);
+    ///          lobby.send("!!! " + e.asString, name);
     ///        }
     ///      };
     ///
-    /// where the "channel" was set up and cleaned by
-    /// channel_construct/channel_destroy.
-    ///
-    /// \param tag the name of the channel
+    /// \param name  the name of the channel
     std::string evaluate_in_channel_open(const std::string& name);
     std::string evaluate_in_channel_close(const std::string& name);
 
