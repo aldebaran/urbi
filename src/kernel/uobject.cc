@@ -514,17 +514,19 @@ namespace urbi
   `-------*/
 
   void UVar::syncValue()
-  { // Nothing to do
+  {
+    // Nothing to do
   }
 
 #define UVAR_OPERATORS(T, DT)                                   \
-  void UVar::operator = (DT t)                                  \
+  UVar& UVar::operator= (DT t)                                  \
   {                                                             \
     ECHO("uvar = operator for "<<name);                         \
     if (owned)                                                  \
       uvar_uowned_set(name, ::object_cast(urbi::UValue(t)));    \
     else                                                        \
       uvar_set(name, ::object_cast(urbi::UValue(t)));           \
+    return *this;                                               \
   }                                                             \
   UVar::operator T() const                                      \
   {                                                             \
@@ -548,6 +550,8 @@ namespace urbi
   UVAR_OPERATORS(UList, const UList&);
   UVAR_OPERATORS(USound, const USound&);
   UVAR_OPERATORS(UImage, const UImage&);
+
+#undef UVAR_OPERATORS
 
   //no corresponding operator= for this one...
   UVar::operator int() const
