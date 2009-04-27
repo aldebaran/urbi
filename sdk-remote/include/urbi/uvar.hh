@@ -37,13 +37,13 @@ namespace urbi
   {
   public:
     UVar();
-    UVar(UVar&);
     UVar(const std::string&);
     UVar(const std::string&, const std::string&);
     UVar(UObject&, const std::string&);
     ~UVar();
 
-    void init(const std::string&, const std::string&);
+    // Bind to \a object.slot.
+    void init(const std::string& object, const std::string& slot);
     void setOwned();
 
     UDataType type() const;
@@ -123,6 +123,12 @@ namespace urbi
     UVariable* variable();
 
   private:
+    /// Declared but not implemented: do not ever try to use it.
+    UVar(const UVar&);
+
+    /// Declared but not implemented: do not ever try to use it.
+    UVar& operator=(const UVar&);
+
     /// Xxx only works in softdevice mode.
     UValue& val()
     {

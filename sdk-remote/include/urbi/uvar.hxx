@@ -33,17 +33,6 @@ namespace urbi
     , name("noname")
   {}
 
-  inline
-  UVar::UVar(UVar&)
-    : owned(false)
-    , VAR_PROP_INIT
-    , vardata(0)
-    , name()
-  {
-    /// FIXME: This is really weird: a copy-ctor that does not use
-    /// the lhs?
-  }
-
 } // end namespace urbi
 
 #endif // ! URBI_UVAR_HXX
