@@ -681,10 +681,7 @@ namespace urbi
     va_start(arg, cmd);
     vpack(mcmd.c_str(), arg);
     va_end(arg);
-    int retval = effective_send(sendBuffer);
-    sendBuffer[0] = 0;
-    sendBufferLock.unlock();
-    if (retval)
+    if (endPack())
     {
       deleteCallback(res);
       return UINVALIDCALLBACKID;
@@ -704,10 +701,7 @@ namespace urbi
     va_start(arg, cmd);
     vpack(mcmd.c_str(), arg);
     va_end(arg);
-    int retval = effective_send(sendBuffer);
-    sendBuffer[0] = 0;
-    sendBufferLock.unlock();
-    if (retval)
+    if (endPack())
     {
       deleteCallback(res);
       return UINVALIDCALLBACKID;
