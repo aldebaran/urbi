@@ -1033,21 +1033,33 @@ namespace urbi
   }
 
   void
-  UAbstractClient::clientError(const char* message, int erc)
+  UAbstractClient::clientError(std::string message, int erc)
   {
+    /// Just like in UMessage's contructor, skip the possible "!!! "
+    /// prefix.
+    const char prefix[] = "!!! ";
+    if (message.substr(0, sizeof prefix - 1) == prefix)
+      message.erase(0, sizeof prefix - 1);
+
+    if (erc)
+    {
+      message += message.empty() ? "" : ": ";
+      message += libport::strerror(erc);
+    }
+
     UMessage m(*this);
     m.type = MESSAGE_ERROR;
-    std::string msg;
-    if (message)
-      msg = message;
-    if (message && erc)
-      msg += " : ";
-    if (erc)
-      msg += libport::strerror(erc);
-    m.message = m.rawMessage = msg; //rawMessage is incorrect but we dont care
+    // rawMessage is incorrect but we don't care.
+    m.message = m.rawMessage = message;
     m.timestamp = 0;
     m.tag = CLIENTERROR_TAG;
     notifyCallbacks(m);
+  }
+
+  void
+  UAbstractClient::clientError(const char* message, int erc)
+  {
+    return clientError(std::string(message ? message : ""), erc);
   }
 
   void

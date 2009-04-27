@@ -317,8 +317,10 @@ namespace urbi
     UCallbackID addCallback(const char* tag, UCallbackWrapper& w);
 
     /// Generate a client error message and notify callbacks.
-    /// \param message an optional string describing the error
+    /// \param message an optional string describing the error.
+    ///                The possible prefix "!!! " is skipped if present.
     /// \param code    an optional system error code on which strerror is called
+    void clientError(std::string msg, int code = 0);
     void clientError(const char* msg = 0, int code = 0);
 
     /// Host name.
