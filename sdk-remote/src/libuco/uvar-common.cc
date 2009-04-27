@@ -6,33 +6,28 @@
 
 namespace urbi
 {
-  // **************************************************************************
-  //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
   UVar::UVar(const std::string& varname)
     : VAR_PROP_INIT
+    , name(varname)
   {
-    name = varname;
     __init();
   }
 
-  //! UVar constructor: object reference + var name
   UVar::UVar(UObject& obj, const std::string& varname)
     : VAR_PROP_INIT
+    , name(obj.__name + '.' + varname)
   {
-    name = obj.__name + '.' + varname;
     __init();
   }
 
-  //! UVar constructor: object name + var name
   UVar::UVar(const std::string& objname, const std::string& varname)
     : VAR_PROP_INIT
+    , name(objname + '.' + varname)
   {
-    name = objname + '.' + varname;
     __init();
   }
 
 
-  //! UVar initialization
   void
   UVar::init(const std::string& objname, const std::string& varname)
   {
