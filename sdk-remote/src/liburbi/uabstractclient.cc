@@ -134,7 +134,7 @@ namespace urbi
   }
 
 
-  const char* UAbstractClient::CLIENTERROR_TAG = "client error";
+  const char* UAbstractClient::CLIENTERROR_TAG = "client_error";
 
   void
   UAbstractClient::notifyCallbacks(const UMessage& msg)
