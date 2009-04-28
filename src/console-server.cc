@@ -328,7 +328,11 @@ namespace urbi
       }
     }
     s.initialize(data.interactive);
-    object::system_class->slot_set(SYMBOL(listenPort), object::rFloat(new object::Float(port)), true);
+
+    // In Urbi: System.listenPort = <port>.
+    object::system_class->slot_set(SYMBOL(listenPort),
+                                   object::rFloat(new object::Float(port)),
+                                   true);
 
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
