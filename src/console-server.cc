@@ -107,9 +107,7 @@ namespace
       << "  PROGRAM_FILE   Urbi script to load."
       << "  `-' stands for standard input" << std::endl
       << "  ARGS           user arguments passed to PROGRAM_FILE" << std::endl
-      << std::endl
-      << "Options:";
-    parser.options_doc(output);
+      << parser;
     throw urbi::Exit(EX_OK, output.str());
   }
 
@@ -218,11 +216,11 @@ namespace urbi
     LoopData data;
 
     libport::OptionFlag
-      arg_fast ("ignore system time, go as fast as possible",
-                "fast", 'F'),
+      arg_fast("ignore system time, go as fast as possible",
+               "fast", 'F'),
       arg_interactive("read and parse stdin in a nonblocking way",
                       "interactive", 'i'),
-      arg_no_net ("ignored for backward compatibility", "no-network", 'n');
+      arg_no_net("ignored for backward compatibility", "no-network", 'n');
 
     libport::OptionValue
       arg_dbg      ("", "debug"),
@@ -236,20 +234,25 @@ namespace urbi
 
     {
       libport::OptionParser parser;
-      parser << arg_dbg
-             << arg_exps
-             << arg_fast
-             << libport::opts::files
-             << libport::opts::help
-             << libport::opts::host_l
-             << arg_interactive
-             << arg_no_net
-             << arg_period
-             << libport::opts::port_l
-             << arg_port_file
-             << arg_stack
-             << libport::opts::version;
-
+      parser
+        << "Options:"
+        << arg_dbg
+        << arg_fast
+        << libport::opts::help
+        << libport::opts::version
+        << arg_period
+        << "Tuning:"
+        << arg_stack
+        << "Networking:"
+        << libport::opts::host_l
+        << libport::opts::port_l
+        << arg_port_file
+        << arg_no_net
+        << "Execution:"
+        << arg_exps
+        << libport::opts::files
+        << arg_interactive
+        ;
       try
       {
         args = parser(args);
