@@ -151,9 +151,8 @@ usage(libport::OptionParser& parser)
   std::cout <<
     "usage: " << program_name() <<
     " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
-    "Start an UObject in either remote or plugin mode.\n";
-  parser.options_doc(std::cout);
-  std::cout <<
+    "Start an UObject in either remote or plugin mode.\n"
+              << parser <<
     "\n"
     "MODULE_NAMES is a list of modules.\n"
     "UOPTIONS are passed to urbi::main in remote and start modes.\n"

@@ -49,12 +49,12 @@ namespace
     std::cout <<
       "usage: " << program_name() << " [OPTION].. [FILE]...\n"
       "\n"
-      "  FILE    to upload onto the server\n";
-    parser.options_doc(std::cout);
-    std::cout << "\n"
-	      << urbi::package_info().report_bugs()
-	      << std::endl
-	      << libport::exit(EX_OK);
+      "  FILE    to upload onto the server\n"
+                << parser
+                << "\n"
+                << urbi::package_info().report_bugs()
+                << std::endl
+                << libport::exit(EX_OK);
   }
 
   static
