@@ -1248,9 +1248,9 @@ Pair;
 \end{urbiscript}
 
 Since \lstinline|Pair| is a regular pair object, you can modify and
-use it at will. Yet this is not necessarily a good idea, since you
-will alter your base prototype, and subsequent cloning will inherit
-these modification (\autoref{lst:tut:alter-proto}).
+use it at will. Yet this is not a good idea, since you will alter your
+base prototype, which alters any derivative, future or past
+(\autoref{lst:tut:alter-proto}).
 
 \begin{urbiscript}[caption=Altering a prototype, label=lst:tut:alter-proto]
 var before = Pair.clone;
@@ -1259,6 +1259,11 @@ Pair.first = false;
 [00000000] false
 var after = Pair.clone;
 [00000000] (false, nil)
+before;
+[00000000] (false, nil)
+// before and after share the same first: that of Pair.
+assert(Pair.first === before.first);
+assert(Pair.first === after.first);
 \end{urbiscript}
 
 \section{Prototypes and slot lookup}
