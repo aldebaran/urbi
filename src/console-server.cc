@@ -1,30 +1,29 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include <libport/option-parser.hh>
 #include <libport/unistd.h>
-#include <libport/sysexits.hh>
-#include <libport/windows.hh>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-
 #include <libport/cstring>
+
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 
 #include <libport/cli.hh>
 #include <libport/debug.hh>
 #include <libport/exception.hh>
 #include <libport/foreach.hh>
+#include <libport/format.hh>
+#include <libport/option-parser.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
 #include <libport/sys/socket.h>
+#include <libport/sysexits.hh>
 #include <libport/thread.hh>
 #include <libport/utime.hh>
-
-#include <boost/format.hpp>
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <libport/windows.hh>
 
 #include <libltdl/ltdl.h>
 
@@ -148,6 +147,7 @@ namespace urbi
 
     bool interactive;
     bool fast;
+    /// Whether network connections are enabled.
     bool network;
     ConsoleServer* server;
   };
@@ -222,7 +222,7 @@ namespace urbi
                 "fast", 'F'),
       arg_interactive("read and parse stdin in a nonblocking way",
                       "interactive", 'i'),
-      arg_no_net ("disable networking", "no-network", 'n');
+      arg_no_net ("ignored for backward compatibility", "no-network", 'n');
 
     libport::OptionValue
       arg_dbg      ("", "debug"),
@@ -266,7 +266,6 @@ namespace urbi
         version();
       data.interactive = arg_interactive.get();
       data.fast = arg_fast.get();
-      data.network = !arg_no_net.get();
       foreach (const std::string& exp, arg_exps.get())
         input.push_back(Input(false, exp));
       foreach (const std::string& file, libport::opts::files.get())
@@ -309,31 +308,37 @@ namespace urbi
 
     data.server = new ConsoleServer(data.fast);
     ConsoleServer& s = *data.server;
-    int port = 0;
-    if (data.network)
+
+    /*----------------.
+    | --port/--host.  |
+    `----------------*/
+    int port = -1;
     {
-      int desired_port = libport::opts::port_l.get<int>(0);
-      std::string host = libport::opts::host_l.value("");
-      port = Network::createTCPServer(desired_port, host);
-      if (!port)
+      int desired_port = libport::opts::port_l.get<int>(-1);
+      if (desired_port != -1)
       {
-        boost::format fmt("%s: cannot bind to port %s");
-        std::string message = str(fmt % program_name() % desired_port);
-        if (libport::opts::host_l.filled())
-        {
-          boost::format fmt(" on %s");
-          message += str(fmt % libport::opts::host_l.value());
-        }
-        throw urbi::Exit(EX_UNAVAILABLE, message);
+        std::string host = libport::opts::host_l.value("");
+        std::cerr << host << ":" << port << std::endl;
+        port = Network::createTCPServer(host, desired_port);
+        if (!port)
+          throw urbi::Exit
+            (EX_UNAVAILABLE,
+             libport::format("%s: cannot bind to port %s:%s",
+                             program_name(), host, desired_port));
       }
     }
-    s.initialize(data.interactive);
-
+    data.network = 0 < port;
+    std::cerr << data.network << std::endl;
     // In Urbi: System.listenPort = <port>.
     object::system_class->slot_set(SYMBOL(listenPort),
                                    object::rFloat(new object::Float(port)),
                                    true);
 
+    s.initialize(data.interactive);
+
+    /*--------------.
+    | --port-file.  |
+    `--------------*/
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
     if (arg_port_file.filled())

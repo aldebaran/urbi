@@ -10,7 +10,6 @@ interactive, or network-based executions.
 \subsection{Options}
 
 \paragraph{Tuning}
-
 \begin{options}
 \item[-s, --stack-size=\var{size}] set the coroutine \dfn{stack size}.
   The unit of \var{size} is KB; it defaults to 128.
@@ -23,6 +22,30 @@ interactive, or network-based executions.
   \code{URBI\_STACK\_SIZE}.  The option \option{--stack-size} has
   precedence over the \code{URBI\_STACK\_SIZE}.
 \end{options}
+
+\paragraph{Networking}
+\begin{options}
+\item[-H, --host=\var{address}] Set the \var{address} on which network
+  connections are listened to.  Typical values of \var{address}
+  include:
+  \begin{description}
+  \item[localhost] only local connections are allowed (no other
+    computer can reach this server).
+  \item[127.0.0.1] same as \code{localhost}.
+  \item[0.0.0.0] any IP v4 connection is allowed, including from
+    remote computers.
+  \end{description}
+  Defaults to \code{0.0.0.0}.
+\item[-P, --port=\var{port}] Set the port to listen incoming
+  connections to.  If \var{port} is \code{-1}, no networking.  If
+  \var{port} is \code{0}, then the system will chose any available
+  port (see \option{--port-file}).  Defaults to \code{-1}.
+\item[-w, --port-file=\var{file}] When the system is up and running,
+  and when it is ready for network connections, create the file named
+  \var{file} which contains the number of the port the server listens
+  to.
+\end{options}
+
 
 \paragraph{Execution}
 \begin{options}
