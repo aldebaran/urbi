@@ -806,14 +806,12 @@ var a = 42;
 [00000000] 42
 var b = 42;
 [00000000] 42
-var c = a; // b refers to the same object as a
+var c = a; // c refers to the same object as a.
 [00000000] 42
-// a, b and c are equal
-a == b;
+// a, b and c are equal: they have the same value.
+a == b && a == c;
 [00000000] true
-a == c;
-// Yet only a and c are the same object
-[00000000] true
+// Yet only a and c are actually the same object.
 a === b;
 [00000000] false
 a === c;
@@ -1220,8 +1218,9 @@ obtain a new one that you can modify afterward. Prototype-based
 programming was introduced by the Self language, and is used in
 several popular script languages such as \io or \js.
 
-Consider pairs for instance. Pairs are objects that hold two values,
-first and second, like an \lstinline{std$::$pair} in \Cxx. Since \us is
+Consider pairs for instance (see \refObject{Pair}). Pairs are objects
+that hold two values,
+first and second, like an \lstinline{std::pair} in \Cxx. Since \us is
 prototype-based, there is no pair class. Instead, \lstinline|Pair| is
 really a pair (\autoref{lst:tut:proto}).
 

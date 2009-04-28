@@ -1,5 +1,55 @@
 \section{Pair}
-A container storing two objects.
+
+A \dfn{pair} is a container storing two objects, similar in spirit to
+\lstinline|std::pair| in \Cxx.
+
+
+\begin{itemize}
+\item \lstinline|asString|\\
+  Generate the string \samp{(\var{first}, \var{second})} using
+  \code{asPrintable} to convert members to strings.
+
+\item \lstinline|first|\\
+  Return the first member of the pair.
+
+\item \lstinline|init(\var{first}, \var{second})|~\\
+  Instantiate a new \lstinline|Pair| containing \var{first} and
+  \var{second}.
+
+\item \lstinline|second|\\
+  Return the second member of the pair.
+
+\item \lstinline|[\var{index}]|\\
+  Return the \var{index}-th element.  \var{index} must be 0 or 1.
+
+\item \lstinline|[\var{index}] = value|\\
+  Set (and return) the \var{index}-th element to \var{value}.
+  \var{index} must be 0 or 1.
+
+\item \lstinline|< \var{other}|\\
+  Lexicographic comparison between two pairs.
+
+\item \lstinline|== \var{other}|\\
+  Whether \lstinline|this| and \lstinline|other| have the same
+  contents (equality-wise).
+\end{itemize}
+
+See \autoref{lst:specs:pair} for an example.
+
+\begin{urbiscript}[caption=Pairs, label=lst:specs:pair]
+var p = Pair.new(1, 2);
+[00000001] (1, 2)
+p.first - p.second;
+[00000002] -1
+p[0] = 10 | p;
+[00000002] (10, 2)
+assert(Pair.new(0, 0) < Pair.new(0, 1));
+assert(Pair.new(0, 0) < Pair.new(1, 0));
+assert(Pair.new(0, 1) < Pair.new(1, 0));
+assert(Pair.new(1, 2) == Pair.new(1, 2));
+assert(!(Pair.new(1, 1) == Pair.new(2, 2)));
+\end{urbiscript}
+
 
 %%% Local Variables:
 %%% mode: latex

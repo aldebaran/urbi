@@ -52,6 +52,11 @@
       {
         members[n]
       };
+
+      function '[]='(n, v)
+      {
+        members[n] = v
+      };
     };
 
     Global.setSlot(name, Res);
