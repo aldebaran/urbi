@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from xml.sax import saxexts, saxlib, saxutils
 import string
