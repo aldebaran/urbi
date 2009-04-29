@@ -36,6 +36,12 @@ namespace object
     return new Barrier(std::deque<sched::rJob>());
   }
 
+  static bool
+  job_compare(sched::rJob lhs, sched::rJob rhs)
+  {
+    return lhs == rhs;
+  }
+
   rObject
   Barrier::wait()
   {
@@ -55,7 +61,7 @@ namespace object
     catch (...)
     {
       // Signal that we should no longer stay queued.
-      libport::erase_if(value_, boost::lambda::_1 == &r);
+      libport::erase_if(value_, boost::bind(job_compare, &r, _1));
       throw;
     }
   }

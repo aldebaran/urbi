@@ -38,7 +38,11 @@ private:                                                                \
   {                                                                     \
     return dynamic_cast<const Name*>(&o);                               \
   }                                                                     \
-  static bool Name ## _added__  = object::CxxObject::add<Name>();
+  struct Name ## _register__                                            \
+  {                                                                     \
+    Name ## _register__() {object::CxxObject::add<Name>();}             \
+  };                                                                    \
+  static Name ## _register__ Name ## _registered__;                     \
 
 
 

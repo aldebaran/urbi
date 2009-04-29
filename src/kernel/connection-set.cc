@@ -26,10 +26,16 @@ namespace kernel
     connections_.push_front(c);
   }
 
+  static bool
+  uconnection_compare(UConnection* lhs, UConnection& rhs)
+  {
+    return lhs == &rhs;
+  }
+
   void
   ConnectionSet::remove(UConnection* c)
   {
-    connections_.erase_if(&boost::lambda::_1 == c);
+    connections_.erase_if(boost::bind(uconnection_compare, c, _1));
   }
 
   void
