@@ -342,7 +342,7 @@ namespace urbi
 	  sequence.push_back(std::string (name));
       }
     }
-    robot->send(command);
+    robot->send("%s", command);
     distance = realmove;
     return 0;
   }
@@ -474,7 +474,7 @@ namespace urbi
       }
     }
     //  std::cerr <<endl;
-    robot->send(command);
+    robot->send("%s", command);
     distance = realmove;
     return 0;
   }

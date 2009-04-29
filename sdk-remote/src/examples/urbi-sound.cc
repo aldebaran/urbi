@@ -40,6 +40,9 @@
 static const char *device="/dev/dsp";
 #endif
 
+// FIXME: those return values should not be ignored
+static size_t ignore;
+
 struct wavheader
 {
   char riff[4];
@@ -81,10 +84,10 @@ endProgram(const urbi::UMessage&)
 	exit(0);
     }
     int len = totallength  - 8;
-    fwrite(&len, 1, 4, file);
+    ignore = fwrite(&len, 1, 4, file);
     fseek(file,offsetof(wavheader, datalength),SEEK_SET);
     len = totallength - 44;
-    fwrite(&len, 1, 4, file);
+    ignore = fwrite(&len, 1, 4, file);
     fclose(file);
     exit(0);
   }
@@ -128,7 +131,7 @@ getSound(const urbi::UMessage& msg)
   withheader = false;
   convert(msg.value->binary->sound, out);
   totallength += out.size;
-  fwrite(out.data, out.size, 1, file);
+  ignore = fwrite(out.data, out.size, 1, file);
   return urbi::URBI_CONTINUE;
 }
 
@@ -140,7 +143,7 @@ int main(int argc, char *argv[])
   //16000 1 16
   if (argc != 3 && argc !=4 && argc != 5)
   {
-    printf(usage);
+    printf("%s", usage);
     exit(1);
   }
 

@@ -33,6 +33,9 @@
 
 #include "monitor.h"
 
+// FIXME: those return value should not be ignored
+static size_t ignore;
+
 using libport::program_name;
 
 int imcount;
@@ -208,7 +211,7 @@ main (int argc, char *argv[])
 
     if (FILE *f = fopen(fileName, "w"))
     {
-      fwrite(buff, 1, sz, f);
+      ignore = fwrite(buff, 1, sz, f);
       fclose(f);
     }
     else

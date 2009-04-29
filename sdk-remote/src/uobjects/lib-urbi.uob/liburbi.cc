@@ -45,7 +45,7 @@ public:
     }
   int send(const std::string& msg)
     {
-      cl->send(msg.c_str());
+      cl->send("%s", msg.c_str());
       return cl->error();
     }
   int setCallback(const std::string& tag)

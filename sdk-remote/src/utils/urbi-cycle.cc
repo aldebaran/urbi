@@ -3,6 +3,9 @@
 #include "urbi/uclient.hh"
 #include "parse-header.hh"
 
+// FIXME: those return value should not be ignored
+static size_t ignore;
+
 void
 usage (const char* name, int status)
 {
@@ -69,12 +72,12 @@ int main(int argc, char * argv[])
   //read and handle by block of commands with same timestamp.
   //init:
   urbi::UCommand uc;
-  fread(&uc, sizeof (urbi::UCommand), 1, inf);
+  ignore = fread(&uc, sizeof (urbi::UCommand), 1, inf);
   buffTime = uc.timestamp;
   buff[uc.id] = uc;
   while (true)
   {
-    size_t ok = fread(&uc, sizeof (urbi::UCommand), 1, inf);
+    size_t ok = ignore = fread(&uc, sizeof (urbi::UCommand), 1, inf);
     if (ok && !basetime)
       basetime = uc.timestamp;
     if (ok && buffTime == 0)
@@ -130,7 +133,7 @@ int main(int argc, char * argv[])
 	if (buff[i].timestamp!=0)
 	{
 	  buff[i].timestamp -= basetime;
-	  fwrite(&buff[i], sizeof (urbi::UCommand), 1, ouf);
+	  ignore = fwrite(&buff[i], sizeof (urbi::UCommand), 1, ouf);
 	}
 
     //flush buffer

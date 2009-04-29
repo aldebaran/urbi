@@ -541,7 +541,7 @@ namespace urbi
       std::string rDevice = (s->device) ? s->device : "speaker";
       std::string message = rDevice + ".val->blend=" +
 	rDevice + ".sendsoundsaveblend;";
-      s->uc->send(message.c_str ());
+      s->uc->send("%s", message.c_str());
       if (s->tag && s->tag[0])
 	s->uc->send("%s << 1;\n", s->tag);
       free(s->buffer);
@@ -580,7 +580,7 @@ namespace urbi
       std::string rDevice = device ? device : "speaker";
       std::string message = "var " + rDevice + ".sendsoundsaveblend = " +
 	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
-      send(message.c_str());
+      send("%s", message.c_str());
       sendSoundData* s = new sendSoundData();
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
       s->uc = this;

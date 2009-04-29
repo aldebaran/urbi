@@ -4,6 +4,9 @@
 #include "urbi/uclient.hh"
 #include "parse-header.hh"
 
+// FIXME: those return value should not be ignored
+static size_t ignore;
+
 void
 usage (const char* name, int status)
 {
@@ -35,7 +38,7 @@ main(int argc, char * argv[])
     if (starttime==-1)
       starttime=uc.timestamp;
     uc.timestamp = starttime-uc.timestamp;
-    fwrite(&uc,sizeof (urbi::UCommand),1,ouf);
+    ignore = fwrite(&uc,sizeof (urbi::UCommand),1,ouf);
   }
 
   fclose(inf);

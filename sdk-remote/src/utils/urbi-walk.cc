@@ -1,6 +1,8 @@
 #include "urbi/usyncclient.hh"
 #include "move.hh"
 
+// FIXME: those return value should not be ignored
+static char* ignore;
 
 int
 main (int argc, char * argv[])
@@ -40,7 +42,7 @@ main (int argc, char * argv[])
   while (1)
   {
     char line[1024];
-    fgets(line,1024,stdin);
+    ignore = fgets(line,1024,stdin);
     char cmd[64];
     float val,prec;
     int arg=sscanf(line,"%s%f%f",cmd,&val,&prec);

@@ -56,18 +56,22 @@ const char * devices[]=
 int devCount=18;
 FILE *f;
 int tilt=0;
+
+// FIXME: those return values should not be ignored
+static size_t ignore;
+
 static void
 buildHeader()
 {
-  fwrite("URBI",4,1,f);
-  fwrite(&devCount,4,1,f);
+  ignore = fwrite("URBI",4,1,f);
+  ignore = fwrite(&devCount,4,1,f);
   for (int i=0;i<devCount; ++i)
   {
-    fwrite(devices[i],strlen(devices[i])+1,1,f);
+    ignore = fwrite(devices[i],strlen(devices[i])+1,1,f);
     short s=i;
-    fwrite(&s,2,1,f);
+    ignore = fwrite(&s,2,1,f);
     char c=(char)TYPE_ANGLE;
-    fwrite(&c,1,1,f);
+    ignore = fwrite(&c,1,1,f);
   }
 }
 
@@ -87,7 +91,7 @@ command(const urbi::UMessage &msg)
       passert (msg.value->type, msg.value->type == urbi::DATA_DOUBLE);
       uc.value.angle=msg.value->val;
 
-      fwrite(&uc,sizeof (UCommand),1,f);
+      ignore = fwrite(&uc,sizeof (UCommand),1,f);
       ++tilt;
       if (! (tilt%100))
       {

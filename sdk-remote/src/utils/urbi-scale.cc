@@ -5,6 +5,9 @@
 #include "urbi/uclient.hh"
 #include "parse-header.hh"
 
+// FIXME: those return value should not be ignored
+static size_t ignore;
+
 void
 usage (const char* name, int status)
 {
@@ -67,7 +70,7 @@ main(int argc, char * argv[])
       {
 	uc.timestamp =
 	  (int) (((float)(uc.timestamp) - ((float)starttime)) * scale);
-	fwrite(&uc, sizeof (urbi::UCommand), 1, ouf);
+	ignore = fwrite(&uc, sizeof (urbi::UCommand), 1, ouf);
 	lastuc[uc.id] = uc;
 	continue;
       }
@@ -89,7 +92,7 @@ main(int argc, char * argv[])
 	    urbi::UCommand suc = lastuc[dev];
 	    suc.timestamp = (lastuc[dev].timestamp * ((int)scale-step) + nextuc[dev].timestamp * step) / (int)scale;
 	    suc.value.angle = (lastuc[dev].value.angle * (float)((int)scale-step) + nextuc[dev].value.angle * (float)step) / (float)((int)scale);
-	    fwrite(&suc, sizeof (urbi::UCommand), 1, ouf);
+	    ignore = fwrite(&suc, sizeof (urbi::UCommand), 1, ouf);
 	  }
 	}
 	//send the last
@@ -97,7 +100,7 @@ main(int argc, char * argv[])
 	{
 	  if (nextuc[dev].timestamp == -1)
 	    continue;
-	  fwrite(&nextuc[dev], sizeof (urbi::UCommand), 1, ouf);
+	  ignore = fwrite(&nextuc[dev], sizeof (urbi::UCommand), 1, ouf);
 	  lastuc[dev] = nextuc[dev];
 	  nextuc[dev].timestamp = -1;
 	}
@@ -106,7 +109,7 @@ main(int argc, char * argv[])
     }
     else
     {
-      fwrite(&uc, sizeof (urbi::UCommand), 1, ouf);
+      ignore = fwrite(&uc, sizeof (urbi::UCommand), 1, ouf);
     }
   }
   //send the last chunk
@@ -115,7 +118,7 @@ main(int argc, char * argv[])
     {
       if (nextuc[dev].timestamp == -1)
 	continue;
-      fwrite(&nextuc[dev], sizeof (urbi::UCommand), 1, ouf);
+      ignore = fwrite(&nextuc[dev], sizeof (urbi::UCommand), 1, ouf);
     }
 
   fclose(inf);

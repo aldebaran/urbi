@@ -3,6 +3,9 @@
 
 #include <urbi/uclient.hh>
 
+// FIXME: those return values should not be ignored
+static size_t ignore;
+
 urbi::USound snd;
 
 static urbi::UCallbackAction
@@ -63,7 +66,7 @@ main(int argc, char * argv [])
       s.data = static_cast<char *> (malloc (st.st_size));
       s.soundFormat = urbi::SOUND_WAV;
       s.size = st.st_size;
-      fread(s.data, 1,st.st_size, f);
+      ignore = fread(s.data, 1,st.st_size, f);
       snd.data = 0;
       convert(s, snd);
 
@@ -76,12 +79,12 @@ main(int argc, char * argv [])
     {
       s.data = static_cast<char *> (malloc (130000));
       s.soundFormat = urbi::SOUND_WAV;
-      fread(s.data, 44, 1, f);
+      ignore = fread(s.data, 44, 1, f);
       int sz=1;
 
       while (sz)
       {
-	sz=fread(s.data+44,1,128000,f);
+	sz = fread(s.data+44,1,128000,f);
 	s.size = sz+44;
 	convert(s, snd);
 	uc.sendSound("speaker", snd,sz<128000?"end":"void");

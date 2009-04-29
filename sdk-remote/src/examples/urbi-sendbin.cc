@@ -126,7 +126,7 @@ send_data(urbi::UClient& client, const data_type& data)
         break;
       len +=r;
     }
-    client.send(data.variable);
+    client.send("%s", data.variable);
     client.send(" = ");
     client.sendBinary(buffer, len, data.headers);
     client.send(";");
