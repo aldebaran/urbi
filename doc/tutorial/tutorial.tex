@@ -1687,7 +1687,7 @@ reverse(echo("first"), echo("second"));
 
 A good example are logic operators. Although \Cxx is a strict
 language, it uses a few logic operators. For instance, the logical and
-(\lstinline{\&\&}) does not evaluate its right operand if the left
+(\lstinline{&&}) does not evaluate its right operand if the left
 operand is false (the result will be false anyway).
 
 \us logic operator mimic this behavior. \autoref{lst:tut:short-circuits} shows
@@ -1734,17 +1734,17 @@ For now, we've separated our different commands with a semicolon
 \begin{itemize}
 \item ``\lstinline{;}'': Serialization operator. Wait for the left
   operand to finish before continuing.
-\item ``\lstinline{\&}'': Parallelism n-ary operator. All operands are
-  started simultaneously, and executed in parallel. The \lstinline{\&}
-  block itself finishes when both operands finish. \lstinline{\&} has
+\item ``\lstinline{&}'': Parallelism n-ary operator. All operands are
+  started simultaneously, and executed in parallel. The \lstinline{&}
+  block itself finishes when both operands finish. \lstinline{&} has
   higher precedence than other separators.
 \item ``\lstinline{,}'': Background operator. Left operand is started,
   and evaluation continues immediately. End of execution of the left
   operand is waited at the exit of the scope.
 \end{itemize}
 
-\autoref{lst:tut:parallelism-operators} show usage of \lstinline{\&} to launch two
-functions in parallel.
+\autoref{lst:tut:parallelism-operators} show usage of \lstinline{&} to
+launch two functions in parallel.
 
 \begin{urbiscript}[caption=Parallelism operator,
   label=lst:tut:parallelism-operators, name=parallel]
@@ -1778,21 +1778,21 @@ test("left") & test("middle") & test ("right");
 [00000000] *** right: 3
 \end{urbiscript}
 
-In this test, we see that the \lstinline{\&} runs its operands
+In this test, we see that the \lstinline{&} runs its operands
 simultaneously.
 
-The difference between ``\lstinline{\&}'' and ``\lstinline{,}'' is rather
-subtle:
+The difference between ``\lstinline{&}'' and ``\lstinline{,}'' is
+rather subtle:
 
 \begin{itemize}
 \item In the top level, will wait for you to terminate your
-  ``\lstinline{\&}'' block to start executing anything, while it will run
-  the code terminated by ``\lstinline{,}'' immediately.
-\item Execution is blocked after a ``\lstinline{\&}'' group until all its
-  children have finished (\autoref{lst:tut:and-comma}).
+  ``\lstinline{&}'' block to start executing anything, while it will
+  run the code terminated by ``\lstinline{,}'' immediately.
+\item Execution is blocked after a ``\lstinline{&}'' group until all
+  its children have finished (\autoref{lst:tut:and-comma}).
 \end{itemize}
 
-\begin{urbiscript}[caption=Difference between ``\lstinline{\&}'' and
+\begin{urbiscript}[caption=Difference between ``\lstinline{&}'' and
 ``\lstinline{,}'', label=lst:tut:and-comma, name=parallel]
 // This runs test and echo("right") in parallel,
 // and wait until both are done before continuing
@@ -1841,7 +1841,7 @@ sleep(1s);
 
 Tags are a multipurpose code execution control and instrumentation
 feature. Any chunk of code can be tagged, by preceding it with a tag
-and a colon (\lstinline{$:$}). Tag can be created with
+and a colon (\lstinline{:}). Tag can be created with
 \lstinline|Tag.new("name")|. Giving tags a name is optional, yet it's
 probably a better idea since it will be used for many
 features. \autoref{lst:tut:tagging} illustrates how to tag chunks of code.
