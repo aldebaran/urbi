@@ -253,6 +253,9 @@ namespace kernel
     /// Store error on commands.
     UErrorValue error_;
 
+    /// The Lobby into which the code is evaluated.
+    object::rLobby lobby_;
+
   private:
     /// A pointer to stop dependencies.
     std::auto_ptr<UQueue> send_queue_;
@@ -269,9 +272,6 @@ namespace kernel
     /// True when the connection is reading to send/receive data (usualy
     /// set at "true" on start).
     bool active_;
-
-    /// The Lobby into which the code is evaluated.
-    object::rLobby lobby_;
 
     /// Our parser.  A pointer to stop dependencies.
     std::auto_ptr<parser::UParser> parser_;

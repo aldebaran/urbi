@@ -61,13 +61,13 @@ namespace kernel
     , receiving_(false)
     , new_data_added_(false)
     , server_(server)
+    , lobby_(new object::Lobby(this))
     , send_queue_(new UQueue())
     , recv_queue_(new UQueue())
     , packet_size_(packetSize)
     , blocked_(false)
       // Initial state of the connection: unblocked, not receiving binary.
     , active_(true)
-    , lobby_(new object::Lobby(this))
     , parser_(new parser::UParser())
     , interactive_p_(true)
   {

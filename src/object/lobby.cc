@@ -29,6 +29,7 @@ namespace object
     if (c)
     {
       // Easy reference to the current lobby.
+      // ndmefyl: Easy reference my ass, easy memory-leaking cycling reference rather!
       slot_set(SYMBOL(lobby), this);
 
       // Initialize the connection tag used to reference local
