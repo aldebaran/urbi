@@ -7,8 +7,6 @@
 
 #include <sdk/config.h>
 
-#include <libltdl/ltdl.h>
-
 #include <libport/cli.hh>
 #include <libport/containers.hh>
 #include <libport/file-system.hh>
@@ -20,6 +18,7 @@
 #include <libport/unistd.h>
 #include <libport/windows.hh>
 #include <libport/option-parser.hh>
+#include <libport/xltdl.hh>
 
 #include <urbi/exit.hh>
 #include <urbi/package-info.hh>
@@ -33,86 +32,6 @@ using libport::program_name;
 
 // List of module names.
 typedef std::list<std::string> modules_type;
-
-namespace
-{
-
-  struct xlt_dladvise
-  {
-    lt_dladvise advise;
-
-    xlt_dladvise()
-    {
-      if (lt_dladvise_init(&advise))
-        std::cerr << program_name()
-                  << ": failed to initialize dladvise: "
-                  << lt_dlerror() << std::endl
-                  << libport::exit(1);
-    }
-
-    xlt_dladvise&
-    global(bool global)
-    {
-      if (global ? lt_dladvise_global(&advise) : lt_dladvise_local(&advise))
-        std::cerr << program_name() << ": failed to set dladvise to "
-                  << (global ? "global" : "local")
-                  << ": " << lt_dlerror() << std::endl
-                  << libport::exit(1);
-      return *this;
-    }
-
-    xlt_dladvise&
-    ext()
-    {
-      if (lt_dladvise_ext(&advise))
-        std::cerr << program_name() << ": failed to set dladvise to ext: "
-                  << lt_dlerror() << std::endl
-                  << libport::exit(1);
-      return *this;
-    }
-  };
-
-
-  /// Wrapper around lt_dlopenext that exits on failures.
-  static
-  lt_dlhandle
-  xlt_dlopenext(const std::string& s, bool global, int exit_failure = 1,
-                bool verbose = false)
-  {
-    if (verbose)
-      std::cerr << program_name() << ": loading " << s << std::endl;
-    lt_dlhandle res =
-      lt_dlopenadvise(s.c_str(),
-                      xlt_dladvise().global(global).ext().advise);
-    if (!res)
-      std::cerr << program_name() << ": failed to load " << s
-                << ": " << lt_dlerror() << std::endl
-                << libport::exit(exit_failure);
-    return res;
-  }
-
-  /// Wrapper around lt_dlsym that exits on failures.
-  template <typename T>
-  static
-  T
-  xlt_dlsym(lt_dlhandle h, const std::string& s)
-  {
-    void* res = lt_dlsym(h, s.c_str());
-    if (!res)
-      std::cerr << program_name()
-                << ": failed to dlsym " << s << ": " << lt_dlerror()
-                << std::endl
-                << libport::exit(1);
-    // GCC 3.4.6 on x86_64 at least requires that we go through a
-    // scalar type. It doesn't support casting a void* into a
-    // function pointer directly. Later GCC versions do not have
-    // this problem. We use a BOOST_STATIC_ASSERT at the top of
-    // the file to ensure that "void*" and "unsigned long" have
-    // the same size.
-    return reinterpret_cast<T>(reinterpret_cast<unsigned long>(res));
-  }
-
-}
 
 static UCallbackAction
 onError(const UMessage& msg)
@@ -316,10 +235,10 @@ main(int argc, char* argv[])
    */
   lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) verbosity);
   lt_dlinit();
-  lt_dlhandle core = xlt_dlopenext(dll, true, EX_OSFILE, verbosity);
+  lt_dlhandle core = libport::xlt_dlopenext(dll, true, EX_OSFILE, verbosity);
   foreach (const std::string& s, modules)
-    xlt_dlopenext(s, false, EX_NOINPUT);
+    libport::xlt_dlopenext(s, false, EX_NOINPUT);
 
-  umain_type umain = xlt_dlsym<umain_type>(core, "urbi_main_args");
+  umain_type umain = libport::xlt_dlsym<umain_type>(core, "urbi_main_args");
   umain(args, true, true);
 }
