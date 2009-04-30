@@ -7,6 +7,8 @@
 
 #include <sdk/config.h>
 
+#include <boost/assign/list_of.hpp>
+
 #include <libport/cli.hh>
 #include <libport/containers.hh>
 #include <libport/file-system.hh>
@@ -27,9 +29,6 @@
 using namespace urbi;
 using libport::program_name;
 
-// List of module names.
-typedef std::list<std::string> modules_type;
-
 static UCallbackAction
 onError(const UMessage& msg)
 {
@@ -45,7 +44,8 @@ onDone(const UMessage&)
 }
 
 static int
-connect_plugin(const std::string& host, int port, const modules_type& modules)
+connect_plugin(const std::string& host, int port,
+               const libport::cli_args_type& modules)
 {
   UClient cl(host, port);
   if (cl.error())
@@ -91,15 +91,6 @@ version()
             << libport::exit(EX_OK);
 }
 
-static
-std::string
-absolute(const std::string& s)
-{
-  libport::path p = s;
-  if (!p.absolute_get())
-    p = libport::get_current_directory() / p;
-  return p.to_string();
-}
 
 static
 int
@@ -138,12 +129,10 @@ main(int argc, char* argv[])
   std::string host = "localhost";
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
-  // The list of modules.
-  modules_type modules;
 
   // The options passed to urbi::main.
   libport::cli_args_type args;
-  libport::cli_args_type args4modules;
+
   args << argv[0];
 
   libport::OptionValue
@@ -172,9 +161,11 @@ main(int argc, char* argv[])
 	     << arg_pfile
 	     << arg_end;
 
+  // The list of modules.
+  libport::cli_args_type modules;
   try
   {
-    args4modules = opt_parser(libport::program_arguments());
+    modules = opt_parser(libport::program_arguments());
   }
   catch (libport::Error& e)
   {
@@ -182,8 +173,6 @@ main(int argc, char* argv[])
     foreach (std::string wrong_arg, err)
       libport::invalid_option(wrong_arg);
   }
-  foreach (std::string& mod_arg, args4modules)
-    modules << absolute(mod_arg);
 
   if (libport::opts::version.get())
     version();
@@ -235,8 +224,19 @@ main(int argc, char* argv[])
   lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) verbosity);
   lt_dlinit();
   lt_dlhandle core = libport::xlt_dlopenext(dll, true, EX_OSFILE, verbosity);
+
+  // Load the modules using our uobject library path.
+  libport::xlt_dladvise dl;
+  dl.ext()
+    .exit_failure(EX_NOINPUT)
+    .verbose(verbosity)
+    .path().push_back((boost::assign::list_of
+                       (std::string(libport::xgetenv("URBI_UOBJECT_PATH")))
+                       (coredir / "uobjects")),
+                      ":");
+
   foreach (const std::string& s, modules)
-    libport::xlt_dlopenext(s, false, EX_NOINPUT);
+    dl.xdlopen(s);
 
   umain_type umain = libport::xlt_dlsym<umain_type>(core, "urbi_main_args");
   umain(args, true, true);
