@@ -1,12 +1,18 @@
 # Yes, this is not by the book, but it is so cooler.
 dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 
+nodist_urbi_DATA =				\
+  $(package_info_u)				\
+  share/urbi/platform.u				\
+  share/urbi/tutorial-content.u
+
+# package-info.u
 package_info_u = share/urbi/package-info.u
-nodist_urbi_DATA = $(package_info_u) share/urbi/platform.u
 REVISIONFLAGS = --urbi
 REVISION_FILE = $(package_info_u)
 include $(top_srcdir)/build-aux/revision.mk
 
+# tutorial-content.u.
 $(srcdir)/share/urbi/tutorial-content.u: share/urbi/tutorial/tutorial.xml share/urbi/tutorial/tutorial.py
 	rm -f $@ $@.tmp
 	$(srcdir)/share/urbi/tutorial/tutorial.py $< > $@.tmp
