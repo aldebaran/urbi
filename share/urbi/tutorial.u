@@ -10,13 +10,12 @@ do (Global.Tutorial)
     function '<<'(s)
     {
       lobby.write(s);
+      return this;
     };
 
     function center(s)
     {
-      this << (" " * ((76 - s.length) / 2));
-      this << s;
-      this << "\n";
+      this << (" " * trunc((76 - s.length) / 2)) << s << "\n";
     };
 
     function delim(c)
@@ -70,7 +69,7 @@ do (Global.Tutorial)
 
   function doNext()
   {
-    next.'emit';
+    next!;
   };
 
   function init(start)
@@ -120,7 +119,7 @@ do (Global.Tutorial)
       onEnter.eval;
       var cond = Tag.new;
       cond: at (condition.eval)
-        tutorial.next.'emit';
+        tutorial.next!;
       waituntil(tutorial.next?);
       cond.stop;
       onLeave.eval;
@@ -136,7 +135,7 @@ do (Global.Tutorial)
     {
       var args = call.evalArgs;
       this.name = args[0];
-      entries = args.removeFront;
+      entries = args.tail;
     };
 
     function setTutorial(tuto)
@@ -154,7 +153,6 @@ do (Global.Tutorial)
     function start()
     {
       Tutorial.channel.section(name);
-
       for (var entry: entries)
         entry.start
     };
