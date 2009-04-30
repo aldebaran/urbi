@@ -121,7 +121,6 @@ main(int argc, char* argv[])
 {
   libport::program_initialize(argc, argv);
   unsigned verbosity = 0;
-  libport::path urbi_root = libport::xgetenv("URBI_ROOT", URBI_ROOT);
 
   enum ConnectMode
   {
@@ -221,9 +220,12 @@ main(int argc, char* argv[])
   if (connect_mode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
 
+  libport::path urbi_root = libport::xgetenv("URBI_ROOT", URBI_ROOT);
+  libport::path coredir = urbi_root / "gostai" / "core" / URBI_HOST;
   if (dll.empty())
-    dll = urbi_root / "gostai" / "core" / URBI_HOST /
-      (connect_mode == MODE_REMOTE ? "remote" : "engine") / "libuobject";
+    dll = (coredir
+           / (connect_mode == MODE_REMOTE ? "remote" : "engine")
+           / "libuobject");
 
   /* The two other modes are handled the same way:
    * -Dlopen the correct libuobject.
