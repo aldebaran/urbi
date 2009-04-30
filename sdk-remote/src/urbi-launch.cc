@@ -24,9 +24,6 @@
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
 
-#include <boost/static_assert.hpp>
-BOOST_STATIC_ASSERT(sizeof(unsigned long) == sizeof(void*));
-
 using namespace urbi;
 using libport::program_name;
 
