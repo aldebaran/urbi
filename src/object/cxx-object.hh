@@ -145,12 +145,13 @@ namespace object
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
   URBI_SDK_API
-  void check_arg_count (unsigned effective, unsigned formal);
+  void check_arg_count(unsigned effective, unsigned formal);
 
   /// Same as above, with a minimum and maximum number of
   /// formal parameters.
   URBI_SDK_API
-  void check_arg_count (unsigned effective, unsigned minformal, unsigned maxformal);
+  void check_arg_count(unsigned effective,
+                       unsigned minformal, unsigned maxformal);
 
 }
 
