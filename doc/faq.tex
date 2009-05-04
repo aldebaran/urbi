@@ -4,8 +4,41 @@
 \section{Tools}
 \paragraph{The server dies with ``stack exhaustion''}
 Your program might be deeply recursive, or use large temporary
-objects.  USe \option{--stack-size} to augment the stack size, see
+objects.  Use \option{--stack-size} to augment the stack size, see
 \autoref{sec:tools:urbi}.
+
+Note that one stack is allocated per ``light thread''.  This can
+explain why programs that heavily rely on concurrency might succeed
+where sequential programs can fail.  For instance the following
+program is very likely to quickly exhaust the (single) stack.
+
+\begin{urbifixme}
+function consume (num)
+{
+  if (num)
+    consume(num - 1) | consume(num - 1)
+} |
+consume (512);
+\end{urbifixme}
+
+But if you use \lstinline{&} instead of \lstinline{|}, then each
+recursive call to \lstinline{consume} will be spawn with a fresh
+stack, and therefore none will run out of stack space:
+
+\begin{urbifixme}
+function consume (num)
+{
+  if (num)
+    consume(num - 1) & consume(num - 1)
+} |
+consume (512);
+\end{urbifixme}
+
+However your machine will run out of resources: this heavily
+concurrent program aims at creating no less than $2^{513}$ threads,
+about $2.68 \times 10^{156}$ (a 156-digit long number, by far larger
+than the number of atoms in the observable universe, estimated to
+$10^{80}$).
 
 \section{\us}
 \subsection{Objects lifetime}
