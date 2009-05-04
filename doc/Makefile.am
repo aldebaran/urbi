@@ -16,8 +16,10 @@ EXTRA_DIST += $(PDF_IMAGES)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
-# Find urbi-report.sty.
-TEXI2DVI_FLAGS += -I $(srcdir)
+# Find urbi-report.sty, and workaround some strange behavior of
+# texi2dvi that wants to play tricks with ~ (which becomes a tilda,
+# instead of a nonbreakable space).
+TEXI2DVI_FLAGS += -I $(srcdir) -~
 pdf_DATA =
 
 # Use tex4ht
