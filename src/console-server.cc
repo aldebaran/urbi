@@ -334,7 +334,7 @@ namespace urbi
     std::cerr << data.network << std::endl;
     // In Urbi: System.listenPort = <port>.
     object::system_class->slot_set(SYMBOL(listenPort),
-                                   object::rFloat(new object::Float(port)),
+                                   object::to_urbi(port),
                                    true);
 
     s.initialize(data.interactive);
