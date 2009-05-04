@@ -393,6 +393,12 @@ load("urbi/event.u");
 
 load("urbi/tag.u");
 
+/*--------.
+| Lobby.  |
+`--------*/
+
+load("urbi/lobby.u");
+
 /*----------.
 | UObject.  |
 `----------*/

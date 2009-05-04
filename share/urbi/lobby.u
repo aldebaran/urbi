@@ -1,0 +1,10 @@
+do (Lobby)
+{
+  function asString()
+  {
+    var res = Object.getSlot("asString").apply([this]) |
+    if (hasSlot("remoteIP"))
+      res += " (%s)" % remoteIP |
+    return res
+  }
+};
