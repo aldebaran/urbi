@@ -32,6 +32,7 @@ namespace object
     void    each_common (const rObject&, bool);
     void    each_and    (const rObject&);
     rObject front       ();
+    /// Also known as pop.
     rObject removeFront ();
     rObject removeBack  ();
     rList   insert      (const rFloat& idx, const rObject& elt);
