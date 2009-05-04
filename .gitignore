@@ -17,6 +17,7 @@
 /lib
 /lib/network
 /sdk
+/share/urbi/tutorial-content.u
 /src/Makefile.in
 /src/include
 /src/kernel/config.h.in
