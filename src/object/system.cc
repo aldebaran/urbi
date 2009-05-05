@@ -8,6 +8,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 #include <libport/cstdlib>
+#include <libport/format.hh>
 #include <libport/program-name.hh>
 
 #include <memory>
@@ -438,6 +439,23 @@ namespace object
     exit(status);
   }
 
+  static int
+  system_system(const rObject&, const std::string& s)
+  {
+    int res = system(s.c_str());
+    switch (res)
+    {
+    case -1:
+      // FIXME: This is potentially widly used, see also path.cc.
+      RAISE(libport::format("%1%: %2%", strerror(errno), s));
+      break;
+    case 127:
+      RAISE(libport::format("shell failed: %1%", s));
+      break;
+    }
+    return res;
+  }
+
   void
   system_class_initialize()
   {
@@ -477,6 +495,7 @@ namespace object
     DECLARE(spawn);
     DECLARE(stats);
     DECLARE(stopall);
+    DECLARE(system);
     DECLARE(time);
     DECLARE(unsetenv);
 
