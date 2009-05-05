@@ -6,7 +6,7 @@ objects written in C++ to the \urbi language, and to interact from C++
 with the objects that are already defined. We cover the use cases of
 controlling a physical device (servomotor, speaker, camera...), and
 interfacing higher-lever components (voice recognition, object
-detection, ...) with \urbi.\\
+detection, ...) with \urbi.
 
 The API defines the UObject class. Each instance of a derived class in
 your C++ code will correspond to an \urbi object sharing some of its
@@ -20,11 +20,11 @@ UValue class. The API provides methods to set up callbacks functions
 that will be notified when a variable is modified or read from \urbi
 code. Instance methods of any prototype can be rendered accessible
 from \urbi, providing all the parameters types and the return type can
-be converted to/from UValue.\\
+be converted to/from UValue.
 
 The next section is a walk through covering all the aspects of the
 UObject API, and the rest of the chapter describes many use cases in
-details.\\
+details.
 
 \section{The UObject API}
 
@@ -38,12 +38,12 @@ argument.
 \begin{itemize}
 \item{First the required include and namespace:}
 
-\begin{urbiscript}
+\begin{cxx}
 #include <uobject.hh>
-\end{urbiscript}
+\end{cxx}
 
 \item{Then we declare our \lstinline{adder} class:}
-\begin{urbiscript}
+\begin{cxx}
 class adder : public urbi::UObject // must inherit from UObject
 {
   public:
@@ -56,9 +56,10 @@ class adder : public urbi::UObject // must inherit from UObject
      // our method
      double add (double);
 };
-\end{urbiscript}
-\item{Finally the implementation of the constructor and our \lstinline{add} method:}
-\begin{urbiscript}
+\end{cxx}
+\item Finally the implementation of the constructor and our
+  \lstinline{add} method:
+\begin{cxx}
 // the constructor defines what is available from Urbi
 adder::adder (const std::string& s)
   : UObject (s) // required
@@ -79,24 +80,24 @@ adder::add (double rhs)
 
 // register the class to the Urbi kernel.
 UStart (adder);
-\end{urbiscript}
+\end{cxx}
 \end{itemize}
 
 To summarize:
 
 \begin{itemize}
-\item{Declare your object class as inheriting from
-  \lstinline{urbi::UObject}.}
-\item{Declare a single constructor taking a string, and pass this
-  string to the constructor of \lstinline{urbi::UObject}.}
-\item{Declare the variables you want to share with \urbi with the type
-  \lstinline{urbi::UVar}.}
-\item{In the constructor, call \lstinline{UBindVar(classname,varname)}
+\item Declare your object class as inheriting from
+  \lstinline{urbi::UObject}.
+\item Declare a single constructor taking a string, and pass this
+  string to the constructor of \lstinline{urbi::UObject}.
+\item Declare the variables you want to share with \urbi with the type
+  \lstinline{urbi::UVar}.
+\item In the constructor, call \lstinline{UBindVar(classname,varname)}
   for each \lstinline{UVar} you want as an instance variable, and
   \lstinline{UBindFunction(classname,functionname)} for each function
-  you want to bind.}
-\item{Don't forget to call the macro \lstinline{UStart} for each
-  object.}
+  you want to bind.
+\item Don't forget to call the macro \lstinline{UStart} for each
+  object.
 \end{itemize}
 
 \subsection{Creating new instances}
@@ -230,17 +231,17 @@ Let's write a \lstinline{UObject} for a servomotor device whose
 underlying API is:
 
 \begin{itemize}
-\item{\lstinline{bool initialize (int id); //initialize the servomotor with given ID}}
-\item{\lstinline{double getPosition (int id); //read servomotor of given id position}}
-\item{\lstinline{void setPosition (int id, double pos); //send a command to servomotor}}
-\item{\lstinline{void setPID (int id, int p, int i, int d); //set PID arguments}}
+\item \lstinline{bool initialize (int id); //initialize the servomotor with given ID}
+\item \lstinline{double getPosition (int id); //read servomotor of given id position}
+\item \lstinline{void setPosition (int id, double pos); //send a command to servomotor}
+\item \lstinline{void setPID (int id, int p, int i, int d); //set PID arguments}
 \end{itemize}
 
 First our header. Our servo device provides an attribute named \lstinline{val},
 the standard \urbi name, and two ways to set PID gain: a method, and
 three variables.
 
-\begin{urbiscript}
+\begin{cxx}
 class servo : public urbi::UObject //must inherits UObject
 {
 public:
@@ -274,27 +275,27 @@ public:
   // motor ID
   int id_;
 };
-\end{urbiscript}
+\end{cxx}
 
 The constructor only registers init, so that our default instance
 \lstinline{servo} does nothing, and can only be used to create new
 instances.
 
-\begin{urbiscript}
+\begin{cxx}
 servo::servo (const std::string& s)
   : urbi::UObject (s)
 {
      // register init
      UBindFunction (servo, init);
 }
-\end{urbiscript}
+\end{cxx}
 
 The \lstinline{init} function, called in a new instance each time a
 new \urbi instance is created, registers the three variables
 (\lstinline{val}, \lstinline{P}, \lstinline{I} and \lstinline{D}), and
 sets up callback functions.
 
-\begin{urbiscript}
+\begin{cxx}
 // Urbi constructor
 int
 servo::init (int id)
@@ -329,7 +330,7 @@ servo::init (int id)
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 Then we define our callback methods. \lstinline{servo::valueChanged}
 will be called each time the \lstinline{val} variable is modified,
@@ -338,7 +339,7 @@ command. \lstinline{servo::valueAccessed} is called just before the
 value is going to be read. In this function we request the current
 value from the servo, and set \lstinline{val} accordingly.
 
-\begin{urbiscript}
+\begin{cxx}
 //called each time val is written to
 int
 servo::valueChanged (urbi::UVar & v)
@@ -358,13 +359,13 @@ servo::valueAccessed(urbi::UVar & v)
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 \lstinline{servo::pidChanged} is called each time one of the PID
 variables is written to. The function \lstinline{servo::setPID} can be
 called directly from \urbi.
 
-\begin{urbiscript}
+\begin{cxx}
 int
 servo::pidChanged (urbi::UVar &v)
 {
@@ -384,7 +385,7 @@ servo::setPID (int p, int i, int d)
 
 //register servo class to the Urbi kernel
 UStart (servo);
-\end{urbiscript}
+\end{cxx}
 
 That's it, compile this module, and you can use it within \urbi:
 
@@ -438,7 +439,7 @@ callback, and write to your actuators in the first. Our previous
 example (ommiting PID handling for clarity) can be rewritten. The
 header becomes:
 
-\begin{urbiscript}
+\begin{cxx}
 // inherits from UObject
 class servo : public urbi::UObject
 {
@@ -460,11 +461,11 @@ public:
   // motor ID
   int id_;
 };
-\end{urbiscript}
+\end{cxx}
 
 Constructor is unchanged, \lstinline{init} becomes:
 
-\begin{urbiscript}
+\begin{cxx}
 int
 servo::init (int id)
 {
@@ -485,7 +486,7 @@ servo::init (int id)
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 \lstinline{valueChanged} becomes \lstinline{update} and
 \lstinline{valueAccessed} becomes \lstinline{getVal}. Instead of being
@@ -503,7 +504,7 @@ takes two arrays of ids and positions. A hub is the perfect way to
 handle this task. The UObject header stays the same. We add a hub
 declaration:
 
-\begin{urbiscript}
+\begin{cxx}
 class servohub : public urbi::UObjectHub
 {
 public:
@@ -521,35 +522,35 @@ public:
   int size;
   int count;
 };
-\end{urbiscript}
+\end{cxx}
 
 \lstinline{servo::update} becomes a call to the \lstinline{addValue}
 method of the hub:
 
-\begin{urbiscript}
+\begin{cxx}
 int
 servo::update()
 {
   ((servohub*)getUObjectHub ("servohub"))->addValue (id, (double)val);
 };
-\end{urbiscript}
+\end{cxx}
 
 The following line can be added to the servo \lstinline{init} method,
 although it has no use in our specific example:
 
-\begin{urbiscript}
+\begin{cxx}
 URegister(servohub);
-\end{urbiscript}
+\end{cxx}
 
 Finaly, the implementation of our hub methods is:
 
-\begin{urbiscript}
+\begin{cxx}
 servohub::servohub (const std::string& s)
-  : UObjectHub (s),
-    ids   (0),
-    vals  (0),
-    size  (0),
-    count (0)
+  : UObjectHub (s)
+  , ids   (0)
+  , vals  (0)
+  , size  (0)
+  , count (0)
 {
   // setup our timer
   USetUpdate (1);
@@ -582,7 +583,7 @@ servohub::addValue (int id, double val)
 }
 
 UStartHub (servohub);
-\end{urbiscript}
+\end{cxx}
 
 Periodically, the \lstinline{update} method is called on each servo
 instance, which adds commands to the hub arrays, then the
@@ -596,7 +597,7 @@ can entirely remove the \lstinline{update} method in the servo class
 (and the \lstinline{USetUpdate()} call in init), and rewrite the hub
 \lstinline{update} method the following way:
 
-\begin{urbiscript}
+\begin{cxx}
 int servohub::update()
 {
   //called periodically
@@ -613,7 +614,7 @@ int servohub::update()
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 \subsection{Writting a camera device}
 
@@ -624,7 +625,7 @@ image-specfic structures for conveniance. You must be careful about
 memory managment. The \lstinline{UBinary} structure handles its own
 memory: copies are deep copies, and the destructor frees the
 associated buffer. The \lstinline{UImage} and \lstinline{USound}
-structures do not.\\
+structures do not.
 
 Let's suppose we have an underlying camera API with the following functions:
 
@@ -638,7 +639,7 @@ Let's suppose we have an underlying camera API with the following functions:
 
 Our device code can be written as follows:
 
-\begin{urbiscript}
+\begin{cxx}
 //inherit from UObject
 class Camera : public urbi::UObject
 {
@@ -667,11 +668,11 @@ public:
   //camera id UBinary bin;
   int id_;
 };
-\end{urbiscript}
+\end{cxx}
 
 The constructor only registers \lstinline{init}:
 
-\begin{urbiscript}
+\begin{cxx}
 //the constructor registers init only
 Camera::Camera (const std::string& s)
   : urbi::UObject (s),
@@ -680,13 +681,13 @@ Camera::Camera (const std::string& s)
   // register init
   UBindFunction (Camera, init);
 }
-\end{urbiscript}
+\end{cxx}
 
 The \lstinline{init} function binds the variable, a function called on
 access, and sets a timer up on update. It also initialises the
 \lstinline{UBinary} structure.
 
-\begin{urbiscript}
+\begin{cxx}
 int
 Camera::init (int id)
 {
@@ -717,25 +718,25 @@ Camera::init (int id)
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 The \lstinline{update} function simply updates the frame counter:
 
-\begin{urbiscript}
+\begin{cxx}
 int
 Camera::update ()
 {
   frame++;
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 The \lstinline{getVal} updates the camera value, only if it hasn't
 already been called this frame, which provides a simple caching
 mechanism to avoid performing the potentially lenghty operation of
 acquiring an image too often.
 
-\begin{urbiscript}
+\begin{cxx}
 int
 Camera::getVal(urbi::UVar &)
 {
@@ -748,9 +749,9 @@ Camera::getVal(urbi::UVar &)
 }
 
 UStart(Camera);
-\end{urbiscript}
+\end{cxx}
 
-The image data is copied inside the kernel when proceeding this way.\\
+The image data is copied inside the kernel when proceeding this way.
 
 Be careful, suppose that we had created the \lstinline{UBinary}
 structure inside the \lstinline{getVal} method, our buffer would have
@@ -779,11 +780,11 @@ still be useable within \urbi: they acquire their data using
 \lstinline{UVar} referencing other modules's variables, and output
 their results to other \lstinline{UVar}. Let's consider the case of a
 ball detector device that takes an image as input, and outputs the
-coordinates of a ball if one is found.\\
+coordinates of a ball if one is found.
 
 The header is defined like:
 
-\begin{urbiscript}
+\begin{cxx}
 // inherit from UObject
 class BallTracker : public urbi::UObject
 {
@@ -801,11 +802,11 @@ public:
   urbi::UVar x;
   urbi::UVar y;
  };
-\end{urbiscript}
+\end{cxx}
 
 The constructor only registers \lstinline{init}:
 
-\begin{urbiscript}
+\begin{cxx}
 //the constructor registers init only
 BallTracker::BallTracker (const::string& s)
   : urbi::UObject (s)
@@ -813,12 +814,12 @@ BallTracker::BallTracker (const::string& s)
   //register init
   UBindFunction (BallTracker, init);
 }
-\end{urbiscript}
+\end{cxx}
 
 The \lstinline{init} function binds the variables and a callback on
 update of the image variable passed as a argument.
 
-\begin{urbiscript}
+\begin{cxx}
 int
 BallTracker::init (const std::string& cameraval)
 {
@@ -831,12 +832,12 @@ BallTracker::init (const std::string& cameraval)
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
 
 The \lstinline{newImage} function runs the detection algorithm on the
 image in its argument, and updates the variables.
 
-\begin{urbiscript}
+\begin{cxx}
 int
 BallTracker::newImage (urbi::UVar &v)
 {
@@ -856,4 +857,4 @@ BallTracker::newImage (urbi::UVar &v)
 
   return 0;
 }
-\end{urbiscript}
+\end{cxx}
