@@ -397,7 +397,7 @@ namespace object
   }
 
   Object&
-  Object::proto_add (const rObject& p)
+  Object::proto_add(const rObject& p)
   {
     assert(p);
     // Inheriting from atoms is a problem: we cannot morph in place
