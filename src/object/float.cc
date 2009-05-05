@@ -85,7 +85,7 @@ namespace object
   Float::as_string(int base)
   {
     if (base != 10 && base != 16)
-      runner::raise_primitive_error("valid base is 10 or 16");
+      RAISE("valid base is 10 or 16");
 
     // Do not rely on boost::format to print inf and nan since
     // behavior differs under Win32.
@@ -134,7 +134,7 @@ namespace object
     static libport::Symbol op(#Op);                                     \
     WHEN(Check,                                                         \
          if (!rhs)							\
-	   runner::raise_primitive_error("division by 0"));		\
+	   RAISE("division by 0"));                                     \
     return value_get() Op rhs;						\
   }
 
@@ -148,7 +148,7 @@ namespace object
   Float::operator %(value_type rhs)
   {
     if (!rhs)
-      runner::raise_primitive_error("modulo by 0");
+      RAISE("modulo by 0");
     return fmod(value_get(), rhs);
   }
 
@@ -190,13 +190,17 @@ namespace object
   BOUNCE_UNSIGNED_OP(>>)
 #undef BOUNCE_UNSIGNED_OP
 
-#define CHECK_POSITIVE(F)                                       \
-  if (value_ < 0)                                               \
-    runner::raise_primitive_error("argument has to be positive");
+#define CHECK_POSITIVE(F)                       \
+  do {                                          \
+    if (value_ < 0)                             \
+      RAISE("argument has to be positive");     \
+  } while (0)
 
-#define CHECK_TRIGO_RANGE(F)                                    \
-  if (value_ < -1 || value_ > 1)                                \
-    runner::raise_primitive_error("invalid range");
+#define CHECK_TRIGO_RANGE(F)                    \
+  do {                                          \
+    if (value_ < -1 || 1 < value_)              \
+      RAISE("invalid range");                   \
+  } while (0)
 
 #define BOUNCE(F, Pos, Range)                           \
   Float::value_type					\

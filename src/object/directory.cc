@@ -54,8 +54,7 @@ namespace object
   void Directory::init(rPath path)
   {
     if (!path->is_dir())
-      runner::raise_primitive_error(str(format("Not a directory: '%s'") %
-					path->as_string()));
+      RAISE(str(format("Not a directory: '%s'") % path->as_string()));
     path_ = path;
   }
 

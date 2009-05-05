@@ -108,7 +108,7 @@ namespace object
     catch (const boost::bad_lexical_cast&)
     {
       boost::format fmt("unable to convert to float: %s");
-      runner::raise_primitive_error(str(fmt % as_printable()));
+      RAISE(str(fmt % as_printable()));
     }
   }
 
@@ -274,7 +274,7 @@ namespace object
       str = next + 2;
       const char format = next[1];
       if (format == 0)
-	runner::raise_primitive_error("Trailing `%'");
+	RAISE("Trailing `%'");
       switch (format)
       {
         case '%':
@@ -283,19 +283,18 @@ namespace object
         case 's':
         {
           if (begin == end)
-	    runner::raise_primitive_error("Too few arguments for format");
+	    RAISE("Too few arguments for format");
           res += from_urbi<std::string>((*begin)->call(SYMBOL(asString)));
           begin++;
           break;
         }
         default:
-	  runner::raise_primitive_error
-	    (std::string("Unrecognized format: `%") + format + "'");
+	  RAISE(std::string("Unrecognized format: `%") + format + "'");
           break;
       }
     }
     if (begin != end)
-      runner::raise_primitive_error("Too many arguments for format");
+      RAISE("Too many arguments for format");
     res += str;
     return res;
   }
@@ -312,14 +311,12 @@ namespace object
   void String::check_bounds(unsigned int from, unsigned int to)
   {
     if (from >= content_.length())
-      runner::raise_primitive_error("invalid index: " + string_cast(from));
+      RAISE("invalid index: " + string_cast(from));
     if (to >  content_.length())
-      runner::raise_primitive_error("invalid index: " + string_cast(to));
+      RAISE("invalid index: " + string_cast(to));
     if (from > to)
-      runner::raise_primitive_error("range starting after its end "
-				    "does not make sense: "
-				    + string_cast(from) + ", " +
-				    string_cast(to));
+      RAISE("range starting after its end does not make sense: "
+            + string_cast(from) + ", " + string_cast(to));
   }
 
   std::string String::sub(unsigned int idx)

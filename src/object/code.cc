@@ -85,8 +85,7 @@ namespace object
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
     if (args->value_get().empty())
-      runner::raise_primitive_error("list of arguments "
-				    "must begin with `this'");
+      RAISE("list of arguments must begin with `this'");
     List::value_type a = args->value_get();
 
     return r.apply(this, SYMBOL(apply), a);

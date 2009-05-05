@@ -59,8 +59,7 @@ namespace object
   void File::init(rPath path)
   {
     if (!path->is_reg())
-      runner::raise_primitive_error(str(format("Not a regular file: '%s'") %
-					path->as_string()));
+      RAISE(str(format("Not a regular file: '%s'") % path->as_string()));
     path_ = path;
   }
 
@@ -103,7 +102,7 @@ namespace object
   {
     std::ifstream s(path_->as_string().c_str());
     if (!s.good())
-      runner::raise_primitive_error("File not readable: " + as_string());
+      RAISE("File not readable: " + as_string());
 
     List::value_type res;
     std::string line;
@@ -145,7 +144,7 @@ namespace object
   {
     std::ifstream s(path_->as_string().c_str());
     if (!s.good())
-      runner::raise_primitive_error("File not readable: " + as_string());
+      RAISE("File not readable: " + as_string());
 
     std::string res;
     while (!s.eof())

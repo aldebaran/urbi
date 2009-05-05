@@ -44,7 +44,7 @@ namespace object
       boost::format fmt("Unable to open file for writing: %s");
       delete stream_;
       stream_ = 0;
-      runner::raise_primitive_error(str(fmt % path));
+      RAISE(str(fmt % path));
     }
     own_ = true;
   }

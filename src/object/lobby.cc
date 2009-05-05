@@ -43,7 +43,7 @@ namespace object
   Lobby::Lobby(rLobby)
     : connection_(0)
   {
-    runner::raise_primitive_error("`Lobby' objects cannot be cloned");
+    RAISE("`Lobby' objects cannot be cloned");
   }
 
   Lobby::connection_type&
@@ -62,7 +62,7 @@ namespace object
   Lobby::send(const objects_type& args)
   {
     if (proto == this)
-      runner::raise_primitive_error("must be called on Lobby derivative");
+      RAISE("must be called on Lobby derivative");
 
     check_arg_count(args.size(), 1, 2);
     // Second argument is the tag name.
@@ -85,7 +85,7 @@ namespace object
   Lobby::write(const std::string& data)
   {
     if (proto == this)
-      runner::raise_primitive_error("must be called on Lobby derivative");
+      RAISE("must be called on Lobby derivative");
     connection_->send_queue(data.c_str(), data.size());
     connection_->flush();
   }

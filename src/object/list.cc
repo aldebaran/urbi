@@ -50,11 +50,10 @@ namespace object
     return content_;
   }
 
-#define CHECK_NON_EMPTY(Name)			\
-  do {						\
-    if (content_.empty())			\
-      runner::raise_primitive_error		\
-	("cannot be applied onto empty list");	\
+#define CHECK_NON_EMPTY(Name)                           \
+  do {                                                  \
+    if (content_.empty())                               \
+      RAISE("cannot be applied onto empty list");	\
   } while (0)
 
   rList
@@ -73,8 +72,7 @@ namespace object
     if (i < 0)
       i += content_.size();
     if (i < 0 || content_.size() <= static_cast<size_type>(i))
-      runner::raise_primitive_error("invalid index: " +
-				    string_cast(idx->value_get()));
+      RAISE("invalid index: " + string_cast(idx->value_get()));
     return static_cast<size_type>(i);
   }
 

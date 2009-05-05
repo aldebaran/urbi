@@ -15,7 +15,7 @@ namespace object
 {
   Primitive::Primitive()
   {
-    runner::raise_primitive_error("`Primitive' objects cannot be cloned");
+    RAISE("`Primitive' objects cannot be cloned");
   }
 
   Primitive::Primitive(rPrimitive model)
@@ -48,8 +48,7 @@ namespace object
   Primitive::apply(rList args)
   {
     if (args->value_get().empty())
-      runner::raise_primitive_error("list of arguments "
-				    "must begin with `this'");
+      RAISE("list of arguments must begin with `this'");
     objects_type a = args->value_get();
     return ::kernel::urbiserver->getCurrentRunner().apply(this, SYMBOL(apply),
                                                           a);

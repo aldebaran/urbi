@@ -83,7 +83,7 @@ namespace object
 
     ast::rConstAst ast = parser::transform(p->ast_get());
     if (!ast)
-      runner::raise_primitive_error(e);
+      RAISE(e);
 
     runner::Interpreter* sub = new runner::Interpreter(run, ast, fun);
     // So that it will resist to the call to yield_until_terminated,
@@ -154,7 +154,7 @@ namespace object
                  const rObject& value, const std::string& assertion)
   {
     if (!is_true(value))
-      runner::raise_primitive_error("failed assertion: " + assertion);
+      RAISE("failed assertion: " + assertion);
   }
 
   static rObject
@@ -394,8 +394,7 @@ namespace object
     }
     lt_dlhandle handle = lt_dlopenext(name.c_str());
     if (!handle)
-      runner::raise_primitive_error
-        ("Failed to open `" + name + "': " + lt_dlerror());
+      RAISE("Failed to open `" + name + "': " + lt_dlerror());
 
     // Reload uobjects
     uobjects_reload();

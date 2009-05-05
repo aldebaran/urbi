@@ -145,7 +145,7 @@ namespace object
     }
     catch (const libport::path::invalid_path& e)
     {
-      runner::raise_primitive_error(e.what());
+      RAISE(e.what());
     }
   }
 
@@ -169,8 +169,7 @@ namespace object
       return new Directory(path_);
     if (is_reg())
       return new File(path_);
-    runner::raise_primitive_error(str(format("Unsupported file type: %s.") %
-				      path_));
+    RAISE(str(format("Unsupported file type: %s.") % path_));
   }
 
   // Conversions
@@ -200,8 +199,7 @@ namespace object
 
   void Path::handle_any_error()
   {
-    runner::raise_primitive_error(str(format("%1%: %2%") %
-				      strerror(errno) % path_));
+    RAISE(str(format("%1%: %2%") % strerror(errno) % path_));
   }
 
   /*---------------.

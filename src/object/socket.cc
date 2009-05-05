@@ -72,7 +72,7 @@ namespace object
   Socket::connect(const std::string& host, const std::string& port)
   {
     if (boost::system::error_code error = libport::Socket::connect(host, port))
-      runner::raise_primitive_error(error.message());
+      RAISE(error.message());
   }
 
   void

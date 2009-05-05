@@ -83,6 +83,12 @@ namespace object
     return (*primitive)(args);                                          \
   }                                                                     \
 
+/// Raise an Urbi exception.
+/**
+ *  @param Message
+ */
+#define RAISE(Message)                                 \
+  runner::raise_primitive_error(Message)
 
 #include <object/cxx-primitive.hxx>
 
