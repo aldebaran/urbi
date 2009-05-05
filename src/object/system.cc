@@ -114,7 +114,7 @@ namespace object
 
 #define SERVER_FUNCTION(Function)               \
   static void                                   \
-  system_ ## Function ()                        \
+  system_ ## Function()                         \
   {                                             \
     urbiserver->Function();                     \
   }
@@ -352,33 +352,38 @@ namespace object
 
 #undef SERVER_SET_VAR
 
-  static rObject system_getenv(const rObject&, const std::string& name)
+  static rObject
+  system_getenv(const rObject&, const std::string& name)
   {
     char* res = getenv(name.c_str());
     return res ? new String(res) : nil_class;
   }
 
-  static rObject system_setenv(const rObject&, const std::string& name, rObject value)
+  static rObject
+  system_setenv(const rObject&, const std::string& name, rObject value)
   {
     rString v = value->call(SYMBOL(asString))->as<String>();
     setenv(name.c_str(), v->value_get().c_str(), 1);
     return v;
   }
 
-  static rObject system_unsetenv(const rObject&, const std::string& name)
+  static rObject
+  system_unsetenv(const rObject&, const std::string& name)
   {
     rObject res = system_getenv(0, name);
     unsetenv(name.c_str());
     return res;
   }
 
-  static libport::InstanceTracker<Lobby>::set_type system_lobbies()
+  static libport::InstanceTracker<Lobby>::set_type
+  system_lobbies()
   {
     return Lobby::instances_get();
   }
 
 
-  static void system_loadModule(const rObject&, const std::string& name)
+  static void
+  system_loadModule(const rObject&, const std::string& name)
   {
     static bool initialized = false;
 
@@ -404,33 +409,38 @@ namespace object
   static libport::cli_args_type urbi_arguments_;
   static boost::optional<std::string> urbi_program_name_;
 
-  void system_push_argument(const std::string& arg)
+  void
+  system_push_argument(const std::string& arg)
   {
     urbi_arguments_.push_back(arg);
   }
 
-  void system_set_program_name(const std::string& name)
+  void
+  system_set_program_name(const std::string& name)
   {
     urbi_program_name_ = name;
   }
 
-  static const libport::cli_args_type& system_arguments()
+  static const libport::cli_args_type&
+  system_arguments()
   {
     return urbi_arguments_;
   }
 
-  static boost::optional<std::string> system_programName()
+  static boost::optional<std::string>
+  system_programName()
   {
     return urbi_program_name_;
   }
 
-  static void system__exit(const rObject&, int status)
+  static void
+  system__exit(const rObject&, int status)
   {
     exit(status);
   }
 
   void
-  system_class_initialize ()
+  system_class_initialize()
   {
 #define DECLARE(Name)                                                   \
     system_class->slot_set(SYMBOL(Name),                                \
