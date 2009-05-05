@@ -10,6 +10,6 @@ namespace parser
   ast::rNary
   transform(ast::rConstNary ast)
   {
-    return binder::bind(flower::flow(rewrite::rewrite(ast)));
+    return binder::bind(rewrite::rewrite(ast::rConstNary(flower::flow(ast))));
   }
 } // namespace parser

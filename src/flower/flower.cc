@@ -55,8 +55,7 @@ namespace flower
       "{var '$loopBreakTag' = Tag.newFlowControl(\"loopBreakTag\") |"
       "'$loopBreakTag': %exp:1}");
 
-    // FIXME: e is visited twice
-    return rewrite::rewrite(ast::rConstExp(exp(brk % e)));
+    return exp(brk % e);
   }
 
   static inline
@@ -68,8 +67,7 @@ namespace flower
       "'$loopContinueTag': %exp:1}");
 
 
-    // FIXME: e is visited twice
-    return rewrite::rewrite(ast::rConstExp(exp(cont % e)));
+    return exp(cont % e);
   }
 
   void

@@ -3,9 +3,9 @@
  *  transformation in a different file descriptor:
  *
  *  3: parsing
- *  4: desugaring
- *  5: rescoping
- *  6: flowing
+ *  4: flowing
+ *  5: desugaring
+ *  6: rescoping
  *  7: binding
  *
  *  For instance, you might use it like this to see ast after
@@ -55,13 +55,13 @@ main()
 
   print(res);
 
+  res = flower::flow(res);
+  print(res);
+
   res = rewrite::desugar(res);
   print(res);
 
   res = rewrite::rescope(res);
-  print(res);
-
-  res = flower::flow(res);
   print(res);
 
   res = binder::bind(res);
