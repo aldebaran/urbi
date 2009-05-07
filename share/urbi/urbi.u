@@ -399,6 +399,12 @@ load("urbi/tag.u");
 
 load("urbi/lobby.u");
 
+/*--------.
+| Mutex.  |
+`--------*/
+
+load("urbi/mutex.u");
+
 /*----------.
 | UObject.  |
 `----------*/

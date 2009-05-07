@@ -1,0 +1,18 @@
+class Global.Mutex
+{
+  function init()
+  {
+    var this.sem = uobjects.Semaphore.new(1);
+  };
+
+  function lock()
+  {
+    this.sem.p;
+  };
+
+  function unlock()
+  {
+    this.sem.v;
+  };
+
+};
