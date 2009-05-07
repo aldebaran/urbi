@@ -11,6 +11,7 @@
 #include <libport/format.hh>
 #include <libport/program-name.hh>
 
+#include <cerrno>
 #include <memory>
 #include <sstream>
 
