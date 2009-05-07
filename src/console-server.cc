@@ -19,6 +19,7 @@
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
+#include <libport/semaphore.hh>
 #include <libport/sys/socket.h>
 #include <libport/sysexits.hh>
 #include <libport/thread.hh>
@@ -183,14 +184,18 @@ namespace urbi
     std::string value;
   };
 
-  int
-  main(const libport::cli_args_type& _args, bool block, bool errors)
+  static int
+  init(const libport::cli_args_type& _args, bool errors,
+             libport::Semaphore* sem)
   {
+    libport::Finally f;
+    if (sem)
+      f << boost::bind(&libport::Semaphore::operator++, sem);
     if (errors)
     {
       try
       {
-        return main(_args, block);
+        return init(_args, false, sem);
       }
       catch (const urbi::Exit& e)
       {
@@ -370,12 +375,12 @@ namespace urbi
 #ifdef ENABLE_DEBUG_TRACES
     std::cerr << program_name() << ": going to work..." << std::endl;
 #endif
-    if (block)
-      return main_loop(data);
-    else
-      libport::startThread(new boost::function0<void>(
-                             boost::bind(&main_loop, data)));
-    return 0;
+
+    if (sem)
+      (*sem)++;
+
+    return main_loop(data);
+
   }
 
   int
@@ -420,6 +425,23 @@ namespace urbi
     }
 
     return EX_OK;
+  }
+
+  int
+  main(const libport::cli_args_type& _args, bool block, bool errors)
+  {
+    if (block)
+      return init(_args, errors, 0);
+    else
+    {
+      // The semaphore must survive this block, as init will use it when
+      // exiting.
+      libport::Semaphore* s = new libport::Semaphore;
+      libport::startThread(boost::bind(&init, boost::ref(_args),
+                                       errors, s));
+      (*s)--;
+      return 0;
+    }
   }
 
 }
