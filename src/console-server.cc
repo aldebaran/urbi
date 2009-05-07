@@ -321,7 +321,6 @@ namespace urbi
       if (desired_port != -1)
       {
         std::string host = libport::opts::host_l.value("");
-        std::cerr << host << ":" << port << std::endl;
         port = Network::createTCPServer(host, desired_port);
         if (!port)
           throw urbi::Exit
@@ -331,7 +330,6 @@ namespace urbi
       }
     }
     data.network = 0 < port;
-    std::cerr << data.network << std::endl;
     // In Urbi: System.listenPort = <port>.
     object::system_class->slot_set(SYMBOL(listenPort),
                                    object::to_urbi(port),
