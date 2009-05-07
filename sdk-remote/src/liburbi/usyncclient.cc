@@ -247,8 +247,8 @@ namespace urbi
   }
 
   UMessage*
-  USyncClient::syncGetTimeout(libport::utime_t useconds,
-                              const char* format, ...)
+  USyncClient::syncGet(libport::utime_t useconds,
+                       const char* format, ...)
   {
     va_list arg;
     va_start(arg, format);
@@ -269,10 +269,10 @@ namespace urbi
   }
 
   UMessage*
-  USyncClient::syncGetTagTimeout(libport::utime_t useconds,
-                                 const char* format,
-                                 const char* mtag,
-                                 const char* mmod, ...)
+  USyncClient::syncGetTag(libport::utime_t useconds,
+                          const char* format,
+                          const char* mtag,
+                          const char* mmod, ...)
   {
     va_list arg;
     va_start(arg, mmod);
@@ -293,7 +293,7 @@ namespace urbi
     send("%s.format = %d;\n"
          "noop;\n"
          "noop;\n", camera, f);
-    UMessage *m = syncGetTimeout(useconds, "%s.val;\n", camera);
+    UMessage *m = syncGet(useconds, "%s.val;\n", camera);
     if (!m)
       return 0;
     if (m->value->binary->type != BINARY_IMAGE)
@@ -354,7 +354,7 @@ namespace urbi
   USyncClient::syncGetNormalizedDevice(const char* device, double& val,
 				       libport::utime_t useconds)
   {
-    UMessage *m = syncGetTimeout(useconds, "%s.valn;\n", device);
+    UMessage *m = syncGet(useconds, "%s.valn;\n", device);
 
     if (!m)
       return 0;
@@ -379,7 +379,7 @@ namespace urbi
   USyncClient::syncGetValue(const char* tag, const char* valName, UValue& val,
 			    libport::utime_t useconds)
   {
-    UMessage *m = syncGetTagTimeout(useconds, "%s;\n", tag, 0, valName);
+    UMessage *m = syncGetTag(useconds, "%s;\n", tag, 0, valName);
 
     if (!m)
       return 0;
@@ -397,7 +397,7 @@ namespace urbi
   USyncClient::syncGetDevice(const char* device, double& val,
 			     libport::utime_t useconds)
   {
-    UMessage *m = syncGetTimeout(useconds, "%s.val;\n", device);
+    UMessage *m = syncGet(useconds, "%s.val;\n", device);
 
     if (!m)
       return 0;
@@ -415,7 +415,7 @@ namespace urbi
   USyncClient::syncGetResult(const char* command, double& val,
 			     libport::utime_t useconds)
   {
-    UMessage *m = syncGetTimeout(useconds, "%s", command);
+    UMessage *m = syncGet(useconds, "%s", command);
 
     if (!m)
       return 0;
@@ -434,7 +434,7 @@ namespace urbi
   USyncClient::syncGetDevice(const char* device, const char* access,
 			     double& val, libport::utime_t useconds)
   {
-    UMessage *m = syncGetTimeout(useconds, "%s.%s;", device, access);
+    UMessage *m = syncGet(useconds, "%s.%s;", device, access);
 
     if (!m)
       return 0;
@@ -461,7 +461,7 @@ namespace urbi
 	 "   noop;\n"
 	 "   noop;\n"
 	 " };\n", device, duration);
-    UMessage* m = syncGetTimeout(useconds, "%s", "syncgetsound;");
+    UMessage* m = syncGet(useconds, "%s", "syncgetsound;");
     if (!m)
       return 0;
     if (m->type != MESSAGE_DATA

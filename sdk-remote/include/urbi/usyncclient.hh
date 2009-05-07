@@ -98,17 +98,17 @@ namespace urbi
     /// not start with a tag or channel.
     UMessage* syncGet(const std::string& exp);
 
-    /// Same function but with timeout.
-    UMessage* syncGetTimeout(libport::utime_t useconds,
-                             const char* expression, ...);
+    /// Likewise, with a timeout.
+    UMessage* syncGet(libport::utime_t useconds,
+                      const char* expression, ...);
     /// Synchronously evaluate an Urbi expression, specifying the tag
     /// and modifiers to prepend to it.
     UMessage* syncGetTag(const char* expression,
                          const char* mtag, const char* mmod, ...);
-    /// Same function but with timeout.
-    UMessage* syncGetTagTimeout(libport::utime_t useconds,
-                                const char* expression,
-				const char* mtag, const char* mmod, ...);
+    /// Likewise, with timeout.
+    UMessage* syncGetTag(libport::utime_t useconds,
+                         const char* expression,
+                         const char* mtag, const char* mmod, ...);
 
     /// Send given buffer without copying it.
     int syncSend(const void* buffer, size_t length);
