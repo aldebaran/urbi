@@ -8,6 +8,7 @@
 #include <sdk/config.h>
 
 #include <boost/assign/list_of.hpp>
+using namespace boost::assign;
 
 #include <libport/cli.hh>
 #include <libport/containers.hh>
@@ -225,15 +226,16 @@ main(int argc, char* argv[])
   lt_dlinit();
   lt_dlhandle core = libport::xlt_dlopenext(dll, true, EX_OSFILE, verbosity);
 
+  // If URBI_UOBJECT_PATH is not defined, first look in ., then in the
+  // stdlib.
+  std::string uobject_path = libport::xgetenv("URBI_UOBJECT_PATH", ".:");
+
   // Load the modules using our uobject library path.
   libport::xlt_dladvise dl;
   dl.ext()
     .exit_failure(EX_NOINPUT)
     .verbose(verbosity)
-    .path().push_back((boost::assign::list_of
-                       (std::string(libport::xgetenv("URBI_UOBJECT_PATH")))
-                       (coredir / "uobjects")),
-                      ":");
+    .path().push_back(list_of(uobject_path)(coredir / "uobjects"), ":");
 
   foreach (const std::string& s, modules)
     dl.xdlopen(s);
