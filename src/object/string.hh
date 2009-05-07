@@ -67,6 +67,7 @@ namespace object
 
     static std::string fromAscii(rObject, int code);
 
+    int         toAscii();
   private:
     value_type content_;
 

@@ -362,6 +362,12 @@ namespace object
     return res;
   }
 
+  int String::toAscii()
+  {
+    check_bounds(0, 1);
+    return value_get()[0];
+  }
+
   OVERLOAD_2(sub_bouncer,
              2,
              (std::string (String::*) (unsigned)) (&String::sub),
@@ -393,6 +399,7 @@ namespace object
     bind(SYMBOL(size), &String::size);
     bind(SYMBOL(split), split_bouncer);
     bind(SYMBOL(STAR), &String::star);
+    bind(SYMBOL(toAscii), &String::toAscii);
     bind(SYMBOL(toLower), &String::to_lower);
     bind(SYMBOL(toUpper), &String::to_upper);
 
