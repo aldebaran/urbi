@@ -1,8 +1,15 @@
-class Global.Mutex
+const var Global.Mutex = Tag.new;
+do (Mutex)
 {
+  var type = "Mutex" |
+  var asMutex = this |
+  var asString = Object.getSlot("asString");
+
   function init()
   {
     var this.sem = uobjects.Semaphore.new(1);
+    at (enter?) lock;
+    at (leave?) unlock;
   };
 
   function lock()
