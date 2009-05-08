@@ -10,7 +10,8 @@ class Global.Group
   function add
   {
     // Fetch Object's updateSlot or we will trigger the fallback
-    Object.getSlot("updateSlot").apply([this, "members", members + call.evalArgs])|
+    Object.getSlot("updateSlot")
+      .apply([this, "members", members + call.evalArgs])|
     this
   };
 
@@ -21,7 +22,8 @@ class Global.Group
   function remove
   {
     // Fetch Object's updateSlot or we will trigger the fallback
-    Object.getSlot("updateSlot").apply([this, "members", members - call.evalArgs])|
+    Object.getSlot("updateSlot")
+      .apply([this, "members", members - call.evalArgs])|
     this
   };
 
@@ -31,6 +33,16 @@ class Global.Group
       "Group"
     else
       type + " " + members.asString
+  };
+
+  function each (action)
+  {
+    members.each(action)
+  };
+
+  function 'each&' (action)
+  {
+    members.'each&' (action)
   };
 
   // FIXME: This implementation always evaluates the
@@ -43,7 +55,7 @@ class Global.Group
     {
       results.insertBack(m.callMessage(outer_call).acceptVoid)
     } |
-    members.'each&'(action) |
+    'each&'(action) |
     // If the resulting group contains only void, return void.
     if (results.all(methodToFunction("isVoid")))
       void

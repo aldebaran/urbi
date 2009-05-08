@@ -7,6 +7,14 @@ were one.
   Report the members.
 \item \lstinline|add(\var{member}, ...)|\\
   Add members to \lstinline|this| group, and return \lstinline|this|.
+\item \lstinline|each(\var{action})|\\
+  Apply \var{action} to all the members, in sequence, then return the
+  Group of the results, in the same order.  Allows to iterate over a
+  Group via \lstinline|for|.
+\item \lstinline|each&(\var{action})|\\
+  Apply \var{action} to all the members, concurrently, then return the
+  Group of the results.  The order is \emph{not} necessarily the same.
+  Allows to iterate over a Group via \lstinline|for&|.
 \item \lstinline|fallback|\\
   This function is called when a method call on \lstinline|this|
   failed.  It bounces the call to the members of the group, collects
@@ -61,6 +69,13 @@ group.value;
 [00000000] Group [1, 2, 3]
 group.value = 10;
 [00000000] Group [10, 10, 10]
+
+// Bouncing to each&.
+var sum = 0|
+for& (var v : group)
+  sum += v.value;
+sum;
+[00000000] 30
 \end{urbiscript}
 
 %%% Local Variables:
