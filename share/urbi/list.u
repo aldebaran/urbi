@@ -7,10 +7,7 @@ do (List)
   // Whether e is in the list.
   function has(e)
   {
-    for| (var i: this)
-      if (i == e)
-	return true |
-    return false
+    return any (function (i) { i == e })
   };
 
   // FIXME: We need to use a single convention for physical-equality
@@ -19,10 +16,7 @@ do (List)
   // memHas, or choose another convention.
   function hasSame(e)
   {
-    for| (var i: this)
-      if (i === e)
-        return true |
-    return false
+    return any (function (i) { i === e })
   };
 
   function '=='(other)
@@ -38,7 +32,7 @@ do (List)
       l = l.tail|
       r = r.tail|
     }|
-    return true|
+    return true
   };
 
   function '<' (other)
@@ -54,7 +48,7 @@ do (List)
       l = l.tail|
       r = r.tail|
     }|
-    return l.empty && !r.empty |
+    return l.empty && !r.empty
   };
 
   // Same contents except occurrences of e.
@@ -96,7 +90,8 @@ do (List)
       foldl_head(function (a, b) { a.asString + sep + b.asString })
   };
 
-  // We might want separate Range objects, with a literal syntax (a..b, a:b, ...)
+  // We might want separate Range objects, with a literal syntax
+  // (a..b, a:b, ...).
   function range
   {
     var fr = 0;
@@ -141,7 +136,7 @@ do (List)
     tail.foldl(action, head)
   };
 
-  // Check whether at least one element verifies the \a f predicate
+  // Whether at least one element verifies the \a f predicate.
   function any (f)
   {
     for| (var i: this)
@@ -150,7 +145,7 @@ do (List)
     false
   };
 
-  // Check whether all elements verifies the \a f predicate
+  // Whether all the elements verify the \a f predicate.
   function all (f)
   {
     for| (var i: this)
@@ -159,11 +154,12 @@ do (List)
     true
   };
 
-  function filter(predicate)
+  // The list of elements verifying the \a f predicate.
+  function filter (f)
   {
     var res = [] |
     for| (var elt: this)
-      if (predicate(elt))
+      if (f(elt))
         res << elt |
     return res
   };
@@ -193,7 +189,7 @@ do (List)
         return false |
       i++ |
     } |
-    return true |
+    return true
   };
 
   function min
