@@ -1542,21 +1542,21 @@ v;
 The \lstinline|switch| statement in \us is similiar to \C's one.
 
 \begin{urbifixme}[frame=, backgroundcolor=, ]
-switch (value)
+switch (\var{value})
 {
-  case value_one:
-    action_one;
-  case value_two:
-    action_two;
+  case \var{value_one}:
+    \var{action_one};
+  case \var{value_two}:
+    \var{action_two};
 //case ...:
 //  ...
   default:
-    default_action;
+    \var{default_action};
 };
 \end{urbifixme}
 
 It might contain an arbitrary number of cases, and optionally a
-default case. The \lstinline|value| is evaluated first, and then the
+default case. The \var{value} is evaluated first, and then the
 result is compared sequentially with the evaluation of all cases
 values, with the \lstinline|==| operator, until one comparison is
 true. If such a match is found, the corresponding action is executed,
@@ -1609,16 +1609,14 @@ jumps after the \lstinline|while|. See \autoref{lst:while}.
 
 \begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
-var i = 5;
-[00000000:hide] 5
+var i = 3;
+[00000000:hide] 3
 
-while (i > 0)
+while (0 < i)
 {
   echo(i);
   i--;
 };
-[00000000] *** 5
-[00000000] *** 4
 [00000000] *** 3
 [00000000] *** 2
 [00000000] *** 1
