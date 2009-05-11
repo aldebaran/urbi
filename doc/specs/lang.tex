@@ -1366,18 +1366,16 @@ for (var i = 0; i < 8; i++)
 The \lstinline|do| construct enables do evaluate an expression with a
 different ``\lstinline|this|''.
 
-\begin{urbiscript}[frame=, backgroundcolor=, ]
-do (target)
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+do (\var{target})
 {
-  body
+  \var{body}
 };
-[00000000:hide] Object_0xADDR
+\end{urbifixme}
 
-\end{urbiscript}
-
-It evaluates \lstinline|body|, with \lstinline|this| being
-\lstinline|target|, as shown in \autoref{lst:do}.  The \lstinline|do| itself
-evaluates to \lstinline|body|.
+It evaluates \var{body}, with \lstinline|this| being \var{target}, as
+shown in \autoref{lst:do}.  The whole construct evaluates to the value
+of \var{body}.
 
 \begin{urbiscript}[caption=Using \lstinline|do|, label=lst:do,
   float=\floatpos]
@@ -1403,21 +1401,21 @@ do (x)
 
 \us support the classical \C-like \lstinline|for| construct.
 
-\begin{urbiscript}[frame=, backgroundcolor=, ]
-for (initialization; condition; increment)
-  body;
-\end{urbiscript}
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+for (\var{initialization}; \var{condition}; \var{increment})
+  \var{body}
+\end{urbifixme}
 
 It has the exact same behavior as \C's \lstinline|for|:
 
 \begin{enumerate}
-\item The \lstinline|initialization| is evaluated.
-\item The \lstinline|condition| is evaluated. If the result is false,
-  executions jump after the \lstinline|for|.
-\item The \lstinline|body| is evaluated. If \lstinline|continue| is
-  encountered, execution jumps to point 4. If \lstinline|break| is
-  encountered, executions jumps after the \lstinline|for|.
-\item The \lstinline|increment| is evaluated.
+\item The \var{initialization} is evaluated.
+\item \var{condition} is evaluated. If the result is false, executions
+  jump after \lstinline|for|.
+\item \var{body} is evaluated. If \lstinline|continue| is encountered,
+  execution jumps to point 4. If \lstinline|break| is encountered,
+  executions jumps after the \lstinline|for|.
+\item The \var{increment} is evaluated.
 \item Execution jumps to point 2.
 \item The loop evaluates to \lstinline|void|.
 \end{enumerate}
@@ -1427,10 +1425,10 @@ It has the exact same behavior as \C's \lstinline|for|:
 \us supports iteration over a collection with another form of the
 \lstinline|for| loop.
 
-\begin{urbiscript}[frame=, backgroundcolor=, ]
+\begin{urbifixme}[frame=, backgroundcolor=, ]
 for (var \var{name} in \var{collection})
    \var{body};
-\end{urbiscript}
+\end{urbifixme}
 
 It evaluates \var{body} for each element in \var{collection}. The loop
 evaluates to \lstinline|void|.  Inside \var{body}, the current element
@@ -1505,7 +1503,7 @@ v;
 
 \us supports the usual \lstinline|if| constructs.
 
-\begin{urbiscript}[frame=, backgroundcolor=, ]
+\begin{urbifixme}[frame=, backgroundcolor=, ]
 if (\var{condition})
   \var{action};
 
@@ -1513,8 +1511,7 @@ if (\var{condition})
   \var{action}
 else
   \var{otherwise};
-[00000000:hide] Object_0xADDR
-\end{urbiscript}
+\end{urbifixme}
 
 If the \var{condition} evaluation is true, \var{action} is
 evaluated. Otherwise, in the latter version, \var{otherwise} is
@@ -1544,7 +1541,7 @@ v;
 
 The \lstinline|switch| statement in \us is similiar to \C's one.
 
-\begin{urbiscript}[frame=, backgroundcolor=, ]
+\begin{urbifixme}[frame=, backgroundcolor=, ]
 switch (value)
 {
   case value_one:
@@ -1556,8 +1553,7 @@ switch (value)
   default:
     default_action;
 };
-[00000000:hide] 3
-\end{urbiscript}
+\end{urbifixme}
 
 It might contain an arbitrary number of cases, and optionally a
 default case. The \lstinline|value| is evaluated first, and then the
@@ -1602,14 +1598,14 @@ sw("foobar");
 
 The \lstinline|while| loop is similar to \C's one.
 
-\begin{urbiscript}[frame=, backgroundcolor=, ]
-while (condition)
-  body;
-\end{urbiscript}
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+while (\var{condition})
+  \var{body};
+\end{urbifixme}
 
-If \lstinline|condition| evaluation, is true, \lstinline|body| is
-evaluated and execution jumps before the \lstinline|while|, otherwise
-execution jumps after the \lstinline|while|. See \autoref{lst:while}.
+If \var{condition} evaluation, is true, \var{body} is evaluated and
+execution jumps before the \lstinline|while|, otherwise execution
+jumps after the \lstinline|while|. See \autoref{lst:while}.
 
 \begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
   float=\floatpos]
