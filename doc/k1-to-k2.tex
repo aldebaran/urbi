@@ -1,9 +1,9 @@
 \chapter{Migration from \us 1 to \us 2}
 
 This chapter is intended to people who want to migrate programs in \us
-1 into program \us 2.  Backward compatibility is \emph{mostly}
-ensured, but there are a number of constructs in \us 1 that were
-removed because they prevented the introduction of a cleaner construct
+1 to \us 2.  Backward compatibility is \emph{mostly}
+ensured, but some \us 1 constructs were
+removed because they prevented the introduction of cleaner constructs
 in \us 2.  When possible, \us 2 supports the remaining \us 1
 constructs.
 
@@ -22,7 +22,7 @@ string, use a \refObject{Dictionary}.
 If you really need to forge identifiers at runtime, use
 \lstinline{setSlot}, \lstinline{updateSlot}, and \lstinline{getSlot},
 which all work with strings, and possibly \lstinline{asString}, which
-is a method used to convert arbitrary expressions into strings.  The
+converts arbitrary expressions into strings.  The
 following table lists common patterns.
 
 \begin{center}
@@ -64,12 +64,12 @@ cout << this.a;
 \end{urbifixme}
 \end{itemize}
 
-For these reasons, and others, \lstinline{delete Foo} was removed.  If
-your goal is to remove the \emph{name} Foo, run
+For these reasons, and others, \lstinline{delete Foo} was removed.
+To remove the \emph{name} Foo, run
 {\lstinline{removeSlot("Foo")}} (\autoref{sec:tut:objects}) --- the
 garbage collector will reclaim memory if there are no other use of
-\lstinline{Foo}.  If your goal is to remove the contents of
-\lstinline{Foo}, then you remove all its slots one by one:
+\lstinline{Foo}.  To remove the contents of
+\lstinline{Foo}, you remove all its slots one by one:
 
 \begin{urbiscript}
 class Foo
@@ -134,7 +134,7 @@ what does \lstinline{new a(1,2).b(3,4)} mean?  Is
 arguments of the constructor?  Or is it the result of
 \lstinline{a(1,2).b(3,4)} that must be cloned?
 
-In temporary version \us 2 used to support this \code{new} construct,
+In temporary versions, \us 2 used to support this \code{new} construct,
 but too many users got it wrong, and we decided to keep only the
 simpler, safer, and more consistent method-call-style construct:
 \lstinline{Foo.new}.  Every single possible interpretation of
