@@ -1397,6 +1397,10 @@ do (x)
 
 \subsection{for}
 
+\lstinline|for| comes in several flavors.
+
+\subsubsection{C-like for}
+
 \us support the classical \C-like \lstinline|for| construct.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
@@ -1415,23 +1419,23 @@ It has the exact same behavior as \C's \lstinline|for|:
   encountered, executions jumps after the \lstinline|for|.
 \item The \lstinline|increment| is evaluated.
 \item Execution jumps to point 2.
+\item The loop evaluates to \lstinline|void|.
 \end{enumerate}
 
-\subsection{for in}
+\subsubsection{for in}
 
 \us supports iteration over a collection with another form of the
 \lstinline|for| loop.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-for (var name in collection)
-   body;
+for (var \var{name} in \var{collection})
+   \var{body};
 \end{urbiscript}
 
-It evaluates \lstinline|body| for each element in
-\lstinline|collection|. Inside \lstinline|body|, the current element
-is accessible via the \lstinline|name| local
-variable. \autoref{lst:foreach} illustrates this.
-
+It evaluates \var{body} for each element in \var{collection}. The loop
+evaluates to \lstinline|void|.  Inside \var{body}, the current element
+is accessible via the \var{name} local variable. \autoref{lst:foreach}
+illustrates this.
 
 \begin{urbiscript}[caption=Iterating over a collection with for, label=lst:foreach,
   float=\floatpos]
@@ -1444,8 +1448,8 @@ for (var x in [0, 1, 2, 3, 4])
 [00000000] *** 16
 \end{urbiscript}
 
-This form of \lstinline|for| simply sends the ``each'' message to
-\lstinline|collection| with one argument: the function that takes the
+This form of \lstinline|for| simply sends the \lstinline|each| message
+to \var{collection} with one argument: the function that takes the
 current element and performs \lstinline|action| over it. Thus, you can
 make any object acceptable in a \lstinline|for| by defining an
 adequate \lstinline|each| method.
@@ -1481,26 +1485,60 @@ Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
 [00000000] *** Sam is a hobbit.
 \end{urbiscript}
 
+\subsubsection{for $n$-times}
+
+\us provides some support for simple replication of computations: it
+allow to repeat a loop body $n$-times.  With the exception that the
+loop index is not available within the body,
+\lstinline|for (n)| is equivalent to \lstinline|for (var i: n)|.
+The loop evaluates to \lstinline|void|.
+
+\begin{urbiscript}
+var v = 1|
+for (10)
+  v *= 2;
+v;
+[00000000] 1024
+\end{urbiscript}
+
 \subsection{if}
 
-\us supports the usual \lstinline|if| construct.
+\us supports the usual \lstinline|if| constructs.
 
 \begin{urbiscript}[frame=, backgroundcolor=, ]
-if (condition)
-  action;
+if (\var{condition})
+  \var{action};
 
-if (condition)
-  action
+if (\var{condition})
+  \var{action}
 else
-  otherwise;
+  \var{otherwise};
 [00000000:hide] Object_0xADDR
 \end{urbiscript}
 
-If the \lstinline|condition| evaluation is true, \lstinline|action| is
-evaluated. Otherwise, in the latter version, \lstinline|otherwise| is
+If the \var{condition} evaluation is true, \var{action} is
+evaluated. Otherwise, in the latter version, \var{otherwise} is
 executed.  Contrary to \C/\Cxx, there \emph{must not} be a semicolon
-after the \lstinline|action|; it would end the
+after the \var{action}; it would end the
 \lstinline|if|/\lstinline|else| construct prematurely.
+
+\subsection{loop}
+
+Endless loops can be created with \lstinline|loop|, which is
+equivalent to \lstinline|while (true)|.  The loop evaluates to
+\lstinline|void|.
+
+\begin{urbiscript}
+var v = 1 |
+loop
+{
+  v *= 2;
+  if (1024 <= v)
+    break;
+};
+v;
+[00000000] 1024
+\end{urbiscript}
 
 \subsection{switch}
 
