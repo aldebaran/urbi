@@ -1,5 +1,40 @@
 \section{String}
-Sequences of characters.
+
+A \dfn{string} is a sequence of characters.
+
+\begin{itemize}
+\item \lstinline|replace(\var{from}, \var{to})|\\
+  Replace every occurrence of the string \var{from} in
+  \lstinline|this| by \var{to}, and return the result.
+  \lstinline|this| is not modified.
+\item \lstinline|toLower|\\
+  Make lower case every upper case character in \lstinline|this| and
+  return the result.  \lstinline|this| is not modified.
+\item \lstinline|toUpper|\\
+  Make upper case every lower case character in \lstinline|this| and
+  return the result.  \lstinline|this| is not modified.
+\item \lstinline|% \var{args}|\\
+  Use \lstinline|this| as format string, and convert occurrences of
+  \lstinline|%s| in \lstinline|this| by the \var{args} converted as
+  strings via \lstinline|asString|.
+%  This construct is actually more
+%  powerful than this, since it relies on
+%  \href{http://www.boost.org/doc/libs/1_39_0/libs/format/doc/format.html,
+%    Boost.Format}.  For instance:
+\begin{urbiscript}
+"%s + %s = %s" % [1, 2, 3];
+[00000000] "1 + 2 = 3"
+\end{urbiscript}
+\end{itemize}
+
+\begin{urbiscript}
+var s = "Hello, World!\n"|;
+assert(s.replace("Hello", "Bonjour")
+        .replace("World!", "Monde !")
+       == "Bonjour, Monde !\n");
+assert(s.toLower == "hello, world!\n");
+assert(s.toUpper == "HELLO, WORLD!\n");
+\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex

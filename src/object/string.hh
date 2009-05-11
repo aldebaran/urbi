@@ -39,6 +39,8 @@ namespace object
     std::string plus(rObject rhs);
     bool lt(const std::string& rhs);
     std::string fresh();
+    /// Convert every occurrence of \a from to \a to.
+    std::string replace(const std::string& from, const std::string& to);
     std::string set(const std::string& rhs);
     size_type size();
     std::vector<std::string> split(const std::string& sep,
@@ -62,7 +64,10 @@ namespace object
     /// [idx] = v.
     std::string sub_eq(unsigned int idx,
                        const std::string& v);
+
+    /// Return a new string with all upper case made lower case.
     std::string to_lower();
+    /// Return a new string with all lower case made upper case.
     std::string to_upper();
 
     static std::string fromAscii(rObject, int code);

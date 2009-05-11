@@ -143,6 +143,13 @@ namespace object
     return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
   }
 
+  std::string
+  String::replace(const std::string& from, const std::string& to)
+  {
+    return boost::replace_all_copy(value_get(), from, to);
+  }
+
+
   static size_t
   find_first(const std::vector<std::string>& seps,
              const std::string& str,
@@ -386,19 +393,20 @@ namespace object
 
   void String::initialize(CxxObject::Binder<String>& bind)
   {
+    bind(SYMBOL(LT), &String::lt);
+    bind(SYMBOL(PERCENT), &String::format);
+    bind(SYMBOL(PLUS), &String::plus);
+    bind(SYMBOL(STAR), &String::star);
     bind(SYMBOL(asFloat), &String::as_float);
     bind(SYMBOL(asPrintable), &String::as_printable);
     bind(SYMBOL(asString), &String::as_string);
     bind(SYMBOL(distance), &String::distance);
     bind(SYMBOL(fresh), &String::fresh);
     bind(SYMBOL(fromAscii), &String::fromAscii);
-    bind(SYMBOL(LT), &String::lt);
-    bind(SYMBOL(PERCENT), &String::format);
-    bind(SYMBOL(PLUS), &String::plus);
+    bind(SYMBOL(replace), &String::replace);
     bind(SYMBOL(set), &String::set);
     bind(SYMBOL(size), &String::size);
     bind(SYMBOL(split), split_bouncer);
-    bind(SYMBOL(STAR), &String::star);
     bind(SYMBOL(toAscii), &String::toAscii);
     bind(SYMBOL(toLower), &String::to_lower);
     bind(SYMBOL(toUpper), &String::to_upper);
