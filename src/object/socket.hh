@@ -20,9 +20,10 @@ namespace object
     virtual void onError(boost::system::error_code);
     virtual int  onRead(const void* data, size_t length);
     void write(const std::string& data);
-    bool isConnected();
+    bool isConnected() const;
     static void poll();
-    std::string host();
+    std::string host() const;
+    unsigned short port() const;
 
   private:
     void slots_create();

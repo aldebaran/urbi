@@ -42,11 +42,18 @@ namespace object
     slots_create();
   }
 
-  std::string
-  Socket::host()
-  {
-    return getRemoteHost();
+#define BOUNCE(Type, From, To)                  \
+  Type                                          \
+  Socket::From() const                          \
+  {                                             \
+    if (isConnected())                          \
+      return To();                              \
+    else                                        \
+      RAISE("unconnected socket");              \
   }
+  BOUNCE(std::string, host, getRemoteHost);
+  BOUNCE(unsigned short, port, getRemotePort);
+#undef BOUNCE
 
   void
   Socket::slots_create()
@@ -105,7 +112,7 @@ namespace object
   }
 
   bool
-  Socket::isConnected()
+  Socket::isConnected() const
   {
     return libport::Socket::isConnected();
   }
@@ -143,6 +150,7 @@ namespace object
     bind(SYMBOL(init),        &Socket::init);
     bind(SYMBOL(isConnected), &Socket::isConnected);
     bind(SYMBOL(poll),        &Socket::poll);
+    bind(SYMBOL(port),        &Socket::port);
     bind(SYMBOL(write),       &Socket::write);
   }
 

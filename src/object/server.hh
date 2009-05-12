@@ -12,6 +12,8 @@ namespace object
     Server(rServer model);
     void listen(const std::string& host, const std::string& port);
     void socket_ready(rSocket socket);
+    unsigned short port() const;
+    std::string host() const;
     typedef std::vector<rSocket> sockets_type;
     const sockets_type& sockets() const;
 

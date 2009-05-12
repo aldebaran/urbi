@@ -24,6 +24,19 @@ namespace object
     slot_set(SYMBOL(connection), connection_);
   }
 
+#define BOUNCE(Type, From, To)                  \
+  Type                                          \
+  Server::From() const                          \
+  {                                             \
+    if (isConnected())                          \
+      return To();                              \
+    else                                        \
+      RAISE("unconnected socket");              \
+  }
+  BOUNCE(std::string, host, getRemoteHost);
+  BOUNCE(unsigned short, port, getRemotePort);
+#undef BOUNCE
+
   libport::Socket*
   Server::make_socket()
   {
@@ -54,7 +67,9 @@ namespace object
 
   void Server::initialize(CxxObject::Binder<Server>& bind)
   {
-    bind(SYMBOL(listen), &Server::listen);
+    bind(SYMBOL(host),    &Server::host);
+    bind(SYMBOL(listen),  &Server::listen);
+    bind(SYMBOL(port),    &Server::port);
     bind(SYMBOL(sockets), &Server::sockets);
   }
 
