@@ -14,8 +14,21 @@ A \dfn{string} is a sequence of characters.
 [00000001:error] !!! asFloat: unable to convert to float: "123abc"
 \end{urbiscript}
 
+\item \lstinline|asPrintable|\\
+  Return \lstinline|this| as a literal (escaped) string.
+\begin{urbiscript}
+"foo".asPrintable;
+[00000000] "\"foo\""
+"foo".asPrintable.asPrintable;
+[00000000] "\"\\\"foo\\\"\""
+\end{urbiscript}
+
 \item \lstinline|asString|\\
   Return \lstinline|this|.
+\begin{urbiscript}
+"\"foo\"".asString;
+[00000000] "\"foo\""
+\end{urbiscript}
 
 \item \lstinline|distance(\var{other})|\\
   Return the
@@ -29,6 +42,16 @@ assert("bar".distance("baz") == 1);
 assert("foo".distance("bar") == 3);
 \end{urbiscript}
 
+\item \lstinline|replace(\var{from}, \var{to})|\\
+  Replace every occurrence of the string \var{from} in
+  \lstinline|this| by \var{to}, and return the result.
+  \lstinline|this| is not modified.
+\begin{urbiscript}
+assert("Hello, World!".replace("Hello", "Bonjour")
+                      .replace("World!", "Monde !")
+       == "Bonjour, Monde !");
+\end{urbiscript}
+
 \item \lstinline|size|\\
   Return the size of the string.
 \begin{urbiscript}
@@ -39,10 +62,16 @@ assert("".size == 0);
 \item \lstinline|toLower|\\
   Make lower case every upper case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.
+\begin{urbiscript}
+assert("Hello, World!".toLower == "hello, world!");
+\end{urbiscript}
 
 \item \lstinline|toUpper|\\
   Make upper case every lower case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.
+\begin{urbiscript}
+assert("Hello, World!".toUpper == "HELLO, WORLD!");
+\end{urbiscript}
 
 \item \lstinline|% \var{args}|\\
   Use \lstinline|this| as format string, and convert occurrences of
@@ -64,16 +93,18 @@ assert("foo" * 0 == "");
 assert("foo" * 1 == "foo");
 assert("foo" * 3 == "foofoofoo");
 \end{urbiscript}
+
+\item \lstinline|+ \var{other}|\\
+  Return the concatenation of \lstinline|this| and
+  \lstinline|\var{other}.asString|.
+\begin{urbiscript}
+assert("foo" + "bar" == "foobar");
+assert("foo" + "" == "foo");
+assert("foo" + 3 == "foo3");
+assert("foo" + [1, 2, 3] == "foo[1, 2, 3]");
+\end{urbiscript}
 \end{itemize}
 
-\begin{urbiscript}
-var s = "Hello, World!\n"|;
-assert(s.replace("Hello", "Bonjour")
-        .replace("World!", "Monde !")
-       == "Bonjour, Monde !\n");
-assert(s.toLower == "hello, world!\n");
-assert(s.toUpper == "HELLO, WORLD!\n");
-\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex
