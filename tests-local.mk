@@ -38,7 +38,7 @@ TFAIL_TESTS +=
 TFAIL_TESTS +=					\
   2.x/call/not-in-a-call.chk			\
   2.x/derive.chk				\
-  2.x/doc.chk
+  2.x/doc.chk					\
   2.x/exceptions/assignment.chk
 
 # k1 tests that currently don't pass, but we should.
