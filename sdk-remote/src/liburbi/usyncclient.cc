@@ -202,9 +202,8 @@ namespace urbi
   }
 
   UMessage*
-  USyncClient::syncGet_(const char* format,
-                        const char* mtag, const char* mmod,
-                        va_list& arg, libport::utime_t useconds)
+  USyncClient::syncGet_(const char* format, va_list& arg,
+			const USendOptions& options)
   {
     if (has_tag(format))
       return 0;
@@ -217,14 +216,14 @@ namespace urbi
     }
     if (!has_terminator(format))
       strcat(sendBuffer, ",\n");
-    std::string tag = make_tag(*this, mtag, mmod);
+    std::string tag = make_tag(*this, options.mtag, options.mmod);
     effective_send(compatibility::evaluate_in_channel_open(tag));
     queueLock_.lock();
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     effective_send(compatibility::evaluate_in_channel_close(tag));
-    return waitForTag(mtag ? mtag : tag, useconds);
+    return waitForTag(options.mtag ? options.mtag : tag, options.useconds);
   }
 
   UMessage*
@@ -232,7 +231,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, format);
-    UMessage* res = syncGet_(format, 0, 0, arg);
+    UMessage* res = syncGet_(format, arg);
     va_end(arg);
     return res;
   }
@@ -252,7 +251,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, format);
-    UMessage* res = syncGet_(format, 0, 0, arg, useconds);
+    UMessage* res = syncGet_(format, arg, useconds);
     va_end(arg);
     return res;
   }
@@ -263,7 +262,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, mmod);
-    UMessage* res = syncGet_(format, mtag, mmod, arg);
+    UMessage* res = syncGet_(format, arg, USendOptions(mtag, mmod));
     va_end(arg);
     return res;
   }
@@ -276,7 +275,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, mmod);
-    UMessage* res = syncGet_(format, mtag, mmod, arg, useconds);
+    UMessage* res = syncGet_(format, arg, USendOptions(mtag, mmod, useconds));
     va_end(arg);
     return res;
   }

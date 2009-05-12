@@ -31,6 +31,7 @@
 # include <libport/pthread.h>
 
 # include <urbi/uclient.hh>
+# include <urbi/usendoptions.hh>
 
 namespace urbi
 {
@@ -86,8 +87,8 @@ namespace urbi
      * \return the resulting message, or 0 in case of error.
      */
     UMessage*
-    syncGet_(const char* expression, const char* mtag,
-             const char* mmod, va_list& arg, libport::utime_t useconds = 0);
+    syncGet_(const char* expression, va_list& arg,
+	     const USendOptions& = USendOptions());
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
