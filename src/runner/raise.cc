@@ -72,8 +72,8 @@ namespace runner
   {
     assert(global_class->slot_has(SYMBOL(LookupError)));
     raise_urbi_skip(SYMBOL(LookupError),
-	       to_urbi(msg),
-	       obj);
+                    to_urbi(msg),
+                    obj);
   }
 
   void
@@ -89,9 +89,9 @@ namespace runner
                     unsigned expected)
   {
     raise_urbi_skip(SYMBOL(ArityError),
-	       raise_current_method,
-	       to_urbi(effective),
-	       to_urbi(expected));
+                    raise_current_method,
+                    to_urbi(effective),
+                    to_urbi(expected));
   }
 
   void
@@ -100,10 +100,10 @@ namespace runner
                     unsigned maximum)
   {
     raise_urbi_skip(SYMBOL(ArityError),
-	       raise_current_method,
-	       to_urbi(effective),
-	       to_urbi(minimum),
-	       to_urbi(maximum));
+                    raise_current_method,
+                    to_urbi(effective),
+                    to_urbi(minimum),
+                    to_urbi(maximum));
   }
 
   void
@@ -113,10 +113,10 @@ namespace runner
 			    rObject method_name)
   {
     raise_urbi_skip(SYMBOL(ArgumentTypeError),
-	       method_name,
-	       to_urbi(idx),
-	       expected,
-	       effective);
+                    method_name,
+                    to_urbi(idx),
+                    expected,
+                    effective);
   }
 
   void
@@ -124,17 +124,30 @@ namespace runner
 			  const std::string fmt)
   {
     raise_urbi_skip(SYMBOL(BadIntegerError),
-	       raise_current_method,
-	       to_urbi(fmt),
-	       to_urbi(effective));
+                    raise_current_method,
+                    to_urbi(fmt),
+                    to_urbi(effective));
+  }
+
+  void
+  raise_bad_integer_range_error(libport::ufloat effective,
+                                libport::ufloat min,
+                                libport::ufloat,
+                                const std::string fmt)
+  {
+    raise_urbi_skip(SYMBOL(BadIntegerError),
+                    raise_current_method,
+                    to_urbi(fmt),
+                    to_urbi(effective),
+                    to_urbi(min));
   }
 
   void
   raise_primitive_error(const std::string message)
   {
     raise_urbi_skip(SYMBOL(PrimitiveError),
-	       raise_current_method,
-	       to_urbi(message));
+                    raise_current_method,
+                    to_urbi(message));
   }
 
   void
