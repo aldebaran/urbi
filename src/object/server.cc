@@ -31,10 +31,10 @@ namespace object
     if (isConnected())                          \
       return To();                              \
     else                                        \
-      RAISE("unconnected socket");              \
+      RAISE("unconnected server");              \
   }
-  BOUNCE(std::string, host, getRemoteHost);
-  BOUNCE(unsigned short, port, getRemotePort);
+  BOUNCE(std::string, host, getLocalHost);
+  BOUNCE(unsigned short, port, getLocalPort);
 #undef BOUNCE
 
   libport::Socket*
@@ -48,7 +48,8 @@ namespace object
   void
   Server::listen(const std::string& host, const std::string& port)
   {
-    libport::Socket::listen(boost::bind(&Server::make_socket, this), host, port);
+    libport::Socket::listen(boost::bind(&Server::make_socket, this),
+                            host, port);
   }
 
   void
