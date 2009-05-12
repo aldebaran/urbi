@@ -99,7 +99,7 @@ namespace object
   }
 
   float
-  String::as_float ()
+  String::as_float()
   {
     try
     {
