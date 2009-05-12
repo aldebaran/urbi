@@ -45,7 +45,8 @@ namespace runner
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_bad_integer_error(libport::ufloat effective,
-			       const std::string = "expected integer, got %s");
+			       const std::string& msg
+                               = "expected integer, got %s");
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
@@ -57,7 +58,7 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
-  void raise_primitive_error(const std::string message);
+  void raise_primitive_error(const std::string& message);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API

@@ -121,7 +121,7 @@ namespace runner
 
   void
   raise_bad_integer_error(libport::ufloat effective,
-			  const std::string fmt)
+			  const std::string& fmt)
   {
     raise_urbi_skip(SYMBOL(BadIntegerError),
                     raise_current_method,
@@ -130,20 +130,7 @@ namespace runner
   }
 
   void
-  raise_bad_integer_range_error(libport::ufloat effective,
-                                libport::ufloat min,
-                                libport::ufloat,
-                                const std::string fmt)
-  {
-    raise_urbi_skip(SYMBOL(BadIntegerError),
-                    raise_current_method,
-                    to_urbi(fmt),
-                    to_urbi(effective),
-                    to_urbi(min));
-  }
-
-  void
-  raise_primitive_error(const std::string message)
+  raise_primitive_error(const std::string& message)
   {
     raise_urbi_skip(SYMBOL(PrimitiveError),
                     raise_current_method,
