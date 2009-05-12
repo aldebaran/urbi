@@ -348,13 +348,26 @@ namespace urbi
     return 1;
   }
 
-
-  int
-  USyncClient::syncGetNormalizedDevice(const char* device, double& val,
-				       libport::utime_t useconds)
+  template <typename T>
+  static int
+  getValue(UMessage* m, T& val)
   {
-    UMessage *m = syncGet(useconds, "%s.valn;\n", device);
+    if (!m)
+      return 0;
+    if (m->type != MESSAGE_DATA)
+    {
+      delete m;
+      return 0;
+    }
+    val = *m->value;
+    delete m;
+    return 1;
+  }
 
+  template <>
+  int
+  getValue<double>(UMessage* m, double& val)
+  {
     if (!m)
       return 0;
     if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
@@ -365,6 +378,13 @@ namespace urbi
     val = (double)*m->value;
     delete m;
     return 1;
+  }
+
+  int
+  USyncClient::syncGetNormalizedDevice(const char* device, double& val,
+				       libport::utime_t useconds)
+  {
+    return getValue(syncGet(useconds, "%s.valn;\n", device), val);
   }
 
   int
@@ -378,54 +398,21 @@ namespace urbi
   USyncClient::syncGetValue(const char* tag, const char* valName, UValue& val,
 			    libport::utime_t useconds)
   {
-    UMessage *m = syncGetTag(useconds, "%s;\n", tag, 0, valName);
-
-    if (!m)
-      return 0;
-    if (m->type != MESSAGE_DATA)
-    {
-      delete m;
-      return 0;
-    }
-    val = *m->value;
-    delete m;
-    return 1;
+    return getValue(syncGetTag(useconds, "%s;\n", tag, 0, valName), val);
   }
 
   int
   USyncClient::syncGetDevice(const char* device, double& val,
 			     libport::utime_t useconds)
   {
-    UMessage *m = syncGet(useconds, "%s.val;\n", device);
-
-    if (!m)
-      return 0;
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
-    {
-      delete m;
-      return 0;
-    }
-    val = (double)*m->value;
-    delete m;
-    return 1;
+    return getValue(syncGet(useconds, "%s.val;\n", device), val);
   }
 
   int
   USyncClient::syncGetResult(const char* command, double& val,
 			     libport::utime_t useconds)
   {
-    UMessage *m = syncGet(useconds, "%s", command);
-
-    if (!m)
-      return 0;
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
-    {
-      delete m;
-      return 0;
-    }
-    val = (double)*m->value;
-    delete m;
-    return 1;
+    return getValue(syncGet(useconds, "%s", command), val);
   }
 
 
@@ -433,18 +420,7 @@ namespace urbi
   USyncClient::syncGetDevice(const char* device, const char* access,
 			     double& val, libport::utime_t useconds)
   {
-    UMessage *m = syncGet(useconds, "%s.%s;", device, access);
-
-    if (!m)
-      return 0;
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
-    {
-      delete m;
-      return 0;
-    }
-    val = (double)*m->value;
-    delete m;
-    return 1;
+    return getValue(syncGet(useconds, "%s.%s;", device, access), val);
   }
 
 
