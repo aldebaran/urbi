@@ -16,6 +16,24 @@
 
 namespace object
 {
+  /// Convert an rFloat to an integral value.
+  template <typename T>
+  T
+  to_integer(const rObject& o)
+  {
+    libport::ufloat value = o->as<Float>()->value_get();
+    try
+    {
+      return libport::numeric_cast<T>(value);
+    }
+    catch (libport::bad_numeric_cast& e)
+    {
+      std::string format = e.what();
+      format += ": %s";
+      runner::raise_bad_integer_error(value, format);
+    }
+  }
+
   /*----------.
   | Objects.  |
   `----------*/
@@ -81,6 +99,7 @@ namespace object
     }
   };
 
+
   /*------.
   | int.  |
   `------*/
@@ -103,28 +122,31 @@ namespace object
   };
 
   /*-----------------.
-  | unsigned chars.  |
+  | Integral types.  |
   `-----------------*/
-  template<>
-  struct CxxConvert<unsigned char>
-  {
-    typedef unsigned char target_type;
-    static target_type
-    to(const rObject& o, unsigned idx)
-    {
-      type_check<Float>(o, idx);
-      int res = o->as<Float>()->to_int();
-      if (res < 0 || res > 255)
-        runner::raise_bad_integer_error(res, "expected a number between 0 and 255, got %s");
-      return res;
-    }
-
-    static rObject
-    from(target_type v)
-    {
-      return new Float(v);
-    }
+#define CONVERT(Type)                           \
+  template<>                                    \
+  struct CxxConvert<Type>                       \
+  {                                             \
+    typedef Type target_type;                   \
+    static target_type                          \
+    to(const rObject& o, unsigned idx)          \
+    {                                           \
+      type_check<Float>(o, idx);                \
+      return to_integer<target_type>(o);        \
+    }                                           \
+                                                \
+    static rObject                              \
+    from(target_type v)                         \
+    {                                           \
+      return new Float(v);                      \
+    }                                           \
   };
+
+  CONVERT(unsigned char);
+  CONVERT(unsigned short);
+  CONVERT(unsigned int);
+#undef CONVERT
 
   /*--------.
   | float.  |
@@ -138,25 +160,6 @@ namespace object
     {
       type_check(o, Float::proto, idx);
       return o->as<Float>()->value_get();
-    }
-
-    static rObject
-    from(target_type v)
-    {
-      return new Float(v);
-    }
-  };
-
-  // Conversion with unsigned int
-  template<>
-  struct CxxConvert<unsigned int>
-  {
-    typedef unsigned int target_type;
-    static target_type
-    to(const rObject& o, unsigned idx)
-    {
-      type_check<Float>(o, idx);
-      return o->as<Float>()->to_unsigned_int();
     }
 
     static rObject
@@ -233,7 +236,7 @@ namespace object
   | char* and const char*.  |
   `------------------------*/
 
-#define CHAR(Type)                                                      \
+#define CONVERT(Type)                                                   \
   template <>                                                           \
   struct CxxConvert<Type>                                               \
   {                                                                     \
@@ -251,10 +254,10 @@ namespace object
     }                                                                   \
   };
 
-  CHAR(char*);
-  CHAR(const char*);
+  CONVERT(char*);
+  CONVERT(const char*);
 
-#undef CHAR
+#undef CONVERT
 
   /*------------------.
   | libport::Symbol.  |
