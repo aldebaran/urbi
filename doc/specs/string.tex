@@ -3,16 +3,47 @@
 A \dfn{string} is a sequence of characters.
 
 \begin{itemize}
-\item \lstinline|replace(\var{from}, \var{to})|\\
-  Replace every occurrence of the string \var{from} in
-  \lstinline|this| by \var{to}, and return the result.
-  \lstinline|this| is not modified.
+\item \lstinline|asFloat|\\
+  If the whole content of \lstinline|this| is an integer, return its
+  value, otherwise return an error.
+\begin{urbiscript}
+"23.03".asFloat;
+[00000000] 23.03
+
+"123abc".asFloat;
+[00000001:error] !!! asFloat: unable to convert to float: "123abc"
+\end{urbiscript}
+
+\item \lstinline|asString|\\
+  Return \lstinline|this|.
+
+\item \lstinline|distance(\var{other})|\\
+  Return the
+  \href{http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance,
+    Damerau-Levenshtein} distance between \lstinline|this| and
+  \var{other}.  The more alike the strings are, the smaller the
+  distance is.
+\begin{urbiscript}
+assert("foo".distance("foo") == 0);
+assert("bar".distance("baz") == 1);
+assert("foo".distance("bar") == 3);
+\end{urbiscript}
+
+\item \lstinline|size|\\
+  Return the size of the string.
+\begin{urbiscript}
+assert("foo".size == 3);
+assert("".size == 0);
+\end{urbiscript}
+
 \item \lstinline|toLower|\\
   Make lower case every upper case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.
+
 \item \lstinline|toUpper|\\
   Make upper case every lower case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.
+
 \item \lstinline|% \var{args}|\\
   Use \lstinline|this| as format string, and convert occurrences of
   \lstinline|%s| in \lstinline|this| by the \var{args} converted as
@@ -24,6 +55,14 @@ A \dfn{string} is a sequence of characters.
 \begin{urbiscript}
 "%s + %s = %s" % [1, 2, 3];
 [00000000] "1 + 2 = 3"
+\end{urbiscript}
+
+\item \lstinline|* \var{n}|\\
+  Return the concatentation of \lstinline|this| \var{n} times.
+\begin{urbiscript}
+assert("foo" * 0 == "");
+assert("foo" * 1 == "foo");
+assert("foo" * 3 == "foofoofoo");
 \end{urbiscript}
 \end{itemize}
 
