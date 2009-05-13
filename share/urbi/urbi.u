@@ -405,6 +405,12 @@ load("urbi/lobby.u");
 
 load("urbi/mutex.u");
 
+/*--------.
+| Timeout.  |
+`--------*/
+
+load("urbi/timeout.u");
+
 /*----------.
 | UObject.  |
 `----------*/

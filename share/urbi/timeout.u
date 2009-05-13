@@ -1,0 +1,41 @@
+const var Global.Timeout = Tag.new;
+do (Timeout)
+{
+  var type = "Timeout" |
+  var asTimeout = this |
+  var timedOut = false |
+  var asString = Object.getSlot("asString");
+
+  function init(time_)
+  {
+    this.timedOut = false;
+    var this.running = false;
+    var this.time = time_;
+    var this.e = Event.new;
+    at (enter?) launch;
+    at (leave?) end;
+    at (e?) count;
+  };
+
+  function launch()
+  {
+    if (running)
+      throw "Timeout is already running";
+    running = true;
+    e!;
+  };
+
+  function count()
+  {
+    timeout (time) {while (running);};
+    timedOut = running;
+    if (timedOut)
+      stop;
+  };
+
+  function end()
+  {
+    running = false;
+  };
+
+};
