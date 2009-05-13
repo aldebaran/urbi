@@ -83,6 +83,14 @@ namespace object
   }
 
   void
+  Socket::connectSerial(const std::string& device, unsigned int baudrate)
+  {
+    if (boost::system::error_code error =
+	libport::Socket::open_serial(device, baudrate))
+      RAISE(error.message());
+  }
+
+  void
   Socket::disconnect()
   {
     close();
@@ -144,14 +152,15 @@ namespace object
 
   void Socket::initialize(CxxObject::Binder<Socket>& bind)
   {
-    bind(SYMBOL(connect),     &Socket::connect);
-    bind(SYMBOL(disconnect),  &Socket::disconnect);
-    bind(SYMBOL(host),        &Socket::host);
-    bind(SYMBOL(init),        &Socket::init);
-    bind(SYMBOL(isConnected), &Socket::isConnected);
-    bind(SYMBOL(poll),        &Socket::poll);
-    bind(SYMBOL(port),        &Socket::port);
-    bind(SYMBOL(write),       &Socket::write);
+    bind(SYMBOL(connect),       &Socket::connect);
+    bind(SYMBOL(connectSerial), &Socket::connectSerial);
+    bind(SYMBOL(disconnect),    &Socket::disconnect);
+    bind(SYMBOL(host),          &Socket::host);
+    bind(SYMBOL(init),          &Socket::init);
+    bind(SYMBOL(isConnected),   &Socket::isConnected);
+    bind(SYMBOL(poll),          &Socket::poll);
+    bind(SYMBOL(port),          &Socket::port);
+    bind(SYMBOL(write),         &Socket::write);
   }
 
   rObject
