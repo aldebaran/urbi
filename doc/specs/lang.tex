@@ -1394,7 +1394,7 @@ do (x)
 \end{urbiscript}
 
 \subsection{for}
-
+\label{sec:lang:for}
 \lstinline|for| comes in several flavors.
 
 \subsubsection{C-like for}
@@ -1421,6 +1421,7 @@ It has the exact same behavior as \C's \lstinline|for|:
 \end{enumerate}
 
 \subsubsection{for in}
+\label{sec:lang:for:each}
 
 \us supports iteration over a collection with another form of the
 \lstinline|for| loop.
@@ -1484,6 +1485,7 @@ Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
 \end{urbiscript}
 
 \subsubsection{for $n$-times}
+\label{sec:lang:for:n}
 
 \us provides some support for simple replication of computations: it
 allow to repeat a loop body $n$-times.  With the exception that the

@@ -125,6 +125,20 @@ can often easily do without.  For instance, \lstinline{eval} was often
 used to manipulate forged identifiers; see \autoref{sec:k122:dollar}
 for means of getting rid of them.
 
+\subsection{foreach}
+The same feature with a slightly different syntax is now provided by
+\lstinline|for|.  See \autoref{sec:lang:for:each}.
+
+\subsection{group}
+Where support for groups was a built-in feature in \us 1, it is now
+provided by the standard library, see \refObject{Group}.  Instead of
+\lstinline|group myGroup {a, b, c}|, write
+\lstinline|var myGroup = Group.new(a,b,c)|.
+
+\subsection{loopn}
+The same feature and syntax is now provided by \lstinline|for|.  See
+\autoref{sec:lang:for:n}.
+
 \subsection{new Foo}
 
 See \autoref{sec:tut:ctor} for details on \code{new}.  The construct
@@ -146,6 +160,9 @@ simpler, safer, and more consistent method-call-style construct:
 \item \lstinline{a.new(1,2).b(3,4)}
 \item \lstinline{new.a(1,2).b(3,4)}
 \end{itemize}
+
+\subsection{self}
+For consistency with the \Cxx syntax, \us now uses \lstinline{this}.
 
 \subsection{stop Foo}
 
