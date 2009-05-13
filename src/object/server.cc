@@ -28,10 +28,10 @@ namespace object
   Type                                          \
   Server::From() const                          \
   {                                             \
-    if (isConnected())                          \
+    if (base_)                                  \
       return To();                              \
     else                                        \
-      RAISE("unconnected server");              \
+      RAISE("server not listening");            \
   }
   BOUNCE(std::string, host, getLocalHost);
   BOUNCE(unsigned short, port, getLocalPort);
