@@ -130,7 +130,9 @@ main (int argc, char *argv[])
     arg_scale("rescale image with given FACTOR (display only)",
               "scale", 's', "FACTOR"),
     arg_form("select format of the image (rgb, ycrcb, jpeg, ppm)",
-             "format", 'F', "FORMAT");
+             "format", 'F', "FORMAT"),
+    arg_resolution("select resolution of the image (0=biggest)",
+                   "resolution", 'R', "RESOLUTION");
   libport::OptionFlag
     arg_rec("use reconstruct mode (for aibo)",
             "reconstruct", 'r');
@@ -146,6 +148,7 @@ main (int argc, char *argv[])
 	     << arg_jpeg
 	     << arg_dev
 	     << arg_out
+	     << arg_resolution
 	     << arg_scale;
 
   opt_parser(libport::program_arguments());
@@ -168,7 +171,8 @@ main (int argc, char *argv[])
 
   client.setCallback(showImage, "uimg");
 
-  client.send("%s.resolution  = 0;", device);
+  client.send("%s.resolution  = %s;", device,
+              arg_resolution.value("0").c_str());
   client.send("%s.jpegfactor = %d;", device, arg_jpeg.get<int>(70));
 
   client << device << ".reconstruct = " << (arg_rec.get() ? 1 : 0)
