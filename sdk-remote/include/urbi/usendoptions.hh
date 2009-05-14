@@ -11,6 +11,10 @@ namespace urbi
     USendOptions(libport::utime_t = 0);
     USendOptions(const char *, const char *, libport::utime_t = 0);
 
+    USendOptions& setUSeconds(libport::utime_t);
+    USendOptions& setMTag(const char*);
+    USendOptions& setMMod(const char*);
+
     libport::utime_t useconds;
     const char* mtag;
     const char* mmod;

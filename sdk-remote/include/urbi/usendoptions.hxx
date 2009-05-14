@@ -20,6 +20,27 @@ namespace urbi
     , mmod(m)
   {}
 
+  inline USendOptions&
+  USendOptions::setUSeconds(libport::utime_t usec)
+  {
+    useconds = usec;
+    return *this;
+  }
+
+  inline USendOptions&
+  USendOptions::setMTag(const char* tag)
+  {
+    mtag = tag;
+    return *this;
+  }
+
+  inline USendOptions&
+  USendOptions::setMMod(const char* mod)
+  {
+    mmod = mod;
+    return *this;
+  }
+
 }
 
 #endif // !URBI_USENDOPTIONS_HXX
