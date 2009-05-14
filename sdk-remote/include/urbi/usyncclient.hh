@@ -31,7 +31,6 @@
 # include <libport/pthread.h>
 
 # include <urbi/uclient.hh>
-# include <urbi/usendoptions.hh>
 
 namespace urbi
 {
@@ -78,6 +77,20 @@ namespace urbi
 
     ~USyncClient();
 
+  struct options
+  {
+    options();
+
+    options& timeout(libport::utime_t);
+    options& tag(const char*, const char* = 0);
+
+    /// Timeout in microseconds
+    libport::utime_t timeout_;
+    const char* mtag_;
+    const char* mmod_;
+    static const options default_options;
+  };
+
   protected:
     /** Synchronously ask the server for the value of an expression.
      * \param expression   the Urbi expression to evaluate.
@@ -88,7 +101,7 @@ namespace urbi
      */
     UMessage*
     syncGet_(const char* expression, va_list& arg,
-	     const USendOptions& = USendOptions::default_options);
+	     const options& = options::default_options);
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
@@ -187,9 +200,9 @@ namespace urbi
      */
     void waitForKernelVersion(bool hasProcessingThread);
 
-    void setDefaultOptions(const USendOptions& opt);
-    const USendOptions& getOptions(const USendOptions& opt =
-                                   USendOptions::default_options) const;
+    void setDefaultOptions(const options& opt);
+    const options& getOptions(const options& opt =
+                                   options::default_options) const;
 
   protected:
     int joinCallbackThread_();
@@ -208,7 +221,7 @@ namespace urbi
     libport::Semaphore syncLock_;
     std::string syncTag;
 
-    USendOptions default_options_;
+    options default_options_;
 
     bool stopCallbackThread_;
     pthread_t cbThread;

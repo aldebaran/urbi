@@ -12,6 +12,31 @@
 
 namespace urbi
 {
+
+  const USyncClient::options USyncClient::options::default_options =
+    USyncClient::options();
+
+  USyncClient::options::options()
+    : timeout_(0)
+    , mtag_(0)
+    , mmod_(0)
+  {}
+
+  USyncClient::options&
+  USyncClient::options::timeout(libport::utime_t usec)
+  {
+    timeout_ = usec;
+    return *this;
+  }
+
+  USyncClient::options&
+  USyncClient::options::tag(const char* tag, const char* mod)
+  {
+    mtag_ = tag;
+    mmod_ = mod;
+    return *this;
+  }
+
   USyncClient::USyncClient(const std::string& host,
 			   unsigned port,
 			   size_t buflen,
@@ -187,14 +212,14 @@ namespace urbi
     /// if they are empty.
     static
     std::string
-    make_tag(UAbstractClient& cl, const USendOptions& opt)
+    make_tag(UAbstractClient& cl, const USyncClient::options& opt)
     {
       std::string res;
-      if (opt.mtag)
+      if (opt.mtag_)
       {
-        res = opt.mtag;
-        if (opt.mmod)
-          res += opt.mmod;
+        res = opt.mtag_;
+        if (opt.mmod_)
+          res += opt.mmod_;
       }
       else
         res = cl.fresh();
@@ -204,9 +229,9 @@ namespace urbi
 
   UMessage*
   USyncClient::syncGet_(const char* format, va_list& arg,
-			const USendOptions& options)
+			const USyncClient::options& options)
   {
-    const USendOptions& opt_used = getOptions(options);
+    const USyncClient::options& opt_used = getOptions(options);
     if (has_tag(format))
       return 0;
     sendBufferLock.lock();
@@ -225,7 +250,8 @@ namespace urbi
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     effective_send(compatibility::evaluate_in_channel_close(tag));
-    return waitForTag(opt_used.mtag ? opt_used.mtag : tag, opt_used.useconds);
+    return waitForTag(opt_used.mtag_ ?
+		      opt_used.mtag_ : tag, opt_used.timeout_);
   }
 
   UMessage*
@@ -253,7 +279,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, format);
-    UMessage* res = syncGet_(format, arg, useconds);
+    UMessage* res = syncGet_(format, arg, options().timeout(useconds));
     va_end(arg);
     return res;
   }
@@ -264,7 +290,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, mmod);
-    UMessage* res = syncGet_(format, arg, USendOptions(mtag, mmod));
+    UMessage* res = syncGet_(format, arg, options().tag(mtag, mmod));
     va_end(arg);
     return res;
   }
@@ -277,7 +303,8 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, mmod);
-    UMessage* res = syncGet_(format, arg, USendOptions(mtag, mmod, useconds));
+    UMessage* res = syncGet_(format, arg,
+			     options().tag(mtag, mmod).timeout(useconds));
     va_end(arg);
     return res;
   }
@@ -489,15 +516,16 @@ namespace urbi
   }
 
   void
-  USyncClient::setDefaultOptions(const USendOptions& opt)
+  USyncClient::setDefaultOptions(const USyncClient::options& opt)
   {
     default_options_ = opt;
   }
 
-  const USendOptions&
-  USyncClient::getOptions(const USendOptions& opt) const
+  const USyncClient::options&
+  USyncClient::getOptions(const USyncClient::options& opt) const
   {
-    return (&opt == &USendOptions::default_options) ? default_options_ : opt;
+    return (&opt == &USyncClient::options::default_options) ?
+      default_options_ : opt;
   }
 
 } // namespace urbi
