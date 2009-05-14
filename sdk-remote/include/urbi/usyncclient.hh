@@ -88,7 +88,7 @@ namespace urbi
      */
     UMessage*
     syncGet_(const char* expression, va_list& arg,
-	     const USendOptions& = USendOptions());
+	     const USendOptions& = USendOptions::default_options);
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
@@ -187,6 +187,10 @@ namespace urbi
      */
     void waitForKernelVersion(bool hasProcessingThread);
 
+    void setDefaultOptions(const USendOptions& opt);
+    const USendOptions& getOptions(const USendOptions& opt =
+                                   USendOptions::default_options) const;
+
   protected:
     int joinCallbackThread_();
 
@@ -203,6 +207,8 @@ namespace urbi
     UMessage* message_;
     libport::Semaphore syncLock_;
     std::string syncTag;
+
+    USendOptions default_options_;
 
     bool stopCallbackThread_;
     pthread_t cbThread;

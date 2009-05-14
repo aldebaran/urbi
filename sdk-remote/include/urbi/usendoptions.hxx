@@ -12,7 +12,9 @@ namespace urbi
   {}
 
   inline
-  USendOptions::USendOptions(const char* t, const char* m, libport::utime_t usecs)
+  USendOptions::USendOptions(const char* t,
+			     const char* m,
+			     libport::utime_t usecs)
     : useconds(usecs)
     , mtag(t)
     , mmod(m)

@@ -16,6 +16,7 @@ liburbi_liburbi_la_SOURCES =			\
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
   liburbi/umessage.cc				\
+  liburbi/usendoptions.cc			\
   liburbi/usyncclient.cc			\
   liburbi/utag.cc
 

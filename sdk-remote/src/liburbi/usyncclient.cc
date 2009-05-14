@@ -24,6 +24,7 @@ namespace urbi
     , message_(0)
     , syncLock_()
     , syncTag()
+    , default_options_()
     , stopCallbackThread_(!startCallbackThread)
     , cbThread(0)
   {
@@ -186,14 +187,14 @@ namespace urbi
     /// if they are empty.
     static
     std::string
-    make_tag(UAbstractClient& cl, const char* t1, const char* t2)
+    make_tag(UAbstractClient& cl, const USendOptions& opt)
     {
       std::string res;
-      if (t1)
+      if (opt.mtag)
       {
-        res = t1;
-        if (t2)
-          res += t2;
+        res = opt.mtag;
+        if (opt.mmod)
+          res += opt.mmod;
       }
       else
         res = cl.fresh();
@@ -205,6 +206,7 @@ namespace urbi
   USyncClient::syncGet_(const char* format, va_list& arg,
 			const USendOptions& options)
   {
+    const USendOptions& opt_used = getOptions(options);
     if (has_tag(format))
       return 0;
     sendBufferLock.lock();
@@ -216,14 +218,14 @@ namespace urbi
     }
     if (!has_terminator(format))
       strcat(sendBuffer, ",\n");
-    std::string tag = make_tag(*this, options.mtag, options.mmod);
+    std::string tag = make_tag(*this, opt_used);
     effective_send(compatibility::evaluate_in_channel_open(tag));
     queueLock_.lock();
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     effective_send(compatibility::evaluate_in_channel_close(tag));
-    return waitForTag(options.mtag ? options.mtag : tag, options.useconds);
+    return waitForTag(opt_used.mtag ? opt_used.mtag : tag, opt_used.useconds);
   }
 
   UMessage*
@@ -485,4 +487,17 @@ namespace urbi
       usleep(100000);
     }
   }
+
+  void
+  USyncClient::setDefaultOptions(const USendOptions& opt)
+  {
+    default_options_ = opt;
+  }
+
+  const USendOptions&
+  USyncClient::getOptions(const USendOptions& opt) const
+  {
+    return (&opt == &USendOptions::default_options) ? default_options_ : opt;
+  }
+
 } // namespace urbi

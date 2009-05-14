@@ -1,6 +1,8 @@
 #ifndef URBI_USENDOPTIONS_HH
 # define URBI_USENDOPTIONS_HH
 
+# include <libport/utime.hh>
+
 namespace urbi
 {
 
@@ -12,6 +14,7 @@ namespace urbi
     libport::utime_t useconds;
     const char* mtag;
     const char* mmod;
+    static const USendOptions default_options;
   };
 
 }
