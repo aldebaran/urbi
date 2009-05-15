@@ -329,18 +329,17 @@ namespace urbi
     /// Set a timer that will call the update function every 'period'
     /// milliseconds.
     void USetUpdate(ufloat period);
-    virtual int update() {return 0;};
+    virtual int update();
 
     /// Set autogrouping facility for each new subclass created.
-    void UAutoGroup() { autogroup = true; };
+    void UAutoGroup();
     /// Called when a subclass is created if autogroup is true.
-    virtual void addAutoGroup() { UJoinGroup(classname+"s"); };
     virtual void addAutoGroup();
 
     /// Join the uobject to the 'gpname' group.
     virtual void UJoinGroup(const std::string& gpname);
     /// Void function used in USync callbacks.
-    int voidfun() {return  0;};
+    int voidfun();
     /// Add a group with a 's' after the base class name.
     bool autogroup;
 

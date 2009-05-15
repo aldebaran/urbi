@@ -84,6 +84,11 @@ namespace urbi
     period = -1;
   }
 
+  void
+  UObject::UAutoGroup()
+  {
+    autogroup = true;
+  }
 
   //! UObject cleaner
   void

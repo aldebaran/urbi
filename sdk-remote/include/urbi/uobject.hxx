@@ -6,6 +6,28 @@
 namespace urbi
 {
 
+  /*----------.
+  | UObject.  |
+  `----------*/
+
+  inline
+  int
+  UObject::update()
+  {
+    return 0;
+  }
+
+  inline
+  int
+  UObject::voidfun()
+  {
+    return 0;
+  }
+
+  /*-------------.
+  | Standalone.  |
+  `-------------*/
+
   inline
   bool
   isPluginMode()
