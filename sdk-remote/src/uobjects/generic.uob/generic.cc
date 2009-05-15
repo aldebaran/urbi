@@ -15,8 +15,15 @@ generic::generic (const std::string& s)
 
   UNotifyChange (val, &generic::newval);
   PING();
-  // This means that the group "generics" will be created automatically.
+#if FIXME
+  // This feature is deprecated (it is not implemented in k2, and it
+  // was considered not relevant).  So unless there are reason to
+  // reenable it, don't use it.
+
+  // This means that the group "generics" will be created
+  // automatically.
   UAutoGroup();
+#endif
 }
 
 int

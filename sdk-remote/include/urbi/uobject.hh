@@ -331,17 +331,36 @@ namespace urbi
     void USetUpdate(ufloat period);
     virtual int update();
 
+
+    /// \name Autogroup.
+    /// \{
+    /// These functions are obsoleted, they are not supported
+    /// in Urbi SDK 2.0.
+
     /// Set autogrouping facility for each new subclass created.
+#ifdef BUILDING_URBI_SDK
+# define URBI_SDK_DEPRECATED
+#else
+# define URBI_SDK_DEPRECATED ATTRIBUTE_DEPRECATED
+#endif
+    URBI_SDK_DEPRECATED
     void UAutoGroup();
     /// Called when a subclass is created if autogroup is true.
+    URBI_SDK_DEPRECATED
     virtual void addAutoGroup();
 
     /// Join the uobject to the 'gpname' group.
+    URBI_SDK_DEPRECATED
     virtual void UJoinGroup(const std::string& gpname);
+
+    /// Add a group with a 's' after the base class name.
+    URBI_SDK_DEPRECATED
+    bool autogroup;
+#undef DEPRECATED
+    /// \}
+
     /// Void function used in USync callbacks.
     int voidfun();
-    /// Add a group with a 's' after the base class name.
-    bool autogroup;
 
     /// Flag to know whether the UObject is in remote mode or not
     bool remote;
