@@ -7,6 +7,16 @@ namespace urbi
   | baseURBIStarter.  |
   `------------------*/
 
+  void
+  baseURBIStarter::copy_(UObject* uso)
+  {
+    getUObject()->members.push_back(uso);
+    uso->derived = true;
+    uso->classname = getUObject()->classname;
+    if (uso->autogroup)
+      uso->addAutoGroup();
+  }
+
   baseURBIStarter::list_type&
   baseURBIStarter::list()
   {
@@ -46,6 +56,5 @@ namespace urbi
 	return (*i)->getUObjectHub();
     return 0;
   }
-
 
 }

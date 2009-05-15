@@ -64,6 +64,7 @@ namespace urbi
      *  Also create a baseURBIStarter for this new UObject.
      */
     virtual void copy(const std::string& name) = 0;
+
     std::string name;
     /// Set to true to have the UObjects use a random unique name.
     bool local;
@@ -74,6 +75,14 @@ namespace urbi
     static list_type& list();
     /// Retrieve an UObject, otherwise 0.
     static UObject* find(const std::string& name);
+
+  protected:
+    /// Common parts used by copy<T>(const std::string& name).
+    // The main point here is to stop using deprecated interfaces
+    // ourselved in the headers (*.hxx) which results in spurious
+    // warnings.  Since we disable the warnings when building
+    // our library, we don't have the problem with code put in *.cc.
+    void copy_(UObject* uso);
   };
 
 

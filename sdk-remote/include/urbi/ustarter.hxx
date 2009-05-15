@@ -78,12 +78,7 @@ namespace urbi
   {
     URBIStarter<T>* ustarter = new URBIStarter<T>(objname, local);
     ustarter->init(objname);
-    UObject* uso = ustarter->object;
-    getUObject()->members.push_back(uso);
-    uso->derived = true;
-    uso->classname = getUObject()->classname;
-    if (uso->autogroup)
-      uso->addAutoGroup();
+    copy_(ustarter->object);
   }
 
   /// Access to the object from the outside.
