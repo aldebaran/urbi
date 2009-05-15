@@ -80,7 +80,7 @@ static rObject urbi_get(rObject r, const std::string& slot)
 static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
   rObject name = new object::String(slot);
-  object::objects_type args = list_of (r)(name) (v);
+  object::objects_type args = list_of (r)(name)(v);
   ECHO("applying set...");
   rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
 					 SYMBOL(updateSlot), args);
