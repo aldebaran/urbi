@@ -54,21 +54,21 @@ namespace object
     return content_;
   }
 
-  static unsigned int
+  static size_type
   damerau_levenshtein_distance(const std::string& s1, const std::string& s2)
   {
-    boost::multi_array<unsigned int, 2> d(boost::extents[s1.size()+1]
+    boost::multi_array<size_type, 2> d(boost::extents[s1.size()+1]
 					                [s2.size()+1]);
 
-    for (unsigned int i = 0; i <= s1.size(); ++i)
+    for (size_type i = 0; i <= s1.size(); ++i)
       d[i][0] = i;
-    for (unsigned int j = 1; j <= s2.size(); ++j)
+    for (size_type j = 1; j <= s2.size(); ++j)
       d[0][j] = j;
 
-    for (unsigned int i = 1; i <= s1.size(); ++i)
-      for (unsigned int j = 1; j <= s2.size(); ++j)
+    for (size_type i = 1; i <= s1.size(); ++i)
+      for (size_type j = 1; j <= s2.size(); ++j)
       {
-	unsigned int cost = s1[i-1] == s2[j-1] ? 0 : 1;
+	size_type cost = s1[i-1] == s2[j-1] ? 0 : 1;
 	d[i][j] = std::min(std::min(d[i-1][j] + 1,        // Deletion
 				    d[i][j-1] + 1),       // Insertion
 			   d[i-1][j-1] + cost);           // Substitution
@@ -79,13 +79,13 @@ namespace object
     return d[s1.size()][s2.size()];
   }
 
-  unsigned int
-  String::distance(rString other)
+  size_type
+  String::distance(const std::string& other) const
   {
-    return damerau_levenshtein_distance(value_get(), other->value_get());
+    return damerau_levenshtein_distance(value_get(), other);
   }
 
-  std::string String::plus (rObject rhs)
+  std::string String::plus(rObject rhs) const
   {
     rObject str = rhs->call(SYMBOL(asString));
     type_check<String>(str);
@@ -93,13 +93,13 @@ namespace object
   }
 
   String::size_type
-  String::size()
+  String::size() const
   {
     return content_.size();
   }
 
   float
-  String::as_float()
+  String::as_float() const
   {
     try
     {
@@ -113,19 +113,19 @@ namespace object
   }
 
   std::string
-  String::as_printable ()
+  String::as_printable() const
   {
     return '"' + string_cast(libport::escape(content_, '"')) + '"';
   }
 
   std::string
-  String::as_string ()
+  String::as_string () const
   {
     return content_;
   }
 
   bool
-  String::lt(const std::string& rhs)
+  String::lt(const std::string& rhs) const
   {
     return value_get() < rhs;
   }
@@ -138,13 +138,13 @@ namespace object
   }
 
   std::string
-  String::fresh ()
+  String::fresh() const
   {
     return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
   }
 
   std::string
-  String::replace(const std::string& from, const std::string& to)
+  String::replace(const std::string& from, const std::string& to) const
   {
     return boost::replace_all_copy(value_get(), from, to);
   }
@@ -173,7 +173,7 @@ namespace object
 
   std::vector<std::string>
   String::split(const std::vector<std::string>& sep, int limit,
-                bool keep_delim, bool keep_empty)
+                bool keep_delim, bool keep_empty) const
   {
     std::vector<std::string> res;
     size_t start = 0;
@@ -209,22 +209,23 @@ namespace object
 
   std::vector<std::string>
   String::split(const std::string& sep, int limit,
-                bool keep_delim, bool keep_empty)
+                bool keep_delim, bool keep_empty) const
   {
     std::vector<std::string> seps;
     seps << sep;
     return split(seps, limit, keep_delim, keep_empty);
   }
 
-  OVERLOAD_TYPE(split_overload, 4, 1,
-                String,
-                (std::vector<std::string>
-                 (String::*)(const std::string&, int, bool, bool))
-                  &String::split,
-                List,
-                (std::vector<std::string>
-                 (String::*)(const std::vector<std::string>&, int, bool, bool))
-                 &String::split)
+  OVERLOAD_TYPE(
+    split_overload, 4, 1,
+    String,
+    (std::vector<std::string>
+     (String::*)(const std::string&, int, bool, bool) const)
+    &String::split,
+    List,
+    (std::vector<std::string>
+     (String::*)(const std::vector<std::string>&, int, bool, bool) const)
+    &String::split)
 
   static rObject split_bouncer(const objects_type& _args)
   {
@@ -258,11 +259,11 @@ namespace object
   }
 
   std::string
-  String::star(unsigned int times)
+  String::star(size_type times) const
   {
     std::string res;
     res.reserve(times * size());
-    for (unsigned int i = 0; i < times; i++)
+    for (size_type i = 0; i < times; i++)
       res += value_get();
     return res;
   }
@@ -306,7 +307,7 @@ namespace object
     return res;
   }
 
-  std::string String::format(rObject value)
+  std::string String::format(rObject value) const
   {
     rList l = value->as<List>();
     if (l)
@@ -315,7 +316,7 @@ namespace object
       return str_format(content_, &value, &value + 1);
   }
 
-  void String::check_bounds(unsigned int from, unsigned int to)
+  void String::check_bounds(size_type from, size_type to) const
   {
     if (from >= content_.length())
       RAISE("invalid index: " + string_cast(from));
@@ -326,40 +327,40 @@ namespace object
             + string_cast(from) + ", " + string_cast(to));
   }
 
-  std::string String::sub(unsigned int idx)
+  std::string String::sub(size_type idx) const
   {
     return sub(idx, idx + 1);
   }
 
-  std::string String::sub_eq(unsigned int idx, const std::string& v)
+  std::string String::sub_eq(size_type idx, const std::string& v)
   {
     return sub_eq(idx, idx + 1, v);
   }
 
-  std::string String::sub(unsigned int from, unsigned int to)
+  std::string String::sub(size_type from, size_type to) const
   {
     check_bounds(from, to);
     return content_.substr(from, to - from);
   }
 
-  std::string String::to_lower()
+  std::string
+  String::sub_eq(size_type from, size_type to, const std::string& v)
+  {
+    check_bounds(from, to);
+    content_ = (content_.substr(0, from)
+                + v
+                + content_.substr(to, std::string::npos));
+    return v;
+  }
+
+  std::string String::to_lower() const
   {
     return boost::to_lower_copy(value_get());
   }
 
-  std::string String::to_upper()
+  std::string String::to_upper() const
   {
     return boost::to_upper_copy(value_get());
-  }
-
-  std::string String::sub_eq(unsigned int from, unsigned int to,
-                             const std::string& v)
-  {
-    check_bounds(from, to);
-    content_ = content_.substr(0, from)
-      + v
-      + content_.substr(to, std::string::npos);
-    return v;
   }
 
   std::string String::fromAscii(rObject, int code)
@@ -369,24 +370,24 @@ namespace object
     return res;
   }
 
-  int String::toAscii()
+  int String::toAscii() const
   {
     check_bounds(0, 1);
     return value_get()[0];
   }
 
-  OVERLOAD_2(sub_bouncer,
-             2,
-             (std::string (String::*) (unsigned)) (&String::sub),
-             (std::string (String::*) (unsigned, unsigned)) (&String::sub)
+  OVERLOAD_2
+  (sub_bouncer, 2,
+   (std::string (String::*) (unsigned) const) (&String::sub),
+   (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
     );
 
-  OVERLOAD_2(sub_eq_bouncer,
-             3,
-             (std::string (String::*) (unsigned, const std::string&))
-             (&String::sub_eq),
-             (std::string (String::*) (unsigned, unsigned, const std::string&))
-             (&String::sub_eq)
+  OVERLOAD_2
+  (sub_eq_bouncer, 3,
+   (std::string (String::*) (unsigned, const std::string&))
+   (&String::sub_eq),
+   (std::string (String::*) (unsigned, unsigned, const std::string&))
+   (&String::sub_eq)
     );
 
   URBI_CXX_OBJECT_REGISTER(String);

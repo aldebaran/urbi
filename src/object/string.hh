@@ -30,53 +30,53 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
-    float as_float();
-    std::string as_string();
-    std::string as_printable();
+    float as_float() const;
+    std::string as_string() const;
+    std::string as_printable() const;
 
-    unsigned int distance(rString other);
-    std::string format(rObject values);
-    std::string plus(rObject rhs);
-    bool lt(const std::string& rhs);
-    std::string fresh();
+    size_type distance(const std::string& other) const;
+    std::string format(rObject values) const;
+    std::string plus(rObject rhs) const;
+    bool lt(const std::string& rhs) const;
+    std::string fresh() const;
     /// Convert every occurrence of \a from to \a to.
-    std::string replace(const std::string& from, const std::string& to);
+    std::string replace(const std::string& from, const std::string& to) const;
     std::string set(const std::string& rhs);
-    size_type size();
+    size_type size() const;
     std::vector<std::string> split(const std::string& sep,
                                    int limit = -1,
                                    bool keep_delim = false,
-                                   bool keep_empty = true);
+                                   bool keep_empty = true) const;
     std::vector<std::string> split(const std::vector<std::string>& sep,
                                    int limit = -1,
                                    bool keep_delim = false,
-                                   bool keep_empty = true);
-    std::string star(unsigned int times);
+                                   bool keep_empty = true) const;
+    std::string star(size_type times) const;
 
     /// [from, to].
-    std::string sub(unsigned int from, unsigned int to);
+    std::string sub(size_type from, size_type to) const;
     /// [idx].
-    std::string sub(unsigned int idx);
+    std::string sub(size_type idx) const;
 
     /// [from, to] = v.
-    std::string sub_eq(unsigned int from, unsigned int to,
+    std::string sub_eq(size_type from, size_type to,
                        const std::string& v);
     /// [idx] = v.
-    std::string sub_eq(unsigned int idx,
+    std::string sub_eq(size_type idx,
                        const std::string& v);
 
     /// Return a new string with all upper case made lower case.
-    std::string to_lower();
+    std::string to_lower() const;
     /// Return a new string with all lower case made upper case.
-    std::string to_upper();
+    std::string to_upper() const;
 
     static std::string fromAscii(rObject, int code);
 
-    int         toAscii();
+    int toAscii() const;
   private:
     value_type content_;
 
-    void check_bounds(unsigned int from, unsigned int to);
+    void check_bounds(size_type from, size_type to) const;
 
     URBI_CXX_OBJECT(String);
   };
