@@ -4,7 +4,7 @@
  Definition of the callback classes.
 
  This file is part of UObject Component Architecture\n
- Copyright (c) 2006, 2007, 2008 Gostai S.A.S.
+ Copyright (c) 2006, 2007, 2008, 2009 Gostai S.A.S.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -37,7 +37,10 @@ namespace urbi
   class URBI_SDK_API UTimerCallback
   {
   public:
-    UTimerCallback(const std::string& objname, ufloat period, UTimerTable& tt);
+    /// \param period in milliseconds.
+    UTimerCallback(const std::string& objname,
+                   ufloat period,
+                   UTimerTable& tt);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
@@ -60,8 +63,8 @@ namespace urbi
       : UTimerCallback(objname, period, tt)                     \
       , obj(obj)                                                \
       , fun##Const(fun)                                         \
-      , is_const_ (IsConst)                                     \
-      {}
+      , is_const_(IsConst)                                      \
+    {}
 
     MKUTimerCallBackObj (/**/, false);
     MKUTimerCallBackObj (const, true);

@@ -316,24 +316,26 @@ namespace urbi
     /// Name of the class the object is derived from.
     std::string classname;
     /// True when the object has been newed by an urbi command.
-    bool   derived;
+    bool derived;
 
     UObjectList members;
 
     /// The hub, if it exists.
-    UObjectHub *objecthub;
+    UObjectHub* objecthub;
 
     /// Send a command to URBI.
     int send(const std::string& s);
 
     /// Set a timer that will call the update function every 'period'
-    /// milliseconds
+    /// milliseconds.
     void USetUpdate(ufloat period);
     virtual int update() {return 0;};
+
     /// Set autogrouping facility for each new subclass created.
     void UAutoGroup() { autogroup = true; };
     /// Called when a subclass is created if autogroup is true.
     virtual void addAutoGroup() { UJoinGroup(classname+"s"); };
+    virtual void addAutoGroup();
 
     /// Join the uobject to the 'gpname' group.
     virtual void UJoinGroup(const std::string& gpname);
@@ -355,7 +357,9 @@ namespace urbi
   private:
     /// Pointer to a globalData structure specific to the
     /// remote/plugin architectures who defines it.
-    UObjectData*  objectData;
+    UObjectData* objectData;
+
+    /// In ms.
     ufloat period;
   };
 
