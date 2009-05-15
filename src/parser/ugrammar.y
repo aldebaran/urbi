@@ -9,7 +9,7 @@
 %define lex_symbol
 
 // Prefix all our external definition of token names with "TOK_".
-%define token.prefix "TOK_"
+%define api.tokens.prefix "TOK_"
 
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
