@@ -54,10 +54,14 @@ static uobject_to_robject_type uobject_to_robject;
     boost::function1<void, rObject>(                    \
       boost::bind(&cls::meth, ptr)))
 
-#define CHECK_MAINTHREAD()				\
+#ifdef SCHED_CORO_OSTHREAD
+# define CHECK_MAINTHREAD()
+#else
+# define CHECK_MAINTHREAD()				\
   if (::kernel::urbiserver->isAnotherThread())		\
     pabort("UObject API isn't thread safe. "		\
 	   "Do the last call within main thread.")
+#endif
 
 static inline runner::Runner& getCurrentRunner()
 {

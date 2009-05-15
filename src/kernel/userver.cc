@@ -539,9 +539,11 @@ namespace kernel
   runner::Runner&
   UServer::getCurrentRunner() const
   {
+#ifndef SCHED_CORO_OSTHREAD
     if (thread_id_ != pthread_self())
       pabort("UObject API isn't thread safe. "
              "Do the last call within main thread.");
+#endif
     return dynamic_cast<runner::Runner&> (scheduler_->current_job());
   }
 
