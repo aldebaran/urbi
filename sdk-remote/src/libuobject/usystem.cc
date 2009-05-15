@@ -1,7 +1,7 @@
-/*! \file usystem.cc
+/*! \file libuobject/usystem.cc
  *******************************************************************************
 
- File: usystem.cc\n
+ File: libuobject/usystem.cc
  Implementation of the USystem class.
 
  This file is part of UObject Component Architecture\n
@@ -38,7 +38,7 @@ namespace urbi
   // UStringSystemMessage
 
   //! UStringSystemMessage constructor.
-  UStringSystemMessage::UStringSystemMessage (const std::string& s)
+  UStringSystemMessage::UStringSystemMessage(const std::string& s)
     : msg (s)
   {
   }
@@ -49,7 +49,7 @@ namespace urbi
   }
 
   const std::string&
-  UStringSystemMessage::getMessage () const
+  UStringSystemMessage::getMessage() const
   {
     return msg;
   };
@@ -69,14 +69,14 @@ namespace urbi
   }
 
   void
-  USystem::register_channel (const USystemChannel&)
+  USystem::register_channel(const USystemChannel&)
   {
     // nothing to do in remote mode.
   }
 
   int
-  USystem::receive_message (const USystemChannel&,
-			    const USystemMessage&)
+  USystem::receive_message(const USystemChannel&,
+                           const USystemMessage&)
   {
     // user defined.
     return 0;

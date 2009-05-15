@@ -29,7 +29,7 @@
 
  This macro can only be called from within a class inheriting from
  UObject.  It binds the UVar x within the object to a variable
- with the same name in the corresponding URBI object.  */
+ with the same name in the corresponding Urbi object.  */
 # define UBindVar(Obj,X) \
   (X).init(__name, #X)
 
@@ -37,7 +37,7 @@
 
  After this call is made, writes by this module affect the sensed
  value, and reads read the target value. Writes by other modules
- and URBI code affect the target value, and reads get the sensed
+ and Urbi code affect the target value, and reads get the sensed
  value. Without this call, all operations affect the same
  underlying variable.  */
 # define UOwned(X) \
@@ -47,7 +47,7 @@
 # define USensor(X) \
   UOwned(X)
 
-/** Bind the function x in current URBI object to the C++ member
+/** Bind the function x in current Urbi object to the C++ member
  function of same name.  The return value and parameters must be of
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
@@ -61,7 +61,7 @@
 /** Registers a function x in current object that will be called each
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
- prototype and the URBI event.
+ prototype and the Urbi event.
  */
 # define UBindEvent(Obj, X)						\
   ::urbi::createUCallback(__name, "event", this,			\
@@ -71,7 +71,7 @@
 /** Registers a function x in current object that will be called each
  * time the event of same name is triggered, and a function fun called
  * when the event ends. The function will be called only if the number
- * of arguments match between the function prototype and the URBI
+ * of arguments match between the function prototype and the Urbi
  * event.
  */
 # define UBindEventEnd(Obj, X, Fun)					\
@@ -92,7 +92,7 @@
 
 //macro to send urbi commands
 # ifndef URBI
-/// Send unquoted URBI commands to the server.
+/// Send unquoted Urbi commands to the server.
 /// Add an extra layer of parenthesis for safety.
 #   define URBI(A) \
   ::urbi::uobject_unarmorAndSend(# A)
@@ -137,7 +137,7 @@ namespace urbi
   /// Retrieve a UObject based on its name or return 0 if not found.
   URBI_SDK_API UObject* getUObject(const std::string& n);
 
-  /// Send URBI code (ghost connection in plugin mode, default
+  /// Send Urbi code (ghost connection in plugin mode, default
   /// connection in remote mode).
   URBI_SDK_API void uobject_unarmorAndSend(const char* str);
 
@@ -180,7 +180,7 @@ namespace urbi
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object.
       It provides mechanisms to bind variables and functions between
-      C++ and URBI.
+      C++ and Urbi.
   */
   class URBI_SDK_API UObject
   {
@@ -311,7 +311,7 @@ namespace urbi
     /// Request permanent synchronization for v.
     void USync(UVar &v);
 
-    /// Name of the object as seen in URBI.
+    /// Name of the object as seen in Urbi.
     std::string __name;
     /// Name of the class the object is derived from.
     std::string classname;
@@ -323,7 +323,7 @@ namespace urbi
     /// The hub, if it exists.
     UObjectHub* objecthub;
 
-    /// Send a command to URBI.
+    /// Send a command to Urbi.
     int send(const std::string& s);
 
     /// Set a timer that will call the update function every 'period'
