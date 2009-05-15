@@ -194,7 +194,7 @@ namespace object
          end = find_first(sep, content_, start, delim), --limit)
     {
       std::string sub = content_.substr(start, end - start);
-      if (keep_empty || sub != "")
+      if (keep_empty || !sub.empty())
         res << sub;
       if (keep_delim)
         res << delim;
