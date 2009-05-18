@@ -243,7 +243,7 @@ namespace kernel
     const std::string& custom = custom_banner_get();
     if (!custom.empty())
       res +=
-        custom_banner_get() + "\n"
+        custom + "\n"
         + "\n";
 
     res +=
