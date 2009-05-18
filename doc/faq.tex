@@ -101,6 +101,7 @@ will create a local variable, which will not be known anymore after we
 exist the current scope.
 
 \paragraph{How do I modify a slot of my object?}
+
 \begin{urbifixme}
 O.mySlot = 51;
 \end{urbifixme}
@@ -258,11 +259,13 @@ var ev = Event.new;
 \end{urbifixme}
 
 \paragraph{How do I emit an event?}
+
 \begin{urbifixme}
 ev!(1, "foo");
 \end{urbifixme}
 
 \paragraph{How do I catch an event?}
+
 \begin{urbifixme}
 at(ev?(1, var msg)) {
   echo ("Received event with 1 and message " + msg);

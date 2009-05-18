@@ -186,10 +186,9 @@ several other literals, such as:
 \item[void] absence of value. Think of it as the value that fits nowhere.
 \end{description}
 
-These literal values can be obtained with the syntax presented in
-\autoref{lst:tut:literals}.
+These literal values can be obtained with the syntax presented below.
 
-\begin{urbiscript}[caption=Literals,label=lst:tut:literals]
+\begin{urbiscript}
 42; // Integer literal.
 [00000000] 42
 3.14; // Floating point number literal.
@@ -202,7 +201,7 @@ nil;
 void;
 \end{urbiscript}
 
-Listing \ref{lst:tut:literals} highlights some point:
+This listing highlights some point:
 \begin{itemize}
 \item Lists in \us are heterogeneous. That is, one list can hold
   values of different types.
@@ -211,10 +210,9 @@ Listing \ref{lst:tut:literals} highlights some point:
 
 \section{Function calls}
 
-You can call functions with the classical, mathematical notation
-(\autoref{lst:tut:calling-functions}).
+You can call functions with the classical, mathematical notation.
 
-\begin{urbiscript}[caption=Calling functions,label=lst:tut:calling-functions]
+\begin{urbiscript}
 cos(0); // Compute cosine
 [00000000] 1
 max(1, 3); // Get the maximum of the arguments.
@@ -226,10 +224,9 @@ max(1, 3, 4, 2);
 Again, the result of the evaluation are printed out. You can see here
 that function in \us can be variadic, that is, take different number
 of arguments, such as the \lstinline{max} function. Let's now try the
-\lstinline{echo} function, that prints out its argument
-(\autoref{lst:tut:printing}).
+\lstinline{echo} function, that prints out its argument.
 
-\begin{urbiscript}[caption=Printing out,label=lst:tut:printing]
+\begin{urbiscript}
 echo("Hello world!");
 [00000000] *** Hello world!
 \end{urbiscript}
@@ -241,9 +238,9 @@ void, no evaluation result is printed.
 \section{Variables\index{variable}}
 Variables can be introduced with the \lstinline{var} keyword, given a
 name and an initial value. They can be assigned new values with the
-\lstinline{=} operator (\autoref{lst:tut:variables}).
+\lstinline{=} operator.
 
-\begin{urbiscript}[caption=Using variables,label=lst:tut:variables]
+\begin{urbiscript}
 var x = 42;
 [00000000] 42
 echo(x);
@@ -260,10 +257,9 @@ identifiers is also the same as in \Cxx: they may contain alphanumeric
 characters and underscores, but they may not start with a digit.
 
 You may omit the initialization value, in which case it defaults to
-\lstinline|void| (\autoref{lst:tut:local-uninit}).
+\lstinline|void|.
 
-\begin{urbiscript}[caption=Variables initialization defaults to
-  nil,label=lst:tut:local-uninit]
+\begin{urbiscript}
 var x;
 x;
 // Remember, the interpreter remains silent
@@ -279,9 +275,9 @@ x.isVoid;
 \section{Scopes\index{scope}}
 Scopes can be introduced with curly brackets (\lstinline|{}|), and can
 contain any number of expressions. Variables declared in a scope only
-exist within this scope (\autoref{lst:tut:scope}).
+exist within this scope.
 
-\begin{urbiscript}[caption=Scoping a variable,label=lst:tut:scope]
+\begin{urbiscript}
 {
   var x = "test";
   echo(x);
@@ -298,9 +294,9 @@ closing curly bracket.
 
 Methods are called on objects with the dot (\lstinline{.}) notation as in
 \Cxx. Method calls can be chained. Methods with no arguments don't
-require the parentheses (\autoref{lst:tut:method-call}).
+require the parentheses.
 
-\begin{urbiscript}[caption=Calling methods,label=lst:tut:method-call]
+\begin{urbiscript}
 0.cos();
 [00000000] 1
 "a-b-c".split("-");
@@ -324,9 +320,9 @@ In \lstinline|obj.method|, we say that \lstinline{obj} is the
 You know how to call routines, let's learn how to write
 some. Functions can be declared thanks to the \lstinline{function}
 keyword, followed by the comma separated, parentheses surrounded list
-of formal arguments, and the body between curly brackets (\autoref{lst:tut:function-def}).
+of formal arguments, and the body between curly brackets.
 
-\begin{urbiscript}[caption=Defining a function,label=lst:tut:function-def]
+\begin{urbiscript}
 // Define myFunction
 function myFunction()
 {
@@ -348,14 +344,13 @@ Note the strange output after you defined the function. \us seems to
 be printing the function you just typed in again. This is because
 a function definition evaluates to the freshly created function.
 
-Since \us supports functional programming, function are first class
-citizen. Which means they are values, just as \lstinline{0} or
-\lstinline{"foobar"}. So your function definition evaluation yields the
-new function, and as always, the interpreter prints out the evaluation
-result, thus showing you the function again. \autoref{lst:tut:function-values}
-might help you understanding this.
+Functions are first class citizen: they are values, just as
+\lstinline{0} or \lstinline{"foobar"}.  The evaluation of a function
+definition yields the new function, and as always, the interpreter
+prints out the evaluation result, thus showing you the function
+again:
 
-\begin{urbiscript}[caption=Function as values,label=lst:tut:function-values]
+\begin{urbiscript}
 // Work in a scope.
 {
   // Define f
@@ -396,7 +391,7 @@ documentation using the \lstinline'|{};' trick (or even
 server first evaluates \var{code}, then evaluates \lstinline'{}' and
 return its value, \lstinline'void', which prints to nothing.
 
-\begin{urbiscript}[caption=Function with arguments,label=lst:tut:function-arg]
+\begin{urbiscript}
 function sum(a, b, c)
 {
   return a + b + c;
@@ -407,11 +402,9 @@ sum(20, 2, 20);
 
 The \lstinline{return} keyword enables to return a value from the
 function. If no \lstinline{return} statement is executed, the
-evaluation of the last expression is returned
-(\autoref{lst:tut:no-return}).
+evaluation of the last expression is returned.
 
-\begin{urbiscript}[caption=Return value is the last evaluated value,
-  label=lst:tut:no-return]
+\begin{urbiscript}
 function succ(i) { i + 1 } | {};
 succ(50);
 [00000000] 51
