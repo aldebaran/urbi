@@ -28,6 +28,7 @@
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
 #include <libport/option-parser.hh>
+#include <libport/sysexits.hh>
 
 #include <urbi/usyncclient.hh>
 

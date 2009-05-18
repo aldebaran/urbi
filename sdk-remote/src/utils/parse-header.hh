@@ -3,6 +3,7 @@
 
 #include <libport/cli.hh>
 #include <libport/program-name.hh>
+#include <libport/sysexits.hh>
 
 void usage(const char* name, int status);
 
