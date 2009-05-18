@@ -1,0 +1,30 @@
+\section{Mutex}
+
+Mutex are objects that allows you to define critical sections in your code.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Tag}
+\end{itemize}
+
+\subsection{Construction}
+A Mutex can be constructed like any other Tag but without name.
+
+\begin{urbiscript}
+var m = Mutex.new;
+[00000000] Mutex_0x964ed40
+\end{urbiscript}
+
+You can define critical sections by tagging your code using the Mutex.
+
+\begin{urbiscript}
+var m = Mutex.new | {}
+m: echo("this is critical section");
+\end{urbiscript}
+
+As a critical section, two piece of code tagged by the same ``Mutex'' will never be executed at the same time.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
