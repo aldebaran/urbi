@@ -13,7 +13,11 @@ REVISION_FILE = $(package_info_u)
 include $(top_srcdir)/build-aux/revision.mk
 
 # tutorial-content.u.
-$(srcdir)/share/urbi/tutorial-content.u: share/urbi/tutorial/tutorial.xml share/urbi/tutorial/tutorial.py
+tutorial_sources =				\
+  share/urbi/tutorial/tutorial.xml		\
+  share/urbi/tutorial/tutorial.py
+EXTRA_DIST += $(tutorial_sources)
+$(srcdir)/share/urbi/tutorial-content.u: $(tutorial_sources)
 	rm -f $@ $@.tmp
 	$(srcdir)/share/urbi/tutorial/tutorial.py $< > $@.tmp
 	mv $@.tmp $@
