@@ -53,6 +53,7 @@ namespace urbi
     : __name(s)
     , classname(s)
     , derived(false)
+    , autogroup(false)
     , remote(true)
   {
     objecthub = 0;
@@ -73,6 +74,7 @@ namespace urbi
   //! Dummy UObject constructor.
   UObject::UObject(int index)
     : derived(false)
+    , autogroup(false)
     , remote(true)
   {
     std::stringstream ss;
