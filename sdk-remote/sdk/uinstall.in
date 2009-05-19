@@ -9,6 +9,7 @@ General options:
   -h, --help           display this help and exit successfully
   -v, --version        display version information and exit successfully
 
+Report bugs to @PACKAGE_BUGREPORT@.
 EOF
 
   exit 0
