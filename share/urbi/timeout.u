@@ -6,10 +6,11 @@ do (Timeout)
   var timedOut = false |
   var asString = Object.getSlot("asString");
 
-  function init(time_)
+  function init(time_, thrower_ = true)
   {
     this.timedOut = false;
     var this.running = false;
+    var this.thrower = thrower_;
     var this.time = time_;
     var this.e = Event.new;
     at (enter?) launch;
@@ -20,7 +21,7 @@ do (Timeout)
   function launch()
   {
     if (running)
-      throw "Timeout is already running";
+      throw asString + " is already running";
     running = true;
     e!;
   };
@@ -36,6 +37,8 @@ do (Timeout)
   function end()
   {
     running = false;
+    if (thrower && timedOut)
+      throw asString + " has timed out."
   };
 
 };
