@@ -81,7 +81,7 @@ ugrammar_deps =					\
   $(wildcard $(top_builddir)/bison/data/*.cc)	\
   $(wildcard $(top_builddir)/bison/data/*.m4)
 
-AM_BISONFLAGS = -d -ra -Derror_verbose=$(ERROR_VERBOSE)
+AM_BISONFLAGS = -d -ra -Derror-verbose=$(YYERROR_VERBOSE)
 $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
 	echo '$@ rebuilt because of: $?' >$@.tmp
