@@ -16,9 +16,7 @@
   comment will end after two \lstinline|*/|, not one.
 \end{itemize}
 
-\autoref{lst:comments} illustrates this.
-
-\begin{urbiscript}[caption=Comments,label=lst:comments,float=\floatpos]
+\begin{urbiscript}
 // C++ style comment
 /* C style comment */
 /* These comments /* do */ nest */
@@ -30,8 +28,8 @@
 \dfn{Identifiers} in \us are composed of one or more alphanumeric or
 underscore (\lstinline|_|) characters, not starting by a digit, i.e.,
 identifiers match the \lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular
-expression (see \autoref{lst:identifiers}).  Additionally, identifiers
-must not match any of the \us reserved words\footnote{
+expression.  Additionally, identifiers must not match any of the \us
+reserved words\footnote{
 %%
   The only exception to this rule is \lstinline|new|, which can be
   used as the method identifier in a method call.
@@ -40,7 +38,7 @@ must not match any of the \us reserved words\footnote{
 between simple quotes (\lstinline|'|), in which case they may contain
 any character.
 
-\begin{urbiscript}[caption=Identifiers,label=lst:identifiers,float=\floatpos]
+\begin{urbiscript}
 var x;
 var foobar51;
 obj.met_hod();
@@ -211,10 +209,10 @@ the integral part of the number in decimal base, possibly followed by
 a dot (\lstinline|.|) and another succession of digits representing
 the decimal part. Briefly, float literals match the
 \lstinline|[0-9]+(\.[0-9]+)?| regular
-expression. \autoref{lst:literal-floats} is an example of literal
+expression. The listing below is an example of literal
 floats.  See \refObject{Float} for more details.
 
-\begin{urbiscript}[caption=Literal floats,label=lst:literal-floats,float=\floatpos]
+\begin{urbiscript}
 1;
 [00000000] 1
 1.1;
@@ -226,10 +224,10 @@ floats.  See \refObject{Float} for more details.
 
 Literal \dfn{lists} are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
-(\lstinline|[]|), as shown in \autoref{lst:literal-lists}.  See
+(\lstinline|[]|), as shown in the listing below.  See
 \refObject{List} for more details.
 
-\begin{urbiscript}[caption=Literal lists,label=lst:literal-lists,float=\floatpos]
+\begin{urbiscript}
 []; // The empty list
 [00000000] []
 [1, 2, 3];
@@ -241,7 +239,7 @@ empty list of arbitrary expressions enclosed in square brackets
 \dfn{String} literals are enclosed in double quotes (\lstinline|"|)
 and can contain arbitrary characters, which stand for themselves, with
 the exception of the escape character, backslash (\lstinline|\|), see
-\autoref{lst:literal-strings}. Backslash introduces the following
+the listing below. Backslash introduces the following
 escapes:
 
 \begin{itemize}
@@ -260,7 +258,7 @@ will be printed out as \lstinline|\n| when a string result is
 dumped. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
-\begin{urbiscript}[caption=Literal strings,label=lst:literal-strings,float=\floatpos]
+\begin{urbiscript}
 "";
 [00000000] ""
 "foo";
@@ -356,8 +354,7 @@ documentation of the classes that provide them.
 \subsubsection{Arithmetic operators}
 
 \us supports classic \dfn{arithmetic operators}, with the classic
-semantics on numeric values. See \autoref{tab:arithmetic-operators}
-and \autoref{lst:arithmetic-operators}.
+semantics on numeric values. See the table and the listing below.
 
 \begin{table}[\floatposh]
   \centering
@@ -379,11 +376,9 @@ and \autoref{lst:arithmetic-operators}.
     \hline
   \end{tabular}
   \caption{Arithmetic operators}
-  \label{tab:arithmetic-operators}
 \end{table}
 
-\begin{urbiscript}[caption=Arithmetic operators,
-  label=lst:arithmetic-operators]
+\begin{urbiscript}
 1 + 1;
 [00000000] 2
 1 - 2;
@@ -403,8 +398,7 @@ and \autoref{lst:arithmetic-operators}.
 \dfn{Assignment} in \us can be performed with the \lstinline|=|
 operator.  Shorthands such as \lstinline|+=| exist; they are not
 redefinable since they are equivalent to a regular assignment combined
-with another operator. See \autoref{tab:assignment-operators} and
-\autoref{lst:assignment-operators}.
+with another operator. See the table and the listing below.
 
 
 \begin{table}[\floatposh]
@@ -418,7 +412,6 @@ with another operator. See \autoref{tab:assignment-operators} and
     \hline
   \end{tabular}
   \caption{Assignment operators}
-  \label{tab:assignment-operators}
 \end{table}
 \footnotetext{For object fields only. Assignment to local variables
   cannot be redefined. }
@@ -428,7 +421,7 @@ with another operator. See \autoref{tab:assignment-operators} and
 %  x %= 3;
 
 
-\begin{urbiscript}[caption=Assignment operators, label=lst:assignment-operators]
+\begin{urbiscript}
 var x = 0;
 [00000000] 0
 x = 10;
@@ -446,8 +439,7 @@ x;
 \subsubsection{Bitwise operators}
 
 \us features \dfn{bitwise operators}.  They are also used for other
-purpose than bit-related operations. See
-\autoref{tab:bitwise-operators} and \autoref{lst:bitwise-operators}.
+purpose than bit-related operations. See the table and the listing below.
 
 \begin{table}[\floatposh]
   \centering
@@ -462,10 +454,9 @@ purpose than bit-related operations. See
     \hline
   \end{tabular}
   \caption{Bitwise operators}
-  \label{tab:bitwise-operators}
 \end{table}
 
-\begin{urbiscript}[caption=Bitwise operators, label=lst:bitwise-operators]
+\begin{urbiscript}
 4 << 2;
 [00000000] 16
 4 >> 2;
@@ -474,10 +465,9 @@ purpose than bit-related operations. See
 
 \subsubsection{Logical operators}
 
-\us supports the usual \dfn{Boolean operators}. See
-\autoref{tab:bool-operators} and \autoref{lst:bool-operators}.  The
-operators \lstinline|&&| and \lstinline-||- are short-circuiting:
-their right-hand side is evaluated only if needed.
+\us supports the usual \dfn{Boolean operators}. See the table and the
+listing below. The operators \lstinline|&&| and \lstinline-||- are
+short-circuiting: their right-hand side is evaluated only if needed.
 
 \begin{table}[\floatposh]
   \centering
@@ -493,10 +483,9 @@ their right-hand side is evaluated only if needed.
     \hline
   \end{tabular}
   \caption{Boolean operators}
-  \label{tab:bool-operators}
 \end{table}
 
-\begin{urbiscript}[caption=Boolean operators, label=lst:bool-operators]
+\begin{urbiscript}
 true && true;
 [00000000] true
 true || false;
@@ -511,9 +500,7 @@ false && (1 / 0);
 
 \subsubsection{Comparison operators}
 
-\us supports classical \dfn{comparison operators}. See
-\autoref{tab:comparison-operators} and
-\autoref{lst:comparison-operators}.
+\us supports classical \dfn{comparison operators}. See the table and the listing below.
 
 \begin{table}[\floatposh]
   \centering
@@ -534,10 +521,9 @@ false && (1 / 0);
     \hline
   \end{tabular}
   \caption{Comparison operators}
-  \label{tab:comparison-operators}
 \end{table}
 
-\begin{urbiscript}[caption=Comparison operators, label=lst:comparison-operators]
+\begin{urbiscript}
 0 < 0;
 [00000000] false
 0 <= 0;
@@ -556,16 +542,14 @@ x !== x;
 
 \subsubsection{Miscellaneous operators}
 
-These operators do not fit the previous categories. See
-\autoref{tab:miscellaneous-operators} and
-\autoref{lst:miscellaneous-operators}. Note that the
-\dfn[operator!subscript]{subscript} (square bracket) operator is
-\dfn{variadic}: it takes any number of arguments that will be passed
-to the \lstinline|'[]'| method of the targeted object.
+These operators do not fit the previous categories. See the table and
+the listing below. Note that the \dfn[operator!subscript]{subscript}
+(square bracket) operator is \dfn{variadic}: it takes any number of
+arguments that will be passed to the \lstinline|'[]'| method of the
+targeted object.
 
 \begin{table}[\floatposh]
   \caption{Miscellaneous operators}
-  \label{tab:miscellaneous-operators}
   \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
@@ -580,8 +564,7 @@ to the \lstinline|'[]'| method of the targeted object.
   \end{tabular}
 \end{table}
 
-\begin{urbiscript}[caption=Miscellaneous operators,
-  label=lst:miscellaneous-operators]
+\begin{urbiscript}
 // On lists.
 var l = [1, 2, 3, 4, 5];
 [00000000] [1, 2, 3, 4, 5]
@@ -688,7 +671,7 @@ separators (see \fixme{autoref{sec:fixme}}). The last separator is
 optional and ignored if present. Scopes are themselves expressions,
 and can thus be used in composite expressions, nested, and so forth.
 
-\begin{urbiscript}[caption=Scopes,label=lst:scopes,float=\floatpos]
+\begin{urbiscript}
 // Scopes evaluate to their last expression
 {
   1;
@@ -711,10 +694,9 @@ declarations evaluate to
 the initialization value. They can later be referred to by their
 name. Their value can be changed with the assignment operator; such an
 assignment expression returns the new value. The use of local
-variables is illustrated in \autoref{lst:local-variables}.
+variables is illustrated below.
 
-\begin{urbiscript}[caption=Using local variables,
-  label=lst:local-variables,float=\floatpos]
+\begin{urbiscript}
 // This declare variable x with value 42, and evaluates to 42.
 var x = 42;
 [00000000] 42
@@ -738,11 +720,9 @@ subscopes\footnote{Local variables can actually escape their scope
   with lexical closures, see \autoref{sec:us-fun-closures}.}. Two
 variables with the same name cannot be defined in the same scope. A
 variable with the same name can be defined in an inner scope, in which
-case references refer to the innermost variable, as shown in
-\autoref{lst:local-variables-scoping}.
+case references refer to the innermost variable, as shown below.
 
-\begin{urbiscript}[caption=Local variables scoping,
-  label=lst:local-variables-scoping,float=\floatpos]
+\begin{urbiscript}
 {
   var x = "x";
   var y = "outer y";
@@ -779,9 +759,9 @@ different from most \C-like languages.  One can create a functional
 value thanks to the \lstinline|function| keyword, followed by the list
 of formal arguments and a compound statement representing the body of
 the function. Formal arguments are a comma separated list of
-identifiers. \autoref{lst:function} illustrates this.
+identifiers. The listing below illustrates this.
 
-\begin{urbiscript}[caption=Functional value,label=lst:function,float=\floatpos]
+\begin{urbiscript}
 function (arg1, arg2) { echo(0) };
 [00000000] function (arg1, arg2) {
 [:]  echo(0)
@@ -789,11 +769,10 @@ function (arg1, arg2) { echo(0) };
 \end{urbiscript}
 
 Usually functions are bound to an identifier to be invoked later.
-\autoref{lst:function-sugar} shows a short-hand to define a named
+The listing below shows a short-hand to define a named
 function.
 
-\begin{urbiscript}[caption=Storing functions in variables,
-  label=lst:function-sugar,float=\floatpos]
+\begin{urbiscript}
 // Functions are often stored in variables to call them later
 var f1 = function () {
   echo("hello")
@@ -825,11 +804,9 @@ function requires. They are accessible by their name from within the
 body, as shown in \autoref{lst:function-args}.  If the list of formal
 arguments is omitted, the number of effective arguments is not
 checked, and arguments themselves are not evaluated. Arguments can
-then be manipulated with the call message, explained in
-\autoref{sec:us-fun-callmsg}.
+then be manipulated with the call message, explained below.
 
-\begin{urbiscript}[caption=Storing and calling
-  functions,label=lst:function-args,float=\floatpos]
+\begin{urbiscript}
 var f = function(a, b) {
   echo(b);
   echo(a);
@@ -857,10 +834,9 @@ last evaluated expression in the scope.  Values can be returned
 manually with the \lstinline|return| keyword followed by the value, in
 which case the evaluation of the function is stopped. If
 \lstinline|return| is used with no value, the function returns
-\lstinline|void|. See \autoref{lst:function-return}.
+\lstinline|void|.
 
-\begin{urbiscript}[caption=Returning values from functions,
-  label=lst:function-return,float=\floatpos]
+\begin{urbiscript}
 function f(a, b)
 {
   echo(a);
@@ -925,11 +901,9 @@ functions and lazy function.
 
 Functions defined with a (possibly empty) list of formal arguments in
 parentheses are strict: the effective arguments are first evaluated,
-and then their value is given to the called function.  See
-\autoref{lst:us-fun-strict}.
+and then their value is given to the called function.
 
-\begin{urbiscript}[caption=Strict Functions,
-  label=lst:us-fun-strict,float=\floatpos]
+\begin{urbiscript}
 function first(a, b) {
   echo(a); echo(b)
 };
@@ -948,10 +922,10 @@ first({echo("Arg1"); 1},
 
 A function declared with no formal argument list is lazy.  Use its
 call message to manipulate its \emph{unevaluated} arguments.
-\autoref{lst:function-lazy} gives an example.  More information about
+The listing below gives an example.  More information about
 this can be found in the \refObject{CallMessage} class documentation.
 
-\begin{urbiscript}[caption=Lazy function,label=lst:function-lazy]
+\begin{urbiscript}
 function first
 {
   echo(call.evalArgAt(0));
@@ -971,12 +945,10 @@ first({echo("Arg1"); 1},
 \end{urbiscript}
 
 A lazy function may implement a strict interface by evaluating its
-arguments and storing them as local variables, see
-\autoref{lst:lazy-2-strict}.  This is less efficient than defining a
-strict function.
+arguments and storing them as local variables, see below.  This is
+less efficient than defining a strict function.
 
-\begin{urbiscript}[caption=Lazy functions with strict semantics,
-  label=lst:lazy-2-strict]
+\begin{urbiscript}
 function first
 {
   var a = call.evalArgAt(0);
@@ -1005,10 +977,9 @@ first({echo("Arg1"); 1},
 can refer to a local variable located outside the function --- but still
 in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
-environment, as shown in \autoref{lst:function-closure}.
+environment, as shown below.
 
-\begin{urbiscript}[caption=Lexical closure,
-  label=lst:function-closure,float=\floatpos]
+\begin{urbiscript}
 var x = 0;
 [00000000:hide] 0
 
@@ -1033,11 +1004,10 @@ cl();
 [00000000] *** 3
 \end{urbiscript}
 
-\autoref{lst:function-closure-escape} illustrate that local variables can even
+The following listing illustrate that local variables can even
 escape their declaration scope by lexical closure.
 
-\begin{urbiscript}[caption=Local variable escaping its scope by
-  lexical closure.,label=lst:function-closure-escape,float=\floatpos]
+\begin{urbiscript}
 function wrapper()
 {
   // Normally, x is local to 'wrapper', and is limited to this scope.
@@ -1089,12 +1059,11 @@ void (\autoref{sec:std-void}) value. The \lstinline|updateSlot|
 function changes the value of a slot; \lstinline|getSlot| reads
 it. The \lstinline|setSlot| method creates a slot with a given
 value. Finally, the \lstinline|slotNames| method returns the list of
-the object slot's name. \autoref{lst:slots} shows how to manipulate
+the object slot's name. The listing below shows how to manipulate
 slots. More documentation about these methods can be found in
 \autorefObject{Object}.
 
-\begin{urbiscript}[caption=Manipulating slots, label=lst:slots,
-  float=\floatpos]
+\begin{urbiscript}
 var o = Object.new;
 [00000000:hide] Object_0xADDR
 o.slotNames;
@@ -1135,12 +1104,10 @@ inherit behavior.
 
 \us objects can have several prototypes. The list of prototypes is
 given by the \lstinline|protos| method; they can be added or removed
-with \lstinline|addProto| and \lstinline|removeProto| (see
-\autoref{lst:prototypes}).  See \autorefObject{Object} for more
-documentation.
+with \lstinline|addProto| and \lstinline|removeProto|.  See
+\autorefObject{Object} for more documentation.
 
-\begin{urbiscript}[caption=Manipulating prototypes, label=lst:prototypes,
-  float=\floatpos]
+\begin{urbiscript}
 var o = Object.new;
 [00000000:hide] Object_0xADDR
 
@@ -1175,10 +1142,9 @@ is, when looking for a slot in an object:
 \item Finally, if no prototype had the slot, an error is raised.
 \end{itemize}
 
-\autoref{lst:inheritance} shows how slots are inherited.
+This listing shows how slots are inherited.
 
-\begin{urbiscript}[caption=Slots inheritance, label=lst:inheritance,
-  float=\floatpos]
+\begin{urbiscript}
 var a = Object.new;
 [00000000:hide] Object_0xADDR
 
@@ -1221,10 +1187,9 @@ inherited from a prototype. In this case, the slot is however not
 updated in the prototype, but rather created in the object itself,
 with the new value. This process is called \dfn{copy on write}; thanks
 to it, prototypes are not altered when the slot is overridden in a
-child object (see \autoref{lst:copy-on-write}).
+child object.
 
-\begin{urbiscript}[caption=Copy on write, label=lst:copy-on-write,
-  float=\floatpos]
+\begin{urbiscript}
 var p = Object.new;
 [00000000:hide] Object_0xADDR
 
@@ -1254,13 +1219,12 @@ c.slot;
 A \dfn{message} in \us consists in a message name and arguments. One can
 send a message to an object with the dot (\lstinline|.|) operator,
 followed by the message name (which can be any valid identifier) and
-the arguments, as shown in \autoref{lst:messages}. When there are no
+the arguments, as shown below. When there are no
 arguments, the parentheses can be omitted. As you might see,
 sending messages is very similar to calling methods in classical
 languages.
 
-\begin{urbiscript}[caption=Sending messages, label=lst:messages,
-  float=\floatpos]
+\begin{urbiscript}
 // Send the message msg to object obj, with arguments arg1 and arg2.
 obj.msg(arg1, arg2);
 // Send the message msg to object obj, with no arguments.
@@ -1285,10 +1249,9 @@ When a message ``msg'' is sent to object \lstinline|obj|:
   match the one required by the \lstinline|Routine|.
 \end{itemize}
 
-Such message sending is illustrated by \autoref{lst:send-message}.
+Such message sending is illustrated below.
 
-\begin{urbiscript}[caption=Sending messages, label=lst:send-message,
-  float=\floatpos]
+\begin{urbiscript}
 var o = Object.new;
 [00000000:hide] Object_0xADDR
 
@@ -1320,11 +1283,9 @@ o.b(50);
 \subsection{break}
 
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
-\lstinline|break| makes the execution jump after the loop. See
-\autoref{lst:break}.
+\lstinline|break| makes the execution jump after the loop.
 
-\begin{urbiscript}[caption=Using break, label=lst:break,
-  float=\floatpos]
+\begin{urbiscript}
 var i = 5;
 [00000000:hide] 5
 
@@ -1344,11 +1305,9 @@ for (; true; echo(i))
 
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|continue| short-circuits the rest of the loop-body, and
-runs the next iteration (if there remains one). See
-\autoref{lst:continue}.
+runs the next iteration (if there remains one).
 
-\begin{urbiscript}[caption=Using continue, label=lst:continue,
-  float=\floatpos]
+\begin{urbiscript}
 for (var i = 0; i < 8; i++)
 {
   if (i % 2 != 0)
@@ -1374,11 +1333,10 @@ do (\var{target})
 \end{urbifixme}
 
 It evaluates \var{body}, with \lstinline|this| being \var{target}, as
-shown in \autoref{lst:do}.  The whole construct evaluates to the value
+shown below.  The whole construct evaluates to the value
 of \var{body}.
 
-\begin{urbiscript}[caption=Using \lstinline|do|, label=lst:do,
-  float=\floatpos]
+\begin{urbiscript}
 var x = 1024;
 [00000000:hide] 1024
 
@@ -1433,11 +1391,10 @@ for (var \var{name} in \var{collection})
 
 It evaluates \var{body} for each element in \var{collection}. The loop
 evaluates to \lstinline|void|.  Inside \var{body}, the current element
-is accessible via the \var{name} local variable. \autoref{lst:foreach}
+is accessible via the \var{name} local variable. The listing below
 illustrates this.
 
-\begin{urbiscript}[caption=Iterating over a collection with for, label=lst:foreach,
-  float=\floatpos]
+\begin{urbiscript}
 for (var x in [0, 1, 2, 3, 4])
   echo(x.sqr);
 [00000000] *** 0
@@ -1565,7 +1522,7 @@ true. If such a match is found, the corresponding action is executed,
 and execution jumps after the \lstinline|switch|. Otherwise, the
 default case --- if any --- is executed, and execution jumps after the
 switch. The switch itself evaluates to case that was evaluated, or to
-void if no match was found and there's no default case. \autoref{lst:switch}
+void if no match was found and there's no default case. The listing below
 illustrates \lstinline|switch| usage.
 
 Unlike \C, there are no \lstinline|break| to end \lstinline|case|
@@ -1573,8 +1530,7 @@ clauses: execution will never span over several cases.  Since the
 comparisons are performed with the generic \lstinline|==| operator,
 \lstinline|switch| can be performed on any comparable data type.
 
-\begin{urbiscript}[caption=The \lstinline|switch| construct,
-  label=lst:switch, float=\floatpos]
+\begin{urbiscript}
 function sw(v)
 {
   switch (v)
@@ -1607,10 +1563,9 @@ while (\var{condition})
 
 If \var{condition} evaluation, is true, \var{body} is evaluated and
 execution jumps before the \lstinline|while|, otherwise execution
-jumps after the \lstinline|while|. See \autoref{lst:while}.
+jumps after the \lstinline|while|.
 
-\begin{urbiscript}[caption=The \lstinline|while| construct, label=lst:while,
-  float=\floatpos]
+\begin{urbiscript}
 var i = 3;
 [00000000:hide] 3
 
@@ -1630,14 +1585,13 @@ while (0 < i)
 \subsection{Throwing exceptions}
 
 Use the \lstinline|throw| keyword to \dfn[exception!throwing]{throw
-  exceptions}, as shown in \autoref{lst:throw}. Thrown exceptions will
+  exceptions}, as shown below. Thrown exceptions will
 break the execution upward until they are caught, or until they reach
 the toplevel --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
 the toplevel are printed, and won't abort the kernel --- other and new
 connections will continue to execute normally.
 
-\begin{urbiscript}[caption=Throwing exceptions, label=lst:throw,
-  float=\floatpos]
+\begin{urbiscript}
 throw 42;
 [00000000:error] !!! 42
 function inner() { throw "exn" } | {};
@@ -1667,10 +1621,9 @@ Exceptions thrown from the \texttt{try} block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
 control jumps after the whole try/catch block. If no catch clause
 matches, the exceptions isn't stopped and continues
-upward. \autoref{lst:catch} illustrates this.
+upward.
 
-\begin{urbiscript}[caption=Catching exceptions, label=lst:catch,
-  float=\floatpos]
+\begin{urbiscript}
 function test(e)
 {
   try

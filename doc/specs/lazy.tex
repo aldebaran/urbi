@@ -12,11 +12,9 @@ Lazies are seldom instantiated manually. They are mainly created
 automatically when a lazy function call is made (see
 \autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
 standard \lstinline|new| method of \lstinline|Lazy|, giving it an
-argument-less function which evaluates to the lazified value
-(\autoref{lst:new-lazy}).
+argument-less function which evaluates to the lazified value.
 
-\begin{urbiscript}[caption=Creating a lazy value, label=lst:new-lazy,
-  float=\floatpos]
+\begin{urbiscript}
 Lazy.new(closure () { /* Value to lazify */ });
 [00000000:hide] Lazy_0xADDR
 \end{urbiscript}
@@ -44,7 +42,7 @@ evaluating the expression several times uselessly.
 
 One usage of lazy values is to avoid evaluating an expression unless
 it's actually needed, because it's expensive or has undesired side
-effects. \autoref{lst:lazy-once} presents a situation where an
+effects. The listing below presents a situation where an
 expensive-to-compute value (\lstinline|heavy_computation|) might be
 needed zero, one or two times. The objective is to save time by:
 
@@ -56,7 +54,7 @@ needed zero, one or two times. The objective is to save time by:
 We thus make the wanted expression lazy, and use the \lstinline|value|
 method to fetch its value when needed.
 
-\begin{urbiscript}[caption=, label=lst:lazy-once, float=\floatpos]
+\begin{urbiscript}
 // This function supposedly performs expensive computations.
 function heavy_computation()
 {

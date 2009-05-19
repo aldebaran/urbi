@@ -28,9 +28,9 @@ List can be created with their literal syntax, as shown in
 
 % FIXME: link to predicate glossary entry
 Return whether all the members of the target verify the given
-predicate (\autoref{lst:list-all}).
+predicate.
 
-\begin{urbiscript}[caption=List.all, label=lst:list-all]
+\begin{urbiscript}
 // Are all elements positive?
 [-2, 0, 2, 4].all(function (e) { e > 0 });
 [00000000] false
@@ -43,9 +43,9 @@ predicate (\autoref{lst:list-all}).
 
 % FIXME: link to predicate glossary entry
 Return whether at least one of the members of the target verify the
-given predicate (\autoref{lst:list-any}).
+given predicate.
 
-\begin{urbiscript}[caption=List.any, label=lst:list-any]
+\begin{urbiscript}
 // Is there any even element?
 [-3, 1, -1].all(function (e) { e % 2 == 0 });
 [00000000] false
@@ -56,29 +56,27 @@ given predicate (\autoref{lst:list-any}).
 
 \subsubsection{asList}
 
-Return the target (\autoref{lst:list-asList}).
+Return the target.
 
-\begin{urbiscript}[caption=List.asList, label=lst:list-asList]
+\begin{urbiscript}
 [0, 1, 2].asList;
 [00000000] [0, 1, 2]
 \end{urbiscript}
 
 \subsubsection{asString}
 
-Return the target as a string describing the list
-(\autoref{lst:list-asString}).
+Return the target as a string describing the list.
 
-\begin{urbiscript}[caption=List.asString, label=lst:list-asString]
+\begin{urbiscript}
 [0, 1, 2].asString;
 [00000000] "[0, 1, 2]"
 \end{urbiscript}
 
 \subsubsection{back}
 
-Return the last element of the target. An error if the target is empty
-(\autoref{lst:list-back}).
+Return the last element of the target. An error if the target is empty.
 
-\begin{urbiscript}[caption=List.back, label=lst:list-back]
+\begin{urbiscript}
 [0, 1, 2].back;
 [00000000] 2
 [].back;
@@ -87,9 +85,9 @@ Return the last element of the target. An error if the target is empty
 
 \subsubsection{clear}
 
-Empty the target (\autoref{lst:list-clear}).
+Empty the target.
 
-\begin{urbiscript}[caption=List.clear, label=lst:list-clear]
+\begin{urbiscript}
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
 x.clear;
@@ -98,10 +96,9 @@ x.clear;
 
 \subsubsection{each}
 
-Apply the given functional value on all members (\autoref{lst:list-each})
-sequentially.
+Apply the given functional value on all members sequentially.
 
-\begin{urbiscript}[caption=List.each, label=lst:list-each]
+\begin{urbiscript}
 [0, 1, 2].each(function (v) {echo (v * v); echo (v * v)});
 [00000000] *** 0
 [00000000] *** 0
@@ -113,10 +110,9 @@ sequentially.
 
 \subsubsection{each\&}
 
-Apply the given functional value on all members simultaneously
-(\autoref{lst:list-each-and}).
+Apply the given functional value on all members simultaneously.
 
-\begin{urbiscript}[caption=List.each, label=lst:list-each-and]
+\begin{urbiscript}
 [0, 1, 2].'each&'(function (v) {echo (v * v); echo (v * v)});
 [00000000] *** 0
 [00000000] *** 1
@@ -128,9 +124,9 @@ Apply the given functional value on all members simultaneously
 
 \subsubsection{empty}
 
-Return whether the target is empty (\autoref{lst:list-empty}).
+Return whether the target is empty.
 
-\begin{urbiscript}[caption=List.empty, label=lst:list-empty]
+\begin{urbiscript}
 [].empty;
 [00000000] true
 [1].empty;
@@ -140,9 +136,9 @@ Return whether the target is empty (\autoref{lst:list-empty}).
 \subsubsection{filter}
 
 Return the list of all member of the target that verify the given
-predicate (\autoref{lst:list-filter}).
+predicate.
 
-\begin{urbiscript}[caption=List.filter, label=lst:list-filter]
+\begin{urbiscript}
 // Keep only odd numbers
 [0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1});
 [00000000] [1, 3, 5]
@@ -152,9 +148,7 @@ predicate (\autoref{lst:list-filter}).
 
 \fixme{This is too damn hard to explain, yet so simple.}
 
-(\autoref{lst:list-foldl}).
-
-\begin{urbiscript}[caption=List.foldl, label=lst:list-foldl]
+\begin{urbiscript}
 
 \end{urbiscript}
 
@@ -162,9 +156,9 @@ predicate (\autoref{lst:list-filter}).
 \label{sec:std-list-front}
 
 Return the first element of the target. An error if the target is
-empty (\autoref{lst:list-front}).
+empty.
 
-\begin{urbiscript}[caption=List.front, label=lst:list-front]
+\begin{urbiscript}
 [0, 1, 2].front;
 [00000000] 0
 [].front;
@@ -173,10 +167,9 @@ empty (\autoref{lst:list-front}).
 
 \subsubsection{has}
 
-Return whether one of the member of the target equals the argument
-(\autoref{lst:list-has}).
+Return whether one of the member of the target equals the argument.
 
-\begin{urbiscript}[caption=List.has, label=lst:list-has]
+\begin{urbiscript}
 [0, 1, 2].has(1);
 [00000000] true
 [0, 1, 2].has(5);
@@ -186,9 +179,9 @@ Return whether one of the member of the target equals the argument
 \subsubsection{hasSame}
 
 Return whether one of the member of the target is physically equal to
-the argument (\autoref{lst:list-hasSame}).
+the argument.
 
-\begin{urbiscript}[caption=List.hasSame, label=lst:list-hasSame]
+\begin{urbiscript}
 var x = 1;
 [00000000:hide] 1
 [0, x, 2].hasSame(1);
@@ -204,9 +197,9 @@ Synonym for \lstinline|front| (\autoref{sec:std-list-front}).
 \subsubsection{join}
 
 Concatenate all members of the target to form a string, separating
-them with the given separator (\autoref{lst:list-join}).
+them with the given separator.
 
-\begin{urbiscript}[caption=List.join, label=lst:list-join]
+\begin{urbiscript}
 ["b", "ob", "b"].join("a");
 [00000000] "baobab"
 \end{urbiscript}
@@ -214,9 +207,9 @@ them with the given separator (\autoref{lst:list-join}).
 \subsubsection{map}
 
 Apply the given functional value on every member, and return the list
-of results (\autoref{lst:list-map}).
+of results.
 
-\begin{urbiscript}[caption=List.map, label=lst:list-map]
+\begin{urbiscript}
 [0, 1, 2, 3].map(function (v) { v % 2 == 0});
 [00000000] [true, false, true, false]
 \end{urbiscript}
@@ -225,11 +218,11 @@ of results (\autoref{lst:list-map}).
 \label{sec:std-list-nth}
 
 Return the nth member of the target (indexing is zero-based). An error
-if out of bounds (\autoref{lst:list-nth}).
+if out of bounds.
 
 %\begin{urbiscript}[caption={\lstinline|List.'\[\]'|},
 %label=lst:list-nth]
-\begin{urbiscript}[caption={List}, label=lst:list-nth]
+\begin{urbiscript}
 var l = [0, 1, 2];
 [00000000:hide] [0, 1, 2]
 l[1];
@@ -241,9 +234,9 @@ l[3];
 \subsubsection{removeBack}
 
 Remove and return the last element of the target. An error if the
-target is empty (\autoref{lst:list-popback}).
+target is empty.
 
-\begin{urbiscript}[caption=List.removeBack, label=lst:list-popback]
+\begin{urbiscript}
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
 x.removeBack;
@@ -257,9 +250,9 @@ x;
 \subsubsection{removeFront}
 
 Remove and return the first element from the target. An error if the
-target is empty (\autoref{lst:list-popfront}).
+target is empty.
 
-\begin{urbiscript}[caption=List.removeFront, label=lst:list-popfront]
+\begin{urbiscript}
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
 x.removeFront;
@@ -273,10 +266,9 @@ x;
 \subsubsection{insertBack}
 \label{sec:std-list-pushback}
 
-Insert the given element at the end of the target
-(\autoref{lst:list-pushback}).
+Insert the given element at the end of the target.
 
-\begin{urbiscript}[caption=List.insertBack, label=lst:list-pushback]
+\begin{urbiscript}
 var x = [0, 1];
 [00000000] [0, 1]
 x.insertBack(2);
@@ -287,10 +279,9 @@ x;
 
 \subsubsection{insertFront}
 
-Insert the given element at the beginning of the target
-(\autoref{lst:list-pushfront}).
+Insert the given element at the beginning of the target.
 
-\begin{urbiscript}[caption=List.insertFront, label=lst:list-pushfront]
+\begin{urbiscript}
 var x = [1, 2];
 [00000000] [1, 2]
 x.insertFront(0);
@@ -302,9 +293,9 @@ x;
 \subsubsection{range}
 
 Return a sub-range of the string, from the first index included to the
-second index excluded. An error if out of bounds (\autoref{lst:list-range}).
+second index excluded. An error if out of bounds.
 
-\begin{urbiscript}[caption=List.range, label=lst:list-range]
+\begin{urbiscript}
 [0, 1, 2, 3].range(1, 3);
 [00000000] [1, 2]
 [].range(1, 3);
@@ -314,10 +305,9 @@ second index excluded. An error if out of bounds (\autoref{lst:list-range}).
 
 \subsubsection{remove}
 
-Remove all elements from the target that equals the argument
-(\autoref{lst:list-remove}).
+Remove all elements from the target that equals the argument.
 
-\begin{urbiscript}[caption=List.remove, label=lst:list-remove]
+\begin{urbiscript}
 var x = [0, 1, 0, 2, 0, 3];
 [00000000] [0, 1, 0, 2, 0, 3]
 x.remove(0);
@@ -329,9 +319,9 @@ x;
 \subsubsection{removeById}
 
 Remove all elements from the target that physically equals the
-argument (\autoref{lst:list-removeById}).
+argument.
 
-\begin{urbiscript}[caption=List.removeById, label=lst:list-removeById]
+\begin{urbiscript}
 var x = 1;
 [00000000] 1
 var l = [0, 1, x, 1, 2];
@@ -344,10 +334,9 @@ l;
 
 \subsubsection{reverse}
 
-Return the target with the order of elements inverted
-(\autoref{lst:list-reverse}).
+Return the target with the order of elements inverted.
 
-\begin{urbiscript}[caption=List.reverse, label=lst:list-reverse]
+\begin{urbiscript}
 [0, 1, 2].reverse;
 [00000000] [2, 1, 0]
 \end{urbiscript}
@@ -355,10 +344,10 @@ Return the target with the order of elements inverted
 \subsubsection{==}
 
 Check whether all elements in the target and the first argument, are
-equal two by two (\autoref{lst:list-sameAs}).
+equal two by two.
 
 %\begin{urbiscript}[caption={\lstinline|List.==|}, label=lst:list-sameAs]
-\begin{urbiscript}[caption={List}, label=lst:list-sameAs]
+\begin{urbiscript}
 [0, 1, 2] == [0, 1, 2];
 [00000000] true
 [0, 1, 2] == [0, 0, 2];
@@ -368,11 +357,10 @@ equal two by two (\autoref{lst:list-sameAs}).
 \subsubsection{[]=}
 \label{sec:std-list-setnth}
 
-Assign a value to the element of the target at the given index
-(\autoref{lst:list-setNth}).
+Assign a value to the element of the target at the given index.
 
 %\begin{urbiscript}[caption={\lstinline|List.'\[\]='|}, label=lst:list-setNth]
-\begin{urbiscript}[caption={List}, label=lst:list-setNth]
+\begin{urbiscript}
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
 x[1] = 42;
@@ -383,9 +371,9 @@ x;
 
 \subsubsection{size}
 
-Return the number of elements in the target (\autoref{lst:list-size}).
+Return the number of elements in the target.
 
-\begin{urbiscript}[caption=List.size, label=lst:list-size]
+\begin{urbiscript}
 [1, 2, 3].size;
 [00000000] 3
 [].size;
@@ -394,10 +382,9 @@ Return the number of elements in the target (\autoref{lst:list-size}).
 
 \subsubsection{sort}
 
-Return the target, sorted with respect to the \lstinline|<| criteria
-(\autoref{lst:list-sort}).
+Return the target, sorted with respect to the \lstinline|<| criteria.
 
-\begin{urbiscript}[caption=List.sort, label=lst:list-sort]
+\begin{urbiscript}
 [1, 0, 3, 2].sort;
 [00000000] [0, 1, 2, 3]
 \end{urbiscript}
@@ -405,9 +392,9 @@ Return the target, sorted with respect to the \lstinline|<| criteria
 \subsubsection{tail}
 
 Return the target, minus the first element. An error if the target is
-empty (\autoref{lst:list-tail}).
+empty.
 
-\begin{urbiscript}[caption=List.tail, label=lst:list-tail]
+\begin{urbiscript}
 [0, 1, 2].tail;
 [00000000] [1, 2]
 [].tail;
@@ -417,21 +404,20 @@ empty (\autoref{lst:list-tail}).
 \subsubsection{*}
 
 Return the target, concatenated n times to itself, n being the
-argument (\autoref{lst:list-times}).
+argument.
 
 %\begin{urbiscript}[caption={\lstinline|List.'*'|}, label=lst:list-times]
-\begin{urbiscript}[caption={List.'*'}, label=lst:list-times]
+\begin{urbiscript}
 [0, 1] * 3;
 [00000000] [0, 1, 0, 1, 0, 1]
 \end{urbiscript}
 
 \subsubsection{+}
 
-Return the concatenation of the target and the given list
-(\autoref{lst:list-plus}).
+Return the concatenation of the target and the given list.
 
 %\begin{urbiscript}[caption={\lstinline|List.'+'|}, label=lst:list-plus,
-\begin{urbiscript}[caption={List.'+'}, label=lst:list-plus,
+\begin{urbiscript}
   float=\floatpos]
 [0, 1] + [2, 3];
 [00000000] [0, 1, 2, 3]
@@ -440,11 +426,10 @@ Return the concatenation of the target and the given list
 \subsubsection{-}
 
 Return the target without all element that equals any element in the
-given list(\autoref{lst:list-minus}).
+given list.
 
 %\begin{urbiscript}[caption={\lstinline|List.'-'|}, label=lst:list-minus,
-\begin{urbiscript}[caption={List.'-'}, label=lst:list-minus,
-  float=\floatpos]
+\begin{urbiscript}
 [0, 1, 0, 2, 3] - [1, 2];
 [00000000] [0, 0, 3]
 \end{urbiscript}
@@ -457,12 +442,10 @@ A synonym for \lstinline|insertBack| (\autoref{sec:std-list-pushback}).
 
 Return whether the target is inferior to the given list. A list is
 inferior to another if at least one of its element differs from the
-other, and the first differing element is inferior to the other
-(\autoref{lst:list-inf}).
+other, and the first differing element is inferior to the other.
 
 %\begin{urbiscript}[caption={\lstinline|List.'<'|}, label=lst:list-inf,
-\begin{urbiscript}[caption={List.'<'}, label=lst:list-inf,
-  float=\floatpos]
+\begin{urbiscript}
 [0, 1, 2] < [0, 1, 2];
 [00000000] false
 [0, 1, 2] < [0, 0, 2];
