@@ -488,6 +488,7 @@ namespace urbi
 
   UObject::UObject(const std::string& name)
     : __name(name)
+    , autogroup(false)
     , load(name, "load")
   {
     ECHO( "Uobject ctor for " << __name );
