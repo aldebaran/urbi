@@ -59,6 +59,13 @@ namespace object
     return dynamic_cast<runner::Interpreter&>(runner());
   }
 
+  static inline
+  sched::Scheduler&
+  scheduler()
+  {
+    return runner().scheduler_get();
+  }
+
   // Extract a filename from a String or a Path object
   static std::string
   filename_get(const rObject& o)
@@ -141,7 +148,7 @@ namespace object
   static float
   system_time()
   {
-    return runner().scheduler_get().get_time() / 1000000.0;
+    return scheduler().get_time() / 1000000.0;
   }
 
   static float
@@ -230,7 +237,7 @@ namespace object
   static float
   system_cycle()
   {
-    return runner().scheduler_get().cycle_get();
+    return scheduler().cycle_get();
   }
 
   static libport::Symbol
@@ -278,8 +285,7 @@ namespace object
   static rObject
   system_stats()
   {
-    const sched::scheduler_stats_type& stats =
-      runner().scheduler_get().stats_get();
+    const sched::scheduler_stats_type& stats = scheduler().stats_get();
 
     // If statistics have just been reset, return "nil" since we cannot
     // return anything significant.
@@ -305,7 +311,7 @@ namespace object
   static void
   system_resetStats()
   {
-    runner().scheduler_get().stats_reset();
+    scheduler().stats_reset();
   }
 
   // This should give a backtrace as an urbi object.
@@ -326,7 +332,7 @@ namespace object
   system_jobs()
   {
     List::value_type res;
-    foreach(sched::rJob job, runner().scheduler_get().jobs_get())
+    foreach(sched::rJob job, scheduler().jobs_get())
       res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
     return res;
   }
