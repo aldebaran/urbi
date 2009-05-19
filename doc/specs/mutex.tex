@@ -1,6 +1,6 @@
 \section{Mutex}
 
-Mutex are objects that allows you to define critical sections in your code.
+\dfn{Mutex} allow to define critical sections.
 
 \subsection{Prototypes}
 \begin{itemize}
@@ -18,11 +18,11 @@ var m = Mutex.new;
 You can define critical sections by tagging your code using the Mutex.
 
 \begin{urbiscript}
-var m = Mutex.new | {}
+var m = Mutex.new |
 m: echo("this is critical section");
 \end{urbiscript}
 
-As a critical section, two piece of code tagged by the same ``Mutex'' will never be executed at the same time.
+As a critical section, two pieces of code tagged by the same ``Mutex'' will never be executed at the same time.
 
 %%% Local Variables:
 %%% mode: latex
