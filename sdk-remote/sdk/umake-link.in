@@ -30,8 +30,8 @@ EOF
 version ()
 {
     cat <<\EOF
-URBI Make Link
-@PACKAGE_STRING@
+umake-link @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
 EOF
     exit 0
 }

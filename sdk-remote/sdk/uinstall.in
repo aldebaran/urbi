@@ -17,8 +17,8 @@ EOF
 version ()
 {
   cat <<\EOF
-URBI Make @PACKAGE_VERSION@
-$Id$
+uinstall @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
 EOF
   exit 0
 }

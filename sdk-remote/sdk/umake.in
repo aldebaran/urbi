@@ -44,8 +44,8 @@ EOF
 version ()
 {
   cat <<\EOF
-URBI Make @PACKAGE_VERSION@
-$Id$
+umake @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
 EOF
   exit 0
 }
