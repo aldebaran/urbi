@@ -1,0 +1,45 @@
+\section{Timeout}
+
+\dfn{Timeout} allow to tag some pieces of code which should be executed in limited time.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Tag}
+\end{itemize}
+
+\subsection{Construction}
+A Timeout can be constructed like any other Tag but without name and
+with time and optional if you want object Timeout to throw exception
+or not in case of timeout. By default, Timeout throws exception.
+
+\begin{urbiscript}
+var t = Timeout.new(300ms, false);
+[00000000] Timeout_0x953c1e0
+\end{urbiscript}
+
+Use it as a tag :
+
+\begin{urbiscript}
+var t = Timeout.new(300ms, false);
+[00000000] Timeout_0x953c1e0
+t:{
+  echo("This code will execute.");
+  sleep(350ms);
+  echo("But not this one.");
+};
+[00000000] *** This code will execute.
+\end{urbiscript}
+
+Even if exception has been disabled in constructor, you can know if your piece of code has timed out or not using the member ``timedOut''.
+
+\begin{urbiscript}
+t:sleep(350ms);
+if (t.timedOut)
+  echo("Your code has just timed out !");
+[00000000] *** Your code has just timed out !
+\end{urbiscript}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
