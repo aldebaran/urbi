@@ -278,7 +278,6 @@ namespace object
   static rObject
   system_stats()
   {
-    Dictionary::value_type res;
     const sched::scheduler_stats_type& stats =
       runner().scheduler_get().stats_get();
 
@@ -289,6 +288,7 @@ namespace object
 
     // The space after "Symbol(" is mandatory to avoid triggering an error in
     // symbol generation code
+    Dictionary::value_type res;
 #define ADDSTAT(Suffix, Function, Divisor)      \
     res[libport::Symbol("cycles" # Suffix)] =   \
       new Float(stats.Function() / Divisor)
