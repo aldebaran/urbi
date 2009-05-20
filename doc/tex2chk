@@ -21,6 +21,15 @@ my %chk;
 # Those with a name.
 my %by_name;
 
+# lineno
+# ------
+# Issue an urbiScript //#line for test $lst.
+sub lineno (\%)
+{
+  my ($lst) = @_;
+  "//#line ${%$lst}{_line} \"${%$lst}{_file}\"\n";
+}
+
 # register ($FILE, $LINE, \%LST)
 # ------------------------------
 # Register a listing.
@@ -36,7 +45,7 @@ sub register ($$\%)
         {
           ${%{$by_name{$name}}}{_contents} .=
             "\n\n"
-            . "//#line ${%$lst}{_line} \"${%$lst}{_file}\"\n"
+            . lineno(%$lst)
             . ${%$lst}{_contents};
           return;
         }
@@ -166,7 +175,7 @@ sub dump_chk ($)
     push @file, $file;
     my $out = new IO::File ">$file.tmp"
         or die "cannot create $file.tmp: $!";
-    print $out "//#line $c{_line} \"$c{_file}\"\n";
+    print $out lineno(%c);
     print $out "$c{_contents}\n";
     system ("$ENV{move_if_change} -I '^//' $file.tmp $file") == 0
       or die "$ENV{move_if_change} failed: $?";
