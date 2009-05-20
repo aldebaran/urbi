@@ -481,7 +481,7 @@ slots, \lstinline{a} and \lstinline{b}, with values \lstinline|42| and
 \lstinline{setSlot} method, which takes the slot name and
 its value.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 o.setSlot("a", 42);
 [00000000] 42
 o.slotNames;
@@ -493,7 +493,7 @@ o.a;
 Here we successfully created our first slot, a. A good shorthand for
 setting slot is using the \lstinline{var} keyword.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
@@ -514,7 +514,7 @@ names are unknown at code-writing time.
 
 % mefyl: FIXME: I never introduced that '+' concatenates strings.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 function set(object, name, value)
 {
   // We have to use setSlot here, since we don't
@@ -549,7 +549,7 @@ one, and it's named\ldots \lstinline{updateSlot} (originality
 award). Getting back to our \lstinline{o} object, let's try to update one
 of its slots.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 o.a;
 [00000000] 42
 o.updateSlot("a", 51);
@@ -561,7 +561,7 @@ o.a;
 Again, there's a shorthand for \lstinline{updateSlot}: operator
 \lstinline{=}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 o.b;
 [00000000] "foo"
 // Equivalent to o.updateSlot("b", "bar")
@@ -579,7 +579,7 @@ Note that defining the same slot twice, be it with \lstinline{setSlot} or
 \lstinline{var}, is an error. The slot must be defined once with setSlot,
 and subsequent writes must be done with \lstinline{updateSlot}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var o.c = 0;
 [00000000] 0
 // Can't redefine a slot like this
@@ -592,7 +592,7 @@ o.c = 1;
 
 Finally, use \lstinline{removeSlot} to delete a slot from an object.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 o.slotNames.sort;
 [00000000] ["a", "b", "c"]
 o.removeSlot("c");
@@ -606,7 +606,7 @@ hesitate to explore \us objects you'll encounter through this
 documentation like this. Last point: reading, updating or removing a
 slot which does not exist is, of course, an error.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 o.d;
 [00000000:error] !!! lookup failed: d
 o.d = 0;
@@ -790,7 +790,7 @@ integer, while \lstinline|b| points to a second one. This a
 non-trivial fact: any modification on \lstinline|a| will affect
 \lstinline|c| as well, as shown below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 a.slotNames;
 [00000000] []
 b.slotNames;
@@ -1230,7 +1230,7 @@ p.protos;
 As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
 which is Pair. We can check this as presented below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Lists 'head' method returns the first element
 p.protos.head;
 [00000000] (nil, nil)
@@ -1399,7 +1399,7 @@ o1.x;
 This work thanks to copy-on-write: slots are first duplicated to the
 local object when they're updated, as we can check below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // This is the continuation of previous example.
 
 // As expected, o2 finds "x" in proto
@@ -1495,13 +1495,12 @@ new. For instance, we can improve our previous \lstinline{Pair} class
 with a constructor.
 
 \begin{urbiscript}
-do (MyPair)
+class MyPair
 {
-  function init(f, s)
-  {
-    first = f;
-    second = s;
-  }
+  var first = nil;
+  var second = nil;
+  function init(f, s) { first = f;   second = s;  };
+  function asString() { "(" + first + ", " + second + ")"; };
 };
 [00000000] (nil, nil)
 MyPair.new(0, 1);

@@ -20,9 +20,7 @@ var t = Timeout.new(300ms, false);
 
 Use it as a tag :
 
-\begin{urbiscript}
-var t = Timeout.new(300ms, false);
-[00000000] Timeout_0x953c1e0
+\begin{urbiscript}[firstnumber=last]
 t:{
   echo("This code will execute.");
   sleep(350ms);
@@ -34,7 +32,7 @@ t:{
 Even if exception has been disabled in constructor, you can know if
 your piece of code has timed out or not using the member ``timedOut''.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 t:sleep(350ms);
 if (t.timedOut)
   echo("Your code has just timed out !");
