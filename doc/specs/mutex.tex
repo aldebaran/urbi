@@ -20,9 +20,11 @@ You can define critical sections by tagging your code using the Mutex.
 \begin{urbiscript}
 var m = Mutex.new |
 m: echo("this is critical section");
+[00000001] *** this is critical section
 \end{urbiscript}
 
-As a critical section, two pieces of code tagged by the same ``Mutex'' will never be executed at the same time.
+As a critical section, two pieces of code tagged by the same ``Mutex''
+will never be executed at the same time.
 
 %%% Local Variables:
 %%% mode: latex

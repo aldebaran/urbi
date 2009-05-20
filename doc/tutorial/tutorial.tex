@@ -1552,14 +1552,17 @@ function all(list, predicate)
       return false;
   return true;
 } | {};
-// now we can easily check if
-// all elements in a list are positive
+// Check if all elements in a list are positive.
 function positive(x) { x >= 0 } | {};
 all([1, 2, 3], getSlot("positive"));
 [00000000] true
 all([1, 2, -3], getSlot("positive"));
 [00000000] false
 \end{urbiscript}
+
+It turns out that \lstinline|all| already exists: instead of
+\lstinline|all(\var{list}, \var{predicate})|, use
+\lstinline|\var{list}.all(\variables{predicate})|, see \refObject{List}.
 
 \section{Lambda functions}
 
@@ -1572,7 +1575,7 @@ expression, without naming it, with the syntax shown below.
 function (x) {x + 1} | {};
 // This enable to easily pass function
 // to our "all" function:
-all([1, 2, 3], function (x) { x > 0});
+[1, 2, 3].all(function (x) { x > 0});
 [00000000] true
 \end{urbiscript}
 
@@ -1723,7 +1726,13 @@ rather subtle:
 \end{itemize}
 
 \begin{urbiscript}
-// This runs test and echo("right") in parallel,
+function test(name)
+{
+  echo(name + ": 1");
+  echo(name + ": 2");
+  echo(name + ": 3");
+} | {};
+// Run test and echo("right") in parallel,
 // and wait until both are done before continuing
 test("left") & echo("right"); echo("done");
 [00000000] *** left: 1
@@ -1731,8 +1740,7 @@ test("left") & echo("right"); echo("done");
 [00000000] *** left: 2
 [00000000] *** left: 3
 [00000000] *** done
-// This runs test in background,
-// then both echos without waiting.
+// Run test in background, then both echos without waiting.
 test("left") , echo("right"); echo("done");
 [00000000] *** left: 1
 [00000000] *** right
