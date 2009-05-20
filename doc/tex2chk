@@ -176,6 +176,9 @@ sub dump_chk ($)
       or die "cannot create $local_mk: $!";
   # Do not include the ../.. stuff in the Makefile.
   @file = map { s,^$ENV{srcdir}/,,; $_ } @file;
+  # Output in order.  It would be nice to have a combinaison between
+  # alphabetical and numerical, so that abc-2 < abc-10.
+  @file = sort @file;
   print $mk join ("\t\\\n  ", "TESTS += ", @file), "\n";
 }
 
