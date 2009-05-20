@@ -30,4 +30,15 @@ do (Float)
       Float.random_counter = (random_counter + 1) % random_values.size;
       res
     }
-} | {};
+}|
+
+// Likewise for String.fresh
+do (String)
+{
+  var counter_ = 5;
+  removeSlot("fresh");
+  function fresh ()
+  {
+    this + "_" + counter_++;
+  }
+}|
