@@ -21,6 +21,9 @@ my %chk;
 # Those with a name.
 my %by_name;
 
+# The name of the previous test.
+my $previous_label = undef;
+
 # lineno
 # ------
 # Issue an urbiScript //#line for test $lst.
@@ -54,17 +57,31 @@ sub register ($$\%)
           $by_name{$name} = $lst;
         }
     }
+
   my $label = ${%$lst}{label};
   if ($chk{$label})
     {
+      # Collision.
       print STDERR
         "warning: label `$label' defined twice\n",
         "  ${%{$chk{$label}}}{_location}: first definition\n",
         "  $file:$line: second definition\n";
     }
+  elsif (exists ${%$lst}{firstnumber}
+         && ${%$lst}{firstnumber} eq "last")
+    {
+      print STDERR "{{${%{$chk{$previous_label}}}{_contents}}}\n";
+      # Extension of the previous listing.
+      ${%{$chk{$previous_label}}}{_contents} .=
+        "\n\n"
+        . lineno(%$lst)
+        . ${%$lst}{_contents};
+      print STDERR "{{${%{$chk{$previous_label}}}{_contents}}}\n";
+    }
   else
     {
       $chk{$label} = $lst;
+      $previous_label = $label;
     }
 }
 
