@@ -47,9 +47,9 @@ $10^{80}$).
 Urbi is based on prototypes. To create a new Object derivative (which
 will inherit all the Object methods), you can do:
 
-\begin{urbifixme}
+\begin{urbiscript}
 var myObject = Object.new;
-\end{urbifixme}
+\end{urbiscript}
 
 \paragraph{How do I destroy an Object}
 There is no \lstinline{delete} in Urbi, for a number of reasons (see
@@ -69,62 +69,68 @@ to this object.
 
 \paragraph{How do I add a new slot in an object?}
 To add a slot to an object \lstinline{O}, you have to use the
-\lstinline{var} keyword:
+\lstinline{var} keyword, which is syntactic sugar for the
+\lstinline{setSlot} method:
+\begin{urbiscript}
+var O = Object.new |
+// Syntax...
+var O.mySlot1 = 42;
+[00000001] 42
 
-\begin{urbifixme}
-var O.mySlot = 42;
-\end{urbifixme}
-
-\noindent
-or you can use the \lstinline{setSlot} method:
-
-\begin{urbifixme}
-O.setSlot("mySlot", 42);
-\end{urbifixme}
+// and semantics.
+O.setSlot("mySlot2", 23);
+[00000001] 23
+\end{urbiscript}
 
 Note that in a method, \lstinline{this} designates the current
-object. For example,
+object.  It is needed to distinguish the name of a slot in the current
+object, versus a local variable name:
 
-\begin{urbifixme}
-var this.mySlot = 42;
+\begin{urbiscript}
+{
+  // Create a new slot in the current object.
+  var this.foo = 42;
+
+  // Create a local variable, which will not be known anymore
+  // after we exit the current scope.
+  var bar = 23;
+}|
+bar
+foo
+[00000001] 23
 \end{urbifixme}
 
-\noindent
-will create a new slot in the current object while
-
-\begin{urbifixme}
-var mySlot = 42;
-\end{urbifixme}
-
-\noindent
-will create a local variable, which will not be known anymore after we
-exist the current scope.
 
 \paragraph{How do I modify a slot of my object?}
 
-\begin{urbifixme}
+Use the \lstinline|=| operator, which is syntactic sugar for the
+\lstinline|updateSlot| method.
+
+\begin{urbiscript}
+class O
+{
+  mySlot = 42;
+}|
+// Sugarful.
 O.mySlot = 51;
-\end{urbifixme}
+[00000001] 51
 
-\noindent
-which is syntactic sugar for
-
-\begin{urbifixme}
-O.updateSlot("mySlot", 51);
-\end{urbifixme}
+// Sugarfree.
+O.updateSlot("mySlot", 23);
+[00000001] 23
+\end{urbiscript}
 
 \paragraph{How do I create or modify a local variable?}
-\begin{urbifixme}
+Use \lstinline|var| and \lstinline|=|.
+
+\begin{urbiscript}
+// In two steps: definition, and initial assignment.
 var myLocalVariable;
 myLocalVariable = "foo";
-\end{urbifixme}
 
-\noindent
-or
-
-\begin{urbifixme}
-var myLocalVariable = "foo";
-\end{urbifixme}
+// In a single step: definition with an initial value.
+var myOtherLocalVariable = "bar";
+\end{urbiscript}
 
 
 \paragraph{How do I make a constructor?}
@@ -199,25 +205,11 @@ class myObject {
 
 \subsection{Tags}
 \paragraph{How do I create a tag?}
-
-
-Tags are objects, and must be created as any object by using
-\lstinline{new} to create derivatives of the \lstinline{Tag} object.
-
-\begin{urbifixme}
-var myTag = Tag.new;
-\end{urbifixme}
-
-or
-
-\begin{urbifixme}
-var myTag = Tag.new("cool name");
-\end{urbifixme}
-
-The name is not mandatory but makes it easier to display a tag and remember
-what it is.
+See \autoref{stdlib:tag:ctor}.
 
 \paragraph{How do I stop a tag?}
+
+Use the \lstinline|stop| method.
 \begin{urbifixme}
 myTag.stop;
 \end{urbifixme}
@@ -259,6 +251,7 @@ var ev = Event.new;
 \end{urbifixme}
 
 \paragraph{How do I emit an event?}
+Use the \lstinline|!| operator.
 
 \begin{urbifixme}
 ev!(1, "foo");
@@ -266,10 +259,11 @@ ev!(1, "foo");
 
 \paragraph{How do I catch an event?}
 
+Use the \lstinline|at(\var{event}?\var{args})| construct.
+
 \begin{urbifixme}
-at(ev?(1, var msg)) {
+at(ev?(1, var msg))
   echo ("Received event with 1 and message " + msg);
-};
 \end{urbifixme}
 
 The \lstinline{?} marker indicates that we are looking for an event
@@ -282,8 +276,8 @@ whatever value is present in the event that triggered the
 \subsection{Lists}
 \paragraph{How can I iterate over a list?}
 
-You can use the \lstinline{for} construct to iterate over the elements
-of a list:
+Use the \lstinline{for} construct (\autoref{sec:lang:for:each}), or
+the \lstinline|each| method (\refObject{List}):
 
 \begin{urbiscript}
 for (var i: [10, 11, 12]) echo (i);

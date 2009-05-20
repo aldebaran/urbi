@@ -1,7 +1,33 @@
 \section{Tag}
 
 A Tag is an object which you can use to tag some blocs of code.
-Tagged code can be freezed, resumed, stopped\ldots See also \autoref{sec:tut:tags}.
+Tagged code can be freezed, resumed, stopped\ldots See also
+\autoref{sec:tut:tags}.
+
+\subsection{Construction}
+\label{stdlib:tag:ctor}
+
+Tags are objects, and must be created as any object by using
+\lstinline{new} to create derivatives of the \lstinline{Tag} object.
+The name is optional, it makes easier to display a tag and remember
+what it is.
+
+\begin{urbiscript}
+// Anonymous tag.
+var t1 = Tag.new;
+[00000001] Tag<tag_5>
+
+// Named tag.
+var t2 = Tag.new("cool name");
+[00000001] Tag<cool name>
+\end{urbiscript}
+
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|stop|~\\
+  Stop any code tagged by \lstinline|this|.
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex
