@@ -1,55 +1,22 @@
-\chapter*{Introduction}
+\chapter*{About this part}
 
-\section*{Status of this document}
-
-This document defines the specifications of the \us language version
+This part defines the specifications of the \us language version
 2.0. It defines the expected behavior from the \us interpreter, the
-standard library, and the \sdk. It can be used to check whether some code
-is valid, or browse \us or \Cxx \api for a desired feature. Random reading
-can also provide you with
-advanced knowledge or subtleties about some \us aspects.
+standard library, and the \sdk. It can be used to check whether some
+code is valid, or browse \us or \Cxx \api for a desired
+feature. Random reading can also provide you with advanced knowledge
+or subtleties about some \us aspects.
 
-This document is not an \us tutorial; it is not structured in a
-progressive manner and is too
-detailed. Think of this document as a dictionary: one does not
-learn a foreign language by reading a dictionary. The \us Tutorial, or
-the live \us tutorial built in the interpreter are good introductions
-to \us.
+This part is not an \us tutorial; it is not structured in a
+progressive manner and is too detailed.  Think of it as a dictionary:
+one does not learn a foreign language by reading a dictionary. The \us
+Tutorial (\autoref{part:tut}), or the live \us tutorial built in the
+interpreter are good introductions to \us.
 
-This document does not aim at giving advanced programming
-techniques. Its only goal is to define the language and its
-libraries.
+This part does not aim at giving advanced programming techniques. Its
+only goal is to define the language and its libraries.
 
-\section*{\us}
-
-\dfn[urbiscript@\us]{\us} is an interpreted language designed for highly
-interactive and parallel behavior programming. %FILLME
-
-\section*{Structure of this document}
-
-This document structured as follows:
-
-\begin{description}
-  \newcommand{\xitem}[2]{\item[\autoref{#1} --- #2]~\\}
-\xitem{sec:tools}{Tools specifications}%
-  Presentation and usage of the different tools available with the
-  \urbi framework related to \us, such as the \urbi server, the
-  command line client, \umake, \ldots
-
-\xitem{sec:lang}{\us language specifications}%
-  Core constructs of the language and their behavior.
-
-\xitem{sec:stdlib}{\us standard library specifications}%
-  Listing of all classes and methods provided in the standard library.
-
-\xitem{sec:sdk}{\urbi \sdk specifications}%
-  The \urbi software development kit that enable to
-  interact with \urbi from \Cxx.
-\end{description}
 
 \input{specs/tools}
-\FloatBarrier
 \input{specs/lang}
-\FloatBarrier
 \input{specs/stdlib}
-\FloatBarrier

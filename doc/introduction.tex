@@ -38,6 +38,74 @@ document, \href{\docurl/urbi-sdk.pdf}{urbi-sdk.pdf}, and as HTML
 pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 
 
+\section*{Outline}
+
+\newenvironment{partDescription}[2]
+{%
+  \paragraph{\autoref{#1} --- #2}%
+  \begin{description}%
+    \newcommand{\xitem}[2]{\item[\autoref{##1} --- ##2]~\\}%
+  }
+  {%
+  \end{description}%
+}
+
+\begin{partDescription}{part:tut}{Urbi SDK Tutorial}
+\xitem{sec:tut:started}{Getting Started}
+  Quick-install guide.
+\xitem{sec:tut:first}{First Steps}
+  First contact with \us.
+\xitem{sec:tut:value}{Basic objects, \us values model}
+  A quick introduction to objects and values.
+\xitem{sec:tut:flow}{Flow control constructs}
+  Basic control flow: \lstinline{if}, \lstinline{for} and the like.
+\xitem{sec:tut:function}{Advanced functions and scoping}
+  Details about functions, scoped, and lexical closures.
+\xitem{sec:tut:object}{Objective programming, \us object model}
+  A more in-depth introduction to object-oriented programming in \us.
+\xitem{sec:tut:functional}{Function programming}
+  Functions are first-class citizens.
+\xitem{sec:tut:concurrent}{Parallelism, concurrent flows control}
+  The \us operators for concurrency, tags.
+\xitem{sec:tut:event-prog}{Event-based programming}
+  Support for event-driven concurrency in \us.
+\end{partDescription}
+
+\begin{partDescription}{part:install}{Installation}
+\xitem{sec:installation}{Installation}
+  Complete instructions on how to install \urbi SDK.
+\end{partDescription}
+
+\begin{partDescription}{part:guide}{Guidelines and Cook Books}
+\xitem{sec:faq}{Frequently Asked Questions}
+  Some answers to common questions.
+\end{partDescription}
+
+\begin{partDescription}{part:specs}{Urbi SDK Specifications}
+\xitem{sec:tools}{Tools specifications}%
+  Presentation and usage of the different tools available with the
+  \urbi framework related to \us, such as the \urbi server, the
+  command line client, \umake, \ldots
+
+\xitem{sec:lang}{\us language specifications}%
+  Core constructs of the language and their behavior.
+
+\xitem{sec:stdlib}{\us standard library specifications}%
+  Listing of all classes and methods provided in the standard library.
+
+\xitem{sec:tut:uobject}{UObject Tutorial}%
+  How to write \Cxx components to enrich \us, either with new
+  low-level software modules, or with drivers to sensors or effectors.
+
+%\xitem{sec:sdk}{\urbi \sdk specifications}%
+%  The \urbi software development kit that enable to
+%  interact with \urbi from \Cxx.
+\end{partDescription}
+
+%\begin{partDescrption}{part:ref}{References and Index}
+%\end{partDescrption}
+
+
 %% \paragraph{Thanks}
 %% The \us language what first designed and implemented by
 %% Jean-Christophe Baillie, together with Matthieu Nottale.  Because

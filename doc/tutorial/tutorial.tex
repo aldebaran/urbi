@@ -1,5 +1,5 @@
 \chapter{Getting started}
-
+\label{sec:tut:started}
 \us comes with a set of tools, two of which being of particular
 importance:
 \begin{description}
@@ -142,7 +142,7 @@ simpler start anew: shut your current server down, and spawn a new
 one.
 
 \chapter{First steps}
-
+\label{sec:tut:first}
 This section intends to provide the most basic notions to write \us
 code. Some aspects are presented only superficially. The point of this
 section is to bootstrap yourself with the \us language, to be able
@@ -416,11 +416,12 @@ You're now up and running with basic \us code, and we can dive in
 details into advanced \us code.
 
 \chapter{Basic objects, \us values model} % FIXME: values model
+\label{sec:tut:value}
 
-In this section, we focus on urbi values as objects, and study \us
+In this section, we focus on \urbi values as objects, and study \us
 by-reference values model. We won't study classes and actual objective
 programming yet, these points will be presented in
-\autoref{section:objective}.
+\autoref{sec:tut:object}.
 
 \section{Objects in \us}
 \label{sec:tut:objects}
@@ -875,6 +876,7 @@ otherwise you will end up modifying variables you didn't want, or
 change a copy of reference, failing to update the desired one.
 
 \chapter{Flow control constructs}
+\label{sec:tut:flow}
 
 In this section, we'll introduce some flow control structures that
 will prove handy later. Most of them are inspired by \C/\Cxx.
@@ -1022,6 +1024,7 @@ do (o)
 %\section{Conclusion} FIXME?
 
 \chapter{Advanced functions and scoping}
+\label{sec:tut:function}
 
 This section presents advanced uses of functions and scoping, as well
 as their combo: lexical closures, which prove to be a very powerful
@@ -1143,12 +1146,12 @@ y;
 
 Closure can be really powerful tools in some situation, and they are
 even more useful when combined with functional programing, as
-described in \autoref{section:functional}.
+described in \autoref{sec:tut:functional}.
 
 %\section{Conclusion}
 
 \chapter{Objective programming, \us object model}
-\label{section:objective}
+\label{sec:tut:object}
 
 % FIXME: this section content will soon become mostly crap
 
@@ -1510,7 +1513,7 @@ MyPair.new(0, 1);
 %\section{Conclusion}
 
 \chapter{Functional programming}
-\label{section:functional}
+\label{sec:tut:functional}
 
 \us support functional programming through first class functions and
 lambda expressions.
@@ -1651,6 +1654,7 @@ myand(true, f());
 %\section{Pattern matching}
 
 \chapter{Parallelism, concurrent flows control}
+\label{sec:tut:concurrent}
 
 Parallelism is one of the major features of \us. So far, all we've
 seen already existed in other language - although we tried to pick,

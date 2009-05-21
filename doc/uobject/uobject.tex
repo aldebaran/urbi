@@ -1,4 +1,5 @@
 \chapter{UObject Tutorial}
+\label{sec:tut:uobject}
 
 This chapter guides you through the various steps of writing an \urbi
 \Cxx component using the UObject API. This API can be used to add new
@@ -783,8 +784,8 @@ Sound handling works similarly to image manipulation, the
 \lstinline{USound} structure is provided for this purpose. The
 recommended way to implement a microphone is to fill the
 \lstinline{UObject} val variable with the sound data corresponding to
-one kernel period. If you do so, the \urbi code \lstinline{loop
-  tag:micro.val,} will produce the expected result.
+one kernel period. If you do so, the \urbi code
+\lstinline{loop tag:micro.val,} will produce the expected result.
 
 \subsection{Writing a softdevice: ball detection}
 
