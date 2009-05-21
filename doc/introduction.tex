@@ -42,7 +42,7 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 
 \newenvironment{partDescription}[2]
 {%
-  \paragraph{\autoref{#1} --- #2}%
+  \subsection*{\autoref{#1} --- #2}%
   \begin{description}%
     \newcommand{\xitem}[2]{\item[\autoref{##1} --- ##2]~\\}%
   }
@@ -69,6 +69,9 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
   The \us operators for concurrency, tags.
 \xitem{sec:tut:event-prog}{Event-based programming}
   Support for event-driven concurrency in \us.
+\xitem{sec:tut:uobject}{UObject Tutorial}%
+  How to write \Cxx components to enrich \us, either with new
+  low-level software modules, or with drivers to sensors or effectors.
 \end{partDescription}
 
 \begin{partDescription}{part:install}{Installation}
@@ -92,10 +95,6 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 
 \xitem{sec:stdlib}{\us standard library specifications}%
   Listing of all classes and methods provided in the standard library.
-
-\xitem{sec:tut:uobject}{UObject Tutorial}%
-  How to write \Cxx components to enrich \us, either with new
-  low-level software modules, or with drivers to sensors or effectors.
 
 %\xitem{sec:sdk}{\urbi \sdk specifications}%
 %  The \urbi software development kit that enable to
