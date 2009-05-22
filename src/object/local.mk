@@ -94,7 +94,6 @@ dist_libuobject_la_SOURCES +=			\
   object/dictionary.hh				\
   object/directory.cc				\
   object/directory.hh				\
-  object/executable.hh				\
   object/executable.cc				\
   object/file.cc				\
   object/file.hh				\
