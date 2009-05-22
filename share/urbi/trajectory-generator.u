@@ -84,26 +84,16 @@ class Global.TrajectoryGenerator
   function run()
   {
     var tag = Tag.new|
-    var exc =
+    tag:
     {
-      tag:
-        {
-          every(getPeriod)
-          {
-    	    if (isOver)
-              tag.stop(nil)|
-	    try {
-              setter(get(getter)) |
-	    }
-            catch (var e) {
-	      tag.stop(e)
-	    }
-          }|
-          sleep(inf)
-        }
-    } |
-    if (!exc.isNil)
-      throw exc
+      every(getPeriod)
+      {
+	if (isOver)
+          tag.stop|
+	setter(get(getter)) |
+      }|
+      sleep(inf)
+    }|
   };
 
   var startValue = 0;
