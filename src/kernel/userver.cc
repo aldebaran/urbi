@@ -170,64 +170,84 @@ namespace kernel
   }
 
 #if !defined WIN32 && !defined _MSC_VER
-  static void
-  install_ice_catcher(void (*catcher)(int))
+  namespace
   {
-    signal(SIGABRT, catcher);
-    signal(SIGBUS,  catcher);
-    signal(SIGSEGV, catcher);
+    static void
+    install_ice_catcher(void (*catcher)(int))
+    {
+      signal(SIGABRT, catcher);
+      signal(SIGBUS,  catcher);
+      signal(SIGSEGV, catcher);
+    }
+
+    ATTRIBUTE_NORETURN static void hard_ice(int i);
+
+    static void hard_ice(int i)
+    {
+      std::cerr
+        << program_name()
+        << ": killed with signal " << i << " (" << strsignal (i)
+        << ") while trying to debug" << std::endl;
+      libport::signal(i, SIG_DFL);
+      if (kill(getpid(), i))
+        perror("kill");
+      // Pacify noreturn.
+      exit(EX_HARD);
+    }
+
+    static
+    inline
+    runner::Runner&
+    operator<<(runner::Runner& r, const std::string& s)
+    {
+      // Avoid dynamic allocation, we're treating an ICE here.
+      static const std::string notag = "";
+      r.send_message(notag, s);
+      return r;
+    }
+
+    static void ice(int i)
+    {
+      install_ice_catcher(hard_ice);
+
+      // If we have a job currently running, use it to signal the error,
+      // otherwise try to use the sneaker which must have been created
+      // (or we have an error very early on and we are in deep trouble).
+      runner::Runner& r = dbg::runner_or_sneaker_get();
+
+      // Display information from the least demanding, to the most
+      // demanding.  For instance "ps" requires that the kernel is not
+      // too broken, otherwise it will segv again.  Hence call it
+      // last.
+      r << ""
+        << "    **********************"
+        << "    *** INTERNAL ERROR ***"
+        << "    **********************"
+        << ""
+        << ("The urbi kernel was killed by signal "
+            + string_cast(i) + ": " + strsignal(i) + ".")
+        << "Please report this bug to " PACKAGE_BUGREPORT " with this report,"
+        << "core dump if any, and what code/situation triggered it."
+        << ""
+        << "Trying to give more information."
+        << "Please include it in the report."
+        << ""
+        << "---------- VERSION ----------"
+        << UServer::package_info().signature()
+        << ""
+        << "---------- CURRENT C++ BACKTRACE ----------";
+      foreach (const char* cp, libport::backtrace())
+        r << cp;
+      r << ""
+        << "---------- CURRENT URBI BACKTRACE ----------";
+      static const std::string notag = "";
+      r.show_backtrace(notag);
+      r << ""
+        << "---------- PS ----------";
+      object::system_class->call(SYMBOL(ps));
+      exit(EX_SOFTWARE);
+    }
   }
-
-  ATTRIBUTE_NORETURN static void hard_ice(int i);
-
-  static void hard_ice(int i)
-  {
-    std::cerr << "Killed with signal " << i
-              << " while trying to debug." << std::endl;
-    libport::signal(i, SIG_DFL);
-    if (kill(getpid(), i))
-      perror("kill");
-    // Pacify noreturn.
-    exit(EX_HARD);
-  }
-
-  static void ice(int i)
-  {
-    install_ice_catcher(hard_ice);
-
-    // If we have a job currently running, use it to signal the error,
-    // otherwise try to use the sneaker which must have been created
-    // (or we have an error very early on and we are in deep trouble).
-    runner::Runner& r = dbg::runner_or_sneaker_get();
-    static const std::string tag = "";
-
-    r.send_message(tag, "");
-    r.send_message(tag, "    **********************");
-    r.send_message(tag, "    *** INTERNAL ERROR ***");
-    r.send_message(tag, "    **********************");
-    r.send_message(tag, "");
-    r.send_message(tag, "The urbi kernel was killed by signal "
-                   + string_cast(i) + ": " + strsignal(i) + ".");
-    r.send_message(tag, "Please report this bug to " PACKAGE_BUGREPORT
-                   " with this report,");
-    r.send_message(tag, "core dump if any, and what code/situation triggered it.");
-    r.send_message(tag, "");
-    r.send_message(tag, "Trying to give more information.");
-    r.send_message(tag, "Please include it in the report.");
-    r.send_message(tag, "");
-    r.send_message(tag, "---------- CURRENT C++ BACKTRACE ----------");
-    foreach (const char* cp, libport::backtrace())
-      r.send_message(tag, cp);
-    r.send_message(tag, "");
-    r.send_message(tag, "---------- CURRENT URBI BACKTRACE ----------");
-    r.show_backtrace(tag);
-    r.send_message(tag, "");
-    r.send_message(tag, "---------- PS ----------");
-    object::system_class->call(SYMBOL(ps));
-    r.send_message(tag, "");
-    exit(EX_SOFTWARE);
-  }
-
 #endif
 
   std::string
