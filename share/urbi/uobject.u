@@ -128,10 +128,10 @@ do (getSlot("UVar"))
       var parent_getprop = parent.getSlot("getProperty")|
       parent.getProperty = function(varname, propname)
       {
-        if (parent.getSlot(varname).isA(UVar))
-          parent.getSlot(varname).getProperty("val", propname).acceptVoid
+        if (getSlot(varname).isA(UVar))
+          getSlot(varname).getProperty("val", propname).acceptVoid
         else
-          parent_getprop.apply([parent, varname, propname])
+          parent_getprop.apply([this, varname, propname])
       }|
       var parent.__has_uvar = true
     }|
