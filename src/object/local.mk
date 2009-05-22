@@ -23,8 +23,11 @@ $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_h
 	  echo "       $$i";			\
 	done
 	@touch $@.tmp
-	:> $(precompiled_symbols_hh)~
-	-cp -f $(srcdir)/$(precompiled_symbols_hh) $(precompiled_symbols_hh)~
+# Don't use `mv' here so that even if we are interrupted, the file
+# is still available for diff in the next run.
+	if test -f $(srcdir)/$(precompiled_symbols_hh); then	\
+	  cat $(srcdir)/$(precompiled_symbols_hh);		\
+	fi >$(precompiled_symbols_hh)~
 	(cd $(srcdir) &&				\
 	 ./object/symbols-generate.pl			\
 		$(precompiled_symbols_hh_sources))	\
