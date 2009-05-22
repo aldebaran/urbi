@@ -5,7 +5,7 @@ release.
 * New in kernel 2.0 RC 2. *
 ***************************
 
-New UrbiScript functions
+New urbiScript functions
 ========================
 
 - System._exit(status).
@@ -140,11 +140,11 @@ Environment variables
 The environment variable URBI_ROOT denotes the directory which is the
 root of the tree into which Urbi was installed.  It corresponds to the
 "prefix" in GNU Autoconf parlance, and defaults to "/usr/local" under
-Unix.  UrbiScript library files are expected to be in
+Unix.  urbiScript library files are expected to be in
 <URBI_ROOT>/share/gostai/urbi.
 
 The environment variable URBI_PATH, which allows to specify a
-colon-separated list of directories into which UrbiScript files are
+colon-separated list of directories into which urbiScript files are
 looked-up, may extend or override URBI_ROOT.  Any superfluous colon
 denotes the place where the URBI_ROOT path is taken into account.
 

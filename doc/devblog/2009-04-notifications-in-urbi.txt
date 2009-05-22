@@ -1,11 +1,11 @@
-Dataflow programming: Creating UVars in UrbiScript
+Dataflow programming: Creating UVars in urbiScript
 ==================================================
 
 One of the things we learned after years of dealing with Urbi is that if a
 feature is cool in the C++ UObject API, then it's also cool to have it in
-UrbiScript. One of those features is the UVar class, which is the central class
+urbiScript. One of those features is the UVar class, which is the central class
 in the UObject notification system. In urbi 2.0, this class is now available
-in UrbiScript too. Let us look at an usage example that we will analyse
+in urbiScript too. Let us look at an usage example that we will analyse
 step by step.
 
 <code>

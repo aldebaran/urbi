@@ -2,7 +2,7 @@ dlopening the cookie jar
 ========================
 
 The Urbi platform features UObjects, an easy means to extend
-UrbiScript with new native objects.  This is typically used to provide
+urbiScript with new native objects.  This is typically used to provide
 computation intensive structures or algorithms, such as
 computer-vision, Simultaneous localization and mapping (SLAM) support
 etc.
@@ -21,7 +21,7 @@ now longer compiled differently, they are shared objects.  Shared
 objects are libraries that can be used dynamically: they can be loaded
 and unloaded on demand.
 
-Today your UrbiScript programs may simply run
+Today your urbiScript programs may simply run
 
 <code>    loadModule("myComponent")
 </code>
