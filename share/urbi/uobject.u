@@ -141,6 +141,7 @@ do (getSlot("UVar"))
   /// Global number of notifyaccess
   var nAccess = 0;
   var nAccessTag = Tag.new;
+  var onHasNotifyAccess = Event.new;
   function newPropertyHook_(parent, name, prop, value)
   {
    parent.getSlot(name).setProperty("val", prop, value)|
@@ -183,6 +184,8 @@ do (getSlot("UVar"))
     access += [f] |
     if (access.size == 1)
       detach(loopCheck) |
+    if (getSlot("UVar").nAccess == 1)
+      onHasNotifyAccess! |
     void
   };
   void
@@ -191,10 +194,8 @@ do (getSlot("UVar"))
 // Can't be in a class or do block.
 // Force reevaluation of all at exprs when at least one notifyaccess is present.
 // FIXME: find a way to stop when callbacks are removed.
-at (getSlot("UVar").nAccess > 0)
-  getSlot("UVar").nAccessTag: every(getPeriod) {}
-onleave
-  getSlot("UVar").nAccessTag.stop;
+at (getSlot("UVar").onHasNotifyAccess?)
+  getSlot("UVar").nAccessTag: every(getPeriod) {};
 
 var Global.uobjects = Object.clone;
 Global.uobjects.uobject_init();
