@@ -109,5 +109,5 @@ fi
 
 # On Windows, copy the .bat file
 case $OS in
-  (windows) $CP "$builddir/scripts/urbi.bat" "$packagedir";;
+  (windows) unix2dos "$builddir/scripts/urbi.bat" "$packagedir";;
 esac
