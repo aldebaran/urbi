@@ -50,7 +50,7 @@ class Global.UObject
       removeSlot(f)
   };
 
-  /// Set a timer to call update at specified interval.
+  /// Set a timer to call update at specified interval in seconds.
   function setUpdate(interval)
   {
     if (0 < interval && interval < minimumInterval)
@@ -59,7 +59,8 @@ class Global.UObject
     updateTask.stop;
     updateInterval = interval;
     if (0 < interval)
-      updateTask: detach({loop{ update; sleep(updateInterval)}})
+      updateTask: detach(periodicCall(updateInterval, getSlot("update"),
+                                      "update", [this]));
   };
 
   /// Set a timer to call \b func every \b interval milliseconds.

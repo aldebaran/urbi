@@ -20,6 +20,7 @@
 #include <kernel/uvalue-cast.hh>
 #include <kernel/uobject.hh>
 
+#include <object/cxx-primitive.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/object.hh>
@@ -66,6 +67,19 @@ static uobject_to_robject_type uobject_to_robject;
 static inline runner::Runner& getCurrentRunner()
 {
   return ::kernel::urbiserver->getCurrentRunner();
+}
+
+static void periodic_call(rObject, ufloat interval, rObject method,
+                          libport::Symbol msg, object::objects_type args)
+{
+  runner::Runner& r = getCurrentRunner();
+  libport::utime_t delay = libport::seconds_to_utime(interval);
+  while(true)
+  {
+    r.apply(method, msg, args);
+    libport::utime_t target = libport::utime() + delay;
+    r.yield_until(target);
+  }
 }
 
 /// UObject read to an urbi variable.
@@ -216,6 +230,7 @@ uobject_make_proto(const std::string& name)
 	       new object::String(name));
   oc->slot_set(SYMBOL(__uobject_base), oc);
   oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
+  oc->slot_set(SYMBOL(periodicCall), object::make_primitive(&periodic_call));
   return oc;
 }
 
