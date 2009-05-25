@@ -70,13 +70,11 @@ sub register ($$\%)
   elsif (exists ${%$lst}{firstnumber}
          && ${%$lst}{firstnumber} eq "last")
     {
-      print STDERR "{{${%{$chk{$previous_label}}}{_contents}}}\n";
       # Extension of the previous listing.
       ${%{$chk{$previous_label}}}{_contents} .=
         "\n\n"
         . lineno(%$lst)
         . ${%$lst}{_contents};
-      print STDERR "{{${%{$chk{$previous_label}}}{_contents}}}\n";
     }
   else
     {
