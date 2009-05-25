@@ -20,14 +20,14 @@ Lazy.new(closure () { /* Value to lazify */ });
 \end{urbiscript}
 
 \subsection{Methods}
-\subsubsection{eval}
 
+\begin{itemize}
+\item \lstinline|eval|\\
 The \lstinline|eval| method forces evaluation of the held lazy
 value. Two calls to \lstinline|eval| will systematically evaluate the
 expression twice, which can be useful to duplicates its side effects.
 
-\subsubsection{value}
-
+\item \lstinline|value|\\
 The \lstinline|value| method returns the held value, potentially
 evaluating it before. \lstinline|value| performs memoization, that is,
 only the first call will actually evaluate the expression, subsequent
@@ -35,6 +35,8 @@ calls will return the cached value. Unless you want to explicitly
 trigger side effects from the expression by evaluating it several
 time, this should be preferred over \lstinline|eval| to avoid
 evaluating the expression several times uselessly.
+
+\end{itemize}
 
 \subsection{Examples}
 

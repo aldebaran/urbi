@@ -24,8 +24,8 @@ List can be created with their literal syntax, as shown in
 
 \subsection{Methods}
 
-\subsubsection{all}
-
+\begin{itemize}
+\item \lstinline|all|\\
 % FIXME: link to predicate glossary entry
 Return whether all the members of the target verify the given
 predicate.
@@ -39,23 +39,21 @@ predicate.
 [00000000] true
 \end{urbiscript}
 
-\subsubsection{any}
-
+\item \lstinline|any|\\
 % FIXME: link to predicate glossary entry
 Return whether at least one of the members of the target verify the
 given predicate.
 
 \begin{urbiscript}[firstnumber=last]
 // Is there any even element?
-[-3, 1, -1].all(function (e) { e % 2 == 0 });
+[-3, 1, -1].any(function (e) { e % 2 == 0 });
 [00000000] false
 // Is there any positive element?
 [-3, 1, -1].any(function (e) { e > 0 });
 [00000000] true
 \end{urbiscript}
 
-\subsubsection{asList}
-
+\item \lstinline|asList|\\
 Return the target.
 
 \begin{urbiscript}[firstnumber=last]
@@ -63,8 +61,7 @@ Return the target.
 [00000000] [0, 1, 2]
 \end{urbiscript}
 
-\subsubsection{asString}
-
+\item \lstinline|asString|\\
 Return the target as a string describing the list.
 
 \begin{urbiscript}[firstnumber=last]
@@ -72,8 +69,7 @@ Return the target as a string describing the list.
 [00000000] "[0, 1, 2]"
 \end{urbiscript}
 
-\subsubsection{back}
-
+\item \lstinline|back|\\
 Return the last element of the target. An error if the target is empty.
 
 \begin{urbiscript}[firstnumber=last]
@@ -83,7 +79,7 @@ Return the last element of the target. An error if the target is empty.
 [00000000:error] !!! back: cannot be applied onto empty list
 \end{urbiscript}
 
-\subsubsection{clear}
+\item \lstinline|clear|\\
 
 Empty the target.
 
@@ -94,7 +90,7 @@ x.clear;
 [00000000] []
 \end{urbiscript}
 
-\subsubsection{each}
+\item \lstinline|each|\\
 
 Apply the given functional value on all members sequentially.
 
@@ -108,7 +104,7 @@ Apply the given functional value on all members sequentially.
 [00000000] *** 4
 \end{urbiscript}
 
-\subsubsection{each\&}
+\item \lstinline|each\&|\\
 
 Apply the given functional value on all members simultaneously.
 
@@ -122,7 +118,7 @@ Apply the given functional value on all members simultaneously.
 [00000000] *** 4
 \end{urbiscript}
 
-\subsubsection{empty}
+\item \lstinline|empty|\\
 
 Return whether the target is empty.
 
@@ -133,7 +129,7 @@ Return whether the target is empty.
 [00000000] false
 \end{urbiscript}
 
-\subsubsection{filter}
+\item \lstinline|filter|\\
 
 Return the list of all member of the target that verify the given
 predicate.
@@ -144,7 +140,7 @@ predicate.
 [00000000] [1, 3, 5]
 \end{urbiscript}
 
-\subsubsection{foldl}
+\item \lstinline|foldl|\\
 
 \fixme{This is too damn hard to explain, yet so simple.}
 
@@ -152,9 +148,8 @@ predicate.
 
 \end{urbiscript}
 
-\subsubsection{front}
+\item \lstinline|front|\\
 \label{sec:std-list-front}
-
 Return the first element of the target. An error if the target is
 empty.
 
@@ -165,8 +160,7 @@ empty.
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
 
-\subsubsection{has}
-
+\item \lstinline|has|\\
 Return whether one of the member of the target equals the argument.
 
 \begin{urbiscript}[firstnumber=last]
@@ -176,7 +170,7 @@ Return whether one of the member of the target equals the argument.
 [00000000] false
 \end{urbiscript}
 
-\subsubsection{hasSame}
+\item \lstinline|hasSame|\\
 
 Return whether one of the member of the target is physically equal to
 the argument.
@@ -190,12 +184,10 @@ var y = 1;
 [00000000] true
 \end{urbiscript}
 
-\subsubsection{head}
-
+\item \lstinline|head|\\
 Synonym for \lstinline|front| (\autoref{sec:std-list-front}).
 
-\subsubsection{join}
-
+\item \lstinline|join|\\
 Concatenate all members of the target to form a string, separating
 them with the given separator.
 
@@ -204,8 +196,7 @@ them with the given separator.
 [00000000] "baobab"
 \end{urbiscript}
 
-\subsubsection{map}
-
+\item \lstinline|map|\\
 Apply the given functional value on every member, and return the list
 of results.
 
@@ -214,9 +205,8 @@ of results.
 [00000000] [true, false, true, false]
 \end{urbiscript}
 
-\subsubsection{[]}
+\item \lstinline|[]|\\
 \label{sec:std-list-nth}
-
 Return the nth member of the target (indexing is zero-based). An error
 if out of bounds.
 
@@ -229,8 +219,7 @@ l[3];
 [00007061:error] !!! []: invalid index: 3
 \end{urbiscript}
 
-\subsubsection{removeBack}
-
+\item \lstinline|removeBack|\\
 Remove and return the last element of the target. An error if the
 target is empty.
 
@@ -245,8 +234,7 @@ t;
 [00000000:error] !!! removeBack: cannot be applied onto empty list
 \end{urbiscript}
 
-\subsubsection{removeFront}
-
+\item \lstinline|removeFront|\\
 Remove and return the first element from the target. An error if the
 target is empty.
 
@@ -261,9 +249,8 @@ g;
 [00000000:error] !!! removeFront: cannot be applied onto empty list
 \end{urbiscript}
 
-\subsubsection{insertBack}
+\item \lstinline|insertBack|\\
 \label{sec:std-list-pushback}
-
 Insert the given element at the end of the target.
 
 \begin{urbiscript}[firstnumber=last]
@@ -275,8 +262,7 @@ z;
 [00000000] [0, 1, 2]
 \end{urbiscript}
 
-\subsubsection{insertFront}
-
+\item \lstinline|insertFront|\\
 Insert the given element at the beginning of the target.
 
 \begin{urbiscript}[firstnumber=last]
@@ -288,8 +274,7 @@ a;
 [00000000] [0, 1, 2]
 \end{urbiscript}
 
-\subsubsection{range}
-
+\item \lstinline|range|\\
 Return a sub-range of the string, from the first index included to the
 second index excluded. An error if out of bounds.
 
@@ -301,8 +286,7 @@ second index excluded. An error if out of bounds.
 \end{urbiscript}
 
 
-\subsubsection{remove}
-
+\item \lstinline|remove|\\
 Remove all elements from the target that equals the argument.
 
 \begin{urbiscript}[firstnumber=last]
@@ -314,8 +298,7 @@ c;
 [00000000] [1, 2, 3]
 \end{urbiscript}
 
-\subsubsection{removeById}
-
+\item \lstinline|removeById|\\
 Remove all elements from the target that physically equals the
 argument.
 
@@ -330,8 +313,7 @@ e;
 [00000000] [0, 1, 1, 2]
 \end{urbiscript}
 
-\subsubsection{reverse}
-
+\item \lstinline|reverse|\\
 Return the target with the order of elements inverted.
 
 \begin{urbiscript}[firstnumber=last]
@@ -339,8 +321,7 @@ Return the target with the order of elements inverted.
 [00000000] [2, 1, 0]
 \end{urbiscript}
 
-\subsubsection{==}
-
+\item \lstinline|==|\\
 Check whether all elements in the target and the first argument, are
 equal two by two.
 
@@ -351,9 +332,8 @@ equal two by two.
 [00000000] false
 \end{urbiscript}
 
-\subsubsection{[]=}
+\item \lstinline|[]=|\\
 \label{sec:std-list-setnth}
-
 Assign a value to the element of the target at the given index.
 
 \begin{urbiscript}[firstnumber=last]
@@ -365,8 +345,7 @@ f;
 [00000000] [0, 42, 2]
 \end{urbiscript}
 
-\subsubsection{size}
-
+\item \lstinline|size|\\
 Return the number of elements in the target.
 
 \begin{urbiscript}[firstnumber=last]
@@ -376,8 +355,7 @@ Return the number of elements in the target.
 [00000000] 0
 \end{urbiscript}
 
-\subsubsection{sort}
-
+\item \lstinline|sort|\\
 Return the target, sorted with respect to the \lstinline|<| criteria.
 
 \begin{urbiscript}[firstnumber=last]
@@ -385,8 +363,7 @@ Return the target, sorted with respect to the \lstinline|<| criteria.
 [00000000] [0, 1, 2, 3]
 \end{urbiscript}
 
-\subsubsection{tail}
-
+\item \lstinline|tail|\\
 Return the target, minus the first element. An error if the target is
 empty.
 
@@ -397,8 +374,7 @@ empty.
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
 
-\subsubsection{*}
-
+\item \lstinline|*|\\
 Return the target, concatenated n times to itself, n being the
 argument.
 
@@ -407,8 +383,7 @@ argument.
 [00000000] [0, 1, 0, 1, 0, 1]
 \end{urbiscript}
 
-\subsubsection{+}
-
+\item \lstinline|+|\\
 Return the concatenation of the target and the given list.
 
 \begin{urbiscript}[firstnumber=last]
@@ -416,8 +391,7 @@ Return the concatenation of the target and the given list.
 [00000000] [0, 1, 2, 3]
 \end{urbiscript}
 
-\subsubsection{-}
-
+\item \lstinline|-|\\
 Return the target without all element that equals any element in the
 given list.
 
@@ -426,12 +400,10 @@ given list.
 [00000000] [0, 0, 3]
 \end{urbiscript}
 
-\subsubsection{\textless\textless}
-
+\item \lstinline|<<|\\
 A synonym for \lstinline|insertBack| (\autoref{sec:std-list-pushback}).
 
-\subsubsection{\textless}
-
+\item \lstinline|<|\\
 Return whether the target is inferior to the given list. A list is
 inferior to another if at least one of its element differs from the
 other, and the first differing element is inferior to the other.
@@ -444,6 +416,8 @@ other, and the first differing element is inferior to the other.
 [0, 1, 2] < [0, 2, 2];
 [00000000] true
 \end{urbiscript}
+
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex
