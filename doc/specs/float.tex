@@ -25,7 +25,7 @@ Float.new;
 \begin{itemize}
 \item \lstinline|abs|\\
   Absolute value of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq((-5).abs, 5);
 assert_eq(  0 .abs, 0);
 assert_eq(  5 .abs, 5);
@@ -33,45 +33,45 @@ assert_eq(  5 .abs, 5);
 
 \item \lstinline|acos|\\
   Arccosine of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.acos, pi/2);
 assert_eq(1.acos, 0);
 \end{urbiscript}
 
 \item \lstinline|asin|\\
   Arcsine of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.asin, 0);
 \end{urbiscript}
 
 \item \lstinline|asString|\\
   Return a string representing the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(42.asString, "42");
 \end{urbiscript}
 
 \item \lstinline|atan|\\
   Return the arctangent of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.atan, 0);
 assert_eq(1.atan, pi/4);
 \end{urbiscript}
 
 \item \lstinline|'bitand'(\var{that})|\\
   The bitwise-and between \lstinline|this| and \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(3 bitand 6, 2);
 \end{urbiscript}
 
 \item \lstinline|'bitor'(\var{that})|\\
   Bitwise-or between \lstinline|this| and \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(3 bitor 6, 7);
 \end{urbiscript}
 
 \item \lstinline|clone|\\
   Return a fresh Float with the same value as the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var x = 0;
 [00000000] 0
 var y = x.clone;
@@ -82,35 +82,35 @@ x === y;
 
 \item \lstinline|compl|\\
   The complement to 1 of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(compl 0, 4294967295);
 assert_eq(compl 4294967295, 0);
 \end{urbiscript}
 
 \item \lstinline|cos|\\
   Cosine of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.cos, 1);
 assert_eq(pi.cos, -1);
 \end{urbiscript}
 
 \item \lstinline|exp|\\
   Exponential of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 1.exp;
 [00000000] 2.71828
 \end{urbiscript}
 
 \item \lstinline|inf|\\
   Return the infinity.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 Float.inf;
 [00000000] inf
 \end{urbiscript}
 
 \item \lstinline|log|\\
   The logarithm of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.log, -inf);
 assert_eq(1.log, 0);
 assert_eq(1.exp.log, 1);
@@ -118,14 +118,14 @@ assert_eq(1.exp.log, 1);
 
 \item \lstinline|nan|\\
   The ``not a number'' special float value.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 Float.nan;
 [00000000] nan
 \end{urbiscript}
 
 \item \lstinline|random|\\
   A random integer between 0 and the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for (3)
   echo (5.random);
 [00000000] *** 3
@@ -135,32 +135,32 @@ for (3)
 
 \item \lstinline|round|\\
   The target, rounded.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(1.6.round, 2);
 assert_eq(1.4.round, 1);
 \end{urbiscript}
 
 \item \lstinline|seq|\\
   The sequence of integers from 0 to \lstinline|this| - 1 as a list.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(3.seq, [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|sin|\\
   The sine of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.sin, 0);
 \end{urbiscript}
 
 \item \lstinline|sqrt|\\
   The square root of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert (1024.sqrt == 32);
 \end{urbiscript}
 
 \item \lstinline|tan|\\
   Tangent of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(0.tan, 0);
 (pi/4).tan;
 [00000000] 1
@@ -168,27 +168,27 @@ assert_eq(0.tan, 0);
 
 \item \lstinline|trunc|\\
   Return the target truncated.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(1.9.trunc, 1);
 assert_eq((-1.9).trunc, -1);
 \end{urbiscript}
 
 \item \lstinline|asFloat|\\
   Return the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(51.asFloat, 51);
 \end{urbiscript}
 
 \item \lstinline|sqr|\\
   Square of the target.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(32.sqr, 1024);
 \end{urbiscript}
 
 \item \lstinline|sgn|\\
   Return 1 if \lstinline|this| is positive, 0 if it is null, -1
   otherwise.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq((-1164).sgn, -1);
 assert_eq(0.sgn      , 0);
 assert_eq((1164).sgn , 1);
@@ -197,7 +197,7 @@ assert_eq((1164).sgn , 1);
 \item \lstinline|times(\var{fun})|\\
   Call the functional argument \var{fun} \lstinline|this| times.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 3.times(function () { echo("ping")});
 [00000000] *** ping
 [00000000] *** ping
@@ -207,7 +207,7 @@ assert_eq((1164).sgn , 1);
 \item \lstinline|each(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
   target - 1.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 3.each(function (i) { echo(i * 2) });
 [00000000] *** 0
 [00000000] *** 2
@@ -216,13 +216,13 @@ assert_eq((1164).sgn , 1);
 
 \item \lstinline|'^'(\var{that})|\\
   Bitwise exclusive or between \lstinline|this| and \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(3 ^ 6, 5);
 \end{urbiscript}
 
 \item \lstinline|'>>'(\var{that})|\\%>>
   \lstinline|this| shifted by \var{that} bits towards the right.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(4 >> 2, 1);
 \end{urbiscript}
 
@@ -230,57 +230,57 @@ assert_eq(4 >> 2, 1);
   Whether \lstinline|this| is less than \var{b}. The other comparison
   operators (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be
   applied on floats since Float inherits \refObject{Orderable}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert(  0 < 1);
 assert(!(1 < 0));
 \end{urbiscript}
 
 \item \lstinline|'<<'(\var{that})|\\
   \lstinline|this| shifted by \var{that} bit towards the left.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(4 << 2, 16);
 \end{urbiscript}
 
 \item \lstinline|'-'(\var{that})|\\
   \lstinline|this| subtracted by \var{b}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(6 - 3, 3);
 \end{urbiscript}
 
 \item \lstinline|'+'(\var{that})|\\
   The sum of \lstinline|this| and \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(1 + 1, 2);
 \end{urbiscript}
 
 \item \lstinline|'/'(\var{that})|\\
   The quotient of \lstinline|this| divided by \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(50 / 10, 5);
 assert_eq(10 / 50, 0.2);
 \end{urbiscript}
 
 \item \lstinline|'%'(\var{that})|\\
   \lstinline|this| modulo \var{b}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(50 % 11, 6);
 \end{urbiscript}
 
 \item \lstinline|'*'(\var{that})|\\
   Product of \lstinline|this| by \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(2 * 3, 6);
 \end{urbiscript}
 
 \item \lstinline|'**'(\var{that})|\\
   \lstinline|this| to the \var{that} power (${this}^{that}$).
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_eq(2 ** 10, 1024);
 \end{urbiscript}
 
 \item \lstinline|'=='(\var{that})|\\
   Whether \lstinline|this| equals \var{that}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert(  1 == 1);
 assert(!(1 == 2));
 \end{urbiscript}
