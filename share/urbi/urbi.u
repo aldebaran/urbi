@@ -83,14 +83,6 @@ do (Global)
     loadFile(searchFile(file));
   };
 
-  // Assertion control
-  var System.ndebug = false;
-  function System.assert
-  {
-    if (!System.ndebug)
-      System.assert_ (call.evalArgAt (0), call.argString (0));
-  };
-
   function noop () {};
 };
 

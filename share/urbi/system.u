@@ -2,6 +2,37 @@
 | System version.  |
 `-----------------*/
 
-const var System.version = "2.0";
+do (System)
+{
+  const var version = "2.0";
+
+  // Assertion control
+  var ndebug = false;
+
+  function assert_(value, message)
+  {
+    if (!value)
+      throw "failed assertion: " + message;
+  };
+
+  function assert
+  {
+    if (!System.ndebug)
+      System.assert_ (call.evalArgAt (0), call.argString (0));
+  };
+
+  function assert_eq
+  {
+    if (!System.ndebug)
+      {
+        var v0 = call.evalArgAt(0);
+        var v1 = call.evalArgAt(1);
+        var s0 = call.argString(0);
+        var s1 = call.argString(1);
+        System.assert_(v0 == v1,
+                       s0 + " == " + s1 + " (i.e., "  + v0 + " == " + v1 + ")");
+      }
+  };
+};
 
 load("urbi/platform.u");

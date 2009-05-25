@@ -158,14 +158,6 @@ namespace object
     return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
   }
 
-  static void
-  system_assert_(const rObject&,
-                 const rObject& value, const std::string& assertion)
-  {
-    if (!is_true(value))
-      RAISE("failed assertion: " + assertion);
-  }
-
   static rObject
   system_eval(const rObject&, const std::string& code)
   {
@@ -473,7 +465,6 @@ namespace object
     DECLARE(_exit);
     DECLARE(aliveJobs);
     DECLARE(arguments);
-    DECLARE(assert_);
     DECLARE(backtrace);
     DECLARE(breakpoint);
     DECLARE(currentRunner);
