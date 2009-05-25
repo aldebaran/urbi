@@ -25,7 +25,7 @@ List can be created with their literal syntax, as shown in
 \subsection{Methods}
 
 \begin{itemize}
-\item \lstinline|all|\\
+\item \lstinline|all(\var{fun})|\\
 % FIXME: link to predicate glossary entry
 Return whether all the members of the target verify the given
 predicate.
@@ -39,7 +39,7 @@ predicate.
 [00000000] true
 \end{urbiscript}
 
-\item \lstinline|any|\\
+\item \lstinline|any(\var{fun})|\\
 % FIXME: link to predicate glossary entry
 Return whether at least one of the members of the target verify the
 given predicate.
@@ -80,7 +80,6 @@ Return the last element of the target. An error if the target is empty.
 \end{urbiscript}
 
 \item \lstinline|clear|\\
-
 Empty the target.
 
 \begin{urbiscript}[firstnumber=last]
@@ -90,8 +89,7 @@ x.clear;
 [00000000] []
 \end{urbiscript}
 
-\item \lstinline|each|\\
-
+\item \lstinline|each(\var{fun})|\\
 Apply the given functional value on all members sequentially.
 
 \begin{urbiscript}[firstnumber=last]
@@ -104,8 +102,7 @@ Apply the given functional value on all members sequentially.
 [00000000] *** 4
 \end{urbiscript}
 
-\item \lstinline|each\&|\\
-
+\item \lstinline|each&(\var{fun})|\\
 Apply the given functional value on all members simultaneously.
 
 \begin{urbiscript}[firstnumber=last]
@@ -119,7 +116,6 @@ Apply the given functional value on all members simultaneously.
 \end{urbiscript}
 
 \item \lstinline|empty|\\
-
 Return whether the target is empty.
 
 \begin{urbiscript}[firstnumber=last]
@@ -129,8 +125,7 @@ Return whether the target is empty.
 [00000000] false
 \end{urbiscript}
 
-\item \lstinline|filter|\\
-
+\item \lstinline|filter(\var{fun})|\\
 Return the list of all member of the target that verify the given
 predicate.
 
@@ -140,7 +135,7 @@ predicate.
 [00000000] [1, 3, 5]
 \end{urbiscript}
 
-\item \lstinline|foldl|\\
+\item \lstinline|foldl(\var{action}, \var{value})|\\
 
 \fixme{This is too damn hard to explain, yet so simple.}
 
@@ -160,7 +155,7 @@ empty.
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|has|\\
+\item \lstinline|has(\var{that})|\\
 Return whether one of the member of the target equals the argument.
 
 \begin{urbiscript}[firstnumber=last]
@@ -170,7 +165,7 @@ Return whether one of the member of the target equals the argument.
 [00000000] false
 \end{urbiscript}
 
-\item \lstinline|hasSame|\\
+\item \lstinline|hasSame(\var{that})|\\
 
 Return whether one of the member of the target is physically equal to
 the argument.
@@ -187,7 +182,7 @@ var y = 1;
 \item \lstinline|head|\\
 Synonym for \lstinline|front| (\autoref{sec:std-list-front}).
 
-\item \lstinline|join|\\
+\item \lstinline|join(\var{sep})|\\
 Concatenate all members of the target to form a string, separating
 them with the given separator.
 
@@ -196,7 +191,7 @@ them with the given separator.
 [00000000] "baobab"
 \end{urbiscript}
 
-\item \lstinline|map|\\
+\item \lstinline|map(\var{fun})|\\
 Apply the given functional value on every member, and return the list
 of results.
 
@@ -205,7 +200,7 @@ of results.
 [00000000] [true, false, true, false]
 \end{urbiscript}
 
-\item \lstinline|[]|\\
+\item \lstinline|'[]'(\var{n})|\\
 \label{sec:std-list-nth}
 Return the nth member of the target (indexing is zero-based). An error
 if out of bounds.
@@ -249,7 +244,7 @@ g;
 [00000000:error] !!! removeFront: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|insertBack|\\
+\item \lstinline|insertBack(\var{that})|\\
 \label{sec:std-list-pushback}
 Insert the given element at the end of the target.
 
@@ -262,7 +257,7 @@ z;
 [00000000] [0, 1, 2]
 \end{urbiscript}
 
-\item \lstinline|insertFront|\\
+\item \lstinline|insertFront(\var{that})|\\
 Insert the given element at the beginning of the target.
 
 \begin{urbiscript}[firstnumber=last]
@@ -274,7 +269,7 @@ a;
 [00000000] [0, 1, 2]
 \end{urbiscript}
 
-\item \lstinline|range|\\
+\item \lstinline|range(\var{begin}, \var{end})|\\
 Return a sub-range of the string, from the first index included to the
 second index excluded. An error if out of bounds.
 
@@ -286,8 +281,8 @@ second index excluded. An error if out of bounds.
 \end{urbiscript}
 
 
-\item \lstinline|remove|\\
-Remove all elements from the target that equals the argument.
+\item \lstinline|remove(\var{val})|\\
+Remove all elements from the target that equals \var{val}.
 
 \begin{urbiscript}[firstnumber=last]
 var c = [0, 1, 0, 2, 0, 3];
@@ -298,9 +293,8 @@ c;
 [00000000] [1, 2, 3]
 \end{urbiscript}
 
-\item \lstinline|removeById|\\
-Remove all elements from the target that physically equals the
-argument.
+\item \lstinline|removeById(\var{that})|\\
+Remove all elements from the target that physically equals \var{that}.
 
 \begin{urbiscript}[firstnumber=last]
 var d = 1;
@@ -321,8 +315,8 @@ Return the target with the order of elements inverted.
 [00000000] [2, 1, 0]
 \end{urbiscript}
 
-\item \lstinline|==|\\
-Check whether all elements in the target and the first argument, are
+\item \lstinline|'=='(\var{that})|\\
+Check whether all elements in the target and \var{that}, are
 equal two by two.
 
 \begin{urbiscript}[firstnumber=last]
@@ -332,9 +326,9 @@ equal two by two.
 [00000000] false
 \end{urbiscript}
 
-\item \lstinline|[]=|\\
+\item \lstinline|'[]='(\var{index}, \var{value})|\\
 \label{sec:std-list-setnth}
-Assign a value to the element of the target at the given index.
+Assign \var{value} to the element of the target at the given \var{index}.
 
 \begin{urbiscript}[firstnumber=last]
 var f = [0, 1, 2];
@@ -374,37 +368,36 @@ empty.
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|*|\\
-Return the target, concatenated n times to itself, n being the
-argument.
+\item \lstinline|'*'(\var{times})|\\
+Return the target, concatenated n times to itself, n being \var{times}.
 
 \begin{urbiscript}[firstnumber=last]
 [0, 1] * 3;
 [00000000] [0, 1, 0, 1, 0, 1]
 \end{urbiscript}
 
-\item \lstinline|+|\\
-Return the concatenation of the target and the given list.
+\item \lstinline|'+'(\var{other})|\\
+Return the concatenation of the target and the \var{other} list.
 
 \begin{urbiscript}[firstnumber=last]
 [0, 1] + [2, 3];
 [00000000] [0, 1, 2, 3]
 \end{urbiscript}
 
-\item \lstinline|-|\\
+\item \lstinline|'-'(\var{other})|\\
 Return the target without all element that equals any element in the
-given list.
+\var(other) list.
 
 \begin{urbiscript}[firstnumber=last]
 [0, 1, 0, 2, 3] - [1, 2];
 [00000000] [0, 0, 3]
 \end{urbiscript}
 
-\item \lstinline|<<|\\
+\item \lstinline|'<<'(\var{that})|\\
 A synonym for \lstinline|insertBack| (\autoref{sec:std-list-pushback}).
 
-\item \lstinline|<|\\
-Return whether the target is inferior to the given list. A list is
+\item \lstinline|'<'(\var{other})|\\
+Return whether the target is inferior to the \var{other} list. A list is
 inferior to another if at least one of its element differs from the
 other, and the first differing element is inferior to the other.
 
