@@ -32,11 +32,9 @@ predicate.
 
 \begin{urbiscript}
 // Are all elements positive?
-[-2, 0, 2, 4].all(function (e) { e > 0 });
-[00000000] false
+assert(! [-2, 0, 2, 4].all(function (e) { e > 0 }));
 // Are all elements even?
-[-2, 0, 2, 4].all(function (e) { e % 2 == 0 });
-[00000000] true
+assert([-2, 0, 2, 4].all(function (e) { e % 2 == 0 }));
 \end{urbiscript}
 
 \item \lstinline|any(\var{fun})|\\
@@ -46,35 +44,30 @@ given predicate.
 
 \begin{urbiscript}[firstnumber=last]
 // Is there any even element?
-[-3, 1, -1].any(function (e) { e % 2 == 0 });
-[00000000] false
+assert(! [-3, 1, -1].any(function (e) { e % 2 == 0 }));
 // Is there any positive element?
-[-3, 1, -1].any(function (e) { e > 0 });
-[00000000] true
+assert([-3, 1, -1].any(function (e) { e > 0 }));
 \end{urbiscript}
 
 \item \lstinline|asList|\\
 Return the target.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].asList;
-[00000000] [0, 1, 2]
+assert_eq([0, 1, 2].asList, [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|asString|\\
 Return the target as a string describing the list.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].asString;
-[00000000] "[0, 1, 2]"
+assert_eq([0, 1, 2].asString, "[0, 1, 2]");
 \end{urbiscript}
 
 \item \lstinline|back|\\
 Return the last element of the target. An error if the target is empty.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].back;
-[00000000] 2
+assert_eq([0, 1, 2].back, 2);
 [].back;
 [00000000:error] !!! back: cannot be applied onto empty list
 \end{urbiscript}
@@ -85,8 +78,7 @@ Empty the target.
 \begin{urbiscript}[firstnumber=last]
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
-x.clear;
-[00000000] []
+assert_eq(x.clear, []);
 \end{urbiscript}
 
 \item \lstinline|each(\var{fun})|\\
@@ -119,10 +111,8 @@ Apply the given functional value on all members simultaneously.
 Return whether the target is empty.
 
 \begin{urbiscript}[firstnumber=last]
-[].empty;
-[00000000] true
-[1].empty;
-[00000000] false
+assert([].empty);
+assert(! [1].empty);
 \end{urbiscript}
 
 \item \lstinline|filter(\var{fun})|\\
@@ -131,8 +121,7 @@ predicate.
 
 \begin{urbiscript}[firstnumber=last]
 // Keep only odd numbers
-[0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1});
-[00000000] [1, 3, 5]
+assert_eq([0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}), [1, 3, 5]);
 \end{urbiscript}
 
 \item \lstinline|foldl(\var{action}, \var{value})|\\
@@ -149,8 +138,7 @@ Return the first element of the target. An error if the target is
 empty.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].front;
-[00000000] 0
+assert_eq([0, 1, 2].front, 0);
 [].front;
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
@@ -159,10 +147,8 @@ empty.
 Return whether one of the member of the target equals the argument.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].has(1);
-[00000000] true
-[0, 1, 2].has(5);
-[00000000] false
+assert([0, 1, 2].has(1));
+assert(! [0, 1, 2].has(5));
 \end{urbiscript}
 
 \item \lstinline|hasSame(\var{that})|\\
@@ -187,8 +173,7 @@ Concatenate all members of the target to form a string, separating
 them with the given separator.
 
 \begin{urbiscript}[firstnumber=last]
-["b", "ob", "b"].join("a");
-[00000000] "baobab"
+assert_eq(["b", "ob", "b"].join("a"), "baobab");
 \end{urbiscript}
 
 \item \lstinline|map(\var{fun})|\\
@@ -196,8 +181,8 @@ Apply the given functional value on every member, and return the list
 of results.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2, 3].map(function (v) { v % 2 == 0});
-[00000000] [true, false, true, false]
+assert_eq([0, 1, 2, 3].map(function (v) { v % 2 == 0}),
+  [true, false, true, false]);
 \end{urbiscript}
 
 \item \lstinline|'[]'(\var{n})|\\
@@ -221,10 +206,8 @@ target is empty.
 \begin{urbiscript}[firstnumber=last]
 var t = [0, 1, 2];
 [00000000] [0, 1, 2]
-t.removeBack;
-[00000000] 2
-t;
-[00000000] [0, 1]
+assert_eq(t.removeBack, 2);
+assert_eq(t, [0, 1]);
 [].removeBack;
 [00000000:error] !!! removeBack: cannot be applied onto empty list
 \end{urbiscript}
@@ -236,10 +219,8 @@ target is empty.
 \begin{urbiscript}[firstnumber=last]
 var g = [0, 1, 2];
 [00000000] [0, 1, 2]
-g.removeFront;
-[00000000] 0
-g;
-[00000000] [1, 2]
+assert_eq(g.removeFront, 0);
+assert_eq(g, [1, 2]);
 [].removeFront;
 [00000000:error] !!! removeFront: cannot be applied onto empty list
 \end{urbiscript}
@@ -251,10 +232,8 @@ Insert the given element at the end of the target.
 \begin{urbiscript}[firstnumber=last]
 var z = [0, 1];
 [00000000] [0, 1]
-z.insertBack(2);
-[00000000] [0, 1, 2]
-z;
-[00000000] [0, 1, 2]
+assert_eq(z.insertBack(2), [0, 1, 2]);
+assert_eq(z, [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|insertFront(\var{that})|\\
@@ -263,10 +242,8 @@ Insert the given element at the beginning of the target.
 \begin{urbiscript}[firstnumber=last]
 var a = [1, 2];
 [00000000] [1, 2]
-a.insertFront(0);
-[00000000] [0, 1, 2]
-a;
-[00000000] [0, 1, 2]
+assert_eq(a.insertFront(0), [0, 1, 2]);
+assert_eq(a, [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|range(\var{begin}, \var{end})|\\
@@ -274,8 +251,7 @@ Return a sub-range of the string, from the first index included to the
 second index excluded. An error if out of bounds.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2, 3].range(1, 3);
-[00000000] [1, 2]
+assert_eq([0, 1, 2, 3].range(1, 3), [1, 2]);
 [].range(1, 3);
 [00428697:error] !!! urbi/list.u: []: invalid index: 1
 \end{urbiscript}
@@ -287,10 +263,8 @@ Remove all elements from the target that equals \var{val}.
 \begin{urbiscript}[firstnumber=last]
 var c = [0, 1, 0, 2, 0, 3];
 [00000000] [0, 1, 0, 2, 0, 3]
-c.remove(0);
-[00000000] [1, 2, 3]
-c;
-[00000000] [1, 2, 3]
+assert_eq(c.remove(0), [1, 2, 3]);
+assert_eq(c, [1, 2, 3]);
 \end{urbiscript}
 
 \item \lstinline|removeById(\var{that})|\\
@@ -301,18 +275,15 @@ var d = 1;
 [00000000] 1
 var e = [0, 1, d, 1, 2];
 [00000000] [0, 1, 1, 1, 2]
-e.removeById(d);
-[00000000] [0, 1, 1, 2]
-e;
-[00000000] [0, 1, 1, 2]
+assert_eq(e.removeById(d), [0, 1, 1, 2]);
+assert_eq(e, [0, 1, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|reverse|\\
 Return the target with the order of elements inverted.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].reverse;
-[00000000] [2, 1, 0]
+assert_eq([0, 1, 2].reverse, [2, 1, 0]);
 \end{urbiscript}
 
 \item \lstinline|'=='(\var{that})|\\
@@ -320,10 +291,8 @@ Check whether all elements in the target and \var{that}, are
 equal two by two.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2] == [0, 1, 2];
-[00000000] true
-[0, 1, 2] == [0, 0, 2];
-[00000000] false
+assert([0, 1, 2] == [0, 1, 2]);
+assert(!([0, 1, 2] == [0, 0, 2]));
 \end{urbiscript}
 
 \item \lstinline|'[]='(\var{index}, \var{value})|\\
@@ -335,26 +304,22 @@ var f = [0, 1, 2];
 [00000000] [0, 1, 2]
 f[1] = 42;
 [00000000] 42
-f;
-[00000000] [0, 42, 2]
+assert_eq(f, [0, 42, 2]);
 \end{urbiscript}
 
 \item \lstinline|size|\\
 Return the number of elements in the target.
 
 \begin{urbiscript}[firstnumber=last]
-[1, 2, 3].size;
-[00000000] 3
-[].size;
-[00000000] 0
+assert_eq([1, 2, 3].size, 3);
+assert_eq([].size, 0);
 \end{urbiscript}
 
 \item \lstinline|sort|\\
 Return the target, sorted with respect to the \lstinline|<| criteria.
 
 \begin{urbiscript}[firstnumber=last]
-[1, 0, 3, 2].sort;
-[00000000] [0, 1, 2, 3]
+assert_eq([1, 0, 3, 2].sort, [0, 1, 2, 3]);
 \end{urbiscript}
 
 \item \lstinline|tail|\\
@@ -362,8 +327,7 @@ Return the target, minus the first element. An error if the target is
 empty.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2].tail;
-[00000000] [1, 2]
+assert_eq([0, 1, 2].tail, [1, 2]);
 [].tail;
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
@@ -372,16 +336,14 @@ empty.
 Return the target, concatenated n times to itself, n being \var{times}.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1] * 3;
-[00000000] [0, 1, 0, 1, 0, 1]
+assert_eq([0, 1] * 3, [0, 1, 0, 1, 0, 1]);
 \end{urbiscript}
 
 \item \lstinline|'+'(\var{other})|\\
 Return the concatenation of the target and the \var{other} list.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1] + [2, 3];
-[00000000] [0, 1, 2, 3]
+assert_eq([0, 1] + [2, 3], [0, 1, 2, 3]);
 \end{urbiscript}
 
 \item \lstinline|'-'(\var{other})|\\
@@ -389,8 +351,7 @@ Return the target without all element that equals any element in the
 \var(other) list.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 0, 2, 3] - [1, 2];
-[00000000] [0, 0, 3]
+assert_eq([0, 1, 0, 2, 3] - [1, 2], [0, 0, 3]);
 \end{urbiscript}
 
 \item \lstinline|'<<'(\var{that})|\\
@@ -402,12 +363,9 @@ inferior to another if at least one of its element differs from the
 other, and the first differing element is inferior to the other.
 
 \begin{urbiscript}[firstnumber=last]
-[0, 1, 2] < [0, 1, 2];
-[00000000] false
-[0, 1, 2] < [0, 0, 2];
-[00000000] false
-[0, 1, 2] < [0, 2, 2];
-[00000000] true
+assert(!([0, 1, 2] < [0, 1, 2]));
+assert(!([0, 1, 2] < [0, 0, 2]));
+assert([0, 1, 2] < [0, 2, 2]);
 \end{urbiscript}
 
 \end{itemize}
