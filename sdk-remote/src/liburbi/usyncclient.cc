@@ -312,7 +312,7 @@ namespace urbi
     send("%s.format = %d;\n"
          "noop;\n"
          "noop;\n", camera, f);
-    UMessage *m = syncGet(useconds, "%s.val;\n", camera);
+    UMessage *m = syncGet(useconds, "%s.val", camera);
     if (!m)
       return 0;
     if (m->value->binary->type != BINARY_IMAGE)
@@ -372,7 +372,7 @@ namespace urbi
   USyncClient::syncGetNormalizedDevice(const char* device, double& val,
 				       libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s.valn;\n", device), val);
+    return getValue(syncGet(useconds, "%s.valn", device), val);
   }
 
   int
@@ -386,14 +386,14 @@ namespace urbi
   USyncClient::syncGetValue(const char* tag, const char* valName, UValue& val,
 			    libport::utime_t useconds)
   {
-    return getValue(syncGetTag(useconds, "%s;\n", tag, 0, valName), val);
+    return getValue(syncGetTag(useconds, "%s", tag, 0, valName), val);
   }
 
   int
   USyncClient::syncGetDevice(const char* device, double& val,
 			     libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s.val;\n", device), val);
+    return getValue(syncGet(useconds, "%s.val", device), val);
   }
 
   int
@@ -408,7 +408,7 @@ namespace urbi
   USyncClient::syncGetDevice(const char* device, const char* access,
 			     double& val, libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s.%s;", device, access), val);
+    return getValue(syncGet(useconds, "%s.%s", device, access), val);
   }
 
 
