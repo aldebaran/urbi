@@ -56,10 +56,11 @@ int main(int argc, char * argv[])
  c.setCallback(bw,"bw");
  c.setCallback(bw,"be");
 
- c << "camera.format = 0;camera.resolution = 0;noop;noop;";
+ c << "camera.format = 0;camera.resolution = 0;noop;noop;"
+      "if (isdef(Channel)) {var Global.bw = Channel.new(\"bw\"); var Global.be = Channel.new(\"be\")|;};";
 
  starttime=c.getCurrentTime();
- c << " for (i=0;i<9; ++i) bw << camera.val|";
+ c << " for (var i=0;i<9;i++) bw << camera.val|";
  c << "be << camera.val;";
  urbi::execute();
 }
