@@ -9,35 +9,98 @@ In a way objects are dictionaries: one can use \lstinline|setSlot|,
 slots also contains value and methods that object depend upon to run
 properly.
 
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Dictionnary are created like any other object. The constructor can
+take couples of argument to store them in the dictionary.
+
+\begin{urbiscript}
+var d = Dictionary.new("one", 1, "two", 2);
+[00000000] Dictionary {"one" => 1, "two" => 2}
+\end{urbiscript}
+
+\subsection{Methods}
+
 \begin{itemize}
 \item \lstinline|asList|\\
   Return the contents of the dictionary as a \refObject{Pair} list
   (\var{key}, \var{value}).  This makes it easier to iterate over a
   Dictionary using \lstinline|for|.  No particular order is ensured.
 
+\begin{urbiscript}[firstnumber=last]
+d.asList;
+[00000000] [("two", 2), ("one", 1)]
+\end{urbiscript}
+
 \item \lstinline|clear|\\
   Empty the dictionary.
+
+\begin{urbiscript}[firstnumber=last]
+d.clear;
+[00102179] Dictionary {}
+\end{urbiscript}
 
 \item \lstinline|empty|\\
   Whether the dictionary is empty.
 
+\begin{urbiscript}[firstnumber=last]
+assert(d.empty);
+\end{urbiscript}
+
 \item \lstinline|erase(\var{key})|\\
   Remove the mapping for \lstinline|\var{key}|.
+
+\begin{urbiscript}[firstnumber=last]
+d["un"] = 1 | d["deux"] = 2 | d["trois"] = 3;
+[00329262] Dictionary {"deux" => 2, "trois" => 3, "un" => 1}
+d.erase("trois");
+[00386250] Dictionary {"deux" => 2, "un" => 1}
+\end{urbiscript}
 
 \item \lstinline|get(\var{key})|\\
   Return the value associated to  \lstinline|\var{key}| if it exists,
   \lstinline|void| otherwise.
 
+\begin{urbiscript}[firstnumber=last]
+d.get("un");
+[00000000] 1
+\end{urbiscript}
+
+
 \item \lstinline|getWithDefault(\var{key}, \var{default-value})|\\
   Return the value associated to  \lstinline|\var{key}| if it exists,
   \lstinline|\var{default-value}| otherwise.
 
+\begin{urbiscript}[firstnumber=last]
+d.getWithDefault("deux", "rien");
+[00000000] 2
+d.getWithDefault("quatre", "rien");
+[00000000] "rien"
+\end{urbiscript}
+
+
 \item \lstinline|has(\var{key})|\\
   Whether the dictionary has a mapping for \lstinline|\var{key}|.
 
+\begin{urbiscript}[firstnumber=last]
+assert(d.has("un"));
+assert(!(d.has("zero")));
+\end{urbiscript}
+
 \item \lstinline|init(\var{key1}, \var{value1}, ...)|~\\
-  Instantiate a new \lstinline|Dictionary|.  Insert the mapping from
-  \lstinline|\var{key1}| to \lstinline|\var{value1}| and so forth.
+  Insert the mapping from \lstinline|\var{key1}| to
+  \lstinline|\var{value1}| and so forth.
+
+\begin{urbiscript}[firstnumber=last]
+d.init("quatre", 4, "cinq", 5, "six", 6);
+[00000000] Dictionary {"cinq" => 5, "deux" => 2, "quatre" => 4, "six" => 6, "un" => 1}
+\end{urbiscript}
 
 \item \lstinline|keys|\\
   The list of all the keys.  No particular order is ensured.
@@ -47,11 +110,27 @@ properly.
   \lstinline|this| so that invocations to \lstinline|set| can be
   chained.  The possibly existing previous mapping is overriden.
 
+\begin{urbiscript}[firstnumber=last]
+d.set("deux", "two").set("zero", 0);
+[00000000] Dictionary {"cinq" => 5, "deux" => "two", "quatre" => 4, "six" => 6, "un" => 1, "zero" => 0}
+\end{urbiscript}
+
 \item \lstinline|[]=(\var{key}, \var{value})|\\
   Syntactic sugar for \lstinline|set(\var{key}, \var{value})|.
 
+\begin{urbiscript}[firstnumber=last]
+d["un"] = "hein ?";
+[00000000] Dictionary {"cinq" => 5, "deux" => "two", "quatre" => 4, "six" => 6, "un" => "hein ?", "zero" => 0}
+\end{urbiscript}
+
 \item \lstinline|[](\var{key})|\\
   Syntactic sugar for \lstinline|get(\var{key})|.
+
+\begin{urbiscript}[firstnumber=last]
+d["cinq"];
+[02123829] 5
+\end{urbiscript}
+
 \end{itemize}
 
 Here is an example.
