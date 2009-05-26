@@ -15,7 +15,12 @@
 #include <libport/exception.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
-#include <libport/option-parser.hh>
+#ifndef NO_OPTION_PARSER
+# include <libport/option-parser.hh>
+# define IF_OPTION_PARSER(a, b) a
+#else
+ #define IF_OPTION_PARSER(a, b) b
+#endif
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
@@ -96,6 +101,7 @@ public:
 
 namespace
 {
+#ifndef NO_OPTION_PARSER
   static
   void
   help(libport::OptionParser& parser)
@@ -111,7 +117,7 @@ namespace
       << parser;
     throw urbi::Exit(EX_OK, output.str());
   }
-
+#endif
   static
   void
   version()
@@ -219,7 +225,7 @@ namespace urbi
 
     // Parse the command line.
     LoopData data;
-
+#ifndef NO_OPTION_PARSER
     libport::OptionFlag
       arg_fast("ignore system time, go as fast as possible",
                "fast", 'F'),
@@ -272,8 +278,11 @@ namespace urbi
         help(parser);
       if (libport::opts::version.get())
         version();
-      data.interactive = arg_interactive.get();
-      data.fast = arg_fast.get();
+#endif
+      data.interactive = IF_OPTION_PARSER(arg_interactive.get(), true);
+      data.fast = IF_OPTION_PARSER(arg_fast.get(), false);
+
+#ifndef NO_OPTION_PARSER
       foreach (const std::string& exp, arg_exps.get())
         input.push_back(Input(false, exp));
       foreach (const std::string& file, libport::opts::files.get())
@@ -294,13 +303,14 @@ namespace urbi
         }
       }
     }
+#endif
 
     // Libtool traces.
     lt_dladd_log_function((lt_dllog_function*) &ltdebug,
-                          (void*) arg_dbg.get<int>(0));
+                          (void*) IF_OPTION_PARSER(arg_dbg.get<int>(0),0));
 
     // If not defined in command line, use the envvar.
-    if (!arg_stack.filled() && getenv("URBI_STACK_SIZE"))
+    if (IF_OPTION_PARSER(!arg_stack.filled() && , )  getenv("URBI_STACK_SIZE"))
       arg_stack_size = libport::convert_envvar<size_t> ("URBI_STACK_SIZE");
 
     if (arg_stack_size)
@@ -322,10 +332,11 @@ namespace urbi
     `----------------*/
     int port = -1;
     {
-      int desired_port = libport::opts::port_l.get<int>(-1);
+      int desired_port = IF_OPTION_PARSER(libport::opts::port_l.get<int>(-1),
+                                          54000);
       if (desired_port != -1)
       {
-        std::string host = libport::opts::host_l.value("");
+        std::string host = IF_OPTION_PARSER(libport::opts::host_l.value(""),"");
         port = Network::createTCPServer(host, desired_port);
         if (!port)
           throw urbi::Exit
@@ -347,9 +358,11 @@ namespace urbi
     `--------------*/
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
+    IF_OPTION_PARSER(
     if (arg_port_file.filled())
       std::ofstream(arg_port_file.value().c_str(), std::ios::out)
-        << port << std::endl;
+        << port << std::endl;,
+    )
 
     kernel::UConnection& c = s.ghost_connection_get();
 #ifdef ENABLE_DEBUG_TRACES
