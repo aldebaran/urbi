@@ -2,24 +2,39 @@
 
 \subsection{Methods}
 
-\subsubsection{Slot Management}
-
 \begin{itemize}
 \item \lstinline|createSlot(\var{name})|\\
   Create an empty slot (which actually means it is bound to
   \lstinline|void|) named \var{name}.  Raise an error if \var{name}
   was already defined.
+\begin{urbiscript}
+assert(Object.createSlot("foo").isVoid);
+assert(Object.hasSlot("foo"));
+\end{urbiscript}
 
 \item \lstinline|getSlot(\var{name})|\\
   Return the value associated to \var{name}.
+\begin{urbiscript}[firstnumber=last]
+assert(!Object.getSlot("getSlot").isVoid);
+\end{urbiscript}
 
 \item \lstinline|setSlot(\var{name}, \var{value})|\\
   Create a slot \var{name} mapping to \var{value}. Raise an error if
   \var{name} was already defined.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(Object.setSlot("theObject", Object), Object);
+assert(Object.theObject === Object);
+assert(theObject === Object);
+\end{urbiscript}
 
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Map the existing slot named \ \var{name} to \var{value}. Raise an
   error if \var{name} was not defined.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(Object.setSlot("one", 1), 1);
+assert_eq(Object.updateSlot("one", 2), 2);
+assert_eq(Object.one, 2);
+\end{urbiscript}
 \end{itemize}
 
 %%% Local Variables:
