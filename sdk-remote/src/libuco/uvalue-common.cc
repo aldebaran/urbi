@@ -26,6 +26,7 @@
 #include <libport/assert.hh>
 #include <libport/cstring>
 #include <libport/escape.hh>
+#include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
 
 #include <urbi/ubinary.hh>
@@ -815,12 +816,9 @@ namespace
     if (this == &b)
       return *this;
     clear();
-    for (std::vector<UValue*>::const_iterator it = b.array.begin();
-	 it !=b.array.end();
-	 ++it)
-      array.push_back(new UValue(**it));
+    foreach (UValue* v, b.array)
+      array.push_back(new UValue(*v));
     offset = b.offset;
-
     return *this;
   }
 
@@ -832,8 +830,8 @@ namespace
   void UList::clear()
   {
     offset = 0;
-    for (size_t i = 0; i < size(); ++i) //relax, its a vector
-      delete array[i];
+    foreach (UValue *v, array)
+      delete v;
     array.clear();
   }
 
