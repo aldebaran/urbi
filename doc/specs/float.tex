@@ -38,6 +38,12 @@ assert_eq(0.acos, pi/2);
 assert_eq(1.acos, 0);
 \end{urbiscript}
 
+\item \lstinline|asFloat|\\
+  Return the target.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(51.asFloat, 51);
+\end{urbiscript}
+
 \item \lstinline|asin|\\
   Arcsine of the target.
 \begin{urbiscript}[firstnumber=last]
@@ -94,6 +100,16 @@ assert_eq(0.cos, 1);
 assert_eq(pi.cos, -1);
 \end{urbiscript}
 
+\item \lstinline|each(\var{fun})|\\
+  Call the functional argument \var{fun} on every integer from 0 to
+  target - 1.
+\begin{urbiscript}[firstnumber=last]
+3.each(function (i) { echo(i * 2) });
+[00000000] *** 0
+[00000000] *** 2
+[00000000] *** 4
+\end{urbiscript}
+
 \item \lstinline|exp|\\
   Exponential of the target.
 \begin{urbiscript}[firstnumber=last]
@@ -146,10 +162,25 @@ assert_eq(1.4.round, 1);
 assert_eq(3.seq, [0, 1, 2]);
 \end{urbiscript}
 
+\item \lstinline|sgn|\\
+  Return 1 if \lstinline|this| is positive, 0 if it is null, -1
+  otherwise.
+\begin{urbiscript}[firstnumber=last]
+assert_eq((-1164).sgn, -1);
+assert_eq(0.sgn      , 0);
+assert_eq((1164).sgn , 1);
+\end{urbiscript}
+
 \item \lstinline|sin|\\
   The sine of the target.
 \begin{urbiscript}[firstnumber=last]
 assert_eq(0.sin, 0);
+\end{urbiscript}
+
+\item \lstinline|sqr|\\
+  Square of the target.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(32.sqr, 1024);
 \end{urbiscript}
 
 \item \lstinline|sqrt|\\
@@ -166,34 +197,6 @@ assert_eq(0.tan, 0);
 [00000000] 1
 \end{urbiscript}
 
-\item \lstinline|trunc|\\
-  Return the target truncated.
-\begin{urbiscript}[firstnumber=last]
-assert_eq(1.9.trunc, 1);
-assert_eq((-1.9).trunc, -1);
-\end{urbiscript}
-
-\item \lstinline|asFloat|\\
-  Return the target.
-\begin{urbiscript}[firstnumber=last]
-assert_eq(51.asFloat, 51);
-\end{urbiscript}
-
-\item \lstinline|sqr|\\
-  Square of the target.
-\begin{urbiscript}[firstnumber=last]
-assert_eq(32.sqr, 1024);
-\end{urbiscript}
-
-\item \lstinline|sgn|\\
-  Return 1 if \lstinline|this| is positive, 0 if it is null, -1
-  otherwise.
-\begin{urbiscript}[firstnumber=last]
-assert_eq((-1164).sgn, -1);
-assert_eq(0.sgn      , 0);
-assert_eq((1164).sgn , 1);
-\end{urbiscript}
-
 \item \lstinline|times(\var{fun})|\\
   Call the functional argument \var{fun} \lstinline|this| times.
 
@@ -204,14 +207,11 @@ assert_eq((1164).sgn , 1);
 [00000000] *** ping
 \end{urbiscript}
 
-\item \lstinline|each(\var{fun})|\\
-  Call the functional argument \var{fun} on every integer from 0 to
-  target - 1.
+\item \lstinline|trunc|\\
+  Return the target truncated.
 \begin{urbiscript}[firstnumber=last]
-3.each(function (i) { echo(i * 2) });
-[00000000] *** 0
-[00000000] *** 2
-[00000000] *** 4
+assert_eq(1.9.trunc, 1);
+assert_eq((-1.9).trunc, -1);
 \end{urbiscript}
 
 \item \lstinline|'^'(\var{that})|\\

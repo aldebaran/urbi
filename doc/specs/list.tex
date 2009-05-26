@@ -168,63 +168,6 @@ var y = 1;
 \item \lstinline|head|\\
 Synonym for \lstinline|front| (\autoref{sec:std-list-front}).
 
-\item \lstinline|join(\var{sep})|\\
-Concatenate all members of the target to form a string, separating
-them with the given separator.
-
-\begin{urbiscript}[firstnumber=last]
-assert_eq(["b", "ob", "b"].join("a"), "baobab");
-\end{urbiscript}
-
-\item \lstinline|map(\var{fun})|\\
-Apply the given functional value on every member, and return the list
-of results.
-
-\begin{urbiscript}[firstnumber=last]
-assert_eq([0, 1, 2, 3].map(function (v) { v % 2 == 0}),
-  [true, false, true, false]);
-\end{urbiscript}
-
-\item \lstinline|'[]'(\var{n})|\\
-\label{sec:std-list-nth}
-Return the nth member of the target (indexing is zero-based). An error
-if out of bounds.
-
-\begin{urbiscript}[firstnumber=last]
-var l = [0, 1, 2];
-[00000000:hide] [0, 1, 2]
-l[1];
-[00000000] 1
-l[3];
-[00007061:error] !!! []: invalid index: 3
-\end{urbiscript}
-
-\item \lstinline|removeBack|\\
-Remove and return the last element of the target. An error if the
-target is empty.
-
-\begin{urbiscript}[firstnumber=last]
-var t = [0, 1, 2];
-[00000000] [0, 1, 2]
-assert_eq(t.removeBack, 2);
-assert_eq(t, [0, 1]);
-[].removeBack;
-[00000000:error] !!! removeBack: cannot be applied onto empty list
-\end{urbiscript}
-
-\item \lstinline|removeFront|\\
-Remove and return the first element from the target. An error if the
-target is empty.
-
-\begin{urbiscript}[firstnumber=last]
-var g = [0, 1, 2];
-[00000000] [0, 1, 2]
-assert_eq(g.removeFront, 0);
-assert_eq(g, [1, 2]);
-[].removeFront;
-[00000000:error] !!! removeFront: cannot be applied onto empty list
-\end{urbiscript}
-
 \item \lstinline|insertBack(\var{that})|\\
 \label{sec:std-list-pushback}
 Insert the given element at the end of the target.
@@ -244,6 +187,23 @@ var a = [1, 2];
 [00000000] [1, 2]
 assert_eq(a.insertFront(0), [0, 1, 2]);
 assert_eq(a, [0, 1, 2]);
+\end{urbiscript}
+
+\item \lstinline|join(\var{sep})|\\
+Concatenate all members of the target to form a string, separating
+them with the given separator.
+
+\begin{urbiscript}[firstnumber=last]
+assert_eq(["b", "ob", "b"].join("a"), "baobab");
+\end{urbiscript}
+
+\item \lstinline|map(\var{fun})|\\
+Apply the given functional value on every member, and return the list
+of results.
+
+\begin{urbiscript}[firstnumber=last]
+assert_eq([0, 1, 2, 3].map(function (v) { v % 2 == 0}),
+  [true, false, true, false]);
 \end{urbiscript}
 
 \item \lstinline|range(\var{begin}, \var{end})|\\
@@ -267,6 +227,19 @@ assert_eq(c.remove(0), [1, 2, 3]);
 assert_eq(c, [1, 2, 3]);
 \end{urbiscript}
 
+\item \lstinline|removeBack|\\
+Remove and return the last element of the target. An error if the
+target is empty.
+
+\begin{urbiscript}[firstnumber=last]
+var t = [0, 1, 2];
+[00000000] [0, 1, 2]
+assert_eq(t.removeBack, 2);
+assert_eq(t, [0, 1]);
+[].removeBack;
+[00000000:error] !!! removeBack: cannot be applied onto empty list
+\end{urbiscript}
+
 \item \lstinline|removeById(\var{that})|\\
 Remove all elements from the target that physically equals \var{that}.
 
@@ -279,32 +252,24 @@ assert_eq(e.removeById(d), [0, 1, 1, 2]);
 assert_eq(e, [0, 1, 1, 2]);
 \end{urbiscript}
 
+\item \lstinline|removeFront|\\
+Remove and return the first element from the target. An error if the
+target is empty.
+
+\begin{urbiscript}[firstnumber=last]
+var g = [0, 1, 2];
+[00000000] [0, 1, 2]
+assert_eq(g.removeFront, 0);
+assert_eq(g, [1, 2]);
+[].removeFront;
+[00000000:error] !!! removeFront: cannot be applied onto empty list
+\end{urbiscript}
+
 \item \lstinline|reverse|\\
 Return the target with the order of elements inverted.
 
 \begin{urbiscript}[firstnumber=last]
 assert_eq([0, 1, 2].reverse, [2, 1, 0]);
-\end{urbiscript}
-
-\item \lstinline|'=='(\var{that})|\\
-Check whether all elements in the target and \var{that}, are
-equal two by two.
-
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2] == [0, 1, 2]);
-assert(!([0, 1, 2] == [0, 0, 2]));
-\end{urbiscript}
-
-\item \lstinline|'[]='(\var{index}, \var{value})|\\
-\label{sec:std-list-setnth}
-Assign \var{value} to the element of the target at the given \var{index}.
-
-\begin{urbiscript}[firstnumber=last]
-var f = [0, 1, 2];
-[00000000] [0, 1, 2]
-f[1] = 42;
-[00000000] 42
-assert_eq(f, [0, 42, 2]);
 \end{urbiscript}
 
 \item \lstinline|size|\\
@@ -330,6 +295,41 @@ empty.
 assert_eq([0, 1, 2].tail, [1, 2]);
 [].tail;
 [00000000:error] !!! tail: cannot be applied onto empty list
+\end{urbiscript}
+
+\item \lstinline|'=='(\var{that})|\\
+Check whether all elements in the target and \var{that}, are
+equal two by two.
+
+\begin{urbiscript}[firstnumber=last]
+assert([0, 1, 2] == [0, 1, 2]);
+assert(!([0, 1, 2] == [0, 0, 2]));
+\end{urbiscript}
+
+\item \lstinline|'[]'(\var{n})|\\
+\label{sec:std-list-nth}
+Return the nth member of the target (indexing is zero-based). An error
+if out of bounds.
+
+\begin{urbiscript}[firstnumber=last]
+var l = [0, 1, 2];
+[00000000:hide] [0, 1, 2]
+l[1];
+[00000000] 1
+l[3];
+[00007061:error] !!! []: invalid index: 3
+\end{urbiscript}
+
+\item \lstinline|'[]='(\var{index}, \var{value})|\\
+\label{sec:std-list-setnth}
+Assign \var{value} to the element of the target at the given \var{index}.
+
+\begin{urbiscript}[firstnumber=last]
+var f = [0, 1, 2];
+[00000000] [0, 1, 2]
+f[1] = 42;
+[00000000] 42
+assert_eq(f, [0, 42, 2]);
 \end{urbiscript}
 
 \item \lstinline|'*'(\var{times})|\\
