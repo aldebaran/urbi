@@ -83,9 +83,10 @@ namespace urbi
   {
     USyncClient& uc = dynamic_cast<USyncClient&>(get_default_client());
     UMessage* m = uc.syncGet("%s->%s", name.c_str(), urbi::name(p));
-    UValue v = *m->value;
+    assert(m->value);
+    UValue res = *m->value;
     delete m;
-    return v;
+    return res;
   }
 
   /*
