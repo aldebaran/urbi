@@ -76,12 +76,12 @@ namespace urbi
 
     /// In plugin mode, gives direct access to the buffer, which may
     /// not be valid after the calling function returns. Changes to
-    /// the other fields of the structure have no effect..
+    /// the other fields of the structure have no effect.
     operator UImage() const;
 
     /// In plugin mode, gives direct access to the buffer, which may
     /// not be valid after the calling function returns. Changes to
-    /// the other fields of the structure have no effect..
+    /// the other fields of the structure have no effect.
     operator USound() const;
 
     operator ufloat() const;
