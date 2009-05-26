@@ -12,7 +12,7 @@ EXTRA_DIST +=								   \
 
 # img/.
 PDF_IMAGES = $(call ls_files,img/*.pdf)
-EXTRA_DIST += $(PDF_IMAGES)
+EXTRA_DIST += $(PDF_IMAGES) $(call ls_files,img/*.png)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
@@ -75,6 +75,10 @@ html_files = 					\
   urbi-sdk4.html				\
   urbi-sdk5.html
 install-doc: $(pdf_DATA) urbi-sdk.html
+# We need to find a better means to provide our own *.png here.  I
+# have not used the name "gostai.png" because stupidly the PDF
+# compilation seems to prefer *.png to *.pdf, which is wrong here.
+	cp $(srcdir)/img/urbi-sdk1x.png urbi-sdk1x.png
 	scp $(pdf_DATA) $(html_files) downloads@www.gostai.com:urbi-sdk-2.0/doc
 
 ## -------------- ##
