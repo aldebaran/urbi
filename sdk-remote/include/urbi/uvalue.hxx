@@ -188,6 +188,9 @@ namespace urbi
   std::ostream&
   operator<<(std::ostream& s, const UValue& v)
   {
+    // Looks bizarre, but might happen without have the "print" die
+    // (it *has* happened).
+    assert(&v);
     return v.print(s);
   }
 
