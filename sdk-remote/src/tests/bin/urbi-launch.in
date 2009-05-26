@@ -22,7 +22,7 @@ verbose ()
 # The libubbject we load depends on the usage.
 verbose "$*"
 case " $* " in
-  (*' --start '*)
+  (*' --start '* | *' -s '*)
      # Spawning a new server, which requires a server.  Two cases:
      # this package is part of a kernel package, in which case we
      # should find libuobject.la in it.  Otherwise we hope a kernel
