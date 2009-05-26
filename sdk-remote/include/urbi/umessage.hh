@@ -66,7 +66,15 @@ namespace urbi
 
   std::ostream& operator<<(std::ostream& s, const UMessage& m);
 
+  /// Set \a val to the value of \a m.
+  /// \return 1 on success, 0 on failure.
+  /// An error message is printed on error.
+  template <typename T>
+  int getValue(UMessage* m, T& val);
+
 } // namespace urbi
+
+
 
 # include <urbi/umessage.hxx>
 

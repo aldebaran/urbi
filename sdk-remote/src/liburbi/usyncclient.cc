@@ -377,28 +377,6 @@ namespace urbi
     return 1;
   }
 
-  template <typename T>
-  static int
-  getValue(UMessage* m, T& val)
-  {
-    int res = 0;
-    if ((res = (m && m->type == MESSAGE_DATA)))
-      val = *m->value;
-    delete m;
-    return res;
-  }
-
-  template <>
-  int
-  getValue<double>(UMessage* m, double& val)
-  {
-    int res = 0;
-    if ((res = (m && m->type == MESSAGE_DATA && m->value->type == DATA_DOUBLE)))
-      val = (double) *m->value;
-    delete m;
-    return res;
-  }
-
   int
   USyncClient::syncGetNormalizedDevice(const char* device, double& val,
 				       libport::utime_t useconds)
