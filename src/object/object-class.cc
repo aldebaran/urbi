@@ -272,7 +272,8 @@ namespace object
   static bool
   object_class_ownsSlot(rObject self, const libport::Symbol& slot)
   {
-    return self->own_slot_get(slot);
+    rObject res = self->own_slot_get(slot)->value();
+    return (res);
   }
 
   void
