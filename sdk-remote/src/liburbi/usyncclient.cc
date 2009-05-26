@@ -381,32 +381,22 @@ namespace urbi
   static int
   getValue(UMessage* m, T& val)
   {
-    if (!m)
-      return 0;
-    if (m->type != MESSAGE_DATA)
-    {
-      delete m;
-      return 0;
-    }
-    val = *m->value;
+    int res = 0;
+    if ((res = (m && m->type == MESSAGE_DATA)))
+      val = *m->value;
     delete m;
-    return 1;
+    return res;
   }
 
   template <>
   int
   getValue<double>(UMessage* m, double& val)
   {
-    if (!m)
-      return 0;
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
-    {
-      delete m;
-      return 0;
-    }
-    val = (double)*m->value;
+    int res = 0;
+    if ((res = (m && m->type == MESSAGE_DATA && m->value->type == DATA_DOUBLE)))
+      val = (double) *m->value;
     delete m;
-    return 1;
+    return res;
   }
 
   int
