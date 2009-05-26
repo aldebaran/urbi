@@ -19,17 +19,17 @@ A \dfn{pair} is a container storing two objects, similar in spirit to
 \item \lstinline|second|\\
   Return the second member of the pair.
 
-\item \lstinline|[\var{index}]|\\
+\item \lstinline|'[]'(\var{index})|\\
   Return the \var{index}-th element.  \var{index} must be 0 or 1.
 
-\item \lstinline|[\var{index}] = value|\\
+\item \lstinline|'[]='(\var{index}, \var{value})|\\
   Set (and return) the \var{index}-th element to \var{value}.
   \var{index} must be 0 or 1.
 
-\item \lstinline|< \var{other}|\\
+\item \lstinline|'<'(\var{other})|\\
   Lexicographic comparison between two pairs.
 
-\item \lstinline|== \var{other}|\\
+\item \lstinline|'=='(\var{other})|\\
   Whether \lstinline|this| and \lstinline|other| have the same
   contents (equality-wise).
 \end{itemize}

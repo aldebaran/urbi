@@ -119,7 +119,7 @@ assert("Hello, World!".toLower == "hello, world!");
 assert("Hello, World!".toUpper == "HELLO, WORLD!");
 \end{urbiscript}
 
-\item \lstinline|% \var{args}|\\
+\item \lstinline|'%'(\var{args})|\\
   Use \lstinline|this| as format string, and convert occurrences of
   \lstinline|%s| in \lstinline|this| by the \var{args} converted as
   strings via \lstinline|asString|.
@@ -132,7 +132,7 @@ assert("Hello, World!".toUpper == "HELLO, WORLD!");
 [00000000] "1 + 2 = 3"
 \end{urbiscript}
 
-\item \lstinline|* \var{n}|\\
+\item \lstinline|'*'(\var{n})|\\
   Return the concatentation of \lstinline|this| \var{n} times.
 \begin{urbiscript}[firstnumber=last]
 assert("foo" * 0 == "");
@@ -140,7 +140,7 @@ assert("foo" * 1 == "foo");
 assert("foo" * 3 == "foofoofoo");
 \end{urbiscript}
 
-\item \lstinline|+ \var{other}|\\
+\item \lstinline|'+'(\var{other})|\\
   Return the concatenation of \lstinline|this| and
   \lstinline|\var{other}.asString|.
 \begin{urbiscript}[firstnumber=last]
@@ -150,7 +150,7 @@ assert("foo" + 3 == "foo3");
 assert("foo" + [1, 2, 3] == "foo[1, 2, 3]");
 \end{urbiscript}
 
-\item \lstinline|< \var{other}|\\
+\item \lstinline|'<'(\var{other})|\\
   Whether \lstinline|this| is lexicographically before \var{other},
   which must be a String.
 \begin{urbiscript}[firstnumber=last]
@@ -160,8 +160,8 @@ assert("a" < "b");
 assert(!("a" < "a"));
 \end{urbiscript}
 
-\item \lstinline|[\var{from}]|\\
-  \lstinline|[\var{from}, \var{to}]|\\
+\item \lstinline|'[]'(\var{from})|\\
+  \lstinline|'[]'(\var{from}, \var{to})|\\
   Return the substring starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1).
 \begin{urbiscript}[firstnumber=last]
@@ -169,8 +169,8 @@ assert("foobar"[0, 3], "foo");
 assert("foobar"[0], "b");
 \end{urbiscript}
 
-\item \lstinline|[\var{from}]| = \var{other}\\
-  \lstinline|[\var{from}, \var{to}]| = \var{other}\\
+\item \lstinline|'[]='(\var{from}, \var{other})|\\
+  \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\
   Replace the substring starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1), by \var{other}.  Return
   \var{other}.
