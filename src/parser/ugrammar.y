@@ -3,7 +3,6 @@
 
 %require "2.3"
 %language "C++"
-%error-verbose
 %defines
 // Instead of "yytoken yylex(yylval, yylloc)", use "symbol_type yylex()".
 %define lex_symbol
