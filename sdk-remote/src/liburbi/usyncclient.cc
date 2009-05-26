@@ -250,8 +250,8 @@ namespace urbi
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     effective_send(compatibility::evaluate_in_channel_close(tag));
-    return waitForTag(opt_used.mtag_ ?
-		      opt_used.mtag_ : tag, opt_used.timeout_);
+    return waitForTag(opt_used.mtag_ ? opt_used.mtag_ : tag,
+                      opt_used.timeout_);
   }
 
   UMessage*
