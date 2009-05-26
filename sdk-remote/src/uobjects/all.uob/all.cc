@@ -184,6 +184,7 @@ public:
 
 #define APPEND(Value)                                   \
     res.array.push_back(new urbi::UValue(Value))
+
 #define APPEND_UFLOAT(Prop)                     \
     APPEND(static_cast<ufloat>(v.Prop))
 
@@ -197,6 +198,7 @@ public:
 #undef APPEND_UFLOAT
 #undef APPEND
 
+    std::cerr << "all.readProps: " << res << std::endl;
     return res;
   }
 
