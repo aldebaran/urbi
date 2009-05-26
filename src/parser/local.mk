@@ -55,8 +55,7 @@ SOURCES_FROM_UGRAMMAR_Y =			\
   parser/location.hh				\
   parser/ugrammar.hh				\
   parser/ugrammar.cc
-BUILT_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
-dist_libuobject_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
+nodist_libuobject_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
 
 DATA_FROM_UGRAMMAR_Y = 				\
   parser/ugrammar.html				\
@@ -82,12 +81,12 @@ ugrammar_deps =					\
   $(wildcard $(top_builddir)/bison/data/*.m4)
 
 AM_BISONFLAGS = -d -ra -Derror-verbose=$(YYERROR_VERBOSE)
-$(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
+parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
 	echo '$@ rebuilt because of: $?' >$@.tmp
 	$(MAKE) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
-	$(BISONXX) $< $(srcdir)/parser/ugrammar.cc \
+	$(BISONXX) $< parser/ugrammar.cc \
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
 	mv -f $@.tmp $@
 
@@ -106,21 +105,21 @@ $(srcdir)/parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 # with it, and I don't know if we wouldn't have troubles elsewhere
 # (other rules of this Makefile which expect VPATH behavior, not
 # GPATH).
-$(SOURCES_FROM_UGRAMMAR_Y): $(srcdir)/parser/ugrammar.stamp
-	@if test ! -f $@ && test ! -f $(srcdir)/$@; then		  \
-	  trap 'rm -rf $(srcdir)/parser/ugrammar.{lock,stamp}' 1 2 13 15; \
-          if mkdir $(srcdir)/parser/ugrammar.lock 2>/dev/null; then	  \
-	    rm -f $(srcdir)/parser/ugrammar.stamp;			  \
-	    $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;		  \
-	    result=$$?;							  \
-	    rm -rf $(srcdir)/parser/ugrammar.lock;			  \
-	    exit $$result;						  \
-	  else								  \
-	    while test -d $(srcdir)/parser/ugrammar.lock; do		  \
-	      sleep 1;							  \
-	    done;							  \
-	    test -f $(srcdir)/parser/ugrammar.stamp;			  \
-	  fi;								  \
+$(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
+	@if test ! -f $@; then					\
+	  trap 'rm -rf parser/ugrammar.{lock,stamp}' 1 2 13 15;	\
+          if mkdir parser/ugrammar.lock 2>/dev/null; then	\
+	    rm -f parser/ugrammar.stamp;			\
+	    $(MAKE) $(AM_MAKEFLAGS) parser/ugrammar.stamp;	\
+	    result=$$?;						\
+	    rm -rf parser/ugrammar.lock;			\
+	    exit $$result;					\
+	  else							\
+	    while test -d parser/ugrammar.lock; do		\
+	      sleep 1;						\
+	    done;						\
+	    test -f parser/ugrammar.stamp;			\
+	  fi;							\
 	fi
 
 # We tried several times to run make from ast/ to build position.hh
@@ -157,8 +156,7 @@ parser/keywords.hh: parser/utoken.l
 FROM_UTOKEN_L =			\
   parser/utoken.cc
 
-BUILT_SOURCES += $(FROM_UTOKEN_L)
-CLEANFILES += $(FROM_UTOKEN_L) parser/utoken.stamp
+CLEANFILES += parser/utoken.stamp
 dist_libuobject_la_SOURCES += parser/flex-lexer.hh
 nodist_libuobject_la_SOURCES += $(FROM_UTOKEN_L)
 

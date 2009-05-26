@@ -26,16 +26,3 @@
 /src/object/cxx-primitive.hxx
 /src/object/executable.hh
 /src/object/symbols.hh.old
-/src/parser/location.hh
-/src/parser/location.hh.bak
-/src/parser/position.hh
-/src/parser/position.hh.bak
-/src/parser/stack.hh
-/src/parser/stack.hh.bak
-/src/parser/ugrammar.cc
-/src/parser/ugrammar.hh
-/src/parser/ugrammar.hh.bak
-/src/parser/ugrammar.html
-/src/parser/ugrammar.output
-/src/parser/ugrammar.stamp
-/src/parser/ugrammar.xml
