@@ -65,6 +65,7 @@ dist_noinst_HEADERS = $(REVISION_FILE)
 dist_libuobject_la_SOURCES =
 nodist_libuobject_la_SOURCES =
 BUILT_SOURCES += $(nodist_libuobject_la_SOURCES)
+CLEANFILES += $(nodist_libuobject_la_SOURCES)
 # Needed in object/local.mk, used potentially everywhere else (maybe
 # before, so initialize it here).
 precompiled_symbols_hh_deps =
