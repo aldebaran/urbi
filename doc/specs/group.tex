@@ -3,18 +3,23 @@ A transparent means to send messages to several objects as if they
 were one.
 
 \begin{itemize}
+
 \item \lstinline|add(\var{member}, ...)|\\
   Add members to \lstinline|this| group, and return \lstinline|this|.
+
 \item \lstinline|asString|\\
   Report the members.
+
 \item \lstinline|each(\var{action})|\\
   Apply \var{action} to all the members, in sequence, then return the
   Group of the results, in the same order.  Allows to iterate over a
   Group via \lstinline|for|.
+
 \item \lstinline|each&(\var{action})|\\
   Apply \var{action} to all the members, concurrently, then return the
   Group of the results.  The order is \emph{not} necessarily the same.
   Allows to iterate over a Group via \lstinline|for&|.
+
 \item \lstinline|fallback|\\
   This function is called when a method call on \lstinline|this|
   failed.  It bounces the call to the members of the group, collects
@@ -22,28 +27,35 @@ were one.
   operation in a row.  If the dispatched calls return
   \lstinline|void|, returns a single \lstinline|void|, not a ``group
   of \lstinline|void|''.
+
 \item \lstinline|getProperty(\var{slot}, \var{prop})|\\
   Bounced to the members so that
   \lstinline|this.var{slot}->\var{prop}| actually collects the values
   of the property \var{prop} of the slots \var{slot} of the group
   members.
+
 \item \lstinline|hasProperty(\var{name})|\\
   Bounced to the members.
+
 \item \lstinline|remove(\var{member}, ...)|\\
   Remove members from \lstinline|this| group, and return
   \lstinline|this|.
+
 \item \lstinline|setProperty(\var{slot}, \var{prop}, \var{value})|\\
   Bounced to the members so that
   \lstinline|this.var{slot}->\var{prop} = \var{value}|
   actually updates the value of the property \var{prop}
   in the slots \var{slot} of the group members.
+
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Bounced to the members so that
   \lstinline|this.\var{name} = \var{value}|
   actually updates the value of the slot \var{name} in
   the group members.
+
 \item \lstinline|'<<'(\var{member})|\\
   Syntactic sugar for \lstinline|add|.
+
 \end{itemize}
 
 \begin{urbiscript}
