@@ -25,8 +25,6 @@
 /src/object/any-to-boost-function.hxx
 /src/object/cxx-primitive.hxx
 /src/object/executable.hh
-/src/object/precompiled-symbols.hh
-/src/object/precompiled-symbols.stamp
 /src/object/symbols.hh.old
 /src/parser/location.hh
 /src/parser/location.hh.bak

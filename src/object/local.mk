@@ -2,6 +2,12 @@
 ## List of used symbols.  ##
 ## ---------------------- ##
 
+nodist_libuobject_la_SOURCES += 		\
+  $(precompiled_symbols_hh)
+
+# We generated this file in builddir so that we can have a single
+# srcdir, but several builddir with different configuration-options
+# that may result in a different set of precompiled symbols.
 precompiled_symbols_hh = object/precompiled-symbols.hh
 precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
 # filter-out generated files, and precompiled_symbols_hh itself to
@@ -25,17 +31,17 @@ $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_h
 	@touch $@.tmp
 # Don't use `mv' here so that even if we are interrupted, the file
 # is still available for diff in the next run.
-	if test -f $(srcdir)/$(precompiled_symbols_hh); then	\
-	  cat $(srcdir)/$(precompiled_symbols_hh);		\
+	if test -f $(precompiled_symbols_hh); then	\
+	  cat $(precompiled_symbols_hh);		\
 	fi >$(precompiled_symbols_hh)~
 	(cd $(srcdir) &&				\
 	 ./object/symbols-generate.pl			\
 		$(precompiled_symbols_hh_sources))	\
 		>$(precompiled_symbols_hh).tmp
 	diff -u $(precompiled_symbols_hh)~ $(precompiled_symbols_hh).tmp || true
-	$(top_srcdir)/build-aux/move-if-change \
-	  $(precompiled_symbols_hh).tmp $(srcdir)/$(precompiled_symbols_hh)
-	@mv -f $@.tmp $(srcdir)/$@
+	$(move_if_change)						\
+	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
+	@mv -f $@.tmp $@
 
 $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	@if test ! -f $@; then					\
@@ -53,8 +59,6 @@ FROM_PY =					\
   object/cxx-primitive.hxx			\
   object/executable.hh
 
-BUILT_SOURCES += $(FROM_PY)
-CLEANFILES += $(FROM_PY)
 nodist_libuobject_la_SOURCES += $(FROM_PY)
 EXTRA_DIST += $(FROM_PY:=.py)
 
@@ -123,10 +127,6 @@ dist_libuobject_la_SOURCES +=			\
   object/root-classes.hh			\
   object/semaphore.cc				\
   object/semaphore.hh				\
-  object/server.cc				\
-  object/server.hh				\
-  object/socket.cc				\
-  object/socket.hh				\
   object/slot.cc				\
   object/slot.hh				\
   object/slot.hxx				\
@@ -149,5 +149,12 @@ dist_libuobject_la_SOURCES +=			\
   object/uvar.hh                                \
   object/uvar.cc                                \
   object/vector-slots.hh			\
-  object/vector-slots.hxx			\
-  $(precompiled_symbols_hh)
+  object/vector-slots.hxx
+
+if !OPTIMIZE_SPACE
+  dist_libuobject_la_SOURCES +=			\
+    object/socket.cc				\
+    object/socket.hh				\
+    object/server.cc				\
+    object/server.hh
+endif
