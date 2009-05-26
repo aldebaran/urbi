@@ -251,7 +251,10 @@ uobject_new(rObject proto, bool forceName)
   // Get the name we will pass to uobject.
   std::string name;
   if (forceName)
+  {
+    r->slot_set(SYMBOL(type), rcName);
     name = cname;
+  }
   else
   {
     // boost::lexical_cast does not work on the way back, so dont use it here
