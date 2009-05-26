@@ -70,7 +70,7 @@ namespace urbi
   UNamedValue&
   UNamedValue::error()
   {
-    static UNamedValue instance;
+    static UNamedValue instance("<<UNamedValue::error (denotes an error)>>");
     return instance;
   }
 

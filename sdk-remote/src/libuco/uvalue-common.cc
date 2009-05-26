@@ -84,7 +84,7 @@ namespace urbi
   UValue&
   UValue::error()
   {
-    static UValue instance;
+    static UValue instance("<<UValue::error (denotes an error)>>");
     return instance;
   }
 
