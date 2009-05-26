@@ -18,7 +18,7 @@ namespace parser
   // propagation.
   inline
   bool
-  is_keyword(libport::Symbol s)
+  is_keyword(libport::Symbol)
   {
     return true;
   }
