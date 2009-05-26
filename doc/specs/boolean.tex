@@ -1,6 +1,39 @@
 \section{Boolean}
-Boolean values, \lstinline{true} and \lstinline{false} and the
-associated operations.
+
+Booleans does not exist as a real type in \us. On the other hand, all
+objects in \us can be evaluated as boolean value especially the two
+specific object \lstinline|true| and \lstinline|false|.
+
+\subsection{Prototypes}
+
+As above, the prototype Boolean does not exists, but \lstinline|true|
+and \lstinline|false| have the following prototype.
+
+\begin{itemize}
+\item \refObject{Singleton}
+\end{itemize}
+
+\subsection{Construction}
+
+Actually you don't want to construct booleans, you just want to know
+if a condition is true or false. So the object \lstinline|true| and
+\lstinline|false| are the result of all comparison statement.
+
+\begin{urbiscript}
+true;
+[00000000] true
+false;
+[00000000] false
+2 < 6;
+[00000000] true
+var x = true.new;
+[00000000] true
+x === true;
+[00000000] true
+\end{urbiscript}
+
+As you can see, when you try to clone \lstinline|true| or
+\lstinline|false|, you get the object itself and not a copy.
 
 %%% Local Variables:
 %%% mode: latex

@@ -2,6 +2,35 @@
 Returning data, typically asynchronous, with a label so that the
 ``caller'' can find it in the flow.
 
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Channels are created like any other object. The constructor must be
+called with a string which will be the label.
+
+\begin{urbiscript}
+var c = Channel.new("my_label") | {};
+\end{urbiscript}
+
+\subsection{Methods}
+
+\begin{itemize}
+
+\item \lstinline|'<<'(\var{value})|\\
+Returns the given \var{value} tagged by the label of \lstinline|this|
+
+\begin{urbiscript}[firstnumber=last]
+c << 42;
+[00000000:my_label] 42
+\end{urbiscript}
+
+\end{itemize}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
