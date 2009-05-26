@@ -269,12 +269,21 @@ namespace object
     return is_a(self, proto);
   }
 
+  static bool
+  object_class_ownsSlot(rObject self, const libport::Symbol& slot)
+  {
+    rObject res = self->own_slot_get(slot)->value();
+    return (res);
+  }
+
   void
   object_class_initialize ()
   {
     Object::proto->slot_set(SYMBOL(isA),
                            make_primitive(object_class_isA));
 
+    Object::proto->slot_set(SYMBOL(ownsSlot),
+      make_primitive(&object_class_ownsSlot));
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)                                                   \
     Object::proto->slot_set(SYMBOL(Name), new Primitive(object_class_##Name), true)

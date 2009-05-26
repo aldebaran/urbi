@@ -28,14 +28,6 @@ do (Object)
     setSlot(to, getSlot(frm).clone)
   };
 
-  /// Whether <slot> is a (direct, not from protos) member of this.
-  /// Works properly with "nil", which is not the case of versions
-  /// relying on locateSlot.
-  function ownsSlot (s)
-  {
-    return s in slotNames;
-  };
-
   // Some sort of k1 compatibility.
   copySlot ("addProto", "inherit");
   copySlot ("removeProto", "disinherit");
