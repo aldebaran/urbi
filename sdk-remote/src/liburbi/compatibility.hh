@@ -18,7 +18,7 @@ namespace urbi
     ///
     /// For Urbi 1:
     ///
-    ///    name << Exp
+    ///    name << Exp,
     ///
     /// For Urbi 2:
     ///
@@ -31,10 +31,10 @@ namespace urbi
     ///        {
     ///          lobby.send("!!! " + e.asString, name);
     ///        }
-    ///      };
+    ///      },
     ///
     /// We add bracess to allow statements and neutralize precedence
-    /// issues.
+    /// issues.  We end with a `,', as this is an asynchronous command.
     ///
     /// \param name  the name of the channel
     std::string evaluate_in_channel_open(const std::string& name);

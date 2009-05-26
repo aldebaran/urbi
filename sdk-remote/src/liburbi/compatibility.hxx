@@ -25,13 +25,13 @@ namespace urbi
     evaluate_in_channel_close(const std::string& name)
     {
       if (kernelMajor() < 2)
-        return "";
+        return ",";
       else
         return ("} }\n"
                 "catch (var e)\n"
                 "{\n"
                 "  lobby.send(\"!!! \" + e, \"" + name + "\");\n"
-                "};\n");
+                "},\n");
     }
 
     /*-------.

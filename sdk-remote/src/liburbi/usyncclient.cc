@@ -201,17 +201,6 @@ namespace urbi
       return *cp == ':' || *cp == '<';
     }
 
-    /// Whether \a cp ends with , or ; (skipping trailing spaces).
-    static
-    bool
-    has_terminator(const char* cp)
-    {
-      int p = static_cast<int>(strlen(cp)) - 1;
-      while (0 <= p && cp[p] == ' ')
-        --p;
-      return 0 <= p && (cp[p] == ';' || cp[p] == ',');
-    }
-
     /// Return the concatenation of t1 and t2, make it unique
     /// if they are empty.
     static
@@ -245,8 +234,6 @@ namespace urbi
       sendBufferLock.unlock();
       return 0;
     }
-    if (!has_terminator(format))
-      strcat(sendBuffer, ",\n");
     std::string tag = make_tag(*this, opt_used);
     effective_send(compatibility::evaluate_in_channel_open(tag));
     queueLock_.lock();
