@@ -16,6 +16,7 @@
 # define URBI_UVALUE_HXX
 
 # include <urbi/uvalue.hh>
+# include <libport/assert.hh>
 
 namespace urbi
 {
