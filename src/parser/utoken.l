@@ -102,7 +102,10 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
                                                                         \
   static bool uconsole_mode = getenv ("UCONSOLE_MODE");                 \
   sc_default = uconsole_mode ? SC_UCONSOLE : INITIAL;                   \
+  if (up && up->meta())                                                 \
+    sc_default = SC_META;                                               \
   BEGIN sc_default;                                                     \
+                                                                        \
   static bool init = false;                                             \
   if (!init)                                                            \
   {                                                                     \
@@ -128,12 +131,6 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   do {                                          \
     if (up)                                     \
       loc.step();                               \
-  } while (0)
-
-// Move the end cursor to the head cursor.  To be used when REJECTing.
-#define STEP_BACK()                             \
-  do {                                          \
-    loc.end = loc.begin;                        \
   } while (0)
 
 // Called via YY_USER_ACION each time we *advance* the cursor, in
@@ -251,11 +248,7 @@ do {                                            \
 #define RETURN_PERCENT(Token)                   \
   do {                                          \
     PRE_SKIP();                                 \
-    if (!up->meta())                            \
-    {                                           \
-      STEP_BACK();                              \
-      REJECT;                                   \
-    }                                           \
+    assert(up->meta());                         \
     RETURN(PERCENT_ ## Token ## _COLON);        \
   } while (0)
 
@@ -314,10 +307,13 @@ do {                                            \
   }
 
 %}
-%option nodefault
+%option nodefault noreject noyymore
 
 %x SC_C_COMMENT SC_DOC_COMMENT SC_STRING_OR_SYMBOL
+ // Ignore lines starting with "[000000:tag]", we are fed with a chk file.
 %s SC_UCONSOLE
+ // Enable meta variable support.
+%s SC_META
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -469,11 +465,13 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
 
-"%exp:"         RETURN_PERCENT(EXP);
-"%exps:"        RETURN_PERCENT(EXPS);
-"%id:"          RETURN_PERCENT(ID);
-"%lvalue:"      RETURN_PERCENT(LVALUE);
-"%unscope:"     RETURN_PERCENT(UNSCOPE);
+<SC_META>{
+  "%exp:"         RETURN_PERCENT(EXP);
+  "%exps:"        RETURN_PERCENT(EXPS);
+  "%id:"          RETURN_PERCENT(ID);
+  "%lvalue:"      RETURN_PERCENT(LVALUE);
+  "%unscope:"     RETURN_PERCENT(UNSCOPE);
+}
 
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);
@@ -823,7 +821,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
                   if (!--comment_level)
                     {
                       STEP();
-                      BEGIN INITIAL;
+                      BEGIN sc_default;
                     }
                 }
 }
