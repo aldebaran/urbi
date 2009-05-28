@@ -20,18 +20,31 @@ namespace object
   typedef libport::intrusive_ptr<Object> rObject;
   typedef libport::ReservedVector<rObject, 8> objects_type;
 
-# define APPLY_ON_ALL_PRIMITIVES(Macro)			\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)		\
-  Macro(object,     Object)
+# define APPLY_ON_ALL_PRIMITIVES(Macro)         \
+    Macro(Barrier);                             \
+    Macro(Code);                                \
+    Macro(Dictionary);                          \
+    Macro(Directory);                           \
+    Macro(Executable);                          \
+    Macro(File);                                \
+    Macro(Float);                               \
+    Macro(List);                                \
+    Macro(Lobby);                               \
+    Macro(OutputStream);                        \
+    Macro(Path);                                \
+    Macro(Primitive);                           \
+    Macro(Semaphore);                           \
+    Macro(Server);                              \
+    Macro(Socket);                              \
+    Macro(String);                              \
+    Macro(Tag);                                 \
+    Macro(Task);                                \
+    Macro(TextOutputStream)                     \
 
+# define APPLY_ON_ALL_OBJECTS(Macro)            \
+  APPLY_ON_ALL_PRIMITIVES(Macro);               \
+  Macro(Event);                                 \
 
-# define APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)		\
-  Macro(global,     Global)
-
-
-# define APPLY_ON_ALL_ROOT_CLASSES(Macro)	\
-  APPLY_ON_ALL_ROOT_CLASSES_BUT_OBJECT(Macro)   \
-  Macro(object, Object)
 
   /*
     Help the generation of precompiled symbols.
@@ -53,26 +66,7 @@ namespace object
   class Class;                                          \
   typedef libport::intrusive_ptr<Class> r ## Class         \
 
-  FWD_DECL(Barrier);
-  FWD_DECL(Code);
-  FWD_DECL(Dictionary);
-  FWD_DECL(Directory);
-  FWD_DECL(Event);
-  FWD_DECL(Executable);
-  FWD_DECL(File);
-  FWD_DECL(Float);
-  FWD_DECL(List);
-  FWD_DECL(Lobby);
-  FWD_DECL(OutputStream);
-  FWD_DECL(Path);
-  FWD_DECL(Primitive);
-  FWD_DECL(Semaphore);
-  FWD_DECL(Server);
-  FWD_DECL(Socket);
-  FWD_DECL(String);
-  FWD_DECL(Tag);
-  FWD_DECL(Task);
-  FWD_DECL(TextOutputStream);
+  APPLY_ON_ALL_OBJECTS(FWD_DECL);
 
   extern URBI_SDK_API rObject false_class;
   extern URBI_SDK_API rObject nil_class;
