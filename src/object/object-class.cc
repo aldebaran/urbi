@@ -263,25 +263,6 @@ namespace object
     return new List(res);
   }
 
-  // self.getLazyLocalSlot(SLOT-NAME, DEFAULT-VALUE, CREATE?).
-  static rObject
-  object_class_getLazyLocalSlot (rObject self,
-                                 libport::Symbol name,
-                                 rObject def,
-                                 bool create)
-  {
-    // If the slot already exists, return its content.
-    if (rObject slot = self->own_slot_get(name))
-      return slot;
-
-    // The slot doesn't exist. Should we create it?
-    if (create)
-      self->slot_set(name, def);
-
-    // Return the default value for this slot.
-    return def;
-  }
-
   static bool
   object_class_isA(rObject self, rObject proto)
   {
@@ -318,7 +299,6 @@ namespace object
     Object::proto->slot_set(SYMBOL(Name), make_primitive(Code))
 
     DECLARE(createSlot, &Object::urbi_createSlot);
-    DECLARE(getLazyLocalSlot, &object_class_getLazyLocalSlot);
     DECLARE(getProperty, &Object::property_get);
     DECLARE(getSlot, &Object::urbi_getSlot);
     DECLARE(hasProperty, &Object::property_has);
