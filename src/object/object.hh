@@ -276,6 +276,9 @@ namespace object
   // FIXME: we probably want libport::refcounted smart pointers here
   typedef boost::shared_ptr<rObject> rrObject;
 
+  /// Pretty print an object (using the asString urbi method).
+  std::ostream& operator << (std::ostream& s, Object& o);
+
 } // namespace object
 
 # include <object/object.hxx>
