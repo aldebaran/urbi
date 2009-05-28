@@ -1,13 +1,14 @@
 \section{Boolean}
 
-Booleans does not exist as a real type in \us. On the other hand, all
-objects in \us can be evaluated as Boolean value especially the two
-specific object \lstinline|true| and \lstinline|false|.
+There is no object \lstinline|Boolean| in \us, but two specific
+objects \lstinline|true| and \lstinline|false|.  They are the result
+of all comparison statement.
+
 
 \subsection{Prototypes}
 
-As above, the prototype Boolean does not exists, but \lstinline|true|
-and \lstinline|false| have the following prototype.
+The objects \lstinline|true| and \lstinline|false| have the following
+prototype.
 
 \begin{itemize}
 \item \refObject{Singleton}
@@ -15,25 +16,49 @@ and \lstinline|false| have the following prototype.
 
 \subsection{Construction}
 
-Actually you don't want to construct booleans, you just want to know
-if a condition is true or false. So the object \lstinline|true| and
-\lstinline|false| are the result of all comparison statement.
+There are no constructors, use \lstinline|true| and \lstinline|false|.
+Since they are singletons, \lstinline|clone| will return themselves,
+not new copies.
 
 \begin{urbiscript}
-true;
-[00000000] true
-false;
-[00000000] false
-2 < 6;
-[00000000] true
-var x = true.new;
-[00000000] true
-x === true;
-[00000000] true
+assert(true);
+assert(!false);
+assert(2 < 6 === true);
+assert(true.new === true);
+assert(6 < 2 === false);
 \end{urbiscript}
 
-As you can see, when you try to clone \lstinline|true| or
-\lstinline|false|, you get the object itself and not a copy.
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|'&&'(\var{that})|\\
+  Short-circuiting logical and. If \lstinline|this| is
+  \lstinline|true| evaluate and return \var{that}.  If
+  \lstinline|this| is \lstinline|false|, return itself without
+  evaluating \var{that}.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(true && 2, 2);
+assert_eq(false && 1 / 0, false);
+\end{urbiscript}
+
+\item \lstinline|'||'(\var{that})|\\
+  Short-circuiting logical or. If \lstinline|this| is
+  \lstinline|false| evaluate and return \var{that}.  If
+  \lstinline|this| is \lstinline|true|, return itself without
+  evaluating \var{that}.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(true || 1/0, true);
+assert_eq(false || 2, 2);
+\end{urbiscript}
+
+\item \lstinline|'!'|\\
+  Logical negation. If \lstinline|this| is \lstinline|false| return
+  \lstinline|true| and vice-versa.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(!true, false);
+assert_eq(!false, true);
+\end{urbiscript}
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex
