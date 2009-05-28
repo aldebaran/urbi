@@ -33,8 +33,7 @@ using libport::program_name;
 static UCallbackAction
 onError(const UMessage& msg)
 {
-  std::cerr << program_name()
-            << ": load module error: " << msg.message << std::endl;
+  GD_FERROR("%s: load module error: %s", (program_name())(msg.message));
   return URBI_CONTINUE;
 }
 

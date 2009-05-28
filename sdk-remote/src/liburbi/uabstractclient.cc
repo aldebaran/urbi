@@ -853,8 +853,7 @@ namespace urbi
 	      currentTag[0] = 0;
 	    else // failure
 	    {
-	      std::cerr << "UAbstractClient::read, error parsing header: '"
-			<< recvBuffer << '\'' << std::endl;
+              GD_FERROR("UAbstractClient::read, error parsing header: '%s'", (recvBuffer));
 	      currentTimestamp = 0;
 	      strcpy(currentTag, "UNKNWN");
 	      //listLock.lock();
@@ -948,7 +947,7 @@ namespace urbi
 	      }
               // this should not happen: \n should have been handled
               // by binary code below
-	      std::cerr << "FATAL PARSE ERROR" << std::endl;
+	      GD_ERROR("FATAL PARSE ERROR");
             }
 	    if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
 	    {
@@ -959,8 +958,7 @@ namespace urbi
                 strtol(recvBuffer+parsePosition+1, &endLength, 0);
 	      if (endLength == recvBuffer+parsePosition+1)
 	      {
-		std::cerr << "UClient::read, error parsing bin data length."
-			  << std::endl;
+		GD_ERROR("UClient::read, error parsing bin data length.");
 		recvBufferPosition = 0;
 		return;
 	      }
@@ -1122,10 +1120,8 @@ namespace urbi
     {
       kernelMajor_ = 2;
       kernelMinor_ = 0;
-      std::cerr << "failed to parse kernel version string: '"
-                << kernelVersion_ << "', assuming "
-                << kernelMajor_ << '.' << kernelMinor_ << '.'
-                << std::endl;
+      GD_FWARN("failed to parse kernel version string: '%s', assuming %s.%s.",
+               (kernelVersion_)(kernelMajor_)(kernelMinor_));
     }
 
     // Have the connectionId sent on __ident.

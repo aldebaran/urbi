@@ -54,6 +54,6 @@ generic::inc ()
 UReturn
 generic::newval (UVar& v)
 {
-  std::cerr << "generic:newval: " << (int) v;
+  GD_FERROR("generic:newval: %s", ((int) v));
   return 0;
 }

@@ -59,7 +59,7 @@ class timerHub: public urbi::UObjectHub
     timerHub(const std::string& name)
 	: urbi::UObjectHub(name)
 	{
-	  std::cerr <<"timerhub started"<<std::endl;
+          GD_ERROR("timerhub started");
 	  thub = this;
 	}
 	virtual int update()

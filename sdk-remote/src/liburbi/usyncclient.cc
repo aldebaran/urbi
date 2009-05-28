@@ -176,9 +176,9 @@ namespace urbi
     // syncTag is reset by the other thread.
     UMessage *res = syncLock_.uget(useconds) ? message_ : 0;
     if (!res)
-      std::cerr << "Timed out" << std::endl;
+      GD_ERROR("Timed out");
     else if (res->type == MESSAGE_ERROR)
-      std::cerr << "Received error message: " << *res << std::endl;
+      GD_FERROR("Received error message: %s", (*res));
     message_ = 0;
     return res;
   }

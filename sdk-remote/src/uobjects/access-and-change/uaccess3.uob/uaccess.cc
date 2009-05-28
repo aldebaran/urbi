@@ -26,7 +26,7 @@ uaccess::newval (UVar& v)
 {
   static int value = 0;
   value++;
-  std::cerr << "uaccess::newval: value = " << value << std::endl;
+  GD_FERROR("uaccess::newval: value = %s", (value));
   v = value;
   return 0;
 }

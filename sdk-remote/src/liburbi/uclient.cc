@@ -79,7 +79,7 @@ namespace urbi
       sa.sin_addr.s_addr = inet_addr(host_.c_str());
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
-        std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
+        GD_ERROR("UClient::UClient cannot resolve host name.");
         rc = -1;
         return;
       }

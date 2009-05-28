@@ -38,11 +38,8 @@ namespace urbi
     , objname(objname)
     , name(callback_name(name, type, size))
   {
-    std::cerr << libport::program_name()
-	      << ": Registering " << type << " " << name << " " << size
-	      << " into " << this->name
-	      << " from " << objname
-	      << std::endl;
+    GD_FINFO("Registering %s %s %s into %s from %s",
+             (type)(name)(size)(this->name)(objname));
 
     if (type == "var")
       URBI_SEND_PIPED_COMMAND("external " << type << " "
@@ -71,7 +68,7 @@ namespace urbi
   void
   UGenericCallback::registerCallback(UTable& t)
   {
-    std::cerr << "Pushing " << name << "in " << &t << std::endl;
+    GD_FINFO("Pushing %s in %s", (name)(&t));
     t[name].push_back(this);
   }
 

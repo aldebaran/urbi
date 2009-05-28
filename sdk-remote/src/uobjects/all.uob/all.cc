@@ -198,7 +198,7 @@ public:
 #undef APPEND_UFLOAT
 #undef APPEND
 
-    std::cerr << "all.readProps: " << res << std::endl;
+    GD_FERROR("all.readProps: %s", (res));
     return res;
   }
 
@@ -219,7 +219,7 @@ public:
 
   int writeD(const std::string &name, double val)
   {
-    std::cerr << "writeD " << name << std::endl;
+    GD_FERROR("writeD %s", (name));
     urbi::UVar v(name);
     v = val;
     return 0;
@@ -227,7 +227,7 @@ public:
 
   int writeS(const std::string &name, const std::string &val)
   {
-    std::cerr << "writeS " << name << std::endl;
+    GD_FERROR("writeS %s", (name));
     urbi::UVar v(name);
     v = val;
     return 0;
@@ -235,7 +235,7 @@ public:
 
   int writeL(const std::string &name, const std::string &val)
   {
-    std::cerr << "writeL " << name << std::endl;
+    GD_FERROR("writeL %s", (name));
     urbi::UVar v(name);
     urbi::UList l;
     l.array.push_back(new urbi::UValue(val));

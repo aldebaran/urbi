@@ -108,9 +108,8 @@ namespace urbi
   do {                                                  \
     if (message[pos] != Char)                           \
     {                                                   \
-      std::cerr << "unexpected `" << message[pos]       \
-                << "', expected `" << Char << "'"       \
-                << std::endl;                           \
+      GD_FERROR("unexpected `%s', expected `%s'",       \
+                (message[pos])(Char));                  \
       return -pos;                                      \
     }                                                   \
   } while(0)
@@ -120,7 +119,7 @@ namespace urbi
   do {                                                          \
     if (!message[p])                                            \
     {                                                           \
-      std::cerr << "unexpected end of file" << std::endl;       \
+      GD_ERROR("unexpected end of file");                       \
       return -p;                                                \
     }                                                           \
   } while (0)
@@ -265,8 +264,7 @@ namespace urbi
     }
 
     // Anything else is an error, but be resilient and ignore it.
-    std::cerr << "syntax error: " << message + pos << " (ignored)"
-              << std::endl;
+    GD_FWARN("syntax error: %s (ignored)", (message + pos));
     return -pos;
   }
 
@@ -380,7 +378,7 @@ namespace urbi
     // LIBPORT_ECHO("Parsing: {" << is.str() << "}");
     if (binpos == bins.end())
     {
-      std::cerr << "no binary data available" << std::endl;
+      GD_ERROR("no binary data available");
       return false;
     }
 
@@ -389,14 +387,12 @@ namespace urbi
     is >> psize;
     if (is.fail())
     {
-      std::cerr << "cannot read bin size: "
-                << is.str() << " (" << psize << ")" << std::endl;
+      GD_FERROR("cannot read bin size: %s (%s)", (is.str())(psize));
       return false;
     }
     if (psize != binpos->size)
     {
-      std::cerr << "bin size inconsistency: "
-                << psize << " != " << binpos->size << std::endl;
+      GD_FERROR("bin size inconsistency: %s != %s", (psize)(binpos->size));
       return false;
     }
     common.size = psize;
@@ -451,7 +447,7 @@ namespace urbi
     }
     else
     {
-      // std::cerr << "unknown binary type: " << t << std::endl;
+      // GD_FWARN("unknown binary type: %s", (t));
       type = BINARY_UNKNOWN;
     }
 

@@ -48,7 +48,7 @@ namespace urbi
     /* no assertion can be made on message[p] because there is no terminator
      * for binaries */
     if (p < 0 || /*message[p] ||*/ iter != bins.end())
-      std::cerr << "PARSE ERROR in `" << msg << "' at " << abs(p) << std::endl;
+      GD_FERROR("PARSE ERROR in `%s' at %s", (msg)(abs(p)));
   }
 
   UMessage::UMessage(const UMessage& b)

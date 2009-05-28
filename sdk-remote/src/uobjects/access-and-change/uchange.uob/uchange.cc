@@ -22,6 +22,6 @@ uchange::init ()
 UReturn
 uchange::newval (UVar& v)
 {
-  std::cerr << "uchange::newval: " << (int) v << std::endl;
+  GD_FERROR("uchange::newval: %s", ((int) v));
   return 0;
 }
