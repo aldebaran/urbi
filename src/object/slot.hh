@@ -38,14 +38,21 @@ namespace object
     | Properties |
     `-----------*/
 
+    /// The \a k property for this slot, or 0 if there is none.
     rObject
     property_get(libport::Symbol k);
+    /// Whether this slot has a \a k property
     bool
     property_has(libport::Symbol k);
+    /// Set the \a k property of this slot to \a value
     bool
     property_set(libport::Symbol k, rObject value);
+    /// Remove the \a k property of this slot. Noop if it does not
+    /// exist.
     void
     property_remove(libport::Symbol k);
+    /// The properties hash map of this slot, or NULL if there are no
+    /// property at all.
     properties_type*
     properties_get();
 
