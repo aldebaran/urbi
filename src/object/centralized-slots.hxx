@@ -79,10 +79,7 @@ namespace object
   {
     loc_index_type::iterator it = where(owner, key);
     if (it == content_->end())
-    {
-      static rSlot s = new Slot(reinterpret_cast<Object*>(0));
-      return s;
-    }
+      return 0;
     return it->second;
   }
 

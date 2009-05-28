@@ -233,7 +233,7 @@ namespace runner
 	if (const rObject& owner = where->slot_locate(elt))
         {
           ECHO("Component " << elt << " exists.");
-	  where = owner->own_slot_get(elt);
+	  where = owner->own_slot_get(elt)->value();
 	  if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
 	  {
             ECHO("It is a tag, so use it as the new parent.");

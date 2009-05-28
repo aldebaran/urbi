@@ -138,10 +138,9 @@ namespace object
     /// \return this
     Object& slot_copy(const key_type& name, const rObject& from);
 
-    /// Get the object pointed to by the *local* slot.
-    /// An error if the slot does not exist in this object (not its
-    /// protos).
-    Slot& own_slot_get(const key_type& k) const;
+    /// Get the object pointed to by the *local* slot. NULL if there
+    /// is no such slot.
+    rSlot own_slot_get(const key_type& k) const;
 
     /// Remove slot.
     Object& slot_remove(const key_type& k);

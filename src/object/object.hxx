@@ -52,10 +52,10 @@ namespace object
   `--------*/
 
   inline
-  Slot&
+  rSlot
   Object::own_slot_get(const key_type& k) const
   {
-    return *slots_.get(this, k);
+    return slots_.get(this, k);
   }
 
   inline

@@ -94,9 +94,8 @@ namespace object
     if (libport::mhas(marks, this))
       return 0;
     marks.insert(this);
-    rObject res;
-    if (res = own_slot_get(k))
-      return value ? res : const_cast<Object*>(this);
+    if (rSlot slot = own_slot_get(k))
+      return value ? slot->value() : const_cast<Object*>(this);
     foreach (const rObject& proto, protos_get())
       if (rObject rec = proto->slot_locate(k, fallback, value, marks))
         return rec;
@@ -132,13 +131,11 @@ namespace object
   Object::slot_get(const key_type& k)
   {
     rObject owner = safe_slot_locate(k);
-    Slot& value = owner->own_slot_get(k);
+    rSlot value = owner->own_slot_get(k);
     if (value)
-      return value;
+      return *value;
     else
-    {
-      return owner->own_slot_get(SYMBOL(fallback));
-    }
+      return *owner->own_slot_get(SYMBOL(fallback));
   }
 
 
