@@ -445,7 +445,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {NUMBER}"d"   RETURN_DURATION(1, 60*60*24);
 {NUMBER}"h"   RETURN_DURATION(1, 60*60);
-{NUMBER}"m"   DEPRECATED(std::string(yytext) + "n");
 {NUMBER}"mn"  RETURN_DURATION(2, 60);
 {NUMBER}"s"   RETURN_DURATION(1, 1);
 {NUMBER}"ms"  RETURN_DURATION(2, 0.001);
@@ -462,7 +461,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {SHEBANG}     LINES(1);
 
-"internal"  DEPRECATED("");
 "external"  RETURN(EXTERNAL);
 
 <SC_META>{
@@ -486,17 +484,13 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "emit"          RETURN(EMIT);
 "event"         RETURN(EVENT);
 "every"         RETURN(EVERY);
-"foreach"       DEPRECATED("for");
 "freezeif"      RETURN(FREEZEIF);
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
 "in"            RETURN(IN);
-"loopn"         DEPRECATED("for");
 "new"           RETURN_OP(NEW);
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
-"self"          DEPRECATED("this");
-"static"        DEPRECATED("");
 "stopif"        RETURN(STOPIF);
 "switch"        RETURN(SWITCH);
 "this"          RETURN(THIS);
@@ -587,6 +581,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "__HERE__"      RETURN(__HERE__);
 
+  /*<no-space< Reserved keywords.*/
 "asm"              |
 "auto"             |
 "bool"             |
@@ -623,6 +618,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "virtual"          |
 "volatile"         |
 "wchar_t"          RESERVED_ERROR;
+  /*>no-space>*/
 
   /*----------------------.
   | The infamous k1-BIN.  |
@@ -658,6 +654,19 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   UNPUT(rewritten.str());
 }
 
+
+  /*<no-space< Deprecated constructs. */
+  /*------------------------.
+  | Deprecated constructs.  |
+  `------------------------*/
+
+{NUMBER}"m"   DEPRECATED(std::string(yytext) + "n");
+"foreach"     DEPRECATED("for");
+"internal"    DEPRECATED("");
+"loopn"       DEPRECATED("for");
+"self"        DEPRECATED("this");
+"static"      DEPRECATED("");
+
 {ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
   PRE_SKIP();
   // Push back "n.'\''" in the stream.
@@ -667,6 +676,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   s += quote[1] == '\'' ? "quote" : quote + 1;
   DEPRECATED(s);
 }
+  /*>no-space>*/
+
 
   /* operator XXX -> 'XXX'. */
 {OPERATOR}    {

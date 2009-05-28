@@ -18,7 +18,8 @@ EXTRA_DIST +=					\
   build-aux/flex++.in				\
   build-aux/fuse-switch				\
   build-aux/move-if-change			\
-  build-aux/output-to-dot
+  build-aux/output-to-dot			\
+  build-aux/studentize
 
 # dev.
 devdir = dev/

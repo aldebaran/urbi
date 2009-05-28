@@ -166,7 +166,8 @@ parser/utoken.stamp: parser/utoken.l $(utoken_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(FLEXXX) $< parser/utoken.cc $(FLEXXXFLAGS)
+	$(PRUNE_FOR_SPACE) - <$< >parser/utoken-pruned.l
+	$(FLEXXX) parser/utoken-pruned.l parser/utoken.cc $(FLEXXXFLAGS)
 	@mv -f $@.tmp $@
 
 $(FROM_UTOKEN_L): parser/utoken.stamp
