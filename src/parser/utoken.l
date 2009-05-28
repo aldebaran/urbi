@@ -56,38 +56,39 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 // as it would capture the "continue" which is meant to yylex's
 // "while(1)".
 #define PRE_SKIP()                              \
+  /* no do-while!  Read above. */               \
   if (!up)                                      \
-  {                                             \
-    ECHO("Skipping: {{{" << yytext << "}}}");   \
-    continue;                                   \
-  }
+    continue
 
 # define PRE_PUSH(Char)                         \
+  /* no do-while!  Read above. */               \
   if (!up)                                      \
   {                                             \
     pre_closers.push_back(Char);                \
     continue;                                   \
   }
 
-# define PRE_POP()                                                      \
-  if (!up)                                                              \
-  {                                                                     \
-    if (!pre_closers.empty() && pre_closers.back() == yytext[0])        \
-    {                                                                   \
-      pre_closers.pop_back();                                           \
-      continue;                                                         \
-    }                                                                   \
-    else                                                                \
-    {                                                                   \
-      /* Syntax error (unbalanced closers).  Return as if the sentence  \
-         was correct.  The parser will report the error itself. */      \
-      ECHO("Pre: Unexpected character: " << yytext);                    \
-      return yy::parser::make_PRE_COMPLETE(loc);                        \
-    }                                                                   \
+# define PRE_POP()                                                    \
+  /* no do-while!  Read above. */                                     \
+  if (!up)                                                            \
+  {                                                                   \
+    if (!pre_closers.empty() && pre_closers.back() == yytext[0])      \
+    {                                                                 \
+      pre_closers.pop_back();                                         \
+      continue;                                                       \
+    }                                                                 \
+    else                                                              \
+    {                                                                 \
+      /* Syntax error (unbalanced closers).  Return as if the         \
+         sentence was correct.  The parser will report the error      \
+         itself. */                                                   \
+      return yy::parser::make_PRE_COMPLETE(loc);                      \
+    }                                                                 \
   }
 
 // Return from the prescanner if everything is closed.
 # define PRE_RETURN()                                   \
+  /* no do-while!  Read above. */                       \
   if (!up)                                              \
   {                                                     \
     if (pre_closers.empty())                            \
@@ -160,10 +161,10 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 
 // Report an error.
 #define SCAN_ERROR(Msg)                         \
-do {                                            \
-  if (up)                                       \
-    up->error(loc, std::string () + Msg);       \
-} while(0)
+  do {                                          \
+    if (up)                                     \
+      up->error(loc, std::string () + Msg);     \
+  } while (0)
 
 // Report an EOF error.  In that case, the prescanner must return
 // non-null, since null means there is not enough data.
