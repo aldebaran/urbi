@@ -726,7 +726,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        size_t remain = yy_n_chars
           - (yy_c_buf_p - YY_CURRENT_BUFFER_LVALUE->yy_ch_buf);
        size_t eat = std::min(remain, len);
-       if (len > eat)
+
+       // If we want more that available, go and fetch in the stream
+       // itself.  Don't use yyinput, it is just not fast enough.
+       if (remain < len)
        {
          // Check available length in stream.
          size_t pos = yyin->tellg();
