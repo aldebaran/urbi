@@ -10,6 +10,7 @@ namespace object
   Slot::Slot()
     : value_(object::void_class)
     , constant_(false)
+    , properties_(0)
   {}
 
   inline
@@ -17,7 +18,8 @@ namespace object
     : libport::RefCounted()
     , value_(model.value_)
     , constant_(false)
-    , properties_(model.properties_)
+    , properties_(model.properties_
+                  ? new properties_type(*model.properties_) : 0)
   {}
 
   template <typename T>
@@ -25,6 +27,7 @@ namespace object
   Slot::Slot(const T& value)
     : value_(0)
     , constant_(false)
+    , properties_(0)
   {
     set(value);
   }

@@ -232,7 +232,11 @@ namespace object
   rDictionary
   Object::properties_get(const key_type& k)
   {
-    return new Dictionary(slot_get(k).properties_get());
+    Slot::properties_type* props = slot_get(k).properties_get();
+    if (props)
+      return new Dictionary(*props);
+    else
+      return new Dictionary();
   }
 
   rObject

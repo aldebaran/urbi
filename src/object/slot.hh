@@ -46,14 +46,14 @@ namespace object
     property_set(libport::Symbol k, rObject value);
     void
     property_remove(libport::Symbol k);
-    properties_type&
+    properties_type*
     properties_get();
 
   private:
     rObject value_;
     rObject changed_;
     bool constant_;
-    properties_type properties_;
+    properties_type* properties_;
   };
 
   typedef libport::intrusive_ptr<Slot> rSlot;
