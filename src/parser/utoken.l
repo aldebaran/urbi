@@ -750,9 +750,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          }
          COLUMNS(len);
          // Yes, go on.
-         if (!up)
-           yyin->seekg(pos + len - eat, std::ios_base::beg);
-         else
+         if (up)
          {
            // Eat 'eaten' from buffer.
            grown_string += std::string(yy_c_buf_p, eat);
@@ -762,6 +760,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
            yyin->read(const_cast<char*>(grown_string.c_str()) + current_size,
                       len-eat);
          }
+         else
+           yyin->seekg(pos + len - eat, std::ios_base::beg);
        }
        else
        {
