@@ -723,8 +723,15 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      "\\B("[0-9]+")("    {
        // Binary escape.
        size_t len = strtol(yytext+3, 0, 0);
-       size_t remain = yy_n_chars
-          - (yy_c_buf_p - YY_CURRENT_BUFFER_LVALUE->yy_ch_buf);
+       // In fast mode, a Flex scanner pass its internal buffer as
+       // yytext, but it smashes yytext[yyleng] to '\0', so restore it
+       // here: we are going to read it ourselves.
+       *yy_c_buf_p = yy_hold_char;
+
+       // How much is available in the buffer.
+       size_t remain = (yy_n_chars
+                        - (yy_c_buf_p - YY_CURRENT_BUFFER_LVALUE->yy_ch_buf));
+       // How much we are going to eat.
        size_t eat = std::min(remain, len);
 
        // If we want more that available, go and fetch in the stream
@@ -765,11 +772,20 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        }
        else
        {
+         // All we have to read is in Flex' buffer.
          if (up)
            grown_string += std::string(yy_c_buf_p, eat);
          COLUMNS(eat);
        }
-       yy_c_buf_p += eat;
+
+       // We played nasty tricks with Flex, tweaking its buffer by
+       // hand.  Restore its state: first of all advance the cursor of
+       // "eat" characters, then set the "hold" character to the next
+       // character it will read (when coming back from an action,
+       // flex reverses the effect of defining yytext, which starts by
+       // yytext[yyleng] = 0, after having saved it in yy_hold_char).
+       yy_cp = yy_c_buf_p += eat;
+       yy_hold_char = *yy_cp;
 
        switch (int c = yyinput())
        {
