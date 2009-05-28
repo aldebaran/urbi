@@ -12,6 +12,7 @@
 #include <libport/contract.hh>
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
+#include <libport/lexical-cast.hh>
 
 #include <kernel/config.h>
 
@@ -21,6 +22,7 @@
 #include <kernel/uobject.hh>
 
 #include <object/cxx-primitive.hh>
+#include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/object.hh>
@@ -64,6 +66,56 @@ static uobject_to_robject_type uobject_to_robject;
     pabort("UObject API isn't thread safe. "		\
 	   "Do the last call within main thread.")
 #endif
+
+namespace Stats
+{
+  typedef std::pair<libport::utime_t, unsigned> Value;
+  typedef libport::hash_map<std::string, Value> Values;
+  static Values hash;
+  static bool enabled = false;
+  static void add(void*, const std::string& key, libport::utime_t d)
+  {
+    if (!enabled)
+      return;
+    Values::iterator i = hash.find(key);
+    if (i == hash.end())
+    {
+      Value& v = hash[key];
+      v.first = d;
+      v.second = 1;
+    }
+    else
+    {
+      i->second.first += d;
+      i->second.second++;
+    }
+  }
+
+  static void clear(rObject)
+  {
+    hash.clear();
+  }
+
+  static object::rDictionary get(rObject)
+  {
+    object::rDictionary res = new object::Dictionary();
+    foreach(Values::value_type &v, hash)
+    {
+      res->set(libport::Symbol(v.first),
+               new object::Float(v.second.first/v.second.second));
+      /*
+      size_t sep = v.first.find_first_of(' ');
+      std::string sPtr = v.first.substr(0, sep);
+      std::string name = v.first.substr(sep+1, v.first.npos);
+      */
+    }
+    return res;
+  }
+  static void enable(rObject, bool state)
+  {
+    enabled = state;
+  }
+};
 
 static inline runner::Runner& getCurrentRunner()
 {
@@ -156,25 +208,32 @@ rObject uobject_initialize(const objects_type& args)
 {
   where = args.front();
   uobjects_reload();
+  where->slot_set(SYMBOL(getStats),    object::make_primitive(&Stats::get));
+  where->slot_set(SYMBOL(clearStats),  object::make_primitive(&Stats::clear));
+  where->slot_set(SYMBOL(enableStats), object::make_primitive(&Stats::enable));
   return object::void_class;
 }
 
 // No rObject here as we do not want to prevent object destruction.
 static libport::hash_map<std::string, object::Object*> uobject_map;
 
-static rObject wrap_ucallback_notify(const object::objects_type&,
-                                     urbi::UGenericCallback* ugc)
+static rObject wrap_ucallback_notify(const object::objects_type& ol ,
+                                     urbi::UGenericCallback* ugc,
+                                     std::string traceName)
 {
   ECHO("uvwrapnotify");
   urbi::UList l;
   l.array.push_back(new urbi::UValue());
   l[0].storage = ugc->storage;
+  libport::utime_t t = libport::utime();
   ugc->__evalcall(l);
+  Stats::add(ol.front().get(), traceName, libport::utime() - t);
   return object::void_class;
 }
 
 static rObject wrap_ucallback(const object::objects_type& ol,
-                              urbi::UGenericCallback* ugc)
+                              urbi::UGenericCallback* ugc,
+                              const std::string& message)
 {
   urbi::UList l;
   object::check_arg_count(ol.size() - 1, ugc->nbparam);
@@ -186,7 +245,10 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     urbi::UValue v = uvalue_cast(co);
     l.array.push_back(new urbi::UValue(v));
   }
+  libport::utime_t start = libport::utime();
   urbi::UValue r = ugc->__evalcall(l);
+  start = libport::utime() - start;
+  Stats::add(ol.front().get(), message, start);
   return object_cast(r);
 }
 
@@ -423,6 +485,7 @@ namespace urbi
     // Check if we handle this callback type.
     if (!storage)
       return;
+    runner::Runner& runner = getCurrentRunner();
     CallbackStorage& s = *reinterpret_cast<CallbackStorage*>(storage);
     StringPair p = split_name(s.name);
     std::string method = p.second;
@@ -430,13 +493,17 @@ namespace urbi
          << method << "  " << s.owned);
     rObject me = get_base(p.first); //objname?
     assertion(me);
+    object::objects_type args = list_of(me);
+    std::string meId = runner.apply(me->slot_get(SYMBOL(id)), SYMBOL(id),
+                                    args)
+      ->as<object::String>()->value_get();
+    std::string traceName = meId + "::" + method;
     if (s.type == "function")
     {
       ECHO( "binding " << p.first << "." << method );
-      me->slot_set(libport::Symbol(method),
-		   object::make_primitive(
+      me->slot_set(libport::Symbol(method), object::make_primitive(
 	boost::function1<rObject, const objects_type&>
-	(boost::bind(&wrap_ucallback, _1, this))));
+         (boost::bind(&wrap_ucallback, _1, this, traceName))));
     }
     if (s.type == "var" || s.type == "varaccess")
     {
@@ -456,8 +523,9 @@ namespace urbi
         (var)
 	(object::make_primitive(
 	boost::function1<rObject, const objects_type&>
-	(boost::bind(&wrap_ucallback_notify, _1, this))));
-      getCurrentRunner().apply(f, sym, args);
+	(boost::bind(&wrap_ucallback_notify, _1, this,
+                     traceName + " " + s.type))));
+      runner.apply(f, sym, args);
     }
     delete &s;
   }
@@ -491,13 +559,28 @@ namespace urbi
   | UObject.  |
   `----------*/
 
+  static void bounce_update(urbi::UObject* ob, void* me, const std::string& key)
+  {
+    libport::utime_t t = libport::utime();
+    ob->update();
+    Stats::add(me, key, libport::utime()-t);
+  }
+
   void UObject::USetUpdate(ufloat t)
   {
     CHECK_MAINTHREAD();
     rObject me = get_base(__name);
     rObject f = me->slot_get(SYMBOL(setUpdate));
-    me->slot_update(SYMBOL(update), MAKE_VOIDCALL(this, urbi::UObject, update));
-    object::objects_type args;// = list_of(new object::Float(t / 1000.0));
+    object::objects_type args;
+    args.push_back(me);
+    std::string meId = getCurrentRunner().apply(
+      me->slot_get(SYMBOL(id)), SYMBOL(id), args)
+      ->as<object::String>()->value_get();
+
+    me->slot_update(SYMBOL(update),
+                    object::make_primitive(boost::function1<void, rObject>(
+                boost::bind(&bounce_update,this, me.get(), meId + " update"))));
+    args.clear();
     args.push_back(me);
     args.push_back(new object::Float(t / 1000.0));
     getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
