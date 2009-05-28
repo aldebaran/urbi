@@ -1,18 +1,35 @@
-true.setProtos([Singleton]);
-false.setProtos([Singleton]);
-var true.asString = "true";
-var false.asString = "false";
+/*-------.
+| true.  |
+`-------*/
 
-/*---------------------------.
-| Logic with short-circuit.  |
-`---------------------------*/
+do (true)
+{
+  setProtos([Singleton]);
+  var asString = "true";
 
-function true.'&&'(a) { a };
-function true.'||' { true };
-var true.'!' = false;
-function false.'&&' { false };
-function false.'||'(a) { a };
-var false.'!' = true;
+  function '&&'(a) { a };
+  function '||' { true };
+  var '!' = false;
+};
+
+/*--------.
+| false.  |
+`--------*/
+
+do (false)
+{
+  setProtos([Singleton]);
+  var asString = "false";
+
+  function '&&' { false };
+  function '||'(a) { a };
+  var '!' = true;
+};
+
+
+/*----------.
+| &&/||/!.  |
+`----------*/
 
 do (Object)
 {
