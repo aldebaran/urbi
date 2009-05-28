@@ -435,7 +435,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 <SC_UCONSOLE>{
   ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
-  ^\[:].*               /* ignore the "[:] whatever" messages */;
+  ^"[:]".*               /* ignore the "[:] whatever" messages */;
 }
 
 
@@ -720,7 +720,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\[\\\"\'] GROW_VAL(yytext[1]);
      \\.        SCAN_ERROR("invalid escape: `" + yytext + '\'');
 
-     \\B\([0-9]+\)\(    {
+     "\\B("[0-9]+")("    {
        // Binary escape.
        size_t len = strtol(yytext+3, 0, 0);
        size_t remain = yy_n_chars
@@ -777,7 +777,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          COLUMNS(1);
          break;
        default:
-         SCAN_ERROR("Expected closing ')' for \\B, got '" + (char)c + "'");
+         SCAN_ERROR("unexpected '" + (char)c
+                    + "' for closing \\B, expected ')'");
          break;
        }
      }
