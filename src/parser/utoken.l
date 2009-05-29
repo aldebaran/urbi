@@ -308,7 +308,12 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   }
 
 %}
-%option nodefault noreject noyymore
+/* No default rule. */
+%option nodefault
+/* Allow faster implements. */
+%option noreject noyymore
+/* We don't need an interactive scanner. */
+%option batch
 
 %x SC_C_COMMENT SC_DOC_COMMENT SC_STRING_OR_SYMBOL
  // Ignore lines starting with "[000000:tag]", we are fed with a chk file.
