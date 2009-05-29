@@ -31,16 +31,18 @@ class Global.TrajectoryGenerator
     var this.setter = setter |
     this.targetValue = targetValue|
     this.startTime = time|
-    if ("time" in args)
-      initTime (args)
+    if ("accel" in args)
+      initAccel(args)
+    else if ("cos" in args)
+      initCos(args)
+    else if ("sin" in args)
+      initSin(args)
     else if ("smooth" in args)
       initSmooth (args)
-    else if ("accel" in args)
-      initAccel(args)
     else if ("speed" in args)
       initSpeed(args)
-    else if ("sin" in args || "cos" in args)
-      initSin(args)
+    else if ("time" in args)
+      initTime(args)
   };
 
   function initAccel (args)
@@ -51,18 +53,19 @@ class Global.TrajectoryGenerator
     var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
   };
 
+  function initCos (args)
+  {
+    args.set("phase", args.getWithDefault("phase", 0) + pi/2) |
+    args.set("sin", args.get("cos")) |
+    initSin(args)
+  };
+
   function initSin (args)
   {
     var this.get = getSlot("sinGet") |
     var this.phase = args.getWithDefault("phase", 0) |
     var this.ampli = args.getWithDefault("ampli", 0) |
-    if ("cos" in args)
-    {
-      var this.period =  args.get("cos") |
-      this.phase += pi/2
-    }
-    else
-      var this.period = args.get("sin")
+    var this.period = args.get("sin")
   };
 
   function initSmooth (args)
