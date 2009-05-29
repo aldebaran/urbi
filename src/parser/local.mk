@@ -40,8 +40,36 @@ $(BISONXX): $(BISONXX_IN)
 FLEXXX = $(top_builddir)/build-aux/flex++
 FLEXXX_IN = $(top_srcdir)/build-aux/flex++.in
 $(FLEXXX): $(FLEXXX_IN)
-	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/flex++
+	(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/flex++
 
+## From flex.info.
+##
+## The default setting is `-Cem', which specifies that `flex'
+## should generate equivalence classes and meta-equivalence
+## classes.  This setting provides the highest degree of table
+## compression.
+##
+##  slowest & smallest
+##        -Cem
+##        -Cm
+##        -Ce
+##        -C
+##        -C{f,F}e
+##        -C{f,F}
+##        -C{f,F}a
+##  fastest & largest
+##
+## `-Cfe' is often a good compromise between speed and size for
+## production scanners.
+FLEXXXFLAGS =
+if COMPILATION_MODE_SPACE
+  FLEXXXFLAGS += -Cem
+else if COMPILATION_MODE_SPEED
+  FLEXXXFLAGS += -Cfa
+endif
+if COMPILATION_MODE_DEBUG
+  FLEXXXFLAGS += --debug
+endif
 
 ## -------------- ##
 ## Bison parser.  ##
