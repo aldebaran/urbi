@@ -594,6 +594,7 @@ stmt:
   {
     $$ = new ast::Emit(@$, $1, $3, $4);
   }
+//<no-space< Emit.
 | "emit" k1_id args.opt tilda.opt
   {
     up.warn(@$,
@@ -601,6 +602,7 @@ stmt:
             "Use `myEvent!(Args...)' instead.");
     $$ = new ast::Emit(@$, $2, $3, $4);
   }
+//>no-space>
 ;
 
 
@@ -1123,6 +1125,7 @@ exp:
     }
 ;
 
+//<no-space< new "identifier".
 // Instantiation looks a lot like a function call.
 %token <libport::Symbol> NEW "new";
 %type <ast::rExp> new;
@@ -1137,13 +1140,14 @@ new:
   }
 ;
 
+exp:
+  new   { std::swap($$, $1); }
+;
+//>no-space>
+
 // Allow Object.new etc.
 id:
   "new" { std::swap($$, $1); }
-;
-
-exp:
-  new   { std::swap($$, $1); }
 ;
 
 
