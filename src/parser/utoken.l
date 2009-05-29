@@ -315,7 +315,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 /* We don't need an interactive scanner. */
 %option batch
 
-%x SC_C_COMMENT SC_DOC_COMMENT SC_STRING_OR_SYMBOL
+%x SC_C_COMMENT SC_STRING_OR_SYMBOL
  // Ignore lines starting with "[000000:tag]", we are fed with a chk file.
 %s SC_UCONSOLE
  // Enable meta variable support.
@@ -836,12 +836,11 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "//".*         STEP(); // One-line comment.
 "/*"           ++comment_level; BEGIN SC_C_COMMENT;
-"/*!"          grown_string.clear(); BEGIN SC_DOC_COMMENT;
 
 {BLANKS}       STEP();
 {EOL}          LINES(1); STEP();
 
-<SC_C_COMMENT,SC_DOC_COMMENT>{ /* Comments. */
+<SC_C_COMMENT>{ /* Comments. */
   <<EOF>> {
     EOF_ERROR("a comment");
     STEP();
@@ -861,17 +860,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
                       BEGIN sc_default;
                     }
                 }
-}
-
-<SC_DOC_COMMENT>{
-  [^*/\n\r]+    |
-  [*/]          GROW_VAL(yytext); continue;
-  {EOL}         GROW_VAL(yytext); LINES(1);
-  "*/" { /* End of the comment. */
-    STEP();
-    BEGIN sc_default;
-    RETURN_VALUE(DOC, grown_string);
-  }
 }
 
 <*>{

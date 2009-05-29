@@ -105,13 +105,11 @@ namespace binder
   Binder::changeSlot(const ast::loc& l,
                      const ast::rExp& target,
                      const libport::Symbol& name,
-                     const std::string& doc,
                      ast::rConstExp value)
   {
     PARAMETRIC_AST(document,
                    "{"
                    "  %exp:1 . createSlot(%exp:2) | "
-                   "  %exp:3 . setProperty(%exp:4, %exp:5, %exp:6) |"
                    "  %exp:7"
                    "}");
 
@@ -119,10 +117,6 @@ namespace binder
     document
       % target
       % new ast::String(l, name)
-      % target
-      % new ast::String(l, name)
-      % new ast::String(l, SYMBOL(doc))
-      % new ast::String(l, libport::Symbol(doc))
       % res;
     return (exp(document));
   }
@@ -177,17 +171,10 @@ namespace binder
 
     if (!call->target_implicit() || set_on_self(unscope_))
       if (value)
-      {
-        std::string doc = input->doc_get();
-        if (doc != "")
-          result_ = changeSlot(loc, call->target_get(), name,
-                               doc, value);
-        else
-          result_ = changeSlot(loc, call->target_get(), name,
-                               input->constant_get()
-                               ? SYMBOL(setConstSlot)
-                               : SYMBOL(setSlot), value);
-      }
+        result_ = changeSlot(loc, call->target_get(), name,
+                             input->constant_get()
+                             ? SYMBOL(setConstSlot)
+                             : SYMBOL(setSlot), value);
       else
         result_ = changeSlot(loc, call->target_get(), name,
                              SYMBOL(createSlot));

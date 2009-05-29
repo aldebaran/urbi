@@ -138,15 +138,14 @@ namespace binder
     ast::rExp changeSlot(const ast::loc& l,
                          const ast::rExp& target,
                          const libport::Symbol& name,
-                         const std::string& doc,
                          ast::rConstExp value = 0);
 
-    /// Make a lazy from \a arg
+    /// Make a lazy from \a arg.
     ast::rExp lazify(ast::rExp arg, const ast::loc& loc);
 
-    /// Wether to report errors
+    /// Wether to report errors.
     bool report_errors_;
-    /// How many scope to bypass when declaring variables
+    /// How many scope to bypass when declaring variables.
     unsigned unscope_;
   };
 

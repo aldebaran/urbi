@@ -228,7 +228,6 @@ namespace %(clonerlib)s
       e->accept(*this);
       if (result_ && !result_->original_get())
         result_->original_set(e->original_get());
-      result_->doc_set(e->doc_get());
       if (loc_)
         result_->location_set(loc_.get());
     }

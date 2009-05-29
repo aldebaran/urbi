@@ -613,23 +613,21 @@ stmt:
 stmt:
   // If you want to use something more general than "k1_id", read the
   // comment of k1_id.
-  "function" k1_id formals doc block
+  "function" k1_id formals block
     {
       // Compiled as "var name = function args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Function(@$, symbols_to_decs($3, @3),
-                                                  ast_scope (@$, $5)));
-      $$->doc_set($4);
+                                                  ast_scope (@4, $4)));
     }
-| "closure" k1_id formals doc block
+| "closure" k1_id formals block
     {
       if (!$3)
 	error(@$, "closure cannot be lazy");
       // Compiled as "var name = closure args stmt"
       $$ = new ast::Declaration(@$, $2,
                                 new ast::Closure(@$, symbols_to_decs($3, @3),
-                                                 ast_scope (@$, $5)));
-      $$->doc_set($4);
+                                                 ast_scope (@4, $4)));
     }
 ;
 
@@ -1536,17 +1534,6 @@ formals:
   /* empty */                { $$ = 0; }
 | "(" formal_arguments ")" { std::swap($$, $2); }
 ;
-
-/*--------------.
-| Documentation |
-`--------------*/
-
-%token <std::string> DOC "documentation";
-%type <std::string> doc;
-
-doc:
-  /* empty */   { $$ = ""; }
-| DOC       { $$ = $1; }
 
 %%
 
