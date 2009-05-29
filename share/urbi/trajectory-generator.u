@@ -1,3 +1,6 @@
+/*----------------------.
+| TrajectoryGenerator.  |
+`----------------------*/
 class Global.TrajectoryGenerator
 {
   /// Stop adaptive trajectory if error is below this value.
@@ -21,84 +24,28 @@ class Global.TrajectoryGenerator
     }
   };
 
-  /*-----------------.
-  | Initialization.  |
-  `-----------------*/
-
+  // Initialization: Instantiate one of the sub classes.
   function init(getter, setter, targetValue, args)
   {
     var this.getter = getter |
     var this.setter = setter |
     this.targetValue = targetValue|
     this.startTime = time|
+    var proto;
     if ("accel" in args)
-      initAccel(args)
+      proto = Accel
     else if ("cos" in args)
-      initCos(args)
+      proto = Sin
     else if ("sin" in args)
-      initSin(args)
+      proto = Sin
     else if ("smooth" in args)
-      initSmooth (args)
+      proto = Smooth
     else if ("speed" in args)
-      initSpeed(args)
+      proto = Speed
     else if ("time" in args)
-      initTime(args)
-  };
-
-  function initAccel (args)
-  {
-    getStartValue()|
-    var this.get = getSlot("accelGet") |
-    var this.accel = args["accel"] |
-    var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
-  };
-
-  function initCos (args)
-  {
-    args["phase"] = args.getWithDefault("phase", 0) + pi/2 |
-    args["sin"] = args["cos"] |
-    initSin(args)
-  };
-
-  function initSin (args)
-  {
-    var this.get = getSlot("sinGet") |
-    var this.phase = args.getWithDefault("phase", 0) |
-    var this.ampli = args.getWithDefault("ampli", 0) |
-    var this.period = args["sin"]
-  };
-
-  function initSmooth (args)
-  {
-    getStartValue()|
-    var this.adaptive = args.getWithDefault("adaptive", 0) |
-    var this.get = getSlot("smoothGet") |
-    var this.duration = args["smooth"] |
-  };
-
-  function initSpeed (args)
-  {
-    getStartValue()|
-    var this.adaptive = args.getWithDefault("adaptive", 0) |
-    var this.speed = args["speed"] |
-    var this.duration =
-      {
-        if (speed)
-          abs(this.startValue - targetValue)  / speed
-        else
-          Float.inf
-      }|
-    var this.get =
-      getSlot({if (adaptive) "adaptiveSpeedGet" else "timeGet"}) |
-  };
-
-  function initTime (args)
-  {
-    getStartValue()|
-    var this.adaptive = args.getWithDefault("adaptive", 0) |
-    var this.get =
-      getSlot({if (this.adaptive) "timeAdaptiveGet" else "timeGet"}) |
-    var this.duration = args["time"] |
+      proto = Time |
+    protos = [proto] |
+    init(args)
   };
 
   // Update the variable according to the trajectory.
@@ -141,7 +88,55 @@ class Global.TrajectoryGenerator
     startValue + (targetValue - startValue) * stat
   };
 
-  function smoothGet(currentVal)
+};
+
+class TrajectoryGenerator.Accel : TrajectoryGenerator
+{
+  function init (args)
+  {
+    getStartValue()|
+    var this.accel = args["accel"] |
+    var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
+  };
+
+  function get(currentVal)
+  {
+    if (time - startTime > duration)
+    {
+      isOver = true |
+      return targetValue
+    } |
+    var d = (time - startTime) |
+    d * d * 0.5 * accel
+  };
+};
+
+class TrajectoryGenerator.Sin : TrajectoryGenerator
+{
+  function init (args)
+  {
+    var this.phase = (args.getWithDefault("phase", 0)
+                      + { if ("cos" in args) pi/2 else 0 }) |
+    var this.ampli = args.getWithDefault("ampli", 0) |
+    var this.period = args[{if ("cos" in args) "cos" else "sin"}]
+  };
+
+  function get (currentVal)
+  {
+    targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
+  };
+};
+
+class TrajectoryGenerator.Smooth : TrajectoryGenerator
+{
+  function init (args)
+  {
+    getStartValue()|
+    var this.adaptive = args.getWithDefault("adaptive", 0) |
+    var this.duration = args["smooth"] |
+  };
+
+  function get(currentVal)
   {
     var stat =  (time - startTime) / duration |
     if (stat > 1)
@@ -152,34 +147,24 @@ class Global.TrajectoryGenerator
     startValue +
       (targetValue - startValue) * ( sin ( - pi / 2.0 + pi * stat) +1) / 2.0
   };
+};
 
-  function timeAdaptiveGet(currentVal)
+class TrajectoryGenerator.Speed : TrajectoryGenerator
+{
+  function init (args)
   {
-    if (abs(currentVal - targetValue) < delta)
+    getStartValue()|
+    var this.adaptive = args.getWithDefault("adaptive", 0) |
+    var this.speed = args["speed"] |
+    var this.duration =
     {
-      isOver = true |
-      return targetValue
-    } |
-    var stat = getPeriod / ( startTime + duration - time) |
-    if (stat > 1 || stat < 0)
-      return targetValue |
-    currentVal + stat *  (targetValue - currentVal)
-  };
-
-  function sinGet
-  {
-    targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
-  };
-
-  function accelGet(currentVal)
-  {
-    if (time - startTime > duration)
-    {
-      isOver = true |
-      return targetValue
-    } |
-    var d = (time - startTime) |
-    d * d * 0.5 * accel
+      if (speed)
+        abs(this.startValue - targetValue)  / speed
+      else
+        Float.inf
+    }|
+    var this.get =
+      getSlot({if (adaptive) "adaptiveSpeedGet" else "timeGet"}) |
   };
 
   function adaptiveSpeedGet(currentVal)
@@ -199,3 +184,29 @@ class Global.TrajectoryGenerator
     nextVal
   };
 };
+
+class TrajectoryGenerator.Time : TrajectoryGenerator
+{
+  function init (args)
+  {
+    getStartValue()|
+    var this.adaptive = args.getWithDefault("adaptive", 0) |
+    var this.get =
+      getSlot({if (this.adaptive) "timeAdaptiveGet" else "timeGet"}) |
+    var this.duration = args["time"] |
+  };
+
+  function timeAdaptiveGet(currentVal)
+  {
+    if (abs(currentVal - targetValue) < delta)
+    {
+      isOver = true |
+      return targetValue
+    } |
+    var stat = getPeriod / ( startTime + duration - time) |
+    if (stat > 1 || stat < 0)
+      return targetValue |
+    currentVal + stat *  (targetValue - currentVal)
+  };
+};
+
