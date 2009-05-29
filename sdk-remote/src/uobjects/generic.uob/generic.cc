@@ -1,5 +1,6 @@
 // #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
+#include <libport/debug.hh>
 #include <iostream>
 #include "generic.hh"
 

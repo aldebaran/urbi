@@ -1,4 +1,5 @@
 #include <libport/compiler.hh>
+#include <libport/debug.hh>
 #include <iostream>
 #include <sstream>
 

@@ -1,4 +1,5 @@
 #include "uaccess.hh"
+#include <libport/debug.hh>
 #include <iostream>
 using namespace urbi;
 

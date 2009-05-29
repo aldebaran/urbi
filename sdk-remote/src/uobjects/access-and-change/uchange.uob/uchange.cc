@@ -1,4 +1,5 @@
 #include <iostream>
+#include <libport/debug.hh>
 #include "uchange.hh"
 
 using namespace urbi;

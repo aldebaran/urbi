@@ -1,3 +1,4 @@
+#include <libport/debug.hh>
 #include <iostream>
 #include <urbi/uobject.hh>
 
