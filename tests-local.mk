@@ -1,6 +1,6 @@
 # This file is loaded by tests/Makefile.am.  It contains things that
 # are specific to a given project or even Svn branch.
-UCONSOLE_CHECKFLAGS = --kernel 2
+UCONSOLE_CHECKFLAGS += --kernel 2
 
 # The test directories we are interested in.
 TESTS_DIRS = 0.x 1.x 2.x demo uob
