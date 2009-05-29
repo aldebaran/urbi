@@ -83,8 +83,6 @@ namespace object
     /// Set \a owner's \a key slot's value to \a v.
     /// @return Whether the slot was already defined (entailing failure).
     static bool set(Object* owner, const key_type& key, value_type v);
-    /// Update \a owner's \a key slot's value to \a v.
-    static void update(Object* owner, const key_type& key, value_type v);
 
 
   /*--------.

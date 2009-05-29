@@ -64,16 +64,6 @@ namespace object
     return true;
   }
 
-  inline void
-  CentralizedSlots::update(Object* owner, const key_type& key, value_type v)
-  {
-    loc_index_type::iterator it = where(owner, key);
-    if (it == content_->end())
-      content_->insert(content(owner, key, v));
-    else
-      loc_index_.replace(it, content(owner, key, v));
-  }
-
   inline CentralizedSlots::value_type
   CentralizedSlots::get(const Object* owner, const key_type& key)
   {
