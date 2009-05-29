@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <iostream>
 
+#include <libport/debug.hh>
+
 #include <urbi/umessage.hh>
 #include <urbi/uvalue.hh>
 

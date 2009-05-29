@@ -25,6 +25,7 @@
 
 #include <libport/assert.hh>
 #include <libport/cstring>
+#include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
@@ -264,7 +265,7 @@ namespace urbi
     }
 
     // Anything else is an error, but be resilient and ignore it.
-    GD_FWARN("syntax error: %s (ignored)", (message + pos));
+    GD_FWARN("syntax error: %s (ignored)", (std::string(message + pos)));
     return -pos;
   }
 

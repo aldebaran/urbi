@@ -12,6 +12,7 @@ using namespace boost::assign;
 
 #include <libport/cli.hh>
 #include <libport/containers.hh>
+#include <libport/debug.hh>
 #include <libport/file-system.hh>
 #include <libport/foreach.hh>
 #include <libport/path.hh>

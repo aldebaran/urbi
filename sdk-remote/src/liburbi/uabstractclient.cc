@@ -6,6 +6,7 @@
 
 #include <libport/cstdio>
 #include <libport/cstring>
+#include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/unistd.h>
 

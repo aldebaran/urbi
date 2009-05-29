@@ -15,6 +15,7 @@
 #endif
 
 #include <libport/cstdio>
+#include <libport/debug.hh>
 #include <libport/sys/select.h>
 #include <libport/arpa/inet.h>
 #include <libport/netdb.h>

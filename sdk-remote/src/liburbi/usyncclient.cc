@@ -3,6 +3,7 @@
 
 #include <libport/assert.hh>
 #include <libport/compiler.hh>
+#include <libport/debug.hh>
 #include <libport/thread.hh>
 #include <libport/unistd.h>
 

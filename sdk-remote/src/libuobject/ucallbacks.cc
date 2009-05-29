@@ -4,7 +4,7 @@
 #include <sstream>
 #include <list>
 
-#include <libport/program-name.hh>
+#include <libport/debug.hh>
 #include <libport/lexical-cast.hh>
 
 #include <urbi/ucallbacks.hh>
