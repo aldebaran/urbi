@@ -20,6 +20,11 @@ class Global.TrajectoryGenerator
       "Warning: setting dummy startValue".print
     }
   };
+
+  /*-----------------.
+  | Initialization.  |
+  `-----------------*/
+
   function init(getter, setter, targetValue, args)
   {
     var this.getter = getter |
@@ -27,55 +32,70 @@ class Global.TrajectoryGenerator
     this.targetValue = targetValue|
     this.startTime = time|
     if ("time" in args)
-    {
-      getStartValue()|
-      var this.adaptive = args.getWithDefault("adaptive", 0) |
-      if (this.adaptive)
-	var this.get = getSlot("timeAdaptiveGet")
-      else
-	var this.get = getSlot("timeGet") |
-      var this.duration = args.get("time") |
-    }
+      initTime (args)
     else if ("smooth" in args)
-    {
-      getStartValue()|
-      var this.adaptive = args.getWithDefault("adaptive", 0) |
-      var this.get = getSlot("smoothGet") |
-      var this.duration = args.get("smooth") |
-    }
+      initSmooth (args)
     else if ("accel" in args)
-    {
-      getStartValue()|
-      var this.get = getSlot("accelGet") |
-      var this.accel = args.get("accel") |
-      var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
-    }
+      initAccel(args)
     else if ("speed" in args)
-    {
-      getStartValue()|
-      var this.adaptive = args.getWithDefault("adaptive", 0) |
-      var this.speed = args.get("speed") |
-      var this.duration = Float.inf;
-      if (speed != 0)
-        this.duration = abs(this.startValue - targetValue)  / speed |
-      if (adaptive)
-        var this.get = getSlot("adaptiveSpeedGet")
-      else
-        var this.get = getSlot("timeGet") |
-    }
+      initSpeed(args)
     else if ("sin" in args || "cos" in args)
+      initSin(args)
+  };
+
+  function initAccel (args)
+  {
+    getStartValue()|
+    var this.get = getSlot("accelGet") |
+    var this.accel = args.get("accel") |
+    var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
+  };
+
+  function initSin (args)
+  {
+    var this.get = getSlot("sinGet") |
+    var this.phase = args.getWithDefault("phase", 0) |
+    var this.ampli = args.getWithDefault("ampli", 0) |
+    if ("cos" in args)
     {
-      var this.get = getSlot("sinGet");
-      var this.phase = args.getWithDefault("phase", 0) |
-      var this.ampli = args.getWithDefault("ampli", 0) |
-      if ("cos" in args)
-      {
-	var this.period =  args.get("cos") |
-	this.phase += pi/2
-      }
-      else
-	var this.period = args.get("sin")
+      var this.period =  args.get("cos") |
+      this.phase += pi/2
     }
+    else
+      var this.period = args.get("sin")
+  };
+
+  function initSmooth (args)
+  {
+    getStartValue()|
+    var this.adaptive = args.getWithDefault("adaptive", 0) |
+    var this.get = getSlot("smoothGet") |
+    var this.duration = args.get("smooth") |
+  };
+
+  function initSpeed (args)
+  {
+    getStartValue()|
+    var this.adaptive = args.getWithDefault("adaptive", 0) |
+    var this.speed = args.get("speed") |
+    var this.duration =
+      {
+        if (speed)
+          abs(this.startValue - targetValue)  / speed
+        else
+          Float.inf
+      }|
+    var this.get =
+      getSlot({if (adaptive) "adaptiveSpeedGet" else "timeGet"}) |
+  };
+
+  function initTime (args)
+  {
+    getStartValue()|
+    var this.adaptive = args.getWithDefault("adaptive", 0) |
+    var this.get =
+      getSlot({if (this.adaptive) "timeAdaptiveGet" else "timeGet"}) |
+    var this.duration = args.get("time") |
   };
 
   // Update the variable according to the trajectory.
