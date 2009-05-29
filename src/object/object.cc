@@ -134,12 +134,7 @@ namespace object
   Slot&
   Object::slot_get(const key_type& k)
   {
-    rObject owner = safe_slot_locate(k).first;
-    rSlot value = owner->own_slot_get(k);
-    if (value)
-      return *value;
-    else
-      return *owner->own_slot_get(SYMBOL(fallback));
+    return *safe_slot_locate(k).second;
   }
 
 
