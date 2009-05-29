@@ -132,7 +132,6 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator
   function init (args)
   {
     getStartValue()|
-    var this.adaptive = args.getWithDefault("adaptive", 0) |
     var this.duration = args["smooth"] |
   };
 
@@ -154,7 +153,6 @@ class TrajectoryGenerator.Speed : TrajectoryGenerator
   function init (args)
   {
     getStartValue()|
-    var this.adaptive = args.getWithDefault("adaptive", 0) |
     var this.speed = args["speed"] |
     var this.duration =
     {
@@ -164,7 +162,10 @@ class TrajectoryGenerator.Speed : TrajectoryGenerator
         Float.inf
     }|
     var this.get =
-      getSlot({if (adaptive) "adaptiveSpeedGet" else "timeGet"}) |
+      getSlot({ if (args.getWithDefault("adaptive", 0))
+                  "adaptiveSpeedGet"
+                else
+                  "timeGet"}) |
   };
 
   function adaptiveSpeedGet(currentVal)
@@ -190,9 +191,9 @@ class TrajectoryGenerator.Time : TrajectoryGenerator
   function init (args)
   {
     getStartValue()|
-    var this.adaptive = args.getWithDefault("adaptive", 0) |
     var this.get =
-      getSlot({if (this.adaptive) "timeAdaptiveGet" else "timeGet"}) |
+      getSlot({if (args.getWithDefault("adaptive", 0)) "timeAdaptiveGet"
+               else "timeGet"}) |
     var this.duration = args["time"] |
   };
 
