@@ -35,6 +35,41 @@ assert_eq(Object.setSlot("one", 1), 1);
 assert_eq(Object.updateSlot("one", 2), 2);
 assert_eq(Object.one, 2);
 \end{urbiscript}
+
+\item \lstinline|'&&'(\var{that})|\\
+  Short-circuiting logical and. If \lstinline|this| evaluates to true
+  evaluate and return \var{that}, otherwise return \lstinline|this|
+  without evaluating \var{that}.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(0 && "foo", 0);
+assert_eq(2 && "foo", "foo");
+
+assert_eq(""    && "foo", "");
+assert_eq("foo" && "bar", "bar");
+\end{urbiscript}
+
+\item \lstinline|'||'(\var{that})|\\
+  Short-circuiting logical or. If \lstinline|this| evaluates to false
+  evaluate and return \var{that}, otherwise return \lstinline|this|
+  without evaluating \var{that}.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(0 || "foo", "foo");
+assert_eq(2 ||  1/0,  2);
+
+assert_eq(""    || "foo", "foo");
+assert_eq("foo" || 1/0,   "foo");
+\end{urbiscript}
+
+\item \lstinline|'!'|\\
+  Logical negation. If \lstinline|this| evaluates to false return
+  \lstinline|true| and vice-versa.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(!1, false);
+assert_eq(!0, true);
+
+assert_eq(!"foo", false);
+assert_eq(!"",    true);
+\end{urbiscript}
 \end{itemize}
 
 %%% Local Variables:
