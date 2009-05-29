@@ -42,12 +42,12 @@ namespace object
   {
     // Prevent further destruction of this object.
     counter_inc();
-    if (rObject finalize = slot_locate(SYMBOL(finalize), false, true))
+    if (rSlot finalize = slot_locate(SYMBOL(finalize), false).second)
     {
       objects_type args;
       args.push_back(this);
-      ::kernel::urbiserver->getCurrentRunner().apply(finalize, SYMBOL(finalize),
-                                                     args);
+      ::kernel::urbiserver->getCurrentRunner().apply
+          (finalize->value(), SYMBOL(finalize), args);
     }
     // We are allready in the destructor, we cannot allow a reference to be
     // kept. This check must be outside the above block.
@@ -87,38 +87,42 @@ namespace object
     protos_ = &l->value_get();
   }
 
-  inline rObject
+  inline Object::location_type
   Object::slot_locate(const key_type& k,
-                      bool fallback, bool value, objects_set_type& marks) const
+                      bool fallback, objects_set_type& marks) const
   {
     if (libport::mhas(marks, this))
-      return 0;
+      return location_type(0, 0);
     marks.insert(this);
     if (rSlot slot = own_slot_get(k))
-      return value ? slot->value() : const_cast<Object*>(this);
+      return location_type(const_cast<Object*>(this), slot);
     foreach (const rObject& proto, protos_get())
-      if (rObject rec = proto->slot_locate(k, fallback, value, marks))
+    {
+      location_type rec = proto->slot_locate(k, fallback, marks);
+      if (rec.first)
         return rec;
-    if (fallback && own_slot_get(SYMBOL(fallback)))
-      return const_cast<Object*>(this);
-    return 0;
+    }
+    if (fallback)
+      if (rSlot slot = own_slot_get(SYMBOL(fallback)))
+        return location_type(const_cast<Object*>(this), slot);
+    return location_type(0, 0);
   }
 
-  rObject
+  Object::location_type
   Object::slot_locate(const key_type& k,
-                      bool fallback, bool value) const
+                      bool fallback) const
   {
     objects_set_type marks;
-    return slot_locate(k, fallback, value, marks);
+    return slot_locate(k, fallback, marks);
   }
 
-  rObject
-  Object::safe_slot_locate(const key_type& k, bool value) const
+  Object::location_type
+  Object::safe_slot_locate(const key_type& k) const
   {
-    rObject r = slot_locate(k, true, value);
-    if (!r)
+    location_type r = slot_locate(k, true);
+    if (!r.first)
       runner::raise_lookup_error(k, const_cast<Object*>(this));
-    return iassertion(r);
+    return r;
   }
 
   rObject
@@ -130,7 +134,7 @@ namespace object
   Slot&
   Object::slot_get(const key_type& k)
   {
-    rObject owner = safe_slot_locate(k);
+    rObject owner = safe_slot_locate(k).first;
     rSlot value = owner->own_slot_get(k);
     if (value)
       return *value;
@@ -165,7 +169,7 @@ namespace object
   bool
   Object::slot_has(const key_type& k)
   {
-    return slot_locate(k);
+    return slot_locate(k).first;
   }
 
   rObject
@@ -177,7 +181,7 @@ namespace object
     // The updated slot
     Slot& s = slot_get(k);
     // Its owner
-    rObject owner = slot_locate(k);
+    rObject owner = slot_locate(k).first;
     // Value to write to the slot
     rObject v = o;
 
@@ -254,11 +258,11 @@ namespace object
 		       const rObject& value)
   {
     // CoW
-    if (safe_slot_locate(k) != this)
+    if (safe_slot_locate(k).first != this)
       slot_set(k, slot_get(k));
     Slot& slot = slot_get(k);
     if (slot.property_set(p, value))
-      if (slot->slot_locate(SYMBOL(newPropertyHook)))
+      if (slot->slot_has(SYMBOL(newPropertyHook)))
         slot->call(SYMBOL(newPropertyHook),
                    this, new String(k), new String(p), value);
     return value;
@@ -446,7 +450,7 @@ namespace object
   rObject
   Object::urbi_locateSlot(key_type name)
   {
-    rObject o = slot_locate(name);
+    rObject o = slot_locate(name).first;
     return o ? o : nil_class;
   }
 

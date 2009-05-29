@@ -231,7 +231,7 @@ namespace runner
       {
 	// Check whether the concerned level in the chain already
 	// exists.
-	if (const rObject& owner = where->slot_locate(elt))
+	if (rObject owner = where->slot_locate(elt).first)
         {
           ECHO("Component " << elt << " exists.");
 	  where = owner->own_slot_get(elt)->value();

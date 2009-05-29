@@ -364,10 +364,10 @@ namespace runner
                 // Display the value using the topLevel channel.  If
                 // it is not (yet) defined, do nothing, unless the
                 // environment variable TOPLEVEL_DEBUG is set.
-                if (rObject topLevel =
-                    object::global_class->slot_locate(SYMBOL(topLevel), false,
-                                                      true))
-                  topLevel->call(SYMBOL(LT_LT), res);
+                if (rSlot topLevel =
+                    object::global_class->slot_locate
+                    (SYMBOL(topLevel), false).second)
+                  topLevel->value()->call(SYMBOL(LT_LT), res);
                 else if (toplevel_debug)
                 {
                   try

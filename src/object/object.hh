@@ -86,21 +86,20 @@ namespace object
     bool
     slot_has(const key_type& k);
 
+    typedef std::pair<rObject, rSlot> location_type;
     /// Lookup field in object hierarchy.
     /// \param k         Slot name.
     /// \param fallback  Whether we agree to use the "fallback" method
     ///                  when the slot does not exist.
-    /// \param value     Whether to return the owner of the slot or its value
-    /// \return the Object containing slot \a k if \a value is false,
-    ///         the slot value if \a value is true, 0 if not found.
-    rObject
-    slot_locate(const key_type& k,
-                bool fallback = true, bool value = false) const;
+    /// \return the Object containing slot \a k and the slot,
+    /// or (0, 0) if not found.
+    location_type
+    slot_locate(const key_type& k, bool fallback = true) const;
 
     /// Same as slot_locate, but raise LookupError if not found.
     /// \throw LookupError if the lookup fails.
-    rObject
-    safe_slot_locate(const key_type& k, bool value = false) const;
+    location_type
+    safe_slot_locate(const key_type& k) const;
 
     /// Lookup field in object hierarchy.
     /// \param name The name of the slot to search
@@ -238,10 +237,9 @@ namespace object
 
 
   private:
-    rObject
+    location_type
     slot_locate(const key_type& k,
                 bool fallback,
-                bool value,
                 objects_set_type& marks) const;
 
 

@@ -316,7 +316,7 @@ namespace kernel
                                    new object::Primitive(&uobject_initialize));
 
     // Force processing of urbi.u.
-    while (!object::Object::proto->slot_locate(SYMBOL(loaded)))
+    while (!object::Object::proto->slot_has(SYMBOL(loaded)))
       work();
     object::Object::proto->slot_remove(SYMBOL(loaded));
   }

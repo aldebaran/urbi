@@ -9,6 +9,7 @@
 #include <kernel/uconnection.hh>
 
 #include <object/lobby.hh>
+#include <object/slot.hh>
 #include <object/symbols.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
@@ -17,11 +18,14 @@
 
 namespace runner
 {
+  using object::rSlot;
+
   void
   Runner::send_message(const std::string& tag, const std::string& msg)
   {
     // If there is a Channel object with name 'tag', use it.
-    rObject chan = lobby_->slot_locate(libport::Symbol(tag), true, true);
+    rSlot chan_slot = lobby_->slot_locate(libport::Symbol(tag), true).second;
+    rObject chan = chan_slot ? chan_slot->value() : rObject();
     object::objects_type args;
     if (chan && is_a(chan, lobby_->slot_get(SYMBOL(Channel))))
     {

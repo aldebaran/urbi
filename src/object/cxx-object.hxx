@@ -82,7 +82,7 @@ namespace object
 
     libport::Symbol conversion =
       libport::Symbol(std::string("as") + T::type_name());
-    if (!res_->slot_locate(conversion, 0))
+    if (!res_->slot_locate(conversion, false).first)
       res_->slot_set(conversion,
                      rPrimitive(new Primitive(boost::bind(cxx_object_id<T>, _1))),
                      true);

@@ -617,11 +617,11 @@ namespace urbi
     Symbol varName(p.second);
     // Force kernel-side variable creation, init to void.
     rObject initVal;
-    if (o->slot_locate(varName) == o.get())
+    if (o->slot_locate(varName).first == o)
     {
       initVal = o->own_slot_get(varName)->value();
       // Check if the variable exists and is an uvar.
-      if (initVal->slot_locate(SYMBOL(owned)))
+      if (initVal->slot_has(SYMBOL(owned)))
 	return;
       else
 	o->slot_remove(varName);
