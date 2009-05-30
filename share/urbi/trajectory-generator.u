@@ -31,20 +31,21 @@ class Global.TrajectoryGenerator
     var this.setter = setter |
     this.targetValue = targetValue|
     this.startTime = time|
-    var proto;
-    if ("accel" in args)
-      proto = Accel
-    else if ("cos" in args)
-      proto = Sin
-    else if ("sin" in args)
-      proto = Sin
-    else if ("smooth" in args)
-      proto = Smooth
-    else if ("speed" in args)
-      proto = Speed
-    else if ("time" in args)
-      proto = Time |
-    protos = [proto] |
+    protos =
+      [{
+        if ("accel" in args)
+          Accel
+        else if ("cos" in args)
+          Sin
+        else if ("sin" in args)
+          Sin
+        else if ("smooth" in args)
+          Smooth
+        else if ("speed" in args)
+          Speed
+        else if ("time" in args)
+          Time
+      }] |
     init(args)
   };
 
