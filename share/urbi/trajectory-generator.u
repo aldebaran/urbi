@@ -37,7 +37,12 @@ class Global.TrajectoryGenerator
         if ("accel" in args)
           Accel
         else if ("cos" in args)
+        {
+          // Bounce to a sine.
+          args["phase"] = args.getWithDefault("phase", 0) + pi/2 |
+          args["sin"] = args["cos"] |
           Sin
+        }
         else if ("sin" in args)
           Sin
         else if ("smooth" in args)
@@ -117,10 +122,9 @@ class TrajectoryGenerator.Sin : TrajectoryGenerator
 {
   function init (args)
   {
-    var this.phase = (args.getWithDefault("phase", 0)
-                      + { if ("cos" in args) pi/2 else 0 }) |
+    var this.phase = args.getWithDefault("phase", 0) |
     var this.ampli = args.getWithDefault("ampli", 0) |
-    var this.period = args[{if ("cos" in args) "cos" else "sin"}]
+    var this.period = args["sin"]
   };
 
   function get (currentVal)
