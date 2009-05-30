@@ -31,12 +31,29 @@ class Global.TrajectoryGenerator
         else if ("smooth" in args)
           Smooth
         else if ("speed" in args)
-          if (adaptive) SpeedAdaptive else Speed
+          if (adaptive)
+            SpeedAdaptive
+          else
+            {
+              // Speed is just Time, but with initial conditions
+              // expressed in speed instead of duration.
+              args["time"] = duration(args["speed"])|
+              Time
+            }
         else if ("time" in args)
           if (adaptive) TimeAdaptive else Time
       }] |
     init(args)
   };
+
+  // Going from startValue to targetValue with given speed.
+  function duration(speed)
+  {
+    if (speed)
+      abs(startValue - targetValue)  / speed
+    else
+      Float.inf
+  }|
 
   /// Stop adaptive trajectory if error is below this value.
   var delta = 2;
@@ -87,18 +104,6 @@ class Global.TrajectoryGenerator
   {
     System.time - currentRunner.timeShift
   };
-
-  function timeGet(currentVal)
-  {
-    var stat =  (time - startTime) / duration |
-    if (stat > 1)
-    {
-      isOver = true|
-      return targetValue
-    } |
-    startValue + (targetValue - startValue) * stat
-  };
-
 };
 
 class TrajectoryGenerator.Accel : TrajectoryGenerator
@@ -156,34 +161,12 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator
   };
 };
 
-class TrajectoryGenerator.Speed : TrajectoryGenerator
-{
-  function init (args)
-  {
-    var this.speed = args["speed"] |
-    var this.duration =
-    {
-      if (speed)
-        abs(this.startValue - targetValue)  / speed
-      else
-        Float.inf
-    }|
-  };
-  var this.get = getSlot("timeGet") |
-};
-
 class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator
 {
   function init (args)
   {
     var this.speed = args["speed"] |
-    var this.duration =
-    {
-      if (speed)
-        abs(this.startValue - targetValue)  / speed
-      else
-        Float.inf
-    }|
+    var this.duration = duration(speed)
   };
 
   function get(currentVal)
@@ -211,7 +194,17 @@ class TrajectoryGenerator.Time : TrajectoryGenerator
      var this.duration = args["time"] |
   };
 
-  var get = getSlot("timeGet")
+  function get(currentVal)
+  {
+    var stat =  (time - startTime) / duration |
+    if (1 < stat)
+    {
+      isOver = true|
+      return targetValue
+    } |
+    startValue + (targetValue - startValue) * stat
+  };
+
 };
 
 
