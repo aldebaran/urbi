@@ -31,6 +31,7 @@ class Global.TrajectoryGenerator
     var this.setter = setter |
     this.targetValue = targetValue|
     this.startTime = time|
+    var adaptive = args.getWithDefault("adaptive", false);
     protos =
       [{
         if ("accel" in args)
@@ -42,9 +43,9 @@ class Global.TrajectoryGenerator
         else if ("smooth" in args)
           Smooth
         else if ("speed" in args)
-          Speed
+          if (adaptive) SpeedAdaptive else Speed
         else if ("time" in args)
-          Time
+          if (adaptive) TimeAdaptive else Time
       }] |
     init(args)
   };
@@ -162,14 +163,26 @@ class TrajectoryGenerator.Speed : TrajectoryGenerator
       else
         Float.inf
     }|
-    var this.get =
-      getSlot({ if (args.getWithDefault("adaptive", 0))
-                  "adaptiveSpeedGet"
-                else
-                  "timeGet"}) |
+  };
+  var this.get = getSlot("timeGet") |
+};
+
+class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator
+{
+  function init (args)
+  {
+    getStartValue()|
+    var this.speed = args["speed"] |
+    var this.duration =
+    {
+      if (speed)
+        abs(this.startValue - targetValue)  / speed
+      else
+        Float.inf
+    }|
   };
 
-  function adaptiveSpeedGet(currentVal)
+  function get(currentVal)
   {
     if (abs(currentVal - targetValue) < delta)
     {
@@ -191,14 +204,23 @@ class TrajectoryGenerator.Time : TrajectoryGenerator
 {
   function init (args)
   {
+     getStartValue()|
+     var this.duration = args["time"] |
+  };
+
+  var get = getSlot("timeGet")
+};
+
+
+class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator
+{
+  function init (args)
+  {
     getStartValue()|
-    var this.get =
-      getSlot({if (args.getWithDefault("adaptive", 0)) "timeAdaptiveGet"
-               else "timeGet"}) |
     var this.duration = args["time"] |
   };
 
-  function timeAdaptiveGet(currentVal)
+  function get(currentVal)
   {
     if (abs(currentVal - targetValue) < delta)
     {
