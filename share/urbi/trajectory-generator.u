@@ -3,34 +3,17 @@
 `----------------------*/
 class Global.TrajectoryGenerator
 {
-  /// Stop adaptive trajectory if error is below this value.
-  var delta = 2;
-  function getStartValue()
-  {
-    var this.startValue = getter() |
-    if (startValue.type == "Float")
-      this.startValue = startValue
-    else if (startValue.type == "Group")
-    {
-      var v = startValue.members.head |
-      while (v.type == "List")
-	v = v.head |
-      this.startValue = v
-    }
-    else
-    {
-      this.startValue = 0|
-      "Warning: setting dummy startValue".print
-    }
-  };
-
   // Initialization: Instantiate one of the sub classes.
   function init(getter, setter, targetValue, args)
   {
     var this.getter = getter |
     var this.setter = setter |
-    this.targetValue = targetValue|
-    this.startTime = time|
+    var this.targetValue = targetValue|
+    var this.startTime = time|
+    // Sin does not need it, but it is simpler to call it anyway as it
+    // allows to depend on startValue below.  And besides, it allows
+    // to enforce a proper initial value for Sin too.
+    getStartValue()|
     var adaptive = args.getWithDefault("adaptive", false);
     protos =
       [{
@@ -55,6 +38,30 @@ class Global.TrajectoryGenerator
     init(args)
   };
 
+  /// Stop adaptive trajectory if error is below this value.
+  var delta = 2;
+
+  /// Compute startValue.
+  function getStartValue()
+  {
+    var this.startValue = getter() |
+    switch (startValue.type)
+    {
+      case "Float":
+        // Fine.
+
+      case "Group":
+        var v = startValue.members.head |
+        while (v.type == "List")
+          v = v.head |
+        this.startValue = v
+
+      default:
+        this.startValue = 0|
+        "Warning: setting dummy startValue".print
+    }
+  };
+
   // Update the variable according to the trajectory.
   // Use the functions getter/setter to read/update the variable.
   // Blocking until the trajectory is over.
@@ -73,9 +80,6 @@ class Global.TrajectoryGenerator
     }|
   };
 
-  var startValue = 0;
-  var startTime;
-  var targetValue;
   var isOver = false;
 
   // Override system time to take shift induced by freeze into account.
@@ -101,7 +105,6 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator
 {
   function init (args)
   {
-    getStartValue()|
     var this.accel = args["accel"] |
     var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
   };
@@ -137,7 +140,6 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator
 {
   function init (args)
   {
-    getStartValue()|
     var this.duration = args["smooth"] |
   };
 
@@ -158,7 +160,6 @@ class TrajectoryGenerator.Speed : TrajectoryGenerator
 {
   function init (args)
   {
-    getStartValue()|
     var this.speed = args["speed"] |
     var this.duration =
     {
@@ -175,7 +176,6 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator
 {
   function init (args)
   {
-    getStartValue()|
     var this.speed = args["speed"] |
     var this.duration =
     {
@@ -208,7 +208,6 @@ class TrajectoryGenerator.Time : TrajectoryGenerator
 {
   function init (args)
   {
-     getStartValue()|
      var this.duration = args["time"] |
   };
 
@@ -220,7 +219,6 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator
 {
   function init (args)
   {
-    getStartValue()|
     var this.duration = args["time"] |
   };
 
