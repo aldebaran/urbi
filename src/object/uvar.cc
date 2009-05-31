@@ -4,6 +4,7 @@
  */
 
 # include <kernel/userver.hh>
+# include <kernel/uvalue-cast.hh>
 
 # include <object/global.hh>
 # include <object/list.hh>
@@ -101,6 +102,12 @@ namespace object
   rObject
   UVar::accessor()
   {
+    return getter(false);
+  }
+
+  rObject
+  UVar::getter(bool fromCXX)
+  {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
     if (this == proto.get())
@@ -111,10 +118,15 @@ namespace object
       callNotify(r, rObject(this), SYMBOL(access));
       inAccess_ = false;
     }
+    rObject res;
     if (!is_true(slot_get(SYMBOL(owned))))
-      return slot_get(SYMBOL(val));
+      res = slot_get(SYMBOL(val));
     else
-      return slot_get(SYMBOL(valsensor));
+      res = slot_get(SYMBOL(valsensor));
+    if (!fromCXX)
+      if (object::rUValue bv = res->as<object::UValue>())
+        return bv->extract();
+    return res;
   }
 
   rObject
@@ -144,4 +156,79 @@ namespace object
   }
 
   URBI_CXX_OBJECT_REGISTER(UVar);
+
+  UValue::UValue()
+  {
+    protos_set(new List);
+    proto_add(proto ? proto : CxxObject::proto);
+  }
+  UValue::UValue(libport::intrusive_ptr<UValue>)
+  {
+    protos_set(new List);
+    proto_add(proto ? proto : CxxObject::proto);
+  }
+  UValue::UValue(const urbi::UValue& v, bool bypass)
+  {
+    protos_set(new List);
+    proto_add(proto ? proto : CxxObject::proto);
+    put(v, bypass);
+  }
+  UValue::~UValue()
+  {
+  }
+  rObject
+  UValue::extract()
+  {
+    if (cache_)
+      return cache_;
+    if (value_.type == urbi::DATA_VOID)
+      return nil_class;
+    if (!cache_)
+      cache_ = object_cast(value_);
+    return cache_;
+  }
+  const urbi::UValue&
+  UValue::value_get()
+  {
+    static urbi::UValue dummy;
+    if (value_.type != urbi::DATA_VOID)
+      return value_;
+    if (!cache_ || cache_ == nil_class)
+      return dummy;
+    value_ = uvalue_cast(cache_);
+    alocated_ = true;
+    return value_;
+  }
+  void
+  UValue::invalidate()
+  {
+    if (!alocated_)
+      value_ = urbi::UValue();
+  }
+  void
+  UValue::put(const urbi::UValue& v,  bool bypass)
+  {
+    alocated_ = !bypass;
+    value_.set(v, !bypass);
+    cache_ = 0;
+  }
+  void
+  UValue::put(rObject r)
+  {
+    value_ = urbi::UValue();
+    cache_ = r;
+  }
+  rObject
+  UValue::proto_make()
+  {
+    return new UValue();
+  }
+  void
+  UValue::initialize(CxxObject::Binder<UValue>& bind)
+  {
+    bind(SYMBOL(extract), &UValue::extract);
+    bind(SYMBOL(invalidate), &UValue::invalidate);
+    bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
+  }
+  URBI_CXX_OBJECT_REGISTER(UValue);
 }

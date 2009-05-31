@@ -192,6 +192,29 @@ do (getSlot("UVar"))
   void
 };
 
+/** BypassValue is UValue container which does only cast the content into
+ *  an Urbi Object on request.
+ */
+do (UValue)
+{
+  var transparent = true;
+  function asString()
+  {
+    if (transparent)
+      extract.asString
+    else
+      id
+  };
+  function asToplevelPrintable()
+  {
+     if (transparent)
+      extract.asToplevelPrintable
+    else
+      id.asToplevelPrintable
+  };
+  var asPrintable = getSlot("asToplevelPrintable");
+};
+
 // Can't be in a class or do block.
 // Force reevaluation of all at exprs when at least one notifyaccess is present.
 // FIXME: find a way to stop when callbacks are removed.

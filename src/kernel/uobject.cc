@@ -29,6 +29,7 @@
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/urbi-exception.hh>
+#include <object/uvar.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
@@ -87,11 +88,14 @@ static rObject urbi_get(rObject r, const std::string& slot)
 {
   object::objects_type args;
   args.push_back(r);
+  Symbol symSlot(slot);
   ECHO("applying get for " << slot << "...");
-  rObject ret =  getCurrentRunner().apply(r->slot_get(Symbol(slot)),
-                                          Symbol(slot), args);
-  ECHO("done");
-  return ret;
+  rObject var = r->slot_get(symSlot);
+  // Bypass the apply if we can.
+  if (object::rUVar uvar = var->as<object::UVar>())
+    return uvar->getter(true);
+  else
+    return getCurrentRunner().apply(var, symSlot, args);
 }
 
 /// UObject write to an urbi variable.
@@ -536,6 +540,12 @@ namespace urbi
   | UVar.  |
   `-------*/
 
+  bool UVar::setBypass(bool enable)
+  {
+    bypassMode_ = enable;
+    return true;
+  }
+
   void UVar::syncValue()
   {
     // Nothing to do
@@ -545,20 +555,27 @@ namespace urbi
   UVar& UVar::operator= (DT t)                                  \
   {                                                             \
     ECHO("uvar = operator for "<<name);                         \
+    object::rUValue ov(new object::UValue());			\
+    urbi::UValue uv(t, !bypassMode_);				\
+    ov->put(uv, bypassMode_);					\
     if (owned)                                                  \
-      uvar_uowned_set(name, ::object_cast(urbi::UValue(t)));    \
+      uvar_uowned_set(name, ov);    				\
     else                                                        \
-      uvar_set(name, ::object_cast(urbi::UValue(t)));           \
+      uvar_set(name, ov);                                       \
+    ov->invalidate();						\
     return *this;                                               \
   }                                                             \
   UVar::operator T() const                                      \
   {                                                             \
+    /*FIXME: still one FATAL case: the UValue was generated from*/  \
+    /*the urbiscript side and the UObject is requesting a ref   */  \
     ECHO("uvar cast operator for "<<name);                      \
     try {                                                       \
-      if (owned)                                                \
-        return ::uvalue_cast(uvar_uowned_get(name));            \
-      else                                                      \
-        return ::uvalue_cast(uvar_get(name));                   \
+      rObject o = owned? ::uvar_uowned_get(name): ::uvar_get(name);  \
+      if (object::rUValue bv = o->as<object::UValue>())  \
+        return bv->value_get();					\
+      else							\
+	return ::uvalue_cast(o);				\
     }                                                           \
     catch (object::UrbiException&)				\
     {                                                           \
@@ -569,7 +586,7 @@ namespace urbi
 
   UVAR_OPERATORS(ufloat, ufloat);
   UVAR_OPERATORS(std::string, const std::string&);
-  UVAR_OPERATORS(UBinary, const UBinary&);
+  UVAR_OPERATORS(const UBinary&, const UBinary&);
   UVAR_OPERATORS(UList, const UList&);
   UVAR_OPERATORS(USound, const USound&);
   UVAR_OPERATORS(UImage, const UImage&);
@@ -593,6 +610,7 @@ namespace urbi
   {
     ECHO("__init " << name);
     owned = false;
+    bypassMode_ = false;
     StringPair p = split_name(name);
     rObject o = get_base(p.first);
     assertion(o);

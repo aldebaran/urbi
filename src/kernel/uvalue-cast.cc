@@ -8,6 +8,7 @@
 #include <object/list.hh>
 #include <object/string.hh>
 #include <object/symbols.hh>
+#include <object/uvar.hh>
 #include <runner/raise.hh>
 #include <urbi/uvalue.hh>
 
@@ -31,6 +32,8 @@ urbi::UValue uvalue_cast(const object::rObject& o)
 {
   CAPTURE_GLOBAL(Binary);
   urbi::UValue res;
+  if (object::rUValue bv = o->as<object::UValue>())
+    return bv->value_get();
   if (object::rFloat f = o->as<object::Float>())
     res = f->value_get();
   else if (object::rString s = o->as<object::String>())
