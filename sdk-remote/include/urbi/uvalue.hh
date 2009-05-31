@@ -146,6 +146,10 @@ namespace urbi
     ~UValue();
 
     UValue& operator=(const UValue&);
+    /// Setter. If copy is false, binary data if present is not copied.
+    /// This is dangerous, as the user must ensure that the source UValue
+    /// lives longer than this one.
+    UValue& set(const UValue&, bool copy=true);
 
     /// A specific UValue used when we want to return an error.
     /// For instance, out-of-bound access returns this object.
@@ -159,7 +163,7 @@ namespace urbi
     UValue& operator, (const UValue &b);
 
 #define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
-    explicit UValue(Type);			\
+    explicit UValue(Type, bool copy=true);	\
     UValue& operator=(Type);			\
     UValue& operator,(Type rhs)
 
@@ -192,8 +196,8 @@ namespace urbi
     operator unsigned long() const;
     operator bool() const;
 
-    /// Deep copy.
-    operator UBinary() const;
+    /// Accessor. Gives us an implicit operator UBinary() const
+    operator const UBinary&() const;
 
     /// Deep copy.
     operator UList() const;
@@ -219,6 +223,8 @@ namespace urbi
 
     /// Print itself on \c s, and return it.
     std::ostream& print(std::ostream& s) const;
+    // Huge hack.
+    static const bool copy = true;
   };
 
   inline

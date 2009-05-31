@@ -25,6 +25,7 @@ namespace urbi
   void
   UVar::__init()
   {
+    bypassMode_ = false;
     varmap()[name].push_back(this);
     URBI_SEND_PIPED_COMMAND("if (!isdef(" << name << ")) var " << name);
     vardata = 0; // unused. For internal softdevices only
@@ -34,6 +35,11 @@ namespace urbi
     createUCallback(dummyUObject->__name,
 		    "var",
 		    dummyUObject, &UObject::voidfun, name, monitormap(), false);
+  }
+
+  bool setBypass(bool enable)
+  {
+    return !enable;
   }
 
   //! UVar out value (read mode)
@@ -216,14 +222,14 @@ namespace urbi
   };
 
 
-  UVar::operator UBinary() const
+  UVar::operator const UBinary&() const
   {
     return value;
   };
 
   UVar::operator UBinary*() const
   {
-    return new UBinary(value.operator UBinary());
+    return new UBinary(value.operator const UBinary&());
   };
 
   UVar::operator UImage() const

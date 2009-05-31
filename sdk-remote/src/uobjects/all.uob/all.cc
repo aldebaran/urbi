@@ -16,6 +16,14 @@ public:
     UBindFunction(all, init);
     UBindFunction(all, setOwned);
     UBindFunction(all, setNotifyChange);
+
+    /** BYPASS check **/
+    UBindFunction(all, setBypassNotifyChangeBinary);
+    UBindFunction(all, setBypassNotifyChangeImage);
+    UBindFunction(all, markBypass);
+    UBindFunction(all, selfWriteB);
+    UBindFunction(all, selfWriteI);
+
     UBindFunction(all, setNotifyAccess);
     UBindFunction(all, setNotifyChangeByName);
 
@@ -81,6 +89,64 @@ public:
     ++destructionCount;
   }
 
+  int setBypassNotifyChangeBinary(const std::string& name)
+  {
+    UNotifyChange(name, &all::onBinaryBypass);
+    return 0;
+  }
+  int setBypassNotifyChangeImage(const std::string& name)
+  {
+    UNotifyChange(name, &all::onImageBypass);
+    return 0;
+  }
+  int markBypass(int id, bool state)
+  {
+    return vars[id]->setBypass(state);
+  }
+  int onBinaryBypass(urbi::UVar& var)
+  {
+    const urbi::UBinary& cb = var;
+    std::cerr << "onbin cptr " << cb.common.data << std::endl;
+    urbi::UBinary& b = const_cast<urbi::UBinary&>(cb);
+    for (unsigned int i=0; i<b.common.size; ++i)
+      ((char*)b.common.data)[i]++;
+    return 0;
+  }
+  int onImageBypass(urbi::UVar& var)
+  {
+    const urbi::UImage& cb = var;
+    std::cerr << "onimg cptr " << (void*)cb.data << std::endl;
+    urbi::UImage& b = const_cast<urbi::UImage&>(cb);
+    for (unsigned int i=0; i<b.size; ++i)
+      b.data[i]++;
+    return 0;
+  }
+  std::string selfWriteB(int idx, const std::string& content)
+  {
+    urbi::UBinary b;
+    b.type = urbi::BINARY_IMAGE;
+    // Dup since we want to test no-copy op: the other end will write.
+    b.common.data = strdup(content.c_str());
+    b.common.size = content.length();
+    std::cerr <<"writeB cptr " << b.common.data << std::endl;
+    *vars[idx] = b;
+    std::string res((char*)b.common.data, b.common.size);
+    free(b.common.data);
+    b.common.data = 0;
+    return res;
+  }
+  std::string selfWriteI(int idx, const std::string& content)
+  {
+    urbi::UImage i;
+    i.data = (unsigned char*)strdup(content.c_str());
+    std::cerr <<"writeI cptr " << (void*)i.data << std::endl;
+    i.size = content.length();
+    *vars[idx] = i;
+    std::string res((char*)i.data, i.size);
+    free(i.data);
+    return res;
+
+  }
   int writeOwnByName(const std::string& name, int val)
   {
     urbi::UVar v(__name + "." + name);

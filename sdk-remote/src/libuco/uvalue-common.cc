@@ -516,9 +516,9 @@ namespace urbi
   // boost::any could be very useful here.  Some day, hopefully...
 
 #define UVALUE_OPERATORS(Args, DataType, Field, Value)	\
-  UValue::UValue(Args)					\
+  UValue::UValue(Args, bool copy)			\
     : type(DataType), Field(Value)			\
-  {}							\
+    {(void)copy;}					\
 							\
   UValue& UValue::operator=(Args)			\
   {							\
@@ -569,7 +569,7 @@ namespace
   `----------------------*/
 
 #define UVALUE_BINARY(Type)			\
-  UVALUE_OPERATORS(Type v, DATA_BINARY, binary, new UBinary(v))
+  UVALUE_OPERATORS(Type v, DATA_BINARY, binary, new UBinary(v, copy))
 
   UVALUE_BINARY(const UBinary&)
   UVALUE_BINARY(const USound&)
@@ -645,11 +645,20 @@ namespace
     }
     return "invalid";
   }
-
+/*
   UValue::operator UBinary() const
   {
     if (type != DATA_BINARY)
       return UBinary();
+    else
+      return *binary;
+  }*/
+
+  UValue::operator const UBinary&() const
+  {
+    static UBinary dummy;
+    if (type != DATA_BINARY)
+      return dummy;
     else
       return *binary;
   }
@@ -691,6 +700,10 @@ namespace
 
   UValue& UValue::operator= (const UValue& v)
   {
+    return set(v);
+  }
+  UValue& UValue::set(const UValue& v, bool copy)
+  {
     // TODO: optimize
     if (this == &v)
       return *this;
@@ -706,7 +719,7 @@ namespace
 	stringValue = new std::string(*v.stringValue);
 	break;
       case DATA_BINARY:
-	binary = new UBinary(*v.binary);
+	binary = new UBinary(*v.binary, copy);
 	break;
       case DATA_LIST:
 	list = new UList(*v.list);
@@ -736,35 +749,54 @@ namespace
     common.data = 0;
     common.size = 0;
     type = BINARY_NONE;
+    alocated = true;
   }
 
   UBinary::~UBinary()
   {
-    if (common.data)
+    if (common.data && alocated)
       free(common.data);
   }
 
-  UBinary::UBinary(const UBinary& b)
+  UBinary::UBinary(const UBinary& b, bool copy)
   {
     type = BINARY_NONE;
     common.data = 0;
-    *this = b;
+    if (copy)
+      *this = b;
+    else
+    {
+      // Be safe, do not try to guess which is bigger.
+      image = b.image;
+      sound = b.sound;
+      message = b.message;
+      type = b.type;
+    }
+    alocated = copy;
   }
 
-  UBinary::UBinary(const UImage& i)
+  UBinary::UBinary(const UImage& i, bool copy)
   {
     type = BINARY_IMAGE;
     image = i;
-    image.data = static_cast<unsigned char*> (malloc (image.size));
-    memcpy(image.data, i.data, image.size);
+    if (copy)
+    {
+      image.data = static_cast<unsigned char*> (malloc (image.size));
+      memcpy(image.data, i.data, image.size);
+    }
+    alocated = copy;
   }
 
-  UBinary::UBinary(const USound& i)
+  UBinary::UBinary(const USound& i, bool copy)
   {
     type = BINARY_SOUND;
     sound = i;
-    sound.data = static_cast<char*> (malloc (sound.size));
-    memcpy(sound.data, i.data, sound.size);
+    if (copy)
+    {
+      sound.data = static_cast<char*> (malloc (sound.size));
+      memcpy(sound.data, i.data, sound.size);
+    }
+    alocated = copy;
   }
 
   UBinary& UBinary::operator= (const UBinary& b)

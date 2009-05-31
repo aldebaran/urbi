@@ -134,12 +134,12 @@ namespace urbi
     };
     /// Extra bin headers(everything after BIN <size> and before ';'.
     std::string message;
-
+    bool alocated;
     UBinary();
     /// Deep copy constructor.
-    UBinary(const UBinary &b);
-    explicit UBinary(const UImage &);
-    explicit UBinary(const USound &);
+    UBinary(const UBinary &b, bool copy = true);
+    explicit UBinary(const UImage &, bool copy = true);
+    explicit UBinary(const USound &, bool copy = true);
     /// Deep copy.
     UBinary & operator = (const UBinary &b);
     /// Build message from structures.

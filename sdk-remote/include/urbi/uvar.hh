@@ -68,8 +68,8 @@ namespace urbi
     operator int() const;
     operator bool() const;
 
-    /// Deep copy.
-    operator UBinary() const;
+    // Cast to a UBinary to make copy through this operator.
+    operator const UBinary&() const;
 
     /// Deep copy, binary will have to be deleted by the user.
     operator UBinary*() const;
@@ -123,7 +123,15 @@ namespace urbi
 
     UVariable* variable();
 
+    /// Enable bypass-mode for this UVar. Plugin-mode only.
+    /// In bypass mode, if the UVar contains binary data, the data is never
+    /// copied. The consequence is that the data is only accessible from
+    /// notifyChange callbacks (urbiScript or C++): it is invalidated as soon
+    /// as all callbacks have returned.
+    bool setBypass(bool enable=true);
+
   private:
+    bool bypassMode_;
     /// Declared but not implemented: do not ever try to use it.
     UVar(const UVar&);
 
