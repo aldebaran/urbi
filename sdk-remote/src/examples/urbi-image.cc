@@ -184,10 +184,14 @@ main (int argc, char *argv[])
     imcount = 0;
     format = (arg_format[0] == 'r') ? 0 : 1;
     client.send("%s.format = %d;", device, format);
+    client.waitForKernelVersion(true);
     if (int period = arg_period.get<int>(0))
       client.send("every (%dms) uimg << %s.val,", period, device);
     else
-      client.send("loop { uimg << %s.val; noop },", device);
+      if (client.kernelMajor() > 1)
+        client.send("%s.getSlot(\"val\").notifyChange(closure() { this.send(%s.val.asString, \"uimg\")});", device, device);
+      else
+        client.send("loop { uimg << %s.val; noop },", device);
     urbi::execute();
   }
   else
