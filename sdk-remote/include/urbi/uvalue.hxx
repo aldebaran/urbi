@@ -15,6 +15,7 @@
 #ifndef URBI_UVALUE_HXX
 # define URBI_UVALUE_HXX
 
+# include <cassert>
 # include <urbi/uvalue.hh>
 # include <libport/assert.hh>
 
