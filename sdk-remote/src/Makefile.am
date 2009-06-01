@@ -36,9 +36,12 @@ AM_LDADD =					\
   $(LIBPORT_LIBS)
 
 include libuco/local.mk
-include liburbi/local.mk
 include libuobject/local.mk
+
+if SDK_REMOTE
+include liburbi/local.mk
 include uobjects/local.mk
+endif SDK_REMOTE
 
 if EXAMPLES
 include examples/local.mk
@@ -58,6 +61,7 @@ core: libs urbi-launch$(EXEEXT)
 ## Urbi-launch.  ##
 ## ------------- ##
 
+if SDK_REMOTE
 bin_PROGRAMS += urbi-launch
 # Find our own ltdl.h.  Push "system" headers last so that our headers
 # have priority.
@@ -69,3 +73,4 @@ urbi_launch_LDADD =				\
   $(AM_LDADD)					\
   $(LTDL_LIBS)					\
   liburbi/liburbi.la
+endif

@@ -71,6 +71,14 @@ AC_MSG_CHECKING([whether compiling the examples])
 AC_MSG_RESULT([$enable_examples])
 AM_CONDITIONAL([EXAMPLES], [test x"$enable_examples" = xyes])
 
+AC_ARG_ENABLE([sdk-remote],
+              [AC_HELP_STRING([--disable-sdk-remote],
+                              [do not compile the remote sdk])],
+              [], [enable_sdk_remote=yes])
+AC_MSG_CHECKING([whether compiling the remote sdk])
+AC_MSG_RESULT([$enable_sdk_remote])
+AM_CONDITIONAL([SDK_REMOTE], [test x"enable_sdk_remote" = xyes])
+
 # Soundcard.
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
