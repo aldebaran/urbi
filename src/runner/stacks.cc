@@ -37,7 +37,7 @@ namespace runner
     STACK_ECHO("Call " << msg << libport::incindent);
     STACK_ECHO("Handle stacks " << libport::incindent);
 
-    // Reserve room for 'this' and 'call'
+    // Reserve room for 'this' and 'call'.
     local += 2;
 
     STACK_ECHO("Frame sizes: " << libport::incindent);
@@ -49,7 +49,7 @@ namespace runner
       boost::bind(&Stacks::pop_frame, this, msg,
                   local_pointer_, captured_pointer_);
 
-    // Adjust frame pointers
+    // Adjust frame pointers.
     local_pointer_ = local_stack_.size();
     captured_pointer_ = captured_stack_.size();
 
@@ -58,14 +58,14 @@ namespace runner
     STACK_ECHO("Captured : " << captured_pointer_);
     STACK_NECHO(libport::decindent);
 
-    // Grow stacks
+    // Grow stacks.
     local_stack_.resize(local_pointer_ + local);
     unsigned size = captured_pointer_ + captured;
     captured_stack_.resize(size, rSlot());
     for (unsigned i = captured_pointer_; i < size; ++i)
       captured_stack_[i] = new Slot();
 
-    // Bind 'this' and 'call'
+    // Bind 'this' and 'call'.
     self_set(self);
     call_set(call);
 

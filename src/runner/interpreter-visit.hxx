@@ -145,11 +145,11 @@ namespace runner
   Interpreter::visit(const ast::LocalDeclaration* d)
   {
     ast::rExp v = d->value_get();
-    rObject val = v ? operator()(v.get()) : object::void_class;
+    rObject res = v ? operator()(v.get()) : object::void_class;
     if (v)
-      check_void(val);
-    stacks_.def(d, val, d->constant_get());
-    return val;
+      check_void(res);
+    stacks_.def(d, res, d->constant_get());
+    return res;
   }
 
 
@@ -165,7 +165,7 @@ namespace runner
   {
     rCode res = make_routine(e);
 
-    // Capture variables
+    // Capture variables.
     foreach (const ast::rLocalDeclaration& dec,
              *e->captured_variables_get())
     {
@@ -174,7 +174,7 @@ namespace runner
       res->captures_get().push_back(stacks_.rget(local));
     }
 
-    // Capture 'this' and 'call' in closures
+    // Capture 'this' and 'call' in closures.
     if (closure)
     {
       res->self_set(stacks_.self());
@@ -223,11 +223,11 @@ namespace runner
   Interpreter::visit(const ast::List* e)
   {
     object::List::value_type res;
-    // Evaluate every expression in the list
+    // Evaluate every expression in the list.
     foreach (const ast::rConstExp& c, e->value_get())
     {
       rObject v = operator()(c.get());
-      // Refuse void in literal lists
+      // Refuse void in literal lists.
       if (v == object::void_class)
 	raise_unexpected_void_error();
       res.push_back(v);
