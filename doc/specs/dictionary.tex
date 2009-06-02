@@ -138,17 +138,6 @@ d["cinq"];
 \begin{urbiscript}
 var d = Dictionary.new("one", 1, "two", 2);
 [00000001] Dictionary {"one" => 1, "two" => 2}
-/*(*/
-  // Make the order deterministic.
-  Dictionary.asList =
-  function ()
-  {
-    var res = []|
-    for| (var k: keys.sort)
-      res.insertBack(Pair.new (k, get (k)))|
-    res
-  } | {};
-/*)*/
 for (var p in d)
   echo (p.first + " -> " + p.second);
 [00000003] *** one -> 1
