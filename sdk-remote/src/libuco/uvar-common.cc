@@ -38,7 +38,9 @@ namespace urbi
   bool
   UVar::invariant() const
   {
-    if (!vardata)
+    if (vardata)
+      return true;
+    else
     {
       // FIXME: this special case should be put in doc.
       echo ("Unable to locate variable %s in hashtable. "
@@ -49,8 +51,6 @@ namespace urbi
 	     name.c_str());
       return false;
     }
-    else
-      return true;
   }
 
   /*-------.
