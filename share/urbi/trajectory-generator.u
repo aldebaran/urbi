@@ -14,7 +14,7 @@ class Global.TrajectoryGenerator
     // allows to depend on startValue below.  And besides, it allows
     // to enforce a proper initial value for Sin too.
     getStartValue()|
-    var adaptive = args.getWithDefault("adaptive", false);
+    var adaptive = args.getWithDefault("adaptive", false) |
     protos =
       [{
         if ("accel" in args)
@@ -228,4 +228,3 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator
     currentVal + stat *  (targetValue - currentVal)
   };
 };
-
