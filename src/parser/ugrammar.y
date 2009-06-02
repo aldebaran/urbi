@@ -1033,8 +1033,8 @@ stmt_loop:
     {
       PARAMETRIC_AST(desugar,
         "for (var '$for' = %exp:1;"
-        "     0 < '$for';" // Use 0 < n, not n > 0, since < is quicker
-        "     '$for'--)"
+        "     0 < '$for';" // Use 0 < n, not n > 0, since < is faster.
+        "     '$for' -= 1)"
         "  %exp:2"
         );
       $$ = exp(desugar % $3 % $5);
