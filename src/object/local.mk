@@ -147,7 +147,7 @@ dist_libuobject_la_SOURCES +=			\
   object/vector-slots.hh			\
   object/vector-slots.hxx
 
-if !OPTIMIZE_SPACE
+if !COMPILATION_MODE_SPACE
   dist_libuobject_la_SOURCES +=			\
     object/output-stream.cc			\
     object/output-stream.hh			\

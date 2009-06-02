@@ -6,6 +6,7 @@
 // #define ENABLE_DEBUG_TRACES
 
 #include <libport/compiler.hh>
+#include <libport/config.h>
 #include <libport/finally.hh>
 
 #include <algorithm>
@@ -318,6 +319,6 @@ namespace runner
 } // namespace runner
 
 // If not in speed mode, compile visit methods here.
-#ifndef LIBPORT_OPTIMIZE_SPEED
+#ifndef LIBPORT_COMPILATION_MODE_SPEED
 # include <runner/interpreter-visit.hxx>
 #endif

@@ -11,6 +11,7 @@
 # include <boost/tuple/tuple.hpp>
 
 # include <libport/compiler.hh>
+# include <libport/config.h>
 
 # include <object/fwd.hh>
 # include <object/list.hh>
@@ -202,7 +203,7 @@ namespace runner
 
 } // namespace runner
 
-# ifdef LIBPORT_OPTIMIZE_SPEED
+# ifdef LIBPORT_COMPILATION_MODE_SPEED
 #  include <runner/runner.hxx>
 # endif
 

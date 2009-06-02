@@ -9,7 +9,7 @@ include $(top_srcdir)/build-aux/libport.mk
 # A tool that cuts code we don't want to keep in space-optimized
 # versions (when cpp cannot be used).
 PRUNE_FOR_SPACE = $(build_aux_dir)/studentize --mark=no-space
-if !OPTIMIZE_SPACE
+if !COMPILATION_MODE_SPACE
   PRUNE_FOR_SPACE += --stage=no-space
 endif
 

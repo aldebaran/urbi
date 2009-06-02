@@ -150,6 +150,6 @@ namespace runner
 } // namespace runner
 
 
-#ifndef LIBPORT_OPTIMIZE_SPEED
+#ifndef LIBPORT_COMPILATION_MODE_SPEED
 # include <runner/runner.hxx>
 #endif

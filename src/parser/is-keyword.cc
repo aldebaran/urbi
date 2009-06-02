@@ -7,7 +7,7 @@
 
 namespace parser
 {
-#ifndef OPTIMIZE_SPACE
+#ifndef COMPILATION_MODE_SPACE
   bool
   is_keyword(libport::Symbol s)
   {

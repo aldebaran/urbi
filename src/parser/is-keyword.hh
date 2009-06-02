@@ -12,7 +12,7 @@ namespace parser
   /// when used as an identifier.
   bool is_keyword(libport::Symbol s);
 
-#ifdef OPTIMIZE_SPACE
+#ifdef COMPILATION_MODE_SPACE
   // If space is tight, it is simpler to consider everything needs to
   // be quoted.  Define as inline to help the compiler in constant
   // propagation.

@@ -89,7 +89,7 @@ def print_includes (node, header, inline, impl):
 #include <libport/compilation.hh>
 
 // If in speed mode, inline Interpreters visit methods.
-#ifdef LIBPORT_OPTIMIZE_SPEED
+#ifdef LIBPORT_COMPILATION_MODE_SPEED
 # include <runner/interpreter-visit.hxx>
 #endif""" % node.hh()
   print_inline_code (node, "impl", "prologue")
