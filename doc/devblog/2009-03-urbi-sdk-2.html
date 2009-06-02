@@ -1,6 +1,6 @@
 With Urbi 1 Gostai introduced a revolutionary means to program robots: a domain specific scripting language that brings together the efficiency of C++, and the flexibility of a dynamic language.  Urbi 1 was designed pragmatically, based on user requests and feedback. That's how Urbi 1 was made useful, and how it met its users expectations. Yet, because of this iterative design process, it suffers a number of limitations.</br>
 
-We are happy to announce the first release candidate of Urbi SDK 2.0, which addresses these issues.  It is the result of an effort initiated by Gostai last year.  Urbi SDK 2.0 already runs on a large range of architectures which include the major PC architectures (GNU/Linux x86 and ARM, Windows, Mac OS X x86 and PPC).  Technical previews have been made available for months to our partners (such as Alderaban) who are working on providing Urbi SDK 2.0 support on their robots.</br>
+We are happy to announce the first release candidate of Urbi SDK 2.0, which addresses these issues.  It is the result of several years of effort by Gostai.  Urbi SDK 2.0 already runs on a large range of architectures which include the major PC architectures (GNU/Linux x86 and ARM, Windows, Mac OS X x86 and PPC).  Technical previews have been made available for months to our partners who are working on providing Urbi SDK 2.0 support on their robots.</br>
 
 <!--more-->
 <h2>Some features of Urbi SDK 2.0</h2>
@@ -55,14 +55,7 @@ We are happy to announce the first release candidate of Urbi SDK 2.0, which addr
 
   <li><strong>A rich set of convenient syntactic constructs</strong>
 
-    Iterating a container is straightforward (<tt>for (var elt in list) echo (elt);</tt>), sending and receiving events is a matter of a few keystrokes:
-[source language='c++']
-var release = Event.new;
-at (release?(version))
-  echo ("Urbi SDK " + version + " is released!");
-release!("2.0");
-[/source]
-<tt>try</tt>/<tt>catch</tt> provide support for exceptions, pattern matching is builtin, etc. etc.
+    Iterating a container is straightforward (<tt>for (var elt in list) echo (elt);</tt>), sending and receiving events is a matter of a few keystrokes, <tt>try</tt>/<tt>catch</tt> provide support for exceptions, pattern matching is builtin, etc. etc.
 
   </li>
 
