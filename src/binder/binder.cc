@@ -358,11 +358,13 @@ namespace binder
   void
   Binder::visit(const ast::CallMsg* input)
   {
-    ast::rFunction fun = function();
-    if (!fun && report_errors_)
+    if (ast::rFunction fun = function())
+    {
+      fun->uses_call_set(true);
+      super_type::visit(input);
+    }
+    else if (report_errors_)
       errors_.error(input->location_get(), "call: used outside any function");
-    fun->uses_call_set(true);
-    super_type::visit(input);
   }
 
   void

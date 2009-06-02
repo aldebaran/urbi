@@ -36,7 +36,6 @@ TFAIL_TESTS +=
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
-  2.x/call/not-in-a-call.chk			\
   2.x/derive.chk				\
   2.x/eval.chk					\
   2.x/exceptions/assignment.chk
