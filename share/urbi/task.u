@@ -1,7 +1,7 @@
 do (Task)
 {
 
-   function dump_state()
+   function dumpState()
    {
      echo("Task: " + name)|
      echo("  State: " + status) |
@@ -22,10 +22,3 @@ do (Task)
    }
 
 };
-
-function System.ps()
-{
-   nonInterruptible |
-   for| (var t : jobs)
-     t.dump_state
-} | void;

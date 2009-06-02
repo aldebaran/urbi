@@ -322,35 +322,15 @@ load("urbi/profiling.u");
 
 load("urbi/position.u");
 
-/*-----------.
-| Loadable.  |
-`-----------*/
-
 load("urbi/loadable.u");
-
-/*--------.
-| Tuple.  |
-`--------*/
 
 load("urbi/tuple.u");
 
-/*-------------.
-| Dictionary.  |
-`-------------*/
-
 load("urbi/dictionary.u");
 
-/*--------------------.
-| Debugging helpers.  |
-`--------------------*/
-
-load("urbi/debug.u");
-
-/*-------------------.
-| Pattern matching.  |
-`-------------------*/
-
 load("urbi/pattern.u");
+
+load("urbi/task.u");
 
 // Properties require patterns
 do (Object)

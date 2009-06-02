@@ -6,7 +6,7 @@ do (System)
 {
   const var version = "2.0";
 
-  // Assertion control
+  // Assertion control.
   var ndebug = false;
 
   function assert_(value, message)
@@ -33,6 +33,14 @@ do (System)
                        s0 + " == " + s1 + " ("  + v0 + " == " + v1 + ")");
       }
   };
+
+  function ps()
+  {
+    nonInterruptible |
+    for| (var t : jobs)
+      t.dumpState
+  };
+
 };
 
 load("urbi/platform.u");
