@@ -9,7 +9,7 @@ AC_PREREQ([2.61])
 ## --------- ##
 
 AC_INIT([Urbi SDK Remote], [UNDEFINED],
-	[sdk-remote-bugs@gostai.com], [sdk-remote])
+        [sdk-remote-bugs@gostai.com], [sdk-remote])
 URBI_PACKAGE_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2004-2009])
 URBI_DISTCHECK_CONFIGURE_FLAGS
@@ -58,13 +58,13 @@ AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
 # FIXME: -lXext should be checked too.
 if test x"$no_x" != xyes; then
   AC_SUBST([X11_LDADD],
-	   ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
+           ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
 fi
 
 
 # Examples.
 URBI_ARG_ENABLE([disable-examples],
-	        [do no compile the examples], [yes|no], [yes])
+                [do no compile the examples], [yes|no], [yes])
 AC_MSG_CHECKING([whether compiling the examples])
 AC_MSG_RESULT([$enable_examples])
 AM_CONDITIONAL([EXAMPLES], [test x"$enable_examples" = xyes])
@@ -103,19 +103,19 @@ AC_MSG_RESULT([$enable_bindings])
 
 AM_CONDITIONAL([BINDINGS], [test x"$enable_bindings" != xno])
 AM_CONDITIONAL([BINDING_CSHARP],
-		[echo "$enable_bindings" | grep -w csharp >/dev/null])
+                [echo "$enable_bindings" | grep -w csharp >/dev/null])
 AM_CONDITIONAL([BINDING_JAVA],
-		[echo "$enable_bindings" | grep -w java >/dev/null])
+                [echo "$enable_bindings" | grep -w java >/dev/null])
 AM_CONDITIONAL([BINDING_LUA],
-		[echo "$enable_bindings" | grep -w lua >/dev/null])
+                [echo "$enable_bindings" | grep -w lua >/dev/null])
 AM_CONDITIONAL([BINDING_PERL],
-		[echo "$enable_bindings" | grep -w perl >/dev/null])
+                [echo "$enable_bindings" | grep -w perl >/dev/null])
 AM_CONDITIONAL([BINDING_PHP],
-		[echo "$enable_bindings" | grep -w php >/dev/null])
+                [echo "$enable_bindings" | grep -w php >/dev/null])
 AM_CONDITIONAL([BINDING_PYTHON],
-		[echo "$enable_bindings" | grep -w python >/dev/null])
+                [echo "$enable_bindings" | grep -w python >/dev/null])
 AM_CONDITIONAL([BINDING_RUBY],
-		[echo "$enable_bindings" | grep -w ruby >/dev/null])
+                [echo "$enable_bindings" | grep -w ruby >/dev/null])
 
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
@@ -136,7 +136,7 @@ fi
 # Reverses the default behavior in libjpeg, that's why we don't simply
 # rely on configure's argument passing.
 URBI_ARG_ENABLE([enable-programs],
-		[Build extra programs], [yes|no], [no])
+                [Build extra programs], [yes|no], [no])
 case $enable_programs in
  (yes) # No need to pass --enable-programs, because (i) it's the
        # default for libjpeg, and (ii) if --enable-programs is
