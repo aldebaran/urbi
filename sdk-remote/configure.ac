@@ -63,21 +63,18 @@ fi
 
 
 # Examples.
-AC_ARG_ENABLE([examples],
-	      [AC_HELP_STRING([--disable-examples],
-			      [do no compile the examples])],
-	      [], [enable_examples=yes])
+URBI_ARG_ENABLE([disable-examples],
+	        [do no compile the examples], [yes|no], [yes])
 AC_MSG_CHECKING([whether compiling the examples])
 AC_MSG_RESULT([$enable_examples])
 AM_CONDITIONAL([EXAMPLES], [test x"$enable_examples" = xyes])
 
-AC_ARG_ENABLE([sdk-remote],
-              [AC_HELP_STRING([--disable-sdk-remote],
-                              [do not compile the remote sdk])],
-              [], [enable_sdk_remote=yes])
+# --without-sdk-remote.
+URBI_ARG_ENABLE([disable-sdk-remote],
+                [do not compile the remote sdk], [yes|no], [yes])
 AC_MSG_CHECKING([whether compiling the remote sdk])
 AC_MSG_RESULT([$enable_sdk_remote])
-AM_CONDITIONAL([SDK_REMOTE], [test x"enable_sdk_remote" = xyes])
+AM_CONDITIONAL([SDK_REMOTE], [test x"$enable_sdk_remote" = xyes])
 
 # Soundcard.
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
@@ -88,10 +85,8 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 ## --------- ##
 ## Bindings  ##
 ## --------- ##
-AC_ARG_ENABLE([bindings],
-	      [AC_HELP_STRING([--enable-bindings],
-			      [enable some bindings])],
-	      [], [enable_bindings=no])
+URBI_ARGLIST_ENABLE([enable-bindings], [enable some bindings],
+                    [yes|no|csharp|java|perl|php|python|ruby], [no])
 AC_MSG_CHECKING([the bindings to activate])
 save_IFS=$IFS
 IFS=,
