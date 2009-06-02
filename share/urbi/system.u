@@ -30,7 +30,7 @@ do (System)
         var s0 = call.argString(0);
         var s1 = call.argString(1);
         System.assert_(v0 == v1,
-                       s0 + " == " + s1 + " (i.e., "  + v0 + " == " + v1 + ")");
+                       s0 + " == " + s1 + " ("  + v0 + " == " + v1 + ")");
       }
   };
 };
