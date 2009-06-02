@@ -193,6 +193,7 @@ print """\
  ** \\brief Implementation of %(clonerlib)s::Cloner.
  */
 
+#include "kernel/config.h"
 #include "%(ast_basedir)sall.hh"
 #include "%(clonerlib)s/cloner.hh"
 // This file contains only protected functions, not loading it
@@ -226,8 +227,10 @@ namespace %(clonerlib)s
     if (e)
     {
       e->accept(*this);
+# ifndef COMPILATION_MODE_SPACE
       if (result_ && !result_->original_get())
         result_->original_set(e->original_get());
+# endif
       if (loc_)
         result_->location_set(loc_.get());
     }
