@@ -7,9 +7,17 @@
 
 namespace parser
 {
-  ast::rNary
-  transform(ast::rConstNary ast)
+  template <typename T>
+  libport::intrusive_ptr<T>
+  transform(libport::intrusive_ptr<T> ast)
   {
     return binder::bind(rewrite::rewrite(ast::rConstNary(flower::flow(ast))));
   }
+
+#define INST(Type)                              \
+  template libport::intrusive_ptr<ast::Type>    \
+  transform(libport::intrusive_ptr<ast::Type>); \
+
+  INST(Ast);
+  INST(Nary);
 } // namespace parser
