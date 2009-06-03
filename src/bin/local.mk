@@ -5,7 +5,9 @@
 EXTRA_PROGRAMS = bin/ast-dump
 dist_bin_ast_dump_SOURCES = bin/ast-dump.cc
 bin_ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-bin_ast_dump_LDADD    =	libuobject.la
+bin_ast_dump_LDADD    =							\
+  $(top_builddir)/sdk-remote/libport/lib/serialize/libserialize.la	\
+  libuobject.la
 
 if BUILD_PROGRAMS
 if !WIN32

@@ -51,8 +51,9 @@ dist_libuobject_la_SOURCES +=			\
   ast/error.cc					\
   ast/exps-type.hh				\
   ast/exps-type.cc				\
-  ast/flavor.hh					\
   ast/flavor.cc					\
+  ast/flavor.hh					\
+  ast/flavor.hxx				\
   ast/loc.hh					\
   ast/local-declarations-type.cc		\
   ast/local-declarations-type.hh		\
@@ -63,6 +64,8 @@ dist_libuobject_la_SOURCES +=			\
   ast/parametric-ast.hxx			\
   ast/parametric-ast.cc				\
   ast/print.hh ast/print.cc			\
+  ast/serialize.cc				\
+  ast/serialize.hh				\
   ast/symbols-type.hh				\
   ast/symbols-type.cc				\
   ast/visitor.hxx

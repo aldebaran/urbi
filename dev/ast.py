@@ -26,6 +26,7 @@ class Attribute:
     self.mandatory = True
     self.init = None
     self.owned = True
+    self.serialize = True
     self.access = "rw"
     self.desc = ""
     self.hide = False
@@ -37,6 +38,7 @@ class Attribute:
 	'init',
 	'mandatory',
 	'owned',
+        'serialize',
 	'type',
 	]:
 	warning ('unknown Attribute attribute: ' + key + ' from ' + name)

@@ -247,11 +247,13 @@ Ast:
         type: loc
         access: rW
         desc: Scanner position information
+        serialize: false
     - original:
         type: rConstAst
         access: r
         desc: Original node, if this is a rewrite
         init: "0"
+        serialize: false
 
 Exp:
   super:

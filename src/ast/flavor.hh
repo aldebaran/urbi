@@ -25,4 +25,6 @@ namespace ast
 
 } // namespace ast
 
+# include <ast/flavor.hxx>
+
 #endif // !AST_FLAVOR_HH

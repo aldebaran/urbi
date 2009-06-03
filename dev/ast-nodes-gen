@@ -32,6 +32,7 @@ def print_guards_close (node, header, inline, impl):
   print_inline_code (node, "header", "epilogue")
 
   # Close protection
+  print >>header, "# include <serialize/serialize.hh>"
   print >>header, "# include <ast/" + node.hxx () + ">"
   print >>header, ""
   print_guard_close (header, node, "hh")
@@ -359,6 +360,69 @@ def print_visitor(node, header, inline, impl):
     declare_visitor (node, header, True)
 
 
+def declare_serialization(node, header):
+  "Declare the serialization methods for node."
+
+  sys.stdout = header
+  print """
+    /// \\name Serialization.
+    /// \\{ */
+  public:
+    template <typename T>
+    %(name)s(libport::serialize::ISerializer<T>& ser);
+    template <typename T>
+    void
+    serialize(libport::serialize::OSerializer<T>& ser) const;
+    /// \\}""" % {'name': node.name}
+
+
+def print_serialization(node, header, inline, impl):
+  """Output the serialization routines."""
+
+  declare_serialization(node, header)
+
+  sys.stdout = inline
+
+  super = ''
+  for n in node.super:
+    super += '    %s::serialize(ser);\n' % n.name
+
+  ser = ''
+  for a in node.attributes:
+    if not a.serialize:
+      continue
+    ser += '    ser.template serialize<%s>("%s", %s_);\n' % (a.type, a.name, a.name)
+
+  print """  template <typename T>
+  void
+  %(name)s::serialize(libport::serialize::OSerializer<T>& ser) const
+  {
+    (void)ser;
+%(super)s%(ser)s  }
+""" % { 'name': node.name, 'super': super, 'ser': ser }
+
+  super = []
+  for n in node.super:
+    super.append('%s(ser)' % n.name)
+  super = ', '.join(super)
+  if len(super) > 0:
+    super = ': %s' % super
+
+  ser = ''
+  for a in node.attributes:
+    if not a.serialize:
+      continue
+    ser += '    %s_ = ser.template unserialize<%s>("%s");\n' % (a.name, a.type, a.name)
+
+  print """  template <typename T>
+  %(name)s::%(name)s(libport::serialize::ISerializer<T>& ser)
+    %(super)s
+  {
+    (void)ser;
+%(ser)s  }
+""" % { 'name': node.name, 'super': super, 'ser': ser }
+
+
 
 
 ## Generate the class corresponding to node
@@ -394,6 +458,9 @@ def class_generate(node):
 
   # Visitor entry point.
   print_visitor (node, header, inline, impl)
+
+  # Serialization.
+  print_serialization (node, header, inline, impl)
 
   # Attributes and accessors.
   print_attributes (node, header, inline, impl)
