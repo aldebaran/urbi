@@ -374,7 +374,7 @@ class Loader:
           n.super_non_nodes.append (sup)
           n.includes[ast_params['includes_map'][sup]] = True
         else:
-          raise "Unknown super type: '%s'." % (sup)
+          raise Exception("Unknown super type: '%s'." % (sup))
 
   def load (self, file):
     "Load both the paramaters and the AST description."
