@@ -904,10 +904,6 @@ Routine:
         type: unsigned
         init: '0'
         access: rW
-    - captured_size:
-        type: unsigned
-        init: '0'
-        access: rW
     - uses_call:
         type: bool
         init: 'false'
@@ -931,11 +927,6 @@ Routine:
 
 Function:
   super: Routine
-  attributes:
-    - closed_variables:
-        type: symbols_type*
-        access: rwW
-        init: 'new symbols_type()'
   # Cloning a list of references such as this one requires a mapping
   # table in the cloner. Forbid it for now.
   cloner_prologue: assert(!e->local_variables_get());

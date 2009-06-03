@@ -26,6 +26,7 @@ print >> dot_printer_hh, """\
 
 # include <ast/ast.hh>
 # include <ast/visitor.hh>
+# include <ast/symbols-type.hh>
 
 namespace %(ns)s
 {

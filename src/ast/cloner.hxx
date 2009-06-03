@@ -10,6 +10,7 @@
 
 # include <ast/print.hh>
 # include <ast/cloner.hh>
+# include <ast/symbols-type.hh>
 
 namespace ast
 {
