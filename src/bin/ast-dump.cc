@@ -46,7 +46,9 @@ print(rAst ast)
   ++fd;
   std::stringstream output;
   ast::dot_print(ast, output);
-  write(fd, output.str().c_str(), output.str().length());
+  size_t s = write(fd, output.str().c_str(), output.str().length());
+  assert(s == output.str().length());
+  (void)s;
 }
 
 int
