@@ -446,12 +446,12 @@ cstmt:
 | tagged stmt.  |
 `--------------*/
 
-%type <ast::rTag> tag;
+%type <ast::rExp> tag;
 %printer { debug_stream() << libport::deref << $$; } <ast::rTag>;
 tag:
   exp
   {
-    $$ = new ast::Tag (@$, $1);
+    $$ = $1;
   }
 ;
 

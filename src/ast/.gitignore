@@ -187,9 +187,6 @@ string.hxx
 subscript.cc
 subscript.hh
 subscript.hxx
-tag.cc
-tag.hh
-tag.hxx
 tagged-stmt.cc
 tagged-stmt.hh
 tagged-stmt.hxx

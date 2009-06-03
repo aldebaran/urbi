@@ -279,17 +279,10 @@ MetaExp:
 ## Tags.  ##
 ## ------ ##
 
-Tag:
-  super: Exp
-  attributes:
-    - exp: { type: 'rExp', desc: The tagging expression }
-  printer:
-    - ~exp
-
 TaggedStmt:
   super: Exp
   attributes:
-    - tag: { type: 'rTag', desc: The tagging expression }
+    - tag: { type: 'rExp', desc: The tagging expression }
     - exp: { type: 'rExp', desc: The tagged expression }
   printer:
     - ~tag

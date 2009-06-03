@@ -563,12 +563,6 @@ namespace runner
     return d;
   }
 
-  LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Tag* t)
-  {
-    return eval_tag(t->exp_get());
-  }
-
   /// Trigger leave event of all \a tags
   static void
   trigger_leave(const std::vector<object::rTag>& tags)
@@ -583,7 +577,7 @@ namespace runner
   {
     // FIXME: might be simplified after type checking code is moved
     // to Object
-    object::rObject unchecked_tag = operator()(t->tag_get().get());
+    object::rObject unchecked_tag = eval_tag(t->tag_get());
     object::type_check<object::Tag>(unchecked_tag);
     object::rTag urbi_tag = unchecked_tag->as<object::Tag>();
 
