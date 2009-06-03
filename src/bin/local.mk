@@ -2,16 +2,45 @@
 ## ast-dump.  ##
 ## ---------- ##
 
-EXTRA_PROGRAMS = bin/ast-dump
+EXTRA_PROGRAMS = bin/ast-dump bin/urbi-parse bin/urbi-pp bin/urbi-compile
+
 dist_bin_ast_dump_SOURCES = bin/ast-dump.cc
 bin_ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
 bin_ast_dump_LDADD    =							\
   $(top_builddir)/sdk-remote/libport/lib/serialize/libserialize.la	\
   libuobject.la
 
+dist_bin_ast_dump_SOURCES =			\
+  bin/ast-dump.cc
+bin_ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
+bin_ast_dump_LDADD    =					\
+  ../sdk-remote/libport/lib/serialize/libserialize.la	\
+  libuobject.la
+
+dist_bin_urbi_parse_SOURCES =			\
+  bin/urbi-parse.cc
+bin_urbi_parse_CPPFLAGS = $(libuobject_la_CPPFLAGS)
+bin_urbi_parse_LDADD    =						\
+  $(top_builddir)/sdk-remote/libport/lib/serialize/libserialize.la	\
+  libuobject.la
+
+dist_bin_urbi_pp_SOURCES =			\
+  bin/urbi-pp.cc
+bin_urbi_pp_CPPFLAGS = $(libuobject_la_CPPFLAGS)
+bin_urbi_pp_LDADD    =							\
+  $(top_builddir)/sdk-remote/libport/lib/serialize/libserialize.la	\
+  libuobject.la
+
+dist_bin_urbi_compile_SOURCES =			\
+  bin/urbi-compile.cc
+bin_urbi_compile_CPPFLAGS = $(libuobject_la_CPPFLAGS)
+bin_urbi_compile_LDADD    =						\
+  $(top_builddir)/sdk-remote/libport/lib/serialize/libserialize.la	\
+  libuobject.la
+
 if BUILD_PROGRAMS
 if !WIN32
-noinst_PROGRAMS = bin/ast-dump
+noinst_PROGRAMS = bin/ast-dump bin/urbi-parse bin/urbi-pp bin/urbi-compile
 endif !WIN32
 endif BUILD_PROGRAMS
 
