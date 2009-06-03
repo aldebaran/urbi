@@ -1,31 +1,229 @@
 \section{Object}
 
+All objects in \us must have \refObject{Object} in their
+parents. \refObject{Object} is done for this purpose so that it come
+with many primitives that are mandatory for all object in \us.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Orderable}
+\item \refObject{Global}
+\end{itemize}
+
 \subsection{Methods}
 
 \begin{itemize}
+\item \lstinline|acceptVoid|\\
+
+\item \lstinline|addProto(\var{proto})|\\
+  Add the prototype \var{proto} as a parent into the list of
+  \lstinline|this|.
+
+\begin{urbiscript}
+var Dummy = Object.new | Dummy.addProto(Orderable) | {}
+assert_eq(Dummy.protos, [Orderable, Object]);
+\end{urbiscript}
+
+\item \lstinline|allProto|\\
+  Return a list with \lstinline|this|, all parents of
+  \lstinline|this|, the parents of the parents of
+  \lstinline|this|,\ldots
+
+\begin{urbiscript}[firstnumber=last]
+assert_eq(12.allProtos,[12, 0, Orderable, Object, Comparable, Global,
+  Tags, Math, DeprecatedCommands, Kernel1Functions, System, Constants]);
+\end{urbiscript}
+
+\item \lstinline|allSlotNames|\\
+  Return a list with the slot names of \lstinline|this| and of all
+  parents in the hierarchy of \lstinline|this|.
+
+\item \lstinline|apply|\\
+
+\item \lstinline|as|\\
+
+\item \lstinline|bounce|\\
+
+\item \lstinline|bounce_named|\\
+
+\item \lstinline|callMessage|\\
+
+\item \lstinline|clone|\\
+
+\item \lstinline|cloneSlot(\var{from}, \var{to})|\\
+  Set the new slot \var{to} using a clone of \var{from}. This can only
+  be used into the same object.
+
+\begin{urbiscript}[firstnumber=last]
+var foo = Object.new | {}
+cloneSlot("foo", "bar") | {}
+assert(!(foo === bar));
+\end{urbiscript}
+
+\item \lstinline|copySlot(\var{from}, \var{to})|\\
+  Same as \lstinline|cloneSlot|, but the slot aren't cloned, so the
+  two slot are the same.
+
+\begin{urbiscript}[firstnumber=last]
+var moo = Object.new | {}
+cloneSlot("moo", "loo") | {}
+assert(!(moo === loo));
+\end{urbiscript}
+
 \item \lstinline|createSlot(\var{name})|\\
   Create an empty slot (which actually means it is bound to
   \lstinline|void|) named \var{name}.  Raise an error if \var{name}
   was already defined.
-\begin{urbiscript}
+
+\begin{urbiscript}[firstnumber=last]
 assert(Object.createSlot("foo").isVoid);
 assert(Object.hasSlot("foo"));
 \end{urbiscript}
 
+\item \lstinline|dump|\\
+
+\item \lstinline|each(\var{fun})|\\
+  Call \lstinline|each| with the given functional value on
+  \lstinline|this.asList|.
+
+\item \lstinline|eachBg|\\
+
+\item \lstinline$each|$\\
+
+\item \lstinline|getLazyLocalSlot|\\
+
+\item \lstinline|getPeriod|\\
+
+\item \lstinline|getProperty|\\
+
 \item \lstinline|getSlot(\var{name})|\\
   Return the value associated to \var{name}.
+
 \begin{urbiscript}[firstnumber=last]
 assert(!Object.getSlot("getSlot").isVoid);
 \end{urbiscript}
 
+\item \lstinline|hasProperty|\\
+
+\item \lstinline|hasSlot(\var{slot})|\\
+  Return true if \lstinline|this| has the slot \var{slot}.
+
+\begin{urbiscript}[firstnumber=last]
+assert(hasSlot("connectionTag"));
+assert(!(hasSlot("thisSlotDoesNotExist")));
+\end{urbiscript}
+
+\item \lstinline|id|\\
+
+\item \lstinline|isA(\var{obj})|\\
+  Return true if \lstinline|this| has \var{obj} in his parents, false
+  otherwise.
+
+\begin{urbiscript}[firstnumber=last]
+assert(Float.isA(Orderable));
+assert(!(String.isA(Float)));
+\end{urbiscript}
+
+\item \lstinline|isNil|\\
+  Return true if \lstinline|this| is nil, false otherwise.
+
+\begin{urbiscript}[firstnumber=last]
+assert(nil.isNil);
+assert(!(0.isNil));
+\end{urbiscript}
+
+\item \lstinline|isProto|\\
+  Return true if \lstinline|this| is a prototype, false otherwise;
+
+\begin{urbiscript}[firstnumber=last]
+assert(Float.isProto);
+assert(!(42.isProto));
+\end{urbiscript}
+
+\item \lstinline|isVoid|\\
+  Return true if \lstinline|this| is \lstinline|void|.
+
+\begin{urbiscript}[firstnumber=last]
+assert(void.isVoid);
+assert(!(42.isVoid));
+\end{urbiscript}
+
+\item \lstinline|locateSlot(\var{slot})|\\
+  Return \lstinline|nil| if \lstinline|this| don't have the slot
+  \lstinline|slot|. Otherwise it returns the first lowest owner of
+  \lstinline|slot| of \lstinline|this|.
+
+\begin{urbiscript}[firstnumber=last]
+assert(locateSlot("init"), Channel);
+assert(locateSlot("doesNotExist").isNil);
+\end{urbiscript}
+
+\item \lstinline|ownsSlot(\var{slot})|\\
+  Return true if \lstinline|this| owns the slot \var{slot}, false
+  otherwise.
+
+\begin{urbiscript}[firstnumber=last]
+assert(Object.ownsSlot("ownsSlot"));
+assert(!(24.ownsSlot("asString")));
+\end{urbiscript}
+
+\item \lstinline|print|\\
+
+\item \lstinline|protos|\\
+  Return the list of prototypes of \lstinline|this|.
+
+\begin{urbiscript}[firstnumber=last]
+assert(Object.protos, [Comparable, Global]);
+\end{urbiscript}
+
+\item \lstinline|removeProperty|\\
+
+\item \lstinline|removeProto(\var{proto})|\\
+  Remove \var{proto} from the list of prototypes of
+  \lstinline|this|.
+
+\item \lstinline|removeSlot(\var(slot))|\\
+  Remove \var{slot} from the list of slot of
+  \lstinline|this|.
+
+\item \lstinline|setConstSlot|\\
+  Like \lstinline|setSlot| but the created slot is const.
+
+\begin{urbiscript}[firstnumber=last]
+assert_eq(setConstSlot("fortyTwo"), 42);
+fortyTwo = 51;
+[00000000:error] !!! cannot modify const slot
+\end{urbiscript}
+
+\item \lstinline|setProperty|\\
+
+\item \lstinline|setProtos|\\
+
 \item \lstinline|setSlot(\var{name}, \var{value})|\\
   Create a slot \var{name} mapping to \var{value}. Raise an error if
   \var{name} was already defined.
+
 \begin{urbiscript}[firstnumber=last]
 assert_eq(Object.setSlot("theObject", Object), Object);
 assert(Object.theObject === Object);
 assert(theObject === Object);
 \end{urbiscript}
+
+\item \lstinline|slotNames|\\
+  Returns the list of slot owned by \lstinline|this|.
+
+\item \lstinline|tasks|\\
+  Returns the list of the current running tasks;
+
+\item \lstinline|type|\\
+
+\item \lstinline|uid|\\
+  Returns ths unique id of \lstinline|this|.
+
+\item \lstinline|unacceptvoid|\\
+
+\item \lstinline|uobject_init|\\
 
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Map the existing slot named \var{name} to \var{value}. Raise an
@@ -48,7 +246,7 @@ assert_eq(""    && "foo", "");
 assert_eq("foo" && "bar", "bar");
 \end{urbiscript}
 
-\item \lstinline|'||'(\var{that})|\\
+\item \lstinline/'||'(\var{that})/\\
   Short-circuiting logical or. If \lstinline|this| evaluates to false
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
