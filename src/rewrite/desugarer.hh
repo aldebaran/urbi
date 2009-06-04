@@ -32,6 +32,7 @@ namespace rewrite
       (Decrementation)
       (Emit)
       (Incrementation)
+      (If)
       (OpAssignment)
       (Pipe)
       (Scope)

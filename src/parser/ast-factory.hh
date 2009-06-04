@@ -130,6 +130,12 @@ namespace parser
   ast_string(const yy::location& l, libport::Symbol s);
 
 
+  /* Simplify \a e in every possible means.  Typically, remove useless
+     Naries with a single statement.  */
+  ast::rExp ast_strip(ast::rNary e);
+  ast::rExp ast_strip(ast::rExp e);
+
+
   /*--------.
   | Switch  |
   `--------*/

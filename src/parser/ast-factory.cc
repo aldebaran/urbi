@@ -271,7 +271,7 @@ namespace parser
   ast_if(const yy::location& l,
          ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse)
   {
-    return new ast::If(l, cond,
+    return new ast::If(l, ast_strip(cond),
                        ast_scope(l, iftrue),
 		       iffalse ? ast_scope(l, iffalse) : new ast::Noop(l, 0));
   }
@@ -337,6 +337,33 @@ namespace parser
   {
     return new ast::String(l, s);
   }
+
+
+  /*------------.
+  | ast_strip.  |
+  `------------*/
+
+  ast::rExp
+  ast_strip(ast::rNary nary)
+  {
+    ast::rExp res = nary;
+    // Remove useless nary and statement if there's only one child.
+    if (nary->children_get().size() == 1)
+      res = (nary->children_get().front()
+             .unchecked_cast<ast::Stmt>()
+             ->expression_get());
+    return res;
+  }
+
+  ast::rExp
+  ast_strip(ast::rExp e)
+  {
+    if (ast::rNary nary = e.unsafe_cast<ast::Nary>())
+      return ast_strip(nary);
+    else
+      return e;
+  }
+
 
   ast::rExp
   ast_switch(const yy::location&, ast::rExp cond,

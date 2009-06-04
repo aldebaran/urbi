@@ -164,8 +164,8 @@ namespace ast
   ParametricAst::operator% (libport::intrusive_ptr<ast::Exp> t)
   {
     // Strangely, the exp_map_type qualification is required
-    // here. Factoring the two % operator in a template method is thus
-    // impossible.
+    // here. Factoring the two % operators in a template method is
+    // thus impossible.
     exp_map_type::append_(count_, t);
     // Compute the location of the source text we used.
     if (!effective_location_.begin.filename)

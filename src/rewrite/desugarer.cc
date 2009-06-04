@@ -275,9 +275,22 @@ namespace rewrite
   {
     PARAMETRIC_AST(increment, "(%lvalue:1 += 1) - 1");
 
-    ast::rExp res = recurse(exp(increment % inc->exp_get()));
-    res->original_set(inc);
-    result_ = res;
+    result_ = recurse(exp(increment % inc->exp_get()));
+    result_->original_set(inc);
+  }
+
+  void Desugarer::visit(const ast::If* s)
+  {
+    ast::rExp test;
+    {
+      libport::Finally finally;
+      finally << libport::scoped_set(allow_subdecl_, true);
+      test = recurse(s->test_get());
+    }
+    ast::rScope thenclause = recurse(s->thenclause_get());
+    ast::rScope elseclause = recurse(s->elseclause_get());
+    result_ = new ast::If(s->location_get(), test, thenclause, elseclause);
+    result_->original_set(s);
   }
 
   void Desugarer::visit(const ast::OpAssignment* a)
@@ -329,7 +342,8 @@ namespace rewrite
   void Desugarer::visit(const ast::Try* t)
   {
     ast::loc loc = t->location_get();
-    ast::rTry res = new ast::Try(loc, recurse(t->body_get()), ast::catches_type());
+    ast::rTry res =
+      new ast::Try(loc, recurse(t->body_get()), ast::catches_type());
 
     foreach (const ast::rCatch& c, t->handlers_get())
     {
@@ -342,7 +356,8 @@ namespace rewrite
       {
         rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
         bind(c->match_get()->pattern_get().get());
-        ast::rExp p = exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
+        ast::rExp p =
+          exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
         {
           allow_subdecl_ = true;
           p = recurse(p);
