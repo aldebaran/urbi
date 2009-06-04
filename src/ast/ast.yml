@@ -313,8 +313,10 @@ Do:
     operator()(n->target_get().get());
     visit((typename Const<Scope>::type*) n);
   printer:
-    - '{ ostr_ << "do " << *n->target_get() << " "; }'
-    - '{ visit(reinterpret_cast<const Scope*>(n)); }'
+    - '"do ("'
+    - ~target
+    - '") "'
+    - '{ visit(static_cast<const Scope*>(n)); }'
 
 ## -------------------- ##
 ## Composing commands.  ##
@@ -930,12 +932,12 @@ Function:
         type: symbols_type*
         access: rwW
         init: 'new symbols_type()'
-  # Cloning a list of reference such as this one requires a mapping table
-  # in the cloner. Forbid it for now.
+  # Cloning a list of references such as this one requires a mapping
+  # table in the cloner. Forbid it for now.
   cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"function "'
-    - '{visit(reinterpret_cast<const Routine*>(n));}'
+    - '{ visit(static_cast<const Routine*>(n)); }'
 
 Closure:
   super: Routine
@@ -944,7 +946,7 @@ Closure:
   cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"closure "'
-    - '{visit(reinterpret_cast<const Routine*>(n));}'
+    - '{ visit(static_cast<const Routine*>(n)); }'
 
 LocalWrite:
   super: Exp
