@@ -36,7 +36,6 @@ TFAIL_TESTS +=
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
-  2.x/derive.chk				\
   2.x/eval.chk					\
   2.x/exceptions/assignment.chk
 
@@ -66,4 +65,6 @@ TO_CHECK_TESTS =				\
 
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
-2.x/uob/group.chk
+  2.x/derive.chk				\
+  2.x/uob/group.chk				\
+  uob/plug/all/destruction.chk
