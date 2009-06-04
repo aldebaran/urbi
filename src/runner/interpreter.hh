@@ -63,7 +63,7 @@ namespace runner
     /// \}
 
     /// The entry point: visit \a e.
-    object::rObject operator() (const ast::Ast* e) __attribute__((always_inline));
+    ATTRIBUTE_ALWAYS_INLINE object::rObject operator() (const ast::Ast* e);
 
     /// \ name Accessors.
     /// \{
@@ -151,7 +151,7 @@ namespace runner
   public:
 
 #define VISIT(Macro, Data, Node)                                        \
-    object::rObject visit(const ast::Node* n) LIBPORT_SPEED_ALWAYS_INLINE;
+    LIBPORT_SPEED_ALWAYS_INLINE object::rObject visit(const ast::Node* n);
 
     AST_FOR_EACH_NODE(VISIT);
 
