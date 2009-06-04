@@ -75,7 +75,7 @@ namespace kernel
     static const libport::PackageInfo& package_info();
 
     //! Overload this function to return the running time of the server.
-    /*! The running time of the server must be in milliseconds.
+    /*! The running time of the server must be in microseconds.
      */
     virtual libport::utime_t getTime() = 0;
 
