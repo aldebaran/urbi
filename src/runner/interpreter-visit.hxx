@@ -101,7 +101,7 @@ namespace runner
   }
 
 
-  static void check_void(const object::rObject& v)
+  static inline void check_void(const object::rObject& v)
   {
     if (v == object::void_class)
       raise_unexpected_void_error();
