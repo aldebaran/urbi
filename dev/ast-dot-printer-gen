@@ -100,6 +100,7 @@ def dot_attrs(node):
       label += '%(name)s: " << escape(n->%(name)s_get()) << "' % {'name' : attr.name}
   if label != '':
     label = '|{%s}' % label
+  label = '|{" << escape(n->location_get()) << " }' + label
   return recurse, label
 
 
