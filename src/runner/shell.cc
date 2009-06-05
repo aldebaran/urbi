@@ -23,11 +23,23 @@ namespace runner
   {
   }
 
+  inline
+  void
+  Shell::handle_oob_()
+  {
+    while (!oob_calls_.empty())
+    {
+      oob_calls_.front()();
+      oob_calls_.pop_front();
+    }
+  }
+
   void
   Shell::work()
   {
     while (true)
     {
+      handle_oob_();
       // Wait until we have some work to do
       if (commands_.empty())
       {
@@ -43,8 +55,10 @@ namespace runner
 					     side_effect_free_get()));
 	side_effect_free_set(true);
 	while (commands_.empty())
+	{
+	  handle_oob_();
 	  yield_until_things_changed();
-
+	}
 	executing_ = true;
       }
 
@@ -63,6 +77,13 @@ namespace runner
   Shell::append_command(const ast::rConstNary& command)
   {
     commands_.push_back(command);
+    scheduler_get().signal_world_change();
+  }
+
+  void
+  Shell::insert_oob_call(boost::function0<void> func)
+  {
+    oob_calls_.push_back(func);
     scheduler_get().signal_world_change();
   }
 
