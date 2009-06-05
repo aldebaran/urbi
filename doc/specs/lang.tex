@@ -1322,8 +1322,9 @@ for (var i = 0; i < 8; i++)
 
 \subsection{do}
 
-The \lstinline|do| construct enables do evaluate an expression with a
-different ``\lstinline|this|''.
+The \lstinline|do| construct changes the target (\lstinline|this|)
+when evaluating an expression.  It is a convenient means to avoid
+repeating the same target several times.
 
 \begin{urbifixme}[frame=, backgroundcolor=, ]
 do (\var{target})
@@ -1337,18 +1338,76 @@ shown below.  The whole construct evaluates to the value
 of \var{body}.
 
 \begin{urbiscript}
-var x = 1024;
-[00000000:hide] 1024
-
-do (x)
+do (1024)
 {
-  echo(this);
-  echo(sqrt);
-  setSlot("y", 0);
-};
-[00000000] *** 1024
-[00000000] *** 32
-[00000000] 1024
+  assert_eq(this, 1024);
+  assert_eq(sqrt, 32);
+  setSlot("y", 23);
+}.y;
+[00000000] 23
+\end{urbiscript}
+
+
+\subsection{if}
+\label{sec:lang:if}
+As in most programming languages, conditionals are expressed with
+\lstinline|if|.
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+if (\var{condition}) \var{then-clause}
+if (\var{condition}) \var{then-clause} else \var{else-clause}
+\end{urbifixme}
+
+First \var{condition} is evaluated; if if evaluates to a value which
+is true (\fixme{point to a definition of truth values}), evaluate
+\var{then-clause}, otherwise, if applicable, evaluate
+\var{else-clause}.
+
+\begin{urbiscript}[firstnumber=last]
+if (true) assert(true) else assert(false);
+if (false) assert(false) else assert(true);
+if (true) assert(true);
+\end{urbiscript}
+
+Beware that \emph{there must not be a terminator after the
+  \var{then-clause}}:
+
+\begin{urbiscript}[firstnumber=last]
+if (true)
+  assert(true);
+else
+  assert(false);
+[00000002:error] !!! syntax error, unexpected else
+\end{urbiscript}
+
+Contrary to \C/\Cxx, it has value: it also implements the
+\lstinline|\var{condition} ? \var{then-clause} : \var{else-clause}|
+construct.  Unfortunately, due to syntactic constraints inherited from
+\C, it is a \emph{statement}: it cannot be used directly as an
+expression.  But as everywhere else in \us, to use a statement where
+an expression is expected, use braces:
+
+\begin{urbiscript}[firstnumber=last]
+assert_eq(1 + if (true) 3 else 4, 4);
+[00000003:error] !!! syntax error, unexpected if
+assert_eq(1 + { if (true) 3 else 4 }, 4);
+\end{urbiscript}
+
+The \var{condition} can be any statement list.  Variables which it
+declares are visible in both the \var{then-clause} and the
+\var{else-clause}, but do not escape the \lstinline|if| construct.
+
+\begin{urbiscript}[firstnumber=last]
+assert_eq({if (false) 10 else 20}, 20);
+assert_eq({if (true) 10 else 20}, 10);
+
+assert_eq({if (true) 10}, 10);
+
+assert_eq({if (var x = 10) x + 2 else x - 2}, 12);
+assert_eq({if (var x = 0)  x + 2 else x - 2}, -2);
+
+if (var x = 123) x | x;
+[00000005:error] !!! lookup failed: x
 \end{urbiscript}
 
 \subsection{for}
