@@ -25,10 +25,32 @@ namespace rewrite
     , allow_subdecl_(false)
   {}
 
+
+  template <typename T>
+  libport::intrusive_ptr<typename boost::remove_const<T>::type>
+  Desugarer::recurse_with_subdecl(T* s)
+  {
+    libport::Finally finally;
+    finally << libport::scoped_set(allow_subdecl_, true);
+    super_type::visit(s);
+    passert(*s, result_);
+    typedef typename boost::remove_const<T>::type T_no_const;
+    return result_.unsafe_cast<T_no_const>();
+  }
+
+  template <typename T>
+  libport::intrusive_ptr<typename boost::remove_const<T>::type>
+  Desugarer::recurse_with_subdecl(libport::intrusive_ptr<T> s)
+  {
+    libport::Finally finally;
+    finally << libport::scoped_set(allow_subdecl_, true);
+    assert(s);
+    return recurse(s);
+  }
+
   void Desugarer::visit(const ast::And* s)
   {
-    allow_subdecl_ = true;
-    super_type::visit(s);
+    recurse_with_subdecl(s);
   }
 
   void
@@ -281,12 +303,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::If* s)
   {
-    ast::rExp test;
-    {
-      libport::Finally finally;
-      finally << libport::scoped_set(allow_subdecl_, true);
-      test = recurse(s->test_get());
-    }
+    ast::rExp test = recurse_with_subdecl(s->test_get());
     ast::rScope thenclause = recurse(s->thenclause_get());
     ast::rScope elseclause = recurse(s->elseclause_get());
     result_ = new ast::If(s->location_get(), test, thenclause, elseclause);
@@ -312,20 +329,17 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Pipe* s)
   {
-    allow_subdecl_ = true;
-    super_type::visit(s);
+    recurse_with_subdecl(s);
   }
 
   void Desugarer::visit(const ast::Scope* s)
   {
-    allow_subdecl_ = true;
-    super_type::visit(s);
+    recurse_with_subdecl(s);
   }
 
   void Desugarer::visit(const ast::Stmt* s)
   {
-    allow_subdecl_ = true;
-    super_type::visit(s);
+    recurse_with_subdecl(s);
   }
 
   void Desugarer::visit(const ast::Subscript* s)
@@ -358,11 +372,7 @@ namespace rewrite
         bind(c->match_get()->pattern_get().get());
         ast::rExp p =
           exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
-        {
-          allow_subdecl_ = true;
-          p = recurse(p);
-          allow_subdecl_ = false;
-        }
+        p = recurse_with_subdecl(p);
         ast::rMatch match =
           new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
         match->bindings_set(recurse(bind.bindings_get()));
@@ -381,8 +391,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::While* s)
   {
-    allow_subdecl_ = true;
-    super_type::visit(s);
+    recurse_with_subdecl(s);
   }
 
 }

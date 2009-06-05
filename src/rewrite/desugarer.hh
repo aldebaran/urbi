@@ -1,7 +1,7 @@
 #ifndef REWRITE_DESUGAR_HH
 # define REWRITE_DESUGAR_HH
 
-# include <libport/finally.hh>
+# include <boost/type_traits/remove_const.hpp>
 
 # include <ast/analyzer.hh>
 
@@ -19,6 +19,15 @@ namespace rewrite
 
     Desugarer();
     virtual void operator()(const ast::Ast* node);
+
+    /// Recurse in \a t, but allow declarations in its children.
+    template <typename T>
+    libport::intrusive_ptr<typename boost::remove_const<T>::type>
+    recurse_with_subdecl(T* t);
+
+    template <typename T>
+    libport::intrusive_ptr<typename boost::remove_const<T>::type>
+    recurse_with_subdecl(libport::intrusive_ptr<T> t);
 
   protected:
     /// Import visit from DefaultVisitor.
