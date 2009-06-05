@@ -408,18 +408,35 @@ namespace kernel
     return next_time;
   }
 
+  static void bounce_disconnection(UConnection* uc)
+  { // This is executed from a job: we have a runner.
+    uc->lobby_get()->call(SYMBOL(handleDisconnect));
+    delete uc;
+  }
+
   void
   UServer::work_handle_stopall_()
   {
     if (stopall)
     {
-      foreach (UConnection& c, *connections_)
-        if (c.active_get() && c.has_pending_command())
-          c.drop_pending_commands();
+      foreach (UConnection* c, *connections_)
+        if (c->active_get() && c->has_pending_command())
+          c->drop_pending_commands();
     }
 
-    // Delete all connections with closing=true
-    connections_->remove_closing();
+    // Call bounce_disconnection() inside GhostConnection's shell for each
+    // closed connection.
+    foreach (UConnection* c, *connections_)
+    {
+      if (c->closing_get())
+      {
+	ghost_->shell_get()->insert_oob_call(
+	  boost::bind(&bounce_disconnection, c));
+      }
+    }
+
+    connections_->connections_.remove_if(
+     boost::bind(&UConnection::closing_get, _1));
 
     stopall = false;
   }

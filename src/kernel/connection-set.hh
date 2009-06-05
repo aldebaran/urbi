@@ -11,11 +11,10 @@ namespace kernel
   {
   public:
     void add(UConnection* c);
-    void remove(UConnection* c);
-    void remove_closing();
+
     void clear();
 
-    typedef boost::ptr_list<UConnection> connections_type;
+    typedef std::list<UConnection*> connections_type;
 
     /// Present an iterable interface for sake of foreach.
     typedef connections_type::iterator iterator;
@@ -25,6 +24,7 @@ namespace kernel
 
   private:
     connections_type connections_;
+    friend class UServer;
   };
 }
 

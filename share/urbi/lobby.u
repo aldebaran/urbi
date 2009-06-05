@@ -1,10 +1,18 @@
 do (Lobby)
 {
+  var onDisconnect = Event.new;
+  var connected = true;
   function asString()
   {
     var res = Object.getSlot("asString").apply([this]) |
     if (hasSlot("remoteIP"))
       res += " (%s)" % remoteIP |
     return res
-  }
+  };
+  function handleDisconnect()
+  {
+    connected = false |
+    lobbies[1].send(("disconnecting " + this).asPrintable) |
+    onDisconnect!(this)
+  };
 };
