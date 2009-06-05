@@ -21,7 +21,7 @@ with many primitives that are mandatory for all object in \us.
   \lstinline|this|.
 
 \begin{urbiscript}
-var Dummy = Object.new | Dummy.addProto(Orderable) | {}
+var Dummy = Object.new | Dummy.addProto(Orderable) | {};
 assert_eq(Dummy.protos, [Orderable, Object]);
 \end{urbiscript}
 
@@ -30,9 +30,13 @@ assert_eq(Dummy.protos, [Orderable, Object]);
   \lstinline|this|, the parents of the parents of
   \lstinline|this|,\ldots
 
+% FIXME: Cannot use assert_eq here, as we use == on Comparable,
+% which is an endless loop.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(12.allProtos,[12, 0, Orderable, Object, Comparable, Global,
-  Tags, Math, DeprecatedCommands, Kernel1Functions, System, Constants]);
+assert_eq(12.allProtos.map(function (t) { t.asString }),
+          ["12", "0", "Orderable", "Object", "Comparable", "Global",
+           "Tags", "Math", "DeprecatedCommands", "Kernel1Functions",
+           "System", "Constants"]);
 \end{urbiscript}
 
 \item \lstinline|allSlotNames|\\
@@ -56,8 +60,8 @@ assert_eq(12.allProtos,[12, 0, Orderable, Object, Comparable, Global,
   be used into the same object.
 
 \begin{urbiscript}[firstnumber=last]
-var foo = Object.new | {}
-cloneSlot("foo", "bar") | {}
+var foo = Object.new |;
+cloneSlot("foo", "bar") |;
 assert(!(foo === bar));
 \end{urbiscript}
 
@@ -66,8 +70,8 @@ assert(!(foo === bar));
   two slot are the same.
 
 \begin{urbiscript}[firstnumber=last]
-var moo = Object.new | {}
-cloneSlot("moo", "loo") | {}
+var moo = Object.new |;
+cloneSlot("moo", "loo") |;
 assert(!(moo === loo));
 \end{urbiscript}
 
@@ -172,26 +176,23 @@ assert(!(24.ownsSlot("asString")));
 
 \item \lstinline|protos|\\
   Return the list of prototypes of \lstinline|this|.
-
 \begin{urbiscript}[firstnumber=last]
-assert(Object.protos, [Comparable, Global]);
+assert_eq(12.protos, [0]);
 \end{urbiscript}
 
 \item \lstinline|removeProperty|\\
 
 \item \lstinline|removeProto(\var{proto})|\\
-  Remove \var{proto} from the list of prototypes of
-  \lstinline|this|.
+  Remove \var{proto} from the list of prototypes of \lstinline|this|.
 
 \item \lstinline|removeSlot(\var(slot))|\\
-  Remove \var{slot} from the list of slot of
-  \lstinline|this|.
+  Remove \var{slot} from the list of slots of \lstinline|this|.
 
 \item \lstinline|setConstSlot|\\
   Like \lstinline|setSlot| but the created slot is const.
 
 \begin{urbiscript}[firstnumber=last]
-assert_eq(setConstSlot("fortyTwo"), 42);
+assert_eq(setConstSlot("fortyTwo", 42), 42);
 fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
 \end{urbiscript}
