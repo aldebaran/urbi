@@ -30,7 +30,7 @@ usage()
     "For instance, you might use it like this to see ast after\n"
     "desugaring:\n"
     "  \n"
-    "  _build/src/ast-dump <foo.u 4> ast.dot && dotty ast.dot\n";
+    "  _build/src/ast-dump <foo.u 4> ast.dot && dotty ast.dot\n"
     "or, with zsh\n"
     "  dotty =(_build/src/ast-dump <foo.u 4>&1)\n";
   exit (EX_OK);
