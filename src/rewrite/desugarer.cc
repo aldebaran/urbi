@@ -98,12 +98,12 @@ namespace rewrite
   {
     ast::loc loc = assign->location_get();
 
-    // Handle modifiers
+    // Handle modifiers.
     if (assign->modifiers_get())
       return desugar_modifiers(assign);
     assert(!assign->modifiers_get());
 
-    // Simple declaration: var x = value
+    // Simple declaration: var x = value.
     if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())
     {
       if (!allow_decl_)
@@ -115,7 +115,7 @@ namespace rewrite
       return;
     }
 
-    // Simple assignment: x = value
+    // Simple assignment: x = value.
     if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
     {
       result_ = new ast::Assignment(loc, call, assign->value_get());
@@ -123,7 +123,7 @@ namespace rewrite
       return;
     }
 
-    // Subscript assignment: x[y] = value
+    // Subscript assignment: x[y] = value.
     if (ast::rSubscript sub =
         assign->what_get().unsafe_cast<ast::Subscript>())
     {
@@ -134,7 +134,7 @@ namespace rewrite
       return;
     }
 
-    // Property assignment: x->prop = value
+    // Property assignment: x->prop = value.
     if (ast::rProperty prop =
         assign->what_get().unsafe_cast<ast::Property>())
     {
