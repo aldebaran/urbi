@@ -214,6 +214,17 @@ Ast:
     header prologue: |2
       # include <ast/fwd.hh>
       namespace runner { class Interpreter; }
+
+      /* At least OS X's GCC does not actually export functions that
+         are flagged as exported, but use types that are not exported.
+         So we need to export these, for sake of binder::bind.
+         The impact on the size is neglectible.  */
+      # include <urbi/export.hh>
+      namespace ast
+      {
+        class URBI_SDK_API Ast;
+        class URBI_SDK_API Nary;
+      }
     header inside: |2
         public:
           /// Store a reference onto the original node.

@@ -14,7 +14,8 @@ namespace binder
 
   /// Bind names in \a a.
   template <typename T>
-  libport::intrusive_ptr<T> URBI_SDK_API bind(libport::intrusive_ptr<T> a);
+  URBI_SDK_API
+  libport::intrusive_ptr<T> bind(libport::intrusive_ptr<T> a);
 
 } // namespace binder
 
