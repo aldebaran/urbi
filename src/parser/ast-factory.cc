@@ -321,9 +321,9 @@ namespace parser
     if (ast::rScope res = e.unsafe_cast<ast::Scope>())
       return res;
     else if (target)
-      return new ast::Do(l, e, target);
+      return new ast::Do(l, ast_strip(e), ast_strip(target));
     else
-      return new ast::Scope(l, e);
+      return new ast::Scope(l, ast_strip(e));
   }
 
   ast::rScope
