@@ -37,7 +37,7 @@ class Global.ImplicitTagComponentError: Exception
   function init()
   {
     Exception.getSlot("init").apply([this,
-                                     "illegal component in implicit tag"])
+                                     "invalid component in implicit tag"])
   }
 };
 
