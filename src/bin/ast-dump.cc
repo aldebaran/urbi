@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #include <iostream>
 
 #include <libport/sysexits.hh>
