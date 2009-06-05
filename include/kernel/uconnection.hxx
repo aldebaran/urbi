@@ -69,6 +69,13 @@ namespace kernel
   }
 
   inline
+  runner::rShell&
+  UConnection::shell_get()
+  {
+    return shell_;
+  }
+
+  inline
   bool&
   UConnection::closing_get()
   {

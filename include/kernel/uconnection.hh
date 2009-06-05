@@ -161,6 +161,7 @@ namespace kernel
     parser::UParser& parser_get();
     UServer& server_get() const;
     object::rLobby& lobby_get();
+    runner::rShell& shell_get();
 
     bool send_queue_empty() const;
 
