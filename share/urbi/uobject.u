@@ -282,6 +282,7 @@ class Global.'external'
     uobjects.setSlot(objname, lobby.getSlot(objname));
     lobby.removeSlot(objname)|
     uobjects.getSlot(objname).addProto(UObject) |
+    uobjects.getSlot(objname).setSlot("lobby", lobby) |
     uobjects.getSlot(objname).init() |
     ("external object "+objname).print|
     var chan = Channel.new(MODULE_TAG)|
@@ -406,5 +407,15 @@ class Global.'external'
       + "onleave 'external'.eventBounce(false, \"%s\",[%s])")
     % [objname, ename, varargs, fullname, args, fullname, args]|
     eval(code)
+  };
+  at (Lobby.onDisconnect?(var l))
+  {
+    // Remove all the remote uobjects created by this lobby.
+    for (var o: uobjects.slotNames)
+    {
+      if (uobjects.getSlot(o).hasSlot("lobby")
+	&& uobjects.getSlot(o).lobby === l)
+	uobjects.removeSlot(o)
+    }
   };
 };
