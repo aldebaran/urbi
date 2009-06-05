@@ -1218,7 +1218,7 @@ Class:
         mandatory: false
         desc: Prototypes
     - content:
-        type: rNary
+        type: rExp
         desc: Class content
   printer:
     - '"class "'
@@ -1298,7 +1298,7 @@ Catch:
         type: rMatch
         mandatory: False
     - body:
-        type: rNary
+        type: rExp
         desc: The handler to execute if we have a match
   printer:
     - '"catch"'

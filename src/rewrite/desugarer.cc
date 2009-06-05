@@ -377,7 +377,8 @@ namespace rewrite
           new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
         match->bindings_set(recurse(bind.bindings_get()));
         match->original_set(c->match_get());
-        desugared = new ast::Catch(loc, match, recurse(c->body_get()));
+        desugared = new ast::Catch(loc, match,
+                                   recurse_with_subdecl(c->body_get()));
       }
       else
       {

@@ -91,6 +91,7 @@
   using parser::ast_nil;
   using parser::ast_scope;
   using parser::ast_string;
+  using parser::ast_strip;
   using parser::ast_switch;
   using parser::ast_whenever;
   using parser::ast_whenever_event;
@@ -290,7 +291,7 @@
 `--------------*/
 
 %printer { debug_stream() << libport::deref << $$; } <ast::rExp>;
-%type <ast::rExp> exp exp.opt softtest stmt stmt_loop;
+%type <ast::rExp> block exp exp.opt softtest stmt stmt_loop;
 
 
 /*----------------------.
@@ -403,7 +404,7 @@ root:
 | stmts.  |
 `--------*/
 
-%type <ast::rNary> block root stmts;
+%type <ast::rNary> root stmts;
 %printer { debug_stream() << libport::deref << $$; } <ast::rNary>;
 
 // Statements: with ";" and ",".
@@ -471,7 +472,7 @@ stmt:
 ;
 
 block:
-  "{" stmts "}"       { std::swap($$, $2); }
+  "{" stmts "}"       { $$ = ast_strip($2); }
 ;
 
 /*----------.
