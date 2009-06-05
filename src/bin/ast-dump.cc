@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <libport/cstring>
 #include <libport/sysexits.hh>
 
 #include <ast/dot-print.hh>
@@ -12,27 +13,29 @@
 using namespace ast;
 using namespace parser;
 
-static const int sz = 4096;
-
 static void
 usage()
 {
   std::cout <<
+    "usage: ast-dump FILE.u\n"
+    "\n"
     "Dump ast in dot format.  Ast is dumped at each step of the\n"
     "transformation in a different file descriptor:\n"
-    "  \n"
+    "\n"
     "  3: parsing\n"
     "  4: flowing\n"
     "  5: desugaring\n"
     "  6: rescoping\n"
     "  7: binding\n"
-    "  \n"
+    "\n"
     "For instance, you might use it like this to see ast after\n"
     "desugaring:\n"
-    "  \n"
-    "  _build/src/ast-dump <foo.u 4> ast.dot && dotty ast.dot\n"
+    "\n"
+    "  _build/src/bin/ast-dump foo.u 4> ast.dot && dotty ast.dot\n"
+    "\n"
     "or, with zsh\n"
-    "  dotty =(_build/src/ast-dump <foo.u 4>&1)\n";
+    "\n"
+    "  dotty =(_build/src/bin/ast-dump foo.u 4>&1)\n";
   exit (EX_OK);
 }
 
@@ -47,22 +50,14 @@ print(rAst ast)
 }
 
 int
-main(int argc, const char*[])
+main(int argc, const char* argv[])
 {
-  if (argc != 1)
+  if (argc != 2
+      || libport::streq(argv[1], "-h")
+      || libport::streq(argv[1], "--help"))
     usage();
 
-  char buf[sz + 1];
-  std::string source;
-  while (!std::cin.eof())
-  {
-    std::cin.read(buf, sz);
-    buf[std::cin.gcount()] = 0;
-    source += buf;
-  }
-
-  rAst res = parse(source, __HERE__)->ast_get();
-
+  rAst res = parse_file(argv[1])->ast_get();
   print(res);
 
   res = flower::flow(res);
