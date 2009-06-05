@@ -118,7 +118,7 @@ for node in concrete:
       output_ << "  node_" << ids_.back().first << " -> node_" << id_
               << "[label=\\"" << ids_.back().second << "\\"];" << std::endl;
     ids_.push_back(std::make_pair(id_, ""));
-    output_ << "  node_" << id_ << " [label=\\"{%(type)s%(label)s}\\",shape=\\"record\\"];" << std::endl;
+    output_ << "  node_" << id_ << " [label=\\"{%(type)s%(label)s}\\"];" << std::endl;
 %(attrs)s
     ids_.pop_back();
   }
@@ -168,8 +168,9 @@ namespace %(ns)s
     if (root_)
     {
       root_ = false;
-      output_ << "digraph" << std::endl;
-      output_ << "{" << std::endl;
+      output_ << "digraph" << std::endl
+              << "{" << std::endl
+              << "  node [shape=\\"record\\"];" << std::endl;
       super_type::operator()(n);
       output_ << "}" << std::endl;
     }
