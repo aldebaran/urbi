@@ -1,21 +1,10 @@
 /**
- *  Dump ast in dot format.  Ast is dumped at each step of the
- *  transformation in a different file descriptor:
- *
- *  3: parsing
- *  4: flowing
- *  5: desugaring
- *  6: rescoping
- *  7: binding
- *
- *  For instance, you might use it like this to see ast after
- *  desugaring:
- *
- *  _build/src/ast-dump 4> ast.dot && dot -Tpng ast.dot > ast.png
  *
  */
 
 #include <iostream>
+
+#include <libport/sysexits.hh>
 
 #include <ast/dot-print.hh>
 #include <ast/nary.hh>
@@ -30,6 +19,28 @@ using namespace parser;
 static const int sz = 4096;
 
 static void
+usage()
+{
+  std::cout <<
+    "Dump ast in dot format.  Ast is dumped at each step of the\n"
+    "transformation in a different file descriptor:\n"
+    "  \n"
+    "  3: parsing\n"
+    "  4: flowing\n"
+    "  5: desugaring\n"
+    "  6: rescoping\n"
+    "  7: binding\n"
+    "  \n"
+    "For instance, you might use it like this to see ast after\n"
+    "desugaring:\n"
+    "  \n"
+    "  _build/src/ast-dump <foo.u 4> ast.dot && dotty ast.dot\n";
+    "or, with zsh\n"
+    "  dotty =(_build/src/ast-dump <foo.u 4>&1)\n";
+  exit (EX_OK);
+}
+
+static void
 print(rAst ast)
 {
   static int fd = 2;
@@ -40,8 +51,11 @@ print(rAst ast)
 }
 
 int
-main()
+main(int argc, const char*[])
 {
+  if (argc != 1)
+    usage();
+
   char buf[sz + 1];
   std::string source;
   while (!std::cin.eof())
