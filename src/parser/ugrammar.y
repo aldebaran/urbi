@@ -449,10 +449,7 @@ cstmt:
 %type <ast::rExp> tag;
 %printer { debug_stream() << libport::deref << $$; } <ast::rTag>;
 tag:
-  exp
-  {
-    $$ = $1;
-  }
+  exp { std::swap($$, $1); }
 ;
 
 stmt:
@@ -688,14 +685,13 @@ dictionary:
   dictionary modifier
   {
     check_modifiers_accumulation(@2, $1->value_get(), $2.first, up);
-    $1->value_get()[$2.first] = $2.second;
-    $$ = $1;
+    std::swap($$, $1);
+    $$->value_get()[$2.first] = $2.second;
   }
 | modifier
   {
-    ast::rDictionary d(new ast::Dictionary(@$, 0, ast::modifiers_type()));
-    d->value_get()[$1.first] = $1.second;
-    $$ = d;
+    $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
+    $$->value_get()[$1.first] = $1.second;
   }
 
 /*-------------------.
@@ -707,10 +703,8 @@ exp:
     {
       ast::rDictionary d = $3.unsafe_cast<ast::Dictionary>();
       if (d && d->base_get())
-      {
         $$ = new ast::Assign(@$, $1, d->base_get(),
                              new ast::modifiers_type(d->value_get()));
-      }
       else
         $$ = new ast::Assign(@$, $1, $3, 0);
     }
@@ -729,19 +723,19 @@ exp:
       else if (ast::rAssign a = $1.unsafe_cast<ast::Assign>())
       {
         ast::modifiers_type* m = a->modifiers_get();
-        if (!m)
+        if (m)
+          check_modifiers_accumulation(@2, *a->modifiers_get(), $2.first, up);
+        else
         {
           m = new ast::modifiers_type();
           a->modifiers_set(m);
         }
-        else
-          check_modifiers_accumulation(@2, *a->modifiers_get(), $2.first, up);
         (*m)[$2.first] = $2.second;
         $$ = $1;
       }
       else
       {
-        ast::rDictionary d(new ast::Dictionary(@$, 0, ast::modifiers_type()));
+        ast::rDictionary d = new ast::Dictionary(@$, 0, ast::modifiers_type());
         d->value_get()[$2.first] = $2.second;
         d->base_get() = $1;
         $$ = d;
@@ -1254,16 +1248,11 @@ event_match:
   }
 ;
 
-%type <ast::rExp> guard.opt guard;
+%type <ast::rExp> guard.opt;
 guard.opt:
   /* nothing */  { $$ = 0; }
-| guard          { $$ = $1; }
+| "if" exp       { std::swap($$, $2); }
 ;
-
-guard:
-  "if" exp { $$ = $2; }
-;
-
 
 %type<ast::rExp> tilda.opt;
 tilda.opt:
