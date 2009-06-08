@@ -12,7 +12,7 @@ do (Global.Dictionary)
     this
   };
 
-  function asList ()
+  function asList()
   {
     var res = []|
     for| (var k: keys)
@@ -20,13 +20,16 @@ do (Global.Dictionary)
     res
   };
 
-  function asString ()
+  function asString()
   {
-    var res = asList.sort|
-    res = res.map(function (p) {
-      p.first.asPrintable + " => " + p.second.asPrintable
-    })|
-    "Dictionary {" + res.join(", ") + "}"
+    var sep = "" |
+    var res = "Dictionary {" |
+    for| (var k: keys)
+    {
+      res += sep + k.asPrintable + " => " + get(k).asPrintable |
+      sep = ", " |
+    }|
+    res +  "}"
   };
 
   function getWithDefault(name, otherwise)

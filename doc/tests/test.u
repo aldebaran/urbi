@@ -14,13 +14,14 @@ do (obj)
 
 var Global.mytag = Tag.new |
 
+// Determinism: asList and asString.
 do (Dictionary)
 {
-  // We want to the items to be sorted.
-  copySlot("asList", "oldAsList");
-  asList = function ()
+  copySlot("keys", "oldKeys");
+  keys->constant = false;
+  keys = function ()
     {
-      oldAsList.sort;
+      oldKeys.sort;
     };
 }|
 
