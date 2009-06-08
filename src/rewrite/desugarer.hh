@@ -39,6 +39,7 @@ namespace rewrite
       (Binding)
       (Class)
       (Decrementation)
+      (Do)
       (Emit)
       (Incrementation)
       (If)

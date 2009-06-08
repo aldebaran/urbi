@@ -265,6 +265,14 @@ namespace rewrite
     result_ = res;
   }
 
+  void Desugarer::visit(const ast::Do* s)
+  {
+    ast::rExp target = recurse(s->target_get());
+    ast::rExp body = recurse_with_subdecl(s->body_get());
+    result_ = new ast::Do(s->location_get(), body, target);
+    result_->original_set(s);
+  }
+
   void Desugarer::visit(const ast::Emit* e)
   {
     ast::rExp event = recurse(e->event_get());
