@@ -348,7 +348,7 @@ Message:
   attributes:
     - text:
         type: 'std::string'
-        desc: The message to display when visited
+        desc: The message to display when visited.
     - tag:
         type: 'std::string'
         desc: The tag for the message.
@@ -402,7 +402,7 @@ Nary:
           Nary();
 
           /// Drop the children.
-          void clear ();
+          void clear();
 
           /// Are there any children?
           bool empty() const;
@@ -414,31 +414,31 @@ Nary:
           void message_push(const std::string& text, const std::string& tag);
 
           /// Sets the flavor of the last child.
-          void back_flavor_set (flavor_type k, const loc& l);
+          void back_flavor_set(flavor_type k, const loc& l);
 
           /// Sets the flavor of the last child without modifying location.
-          void back_flavor_set (flavor_type k);
+          void back_flavor_set(flavor_type k);
 
           /// Get the flavor of the last child.
           flavor_type back_flavor_get() const;
 
           /// Drop the last children.
-          void pop_back ();
+          void pop_back();
 
           /// Splice the content of \a rhs at the back this list.
-          void splice_back (rNary rhs);
+          void splice_back(rNary rhs);
 
        private:
           /// Return the last child if there is one of the right type.
           template <typename T>
-          libport::intrusive_ptr<T> back ();
+          libport::intrusive_ptr<T> back();
 
           /// Return the last child if there is one of the right type.
           template <typename T>
-          libport::intrusive_ptr<const T> back () const;
+          libport::intrusive_ptr<const T> back() const;
 
           /// Adjust the whole location.
-          void location_adjust ();
+          void location_adjust();
 
     impl prologue: |2
       #include <libport/indent.hh>
@@ -448,27 +448,27 @@ Nary:
       #include <ast/stmt.hh>
 
     impl inside: |2
-        Nary::Nary ()
+        Nary::Nary()
           : Exp(loc()),
             children_(new exps_type()),
             toplevel_(false)
         {}
 
         void
-        Nary::clear ()
+        Nary::clear()
         {
-          children_->clear ();
+          children_->clear();
           location_ = loc();
         }
 
         bool
-        Nary::empty () const
+        Nary::empty() const
         {
           return children_->empty();
         }
 
         void
-        Nary::location_adjust ()
+        Nary::location_adjust()
         {
           if (empty())
             location_.initialize(0);
@@ -479,9 +479,9 @@ Nary:
           }
         }
 
-        static ast::Stmt* stmt(ast::Exp* e, flavor_type f)
+        static Stmt* stmt(Exp* e, flavor_type f)
         {
-          if (ast::Stmt* s = dynamic_cast<ast::Stmt*>(e))
+          if (Stmt* s = dynamic_cast<Stmt*>(e))
             return s;
           else
             return new Stmt(e->location_get(), f, e);
@@ -502,7 +502,7 @@ Nary:
 
         template <typename T>
         libport::intrusive_ptr<T>
-        Nary::back ()
+        Nary::back()
         {
           return (empty()
                   ? libport::intrusive_ptr<T>()
@@ -511,7 +511,7 @@ Nary:
 
         template <typename T>
         libport::intrusive_ptr<const T>
-        Nary::back () const
+        Nary::back() const
         {
           return (empty()
                   ? libport::intrusive_ptr<const T>()
@@ -519,18 +519,18 @@ Nary:
         }
 
         void
-        Nary::back_flavor_set (flavor_type k, const loc& l)
+        Nary::back_flavor_set(flavor_type k, const loc& l)
         {
           if (rStmt b = back<Stmt>())
           {
             b->flavor_set(k);
-            b->location_set(b->location_get () + l);
+            b->location_set(b->location_get() + l);
           }
           location_adjust();
         }
 
         void
-        Nary::back_flavor_set (flavor_type k)
+        Nary::back_flavor_set(flavor_type k)
         {
           if (rStmt b = back<Stmt>())
              b->flavor_set(k);
@@ -540,12 +540,12 @@ Nary:
         Nary::back_flavor_get() const
         {
           if (rConstStmt b = back<Stmt>())
-            return b->flavor_get ();
+            return b->flavor_get();
           return flavor_none;
         }
 
         void
-        Nary::pop_back ()
+        Nary::pop_back()
         {
           children_->pop_back();
           location_adjust();
@@ -738,13 +738,13 @@ Dictionary:
   printer:
     - '{
          ostr_ << "(";
-         foreach (ast::modifiers_type::value_type exp, n->value_get())
-           ostr_ << exp.first <<":" << (*exp.second.get())<< " ";
+         foreach (modifiers_type::value_type exp, n->value_get())
+           ostr_ << exp.first <<":" << *exp.second.get()<< " ";
          ostr_ << ")";
        }'
   default: |2
     /* Kind of dump to iterate on vals without the keys */
-    foreach (ast::modifiers_type::value_type exp, n->value_get())
+    foreach (modifiers_type::value_type exp, n->value_get())
       ; //operator()(exp.second.get());
 
 List:
@@ -756,7 +756,7 @@ List:
         desc: Stored list value
   printer:
     - '"["'
-    - 'libport::separate (n->value_get(), ", ")'
+    - 'libport::separate(n->value_get(), ", ")'
     - '"]"'
   default: |2
     foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
@@ -770,11 +770,11 @@ LValue:
     header inside: |2
         public:
           /// This lvalue as a call
-          ast::rCall call();
+          rCall call();
     impl inside: |2
-          ast::rCall LValue::call()
+          rCall LValue::call()
           {
-            ast::rCall res = dynamic_cast<ast::Call*>(this);
+            rCall res = dynamic_cast<Call*>(this);
             passert("Invalid call: " << *this, res);
             return res;
           }
@@ -923,7 +923,7 @@ Routine:
     header inside: |2
         public:
           /// Whether the arguments must be evaluated.
-          bool strict () const;
+          bool strict() const;
     inline inside: |2
           inline bool Routine::strict() const
           {
@@ -931,7 +931,7 @@ Routine:
           }
   printer:
     - '{
-         if (n->formals_get ())
+         if (n->formals_get())
            ostr_ << "(" << *n->formals_get() << ") ";
        }'
     - ~body
@@ -1050,7 +1050,7 @@ Declaration:
         init: "false"
   printer:
     - '"var "'
-    - '{ visit(static_cast<const ast::Write*>(n)); }'
+    - '{ visit(static_cast<const Write*>(n)); }'
 
 Assignment:
   super: Write
@@ -1284,7 +1284,7 @@ Try:
     - '"try "'
     - ~body
     - '{
-         foreach(const ast::rConstExp& e, n->handlers_get())
+         foreach (const rConstExp& e, n->handlers_get())
          {
            ostr_ << libport::iendl;
            operator()(e.get());
