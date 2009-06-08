@@ -356,14 +356,13 @@ again:
   // Define f
   function f()
   {
-    echo("f");
+    echo("f")
   };
-  // This does not invoke f
-  // We are just evaluating it as a function
+  // This does not invoke f, it returns its value.
   f;
 };
 [00000000] function () {
-[:]  echo("f");
+[:]  echo("f")
 [:]}
 {
   // Define f
