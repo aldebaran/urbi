@@ -64,7 +64,7 @@ $(ast_basedir)ignores: $(ast_srcdir)/ignores.stamp
 
 ## AST itself.
 EXTRA_DIST += $(ast_basedir)nodes.stamp
-$(ast_nodes): $(ast_srcdir)/nodes.stamp
+$(AST_NODES): $(ast_srcdir)/nodes.stamp
 
 ## ast.dot
 EXTRA_DIST += $(ast_basedir)graph.stamp
