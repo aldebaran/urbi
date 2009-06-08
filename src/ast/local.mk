@@ -2,34 +2,28 @@ ast_basedir = ast/
 ast_srcdir = $(srcdir)/ast
 # Don't use ast_srcdir in the include, otherwise Automake can't resolve it.
 include $(srcdir)/ast/ast-nodes.mk
-ast_nodes = $(AST_NODES)
 
 EXTRA_DIST += ast/ast.yml
 BUILT_SOURCES += $(BUILT_SOURCES_ast)
+
 # Don't use LOCAL_BUILT_SOURCES since it looks like the SOURCES of the
 # program `LOCAL_BUILT' and triggers Automake warnings.
+#
+# List only *generated* files here.
 BUILT_SOURCES_ast_libuobject =			\
   ast/fwd.hh					\
   ast/all.hh					\
-  ast/analyzer.hh				\
-  ast/analyzer.cc				\
-  ast/dot-print.cc                              \
-  ast/dot-print.hh                              \
   ast/dot-printer.cc                            \
   ast/dot-printer.hh                            \
-  ast/error.hh					\
-  ast/error.hxx					\
-  ast/error.cc					\
   ast/ignores					\
   ast/visitor.hh				\
   ast/cloner.hh					\
-  ast/cloner.hxx				\
   ast/cloner.cc					\
   ast/default-visitor.hh			\
   ast/default-visitor.hxx			\
   ast/pretty-printer.hh				\
   ast/pretty-printer.cc				\
-  $(ast_nodes)
+  $(AST_NODES)
 
 BUILT_SOURCES_ast = 				\
   $(BUILT_SOURCES_ast_libuobject) 		\
@@ -45,8 +39,16 @@ include $(top_srcdir)/dev/ast-gen.mk
 
 dist_libuobject_la_SOURCES +=			\
   ast/all.hh					\
+  ast/analyzer.hh				\
+  ast/analyzer.cc				\
   ast/catches-type.hh				\
   ast/catches-type.cc				\
+  ast/cloner.hxx				\
+  ast/dot-print.cc                              \
+  ast/dot-print.hh                              \
+  ast/error.hh					\
+  ast/error.hxx					\
+  ast/error.cc					\
   ast/exps-type.hh				\
   ast/exps-type.cc				\
   ast/flavor.hh					\
