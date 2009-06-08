@@ -65,7 +65,9 @@ dist_libuobject_la_SOURCES +=			\
   ast/print.hh ast/print.cc			\
   ast/symbols-type.hh				\
   ast/symbols-type.cc				\
-  ast/visitor.hxx				\
+  ast/visitor.hxx
+
+nodist_libuobject_la_SOURCES += 		\
   $(BUILT_SOURCES_ast_libuobject)
 
 # To ensure that the file is kept up to date.
