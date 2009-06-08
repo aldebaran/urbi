@@ -251,8 +251,7 @@ namespace rewrite
       % ast_string(l, libport::Symbol("as" + name.name_get()))
       % c->content_get();
 
-    allow_subdecl_ = true;
-    result_ = recurse(exp(desugar));
+    result_ = recurse_with_subdecl(exp(desugar));
     result_->original_set(c);
   }
 
