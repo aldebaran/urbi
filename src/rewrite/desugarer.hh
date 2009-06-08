@@ -56,7 +56,9 @@ namespace rewrite
     void desugar_modifiers(const ast::Assign* assign);
 
     bool pattern_;
+    /// Whether Declarations are allowed in the current node.
     bool allow_decl_;
+    /// Whether Declarations are allowed in children.
     bool allow_subdecl_;
   };
 }
