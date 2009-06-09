@@ -40,7 +40,7 @@ $(BISONXX): $(BISONXX_IN)
 FLEXXX = $(top_builddir)/build-aux/flex++
 FLEXXX_IN = $(top_srcdir)/build-aux/flex++.in
 $(FLEXXX): $(FLEXXX_IN)
-	(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/flex++
+	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/flex++
 
 ## From flex.info.
 ##
