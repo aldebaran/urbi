@@ -35,7 +35,6 @@
 #include <parser/fwd.hh>
 #include <ast/call.hh>
 #include <ast/nary.hh>
-#include <ast/tag.hh>
 #include <parser/event-match.hh>
 
   // Typedef shorthands
@@ -447,7 +446,6 @@ cstmt:
 `--------------*/
 
 %type <ast::rExp> tag;
-%printer { debug_stream() << libport::deref << $$; } <ast::rTag>;
 tag:
   exp { std::swap($$, $1); }
 ;
