@@ -4,6 +4,15 @@
 
 namespace urbi
 {
+  UImage
+  UImage::make()
+  {
+    UImage res;
+    res.data = 0;
+    res.size = res.width = res.height = 0;
+    res.imageFormat = IMAGE_UNKNOWN;
+    return res;
+  }
 
   const char*
   UImage::format_string() const

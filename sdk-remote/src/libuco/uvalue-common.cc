@@ -660,15 +660,9 @@ namespace
 
   UValue::operator UImage() const
   {
-    if (type == DATA_BINARY
-	&& binary->type == BINARY_IMAGE)
+    if (type == DATA_BINARY && binary->type == BINARY_IMAGE)
       return binary->image;
-
-    UImage res;
-    res.data = 0;
-    res.size = res.width = res.height = 0;
-    res.imageFormat = IMAGE_UNKNOWN;
-    return res;
+    return UImage::make();
   }
 
   UValue::operator USound() const

@@ -37,6 +37,13 @@ namespace urbi
   class URBI_SDK_API UImage
   {
   public:
+    /// Return an empty UImage.
+    /// Not a constructor so that we can still put it in a union.
+    static UImage make();
+
+    /// Return a legible definition of imageFormat.
+    const char* format_string() const;
+
     /// Pointer to image data.
     unsigned char* data;
     /// Image size in byte.
@@ -45,9 +52,6 @@ namespace urbi
     size_t width, height;
 
     UImageFormat imageFormat;
-
-    /// Return a legible definition of imageFormat.
-    const char* format_string() const;
   };
 
 
