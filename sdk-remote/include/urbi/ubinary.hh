@@ -134,7 +134,6 @@ namespace urbi
     };
     /// Extra bin headers(everything after BIN <size> and before ';'.
     std::string message;
-    bool alocated;
     UBinary();
     /// Deep copy constructor.
     UBinary(const UBinary &b, bool copy = true);
@@ -158,6 +157,9 @@ namespace urbi
 
     /// Used by UValue::print for serialization.
     std::ostream& print(std::ostream& o) const;
+
+  private:
+    bool allocated_;
   };
 
   URBI_SDK_API

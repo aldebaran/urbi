@@ -735,8 +735,8 @@ namespace
 
 
   UValue::UValue(const UValue& v)
+    : type(DATA_VOID)
   {
-    type = DATA_VOID;
     *this = v;
   }
 
@@ -745,22 +745,17 @@ namespace
   `----------*/
 
   UBinary::UBinary()
+    : type(BINARY_NONE)
+    , allocated_(true)
   {
     common.data = 0;
     common.size = 0;
-    type = BINARY_NONE;
-    alocated = true;
-  }
-
-  UBinary::~UBinary()
-  {
-    if (common.data && alocated)
-      free(common.data);
   }
 
   UBinary::UBinary(const UBinary& b, bool copy)
+    : type(BINARY_NONE)
+    , allocated_(copy)
   {
-    type = BINARY_NONE;
     common.data = 0;
     if (copy)
       *this = b;
@@ -772,31 +767,36 @@ namespace
       message = b.message;
       type = b.type;
     }
-    alocated = copy;
   }
 
   UBinary::UBinary(const UImage& i, bool copy)
+    : type(BINARY_IMAGE)
+    , image(i)
+    , allocated_(copy)
   {
-    type = BINARY_IMAGE;
-    image = i;
     if (copy)
     {
       image.data = static_cast<unsigned char*> (malloc (image.size));
       memcpy(image.data, i.data, image.size);
     }
-    alocated = copy;
   }
 
   UBinary::UBinary(const USound& i, bool copy)
+    : type(BINARY_SOUND)
+    , sound(i)
+    , allocated_(copy)
   {
-    type = BINARY_SOUND;
-    sound = i;
     if (copy)
     {
       sound.data = static_cast<char*> (malloc (sound.size));
       memcpy(sound.data, i.data, sound.size);
     }
-    alocated = copy;
+  }
+
+  UBinary::~UBinary()
+  {
+    if (common.data && allocated_)
+      free(common.data);
   }
 
   UBinary& UBinary::operator= (const UBinary& b)
