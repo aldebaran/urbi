@@ -49,33 +49,33 @@ namespace urbi
   UBinary
   uvalue_caster<UBinary>::operator() (UValue& v)
   {
-    if (v.type != DATA_BINARY)
-      return UBinary();
-    return UBinary(*v.binary);
+    if (v.type == DATA_BINARY)
+      return UBinary(*v.binary);
+    return UBinary();
   }
 
   UList
   uvalue_caster<UList>::operator() (UValue& v)
   {
-    if (v.type != DATA_LIST)
-      return UList();
-    return UList(*v.list);
+    if (v.type == DATA_LIST)
+      return UList(*v.list);
+    return UList();
   }
 
   UObjectStruct
   uvalue_caster<UObjectStruct>::operator() (UValue& v)
   {
-    if (v.type != DATA_OBJECT)
-      return UObjectStruct();
-    return UObjectStruct(*v.object);
+    if (v.type == DATA_OBJECT)
+      return UObjectStruct(*v.object);
+    return UObjectStruct();
   }
 
   const char*
   uvalue_caster<const char*>::operator() (UValue& v)
   {
-    if (v.type != DATA_STRING)
-      return "invalid";
-    return v.stringValue->c_str();
+    if (v.type == DATA_STRING)
+      return v.stringValue->c_str();
+    return "invalid";
   }
 
 
@@ -517,8 +517,11 @@ namespace urbi
 
 #define UVALUE_OPERATORS(Args, DataType, Field, Value)	\
   UValue::UValue(Args, bool copy)			\
-    : type(DataType), Field(Value)			\
-    {(void)copy;}					\
+    : type(DataType)                                    \
+    , Field(Value)                                      \
+  {                                                     \
+    (void) copy;                                        \
+  }                                                     \
 							\
   UValue& UValue::operator=(Args)			\
   {							\
@@ -645,14 +648,6 @@ namespace
     }
     return "invalid";
   }
-/*
-  UValue::operator UBinary() const
-  {
-    if (type != DATA_BINARY)
-      return UBinary();
-    else
-      return *binary;
-  }*/
 
   UValue::operator const UBinary&() const
   {
@@ -665,17 +660,15 @@ namespace
 
   UValue::operator UImage() const
   {
-    if (type != DATA_BINARY
-	|| binary->type != BINARY_IMAGE)
-    {
-      UImage i;
-      i.data = 0;
-      i.size = i.width = i.height = 0;
-      i.imageFormat = IMAGE_UNKNOWN;
-      return i;
-    }
-    else
+    if (type == DATA_BINARY
+	&& binary->type == BINARY_IMAGE)
       return binary->image;
+
+    UImage res;
+    res.data = 0;
+    res.size = res.width = res.height = 0;
+    res.imageFormat = IMAGE_UNKNOWN;
+    return res;
   }
 
   UValue::operator USound() const
@@ -693,15 +686,16 @@ namespace
 
   UValue::operator UList() const
   {
-    if (type != DATA_LIST)
-      return UList();
-    return UList(*list);
+    if (type == DATA_LIST)
+      return UList(*list);
+    return UList();
   }
 
   UValue& UValue::operator= (const UValue& v)
   {
     return set(v);
   }
+
   UValue& UValue::set(const UValue& v, bool copy)
   {
     // TODO: optimize

@@ -137,8 +137,8 @@ namespace urbi
     UBinary();
     /// Deep copy constructor.
     UBinary(const UBinary &b, bool copy = true);
-    explicit UBinary(const UImage &, bool copy = true);
-    explicit UBinary(const USound &, bool copy = true);
+    explicit UBinary(const UImage&, bool copy = true);
+    explicit UBinary(const USound&, bool copy = true);
     /// Deep copy.
     UBinary & operator = (const UBinary &b);
     /// Build message from structures.
