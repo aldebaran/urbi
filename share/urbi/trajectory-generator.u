@@ -55,9 +55,6 @@ class Global.TrajectoryGenerator
       Float.inf
   }|
 
-  /// Stop adaptive trajectory if error is below this value.
-  var delta = 2;
-
   /// Compute startValue.
   function getStartValue()
   {
@@ -79,6 +76,15 @@ class Global.TrajectoryGenerator
     }
   };
 
+  // Override system time to take shift induced by freeze into account.
+  function time()
+  {
+    System.time - currentRunner.timeShift
+  };
+
+
+  var isOver = false;
+
   // Update the variable according to the trajectory.
   // Use the functions getter/setter to read/update the variable.
   // Blocking until the trajectory is over.
@@ -91,22 +97,34 @@ class Global.TrajectoryGenerator
       {
 	if (isOver)
           tag.stop|
-	setter(get(getter)) |
+	setter(nextValue) |
       }|
       sleep(inf)
     }|
   };
 
-  var isOver = false;
+};
 
-  // Override system time to take shift induced by freeze into account.
-  function time()
+
+
+/*-------------------------------.
+| TrajectoryGenerator.OpenLoop.  |
+`-------------------------------*/
+
+// The generators that derive from this trajectory generator do not
+// need the current value to compute the new one.  Separating them
+// allows to spare useless calls to the getter in trajectories that do
+// not need them, which can be an huge saving in cases where reading
+// the current value is expensive.
+class TrajectoryGenerator.OpenLoop : TrajectoryGenerator
+{
+  function nextValue()
   {
-    System.time - currentRunner.timeShift
+    get
   };
 };
 
-class TrajectoryGenerator.Accel : TrajectoryGenerator
+class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 {
   function init (args)
   {
@@ -114,7 +132,7 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator
     var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
   };
 
-  function get(currentVal)
+  function get()
   {
     if (time - startTime > duration)
     {
@@ -126,7 +144,7 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator
   };
 };
 
-class TrajectoryGenerator.Sin : TrajectoryGenerator
+class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 {
   function init (args)
   {
@@ -135,20 +153,20 @@ class TrajectoryGenerator.Sin : TrajectoryGenerator
     var this.period = args["sin"]
   };
 
-  function get (currentVal)
+  function get()
   {
     targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
   };
 };
 
-class TrajectoryGenerator.Smooth : TrajectoryGenerator
+class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 {
   function init (args)
   {
     var this.duration = args["smooth"] |
   };
 
-  function get(currentVal)
+  function get()
   {
     var stat =  (time - startTime) / duration |
     if (stat > 1)
@@ -161,7 +179,45 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator
   };
 };
 
-class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator
+class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
+{
+  function init (args)
+  {
+     var this.duration = args["time"] |
+  };
+
+  function get()
+  {
+    var stat =  (time - startTime) / duration |
+    if (1 < stat)
+    {
+      isOver = true|
+      return targetValue
+    } |
+    startValue + (targetValue - startValue) * stat
+  };
+
+};
+
+
+/*---------------------------------.
+| TrajectoryGenerator.ClosedLoop.  |
+`---------------------------------*/
+
+// The generators that derive from this trajectory generator need the
+// the current value to compute the new one.
+class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
+{
+  /// Stop adaptive trajectory if error is below this value.
+  var delta = 2;
+
+  function nextValue()
+  {
+    get(getter)
+  };
+};
+
+class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
 {
   function init (args)
   {
@@ -187,28 +243,7 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator
   };
 };
 
-class TrajectoryGenerator.Time : TrajectoryGenerator
-{
-  function init (args)
-  {
-     var this.duration = args["time"] |
-  };
-
-  function get(currentVal)
-  {
-    var stat =  (time - startTime) / duration |
-    if (1 < stat)
-    {
-      isOver = true|
-      return targetValue
-    } |
-    startValue + (targetValue - startValue) * stat
-  };
-
-};
-
-
-class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator
+class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
 {
   function init (args)
   {
