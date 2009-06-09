@@ -75,10 +75,10 @@ class Global.Control
 
   function finally(action, reaction)
   {
-    var t = Tag.new;
+    var t = Tag.new |
     at (t.leave?)
-      reaction();
-    t: action();
+      reaction() |
+    t: action()
   };
 };
 
