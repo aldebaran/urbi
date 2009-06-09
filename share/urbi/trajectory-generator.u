@@ -134,7 +134,7 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 
   function get()
   {
-    if (time - startTime > duration)
+    if (duration < time - startTime)
     {
       isOver = true |
       return targetValue
@@ -169,7 +169,7 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
   function get()
   {
     var stat =  (time - startTime) / duration |
-    if (stat > 1)
+    if (1 < stat)
     {
       isOver = true|
       return targetValue
@@ -215,6 +215,13 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
   {
     get(getter)
   };
+
+  function done(currentVal)
+  {
+    if (abs(currentVal - targetValue) < delta)
+      isOver = true |
+    return isOver
+  };
 };
 
 class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
@@ -227,19 +234,16 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
 
   function get(currentVal)
   {
-    if (abs(currentVal - targetValue) < delta)
-    {
-      isOver = true |
-      return targetValue
-    } |
-    var nextVal = currentVal
+    if (done(currentVal))
+      return targetValue |
+    var res = currentVal
       + speed * sgn(targetValue - currentVal) * getPeriod |
-    if ((currentVal < targetValue && targetValue < nextVal)
-      || (nextVal < targetValue && targetValue < currentVal))
+    if ((currentVal < targetValue && targetValue < res)
+      || (res < targetValue && targetValue < currentVal))
     {
-      nextVal = targetValue
+      res = targetValue
     } |
-    nextVal
+    res
   };
 };
 
@@ -252,13 +256,10 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
 
   function get(currentVal)
   {
-    if (abs(currentVal - targetValue) < delta)
-    {
-      isOver = true |
-      return targetValue
-    } |
+    if (done(currentVal))
+      return targetValue |
     var stat = getPeriod / ( startTime + duration - time) |
-    if (stat > 1 || stat < 0)
+    if (stat < 0 || 1 < stat)
       return targetValue |
     currentVal + stat *  (targetValue - currentVal)
   };
