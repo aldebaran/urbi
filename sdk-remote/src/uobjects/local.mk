@@ -27,8 +27,8 @@ clean-uobjects:
 
 # Help to restart broken builds.
 $(UMAKE_SHARED):
-	make -C tests bin/umake-shared
-	make -C $(top_builddir) sdk/umake-shared sdk/umake
+	$(MAKE) $(AM_MAKEFLAGS) -C tests bin/umake-shared
+	$(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir) sdk/umake-shared sdk/umake
 
 
 ## -------------- ##
@@ -52,3 +52,4 @@ uobjects/remote$(SHLIBEXT): $(wildcard $(srcdir)/uobjects/remote.uob/*)
 uobjects/sensor$(SHLIBEXT): $(wildcard $(srcdir)/uobjects/sensor.uob/*)
 uobjects/sensor2$(SHLIBEXT): $(wildcard $(srcdir)/uobjects/sensor2.uob/*)
 uobjects/timer$(SHLIBEXT): $(wildcard $(srcdir)/uobjects/timer.uob/*)
+uobjects/ultest(SHLIBEXT): $(wildcard $(srcdir)/uobjects/ultest.uob/*)

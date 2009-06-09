@@ -10,4 +10,5 @@ UOBJECTS =					\
   remote					\
   sensor					\
   sensor2					\
-  timer
+  timer						\
+  ultest
