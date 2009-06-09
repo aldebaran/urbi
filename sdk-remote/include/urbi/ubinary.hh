@@ -22,74 +22,10 @@
 
 # include <urbi/export.hh>
 # include <urbi/uimage.hh>
+# include <urbi/usound.hh>
 
 namespace urbi
 {
-
-  /** Backward compatibility **/
-  enum USoundFormat
-  {
-    SOUND_RAW,
-    SOUND_WAV,
-    SOUND_MP3,
-    SOUND_OGG,
-    SOUND_UNKNOWN
-  };
-
-  enum USoundSampleFormat
-  {
-    SAMPLE_SIGNED=1,
-    SAMPLE_UNSIGNED=2,
-    SAMPLE_FLOAT=3
-  };
-
-  std::istream& operator>> (std::istream& is, USoundSampleFormat& f);
-
-  enum UBinaryType
-  {
-    BINARY_NONE,
-    BINARY_UNKNOWN,
-    BINARY_IMAGE,
-    BINARY_SOUND
-  };
-
-
-  /*---------.
-  | USound.  |
-  `---------*/
-
-  /** Class encapsulating sound information.
-
-   This class does not handle its memory: the data field msut be
-   freed manualy.  */
-  class URBI_SDK_API USound
-  {
-  public:
-    char* data;              ///< pointer to sound data
-    size_t size;             ///< total size in byte
-    size_t channels;         ///< number of audio channels
-    size_t rate;             ///< rate in Hertz
-    size_t sampleSize;       ///< sample size in bit
-
-    USoundFormat          soundFormat;      ///< format of the sound data
-    /// Return a legible definition of imageFormat.
-    const char* format_string () const;
-
-    enum SampleFormat
-    {
-      SAMPLE_SIGNED=1,
-      SAMPLE_UNSIGNED=2
-    };
-    USoundSampleFormat    sampleFormat;     ///< sample format
-
-    bool operator ==(const USound &b) const
-    {
-      return !memcmp(this, &b, sizeof(USound));
-    }
-    operator std::string() const;
-
-  };
-
 
   /*--------------.
   | UBinaryData.  |
@@ -114,6 +50,14 @@ namespace urbi
   /*----------.
   | UBinary.  |
   `----------*/
+
+  enum UBinaryType
+  {
+    BINARY_NONE,
+    BINARY_UNKNOWN,
+    BINARY_IMAGE,
+    BINARY_SOUND,
+  };
 
   /// Binary data of known or unknown type.
   ///
