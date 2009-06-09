@@ -115,25 +115,13 @@ namespace urbi
   | UBinary.  |
   `----------*/
 
-  /** Class containing binary data of known or unknown type.
-   Handles its memory: the data field will be freed when the destructor is called.
-   */
+  /// Binary data of known or unknown type.
+  ///
+  /// Handles its memory: the data field will be freed when the
+  /// destructor is called.
   class URBI_SDK_API UBinary
   {
   public:
-    UBinaryType type;
-    union
-    {
-      struct
-      {
-	void* data;             ///< binary data
-	size_t size;
-      } common;
-      UImage image;
-      USound sound;
-    };
-    /// Extra bin headers(everything after BIN <size> and before ';'.
-    std::string message;
     UBinary();
     /// Deep copy constructor.
     UBinary(const UBinary &b, bool copy = true);
@@ -157,6 +145,20 @@ namespace urbi
 
     /// Used by UValue::print for serialization.
     std::ostream& print(std::ostream& o) const;
+
+    UBinaryType type;
+    union
+    {
+      struct
+      {
+	void* data;             ///< binary data
+	size_t size;
+      } common;
+      UImage image;
+      USound sound;
+    };
+    /// Extra bin headers (everything after BIN <size> and before ';').
+    std::string message;
 
   private:
     bool allocated_;
