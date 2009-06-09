@@ -365,9 +365,7 @@ namespace urbi
     )
 
     kernel::UConnection& c = s.ghost_connection_get();
-#ifdef ENABLE_DEBUG_TRACES
-    std::cerr << program_name() << ": got ghost connection" << std::endl;
-#endif
+    GD_INFO("got ghost connection");
 
     foreach (const Input& i, input)
     {
@@ -385,9 +383,7 @@ namespace urbi
 
     c.new_data_added_get() = true;
 
-#ifdef ENABLE_DEBUG_TRACES
-    std::cerr << program_name() << ": going to work..." << std::endl;
-#endif
+    GD_INFO("going to work...");
 
     if (sem)
       (*sem)++;
