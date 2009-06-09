@@ -6,7 +6,7 @@ public:
   ultest(const std::string& name)
     : urbi::UObject(name)
   {
-    UBindFunction(ULTest, f);
+    UBindFunction(ultest, f);
   }
 
   int f()
