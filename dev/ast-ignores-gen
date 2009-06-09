@@ -51,6 +51,7 @@ ignores.sort();
 
 f = file ("ignores.tmp", "w")
 for n in ignores:
-  print >>f, n
+  print >>f, "%s" % n
+  print >>f, "%s~" % n
 f.close ()
 tools.lazy_install (srcdir, "ignores");
