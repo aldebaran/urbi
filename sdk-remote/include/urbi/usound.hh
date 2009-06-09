@@ -18,7 +18,6 @@
 # include <iosfwd>
 
 # include <urbi/export.hh>
-# include <urbi/uimage.hh>
 
 namespace urbi
 {
@@ -54,6 +53,16 @@ namespace urbi
   class URBI_SDK_API USound
   {
   public:
+    /// Return an empty instance.
+    /// Not a constructor so that we can still put it in a union.
+    static USound make();
+
+    /// Return a legible definition of imageFormat.
+    const char* format_string() const;
+
+    bool operator==(const USound &b) const;
+    operator std::string() const;
+
     /// Pointer to sound data.
     char* data;
     /// Total size in byte.
@@ -67,20 +76,9 @@ namespace urbi
 
     /// Format of the sound data.
     USoundFormat soundFormat;
-    /// Return a legible definition of imageFormat.
-    const char* format_string () const;
-
-    enum SampleFormat
-    {
-      SAMPLE_SIGNED = 1,
-      SAMPLE_UNSIGNED = 2,
-    };
 
     /// Sample format.
     USoundSampleFormat sampleFormat;
-
-    bool operator==(const USound &b) const;
-    operator std::string() const;
   };
 
 
