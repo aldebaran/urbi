@@ -9,6 +9,7 @@
 # include <object/global.hh>
 # include <object/list.hh>
 # include <object/symbols.hh>
+# include <object/urbi-exception.hh>
 # include <object/uvar.hh>
 
 # include <runner/runner.hh>
@@ -22,8 +23,37 @@ namespace object
     rList l = self->slot_get(notifyList).value().unsafe_cast<List>();
     objects_type args;
     args.push_back(self);
-    foreach(rObject& co, l->value_get())
-      r.apply(co, SYMBOL(NOTIFY), args);
+    List::value_type& callbacks = l->value_get();
+    for (List::value_type::iterator i = callbacks.begin();
+         i != callbacks.end(); )
+    {
+      try
+      {
+         r.apply(*i, SYMBOL(NOTIFY), args);
+         ++i;
+      }
+      catch(UrbiException& e)
+      {
+        std::cerr << "Urbi Exception caught while processing notify: "
+          << *e.value_get() << std::endl;
+        std::cerr <<"backtrace: " << std::endl;
+        rforeach (call_type c, e.backtrace_get())
+        {
+          std::ostringstream o;
+          std::cerr << "    called from: ";
+          if (c.second)
+            std::cerr  << *c.second << ": ";
+          std::cerr << c.first << std::endl;
+        }
+        i = callbacks.erase(i);
+      }
+      catch(...)
+      {
+        std::cerr << "Unknown exception caught while processing notify."
+          << std::endl;
+        i = callbacks.erase(i);
+      }
+    }
   }
 
   static rObject
