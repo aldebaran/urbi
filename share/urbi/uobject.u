@@ -224,6 +224,19 @@ at (getSlot("UVar").onHasNotifyAccess?)
 var Global.uobjects = Object.clone;
 Global.uobjects.uobject_init();
 
+if ("evaluate" not in Global.slotNames)
+	UVar.new(Global,"evaluate")
+else
+{
+  // A plugged UObject allready instanciated it.
+  if (evaluate.isA(String))
+    eval(evaluate)
+};
+Global.getSlot("evaluate").notifyChange(function()
+{
+  eval(evaluate)
+})|;
+
 
 // UObject remote API.
 
