@@ -117,14 +117,6 @@
     | Warnings etc.  |
     `---------------*/
 
-# define NOT_IMPLEMENTED(Loc)                                           \
-  do {                                                                  \
-    error(Loc,                                                          \
-          ("rule not implemented in the parser.\n"                      \
-	   "Rerun with YYDEBUG=1 in the environment to know more."));   \
-    YYERROR;                                                            \
-  } while (0)
-
 # undef ERROR
 # define ERROR(Loc, Msg, Type)                  \
     do {                                        \
