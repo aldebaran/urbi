@@ -15,7 +15,7 @@ namespace object
   class Barrier: public CxxObject
   {
   public:
-    typedef std::deque<sched::rJob> value_type;
+    typedef std::list<sched::rJob> value_type;
 
     Barrier(rBarrier model);
     Barrier(const value_type& value);

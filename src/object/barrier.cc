@@ -33,7 +33,7 @@ namespace object
   rBarrier
   Barrier::_new(rObject)
   {
-    return new Barrier(std::deque<sched::rJob>());
+    return new Barrier(value_type());
   }
 
   static bool
