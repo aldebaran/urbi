@@ -1,5 +1,5 @@
 #include <sstream>
-#include <string.h>
+#include <cstring>
 
 #include <urbi/usound.hh>
 
