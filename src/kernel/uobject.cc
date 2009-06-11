@@ -70,7 +70,13 @@ static std::set<void*> initialized;
 
 namespace Stats
 {
-  typedef std::pair<libport::utime_t, unsigned> Value;
+  struct Value
+  {
+    unsigned sum;
+    unsigned min;
+    unsigned max;
+    unsigned count;
+  };
   typedef libport::hash_map<std::string, Value> Values;
   static Values hash;
   static bool enabled = false;
@@ -82,13 +88,15 @@ namespace Stats
     if (i == hash.end())
     {
       Value& v = hash[key];
-      v.first = d;
-      v.second = 1;
+      v.sum = v.min = v.max = d;
+      v.count = 1;
     }
     else
     {
-      i->second.first += d;
-      i->second.second++;
+      i->second.sum += d;
+      i->second.count++;
+      i->second.min = std::min(i->second.min, (unsigned)d);
+      i->second.max = std::max(i->second.max, (unsigned)d);
     }
   }
 
@@ -99,11 +107,16 @@ namespace Stats
 
   static object::rDictionary get(rObject)
   {
+    using object::Float;
     object::rDictionary res = new object::Dictionary();
     foreach(Values::value_type &v, hash)
     {
-      res->set(libport::Symbol(v.first),
-               new object::Float(v.second.first/v.second.second));
+      object::rList l = new object::List();
+      l->insertBack(new Float(v.second.sum / v.second.count));
+      l->insertBack(new Float(v.second.min));
+      l->insertBack(new Float(v.second.max));
+      l->insertBack(new Float(v.second.count));
+      res->set(libport::Symbol(v.first), l);
       /*
       size_t sep = v.first.find_first_of(' ');
       std::string sPtr = v.first.substr(0, sep);
