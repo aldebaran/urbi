@@ -70,13 +70,6 @@ namespace kernel
 
   inline
   bool&
-  UConnection::new_data_added_get()
-  {
-    return new_data_added_;
-  }
-
-  inline
-  bool&
   UConnection::closing_get()
   {
     return closing_;

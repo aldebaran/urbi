@@ -207,8 +207,6 @@ namespace kernel
 
   private:
     /// \{ Various parts of @c UServer::work.
-    /// Scan currently opened connections for ongoing work
-    void work_handle_connections_();
     /// Scan currently opened connections for deleting marked commands or
     /// killall order
     void work_handle_stopall_();

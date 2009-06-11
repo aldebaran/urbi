@@ -59,7 +59,6 @@ namespace kernel
     , connection_tag_(uid(this))
     , closing_(false)
     , receiving_(false)
-    , new_data_added_(false)
     , server_(server)
     , lobby_(new object::Lobby(this))
     , send_queue_(new UQueue())
@@ -103,7 +102,7 @@ namespace kernel
 
     /// Load CLIENT.INI.
     server_.load_file("CLIENT.INI", *recv_queue_);
-    new_data_added_ = true;
+    received("");
   }
 
   void

@@ -112,7 +112,7 @@ namespace kernel
     if (res == USUCCESS)
     {
       DEBUG(("done\n"));
-      ghost_->new_data_added_get() = true;
+      ghost_->received("");
     }
     else
       DEBUG (("not found\n"));
@@ -351,8 +351,6 @@ namespace kernel
 
     beforeWork();
 
-    work_handle_connections_();
-
     // To make sure that we get different times before and after every work
     // phase if we use a monotonic clock, update the time before and after
     // working.
@@ -401,27 +399,6 @@ namespace kernel
     work_handle_stopall_();
     afterWork();
     return next_time;
-  }
-
-  void
-  UServer::work_handle_connections_()
-  {
-    // Scan currently opened connections for ongoing work
-    foreach (UConnection& c, *connections_)
-      if (c.active_get())
-      {
-        if (!c.blocked_get())
-          c.continue_send();
-
-        if (c.new_data_added_get())
-        {
-          // used by load_file and eval to
-          // delay the parsing after the completion
-          // of execute().
-          c.new_data_added_get() = false;
-          c.received("");
-        }
-      }
   }
 
   void

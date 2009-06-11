@@ -171,8 +171,6 @@ namespace kernel
     bool& blocked_get();
     bool& closing_get();
 
-    bool& new_data_added_get();
-
     /*------------------.
     | Utility functions |
     \------------------*/
@@ -239,9 +237,6 @@ namespace kernel
 
     /// Connection receiving (and processing) commands.
     bool receiving_;
-
-    /// Used by addToQueue to notify new data.
-    bool new_data_added_;
 
   protected:
     /// Reference to the underlying server.

@@ -381,8 +381,7 @@ namespace urbi
       }
     }
 
-    c.new_data_added_get() = true;
-
+    c.received("");
     GD_INFO("going to work...");
 
     if (sem)
