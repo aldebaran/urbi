@@ -52,6 +52,7 @@ using libport::Symbol;
 static rObject where;
 typedef libport::hash_map<std::string, urbi::UObject*> uobject_to_robject_type;
 static uobject_to_robject_type uobject_to_robject;
+static std::set<void*> initialized;
 
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \
   object::make_primitive(                               \
@@ -183,7 +184,6 @@ static StringPair split_name(const std::string& name)
 
 void uobjects_reload()
 {
-  static std::set<void*> initialized;
   foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
     if (!libport::mhas(initialized, i))
     {
@@ -338,9 +338,12 @@ uobject_new(rObject proto, bool forceName)
   {
     if (i->name == cname)
     {
-      ECHO( "Instanciating a new " << cname << "named "<<name);
+      ECHO( "Instanciating a new " << cname << " named "<< name);
       if (i->getUObject())
-        i->copy(name);
+      {
+        urbi::baseURBIStarter* bus = i->copy(name);
+        initialized.insert(bus);
+      }
       else
         i->init(name);
       return r;
