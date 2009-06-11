@@ -141,7 +141,7 @@ namespace binder
                          ast::rConstExp value = 0);
 
     /// Make a lazy from \a arg.
-    ast::rExp lazify(ast::rExp arg, const ast::loc& loc);
+    ast::rExp lazify(ast::rExp arg);
 
     /// Wether to report errors.
     bool report_errors_;

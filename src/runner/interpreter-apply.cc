@@ -12,6 +12,7 @@
 #include <ast/lazy.hh>
 #include <ast/local-declarations-type.hh>
 #include <ast/routine.hh>
+#include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
 #include <object/code.hh>
@@ -375,8 +376,10 @@ namespace runner
       /// Retreive and evaluate the lazy version of arguments.
       const ast::rConstLazy& lazy = e.unsafe_cast<const ast::Lazy>();
       assert(lazy);
-      rObject v = operator()(lazy->lazy_get().get());
-      lazy_args.push_back(v);
+
+      rObject closure = operator()(lazy->lazy_get().get());
+      CAPTURE_GLOBAL(Lazy);
+      lazy_args.push_back(Lazy->call("clone")->call("init", closure));
     }
 
     return build_call_message(code, msg, lazy_args);

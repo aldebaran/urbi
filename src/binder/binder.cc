@@ -348,7 +348,7 @@ namespace binder
         ast::rExp& arg = (*args)[i];
         ast::loc loc = arg->location_get();
         arg = new ast::Lazy(loc,
-                            lazify((*input->arguments_get())[i], loc),
+                            lazify((*input->arguments_get())[i]),
                             arg);
       }
     }
@@ -376,24 +376,13 @@ namespace binder
   }
 
   ast::rExp
-  Binder::lazify (ast::rExp arg, const ast::loc& loc)
+  Binder::lazify (ast::rExp arg)
   {
-    // build Lazy.clone.init(closure () { %arg })
-    ast::rCall lazy = new ast::Call
-      (loc, new ast::exps_type(), new ast::Implicit(loc), SYMBOL(Lazy));
-    ast::rCall clone = new ast::Call(loc, new ast::exps_type(), lazy, SYMBOL(clone));
-    ast::exps_type* init_args = new ast::exps_type();
-
-    {
-      // FIXME: Maybe started another Binder would be better?
-      ast::rAst res;
-      std::swap(res, result_);
-      init_args->push_back(recurse(parser::ast_closure(arg)));
-      std::swap(res, result_);
-    }
-
-    ast::rCall init = new ast::Call(loc, init_args, clone, SYMBOL(init));
-    return init;
+    ast::rAst save;
+    std::swap(save, result_);
+    ast::rExp res = recurse(parser::ast_closure(arg));
+    std::swap(save, result_);
+    return res;
   }
 
   void
