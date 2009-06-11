@@ -40,22 +40,6 @@ namespace object
 
   Object::~Object ()
   {
-    // Prevent further destruction of this object.
-//     counter_inc();
-//     if (rSlot finalize = slot_locate(SYMBOL(finalize), false).second)
-//     {
-//       objects_type args;
-//       args.push_back(this);
-//       ::kernel::urbiserver->getCurrentRunner().apply
-//           (finalize->value(), SYMBOL(finalize), args);
-//     }
-//     // We are allready in the destructor, we cannot allow a reference to be
-//     // kept. This check must be outside the above block.
-//     if (counter_get() != 1)
-//     {
-//       pabort("Object finalizer kept " + string_cast(counter_get()-1)
-//              + " reference(s) to this");
-//     }
     slots_.finalize(this);
     if (!protos_cache_)
       delete protos_;
