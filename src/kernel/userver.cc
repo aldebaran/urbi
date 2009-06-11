@@ -354,14 +354,15 @@ namespace kernel
     // To make sure that we get different times before and after every work
     // phase if we use a monotonic clock, update the time before and after
     // working.
-    updateTime();
-    libport::utime_t ctime = libport::utime();
-    libport::utime_t next_time = scheduler_->work ();
-    libport::utime_t rtime = next_time? std::max(0LL, next_time - ctime):0;
-    ctime = libport::utime() - ctime;
-    updateTime();
+    libport::utime_t next_time;
     if (report)
     {
+      updateTime();
+      libport::utime_t ctime = libport::utime();
+      next_time = scheduler_->work ();
+      libport::utime_t rtime = next_time? std::max(0LL, next_time - ctime):0;
+      ctime = libport::utime() - ctime;
+      updateTime();
       if (!rtime)
         nzero++;
       else
@@ -395,6 +396,12 @@ namespace kernel
         rmintime = 1000000;
         nzero = 0;
       }
+    }
+    else
+    {
+      updateTime();
+      next_time = scheduler_->work ();
+      updateTime();
     }
     work_handle_stopall_();
     afterWork();
