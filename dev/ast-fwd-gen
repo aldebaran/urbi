@@ -24,6 +24,7 @@ print >>fwd_hh, """
 # include <boost/preprocessor/seq/for_each.hpp>
 
 # include <libport/intrusive-ptr.hh>
+# include <libport/typelist.hh>
 
 namespace ast
 {
@@ -35,6 +36,15 @@ for node in arr:
   print >>fwd_hh, "  class " + node.name + ";"
   print >>fwd_hh, "  typedef libport::intrusive_ptr<%s> r%s;" %(node.name, node.name)
   print >>fwd_hh, "  typedef libport::intrusive_ptr<const %s> rConst%s;" %(node.name, node.name)
+
+nodes = []
+size = 0
+
+for node in [node for node in arr if node.concrete]:
+  size += 1
+  nodes.append(node.name)
+
+print >>fwd_hh, "  typedef TYPELIST_%s(%s) Nodes;" % (size, ', '.join(nodes))
 
 
 print >>fwd_hh, """

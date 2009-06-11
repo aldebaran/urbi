@@ -40,6 +40,7 @@ includes_map:
   "exps_type":                  '<ast/exps-type.hh>'
   "flavor_type":                '<ast/flavor.hh>'
   "libport::RefCounted":        '<libport/ref-counted.hh>'
+  "libport::meta::Hierarchy<Ast, Nodes>": '<libport/hierarchy.hh>'
   "libport::Symbol":            '<libport/symbol.hh>'
   "std::string":                '<string>'
   "symbols_type":               '<ast/symbols-type.hh>'
@@ -209,7 +210,9 @@ printer_cc_prologue: |2
 ## -------------- ##
 
 Ast:
-  super: 'libport::RefCounted'
+  super:
+    - 'libport::RefCounted'
+    - 'libport::meta::Hierarchy<Ast, Nodes>'
   inline:
     header prologue: |2
       # include <ast/fwd.hh>
