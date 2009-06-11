@@ -375,7 +375,7 @@
 
 %right  "=" "+=" "-=" "*=" "/=" "^=" "%="
 
-%left VAR
+%left "const" "var"
 
 %nonassoc "~" // This is not the same as in C++, this is for "softest".
 %left  "||"
@@ -1094,7 +1094,7 @@ id:
 ;
 
 exp:
-  "var" exp %prec VAR
+  "var" exp
   {
     if (!$2.unsafe_cast<ast::LValue>()
         || ($2.unsafe_cast<ast::Call>()
@@ -1104,12 +1104,12 @@ exp:
     ast::rBinding res = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
     $$ = res;
   }
-| "const" "var" exp %prec VAR
+| "const" "var" exp
   {
     if (!$3.unsafe_cast<ast::LValue>()
         || ($3.unsafe_cast<ast::Call>()
             && $3.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@2, "syntax error, " << *$3 << " is not a valid lvalue",
+      ERROR(@3, "syntax error, " << *$3 << " is not a valid lvalue",
             ast::rExp);
     ast::rBinding res = new ast::Binding(@$, $3.unchecked_cast<ast::LValue>());
     res->constant_set(true);
