@@ -175,6 +175,8 @@ namespace kernel
     static void
     install_ice_catcher(void (*catcher)(int))
     {
+      if (getenv("NO_ICE_CATCHER"))
+        return;
       signal(SIGABRT, catcher);
       signal(SIGBUS,  catcher);
       signal(SIGSEGV, catcher);
