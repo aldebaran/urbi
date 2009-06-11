@@ -12,10 +12,8 @@
 namespace ast
 {
 
-  class Ast;
   std::ostream& operator<< (std::ostream& o, const Ast& a);
 
 } // namespace ast
 
 #endif // !AST_PRINT_HH
-

@@ -1485,14 +1485,8 @@ var.opt:
 
 %type <formal_type> formal_argument;
 formal_argument:
-  var.opt "identifier"
-  {
-    $$ = formal_type($2, 0);
-  }
-| var.opt "identifier" "=" exp
-  {
-    $$ = formal_type($2, $4);
-  }
+  var.opt "identifier"          { $$ = formal_type($2, 0);  }
+| var.opt "identifier" "=" exp  { $$ = formal_type($2, $4); }
 ;
 
 // One or several comma-separated identifiers.
@@ -1513,7 +1507,7 @@ formal_arguments.1:
 
 // Zero or several comma-separated identifiers.
 formal_arguments:
-  /* empty */            { $$ = new formals_type; }
+  /* empty */          { $$ = new formals_type; }
 | formal_arguments.1   { std::swap($$, $1); }
 ;
 
