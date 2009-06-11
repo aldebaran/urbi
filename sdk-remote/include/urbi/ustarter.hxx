@@ -73,12 +73,13 @@ namespace urbi
 
   template <class T>
   inline
-  void
+  baseURBIStarter*
   URBIStarter<T>::copy(const std::string& objname)
   {
     URBIStarter<T>* ustarter = new URBIStarter<T>(objname, local);
     ustarter->init(objname);
     copy_(ustarter->object);
+    return ustarter;
   }
 
   /// Access to the object from the outside.

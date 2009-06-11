@@ -61,9 +61,9 @@ namespace urbi
     /// Create the instance.
     virtual void init(const std::string& name) = 0;
     /** Create a new UObject cloning the one in this baseURBIstarter.
-     *  Also create a baseURBIStarter for this new UObject.
+     *  Also create a baseURBIStarter for this new UObject and return it.
      */
-    virtual void copy(const std::string& name) = 0;
+    virtual baseURBIStarter* copy(const std::string& name) = 0;
 
     std::string name;
     /// Set to true to have the UObjects use a random unique name.
@@ -102,7 +102,7 @@ namespace urbi
 
     virtual void clean();
 
-    virtual void copy(const std::string& objname);
+    virtual baseURBIStarter* copy(const std::string& objname);
 
     /// Access to the object from the outside.
     virtual UObject* getUObject();
