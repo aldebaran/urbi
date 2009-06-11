@@ -1265,15 +1265,11 @@ Try:
         type: catches_type
         desc: The exception handlers
   printer:
-    - '"try "'
+    - '"try"'
+    - 'libport::iendl'
     - ~body
-    - '{
-         foreach (const rConstExp& e, n->handlers_get())
-         {
-           ostr_ << libport::iendl;
-           operator()(e.get());
-         }
-       }'
+    - 'libport::iendl'
+    - 'n->handlers_get()'
 
 Catch:
   super: Exp
@@ -1299,7 +1295,8 @@ Catch:
            ostr_ << ")";
          }
        }'
-    - '" {"'
+    - 'libport::iendl'
+    - '"{"'
     - 'libport::incendl'
     - ~body
     - 'libport::decendl'
