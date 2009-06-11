@@ -7,12 +7,13 @@
 # define AST_PRINT_HH
 
 # include <ast/fwd.hh>
+# include <urbi/export.hh>
 # include <iosfwd>
 
 namespace ast
 {
 
-  std::ostream& operator<< (std::ostream& o, const Ast& a);
+  URBI_SDK_API std::ostream& operator<< (std::ostream& o, const Ast& a);
 
 } // namespace ast
 
