@@ -1249,6 +1249,7 @@ event_match:
   {
     $$ = ::parser::EventMatch($1, $3, $4);
   }
+//<no-space< ? event.
 | "?" exp guard.opt
   {
     up.warn(@$,
@@ -1265,6 +1266,7 @@ event_match:
     else
       $$ = ::parser::EventMatch($2, 0, $3);
   }
+//>no-space>
 ;
 
 %type <ast::rExp> guard.opt;
