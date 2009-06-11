@@ -135,6 +135,28 @@
       return noop;
     }
 
+  /// Use the scanner in the right parser::ParserImpl.
+    static
+    inline
+    yy::parser::symbol_type
+    yylex(parser::ParserImpl& up, yyFlexLexer& scanner)
+    {
+      return scanner.yylex(&up);
+    }
+
+    static ast::local_declarations_type*
+    symbols_to_decs(formals_type* formals,
+                    const ast::loc& loc)
+    {
+      if (!formals)
+        return 0;
+      ast::local_declarations_type* res = new ast::local_declarations_type();
+      foreach (const formal_type& var, *formals)
+        res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
+      delete formals;
+      return res;
+    }
+
   } // anon namespace
 
   namespace std
@@ -156,27 +178,6 @@
         o << var.first << " " << var.second;
       return o;
     }
-  }
-
-  /// Use the scanner in the right parser::ParserImpl.
-  inline
-    yy::parser::symbol_type
-    yylex(parser::ParserImpl& up, yyFlexLexer& scanner)
-  {
-    return scanner.yylex(&up);
-  }
-
-  static ast::local_declarations_type*
-    symbols_to_decs(formals_type* formals,
-                    const ast::loc& loc)
-  {
-    if (!formals)
-      return 0;
-    ast::local_declarations_type* res = new ast::local_declarations_type();
-    foreach (const formal_type& var, *formals)
-      res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
-    delete formals;
-    return res;
   }
 
 } // %code requires.
