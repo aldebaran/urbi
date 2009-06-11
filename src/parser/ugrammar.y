@@ -267,8 +267,8 @@
 
 // We use variants.
 %define variant
-
-%printer { debug_stream() << libport::deref << $$; } <ast::rCall>;
+// Default printer.
+%printer { debug_stream() << libport::deref << $$; } <*>;
 
 
 %token <ast::flavor_type>
@@ -281,7 +281,6 @@
         WHILE        "while"
         AT           "at"
 ;
-%printer { debug_stream() << $$; } <ast::flavor_type>;
 
 
  /*---------.
@@ -289,7 +288,6 @@
  `---------*/
 
 %token  <std::string>  STRING  "string";
-%printer { debug_stream() << $$; } <std::string>;
 
 
  /*---------.
@@ -303,14 +301,11 @@
 // asssociativity, yet we can write "foo . + (2)" and call foo's +.
 %type <libport::Symbol> id;
 
-%printer { debug_stream() << $$; } <libport::Symbol>;
-
 
 /*--------------.
 | Expressions.  |
 `--------------*/
 
-%printer { debug_stream() << libport::deref << $$; } <ast::rExp>;
 %type <ast::rExp> block exp exp.opt softtest stmt stmt_loop;
 
 
@@ -425,7 +420,6 @@ root:
 `--------*/
 
 %type <ast::rNary> root stmts;
-%printer { debug_stream() << libport::deref << $$; } <ast::rNary>;
 
 // Statements: with ";" and ",".
 stmts:
@@ -514,7 +508,6 @@ proto:
 ;
 
 %type <exps_pointer> protos.1 protos;
-%printer { debug_stream() << libport::deref << $$; } <exps_pointer>;
 
 protos.1:
   proto               { $$ = new ast::exps_type; $$->push_back ($1); }
@@ -962,7 +955,6 @@ stmt:
 `--------*/
 
 %type <::parser::cases_type> cases;
-%printer { debug_stream() << $$; } <::parser::cases_type>;
 
 cases:
   /* empty */  { $$ = ::parser::cases_type();   }
@@ -970,7 +962,6 @@ cases:
 ;
 
 %type <::parser::case_type> case;
-%printer { debug_stream() << $$; } <::parser::case_type>;
 
 case:
   "case" match ":" stmts  {  $$ = ::parser::case_type($2, $4); }
@@ -1093,7 +1084,6 @@ exp:
 `---------------------------*/
 
 %type <ast::rLValue> lvalue;
-%printer { debug_stream() << *$$; } <ast::rLValue>;
 lvalue:
 	  id	{ $$ = ast_call(@$, $1); }
 | exp "." id	{ $$ = ast_call(@$, $1, $3); }
@@ -1188,7 +1178,6 @@ exp:
 | Numbers.  |
 `----------*/
 
-%printer { debug_stream() << $$; } <ufloat>;
 %token <ufloat>
         FLOAT      "float"
         DURATION   "duration";
@@ -1513,7 +1502,6 @@ formal_argument:
 ;
 
 // One or several comma-separated identifiers.
-%printer { debug_stream() << libport::deref << $$; } <symbols_pointer>;
 %type <formals_type*> formal_arguments formal_arguments.1 formals;
 formal_arguments.1:
   formal_argument
