@@ -97,19 +97,19 @@ dist_noinst_DATA += $(DATA_FROM_UGRAMMAR_Y)
 FROM_UGRAMMAR_Y = $(SOURCES_FROM_UGRAMMAR_Y) $(DATA_FROM_UGRAMMAR_Y)
 MAINTAINERCLEANFILES += $(FROM_UGRAMMAR_Y)
 
-# Compile the parser and save cycles.
-# This code comes from "Handling Tools that Produce Many Outputs",
-# from the Automake documentation.
 EXTRA_DIST += parser/ugrammar.y
 precompiled_symbols_hh_deps += parser/ugrammar.y
 ugrammar_deps =					\
   $(BISONXX_IN)					\
   $(top_srcdir)/build-aux/fuse-switch		\
   parser/local.mk				\
-  $(wildcard $(top_builddir)/bison/data/*.c)	\
-  $(wildcard $(top_builddir)/bison/data/*.cc)	\
-  $(wildcard $(top_builddir)/bison/data/*.m4)
+  $(wildcard $(top_srcdir)/bison/data/*.c)	\
+  $(wildcard $(top_srcdir)/bison/data/*.cc)	\
+  $(wildcard $(top_srcdir)/bison/data/*.m4)
 
+# Compile the parser and save cycles.
+# This code comes from "Handling Tools that Produce Many Outputs",
+# from the Automake documentation.
 AM_BISONFLAGS = -d -ra -Derror-verbose=$(YYERROR_VERBOSE)
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
