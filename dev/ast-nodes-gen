@@ -74,6 +74,7 @@ def print_includes (node, header, inline, impl):
     print >>header, "# include " + i
   print_inline_code (node, "header", "prologue")
   print >>header, "# include <object/fwd.hh>"
+  print >>header, "# include <kernel/config.h>"
 
   # *.hxx
   sys.stdout = inline
@@ -365,6 +366,7 @@ def declare_serialization(node, header):
 
   sys.stdout = header
   print """
+#if defined ENABLE_SERIALIZATION
     /// \\name Serialization.
     /// \\{ */
   public:
@@ -373,7 +375,9 @@ def declare_serialization(node, header):
     template <typename T>
     void
     serialize(libport::serialize::OSerializer<T>& ser) const;
-    /// \\}""" % {'name': node.name}
+    /// \\}
+#endif
+""" % {'name': node.name}
 
 
 def print_serialization(node, header, inline, impl):
@@ -393,7 +397,8 @@ def print_serialization(node, header, inline, impl):
       continue
     ser += '    ser.template serialize<%s>("%s", %s_);\n' % (a.type, a.name, a.name)
 
-  print """  template <typename T>
+  print """#if defined ENABLE_SERIALIZATION
+ template <typename T>
   void
   %(name)s::serialize(libport::serialize::OSerializer<T>& ser) const
   {
@@ -420,6 +425,7 @@ def print_serialization(node, header, inline, impl):
   {
     (void)ser;
 %(ser)s  }
+#endif
 """ % { 'name': node.name, 'super': super, 'ser': ser }
 
 

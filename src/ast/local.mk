@@ -27,6 +27,7 @@ BUILT_SOURCES_ast_libuobject =			\
   ast/transformer.hh				\
   $(AST_NODES)
 
+
 BUILT_SOURCES_ast = 				\
   $(BUILT_SOURCES_ast_libuobject) 		\
   ast/dot-printer.hh				\
@@ -66,11 +67,15 @@ dist_libuobject_la_SOURCES +=			\
   ast/parametric-ast.hxx			\
   ast/parametric-ast.cc				\
   ast/print.hh ast/print.cc			\
-  ast/serialize.cc				\
-  ast/serialize.hh				\
   ast/symbols-type.hh				\
   ast/symbols-type.cc				\
   ast/visitor.hxx
+
+if ENABLE_SERIALIZATION
+  dist_libuobject_la_SOURCES +=                 \
+    ast/serialize.cc                            \
+    ast/serialize.hh
+endif
 
 nodist_libuobject_la_SOURCES += 		\
   $(BUILT_SOURCES_ast_libuobject)

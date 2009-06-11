@@ -7,7 +7,9 @@ EXTRA_PROGRAMS = bin/ast-dump bin/urbi-parse bin/urbi-pp bin/urbi-compile
 if BUILD_PROGRAMS
 if !WIN32
 noinst_PROGRAMS = bin/ast-dump
+if ENABLE_SERIALIZATION
 bin_PROGRAMS += bin/urbi-parse bin/urbi-pp bin/urbi-compile
+endif
 endif !WIN32
 endif BUILD_PROGRAMS
 

@@ -212,8 +212,10 @@ namespace object
   system_loadFile(const rObject&, const rObject& f)
   {
     const std::string& filename = filename_get(f);
+#if defined ENABLE_SERIALIZATION
     if (!libport::path(filename).exists())
       runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
+#endif
     return
       execute_parsed(parser::parse_file(filename),
                      SYMBOL(loadFile),
