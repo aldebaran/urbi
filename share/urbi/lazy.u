@@ -6,7 +6,7 @@ class Global.Lazy
   function init(value)
   {
     var this.code = value |
-    var this.val;
+    var this.val |
     this
   };
 
