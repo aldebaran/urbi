@@ -183,9 +183,9 @@ if.hh~
 if.hxx
 if.hxx~
 ignores
-ignores~
 ignores.stamp
 ignores.stamp~
+ignores~
 implicit.cc
 implicit.cc~
 implicit.hh
@@ -394,6 +394,11 @@ throw.hh
 throw.hh~
 throw.hxx
 throw.hxx~
+transformer.cc
+transformer.cc~
+transformer.hh
+transformer.hh~
+transformer.stamp
 try.cc
 try.cc~
 try.hh

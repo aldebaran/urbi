@@ -23,6 +23,8 @@ BUILT_SOURCES_ast_libuobject =			\
   ast/default-visitor.hxx			\
   ast/pretty-printer.hh				\
   ast/pretty-printer.cc				\
+  ast/transformer.cc				\
+  ast/transformer.hh				\
   $(AST_NODES)
 
 BUILT_SOURCES_ast = 				\

@@ -44,6 +44,10 @@ $(ast_basedir)all.hh: $(ast_srcdir)/all.stamp
 EXTRA_DIST += $(ast_basedir)cloner.stamp
 $(ast_basedir)cloner.hh $(ast_basedir)cloner.cc: $(ast_srcdir)/cloner.stamp
 
+## transformer.hh etc.
+EXTRA_DIST += $(ast_basedir)transformer.stamp
+$(ast_basedir)transformer.hh $(ast_basedir)transformer.cc: $(ast_srcdir)/transformer.stamp
+
 ## fwd.hh.
 EXTRA_DIST += $(ast_basedir)fwd.stamp
 $(ast_basedir)fwd.hh: $(ast_srcdir)/fwd.stamp

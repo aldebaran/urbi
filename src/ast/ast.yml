@@ -18,6 +18,8 @@ auxlib: "libport"
 
 # The name of the directory/namespace that contains the cloner.
 clonerlib: "ast"
+# The name of the directory/namespace that contains the transformer.
+transformerlib: "ast"
 
 # The generator will accept these types as is, without looking for a
 # particular header.  Also, they are handled by copy.
@@ -803,7 +805,7 @@ Call:
     - target:
         type: rExp
         desc: The target of the call
-        access: rW
+        access: rwW
     - name:
         type: 'libport::Symbol'
         desc: Name of the called function
@@ -954,7 +956,7 @@ LocalWrite:
     - what:
         type:   'libport::Symbol'
         desc:   Name of the symbol being declared or updated.
-        access: rW
+        access: rwW
     - value:
         type: rExp
         desc: Initialization value.
@@ -1013,11 +1015,11 @@ Write:
     - what:
         type: rLValue
         desc: What is being declared
-        access: r
+        access: rw
     - value:
         type: rExp
         desc: Initialization value.
-        access: r
+        access: rw
 
   printer:
     - ~what
@@ -1118,7 +1120,7 @@ Binding:
   attributes:
     - what:
         type: rLValue
-        access: r
+        access: rw
     - constant:
         desc: /// Whether this slot should be constant
         type: bool
@@ -1135,7 +1137,7 @@ Unary:
     - exp:
         type: rLValue
         desc: Operand
-        access: r
+        access: rw
 
 Incrementation:
   super: Unary
@@ -1337,14 +1339,14 @@ Match:
   attributes:
     - pattern:
         type: rExp
-        access: rW
+        access: rwW
     - guard:
         type: rExp
-        access: rW
+        access: rwW
         mandatory: false
     - bindings:
         type: rExp
-        access: rW
+        access: rwW
         init: '0'
         mandatory: false
   printer:

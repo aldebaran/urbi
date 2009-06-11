@@ -1,0 +1,176 @@
+#! /usr/bin/env python
+
+import string
+import sys, os, os.path
+import ast, tools
+
+if len(sys.argv) != 2:
+  tools.error("Usage: .. SRCDIR")
+srcdir = sys.argv[1]
+
+loader = ast.Loader ()
+nodes, ast_params = loader.load (sys.stdin)
+
+header = file("transformer.hh.tmp", "w")
+implem = file("transformer.cc.tmp", "w")
+
+print >> header, """\
+#ifndef AST_TRANSFORMER_HH
+# define AST_TRANSFORMER_HH
+
+# include <set>
+
+# include <libport/assert.hh>
+# include <libport/contract.hh>
+# include <libport/type-info.hh>
+
+# include <ast/visitor.hh>
+# include <ast/default-visitor.hh>
+
+namespace ast
+{
+  class Transformer: public DefaultVisitor
+  {
+  public:
+    typedef DefaultVisitor super_type;
+
+    template <typename T>
+    void
+    transform(libport::intrusive_ptr<T>& ptr)
+    {
+      if (!ptr)
+        return;
+      operator()(ptr.get());
+# ifndef NDEBUG
+      if (!result_.unsafe_cast<T>())
+        (void)pabort("Invalid transformation, expected a"
+          << libport::TypeInfo(typeid(T))
+          << ", got a "
+          << libport::TypeInfo(typeid(*result_)));
+# endif
+      ptr = result_.unchecked_cast<T>();
+    }
+
+    template <typename K, typename V>
+    void
+    transform_collection(libport::hash_map<K, V>* hash)
+    {
+      if (!hash)
+        return;
+      transform_collection(*hash);
+    }
+
+    template <typename K, typename V>
+    void
+    transform_collection(libport::hash_map<K, V>& hash)
+    {
+      typedef typename libport::hash_map<K, V>::value_type value_type;
+      foreach (const value_type& v, hash)
+      {
+        V ast = v.second;
+        transform(ast);
+        hash[v.first] = ast;
+      }
+    }
+
+    template <typename T>
+    void
+    transform_collection(std::vector<T>& v)
+    {
+      foreach (T& elt, v)
+        transform(elt);
+    }
+
+    template <typename T>
+    void
+    transform_collection(std::vector<T>* v)
+    {
+      if (!v)
+        return;
+      transform_collection(*v);
+    }
+
+    using super_type::visit;
+    VISITOR_VISIT_NODES(
+      %(boost_seq_nodes)s
+    );
+
+    rAst
+    result_get()
+    {
+      return result_;
+    }
+
+    virtual
+    void
+    operator() (ast::Ast* node)
+    {
+      if (mhas(seen_, node))
+      {
+        result_ = node;
+        return;
+      }
+      seen_.insert(node);
+      super_type::operator()(node);
+    }
+
+  protected:
+    rAst result_;
+
+  private:
+    std::set<void*> seen_;
+  };
+}
+
+#endif
+""" % {
+  'boost_seq_nodes':
+    '\n      '.join(map(lambda k: '(%s)' % nodes[k].name, nodes)),
+  }
+
+def attr_transform(attr):
+
+  if attr.root_type () in ast_params['collections']:
+    return '    transform_collection(node->%s_get());\n' % attr.name
+  elif not attr.visitable_p():
+    return ''
+  else:
+    return '    transform(node->%s_get());\n' % attr.name
+
+def node_transform(node):
+
+  return """\
+  void
+  Transformer::visit(%(type)s* node)
+  {
+%(attrs)s\
+    result_ = node;
+  }
+
+""" % {
+    'attrs': ''.join(map(lambda a: attr_transform(a), node.all_attributes())),
+    'type': node.name,
+    }
+
+def nodes_transform():
+
+  names = list(nodes)
+  names.sort()
+  return ''.join(map(lambda k: node_transform(nodes[k]), names))
+
+print >> implem, """\
+#include <ast/transformer.hh>
+
+namespace ast
+{
+%(transform)s
+}
+""" % {
+      'transform': nodes_transform(),
+      }
+
+header.close()
+tools.lazy_install(srcdir, "transformer.hh");
+
+implem.close()
+tools.lazy_install(srcdir, "transformer.cc");

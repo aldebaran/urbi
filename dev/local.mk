@@ -4,6 +4,7 @@
 EXTRA_DIST +=					\
 $(devdir)ast-all-gen				\
 $(devdir)ast-cloner-gen				\
+$(devdir)ast-transformer-gen			\
 $(devdir)ast-default-visitor-gen		\
 $(devdir)ast-dot-printer-gen			\
 $(devdir)ast-fwd-gen				\
