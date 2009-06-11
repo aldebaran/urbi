@@ -116,7 +116,8 @@ parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	echo '$@ rebuilt because of: $?' >$@.tmp
 	$(MAKE) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
-	$(BISONXX) $< parser/ugrammar.cc \
+	$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
+	$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
 	mv -f $@.tmp $@
 

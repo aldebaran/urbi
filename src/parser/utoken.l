@@ -494,7 +494,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
 "in"            RETURN(IN);
+  /*<no-space< New.*/
 "new"           RETURN_OP(NEW);
+  /*>no-space>*/
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
 "stopif"        RETURN(STOPIF);

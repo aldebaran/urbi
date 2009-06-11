@@ -1109,11 +1109,11 @@ exp:
     $$ = $1;
   }
 | lvalue args
-    {
-      $$ = $1;
-      $$.unchecked_cast<ast::LValueArgs>()->arguments_set($2);
-      $$->location_set(@$);
-    }
+  {
+    $$ = $1;
+    $$.unchecked_cast<ast::LValueArgs>()->arguments_set($2);
+    $$->location_set(@$);
+  }
 ;
 
 //<no-space< new "identifier".
@@ -1134,12 +1134,12 @@ new:
 exp:
   new   { std::swap($$, $1); }
 ;
-//>no-space>
 
 // Allow Object.new etc.
 id:
   "new" { std::swap($$, $1); }
 ;
+//>no-space>
 
 
 /*------------.
