@@ -9,21 +9,18 @@
 
 # include <ast/fwd.hh>
 # include <ast/exp.hh>
+# include <ast/exps-type.hh>
 
 namespace parser
 {
   struct EventMatch
   {
-    ast::rExp event;
-    ast::exps_type* pattern;
-    ast::rExp guard;
-
-    EventMatch(ast::rExp event_,
-               ast::exps_type* pattern_,
-               ast::rExp guard_)
-      : event(event_)
-      , pattern(pattern_)
-      , guard(guard_)
+    EventMatch(ast::rExp event,
+               ast::exps_type* pattern,
+               ast::rExp guard)
+      : event(event)
+      , pattern(pattern)
+      , guard(guard)
     {}
 
     EventMatch()
@@ -31,8 +28,16 @@ namespace parser
       , pattern(0)
       , guard(0)
     {}
+
+    std::ostream& dump(std::ostream& o) const;
+
+    ast::rExp event;
+    ast::exps_type* pattern;
+    ast::rExp guard;
   };
 
+  std::ostream&
+  operator<<(std::ostream& o, const EventMatch& e);
 }
 
 #endif // ! PARSER_EVENT_MATCH_HH
