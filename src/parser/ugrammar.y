@@ -145,6 +145,27 @@
 
   } // anon namespace
 
+  namespace std
+  {
+    static
+    inline
+    ostream&
+    operator<<(ostream& o, const modifier_type& m)
+    {
+      return o << m.first << ": " << m.second;
+    }
+
+    static
+    inline
+    ostream&
+    operator<<(ostream& o, const formals_type& f)
+    {
+      foreach (const formal_type& var, f)
+        o << var.first << " " << var.second;
+      return o;
+    }
+  }
+
   /// Use the scanner in the right parser::ParserImpl.
   inline
     yy::parser::symbol_type
