@@ -1,4 +1,6 @@
 #include <sstream>
+#include <string.h>
+
 #include <urbi/usound.hh>
 
 namespace urbi
