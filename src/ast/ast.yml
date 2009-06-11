@@ -972,10 +972,7 @@ LocalDeclaration:
     - $what
     - '{
          if (n->value_get())
-         {
-           ostr_ << " = ";
-           operator()(n->value_get().get());
-         }
+           ostr_ << " = " << *n->value_get();
        }'
 
 LocalAssignment:
@@ -1209,11 +1206,7 @@ Class:
     - ~what
     -  '{
           if (const exps_type* protos = n->protos_get())
-          {
-            ostr_ << ": ";
-            (void) protos;
-            ostr_ << libport::separate(*protos, ", ");
-          }
+            ostr_ << ": " << libport::separate(*protos, ", ");
         }'
     - 'libport::iendl'
     - '"{"'
@@ -1241,18 +1234,11 @@ Emit:
     - '"!"'
     -  '{
           if (const exps_type* args = n->arguments_get())
-          {
-            ostr_ << "(";
-            ostr_ << libport::separate(*args, ", ");
-            ostr_ << ")";
-          }
+            ostr_ << "(" << libport::separate(*args, ", ") << ")";
         }'
     -  '{
           if (rConstExp duration = n->duration_get())
-          {
-            ostr_ << " ~ ";
-            operator()(duration.get());
-          }
+            ostr_ << " ~ " << *duration;
         }'
 
 Try:
@@ -1283,17 +1269,8 @@ Catch:
   printer:
     - '"catch"'
     - '{
-         if (n->match_get())
-         {
-           ostr_ << " (";
-           operator()(n->match_get()->pattern_get().get());
-           if (n->match_get()->guard_get())
-           {
-             ostr_ << " if ";
-             operator()(n->match_get()->guard_get().get());
-           }
-           ostr_ << ")";
-         }
+         if (rConstMatch m = n->match_get())
+           ostr_ << " (" << *m << ")";
        }'
     - 'libport::iendl'
     - '"{"'
@@ -1335,11 +1312,7 @@ Assign:
          if (const modifiers_type* modifiers = n->modifiers_get())
          {
           foreach (const modifiers_type::value_type& modifier, *modifiers)
-           {
-             ostr_ << " ";
-             ostr_ << modifier.first << ": ";
-             operator()(modifier.second.get());
-           }
+             ostr_ << " " << modifier.first << ": " << *modifier.second;
          }
        }'
 
@@ -1369,6 +1342,12 @@ Match:
         access: rW
         init: '0'
         mandatory: false
+  printer:
+    - '{
+         ostr_ << *n->pattern_get();
+         if (rConstExp guard = n->guard_get())
+           ostr_ << " if " << *guard;
+       }'
 
 Unscope:
   super: Exp
