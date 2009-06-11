@@ -129,7 +129,8 @@ send_data(urbi::UClient& client, const data_type& data)
     client.send("%s", data.variable);
     client.send(" = ");
     client.sendBinary(buffer, len, data.headers);
-    client.send(";");
+    // No need to have the server echo the binary back to us.
+    client.send("|;");
   }
 }
 
@@ -182,6 +183,7 @@ main(int argc, char * argv[])
 
   client.setWildcardCallback(callback(&dump));
   client.setClientErrorCallback(callback(&error));
+  client.waitForKernelVersion();
 
   /*----------------.
   | Send contents.  |
