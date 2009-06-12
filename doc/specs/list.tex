@@ -133,7 +133,6 @@ assert_eq([0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}), [1, 3, 5]);
 \end{urbiscript}
 
 \item \lstinline|front|\\
-\label{sec:std-list-front}
 Return the first element of the target. An error if the target is
 empty.
 
@@ -166,11 +165,10 @@ var y = 1;
 \end{urbiscript}
 
 \item \lstinline|head|\\
-Synonym for \lstinline|front| (\autoref{sec:std-list-front}).
+  Synonym for \lstinline|front|.
 
 \item \lstinline|insertBack(\var{that})|\\
-\label{sec:std-list-pushback}
-Insert the given element at the end of the target.
+  Insert the given element at the end of the target.
 
 \begin{urbiscript}[firstnumber=last]
 var z = [0, 1];
@@ -306,9 +304,8 @@ assert(!([0, 1, 2] == [0, 0, 2]));
 \end{urbiscript}
 
 \item \lstinline|'[]'(\var{n})|\\
-\label{sec:std-list-nth}
-Return the nth member of the target (indexing is zero-based). An error
-if out of bounds.
+  Return the nth member of the target (indexing is zero-based). An
+  error if out of bounds.
 
 \begin{urbiscript}[firstnumber=last]
 var l = [0, 1, 2];
@@ -320,8 +317,8 @@ l[3];
 \end{urbiscript}
 
 \item \lstinline|'[]='(\var{index}, \var{value})|\\
-\label{sec:std-list-setnth}
-Assign \var{value} to the element of the target at the given \var{index}.
+  Assign \var{value} to the element of the target at the given
+  \var{index}.
 
 \begin{urbiscript}[firstnumber=last]
 var f = [0, 1, 2];
@@ -354,12 +351,13 @@ assert_eq([0, 1, 0, 2, 3] - [1, 2], [0, 0, 3]);
 \end{urbiscript}
 
 \item \lstinline|'<<'(\var{that})|\\
-A synonym for \lstinline|insertBack| (\autoref{sec:std-list-pushback}).
+  A synonym for \lstinline|insertBack|.
 
 \item \lstinline|'<'(\var{other})|\\
-Return whether the target is inferior to the \var{other} list. A list is
-inferior to another if at least one of its element differs from the
-other, and the first differing element is inferior to the other.
+  Return whether the target is inferior to the \var{other} list. A
+  list is inferior to another if at least one of its element differs
+  from the other, and the first differing element is inferior to the
+  other.
 
 \begin{urbiscript}[firstnumber=last]
 assert(!([0, 1, 2] < [0, 1, 2]));
