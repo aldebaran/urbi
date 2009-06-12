@@ -43,6 +43,7 @@
 #include <ast/ast.hh>
 #include <ast/nary.hh>
 
+#include <object/lobby.hh>
 #include <object/object.hh>
 #include <object/primitive.hh>
 #include <object/root-classes.hh>
@@ -409,7 +410,8 @@ namespace kernel
   }
 
   static void bounce_disconnection(UConnection* uc)
-  { // This is executed from a job: we have a runner.
+  {
+    // This is executed from a job: we have a runner.
     uc->lobby_get()->call(SYMBOL(handleDisconnect));
     delete uc;
   }
