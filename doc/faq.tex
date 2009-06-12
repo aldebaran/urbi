@@ -286,6 +286,82 @@ for (var i: [10, 11, 12]) echo (i);
 [00000003] *** 12
 \end{urbiscript}
 
+\subsection{\lstinline|at| and \lstinline|waituntil| with expressions}
+\label{sec:faq:atexp}
+Because the development of \us was focused on other features, the
+initial implementation for the \lstinline|waituntil(\var{cond})| and
+the \lstinline|at(\var{cond})| features are expensive: the expressions
+\var{cond} are repeatedly evaluated at every ``cycle''.  As a
+consequence, \strong{the whole \us program is slowed down!}.  And of
+course this considerably hinders the battery lifetime.
+
+In the future, they will be evaluated only when they are likely to
+change.
+
+There are at least two means to avoid this problems.
+
+\paragraph{Events}
+The key \us feature for event-based programming are... events (see
+\refObject{Event} and \autoref{sec:tut:events}).  The use of
+\lstinline|at| and \lstinline|waituntil| with events is well
+optimized, and incurs no cost on the whole program: it is effective
+only when events are fired.
+
+There, rather than observing the values of a variable for changes, it
+is preferable to subscribe to the variable to be notified when it is
+changed, and then to check that your conditions are verified.  For
+instance, instead of the costly following program:
+
+\begin{urbiscript}
+{
+  var x = 0;
+  at (x == 1)
+    echo ("one!");
+  for (var i in [0, 1, 2])
+    echo (i) | x = i;
+};
+[00000003] *** 0
+[00000003] *** 1
+[00000003] *** one!
+[00000003] *** 2
+\end{urbiscript}
+
+\noindent
+use the following implementation:
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var x = 0;
+  at (x->changed?)
+    if (x == 1)
+      echo ("one!");
+  for (var i in [0, 1, 2])
+};
+[00000003] *** 0
+[00000003] *** 1
+[00000003] *** one!
+[00000003] *** 2
+\end{urbiscript}
+
+You may also use the event guard using %
+\lstinline|at (\var{event}? if \var{cond}|:
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var x = 0;
+  at (x->changed? if x == 1)
+      echo ("one!");
+  for (var i in [0, 1, 2])
+    echo (i) | x = i;
+};
+[00000003] *** 0
+[00000003] *** 1
+[00000003] *** one!
+[00000003] *** 2
+\end{urbiscript}
+
+The optimization of \lstinline|waituntil(\var{cond})| can be done
+similarly.
 
 \section{UObjects}
 

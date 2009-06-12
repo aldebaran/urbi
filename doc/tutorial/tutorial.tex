@@ -1986,6 +1986,7 @@ var x = 0;
 [00000000] 0
 at (x > 5)
   echo("ping");
+[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 x = 5;
 [00000000] 5
 // This triggers the event
@@ -2014,6 +2015,7 @@ at (x)
   echo("x")
 onleave
   echo("!x");
+[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 x = true;
 [00000000] true
 [00000000] *** x
