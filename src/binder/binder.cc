@@ -336,22 +336,6 @@ namespace binder
       args = res->arguments_get();
     else if (ast::rLocal res = result_.unsafe_cast<ast::Local>())
       args = res->arguments_get();
-
-    if (args)
-    {
-      // Do not report errors while lazifying arguments, to avoid
-      // reporting them twice.
-      Finally finally(libport::scoped_set(report_errors_, false));
-      assert(args->size() == input->arguments_get()->size());
-      for (unsigned i = 0; i < args->size(); ++i)
-      {
-        ast::rExp& arg = (*args)[i];
-        ast::loc loc = arg->location_get();
-        arg = new ast::Lazy(loc,
-                            lazify((*input->arguments_get())[i]),
-                            arg);
-      }
-    }
   }
 
 

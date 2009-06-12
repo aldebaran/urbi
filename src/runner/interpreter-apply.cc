@@ -9,11 +9,12 @@
 
 #include <ast/closure.hh>
 #include <ast/exps-type.hh>
-#include <ast/lazy.hh>
 #include <ast/local-declarations-type.hh>
+#include <ast/new-clone.hh>
 #include <ast/routine.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
+#include <ast/transformer.hh>
 
 #include <object/code.hh>
 #include <object/global.hh>
@@ -362,6 +363,112 @@ namespace runner
     return res;
   }
 
+  class Rebinder: public ast::Transformer
+  {
+  public:
+    typedef ast::Transformer super_type;
+    Rebinder(ast::rRoutine routine, object::rCode code, Stacks& stacks)
+      : idx_(0)
+      , routine_(routine)
+      , code_(code)
+      , stacks_(stacks)
+    {}
+
+  protected:
+    using super_type::visit;
+
+    virtual void
+    visit(ast::Closure* c)
+    {
+      foreach (const ast::rLocalDeclaration& decl, *c->captured_variables_get())
+        transform(decl->value_get());
+      result_ = c;
+    }
+
+    virtual void
+    visit(ast::Function* f)
+    {
+      foreach (const ast::rLocalDeclaration& decl, *f->captured_variables_get())
+        transform(decl->value_get());
+      result_ = f;
+    }
+
+    virtual void
+    visit(ast::LocalDeclaration* decl)
+    {
+      if (mhas(decls_, decl))
+      {
+        result_ = decl;
+        return;
+      }
+      decls_.insert(decl);
+      // Reindex declarations.
+      decl->local_index_set(idx_++);
+      routine_->local_size_set(idx_);
+      super_type::visit(decl);
+    }
+
+    virtual void
+    visit(ast::LocalAssignment* assignment)
+    {
+      ast::rLocalDeclaration d = assignment->declaration_get();
+
+      // If the variable is captured, or declared locally, we're good.
+      if (mhas(decls_, d.get()))
+      {
+        super_type::visit(assignment);
+        return;
+      }
+
+      object::rSlot value = stacks_.rget_assignment(assignment);
+      code_->captures_get().push_back(value);
+
+      // Capture the variable
+      assignment->depth_set(assignment->depth_get() + 1);
+      ast::rLocalDeclaration nd =
+        new ast::LocalDeclaration(d->location_get(), d->what_get(), d->value_get());
+      nd->local_index_set(routine_->captured_variables_get()->size());
+      routine_->captured_variables_get()->push_back(nd);
+      assignment->declaration_set(0);
+      super_type::visit(assignment);
+      assignment->declaration_set(nd);
+    }
+
+    virtual void
+    visit(ast::Local* local)
+    {
+      ast::rLocalDeclaration d = local->declaration_get();
+
+      // If the variable is captured, or declared locally, we're good.
+      if (mhas(decls_, d.get()))
+      {
+        super_type::visit(local);
+        return;
+      }
+
+      // Retreive the value to capture.
+      object::rSlot value = stacks_.rget(local);
+      code_->captures_get().push_back(value);
+
+      // Capture the variable
+      local->depth_set(local->depth_get() + 1);
+      ast::rLocalDeclaration nd =
+        new ast::LocalDeclaration(d->location_get(), d->what_get(), d->value_get());
+      nd->local_index_set(routine_->captured_variables_get()->size());
+      routine_->captured_variables_get()->push_back(nd);
+      local->declaration_set(0);
+      super_type::visit(local);
+      local->declaration_set(nd);
+    }
+
+  private:
+    unsigned idx_;
+    std::set<ast::LocalDeclaration*> decls_;
+    ast::rRoutine routine_;
+    object::rCode code_;
+    Stacks& stacks_;
+  };
+
   object::rObject
   Interpreter::build_call_message (const rObject& tgt,
 				   const rObject& code,
@@ -373,13 +480,25 @@ namespace runner
     lazy_args.push_back(tgt);
     foreach (const ast::rConstExp& e, args)
     {
-      /// Retreive and evaluate the lazy version of arguments.
-      const ast::rConstLazy& lazy = e.unsafe_cast<const ast::Lazy>();
-      assert(lazy);
+      // Create the lazy version of arguments.
+      ast::rExp body = //const_cast<ast::Exp*>(e.get());
+        ast::new_clone(e);
 
-      rObject closure = operator()(lazy->lazy_get().get());
+      // FIXME: location?
+      ast::rRoutine routine =
+        new ast::Closure(ast::loc(), new ast::local_declarations_type,
+                         new ast::Scope(ast::loc(), body));
+
+      rCode closure = new object::Code(routine.get());
+      closure->self_set(stacks_.self());
+      closure->call_get() = stacks_.call();
+
+      Rebinder rebind(routine, closure, stacks_);
+      rebind(body.get());
+
       CAPTURE_GLOBAL(Lazy);
-      lazy_args.push_back(Lazy->call("clone")->call("init", closure));
+      rObject arg = Lazy->call("clone")->call("init", closure);
+      lazy_args.push_back(arg);
     }
 
     return build_call_message(code, msg, lazy_args);

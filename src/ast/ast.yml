@@ -863,27 +863,6 @@ MetaArgs:
     - $id
     - '")"'
 
-Lazy:
-  desc:
-    /// When calling a function, it is unknown whether it will
-    /// needed the lazy (AST) or strict (value) version of the arguments.
-    /// So we pass both, and let the function decide.
-  super: Exp
-  attributes:
-    - lazy:
-        type: rExp
-        access: rwW
-    - strict:
-        type: rExp
-        access: rwW
-  printer:
-    - ~strict
-    - '{
-         static bool pprinter = getenv("PPRINTER");
-         if (pprinter)
-           ostr_ << "/* " << *n->lazy_get() << " */";
-       }'
-
 Routine:
   super: Exp
   attributes:

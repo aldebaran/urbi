@@ -236,13 +236,6 @@ namespace runner
     //ECHO ("result: " << *result_);
   }
 
-
-  LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Lazy* e)
-  {
-    return operator()(e->strict_get().get());
-  }
-
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Local* e)
   {

@@ -75,7 +75,7 @@ namespace runner
   void
   Stacks::self_set(rObject s)
   {
-    STACK_ECHO("Set 'this' @[" << local_pointer_ << "] = " << v->value().get());
+    STACK_ECHO("Set 'this' @[" << local_pointer_ << "] = " << s.get());
     local_stack_[local_pointer_] = new Slot(s);
   }
 
@@ -200,8 +200,9 @@ namespace runner
   void
   Stacks::def(unsigned local, bool captured, rSlot v)
   {
+    assert(v);
 #define DBG                                                     \
-    STACK_NECHO(") @[" << idx << "] = " << v.get() << std::endl)
+    STACK_NECHO(") @[" << idx << "] = " << " @" << v.get() << std::endl)
     if (captured)
     {
       STACK_NECHO("captured");
@@ -227,32 +228,46 @@ namespace runner
     local_stack_[idx] = new Slot(v);
   }
 
-  Stacks::rSlot Stacks::rget(ast::rConstLocal e)
+  Stacks::rSlot
+  Stacks::rget(libport::Symbol name, unsigned index, unsigned depth)
   {
+    (void)name;
     rSlot res;
 
     STACK_OPEN();
-    STACK_NECHO("Get variable " << e->name_get()
-                << " (#" << e->local_index_get() << " ");
+    STACK_NECHO("Get variable " << name
+                << " (#" << index << " ");
 #define DBG                                     \
     STACK_NECHO(") @[" << idx << "] = ")
-    if (e->depth_get())
+    if (depth)
     {
       STACK_NECHO("captured");
-      unsigned idx = captured_pointer_ + e->local_index_get();
+      unsigned idx = captured_pointer_ + index;
       DBG;
       res = captured_stack_[idx];
     }
     else
     {
       STACK_NECHO("local");
-      unsigned idx = local_pointer_ + 2 + e->local_index_get();
+      unsigned idx = local_pointer_ + 2 + index;
       DBG;
       res = local_stack_[idx];
     }
-    STACK_NECHO(res->get() << " @" << res.get() << std::endl);
+    STACK_NECHO(res->value().get() << " @" << res.get() << std::endl);
     return res;
 #undef DBG
+  }
+
+  Stacks::rSlot
+  Stacks::rget(ast::rConstLocal e)
+  {
+    return rget(e->name_get(), e->local_index_get(), e->depth_get());
+  }
+
+  Stacks::rSlot
+  Stacks::rget_assignment(ast::rConstLocalAssignment e)
+  {
+    return rget(e->what_get(), e->local_index_get(), e->depth_get());
   }
 
   Stacks::rObject Stacks::get(ast::rConstLocal e)
