@@ -127,9 +127,10 @@
       YYERROR;                                  \
     } while (false)                             \
 
+
     /// Whether the \a e was the empty command.
     static bool
-    implicit (const ast::rExp e)
+    implicit(const ast::rExp e)
     {
       ast::rConstNoop noop = e.unsafe_cast<const ast::Noop>();
       return noop;
@@ -547,8 +548,8 @@ stmt:
     PARAMETRIC_AST(a, "'external'.'object'(%exp:1)");
 
     if ($2 != SYMBOL(object))
-      up.error (@2, "syntax error, external must be followed by "
-                "object, var, function or event");
+      up.error(@2, "syntax error, external must be followed by "
+               "object, var, function or event");
     $$ = exp(a % $3);
   }
 | "external" "var" identifier_as_string "." identifier_as_string
@@ -1527,7 +1528,7 @@ formals:
 void
 yy::parser::error(const location_type& l, const std::string& m)
 {
-  up.error (l, m);
+  up.error(l, m);
 }
 
 // Local Variables:

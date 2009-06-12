@@ -463,9 +463,7 @@ namespace parser
   {
     if (!payload)
     {
-      PARAMETRIC_AST
-        (desugar,
-         "  %exp:1.'waituntil'(nil)");
+      PARAMETRIC_AST(desugar, "%exp:1.'waituntil'(nil)");
       return exp(desugar % event);
     }
 

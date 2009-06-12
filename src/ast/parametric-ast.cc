@@ -38,7 +38,7 @@ namespace ast
       nary = rewrite::rewrite(nary);
     passert("ParametricAst result is not a Nary", nary);
 
-    // Remove useless nary and statement if there.s only one child
+    // Remove useless nary and statement if there's only one child.
     if (nary->children_get().size() == 1)
     {
       ast::rConstStmt stmt =
@@ -65,7 +65,6 @@ namespace ast
   ParametricAst::visit(const ast::MetaCall* e)
   {
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
-
     result_ = new ast::Call(e->location_get(),
 			    maybe_recurse_collection(e->arguments_get()),
                             recurse(e->target_get()), name);
@@ -82,7 +81,6 @@ namespace ast
   ParametricAst::visit(const ast::MetaId* e)
   {
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
-
     result_ = parser::ast_call(e->location_get(), name);
   }
 
