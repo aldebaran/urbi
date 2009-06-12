@@ -138,10 +138,9 @@ namespace flower
     }
     each % c;
 
+    result_ = exp(each);
     if (has_break_)
-      result_ = brk(exp(each));
-    else
-      result_ = exp(each);
+      result_ = brk(result_);
 
     result_->original_set(code);
   }
