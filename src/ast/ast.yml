@@ -934,18 +934,12 @@ Routine:
 
 Function:
   super: Routine
-  # Cloning a list of references such as this one requires a mapping
-  # table in the cloner. Forbid it for now.
-  cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"function "'
     - '{ visit(static_cast<const Routine*>(n)); }'
 
 Closure:
   super: Routine
-  # Cloning a list of reference such as this one requires a mapping table
-  # in the cloner. Forbid it for now.
-  cloner_prologue: assert(!e->local_variables_get());
   printer:
     - '"closure "'
     - '{ visit(static_cast<const Routine*>(n)); }'
@@ -1003,7 +997,6 @@ LocalAssignment:
         assert(declaration_);
         return declaration_->local_index_get();
       }
-  cloner_prologue: 'assert(!e->declaration_get());'
   printer:
     - $what
     - '" = "'
@@ -1075,7 +1068,6 @@ Local:
         type: rLocalDeclaration
         access: rwW
         init: '0'
-  cloner_prologue: 'assert(!e->declaration_get());'
   inline:
     header inside: |2
       public:

@@ -39,6 +39,8 @@ namespace %(clonerlib)s
   public:
     typedef ast::DefaultConstVisitor super_type;
 
+    /// Create a Cloner.
+    Cloner (bool map = false);
     /// Destroy a Cloner.
     virtual ~Cloner ();
 
@@ -110,6 +112,10 @@ print """
 
     /// The potential forced location
     boost::optional<ast::loc> loc_;
+
+  private:
+    bool use_map_;
+    libport::hash_map<long, ast::rAst> map_;
   };
 
 } // namespace ast
@@ -205,9 +211,12 @@ namespace %(clonerlib)s
 {
   using namespace ast;
 
+  Cloner::Cloner (bool map)
+   : use_map_(map)
+  {}
+
   Cloner::~Cloner ()
-  {
-  }
+  {}
 
   rAst
   Cloner::result_get ()
@@ -222,18 +231,26 @@ namespace %(clonerlib)s
 
   void Cloner::operator() (const Ast* e)
   {
+    if (!e)
+      return;
+
+    if (use_map_ && libport::mhas(map_, (long)e))
+    {
+      result_ = map_[(long)e];
+      return;
+    }
     // We must check e and result_, because cloners may return NULL
     // in case of errors.
-    if (e)
-    {
-      e->accept(*this);
+
+    e->accept(*this);
 # ifndef COMPILATION_MODE_SPACE
-      if (result_ && !result_->original_get())
-        result_->original_set(e->original_get());
+    if (result_ && !result_->original_get())
+      result_->original_set(e->original_get());
 # endif
-      if (loc_)
-        result_->location_set(loc_.get());
-    }
+    if (loc_)
+      result_->location_set(loc_.get());
+    if (use_map_)
+      map_[(long)e] = result_;
   }
 
 """ % ast_params

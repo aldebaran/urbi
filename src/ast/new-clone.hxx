@@ -21,7 +21,7 @@ namespace ast
   new_clone (libport::intrusive_ptr<const T> ast)
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
-    Cloner cloner;
+    Cloner cloner(true);
     cloner(ast.get());
     libport::intrusive_ptr<T> res = libport::unsafe_cast<T>(cloner.result_get());
     assert (res);
