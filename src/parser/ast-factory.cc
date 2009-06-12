@@ -31,6 +31,34 @@ namespace std
     return o << "}";
   }
 
+  ostream&
+  operator<<(ostream& o, const parser::modifier_type& m)
+  {
+    return o << m.first << ": " << m.second;
+  }
+
+  ostream&
+  operator<<(ostream& o, const parser::formals_type& f)
+  {
+    foreach (const parser::formal_type& var, f)
+      o << var.first << " " << var.second;
+    return o;
+  }
+}
+
+namespace
+{
+  static ast::local_declarations_type*
+  symbols_to_decs(const ast::loc& loc, parser::formals_type* formals)
+  {
+    if (!formals)
+      return 0;
+    ast::local_declarations_type* res = new ast::local_declarations_type();
+    foreach (const parser::formal_type& var, *formals)
+      res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
+    delete formals;
+    return res;
+  }
 }
 
 namespace parser
@@ -189,8 +217,8 @@ namespace parser
 
   /// "<method> (args)".
   ast::rCall
-  ast_call (const yy::location& l,
-            libport::Symbol method)
+  ast_call(const yy::location& l,
+           libport::Symbol method)
   {
     return ast_call(l, new ast::Implicit(l), method);
   }
@@ -245,6 +273,15 @@ namespace parser
     return exp(a % value);
   }
 
+  ast::rClosure
+  ast_closure(const ast::loc& loc,
+              const ast::loc& floc, formals_type* f,
+              const ast::loc& bloc, ast::rExp b)
+  {
+    return new ast::Closure(loc,
+                            symbols_to_decs(floc, f),
+                            ast_scope(bloc, b));
+  }
 
   /// Build a for loop.
   // The increment is included directly in the condition to make sure
@@ -266,6 +303,16 @@ namespace parser
     return exp(desugar % init % inc % test % body);
   }
 
+
+  ast::rFunction
+  ast_function(const ast::loc& loc,
+               const ast::loc& floc, formals_type* f,
+               const ast::loc& bloc, ast::rExp b)
+  {
+    return new ast::Function(loc,
+                             symbols_to_decs(floc, f),
+                             ast_scope(bloc, b));
+  }
 
   ast::rExp
   ast_if(const yy::location& l,

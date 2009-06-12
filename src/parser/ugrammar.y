@@ -41,9 +41,6 @@
   // It is inconvenient to use the pointer notation with the variants.
   typedef ast::exps_type* exps_pointer;
   typedef ast::symbols_type* symbols_pointer;
-  typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
-  typedef modifier_type formal_type;
-  typedef std::vector<formal_type> formals_type;
 
   // We need this type everywhere.
   using libport::ufloat;
@@ -85,7 +82,9 @@
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
+  using parser::ast_closure;
   using parser::ast_for;
+  using parser::ast_function;
   using parser::ast_if;
   using parser::ast_nil;
   using parser::ast_scope;
@@ -164,41 +163,8 @@
       return scanner.yylex(&up);
     }
 
-    static ast::local_declarations_type*
-    symbols_to_decs(formals_type* formals,
-                    const ast::loc& loc)
-    {
-      if (!formals)
-        return 0;
-      ast::local_declarations_type* res = new ast::local_declarations_type();
-      foreach (const formal_type& var, *formals)
-        res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
-      delete formals;
-      return res;
-    }
-
   } // anon namespace
 
-  namespace std
-  {
-    static
-    inline
-    ostream&
-    operator<<(ostream& o, const modifier_type& m)
-    {
-      return o << m.first << ": " << m.second;
-    }
-
-    static
-    inline
-    ostream&
-    operator<<(ostream& o, const formals_type& f)
-    {
-      foreach (const formal_type& var, f)
-        o << var.first << " " << var.second;
-      return o;
-    }
-  }
 
 } // %code requires.
 
@@ -640,8 +606,7 @@ stmt:
     {
       // Compiled as "var name = function args stmt"
       $$ = new ast::Declaration(@$, $2,
-                                new ast::Function(@$, symbols_to_decs($3, @3),
-                                                  ast_scope (@4, $4)));
+                                ast_function(@$, @3, $3, @4, $4));
     }
 | "closure" k1_id formals block
     {
@@ -649,8 +614,7 @@ stmt:
 	error(@$, "closure cannot be lazy");
       // Compiled as "var name = closure args stmt"
       $$ = new ast::Declaration(@$, $2,
-                                new ast::Closure(@$, symbols_to_decs($3, @3),
-                                                 ast_scope (@4, $4)));
+                                ast_closure(@$, @3, $3, @4, $4));
     }
 ;
 
@@ -695,7 +659,7 @@ k1_id:
 `----------*/
 
 
-%type <modifier_type> modifier;
+%type <::parser::modifier_type> modifier;
 %type <ast::rDictionary> dictionary;
 
 modifier:
@@ -1177,15 +1141,13 @@ id:
 exp:
   "function" formals block
     {
-      $$ = new ast::Function(@$, symbols_to_decs($2, @2),
-                             ast_scope(@$, $3));
+      $$ = ast_function(@$, @2, $2, @3, $3);
     }
 | "closure" formals block
     {
       if (!$2)
 	error(@$, "closure cannot be lazy");
-      $$ = new ast::Closure(@$, symbols_to_decs($2, @2),
-                            ast_scope(@$, $3));
+      $$ = ast_closure(@$, @2, $2, @$, $3);
     }
 ;
 
@@ -1511,18 +1473,18 @@ var.opt:
 | "var"
 ;
 
-%type <formal_type> formal_argument;
+%type <::parser::formal_type> formal_argument;
 formal_argument:
-  var.opt "identifier"          { $$ = formal_type($2, 0);  }
-| var.opt "identifier" "=" exp  { $$ = formal_type($2, $4); }
+  var.opt "identifier"          { $$ = ::parser::formal_type($2, 0);  }
+| var.opt "identifier" "=" exp  { $$ = ::parser::formal_type($2, $4); }
 ;
 
 // One or several comma-separated identifiers.
-%type <formals_type*> formal_arguments formal_arguments.1 formals;
+%type <::parser::formals_type*> formal_arguments formal_arguments.1 formals;
 formal_arguments.1:
   formal_argument
   {
-    $$ = new formals_type;
+    $$ = new ::parser::formals_type;
     $$->push_back($1);
   }
 | formal_arguments.1 "," formal_argument
@@ -1534,13 +1496,13 @@ formal_arguments.1:
 
 // Zero or several comma-separated identifiers.
 formal_arguments:
-  /* empty */          { $$ = new formals_type; }
+  /* empty */          { $$ = new ::parser::formals_type; }
 | formal_arguments.1   { std::swap($$, $1); }
 ;
 
 // Function formal arguments.
 formals:
-  /* empty */                { $$ = 0; }
+  /* empty */              { $$ = 0; }
 | "(" formal_arguments ")" { std::swap($$, $2); }
 ;
 

@@ -11,6 +11,11 @@
 
 namespace parser
 {
+  typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
+  typedef modifier_type formal_type;
+  typedef std::vector<formal_type> formals_type;
+
+
   /// at (%cond ~ %duration) {%body} onleave {%onleave}
   ast::rExp
   ast_at(const yy::location& loc,
@@ -71,15 +76,21 @@ namespace parser
   ast_closure(ast::rExp value);
 
 
+  /// Create a function.
+  /// \param loc    location for the whole declaration.
+  /// \param floc   location of the formals
+  /// \param f      formals
+  /// \param bloc   location of the body
+  /// \param b      body
+  ast::rClosure
+  ast_closure(const ast::loc& loc,
+              const ast::loc& floc, formals_type* f,
+              const ast::loc& bloc, ast::rExp b);
+
   ast::rExp
   ast_event_catcher(const ast::loc& loc,
                     EventMatch& event,
                     ast::rExp body, ast::rExp onleave);
-
-  /// \param iffalse can be 0.
-  ast::rExp
-  ast_if(const yy::location& l,
-         ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse);
 
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
@@ -91,6 +102,22 @@ namespace parser
   ast_for(const yy::location& l, ast::flavor_type op,
           ast::rExp init, ast::rExp test, ast::rExp inc,
           ast::rExp body);
+
+  /// Create a function.
+  /// \param loc    location for the whole declaration.
+  /// \param floc   location of the formals
+  /// \param f      formals
+  /// \param bloc   location of the body
+  /// \param b      body
+  ast::rFunction
+  ast_function(const ast::loc& loc,
+               const ast::loc& floc, formals_type* f,
+               const ast::loc& bloc, ast::rExp b);
+
+  /// \param iffalse can be 0.
+  ast::rExp
+  ast_if(const yy::location& l,
+         ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse);
 
   /** Use these functions to avoid CPP-like problem when referring
    *  several times to an lvalue.  For instance, do not desugar
@@ -176,12 +203,14 @@ namespace parser
                      ast::rExp body, ast::rExp onleave = 0);
 }
 
+// The structures (list) live in std, that's where Koening look-up
+// will look for them.
 namespace std
 {
-  // The structure (list) live in std, that's where Koening look-up
-  // will look for them.
-  ostream& operator<< (ostream& o, const parser::case_type& c);
-  ostream& operator<< (ostream& o, const parser::cases_type& c);
+  ostream& operator<<(ostream& o, const parser::case_type& c);
+  ostream& operator<<(ostream& o, const parser::cases_type& c);
+  ostream& operator<<(ostream& o, const parser::modifier_type& m);
+  ostream& operator<<(ostream& o, const parser::formals_type& f);
 }
 
 # include <parser/ast-factory.hxx>
