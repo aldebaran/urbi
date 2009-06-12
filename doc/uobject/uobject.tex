@@ -345,16 +345,16 @@ commands. \lstinline{servo::valueAccessed} is called just before the
 value is going to be read. In this function we request the current
 value from the servo, and set \lstinline{val} accordingly.
 
-\fixme{Check the body (we don't use v) and the comment in
-  valueAccessed}
 \begin{cxx}
 // Called each time val is written to.
 int
 servo::valueChanged (urbi::UVar& v)
 {
-  // v is a reference to val.
+  // v is a reference to our class member val: you can use both
+  // indifferently.
   setPosition (id, (double)val);
 
+  // The return value is ignored for now, just return 0.
   return 0;
 }
 
@@ -373,14 +373,13 @@ servo::valueAccessed (urbi::UVar& v)
 variables is written to. The function \lstinline{servo::setPID} can be
 called directly from \urbi.
 
-\fixme{Why do we return 1 here?}
 \begin{cxx}
 int
 servo::pidChanged (urbi::UVar& v)
 {
   setPID(id, (int)P, (int)I, (int)D);
 
-  return 1;
+  return 0;
 }
 
 void
@@ -501,11 +500,9 @@ servo::init (int id)
 \lstinline{valueChanged} becomes \lstinline{update} and
 \lstinline{valueAccessed} becomes \lstinline{getVal}. Instead of being
 called on demand, they are now called periodically. The period of the
-call cannot be lower than the server period (which is chosen when
-starting the robot, or fixed by the underlying architecture), so you
-can set it to 0 to mean ``as fast as is useful''. \fixme{Adjust this
-  to the lack of period in k2.}
-
+call cannot be lower than the value returned by
+\lstinline{Object.getPeriod;}
+so you can set it to 0 to mean ``as fast as is useful''.
 
 \subsection{Using hubs to group objects}
 
@@ -653,8 +650,7 @@ Let's suppose we have an underlying camera API with the following functions:
   same and doesn't have to be freed.
 \end{itemize}
 
-Our device code can be written as follows: \fixme{There is a trailing
-  UBinary bin in the last comment.}
+Our device code can be written as follows:
 \begin{cxx}
 // Inherit from UObject.
 class Camera : public urbi::UObject
@@ -681,8 +677,10 @@ public:
   int frame;
   // Frame number of last access.
   int accessFrame;
-  // Camera id UBinary bin;
+  // Camera id.
   int id_;
+  // Storage for last captured image.
+  UBinary bin;
 };
 \end{cxx}
 
