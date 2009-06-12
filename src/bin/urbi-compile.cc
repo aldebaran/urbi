@@ -1,12 +1,16 @@
 #include <iostream>
 
 #include <ast/serialize.hh>
+#include <bin/arg.hh>
 #include <parser/transform.hh>
 
 int
-main()
+main(int argc, char** argv)
 {
-  ast::rAst ast = ast::unserialize(std::cin);
-  ast::rAst res = parser::transform(ast);
-  ast::serialize(res, std::cout);
+  std::istream* input;
+  std::ostream* output;
+  get_io(input, output, argc, argv);
+
+  ast::rAst ast = ast::unserialize(*input);
+  ast::serialize(parser::transform(ast), *output);
 }

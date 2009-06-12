@@ -1,21 +1,25 @@
-#include <iostream>
-
 #include <ast/serialize.hh>
+#include <bin/arg.hh>
 #include <parser/parse.hh>
 
 int
-main()
+main(int argc, char** argv)
 {
   // FIXME: Don't read the whole entry, parse the stream.
   char buf[BUFSIZ + 1];
   std::string source;
-  while (!std::cin.eof())
+
+  std::istream* input;
+  std::ostream* output;
+  get_io(input, output, argc, argv);
+
+  while (!input->eof())
   {
-    std::cin.read(buf, BUFSIZ);
-    buf[std::cin.gcount()] = 0;
+    input->read(buf, BUFSIZ);
+    buf[input->gcount()] = 0;
     source += buf;
   }
 
   ast::rAst res = parser::parse(source, __HERE__)->ast_get();
-  ast::serialize(res, std::cout);
+  ast::serialize(res, *output);
 }
