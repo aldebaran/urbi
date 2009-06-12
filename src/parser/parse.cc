@@ -34,7 +34,10 @@ namespace parser
   parse_result_type
   parse_meta(const std::string& cmd, const yy::location& l)
   {
-    return parse_(cmd, l, true);
+    parse_result_type res = parse_(cmd, l, true);
+    // A parametric ast should never issue parse warnings/errors.
+    passert(*res, res->perfect());
+    return res;
   }
 
   parse_result_type

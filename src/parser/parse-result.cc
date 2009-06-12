@@ -45,6 +45,12 @@ namespace parser
             && errors_.good());
   }
 
+  bool
+  ParseResult::perfect() const
+  {
+    return good() && errors_.empty();
+  }
+
   std::ostream&
   ParseResult::dump(std::ostream& o) const
   {
