@@ -866,6 +866,9 @@ MetaArgs:
 Routine:
   super: Exp
   attributes:
+    - closure:
+        type: bool
+        desc: Whether is a closure, or a function.
     - formals:
         type: 'local_declarations_type*'
         mandatory: False
@@ -905,23 +908,13 @@ Routine:
             return formals_;
           }
   printer:
+    - '(n->closure_get() ? "closure" : "function")'
+    - '" "'
     - '{
          if (n->formals_get())
            ostr_ << "(" << *n->formals_get() << ") ";
        }'
     - ~body
-
-Function:
-  super: Routine
-  printer:
-    - '"function "'
-    - '{ visit(static_cast<const Routine*>(n)); }'
-
-Closure:
-  super: Routine
-  printer:
-    - '"closure "'
-    - '{ visit(static_cast<const Routine*>(n)); }'
 
 LocalWrite:
   super: Exp

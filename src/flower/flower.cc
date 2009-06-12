@@ -114,7 +114,7 @@ namespace flower
     // 'fillme' is a placeholder filled later. Parametric ASTs can't
     // parametrize formal arguments for now.
     PARAMETRIC_AST(closure, "closure (fillme) {%exp:1}");
-    ast::rClosure c = (closure % body).result<ast::Closure>();
+    ast::rRoutine c = (closure % body).result<ast::Routine>();
     // Rename the 'fillme' closure formal argument
     c->formals_get()->front()->what_set(code->index_get()->what_get());
 
@@ -147,8 +147,13 @@ namespace flower
   }
 
   void
-  Flower::visit(const ast::Function* code)
+  Flower::visit(const ast::Routine* code)
   {
+    if (code->closure_get())
+    {
+      super_type::visit(code);
+      return;
+    }
     Finally finally;
     finally << scoped_set(in_function_, true)
             << scoped_set(has_return_, false);
@@ -159,8 +164,7 @@ namespace flower
                              "var '$returnTag' ="
                              "  Tag.newFlowControl(\"returnTag\") | "
                              "'$returnTag': %exp:1");
-      ast::rScope copy =
-        result_.unsafe_cast<ast::Function>()->body_get();
+      ast::rScope copy = result_.unsafe_cast<ast::Routine>()->body_get();
       copy->body_set(exp(a % copy->body_get()));
     }
     result_->original_set(code);

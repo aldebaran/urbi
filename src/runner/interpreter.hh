@@ -194,9 +194,6 @@ namespace runner
 			const rObject& call_message);
 
   private:
-    /// Factor handling of Function and Closure
-    object::rObject visit(const ast::Routine* e, bool closure);
-
     /// The root of the AST being executed.
     ast::rConstAst ast_;
 

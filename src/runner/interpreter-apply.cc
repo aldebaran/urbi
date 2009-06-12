@@ -7,13 +7,12 @@
 #include <libport/range.hh>
 #include <libport/finally.hh>
 
-#include <ast/closure.hh>
 #include <ast/exps-type.hh>
 #include <ast/local-declarations-type.hh>
 #include <ast/new-clone.hh>
-#include <ast/routine.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
+#include <ast/routine.hh>
 #include <ast/transformer.hh>
 
 #include <object/code.hh>
@@ -228,9 +227,6 @@ namespace runner
     // The called function.
     const object::Code::ast_type& ast = function->ast_get();
 
-    // Whether it's an explicit closure
-    bool closure = ast.unsafe_cast<const ast::Closure>();
-
     // If the function is lazy and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
     // instance.
@@ -252,7 +248,7 @@ namespace runner
     // Determine the function's 'this' and 'call'
     rObject self;
     rObject call;
-    if (closure)
+    if (ast->closure_get())
     {
       self = function->self_get();
       assert(self);
@@ -378,19 +374,11 @@ namespace runner
     using super_type::visit;
 
     virtual void
-    visit(ast::Closure* c)
+    visit(ast::Routine* r)
     {
-      foreach (const ast::rLocalDeclaration& decl, *c->captured_variables_get())
+      foreach (const ast::rLocalDeclaration& decl, *r->captured_variables_get())
         transform(decl->value_get());
-      result_ = c;
-    }
-
-    virtual void
-    visit(ast::Function* f)
-    {
-      foreach (const ast::rLocalDeclaration& decl, *f->captured_variables_get())
-        transform(decl->value_get());
-      result_ = f;
+      result_ = r;
     }
 
     virtual void
@@ -470,10 +458,10 @@ namespace runner
   };
 
   object::rObject
-  Interpreter::build_call_message (const rObject& tgt,
-				   const rObject& code,
-				   const libport::Symbol& msg,
-				   const ast::exps_type& args)
+  Interpreter::build_call_message(const rObject& tgt,
+				  const rObject& code,
+                                  const libport::Symbol& msg,
+                                  const ast::exps_type& args)
   {
     // Build the list of lazy arguments
     object::objects_type lazy_args;
@@ -484,10 +472,10 @@ namespace runner
       ast::rExp body = //const_cast<ast::Exp*>(e.get());
         ast::new_clone(e);
 
-      // FIXME: location?
       ast::rRoutine routine =
-        new ast::Closure(ast::loc(), new ast::local_declarations_type,
-                         new ast::Scope(ast::loc(), body));
+        new ast::Routine(__HERE__,
+                         true, new ast::local_declarations_type,
+                         new ast::Scope(__HERE__, body));
 
       rCode closure = new object::Code(routine.get());
       closure->self_set(stacks_.self());

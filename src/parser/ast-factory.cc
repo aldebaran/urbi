@@ -348,19 +348,12 @@ namespace parser
               const ast::loc& floc, formals_type* f,
               const ast::loc& bloc, ast::rExp b)
   {
-    if (closure)
-    {
-      if (!f)
-        up.error(loc, "closure cannot be lazy");
-      // Yet we build one...
-      return new ast::Closure(loc,
-                              symbols_to_decs(floc, f),
-                              ast_scope(bloc, b));
-    }
-    else
-      return new ast::Function(loc,
-                               symbols_to_decs(floc, f),
-                               ast_scope(bloc, b));
+    if (closure && !f)
+      up.error(loc, "closure cannot be lazy");
+    // Yet we might build one...
+    return new ast::Routine(loc, closure,
+                            symbols_to_decs(floc, f),
+                            ast_scope(bloc, b));
   }
 
 

@@ -49,21 +49,18 @@ namespace binder
                               (Call)
                               (CallMsg)
                               (Catch)
-                              (Closure)
                               (Declaration)
                               (Dictionary)
                               (Do)
                               (Foreach)
-                              (Function)
                               (If)
                               (LocalDeclaration)
                               (Match)
+                              (Routine)
                               (Scope)
                               (Unscope)
-                              (While));
-
-    template <typename Code>
-    void handleRoutine(const Code* code);
+                              (While)
+      );
 
     template <typename Node, typename NewNode>
     void link_to_declaration(Node input,
@@ -105,7 +102,7 @@ namespace binder
 
     /// The innermost function (not closure).
     /// May return 0.
-    ast::rFunction function() const;
+    ast::rRoutine function() const;
     /// \}
 
     /// Level of routine nesting.

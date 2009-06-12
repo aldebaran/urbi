@@ -24,8 +24,8 @@ namespace flower
 			      (Catch)
 			      (Continue)
 			      (Foreach)
-			      (Function)
 			      (Return)
+			      (Routine)
 			      (Throw)
 			      (Try)
 			      (While));

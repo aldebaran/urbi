@@ -80,12 +80,6 @@ cloner.hh
 cloner.hh~
 cloner.stamp
 cloner.stamp~
-closure.cc
-closure.cc~
-closure.hh
-closure.hh~
-closure.hxx
-closure.hxx~
 composite.cc
 composite.cc~
 composite.hh
@@ -164,12 +158,6 @@ foreach.hh
 foreach.hh~
 foreach.hxx
 foreach.hxx~
-function.cc
-function.cc~
-function.hh
-function.hh~
-function.hxx
-function.hxx~
 fwd.hh
 fwd.hh~
 fwd.stamp

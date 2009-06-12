@@ -161,7 +161,7 @@ namespace runner
 
 
   LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Routine* e, bool closure)
+  Interpreter::visit(const ast::Routine* e)
   {
     rCode res = make_routine(e);
 
@@ -175,27 +175,13 @@ namespace runner
     }
 
     // Capture 'this' and 'call' in closures.
-    if (closure)
+    if (e->closure_get())
     {
       res->self_set(stacks_.self());
       res->call_get() = stacks_.call();
     }
 
     return res;
-  }
-
-
-  LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Function* e)
-  {
-    return visit(e, false);
-  }
-
-
-  LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Closure* e)
-  {
-    return visit(e, true);
   }
 
 

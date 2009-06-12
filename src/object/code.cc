@@ -5,7 +5,6 @@
 
 #include <libport/lexical-cast.hh>
 
-#include <ast/function.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 

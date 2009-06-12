@@ -144,12 +144,12 @@ namespace binder
     return routine_stack_.back();
   }
 
-  ast::rFunction
+  ast::rRoutine
   Binder::function() const
   {
     rforeach(ast::rRoutine r, routine_stack_)
-      if (ast::rFunction res = r.unsafe_cast<ast::Function>())
-        return res;
+      if (!r->closure_get())
+        return r;
     return 0;
   }
 
@@ -342,7 +342,7 @@ namespace binder
   void
   Binder::visit(const ast::CallMsg* input)
   {
-    if (ast::rFunction fun = function())
+    if (ast::rRoutine fun = function())
     {
       fun->uses_call_set(true);
       super_type::visit(input);
@@ -425,9 +425,8 @@ namespace binder
     setOnSelf_.pop_back();
   }
 
-  template <typename Code>
   void
-  Binder::handleRoutine(const Code* input)
+  Binder::visit(const ast::Routine* input)
   {
     // Check whether default arguments are followed by non-default arguments
     if (input->formals_get())
@@ -439,7 +438,8 @@ namespace binder
           found = true;
         else if (found)
           errors_.error(decl->location_get(),
-                        "argument with no default value after arguments with default value");
+                        "argument with no default value after arguments"
+                        " with default value");
       }
     }
 
@@ -447,7 +447,8 @@ namespace binder
     Finally finally(5);
 
     // Clone and push the function, without filling its body and arguments
-    libport::intrusive_ptr<Code> res = new Code(input->location_get(), 0, 0);
+    ast::rRoutine res =
+      new ast::Routine(input->location_get(), input->closure_get(), 0, 0);
     res->local_variables_set(new ast::local_declarations_type());
     routine_push(res);
     finally << boost::bind(&Binder::routine_pop, this);
@@ -489,17 +490,6 @@ namespace binder
 
   }
 
-  void
-  Binder::visit(const ast::Function* input)
-  {
-    handleRoutine(input);
-  }
-
-  void
-  Binder::visit(const ast::Closure* input)
-  {
-    handleRoutine(input);
-  }
 
   // Scope variables declared in conditions
 #define SCOPE(Node)                             \
