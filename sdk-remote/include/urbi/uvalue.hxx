@@ -302,10 +302,10 @@ namespace urbi
         std::list<I> res;
         if (v.type != DATA_LIST)
           // Cast just the element.
-          res.push_back(uvalue_cast<I*>(v));
+          res.push_back(uvalue_cast<I>(v));
         else
           for (int i = 0; i < v.list->size(); ++i)
-            res.push_back(uvalue_cast<I*>(*v.list->array[i]));
+            res.push_back(uvalue_cast<I>(*v.list->array[i]));
         return res;
       }
   };
