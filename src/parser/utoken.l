@@ -457,7 +457,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {HEXA}        RETURN_VALUE(FLOAT, strtoll(yytext + 2, 0, 16));
 {NATURAL}     |
-{FLOAT}       RETURN_VALUE(FLOAT,   lexical_cast<ufloat>(*up, loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(*up, loc, yytext));
 
 [\"\']        {
                 grown_string.clear();

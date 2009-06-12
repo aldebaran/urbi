@@ -36,14 +36,6 @@
 #include <ast/call.hh>
 #include <ast/nary.hh>
 #include <parser/event-match.hh>
-
-  // Typedef shorthands
-  // It is inconvenient to use the pointer notation with the variants.
-  typedef ast::exps_type* exps_pointer;
-  typedef ast::symbols_type* symbols_pointer;
-
-  // We need this type everywhere.
-  using libport::ufloat;
 }
 
 // Locations.
@@ -486,7 +478,7 @@ proto:
   visibility exp   { std::swap($$, $2); }
 ;
 
-%type <exps_pointer> protos.1 protos;
+%type <ast::exps_type*> protos.1 protos;
 
 protos.1:
   proto               { $$ = new ast::exps_type; $$->push_back ($1); }
@@ -1156,7 +1148,7 @@ exp:
 | Numbers.  |
 `----------*/
 
-%token <ufloat>
+%token <libport::ufloat>
         FLOAT      "float"
         DURATION   "duration";
 %type <ast::rExp> exp_float;
@@ -1169,7 +1161,7 @@ exp_float:
 | Duration.  |
 `-----------*/
 
-%type <ufloat> duration;
+%type <libport::ufloat> duration;
 duration:
   "duration"          { $$ = $1;      }
 | duration "duration" { $$ = $1 + $2; }
@@ -1432,7 +1424,7 @@ exp:
 | Expressions.  |
 `--------------*/
 
-%type <exps_pointer> exps exps.1 args args.opt;
+%type <ast::exps_type*> exps exps.1 args args.opt;
 
 exps:
   /* empty */ { $$ = new ast::exps_type; }
