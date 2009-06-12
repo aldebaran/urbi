@@ -278,8 +278,10 @@ class Global.'external'
       var u = fresh;
       chan << ['external'.UEM_NEW, u, objname];
       // Wait until the remote defines u.init.
-      waituntil(Global.uobjects.hasSlot(u)
-                && Global.uobjects.getSlot(u).ownsSlot("init"));
+      // FIXME: Use waituntil once it is efficient.
+      while(!(Global.uobjects.hasSlot(u)
+              && Global.uobjects.getSlot(u).ownsSlot("init")))
+        sleep(getPeriod) |
       var ret = Global.uobjects.getSlot(u);
       ret.protos = [this];
       ret
@@ -356,7 +358,9 @@ class Global.'external'
       chan << [ 'external'.UEM_EVALFUNCTION,
                 functionName + "__" + args.size.asString,
                 "Global.uobjects." + u ] + args;
-      waituntil(Global.uobjects.hasSlot(u));
+      // FIXME: Use waituntil once it is efficient.
+      while (!Global.uobjects.hasSlot(u))
+        sleep(getPeriod) |
       var res = Global.uobjects.getSlot(u).acceptVoid;
       Global.uobjects.removeSlot(u);
       res.unacceptVoid
