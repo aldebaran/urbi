@@ -53,14 +53,14 @@ libuobject_la_CPPFLAGS =				\
 libuobject_la_LDFLAGS =				\
   -avoid-version -no-undefined
 libuobject_la_LIBADD =					\
-  $(SOCKETS_LIBS)					\
-  $(PTHREAD_LIBS)					\
-  $(LTDL_LIBS)						\
-  $(LIBPORT_LIBS)					\
-  $(top_builddir)/sdk-remote/src/libuco/libuco.la	\
   $(BOOST_SYSTEM_LIBS)					\
-  $(SCHED_LIBS)
-
+  $(LIBPORT_LIBS)					\
+  $(LTDL_LIBS)						\
+  $(PTHREAD_LIBS)					\
+  $(SCHED_LIBS)						\
+  $(SERIALIZE_LIBS)					\
+  $(SOCKETS_LIBS)					\
+  $(top_builddir)/sdk-remote/src/libuco/libuco.la
 
 ## ------------ ##
 ## version.hh.  ##
