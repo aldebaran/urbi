@@ -68,11 +68,11 @@
 #include <iostream>
 
 #include <boost/bind.hpp>
-#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <libport/assert.hh>
 #include <libport/finally.hh>
+#include <libport/format.hh>
 #include <libport/separator.hh>
 
 #include <ast/all.hh>
@@ -102,6 +102,10 @@
   namespace
   {
 
+    /*---------------.
+    | Warnings etc.  |
+    `---------------*/
+
     static void
     check_modifiers_accumulation(ast::loc loc,
                                  const ast::modifiers_type& modifiers,
@@ -110,12 +114,8 @@
     {
       if (libport::mhas(modifiers, name))
         up.warn(loc,
-                str(boost::format("accumulated modifier: %s.") % name));
+                libport::format("accumulated modifier: %s", name));
     }
-
-    /*---------------.
-    | Warnings etc.  |
-    `---------------*/
 
 # undef ERROR
 # define ERROR(Loc, Msg, Type)                  \
@@ -126,6 +126,25 @@
       yylhs.value.destroy<Type>();              \
       YYERROR;                                  \
     } while (false)                             \
+
+    static
+    void
+    expensive(parser::ParserImpl& up, ast::loc loc,
+              const std::string& msg)
+    {
+      // Warn only if not a parametric AST.
+      //
+      // This is dubious, as it would help catching expensive used in
+      // parametric AST, but on the other hand, some expensive
+      // features are desugared in other expensive features...
+      //
+      // The best option in the long run is probably flagging
+      // explicitly parametric asts that are known to be expensive,
+      // but it's ok.
+      if (!up.meta())
+        up.warn(loc,
+                libport::format("expensive feature: %s", msg));
+    }
 
 
     /// Whether the \a e was the empty command.
@@ -825,6 +844,7 @@ stmt:
     {
       FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
+      expensive(up, @$, "at (<expression>), prefer at (<event>)");
       $$ = ast_at(@$, $3, $6, $7, $4);
     }
 | "at" "(" event_match ")" nstmt onleave.opt
@@ -897,6 +917,8 @@ stmt:
     }
 | "waituntil" "(" exp tilda.opt ")"
     {
+      expensive(up, @$,
+                "waituntil (<expression>), prefer waituntil (<event>)");
       $$ = ::parser::ast_waituntil(@$, $3, $4);
     }
 | "waituntil" "(" event_match ")"
