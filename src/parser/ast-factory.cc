@@ -4,8 +4,9 @@
 #include <object/symbols.hh>
 #include <parser/ast-factory.hh>
 #include <parser/event-match.hh>
-#include <parser/parse.hh>
+#include <parser/parser-impl.hh>
 #include <parser/parse-result.hh>
+#include <parser/parse.hh>
 #include <rewrite/pattern-binder.hh>
 #include <rewrite/rewrite.hh>
 
@@ -273,16 +274,6 @@ namespace parser
     return exp(a % value);
   }
 
-  ast::rClosure
-  ast_closure(const ast::loc& loc,
-              const ast::loc& floc, formals_type* f,
-              const ast::loc& bloc, ast::rExp b)
-  {
-    return new ast::Closure(loc,
-                            symbols_to_decs(floc, f),
-                            ast_scope(bloc, b));
-  }
-
   /// Build a for loop.
   // The increment is included directly in the condition to make sure
   // it is executed on `continue'.
@@ -303,16 +294,6 @@ namespace parser
     return exp(desugar % init % inc % test % body);
   }
 
-
-  ast::rFunction
-  ast_function(const ast::loc& loc,
-               const ast::loc& floc, formals_type* f,
-               const ast::loc& bloc, ast::rExp b)
-  {
-    return new ast::Function(loc,
-                             symbols_to_decs(floc, f),
-                             ast_scope(bloc, b));
-  }
 
   ast::rExp
   ast_if(const yy::location& l,
@@ -360,6 +341,28 @@ namespace parser
     PARAMETRIC_AST(nil, "nil");
     return exp(nil);
   }
+
+  ast::rRoutine
+  ast_routine(ParserImpl& up,
+              const ast::loc& loc, bool closure,
+              const ast::loc& floc, formals_type* f,
+              const ast::loc& bloc, ast::rExp b)
+  {
+    if (closure)
+    {
+      if (!f)
+        up.error(loc, "closure cannot be lazy");
+      // Yet we build one...
+      return new ast::Closure(loc,
+                              symbols_to_decs(floc, f),
+                              ast_scope(bloc, b));
+    }
+    else
+      return new ast::Function(loc,
+                               symbols_to_decs(floc, f),
+                               ast_scope(bloc, b));
+  }
+
 
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope

@@ -75,18 +75,6 @@ namespace parser
   ast::rExp
   ast_closure(ast::rExp value);
 
-
-  /// Create a function.
-  /// \param loc    location for the whole declaration.
-  /// \param floc   location of the formals
-  /// \param f      formals
-  /// \param bloc   location of the body
-  /// \param b      body
-  ast::rClosure
-  ast_closure(const ast::loc& loc,
-              const ast::loc& floc, formals_type* f,
-              const ast::loc& bloc, ast::rExp b);
-
   ast::rExp
   ast_event_catcher(const ast::loc& loc,
                     EventMatch& event,
@@ -102,17 +90,6 @@ namespace parser
   ast_for(const yy::location& l, ast::flavor_type op,
           ast::rExp init, ast::rExp test, ast::rExp inc,
           ast::rExp body);
-
-  /// Create a function.
-  /// \param loc    location for the whole declaration.
-  /// \param floc   location of the formals
-  /// \param f      formals
-  /// \param bloc   location of the body
-  /// \param b      body
-  ast::rFunction
-  ast_function(const ast::loc& loc,
-               const ast::loc& floc, formals_type* f,
-               const ast::loc& bloc, ast::rExp b);
 
   /// \param iffalse can be 0.
   ast::rExp
@@ -145,6 +122,20 @@ namespace parser
 
   /// Return the ast for "nil".
   ast::rExp ast_nil();
+
+  /// Create a closure or a function.
+  /// \param up       the parser to report errors to.
+  /// \param closure  whether building a closure.
+  /// \param loc      location for the whole declaration.
+  /// \param floc     location of the formals.
+  /// \param f        formals.  Mandatory for closures.
+  /// \param bloc     location of the body.
+  /// \param b        body.
+  ast::rRoutine
+  ast_routine(ParserImpl& up,
+              const ast::loc& loc, bool closure,
+              const ast::loc& floc, formals_type* f,
+              const ast::loc& bloc, const ast::rExp b);
 
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope

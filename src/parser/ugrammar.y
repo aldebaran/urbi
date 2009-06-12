@@ -74,11 +74,10 @@
   using parser::ast_bin;
   using parser::ast_call;
   using parser::ast_class;
-  using parser::ast_closure;
   using parser::ast_for;
-  using parser::ast_function;
   using parser::ast_if;
   using parser::ast_nil;
+  using parser::ast_routine;
   using parser::ast_scope;
   using parser::ast_string;
   using parser::ast_strip;
@@ -590,23 +589,21 @@ stmt:
 /*------------.
 | Functions.  |
 `------------*/
+// Whether is a closure (otherwise a function).
+%type <bool> routine;
+routine:
+  "closure"  { $$ = true; }
+| "function" { $$ = false; }
+;
 
 stmt:
   // If you want to use something more general than "k1_id", read the
   // comment of k1_id.
-  "function" k1_id formals block
+  routine k1_id formals block
     {
-      // Compiled as "var name = function args stmt"
+      // Compiled as "var name = function args stmt".
       $$ = new ast::Declaration(@$, $2,
-                                ast_function(@$, @3, $3, @4, $4));
-    }
-| "closure" k1_id formals block
-    {
-      if (!$3)
-	error(@$, "closure cannot be lazy");
-      // Compiled as "var name = closure args stmt"
-      $$ = new ast::Declaration(@$, $2,
-                                ast_closure(@$, @3, $3, @4, $4));
+                                ast_routine(up, @$, $1, @3, $3, @4, $4));
     }
 ;
 
@@ -1131,15 +1128,9 @@ id:
 
 // Anonymous function.
 exp:
-  "function" formals block
+  routine formals block
     {
-      $$ = ast_function(@$, @2, $2, @3, $3);
-    }
-| "closure" formals block
-    {
-      if (!$2)
-	error(@$, "closure cannot be lazy");
-      $$ = ast_closure(@$, @2, $2, @$, $3);
+      $$ = ast_routine(up, @$, $1, @2, $2, @3, $3);
     }
 ;
 
