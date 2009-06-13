@@ -18,7 +18,7 @@
 namespace object
 {
   static inline void callNotify(runner::Runner& r, rObject self,
-                                libport::Symbol notifyList)
+                                libport::Symbol notifyList) throw()
   {
     rList l = self->slot_get(notifyList).value().unsafe_cast<List>();
     objects_type args;
@@ -72,7 +72,6 @@ namespace object
   UVar::UVar()
     : Primitive( boost::bind(&UVar::accessor, this))
     , looping_(false)
-    , inChange_(false)
     , inAccess_(false)
   {
     protos_set(new List);
@@ -82,7 +81,6 @@ namespace object
   UVar::UVar(libport::intrusive_ptr<UVar>)
     : Primitive( boost::bind(&UVar::accessor, this))
     , looping_(false)
-    , inChange_(false)
     , inAccess_(false)
   {
     protos_set(new List);
@@ -116,17 +114,21 @@ namespace object
   UVar::update_(rObject val)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
     slot_update(SYMBOL(val), val);
     if (is_true(slot_get(SYMBOL(owned))))
       callNotify(r, rObject(this), SYMBOL(changeOwned));
-     else if (!inChange_)
-     {
-       inChange_ = true;
-       callNotify(r, rObject(this), SYMBOL(change));
-       inChange_ = false;
-     }
-   return val;
+    else
+    {
+      std::set<void*>::iterator i = inChange_.find(&r);
+      if (i == inChange_.end())
+      {
+	// callNotify does not throw, this is safe.
+	i = inChange_.insert(&r).first;
+	callNotify(r, rObject(this), SYMBOL(change));
+	inChange_.erase(i);
+      }
+    }
+    return val;
   }
 
   rObject

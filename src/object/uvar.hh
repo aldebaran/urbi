@@ -25,7 +25,8 @@ namespace object
     rObject writeOwned(rObject newval);
   private:
     bool looping_;
-    bool inChange_;
+    /// Set of runners currently in a notifyChange.
+    std::set<void*> inChange_;
     bool inAccess_;
     URBI_CXX_OBJECT(UVar);
   };
