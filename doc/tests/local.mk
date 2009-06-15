@@ -8,20 +8,19 @@ TEST_SUITE_LOG = tests/test-suite.log
 # The tests are generated in the src tree, but since it changes often,
 # we don't put them in the repository.  That's no reason to forget to
 # ship it.
-#
-# We don't use '*.tex' blindly, as there are some in document-aux.
-local_mks =							\
-  $(patsubst %.tex,$(srcdir)/tests/%/local.mk,			\
-             $(call ls_files,specs/*.tex tutorial/*.tex))
--include $(local_mks)
+test_mks =					\
+  $(patsubst %.tex,$(srcdir)/tests/%/test.mk,	\
+    $(filter-out document-aux/%,		\
+      $(call ls_files,*.tex)))
+-include $(test_mks)
 
 EXTRA_DIST +=					\
-  $(local_mks)					\
+  $(test_mks)					\
   $(TESTS)					\
   tests/test.u
 
 # Generating the test files.
-$(srcdir)/tests/%/local.mk: %.tex $(srcdir)/tex2chk
+$(srcdir)/tests/%/test.mk: %.tex $(srcdir)/tex2chk
 	srcdir=$(srcdir) move_if_change=$(move_if_change) $(srcdir)/tex2chk $<
 
 

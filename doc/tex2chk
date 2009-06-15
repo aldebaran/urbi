@@ -178,7 +178,7 @@ sub process_file ($)
 
 # dump_chk $DIR
 # -------------
-# Generate all the *chk files and there associated local.mk.
+# Generate all the *chk files and there associated test.mk.
 sub dump_chk ($)
 {
   my ($dir) = @_;
@@ -195,7 +195,7 @@ sub dump_chk ($)
     system ("$ENV{move_if_change} -I '^//' $file.tmp $file") == 0
       or die "$ENV{move_if_change} failed: $?";
   }
-  my $local_mk = "$dir/local.mk";
+  my $local_mk = "$dir/test.mk";
   my $mk = new IO::File ">$local_mk"
       or die "cannot create $local_mk: $!";
   # Do not include the ../.. stuff in the Makefile.

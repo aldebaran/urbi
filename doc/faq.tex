@@ -49,6 +49,7 @@ will inherit all the Object methods), you can do:
 
 \begin{urbiscript}
 var myObject = Object.new;
+[00000001] Object_0x76543210
 \end{urbiscript}
 
 \paragraph{How do I destroy an Object}
@@ -71,14 +72,15 @@ to this object.
 To add a slot to an object \lstinline{O}, you have to use the
 \lstinline{var} keyword, which is syntactic sugar for the
 \lstinline{setSlot} method:
+
 \begin{urbiscript}
-var O = Object.new |
+var O2 = Object.new |
 // Syntax...
-var O.mySlot1 = 42;
+var O2.mySlot1 = 42;
 [00000001] 42
 
 // and semantics.
-O.setSlot("mySlot2", 23);
+O2.setSlot("mySlot2", 23);
 [00000001] 23
 \end{urbiscript}
 
@@ -86,7 +88,7 @@ Note that in a method, \lstinline{this} designates the current
 object.  It is needed to distinguish the name of a slot in the current
 object, versus a local variable name:
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   // Create a new slot in the current object.
   var this.foo = 42;
@@ -95,9 +97,9 @@ object, versus a local variable name:
   // after we exit the current scope.
   var bar = 23;
 }|
-bar
-foo
-[00000001] 23
+bar;
+foo;
+[00000001] 42
 \end{urbifixme}
 
 
@@ -106,10 +108,10 @@ foo
 Use the \lstinline|=| operator, which is syntactic sugar for the
 \lstinline|updateSlot| method.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 class O
 {
-  mySlot = 42;
+  var mySlot = 42;
 }|
 // Sugarful.
 O.mySlot = 51;
@@ -127,9 +129,10 @@ Use \lstinline|var| and \lstinline|=|.
 // In two steps: definition, and initial assignment.
 var myLocalVariable;
 myLocalVariable = "foo";
-
+[00000001] "foo"
 // In a single step: definition with an initial value.
 var myOtherLocalVariable = "bar";
+[00000001] "bar"
 \end{urbiscript}
 
 
@@ -279,7 +282,7 @@ whatever value is present in the event that triggered the
 Use the \lstinline{for} construct (\autoref{sec:lang:for:each}), or
 the \lstinline|each| method (\refObject{List}):
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for (var i: [10, 11, 12]) echo (i);
 [00000001] *** 10
 [00000002] *** 11
@@ -312,14 +315,18 @@ is preferable to subscribe to the variable to be notified when it is
 changed, and then to check that your conditions are verified.  For
 instance, instead of the costly following program:
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   var x = 0;
   at (x == 1)
     echo ("one!");
-  for (var i in [0, 1, 2])
-    echo (i) | x = i;
+  for (var i : [0, 1, 2])
+  {
+    echo (i);
+    x = i
+  };
 };
+[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 [00000003] *** 0
 [00000003] *** 1
 [00000003] *** one!
@@ -335,7 +342,11 @@ use the following implementation:
   at (x->changed?)
     if (x == 1)
       echo ("one!");
-  for (var i in [0, 1, 2])
+  for (var i : [0, 1, 2])
+  {
+    echo (i);
+    x = i
+  };
 };
 [00000003] *** 0
 [00000003] *** 1
@@ -351,8 +362,11 @@ You may also use the event guard using %
   var x = 0;
   at (x->changed? if x == 1)
       echo ("one!");
-  for (var i in [0, 1, 2])
-    echo (i) | x = i;
+  for (var i : [0, 1, 2])
+  {
+    echo (i);
+    x = i
+  };
 };
 [00000003] *** 0
 [00000003] *** 1
@@ -362,6 +376,28 @@ You may also use the event guard using %
 
 The optimization of \lstinline|waituntil(\var{cond})| can be done
 similarly.
+
+\paragraph{Loops}
+
+Alternatively, \lstinline|waituntil| can be simulated with a
+\lstinline|while|, but rather that looping intensively on an empty
+body, you may \lstinline|sleep| for a little while, say 20ms.  This is
+especially useful when there is no value that changes, such as the
+creation of a new slot.
+
+\begin{urbiscript}[firstnumber=last]
+waituntil(Object.hasSlot("foo")) | echo (Object.foo),
+[00000010:warning] !!! expensive feature: waituntil (<expression>), prefer waituntil (<event>)
+var Object.foo = "bar"|;
+[00000003] *** bar
+\end{urbiscript}
+
+\begin{urbiscript}[firstnumber=last]
+while (!Object.hasSlot("bar")) sleep(20ms) | echo (Object.bar),
+var Object.bar = "foo"|;
+sleep(20ms);
+[00000003] *** foo
+\end{urbiscript}
 
 \section{UObjects}
 

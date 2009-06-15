@@ -219,11 +219,11 @@ macro is available, as well as the \lstinline{send()} function. You
 can either pass it a string, or directly \urbi code inside a pair of
 parentheses:
 
-\begin{urbiscript}
+\begin{urbifixme}
 send ("tag:1+1;");
 
 URBI (( at (someevent (x)) { sometag:echo x; }; ));
-\end{urbiscript}
+\end{urbifixme}
 
 \section{Use cases}
 
@@ -395,10 +395,10 @@ servo::setPID (int p, int i, int d)
 UStart (servo);
 \end{cxx}
 
-That's it, compile this module, and you can use it within \urbi:
+That's it, compile this module, and you can use it within \us:
 
-\begin{urbiscript}
-// Create a new instance.  Calls init (1)
+\begin{urbifixme}
+// Create a new instance.  Calls init (1).
 headPan = new servo (1);
 
 // Calls setPID ().
@@ -416,7 +416,7 @@ headPan.val = 0 sin:1s ampli:20,
 // Periodically calls valueAccessed ().
 at (headPan.val < 0)
   echo ("left");
-\end{urbiscript}
+\end{urbifixme}
 
 The sample code above has one problem: \lstinline{valueAccessed} and
 \lstinline{valueChanged} are called each time the value is read or
