@@ -78,7 +78,7 @@ namespace runner
   LIBPORT_SPEED_INLINE bool
   Runner::has_tag(const object::rTag& tag) const
   {
-    return has_tag(*(tag->value_get()));
+    return has_tag(*tag->value_get());
   }
 
   LIBPORT_SPEED_INLINE void

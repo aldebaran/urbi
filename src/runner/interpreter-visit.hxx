@@ -527,19 +527,19 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Dictionary* e)
   {
-    object::rDictionary d = new object::Dictionary();
+    object::rDictionary res = new object::Dictionary();
     /// Dictonary with a base was caught at parse time.
     assert(!e->base_get());
     foreach (ast::modifiers_type::value_type exp, e->value_get())
     {
       rObject v = operator()(exp.second.get());
-      // Refuse void in literal lists
+      // Refuse void in literals.
       if (v == object::void_class)
 	raise_unexpected_void_error();
-      passert(v,v);
-      d->set(exp.first, v);
+      passert(v, v);
+      res->set(exp.first, v);
     }
-    return d;
+    return res;
   }
 
   /// Trigger leave event of all \a tags
@@ -555,11 +555,10 @@ namespace runner
   Interpreter::visit(const ast::TaggedStmt* t)
   {
     // FIXME: might be simplified after type checking code is moved
-    // to Object
+    // to Object.
     object::rObject unchecked_tag = eval_tag(t->tag_get());
     object::type_check<object::Tag>(unchecked_tag);
     object::rTag urbi_tag = unchecked_tag->as<object::Tag>();
-
 
     size_t result_depth = tag_stack_size();
     std::vector<object::rTag> applied;
@@ -587,9 +586,8 @@ namespace runner
       // children.
       foreach (const rTag& tag, applied)
 	apply_tag(tag, &finally);
-      // If one of the tags caused us to be frozen, let the
-      // scheduler handle this properly to avoid duplicating the
-      // logic.
+      // If one of the tags caused us to be frozen, let the scheduler
+      // handle this properly to avoid duplicating the logic.
       if (some_frozen)
 	yield();
       // Start with the uppermost tag in the derivation chain.
