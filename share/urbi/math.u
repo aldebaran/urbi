@@ -20,5 +20,9 @@ class Global.Math
   {
     return call.evalArgs.max
   };
+
+  var pi  = 3.14159265358979323846264338327950288;
+  var inf = Float.inf;
+  var nan = Float.nan;
 };
 Global.addProto(Global.Math);

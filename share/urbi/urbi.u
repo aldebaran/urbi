@@ -1,16 +1,3 @@
-/*------------.
-| Constants.  |
-`------------*/
-
-class Global.Constants
-{
-  var pi     = 3.14159265358979323846264338327950288;
-  var inf    = Float.inf;
-  var nan    = Float.nan;
-};
-
-Global.addProto (Global.Constants);
-
 /*---------.
 | Object.  |
 `---------*/
