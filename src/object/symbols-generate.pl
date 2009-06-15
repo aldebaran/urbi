@@ -67,7 +67,7 @@ die "grep failed"
 # Accept only identifiers followed by ')', or ','.
 my %symbol =
     map { $_ => symbol($_) }
-	($symbols =~ /\b(?:$symbol_tag) *\((\w+)[,)]/gm);
+	($symbols =~ /\b(?:$symbol_tag) *\((\w+)\s*[,)]/gm);
 
 print <<'EOF';
 /**
