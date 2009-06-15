@@ -25,15 +25,15 @@ namespace object
     void block(const objects_type&);
     void init(const objects_type& args);
     void freeze();
-    libport::Symbol name();
+    libport::Symbol name() const;
     static rTag new_flow_control(const objects_type&);
-    sched::prio_type prio();
+    sched::prio_type prio() const;
     sched::prio_type prio_set(sched::prio_type);
     void stop(const objects_type&);
     void unblock();
     void unfreeze();
-    bool frozen();
-    bool blocked();
+    bool frozen() const;
+    bool blocked() const;
 
     /// Return, potentially creating first, the enter event for \a this
     rObject enter();

@@ -63,7 +63,7 @@ namespace object
   }
 
   libport::Symbol
-  Tag::name()
+  Tag::name() const
   {
     return value_->name_get();
   }
@@ -95,7 +95,7 @@ namespace object
   }
 
   sched::prio_type
-  Tag::prio()
+  Tag::prio() const
   {
     return value_->prio_get();
   }
@@ -173,13 +173,13 @@ namespace object
   }
 
   bool
-  Tag::frozen()
+  Tag::frozen() const
   {
     return value_->frozen();
   }
 
   bool
-  Tag::blocked()
+  Tag::blocked() const
   {
     return value_->blocked();
   }
