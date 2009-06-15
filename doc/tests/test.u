@@ -32,8 +32,8 @@ do (Float)
   // chosen by fair dice roll.
   // guaranteed to be random.
   var this.random_values = [3, 1, 2];
-  removeSlot("random");
-  var random =
+  random->constant = false;
+  random =
     function ()
     {
       var res = random_values[random_counter];
@@ -43,12 +43,12 @@ do (Float)
     }
 }|
 
-// Likewise for String.fresh
+// Likewise for String.fresh.
 do (String)
 {
   var counter_ = 5;
-  removeSlot("fresh");
-  function fresh ()
+  fresh->constant = false;
+  fresh = function ()
   {
     this + "_" + counter_++;
   }
