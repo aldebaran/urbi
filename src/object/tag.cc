@@ -74,14 +74,13 @@ namespace object
     check_arg_count(args.size(), 0, 1);
     libport::Symbol tag_short_name;
 
-    if (args.size() > 0)
+    if (args.empty())
+      tag_short_name = libport::Symbol::fresh("tag");
+    else
     {
       type_check<String>(args[0]);
-      tag_short_name =
-	libport::Symbol(args[0]->as<String>()->value_get());
+      tag_short_name = libport::Symbol(args[0]->as<String>()->value_get());
     }
-    else
-      tag_short_name = libport::Symbol::fresh("tag");
 
     value_->name_set(tag_short_name);
   }
@@ -132,14 +131,13 @@ namespace object
   static inline rObject
   tag_event(Tag* owner, const libport::Symbol& field)
   {
-    if (!owner->slot_has(field))
-    {
-      CAPTURE_GLOBAL(Event);
-      rObject evt = Event->call(SYMBOL(new));
-      owner->slot_set(field, evt);
-      return evt;
-    }
-    return owner->slot_get(field);
+    if (owner->slot_has(field))
+      return owner->slot_get(field);
+
+    CAPTURE_GLOBAL(Event);
+    rObject evt = Event->call(SYMBOL(new));
+    owner->slot_set(field, evt);
+    return evt;
   }
 
   rObject
@@ -189,21 +187,25 @@ namespace object
   void
   Tag::initialize(CxxObject::Binder<Tag>& bind)
   {
-    bind(SYMBOL(block), &Tag::block);
-    bind(SYMBOL(blocked), &Tag::blocked);
-    bind(SYMBOL(enter), &Tag::enter);
-    bind(SYMBOL(freeze), &Tag::freeze);
-    bind(SYMBOL(frozen), &Tag::frozen);
-    bind(SYMBOL(getParent), &Tag::parent_get);
-    bind(SYMBOL(leave), &Tag::leave);
-    bind(SYMBOL(name), &Tag::name);
-    bind(SYMBOL(init), &Tag::init);
-    bind(SYMBOL(newFlowControl), &Tag::new_flow_control);
-    bind(SYMBOL(prio), &Tag::prio);
-    bind(SYMBOL(prio_set), &Tag::prio_set);
-    bind(SYMBOL(stop), &Tag::stop);
-    bind(SYMBOL(unblock), &Tag::unblock);
-    bind(SYMBOL(unfreeze), &Tag::unfreeze);
+#define DECLARE(Name, Function)                 \
+    bind(SYMBOL(Name), &Tag::Function)
+
+    DECLARE(block, block);
+    DECLARE(blocked, blocked);
+    DECLARE(enter, enter);
+    DECLARE(freeze, freeze);
+    DECLARE(frozen, frozen);
+    DECLARE(getParent, parent_get);
+    DECLARE(init, init);
+    DECLARE(leave, leave);
+    DECLARE(name, name);
+    DECLARE(newFlowControl, new_flow_control);
+    DECLARE(prio, prio);
+    DECLARE(prio_set, prio_set);
+    DECLARE(stop, stop);
+    DECLARE(unblock, unblock);
+    DECLARE(unfreeze, unfreeze);
+#undef DECLARE
   }
 
   URBI_CXX_OBJECT_REGISTER(Tag);

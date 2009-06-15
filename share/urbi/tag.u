@@ -16,11 +16,11 @@ do (Global.Tag)
   {
     function report(msg)
     {
-      var res = "";
+      var res = ""|
       for| (var tag: currentRunner.tags)
         if (!tag.isA(SystemTag))
-          res += tag.name + ": ";
-      echo(res + msg);
+          res += tag.name + ": "|
+      echo(res + msg)
     };
 
     at (begin.enter?)
@@ -35,7 +35,8 @@ do (Global.Tag)
   }
 };
 
-class Global.Tags {
+class Global.Tags
+{
   function 'new'(name)
   {
     return Tag.new(name)
