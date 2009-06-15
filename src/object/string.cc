@@ -369,23 +369,29 @@ namespace object
 
   void String::initialize(CxxObject::Binder<String>& bind)
   {
-    bind(SYMBOL(LT), &String::lt);
-    bind(SYMBOL(PERCENT), &String::format);
-    bind(SYMBOL(PLUS), &String::plus);
-    bind(SYMBOL(STAR), &String::star);
-    bind(SYMBOL(asFloat), &String::as_float);
-    bind(SYMBOL(asPrintable), &String::as_printable);
-    bind(SYMBOL(asString), &String::as_string);
-    bind(SYMBOL(distance), &String::distance);
-    bind(SYMBOL(fresh), &String::fresh);
-    bind(SYMBOL(fromAscii), &String::fromAscii);
-    bind(SYMBOL(replace), &String::replace);
-    bind(SYMBOL(set), &String::set);
-    bind(SYMBOL(size), &String::size);
+#define DECLARE(Name, Function)                 \
+    bind(SYMBOL(Name), &String::Function)
+
+    DECLARE(LT          , lt);
+    DECLARE(PERCENT     , format);
+    DECLARE(PLUS        , plus);
+    DECLARE(STAR        , star);
+    DECLARE(asFloat     , as_float);
+    DECLARE(asPrintable , as_printable);
+    DECLARE(asString    , as_string);
+    DECLARE(distance    , distance);
+    DECLARE(fresh       , fresh);
+    DECLARE(fromAscii   , fromAscii);
+    DECLARE(replace     , replace);
+    DECLARE(set         , set);
+    DECLARE(size        , size);
+    DECLARE(toAscii     , toAscii);
+    DECLARE(toLower     , to_lower);
+    DECLARE(toUpper     , to_upper);
+
+#undef DECLARE
+
     bind(SYMBOL(split), split_bouncer);
-    bind(SYMBOL(toAscii), &String::toAscii);
-    bind(SYMBOL(toLower), &String::to_lower);
-    bind(SYMBOL(toUpper), &String::to_upper);
 
     proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
     proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
