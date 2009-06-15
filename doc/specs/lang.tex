@@ -41,7 +41,7 @@ any character.
 \begin{urbiscript}
 var x;
 var foobar51;
-obj.met_hod();
+var this.a_name_with_underscores;
 // Invalid.
 // var 3x;
 // obj.3x();
@@ -51,12 +51,12 @@ obj.met_hod();
 // obj.if();
 // However, keywords can be escaped with simple quotes.
 var 'if';
-obj.'if'();
+var this.'else';
 
 // Identifiers can be escaped with simple quotes
 var '%x';
 var '1 2 3';
-obj.'[]';
+var this.'[]';
 \end{urbiscript}
 
 \subsection{Keywords}
@@ -1218,14 +1218,14 @@ arguments, the parentheses can be omitted. As you might see,
 sending messages is very similar to calling methods in classical
 languages.
 
-\begin{urbiscript}
+\begin{urbifixme}
 // Send the message msg to object obj, with arguments arg1 and arg2.
 obj.msg(arg1, arg2);
 // Send the message msg to object obj, with no arguments.
 obj.msg();
 // This is strictly equivalent.
 obj.msg;
-\end{urbiscript}
+\end{urbifixme}
 
 When a message ``msg'' is sent to object \lstinline|obj|:
 

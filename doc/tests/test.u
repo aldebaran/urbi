@@ -3,17 +3,6 @@
 // Too many unpredictable changes in the error messages.
 LookupError.fixSpellingErrors = false |
 
-var obj = Object.new |
-do (obj)
-{
-  function met_hod() {};
-  function 'if'() {};
-  var '[]';
-  function msg {};
-} |
-
-var Global.mytag = Tag.new |
-
 // Determinism: asList and asString.
 do (Dictionary)
 {
