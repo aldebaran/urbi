@@ -12,7 +12,7 @@ function Global.isdef
   {
     if (base.hasSlot(c))
     {
-      if (!first && !base.slotNames.has(c))
+      if (!first && !base.hasLocalSlot(c))
         return false |
       var s = base.getSlot(c).acceptVoid |
       base = s.apply([s]).acceptVoid |
@@ -46,7 +46,7 @@ class Global.UObject
   function destroy()
   {
     uobjects.removeSlot(__uobjectName);
-    for (var f: slotNames.remove("__uobjectName"))
+    for (var f: localSlotNames.remove("__uobjectName"))
       removeSlot(f)
   };
 
@@ -124,7 +124,7 @@ do (getSlot("UVar"))
         var max = parent.getSlot(name).getProperty("val", "rangemax")|
         parent.updateSlot(name, min + (max - min) * value)
       })|
-    if ("__has_uvar" not in parent.slotNames)
+    if (not parent.hasLocalSlot("__has_uvar"))
     {
       var parent_getprop = parent.getSlot("getProperty")|
       parent.getProperty = function(varname, propname)
@@ -224,11 +224,11 @@ at (getSlot("UVar").onHasNotifyAccess?)
 var Global.uobjects = Object.clone;
 Global.uobjects.uobject_init();
 
-if ("evaluate" not in Global.slotNames)
-	UVar.new(Global,"evaluate")
+if (not Global.hasLocalSlot("evaluate"))
+  UVar.new(Global,"evaluate")
 else
 {
-  // A plugged UObject allready instanciated it.
+  // A plugged UObject already instanciated it.
   if (evaluate.isA(String))
     eval(evaluate)
 };
@@ -320,7 +320,7 @@ class Global.'external'
     }|
     // Ignore duplicate binds of same var.
     var lid = lobby.uid|
-    if (lid not in slotNames)
+    if (!hasLocalSlot(lid))
       setSlot(lid, [])|
     if (fullname in getSlot(lid))
       return|
@@ -398,7 +398,7 @@ class Global.'external'
     if (obj.remoteEventMap.has(key))
       return |
     obj.remoteEventMap[key] = 1 |
-    if (ename not in uobjects.getSlot(objname).slotNames)
+    if (not uobjects.getSlot(objname).hasLocalSlot(ename))
       uobjects.getSlot(objname).setSlot(ename, Event.new) |
     var args = nargs.seq.map(function(x) { "p%s" %[x]}).join(", ") |
     var varargs = nargs.seq.map(function(x) { "var p%s" %[x]}).join(", ")|
@@ -411,7 +411,7 @@ class Global.'external'
   at (Lobby.onDisconnect?(var l))
   {
     // Remove all the remote uobjects created by this lobby.
-    for (var o: uobjects.slotNames)
+    for (var o: uobjects.localSlotNames)
     {
       if (uobjects.getSlot(o).hasSlot("lobby")
 	&& uobjects.getSlot(o).lobby === l)

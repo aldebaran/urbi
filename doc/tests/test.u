@@ -43,7 +43,18 @@ do (Float)
     }
 }|
 
-// Likewise for String.fresh.
+// Deterministic localSlotNames.
+do (Object)
+{
+  copySlot("localSlotNames", "oldLocalSlotNames");
+  localSlotNames->constant = false;
+  localSlotNames = function ()
+    {
+      oldLocalSlotNames.sort;
+    };
+}|
+
+// Deterministic String.fresh.
 do (String)
 {
   var counter_ = 5;

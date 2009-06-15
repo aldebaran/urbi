@@ -1053,7 +1053,7 @@ The \lstinline|createSlot| function adds a slot to an object with the
 void (\autoref{sec:std-void}) value. The \lstinline|updateSlot|
 function changes the value of a slot; \lstinline|getSlot| reads
 it. The \lstinline|setSlot| method creates a slot with a given
-value. Finally, the \lstinline|slotNames| method returns the list of
+value. Finally, the \lstinline|localSlotNames| method returns the list of
 the object slot's name. The listing below shows how to manipulate
 slots. More documentation about these methods can be found in
 \autorefObject{Object}.
@@ -1061,10 +1061,10 @@ slots. More documentation about these methods can be found in
 \begin{urbiscript}
 var o = Object.new;
 [00000000:hide] Object_0xADDR
-o.slotNames;
+o.localSlotNames;
 [00000000] []
 o.createSlot("test");
-o.slotNames;
+o.localSlotNames;
 [00000000] ["test"]
 o.getSlot("test").asString;
 [00000000] "void"
@@ -1076,8 +1076,7 @@ o.getSlot("test");
 
 \subsubsection{Syntactic Sugar}
 
-Syntactic sugar eases the use of slot methods:
-
+There is some syntactic sugar for slot methods:
 \begin{itemize}
 \item \lstinline|var o.name| is equivalent to
   \lstinline|o.createSlot("name")|.

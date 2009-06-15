@@ -222,7 +222,7 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (const objects_type& args)
+  object_class_localSlotNames(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     const rObject& obj = args[0];
@@ -281,10 +281,14 @@ namespace object
                            make_primitive(object_class_isA));
     Object::proto->slot_set(SYMBOL(hasLocalSlot),
                             make_primitive(&object_class_hasLocalSlot));
-    /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
-#define DECLARE(Name)                                                   \
-    Object::proto->slot_set(SYMBOL(Name), new Primitive(object_class_##Name), true)
 
+#define DECLARE(Name)                                           \
+    Object::proto->slot_set(SYMBOL(Name),                       \
+                            new Primitive(object_class_##Name), \
+                            true)
+
+    DECLARE(EQ_EQ);
+    DECLARE(EQ_EQ_EQ);
     DECLARE(addProto);
     DECLARE(allProtos);
     DECLARE(allSlotNames);
@@ -293,11 +297,9 @@ namespace object
     DECLARE(clone);
     DECLARE(dump);
     DECLARE(init);
-    DECLARE(EQ_EQ_EQ);
+    DECLARE(localSlotNames);
     DECLARE(protos);
     DECLARE(removeProto);
-    DECLARE(EQ_EQ);
-    DECLARE(slotNames);
     DECLARE(uid);
 #undef DECLARE
 

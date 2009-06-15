@@ -430,14 +430,14 @@ list of slot names, each of which indexes a value --- just like a
 dictionary. You can get an object's slot value by using the dot
 (\lstinline{.}) operator on this object, followed by the name of the
 slot. You can list the names of the slots of an object with the
-\lstinline{slotNames} method.
+\lstinline{localSlotNames} method.
 
 \begin{urbiscript}
 // Create a fresh object with two slots.
 class Foo { var a = 42; var b = "foo"; };
 [00000000] Foo
 // Inspect it.
-Foo.slotNames.sort;
+Foo.localSlotNames;
 [00000000] ["a", "asFoo", "b", "type"]
 // We now know the name of its slots.
 // Let's see their value.
@@ -460,20 +460,20 @@ empty, neutral object, so let's start by instantiating one with the
 var o = Object.clone;
 [00000000] Object_0x00000000
 // Check its content
-o.slotNames;
+o.localSlotNames;
 [00000000] []
 \end{urbiscript}
 
 As you can see, we obtain an empty fresh object. Note that it still
 inherits from \lstinline{Object} features that all objects share, such as
-the \lstinline{slotNames} method.
+the \lstinline{localSlotNames} method.
 
-Also note how \lstinline{o} is printed out: \lstinline{Object\_}, followed by an
-hexadecimal number. Since this object is empty, its printing is quite
-generic: its type (\lstinline{Object}), and its unique identifier (every
-\us object has one). Since these identifiers are often irrelevant
-and might differ between two executions, they are often filled with
-zeroes in this document.
+Also note how \lstinline{o} is printed out: \lstinline{Object_},
+followed by an hexadecimal number. Since this object is empty, its
+printing is quite generic: its type (\lstinline{Object}), and its
+unique identifier (every \us object has one). Since these identifiers
+are often irrelevant and might differ between two executions, they are
+often filled with zeroes in this document.
 
 We're now getting back to our empty object. We want to give it two
 slots, \lstinline{a} and \lstinline{b}, with values \lstinline|42| and
@@ -484,7 +484,7 @@ its value.
 \begin{urbiscript}[firstnumber=last]
 o.setSlot("a", 42);
 [00000000] 42
-o.slotNames;
+o.localSlotNames;
 [00000000] ["a"]
 o.a;
 [00000000] 42
@@ -497,7 +497,7 @@ setting slot is using the \lstinline{var} keyword.
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
-o.slotNames.sort;
+o.localSlotNames;
 [00000000] ["a", "b"]
 o.b;
 [00000000] "foo"
@@ -533,7 +533,7 @@ set(x, "foo", 0);
 [00000000] 0
 set(x, "bar", 1);
 [00000000] 1
-x.slotNames.sort;
+x.localSlotNames;
 [00000000] ["x_bar", "x_foo"]
 get(x, "foo");
 [00000000] 0
@@ -593,11 +593,11 @@ o.c = 1;
 Finally, use \lstinline{removeSlot} to delete a slot from an object.
 
 \begin{urbiscript}[firstnumber=last]
-o.slotNames.sort;
+o.localSlotNames;
 [00000000] ["a", "b", "c"]
 o.removeSlot("c");
 [00000000] Object_0x00000000
-o.slotNames.sort;
+o.localSlotNames;
 [00000000] ["a", "b"]
 \end{urbiscript}
 
@@ -695,11 +695,11 @@ object, including primitive types, types themselves, functions, \ldots
 \begin{urbiscript}
 var x = 0;
 [00000000] 0
-x.slotNames;
+x.localSlotNames;
 [00000000] []
 var x.slot = 1;
 [00000000] 1
-x.slotNames;
+x.localSlotNames;
 [00000000] ["slot"]
 x.slot;
 [00000000] 1
@@ -791,18 +791,18 @@ non-trivial fact: any modification on \lstinline|a| will affect
 \lstinline|c| as well, as shown below.
 
 \begin{urbiscript}[firstnumber=last]
-a.slotNames;
+a.localSlotNames;
 [00000000] []
-b.slotNames;
+b.localSlotNames;
 [00000000] []
-c.slotNames;
+c.localSlotNames;
 [00000000] []
 var a.flag; // Create a slot in a.
-a.slotNames;
+a.localSlotNames;
 [00000000] ["flag"]
-b.slotNames;
+b.localSlotNames;
 [00000000] []
-c.slotNames;
+c.localSlotNames;
 [00000000] ["flag"]
 \end{urbiscript}
 
@@ -844,7 +844,7 @@ x.uid;
 [00000000] "0x1"
 test(x);
 [00000000] *** 0x1
-x.slotNames;
+x.localSlotNames;
 [00000000] ["flag"]
 \end{urbiscript}
 
@@ -1257,7 +1257,7 @@ illustrated below.
 var p = Pair.clone;
 [00000000] (nil, nil)
 // p has absolutely no slots.
-p.slotNames;
+p.localSlotNames;
 [00000000] []
 // Yet this works
 p.first;
@@ -1265,7 +1265,7 @@ p.first;
 // and Pair has a 'first' slot.
 p.protos.head === Pair;
 [00000000] true
-"first" in Pair.slotNames && "second" in Pair.slotNames;
+"first" in Pair.localSlotNames && "second" in Pair.localSlotNames;
 [00000000] true
 \end{urbiscript}
 

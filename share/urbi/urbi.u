@@ -201,6 +201,12 @@ do (Object)
     hasLocalSlot(s)
   };
 
+  function slotNames()
+  {
+    warn("the semantics of `slotNames' is about to change from `localSlotNames' to `allSlotNames', consistently with `hasLocalSlot'/`hasSlot'.  In the meanwhile please use either `localSlotNames' or `allSlotNames'") |
+    localSlotNames
+  };
+
   function isProto()
   {
     hasLocalSlot("type")

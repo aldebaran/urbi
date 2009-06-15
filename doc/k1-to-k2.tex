@@ -79,11 +79,11 @@ class Foo
 } | {};
 function Object.removeAllSlots()
 {
-  for (var s: slotNames)
+  for (var s: localSlotNames)
     removeSlot(s);
 } | {};
 Foo.removeAllSlots;
-Foo.slotNames;
+Foo.localSlotNames;
 [00000000] []
 \end{urbiscript}
 
