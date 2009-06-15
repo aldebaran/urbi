@@ -110,12 +110,25 @@ assert(!Object.getSlot("getSlot").isVoid);
 
 \item \lstinline|hasProperty|\\
 
-\item \lstinline|hasSlot(\var{slot})|\\
-  Return true if \lstinline|this| has the slot \var{slot}.
+\item \lstinline|hasLocalSlot(\var{slot})|\\
+  Whether \lstinline|this| features a slot \var{slot}, locally, not
+  from some ancester.  See also \lstinline|Object.hasSlot|.
 
 \begin{urbiscript}[firstnumber=last]
-assert(hasSlot("connectionTag"));
-assert(!(hasSlot("thisSlotDoesNotExist")));
+class Base         { var this.base = 23; } |;
+class Derive: Base { var this.derive = 43 } |;
+assert(Derive.hasLocalSlot("derive"));
+assert(!Derive.hasLocalSlot("base"));
+\end{urbiscript}
+
+\item \lstinline|hasSlot(\var{slot})|\\
+  Whether \lstinline|this| has the slot \var{slot}, locally, or from
+  some ancester.  See also \lstinline|Object.hasLocalSlot|.
+
+\begin{urbiscript}[firstnumber=last]
+assert(Derive.hasSlot("derive"));
+assert(Derive.hasSlot("base"));
+assert(!Base.hasSlot("derive"));
 \end{urbiscript}
 
 \item \lstinline|id|\\
@@ -161,15 +174,6 @@ assert(!(42.isVoid));
 \begin{urbiscript}[firstnumber=last]
 assert(locateSlot("init"), Channel);
 assert(locateSlot("doesNotExist").isNil);
-\end{urbiscript}
-
-\item \lstinline|ownsSlot(\var{slot})|\\
-  Return true if \lstinline|this| owns the slot \var{slot}, false
-  otherwise.
-
-\begin{urbiscript}[firstnumber=last]
-assert(Object.ownsSlot("ownsSlot"));
-assert(!(24.ownsSlot("asString")));
 \end{urbiscript}
 
 \item \lstinline|print|\\

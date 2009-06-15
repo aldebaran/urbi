@@ -195,9 +195,15 @@ load("urbi/system.u");
 
 do (Object)
 {
-  function isProto ()
+  function ownsSlot(s)
   {
-    ownsSlot("type")
+    warn("`o.ownsSlot(s)' is deprecated, use `o.hasLocalSlot(s)'") |
+    hasLocalSlot(s)
+  };
+
+  function isProto()
+  {
+    hasLocalSlot("type")
   };
 
   // Gives type, + uid if relevant

@@ -68,7 +68,7 @@ class Global.UObject
   {
     if (interval < minimumInterval)
       interval = minimumInterval;
-    if (!ownsSlot("timerTask"))
+    if (!hasLocalSlot("timerTask"))
       timerTask = [];
     var tag = Tag.new;
     tag: detach({loop{ func(); sleep(interval)}}) |
@@ -272,7 +272,7 @@ class Global.'external'
   */
   function 'object'(objname)
   {
-    if (uobjects.ownsSlot(objname))
+    if (uobjects.hasLocalSlot(objname))
       return|
     // The remote sent the code 'class <objname> {};' just before
     // calling this function, but we want objname in uobjects, not
@@ -294,7 +294,7 @@ class Global.'external'
       // Wait until the remote defines u.init.
       // FIXME: Use waituntil once it is efficient.
       while(!(Global.uobjects.hasSlot(u)
-              && Global.uobjects.getSlot(u).ownsSlot("init")))
+              && Global.uobjects.getSlot(u).hasLocalSlot("init")))
         sleep(getPeriod) |
       var ret = Global.uobjects.getSlot(u);
       ret.protos = [this];
@@ -327,7 +327,7 @@ class Global.'external'
     getSlot(lid).insertBack(fullname)|
     var obj = uobjects.getSlot(objname)|
     // Setup a hook, notify the remote when a change occurrs.
-    if (!obj.ownsSlot(varname))
+    if (!obj.hasLocalSlot(varname))
       UVar.new(obj, varname)
     else if (obj.getSlot(varname).isVoid
         || !obj.getSlot(varname).hasSlot("isUVar"))

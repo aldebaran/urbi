@@ -53,7 +53,7 @@ namespace object
 
   inline
   rSlot
-  Object::own_slot_get(const key_type& k) const
+  Object::local_slot_get(const key_type& k) const
   {
     return slots_.get(this, k);
   }

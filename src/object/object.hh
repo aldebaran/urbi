@@ -109,7 +109,6 @@ namespace object
     slot_get(const key_type& k);
 
     /// Implement copy-on-write if the owner of the scope is not this.
-    /// Otherwise, falls-thru to own_slot_update().
     /// \param r        Runner to run the updateHook.
     /// \param k	The slot to update
     /// \param o	The new value
@@ -138,7 +137,7 @@ namespace object
 
     /// Get the object pointed to by the *local* slot.
     /// \return 0 if there is no such slot.
-    rSlot own_slot_get(const key_type& k) const;
+    rSlot local_slot_get(const key_type& k) const;
 
     /// Remove slot.
     Object& slot_remove(const key_type& k);

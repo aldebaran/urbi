@@ -30,7 +30,7 @@
         setProperty(name, "updateHook",
           function (name, val) {
             // Copy members if needed before altering it
-            if (!ownsSlot("members"))
+            if (!hasLocalSlot("members"))
               members = members.clone;
             members[n] = val;
             void;

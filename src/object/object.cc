@@ -78,7 +78,7 @@ namespace object
     if (libport::mhas(marks, this))
       return location_type(0, 0);
     marks.insert(this);
-    if (rSlot slot = own_slot_get(k))
+    if (rSlot slot = local_slot_get(k))
       return location_type(const_cast<Object*>(this), slot);
     foreach (const rObject& proto, protos_get())
     {
@@ -87,7 +87,7 @@ namespace object
         return rec;
     }
     if (fallback)
-      if (rSlot slot = own_slot_get(SYMBOL(fallback)))
+      if (rSlot slot = local_slot_get(SYMBOL(fallback)))
         return location_type(const_cast<Object*>(this), slot);
     return location_type(0, 0);
   }

@@ -73,7 +73,7 @@ namespace runner
     // Accept to call methods on void only if void itself is holding
     // the method.
     if (target == object::void_class)
-      if (!target->own_slot_get(message))
+      if (!target->local_slot_get(message))
 	raise_unexpected_void_error();
 
     // Bounce on apply_ast overload

@@ -718,7 +718,7 @@ namespace urbi
     rObject initVal;
     if (o->slot_locate(varName).first == o)
     {
-      initVal = o->own_slot_get(varName)->value();
+      initVal = o->local_slot_get(varName)->value();
       // Check if the variable exists and is an uvar.
       if (initVal->slot_has(SYMBOL(owned)))
 	return;

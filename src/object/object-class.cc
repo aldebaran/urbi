@@ -270,9 +270,9 @@ namespace object
   }
 
   static bool
-  object_class_ownsSlot(rObject self, const libport::Symbol& slot)
+  object_class_hasLocalSlot(rObject self, const libport::Symbol& slot)
   {
-    return self->own_slot_get(slot);
+    return self->local_slot_get(slot);
   }
 
   void
@@ -280,9 +280,8 @@ namespace object
   {
     Object::proto->slot_set(SYMBOL(isA),
                            make_primitive(object_class_isA));
-
-    Object::proto->slot_set(SYMBOL(ownsSlot),
-      make_primitive(&object_class_ownsSlot));
+    Object::proto->slot_set(SYMBOL(hasLocalSlot),
+                            make_primitive(&object_class_hasLocalSlot));
     /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Name)                                                   \
     Object::proto->slot_set(SYMBOL(Name), new Primitive(object_class_##Name), true)
