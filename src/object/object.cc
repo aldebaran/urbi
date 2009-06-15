@@ -146,7 +146,7 @@ namespace object
   }
 
   bool
-  Object::slot_has(const key_type& k)
+  Object::slot_has(const key_type& k) const
   {
     return slot_locate(k).first;
   }

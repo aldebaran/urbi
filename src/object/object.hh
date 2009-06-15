@@ -83,8 +83,7 @@ namespace object
     /// Whether \a this has a \a k slot
     /// \param k         Slot name.
     /// \return Whether the \a k slot exists
-    bool
-    slot_has(const key_type& k);
+    bool slot_has(const key_type& k) const;
 
     typedef std::pair<rObject, rSlot> location_type;
     /// Lookup field in object hierarchy.
@@ -137,8 +136,8 @@ namespace object
     /// \return this
     Object& slot_copy(const key_type& name, const rObject& from);
 
-    /// Get the object pointed to by the *local* slot. NULL if there
-    /// is no such slot.
+    /// Get the object pointed to by the *local* slot.
+    /// \return 0 if there is no such slot.
     rSlot own_slot_get(const key_type& k) const;
 
     /// Remove slot.

@@ -66,7 +66,8 @@ namespace object
     return *this;
   }
 
-  inline const Object::slots_implem&
+  inline
+  const Object::slots_implem&
   Object::slots_get () const
   {
     return slots_;
