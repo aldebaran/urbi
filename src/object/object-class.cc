@@ -233,7 +233,6 @@ namespace object
   }
 
   /// Recursive list of slot names.
-
   static void
   maybe_add(std::vector<libport::Symbol>& control, List::value_type& l,
 	    libport::Symbol slot_name)
@@ -276,7 +275,7 @@ namespace object
   }
 
   void
-  object_class_initialize ()
+  object_class_initialize()
   {
     Object::proto->slot_set(SYMBOL(isA),
                            make_primitive(object_class_isA));
@@ -303,20 +302,20 @@ namespace object
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                     \
-    Object::proto->slot_set(SYMBOL(Name), make_primitive(Code))
+    Object::proto->slot_set(SYMBOL(Name), make_primitive(&Object::Code))
 
-    DECLARE(createSlot, &Object::urbi_createSlot);
-    DECLARE(getProperty, &Object::property_get);
-    DECLARE(getSlot, &Object::urbi_getSlot);
-    DECLARE(hasProperty, &Object::property_has);
-    DECLARE(hasSlot, &Object::slot_has);
-    DECLARE(locateSlot, &Object::urbi_locateSlot);
-    DECLARE(setProperty, &Object::property_set);
-    DECLARE(setSlot, &Object::urbi_setSlot);
-    DECLARE(setConstSlot, &Object::urbi_setConstSlot);
-    DECLARE(removeProperty, &Object::property_remove);
-    DECLARE(removeSlot, &Object::urbi_removeSlot);
-    DECLARE(updateSlot, &Object::urbi_updateSlot);
+    DECLARE(createSlot     , urbi_createSlot);
+    DECLARE(getProperty    , property_get);
+    DECLARE(getSlot        , urbi_getSlot);
+    DECLARE(hasProperty    , property_has);
+    DECLARE(hasSlot        , slot_has);
+    DECLARE(locateSlot     , urbi_locateSlot);
+    DECLARE(removeProperty , property_remove);
+    DECLARE(removeSlot     , urbi_removeSlot);
+    DECLARE(setConstSlot   , urbi_setConstSlot);
+    DECLARE(setProperty    , property_set);
+    DECLARE(setSlot        , urbi_setSlot);
+    DECLARE(updateSlot     , urbi_updateSlot);
 #undef DECLARE
   }
 
