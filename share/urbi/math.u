@@ -1,0 +1,24 @@
+class Global.Math
+{
+  for (var fn: ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
+               "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"])
+  {
+    setSlot (fn, bounce_named (fn))
+  };
+  function atan2(x, y)
+  {
+    x.atan2(y)
+  };
+
+  function min
+  {
+    return call.evalArgs.min
+  };
+
+  // FIXME: Global.max but Math.min???
+  function Global.max
+  {
+    return call.evalArgs.max
+  };
+};
+Global.addProto(Global.Math);
