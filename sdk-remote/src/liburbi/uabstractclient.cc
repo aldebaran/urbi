@@ -510,24 +510,6 @@ namespace urbi
       s->uc->sendBin(&wh, sizeof (wavheader));
     }
 
-
-#if 0
-    // this appears to be useless
-    int msecpause = ((SUBCHUNK_SIZE / 32) * 10) / 14;
-    int spos = 0;
-    while (spos != tosend)
-    {
-      int ts = SUBCHUNK_SIZE;
-      if (ts > tosend-spos)
-	ts = tosend-spos;
-      printf("%d chunk\n", mtime());
-      s->uc->sendBin(s->buffer, ts);
-      s->buffer += ts;
-      spos += ts;
-      usleep(msecpause);
-    }
-#endif
-
     s->uc->sendBin(s->buffer+s->pos, tosend);
     s->uc->send("sleep(%s.remain < %d);\n"
 		" %s << ping;\n", s->device, playlength / 2, msg.tag.c_str());
@@ -539,7 +521,7 @@ namespace urbi
       //if (s->tag && s->tag[0])
       //  s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** stop"));
 
-      std::string rDevice = (s->device) ? s->device : "speaker";
+      std::string rDevice = s->device ? s->device : "speaker";
       std::string message = rDevice + ".val->blend=" +
 	rDevice + ".sendsoundsaveblend;";
       s->uc->send("%s", message.c_str());
