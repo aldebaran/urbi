@@ -113,9 +113,8 @@ namespace urbi
                             static_cast<unsigned long>(array.size()));
           return URBI_CONTINUE;
         }
-        UVarTable::iterator varmapfind = varmap().find(array[1]);
-        if (varmapfind != varmap().end())
-          foreach (UVar* u, varmapfind->second)
+        if (std::list<UVar*> *us = varmap().find0(array[1]))
+          foreach (UVar* u, *us)
             u->__update(array[2]);
 
         if (callbacks_type* cs = monitormap().find0(array[1]))
