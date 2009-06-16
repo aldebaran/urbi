@@ -487,10 +487,13 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
-    libport::Finally finally;
+    Interpreter* i = this;
+    bool non_interruptible = non_interruptible_;
+    FINALLY(((Interpreter*, i))((bool&, non_interruptible_))((bool, non_interruptible)),
+            i->cleanup_scope_tag();
+            non_interruptible_ = non_interruptible;
+      );
     create_scope_tag();
-    finally << boost::bind(&Interpreter::cleanup_scope_tag, this);
-    finally << libport::restore(non_interruptible_);
     return operator()(e->body_get().get());
   }
 
@@ -498,11 +501,11 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Do* e)
   {
-    Finally finally;
-
     rObject tgt = operator()(e->target_get().get());
-
-    finally << stacks_.switch_self(tgt);
+    rObject old_tgt = stacks_.self();
+    stacks_.switch_self(tgt);
+    FINALLY(((Stacks&, stacks_))((rObject&, old_tgt)),
+            stacks_.switch_self(old_tgt));
 
     visit(static_cast<const ast::Scope*>(e));
     // This is arguable. Do, just like Scope, should maybe return
@@ -669,7 +672,10 @@ namespace runner
           continue;
         }
       }
-      libport::Finally f(libport::scoped_set(current_exception_, value));
+      rObject old_exception = current_exception_;
+      FINALLY(((rObject&, current_exception_))((rObject&, old_exception)),
+              current_exception_ = old_exception);
+      current_exception_ = value;
       return operator()(handler->body_get().get());
     }
     // No handler matched, rethrow.

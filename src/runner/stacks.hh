@@ -47,14 +47,12 @@ namespace runner
      *  \param captured Size of the captured variable frame.
      *  \param self     Value of 'this' in the new frame.
      *  \param call     Value of 'call' in the new frame.
-     *  \return The action to restore the previous frame state.
      */
-    action_type
+    void
     push_frame(const libport::Symbol& msg,
                unsigned local, unsigned captured,
                rObject self, rObject call);
 
-  private:
     /// Helper to restore a previous frame state
     void pop_frame(const libport::Symbol& msg,
                    unsigned local, unsigned captured);
@@ -76,6 +74,11 @@ namespace runner
     rObject self();
     /// Get 'call'.
     rObject call();
+    /// Get the current local pointer.
+    unsigned local_pointer() const;
+    /// Get the current captured pointer.
+    unsigned captured_pointer() const;
+
   private:
     /// Factored helpers for both rget.
     Stacks::rSlot
@@ -103,7 +106,7 @@ namespace runner
     /// Switch the current 'this'
     /** \return the action to switch back to the previous 'this'
      */
-    action_type switch_self(rObject s);
+    void switch_self(rObject s);
 
   private:
     /// Factored setter
@@ -130,5 +133,7 @@ namespace runner
     unsigned captured_pointer_;
   };
 }
+
+# include <runner/stacks.hxx>
 
 #endif

@@ -29,8 +29,8 @@ namespace runner
     STACK_ECHO("STACKS SPAWNED");
   }
 
-  action_type
-  Stacks::push_frame(const libport::Symbol& msg,
+  void
+  Stacks::push_frame(const libport::Symbol&,
                      unsigned local, unsigned captured,
                      rObject self, rObject call)
   {
@@ -44,10 +44,6 @@ namespace runner
     STACK_ECHO("Local    : " << local);
     STACK_ECHO("Captured : " << captured);
     STACK_NECHO(libport::decindent);
-
-    action_type res =
-      boost::bind(&Stacks::pop_frame, this, msg,
-                  local_pointer_, captured_pointer_);
 
     // Adjust frame pointers.
     local_pointer_ = local_stack_.size();
@@ -68,8 +64,6 @@ namespace runner
     // Bind 'this' and 'call'.
     self_set(self);
     call_set(call);
-
-    return res;
   }
 
   void
@@ -275,16 +269,12 @@ namespace runner
     return *rget(e);
   }
 
-  action_type
+  void
   Stacks::switch_self(rObject v)
   {
     STACK_ECHO("Switching 'this':" << libport::incindent);
-    action_type res =
-      boost::bind(&Stacks::switch_self_back, this,
-                  *local_stack_[local_pointer_]);
     self_set(v);
     STACK_NECHO(libport::decindent);
-    return res;
   }
 
   void

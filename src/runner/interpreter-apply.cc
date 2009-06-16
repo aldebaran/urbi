@@ -4,8 +4,8 @@
  ** the interpreter.
  */
 
+#include <libport/compiler.hh>
 #include <libport/range.hh>
-#include <libport/finally.hh>
 
 #include <ast/exps-type.hh>
 #include <ast/local-declarations-type.hh>
@@ -28,7 +28,6 @@
 
 namespace runner
 {
-  using libport::Finally;
   using object::Slot;
   using object::rSlot;
 
@@ -139,13 +138,14 @@ namespace runner
     precondition(function);
     precondition(!args.empty());
     precondition(args.front());
-    Finally finally;
 
-    if (msg != libport::Symbol::make_empty())
-    {
+    bool reg = msg != libport::Symbol::make_empty();
+    if (reg)
       call_stack_.push_back(std::make_pair(msg, loc));
-      finally << (bind(&call_stack_type::pop_back, &call_stack_));
-    }
+    FINALLY(((call_stack_type&, call_stack_))((bool, reg)),
+            if (reg)
+              call_stack_.pop_back();
+      );
 
     // Check if any argument is void
     foreach (const rObject& arg, libport::skip_first(args))
@@ -222,8 +222,6 @@ namespace runner
                           const object::objects_type& args,
                           const rObject& call_message)
   {
-    libport::Finally finally;
-
     // The called function.
     const object::Code::ast_type& ast = function->ast_get();
 
@@ -260,11 +258,15 @@ namespace runner
       call = call_message;
     }
 
+    size_t local_pointer = stacks_.local_pointer();
+    size_t captured_pointer = stacks_.captured_pointer();
+    size_t local = ast->local_size_get();
+    size_t captured = ast->captured_variables_get()->size();
     // Push new frames on the stacks
-    finally << stacks_.push_frame(msg,
-                                  ast->local_size_get(),
-                                  ast->captured_variables_get()->size(),
-                                  self, call);
+    stacks_.push_frame(msg, local, captured, self, call);
+    FINALLY(((Stacks&, stacks_))((libport::Symbol, msg))
+            ((size_t, local_pointer))((size_t, captured_pointer)),
+            stacks_.pop_frame(msg, local_pointer, captured_pointer));
 
     // Push captured variables
     foreach (const ast::rConstLocalDeclaration& dec,

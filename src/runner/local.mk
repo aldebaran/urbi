@@ -18,7 +18,8 @@ dist_libuobject_la_SOURCES +=			\
   runner/sneaker.hh				\
   runner/stack-debug.hh				\
   runner/stacks.cc				\
-  runner/stacks.hh
+  runner/stacks.hh				\
+  runner/stacks.hxx
 
 
 sdk2_runnerdir = $(includedir)/runner

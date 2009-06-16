@@ -6,6 +6,8 @@
 #ifndef RUNNER_INTERPRETER_HXX
 # define RUNNER_INTERPRETER_HXX
 
+#include <libport/finally.hh>
+
 #include <object/tag.hh>
 
 namespace runner
@@ -33,7 +35,10 @@ namespace runner
   inline object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
-    libport::Finally finally(scoped_set(innermost_node_, e));
+    const ast::Ast* previous = innermost_node_;
+    FINALLY(((const ast::Ast*&, innermost_node_))((const ast::Ast*, previous)),
+      innermost_node_ = previous);
+    innermost_node_ = e;
     return e->eval(*this);
   }
 

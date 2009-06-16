@@ -184,8 +184,10 @@ namespace runner
     {
       // Clear the non-interruptible flag so that we do not
       // run into an error while waiting for our child.
-      finally << boost::bind(&Job::non_interruptible_set, this,
-			     non_interruptible_get());
+      bool non_interruptible = non_interruptible_get();
+      Job* job = this;
+      FINALLY(((Job*, job))((bool, non_interruptible)),
+              job->non_interruptible_set(non_interruptible));
       non_interruptible_set(false);
       yield_until_terminated(*child);
     }
