@@ -70,9 +70,11 @@ namespace urbi
     bool local;
     /// Return the full name to pass to the UObject constructor.
     std::string getFullName(const std::string& name);
+
     /// List of starters.
     typedef std::list<baseURBIStarter*> list_type;
     static list_type& list();
+
     /// Retrieve an UObject, otherwise 0.
     static UObject* find(const std::string& name);
 

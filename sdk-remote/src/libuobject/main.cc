@@ -124,32 +124,39 @@ namespace urbi
       case UEM_EVALFUNCTION:
       {
 	callbacks_type tmpfun = functionmap()[array[1]];
+        const std::string var = array[2];
 	callbacks_type::iterator tmpfunit = tmpfun.begin();
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-	if (retval.type == DATA_BINARY)
-	{
+	switch (retval.type)
+        {
+        case DATA_BINARY:
 	  // Send it
-	  if (urbi::getDefaultClient ())
+	  if (UClient* client = urbi::getDefaultClient())
           {
-             // URBI_SEND_COMMAND does not now how to send binary since it
+            // URBI_SEND_COMMAND does not now how to send binary since it
             // depends on the kernel version.
-            getDefaultClient()->startPack();
-            (*getDefaultClient()) << " var  " << (std::string) array[2] << "=";
-            getDefaultClient()->send(retval);
-            (*getDefaultClient()) << ";";
-            getDefaultClient()->endPack();
+            client->startPack();
+            *client << " var  " << var << "=";
+            client->send(retval);
+            *client << ";";
+            client->endPack();
           }
-	  // Send void if no client. Would block anyway
 	  else
-	    URBI_SEND_COMMAND("var " << (std::string) array[2]);
-	}
-	else // Non-binary value.
-	  if (retval.type == DATA_VOID)
-	    URBI_SEND_COMMAND("var " << (std::string) array[2]);
-	  else
-	    URBI_SEND_COMMAND("var " << (std::string) array[2] << "=" << retval);
+            // Send void if no client. Would block anyway.
+	    goto case_void;
+          break;
+
+        case DATA_VOID:
+        case_void:
+          URBI_SEND_COMMAND("var " << var);
+          break;
+
+        default:
+          URBI_SEND_COMMAND("var " << var << "=" << retval);
+          break;
+        }
       }
       break;
 
@@ -291,17 +298,17 @@ namespace urbi
 				    externalModuleTag.c_str());
 
     // Wait for client to be connected if in server mode
-    while (getDefaultClient ()
-           && !getDefaultClient()->error ()
-           && !getDefaultClient()->init ())
+    while (getDefaultClient()
+           && !getDefaultClient()->error()
+           && !getDefaultClient()->init())
       usleep(20000);
 
     // Waiting for connectionID
-    while (getDefaultClient ()
-           && getDefaultClient ()->connectionID () == "")
+    while (getDefaultClient()
+           && getDefaultClient()->connectionID() == "")
       usleep (5000);
 
-    dummyUObject = new UObject (0);
+    dummyUObject = new UObject(0);
     for (baseURBIStarter::list_type::iterator
            i = baseURBIStarter::list().begin(),
            i_end = baseURBIStarter::list().end();
