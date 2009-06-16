@@ -131,12 +131,15 @@ possibility to update its value.
 
 The API gives you two methods to have a function called periodically:
 \begin{itemize}
-\item Calling \lstinline{USetUpdate (int period)} in your object sets
-  up a timer that calls the virtual \lstinline{UObject} method
-  \lstinline{update ()} with the specified period (in milliseconds)
-\item Calling \lstinline{USetTimer} passing the period in milliseconds
-  and a pointer to a method in your \lstinline{UObject} will call this
-  method at the specified period.
+\item \lstinline|urbi::UObject::USetUpdate(ufloat \var{period})|\\
+  Set up a timer that calls the virtual method
+  \lstinline{UObject::update()} with the specified period (in
+  milliseconds).  Disable updates if \var{period} is -1.
+
+\item \lstinline|urbi::UObject::USetTimer<T>(ufloat \var{period}), int (T::*\var{fun})()|\\
+  Invoke an UObject member function \var{fun} every \var{period}
+  milliseconds.  \var{fun} is a regular member-function pointer, for
+  instance \lstinline|MyUObject::my_function|.
 \end{itemize}
 
 \subsection{The special case of sensor/effector variables}
