@@ -283,38 +283,33 @@ namespace urbi
       if (!getDefaultClient() || getDefaultClient()->error())
 	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
 		  << libport::exit(1);
-      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
+      getDefaultClient()->setClientErrorCallback(callback(&endProgram));
     }
    if (!getDefaultClient() || getDefaultClient()->error())
       return 1;
 
 #ifdef LIBURBIDEBUG
-    getDefaultClient()->setWildcardCallback(callback (&debug));
+    getDefaultClient()->setWildcardCallback(callback(&debug));
 #else
-    getDefaultClient()->setErrorCallback(callback (&debug));
+    getDefaultClient()->setErrorCallback(callback(&debug));
 #endif
 
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
 
-    // Wait for client to be connected if in server mode
+    // Wait for client to be connected if in server mode.
     while (getDefaultClient()
            && !getDefaultClient()->error()
            && !getDefaultClient()->init())
       usleep(20000);
 
-    // Waiting for connectionID
+    // Waiting for connectionID.
     while (getDefaultClient()
            && getDefaultClient()->connectionID() == "")
-      usleep (5000);
+      usleep(5000);
 
     dummyUObject = new UObject(0);
-    for (baseURBIStarter::list_type::iterator
-           i = baseURBIStarter::list().begin(),
-           i_end = baseURBIStarter::list().end();
-	 i != i_end;
-	 ++i)
-      (*i)->init((*i)->name);
+    baseURBIStarter::init();
     // Send a ';' since UObject likely sent a serie of piped commands.
     URBI_SEND_COMMAND("");
     return 0;

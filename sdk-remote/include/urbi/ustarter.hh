@@ -60,6 +60,10 @@ namespace urbi
     virtual void clean() = 0;
     /// Create the instance.
     virtual void init(const std::string& name) = 0;
+
+    /// Create all the instances.
+    static void init();
+
     /** Create a new UObject cloning the one in this baseURBIstarter.
      *  Also create a baseURBIStarter for this new UObject and return it.
      */
