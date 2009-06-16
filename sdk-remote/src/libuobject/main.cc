@@ -25,8 +25,38 @@ using libport::program_name;
 namespace urbi
 {
 
-  // This part is specific for standalone linux objects
-  // LIBURBI 'Module mode'
+  namespace
+  {
+
+    /// Find in baseURBIStarter::list an object named \a named.
+    /// Report errors to \a client.
+    /// \return a pointer to the object found, 0 otherwise.
+    static
+    baseURBIStarter*
+    find_object(UAbstractClient& client,
+                const std::string& name)
+    {
+      typedef baseURBIStarter::list_type::iterator iterator;
+      iterator i_end = baseURBIStarter::list().end();
+      iterator found = i_end;
+      for (iterator i = baseURBIStarter::list().begin(); i != i_end; ++i)
+        if ((*i)->name == name)
+        {
+          if (found != i_end)
+            client.printf("Double object definition %s\n", name.c_str());
+          else
+            found = i;
+        }
+
+      if (found == i_end)
+      {
+        client.printf("Unknown object definition %s\n", name.c_str());
+        return 0;
+      }
+      else
+        return *found;
+    }
+  }
 
   UCallbackAction
   dispatcher(const UMessage& msg)
@@ -43,7 +73,7 @@ namespace urbi
 
     UList& array = *msg.value->list;
 
-    if (array.size()<2)
+    if (array.size() < 2)
     {
       msg.client.printf("Component Error: Invalid number "
 			"of arguments in the server message: %lu\n",
@@ -54,7 +84,7 @@ namespace urbi
     if (array[0].type != DATA_DOUBLE)
     {
       msg.client.printf("Component Error: "
-			"unknown server message type %d\n",
+			"invalid server message type %d\n",
 			array[0].type);
       return URBI_CONTINUE;
     }
@@ -148,50 +178,14 @@ namespace urbi
       break;
 
       case UEM_NEW:
-      {
-        typedef baseURBIStarter::list_type::iterator iterator;
-        iterator i_end = baseURBIStarter::list().end();
-        iterator found = i_end;
-        for (iterator i = baseURBIStarter::list().begin(); i != i_end; ++i)
-          if ((*i)->name == (std::string)array[2])
-          {
-            if (found != i_end)
-              msg.client.printf("Double object definition %s\n",
-                                (*i)->name.c_str());
-            else
-              found = i;
-          }
-
-        if (found == i_end)
-          msg.client.printf("Unknown object definition %s\n",
-                            ((std::string) array[2]).c_str());
-        else
-          (*found)->copy((std::string) array[1]);
-
-      }
+        if (baseURBIStarter* o = find_object(msg.client,
+                                             (std::string)array[2]))
+          o->copy((std::string) array[1]);
       break;
 
       case UEM_DELETE:
-      {
-        typedef baseURBIStarter::list_type::iterator iterator;
-        iterator i_end = baseURBIStarter::list().end();
-        iterator found = i_end;
-        for (iterator i = baseURBIStarter::list().begin();
-             i != i_end;
-             ++i)
-          if ((*i)->name == (std::string)array[1])
-          {
-            if (found != i_end)
-              msg.client.printf("Double object definition %s\n",
-                                (*i)->name.c_str());
-            else
-              found = i;
-          }
-
-        if (found == i_end)
-          msg.client.printf("Unknown object definition %s\n",
-                            ((std::string) array[1]).c_str());
-        else
+        if (baseURBIStarter* o = find_object(msg.client,
+                                             (std::string)array[1]))
         {
           // remove the object from objectlist or terminate
           // the component if there is nothing left
@@ -199,10 +193,9 @@ namespace urbi
             exit(0);
           else
             // delete the object
-            delete *found;
+            delete o;
         }
-      }
-      break;
+        break;
 
       default:
         msg.client.printf("Component Error: "
