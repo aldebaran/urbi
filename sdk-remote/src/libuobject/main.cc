@@ -11,6 +11,7 @@
 #include <libport/cli.hh>
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
+#include <libport/lexical-cast.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
@@ -220,19 +221,17 @@ namespace urbi
   UCallbackAction
   debug(const UMessage& msg)
   {
-    std::stringstream mesg;
-    mesg << msg;
-    msg.client.printf("DEBUG: got a message: %s\n",  mesg.str().c_str());
+    msg.client.printf("DEBUG: got a message: %s\n",
+                      string_cast(msg).c_str());
     return URBI_CONTINUE;
   }
 
   UCallbackAction
-  static endProgram(const UMessage& msg)
+  static
+  endProgram(const UMessage& msg)
   {
-    std::stringstream mesg;
-    mesg << msg;
     msg.client.printf("ERROR: got a disconnection message: %s\n",
-                      mesg.str().c_str());
+                      string_cast(msg).c_str());
     exit(1);
     return URBI_CONTINUE; //stupid gcc
   }
