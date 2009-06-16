@@ -114,10 +114,12 @@ namespace urbi
           return URBI_CONTINUE;
         }
         if (std::list<UVar*> *us = varmap().find0(array[1]))
+        {
           foreach (UVar* u, *us)
             u->__update(array[2]);
-
+        }
         if (callbacks_type* cs = monitormap().find0(array[1]))
+        {
           foreach (UGenericCallback *c, *cs)
           {
             // test of return value here
@@ -126,6 +128,7 @@ namespace urbi
             u[0].storage = c->storage;
             c->__evalcall(u);
           }
+        }
       }
       break;
 
