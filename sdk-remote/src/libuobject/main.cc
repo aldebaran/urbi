@@ -38,25 +38,19 @@ namespace urbi
     find_object(UAbstractClient& client,
                 const std::string& name)
     {
-      typedef baseURBIStarter::list_type::iterator iterator;
-      iterator i_end = baseURBIStarter::list().end();
-      iterator found = i_end;
-      for (iterator i = baseURBIStarter::list().begin(); i != i_end; ++i)
-        if ((*i)->name == name)
+      baseURBIStarter* res = 0;
+      foreach (baseURBIStarter* s, baseURBIStarter::list())
+        if (s->name == name)
         {
-          if (found != i_end)
+          if (res)
             client.printf("Double object definition %s\n", name.c_str());
           else
-            found = i;
+            res = s;
         }
 
-      if (found == i_end)
-      {
+      if (!res)
         client.printf("Unknown object definition %s\n", name.c_str());
-        return 0;
-      }
-      else
-        return *found;
+      return res;
     }
 
     /// Look for the function args[1] in \a t, and make a call to the
@@ -121,20 +115,17 @@ namespace urbi
         }
         UVarTable::iterator varmapfind = varmap().find(array[1]);
         if (varmapfind != varmap().end())
-          for (std::list<UVar*>::iterator it = varmapfind->second.begin();
-               it != varmapfind->second.end();
-               ++it)
-            (*it)->__update(array[2]);
+          foreach (UVar* u, varmapfind->second)
+            u->__update(array[2]);
 
         if (callbacks_type* cs = monitormap().find0(array[1]))
-          for (callbacks_type::iterator i = cs->begin();
-               i != cs->end(); ++i)
+          foreach (UGenericCallback *c, *cs)
           {
             // test of return value here
             UList u;
             u.array.push_back(new UValue());
-            u[0].storage = (*i)->storage;
-            (*i)->__evalcall(u);
+            u[0].storage = c->storage;
+            c->__evalcall(u);
           }
       }
       break;
