@@ -10,6 +10,7 @@
 
 #include <libport/cli.hh>
 #include <libport/containers.hh>
+#include <libport/foreach.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
@@ -56,6 +57,22 @@ namespace urbi
       else
         return *found;
     }
+
+    /// Look for the function args[1] in \a t, and make a call to the
+    /// associated callback with arguments (args[2], args[3], etc.).
+    static
+    void
+    eval_call(UTable& t, UList& args)
+    {
+      if (UTable::callbacks_type* cs = t.find0(args[1]))
+      {
+        args.setOffset(2);
+        foreach (UGenericCallback* c, *cs)
+          c->__evalcall(args);
+        args.setOffset(0);
+      }
+    }
+
   }
 
   UCallbackAction
@@ -161,27 +178,11 @@ namespace urbi
       break;
 
       case UEM_EMITEVENT:
-        if (callbacks_type* cs = eventmap().find0(array[1]))
-          for (callbacks_type::iterator i = cs->begin();
-               i != cs->end();
-               ++i)
-          {
-            array.setOffset(2);
-            (*i)->__evalcall(array);
-            array.setOffset(0);
-          }
+        eval_call(eventmap(), array);
       break;
 
       case UEM_ENDEVENT:
-        if (callbacks_type* cs = eventendmap().find0(array[1]))
-          for (callbacks_type::iterator i = cs->begin();
-               i != cs->end();
-               ++i)
-          {
-            array.setOffset(2);
-            (*i)->__evalcall(array);
-            array.setOffset(0);
-          }
+        eval_call(eventendmap(), array);
       break;
 
       case UEM_NEW:
