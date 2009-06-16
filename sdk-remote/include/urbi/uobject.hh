@@ -47,28 +47,26 @@
 # define USensor(X) \
   UOwned(X)
 
-/** Bind the function x in current Urbi object to the C++ member
- function of same name.  The return value and parameters must be of
+/** Bind the function X in current Urbi object to the C++ member
+ function of same name.  The return value and arguments must be of
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
-# define UBindFunction(Obj, X)						\
-  ::urbi::createUCallback(__name, "function",				\
-			  dynamic_cast<Obj*> (this),			\
-                          (&Obj::X), __name + "." #X,                   \
+# define UBindFunction(Obj, X)                          \
+  ::urbi::createUCallback(__name, "function", this,     \
+                          (&Obj::X), __name + "." #X,   \
                           ::urbi::functionmap(), false)
 
-/** Registers a function x in current object that will be called each
+/** Registers a function X in current object that will be called each
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
- prototype and the Urbi event.
- */
-# define UBindEvent(Obj, X)						\
-  ::urbi::createUCallback(__name, "event", this,			\
-			  (&Obj::X), __name + "." #X,			\
+ prototype and the Urbi event.  */
+# define UBindEvent(Obj, X)                             \
+  ::urbi::createUCallback(__name, "event", this,        \
+			  (&Obj::X), __name + "." #X,   \
                           ::urbi::eventmap(), false)
 
-/** Registers a function x in current object that will be called each
+/** Registers a function \a X in current object that will be called each
  * time the event of same name is triggered, and a function fun called
  * when the event ends. The function will be called only if the number
  * of arguments match between the function prototype and the Urbi
@@ -79,7 +77,7 @@
 			  (&Obj::X),(&Obj::Fun), __name + "." #X,	\
                           ::urbi::eventendmap())
 
-/// Register current object to the UObjectHub named 'hub'.
+/// Register current object to the UObjectHub named \a Hub.
 # define URegister(Hub)						\
   do {								\
     objecthub = ::urbi::baseURBIStarterHub::find(#Hub);         \
@@ -237,11 +235,9 @@ namespace urbi
     */
     void UNotifyAccess(UVar& v, int (UObject::*fun)(UVar&));
 
-    /*!
-    \brief Setup a callback function that will be called every \t milliseconds.
-    */
+    /// Call \a fun every \a t milliseconds.
     template <class T>
-    void USetTimer(ufloat t, int (T::*fun) ());
+    void USetTimer(ufloat t, int (T::*fun)());
 # else
 
     /// \internal

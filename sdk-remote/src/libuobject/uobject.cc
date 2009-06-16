@@ -122,7 +122,6 @@ namespace urbi
   void
   UObject::USetUpdate(ufloat t)
   {
-    std::ostringstream os;
     // Forge names for callback and tag
     std::string tagName = "maintimer_" + __name;
     std::string cbName = __name + ".maintimer";
