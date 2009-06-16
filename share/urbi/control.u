@@ -10,7 +10,7 @@ class Global.Control
     spawn(closure() { call.evalArgAt(0) }, true)
   };
 
-  // every_ takes two arguments, a delay and an expression.
+  // every_(delay, expression).
   function every_
   {
     detach ({
@@ -83,6 +83,6 @@ class Global.Control
 };
 
 // Import those at the global level
-var Global.persist = Control.getSlot("persist");
 var Global.detach = Control.getSlot("detach");
 var Global.disown = Control.getSlot("disown");
+var Global.persist = Control.getSlot("persist");

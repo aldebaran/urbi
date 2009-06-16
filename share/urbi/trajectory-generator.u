@@ -10,10 +10,10 @@ class Global.TrajectoryGenerator
     var this.setter = setter |
     var this.targetValue = targetValue|
     var this.startTime = time|
-    // Sin does not need it, but it is simpler to call it anyway as it
-    // allows to depend on startValue below.  And besides, it allows
+    // Sin does not need startValue, but it is simpler to compute it
+    // anyway as it allows to depend on it below.  Besides, it allows
     // to enforce a proper initial value for Sin too.
-    getStartValue()|
+    var this.startValue = getStartValue |
     var adaptive = args.getWithDefault("adaptive", false) |
     protos =
       [{
@@ -55,25 +55,25 @@ class Global.TrajectoryGenerator
       Float.inf
   }|
 
-  /// Compute startValue.
+  /// Evaluate the initial value.
   function getStartValue()
   {
-    var this.startValue = getter() |
-    switch (startValue.type)
+    var res = getter |
+    switch (res.type)
     {
       case "Float":
         // Fine.
 
       case "Group":
-        var v = startValue.members.head |
-        while (v.type == "List")
-          v = v.head |
-        this.startValue = v
+        res = res.members.head |
+        while (res.type == "List")
+          res = res.head
 
       default:
-        this.startValue = 0|
+        res = 0|
         "Warning: setting dummy startValue".print
-    }
+    } |
+    res
   };
 
   // Override system time to take shift induced by freeze into account.
