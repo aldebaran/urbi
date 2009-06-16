@@ -806,7 +806,7 @@ stmt:
     }
 | "every" "(" exp ")" nstmt
     {
-      PARAMETRIC_AST(every, "Control.every_(%exp:1, %exp:2)");
+      PARAMETRIC_AST(every, "Control.every_(%exp:1, closure() {%exp:2})");
       $$ = exp (every % $3 % $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
