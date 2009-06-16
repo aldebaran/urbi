@@ -60,7 +60,8 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
-    libport::Finally finally;
+    Job::ChildrenCollecter children(this, e->children_get().size() - 1);
+
     // Collect all subrunners
     sched::jobs_type jobs;
 
@@ -71,7 +72,7 @@ namespace runner
       Interpreter* job =
 	new Interpreter(*this, operator()(child.get()),
 			libport::Symbol::fresh(name_get()));
-      register_child(job, finally);
+      register_child(job, children);
       jobs.push_back(job);
       job->start_job();
     }
@@ -273,7 +274,7 @@ namespace runner
     // List of runners for Stmt flavored by a comma.
     sched::jobs_type runners;
 
-    Finally finally;
+    Job::ChildrenCollecter children(this, 0);
 
     // Initialize the result to void to account for a Nary which would
     // contain only comma-terminated statements.
@@ -309,7 +310,7 @@ namespace runner
           // subrunner.
           if (!e->toplevel_get())
 	  {
-	    register_child(subrunner, finally);
+	    register_child(subrunner, children);
 	    runners.push_back(subrunner);
 	  }
           subrunner->start_job ();

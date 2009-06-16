@@ -98,8 +98,8 @@ namespace object
     // So that it will resist to the call to yield_until_terminated,
     // and will be reclaimed at the end of the scope.
     sched::rJob job = sub;
-    libport::Finally finally;
-    runner().register_child(sub, finally);
+    sched::Job::ChildrenCollecter children(&run, 1);
+    run.register_child(sub, children);
     sub->start_job();
     try
     {

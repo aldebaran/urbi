@@ -205,12 +205,13 @@ namespace object
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
-    libport::Finally finally;
-    sched::jobs_type jobs;
-
     // Beware of iterations that modify the list in place: make a
     // copy.
     value_type l(content_);
+
+    sched::Job::ChildrenCollecter children(&r, l.size());
+    sched::jobs_type jobs;
+
     foreach (const rObject& o, l)
     {
       object::objects_type args;
@@ -218,9 +219,9 @@ namespace object
       sched::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                 f, SYMBOL(each), args);
-      r.register_child(job, finally);
-      job->start_job();
+      r.register_child(job, children);
       jobs.push_back(job);
+      job->start_job();
     }
 
     try
