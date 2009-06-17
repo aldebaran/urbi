@@ -10,7 +10,6 @@ class Global.Control
     spawn(closure() { call.evalArgAt(0) }, true)
   };
 
-  // every_(delay, expression).
   function every_(delay, action)
   {
     detach ({
@@ -27,8 +26,7 @@ class Global.Control
     })
   };
 
-  // every_(delay, expression).
-  function every_pipe(delay, action)
+  function 'every|'(delay, action)
   {
     detach ({
       var deadline = shiftedTime |
