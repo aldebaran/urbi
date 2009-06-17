@@ -219,24 +219,19 @@ do (UValue)
 // Force reevaluation of all at exprs when at least one notifyaccess is present.
 // FIXME: find a way to stop when callbacks are removed.
 at (getSlot("UVar").onHasNotifyAccess?)
-  getSlot("UVar").nAccessTag: every(getPeriod) {};
+  getSlot("UVar").nAccessTag: loop { sleep(getPeriod)};
 
-var Global.uobjects = Object.clone;
-Global.uobjects.uobject_init();
-
-if (not Global.hasLocalSlot("evaluate"))
-  UVar.new(Global,"evaluate")
-else
-{
-  // A plugged UObject already instanciated it.
-  if (evaluate.isA(String))
-    eval(evaluate)
-};
+// UObjects can use evaluate at initialization-time.
+UVar.new(Global,"evaluate");
 Global.getSlot("evaluate").notifyChange(function()
 {
   eval(evaluate)
 })|;
 
+var Global.uobjects = Object.clone;
+Global.uobjects.uobject_init();
+
+Global.addProto(uobjects);
 
 // UObject remote API.
 
