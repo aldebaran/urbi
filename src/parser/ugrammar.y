@@ -178,7 +178,6 @@
         ELSE         "else"
         EMIT         "emit"
         EVENT        "event"
-        EVERY        "every"
         FREEZEIF     "freezeif"
         FUNCTION     "function"
         IF           "if"
@@ -246,6 +245,7 @@
         SEMICOLON    ";"
         AMPERSAND    "&"
         PIPE         "|"
+        EVERY        "every"
         FOR          "for"
         LOOP         "loop"
         WHILE        "while"
@@ -806,8 +806,13 @@ stmt:
     }
 | "every" "(" exp ")" nstmt
     {
-      PARAMETRIC_AST(every, "Control.every_(%exp:1, closure() {%exp:2})");
-      $$ = exp (every % $3 % $5);
+      FLAVOR_CHECK(@$, "every", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
+      PARAMETRIC_AST(every, "Control.%id:1(%exp:2, closure() {%exp:3})");
+      libport::Symbol msg = $1 == ast::flavor_semicolon
+        ? SYMBOL(every_)
+        : SYMBOL(every_pipe);
+      $$ = exp (every % msg % $3 % $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
     {

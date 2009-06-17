@@ -489,7 +489,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);
 "event"         RETURN(EVENT);
-"every"         RETURN(EVERY);
 "freezeif"      RETURN(FREEZEIF);
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
@@ -507,6 +506,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "waituntil"     RETURN(WAITUNTIL);
 "whenever"      RETURN(WHENEVER);
 
+"every"{FLAVOR} RETURN_FLAVORED_KEYWORD(EVERY);
 "for"{FLAVOR}   RETURN_FLAVORED_KEYWORD(FOR);
 "loop"{FLAVOR}  RETURN_FLAVORED_KEYWORD(LOOP);
 "while"{FLAVOR} RETURN_FLAVORED_KEYWORD(WHILE);

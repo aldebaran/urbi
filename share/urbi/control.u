@@ -27,6 +27,27 @@ class Global.Control
     })
   };
 
+  // every_(delay, expression).
+  function every_pipe(delay, action)
+  {
+    detach ({
+      var deadline = shiftedTime |
+      var controlTag = Tag.newFlowControl |
+      throw {
+	controlTag: loop
+          {
+            action() |
+            deadline += delay |
+            var delta = deadline - shiftedTime;
+            if (delta > 0)
+              sleep (delta)
+            else
+              deadline -= delta;
+	  }
+      }
+    })
+  };
+
   // at_(test, on_true, on_false)
   //
   // Takes three expressions, a test and some code to execute each
