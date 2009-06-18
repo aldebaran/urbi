@@ -129,9 +129,12 @@ namespace urbi
     // Stop any previous update
     if (2 <= kernelMajor())
       URBI_SEND_COMMAND
-        ("if (\"" << tagName << "\" not in " << __name
-         << ".slotNames) var " << __name <<"." << tagName<<" = Tag.new(\"" <<
-         tagName <<"\")|" << __name <<"." << tagName<<".stop");
+        (libport::format("if (!%s.hasLocalSlot(\"%s\"))\n"
+                         "  var %s.%s = Tag.new(\"%s\")|\n"
+                         " %s.%s.stop",
+                         __name, tagName,
+                         __name, tagName, tagName,
+                         __name, tagName));
     else
       URBI_SEND_COMMAND("stop " << tagName);
 
