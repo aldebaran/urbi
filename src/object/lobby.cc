@@ -19,6 +19,12 @@
 
 namespace object
 {
+  static rLobby
+  lobby(rObject /*this*/, rLobby l)
+  {
+    return l;
+  }
+
   Lobby::Lobby(connection_type* c)
     : connection_(c)
   {
@@ -28,9 +34,11 @@ namespace object
 
     if (c)
     {
-      // Easy reference to the current lobby.
-      // ndmefyl: Easy reference my ass, easy memory-leaking cycling reference rather!
-      slot_set(SYMBOL(lobby), this);
+      // Don't you DARE change this with a slot pointing to `this', as
+      // it would be a circular reference to the lobby from itself,
+      // making him un-reclaimable.
+      boost::function1<rLobby, rObject> f(boost::bind(lobby, _1, this));
+      slot_set(SYMBOL(lobby), make_primitive(f));
 
       // Initialize the connection tag used to reference local
       // variables.
