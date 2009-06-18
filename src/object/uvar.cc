@@ -20,7 +20,8 @@ namespace object
   static inline void callNotify(runner::Runner& r, rObject self,
                                 libport::Symbol notifyList)
   {
-    rList l = self->slot_get(notifyList).value().unsafe_cast<List>();
+    rList l =
+      self->slot_get(notifyList)->call(SYMBOL(values)).unsafe_cast<List>();
     objects_type args;
     args.push_back(self);
     List::value_type& callbacks = l->value_get();
@@ -97,8 +98,8 @@ namespace object
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
     if (!looping_
-        && !slot_get(SYMBOL(change))->as<List>()->value_get().empty()
-        && !slot_get(SYMBOL(access))->as<List>()->value_get().empty())
+        && !is_true(slot_get(SYMBOL(change))->call(SYMBOL(empty)))
+        && !is_true(slot_get(SYMBOL(access))->call(SYMBOL(empty))))
     {
       looping_ = true;
       while (true)

@@ -23,6 +23,7 @@
 
 #include <object/cxx-primitive.hh>
 #include <object/dictionary.hh>
+#include <object/finalizable.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/object.hh>
@@ -300,10 +301,10 @@ uobject_finalize(const object::objects_type& args)
 rObject
 uobject_make_proto(const std::string& name)
 {
-  rObject oc = object::Object::proto->slot_get(SYMBOL(UObject))->clone();
-  object::objects_type args;
-  args.push_back(oc);
-  getCurrentRunner().apply(oc->slot_get(SYMBOL(init)), SYMBOL(init), args);
+  rObject oc = object::Object::proto->slot_get(SYMBOL(UObject))->call(
+             SYMBOL(clone));
+  oc->call(SYMBOL(uobject_init));
+  oc->call(SYMBOL(init));
   oc->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
   oc->slot_set(SYMBOL(__uobject_cname),
 	       new object::String(name));
@@ -321,7 +322,7 @@ uobject_make_proto(const std::string& name)
 rObject
 uobject_new(rObject proto, bool forceName)
 {
-  rObject r = proto->clone();
+  rObject r = new object::Finalizable(proto->as<object::Finalizable>());
 
   // Get UObject name.
   rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
@@ -346,6 +347,7 @@ uobject_new(rObject proto, bool forceName)
   }
   uobject_map[name] = r.get();
   r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
+  r->call(SYMBOL(uobject_init));
   // Instanciate UObject.
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
   {
@@ -467,9 +469,18 @@ namespace urbi
 
   struct CallbackStorage
   {
+    CallbackStorage()
+    :owned(false)
+    ,initialized(false)
+    {}
+    /// Callback type: var, varaccess, event, eventend.
     std::string type;
+    /// Variable name to hook.
     std::string name;
+    /// Name of the uobject installing the callback.
+    std::string source;
     bool owned;
+    bool initialized;
   };
 
 
@@ -482,7 +493,7 @@ namespace urbi
    * So just store the constructor arguments, and perform the real work in
    * registerCallback()
    */
-  UGenericCallback::UGenericCallback(const std::string&,
+  UGenericCallback::UGenericCallback(const std::string& source,
 				     const std::string& type,
 				     const std::string& name,
 				     int, urbi::UTable&, bool owned)
@@ -491,6 +502,7 @@ namespace urbi
     s.type = type;
     s.name = name;
     s.owned = owned;
+    s.source = source;
     storage = &s;
   }
 
@@ -503,17 +515,26 @@ namespace urbi
       return;
     runner::Runner& runner = getCurrentRunner();
     CallbackStorage& s = *reinterpret_cast<CallbackStorage*>(storage);
+    if (s.initialized)
+    {
+      std::cerr << "###UGenericcallback on " << s.name << " allready registered"
+        << std::endl;
+      return;
+    }
+    s.initialized = true;
     StringPair p = split_name(s.name);
     std::string method = p.second;
     ECHO("ugenericcallback " << s.type << " " << p.first << " "
          << method << "  " << s.owned);
+    // UObject owning the variable/event to monitor
     rObject me = get_base(p.first); //objname?
     assertion(me);
     object::objects_type args = list_of(me);
     std::string meId = runner.apply(me->slot_get(SYMBOL(id)), SYMBOL(id),
                                     args)
       ->as<object::String>()->value_get();
-    std::string traceName = meId + "::" + method;
+    std::string traceName = meId + "::" + method + "::"
+      + string_cast((void*)this);
     if (s.type == "function")
     {
       ECHO( "binding " << p.first << "." << method );
@@ -533,10 +554,14 @@ namespace urbi
 	else
 	  sym = SYMBOL(notifyChange);
       }
+      rObject source = get_base(s.source);
+      assertion(source);
+      rObject handle = source->slot_get(SYMBOL(handle));
       rObject f = var->slot_get(sym);
       assertion(f);
       object::objects_type args = list_of
         (var)
+        (handle)
 	(object::make_primitive(
 	boost::function1<rObject, const objects_type&>
 	(boost::bind(&wrap_ucallback_notify, _1, this,

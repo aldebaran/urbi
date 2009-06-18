@@ -24,7 +24,8 @@ function Global.isdef
   return true
 };
 
-class Global.UObject
+var Global.UObject = Finalizable.new;
+do (Global.UObject)
 {
   var minimumInterval = Object.getPeriod;
   var updateTask = 0;
@@ -39,15 +40,39 @@ class Global.UObject
 
   function init()
   {
+    0
+  };
+  function uobject_init()
+  {
+    // COW
     updateTask = Tag.new;
     remoteEventMap = Dictionary.new;
+    var this.handle = WeakPointer.new;
+    timerTask = [];
   };
 
   function destroy()
   {
+    for( var t: timerTask)
+      t.stop |
+    updateTask.stop |
     uobjects.removeSlot(__uobjectName);
-    for (var f: localSlotNames.remove("__uobjectName"))
-      removeSlot(f)
+    // Deregister all callbacks
+    handle = nil;
+    // Remove reference loops induced by closures.
+    for (var f: localSlotNames)
+    {
+      if (getSlot(f).isA(UVar))
+      {
+        removeProperty(f + "_quote_n", "updateHook");
+      }
+    };
+    for (var f: localSlotNames.remove("__uobjectName").remove("finalize"))
+      removeSlot(f) ;
+    // Destroy C++ UObject instance
+    finalize;
+    // Reparent to loose all UObject methods including finalize
+    setProtos([Finalizable]);
   };
 
   /// Set a timer to call update at specified interval in seconds.
@@ -156,9 +181,9 @@ do (getSlot("UVar"))
     var uv = __clone;
     do (uv)
     {
-      var change = [] |
-      var changeOwned = [] |
-      var access = [] |
+      var change = WeakDictionary.new |
+      var changeOwned = WeakDictionary.new |
+      var access = WeakDictionary.new |
       var owned = false |
       var val |
       var valsensor = 0 |
@@ -166,24 +191,24 @@ do (getSlot("UVar"))
     }
   };
 
-  function notifyChange(f)
+  function notifyChange(handle, f)
   {
-    change += [f] |
-    if (change.size == 1)
+    change[handle] = f |
+    if (change.asList.size == 1)
       detach(loopCheck) |
     void
   };
-  function notifyChangeOwned(f)
+  function notifyChangeOwned(handle, f)
   {
-    changeOwned += [f] |
+    changeOwned[handle] = f |
     void
   };
-  function notifyAccess(f)
+  function notifyAccess(handle, f)
   {
     //beware of the CoW
     getSlot("UVar").nAccess++ |
-    access += [f] |
-    if (access.size == 1)
+    access[handle] = f |
+    if (access.asList.size == 1)
       detach(loopCheck) |
     if (getSlot("UVar").nAccess == 1)
       onHasNotifyAccess! |
@@ -221,14 +246,17 @@ do (UValue)
 at (getSlot("UVar").onHasNotifyAccess?)
   getSlot("UVar").nAccessTag: loop { sleep(getPeriod)};
 
+
+var Global.uobjects = Object.clone;
+var Global.uobjects_handle = WeakPointer.new;
+
 // UObjects can use evaluate at initialization-time.
 UVar.new(Global,"evaluate");
-Global.getSlot("evaluate").notifyChange(function()
+Global.getSlot("evaluate").notifyChange(uobjects_handle, function()
 {
   eval(evaluate)
 })|;
 
-var Global.uobjects = Object.clone;
 Global.uobjects.uobject_init();
 
 Global.addProto(uobjects);
@@ -274,9 +302,11 @@ class Global.'external'
     // lobby.
     if (uobjects not in Global.protos)
       Global.addProto(uobjects)|
-    uobjects.setSlot(objname, lobby.getSlot(objname));
+    uobjects.setSlot(objname, UObject.new) |
+    uobjects.getSlot(objname).uobject_init |
+    for| (var s: lobby.getSlot(objname).localSlotNames)
+      uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s)) |
     lobby.removeSlot(objname)|
-    uobjects.getSlot(objname).addProto(UObject) |
     uobjects.getSlot(objname).setSlot("lobby", lobby) |
     uobjects.getSlot(objname).init() |
     ("external object "+objname).print|
@@ -313,6 +343,10 @@ class Global.'external'
         return|
       ("Error: external var called for "+objname+"."+varname).print
     }|
+    if (!lobby.hasSlot("handle"))
+    {
+      var lobby.handle = WeakPointer.new
+    }|
     // Ignore duplicate binds of same var.
     var lid = lobby.uid|
     if (!hasLocalSlot(lid))
@@ -347,7 +381,7 @@ class Global.'external'
                  fullname,
                  v]
     }|
-    uobjects.getSlot(objname).getSlot(varname).notifyChange(f)|
+    uobjects.getSlot(objname).getSlot(varname).notifyChange(lobby.handle, f)|
     void
   };
 
@@ -410,7 +444,10 @@ class Global.'external'
     {
       if (uobjects.getSlot(o).hasSlot("lobby")
 	&& uobjects.getSlot(o).lobby === l)
+      {
+        uobjects.getSlot(o).destroy |
 	uobjects.removeSlot(o)
+      }
     }
   };
 };
