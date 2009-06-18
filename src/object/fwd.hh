@@ -27,6 +27,7 @@ namespace object
     Macro(Directory);                           \
     Macro(Executable);                          \
     Macro(File);                                \
+    Macro(Finalizable);                         \
     Macro(Float);                               \
     Macro(List);                                \
     Macro(Lobby);                               \

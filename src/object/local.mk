@@ -101,6 +101,8 @@ dist_libuobject_la_SOURCES +=			\
   object/executable.cc				\
   object/file.cc				\
   object/file.hh				\
+  object/finalizable.hh                         \
+  object/finalizable.cc                         \
   object/float.cc				\
   object/float.hh				\
   object/fwd.hh					\
