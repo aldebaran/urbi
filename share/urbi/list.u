@@ -203,9 +203,9 @@ do (List)
     res
   };
 
-  function max(var comp = function (a, b) { b < a })
+  function max(var comp = function (a, b) { a < b })
   {
-    min(comp)
+    min(function (a, b) {!comp(a, b)})
   };
 };
 
