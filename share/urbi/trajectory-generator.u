@@ -9,11 +9,6 @@ class Global.TrajectoryGenerator
     var this.getter = getter |
     var this.setter = setter |
     var this.targetValue = targetValue|
-    var this.startTime = time|
-    // Sin does not need startValue, but it is simpler to compute it
-    // anyway as it allows to depend on it below.  Besides, it allows
-    // to enforce a proper initial value for Sin too.
-    var this.startValue = getStartValue |
     var adaptive = args.getWithDefault("adaptive", false) |
     protos =
       [{
@@ -44,6 +39,20 @@ class Global.TrajectoryGenerator
           if (adaptive) TimeAdaptive else Time
       }] |
     init(args)
+  };
+
+  // Complete the initialization by setting startTime and startValue.
+  // Must be called right before run(), not in init(), since the
+  // TrajectoryGenerator might be created way before it is run, in
+  // which case we want startTime to match that of run(), not that of
+  // init().
+  function start ()
+  {
+    var this.startTime = time|
+    // Sin does not need startValue, but it is simpler to compute it
+    // anyway as it allows to depend on it below.  Besides, it allows
+    // to enforce a proper initial value for Sin too.
+    var this.startValue = getStartValue |
   };
 
   // Going from startValue to targetValue with given speed.
@@ -90,6 +99,7 @@ class Global.TrajectoryGenerator
   // Blocking until the trajectory is over.
   function run()
   {
+    start |
     var tag = Tag.new|
     tag:
     {
@@ -103,8 +113,63 @@ class Global.TrajectoryGenerator
     }|
   };
 
+  // Generate a TrajectoryGenerator that first runs \a this, then
+  // \a other.
+  function '+' (other)
+  {
+    Then.new(this, other);
+  }
+
 };
 
+class TrajectoryGenerator.Until : TrajectoryGenerator
+{
+  // Build a trajectory generator that runs \a generator until
+  // the \a condition is verified.  Then quit.
+  function init // (generator, condition)
+  {
+    var this.gen = call.evalArgAt(0) |
+    var this.until = call.argAt(1) |
+  };
+
+  var isOver = false;
+
+  // Update the variable according to the trajectory.
+  // Use the functions getter/setter to read/update the variable.
+  // Blocking until the trajectory is over.
+  function run()
+  {
+    gen.run,
+    while (!gen.isOver)
+    {
+      if (until)
+        gen.isOver = true
+      else
+        sleep(getPeriod)
+    }|
+  };
+};
+
+
+class TrajectoryGenerator.Then : TrajectoryGenerator
+{
+  // Generate the TrajectoryGenerator that first runs \a first, then
+  // \a second.
+  function init(first, second)
+  {
+    var this.first = first |
+    var this.second = second |
+  };
+
+  // Update the variable according to the trajectory.
+  // Use the functions getter/setter to read/update the variable.
+  // Blocking until the trajectory is over.
+  function run()
+  {
+    first.run|
+    second.run
+  };
+};
 
 
 /*-------------------------------.
