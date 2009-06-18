@@ -1,0 +1,86 @@
+var Global.WeakPointer = Finalizable.new;
+/** A WeakPointer can be inserted into a WeakDictionary without increasing its
+  * reference count. Upon destruction of the WeakPointer, it is automatically
+  * removed of all WeakDictionary it was in.
+  */
+do (Global.WeakPointer)
+{
+  // Careful, we rely on copy-on-write.
+  var dicts = [];
+  function finalize()
+  {
+    nonInterruptible |
+    for| (var d: dicts)
+    {
+      d.dict.erase(this.id) |
+      __inc |
+      d.__inc
+    }
+  };
+};
+
+var Global.WeakDictionary = Finalizable.new;
+do (Global.WeakDictionary)
+{
+  function init()
+  {
+    var this.dict = Dictionary.new
+  };
+  function '[]='(key, val)
+  {
+    nonInterruptible |
+    if (!dict.has(key.id))
+    {
+      if (!key.isA(WeakPointer))
+        throw "WeakDictionary key is not a WeakPointer"|
+      key.__dec |
+      key.dicts = key.dicts + [this]|
+      __dec
+    }|
+    dict.set(key.id, Pair.new(key, val))|
+  };
+  function '[]'(key)
+  {
+    dict[key.id].second
+  };
+  function finalize()
+  {
+    nonInterruptible |
+    for(var e: dict)
+    {
+      e.second.first.dicts.remove(this) |
+      __inc
+    }
+  };
+  function erase(key)
+  {
+    if (!key.isA(WeakPointer))
+      throw "WeakDictionary key is not a WeakPointer"|
+    nonInterruptible |
+    if (dict.has(key.id))
+    {
+      dict.erase(key.id) |
+      key.__inc |
+      key.dicts.remove(this) |
+      __inc
+    }
+  };
+  function empty()
+  {
+    dict.empty
+  };
+  function asList()
+  {
+    dict.asList.map(function(x) {x.second})
+  };
+  function values()
+  {
+    dict.asList.map(function(x) {x.second.second})
+  };
+  function keys()
+  {
+    dict.asList.map(function(x) {x.second.first})
+  };
+};
+
+
