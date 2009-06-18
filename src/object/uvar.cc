@@ -18,7 +18,7 @@
 namespace object
 {
   static inline void callNotify(runner::Runner& r, rObject self,
-                                libport::Symbol notifyList) throw()
+                                libport::Symbol notifyList)
   {
     rList l = self->slot_get(notifyList).value().unsafe_cast<List>();
     objects_type args;
@@ -46,6 +46,10 @@ namespace object
           std::cerr << c.first << std::endl;
         }
         i = callbacks.erase(i);
+      }
+      catch(sched::exception& e)
+      {
+        throw;
       }
       catch(...)
       {
