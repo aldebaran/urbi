@@ -56,22 +56,33 @@ namespace rewrite
   void
   Desugarer::desugar_modifiers(const ast::Assign* assign)
   {
-    const ast::loc& loc = assign->location_get();
-    const ast::modifiers_type* source = assign->modifiers_get();
     ast::rLValue what = assign->what_get().unsafe_cast<ast::LValue>();
-    ast::rConstBinding binding = what.unsafe_cast<const ast::Binding>();
-
     if (!what)
       errors_.error(what->location_get(),
                     "cannot use modifiers on pattern assignments");
 
+    ast::rConstBinding binding = what.unsafe_cast<const ast::Binding>();
     if (binding)
       what = binding->what_get();
 
-    PARAMETRIC_AST(dict, "Dictionary.new");
+    const ast::loc& loc = assign->location_get();
+    ast::rLValue tgt = ast_lvalue_once(what);
 
+    // Complete the dictionary with the base, getter and setter.
+    // FIXME: There is a copy here that we would like to get rid of.
+    ast::modifiers_type source = *assign->modifiers_get();
+    source[SYMBOL(base)] = assign->value_get();
+    PARAMETRIC_AST(getter, "closure ( ) { %exp:1 }");
+    source[SYMBOL(getter)] = exp(getter % new_clone(tgt));
+    PARAMETRIC_AST(setter, "closure (v) { %exp:1 }");
+    source[SYMBOL(setter)] =
+      exp(setter
+          % new ast::Assignment(loc, new_clone(tgt),
+                                parser::ast_call(loc, SYMBOL(v))));
+
+    PARAMETRIC_AST(dict, "Dictionary.new");
     ast::rExp modifiers = exp(dict);
-    foreach (const ast::modifiers_type::value_type& elt, *source)
+    foreach (const ast::modifiers_type::value_type& elt, source)
     {
       PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
 
@@ -81,29 +92,9 @@ namespace rewrite
       modifiers = exp(add);
     }
 
-    ast::rExp target_value = recurse(assign->value_get());
-
-    ast::rLValue tgt = ast_lvalue_once(what);
-    PARAMETRIC_AST(trajectory,
-                   "TrajectoryGenerator.new("
-                   "  closure ( ) { %exp:1 }," // getter
-                   "  closure (v) { %exp:2 }," // Setter
-                   "  %exp:3," // Target value
-                   "  %exp:4" // modifiers
-                   ").run"
-      );
-
-    ast::rExp read = new_clone(tgt);
-    ast::rExp write = new ast::Assignment(loc, new_clone(tgt),
-                                          parser::ast_call(loc, SYMBOL(v)));
-
-    trajectory
-      % read
-      % write
-      % target_value
-      % modifiers;
-
-    ast::rExp res = ast::rExp(ast_lvalue_wrap(what, exp(trajectory)).get());
+    PARAMETRIC_AST(trajectory, "TrajectoryGenerator.new(%exp:1).run");
+    ast::rExp res =
+      ast::rExp(ast_lvalue_wrap(what, exp(trajectory % modifiers)).get());
 
     if (binding)
     {

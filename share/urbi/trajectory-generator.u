@@ -4,11 +4,12 @@
 class Global.TrajectoryGenerator
 {
   // Initialization: Instantiate one of the sub classes.
-  function init(getter, setter, targetValue, args)
+  function init(args)
   {
-    var this.getter = getter |
-    var this.setter = setter |
-    var this.targetValue = targetValue|
+    var this.getter = args["getter"] |
+    var this.setter = args["setter"] |
+    var this.targetValue = args["base"]|
+    var this.args = args|
     var adaptive = args.getWithDefault("adaptive", false) |
     protos =
       [{
@@ -29,16 +30,13 @@ class Global.TrajectoryGenerator
           if (adaptive)
             SpeedAdaptive
           else
-            {
-              // Speed is just Time, but with initial conditions
-              // expressed in speed instead of duration.
-              args["time"] = duration(args["speed"])|
-              Time
-            }
+            // Speed is just Time, but with initial conditions
+            // expressed in speed instead of duration.
+            Time
         else if ("time" in args)
           if (adaptive) TimeAdaptive else Time
       }] |
-    init(args)
+    init(args) |
   };
 
   // Complete the initialization by setting startTime and startValue.
@@ -46,7 +44,7 @@ class Global.TrajectoryGenerator
   // TrajectoryGenerator might be created way before it is run, in
   // which case we want startTime to match that of run(), not that of
   // init().
-  function start ()
+  function reset ()
   {
     var this.startTime = time|
     // Sin does not need startValue, but it is simpler to compute it
@@ -99,7 +97,7 @@ class Global.TrajectoryGenerator
   // Blocking until the trajectory is over.
   function run()
   {
-    start |
+    reset |
     var tag = Tag.new|
     tag:
     {
@@ -194,6 +192,11 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
   function init (args)
   {
     var this.accel = args["accel"] |
+  };
+
+  function reset ()
+  {
+    TrajectoryGenerator.OpenLoop.getSlot("reset").apply([this]) |
     var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
   };
 
@@ -248,7 +251,15 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 {
   function init (args)
   {
-     var this.duration = args["time"] |
+  };
+
+  function reset ()
+  {
+    // Speed is just Time, but with initial conditions expressed in
+    // speed instead of duration.  But since this relies on the
+    // current time, it must be call in reset, not init.
+    TrajectoryGenerator.OpenLoop.getSlot("reset").apply([this]) |
+    var this.duration = args["time"] || duration(args["speed"])|
   };
 
   function get()
@@ -294,6 +305,11 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
   function init (args)
   {
     var this.speed = args["speed"] |
+  };
+
+  function reset ()
+  {
+    TrajectoryGenerator.ClosedLoop.getSlot("reset").apply([this]) |
     var this.duration = duration(speed)
   };
 
@@ -316,7 +332,15 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
 {
   function init (args)
   {
-    var this.duration = args["time"] |
+  };
+
+  function reset ()
+  {
+    // Speed is just Time, but with initial conditions expressed in
+    // speed instead of duration.  But since this relies on the
+    // current time, it must be call in reset, not init.
+    TrajectoryGenerator.ClosedLoop.getSlot("reset").apply([this]) |
+    var this.duration = args["time"] || duration(args["speed"])|
   };
 
   function get(currentVal)

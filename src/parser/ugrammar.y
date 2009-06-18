@@ -97,15 +97,17 @@
     `---------------*/
 
     static void
-    check_modifiers_accumulation(ast::loc loc,
-                                 const ast::modifiers_type& modifiers,
-                                 libport::Symbol name,
-                                 parser::ParserImpl& up)
+    modifiers_add(parser::ParserImpl& up, const ast::loc& loc,
+                  ast::modifiers_type& mods,
+                  const ::parser::modifier_type& mod)
     {
-      if (libport::mhas(modifiers, name))
+      if (libport::mhas(mods, mod.first))
         up.warn(loc,
-                libport::format("accumulated modifier: %s", name));
+                libport::format("modifier redefined: %s", mod.first));
+      mods[mod.first] = mod.second;
     }
+
+
 
 # undef ERROR
 # define ERROR(Loc, Msg, Type)                  \
@@ -662,14 +664,13 @@ modifier:
 dictionary:
   dictionary modifier
   {
-    check_modifiers_accumulation(@2, $1->value_get(), $2.first, up);
     std::swap($$, $1);
-    $$->value_get()[$2.first] = $2.second;
+    modifiers_add(up, @2, $$->value_get(), $2);
   }
 | modifier
   {
     $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
-    $$->value_get()[$1.first] = $1.second;
+    modifiers_add(up, @1, $$->value_get(), $1);
   }
 
 /*-------------------.
@@ -680,6 +681,8 @@ exp:
   exp "=" exp
   {
     ast::rDictionary d = $3.unsafe_cast<ast::Dictionary>();
+    // If exp is "e0 k1: e1 k2: e2...", i.e. a dictionary plus a
+    // "base" (e0), then this is a trajectory.
     if (d && d->base_get())
       $$ = new ast::Assign(@$, $1, d->base_get(),
                            new ast::modifiers_type(d->value_get()));
@@ -694,27 +697,24 @@ exp:
   {
     if (ast::rDictionary d = $1.unsafe_cast<ast::Dictionary>())
     {
-      check_modifiers_accumulation(@2, d->value_get(), $2.first, up);
-      d->value_get()[$2.first] = $2.second;
+      modifiers_add(up, @2, d->value_get(), $2);
       $$ = $1;
     }
     else if (ast::rAssign a = $1.unsafe_cast<ast::Assign>())
     {
       ast::modifiers_type* m = a->modifiers_get();
-      if (m)
-        check_modifiers_accumulation(@2, *a->modifiers_get(), $2.first, up);
-      else
+      if (!m)
       {
         m = new ast::modifiers_type();
         a->modifiers_set(m);
       }
-      (*m)[$2.first] = $2.second;
+      modifiers_add(up, @2, *a->modifiers_get(), $2);
       $$ = $1;
     }
     else
     {
       ast::rDictionary d = new ast::Dictionary(@$, 0, ast::modifiers_type());
-      d->value_get()[$2.first] = $2.second;
+      modifiers_add(up, @2, d->value_get(), $2);
       d->base_get() = $1;
       $$ = d;
     }
