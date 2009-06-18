@@ -192,33 +192,20 @@ do (List)
     return true
   };
 
-  function min
+  function min(var comp = function (a, b) { a < b })
   {
     if (empty)
       throw Exception.new("list cannot be empty") |
-    var f |
-    if (call.argsCount > 0)
-      f = call.argAt(0)
-    else
-      f = function (a, b) {a < b} |
     var res = head|
-    for| (var elt: tail)
-      if (f(elt, res))
+    for| (var elt in tail)
+      if (comp(elt, res))
         res = elt |
     res
   };
 
-  function max
+  function max(var comp = function (a, b) { b < a })
   {
-    var f;
-    if (call.argsCount > 0)
-    {
-      var arg = call.argAt(0) |
-      f = function (a, b) { !arg(a, b) } |
-    }
-    else
-      f = function (a, b) {b < a} |
-    min(f)
+    min(comp)
   };
 };
 
