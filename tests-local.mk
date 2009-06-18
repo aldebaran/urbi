@@ -66,5 +66,4 @@ TFAIL_TESTS +=					\
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
-  2.x/uob/group.chk				\
-  uob/plug/all/destruction.chk
+  2.x/uob/group.chk
