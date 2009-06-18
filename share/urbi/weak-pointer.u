@@ -14,7 +14,8 @@ do (Global.WeakPointer)
     {
       d.dict.erase(this.id) |
       __inc |
-      d.__inc
+      d.__inc |
+      d.cache_values
     }
   };
 };
@@ -24,7 +25,9 @@ do (Global.WeakDictionary)
 {
   function init()
   {
-    var this.dict = Dictionary.new
+    var this.dict = Dictionary.new |
+    // Cache values for performance
+    var this.values = []
   };
   function '[]='(key, val)
   {
@@ -38,6 +41,7 @@ do (Global.WeakDictionary)
       __dec
     }|
     dict.set(key.id, Pair.new(key, val))|
+    cache_values
   };
   function '[]'(key)
   {
@@ -73,9 +77,9 @@ do (Global.WeakDictionary)
   {
     dict.asList.map(function(x) {x.second})
   };
-  function values()
+  function cache_values()
   {
-    dict.asList.map(function(x) {x.second.second})
+    values = dict.asList.map(function(x) {x.second.second})
   };
   function keys()
   {

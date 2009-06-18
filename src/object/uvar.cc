@@ -21,7 +21,7 @@ namespace object
                                 libport::Symbol notifyList)
   {
     rList l =
-      self->slot_get(notifyList)->call(SYMBOL(values)).unsafe_cast<List>();
+      self->slot_get(notifyList)->slot_get(SYMBOL(values))->as<List>();
     objects_type args;
     args.push_back(self);
     List::value_type& callbacks = l->value_get();
