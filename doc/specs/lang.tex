@@ -1706,6 +1706,79 @@ test(51);
 
 \subsection{at}
 \subsection{every}
+
+The \texttt{every} statement enables to execute a block of code
+repeatedly, with the given period.
+
+\begin{urbiscript}
+// Print out a message every second.
+every(1s)
+  echo("Are you still there?");
+/*(*/sleep(2.1s);/*)*/
+[00000000] *** Are you still there?
+[00001000] *** Are you still there?
+[00002000] *** Are you still there?
+\end{urbiscript}
+
+It exists in two flavors. The default flavor will execute the block in
+the background every \texttt{period}. Several iteration can thus
+overlap.
+
+\begin{urbiscript}
+// If an iteration is longer than the given period, it will overlap
+// with the next one.
+every(1s)
+{
+  echo("Could you come over here?");
+  sleep(1.5s);
+  echo("There you are!");
+};
+/*(*/sleep(2.6s);/*)*/
+[00000000] *** Could you come over here?
+[00001000] *** Could you come over here?
+[00001500] *** There you are!
+[00002000] *** Could you come over here?
+[00002500] *** There you are!
+\end{urbiscript}
+
+On the other hand, the \texttt{every|} flavor will not let iterations
+overlap. If an iterations duration exceeds the period, it will delay
+all the following iterations. That is, the next iterations will start
+immediately after the end of the current one, and next iterations will
+occur normally every \texttt{period} from this point.
+
+\begin{urbiscript}
+var too_long = true;
+[00000000:hide] true
+
+// Every other iteration exceeds the period, and will delay the
+// following one.
+
+every|(1s)
+{
+  if (too_long)
+  {
+    too_long = false;
+    echo("Please put me down");
+    sleep(1.5s);
+    echo("I don't hate you");
+  }
+  else
+  {
+    too_long = true;
+    echo("No hard feelings");
+  }
+};
+/*(*/sleep(4.1s);/*)*/
+[00000000] *** Please put me down
+[00001500] *** I don't hate you
+[00001500] *** No hard feelings
+[00002500] *** Please put me down
+[00004000] *** I don't hate you
+[00004000] *** No hard feelings
+
+\end{urbiscript}
+
 \subsection{for\& (:)}
 \subsection{for\& (n)}
 \subsection{waituntil}
