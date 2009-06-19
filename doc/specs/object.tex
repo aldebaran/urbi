@@ -91,28 +91,38 @@ do (Object.new)
 \item \lstinline|dump(\var{depth})|\\
   Describe \lstinline|this|: its prototypes and slots.  The argument
   \var{depth} specifies how recursive the description is: the greater,
-  the more detailed.  See also \lstinline|Object.inspect|.
+  the more detailed.  This method is mostly useful for debugging
+  low-level issues, for a more human-readable interface, see also
+  \lstinline|Object.inspect|.
 \begin{urbiscript}[firstnumber=last]
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(0);
-[00075782] *** Float_0x1800c70 {
-[00075782] ***   /* Special slots */
-[00075782] ***   protos = Float
-[00075782] ***   value = 2
-[00075782] ***   /* Slots */
-[00075782] ***   attr = String_0x18480d0 <...>
-[00075782] ***   }
+[00015137] *** Float_0x240550 {
+[00015137] ***   /* Special slots */
+[00015137] ***   protos = Float
+[00015137] ***   value = 2
+[00015137] ***   /* Slots */
+[00015137] ***   attr = String_0x23a750 <...>
+[00015137] ***     /* Properties */
+[00015137] ***     prop = String_0x23a7a0 <...>
+[00015137] ***   }
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
-[00078918] *** Float_0x1800c70 {
-[00078918] ***   /* Special slots */
-[00078918] ***   protos = Float
-[00078918] ***   value = 2
-[00078918] ***   /* Slots */
-[00078918] ***   attr = String_0x1859f10 {
-[00078918] ***     /* Special slots */
-[00078918] ***     protos = String
-[00078918] ***     /* Slots */
-[00078918] ***     }
-[00078918] ***   }
+[00020505] *** Float_0x240550 {
+[00020505] ***   /* Special slots */
+[00020505] ***   protos = Float
+[00020505] ***   value = 2
+[00020505] ***   /* Slots */
+[00020505] ***   attr = String_0x23a750 {
+[00020505] ***     /* Special slots */
+[00020505] ***     protos = String
+[00020505] ***     /* Slots */
+[00020505] ***     }
+[00020505] ***     /* Properties */
+[00020505] ***     prop = String_0x239330 {
+[00020505] ***       /* Special slots */
+[00020505] ***       protos = String
+[00020505] ***       /* Slots */
+[00020505] ***       }
+[00020505] ***   }
 \end{urbiscript}
 
 \item \lstinline|each(\var{fun})|\\
@@ -240,7 +250,7 @@ do (2) { var foo = "foo" }.properties("foo");
 [00238501] Dictionary {}
 do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
 [00238502] Dictionary {"bar" => "bar"}
-\end{urbiscript}
+\enqd{urbiscript}
 
 \item \lstinline|removeProperty|\\
 

@@ -32,6 +32,20 @@
 namespace object
 {
 
+  namespace
+  {
+    /// Use xalloc/iword to store our current depth within the stream object.
+    static
+    inline
+    long&
+    current_depth(std::ostream& o)
+    {
+      static const long idx = std::ios::xalloc();
+      return o.iword(idx);
+    }
+  }
+
+
   Object::Object()
     : protos_(new protos_type)
     , slots_()
@@ -263,8 +277,28 @@ namespace object
   `-----------*/
 
   std::ostream&
-  Object::special_slots_dump (std::ostream& o) const
+  Object::special_slots_dump(std::ostream& o) const
   {
+    return o;
+  }
+
+  std::ostream&
+  Object::slot_dump(std::ostream& o,
+                    const CentralizedSlots::q_slot_type& slot,
+                    int depth_max) const
+  {
+    o << slot.first.second << " = ";
+    slot.second->value()->dump(o, depth_max) << libport::iendl;
+    if (Slot::properties_type* props = slot.second->properties_get())
+    {
+      o << "  /* Properties */" << libport::incendl;
+      foreach (const Slot::properties_type::value_type& p, *props)
+      {
+        o << p.first << " = ";
+        p.second->dump(o, depth_max);
+      }
+      o << libport::decendl;
+    }
     return o;
   }
 
@@ -302,34 +336,28 @@ namespace object
   }
 
   std::ostream&
-  Object::dump (std::ostream& o, int depth_max) const
+  Object::dump(std::ostream& o, int depth_max) const
   {
     id_dump(o);
-    /// Use xalloc/iword to store our current depth within the stream object.
-    static const long idx = o.xalloc();
-    long& current_depth = o.iword(idx);
 
     // Stop recursion at depth_max.
-    if (current_depth > depth_max)
+    if (depth_max < current_depth(o))
       return o << " <...>";
-    ++current_depth;
-    o << " {" << libport::incendl;
-    o << "/* Special slots */" << libport::iendl;
+    ++current_depth(o);
+
+    o << " {" << libport::incendl
+      << "/* Special slots */" << libport::iendl;
     protos_dump(o);
     special_slots_dump (o);
 
     o << "/* Slots */" << libport::iendl;
-    for (slots_implem::const_iterator slot = slots_.begin(this);
-         slot != slots_.end(this);
-         ++slot)
-    {
-      o << slot->first.second << " = ";
-      slot->second->value()->dump(o, depth_max) << libport::iendl;
-    }
+    for (slots_implem::const_iterator i = slots_.begin(this);
+         i != slots_.end(this);
+         ++i)
+      slot_dump(o, *i, depth_max);
 
     o << libport::decindent << '}';
-    //We can not reuse current_depth variable above according to spec.
-    o.iword(idx)--;
+    --current_depth(o);
     return o;
   }
 

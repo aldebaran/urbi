@@ -77,9 +77,6 @@ namespace object
 
     /// \name The slots.
     /// \{
-    /// One slot.
-    typedef std::set<const Object*> objects_set_type;
-
     /// Whether \a this has a \a k slot
     /// \param k         Slot name.
     /// \return Whether the \a k slot exists
@@ -173,6 +170,10 @@ namespace object
     std::ostream& protos_dump(std::ostream& o) const;
     /// Report a short string describing the identity.
     std::ostream& id_dump(std::ostream& o) const;
+    /// Report a slot and possibly its properties.
+    std::ostream& slot_dump(std::ostream& o,
+                            const CentralizedSlots::q_slot_type& s,
+                            int depth_max) const;
 
     /// Dump the special slots if there are.
     virtual std::ostream& special_slots_dump(std::ostream& o) const;
@@ -231,7 +232,6 @@ namespace object
   private:
     location_type
     slot_locate_(const key_type& k, bool fallback) const;
-
 
     /// The protos.
     protos_type* protos_;
