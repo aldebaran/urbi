@@ -37,13 +37,13 @@ namespace object
       {
         std::cerr << "Urbi Exception caught while processing notify: "
           << *e.value_get() << std::endl;
-        std::cerr <<"backtrace: " << std::endl;
+        std::cerr << "backtrace: " << std::endl;
         rforeach (call_type c, e.backtrace_get())
         {
           std::ostringstream o;
           std::cerr << "    called from: ";
           if (c.second)
-            std::cerr  << *c.second << ": ";
+            std::cerr << *c.second << ": ";
           std::cerr << c.first << std::endl;
         }
         i = callbacks.erase(i);
@@ -98,8 +98,8 @@ namespace object
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
     if (!looping_
-        && !is_true(slot_get(SYMBOL(change))->call(SYMBOL(empty)))
-        && !is_true(slot_get(SYMBOL(access))->call(SYMBOL(empty))))
+        && !slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
+        && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool())
     {
       looping_ = true;
       while (true)
@@ -168,7 +168,6 @@ namespace object
   UVar::writeOwned(rObject newval)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
     slot_update(SYMBOL(valsensor), newval);
     callNotify(r, rObject(this), SYMBOL(change));
     return newval;
