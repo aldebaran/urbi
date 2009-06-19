@@ -5,6 +5,8 @@
 #include <list>
 #include <libport/unistd.h>
 
+#include <libport/format.hh>
+
 #include <liburbi/compatibility.hh>
 
 #include <urbi/uobject.hh>
