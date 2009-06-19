@@ -5,10 +5,104 @@ release.
 * New in kernel 2.0 RC 2. *
 ***************************
 
-New urbiScript functions
-========================
+This release candidate includes many fixes and improvements that are
+not reported below.  The following list is by no means exhaustive.
 
-- System._exit(status).
+Documentation
+=============
+
+The documentation was largely extended and fixed.  Its layout was also
+improved.  Changes include, but are not limited to:
+
+- documentation of UOBJECT_PATH
+- documentation of various executables
+- k1-to-k2
+  Conversion idioms to urbiScript 1 to urbiScript 2
+- faq
+  - stack exhaustion
+  - at and waituntil: performance considerations
+- specs:
+  - completion of the definition of the control flow constructs
+    (every, every|, if, for, loop)
+  - Boolean
+  - Channel
+  - Dictionary
+  - Lazy
+  - Mutex
+  - Object
+  - Pair
+  - String
+  - Tag
+  - Timeout
+- tutorial:
+  - uobjects
+
+
+Optimization
+============
+
+The urbiScript engine was considerably optimized in both space and
+time.  FIXME: More about this here, and some figures please.
+Including about SDK-Remote.
+
+
+urbiScript functions
+====================
+
+New constructs:
+- every|
+
+New objects:
+- Finalizable
+- Mutex
+- Server
+- Socket
+- Timeout
+- WeakDictionary
+- WeakPointer
+
+New functions:
+- asBool
+- Channel.wall
+- Global.evaluate
+- Group.each, Group.each&
+- Lobby.onDisconnect (actually, an event).
+- Object.inspect
+- String:
+  fromAscii, replace, toAscii
+- System: _exit, assert_eq, system
+
+Fixes:
+- File.content reads the whole file.
+
+Deprecations:
+- ownsSlot is deprecated in favor of hasSlot/hasLocalSlot.
+- slotNames is deprecated in favor of allSlotName/localSlotNames.
+
+Changes:
+- empty strings, dictionaries and lists are now evaluated as "false"
+  in conditions.
+- Dictionaries.asString does not sort the keys.
+- Constants is merged into Math.
+
+
+UObjects
+========
+
+- the environment variable UOBJECT_PATH is used by urbi-launch and
+  urbiScript's loadModule to find uobjects.
+
+- fixed multiple notifications of event trigger in remote UObjects
+
+- possible notifyChange-based deadlocks are neutralized
+
+- FIXME: MN: destruction of UObjects.
+
+Various
+=======
+
+- Text files are converted to DOS end-of-lines for Windows packages.
+
 
 ***************************
 * New in kernel 2.0 RC 1. *
