@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+#include <climits>
 
 #include <boost/format.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -34,6 +35,7 @@ namespace object
   Object::Object()
     : protos_(new protos_type)
     , slots_()
+    , lookup_id_(INT_MAX)
   {
     root_classes_initialize();
   }
@@ -71,18 +73,19 @@ namespace object
     protos_ = &l->value_get();
   }
 
+  static int lookup_id = 0;
+
   inline Object::location_type
-  Object::slot_locate(const key_type& k,
-                      bool fallback, objects_set_type& marks) const
+  Object::slot_locate_(const key_type& k, bool fallback) const
   {
-    if (libport::mhas(marks, this))
+    if (lookup_id_ == lookup_id)
       return location_type(0, 0);
-    marks.insert(this);
+    lookup_id_ = lookup_id;
     if (rSlot slot = local_slot_get(k))
       return location_type(const_cast<Object*>(this), slot);
     foreach (const rObject& proto, protos_get())
     {
-      location_type rec = proto->slot_locate(k, fallback, marks);
+      location_type rec = proto->slot_locate_(k, fallback);
       if (rec.first)
         return rec;
     }
@@ -96,8 +99,8 @@ namespace object
   Object::slot_locate(const key_type& k,
                       bool fallback) const
   {
-    objects_set_type marks;
-    return slot_locate(k, fallback, marks);
+    ++lookup_id;
+    return slot_locate_(k, fallback);
   }
 
   Object::location_type

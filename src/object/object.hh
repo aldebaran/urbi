@@ -236,9 +236,7 @@ namespace object
 
   private:
     location_type
-    slot_locate(const key_type& k,
-                bool fallback,
-                objects_set_type& marks) const;
+    slot_locate_(const key_type& k, bool fallback) const;
 
 
     /// The protos.
@@ -249,6 +247,8 @@ namespace object
 
     /// The slots.
     slots_implem slots_;
+
+    mutable int lookup_id_;
   };
 
   /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
