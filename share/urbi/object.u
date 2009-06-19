@@ -1,0 +1,36 @@
+do (Object)
+{
+  function inspect (var deep = false)
+  {
+    function '<' (l, r) { l.toLower < r.toLower };
+    echo("Inspecting " + this);
+    echo("** Prototypes:");
+    for (var p: protos)
+      echo("  " + p);
+    var slots =
+      {
+        if (deep)
+        {
+          echo("** All Slots:");
+          allSlotNames;
+        }
+          else
+        {
+          echo("** Local Slots:");
+          localSlotNames;
+        }
+      };
+    for (var s: slots.sort ('<'))
+    {
+      var o = locateSlot(s);
+      echo("  " + o + "." + s + " : " + o.getSlot(s).type);
+      var ps = o.properties(s);
+      if (!ps.empty)
+        {
+          echo("    Properties:");
+          for (var p: ps.keys.sort('<'))
+            echo("     " + p + " : " + ps[p].type + " = " + ps[p]);
+        }
+    };
+  };
+};

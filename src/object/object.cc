@@ -215,8 +215,7 @@ namespace object
   rDictionary
   Object::properties_get(const key_type& k)
   {
-    Slot::properties_type* props = slot_get(k).properties_get();
-    if (props)
+    if (Slot::properties_type* props = slot_get(k).properties_get())
       return new Dictionary(*props);
     else
       return new Dictionary();
@@ -413,9 +412,9 @@ namespace object
     return "Object";
   }
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
 
   void
   Object::urbi_createSlot(key_type name)
@@ -434,6 +433,12 @@ namespace object
   {
     rObject o = slot_locate(name).first;
     return o ? o : nil_class;
+  }
+
+  rDictionary
+  Object::urbi_properties(key_type name)
+  {
+    return properties_get(name);
   }
 
   rObject

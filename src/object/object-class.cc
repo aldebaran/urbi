@@ -17,6 +17,7 @@
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
 #include <object/cxx-primitive.hh>
+#include <object/dictionary.hh>
 #include <object/float.hh>
 #include <object/global.hh>
 #include <object/list.hh>
@@ -33,7 +34,7 @@ namespace object
   `--------------------*/
 
   static rObject
-  object_class_clone (const objects_type& args)
+  object_class_clone(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
 
@@ -41,7 +42,7 @@ namespace object
   }
 
   static rObject
-  object_class_init (const objects_type& args)
+  object_class_init(const objects_type& args)
   {
     check_arg_count(args.size() - 1, 0);
     return args[0];
@@ -50,7 +51,7 @@ namespace object
   /// Send dumped self on the connection.
   /// args[1], if present, can be the tag to use.
   static rObject
-  object_class_dump (const objects_type& args)
+  object_class_dump(const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
@@ -58,7 +59,7 @@ namespace object
 
     // Second argument is max depth.
     int depth_max = 0;
-    if (args.size() >= 2)
+    if (2 <= args.size())
     {
       type_check<Float>(args[1]);
       const rFloat& arg1 = args[1]->as<Float>();
@@ -74,7 +75,7 @@ namespace object
 
     // Third argument is the tag name.
     std::string tag;
-    if (args.size() >= 3)
+    if (3 <= args.size())
     {
       type_check<String>(args[2]);
       const rString& arg2 = args[2].unsafe_cast<String>();
@@ -312,6 +313,7 @@ namespace object
     DECLARE(hasProperty    , property_has);
     DECLARE(hasSlot        , slot_has);
     DECLARE(locateSlot     , urbi_locateSlot);
+    DECLARE(properties     , urbi_properties);
     DECLARE(removeProperty , property_remove);
     DECLARE(removeSlot     , urbi_removeSlot);
     DECLARE(setConstSlot   , urbi_setConstSlot);

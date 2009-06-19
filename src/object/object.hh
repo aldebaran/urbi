@@ -218,20 +218,14 @@ namespace object
     | Urbi methods |
     `-------------*/
 
-    void
-    urbi_createSlot(key_type k);
-    rObject
-    urbi_getSlot(key_type k);
-    rObject
-    urbi_locateSlot(key_type k);
-    rObject
-    urbi_removeSlot(key_type k);
-    rObject
-    urbi_setSlot(key_type k, const rObject& o);
-    rObject
-    urbi_setConstSlot(key_type k, const rObject& o);
-    rObject
-    urbi_updateSlot(key_type k, const rObject& o);
+    void urbi_createSlot(key_type k);
+    rObject urbi_getSlot(key_type k);
+    rObject urbi_locateSlot(key_type k);
+    rDictionary urbi_properties(key_type slotName);
+    rObject urbi_removeSlot(key_type k);
+    rObject urbi_setSlot(key_type k, const rObject& o);
+    rObject urbi_setConstSlot(key_type k, const rObject& o);
+    rObject urbi_updateSlot(key_type k, const rObject& o);
 
 
   private:
