@@ -30,6 +30,9 @@ namespace object
     value_type& value_get();
     const value_type& value_get() const;
 
+    /// False iff equals zero.
+    virtual bool as_bool() const;
+
     /// \name Conversions.
     /// \{
     // FIXME: For some reason I don't understand, MSVC fails to

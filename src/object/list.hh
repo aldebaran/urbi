@@ -25,12 +25,15 @@ namespace object
     value_type& value_get();
 
     // Urbi method
+    /// False iff empty.
+    virtual bool as_bool() const;
     rObject back        ();
     rList   clear       ();
     void    each        (const rObject&);
     void    each_pipe   (const rObject&);
     void    each_common (const rObject&, bool);
     void    each_and    (const rObject&);
+    bool empty() const;
     rObject front       ();
     /// Also known as pop.
     rObject removeFront ();

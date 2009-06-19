@@ -120,7 +120,7 @@ namespace object
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     slot_update(SYMBOL(val), val);
-    if (is_true(slot_get(SYMBOL(owned))))
+    if (slot_get(SYMBOL(owned))->as_bool())
       callNotify(r, rObject(this), SYMBOL(changeOwned));
     else
     {
@@ -155,11 +155,9 @@ namespace object
       callNotify(r, rObject(this), SYMBOL(access));
       inAccess_ = false;
     }
-    rObject res;
-    if (!is_true(slot_get(SYMBOL(owned))))
-      res = slot_get(SYMBOL(val));
-    else
-      res = slot_get(SYMBOL(valsensor));
+    rObject res = slot_get(slot_get(SYMBOL(owned))->as_bool()
+                           ? SYMBOL(valsensor)
+                           : SYMBOL(val));
     if (!fromCXX)
       if (object::rUValue bv = res->as<object::UValue>())
         return bv->extract();

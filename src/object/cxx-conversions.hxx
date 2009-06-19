@@ -290,7 +290,7 @@ namespace object
     static target_type
     to(const rObject& o, unsigned)
     {
-      return is_true(o);
+      return o->as_bool();
     }
 
     static rObject

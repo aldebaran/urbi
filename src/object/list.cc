@@ -65,6 +65,18 @@ namespace object
     return new List(res);
   }
 
+  bool
+  List::as_bool() const
+  {
+    return !empty();
+  }
+
+  bool
+  List::empty() const
+  {
+    return content_.empty();
+  }
+
   List::size_type
   List::index(const rFloat& idx) const
   {
@@ -133,7 +145,7 @@ namespace object
   static bool
   compareListItems (const rObject& a, const rObject& b)
   {
-    return is_true(a->call(SYMBOL(LT), b));
+    return a->call(SYMBOL(LT), b)->as_bool();
   }
   static bool
   compareListItemsLambda (const rObject& f, const rObject& l,
@@ -149,7 +161,7 @@ namespace object
     args << l;
     args << a;
     args << b;
-    return is_true((*fun)(args));
+    return (*fun)(args)->as_bool();
   }
 
   List::value_type List::sort()
@@ -299,27 +311,34 @@ namespace object
 
   void List::initialize(CxxObject::Binder<List>& bind)
   {
-    bind(SYMBOL(back),           &List::back            );
-    bind(SYMBOL(clear),          &List::clear           );
-    bind(SYMBOL(each),           &List::each            );
-    bind(SYMBOL(each_AMPERSAND), &List::each_and        );
-    bind(SYMBOL(each_PIPE),      &List::each_pipe       );
-    bind(SYMBOL(front),          &List::front           );
-    bind(SYMBOL(SBL_SBR),        &List::operator[]      );
-    bind(SYMBOL(SBL_SBR_EQ),     &List::set             );
-    bind(SYMBOL(PLUS),           &List::operator+       );
-    bind(SYMBOL(PLUS_EQ),        &List::operator+=      );
-    bind(SYMBOL(insert),         &List::insert          );
-    bind(SYMBOL(insertBack),     &List::insertBack      );
-    bind(SYMBOL(insertFront),    &List::insertFront     );
-    bind(SYMBOL(removeBack),     &List::removeBack      );
-    bind(SYMBOL(removeFront),    &List::removeFront     );
-    bind(SYMBOL(removeById),     &List::remove_by_id    );
-    bind(SYMBOL(reverse),        &List::reverse         );
-    bind(SYMBOL(size),           &List::size            );
-    bind(SYMBOL(sort),           &sort_bouncer          );
-    bind(SYMBOL(STAR),           &List::operator*       );
-    bind(SYMBOL(tail),           &List::tail            );
+#define DECLARE(Name, Function)                 \
+    bind(SYMBOL(Name), &List::Function)
+
+    DECLARE(asBool,         as_bool         );
+    DECLARE(back,           back            );
+    DECLARE(clear,          clear           );
+    DECLARE(each,           each            );
+    DECLARE(each_AMPERSAND, each_and        );
+    DECLARE(each_PIPE,      each_pipe       );
+    DECLARE(empty,          empty           );
+    DECLARE(front,          front           );
+    DECLARE(SBL_SBR,        operator[]      );
+    DECLARE(SBL_SBR_EQ,     set             );
+    DECLARE(PLUS,           operator+       );
+    DECLARE(PLUS_EQ,        operator+=      );
+    DECLARE(insert,         insert          );
+    DECLARE(insertBack,     insertBack      );
+    DECLARE(insertFront,    insertFront     );
+    DECLARE(removeBack,     removeBack      );
+    DECLARE(removeFront,    removeFront     );
+    DECLARE(removeById,     remove_by_id    );
+    DECLARE(reverse,        reverse         );
+    DECLARE(size,           size            );
+    DECLARE(STAR,           operator*       );
+    DECLARE(tail,           tail            );
+
+#undef DECLARE
+    bind(SYMBOL(sort),      &sort_bouncer          );
   }
 
   URBI_CXX_OBJECT_REGISTER(List);

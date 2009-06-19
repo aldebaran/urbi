@@ -47,6 +47,10 @@ namespace object
     template<typename T>
     bool is_a() const;
 
+    /// Whether \a this represents a true value. UnexpectedVoidError
+    /// will be signalled if void is passed.
+    virtual bool as_bool() const;
+
     /// Convert this to type \a T
     /** \return This seen as a \a T, or 0 if it's not of type \a T
      */
@@ -255,10 +259,6 @@ namespace object
   /// atoms more efficiently.
   template<typename T>
   URBI_SDK_API bool is_a(const rObject& c);
-
-  /// Whether \a o represents a true value. UnexpectedVoidError will be
-  /// signalled if void is passed.
-  URBI_SDK_API bool is_true(const rObject& o);
 
   /// Return an Urbi boolean object corresponding to \a b.
   URBI_SDK_API const rObject& to_boolean(bool b);

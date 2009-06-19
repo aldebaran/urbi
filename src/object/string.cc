@@ -73,6 +73,18 @@ namespace object
     return content_.size();
   }
 
+  bool
+  String::empty() const
+  {
+    return content_.empty();
+  }
+
+  bool
+  String::as_bool() const
+  {
+    return !empty();
+  }
+
   float
   String::as_float() const
   {
@@ -376,10 +388,12 @@ namespace object
     DECLARE(PERCENT     , format);
     DECLARE(PLUS        , plus);
     DECLARE(STAR        , star);
+    DECLARE(asBool      , as_bool);
     DECLARE(asFloat     , as_float);
     DECLARE(asPrintable , as_printable);
     DECLARE(asString    , as_string);
     DECLARE(distance    , distance);
+    DECLARE(empty       , empty);
     DECLARE(fresh       , fresh);
     DECLARE(fromAscii   , fromAscii);
     DECLARE(replace     , replace);

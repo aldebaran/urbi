@@ -62,9 +62,15 @@ namespace object
   }
 
   bool
-  Dictionary::empty()
+  Dictionary::empty() const
   {
     return content_.empty();
+  }
+
+  bool
+  Dictionary::as_bool() const
+  {
+    return !empty();
   }
 
   rDictionary
@@ -85,7 +91,7 @@ namespace object
   }
 
   bool
-  Dictionary::has(libport::Symbol key)
+  Dictionary::has(libport::Symbol key) const
   {
     return libport::mhas(content_, key);
   }
@@ -95,13 +101,18 @@ namespace object
   void
   Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
   {
-    bind(SYMBOL(clear), &Dictionary::clear);
-    bind(SYMBOL(empty), &Dictionary::empty);
-    bind(SYMBOL(erase), &Dictionary::erase);
-    bind(SYMBOL(get),   &Dictionary::get);
-    bind(SYMBOL(has),   &Dictionary::has);
-    bind(SYMBOL(keys),  &Dictionary::keys);
-    bind(SYMBOL(set),   &Dictionary::set);
+    bind(SYMBOL(asBool), &Dictionary::as_bool);
+#define DECLARE(Name)                      \
+    bind(SYMBOL(Name), &Dictionary::Name);
+
+    DECLARE(clear);
+    DECLARE(empty);
+    DECLARE(erase);
+    DECLARE(get);
+    DECLARE(has);
+    DECLARE(keys);
+    DECLARE(set);
+#undef DECLARE
   }
 
   rObject

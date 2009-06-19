@@ -388,26 +388,15 @@ namespace object
   }
 
   bool
-  is_true(const rObject& o)
+  Object::as_bool() const
   {
-    if (o == nil_class
-        || o == false_class)
+    if (this == nil_class.get()
+        || this == false_class.get())
       return false;
 
-    // Semantically useless, but run cheap tests first.
-    if (o == true_class)
-      return true;
-
-    if (o == void_class)
+    if (this == void_class.get())
       runner::raise_unexpected_void_error();
 
-    if (o->is_a<object::Float>())
-      return o.unsafe_cast<object::Float>()->value_get();
-    if (o->is_a<object::String>())
-      return !o.unsafe_cast<object::String>()->value_get().empty();
-
-    // FIXME: We will probably want to throw here.  This is related to
-    // maybe calling asBool on every tested value.
     return true;
   }
 

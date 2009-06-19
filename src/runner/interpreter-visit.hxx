@@ -193,7 +193,7 @@ namespace runner
     JAECHO ("test", e->test_get ());
     rObject cond = operator()(e->test_get().get());
 
-    if (object::is_true(cond))
+    if (cond->as_bool())
     {
       JAECHO ("then", e->thenclause_get());
       return e->thenclause_get()->eval(*this);
@@ -661,11 +661,11 @@ namespace runner
       if (handler->match_get())
       {
         rObject pattern = operator()(handler->match_get()->pattern_get().get());
-        if (!is_true(pattern->call(SYMBOL(match), value)))
+        if (!pattern->call(SYMBOL(match), value)->as_bool())
           continue;
         operator()(handler->match_get()->bindings_get().get());
         if (handler->match_get()->guard_get()
-            && !is_true(operator()(handler->match_get()->guard_get().get())))
+            && !operator()(handler->match_get()->guard_get().get())->as_bool())
         {
           // Clear pattern
           pattern = operator()(handler->match_get()->pattern_get().get());
@@ -695,8 +695,7 @@ namespace runner
       if (must_yield && tail++)
 	YIELD();
       JAECHO ("while test", e->test_get());
-      rObject cond = operator()(e->test_get().get());
-      if (!object::is_true(cond))
+      if (!operator()(e->test_get().get())->as_bool())
 	break;
 
       JAECHO ("while body", e->body_get());

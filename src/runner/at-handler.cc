@@ -119,7 +119,7 @@ namespace runner
 	{
 	  non_interruptible_set(true);
 	  lobby_set(job->lobby_get());
-	  new_state = object::is_true(job->condition_get()->call(SYMBOL(eval)));
+	  new_state = job->condition_get()->call(SYMBOL(eval))->as_bool();
 	}
 	catch (object::UrbiException& ue)
 	{

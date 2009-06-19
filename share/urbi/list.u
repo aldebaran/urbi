@@ -72,11 +72,6 @@ do (List)
     return res
   };
 
-  function empty()
-  {
-    return size == 0
-  };
-
   // Add head, symmetric of tail
   copySlot ("front", "head");
   copySlot ("insertBack", "<<");

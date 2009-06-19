@@ -11,9 +11,6 @@ do (String)
   // Comparable.!= that bounce endlessly one on the other.
   setProtos([Orderable, Comparable]);
 
-  // Whether the string is empty.
-  function empty() { this == "" };
-
   // It is more natural to refer to the length of a string.  Besides,
   // other encodings will make a difference between size and length.
   copySlot("size", "length");

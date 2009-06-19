@@ -28,6 +28,13 @@ var d = Dictionary.new("one", 1, "two", 2);
 \subsection{Methods}
 
 \begin{itemize}
+\item \lstinline|asBool|\\
+  Negation of \lstinline|Dictionary.empty|.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(Dictionary.new.asBool, false);
+assert_eq(Dictionary.new.set("key", "value").asBool, true);
+\end{urbiscript}
+
 \item \lstinline|asList|\\
   Return the contents of the dictionary as a \refObject{Pair} list
   (\var{key}, \var{value}).  This makes it easier to iterate over a
@@ -50,7 +57,8 @@ d.clear;
   Whether the dictionary is empty.
 
 \begin{urbiscript}[firstnumber=last]
-assert(d.empty);
+assert(Dictionary.new.empty);
+assert(!Dictionary.new.set("key", "value").empty);
 \end{urbiscript}
 
 \item \lstinline|erase(\var{key})|\\

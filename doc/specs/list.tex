@@ -49,6 +49,13 @@ assert(! [-3, 1, -1].any(function (e) { e % 2 == 0 }));
 assert([-3, 1, -1].any(function (e) { e > 0 }));
 \end{urbiscript}
 
+\item \lstinline|asBool|\\
+  Whether not empty.
+\begin{urbiscript}[firstnumber=last]
+assert_eq([].asBool, false);
+assert_eq([1].asBool, true);
+\end{urbiscript}
+
 \item \lstinline|asList|\\
 Return the target.
 
@@ -73,7 +80,7 @@ assert_eq([0, 1, 2].back, 2);
 \end{urbiscript}
 
 \item \lstinline|clear|\\
-Empty the target.
+  Empty the target.
 
 \begin{urbiscript}[firstnumber=last]
 var x = [0, 1, 2];
@@ -108,7 +115,7 @@ Apply the given functional value on all members simultaneously.
 \end{urbiscript}
 
 \item \lstinline|empty|\\
-Return whether the target is empty.
+  Whether the target is empty.
 
 \begin{urbiscript}[firstnumber=last]
 assert([].empty);

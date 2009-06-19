@@ -25,10 +25,12 @@ namespace object
 
     /// Urbi methods
     rDictionary clear();
-    bool empty();
+    bool empty() const;
+    /// False iff empty.
+    virtual bool as_bool() const;
     rDictionary erase(libport::Symbol key);
     rObject get(libport::Symbol key);
-    bool has(libport::Symbol key);
+    bool has(libport::Symbol key) const;
     rList keys();
     rDictionary set(libport::Symbol key, rObject value);
 

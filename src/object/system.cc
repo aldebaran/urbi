@@ -269,7 +269,7 @@ namespace object
                               rObject(code),
                               libport::Symbol::fresh(r.name_get()));
 
-    if (is_true(clear_tags))
+    if (clear_tags->as_bool())
       new_runner->tag_stack_clear();
 
     new_runner->time_shift_set(r.time_shift_get());

@@ -69,6 +69,12 @@ namespace object
 
 #undef CONVERSION
 
+  bool
+  Float::as_bool() const
+  {
+    return value_;
+  }
+
   Float::value_type
   Float::inf()
   {

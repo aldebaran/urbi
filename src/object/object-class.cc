@@ -307,6 +307,7 @@ namespace object
 #define DECLARE(Name, Code)                                     \
     Object::proto->slot_set(SYMBOL(Name), make_primitive(&Object::Code))
 
+    DECLARE(asBool         , as_bool);
     DECLARE(createSlot     , urbi_createSlot);
     DECLARE(getProperty    , property_get);
     DECLARE(getSlot        , urbi_getSlot);
