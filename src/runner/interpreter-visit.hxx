@@ -643,6 +643,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Try* e)
   {
+    // Evaluate the body, catch the exception, and process it.
     sched::exception_ptr exception;
     try
     {
@@ -653,9 +654,10 @@ namespace runner
       exception = exn.clone();
     }
 
-
     rObject value =
       static_cast<object::UrbiException*>(exception.get())->value_get();
+
+    // Find the right handler.
     foreach (ast::rCatch handler, e->handlers_get())
     {
       if (handler->match_get())

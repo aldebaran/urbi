@@ -360,30 +360,23 @@ namespace rewrite
     foreach (const ast::rCatch& c, t->handlers_get())
     {
       const ast::loc& loc = c->location_get();
-      ast::rCatch desugared;
+      ast::rMatch match = c->match_get();
 
-      PARAMETRIC_AST(pattern, "var '$pattern' = Pattern.new(%exp:1)");
-
-      if (c->match_get())
+      if (match)
       {
         rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
         bind(c->match_get()->pattern_get().get());
+        PARAMETRIC_AST(pattern, "var '$pattern' = Pattern.new(%exp:1)");
         ast::rExp p =
           exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
         p = recurse_with_subdecl(p);
-        ast::rMatch match =
-          new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
+        match = new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
         match->bindings_set(recurse(bind.bindings_get()));
         match->original_set(c->match_get());
-        desugared = new ast::Catch(loc, match,
-                                   recurse_with_subdecl(c->body_get()));
       }
-      else
-      {
-        super_type::visit(c.get());
-        desugared = c.unchecked_cast<ast::Catch>();
-      }
-      res->handlers_get().push_back(desugared);
+      res->handlers_get()
+        .push_back(new ast::Catch(loc, match,
+                                  recurse_with_subdecl(c->body_get())));
     }
     result_ = res;
   }
