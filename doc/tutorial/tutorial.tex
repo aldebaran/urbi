@@ -656,35 +656,34 @@ interface, since the parentheses are optional.
 This implies that getSlot can be a better tool for object inspection
 to avoid invoking slots, as shown below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // The 'empty' method of strings return
 // whether they're the empty string.
 "foo".empty;
 [00000000] false
 "".empty;
 [00000000] true
-// Using getSlot, we can fetch the function
-// without calling it
-"".getSlot("empty");
+// Using getSlot, we can fetch the function without calling it.
+"".getSlot("asList");
 [00000000] function () {
-[:]  this . '=='("")
+[:]  split("")
 [:]}
 \end{urbiscript}
 
-So the empty function simply checks whether the target string is empty
-with the equality operator! Let's try \lstinline{getSlot}'ing another method:
+The \lstinline|asList| function simply bounces the task to
+\lstinline|split|.  Let's try \lstinline{getSlot}'ing another method:
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 "foo".size;
 [00000000] 3
 "foo".getSlot("size");
 [00000000] Primitive_0x0
 \end{urbiscript}
 
-So the \lstinline{size} method of \refObject{String} is another type
-of object, a \refObject{Primitive}. These objects are executable, like
-functions, but they are actually primitives implemented in \Cxx. You
-have thus no means to see their body.
+The \lstinline{size} method of \refObject{String} is another type of
+object: a \refObject{Primitive}. These objects are executable, like
+functions, but they are actually opaque primitives implemented in
+\Cxx.
 
 \section{Everything is an object}
 
@@ -692,7 +691,7 @@ If you're wondering what is an object and what is not, the answer is
 simple: every single bit of value you manipulate in \us is an
 object, including primitive types, types themselves, functions, \ldots
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var x = 0;
 [00000000] 0
 x.localSlotNames;
@@ -746,7 +745,7 @@ equal. The second operator is \lstinline{===}, which is the
 are the same object, which is equivalent to having the same uid. This
 can seem a bit confusing; let's have an example.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var a = 42;
 [00000000] 42
 var b = 42;

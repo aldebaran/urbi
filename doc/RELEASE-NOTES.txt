@@ -83,6 +83,7 @@ Changes:
 - empty strings, dictionaries and lists are now evaluated as "false"
   in conditions.
 - Dictionaries.asString does not sort the keys.
+- Dictionaries.[]= returns the assigned value, not the dictionary.
 - Constants is merged into Math.
 
 

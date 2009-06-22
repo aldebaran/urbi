@@ -30,7 +30,10 @@ my $previous_label = undef;
 sub lineno (\%)
 {
   my ($lst) = @_;
-  "//#line ${%$lst}{_line} \"${%$lst}{_file}\"\n";
+  my $line = ${%$lst}{_line};
+  my $file = ${%$lst}{_file};
+  "clog << \"$file:$line\";\n"
+  . "//#line $line \"$file\"\n"
 }
 
 # register ($FILE, $LINE, \%LST)
@@ -105,9 +108,14 @@ sub process_listing ($$$)
      /xs;
 
   $res{'_contents'} = $2;
+  my $options = $1;
+
+  # assert_eq is clearer when there are failures, but it is not nice
+  # looking in the documentation.  Beware of === and !== that contain
+  # ==.
+  $res{'_contents'} =~ s/^(\s*assert)\(([^,(]*?)\s+==\s/$1_eq($2, /gms;
 
   # Decode and normalize the options.
-  my $options = $1;
   if ($options)
   {
     foreach my $opt (split (/\s*,\s*/, $options))

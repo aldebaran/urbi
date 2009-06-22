@@ -125,7 +125,7 @@ O.updateSlot("mySlot", 23);
 \paragraph{How do I create or modify a local variable?}
 Use \lstinline|var| and \lstinline|=|.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // In two steps: definition, and initial assignment.
 var myLocalVariable;
 myLocalVariable = "foo";
@@ -389,15 +389,15 @@ creation of a new slot.
 \begin{urbiscript}[firstnumber=last]
 waituntil(Object.hasSlot("foo")) | echo (Object.foo),
 [00000010:warning] !!! expensive feature: waituntil (<expression>), prefer waituntil (<event>)
-var Object.foo = "bar"|;
-[00000003] *** bar
+var Object.foo = "foo"|;
+[00000003] *** foo
 \end{urbiscript}
 
 \begin{urbiscript}[firstnumber=last]
 while (!Object.hasSlot("bar")) sleep(20ms) | echo (Object.bar),
-var Object.bar = "foo"|;
-sleep(20ms);
-[00000003] *** foo
+var Object.bar = "bar"|;
+sleep(25ms);
+[00000003] *** bar
 \end{urbiscript}
 
 \section{UObjects}

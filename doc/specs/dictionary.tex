@@ -43,7 +43,7 @@ Dictionnary are created like any other object. The constructor can
 take couples of argument to store them in the dictionary.
 
 \begin{urbiscript}
-var d = Dictionary.new("one", 1, "two", 2);
+Dictionary.new("one", 1, "two", 2);
 [00000000] Dictionary {"one" => 1, "two" => 2}
 \end{urbiscript}
 
@@ -53,8 +53,8 @@ var d = Dictionary.new("one", 1, "two", 2);
 \item \lstinline|asBool|\\
   Negation of \lstinline|Dictionary.empty|.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(Dictionary.new.asBool, false);
-assert_eq(Dictionary.new.set("key", "value").asBool, true);
+assert(Dictionary.new.asBool == false);
+assert(Dictionary.new.set("key", "value").asBool == true);
 \end{urbiscript}
 
 \item \lstinline|asList|\\
@@ -63,7 +63,7 @@ assert_eq(Dictionary.new.set("key", "value").asBool, true);
   Dictionary using \lstinline|for|.  No particular order is ensured.
 
 \begin{urbiscript}[firstnumber=last]
-d.asList;
+Dictionary.new("one", 1, "two", 2).asList;
 [00000000] [("one", 1), ("two", 2)]
 \end{urbiscript}
 
@@ -71,8 +71,7 @@ d.asList;
   Empty the dictionary.
 
 \begin{urbiscript}[firstnumber=last]
-d.clear;
-[00102179] Dictionary {}
+assert(Dictionary.new("one", 1).clear.empty());
 \end{urbiscript}
 
 \item \lstinline|empty|\\
@@ -87,19 +86,16 @@ assert(!Dictionary.new.set("key", "value").empty);
   Remove the mapping for \lstinline|\var{key}|.
 
 \begin{urbiscript}[firstnumber=last]
-d["un"] = 1 | d["deux"] = 2 | d["trois"] = 3;
-[00329262] Dictionary {"deux" => 2, "trois" => 3, "un" => 1}
-d.erase("trois");
-[00386250] Dictionary {"deux" => 2, "un" => 1}
+Dictionary.new("one", 1, "two", 2).erase("two");
+[00386250] Dictionary {"one" => 1}
 \end{urbiscript}
 
 \item \lstinline|get(\var{key})|\\
   Return the value associated to  \lstinline|\var{key}| if it exists,
   \lstinline|void| otherwise.
-
 \begin{urbiscript}[firstnumber=last]
-d.get("un");
-[00000000] 1
+assert(Dictionary.new("one", 1, "two", 2).get("one") == 1);
+assert(Dictionary.new("one", 1, "two", 2).get("three").isVoid);
 \end{urbiscript}
 
 
@@ -108,10 +104,11 @@ d.get("un");
   \lstinline|\var{default-value}| otherwise.
 
 \begin{urbiscript}[firstnumber=last]
-d.getWithDefault("deux", "rien");
-[00000000] 2
-d.getWithDefault("quatre", "rien");
-[00000000] "rien"
+do (Dictionary.new("one", 1, "two", 2))
+{
+  assert(getWithDefault("one",  -1) == 1);
+  assert(getWithDefault("three", 3) == 3);
+}|;
 \end{urbiscript}
 
 
@@ -119,8 +116,11 @@ d.getWithDefault("quatre", "rien");
   Whether the dictionary has a mapping for \lstinline|\var{key}|.
 
 \begin{urbiscript}[firstnumber=last]
-assert(d.has("un"));
-assert(!(d.has("zero")));
+do (Dictionary.new("one", 1))
+{
+  assert(has("one"));
+  assert(!has("zero"));
+}|;
 \end{urbiscript}
 
 \item \lstinline|init(\var{key1}, \var{value1}, ...)|~\\
@@ -128,12 +128,15 @@ assert(!(d.has("zero")));
   \lstinline|\var{value1}| and so forth.
 
 \begin{urbiscript}[firstnumber=last]
-d.init("quatre", 4, "cinq", 5, "six", 6);
-[00000000] Dictionary {"cinq" => 5, "deux" => 2, "quatre" => 4, "six" => 6, "un" => 1}
+Dictionary.clone.init("one", 1, "two", 2);
+[00000000] Dictionary {"one" => 1, "two" => 2}
 \end{urbiscript}
 
 \item \lstinline|keys|\\
   The list of all the keys.  No particular order is ensured.
+\begin{urbiscript}[firstnumber=last]
+assert(Dictionary.new("one", 1, "two", 2).keys == ["one", "two"]);
+\end{urbiscript}
 
 \item \lstinline|set(\var{key}, \var{value})|\\
   Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
@@ -141,24 +144,27 @@ d.init("quatre", 4, "cinq", 5, "six", 6);
   chained.  The possibly existing previous mapping is overriden.
 
 \begin{urbiscript}[firstnumber=last]
-d.set("deux", "two").set("zero", 0);
-[00000000] Dictionary {"cinq" => 5, "deux" => "two", "quatre" => 4, "six" => 6, "un" => 1, "zero" => 0}
+Dictionary.new.set("one", 2).set("one", 1);
+[00000000] Dictionary {"one" => 1}
 \end{urbiscript}
 
 \item \lstinline|[]=(\var{key}, \var{value})|\\
-  Syntactic sugar for \lstinline|set(\var{key}, \var{value})|.
+  Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but
+  returns \var{value}.
 
 \begin{urbiscript}[firstnumber=last]
-d["un"] = "hein ?";
-[00000000] Dictionary {"cinq" => 5, "deux" => "two", "quatre" => 4, "six" => 6, "un" => "hein ?", "zero" => 0}
+{
+  var d = Dictionary.new("one", "2");
+  assert((d["one"] = 1) == 1);
+  assert(d["one"] == 1);
+};
 \end{urbiscript}
 
 \item \lstinline|[](\var{key})|\\
   Syntactic sugar for \lstinline|get(\var{key})|.
 
 \begin{urbiscript}[firstnumber=last]
-d["cinq"];
-[02123829] 5
+assert(Dictionary.new("one", 1)["one"] == 1);
 \end{urbiscript}
 
 \end{itemize}

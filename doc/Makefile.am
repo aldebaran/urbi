@@ -16,6 +16,10 @@ EXTRA_DIST += $(PDF_IMAGES) $(call ls_files,img/*.png)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
+# Our system leaves trailing unused *chk files.
+CHECK_CLEANFILES +=						\
+  $(shell find $(srcdir) -name '*.chk' -or -name 'test.chk')
+
 # Find urbi-report.sty, and workaround some strange behavior of
 # texi2dvi that wants to play tricks with ~ (which becomes a tilda,
 # instead of a nonbreakable space).

@@ -1333,8 +1333,8 @@ of \var{body}.
 \begin{urbiscript}
 do (1024)
 {
-  assert_eq(this, 1024);
-  assert_eq(sqrt, 32);
+  assert(this == 1024);
+  assert(sqrt == 32);
   setSlot("y", 23);
 }.y;
 [00000000] 23
@@ -1381,9 +1381,9 @@ expression.  But as everywhere else in \us, to use a statement where
 an expression is expected, use braces:
 
 \begin{urbiscript}[firstnumber=last]
-assert_eq(1 + if (true) 3 else 4, 4);
+assert(1 + if (true) 3 else 4 == 4);
 [00000003:error] !!! syntax error, unexpected if
-assert_eq(1 + { if (true) 3 else 4 }, 4);
+assert(1 + { if (true) 3 else 4 } == 4);
 \end{urbiscript}
 
 The \var{condition} can be any statement list.  Variables which it
@@ -1391,13 +1391,13 @@ declares are visible in both the \var{then-clause} and the
 \var{else-clause}, but do not escape the \lstinline|if| construct.
 
 \begin{urbiscript}[firstnumber=last]
-assert_eq({if (false) 10 else 20}, 20);
-assert_eq({if (true) 10 else 20}, 10);
+assert({if (false) 10 else 20} == 20);
+assert({if (true) 10 else 20} == 10);
 
-assert_eq({if (true) 10}, 10);
+assert({if (true) 10} == 10);
 
-assert_eq({if (var x = 10) x + 2 else x - 2}, 12);
-assert_eq({if (var x = 0)  x + 2 else x - 2}, -2);
+assert({if (var x = 10) x + 2 else x - 2} == 12);
+assert({if (var x = 0)  x + 2 else x - 2} == -2);
 
 if (var x = 123) x | x;
 [00000005:error] !!! lookup failed: x

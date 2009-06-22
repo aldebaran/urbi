@@ -22,21 +22,15 @@ with many primitives that are mandatory for all object in \us.
 
 \begin{urbiscript}
 var Dummy = Object.new | Dummy.addProto(Orderable) | {};
-assert_eq(Dummy.protos, [Orderable, Object]);
+assert(Dummy.protos == [Orderable, Object]);
 \end{urbiscript}
 
 \item \lstinline|allProto|\\
   Return a list with \lstinline|this|, all parents of
   \lstinline|this|, the parents of the parents of
   \lstinline|this|,\ldots
-
-% FIXME: Cannot use assert_eq here, as we use == on Comparable,
-% which is an endless loop.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(12.allProtos.map(function (t) { t.asString }),
-          ["12", "0", "Orderable", "Object", "Comparable", "Global",
-           "Tags", "Math", "DeprecatedCommands", "Kernel1Functions",
-           "System"]);
+assert(123.allProtos.size == 12);
 \end{urbiscript}
 
 \item \lstinline|allSlotNames|\\
@@ -63,9 +57,9 @@ assert_eq(12.allProtos.map(function (t) { t.asString }),
   \item otherwise\\
     Return true.
   \end{itemize}
-\begin{urbiscript}
-assert_eq(Global.asBool, true);
-assert_eq(nil.asBool,    false);
+\begin{urbiscript}[firstnumber=last]
+assert(Global.asBool == true);
+assert(nil.asBool ==    false);
 void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
@@ -257,7 +251,7 @@ assert(locateSlot("doesNotExist").isNil);
 \item \lstinline|protos|\\
   Return the list of prototypes of \lstinline|this|.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(12.protos, [0]);
+assert(12.protos == [0]);
 \end{urbiscript}
 
 \item \lstinline|properties(\var{slotName})|\\
@@ -287,7 +281,7 @@ do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
   Like \lstinline|setSlot| but the created slot is const.
 
 \begin{urbiscript}[firstnumber=last]
-assert_eq(setConstSlot("fortyTwo", 42), 42);
+assert(setConstSlot("fortyTwo", 42) == 42);
 fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
 \end{urbiscript}
@@ -301,7 +295,7 @@ fortyTwo = 51;
   \var{name} was already defined.
 
 \begin{urbiscript}[firstnumber=last]
-assert_eq(Object.setSlot("theObject", Object), Object);
+assert(Object.setSlot("theObject", Object), Object);
 assert(Object.theObject === Object);
 assert(theObject === Object);
 \end{urbiscript}
@@ -325,9 +319,9 @@ assert(theObject === Object);
   Map the existing slot named \var{name} to \var{value}. Raise an
   error if \var{name} was not defined.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(Object.setSlot("one", 1), 1);
-assert_eq(Object.updateSlot("one", 2), 2);
-assert_eq(Object.one, 2);
+assert(Object.setSlot("one", 1)    == 1);
+assert(Object.updateSlot("one", 2) == 2);
+assert(Object.one                  == 2);
 \end{urbiscript}
 
 \item \lstinline|'&&'(\var{that})|\\
@@ -335,11 +329,11 @@ assert_eq(Object.one, 2);
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(0 && "foo", 0);
-assert_eq(2 && "foo", "foo");
+assert(0 && "foo" == 0);
+assert(2 && "foo" == "foo");
 
-assert_eq(""    && "foo", "");
-assert_eq("foo" && "bar", "bar");
+assert(""    && "foo" == "");
+assert("foo" && "bar" == "bar");
 \end{urbiscript}
 
 \item \lstinline/'||'(\var{that})/\\
@@ -347,22 +341,22 @@ assert_eq("foo" && "bar", "bar");
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(0 || "foo", "foo");
-assert_eq(2 ||  1/0,  2);
+assert(0 || "foo" == "foo");
+assert(2 ||  1/0 ==  2);
 
-assert_eq(""    || "foo", "foo");
-assert_eq("foo" || 1/0,   "foo");
+assert(""    || "foo" == "foo");
+assert("foo" || 1/0 ==   "foo");
 \end{urbiscript}
 
 \item \lstinline|'!'|\\
   Logical negation. If \lstinline|this| evaluates to false return
   \lstinline|true| and vice-versa.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(!1, false);
-assert_eq(!0, true);
+assert(!1 == false);
+assert(!0 == true);
 
-assert_eq(!"foo", false);
-assert_eq(!"",    true);
+assert(!"foo" == false);
+assert(!"" ==    true);
 \end{urbiscript}
 \end{itemize}
 

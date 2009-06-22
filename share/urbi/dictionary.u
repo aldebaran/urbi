@@ -41,6 +41,11 @@ do (Global.Dictionary)
   };
 
   // Syntactic sugar.
-  copySlot("set", "[]=");
   copySlot("get", "[]");
+  function '[]=' (k, v)
+  {
+    set(k, v) |
+    v
+  };
+
 };
