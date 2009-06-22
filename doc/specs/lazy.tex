@@ -6,38 +6,6 @@ value. They provide facilities to evaluate their content only once
 messages, to represent lazy arguments, as described in
 \autorefObject{CallMessage}.
 
-\subsection{Construction}
-
-Lazies are seldom instantiated manually. They are mainly created
-automatically when a lazy function call is made (see
-\autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
-standard \lstinline|new| method of \lstinline|Lazy|, giving it an
-argument-less function which evaluates to the lazified value.
-
-\begin{urbiscript}
-Lazy.new(closure () { /* Value to lazify */ });
-[00000000:hide] Lazy_0xADDR
-\end{urbiscript}
-
-\subsection{Methods}
-
-\begin{itemize}
-\item \lstinline|eval|\\
-The \lstinline|eval| method forces evaluation of the held lazy
-value. Two calls to \lstinline|eval| will systematically evaluate the
-expression twice, which can be useful to duplicates its side effects.
-
-\item \lstinline|value|\\
-The \lstinline|value| method returns the held value, potentially
-evaluating it before. \lstinline|value| performs memoization, that is,
-only the first call will actually evaluate the expression, subsequent
-calls will return the cached value. Unless you want to explicitly
-trigger side effects from the expression by evaluating it several
-time, this should be preferred over \lstinline|eval| to avoid
-evaluating the expression several times uselessly.
-
-\end{itemize}
-
 \subsection{Examples}
 
 \subsubsection{Evaluating once}
@@ -141,6 +109,38 @@ p.value(2);
 p.value(1);
 [00074562] 2
 \end{urbiscript}
+
+\subsection{Construction}
+
+Lazies are seldom instantiated manually. They are mainly created
+automatically when a lazy function call is made (see
+\autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
+standard \lstinline|new| method of \lstinline|Lazy|, giving it an
+argument-less function which evaluates to the lazified value.
+
+\begin{urbiscript}
+Lazy.new(closure () { /* Value to lazify */ });
+[00000000:hide] Lazy_0xADDR
+\end{urbiscript}
+
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|eval|\\
+The \lstinline|eval| method forces evaluation of the held lazy
+value. Two calls to \lstinline|eval| will systematically evaluate the
+expression twice, which can be useful to duplicates its side effects.
+
+\item \lstinline|value|\\
+The \lstinline|value| method returns the held value, potentially
+evaluating it before. \lstinline|value| performs memoization, that is,
+only the first call will actually evaluate the expression, subsequent
+calls will return the cached value. Unless you want to explicitly
+trigger side effects from the expression by evaluating it several
+time, this should be preferred over \lstinline|eval| to avoid
+evaluating the expression several times uselessly.
+
+\end{itemize}
 
 
 %%% Local Variables:

@@ -2,8 +2,67 @@
 A transparent means to send messages to several objects as if they
 were one.
 
-\begin{itemize}
+\subsection{Example}
 
+The following session demonstrates the features of the Group
+objects.  It first creates the \lstinline|Sample| family of object,
+makes a group of such object, and uses that group.
+
+\begin{urbiscript}
+class Sample
+{
+  var value = 0;
+  function init(v) { value = v; };
+  function asString() { "<" + value.asString + ">"; };
+  function timesTen() { new(value * 10); };
+  function plusTwo()  { new(value + 2); };
+};
+[00000000] <0>
+
+var group = Group.new(Sample.new(1), Sample.new(2));
+[00000000] Group [<1>, <2>]
+group << Sample.new(3);
+[00000000] Group [<1>, <2>, <3>]
+group.timesTen.plusTwo;
+[00000000] Group [<12>, <22>, <32>]
+
+// Bouncing getSlot and updateSlot.
+group.value;
+[00000000] Group [1, 2, 3]
+group.value = 10;
+[00000000] Group [10, 10, 10]
+
+// Bouncing to each&.
+var sum = 0|
+for& (var v : group)
+  sum += v.value;
+sum;
+[00000000] 30
+\end{urbiscript}
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Groups are created like any other object. The constructor can
+take members to add to the group.
+
+\begin{urbiscript}[firstnumber=last]
+Group.new;
+[00000000] Group []
+Group.new(1, "two");
+[00000000] Group [1, "two"]
+\end{urbiscript}
+
+\subsection{Prototypes}
+\subsection{Construction}
+\subsection{Methods}
+
+\begin{itemize}
 \item \lstinline|add(\var{member}, ...)|\\
   Add members to \lstinline|this| group, and return \lstinline|this|.
 
@@ -55,40 +114,7 @@ were one.
 
 \item \lstinline|'<<'(\var{member})|\\
   Syntactic sugar for \lstinline|add|.
-
 \end{itemize}
-
-\begin{urbiscript}
-class Sample
-{
-  var value = 0;
-  function init(v) { value = v; };
-  function asString() { "<" + value.asString + ">"; };
-  function timesTen() { new(value * 10); };
-  function plusTwo()  { new(value + 2); };
-};
-[00000000] <0>
-
-var group = Group.new(Sample.new(1), Sample.new(2));
-[00000000] Group [<1>, <2>]
-group << Sample.new(3);
-[00000000] Group [<1>, <2>, <3>]
-group.timesTen.plusTwo;
-[00000000] Group [<12>, <22>, <32>]
-
-// Bouncing getSlot and updateSlot.
-group.value;
-[00000000] Group [1, 2, 3]
-group.value = 10;
-[00000000] Group [10, 10, 10]
-
-// Bouncing to each&.
-var sum = 0|
-for& (var v : group)
-  sum += v.value;
-sum;
-[00000000] 30
-\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex

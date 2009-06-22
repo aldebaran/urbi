@@ -9,6 +9,28 @@ In a way objects are dictionaries: one can use \lstinline|setSlot|,
 slots also contains value and methods that object depend upon to run
 properly.
 
+\subsection{Example}
+
+The following session demonstrates the features of the Dictionary
+objects.
+
+\begin{urbiscript}
+var d = Dictionary.new("one", 1, "two", 2);
+[00000001] Dictionary {"one" => 1, "two" => 2}
+for (var p in d)
+  echo (p.first + " -> " + p.second);
+[00000003] *** one -> 1
+[00000002] *** two -> 2
+"three" in d;
+[00000004] false
+d["three"] = d["one"] + d["two"] | {};
+"three" in d;
+[00000005] true
+d.getWithDefault("four", 4);
+[00000006] 4
+\end{urbiscript}
+
+
 \subsection{Prototypes}
 
 \begin{itemize}
@@ -141,23 +163,6 @@ d["cinq"];
 
 \end{itemize}
 
-\subsection{Example}
-
-\begin{urbiscript}
-var d = Dictionary.new("one", 1, "two", 2);
-[00000001] Dictionary {"one" => 1, "two" => 2}
-for (var p in d)
-  echo (p.first + " -> " + p.second);
-[00000003] *** one -> 1
-[00000002] *** two -> 2
-"three" in d;
-[00000004] false
-d["three"] = d["one"] + d["two"] | {};
-"three" in d;
-[00000005] true
-d.getWithDefault("four", 4);
-[00000006] 4
-\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex
