@@ -1707,12 +1707,12 @@ test(51);
 \subsection{at}
 \subsection{every}
 
-The \texttt{every} statement enables to execute a block of code
+The \lstindex{every} statement enables to execute a block of code
 repeatedly, with the given period.
 
 \begin{urbiscript}
 // Print out a message every second.
-every(1s)
+every (1s)
   echo("Are you still there?");
 /*(*/sleep(2.1s);/*)*/
 [00000000] *** Are you still there?
@@ -1720,63 +1720,60 @@ every(1s)
 [00002000] *** Are you still there?
 \end{urbiscript}
 
-It exists in two flavors. The default flavor will execute the block in
-the background every \texttt{period}. Several iteration can thus
+It exists in two flavors. The default flavor launches the execution of
+the block in the background every given period. Iterations may
 overlap.
 
 \begin{urbiscript}
 // If an iteration is longer than the given period, it will overlap
 // with the next one.
-every(1s)
+every (1s)
 {
-  echo("Could you come over here?");
+  echo("In");
   sleep(1.5s);
-  echo("There you are!");
+  echo("Out");
 };
 /*(*/sleep(2.6s);/*)*/
-[00000000] *** Could you come over here?
-[00001000] *** Could you come over here?
-[00001500] *** There you are!
-[00002000] *** Could you come over here?
-[00002500] *** There you are!
+[00000000] *** In
+[00001000] *** In
+[00001500] *** Out
+[00002000] *** In
+[00002500] *** Out
 \end{urbiscript}
 
-On the other hand, the \texttt{every|} flavor will not let iterations
-overlap. If an iterations duration exceeds the period, it will delay
-all the following iterations. That is, the next iterations will start
+On the other hand, the \lstindex{every|} flavor will not let
+iterations overlap. If an iteration takes too long, the following
+iterations are delayed. That is, the next iterations will start
 immediately after the end of the current one, and next iterations will
-occur normally every \texttt{period} from this point.
+occur normally from this point.
 
 \begin{urbiscript}
-var too_long = true;
-[00000000:hide] true
+var too_long = true|;
 
 // Every other iteration exceeds the period, and will delay the
 // following one.
-
-every|(1s)
+every| (1s)
 {
   if (too_long)
   {
     too_long = false;
-    echo("Please put me down");
+    echo("Long in");
     sleep(1.5s);
-    echo("I don't hate you");
+    echo("Long out");
   }
   else
   {
     too_long = true;
-    echo("No hard feelings");
+    echo("Short");
   }
 };
 /*(*/sleep(4.1s);/*)*/
-[00000000] *** Please put me down
-[00001500] *** I don't hate you
-[00001500] *** No hard feelings
-[00002500] *** Please put me down
-[00004000] *** I don't hate you
-[00004000] *** No hard feelings
-
+[00000000] *** Long in
+[00001500] *** Long out
+[00001500] *** Short
+[00002500] *** Long in
+[00004000] *** Long out
+[00004000] *** Short
 \end{urbiscript}
 
 \subsection{for\& (:)}
