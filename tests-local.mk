@@ -31,12 +31,8 @@ k2-check:
 # while running make check.
 ENABLE_HARD_ERRORS = false
 
-# pending features
-TFAIL_TESTS +=
-
 # test we don't want to care about temporarily
-TFAIL_TESTS +=					\
-  2.x/eval.chk
+TFAIL_TESTS +=
 
 # k1 tests that currently don't pass, but we should.
 # In fact, the above list has been removed to gain some time
