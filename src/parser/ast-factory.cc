@@ -278,11 +278,43 @@ namespace parser
   ast_every(const yy::location&, ast::flavor_type flavor,
             ast::rExp test, ast::rExp body)
   {
-    PARAMETRIC_AST(every, "Control.%id:1(%exp:2, closure() {%exp:3})");
-    libport::Symbol msg = (flavor == ast::flavor_semicolon
-                           ? SYMBOL(every)
-                           : SYMBOL(every_PIPE));
-    return exp(every % msg % test % body);
+    // every (exp:1) exp:2.
+    PARAMETRIC_AST(semi,
+    "detach ({\n"
+    "  var deadline = shiftedTime |\n"
+    "  var controlTag = Tag.newFlowControl |\n"
+    "  throw\n"
+    "  {\n"
+    "    controlTag: loop\n"
+    "    {\n"
+    "      detach ({ try { %exp:2 } catch (var e) { controlTag.stop(e)} }) |\n"
+    "      deadline += %exp:1 |\n"
+    "      sleep (deadline - shiftedTime)\n"
+    "    }\n"
+    "  }\n"
+    "})\n");
+
+    // every| (exp:1) exp:2.
+    PARAMETRIC_AST(pipe,
+    "detach ({\n"
+    "  var deadline = shiftedTime |\n"
+    "  throw\n"
+    "  {\n"
+    "    loop\n"
+    "    {\n"
+    "      %exp:2 |\n"
+    "      deadline += %exp:1 |\n"
+    "      var delta = deadline - shiftedTime |\n"
+    "      if (0 < delta)\n"
+    "        sleep(delta)\n"
+    "      else\n"
+    "        deadline -= delta\n"
+    "    }\n"
+    "  }\n"
+    "})\n");
+
+    return exp((flavor == ast::flavor_semicolon ? semi : pipe)
+               % test % body);
   }
 
 
