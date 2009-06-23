@@ -10,18 +10,19 @@ class Global.Control
     spawn(closure() { call.evalArgAt(0) }, true)
   };
 
-  function every_(delay, action)
+  function 'every'(delay, action)
   {
     detach ({
       var deadline = shiftedTime |
       var controlTag = Tag.newFlowControl |
-      throw {
+      throw
+      {
 	controlTag: loop
-          {
-            detach ({ try { action() } catch (var e) { controlTag.stop(e)} }) |
-            deadline += delay |
-            sleep (deadline - shiftedTime)
-	  }
+        {
+          detach ({ try { action() } catch (var e) { controlTag.stop(e)} }) |
+          deadline += delay |
+          sleep (deadline - shiftedTime)
+	}
       }
     })
   };
@@ -30,18 +31,18 @@ class Global.Control
   {
     detach ({
       var deadline = shiftedTime |
-      var controlTag = Tag.newFlowControl |
-      throw {
-	controlTag: loop
-          {
-            action() |
-            deadline += delay |
-            var delta = deadline - shiftedTime;
-            if (delta > 0)
-              sleep (delta)
-            else
-              deadline -= delta;
-	  }
+      throw
+      {
+        loop
+        {
+          action() |
+          deadline += delay |
+          var delta = deadline - shiftedTime |
+          if (0 < delta)
+            sleep(delta)
+          else
+            deadline -= delta|
+        }
       }
     })
   };
