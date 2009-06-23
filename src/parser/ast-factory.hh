@@ -80,6 +80,11 @@ namespace parser
                     EventMatch& event,
                     ast::rExp body, ast::rExp onleave);
 
+  /// Build an "every" loop.
+  ast::rExp
+  ast_every(const yy::location& loc, ast::flavor_type flavor,
+            ast::rExp test, ast::rExp body);
+
   /// Build a for loop.
   // Since we don't have "continue", for is really a sugared
   // while:

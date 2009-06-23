@@ -274,6 +274,18 @@ namespace parser
     return exp(a % value);
   }
 
+  ast::rExp
+  ast_every(const yy::location&, ast::flavor_type flavor,
+            ast::rExp test, ast::rExp body)
+  {
+    PARAMETRIC_AST(every, "Control.%id:1(%exp:2, closure() {%exp:3})");
+    libport::Symbol msg = (flavor == ast::flavor_semicolon
+                           ? SYMBOL(every)
+                           : SYMBOL(every_PIPE));
+    return exp(every % msg % test % body);
+  }
+
+
   /// Build a for loop.
   // The increment is included directly in the condition to make sure
   // it is executed on `continue'.
