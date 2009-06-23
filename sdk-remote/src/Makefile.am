@@ -36,16 +36,12 @@ AM_LDADD =					\
   $(LIBPORT_LIBS)
 
 include libuco/local.mk
+include libuobject/local.mk
 
 if SDK_REMOTE
 include liburbi/local.mk
 include uobjects/local.mk
 endif SDK_REMOTE
-
-# libuobject depends on liburbi, and make install installs them (and
-# therefore relinks them) in the order of definition.  So be sure to
-# load liburbi/local.mk before libuobject/local.mk.
-include libuobject/local.mk
 
 if EXAMPLES
 include examples/local.mk
