@@ -25,7 +25,7 @@ namespace flower
   Flower::visit(const ast::Break* b)
   {
     if (!in_loop_)
-      errors_.error(b->location_get(), "break: outside a loop");
+      errors_.error(b->location_get(), "`break' not within a loop");
 
     has_break_ = true;
 
@@ -38,7 +38,7 @@ namespace flower
   Flower::visit(const ast::Continue* c)
   {
     if (!in_loop_)
-      errors_.error(c->location_get(), "continue: outside a loop");
+      errors_.error(c->location_get(), "`continue' not within a loop");
 
     has_continue_ = true;
 
