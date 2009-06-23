@@ -21,6 +21,21 @@ class Global.Control
     registerAtJob(call.args[0], call.args[1], call.args[2])
   };
 
+  // 'every|sleep'(deadline, delay)
+  //
+  // Prepare the next iteration for every|, which should happen at
+  // deadline + delay.  Return deadline.
+  function 'every|sleep'(deadline, delay)
+  {
+    deadline += delay |
+    var delta = deadline - shiftedTime |
+    if (0 < delta)
+      sleep(delta)
+    else
+      deadline -= delta |
+    deadline
+  };
+
   // whenever_(test, on_true, on_false)
   //
   // Takes three expressions, a test and some code to execute each

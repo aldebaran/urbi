@@ -1705,6 +1705,7 @@ test(51);
 \section{Parallel and event-based flow control}
 
 \subsection{at}
+
 \subsection{every}
 
 The \lstindex{every} statement enables to execute a block of code
@@ -1774,6 +1775,27 @@ every| (1s)
 [00002500] *** Long in
 [00004000] *** Long out
 [00004000] *** Short
+\end{urbiscript}
+
+The flow-control constructs \lstinline|break| and \lstinline|continue|
+are supported.
+
+\begin{urbiscript}
+{
+  var count = 0;
+  every| (250ms)
+  {
+    count += 1;
+    if (count == 2)
+      continue;
+    if (count == 4)
+      break;
+    echo(count);
+  }
+};
+/*(*/sleep(2s);/*)*/
+[00000000] *** 1
+[00001500] *** 3
 \end{urbiscript}
 
 \subsection{for\& (:)}

@@ -51,6 +51,7 @@ urbiScript functions
 
 New constructs:
 - every|
+- break and continue are supported in "every|" loops.
 
 New objects:
 - Finalizable
