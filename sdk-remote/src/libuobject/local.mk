@@ -2,7 +2,9 @@
 ## libuobject.la.  ##
 ## --------------- ##
 
-env_LTLIBRARIES = libuobject/libuobject.la
+# Hook to install-exec, not install-data.
+execenvdir = $(envdir)
+execenv_LTLIBRARIES = libuobject/libuobject.la
 libuobject_libuobject_la_SOURCES =		\
   libuobject/main.cc				\
   libuobject/ucallbacks.cc			\
@@ -18,6 +20,9 @@ libuobject_libuobject_la_LDFLAGS = -avoid-version -no-undefined
 
 # libuobject depends on liburbi, and make install installs them (and
 # therefore relinks them) in unspecified order.  So be sure to install
-# lib libraries before the env libraries.
-install-envLTLIBRARIES: install-libLTLIBRARIES
-
+# lib libraries before the env libraries.  We cannot insert the
+# dependency here, because Automake thinks we are trying to override
+# its definition of install-execenvdir and no longer produces it.  As
+# a result, we do have the right dependencies, but nothing is
+# installed.
+@INSTALL_EXECENV_BEFORE_LIB@

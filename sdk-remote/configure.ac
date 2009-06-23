@@ -183,4 +183,8 @@ AC_CONFIG_FILES([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in],
                 [chmod +x src/tests/bin/urbi-launch$EXEEXT],
                 [EXEEXT=$EXEEXT])
 
+# Additional dependencies.
+AC_SUBST([INSTALL_EXECENV_BEFORE_LIB],
+         [install-execenvLTLIBRARIES: install-libLTLIBRARIES])
+
 AC_OUTPUT
