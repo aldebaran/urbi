@@ -15,3 +15,9 @@ libuobject_libuobject_la_CPPFLAGS =		\
   -DBUILDING_URBI_SDK
 libuobject_libuobject_la_LIBADD = $(LIBADD) libuco/libuco.la liburbi/liburbi.la
 libuobject_libuobject_la_LDFLAGS = -avoid-version -no-undefined
+
+# libuobject depends on liburbi, and make install installs them (and
+# therefore relinks them) in unspecified order.  So be sure to install
+# lib libraries before the env libraries.
+install-envLTLIBRARIES: install-libLTLIBRARIES
+
