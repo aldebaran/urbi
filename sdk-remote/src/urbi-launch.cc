@@ -190,6 +190,10 @@ main(int argc, char* argv[])
   }
   if (arg_plugin.get())
     connect_mode = MODE_PLUGIN_LOAD;
+  if (arg_remote.get())
+    connect_mode = MODE_REMOTE;
+  if (arg_start.get())
+    connect_mode = MODE_PLUGIN_START;
   if (libport::opts::port.filled())
   {
     port = libport::opts::port.get<int>();
@@ -198,13 +202,10 @@ main(int argc, char* argv[])
   if (arg_pfile.filled())
   {
     std::string my_arg = arg_pfile.value();
-    port = libport::file_contents_get<int>(my_arg);
+    if (connect_mode == MODE_PLUGIN_LOAD)
+      port = libport::file_contents_get<int>(my_arg);
     args << "--port-file" << my_arg;
   }
-  if (arg_remote.get())
-    connect_mode = MODE_REMOTE;
-  if (arg_start.get())
-    connect_mode = MODE_PLUGIN_START;
   args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
   if (connect_mode == MODE_PLUGIN_LOAD)
