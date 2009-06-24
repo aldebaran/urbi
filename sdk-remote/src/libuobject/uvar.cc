@@ -37,7 +37,7 @@ namespace urbi
 		    dummyUObject, &UObject::voidfun, name, monitormap(), false);
   }
 
-  bool setBypass(bool enable)
+  bool UVar::setBypass(bool enable)
   {
     return !enable;
   }
