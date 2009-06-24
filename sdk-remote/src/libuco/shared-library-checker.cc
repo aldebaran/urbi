@@ -1,6 +1,7 @@
 #include <cstring>
 #include <iostream>
 
+#include <libport/cstdlib>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>
