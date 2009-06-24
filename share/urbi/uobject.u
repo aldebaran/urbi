@@ -38,6 +38,20 @@ do (Global.UObject)
     "update not defined".print
   };
 
+  // Override new to throw an exception in init returned
+  function 'new'
+  {
+    // The fresh child.
+    var res = call.getSlot("target").clone |
+    // Call the "init" from the parent, retargetted to the child.
+    call.message = "init" |
+    var ret = res.callMessage(call)|
+    if (ret != 0)
+      throw Exception.new
+      ("%s construction failed: init returned %s." % [__uobjectName, ret])|
+    res
+  };
+
   function init()
   {
     0
