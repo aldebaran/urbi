@@ -25,4 +25,5 @@ libuobject_libuobject_la_LDFLAGS = -avoid-version -no-undefined
 # its definition of install-execenvdir and no longer produces it.  As
 # a result, we do have the right dependencies, but nothing is
 # installed.
-@INSTALL_EXECENV_BEFORE_LIB@
+install_execenvltlibraries = install-execenvLTLIBRARIES
+$(install_execenvltlibraries): install-libLTLIBRARIES
