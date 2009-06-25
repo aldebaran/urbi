@@ -10,6 +10,9 @@ FAST_MODE = true
 # Whether we use Valgrind etc. Activated in 'check-buildfarm'.
 INSTRUMENT = false
 
+# The wrappers around our embedded SDK-Remote tools.
+sdk_remote_builddir = $(abs_top_builddir)/sdk-remote
+
 # Environment used both in check and installcheck.
 CHECK_ENVIRONMENT +=				\
   FAST_MODE=$(FAST_MODE)			\
