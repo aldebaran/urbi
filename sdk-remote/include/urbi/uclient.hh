@@ -23,6 +23,7 @@
 #ifndef URBI_UCLIENT_HH
 # define URBI_UCLIENT_HH
 
+# include <libport/asio.hh>
 # include <libport/pthread.h>
 # include <libport/semaphore.hh>
 # include <libport/utime.hh>
@@ -36,28 +37,22 @@ namespace urbi
   /*! This implementation creates a thread for each instance of UClient, which
     listens on the associated socket.
   */
-  class URBI_SDK_API UClient: public UAbstractClient
+  class URBI_SDK_API UClient:
+    public UAbstractClient,
+    private libport::Socket
   {
   public:
     UClient(const std::string& host, unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
-	    bool server = false,
-	    unsigned semListenInc = 1u);
+	    bool server = false);
 
     virtual ~UClient();
-
-    int closeUClient ();
 
     //! For compatibility with older versions of the library
     void start() {}
 
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;
-
-    //! For internal use.
-    void acceptThread();
-    //! For internal use.
-    void listenThread();
 
     UCallbackAction pong(const UMessage& msg);
 
@@ -67,18 +62,20 @@ namespace urbi
     virtual void setKeepAliveCheck(unsigned pingInterval,
                                    unsigned pongTimeout);
 
+    using UAbstractClient::send;
+
   protected:
     virtual int effectiveSend(const void* buffer, size_t size);
 
-    /// Socket file descriptor.
-    int sd;
+    libport::Socket* mySocketFactory();
+
+    virtual void onConnect();
+
+    virtual void onError(boost::system::error_code erc);
+
+    virtual int onRead(const void*, size_t length);
 
   protected:
-    /// Pipe for termination notification
-    int control_fd[2];
-
-    pthread_t thread;
-
     /// Delay (in microseconds) without activity to check if the
     /// connection is yet available.
     libport::utime_t ping_interval_;
@@ -88,11 +85,6 @@ namespace urbi
 
     /// True if waiting 'PONG'.
     bool waitingPong;
-
-  protected:
-    libport::Semaphore listenSem_;
-    libport::Semaphore acceptSem_;
-    unsigned semListenInc_;
   };
 
 } // namespace urbi

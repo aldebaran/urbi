@@ -15,6 +15,7 @@
 #endif
 
 #include <libport/cstdio>
+#include <libport/boost-error.hh>
 #include <libport/debug.hh>
 #include <libport/sys/select.h>
 #include <libport/arpa/inet.h>
@@ -34,251 +35,51 @@ namespace urbi
    messages, and notify the appropriate callbacks.
    */
   UClient::UClient(const std::string& host, unsigned port,
-                   size_t buflen, bool server,
-                   unsigned semListenInc)
+                   size_t buflen, bool server)
     : UAbstractClient(host, port, buflen, server)
-    , thread(0)
     , ping_interval_(0)
     , pong_timeout_(0)
-    , semListenInc_(semListenInc)
   {
-    sd = -1;
-    int pos = 0;
-
-    setlocale(LC_NUMERIC, "C");
-    control_fd[0] = control_fd[1] = -1;
-
-#ifndef WIN32
-    if (::pipe(control_fd) == -1)
-    {
-      rc = -1;
-      libport::perror("UClient::UClient failed to create pipe");
-      return;
-    }
-    //block sigpipe
-    signal(SIGPIPE, SIG_IGN);
-#endif
-
-    // Address resolution stage.
-    struct sockaddr_in sa;	// Internet address struct
-    memset(&sa, 0, sizeof sa);
-#ifdef WIN32
-    WSADATA wsaData;
-    WORD wVersionRequested;
-    wVersionRequested = MAKEWORD(1, 1);
-    WSAStartup(wVersionRequested, &wsaData);
-#endif
-    sa.sin_family = AF_INET;
-    sa.sin_port = htons(port);
-
-    // host-to-IP translation
-    if (struct hostent* hen = gethostbyname(host_.c_str()))
-      memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
-    else
-    {
-      // Maybe it is an IP address.
-      sa.sin_addr.s_addr = inet_addr(host_.c_str());
-      if (sa.sin_addr.s_addr == INADDR_NONE)
-      {
-        GD_ERROR("UClient::UClient cannot resolve host name.");
-        rc = -1;
-        return;
-      }
-    }
-
-    sd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sd < 0)
-    {
-      rc = -1;
-      libport::perror("UClient::UClient socket");
-      return;
-    }
+    boost::system::error_code erc;
 
     if (!server_)
     {
-      // Connect on given host and port
-      rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
-      // If we attempt to connect too fast to aperios ipstack it will fail.
-      if (rc)
-      {
-	usleep(20000);
-	rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
-      }
-
-      // Check there was no error.
-      if (rc)
-      {
-	rc = -1;
-	libport::perror("UClient::UClient connect");
-	return;
-      }
-
-      // Check that it really worked.
-      while (!pos)
-	pos = ::recv(sd, recvBuffer, buflen, 0);
-      if (pos < 0)
-      {
-	rc = -1;
-	libport::perror("UClient::UClient recv");
-	return;
-      }
+      if ((erc = connect(host, port)))
+        libport::boost_error("UClient::UClient connect", erc);
     }
     else
-    {
-      // Allow to rebind on the same port shortly after having used it.
+      if (listen(boost::bind(&urbi::UClient::mySocketFactory, this), host, port))
       {
-	int one = 1;
-	rc = libport::setsockopt(sd, SOL_SOCKET, SO_REUSEADDR,
-                                 &one, sizeof one);
-	if (rc)
-	{
-	  rc = -1;
-	  libport::perror("UClient::UClient cannot use setsockopt");
-	  return;
-	}
+        libport::perror("UClient::UClient cannot listen");
+        return;
       }
-      // Bind socket
-      rc = bind (sd, (struct sockaddr *) &sa, sizeof sa);
-      if (rc)
-      {
-	rc = -1;
-	libport::perror("UClient::UClient cannot bind");
-	return;
-      }
-      // Activate listen/passive mode, do not allow queued connections
-      rc = listen (sd, 0);
-      if (rc)
-      {
-	rc = -1;
-	libport::perror("UClient::UClient cannot listen");
-	return;
-      }
-
-      // Create a thread waiting for incoming connection.
-      // This must not be blocking in case of a remote server.
-      // FIXME: block if normal remote ?
-      init_ = false;
-      thread = libport::startThread(this, &UClient::acceptThread);
-    }
-
-    recvBufferPosition = pos;
-    recvBuffer[recvBufferPosition] = 0;
-
-    // Do not create thread if one is already waiting for incoming
-    // connection.
-    if (!thread)
-    {
-      thread = libport::startThread(this, &UClient::listenThread);
-      // Notify the base class that connection is established.
-      onConnection();
-    }
-
-    if (!defaultClient)
-      defaultClient = this;
-
-    listenSem_++;
-    acceptSem_++;
   }
 
   UClient::~UClient()
   {
-    if (sd >= 0)
-      closeUClient ();
   }
-
-  int
-  UClient::closeUClient ()
-  {
-    if (sd >= 0 && libport::closeSocket(sd) == -1)
-      libport::perror ("cannot close sd");
-
-    sd = -1;
-    if (control_fd[1] != -1
-        && ::write(control_fd[1], "a", 1) == -1)
-      libport::perror ("cannot write to control_fd[1]");
-
-    // If the connection has failed while building the client, the
-    // thread is not created.
-    if (thread)
-      // Must wait for listen thread to terminate.
-      pthread_join(thread, 0);
-
-    if (control_fd[1] != -1
-        && close(control_fd[1]) == -1)
-      libport::perror ("cannot close controlfd[1]");
-    if (control_fd[0] != -1
-        && close(control_fd[0]) == -1)
-      libport::perror ("cannot close controlfd[0]");
-
-    return 0;
-  }
-
   int
   UClient::effectiveSend(const void* buffer, size_t size)
   {
     if (rc)
       return -1;
-    size_t pos = 0;
-    while (pos != size)
-    {
-      int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-      if (retval < 0)
-      {
-        rc = retval;
-        clientError("send error", errno);
-        return rc;
-      }
-      pos += retval;
-    }
+    libport::Socket::write(buffer, size);
     return 0;
   }
 
-  void
-  UClient::acceptThread()
+  libport::Socket*
+  UClient::mySocketFactory()
   {
-    // Wait for it...
-    acceptSem_--;
-
-    // Accept one connection
-    struct sockaddr_in saClient;
-    socklen_t addrlenClient;
-    int acceptFD = 0;
-
-    acceptFD = accept (sd, (struct sockaddr *) &saClient, &addrlenClient);
-    if (acceptFD < 0)
-    {
-      libport::perror("UClient::UClient cannot accept");
-      rc = -1;
-      return;
-    }
-
-    // Store client connection info
-    host_ = inet_ntoa(saClient.sin_addr);
-    port_ = saClient.sin_port;
-
-    // Do not listen anymore.
-    close(sd);
-    // Redirect send/receive on accepted connection.
-    sd = acceptFD;
-
-    // FIXME: leaking ?
-    thread = libport::startThread(this, &UClient::listenThread);
-
-    init_ = true;
-    onConnection();
-
-    // Stop this thread, the listen one is the real thing.
-    return;
+    return this;
   }
 
   void
-  UClient::listenThread()
+  UClient::onConnect()
   {
-    // Wait for it...
-    listenSem_ -= semListenInc_;
+    init_ = true;
+    onConnection();
 
-    int maxfd = 1 + std::max(sd, control_fd[0]);
-    waitingPong = false;
+   waitingPong = false;
 
     // Declare ping channel for kernel that requires it.  Do not try
     // to depend on kernelMajor, because it has not been computed yet.
@@ -287,104 +88,28 @@ namespace urbi
     send("if (isdef(Channel))\n"
          "  var lobby.%s = Channel.new(\"%s\") | {};",
          internalPongTag, internalPongTag);
+  }
 
-    while (true)
-    {
-      if (sd == -1)
-        return;
+  void
+  UClient::onError(boost::system::error_code erc)
+  {
+    rc = -1;
+    clientError(erc.message());
+    notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, erc.message().c_str()));
+    return;
+  }
 
-      fd_set rfds;
-      FD_ZERO(&rfds);
-      LIBPORT_FD_SET(sd, &rfds);
+  int
+  UClient::onRead(const void* data, size_t length)
+  {
+    size_t capacity = buflen - recvBufferPosition - 1;
+    int eat = (capacity < length) ? capacity : length;
 
-      fd_set efds;
-      FD_ZERO(&efds);
-      LIBPORT_FD_SET(sd, &efds);
-
-#ifndef WIN32
-      LIBPORT_FD_SET(control_fd[0], &rfds);
-#endif
-
-      int selectReturn;
-      if (ping_interval_)
-      {
-        struct timeval timeout =
-          libport::utime_to_timeval(waitingPong
-                                    ? pong_timeout_ : ping_interval_);
-        selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, &timeout);
-      }
-      else
-      {
-        selectReturn = ::select(maxfd + 1, &rfds, NULL, &efds, NULL);
-      }
-
-      if (sd < 0)
-	return;
-
-      // Treat error
-      if (selectReturn < 0)
-      {
-        if (errno == EINTR)
-          // ::select caught a signal.
-          continue;
-        else
-        {
-          rc = -1;
-          const char* err = "!!! Connection error: select failed";
-          clientError(err, errno);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
-          return;
-        }
-      }
-      else if (selectReturn == 0)
-      {
-        if (waitingPong) // Timeout while waiting PONG
-        {
-          rc = -1;
-          // FIXME: Choose between two differents way to alert user program
-          const char* err = "!!! Lost connection with server: ping timeout";
-          clientError(err);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
-          return;
-        }
-        else // Timeout: Ping_interval
-        {
-          send("%s << 1,", internalPongTag);
-          waitingPong = true;
-        }
-      }
-      else // 0 < selectReturn
-      {
-        // We receive data, at least the "1" value sent through the pong tag
-        // channel so we are no longer waiting for a pong.
-        waitingPong = false;
-        int count = ::recv(sd, &recvBuffer[recvBufferPosition],
-                           buflen - recvBufferPosition - 1, 0);
-
-        if (count <= 0)
-        {
-          const char* errorMsg;
-          int errorCode = 0;
-
-          if (count < 0)
-          {
-            errorCode = WIN32_IF(WSAGetLastError(), errno);
-            errorMsg = "!!! Connection error: recv failed";
-          }
-          else // count == 0  => Connection closed.
-            errorMsg = "!!! Connection closed";
-
-          rc = -1;
-          clientError(errorMsg, errorCode);
-          notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, errorMsg));
-          return;
-        }
-
-        recvBufferPosition += count;
-        recvBuffer[recvBufferPosition] = 0;
-        processRecvBuffer();
-      }
-    }
+    memcpy(&recvBuffer[recvBufferPosition], data, eat);
+    recvBufferPosition += eat;
+    recvBuffer[recvBufferPosition] = 0;
+    processRecvBuffer();
+    return eat;
   }
 
   void

@@ -42,9 +42,8 @@ namespace urbi
 			   unsigned port,
 			   size_t buflen,
 			   bool server,
-                           bool startCallbackThread,
-			   unsigned semListenInc)
-    : UClient(host, port, buflen, server, semListenInc)
+                           bool startCallbackThread)
+    : UClient(host, port, buflen, server)
     , sem_()
     , queueLock_()
     , message_(0)
@@ -62,14 +61,11 @@ namespace urbi
     if (!defaultClient)
       defaultClient = this;
 
-    listenSem_++;
     callbackSem_++;
   }
 
   USyncClient::~USyncClient()
   {
-    closeUClient();
-
     if (cbThread)
       joinCallbackThread_();
   }
@@ -446,20 +442,9 @@ namespace urbi
     if (rc != 0)
       return -1;
     sendBufferLock.lock();
-    size_t sent = 0;
-    while (sent < length)
-    {
-      int res = ::write(sd, (char*) buffer + sent, length - sent);
-      if (res < 0)
-      {
-	rc = res;
-	sendBufferLock.unlock();
-	return res;
-      }
-      sent += res;
-    }
+    int e = effectiveSend(buffer, length);
     sendBufferLock.unlock();
-    return 0;
+    return e;
   }
 
   void

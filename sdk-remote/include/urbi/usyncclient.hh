@@ -72,8 +72,7 @@ namespace urbi
 		unsigned port = URBI_PORT,
 		size_t buflen = URBI_BUFLEN,
 		bool server = false,
-		bool startCallbackThread = true,
-		unsigned semListenInc = 2u);
+		bool startCallbackThread = true);
 
     ~USyncClient();
 
