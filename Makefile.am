@@ -114,7 +114,7 @@ libraries.stamp: src/libuobject.la sdk-remote/src/libuobject/libuobject.la sdk-r
 
 # All the executables.
 STAMPS += executables.stamp
-executables.stamp: src/bin/urbi$(EXEEXT) sdk-remote/src/urbi-launch$(EXEEXT)
+executables.stamp: src/bin/urbi$(EXEEXT) sdk-remote/src/bin/urbi-launch$(EXEEXT)
 	@echo "$$(date): $?" >>$@
 
 # Everything.
