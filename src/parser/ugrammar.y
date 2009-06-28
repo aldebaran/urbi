@@ -645,9 +645,9 @@ k1_id:
 ;
 
 
-/*----------.
-| Modifiers |
-`----------*/
+/*------------.
+| Modifiers.  |
+`------------*/
 
 
 %type <::parser::modifier_type> modifier;
@@ -931,25 +931,24 @@ case:
 
 %type <ast::catches_type> catches;
 catches:
-  /* empty */ { $$ = ast::catches_type(); }
+  /* empty */   { $$ = ast::catches_type(); }
 | catches catch { std::swap($$, $1); $$.push_back($2); }
 ;
 
-%type <ast::rMatch> match;
+%type <ast::rMatch> match match.opt;
 match:
   exp           { $$ = new ast::Match(@$, $1, 0);  }
 | exp "if" exp  { $$ = new ast::Match(@$, $1, $3); }
 
+match.opt:
+  /* empty */   { $$ = 0; }
+| "(" match ")" { std::swap($$, $2); }
 
 %type <ast::rCatch> catch;
 catch:
-  "catch" "(" match ")" block
+  "catch" match.opt block
   {
-    $$ = new ast::Catch(@$, $3, $5);
-  }
-| "catch" block
-  {
-    $$ = new ast::Catch(@$, 0, $2);
+    $$ = new ast::Catch(@$, $[match.opt], $[block]);
   }
 ;
 
