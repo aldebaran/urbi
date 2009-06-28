@@ -519,50 +519,49 @@ identifier_as_string:
 /*-----------.
 | Bindings.  |
 `-----------*/
+from:
+  "identifier"
+  {
+    if ($1 != SYMBOL(from))
+      up.error(@1, "unexpected `" + $1.name_get() + "', expecting `from'");
+  }
+;
+
+object:
+  "identifier"
+  {
+    if ($1 != SYMBOL(object))
+      up.error(@1, "unexpected `" + $1.name_get() + "', expecting `object'");
+  }
+;
 
 %token EXTERNAL "external";
 stmt:
-  "external" "identifier"[object] identifier_as_string[id]
+  "external" object identifier_as_string[id]
   {
     PARAMETRIC_AST(a, "'external'.'object'(%exp:1)");
-
-    if ($object != SYMBOL(object))
-      up.error(@object, "syntax error, external must be followed by "
-               "object, var, function or event");
     $$ = exp(a % $id);
   }
 | "external" "var" identifier_as_string[obj] "." identifier_as_string[slot]
-	     "identifier"[from] identifier_as_string[id]
+	     from identifier_as_string[id]
   {
     PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
-
-    if ($from != SYMBOL(from))
-      up.error(@from, "unexpected `" + $from.name_get() +
-	       "', expecting `from'");
     $$ = exp(a % $obj % $slot % $id);
   }
 | "external" "function" "(" exp_float[arity] ")"
              identifier_as_string[obj] "." identifier_as_string[slot]
-	     "identifier"[from] identifier_as_string[id]
+	     from identifier_as_string[id]
   {
     PARAMETRIC_AST
       (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
-
-    if ($from != SYMBOL(from))
-      up.error(@from, "unexpected `" + $from.name_get() +
-	       "', expecting `from'");
     $$ = exp(a % $arity % $obj % $slot % $id);
   }
 | "external" "event" "(" exp_float[arity] ")"
              identifier_as_string[obj] "." identifier_as_string[slot]
-	     "identifier"[from] identifier_as_string[id]
+	     from identifier_as_string[id]
   {
     PARAMETRIC_AST
       (a, "'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
-
-    if ($from != SYMBOL(from))
-      up.error(@from, "unexpected `" + $from.name_get() +
-	       "', expecting `from'");
     $$ = exp(a % $arity % $obj % $slot % $id);
   }
 ;
