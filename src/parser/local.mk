@@ -111,7 +111,7 @@ ugrammar_deps =					\
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
-AM_BISONFLAGS = -d -ra -Derror-verbose=$(YYERROR_VERBOSE)
+AM_BISONFLAGS = -d -ra -Dparse.error=$(PARSE_ERROR)
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp
 	echo '$@ rebuilt because of: $?' >$@.tmp
