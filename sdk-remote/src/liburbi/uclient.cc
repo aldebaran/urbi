@@ -20,19 +20,18 @@ namespace urbi
     , ping_interval_(0)
     , pong_timeout_(0)
   {
-    boost::system::error_code erc;
-
-    if (!server_)
+    if (server_)
     {
-      if ((erc = connect(host, port)))
-        libport::boost_error("UClient::UClient connect", erc);
+      if (boost::system::error_code erc =
+          listen(boost::bind(&urbi::UClient::mySocketFactory, this),
+                 host, port))
+      {
+        libport::boost_error("UClient::UClient cannot listen", erc);
+        return;
+      }
     }
-    else if ((erc = listen(boost::bind(&urbi::UClient::mySocketFactory, this),
-                           host, port)))
-    {
-      libport::boost_error("UClient::UClient cannot listen", erc);
-      return;
-    }
+    else if (boost::system::error_code erc = connect(host, port))
+      libport::boost_error("UClient::UClient connect", erc);
   }
 
   UClient::~UClient()
