@@ -1,4 +1,6 @@
 dist_libuobject_la_SOURCES +=			\
+  kernel/connection.cc				\
+  kernel/connection.hh				\
   kernel/connection-set.cc			\
   kernel/connection-set.hh			\
   kernel/debug.cc				\

@@ -98,11 +98,7 @@ include urbi/local.mk
 urbiinclude_HEADERS = $(uobject_headers)
 
 dist_libuobject_la_SOURCES +=			\
-  console-server.cc				\
-  lib/network/bsdnet/connection.hh		\
-  lib/network/bsdnet/connection.cc		\
-  lib/network/bsdnet/network.hh			\
-  lib/network/bsdnet/network.cc
+  console-server.cc
 
 # We used to install a different version (with s/remote/engine/g), but
 # there is no occurrence of remote in param.mk.  Yet MN insists on

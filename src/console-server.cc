@@ -10,6 +10,7 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
+#include <libport/asio.hh>
 #include <libport/cli.hh>
 #include <libport/debug.hh>
 #include <libport/exception.hh>
@@ -34,7 +35,6 @@
 #include <libltdl/ltdl.h>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
-#include <network/bsdnet/network.hh>
 #include <kernel/uqueue.hh>
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
@@ -42,6 +42,7 @@
 #include <sched/configuration.hh>
 #include <sched/scheduler.hh>
 
+#include <kernel/connection.hh>
 #include <kernel/ubanner.hh>
 #include <object/symbols.hh>
 #include <object/object.hh>
@@ -58,10 +59,14 @@ using libport::program_name;
 
 class ConsoleServer
   : public kernel::UServer
+  , public libport::Socket
 {
 public:
   ConsoleServer(bool fast)
-    : kernel::UServer("console"), fast(fast), ctime(0)
+    : kernel::UServer("console")
+    , fast(fast)
+    , ctime(0)
+    , io_(libport::get_io_service(false))
   {}
 
   virtual ~ConsoleServer()
@@ -97,6 +102,7 @@ public:
 
   bool fast;
   libport::utime_t ctime;
+  boost::asio::io_service& io_;
 };
 
 namespace
@@ -159,6 +165,13 @@ namespace urbi
 
   int main_loop(LoopData& l);
 
+  static libport::Socket*
+  connectionFactory()
+  {
+    kernel::Connection* c = new kernel::Connection();
+    kernel::urbiserver->connection_add(c);
+    return c;
+  }
 
   static
   int
@@ -337,7 +350,8 @@ namespace urbi
       if (desired_port != -1)
       {
         std::string host = IF_OPTION_PARSER(libport::opts::host_l.value(""),"");
-        port = Network::createTCPServer(host, desired_port);
+        s.listen(&connectionFactory, host, desired_port);
+        port = s.getLocalPort();
         if (!port)
           throw urbi::Exit
             (EX_UNAVAILABLE,
@@ -423,7 +437,7 @@ namespace urbi
           if (data.interactive)
             select_time = std::min(100000LL, select_time);
         }
-        Network::selectAndProcess(select_time);
+        s.io_.poll();
       }
 
       next_time = s.work();
