@@ -239,8 +239,8 @@ namespace kernel
         << UServer::package_info().signature()
         << ""
         << "---------- CURRENT C++ BACKTRACE ----------";
-      foreach (const char* cp, libport::backtrace())
-        r << cp;
+      foreach (const std::string& s, libport::Backtrace())
+        r << s;
       r << ""
         << "---------- CURRENT URBI BACKTRACE ----------";
       static const std::string notag = "";
