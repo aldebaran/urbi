@@ -23,19 +23,36 @@ namespace urbi
     , ping_interval_(0)
     , pong_timeout_(0)
   {
-    using namespace boost::system;
-    if (server_)
+    rc = server_ ? listen_() : connect_();
+  }
+
+  UClient::error_type
+  UClient::connect_()
+  {
+    if (boost::system::error_code erc = connect(host_, port_))
     {
-      if (error_code erc = listen(boost::bind(&UClient::mySocketFactory, this),
-                                  host, port))
-        libport::boost_error(libport::format("UClient::UClient listen(%s, %s)",
-                                             host, port),
-                             erc);
-    }
-    else if (error_code erc = connect(host, port))
-      libport::boost_error(libport::format("UClient::UClient connect",
-                                           host, port),
+      libport::boost_error(libport::format("UClient::UClient connect(%s, %s)",
+                                           host_, port_),
                            erc);
+      return -1;
+    }
+    else
+      return 0;
+  }
+
+  UClient::error_type
+  UClient::listen_()
+  {
+    if (boost::system::error_code erc =
+        listen(boost::bind(&UClient::mySocketFactory, this), host_, port_))
+    {
+      libport::boost_error(libport::format("UClient::UClient listen(%s, %s)",
+                                           host_, port_),
+                           erc);
+      return -1;
+    }
+    else
+      return 0;
   }
 
   UClient::~UClient()

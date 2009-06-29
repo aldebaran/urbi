@@ -85,6 +85,14 @@ namespace urbi
 
     /// True if waiting 'PONG'.
     bool waitingPong;
+
+  private:
+    /// Wrapper around Socket::connect.
+    /// Client mode.
+    error_type connect_();
+    /// Wrapper around Socket::listen.
+    /// Server mode.
+    error_type listen_();
   };
 
 } // namespace urbi
