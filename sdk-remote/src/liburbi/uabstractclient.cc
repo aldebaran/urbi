@@ -879,7 +879,7 @@ namespace urbi
       inString = false;
     }
 
-    while (parsePosition < recvBufferPosition)
+    for (/* nothing */; parsePosition < recvBufferPosition; ++parsePosition)
     {
       if (inString)
         switch (recvBuffer[parsePosition])
@@ -888,11 +888,10 @@ namespace urbi
           if (parsePosition == recvBufferPosition-1)
             //we cant handle the '\\'
             return false;
-          parsePosition+=2; //ignore next character
+          ++parsePosition; //ignore next character
           continue;
         case '"':
           inString = false;
-          ++parsePosition;
           continue;
         }
       else
@@ -901,46 +900,38 @@ namespace urbi
         {
         case '"':
           inString = true;
-          ++parsePosition;
           continue;
         case '[':
           ++nBracket;
-          ++parsePosition;
           continue;
         case ']':
           --nBracket;
-          ++parsePosition;
           continue;
         case '\n':
           /* XXX: handle '[' in echoed messages or errors nBracket == 0 */
-          if (true)
+          //end of command
+          recvBuffer[parsePosition]=0;
+          //listLock.lock();
+          UMessage msg(*this, currentTimestamp, currentTag,
+                       currentCommand,
+                       bins);
+          notifyCallbacks(msg);
+          //unlistLock.lock();
+          //prepare for next read, copy the extra
+          memmove(recvBuffer, recvBuffer + parsePosition + 1,
+                  recvBufferPosition - parsePosition - 1);
+          // copy beginning of next cmd
+          recvBufferPosition = recvBufferPosition - parsePosition - 1;
+          recvBuffer[recvBufferPosition] = 0;
+          parsePosition = 0;
+          while (!bins.empty())
           {
-            //end of command
-            recvBuffer[parsePosition]=0;
-            //listLock.lock();
-            UMessage msg(*this, currentTimestamp, currentTag,
-                         currentCommand,
-                         bins);
-            notifyCallbacks(msg);
-            //unlistLock.lock();
-            //prepare for next read, copy the extra
-            memmove(recvBuffer, recvBuffer + parsePosition + 1,
-                    recvBufferPosition - parsePosition - 1);
-            // copy beginning of next cmd
-            recvBufferPosition = recvBufferPosition - parsePosition - 1;
-            recvBuffer[recvBufferPosition] = 0;
-            parsePosition = 0;
-            while (!bins.empty())
-            {
-              free(bins.front().data);
-              bins.pop_front();
-            }
-            goto line_finished; //restart
+            free(bins.front().data);
+            bins.pop_front();
           }
-          // this should not happen: \n should have been handled
-          // by binary code below
-          GD_ERROR("FATAL PARSE ERROR");
+          goto line_finished; //restart
         }
+
         if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
         {
           //very important: scan starts below current point
@@ -965,7 +956,6 @@ namespace urbi
           break; //restart in binarymode to handle binary
         }
       }
-      ++parsePosition;
     }
   line_finished:
     // Either we ate all characters, or we were asked to restart.
