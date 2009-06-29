@@ -778,28 +778,26 @@ namespace urbi
         notifyCallbacks(msg);
         //unlistLock.lock();
 
-        while (!bins.empty())
-        {
+        for (/* nothing */; !bins.empty(); bins.pop_front())
           free(bins.front().data);
-          bins.pop_front();
-        }
+
         //flush
         parsePosition = 0;
         //Move the extra we received
+        recvBufferPosition -= len + endOfHeaderPosition;
         memmove(recvBuffer,
                 recvBuffer + endOfHeaderPosition + len,
-                recvBufferPosition - len - endOfHeaderPosition);
-        recvBufferPosition = recvBufferPosition - len - endOfHeaderPosition;
+                recvBufferPosition);
       }
       else
       {
         // not over yet
         //leave parseposition where it is
         //move the extra (parsePosition = endOfHeaderPosition)
-        memmove(recvBuffer+parsePosition,
+        recvBufferPosition -= len;
+        memmove(recvBuffer + parsePosition,
                 recvBuffer + endOfHeaderPosition + len,
-                recvBufferPosition - len - endOfHeaderPosition);
-        recvBufferPosition = recvBufferPosition - len;
+                recvBufferPosition - endOfHeaderPosition);
       }
       binaryBuffer = 0;
       binaryMode = false;
@@ -834,15 +832,15 @@ namespace urbi
         recvBufferPosition--;
         return true;
       }
-      int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]",
-                         &currentTimestamp, currentTag);
-      if (found != 2)
+
+      if (2 != sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]",
+                      &currentTimestamp, currentTag))
       {
-        found = sscanf(recvBuffer, "[%d]", &currentTimestamp);
-        if (found == 1)
+        if (1 == sscanf(recvBuffer, "[%d]", &currentTimestamp))
           currentTag[0] = 0;
-        else // failure
+        else
         {
+          // failure
           GD_FERROR("UAbstractClient::read, error parsing header: '%s'",
                     (recvBuffer));
           currentTimestamp = 0;
