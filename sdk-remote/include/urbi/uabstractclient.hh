@@ -304,6 +304,16 @@ namespace urbi
     /// Called each time new data is available in recvBuffer.
     void processRecvBuffer();
 
+  private:
+    /// New binary data is available.
+    /// \return true if there is still data to process.
+    bool process_recv_buffer_binary_();
+
+    /// New text data is available.
+    /// \return true if there is still data to process.
+    bool process_recv_buffer_text_();
+
+  public:
     /// This, as a stream.
     std::ostream& stream_get();
 

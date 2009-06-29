@@ -747,239 +747,242 @@ namespace urbi
     strcpy(tag, fresh().c_str());
   }
 
-  /*!
-   As long as this function has not returned, neither recvBuffer
-   nor recvBufferPos may be modified.
-   */
-  void
-  UAbstractClient::processRecvBuffer()
+  bool
+  UAbstractClient::process_recv_buffer_binary_()
   {
-    while (true)
+    //Receiving binary. Append to binaryBuffer;
+    size_t len =
+      std::min(recvBufferPosition - endOfHeaderPosition,
+               binaryBufferLength - binaryBufferPosition);
+    if (binaryBuffer)
+      memcpy (static_cast<char*> (binaryBuffer) + binaryBufferPosition,
+              recvBuffer + endOfHeaderPosition, len);
+    binaryBufferPosition += len;
+
+    if (binaryBufferPosition == binaryBufferLength)
     {
-      if (binaryMode)
+      //Finished receiving binary.
+      //append
+      BinaryData bd;
+      bd.size = binaryBufferLength;
+      bd.data = binaryBuffer;
+      bins.push_back(bd);
+      binaryBuffer = 0;
+
+      if (nBracket == 0)
       {
-	//Receiving binary. Append to binaryBuffer;
-	size_t len =
-          std::min(recvBufferPosition - endOfHeaderPosition,
-                   binaryBufferLength - binaryBufferPosition);
-	if (binaryBuffer)
-	  memcpy (static_cast<char*> (binaryBuffer) + binaryBufferPosition,
-		  recvBuffer + endOfHeaderPosition, len);
-	binaryBufferPosition += len;
+        //end of command, send
+        //dumb listLock.lock();
+        UMessage msg(*this, currentTimestamp, currentTag, currentCommand,
+                     bins);
+        notifyCallbacks(msg);
+        //unlistLock.lock();
 
-	if (binaryBufferPosition == binaryBufferLength)
-	{
-	  //Finished receiving binary.
-	  //append
-	  BinaryData bd;
-	  bd.size = binaryBufferLength;
-	  bd.data = binaryBuffer;
-	  bins.push_back(bd);
-	  binaryBuffer = 0;
-
-	  if (nBracket == 0)
-	  {
-	    //end of command, send
-	    //dumb listLock.lock();
-	    UMessage msg(*this, currentTimestamp, currentTag, currentCommand,
-			 bins);
-	    notifyCallbacks(msg);
-	    //unlistLock.lock();
-
-	    while (!bins.empty())
-	    {
-	      free(bins.front().data);
-	      bins.pop_front();
-	    }
-	    //flush
-	    parsePosition = 0;
-	    //Move the extra we received
-	    memmove(recvBuffer,
-		    recvBuffer + endOfHeaderPosition + len,
-		    recvBufferPosition - len - endOfHeaderPosition);
-	    recvBufferPosition = recvBufferPosition - len - endOfHeaderPosition;
-	  }
-	  else
-	  {
-	    // not over yet
-	    //leave parseposition where it is
-	    //move the extra (parsePosition = endOfHeaderPosition)
-	    memmove(recvBuffer+parsePosition,
-		    recvBuffer + endOfHeaderPosition + len,
-		    recvBufferPosition - len - endOfHeaderPosition);
-	    recvBufferPosition = recvBufferPosition - len;
-	  }
-	  binaryBuffer = 0;
-	  binaryMode = false;
-
-	  //Reenter loop.
-	  continue;
-	}
-	else
-	{
-	  //Not finished receiving binary.
-	  recvBufferPosition = endOfHeaderPosition;
-	  return;
-	}
+        while (!bins.empty())
+        {
+          free(bins.front().data);
+          bins.pop_front();
+        }
+        //flush
+        parsePosition = 0;
+        //Move the extra we received
+        memmove(recvBuffer,
+                recvBuffer + endOfHeaderPosition + len,
+                recvBufferPosition - len - endOfHeaderPosition);
+        recvBufferPosition = recvBufferPosition - len - endOfHeaderPosition;
       }
       else
       {
-	// Not in binary mode.
-	char* endline =
-	  static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
-				     recvBufferPosition - parsePosition));
-	if (!endline)
-	  return; //no new end of command/start of binary: wait
-
-	if (parsePosition == 0) // parse header
-	{
-	  // Ignore empty lines.
-	  if (endline == recvBuffer)
-	  {
-	    memmove(recvBuffer, recvBuffer+1, recvBufferPosition - 1);
-	    recvBufferPosition--;
-	    continue;
-	  }
-	  int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]",
-			     &currentTimestamp, currentTag);
-	  if (found != 2)
-	  {
-	    found = sscanf(recvBuffer, "[%d]", &currentTimestamp);
-	    if (found == 1)
-	      currentTag[0] = 0;
-	    else // failure
-	    {
-              GD_FERROR("UAbstractClient::read, error parsing header: '%s'",
-                        (recvBuffer));
-	      currentTimestamp = 0;
-	      strcpy(currentTag, "UNKNWN");
-	      //listLock.lock();
-	      UMessage msg(*this, 0, tag_error,
-			   "!!! UAbstractClient::read,"
-                           " fatal error parsing header",
-			   binaries_type());
-	      notifyCallbacks(msg);
-	      //unlistLock.lock();
-	    }
-	  }
-
-	  currentCommand = strstr(recvBuffer, "]");
-	  if (!currentCommand)
-          {
-	    //reset all
-	    nBracket = 0;
-	    inString = false;
-	    parsePosition = 0;
-	    recvBufferPosition = 0;
-	    return;
-	  }
-
-	  ++currentCommand;
-	  while (*currentCommand == ' ')
-	    ++currentCommand;
-	  system = (*currentCommand == '!' || *currentCommand == '*');
-	  parsePosition = (long) currentCommand - (long) recvBuffer;
-
-	  //reinit just to be sure:
-	  nBracket = 0;
-	  inString = false;
-	}
-
-	while (parsePosition < recvBufferPosition)
-	{
-	  if (inString)
-            switch (recvBuffer[parsePosition])
-            {
-            case '\\':
-	      if (parsePosition == recvBufferPosition-1)
-		//we cant handle the '\\'
-		return;
-	      parsePosition+=2; //ignore next character
-	      continue;
-            case '"':
-              inString = false;
-              ++parsePosition;
-              continue;
-            }
-	  else
-	  {
-            switch (recvBuffer[parsePosition])
-            {
-            case '"':
-	      inString = true;
-	      ++parsePosition;
-	      continue;
-	    case '[':
-	      ++nBracket;
-	      ++parsePosition;
-	      continue;
-	    case ']':
-	      --nBracket;
-	      ++parsePosition;
-	      continue;
-	    case '\n':
-              /* XXX: handle '[' in echoed messages or errors nBracket == 0 */
-	      if (true)
-	      {
-		//end of command
-		recvBuffer[parsePosition]=0;
-		//listLock.lock();
-		UMessage msg(*this, currentTimestamp, currentTag,
-			     currentCommand,
-			     bins);
-		notifyCallbacks(msg);
-		//unlistLock.lock();
-		//prepare for next read, copy the extra
-		memmove(recvBuffer, recvBuffer + parsePosition + 1,
-			recvBufferPosition - parsePosition - 1);
-		// copy beginning of next cmd
-		recvBufferPosition = recvBufferPosition - parsePosition - 1;
-		recvBuffer[recvBufferPosition] = 0;
-		parsePosition = 0;
-		while (!bins.empty())
-		{
-		  free(bins.front().data);
-		  bins.pop_front();
-		}
-		goto line_finished; //restart
-	      }
-              // this should not happen: \n should have been handled
-              // by binary code below
-	      GD_ERROR("FATAL PARSE ERROR");
-            }
-	    if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
-	    {
-	      //very important: scan starts below current point
-	      //compute length
-	      char* endLength;
-	      binaryBufferLength =
-                strtol(recvBuffer+parsePosition+1, &endLength, 0);
-	      if (endLength == recvBuffer+parsePosition+1)
-	      {
-		GD_ERROR("UClient::read, error parsing bin data length.");
-		recvBufferPosition = 0;
-		return;
-	      }
-	      //go to end of header
-	      while (recvBuffer[parsePosition] !='\n')
-		++parsePosition; //we now we will find a \n
-	      ++parsePosition;
-	      endOfHeaderPosition = parsePosition;
-	      binaryMode = true;
-	      binaryBuffer = malloc(binaryBufferLength);
-	      binaryBufferPosition = 0;
-	      break; //restart in binarymode to handle binary
-	    }
-	  }
-	  ++parsePosition;
-	}
-        line_finished:
-	//either we ate all characters, or we were asked to restart
-	if (parsePosition == recvBufferPosition)
-	  return;
-	continue;
+        // not over yet
+        //leave parseposition where it is
+        //move the extra (parsePosition = endOfHeaderPosition)
+        memmove(recvBuffer+parsePosition,
+                recvBuffer + endOfHeaderPosition + len,
+                recvBufferPosition - len - endOfHeaderPosition);
+        recvBufferPosition = recvBufferPosition - len;
       }
+      binaryBuffer = 0;
+      binaryMode = false;
+
+      // Reenter loop.
+      return true;
     }
+    else
+    {
+      // Not finished receiving binary.
+      recvBufferPosition = endOfHeaderPosition;
+      return false;
+    }
+  }
+
+  bool
+  UAbstractClient::process_recv_buffer_text_()
+  {
+    // Not in binary mode.
+    char* endline =
+      static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
+                                 recvBufferPosition - parsePosition));
+    if (!endline)
+      return false; //no new end of command/start of binary: wait
+
+    if (parsePosition == 0) // parse header
+    {
+      // Ignore empty lines.
+      if (endline == recvBuffer)
+      {
+        memmove(recvBuffer, recvBuffer+1, recvBufferPosition - 1);
+        recvBufferPosition--;
+        return true;
+      }
+      int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]",
+                         &currentTimestamp, currentTag);
+      if (found != 2)
+      {
+        found = sscanf(recvBuffer, "[%d]", &currentTimestamp);
+        if (found == 1)
+          currentTag[0] = 0;
+        else // failure
+        {
+          GD_FERROR("UAbstractClient::read, error parsing header: '%s'",
+                    (recvBuffer));
+          currentTimestamp = 0;
+          strcpy(currentTag, "UNKNWN");
+          //listLock.lock();
+          UMessage msg(*this, 0, tag_error,
+                       "!!! UAbstractClient::read,"
+                       " fatal error parsing header",
+                       binaries_type());
+          notifyCallbacks(msg);
+          //unlistLock.lock();
+        }
+      }
+
+      currentCommand = strstr(recvBuffer, "]");
+      if (!currentCommand)
+      {
+        //reset all
+        nBracket = 0;
+        inString = false;
+        parsePosition = 0;
+        recvBufferPosition = 0;
+        return false;
+      }
+
+      ++currentCommand;
+      while (*currentCommand == ' ')
+        ++currentCommand;
+      system = (*currentCommand == '!' || *currentCommand == '*');
+      parsePosition = (long) currentCommand - (long) recvBuffer;
+
+      //reinit just to be sure:
+      nBracket = 0;
+      inString = false;
+    }
+
+    while (parsePosition < recvBufferPosition)
+    {
+      if (inString)
+        switch (recvBuffer[parsePosition])
+        {
+        case '\\':
+          if (parsePosition == recvBufferPosition-1)
+            //we cant handle the '\\'
+            return false;
+          parsePosition+=2; //ignore next character
+          continue;
+        case '"':
+          inString = false;
+          ++parsePosition;
+          continue;
+        }
+      else
+      {
+        switch (recvBuffer[parsePosition])
+        {
+        case '"':
+          inString = true;
+          ++parsePosition;
+          continue;
+        case '[':
+          ++nBracket;
+          ++parsePosition;
+          continue;
+        case ']':
+          --nBracket;
+          ++parsePosition;
+          continue;
+        case '\n':
+          /* XXX: handle '[' in echoed messages or errors nBracket == 0 */
+          if (true)
+          {
+            //end of command
+            recvBuffer[parsePosition]=0;
+            //listLock.lock();
+            UMessage msg(*this, currentTimestamp, currentTag,
+                         currentCommand,
+                         bins);
+            notifyCallbacks(msg);
+            //unlistLock.lock();
+            //prepare for next read, copy the extra
+            memmove(recvBuffer, recvBuffer + parsePosition + 1,
+                    recvBufferPosition - parsePosition - 1);
+            // copy beginning of next cmd
+            recvBufferPosition = recvBufferPosition - parsePosition - 1;
+            recvBuffer[recvBufferPosition] = 0;
+            parsePosition = 0;
+            while (!bins.empty())
+            {
+              free(bins.front().data);
+              bins.pop_front();
+            }
+            goto line_finished; //restart
+          }
+          // this should not happen: \n should have been handled
+          // by binary code below
+          GD_ERROR("FATAL PARSE ERROR");
+        }
+        if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
+        {
+          //very important: scan starts below current point
+          //compute length
+          char* endLength;
+          binaryBufferLength =
+            strtol(recvBuffer+parsePosition+1, &endLength, 0);
+          if (endLength == recvBuffer+parsePosition+1)
+          {
+            GD_ERROR("UClient::read, error parsing bin data length.");
+            recvBufferPosition = 0;
+            return false;
+          }
+          //go to end of header
+          while (recvBuffer[parsePosition] !='\n')
+            ++parsePosition; //we now we will find a \n
+          ++parsePosition;
+          endOfHeaderPosition = parsePosition;
+          binaryMode = true;
+          binaryBuffer = malloc(binaryBufferLength);
+          binaryBufferPosition = 0;
+          break; //restart in binarymode to handle binary
+        }
+      }
+      ++parsePosition;
+    }
+  line_finished:
+    // Either we ate all characters, or we were asked to restart.
+    return parsePosition != recvBufferPosition;
+  }
+
+  /*!
+    As long as this function has not returned, neither recvBuffer
+    nor recvBufferPos may be modified.
+  */
+  void
+  UAbstractClient::processRecvBuffer()
+  {
+    while (binaryMode
+           ? process_recv_buffer_binary_()
+           : process_recv_buffer_text_())
+      continue;
   }
 
   UCallbackID
